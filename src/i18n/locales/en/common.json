@@ -200,6 +200,7 @@
     "code_sent": "Verification code sent",
     "contact_match_help": "Must match the one registered in the system",
     "errors": {
+      "credentials_or_password_incorrect": "We couldn't verify your identity. Check your credentials and your password and try again.",
       "participant_not_found": "The voter is not listed in the census, or the provided credentials are incorrect.",
       "requests_on_cooldown": "Too many requests. Please wait a moment before trying again.",
       "zero_voting_weight": "You don't have enough voting power to access the election."
@@ -467,7 +468,8 @@
       "error": {
         "invalid_birth_date": "Birth date cannot be in the future",
         "invalid_email": "Invalid email address",
-        "invalid_phone": "Invalid phone number"
+        "invalid_phone": "Invalid phone number",
+        "password_requirements": "Use at least 6 characters, including a letter and a number."
       }
     },
     "process_create": {
@@ -959,6 +961,10 @@
     },
     "groups": {
       "title": "Groups"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} rows were not imported because their password does not meet the requirements (at least 6 characters, including a letter and a number): lines {{lines}}.",
+      "password_rows_skipped_other": "{{count}} rows were not imported because their password does not meet the requirements (at least 6 characters, including a letter and a number): lines {{lines}}."
     },
     "import_file": {
       "subtitle": "Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.",

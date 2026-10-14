@@ -202,6 +202,7 @@
     "code_sent": "Código de verificación enviado",
     "contact_match_help": "Debe coincidir con el registrado en el sistema",
     "errors": {
+      "credentials_or_password_incorrect": "No hemos podido verificar tu identidad. Comprueba tus credenciales y tu contraseña e inténtalo de nuevo.",
       "participant_not_found": "El votante no figura en el censo o las credenciales proporcionadas son incorrectas.",
       "requests_on_cooldown": "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.",
       "zero_voting_weight": "No tienes suficiente poder de voto para acceder a la votación."
@@ -469,7 +470,8 @@
       "error": {
         "invalid_birth_date": "La fecha de nacimiento no puede estar en el futuro",
         "invalid_email": "Dirección de correo electrónico no válida",
-        "invalid_phone": "Número de teléfono no válido"
+        "invalid_phone": "Número de teléfono no válido",
+        "password_requirements": "Usa al menos 6 caracteres, con una letra y un número."
       }
     },
     "process_create": {
@@ -968,6 +970,11 @@
     },
     "groups": {
       "title": "Grupos"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} fila no se ha importado porque su contraseña no cumple los requisitos (al menos 6 caracteres, con una letra y un número): línea {{lines}}.",
+      "password_rows_skipped_many": "{{count}} filas no se han importado porque su contraseña no cumple los requisitos (al menos 6 caracteres, con una letra y un número): líneas {{lines}}.",
+      "password_rows_skipped_other": "{{count}} filas no se han importado porque su contraseña no cumple los requisitos (al menos 6 caracteres, con una letra y un número): líneas {{lines}}."
     },
     "import_file": {
       "subtitle": "Importa tu archivo CSV, XLS, XLSX o ODS con los datos de los miembros. Asegúrate de que los encabezados de columna coincidan con la plantilla para una asignación correcta.",

@@ -202,6 +202,7 @@
     "code_sent": "Code de vérification envoyé",
     "contact_match_help": "Doit correspondre à celui enregistré dans le système",
     "errors": {
+      "credentials_or_password_incorrect": "Nous n'avons pas pu vérifier votre identité. Vérifiez vos identifiants et votre mot de passe, puis réessayez.",
       "participant_not_found": "L'électeur ne figure pas sur la liste électorale, ou les identifiants fournis sont incorrects.",
       "requests_on_cooldown": "Trop de tentatives. Veuillez patienter un instant avant de réessayer.",
       "zero_voting_weight": "Vous n'avez pas suffisamment de poids de vote pour accéder à l'élection."
@@ -469,7 +470,8 @@
       "error": {
         "invalid_birth_date": "La date de naissance ne peut pas être dans le futur",
         "invalid_email": "Adresse e-mail invalide",
-        "invalid_phone": "Numéro de téléphone invalide"
+        "invalid_phone": "Numéro de téléphone invalide",
+        "password_requirements": "Utilisez au moins 6 caractères, dont une lettre et un chiffre."
       }
     },
     "process_create": {
@@ -968,6 +970,11 @@
     },
     "groups": {
       "title": "Groupes"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} ligne n'a pas été importée car son mot de passe ne respecte pas les exigences (au moins 6 caractères, dont une lettre et un chiffre) : ligne {{lines}}.",
+      "password_rows_skipped_many": "{{count}} lignes n'ont pas été importées car leur mot de passe ne respecte pas les exigences (au moins 6 caractères, dont une lettre et un chiffre) : lignes {{lines}}.",
+      "password_rows_skipped_other": "{{count}} lignes n'ont pas été importées car leur mot de passe ne respecte pas les exigences (au moins 6 caractères, dont une lettre et un chiffre) : lignes {{lines}}."
     },
     "import_file": {
       "subtitle": "Importez votre fichier CSV, XLS, XLSX ou ODS contenant les données des membres. Assurez-vous que les en-têtes de colonnes correspondent au modèle pour une correspondance exacte.",
