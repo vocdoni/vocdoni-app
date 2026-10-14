@@ -5,9 +5,11 @@
 # Usage:
 #   printf '%s' "$COMMENT_BODY" | scripts/integration-pins.sh
 #
-# Example first line: /integration vocdoni-node=1a2b3c4 saas-backend=#760 integrator-sdk=main
+# Example first line: /integration vocdoni-node=1a2b3c4 saas-backend=760 integrator-sdk=main
 #   or: /integration reset
-# A ref is a commit SHA (7-40 hex), a branch or tag, or #<PR number>.
+# A ref is a commit SHA (7-40 hex), a branch or tag, or a PR number: #<N>, or a
+# bare <N> of 1-6 digits, which is output as #<N>. A branch or tag named only
+# 1-6 digits cannot be pinned by name.
 # sticky=true when refs are given and none is a SHA: the refs are re-resolved
 # on every push until `/integration reset`. A comment with any SHA runs once.
 #
@@ -57,6 +59,10 @@ for tok in ${tokens[@]+"${tokens[@]}"}; do
   fi
   key="${tok%%=*}"
   ref="${tok#*=}"
+  # A bare PR number means the same as #N: GitHub autolinks #N to this repo.
+  if [[ "$ref" =~ ^[0-9]{1,6}$ ]]; then
+    ref="#$ref"
+  fi
   case "$key" in
     vocdoni-node)
       [ "$seen_node" = 0 ] || fail "vocdoni-node given twice"

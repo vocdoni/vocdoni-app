@@ -63,6 +63,24 @@ describe('integration-pins.sh', () => {
       expectOk('/integration integrator-sdk=#88', '', '', '#88', true)
     })
 
+    it('a bare PR number is the same as #N and sticky', () => {
+      expectOk('/integration saas-backend=760', '', '#760', '', true)
+      expectOk('/integration saas-backend=760 integrator-sdk=86', '', '#760', '#86', true)
+      expectOk('/integration vocdoni-node=1 saas-backend=999999', '#1', '#999999', '', true)
+    })
+
+    it('a bare PR number mixed with a SHA is one-shot', () => {
+      expectOk('/integration vocdoni-node=1a2b3c4 saas-backend=760', '1a2b3c4', '#760', '', false)
+    })
+
+    it('keeps leading zeros of a bare PR number', () => {
+      expectOk('/integration saas-backend=0760', '', '#0760', '', true)
+    })
+
+    it('a 7-digit number is a SHA, not a PR number', () => {
+      expectOk('/integration saas-backend=1234567', '', '1234567', '', false)
+    })
+
     it('a branch with a #PR is sticky', () => {
       expectOk('/integration vocdoni-node=main saas-backend=#760', 'main', '#760', '', true)
       expectOk('/integration vocdoni-node=1a2b3c4 integrator-sdk=#88', '1a2b3c4', '', '#88', false)
@@ -139,6 +157,7 @@ describe('integration-pins.sh', () => {
     it('rejects an empty ref', () => {
       expectError('/integration vocdoni-node=')
       expectError('/integration integrator-sdk=')
+      expect(parse('/integration saas-backend=').stderr).toContain('empty ref')
     })
 
     it('rejects a ref containing ..', () => {

@@ -128,11 +128,12 @@ The integration suite (`.github/workflows/integration.yml`) runs against the pub
 here depends on upstream work that is not merged yet, that run fails or proves nothing. **Rule: when a PR depends on
 an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change, open the PR with its usual description
 (linking the upstream PR), then post a separate PR comment with the `/integration` command pointing at that upstream
-PR, e.g. `/integration saas-backend=#760`.** The command does nothing in the PR description; only a comment triggers
-it. That comment holds the command alone, with no signature or other text.
+PR, e.g. `/integration saas-backend=760` (bare PR number; `#760` also works, but GitHub autolinks it to this
+repo).** The command does nothing in the PR description; only a comment triggers it. That comment holds the command
+alone, with no signature or other text.
 - Keys: `vocdoni-node=`, `saas-backend=`, `integrator-sdk=` (the SDK repo, built, packed and installed through pnpm
-  overrides for that run only). Each is optional. A ref is a SHA, branch, tag or `#PR`. Upstreams are built from
-  source, so the run takes longer.
+  overrides for that run only). Each is optional. A ref is a SHA, branch, tag, or a PR number (bare `760` or `#760`).
+  Upstreams are built from source, so the run takes longer.
 - A comment whose refs are all branches, tags or PRs is **sticky**: every later push re-runs against those refs at
   their current heads. Any SHA makes it a one-shot run, and so does a bare `/integration` (`:main` images and npm
   packages), without changing the sticky refs. `/integration reset` goes back to the `:main` images and npm packages.

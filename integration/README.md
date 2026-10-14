@@ -53,8 +53,11 @@ Each key is optional:
 
 - A bare `/integration` is an ordinary run: `:main` images and the npm packages
   from the lockfile.
-- A ref is a commit SHA (7-40 hex), a branch, a tag, or `#<PR number>` for that
-  upstream repo's PR head (e.g. `saas-backend=#760`).
+- A ref is a commit SHA (7-40 hex), a branch, a tag, or a PR number for that
+  upstream repo's PR head. Write the PR number bare (`saas-backend=760`), which is
+  the recommended form. `saas-backend=#760` still works. GitHub autolinks `#760` to
+  this repo's issue, and copying a rendered comment pastes links the parser rejects.
+  A branch or tag named only 1-6 digits cannot be pinned by name.
 - `vocdoni-node` and `saas-backend` are built into Docker images and the stack
   runs those instead of `:main`.
 - `integrator-sdk` is built and packed. Its `@vocdoni/*` packages are installed in

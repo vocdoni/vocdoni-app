@@ -8,7 +8,7 @@ name: Integration
 #
 # A writer's `/integration vocdoni-node=<ref> saas-backend=<ref> integrator-sdk=<ref>`
 # comment on a pull request runs it once against those refs (each key is optional).
-# Refs that are branches, tags or #PRs also stick to the PR until `/integration reset`,
+# Refs that are branches, tags or PR numbers (760 or #760) also stick to the PR until `/integration reset`,
 # and the pull_request event re-resolves sticky refs on every push. workflow_dispatch
 # takes the same refs as inputs.
 #
@@ -34,17 +34,17 @@ on:
   workflow_dispatch:
     inputs:
       vocdoni_node_ref:
-        description: 'vocdoni-node commit SHA, branch, tag or #PR to build from source (empty = :main image)'
+        description: 'vocdoni-node commit SHA, branch, tag or PR number (760 or #760) to build from source (empty = :main image)'
         type: string
         required: false
         default: ''
       saas_backend_ref:
-        description: 'saas-backend commit SHA, branch, tag or #PR to build from source (empty = :main image)'
+        description: 'saas-backend commit SHA, branch, tag or PR number (760 or #760) to build from source (empty = :main image)'
         type: string
         required: false
         default: ''
       integrator_sdk_ref:
-        description: 'integrator-sdk commit SHA, branch, tag or #PR to build and install in place of the npm packages (empty = npm versions from the lockfile)'
+        description: 'integrator-sdk commit SHA, branch, tag or PR number (760 or #760) to build and install in place of the npm packages (empty = npm versions from the lockfile)'
         type: string
         required: false
         default: ''
