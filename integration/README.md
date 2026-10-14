@@ -72,7 +72,8 @@ Each key is optional:
 - Images and the SDK are built from source, so allow ~10+ extra minutes. A pinned
   run gets 90 minutes instead of 45.
 - The result is posted back to the PR as a comment with the App head, the upstream
-  SHAs and the run link.
+  SHAs and the run link. A failed run's comment includes the failing step's output.
+  A push run on a pinned PR posts a new comment each time, with the same details.
 - The comment trigger runs the workflow file from `develop` (the default branch),
   so changes to the workflow only take effect once merged.
 

@@ -138,7 +138,8 @@ alone, with no signature or other text.
   their current heads. Any SHA makes it a one-shot run, and so does a bare `/integration` (`:main` images and npm
   packages), without changing the sticky refs. `/integration reset` goes back to the `:main` images and npm packages.
 - Only users with write access can trigger it. The comment trigger runs the workflow from `develop` and replies with a
-  PR comment; sticky re-runs on push show up as the Integration check instead.
+  PR comment, and a failed run's reply includes the failing step's output. Sticky re-runs on push
+  show up as the Integration check and post a new PR comment each time, with the same output.
 - This workflow does not run on every PR: its triggers are listed under Branching Model above. A sticky pin also runs
   the e2e job on PRs into `develop`, which otherwise skip it.
 - Pushes to the upstream PR do not re-run anything here. Push to this PR or comment again.
