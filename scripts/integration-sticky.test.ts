@@ -85,6 +85,10 @@ describe('integration-sticky.sh', () => {
     expect(sticky([{ body: '/integration saas-backend=#760', user: { login: WRITER } }])).toBe(refs('', '#760'))
   })
 
+  it('a bare PR number comment sets the state as #N', () => {
+    expect(sticky([{ body: '/integration saas-backend=760', user: { login: WRITER } }])).toBe(refs('', '#760'))
+  })
+
   it('a SHA-only comment does not change the state', () => {
     expect(
       sticky([
