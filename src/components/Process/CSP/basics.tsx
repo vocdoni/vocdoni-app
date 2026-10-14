@@ -4,12 +4,17 @@ import type { AuthRequest, OrgMemberAuthField, OrgMemberTwoFaField } from '@vocd
 import { useElectionAuth } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 
+// TODO(member-password): drop these two widenings once @vocdoni/api-types ships the `password`
+// auth field and `AuthRequest.password` (vocdoni-integrator-sdk feat/member-password).
+type MemberAuthField = OrgMemberAuthField | 'password'
+type MemberAuthRequest = AuthRequest & { password?: string }
+
 export type CensusData = {
-  authFields: OrgMemberAuthField[]
+  authFields: MemberAuthField[]
   twoFaFields: OrgMemberTwoFaField[]
 }
 
-export type AuthFieldType = OrgMemberAuthField
+export type AuthFieldType = MemberAuthField
 export type TwoFaFieldType = OrgMemberTwoFaField
 
 export type CSPFormData = {
@@ -20,6 +25,8 @@ export type CSPFormData = {
   birthDate?: string
   email?: string
   phone?: string
+  // the member password: typed in plaintext, sent only as its hash (hashMemberPassword)
+  password?: string
 } & Record<string, string>
 
 export type CSPStep0FormData = CSPFormData
@@ -75,7 +82,7 @@ export const useCspAuth0 = () => {
   const { auth0 } = useElectionAuth()
   const translateError = useTranslateCspError()
 
-  return useMutation<void, Error, AuthRequest>({
+  return useMutation<void, Error, MemberAuthRequest>({
     mutationKey: [...cspAuthMutationKey, 0],
     mutationFn: async (participant) => {
       try {
