@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
-import { hashMemberPassword } from '~utils/member-password'
+import { hashMemberPassword, isValidMemberPassword } from '~utils/member-password'
 import { useTable } from '../TableProvider'
 
 type MemberFormData = Record<string, string>
@@ -114,6 +114,15 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         value: /^\+?[1-9]\d{7,14}$/,
         message: t('form.member.error.invalid_phone', { defaultValue: 'Invalid phone number' }),
       },
+    },
+    password: {
+      // Empty stays allowed: no password on add, an explicit clear on edit.
+      validate: (value: string) =>
+        !value?.trim() ||
+        isValidMemberPassword(value) ||
+        t('form.member.error.password_requirements', {
+          defaultValue: 'Use at least 6 characters, including a letter and a number.',
+        }),
     },
     birthDate: {
       validate: (value: string) => {

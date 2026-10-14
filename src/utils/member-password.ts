@@ -36,3 +36,12 @@ export const hashMemberPasswords = async (
       password?.trim() ? { ...row, password: await hashMemberPassword(orgAddress, password) } : row
     )
   )
+
+/**
+ * The requirements for a password an organizer sets: at least 6 characters (after trimming, like
+ * hashMemberPassword), with at least one letter and one number. Voters are never held to it.
+ */
+export const isValidMemberPassword = (password: string): boolean => {
+  const trimmed = password.trim()
+  return trimmed.length >= 6 && /\p{L}/u.test(trimmed) && /\p{N}/u.test(trimmed)
+}

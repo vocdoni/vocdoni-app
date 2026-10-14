@@ -39,7 +39,7 @@ import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
-import { hashMemberPasswords } from '~utils/member-password'
+import { hashMemberPasswords, isValidMemberPassword } from '~utils/member-password'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { maskIfNeeded } from './maskIfNeeded'
@@ -80,20 +80,28 @@ const mapSpreadsheetData = (data: SpreadsheetRow[], mapping: ColumnMapping): Map
 
 /**
  * The members to import from an uploaded spreadsheet, mapped to member fields. Passwords are
- * replaced by their hashes here, so the plaintext never leaves the browser.
+ * replaced by their hashes here, so the plaintext never leaves the browser. A row whose password
+ * is set but does not meet the requirements is left out entirely; its spreadsheet line number
+ * (the header is line 1) is returned in `skippedLines`.
  */
-export const buildImportRows = (
+export const buildImportRows = async (
   orgAddress: string,
   spreadsheet: { heading: string[]; filedata: string[][] },
   mapping: ColumnMapping
-): Promise<MappedRow[]> => {
+): Promise<{ rows: MappedRow[]; skippedLines: number[] }> => {
   const parsedRows: SpreadsheetRow[] = spreadsheet.filedata.map((row) =>
     spreadsheet.heading.reduce((acc: SpreadsheetRow, key, index) => {
       acc[key] = row[index]
       return acc
     }, {})
   )
-  return hashMemberPasswords(orgAddress, mapSpreadsheetData(parsedRows, mapping))
+  const skippedLines: number[] = []
+  const valid = mapSpreadsheetData(parsedRows, mapping).filter(({ password }, index) => {
+    if (!password?.trim() || isValidMemberPassword(password)) return true
+    skippedLines.push(index + 2)
+    return false
+  })
+  return { rows: await hashMemberPasswords(orgAddress, valid), skippedLines }
 }
 
 const TemplateUploader = () => {
@@ -515,7 +523,22 @@ export const ImportMembers = () => {
 
   const onSubmit = async ({ spreadsheet }: { spreadsheet: any }) => {
     try {
-      const finalData = await buildImportRows(organization.address, spreadsheet, columnMapping)
+      const { rows: finalData, skippedLines } = await buildImportRows(organization.address, spreadsheet, columnMapping)
+      if (skippedLines.length > 0) {
+        // Not an Alert in the drawer: it closes as soon as the valid rows are sent.
+        toast({
+          type: 'warning',
+          description: t('memberbase.import.password_rows_skipped', {
+            defaultValue:
+              '{{count}} rows were not imported because their password does not meet the requirements (at least 6 characters, including a letter and a number): lines {{lines}}.',
+            count: skippedLines.length,
+            lines: skippedLines.join(', '),
+          }),
+          duration: null,
+          isClosable: true,
+        })
+        if (finalData.length === 0) return
+      }
       trackAnalyticsEvent({ name: AnalyticsEvents.MembersImportStarted, props: { total_rows: finalData.length } })
       const data = await addMembers.mutateAsync(finalData)
       setJobId(data?.jobId)

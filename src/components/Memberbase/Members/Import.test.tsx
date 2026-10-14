@@ -96,8 +96,30 @@ describe('buildImportRows', () => {
       { memberNumber: 'number', password: 'secret' }
     )
 
-    expect(rows).toEqual([{ memberNumber: '1', password: S3CRET_HASH }, { memberNumber: '2' }])
+    expect(rows).toEqual({
+      rows: [{ memberNumber: '1', password: S3CRET_HASH }, { memberNumber: '2' }],
+      skippedLines: [],
+    })
     expect(JSON.stringify(rows)).not.toContain('s3cret')
+  })
+
+  it('skips the rows whose password does not meet the requirements and reports their spreadsheet lines', async () => {
+    const result = await buildImportRows(
+      '0x00000000000000000000000000000000000000AA',
+      {
+        heading: ['number', 'secret'],
+        filedata: [
+          ['1', 's3cret'],
+          ['2', 'abc'],
+          ['3', ''],
+          ['4', '123456'],
+        ],
+      },
+      { memberNumber: 'number', password: 'secret' }
+    )
+
+    expect(result.rows).toEqual([{ memberNumber: '1', password: S3CRET_HASH }, { memberNumber: '3' }])
+    expect(result.skippedLines).toEqual([3, 5])
   })
 
   it('masks the password column of the import preview', () => {

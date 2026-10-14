@@ -193,6 +193,28 @@ describe('MemberManager password', () => {
     expect(JSON.stringify(editMutate.mock.calls)).not.toContain('s3cret')
   })
 
+  it('rejects a typed password that does not meet the requirements, without calling the API', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={member} open />)
+
+    await user.type(await screen.findByLabelText('Password'), 'abc')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    expect(await screen.findByText('Use at least 6 characters, including a letter and a number.')).toBeInTheDocument()
+    expect(editMutate).not.toHaveBeenCalled()
+  })
+
+  it('sends the hash of a password that meets the requirements', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={member} open />)
+
+    await user.type(await screen.findByLabelText('Password'), 'abc123')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(editMutate).toHaveBeenCalledTimes(1))
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', password: expect.stringMatching(/^[0-9a-f]{64}$/) })
+  })
+
   it('keeps a stored password the user did not touch', async () => {
     const user = userEvent.setup()
     render(<MemberManager member={withPassword} open />)
