@@ -60,9 +60,11 @@ test.describe('voting with a member password census', () => {
       const dialog = await openIdentifyModal(voter)
       await expect(dialog.locator('input[name="password"]')).toHaveAttribute('type', 'password')
 
-      // A wrong password gets the same answer as someone outside the census.
+      // A wrong password gets the same password-aware answer as someone outside the census.
       await submitPasswordLogin(dialog, member.memberNumber, wrongPassword)
-      await expect(dialog.getByText(/not listed in the census|incorrect/i).first()).toBeVisible({ timeout: 30_000 })
+      await expect(
+        dialog.getByText(/couldn.t verify your identity\. Check your credentials and your password/i).first()
+      ).toBeVisible({ timeout: 30_000 })
 
       // The right one logs in straight away: no 2FA on this census.
       await submitPasswordLogin(dialog, member.memberNumber, member.password)
