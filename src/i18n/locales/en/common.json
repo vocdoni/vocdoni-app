@@ -215,6 +215,7 @@
       "memberNumber": "Member Number",
       "name": "First Name",
       "nationalId": "National ID",
+      "password": "Password",
       "phone": "Phone",
       "surname": "Last Name"
     },
@@ -951,6 +952,8 @@
     },
     "form": {
       "cancel": "Cancel",
+      "password_set": "A password is set. Type a new one to replace it.",
+      "password_will_be_removed": "The stored password will be removed when you save.",
       "phone_warning": "Phone number hidden. Any changes here will overwrite it.",
       "phone_will_be_removed": "The stored phone number will be removed when you save.",
       "save": "Save changes"
@@ -1003,6 +1006,7 @@
       "firstname": "First Name",
       "member_number": "Member Number",
       "national_id": "National ID",
+      "password": "Password",
       "phone": "Phone",
       "surname": "Last Name",
       "weight": "Voting power (Weight)"
@@ -2034,6 +2038,7 @@
       "title": "How will voters sign in?"
     },
     "no_group_description": "Please select a group first to configure authentication.",
+    "password_needs_another_credential": "A password alone cannot identify voters. Select another credential, or enable two-factor authentication in the next step.",
     "pending": {
       "description": "Pick the member details voters must enter to vote, like their ID or member number.",
       "error_title": "You need this to publish",

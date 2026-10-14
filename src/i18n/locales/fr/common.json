@@ -219,6 +219,7 @@
       "memberNumber": "Numéro d'adhérent",
       "name": "Prénom",
       "nationalId": "Pièce d'identité",
+      "password": "Mot de passe",
       "phone": "Téléphone",
       "surname": "Nom"
     },
@@ -962,6 +963,8 @@
     },
     "form": {
       "cancel": "Annuler",
+      "password_set": "Un mot de passe est enregistré. Saisissez-en un nouveau pour le remplacer.",
+      "password_will_be_removed": "Le mot de passe enregistré sera supprimé lors de l'enregistrement.",
       "phone_warning": "Numéro de téléphone masqué. Toute modification ici l'écrasera.",
       "phone_will_be_removed": "Le numéro de téléphone enregistré sera supprimé lors de l'enregistrement.",
       "save": "Enregistrer les modifications"
@@ -1014,6 +1017,7 @@
       "firstname": "Prénom",
       "member_number": "Numéro d'adhérent",
       "national_id": "Pièce d'identité",
+      "password": "Mot de passe",
       "phone": "Téléphone",
       "surname": "Nom",
       "weight": "Poids du vote"
@@ -2066,6 +2070,7 @@
       "title": "Comment les électeurs se connecteront-ils ?"
     },
     "no_group_description": "Veuillez d'abord sélectionner un groupe pour configurer l'authentification.",
+    "password_needs_another_credential": "Un mot de passe seul ne permet pas d'identifier les électeurs. Sélectionnez un autre identifiant ou activez l'authentification à deux facteurs à l'étape suivante.",
     "pending": {
       "description": "Choisissez les données de membre que les électeurs doivent saisir pour voter, comme leur pièce d'identité ou leur numéro d'adhérent.",
       "error_title": "Indispensable pour publier",
