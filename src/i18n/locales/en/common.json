@@ -963,7 +963,7 @@
       "title": "Groups"
     },
     "import": {
-      "password_rows_skipped_one": "{{count}} rows were not imported because their password does not meet the requirements (at least 6 characters, including a letter and a number): lines {{lines}}.",
+      "password_rows_skipped_one": "{{count}} row was not imported because its password does not meet the requirements (at least 6 characters, including a letter and a number): line {{lines}}.",
       "password_rows_skipped_other": "{{count}} rows were not imported because their password does not meet the requirements (at least 6 characters, including a letter and a number): lines {{lines}}."
     },
     "import_file": {
