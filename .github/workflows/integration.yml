@@ -466,15 +466,20 @@ jobs:
           }
           {
             if [ "$PARSED" != true ]; then
-              echo "Integration run: **rejected**: the \`/integration\` command could not be parsed, see the run log."
+              echo "❌ Integration run: **rejected**: the \`/integration\` command could not be parsed, see the run log."
             elif [ "$RESOLVE" != success ]; then
-              echo "Integration run: **error** resolving the PR ($RESOLVE), see the run log; comment again to retry."
+              echo "❌ Integration run: **error** resolving the PR ($RESOLVE), see the run log; comment again to retry."
             elif [ "$RESET" = true ]; then
               echo "Sticky integration refs cleared; pushes use the \`:main\` images and the npm SDK again."
               echo
               echo "- Run: $RUN_URL"
             else
-              echo "Integration run: **$RESULT**"
+              case "$RESULT" in
+                success) icon='✅' ;;
+                failure) icon='❌' ;;
+                *) icon='⚠️' ;;
+              esac
+              echo "$icon Integration run: **$RESULT**"
               echo
               if [[ "$CHECKOUT" =~ ^[0-9a-f]{40}$ && "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
                 echo "- App: merge of $SERVER_URL/$REPO/commit/$HEAD_SHA ($SERVER_URL/$REPO/commit/$CHECKOUT)"
