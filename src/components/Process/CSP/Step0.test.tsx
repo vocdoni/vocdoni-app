@@ -11,7 +11,20 @@ const csp = vi.hoisted(() => ({
   mutateAsync: vi.fn(),
   toast: vi.fn(),
   pending: false,
+  // when set, hashMemberPassword resolves only once this promise does
+  hashGate: undefined as Promise<void> | undefined,
 }))
+
+vi.mock('~utils/member-password', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~utils/member-password')>()
+  return {
+    ...actual,
+    hashMemberPassword: async (...args: Parameters<typeof actual.hashMemberPassword>) => {
+      await csp.hashGate
+      return actual.hashMemberPassword(...args)
+    },
+  }
+})
 
 vi.mock('./CSPStepsProvider', () => ({
   useCspAuthContext: () => ({
@@ -62,6 +75,7 @@ describe('Step0Base', () => {
     csp.mutateAsync.mockReset().mockResolvedValue(undefined)
     csp.toast.mockReset()
     csp.pending = false
+    csp.hashGate = undefined
   })
 
   it('renders the password after the other auth fields, whatever order the census lists them in', () => {
@@ -200,6 +214,26 @@ describe('Step0Base', () => {
         expect(csp.mutateAsync).toHaveBeenCalledWith({ memberNumber: '00123', password: S3CRET_HASH })
       )
       expect(JSON.stringify(csp.mutateAsync.mock.calls)).not.toContain('s3cret')
+    })
+
+    it('ignores a second submit while the password is still being hashed', async () => {
+      let release!: () => void
+      csp.hashGate = new Promise<void>((resolve) => (release = resolve))
+      const user = userEvent.setup()
+      renderStep0({ authFields: ['memberNumber', 'password'] })
+
+      await user.type(field('memberNumber'), '00123')
+      await user.type(field('password'), 's3cret')
+      await user.click(screen.getByRole('checkbox'))
+      const button = screen.getByRole('button', { name: 'Authenticate' })
+      await user.click(button)
+      await user.click(button)
+      release()
+
+      await waitFor(() => expect(csp.mutateAsync).toHaveBeenCalledTimes(1))
+      // let any stray second submit settle before asserting the count stayed at one
+      await new Promise((resolve) => setTimeout(resolve, 50))
+      expect(csp.mutateAsync).toHaveBeenCalledTimes(1)
     })
 
     it('shows a translated error, not the developer message, when the password cannot be hashed', async () => {

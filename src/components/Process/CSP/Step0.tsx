@@ -17,6 +17,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
+import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
@@ -48,8 +49,13 @@ export const Step0Base = () => {
   const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
   const crispWebsiteId = appEnv.CRISP_WEBSITE_ID
 
+  // Set synchronously on submit: the busy flag only turns on once the mutation starts, after the
+  // password hash is awaited, so a second submit in that window would send a second identify request.
+  const submitting = useRef(false)
+
   const onSubmit = async (values: CSPStep0FormData) => {
-    if (isAuthBusy()) return
+    if (submitting.current || isAuthBusy()) return
+    submitting.current = true
 
     const trimmed: CSPStep0FormData = Object.fromEntries(
       Object.entries(values).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
@@ -162,6 +168,8 @@ export const Step0Base = () => {
         isClosable: true,
       })
       console.error('CSP auth failed:', error)
+    } finally {
+      submitting.current = false
     }
   }
 
