@@ -1,13 +1,15 @@
 import '@testing-library/jest-dom'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { render } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { MemberManager } from './Manager'
 
 const editMutate = vi.hoisted(() => vi.fn())
+const addMutate = vi.hoisted(() => vi.fn())
 
 vi.mock('~src/queries/members', () => ({
-  useAddMembers: () => ({ mutate: vi.fn(), isPending: false }),
+  useAddMembers: () => ({ mutate: addMutate, isPending: false }),
   useEditMember: () => ({ mutate: editMutate, isPending: false }),
 }))
 
@@ -19,6 +21,7 @@ vi.mock('../TableProvider', () => ({
       { id: 'email', label: 'Email' },
       { id: 'phone', label: 'Phone' },
       { id: 'weight', label: 'Weight' },
+      { id: 'password', label: 'Password' },
     ],
   }),
 }))
@@ -154,5 +157,76 @@ describe('MemberManager edit', () => {
     await user.click(screen.getByRole('button', { name: 'Save changes' }))
 
     expect(editMutate).not.toHaveBeenCalled()
+  })
+})
+
+describe('MemberManager password', () => {
+  // hashMemberPassword(ORG, 's3cret'), the shared test vector
+  const ORG = '0x00000000000000000000000000000000000000AA'
+  const S3CRET_HASH = '2f7e83a0b19a82fa9a5dc6ecc6ff44ec82679ea87012a7187bd3313366bf277e'
+  const withPassword = { ...member, hasPassword: true }
+
+  beforeEach(() => {
+    editMutate.mockClear()
+    addMutate.mockClear()
+    setReactProvidersMock({ useOrganization: () => ({ organization: { address: ORG } }) })
+  })
+
+  it('masks the password input and leaves it blank', async () => {
+    render(<MemberManager member={withPassword} open />)
+
+    const password = await screen.findByLabelText('Password')
+    expect(password).toHaveAttribute('type', 'password')
+    expect(password).toHaveValue('')
+    expect(screen.getByText(/a password is set/i)).toBeInTheDocument()
+  })
+
+  it('sends the hash of a typed password, never the plaintext', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={member} open />)
+
+    await user.type(await screen.findByLabelText('Password'), '  s3cret ')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(editMutate).toHaveBeenCalledTimes(1))
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', password: S3CRET_HASH })
+    expect(JSON.stringify(editMutate.mock.calls)).not.toContain('s3cret')
+  })
+
+  it('keeps a stored password the user did not touch', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={withPassword} open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'X')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', name: 'AdaX' })
+  })
+
+  it('clears a stored password once the field is emptied, after warning', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={withPassword} open />)
+
+    const password = await screen.findByLabelText('Password')
+    await user.type(password, 'x')
+    await user.clear(password)
+    expect(screen.getByText(/stored password will be removed/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(editMutate).toHaveBeenCalledTimes(1))
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', password: '' })
+  })
+
+  it('hashes the password of a new member', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'Ada')
+    await user.type(screen.getByLabelText('Password'), 's3cret')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(addMutate).toHaveBeenCalledTimes(1))
+    expect(addMutate.mock.calls[0][0]).toEqual([expect.objectContaining({ name: 'Ada', password: S3CRET_HASH })])
+    expect(JSON.stringify(addMutate.mock.calls)).not.toContain('s3cret')
   })
 })

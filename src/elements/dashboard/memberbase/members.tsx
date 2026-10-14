@@ -51,6 +51,11 @@ export const useMemberColumns = () => {
         id: 'weight',
         visible: true,
       },
+      {
+        label: t('members.fields.password', { defaultValue: 'Password' }),
+        id: 'password',
+        visible: false,
+      },
     ],
     [t]
   )
