@@ -131,18 +131,21 @@ an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change, o
 PR, e.g. `/integration saas-backend=#760`.** The command does nothing in the PR description; only a comment triggers
 it. That comment holds the command alone, with no signature or other text.
 - Keys: `vocdoni-node=`, `saas-backend=`, `integrator-sdk=` (the SDK repo, built, packed and installed through pnpm
-  overrides for that run only). Each is optional. A ref is a SHA, branch, tag or `#PR`.
+  overrides for that run only). Each is optional. A ref is a SHA, branch, tag or `#PR`. Upstreams are built from
+  source, so the run takes longer.
 - A comment whose refs are all branches, tags or PRs is **sticky**: every later push re-runs against those refs at
   their current heads. Any SHA makes it a one-shot run, and so does a bare `/integration` (`:main` images and npm
   packages), without changing the sticky refs. `/integration reset` goes back to the `:main` images and npm packages.
-- Only users with write access can trigger it. The comment trigger runs the workflow from `develop`, and the result is
-  posted back as a PR comment, not as a check.
+- Only users with write access can trigger it. The comment trigger runs the workflow from `develop` and replies with a
+  PR comment; sticky re-runs on push show up as the Integration check instead.
 - This workflow does not run on every PR: its triggers are listed under Branching Model above. A sticky pin also runs
   the e2e job on PRs into `develop`, which otherwise skip it.
 - Pushes to the upstream PR do not re-run anything here. Push to this PR or comment again.
 - Do not treat a green pinned run as ready to merge. For `saas-backend` or `vocdoni-node`, merge only after the
-  upstream change is merged and deployed to the environment the base branch uses (`develop` → api-dev). For
-  `integrator-sdk`, merge only after it is published to npm and bumped here, since the pinned run commits nothing.
+  upstream change is merged and deployed to the environment the base branch uses (`develop` → api-dev and vochain
+  dev). For `integrator-sdk`, merge only after it is published to npm and bumped here, since the pinned run commits
+  nothing. The pin only reaches the e2e job: lint, type checks and unit tests (`test.yml`) still use the lockfile
+  packages, so a PR that needs unpublished SDK API stays red there until the bump.
 
 See `integration/README.md` ("Pinning upstream commits") for the details.
 
