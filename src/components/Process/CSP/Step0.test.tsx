@@ -64,6 +64,13 @@ describe('Step0Base', () => {
     csp.pending = false
   })
 
+  it('renders the password after the other auth fields, whatever order the census lists them in', () => {
+    renderStep0({ authFields: ['password', 'memberNumber', 'name'], twoFaFields: ['email'] })
+
+    const names = Array.from(document.querySelectorAll('input[name]')).map((i) => i.getAttribute('name'))
+    expect(names).toEqual(['memberNumber', 'name', 'password', 'contact'])
+  })
+
   it('sends the trimmed credentials and moves on to the code step when 2FA is required', async () => {
     const user = userEvent.setup()
     renderStep0({ authFields: ['memberNumber'], twoFaFields: ['email'] })

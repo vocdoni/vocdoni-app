@@ -3,6 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { AllProviders } from '~src/test-utils'
+import { CspAuthProvider } from './CSPStepsProvider'
 import { useCspAuth0, useCspAuth1, useCspAuthPending } from './basics'
 
 const { auth0, auth1 } = vi.hoisted(() => ({ auth0: vi.fn(), auth1: vi.fn() }))
@@ -17,6 +18,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
 
 const messages = {
   participantNotFound: 'The voter is not listed in the census, or the provided credentials are incorrect.',
+  credentialsOrPassword: "We couldn't verify your identity. Check your credentials and your password and try again.",
   requestsOnCooldown: 'Too many requests. Please wait a moment before trying again.',
   zeroVotingWeight: "You don't have enough voting power to access the election.",
 }
@@ -34,6 +36,32 @@ describe('useCspAuth0 errors', () => {
   it('maps 40029 to participant not found message', async () => {
     mockAuthError(40029)
     const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
+
+    await expect(result.current.mutateAsync({})).rejects.toThrow(messages.participantNotFound)
+  })
+
+  it('maps 40029 to the password-aware message when the census asks for a password', async () => {
+    mockAuthError(40029)
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <AllProviders>
+        <CspAuthProvider censusData={{ authFields: ['memberNumber', 'password'], twoFaFields: [] }}>
+          {children}
+        </CspAuthProvider>
+      </AllProviders>
+    )
+    const { result } = renderHook(() => useCspAuth0(), { wrapper })
+
+    await expect(result.current.mutateAsync({})).rejects.toThrow(messages.credentialsOrPassword)
+  })
+
+  it('keeps the participant not found message when the census has no password', async () => {
+    mockAuthError(40029)
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <AllProviders>
+        <CspAuthProvider censusData={{ authFields: ['memberNumber'], twoFaFields: [] }}>{children}</CspAuthProvider>
+      </AllProviders>
+    )
+    const { result } = renderHook(() => useCspAuth0(), { wrapper })
 
     await expect(result.current.mutateAsync({})).rejects.toThrow(messages.participantNotFound)
   })
