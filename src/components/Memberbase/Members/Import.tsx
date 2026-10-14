@@ -39,8 +39,10 @@ import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { hashMemberPasswords } from '~utils/member-password'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
+import { maskIfNeeded } from './maskIfNeeded'
 import { MembersCsvManager } from './MembersCsvManager'
 
 type SpreadsheetRow = Record<string, string>
@@ -74,6 +76,24 @@ const mapSpreadsheetData = (data: SpreadsheetRow[], mapping: ColumnMapping): Map
 
     return mappedRow
   })
+}
+
+/**
+ * The members to import from an uploaded spreadsheet, mapped to member fields. Passwords are
+ * replaced by their hashes here, so the plaintext never leaves the browser.
+ */
+export const buildImportRows = (
+  orgAddress: string,
+  spreadsheet: { heading: string[]; filedata: string[][] },
+  mapping: ColumnMapping
+): Promise<MappedRow[]> => {
+  const parsedRows: SpreadsheetRow[] = spreadsheet.filedata.map((row) =>
+    spreadsheet.heading.reduce((acc: SpreadsheetRow, key, index) => {
+      acc[key] = row[index]
+      return acc
+    }, {})
+  )
+  return hashMemberPasswords(orgAddress, mapSpreadsheetData(parsedRows, mapping))
 }
 
 const TemplateUploader = () => {
@@ -334,7 +354,9 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
   const getCellValue = (row: string[], fieldId: string) => {
     const columnName = columnMapping[fieldId]
     const columnIndex = manager.header.indexOf(columnName)
-    return columnIndex !== -1 ? row[columnIndex] : '-'
+    if (columnIndex === -1) return '-'
+    // a password is never shown, not even from the organizer's own file
+    return fieldId === 'password' ? maskIfNeeded(fieldId, row[columnIndex]) : row[columnIndex]
   }
 
   const getAvailableOptions = (fieldId: string) => {
@@ -486,21 +508,14 @@ export const ImportMembers = () => {
   })
   const [columnMapping, setColumnMapping] = useState<ColumnMapping>({})
   const addMembers = useAddMembers(true)
+  const { organization } = useOrganization()
   const { setJobId } = useOutletContext<MemberbaseTabsContext>()
 
   const hasSpreadsheet = Boolean(spreadsheet?.filedata)
 
   const onSubmit = async ({ spreadsheet }: { spreadsheet: any }) => {
-    const parsedRows: SpreadsheetRow[] = spreadsheet.filedata.map((row: string[]) => {
-      return spreadsheet.heading.reduce((acc: SpreadsheetRow, key: string, index: number) => {
-        acc[key] = row[index]
-        return acc
-      }, {})
-    })
-
-    const finalData = mapSpreadsheetData(parsedRows, columnMapping)
-
     try {
+      const finalData = await buildImportRows(organization.address, spreadsheet, columnMapping)
       trackAnalyticsEvent({ name: AnalyticsEvents.MembersImportStarted, props: { total_rows: finalData.length } })
       const data = await addMembers.mutateAsync(finalData)
       setJobId(data?.jobId)
