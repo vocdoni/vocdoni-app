@@ -435,25 +435,34 @@ jobs:
           SAAS_SHA: ${{ needs.e2e.outputs.saas_backend_sha }}
           SDK_SHA: ${{ needs.e2e.outputs.integrator_sdk_sha }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SERVER_URL: ${{ github.server_url }}
         run: |
           set -euo pipefail
           body="$RUNNER_TEMP/report.md"
+          # Refs and SHAs are printed as full URLs: a bare #N or SHA would link to this repo.
+          # One line per upstream: 'ref → sha' when pinned, the unpinned label otherwise.
           # SHAs reach this job through outputs of the PR's own build steps, so only
-          # a full 40-digit lowercase hex SHA is printed; anything else gets the label.
-          sha_or() {
-            if [[ "$1" =~ ^[0-9a-f]{40}$ ]]; then
-              echo "$1"
-            else
-              echo "$2"
-            fi
-          }
-          # One line per upstream: ':main image' when unpinned, 'ref → sha' when pinned.
+          # a full 40-digit lowercase hex SHA is printed; anything else gets 'not built'.
           upstream() {
-            if [ -n "$2" ]; then
-              echo "- $1: $2 → $(sha_or "$3" 'not built')"
-            else
-              echo "- $1: :main image"
+            local label="$1" repo="$2" ref="$3" sha="$4" unpinned="$5"
+            local base="https://github.com/vocdoni/$repo" ref_link sha_link
+            if [ -z "$ref" ]; then
+              echo "- $label: $unpinned"
+              return
             fi
+            if [[ "$ref" =~ ^#([0-9]+)$ ]]; then
+              ref_link="$base/pull/${BASH_REMATCH[1]}"
+            elif [[ "$ref" =~ ^[0-9A-Fa-f]{7,40}$ ]]; then
+              ref_link="$base/commit/$ref"
+            else
+              ref_link="[\`$ref\`]($base/tree/$ref)"
+            fi
+            if [[ "$sha" =~ ^[0-9a-f]{40}$ ]]; then
+              sha_link="$base/commit/$sha"
+            else
+              sha_link='not built'
+            fi
+            echo "- $label: $ref_link → $sha_link"
           }
           {
             if [ "$PARSED" != true ]; then
@@ -468,17 +477,13 @@ jobs:
               echo "Integration run: **$RESULT**"
               echo
               if [[ "$CHECKOUT" =~ ^[0-9a-f]{40}$ && "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
-                echo "- App: merge of $HEAD_SHA ($CHECKOUT)"
+                echo "- App: merge of $SERVER_URL/$REPO/commit/$HEAD_SHA ($SERVER_URL/$REPO/commit/$CHECKOUT)"
               else
                 echo "- App: not resolved"
               fi
-              upstream vocdoni-node "$NODE_REF" "$NODE_SHA"
-              upstream saas-backend "$SAAS_REF" "$SAAS_SHA"
-              if [ -n "$SDK_REF" ]; then
-                echo "- integrator-sdk: $SDK_REF → $(sha_or "$SDK_SHA" 'not built')"
-              else
-                echo "- integrator-sdk: npm (lockfile)"
-              fi
+              upstream vocdoni-node vocdoni-node "$NODE_REF" "$NODE_SHA" ':main image'
+              upstream saas-backend saas-backend "$SAAS_REF" "$SAAS_SHA" ':main image'
+              upstream integrator-sdk vocdoni-integrator-sdk "$SDK_REF" "$SDK_SHA" 'npm (lockfile)'
               echo "- Run: $RUN_URL"
               if [ "$STICKY" = true ]; then
                 echo
