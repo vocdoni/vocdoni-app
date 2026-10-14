@@ -5,6 +5,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import { useEffect, useRef, useState } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from '~src/queries/keys'
+import { PASSWORD_CREDENTIAL } from './utils'
 
 /**
  * The backend's verdict on a census spec (saas-backend `OrgMemberAggregationResults`),
@@ -90,11 +91,14 @@ export type MissingFieldCount = { field: string; count: number }
 // The backend reports a member as missing data without saying which chosen
 // field is empty. When several fields are chosen, each is checked on its own
 // (only after a failed check, and cached) so the admin is told which one.
+// The password is left out: the backend refuses it alone, see `missingByField`.
 const fieldParts = (spec: CensusSpec) => [
-  ...(spec.authFields ?? []).map((field) => ({
-    field: field as string,
-    spec: { ...spec, authFields: [field], twoFaFields: undefined },
-  })),
+  ...(spec.authFields ?? [])
+    .filter((field) => (field as string) !== PASSWORD_CREDENTIAL)
+    .map((field) => ({
+      field: field as string,
+      spec: { ...spec, authFields: [field], twoFaFields: undefined },
+    })),
   ...(spec.twoFaFields?.length
     ? [{ field: 'contact', spec: { ...spec, authFields: undefined, twoFaFields: spec.twoFaFields } }]
     : []),
@@ -139,7 +143,8 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
   const issues = result && result.valid === false ? result.issues : null
 
   const parts = fieldParts(settled.spec)
-  const breakdownNeeded = status === 'invalid' && !!issues?.missingData.length && parts.length > 1
+  const fieldCount = (settled.spec.authFields?.length ?? 0) + (settled.spec.twoFaFields?.length ? 1 : 0)
+  const breakdownNeeded = status === 'invalid' && !!issues?.missingData.length && fieldCount > 1
   const breakdown = useQueries({
     queries: parts.map((part) => ({
       ...censusCheckQuery(client, orgAddress, part.spec),
@@ -150,12 +155,18 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
   // Null until every part has answered: better the combined sentence than a partial one.
   let missingByField: MissingFieldCount[] | null = null
   if (breakdownNeeded && breakdown.every((part) => part.isSuccess)) {
-    missingByField = parts
-      .map((part, index) => {
-        const data = breakdown[index].data
-        return { field: part.field, count: data && data.valid === false ? data.issues.missingData.length : 0 }
-      })
-      .filter((part) => part.count > 0)
+    const missingIn = (data: CensusCheckResult | undefined) =>
+      data && data.valid === false ? data.issues.missingData : []
+    const named = parts.map((part, index) => ({ field: part.field, missing: missingIn(breakdown[index].data) }))
+    // The password is never checked alone, so its count is what the combined check flags beyond the other
+    // parts. That undercounts a member who lacks the password and another chosen field: they are already counted there.
+    const namedMissing = new Set(named.flatMap((part) => part.missing))
+    const passwordCount = (issues?.missingData ?? []).filter((id) => !namedMissing.has(id)).length
+    const hasPassword = (settled.spec.authFields as string[] | undefined)?.includes(PASSWORD_CREDENTIAL)
+    missingByField = [
+      ...named.map((part) => ({ field: part.field, count: part.missing.length })),
+      ...(hasPassword ? [{ field: PASSWORD_CREDENTIAL, count: passwordCount }] : []),
+    ].filter((part) => part.count > 0)
   }
 
   const lastOutcome = useRef<CensusCheckOutcome | null>(null)

@@ -18,7 +18,7 @@ import type { TFunction } from 'i18next'
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuChevronDown, LuEye } from 'react-icons/lu'
+import { LuChevronDown, LuEye, LuInfo } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { AUTH_FIELDS, getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { useToast } from '~components/Toast'
@@ -30,11 +30,15 @@ import { ProtectionMeter } from './ProtectionLevel'
 import { useCensusCheck } from './useCensusCheck'
 import {
   CodeMethod,
+  countedCredentials,
   fromCensus,
   getCodeTwoFaFields,
   hasAuthConfig,
   MAX_AUTH_FIELDS,
+  PASSWORD_CREDENTIAL,
+  passwordNeedsAnotherCredential,
   toCensus,
+  VoterAuthField,
   VoterAuthFormData,
 } from './utils'
 import { VoterSignInPreview } from './VoterSignInPreview'
@@ -93,6 +97,10 @@ const formatList = (language: string, items: string[], type: 'conjunction' | 'di
  */
 const describeFields = (t: TFunction, language: string, { credentials, codeMethod }: VoterAuthFormData) => {
   const details = credentials.map((field) => getAuthFieldLabel(t, field))
+  // The backend leaves the password out of duplicate detection, so it never shares a clash.
+  const duplicateDetails = credentials
+    .filter((field) => field !== PASSWORD_CREDENTIAL)
+    .map((field) => getAuthFieldLabel(t, field))
   const contacts = getCodeTwoFaFields(codeMethod).map((field) =>
     field === 'email'
       ? t('csp.fields.email', { defaultValue: 'Email' })
@@ -110,7 +118,7 @@ const describeFields = (t: TFunction, language: string, { credentials, codeMetho
     missing: formatList(language, missingContact ? [...details, missingContact] : details, 'disjunction'),
     duplicate: formatList(
       language,
-      contacts.length ? [...details, formatList(language, contacts, 'disjunction')] : details,
+      contacts.length ? [...duplicateDetails, formatList(language, contacts, 'disjunction')] : duplicateDetails,
       'conjunction'
     ),
     /** The name of one part of the per-field breakdown: an auth field id, or 'contact'. */
@@ -149,10 +157,13 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
   const codeMethod = watch('codeMethod') ?? 'none'
   const values: VoterAuthFormData = { credentials, codeMethod }
   const configured = hasAuthConfig(values)
+  // A password alone is refused before saving, so the backend never gets a census it would reject.
+  const passwordAlone = passwordNeedsAnotherCredential(credentials, codeMethod)
 
   const spec = buildCensusSpec({ groupId, anonymousVoting, weightedVote, census: toCensus(values) })
-  const censusCheck = useCensusCheck(spec)
+  const censusCheck = useCensusCheck(spec, { enabled: !passwordAlone })
   const statusRef = useRef<HTMLDivElement>(null)
+  const passwordHintRef = useRef<HTMLDivElement>(null)
 
   const [saving, setSaving] = useState(false)
   const [emptyAttempt, setEmptyAttempt] = useState(false)
@@ -189,6 +200,10 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
     if (!configured) {
       setEmptyAttempt(true)
       statusRef.current?.focus()
+      return
+    }
+    if (passwordAlone) {
+      passwordHintRef.current?.focus()
       return
     }
 
@@ -270,6 +285,9 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                     'Pick up to {{max}} details from your member list. What voters type must match it exactly.',
                   max: MAX_AUTH_FIELDS,
                 })}{' '}
+                {t('voter_auth.details.password_not_counted', {
+                  defaultValue: 'The password does not count toward that limit.',
+                })}{' '}
                 {/* A code-only census is valid: say so, or admins assume a detail is required. */}
                 {t('voter_auth.details.optional', {
                   defaultValue: 'Optional if you send a one-time code: voters can then sign in with the code alone.',
@@ -281,15 +299,17 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                 render={({ field }) => (
                   <CheckboxGroup value={field.value} onValueChange={(value) => field.onChange(value)}>
                     <Flex wrap='wrap' gap={2}>
-                      {AUTH_FIELDS.map((id) => {
+                      {[...AUTH_FIELDS, PASSWORD_CREDENTIAL].map((id: VoterAuthField) => {
                         const checked = field.value.includes(id)
+                        // The password is not counted toward the limit (see countedCredentials).
+                        const atLimit = id !== PASSWORD_CREDENTIAL && countedCredentials(field.value) >= MAX_AUTH_FIELDS
                         return (
                           <CheckboxCard.Root
                             key={id}
                             value={id}
                             size='sm'
                             flex='0 0 auto'
-                            disabled={saving || (!checked && field.value.length >= MAX_AUTH_FIELDS)}
+                            disabled={saving || (!checked && atLimit)}
                             {...optionCardStyles}
                           >
                             <CheckboxCard.HiddenInput />
@@ -306,6 +326,17 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                   </CheckboxGroup>
                 )}
               />
+              {passwordAlone && (
+                <HStack ref={passwordHintRef} tabIndex={-1} gap={2} align='start' mt={3} fontSize='sm' color='fg.muted'>
+                  <Icon as={LuInfo} boxSize={4} mt={0.5} flexShrink={0} />
+                  <Text>
+                    {t('voter_auth.password_needs_another_credential', {
+                      defaultValue:
+                        'A password alone cannot identify voters. Pick another detail too, or send a one-time code.',
+                    })}
+                  </Text>
+                </HStack>
+              )}
             </Box>
 
             <Box>

@@ -265,7 +265,7 @@ describe('VoterAuthentication', () => {
     expect(mockValidateCensus).toHaveBeenCalledTimes(2)
     expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
       name: 'census_configured',
-      props: { auth_fields_count: 1, two_fa: true, two_fa_method: 'email' },
+      props: { auth_fields_count: 1, password: false, two_fa: true, two_fa_method: 'email' },
     })
   })
 
@@ -579,7 +579,124 @@ describe('VoterAuthentication', () => {
     await waitFor(() => expect(mockTrackAnalyticsEvent).toHaveBeenCalledTimes(1))
     expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
       name: 'census_configured',
-      props: { auth_fields_count: 1, two_fa: false, two_fa_method: 'none' },
+      props: { auth_fields_count: 1, password: false, two_fa: false, two_fa_method: 'none' },
+    })
+  })
+
+  describe('password credential', () => {
+    it('is offered as a credential', async () => {
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />)
+      const dialog = await openDialog(user)
+
+      expect(dialog.getByRole('checkbox', { name: /password/i })).toBeEnabled()
+    })
+
+    it('does not count toward the limit of 3 credentials', async () => {
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />)
+      const dialog = await openDialog(user)
+
+      for (const name of [/first name/i, /last name/i, /member number/i]) {
+        await user.click(dialog.getByRole('checkbox', { name }))
+      }
+      expect(dialog.getByRole('checkbox', { name: /national id/i })).toBeDisabled()
+      expect(dialog.getByRole('checkbox', { name: /password/i })).toBeEnabled()
+
+      await user.click(dialog.getByRole('checkbox', { name: /password/i }))
+      expect(dialog.getByRole('checkbox', { name: /password/i })).toBeChecked()
+    })
+
+    it('refuses a password alone without a code, without checking the members', async () => {
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />)
+      const dialog = await openDialog(user)
+
+      await user.click(dialog.getByRole('checkbox', { name: /password/i }))
+      const hint = dialog.getByText(/a password alone cannot identify voters/i)
+      await user.click(dialog.getByTestId('voter-auth-save'))
+
+      await waitFor(() => expect(hint.closest('[tabindex="-1"]')).toHaveFocus())
+      expect(mockValidateCensus).not.toHaveBeenCalled()
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(storedCensus()).toBeNull()
+    })
+
+    it('saves a password with a one-time code', async () => {
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />)
+      const dialog = await openDialog(user)
+
+      await user.click(dialog.getByRole('checkbox', { name: /password/i }))
+      await chooseCode(user, 'email')
+      await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
+      expect(mockValidateCensus).toHaveBeenLastCalledWith({
+        orgAddress: '0x1',
+        census: { groupId: 'group-1', authFields: ['password'], twoFaFields: ['email'] },
+      })
+      await user.click(dialog.getByTestId('voter-auth-save'))
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      expect(storedCensus()).toEqual({ credentials: ['password'], use2FA: true, use2FAMethod: 'email' })
+    })
+
+    it('saves a password with another detail, without a code', async () => {
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />)
+      const dialog = await openDialog(user)
+
+      await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+      await user.click(dialog.getByRole('checkbox', { name: /password/i }))
+      await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
+      await user.click(dialog.getByTestId('voter-auth-save'))
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      expect(storedCensus()).toEqual({
+        credentials: ['memberNumber', 'password'],
+        use2FA: false,
+        use2FAMethod: 'email',
+      })
+    })
+
+    it('does not name the password in a duplicate, which the backend never counts', async () => {
+      mockValidateCensus.mockRejectedValue(
+        membersError({ memberIds: ['m1'], duplicates: ['m2', 'm3'], missingData: null })
+      )
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />)
+      const dialog = await openDialog(user)
+
+      await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+      await user.click(dialog.getByRole('checkbox', { name: /password/i }))
+
+      const status = dialog.getByRole('status')
+      await waitFor(() =>
+        expect(status).toHaveTextContent("2 members share the same Member Number, so they can't be told apart.")
+      )
+      expect(status).not.toHaveTextContent(/password/i)
+    })
+
+    it('reports the members missing a password without ever checking the password alone', async () => {
+      mockValidateCensus.mockImplementation(({ census }) => {
+        const fields = census.authFields ?? []
+        if (fields.length === 2) {
+          // Member Number and Password together: m2 to m4 lack something.
+          return Promise.reject(membersError({ memberIds: ['m1'], duplicates: [], missingData: ['m2', 'm3', 'm4'] }))
+        }
+        // Member Number alone: only m2 lacks it, so m3 and m4 lack the password.
+        return Promise.reject(membersError({ memberIds: ['m1'], duplicates: [], missingData: ['m2'] }))
+      })
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />)
+      const dialog = await openDialog(user)
+
+      await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+      await user.click(dialog.getByRole('checkbox', { name: /password/i }))
+
+      const status = dialog.getByRole('status')
+      await waitFor(() => expect(status).toHaveTextContent('1 members are missing Member Number.'))
+      expect(status).toHaveTextContent('2 members are missing Password.')
+      expect(mockValidateCensus.mock.calls.map(([{ census }]) => census.authFields)).not.toContainEqual(['password'])
     })
   })
 })
