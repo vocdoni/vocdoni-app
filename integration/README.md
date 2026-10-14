@@ -38,6 +38,61 @@ To point the app at it:
 SAAS_URL=http://localhost:8080 pnpm build && pnpm serve:ssr
 ```
 
+The stack runs the `:main` images of `vocdoni-node` and `saas-backend` and the
+npm `@vocdoni/*` packages from the lockfile. To run against unmerged upstream
+commits instead, see [Pinning upstream commits](#pinning-upstream-commits).
+
+## Pinning upstream commits
+
+Comment on a pull request to run the suite against upstream built from source.
+Each key is optional:
+
+```text
+/integration vocdoni-node=<ref> saas-backend=<ref> integrator-sdk=<ref>
+```
+
+- A bare `/integration` is an ordinary run: `:main` images and the npm packages
+  from the lockfile.
+- A ref is a branch, a tag or a commit SHA. A short SHA only resolves for a commit
+  reachable from a branch or tag; for any other commit use the full SHA. An upstream
+  PR head works as `pull/<N>/head`.
+- `vocdoni-node` and `saas-backend` are built into Docker images and the stack
+  runs those instead of `:main`.
+- `integrator-sdk` is cloned, built and packed. Its `@vocdoni/*` packages are
+  installed in place of the npm versions, transitive copies included, through
+  pnpm overrides. The overrides are added to `pnpm-workspace.yaml` for that run
+  only, so nothing is committed back.
+- Only users with write access can trigger it. The PR head is pinned when the
+  run starts, so later pushes do not change what runs.
+- Source builds take a long time (the Go images and the SDK each take minutes),
+  so a pinned run gets 90 minutes instead of 45.
+- The result is posted back to the PR with the App head, the upstream SHAs and
+  the run link.
+- The comment trigger runs the workflow file from `develop` (the default
+  branch), so changes to the workflow only take effect once merged.
+- The Actions tab's "Run workflow" takes the same refs as the
+  `vocdoni_node_ref`, `saas_backend_ref` and `integrator_sdk_ref` inputs.
+
+Locally, build an image and point the stack at it:
+
+```bash
+out="$(scripts/integration-build-image.sh vocdoni-node <ref>)"
+image="$(sed -n 's/^image=//p' <<<"$out")"
+[ -n "$image" ] && VOCDONI_NODE_IMAGE="$image" pnpm test:e2e:stack
+```
+
+Use `SAAS_BACKEND_IMAGE` and `saas-backend` the same way.
+
+Locally, pack the SDK and install it in place of the npm packages:
+
+```bash
+scripts/integration-build-sdk.sh <ref> /tmp/sdk-tgz
+node scripts/integration-use-sdk.mjs /tmp/sdk-tgz
+pnpm install --no-frozen-lockfile
+# when done, restore the files the last two commands rewrote:
+git checkout pnpm-workspace.yaml pnpm-lock.yaml
+```
+
 ## Reading the mail
 
 **This is the debugging tool we were missing.** Every email the backend sends —
@@ -77,4 +132,6 @@ that file encode real failure modes (notably the sizing of vocone's healthcheck
 window around its own 300s zk-circuit download deadline; **do not tighten it**).
 
 The CI workflow prints the resolved image digests on every run, so a job that
-goes red with no change in this repo can be reproduced locally.
+goes red with no change in this repo can be reproduced locally. Locally, the
+`VOCDONI_NODE_IMAGE` and `SAAS_BACKEND_IMAGE` environment variables override the
+`:main` images (see [Pinning upstream commits](#pinning-upstream-commits)).
