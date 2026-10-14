@@ -64,8 +64,6 @@ export const useMemberColumns = () => {
 const Members = () => {
   const { t } = useTranslation()
   const columns = useMemberColumns()
-  // the API never returns the password, so the table has nothing to show for it
-  const tableColumns = useMemo(() => columns.filter((column) => column.id !== 'password'), [columns])
   const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
   const { data, isLoading, isFetching, error } = usePaginatedMembers({ search: debouncedSearch })
 
@@ -99,13 +97,7 @@ const Members = () => {
         })
 
   return (
-    <TableProvider
-      data={members}
-      initialColumns={tableColumns}
-      isLoading={isLoading}
-      isFetching={isFetching}
-      error={error}
-    >
+    <TableProvider data={members} initialColumns={columns} isLoading={isLoading} isFetching={isFetching} error={error}>
       <RoutedPaginationProvider path={Routes.dashboard.memberbase.members} pagination={pagination}>
         {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
         <MembersTable />

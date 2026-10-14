@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router'
+import userEvent from '@testing-library/user-event'
 import { render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { TableProvider } from '../TableProvider'
@@ -213,5 +214,24 @@ describe('MembersTable range summary', () => {
 
     expect(screen.getByText('Showing 1–2 of 2 results')).toBeInTheDocument()
     expect(screen.queryByText(/of 2 members/)).not.toBeInTheDocument()
+  })
+})
+
+describe('MembersTable manage columns', () => {
+  it('does not offer the password column, which the API never returns', async () => {
+    const user = userEvent.setup()
+    render(
+      <TableProvider
+        data={members}
+        initialColumns={[...columns, { id: 'password', label: 'Password', visible: false }]}
+      >
+        <MembersTable />
+      </TableProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Manage Columns' }))
+
+    expect(await screen.findByRole('checkbox', { name: /Toggle column Email/ })).toBeInTheDocument()
+    expect(screen.queryByText('Password')).not.toBeInTheDocument()
   })
 })
