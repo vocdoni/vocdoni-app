@@ -220,6 +220,7 @@
       "surname": "Nachname"
     },
     "important": "Wichtig",
+    "password_unavailable": "Das Passwort kann gerade nicht geprüft werden. Lade die Seite neu und versuche es erneut.",
     "receive_code": "Code empfangen",
     "step1": {
       "footer_text": "Bei Problemen wende dich an deine Organisation.",

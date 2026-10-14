@@ -224,6 +224,7 @@
       "surname": "Apellidos"
     },
     "important": "Importante",
+    "password_unavailable": "No se puede comprobar la contraseña en este momento. Recarga la página e inténtalo de nuevo.",
     "receive_code": "Recibir código",
     "step1": {
       "footer_text": "Si tienes algún problema, contacta con tu organización.",

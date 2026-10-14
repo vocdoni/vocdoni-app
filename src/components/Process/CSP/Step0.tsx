@@ -113,7 +113,16 @@ export const Step0Base = () => {
       // The plaintext password never leaves the browser: the request carries its hash, salted with
       // the organization address exactly like the one the organizer stored.
       if (form.password) {
-        form.password = await hashMemberPassword(election?.orgAddress ?? '', form.password)
+        try {
+          form.password = await hashMemberPassword(election?.orgAddress ?? '', form.password)
+        } catch (error) {
+          console.error('CSP password hashing failed:', error)
+          throw new Error(
+            t('csp.password_unavailable', {
+              defaultValue: 'The password cannot be checked right now. Reload the page and try again.',
+            })
+          )
+        }
       }
 
       // The voter session (ElectionProvider's auth context) stores the auth token;
