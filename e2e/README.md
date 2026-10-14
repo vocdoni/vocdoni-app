@@ -155,10 +155,11 @@ a break anywhere along that chain fails here.
 ## CI
 
 `.github/workflows/integration.yml` runs this — both projects — on pushes to
-`develop` and on pull requests targeting `stage` or `main` — the merge into the integration
-branch, and the two promotions that actually reach users. Feature PRs into
-`develop` do not run it (they are covered by `test.yml`); use
-**Run workflow** on the Actions tab to trigger it by hand on any branch.
+`develop` (the integration branch), on pull requests targeting `stage` or `main`
+(the two promotions that actually reach users), and on any pull request with
+pinned `/integration` refs (see [integration/README.md](../integration/README.md)).
+Other feature PRs into `develop` do not run it (they are covered by `test.yml`);
+use **Run workflow** on the Actions tab to trigger it by hand on any branch.
 
 It is deliberately separate from `test.yml`: the stack tracks
 `ghcr.io/vocdoni/{saas-backend,vocdoni-node}:main`, so a red run here often
