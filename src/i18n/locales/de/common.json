@@ -212,6 +212,7 @@
       "memberNumber": "Mitgliedsnummer",
       "name": "Name",
       "nationalId": "Ausweisnummer",
+      "password": "Passwort",
       "phone": "Telefon",
       "surname": "Nachname"
     },
@@ -949,6 +950,8 @@
     },
     "form": {
       "cancel": "Abbrechen",
+      "password_set": "Ein Passwort ist gespeichert. Gib ein neues ein, um es zu ersetzen.",
+      "password_will_be_removed": "Das gespeicherte Passwort wird beim Speichern entfernt.",
       "phone_warning": "Telefonnummer ausgeblendet. Änderungen hier überschreiben sie.",
       "phone_will_be_removed": "Die gespeicherte Telefonnummer wird beim Speichern entfernt.",
       "save": "Änderungen speichern"
@@ -1001,6 +1004,7 @@
       "firstname": "Vorname",
       "member_number": "Mitgliedsnummer",
       "national_id": "Ausweisnummer",
+      "password": "Passwort",
       "phone": "Telefon",
       "surname": "Nachname",
       "weight": "Stimmgewicht"
@@ -2037,6 +2041,7 @@
     "level_strong": "Stark",
     "level_weak": "Schwach",
     "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
+    "password_needs_another_credential": "Ein Passwort allein kann Wählende nicht identifizieren. Wähle weitere Zugangsdaten aus oder aktiviere im nächsten Schritt die Zwei-Faktor-Authentifizierung.",
     "pending": {
       "description": "Wähle aus, welche Mitgliedsdaten Wählende zur Stimmabgabe eingeben müssen, z. B. ihre Ausweis- oder Mitgliedsnummer.",
       "error_title": "Das brauchst du zum Veröffentlichen",

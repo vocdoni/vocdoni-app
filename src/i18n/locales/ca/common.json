@@ -214,6 +214,7 @@
       "memberNumber": "Número de soci",
       "name": "Nom",
       "nationalId": "DNI/NIE",
+      "password": "Contrasenya",
       "phone": "Telèfon",
       "surname": "Cognoms"
     },
@@ -958,6 +959,8 @@
     },
     "form": {
       "cancel": "Cancel·la",
+      "password_set": "Hi ha una contrasenya desada. Escriu-ne una de nova per substituir-la.",
+      "password_will_be_removed": "La contrasenya desada s'eliminarà en desar.",
       "phone_warning": "Número de telèfon ocult. Qualsevol canvi aquí el sobreescriurà.",
       "phone_will_be_removed": "El número de telèfon desat s'eliminarà en desar.",
       "save": "Desa els canvis"
@@ -1010,6 +1013,7 @@
       "firstname": "Nom",
       "member_number": "Número de Soci",
       "national_id": "Document d'Identitat",
+      "password": "Contrasenya",
       "phone": "Telèfon",
       "surname": "Cognom",
       "weight": "Poder de votació (Pes)"
@@ -2066,6 +2070,7 @@
     "level_strong": "Fort",
     "level_weak": "Feble",
     "no_group_description": "Si us plau, selecciona primer un grup per configurar l'autenticació.",
+    "password_needs_another_credential": "Una contrasenya sola no pot identificar els votants. Selecciona una altra credencial o activa l'autenticació de dos factors al pas següent.",
     "pending": {
       "description": "Tria quines dades de membre hauran d'introduir els votants per votar, com ara el document d'identitat o el número de soci.",
       "error_title": "Ho necessites per publicar",

@@ -214,6 +214,7 @@
       "memberNumber": "Numero socio",
       "name": "Nome",
       "nationalId": "Codice Fiscale/ID Nazionale",
+      "password": "Password",
       "phone": "Telefono",
       "surname": "Cognome"
     },
@@ -958,6 +959,8 @@
     },
     "form": {
       "cancel": "Annulla",
+      "password_set": "È impostata una password. Digitane una nuova per sostituirla.",
+      "password_will_be_removed": "La password salvata verrà rimossa al salvataggio.",
       "phone_warning": "Numero di telefono nascosto. Qualsiasi modifica qui lo sovrascriverà.",
       "phone_will_be_removed": "Il numero di telefono salvato verrà rimosso al salvataggio.",
       "save": "Salva modifiche"
@@ -1010,6 +1013,7 @@
       "firstname": "Nome",
       "member_number": "Numero socio",
       "national_id": "ID Nazionale",
+      "password": "Password",
       "phone": "Telefono",
       "surname": "Cognome",
       "weight": "Peso del voto"
@@ -2066,6 +2070,7 @@
     "level_strong": "Forte",
     "level_weak": "Debole",
     "no_group_description": "Seleziona prima un gruppo per configurare l'autenticazione.",
+    "password_needs_another_credential": "Una password da sola non può identificare i votanti. Seleziona un'altra credenziale o attiva l'autenticazione a due fattori nel passaggio successivo.",
     "pending": {
       "description": "Scegli quali dati dei membri i votanti devono inserire per votare, come il documento d'identità o il numero di socio.",
       "error_title": "Ti serve per pubblicare",

@@ -212,6 +212,7 @@
       "memberNumber": "Bazkide-zenbakia",
       "name": "Izena",
       "nationalId": "NAN/AIZ",
+      "password": "Pasahitza",
       "phone": "Telefonoa",
       "surname": "Abizenak"
     },
@@ -949,6 +950,8 @@
     },
     "form": {
       "cancel": "Utzi",
+      "password_set": "Pasahitz bat gordeta dago. Idatzi berri bat ordezkatzeko.",
+      "password_will_be_removed": "Gordetako pasahitza kendu egingo da gordetzean.",
       "phone_warning": "Telefono-zenbakia ezkutatuta. Hemen egindako aldaketa gainidatziko du.",
       "phone_will_be_removed": "Gordetako telefono-zenbakia kendu egingo da gordetzean.",
       "save": "Gorde aldaketak"
@@ -1001,6 +1004,7 @@
       "firstname": "Izena",
       "member_number": "Kide-zenbakia",
       "national_id": "NAN/AIZ",
+      "password": "Pasahitza",
       "phone": "Telefonoa",
       "surname": "Abizenak",
       "weight": "Boto-pisua (Pisua)"
@@ -2037,6 +2041,7 @@
     "level_strong": "Indartsua",
     "level_weak": "Ahula",
     "no_group_description": "Hautatu lehenik talde bat autentifikazioa konfiguratzeko.",
+    "password_needs_another_credential": "Pasahitzak berak bakarrik ezin ditu botogileak identifikatu. Hautatu beste kredentzial bat edo aktibatu bi faktoreko autentifikazioa hurrengo urratsean.",
     "pending": {
       "description": "Aukeratu hautesleek bozkatzeko zein kide-datu sartu behar dituzten, adibidez NANa edo kide-zenbakia.",
       "error_title": "Hau behar duzu argitaratzeko",

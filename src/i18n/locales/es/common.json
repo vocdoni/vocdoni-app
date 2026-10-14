@@ -214,6 +214,7 @@
       "memberNumber": "Número de socio",
       "name": "Nombre",
       "nationalId": "DNI/NIE",
+      "password": "Contraseña",
       "phone": "Teléfono",
       "surname": "Apellidos"
     },
@@ -958,6 +959,8 @@
     },
     "form": {
       "cancel": "Cancelar",
+      "password_set": "Hay una contraseña guardada. Escribe una nueva para sustituirla.",
+      "password_will_be_removed": "La contraseña guardada se eliminará al guardar.",
       "phone_warning": "Número de teléfono oculto. Cualquier cambio aquí lo sobrescribirá.",
       "phone_will_be_removed": "El número de teléfono guardado se eliminará al guardar.",
       "save": "Guardar cambios"
@@ -1010,6 +1013,7 @@
       "firstname": "Nombre",
       "member_number": "Número de miembro",
       "national_id": "DNI/NIE",
+      "password": "Contraseña",
       "phone": "Teléfono",
       "surname": "Apellidos",
       "weight": "Poder de voto (Peso)"
@@ -2066,6 +2070,7 @@
     "level_strong": "Fuerte",
     "level_weak": "Débil",
     "no_group_description": "Selecciona primero un grupo para configurar la autenticación.",
+    "password_needs_another_credential": "Una contraseña sola no puede identificar a los votantes. Selecciona otra credencial o activa la autenticación de dos factores en el siguiente paso.",
     "pending": {
       "description": "Elige qué datos de miembro deben introducir los votantes para votar, como su DNI o su número de miembro.",
       "error_title": "Lo necesitas para publicar",
