@@ -173,6 +173,8 @@ const getIdentityFieldLabel = (field: string, t: TFunction) => {
       return t('members.fields.birth_date', { defaultValue: 'Birth Date' })
     case 'weight':
       return t('members.fields.weight', { defaultValue: 'Voting power (Weight)' })
+    case 'password':
+      return t('members.fields.password', { defaultValue: 'Password' })
     default:
       return field
   }
