@@ -17,6 +17,10 @@ import {
 
 const getSupportedPublicLanguages = () => Object.keys(getServerAppEnv().LANGUAGES ?? {})
 
+// Same host shape server/ssr-cache.mjs accepts; anything else is never echoed into URLs.
+const FORWARDED_HOST_PATTERN = /^[a-zA-Z0-9.-]+(:\d+)?$/
+const FORWARDED_PROTOCOLS = ['http', 'https']
+
 const resolvePublicOrigin = (pageContext: PageContextServer) => {
   const configuredOrigin = getServerAppEnv().APP_URL?.trim()
 
@@ -32,10 +36,18 @@ const resolvePublicOrigin = (pageContext: PageContextServer) => {
 
   if (!headers) return undefined
 
-  const host = headers['x-forwarded-host'] || headers.host
-  const protocol = headers['x-forwarded-proto'] || (host?.startsWith('localhost') ? 'http' : 'https')
+  const host = String(headers['x-forwarded-host'] || headers.host || '')
+    .split(',')[0]
+    .trim()
 
-  if (!host || !protocol) return undefined
+  if (!FORWARDED_HOST_PATTERN.test(host)) return undefined
+
+  const forwardedProtocol = String(headers['x-forwarded-proto'] || '')
+    .split(',')[0]
+    .trim()
+    .toLowerCase()
+  const defaultProtocol = host.startsWith('localhost') ? 'http' : 'https'
+  const protocol = FORWARDED_PROTOCOLS.includes(forwardedProtocol) ? forwardedProtocol : defaultProtocol
 
   return `${protocol}://${host}`
 }
