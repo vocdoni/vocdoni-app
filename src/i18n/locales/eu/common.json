@@ -1301,6 +1301,26 @@
       }
     },
     "census": "Errolda",
+    "checkout": {
+      "check_again": "Egiaztatu berriro",
+      "confirming": "Zure ordainketa berresten…",
+      "failed": "Ordainketa ez da burutu; beraz, ez da ezer kobratu eta boto-ematearen prozesua ez da argitaratu. Berriro saia zaitezke, ordainketa-metodo berarekin edo beste batekin.",
+      "pay": "Ordaindu {{amount}} eta argitaratu",
+      "processing": "Zure ordainketa prozesatzen ari da. Ordainketa-metodo batzuek egun batzuk behar dituzte burutzeko. Boto-ematearen prozesua automatikoki argitaratuko da ordainketa burutzen denean, eta bitartean ezin da haren zirriborroa aldatu. Leiho hau itxi dezakezu.",
+      "publish_failed": "Zure ordainketa burutu da, baina boto-ematearen prozesua ezin izan da oraindik argitaratu. Berriro argitaratzea doakoa da.",
+      "publishing": "Ordainketa jaso da. Zure boto-ematearen prozesua argitaratzen…",
+      "retry_payment": "Saiatu berriro ordaintzen",
+      "summary": {
+        "one_time": "Ordainketa bakarra boto-ematearen prozesu honengatik",
+        "subtotal": "Azpitotala",
+        "title": "Eskaeraren laburpena",
+        "total": "Gaur ordaintzekoa guztira",
+        "vat": "BEZ",
+        "vat_pending": "Zure fakturazio-helbidearen arabera kalkulatzen da"
+      },
+      "timeout": "Zure ordainketa ez da oraindik berretsi. Ez ordaindu berriro: berresten denean, boto-ematearen prozesua automatikoki argitaratuko da. Egiaztatu berriro une batean.",
+      "title": "Ordaindu eta argitaratu"
+    },
     "create": {
       "action": {
         "publish": "Argitaratu",

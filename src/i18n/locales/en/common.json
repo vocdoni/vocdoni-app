@@ -1301,6 +1301,26 @@
       }
     },
     "census": "Census",
+    "checkout": {
+      "check_again": "Check again",
+      "confirming": "Confirming your payment…",
+      "failed": "The payment did not go through, so nothing was charged and the voting process was not published. You can try again, with the same or another payment method.",
+      "pay": "Pay {{amount}} and publish",
+      "processing": "Your payment is being processed. Some payment methods take a few days to clear. The voting process is published automatically once it does, and its draft cannot be changed meanwhile. You can close this window.",
+      "publish_failed": "Your payment went through, but the voting process could not be published yet. Publishing it again is free.",
+      "publishing": "Payment received. Publishing your voting process…",
+      "retry_payment": "Try paying again",
+      "summary": {
+        "one_time": "One-time payment for this voting process",
+        "subtotal": "Subtotal",
+        "title": "Order summary",
+        "total": "Total due today",
+        "vat": "VAT",
+        "vat_pending": "Calculated from your billing address"
+      },
+      "timeout": "Your payment has not been confirmed yet. Do not pay again: once it is confirmed, the voting process is published automatically. Check again in a moment.",
+      "title": "Pay and publish"
+    },
     "create": {
       "action": {
         "publish": "Publish",
