@@ -117,6 +117,7 @@ export const importMembers = async (page: Page, members: TestMember[]): Promise<
   // exists when the members carry one, matching what `membersCsv` emitted.
   const columns = ['name', 'surname', 'email', 'memberNumber']
   if (members.some((member) => member.weight !== undefined)) columns.push('weight')
+  if (members.some((member) => member.password !== undefined)) columns.push('password')
   for (const column of columns) {
     await selectComboboxOption(page, page.locator(`#${column}`), column)
   }
@@ -192,6 +193,10 @@ export type ProcessSpec = {
   weighted?: boolean
   /** Blind-CSP census: the CSP signs a ballot it cannot read. Defaults to off. */
   anonymous?: boolean
+  /** The credentials voters identify with, as checkbox values (API field names). Defaults to `memberNumber`. */
+  credentials?: string[]
+  /** Email 2FA on top of the credentials. Defaults to on. */
+  twoFactor?: boolean
 }
 
 /**
@@ -311,12 +316,14 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
 
   // Tab 1 — credentials. The checkbox `value` is the API field name, so this
   // does not depend on the translated label.
-  await checkCheckbox(
-    dialog
-      .locator('[data-scope="checkbox"][data-part="root"]')
-      .filter({ has: page.locator('input[value="memberNumber"]') })
-  )
-  await expect(dialog.locator('input[value="memberNumber"]')).toBeChecked()
+  for (const credential of spec.credentials ?? ['memberNumber']) {
+    await checkCheckbox(
+      dialog
+        .locator('[data-scope="checkbox"][data-part="root"]')
+        .filter({ has: page.locator(`input[value="${credential}"]`) })
+    )
+    await expect(dialog.locator(`input[value="${credential}"]`)).toBeChecked()
+  }
 
   // The tab triggers are disabled until their step is completed, so the modal
   // is advanced with its footer button — the same path a user takes. It is
@@ -330,8 +337,10 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
     'data-selected',
     ''
   )
-  await toggleSwitch(dialog)
-  await expect(dialog.locator('input[value="email"]')).toBeChecked()
+  if (spec.twoFactor ?? true) {
+    await toggleSwitch(dialog)
+    await expect(dialog.locator('input[value="email"]')).toBeChecked()
+  }
   await advance.click()
 
   // Tab 3 — summary. Confirming runs the backend census validation (the chosen
@@ -416,6 +425,21 @@ export const authenticateVoterWithOtp = async (page: Page, member: TestMember): 
   await expect(dialog).toBeHidden({ timeout: 60_000 })
 
   return otp
+}
+
+/**
+ * Submits CSP step 0 on an auth-only census of `memberNumber` + `password`:
+ * fills both, accepts the terms and submits. The caller asserts the outcome
+ * (the modal closing on success, an error inside it otherwise), and may call it
+ * again on the same open modal to retry.
+ */
+export const submitPasswordLogin = async (dialog: Locator, memberNumber: string, password: string): Promise<void> => {
+  await dialog.locator('input[name="memberNumber"]').fill(memberNumber)
+  await dialog.locator('input[name="password"]').fill(password)
+  // The terms checkbox keeps its state between attempts on the same modal.
+  const terms = dialog.locator('[data-scope="checkbox"][data-part="root"] input[type="checkbox"]').first()
+  if (!(await terms.isChecked())) await checkCheckbox(dialog)
+  await dialog.locator('button[type="submit"]').click()
 }
 
 /**

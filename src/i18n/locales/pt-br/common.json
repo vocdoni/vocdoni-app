@@ -202,6 +202,7 @@
     "code_sent": "Código de verificação enviado",
     "contact_match_help": "Deve corresponder ao registrado no sistema",
     "errors": {
+      "credentials_or_password_incorrect": "Não foi possível verificar sua identidade. Confira suas credenciais e sua senha e tente novamente.",
       "participant_not_found": "O eleitor não consta na lista de participantes ou as credenciais fornecidas estão incorretas.",
       "requests_on_cooldown": "Muitas solicitações. Aguarde um momento antes de tentar novamente.",
       "zero_voting_weight": "Você não tem poder de voto suficiente para acessar a eleição."
@@ -214,10 +215,12 @@
       "memberNumber": "Número de sócio",
       "name": "Nome",
       "nationalId": "CPF/RG",
+      "password": "Senha",
       "phone": "Telefone",
       "surname": "Sobrenome"
     },
     "important": "Importante",
+    "password_unavailable": "Não foi possível verificar a senha agora. Recarregue a página e tente novamente.",
     "receive_code": "Receber código",
     "step1": {
       "footer_text": "Se tiver algum problema, entre em contato com sua organização.",
@@ -467,7 +470,8 @@
       "error": {
         "invalid_birth_date": "A data de nascimento não pode estar no futuro",
         "invalid_email": "Endereço de e-mail inválido",
-        "invalid_phone": "Número de telefone inválido"
+        "invalid_phone": "Número de telefone inválido",
+        "password_requirements": "Use pelo menos 6 caracteres, com uma letra e um número."
       }
     },
     "process_create": {
@@ -958,12 +962,19 @@
     },
     "form": {
       "cancel": "Cancelar",
+      "password_set": "Há uma senha salva. Digite uma nova para substituí-la.",
+      "password_will_be_removed": "A senha salva será removida ao salvar.",
       "phone_warning": "Número de telefone oculto. Qualquer alteração aqui irá sobrescrevê-lo.",
       "phone_will_be_removed": "O número de telefone salvo será removido ao salvar.",
       "save": "Salvar alterações"
     },
     "groups": {
       "title": "Grupos"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} linha não foi importada porque a senha dela não atende aos requisitos (pelo menos 6 caracteres, com uma letra e um número): linha {{lines}}.",
+      "password_rows_skipped_many": "{{count}} linhas não foram importadas porque a senha delas não atende aos requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}.",
+      "password_rows_skipped_other": "{{count}} linhas não foram importadas porque a senha delas não atende aos requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}."
     },
     "import_file": {
       "subtitle": "Importe seu arquivo CSV, XLS, XLSX ou ODS com os dados dos membros. Certifique-se de que os cabeçalhos das colunas correspondam ao modelo para um mapeamento correto.",
@@ -1010,6 +1021,7 @@
       "firstname": "Nome",
       "member_number": "Número de membro",
       "national_id": "CPF/RG",
+      "password": "Senha",
       "phone": "Telefone",
       "surname": "Sobrenome",
       "weight": "Poder de voto (peso)"
@@ -2066,6 +2078,7 @@
     "level_strong": "Forte",
     "level_weak": "Fraco",
     "no_group_description": "Selecione um grupo primeiro para configurar a autenticação.",
+    "password_needs_another_credential": "Uma senha sozinha não consegue identificar os eleitores. Selecione outra credencial ou ative a autenticação de dois fatores na próxima etapa.",
     "pending": {
       "description": "Escolha quais dados de membro os eleitores devem informar para votar, como o CPF ou o número de membro.",
       "error_title": "Você precisa disso para publicar",

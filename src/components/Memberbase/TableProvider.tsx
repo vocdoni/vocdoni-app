@@ -49,7 +49,8 @@ const computeColumns = (params: {
       (storedVisibleIds ? storedVisibleIds.has(column.id)! : undefined) ??
       column.visible !== false
 
-    return { ...column, visible }
+    // a stored visible id must never surface the password, which the API never returns
+    return { ...column, visible: column.id === 'password' ? false : visible }
   })
 }
 

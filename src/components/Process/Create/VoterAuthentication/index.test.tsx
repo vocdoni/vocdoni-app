@@ -306,4 +306,65 @@ describe('VoterAuthentication', () => {
     })
     expect(mockTrackAnalyticsEvent).not.toHaveBeenCalled()
   })
+  describe('password credential', () => {
+    const openDialog = async (user: ReturnType<typeof userEvent.setup>) => {
+      render(<TestForm initialCensus={null} />)
+      await user.click(
+        within(screen.getByRole('status')).getByRole('button', { name: /configure voter authentication/i })
+      )
+      return screen.findByRole('dialog')
+    }
+
+    it('is offered as a credential', async () => {
+      const user = userEvent.setup()
+      const dialog = await openDialog(user)
+
+      expect(dialog.querySelector('input[value="password"]')).toBeInTheDocument()
+    })
+
+    it('refuses a password alone without 2FA and sends the organizer back to the credentials', async () => {
+      const user = userEvent.setup()
+      const dialog = await openDialog(user)
+
+      await user.click(dialog.querySelector('input[value="password"]')!)
+      expect(within(dialog).getByText(/a password alone cannot identify voters/i)).toBeInTheDocument()
+      await user.click(within(dialog).getByRole('button', { name: /next/i }))
+      await user.click(within(dialog).getByRole('button', { name: /next/i }))
+
+      expect(mockValidateCensus).not.toHaveBeenCalled()
+      expect(dialog.querySelector('[data-part="trigger"][data-value="credentials"]')).toHaveAttribute('data-selected')
+    })
+
+    it('accepts a password alone with 2FA', async () => {
+      mockValidateCensus.mockResolvedValue({ valid: true })
+      const user = userEvent.setup()
+      const dialog = await openDialog(user)
+
+      await user.click(dialog.querySelector('input[value="password"]')!)
+      await user.click(within(dialog).getByRole('button', { name: /next/i }))
+      await user.click(within(dialog).getByRole('checkbox', { name: /enable two-factor authentication/i }))
+      await user.click(within(dialog).getByRole('button', { name: /next/i }))
+
+      await waitFor(() => expect(mockValidateCensus).toHaveBeenCalledTimes(1))
+      expect(mockValidateCensus).toHaveBeenCalledWith({
+        orgAddress: '0x1',
+        census: { groupId: 'group-1', authFields: ['password'], twoFaFields: ['email'] },
+      })
+    })
+
+    it('does not count toward the limit of 3 credentials', async () => {
+      const user = userEvent.setup()
+      const dialog = await openDialog(user)
+
+      for (const field of ['name', 'surname', 'memberNumber']) {
+        await user.click(dialog.querySelector(`input[value="${field}"]`)!)
+      }
+      expect(dialog.querySelector('input[value="nationalId"]')).toBeDisabled()
+      expect(dialog.querySelector('input[value="password"]')).toBeEnabled()
+
+      await user.click(dialog.querySelector('input[value="password"]')!)
+      expect(dialog.querySelector('input[value="password"]')).toBeChecked()
+      expect(within(dialog).getByText('3/3 credentials selected')).toBeInTheDocument()
+    })
+  })
 })

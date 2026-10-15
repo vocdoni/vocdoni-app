@@ -31,7 +31,7 @@ import { useCensusSteps } from '../useCensusSteps'
 import { CredentialsForm } from './CredentialsForm'
 import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
 import { TwoFactorForm } from './TwoFactorForm'
-import { getTwoFaFields, StepCompletionState, VoterAuthFormData } from './utils'
+import { getTwoFaFields, passwordNeedsAnotherCredential, StepCompletionState, VoterAuthFormData } from './utils'
 import { ValidationError, ValidationErrorsAlert } from './ValidationErrorsAlert'
 import { useVoterAuthDialog } from './VoterAuthDialogContext'
 
@@ -146,8 +146,24 @@ export const VoterAuthentication = ({ triggerRef }: VoterAuthenticationProps) =>
     } else if (activeTabIndex === 1) {
       setValidationError(null)
 
+      const currentFormData = voterAuthForm.getValues()
+      // the backend refuses it too, but untranslated: say it here and send the organizer back to fix it
+      if (passwordNeedsAnotherCredential(currentFormData.credentials, currentFormData.use2FA)) {
+        toast({
+          title: t('voter_auth.validation_failed', { defaultValue: 'Validation failed' }),
+          description: t('voter_auth.password_needs_another_credential', {
+            defaultValue:
+              'A password alone cannot identify voters. Select another credential, or enable two-factor authentication in the next step.',
+          }),
+          type: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+        setActiveTabIndex(0)
+        return
+      }
+
       try {
-        const currentFormData = voterAuthForm.getValues()
         const twoFaFields = currentFormData.use2FA ? getTwoFaFields(currentFormData.use2FAMethod) : []
 
         await validateCensusMutation.mutateAsync({

@@ -15,7 +15,7 @@ import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuCheck, LuMail, LuShield } from 'react-icons/lu'
 import { getSecurityLevel, getSecurityLevelMessages, SecurityLevelDisplay } from './SecurityLevel'
-import { TwoFAMethod } from './utils'
+import { PASSWORD_CREDENTIAL, TwoFAMethod } from './utils'
 
 type CredentialsOverviewProps = {
   credentials: string[]
@@ -48,7 +48,9 @@ export const CredentialsOverview = ({ credentials, use2FA, use2FAMethod }: Crede
             {credentials.map((cred) => (
               <HStack key={cred}>
                 <Icon as={LuCheck} color='green.500' />
-                <Text>{cred}</Text>
+                <Text>
+                  {cred === PASSWORD_CREDENTIAL ? t('members.fields.password', { defaultValue: 'Password' }) : cred}
+                </Text>
               </HStack>
             ))}
           </Stack>

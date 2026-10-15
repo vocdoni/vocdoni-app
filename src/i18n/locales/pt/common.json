@@ -202,6 +202,7 @@
     "code_sent": "Código de verificação enviado",
     "contact_match_help": "Tens de corresponder ao registado no sistema",
     "errors": {
+      "credentials_or_password_incorrect": "Não foi possível verificar a tua identidade. Confirma as tuas credenciais e a tua palavra-passe e tenta novamente.",
       "participant_not_found": "O votante não consta da lista de participantes ou as credenciais fornecidas estão incorretas.",
       "requests_on_cooldown": "Demasiados pedidos. Aguarda um momento antes de tentar novamente.",
       "zero_voting_weight": "Não tens poder de voto suficiente para aceder à votação."
@@ -214,10 +215,12 @@
       "memberNumber": "Número de sócio",
       "name": "Nome próprio",
       "nationalId": "Cartão de cidadão",
+      "password": "Palavra-passe",
       "phone": "Telefone",
       "surname": "Apelido"
     },
     "important": "Importante",
+    "password_unavailable": "Não é possível verificar a palavra-passe neste momento. Recarrega a página e tenta novamente.",
     "receive_code": "Receber código",
     "step1": {
       "footer_text": "Se tiveres algum problema, contacta a tua organização.",
@@ -467,7 +470,8 @@
       "error": {
         "invalid_birth_date": "A data de nascimento não pode estar no futuro",
         "invalid_email": "Endereço de email inválido",
-        "invalid_phone": "Número de telefone inválido"
+        "invalid_phone": "Número de telefone inválido",
+        "password_requirements": "Usa pelo menos 6 caracteres, com uma letra e um número."
       }
     },
     "process_create": {
@@ -958,12 +962,19 @@
     },
     "form": {
       "cancel": "Cancelar",
+      "password_set": "Existe uma palavra-passe guardada. Escreve uma nova para a substituir.",
+      "password_will_be_removed": "A palavra-passe guardada será removida ao guardar.",
       "phone_warning": "Número de telefone oculto. Qualquer alteração aqui irá substituí-lo.",
       "phone_will_be_removed": "O número de telefone guardado será removido ao guardar.",
       "save": "Guardar alterações"
     },
     "groups": {
       "title": "Grupos"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} linha não foi importada porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linha {{lines}}.",
+      "password_rows_skipped_many": "{{count}} linhas não foram importadas porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}.",
+      "password_rows_skipped_other": "{{count}} linhas não foram importadas porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}."
     },
     "import_file": {
       "subtitle": "Importa o teu ficheiro CSV, XLS, XLSX ou ODS com os dados dos membros. Certifica-te de que os cabeçalhos das colunas correspondem ao modelo para uma associação correta.",
@@ -1010,6 +1021,7 @@
       "firstname": "Nome próprio",
       "member_number": "Número de sócio",
       "national_id": "Cartão de cidadão",
+      "password": "Palavra-passe",
       "phone": "Telefone",
       "surname": "Apelido",
       "weight": "Poder de voto (peso)"
@@ -2066,6 +2078,7 @@
     "level_strong": "Forte",
     "level_weak": "Fraco",
     "no_group_description": "Seleciona primeiro um grupo para configurar a autenticação.",
+    "password_needs_another_credential": "Uma palavra-passe sozinha não consegue identificar os votantes. Seleciona outra credencial ou ativa a autenticação de dois fatores no passo seguinte.",
     "pending": {
       "description": "Escolhe os dados de membro que os votantes têm de introduzir para votar, como o cartão de cidadão ou o número de sócio.",
       "error_title": "Precisas disto para publicar",

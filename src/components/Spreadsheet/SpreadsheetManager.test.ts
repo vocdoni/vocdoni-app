@@ -14,6 +14,21 @@ describe('SpreadsheetManager', () => {
     expect(manager.data).toEqual([['Núria Sàez', '00123']])
   })
 
+  it('keeps the file line of each row when blank rows are dropped or precede the header', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const csv = '\n\nname,password\na,abc123\n\n,,\nb,bad\n'
+    const manager = new SpreadsheetManager(new File([csv], 'members.csv', { type: 'text/csv' }), true)
+
+    await manager.read()
+
+    expect(manager.header).toEqual(['name', 'password'])
+    expect(manager.data).toEqual([
+      ['a', 'abc123'],
+      ['b', 'bad'],
+    ])
+    expect(manager.lineNumbers).toEqual([4, 7])
+  })
+
   it('accepts every supported spreadsheet by extension, not only by MIME type', () => {
     const extensions = Object.values(SpreadsheetManager.Accept).flat()
 

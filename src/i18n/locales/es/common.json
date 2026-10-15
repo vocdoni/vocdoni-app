@@ -202,6 +202,7 @@
     "code_sent": "Código de verificación enviado",
     "contact_match_help": "Debe coincidir con el registrado en el sistema",
     "errors": {
+      "credentials_or_password_incorrect": "No hemos podido verificar tu identidad. Comprueba tus credenciales y tu contraseña e inténtalo de nuevo.",
       "participant_not_found": "El votante no figura en el censo o las credenciales proporcionadas son incorrectas.",
       "requests_on_cooldown": "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.",
       "zero_voting_weight": "No tienes suficiente poder de voto para acceder a la votación."
@@ -214,10 +215,12 @@
       "memberNumber": "Número de socio",
       "name": "Nombre",
       "nationalId": "DNI/NIE",
+      "password": "Contraseña",
       "phone": "Teléfono",
       "surname": "Apellidos"
     },
     "important": "Importante",
+    "password_unavailable": "No se puede comprobar la contraseña en este momento. Recarga la página e inténtalo de nuevo.",
     "receive_code": "Recibir código",
     "step1": {
       "footer_text": "Si tienes algún problema, contacta con tu organización.",
@@ -467,7 +470,8 @@
       "error": {
         "invalid_birth_date": "La fecha de nacimiento no puede estar en el futuro",
         "invalid_email": "Dirección de correo electrónico no válida",
-        "invalid_phone": "Número de teléfono no válido"
+        "invalid_phone": "Número de teléfono no válido",
+        "password_requirements": "Usa al menos 6 caracteres, con una letra y un número."
       }
     },
     "process_create": {
@@ -958,12 +962,19 @@
     },
     "form": {
       "cancel": "Cancelar",
+      "password_set": "Hay una contraseña guardada. Escribe una nueva para sustituirla.",
+      "password_will_be_removed": "La contraseña guardada se eliminará al guardar.",
       "phone_warning": "Número de teléfono oculto. Cualquier cambio aquí lo sobrescribirá.",
       "phone_will_be_removed": "El número de teléfono guardado se eliminará al guardar.",
       "save": "Guardar cambios"
     },
     "groups": {
       "title": "Grupos"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} fila no se ha importado porque su contraseña no cumple los requisitos (al menos 6 caracteres, con una letra y un número): línea {{lines}}.",
+      "password_rows_skipped_many": "{{count}} filas no se han importado porque su contraseña no cumple los requisitos (al menos 6 caracteres, con una letra y un número): líneas {{lines}}.",
+      "password_rows_skipped_other": "{{count}} filas no se han importado porque su contraseña no cumple los requisitos (al menos 6 caracteres, con una letra y un número): líneas {{lines}}."
     },
     "import_file": {
       "subtitle": "Importa tu archivo CSV, XLS, XLSX o ODS con los datos de los miembros. Asegúrate de que los encabezados de columna coincidan con la plantilla para una asignación correcta.",
@@ -1010,6 +1021,7 @@
       "firstname": "Nombre",
       "member_number": "Número de miembro",
       "national_id": "DNI/NIE",
+      "password": "Contraseña",
       "phone": "Teléfono",
       "surname": "Apellidos",
       "weight": "Poder de voto (Peso)"
@@ -2066,6 +2078,7 @@
     "level_strong": "Fuerte",
     "level_weak": "Débil",
     "no_group_description": "Selecciona primero un grupo para configurar la autenticación.",
+    "password_needs_another_credential": "Una contraseña sola no puede identificar a los votantes. Selecciona otra credencial o activa la autenticación de dos factores en el siguiente paso.",
     "pending": {
       "description": "Elige qué datos de miembro deben introducir los votantes para votar, como su DNI o su número de miembro.",
       "error_title": "Lo necesitas para publicar",
