@@ -1030,6 +1030,7 @@
       "add_to_group_confirmation_one": "«{{group}}» taldera kide bat gehituko duzu.",
       "add_to_group_confirmation_other": "«{{group}}» taldera {{count}} kide gehituko dituzu.",
       "add_to_group_description": "Hautatu kideak gehitzeko taldea.",
+      "add_to_group_error": "Errorea kideak taldera gehitzean",
       "add_to_group_success": "Kideak behar bezala gehitu dira taldera",
       "bulk_delete": "Ezabatu",
       "cancel": "Utzi",
@@ -1355,8 +1356,38 @@
     "extended_info": "Informazio zabaldua",
     "is_invalid": "Prozesu honek datu okerrak ditu eta, beraz, ez da baliozkoa",
     "no_description": "Ez da deskribapenik eman",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "Kide hauek erabiltzen dituen boto-ematearen prozesu baten ordainketa oraindik prozesatzen ari da. Saiatu berriro amaitzen denean.",
+        "census_growth_payment_required": "Kide hauek boto-ematearen prozesu baten erroldea ordaindutakoaz haratago handituko lukete. Handitzeak gehienez {{amount}} gehiago balio du (BEZa kanpo).",
+        "census_growth_quote_required": "Kide hauek boto-ematearen prozesu baten erroldea 50.000 botogiletik gora eramango lukete, eta horrek aurrekontu pertsonalizatua behar du. Jarri gurekin harremanetan handitzeko.",
+        "draft_payment_in_progress": "Zirriborro hau ezin da gorde bere ordainketagatik: edo ordainketa oraindik prozesatzen ari da, edo aldaketa ez da onartzen ordaindu ondoren (adibidez, marka pertsonalizatua gehitzea). Jarri gurekin harremanetan horrela jarraitzen badu.",
+        "payment_in_progress": "Boto-ematearen prozesu honen ordainketa, erosketa edo itzulketa bat oraindik ez da amaitu, beraz ezin da orain argitaratu. Saiatu berriro geroago, eta jarri gurekin harremanetan horrela jarraitzen badu.",
+        "publish_payment_required": "Boto-ematearen prozesu honek guztira {{amount}} balio du (BEZa kanpo) eta argitaratu aurretik ordaindu behar da. Zati bat dagoeneko ordaindu bada, aldea bakarrik ordaindu behar da.",
+        "quote_required": "50.000 botogile baino gehiagoko boto-ematearen prozesuek aurrekontu pertsonalizatua behar dute. Jarri gurekin harremanetan hau argitaratzeko.",
+        "wallet_insufficient": "Integratzailearen saldoak ez du boto-ematearen prozesu honen prezioa estaltzen. Erakunde hau kudeatzen duen integratzaileak bere saldoa kargatu behar du berriro argitaratu aurretik.",
+        "wallet_insufficient_amounts": "Integratzailearen saldoa {{available}} da, baina boto-ematearen prozesu hau argitaratzeko {{required}} (BEZa kanpo) ordaintzeke daude. Erakunde hau kudeatzen duen integratzaileak bere saldoa kargatu behar du berriro argitaratu aurretik."
+      }
+    },
     "people_in_census_one": "Boto-emaile bat",
     "people_in_census_other": "{{ count }} boto-emaile",
+    "price": {
+      "error": "Ezin izan da prezioa kargatu.",
+      "free": "Boto-ematearen prozesu hau doakoa da: ordaindu gabe argitaratzen da.",
+      "line": {
+        "base": "Boto-ematearen prozesua",
+        "branding": "Marka pertsonalizatua eta marka zuria",
+        "custom_url": "URL pertsonalizatua",
+        "email_two_fa": "Egiaztapen-kodea posta elektronikoz",
+        "signed_certificate": "Emaitzen ziurtagiri sinatua",
+        "sms_two_fa": "Egiaztapen-kodea SMS bidez"
+      },
+      "quote_recommended": "{{limit}} botogile baino gehiagoko boto-ematearen prozesuetarako aurrekontu pertsonalizatua gomendatzen dizugu. <contact>Eskatu aurrekontua</contact>, edo argitaratu ezarpenetan agertzen den prezioan.",
+      "quote_required": "{{limit}} botogile baino gehiagoko boto-ematearen prozesuak aurrekontu pertsonalizatu batekin bakarrik argitara daitezke. <contact>Eskatu aurrekontua</contact> hau argitaratzeko.",
+      "total": "Guztira",
+      "unavailable": "Prezioa hemen agertuko da zirriborroa botogileekin eta haien autentifikazioa konfiguratuta gordetzen duzunean.",
+      "vat_excluded": "BEZa kanpo. Ordaintzean gehitzen da."
+    },
     "question_type": {
       "label": "Galdera mota",
       "multiple": "Aukera anitza",
@@ -1490,6 +1521,7 @@
       "placeholder": "{{number}}. aukera",
       "remove": "Kendu aukera"
     },
+    "price": "Prezioa",
     "question": {
       "description": {
         "placeholder": "Gehitu galderaren deskribapena hemen (aukerakoa)..."

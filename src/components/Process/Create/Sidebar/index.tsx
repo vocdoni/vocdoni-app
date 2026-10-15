@@ -3,11 +3,12 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuX } from 'react-icons/lu'
 import { Sidebar, SidebarContents, SidebarSubtitle, SidebarTitle } from '~components/Dashboard/Contents'
 import { useSidebarVisibility } from '~components/Dashboard/SidebarContext'
+import { ProcessPriceBreakdown } from '~components/Pricing/ProcessPrice'
 import { BasicConfig } from './BasicConfig'
 import CensusCreation, { CensusStatusBadge } from './CensusCreation'
 import { ExtraConfig } from './ExtraConfig'
 
-export const CreateSidebar = () => {
+export const CreateSidebar = ({ draftId }: { draftId?: string | null }) => {
   const { t } = useTranslation()
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { showSidebar, closeSidebar } = useSidebarVisibility()
@@ -57,6 +58,11 @@ export const CreateSidebar = () => {
         </Flex>
 
         <CensusCreation />
+
+        <SidebarSubtitle borderTop='1px solid' borderColor='table.border' mt={4}>
+          <Trans i18nKey='process_create.price'>Price</Trans>
+        </SidebarSubtitle>
+        <ProcessPriceBreakdown processId={draftId} />
       </SidebarContents>
     </Sidebar>
   )

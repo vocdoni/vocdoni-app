@@ -1,13 +1,14 @@
-import { Badge, Box, Button, ButtonProps, Card, Flex, Icon, Link, List, Separator, Text } from '@chakra-ui/react'
+import { Badge, Box, Button, ButtonProps, Card, Flex, Icon, List, Separator, Text } from '@chakra-ui/react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { ReactNode, useRef } from 'react'
+import { useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCircleCheckBig } from 'react-icons/lu'
-import { Link as RouterLink, useLocation } from 'react-router'
+import { useLocation } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import ContactButton from '~components/ContactLink'
+import { SupportLink } from '~components/Layout/SupportLink'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { getPlanKey, isPlanNamed, PlanName } from '~constants'
 import { useProfile } from '~queries/account'
@@ -72,11 +73,6 @@ const PricingCard = ({
     )
   const hasActiveSubscription =
     !isPlanNamed(subscription?.plan, PlanName.Free) && !!subscription?.subscriptionDetails.active
-  const ContactLink = ({ children }: { children?: ReactNode }) => (
-    <Link asChild>
-      <RouterLink to={Routes.dashboard.settings.support}>{children}</RouterLink>
-    </Link>
-  )
 
   useGSAP(
     () => {
@@ -180,7 +176,7 @@ const PricingCard = ({
       </Card.Body>
       {(isPlanNamed(plan, PlanName.Professional) || isPlanNamed(plan, PlanName.Starter)) && (
         <Text fontSize='xs' fontStyle='italic' textAlign='center'>
-          <Trans i18nKey='pricing_card.need_more_members' components={{ 2: <ContactLink /> }} />
+          <Trans i18nKey='pricing_card.need_more_members' components={{ 2: <SupportLink /> }} />
         </Text>
       )}
       {!isCustomPlan && isDashboard && <Separator />}

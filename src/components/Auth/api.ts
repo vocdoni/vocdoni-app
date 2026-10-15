@@ -1,3 +1,4 @@
+import { VocdoniApiError } from '@vocdoni/api-client'
 import i18n from '~i18n'
 import { getActiveLanguage } from '~i18n/active-language'
 
@@ -45,6 +46,7 @@ export enum ApiEndpoints {
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
   Plans = 'plans',
+  ProcessPrice = 'processes/{processId}/price',
   Refresh = 'auth/refresh',
   Register = 'users',
   SubscriptionCheckout = 'subscriptions/checkout',
@@ -63,11 +65,18 @@ export enum ErrorCode {
   UserNotVerified = 40014,
   UserAlreadyVerified = 40015,
   DraftLimitReached = 40031,
+  // Pay-per-process billing
+  InsufficientWalletBalance = 40175,
+  QuoteRequired = 40176,
+  PaymentSessionConflict = 40177,
+  PaymentRequired = 40178,
 }
 
 interface IApiError {
   error: string
   code?: number
+  // Error-specific payload, e.g. the quote of a 402 payment error
+  data?: unknown
 }
 
 export class ApiError extends Error {
@@ -88,6 +97,23 @@ export class BadRequestApiError extends ApiError {}
 export class UnverifiedApiError extends ApiError {}
 
 export class UserAlreadyVerifiedApiError extends ApiError {}
+
+export type ApiErrorDetails = {
+  code?: number
+  data?: unknown
+}
+
+// The app talks to the backend through both its own `api()` (ApiError) and the integrator SDK
+// (VocdoniApiError); both carry the parsed error body, just under different names. Undefined
+// for any other error.
+export const apiErrorDetails = (error: unknown): ApiErrorDetails | undefined => {
+  if (error instanceof ApiError) return { code: error.apiError?.code, data: error.apiError?.data }
+  if (error instanceof VocdoniApiError) {
+    const body = error.body as { data?: unknown } | undefined
+    return { code: error.code, data: body?.data }
+  }
+  return undefined
+}
 
 export const getApiErrorMessage = (error: unknown) => {
   if (!error) return undefined
