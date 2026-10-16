@@ -12,7 +12,8 @@ import { QueryKeys } from './keys'
  * do not always agree: the staging SaaS backend anchors its processes to the production chain
  * (`vocdoni/LTS/…`), so an environment-keyed lookup would query the dev gateway and miss them.
  */
-const getGatewayUrlForChain = (chainId?: string) => getVochainGatewayUrl(chainId?.includes('/LTS/') ? 'prod' : 'dev')
+export const getGatewayUrlForChain = (chainId?: string) =>
+  getVochainGatewayUrl(chainId?.includes('/LTS/') ? 'prod' : 'dev')
 
 /**
  * A process left to run its course still ends a few seconds either side of its schedule — the chain

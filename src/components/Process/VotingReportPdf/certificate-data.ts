@@ -17,7 +17,11 @@ import {
 import { useElection } from '@vocdoni/react-components'
 
 import { getAnonymityLabels } from '~components/Process/anonymityLabels'
+import { getGatewayUrlForChain } from '~queries/process-end-date'
 import { type TFunction } from 'i18next'
+
+import { auditElectionMetadata, fetchElectionChildren, normalizeHex, type ProcessMetadataAudit } from './metadata-audit'
+import { buildMetadataAuditSection, type CertificateMetadataAudit } from './metadata-audit-section'
 
 /** Anything callers may hand us as an election: a typed process response or an untyped record. */
 export type ElectionLike = VotingProcessResponse | Record<string, unknown> | null | undefined
@@ -89,6 +93,7 @@ export type CertificateData = {
   resultsHiddenText?: string
   verification: CertificateField[]
   verificationProcedures: string[]
+  metadataAudit: CertificateMetadataAudit
   issuer: CertificateField[]
   disclaimerParagraphs: string[]
   disclaimerBullets: string[]
@@ -262,6 +267,7 @@ export const buildCertificateData = ({
   explorerUrl,
   now,
   earlyEndDate,
+  metadataAudit,
 }: {
   election: PublishedVotingProcessResponse
   results: VotingProcessResultsResponse | null
@@ -271,6 +277,8 @@ export const buildCertificateData = ({
   now: Date
   /** When voting really stopped, set only if the process was stopped early — see `getEarlyEndDate`. */
   earlyEndDate?: Date | null
+  /** Metadata history of the process' elections and the parent's children — see `fetchMetadataAudit`. */
+  metadataAudit?: ProcessMetadataAudit | null
 }): CertificateData => {
   const notAvailableLabel = notAvailable(t)
   const eventReference = getDefaultText(election.title).trim() || election.id
@@ -670,6 +678,17 @@ export const buildCertificateData = ({
           'For a deeper technical audit, an auditor may inspect the public records in more detail or recompute the tally to confirm that the recorded ballots and final results are consistent.',
       }),
     ],
+    metadataAudit: buildMetadataAuditSection({
+      process: { title: eventReference, upstreamId: getProcessUpstreamId(election) },
+      questions: election.questions.map((question) => ({
+        title: getDefaultText(question.title),
+        upstreamId: question.upstreamId,
+      })),
+      audits: metadataAudit?.audits,
+      children: metadataAudit?.children,
+      t,
+      notAvailableLabel,
+    }),
     issuer: [
       { label: t('process_pdf.issuer.provider', { defaultValue: 'Provider' }), value: 'Vocdoni (Synergize SL)' },
       {
@@ -725,6 +744,41 @@ export const fetchProcessResults = async (
   } catch {
     return null
   }
+}
+
+/**
+ * The process' parent on-chain election, whose metadata holds the process title, description and
+ * media. Absent for processes published before parent elections existed.
+ */
+export const getProcessUpstreamId = (election: VotingProcessResponse): string | undefined => {
+  const upstreamId = (election as { upstreamId?: unknown }).upstreamId
+  return typeof upstreamId === 'string' && upstreamId ? upstreamId : undefined
+}
+
+/**
+ * Audit the metadata history of the process' parent election and of its question elections, read
+ * from the gateway of the chain the process was anchored to. The question elections are the
+ * parent's children as linked on chain, together with any question of the process that is not
+ * among them, so a mismatch between the two shows in the report. Never rejects: unreadable
+ * histories and children lists come back as unavailable.
+ */
+export const fetchMetadataAudit = async (election: VotingProcessResponse): Promise<ProcessMetadataAudit> => {
+  const gatewayUrl = getGatewayUrlForChain(election.chainId)
+  const processId = normalizeHex(getProcessUpstreamId(election))
+  const [processAudit, children] = processId
+    ? await Promise.all([
+        auditElectionMetadata({ gatewayUrl, electionId: processId }),
+        fetchElectionChildren({ gatewayUrl, electionId: processId }),
+      ])
+    : [null, null]
+  const childIds = children?.children.map((child) => child.electionId) ?? []
+  const questionIds = election.questions.map((question) => normalizeHex(question.upstreamId))
+  const electionIds = [...new Set([...childIds, ...questionIds])].filter((id) => id && id !== processId)
+  const questionAudits = await Promise.all(
+    electionIds.map((electionId) => auditElectionMetadata({ gatewayUrl, electionId }))
+  )
+
+  return { audits: processAudit ? [processAudit, ...questionAudits] : questionAudits, children }
 }
 
 /**
