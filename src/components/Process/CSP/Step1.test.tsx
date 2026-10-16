@@ -1,7 +1,8 @@
 import type { ChangeEvent, ReactNode } from 'react'
 import userEvent from '@testing-library/user-event'
-import { render, screen, waitFor } from '~src/test-utils'
+import { act, render, screen, waitFor } from '~src/test-utils'
 import { Step1Base } from './Step1'
+import { CspCooldownError } from './basics'
 
 vi.mock('@chakra-ui/react', async () => {
   const actual = await vi.importActual<typeof import('@chakra-ui/react')>('@chakra-ui/react')
@@ -108,7 +109,8 @@ vi.mock('./CSPStepsProvider', () => ({
   }),
 }))
 
-vi.mock('./basics', () => ({
+vi.mock('./basics', async () => ({
+  ...(await vi.importActual<typeof import('./basics')>('./basics')),
   useCspAuth1: () => ({
     mutateAsync,
     isPending: false,
@@ -279,6 +281,54 @@ describe('Step1Base', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Code resent successfully')).toBeInTheDocument()
+    })
+  })
+
+  it('tells the voter the code already received still works', () => {
+    render(<Step1Base />)
+
+    expect(
+      screen.getByText('Asking again sends the same code, so the one you already received still works.')
+    ).toBeInTheDocument()
+  })
+
+  describe('resend countdown', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true })
+    })
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('waits out the cooldown after a successful resend, then offers it again', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+      render(<Step1Base />)
+
+      await user.click(screen.getByRole('button', { name: 'Resend it' }))
+
+      expect(await screen.findByText("Didn't receive the code? You can request it again in 60 s.")).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Resend it' })).not.toBeInTheDocument()
+
+      await act(async () => vi.advanceTimersByTime(60_000))
+
+      expect(await screen.findByRole('button', { name: 'Resend it' })).toBeEnabled()
+    })
+
+    it('shows the wait the backend reported instead of an error', async () => {
+      resendMutateAsync.mockRejectedValue(new CspCooldownError('You can request a new code in 42 s.', 41_200))
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+      render(<Step1Base />)
+
+      await user.click(screen.getByRole('button', { name: 'Resend it' }))
+
+      expect(await screen.findByText("Didn't receive the code? You can request it again in 42 s.")).toBeInTheDocument()
+      expect(screen.queryByText('Failed to resend code')).not.toBeInTheDocument()
+
+      await act(async () => vi.advanceTimersByTime(42_000))
+
+      expect(await screen.findByRole('button', { name: 'Resend it' })).toBeEnabled()
     })
   })
 
