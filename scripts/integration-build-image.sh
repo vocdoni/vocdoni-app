@@ -36,51 +36,50 @@ fi
 dir="$(mktemp -d)"
 trap 'rm -rf "$dir"' EXIT
 
-# Resolves the ref through the GitHub API, then shallow-fetches exactly that commit.
-# A #N ref reads the PR's head SHA; a branch, tag or short/full SHA goes via commits.
-auth=()
-if [ -n "${GH_TOKEN:-}" ]; then
-  auth=(-H "Authorization: Bearer $GH_TOKEN")
-fi
-body="$dir/resolve.txt"
-if [[ "$ref" == \#* ]]; then
-  command -v jq >/dev/null || {
-    echo "ERROR: jq is required to resolve '$ref'" >&2
-    exit 1
-  }
-  if curl -fsSL ${auth[@]+"${auth[@]}"} -H 'Accept: application/vnd.github+json' \
-    "https://api.github.com/repos/vocdoni/$repo/pulls/${ref:1}" -o "$body"; then
-    sha="$(jq -r '.head.sha // empty' "$body")"
-  else
-    sha=""
+# Resolves the ref with git alone, then shallow-fetches exactly that commit. saas-backend is
+# private and reached over SSH: with SAAS_BACKEND_DEPLOY_KEY (its read-only deploy key) in CI,
+# with the caller's own SSH access otherwise. A throwaway repo fetches every branch, tag and PR
+# head without trees or blobs, so rev-parse can resolve a #N, branch, tag or short/full SHA.
+url="https://github.com/vocdoni/$repo.git"
+if [ "$repo" = saas-backend ]; then
+  url="git@github.com:vocdoni/$repo.git"
+  if [ -n "${SAAS_BACKEND_DEPLOY_KEY:-}" ]; then
+    printf '%s\n' "$SAAS_BACKEND_DEPLOY_KEY" > "$dir/deploy_key"
+    chmod 600 "$dir/deploy_key"
+    echo "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" > "$dir/known_hosts"
+    export GIT_SSH_COMMAND="ssh -i $dir/deploy_key -o IdentitiesOnly=yes -o UserKnownHostsFile=$dir/known_hosts"
   fi
-elif curl -fsSL ${auth[@]+"${auth[@]}"} -H 'Accept: application/vnd.github.sha' \
-  "https://api.github.com/repos/vocdoni/$repo/commits/$ref" -o "$body"; then
-  sha="$(cat "$body")"
-else
-  sha=""
 fi
-rm -f "$body"
+refs="$dir/refs"
+git init --quiet "$refs" >&2
+git -C "$refs" fetch --quiet --filter=tree:0 --update-head-ok "$url" \
+  '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*' '+refs/pull/*/head:refs/pull/*' >&2
+rev="$ref"
+if [[ "$ref" == \#* ]]; then
+  rev="refs/pull/${ref:1}"
+fi
+sha="$(git -C "$refs" rev-parse --verify --quiet "$rev^{commit}" || true)"
 if ! [[ "$sha" =~ ^[0-9a-f]{40}$ ]]; then
   echo "ERROR: could not resolve '$ref' in vocdoni/$repo" >&2
   exit 1
 fi
-git -C "$dir" init --quiet >&2
-git -C "$dir" fetch --quiet --depth 1 "https://github.com/vocdoni/$repo.git" "$sha" >&2
-git -C "$dir" checkout --quiet FETCH_HEAD >&2
+src="$dir/src"
+git init --quiet "$src" >&2
+git -C "$src" fetch --quiet --depth 1 "$url" "$sha" >&2
+git -C "$src" checkout --quiet FETCH_HEAD >&2
 
 tag="vocdoni-app-integration/$repo:$sha"
 echo "== building $repo@$sha" >&2
 export DOCKER_BUILDKIT=1
 if [ "$repo" = vocdoni-node ]; then
-  docker build --platform linux/amd64 -t "$tag" "$dir" >&2
+  docker build --platform linux/amd64 -t "$tag" "$src" >&2
 else
-  go_version="$(awk '/^go [0-9]/ { print $2; exit }' "$dir/go.mod")"
+  go_version="$(awk '/^go [0-9]/ { print $2; exit }' "$src/go.mod")"
   if [ -z "$go_version" ]; then
     echo "ERROR: no 'go' directive found in saas-backend go.mod" >&2
     exit 1
   fi
-  docker build --platform linux/amd64 --build-arg "GOLANG_VERSION=$go_version" -t "$tag" "$dir" >&2
+  docker build --platform linux/amd64 --build-arg "GOLANG_VERSION=$go_version" -t "$tag" "$src" >&2
 fi
 
 printf 'image=%s\nsha=%s\n' "$tag" "$sha"
