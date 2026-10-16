@@ -222,6 +222,7 @@ jobs:
       cancel-in-progress: true
     permissions:
       contents: read
+      packages: read # pull ghcr.io/vocdoni/saas-backend
     outputs:
       vocdoni_node_sha: ${{ steps.pins.outputs.vocdoni_node_sha }}
       saas_backend_sha: ${{ steps.pins.outputs.saas_backend_sha }}
@@ -295,7 +296,7 @@ jobs:
         id: pins
         if: needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != ''
         env:
-          GH_TOKEN: ${{ github.token }}
+          SAAS_BACKEND_DEPLOY_KEY: ${{ secrets.SAAS_BACKEND_DEPLOY_KEY }}
           NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
           SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
         run: |
@@ -338,6 +339,13 @@ jobs:
             echo "::endgroup::"
           done
           [ "$failed" = 0 ]
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
 
       - name: Print resolved image digests
         id: digests
