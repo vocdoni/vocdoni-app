@@ -206,6 +206,7 @@ const GroupCensusCreation = () => {
     name: 'groupId',
     rules: { required: { value: required, message: t('form.error.required', 'This field is required') } },
   })
+  const selectedGroup = groups?.find((group) => group.id === groupField.value) ?? null
   // No message: the pending notice in VoterAuthentication says what's missing.
   const {
     field: { ref: censusRef },
@@ -234,7 +235,7 @@ const GroupCensusCreation = () => {
               <StepMarker step={2} status={authStatus} />
               {t('process_create.census.voter_auth.label', { defaultValue: 'Set how voters prove who they are' })}
             </HStack>
-            <VoterAuthentication triggerRef={censusRef} />
+            <VoterAuthentication triggerRef={censusRef} group={selectedGroup} />
           </Flex>
         </>
       )}

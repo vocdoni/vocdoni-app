@@ -1,4 +1,4 @@
-const maskedFields = new Set<string>(['phone'])
+const maskedFields = new Set<string>(['phone', 'password'])
 
 // value may be undefined for optional/empty member fields, so guard it before
 // returning so the function always resolves to a string.

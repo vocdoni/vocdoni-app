@@ -3,13 +3,19 @@ import { VocdoniApiError } from '@vocdoni/api-client'
 import type { AuthRequest, OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useElectionAuth } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
+import { useOptionalCspAuthContext } from './CSPStepsProvider'
+
+// TODO(member-password): drop these two widenings once @vocdoni/api-types ships the `password`
+// auth field and `AuthRequest.password` (vocdoni-integrator-sdk feat/member-password).
+type MemberAuthField = OrgMemberAuthField | 'password'
+type MemberAuthRequest = AuthRequest & { password?: string }
 
 export type CensusData = {
-  authFields: OrgMemberAuthField[]
+  authFields: MemberAuthField[]
   twoFaFields: OrgMemberTwoFaField[]
 }
 
-export type AuthFieldType = OrgMemberAuthField
+export type AuthFieldType = MemberAuthField
 export type TwoFaFieldType = OrgMemberTwoFaField
 
 export type CSPFormData = {
@@ -20,6 +26,8 @@ export type CSPFormData = {
   birthDate?: string
   email?: string
   phone?: string
+  // the member password: typed in plaintext, sent only as its hash (hashMemberPassword)
+  password?: string
 } & Record<string, string>
 
 export type CSPStep0FormData = CSPFormData
@@ -35,11 +43,22 @@ export type ResendChallengePayload = {
 // other failure keeps the API's own message.
 const useTranslateCspError = () => {
   const { t } = useTranslation()
+  const hasPassword = !!useOptionalCspAuthContext()?.authFields.includes('password')
 
   return (error: unknown): Error => {
     if (error instanceof VocdoniApiError) {
       switch (error.code) {
         case 40029:
+          // A wrong password is answered like an unknown participant (no membership oracle), so with a
+          // password the message must not blame the password, or any single field, specifically.
+          if (hasPassword) {
+            return new Error(
+              t('csp.errors.credentials_or_password_incorrect', {
+                defaultValue:
+                  "We couldn't verify your identity. Check your credentials and your password and try again.",
+              })
+            )
+          }
           return new Error(
             t('csp.errors.participant_not_found', {
               defaultValue: 'The voter is not listed in the census, or the provided credentials are incorrect.',
@@ -75,7 +94,7 @@ export const useCspAuth0 = () => {
   const { auth0 } = useElectionAuth()
   const translateError = useTranslateCspError()
 
-  return useMutation<void, Error, AuthRequest>({
+  return useMutation<void, Error, MemberAuthRequest>({
     mutationKey: [...cspAuthMutationKey, 0],
     mutationFn: async (participant) => {
       try {

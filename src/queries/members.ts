@@ -18,6 +18,8 @@ export type Member = {
   nationalId: string
   birthDate: string
   weight?: string
+  // Read-only: the API never returns the password, only whether the member has one.
+  hasPassword?: boolean
 }
 
 export type MembersResponse = {
