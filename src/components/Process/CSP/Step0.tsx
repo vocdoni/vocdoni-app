@@ -25,6 +25,7 @@ import { useAppEnv } from '~src/app-env'
 import { hashMemberPassword } from '~utils/member-password'
 import { CSPStep0FormData, CSPStep0RequestData, useCspAuth0, useCspAuthPending, useIsCspAuthBusy } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
+import { getAuthFieldInputType, getAuthFieldLabel, getContactFieldLabel, passwordLast } from './fields'
 
 export const Step0Base = () => {
   const { t } = useTranslation()
@@ -172,55 +173,22 @@ export const Step0Base = () => {
     }
   }
 
-  const getFieldLabel = (field: string) => {
-    const labels: Record<string, string> = {
-      memberNumber: t('csp.fields.memberNumber', 'Member Number'),
-      name: t('csp.fields.name', 'Name'),
-      surname: t('csp.fields.surname', 'Surname'),
-      nationalId: t('csp.fields.nationalId', 'National ID'),
-      birthDate: t('csp.fields.birthDate', 'Birth Date'),
-      password: t('csp.fields.password', 'Password'),
-    }
-    return labels[field] || field
-  }
-
-  const get2FaFieldLabel = () => {
-    if (twoFaFields.includes('email') && twoFaFields.includes('phone')) {
-      return t('csp.fields.email_or_phone', 'Email or Phone')
-    } else if (twoFaFields.includes('email')) {
-      return t('csp.fields.email', 'Email')
-    } else if (twoFaFields.includes('phone')) {
-      return t('csp.fields.phone', 'Phone')
-    }
-    return t('csp.fields.contact', 'Contact')
-  }
-
-  const getFieldType = (field: string) => {
-    if (field === 'email') return 'email'
-    if (field === 'phone') return 'tel'
-    if (field === 'birthDate') return 'date'
-    if (field === 'password') return 'password'
-    return 'text'
-  }
-
   return (
     <VStack gap={6} align='stretch' w='full'>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack gap={4}>
           {/* Render auth fields, the password always last */}
-          {[...authFields.filter((f) => f !== 'password'), ...authFields.filter((f) => f === 'password')].map(
-            (field) => (
-              <FieldRoot key={field} invalid={!!errors[field]} required>
-                <FieldLabel>{getFieldLabel(field)}</FieldLabel>
-                <Input {...register(field, { required: true })} type={getFieldType(field)} />
-              </FieldRoot>
-            )
-          )}
+          {passwordLast(authFields).map((field) => (
+            <FieldRoot key={field} invalid={!!errors[field]} required>
+              <FieldLabel>{getAuthFieldLabel(t, field)}</FieldLabel>
+              <Input {...register(field, { required: true })} type={getAuthFieldInputType(field)} />
+            </FieldRoot>
+          ))}
 
           {/* Render 2FA field */}
           {is2Factor && (
             <FieldRoot invalid={!!errors.contact} required>
-              <FieldLabel>{get2FaFieldLabel()}</FieldLabel>
+              <FieldLabel>{getContactFieldLabel(t, twoFaFields)}</FieldLabel>
               <Input {...register('contact', { required: true })} type='text' />
               <FieldHelperText>
                 <Text as='span' fontWeight='bold'>

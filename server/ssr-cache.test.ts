@@ -300,6 +300,76 @@ describe('createSsrCacheMiddleware', () => {
       }
     })
 
+    it('keys the cache on the first forwarded host only, never a poisoned list', async () => {
+      const previous = process.env.APP_URL
+      delete process.env.APP_URL
+
+      try {
+        const renderPage = makeRenderPage()
+        const mw = createSsrCacheMiddleware({ renderPage, getViteServer: () => null, isProduction: true })
+
+        await mw(
+          makeReq('/en/organization/0xabc', 'GET', { 'x-forwarded-host': 'localhost:13000,@evil.example' }),
+          makeRes(),
+          next
+        )
+
+        expect(Array.from(ssrCache.keys())).toEqual(['http://localhost:13000/en/organization/0xabc'])
+      } finally {
+        process.env.APP_URL = previous
+      }
+    })
+
+    it('ignores a junk forwarded proto and uses the default scheme', async () => {
+      const previous = process.env.APP_URL
+      delete process.env.APP_URL
+
+      try {
+        const renderPage = makeRenderPage()
+        const mw = createSsrCacheMiddleware({ renderPage, getViteServer: () => null, isProduction: true })
+
+        await mw(
+          makeReq('/en/organization/0xabc', 'GET', {
+            'x-forwarded-host': 'app.example.org',
+            'x-forwarded-proto': 'https://evil.example/?',
+          }),
+          makeRes(),
+          next
+        )
+        await mw(
+          makeReq('/en/processes/0xabc', 'GET', {
+            'x-forwarded-host': 'localhost:13000',
+            'x-forwarded-proto': 'https://evil.example/?',
+          }),
+          makeRes(),
+          next
+        )
+
+        expect(Array.from(ssrCache.keys()).sort()).toEqual([
+          'http://localhost:13000/en/processes/0xabc',
+          'https://app.example.org/en/organization/0xabc',
+        ])
+      } finally {
+        process.env.APP_URL = previous
+      }
+    })
+
+    it('falls back to a path-only cache key when the forwarded host is invalid', async () => {
+      const previous = process.env.APP_URL
+      delete process.env.APP_URL
+
+      try {
+        const renderPage = makeRenderPage()
+        const mw = createSsrCacheMiddleware({ renderPage, getViteServer: () => null, isProduction: true })
+
+        await mw(makeReq('/en/organization/0xabc', 'GET', { 'x-forwarded-host': '@evil.example' }), makeRes(), next)
+
+        expect(Array.from(ssrCache.keys())).toEqual(['/en/organization/0xabc'])
+      } finally {
+        process.env.APP_URL = previous
+      }
+    })
+
     // ---- TTL expiry --------------------------------------------------------
     describe('TTL expiry', () => {
       beforeEach(() => {

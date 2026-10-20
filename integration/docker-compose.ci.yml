@@ -124,8 +124,8 @@ services:
       VOCDONI_EMAILFROMADDRESS: admin@test.local
       VOCDONI_EMAILFROMNAME: Vocdoni
     ports:
-      - '${INTEGRATION_HOST_PORT:-8080}:8080'
-      - '${INTEGRATION_MAILHOG_PORT:-8025}:8025'
+      - '127.0.0.1:${INTEGRATION_HOST_PORT:-8080}:8080'
+      - '127.0.0.1:${INTEGRATION_MAILHOG_PORT:-8025}:8025'
     depends_on:
       mongo:
         condition: service_healthy
