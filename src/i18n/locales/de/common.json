@@ -47,7 +47,7 @@
   "annual": "Jährlich<1>40 % sparen</1>",
   "apply": "Anwenden",
   "aside": {
-    "anonymous_receipt_gone": "",
+    "anonymous_receipt_gone": "Dein Beleg wurde bei der Stimmabgabe angezeigt und kann nicht erneut abgerufen werden.",
     "has_already_voted": "Deine Stimme wurde erfolgreich abgegeben",
     "is_not_in_census": "Du bist nicht in der Teilnehmerliste",
     "votes_one": "<span>1</span> <text>Wählende Person</text>",
@@ -100,7 +100,7 @@
   "back": "Zurück",
   "billing_details": "Rechnungsdetails",
   "booking": {
-    "unavailable": "Die Buchung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut."
+    "unavailable": "Die Buchung ist derzeit nicht verfügbar. Bitte versuche es später erneut."
   },
   "calendar": {
     "max_duration_exceeded": "Die Dauer überschreitet das {{ maxDuration }}-Tage-Limit deines Plans. Verkürze den Abstimmungszeitraum oder <a>kontaktiere uns</a>, wenn du mehr Tage benötigst.",
@@ -193,7 +193,6 @@
   },
   "csp": {
     "auth_failed": "Authentifizierung fehlgeschlagen",
-    "auth_success": "Authentifizierung erfolgreich",
     "authenticate": "Identifizieren",
     "code_info": "Du erhältst einen einmaligen Code über das gewählte Medium, um deine Identität zu bestätigen und die Authentifizierung abzuschließen",
     "code_sent": "Bestätigungscode gesendet",
@@ -343,6 +342,9 @@
   "ended_processes": "Beendet",
   "enter_promo_code": "Code eingeben",
   "error": {
+    "crash_description": "Lade die Seite neu oder kehre zum Dashboard zurück.",
+    "crash_title": "Etwas ist schiefgelaufen",
+    "go_to_dashboard": "Zum Dashboard",
     "loading_languages": "Fehler beim Laden der Sprachen",
     "loading_page": "Fehler beim Laden der Seite",
     "loading_roles": "Fehler beim Laden der Rollen",
@@ -352,12 +354,13 @@
     "missing_header": "Die Tabelle enthält keine Kopfzeile.",
     "not_found": "Seite nicht gefunden",
     "not_found_description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "reload": "Neu laden",
     "return_to_home": "Zurück zur Startseite",
     "title": "Fehler"
   },
   "error_removing_code": "Fehler beim Entfernen des Codes",
   "features": {
-    "anonymous": "Geheime Abstimmung",
+    "anonymous": "Anonyme Abstimmung",
     "approval": "Zustimmungsabstimmung",
     "audit": "Prüfung",
     "audit_blockchain": "100 % blockchain-prüfbar",
@@ -448,7 +451,6 @@
       }
     },
     "error": {
-      "census_config_required": "Bitte konfiguriere die Authentifizierungseinstellungen für die Teilnehmerliste.",
       "email_invalid": "Ungültige E-Mail-Adresse",
       "field_is_required": "Dieses Feld ist erforderlich",
       "generic": "Fehler beim Ausführen der Operation",
@@ -945,13 +947,14 @@
     "form": {
       "cancel": "Abbrechen",
       "phone_warning": "Telefonnummer ausgeblendet. Änderungen hier überschreiben sie.",
+      "phone_will_be_removed": "Die gespeicherte Telefonnummer wird beim Speichern entfernt.",
       "save": "Änderungen speichern"
     },
     "groups": {
       "title": "Gruppen"
     },
     "import_file": {
-      "subtitle": "Importiere deine CSV-, XLS- oder XLSX-Datei mit Mitgliederdaten. Stelle sicher, dass die Spaltenüberschriften mit der Vorlage übereinstimmen.",
+      "subtitle": "Importiere deine CSV-, XLS-, XLSX- oder ODS-Datei mit Mitgliederdaten. Stelle sicher, dass die Spaltenüberschriften mit der Vorlage übereinstimmen.",
       "title": "Datei importieren"
     },
     "importer": {
@@ -959,6 +962,10 @@
       "cancel": "Abbrechen",
       "data_preview": "Datenvorschau",
       "download_template_btn": "Vorlage herunterladen",
+      "error": {
+        "invalid_file_type": "Dieser Dateityp wird nicht unterstützt. Lade eine .csv-, .xlsx-, .xls- oder .ods-Datei hoch.",
+        "read_failed": "Wir konnten diese Datei nicht lesen. Prüfe, ob es eine gültige CSV- oder Tabellendatei ist, und versuche es erneut."
+      },
       "field_mapper": {
         "empty": "-- Nicht importieren --",
         "placeholder": "Spalte auswählen"
@@ -971,7 +978,7 @@
       "reset": "Import zurücksetzen",
       "select_at_least_one_column": "Wähle mindestens eine Spalte aus, um die Vorlage herunterzuladen.",
       "submit": "Daten importieren",
-      "subtitle": "Lade eine Vorlage herunter oder importiere deine eigene CSV-, XLS- oder XLSX-Datei, um Mitglieder hinzuzufügen.",
+      "subtitle": "Lade eine Vorlage herunter oder importiere deine eigene CSV-, XLS-, XLSX- oder ODS-Datei, um Mitglieder hinzuzufügen.",
       "title": "Mitglieder importieren",
       "warning": {
         "subtitle": "Die Informationen nicht zugeordneter Spalten werden nicht importiert.",
@@ -1053,10 +1060,10 @@
       "select_process": "Prozess auswählen",
       "selected_one": "Ausgewählt: <strong>{{count}} Mitglied</strong>",
       "selected_other": "Ausgewählt: <strong>{{count}} Mitglieder</strong>",
-      "showing_members_one": "",
-      "showing_members_other": "",
-      "showing_results_one": "",
-      "showing_results_other": "",
+      "showing_members_one": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Mitglied",
+      "showing_members_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Mitgliedern",
+      "showing_results_one": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnis",
+      "showing_results_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnissen",
       "toggle_column": "Spalte {{column}} ein-/ausblenden"
     }
   },
@@ -1064,7 +1071,6 @@
     "selector_label": "Mitgliederzahl"
   },
   "menu": {
-    "burger_aria_label": "Benutzermenü",
     "collapse": "Menü einklappen",
     "create": "Abstimmung erstellen",
     "dashboard": "Dashboard",
@@ -1134,9 +1140,9 @@
     "title": {
       "read_more": "Titel ausklappen"
     },
-    "unavailable_description": "",
-    "unavailable_retry": "",
-    "unavailable_title": ""
+    "unavailable_description": "Beim Lesen deiner Organisationen ist etwas schiefgelaufen. Das ist meist nur vorübergehend – versuch es bitte erneut.",
+    "unavailable_retry": "Erneut versuchen",
+    "unavailable_title": "Deine Organisationen konnten nicht geladen werden"
   },
   "organization_settings": {
     "phone_support": {
@@ -1164,9 +1170,9 @@
   "organizations": "Organisationen ({{ numOrgs }})",
   "other_details": "Weitere Details",
   "pagination": {
-    "next": "",
+    "next": "Nächste Seite",
     "page_out_of": "Seite {{page}} von {{total}}",
-    "previous": "",
+    "previous": "Vorherige Seite",
     "rows_per_page": "Zeilen pro Seite"
   },
   "password": "Passwort",
@@ -1204,7 +1210,7 @@
   "passwords_do_not_match": "Passwörter stimmen nicht überein",
   "pause_vote": "Abstimmung pausieren",
   "payment": {
-    "stripe_unavailable": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut."
+    "stripe_unavailable": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuche es später erneut."
   },
   "plan": {
     "encouragement": "Eine Abstimmung zu starten ist einfach, und Teilnehmende können von überall mitmachen. Starke Garantien zu niedrigen Kosten haben Vocdoni zur vertrauenswürdigen Wahl für Hunderte von Gemeinden, Vereinen, politischen Parteien und Unternehmen gemacht.",
@@ -1373,7 +1379,7 @@
     "success_modal": {
       "btn": "Schließen",
       "text": "<p>Deine Stimme wurde sicher abgegeben und mit der Technologie von Vocdoni gespeichert. <verify>Du kannst sie hier überprüfen</verify>.</p>",
-      "text_no_id": "",
+      "text_no_id": "<p>Deine Stimme wurde erfolgreich abgegeben.</p>",
       "title": "Stimme abgegeben!"
     },
     "summary": {
@@ -1432,17 +1438,38 @@
   },
   "process_create": {
     "anonymity": {
-      "title": "",
-      "tooltip": ""
+      "title": "Anonyme Abstimmung",
+      "tooltip": "In beiden Fällen kann deine Organisation nicht sehen, wie jemand abgestimmt hat. Die Anonymität der Wählenden fügt eine kryptografische Ebene hinzu, die es unmöglich macht, eine Stimme einer Person zuzuordnen."
     },
     "auto_start": "Sofort starten",
     "basic_configuration": "Grundkonfiguration",
     "census": {
+      "auth_missing": {
+        "action": "Einrichten",
+        "description": "Lege fest, wie sich Wählende identifizieren, und veröffentliche dann erneut.",
+        "title": "Wähler-Authentifizierung ist nicht eingerichtet"
+      },
+      "auth_reset": {
+        "description": "Sie wurde mit der vorherigen Gruppe geprüft. Deine Auswahl bleibt erhalten: Bestätige sie für diese Gruppe.",
+        "title": "Wähler-Authentifizierung wurde zurückgesetzt"
+      },
       "group": {
         "no_groups": "Um eine Abstimmung zu starten, musst du zunächst eine Gruppe berechtigter Wählender aus deiner Mitgliederbasis erstellen. <1>Hier eine Gruppe erstellen</1>."
       },
+      "group_missing": {
+        "description": "Wähle eine Mitgliedergruppe aus, richte die Wähler-Authentifizierung ein und veröffentliche dann erneut.",
+        "title": "Wähle aus, wer abstimmen darf"
+      },
       "memberbase": {
         "label": "Wähle eine Mitgliedergruppe aus, um die Teilnehmerliste zu erstellen"
+      },
+      "status": {
+        "ready": "Bereit",
+        "steps_left_one": "Noch {{ count }} Schritt",
+        "steps_left_other": "Noch {{ count }} Schritte"
+      },
+      "voter_auth": {
+        "label": "Lege fest, wie Wählende nachweisen, wer sie sind"
       }
     },
     "census_creation": "Erstellung der Teilnehmerliste",
@@ -1480,7 +1507,7 @@
     "weight": {
       "equal": "Eine Person, eine Stimme",
       "title": "Stimmgewicht",
-      "tooltip": "",
+      "tooltip": "Lege fest, ob alle berechtigten Wählenden das gleiche Stimmgewicht haben oder ob die Stimmen nach dem Feld „Stimmgewicht“ der Mitgliederbasis gewichtet werden.",
       "weighted": "Gewichtet nach Stimmgewicht"
     },
     "youtube": {
@@ -1607,7 +1634,7 @@
     "voting_process": {
       "card": {
         "abstain": "Enthalten",
-        "item": "Frage {{index}}",
+        "item": "Stimmen gesamt",
         "option": "Option",
         "outcome_label": "Abstimmungsmethode",
         "participation_short": "{{votes}} Stimmen",
@@ -1916,6 +1943,10 @@
     "csv_row_limit_exceeded_one": "Dieser Import würde {{count}} Zeile ergeben und damit dein Planlimit von {{max}} überschreiten.",
     "csv_row_limit_exceeded_other": "Dieser Import würde {{count}} Zeilen ergeben und damit dein Planlimit von {{max}} überschreiten.",
     "drop_here": "Datei hier ablegen",
+    "error": {
+      "invalid_image_type": "Dieser Dateityp wird nicht unterstützt. Lade ein .png- oder .jpg-Bild hoch.",
+      "too_many_files": "Lade jeweils nur eine Datei hoch."
+    },
     "image_upload_failed": "Bild-Upload fehlgeschlagen",
     "image_upload_success": "Bild hochgeladen",
     "upload_failed": "Upload fehlgeschlagen"
@@ -1957,97 +1988,102 @@
   "view_plans_and_pricing": "Pläne & Preise anzeigen",
   "vocdoni_logo": "Vocdoni Logo",
   "vote": {
-    "anonymous_receipt": "",
+    "anonymous_receipt": "Anonyme Stimmabgabe: Speichere diesen Beleg jetzt, die Plattform kann ihn dir nicht erneut anzeigen.",
     "voted_title": "Deine Stimme wurde erfolgreich abgegeben!"
   },
   "vote_information": "Abstimmungsdetails",
   "vote_overwrite": "Stimme überschreiben",
-  "voter_anonymity": "",
+  "voter_anonymity": "Anonymität der Wählenden",
   "voter_auth": {
-    "anonymity": "",
+    "anonymity": "Anonymität der Stimmabgabe: {{ mode }}",
     "button": {
       "configure": "Wähler-Authentifizierung konfigurieren",
       "edit": "Wähler-Authentifizierung bearbeiten"
     },
     "code": {
-      "description": "",
-      "email_description": "",
-      "email_label": "",
-      "heading": "",
-      "none": "",
-      "none_description": "",
-      "sms_description": "",
-      "sms_label": "",
-      "voter_choice": "",
-      "voter_choice_description": ""
+      "description": "Vor der Abstimmung senden wir einen 6-stelligen Code an die E-Mail-Adresse oder Telefonnummer der Wählenden. So ist belegt, dass sie ihnen gehört, und niemand kann mit fremden Angaben abstimmen.",
+      "email_description": "Wird an die E-Mail-Adresse in deiner Mitgliederliste gesendet.",
+      "email_label": "E-Mail",
+      "heading": "2. Zusätzlich einen einmaligen Code senden?",
+      "none": "Kein Code",
+      "none_description": "Wählende melden sich nur mit ihren Angaben an.",
+      "sms_description": "Wird an die Telefonnummer in deiner Mitgliederliste gesendet.",
+      "sms_label": "SMS",
+      "voter_choice": "E-Mail oder SMS",
+      "voter_choice_description": "Jede wählende Person wählt selbst, wo sie ihn erhält."
     },
     "details": {
-      "description": "",
-      "heading": "",
-      "optional": ""
+      "description": "Wähle bis zu {{max}} Angaben aus deiner Mitgliederliste. Was Wählende eingeben, muss genau damit übereinstimmen.",
+      "heading": "1. Was geben Wählende ein?",
+      "optional": "Optional, wenn du einen einmaligen Code sendest: Wählende können sich dann nur mit dem Code anmelden."
     },
     "level": {
-      "basic": "",
-      "good": "",
-      "strong": "",
-      "unset": ""
+      "basic": "Einfach",
+      "good": "Gut",
+      "strong": "Stark",
+      "unset": "Nicht festgelegt"
     },
     "modal": {
-      "group_summary_one": "",
-      "group_summary_other": "",
-      "title": ""
+      "group_summary_one": "{{group}} · {{count}} Mitglied",
+      "group_summary_other": "{{group}} · {{count}} Mitglieder",
+      "title": "Wie melden sich Wählende an?"
     },
     "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
+    "pending": {
+      "description": "Wähle aus, welche Mitgliedsdaten Wählende zur Stimmabgabe eingeben müssen, z. B. ihre Ausweis- oder Mitgliedsnummer.",
+      "error_title": "Das brauchst du zum Veröffentlichen",
+      "title": "Vor dem Veröffentlichen erforderlich"
+    },
     "preview": {
-      "first_step": "",
-      "second_step": "",
-      "title": ""
+      "first_step": "Erster Schritt",
+      "second_step": "Zweiter Schritt",
+      "title": "Das sehen Wählende"
     },
     "protection": {
-      "basic_risk": "",
-      "good_code_risk": "",
-      "good_details_risk": "",
-      "label": "",
-      "strong": "",
-      "unset": ""
+      "basic_risk": "Jeder, der diese Angaben kennt, könnte anstelle eines Mitglieds abstimmen.",
+      "good_code_risk": "Jeder, der die E-Mail oder das Telefon eines Mitglieds öffnen kann, könnte an dessen Stelle abstimmen.",
+      "good_details_risk": "Um anstelle eines Mitglieds abzustimmen, wären mehrere private Angaben nötig.",
+      "label": "Schutz",
+      "strong": "Um anstelle eines Mitglieds abzustimmen, wären dessen Angaben sowie seine E-Mail oder sein Telefon nötig.",
+      "unset": "Wähle mindestens eine Angabe oder einen Code."
     },
     "sample": {
-      "birthDate": "",
-      "email": "",
-      "memberNumber": "",
-      "name": "",
-      "nationalId": "",
-      "phone": "",
-      "surname": ""
+      "birthDate": "14.03.1979",
+      "email": "laura@example.org",
+      "memberNumber": "00482",
+      "name": "Laura",
+      "nationalId": "12345678Z",
+      "phone": "+49 555 010 0100",
+      "surname": "Schmidt"
     },
     "save": {
-      "submit": "",
-      "unchecked": ""
+      "submit": "Speichern",
+      "unchecked": "Gespeichert, aber wir konnten deine Mitgliederliste nicht prüfen"
     },
-    "saved": "",
+    "saved": "Anmeldeeinstellungen gespeichert",
     "status": {
-      "both_contacts": "",
-      "checking": "",
-      "duplicated_members_one": "",
-      "duplicated_members_other": "",
-      "empty": "",
-      "fix": "",
-      "missing_members_one": "",
-      "missing_members_other": "",
-      "retry": "",
-      "unavailable": "",
-      "valid": "",
-      "valid_count_one": "",
-      "valid_count_other": ""
+      "both_contacts": "beides: {{contacts}}",
+      "checking": "Deine Mitgliederliste wird geprüft…",
+      "duplicated_members_one": "{{count}} Mitglied hat dieselben Angaben ({{fields}}) wie ein anderes und kann nicht unterschieden werden.",
+      "duplicated_members_other": "{{count}} Mitglieder haben dieselben Angaben ({{fields}}) und können nicht unterschieden werden.",
+      "empty": "Wähle mindestens eine Angabe oder einen Code.",
+      "fix": "Mitgliederliste korrigieren",
+      "missing_members_one": "Bei {{count}} Mitglied fehlt: {{fields}}.",
+      "missing_members_other": "Bei {{count}} Mitgliedern fehlt: {{fields}}.",
+      "retry": "Erneut prüfen",
+      "unavailable": "Wir konnten deine Mitgliederliste nicht prüfen. Du kannst trotzdem speichern.",
+      "valid": "Alle Mitglieder können sich anmelden.",
+      "valid_count_one": "Das einzige Mitglied dieser Gruppe kann sich anmelden.",
+      "valid_count_other": "Alle {{count}} Mitglieder können sich anmelden."
     },
     "summary": {
-      "code_choice": "",
-      "code_email": "",
-      "code_none": "",
-      "code_sms": "",
-      "details": "",
-      "member_list_mismatch": "",
-      "title": ""
+      "code_choice": "Einmaliger Code per E-Mail oder SMS",
+      "code_email": "Einmaliger Code per E-Mail",
+      "code_none": "Kein einmaliger Code",
+      "code_sms": "Einmaliger Code per SMS",
+      "details": "Wählende geben ein: {{fields}}",
+      "member_list_mismatch": "Diese Einstellungen passen nicht zu deiner Mitgliederliste. Bearbeite sie, um den Grund zu sehen.",
+      "title": "Anmeldung der Wählenden"
     }
   },
   "voting_link": {

@@ -1,5 +1,6 @@
 import { FormProvider, useForm } from 'react-hook-form'
 import { createTestI18n, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { Routes } from '~src/router/routes'
 import PricingCard from './Card'
 
 vi.mock('~components/Auth/Subscription', () => ({
@@ -94,7 +95,7 @@ describe('PricingCard', () => {
     expect(screen.getByText('Feature A')).toBeInTheDocument()
   })
 
-  it('renders the contact link translation without crashing', () => {
+  it('links "need more members" to the support page for Starter plans', () => {
     const Wrapper = () => {
       const form = useForm({ defaultValues: { billingPeriod: 'year' } })
 
@@ -124,11 +125,11 @@ describe('PricingCard', () => {
       )
     }
 
-    expect(() =>
-      render(<Wrapper />, {
-        i18nInstance: i18n,
-        wrapper: ({ children }) => <TestMemoryRouter>{children}</TestMemoryRouter>,
-      })
-    ).not.toThrow()
+    render(<Wrapper />, {
+      i18nInstance: i18n,
+      wrapper: ({ children }) => <TestMemoryRouter>{children}</TestMemoryRouter>,
+    })
+
+    expect(screen.getByRole('link', { name: 'Contact us' })).toHaveAttribute('href', Routes.dashboard.settings.support)
   })
 })

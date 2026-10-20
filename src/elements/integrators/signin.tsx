@@ -14,7 +14,7 @@ const IntegratorsSignin = () => {
   useEffect(() => {
     setTitle(t('integrators.signin_title', { defaultValue: 'Sign in' }))
     setSubtitle(t('integrators.signin_subtitle', { defaultValue: 'Access your integrator dashboard.' }))
-  }, [])
+  }, [setTitle, setSubtitle, t])
 
   return (
     <SignIn

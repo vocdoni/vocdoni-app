@@ -9,6 +9,7 @@ import {
   type CertificateChoice,
   type CertificateData,
   type CertificateField,
+  type CertificateQuestion,
   formatPdfFieldValue,
   shouldStackFieldValue,
 } from './certificate-data'
@@ -77,30 +78,98 @@ const SECTION_DEFAULT_PAGES: Record<string, string> = {
   [SECTION_IDS.s7]: '4',
 }
 
+// A question card moves whole to the next page, unless its results are long enough that it could
+// be taller than the space left: then it splits between result rows (each row stays whole).
+// Result length is estimated in text lines of the option column, so long option names count more.
+const MAX_UNSPLIT_QUESTION_LINES = 15
+// Rough characters per line of the option column (Helvetica 8.7pt at 64% / 40% of the card width).
+const OPTION_CHARS_PER_LINE = 65
+const OPTION_CHARS_PER_LINE_WEIGHTED = 40
+// Rough characters per line of the question title (Helvetica Bold 11pt across the card width).
+// Every title line past the first counts as one more result line, so a long title can split the card.
+const QUESTION_TITLE_CHARS_PER_LINE = 75
+// A split card keeps its title, summary, table header and this many result rows together, so it
+// never ends a page with a heading and no results.
+const QUESTION_HEAD_RESULT_ROWS = 3
+// Space (pt) a section heading needs below it, so it never ends a page on its own.
+const SECTION_HEADING_MIN_PRESENCE_AHEAD = 60
+// Section 6 lists one explorer link per question. It is kept whole up to this many (11 fit on a
+// page, the rest is margin for long labels); beyond that it must flow across pages.
+const MAX_UNSPLIT_VERIFICATION_ROWS = 8
+
+// Explicit line breaks each start a new line, so every paragraph of the text is counted on its own.
+const estimateTextLines = (text: string, charsPerLine: number) =>
+  text.split('\n').reduce((total, paragraph) => total + Math.max(1, Math.ceil(paragraph.length / charsPerLine)), 0)
+
+const canSplitQuestionCard = (question: CertificateQuestion) => {
+  const charsPerLine = question.isWeighted ? OPTION_CHARS_PER_LINE_WEIGHTED : OPTION_CHARS_PER_LINE
+  const extraTitleLines = estimateTextLines(question.question, QUESTION_TITLE_CHARS_PER_LINE) - 1
+  const lines = question.choices.reduce(
+    (total, choice) => total + estimateTextLines(choice.name, charsPerLine),
+    extraTitleLines
+  )
+  return lines > MAX_UNSPLIT_QUESTION_LINES
+}
+
 const SectionTitle = ({ children }: { children: string }) => <PdfText style={styles.sectionTitle}>{children}</PdfText>
 
+// Sections are kept whole by default. A section whose length grows with the number of questions
+// (results, verification links) must pass `wrap`: a non-wrapping block taller than a page is
+// squeezed onto a single page by react-pdf, which overlaps its contents.
+// The TOC anchor, the page probe and the title move together as one heading, so the TOC points
+// at the page where the title lands even when a wrapping section starts near a page bottom.
+// react-pdf only honours `minPresenceAhead` on a node that has earlier siblings in its parent (it
+// never breaks the first child), so a wrapping section lays its heading out next to its body
+// instead of inside it. The split styles add up to `styles.section`, keeping the same layout.
 const ReportSectionBlock = ({
+  title,
   children,
   sectionId,
   onCapturePage,
+  wrap = false,
 }: {
+  title: string
   children: ReactNode
   sectionId?: string
   onCapturePage?: (id: string, n: number) => void
-}) => (
-  <View wrap={false} style={styles.section} id={sectionId}>
-    {sectionId && onCapturePage && (
-      <PdfText
-        style={styles.captureProbe}
-        render={({ pageNumber }) => {
-          onCapturePage(sectionId, pageNumber)
-          return null
-        }}
-      />
-    )}
-    {children}
-  </View>
-)
+  wrap?: boolean
+}) => {
+  const heading = (
+    <View
+      wrap={false}
+      minPresenceAhead={SECTION_HEADING_MIN_PRESENCE_AHEAD}
+      id={sectionId}
+      style={wrap ? styles.sectionHeading : undefined}
+    >
+      {sectionId && onCapturePage && (
+        <PdfText
+          style={styles.captureProbe}
+          render={({ pageNumber }) => {
+            onCapturePage(sectionId, pageNumber)
+            return null
+          }}
+        />
+      )}
+      <SectionTitle>{title}</SectionTitle>
+    </View>
+  )
+
+  if (!wrap) {
+    return (
+      <View wrap={false} style={styles.section}>
+        {heading}
+        {children}
+      </View>
+    )
+  }
+
+  return (
+    <>
+      {heading}
+      <View style={styles.sectionBody}>{children}</View>
+    </>
+  )
+}
 
 const KeyValueList = ({ items }: { items: CertificateField[] }) => (
   <View style={styles.keyValueTable}>
@@ -109,7 +178,7 @@ const KeyValueList = ({ items }: { items: CertificateField[] }) => (
       const rowStyle = shouldStackFieldValue(item.value) || item.helperText ? styles.fieldRowStacked : styles.fieldRow
 
       return (
-        <View key={item.label} style={[rowStyle, isLast ? styles.lastFieldRow : {}]}>
+        <View key={item.label} wrap={false} style={[rowStyle, isLast ? styles.lastFieldRow : {}]}>
           <PdfText style={styles.fieldLabel}>{item.label}:</PdfText>
           {item.kind === 'link' ? (
             <View style={[styles.fieldValueStacked, styles.linkValueRow]}>
@@ -145,7 +214,7 @@ const BulletList = ({ items }: { items: string[] }) => (
 const NumberedList = ({ items }: { items: string[] }) => (
   <View>
     {items.map((item, index) => (
-      <View key={`${item}-${index}`} style={styles.bulletRow}>
+      <View key={`${item}-${index}`} wrap={false} style={styles.bulletRow}>
         <PdfText style={styles.bulletMarker}>{`${index + 1}.`}</PdfText>
         <PdfText style={styles.bulletText}>{item}</PdfText>
       </View>
@@ -303,6 +372,15 @@ const ReportPageNumber = () => (
   </View>
 )
 
+// Splits the results intro around the process name so the name can be set in italics. Slicing at
+// the first match, unlike `split`, keeps the text after a repeated match (a process titled "The").
+// Without a match the whole intro comes first and the name is appended.
+const splitAroundReference = (text: string, reference: string): [string, string] => {
+  const start = text.indexOf(reference)
+  if (start === -1) return [text, '']
+  return [text.slice(0, start), text.slice(start + reference.length)]
+}
+
 const RunningHeader = () => (
   <View fixed style={styles.runningHeader}>
     <View style={styles.pageBrand}>
@@ -313,6 +391,10 @@ const RunningHeader = () => (
 
 export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePage }: PdfDocumentProps) => {
   const reportSections = buildReportSections(t)
+  const [votingProcessIntroBefore, votingProcessIntroAfter] = splitAroundReference(
+    data.votingProcessIntro,
+    data.eventReference
+  )
   const formatVotingPowerShort = (power: string) =>
     power === data.notAvailableLabel
       ? data.notAvailableLabel
@@ -369,8 +451,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
         <PageFooterLine />
         <ReportPageNumber />
 
-        <ReportSectionBlock>
-          <SectionTitle>{t('process_pdf.document.index.title', { defaultValue: 'Index' })}</SectionTitle>
+        <ReportSectionBlock title={t('process_pdf.document.index.title', { defaultValue: 'Index' })}>
           <PdfText style={styles.indexIntro}>
             {t('process_pdf.document.index.intro', {
               defaultValue: 'This report is organized into the following sections:',
@@ -403,10 +484,11 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
         <ReportPageNumber />
         {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsA} onCapturePage={onCapturePage} />}
 
-        <ReportSectionBlock sectionId={SECTION_IDS.s1} onCapturePage={onCapturePage}>
-          <SectionTitle>
-            {t('process_pdf.document.sections.voting_system', { defaultValue: '1. Technical Framework' })}
-          </SectionTitle>
+        <ReportSectionBlock
+          sectionId={SECTION_IDS.s1}
+          onCapturePage={onCapturePage}
+          title={t('process_pdf.document.sections.voting_system', { defaultValue: '1. Technical Framework' })}
+        >
           <Paragraphs items={data.votingSystemParagraphs} />
           <BulletList items={data.votingSystemBullets} />
           <PdfText style={styles.paragraph}>
@@ -418,24 +500,29 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
           </PdfText>
         </ReportSectionBlock>
 
-        <ReportSectionBlock sectionId={SECTION_IDS.s2} onCapturePage={onCapturePage}>
-          <SectionTitle>
-            {t('process_pdf.document.sections.general_information', { defaultValue: '2. General Information' })}
-          </SectionTitle>
+        <ReportSectionBlock
+          sectionId={SECTION_IDS.s2}
+          onCapturePage={onCapturePage}
+          title={t('process_pdf.document.sections.general_information', { defaultValue: '2. General Information' })}
+        >
           <KeyValueList items={data.generalInformation} />
         </ReportSectionBlock>
 
-        <ReportSectionBlock sectionId={SECTION_IDS.s3} onCapturePage={onCapturePage}>
-          <SectionTitle>
-            {t('process_pdf.document.sections.authentication', { defaultValue: '3. Authentication' })}
-          </SectionTitle>
+        <ReportSectionBlock
+          sectionId={SECTION_IDS.s3}
+          onCapturePage={onCapturePage}
+          title={t('process_pdf.document.sections.authentication', { defaultValue: '3. Authentication' })}
+        >
           <KeyValueList items={data.authentication} />
         </ReportSectionBlock>
 
-        <ReportSectionBlock sectionId={SECTION_IDS.s4} onCapturePage={onCapturePage}>
-          <SectionTitle>
-            {t('process_pdf.document.sections.turnout_participation', { defaultValue: '4. Census and Participation' })}
-          </SectionTitle>
+        <ReportSectionBlock
+          sectionId={SECTION_IDS.s4}
+          onCapturePage={onCapturePage}
+          title={t('process_pdf.document.sections.turnout_participation', {
+            defaultValue: '4. Census and Participation',
+          })}
+        >
           <KeyValueList items={data.censusParticipation} />
           <PdfText style={styles.sectionLead}>{data.censusParticipationLead}</PdfText>
         </ReportSectionBlock>
@@ -452,14 +539,16 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
         <ReportPageNumber />
         {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsB} onCapturePage={onCapturePage} />}
 
-        <ReportSectionBlock sectionId={SECTION_IDS.s5} onCapturePage={onCapturePage}>
-          <SectionTitle>
-            {t('process_pdf.document.sections.voting_process', { defaultValue: '5. Questions and Results' })}
-          </SectionTitle>
+        <ReportSectionBlock
+          wrap
+          sectionId={SECTION_IDS.s5}
+          onCapturePage={onCapturePage}
+          title={t('process_pdf.document.sections.voting_process', { defaultValue: '5. Questions and Results' })}
+        >
           <PdfText style={styles.paragraph}>
-            {data.votingProcessIntro.split(data.eventReference)[0]}
+            {votingProcessIntroBefore}
             <PdfText style={styles.italicText}>{data.eventReference}</PdfText>
-            {data.votingProcessIntro.split(data.eventReference)[1]}
+            {votingProcessIntroAfter}
           </PdfText>
           {data.resultsHiddenText ? (
             <PdfText style={styles.smallText}>{data.resultsHiddenText}</PdfText>
@@ -511,74 +600,83 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
                     },
                   ]
 
+              const resultRows = question.choices.map((choice) => (
+                <ResultBarRow
+                  key={`${choice.name}-${choice.votes}-result`}
+                  choice={choice}
+                  isWeighted={question.isWeighted}
+                  notAvailableLabel={data.notAvailableLabel}
+                />
+              ))
+
               return (
-                <View key={`${question.question}-${index}`} wrap={false} style={styles.questionCard}>
-                  <PdfText style={styles.questionTitle}>{question.question}</PdfText>
-                  <View style={styles.questionSummaryRow}>
-                    {summaryFields.map((field) => (
-                      <View key={`${question.question}-${field.label}`} style={styles.questionSummaryPill}>
-                        <PdfText style={styles.questionSummaryLabel}>{field.label}</PdfText>
-                        <PdfText style={styles.questionSummaryValue}>{field.value}</PdfText>
-                      </View>
-                    ))}
-                  </View>
-                  <PdfText style={styles.questionResultsLabel}>
-                    {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
-                  </PdfText>
-                  {question.choices.length > 0 ? (
-                    <View style={styles.resultTable}>
-                      <View style={styles.resultHeaderRow}>
-                        <PdfText
-                          style={
-                            question.isWeighted
-                              ? [styles.resultHeaderOption, styles.resultHeaderOptionWeighted]
-                              : styles.resultHeaderOption
-                          }
-                        >
-                          {t('process_pdf.voting_process.card.option', { defaultValue: 'Option' })}
-                        </PdfText>
-                        <PdfText
-                          style={
-                            question.isWeighted
-                              ? [styles.resultHeaderVotes, styles.resultHeaderVotesWeighted]
-                              : styles.resultHeaderVotes
-                          }
-                        >
-                          {data.resultValueLabel}
-                        </PdfText>
-                        <PdfText
-                          style={
-                            question.isWeighted
-                              ? [styles.resultHeaderShare, styles.resultHeaderShareWeighted]
-                              : styles.resultHeaderShare
-                          }
-                        >
-                          {question.isWeighted
-                            ? t('process_pdf.voting_process.card.share_cast_power', {
-                                defaultValue: 'Share of cast power',
-                              })
-                            : t('process_pdf.voting_process.card.share_votes', { defaultValue: 'Share of votes' })}
-                        </PdfText>
-                        {question.isWeighted && (
-                          <PdfText style={styles.resultHeaderEligibleShare}>
-                            {t('process_pdf.voting_process.card.share_eligible_power', {
-                              defaultValue: 'Share of eligible power',
-                            })}
-                          </PdfText>
-                        )}
-                      </View>
-                      {question.choices.map((choice) => (
-                        <ResultBarRow
-                          key={`${choice.name}-${choice.votes}-result`}
-                          choice={choice}
-                          isWeighted={question.isWeighted}
-                          notAvailableLabel={data.notAvailableLabel}
-                        />
+                <View
+                  key={`${question.question}-${index}`}
+                  wrap={canSplitQuestionCard(question)}
+                  style={styles.questionCard}
+                >
+                  <View wrap={false}>
+                    <PdfText style={styles.questionTitle}>{question.question}</PdfText>
+                    <View style={styles.questionSummaryRow}>
+                      {summaryFields.map((field) => (
+                        <View key={`${question.question}-${field.label}`} style={styles.questionSummaryPill}>
+                          <PdfText style={styles.questionSummaryLabel}>{field.label}</PdfText>
+                          <PdfText style={styles.questionSummaryValue}>{field.value}</PdfText>
+                        </View>
                       ))}
                     </View>
-                  ) : (
-                    <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
-                  )}
+                    <PdfText style={styles.questionResultsLabel}>
+                      {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
+                    </PdfText>
+                    {question.choices.length > 0 ? (
+                      <View style={styles.resultTable}>
+                        <View style={styles.resultHeaderRow}>
+                          <PdfText
+                            style={
+                              question.isWeighted
+                                ? [styles.resultHeaderOption, styles.resultHeaderOptionWeighted]
+                                : styles.resultHeaderOption
+                            }
+                          >
+                            {t('process_pdf.voting_process.card.option', { defaultValue: 'Option' })}
+                          </PdfText>
+                          <PdfText
+                            style={
+                              question.isWeighted
+                                ? [styles.resultHeaderVotes, styles.resultHeaderVotesWeighted]
+                                : styles.resultHeaderVotes
+                            }
+                          >
+                            {data.resultValueLabel}
+                          </PdfText>
+                          <PdfText
+                            style={
+                              question.isWeighted
+                                ? [styles.resultHeaderShare, styles.resultHeaderShareWeighted]
+                                : styles.resultHeaderShare
+                            }
+                          >
+                            {question.isWeighted
+                              ? t('process_pdf.voting_process.card.share_cast_power', {
+                                  defaultValue: 'Share of cast power',
+                                })
+                              : t('process_pdf.voting_process.card.share_votes', { defaultValue: 'Share of votes' })}
+                          </PdfText>
+                          {question.isWeighted && (
+                            <PdfText style={styles.resultHeaderEligibleShare}>
+                              {t('process_pdf.voting_process.card.share_eligible_power', {
+                                defaultValue: 'Share of eligible power',
+                              })}
+                            </PdfText>
+                          )}
+                        </View>
+                        {resultRows.slice(0, QUESTION_HEAD_RESULT_ROWS)}
+                      </View>
+                    ) : (
+                      <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
+                    )}
+                  </View>
+                  {resultRows.slice(QUESTION_HEAD_RESULT_ROWS)}
                 </View>
               )
             })
@@ -587,10 +685,12 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
           )}
         </ReportSectionBlock>
 
-        <ReportSectionBlock sectionId={SECTION_IDS.s6} onCapturePage={onCapturePage}>
-          <SectionTitle>
-            {t('process_pdf.document.sections.verification', { defaultValue: '6. Verification' })}
-          </SectionTitle>
+        <ReportSectionBlock
+          wrap={data.verification.length > MAX_UNSPLIT_VERIFICATION_ROWS}
+          sectionId={SECTION_IDS.s6}
+          onCapturePage={onCapturePage}
+          title={t('process_pdf.document.sections.verification', { defaultValue: '6. Verification' })}
+        >
           <PdfText style={styles.paragraph}>
             {t('process_pdf.verification.paragraph', {
               defaultValue:
@@ -598,7 +698,10 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
             })}
           </PdfText>
           <KeyValueList items={data.verification} />
-          <PdfText style={[styles.paragraph, styles.afterBoxText]}>
+          <PdfText
+            minPresenceAhead={SECTION_HEADING_MIN_PRESENCE_AHEAD}
+            style={[styles.paragraph, styles.afterBoxText]}
+          >
             {t('process_pdf.verification.procedure_title', { defaultValue: 'Verification Procedure' })}
           </PdfText>
           <NumberedList items={data.verificationProcedures} />
@@ -615,8 +718,11 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
         <PageFooterLine />
         <ReportPageNumber />
         {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsC} onCapturePage={onCapturePage} />}
-        <ReportSectionBlock sectionId={SECTION_IDS.s7} onCapturePage={onCapturePage}>
-          <SectionTitle>{t('process_pdf.document.sections.issuer', { defaultValue: '7. Issuer' })}</SectionTitle>
+        <ReportSectionBlock
+          sectionId={SECTION_IDS.s7}
+          onCapturePage={onCapturePage}
+          title={t('process_pdf.document.sections.issuer', { defaultValue: '7. Issuer' })}
+        >
           <KeyValueList items={data.issuer} />
           <PdfText style={[styles.paragraph, styles.afterBoxText]}>
             {t('process_pdf.issuer.paragraph', {

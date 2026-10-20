@@ -47,7 +47,7 @@
   "annual": "Urtekoa<1>% 40ko aurrezkia</1>",
   "apply": "Aplikatu",
   "aside": {
-    "anonymous_receipt_gone": "",
+    "anonymous_receipt_gone": "Zure egiaztagiria bozkatu zenuenean erakutsi zen, eta ezin da berreskuratu.",
     "has_already_voted": "Zure botoa behar bezala eman da",
     "is_not_in_census": "Ez zaude erroldan",
     "votes_one": "<span>1</span> <text>boto-emaile</text>",
@@ -193,7 +193,6 @@
   },
   "csp": {
     "auth_failed": "Autentifikazioak huts egin du",
-    "auth_success": "Autentifikazioa zuzena",
     "authenticate": "Identifikatu",
     "code_info": "Hautatutako bidetik kode bakar bat jasoko duzu zure nortasuna egiaztatzeko eta autentifikazioa burutzeko.",
     "code_sent": "Egiaztapen-kodea bidali da",
@@ -343,6 +342,9 @@
   "ended_processes": "Amaituak",
   "enter_promo_code": "Sartu sustapen-kodea",
   "error": {
+    "crash_description": "Kargatu berriro orria edo itzuli Dashboard-era.",
+    "crash_title": "Zerbait gaizki joan da",
+    "go_to_dashboard": "Joan Dashboard-era",
     "loading_languages": "Errorea hizkuntzak kargatzean",
     "loading_page": "Errorea orrialdea kargatzean",
     "loading_roles": "Errorea rolak kargatzean",
@@ -352,12 +354,13 @@
     "missing_header": "Kalkulu-orriak ez du goibururik.",
     "not_found": "Ez da orria aurkitu",
     "not_found_description": "Bilatzen ari zaren orria ez dago edo lekuz aldatu da.",
+    "reload": "Kargatu berriro",
     "return_to_home": "Itzuli hasierara",
     "title": "Errorea"
   },
   "error_removing_code": "Errorea kodea kentzean",
   "features": {
-    "anonymous": "Boto sekretua",
+    "anonymous": "Bozketa anonimoa",
     "approval": "Onarpen-bozketa",
     "audit": "Auditoria",
     "audit_blockchain": "% 100 auditagarria blockchainean",
@@ -448,7 +451,6 @@
       }
     },
     "error": {
-      "census_config_required": "Konfiguratu erroldaren autentifikazio-ezarpenak.",
       "email_invalid": "Posta elektronikoaren helbidea ez da baliozkoa",
       "field_is_required": "Eremu hau bete beharrekoa da",
       "generic": "Errorea eragiketa burutzean",
@@ -945,13 +947,14 @@
     "form": {
       "cancel": "Utzi",
       "phone_warning": "Telefono-zenbakia ezkutatuta. Hemen egindako aldaketa gainidatziko du.",
+      "phone_will_be_removed": "Gordetako telefono-zenbakia kendu egingo da gordetzean.",
       "save": "Gorde aldaketak"
     },
     "groups": {
       "title": "Taldeak"
     },
     "import_file": {
-      "subtitle": "Inportatu zure CSV, XLS edo XLSX fitxategia kideen datuekin. Ziurtatu zutabeen goiburuak txantiloiarekin bat datozela esleipen zuzena egiteko.",
+      "subtitle": "Inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideen datuekin. Ziurtatu zutabeen goiburuak txantiloiarekin bat datozela esleipen zuzena egiteko.",
       "title": "Inportatu fitxategia"
     },
     "importer": {
@@ -959,6 +962,10 @@
       "cancel": "Utzi",
       "data_preview": "Datuen aurrebista",
       "download_template_btn": "Deskargatu txantiloia",
+      "error": {
+        "invalid_file_type": "Fitxategi mota hau ez da onartzen. Igo .csv, .xlsx, .xls edo .ods fitxategi bat.",
+        "read_failed": "Ezin izan dugu fitxategi hau irakurri. Egiaztatu baliozko CSV edo kalkulu-orri bat dela eta saiatu berriro."
+      },
       "field_mapper": {
         "empty": "-- Ez inportatu --",
         "placeholder": "Hautatu zutabea"
@@ -971,7 +978,7 @@
       "reset": "Berrezarri inportazioa",
       "select_at_least_one_column": "Hautatu gutxienez zutabe bat txantiloia deskargatzeko.",
       "submit": "Inportatu datuak",
-      "subtitle": "Deskargatu txantiloi bat edo inportatu zure CSV, XLS edo XLSX fitxategia kideak gehitzeko.",
+      "subtitle": "Deskargatu txantiloi bat edo inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideak gehitzeko.",
       "title": "Inportatu kideak",
       "warning": {
         "subtitle": "Ez da esleitzen ez diren zutabeen informazioa inportatuko.",
@@ -1053,10 +1060,10 @@
       "select_process": "Hautatu prozesua",
       "selected_one": "Hautatuta: <strong>Kide bat</strong>",
       "selected_other": "Hautatuta: <strong>{{count}} kide</strong>",
-      "showing_members_one": "",
-      "showing_members_other": "",
-      "showing_results_one": "",
-      "showing_results_other": "",
+      "showing_members_one": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} kide",
+      "showing_members_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} kide",
+      "showing_results_one": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
+      "showing_results_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
       "toggle_column": "Txandakatu {{column}} zutabea"
     }
   },
@@ -1064,7 +1071,6 @@
     "selector_label": "Kide-kopurua"
   },
   "menu": {
-    "burger_aria_label": "erabiltzaile-menua",
     "collapse": "Tolestu menua",
     "create": "Sortu prozesua",
     "dashboard": "Panela",
@@ -1134,9 +1140,9 @@
     "title": {
       "read_more": "Zabaldu izenburua"
     },
-    "unavailable_description": "",
-    "unavailable_retry": "",
-    "unavailable_title": ""
+    "unavailable_description": "Arazo bat gertatu da zure erakundeak irakurtzean. Normalean aldi baterakoa izaten da; saiatu berriro.",
+    "unavailable_retry": "Saiatu berriro",
+    "unavailable_title": "Ezin izan dira zure erakundeak kargatu"
   },
   "organization_settings": {
     "phone_support": {
@@ -1164,9 +1170,9 @@
   "organizations": "Erakundeak ({{ numOrgs }})",
   "other_details": "Bestelako xehetasunak",
   "pagination": {
-    "next": "",
+    "next": "Hurrengo orrialdea",
     "page_out_of": "{{page}}. orrialdea, guztira {{total}}",
-    "previous": "",
+    "previous": "Aurreko orrialdea",
     "rows_per_page": "Errenkadak orrialdeko"
   },
   "password": "Pasahitza",
@@ -1373,7 +1379,7 @@
     "success_modal": {
       "btn": "Itxi",
       "text": "<p>Zure botoa eman da eta modu seguruan gorde da Vocdoniren teknologiarekin. <verify>Hemen egiazta dezakezu</verify>.</p>",
-      "text_no_id": "",
+      "text_no_id": "<p>Zure botoa behar bezala eman da.</p>",
       "title": "Botoa bidalita!"
     },
     "summary": {
@@ -1432,17 +1438,38 @@
   },
   "process_create": {
     "anonymity": {
-      "title": "",
-      "tooltip": ""
+      "title": "Bozketa anonimoa",
+      "tooltip": "Edozein kasutan, zure erakundeak ezin du ikusi norbaitek zer bozkatu duen. Boto-emaileen anonimotasunak geruza kriptografiko bat gehitzen du, eta ezinezko bihurtzen du boto bat pertsona batekin lotzea."
     },
     "auto_start": "Hasi berehala",
     "basic_configuration": "Oinarrizko konfigurazioa",
     "census": {
+      "auth_missing": {
+        "action": "Konfiguratu",
+        "description": "Aukeratu hautesleak nola identifikatuko diren, eta argitaratu berriro.",
+        "title": "Hautesleen autentifikazioa ez dago konfiguratuta"
+      },
+      "auth_reset": {
+        "description": "Aurreko taldearekin egiaztatu zen. Zure aukerak gordeta daude: berretsi talde honetarako.",
+        "title": "Hautesleen autentifikazioa berrezarri da"
+      },
       "group": {
         "no_groups": "Bozketa bat hasteko, lehenik zure kide-oinarritik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu. <1>Sortu hemen</1>."
       },
+      "group_missing": {
+        "description": "Hautatu kide-talde bat, konfiguratu hautesleen autentifikazioa eta argitaratu berriro.",
+        "title": "Aukeratu nork bozka dezakeen"
+      },
       "memberbase": {
         "label": "Hautatu kide-talde bat errolda sortzeko"
+      },
+      "status": {
+        "ready": "Prest",
+        "steps_left_one": "{{ count }} urrats falta da",
+        "steps_left_other": "{{ count }} urrats falta dira"
+      },
+      "voter_auth": {
+        "label": "Zehaztu hautesleek nola frogatuko duten nor diren"
       }
     },
     "census_creation": "Erroldaren sorrera",
@@ -1480,7 +1507,7 @@
     "weight": {
       "equal": "Pertsona bat, boto bat",
       "title": "Boto-pisua",
-      "tooltip": "",
+      "tooltip": "Aukeratu boto-emaile hautagarri guztiek pisu bera duten ala botoak kide-oinarriko «Boto-pisua (Pisua)» eremuaren arabera haztatzen diren.",
       "weighted": "Boto-pisuan oinarritutako haztatzea"
     },
     "youtube": {
@@ -1607,7 +1634,7 @@
     "voting_process": {
       "card": {
         "abstain": "Abstenitu",
-        "item": "{{index}}. galdera",
+        "item": "Boto guztira",
         "option": "Aukera",
         "outcome_label": "Bozketa-metodoa",
         "participation_short": "{{votes}} boto",
@@ -1916,6 +1943,10 @@
     "csv_row_limit_exceeded_one": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
     "csv_row_limit_exceeded_other": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
     "drop_here": "Jaregin hemen",
+    "error": {
+      "invalid_image_type": "Fitxategi mota hau ez da onartzen. Igo .png edo .jpg irudi bat.",
+      "too_many_files": "Igo fitxategi bakarra aldi bakoitzean."
+    },
     "image_upload_failed": "Errorea irudia kargatzean",
     "image_upload_success": "Irudia kargatu da",
     "upload_failed": "Errorea kargatzean"
@@ -1957,97 +1988,102 @@
   "view_plans_and_pricing": "Ikusi planak eta prezioak",
   "vocdoni_logo": "Vocdoniren logotipoa",
   "vote": {
-    "anonymous_receipt": "",
+    "anonymous_receipt": "Boto anonimoa: gorde egiaztagiri hau orain; plataformak ezin izango dizu berriro erakutsi.",
     "voted_title": "Zure botoa behar bezala eman da!"
   },
   "vote_information": "Botoaren informazioa",
   "vote_overwrite": "Botoa berridaztea",
-  "voter_anonymity": "",
+  "voter_anonymity": "Boto-emaileen anonimotasuna",
   "voter_auth": {
-    "anonymity": "",
+    "anonymity": "Botoaren anonimotasuna: {{ mode }}",
     "button": {
       "configure": "Konfiguratu hautesleen autentifikazioa",
       "edit": "Editatu hautesleen autentifikazioa"
     },
     "code": {
-      "description": "",
-      "email_description": "",
-      "email_label": "",
-      "heading": "",
-      "none": "",
-      "none_description": "",
-      "sms_description": "",
-      "sms_label": "",
-      "voter_choice": "",
-      "voter_choice_description": ""
+      "description": "Botoa eman aurretik, 6 digituko kode bat bidaltzen diegu botogilearen helbide elektronikora edo telefonora. Horrek frogatzen du berea dela, eta, beraz, inork ezin du beste norbaiten datuekin bozkatu.",
+      "email_description": "Zure kide-zerrendako helbide elektronikora bidaltzen da.",
+      "email_label": "Helbide elektronikoa",
+      "heading": "2. Behin erabiltzeko kode bat ere bidali?",
+      "none": "Koderik ez",
+      "none_description": "Botogileek beren datuekin soilik hasten dute saioa.",
+      "sms_description": "Zure kide-zerrendako telefono-zenbakira bidaltzen da.",
+      "sms_label": "SMSa",
+      "voter_choice": "Helbide elektronikoa edo SMSa",
+      "voter_choice_description": "Botogile bakoitzak aukeratzen du non jaso."
     },
     "details": {
-      "description": "",
-      "heading": "",
-      "optional": ""
+      "description": "Hautatu gehienez {{max}} datu zure kide-zerrendatik. Botogileek idazten dutenak zehatz-mehatz bat etorri behar du horrekin.",
+      "heading": "1. Zer idatziko dute botogileek?",
+      "optional": "Aukerakoa behin erabiltzeko kode bat bidaltzen baduzu: orduan botogileek kodearekin bakarrik hasi dezakete saioa."
     },
     "level": {
-      "basic": "",
-      "good": "",
-      "strong": "",
-      "unset": ""
+      "basic": "Oinarrizkoa",
+      "good": "Ona",
+      "strong": "Sendoa",
+      "unset": "Ezarri gabe"
     },
     "modal": {
-      "group_summary_one": "",
-      "group_summary_other": "",
-      "title": ""
+      "group_summary_one": "{{group}} · {{count}} kide",
+      "group_summary_other": "{{group}} · {{count}} kide",
+      "title": "Nola hasiko dute saioa botogileek?"
     },
     "no_group_description": "Hautatu lehenik talde bat autentifikazioa konfiguratzeko.",
+    "pending": {
+      "description": "Aukeratu hautesleek bozkatzeko zein kide-datu sartu behar dituzten, adibidez NANa edo kide-zenbakia.",
+      "error_title": "Hau behar duzu argitaratzeko",
+      "title": "Argitaratu aurretik beharrezkoa"
+    },
     "preview": {
-      "first_step": "",
-      "second_step": "",
-      "title": ""
+      "first_step": "Lehen urratsa",
+      "second_step": "Bigarren urratsa",
+      "title": "Botogileek ikusiko dutena"
     },
     "protection": {
-      "basic_risk": "",
-      "good_code_risk": "",
-      "good_details_risk": "",
-      "label": "",
-      "strong": "",
-      "unset": ""
+      "basic_risk": "Datu hauek dakien edonork bozka lezake kide baten ordez.",
+      "good_code_risk": "Kide baten helbide elektronikoa edo telefonoa ireki dezakeen edonork bozka lezake haren ordez.",
+      "good_details_risk": "Norbaitek hainbat datu pribatu beharko lituzke kide baten ordez bozkatzeko.",
+      "label": "Babesa",
+      "strong": "Norbaitek kide baten datuak eta haren helbide elektronikoa edo telefonoa beharko lituzke haren ordez bozkatzeko.",
+      "unset": "Aukeratu datu bat gutxienez edo kode bat."
     },
     "sample": {
-      "birthDate": "",
-      "email": "",
-      "memberNumber": "",
-      "name": "",
-      "nationalId": "",
-      "phone": "",
-      "surname": ""
+      "birthDate": "1979/03/14",
+      "email": "laura@example.org",
+      "memberNumber": "00482",
+      "name": "Laura",
+      "nationalId": "12345678Z",
+      "phone": "+1 555 010 0100",
+      "surname": "Smith"
     },
     "save": {
-      "submit": "",
-      "unchecked": ""
+      "submit": "Gorde",
+      "unchecked": "Gorde da, baina ezin izan dugu zure kide-zerrenda egiaztatu"
     },
-    "saved": "",
+    "saved": "Saio-hasierako ezarpenak gorde dira",
     "status": {
-      "both_contacts": "",
-      "checking": "",
-      "duplicated_members_one": "",
-      "duplicated_members_other": "",
-      "empty": "",
-      "fix": "",
-      "missing_members_one": "",
-      "missing_members_other": "",
-      "retry": "",
-      "unavailable": "",
-      "valid": "",
-      "valid_count_one": "",
-      "valid_count_other": ""
+      "both_contacts": "{{contacts}} biak",
+      "checking": "Zure kide-zerrenda egiaztatzen…",
+      "duplicated_members_one": "Kide batek {{fields}} berbera du beste batekin, eta ezin dira bereizi.",
+      "duplicated_members_other": "{{count}} kidek {{fields}} berbera dute, eta ezin dira bereizi.",
+      "empty": "Aukeratu datu bat gutxienez edo kode bat.",
+      "fix": "Konpondu zure kide-zerrenda",
+      "missing_members_one": "Kide bati {{fields}} falta zaio.",
+      "missing_members_other": "{{count}} kideri {{fields}} falta zaie.",
+      "retry": "Egiaztatu berriro",
+      "unavailable": "Ezin izan dugu zure kide-zerrenda egiaztatu. Hala ere, gorde dezakezu.",
+      "valid": "Kide guztiek hasi dezakete saioa.",
+      "valid_count_one": "Talde honetako kide bakarrak hasi dezake saioa.",
+      "valid_count_other": "{{count}} kide guztiek hasi dezakete saioa."
     },
     "summary": {
-      "code_choice": "",
-      "code_email": "",
-      "code_none": "",
-      "code_sms": "",
-      "details": "",
-      "member_list_mismatch": "",
-      "title": ""
+      "code_choice": "Behin erabiltzeko kodea helbide elektronikoz edo SMSz",
+      "code_email": "Behin erabiltzeko kodea helbide elektronikoz",
+      "code_none": "Behin erabiltzeko koderik ez",
+      "code_sms": "Behin erabiltzeko kodea SMSz",
+      "details": "Botogileek idazten dutena: {{fields}}",
+      "member_list_mismatch": "Ezarpen hauek ez datoz bat zure kide-zerrendarekin. Editatu zergatik ikusteko.",
+      "title": "Botogilearen saio-hasiera"
     }
   },
   "voting_link": {

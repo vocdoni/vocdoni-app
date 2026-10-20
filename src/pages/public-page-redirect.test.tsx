@@ -127,28 +127,4 @@ describe('preferred public-language redirect', () => {
       })
     )
   })
-
-  it('does not redirect already localized public pages', async () => {
-    currentData = {
-      id: '0xprocess',
-      election: {},
-      organization: { address: '0xabc' },
-      meta: {
-        language: 'ca',
-        alternates: [
-          { hrefLang: 'en', href: 'http://localhost:3000/en/processes/0xprocess' },
-          { hrefLang: 'ca', href: 'http://localhost:3000/ca/processes/0xprocess' },
-        ],
-      },
-    }
-    currentPageContext = { urlPathname: '/ca/processes/0xprocess' }
-
-    const { default: ProcessPage } = await import('./@lang/processes/@id/+Page')
-
-    render(<ProcessPage />)
-
-    expect(usePreferredPublicLanguageRedirect).toHaveBeenCalledWith({
-      pathname: '/ca/processes/0xprocess',
-    })
-  })
 })

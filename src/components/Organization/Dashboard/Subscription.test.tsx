@@ -1,4 +1,5 @@
-import { createTestI18n, render, TestMemoryRouter } from '~src/test-utils'
+import { Routes } from '~src/router/routes'
+import { createTestI18n, render, screen, TestMemoryRouter } from '~src/test-utils'
 import SubscriptionPage from './Subscription'
 
 vi.mock('~components/Auth/Subscription', () => ({
@@ -55,12 +56,16 @@ beforeAll(async () => {
 })
 
 describe('SubscriptionPage', () => {
-  it('renders translated help link without crashing', () => {
-    expect(() =>
-      render(<SubscriptionPage />, {
-        i18nInstance: i18n,
-        wrapper: ({ children }) => <TestMemoryRouter>{children}</TestMemoryRouter>,
-      })
-    ).not.toThrow()
+  it('links the translated help text to the support page', () => {
+    render(<SubscriptionPage />, {
+      i18nInstance: i18n,
+      wrapper: ({ children }) => <TestMemoryRouter>{children}</TestMemoryRouter>,
+    })
+
+    expect(screen.getByText('Need help choosing?')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Contact our sales team' })).toHaveAttribute(
+      'href',
+      Routes.dashboard.settings.support
+    )
   })
 })

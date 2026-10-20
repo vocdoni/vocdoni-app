@@ -11,7 +11,11 @@ type CensusSpecSource = Pick<Process, 'groupId' | 'weightedVote' | 'anonymousVot
  */
 export const buildCensusSpec = (form: CensusSpecSource): CensusSpec => {
   const spec: CensusSpec = {
-    groupId: form.groupId || undefined,
+    // The backend builds the group's voter list on every save, keyed on the
+    // voters' credentials. Without them every voter collides and the save fails,
+    // so a draft only commits to its group once authentication is set up.
+    // Publishing requires it anyway, so this only ever affects drafts.
+    groupId: (form.census && form.groupId) || undefined,
     weighted: form.weightedVote || undefined,
     // Blind-CSP census: omitted rather than sent as `false`, matching how the
     // other optional flags are built here.

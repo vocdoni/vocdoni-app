@@ -66,7 +66,7 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
     setSubtitle(
       t('invite.create_account_subtitle', { defaultValue: 'You need an account first, in order to accept your invite' })
     )
-  }, [acceptInvitationMutation.isError])
+  }, [acceptInvitationMutation.isError, setTitle, setSubtitle, t])
 
   if (!code || !address || !email) {
     return <Error error={<Trans i18nKey='invite.invalid_link'>Invalid invite link received</Trans>} />

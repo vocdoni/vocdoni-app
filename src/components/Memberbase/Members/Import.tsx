@@ -547,7 +547,7 @@ export const ImportMembers = () => {
             <Drawer.Title>{t('memberbase.importer.title', { defaultValue: 'Import Members' })}</Drawer.Title>
             <Text color='texts.subtle' fontSize='sm'>
               {t('memberbase.importer.subtitle', {
-                defaultValue: 'Download a template or import your own CSV, XLS, or XLSX file to add members.',
+                defaultValue: 'Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.',
               })}
             </Text>
           </Drawer.Header>

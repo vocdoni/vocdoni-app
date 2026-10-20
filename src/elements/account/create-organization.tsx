@@ -13,7 +13,7 @@ const CreateOrganization = () => {
   useEffect(() => {
     setTitle(t('create_org.title', { defaultValue: 'Tell us about your organization' }))
     setSubtitle(t('create_org.subtitle', { defaultValue: 'This information helps us customize your experience' }))
-  }, [])
+  }, [setTitle, setSubtitle, t])
 
   return <OrganizationCreate canSkip onSuccessRoute={Routes.dashboard.base} minified />
 }

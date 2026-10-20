@@ -1,6 +1,7 @@
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
-import { SelectorTypes } from './common'
+import { defaultProcessValues, SelectorTypes } from './common'
 import { votingProcessToCreateRequest, votingProcessToForm } from './draft-mapping'
+import { buildCensusSpec } from '.'
 
 const BALLOT_PROTOCOL = {
   costExponent: 1,
@@ -258,12 +259,23 @@ describe('votingProcessToForm', () => {
       expect(votingProcessToForm(process()).census).toBeNull()
     })
 
-    // A code-only census is a valid configuration: losing it on rehydration let
-    // the next autosave strip the one-time code from the stored draft.
-    it('keeps a census that only sends a one-time code', () => {
-      const form = votingProcessToForm(process({ census: { twoFaFields: ['email'] } }))
+    // The auth dialog confirms a two-factor-only setup; reloading it as unset
+    // blocked publishing a draft that was ready.
+    it.each([
+      [['email'], 'email'],
+      [['phone'], 'sms'],
+      [['email', 'phone'], 'voter_choice'],
+    ] as const)('restores a two-factor-only census from %s', (twoFaFields, method) => {
+      const form = votingProcessToForm(process({ census: { authFields: [], twoFaFields: [...twoFaFields] } as any }))
 
-      expect(form.census).toEqual({ credentials: [], use2FA: true, use2FAMethod: 'email' })
+      expect(form.census).toEqual({ credentials: [], use2FA: true, use2FAMethod: method })
+    })
+
+    it('round-trips a two-factor-only census through the census spec', () => {
+      const census = { credentials: [], use2FA: true, use2FAMethod: 'sms' as const }
+      const spec = buildCensusSpec({ ...defaultProcessValues, groupId: 'group-1', census })
+
+      expect(votingProcessToForm(process({ census: spec as any })).census).toEqual(census)
     })
 
     it('restores anonymous voting', () => {
@@ -345,5 +357,68 @@ describe('votingProcessToCreateRequest', () => {
 
     expect(request.questions[0].type).toBeUndefined()
     expect(request.questions[0].ballotProtocol).toEqual(BALLOT_PROTOCOL)
+  })
+
+  it('copies the process texts and every question with its choices', () => {
+    const request = votingProcessToCreateRequest(
+      process({
+        questions: [
+          question([{ title: 'A' }, { title: 'B' }], { title: { default: 'First' } }),
+          question([{ title: 'C' }], { title: { default: 'Second' } }),
+        ],
+      }),
+      '0xorg'
+    )
+
+    expect(request).toMatchObject({
+      title: { default: 'Process title' },
+      description: { default: 'Process description' },
+      questions: [
+        {
+          title: { default: 'First' },
+          description: { default: 'Question description' },
+          choices: [
+            { title: { default: 'A' }, value: 0 },
+            { title: { default: 'B' }, value: 1 },
+          ],
+        },
+        { title: { default: 'Second' }, choices: [{ title: { default: 'C' }, value: 0 }] },
+      ],
+    })
+    expect(request.questions).toHaveLength(2)
+  })
+
+  it('carries the per-choice extended info through the question metadata', () => {
+    const request = votingProcessToCreateRequest(
+      process({
+        questions: [
+          question([
+            { title: 'Option 1', description: 'Why option 1', image: 'https://example.com/1.png' },
+            { title: 'Option 2' },
+          ]),
+        ],
+      }),
+      '0xorg'
+    )
+
+    expect(request.questions[0].metadata).toEqual({
+      choices: [
+        { value: 0, description: 'Why option 1', image: 'https://example.com/1.png' },
+        { value: 1, description: undefined, image: undefined },
+      ],
+    })
+  })
+
+  it('keeps the census weighting, credentials and two-factor fields, and question secrecy', () => {
+    const request = votingProcessToCreateRequest(
+      process({
+        census: { weighted: true, authFields: ['memberNumber'], twoFaFields: ['email'] },
+        questions: [question([{ title: 'A' }], { secretUntilTheEnd: true })],
+      }),
+      '0xorg'
+    )
+
+    expect(request.census).toMatchObject({ weighted: true, authFields: ['memberNumber'], twoFaFields: ['email'] })
+    expect(request.questions[0].secretUntilTheEnd).toBe(true)
   })
 })

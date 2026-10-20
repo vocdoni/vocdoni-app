@@ -134,6 +134,10 @@ function sendEntry(req, res, entry) {
 // Origin helper
 // ---------------------------------------------------------------------------
 
+// Same host shape publicPageData.ts accepts; anything else is never echoed into URLs.
+const FORWARDED_HOST_PATTERN = /^[a-zA-Z0-9.-]+(:\d+)?$/
+const FORWARDED_PROTOS = ['http', 'https']
+
 /**
  * Derives the effective origin from the request, mirroring resolvePublicOrigin
  * in src/pages/shared/publicPageData.ts.
@@ -156,10 +160,13 @@ function getEffectiveOrigin(req) {
   const rawHost = req.headers['x-forwarded-host'] || req.headers['host']
   if (!rawHost) return ''
   const host = String(rawHost).split(',')[0].trim()
-  const rawProto = req.headers['x-forwarded-proto']
-  const proto = rawProto
-    ? String(rawProto).split(',')[0].trim()
-    : host.startsWith('localhost') ? 'http' : 'https'
+  if (!FORWARDED_HOST_PATTERN.test(host)) return ''
+  const forwardedProto = String(req.headers['x-forwarded-proto'] || '')
+    .split(',')[0]
+    .trim()
+    .toLowerCase()
+  const defaultProto = host.startsWith('localhost') ? 'http' : 'https'
+  const proto = FORWARDED_PROTOS.includes(forwardedProto) ? forwardedProto : defaultProto
   return `${proto}://${host}`
 }
 

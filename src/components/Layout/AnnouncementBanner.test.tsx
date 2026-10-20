@@ -11,14 +11,6 @@ describe('AnnouncementBanner', () => {
   // server-rendered whenever HOME_PROCESS_ID turns it into a process page, so
   // the server pass must produce nothing instead of a 500.
   it('renders nothing (and does not throw) on the server', () => {
-    expect(() =>
-      renderToString(
-        <AppEnvProvider value={buildAppEnv({ ANNOUNCEMENT: announcement })}>
-          <AnnouncementBanner />
-        </AppEnvProvider>
-      )
-    ).not.toThrow()
-
     expect(
       renderToString(
         <AppEnvProvider value={buildAppEnv({ ANNOUNCEMENT: announcement })}>

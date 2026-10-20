@@ -1,11 +1,31 @@
 import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { Routes } from '~src/router/routes'
+import { AnalyticsEvents } from '~utils/analytics'
 import { render, waitFor } from '~src/test-utils'
 import { setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 import GoogleAuth from './GoogleAuth'
 
 const disconnectMock = vi.fn()
 const navigateMock = vi.fn()
+const trackEventMock = vi.fn()
+const rememberSignupMethodMock = vi.fn()
+let accountState: { isConnected: boolean; connector?: { id: string } } = {
+  isConnected: true,
+  connector: { id: 'google' },
+}
+let connectState: { isError: boolean; error: Error | null } = { isError: false, error: null }
+
+vi.mock('~components/AnalyticsProvider', () => ({
+  useAnalytics: () => ({ trackEvent: trackEventMock }),
+}))
+
+vi.mock('~utils/analytics', async () => {
+  const actual = await vi.importActual<typeof import('~utils/analytics')>('~utils/analytics')
+  return {
+    ...actual,
+    rememberSignupMethod: (method: string) => rememberSignupMethodMock(method),
+  }
+})
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => getAuthMock(),
@@ -23,8 +43,8 @@ vi.mock('wagmi', async () => {
   const actual = await vi.importActual<typeof import('wagmi')>('wagmi')
   return {
     ...actual,
-    useAccount: () => ({ isConnected: true, connector: { id: 'google' } }),
-    useConnect: () => ({ connect: vi.fn(), isPending: false, isError: false, error: null }),
+    useAccount: () => accountState,
+    useConnect: () => ({ connect: vi.fn(), isPending: false, ...connectState }),
     useDisconnect: () => ({ disconnect: disconnectMock }),
   }
 })
@@ -41,6 +61,8 @@ describe('GoogleAuth', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     localStorage.clear()
+    accountState = { isConnected: true, connector: { id: 'google' } }
+    connectState = { isError: false, error: null }
   })
 
   it('redirects OAuth signups to organization create', async () => {
@@ -59,6 +81,9 @@ describe('GoogleAuth', () => {
       expect(refreshAddressesMock).toHaveBeenCalled()
       expect(navigateMock).toHaveBeenCalledWith(Routes.auth.organizationCreate)
     })
+    expect(trackEventMock).toHaveBeenCalledTimes(1)
+    expect(trackEventMock).toHaveBeenCalledWith({ name: AnalyticsEvents.AccountSignup, props: { method: 'google' } })
+    expect(rememberSignupMethodMock).toHaveBeenCalledWith('google')
   })
 
   it('does not redirect when login is not a signup', async () => {
@@ -77,5 +102,29 @@ describe('GoogleAuth', () => {
     })
 
     expect(navigateMock).not.toHaveBeenCalled()
+    expect(trackEventMock).toHaveBeenCalledTimes(1)
+    expect(trackEventMock).toHaveBeenCalledWith({ name: AnalyticsEvents.UserLoggedIn, props: { method: 'google' } })
+    expect(rememberSignupMethodMock).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ['account_conflict', 'OAuthAccountConflictError: email already registered'],
+    ['oauth_error', 'Popup closed by user'],
+  ])('tracks a failed Google auth as %s', async (reason, message) => {
+    setAuthMock({ setSession: vi.fn(), refreshAddresses: vi.fn() })
+    accountState = { isConnected: false }
+    connectState = { isError: true, error: new Error(message) }
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    render(<GoogleAuth />)
+
+    await waitFor(() => {
+      expect(trackEventMock).toHaveBeenCalledWith({
+        name: AnalyticsEvents.AuthFailed,
+        props: { method: 'google', reason },
+      })
+    })
+    expect(trackEventMock).toHaveBeenCalledTimes(1)
+    expect(rememberSignupMethodMock).not.toHaveBeenCalled()
   })
 })

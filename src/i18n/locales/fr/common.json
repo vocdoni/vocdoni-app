@@ -47,14 +47,14 @@
   "annual": "Annuel<1>40 % d'économie</1>",
   "apply": "Appliquer",
   "aside": {
-    "anonymous_receipt_gone": "",
+    "anonymous_receipt_gone": "Votre reçu a été affiché lors de votre vote et ne peut pas être récupéré.",
     "has_already_voted": "Votre vote a bien été enregistré",
     "is_not_in_census": "Vous ne figurez pas sur la liste électorale",
-    "votes_one": "<span>1</span> <text>votant</text>",
-    "votes_many": "",
+    "votes_one": "<span>{{ count }}</span> <text>votant</text>",
+    "votes_many": "<span>{{ count }}</span> <text>votants</text>",
     "votes_other": "<span>{{ count }}</span> <text>votants</text>",
-    "votes_weight_one": "<span>1</span> <text>voix</text>",
-    "votes_weight_many": "",
+    "votes_weight_one": "<span>{{ count }}</span> <text>voix</text>",
+    "votes_weight_many": "<span>{{ count }}</span> <text>voix</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>voix</text>"
   },
   "auth": {
@@ -195,7 +195,6 @@
   },
   "csp": {
     "auth_failed": "Échec de l'authentification",
-    "auth_success": "Authentification réussie",
     "authenticate": "S'identifier",
     "code_info": "Vous recevrez un code unique sur le canal sélectionné pour vérifier votre identité et finaliser l'authentification",
     "code_sent": "Code de vérification envoyé",
@@ -345,6 +344,9 @@
   "ended_processes": "Terminés",
   "enter_promo_code": "Saisir le code",
   "error": {
+    "crash_description": "Rechargez la page ou revenez au Dashboard.",
+    "crash_title": "Une erreur s'est produite",
+    "go_to_dashboard": "Aller au Dashboard",
     "loading_languages": "Erreur lors du chargement des langues",
     "loading_page": "Erreur lors du chargement de la page",
     "loading_roles": "Erreur lors du chargement des rôles",
@@ -354,6 +356,7 @@
     "missing_header": "Le tableur ne contient pas d'en-tête.",
     "not_found": "Page introuvable",
     "not_found_description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "reload": "Recharger",
     "return_to_home": "Retour à l'accueil",
     "title": "Erreur"
   },
@@ -450,7 +453,6 @@
       }
     },
     "error": {
-      "census_config_required": "Configurez les paramètres d'authentification de la liste électorale.",
       "email_invalid": "Adresse e-mail invalide",
       "field_is_required": "Ce champ est obligatoire",
       "generic": "Erreur lors de l'opération",
@@ -493,7 +495,7 @@
     }
   },
   "free_trial_days_one": "Une journée gratuite",
-  "free_trial_days_many": "",
+  "free_trial_days_many": "{{count}} jours gratuits",
   "free_trial_days_other": "{{count}} jours gratuits",
   "google_oauth_conflict_error": "Un compte avec cette adresse e-mail existe déjà. Veuillez vous connecter avec votre méthode existante.",
   "google_oauth_error": "Erreur OAuth Google",
@@ -521,7 +523,7 @@
     "delete_group": "Supprimer le groupe",
     "delete_member": {
       "subtitle_one": "Voulez-vous vraiment supprimer {{count}} membre ?",
-      "subtitle_many": "",
+      "subtitle_many": "Voulez-vous vraiment supprimer {{count}} membres ?",
       "subtitle_other": "Voulez-vous vraiment supprimer {{count}} membres ?",
       "title": "Supprimer des membres"
     },
@@ -532,7 +534,7 @@
       "error": "Impossible de charger les membres du groupe"
     },
     "members_one": "{{count}} membre",
-    "members_many": "",
+    "members_many": "{{count}} membres",
     "members_other": "{{count}} membres",
     "name": "Nom"
   },
@@ -764,7 +766,7 @@
     "success_title": "Vos données de membres ont été importées avec succès.",
     "title": "Importation de la base de membres en cours",
     "view_errors_one": "Voir {{count}} erreur",
-    "view_errors_many": "",
+    "view_errors_many": "Voir {{count}} erreurs",
     "view_errors_other": "Voir {{count}} erreurs"
   },
   "integrators": {
@@ -929,14 +931,14 @@
       "cancel": "Annuler",
       "delete": "Supprimer",
       "error_one": "Erreur lors de la suppression du membre",
-      "error_many": "",
+      "error_many": "Erreur lors de la suppression des membres",
       "error_other": "Erreur lors de la suppression des membres",
       "loading": "Chargement des membres à supprimer…",
       "subtitle_one": "Voulez-vous vraiment supprimer {{count}} membre ? Cette action est irréversible.",
-      "subtitle_many": "",
+      "subtitle_many": "Voulez-vous vraiment supprimer {{count}} membres ? Cette action est irréversible.",
       "subtitle_other": "Voulez-vous vraiment supprimer {{count}} membres ? Cette action est irréversible.",
       "success_one": "Membre supprimé avec succès",
-      "success_many": "",
+      "success_many": "Membres supprimés avec succès",
       "success_other": "Membres supprimés avec succès",
       "title": "Supprimer des membres"
     },
@@ -954,13 +956,14 @@
     "form": {
       "cancel": "Annuler",
       "phone_warning": "Numéro de téléphone masqué. Toute modification ici l'écrasera.",
+      "phone_will_be_removed": "Le numéro de téléphone enregistré sera supprimé lors de l'enregistrement.",
       "save": "Enregistrer les modifications"
     },
     "groups": {
       "title": "Groupes"
     },
     "import_file": {
-      "subtitle": "Importez votre fichier CSV, XLS ou XLSX contenant les données des membres. Assurez-vous que les en-têtes de colonnes correspondent au modèle pour une correspondance exacte.",
+      "subtitle": "Importez votre fichier CSV, XLS, XLSX ou ODS contenant les données des membres. Assurez-vous que les en-têtes de colonnes correspondent au modèle pour une correspondance exacte.",
       "title": "Importer un fichier"
     },
     "importer": {
@@ -968,6 +971,10 @@
       "cancel": "Annuler",
       "data_preview": "Aperçu des données",
       "download_template_btn": "Télécharger le modèle",
+      "error": {
+        "invalid_file_type": "Ce type de fichier n'est pas pris en charge. Importez un fichier .csv, .xlsx, .xls ou .ods.",
+        "read_failed": "Nous n'avons pas pu lire ce fichier. Vérifiez qu'il s'agit d'un fichier CSV ou d'un tableur valide, puis réessayez."
+      },
       "field_mapper": {
         "empty": "-- Ne pas importer --",
         "placeholder": "Sélectionnez une colonne"
@@ -980,7 +987,7 @@
       "reset": "Réinitialiser l'importation",
       "select_at_least_one_column": "Sélectionnez au moins une colonne pour télécharger le modèle.",
       "submit": "Importer les données",
-      "subtitle": "Téléchargez un modèle ou importez votre propre fichier CSV, XLS ou XLSX pour ajouter des membres.",
+      "subtitle": "Téléchargez un modèle ou importez votre propre fichier CSV, XLS, XLSX ou ODS pour ajouter des membres.",
       "title": "Importer des membres",
       "warning": {
         "subtitle": "Les informations des colonnes non associées ne seront pas importées.",
@@ -1015,23 +1022,23 @@
       "actions": "Actions",
       "add_to_census": "Ajouter à la liste électorale",
       "add_to_census_button_one": "Ajouter {{count}} membre",
-      "add_to_census_button_many": "",
+      "add_to_census_button_many": "Ajouter {{count}} membres",
       "add_to_census_button_other": "Ajouter {{count}} membres",
       "add_to_census_confirmation_one": "Vous allez ajouter {{count}} membre à la liste électorale du processus « {{process}} ».",
-      "add_to_census_confirmation_many": "",
+      "add_to_census_confirmation_many": "Vous allez ajouter {{count}} membres à la liste électorale du processus « {{process}} ».",
       "add_to_census_confirmation_other": "Vous allez ajouter {{count}} membres à la liste électorale du processus « {{process}} ».",
       "add_to_census_description": "Sélectionnez un processus de vote actif pour ajouter les membres à sa liste électorale.",
       "add_to_census_error": "Erreur lors de l'ajout des membres à la liste électorale",
       "add_to_census_partial": "Certains membres n'ont pas pu être ajoutés.",
       "add_to_census_success_one": "{{count}} membre ajouté à la liste électorale",
-      "add_to_census_success_many": "",
+      "add_to_census_success_many": "{{count}} membres ajoutés à la liste électorale",
       "add_to_census_success_other": "{{count}} membres ajoutés à la liste électorale",
       "add_to_group": "Ajouter au groupe",
       "add_to_group_button_one": "Ajouter {{count}} membre",
-      "add_to_group_button_many": "",
+      "add_to_group_button_many": "Ajouter {{count}} membres",
       "add_to_group_button_other": "Ajouter {{count}} membres",
       "add_to_group_confirmation_one": "Vous allez ajouter {{count}} membre au groupe « {{group}} ».",
-      "add_to_group_confirmation_many": "",
+      "add_to_group_confirmation_many": "Vous allez ajouter {{count}} membres au groupe « {{group}} ».",
       "add_to_group_confirmation_other": "Vous allez ajouter {{count}} membres au groupe « {{group}} ».",
       "add_to_group_description": "Sélectionnez un groupe auquel ajouter les membres.",
       "add_to_group_success": "Membres ajoutés au groupe avec succès",
@@ -1050,7 +1057,7 @@
       "group_description_placeholder": "Saisissez une brève description du groupe",
       "group_members": "Membres sélectionnés",
       "group_members_count_one": "{{count}} membre sélectionné",
-      "group_members_count_many": "",
+      "group_members_count_many": "{{count}} membres sélectionnés",
       "group_members_count_other": "{{count}} membres sélectionnés",
       "group_name": "Nom du groupe",
       "manage_columns": "Gérer les colonnes",
@@ -1059,7 +1066,7 @@
       "no_filter_results": "Aucun membre ne correspond à ces attributs",
       "no_results": "Aucun membre trouvé",
       "remaining_members_one": "+{{count}} de plus",
-      "remaining_members_many": "",
+      "remaining_members_many": "+{{count}} de plus",
       "remaining_members_other": "+{{count}} de plus",
       "search": "Rechercher des membres…",
       "select_all": "Tout sélectionner",
@@ -1068,14 +1075,14 @@
       "select_member": "Sélectionner {{name}}",
       "select_process": "Sélectionner un processus",
       "selected_one": "Sélectionné : <strong>{{count}} membre</strong>",
-      "selected_many": "",
+      "selected_many": "Sélectionnés : <strong>{{count}} membres</strong>",
       "selected_other": "Sélectionnés : <strong>{{count}} membres</strong>",
-      "showing_members_one": "",
-      "showing_members_many": "",
-      "showing_members_other": "",
-      "showing_results_one": "",
-      "showing_results_many": "",
-      "showing_results_other": "",
+      "showing_members_one": "Affichage de {{from, number}}–{{to, number}} sur {{count, number}} membre",
+      "showing_members_many": "Affichage de {{from, number}}–{{to, number}} sur {{count, number}} membres",
+      "showing_members_other": "Affichage de {{from, number}}–{{to, number}} sur {{count, number}} membres",
+      "showing_results_one": "Affichage de {{from, number}}–{{to, number}} sur {{count, number}} résultat",
+      "showing_results_many": "Affichage de {{from, number}}–{{to, number}} sur {{count, number}} résultats",
+      "showing_results_other": "Affichage de {{from, number}}–{{to, number}} sur {{count, number}} résultats",
       "toggle_column": "Afficher/masquer la colonne {{column}}"
     }
   },
@@ -1083,7 +1090,6 @@
     "selector_label": "Taille de l'adhésion"
   },
   "menu": {
-    "burger_aria_label": "menu utilisateur",
     "collapse": "Réduire le menu",
     "create": "Créer un processus",
     "dashboard": "Dashboard",
@@ -1109,7 +1115,7 @@
   "no_results_filtering": "Votre filtre de recherche actuel ne renvoie aucun résultat",
   "not_registred_yet": "Vous n'avez pas de compte ?",
   "number_of_members_one": "{{ count }} membre de l'équipe",
-  "number_of_members_many": "",
+  "number_of_members_many": "{{ count }} membres de l'équipe",
   "number_of_members_other": "{{ count }} membres de l'équipe",
   "oauth": {
     "link": {
@@ -1154,9 +1160,9 @@
     "title": {
       "read_more": "Développer le titre"
     },
-    "unavailable_description": "",
-    "unavailable_retry": "",
-    "unavailable_title": ""
+    "unavailable_description": "Une erreur s'est produite lors de la lecture de vos organisations. Le problème est généralement temporaire, réessayez.",
+    "unavailable_retry": "Réessayer",
+    "unavailable_title": "Impossible de charger vos organisations"
   },
   "organization_settings": {
     "phone_support": {
@@ -1256,7 +1262,7 @@
       "footnote_on_demand": "* Les fonctionnalités demandées seront évaluées au cas par cas et peuvent entraîner des frais supplémentaires."
     },
     "core_voting_one": "Un seul membre",
-    "core_voting_many": "",
+    "core_voting_many": "Jusqu'à {{ count }} membres",
     "core_voting_other": "Jusqu'à {{ count }} membres",
     "custom_branding": "Marque personnalisée*",
     "custom_subtitle": "Adapté à vos besoins",
@@ -1276,10 +1282,10 @@
     "ticket_support_48": "Assistance par e-mail (48 h)",
     "ticket_support_72": "Assistance par e-mail (72 h)",
     "up_to_admins_one": "Un administrateur",
-    "up_to_admins_many": "",
+    "up_to_admins_many": "{{ count }} administrateurs",
     "up_to_admins_other": "{{ count }} administrateurs",
     "yearly_processes_one": "{{ count }} vote par an¹",
-    "yearly_processes_many": "",
+    "yearly_processes_many": "{{ count }} votes par an¹",
     "yearly_processes_other": "{{ count }} votes par an¹"
   },
   "pricing_card": {
@@ -1334,7 +1340,7 @@
       },
       "limit_reached": {
         "message_one": "Vous avez atteint votre limite de {{ count }} brouillon. Pour enregistrer ce brouillon, supprimez-en un existant ou mettez votre forfait à niveau.",
-        "message_many": "",
+        "message_many": "Vous avez atteint votre limite de {{ count }} brouillons. Pour enregistrer ce brouillon, supprimez-en un existant ou mettez votre forfait à niveau.",
         "message_other": "Vous avez atteint votre limite de {{ count }} brouillons. Pour enregistrer ce brouillon, supprimez-en un existant ou mettez votre forfait à niveau."
       },
       "question": {
@@ -1370,8 +1376,8 @@
     "extended_info": "Informations détaillées",
     "is_invalid": "Ce processus contient des données erronées et est donc invalide",
     "no_description": "Aucune description fournie",
-    "people_in_census_one": "Un électeur",
-    "people_in_census_many": "",
+    "people_in_census_one": "{{ count }} électeur",
+    "people_in_census_many": "{{ count }} électeurs",
     "people_in_census_other": "{{ count }} électeurs",
     "question_type": {
       "label": "Type de question",
@@ -1398,7 +1404,7 @@
     "success_modal": {
       "btn": "Fermer",
       "text": "<p>Votre vote a été émis et stocké de manière sécurisée grâce à la technologie de Vocdoni. Vous pouvez le vérifier <verify>ici</verify>.</p>",
-      "text_no_id": "",
+      "text_no_id": "<p>Votre vote a bien été émis.</p>",
       "title": "Vote envoyé !"
     },
     "summary": {
@@ -1423,7 +1429,7 @@
       "time_until_start": "Temps avant le début",
       "view_summary": "Suivre le processus",
       "votes_cast_one": "{{votes}} vote exprimé",
-      "votes_cast_many": "",
+      "votes_cast_many": "{{votes}} votes exprimés",
       "votes_cast_other": "{{votes}} votes exprimés"
     },
     "vote_failed": {
@@ -1458,17 +1464,39 @@
   },
   "process_create": {
     "anonymity": {
-      "title": "",
-      "tooltip": ""
+      "title": "Vote anonyme",
+      "tooltip": "Dans les deux cas, votre organisation ne peut pas voir ce que chacun a voté. L'anonymat des électeurs ajoute une couche cryptographique qui rend impossible de relier un vote à une personne."
     },
     "auto_start": "Démarrer immédiatement",
     "basic_configuration": "Configuration de base",
     "census": {
+      "auth_missing": {
+        "action": "Configurer",
+        "description": "Choisissez comment les électeurs s'identifieront, puis publiez à nouveau.",
+        "title": "L'authentification des électeurs n'est pas configurée"
+      },
+      "auth_reset": {
+        "description": "Elle avait été vérifiée pour le groupe précédent. Vos choix sont conservés : confirmez-les pour celui-ci.",
+        "title": "L'authentification des électeurs a été réinitialisée"
+      },
       "group": {
         "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
       },
+      "group_missing": {
+        "description": "Sélectionnez un groupe de membres et configurez l'authentification des électeurs, puis publiez à nouveau.",
+        "title": "Choisissez qui peut voter"
+      },
       "memberbase": {
         "label": "Sélectionnez un groupe de membres pour créer la liste électorale"
+      },
+      "status": {
+        "ready": "Prête",
+        "steps_left_one": "{{ count }} étape restante",
+        "steps_left_many": "{{ count }} étapes restantes",
+        "steps_left_other": "{{ count }} étapes restantes"
+      },
+      "voter_auth": {
+        "label": "Définissez comment les électeurs prouvent leur identité"
       }
     },
     "census_creation": "Création de la liste électorale",
@@ -1506,7 +1534,7 @@
     "weight": {
       "equal": "Une personne, une voix",
       "title": "Poids du vote",
-      "tooltip": "",
+      "tooltip": "Choisissez si chaque électeur éligible dispose d'une voix égale ou si les votes sont pondérés selon le champ « Poids du vote » de la base de membres.",
       "weighted": "Pondéré par poids du vote"
     },
     "youtube": {
@@ -1649,7 +1677,7 @@
         "weighted_method": "{{base}} avec vote pondéré"
       },
       "intro_one": "Le processus de vote {{process_name}} a comporté 1 question.",
-      "intro_many": "",
+      "intro_many": "Le processus de vote {{process_name}} a comporté {{count}} questions.",
       "intro_other": "Le processus de vote {{process_name}} a comporté {{count}} questions.",
       "results_hidden": "Les résultats sont masqués jusqu'à ce que le processus atteigne l'étape des résultats finaux."
     },
@@ -1941,9 +1969,13 @@
     "click_or_drag_and_drop": "<click>Cliquez pour charger ou glissez-déposez</click><formats>(Formats autorisés : {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Charger une image",
     "csv_row_limit_exceeded_one": "Cette importation aboutirait à un total de {{count}} ligne, dépassant la limite de votre forfait fixée à {{max}}.",
-    "csv_row_limit_exceeded_many": "",
+    "csv_row_limit_exceeded_many": "Cette importation aboutirait à un total de {{count}} lignes, dépassant la limite de votre forfait fixée à {{max}}.",
     "csv_row_limit_exceeded_other": "Cette importation aboutirait à un total de {{count}} lignes, dépassant la limite de votre forfait fixée à {{max}}.",
     "drop_here": "Déposez le fichier ici",
+    "error": {
+      "invalid_image_type": "Ce type de fichier n'est pas pris en charge. Importez une image .png ou .jpg.",
+      "too_many_files": "Importez un seul fichier à la fois."
+    },
     "image_upload_failed": "Échec du chargement de l'image",
     "image_upload_success": "Image chargée",
     "upload_failed": "Échec du chargement"
@@ -1985,101 +2017,106 @@
   "view_plans_and_pricing": "Voir les forfaits et tarifs",
   "vocdoni_logo": "Logo de Vocdoni",
   "vote": {
-    "anonymous_receipt": "",
+    "anonymous_receipt": "Vote anonyme : enregistrez ce reçu maintenant, la plateforme ne pourra plus vous l'afficher.",
     "voted_title": "Votre vote a été enregistré avec succès !"
   },
   "vote_information": "Informations sur le vote",
   "vote_overwrite": "Modification du vote",
-  "voter_anonymity": "",
+  "voter_anonymity": "Anonymat des électeurs",
   "voter_auth": {
-    "anonymity": "",
+    "anonymity": "Anonymat du bulletin : {{ mode }}",
     "button": {
       "configure": "Configurer l'authentification des électeurs",
       "edit": "Modifier l'authentification des électeurs"
     },
     "code": {
-      "description": "",
-      "email_description": "",
-      "email_label": "",
-      "heading": "",
-      "none": "",
-      "none_description": "",
-      "sms_description": "",
-      "sms_label": "",
-      "voter_choice": "",
-      "voter_choice_description": ""
+      "description": "Avant le vote, nous envoyons un code à 6 chiffres à l'adresse e-mail ou au téléphone de l'électeur. Il prouve que celui-ci en est le titulaire : personne ne peut voter avec les informations d'un autre.",
+      "email_description": "Envoyé à l'adresse e-mail de votre liste de membres.",
+      "email_label": "E-mail",
+      "heading": "2. Envoyer aussi un code à usage unique ?",
+      "none": "Aucun code",
+      "none_description": "Les électeurs se connectent uniquement avec leurs informations.",
+      "sms_description": "Envoyé au numéro de téléphone de votre liste de membres.",
+      "sms_label": "SMS",
+      "voter_choice": "E-mail ou SMS",
+      "voter_choice_description": "Chaque électeur choisit où le recevoir."
     },
     "details": {
-      "description": "",
-      "heading": "",
-      "optional": ""
+      "description": "Choisissez jusqu'à {{max}} informations dans votre liste de membres. Ce que saisissent les électeurs doit correspondre exactement.",
+      "heading": "1. Que saisiront les électeurs ?",
+      "optional": "Facultatif si vous envoyez un code à usage unique : les électeurs pourront alors se connecter avec le code seul."
     },
     "level": {
-      "basic": "",
-      "good": "",
-      "strong": "",
-      "unset": ""
+      "basic": "Basique",
+      "good": "Bonne",
+      "strong": "Forte",
+      "unset": "Non défini"
     },
     "modal": {
-      "group_summary_one": "",
-      "group_summary_many": "",
-      "group_summary_other": "",
-      "title": ""
+      "group_summary_one": "{{group}} · {{count}} membre",
+      "group_summary_many": "{{group}} · {{count}} membres",
+      "group_summary_other": "{{group}} · {{count}} membres",
+      "title": "Comment les électeurs se connecteront-ils ?"
     },
     "no_group_description": "Veuillez d'abord sélectionner un groupe pour configurer l'authentification.",
+    "pending": {
+      "description": "Choisissez les données de membre que les électeurs doivent saisir pour voter, comme leur pièce d'identité ou leur numéro d'adhérent.",
+      "error_title": "Indispensable pour publier",
+      "title": "Obligatoire avant la publication"
+    },
     "preview": {
-      "first_step": "",
-      "second_step": "",
-      "title": ""
+      "first_step": "Première étape",
+      "second_step": "Deuxième étape",
+      "title": "Ce que verront les électeurs"
     },
     "protection": {
-      "basic_risk": "",
-      "good_code_risk": "",
-      "good_details_risk": "",
-      "label": "",
-      "strong": "",
-      "unset": ""
+      "basic_risk": "Toute personne connaissant ces informations pourrait voter à la place d'un membre.",
+      "good_code_risk": "Toute personne pouvant accéder à l'e-mail ou au téléphone d'un membre pourrait voter à sa place.",
+      "good_details_risk": "Il faudrait connaître plusieurs informations privées pour voter à la place d'un membre.",
+      "label": "Protection",
+      "strong": "Il faudrait connaître les informations d'un membre et accéder à son e-mail ou à son téléphone pour voter à sa place.",
+      "unset": "Choisissez au moins une information ou un code."
     },
     "sample": {
-      "birthDate": "",
-      "email": "",
-      "memberNumber": "",
-      "name": "",
-      "nationalId": "",
-      "phone": "",
-      "surname": ""
+      "birthDate": "14/03/1979",
+      "email": "laura@example.org",
+      "memberNumber": "00482",
+      "name": "Laura",
+      "nationalId": "12345678Z",
+      "phone": "+33 6 12 34 56 78",
+      "surname": "Martin"
     },
     "save": {
-      "submit": "",
-      "unchecked": ""
+      "submit": "Enregistrer",
+      "unchecked": "Enregistré, mais nous n'avons pas pu vérifier votre liste de membres"
     },
-    "saved": "",
+    "saved": "Paramètres de connexion enregistrés",
     "status": {
-      "both_contacts": "",
-      "checking": "",
-      "duplicated_members_one": "",
-      "duplicated_members_many": "",
-      "duplicated_members_other": "",
-      "empty": "",
-      "fix": "",
-      "missing_members_one": "",
-      "missing_members_many": "",
-      "missing_members_other": "",
-      "retry": "",
-      "unavailable": "",
-      "valid": "",
-      "valid_count_one": "",
-      "valid_count_many": "",
-      "valid_count_other": ""
+      "both_contacts": "les deux : {{contacts}}",
+      "checking": "Vérification de votre liste de membres…",
+      "duplicated_members_one": "{{count}} membre a les mêmes {{fields}} qu'un autre : il est impossible de les distinguer.",
+      "duplicated_members_many": "{{count}} membres ont les mêmes {{fields}} : il est impossible de les distinguer.",
+      "duplicated_members_other": "{{count}} membres ont les mêmes {{fields}} : il est impossible de les distinguer.",
+      "empty": "Choisissez au moins une information ou un code.",
+      "fix": "Corrigez votre liste de membres",
+      "missing_members_one": "{{count}} membre n'a pas de {{fields}}.",
+      "missing_members_many": "{{count}} membres n'ont pas de {{fields}}.",
+      "missing_members_other": "{{count}} membres n'ont pas de {{fields}}.",
+      "retry": "Vérifier à nouveau",
+      "unavailable": "Nous n'avons pas pu vérifier votre liste de membres. Vous pouvez tout de même enregistrer.",
+      "valid": "Tous les membres peuvent se connecter.",
+      "valid_count_one": "Le seul membre de ce groupe peut se connecter.",
+      "valid_count_many": "Les {{count}} membres peuvent tous se connecter.",
+      "valid_count_other": "Les {{count}} membres peuvent tous se connecter."
     },
     "summary": {
-      "code_choice": "",
-      "code_email": "",
-      "code_none": "",
-      "code_sms": "",
-      "details": "",
-      "member_list_mismatch": "",
-      "title": ""
+      "code_choice": "Code à usage unique par e-mail ou SMS",
+      "code_email": "Code à usage unique par e-mail",
+      "code_none": "Aucun code à usage unique",
+      "code_sms": "Code à usage unique par SMS",
+      "details": "Les électeurs saisissent : {{fields}}",
+      "member_list_mismatch": "Ces paramètres ne correspondent pas à votre liste de membres. Modifiez-les pour voir pourquoi.",
+      "title": "Connexion des électeurs"
     }
   },
   "voting_link": {

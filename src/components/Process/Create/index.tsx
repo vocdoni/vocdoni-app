@@ -17,7 +17,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { CensusSpec, Choice, CreateVotingProcessRequest, VotingProcessQuestionRequest } from '@vocdoni/api-types'
-import { addDays, parse } from 'date-fns'
+import { addDays } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -49,9 +49,11 @@ import { LiveStreamingInput } from './LiveStreamingInput'
 import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
-import { defaultProcessValues, Option, Process, SelectorTypes } from './common'
+import { defaultProcessValues, Option, parseFormDateTime, Process, SelectorTypes } from './common'
 import { votingProcessToForm } from './draft-mapping'
 import { buildCensusSpec } from './census-spec'
+import { useCensusSetupToast } from './useCensusSetupToast'
+import { VoterAuthDialogProvider } from './VoterAuthentication/VoterAuthDialogContext'
 
 export { buildCensusSpec }
 
@@ -475,7 +477,7 @@ export const useFormToVotingProcessRequest = () => {
 
   const parseLocalDateTime = (dateStr?: string, timeStr?: string): string | undefined => {
     if (!dateStr || !timeStr) return undefined
-    return parse(`${dateStr} ${timeStr}`, 'yyyy-MM-dd HH:mm', new Date()).toISOString()
+    return parseFormDateTime(dateStr, timeStr).toISOString()
   }
 
   return (form: Process, censusSpec: CensusSpec): CreateVotingProcessRequest => {
@@ -580,6 +582,7 @@ const ProcessCreateView = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { showSidebar, toggleSidebar, openSidebar } = useSidebarVisibility()
+  const showCensusSetupToast = useCensusSetupToast()
   const methods = useForm<Process>({
     defaultValues: {
       ...defaultProcessValues,
@@ -624,7 +627,10 @@ const ProcessCreateView = () => {
     if (!formDraft) return
 
     Object.entries(formDraft).forEach(([key, value]) => {
-      if (key === 'groupId' && groupId) return
+      // A draft only stores its group once voter authentication is set up (see
+      // buildCensusSpec), so a missing one means "not saved yet", not "none":
+      // the draft read that follows the first save must not clear a picked group.
+      if (key === 'groupId' && (groupId || !value)) return
       methods.setValue(key as keyof Process, value as Process[keyof Process], { shouldDirty: true })
     })
   }, [formDraft, groupId, methods])
@@ -803,6 +809,8 @@ const ProcessCreateView = () => {
     if (hasSidebarErrors) {
       openSidebar()
     }
+
+    showCensusSetupToast(errors)
   }
 
   if (!formDraftLoaded) {
@@ -944,7 +952,9 @@ const ProcessCreateView = () => {
 
 export const ProcessCreate = () => (
   <SidebarVisibilityProvider>
-    <ProcessCreateView />
+    <VoterAuthDialogProvider>
+      <ProcessCreateView />
+    </VoterAuthDialogProvider>
   </SidebarVisibilityProvider>
 )
 

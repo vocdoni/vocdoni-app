@@ -12,3 +12,7 @@ coverage
 .netlify
 stress
 skills-lock.json
+.env
+.env.*
+.tmp
+e2e

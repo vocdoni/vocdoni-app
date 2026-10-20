@@ -9,7 +9,6 @@ import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { useInviteMemberMutation } from '~src/queries/organization'
-import { useCallbackContext } from '~utils/callback-provider'
 import { useAllUsers } from './Team'
 
 // Invite form component
@@ -17,7 +16,6 @@ const InviteForm = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const mutation = useInviteMemberMutation()
-  const { success } = useCallbackContext()
 
   const methods = useForm({
     defaultValues: {
@@ -37,7 +35,6 @@ const InviteForm = () => {
             duration: 5000,
             isClosable: true,
           })
-          success()
         },
         onError: (error: Error) => {
           toast({

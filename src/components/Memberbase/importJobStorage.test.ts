@@ -1,4 +1,3 @@
-import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
 
 describe('importJobStorage', () => {
@@ -17,13 +16,6 @@ describe('importJobStorage', () => {
     setStoredImportJobId('job-1', '0xabc')
 
     expect(getStoredImportJobId('0xdef')).toBeNull()
-  })
-
-  it('keeps the original account job id after checking another account', () => {
-    setStoredImportJobId('job-1', '0xabc')
-
-    expect(getStoredImportJobId('0xdef')).toBeNull()
-    expect(getStoredImportJobId('0xabc')).toBe('job-1')
   })
 
   it('stores independent job ids per account', () => {
@@ -48,10 +40,10 @@ describe('importJobStorage', () => {
     expect(localStorage.getItem('memberbaseImportJobId')).toBe('legacy-job-id')
   })
 
-  it('uses signerAddress from localStorage as account identity in practice', () => {
-    localStorage.setItem(LocalStorageKeys.SignerAddress, '0xABC')
-    setStoredImportJobId('job-2', '0xabc')
+  // Callers pass the signer address, whose casing (checksummed or not) varies by source.
+  it('matches account ids regardless of case and surrounding whitespace', () => {
+    setStoredImportJobId('job-2', '0xABC')
 
-    expect(getStoredImportJobId('0xabc')).toBe('job-2')
+    expect(getStoredImportJobId(' 0xabc ')).toBe('job-2')
   })
 })

@@ -3,9 +3,7 @@ import { render } from '@testing-library/react'
 let currentPageContext: any
 const publicLayout = vi.fn(({ children }: { children: React.ReactNode }) => <>{children}</>)
 const appProviders = vi.fn(({ children }: { children: React.ReactNode }) => <>{children}</>)
-const errorView = vi.fn((_: { isNotFound?: boolean; message?: string; returnHomeHref?: string }) => (
-  <div>error-view</div>
-))
+const errorView = vi.fn((_: { isNotFound?: boolean; returnHomeHref?: string }) => <div>error-view</div>)
 
 vi.mock('vike-react/usePageContext', () => ({
   usePageContext: () => currentPageContext,
@@ -20,7 +18,7 @@ vi.mock('~elements/PublicLayout', () => ({
 }))
 
 vi.mock('~elements/Error', () => ({
-  ErrorView: (props: { isNotFound?: boolean; message?: string; returnHomeHref?: string }) => errorView(props),
+  ErrorView: (props: { isNotFound?: boolean; returnHomeHref?: string }) => errorView(props),
 }))
 
 describe('Vike error page', () => {
@@ -58,46 +56,13 @@ describe('Vike error page', () => {
     )
   })
 
-  it('passes string abort reasons through to the shared generic error view', async () => {
-    currentPageContext.abortReason = 'Server exploded'
+  it('renders the generic error view without leaking the abort reason', async () => {
+    currentPageContext.abortReason = new Error('Server exploded')
 
     const { default: ErrorPage } = await import('./+Page')
 
     render(<ErrorPage />)
 
-    expect(errorView).toHaveBeenCalledWith(
-      expect.objectContaining({
-        isNotFound: false,
-        message: 'Server exploded',
-      })
-    )
-  })
-
-  it('passes Error abort reasons through to the shared generic error view', async () => {
-    currentPageContext.abortReason = new Error('Boom')
-
-    const { default: ErrorPage } = await import('./+Page')
-
-    render(<ErrorPage />)
-
-    expect(errorView).toHaveBeenCalledWith(
-      expect.objectContaining({
-        isNotFound: false,
-        message: 'Boom',
-      })
-    )
-  })
-
-  it('falls back to the existing generic copy when no abort reason is available', async () => {
-    const { default: ErrorPage } = await import('./+Page')
-
-    render(<ErrorPage />)
-
-    expect(errorView).toHaveBeenCalledWith(
-      expect.objectContaining({
-        isNotFound: false,
-        message: 'Error loading the page',
-      })
-    )
+    expect(errorView).toHaveBeenCalledWith({ isNotFound: false, returnHomeHref: '/' })
   })
 })

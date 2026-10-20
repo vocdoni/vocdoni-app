@@ -38,7 +38,12 @@ export const AnalyticsEvents = {
   TeamMemberInvited: 'team_member_invited',
   TeamMemberRemoved: 'team_member_removed',
   PdfReportDownloaded: 'pdf_report_downloaded',
+  AuthFailed: 'auth_failed',
 } as const
+
+// How an account was created or signed in to; sent as the `method` event
+// property and stored once on the person as `signup_method`.
+export type AuthMethod = 'password' | 'google' | 'invite'
 
 export interface AnalyticsEvent {
   name: (typeof AnalyticsEvents)[keyof typeof AnalyticsEvents]
@@ -227,16 +232,16 @@ const SENSITIVE_QUERY_PARAMS = ['email', 'token', 'code']
 // hide fields we do want to read back — the organization name in settings being
 // the one case. Opt a field back in by adding `data-ph-unmask` to it (or to any
 // ancestor). Passwords are never unmasked, whatever the markup says.
-export const POSTHOG_UNMASK_ATTRIBUTE = 'data-ph-unmask'
+const POSTHOG_UNMASK_ATTRIBUTE = 'data-ph-unmask'
 
-export const posthogMaskInput = (text: string, element?: HTMLElement): string => {
+const posthogMaskInput = (text: string, element?: HTMLElement): string => {
   const masked = '*'.repeat(text.length)
   if (!element) return masked
   if (element instanceof HTMLInputElement && element.type === 'password') return masked
   return element.closest(`[${POSTHOG_UNMASK_ATTRIBUTE}]`) ? text : masked
 }
 
-export const sanitizeAnalyticsUrl = (url: string): string => {
+const sanitizeAnalyticsUrl = (url: string): string => {
   try {
     const parsed = new URL(url)
     let changed = false
@@ -263,10 +268,7 @@ const SCANNER_REJECTION_REGEX = /Object Not Found Matching Id:\d+, MethodName:\w
 // the scanner filter is worth stripping emails from, so both run in one pass.
 const EXCEPTION_PAYLOAD_KEYS = ['$exception_message', '$exception_values', '$exception_list'] as const
 
-export const posthogBeforeSend = (
-  event: CaptureResult | null,
-  votingRoutes: VotingRouteConfig = {}
-): CaptureResult | null => {
+const posthogBeforeSend = (event: CaptureResult | null, votingRoutes: VotingRouteConfig = {}): CaptureResult | null => {
   if (!event) return null
   if (canUseBrowserAnalytics() && isVotingPath(window.location.pathname, votingRoutes)) return null
 
@@ -431,13 +433,43 @@ export const applyPosthogConsent = (consent: PosthogConsent): void => {
   })
 }
 
+// The sign-up happens before the user is identified, and with
+// `person_profiles: 'identified_only'` an anonymous user has no person to hold
+// properties. The method is kept in memory until the consented identify call, which
+// sets it once (`$set_once`), so a later login with another method never overwrites
+// it. It does not survive a page reload (e.g. opening the emailed verification link
+// in a new tab), in which case the method is simply not recorded.
+// When the email is known (password and invite signups) the method is only applied
+// to the profile with that email, so it can't end up on another account that logs in
+// first. The Google flow knows no email up front and applies to the next identify.
+let pendingSignup: { method: AuthMethod; email?: string } | null = null
+
+const sameEmail = (a?: string, b?: unknown) =>
+  typeof b === 'string' && a?.trim().toLowerCase() === b.trim().toLowerCase()
+
+export const rememberSignupMethod = (method: AuthMethod, email?: string): void => {
+  pendingSignup = { method, email: email || undefined }
+}
+
 export const identifyPosthogUser = (id: string, props?: Record<string, unknown>): void => {
+  // Decide at call time: the PostHog callback runs asynchronously, by when the pending
+  // method may belong to another sign-up or have been cleared by a reset.
+  const signup =
+    pendingSignup && (!pendingSignup.email || sameEmail(pendingSignup.email, props?.email)) ? pendingSignup : null
+  if (signup) pendingSignup = null
+
   withPosthog('Failed to identify PostHog user:', (posthog) => {
-    posthog.identify(id, props)
+    if (signup) {
+      posthog.identify(id, props, { signup_method: signup.method })
+    } else {
+      posthog.identify(id, props)
+    }
   })
 }
 
 export const resetPosthogUser = (): void => {
+  // A method remembered for one account must never be attached to the next one to log in
+  pendingSignup = null
   withPosthog('Failed to reset PostHog user:', (posthog) => {
     posthog.reset()
   })

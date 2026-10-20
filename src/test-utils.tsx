@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, RenderOptions } from '@testing-library/react'
 import { ComponentsProvider, ConfirmProvider } from '@vocdoni/react-components'
 import { AuthProvider as SdkAuthProvider } from '@vocdoni/react-providers'
-import i18n, { type Resource } from 'i18next'
+import i18n, { type InitOptions, type Resource } from 'i18next'
 import { ComponentType, ReactElement, ReactNode } from 'react'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
 import { flushSync } from 'react-dom'
@@ -30,6 +30,8 @@ type TestI18nOptions = {
   lng?: string
   fallbackLng?: string
   useReactI18next?: boolean
+  /** Extra i18next init options (supportedLngs, lowerCaseLng...); the test defaults above still win. */
+  options?: InitOptions
 }
 
 export async function createTestI18n({
@@ -37,6 +39,7 @@ export async function createTestI18n({
   lng = 'en',
   fallbackLng = 'en',
   useReactI18next = false,
+  options,
 }: TestI18nOptions) {
   const instance = i18n.createInstance()
 
@@ -45,6 +48,7 @@ export async function createTestI18n({
   }
 
   await instance.init({
+    ...options,
     lng,
     fallbackLng,
     defaultNS: 'common',

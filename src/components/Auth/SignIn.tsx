@@ -78,12 +78,14 @@ const SignIn = ({
   const { mutateAsync: checkVerificationCodeStatus } = useVerificationCodeStatus()
   const { mutateAsync: resendVerificationCode } = useResendVerificationCode()
 
+  // Keyed on `t` so the title follows a language switch.
   useEffect(() => {
-    // set SignUp title and description
     setTitle(t('signin_title'))
     setSubtitle(t('signin_subtitle'))
+  }, [setTitle, setSubtitle, t])
 
-    // reset the form to clear the errors
+  // reset the form to clear the errors
+  useEffect(() => {
     reset()
   }, [])
 

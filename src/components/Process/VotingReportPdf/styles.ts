@@ -103,6 +103,13 @@ export const styles = StyleSheet.create({
     marginBottom: 18,
     paddingTop: 1,
   },
+  // A wrapping section's heading and body, laid out as siblings (see ReportSectionBlock).
+  sectionHeading: {
+    paddingTop: 1,
+  },
+  sectionBody: {
+    marginBottom: 18,
+  },
   sectionTitle: {
     fontSize: 12.5,
     fontWeight: 700,

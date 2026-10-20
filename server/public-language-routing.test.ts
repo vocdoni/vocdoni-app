@@ -58,6 +58,24 @@ describe('public language server routing', () => {
     ).toBeNull()
   })
 
+  it('ignores a malformed language cookie instead of throwing', () => {
+    expect(() =>
+      resolvePublicLanguageRedirect({
+        urlOriginal: '/organization/0xabc',
+        cookieHeader: 'vocdoni-public-language=%E0%A4%A',
+        supportedLanguages: ['en', 'es'],
+      })
+    ).not.toThrow()
+
+    expect(
+      resolvePublicLanguageRedirect({
+        urlOriginal: '/organization/0xabc',
+        cookieHeader: 'vocdoni-public-language=%E0%A4%A',
+        supportedLanguages: ['en', 'es'],
+      })
+    ).toBe('/en/organization/0xabc')
+  })
+
   it('ignores unsupported paths and invalid cookie languages', () => {
     expect(
       resolvePublicLanguageRedirect({

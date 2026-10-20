@@ -1,6 +1,7 @@
 import { Box, Button, HStack, Icon, Link, Text } from '@chakra-ui/react'
 import * as ReactPDF from '@react-pdf/renderer'
 import { useQueryClient } from '@tanstack/react-query'
+import { Buffer as BufferPolyfill } from 'buffer'
 import { useOrganization } from '@vocdoni/react-components'
 import { useState } from 'react'
 import type { TFunction } from 'i18next'
@@ -92,6 +93,12 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
         explorerUrl,
         now: new Date(),
       })
+
+      // @react-pdf/layout calls `Buffer.isBuffer` after loading each image. Browsers have no Buffer,
+      // so that call throws (logged as "Buffer is not defined") before the image cache key is set,
+      // and the running-header icon gets embedded again on every page. The global is installed only
+      // when a report is generated, not when the dashboard loads. Node (tests) keeps its own Buffer.
+      globalThis.Buffer ??= BufferPolyfill as unknown as typeof globalThis.Buffer
 
       // --- Pass 1: capture actual page starts ---
       const capturedPages: Record<string, number> = {}

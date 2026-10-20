@@ -12,15 +12,17 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useCallback, useMemo, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuFileSpreadsheet } from 'react-icons/lu'
 import { useSubscription } from '~components/Auth/Subscription'
+import { dropRejectionMessage, useLatestDrop } from '~components/Layout/dropzone'
 import Uploader from '~components/Layout/Uploader'
 import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
+import SpreadsheetError from '~components/Spreadsheet/errors/SpreadsheetError'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { usePaginatedMembers } from '~queries/members'
 import { useTable } from '../TableProvider'
@@ -53,6 +55,7 @@ export const MembersCsvManager = () => {
     setValue,
     watch,
     setError,
+    clearErrors,
     formState: { errors },
   } = useFormContext()
   const { columns } = useTable()
@@ -64,13 +67,37 @@ export const MembersCsvManager = () => {
   const existingMembers = membersData?.pagination?.totalItems ?? 0
 
   // File dropzone
+  // A slow read from an earlier drop can't overwrite the outcome of a newer one. The drawer also unmounts this
+  // component on close while the form outlives it, so a read still in flight must not write its file (or open the
+  // upgrade modal) after the user closed the drawer or reopened it and dropped another. `reading` is true while the
+  // latest drop's file is read, so the dropzone shows it is busy
+  const { busy: reading, start, isLatest, finish } = useLatestDrop()
   const onDrop = useCallback(
-    async ([file]: File[]) => {
+    async (accepted: File[], rejections: FileRejection[] = []) => {
+      const [file] = accepted
+      // Nothing was dropped at all (e.g. an empty folder), so there is nothing to complain about. Bail out before
+      // starting a drop, or an empty drop would silently discard a read that is still in flight
+      if (!file && !rejections.length) return
+      // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
+      const rejected = dropRejectionMessage(
+        t,
+        accepted,
+        rejections,
+        t('memberbase.importer.error.invalid_file_type', {
+          defaultValue: "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
+        })
+      )
+      const drop = start(!rejected)
       setValue('spreadsheet', undefined)
-      setError('spreadsheet', {})
+      clearErrors('spreadsheet')
+      if (rejected) {
+        setError('spreadsheet', { type: 'validate', message: rejected })
+        return
+      }
       try {
         const spreadsheet = new SpreadsheetManager(file, true)
         await spreadsheet.read()
+        if (!isLatest(drop)) return
         const totalMembers = spreadsheet.data.length + existingMembers
         const limitErrorMessage = t('uploader.csv_row_limit_exceeded', {
           count: totalMembers,
@@ -84,25 +111,32 @@ export const MembersCsvManager = () => {
         })
         setValue('spreadsheet', spreadsheet)
       } catch (e) {
+        if (!isLatest(drop)) return
         if (e instanceof CsvRowLimitExceededError) {
           openModal('planUpgrade', { context: 'memberbase', limit: String(maxCensusSize ?? '') })
           return
         }
-        if (e instanceof Error) {
-          setError('spreadsheet', {
-            type: e.name,
-            message: e.message,
-          })
-        }
+        // Only our own errors carry a translated message; anything else (FileReader, xlsx) is raw browser text
+        const known = e instanceof SpreadsheetError
+        setError('spreadsheet', {
+          type: known ? e.name : 'validate',
+          message: known
+            ? e.message
+            : t('memberbase.importer.error.read_failed', {
+                defaultValue: "We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again.",
+              }),
+        })
         console.error('could not load file:', e)
+      } finally {
+        finish(drop)
       }
     },
-    [existingMembers, maxCensusSize, openModal, setError, setValue, t]
+    [clearErrors, existingMembers, finish, isLatest, maxCensusSize, openModal, setError, setValue, start, t]
   )
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
-    accept: SpreadsheetManager.AcceptedTypes.reduce((prev, curr) => ({ ...prev, [curr]: [] }), {}),
+    accept: SpreadsheetManager.Accept,
   })
   const [visibleColumns, setVisibleColumns] = useState<string[]>(['name', 'surname', 'email'])
   const handleColumnChange = (value: string[]) => setVisibleColumns(value)
@@ -174,10 +208,15 @@ export const MembersCsvManager = () => {
           <Text color='texts.subtle' fontSize='sm'>
             {t('memberbase.import_file.subtitle', {
               defaultValue:
-                'Import your CSV, XLS, or XLSX file containing member data. Ensure column headers match the template for accurate mapping.',
+                'Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.',
             })}
           </Text>
-          <Uploader getInputProps={getInputProps} getRootProps={getRootProps} isDragActive={isDragActive} />
+          <Uploader
+            getInputProps={getInputProps}
+            getRootProps={getRootProps}
+            isDragActive={isDragActive}
+            isLoading={reading}
+          />
           <FormErrorMessage display='flex' justifyContent='center'>
             {errors?.spreadsheet?.message?.toString()}
           </FormErrorMessage>

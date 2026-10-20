@@ -4,20 +4,30 @@ import { LuLayoutDashboard } from 'react-icons/lu'
 import { system } from '~theme/system'
 import { DashboardMenuItemButton } from './Item'
 
-describe('DashboardMenuItemButton', () => {
-  it('renders the button when reduced', () => {
-    render(
-      <ChakraProvider value={system}>
-        <DashboardMenuItemButton
-          reduced
-          item={{
-            label: 'Dashboard',
-            icon: LuLayoutDashboard,
-          }}
-        />
-      </ChakraProvider>
-    )
+const renderItem = (reduced: boolean) =>
+  render(
+    <ChakraProvider value={system}>
+      <DashboardMenuItemButton
+        reduced={reduced}
+        item={{
+          label: 'Dashboard',
+          icon: LuLayoutDashboard,
+        }}
+      />
+    </ChakraProvider>
+  )
 
-    expect(screen.getByRole('button')).toBeInTheDocument()
+describe('DashboardMenuItemButton', () => {
+  it('shows the label inline when expanded', () => {
+    renderItem(false)
+
+    expect(screen.getByRole('button')).toHaveTextContent('Dashboard')
+  })
+
+  // The reduced sidebar is icon-only: the label moves to a tooltip.
+  it('drops the inline label when reduced', () => {
+    renderItem(true)
+
+    expect(screen.getByRole('button')).not.toHaveTextContent('Dashboard')
   })
 })

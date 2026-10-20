@@ -4,7 +4,7 @@ import { LuX } from 'react-icons/lu'
 import { Sidebar, SidebarContents, SidebarSubtitle, SidebarTitle } from '~components/Dashboard/Contents'
 import { useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { BasicConfig } from './BasicConfig'
-import CensusCreation from './CensusCreation'
+import CensusCreation, { CensusStatusBadge } from './CensusCreation'
 import { ExtraConfig } from './ExtraConfig'
 
 export const CreateSidebar = () => {
@@ -36,7 +36,9 @@ export const CreateSidebar = () => {
         )}
       </SidebarContents>
 
-      <SidebarContents flex='1' overflowY='auto'>
+      {/* Bottom room for the floating support chat launcher (bottom-right, over
+          this panel), so it never covers the last settings. */}
+      <SidebarContents flex='1' overflowY='auto' pb={24}>
         <SidebarSubtitle>
           <Trans i18nKey='process_create.basic_configuration'>Basic Configuration</Trans>
         </SidebarSubtitle>
@@ -47,10 +49,11 @@ export const CreateSidebar = () => {
         </SidebarSubtitle>
         <ExtraConfig />
 
-        <Flex borderTop='1px solid' borderColor='table.border' mt={4} pt={4}>
+        <Flex borderTop='1px solid' borderColor='table.border' mt={4} pt={4} justify='space-between' align='center'>
           <SidebarSubtitle m={0}>
             <Trans i18nKey='process_create.census_creation'>Census Creation</Trans>
           </SidebarSubtitle>
+          <CensusStatusBadge />
         </Flex>
 
         <CensusCreation />

@@ -29,7 +29,7 @@ const Verify = () => {
         })
       )
     }
-  }, [email, code])
+  }, [email, code, setTitle, setSubtitle, t])
 
   if (!email) {
     return (

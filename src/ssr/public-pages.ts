@@ -223,32 +223,6 @@ export const resolvePublicLanguage = ({
   throw new Error(`Unsupported public language: ${routeLanguage}`)
 }
 
-export const getLocalizedPublicRedirectTarget = ({
-  routeType,
-  preferredLanguage,
-  currentLanguage,
-  idOrAddress,
-}: {
-  routeType: 'organization' | 'process'
-  preferredLanguage: string
-  currentLanguage: string
-  idOrAddress: string
-}) => {
-  if (preferredLanguage === currentLanguage) return null
-
-  if (routeType === 'organization') {
-    return getPublicOrganizationPath({
-      address: idOrAddress,
-      language: preferredLanguage,
-    })
-  }
-
-  return getPublicProcessPath({
-    id: idOrAddress,
-    language: preferredLanguage,
-  })
-}
-
 export const getPublicOrganizationPath = ({ address, language }: { address: string; language: string }) =>
   `/${language}/organization/${address}`
 

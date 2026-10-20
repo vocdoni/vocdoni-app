@@ -49,6 +49,9 @@ export const useDashboardRoutes = () => {
         <AccountProtectedRoute />
       </SuspenseLoader>
     ),
+    // Safety net for crashes in the guards or the layout. Pages below have their own, so their
+    // crashes render inside the dashboard shell.
+    errorElement: <Error />,
     children: [
       {
         // Guard that redirects integrators to /integrators
@@ -72,6 +75,7 @@ export const useDashboardRoutes = () => {
                     <DashboardCreateOrg />
                   </SuspenseLoader>
                 ),
+                errorElement: <Error />,
               },
               {
                 path: Routes.dashboard.base,
@@ -89,6 +93,7 @@ export const useDashboardRoutes = () => {
                     <Profile />
                   </SuspenseLoader>
                 ),
+                errorElement: <Error />,
               },
               // Protected routes if no account created without organization
               {
@@ -199,6 +204,7 @@ export const useDashboardRoutes = () => {
                         <Settings />
                       </SuspenseLoader>
                     ),
+                    errorElement: <Error />,
                     children: [
                       {
                         index: true,
@@ -247,6 +253,7 @@ export const useDashboardRoutes = () => {
                             <ProcessCreate />
                           </SuspenseLoader>
                         ),
+                        errorElement: <Error />,
                       },
                     ]),
                   },

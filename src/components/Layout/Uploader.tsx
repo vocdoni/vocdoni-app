@@ -17,14 +17,16 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
-import { DropzoneInputProps, DropzoneRootProps, useDropzone } from 'react-dropzone'
-import { useFormContext } from 'react-hook-form'
+import { useRef, useState } from 'react'
+import { DropzoneInputProps, DropzoneRootProps, FileRejection, useDropzone } from 'react-dropzone'
+import { SetValueConfig, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { BiTrash } from 'react-icons/bi'
 import { LuUpload } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
+import { dropRejectionMessage, useLatestDrop } from './dropzone'
 
 export type UploaderProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T) => T
@@ -37,6 +39,11 @@ export type UploaderProps = {
 type ImageUploaderProps = {
   name: string
 } & Pick<BoxProps, 'w' | 'h' | 'borderTopRadius'>
+
+const imageAccept = {
+  'image/png': ['.png'],
+  'image/jpeg': ['.jpg', '.jpeg'],
+}
 
 const useUploadFile = () => {
   const { bearedFetch } = useAuth()
@@ -53,61 +60,107 @@ const useUploadFile = () => {
   })
 }
 
-export const AvatarUploader = (props: FormControlProps) => {
+type ImageDropUploadOptions = {
+  name: string
+  successTitle: string
+  failureTitle: string
+  // Prepended to the console error when an upload fails
+  logPrefix: string
+  setValueOptions?: SetValueConfig
+}
+
+// Shared drop handling for the image dropzones: explains rejected drops, uploads the accepted image and stores its
+// URL in the `name` form field.
+// Drop and upload problems are kept as local state, not form errors: these fields are never registered, so the
+// form's validation would never clear a `setError` on them and it would block submitting until a valid image is
+// uploaded. It also avoids looking up index-based names (`questions.0.options.2.image`) in the nested errors object
+const useImageDropUpload = ({
+  name,
+  successTitle,
+  failureTitle,
+  logPrefix,
+  setValueOptions,
+}: ImageDropUploadOptions) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const {
-    watch,
-    getValues,
-    setValue,
-    setError,
-    clearErrors,
-    formState: { errors },
-  } = useFormContext()
-  const { mutateAsync: uploadFile, isPending } = useUploadFile()
+  const { setValue } = useFormContext()
+  const { mutateAsync: uploadFile } = useUploadFile()
+  const [error, setError] = useState<string>()
 
-  const avatar = watch('avatar')
-  const name = getValues('name')
-
-  const onUpload = async (files: File[]) => {
-    clearErrors('avatar')
+  // A slow upload from an earlier drop can't overwrite the outcome of a newer one, and once unmounted (e.g. the
+  // option was removed) a pending upload has no field left to write to. `isPending` only reflects the latest drop, so
+  // the spinner doesn't keep spinning for an upload a newer drop superseded
+  const { busy: isPending, start, isLatest, finish } = useLatestDrop()
+  // Field-array names are index based (e.g. `questions.0.options.2.image`) and shift when an earlier item is
+  // removed, so the upload result must go to the field's current name, not the one captured when it was dropped
+  const currentName = useRef(name)
+  currentName.current = name
+  const onUpload = async (files: File[], rejections: FileRejection[] = []) => {
+    // Nothing was dropped at all (e.g. an empty folder): keep any visible error and any upload in flight
+    if (!files.length && !rejections.length) return
+    const rejected = dropRejectionMessage(
+      t,
+      files,
+      rejections,
+      t('uploader.error.invalid_image_type', {
+        defaultValue: "This file type isn't supported. Upload a .png or .jpg image.",
+      })
+    )
+    const drop = start(!rejected)
+    setError(rejected)
+    if (rejected) return
     try {
       const url = await uploadFile(files[0])
-      setValue('avatar', url)
+      if (!isLatest(drop)) return
+      setValue(currentName.current, url, setValueOptions)
       toast({
-        title: t('uploader.avatar_upload_success', { defaultValue: 'Avatar uploaded' }),
+        title: successTitle,
         type: 'success',
         duration: 3000,
         isClosable: true,
       })
-    } catch (error) {
+    } catch (e) {
+      console.error(logPrefix, e)
+      if (!isLatest(drop)) return
       const errorMessage =
-        error && error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
-      setError('avatar', {
-        message: errorMessage,
-      })
+        e instanceof Error ? e.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
+      setError(errorMessage)
       toast({
-        title: t('uploader.avatar_upload_failed', { defaultValue: 'Avatar upload failed' }),
+        title: failureTitle,
         description: errorMessage,
         type: 'error',
         duration: 3000,
         isClosable: true,
       })
-      console.error('Error uploading avatar:', error)
+    } finally {
+      finish(drop)
     }
   }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const dropzone = useDropzone({
     onDrop: onUpload,
     multiple: false,
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-    },
+    accept: imageAccept,
   })
 
+  return { ...dropzone, error, isPending }
+}
+
+export const AvatarUploader = (props: FormControlProps) => {
+  const { t } = useTranslation()
+  const { watch, getValues, setValue } = useFormContext()
+  const { getRootProps, getInputProps, isDragActive, isPending, error } = useImageDropUpload({
+    name: 'avatar',
+    successTitle: t('uploader.avatar_upload_success', { defaultValue: 'Avatar uploaded' }),
+    failureTitle: t('uploader.avatar_upload_failed', { defaultValue: 'Avatar upload failed' }),
+    logPrefix: 'Error uploading avatar:',
+  })
+
+  const avatar = watch('avatar')
+  const name = getValues('name')
+
   return (
-    <FormControl invalid={!!errors?.avatar} {...props}>
+    <FormControl invalid={!!error} {...props}>
       <FormLabel>{t('avatar.label', { defaultValue: 'Logo/Avatar' })}</FormLabel>
       <Box borderRadius='full' px={6}>
         {avatar ? (
@@ -165,62 +218,26 @@ export const AvatarUploader = (props: FormControlProps) => {
           </Flex>
         )}
       </Box>
-      <FormErrorMessage>{errors?.avatar?.message?.toString()}</FormErrorMessage>
+      <FormErrorMessage>{error}</FormErrorMessage>
     </FormControl>
   )
 }
 
 export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }: ImageUploaderProps) => {
   const { t } = useTranslation()
-  const toast = useToast()
-  const {
-    watch,
-    setValue,
-    setError,
-    clearErrors,
-    formState: { errors },
-  } = useFormContext()
-  const { mutateAsync: uploadFile, isPending } = useUploadFile()
+  const { watch } = useFormContext()
+  const { getRootProps, getInputProps, isDragActive, isPending, error } = useImageDropUpload({
+    name,
+    successTitle: t('uploader.image_upload_success', { defaultValue: 'Image uploaded' }),
+    failureTitle: t('uploader.image_upload_failed', { defaultValue: 'Image upload failed' }),
+    logPrefix: 'Error uploading image:',
+    setValueOptions: { shouldDirty: true },
+  })
 
   const value = watch(name)
 
-  const onUpload = async (files: File[]) => {
-    clearErrors(name)
-    try {
-      const url = await uploadFile(files[0])
-      setValue(name, url, { shouldDirty: true })
-      toast({
-        title: t('uploader.image_upload_success', { defaultValue: 'Image uploaded' }),
-        type: 'success',
-        duration: 3000,
-        isClosable: true,
-      })
-    } catch (error) {
-      const errorMessage =
-        error && error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
-      setError(name, { message: errorMessage })
-      toast({
-        title: t('uploader.image_upload_failed', { defaultValue: 'Image upload failed' }),
-        description: errorMessage,
-        type: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
-      console.error(error)
-    }
-  }
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: onUpload,
-    multiple: false,
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-    },
-  })
-
   return (
-    <FormControl invalid={!!errors?.[name]}>
+    <FormControl invalid={!!error}>
       <Flex direction='column' gap={2} align='center' w='full'>
         {value ? (
           <Flex
@@ -240,6 +257,12 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
               h='100%'
               objectFit='cover'
             />
+            {/* A new image dropped over the current one is uploading */}
+            {isPending && (
+              <Flex position='absolute' inset={0} align='center' justify='center' bg='blackAlpha.500'>
+                <Spinner color='white' />
+              </Flex>
+            )}
           </Flex>
         ) : (
           <Flex
@@ -258,7 +281,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
           </Flex>
         )}
       </Flex>
-      <FormErrorMessage>{errors?.[name]?.message?.toString()}</FormErrorMessage>
+      <FormErrorMessage>{error}</FormErrorMessage>
     </FormControl>
   )
 }
@@ -267,7 +290,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
   const { t } = useTranslation()
 
   if (!formats) {
-    formats = ['CSV', 'XLSX', 'ODS']
+    formats = ['CSV', 'XLS', 'XLSX', 'ODS']
   }
 
   return (

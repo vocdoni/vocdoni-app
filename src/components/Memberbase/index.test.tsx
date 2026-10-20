@@ -23,28 +23,30 @@ const renderTabs = () =>
     </MemoryRouter>
   )
 
+// The Chakra tabs settle their own state right after mounting; querying with findBy*
+// waits inside act() for that, instead of asserting before it and leaking the update.
 describe('MemberbaseTabs member count', () => {
   afterEach(() => {
     membersQuery.data = undefined
   })
 
-  it('shows the exact, locale formatted memberbase size on the Members tab', () => {
+  it('shows the exact, locale formatted memberbase size on the Members tab', async () => {
     membersQuery.data = { members: [], pagination: { totalItems: 1234, lastPage: 124, currentPage: 1 } }
     renderTabs()
 
-    expect(screen.getByRole('tab', { name: /Members/ })).toHaveTextContent('Members1,234')
+    expect(await screen.findByRole('tab', { name: /Members/ })).toHaveTextContent('Members1,234')
   })
 
-  it('shows an empty memberbase as zero', () => {
+  it('shows an empty memberbase as zero', async () => {
     membersQuery.data = { members: [], pagination: { totalItems: 0, lastPage: 1, currentPage: 1 } }
     renderTabs()
 
-    expect(screen.getByRole('tab', { name: /Members/ })).toHaveTextContent('Members0')
+    expect(await screen.findByRole('tab', { name: /Members/ })).toHaveTextContent('Members0')
   })
 
-  it('shows no count until the total is known', () => {
+  it('shows no count until the total is known', async () => {
     renderTabs()
 
-    expect(screen.getByRole('tab', { name: /Members/ })).toHaveTextContent(/^Members$/)
+    expect(await screen.findByRole('tab', { name: /Members/ })).toHaveTextContent(/^Members$/)
   })
 })

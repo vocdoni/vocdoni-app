@@ -25,7 +25,7 @@ import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { useAppEnv } from '~src/app-env'
 import { useSignupFromInvite } from '~src/queries/account'
 import { Routes } from '~src/router/routes'
-import { AnalyticsEvents } from '~utils/analytics'
+import { AnalyticsEvents, rememberSignupMethod } from '~utils/analytics'
 import { withParam } from '~utils/url'
 import GoogleAuth from './GoogleAuth'
 
@@ -93,10 +93,13 @@ const SignUp = ({
   const privacyPolicyUrl = appEnv.PRIVACY_POLICY_URL
   const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
 
+  // Keyed on `t` so the title follows a language switch.
   useEffect(() => {
-    // set SignUp title and description
     setTitle(t('signup_title'))
     setSubtitle(t('signup_subtitle'))
+  }, [setTitle, setSubtitle, t])
+
+  useEffect(() => {
     signup.reset()
   }, [])
 
@@ -117,6 +120,7 @@ const SignUp = ({
   useEffect(() => {
     if (verifyInline && signup.isSuccess && !verifyingEmail) {
       trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'password' } })
+      rememberSignupMethod('password', signup.variables?.email ?? email)
       setVerifyingEmail(email)
       signup.reset()
     }
@@ -125,6 +129,7 @@ const SignUp = ({
   useEffect(() => {
     if (!verifyInline && signup.isSuccess && !registeredEmail) {
       trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'password' } })
+      rememberSignupMethod('password', signup.variables?.email ?? email)
       setRegisteredEmail(email)
       signup.reset()
     }
@@ -133,6 +138,7 @@ const SignUp = ({
   useEffect(() => {
     if (inviteSignup.isSuccess) {
       trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'invite' } })
+      rememberSignupMethod('invite', email)
     }
   }, [inviteSignup.isSuccess, trackEvent])
 

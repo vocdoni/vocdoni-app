@@ -35,7 +35,6 @@ import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
-import { inferQuestionBallotTypeOrUndefined } from '../resultTypeLabels'
 import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
@@ -98,17 +97,9 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
   )
 }
 
-// The badge infers the ballot type, which throws for questions that state neither a type nor a
-// ballot protocol — e.g. the read-only projection of a legacy multiple-choice election. The row
-// is still worth showing without it, so such a question gets no badge.
-const ProcessTypeBadge = () => {
-  const { election } = useElection()
-  const question = election?.questions[0]
-
-  if (question && !inferQuestionBallotTypeOrUndefined(question)) return null
-
-  return <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
-}
+// QuestionsTypeBadge renders nothing for a question whose ballot type can't be inferred (e.g. the
+// read-only projection of a legacy multiple-choice election), so such a row simply has no badge.
+const ProcessTypeBadge = () => <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
 
 const rowTitleProps: TextProps = { w: 'full', maxW: '500px', size: 'sm', truncate: true }
 const cardTitleProps: TextProps = { fontWeight: 'medium', lineClamp: 2 }

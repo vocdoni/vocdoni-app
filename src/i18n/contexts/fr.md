@@ -47,7 +47,9 @@ Address the user with formal **vous / votre** throughout — in French this is t
 | sign (cryptographic) | signer | Technical term in common use — keep |
 
 ## Pluralization keys
-Keys ending in `_one` and `_other` are singular and plural forms. French uses the same two-form pattern — translate accordingly. Note that French treats 0 as plural (`_other`), unlike some languages.
+Keys ending in `_one` and `_other` are singular and plural forms. French uses the same two-form pattern — translate accordingly. Note that CLDR puts 0 in the singular form for French (`_one` covers 0 and 1), unlike English: never hardcode "1" or "Un" in a `_one` value whose count can be 0 — use `{{count}}` so 0 renders as "0".
+
+Keys ending in `_many` also exist: CLDR uses that form for large round numbers such as 1,000,000. Never leave them empty (an empty value falls back to English) — copy the `_other` value.
 
 ## Numbers & punctuation
 - Decimal separator: comma (e.g. "77,12 %").
