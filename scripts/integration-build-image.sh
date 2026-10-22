@@ -39,7 +39,7 @@ trap 'rm -rf "$dir"' EXIT
 # Resolves the ref with git alone, then shallow-fetches exactly that commit. saas-backend is
 # private and reached over SSH: with SAAS_BACKEND_DEPLOY_KEY (its read-only deploy key) in CI,
 # with the caller's own SSH access otherwise. A throwaway repo fetches every branch, tag and PR
-# head without trees or blobs, so rev-parse can resolve a #N, branch, tag or short/full SHA.
+# head without trees or blobs, so the ref can be looked up among those refs only.
 url="https://github.com/vocdoni/$repo.git"
 if [ "$repo" = saas-backend ]; then
   url="git@github.com:vocdoni/$repo.git"
@@ -48,17 +48,34 @@ if [ "$repo" = saas-backend ]; then
     chmod 600 "$dir/deploy_key"
     echo "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" > "$dir/known_hosts"
     export GIT_SSH_COMMAND="ssh -i $dir/deploy_key -o IdentitiesOnly=yes -o UserKnownHostsFile=$dir/known_hosts"
+  elif [ -n "${CI:-}" ]; then
+    # Fork PRs and Dependabot runs get no secrets, so the key is empty there.
+    echo "ERROR: SAAS_BACKEND_DEPLOY_KEY not available: CI needs it to fetch the private saas-backend (fork PRs and Dependabot runs get no secrets)" >&2
+    exit 1
   fi
 fi
 refs="$dir/refs"
 git init --quiet "$refs" >&2
 git -C "$refs" fetch --quiet --filter=tree:0 --update-head-ok "$url" \
-  '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*' '+refs/pull/*/head:refs/pull/*' >&2
-rev="$ref"
+  '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*' '+refs/pull/*/head:refs/pull/*/head' >&2
+# resolve <rev>: the commit that <rev> names in the fetched refs, or nothing.
+resolve() {
+  git -C "$refs" rev-parse --verify --quiet "$1^{commit}" || true
+}
+# Order: a branch, a tag, a full refs/ path (heads/, tags/ or pull/ only), then a hex SHA.
+# HEAD and FETCH_HEAD are not in the fetched refs, so they never resolve.
 if [[ "$ref" == \#* ]]; then
-  rev="refs/pull/${ref:1}"
+  sha="$(resolve "refs/pull/$((10#${ref:1}))/head")"
+else
+  sha="$(resolve "refs/heads/$ref")"
+  [ -n "$sha" ] || sha="$(resolve "refs/tags/$ref")"
+  if [ -z "$sha" ] && [[ "$ref" =~ ^(heads|tags|pull)/ ]]; then
+    sha="$(resolve "refs/$ref")"
+  fi
+  if [ -z "$sha" ] && [[ "$ref" =~ ^[0-9A-Fa-f]{7,40}$ ]]; then
+    sha="$(resolve "$ref")"
+  fi
 fi
-sha="$(git -C "$refs" rev-parse --verify --quiet "$rev^{commit}" || true)"
 if ! [[ "$sha" =~ ^[0-9a-f]{40}$ ]]; then
   echo "ERROR: could not resolve '$ref' in vocdoni/$repo" >&2
   exit 1

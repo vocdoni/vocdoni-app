@@ -16,6 +16,9 @@ name: Integration
 # gets a reply; a push run on a pull request gets its own comment, each time, so nobody has
 # to open the Actions tab to see it. A failed run's reply includes the failing step's output.
 #
+# Pinned upstream images are built by the `images` job, the only job that gets the deploy
+# key. It runs no PR code, and e2e loads the built images from an artifact.
+#
 # `pnpm test:e2e` runs every project in playwright.config.ts, so this covers both
 # the desktop (`chromium`) and the emulated-phone (`mobile-chrome`) passes. Adding
 # a project needs no change here.
@@ -194,25 +197,146 @@ jobs:
             echo "parsed=true" >> "$GITHUB_OUTPUT"
           fi
 
+  images:
+    name: Build pinned images
+    needs: resolve
+    # The only job that references SAAS_BACKEND_DEPLOY_KEY, and it runs no PR code: it checks out
+    # github.sha, the default branch for a comment or the dispatched ref for a dispatch. On a
+    # pull_request that is the merge commit, so the PR's own build script runs there; a fork gets
+    # no secrets, and a same-repo author could already read them through the workflow file.
+    # e2e gets the built images as an artifact, so no job with the key runs PR code after it.
+    if: ${{ needs.resolve.result == 'success' && needs.resolve.outputs.reset != 'true' && (needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # Same grouping as e2e: a pinned run is never cancelled by a push or another comment.
+    concurrency:
+      group: integration-${{ (github.event_name == 'issue_comment' || github.event_name == 'workflow_dispatch') && github.run_id || github.ref }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+    outputs:
+      vocdoni_node_image: ${{ steps.pins.outputs.vocdoni_node_image }}
+      vocdoni_node_sha: ${{ steps.pins.outputs.vocdoni_node_sha }}
+      saas_backend_image: ${{ steps.pins.outputs.saas_backend_image }}
+      saas_backend_sha: ${{ steps.pins.outputs.saas_backend_sha }}
+      failure: ${{ steps.failure.outputs.failure }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Build pinned images
+        id: pins
+        env:
+          SAAS_BACKEND_DEPLOY_KEY: ${{ secrets.SAAS_BACKEND_DEPLOY_KEY }}
+          NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
+          SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/steps" "$RUNNER_TEMP/pinned-images"; exec > >(tee -a "$RUNNER_TEMP/steps/pins.log") 2>&1
+          set -euo pipefail
+          # Saved images are compressed with zstd when the runner has it, gzip otherwise.
+          if command -v zstd >/dev/null; then
+            ext=tar.zst
+            compress=(zstd -q -T0)
+          else
+            ext=tar.gz
+            compress=(gzip -1)
+          fi
+          # build <repo> <ref> <image output> <sha output>: runs in the background.
+          # Output goes to files, so a failure shows at `wait`, not via errexit.
+          build() {
+            local repo="$1" ref="$2" image_out="$3" sha_out="$4"
+            local image sha
+            scripts/integration-build-image.sh "$repo" "$ref" > "$RUNNER_TEMP/$repo.out" 2> "$RUNNER_TEMP/$repo.log" || return 1
+            image="$(sed -n 's/^image=//p' "$RUNNER_TEMP/$repo.out")"
+            sha="$(sed -n 's/^sha=//p' "$RUNNER_TEMP/$repo.out")"
+            [ -n "$image" ] && [ -n "$sha" ] || return 1
+            docker save "$image" | "${compress[@]}" > "$RUNNER_TEMP/pinned-images/$repo.$ext" || return 1
+            echo "$image_out=$image" >> "$GITHUB_OUTPUT"
+            echo "$sha_out=$sha" >> "$GITHUB_OUTPUT"
+          }
+          names=()
+          pids=()
+          if [ -n "$NODE_REF" ]; then
+            build vocdoni-node "$NODE_REF" vocdoni_node_image vocdoni_node_sha &
+            names+=(vocdoni-node)
+            pids+=("$!")
+          fi
+          if [ -n "$SAAS_REF" ]; then
+            build saas-backend "$SAAS_REF" saas_backend_image saas_backend_sha &
+            names+=(saas-backend)
+            pids+=("$!")
+          fi
+          failed=0
+          for i in "${!pids[@]}"; do
+            if ! wait "${pids[$i]}"; then
+              echo "::error::build of ${names[$i]} failed" >&2
+              failed=1
+            fi
+          done
+          for repo in "${names[@]}"; do
+            echo "::group::$repo build"
+            cat "$RUNNER_TEMP/$repo.log"
+            echo "::endgroup::"
+          done
+          [ "$failed" = 0 ]
+
+      - name: Upload pinned images
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: pinned-images
+          path: ${{ runner.temp }}/pinned-images
+          if-no-files-found: error
+          retention-days: 1
+          # Artifacts are per run, not per attempt: a re-run would otherwise hit 409 Conflict.
+          overwrite: true
+
+      # As in e2e: the first failed step's log excerpt goes to the report, so a failed build is
+      # reported with its output.
+      - name: Collect failure output
+        id: failure
+        if: failure()
+        env:
+          OUT_PINS: ${{ steps.pins.outcome }}
+        run: |
+          set -euo pipefail
+          if [ "$OUT_PINS" = failure ]; then
+            excerpt="$(scripts/integration-failure.sh "Build pinned images" "$RUNNER_TEMP/steps/pins.log")"
+          else
+            excerpt="A setup step failed before any captured step; see the run log."
+          fi
+          # A random delimiter, so no line of the output can end the value early.
+          delim="EOF_$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
+          {
+            echo "failure<<$delim"
+            printf '%s\n' "$excerpt"
+            echo "$delim"
+          } >> "$GITHUB_OUTPUT"
+
   e2e:
     name: End-to-end suite
-    needs: resolve
+    needs: [resolve, images]
     # resolve only runs for dispatches, pull requests and /integration comments.
     # push skips it and still runs this job, as it always has. An unrelated comment
     # skips resolve, and that skip must skip this job too. A cleared
     # `/integration reset` builds nothing, so it skips this job as well.
     #
+    # A failed or cancelled images job skips this job; a skipped one (no pins) does not.
+    #
     # For a pull_request the job runs when the base is stage or main (release and
     # hotfix PRs, as before), or when a ref is pinned, sticky or one-shot. Other
     # feature PRs into develop run only test.yml.
-    if: ${{ !cancelled() && needs.resolve.outputs.reset != 'true' && (needs.resolve.result == 'success' || (needs.resolve.result == 'skipped' && github.event_name != 'issue_comment')) && (github.event_name != 'pull_request' || github.base_ref == 'stage' || github.base_ref == 'main' || needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') }}
+    if: ${{ !cancelled() && needs.resolve.outputs.reset != 'true' && (needs.resolve.result == 'success' || (needs.resolve.result == 'skipped' && github.event_name != 'issue_comment')) && (needs.images.result == 'success' || needs.images.result == 'skipped') && (github.event_name != 'pull_request' || github.base_ref == 'stage' || github.base_ref == 'main' || needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') }}
     runs-on: ubuntu-latest
     # The suite publishes real on-chain processes and casts real votes, and
     # vocone's first boot downloads its zk circuit artifacts. Budget for that —
     # and note every journey now runs twice, desktop and mobile.
     #
-    # Building upstream from source (any pinned ref) or an SDK build adds a lot
-    # of time, hence 90 over the default 45.
+    # An SDK build adds a lot of time, and so does loading pinned upstream images
+    # (built in the images job), hence 90 over the default 45.
     timeout-minutes: ${{ (needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') && 90 || 45 }}
     # Every comment and dispatch run gets its own group, so a pinned run is never
     # cancelled by a push or another comment. Queue order between groups is not
@@ -224,8 +348,6 @@ jobs:
       contents: read
       packages: read # pull ghcr.io/vocdoni/saas-backend
     outputs:
-      vocdoni_node_sha: ${{ steps.pins.outputs.vocdoni_node_sha }}
-      saas_backend_sha: ${{ steps.pins.outputs.saas_backend_sha }}
       integrator_sdk_sha: ${{ steps.sdk.outputs.integrator_sdk_sha }}
       failure: ${{ steps.failure.outputs.failure }}
     steps:
@@ -236,6 +358,59 @@ jobs:
           # empty means the default event ref, as for a pull request or a push.
           ref: ${{ needs.resolve.outputs.checkout_ref }}
           persist-credentials: false
+
+      - name: Download pinned images
+        id: download
+        if: needs.images.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: pinned-images
+          path: ${{ runner.temp }}/pinned-images
+
+      - name: Load pinned images
+        id: pins
+        if: needs.images.result == 'success'
+        env:
+          NODE_IMAGE: ${{ needs.images.outputs.vocdoni_node_image }}
+          SAAS_IMAGE: ${{ needs.images.outputs.saas_backend_image }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/steps"; exec > >(tee -a "$RUNNER_TEMP/steps/pins.log") 2>&1
+          set -euo pipefail
+          for archive in "$RUNNER_TEMP"/pinned-images/*; do
+            case "$archive" in
+              *.tar.zst) zstd -dc "$archive" | docker load ;;
+              *) gzip -dc "$archive" | docker load ;;
+            esac
+          done
+          if [ -n "$NODE_IMAGE" ]; then echo "VOCDONI_NODE_IMAGE=$NODE_IMAGE" >> "$GITHUB_ENV"; fi
+          if [ -n "$SAAS_IMAGE" ]; then echo "SAAS_BACKEND_IMAGE=$SAAS_IMAGE" >> "$GITHUB_ENV"; fi
+
+      - name: Print resolved image digests
+        id: digests
+        env:
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ github.token }}
+        # `:main` is tracked deliberately, so a green run can go red with no
+        # change in this repo. Printing the digests makes such a run
+        # reproducible locally and tells you immediately that upstream moved.
+        run: |
+          mkdir -p "$RUNNER_TEMP/steps"; exec > >(tee -a "$RUNNER_TEMP/steps/digests.log") 2>&1
+          # Logged in only for the pulls below, and logged out on any exit: the token must
+          # not stay in ~/.docker/config.json while PR code runs.
+          trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+          if [ -n "${VOCDONI_NODE_IMAGE:-}" ]; then
+            echo "vocdoni-node built from source: $VOCDONI_NODE_IMAGE"
+          else
+            docker pull ghcr.io/vocdoni/vocdoni-node:main
+            docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/vocdoni-node:main
+          fi
+          if [ -n "${SAAS_BACKEND_IMAGE:-}" ]; then
+            echo "saas-backend built from source: $SAAS_BACKEND_IMAGE"
+          else
+            docker pull ghcr.io/vocdoni/saas-backend:main
+            docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/saas-backend:main
+          fi
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -292,87 +467,12 @@ jobs:
           mkdir -p "$RUNNER_TEMP/steps"; exec > >(tee -a "$RUNNER_TEMP/steps/browser.log") 2>&1
           pnpm exec playwright install --with-deps chromium
 
-      - name: Build pinned images
-        id: pins
-        if: needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != ''
-        env:
-          SAAS_BACKEND_DEPLOY_KEY: ${{ secrets.SAAS_BACKEND_DEPLOY_KEY }}
-          NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
-          SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
-        run: |
-          mkdir -p "$RUNNER_TEMP/steps"; exec > >(tee -a "$RUNNER_TEMP/steps/pins.log") 2>&1
-          set -euo pipefail
-          # build <repo> <ref> <ENV_VAR> <output_name>: runs in the background.
-          # Output goes to files, so a failure shows at `wait`, not via errexit.
-          build() {
-            local repo="$1" ref="$2" env_var="$3" output="$4"
-            local image sha
-            scripts/integration-build-image.sh "$repo" "$ref" > "$RUNNER_TEMP/$repo.out" 2> "$RUNNER_TEMP/$repo.log" || return 1
-            image="$(sed -n 's/^image=//p' "$RUNNER_TEMP/$repo.out")"
-            sha="$(sed -n 's/^sha=//p' "$RUNNER_TEMP/$repo.out")"
-            [ -n "$image" ] && [ -n "$sha" ] || return 1
-            echo "$env_var=$image" >> "$GITHUB_ENV"
-            echo "$output=$sha" >> "$GITHUB_OUTPUT"
-          }
-          names=()
-          pids=()
-          if [ -n "$NODE_REF" ]; then
-            build vocdoni-node "$NODE_REF" VOCDONI_NODE_IMAGE vocdoni_node_sha &
-            names+=(vocdoni-node)
-            pids+=("$!")
-          fi
-          if [ -n "$SAAS_REF" ]; then
-            build saas-backend "$SAAS_REF" SAAS_BACKEND_IMAGE saas_backend_sha &
-            names+=(saas-backend)
-            pids+=("$!")
-          fi
-          failed=0
-          for i in "${!pids[@]}"; do
-            if ! wait "${pids[$i]}"; then
-              echo "::error::build of ${names[$i]} failed" >&2
-              failed=1
-            fi
-          done
-          for repo in "${names[@]}"; do
-            echo "::group::$repo build"
-            cat "$RUNNER_TEMP/$repo.log"
-            echo "::endgroup::"
-          done
-          [ "$failed" = 0 ]
-
-      - name: Log in to ghcr.io
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - name: Print resolved image digests
-        id: digests
-        # `:main` is tracked deliberately, so a green run can go red with no
-        # change in this repo. Printing the digests makes such a run
-        # reproducible locally and tells you immediately that upstream moved.
-        run: |
-          mkdir -p "$RUNNER_TEMP/steps"; exec > >(tee -a "$RUNNER_TEMP/steps/digests.log") 2>&1
-          if [ -n "${VOCDONI_NODE_IMAGE:-}" ]; then
-            echo "vocdoni-node built from source: $VOCDONI_NODE_IMAGE"
-          else
-            docker pull ghcr.io/vocdoni/vocdoni-node:main
-            docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/vocdoni-node:main
-          fi
-          if [ -n "${SAAS_BACKEND_IMAGE:-}" ]; then
-            echo "saas-backend built from source: $SAAS_BACKEND_IMAGE"
-          else
-            docker pull ghcr.io/vocdoni/saas-backend:main
-            docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/saas-backend:main
-          fi
-
       - name: Summarize tested refs
         env:
           NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
-          NODE_SHA: ${{ steps.pins.outputs.vocdoni_node_sha }}
+          NODE_SHA: ${{ needs.images.outputs.vocdoni_node_sha }}
           SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
-          SAAS_SHA: ${{ steps.pins.outputs.saas_backend_sha }}
+          SAAS_SHA: ${{ needs.images.outputs.saas_backend_sha }}
           SDK_REF: ${{ needs.resolve.outputs.integrator_sdk_ref }}
           SDK_SHA: ${{ steps.sdk.outputs.integrator_sdk_sha }}
         run: |
@@ -433,6 +533,7 @@ jobs:
           OUT_SDK: ${{ steps.sdk.outcome }}
           OUT_INSTALL: ${{ steps.install.outcome }}
           OUT_BROWSER: ${{ steps.browser.outcome }}
+          OUT_DOWNLOAD: ${{ steps.download.outcome }}
           OUT_PINS: ${{ steps.pins.outcome }}
           OUT_DIGESTS: ${{ steps.digests.outcome }}
           OUT_STACK: ${{ steps.stack.outcome }}
@@ -449,11 +550,12 @@ jobs:
               log="$RUNNER_TEMP/steps/$3.log"
             fi
           }
+          pick "$OUT_DOWNLOAD" "Download pinned images" download
+          pick "$OUT_PINS" "Load pinned images" pins
+          pick "$OUT_DIGESTS" "Print resolved image digests" digests
           pick "$OUT_SDK" "Build pinned SDK" sdk
           pick "$OUT_INSTALL" "Install dependencies" install
           pick "$OUT_BROWSER" "Install Playwright browser" browser
-          pick "$OUT_PINS" "Build pinned images" pins
-          pick "$OUT_DIGESTS" "Print resolved image digests" digests
           pick "$OUT_STACK" "Start stack" stack
           pick "$OUT_BUILD" "Build app against the stack" build
           pick "$OUT_E2E" "Run end-to-end suite (desktop + mobile)" e2e
@@ -506,13 +608,13 @@ jobs:
 
   report:
     name: Report to PR
-    needs: [resolve, e2e]
+    needs: [resolve, images, e2e]
     # Two kinds of reply, each one comment. An authorized /integration comment gets
     # one, and anyone else is ignored silently; a writer whose command did not parse
     # still gets the "rejected" reply. A push run on a pull request whose e2e job
-    # succeeded or failed gets one too, every time. A cancelled e2e job was superseded
+    # succeeded or failed, or whose images build failed, gets one too, every time. A cancelled e2e job was superseded
     # by a newer push, so it gets none.
-    if: ${{ always() && ((github.event_name == 'issue_comment' && needs.resolve.outputs.authorized == 'true') || (github.event_name == 'pull_request' && (needs.e2e.result == 'success' || needs.e2e.result == 'failure'))) }}
+    if: ${{ always() && ((github.event_name == 'issue_comment' && needs.resolve.outputs.authorized == 'true') || (github.event_name == 'pull_request' && (needs.e2e.result == 'success' || needs.e2e.result == 'failure' || needs.images.result == 'failure'))) }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -535,7 +637,7 @@ jobs:
           PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.issue.number }}
           PARSED: ${{ needs.resolve.outputs.parsed }}
           RESOLVE: ${{ needs.resolve.result }}
-          RESULT: ${{ needs.e2e.result }}
+          RESULT: ${{ needs.images.result == 'failure' && 'failure' || needs.e2e.result }}
           RESET: ${{ needs.resolve.outputs.reset }}
           STICKY: ${{ needs.resolve.outputs.sticky }}
           CHECKOUT: ${{ github.event_name == 'pull_request' && github.sha || needs.resolve.outputs.checkout_ref }}
@@ -543,10 +645,10 @@ jobs:
           NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
           SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
           SDK_REF: ${{ needs.resolve.outputs.integrator_sdk_ref }}
-          NODE_SHA: ${{ needs.e2e.outputs.vocdoni_node_sha }}
-          SAAS_SHA: ${{ needs.e2e.outputs.saas_backend_sha }}
+          NODE_SHA: ${{ needs.images.outputs.vocdoni_node_sha }}
+          SAAS_SHA: ${{ needs.images.outputs.saas_backend_sha }}
           SDK_SHA: ${{ needs.e2e.outputs.integrator_sdk_sha }}
-          FAILURE: ${{ needs.e2e.outputs.failure }}
+          FAILURE: ${{ needs.images.result == 'failure' && needs.images.outputs.failure || needs.e2e.outputs.failure }}
           ERROR: ${{ needs.resolve.outputs.error }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           SERVER_URL: ${{ github.server_url }}

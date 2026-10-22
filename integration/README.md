@@ -113,6 +113,10 @@ image="$(sed -n 's/^image=//p' <<<"$out")"
 Use `SAAS_BACKEND_IMAGE` and `saas-backend` the same way. `up` prints the two
 images it is using, so a run shows what it tested.
 
+saas-backend is private, so building it locally fetches over SSH and needs your
+own GitHub SSH access to `vocdoni/saas-backend`. CI uses the read-only
+`SAAS_BACKEND_DEPLOY_KEY` deploy key instead.
+
 Locally, pack the SDK and install it in place of the npm packages:
 
 ```bash
