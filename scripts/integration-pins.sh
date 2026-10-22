@@ -63,6 +63,10 @@ for tok in ${tokens[@]+"${tokens[@]}"}; do
   if [[ "$ref" =~ ^[0-9]{1,6}$ ]]; then
     ref="#$ref"
   fi
+  # Leading zeros are not octal: #0760 is PR 760.
+  if [[ "$ref" =~ ^#[0-9]{1,9}$ ]]; then
+    ref="#$((10#${ref:1}))"
+  fi
   case "$key" in
     vocdoni-node)
       [ "$seen_node" = 0 ] || fail "vocdoni-node given twice"
