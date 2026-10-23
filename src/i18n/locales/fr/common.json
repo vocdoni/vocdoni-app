@@ -204,6 +204,7 @@
     "errors": {
       "participant_not_found": "L'électeur ne figure pas sur la liste électorale, ou les identifiants fournis sont incorrects.",
       "requests_on_cooldown": "Trop de tentatives. Veuillez patienter un instant avant de réessayer.",
+      "requests_on_cooldown_seconds": "Vous pourrez demander un nouveau code dans {{seconds}} s.",
       "zero_voting_weight": "Vous n'avez pas suffisamment de poids de vote pour accéder à l'élection."
     },
     "fields": {
@@ -222,9 +223,11 @@
     "step1": {
       "footer_text": "En cas de problème, contactez votre organisation.",
       "helper_text": "Nous avons envoyé un code à votre numéro de téléphone ou à votre adresse e-mail. Si vous avez choisi de le recevoir par e-mail, pensez à vérifier votre dossier de courriers indésirables.",
+      "resend_countdown": "Vous n'avez pas reçu le code ? Vous pourrez le redemander dans {{seconds}} s.",
       "resend_failed": "Échec du renvoi du code",
       "resend_success": "Code renvoyé avec succès",
       "resend_text": "Vous n'avez pas reçu le code ? <resendBtn>Renvoyez-le</resendBtn>",
+      "same_code_text": "Si vous le redemandez, vous recevrez le même code : celui que vous avez déjà reçu reste donc valable.",
       "start_over_text": "Informations incorrectes ? <restartBtn>Recommencez</restartBtn>",
       "subtitle": "Saisissez le code de vérification",
       "title": "Authentification",

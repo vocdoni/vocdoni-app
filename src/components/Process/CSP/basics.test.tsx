@@ -3,7 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { AllProviders } from '~src/test-utils'
-import { useCspAuth0, useCspAuth1, useCspAuthPending } from './basics'
+import { CspCooldownError, useCountdown, useCspAuth0, useCspAuth1, useCspAuthPending } from './basics'
 
 const { auth0, auth1 } = vi.hoisted(() => ({ auth0: vi.fn(), auth1: vi.fn() }))
 
@@ -21,8 +21,8 @@ const messages = {
   zeroVotingWeight: "You don't have enough voting power to access the election.",
 }
 
-const mockAuthError = (code: number, error = 'server error') => {
-  auth0.mockRejectedValue(new VocdoniApiError(400, { code, error }, error, code))
+const mockAuthError = (code: number, error = 'server error', data?: unknown) => {
+  auth0.mockRejectedValue(new VocdoniApiError(400, { code, error, data }, error, code))
 }
 
 beforeEach(() => {
@@ -42,7 +42,20 @@ describe('useCspAuth0 errors', () => {
     mockAuthError(40103)
     const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
 
-    await expect(result.current.mutateAsync({})).rejects.toThrow(messages.requestsOnCooldown)
+    const error = await result.current.mutateAsync({}).catch((e: unknown) => e)
+    expect(error).toBeInstanceOf(CspCooldownError)
+    expect((error as CspCooldownError).message).toBe(messages.requestsOnCooldown)
+    expect((error as CspCooldownError).retryAfterMs).toBeUndefined()
+  })
+
+  it('maps 40103 with the wait left to a countdown message', async () => {
+    mockAuthError(40103, 'attempt cooldown time not reached', { coolDownTime: 41_200 })
+    const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
+
+    const error = await result.current.mutateAsync({}).catch((e: unknown) => e)
+    expect(error).toBeInstanceOf(CspCooldownError)
+    expect((error as CspCooldownError).message).toBe('You can request a new code in 42 s.')
+    expect((error as CspCooldownError).retryAfterMs).toBe(41_200)
   })
 
   it('maps 40801 to zero voting weight message', async () => {
@@ -103,5 +116,26 @@ describe('useCspAuthPending', () => {
 
     await act(async () => resolve())
     await waitFor(() => expect(other.result.current).toBe(false))
+  })
+})
+
+describe('useCountdown', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('counts the seconds left down to zero', () => {
+    vi.useFakeTimers()
+    const { result } = renderHook(() => useCountdown())
+    expect(result.current.secondsLeft).toBe(0)
+
+    act(() => result.current.start(2_500))
+    expect(result.current.secondsLeft).toBe(3)
+
+    act(() => vi.advanceTimersByTime(1_000))
+    expect(result.current.secondsLeft).toBe(2)
+
+    act(() => vi.advanceTimersByTime(2_000))
+    expect(result.current.secondsLeft).toBe(0)
   })
 })

@@ -204,6 +204,7 @@
     "errors": {
       "participant_not_found": "O eleitor não consta na lista de participantes ou as credenciais fornecidas estão incorretas.",
       "requests_on_cooldown": "Muitas solicitações. Aguarde um momento antes de tentar novamente.",
+      "requests_on_cooldown_seconds": "Você pode solicitar um novo código em {{seconds}} s.",
       "zero_voting_weight": "Você não tem poder de voto suficiente para acessar a eleição."
     },
     "fields": {
@@ -222,9 +223,11 @@
     "step1": {
       "footer_text": "Se tiver algum problema, entre em contato com sua organização.",
       "helper_text": "Enviamos um código para o seu número de telefone ou endereço de e-mail. Se optou por recebê-lo por e-mail, verifique também a pasta de spam.",
+      "resend_countdown": "Não recebeu o código? Você pode solicitá-lo novamente em {{seconds}} s.",
       "resend_failed": "Falha ao reenviar o código",
       "resend_success": "Código reenviado com sucesso",
       "resend_text": "Não recebeu o código? <resendBtn>Reenviar</resendBtn>",
+      "same_code_text": "Se solicitar novamente, você receberá o mesmo código, então o que você já recebeu continua válido.",
       "start_over_text": "Dados incorretos? <restartBtn>Recomeçar</restartBtn>",
       "subtitle": "Digite o código de verificação",
       "title": "Autenticação",
