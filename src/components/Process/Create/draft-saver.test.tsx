@@ -1,5 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { act, renderHook, waitFor } from '@testing-library/react'
+import { ErrorCode } from '~components/Auth/api'
 import { createTestQueryClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
@@ -9,6 +11,11 @@ import { useFormDraftSaver } from './index'
 
 const create = vi.fn()
 const update = vi.fn()
+const toast = vi.fn()
+
+vi.mock('~components/Toast', () => ({
+  useToast: () => toast,
+}))
 
 vi.mock('~components/Auth/Subscription', () => ({
   useSubscription: () => ({ permission: () => true }),
@@ -158,6 +165,38 @@ describe('useFormDraftSaver', () => {
     expect(storeDraftId).toHaveBeenCalledWith('draft-1')
     expect(publishedId).toBe('draft-1')
     expect(update).toHaveBeenCalledWith('draft-1', { published: true })
+  })
+
+  it('explains a draft locked by its payment once, not on every auto-save', async () => {
+    const locked = new VocdoniApiError(
+      409,
+      { error: 'draft locked', code: ErrorCode.PaymentSessionConflict },
+      'draft locked',
+      ErrorCode.PaymentSessionConflict
+    )
+    update.mockRejectedValue(locked)
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const { result } = renderSaver('draft-1')
+
+    await expect(result.current.saveDraft(true)).resolves.toBe('error')
+    await expect(result.current.saveDraft(true)).resolves.toBe('error')
+    expect(toast).toHaveBeenCalledTimes(1)
+    expect(toast).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', isClosable: true }))
+
+    // once a save goes through, a later lock is explained again
+    update.mockResolvedValueOnce(undefined)
+    await expect(result.current.saveDraft(true)).resolves.toBe('saved')
+    await expect(result.current.saveDraft(true)).resolves.toBe('error')
+    expect(toast).toHaveBeenCalledTimes(2)
+  })
+
+  it('keeps any other auto-save failure silent', async () => {
+    update.mockRejectedValue(new Error('network down'))
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const { result } = renderSaver('draft-1')
+
+    await expect(result.current.saveDraft(true)).resolves.toBe('error')
+    expect(toast).not.toHaveBeenCalled()
   })
 
   describe('clearPublishedDraftId', () => {

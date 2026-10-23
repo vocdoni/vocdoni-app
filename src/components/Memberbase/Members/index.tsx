@@ -11,7 +11,7 @@ import {
   Input,
   InputGroup,
   Menu,
-  Progress,
+  Spinner,
   Stack,
   Switch,
   Table,
@@ -28,6 +28,7 @@ import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
+import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -42,6 +43,7 @@ import {
   LuUsers,
   LuX,
 } from 'react-icons/lu'
+import { FaCaretDown, FaCaretUp } from 'react-icons/fa6'
 import { generatePath, useNavigate, useOutletContext } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
@@ -52,10 +54,19 @@ import { Routes } from '~routes'
 import { useAddCensusParticipants } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
-import { Member, useDeleteMembers, usePaginatedMembers, useUrlPagination } from '~src/queries/members'
+import {
+  isMemberSortField,
+  Member,
+  MemberSortField,
+  SortOrder,
+  useDeleteMembers,
+  usePaginatedMembers,
+  useUrlMemberSort,
+  useUrlPagination,
+} from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { MemberbaseTabsContext } from '..'
-import { useTable } from '../TableProvider'
+import { TableColumn, useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
 import { MemberManager } from './Manager'
 import { maskIfNeeded } from './maskIfNeeded'
@@ -139,6 +150,17 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
           })
           resetSelectedRows()
           onClose()
+        },
+        onError: (error: Error) => {
+          const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
+          toast({
+            title: t('members.table.add_to_group_error', { defaultValue: 'Error adding members to the group' }),
+            description: paymentMessage ?? error.message,
+            type: 'error',
+            duration: 3000,
+            isClosable: true,
+            ...(paymentMessage ? paymentErrorToastOptions : {}),
+          })
         },
       }
     )
@@ -266,12 +288,14 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
           handleClose()
         },
         onError: (error: Error) => {
+          const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
           toast({
             title: t('members.table.add_to_census_error', { defaultValue: 'Error adding members to the census' }),
-            description: error.message,
+            description: paymentMessage ?? error.message,
             type: 'error',
             duration: 3000,
             isClosable: true,
+            ...(paymentMessage ? paymentErrorToastOptions : {}),
           })
         },
       }
@@ -354,12 +378,19 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
 const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: MemberActionsProps) => {
   const { t } = useTranslation()
   const { open: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
+  const { isPlaceholderData } = useTable()
 
   return (
     <>
       <Menu.Root>
         <Menu.Trigger asChild>
-          <IconButton variant='ghost' size='sm' aria-label={t('members.table.actions', { defaultValue: 'Actions' })}>
+          <IconButton
+            variant='ghost'
+            size='sm'
+            aria-label={t('members.table.actions', { defaultValue: 'Actions' })}
+            // Placeholder rows are about to be replaced, so no action may start from them.
+            disabled={isPlaceholderData}
+          >
             <LuEllipsis />
           </IconButton>
         </Menu.Trigger>
@@ -687,37 +718,49 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
 }
 
 const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching } = useTable()
+  const { data = [], isLoading, isFetching, isPlaceholderData } = useTable()
   const isLoadingOrImporting = isLoading || isFetching
   const isEmpty = data.length === 0 && !isLoadingOrImporting
-  return (
-    <Table.Body>
-      {isEmpty ? (
+
+  if (isLoading && !data.length) {
+    return (
+      <Table.Body>
+        <MembersLoadingRow />
+      </Table.Body>
+    )
+  }
+  if (isEmpty) {
+    return (
+      <Table.Body>
         <EmptyMembers />
-      ) : (
-        data.map((member) => (
-          <MemberTableItem
-            key={member.id}
-            member={member}
-            openDeleteSelected={() => openDeleteSelected(member)}
-            onAddToGroup={() => onAddToGroup(member)}
-            onAddToCensus={() => onAddToCensus(member)}
-          />
-        ))
-      )}
+      </Table.Body>
+    )
+  }
+  return (
+    <Table.Body {...placeholderRowsStyle(isPlaceholderData)}>
+      {data.map((member) => (
+        <MemberTableItem
+          key={member.id}
+          member={member}
+          openDeleteSelected={() => openDeleteSelected(member)}
+          onAddToGroup={() => onAddToGroup(member)}
+          onAddToCensus={() => onAddToCensus(member)}
+        />
+      ))}
     </Table.Body>
   )
 }
 
 const MembersCardList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching } = useTable()
+  const { data = [], isLoading, isFetching, isPlaceholderData } = useTable()
   const isLoadingOrImporting = isLoading || isFetching
   const isEmpty = data.length === 0 && !isLoadingOrImporting
 
+  if (isLoading && !data.length) return <MembersLoading />
   if (isEmpty) return <EmptyMembersMessage />
 
   return (
-    <Stack gap={3}>
+    <Stack gap={3} {...placeholderRowsStyle(isPlaceholderData)}>
       {data.map((member) => (
         <MemberCard
           key={member.id}
@@ -758,6 +801,33 @@ const EmptyMembersMessage = () => {
   )
 }
 
+// While the next page or sort loads, the previous rows stay in place but faded, so the table
+// gives feedback without changing height. Their checkboxes and action menus are disabled meanwhile
+// (see `isPlaceholderData` below), so nothing can select or act on rows about to be replaced.
+const placeholderRowsStyle = (isPlaceholderData: boolean) => ({
+  'aria-busy': isPlaceholderData || undefined,
+  opacity: isPlaceholderData ? 0.5 : 1,
+  transition: 'opacity 0.15s ease-out',
+})
+
+const MembersLoading = () => (
+  <Flex justify='center' align='center' height='150px'>
+    <Spinner size='sm' color='texts.subtle' />
+  </Flex>
+)
+
+const MembersLoadingRow = () => {
+  const { columns } = useTable()
+
+  return (
+    <Table.Row>
+      <Table.Cell colSpan={columns.filter((c) => c.visible).length + 2}>
+        <MembersLoading />
+      </Table.Cell>
+    </Table.Row>
+  )
+}
+
 const EmptyMembers = () => {
   const { columns } = useTable()
 
@@ -770,8 +840,43 @@ const EmptyMembers = () => {
   )
 }
 
+// The caret for the active direction is drawn at full strength, the other one stays faint.
+const sortCaretStyle = (active: boolean) =>
+  active ? { color: 'texts.primary' } : { color: 'texts.subtle', opacity: 0.5 }
+
+const ARIA_SORT: Record<SortOrder, 'ascending' | 'descending'> = { asc: 'ascending', desc: 'descending' }
+
+const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: MemberSortField }) => {
+  const { t } = useTranslation()
+  const { sort, toggleSort } = useUrlMemberSort()
+  const order = sort?.sortBy === field ? sort.sortOrder : null
+  return (
+    // aria-sort goes on the active column only, as the ARIA spec recommends.
+    <Table.ColumnHeader aria-sort={order ? ARIA_SORT[order] : undefined}>
+      <Button
+        variant='plain'
+        size='sm'
+        px={0}
+        h='auto'
+        minW={0}
+        fontWeight='inherit'
+        color='inherit'
+        gap={1}
+        onClick={() => toggleSort(field)}
+        title={t('members.table.sort_by', { defaultValue: 'Sort by {{column}}', column: column.label })}
+      >
+        {column.label}
+        <Flex direction='column' aria-hidden gap={0} lineHeight={0} ms={0.5}>
+          <Icon as={FaCaretUp} boxSize={3} mb='-3.5px' {...sortCaretStyle(order === 'asc')} />
+          <Icon as={FaCaretDown} boxSize={3} mt='-3.5px' {...sortCaretStyle(order === 'desc')} />
+        </Flex>
+      </Button>
+    </Table.ColumnHeader>
+  )
+}
+
 const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCensus }: MemberTableItemProps) => {
-  const { isSelected, toggleOne, columns } = useTable()
+  const { isSelected, toggleOne, columns, isPlaceholderData } = useTable()
 
   return (
     <Table.Row>
@@ -779,6 +884,7 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCens
         <Checkbox.Root
           checked={isSelected(member.id)}
           onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
+          disabled={isPlaceholderData}
         >
           <Checkbox.HiddenInput />
           <Checkbox.Control />
@@ -930,9 +1036,8 @@ const MembersTable = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { open: isAddToGroupOpen, onOpen: onOpenAddToGroup, onClose: onAddToGroupClose } = useDisclosure()
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
-  const { isLoading, isFetching, allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } =
+  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isPlaceholderData } =
     useTable()
-  const isLoadingOrImporting = isLoading || isFetching
   const isMobile = useBreakpointValue({ base: true, md: false })
 
   const openDeleteSelected = (member?: Member) => {
@@ -990,19 +1095,13 @@ const MembersTable = () => {
             />
           </Flex>
         </Flex>
-        {isLoadingOrImporting && (
-          <Progress.Root size='xs' value={null}>
-            <Progress.Track>
-              <Progress.Range />
-            </Progress.Track>
-          </Progress.Root>
-        )}
         {isMobile ? (
           <Box p={4}>
             <Flex justify='space-between' align='center' mb={3}>
               <Checkbox.Root
                 checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                 onCheckedChange={({ checked }) => toggleAll(checked === true)}
+                disabled={isPlaceholderData}
               >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control />
@@ -1030,6 +1129,7 @@ const MembersTable = () => {
                     <Checkbox.Root
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
+                      disabled={isPlaceholderData}
                     >
                       <Checkbox.HiddenInput />
                       <Checkbox.Control />
@@ -1037,9 +1137,13 @@ const MembersTable = () => {
                   </Table.ColumnHeader>
                   {columns
                     .filter((col) => col.visible)
-                    .map((col) => (
-                      <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
-                    ))}
+                    .map((col) =>
+                      isMemberSortField(col.id) ? (
+                        <SortableColumnHeader key={col.id} column={col} field={col.id} />
+                      ) : (
+                        <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
+                      )
+                    )}
                   <Table.ColumnHeader width='50px'>
                     <ColumnManager />
                   </Table.ColumnHeader>
