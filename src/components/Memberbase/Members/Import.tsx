@@ -34,12 +34,14 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
 import { useOutletContext } from 'react-router'
 import { Select } from '~components/Form/Select'
+import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { MemberbaseTabsContext } from '..'
+import { setStoredImportJobMeta, takeStoredImportJobMeta } from '../importJobStorage'
 import { useTable } from '../TableProvider'
 import { MembersCsvManager } from './MembersCsvManager'
 
@@ -137,14 +139,17 @@ export const ImportProgress = () => {
     }
   }, [queryClient, organization.address, isComplete])
 
-  // Track the async job outcome once per job
-  const trackedJobRef = useRef<string | null>(null)
+  // Track the async job outcome once per job. The stored metadata is consumed
+  // here, so a finished job whose alert is still showing is not tracked again
+  // when this remounts.
   useEffect(() => {
-    if (!jobId || trackedJobRef.current === jobId || (!isComplete && !hasFailed)) return
-    trackedJobRef.current = jobId
+    if (!jobId || (!isComplete && !hasFailed)) return
+    const meta = takeStoredImportJobMeta(jobId)
+    if (!meta) return
     trackAnalyticsEvent({
       name: AnalyticsEvents.MembersImportCompleted,
       props: {
+        ...meta,
         status: hasFailed ? 'failed' : 'completed',
         added: data?.result?.added ?? 0,
         total: data?.result?.total ?? 0,
@@ -503,16 +508,30 @@ export const ImportMembers = () => {
     try {
       trackAnalyticsEvent({ name: AnalyticsEvents.MembersImportStarted, props: { total_rows: finalData.length } })
       const data = await addMembers.mutateAsync(finalData)
+      if (data?.jobId) {
+        setStoredImportJobMeta(data.jobId, {
+          file_type: spreadsheet.fileType,
+          rows: finalData.length,
+          encoding: spreadsheet.encoding ?? 'unknown',
+        })
+      }
       setJobId(data?.jobId)
       setColumnMapping({})
       methods.reset()
       onClose()
     } catch (error) {
       console.error(error)
+      const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
       toast({
         type: 'error',
-        title: 'Import failed',
-        description: error?.message ?? 'Unexpected error while importing members',
+        title: t('import_progress.error_title', { defaultValue: 'Import Error' }),
+        description:
+          paymentMessage ??
+          error?.message ??
+          t('import_progress.error_description', {
+            defaultValue: 'An error occurred while importing your member data. Please try again later.',
+          }),
+        ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }
   }

@@ -184,6 +184,13 @@ const buildPlan = (orgIndex) => {
           groupTypeIndex: byOrg,
         }),
         trend({
+          name: 'Memberbase · import failures per week (by reason)',
+          description:
+            'Files rejected or unreadable before the import even starts: wrong type, no header, no rows, or a parse error. Before this event they only surfaced as rage clicks.',
+          series: [event('members_import_failed')],
+          breakdown: 'reason',
+        }),
+        trend({
           name: 'Organizations created (by name)',
           description:
             'Who signed up, by name. `org_name` rides on the creation event itself, since the group profile is only registered once the organization has been fetched.',
@@ -355,19 +362,44 @@ const buildPlan = (orgIndex) => {
       },
       insights: [
         funnel({
-          name: 'Election wizard · template → census → created → results',
+          name: 'Election wizard · started → census → created → results',
           description:
-            'The creation flow in order: a template is picked, voter authentication (the census) is configured mid-wizard, the process is created, and results are opened later. Organization-level.',
-          steps: ['process_template_selected', 'census_configured', 'process_created', 'process_results_viewed'],
+            'The creation flow in order: the form is opened, voter authentication (the census) is configured mid-wizard, the process is created, and results are opened later. Organization-level.',
+          steps: ['process_create_started', 'census_configured', 'process_created', 'process_results_viewed'],
           groupTypeIndex: byOrg,
         }),
         funnel({
-          name: 'Election wizard · created vs failed',
-          description: 'Creation attempts that ended in an error. Anything above a few percent is a bug, not friction.',
-          steps: ['process_template_selected', 'process_creation_failed'],
+          name: 'Election wizard · started vs failed',
+          description:
+            'Opened forms that hit an error on submit. Split `stage = publish` out: those are API failures, and anything above a few percent is a bug, not friction.',
+          steps: ['process_create_started', 'process_creation_failed'],
           groupTypeIndex: byOrg,
           windowInterval: 1,
           windowUnit: 'hour',
+        }),
+        funnel({
+          name: 'Election wizard · which errors block publishing',
+          description:
+            'For each first failing field, how many admins still went on to publish. The breakdown is read from the failure step, not the first one, so each row is an error path like `questions.0.options.2.option`.',
+          steps: ['process_create_started', 'process_creation_failed', 'process_created'],
+          groupTypeIndex: byOrg,
+          windowInterval: 1,
+          breakdown: 'first_error_path',
+          extraFilter: { breakdownAttributionType: 'step', breakdownAttributionValue: 1 },
+        }),
+        funnel({
+          name: 'After publishing · created → link shared → results viewed',
+          description:
+            'Voting pages are never tracked, so copying the voting link is the in-app sign that a vote is being distributed.',
+          steps: ['process_created', 'voting_link_copied', 'process_results_viewed'],
+          groupTypeIndex: byOrg,
+        }),
+        trend({
+          name: 'Drafts · save failures per week (by status)',
+          description:
+            'Failed draft saves by HTTP status (0 = no response). Auto-save is only counted when its outcome changes, so a steady outage reads as one failure per editing session, not one per 30 s.',
+          series: [event('draft_save_failed')],
+          breakdown: 'status',
         }),
         trend({
           name: 'Most active organizations (by name)',
