@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event'
 import { mockUseElection, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { BallotUpdateProvider, VoteErrorText } from './BallotUpdate'
 import { AnonymityInfoCard, ProcessInfoCard, SuccessVoteModal, VotingVoteModal } from './View'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
@@ -102,6 +103,41 @@ describe('VotingVoteModal', () => {
     render(<VotingVoteModal />)
 
     expect(screen.queryByText('Your vote could not be cast')).not.toBeInTheDocument()
+  })
+
+  it('explains a ballot that changed under the voter instead of a generic failure', async () => {
+    const chainReason = 'vote metadata hash 0a does not match the election metadata hash 0b'
+    setElection({ voting: false, voteStatus: { q1: 'failed', q2: 'failed', q3: 'failed' } })
+
+    render(
+      <BallotUpdateProvider>
+        <VoteErrorText error={`Vote failed: ${chainReason}`} />
+        <VotingVoteModal />
+      </BallotUpdateProvider>
+    )
+
+    expect(await screen.findByText('The ballot has been updated')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Your vote was not cast because the organizer changed this vote. Review the updated questions and vote again.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Your vote could not be cast')).not.toBeInTheDocument()
+    expect(screen.queryByText(new RegExp(chainReason))).not.toBeInTheDocument()
+  })
+
+  it('keeps showing an unrelated failure as is', async () => {
+    setElection({ voting: false, voteStatus: { q1: 'failed' } })
+
+    render(
+      <BallotUpdateProvider>
+        <VoteErrorText error='Vote failed: nullifier already exists' />
+        <VotingVoteModal />
+      </BallotUpdateProvider>
+    )
+
+    expect(await screen.findByText('Your vote could not be cast')).toBeInTheDocument()
+    expect(screen.getByText('Vote failed: nullifier already exists')).toBeInTheDocument()
   })
 
   it('lets the voter dismiss the failure', async () => {
