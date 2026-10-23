@@ -73,8 +73,9 @@ describe('integration-pins.sh', () => {
       expectOk('/integration vocdoni-node=1a2b3c4 saas-backend=760', '1a2b3c4', '#760', '', false)
     })
 
-    it('keeps leading zeros of a bare PR number', () => {
-      expectOk('/integration saas-backend=0760', '', '#0760', '', true)
+    it('reads leading zeros of a PR number as decimal', () => {
+      expectOk('/integration saas-backend=0760', '', '#760', '', true)
+      expectOk('/integration saas-backend=#0760', '', '#760', '', true)
     })
 
     it('a 7-digit number is a SHA, not a PR number', () => {
