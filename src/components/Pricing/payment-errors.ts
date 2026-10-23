@@ -23,6 +23,10 @@ const hasCents = <K extends string>(data: unknown, ...keys: K[]): data is Record
 // that state it are checked against it in payment-errors.test.ts.
 export const selfServiceVoterLimit = 50_000
 
+// A publish refusal (40178) whose quote only a custom quote can settle: checkout refuses it (40176)
+export const isQuoteOnlyRefusal = (data: unknown) =>
+  (data as { quoteRequired?: unknown } | undefined)?.quoteRequired === true
+
 // Prefers the backend's own verdict when the payload carries it, so a changed threshold needs no
 // release here.
 const exceedsSelfServiceLimit = (data: object): boolean => {
@@ -45,7 +49,7 @@ export const publishPaymentErrorMessage = (t: TFunction, error: unknown): string
       if (!hasCents(details.data, 'totalCents')) break
       // Above the self-service limit the quote is still sent, but checkout refuses it (40176):
       // asking the user to pay that price would send them to a dead end.
-      if ((details.data as { quoteRequired?: unknown }).quoteRequired === true) return quoteRequiredMessage(t)
+      if (isQuoteOnlyRefusal(details.data)) return quoteRequiredMessage(t)
       // The quote is the full price: for a draft that grew after it was paid, the backend does not
       // say how much was paid, so the copy cannot claim the whole amount is due.
       return t('process.payment.error.publish_payment_required', {

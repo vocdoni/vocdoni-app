@@ -1324,6 +1324,26 @@
       }
     },
     "census": "Lista de participantes",
+    "checkout": {
+      "check_again": "Verificar novamente",
+      "confirming": "A confirmar o teu pagamento…",
+      "failed": "O pagamento não foi concluído, por isso não foi cobrado nada e o processo de votação não foi publicado. Podes tentar novamente, com o mesmo método de pagamento ou com outro.",
+      "pay": "Pagar {{amount}} e publicar",
+      "processing": "O teu pagamento está a ser processado. Alguns métodos de pagamento demoram alguns dias a ser concluídos. O processo de votação é publicado automaticamente quando o pagamento for concluído e, entretanto, o seu rascunho não pode ser alterado. Podes fechar esta janela.",
+      "publish_failed": "O teu pagamento foi concluído, mas ainda não foi possível publicar o processo de votação. Voltar a publicá-lo é gratuito.",
+      "publishing": "Pagamento recebido. A publicar o teu processo de votação…",
+      "retry_payment": "Tentar pagar novamente",
+      "summary": {
+        "one_time": "Pagamento único para este processo de votação",
+        "subtotal": "Subtotal",
+        "title": "Resumo da encomenda",
+        "total": "Total a pagar hoje",
+        "vat": "IVA",
+        "vat_pending": "Calculado a partir do teu endereço de faturação"
+      },
+      "timeout": "O teu pagamento ainda não foi confirmado. Não voltes a pagar: assim que for confirmado, o processo de votação é publicado automaticamente. Verifica novamente daqui a pouco.",
+      "title": "Pagar e publicar"
+    },
     "create": {
       "action": {
         "publish": "Publicar",

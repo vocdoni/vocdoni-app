@@ -1324,6 +1324,26 @@
       }
     },
     "census": "Cens",
+    "checkout": {
+      "check_again": "Torna-ho a comprovar",
+      "confirming": "S'està confirmant el teu pagament…",
+      "failed": "El pagament no s'ha completat, així que no s'ha cobrat res i el procés de votació no s'ha publicat. Pots tornar-ho a intentar amb el mateix mètode de pagament o amb un altre.",
+      "pay": "Paga {{amount}} i publica",
+      "processing": "El teu pagament s'està processant. Alguns mètodes de pagament triguen uns dies a completar-se. El procés de votació es publicarà automàticament quan es completi i, mentrestant, el seu esborrany no es pot modificar. Pots tancar aquesta finestra.",
+      "publish_failed": "El teu pagament s'ha completat, però encara no s'ha pogut publicar el procés de votació. Tornar-lo a publicar és gratuït.",
+      "publishing": "Pagament rebut. S'està publicant el teu procés de votació…",
+      "retry_payment": "Torna a intentar el pagament",
+      "summary": {
+        "one_time": "Pagament únic per a aquest procés de votació",
+        "subtotal": "Subtotal",
+        "title": "Resum de la comanda",
+        "total": "Total a pagar avui",
+        "vat": "IVA",
+        "vat_pending": "Es calcula a partir de la teva adreça de facturació"
+      },
+      "timeout": "El teu pagament encara no s'ha confirmat. No tornis a pagar: quan es confirmi, el procés de votació es publicarà automàticament. Torna-ho a comprovar d'aquí a un moment.",
+      "title": "Paga i publica"
+    },
     "create": {
       "action": {
         "publish": "Publica",

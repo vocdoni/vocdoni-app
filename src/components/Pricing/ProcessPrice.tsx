@@ -11,7 +11,7 @@ import { selfServiceVoterLimit } from './payment-errors'
 export const quoteRecommendedVoterLimit = 15_000
 
 // The backend describes each line in English; known kinds are translated here instead.
-const lineLabel = (t: TFunction, { kind, description }: ProcessPriceLine) => {
+export const priceLineLabel = (t: TFunction, { kind, description }: Pick<ProcessPriceLine, 'kind' | 'description'>) => {
   switch (kind) {
     case 'base':
       return t('process.price.line.base', { defaultValue: 'Voting process' })
@@ -74,7 +74,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
     <Stack gap={2} fontSize='sm'>
       {price.lines.map((line) => (
         <Flex key={line.kind} justify='space-between' gap={2}>
-          <Text>{lineLabel(t, line)}</Text>
+          <Text>{priceLineLabel(t, line)}</Text>
           <Text whiteSpace='nowrap'>{currency(line.amountCents)}</Text>
         </Flex>
       ))}
