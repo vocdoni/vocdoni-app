@@ -35,6 +35,14 @@ export const QueryKeys = {
       ['organizations', 'members', address, 'importJobProgress', jobID].filter(Boolean),
     drafts: (address?: string) => ['organizations', 'drafts', address].filter(Boolean),
     groups: (address?: string) => ['organizations', 'groups', address].filter(Boolean),
+    // Pre-flight census validation. `spec` is the normalized census signature, so
+    // two orderings of the same credentials share one cache entry.
+    censusCheck: (address: string | undefined, spec: string) => [
+      'organizations',
+      'census-check',
+      address ?? null,
+      spec,
+    ],
     apikeys: (address?: string) => ['organizations', 'apikeys', address].filter(Boolean),
   },
   process: {

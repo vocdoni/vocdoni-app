@@ -69,10 +69,10 @@ export const votingProcessToForm = (process: VotingProcessResponse): Process => 
     weightedVote: process.census?.weighted ?? false,
     anonymousVoting: process.census?.anonymous ?? false,
     groupId: process.census?.groupId ?? defaultProcessValues.groupId,
-    // Two-factor alone is a complete configuration (the auth dialog confirms it
-    // without credentials), so either half restores it.
+    // A code-only census (no credentials, 2FA on) is a valid configuration too:
+    // dropping it here would let the next autosave strip `twoFaFields` from the draft.
     census:
-      authFields.length || twoFaMethod
+      authFields.length || twoFaFields.length
         ? {
             credentials: [...authFields],
             use2FA: twoFaFields.length > 0,
