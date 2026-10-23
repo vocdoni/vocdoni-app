@@ -1044,6 +1044,7 @@
       "add_to_group_confirmation_many": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
       "add_to_group_confirmation_other": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
       "add_to_group_description": "Seleziona un gruppo a cui aggiungere i membri.",
+      "add_to_group_error": "Errore durante l'aggiunta dei membri al gruppo",
       "add_to_group_success": "Membri aggiunti al gruppo con successo",
       "bulk_delete": "Elimina",
       "cancel": "Annulla",
@@ -1379,9 +1380,39 @@
     "extended_info": "Informazioni estese",
     "is_invalid": "Questo processo contiene dati errati, rendendolo non valido",
     "no_description": "Nessuna descrizione fornita",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "Il pagamento di un processo di voto che usa questi membri è ancora in elaborazione. Riprova quando sarà completato.",
+        "census_growth_payment_required": "Questi membri amplierebbero il censimento di un processo di voto oltre quanto è stato pagato. Ampliarlo costa fino a {{amount}} in più (IVA esclusa).",
+        "census_growth_quote_required": "Questi membri porterebbero il censimento di un processo di voto oltre i 50.000 votanti, il che richiede un preventivo personalizzato. Contattaci per ampliarlo.",
+        "draft_payment_in_progress": "Questa bozza non può essere salvata a causa del suo pagamento: o il pagamento è ancora in elaborazione, oppure la modifica non è consentita dopo il pagamento (come aggiungere il branding). Contattaci se continua a succedere.",
+        "payment_in_progress": "Un pagamento, un acquisto o un rimborso di questo processo di voto non è ancora concluso, quindi il processo non può essere pubblicato ora. Riprova più tardi e contattaci se continua a succedere.",
+        "publish_payment_required": "Questo processo di voto costa {{amount}} in totale (IVA esclusa) e deve essere pagato prima di poterlo pubblicare. Se una parte è già stata pagata, resta da pagare solo la differenza.",
+        "quote_required": "I processi di voto con più di 50.000 votanti richiedono un preventivo personalizzato. Contattaci per pubblicare questo.",
+        "wallet_insufficient": "Il saldo dell'integratore non copre il prezzo di questo processo di voto. L'integratore che gestisce questa organizzazione deve ricaricare il proprio saldo prima che tu possa pubblicare di nuovo.",
+        "wallet_insufficient_amounts": "Il saldo dell'integratore è di {{available}}, ma per pubblicare questo processo di voto mancano ancora {{required}} (IVA esclusa). L'integratore che gestisce questa organizzazione deve ricaricare il proprio saldo prima che tu possa pubblicare di nuovo."
+      }
+    },
     "people_in_census_one": "Un votante",
     "people_in_census_many": "{{ count }} votanti",
     "people_in_census_other": "{{ count }} votanti",
+    "price": {
+      "error": "Non è stato possibile caricare il prezzo.",
+      "free": "Questo processo di voto è gratuito: viene pubblicato senza pagamento.",
+      "line": {
+        "base": "Processo di voto",
+        "branding": "Branding e white-label",
+        "custom_url": "URL personalizzato",
+        "email_two_fa": "Codice di verifica via email",
+        "signed_certificate": "Certificato dei risultati firmato",
+        "sms_two_fa": "Codice di verifica via SMS"
+      },
+      "quote_recommended": "Per i processi di voto con più di {{limit}} votanti ti consigliamo un preventivo personalizzato. <contact>Richiedi un preventivo</contact>, oppure pubblicalo al prezzo indicato nelle impostazioni.",
+      "quote_required": "I processi di voto con più di {{limit}} votanti possono essere pubblicati solo con un preventivo personalizzato. <contact>Richiedi un preventivo</contact> per pubblicare questo.",
+      "total": "Totale",
+      "unavailable": "Il prezzo appare qui una volta salvata la bozza con i votanti e la loro autenticazione configurata.",
+      "vat_excluded": "IVA esclusa. Viene aggiunta al momento del pagamento."
+    },
     "question_type": {
       "label": "Tipo di domanda",
       "multiple": "Scelta multipla",
@@ -1517,6 +1548,7 @@
       "placeholder": "Opzione {{number}}",
       "remove": "Rimuovi opzione"
     },
+    "price": "Prezzo",
     "question": {
       "description": {
         "placeholder": "Aggiungi qui la descrizione della domanda (opzionale)..."
