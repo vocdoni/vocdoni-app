@@ -16,7 +16,7 @@ const memberAlias = (member: Member) =>
 
 const MemberCard = ({ member, actions, selectable = true }: MemberCardProps) => {
   const { t } = useTranslation()
-  const { columns, isSelected, toggleOne } = useTable()
+  const { columns, isSelected, toggleOne, isPlaceholderData } = useTable()
   const alias = memberAlias(member)
 
   return (
@@ -29,6 +29,7 @@ const MemberCard = ({ member, actions, selectable = true }: MemberCardProps) => 
             <Checkbox.Root
               checked={isSelected(member.id)}
               onCheckedChange={({ checked }) => toggleOne(member.id!, checked === true)}
+              disabled={isPlaceholderData}
               aria-label={t('members.table.select_member', { defaultValue: 'Select {{name}}', name: alias })}
             >
               <Checkbox.HiddenInput />
