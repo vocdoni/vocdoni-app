@@ -2063,7 +2063,8 @@
     "details": {
       "description": "Tria fins a {{max}} dades de la teva base de membres. El que escriguin els votants hi ha de coincidir exactament.",
       "heading": "1. Què escriuran els votants?",
-      "optional": "És opcional si envies un codi d'un sol ús: els votants podran iniciar sessió només amb el codi."
+      "optional": "És opcional si envies un codi d'un sol ús: els votants podran iniciar sessió només amb el codi.",
+      "password_not_counted": "La contrasenya no compta per a aquest límit."
     },
     "level": {
       "basic": "Bàsic",
@@ -2078,7 +2079,7 @@
       "title": "Com iniciaran sessió els votants?"
     },
     "no_group_description": "Si us plau, selecciona primer un grup per configurar l'autenticació.",
-    "password_needs_another_credential": "Una contrasenya sola no pot identificar els votants. Selecciona una altra credencial o activa l'autenticació de dos factors al pas següent.",
+    "password_needs_another_credential": "Una contrasenya sola no pot identificar els votants. Tria també una altra dada o envia un codi d'un sol ús.",
     "pending": {
       "description": "Tria quines dades de membre hauran d'introduir els votants per votar, com ara el document d'identitat o el número de soci.",
       "error_title": "Ho necessites per publicar",

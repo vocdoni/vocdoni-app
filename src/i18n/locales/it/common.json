@@ -2063,7 +2063,8 @@
     "details": {
       "description": "Scegli fino a {{max}} dati dal tuo database membri. Ciò che scrivono i votanti deve corrispondere esattamente.",
       "heading": "1. Cosa scriveranno i votanti?",
-      "optional": "Facoltativo se invii un codice monouso: i votanti potranno accedere solo con il codice."
+      "optional": "Facoltativo se invii un codice monouso: i votanti potranno accedere solo con il codice.",
+      "password_not_counted": "La password non conta per questo limite."
     },
     "level": {
       "basic": "Base",
@@ -2078,7 +2079,7 @@
       "title": "Come accederanno i votanti?"
     },
     "no_group_description": "Seleziona prima un gruppo per configurare l'autenticazione.",
-    "password_needs_another_credential": "Una password da sola non può identificare i votanti. Seleziona un'altra credenziale o attiva l'autenticazione a due fattori nel passaggio successivo.",
+    "password_needs_another_credential": "Una password da sola non può identificare i votanti. Scegli anche un altro dato, oppure invia un codice monouso.",
     "pending": {
       "description": "Scegli quali dati dei membri i votanti devono inserire per votare, come il documento d'identità o il numero di socio.",
       "error_title": "Ti serve per pubblicare",

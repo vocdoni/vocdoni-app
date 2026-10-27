@@ -2063,7 +2063,8 @@
     "details": {
       "description": "Elige hasta {{max}} datos de tu base de miembros. Lo que escriban los votantes debe coincidir exactamente.",
       "heading": "1. ¿Qué escribirán los votantes?",
-      "optional": "Es opcional si envías un código de un solo uso: los votantes podrán iniciar sesión solo con el código."
+      "optional": "Es opcional si envías un código de un solo uso: los votantes podrán iniciar sesión solo con el código.",
+      "password_not_counted": "La contraseña no cuenta para ese límite."
     },
     "level": {
       "basic": "Básico",
@@ -2078,7 +2079,7 @@
       "title": "¿Cómo iniciarán sesión los votantes?"
     },
     "no_group_description": "Selecciona primero un grupo para configurar la autenticación.",
-    "password_needs_another_credential": "Una contraseña sola no puede identificar a los votantes. Selecciona otra credencial o activa la autenticación de dos factores en el siguiente paso.",
+    "password_needs_another_credential": "Una contraseña sola no puede identificar a los votantes. Elige también otro dato o envía un código de un solo uso.",
     "pending": {
       "description": "Elige qué datos de miembro deben introducir los votantes para votar, como su DNI o su número de miembro.",
       "error_title": "Lo necesitas para publicar",

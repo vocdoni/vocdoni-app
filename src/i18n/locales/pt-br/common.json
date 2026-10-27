@@ -2063,7 +2063,8 @@
     "details": {
       "description": "Escolha até {{max}} dados da sua lista de membros. O que os eleitores digitarem deve corresponder exatamente.",
       "heading": "1. O que os eleitores vão digitar?",
-      "optional": "Opcional se você enviar um código único: os eleitores poderão entrar apenas com o código."
+      "optional": "Opcional se você enviar um código único: os eleitores poderão entrar apenas com o código.",
+      "password_not_counted": "A senha não conta para esse limite."
     },
     "level": {
       "basic": "Básica",
@@ -2078,7 +2079,7 @@
       "title": "Como os eleitores vão entrar?"
     },
     "no_group_description": "Selecione um grupo primeiro para configurar a autenticação.",
-    "password_needs_another_credential": "Uma senha sozinha não consegue identificar os eleitores. Selecione outra credencial ou ative a autenticação de dois fatores na próxima etapa.",
+    "password_needs_another_credential": "Uma senha sozinha não consegue identificar os eleitores. Escolha também outro dado ou envie um código único.",
     "pending": {
       "description": "Escolha quais dados de membro os eleitores devem informar para votar, como o CPF ou o número de membro.",
       "error_title": "Você precisa disso para publicar",

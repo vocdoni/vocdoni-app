@@ -2063,7 +2063,8 @@
     "details": {
       "description": "Choisissez jusqu'à {{max}} informations dans votre liste de membres. Ce que saisissent les électeurs doit correspondre exactement.",
       "heading": "1. Que saisiront les électeurs ?",
-      "optional": "Facultatif si vous envoyez un code à usage unique : les électeurs pourront alors se connecter avec le code seul."
+      "optional": "Facultatif si vous envoyez un code à usage unique : les électeurs pourront alors se connecter avec le code seul.",
+      "password_not_counted": "Le mot de passe ne compte pas dans cette limite."
     },
     "level": {
       "basic": "Basique",
@@ -2078,7 +2079,7 @@
       "title": "Comment les électeurs se connecteront-ils ?"
     },
     "no_group_description": "Veuillez d'abord sélectionner un groupe pour configurer l'authentification.",
-    "password_needs_another_credential": "Un mot de passe seul ne permet pas d'identifier les électeurs. Sélectionnez un autre identifiant ou activez l'authentification à deux facteurs à l'étape suivante.",
+    "password_needs_another_credential": "Un mot de passe seul ne permet pas d'identifier les électeurs. Choisissez aussi une autre information, ou envoyez un code à usage unique.",
     "pending": {
       "description": "Choisissez les données de membre que les électeurs doivent saisir pour voter, comme leur pièce d'identité ou leur numéro d'adhérent.",
       "error_title": "Indispensable pour publier",

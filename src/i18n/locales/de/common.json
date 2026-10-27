@@ -2031,7 +2031,8 @@
     "details": {
       "description": "Wähle bis zu {{max}} Angaben aus deiner Mitgliederliste. Was Wählende eingeben, muss genau damit übereinstimmen.",
       "heading": "1. Was geben Wählende ein?",
-      "optional": "Optional, wenn du einen einmaligen Code sendest: Wählende können sich dann nur mit dem Code anmelden."
+      "optional": "Optional, wenn du einen einmaligen Code sendest: Wählende können sich dann nur mit dem Code anmelden.",
+      "password_not_counted": "Das Passwort zählt nicht zu dieser Grenze."
     },
     "level": {
       "basic": "Einfach",
@@ -2045,7 +2046,7 @@
       "title": "Wie melden sich Wählende an?"
     },
     "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
-    "password_needs_another_credential": "Ein Passwort allein kann Wählende nicht identifizieren. Wähle weitere Zugangsdaten aus oder aktiviere im nächsten Schritt die Zwei-Faktor-Authentifizierung.",
+    "password_needs_another_credential": "Ein Passwort allein kann Wählende nicht identifizieren. Wähle zusätzlich eine weitere Angabe oder sende einen einmaligen Code.",
     "pending": {
       "description": "Wähle aus, welche Mitgliedsdaten Wählende zur Stimmabgabe eingeben müssen, z. B. ihre Ausweis- oder Mitgliedsnummer.",
       "error_title": "Das brauchst du zum Veröffentlichen",

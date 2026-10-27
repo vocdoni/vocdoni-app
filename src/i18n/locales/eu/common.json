@@ -2031,7 +2031,8 @@
     "details": {
       "description": "Hautatu gehienez {{max}} datu zure kide-zerrendatik. Botogileek idazten dutenak zehatz-mehatz bat etorri behar du horrekin.",
       "heading": "1. Zer idatziko dute botogileek?",
-      "optional": "Aukerakoa behin erabiltzeko kode bat bidaltzen baduzu: orduan botogileek kodearekin bakarrik hasi dezakete saioa."
+      "optional": "Aukerakoa behin erabiltzeko kode bat bidaltzen baduzu: orduan botogileek kodearekin bakarrik hasi dezakete saioa.",
+      "password_not_counted": "Pasahitza ez da muga horretan kontatzen."
     },
     "level": {
       "basic": "Oinarrizkoa",
@@ -2045,7 +2046,7 @@
       "title": "Nola hasiko dute saioa botogileek?"
     },
     "no_group_description": "Hautatu lehenik talde bat autentifikazioa konfiguratzeko.",
-    "password_needs_another_credential": "Pasahitzak berak bakarrik ezin ditu botogileak identifikatu. Hautatu beste kredentzial bat edo aktibatu bi faktoreko autentifikazioa hurrengo urratsean.",
+    "password_needs_another_credential": "Pasahitzak berak bakarrik ezin ditu botogileak identifikatu. Hautatu beste datu bat ere, edo bidali behin erabiltzeko kode bat.",
     "pending": {
       "description": "Aukeratu hautesleek bozkatzeko zein kide-datu sartu behar dituzten, adibidez NANa edo kide-zenbakia.",
       "error_title": "Hau behar duzu argitaratzeko",
