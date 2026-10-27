@@ -177,6 +177,8 @@ Three branches are linked to deploys:
 - [![GitHub Actions Workflow Status][build badge stage]][app-stg.vocdoni.io] linked to SaaS api-stg and vochain LTS.
 - [![GitHub Actions Workflow Status][build badge main]][app.vocdoni.io] linked to SaaS api-lts and vochain LTS.
 
+Only `app.vocdoni.io` allows search engines to crawl: every other hostname serves a `robots.txt` with `Disallow: /`, decided per request in `server/robots.mjs`.
+
 Pushes and pull requests to `develop` and `stage` are validated by the GitHub
 Actions test workflow, which runs lint, test, and env-specific production
 builds.
