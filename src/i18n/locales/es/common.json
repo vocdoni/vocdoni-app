@@ -204,6 +204,13 @@
     "errors": {
       "participant_not_found": "El votante no figura en el censo o las credenciales proporcionadas son incorrectas.",
       "requests_on_cooldown": "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.",
+      "too_many_attempts": "Demasiados intentos. Vuelve a intentarlo más tarde.",
+      "too_many_attempts_hours_one": "Demasiados intentos. Vuelve a intentarlo en {{count}} hora.",
+      "too_many_attempts_hours_many": "Demasiados intentos. Vuelve a intentarlo en {{count}} horas.",
+      "too_many_attempts_hours_other": "Demasiados intentos. Vuelve a intentarlo en {{count}} horas.",
+      "too_many_attempts_minutes_one": "Demasiados intentos. Vuelve a intentarlo en {{count}} minuto.",
+      "too_many_attempts_minutes_many": "Demasiados intentos. Vuelve a intentarlo en {{count}} minutos.",
+      "too_many_attempts_minutes_other": "Demasiados intentos. Vuelve a intentarlo en {{count}} minutos.",
       "zero_voting_weight": "No tienes suficiente poder de voto para acceder a la votación."
     },
     "fields": {

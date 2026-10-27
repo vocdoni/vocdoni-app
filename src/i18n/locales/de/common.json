@@ -202,6 +202,11 @@
     "errors": {
       "participant_not_found": "Die/der Wählende ist nicht in der Teilnehmerliste aufgeführt, oder die angegebenen Zugangsdaten sind falsch.",
       "requests_on_cooldown": "Zu viele Anfragen. Bitte warte einen Moment, bevor du es erneut versuchst.",
+      "too_many_attempts": "Zu viele Versuche. Bitte versuche es später erneut.",
+      "too_many_attempts_hours_one": "Zu viele Versuche. Bitte versuche es in {{count}} Stunde erneut.",
+      "too_many_attempts_hours_other": "Zu viele Versuche. Bitte versuche es in {{count}} Stunden erneut.",
+      "too_many_attempts_minutes_one": "Zu viele Versuche. Bitte versuche es in {{count}} Minute erneut.",
+      "too_many_attempts_minutes_other": "Zu viele Versuche. Bitte versuche es in {{count}} Minuten erneut.",
       "zero_voting_weight": "Du hast kein ausreichendes Stimmgewicht, um an der Abstimmung teilzunehmen."
     },
     "fields": {

@@ -31,6 +31,15 @@ export type ResendChallengePayload = {
   phone?: string
 }
 
+// Seconds until a rate-limited voter may retry, from the 40017 body's `data.retryAfter`.
+const retryAfterSeconds = (body: unknown): number | undefined => {
+  if (typeof body !== 'object' || body === null || !('data' in body)) return undefined
+  const { data } = body
+  if (typeof data !== 'object' || data === null || !('retryAfter' in data)) return undefined
+  const { retryAfter } = data
+  return typeof retryAfter === 'number' && retryAfter > 0 ? retryAfter : undefined
+}
+
 // Maps the SaaS CSP auth error codes to translated, voter-facing messages. Any
 // other failure keeps the API's own message.
 const useTranslateCspError = () => {
@@ -39,12 +48,38 @@ const useTranslateCspError = () => {
   return (error: unknown): Error => {
     if (error instanceof VocdoniApiError) {
       switch (error.code) {
+        // 40802 covers both an unknown participant and a contact mismatch; older backends send 40029.
         case 40029:
+        case 40802:
           return new Error(
             t('csp.errors.participant_not_found', {
               defaultValue: 'The voter is not listed in the census, or the provided credentials are incorrect.',
             })
           )
+        case 40017: {
+          const retryAfter = retryAfterSeconds(error.body)
+          if (retryAfter === undefined) {
+            return new Error(
+              t('csp.errors.too_many_attempts', { defaultValue: 'Too many attempts. Please try again later.' })
+            )
+          }
+          if (retryAfter < 3600) {
+            return new Error(
+              t('csp.errors.too_many_attempts_minutes', {
+                count: Math.max(1, Math.ceil(retryAfter / 60)),
+                defaultValue_one: 'Too many attempts. Please try again in {{count}} minute.',
+                defaultValue_other: 'Too many attempts. Please try again in {{count}} minutes.',
+              })
+            )
+          }
+          return new Error(
+            t('csp.errors.too_many_attempts_hours', {
+              count: Math.ceil(retryAfter / 3600),
+              defaultValue_one: 'Too many attempts. Please try again in {{count}} hour.',
+              defaultValue_other: 'Too many attempts. Please try again in {{count}} hours.',
+            })
+          )
+        }
         case 40103:
           return new Error(
             t('csp.errors.requests_on_cooldown', {

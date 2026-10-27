@@ -202,6 +202,11 @@
     "errors": {
       "participant_not_found": "The voter is not listed in the census, or the provided credentials are incorrect.",
       "requests_on_cooldown": "Too many requests. Please wait a moment before trying again.",
+      "too_many_attempts": "Too many attempts. Please try again later.",
+      "too_many_attempts_hours_one": "Too many attempts. Please try again in {{count}} hour.",
+      "too_many_attempts_hours_other": "Too many attempts. Please try again in {{count}} hours.",
+      "too_many_attempts_minutes_one": "Too many attempts. Please try again in {{count}} minute.",
+      "too_many_attempts_minutes_other": "Too many attempts. Please try again in {{count}} minutes.",
       "zero_voting_weight": "You don't have enough voting power to access the election."
     },
     "fields": {

@@ -204,6 +204,13 @@
     "errors": {
       "participant_not_found": "Il votante non è presente nel censimento o le credenziali fornite non sono corrette.",
       "requests_on_cooldown": "Troppe richieste. Attendi un momento prima di riprovare.",
+      "too_many_attempts": "Troppi tentativi. Riprova più tardi.",
+      "too_many_attempts_hours_one": "Troppi tentativi. Riprova tra {{count}} ora.",
+      "too_many_attempts_hours_many": "Troppi tentativi. Riprova tra {{count}} ore.",
+      "too_many_attempts_hours_other": "Troppi tentativi. Riprova tra {{count}} ore.",
+      "too_many_attempts_minutes_one": "Troppi tentativi. Riprova tra {{count}} minuto.",
+      "too_many_attempts_minutes_many": "Troppi tentativi. Riprova tra {{count}} minuti.",
+      "too_many_attempts_minutes_other": "Troppi tentativi. Riprova tra {{count}} minuti.",
       "zero_voting_weight": "Non hai abbastanza potere di voto per accedere alla votazione."
     },
     "fields": {

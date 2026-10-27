@@ -204,6 +204,13 @@
     "errors": {
       "participant_not_found": "O votante não consta da lista de participantes ou as credenciais fornecidas estão incorretas.",
       "requests_on_cooldown": "Demasiados pedidos. Aguarda um momento antes de tentar novamente.",
+      "too_many_attempts": "Demasiadas tentativas. Tenta novamente mais tarde.",
+      "too_many_attempts_hours_one": "Demasiadas tentativas. Tenta novamente daqui a {{count}} hora.",
+      "too_many_attempts_hours_many": "Demasiadas tentativas. Tenta novamente daqui a {{count}} horas.",
+      "too_many_attempts_hours_other": "Demasiadas tentativas. Tenta novamente daqui a {{count}} horas.",
+      "too_many_attempts_minutes_one": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minuto.",
+      "too_many_attempts_minutes_many": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minutos.",
+      "too_many_attempts_minutes_other": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minutos.",
       "zero_voting_weight": "Não tens poder de voto suficiente para aceder à votação."
     },
     "fields": {

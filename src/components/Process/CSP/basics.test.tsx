@@ -19,10 +19,13 @@ const messages = {
   participantNotFound: 'The voter is not listed in the census, or the provided credentials are incorrect.',
   requestsOnCooldown: 'Too many requests. Please wait a moment before trying again.',
   zeroVotingWeight: "You don't have enough voting power to access the election.",
+  tooManyAttempts: 'Too many attempts. Please try again later.',
+  tooManyAttemptsMinutes: 'Too many attempts. Please try again in 2 minutes.',
+  tooManyAttemptsHours: 'Too many attempts. Please try again in 2 hours.',
 }
 
-const mockAuthError = (code: number, error = 'server error') => {
-  auth0.mockRejectedValue(new VocdoniApiError(400, { code, error }, error, code))
+const mockAuthError = (code: number, error = 'server error', data?: Record<string, unknown>) => {
+  auth0.mockRejectedValue(new VocdoniApiError(400, { code, error, data }, error, code))
 }
 
 beforeEach(() => {
@@ -36,6 +39,34 @@ describe('useCspAuth0 errors', () => {
     const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
 
     await expect(result.current.mutateAsync({})).rejects.toThrow(messages.participantNotFound)
+  })
+
+  it('maps 40802 to participant not found message', async () => {
+    mockAuthError(40802)
+    const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
+
+    await expect(result.current.mutateAsync({})).rejects.toThrow(messages.participantNotFound)
+  })
+
+  it('maps 40017 with retryAfter under an hour to a minutes message', async () => {
+    mockAuthError(40017, 'max attempts', { retryAfter: 90 })
+    const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
+
+    await expect(result.current.mutateAsync({})).rejects.toThrow(messages.tooManyAttemptsMinutes)
+  })
+
+  it('maps 40017 with retryAfter of an hour or more to an hours message', async () => {
+    mockAuthError(40017, 'max attempts', { retryAfter: 7200 })
+    const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
+
+    await expect(result.current.mutateAsync({})).rejects.toThrow(messages.tooManyAttemptsHours)
+  })
+
+  it('maps 40017 without retryAfter to a generic message', async () => {
+    mockAuthError(40017, 'max attempts')
+    const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
+
+    await expect(result.current.mutateAsync({})).rejects.toThrow(messages.tooManyAttempts)
   })
 
   it('maps 40103 to requests on cooldown message', async () => {
