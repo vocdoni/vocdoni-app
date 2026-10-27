@@ -44,7 +44,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
   const level = getProtectionLevel(credentials, codeMethod)
 
   return (
-    <Box p={4} borderWidth='1px' borderColor='border' borderRadius='md' data-testid='voter-auth-summary'>
+    <Box p={4} borderWidth='1px' borderColor='border' borderRadius='md'>
       <HStack justify='space-between' mb={3}>
         <Text fontWeight='semibold'>{t('voter_auth.summary.title', { defaultValue: 'Voter sign-in' })}</Text>
         <Badge colorPalette={protectionLevelPalettes[level]}>{getProtectionLevelTitle(t, level)}</Badge>
@@ -78,10 +78,10 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
             })}
           </Text>
         </HStack>
-        {/* Re-checked whenever the group, anonymity or weighting changes after
+        {/* Re-checked whenever the group or the chosen details change after
             saving: the settings were only ever validated against the old ones. */}
-        {checkStatus === 'invalid' && (
-          <HStack gap={2} align='start' color='fg.error' data-testid='voter-auth-summary-invalid'>
+        {(checkStatus === 'invalid' || checkStatus === 'rejected') && (
+          <HStack gap={2} align='start' color='fg.error'>
             <Icon as={LuTriangleAlert} mt={0.5} />
             <Text fontSize='inherit'>
               {t('voter_auth.summary.member_list_mismatch', {

@@ -2079,7 +2079,7 @@
     "protection": {
       "basic_risk": "Toute personne connaissant ces informations pourrait voter à la place d'un membre.",
       "good_code_risk": "Toute personne pouvant accéder à l'e-mail ou au téléphone d'un membre pourrait voter à sa place.",
-      "good_details_risk": "Il faudrait connaître plusieurs informations privées pour voter à la place d'un membre.",
+      "good_details_risk": "Il faudrait connaître plusieurs informations, dont au moins une privée, pour voter à la place d'un membre.",
       "label": "Protection",
       "strong": "Il faudrait connaître les informations d'un membre et accéder à son e-mail ou à son téléphone pour voter à sa place.",
       "unset": "Choisissez au moins une information ou un code."
@@ -2094,6 +2094,7 @@
       "surname": "Martin"
     },
     "save": {
+      "failed": "Paramètres de connexion non enregistrés",
       "submit": "Enregistrer",
       "unchecked": "Enregistré, mais nous n'avons pas pu vérifier votre liste de membres"
     },
@@ -2109,6 +2110,7 @@
       "missing_members_one": "{{count}} membre n'a pas de {{fields}}.",
       "missing_members_many": "{{count}} membres n'ont pas de {{fields}}.",
       "missing_members_other": "{{count}} membres n'ont pas de {{fields}}.",
+      "rejected": "Cette connexion ne peut pas être utilisée avec votre liste de membres.",
       "retry": "Vérifier à nouveau",
       "unavailable": "Nous n'avons pas pu vérifier votre liste de membres. Vous pouvez tout de même enregistrer.",
       "valid": "Tous les membres peuvent se connecter.",

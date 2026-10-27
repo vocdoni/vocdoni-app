@@ -13,11 +13,13 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import type { TFunction } from 'i18next'
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuChevronDown, LuEye } from 'react-icons/lu'
+import { getApiErrorMessage } from '~components/Auth/api'
 import { AUTH_FIELDS, getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { useToast } from '~components/Toast'
 import type { Group } from '~src/queries/groups'
@@ -86,8 +88,8 @@ const formatList = (language: string, items: string[], type: 'conjunction' | 'di
  * backend's rules (saas-backend `aggregateMemberFields`):
  * - missing data: any chosen detail is empty, or ALL the code contacts are, so
  *   "Member Number or Email" (and "both Email and Phone" for voter's choice);
- * - duplicates: the whole combination matches another member's, so
- *   "Member Number and Email".
+ * - duplicates: the details plus one contact match another member's (either
+ *   contact for voter's choice), so "Member Number and Email or Phone".
  */
 const describeFields = (t: TFunction, language: string, { credentials, codeMethod }: VoterAuthFormData) => {
   const details = credentials.map((field) => getAuthFieldLabel(t, field))
@@ -106,7 +108,11 @@ const describeFields = (t: TFunction, language: string, { credentials, codeMetho
 
   return {
     missing: formatList(language, missingContact ? [...details, missingContact] : details, 'disjunction'),
-    duplicate: formatList(language, [...details, ...contacts], 'conjunction'),
+    duplicate: formatList(
+      language,
+      contacts.length ? [...details, formatList(language, contacts, 'disjunction')] : details,
+      'conjunction'
+    ),
     /** The name of one part of the per-field breakdown: an auth field id, or 'contact'. */
     of: (field: string) => (field === 'contact' ? (missingContact ?? field) : getAuthFieldLabel(t, field)),
   }
@@ -154,7 +160,24 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
   const valuesKey = JSON.stringify(values)
   useEffect(() => setEmptyAttempt(false), [valuesKey])
 
-  const fieldNames = describeFields(t, i18n.language, values)
+  // Closing the dialog mid-save discards the edit: nothing may be saved after that.
+  const mounted = useRef(false)
+  useEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+    }
+  }, [])
+
+  // A dimmed previous outcome was computed for the details ticked before the
+  // current ones, so while re-checking its labels come from those.
+  const settledValues = useRef(values)
+  if (censusCheck.status !== 'checking') settledValues.current = values
+  const fieldNames = describeFields(
+    t,
+    i18n.language,
+    censusCheck.status === 'checking' ? settledValues.current : values
+  )
 
   const groupTitle = group?.isAutoGroup
     ? t('groups_board.auto_group.title', { defaultValue: 'All Members' })
@@ -177,7 +200,21 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
         statusRef.current?.focus()
         return
       }
-    } catch {
+    } catch (error) {
+      // A 400 without member issues means the backend rejected the census itself
+      // (e.g. its group is gone): saving would store a census that cannot work.
+      if (error instanceof VocdoniApiError && error.status === 400) {
+        if (mounted.current) {
+          toast({
+            title: t('voter_auth.save.failed', { defaultValue: 'Sign-in settings not saved' }),
+            description: getApiErrorMessage(error),
+            type: 'error',
+            duration: 5000,
+            isClosable: true,
+          })
+        }
+        return
+      }
       // The check itself failed (network, server, permissions): that says
       // nothing about the members, so it must not trap the admin here.
       checked = false
@@ -185,6 +222,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
       setSaving(false)
     }
 
+    if (!mounted.current) return
     if (!checked) {
       toast({
         title: t('voter_auth.save.unchecked', { defaultValue: "Saved, but we couldn't check your member list" }),
@@ -251,7 +289,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                             value={id}
                             size='sm'
                             flex='0 0 auto'
-                            disabled={!checked && field.value.length >= MAX_AUTH_FIELDS}
+                            disabled={saving || (!checked && field.value.length >= MAX_AUTH_FIELDS)}
                             {...optionCardStyles}
                           >
                             <CheckboxCard.HiddenInput />
@@ -278,6 +316,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                   <RadioCard.Root
                     name='use2FAMethod'
                     size='sm'
+                    disabled={saving}
                     value={field.value}
                     onValueChange={({ value }) => field.onChange(value)}
                     aria-describedby='voter-auth-code-help'
@@ -389,6 +428,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
           <Button variant='ghost' onClick={onCancel}>
             {t('actions.cancel', { defaultValue: 'Cancel' })}
           </Button>
+          {/* Its label is translated and it is not a form submit, so e2e has no structural handle. */}
           <Button onClick={handleSave} loading={saving} data-testid='voter-auth-save'>
             {t('voter_auth.save.submit', { defaultValue: 'Save' })}
           </Button>

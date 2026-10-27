@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event'
 import { render, screen, within } from '~src/test-utils'
 import { VoterSignInPreview } from './VoterSignInPreview'
 
-const preview = () => within(screen.getByTestId('voter-signin-preview'))
+const preview = () => within(screen.getByRole('region', { name: 'What voters will see' }))
 
 describe('VoterSignInPreview', () => {
   it('shows the details voters will type and asks for the code contact', () => {
@@ -50,6 +50,6 @@ describe('VoterSignInPreview', () => {
   it('renders no form controls', () => {
     render(<VoterSignInPreview credentials={['memberNumber', 'name']} codeMethod='email' />)
 
-    expect(screen.getByTestId('voter-signin-preview').querySelectorAll('input, form')).toHaveLength(0)
+    expect(screen.getByRole('region', { name: 'What voters will see' }).querySelectorAll('input, form')).toHaveLength(0)
   })
 })

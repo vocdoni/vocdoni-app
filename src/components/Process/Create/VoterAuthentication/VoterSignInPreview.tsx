@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuEye } from 'react-icons/lu'
 import { getAuthFieldLabel, getContactFieldLabel } from '~components/Process/CSP/fields'
-import { CodeMethod, getCodeTwoFaFields } from './utils'
+import { CodeMethod, getCodeTwoFaFields, hasAuthConfig } from './utils'
 
 const getSampleValue = (t: TFunction, field: string) => {
   switch (field) {
@@ -166,7 +166,7 @@ export const VoterSignInPreview = ({
 }) => {
   const { t } = useTranslation()
   const [screen, setScreen] = useState<Screen>('signIn')
-  const hasConfig = credentials.length > 0 || codeMethod !== 'none'
+  const hasConfig = hasAuthConfig({ credentials, codeMethod })
   const visibleScreen = codeMethod === 'none' ? 'signIn' : screen
 
   // Any edit shows the first step again: with the second step on screen, a
@@ -175,7 +175,7 @@ export const VoterSignInPreview = ({
   useEffect(() => setScreen('signIn'), [configKey])
 
   return (
-    <Stack gap={3} as='section' aria-labelledby='voter-signin-preview-title' data-testid='voter-signin-preview'>
+    <Stack gap={3} as='section' aria-labelledby='voter-signin-preview-title'>
       {/* Heading and toggle on separate rows: side by side, the heading wrapped
           as soon as the toggle appeared (and sooner in longer languages). */}
       <Stack gap={2}>

@@ -79,6 +79,13 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
             : t('voter_auth.status.valid', { defaultValue: 'All members can sign in.' })}
         </Line>
       )
+    } else if (shown.status === 'rejected') {
+      // Saving is refused in this state too, so the line must not promise otherwise.
+      content = (
+        <Line icon={<Icon as={LuCircleAlert} boxSize={4} color='fg.error' />} busy={rechecking}>
+          {t('voter_auth.status.rejected', { defaultValue: "This sign-in can't be used with your member list." })}
+        </Line>
+      )
     } else if (shown.status === 'unavailable') {
       content = (
         <Line icon={<Icon as={LuTriangleAlert} boxSize={4} color='fg.warning' />} busy={rechecking}>
@@ -141,7 +148,6 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
         outline='none'
         opacity={rechecking ? 0.6 : 1}
         transition='opacity 0.15s'
-        data-testid='member-check'
         data-status={status}
       >
         {content}

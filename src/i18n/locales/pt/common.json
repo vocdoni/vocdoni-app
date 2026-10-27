@@ -2079,7 +2079,7 @@
     "protection": {
       "basic_risk": "Qualquer pessoa que conheça estes dados poderia votar no lugar de um membro.",
       "good_code_risk": "Qualquer pessoa que consiga aceder ao email ou telemóvel de um membro poderia votar no seu lugar.",
-      "good_details_risk": "Alguém precisaria de vários dados privados para votar no lugar de um membro.",
+      "good_details_risk": "Alguém precisaria de vários dados, pelo menos um deles privado, para votar no lugar de um membro.",
       "label": "Proteção",
       "strong": "Alguém precisaria dos dados de um membro e do respetivo email ou telemóvel para votar no seu lugar.",
       "unset": "Escolhe pelo menos um dado ou um código."
@@ -2094,6 +2094,7 @@
       "surname": "Silva"
     },
     "save": {
+      "failed": "Definições de início de sessão não guardadas",
       "submit": "Guardar",
       "unchecked": "Guardado, mas não foi possível verificar a tua base de membros"
     },
@@ -2109,6 +2110,7 @@
       "missing_members_one": "A {{count}} membro falta {{fields}}.",
       "missing_members_many": "A {{count}} membros falta {{fields}}.",
       "missing_members_other": "A {{count}} membros falta {{fields}}.",
+      "rejected": "Este início de sessão não pode ser usado com a tua base de membros.",
       "retry": "Verificar novamente",
       "unavailable": "Não foi possível verificar a tua base de membros. Podes guardar na mesma.",
       "valid": "Todos os membros podem iniciar sessão.",

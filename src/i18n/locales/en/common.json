@@ -2047,7 +2047,7 @@
     "protection": {
       "basic_risk": "Anyone who knows these details could vote in a member's place.",
       "good_code_risk": "Anyone who can open a member's email or phone could vote in their place.",
-      "good_details_risk": "Someone would need several private details to vote in a member's place.",
+      "good_details_risk": "Someone would need several details, at least one of them private, to vote in a member's place.",
       "label": "Protection",
       "strong": "Someone would need a member's details and their email or phone to vote in their place.",
       "unset": "Choose at least one detail or a code."
@@ -2062,6 +2062,7 @@
       "surname": "Smith"
     },
     "save": {
+      "failed": "Sign-in settings not saved",
       "submit": "Save",
       "unchecked": "Saved, but we couldn't check your member list"
     },
@@ -2075,6 +2076,7 @@
       "fix": "Fix your member list",
       "missing_members_one": "{{count}} member is missing {{fields}}.",
       "missing_members_other": "{{count}} members are missing {{fields}}.",
+      "rejected": "This sign-in can't be used with your member list.",
       "retry": "Check again",
       "unavailable": "We couldn't check your member list. You can still save.",
       "valid": "All members can sign in.",

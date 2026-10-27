@@ -2079,7 +2079,7 @@
     "protection": {
       "basic_risk": "Chiunque conosca questi dati potrebbe votare al posto di un membro.",
       "good_code_risk": "Chiunque possa aprire l'email o il telefono di un membro potrebbe votare al suo posto.",
-      "good_details_risk": "Servirebbero diversi dati privati per votare al posto di un membro.",
+      "good_details_risk": "Servirebbero diversi dati, di cui almeno uno privato, per votare al posto di un membro.",
       "label": "Protezione",
       "strong": "Servirebbero i dati di un membro e l'accesso alla sua email o al suo telefono per votare al suo posto.",
       "unset": "Scegli almeno un dato o un codice."
@@ -2094,6 +2094,7 @@
       "surname": "Rossi"
     },
     "save": {
+      "failed": "Impostazioni di accesso non salvate",
       "submit": "Salva",
       "unchecked": "Salvato, ma non siamo riusciti a verificare il tuo database membri"
     },
@@ -2109,6 +2110,7 @@
       "missing_members_one": "A {{count}} membro manca: {{fields}}.",
       "missing_members_many": "A {{count}} membri manca: {{fields}}.",
       "missing_members_other": "A {{count}} membri manca: {{fields}}.",
+      "rejected": "Questo accesso non può essere usato con il tuo database membri.",
       "retry": "Verifica di nuovo",
       "unavailable": "Non siamo riusciti a verificare il tuo database membri. Puoi comunque salvare.",
       "valid": "Tutti i membri possono accedere.",

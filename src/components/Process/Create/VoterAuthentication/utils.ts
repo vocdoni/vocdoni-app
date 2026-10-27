@@ -50,8 +50,13 @@ export const toCensus = ({ credentials, codeMethod }: VoterAuthFormData): Census
   use2FAMethod: codeMethod === 'none' ? 'email' : codeMethod,
 })
 
-export const hasAuthConfig = ({ credentials, codeMethod }: VoterAuthFormData) =>
-  credentials.length > 0 || codeMethod !== 'none'
+export const hasAuthConfig = ({
+  credentials,
+  codeMethod,
+}: {
+  credentials: readonly string[]
+  codeMethod: CodeMethod
+}) => credentials.length > 0 || codeMethod !== 'none'
 
 /**
  * Order-insensitive identity of an auth configuration, used to tell an actual

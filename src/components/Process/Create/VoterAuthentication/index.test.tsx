@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { FormProvider, useController, useForm, useFormContext } from 'react-hook-form'
 import { CensusTypes } from '~components/Process/Census/CensusType'
-import { mockUseOrganization, render, screen, waitFor, within } from '~src/test-utils'
+import { act, mockUseOrganization, render, screen, waitFor, within } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VoterAuthentication } from '.'
 import { Census, defaultQuestion, Process } from '../common'
@@ -11,12 +11,13 @@ import { CENSUS_SETUP_TOAST_ID } from '../useCensusSetupToast'
 import { useVoterAuthDialog, VoterAuthDialogProvider } from './VoterAuthDialogContext'
 
 const mockValidateCensus = vi.fn()
+const mockToast = vi.fn()
 const mockCloseToast = vi.fn()
 
 // The test render wraps everything in the real ToastProvider, so keep it.
 vi.mock('~components/Toast', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~components/Toast')>()),
-  useToast: () => Object.assign(vi.fn(), { close: mockCloseToast }),
+  useToast: () => Object.assign(mockToast, { close: mockCloseToast }),
 }))
 const mockTrackAnalyticsEvent = vi.fn()
 
@@ -142,10 +143,9 @@ describe('VoterAuthentication', () => {
   it('summarizes the saved settings with readable labels', () => {
     render(<TestForm initialCensus={{ credentials: ['memberNumber'], use2FA: true, use2FAMethod: 'sms' }} />)
 
-    const summary = within(screen.getByTestId('voter-auth-summary'))
-    expect(summary.getByText('Voters type: Member Number')).toBeInTheDocument()
-    expect(summary.getByText('One-time code by SMS')).toBeInTheDocument()
-    expect(summary.getByText('Strong')).toBeInTheDocument()
+    expect(screen.getByText('Voters type: Member Number')).toBeInTheDocument()
+    expect(screen.getByText('One-time code by SMS')).toBeInTheDocument()
+    expect(screen.getByText('Strong')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /edit voter authentication/i })).toBeInTheDocument()
   })
 
@@ -204,7 +204,7 @@ describe('VoterAuthentication', () => {
     )
     const dialog = await screen.findByRole('dialog')
     await user.click(dialog.querySelector('input[value="memberNumber"]')!)
-    await waitFor(() => expect(within(dialog).getByTestId('member-check')).toHaveAttribute('data-status', 'valid'))
+    await waitFor(() => expect(within(dialog).getByRole('status')).toHaveAttribute('data-status', 'valid'))
     await user.click(within(dialog).getByTestId('voter-auth-save'))
 
     await waitFor(() => expect(screen.getByRole('button', { name: /edit voter authentication/i })).toHaveFocus())
@@ -242,11 +242,12 @@ describe('VoterAuthentication', () => {
     await chooseCode(user, 'email')
 
     // The preview follows the configuration.
-    const preview = within(dialog.getByTestId('voter-signin-preview'))
+    // Below md the preview's wrapper is display:none, and jsdom applies the base breakpoint, so it is hidden here.
+    const preview = within(dialog.getByRole('region', { name: 'What voters will see', hidden: true }))
     expect(preview.getByText('Member Number *')).toBeInTheDocument()
     expect(preview.getByText('Email *')).toBeInTheDocument()
 
-    await waitFor(() => expect(dialog.getByTestId('member-check')).toHaveAttribute('data-status', 'valid'))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
     // Debounced: the two clicks above cost one request for the final configuration.
     expect(mockValidateCensus).toHaveBeenCalledTimes(1)
     expect(mockValidateCensus).toHaveBeenCalledWith({
@@ -260,8 +261,8 @@ describe('VoterAuthentication', () => {
     expect(storedCensus()).toEqual({ credentials: ['memberNumber'], use2FA: true, use2FAMethod: 'email' })
     // Saving must count as an edit, or the draft autosave would skip it.
     expect(screen.getByTestId('census-dirty')).toHaveTextContent('true')
-    // Save reuses the cached check instead of asking again.
-    expect(mockValidateCensus).toHaveBeenCalledTimes(1)
+    // Save asks the backend afresh, even though the check above is cached.
+    expect(mockValidateCensus).toHaveBeenCalledTimes(2)
     expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
       name: 'census_configured',
       props: { auth_fields_count: 1, two_fa: true, two_fa_method: 'email' },
@@ -301,7 +302,7 @@ describe('VoterAuthentication', () => {
     render(<TestForm />)
     const dialog = await openDialog(user)
 
-    await waitFor(() => expect(dialog.getByTestId('member-check')).toHaveAttribute('data-status', 'valid'))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
     await user.click(dialog.getByTestId('voter-auth-save'))
 
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
@@ -321,7 +322,7 @@ describe('VoterAuthentication', () => {
 
     await user.click(dialog.getByRole('checkbox', { name: /first name/i }))
 
-    const status = dialog.getByTestId('member-check')
+    const status = dialog.getByRole('status')
     await waitFor(() => expect(status).toHaveAttribute('data-status', 'invalid'))
     expect(status).toHaveTextContent("2 members share the same First Name, so they can't be told apart.")
     expect(status).not.toHaveTextContent(/5/)
@@ -345,7 +346,7 @@ describe('VoterAuthentication', () => {
 
     await chooseCode(user, 'email')
 
-    const status = dialog.getByTestId('member-check')
+    const status = dialog.getByRole('status')
     await waitFor(() => expect(status).toHaveAttribute('data-status', 'invalid'))
     expect(status).toHaveTextContent('3 members are missing Email.')
 
@@ -373,7 +374,7 @@ describe('VoterAuthentication', () => {
 
     await chooseCode(user, 'email')
 
-    const status = dialog.getByTestId('member-check')
+    const status = dialog.getByRole('status')
     await waitFor(() => expect(status).toHaveTextContent('3 members are missing Email.'))
     expect(status).not.toHaveTextContent(/Member Number/)
   })
@@ -391,7 +392,7 @@ describe('VoterAuthentication', () => {
 
     await chooseCode(user, 'voter_choice')
 
-    const status = dialog.getByTestId('member-check')
+    const status = dialog.getByRole('status')
     await waitFor(() => expect(status).toHaveTextContent('1 members are missing both Email and Phone.'))
   })
 
@@ -402,12 +403,142 @@ describe('VoterAuthentication', () => {
     const dialog = await openDialog(user)
 
     await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
-    await waitFor(() => expect(dialog.getByTestId('member-check')).toHaveAttribute('data-status', 'unavailable'))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'unavailable'))
 
     await user.click(dialog.getByTestId('voter-auth-save'))
 
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
     expect(storedCensus()).toEqual({ credentials: ['memberNumber'], use2FA: false, use2FAMethod: 'email' })
+  })
+
+  // A 400 with no member issues means the census itself is unusable (e.g. its
+  // group was deleted): saving it would store something that cannot work.
+  it('keeps the dialog open and says why when the backend rejects the census', async () => {
+    mockValidateCensus.mockRejectedValue(new VocdoniApiError(400, { error: 'group not found' }, 'group not found'))
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />)
+    const dialog = await openDialog(user)
+
+    await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'rejected'))
+    expect(dialog.getByRole('status')).toHaveTextContent("This sign-in can't be used with your member list.")
+    expect(dialog.getByRole('status')).not.toHaveTextContent(/still save/i)
+
+    await user.click(dialog.getByTestId('voter-auth-save'))
+
+    await waitFor(() =>
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'error', title: 'Sign-in settings not saved', description: 'group not found' })
+      )
+    )
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(storedCensus()).toBeNull()
+  })
+
+  it('locks the choices while the save is checking, so edits cannot be lost', async () => {
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />)
+    const dialog = await openDialog(user)
+    await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
+
+    // Hold the save's check open, so the voter can try to edit mid-save.
+    let answer: (value: string) => void = () => {}
+    mockValidateCensus.mockImplementation(() => new Promise((resolve) => (answer = resolve)))
+    await user.click(dialog.getByRole('checkbox', { name: /national id/i }))
+    await user.click(dialog.getByTestId('voter-auth-save'))
+
+    await waitFor(() => expect(dialog.getByRole('checkbox', { name: /member number/i })).toBeDisabled())
+    expect(dialog.getByRole('checkbox', { name: /first name/i })).toBeDisabled()
+    await user.click(dialog.getByRole('checkbox', { name: /first name/i }))
+
+    answer('ok')
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    expect(storedCensus()).toEqual({
+      credentials: ['memberNumber', 'nationalId'],
+      use2FA: false,
+      use2FAMethod: 'email',
+    })
+  })
+
+  it('discards a save still checking when the dialog is closed mid-check', async () => {
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />)
+    const dialog = await openDialog(user)
+    await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
+
+    // Hold the save's check open, then close the dialog while it waits.
+    let answer: (value: string) => void = () => {}
+    mockValidateCensus.mockImplementation(() => new Promise((resolve) => (answer = resolve)))
+    await user.click(dialog.getByRole('checkbox', { name: /national id/i }))
+    await user.click(dialog.getByTestId('voter-auth-save'))
+    await waitFor(() => expect(dialog.getByRole('checkbox', { name: /first name/i })).toBeDisabled())
+
+    await user.click(dialog.getByRole('button', { name: 'Cancel' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    await act(async () => answer('ok'))
+
+    expect(storedCensus()).toBeNull()
+    expect(mockToast).not.toHaveBeenCalledWith(expect.objectContaining({ title: 'Sign-in settings saved' }))
+  })
+
+  // The answer is cached for a minute, so a member list fixed since then must be re-read on Save.
+  it('re-reads the member list on save instead of the answer cached before it was fixed', async () => {
+    mockValidateCensus.mockRejectedValue(
+      membersError({ memberIds: ['m1'], duplicates: ['m2', 'm3'], missingData: null })
+    )
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />)
+    const dialog = await openDialog(user)
+    await user.click(dialog.getByRole('checkbox', { name: /first name/i }))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'invalid'))
+
+    // The duplicates are fixed in the member list: the backend now accepts the census.
+    mockValidateCensus.mockResolvedValue('ok')
+    const checksBefore = mockValidateCensus.mock.calls.length
+    await user.click(dialog.getByTestId('voter-auth-save'))
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    expect(mockValidateCensus).toHaveBeenCalledTimes(checksBefore + 1)
+    expect(storedCensus()).toEqual({ credentials: ['name'], use2FA: false, use2FAMethod: 'email' })
+  })
+
+  it('reads a duplicate in voter choice as sharing either contact', async () => {
+    mockValidateCensus.mockRejectedValue(
+      membersError({ memberIds: ['m1'], duplicates: ['m2', 'm3'], missingData: null })
+    )
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />)
+    const dialog = await openDialog(user)
+
+    await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+    await chooseCode(user, 'voter_choice')
+
+    await waitFor(() =>
+      expect(dialog.getByRole('status')).toHaveTextContent(
+        "2 members share the same Member Number and Email or Phone, so they can't be told apart."
+      )
+    )
+  })
+
+  it('names the details a shown result was checked for, not the ones ticked since', async () => {
+    mockValidateCensus
+      .mockRejectedValueOnce(membersError({ memberIds: ['m1'], duplicates: ['m2', 'm3'], missingData: null }))
+      .mockReturnValue(new Promise(() => {}))
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />)
+    const dialog = await openDialog(user)
+    await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'invalid'))
+
+    // The re-check for the new details never answers here, so the old result stays on screen.
+    await user.click(dialog.getByRole('checkbox', { name: /birth date/i }))
+
+    const status = dialog.getByRole('status')
+    expect(status).toHaveAttribute('data-status', 'checking')
+    expect(status).toHaveTextContent("2 members share the same Member Number, so they can't be told apart.")
+    expect(status).not.toHaveTextContent(/birth date/i)
   })
 
   it('asks for a choice before saving an empty configuration, without calling the backend', async () => {
@@ -417,7 +548,7 @@ describe('VoterAuthentication', () => {
 
     await user.click(dialog.getByTestId('voter-auth-save'))
 
-    const status = dialog.getByTestId('member-check')
+    const status = dialog.getByRole('status')
     expect(status).toHaveTextContent(/at least one detail or a code/i)
     expect(status).toHaveFocus()
     expect(mockValidateCensus).not.toHaveBeenCalled()
@@ -429,7 +560,7 @@ describe('VoterAuthentication', () => {
     const dialog = await openDialog(user)
 
     await chooseCode(user, 'sms')
-    await waitFor(() => expect(dialog.getByTestId('member-check')).toHaveAttribute('data-status', 'valid'))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
     await user.click(dialog.getByTestId('voter-auth-save'))
 
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
@@ -442,7 +573,7 @@ describe('VoterAuthentication', () => {
     const dialog = await openDialog(user)
 
     await chooseCode(user, 'none')
-    await waitFor(() => expect(dialog.getByTestId('member-check')).toHaveAttribute('data-status', 'valid'))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
     await user.click(dialog.getByTestId('voter-auth-save'))
 
     await waitFor(() => expect(mockTrackAnalyticsEvent).toHaveBeenCalledTimes(1))

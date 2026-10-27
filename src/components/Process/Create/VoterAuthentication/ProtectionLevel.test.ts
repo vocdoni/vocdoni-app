@@ -28,8 +28,8 @@ describe('ProtectionMeter', () => {
     [[], 'email'],
     [['memberNumber'], 'sms'],
   ] as const)('gives no advice for %j with code %s', (credentials, codeMethod) => {
-    const { getByTestId } = render(createElement(ProtectionMeter, { credentials, codeMethod }))
+    const { container } = render(createElement(ProtectionMeter, { credentials, codeMethod }))
 
-    expect(getByTestId('protection-level')).not.toHaveTextContent(/\badd\b|member number|send a code/i)
+    expect(container.querySelector('[data-level]')).not.toHaveTextContent(/\badd\b|member number|send a code/i)
   })
 })

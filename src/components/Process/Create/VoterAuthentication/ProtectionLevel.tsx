@@ -65,7 +65,8 @@ const getProtectionLevelDescription = (t: TFunction, level: ProtectionLevel, cod
     case 'good':
       return codeMethod === 'none'
         ? t('voter_auth.protection.good_details_risk', {
-            defaultValue: "Someone would need several private details to vote in a member's place.",
+            defaultValue:
+              "Someone would need several details, at least one of them private, to vote in a member's place.",
           })
         : t('voter_auth.protection.good_code_risk', {
             defaultValue: "Anyone who can open a member's email or phone could vote in their place.",
@@ -91,7 +92,7 @@ export const ProtectionMeter = ({
   const palette = protectionLevelPalettes[level]
 
   return (
-    <Box data-testid='protection-level' data-level={level}>
+    <Box data-level={level}>
       <HStack gap={2} fontSize='sm'>
         <Text fontSize='inherit' color='fg.muted'>
           {t('voter_auth.protection.label', { defaultValue: 'Protection' })}

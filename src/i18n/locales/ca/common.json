@@ -2079,7 +2079,7 @@
     "protection": {
       "basic_risk": "Qualsevol que conegui aquestes dades podria votar en lloc d'un membre.",
       "good_code_risk": "Qualsevol que pugui obrir el correu o el telèfon d'un membre podria votar en el seu lloc.",
-      "good_details_risk": "Caldria conèixer diverses dades privades per votar en lloc d'un membre.",
+      "good_details_risk": "Caldria conèixer diverses dades, almenys una de privada, per votar en lloc d'un membre.",
       "label": "Protecció",
       "strong": "Caldria conèixer les dades d'un membre i tenir accés al seu correu o telèfon per votar en el seu lloc.",
       "unset": "Tria almenys una dada o un codi."
@@ -2094,6 +2094,7 @@
       "surname": "Puig Serra"
     },
     "save": {
+      "failed": "No s'ha desat la configuració d'accés",
       "submit": "Desa",
       "unchecked": "S'ha desat, però no hem pogut comprovar la teva base de membres"
     },
@@ -2109,6 +2110,7 @@
       "missing_members_one": "A {{count}} membre li falta: {{fields}}.",
       "missing_members_many": "A {{count}} membres els falta: {{fields}}.",
       "missing_members_other": "A {{count}} membres els falta: {{fields}}.",
+      "rejected": "Aquest accés no es pot fer servir amb la teva base de membres.",
       "retry": "Torna a comprovar",
       "unavailable": "No hem pogut comprovar la teva base de membres. Pots desar igualment.",
       "valid": "Tots els membres poden iniciar sessió.",

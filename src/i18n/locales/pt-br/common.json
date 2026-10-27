@@ -2079,7 +2079,7 @@
     "protection": {
       "basic_risk": "Qualquer pessoa que conheça esses dados poderia votar no lugar de um membro.",
       "good_code_risk": "Qualquer pessoa que consiga abrir o e-mail ou o telefone de um membro poderia votar no lugar dele.",
-      "good_details_risk": "Seriam necessários vários dados privados para votar no lugar de um membro.",
+      "good_details_risk": "Seriam necessários vários dados, pelo menos um deles privado, para votar no lugar de um membro.",
       "label": "Proteção",
       "strong": "Seriam necessários os dados de um membro e o e-mail ou telefone dele para votar no lugar dele.",
       "unset": "Escolha pelo menos um dado ou um código."
@@ -2094,6 +2094,7 @@
       "surname": "Smith"
     },
     "save": {
+      "failed": "Configurações de login não salvas",
       "submit": "Salvar",
       "unchecked": "Salvo, mas não foi possível verificar sua lista de membros"
     },
@@ -2109,6 +2110,7 @@
       "missing_members_one": "{{count}} membro está sem {{fields}}.",
       "missing_members_many": "{{count}} membros estão sem {{fields}}.",
       "missing_members_other": "{{count}} membros estão sem {{fields}}.",
+      "rejected": "Este login não pode ser usado com sua lista de membros.",
       "retry": "Verificar novamente",
       "unavailable": "Não foi possível verificar sua lista de membros. Você ainda pode salvar.",
       "valid": "Todos os membros podem entrar.",

@@ -55,8 +55,8 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
     [triggerRef]
   )
 
-  // The saved settings were validated against the group, anonymity and
-  // weighting of that moment; this re-checks them whenever any of those change.
+  // The saved settings were validated against the group and the chosen details
+  // of that moment; this re-checks them whenever either changes.
   // Same cache as the dialog's own check, so an unchanged census costs nothing.
   const savedCheck = useCensusCheck(buildCensusSpec({ groupId, anonymousVoting, weightedVote, census }), {
     enabled: !!census && !!groupId,

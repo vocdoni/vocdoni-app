@@ -2047,7 +2047,7 @@
     "protection": {
       "basic_risk": "Datu hauek dakien edonork bozka lezake kide baten ordez.",
       "good_code_risk": "Kide baten helbide elektronikoa edo telefonoa ireki dezakeen edonork bozka lezake haren ordez.",
-      "good_details_risk": "Norbaitek hainbat datu pribatu beharko lituzke kide baten ordez bozkatzeko.",
+      "good_details_risk": "Norbaitek hainbat datu beharko lituzke, horietako gutxienez bat pribatua, kide baten ordez bozkatzeko.",
       "label": "Babesa",
       "strong": "Norbaitek kide baten datuak eta haren helbide elektronikoa edo telefonoa beharko lituzke haren ordez bozkatzeko.",
       "unset": "Aukeratu datu bat gutxienez edo kode bat."
@@ -2062,6 +2062,7 @@
       "surname": "Smith"
     },
     "save": {
+      "failed": "Saio-hasierako ezarpenak ez dira gorde",
       "submit": "Gorde",
       "unchecked": "Gorde da, baina ezin izan dugu zure kide-zerrenda egiaztatu"
     },
@@ -2075,6 +2076,7 @@
       "fix": "Konpondu zure kide-zerrenda",
       "missing_members_one": "Kide bati {{fields}} falta zaio.",
       "missing_members_other": "{{count}} kideri {{fields}} falta zaie.",
+      "rejected": "Saio-hasiera hau ezin da erabili zure kide-zerrendarekin.",
       "retry": "Egiaztatu berriro",
       "unavailable": "Ezin izan dugu zure kide-zerrenda egiaztatu. Hala ere, gorde dezakezu.",
       "valid": "Kide guztiek hasi dezakete saioa.",

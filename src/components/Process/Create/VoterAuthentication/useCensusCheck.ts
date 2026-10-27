@@ -2,7 +2,7 @@ import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { CensusSpec } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from '~src/queries/keys'
 
@@ -28,7 +28,8 @@ export type CensusCheckIssues = {
  */
 export type CensusCheckResult = { valid: true } | { valid: false; issues: CensusCheckIssues }
 
-export type CensusCheckStatus = 'idle' | 'checking' | 'valid' | 'invalid' | 'unavailable'
+/** `rejected`: the backend refused the census itself (e.g. its group is gone), so it cannot be saved. */
+export type CensusCheckStatus = 'idle' | 'checking' | 'valid' | 'invalid' | 'rejected' | 'unavailable'
 
 /** A finished check, kept on screen (dimmed) while the next one runs so the status doesn't flicker. */
 export type CensusCheckOutcome = {
@@ -56,15 +57,12 @@ const readIssues = (error: unknown): CensusCheckIssues | null => {
   return issues.duplicates.length || issues.missingData.length ? issues : null
 }
 
-/** Order-insensitive identity of a census spec: the check's cache key. */
+/**
+ * Order-insensitive identity of a census spec: the check's cache key. Anonymity
+ * and weighting are left out: the backend's member check does not depend on them.
+ */
 export const censusSpecSignature = (spec: CensusSpec) =>
-  JSON.stringify([
-    spec.groupId ?? null,
-    [...(spec.authFields ?? [])].sort(),
-    [...(spec.twoFaFields ?? [])].sort(),
-    !!spec.anonymous,
-    !!spec.weighted,
-  ])
+  JSON.stringify([spec.groupId ?? null, [...(spec.authFields ?? [])].sort(), [...(spec.twoFaFields ?? [])].sort()])
 
 export const hasAuthFields = (spec: CensusSpec) => !!spec.authFields?.length || !!spec.twoFaFields?.length
 
@@ -86,15 +84,6 @@ const censusCheckQuery = (client: ApiClient, orgAddress: string | undefined, spe
   retry: false,
 })
 
-/**
- * Checks, while the admin is still choosing, that every member targeted by a
- * census spec can sign in with it (the chosen details are present and unique).
- *
- * Debounced so a run of clicks costs one request, and keyed by the whole spec
- * so a slow answer can only ever land on the configuration it was asked for.
- * `check()` runs it now for the current spec (reusing a cached answer), for the
- * moment the admin saves.
- */
 /** One field (or the code contacts, as one) and how many members lack it. */
 export type MissingFieldCount = { field: string; count: number }
 
@@ -111,6 +100,10 @@ const fieldParts = (spec: CensusSpec) => [
     : []),
 ]
 
+/**
+ * Checks that every member targeted by a census spec can sign in with it. Debounced
+ * while the admin is still choosing; `check()` asks the backend afresh, for the moment they save.
+ */
 export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?: boolean } = {}) => {
   const { client } = useApiClient()
   const { organization } = useOrganization()
@@ -137,7 +130,8 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
   let status: CensusCheckStatus = 'idle'
   if (active) {
     if (pending || query.isFetching) status = 'checking'
-    else if (query.isError) status = 'unavailable'
+    else if (query.isError)
+      status = query.error instanceof VocdoniApiError && query.error.status === 400 ? 'rejected' : 'unavailable'
     else if (query.data) status = query.data.valid ? 'valid' : 'invalid'
   }
 
@@ -166,14 +160,12 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
 
   const lastOutcome = useRef<CensusCheckOutcome | null>(null)
   if (!active) lastOutcome.current = null
-  else if (status === 'valid' || status === 'invalid' || status === 'unavailable') {
+  else if (status === 'valid' || status === 'invalid' || status === 'rejected' || status === 'unavailable') {
     lastOutcome.current = { status, issues, missingByField }
   }
 
-  const check = useCallback(
-    () => queryClient.fetchQuery(censusCheckQuery(client, orgAddress, spec)),
-    [queryClient, client, orgAddress, signature]
-  )
+  // Always asks the backend: the member list may have been fixed since the cached answer.
+  const check = () => queryClient.fetchQuery({ ...censusCheckQuery(client, orgAddress, spec), staleTime: 0 })
 
   return {
     status,
@@ -181,7 +173,6 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
     missingByField,
     /** While checking: the previous outcome, to keep showing until the new one lands. */
     previous: status === 'checking' ? lastOutcome.current : null,
-    error: query.error,
     retry: query.refetch,
     check,
   }

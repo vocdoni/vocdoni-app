@@ -2079,7 +2079,7 @@
     "protection": {
       "basic_risk": "Cualquiera que conozca estos datos podría votar en lugar de un miembro.",
       "good_code_risk": "Cualquiera que pueda abrir el correo o el teléfono de un miembro podría votar en su lugar.",
-      "good_details_risk": "Haría falta conocer varios datos privados para votar en lugar de un miembro.",
+      "good_details_risk": "Haría falta conocer varios datos, al menos uno privado, para votar en lugar de un miembro.",
       "label": "Protección",
       "strong": "Haría falta conocer los datos de un miembro y tener acceso a su correo o teléfono para votar en su lugar.",
       "unset": "Elige al menos un dato o un código."
@@ -2094,6 +2094,7 @@
       "surname": "García López"
     },
     "save": {
+      "failed": "La configuración de acceso no se ha guardado",
       "submit": "Guardar",
       "unchecked": "Guardado, pero no hemos podido comprobar tu base de miembros"
     },
@@ -2109,6 +2110,7 @@
       "missing_members_one": "A {{count}} miembro le falta: {{fields}}.",
       "missing_members_many": "A {{count}} miembros les falta: {{fields}}.",
       "missing_members_other": "A {{count}} miembros les falta: {{fields}}.",
+      "rejected": "Este acceso no se puede usar con tu base de miembros.",
       "retry": "Comprobar de nuevo",
       "unavailable": "No hemos podido comprobar tu base de miembros. Puedes guardar igualmente.",
       "valid": "Todos los miembros pueden iniciar sesión.",

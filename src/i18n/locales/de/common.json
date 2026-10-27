@@ -2047,7 +2047,7 @@
     "protection": {
       "basic_risk": "Jeder, der diese Angaben kennt, könnte anstelle eines Mitglieds abstimmen.",
       "good_code_risk": "Jeder, der die E-Mail oder das Telefon eines Mitglieds öffnen kann, könnte an dessen Stelle abstimmen.",
-      "good_details_risk": "Um anstelle eines Mitglieds abzustimmen, wären mehrere private Angaben nötig.",
+      "good_details_risk": "Um anstelle eines Mitglieds abzustimmen, wären mehrere Angaben nötig, davon mindestens eine privat.",
       "label": "Schutz",
       "strong": "Um anstelle eines Mitglieds abzustimmen, wären dessen Angaben sowie seine E-Mail oder sein Telefon nötig.",
       "unset": "Wähle mindestens eine Angabe oder einen Code."
@@ -2062,6 +2062,7 @@
       "surname": "Schmidt"
     },
     "save": {
+      "failed": "Anmeldeeinstellungen nicht gespeichert",
       "submit": "Speichern",
       "unchecked": "Gespeichert, aber wir konnten deine Mitgliederliste nicht prüfen"
     },
@@ -2075,6 +2076,7 @@
       "fix": "Mitgliederliste korrigieren",
       "missing_members_one": "Bei {{count}} Mitglied fehlt: {{fields}}.",
       "missing_members_other": "Bei {{count}} Mitgliedern fehlt: {{fields}}.",
+      "rejected": "Diese Anmeldung kann mit deiner Mitgliederliste nicht verwendet werden.",
       "retry": "Erneut prüfen",
       "unavailable": "Wir konnten deine Mitgliederliste nicht prüfen. Du kannst trotzdem speichern.",
       "valid": "Alle Mitglieder können sich anmelden.",
