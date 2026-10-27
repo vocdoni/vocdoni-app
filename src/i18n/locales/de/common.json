@@ -143,9 +143,7 @@
   "common": {
     "back": "Zurück",
     "close_drawer": "Seitenleiste schließen",
-    "confirm": "Bestätigen",
     "home": "Startseite",
-    "next": "Weiter",
     "retry": "Nochmal versuchen"
   },
   "confirm": {
@@ -891,7 +889,6 @@
     },
     "upgrade_plan": "Plan upgraden"
   },
-  "internal_server_error": "Interner Serverfehler",
   "invalid_promo_code": "Ungültiger Aktionscode",
   "invite": {
     "account_not_verified": "Dein Konto ist nicht verifiziert. Bitte verifiziere dein Konto, um fortzufahren.",
@@ -2003,78 +2000,98 @@
   "vote_overwrite": "Stimme überschreiben",
   "voter_anonymity": "Anonymität der Wählenden",
   "voter_auth": {
-    "2fa_badge": "2FA",
-    "2fa_description": "Erhöhe die Sicherheit, indem Wählende ihre Identität bestätigen müssen",
-    "2fa_email": "<email /> E-Mail-Verifizierung",
-    "2fa_email_description": "Wählende erhalten einen Bestätigungscode per E-Mail",
-    "2fa_enable": "Zwei-Faktor-Authentifizierung aktivieren",
-    "2fa_method_title": "Verifizierungsmethode auswählen",
-    "2fa_security_description": "Die Zwei-Faktor-Authentifizierung erhöht die Sicherheit deines Abstimmungsprozesses erheblich, indem sichergestellt wird, dass nur berechtigte Mitglieder abstimmen können.",
-    "2fa_security_title": "Erhöhte Sicherheit",
-    "2fa_sms": "<phone /> SMS-Verifizierung",
-    "2fa_sms_description": "Wählende erhalten einen Bestätigungscode per SMS",
-    "2fa_voter_choice": "<email /> oder <phone /> Wahl der Wählenden",
-    "2fa_voter_choice_description": "Wählende können ihre bevorzugte Verifizierungsmethode wählen",
     "anonymity": "Anonymität der Stimmabgabe: {{ mode }}",
     "button": {
       "configure": "Wähler-Authentifizierung konfigurieren",
       "edit": "Wähler-Authentifizierung bearbeiten"
     },
-    "configured": "Wähler-Authentifizierung konfiguriert",
-    "configured_auth": "Wähler-Authentifizierung",
-    "credentials": "Zugangsdaten",
-    "description": "Lege fest, wie sich Wählende authentifizieren, um an diesem Abstimmungsprozess teilzunehmen.",
-    "email": "Per E-Mail-Verifizierung",
-    "guarantees": "Authentifizierungsgarantien",
-    "guarantees_mid_description_intro": "Deine Konfiguration bietet mittlere Authentifizierungsgarantien mit 3 Zugangsdaten.",
-    "guarantees_mid_list_1": "Zwei-Faktor-Authentifizierung für starke Garantien aktivieren",
-    "guarantees_mid_title": "Mittlere Authentifizierungsgarantien",
-    "guarantees_strong_description": "Deine Konfiguration bietet starke Authentifizierungsgarantien mit Zwei-Faktor-Verifizierung.",
-    "guarantees_strong_title": "Starke Authentifizierungsgarantien",
-    "guarantees_sub_mid": "Mittlere Authentifizierungsgarantien mit 3 Zugangsdaten, aber ohne Zwei-Faktor-Verifizierung.",
-    "guarantees_sub_strong": "Starke Authentifizierungsgarantien mit aktivierter Zwei-Faktor-Verifizierung.",
-    "guarantees_sub_weak": "Grundlegende Authentifizierungsgarantien mit 1 Zugangsdatum und ohne Zwei-Faktor-Verifizierung.",
-    "guarantees_weak_description_intro": "Deine aktuelle Konfiguration bietet minimale Authentifizierungsgarantien. Wir empfehlen dringend:",
-    "guarantees_weak_list_1": "Weitere Zugangsdaten hinzufügen (Ziel: 2) für bessere Identitätsprüfung",
-    "guarantees_weak_list_2": "Zwei-Faktor-Authentifizierung für eine zusätzliche Verifizierungsebene aktivieren",
-    "guarantees_weak_title": "Schwache Authentifizierungsgarantien",
-    "level_mid": "Mittel",
-    "level_strong": "Stark",
-    "level_weak": "Schwach",
+    "code": {
+      "description": "Vor der Abstimmung senden wir einen 6-stelligen Code an die E-Mail-Adresse oder Telefonnummer der Wählenden. So ist belegt, dass sie ihnen gehört, und niemand kann mit fremden Angaben abstimmen.",
+      "email_description": "Wird an die E-Mail-Adresse in deiner Mitgliederliste gesendet.",
+      "email_label": "E-Mail",
+      "heading": "2. Zusätzlich einen einmaligen Code senden?",
+      "none": "Kein Code",
+      "none_description": "Wählende melden sich nur mit ihren Angaben an.",
+      "sms_description": "Wird an die Telefonnummer in deiner Mitgliederliste gesendet.",
+      "sms_label": "SMS",
+      "voter_choice": "E-Mail oder SMS",
+      "voter_choice_description": "Jede wählende Person wählt selbst, wo sie ihn erhält."
+    },
+    "details": {
+      "description": "Wähle bis zu {{max}} Angaben aus deiner Mitgliederliste. Was Wählende eingeben, muss genau damit übereinstimmen.",
+      "heading": "1. Was geben Wählende ein?",
+      "optional": "Optional, wenn du einen einmaligen Code sendest: Wählende können sich dann nur mit dem Code anmelden."
+    },
+    "level": {
+      "basic": "Einfach",
+      "good": "Gut",
+      "strong": "Stark",
+      "unset": "Nicht festgelegt"
+    },
+    "modal": {
+      "group_summary_one": "{{group}} · {{count}} Mitglied",
+      "group_summary_other": "{{group}} · {{count}} Mitglieder",
+      "title": "Wie melden sich Wählende an?"
+    },
     "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
     "pending": {
       "description": "Wähle aus, welche Mitgliedsdaten Wählende zur Stimmabgabe eingeben müssen, z. B. ihre Ausweis- oder Mitgliedsnummer.",
       "error_title": "Das brauchst du zum Veröffentlichen",
       "title": "Vor dem Veröffentlichen erforderlich"
     },
-    "security_level": "Gute Sicherheit",
-    "security_recommendation_1": "Für mehr Sicherheit empfehlen wir, mindestens 2 Zugangsdaten auszuwählen.",
-    "security_recommendation_2_one": "Du hast {{ count }} Zugangsdatum ausgewählt, was deinen Wählenden gute Sicherheit bietet.",
-    "security_recommendation_2_other": "Du hast {{ count }} Zugangsdaten ausgewählt, was deinen Wählenden gute Sicherheit bietet.",
-    "security_recommendation_title": "Sicherheitsempfehlung",
-    "select_credentials": "Erforderliche Zugangsdaten für die Authentifizierung der Wählenden auswählen",
-    "select_credentials_description": "Wähle die Felder aus, die Wählende zur Authentifizierung angeben müssen. Bis zu 3 Felder bieten das beste Verhältnis aus Sicherheit und Benutzerfreundlichkeit. Wenn du nur E-Mail oder Telefon für die Zwei-Faktor-Authentifizierung nutzen möchtest, überspringe diesen Schritt und klicke auf Weiter.",
-    "selected_credentials_count_one": "{{ count }}/3 Zugangsdatum ausgewählt",
-    "selected_credentials_count_other": "{{ count }}/3 Zugangsdaten ausgewählt",
-    "sms": "Per SMS-Verifizierung",
-    "summary": "Zusammenfassung",
-    "summary_2fa_enable": "Zwei-Faktor-Authentifizierung",
-    "summary_2fa_enabled": "Aktiviert",
-    "summary_credentials": "Erforderliche Zugangsdaten",
-    "summary_title": "Zusammenfassung der Authentifizierungskonfiguration",
-    "title": "Authentifizierung der Wählenden konfigurieren",
-    "two_factor": "Zwei-Faktor",
-    "validation_duplicates_one": "{{count}} doppelter Nutzer",
-    "validation_duplicates_other": "{{count}} doppelte Nutzer",
-    "validation_error_title": "Validierungsfehler",
-    "validation_failed": "Validierung fehlgeschlagen",
-    "validation_missing_data_one": "{{count}} Nutzer mit fehlenden Pflichtfeldern",
-    "validation_missing_data_other": "{{count}} Nutzer mit fehlenden Pflichtfeldern",
-    "validation_review_members": "Mitglieder prüfen",
-    "validation_summary": "Validierung für einige Nutzer fehlgeschlagen.",
-    "validation_total_one": "{{count}} Nutzer insgesamt",
-    "validation_total_other": "{{count}} Nutzer insgesamt",
-    "voters_choice": "Wahl der Wählenden"
+    "preview": {
+      "first_step": "Erster Schritt",
+      "second_step": "Zweiter Schritt",
+      "title": "Das sehen Wählende"
+    },
+    "protection": {
+      "basic_risk": "Jeder, der diese Angaben kennt, könnte anstelle eines Mitglieds abstimmen.",
+      "good_code_risk": "Jeder, der die E-Mail oder das Telefon eines Mitglieds öffnen kann, könnte an dessen Stelle abstimmen.",
+      "good_details_risk": "Um anstelle eines Mitglieds abzustimmen, wären mehrere Angaben nötig, davon mindestens eine privat.",
+      "label": "Schutz",
+      "strong": "Um anstelle eines Mitglieds abzustimmen, wären dessen Angaben sowie seine E-Mail oder sein Telefon nötig.",
+      "unset": "Wähle mindestens eine Angabe oder einen Code."
+    },
+    "sample": {
+      "birthDate": "14.03.1979",
+      "email": "laura@example.org",
+      "memberNumber": "00482",
+      "name": "Laura",
+      "nationalId": "12345678Z",
+      "phone": "+49 555 010 0100",
+      "surname": "Schmidt"
+    },
+    "save": {
+      "failed": "Anmeldeeinstellungen nicht gespeichert",
+      "submit": "Speichern",
+      "unchecked": "Gespeichert, aber wir konnten deine Mitgliederliste nicht prüfen"
+    },
+    "saved": "Anmeldeeinstellungen gespeichert",
+    "status": {
+      "both_contacts": "beides: {{contacts}}",
+      "checking": "Deine Mitgliederliste wird geprüft…",
+      "duplicated_members_one": "{{count}} Mitglied hat dieselben Angaben ({{fields}}) wie ein anderes und kann nicht unterschieden werden.",
+      "duplicated_members_other": "{{count}} Mitglieder haben dieselben Angaben ({{fields}}) und können nicht unterschieden werden.",
+      "empty": "Wähle mindestens eine Angabe oder einen Code.",
+      "fix": "Mitgliederliste korrigieren",
+      "missing_members_one": "Bei {{count}} Mitglied fehlt: {{fields}}.",
+      "missing_members_other": "Bei {{count}} Mitgliedern fehlt: {{fields}}.",
+      "rejected": "Diese Anmeldung kann mit deiner Mitgliederliste nicht verwendet werden.",
+      "retry": "Erneut prüfen",
+      "unavailable": "Wir konnten deine Mitgliederliste nicht prüfen. Du kannst trotzdem speichern.",
+      "valid": "Alle Mitglieder können sich anmelden.",
+      "valid_count_one": "Das einzige Mitglied dieser Gruppe kann sich anmelden.",
+      "valid_count_other": "Alle {{count}} Mitglieder können sich anmelden."
+    },
+    "summary": {
+      "code_choice": "Einmaliger Code per E-Mail oder SMS",
+      "code_email": "Einmaliger Code per E-Mail",
+      "code_none": "Kein einmaliger Code",
+      "code_sms": "Einmaliger Code per SMS",
+      "details": "Wählende geben ein: {{fields}}",
+      "member_list_mismatch": "Diese Einstellungen passen nicht zu deiner Mitgliederliste. Bearbeite sie, um den Grund zu sehen.",
+      "title": "Anmeldung der Wählenden"
+    }
   },
   "voting_link": {
     "description": "Teile diesen Link mit deinen Wählenden, um an der Abstimmung teilzunehmen",

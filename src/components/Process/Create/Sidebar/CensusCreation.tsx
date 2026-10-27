@@ -23,7 +23,7 @@ import { Select } from '~components/Form/Select'
 import { useToast } from '~components/Toast'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { Routes } from '~routes'
-import { Group, useGroups } from '~src/queries/groups'
+import { Group, useGroup, useGroups } from '~src/queries/groups'
 import { VoterAuthentication } from '../VoterAuthentication'
 import { Process } from '../common'
 import { StepStatus, useCensusSteps } from '../useCensusSteps'
@@ -206,6 +206,10 @@ const GroupCensusCreation = () => {
     name: 'groupId',
     rules: { required: { value: required, message: t('form.error.required', 'This field is required') } },
   })
+  const listedGroup = groups?.find((group) => group.id === groupField.value)
+  // A draft's group may sit on a page the list hasn't loaded: fetch just that one.
+  const { data: unlistedGroup } = useGroup(groupField.value, !!groups && !listedGroup)
+  const selectedGroup = listedGroup ?? unlistedGroup ?? null
   // No message: the pending notice in VoterAuthentication says what's missing.
   const {
     field: { ref: censusRef },
@@ -234,7 +238,7 @@ const GroupCensusCreation = () => {
               <StepMarker step={2} status={authStatus} />
               {t('process_create.census.voter_auth.label', { defaultValue: 'Set how voters prove who they are' })}
             </HStack>
-            <VoterAuthentication triggerRef={censusRef} />
+            <VoterAuthentication triggerRef={censusRef} group={selectedGroup} />
           </Flex>
         </>
       )}
