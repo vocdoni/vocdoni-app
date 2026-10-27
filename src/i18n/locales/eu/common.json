@@ -1022,7 +1022,7 @@
       "add_to_census": "Gehitu erroldara",
       "add_to_census_button_one": "Gehitu {{count}} kide",
       "add_to_census_button_other": "Gehitu {{count}} kide",
-      "add_to_census_confirmation_one": "«{{process}}» prozesuaren erroldara {{count}} kide gehituko dituzu.",
+      "add_to_census_confirmation_one": "«{{process}}» prozesuaren erroldara {{count}} kide gehituko duzu.",
       "add_to_census_confirmation_other": "«{{process}}» prozesuaren erroldara {{count}} kide gehituko dituzu.",
       "add_to_census_description": "Hautatu boto-prozesu aktibo bat kideak bere erroldara gehitzeko.",
       "add_to_census_error": "Errorea kideak erroldara gehitzean",
@@ -1948,7 +1948,7 @@
     "avatar_upload_success": "Avatarra kargatu da",
     "click_or_drag_and_drop": "<click>Egin klik kargatzeko edo arrastatu eta jaregin</click><formats>(Onartutako formatuak: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Kargatu irudia",
-    "csv_row_limit_exceeded_one": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
+    "csv_row_limit_exceeded_one": "Inportazio honek guztira {{count}} errenkada emango luke, zure {{max}}eko planaren muga gaindituz.",
     "csv_row_limit_exceeded_other": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
     "drop_here": "Jaregin hemen",
     "error": {
