@@ -148,7 +148,7 @@ const FORWARDED_PROTOS = ['http', 'https']
  * @param {import('express').Request} req
  * @returns {string}
  */
-function getEffectiveOrigin(req) {
+export function getEffectiveOrigin(req) {
   const configured = process.env.APP_URL?.trim()
   if (configured) {
     try {
