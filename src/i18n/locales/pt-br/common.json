@@ -204,6 +204,13 @@
     "errors": {
       "participant_not_found": "O eleitor não consta na lista de participantes ou as credenciais fornecidas estão incorretas.",
       "requests_on_cooldown": "Muitas solicitações. Aguarde um momento antes de tentar novamente.",
+      "too_many_attempts": "Muitas tentativas. Tente novamente mais tarde.",
+      "too_many_attempts_hours_one": "Muitas tentativas. Tente novamente em {{count}} hora.",
+      "too_many_attempts_hours_many": "Muitas tentativas. Tente novamente em {{count}} horas.",
+      "too_many_attempts_hours_other": "Muitas tentativas. Tente novamente em {{count}} horas.",
+      "too_many_attempts_minutes_one": "Muitas tentativas. Tente novamente em {{count}} minuto.",
+      "too_many_attempts_minutes_many": "Muitas tentativas. Tente novamente em {{count}} minutos.",
+      "too_many_attempts_minutes_other": "Muitas tentativas. Tente novamente em {{count}} minutos.",
       "zero_voting_weight": "Você não tem poder de voto suficiente para acessar a eleição."
     },
     "fields": {

@@ -202,6 +202,11 @@
     "errors": {
       "participant_not_found": "Botogilea ez dago erroldan edo emandako kredentzialak ez dira zuzenak.",
       "requests_on_cooldown": "Eskaera gehiegi. Itxaron pixka bat berriro saiatu aurretik.",
+      "too_many_attempts": "Saiakera gehiegi. Saiatu berriro geroago.",
+      "too_many_attempts_hours_one": "Saiakera gehiegi. Saiatu berriro {{count}} ordu barru.",
+      "too_many_attempts_hours_other": "Saiakera gehiegi. Saiatu berriro {{count}} ordu barru.",
+      "too_many_attempts_minutes_one": "Saiakera gehiegi. Saiatu berriro {{count}} minutu barru.",
+      "too_many_attempts_minutes_other": "Saiakera gehiegi. Saiatu berriro {{count}} minutu barru.",
       "zero_voting_weight": "Ez duzu boto-pisu nahikoa bozketara sartzeko."
     },
     "fields": {

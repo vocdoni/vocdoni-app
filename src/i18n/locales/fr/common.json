@@ -204,6 +204,13 @@
     "errors": {
       "participant_not_found": "L'électeur ne figure pas sur la liste électorale, ou les identifiants fournis sont incorrects.",
       "requests_on_cooldown": "Trop de tentatives. Veuillez patienter un instant avant de réessayer.",
+      "too_many_attempts": "Trop de tentatives. Réessayez plus tard.",
+      "too_many_attempts_hours_one": "Trop de tentatives. Réessayez dans {{count}} heure.",
+      "too_many_attempts_hours_many": "Trop de tentatives. Réessayez dans {{count}} heures.",
+      "too_many_attempts_hours_other": "Trop de tentatives. Réessayez dans {{count}} heures.",
+      "too_many_attempts_minutes_one": "Trop de tentatives. Réessayez dans {{count}} minute.",
+      "too_many_attempts_minutes_many": "Trop de tentatives. Réessayez dans {{count}} minutes.",
+      "too_many_attempts_minutes_other": "Trop de tentatives. Réessayez dans {{count}} minutes.",
       "zero_voting_weight": "Vous n'avez pas suffisamment de poids de vote pour accéder à l'élection."
     },
     "fields": {

@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuPencil } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
+import type { LoginResponse } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
 import { ModalForm, useModalForm } from '~components/Form/ModalForm'
 import { useToast } from '~components/Toast'
@@ -29,14 +30,19 @@ interface UpdatePasswordParams {
 }
 
 const useUpdatePassword = () => {
-  const { bearedFetch } = useAuth()
+  const { bearedFetch, setSession } = useAuth()
 
-  return useMutation<void, Error, UpdatePasswordParams>({
+  return useMutation<LoginResponse | undefined, Error, UpdatePasswordParams>({
     mutationFn: (params) =>
-      bearedFetch<void>(ApiEndpoints.Password, {
+      bearedFetch<LoginResponse | undefined>(ApiEndpoints.Password, {
         method: 'PUT',
         body: params,
       }),
+    // A password change revokes every session, this one included, and answers with a fresh token.
+    // Older backends answer with no body and keep the current session valid.
+    onSuccess: (data) => {
+      if (data?.token) setSession(data)
+    },
   })
 }
 
