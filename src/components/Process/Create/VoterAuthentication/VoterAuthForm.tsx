@@ -18,7 +18,7 @@ import type { TFunction } from 'i18next'
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuChevronDown, LuEye, LuInfo } from 'react-icons/lu'
+import { LuChevronDown, LuEye } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { AUTH_FIELDS, getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { useToast } from '~components/Toast'
@@ -163,7 +163,6 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
   const spec = buildCensusSpec({ groupId, anonymousVoting, weightedVote, census: toCensus(values) })
   const censusCheck = useCensusCheck(spec, { enabled: !passwordAlone })
   const statusRef = useRef<HTMLDivElement>(null)
-  const passwordHintRef = useRef<HTMLDivElement>(null)
 
   const [saving, setSaving] = useState(false)
   const [emptyAttempt, setEmptyAttempt] = useState(false)
@@ -202,10 +201,8 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
       statusRef.current?.focus()
       return
     }
-    if (passwordAlone) {
-      passwordHintRef.current?.focus()
-      return
-    }
+    // Save is disabled in this state; this only guards a call that gets past it.
+    if (passwordAlone) return
 
     setSaving(true)
     let checked = true
@@ -326,17 +323,6 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                   </CheckboxGroup>
                 )}
               />
-              {passwordAlone && (
-                <HStack ref={passwordHintRef} tabIndex={-1} gap={2} align='start' mt={3} fontSize='sm' color='fg.muted'>
-                  <Icon as={LuInfo} boxSize={4} mt={0.5} flexShrink={0} />
-                  <Text>
-                    {t('voter_auth.password_needs_another_credential', {
-                      defaultValue:
-                        'A password alone cannot identify voters. Pick another detail too, or send a one-time code.',
-                    })}
-                  </Text>
-                </HStack>
-              )}
             </Box>
 
             <Box>
@@ -438,7 +424,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
         alignItems={{ base: 'stretch', md: 'center' }}
         gap={3}
       >
-        <Box flex='1' minW={0}>
+        <Box id='voter-auth-status' flex='1' minW={0}>
           <MemberCheck
             ref={statusRef}
             status={censusCheck.status}
@@ -452,6 +438,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             )?.map(({ field, count }) => ({ label: fieldNames.of(field), count }))}
             membersCount={group?.membersCount}
             emptyAttempt={emptyAttempt}
+            passwordOnly={passwordAlone}
             onRetry={() => censusCheck.retry()}
           />
         </Box>
@@ -460,7 +447,14 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             {t('actions.cancel', { defaultValue: 'Cancel' })}
           </Button>
           {/* Its label is translated and it is not a form submit, so e2e has no structural handle. */}
-          <Button onClick={handleSave} loading={saving} data-testid='voter-auth-save'>
+          {/* A disabled button leaves the tab order: point it at the status line that says why. */}
+          <Button
+            onClick={handleSave}
+            loading={saving}
+            disabled={passwordAlone}
+            aria-describedby={passwordAlone ? 'voter-auth-status' : undefined}
+            data-testid='voter-auth-save'
+          >
             {t('voter_auth.save.submit', { defaultValue: 'Save' })}
           </Button>
         </HStack>

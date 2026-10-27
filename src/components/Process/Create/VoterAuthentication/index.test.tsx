@@ -607,19 +607,34 @@ describe('VoterAuthentication', () => {
       expect(dialog.getByRole('checkbox', { name: /password/i })).toBeChecked()
     })
 
-    it('refuses a password alone without a code, without checking the members', async () => {
+    it('disables Save for a password alone without a code, without checking the members', async () => {
       const user = userEvent.setup()
       render(<TestForm initialCensus={null} />)
       const dialog = await openDialog(user)
 
       await user.click(dialog.getByRole('checkbox', { name: /password/i }))
-      const hint = dialog.getByText(/a password alone cannot identify voters/i)
-      await user.click(dialog.getByTestId('voter-auth-save'))
-
-      await waitFor(() => expect(hint.closest('[tabindex="-1"]')).toHaveFocus())
+      expect(dialog.getByTestId('voter-auth-save')).toBeDisabled()
+      expect(dialog.getByRole('status')).toHaveTextContent(/a password alone cannot identify voters/i)
       expect(mockValidateCensus).not.toHaveBeenCalled()
-      expect(screen.getByRole('dialog')).toBeInTheDocument()
       expect(storedCensus()).toBeNull()
+    })
+
+    it('replaces the check result with the password notice once the other detail is unticked', async () => {
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />)
+      const dialog = await openDialog(user)
+
+      await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+      await user.click(dialog.getByRole('checkbox', { name: /password/i }))
+      const status = dialog.getByRole('status')
+      await waitFor(() => expect(status).toHaveAttribute('data-status', 'valid'))
+
+      await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+      expect(dialog.getByRole('checkbox', { name: /password/i })).toBeChecked()
+      expect(status).toHaveAttribute('data-status', 'idle')
+      expect(status).toHaveTextContent(/a password alone cannot identify voters/i)
+      expect(status).not.toHaveTextContent(/can sign in/i)
+      expect(dialog.getByTestId('voter-auth-save')).toBeDisabled()
     })
 
     it('saves a password with a one-time code', async () => {

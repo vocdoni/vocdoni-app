@@ -19,6 +19,8 @@ type MemberCheckProps = {
   membersCount?: number
   /** Set when the admin tried to save without choosing anything. */
   emptyAttempt: boolean
+  /** A password alone can't identify voters. The census check is off then, so no result is shown. */
+  passwordOnly?: boolean
   onRetry: () => void
 }
 
@@ -43,7 +45,18 @@ const Line = ({ icon, busy, color, children }: LineProps) => (
  */
 export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
   (
-    { status, issues, previous, missingFields, duplicateFields, missingByField, membersCount, emptyAttempt, onRetry },
+    {
+      status,
+      issues,
+      previous,
+      missingFields,
+      duplicateFields,
+      missingByField,
+      membersCount,
+      emptyAttempt,
+      passwordOnly,
+      onRetry,
+    },
     ref
   ) => {
     const { t } = useTranslation()
@@ -59,6 +72,16 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
         content = (
           <Line icon={<Spinner size='xs' />} color='fg.muted'>
             {t('voter_auth.status.checking', { defaultValue: 'Checking your member list…' })}
+          </Line>
+        )
+      } else if (passwordOnly) {
+        // Save is disabled in this state, so the line says what to change rather than just refusing.
+        content = (
+          <Line icon={<Icon as={LuCircleAlert} boxSize={4} />} color='fg.error'>
+            {t('voter_auth.password_needs_another_credential', {
+              defaultValue:
+                'A password alone cannot identify voters. Pick another detail too, or send a one-time code.',
+            })}
           </Line>
         )
       } else if (emptyAttempt) {
