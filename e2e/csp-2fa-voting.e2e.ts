@@ -3,12 +3,13 @@ import {
   authenticateVoterWithOtp,
   castVote,
   createAndPublishTwoFactorProcess,
+  identifyVoter,
   importMembers,
   openIdentifyModal,
   signUpWithOrganization,
 } from './helpers/flows'
-import { expect, prepareContext, test } from './helpers/fixtures'
-import { inboxFor, MailSubjects, waitForEmail } from './helpers/mailhog'
+import { expect, fillPinInput, prepareContext, test } from './helpers/fixtures'
+import { extractCode, inboxFor, MailSubjects, waitForCode, waitForEmail } from './helpers/mailhog'
 
 /**
  * Flow 2 — voting on a CSP census with an email 2FA challenge.
@@ -85,6 +86,59 @@ test.describe('voting with a CSP + email 2FA census', () => {
       } finally {
         await observerContext.close()
       }
+    } finally {
+      await voterContext.close()
+    }
+  })
+
+  test('a voter who reloads and identifies again can still use the first code', async ({ page, browser }) => {
+    const seed = String(Date.now()).slice(-6)
+    const members = makeMembers(3, seed)
+
+    await signUpWithOrganization(page, `Voting Org ${seed}`)
+    await importMembers(page, members)
+    const processId = await createAndPublishTwoFactorProcess(page, {
+      title: `E2E reload ${seed}`,
+      questions: [{ title: 'Do you approve?', choices: [{ label: 'Yes' }, { label: 'No' }] }],
+    })
+
+    const voterContext = await browser.newContext()
+    await prepareContext(voterContext)
+    const voter = await voterContext.newPage()
+
+    try {
+      const [member] = members
+      await voter.goto(`/processes/${processId}`)
+
+      const firstRequestAt = new Date()
+      await identifyVoter(voter, member)
+      const firstCode = await waitForCode({
+        to: member.email,
+        subject: MailSubjects.twoFactorChallenge,
+        since: firstRequestAt,
+      })
+
+      // A reload drops the pending CSP session, so the voter has to identify
+      // again — the common case on mobile, switching to the mail app and back.
+      await voter.reload()
+      const secondRequestAt = new Date()
+      // Asking again while the first code is pending is not an error (it used
+      // to be a "please wait" inside the cooldown): it lands on the code step.
+      const dialog = await identifyVoter(voter, member)
+      await expect(dialog.getByRole('alert')).toHaveCount(0)
+
+      // Whatever reached the inbox for the second request carries the same
+      // code (inside the cooldown, nothing is sent at all).
+      const resent = (await inboxFor(member.email)).filter(
+        (mail) => mail.subject.includes(MailSubjects.twoFactorChallenge) && mail.createdAt > secondRequestAt
+      )
+      for (const mail of resent) {
+        expect(extractCode(mail)).toBe(firstCode)
+      }
+
+      // The code from the first email connects the voter.
+      await fillPinInput(dialog, firstCode)
+      await expect(dialog).toBeHidden({ timeout: 60_000 })
     } finally {
       await voterContext.close()
     }

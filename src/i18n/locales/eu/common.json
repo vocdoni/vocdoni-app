@@ -202,6 +202,7 @@
     "errors": {
       "participant_not_found": "Botogilea ez dago erroldan edo emandako kredentzialak ez dira zuzenak.",
       "requests_on_cooldown": "Eskaera gehiegi. Itxaron pixka bat berriro saiatu aurretik.",
+      "requests_on_cooldown_seconds": "Kode berri bat eska dezakezu {{seconds}} s barru.",
       "zero_voting_weight": "Ez duzu boto-pisu nahikoa bozketara sartzeko."
     },
     "fields": {
@@ -220,9 +221,11 @@
     "step1": {
       "footer_text": "Arazoren bat baduzu, jarri zure erakundearekin harremanetan.",
       "helper_text": "Adierazitako telefonora edo posta elektronikora kode bat bidali dugu. Posta elektronikoz jasotzea aukeratu baduzu, begiratu spam karpeta ere.",
+      "resend_countdown": "Ez duzu kodea jaso? Berriro eska dezakezu {{seconds}} s barru.",
       "resend_failed": "Errorea kodea berbidaltzean",
       "resend_success": "Kodea behar bezala berbidali da",
       "resend_text": "Ez duzu kodea jaso? <resendBtn>Bidali berriro</resendBtn>",
+      "same_code_text": "Berriro eskatzen baduzu, kode bera jasoko duzu; beraz, jaso duzuna baliozkoa da oraindik.",
       "start_over_text": "Datu okerrak? <restartBtn>Hasi berriro</restartBtn>",
       "subtitle": "Sartu egiaztapen-kodea",
       "title": "Autentifikazioa",
