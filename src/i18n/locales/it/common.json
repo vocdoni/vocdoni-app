@@ -200,6 +200,7 @@
     "code_sent": "Codice di verifica inviato",
     "contact_match_help": "Deve corrispondere a quello registrato nel sistema",
     "errors": {
+      "credentials_or_password_incorrect": "Non siamo riusciti a verificare la tua identità. Controlla le tue credenziali e la tua password e riprova.",
       "participant_not_found": "Il votante non è presente nel censimento o le credenziali fornite non sono corrette.",
       "requests_on_cooldown": "Troppe richieste. Attendi un momento prima di riprovare.",
       "too_many_attempts": "Troppi tentativi. Riprova più tardi.",
@@ -219,10 +220,12 @@
       "memberNumber": "Numero socio",
       "name": "Nome",
       "nationalId": "Codice Fiscale/ID Nazionale",
+      "password": "Password",
       "phone": "Telefono",
       "surname": "Cognome"
     },
     "important": "Importante",
+    "password_unavailable": "Al momento non è possibile verificare la password. Ricarica la pagina e riprova.",
     "receive_code": "Ricevi codice",
     "step1": {
       "footer_text": "In caso di problemi, contatta la tua organizzazione.",
@@ -472,7 +475,8 @@
       "error": {
         "invalid_birth_date": "La data di nascita non può essere futura",
         "invalid_email": "Indirizzo email non valido",
-        "invalid_phone": "Numero di telefono non valido"
+        "invalid_phone": "Numero di telefono non valido",
+        "password_requirements": "Usa almeno 6 caratteri, con una lettera e un numero."
       }
     },
     "process_create": {
@@ -962,12 +966,19 @@
     },
     "form": {
       "cancel": "Annulla",
+      "password_set": "È impostata una password. Digitane una nuova per sostituirla.",
+      "password_will_be_removed": "La password salvata verrà rimossa al salvataggio.",
       "phone_warning": "Numero di telefono nascosto. Qualsiasi modifica qui lo sovrascriverà.",
       "phone_will_be_removed": "Il numero di telefono salvato verrà rimosso al salvataggio.",
       "save": "Salva modifiche"
     },
     "groups": {
       "title": "Gruppi"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} riga non è stata importata perché la sua password non rispetta i requisiti (almeno 6 caratteri, con una lettera e un numero): riga {{lines}}.",
+      "password_rows_skipped_many": "{{count}} righe non sono state importate perché la loro password non rispetta i requisiti (almeno 6 caratteri, con una lettera e un numero): righe {{lines}}.",
+      "password_rows_skipped_other": "{{count}} righe non sono state importate perché la loro password non rispetta i requisiti (almeno 6 caratteri, con una lettera e un numero): righe {{lines}}."
     },
     "import_file": {
       "subtitle": "Importa il file CSV, XLS, XLSX o ODS contenente i dati dei membri. Assicurati che le intestazioni delle colonne corrispondano al modello per una mappatura accurata.",
@@ -1014,6 +1025,7 @@
       "firstname": "Nome",
       "member_number": "Numero socio",
       "national_id": "ID Nazionale",
+      "password": "Password",
       "phone": "Telefono",
       "surname": "Cognome",
       "weight": "Peso del voto"
@@ -2051,7 +2063,8 @@
     "details": {
       "description": "Scegli fino a {{max}} dati dal tuo database membri. Ciò che scrivono i votanti deve corrispondere esattamente.",
       "heading": "1. Cosa scriveranno i votanti?",
-      "optional": "Facoltativo se invii un codice monouso: i votanti potranno accedere solo con il codice."
+      "optional": "Facoltativo se invii un codice monouso: i votanti potranno accedere solo con il codice.",
+      "password_not_counted": "La password non conta per questo limite."
     },
     "level": {
       "basic": "Base",
@@ -2066,6 +2079,7 @@
       "title": "Come accederanno i votanti?"
     },
     "no_group_description": "Seleziona prima un gruppo per configurare l'autenticazione.",
+    "password_needs_another_credential": "Una password da sola non può identificare i votanti. Scegli anche un altro dato, oppure invia un codice monouso.",
     "pending": {
       "description": "Scegli quali dati dei membri i votanti devono inserire per votare, come il documento d'identità o il numero di socio.",
       "error_title": "Ti serve per pubblicare",

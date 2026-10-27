@@ -43,6 +43,8 @@ const generateFakeValue = (columnId: string): string => {
       return '987654321'
     case 'birthDate':
       return '1990-01-01'
+    case 'password':
+      return 'Ch4nge-me'
     default:
       return ''
   }

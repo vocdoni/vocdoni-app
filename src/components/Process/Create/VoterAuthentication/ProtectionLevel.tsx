@@ -93,11 +93,11 @@ export const ProtectionMeter = ({
 
   return (
     <Box data-level={level}>
-      <HStack gap={2} fontSize='sm'>
+      <HStack gap={2} fontSize='sm' w='full'>
         <Text fontSize='inherit' color='fg.muted'>
           {t('voter_auth.protection.label', { defaultValue: 'Protection' })}
         </Text>
-        <HStack gap={0.5} w={16} aria-hidden>
+        <HStack gap={0.5} flex='1' aria-hidden>
           {[0, 1, 2].map((segment) => (
             <Box
               key={segment}

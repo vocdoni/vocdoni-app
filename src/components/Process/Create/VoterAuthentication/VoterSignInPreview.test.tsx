@@ -14,6 +14,15 @@ describe('VoterSignInPreview', () => {
     expect(preview().getByText('Receive Code')).toBeInTheDocument()
   })
 
+  it('shows the password last, masked, as the sign-in form does', () => {
+    render(<VoterSignInPreview credentials={['password', 'memberNumber']} codeMethod='none' />)
+
+    const memberNumber = preview().getByText('Member Number *')
+    const password = preview().getByText('Password *')
+    expect(memberNumber.compareDocumentPosition(password) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(preview().getByText('••••••')).toBeInTheDocument()
+  })
+
   it('identifies straight away when no code is sent', () => {
     render(<VoterSignInPreview credentials={['memberNumber']} codeMethod='none' />)
 

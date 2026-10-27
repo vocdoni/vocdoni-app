@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuEye } from 'react-icons/lu'
 import { getAuthFieldLabel, getContactFieldLabel } from '~components/Process/CSP/fields'
-import { CodeMethod, getCodeTwoFaFields, hasAuthConfig } from './utils'
+import { CodeMethod, getCodeTwoFaFields, hasAuthConfig, PASSWORD_CREDENTIAL } from './utils'
 
 const getSampleValue = (t: TFunction, field: string) => {
   switch (field) {
@@ -18,6 +18,8 @@ const getSampleValue = (t: TFunction, field: string) => {
       return t('voter_auth.sample.nationalId', { defaultValue: '12345678Z' })
     case 'birthDate':
       return t('voter_auth.sample.birthDate', { defaultValue: '03/14/1979' })
+    case 'password':
+      return '••••••'
     default:
       return ''
   }
@@ -69,7 +71,11 @@ const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly strin
 
   return (
     <Stack gap={3}>
-      {credentials.map((field) => (
+      {/* The password comes last, as the real sign-in form asks for it. */}
+      {[
+        ...credentials.filter((field) => field !== PASSWORD_CREDENTIAL),
+        ...credentials.filter((field) => field === PASSWORD_CREDENTIAL),
+      ].map((field) => (
         <Box key={field}>
           <Text fontSize='sm' fontWeight='medium' mb={1.5}>
             {getAuthFieldLabel(t, field)} *

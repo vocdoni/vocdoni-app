@@ -22,6 +22,7 @@ export const buildCensusSpec = (form: CensusSpecSource): CensusSpec => {
     anonymous: form.anonymousVoting || undefined,
   }
   if (form.census?.credentials?.length) {
+    // The cast also carries 'password', which @vocdoni/api-types does not list yet: drop it once it does.
     spec.authFields = form.census.credentials as OrgMemberAuthField[]
   }
   if (form.census?.use2FA && form.census?.use2FAMethod) {

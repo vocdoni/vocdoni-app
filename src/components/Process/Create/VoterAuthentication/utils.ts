@@ -6,8 +6,15 @@ export type TwoFAMethod = 'email' | 'sms' | 'voter_choice'
 /** The one-time code choice as the modal shows it: "no code" is an option, not a switch. */
 export type CodeMethod = 'none' | TwoFAMethod
 
+// The member password never identifies a voter on its own: the backend finds the participant on
+// the other credentials, then checks the password. So it does not count toward the credentials
+// limit, and it needs another credential or 2FA next to it.
+export const PASSWORD_CREDENTIAL = 'password'
+
+export type VoterAuthField = OrgMemberAuthField | typeof PASSWORD_CREDENTIAL
+
 export type VoterAuthFormData = {
-  credentials: OrgMemberAuthField[]
+  credentials: VoterAuthField[]
   codeMethod: CodeMethod
 }
 
@@ -19,9 +26,16 @@ export const MAX_AUTH_FIELDS = 3
 
 /**
  * Details a stranger cannot easily look up. Names are public, so a census that
- * only asks for them protects little however many of them it asks for.
+ * only asks for them protects little however many of them it asks for. The
+ * password is something only the member knows, so it counts as private too.
  */
-export const PRIVATE_AUTH_FIELDS: readonly string[] = ['memberNumber', 'nationalId', 'birthDate']
+export const PRIVATE_AUTH_FIELDS: readonly string[] = ['memberNumber', 'nationalId', 'birthDate', PASSWORD_CREDENTIAL]
+
+export const countedCredentials = (credentials: readonly string[]): number =>
+  credentials.filter((credential) => credential !== PASSWORD_CREDENTIAL).length
+
+export const passwordNeedsAnotherCredential = (credentials: readonly string[], codeMethod: CodeMethod): boolean =>
+  credentials.includes(PASSWORD_CREDENTIAL) && countedCredentials(credentials) === 0 && codeMethod === 'none'
 
 export const getTwoFaFields = (method: TwoFAMethod): OrgMemberTwoFaField[] => {
   switch (method) {
@@ -38,7 +52,7 @@ export const getCodeTwoFaFields = (method: CodeMethod): OrgMemberTwoFaField[] =>
   method === 'none' ? [] : getTwoFaFields(method)
 
 export const fromCensus = (census?: Census | null): VoterAuthFormData => ({
-  credentials: (census?.credentials ?? []) as OrgMemberAuthField[],
+  credentials: (census?.credentials ?? []) as VoterAuthField[],
   codeMethod: census?.use2FA ? (census.use2FAMethod ?? 'email') : 'none',
 })
 

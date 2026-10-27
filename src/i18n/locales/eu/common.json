@@ -198,6 +198,7 @@
     "code_sent": "Egiaztapen-kodea bidali da",
     "contact_match_help": "Sisteman erregistratutakoarekin bat etorri behar du",
     "errors": {
+      "credentials_or_password_incorrect": "Ezin izan dugu zure identitatea egiaztatu. Egiaztatu zure kredentzialak eta pasahitza, eta saiatu berriro.",
       "participant_not_found": "Botogilea ez dago erroldan edo emandako kredentzialak ez dira zuzenak.",
       "requests_on_cooldown": "Eskaera gehiegi. Itxaron pixka bat berriro saiatu aurretik.",
       "too_many_attempts": "Saiakera gehiegi. Saiatu berriro geroago.",
@@ -215,10 +216,12 @@
       "memberNumber": "Bazkide-zenbakia",
       "name": "Izena",
       "nationalId": "NAN/AIZ",
+      "password": "Pasahitza",
       "phone": "Telefonoa",
       "surname": "Abizenak"
     },
     "important": "Garrantzitsua",
+    "password_unavailable": "Une honetan ezin da pasahitza egiaztatu. Birkargatu orria eta saiatu berriro.",
     "receive_code": "Jaso kodea",
     "step1": {
       "footer_text": "Arazoren bat baduzu, jarri zure erakundearekin harremanetan.",
@@ -468,7 +471,8 @@
       "error": {
         "invalid_birth_date": "Jaioteguna ezin da etorkizunean egon",
         "invalid_email": "Posta elektronikoaren helbidea ez da baliozkoa",
-        "invalid_phone": "Telefono-zenbakia ez da baliozkoa"
+        "invalid_phone": "Telefono-zenbakia ez da baliozkoa",
+        "password_requirements": "Erabili gutxienez 6 karaktere, letra bat eta zenbaki bat barne."
       }
     },
     "process_create": {
@@ -951,12 +955,18 @@
     },
     "form": {
       "cancel": "Utzi",
+      "password_set": "Pasahitz bat gordeta dago. Idatzi berri bat ordezkatzeko.",
+      "password_will_be_removed": "Gordetako pasahitza kendu egingo da gordetzean.",
       "phone_warning": "Telefono-zenbakia ezkutatuta. Hemen egindako aldaketa gainidatziko du.",
       "phone_will_be_removed": "Gordetako telefono-zenbakia kendu egingo da gordetzean.",
       "save": "Gorde aldaketak"
     },
     "groups": {
       "title": "Taldeak"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} errenkada ez da inportatu, bere pasahitzak ez dituelako betetzen baldintzak (gutxienez 6 karaktere, letra bat eta zenbaki bat barne): {{lines}}. lerroa.",
+      "password_rows_skipped_other": "{{count}} errenkada ez dira inportatu, haien pasahitzek ez dituztelako betetzen baldintzak (gutxienez 6 karaktere, letra bat eta zenbaki bat barne): {{lines}} lerroak."
     },
     "import_file": {
       "subtitle": "Inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideen datuekin. Ziurtatu zutabeen goiburuak txantiloiarekin bat datozela esleipen zuzena egiteko.",
@@ -1003,6 +1013,7 @@
       "firstname": "Izena",
       "member_number": "Kide-zenbakia",
       "national_id": "NAN/AIZ",
+      "password": "Pasahitza",
       "phone": "Telefonoa",
       "surname": "Abizenak",
       "weight": "Boto-pisua (Pisua)"
@@ -2020,7 +2031,8 @@
     "details": {
       "description": "Hautatu gehienez {{max}} datu zure kide-zerrendatik. Botogileek idazten dutenak zehatz-mehatz bat etorri behar du horrekin.",
       "heading": "1. Zer idatziko dute botogileek?",
-      "optional": "Aukerakoa behin erabiltzeko kode bat bidaltzen baduzu: orduan botogileek kodearekin bakarrik hasi dezakete saioa."
+      "optional": "Aukerakoa behin erabiltzeko kode bat bidaltzen baduzu: orduan botogileek kodearekin bakarrik hasi dezakete saioa.",
+      "password_not_counted": "Pasahitza ez da muga horretan kontatzen."
     },
     "level": {
       "basic": "Oinarrizkoa",
@@ -2034,6 +2046,7 @@
       "title": "Nola hasiko dute saioa botogileek?"
     },
     "no_group_description": "Hautatu lehenik talde bat autentifikazioa konfiguratzeko.",
+    "password_needs_another_credential": "Pasahitzak berak bakarrik ezin ditu botogileak identifikatu. Hautatu beste datu bat ere, edo bidali behin erabiltzeko kode bat.",
     "pending": {
       "description": "Aukeratu hautesleek bozkatzeko zein kide-datu sartu behar dituzten, adibidez NANa edo kide-zenbakia.",
       "error_title": "Hau behar duzu argitaratzeko",

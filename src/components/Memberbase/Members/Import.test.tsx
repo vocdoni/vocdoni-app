@@ -1,7 +1,9 @@
 import type { ImportJob } from '~src/queries/members'
 import { mockUseOrganization, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { ImportProgress } from './Import'
+import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
+import { buildImportRows, ImportProgress } from './Import'
+import { maskIfNeeded } from './maskIfNeeded'
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
@@ -75,5 +77,70 @@ describe('ImportProgress', () => {
     render(<ImportProgress />)
 
     expect(screen.getByText('Import Completed with Errors')).toBeInTheDocument()
+  })
+})
+
+describe('buildImportRows', () => {
+  // hashMemberPassword('0x…AA', 's3cret'), the shared test vector
+  const S3CRET_HASH = '2f7e83a0b19a82fa9a5dc6ecc6ff44ec82679ea87012a7187bd3313366bf277e'
+
+  it('maps the spreadsheet columns and sends password hashes, never the plaintext', async () => {
+    const rows = await buildImportRows(
+      '0x00000000000000000000000000000000000000AA',
+      {
+        heading: ['number', 'secret'],
+        filedata: [
+          ['1', 's3cret'],
+          ['2', ''],
+        ],
+      },
+      { memberNumber: 'number', password: 'secret' }
+    )
+
+    expect(rows).toEqual({
+      rows: [{ memberNumber: '1', password: S3CRET_HASH }, { memberNumber: '2' }],
+      skippedLines: [],
+    })
+    expect(JSON.stringify(rows)).not.toContain('s3cret')
+  })
+
+  it('reports the real file line of a skipped row when blank rows were dropped', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const csv = 'name,password\na,abc123\n\n,,\nb,bad\n'
+    const manager = new SpreadsheetManager(new File([csv], 'members.csv', { type: 'text/csv' }), true)
+    await manager.read()
+
+    const result = await buildImportRows(
+      '0x00000000000000000000000000000000000000AA',
+      { heading: manager.header, filedata: manager.data, lineNumbers: manager.lineNumbers },
+      { name: 'name', password: 'password' }
+    )
+
+    expect(result.rows).toHaveLength(1)
+    expect(result.skippedLines).toEqual([5])
+  })
+
+  it('skips the rows whose password does not meet the requirements and reports their spreadsheet lines', async () => {
+    const result = await buildImportRows(
+      '0x00000000000000000000000000000000000000AA',
+      {
+        heading: ['number', 'secret'],
+        filedata: [
+          ['1', 's3cret'],
+          ['2', 'abc'],
+          ['3', ''],
+          ['4', '123456'],
+        ],
+      },
+      { memberNumber: 'number', password: 'secret' }
+    )
+
+    expect(result.rows).toEqual([{ memberNumber: '1', password: S3CRET_HASH }, { memberNumber: '3' }])
+    expect(result.skippedLines).toEqual([3, 5])
+  })
+
+  it('masks the password column of the import preview', () => {
+    expect(maskIfNeeded('password', 's3cret')).toBe('*********')
+    expect(maskIfNeeded('password', '')).toBe('')
   })
 })

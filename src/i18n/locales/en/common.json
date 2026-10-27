@@ -198,6 +198,7 @@
     "code_sent": "Verification code sent",
     "contact_match_help": "Must match the one registered in the system",
     "errors": {
+      "credentials_or_password_incorrect": "We couldn't verify your identity. Check your credentials and your password and try again.",
       "participant_not_found": "The voter is not listed in the census, or the provided credentials are incorrect.",
       "requests_on_cooldown": "Too many requests. Please wait a moment before trying again.",
       "too_many_attempts": "Too many attempts. Please try again later.",
@@ -215,10 +216,12 @@
       "memberNumber": "Member Number",
       "name": "First Name",
       "nationalId": "National ID",
+      "password": "Password",
       "phone": "Phone",
       "surname": "Last Name"
     },
     "important": "Important",
+    "password_unavailable": "The password cannot be checked right now. Reload the page and try again.",
     "receive_code": "Receive Code",
     "step1": {
       "footer_text": "If you experience any issues, contact your organization.",
@@ -468,7 +471,8 @@
       "error": {
         "invalid_birth_date": "Birth date cannot be in the future",
         "invalid_email": "Invalid email address",
-        "invalid_phone": "Invalid phone number"
+        "invalid_phone": "Invalid phone number",
+        "password_requirements": "Use at least 6 characters, including a letter and a number."
       }
     },
     "process_create": {
@@ -951,12 +955,18 @@
     },
     "form": {
       "cancel": "Cancel",
+      "password_set": "A password is set. Type a new one to replace it.",
+      "password_will_be_removed": "The stored password will be removed when you save.",
       "phone_warning": "Phone number hidden. Any changes here will overwrite it.",
       "phone_will_be_removed": "The stored phone number will be removed when you save.",
       "save": "Save changes"
     },
     "groups": {
       "title": "Groups"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} row was not imported because its password does not meet the requirements (at least 6 characters, including a letter and a number): line {{lines}}.",
+      "password_rows_skipped_other": "{{count}} rows were not imported because their password does not meet the requirements (at least 6 characters, including a letter and a number): lines {{lines}}."
     },
     "import_file": {
       "subtitle": "Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.",
@@ -1003,6 +1013,7 @@
       "firstname": "First Name",
       "member_number": "Member Number",
       "national_id": "National ID",
+      "password": "Password",
       "phone": "Phone",
       "surname": "Last Name",
       "weight": "Voting power (Weight)"
@@ -2020,7 +2031,8 @@
     "details": {
       "description": "Pick up to {{max}} details from your member list. What voters type must match it exactly.",
       "heading": "1. What will voters type?",
-      "optional": "Optional if you send a one-time code: voters can then sign in with the code alone."
+      "optional": "Optional if you send a one-time code: voters can then sign in with the code alone.",
+      "password_not_counted": "The password does not count toward that limit."
     },
     "level": {
       "basic": "Basic",
@@ -2034,6 +2046,7 @@
       "title": "How will voters sign in?"
     },
     "no_group_description": "Please select a group first to configure authentication.",
+    "password_needs_another_credential": "A password alone cannot identify voters. Pick another detail too, or send a one-time code.",
     "pending": {
       "description": "Pick the member details voters must enter to vote, like their ID or member number.",
       "error_title": "You need this to publish",

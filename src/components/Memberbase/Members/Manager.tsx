@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
+import { hashMemberPassword, isValidMemberPassword } from '~utils/member-password'
 import { useTable } from '../TableProvider'
 
 type MemberFormData = Record<string, string>
@@ -54,6 +55,9 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   // change; track edits to it explicitly so emptying it still reaches the API.
   const [phoneEdited, setPhoneEdited] = useState(false)
   const hadPhone = !!member?.phone
+  // Same for the password, which is never returned at all: only whether there is one.
+  const [passwordEdited, setPasswordEdited] = useState(false)
+  const hadPassword = !!member?.hasPassword
 
   const defaultValues: MemberFormData = useMemo(() => Object.fromEntries(columns.map((col) => [col.id, ''])), [columns])
 
@@ -111,6 +115,15 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         message: t('form.member.error.invalid_phone', { defaultValue: 'Invalid phone number' }),
       },
     },
+    password: {
+      // Empty stays allowed: no password on add, an explicit clear on edit.
+      validate: (value: string) =>
+        !value?.trim() ||
+        isValidMemberPassword(value) ||
+        t('form.member.error.password_requirements', {
+          defaultValue: 'Use at least 6 characters, including a letter and a number.',
+        }),
+    },
     birthDate: {
       validate: (value: string) => {
         if (!value) return true
@@ -141,7 +154,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
     const isNewSession = syncedMemberId.current !== member.id
     syncedMemberId.current = member.id
 
-    const cleanMember = { ...member }
+    const { hasPassword: _hasPassword, ...cleanMember } = member
     if (member.phone) {
       cleanMember.phone = ''
     }
@@ -149,6 +162,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
     const values = { ...defaultValues, ...stringifyObjectValues(cleanMember) }
     if (isNewSession) {
       setPhoneEdited(false)
+      setPasswordEdited(false)
       methods.reset(values)
     } else {
       // errors on fields the user has not touched describe a value that was just replaced
@@ -165,9 +179,10 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   }, [member, isOpen])
 
   const phoneWillBeRemoved = hadPhone && phoneEdited && !methods.watch('phone')
+  const passwordWillBeRemoved = hadPassword && passwordEdited && !methods.watch('password')?.trim()
 
-  const onSubmit = (data: Partial<Member>) => {
-    const { id, memberNumber, name, surname, email, phone, nationalId, birthDate, weight } = data
+  const onSubmit = async (data: Partial<Member>) => {
+    const { id, memberNumber, name, surname, email, phone, nationalId, birthDate, weight, password } = data
 
     const memberPayload: Partial<Member> = stringifyObjectValues({
       id,
@@ -190,6 +205,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
       })
       methods.reset()
       setPhoneEdited(false)
+      setPasswordEdited(false)
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.members(organization.address),
         exact: false,
@@ -205,6 +221,20 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         duration: 3000,
         isClosable: true,
       })
+    }
+
+    // The plaintext never leaves the browser: a typed password is sent as its hash, and an emptied
+    // one as '' (which clears the stored password). Untouched, it is left out and kept.
+    const trimmedPassword = password?.trim() ?? ''
+    if (trimmedPassword) {
+      try {
+        memberPayload.password = await hashMemberPassword(organization?.address ?? '', trimmedPassword)
+      } catch (error) {
+        handleError(error instanceof Error ? error : new Error(String(error)))
+        return
+      }
+    } else if (isEdit && hadPassword && passwordEdited) {
+      memberPayload.password = ''
     }
 
     if (isEdit) {
@@ -223,10 +253,11 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
 
       // Send only what the user changed: the API keeps a field left out and clears one sent empty.
       // An untouched phone is blank in the form (it is never returned in plaintext), so it must
-      // be left out rather than sent empty.
+      // be left out rather than sent empty. The password is in the payload only when it changed.
       const changes = Object.fromEntries(
         Object.entries(memberPayload).filter(
-          ([key]) => key !== 'id' && (dirtyFields[key] || (key === 'phone' && hadPhone && phoneEdited))
+          ([key]) =>
+            key === 'password' || (key !== 'id' && (dirtyFields[key] || (key === 'phone' && hadPhone && phoneEdited)))
         )
       )
 
@@ -288,6 +319,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
               <Stack as='form' id='member-form' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
                 {columns.map((col) => {
                   const isPhone = col.id === 'phone'
+                  const isPassword = col.id === 'password'
                   const isBirthdate = col.id === 'birthDate'
                   const isWeighted = col.id === 'weight'
 
@@ -322,9 +354,15 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                                 setPhoneEdited(true)
                               },
                             }),
+                            ...(isPassword && {
+                              onChange: () => {
+                                setPasswordEdited(true)
+                              },
+                            }),
                           })}
-                          placeholder={hadPhone && isPhone ? '•••••••••••' : ''}
-                          type={isBirthdate ? 'date' : isPhone ? 'tel' : 'text'}
+                          placeholder={(hadPhone && isPhone) || (hadPassword && isPassword) ? '•••••••••••' : ''}
+                          type={isBirthdate ? 'date' : isPhone ? 'tel' : isPassword ? 'password' : 'text'}
+                          autoComplete={isPassword ? 'new-password' : undefined}
                           required={false} // we don't want HTML5 validation
                         />
                       )}
@@ -338,6 +376,18 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                         <FormHelperText>
                           {t('memberbase.form.phone_warning', {
                             defaultValue: 'Phone number hidden. Any changes here will overwrite it.',
+                          })}
+                        </FormHelperText>
+                      ) : isPassword && passwordWillBeRemoved ? (
+                        <FormHelperText color='fg.error'>
+                          {t('memberbase.form.password_will_be_removed', {
+                            defaultValue: 'The stored password will be removed when you save.',
+                          })}
+                        </FormHelperText>
+                      ) : isPassword && hadPassword ? (
+                        <FormHelperText>
+                          {t('memberbase.form.password_set', {
+                            defaultValue: 'A password is set. Type a new one to replace it.',
                           })}
                         </FormHelperText>
                       ) : null}

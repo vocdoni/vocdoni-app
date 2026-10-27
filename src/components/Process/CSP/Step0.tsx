@@ -16,10 +16,13 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
+import { useElection } from '@vocdoni/react-components'
+import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
+import { hashMemberPassword } from '~utils/member-password'
 import { CSPStep0FormData, CSPStep0RequestData, useCspAuth0, useCspAuthPending, useIsCspAuthBusy } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
 import { getAuthFieldInputType, getAuthFieldLabel, getContactFieldLabel } from './fields'
@@ -28,6 +31,7 @@ export const Step0Base = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const { setCurrentStep, setAuthData, authFields, twoFaFields } = useCspAuthContext()
+  const { election } = useElection()
   const {
     register,
     handleSubmit,
@@ -45,8 +49,13 @@ export const Step0Base = () => {
   const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
   const crispWebsiteId = appEnv.CRISP_WEBSITE_ID
 
+  // Set synchronously on submit: the busy flag only turns on once the mutation starts, after the
+  // password hash is awaited, so a second submit in that window would send a second identify request.
+  const submitting = useRef(false)
+
   const onSubmit = async (values: CSPStep0FormData) => {
-    if (isAuthBusy()) return
+    if (submitting.current || isAuthBusy()) return
+    submitting.current = true
 
     const trimmed: CSPStep0FormData = Object.fromEntries(
       Object.entries(values).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
@@ -87,7 +96,10 @@ export const Step0Base = () => {
       }
 
       try {
-        const firstEntry = Object.entries(fields).find(([, value]) => typeof value === 'string' && value.length > 0)
+        // The password hash is a credential: it must never reach a third-party script.
+        const firstEntry = Object.entries(fields).find(
+          ([field, value]) => field !== 'password' && typeof value === 'string' && value.length > 0
+        )
         if (!firstEntry) {
           return
         }
@@ -104,6 +116,21 @@ export const Step0Base = () => {
     }
 
     try {
+      // The plaintext password never leaves the browser: the request carries its hash, salted with
+      // the organization address exactly like the one the organizer stored.
+      if (form.password) {
+        try {
+          form.password = await hashMemberPassword(election?.orgAddress ?? '', form.password)
+        } catch (error) {
+          console.error('CSP password hashing failed:', error)
+          throw new Error(
+            t('csp.password_unavailable', {
+              defaultValue: 'The password cannot be checked right now. Reload the page and try again.',
+            })
+          )
+        }
+      }
+
       // The voter session (ElectionProvider's auth context) stores the auth token;
       // we only keep the contact info so step 1 can resend the challenge.
       await auth.mutateAsync(form)
@@ -141,6 +168,8 @@ export const Step0Base = () => {
         isClosable: true,
       })
       console.error('CSP auth failed:', error)
+    } finally {
+      submitting.current = false
     }
   }
 
@@ -148,13 +177,15 @@ export const Step0Base = () => {
     <VStack gap={6} align='stretch' w='full'>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack gap={4}>
-          {/* Render auth fields */}
-          {authFields.map((field) => (
-            <FieldRoot key={field} invalid={!!errors[field]} required>
-              <FieldLabel>{getAuthFieldLabel(t, field)}</FieldLabel>
-              <Input {...register(field, { required: true })} type={getAuthFieldInputType(field)} />
-            </FieldRoot>
-          ))}
+          {/* Render auth fields, the password always last */}
+          {[...authFields.filter((f) => f !== 'password'), ...authFields.filter((f) => f === 'password')].map(
+            (field) => (
+              <FieldRoot key={field} invalid={!!errors[field]} required>
+                <FieldLabel>{getAuthFieldLabel(t, field)}</FieldLabel>
+                <Input {...register(field, { required: true })} type={getAuthFieldInputType(field)} />
+              </FieldRoot>
+            )
+          )}
 
           {/* Render 2FA field */}
           {is2Factor && (

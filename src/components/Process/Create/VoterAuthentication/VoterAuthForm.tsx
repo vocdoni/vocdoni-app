@@ -30,11 +30,15 @@ import { ProtectionMeter } from './ProtectionLevel'
 import { useCensusCheck } from './useCensusCheck'
 import {
   CodeMethod,
+  countedCredentials,
   fromCensus,
   getCodeTwoFaFields,
   hasAuthConfig,
   MAX_AUTH_FIELDS,
+  PASSWORD_CREDENTIAL,
+  passwordNeedsAnotherCredential,
   toCensus,
+  VoterAuthField,
   VoterAuthFormData,
 } from './utils'
 import { VoterSignInPreview } from './VoterSignInPreview'
@@ -93,6 +97,10 @@ const formatList = (language: string, items: string[], type: 'conjunction' | 'di
  */
 const describeFields = (t: TFunction, language: string, { credentials, codeMethod }: VoterAuthFormData) => {
   const details = credentials.map((field) => getAuthFieldLabel(t, field))
+  // The backend leaves the password out of duplicate detection, so it never shares a clash.
+  const duplicateDetails = credentials
+    .filter((field) => field !== PASSWORD_CREDENTIAL)
+    .map((field) => getAuthFieldLabel(t, field))
   const contacts = getCodeTwoFaFields(codeMethod).map((field) =>
     field === 'email'
       ? t('csp.fields.email', { defaultValue: 'Email' })
@@ -110,7 +118,7 @@ const describeFields = (t: TFunction, language: string, { credentials, codeMetho
     missing: formatList(language, missingContact ? [...details, missingContact] : details, 'disjunction'),
     duplicate: formatList(
       language,
-      contacts.length ? [...details, formatList(language, contacts, 'disjunction')] : details,
+      contacts.length ? [...duplicateDetails, formatList(language, contacts, 'disjunction')] : duplicateDetails,
       'conjunction'
     ),
     /** The name of one part of the per-field breakdown: an auth field id, or 'contact'. */
@@ -149,9 +157,11 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
   const codeMethod = watch('codeMethod') ?? 'none'
   const values: VoterAuthFormData = { credentials, codeMethod }
   const configured = hasAuthConfig(values)
+  // A password alone is refused before saving, so the backend never gets a census it would reject.
+  const passwordAlone = passwordNeedsAnotherCredential(credentials, codeMethod)
 
   const spec = buildCensusSpec({ groupId, anonymousVoting, weightedVote, census: toCensus(values) })
-  const censusCheck = useCensusCheck(spec)
+  const censusCheck = useCensusCheck(spec, { enabled: !passwordAlone })
   const statusRef = useRef<HTMLDivElement>(null)
 
   const [saving, setSaving] = useState(false)
@@ -191,6 +201,8 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
       statusRef.current?.focus()
       return
     }
+    // Save is disabled in this state; this only guards a call that gets past it.
+    if (passwordAlone) return
 
     setSaving(true)
     let checked = true
@@ -270,6 +282,9 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                     'Pick up to {{max}} details from your member list. What voters type must match it exactly.',
                   max: MAX_AUTH_FIELDS,
                 })}{' '}
+                {t('voter_auth.details.password_not_counted', {
+                  defaultValue: 'The password does not count toward that limit.',
+                })}{' '}
                 {/* A code-only census is valid: say so, or admins assume a detail is required. */}
                 {t('voter_auth.details.optional', {
                   defaultValue: 'Optional if you send a one-time code: voters can then sign in with the code alone.',
@@ -281,15 +296,17 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                 render={({ field }) => (
                   <CheckboxGroup value={field.value} onValueChange={(value) => field.onChange(value)}>
                     <Flex wrap='wrap' gap={2}>
-                      {AUTH_FIELDS.map((id) => {
+                      {[...AUTH_FIELDS, PASSWORD_CREDENTIAL].map((id: VoterAuthField) => {
                         const checked = field.value.includes(id)
+                        // The password is not counted toward the limit (see countedCredentials).
+                        const atLimit = id !== PASSWORD_CREDENTIAL && countedCredentials(field.value) >= MAX_AUTH_FIELDS
                         return (
                           <CheckboxCard.Root
                             key={id}
                             value={id}
                             size='sm'
                             flex='0 0 auto'
-                            disabled={saving || (!checked && field.value.length >= MAX_AUTH_FIELDS)}
+                            disabled={saving || (!checked && atLimit)}
                             {...optionCardStyles}
                           >
                             <CheckboxCard.HiddenInput />
@@ -407,7 +424,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
         alignItems={{ base: 'stretch', md: 'center' }}
         gap={3}
       >
-        <Box flex='1' minW={0}>
+        <Box id='voter-auth-status' flex='1' minW={0}>
           <MemberCheck
             ref={statusRef}
             status={censusCheck.status}
@@ -421,6 +438,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             )?.map(({ field, count }) => ({ label: fieldNames.of(field), count }))}
             membersCount={group?.membersCount}
             emptyAttempt={emptyAttempt}
+            passwordOnly={passwordAlone}
             onRetry={() => censusCheck.retry()}
           />
         </Box>
@@ -429,7 +447,14 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             {t('actions.cancel', { defaultValue: 'Cancel' })}
           </Button>
           {/* Its label is translated and it is not a form submit, so e2e has no structural handle. */}
-          <Button onClick={handleSave} loading={saving} data-testid='voter-auth-save'>
+          {/* A disabled button leaves the tab order: point it at the status line that says why. */}
+          <Button
+            onClick={handleSave}
+            loading={saving}
+            disabled={passwordAlone}
+            aria-describedby={passwordAlone ? 'voter-auth-status' : undefined}
+            data-testid='voter-auth-save'
+          >
             {t('voter_auth.save.submit', { defaultValue: 'Save' })}
           </Button>
         </HStack>

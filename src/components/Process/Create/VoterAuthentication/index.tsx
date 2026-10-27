@@ -12,7 +12,7 @@ import { CENSUS_SETUP_TOAST_ID } from '../useCensusSetupToast'
 import { useCensusSteps } from '../useCensusSteps'
 import { AuthSummary } from './AuthSummary'
 import { useCensusCheck } from './useCensusCheck'
-import { censusConfigSignature } from './utils'
+import { censusConfigSignature, countedCredentials, PASSWORD_CREDENTIAL } from './utils'
 import { useVoterAuthDialog } from './VoterAuthDialogContext'
 import { VoterAuthForm } from './VoterAuthForm'
 
@@ -71,7 +71,8 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
       trackAnalyticsEvent({
         name: AnalyticsEvents.CensusConfigured,
         props: {
-          auth_fields_count: next.credentials.length,
+          auth_fields_count: countedCredentials(next.credentials),
+          password: next.credentials.includes(PASSWORD_CREDENTIAL),
           two_fa: next.use2FA,
           two_fa_method: next.use2FA ? next.use2FAMethod : 'none',
         },

@@ -25,6 +25,8 @@ export const getAuthFieldLabel = (t: TFunction, field: string): string => {
       return t('csp.fields.nationalId', { defaultValue: 'National ID' })
     case 'birthDate':
       return t('csp.fields.birthDate', { defaultValue: 'Birth Date' })
+    case 'password':
+      return t('csp.fields.password', { defaultValue: 'Password' })
     default:
       return field
   }
@@ -48,5 +50,6 @@ export const getAuthFieldInputType = (field: string): string => {
   if (field === 'email') return 'email'
   if (field === 'phone') return 'tel'
   if (field === 'birthDate') return 'date'
+  if (field === 'password') return 'password'
   return 'text'
 }

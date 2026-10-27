@@ -13,6 +13,11 @@ describe('getProtectionLevel', () => {
     [[], 'email', 'good'],
     [['name'], 'sms', 'strong'],
     [['memberNumber'], 'voter_choice', 'strong'],
+    // The password never lowers the level: it is good beside another detail, basic alone.
+    [['memberNumber', 'password'], 'none', 'good'],
+    [['name', 'password'], 'none', 'good'],
+    [['password'], 'none', 'basic'],
+    [['password'], 'email', 'strong'],
   ] as const)('grades %j with code %s as %s', (credentials, codeMethod, expected) => {
     expect(getProtectionLevel(credentials, codeMethod)).toBe(expected)
   })

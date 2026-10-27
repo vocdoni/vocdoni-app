@@ -419,24 +419,27 @@ const ColumnManager = () => {
               </Text>
             </Drawer.Header>
             <Drawer.Body>
-              {columns.map((col) => (
-                <Flex key={col.id} justify='space-between' align='center' my={2}>
-                  <Text>{col.label}</Text>
-                  <Switch.Root
-                    checked={col.visible}
-                    onCheckedChange={({ checked }) => toggleColumn(col.id, checked === true)}
-                    aria-label={t('members.table.toggle_column', {
-                      defaultValue: `Toggle column {{column}}`,
-                      column: col.label,
-                    })}
-                  >
-                    <Switch.HiddenInput />
-                    <Switch.Control>
-                      <Switch.Thumb />
-                    </Switch.Control>
-                  </Switch.Root>
-                </Flex>
-              ))}
+              {/* The API never returns the password, so it has nothing to show; it stays in the column list because the member form, CSV mapper and template read their fields from it. */}
+              {columns
+                .filter((col) => col.id !== 'password')
+                .map((col) => (
+                  <Flex key={col.id} justify='space-between' align='center' my={2}>
+                    <Text>{col.label}</Text>
+                    <Switch.Root
+                      checked={col.visible}
+                      onCheckedChange={({ checked }) => toggleColumn(col.id, checked === true)}
+                      aria-label={t('members.table.toggle_column', {
+                        defaultValue: `Toggle column {{column}}`,
+                        column: col.label,
+                      })}
+                    >
+                      <Switch.HiddenInput />
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                    </Switch.Root>
+                  </Flex>
+                ))}
             </Drawer.Body>
           </Drawer.Content>
         </Drawer.Positioner>
