@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createDevMiddleware, renderPage } from 'vike/server'
 import { getSupportedPublicLanguagesFromEnv, resolvePublicLanguageRedirect } from './public-language-routing.mjs'
+import { robotsTxtHandler } from './robots.mjs'
 import { securityHeaders } from './security-headers.mjs'
 import { createSsrCacheMiddleware } from './ssr-cache.mjs'
 import { isStaticAssetPath } from './static-asset-guard.mjs'
@@ -30,6 +31,8 @@ if (isProduction && !process.env.APP_URL?.trim()) {
 }
 
 app.use(securityHeaders({ isProduction }))
+// Before the static and dev middleware, which would otherwise serve public/ files.
+app.use(robotsTxtHandler())
 
 if (isProduction) {
   await import(pathToFileURL(join(root, 'dist/server/entry.mjs')).href)
