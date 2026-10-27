@@ -1027,7 +1027,7 @@
       "add_to_group": "Add to Group",
       "add_to_group_button_one": "Add {{count}} member",
       "add_to_group_button_other": "Add {{count}} member",
-      "add_to_group_confirmation_one": "You will add {{count}} members to the \"{{group}}\" group.",
+      "add_to_group_confirmation_one": "You will add {{count}} member to the \"{{group}}\" group.",
       "add_to_group_confirmation_other": "You will add {{count}} members to the \"{{group}}\" group.",
       "add_to_group_description": "Select a group to add the members to.",
       "add_to_group_success": "Members added to group successfully",
@@ -1045,7 +1045,7 @@
       "group_description": "Description (optional)",
       "group_description_placeholder": "Enter a brief description of the group",
       "group_members": "Selected Members",
-      "group_members_count_one": "{{count}} members selected",
+      "group_members_count_one": "{{count}} member selected",
       "group_members_count_other": "{{count}} members selected",
       "group_name": "Group name",
       "manage_columns": "Manage Columns",
@@ -1244,7 +1244,7 @@
       "footnote_2": "² 2FA credits are only consumed when a user actually requests verification in a voting process. You'll never unexpectedly run out: if you exceed your included credits during a vote, each additional code will be charged at €0.015 as it's sent. You can also pre-purchase extra credits in convenient packages.",
       "footnote_on_demand": "* Requested features will be evaluated individually and may incur additional fees."
     },
-    "core_voting_one": "Up to {{ count }} members",
+    "core_voting_one": "Up to {{ count }} member",
     "core_voting_other": "Up to {{ count }} members",
     "custom_branding": "Custom branding*",
     "custom_subtitle": "Tailored for your needs",
@@ -1319,7 +1319,7 @@
         "title": "Saving Draft"
       },
       "limit_reached": {
-        "message_one": "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan.",
+        "message_one": "You've reached your limit of {{ count }} draft. To save this draft, delete an existing draft or upgrade your plan.",
         "message_other": "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan."
       },
       "question": {
@@ -2044,7 +2044,7 @@
     },
     "security_level": "Good security",
     "security_recommendation_1": "For better security, we recommend selecting at least 2 credentials.",
-    "security_recommendation_2_one": "You've selected {{ count }} credentials, which provides good security for your voters.",
+    "security_recommendation_2_one": "You've selected {{ count }} credential, which provides good security for your voters.",
     "security_recommendation_2_other": "You've selected {{ count }} credentials, which provides good security for your voters.",
     "security_recommendation_title": "Security recommendation",
     "select_credentials": "Select required credentials for voter authentication",
@@ -2059,15 +2059,15 @@
     "summary_title": "Authentication Configuration Summary",
     "title": "Configure Voter Authentication",
     "two_factor": "Two-Factor",
-    "validation_duplicates_one": "{{count}} duplicated users",
+    "validation_duplicates_one": "{{count}} duplicated user",
     "validation_duplicates_other": "{{count}} duplicated users",
     "validation_error_title": "Validation Error",
     "validation_failed": "Validation failed",
-    "validation_missing_data_one": "{{count}} users missing required fields",
+    "validation_missing_data_one": "{{count}} user missing required fields",
     "validation_missing_data_other": "{{count}} users missing required fields",
     "validation_review_members": "Review members",
     "validation_summary": "Validation failed for some users.",
-    "validation_total_one": "{{count}} users total",
+    "validation_total_one": "{{count}} user total",
     "validation_total_other": "{{count}} users total",
     "voters_choice": "Voter's choice"
   },
