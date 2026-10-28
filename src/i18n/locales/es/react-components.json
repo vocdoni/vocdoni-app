@@ -32,6 +32,7 @@
     "vote_failed": "No se ha podido emitir tu voto: {{ detail }}",
     "vote_failed_unknown": "No se ha podido emitir tu voto. Inténtalo de nuevo.",
     "vote_partial": "Solo se ha emitido una parte de tu voto: se han registrado {{ cast }} de {{ total }} preguntas. {{ detail }} Vuelve a enviarlo para reintentar las que han fallado.",
+    "vote_unconfirmed": "Todavía no se ha podido confirmar tu voto. Puede que se haya registrado igualmente: vuelve a enviarlo dentro de un momento para comprobarlo.",
     "wrong_data_description": "Los datos especificados no son correctos",
     "wrong_data_title": "Datos incorrectos"
   },
@@ -110,11 +111,14 @@
       "not_in_census": "No puedes votar en este proceso",
       "not_open": "La votación no está abierta",
       "paused": "La votación está pausada",
+      "signed": "Tu voto ya estaba autorizado. No se puede confirmar desde este dispositivo.",
+      "unconfirmed": "Tu voto fue autorizado, pero no llegó al registro, y este dispositivo no puede volver a enviarlo. Ponte en contacto con la organización.",
       "upcoming": "La votación aún no se ha abierto",
       "upcoming_at": "La votación se abre el {{ date }}",
       "upcoming_date_format": "PPp",
       "voted": "Ya has votado"
     },
+    "pending_resend": "Tu voto para esta pregunta se está volviendo a enviar.",
     "rank_position": "#{{ position }}",
     "sign": "Firmar primero",
     "voted_description": "Para verificar tu voto, puedes usar este identificador único: {{ id }}",
