@@ -9,11 +9,14 @@ import {
 } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
+import { useVerifiedMediaSrc } from './MetadataVerification/context'
 
 const ProcessHeader = () => {
   const { t } = useTranslation()
   const { election } = useElection()
   const { ReadMoreMarkdownWrapper, ReadMoreMarkdownButton } = useReadMoreMarkdown(600, 20)
+  // Rendered from the verified bytes when the header is committed on chain (empty until then).
+  const headerSrc = useVerifiedMediaSrc(election?.header)
 
   if (!election) return null
 
@@ -23,7 +26,7 @@ const ProcessHeader = () => {
         <Box w='100%' mx='auto' my='30px' overflow='hidden'>
           <AspectRatio ratio={3 / 1} maxH='300px'>
             <Image
-              src={election?.header}
+              src={headerSrc}
               alt={
                 election.title
                   ? typeof election.title === 'string'
