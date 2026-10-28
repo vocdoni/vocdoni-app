@@ -11,7 +11,7 @@ export type CodeMethod = 'none' | TwoFAMethod
 // limit, and it needs another credential or 2FA next to it.
 export const PASSWORD_CREDENTIAL = 'password'
 
-export type VoterAuthField = OrgMemberAuthField | typeof PASSWORD_CREDENTIAL
+export type VoterAuthField = OrgMemberAuthField
 
 export type VoterAuthFormData = {
   credentials: VoterAuthField[]

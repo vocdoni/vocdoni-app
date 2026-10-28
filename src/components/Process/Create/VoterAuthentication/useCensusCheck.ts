@@ -94,7 +94,7 @@ export type MissingFieldCount = { field: string; count: number }
 // The password is left out: the backend refuses it alone, see `missingByField`.
 const fieldParts = (spec: CensusSpec) => [
   ...(spec.authFields ?? [])
-    .filter((field) => (field as string) !== PASSWORD_CREDENTIAL)
+    .filter((field) => field !== PASSWORD_CREDENTIAL)
     .map((field) => ({
       field: field as string,
       spec: { ...spec, authFields: [field], twoFaFields: undefined },
@@ -162,7 +162,7 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
     // parts. That undercounts a member who lacks the password and another chosen field: they are already counted there.
     const namedMissing = new Set(named.flatMap((part) => part.missing))
     const passwordCount = (issues?.missingData ?? []).filter((id) => !namedMissing.has(id)).length
-    const hasPassword = (settled.spec.authFields as string[] | undefined)?.includes(PASSWORD_CREDENTIAL)
+    const hasPassword = settled.spec.authFields?.includes(PASSWORD_CREDENTIAL)
     missingByField = [
       ...named.map((part) => ({ field: part.field, count: part.missing.length })),
       ...(hasPassword ? [{ field: PASSWORD_CREDENTIAL, count: passwordCount }] : []),
