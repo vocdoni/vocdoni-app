@@ -6,6 +6,7 @@
 import * as ReactPDF from '@react-pdf/renderer'
 import { describe, expect, it, vi } from 'vitest'
 import { buildCertificateData } from './certificate-data'
+import { type ElectionMetadataAudit } from './metadata-audit'
 import { VotingCertificateDocument } from './pdf-document'
 import { createElection, createQuestion, createQuestionResults, createResults, translate } from './__fixtures__'
 
@@ -21,12 +22,17 @@ type ReportSize = {
   title?: string
   choiceName?: string
   weighted?: boolean
+  metadataAudits?: ElectionMetadataAudit[]
 }
 
-const buildReportData = ({ questions, choices, title, choiceName, weighted }: ReportSize) => {
+// On-chain election ids are hex, which the audit relies on to match elections and questions.
+const questionElectionId = (questionIndex: number) => (questionIndex + 1).toString(16).padStart(40, '0')
+
+const buildReportData = ({ questions, choices, title, choiceName, weighted, metadataAudits }: ReportSize) => {
   const processQuestions = Array.from({ length: questions }, (_, questionIndex) =>
     createQuestion({
       id: `question-${questionIndex + 1}`,
+      upstreamId: questionElectionId(questionIndex),
       title: { default: title ?? `Question ${questionIndex + 1}` },
       choices: Array.from({ length: choices }, (_, choiceIndex) => ({
         title: { default: `${choiceName ?? 'Option'} ${choiceIndex + 1}` },
@@ -49,8 +55,49 @@ const buildReportData = ({ questions, choices, title, choiceName, weighted }: Re
     t: translate,
     explorerUrl: 'https://explorer.vote',
     now: new Date('2026-01-03T10:00:00Z'),
+    metadataAudit: metadataAudits ? { audits: metadataAudits, children: null } : undefined,
   })
 }
+
+const LONG_TEXT = 'The board proposes to renew the agreement with the current provider for two more years. '.repeat(40)
+
+// Every question edited several times, with a long description rewritten each time.
+const createEditedAudits = (questions: number, edits: number): ElectionMetadataAudit[] =>
+  Array.from({ length: questions }, (_, questionIndex) => ({
+    electionId: questionElectionId(questionIndex),
+    available: true,
+    versions: Array.from({ length: edits + 1 }, (_, versionIndex) => ({
+      metadataURL: `https://store.example/${questionIndex}-${versionIndex}`,
+      recordedHash: 'aa'.repeat(32),
+      computedHash: 'aa'.repeat(32),
+      blockHeight: 100 + versionIndex,
+      txHash: 'ab'.repeat(32),
+      timestamp: new Date('2026-01-01T10:00:00Z'),
+      integrity: 'verified' as const,
+      changes:
+        versionIndex === 0
+          ? null
+          : [
+              {
+                field: 'title' as const,
+                lang: 'default',
+                before: 'Agreement renewal',
+                after: 'Agreement renewal 2027',
+              },
+              {
+                field: 'description' as const,
+                lang: 'default',
+                before: LONG_TEXT,
+                after: LONG_TEXT.replaceAll('two more years', 'three more years'),
+              },
+              {
+                field: 'header' as const,
+                before: 'https://media.example/header-before.png',
+                after: 'https://media.example/header-after.png',
+              },
+            ],
+    })),
+  }))
 
 type ActEnvironment = typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }
 
@@ -95,6 +142,8 @@ describe('voting report PDF layout', () => {
     { questions: 8, choices: 2 },
     // Weighted cards have a narrower option column and more summary fields, but 15 options stay whole.
     { questions: 1, choices: 15, choiceName: 'Candidate Josefina Martínez-Rodríguez', weighted: true },
+    // The metadata changes section flows across pages when questions were edited many times.
+    { questions: 3, choices: 2, metadataAudits: createEditedAudits(3, 4) },
   ] satisfies ReportSize[])(
     'fits every block on a page with $questions questions of $choices options',
     async (size) => {
@@ -114,7 +163,7 @@ describe('voting report PDF layout', () => {
 
       expect(unavailableSpaceWarnings).toEqual([])
       expect(capturedPages['sec-6-verification'] - capturedPages['sec-5-results']).toBeGreaterThan(1)
-      expect(capturedPages['sec-7-issuer'] - capturedPages['sec-6-verification']).toBeGreaterThan(1)
+      expect(capturedPages['sec-8-issuer'] - capturedPages['sec-6-verification']).toBeGreaterThan(1)
     },
     LAYOUT_TIMEOUT
   )

@@ -218,7 +218,7 @@ describe('VotingCertificateDocument', () => {
     )
     expect((indexFirstRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('2')
 
-    expect(indexListChildren).toHaveLength(7)
+    expect(indexListChildren).toHaveLength(8)
 
     const indexSecondRow = indexListChildren[4] as {
       props: {
@@ -243,7 +243,7 @@ describe('VotingCertificateDocument', () => {
     })
     expect((indexSecondRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('3')
 
-    const indexIssuerRow = indexListChildren[6] as {
+    const indexIssuerRow = indexListChildren[7] as {
       props: {
         src: string
         children: ReactNode
@@ -258,7 +258,7 @@ describe('VotingCertificateDocument', () => {
     const indexIssuerRowBlockChildren = Array.isArray(indexIssuerRowBlock.props.children)
       ? indexIssuerRowBlock.props.children
       : [indexIssuerRowBlock.props.children]
-    expect(indexIssuerRow.props.src).toBe('#sec-7-issuer')
+    expect(indexIssuerRow.props.src).toBe('#sec-8-issuer')
     expect(
       (indexIssuerRowBlockChildren[1] as { props: { style?: Record<string, unknown> } }).props.style
     ).toMatchObject({
@@ -312,7 +312,7 @@ describe('VotingCertificateDocument', () => {
       : [fifthPage.props.children]
     const issuerSection = fifthPageChildren[4] as { props: { title: string } }
 
-    expect(issuerSection.props.title).toBe('7. Issuer')
+    expect(issuerSection.props.title).toBe('8. Issuer')
 
     const legalNotice = fifthPageChildren[5] as { props: { style?: Record<string, unknown>; children: ReactNode } }
     expect(legalNotice.props.style).toMatchObject({
