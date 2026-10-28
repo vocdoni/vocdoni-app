@@ -32,6 +32,7 @@
     "vote_failed": "No s'ha pogut emetre el teu vot: {{ detail }}",
     "vote_failed_unknown": "No s'ha pogut emetre el teu vot. Torna-ho a provar.",
     "vote_partial": "Només s'ha emès una part del teu vot: s'han registrat {{ cast }} de {{ total }} preguntes. {{ detail }} Torna a enviar-lo per reintentar les que han fallat.",
+    "vote_unconfirmed": "Encara no s'ha pogut confirmar el teu vot. És possible que s'hagi registrat igualment: torna-ho a enviar d'aquí a un moment per comprovar-ho.",
     "wrong_data_description": "Les dades especificades no són correctes",
     "wrong_data_title": "Dades incorrectes"
   },
@@ -110,11 +111,14 @@
       "not_in_census": "No pots votar en aquest procés",
       "not_open": "La votació no està oberta",
       "paused": "La votació està pausada",
+      "signed": "El teu vot ja estava autoritzat. No es pot confirmar des d'aquest dispositiu.",
+      "unconfirmed": "El teu vot va ser autoritzat però no ha arribat al registre, i aquest dispositiu no el pot tornar a enviar. Posa't en contacte amb l'organització.",
       "upcoming": "La votació encara no s'ha obert",
       "upcoming_at": "La votació s'obre el {{ date }}",
       "upcoming_date_format": "PPp",
       "voted": "Ja has votat"
     },
+    "pending_resend": "El teu vot per a aquesta pregunta s'està tornant a enviar.",
     "rank_position": "#{{ position }}",
     "sign": "Signa abans de votar",
     "voted_description": "Per verificar el teu vot, pots utilitzar aquesta identificació única: {{ id }}",
