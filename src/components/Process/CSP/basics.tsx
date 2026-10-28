@@ -5,17 +5,12 @@ import { useElectionAuth } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { useOptionalCspAuthContext } from './CSPStepsProvider'
 
-// TODO(member-password): drop these two widenings once @vocdoni/api-types ships the `password`
-// auth field and `AuthRequest.password` (vocdoni-integrator-sdk feat/member-password).
-type MemberAuthField = OrgMemberAuthField | 'password'
-type MemberAuthRequest = AuthRequest & { password?: string }
-
 export type CensusData = {
-  authFields: MemberAuthField[]
+  authFields: OrgMemberAuthField[]
   twoFaFields: OrgMemberTwoFaField[]
 }
 
-export type AuthFieldType = MemberAuthField
+export type AuthFieldType = OrgMemberAuthField
 export type TwoFaFieldType = OrgMemberTwoFaField
 
 export type CSPFormData = {
@@ -129,7 +124,7 @@ export const useCspAuth0 = () => {
   const { auth0 } = useElectionAuth()
   const translateError = useTranslateCspError()
 
-  return useMutation<void, Error, MemberAuthRequest>({
+  return useMutation<void, Error, AuthRequest>({
     mutationKey: [...cspAuthMutationKey, 0],
     mutationFn: async (participant) => {
       try {
