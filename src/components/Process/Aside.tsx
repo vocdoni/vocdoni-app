@@ -28,8 +28,8 @@ const ProcessAside = () => {
   const votes = processVoteCount(results)
 
   return (
-    <Card.Root variant='section' size='sm' borderRadius='lg' gap={2}>
-      <Card.Root variant='section' size='sm' borderRadius='lg' gap={5} flexWrap='wrap'>
+    <Card.Root variant='section' size='sm' gap={2}>
+      <Card.Root variant='section' size='sm' gap={5} flexWrap='wrap'>
         <Text textAlign='center' fontSize='xl' textTransform='uppercase'>
           {getStatusText(t, status).toUpperCase()}
         </Text>

@@ -160,7 +160,7 @@ export const CreateApiKeyButton = () => {
                       </Alert.Content>
                     </Alert.Root>
                     <Clipboard.Root value={created.secret}>
-                      <Card.Root variant='section' p={3} flexDirection='row' alignItems='center' gap={3}>
+                      <Card.Root variant='section' size='sm' flexDirection='row' alignItems='center' gap={3}>
                         <Code flex='1' overflowX='auto' whiteSpace='nowrap'>
                           {created.secret}
                         </Code>
