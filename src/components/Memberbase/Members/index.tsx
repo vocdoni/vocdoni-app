@@ -12,7 +12,6 @@ import {
   Input,
   InputGroup,
   Menu,
-  Progress,
   Stack,
   Switch,
   Table,
@@ -27,6 +26,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getElectionTitle, useOrganization, useRoutedPagination } from '@vocdoni/react-components'
 import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
+import { EmptyState } from '~components/ui/EmptyState'
+import { ListLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { useState } from 'react'
@@ -747,9 +748,11 @@ const EmptyMembersMessage = () => {
   const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
 
   return (
-    <Flex justify='center' align='center' height='150px'>
-      <Text color='fg.muted' fontSize='sm'>
-        {debouncedSearch
+    <EmptyState
+      size='sm'
+      height='150px'
+      title={
+        debouncedSearch
           ? t('members.table.no_filter_results', {
               defaultValue: 'No members matching these attributes',
             })
@@ -757,9 +760,9 @@ const EmptyMembersMessage = () => {
             ? error.message.toString()
             : t('members.table.no_results', {
                 defaultValue: 'No members found',
-              })}
-      </Text>
-    </Flex>
+              })
+      }
+    />
   )
 }
 
@@ -987,13 +990,7 @@ const MembersTable = () => {
             />
           </Flex>
         </Flex>
-        {isLoadingOrImporting && (
-          <Progress.Root size='xs' value={null}>
-            <Progress.Track>
-              <Progress.Range />
-            </Progress.Track>
-          </Progress.Root>
-        )}
+        {isLoadingOrImporting && <ListLoader size='xs' />}
         {isMobile ? (
           <Box p={4}>
             <Flex justify='space-between' align='center' mb={3}>

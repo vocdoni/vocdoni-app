@@ -1,4 +1,4 @@
-import { AspectRatio, Box, Flex, Link, Spinner, Text } from '@chakra-ui/react'
+import { AspectRatio, Box, Flex, Link, Text } from '@chakra-ui/react'
 import {
   ElectionProvider,
   ElectionStatusBadge,
@@ -16,6 +16,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { ManageProcessLink } from '~components/Process/ManageProcessLink'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
+import { InlineLoader } from '~components/ui/Loader'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { ensureAddressPrefix, sameAddress } from '~utils/address'
 
@@ -113,7 +114,7 @@ const SharedCensusHomeContent = () => {
     .join('\n\n')
 
   if (loading && !election) {
-    return <Spinner />
+    return <InlineLoader />
   }
 
   if (!election) {

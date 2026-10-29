@@ -1,4 +1,5 @@
-import { chakra, Flex, Icon, Progress, Separator, Table, Text, Tooltip } from '@chakra-ui/react'
+import { chakra, Flex, Icon, Separator, Table, Text, Tooltip } from '@chakra-ui/react'
+import { ListLoader } from '~components/ui/Loader'
 import { dotobject } from '~utils/objects'
 import { forwardRef, isValidElement } from 'react'
 import { Trans } from 'react-i18next'
@@ -121,13 +122,7 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
   const translations = usePlanTranslations()
 
   if (isLoading) {
-    return (
-      <Progress.Root size='sm' value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader size='sm' />
   }
 
   // The custom plan is no longer returned by the API, so all returned plans are shown.

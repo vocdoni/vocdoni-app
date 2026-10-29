@@ -270,10 +270,9 @@ export const ImportProgress = () => {
     <>
       <Alert
         status={getStatus()}
-        borderRadius='md'
+        layout='panel'
         mb={3}
         mt={4}
-        p={6}
         as={Flex}
         flexDirection='row'
         justifyContent='space-between'

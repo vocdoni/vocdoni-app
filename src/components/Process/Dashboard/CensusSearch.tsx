@@ -5,7 +5,6 @@ import {
   Icon,
   Input,
   InputGroup,
-  Spinner,
   Text,
   TooltipContent,
   TooltipPositioner,
@@ -20,6 +19,7 @@ import { LuCircleHelp, LuSearch } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { SidebarSubtitle } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
+import { InlineLoader } from '~components/ui/Loader'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import {
   isParticipantLookupField,
@@ -199,7 +199,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
             </Text>
           ) : isLoading && !data ? (
             <HStack gap={2}>
-              <Spinner size='sm' />
+              <InlineLoader size='sm' />
               <Text fontSize='sm' color='fg.muted'>
                 <Trans i18nKey='census.search.loading'>Searching census…</Trans>
               </Text>

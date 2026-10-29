@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation, useOutletContext } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
-import { Loading } from '~src/router/SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
 import { Routes } from './routes'
 
 type AccountProtectedRouteProps = {
@@ -15,7 +15,7 @@ const AccountProtectedRoute = ({ signInRoute = Routes.auth.signIn }: AccountProt
   const { pathname } = useLocation()
 
   if (isAuthLoading) {
-    return <Loading />
+    return <PageLoader />
   }
 
   if (!isAuthenticated) {

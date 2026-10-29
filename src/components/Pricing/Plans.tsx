@@ -1,4 +1,4 @@
-import { Flex, Progress, SimpleGrid, Tabs, Tag } from '@chakra-ui/react'
+import { Flex, SimpleGrid, Tabs, Tag } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -17,6 +17,7 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListLoader } from '~components/ui/Loader'
 import { getPlanKey, isPlanNamed, PlanName } from '~constants'
 import { QueryKeys } from '~src/queries/keys'
 import { statusPalette } from '~theme/status'
@@ -343,13 +344,7 @@ export const SubscriptionPlans = () => {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex flexDir='column' gap={4}>
-          {isLoading && (
-            <Progress.Root value={null}>
-              <Progress.Track>
-                <Progress.Range />
-              </Progress.Track>
-            </Progress.Root>
-          )}
+          {isLoading && <ListLoader />}
           {showAlert && (
             <ListStateAlert
               show

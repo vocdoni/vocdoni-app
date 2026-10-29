@@ -1,10 +1,11 @@
-import { Flex, Progress } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 import { RoutedPaginationProvider, useOrganization } from '@vocdoni/react-components'
 import type { VotingProcessListResponse } from '@vocdoni/api-types'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { NoResultsFiltering } from '~components/Layout/NoResultsFiltering'
+import { ListLoader } from '~components/ui/Loader'
 import { usePaginatedElections } from '~queries/organization'
 import ProcessesTable from '../../Process/Dashboard/ProcessesTable'
 import NoElections from '../NoElections'
@@ -36,13 +37,7 @@ const Votings = ({ path }: VotingsProps) => {
   // unmounted until it resolves — but show progress rather than a blank page while it (or
   // the first page of results) is still loading.
   if (!organization || isLoading) {
-    return (
-      <Progress.Root size='xs' value={null} colorPalette='gray'>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader size='xs' colorPalette='gray' />
   }
 
   return (

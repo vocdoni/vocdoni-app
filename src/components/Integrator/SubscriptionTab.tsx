@@ -1,9 +1,10 @@
-import { Alert, Button, Center, Flex, Spinner, Stack, Text } from '@chakra-ui/react'
+import { Alert, Button, Center, Flex, Stack, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '~components/Auth/Subscription'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { useToast } from '~components/Toast'
+import { InlineLoader } from '~components/ui/Loader'
 import { usePortalSession } from '~queries/stripe'
 
 /**
@@ -33,7 +34,7 @@ const IntegratorSubscriptionTab = () => {
   if (loading) {
     return (
       <Center py={12}>
-        <Spinner />
+        <InlineLoader />
       </Center>
     )
   }

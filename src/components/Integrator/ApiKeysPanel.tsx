@@ -9,7 +9,6 @@ import {
   Icon,
   IconButton,
   SimpleGrid,
-  Spinner,
   Stack,
   Table,
   Text,
@@ -23,6 +22,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
+import { InlineLoader } from '~components/ui/Loader'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
 import type { StatusTone } from '~theme/status'
@@ -148,7 +148,7 @@ const ApiKeysPanel = () => {
   if (keys.isLoading) {
     return (
       <Center py={12}>
-        <Spinner />
+        <InlineLoader />
       </Center>
     )
   }

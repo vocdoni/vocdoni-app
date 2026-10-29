@@ -1,10 +1,11 @@
-import { Alert, ButtonGroup, Center, Flex, IconButton, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
+import { Alert, ButtonGroup, Center, Flex, IconButton, SimpleGrid, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuBookOpen, LuChevronLeft, LuChevronRight } from 'react-icons/lu'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { DocsCard } from '~components/Integrator/DocsCard'
 import { ManagedOrganizationsTable } from '~components/Integrator/ManagedOrganizationsTable'
+import { InlineLoader } from '~components/ui/Loader'
 import { useManagedOrganizations } from '~src/queries/integrators'
 
 const LIMIT = 10
@@ -32,7 +33,7 @@ const IntegratorManagedOrganizations = () => {
 
       {isLoading ? (
         <Center py={16}>
-          <Spinner />
+          <InlineLoader />
         </Center>
       ) : error ? (
         <Alert.Root status='error'>

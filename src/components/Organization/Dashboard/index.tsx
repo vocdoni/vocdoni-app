@@ -1,4 +1,4 @@
-import { AspectRatio, Box, Button, Flex, HStack, Icon, Link, Progress, Text } from '@chakra-ui/react'
+import { AspectRatio, Box, Button, Flex, HStack, Icon, Link, Text } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ElectionProvider,
@@ -8,6 +8,7 @@ import {
   useOrganization,
 } from '@vocdoni/react-components'
 import { processVoteCount } from '@vocdoni/api-client'
+import { ListLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { useDateFns } from '~i18n/use-date-fns'
@@ -71,11 +72,7 @@ const Tutorial = () => {
           })}
         </Text>
         {loading || isLoading ? (
-          <Progress.Root value={null} mb={4}>
-            <Progress.Track>
-              <Progress.Range />
-            </Progress.Track>
-          </Progress.Root>
+          <ListLoader mb={4} />
         ) : !subscription ? (
           <Text color='fg.muted' mb={4}>
             {t('dashboard.welcome.no_subscription', {
@@ -177,13 +174,7 @@ const Processes = () => {
   })
 
   if (isLoading) {
-    return (
-      <Progress.Root value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   // Checked before the error state on purpose: with no organization this query never ran, and
