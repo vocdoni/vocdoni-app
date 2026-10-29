@@ -64,12 +64,8 @@ const OrganizationHeader = () => {
             justifyContent='space-between'
             alignItems='center'
             css={{
-              h1: {
-                noOfLines: readMore ? 1 : 'none',
-                overflow: 'hidden',
-                display: '-webkit-box',
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 'var(--chakra-line-clamp)',
+              '& h1': {
+                lineClamp: readMore ? 1 : 'none',
               },
             }}
           >
