@@ -14,4 +14,10 @@ describe('BallotBoxAnimated', () => {
 
     expect(svg).toHaveStyle({ width: '180px', height: '180px', alignSelf: 'center' })
   })
+
+  it('keeps its illustration colour when a caller passes one', () => {
+    const { getByTestId } = render(<BallotBoxAnimated data-testid='ballot-box' color='red.500' />)
+
+    expect(getByTestId('ballot-box')).toHaveStyle({ color: 'var(--chakra-colors-illustration-fg)' })
+  })
 })

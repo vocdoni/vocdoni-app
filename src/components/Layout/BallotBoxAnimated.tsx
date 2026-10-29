@@ -76,7 +76,6 @@ export function BallotBoxAnimated({ size = 200, ...props }: BallotBoxAnimatedPro
       xmlns='http://www.w3.org/2000/svg'
       aria-hidden='true'
       focusable='false'
-      color='illustration.fg'
       css={{
         '& .ballot-contrast': {
           fill: 'illustration.contrast',
@@ -102,6 +101,8 @@ export function BallotBoxAnimated({ size = 200, ...props }: BallotBoxAnimatedPro
         },
       }}
       {...props}
+      // After the spread: callers cannot recolour the box, as with the fills it replaced.
+      color='illustration.fg'
     >
       <defs>
         <clipPath id='slot-mask'>
