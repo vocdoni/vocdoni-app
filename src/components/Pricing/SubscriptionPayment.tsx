@@ -6,7 +6,7 @@ import {
   TaxIdElement,
   useCheckout,
 } from '@stripe/react-stripe-js/checkout'
-import { loadStripe, Stripe, StripeCheckoutOptions } from '@stripe/stripe-js'
+import type { StripeCheckoutOptions } from '@stripe/stripe-js'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ensure0x } from '~utils/address'
 import { useCallback, useState } from 'react'
@@ -17,12 +17,11 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { SubscriptionType, useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
-import { useAppEnv } from '~src/app-env'
 import { QueryKeys } from '~src/queries/keys'
-import { useColorMode } from '~theme/color-mode'
 import { AnalyticsEvents } from '~utils/analytics'
 import { OrderSummary } from './OrderSummary'
 import { PromotionCodeInput } from './PromotionCodeInput'
+import { checkoutReturnUrl, useCheckoutAppearance, useStripePromise } from './stripe'
 import { useSubscriptionCheckout } from './use-subscription-checkout'
 
 export type SubscriptionPaymentData = {
@@ -73,14 +72,7 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
       const result = await checkoutState.checkout.confirm({
         redirect: 'if_required',
         // Ensure we return to the same locale after the checkout process
-        returnUrl: (() => {
-          const url = new URL(window.location.href)
-          if (sessionId) {
-            url.searchParams.set('session_id', sessionId)
-          }
-          url.hash = '' // Remove hash if present, to match original behavior
-          return url.toString()
-        })(),
+        returnUrl: checkoutReturnUrl({ session_id: sessionId }),
       })
       if (result.type === 'error') {
         setError(result.error.message)
@@ -167,19 +159,8 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
   const { mutateAsync: checkSubscription } = useUpdateSubscription()
   const toast = useToast()
   const { trackEvent } = useAnalytics()
-  const { colorMode } = useColorMode()
-  const stripePublicKey = useAppEnv().STRIPE_PUBLIC_KEY
-
-  // Lazy initializer so loadStripe runs once (not on every render), and only when
-  // a key is configured — loadStripe('') throws, and STRIPE_PUBLIC_KEY is optional.
-  const [stripePromise] = useState<Promise<Stripe | null> | null>(() =>
-    stripePublicKey
-      ? loadStripe(stripePublicKey, {
-          locale: i18n.resolvedLanguage as any,
-          betas: ['custom_checkout_tax_id_1'],
-        })
-      : null
-  )
+  const appearance = useCheckoutAppearance()
+  const stripePromise = useStripePromise()
   const [sessionId, setSessionId] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
@@ -258,13 +239,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
   const options: StripeCheckoutOptions = {
     fetchClientSecret,
     elementsOptions: {
-      appearance: {
-        theme: colorMode === 'dark' ? ('night' as const) : ('stripe' as const),
-        variables: {
-          // Stripe renders in an iframe, so theme CSS vars are unreachable; raw values mirror the `bg` token
-          colorBackground: colorMode === 'dark' ? '#0a0a0a' : 'white',
-        },
-      },
+      appearance,
     },
   }
 
