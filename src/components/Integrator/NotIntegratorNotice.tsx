@@ -1,4 +1,4 @@
-import { Alert, Button, Flex, Icon, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
+import { Alert, Button, Icon, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuSquareStack } from 'react-icons/lu'
@@ -7,8 +7,8 @@ import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useOrganizationNames } from '~components/Dashboard/Menu/useOrganizationNames'
 import { useSelectOrganization } from '~components/Dashboard/Menu/useSelectOrganization'
-import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useProfile } from '~src/queries/account'
 import { useProvisionIntegratorOrganization } from '~src/queries/integrators'
 
@@ -71,9 +71,11 @@ const NotIntegratorNotice = () => {
         {t('integrators.not_integrator.cta', { defaultValue: 'Create a free integrator account' })}
       </Button>
 
-      <DeleteModal
+      <ConfirmDialog
+        layout='inline'
+        destructive={false}
         title={t('integrators.create_account.title', { defaultValue: 'Create a free integrator account?' })}
-        subtitle={t('integrators.create_account.description', {
+        description={t('integrators.create_account.description', {
           defaultValue:
             'A new integrator account on the free plan will be created and set as your active organization.',
         })}
@@ -83,6 +85,11 @@ const NotIntegratorNotice = () => {
         closeOnEscape={!provision.isPending}
         closeOnInteractOutside={!provision.isPending}
         onOpenChange={({ open }) => setOpen(open)}
+        cancelText={t('integrators.create_account.cancel', { defaultValue: 'Cancel' })}
+        cancelDisabled={provision.isPending}
+        confirmText={t('integrators.create_account.confirm', { defaultValue: 'Create account' })}
+        loading={provision.isPending}
+        onConfirm={onCreate}
       >
         {hasMultipleOrgs && (
           <Stack gap={2} mt={4}>
@@ -116,16 +123,7 @@ const NotIntegratorNotice = () => {
             </Stack>
           </Stack>
         )}
-
-        <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' disabled={provision.isPending} onClick={() => setOpen(false)}>
-            {t('integrators.create_account.cancel', { defaultValue: 'Cancel' })}
-          </Button>
-          <Button loading={provision.isPending} onClick={onCreate}>
-            {t('integrators.create_account.confirm', { defaultValue: 'Create account' })}
-          </Button>
-        </Flex>
-      </DeleteModal>
+      </ConfirmDialog>
     </Stack>
   )
 }

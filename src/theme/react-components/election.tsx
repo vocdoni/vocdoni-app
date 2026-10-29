@@ -39,6 +39,7 @@ import {
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
+import { ConfirmDialogContent } from '~components/ui/ConfirmDialog'
 import { Markdown } from '~components/ui/Markdown'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
@@ -428,80 +429,61 @@ export const electionComponents: ComponentsPartialDefinition = {
       {error}
     </Text>
   )),
-  ConfirmShell: defineComponent<'ConfirmShell', BoxProps>(({ isOpen, onClose, content, ...props }) => {
-    const recipe = useSlotRecipe({ key: 'ConfirmModal' })
-    const styles = recipe()
-
-    return (
-      <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()}>
-        <Dialog.Backdrop css={styles.overlay} />
-        <Dialog.Positioner>
-          <Dialog.Content css={styles.content} {...props}>
-            {content}
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Dialog.Root>
-    )
-  }),
+  ConfirmShell: defineComponent<'ConfirmShell', BoxProps>(({ isOpen, onClose, content, ...props }) => (
+    <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content {...props}>{content}</Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
+  )),
   QuestionsConfirmation: defineComponent<'QuestionsConfirmation', BoxProps>(
     ({ election, answersView, onConfirm, onCancel }) => {
-      const recipe = useSlotRecipe({ key: 'ConfirmModal' })
-      const styles = recipe({ variant: 'neutral' })
       const { t } = useTranslation()
 
       return (
-        <>
-          <Dialog.Header css={styles.header} flexDirection='column'>
-            <Heading variant='header'>{getElectionTitle(election)}</Heading>
-            <Text variant='subheader'>
-              {t('process.spreadsheet.confirm.election_title', {
-                defaultValue: 'Your vote has been recorded for:',
-              })}
-            </Text>
-          </Dialog.Header>
-          <Dialog.CloseTrigger asChild>
-            <CloseButton css={styles.close} />
-          </Dialog.CloseTrigger>
-          <Dialog.Body css={styles.body}>
-            <Flex direction='column' gap={3}>
-              {answersView.map((item, index) => (
-                <Flex
-                  key={`${item.question}-${index}`}
-                  border='1px solid'
-                  borderColor='border'
-                  borderRadius='lg'
-                  p={4}
-                  gap={3}
-                  align='flex-start'
-                >
-                  <Icon as={FaCircleCheck} mt={1} />
-                  <Flex direction='column' gap={1} flex='1'>
-                    <Text fontWeight='extrabold'>{item.question}</Text>
-                    {item.answers.length <= 1 ? (
-                      <Text color='fg.muted'>{item.answers[0] || '-'}</Text>
-                    ) : (
-                      <Flex direction='column' gap={1}>
-                        {item.answers.map((answer, answerIndex) => (
-                          <Text key={`${item.question}-${index}-${answerIndex}`} color='fg.muted'>
-                            {answer}
-                          </Text>
-                        ))}
-                      </Flex>
-                    )}
-                  </Flex>
+        <ConfirmDialogContent
+          layout='summary'
+          destructive={false}
+          title={getElectionTitle(election)}
+          description={t('process.spreadsheet.confirm.election_title', {
+            defaultValue: 'Your vote has been recorded for:',
+          })}
+          cancelText={t('confirm.cancel')}
+          confirmText={t('confirm.confirm')}
+          onCancel={onCancel}
+          onConfirm={onConfirm}
+        >
+          <Flex direction='column' gap={3}>
+            {answersView.map((item, index) => (
+              <Flex
+                key={`${item.question}-${index}`}
+                border='1px solid'
+                borderColor='border'
+                borderRadius='lg'
+                p={4}
+                gap={3}
+                align='flex-start'
+              >
+                <Icon as={FaCircleCheck} mt={1} />
+                <Flex direction='column' gap={1} flex='1'>
+                  <Text fontWeight='extrabold'>{item.question}</Text>
+                  {item.answers.length <= 1 ? (
+                    <Text color='fg.muted'>{item.answers[0] || '-'}</Text>
+                  ) : (
+                    <Flex direction='column' gap={1}>
+                      {item.answers.map((answer, answerIndex) => (
+                        <Text key={`${item.question}-${index}-${answerIndex}`} color='fg.muted'>
+                          {answer}
+                        </Text>
+                      ))}
+                    </Flex>
+                  )}
                 </Flex>
-              ))}
-            </Flex>
-          </Dialog.Body>
-          <Dialog.Footer css={styles.footer}>
-            <Button variant='ghost' css={styles.cancel} onClick={onCancel}>
-              {t('confirm.cancel')}
-            </Button>
-            <Button css={styles.confirm} onClick={onConfirm}>
-              {t('confirm.confirm')}
-            </Button>
-          </Dialog.Footer>
-        </>
+              </Flex>
+            ))}
+          </Flex>
+        </ConfirmDialogContent>
       )
     }
   ),
@@ -671,25 +653,18 @@ export const electionComponents: ComponentsPartialDefinition = {
     </Button>
   )),
   ConfirmActionModal: defineComponent<'ConfirmActionModal', BoxProps>(
-    ({ title, description, confirm, cancel, onConfirm, onCancel, ...props }) => {
-      const recipe = useSlotRecipe({ key: 'ConfirmModal' })
-      const styles = recipe()
-      return (
-        <Box {...props}>
-          <Dialog.Header css={styles.header}>{title}</Dialog.Header>
-          <Dialog.Body css={styles.body}>
-            <Text>{description}</Text>
-          </Dialog.Body>
-          <Dialog.Footer css={styles.footer}>
-            <Button variant='ghost' css={styles.cancel} onClick={onCancel}>
-              {cancel}
-            </Button>
-            <Button css={styles.confirm} onClick={onConfirm}>
-              {confirm}
-            </Button>
-          </Dialog.Footer>
-        </Box>
-      )
-    }
+    ({ title, description, confirm, cancel, onConfirm, onCancel, ...props }) => (
+      <Box {...props}>
+        <ConfirmDialogContent
+          layout='shell'
+          title={title}
+          description={description}
+          confirmText={confirm}
+          cancelText={cancel}
+          onCancel={onCancel}
+          onConfirm={onConfirm}
+        />
+      </Box>
+    )
   ),
 }

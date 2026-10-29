@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Icon, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, HStack, Icon, Text, VStack } from '@chakra-ui/react'
 import {
   closestCenter,
   DndContext,
@@ -14,8 +14,7 @@ import { useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus } from 'react-icons/lu'
-import DeleteModal from '~components/Modal/DeleteModal'
-import { statusPalette } from '~theme/status'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { defaultQuestion } from '../common'
 import { QuestionForm } from './QuestionForm'
 
@@ -23,23 +22,18 @@ const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
   const { t } = useTranslation()
 
   return (
-    <DeleteModal
+    <ConfirmDialog
+      layout='inline'
       title={t('process.create.question.delete.title', { defaultValue: 'Delete Question' })}
-      subtitle={t('process.create.question.delete.description', {
+      description={t('process.create.question.delete.description', {
         defaultValue: 'Are you sure you want to delete this question?',
       })}
       open={open}
       onOpenChange={onOpenChange}
-    >
-      <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={() => onOpenChange({ open: false })}>
-          {t('process.create.question.delete.cancel_button', { defaultValue: 'Cancel' })}
-        </Button>
-        <Button colorPalette={statusPalette.destructive} onClick={removeQuestion}>
-          {t('process.create.question.delete.delete_button', { defaultValue: 'Delete' })}
-        </Button>
-      </Flex>
-    </DeleteModal>
+      cancelText={t('process.create.question.delete.cancel_button', { defaultValue: 'Cancel' })}
+      confirmText={t('process.create.question.delete.delete_button', { defaultValue: 'Delete' })}
+      onConfirm={removeQuestion}
+    />
   )
 }
 

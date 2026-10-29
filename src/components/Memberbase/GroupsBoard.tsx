@@ -38,7 +38,7 @@ import { generatePath, useNavigate } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
-import DeleteModal from '~components/Modal/DeleteModal'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { PaginatedTableFooter } from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
@@ -468,32 +468,24 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
           </>
         )}
       </Table.ScrollArea>
-      <DeleteModal
+      <ConfirmDialog
+        layout='inline'
         title={t('group.delete_member.title', { defaultValue: 'Delete Members' })}
-        subtitle={t('group.delete_member.subtitle', {
+        description={t('group.delete_member.subtitle', {
           defaultValue: 'Are you sure you want to delete {{count}} members?',
           count: selectedRows.length,
         })}
         open={isDeleteMembersModalOpen}
         onOpenChange={({ open }) => setDeleteMembersModalOpen(open)}
-      >
-        <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' onClick={() => setDeleteMembersModalOpen(false)}>
-            {t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
-          </Button>
-          <Button
-            loading={deleteGroupMembers.isPending}
-            colorPalette={statusPalette.destructive}
-            onClick={() => {
-              onDeleteMember(selectedRows.map((row) => row.id))
-              setDeleteMembersModalOpen(false)
-              resetSelectedRows()
-            }}
-          >
-            {t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
-          </Button>
-        </Flex>
-      </DeleteModal>
+        cancelText={t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
+        confirmText={t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
+        loading={deleteGroupMembers.isPending}
+        onConfirm={() => {
+          onDeleteMember(selectedRows.map((row) => row.id))
+          setDeleteMembersModalOpen(false)
+          resetSelectedRows()
+        }}
+      />
     </>
   )
 }
@@ -652,9 +644,10 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
   }
 
   return (
-    <DeleteModal
+    <ConfirmDialog
+      layout='inline'
       title={t('group.actions.delete_confirm_title', { defaultValue: 'Delete Group' })}
-      subtitle={
+      description={
         <Trans
           i18nKey='group.actions.delete_confirm_description'
           values={{ title: group.title }}
@@ -664,16 +657,10 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
       }
       open={isOpen}
       onOpenChange={({ open }) => (!open ? onClose() : undefined)}
-    >
-      <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={onClose}>
-          {t('group.actions.cancel', { defaultValue: 'Cancel' })}
-        </Button>
-        <Button colorPalette={statusPalette.destructive} onClick={handleDelete}>
-          {t('group.actions.delete', { defaultValue: 'Delete' })}
-        </Button>
-      </Flex>
-    </DeleteModal>
+      cancelText={t('group.actions.cancel', { defaultValue: 'Cancel' })}
+      confirmText={t('group.actions.delete', { defaultValue: 'Delete' })}
+      onConfirm={handleDelete}
+    />
   )
 }
 
