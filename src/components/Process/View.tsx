@@ -106,7 +106,7 @@ const ProcessInfoPanel = () => {
         {status !== 'CANCELED' ? (
           <ProcessDate />
         ) : (
-          <Text color='process.canceled' fontWeight='bold'>
+          <Text color='brand.fg' fontWeight='bold'>
             {t('process.status.canceled')}
           </Text>
         )}
@@ -124,12 +124,12 @@ const ProcessInfoPanel = () => {
       {showOrgInformation && <ProcessInfoCard label={t('process.created_by')} description={<CreatedBy />} />}
       {status === 'PAUSED' && !sameAddress(election?.orgAddress, currentAddress) && (
         <Flex
-          color='process.paused'
+          color='brand.fg'
           _dark={{ color: 'white' }}
           gap={2}
           alignItems='center'
           border='1px solid'
-          borderColor='process.paused'
+          borderColor='brand.fg'
           borderRadius='lg'
           p={2}
         >
