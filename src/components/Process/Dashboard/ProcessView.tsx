@@ -377,9 +377,8 @@ const ResultsStateBadge = (props: Omit<StatusBadgeProps, 'colorPalette'>) => {
       tooltip = null
     }
     const badge = (
-      <StatusBadge colorPalette={color} {...props}>
+      <StatusBadge colorPalette={color} endElement={tooltip ? <Icon as={LuInfo} /> : undefined} {...props}>
         {text}
-        {tooltip && <Icon as={LuInfo} />}
       </StatusBadge>
     )
 

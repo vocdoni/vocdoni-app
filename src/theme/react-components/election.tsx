@@ -82,7 +82,6 @@ export const electionComponents: ComponentsPartialDefinition = {
     ({ label, tone, ...props }) => (
       <StatusBadge
         colorPalette={tone === 'success' || tone === 'warning' ? tone : 'danger'}
-        size='md'
         variant='surface'
         {...props}
       >

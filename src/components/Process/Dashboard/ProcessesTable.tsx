@@ -150,11 +150,11 @@ const ProcessResultsTag = () => {
     hasResults(election) || ((status === 'ENDED' || status === 'ONGOING') && !isSecretUntilTheEnd(election))
 
   return resultsVisible ? (
-    <StatusBadge colorPalette='gray' variant='solid' size='sm'>
+    <StatusBadge colorPalette='gray' variant='solid'>
       <Trans i18nKey='process_list.results_live'>Live</Trans>
     </StatusBadge>
   ) : (
-    <StatusBadge colorPalette='gray' variant='surface' size='sm'>
+    <StatusBadge colorPalette='gray' variant='surface'>
       <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
     </StatusBadge>
   )
@@ -176,7 +176,7 @@ const ProcessCard = () => {
       <Card.Body>
         <HStack flexWrap='wrap' gap={2}>
           <ProcessTypeBadge />
-          <ElectionStatusBadge size='sm' />
+          <ElectionStatusBadge />
           <ProcessResultsTag />
         </HStack>
         <Text>
@@ -213,7 +213,7 @@ const ProcessRow = () => {
         <ProcessTypeBadge />
       </Table.Cell>
       <Table.Cell>
-        <ElectionStatusBadge size='sm' />
+        <ElectionStatusBadge />
       </Table.Cell>
       <Table.Cell textAlign='end'>{processVoteCount(results)}</Table.Cell>
       <Table.Cell>
