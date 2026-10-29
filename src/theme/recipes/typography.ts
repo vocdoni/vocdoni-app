@@ -24,16 +24,21 @@ export const heading = defineRecipe({
   },
 })
 
-// Chakra colours links with the palette in its plain and underline variants, which would also
-// win in dark mode; keep the palette in light mode and the shared link colour in dark.
-const paletteLink = { color: { base: 'colorPalette.fg', _dark: 'link.fg' } }
-
 export const link = defineRecipe({
   base: {
     color: 'link.fg',
     textDecoration: 'underline',
     textDecorationThickness: 'from-font',
     textUnderlineOffset: '0.15em',
+    // Repeats the token on purpose: `.dark &` is more specific than a single class, so in dark mode
+    // it beats the palette colour of Chakra's plain/underline variants and of a Button rendering a
+    // Link (`asChild`), as the dashboard's report download does.
+    _dark: {
+      color: 'link.fg',
+      _hover: {
+        color: 'link.fg.hover',
+      },
+    },
     _hover: {
       color: 'link.fg.hover',
     },
@@ -45,13 +50,11 @@ export const link = defineRecipe({
       // fighting the base styles above — pin both so hover keeps a solid,
       // consistent underline.
       plain: {
-        ...paletteLink,
         _hover: {
           textDecorationColor: 'currentColor',
           textUnderlineOffset: '0.15em',
         },
       },
-      underline: paletteLink,
       unstyled: {
         textDecoration: 'none',
         _hover: {
