@@ -1,11 +1,11 @@
-import { LuUserPlus } from 'react-icons/lu'
+import { AddUserIcon } from '~theme/icons'
 import { render, screen } from '~src/test-utils'
 import { EmptyState } from './EmptyState'
 
 describe('EmptyState', () => {
   it('renders title, description and a CTA', () => {
     render(
-      <EmptyState icon={LuUserPlus} title='No members' description='Invite someone to get started'>
+      <EmptyState icon={AddUserIcon} title='No members' description='Invite someone to get started'>
         <button>Invite</button>
       </EmptyState>
     )

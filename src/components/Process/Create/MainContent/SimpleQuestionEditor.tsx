@@ -16,7 +16,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuGripVertical, LuPlus, LuX } from 'react-icons/lu'
+import { AddIcon, CloseIcon, DragHandleIcon } from '~theme/icons'
 import { SelectorTypes } from '../common'
 
 const SimpleQuestionEditor = ({
@@ -65,7 +65,7 @@ const SimpleQuestionEditor = ({
         alignSelf='flex-start'
       >
         <HStack gap={2}>
-          <Icon as={LuPlus} />
+          <Icon as={AddIcon} />
           <Text as='span'>
             <Trans i18nKey='process_create.new_option'>Add option</Trans>
           </Text>
@@ -110,7 +110,7 @@ const SortableOption = ({
             color='fg.subtle'
             _hover={{ color: 'fg.muted' }}
           >
-            <Icon as={LuGripVertical} size='sm' />
+            <Icon as={DragHandleIcon} size='sm' />
           </Box>
         )}
 
@@ -146,7 +146,7 @@ const SortableOption = ({
             size='sm'
             variant='ghost'
           >
-            <Icon as={LuX} />
+            <Icon as={CloseIcon} />
           </IconButton>
         )}
       </Box>

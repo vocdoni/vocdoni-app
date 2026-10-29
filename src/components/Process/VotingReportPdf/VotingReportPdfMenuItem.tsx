@@ -1,6 +1,6 @@
 import { Box, Icon, Menu } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuFileDown } from 'react-icons/lu'
+import { DownloadFileIcon } from '~theme/icons'
 
 import { InlineLoader } from '~components/ui/Loader'
 import { Tooltip } from '~components/ui/Tooltip'
@@ -24,7 +24,7 @@ export const VotingReportPdfMenuItem = ({ election }: VotingReportPdfProps) => {
             tooltip attached straight to it would never open. */}
         <Box>
           <Menu.Item value='download-pdf' disabled closeOnSelect={false}>
-            <Icon as={LuFileDown} boxSize={4} />
+            <Icon as={DownloadFileIcon} />
             {t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}
           </Menu.Item>
         </Box>
@@ -34,7 +34,7 @@ export const VotingReportPdfMenuItem = ({ election }: VotingReportPdfProps) => {
 
   return (
     <Menu.Item value='download-pdf' onClick={download} disabled={isGenerating}>
-      {isGenerating ? <InlineLoader /> : <Icon as={LuFileDown} boxSize={4} />}
+      {isGenerating ? <InlineLoader /> : <Icon as={DownloadFileIcon} />}
       {t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}
     </Menu.Item>
   )

@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCircleHelp } from 'react-icons/lu'
+import { HelpIcon } from '~theme/icons'
 import { Select } from '~components/Form/Select'
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
 import { Tooltip } from '~components/ui/Tooltip'
@@ -37,7 +37,7 @@ const LabelTooltip = ({ children }: { children: React.ReactNode }) => (
       // the switch below). The tooltip trigger ignores a prevented click.
       onClick={(event) => event.preventDefault()}
     >
-      <Icon as={LuCircleHelp} />
+      <Icon as={HelpIcon} />
     </Box>
   </Tooltip>
 )

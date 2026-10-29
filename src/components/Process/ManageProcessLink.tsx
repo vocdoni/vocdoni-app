@@ -1,7 +1,7 @@
 import { Icon, IconButton } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
-import { FaCog } from 'react-icons/fa'
+import { LegacySettingsIcon } from '~theme/icons'
 import { generatePath } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { RouterAwareLink } from '~components/RouterAwareLink'
@@ -47,7 +47,7 @@ export const ManageProcessLink = () => {
       {/* RouterAwareLink keeps client-side navigation when rendered inside the SPA (home / org
           pages) and falls back to a plain anchor on the SSR voting page, which has no router. */}
       <RouterAwareLink to={generatePath(Routes.dashboard.process, { id: dashboardId })}>
-        <Icon as={FaCog} />
+        <Icon as={LegacySettingsIcon} />
       </RouterAwareLink>
     </IconButton>
   )

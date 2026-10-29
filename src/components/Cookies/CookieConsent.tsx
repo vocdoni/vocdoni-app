@@ -89,7 +89,7 @@ export function CookieConsent() {
             defaultValue:
               'We use cookies and analytics tools to improve your experience and understand how you interact with our website. You can choose to accept or reject cookies.',
           })}{' '}
-          <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' textDecoration='underline'>
+          <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer'>
             {t('cookies.learnMore', { defaultValue: 'Learn more' })}
           </Link>
         </AlertDescription>

@@ -231,10 +231,10 @@ const SignUp = ({
                           i18nKey='signup_agree_terms'
                           components={{
                             termsLink: (
-                              <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' fontSize='sm' />
+                              <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' size='sm' />
                             ),
                             privacyLink: (
-                              <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' fontSize='sm' />
+                              <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' size='sm' />
                             ),
                           }}
                         />
@@ -264,7 +264,7 @@ const SignUp = ({
         fontWeight={'bold'}
       >
         {t('already_member')}
-        <Link asChild ml={1} fontWeight={'bold'} fontSize='sm'>
+        <Link asChild ml={1} emphasis='strong' size='sm'>
           <NavLink to={signInRoute}>{t('signin')}</NavLink>
         </Link>
       </Text>

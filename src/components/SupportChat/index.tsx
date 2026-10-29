@@ -1,7 +1,7 @@
 import { Button, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuMessageCircle, LuX } from 'react-icons/lu'
+import { ChatIcon, CloseIcon } from '~theme/icons'
 import { useAuth } from '~components/Auth/useAuth'
 import { ChatPanel } from './ChatPanel'
 import { useSupportChat } from './useSupportChat'
@@ -127,7 +127,7 @@ const SupportChatWidget = () => {
         aria-controls={open ? 'support-chat-panel' : undefined}
         onClick={open ? close : openChat}
       >
-        <Icon as={open ? LuX : LuMessageCircle} boxSize={6} />
+        <Icon as={open ? CloseIcon : ChatIcon} boxSize='icon.lg' />
       </IconButton>
     </>
   )

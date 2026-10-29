@@ -1,6 +1,6 @@
 import { Button, HStack, Icon, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { MdOutlineWhatsapp } from 'react-icons/md'
+import { WhatsappIcon } from '~theme/icons'
 import { useAppEnv } from '~src/app-env'
 
 interface WhatsAppButtonProps {
@@ -16,7 +16,7 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
     <Button asChild role='group' variant='whatsapp' overflow='hidden'>
       <a href={whatsappUrl} target='_blank' rel='noopener noreferrer'>
         <HStack gap={0}>
-          <Icon as={MdOutlineWhatsapp} boxSize={6} flexShrink={0} />
+          <Icon as={WhatsappIcon} boxSize='icon.lg' flexShrink={0} />
           {!noExpand && (
             <Text
               as='span'

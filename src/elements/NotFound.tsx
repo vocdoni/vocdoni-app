@@ -1,6 +1,6 @@
 import { Button, Flex, Icon, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuHouse } from 'react-icons/lu'
+import { HomeIcon } from '~theme/icons'
 import { matchPath, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { Heading, SubHeading } from '~components/Dashboard/Contents'
@@ -41,13 +41,13 @@ export const NotFoundView = ({ onReturnHome, returnHomeHref }: NotFoundViewProps
       {returnHomeHref ? (
         <Button asChild>
           <a href={returnHomeHref}>
-            <Icon as={LuHouse} />
+            <Icon as={HomeIcon} />
             {t('error.return_to_home')}
           </a>
         </Button>
       ) : (
         <Button onClick={onReturnHome}>
-          <Icon as={LuHouse} />
+          <Icon as={HomeIcon} />
           {t('error.return_to_home')}
         </Button>
       )}

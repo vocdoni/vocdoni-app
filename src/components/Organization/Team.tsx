@@ -26,7 +26,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { ComponentProps, ReactNode, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuEllipsis, LuMail, LuPlus, LuRefreshCw, LuUserCog, LuUserPlus } from 'react-icons/lu'
+import { AddIcon, AddUserIcon, MailIcon, MoreIcon, RefreshIcon, UserCogIcon } from '~theme/icons'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
@@ -566,7 +566,7 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
   return (
     <>
       <Menu.Item value='resend-invitation' disabled={isLoading} onClick={resendInvitationHandler}>
-        {isLoading ? <InlineLoader /> : <Icon as={LuRefreshCw} />}
+        {isLoading ? <InlineLoader /> : <Icon as={RefreshIcon} />}
         <Box>{t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}</Box>
       </Menu.Item>
       <Menu.Item value='cancel-invitation' color='danger.action' disabled={isLoading} onClick={openCancelInvitation}>
@@ -582,7 +582,7 @@ const ActiveUserActions = ({ openChangeRole, openRemoveUser }: ActiveUserActions
   return (
     <>
       <Menu.Item value='change-role' onClick={openChangeRole} fontSize='sm'>
-        <Icon boxSize={4} as={LuUserCog} />
+        <Icon as={UserCogIcon} />
         <Box>{t('team.actions.change_role', { defaultValue: 'Change role' })}</Box>
       </Menu.Item>
       <Menu.Separator />
@@ -633,7 +633,7 @@ const UserActions = ({ user }: UserActionsProps) => {
             aria-label={t('team.actions.options', { defaultValue: 'Options' })}
             onClick={openMenu}
           >
-            <Icon as={LuEllipsis} />
+            <Icon as={MoreIcon} />
           </IconButton>
         </Menu.Trigger>
         <Menu.Positioner>
@@ -677,7 +677,7 @@ const UsersEmpty = () => {
 
   return (
     <EmptyState
-      icon={LuUserPlus}
+      icon={AddUserIcon}
       title={t('team.only_one_member.title', { defaultValue: "You're the only team member of this organization" })}
       description={t('team.only_one_member.subtitle', {
         defaultValue: 'Add team members to collaborate on your organization',
@@ -685,7 +685,7 @@ const UsersEmpty = () => {
       p={10}
       gap={6}
     >
-      <InviteToTeamModal leftIcon={<Icon mr={2} as={LuPlus} />} whiteSpace='normal'>
+      <InviteToTeamModal leftIcon={<Icon mr={2} as={AddIcon} />} whiteSpace='normal'>
         {t('team.only_one_member.add_team_member', { defaultValue: 'Add team member' })}
       </InviteToTeamModal>
     </EmptyState>
@@ -707,7 +707,7 @@ const UsersList = ({ users }: UsersListProps) => {
 
         return (
           <Flex alignItems='center' p={2} key={i}>
-            <Avatar.Root>{!isActive ? <Avatar.Icon as={LuMail} /> : <Avatar.Fallback name={avatarName} />}</Avatar.Root>
+            <Avatar.Root>{!isActive ? <Avatar.Icon as={MailIcon} /> : <Avatar.Fallback name={avatarName} />}</Avatar.Root>
             <Box ml='3'>
               <HStack align='center'>
                 <Text fontWeight='bold'>{name}</Text>

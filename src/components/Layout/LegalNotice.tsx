@@ -31,7 +31,7 @@ export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
             strong: <Box as='strong' color='fg' fontWeight='semibold' />,
           }}
         />{' '}
-        <Link href='https://vocdoni.io/' target='_blank' rel='noopener noreferrer' textDecor='underline'>
+        <Link href='https://vocdoni.io/' target='_blank' rel='noopener noreferrer'>
           vocdoni.io
         </Link>
         .

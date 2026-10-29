@@ -1,7 +1,7 @@
 import { Alert, Flex, SimpleGrid } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuBookOpen } from 'react-icons/lu'
+import { DocsIcon } from '~theme/icons'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { DocsCard } from '~components/Integrator/DocsCard'
 import { ManagedOrganizationsTable } from '~components/Integrator/ManagedOrganizationsTable'
@@ -61,7 +61,7 @@ const IntegratorManagedOrganizations = () => {
           <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
             <DocsCard
               href='https://vocdoni.io/en/developers/docs/organizations#creating-an-organization'
-              icon={LuBookOpen}
+              icon={DocsIcon}
               title={t('integrators.managed.docs_card_title', { defaultValue: 'Creating an organization' })}
               description={t('integrators.managed.docs_card_description', {
                 defaultValue: 'Learn how to create and manage organizations programmatically through the API.',

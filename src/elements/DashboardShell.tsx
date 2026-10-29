@@ -3,7 +3,7 @@ import { useLocalStorage } from '@uidotdev/usehooks'
 import { OrganizationProvider } from '@vocdoni/react-components'
 import React, { PropsWithChildren, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuPanelLeft } from 'react-icons/lu'
+import { SidebarIcon } from '~theme/icons'
 import { Outlet, useLocation } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import DashboardMenu from '~components/Dashboard/Menu'
@@ -63,7 +63,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
               gap={2}
             >
               <IconButton aria-label={t('menu.open')} colorPalette='gray' variant='subtle' size='xs' onClick={onOpen}>
-                <LuPanelLeft />
+                <SidebarIcon />
               </IconButton>
             </Flex>
             <OrganizationGate>
