@@ -1,8 +1,17 @@
-import { Alert, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/react'
+import { Alert, Button, Flex, Link, Skeleton, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
+import { Link as RouterLink } from 'react-router'
 import { SupportLink } from '~components/Layout/SupportLink'
-import { isQuoteOnly, isUnpriceableDraft, ProcessPriceLine, useProcessPrice } from '~queries/process-price'
+import {
+  isQuoteOnly,
+  isUnpriceableDraft,
+  ProcessPrice,
+  ProcessPriceLine,
+  useProcessPrice,
+} from '~queries/process-price'
+import { useWallet } from '~queries/wallet'
+import { Routes } from '~src/router/routes'
 import { currency, quantity } from '~utils/numbers'
 import { selfServiceVoterLimit } from './payment-errors'
 
@@ -25,12 +34,72 @@ const lineLabel = (t: TFunction, { kind, description }: ProcessPriceLine) => {
       return t('process.price.line.custom_url', { defaultValue: 'Custom URL' })
     case 'branding':
       return t('process.price.line.branding', { defaultValue: 'Branding and white label' })
+    case 'minimumCharge':
+      return t('process.price.line.minimum_charge', { defaultValue: 'Minimum charge' })
     default:
       return description
   }
 }
 
 const quoteLink = <SupportLink fontWeight='semibold' textDecoration='underline' />
+
+// The note under the total: why the price is what it is, and what paying it means
+const priceNote = (t: TFunction, price: ProcessPrice) => {
+  if (isQuoteOnly(price)) {
+    return t('process.price.quote_only', { defaultValue: 'The price of this voting process is set by a custom quote.' })
+  }
+  switch (price.paymentStatus) {
+    case 'paid':
+      return t('process.price.paid', { defaultValue: 'Paid: publishing this voting process costs nothing more.' })
+    case 'pending':
+      return t('process.price.pending', { defaultValue: 'A wallet top-up checkout is open for this draft.' })
+  }
+  if (price.totalCents === 0) {
+    return t('process.price.free', { defaultValue: 'This voting process is free: it publishes without payment.' })
+  }
+  return t('process.price.vat_excluded', {
+    defaultValue: 'Prices exclude VAT, which is added when you top up your wallet.',
+  })
+}
+
+// Whether the organization's wallet covers the price, and if not, how much to top up. Renders
+// nothing while the balance loads or when it cannot be read: a managed organization's 403 means
+// its integrator pays, and a backend without wallets has none to show.
+const WalletCoverage = ({ totalCents }: { totalCents: number }) => {
+  const { t } = useTranslation()
+  const { data: wallet } = useWallet()
+
+  if (!wallet) return null
+
+  const { balanceCents } = wallet
+  const currencyCode = wallet.currency?.toUpperCase()
+
+  if (balanceCents >= totalCents) {
+    return (
+      <Text color='texts.subtle' fontSize='xs'>
+        {t('process.price.wallet_covers', {
+          defaultValue: 'Your wallet balance ({{balance}}) covers this total: publishing pays it from your wallet.',
+          balance: currency(balanceCents, currencyCode),
+        })}
+      </Text>
+    )
+  }
+
+  return (
+    <Text color='texts.subtle' fontSize='xs'>
+      {t('process.price.wallet_short', {
+        defaultValue: 'Your wallet has {{balance}}, {{shortfall}} short of this total.',
+        balance: currency(balanceCents, currencyCode),
+        shortfall: currency(totalCents - balanceCents, currencyCode),
+      })}{' '}
+      <Link asChild fontWeight='semibold' textDecoration='underline'>
+        <RouterLink to={Routes.dashboard.settings.wallet}>
+          {t('process.price.wallet_top_up', { defaultValue: 'Top up wallet' })}
+        </RouterLink>
+      </Link>
+    </Text>
+  )
+}
 
 /**
  * The backend's price breakdown of a draft, VAT excluded. Before the draft is saved with its
@@ -70,6 +139,12 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
     )
   }
 
+  // A quote-only price has no lines, and its zero total is not a price to show
+  const quoteOnly = isQuoteOnly(price)
+  // Nothing is left for the wallet to pay once the draft is paid, or while a top-up checkout is open
+  const walletPays =
+    !quoteOnly && price.totalCents > 0 && price.paymentStatus !== 'paid' && price.paymentStatus !== 'pending'
+
   return (
     <Stack gap={2} fontSize='sm'>
       {price.lines.map((line) => (
@@ -78,19 +153,20 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
           <Text whiteSpace='nowrap'>{currency(line.amountCents)}</Text>
         </Flex>
       ))}
-      <Flex justify='space-between' gap={2} borderTop='1px solid' borderColor='table.border' pt={2}>
-        <Text fontWeight='bold'>
-          <Trans i18nKey='process.price.total'>Total</Trans>
-        </Text>
-        <Text fontWeight='bold' whiteSpace='nowrap'>
-          {currency(price.totalCents)}
-        </Text>
-      </Flex>
+      {!quoteOnly && (
+        <Flex justify='space-between' gap={2} borderTop='1px solid' borderColor='table.border' pt={2}>
+          <Text fontWeight='bold'>
+            <Trans i18nKey='process.price.total'>Total</Trans>
+          </Text>
+          <Text fontWeight='bold' whiteSpace='nowrap'>
+            {currency(price.totalCents)}
+          </Text>
+        </Flex>
+      )}
       <Text color='texts.subtle' fontSize='xs'>
-        {price.totalCents === 0
-          ? t('process.price.free', { defaultValue: 'This voting process is free: it publishes without payment.' })
-          : t('process.price.vat_excluded', { defaultValue: 'VAT excluded. It is added at checkout.' })}
+        {priceNote(t, price)}
       </Text>
+      {walletPays && <WalletCoverage totalCents={price.totalCents} />}
     </Stack>
   )
 }
@@ -102,9 +178,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
 export const ProcessQuoteAlert = ({ processId }: { processId?: string | null }) => {
   const { price } = useProcessPrice(processId)
 
-  // A paid process has nothing left to quote
-  if (price?.paymentStatus === 'paid') return null
-
+  // A quote-only process stays blocked after payment: the backend refuses it whatever was paid
   if (isQuoteOnly(price)) {
     return (
       <Alert.Root status='warning'>
@@ -121,7 +195,8 @@ export const ProcessQuoteAlert = ({ processId }: { processId?: string | null }) 
     )
   }
 
-  if (price?.quoteRecommended) {
+  // A paid process has nothing left to recommend a quote for
+  if (price?.quoteRecommended && price.paymentStatus !== 'paid') {
     return (
       <Alert.Root status='info'>
         <Alert.Indicator />

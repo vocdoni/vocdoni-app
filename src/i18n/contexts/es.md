@@ -30,6 +30,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | private ballot / pseudonymous | voto privado / seudónimo | The default mode, opposite the anonymous one: the ballot carries a one-time code instead of a name, but platform records could still connect it to a member. Translate "private ballot" as "voto privado" and "pseudonymous" as "seudónimo" — never as "anónimo" (that is the other mode) nor "secreto" (that is ballot secrecy) |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
 | wallet (prepaid credit balance) | wallet | Keep in English, so it is not confused with a crypto wallet |
+| wallet gender | la wallet, tu wallet, de la wallet | Feminine, as on the wallet page. Never "el wallet" or "del wallet" |
 | overwrite vote / correct vote | modificar el voto / corregir el voto | Prefer "modificar" for buttons, "corregir" for descriptions |
 | abstain | abstenerse / abstención | Use "abstenerse" for actions, "abstención" for the noun form |
 | census size | tamaño del censo | Or "número de votantes" |

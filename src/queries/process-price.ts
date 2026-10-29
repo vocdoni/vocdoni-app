@@ -4,7 +4,14 @@ import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from './keys'
 
 // Kinds of the priced components of a voting process, as the backend names them.
-export type ProcessPriceLineKind = 'base' | 'emailTwoFA' | 'smsTwoFA' | 'signedCertificate' | 'customUrl' | 'branding'
+export type ProcessPriceLineKind =
+  | 'base'
+  | 'emailTwoFA'
+  | 'smsTwoFA'
+  | 'signedCertificate'
+  | 'customUrl'
+  | 'branding'
+  | 'minimumCharge'
 
 export type ProcessPriceLine = {
   // Typed loosely on purpose: a kind added by the backend must still render, with its own description
@@ -14,18 +21,20 @@ export type ProcessPriceLine = {
   amountCents: number
 }
 
-export type ProcessPaymentStatus = 'pending' | 'processing' | 'failed' | 'paid' | 'refunded'
+// 'pending': a wallet top-up checkout is open for the draft. 'failed' and 'refunded': a wallet payment
+// was credited back, so the draft is unpaid again.
+export type ProcessPaymentStatus = 'pending' | 'failed' | 'paid' | 'refunded'
 
-// Pay-per-process price of a draft (vocdoni-app#1767): EUR cents, VAT excluded (checkout adds it).
+// Pay-per-process price of a draft (vocdoni-app#1767): EUR cents, VAT excluded (a wallet top-up adds it).
 export type ProcessPrice = {
   lines: ProcessPriceLine[]
   totalCents: number
   currency: string
   // Census above 15,000 voters: a custom quote is recommended
   quoteRecommended: boolean
-  // Census above 50,000 voters: self-service payment is refused, only a custom quote can publish it
+  // Census above 50,000 voters: no price, and no payment path or publish accepts it, whatever was paid
   quoteRequired: boolean
-  // Absent until a payment has been started for the process
+  // Absent until a wallet payment has touched the draft
   paymentStatus?: ProcessPaymentStatus
 }
 
@@ -64,6 +73,6 @@ export const useProcessPrice = (processId?: string | null) => {
 // which drafts lack until their voters and authentication are set up.
 export const isUnpriceableDraft = (error: unknown) => apiErrorDetails(error)?.code === ErrorCode.MalformedJSONBody
 
-// Above the self-service limit only a custom quote publishes a process, so the app offers no way
-// to publish it, until a payment settled that quote.
-export const isQuoteOnly = (price?: ProcessPrice) => !!price?.quoteRequired && price.paymentStatus !== 'paid'
+// Above the self-service limit the zero total is not a free process: the backend refuses every
+// publish of it, so the app offers no way to publish it.
+export const isQuoteOnly = (price?: ProcessPrice) => !!price?.quoteRequired
