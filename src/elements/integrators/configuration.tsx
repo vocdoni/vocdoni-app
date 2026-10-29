@@ -12,9 +12,8 @@ type ConfigTab = {
 }
 
 /**
- * Integrator Configuration: a tabbed container (Wallet, Subscription + Support) mirroring the admin
- * settings screen, but limited to the tabs integrators need. Tabs are child routes so they are
- * deep-linkable.
+ * Integrator Configuration: a tabbed container (Billing + Support) mirroring the admin settings
+ * screen, but limited to the tabs integrators need. Tabs are child routes so they are deep-linkable.
  */
 const IntegratorConfiguration = () => {
   const { t } = useTranslation()
@@ -26,15 +25,11 @@ const IntegratorConfiguration = () => {
     ...(canViewWallet
       ? [
           {
-            label: t('wallet.title', { defaultValue: 'Wallet' }),
-            route: Routes.integrators.configuration.wallet,
+            label: t('billing.title', { defaultValue: 'Billing' }),
+            route: Routes.integrators.configuration.billing,
           },
         ]
       : []),
-    {
-      label: t('subscription.title', { defaultValue: 'Subscription plan' }),
-      route: Routes.integrators.configuration.subscription,
-    },
     {
       label: t('support', { defaultValue: 'Support' }),
       route: Routes.integrators.configuration.support,
@@ -52,7 +47,7 @@ const IntegratorConfiguration = () => {
       <Heading>{t('integrators.configuration.title', { defaultValue: 'Configuration' })}</Heading>
       <SubHeading>
         {t('integrators.configuration.subtitle', {
-          defaultValue: 'Manage your wallet, subscription and support.',
+          defaultValue: 'Manage your billing and support.',
         })}
       </SubHeading>
       <TabsRoot

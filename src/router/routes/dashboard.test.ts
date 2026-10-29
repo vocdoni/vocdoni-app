@@ -1,5 +1,5 @@
 import { Fragment, type ReactElement } from 'react'
-import type { RouteObject } from 'react-router'
+import type { LoaderFunction, LoaderFunctionArgs, RouteObject } from 'react-router'
 import { renderHook } from '@testing-library/react'
 import { Routes } from '.'
 import { mockUseClient } from '~src/test-utils'
@@ -16,6 +16,14 @@ vi.mock('../SuspenseLoader', () => ({
   SuspenseLoader: ({ children }: { children: React.ReactNode }) => children ?? Fragment,
   Loading: () => null,
 }))
+
+const findRoute = (routes: RouteObject[] | undefined, path: string): RouteObject | undefined => {
+  for (const route of routes ?? []) {
+    if (route.path === path) return route
+    const found = findRoute(route.children, path)
+    if (found) return found
+  }
+}
 
 describe('shouldRevalidateDashboardProcess', () => {
   it('does not revalidate when only switching between process tabs for the same id', () => {
@@ -51,13 +59,6 @@ describe('dashboard process routes', () => {
     const { useDashboardRoutes } = await import('./dashboard')
     const { result } = renderHook(() => useDashboardRoutes())
 
-    const findRoute = (routes: RouteObject[] | undefined, path: string): RouteObject | undefined => {
-      for (const route of routes ?? []) {
-        if (route.path === path) return route
-        const found = findRoute(route.children, path)
-        if (found) return found
-      }
-    }
     const processRoute = findRoute([result.current], Routes.dashboard.process)
 
     // The view sits on the parent; the tab routes render nothing of their own, so
@@ -71,5 +72,48 @@ describe('dashboard process routes', () => {
     for (const child of processRoute?.children ?? []) {
       expect((child.element as ReactElement).type).toBe(Fragment)
     }
+  })
+})
+
+describe('admin settings billing routes', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useClient: () => mockUseClient({ client: {} }),
+    })
+  })
+
+  const settingsRoutes = async () => {
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { result } = renderHook(() => useDashboardRoutes())
+    return findRoute([result.current], Routes.dashboard.settings.base)?.children ?? []
+  }
+
+  const redirectOf = async (path: string, params: Record<string, string> = {}) => {
+    const route = findRoute(await settingsRoutes(), path)!
+    const request = new Request(`https://app.test${path}`)
+    return (await (route.loader as LoaderFunction)({ request, params } as LoaderFunctionArgs)) as Response
+  }
+
+  it('renders billing, and its Stripe return, with the wallet panel', async () => {
+    const routes = await settingsRoutes()
+
+    expect(findRoute(routes, Routes.dashboard.settings.billing)?.element).toBeTruthy()
+    expect(findRoute(routes, Routes.dashboard.settings.billingReturn)?.element).toBeTruthy()
+  })
+
+  it('redirects the retired subscription and wallet tabs to billing', async () => {
+    for (const path of [Routes.dashboard.settings.legacySubscription, Routes.dashboard.settings.legacyWallet]) {
+      const response = await redirectOf(path)
+
+      expect(response.status).toBe(302)
+      expect(response.headers.get('Location')).toBe(Routes.dashboard.settings.billing)
+    }
+  })
+
+  // A top-up started on the old wallet tab still returns to the old path with its session id
+  it('keeps the session id when a wallet return URL is redirected', async () => {
+    const response = await redirectOf(Routes.dashboard.settings.legacyWalletReturn, { sessionId: 'cs_123' })
+
+    expect(response.headers.get('Location')).toBe('/admin/settings/billing/return/cs_123')
   })
 })

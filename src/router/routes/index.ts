@@ -1,3 +1,5 @@
+import { generatePath, redirect, type LoaderFunctionArgs } from 'react-router'
+
 const censusCheckoutReturnBase = '/admin/process/:id/census/checkout/return'
 
 export const Routes = {
@@ -23,11 +25,14 @@ export const Routes = {
     apiKeys: '/integrators/api-keys',
     configuration: {
       base: '/integrators/configuration',
-      subscription: '/integrators/configuration/subscription',
+      billing: '/integrators/configuration/billing',
       support: '/integrators/configuration/support',
-      wallet: '/integrators/configuration/wallet',
       // Stripe sends a redirect-based top-up back here, with the checkout session id appended
-      walletReturn: '/integrators/configuration/wallet/return/:sessionId',
+      billingReturn: '/integrators/configuration/billing/return/:sessionId',
+      // Tabs that existed before billing; old links and emails still point at them
+      legacySubscription: '/integrators/configuration/subscription',
+      legacyWallet: '/integrators/configuration/wallet',
+      legacyWalletReturn: '/integrators/configuration/wallet/return/:sessionId',
     },
   },
   dashboard: {
@@ -58,12 +63,17 @@ export const Routes = {
       base: '/admin/settings',
       organization: '/admin/settings/organization',
       team: '/admin/settings/team',
-      subscription: '/admin/settings/subscription',
       support: '/admin/settings/support',
-      wallet: '/admin/settings/wallet',
-      walletReturn: '/admin/settings/wallet/return/:sessionId',
+      billing: '/admin/settings/billing',
+      // Stripe sends a redirect-based top-up back here, with the checkout session id appended
+      billingReturn: '/admin/settings/billing/return/:sessionId',
+      // Tabs that existed before billing; old links and emails still point at them
+      legacySubscription: '/admin/settings/subscription',
+      legacyWallet: '/admin/settings/wallet',
+      legacyWalletReturn: '/admin/settings/wallet/return/:sessionId',
     },
   },
+  // Retired public page; /plans redirects to billing (signed in) or home
   plans: '/plans',
   organization: '/organization/:address',
   processes: {
@@ -78,3 +88,8 @@ export const Routes = {
 
 // The tab a checkout return belongs to: `<tab>/return/<sessionId>` -> `<tab>`.
 export const stripCheckoutReturn = (pathname: string) => pathname.replace(/\/return\/[^/]+\/?$/, '')
+
+// A retired tab path redirects to its replacement, carrying over the params (a return URL's session id).
+export const redirectLegacyPath = (to: string) => ({
+  loader: ({ params }: LoaderFunctionArgs) => redirect(generatePath(to, params)),
+})

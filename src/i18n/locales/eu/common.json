@@ -44,8 +44,6 @@
       "ticanoia": "TIC Anoiaren logotipoa"
     }
   },
-  "annual": "Urtekoa<1>% 40ko aurrezkia</1>",
-  "apply": "Aplikatu",
   "aside": {
     "anonymous_receipt_gone": "Zure egiaztagiria bozkatu zenuenean erakutsi zen, eta ezin da berreskuratu.",
     "has_already_voted": "Zure botoa behar bezala eman da",
@@ -98,7 +96,9 @@
     "label": "Erakundearen avatarra"
   },
   "back": "Atzera",
-  "billing_details": "Fakturazio-datuak",
+  "billing": {
+    "title": "Fakturazioa"
+  },
   "booking": {
     "unavailable": "Erreserba ez dago erabilgarri une honetan. Saiatu berriro geroago."
   },
@@ -155,7 +155,6 @@
     "title": "Aldatu pasahitza"
   },
   "close": "Itxi",
-  "code_applied": "«{{appliedCode}}» kodea aplikatu da",
   "color_mode_switcher": "Aldatu kolore-modua",
   "common": {
     "back": "Atzera",
@@ -257,7 +256,6 @@
     "terms_acceptance": "<2>Erabilera-baldintzak</2> eta <6>Pribatutasun-politika</6> irakurri eta onartzen ditut."
   },
   "current": "Egungoa",
-  "current_plan": "Egungo plana",
   "dark": "Iluna",
   "dashboard": {
     "actions": {
@@ -269,15 +267,11 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "2FA kodeak posta elektronikoz",
-      "2fa_email_tooltip": "Posta elektronikoz bidalitako egiaztapen-kodeak. Muga gainditzeak {{price}} € kostatzen du kode bakoitzeko.",
-      "2fa_sms": "2FA kodeak SMS bidez",
-      "2fa_sms_tooltip": "SMS bidez bidalitako egiaztapen-kodeak. Muga gainditzeak {{price}} € kostatzen du kode bakoitzeko.",
+      "description": "Jarraitu zure erakundearen erabilera bere mugen arabera.",
       "limit_exceeded_message": "Zure kide-oinarriak {{max}} kideko muga iritsi du.",
       "memberbase_size": "Kide-oinarriaren tamaina",
       "memberbase_tooltip": "Zure kide-oinarrian onartutako gehienezko kide-kopurua.",
-      "plan_usage": "Planaren erabilera",
-      "plan_usage_description": "Kontrolatu zure egungo erabilera planaren mugen aldean",
+      "title": "Erabilera",
       "voting_processes": "Bozketa-prozesuak"
     },
     "welcome": {
@@ -290,7 +284,6 @@
       "hello": "Ongi etorri Vocdoni-ra, {{name}}!",
       "how_first_vote": "Nola sortu zure lehen bozketa",
       "no_organization": "Ez da erakunderik aurkitu",
-      "no_subscription": "Ez dago harpidetzarik eskuragarri. Sortu erakunde bat zure plana aktibatzeko.",
       "quick_actions": "Ekintza azkarrak",
       "recent_voting_description": "Zure erakundearen bozketa-prozesu berrienak",
       "recent_voting_title": "Azken bozketa-prozesuak",
@@ -311,7 +304,6 @@
   },
   "delete_my_account": "Ezabatu nire kontua",
   "description": "Deskribapena",
-  "discount": "Deskontua",
   "do_it_later": "Geroago egin",
   "draft_processes": "Zirriborroak",
   "drafts": {
@@ -363,7 +355,6 @@
   "end_time": "Amaiera-ordua",
   "end_vote": "Amaitu bozketa",
   "ended_processes": "Amaituak",
-  "enter_promo_code": "Sartu sustapen-kodea",
   "error": {
     "crash_description": "Kargatu berriro orria edo itzuli Dashboard-era.",
     "crash_title": "Zerbait gaizki joan da",
@@ -380,74 +371,6 @@
     "reload": "Kargatu berriro",
     "return_to_home": "Itzuli hasierara",
     "title": "Errorea"
-  },
-  "error_removing_code": "Errorea kodea kentzean",
-  "features": {
-    "anonymous": "Bozketa anonimoa",
-    "approval": "Onarpen-bozketa",
-    "audit": "Auditoria",
-    "audit_blockchain": "% 100 auditagarria blockchainean",
-    "basic_analytics": "Oinarrizko analitikak",
-    "basic_branding": "Oinarrizko marka",
-    "basic_sla": "Ahalik eta onena",
-    "cumulative": "Bozketa metakorra",
-    "custom_reports": "Txosten pertsonalizatuak",
-    "custom_url": "URL pertsonalizatua",
-    "dedicated_account_manager": "Kontu-kudeatzaile dedikatua",
-    "email_notification": "Bi faktore posta elektronikoz",
-    "email_notifications": "Posta elektroniko bidezko jakinarazpenak hautesleei",
-    "email_reminder": "Gogorarazleak posta elektronikoz",
-    "email_support": "Posta elektronikoa",
-    "email_support_basic": "(72 ord. eran.)",
-    "email_support_essential": "(48 ord. eran.)",
-    "email_support_premium": "(24 ord. eran.)",
-    "GDPR_compliance": "DBEOrekiko betetzea",
-    "generic_sla": "SLA generikoa",
-    "live_results": "Zuzeneko emaitzak",
-    "live_streaming": "Zuzeneko transmisioa",
-    "memberbase_all_in_one_management": "Kideen kudeaketa integrala",
-    "multiple": "Aukera anitzeko bozketa",
-    "on_demand": "Eskaeraren arabera*",
-    "overwrite": "Botoa aldatu",
-    "participatory_budgeting": "Aurrekontu parte-hartzaileak",
-    "personalization": "Pertsonalizazioa",
-    "phone_support": "Telefono bidezko laguntza",
-    "priority_support": "Lehentasunezko laguntza",
-    "ranked": "Hurrenkerako bozketa",
-    "section": {
-      "analytics_and_reporting": "Analitikak eta txostenak",
-      "authentication_security": "Autentifikazioa eta segurtasuna",
-      "compliance_and_security": "Betetzea eta segurtasuna",
-      "customization": "Pertsonalizazioa",
-      "extra_features": "Funtzionalitate gehigarriak",
-      "features": "Ezaugarriak",
-      "general_limits": "Muga orokorrak",
-      "memberbase_management": "Kideen kudeaketa",
-      "organization": "Erakundea",
-      "support": "Laguntza",
-      "voting_types": "Bozketa motak"
-    },
-    "single": "Aukera bakarreko bozketa",
-    "sms_notification": "Bi faktore SMS bidez",
-    "sms_notifications": "SMS bidezko jakinarazpenak hautesleei",
-    "sub_orgs": "{{ count }} azpierakunde arte",
-    "team_members": "Taldeko kideak",
-    "tooltips": {
-      "anonymous": "Aukerako funtzionalitate hau antolatzaileek hauta dezakete. Aktibatuta dagoenean, botoak guztiz anonimoak dira: ezta guk ere ezin dugu jakin nork bozkatu duen aukera zehatz baten alde. Bestela, antolatzaileek emaitzak zifra ditzakete bozketa amaitu arte, edo bozketa guztiz publikoa egin.",
-      "live_results": "Aukerako funtzionalitate hau antolatzaileek hauta dezakete. Emaitzak denbora errealean erakuts daitezke botoak ematen diren heinean, edo antolatzaileek emaitzak zifratuta eta ezkutatuta manten ditzakete bozketa-aldia amaitu arte.",
-      "memberbase_all_in_one": "Inportatu zure kide-oinarria boto-emaile hautagarrien taldeak sortzeko eta bozketa-baimenak oso erraz kudeatzeko.",
-      "multiple": "Hautesleek hainbat aukera hauta ditzakete eskuragarri dauden aukeren artean. Ezin hobea inkesta eta erabaki anitzentzat.",
-      "overwrite": "Hautesleek beren botoa alda dezakete bozketa-aldia amaitu aurretik. Funtzionalitate honek erroreak saihesten eta bortxa eragozten laguntzen du, hautesleei beren aukerak zuzentzeko aukera emanez.",
-      "single": "Hautesleek aukera bakarra hauta dezakete eskuragarri dauden aukeren artean. Ezin hobea hauteskunde eta bai/ez erabaki sinpleentzat.",
-      "team_members": "Gonbidatu taldeko kideak eta esleitu rolean oinarritutako baimenak zure erakundea erraz kudeatu ahal izateko.",
-      "uptime": "% 99,99ko jardun-denbora bermatzen dugu, baina ordainpeko planetan soilik bermatzen da kontratuz."
-    },
-    "total_orgs": "Eskuragarri dauden azpierakundeak guztira",
-    "total_users": "Eskuragarri dauden erabiltzaileak guztira",
-    "uptime": "% 99,99ko jardun-denbora",
-    "uptime_guaranteed": "Bermatua ({{suffix}})",
-    "weighted": "Ponderatutako botazioa",
-    "white_label": "Marka zuria"
   },
   "footer": {
     "company": "Konpainia",
@@ -516,8 +439,6 @@
       "voting_issue": "Bozketa-arazoa"
     }
   },
-  "free_trial_days_one": "Egun bat doan",
-  "free_trial_days_other": "{{count}} egun doan",
   "google_oauth_conflict_error": "Posta elektroniko honekin lotutako kontu bat dago dagoeneko. Mesedez, hasi saioa zure egungo metodoarekin.",
   "google_oauth_error": "Google OAuth errorea",
   "google_oauth_error_description": "Google OAuth errorea, saiatu berriro",
@@ -837,13 +758,13 @@
       "title": "APIren gakoak"
     },
     "configuration": {
-      "subtitle": "Kudeatu zure wallet-a, harpidetza eta lortu laguntza.",
+      "subtitle": "Kudeatu zure fakturazioa eta lortu laguntza.",
       "title": "Konfigurazioa"
     },
     "create_account": {
       "cancel": "Utzi",
       "confirm": "Sortu kontua",
-      "description": "Integrator kontu berri bat sortuko da dohaineko planean eta zure erakunde aktibo gisa ezarriko da.",
+      "description": "Integrator kontu berri bat sortuko da eta zure erakunde aktibo gisa ezarriko da, integratzaileen panela desblokeatuz.",
       "error": "Ezin izan da integrator kontua sortu",
       "switch_instead": "Edo aldatu dagoen erakunde baten",
       "title": "Dohaineko integrator kontua sortu?"
@@ -909,21 +830,11 @@
     "signin_title": "Sartu",
     "signup_subtitle": "Izena eman integrator gisa erakundeak kudeatzeko.",
     "signup_title": "Sortu zure integrator kontua",
-    "subscription": {
-      "active": "Aktiboa",
-      "billing_details": "Fakturatze-xehetasunak",
-      "current_plan": "Uneko plana",
-      "inactive": "Inaktibo",
-      "portal_error": "Ezin da fakturazio portala ireki",
-      "unavailable": "Harpidetzaren xehetasunak ez daude erabilgarri"
-    },
-    "upgrade_plan": "Hobetu plana",
     "wallet": {
       "balance": "Wallet-aren saldoa",
       "manage": "Kudeatu wallet-a"
     }
   },
-  "invalid_promo_code": "Sustapen-kodea ez da baliozkoa",
   "invite": {
     "account_not_verified": "Zure kontua ez dago egiaztatuta. Egiaztatu zure kontua jarraitzeko.",
     "create_account_subtitle": "Lehenik kontu bat behar duzu gonbidapena onartzeko",
@@ -1125,8 +1036,6 @@
     "login": "Hasi saioa",
     "open": "Ireki menua"
   },
-  "month": "hilabete",
-  "monthly": "Hilekoa",
   "name": "Izena",
   "need_help": {
     "description": "Laguntza behar duzu zure lehen bozketa-prozesuarekin? Ikusi tutorial hau edo antolatu dei bat.",
@@ -1158,7 +1067,6 @@
   },
   "open_in_explorer": "Ireki esploratzailean",
   "or_continue_with": "edo jarraitu honekin",
-  "order_summary": "Eskaeraren laburpena",
   "org_type_selector": {
     "selector_label": "Erakunde mota"
   },
@@ -1178,8 +1086,6 @@
       "title": "Sortu zure lehen bozketa-prozesua"
     },
     "elections_list_load_more": "Kargatu gehiago",
-    "max_census": "Bozketako gehienezko errolda",
-    "max_processes": "Bozketak urteko¹",
     "no_organization_title": "Oraindik ez zara erakunde batekoa!",
     "organization": "Erakundearen xehetasunak",
     "title": {
@@ -1200,7 +1106,7 @@
       "priority_support_line_description": "Eskuragarri astelehenetik ostiralera, 9:00etatik 18:00etara CET",
       "title": "Telefono bidezko laguntza"
     },
-    "subtitle": "Kudeatu zure erakundea, taldeko kideak eta zure harpidetza-plana",
+    "subtitle": "Kudeatu zure erakundea, taldeko kideak eta fakturazioa",
     "support": {
       "description": "Lortu laguntza zure erakundearentzat.",
       "title": "Laguntza"
@@ -1259,58 +1165,11 @@
   },
   "plan": {
     "encouragement": "Bozketa bat abiaraztea sinplea da, eta parte-hartzaileek edonondik elkar daitezke. Berme sendoak prezio txikiagoan: horregatik bihurtu da Vocdoni ehunka udal, elkarte, alderdi politiko eta enpresentzako hautu fidagarria.",
-    "free": "<0>Doako planean zaude</0>, eta horrek dagoeneko bozketak abiarazteko aukera ematen dizu. Funtzionalitate gehiago, muga handiagoak edo aukera espezifikoak behar badituzu, arakatu ordainpeko planak eta probatu doan.",
     "special_needs": "Laguntza edo zerbait espezifikoa behar duzu? Antolatu dei bat."
   },
   "please_check_email_to_verify": "Mesedez, begiratu zure posta elektronikoa kontua egiaztatzeko",
   "preferences": "Hobespenak",
   "preview": "Aurrebista",
-  "pricing": {
-    "2fa": "2FA autentifikazioa² ({{suffix}})",
-    "2fa_suffix_both": "Posta elektronikoa eta SMSa",
-    "2fa_suffix_email": "Posta elektronikoa",
-    "2fa_suffix_sms": "SMSa",
-    "basic_analytics": "Oinarrizko txosten eta analitikak",
-    "comparison_table": {
-      "footnote_1": "¹ 10 parte-hartzaile baino gutxiago dituzten bozketak proba gisa hartzen dira eta ez dira zure planaren mugetarako kontatzen.",
-      "footnote_2": "² 2FA kredituak erabiltzaile batek bozketa-prozesu batean egiaztapen-eskaera egiten duenean soilik kontsumitzen dira. Inoiz ez zaizu ustekabean amaituko: bozketa batean barne hartutako kredituak gainditzen badituzu, bidalitako kode bakoitza 0,015 € kobratuko da bidaltze-unean. Aurrez ere kreditu osagarriak eros ditzakezu pakete erosoetan.",
-      "footnote_on_demand": "* Eskatutako funtzionalitateak banaka aztertuko dira eta kostu gehigarriak ekar ditzakete."
-    },
-    "core_voting_one": "Kide bakar bat",
-    "core_voting_other": "{{ count }} kide arte",
-    "custom_branding": "Marka pertsonalizatua*",
-    "custom_subtitle": "Zure beharretara egokitua",
-    "custom_title": "Pertsonalizatua",
-    "different_voting_methods": "Bozketa-metodo desberdinak",
-    "empty": "Ez da planik aurkitu",
-    "empty_description": "Saiatu berriro geroago eskuragarri dauden planak ikusteko.",
-    "essential_subtitle": "Hazten ari diren erakundeentzat",
-    "essential_title": "Oinarrizkoa",
-    "free_subtitle": "Hasteko ezin hobea",
-    "free_title": "Doakoa",
-    "load_error": "Ezin izan dira planak kargatu",
-    "load_error_description": "Saiatu berriro.",
-    "premium_subtitle": "Erakunde sendoentzat",
-    "premium_title": "Premium",
-    "priority_support": "Lehentasunezko laguntza posta elektronikoz (24h)",
-    "ticket_support_48": "Posta elektroniko bidezko laguntza (48h)",
-    "ticket_support_72": "Posta elektroniko bidezko laguntza (72h)",
-    "up_to_admins_one": "Administratzaile bakar bat",
-    "up_to_admins_other": "{{ count }} administratzaile",
-    "yearly_processes_one": "Urteko {{ count }} bozketa-prozesu",
-    "yearly_processes_other": "Urteko {{ count }} bozketa-prozesu"
-  },
-  "pricing_card": {
-    "annual_savings": "Aurreztu {{ savings }}/urteko urteko planarekin",
-    "annual_total_cost": "{{ price }} urteko fakturatua",
-    "contact_sales": "<0>Jarri harremanetan gure salmenta-taldearekin</0> <1>edo</1>",
-    "custom_plan": "Prezioa eskaeraren arabera",
-    "custom_plan_description": "Gobernantza-eskakizun bereziak dituzu? Zure beharretara egoki gaitezke konponbide pertsonalizatu batekin. Jarri harremanetan.",
-    "free_trial": "{{ freeDays }} egun doan",
-    "from": "<price>{{ price }}</price><time>/hilean+BEZ</time>",
-    "most_popular_plan": "Ezagunena",
-    "need_more_members": "Kide gehiago behar dituzu? <2>Jarri harremanetan</2>"
-  },
   "privacy_policy": "Pribatutasun-politika",
   "process": {
     "anonymity": {
@@ -1786,8 +1645,6 @@
     "error": "Errorea profila eguneratzean",
     "success": "Profila behar bezala eguneratu da"
   },
-  "promo_code": "Sustapen-kodea",
-  "promo_code_required": "Kodea bete beharrekoa da",
   "public_process": {
     "no_tally": "Zenbaketarik ez",
     "verify": "Egiaztatu blockchain esploratzailean:",
@@ -1796,7 +1653,6 @@
   "questions_and_results": "Galderak eta emaitzak",
   "registration_failed": "Errorea izen-ematean",
   "registration_successful": "Izen-ematea behar bezala egin da",
-  "remove": "Kendu",
   "remove_avatar": "Kendu avatarra",
   "reset_password_button": "Berrezarri pasahitza",
   "result_visibility": "Emaitzen ikusgaitasuna",
@@ -1872,19 +1728,6 @@
   },
   "start_date": "Hasiera-data",
   "start_time": "Hasiera-ordua",
-  "subscribe": "Harpidetu",
-  "subscription": {
-    "title": "Harpidetza-plana"
-  },
-  "subscription_plan": {
-    "gdpr_compliance": "Plan guztiek DBEOrekiko betetzea barne hartzen dute.",
-    "hide_comparison_table": "Erakutsi funtzionalitate gutxiago",
-    "need_help": "<0>Aukeraketan laguntza behar duzu?</0> <1>Jarri harremanetan gure salmenta-taldearekin</1>",
-    "show_comparison_table": "Ikusi funtzionalitate guztiak",
-    "subtitle": "Gure harpidetzekin, plan bat baino gehiago lortzen duzu. Gobernantza-plataformarik berritzaileenerako sarbidea lortzen duzu. Eredu honi esker, merkatuko prezio onena eskain dezakegu: urtean 1, 5 edo 20 bozka behar dituzun ala ez, betiere kostu lehiakorrenak eta berme paregabeak izango dituzu. Plataforma autozerbitzu osokoa da, baina gure taldea beti dago prest laguntza eskaintzeko edo soluzioak zure behar espezifikoetara egokitzeko.",
-    "title": "Harpidetza-plana"
-  },
-  "subtotal": "Azpitotala",
   "support": "Laguntza",
   "support_chat": {
     "ask_name": "Bidali aurretik — nola duzu izena?",
@@ -1916,7 +1759,6 @@
   "switch_mode": "Aldatu {{ mode }} modura",
   "switch_organization": "Aldatu erakundea",
   "system": "Sistema",
-  "tax": "Zerga (% {{percent}})",
   "team": {
     "actions": {
       "cancel_invitation": "Bertan behera utzi gonbidapena",
@@ -2029,12 +1871,8 @@
     }
   },
   "theme": "Gaia",
-  "then_price_per_period": "Ondoren {{price}}/{{period}}",
-  "total_after_trial": "Probaren ondorengo guztira",
-  "total_due_today": "Gaur ordaindu beharrekoa",
   "total_votes": "Boto guztira",
   "turnout": "Parte-hartzea",
-  "upgrade_plan": "Eguneratu {{plan}} planera",
   "uploaded_image_preview": "Kargatutako irudiaren aurrebista",
   "uploader": {
     "avatar_upload_failed": "Errorea avatarra kargatzean",
@@ -2086,7 +1924,6 @@
     "verifying_title": "{{ email }} egiaztatzen"
   },
   "view_in_explorer": "Ikusi esploratzailean",
-  "view_plans_and_pricing": "Ikusi planak eta prezioak",
   "vocdoni_logo": "Vocdoniren logotipoa",
   "vote": {
     "anonymous_receipt": "Boto anonimoa: gorde egiaztagiri hau orain; plataformak ezin izango dizu berriro erakutsi.",
@@ -2225,7 +2062,6 @@
     "pagination": "{{page}}/{{total}} orria · guztira {{items}}",
     "processing": "Ordainketa jasota. Zure saldoa eguneratuko da berretsi bezain pronto.",
     "processing_timeout": "Espero baino denbora gehiago behar da. Zure saldoa eguneratuko da ordainketa berretsi bezain pronto; begiratu berriro geroago.",
-    "title": "Wallet-a",
     "topup": {
       "admin_only": "Administratzaileek bakarrik karga dezakete wallet-a.",
       "amount": "Zenbatekoa (EUR, BEZ gabe)",
@@ -2242,8 +2078,6 @@
       "vat": "BEZ"
     }
   },
-  "wallet_not_connected": "Zorroa ez dago konektatuta",
   "website": "Webgunea",
-  "whatsapp_contact": "Hitz egin gurekin!",
-  "year": "urtea"
+  "whatsapp_contact": "Hitz egin gurekin!"
 }

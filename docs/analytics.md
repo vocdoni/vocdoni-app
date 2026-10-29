@@ -61,7 +61,7 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
 `vocdoni.io` (the marketing site, a separate repo) reports into **the same PostHog project** as this
 app. That is not a convenience: the free plan allows exactly one project, and PostHog cannot query
 across projects, so sharing one is the only way a funnel can start on a landing page and end at a
-subscription. Both sites ship the same `phc_…` key.
+published process. Both sites ship the same `phc_…` key.
 
 What makes the two halves join up is a single `distinct_id` surviving the hop between subdomains:
 
@@ -92,15 +92,13 @@ keep their historical strings for Plausible/GTM and are renamed to snake_case fo
 contain voter identifiers, ballot content, emails, or tokens.
 
 Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `organization_created`,
-`process_created`, `subscription_completed`, `checkout_started`,
-`billing_portal_opened`, `paywall_viewed`, `feature_blocked`, `process_creation_failed`,
-`process_action`, `process_results_viewed`, `members_import_started`,
+`process_created`, `process_creation_failed`, `process_action`, `process_results_viewed`, `members_import_started`,
 `members_import_completed`, `member_group_created`, `member_group_deleted`, `census_configured`,
 `team_member_invited`, `team_member_removed`, `pdf_report_downloaded`.
 
-Organization-level BI: every session registers `org_address`/`org_name`/`org_plan` super properties, and
-the `organization` group profile carries name, plan, type, country, size, usage counters, and renewal
-date (see `AnalyticsProvider`).
+Organization-level BI: every session registers `org_address`/`org_name` super properties, and
+the `organization` group profile carries name, type, country, size and creation date (see
+`AnalyticsProvider`).
 
 The group's `name` property is what PostHog uses to label a group — without it every organization renders
 as a bare `0x…` address. It is duplicated as the `org_name` super property because group properties are
@@ -154,9 +152,8 @@ What it provisions:
 | Dashboard                  | Insights                                                                                                                                                                                                                                                                                                                                                            |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Activation**             | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed; organizations created by name                                                                                                                                                                                                           |
-| **Monetization**           | paywall → checkout → subscription (broken down by `source`); blocked feature → upgrade (by `feature`); paywall exposure per plan                                                                                                                                                                                                                                    |
 | **Elections & engagement** | wizard funnel `census_configured` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type`                                                                                                                                                                                                        |
-| **Web → app**              | website visit → CTA → signup → org → first election (by first-touch campaign); which vertical converts; blog and learn article → signup; docs → integrator signup; sales assist `demo_requested` → `demo_booked` → subscription; marketing-sourced revenue; activation by locale; revenue by first-touch channel; event volume by `site`; CTA clicks by `page_type` |
+| **Web → app**              | website visit → CTA → signup → org → first election (by first-touch campaign); which vertical converts; blog and learn article → signup; docs → integrator signup; sales assist `demo_requested` → `demo_booked`; marketing-sourced revenue; activation by locale; revenue by first-touch channel; event volume by `site`; CTA clicks by `page_type` |
 
 The **Web → app** dashboard is the one that needs both properties in the project. Every funnel on it
 stays **person-level**: the app funnels aggregate by the `organization` group, which is right for them,
@@ -192,11 +189,10 @@ Edit the `buildPlan` function to change a funnel; the query shapes follow PostHo
 
 ## Follow-up: server-side events (saas-backend)
 
-The frontend cannot see renewals, churn, payment failures, or final turnout. A follow-up in the
+The frontend cannot see payment failures or final turnout. A follow-up in the
 saas-backend repo should send server-authoritative events with `posthog-node`, keyed to the same
-`organization` group: `organization_registered`, `subscription_renewed`, `subscription_cancelled`,
-`payment_failed`, election finalization with final turnout, and a periodic usage-counter sync to group
-properties. That makes PostHog the single BI pane without ever touching voters.
+`organization` group: `organization_registered`, `payment_failed`, election finalization with final
+turnout, and a periodic usage-counter sync to group properties. That makes PostHog the single BI pane without ever touching voters.
 
 ## Verifying locally
 

@@ -195,38 +195,6 @@ const buildPlan = (orgIndex) => {
     },
     {
       dashboard: {
-        name: 'Vocdoni · Monetization',
-        description: 'Paywall exposure, checkout conversion, and which blocked features drive upgrades.',
-      },
-      insights: [
-        funnel({
-          name: 'Monetization · paywall → checkout → subscription',
-          description: 'Organization-level, 7-day window. Broken down by where the paywall was opened from.',
-          steps: ['paywall_viewed', 'checkout_started', 'subscription_completed'],
-          groupTypeIndex: byOrg,
-          windowInterval: 7,
-          breakdown: 'source',
-        }),
-        funnel({
-          name: 'Monetization · blocked feature → upgrade',
-          description:
-            'Which locked feature actually converts. Breakdown by feature uses first-touch attribution, i.e. the feature that started the journey.',
-          steps: ['feature_blocked', 'paywall_viewed', 'checkout_started', 'subscription_completed'],
-          groupTypeIndex: byOrg,
-          windowInterval: 14,
-          breakdown: 'feature',
-        }),
-        trend({
-          name: 'Paywall exposure per plan',
-          description: 'How often each plan hits a wall — sustained pressure on one plan is a packaging signal.',
-          series: [event('feature_blocked', orgMath)],
-          breakdown: 'plan',
-          display: 'ActionsBar',
-        }),
-      ],
-    },
-    {
-      dashboard: {
         name: 'Vocdoni · Web → app',
         description:
           'What the marketing site actually produces. vocdoni.io and this app report into one PostHog project, so these funnels can cross the domain boundary.',
@@ -276,26 +244,10 @@ const buildPlan = (orgIndex) => {
         funnel({
           name: 'Web → app · sales assist',
           description:
-            'Puts a conversion rate on the Cal.com booking flow and, at the last step, a value on a booked call. A wide gap between requested and booked points at the booking widget itself.',
-          steps: ['demo_requested', 'demo_booked', 'account_signed_up', 'subscription_completed'],
+            'Puts a conversion rate on the Cal.com booking flow and, at the last step, on signup after a booked call. A wide gap between requested and booked points at the booking widget itself.',
+          steps: ['demo_requested', 'demo_booked', 'account_signed_up'],
           windowInterval: 90,
           breakdown: 'location',
-        }),
-        funnel({
-          name: 'Web → app · marketing-sourced revenue',
-          description:
-            'The money question, end to end, attributed to the campaign that started the journey rather than to the app URL the visitor happened to land on.',
-          steps: [
-            webPageview,
-            'account_signed_up',
-            'process_created',
-            'paywall_viewed',
-            'checkout_started',
-            'subscription_completed',
-          ],
-          windowInterval: 90,
-          breakdown: '$initial_utm_source',
-          breakdownType: 'person',
         }),
         funnel({
           name: 'Web → app · activation by locale',
@@ -320,15 +272,6 @@ const buildPlan = (orgIndex) => {
           ],
           windowInterval: 14,
           breakdown: 'slug',
-        }),
-        trend({
-          name: 'Revenue by first-touch channel',
-          description:
-            'Subscriptions attributed to the campaign that produced the very first visit. Needs no tagging discipline beyond UTMs on inbound links.',
-          series: [event('subscription_completed')],
-          breakdown: '$initial_utm_source',
-          breakdownType: 'person',
-          display: 'ActionsTable',
         }),
         trend({
           name: 'Event volume by site',

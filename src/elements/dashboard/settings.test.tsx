@@ -59,17 +59,19 @@ describe('Settings', () => {
     expect(activeTab).toHaveAttribute('aria-selected', 'true')
   })
 
-  it('shows the Wallet tab to admins and managers', async () => {
+  it('shows the Billing tab to admins and managers, in place of the wallet and subscription tabs', async () => {
     render(
       <ChakraProvider value={system}>
         <Settings />
       </ChakraProvider>
     )
 
-    expect(await screen.findByRole('tab', { name: 'Wallet' })).toBeInTheDocument()
+    expect(await screen.findByRole('tab', { name: 'Billing' })).toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: 'Wallet' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: 'Subscription plan' })).not.toBeInTheDocument()
   })
 
-  it('hides the Wallet tab from roles that cannot read the wallet', async () => {
+  it('hides the Billing tab from roles that cannot read the wallet', async () => {
     walletAccess.current = { canView: false, canTopUp: false }
     render(
       <ChakraProvider value={system}>
@@ -78,6 +80,6 @@ describe('Settings', () => {
     )
 
     expect(await screen.findByRole('tab', { name: 'Team' })).toBeInTheDocument()
-    expect(screen.queryByRole('tab', { name: 'Wallet' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: 'Billing' })).not.toBeInTheDocument()
   })
 })

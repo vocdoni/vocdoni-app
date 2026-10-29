@@ -8,7 +8,7 @@ import LayoutDashboard from '~elements/LayoutDashboard'
 import { QueryKeys } from '~queries/keys'
 import OrganizationProtectedRoute from '~src/router/OrganizationProtectedRoute'
 import ProtectedRoutes from '~src/router/ProtectedRoutes'
-import { Routes } from '.'
+import { redirectLegacyPath, Routes } from '.'
 import AccountProtectedRoute from '../AccountProtectedRoute'
 import OrganizationTypeGuard from '../OrganizationTypeGuard'
 import { Loading, SuspenseLoader } from '../SuspenseLoader'
@@ -22,7 +22,6 @@ const Drafts = lazy(() => import('~elements/dashboard/processes/drafts'))
 const DashboardProcessView = lazy(() => import('~elements/dashboard/processes/view'))
 const ProcessCreate = lazy(() => import('~elements/dashboard/processes/create'))
 const OrganizationEdit = lazy(() => import('~components/Organization/Dashboard/Organization'))
-const SubscriptionPage = lazy(() => import('~components/Organization/Dashboard/Subscription'))
 const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
 const OrganizationSupport = lazy(() => import('~components/Organization/Dashboard/Support'))
 const OrganizationTeam = lazy(() => import('~components/Organization/Dashboard/Team'))
@@ -247,7 +246,7 @@ export const useDashboardRoutes = () => {
                         ),
                       },
                       {
-                        path: Routes.dashboard.settings.wallet,
+                        path: Routes.dashboard.settings.billing,
                         element: (
                           <SuspenseLoader>
                             <WalletPanel processLinks />
@@ -255,7 +254,7 @@ export const useDashboardRoutes = () => {
                         ),
                       },
                       {
-                        path: Routes.dashboard.settings.walletReturn,
+                        path: Routes.dashboard.settings.billingReturn,
                         element: (
                           <SuspenseLoader>
                             <WalletPanel processLinks />
@@ -263,12 +262,16 @@ export const useDashboardRoutes = () => {
                         ),
                       },
                       {
-                        path: Routes.dashboard.settings.subscription,
-                        element: (
-                          <SuspenseLoader>
-                            <SubscriptionPage />
-                          </SuspenseLoader>
-                        ),
+                        path: Routes.dashboard.settings.legacySubscription,
+                        ...redirectLegacyPath(Routes.dashboard.settings.billing),
+                      },
+                      {
+                        path: Routes.dashboard.settings.legacyWallet,
+                        ...redirectLegacyPath(Routes.dashboard.settings.billing),
+                      },
+                      {
+                        path: Routes.dashboard.settings.legacyWalletReturn,
+                        ...redirectLegacyPath(Routes.dashboard.settings.billingReturn),
                       },
                       {
                         path: Routes.dashboard.settings.support,

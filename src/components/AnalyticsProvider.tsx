@@ -1,7 +1,6 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
-import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent, watchCrossSiteConsent } from '~components/Cookies/utils'
 import { useProfile } from '~queries/account'
@@ -38,7 +37,6 @@ const useAnalyticsProvider = () => {
   const { isAuthenticated } = useAuth()
   const { data: profile } = useProfile({ enabled: isAuthenticated })
   const { organization } = useSaasAccount()
-  const { subscription } = useSubscription()
   const { i18n } = useTranslation()
   const [consent, setConsent] = useState<PosthogConsent>(() => getCookieConsent())
 
@@ -139,7 +137,7 @@ const useAnalyticsProvider = () => {
   }, [isAuthenticated])
 
   // Organization-level BI: group profile plus super properties so insights can
-  // break down by organization/plan even without the group analytics add-on.
+  // break down by organization even without the group analytics add-on.
   useEffect(() => {
     if (!organization?.address) return
 
@@ -151,16 +149,6 @@ const useAnalyticsProvider = () => {
       country: organization.country,
       size: organization.size,
       created_at: organization.createdAt,
-      plan_id: subscription?.subscriptionDetails?.planId,
-      plan_name: subscription?.plan?.name,
-      subscription_active: subscription?.subscriptionDetails?.active,
-      renewal_date: subscription?.subscriptionDetails?.renewalDate,
-      max_census_size: subscription?.subscriptionDetails?.maxCensusSize,
-      usage_processes: subscription?.usage?.processes,
-      usage_users: subscription?.usage?.users,
-      usage_sub_orgs: subscription?.usage?.subOrgs,
-      usage_sent_emails: subscription?.usage?.sentEmails,
-      usage_sent_sms: subscription?.usage?.sentSMS,
     })
     registerPosthogSuperProperties({
       org_address: organization.address,
@@ -168,7 +156,6 @@ const useAnalyticsProvider = () => {
       // queryable with the group analytics add-on, whereas a super property
       // lands on every event and can always be broken down by.
       org_name: organization.account?.name?.default,
-      org_plan: subscription?.plan?.name,
     })
   }, [
     organization?.address,
@@ -177,7 +164,6 @@ const useAnalyticsProvider = () => {
     organization?.country,
     organization?.size,
     organization?.createdAt,
-    subscription,
   ])
 
   return {

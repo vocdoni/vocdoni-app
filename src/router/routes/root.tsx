@@ -1,6 +1,7 @@
 import { VocdoniApiError, type VocdoniApiClient } from '@vocdoni/api-client'
 import { lazy } from 'react'
-import { Params, redirectDocument, type LoaderFunctionArgs } from 'react-router'
+import { Navigate, Params, redirectDocument, type LoaderFunctionArgs } from 'react-router'
+import { useAuth } from '~components/Auth/useAuth'
 // These aren't lazy loaded since they are main layouts and related components
 import ErrorElement from '~elements/Error'
 import Layout from '~elements/Layout'
@@ -17,7 +18,15 @@ import { Loading, SuspenseLoader } from '../SuspenseLoader'
 // elements / pages
 const NotFound = lazy(() => import('~elements/NotFound'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
-const PlansPublicPage = lazy(() => import('~elements/plans'))
+
+// The plans page is retired. Signed-in users land on billing, everyone else on the home page.
+const PlansRedirect = () => {
+  const { isAuthenticated, isAuthLoading } = useAuth()
+
+  if (isAuthLoading) return <Loading />
+
+  return <Navigate to={isAuthenticated ? Routes.dashboard.settings.billing : Routes.root} replace />
+}
 
 const isSaasNotFoundError = (error: unknown) =>
   error instanceof VocdoniApiError && (error.status === 404 || error.status === 400)
@@ -64,11 +73,7 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
   },
   {
     path: Routes.plans,
-    element: (
-      <SuspenseLoader>
-        <PlansPublicPage />
-      </SuspenseLoader>
-    ),
+    element: <PlansRedirect />,
   },
   {
     path: '*',

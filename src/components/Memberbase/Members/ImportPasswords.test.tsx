@@ -53,15 +53,6 @@ vi.mock('~components/Pricing/useBuyRoomAction', () => ({
   useBuyRoomAction: () => () => undefined,
 }))
 
-vi.mock('~components/Auth/Subscription', () => ({
-  useSubscription: () => ({
-    subscription: {
-      subscriptionDetails: { maxCensusSize: 1000 },
-      plan: { organization: { maxCensus: 1000 } },
-    },
-  }),
-}))
-
 vi.mock('../TableProvider', () => ({
   useTable: () => ({
     columns: [

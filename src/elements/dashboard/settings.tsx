@@ -34,15 +34,11 @@ const Settings = () => {
     ...(canViewWallet
       ? [
           {
-            label: t('wallet.title', { defaultValue: 'Wallet' }),
-            route: Routes.dashboard.settings.wallet,
+            label: t('billing.title', { defaultValue: 'Billing' }),
+            route: Routes.dashboard.settings.billing,
           },
         ]
       : []),
-    {
-      label: t('subscription.title', { defaultValue: 'Subscription plan' }),
-      route: Routes.dashboard.settings.subscription,
-    },
     {
       label: t('support', { defaultValue: 'Support' }),
       route: Routes.dashboard.settings.support,
@@ -66,7 +62,7 @@ const Settings = () => {
       </Heading>
       <SubHeading>
         {t('organization_settings.subtitle', {
-          defaultValue: 'Manage your organization, team members and your subscription plan',
+          defaultValue: 'Manage your organization, team members and billing',
         })}
       </SubHeading>
       <QueryDataLayout isLoading={isLoading} isError={isError} error={error}>

@@ -44,8 +44,6 @@
       "ticanoia": "logo TIC Anoia"
     }
   },
-  "annual": "Anual<1>40% d'estalvi</1>",
-  "apply": "Aplica",
   "aside": {
     "anonymous_receipt_gone": "El teu comprovant es va mostrar en votar i no es pot recuperar.",
     "has_already_voted": "El teu vot s'ha registrat correctament",
@@ -100,7 +98,9 @@
     "label": "Avatar de l'organització"
   },
   "back": "Enrere",
-  "billing_details": "Detalls de Facturació",
+  "billing": {
+    "title": "Facturació"
+  },
   "booking": {
     "unavailable": "La reserva no està disponible en aquest moment. Torna-ho a provar més tard."
   },
@@ -157,7 +157,6 @@
     "title": "Canvia la contrasenya"
   },
   "close": "Tanca",
-  "code_applied": "Codi \"{{appliedCode}}\" aplicat",
   "color_mode_switcher": "Commutador de mode de color",
   "common": {
     "back": "Enrere",
@@ -261,7 +260,6 @@
     "terms_acceptance": "He llegit i accepto els <2>Termes i Condicions</2> i la <6>Política de Privacitat.</6>"
   },
   "current": "Actual",
-  "current_plan": "Pla Actual",
   "dark": "Fosc",
   "dashboard": {
     "actions": {
@@ -273,15 +271,11 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "Codis 2FA per email",
-      "2fa_email_tooltip": "Codis de verificació per email enviats. Superar el límit costa {{price}}€ per codi.",
-      "2fa_sms": "Codis 2FA per SMS",
-      "2fa_sms_tooltip": "Codis de verificació per SMS enviats. Superar el límit costa {{price}}€ per codi.",
+      "description": "Segueix l'ús de la teva organització respecte als seus límits.",
       "limit_exceeded_message": "La teva base de membres ha arribat al límit de {{max}} membres.",
       "memberbase_size": "Mida de la base de membres",
       "memberbase_tooltip": "Nombre màxim de membres permesos a la teva base de membres.",
-      "plan_usage": "Ús del pla",
-      "plan_usage_description": "Controla el teu ús actual enfront els límits del teu pla",
+      "title": "Ús",
       "voting_processes": "Processos de votació"
     },
     "welcome": {
@@ -294,7 +288,6 @@
       "hello": "Benvingut a Vocdoni, {{name}}!",
       "how_first_vote": "Com crear la teva primera votació",
       "no_organization": "No s'ha trobat cap organització",
-      "no_subscription": "No hi ha cap subscripció disponible. Crea una organització per activar el teu pla.",
       "quick_actions": "Accions ràpides",
       "recent_voting_description": "Les darreres activitats de votació de la teva organització",
       "recent_voting_title": "Processos de votació recents",
@@ -315,7 +308,6 @@
   },
   "delete_my_account": "Elimina el meu compte",
   "description": "Descripció",
-  "discount": "Descompte",
   "do_it_later": "Fes-ho més tard",
   "draft_processes": "Esborranys",
   "drafts": {
@@ -367,7 +359,6 @@
   "end_time": "Hora de finalització",
   "end_vote": "Finalitza votació",
   "ended_processes": "Acabats",
-  "enter_promo_code": "Introdueix el codi",
   "error": {
     "crash_description": "Recarrega la pàgina o torna al tauler.",
     "crash_title": "Alguna cosa ha anat malament",
@@ -384,74 +375,6 @@
     "reload": "Recarrega",
     "return_to_home": "Torna a l'inici",
     "title": "Error"
-  },
-  "error_removing_code": "Hi ha hagut un error eliminant el codi",
-  "features": {
-    "anonymous": "Votació anònima",
-    "approval": "Per aprovació",
-    "audit": "Auditoria",
-    "audit_blockchain": "100% auditable a la blockchain",
-    "basic_analytics": "Analítiques bàsiques",
-    "basic_branding": "Marca bàsica",
-    "basic_sla": "Millor esforç",
-    "cumulative": "Votació acumulativa",
-    "custom_reports": "Informes personalitzats",
-    "custom_url": "Adreça URL personalitzada",
-    "dedicated_account_manager": "Gestor de comptes dedicat",
-    "email_notification": "Doble factor per correu electrònic",
-    "email_notifications": "Notificacions per correu als votants",
-    "email_reminder": "Recordatoris per correu electrònic",
-    "email_support": "Correu electrònic",
-    "email_support_basic": "(72h resp.)",
-    "email_support_essential": "(48h resp.)",
-    "email_support_premium": "(24h resp.)",
-    "GDPR_compliance": "Compliment del RGPD",
-    "generic_sla": "SLA genèric",
-    "live_results": "Resultats en directe",
-    "live_streaming": "Streaming en directe",
-    "memberbase_all_in_one_management": "Gestió integral de membres",
-    "multiple": "Elecció múltiple",
-    "on_demand": "Sota demanda*",
-    "overwrite": "Sobre-escriptura del vot",
-    "participatory_budgeting": "Pressupost participatiu",
-    "personalization": "Personalització",
-    "phone_support": "Suport telefònic",
-    "priority_support": "Suport prioritari",
-    "ranked": "Votació ordenada",
-    "section": {
-      "analytics_and_reporting": "Analítiques i informes",
-      "authentication_security": "Autenticació i seguretat",
-      "compliance_and_security": "Compliment i seguretat",
-      "customization": "Personalització",
-      "extra_features": "Funcionalitats addicionals",
-      "features": "Funcionalitats",
-      "general_limits": "Límits generals",
-      "memberbase_management": "Gestió de membres",
-      "organization": "Organització",
-      "support": "Suport",
-      "voting_types": "Tipus de votacions"
-    },
-    "single": "Elecció simple",
-    "sms_notification": "Doble factor via missatges de text SMS",
-    "sms_notifications": "Notificacions SMS als votants",
-    "sub_orgs": "Fins a {{ value }} suborganitzacions",
-    "team_members": "Membres de l'equip",
-    "tooltips": {
-      "anonymous": "Aquesta és una funcionalitat opcional que els organitzadors poden triar. Quan s'activa, els vots són completament anònims: ni tan sols nosaltres podem saber qui ha votat quina opció. Alternativament, els organitzadors poden triar xifrar els resultats fins que acabi la votació, o fer la votació completament pública.",
-      "live_results": "Aquesta és una funcionalitat opcional que els organitzadors poden triar. Els resultats es poden mostrar en temps real a mesura que es registren els vots, o els organitzadors poden triar mantenir els resultats xifrats i ocults fins que acabi el període de votació.",
-      "memberbase_all_in_one": "Importa la teva base de membres per crear grups de votants elegibles i gestionar els permisos de votació de manera molt fàcil.",
-      "multiple": "Els votants poden seleccionar múltiples opcions de les opcions disponibles. Ideal per a enquestes i decisions on es permeten múltiples seleccions.",
-      "overwrite": "Els votants poden canviar el seu vot abans que acabi el període de votació. Aquesta funcionalitat ajuda a evitar errors i prevenir la coerció permetent als votants corregir les seves tries.",
-      "single": "Els votants només poden seleccionar una opció de les opcions disponibles. Perfecte per a eleccions i decisions simples de sí/no.",
-      "team_members": "Convida membres de l'equip i assigna permisos basats en rols per poder gestionar fàcilment la teva organització",
-      "uptime": "Garantim un 99.99% de temps actiu, però només en els plans de pagament aquests són exigits per contracte amb garanties."
-    },
-    "total_orgs": "Sub-organitzacions disponibles",
-    "total_users": "Total d'usuaris disponibles",
-    "uptime": "99.99% de temps actiu",
-    "uptime_guaranteed": "Garantit ({{suffix}})",
-    "weighted": "Amb pes",
-    "white_label": "Marca blanca"
   },
   "footer": {
     "company": "Empresa",
@@ -520,9 +443,6 @@
       "voting_issue": "Problema de votació"
     }
   },
-  "free_trial_days_one": "Un dia gratuït",
-  "free_trial_days_many": "{{count}} dies gratuïts",
-  "free_trial_days_other": "{{count}} dies gratuïts",
   "google_oauth_conflict_error": "Ja existeix un compte amb aquest correu electrònic. Si us plau, inicia sessió amb el teu mètode existent.",
   "google_oauth_error": "Error d'OAuth de Google",
   "google_oauth_error_description": "Error d'OAuth de Google, si us plau torna-ho a provar",
@@ -845,13 +765,13 @@
       "title": "Claus API"
     },
     "configuration": {
-      "subtitle": "Gestiona el teu wallet, la teva subscripció i obtén suport.",
+      "subtitle": "Gestiona la teva facturació i obtén suport.",
       "title": "Configuració"
     },
     "create_account": {
       "cancel": "Cancel·lar",
       "confirm": "Crear el compte",
-      "description": "Es crearà un compte d'integrador nou en el pla gratuït i s'establirà com la teva organització activa.",
+      "description": "Es crearà un compte d'integrador nou i s'establirà com la teva organització activa, cosa que desbloqueja el tauler d'integrador.",
       "error": "No s'ha pogut crear el compte d'integrador",
       "switch_instead": "O canvia a una organització existent",
       "title": "Crear un compte d'integrador gratuït?"
@@ -917,21 +837,11 @@
     "signin_title": "Iniciar sessió",
     "signup_subtitle": "Registra't per gestionar organitzacions com a integrador.",
     "signup_title": "Crea el teu compte d'integrador",
-    "subscription": {
-      "active": "Activa",
-      "billing_details": "Detalls de facturació",
-      "current_plan": "Pla actual",
-      "inactive": "Inactiva",
-      "portal_error": "No s'ha pogut obrir el portal de facturació",
-      "unavailable": "Els detalls de la subscripció no estan disponibles"
-    },
-    "upgrade_plan": "Millorar el pla",
     "wallet": {
       "balance": "Saldo del wallet",
       "manage": "Gestiona el wallet"
     }
   },
-  "invalid_promo_code": "Codi de promoció no vàlid",
   "invite": {
     "account_not_verified": "El teu compte no està verificat. Si us plau, verifica'l per continuar.",
     "create_account_subtitle": "Primer necessites un compte per poder acceptar la invitació",
@@ -1147,8 +1057,6 @@
     "login": "Iniciar sessió",
     "open": "Obre menú"
   },
-  "month": "mes",
-  "monthly": "Mensual",
   "name": "Nom",
   "need_help": {
     "description": "Necessites ajuda amb el teu primer procés de votació? Mira aquest tutorial o programa una trucada.",
@@ -1180,7 +1088,6 @@
   },
   "open_in_explorer": "Obre a l'explorador",
   "or_continue_with": "o continua amb",
-  "order_summary": "Resum de la comanda",
   "org_type_selector": {
     "selector_label": "Selecciona el tipus d'organització"
   },
@@ -1200,8 +1107,6 @@
       "title": "Crea la teva primera votació"
     },
     "elections_list_load_more": "Carrega’n més",
-    "max_census": "Cens màxim per votació",
-    "max_processes": "Votacions per any¹",
     "no_organization_title": "Encara no pertanys a cap organització!",
     "organization": "Detalls de l'organització",
     "title": {
@@ -1222,7 +1127,7 @@
       "priority_support_line_description": "Disponible de dilluns a divendres, de 9:00 a 18:00 CET",
       "title": "Suport telefònic"
     },
-    "subtitle": "Gestiona la teva organització, els membres de l'equip i el teu pla de subscripció",
+    "subtitle": "Gestiona la teva organització, els membres de l'equip i la facturació",
     "support": {
       "description": "Obtén ajuda i suport per a la teva organització.",
       "title": "Suport"
@@ -1281,61 +1186,11 @@
   },
   "plan": {
     "encouragement": "Llançar una votació és senzill, i els participants poden unir-s'hi des de qualsevol lloc. Les fortes garanties a un cost més baix han convertit Vocdoni en una opció de confiança per a centenars d'ajuntaments, associacions, partits polítics i empreses.",
-    "free": "<0>Estàs al Pla Gratuït</0>, que ja et permet llançar votacions. Si necessites més funcionalitats, límits més alts o opcions específiques, explora els plans de pagament i prova'ls gratuïtament.",
     "special_needs": "Necessites ajuda o alguna cosa específica? Programa una trucada."
   },
   "please_check_email_to_verify": "Si us plau, comprova el teu correu electrònic per verificar el teu compte.",
   "preferences": "Preferències",
   "preview": "Vista prèvia",
-  "pricing": {
-    "2fa": "Autenticació 2FA² ({{suffix}})",
-    "2fa_suffix_both": "Correu i SMS",
-    "2fa_suffix_email": "Correu electrònic",
-    "2fa_suffix_sms": "SMS",
-    "basic_analytics": "Informes i anàlisis bàsiques",
-    "comparison_table": {
-      "footnote_1": "¹ Les votacions amb menys de 10 participants es tracten com a proves i no compten per als límits del teu pla.",
-      "footnote_2": "² Els crèdits de 2FA només es consumeixen en el moment que un usuari sol·licita la verificació en un procés de votació. No et quedaràs mai sense avís: si superes els crèdits inclosos durant una votació, cada codi addicional es cobrarà a 0,015 € en el moment de l'enviament. També pots comprar crèdits addicionals per avançat en paquets còmodes.",
-      "footnote_on_demand": "* Les funcionalitats sol·licitades s'avaluaran individualment i poden comportar costos addicionals."
-    },
-    "core_voting_one": "Un únic membre",
-    "core_voting_many": "Fins a {{ count }} membres",
-    "core_voting_other": "Fins a {{ count }} membres",
-    "custom_branding": "Marca personalitzada*",
-    "custom_subtitle": "Adaptat a les teves necessitats",
-    "custom_title": "Personalitzat",
-    "different_voting_methods": "Diferents mètodes de votació",
-    "empty": "No s'han trobat plans",
-    "empty_description": "Torna-ho a provar més tard per veure els plans disponibles.",
-    "essential_subtitle": "Organitzacions petites o mitjanes o grups comunitaris amb necessitats bàsiques de votació.",
-    "essential_title": "Bàsic",
-    "free_subtitle": "Organitzacions petites o grups comunitaris amb necessitats bàsiques de votació.",
-    "free_title": "Gratuït",
-    "load_error": "No s'han pogut carregar els plans",
-    "load_error_description": "Torna-ho a provar.",
-    "premium_subtitle": "un volum més gran que requereix funcions més avançades.",
-    "premium_title": "Prèmium",
-    "priority_support": "Suport prioritari per correu electrònic (24h)",
-    "ticket_support_48": "Suport per correu electrònic (48h)",
-    "ticket_support_72": "Suport per correu electrònic (72h)",
-    "up_to_admins_one": "Un únic administrador",
-    "up_to_admins_many": "{{ count }} administradors",
-    "up_to_admins_other": "{{ count }} administradors",
-    "yearly_processes_one": "{{ count }} procés anual",
-    "yearly_processes_many": "{{ count }} processos anuals",
-    "yearly_processes_other": "{{ count }} processos anuals"
-  },
-  "pricing_card": {
-    "annual_savings": "Estalvia {{ savings }}/any amb l'anual",
-    "annual_total_cost": "{{ price }} facturats anualment",
-    "contact_sales": "<0>Contacta amb els nostres comercials</0> <1>o</1>",
-    "custom_plan": "Preu sota consulta",
-    "custom_plan_description": "Tens requisits de governança especials? Ens podem adaptar a les teves necessitats amb una solució personalitzada. Contacta'ns.",
-    "free_trial": "{{ freeDays }} dies gratuïts",
-    "from": "<price>{{ price }}</price><time>/mes+IVA</time>",
-    "most_popular_plan": "Recomanat",
-    "need_more_members": "Necessites més membres? <2>Contacta'ns</2>"
-  },
   "privacy_policy": "Política de Privacitat",
   "process": {
     "anonymity": {
@@ -1816,8 +1671,6 @@
     "error": "No s'ha pogut actualitzar el perfil",
     "success": "Perfil actualitzat correctament"
   },
-  "promo_code": "Codi promocional",
-  "promo_code_required": "Cal introduir un codi",
   "public_process": {
     "no_tally": "Sense recompte",
     "verify": "Verifica a l’explorador de la blockchain:",
@@ -1826,7 +1679,6 @@
   "questions_and_results": "Preguntes i resultats",
   "registration_failed": "El registre ha fallat",
   "registration_successful": "Registre completat correctament",
-  "remove": "Elimina",
   "remove_avatar": "Elimina l'avatar",
   "reset_password_button": "Restableix la contrasenya",
   "result_visibility": "Visibilitat dels resultats",
@@ -1902,19 +1754,6 @@
   },
   "start_date": "Data d'inici",
   "start_time": "Hora d'inici",
-  "subscribe": "Subscriu-te",
-  "subscription": {
-    "title": "Subscripció"
-  },
-  "subscription_plan": {
-    "gdpr_compliance": "Tots els plans inclouen compliment del RGPD.",
-    "hide_comparison_table": "Mostra menys funcionalitats",
-    "need_help": "<0>Necessites ajuda per triar?</0> <1>Contacta amb el nostre equip comercial</1>",
-    "show_comparison_table": "Veure totes les funcionalitats",
-    "subtitle": "Amb les nostres subscripcions, obtens més que un pla. Aconsegueixes accés a la plataforma de governança més innovadora. Gràcies a aquest model, podem oferir el millor preu del mercat: tant si necessites 1, 5 o 20 votacions a l'any, sempre gaudiràs dels costos més competitius i de garanties incomparables. La plataforma és totalment d'autoservei, però el nostre equip està sempre disponible per oferir-te assistència o adaptar solucions a les teves necessitats específiques.",
-    "title": "Pla de subscripció"
-  },
-  "subtotal": "Subtotal",
   "support": "Suport",
   "support_chat": {
     "ask_name": "Abans d'enviar-ho, com et dius?",
@@ -1946,7 +1785,6 @@
   "switch_mode": "Canvia al mode {{ mode }}",
   "switch_organization": "Canvia d'organització",
   "system": "Sistema",
-  "tax": "IVA ({{percent}}%)",
   "team": {
     "actions": {
       "cancel_invitation": "Cancel·la la invitació",
@@ -2059,12 +1897,8 @@
     }
   },
   "theme": "Tema",
-  "then_price_per_period": "Llavors {{price}}/{{period}}",
-  "total_after_trial": "Total després de la prova",
-  "total_due_today": "Total a pagar avui",
   "total_votes": "Total de vots",
   "turnout": "Participació",
-  "upgrade_plan": "Canvia a {{plan}}",
   "uploaded_image_preview": "Previsualització de la imatge carregada",
   "uploader": {
     "avatar_upload_failed": "Error en pujar l'avatar",
@@ -2117,7 +1951,6 @@
     "verifying_title": "Verificant {{ email }}"
   },
   "view_in_explorer": "Mostra a l'explorador",
-  "view_plans_and_pricing": "Veure plans i preus",
   "vocdoni_logo": "Logotip de Vocdoni",
   "vote": {
     "anonymous_receipt": "Vot anònim: desa ara aquest comprovant, la plataforma no te’l podrà tornar a mostrar.",
@@ -2260,7 +2093,6 @@
     "pagination": "Pàgina {{page}} de {{total}} · {{items}} en total",
     "processing": "Pagament rebut. El saldo s'actualitzarà tan bon punt es confirmi.",
     "processing_timeout": "Triga més del previst. El saldo s'actualitzarà quan es confirmi el pagament; torna a mirar-ho més tard.",
-    "title": "Wallet",
     "topup": {
       "admin_only": "Només els administradors poden recarregar el wallet.",
       "amount": "Import (EUR, sense IVA)",
@@ -2277,8 +2109,6 @@
       "vat": "IVA"
     }
   },
-  "wallet_not_connected": "Cartera no connectada",
   "website": "Lloc web",
-  "whatsapp_contact": "Parla amb nosaltres!",
-  "year": "any"
+  "whatsapp_contact": "Parla amb nosaltres!"
 }
