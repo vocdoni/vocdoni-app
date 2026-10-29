@@ -42,7 +42,7 @@ const DashboardButton = (props?: ButtonProps) => {
   const showAuthenticatedState = mounted && isAuthenticated
 
   return (
-    <Button asChild px={6} {...props}>
+    <Button asChild size='cta' {...props}>
       <RouterAwareLink to={showAuthenticatedState ? generatePath(Routes.dashboard.base) : Routes.auth.signIn}>
         {showAuthenticatedState ? t('menu.dashboard', { defaultValue: 'Dashboard' }) : t('menu.login')}
       </RouterAwareLink>

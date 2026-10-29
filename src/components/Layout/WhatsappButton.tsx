@@ -13,19 +13,7 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
   const whatsappUrl = `https://wa.me/${phoneNumber}`
 
   return (
-    <Button
-      asChild
-      role='group'
-      bg='whatsapp.500'
-      color='white'
-      _hover={{ bg: 'whatsapp.600' }}
-      px='4'
-      display='inline-flex'
-      alignItems='center'
-      justifyContent='center'
-      overflow='hidden'
-      transition='background-color {durations.moderate} ease-in-out'
-    >
+    <Button asChild role='group' variant='whatsapp' overflow='hidden'>
       <a href={whatsappUrl} target='_blank' rel='noopener noreferrer'>
         <HStack gap={0}>
           <Icon as={MdOutlineWhatsapp} boxSize={6} flexShrink={0} />

@@ -200,9 +200,7 @@ export const VoterSignInPreview = ({
                 key={value}
                 size='xs'
                 flex='1'
-                variant='ghost'
-                bg={visibleScreen === value ? 'bg.emphasized' : undefined}
-                fontWeight={visibleScreen === value ? 'semibold' : 'normal'}
+                variant='segment'
                 aria-pressed={visibleScreen === value}
                 onClick={() => setScreen(value)}
               >

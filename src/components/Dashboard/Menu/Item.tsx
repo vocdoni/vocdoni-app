@@ -42,12 +42,9 @@ export const DashboardMenuItemButton = forwardRef(
         onClick={(e) => {
           if (isDisabled) e.preventDefault()
         }}
-        variant='listmenu'
+        variant='nav-item'
         size='xs'
         colorPalette='gray'
-        justifyContent='start'
-        gap={4}
-        p={2}
         disabled={isDisabled}
         data-active={isActive ? '' : undefined}
         aria-current={isActive ? 'page' : undefined}
@@ -59,13 +56,9 @@ export const DashboardMenuItemButton = forwardRef(
       <Button
         ref={ref}
         asChild
-        variant='listmenu'
+        variant='nav-item'
         size='xs'
-        fontSize='sm'
         colorPalette='gray'
-        justifyContent='start'
-        gap={4}
-        p={2}
         data-active={isActive ? '' : undefined}
         aria-current={isActive ? 'page' : undefined}
         {...buttonProps}
