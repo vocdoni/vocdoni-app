@@ -8,6 +8,7 @@ vi.mock('~src/queries/integrators', () => ({
 
 vi.mock('~src/queries/wallet', () => ({
   useWallet: vi.fn(),
+  useWalletAccess: vi.fn(),
 }))
 
 // Avoid loading the Cal.com embed (@calcom/embed-react) in jsdom.
@@ -16,7 +17,7 @@ vi.mock('~components/Dashboard/Booker', () => ({
 }))
 
 import { useIntegratorInfo } from '~src/queries/integrators'
-import { useWallet } from '~src/queries/wallet'
+import { useWallet, useWalletAccess } from '~src/queries/wallet'
 
 const mockInfo = (overrides: Partial<ReturnType<typeof useIntegratorInfo>> = {}) =>
   ({ data: undefined, isLoading: false, error: null, ...overrides }) as any
@@ -47,6 +48,7 @@ describe('IntegratorOverview', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(useWallet).mockReturnValue(mockWallet())
+    vi.mocked(useWalletAccess).mockReturnValue({ canView: true, canTopUp: true })
   })
 
   it('renders quota cards with usage and limits', () => {
@@ -109,6 +111,17 @@ describe('IntegratorOverview', () => {
       'href',
       '/integrators/configuration/wallet'
     )
+  })
+
+  it('hides the wallet card from roles that cannot read the wallet', () => {
+    vi.mocked(useIntegratorInfo).mockReturnValue(mockInfo({ data: enabledData }))
+    vi.mocked(useWallet).mockReturnValue(mockWallet({ data: walletData }))
+    vi.mocked(useWalletAccess).mockReturnValue({ canView: false, canTopUp: false })
+
+    render(<IntegratorOverview />, { wrapper: TestMemoryRouter })
+
+    expect(screen.queryByText('Wallet balance')).not.toBeInTheDocument()
+    expect(screen.getByText('Organizations created')).toBeInTheDocument()
   })
 
   it('hides the wallet card when the wallet cannot be loaded', () => {

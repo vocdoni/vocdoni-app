@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
+import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '~src/router/routes'
 
 type ConfigTab = {
@@ -19,12 +20,17 @@ const IntegratorConfiguration = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
+  const { canView: canViewWallet } = useWalletAccess()
 
   const tabs: ConfigTab[] = [
-    {
-      label: t('wallet.title', { defaultValue: 'Wallet' }),
-      route: Routes.integrators.configuration.wallet,
-    },
+    ...(canViewWallet
+      ? [
+          {
+            label: t('wallet.title', { defaultValue: 'Wallet' }),
+            route: Routes.integrators.configuration.wallet,
+          },
+        ]
+      : []),
     {
       label: t('subscription.title', { defaultValue: 'Subscription plan' }),
       route: Routes.integrators.configuration.subscription,

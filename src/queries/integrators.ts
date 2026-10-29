@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { MultilingualText } from '@vocdoni/api-types'
 import { ensure0x } from '~utils/address'
 import { ApiEndpoints } from '~components/Auth/api'
@@ -93,6 +93,8 @@ export const useManagedOrganizations = (page: number, limit: number) => {
 
   return useQuery<ManagedOrganizationsResponse>({
     queryKey: QueryKeys.integrator.managed(selectedAddress, page, limit),
+    // Keeps the previous page on screen while the next one loads, so pagination can be disabled meanwhile
+    placeholderData: keepPreviousData,
     queryFn: () =>
       bearedFetch<ManagedOrganizationsResponse>(`${ApiEndpoints.ManagedOrganizations}?page=${page}&limit=${limit}`),
   })

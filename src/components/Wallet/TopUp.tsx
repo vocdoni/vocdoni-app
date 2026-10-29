@@ -18,6 +18,8 @@ const PRESET_AMOUNTS_EUR = [50, 100, 500, 1000]
 const AMOUNT_PATTERN = /^\d+(\.\d{1,2})?$/
 
 type WalletTopUpProps = {
+  // Called when the payment is submitted, before Stripe may redirect the page away.
+  onStart?: (amountCents: number) => void
   onDone: (amountCents: number) => void
   onCancel: () => void
 }
@@ -84,6 +86,7 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
 type PaymentStepProps = {
   amountCents: number
   onBack: () => void
+  onStart?: (amountCents: number) => void
   onDone: (amountCents: number) => void
 }
 
@@ -91,10 +94,11 @@ type CheckoutFormProps = {
   amountCents: number
   sessionId: string | null
   onBack: () => void
+  onStart?: (amountCents: number) => void
   onDone: (amountCents: number) => void
 }
 
-const CheckoutForm = ({ amountCents, sessionId, onBack, onDone }: CheckoutFormProps) => {
+const CheckoutForm = ({ amountCents, sessionId, onBack, onStart, onDone }: CheckoutFormProps) => {
   const { t } = useTranslation()
   const checkoutState = useCheckout()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -107,6 +111,7 @@ const CheckoutForm = ({ amountCents, sessionId, onBack, onDone }: CheckoutFormPr
 
     setIsSubmitting(true)
     setError(null)
+    onStart?.(amountCents)
 
     try {
       const result = await checkoutState.checkout.confirm({
@@ -205,7 +210,7 @@ const CheckoutForm = ({ amountCents, sessionId, onBack, onDone }: CheckoutFormPr
   )
 }
 
-const PaymentStep = ({ amountCents, onBack, onDone }: PaymentStepProps) => {
+const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps) => {
   const { t, i18n } = useTranslation()
   const stripePromise = useStripePromise()
   const appearance = useCheckoutAppearance()
@@ -246,12 +251,12 @@ const PaymentStep = ({ amountCents, onBack, onDone }: PaymentStepProps) => {
 
   return (
     <CheckoutProvider stripe={stripePromise} options={options}>
-      <CheckoutForm amountCents={amountCents} sessionId={sessionId} onBack={onBack} onDone={onDone} />
+      <CheckoutForm amountCents={amountCents} sessionId={sessionId} onBack={onBack} onStart={onStart} onDone={onDone} />
     </CheckoutProvider>
   )
 }
 
-export const WalletTopUp = ({ onDone, onCancel }: WalletTopUpProps) => {
+export const WalletTopUp = ({ onStart, onDone, onCancel }: WalletTopUpProps) => {
   const [amount, setAmount] = useState('')
   const [amountCents, setAmountCents] = useState<number | null>(null)
 
@@ -259,5 +264,5 @@ export const WalletTopUp = ({ onDone, onCancel }: WalletTopUpProps) => {
     return <AmountStep amount={amount} onAmountChange={setAmount} onContinue={setAmountCents} onCancel={onCancel} />
   }
 
-  return <PaymentStep amountCents={amountCents} onBack={() => setAmountCents(null)} onDone={onDone} />
+  return <PaymentStep amountCents={amountCents} onBack={() => setAmountCents(null)} onStart={onStart} onDone={onDone} />
 }
