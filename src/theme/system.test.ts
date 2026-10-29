@@ -44,6 +44,63 @@ const COLOR_PROPS = new Set([
 // Exact string literals that are intentionally raw (each entry needs a reason)
 const RAW_LITERAL_ALLOWLIST = new Set<string>([])
 
+// Non-color style props whose token-looking string values must resolve in their token category
+const RADIUS_PROPS = [
+  'borderRadius',
+  'rounded',
+  'roundedTop',
+  'roundedBottom',
+  'roundedLeft',
+  'roundedRight',
+  'roundedTopLeft',
+  'roundedTopRight',
+  'roundedBottomLeft',
+  'roundedBottomRight',
+  'borderTopRadius',
+  'borderBottomRadius',
+  'borderTopLeftRadius',
+  'borderTopRightRadius',
+  'borderBottomLeftRadius',
+  'borderBottomRightRadius',
+]
+const TOKEN_PROPS: Record<string, string> = {
+  lineHeight: 'lineHeights',
+  fontSize: 'fontSizes',
+  fontWeight: 'fontWeights',
+  letterSpacing: 'letterSpacings',
+  boxShadow: 'shadows',
+  shadow: 'shadows',
+  zIndex: 'zIndex',
+  ...Object.fromEntries(RADIUS_PROPS.map((prop) => [prop, 'radii'])),
+}
+
+// CSS keywords these props accept besides tokens
+const TOKEN_PROP_KEYWORDS = new Set([
+  'normal',
+  'bold',
+  'bolder',
+  'lighter',
+  'smaller',
+  'larger',
+  'xx-small',
+  'x-small',
+  'small',
+  'medium',
+  'large',
+  'x-large',
+  'xx-large',
+  'revert',
+])
+
+// Recipe paths whose non-color token is known to be dangling, pending their fix.
+// removed by fix/theme-dead-tokens (PR 1.1); delete this entry then
+const KNOWN_INVALID = new Set<string>([
+  'badge.variants.size.xs.lineHeight',
+  'badge.variants.size.sm.lineHeight',
+  'badge.variants.size.md.lineHeight',
+  'badge.variants.size.lg.lineHeight',
+])
+
 const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes, resultsProgress: resultsProgressRecipe }
 
 const isTokenPath = (value: string) => /^[a-zA-Z][\w-]*(\.[\w-]+)+$/.test(value)
@@ -64,6 +121,16 @@ const isValidConditionalKey = (key: string) =>
 
 type Violation = { path: string; value: string; reason: string }
 
+// Checks a string used as the value of a non-color token prop (lineHeight, fontSize, radius, …)
+const checkTokenValue = (value: string, path: string, category: string, violations: Violation[]) => {
+  if (KNOWN_INVALID.has(path) || CSS_KEYWORDS.has(value) || TOKEN_PROP_KEYWORDS.has(value)) return
+  // Numbers, lengths and composite values (`0 0 0 1px …`) are not token references
+  if (!/^[a-zA-Z][\w-]*(\.[\w-]+)*$/.test(value)) return
+  if (system.tokens.getByName(`${category}.${value}`) === undefined) {
+    violations.push({ path, value, reason: `${category} token not found in the built system` })
+  }
+}
+
 // Checks a string used as the value of a color prop (directly or via a conditional map)
 const checkColorValue = (value: string, path: string, violations: Violation[]) => {
   if (CSS_KEYWORDS.has(value)) return
@@ -76,9 +143,17 @@ const checkColorValue = (value: string, path: string, violations: Violation[]) =
   }
 }
 
-const walk = (node: unknown, path: string, colorProp: boolean, violations: Violation[], slotNames: Set<string>) => {
+const walk = (
+  node: unknown,
+  path: string,
+  colorProp: boolean,
+  violations: Violation[],
+  slotNames: Set<string>,
+  tokenCategory?: string
+) => {
   if (typeof node === 'string') {
     if (colorProp) checkColorValue(node, path, violations)
+    if (tokenCategory) checkTokenValue(node, path, tokenCategory, violations)
     if (!RAW_LITERAL_ALLOWLIST.has(node)) {
       if (/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(/.test(node)) {
         violations.push({ path, value: node, reason: 'raw color literal (use a token)' })
@@ -90,7 +165,7 @@ const walk = (node: unknown, path: string, colorProp: boolean, violations: Viola
     return
   }
   if (Array.isArray(node)) {
-    node.forEach((item, i) => walk(item, `${path}[${i}]`, colorProp, violations, slotNames))
+    node.forEach((item, i) => walk(item, `${path}[${i}]`, colorProp, violations, slotNames, tokenCategory))
     return
   }
   if (typeof node !== 'object' || node === null) return
@@ -125,7 +200,10 @@ const walk = (node: unknown, path: string, colorProp: boolean, violations: Viola
           }
         }
       }
-      walk(value, childPath, false, violations, slotNames)
+      // Direct value of a token prop, or a conditional/responsive map of one
+      const childCategory =
+        TOKEN_PROPS[key] ?? (tokenCategory && isValidConditionalKey(key) ? tokenCategory : undefined)
+      walk(value, childPath, false, violations, slotNames, childCategory)
     }
   }
 }
@@ -145,6 +223,23 @@ describe('theme system integrity', () => {
     expect(colorTokenExists('fg.muted')).toBe(true)
     expect(colorTokenExists('colorPalette.solid')).toBe(true)
     expect(colorTokenExists('nope.does.not.exist')).toBe(false)
+  })
+
+  it('sanity: non-color token props are checked against their category', () => {
+    const check = (recipe: unknown) => {
+      const violations: Violation[] = []
+      walk(recipe, 'fixture', false, violations, new Set())
+      return violations.map((v) => `${v.path}=${v.value}`)
+    }
+    expect(check({ base: { fontSize: 'sm', lineHeight: 'short', rounded: 'md', zIndex: 'sidebar' } })).toEqual([])
+    expect(
+      check({ base: { lineHeight: 1.2, fontSize: '12px', boxShadow: '0 0 0 1px red', fontWeight: 'bold' } })
+    ).toEqual([])
+    expect(check({ base: { lineHeight: 'xs', rounded: { base: 'md', md: 'huge' }, zIndex: 'nope' } })).toEqual([
+      'fixture.base.lineHeight=xs',
+      'fixture.base.rounded.md=huge',
+      'fixture.base.zIndex=nope',
+    ])
   })
 
   it.each(Object.entries(ALL_RECIPES))('recipe "%s" only references existing tokens and conditions', (name, recipe) => {
