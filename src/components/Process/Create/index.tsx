@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   ButtonGroup,
-  Flex,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   HStack,
@@ -39,13 +38,12 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
-import DeleteModal from '~components/Modal/DeleteModal'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
-import { statusPalette } from '~theme/status'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
@@ -418,9 +416,11 @@ const LeaveConfirmationModal = ({
   const { t } = useTranslation()
 
   return (
-    <DeleteModal
+    <ConfirmDialog
+      layout='inline'
+      separateCancel
       title={t('process.create.leave_confirmation.title', { defaultValue: 'Unsaved Changes' })}
-      subtitle={
+      description={
         isSamePath
           ? t('process.create.leave_confirmation.reset_message', {
               defaultValue: 'This will reset the form. Do you want to continue?',
@@ -431,28 +431,21 @@ const LeaveConfirmationModal = ({
       }
       open={isOpen}
       onOpenChange={({ open }) => (!open ? onCancel() : undefined)}
-    >
-      <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={onCancel}>
-          {t('process.create.leave_confirmation.cancel', { defaultValue: 'Cancel' })}
-        </Button>
-        <Spacer />
-        {isSamePath ? (
-          <Button colorPalette={statusPalette.destructive} onClick={() => onResetSamePath()}>
-            {t('process.create.leave_confirmation.reset', { defaultValue: 'Reset' })}
+      cancelText={t('process.create.leave_confirmation.cancel', { defaultValue: 'Cancel' })}
+      confirmText={
+        isSamePath
+          ? t('process.create.leave_confirmation.reset', { defaultValue: 'Reset' })
+          : t('process.create.leave_confirmation.leave', { defaultValue: 'Leave without saving' })
+      }
+      onConfirm={isSamePath ? () => onResetSamePath() : onLeave}
+      extraActions={
+        !isSamePath && (
+          <Button onClick={onSaveAndLeave}>
+            {t('process.create.leave_confirmation.save_and_leave', { defaultValue: 'Save and leave' })}
           </Button>
-        ) : (
-          <>
-            <Button colorPalette={statusPalette.destructive} onClick={onLeave}>
-              {t('process.create.leave_confirmation.leave', { defaultValue: 'Leave without saving' })}
-            </Button>
-            <Button onClick={onSaveAndLeave}>
-              {t('process.create.leave_confirmation.save_and_leave', { defaultValue: 'Save and leave' })}
-            </Button>
-          </>
-        )}
-      </Flex>
-    </DeleteModal>
+        )
+      }
+    />
   )
 }
 

@@ -1,9 +1,9 @@
-import { Button, Dialog, Flex, Text } from '@chakra-ui/react'
+import { Button, Flex, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { DashboardBox } from '~components/Dashboard/Contents'
-import DeleteModal from '~components/Modal/DeleteModal'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { Routes } from '~routes'
 import { useProfile } from '~src/queries/account'
 import { statusPalette } from '~theme/status'
@@ -30,12 +30,14 @@ export const AccountEdit = () => {
           <Trans i18nKey='delete_my_account'>Delete Account</Trans>
         </Button>
       </DashboardBox>
-      <DeleteModal
+      <ConfirmDialog
+        layout='compact'
+        destructive={false}
         size='md'
         open={isOpen}
         onOpenChange={({ open }) => setOpen(open)}
         title={t('delete.confirm_title', { defaultValue: 'Delete Your Account' })}
-        subtitle={
+        description={
           <Flex flexDirection='column' gap={2}>
             <Text fontSize='sm'>
               {t('delete.confirm_description', {
@@ -44,20 +46,14 @@ export const AccountEdit = () => {
             </Text>
           </Flex>
         }
-      >
-        <Flex justifyContent='flex-end' gap={3}>
-          <Dialog.ActionTrigger asChild>
-            <Button variant='outline' alignSelf='flex-end'>
-              {t('delete.cancel_button', { defaultValue: 'Cancel' })}
-            </Button>
-          </Dialog.ActionTrigger>
-          <Button asChild>
-            <Link to={Routes.dashboard.settings.support}>
-              <Trans i18nKey='contact_us'>Contact us</Trans>
-            </Link>
-          </Button>
-        </Flex>
-      </DeleteModal>
+        cancelText={t('delete.cancel_button', { defaultValue: 'Cancel' })}
+        confirmProps={{ asChild: true }}
+        confirmText={
+          <Link to={Routes.dashboard.settings.support}>
+            <Trans i18nKey='contact_us'>Contact us</Trans>
+          </Link>
+        }
+      />
     </Flex>
   )
 }

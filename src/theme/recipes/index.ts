@@ -3,7 +3,6 @@ import { Badge } from './badge'
 import { Button } from './button'
 import { Card } from './card'
 import { checkbox } from './checkbox'
-import { ConfirmModal } from './confirmModal'
 import { Dialog } from './dialog'
 import { Drawer } from './drawer'
 import {
@@ -72,7 +71,6 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   tabs: Tabs,
   tag: Tag,
   tooltip: Tooltip,
-  ConfirmModal,
   ElectionQuestions,
   ElectionResults,
   Pagination,

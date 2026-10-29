@@ -61,7 +61,7 @@ export const ModalForm = ({ isOpen, onClose, title, subtitle, children, submitTe
             <Dialog.Body>{children}</Dialog.Body>
 
             <Dialog.Footer>
-              <Button variant='ghost' onClick={onClose}>
+              <Button variant='outline' onClick={onClose}>
                 {cancelText || t('actions.cancel', { defaultValue: 'Cancel' })}
               </Button>
               <Button
