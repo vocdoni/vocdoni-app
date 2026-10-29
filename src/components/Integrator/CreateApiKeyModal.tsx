@@ -240,7 +240,7 @@ export const CreateApiKeyButton = () => {
                   </Stack>
                 </Dialog.Body>
                 <Dialog.Footer>
-                  <Button variant='ghost' onClick={close}>
+                  <Button variant='outline' onClick={close}>
                     {t('cancel', { defaultValue: 'Cancel' })}
                   </Button>
                   <Button onClick={onSubmit} loading={create.isPending}>
