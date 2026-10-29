@@ -127,9 +127,12 @@ const MIN_SURFACE_CONTRAST = 3
 const LIGHT_SOLID_STEPS: Array<keyof PaletteScale> = [500, 600, 700, 800, 900, 950]
 const DARK_SOLID_STEPS: Array<keyof PaletteScale> = [500, 400, 300, 200, 100, 50]
 
-const pickReadableStep = (scale: PaletteScale, candidates: Array<keyof PaletteScale>, background: string) =>
-  candidates.find((step) => contrastRatio(scale[step], background) >= MIN_SURFACE_CONTRAST) ??
-  candidates[candidates.length - 1]
+const pickReadableStep = (
+  scale: PaletteScale,
+  candidates: Array<keyof PaletteScale>,
+  background: string,
+  min = MIN_SURFACE_CONTRAST
+) => candidates.find((step) => contrastRatio(scale[step], background) >= min) ?? candidates[candidates.length - 1]
 
 // WCAG AA minimum for normal-size text (4.5:1). Labels on a filled surface are
 // text, so they are held to this bar rather than the 3:1 non-text one.
@@ -142,10 +145,6 @@ const MIN_TEXT_CONTRAST = 4.5
 // keep the same step.
 const LIGHT_FG_STEPS: Array<keyof PaletteScale> = [700, 800, 900, 950]
 const DARK_FG_STEPS: Array<keyof PaletteScale> = [300, 200, 100, 50]
-
-const pickReadableTextStep = (scale: PaletteScale, candidates: Array<keyof PaletteScale>, background: string) =>
-  candidates.find((step) => contrastRatio(scale[step], background) >= MIN_TEXT_CONTRAST) ??
-  candidates[candidates.length - 1]
 
 // Text color for a filled surface of the given color. White is preferred as
 // long as it clears the text bar: raw luminance would pick black on most mid
@@ -198,8 +197,8 @@ type Backgrounds = { light: string; dark: string }
 export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Backgrounds): PaletteSemanticTokens => {
   const lightSolid = pickReadableStep(scale, LIGHT_SOLID_STEPS, backgrounds.light)
   const darkSolid = pickReadableStep(scale, DARK_SOLID_STEPS, backgrounds.dark)
-  const lightFg = pickReadableTextStep(scale, LIGHT_FG_STEPS, backgrounds.light)
-  const darkFg = pickReadableTextStep(scale, DARK_FG_STEPS, backgrounds.dark)
+  const lightFg = pickReadableStep(scale, LIGHT_FG_STEPS, backgrounds.light, MIN_TEXT_CONTRAST)
+  const darkFg = pickReadableStep(scale, DARK_FG_STEPS, backgrounds.dark, MIN_TEXT_CONTRAST)
   const ref = (step: keyof PaletteScale) => `{colors.brand.${step}}`
 
   return {
