@@ -1,15 +1,10 @@
 import { Alert, Button, Flex, Link, Skeleton, Stack, Text } from '@chakra-ui/react'
+import type { ProcessPriceResponse, QuoteLine } from '@vocdoni/api-types'
 import type { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router'
 import { SupportLink } from '~components/Layout/SupportLink'
-import {
-  isQuoteOnly,
-  isUnpriceableDraft,
-  ProcessPrice,
-  ProcessPriceLine,
-  useProcessPrice,
-} from '~queries/process-price'
+import { isQuoteOnly, isUnpriceableDraft, useProcessPrice } from '~queries/process-price'
 import { useWallet } from '~queries/wallet'
 import { Routes } from '~src/router/routes'
 import { currency, quantity } from '~utils/numbers'
@@ -20,7 +15,7 @@ import { selfServiceVoterLimit } from './payment-errors'
 export const quoteRecommendedVoterLimit = 15_000
 
 // The backend describes each line in English; known kinds are translated here instead.
-const lineLabel = (t: TFunction, { kind, description }: ProcessPriceLine) => {
+const lineLabel = (t: TFunction, { kind, description }: QuoteLine) => {
   switch (kind) {
     case 'base':
       return t('process.price.line.base', { defaultValue: 'Voting process' })
@@ -44,7 +39,7 @@ const lineLabel = (t: TFunction, { kind, description }: ProcessPriceLine) => {
 const quoteLink = <SupportLink fontWeight='semibold' textDecoration='underline' />
 
 // The note under the total: why the price is what it is, and what paying it means
-const priceNote = (t: TFunction, price: ProcessPrice) => {
+const priceNote = (t: TFunction, price: ProcessPriceResponse) => {
   if (isQuoteOnly(price)) {
     return t('process.price.quote_only', { defaultValue: 'The price of this voting process is set by a custom quote.' })
   }
