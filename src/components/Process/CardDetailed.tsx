@@ -72,7 +72,11 @@ const ProcessDetailedCardTitle = () => {
   const { t } = useTranslation()
 
   if (!election) {
-    return <Text fontStyle='italic'>{t('process.is_invalid')}</Text>
+    return (
+      <Text fontStyle='italic' color='status.error.fg'>
+        {t('process.is_invalid')}
+      </Text>
+    )
   }
 
   return <ElectionTitle as='p' />

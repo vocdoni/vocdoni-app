@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { accentPalette, statusPalette, statusPaletteAlt } from './status'
+import { statusPalette } from './status'
 import { createAppSystem, system } from './system'
 
 const BRANDED = createAppSystem('#1a73e8')
@@ -10,11 +10,7 @@ describe('status roles', () => {
     ['stock', system],
     ['branded', BRANDED],
   ])('maps every status to a palette the system defines (%s system)', (_name, sys) => {
-    const palettes = [
-      ...Object.values(statusPalette),
-      ...Object.values(statusPaletteAlt),
-      ...Object.values(accentPalette),
-    ]
+    const palettes = Object.values(statusPalette)
     // colorPalette props fall back silently on an unknown palette, so check the slots recipes read.
     const missing = palettes.filter(
       (p) => !['solid', 'contrast', 'fg', 'subtle'].every((s) => exists(sys, `${p}.${s}`))

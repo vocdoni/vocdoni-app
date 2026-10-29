@@ -17,7 +17,6 @@ import { Link as ReactRouterLink } from 'react-router'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { Routes } from '~routes'
 import { Organization, useProfile } from '~src/queries/account'
-import { accentPalette } from '~theme/status'
 import { useOrganizationNames } from './useOrganizationNames'
 import { useSelectOrganization } from './useSelectOrganization'
 
@@ -115,7 +114,7 @@ export const OrganizationSwitcher = () => {
                 </Text>
                 <HStack gap={1} flexShrink={0}>
                   {org.isIntegrator && (
-                    <TagRoot colorPalette={accentPalette.purple}>
+                    <TagRoot>
                       {/* "API" is a universal acronym, not translated in any locale */}
                       <TagLabel>API</TagLabel>
                     </TagRoot>
