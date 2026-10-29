@@ -50,6 +50,7 @@ const AddressBtn = ({ ...props }) => {
               display='flex'
               justifyContent='start'
               alignItems='center'
+              borderRadius='sm'
               mb={1}
             >
               <RiFileCopyLine />
@@ -63,6 +64,7 @@ const AddressBtn = ({ ...props }) => {
               display='flex'
               justifyContent='start'
               alignItems='center'
+              borderRadius='sm'
             >
               <HStack gap={2}>
                 <RiExternalLinkLine />
