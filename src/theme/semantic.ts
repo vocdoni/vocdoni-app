@@ -5,30 +5,7 @@ import { defineSemanticTokens } from '@chakra-ui/react'
  * https://v2.chakra-ui.com/docs/styled-system/semantic-tokens
  */
 
-// @deprecated: use the chakra built-in `bg` token directly
-const chakra = {
-  body: {
-    bg: {
-      value: '{colors.bg}',
-    },
-  },
-}
-
-// @deprecated: use the chakra built-in `fg`/`fg.muted` tokens directly
-const texts = {
-  primary: {
-    value: '{colors.fg}',
-  },
-  subtle: {
-    value: '{colors.fg.muted}',
-  },
-  dark: {
-    value: '{colors.fg.muted}',
-  },
-}
-
 export const colors = defineSemanticTokens.colors({
-  chakra,
   // Chakra's neutral `bg`, `fg` and `border` slots, written out so this file owns them; status slots stay Chakra's.
   bg: {
     DEFAULT: {
@@ -143,12 +120,6 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   auth: {
-    bg: {
-      value: {
-        _light: '{colors.gray.50}',
-        _dark: '{colors.ink.550}',
-      },
-    },
     card: {
       bg: {
         value: {
@@ -171,13 +142,10 @@ export const colors = defineSemanticTokens.colors({
           value: '{colors.gray.400}',
         },
       },
-      ring: {
-        value: '{colors.separator}',
-      },
       // Hairline between the quote and its attribution. Neutral white alpha rather than
       // `separator`, which is faintly blue and reads as a tint of its own on a coloured panel.
       rule: {
-        value: 'rgba(255, 255, 255, 0.16)',
+        value: '{colors.whiteAlpha.300}',
       },
     },
     // Tile the customer logos sit on, in the showcase panel and in the trust bar alike. Light in
@@ -228,10 +196,6 @@ export const colors = defineSemanticTokens.colors({
         _dark: '{colors.gray.200}',
       },
     },
-    // @deprecated: use the chakra built-in `border` token directly
-    dashboard: {
-      value: '{colors.border}',
-    },
     pagination: {
       active: {
         value: {
@@ -281,12 +245,6 @@ export const colors = defineSemanticTokens.colors({
       value: '{colors.gray.500}',
     },
   },
-  // @deprecated: use the chakra built-in `border` token directly
-  table: {
-    border: {
-      value: '{colors.border}',
-    },
-  },
   tabs: {
     tab: {
       color: {
@@ -319,7 +277,6 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
-  texts,
 })
 
 // Elevation by role; each points at a Chakra size, which carries its own dark-mode value.
