@@ -29,6 +29,7 @@ const IntegratorManagedOrganizations = () => {
   return (
     <DashboardContents>
       <DashboardCardHeader
+        titleAs='h1'
         title={t('integrators.managed.title', { defaultValue: 'Managed organizations' })}
         subtitle={t('integrators.managed.subtitle', {
           defaultValue: 'Organizations you manage on behalf of your customers.',

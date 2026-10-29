@@ -164,7 +164,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
           </TooltipPositioner>
         </TooltipRoot>
       </HStack>
-      <Text fontSize='sm' color='fg.muted'>
+      <Text textStyle='body-sm' color='fg.muted'>
         <Trans i18nKey='census.search.description'>
           Look up a voter by their credentials to check whether they are in the census and if they have already voted.
         </Trans>
@@ -195,13 +195,13 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
       {hasSearch && (
         <Box>
           {isError ? (
-            <Text fontSize='sm' color='status.error.fg'>
+            <Text textStyle='body-sm' color='status.error.fg'>
               {getApiErrorMessage(error) ?? t('census.search.error', { defaultValue: 'Could not search the census.' })}
             </Text>
           ) : isLoading && !data ? (
             <HStack gap={2}>
               <InlineLoader />
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 <Trans i18nKey='census.search.loading'>Searching census…</Trans>
               </Text>
             </HStack>
@@ -225,10 +225,10 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
                   gap={2}
                 >
                   <Box minW={0}>
-                    <Text fontSize='sm' fontWeight='bold' truncate>
+                    <Text textStyle='body-sm' fontWeight='bold' truncate>
                       {[participant.name, participant.surname].filter(Boolean).join(' ')}
                     </Text>
-                    <Text fontSize='sm' color='fg.muted' truncate>
+                    <Text textStyle='body-sm' color='fg.muted' truncate>
                       {valueForField(participant, selectedField, debouncedSearch.trim())}
                     </Text>
                   </Box>

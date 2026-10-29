@@ -97,6 +97,7 @@ const EXCLUDED_FILES = new Set(
     'ballot',
     'status',
     'style-inventory',
+    'textStyles',
   ].map((name) => `src/theme/${name}.ts`)
 )
 

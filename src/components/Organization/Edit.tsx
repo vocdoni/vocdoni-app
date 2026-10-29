@@ -113,7 +113,7 @@ const EditOrganization = () => {
             <Heading size='md'>
               {t('create_org.organization_details', { defaultValue: 'Organization details' })}
             </Heading>
-            <Text color='fg.muted' fontSize='sm'>
+            <Text color='fg.muted' textStyle='body-sm'>
               {t('create_org.organization_details_description', {
                 defaultValue: "Manage your organization's profile and configuration settings.",
               })}
@@ -130,7 +130,7 @@ const EditOrganization = () => {
               fontWeight='bold'
               mx={3.5}
               whiteSpace='nowrap'
-              fontSize='xs'
+              textStyle='caption'
               textTransform='uppercase'
             >
               {t('other_details', { defaultValue: 'Other details' })}

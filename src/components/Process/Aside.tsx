@@ -31,7 +31,7 @@ const ProcessAside = () => {
     <Card.Root variant='section' size='sm' gap={2}>
       <Card.Root variant='section' size='sm' gap={5} flexWrap='wrap'>
         <Text textAlign='center' fontSize='xl' textTransform='uppercase'>
-          {getStatusText(t, status).toUpperCase()}
+          {getStatusText(t, status)}
         </Text>
 
         {/* data-testid on both branches: the count is interpolated into a
@@ -71,7 +71,7 @@ const ProcessAside = () => {
           flag (unlike the old loading.census/loaded.census pair), so this may flash
           briefly right after connecting, before isInCensus resolves. */}
       {connected && !isInCensus && (
-        <Text textAlign='center' fontSize='sm'>
+        <Text textAlign='center' textStyle='body-sm'>
           {t('aside.is_not_in_census')}
         </Text>
       )}
@@ -80,7 +80,7 @@ const ProcessAside = () => {
           each with its own vote id) — the aside only confirms the vote landed. */}
       {renderVoteMenu && (
         <Flex flexDirection='column' alignItems='center' gap={3} w='full'>
-          <Text fontWeight='extrabold' fontSize='sm' color='status.success.fg' textAlign='center'>
+          <Text fontWeight='extrabold' textStyle='body-sm' color='status.success.fg' textAlign='center'>
             {t('aside.has_already_voted').toString()}
           </Text>
           {/* The vote id was only ever shown at cast time: an anonymous census
@@ -90,7 +90,7 @@ const ProcessAside = () => {
               the id is actually gone: right after casting it is still on
               screen, in the Voted notice. */}
           {election.census?.anonymous && !voteId && (
-            <Text fontSize='xs' color='fg.muted' textAlign='center'>
+            <Text textStyle='caption' color='fg.muted' textAlign='center'>
               {t('aside.anonymous_receipt_gone', {
                 defaultValue: 'Your receipt was shown when you voted and cannot be retrieved.',
               })}

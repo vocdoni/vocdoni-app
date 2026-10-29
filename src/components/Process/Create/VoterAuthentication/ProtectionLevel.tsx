@@ -113,7 +113,7 @@ export const ProtectionMeter = ({
           {getProtectionLevelTitle(t, level)}
         </Text>
       </HStack>
-      <Text fontSize='sm' color='fg.muted' mt={1}>
+      <Text textStyle='body-sm' color='fg.muted' mt={1}>
         {getProtectionLevelDescription(t, level, codeMethod)}
       </Text>
     </Box>

@@ -11,6 +11,7 @@ const IntegratorApiKeys = () => {
   return (
     <DashboardContents>
       <DashboardCardHeader
+        titleAs='h1'
         title={t('integrators.api_keys.title', { defaultValue: 'API keys' })}
         subtitle={t('integrators.api_keys.subtitle', {
           defaultValue: 'Create and manage API keys to access the API programmatically.',

@@ -36,7 +36,7 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
                 <Text truncate>{title}</Text>
               </RouterAwareLink>
             </Link>
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('election.ends_on', {
                 defaultValue: 'Ends on {{date}}',
                 date: format(election.endDate, t('organization.date_format')),
@@ -47,7 +47,7 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
             <StatusBadge colorPalette={election.status === 'ONGOING' ? 'success' : 'gray'}>
               {election.status}
             </StatusBadge>
-            <Text fontSize='sm' whiteSpace='nowrap'>
+            <Text textStyle='body-sm' whiteSpace='nowrap'>
               {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: election.voteCount })}
             </Text>
           </Flex>
@@ -105,8 +105,10 @@ export const ArchiveOrganizationView = ({
           <Avatar.Fallback name={name} />
         </Avatar.Root>
         <Box>
-          <Heading size='xl'>{name}</Heading>
-          <Text fontSize='sm' color='fg.muted'>
+          <Heading as='h1' size='xl'>
+            {name}
+          </Heading>
+          <Text textStyle='body-sm' color='fg.muted'>
             {organization.address}
           </Text>
         </Box>

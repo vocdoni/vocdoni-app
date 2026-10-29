@@ -81,7 +81,7 @@ const VoterAnonymity = () => {
               </Switch.Label>
             </Switch.Root>
             {field.value && (
-              <Text fontSize='xs' color='fg.muted' mt={1}>
+              <Text textStyle='caption' color='fg.muted' mt={1}>
                 {description}
               </Text>
             )}

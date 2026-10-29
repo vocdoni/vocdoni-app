@@ -36,7 +36,7 @@ export const ElectionTitle = defineRecipe({
       md: {},
       // Public process page header.
       hero: {
-        fontSize: '4xl',
+        textStyle: 'display',
         textAlign: 'left',
         mb: 5,
       },

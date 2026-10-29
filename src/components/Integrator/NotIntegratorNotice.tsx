@@ -93,7 +93,7 @@ const NotIntegratorNotice = () => {
       >
         {hasMultipleOrgs && (
           <Stack gap={2} mt={4}>
-            <Text fontSize='sm' fontWeight='bold'>
+            <Text textStyle='body-sm' fontWeight='bold'>
               {t('integrators.create_account.switch_instead', {
                 defaultValue: 'Or switch to an existing organization',
               })}
@@ -109,7 +109,7 @@ const NotIntegratorNotice = () => {
                   onClick={() => selectOrganization(organization, isIntegrator)}
                 >
                   <Icon as={OrganizationIcon} />
-                  <Text as='span' fontSize='sm' truncate>
+                  <Text as='span' textStyle='body-sm' truncate>
                     {names[organization.address] || organization.address}
                   </Text>
                   {isIntegrator && (

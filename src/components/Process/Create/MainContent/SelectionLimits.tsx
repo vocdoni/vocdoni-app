@@ -39,7 +39,7 @@ const SelectionLimits = ({ index }) => {
       <Text fontWeight='medium' mb={1}>
         <Trans i18nKey='process.create.selectionLimits.title'>Selection limits:</Trans>
       </Text>
-      <Text as='span' fontSize='sm'>
+      <Text as='span' textStyle='body-sm'>
         <Trans
           i18nKey='process.create.selectionLimits.full'
           defaults='Voters must select at least  <min />  and at most  <max />  options.'

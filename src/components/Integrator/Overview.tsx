@@ -80,6 +80,7 @@ export const IntegratorOverview = () => {
   return (
     <DashboardContents>
       <DashboardCardHeader
+        titleAs='h1'
         title={t('integrators.overview_title', { defaultValue: 'Overview' })}
         subtitle={t('integrators.overview_subtitle', {
           defaultValue: 'Your integrator usage and wallet balance.',
@@ -88,7 +89,7 @@ export const IntegratorOverview = () => {
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
         {canView && wallet.data && (
           <DashboardBox gap={3} justifyContent='flex-start'>
-            <Text fontSize='sm' color='fg.muted' fontWeight='medium'>
+            <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
               {t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}
             </Text>
             <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>

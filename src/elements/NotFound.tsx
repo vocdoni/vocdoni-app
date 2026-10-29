@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { HomeIcon } from '~theme/icons'
 import { matchPath, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
-import { Heading, SubHeading } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { Routes } from '~src/router/routes'
 
 export const getNotFoundReturnPath = ({
@@ -31,12 +31,12 @@ export const NotFoundView = ({ onReturnHome, returnHomeHref }: NotFoundViewProps
       <Text as='div' fontSize='6xl' fontWeight='extrabold' lineHeight='1'>
         404
       </Text>
-      <Heading size='lg'>{t('error.not_found')}</Heading>
-      <SubHeading m={0} maxW='45ch'>
+      <PageTitle textStyle='lg'>{t('error.not_found')}</PageTitle>
+      <PageSubtitle m={0} maxW='45ch'>
         {t('error.not_found_description', {
           defaultValue: "The page you're looking for does not exist or has been moved.",
         })}
-      </SubHeading>
+      </PageSubtitle>
 
       {returnHomeHref ? (
         <Button asChild>

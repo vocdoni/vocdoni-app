@@ -74,7 +74,7 @@ export const PrivateOrgForm = ({ minified }: { minified?: boolean }) => {
           <Text fontWeight='bold' mb={2.5}>
             {t('create_org.private_org', { defaultValue: 'Other details' })}
           </Text>
-          <Text fontSize='sm'>
+          <Text textStyle='body-sm'>
             {t('create_org.private_org_description', {
               defaultValue: 'This information is private and used for internal configuration.',
             })}

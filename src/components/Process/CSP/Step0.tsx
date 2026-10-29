@@ -243,7 +243,7 @@ export const Step0Base = () => {
           </Button>
 
           {is2Factor && (
-            <Text textAlign='center' fontSize='sm'>
+            <Text textAlign='center' textStyle='body-sm'>
               {t(
                 'csp.code_info',
                 'You will receive a unique code on the selected medium to verify your identity and complete authentication'

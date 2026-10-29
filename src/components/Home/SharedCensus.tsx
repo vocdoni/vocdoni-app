@@ -143,7 +143,7 @@ const SharedCensusHomeContent = () => {
       <Box>{election && !isAdmin && <CensusConnectButton />}</Box>
       {canViewProcesses && (
         <Box w='90%'>
-          <Text alignSelf='start' mb={10} as='h3' fontWeight='bold' fontSize='2xl' mt='-30px'>
+          <Text alignSelf='start' mb={10} as='h1' fontWeight='bold' fontSize='2xl' mt='-30px'>
             {t('shared_census.section_title', { defaultValue: 'Elections' })}
           </Text>
           <Flex gap={5} flexDirection={{ base: 'column' }}>
@@ -229,10 +229,10 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
             <Box as='span' mr={2} position='absolute' left={2} top={2} color='fg.subtle'>
               {index + 1}
             </Box>
-            <ElectionTitle size='card' />
+            <ElectionTitle size='card' as='h2' />
             <ElectionStatusBadge position='absolute' top={1} right={1} />
             {hasVoted && (
-              <Text fontSize='sm' color='status.success.fg' position='absolute' bottom={0} right={1}>
+              <Text textStyle='body-sm' color='status.success.fg' position='absolute' bottom={0} right={1}>
                 {t('shared_census.voted', { defaultValue: 'You already voted' })}
               </Text>
             )}

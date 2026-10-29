@@ -1,7 +1,8 @@
 import { Tabs } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, matchPath, Outlet, useLocation, useNavigate } from 'react-router'
-import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { Routes } from '~routes'
 
 const OrganizationVotings = () => {
@@ -31,8 +32,8 @@ const OrganizationVotings = () => {
 
   return (
     <DashboardContents>
-      <Heading>{t('voting_processes')}</Heading>
-      <SubHeading>{t('voting_processes_description')}</SubHeading>
+      <PageTitle>{t('voting_processes')}</PageTitle>
+      <PageSubtitle>{t('voting_processes_description')}</PageSubtitle>
       <Tabs.Root
         value={activeTabValue}
         onValueChange={({ value }) => {

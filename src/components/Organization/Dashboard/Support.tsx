@@ -96,7 +96,7 @@ const SupportTicketForm = () => {
         <Heading size='md' mb={2}>
           {t('form.support.open_ticket', { defaultValue: 'Open a Support Ticket' })}
         </Heading>
-        <Text fontSize='sm' color='fg.muted' mb={6}>
+        <Text textStyle='body-sm' color='fg.muted' mb={6}>
           {t('form.support.subtitle', {
             defaultValue: 'Submit a ticket and our support team will get back to you as soon as possible.',
           })}
@@ -141,7 +141,7 @@ const PhoneSupportCard = () => {
       <Heading size='md' mb={1}>
         {t('organization_settings.phone_support.title', { defaultValue: 'Phone Support' })}
       </Heading>
-      <Text fontSize='sm' mb={6}>
+      <Text textStyle='body-sm' mb={6}>
         {t('organization_settings.phone_support.description', {
           defaultValue: 'Call our team directly for priority help.',
         })}
@@ -173,7 +173,7 @@ const PhoneSupportCard = () => {
             <Text fontSize='lg' fontWeight='bold'>
               {prioritySupportPhone}
             </Text>
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('organization_settings.phone_support.priority_support_line_description', {
                 defaultValue: 'Available Monday–Friday, 9:00–18:00 CET',
               })}
@@ -205,7 +205,7 @@ const PhoneSupportCard = () => {
             <Text fontFamily='mono' color='fg.muted'>
               {organization.address ?? ''}
             </Text>
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('organization_settings.phone_support.organization_id_description', {
                 defaultValue: 'Please provide this ID when contacting support',
               })}
@@ -216,7 +216,7 @@ const PhoneSupportCard = () => {
 
       <Flex align='center' mb={6}>
         <Icon as={InfoIcon} mr={2} />
-        <Text fontSize='sm' color='fg.muted'>
+        <Text textStyle='body-sm' color='fg.muted'>
           {t('organization_settings.phone_support.info', {
             defaultValue: 'Please have your organization ID ready when calling.',
           })}
