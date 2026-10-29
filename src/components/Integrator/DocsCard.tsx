@@ -1,5 +1,5 @@
 import { HStack, Icon, LinkBox, LinkOverlay, Text } from '@chakra-ui/react'
-import { GoToIcon } from '~theme/icons'
+import { ExternalLinkIcon } from '~theme/icons'
 import type { IconType } from '~theme/icons'
 import { DashboardBox } from '~components/Dashboard/Contents'
 
@@ -24,7 +24,7 @@ export const DocsCard = ({ href, icon, title, description }: DocsCardProps) => (
   >
     <HStack justify='space-between'>
       <Icon as={icon} boxSize='icon.lg' color='colorPalette.fg' />
-      <Icon as={GoToIcon} color='fg.muted' />
+      <Icon as={ExternalLinkIcon} color='fg.muted' />
     </HStack>
     <LinkOverlay href={href} target='_blank' rel='noopener noreferrer' fontWeight='bold' fontSize='md'>
       {title}

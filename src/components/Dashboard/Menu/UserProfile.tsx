@@ -18,7 +18,7 @@ import {
   ChevronRightIcon,
   ChevronsUpDownIcon,
   LogoutIcon,
-  OrganizationProfileIcon,
+  OrganizationIcon,
   ProfileIcon,
 } from '~theme/icons'
 import { Link as ReactRouterLink } from 'react-router'
@@ -139,7 +139,7 @@ const UserProfile = () => {
                 <Box borderBottom='1px solid' borderBottomColor='border' py={1}>
                   <Button colorPalette='gray' variant='menu-item' onClick={() => setSwitchOrg(true)}>
                     <Flex alignItems='center' gap={2} w='full'>
-                      <Icon as={OrganizationProfileIcon} />
+                      <Icon as={OrganizationIcon} />
                       <Trans i18nKey={'switch_organization'} />
                       <Icon as={ChevronRightIcon} marginLeft='auto' />
                     </Flex>

@@ -1,7 +1,7 @@
 import { Alert, Button, Icon, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StackIcon } from '~theme/icons'
+import { OrganizationIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
@@ -108,7 +108,7 @@ const NotIntegratorNotice = () => {
                   disabled={provision.isPending}
                   onClick={() => selectOrganization(organization, isIntegrator)}
                 >
-                  <Icon as={StackIcon} />
+                  <Icon as={OrganizationIcon} />
                   <Text as='span' fontSize='sm' truncate>
                     {names[organization.address] || organization.address}
                   </Text>

@@ -53,7 +53,7 @@ import {
   ViewIcon,
   InfoIcon,
   PauseIcon,
-  RetryIcon,
+  RefreshIcon,
   SearchIcon,
   SettingsIcon,
   DeleteIcon,
@@ -542,7 +542,7 @@ const ProcessViewSidebar = () => {
             tooltip={election ? anonymityMechanism : undefined}
           />
           <SettingsField
-            icon={RetryIcon}
+            icon={RefreshIcon}
             text={t('vote_overwrite', 'Vote overwrite')}
             subtext={
               election

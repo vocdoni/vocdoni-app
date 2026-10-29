@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import {
   DashboardIcon,
-  HelpCenterIcon,
   HomeIcon,
-  KeyRoundIcon,
+  KeyIcon,
   OrganizationIcon,
-  PreferencesIcon,
   SettingsIcon,
+  SupportIcon,
   UsersIcon,
   VoteIcon,
 } from '~theme/icons'
@@ -76,7 +75,7 @@ export const useAdminMenuConfig = (): DashboardMenuConfig => {
         items: [
           {
             label: t('support'),
-            icon: HelpCenterIcon,
+            icon: SupportIcon,
             route: Routes.dashboard.settings.support,
           },
         ],
@@ -110,13 +109,13 @@ export const useIntegratorMenuConfig = (): DashboardMenuConfig => {
           },
           {
             label: t('integrators.api_keys.title', { defaultValue: 'API keys' }),
-            icon: KeyRoundIcon,
+            icon: KeyIcon,
             route: Routes.integrators.apiKeys,
             activeMatch: [{ path: Routes.integrators.apiKeys, end: false }],
           },
           {
             label: t('integrators.configuration.title', { defaultValue: 'Configuration' }),
-            icon: PreferencesIcon,
+            icon: SettingsIcon,
             route: Routes.integrators.configuration.base,
             activeMatch: [{ path: Routes.integrators.configuration.base, end: false }],
           },
