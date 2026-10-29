@@ -1,8 +1,7 @@
 import { defineRecipe } from '@chakra-ui/react'
 
-// `lineHeight: 'inherit'` is deliberate: it replaces the sizes 'xs'..'lg', which are not line-height tokens. Those
-// values were invalid CSS but still displaced the line height of Chakra's own badge text style, so every badge
-// inherits its line height. Dropping the key would bring Chakra's per-size line height back (a visible change).
+// `lineHeight: 'inherit'` is deliberate: badges take their line height from the parent. Dropping the key would
+// bring back the per-size line height of Chakra's badge text styles, a visible change.
 
 const xs = {
   fontSize: 'xs',
