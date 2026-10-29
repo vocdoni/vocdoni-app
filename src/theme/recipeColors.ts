@@ -18,11 +18,4 @@ const link = {
   },
 }
 
-// Border of a secondary action sitting on a card. Same grey in both color modes.
-const control = {
-  border: {
-    value: '{colors.gray.300}',
-  },
-}
-
-export const recipeColors = defineSemanticTokens.colors({ link, control })
+export const recipeColors = defineSemanticTokens.colors({ link })

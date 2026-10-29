@@ -1,4 +1,4 @@
-import { chakra, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
+import { Button, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuMessageCircle, LuX } from 'react-icons/lu'
@@ -67,9 +67,9 @@ const SupportChatWidget = () => {
         >
           {/* No aria-label: the visible teaser text is the accessible name, and
               must not collide with the launcher's "Open support chat" */}
-          <chakra.button type='button' fontSize='sm' fontWeight='medium' cursor='pointer' onClick={openChat}>
+          <Button variant='text' onClick={openChat}>
             {t('support_chat.teaser', { defaultValue: 'Do you need help?' })}
-          </chakra.button>
+          </Button>
           {/* Dismissing unmounts the teaser, so hand focus back to the launcher
               instead of dropping it on <body> */}
           <CloseButton
@@ -116,10 +116,7 @@ const SupportChatWidget = () => {
         bottom={6}
         right={6}
         zIndex='overlay'
-        w='52px'
-        h='52px'
-        borderRadius='full'
-        boxShadow='shadow.floating'
+        variant='floating'
         aria-label={
           open
             ? t('support_chat.close_label', { defaultValue: 'Close support chat' })
@@ -129,10 +126,6 @@ const SupportChatWidget = () => {
         // The panel is lazily mounted, so only reference it once it exists
         aria-controls={open ? 'support-chat-panel' : undefined}
         onClick={open ? close : openChat}
-        transition='transform {durations.fast}'
-        _hover={{ transform: 'scale(1.06)' }}
-        _active={{ transform: 'scale(0.96)' }}
-        _motionReduce={{ transition: 'none', _hover: { transform: 'none' }, _active: { transform: 'none' } }}
       >
         <Icon as={open ? LuX : LuMessageCircle} boxSize={6} />
       </IconButton>

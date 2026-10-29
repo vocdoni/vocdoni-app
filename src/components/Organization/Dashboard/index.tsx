@@ -326,7 +326,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
         })}
       </Text>
       <Flex flexDirection='column' gap={4} minW={0}>
-        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold' minW={0}>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW={0}>
           <ReactRouterLink to={generatePath(Routes.processes.create)}>
             <HStack gap={2} minW={0}>
               <Icon as={LuPlus} flexShrink={0} />
@@ -338,7 +338,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
             </HStack>
           </ReactRouterLink>
         </Button>
-        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold' minW={0}>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW={0}>
           <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
             <HStack gap={2} minW={0}>
               <Icon as={LuVote} flexShrink={0} />
@@ -350,7 +350,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
             </HStack>
           </ReactRouterLink>
         </Button>
-        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold' minW={0}>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW={0}>
           <ReactRouterLink to={generatePath(Routes.dashboard.settings.base)}>
             <HStack gap={2} minW={0}>
               <Icon as={LuUsers} flexShrink={0} />

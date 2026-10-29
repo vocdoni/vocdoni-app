@@ -31,7 +31,7 @@ export const link = defineRecipe({
     textUnderlineOffset: '0.15em',
     // Repeats the token on purpose: `.dark &` is more specific than a single class, so in dark mode
     // it beats the palette colour of Chakra's plain/underline variants and of a Button rendering a
-    // Link (`asChild`), as the dashboard's report download does.
+    // Link (`asChild`), as the members CSV template download does.
     _dark: {
       color: 'link.fg',
       _hover: {

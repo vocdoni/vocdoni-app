@@ -258,12 +258,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
                     <Icon as={providerIcon} /> {unlinkLabel}
                   </Button>
                 ) : (
-                  <Button
-                    variant='outline'
-                    loading={isLinking}
-                    onClick={() => linkProvider.mutate(provider)}
-                    fontWeight={'bold'}
-                  >
+                  <Button variant='outline' loading={isLinking} onClick={() => linkProvider.mutate(provider)}>
                     <Icon as={providerIcon} /> {linkLabel}
                   </Button>
                 )}
