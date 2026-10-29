@@ -20,15 +20,6 @@ export interface Organization {
   // Integrator org that manages this one, when it was created through the integrator portal.
   // Present only for managed orgs (regular orgs omit it), so we can hide them from org pickers.
   managedBy?: string
-  subscription?: Subscription
-}
-
-export interface Subscription {
-  planId: string
-  startDate: string
-  renewalDate: string
-  lastPaymentDate: string
-  active: boolean
 }
 
 export interface UserRole {

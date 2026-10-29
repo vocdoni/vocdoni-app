@@ -44,8 +44,6 @@
       "ticanoia": "Logo da TIC Anoia"
     }
   },
-  "annual": "Anual<1>Economize 40%</1>",
-  "apply": "Aplicar",
   "aside": {
     "anonymous_receipt_gone": "Seu comprovante foi exibido quando você votou e não pode ser recuperado.",
     "has_already_voted": "Seu voto foi registrado corretamente",
@@ -100,7 +98,9 @@
     "label": "Avatar da organização"
   },
   "back": "Voltar",
-  "billing_details": "Dados de cobrança",
+  "billing": {
+    "title": "Faturamento"
+  },
   "booking": {
     "unavailable": "O agendamento está indisponível no momento. Tente novamente mais tarde."
   },
@@ -157,7 +157,6 @@
     "title": "Alterar senha"
   },
   "close": "Fechar",
-  "code_applied": "Código \"{{appliedCode}}\" aplicado",
   "color_mode_switcher": "Alternar modo de cor",
   "common": {
     "back": "Voltar",
@@ -261,7 +260,6 @@
     "terms_acceptance": "Li e aceito os <2>Termos e Condições</2> e a <6>Política de Privacidade</6>."
   },
   "current": "Atual",
-  "current_plan": "Plano atual",
   "dark": "Escuro",
   "dashboard": {
     "actions": {
@@ -273,15 +271,11 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "Códigos 2FA por E-mail",
-      "2fa_email_tooltip": "Códigos de verificação enviados por e-mail. Exceder o limite custa €{{price}} por código.",
-      "2fa_sms": "Códigos 2FA por SMS",
-      "2fa_sms_tooltip": "Códigos de verificação enviados por SMS. Exceder o limite custa €{{price}} por código.",
+      "description": "Acompanhe o uso da sua organização em relação aos seus limites.",
       "limit_exceeded_message": "Sua base de membros atingiu o limite de {{max}} membros.",
       "memberbase_size": "Tamanho da base de membros",
       "memberbase_tooltip": "Número máximo de membros permitido na sua base de membros.",
-      "plan_usage": "Uso do plano",
-      "plan_usage_description": "Acompanhe seu uso atual em relação aos limites do plano",
+      "title": "Uso",
       "voting_processes": "Processos de votação"
     },
     "welcome": {
@@ -294,7 +288,6 @@
       "hello": "Bem-vindo ao Vocdoni, {{name}}!",
       "how_first_vote": "Como criar sua primeira votação",
       "no_organization": "Nenhuma organização encontrada",
-      "no_subscription": "Nenhuma assinatura disponível. Crie uma organização para ativar seu plano.",
       "quick_actions": "Ações rápidas",
       "recent_voting_description": "As últimas atividades de votação da sua organização",
       "recent_voting_title": "Processos de votação recentes",
@@ -315,7 +308,6 @@
   },
   "delete_my_account": "Excluir minha conta",
   "description": "Descrição",
-  "discount": "Desconto",
   "do_it_later": "Fazer depois",
   "draft_processes": "Rascunhos",
   "drafts": {
@@ -367,7 +359,6 @@
   "end_time": "Horário de encerramento",
   "end_vote": "Encerrar votação",
   "ended_processes": "Encerrados",
-  "enter_promo_code": "Inserir código",
   "error": {
     "crash_description": "Recarregue a página ou volte ao painel.",
     "crash_title": "Algo deu errado",
@@ -384,74 +375,6 @@
     "reload": "Recarregar",
     "return_to_home": "Voltar ao início",
     "title": "Erro"
-  },
-  "error_removing_code": "Erro ao remover o código",
-  "features": {
-    "anonymous": "Votação anônima",
-    "approval": "Votação por aprovação",
-    "audit": "Auditoria",
-    "audit_blockchain": "100% auditável na blockchain",
-    "basic_analytics": "Análises básicas",
-    "basic_branding": "Identidade visual básica",
-    "basic_sla": "Melhor esforço",
-    "cumulative": "Votação cumulativa",
-    "custom_reports": "Relatórios personalizados",
-    "custom_url": "Domínio personalizado",
-    "dedicated_account_manager": "Gerente de conta dedicado",
-    "email_notification": "2FA por e-mail",
-    "email_notifications": "Notificações por e-mail aos eleitores",
-    "email_reminder": "Lembretes por e-mail",
-    "email_support": "E-mail",
-    "email_support_basic": "(resp. 72h)",
-    "email_support_essential": "(resp. 48h)",
-    "email_support_premium": "(resp. 24h)",
-    "GDPR_compliance": "Conformidade com o RGPD",
-    "generic_sla": "SLA genérico",
-    "live_results": "Resultados em tempo real",
-    "live_streaming": "Integração com transmissão ao vivo",
-    "memberbase_all_in_one_management": "Gestão integrada da base de membros",
-    "multiple": "Múltipla escolha",
-    "on_demand": "Sob demanda*",
-    "overwrite": "Alteração do voto",
-    "participatory_budgeting": "Orçamento participativo",
-    "personalization": "Personalização completa",
-    "phone_support": "Telefone",
-    "priority_support": "Suporte prioritário",
-    "ranked": "Votação por ordem de preferência",
-    "section": {
-      "analytics_and_reporting": "Análises e relatórios",
-      "authentication_security": "Autenticação e segurança",
-      "compliance_and_security": "Conformidade e segurança",
-      "customization": "Personalização",
-      "extra_features": "Funcionalidades adicionais",
-      "features": "Funcionalidades",
-      "general_limits": "Limites gerais",
-      "memberbase_management": "Gestão da base de membros",
-      "organization": "Organização",
-      "support": "Suporte",
-      "voting_types": "Tipos de votação"
-    },
-    "single": "Escolha única",
-    "sms_notification": "2FA por SMS",
-    "sms_notifications": "Notificações por SMS aos eleitores",
-    "sub_orgs": "Até {{ count }} sub-organizações",
-    "team_members": "Membros da equipe",
-    "tooltips": {
-      "anonymous": "Esta é uma funcionalidade opcional que os organizadores podem escolher. Quando habilitada, os votos são completamente anônimos — nem nós conseguimos saber quem votou em qual opção. Como alternativa, os organizadores podem optar por criptografar os resultados até o fim da votação, ou tornar a votação totalmente pública.",
-      "live_results": "Esta é uma funcionalidade opcional que os organizadores podem escolher. Os resultados podem ser exibidos em tempo real conforme os votos são registrados, ou os organizadores podem manter os resultados criptografados e ocultos até o fim do período de votação.",
-      "memberbase_all_in_one": "Importe sua base de membros para criar grupos de eleitores elegíveis e gerenciar as permissões de votação de forma muito simples.",
-      "multiple": "Os eleitores podem selecionar várias opções entre as disponíveis. Ideal para pesquisas e decisões em que múltiplas seleções são permitidas.",
-      "overwrite": "Os eleitores podem alterar seu voto antes do término do período de votação. Essa funcionalidade ajuda a evitar erros e previne coerção, permitindo que os eleitores corrijam suas escolhas.",
-      "single": "Os eleitores podem selecionar apenas uma opção entre as disponíveis. Perfeito para eleições e decisões simples de sim/não.",
-      "team_members": "Convide membros da equipe e atribua permissões baseadas em função para gerenciar sua organização com facilidade",
-      "uptime": "Garantimos 99,99% de disponibilidade, mas apenas nos planos pagos isso é assegurado por contrato com garantias."
-    },
-    "total_orgs": "Total de sub-organizações disponíveis",
-    "total_users": "Total de usuários disponíveis",
-    "uptime": "99,99% de disponibilidade",
-    "uptime_guaranteed": "Garantida ({{suffix}})",
-    "weighted": "Votação ponderada",
-    "white_label": "Marca branca (sem identidade visual Vocdoni)"
   },
   "footer": {
     "company": "Empresa",
@@ -520,9 +443,6 @@
       "voting_issue": "Problema de votação"
     }
   },
-  "free_trial_days_one": "Um dia gratuito",
-  "free_trial_days_many": "{{count}} dias gratuitos",
-  "free_trial_days_other": "{{count}} dias gratuitos",
   "google_oauth_conflict_error": "Já existe uma conta com este e-mail. Faça login usando seu método de acesso existente.",
   "google_oauth_error": "Erro de OAuth do Google",
   "google_oauth_error_description": "Erro de OAuth do Google, tente novamente",
@@ -845,13 +765,13 @@
       "title": "Chaves de API"
     },
     "configuration": {
-      "subtitle": "Gerencie sua wallet, sua assinatura e obtenha suporte.",
+      "subtitle": "Gerencie sua faturação e obtenha suporte.",
       "title": "Configuração"
     },
     "create_account": {
       "cancel": "Cancelar",
       "confirm": "Criar conta",
-      "description": "Uma nova conta de integrador no plano gratuito será criada e definida como sua organização ativa.",
+      "description": "Uma nova conta de integrador será criada e definida como sua organização ativa, desbloqueando o painel de integrador.",
       "error": "Não foi possível criar a conta de integrador",
       "switch_instead": "Ou mude para uma organização existente",
       "title": "Criar uma conta de integrador gratuita?"
@@ -917,21 +837,11 @@
     "signin_title": "Entrar",
     "signup_subtitle": "Cadastre-se para gerenciar organizações como integradora.",
     "signup_title": "Crie sua conta de integradora",
-    "subscription": {
-      "active": "Ativo",
-      "billing_details": "Detalhes de cobrança",
-      "current_plan": "Plano atual",
-      "inactive": "Inativo",
-      "portal_error": "Não foi possível abrir o portal de cobrança",
-      "unavailable": "Os detalhes da assinatura não estão disponíveis"
-    },
-    "upgrade_plan": "Fazer upgrade do plano",
     "wallet": {
       "balance": "Saldo da wallet",
       "manage": "Gerenciar wallet"
     }
   },
-  "invalid_promo_code": "Código promocional inválido",
   "invite": {
     "account_not_verified": "Sua conta não está verificada. Por favor, verifique sua conta para continuar.",
     "create_account_subtitle": "Você precisa de uma conta para aceitar o convite",
@@ -1147,8 +1057,6 @@
     "login": "Entrar",
     "open": "Abrir menu"
   },
-  "month": "mês",
-  "monthly": "Mensal",
   "name": "Nome",
   "need_help": {
     "description": "Precisa de ajuda com seu primeiro processo de votação? Assista a este tutorial ou agende uma chamada.",
@@ -1180,7 +1088,6 @@
   },
   "open_in_explorer": "Abrir no Explorer",
   "or_continue_with": "ou continue com",
-  "order_summary": "Resumo do pedido",
   "org_type_selector": {
     "selector_label": "Tipo de organização"
   },
@@ -1200,8 +1107,6 @@
       "title": "Crie seu primeiro processo de votação"
     },
     "elections_list_load_more": "Carregar mais",
-    "max_census": "Máximo de participantes por votação",
-    "max_processes": "Votações por ano¹",
     "no_organization_title": "Você ainda não pertence a nenhuma organização!",
     "organization": "Detalhes da organização",
     "title": {
@@ -1222,7 +1127,7 @@
       "priority_support_line_description": "Disponível de segunda a sexta, das 9h às 18h CET",
       "title": "Suporte por telefone"
     },
-    "subtitle": "Gerencie sua organização, os membros da equipe e seu plano de assinatura",
+    "subtitle": "Gerencie sua organização, os membros da equipe e o faturamento",
     "support": {
       "description": "Obtenha ajuda e suporte para a sua organização.",
       "title": "Suporte"
@@ -1281,61 +1186,11 @@
   },
   "plan": {
     "encouragement": "Lançar uma votação é simples, e os participantes podem votar de qualquer lugar. Garantias sólidas a um custo menor tornaram o Vocdoni uma escolha confiável para centenas de municípios, associações, partidos políticos e empresas.",
-    "free": "<0>Você está no Plano Gratuito</0>, que já permite lançar votações. Se precisar de mais recursos, limites maiores ou opções específicas, explore os planos pagos e experimente-os gratuitamente.",
     "special_needs": "Precisa de ajuda ou algo específico? Agende uma chamada."
   },
   "please_check_email_to_verify": "Verifique seu e-mail para confirmar sua conta",
   "preferences": "Preferências",
   "preview": "Visualizar",
-  "pricing": {
-    "2fa": "Autenticação 2FA² ({{suffix}})",
-    "2fa_suffix_both": "E-mail e SMS",
-    "2fa_suffix_email": "E-mail",
-    "2fa_suffix_sms": "SMS",
-    "basic_analytics": "Relatórios e análises básicas",
-    "comparison_table": {
-      "footnote_1": "¹ Votações com menos de 10 participantes são tratadas como testes e não contam para os limites do seu plano.",
-      "footnote_2": "² Os créditos 2FA só são consumidos quando um usuário solicita efetivamente a verificação em um processo de votação. Você nunca ficará sem créditos de surpresa: se exceder os créditos incluídos durante uma votação, cada código adicional será cobrado a €0,015 no momento do envio. Você também pode pré-comprar créditos extras em pacotes convenientes.",
-      "footnote_on_demand": "* As funcionalidades solicitadas serão avaliadas individualmente e podem gerar custos adicionais."
-    },
-    "core_voting_one": "Um único membro",
-    "core_voting_many": "Até {{ count }} membros",
-    "core_voting_other": "Até {{ count }} membros",
-    "custom_branding": "Marca personalizada*",
-    "custom_subtitle": "Adaptado às suas necessidades",
-    "custom_title": "Personalizado",
-    "different_voting_methods": "Diferentes métodos de votação",
-    "empty": "Nenhum plano encontrado",
-    "empty_description": "Volte mais tarde para ver os planos disponíveis.",
-    "essential_subtitle": "Para organizações em crescimento",
-    "essential_title": "Essencial",
-    "free_subtitle": "Ideal para começar",
-    "free_title": "Gratuito",
-    "load_error": "Não foi possível carregar os planos",
-    "load_error_description": "Tente novamente.",
-    "premium_subtitle": "Para organizações consolidadas",
-    "premium_title": "Premium",
-    "priority_support": "Suporte prioritário por e-mail (24h)",
-    "ticket_support_48": "Suporte por e-mail (48h)",
-    "ticket_support_72": "Suporte por e-mail (72h)",
-    "up_to_admins_one": "Um administrador",
-    "up_to_admins_many": "{{ count }} administradores",
-    "up_to_admins_other": "{{ count }} administradores",
-    "yearly_processes_one": "{{ count }} votação por ano¹",
-    "yearly_processes_many": "{{ count }} votações por ano¹",
-    "yearly_processes_other": "{{ count }} votações por ano¹"
-  },
-  "pricing_card": {
-    "annual_savings": "Economize {{ savings }}/ano com o plano anual",
-    "annual_total_cost": "{{ price }} cobrado anualmente",
-    "contact_sales": "<0>Fale com nossa equipe de vendas</0> <1>ou</1>",
-    "custom_plan": "Preço sob consulta",
-    "custom_plan_description": "Você tem requisitos especiais de governança? Podemos adaptar nossa solução às suas necessidades com uma proposta totalmente personalizada. Um gerente de conta dedicado irá acompanhar você durante toda a parceria.",
-    "free_trial": "{{ freeDays }} dias grátis para testar",
-    "from": "<price>{{ price }}</price><time>/mês+impostos</time>",
-    "most_popular_plan": "Mais popular",
-    "need_more_members": "Precisa de mais membros? <2>Fale conosco</2>"
-  },
   "privacy_policy": "Política de privacidade",
   "process": {
     "anonymity": {
@@ -1816,8 +1671,6 @@
     "error": "Falha ao atualizar o perfil",
     "success": "Perfil atualizado com sucesso"
   },
-  "promo_code": "Código promocional",
-  "promo_code_required": "O código promocional é obrigatório",
   "public_process": {
     "no_tally": "Sem contagem",
     "verify": "Verifique no explorador da blockchain:",
@@ -1826,7 +1679,6 @@
   "questions_and_results": "Perguntas e resultados",
   "registration_failed": "Falha no cadastro",
   "registration_successful": "Cadastro realizado com sucesso",
-  "remove": "Remover",
   "remove_avatar": "Remover avatar",
   "reset_password_button": "Redefinir senha",
   "result_visibility": "Visibilidade dos resultados",
@@ -1902,19 +1754,6 @@
   },
   "start_date": "Data de início",
   "start_time": "Horário de início",
-  "subscribe": "Assinar",
-  "subscription": {
-    "title": "Plano de assinatura"
-  },
-  "subscription_plan": {
-    "gdpr_compliance": "Todos os planos incluem conformidade com o GDPR.",
-    "hide_comparison_table": "Mostrar menos recursos",
-    "need_help": "<0>Precisa de ajuda para escolher?</0> <1>Fale com nossa equipe de vendas</1>",
-    "show_comparison_table": "Ver todos os recursos",
-    "subtitle": "Com nossas assinaturas, você obtém muito mais do que um plano. Você ganha acesso à plataforma de governança mais inovadora. Graças a esse modelo, conseguimos oferecer o melhor preço do mercado: seja para 1, 5 ou 20 votações por ano, você sempre terá os custos mais competitivos e garantias incomparáveis. A plataforma é totalmente self-service, mas nossa equipe está sempre disponível para oferecer suporte ou adaptar soluções às suas necessidades específicas.",
-    "title": "Plano de assinatura"
-  },
-  "subtotal": "Subtotal",
   "support": "Suporte",
   "support_chat": {
     "ask_name": "Antes de enviar — qual é o seu nome?",
@@ -1946,7 +1785,6 @@
   "switch_mode": "Alternar para o modo {{ mode }}",
   "switch_organization": "Trocar de organização",
   "system": "Sistema",
-  "tax": "Imposto ({{percent}}%)",
   "team": {
     "actions": {
       "cancel_invitation": "Cancelar convite",
@@ -2059,12 +1897,8 @@
     }
   },
   "theme": "Tema",
-  "then_price_per_period": "Depois {{price}}/{{period}}",
-  "total_after_trial": "Total após o período de teste",
-  "total_due_today": "Total a pagar hoje",
   "total_votes": "Total de votos",
   "turnout": "Participação",
-  "upgrade_plan": "Fazer upgrade para {{plan}}",
   "uploaded_image_preview": "Visualização da imagem enviada",
   "uploader": {
     "avatar_upload_failed": "Falha ao enviar o avatar",
@@ -2117,7 +1951,6 @@
     "verifying_title": "Verificando {{ email }}"
   },
   "view_in_explorer": "Ver no Explorer",
-  "view_plans_and_pricing": "Ver planos e preços",
   "vocdoni_logo": "Logotipo do Vocdoni",
   "vote": {
     "anonymous_receipt": "Voto anônimo: salve este comprovante agora, a plataforma não poderá exibi-lo novamente.",
@@ -2260,7 +2093,6 @@
     "pagination": "Página {{page}} de {{total}} · {{items}} no total",
     "processing": "Pagamento recebido. Seu saldo será atualizado assim que for confirmado.",
     "processing_timeout": "Está demorando mais do que o esperado. Seu saldo será atualizado quando o pagamento for confirmado; verifique novamente mais tarde.",
-    "title": "Wallet",
     "topup": {
       "admin_only": "Somente administradores podem recarregar a wallet.",
       "amount": "Valor (EUR, sem IVA)",
@@ -2277,8 +2109,6 @@
       "vat": "IVA"
     }
   },
-  "wallet_not_connected": "Carteira não conectada",
   "website": "Site",
-  "whatsapp_contact": "Fale conosco!",
-  "year": "ano"
+  "whatsapp_contact": "Fale conosco!"
 }

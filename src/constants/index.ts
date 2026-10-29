@@ -1,11 +1,6 @@
 import { dotobject } from '~utils/objects'
 import { FieldErrors, FieldValues } from 'react-hook-form'
 
-export const TwoFACodePrice = {
-  email: 0.015,
-  sms: 0.015,
-} as const
-
 export const OAuthProviders = ['google'] as const
 export type OAuthProvider = (typeof OAuthProviders)[number]
 
@@ -16,71 +11,6 @@ export const MaxDraftsPerOrg = 20
 export const MaxProcessDurationDays = 90
 export const MaxMembersPerOrg = 50_000
 export const MaxQuestionsPerProcess = 15
-
-export enum SubscriptionPermission {
-  Name = 'name',
-  StripeId = 'stripeId',
-  Default = 'default',
-  Users = 'organization.teamMembers',
-  SubOrgs = 'organization.subOrgs',
-  MaxCensus = 'organization.maxCensus',
-  MaxProcesses = 'organization.maxProcesses',
-  MaxDuration = 'organization.maxDaysDuration',
-  CustomURL = 'organization.customURL',
-  Drafts = 'organization.drafts',
-  SingleVoting = 'votingTypes.single',
-  MultipleVoting = 'votingTypes.multiple',
-  ApprovalVoting = 'votingTypes.approval',
-  CumulativeVoting = 'votingTypes.cumulative',
-  RankedVoting = 'votingTypes.ranked',
-  WeightedVoting = 'votingTypes.weighted',
-  Anonymous = 'features.anonymous',
-  Overwrite = 'features.overwrite',
-  PhoneSupport = 'features.phoneSupport',
-  LiveResults = 'features.liveResults',
-  Personalization = 'features.personalization',
-  EmailReminder = 'features.emailReminder',
-  TwoFASms = 'features.2FAsms',
-  TwoFAEmail = 'features.2FAemail',
-  WhiteLabel = 'features.whiteLabel',
-  LiveStreaming = 'features.liveStreaming',
-}
-
-/**
- * Canonical Stripe product names returned by the `/plans` endpoint. These are
- * the stable identifiers used to match plans, since the plan `id` is now the
- * Stripe product key (which may change).
- */
-export const PlanName = {
-  Free: 'Free',
-  Starter: 'Starter',
-  Professional: 'Professional',
-} as const
-
-export type PlanName = (typeof PlanName)[keyof typeof PlanName]
-
-/**
- * Normalizes a plan name for case-insensitive comparison. The API returns names
- * in TitleCase, but matching defensively avoids breakage on casing drift.
- */
-export const normalizePlanName = (value?: string | null) => value?.trim().toLowerCase() || undefined
-
-/**
- * Whether a plan matches a given name (case-insensitively).
- */
-export const isPlanNamed = (plan: { name?: string } | null | undefined, name?: string | null) => {
-  const a = normalizePlanName(plan?.name)
-  return !!a && a === normalizePlanName(name)
-}
-
-/**
- * Resolves a plan to its canonical PlanName key (or undefined if it doesn't match
- * any known plan). Useful to look up plan-specific translations by name.
- */
-export const getPlanKey = (plan: { name?: string } | null | undefined): PlanName | undefined =>
-  (Object.values(PlanName) as string[]).find((n) => normalizePlanName(n) === normalizePlanName(plan?.name)) as
-    | PlanName
-    | undefined
 
 export const LocalStorageKeys = {
   DashboardMenuReduced: 'dashboard.menu.reduced',

@@ -110,7 +110,7 @@ describe('ProcessPriceBreakdown', () => {
     expect(await screen.findByText('Your wallet has €100, €197 short of this total.')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Top up wallet' })).toHaveAttribute(
       'href',
-      Routes.dashboard.settings.wallet
+      Routes.dashboard.settings.billing
     )
   })
 

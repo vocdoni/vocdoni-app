@@ -1,77 +1,10 @@
 import { cardAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe } from '@chakra-ui/react'
 
-const pricingCard = {
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 4,
-    position: 'relative',
-    border: '1px solid',
-    borderRadius: 'md',
-    bgColor: 'card.pricing.bg',
-    p: 6,
-    flex: 1,
-  },
-  header: {
-    p: 0,
-    // minH: 28,
-    '& > p:first-of-type': {
-      pt: 1.5,
-      fontWeight: 'bold',
-      mb: 1.5,
-      fontSize: 'lg',
-    },
-    '& > p:nth-of-type(2)': {
-      fontSize: 'sm',
-      lineHeight: 1.2,
-    },
-  },
-  body: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'start',
-    p: 0,
-    '& > div > ul': {
-      m: 0,
-      mt: 4,
-      maxW: 'fit-content',
-      fontSize: 'sm',
-      listStyleType: 'none',
-    },
-  },
-  footer: {
-    p: 0,
-    display: 'flex',
-    '& > button': {
-      mx: 'auto',
-      mt: 3,
-      mb: 2,
-      w: 'full',
-      borderRadius: 'md',
-      border: '1px',
-      borderColor: 'gray.300',
-      p: 4,
-    },
-  },
-}
-
-const customPricingCard = {
-  ...pricingCard,
-  root: {
-    ...pricingCard.root,
-    bgColor: 'card.pricing.featured.bg',
-    borderColor: 'card.pricing.featured.border',
-    color: 'white',
-  },
-}
-
 export const Card = defineSlotRecipe({
   slots: cardAnatomy.keys(),
   variants: {
     variant: {
-      'pricing-card': pricingCard,
-      'custom-pricing-card': customPricingCard,
       client: {
         root: {
           border: 'none',

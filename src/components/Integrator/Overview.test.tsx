@@ -11,11 +11,6 @@ vi.mock('~src/queries/wallet', () => ({
   useWalletAccess: vi.fn(),
 }))
 
-// Avoid loading the Cal.com embed (@calcom/embed-react) in jsdom.
-vi.mock('~components/Dashboard/Booker', () => ({
-  BookerModalButton: ({ children }: { children?: React.ReactNode }) => <button>{children}</button>,
-}))
-
 import { useIntegratorInfo } from '~src/queries/integrators'
 import { useWallet, useWalletAccess } from '~src/queries/wallet'
 
@@ -109,8 +104,16 @@ describe('IntegratorOverview', () => {
     expect(screen.getByText(currency(12345, 'EUR'))).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Manage wallet' })).toHaveAttribute(
       'href',
-      '/integrators/configuration/wallet'
+      '/integrators/configuration/billing'
     )
+  })
+
+  it('offers no plan upgrade', () => {
+    vi.mocked(useIntegratorInfo).mockReturnValue(mockInfo({ data: enabledData }))
+
+    render(<IntegratorOverview />, { wrapper: TestMemoryRouter })
+
+    expect(screen.queryByText('Upgrade plan')).not.toBeInTheDocument()
   })
 
   it('hides the wallet card from roles that cannot read the wallet', () => {

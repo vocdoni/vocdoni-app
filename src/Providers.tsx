@@ -10,7 +10,6 @@ import { SaasAccountProvider } from '~components/Account/SaasAccountProvider'
 import { AnalyticsProvider } from '~components/AnalyticsProvider'
 import { UnauthorizedApiError } from '~components/Auth/api'
 import { AuthProvider } from '~components/Auth/AuthContext'
-import { SubscriptionProvider } from '~components/Auth/Subscription'
 import { CookieConsent } from '~components/Cookies/CookieConsent'
 import { hasAcceptedCookieConsent } from '~components/Cookies/utils'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
@@ -195,9 +194,7 @@ export const AppProviders = ({
 const SaasProviders = ({ children }: PropsWithChildren<{}>) => (
   <SdkAuthProvider storageKey={AUTH_STORAGE_KEY}>
     <AuthProvider>
-      <SubscriptionProvider>
-        <SaasAccountProvider>{children}</SaasAccountProvider>
-      </SubscriptionProvider>
+      <SaasAccountProvider>{children}</SaasAccountProvider>
     </AuthProvider>
   </SdkAuthProvider>
 )

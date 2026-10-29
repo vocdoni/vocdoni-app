@@ -892,7 +892,7 @@ const ProcessCreateView = () => {
           ? {
               action: {
                 label: t('process.payment.error.open_wallet', { defaultValue: 'Open wallet' }),
-                onClick: () => navigate(Routes.dashboard.settings.wallet),
+                onClick: () => navigate(Routes.dashboard.settings.billing),
               },
             }
           : {}),
