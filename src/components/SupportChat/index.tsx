@@ -1,4 +1,4 @@
-import { chakra, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
+import { Button, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuMessageCircle, LuX } from 'react-icons/lu'
@@ -67,9 +67,9 @@ const SupportChatWidget = () => {
         >
           {/* No aria-label: the visible teaser text is the accessible name, and
               must not collide with the launcher's "Open support chat" */}
-          <chakra.button type='button' fontSize='sm' fontWeight='medium' cursor='pointer' onClick={openChat}>
+          <Button variant='text' onClick={openChat}>
             {t('support_chat.teaser', { defaultValue: 'Do you need help?' })}
-          </chakra.button>
+          </Button>
           {/* Dismissing unmounts the teaser, so hand focus back to the launcher
               instead of dropping it on <body> */}
           <CloseButton
