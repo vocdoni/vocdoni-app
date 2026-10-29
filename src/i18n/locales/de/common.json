@@ -109,6 +109,23 @@
   "cancel": "Abbrechen",
   "cancel_vote": "Abstimmung abbrechen",
   "census": {
+    "checkout": {
+      "admin_only": "Nur Administratoren können Wählerplätze hinzufügen.",
+      "amount_net": "Plätze (ohne MwSt.)",
+      "back_to_members": "Zurück zu den Mitgliedern",
+      "balance": "Dein Wallet hat {{balance}}.",
+      "bought": "Wählerplätze hinzugefügt: {{amount}} wurden von deinem Wallet abgebucht. Versuche, die Mitglieder erneut hinzuzufügen.",
+      "buy": "Wählerplätze hinzufügen",
+      "intro": "Plätze für {{size}} Wählende, für {{due}} zusätzlich (ohne MwSt.).",
+      "intro_no_price": "Plätze für {{size}} Wählende.",
+      "invalid": "Diese Seite braucht die Anzahl der Wählenden, für die Plätze hinzugefügt werden sollen. Öffne sie über die abgelehnte Änderung.",
+      "pay": "{{amount}} bezahlen",
+      "shortfall": "Dein Wallet ist {{shortfall}} zu knapp.",
+      "timeout": "Deine Zahlung ist bestätigt; die Plätze werden hinzugefügt, sobald die Zahlung verarbeitet ist. Versuche, die Mitglieder in Kürze erneut hinzuzufügen.",
+      "timeout_redirected": "Wir warten noch darauf, dass die Plätze hinzugefügt werden. Versuche, die Mitglieder in Kürze erneut hinzuzufügen.",
+      "title": "Wählerplätze hinzufügen",
+      "waiting": "Zahlung eingegangen. Die Wählerplätze werden hinzugefügt…"
+    },
     "search": {
       "description": "Suche eine wählende Person anhand ihrer Anmeldedaten, um zu prüfen, ob sie in der Teilnehmerliste ist und bereits abgestimmt hat.",
       "error": "Die Teilnehmerliste konnte nicht durchsucht werden.",

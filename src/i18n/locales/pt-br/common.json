@@ -111,6 +111,23 @@
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar votação",
   "census": {
+    "checkout": {
+      "admin_only": "Somente administradores podem adicionar vagas para eleitores.",
+      "amount_net": "Vagas (sem IVA)",
+      "back_to_members": "Voltar para os membros",
+      "balance": "Sua wallet tem {{balance}}.",
+      "bought": "Vagas para eleitores adicionadas: {{amount}} foram debitados da sua wallet. Tente adicionar os membros novamente.",
+      "buy": "Adicionar vagas para eleitores",
+      "intro": "Vagas para {{size}} eleitores, por mais {{due}} (sem IVA).",
+      "intro_no_price": "Vagas para {{size}} eleitores.",
+      "invalid": "Esta página precisa do número de eleitores para o qual adicionar vagas. Abra-a a partir da alteração recusada.",
+      "pay": "Pagar {{amount}}",
+      "shortfall": "Faltam {{shortfall}} na sua wallet.",
+      "timeout": "Seu pagamento foi confirmado; as vagas são adicionadas assim que for processado. Tente adicionar os membros novamente em instantes.",
+      "timeout_redirected": "Ainda estamos aguardando as vagas serem adicionadas. Tente adicionar os membros novamente em instantes.",
+      "title": "Adicionar vagas para eleitores",
+      "waiting": "Pagamento recebido. Adicionando as vagas para eleitores…"
+    },
     "search": {
       "description": "Pesquise um eleitor pelas suas credenciais para verificar se está na lista de participantes e se já votou.",
       "error": "Não foi possível pesquisar a lista de participantes.",

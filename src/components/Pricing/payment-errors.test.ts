@@ -2,6 +2,7 @@ import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
 import type { TFunction } from 'i18next'
 import { ApiError, ErrorCode } from '~components/Auth/api'
 import {
+  censusGrowthCheckoutTarget,
   censusGrowthPaymentErrorMessage,
   draftSavePaymentErrorMessage,
   publishNeedsWalletTopUp,
@@ -283,5 +284,39 @@ describe('selfServiceVoterLimit', () => {
       const digits = error[key].replace(/(\d)[\s.,\u00a0\u202f](?=\d{3})/g, '$1')
       expect(digits).toContain(String(selfServiceVoterLimit))
     }
+  })
+})
+
+describe('censusGrowthCheckoutTarget', () => {
+  it('reads the room a census-growth refusal would buy', () => {
+    expect(censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, growth))).toEqual({
+      processId: growth.processId,
+      censusSize: 700,
+      dueCents: 2000,
+      shortfallCents: undefined,
+    })
+    expect(
+      censusGrowthCheckoutTarget(sdkError(ErrorCode.PaymentRequired, { ...growth, shortfallCents: 1500 }))
+    ).toEqual(expect.objectContaining({ shortfallCents: 1500 }))
+  })
+
+  it('has no target for a publish refusal, a refusal of another code or a refusal without the process', () => {
+    expect(
+      censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, { totalCents: 2000, shortfallCents: 1 }))
+    ).toBe(undefined)
+    expect(censusGrowthCheckoutTarget(apiError(ErrorCode.InsufficientWalletBalance, growth))).toBeUndefined()
+    expect(censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, { ...growth, processId: 'a/b' }))).toBe(
+      undefined
+    )
+    expect(censusGrowthCheckoutTarget(new Error('network down'))).toBeUndefined()
+  })
+
+  it('has no target above the self-service limit, which checkout refuses', () => {
+    expect(censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, { ...growth, censusSize: 50001 }))).toBe(
+      undefined
+    )
+    expect(
+      censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, { ...growth, quoteRequired: true }))
+    ).toBeUndefined()
   })
 })

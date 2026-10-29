@@ -35,6 +35,7 @@ import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
 import { useOutletContext } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
+import { useBuyRoomAction } from '~components/Pricing/useBuyRoomAction'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
@@ -509,6 +510,7 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
 export const ImportMembers = () => {
   const { t } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
   const { open: isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef<HTMLButtonElement>(null)
   const methods = useForm({ defaultValues: { spreadsheet: null } })
@@ -559,6 +561,7 @@ export const ImportMembers = () => {
           t('import_progress.error_description', {
             defaultValue: 'An error occurred while importing your member data. Please try again later.',
           }),
+        action: buyRoomAction(error),
         ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }

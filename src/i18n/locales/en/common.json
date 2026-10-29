@@ -109,6 +109,23 @@
   "cancel": "Cancel",
   "cancel_vote": "Cancel vote",
   "census": {
+    "checkout": {
+      "admin_only": "Only admins can add voter places.",
+      "amount_net": "Places (VAT excluded)",
+      "back_to_members": "Back to members",
+      "balance": "Your wallet has {{balance}}.",
+      "bought": "Voter places added: {{amount}} was charged from your wallet. Try adding the members again.",
+      "buy": "Add voter places",
+      "intro": "Places for {{size}} voters, at {{due}} more (VAT excluded).",
+      "intro_no_price": "Places for {{size}} voters.",
+      "invalid": "This page needs the number of voters to add places for. Open it from the refused change.",
+      "pay": "Pay {{amount}}",
+      "shortfall": "Your wallet is {{shortfall}} short.",
+      "timeout": "Your payment is confirmed; the places are added as soon as it is processed. Try adding the members again in a moment.",
+      "timeout_redirected": "We are still waiting for the places to be added. Try adding the members again in a moment.",
+      "title": "Add voter places",
+      "waiting": "Payment received. Adding the voter places…"
+    },
     "search": {
       "description": "Look up a voter by their credentials to check whether they are in the census and if they have already voted.",
       "error": "Could not search the census.",

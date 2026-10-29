@@ -111,6 +111,23 @@
   "cancel": "Cancel·la",
   "cancel_vote": "Cancel·la el procés",
   "census": {
+    "checkout": {
+      "admin_only": "Només els administradors poden afegir places al cens.",
+      "amount_net": "Places (sense IVA)",
+      "back_to_members": "Torna als membres",
+      "balance": "El teu wallet té {{balance}}.",
+      "bought": "Places al cens afegides: s'han cobrat {{amount}} del teu wallet. Torna a intentar afegir els membres.",
+      "buy": "Afegeix places al cens",
+      "intro": "Places per a {{size}} votants, per {{due}} més (sense IVA).",
+      "intro_no_price": "Places per a {{size}} votants.",
+      "invalid": "Aquesta pàgina necessita el nombre de votants per als quals afegir places al cens. Obre-la des del canvi rebutjat.",
+      "pay": "Paga {{amount}}",
+      "shortfall": "Al wallet li falten {{shortfall}}.",
+      "timeout": "El pagament està confirmat; les places s'afegeixen tan bon punt es processi. Torna a intentar afegir els membres d'aquí a un moment.",
+      "timeout_redirected": "Encara esperem que s'afegeixin les places. Torna a intentar afegir els membres d'aquí a un moment.",
+      "title": "Afegeix places al cens",
+      "waiting": "Pagament rebut. S'estan afegint les places de votants…"
+    },
     "search": {
       "description": "Cerca un votant per les seves credencials per comprovar si és al cens i si ja ha votat.",
       "error": "No s'ha pogut cercar al cens.",

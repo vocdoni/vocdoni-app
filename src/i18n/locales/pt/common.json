@@ -111,6 +111,23 @@
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar voto",
   "census": {
+    "checkout": {
+      "admin_only": "Só os administradores podem adicionar lugares para votantes.",
+      "amount_net": "Lugares (sem IVA)",
+      "back_to_members": "Voltar aos membros",
+      "balance": "A tua wallet tem {{balance}}.",
+      "bought": "Lugares para votantes adicionados: {{amount}} foram debitados da tua wallet. Tenta adicionar os membros novamente.",
+      "buy": "Adicionar lugares para votantes",
+      "intro": "Lugares para {{size}} votantes, por mais {{due}} (sem IVA).",
+      "intro_no_price": "Lugares para {{size}} votantes.",
+      "invalid": "Esta página precisa do número de votantes para o qual adicionar lugares. Abre-a a partir da alteração recusada.",
+      "pay": "Pagar {{amount}}",
+      "shortfall": "Faltam {{shortfall}} à tua wallet.",
+      "timeout": "O pagamento está confirmado; os lugares são adicionados assim que for processado. Tenta adicionar os membros novamente daqui a pouco.",
+      "timeout_redirected": "Ainda estamos a aguardar que os lugares sejam adicionados. Tenta adicionar os membros novamente daqui a pouco.",
+      "title": "Adicionar lugares para votantes",
+      "waiting": "Pagamento recebido. A adicionar os lugares para votantes…"
+    },
     "search": {
       "description": "Pesquisa um votante pelas suas credenciais para verificar se está na lista de participantes e se já votou.",
       "error": "Ocorreu um erro ao pesquisar o votante. Por favor, tenta novamente.",

@@ -109,6 +109,23 @@
   "cancel": "Utzi",
   "cancel_vote": "Utzi botoa",
   "census": {
+    "checkout": {
+      "admin_only": "Administratzaileek bakarrik gehi ditzakete botogile-lekuak.",
+      "amount_net": "Lekuak (BEZ gabe)",
+      "back_to_members": "Itzuli kideetara",
+      "balance": "Zure wallet-ak {{balance}} ditu.",
+      "bought": "Botogile-lekuak gehitu dira: {{amount}} kobratu dira zure wallet-etik. Saiatu berriro kideak gehitzen.",
+      "buy": "Gehitu botogile-lekuak",
+      "intro": "{{size}} botogilerentzako lekuak, {{due}} gehiagotan (BEZ gabe).",
+      "intro_no_price": "{{size}} botogilerentzako lekuak.",
+      "invalid": "Orri honek botogile kopurua behar du, lekuak gehitzeko. Ireki ukatutako aldaketatik.",
+      "pay": "Ordaindu {{amount}}",
+      "shortfall": "Zure wallet-ak {{shortfall}} falta du.",
+      "timeout": "Zure ordainketa berretsi da; lekuak prozesatu bezain pronto gehituko dira. Saiatu berriro kideak gehitzen une batean.",
+      "timeout_redirected": "Oraindik lekuak gehitzeko zain gaude. Saiatu berriro kideak gehitzen une batean.",
+      "title": "Gehitu botogile-lekuak",
+      "waiting": "Ordainketa jaso da. Botogile-lekuak gehitzen…"
+    },
     "search": {
       "description": "Bilatu botogile bat bere kredentzialak erabiliz erroldean dagoen eta dagoeneko bozka eman duen egiaztatzeko.",
       "error": "Ezin izan da erroldea bilatu.",

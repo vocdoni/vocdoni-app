@@ -111,6 +111,23 @@
   "cancel": "Annulla",
   "cancel_vote": "Annulla votazione",
   "census": {
+    "checkout": {
+      "admin_only": "Solo gli amministratori possono aggiungere posti per votanti.",
+      "amount_net": "Posti (IVA esclusa)",
+      "back_to_members": "Torna ai membri",
+      "balance": "Il tuo wallet ha {{balance}}.",
+      "bought": "Posti per votanti aggiunti: {{amount}} sono stati addebitati dal tuo wallet. Riprova ad aggiungere i membri.",
+      "buy": "Aggiungi posti per votanti",
+      "intro": "Posti per {{size}} votanti, per altri {{due}} (IVA esclusa).",
+      "intro_no_price": "Posti per {{size}} votanti.",
+      "invalid": "Questa pagina richiede il numero di votanti per cui aggiungere posti. Aprila dalla modifica rifiutata.",
+      "pay": "Paga {{amount}}",
+      "shortfall": "Al wallet mancano {{shortfall}}.",
+      "timeout": "Il pagamento è confermato; i posti vengono aggiunti appena sarà elaborato. Riprova ad aggiungere i membri tra poco.",
+      "timeout_redirected": "Stiamo ancora aspettando che i posti vengano aggiunti. Riprova ad aggiungere i membri tra poco.",
+      "title": "Aggiungi posti per votanti",
+      "waiting": "Pagamento ricevuto. Aggiunta dei posti in corso…"
+    },
     "search": {
       "description": "Cerca un votante tramite le sue credenziali per verificare se è nel censimento e se ha già votato.",
       "error": "Impossibile cercare nel censimento.",

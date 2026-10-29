@@ -111,6 +111,23 @@
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar voto",
   "census": {
+    "checkout": {
+      "admin_only": "Solo los administradores pueden añadir plazas para votantes.",
+      "amount_net": "Plazas (sin IVA)",
+      "back_to_members": "Volver a los miembros",
+      "balance": "Tu wallet tiene {{balance}}.",
+      "bought": "Plazas para votantes añadidas: se han cobrado {{amount}} de tu wallet. Vuelve a intentar añadir los miembros.",
+      "buy": "Añadir plazas para votantes",
+      "intro": "Plazas para {{size}} votantes, por {{due}} más (sin IVA).",
+      "intro_no_price": "Plazas para {{size}} votantes.",
+      "invalid": "Esta página necesita el número de votantes para el que añadir plazas. Ábrela desde el cambio rechazado.",
+      "pay": "Pagar {{amount}}",
+      "shortfall": "A tu wallet le faltan {{shortfall}}.",
+      "timeout": "Tu pago está confirmado; las plazas se añaden en cuanto se procese. Vuelve a intentar añadir los miembros en un momento.",
+      "timeout_redirected": "Seguimos esperando a que se añadan las plazas. Vuelve a intentar añadir los miembros en un momento.",
+      "title": "Añadir plazas para votantes",
+      "waiting": "Pago recibido. Añadiendo las plazas para votantes…"
+    },
     "search": {
       "description": "Busca a un votante por sus credenciales para comprobar si está en el censo y si ya ha votado.",
       "error": "No se pudo buscar en el censo.",
