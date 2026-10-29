@@ -209,7 +209,7 @@ export const AvatarUploader = (props: FormControlProps) => {
               justifyContent='center'
             >
               <input {...getInputProps()} />
-              {isPending ? <Spinner /> : <Icon as={LuUpload} boxSize={8} color='texts.subtle' />}
+              {isPending ? <Spinner /> : <Icon as={LuUpload} boxSize={8} color='fg.muted' />}
             </Box>
             <Button variant='outline'>
               <Icon as={LuUpload} boxSize={4} />
@@ -301,14 +301,14 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
       gap={5}
       p={10}
       border='1px dashed'
-      borderColor={isDragActive ? 'border.emphasized' : 'table.border'}
+      borderColor={isDragActive ? 'border.emphasized' : 'border'}
       cursor='pointer'
       borderRadius={12}
       {...getRootProps()}
     >
       <input {...getInputProps()} />
       <Flex justifyContent='center' alignItems='center' p={2}>
-        <Icon color='texts.subtle' as={LuUpload} boxSize={10} />
+        <Icon color='fg.muted' as={LuUpload} boxSize={10} />
       </Flex>
       <Box>
         {isDragActive ? (
@@ -321,7 +321,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
               i18nKey='uploader.click_or_drag_and_drop'
               components={{
                 click: <Text as='span' color='fg' />,
-                formats: <Text as='span' fontSize='sm' color='texts.subtle' />,
+                formats: <Text as='span' fontSize='sm' color='fg.muted' />,
               }}
               values={{ formats }}
             />

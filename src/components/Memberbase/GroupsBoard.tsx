@@ -115,7 +115,7 @@ const GroupsInfo = () => {
   if (!isOpen) return null
 
   return (
-    <DashboardBox position='relative' flexDirection='column' display='flex' gap={2} p={6} borderColor='table.border'>
+    <DashboardBox position='relative' flexDirection='column' display='flex' gap={2} p={6} borderColor='border'>
       <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorPalette='gray' size='sm' />
       <Flex flexDirection='row' gap={4}>
         <Icon as={LuUsers} boxSize={8} />
@@ -157,7 +157,7 @@ const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
             <Drawer.Title>
               {t('groups_board.history.title', { defaultValue: '{{ title }} History', title: displayTitle })}
             </Drawer.Title>
-            <Text color='texts.subtle' fontSize='sm'>
+            <Text color='fg.muted' fontSize='sm'>
               {t('groups_board.history.description', {
                 defaultValue: 'View the history of this group and its associated censuses',
               })}
@@ -245,7 +245,7 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
           </Drawer.CloseTrigger>
           <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
             <Drawer.Title>{t('actions.edit', { defaultValue: 'Edit' })}</Drawer.Title>
-            <Text color='texts.subtle' fontSize='sm'>
+            <Text color='fg.muted' fontSize='sm'>
               {t('group.actions.edit_description', {
                 defaultValue: 'Update the name and description of this group.',
               })}
@@ -379,7 +379,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
         <Flex gap={4} align='center' minH='42px' mb={2}>
           {selectedRows.length > 0 ? (
             <>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 <Trans
                   i18nKey='members.table.selected'
                   count={selectedRows.length}
@@ -393,22 +393,16 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
               </Button>
             </>
           ) : (
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text fontSize='sm' color='fg.muted'>
               <Trans i18nKey='members.table.select_hint' defaults='Select members to perform bulk actions' />
             </Text>
           )}
         </Flex>
       )}
-      <Table.ScrollArea
-        border='1px'
-        borderRadius='sm'
-        borderColor='table.border'
-        overflowX='visible'
-        overflowY='visible'
-      >
+      <Table.ScrollArea border='1px' borderRadius='sm' borderColor='border' overflowX='visible' overflowY='visible'>
         {isEmpty ? (
           <Flex justify='center' align='center' height='200px'>
-            <Text color='texts.subtle' fontSize='sm'>
+            <Text color='fg.muted' fontSize='sm'>
               {t('members.table.no_results', {
                 defaultValue: 'No members found',
               })}
@@ -513,7 +507,7 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
           </Drawer.CloseTrigger>
           <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
             <Drawer.Title>{displayTitle}</Drawer.Title>
-            <Text color='texts.subtle' fontSize='sm'>
+            <Text color='fg.muted' fontSize='sm'>
               {`${t('group.created_on', {
                 defaultValue: 'Created {{date}}',
                 date: new Date(group.createdAt).toLocaleDateString(undefined, {
@@ -535,7 +529,7 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
               <Text fontWeight='extrabold' fontSize='sm'>
                 {t('group.actions_title', { defaultValue: 'Actions' })}
               </Text>
-              <Text fontSize='xs' color='texts.subtle'>
+              <Text fontSize='xs' color='fg.muted'>
                 {t('group.actions_description', {
                   defaultValue:
                     "When a new vote is created, the system takes a snapshot of the group's members at that moment. Any changes to the member list afterward will not affect the created census.",
@@ -687,7 +681,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
   return (
     <>
-      <Card.Root variant='outline' borderColor='table.border' p={4} pt={2}>
+      <Card.Root variant='outline' borderColor='border' p={4} pt={2}>
         <Card.Header p={0}>
           <Flex justify='space-between' align='center'>
             <Heading size='md'>{displayTitle}</Heading>
@@ -703,7 +697,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
           <Flex direction='column' gap={2}>
             <Flex align='center' gap={2}>
               <Icon as={LuCalendar} boxSize={3.5} />
-              <Text color='texts.subtle' fontSize='sm'>
+              <Text color='fg.muted' fontSize='sm'>
                 {t('group.created_on', {
                   defaultValue: 'Created {{date}}',
                   date: new Date(group.createdAt).toLocaleDateString(undefined, {
@@ -730,7 +724,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
                 })}
               </Text>
             </Flex>
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text fontSize='sm' color='fg.muted'>
               {displayDescription}
             </Text>
           </Flex>

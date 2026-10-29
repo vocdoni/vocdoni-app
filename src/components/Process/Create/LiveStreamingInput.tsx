@@ -30,7 +30,7 @@ export const LiveStreamingInput = () => {
       <AccordionItem value='live-streaming' border='none'>
         <AccordionItemTrigger px={0}>
           <Box textAlign='left'>
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text fontSize='sm' color='fg.muted'>
               {t('process_create.youtube.accordion_title', {
                 defaultValue: 'Attach video (optional)',
               })}

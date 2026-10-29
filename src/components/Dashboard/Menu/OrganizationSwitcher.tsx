@@ -103,7 +103,7 @@ export const OrganizationSwitcher = () => {
                 <Icon
                   as={LuSquareStack}
                   border='1px solid'
-                  borderColor='table.border'
+                  borderColor='border'
                   borderRadius='xs'
                   p={1}
                   boxSize={6}
@@ -151,7 +151,7 @@ export const OrganizationSwitcher = () => {
                 justifyContent={'center'}
                 alignItems={'center'}
                 border='1px solid'
-                borderColor='table.border'
+                borderColor='border'
                 w='22px'
                 h='22px'
                 borderRadius='xs'

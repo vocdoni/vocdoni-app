@@ -22,7 +22,7 @@ export const AccountEdit = () => {
         <Text size='2xl' fontWeight='600'>
           {t('delete.delete_title', { defaultValue: 'Delete Account' })}
         </Text>
-        <Text fontSize='sm' color='texts.subtle'>
+        <Text fontSize='sm' color='fg.muted'>
           {t('delete.delete_subtitle', { defaultValue: 'Permanently delete your account and all associated data' })}
         </Text>
         <Button colorPalette='red' alignSelf={'flex-end'} onClick={() => setOpen(true)}>

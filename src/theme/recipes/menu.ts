@@ -6,10 +6,10 @@ const baseStyle = {
     p: 1,
     borderRadius: 'sm',
     boxShadow: 'md',
-    bg: 'chakra.body.bg',
+    bg: 'bg',
   },
   item: {
-    bg: 'chakra.body.bg',
+    bg: 'bg',
     _selected: {
       bg: 'gray.100',
       color: 'black',
