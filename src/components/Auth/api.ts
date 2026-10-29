@@ -64,14 +64,6 @@ export enum ErrorCode {
   UserNotVerified = 40014,
   UserAlreadyVerified = 40015,
   DraftLimitReached = 40031,
-  // Pay-per-process billing
-  IntegratorOrgCannotOwnProcess = 40174,
-  InsufficientWalletBalance = 40175,
-  QuoteRequired = 40176,
-  PaymentSessionConflict = 40177,
-  PaymentRequired = 40178,
-  MaxWritersReached = 40182,
-  SpendCapReached = 40183,
 }
 
 interface IApiError {
@@ -112,7 +104,7 @@ export const apiErrorDetails = (error: unknown): ApiErrorDetails | undefined => 
   if (error instanceof ApiError) return { code: error.apiError?.code, data: error.apiError?.data }
   if (error instanceof VocdoniApiError) {
     const body = error.body as { data?: unknown } | undefined
-    return { code: error.code, data: body?.data }
+    return { code: error.code, data: error.data ?? body?.data }
   }
   return undefined
 }

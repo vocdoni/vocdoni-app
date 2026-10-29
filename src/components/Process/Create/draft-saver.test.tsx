@@ -1,7 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import { VocdoniApiError } from '@vocdoni/api-client'
+import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { ErrorCode } from '~components/Auth/api'
 import { createTestQueryClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
@@ -170,9 +169,9 @@ describe('useFormDraftSaver', () => {
   it('explains a draft locked by its payment once, not on every auto-save', async () => {
     const locked = new VocdoniApiError(
       409,
-      { error: 'draft locked', code: ErrorCode.PaymentSessionConflict },
+      { error: 'draft locked', code: ApiErrorCode.PaymentSessionConflict },
       'draft locked',
-      ErrorCode.PaymentSessionConflict
+      ApiErrorCode.PaymentSessionConflict
     )
     update.mockRejectedValue(locked)
     vi.spyOn(console, 'error').mockImplementation(() => {})
