@@ -43,7 +43,7 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
         value={hasLimit ? Math.min(used, limit) : 0}
         max={hasLimit ? limit : 1}
         size='sm'
-        colorPalette={atLimit ? statusPalette.error : undefined}
+        colorPalette={atLimit ? statusPalette.error : 'blue'}
       >
         <Progress.Track>
           <Progress.Range />
