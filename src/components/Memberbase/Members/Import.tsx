@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Card,
-  CloseButton,
   Dialog,
   Drawer,
   Flex,
@@ -26,6 +25,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { chakraComponents } from 'chakra-react-select'

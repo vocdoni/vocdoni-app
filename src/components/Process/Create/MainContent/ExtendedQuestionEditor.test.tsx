@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm } from 'react-hook-form'
 import { render, screen } from '~src/test-utils'
 import ExtendedQuestionEditor from './ExtendedQuestionEditor'
@@ -52,5 +53,20 @@ describe('ExtendedQuestionEditor', () => {
 
     expect(screen.getByTestId('image-uploader')).toBeTruthy()
     expect(container.querySelectorAll('[data-choice-card]')).toHaveLength(1)
+  })
+
+  it('adds an option from a keyboard-reachable button', async () => {
+    const user = userEvent.setup()
+    const append = vi.fn()
+
+    render(<ExtendedQuestionEditor index={0} questionOptions={[{ id: 'opt-1' }]} append={append} remove={vi.fn()} />, {
+      wrapper: Wrapper,
+    })
+
+    const add = screen.getByRole('button', { name: 'Add option' })
+    add.focus()
+    await user.keyboard('{Enter}')
+
+    expect(append).toHaveBeenCalledWith({ option: '', description: '' })
   })
 })

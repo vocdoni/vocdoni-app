@@ -1,4 +1,5 @@
-import { Box, Button, CloseButton, Dialog } from '@chakra-ui/react'
+import { Box, Button, Dialog } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { Routes } from '~routes'

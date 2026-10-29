@@ -1,11 +1,13 @@
 import { Box, Toast, Toaster, createToaster } from '@chakra-ui/react'
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type ToastContextValue = ReturnType<typeof createToaster>
 
 const ToastContext = createContext<ToastContextValue | null>(null)
 
 export const ToastProvider = ({ children }: PropsWithChildren) => {
+  const { t } = useTranslation()
   const toaster = useMemo(() => createToaster({ placement: 'bottom' }), [])
   return (
     <ToastContext.Provider value={toaster}>
@@ -21,7 +23,7 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
             {toast.action ? (
               <Toast.ActionTrigger onClick={toast.action.onClick}>{toast.action.label}</Toast.ActionTrigger>
             ) : null}
-            {toast.closable ? <Toast.CloseTrigger /> : null}
+            {toast.closable ? <Toast.CloseTrigger aria-label={t('close', { defaultValue: 'Close' })} /> : null}
           </Toast.Root>
         )}
       </Toaster>

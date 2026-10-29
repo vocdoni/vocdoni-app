@@ -1,4 +1,5 @@
-import { AlertRoot as Alert, AlertDescription, CloseButton, HStack } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, HStack } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'

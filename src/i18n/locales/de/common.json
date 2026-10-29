@@ -467,6 +467,7 @@
       "password_min_length": "Min. 8 Zeichen",
       "required": "Dieses Feld ist erforderlich"
     },
+    "hide_password": "Passwort ausblenden",
     "member": {
       "error": {
         "invalid_birth_date": "Geburtsdatum darf nicht in der Zukunft liegen",
@@ -482,6 +483,7 @@
       "success_title": "Abstimmungsprozess erfolgreich erstellt"
     },
     "select_language": "Sprache",
+    "show_password": "Passwort anzeigen",
     "support": {
       "billing_issue": "Abrechnungsproblem",
       "custom_request": "Sonderwunsch",

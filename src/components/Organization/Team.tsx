@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Card,
-  CloseButton,
   Dialog,
   type DialogRootProps,
   Field,
@@ -21,6 +20,7 @@ import {
   useDisclosure,
   useRadioGroupContext,
 } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ComponentProps, ReactNode, useState } from 'react'
