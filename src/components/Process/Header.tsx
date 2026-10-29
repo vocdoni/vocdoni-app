@@ -20,7 +20,7 @@ const ProcessHeader = () => {
   return (
     <>
       {election?.header && (
-        <Box w='100%' mx='auto' my='30px' overflow='hidden'>
+        <Box w='100%' mx='auto' my={8} overflow='hidden'>
           <AspectRatio ratio={3 / 1} maxH='300px'>
             <Image
               src={election?.header}

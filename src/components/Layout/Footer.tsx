@@ -15,16 +15,10 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
 
   return (
     <>
-      <Flex
-        pt='24px'
-        flexDirection={{ base: 'column', xl: 'row' }}
-        alignItems='start'
-        pb={{ base: '50px', xl: '24px' }}
-        gap={6}
-      >
+      <Flex pt={6} flexDirection={{ base: 'column', xl: 'row' }} alignItems='start' pb={{ base: 12, xl: 6 }} gap={6}>
         <Box flex='1 1 33%'>
           <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
-            <Image src={vcdLogo} w='125px' mb='12px' filter={invert} alt={t('vocdoni_logo')} />
+            <Image src={vcdLogo} w='125px' mb={3} filter={invert} alt={t('vocdoni_logo')} />
           </Link>
           <Text fontSize='md' lineHeight={1.75}>
             {t('footer.footer_subtitle')}
@@ -35,7 +29,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             flex='1 1 67%'
             flexDirection={{ base: 'column', sm: 'row' }}
             justifyContent={{ sm: 'space-between', lg: 'space-between' }}
-            gap={{ base: '30px', sm: 0 }}
+            gap={{ base: 8, sm: 0 }}
             mt={1}
             ml={{ xl: 10 }}
             w='full'
@@ -43,7 +37,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             <Flex
               flexDirection={{ base: 'column', sm: 'row' }}
               justifyContent='space-between'
-              gap={{ base: '0px', xl: '90px' }}
+              gap={{ base: '0px', xl: 24 }}
               w='full'
             >
               <Text fontWeight='bold' fontSize='lg' lineHeight={1.15} mb={4} display='none'>
@@ -84,10 +78,10 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
         width='full'
         m='0 auto'
         flexDirection={{ base: 'column', md: 'row' }}
-        gap={{ base: '20px', md: '10px' }}
+        gap={{ base: 5, md: 2.5 }}
         justifyContent='space-between'
         alignItems='center'
-        py='12px'
+        py={3}
         borderTop='1px solid'
         borderTopColor='border'
       >
@@ -100,7 +94,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             }}
           />
         </Text>
-        <Flex gap='10px'>
+        <Flex gap={2.5}>
           <Link variant='icon' href='https://twitter.com/vocdoni' target='_blank' rel='noopener noreferrer'>
             <Icon aria-label={t('link.twitter').toString()} as={FaXTwitter} />
           </Link>

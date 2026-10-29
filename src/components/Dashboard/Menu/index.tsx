@@ -53,8 +53,8 @@ const DashboardMenu = ({
         top={0}
         w={reduced ? rWidth : width}
         h='100dvh'
-        zIndex={100}
-        transition='width .3s ease'
+        zIndex='dashboard-menu'
+        transition='width {durations.slow} ease'
       >
         <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} />
       </Box>
@@ -181,13 +181,13 @@ const DashboardMenuContent = ({
             transform={reduced ? 'translate(-50%, -50%)' : 'translateY(-50%)'}
             opacity={reduced ? 0 : 1}
             pointerEvents={reduced ? 'none' : 'auto'}
-            zIndex={1}
+            zIndex='contents'
           >
             <Icon as={LuPanelLeft} />
           </IconButton>
         </Flex>
         {menu.newVote && (
-          <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
+          <Button asChild w='full' minW={0} mt={2} mb={8} size={'xs'}>
             <RouterLink to={generatePath(Routes.processes.create)}>
               <HStack gap={reduced ? 0 : 2}>
                 <Icon as={LuPlus} boxSize={4} />

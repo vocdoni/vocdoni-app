@@ -24,7 +24,7 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
       alignItems='center'
       justifyContent='center'
       overflow='hidden'
-      transition='background-color 0.2s ease-in-out'
+      transition='background-color {durations.moderate} ease-in-out'
     >
       <a href={whatsappUrl} target='_blank' rel='noopener noreferrer'>
         <HStack gap={0}>
@@ -37,7 +37,7 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
               opacity={0}
               whiteSpace='nowrap'
               overflow='hidden'
-              transition='max-width 0.3s ease, margin-left 0.3s ease, opacity 0.2s'
+              transition='max-width {durations.slow} ease, margin-left {durations.slow} ease, opacity {durations.moderate}'
               _groupHover={{ maxW: '12rem', ml: 2, opacity: 1 }}
             >
               {t('whatsapp_contact', 'Talk with us!')}
