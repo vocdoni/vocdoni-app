@@ -1,14 +1,21 @@
+import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
+import type { WalletLedgerEntry } from '@vocdoni/api-types'
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement, type ReactNode } from 'react'
-import { ApiError, ErrorCode } from '~components/Auth/api'
-import type { WalletEntry } from './wallet'
-import { censusPaymentIds, useCensusCheckout, waitForCensusPayment } from './census-checkout'
+import { censusPaymentIds, useCensusCheckout, useReadWalletHistory, waitForCensusPayment } from './census-checkout'
 
-const mockBearedFetch = vi.hoisted(() => vi.fn())
+const mockCensusCheckout = vi.hoisted(() => vi.fn())
+const mockGetWallet = vi.hoisted(() => vi.fn())
 
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ bearedFetch: mockBearedFetch, currentAddress: '0x1234' }),
+  useAuth: () => ({ currentAddress: '0x1234' }),
+}))
+
+vi.mock('~src/providers/ApiClientProvider', () => ({
+  useApiClient: () => ({
+    client: { elections: { censusCheckout: mockCensusCheckout }, organizations: { getWallet: mockGetWallet } },
+  }),
 }))
 
 const processId = '6650f0c0c0c0c0c0c0c0c0c0'
@@ -17,7 +24,7 @@ const queryClient = new QueryClient()
 const wrapper = ({ children }: { children: ReactNode }) =>
   createElement(QueryClientProvider, { client: queryClient }, children)
 
-const entry = (overrides: Partial<WalletEntry>): WalletEntry => ({
+const entry = (overrides: Partial<WalletLedgerEntry>): WalletLedgerEntry => ({
   id: 'e1',
   orgAddress: '0x1234',
   amountCents: -500,
@@ -43,39 +50,59 @@ const fakeClock = () => {
 
 describe('useCensusCheckout', () => {
   beforeEach(() => {
-    mockBearedFetch.mockReset()
+    mockCensusCheckout.mockReset()
   })
 
-  it('posts the census size to the process census checkout, without a return URL', async () => {
-    mockBearedFetch.mockResolvedValue({ amountCents: 500, currency: 'eur' })
+  it('buys the census room through the SDK, with the locale and the return URL', async () => {
+    mockCensusCheckout.mockResolvedValue({ amountCents: 500, currency: 'eur', clientSecret: '', sessionId: '' })
     const { result } = renderHook(() => useCensusCheckout(), { wrapper })
 
-    result.current.mutate({ processId, censusSize: 1200, locale: 'es' })
+    result.current.mutate({ processId, censusSize: 1200, locale: 'es', returnURL: 'https://app.test/return' })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(mockBearedFetch).toHaveBeenCalledWith(`processes/${processId}/census/checkout`, {
-      method: 'POST',
-      body: { censusSize: 1200, locale: 'es' },
+    expect(mockCensusCheckout).toHaveBeenCalledWith(processId, {
+      censusSize: 1200,
+      locale: 'es',
+      returnURL: 'https://app.test/return',
     })
   })
 
   it('refuses a process id that is not one, before any request', async () => {
     const { result } = renderHook(() => useCensusCheckout(), { wrapper })
 
-    result.current.mutate({ processId: 'processes/x/../../wallet', censusSize: 10 })
+    result.current.mutate({ processId: 'processes/x/../../wallet', censusSize: 10, returnURL: 'https://app.test' })
 
     await waitFor(() => expect(result.current.isError).toBe(true))
-    expect(mockBearedFetch).not.toHaveBeenCalled()
+    expect(mockCensusCheckout).not.toHaveBeenCalled()
   })
 
   it('surfaces the refusal of the backend', async () => {
-    const refusal = new ApiError({ error: 'no room', code: ErrorCode.SpendCapReached })
-    mockBearedFetch.mockRejectedValue(refusal)
+    const refusal = new VocdoniApiError(
+      402,
+      { error: 'no room', code: ApiErrorCode.SpendCapReached },
+      'no room',
+      ApiErrorCode.SpendCapReached
+    )
+    mockCensusCheckout.mockRejectedValue(refusal)
     const { result } = renderHook(() => useCensusCheckout(), { wrapper })
 
-    result.current.mutate({ processId, censusSize: 10 })
+    result.current.mutate({ processId, censusSize: 10, returnURL: 'https://app.test' })
 
     await waitFor(() => expect(result.current.error).toBe(refusal))
+  })
+})
+
+describe('useReadWalletHistory', () => {
+  beforeEach(() => {
+    mockGetWallet.mockReset()
+  })
+
+  it('reads the first page of the ledger of the selected organization', async () => {
+    mockGetWallet.mockResolvedValue({ balanceCents: 0, currency: 'eur', history: [entry({ id: 'h1' })] })
+    const { result } = renderHook(() => useReadWalletHistory(), { wrapper })
+
+    await expect(result.current()).resolves.toEqual([entry({ id: 'h1' })])
+    expect(mockGetWallet).toHaveBeenCalledWith('0x1234', { page: 1, limit: 10 })
   })
 })
 
@@ -158,7 +185,7 @@ describe('waitForCensusPayment', () => {
 
   it('stops at once on a permanent refusal of the wallet', async () => {
     const clock = fakeClock()
-    const readHistory = vi.fn().mockRejectedValue(new ApiError({ error: 'forbidden' }, { status: 403 } as Response))
+    const readHistory = vi.fn().mockRejectedValue(new VocdoniApiError(403, { error: 'forbidden' }, 'forbidden'))
 
     await expect(waitForCensusPayment(readHistory, processId, [], clock)).rejects.toThrow('forbidden')
     expect(readHistory).toHaveBeenCalledTimes(1)

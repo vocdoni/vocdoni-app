@@ -1,7 +1,8 @@
 import '@testing-library/jest-dom'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ApiError, ErrorCode } from '~components/Auth/api'
+import { ApiErrorCode } from '@vocdoni/api-client'
+import { ApiError } from '~components/Auth/api'
 import { render } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { MemberManager } from './Manager'
@@ -68,7 +69,7 @@ describe('MemberManager edit', () => {
     const refusal = new ApiError(
       {
         error: 'payment required',
-        code: ErrorCode.PaymentRequired,
+        code: ApiErrorCode.PaymentRequired,
         data: { processId: '6650f0c0c0c0c0c0c0c0c0c0', censusSize: 700, dueCents: 2000, totalCents: 31000 },
       },
       new Response(null, { status: 402 })

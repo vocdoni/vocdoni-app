@@ -1419,6 +1419,7 @@
         "census_growth_payment_required": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members.",
         "census_growth_payment_shortfall": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members. Your wallet lacks {{shortfall}} of that amount.",
         "census_growth_quote_required": "These members would take the census of a voting process above 50,000 voters, which needs a custom quote. Contact us to grow it.",
+        "census_growth_spend_cap_reached": "These voter places would exceed the spend cap the integrator set for this organization. The integrator must raise it first.",
         "census_growth_wallet_insufficient": "The integrator wallet does not cover the cost of adding these members to a voting process. The integrator managing this organization must top up its wallet first.",
         "census_growth_wallet_insufficient_amounts": "The integrator wallet has {{available}}, but {{required}} (VAT excluded) is needed to add these members to a voting process. The integrator managing this organization must top up its wallet first.",
         "draft_integrator_org": "Your integrator organization cannot own voting processes, only the organizations it manages can. Save this draft from one of them.",

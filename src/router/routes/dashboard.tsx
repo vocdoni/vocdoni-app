@@ -136,6 +136,15 @@ export const useDashboardRoutes = () => {
                     errorElement: <Error />,
                   },
                   {
+                    path: Routes.dashboard.census.checkoutReturn,
+                    element: (
+                      <SuspenseLoader>
+                        <CensusCheckout />
+                      </SuspenseLoader>
+                    ),
+                    errorElement: <Error />,
+                  },
+                  {
                     path: Routes.dashboard.processes.base,
                     element: (
                       <SuspenseLoader>

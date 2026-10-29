@@ -9,7 +9,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link as RouterLink, useSearchParams } from 'react-router'
+import { generatePath, Link as RouterLink, useHref, useNavigate } from 'react-router'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
 import {
   censusPaymentIds,
@@ -20,19 +20,25 @@ import {
 import { useWallet, useWalletAccess } from '~queries/wallet'
 import { Routes } from '~src/router/routes'
 import { currency } from '~utils/numbers'
-import { checkoutReturnParam } from './ProcessCheckout'
 import { censusGrowthPaymentErrorMessage } from './payment-errors'
-import { checkoutReturnUrl, useCheckoutAppearance, useStripePromise } from './stripe'
+import { useCheckoutAppearance, useStripePromise } from './stripe'
 
-// The payment's snapshot of the ledger, kept across a redirect-based payment (3DS, bank redirect)
+// The room a purchase buys: its size in voters, and the price the page showed, EUR cents VAT excluded
+type Room = { censusSize: number; dueCents?: number; shortfallCents?: number }
+
+// The payment's snapshot of the ledger and of the room, kept across a redirect-based payment (3DS, bank
+// redirect). The return URL carries only the session id, so the room is read back from here.
 const PENDING_KEY = 'census-checkout-pending'
-type StoredPending = { processId: string; knownIds: string[] }
+export type StoredPending = Room & { processId: string; knownIds: string[] }
 
-// sessionStorage can be blocked (private windows), so every access is guarded.
-const readStoredPending = (): StoredPending | null => {
+// sessionStorage can be blocked (private windows), so every access is guarded. Another process's
+// snapshot is never returned.
+export const readStoredPending = (processId: string): StoredPending | null => {
   try {
     const value = sessionStorage.getItem(PENDING_KEY)
-    return value === null ? null : (JSON.parse(value) as StoredPending)
+    if (value === null) return null
+    const stored = JSON.parse(value) as StoredPending
+    return stored.processId === processId ? stored : null
   } catch {
     return null
   }
@@ -57,7 +63,7 @@ const clearStoredPending = () => {
 type Step =
   | { name: 'ready' }
   | { name: 'buying' }
-  | { name: 'checkout'; clientSecret: string; amountCents: number; currency: string }
+  | { name: 'checkout'; clientSecret: string; amountCents: number; currency: string; censusSize: number }
   // The payment is submitted: the debit for the room is awaited in the ledger
   | { name: 'waiting'; redirected: boolean; knownIds: string[] }
   | { name: 'bought'; amountCents: number; currency?: string }
@@ -72,6 +78,9 @@ export type CensusCheckoutProps = {
   // backend recomputes both when the room is bought.
   dueCents?: number
   shortfallCents?: number
+  // Set on the return from a redirect-based payment, with the ledger snapshot taken before it when one was stored
+  returned?: boolean
+  knownIds?: string[]
 }
 
 const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error))
@@ -79,31 +88,38 @@ const errorMessage = (error: unknown) => (error instanceof Error ? error.message
 const censusCheckoutErrorMessage = (t: ReturnType<typeof useTranslation>['t'], error: unknown) =>
   censusGrowthPaymentErrorMessage(t, error) ?? errorMessage(error)
 
-// Where a redirect return starts: waiting when the payment was snapshotted for this process, else
-// neutral copy, since nothing says whether the room was bought
-const stepAfterReturn = (processId: string): Step => {
-  const stored = readStoredPending()
-  if (stored?.processId === processId) return { name: 'waiting', redirected: true, knownIds: stored.knownIds }
-  return { name: 'timeout', confirmed: false }
-}
+// Where a redirect return starts: waiting when the payment was snapshotted, else neutral copy, since
+// nothing says whether the room was bought
+const stepAfterReturn = (knownIds?: string[]): Step =>
+  knownIds ? { name: 'waiting', redirected: true, knownIds } : { name: 'timeout', confirmed: false }
 
 /**
  * Buy room in a process census, so the members that were refused can be added (the census growth
  * refused with 40178). Inline, not a Dialog: a modal focus trap breaks Stripe's 3D Secure lightbox.
  * The room is only there once the backend has debited it, so success is read from the wallet ledger.
  */
-export const CensusCheckout = ({ processId, censusSize, dueCents, shortfallCents }: CensusCheckoutProps) => {
+export const CensusCheckout = ({
+  processId,
+  censusSize,
+  dueCents,
+  shortfallCents,
+  returned = false,
+  knownIds,
+}: CensusCheckoutProps) => {
   const { t, i18n } = useTranslation()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
   const { canTopUp } = useWalletAccess()
   const { data: wallet } = useWallet()
   const queryClient = useQueryClient()
   const buyRoom = useCensusCheckout()
   const readHistory = useReadWalletHistory()
   const stripePromise = useStripePromise()
-  // Set once on mount: the page was reached from the return of a redirect-based payment
-  const [returned] = useState(() => searchParams.get(checkoutReturnParam) === 'return')
-  const [step, setStep] = useState<Step>(() => (returned ? stepAfterReturn(processId) : { name: 'ready' }))
+  // Stripe appends the session id to this path, so the redirect lands on the return route of this page
+  const returnURL = new URL(
+    useHref(generatePath(Routes.dashboard.census.checkoutReturnBase, { id: processId })),
+    window.location.origin
+  )
+  const [step, setStep] = useState<Step>(() => (returned ? stepAfterReturn(knownIds) : { name: 'ready' }))
   const [error, setError] = useState<string>()
 
   // The debit changes the balance and the ledger: every wallet page is read again
@@ -117,18 +133,20 @@ export const CensusCheckout = ({ processId, censusSize, dueCents, shortfallCents
     latest.current = { readHistory }
   })
 
-  // The return param and the snapshot have served their purpose once read on mount
+  // The snapshot has served its purpose once read on the return. The URL then moves on to the census
+  // checkout with its room, so a reload does not repeat the return; the page keeps its state.
   useEffect(() => {
-    if (!searchParams.has(checkoutReturnParam)) return
+    if (!returned) return
     clearStoredPending()
-    setSearchParams(
-      (params) => {
-        params.delete(checkoutReturnParam)
-        return params
-      },
+    if (censusSize === undefined || censusSize < 1) return
+    const params = new URLSearchParams({ size: String(censusSize) })
+    if (dueCents !== undefined) params.set('due', String(dueCents))
+    if (shortfallCents !== undefined) params.set('shortfall', String(shortfallCents))
+    navigate(
+      { pathname: generatePath(Routes.dashboard.census.checkout, { id: processId }), search: `?${params}` },
       { replace: true }
     )
-  }, [searchParams, setSearchParams])
+  }, [returned, censusSize, dueCents, shortfallCents, processId, navigate])
 
   // Reads the ledger until the debit for the room shows up, or the wait times out
   useEffect(() => {
@@ -167,10 +185,15 @@ export const CensusCheckout = ({ processId, censusSize, dueCents, shortfallCents
     setError(undefined)
     setStep({ name: 'buying' })
     buyRoom
-      .mutateAsync({ processId, censusSize: size, locale: i18n.resolvedLanguage })
+      .mutateAsync({
+        processId,
+        censusSize: size,
+        locale: i18n.resolvedLanguage,
+        returnURL: returnURL.toString(),
+      })
       .then((response) => {
-        if (response.clientSecret === undefined) {
-          // The wallet covered it: the debit is already made
+        // Without a client secret the wallet covered it: the debit is already made
+        if (!response.clientSecret) {
           markBought(response.amountCents, response.currency)
           return
         }
@@ -179,6 +202,7 @@ export const CensusCheckout = ({ processId, censusSize, dueCents, shortfallCents
           clientSecret: response.clientSecret,
           amountCents: response.amountCents,
           currency: response.currency,
+          censusSize: size,
         })
       })
       .catch((err) => {
@@ -199,22 +223,6 @@ export const CensusCheckout = ({ processId, censusSize, dueCents, shortfallCents
   )
 
   const renderBody = () => {
-    if (censusSize === undefined || censusSize < 1) {
-      return (
-        <Alert.Root status='error'>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Description>
-              {t('census.checkout.invalid', {
-                defaultValue:
-                  'This page needs the number of voters to add places for. Open it from the refused change.',
-              })}
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Root>
-      )
-    }
-
     switch (step.name) {
       case 'buying':
         return <Waiting />
@@ -225,11 +233,12 @@ export const CensusCheckout = ({ processId, censusSize, dueCents, shortfallCents
             clientSecret={step.clientSecret}
             amountCents={step.amountCents}
             currencyCode={step.currency}
+            room={{ censusSize: step.censusSize, dueCents, shortfallCents }}
             stripePromise={stripePromise}
             snapshotPayments={snapshotPayments}
-            onPaid={(knownIds) => {
-              if (knownIds === null) setStep({ name: 'timeout', confirmed: true })
-              else setStep({ name: 'waiting', redirected: false, knownIds })
+            onPaid={(snapshot) => {
+              if (snapshot === null) setStep({ name: 'timeout', confirmed: true })
+              else setStep({ name: 'waiting', redirected: false, knownIds: snapshot })
             }}
           />
         )
@@ -267,6 +276,21 @@ export const CensusCheckout = ({ processId, censusSize, dueCents, shortfallCents
           </VStack>
         )
       case 'ready':
+        if (censusSize === undefined || censusSize < 1) {
+          return (
+            <Alert.Root status='error'>
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Description>
+                  {t('census.checkout.invalid', {
+                    defaultValue:
+                      'This page needs the number of voters to add places for. Open it from the refused change.',
+                  })}
+                </Alert.Description>
+              </Alert.Content>
+            </Alert.Root>
+          )
+        }
         return (
           <VStack align='stretch' gap={5}>
             <Text>
@@ -354,6 +378,7 @@ type CheckoutStepProps = {
   clientSecret: string
   amountCents: number
   currencyCode: string
+  room: Room
   stripePromise: ReturnType<typeof useStripePromise>
   snapshotPayments: () => Promise<string[] | null>
   onPaid: (knownIds: string[] | null) => void
@@ -364,6 +389,7 @@ const CheckoutStep = ({
   clientSecret,
   amountCents,
   currencyCode,
+  room,
   stripePromise,
   snapshotPayments,
   onPaid,
@@ -389,6 +415,7 @@ const CheckoutStep = ({
         processId={processId}
         amountCents={amountCents}
         currencyCode={currencyCode}
+        room={room}
         snapshotPayments={snapshotPayments}
         onPaid={onPaid}
       />
@@ -398,13 +425,14 @@ const CheckoutStep = ({
 
 type CheckoutFormFieldsProps = Pick<
   CheckoutStepProps,
-  'processId' | 'amountCents' | 'currencyCode' | 'snapshotPayments' | 'onPaid'
+  'processId' | 'amountCents' | 'currencyCode' | 'room' | 'snapshotPayments' | 'onPaid'
 >
 
 const CheckoutFormFields = ({
   processId,
   amountCents,
   currencyCode,
+  room,
   snapshotPayments,
   onPaid,
 }: CheckoutFormFieldsProps) => {
@@ -437,19 +465,18 @@ const CheckoutFormFields = ({
     setError(null)
     // Taken before the payment: the debit it causes is the one new payment of this process in the ledger
     const knownIds = await snapshotPayments()
-    if (knownIds) writeStoredPending({ processId, knownIds })
+    if (knownIds) writeStoredPending({ processId, ...room, knownIds })
     else clearStoredPending()
     try {
-      const result = await checkout.confirm({
-        redirect: 'if_required',
-        returnUrl: checkoutReturnUrl({ [checkoutReturnParam]: 'return' }),
-      })
+      const result = await checkout.confirm({ redirect: 'if_required' })
       if (result.type === 'error') {
         clearStoredPending()
         setError(result.error.message)
         setIsSubmitting(false)
         return
       }
+      // No redirect happened, so the return route will not need the snapshot
+      clearStoredPending()
       // Stripe accepted the payment; the debit for the room is the backend's to make
       onPaid(knownIds)
     } catch (err) {

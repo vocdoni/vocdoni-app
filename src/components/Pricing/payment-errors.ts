@@ -150,16 +150,19 @@ export type CensusGrowthCheckoutTarget = {
 
 export const censusGrowthCheckoutTarget = (error: unknown): CensusGrowthCheckoutTarget | undefined => {
   const details = apiErrorDetails(error)
-  if (details?.code !== ErrorCode.PaymentRequired || !hasCents(details.data, 'dueCents', 'censusSize')) return undefined
-  const data = details.data as { processId?: unknown; shortfallCents?: unknown }
-  const { censusSize, dueCents } = details.data
-  if (typeof data.processId !== 'string' || !isProcessId(data.processId)) return undefined
-  if (censusSize < 1 || exceedsSelfServiceLimit(details.data)) return undefined
+  if (details?.code !== ApiErrorCode.PaymentRequired || !hasNumbers(details.data, 'dueCents', 'censusSize')) {
+    return undefined
+  }
+  const quote = details.data as PaymentRequiredData | CensusGrowthQuote
+  if (!isCensusGrowthQuote(quote)) return undefined
+  const { processId, censusSize, dueCents, shortfallCents } = quote
+  if (typeof processId !== 'string' || !isProcessId(processId)) return undefined
+  if (censusSize < 1 || exceedsSelfServiceLimit(quote)) return undefined
   return {
-    processId: data.processId,
+    processId,
     censusSize,
     dueCents,
-    shortfallCents: typeof data.shortfallCents === 'number' ? data.shortfallCents : undefined,
+    shortfallCents: hasNumbers(quote, 'shortfallCents') ? shortfallCents : undefined,
   }
 }
 
@@ -207,6 +210,12 @@ export const censusGrowthPaymentErrorMessage = (t: TFunction, error: unknown): s
       })
     case ApiErrorCode.QuoteRequired:
       return censusGrowthQuoteRequiredMessage(t)
+    case ApiErrorCode.SpendCapReached:
+      // The backend may send this without data (40183), so the copy does not read it.
+      return t('process.payment.error.census_growth_spend_cap_reached', {
+        defaultValue:
+          'These voter places would exceed the spend cap the integrator set for this organization. The integrator must raise it first.',
+      })
     case ApiErrorCode.PaymentSessionConflict:
       return t('process.payment.error.census_growth_payment_in_progress', {
         defaultValue:
