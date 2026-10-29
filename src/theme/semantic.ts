@@ -1,6 +1,7 @@
 import { defineSemanticTokens } from '@chakra-ui/react'
 import { ballotColors } from './ballot'
 import { chartColors } from './charts'
+import { illustrationColors } from './illustration'
 import { recipeColors } from './recipeColors'
 import { stateColors } from './states'
 import { statusColors } from './status'
@@ -213,6 +214,7 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  ...illustrationColors,
   card: {
     pricing: {
       bg: {
