@@ -190,7 +190,7 @@ export const ProcessView = () => {
     // the sidebar one must resume the same step.
     <CspAuthSession>
       <PageSection
-        size='voting'
+        size='wide'
         display='grid'
         gridTemplateColumns={{ base: '1fr', xl: 'minmax(0,1fr) var(--chakra-sizes-voting-sidebar)' }}
         gap={10}

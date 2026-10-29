@@ -69,7 +69,7 @@ const IntegratorOrgGuard = () => {
 
   if (provision.isError) {
     return (
-      <DashboardContents p={0}>
+      <DashboardContents>
         <Center py={16}>
           <Stack align='center' gap={3}>
             <Text fontSize='sm' color='gray.500'>

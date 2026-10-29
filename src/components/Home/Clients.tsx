@@ -31,7 +31,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
   return (
     <PageSection
       as='section'
-      size='clients'
+      size='wide'
       display='grid'
       mb={{ base: 10, lg: 20 }}
       px={{

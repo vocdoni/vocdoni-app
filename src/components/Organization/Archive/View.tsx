@@ -98,7 +98,7 @@ export const ArchiveOrganizationView = ({
 
   return (
     <PageSection
-      size='archive'
+      size='narrow'
       display='flex'
       flexDirection='column'
       alignItems='stretch'

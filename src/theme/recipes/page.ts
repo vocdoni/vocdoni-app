@@ -10,18 +10,11 @@ export const PageContainer = defineRecipe({
     size: {
       wide: { maxW: 'content.wide' },
       medium: { maxW: 'content.medium' },
-      // The other page widths in use, until they are folded into the ones above.
-      chrome: { maxW: 'navbar' },
-      voting: { maxW: 'voting.contents.max' },
-      clients: { maxW: 'content.clients' },
-      legal: { maxW: '6xl' },
-      summary: { maxW: 'breakpoint-lg' },
-      archive: { maxW: '4xl' },
+      narrow: { maxW: 'content.narrow' },
     },
     gutter: {
+      // Shared by the public header, content and footer, so their edges line up.
       page: { px: { base: 2.5, sm: 5, md: 20 } },
-      // The public header and footer, which step at other breakpoints.
-      chrome: { px: { base: 4, md: 6, xl: 10 } },
       none: {},
     },
   },

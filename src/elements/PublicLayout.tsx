@@ -1,4 +1,4 @@
-import { Flex, HStack } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 import { PropsWithChildren, ReactNode } from 'react'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import CrispChat from '~components/Layout/CrispChat'
@@ -45,12 +45,13 @@ const PublicLayout = ({
   const { SHOW_ORG_LOGO } = useAppEnv()
   const normalizedPathname = stripPublicLanguagePrefix(pathname, Object.keys(useLanguagesEnv()))
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
+  const footerBg = isOrganizationPage ? 'footer.bg.muted' : 'footer.bg'
   const showLimitedAnnouncementBanner = !hideAnnouncement && [Routes.root, Routes.plans].includes(normalizedPathname)
 
   return (
     <Flex position='relative' flexDirection='column' minH='dvh'>
-      <PageContainer size='chrome' gutter='chrome' asChild>
-        <HStack as='header' position='sticky' top={0} w='full' backdropFilter='blur(40px)' zIndex='public-header'>
+      <Box as='header' position='sticky' top={0} w='full' backdropFilter='blur(40px)' zIndex='public-header'>
+        <PageContainer w='full'>
           {header ?? (
             <Navbar
               publicLanguageLinks={publicLanguageLinks}
@@ -58,8 +59,8 @@ const PublicLayout = ({
               organizationLogo={SHOW_ORG_LOGO ? organizationLogo : undefined}
             />
           )}
-        </HStack>
-      </PageContainer>
+        </PageContainer>
+      </Box>
       {enableChat ? <CrispChat /> : null}
       {showLimitedAnnouncementBanner && <AnnouncementBanner limited />}
       <PageContainer asChild>
@@ -74,22 +75,17 @@ const PublicLayout = ({
           {children}
         </Flex>
       </PageContainer>
-      {simpleFooter ? (
-        <PageContainer as='footer' size='chrome' gutter='chrome' w='full'>
-          <Footer simplified />
+      {/* The band spans the window; its content keeps to the page column. */}
+      <Box
+        as='footer'
+        w='full'
+        bgColor={simpleFooter ? undefined : footerBg}
+        backdropFilter={simpleFooter ? undefined : 'blur(40px)'}
+      >
+        <PageContainer w='full'>
+          <Footer simplified={simpleFooter} />
         </PageContainer>
-      ) : (
-        <PageContainer
-          as='footer'
-          size='chrome'
-          gutter='chrome'
-          bgColor={isOrganizationPage ? 'footer.bg.muted' : 'footer.bg'}
-          w='full'
-          backdropFilter='blur(40px)'
-        >
-          <Footer />
-        </PageContainer>
-      )}
+      </Box>
     </Flex>
   )
 }

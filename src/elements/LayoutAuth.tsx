@@ -53,7 +53,13 @@ export const AuthLayout = ({ signInPath, signInRoute = signInPath, aside, footer
 
   return (
     <Flex justifyContent='center' minH='dvh' p={{ base: 6, md: 10 }}>
-      <Flex w='full' maxW={aside ? { base: 'md', md: '4xl', lg: '6xl' } : 'md'} flexDir='column' gap={2} my='auto'>
+      <Flex
+        w='full'
+        maxW={aside ? { base: 'md', md: 'content.narrow', lg: 'content.medium' } : 'md'}
+        flexDir='column'
+        gap={2}
+        my='auto'
+      >
         <AuthLayoutHeader isSignin={pathname === signInPath} signInRoute={signInRoute} />
         {aside ? (
           <Card.Root

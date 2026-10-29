@@ -359,7 +359,7 @@ const ProcessSummary = () => {
   if (!election) return null
 
   return (
-    <PageSection size='summary' display='flex' flexDirection='column' gap={8} w='full' py={6}>
+    <PageSection size='narrow' display='flex' flexDirection='column' gap={8} w='full' py={6}>
       <ParticipationCard />
       <KeyIndicators />
       <ResultsNotice />
