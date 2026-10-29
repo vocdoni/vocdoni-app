@@ -16,7 +16,6 @@ import ProcessCreate, {
   useFormToVotingProcessRequest,
 } from './index'
 
-const mockPermission = vi.fn()
 const mockApiClient = vi.hoisted(() => ({
   elections: { create: vi.fn(), update: vi.fn(), get: vi.fn(), publish: vi.fn(), publishAndWait: vi.fn() },
 }))
@@ -26,12 +25,6 @@ const { mockUseBlocker } = vi.hoisted(() => ({ mockUseBlocker: vi.fn() }))
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal<typeof import('react-router')>()),
   useBlocker: () => mockUseBlocker(),
-}))
-
-vi.mock('~components/Auth/Subscription', () => ({
-  useSubscription: () => ({
-    permission: mockPermission,
-  }),
 }))
 
 vi.mock('~utils/analytics', () => ({
@@ -136,8 +129,6 @@ describe('useFormToVotingProcessRequest', () => {
     setReactProvidersMock({
       useOrganization: vi.fn().mockReturnValue({ organization: { address: '0xorgaddr' } }),
     })
-
-    mockPermission.mockReturnValue(true)
 
     mockForm = {
       title: 'Test Election',
@@ -415,47 +406,23 @@ describe('useFormToVotingProcessRequest', () => {
   })
 
   describe('streamUri', () => {
-    it('includes streamUri when LiveStreaming permission is granted', () => {
+    it('includes streamUri without any plan', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
-      mockPermission.mockReturnValue(true)
       const req = result.current({ ...mockForm, streamUri: 'https://stream.example.com/live' }, censusSpec())
       expect(req.streamUri).toBe('https://stream.example.com/live')
     })
 
-    it('excludes streamUri when LiveStreaming permission is denied', () => {
+    it('coerces empty streamUri to undefined', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
-      mockPermission.mockReturnValue(false)
-      const req = result.current({ ...mockForm, streamUri: 'https://stream.example.com/live' }, censusSpec())
-      expect(req.streamUri).toBeUndefined()
-    })
-
-    it('coerces empty streamUri to undefined even with permission', () => {
-      const { result } = renderHook(() => useFormToVotingProcessRequest())
-      mockPermission.mockReturnValue(true)
       const req = result.current({ ...mockForm, streamUri: '' }, censusSpec())
       expect(req.streamUri).toBeUndefined()
     })
   })
 
-  describe('anonymous census gating', () => {
-    const anonymousSpec = () => ({ ...censusSpec(), anonymous: true })
-
-    it('keeps the anonymous flag when the plan has the feature', () => {
-      const { result } = renderHook(() => useFormToVotingProcessRequest())
-      mockPermission.mockReturnValue(true)
-      const req = result.current(mockForm, anonymousSpec())
-      expect(req.census?.anonymous).toBe(true)
-    })
-
-    it('strips the anonymous flag when the plan lacks the feature', () => {
-      // The backend refuses to publish a blind-CSP census on such a plan, but
-      // only inside the publish job; the draft itself would save fine.
-      const { result } = renderHook(() => useFormToVotingProcessRequest())
-      mockPermission.mockReturnValue(false)
-      const req = result.current(mockForm, anonymousSpec())
-      expect(req.census?.anonymous).toBeUndefined()
-      expect(req.census?.groupId).toBe('test-group-id')
-    })
+  it('keeps the anonymous census flag without any plan', () => {
+    const { result } = renderHook(() => useFormToVotingProcessRequest())
+    const req = result.current(mockForm, { ...censusSpec(), anonymous: true })
+    expect(req.census?.anonymous).toBe(true)
   })
 })
 

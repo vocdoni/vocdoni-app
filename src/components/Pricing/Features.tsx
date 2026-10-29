@@ -294,7 +294,7 @@ export const isFeatureAvailable = (
 // t('features.white_label', { defaultValue: 'White-label (no vocdoni branding)' })
 // t('features.live_streaming', { defaultValue: 'Live streaming integration' })
 // The key must match PlanFeaturesTranslationKeys[SubscriptionPermission.Anonymous]
-// above, which is what SubscriptionLockedContent and the comparison table render.
+// above, which is what the comparison table renders.
 // t('features.anonymous', { defaultValue: 'Anonymous voting' })
 // t('features.overwrite', { defaultValue: 'Vote overwrite' })
 // t('features.live_results', { defaultValue: 'Live results' })

@@ -103,7 +103,7 @@
     "unavailable": "Erreserba ez dago erabilgarri une honetan. Saiatu berriro geroago."
   },
   "calendar": {
-    "max_duration_exceeded": "Iraupena zure planaren {{ maxDuration }} eguneko muga gainditzen du. Murriztu bozketa-aldia edo <a>jarri gurekin harremanetan</a> egun gehiago behar badituzu.",
+    "max_duration_exceeded": "Iraupena {{ maxDuration }} eguneko muga gainditzen du. Murriztu bozketa-aldia.",
     "title": "Egutegia"
   },
   "cancel": "Utzi",
@@ -273,14 +273,12 @@
       "2fa_email_tooltip": "Posta elektronikoz bidalitako egiaztapen-kodeak. Muga gainditzeak {{price}} € kostatzen du kode bakoitzeko.",
       "2fa_sms": "2FA kodeak SMS bidez",
       "2fa_sms_tooltip": "SMS bidez bidalitako egiaztapen-kodeak. Muga gainditzeak {{price}} € kostatzen du kode bakoitzeko.",
-      "limit_exceeded_message": "Zure egungo planak mugak iritsi ditu. Eguneratu orain mugarik gabe lanean jarraitzeko.",
+      "limit_exceeded_message": "Zure kide-oinarriak {{max}} kideko muga iritsi du.",
       "memberbase_size": "Kide-oinarriaren tamaina",
       "memberbase_tooltip": "Zure kide-oinarrian onartutako gehienezko kide-kopurua.",
       "plan_usage": "Planaren erabilera",
       "plan_usage_description": "Kontrolatu zure egungo erabilera planaren mugen aldean",
-      "upgrade_plan": "Eguneratu plana",
-      "voting_processes": "Bozketa-prozesuak",
-      "voting_processes_tooltip": "Aurten sortutako bozketa-prozesu kopurua. 10 kide edo gutxiago dituzten bozketak ez dira mugetarako kontatzen."
+      "voting_processes": "Bozketa-prozesuak"
     },
     "welcome": {
       "common_tasks_actions": "Ohiko zeregin eta ekintzak",
@@ -1133,8 +1131,6 @@
   "new_voting": "Bozketa berria",
   "no_results_filtering": "Zure bilaketa-iragazkiak ez du emaitzarik itzultzen",
   "not_registred_yet": "Ez duzu konturik?",
-  "number_of_members_one": "Taldeko kide {{ count }}",
-  "number_of_members_other": "Taldeko {{ count }} kide",
   "oauth": {
     "link": {
       "action": "Lotu {{provider}} kontua",
@@ -1184,7 +1180,7 @@
   },
   "organization_settings": {
     "phone_support": {
-      "description": "Plan pertsonalizatuaren harpidedunentzat soilik eskuragarri.",
+      "description": "Deitu zuzenean gure taldeari lehentasunezko laguntza jasotzeko.",
       "id": "ID",
       "info": "Eduki prest zure erakundearen IDa deitzean.",
       "organization_id": "Zure erakundearen IDa",
@@ -1254,16 +1250,6 @@
     "encouragement": "Bozketa bat abiaraztea sinplea da, eta parte-hartzaileek edonondik elkar daitezke. Berme sendoak prezio txikiagoan: horregatik bihurtu da Vocdoni ehunka udal, elkarte, alderdi politiko eta enpresentzako hautu fidagarria.",
     "free": "<0>Doako planean zaude</0>, eta horrek dagoeneko bozketak abiarazteko aukera ematen dizu. Funtzionalitate gehiago, muga handiagoak edo aukera espezifikoak behar badituzu, arakatu ordainpeko planak eta probatu doan.",
     "special_needs": "Laguntza edo zerbait espezifikoa behar duzu? Antolatu dei bat."
-  },
-  "plan_upgrade": {
-    "cancel": "Utzi",
-    "generic_subtitle": "Zure egungo planak ekintza hau {{limit}}era mugatzen du. Eguneratu zure plana jarraitzeko eta funtzio aurreratuak desblokeatzeko.",
-    "generic_title": "Eguneratu zure plana mugak handitzeko",
-    "memberbase_subtitle": "Zure egungo planak {{limit}} kide arte onartzen ditu zure kide-oinarrian. Eguneratu zure plana kide gehiago gehitzeko eta funtzio aurreratuak desblokeatzeko.",
-    "memberbase_title": "Eguneratu zure plana zure kide-oinarrera kide gehiago gehitzeko",
-    "see_plans": "Ikusi planak",
-    "subtitle": "Zure egungo planak {{limit}} baino ez du onartzen lankidetzarako. Eguneratu zure plana taldera kide gehiago gehitzeko eta funtzio aurreratuak desblokeatzeko.",
-    "title": "Eguneratu taldera kide gehiago gehitzeko"
   },
   "please_check_email_to_verify": "Mesedez, begiratu zure posta elektronikoa kontua egiaztatzeko",
   "preferences": "Hobespenak",
@@ -1377,8 +1363,8 @@
         "title": "Zirriborroa gordetzen"
       },
       "limit_reached": {
-        "message_one": "Zure {{ count }} zirriborroko muga iritsi duzu. Zirriborro hau gordetzeko, ezabatu lehendik dagoen zirriborro bat edo eguneratu zure plana.",
-        "message_other": "Zure {{ count }} zirriborroko muga iritsi duzu. Zirriborro hau gordetzeko, ezabatu lehendik dagoen zirriborro bat edo eguneratu zure plana."
+        "message_one": "Zure {{ count }} zirriborroko muga iritsi duzu. Zirriborro hau gordetzeko, ezabatu lehendik dagoen zirriborro bat.",
+        "message_other": "Zure {{ count }} zirriborroko muga iritsi duzu. Zirriborro hau gordetzeko, ezabatu lehendik dagoen zirriborro bat."
       },
       "question": {
         "add": "Gehitu galdera",
@@ -1388,6 +1374,7 @@
           "description": "Ziur zaude galdera hau ezabatu nahi duzula?",
           "title": "Ezabatu galdera"
         },
+        "limit_reached": "Boto-prozesu batek gehienez {{ max }} galdera izan ditzake.",
         "question_number": "{{index}}. galdera, guztira {{total}}"
       },
       "save_draft_error": {
@@ -1876,12 +1863,6 @@
   "start_time": "Hasiera-ordua",
   "subscribe": "Harpidetu",
   "subscription": {
-    "locked_content": {
-      "available_in": "Eskuragarri:",
-      "description": "Eguneratu zure plana {{ permissionName }} eta gehiago lortzeko.",
-      "title": "Zure egungo {{ plan }} planak ez du {{ permissionName }} barne hartzen",
-      "unlock": "Desblokeatu {{ permissionName }}"
-    },
     "title": "Harpidetza-plana"
   },
   "subscription_plan": {
@@ -1948,7 +1929,7 @@
     "expires_in": "Iraungipena: {{time}}",
     "load_error": "Ezin izan dira taldeko kideak kargatu",
     "load_error_description": "Saiatu berriro.",
-    "max_writers_reached": "Erakunde honek jada 5 administratzaile eta kudeatzaile ditu, bidean dauden gonbidapenak barne. Kendu bat edo utzi bertan behera bidean dagoen gonbidapen bat leku bat askatzeko. Ikusleak ez dira mugatuak.",
+    "max_writers_reached": "Erakunde honek jada {{max}} administratzaile eta kudeatzaile ditu, bidean dauden gonbidapenak barne. Kendu bat edo utzi bertan behera bidean dagoen gonbidapen bat leku bat askatzeko. Ikusleak ez dira mugatuak.",
     "only_one_member": {
       "add_team_member": "Gehitu kidea taldera",
       "subtitle": "Gehitu kideak zure erakundean lankidetzan jarduteko",
@@ -2049,8 +2030,8 @@
     "avatar_upload_success": "Avatarra kargatu da",
     "click_or_drag_and_drop": "<click>Egin klik kargatzeko edo arrastatu eta jaregin</click><formats>(Onartutako formatuak: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Kargatu irudia",
-    "csv_row_limit_exceeded_one": "Inportazio honek guztira {{count}} errenkada emango luke, zure {{max}}eko planaren muga gaindituz.",
-    "csv_row_limit_exceeded_other": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
+    "csv_row_limit_exceeded_one": "Inportazio honek guztira {{count}} errenkada emango luke, {{max}} kideko muga gaindituz.",
+    "csv_row_limit_exceeded_other": "Inportazio honek guztira {{count}} errenkada emango lituzke, {{max}} kideko muga gaindituz.",
     "drop_here": "Jaregin hemen",
     "error": {
       "invalid_image_type": "Fitxategi mota hau ez da onartzen. Igo .png edo .jpg irudi bat.",

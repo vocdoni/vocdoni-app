@@ -105,7 +105,7 @@
     "unavailable": "A marcação está indisponível de momento. Tente novamente mais tarde."
   },
   "calendar": {
-    "max_duration_exceeded": "A duração excede o limite de {{ maxDuration }} dias do teu plano. Reduz a duração da votação ou <a>contacta-nos</a> se precisares de mais dias.",
+    "max_duration_exceeded": "A duração excede o limite de {{ maxDuration }} dias. Reduz a duração da votação.",
     "title": "Calendário"
   },
   "cancel": "Cancelar",
@@ -277,14 +277,12 @@
       "2fa_email_tooltip": "Códigos de verificação enviados por email. Ao exceder o limite, cada código custa {{price}} €.",
       "2fa_sms": "Códigos 2FA por SMS",
       "2fa_sms_tooltip": "Códigos de verificação enviados por SMS. Ao exceder o limite, cada código custa {{price}} €.",
-      "limit_exceeded_message": "O teu plano atual atingiu os limites. Atualiza agora para continuar a trabalhar sem restrições.",
+      "limit_exceeded_message": "A tua base de membros atingiu o limite de {{max}} membros.",
       "memberbase_size": "Tamanho da base de membros",
       "memberbase_tooltip": "Número máximo de membros permitido na tua base de membros.",
       "plan_usage": "Utilização do plano",
       "plan_usage_description": "Acompanha a tua utilização atual face aos limites do plano",
-      "upgrade_plan": "Atualizar plano",
-      "voting_processes": "Processos de votação",
-      "voting_processes_tooltip": "Número de processos de votação criados este ano. As votações com 10 membros ou menos não contam para os limites."
+      "voting_processes": "Processos de votação"
     },
     "welcome": {
       "common_tasks_actions": "Tarefas e ações comuns",
@@ -1155,9 +1153,6 @@
   "new_voting": "Nova votação",
   "no_results_filtering": "O teu filtro de pesquisa atual não devolve resultados",
   "not_registred_yet": "Ainda não tens conta?",
-  "number_of_members_one": "{{ count }} membro da equipa",
-  "number_of_members_many": "{{ count }} membros da equipa",
-  "number_of_members_other": "{{ count }} membros da equipa",
   "oauth": {
     "link": {
       "action": "Associar conta {{provider}}",
@@ -1207,7 +1202,7 @@
   },
   "organization_settings": {
     "phone_support": {
-      "description": "Disponível apenas para subscritores do plano personalizado.",
+      "description": "Liga diretamente para a nossa equipa para obter ajuda prioritária.",
       "id": "ID",
       "info": "Tem à mão o ID da tua organização ao ligar.",
       "organization_id": "ID da tua organização",
@@ -1277,16 +1272,6 @@
     "encouragement": "Lançar uma votação é simples e os participantes podem aderir a partir de qualquer lugar. Garantias sólidas a um custo mais baixo fizeram do Vocdoni uma escolha de confiança para centenas de municípios, associações, partidos políticos e empresas.",
     "free": "<0>Estás no plano gratuito</0>, que já te permite lançar votações. Se precisares de mais funcionalidades, limites mais elevados ou opções específicas, explora os planos pagos e experimenta-os gratuitamente.",
     "special_needs": "Precisas de ajuda ou de algo específico? Marca uma chamada."
-  },
-  "plan_upgrade": {
-    "cancel": "Cancelar",
-    "generic_subtitle": "O teu plano atual limita esta ação a {{limit}}. Atualiza o plano para continuar e desbloquear funcionalidades avançadas.",
-    "generic_title": "Atualiza o plano para aumentar os limites",
-    "memberbase_subtitle": "O teu plano atual permite até {{limit}} membros na tua base de membros. Atualiza-o para adicionar mais membros e desbloquear funcionalidades avançadas.",
-    "memberbase_title": "Atualiza o plano para adicionar mais membros à tua base de membros",
-    "see_plans": "Ver planos",
-    "subtitle": "O teu plano atual só permite {{limit}} para colaboração. Atualiza-o para adicionar mais membros à equipa e desbloquear funcionalidades avançadas.",
-    "title": "Atualiza para adicionar mais membros à equipa"
   },
   "please_check_email_to_verify": "Verifica o teu email para confirmar a conta",
   "preferences": "Preferências",
@@ -1403,9 +1388,9 @@
         "title": "A guardar rascunho"
       },
       "limit_reached": {
-        "message_one": "Atingiste o limite de {{ count }} rascunho. Para guardar este rascunho, elimina um rascunho existente ou atualiza o teu plano.",
-        "message_many": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente ou atualiza o teu plano.",
-        "message_other": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente ou atualiza o teu plano."
+        "message_one": "Atingiste o limite de {{ count }} rascunho. Para guardar este rascunho, elimina um rascunho existente.",
+        "message_many": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente.",
+        "message_other": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente."
       },
       "question": {
         "add": "Adicionar pergunta",
@@ -1415,6 +1400,7 @@
           "description": "Tens a certeza de que queres eliminar esta pergunta?",
           "title": "Eliminar pergunta"
         },
+        "limit_reached": "Um processo de votação pode ter no máximo {{ max }} perguntas.",
         "question_number": "Pergunta {{index}} de {{total}}"
       },
       "save_draft_error": {
@@ -1907,12 +1893,6 @@
   "start_time": "Hora de início",
   "subscribe": "Subscrever",
   "subscription": {
-    "locked_content": {
-      "available_in": "Disponível em:",
-      "description": "Atualiza o teu plano para obteres {{ permissionName }} e mais.",
-      "title": "O teu plano atual {{ plan }} não inclui {{ permissionName }}",
-      "unlock": "Desbloquear {{ permissionName }}"
-    },
     "title": "Plano de subscrição"
   },
   "subscription_plan": {
@@ -1979,7 +1959,7 @@
     "expires_in": "Expira em {{time}}",
     "load_error": "Não foi possível carregar os membros da equipa",
     "load_error_description": "Tenta novamente.",
-    "max_writers_reached": "Esta organização já tem 5 administradores e gestores, incluindo convites pendentes. Remove um ou cancela um convite pendente para libertar um lugar. Os visualizadores não têm limite.",
+    "max_writers_reached": "Esta organização já tem {{max}} administradores e gestores, incluindo convites pendentes. Remove um ou cancela um convite pendente para libertar um lugar. Os visualizadores não têm limite.",
     "only_one_member": {
       "add_team_member": "Adicionar membro à equipa",
       "subtitle": "Adiciona membros à equipa para colaborar na tua organização",
@@ -2080,9 +2060,9 @@
     "avatar_upload_success": "Avatar carregado",
     "click_or_drag_and_drop": "<click>Clica para carregar ou arrasta e larga</click><formats>(Formatos permitidos: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Carregar imagem",
-    "csv_row_limit_exceeded_one": "Esta importação resultaria num total de {{count}} linha, excedendo o limite do teu plano de {{max}}.",
-    "csv_row_limit_exceeded_many": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite do teu plano de {{max}}.",
-    "csv_row_limit_exceeded_other": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite do teu plano de {{max}}.",
+    "csv_row_limit_exceeded_one": "Esta importação resultaria num total de {{count}} linha, excedendo o limite de {{max}} membros.",
+    "csv_row_limit_exceeded_many": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite de {{max}} membros.",
+    "csv_row_limit_exceeded_other": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite de {{max}} membros.",
     "drop_here": "Larga o ficheiro aqui",
     "error": {
       "invalid_image_type": "Este tipo de ficheiro não é suportado. Carrega uma imagem .png ou .jpg.",

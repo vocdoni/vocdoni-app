@@ -105,7 +105,7 @@
     "unavailable": "La prenotazione non è al momento disponibile. Riprova più tardi."
   },
   "calendar": {
-    "max_duration_exceeded": "La durata supera il limite di {{ maxDuration }} giorni del piano. Ridurre la durata della votazione o <a>contattarci</a> se servono più giorni.",
+    "max_duration_exceeded": "La durata supera il limite di {{ maxDuration }} giorni. Ridurre la durata della votazione.",
     "title": "Programma"
   },
   "cancel": "Annulla",
@@ -277,14 +277,12 @@
       "2fa_email_tooltip": "Codici di verifica email inviati. Il superamento del limite costa €{{price}} per codice.",
       "2fa_sms": "Codici SMS 2FA",
       "2fa_sms_tooltip": "Codici di verifica SMS inviati. Il superamento del limite costa €{{price}} per codice.",
-      "limit_exceeded_message": "Il tuo piano attuale ha raggiunto i suoi limiti. Aggiorna ora per continuare a lavorare senza restrizioni.",
+      "limit_exceeded_message": "La tua base di membri ha raggiunto il limite di {{max}} membri.",
       "memberbase_size": "Dimensione della base membri",
       "memberbase_tooltip": "Numero massimo di membri consentiti per processo di voto.",
       "plan_usage": "Utilizzo del piano",
       "plan_usage_description": "Monitora il tuo utilizzo attuale rispetto ai limiti del piano",
-      "upgrade_plan": "Aggiorna piano",
-      "voting_processes": "Processi di voto",
-      "voting_processes_tooltip": "Numero di processi di voto creati quest'anno. Le votazioni con 10 membri o meno non vengono conteggiate nei limiti."
+      "voting_processes": "Processi di voto"
     },
     "welcome": {
       "common_tasks_actions": "Attività e azioni comuni",
@@ -1155,9 +1153,6 @@
   "new_voting": "Nuovo voto",
   "no_results_filtering": "Il filtro di ricerca attuale non restituisce risultati",
   "not_registred_yet": "Non hai un account?",
-  "number_of_members_one": "{{ count }} membro del team",
-  "number_of_members_many": "{{ count }} membri del team",
-  "number_of_members_other": "{{ count }} membri del team",
   "oauth": {
     "link": {
       "action": "Collega l'account {{provider}}",
@@ -1207,7 +1202,7 @@
   },
   "organization_settings": {
     "phone_support": {
-      "description": "Disponibile solo per gli abbonati al piano Custom.",
+      "description": "Chiama direttamente il nostro team per un supporto prioritario.",
       "id": "ID",
       "info": "Tieni a portata di mano l'ID dell'organizzazione quando chiami.",
       "organization_id": "Il tuo ID organizzazione",
@@ -1277,16 +1272,6 @@
     "encouragement": "Lanciare una votazione è semplice e i partecipanti possono unirsi da qualsiasi luogo. Forti garanzie a un costo inferiore hanno reso Vocdoni una scelta affidabile per centinaia di comuni, associazioni, partiti politici e aziende.",
     "free": "<0>Sei nel Piano Gratuito</0>, che ti consente già di lanciare votazioni. Se hai bisogno di più funzionalità, limiti più alti o opzioni specifiche, esplora i piani a pagamento e provali gratuitamente.",
     "special_needs": "Hai bisogno di aiuto o di qualcosa di specifico? Prenota una chiamata."
-  },
-  "plan_upgrade": {
-    "cancel": "Annulla",
-    "generic_subtitle": "Il piano attuale limita questa azione a {{limit}}. Aggiorna il piano per continuare e sbloccare funzionalità avanzate.",
-    "generic_title": "Aggiorna il piano per aumentare i limiti",
-    "memberbase_subtitle": "Il piano attuale consente fino a {{limit}} membri nella memberbase. Aggiorna il piano per aggiungere più membri e sbloccare funzionalità avanzate.",
-    "memberbase_title": "Aggiorna il piano per aggiungere più membri alla memberbase",
-    "see_plans": "Vedi piani",
-    "subtitle": "Il piano attuale consente solo {{limit}} per la collaborazione. Aggiorna il piano per aggiungere più membri al team e sbloccare funzionalità avanzate.",
-    "title": "Aggiorna per aggiungere più membri del team"
   },
   "please_check_email_to_verify": "Controlla la tua email per verificare il tuo account",
   "preferences": "Preferenze",
@@ -1403,9 +1388,9 @@
         "title": "Salvataggio bozza"
       },
       "limit_reached": {
-        "message_one": "Hai raggiunto il limite di {{ count }} bozza. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano.",
-        "message_many": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano.",
-        "message_other": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano."
+        "message_one": "Hai raggiunto il limite di {{ count }} bozza. Per salvare questa bozza, elimina una bozza esistente.",
+        "message_many": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente.",
+        "message_other": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente."
       },
       "question": {
         "add": "Aggiungi domanda",
@@ -1415,6 +1400,7 @@
           "description": "Sei sicuro di voler eliminare questa domanda?",
           "title": "Elimina domanda"
         },
+        "limit_reached": "Un processo di voto può avere al massimo {{ max }} domande.",
         "question_number": "Domanda {{index}} di {{total}}"
       },
       "save_draft_error": {
@@ -1907,12 +1893,6 @@
   "start_time": "Ora inizio",
   "subscribe": "Abbonati",
   "subscription": {
-    "locked_content": {
-      "available_in": "Disponibile in:",
-      "description": "Aggiorna il tuo piano per ottenere {{ permissionName }} e altro.",
-      "title": "Il tuo piano attuale {{ plan }} non include {{ permissionName }}",
-      "unlock": "Sblocca {{ permissionName }}"
-    },
     "title": "Piano di abbonamento"
   },
   "subscription_plan": {
@@ -1979,7 +1959,7 @@
     "expires_in": "Scade tra {{time}}",
     "load_error": "Impossibile caricare i membri del team",
     "load_error_description": "Riprova.",
-    "max_writers_reached": "Questa organizzazione ha già 5 amministratori e manager, inviti in sospeso compresi. Rimuovine uno o annulla un invito in sospeso per liberare un posto. I visualizzatori non hanno limiti.",
+    "max_writers_reached": "Questa organizzazione ha già {{max}} amministratori e manager, inviti in sospeso compresi. Rimuovine uno o annulla un invito in sospeso per liberare un posto. I visualizzatori non hanno limiti.",
     "only_one_member": {
       "add_team_member": "Aggiungi membro del team",
       "subtitle": "Aggiungi membri del team per collaborare alla tua organizzazione",
@@ -2080,9 +2060,9 @@
     "avatar_upload_success": "Avatar caricato",
     "click_or_drag_and_drop": "<click>Clicca per caricare o trascina e rilascia</click><formats>(Formati consentiti: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Carica Immagine",
-    "csv_row_limit_exceeded_one": "Questa importazione porterebbe a un totale di {{count}} riga, superando il limite del tuo piano di {{max}}.",
-    "csv_row_limit_exceeded_many": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
-    "csv_row_limit_exceeded_other": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
+    "csv_row_limit_exceeded_one": "Questa importazione porterebbe a un totale di {{count}} riga, superando il limite di {{max}} membri.",
+    "csv_row_limit_exceeded_many": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite di {{max}} membri.",
+    "csv_row_limit_exceeded_other": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite di {{max}} membri.",
     "drop_here": "Rilascia il file qui",
     "error": {
       "invalid_image_type": "Questo tipo di file non è supportato. Carica un'immagine .png o .jpg.",

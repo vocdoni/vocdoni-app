@@ -5,7 +5,6 @@ import Clients from '~components/Home/Clients'
 import Faqs from '~components/Home/Faqs'
 import { ComparisonTable } from '~components/Pricing/ComparisonTable'
 import { SubscriptionPlans, usePlans } from '~components/Pricing/Plans'
-import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
 import { SubscriptionCheckoutProvider } from '~components/Pricing/SubscriptionCheckoutProvider'
 
 const PlansPublicPage = () => {
@@ -22,14 +21,12 @@ const PlansPublicPage = () => {
 
   return (
     <SubscriptionCheckoutProvider>
-      <PricingModalProvider>
-        <Flex flexDirection='column' gap={12} width='full' mx='auto'>
-          <SubscriptionPlans />
-          <ComparisonTable ref={featuresRef} />
-          <Clients mt={14} />
-          <Faqs />
-        </Flex>
-      </PricingModalProvider>
+      <Flex flexDirection='column' gap={12} width='full' mx='auto'>
+        <SubscriptionPlans />
+        <ComparisonTable ref={featuresRef} />
+        <Clients mt={14} />
+        <Faqs />
+      </Flex>
     </SubscriptionCheckoutProvider>
   )
 }

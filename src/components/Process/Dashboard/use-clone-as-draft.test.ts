@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import type { CreateVotingProcessRequest, VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
+import { ApiError, ErrorCode } from '~components/Auth/api'
 import { mockUseElection } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { useCloneAsDraft } from './use-clone-as-draft'
@@ -8,7 +9,6 @@ import { useCloneAsDraft } from './use-clone-as-draft'
 const mockNavigate = vi.fn()
 const mockToast = vi.fn()
 const mockMutateAsync = vi.fn()
-const mockPermission = vi.fn()
 let mockElection: VotingProcessResponse | null = null
 
 vi.mock('react-router', () => ({
@@ -19,12 +19,6 @@ vi.mock('react-router', () => ({
 
 vi.mock('~components/Toast', () => ({
   useToast: () => mockToast,
-}))
-
-vi.mock('~components/Auth/Subscription', () => ({
-  useSubscription: () => ({
-    permission: mockPermission,
-  }),
 }))
 
 vi.mock('../Create', () => ({
@@ -112,7 +106,6 @@ describe('useCloneAsDraft', () => {
     mockMutateAsync.mockReset()
     mockNavigate.mockReset()
     mockToast.mockReset()
-    mockPermission.mockReturnValue(5) // Default draft limit
     mockElection = null
     setReactProvidersMock({
       useElection: () => mockUseElection({ election: mockElection }),
@@ -169,9 +162,11 @@ describe('useCloneAsDraft', () => {
   })
 
   describe('error flow', () => {
-    it('shows an error toast and stays on the page when the clone fails', async () => {
+    it('shows the draft limit and stays on the page when the account is over its drafts', async () => {
       mockElection = createMockElection([{ title: 'Option 1' }])
-      mockMutateAsync.mockRejectedValue(new Error('limit reached'))
+      mockMutateAsync.mockRejectedValue(
+        new ApiError({ error: 'draft limit', code: ErrorCode.DraftLimitReached }, new Response(null, { status: 400 }))
+      )
 
       const { result } = renderHook(() => useCloneAsDraft())
       await act(async () => {
@@ -179,9 +174,27 @@ describe('useCloneAsDraft', () => {
       })
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }))
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({ type: 'error', description: expect.stringContaining('limit of 20 drafts') })
+        )
       })
       expect(mockNavigate).not.toHaveBeenCalled()
+    })
+
+    it('shows the backend reason for any other refusal, such as a legacy process over the question cap', async () => {
+      mockElection = createMockElection([{ title: 'Option 1' }])
+      mockMutateAsync.mockRejectedValue(new Error('a process can have at most 15 questions'))
+
+      const { result } = renderHook(() => useCloneAsDraft())
+      await act(async () => {
+        await result.current.cloneAsDraft()
+      })
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({ type: 'error', description: 'a process can have at most 15 questions' })
+        )
+      })
     })
   })
 

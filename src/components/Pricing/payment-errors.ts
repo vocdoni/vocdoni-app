@@ -2,6 +2,7 @@ import { ApiErrorCode, isCensusGrowthQuote } from '@vocdoni/api-client'
 import type { CensusGrowthQuote, InsufficientWalletBalanceData, PaymentRequiredData } from '@vocdoni/api-types'
 import type { TFunction } from 'i18next'
 import { apiErrorDetails } from '~components/Auth/api'
+import { MaxWritersPerOrg } from '~constants'
 import { isProcessId } from '~queries/process-price'
 import { currency } from '~utils/numbers'
 
@@ -225,12 +226,15 @@ export const censusGrowthPaymentErrorMessage = (t: TFunction, error: unknown): s
   return undefined
 }
 
+// The admin and manager limit in words, pending invitations included. Viewers are not limited.
+export const teamWriterLimitMessage = (t: TFunction): string =>
+  t('team.max_writers_reached', {
+    max: MaxWritersPerOrg,
+    defaultValue:
+      'This organization already has {{max}} admins and managers, pending invitations included. Remove one or cancel a pending invitation to free a slot. Viewers are not limited.',
+  })
+
 // A translated explanation of why an invitation or a role change was refused because the
 // organization already has its maximum of admins and managers, or undefined for any other error.
-export const teamWriterLimitErrorMessage = (t: TFunction, error: unknown): string | undefined => {
-  if (apiErrorDetails(error)?.code !== ApiErrorCode.MaxWritersReached) return undefined
-  return t('team.max_writers_reached', {
-    defaultValue:
-      'This organization already has 5 admins and managers, pending invitations included. Remove one or cancel a pending invitation to free a slot. Viewers are not limited.',
-  })
-}
+export const teamWriterLimitErrorMessage = (t: TFunction, error: unknown): string | undefined =>
+  apiErrorDetails(error)?.code === ApiErrorCode.MaxWritersReached ? teamWriterLimitMessage(t) : undefined
