@@ -156,7 +156,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
             )}
           <Link href={Routes.dashboard.memberbase.base} target='_blank' rel='noopener noreferrer' emphasis='medium'>
             {t('voter_auth.status.fix', { defaultValue: 'Fix your member list' })}
-            <Icon as={ExternalLinkIcon} boxSize={3} />
+            <Icon as={ExternalLinkIcon} boxSize='icon.sm' />
           </Link>
         </Line>
       )

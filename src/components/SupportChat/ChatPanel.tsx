@@ -29,7 +29,7 @@ const ContactActionsRow = () => {
           size='xs'
           variant='outline'
           colorPalette='gray'
-          leftIcon={<Icon as={CalendarIcon} boxSize={3.5} />}
+          leftIcon={<Icon as={CalendarIcon} boxSize='icon.sm' />}
         >
           {t('support_chat.book_call', { defaultValue: 'Book a call' })}
         </BookerModalButton>
@@ -37,7 +37,7 @@ const ContactActionsRow = () => {
       {phoneNumber && (
         <Button asChild size='xs' variant='outline' colorPalette='gray'>
           <a href={`https://wa.me/${phoneNumber}`} target='_blank' rel='noopener noreferrer'>
-            <Icon as={WhatsappIcon} boxSize={3.5} />
+            <Icon as={WhatsappIcon} boxSize='icon.sm' />
             {t('support_chat.whatsapp', { defaultValue: 'Chat on WhatsApp' })}
           </a>
         </Button>
@@ -195,7 +195,7 @@ export const ChatPanel = ({
           {/* role='status' sits on the non-interactive text only — a live region
               must not contain the button next to it */}
           <Flex role='status' align='center' gap={1.5} fontSize='xs' color='fg.muted' minW={0}>
-            <Icon as={CheckIcon} boxSize={3.5} flexShrink={0} />
+            <Icon as={CheckIcon} boxSize='icon.sm' flexShrink={0} />
             <Text fontSize='xs'>
               {t('support_chat.sent_status', { defaultValue: "Request sent — we'll reply by email" })}
             </Text>

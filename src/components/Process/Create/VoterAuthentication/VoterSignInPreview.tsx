@@ -188,7 +188,7 @@ export const VoterSignInPreview = ({
         {/* Muted, with an icon: a label for this zone, not a third step. On
             phones the fold button above already carries the same words. */}
         <HStack gap={1.5} color='fg.muted' display={{ base: 'none', md: 'flex' }}>
-          <Icon as={ViewIcon} boxSize={3.5} />
+          <Icon as={ViewIcon} boxSize='icon.sm' />
           <Text id='voter-signin-preview-title' fontSize='sm' fontWeight='medium' whiteSpace='nowrap'>
             {t('voter_auth.preview.title', { defaultValue: 'What voters will see' })}
           </Text>

@@ -119,7 +119,7 @@ const UserProfile = () => {
                     asChild
                   >
                     <Link>
-                      <Icon as={ChevronLeftIcon} boxSize={3} />
+                      <Icon as={ChevronLeftIcon} boxSize='icon.sm' />
                       {t('back')}
                     </Link>
                   </Button>
