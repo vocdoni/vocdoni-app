@@ -1,4 +1,6 @@
 import { defineSemanticTokens } from '@chakra-ui/react'
+import { chartColors } from './charts'
+import { stateColors } from './states'
 
 /**
  * Semantic tokens allow us to define tokens, like colors, based on their usage
@@ -6,6 +8,8 @@ import { defineSemanticTokens } from '@chakra-ui/react'
  */
 
 export const colors = defineSemanticTokens.colors({
+  ...stateColors,
+  ...chartColors,
   // Chakra's neutral `bg`, `fg` and `border` slots, written out so this file owns them; status slots stay Chakra's.
   bg: {
     DEFAULT: {
