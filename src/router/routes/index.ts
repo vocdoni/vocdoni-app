@@ -46,6 +46,9 @@ export const Routes = {
       members: '/admin/memberbase/members/:page?',
       groups: '/admin/memberbase/groups',
     },
+    census: {
+      checkout: '/admin/process/:id/census/checkout',
+    },
     settings: {
       base: '/admin/settings',
       organization: '/admin/settings/organization',

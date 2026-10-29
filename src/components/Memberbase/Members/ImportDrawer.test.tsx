@@ -4,6 +4,11 @@ import userEvent from '@testing-library/user-event'
 import { render } from '~src/test-utils'
 import { ImportMembers } from './Import'
 
+// The toast action needs the router and the signed-in account, which this test does not set up
+vi.mock('~components/Pricing/useBuyRoomAction', () => ({
+  useBuyRoomAction: () => () => undefined,
+}))
+
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
   return {
