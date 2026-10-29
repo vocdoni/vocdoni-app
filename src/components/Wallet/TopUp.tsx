@@ -12,10 +12,9 @@ import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
 import { checkoutReturnBase, useCheckoutAppearance, useStripePromise } from '~components/Pricing/stripe'
 import { useWalletTopUp, WALLET_TOPUP_MAX_CENTS, WALLET_TOPUP_MIN_CENTS } from '~queries/wallet'
-import { currency } from '~utils/numbers'
+import { currency, parseEuroAmountCents } from '~utils/numbers'
 
 const PRESET_AMOUNTS_EUR = [50, 100, 500, 1000]
-const AMOUNT_PATTERN = /^\d+(\.\d{1,2})?$/
 
 type WalletTopUpProps = {
   // Called when the payment is submitted, before Stripe may redirect the page away.
@@ -34,7 +33,7 @@ type AmountStepProps = {
 const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStepProps) => {
   const { t } = useTranslation()
   const trimmed = amount.trim()
-  const amountCents = AMOUNT_PATTERN.test(trimmed) ? Math.round(Number(trimmed) * 100) : null
+  const amountCents = parseEuroAmountCents(trimmed)
   const isValid = amountCents !== null && amountCents >= WALLET_TOPUP_MIN_CENTS && amountCents <= WALLET_TOPUP_MAX_CENTS
   const hasTooManyDecimals = /^\d*\.\d{3,}$/.test(trimmed)
 
