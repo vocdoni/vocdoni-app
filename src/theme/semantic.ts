@@ -142,6 +142,17 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  // Chakra's gray.focusRing (gray.400) misses the 3:1 WCAG floor for focus indicators on a white page,
+  // so light mode steps to gray.800; dark keeps gray.400, which clears it on the dark page.
+  // Deep-merges with chakra's other gray slots.
+  gray: {
+    focusRing: {
+      value: {
+        _light: '{colors.gray.800}',
+        _dark: '{colors.gray.400}',
+      },
+    },
+  },
   input: {
     placeholder: {
       value: '{colors.gray.500}',

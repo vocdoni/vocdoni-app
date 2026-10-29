@@ -117,6 +117,36 @@ describe('generateBrandSemanticTokens', () => {
     }
   )
 
+  // `fg` is brand-coloured text on the page itself (links, outline buttons,
+  // active tab labels), so it is held to the 4.5:1 text bar, not 3:1.
+  it.each(['#1a73e8', '#ffd600', '#ffe600', '#ffffff', '#0b1a3a', '#001f54', '#000000', '#ff6600'])(
+    'keeps the brand text color readable on the page in both modes for %s',
+    (base) => {
+      const scale = generatePaletteScale(base)
+      const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
+      expect(contrastRatio(scale[stepOf(tokens.fg._light)], BACKGROUNDS.light), 'light').toBeGreaterThanOrEqual(4.5)
+      expect(contrastRatio(scale[stepOf(tokens.fg._dark)], BACKGROUNDS.dark), 'dark').toBeGreaterThanOrEqual(4.5)
+    }
+  )
+
+  it('walks a pale brand (#ffd600) down the scale in light mode instead of keeping a washed-out 700', () => {
+    const scale = generatePaletteScale('#ffd600')
+    expect(contrastRatio(scale[700], BACKGROUNDS.light)).toBeLessThan(4.5) // the old fixed step
+    const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
+    expect(stepOf(tokens.fg._light)).toBeGreaterThan(700)
+    expect(tokens.fg._dark).toBe('{colors.brand.300}') // already reads on the dark page
+  })
+
+  // The dark-mode 300 is a 60% tint of the brand, so it stays light whatever the
+  // hue: a navy keeps chakra's mapping and still reads on the near-black page.
+  // (The walk towards 50 is a guard that the current scale mixing never reaches.)
+  it.each(['#001a4d', '#000080', '#0b1a3a'])('gives a navy brand (%s) readable text in dark mode', (base) => {
+    const scale = generatePaletteScale(base)
+    const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
+    expect(tokens.fg._dark).toBe('{colors.brand.300}')
+    expect(contrastRatio(scale[stepOf(tokens.fg._dark)], BACKGROUNDS.dark)).toBeGreaterThanOrEqual(4.5)
+  })
+
   it('uses the exact color for solid surfaces when it reads on both backgrounds', () => {
     const tokens = generateBrandSemanticTokens(generatePaletteScale('#1a73e8'), BACKGROUNDS)
     expect(tokens.solid).toEqual({ _light: '{colors.brand.500}', _dark: '{colors.brand.500}' })
