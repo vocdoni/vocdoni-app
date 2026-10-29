@@ -7,6 +7,7 @@ import { useAppEnv } from '~src/app-env'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
 import type { LegacyElection, LegacyElectionStatus } from '~src/legacy/vochain-archive'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
+import { accentPalette, statusPalette, statusPaletteAlt } from '~theme/status'
 
 const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
   const { t } = useTranslation()
@@ -21,13 +22,13 @@ const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
     PROCESS_UNKNOWN: t('process.status.unknown', { defaultValue: 'Unknown' }),
   }
   const palettes: Partial<Record<LegacyElectionStatus, string>> = {
-    ONGOING: 'green',
-    RESULTS: 'teal',
-    CANCELED: 'red',
-    PAUSED: 'orange',
+    ONGOING: statusPalette.success,
+    RESULTS: statusPaletteAlt.success,
+    CANCELED: statusPalette.error,
+    PAUSED: statusPalette.warning,
   }
 
-  return <Badge colorPalette={palettes[status] ?? 'gray'}>{labels[status]}</Badge>
+  return <Badge colorPalette={palettes[status] ?? statusPalette.neutral}>{labels[status]}</Badge>
 }
 
 /**
@@ -53,7 +54,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
         <HStack mb={2} gap={2} flexWrap='wrap'>
           <StatusBadge status={election.status} />
           {election.secretUntilTheEnd && !election.resultsAvailable && (
-            <Badge colorPalette='purple'>
+            <Badge colorPalette={accentPalette.purple}>
               {t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })}
             </Badge>
           )}
@@ -113,7 +114,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
                             : `${choice.votes} · ${choice.percentage === null ? '—' : `${choice.percentage.toFixed(1)}%`}`}
                         </Text>
                       </Flex>
-                      <Progress.Root value={choice.percentage ?? 0} size='sm' colorPalette='teal'>
+                      <Progress.Root value={choice.percentage ?? 0} size='sm' colorPalette={accentPalette.teal}>
                         <Progress.Track>
                           <Progress.Range />
                         </Progress.Track>

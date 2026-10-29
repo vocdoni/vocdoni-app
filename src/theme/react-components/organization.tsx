@@ -41,7 +41,7 @@ export const organizationComponents: ComponentsPartialDefinition = {
     return <Image css={styles} src={src} alt={alt} {...props} />
   }),
   QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    <Text color='red.500' {...props}>
+    <Text color='status.error.alt.500' {...props}>
       {error}
     </Text>
   )),

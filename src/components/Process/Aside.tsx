@@ -88,15 +88,7 @@ const ProcessAside = () => {
           each with its own vote id) — the aside only confirms the vote landed. */}
       {renderVoteMenu && (
         <Flex flexDirection='column' alignItems='center' gap={3} w='full'>
-          <Text
-            fontWeight='extrabold'
-            fontSize='sm'
-            css={{
-              color: 'green.500',
-              _dark: { color: 'green.300' },
-            }}
-            textAlign='center'
-          >
+          <Text fontWeight='extrabold' fontSize='sm' color='status.success.alt.paired' textAlign='center'>
             {t('aside.has_already_voted').toString()}
           </Text>
           {/* The vote id was only ever shown at cast time: an anonymous census

@@ -86,7 +86,7 @@ export const PromotionCodeInput = () => {
         </Button>
       </Flex>
       {(errors.promoCode || error) && (
-        <Text color='red.500' fontSize='sm' mt={1}>
+        <Text color='status.error.alt.500' fontSize='sm' mt={1}>
           {errors.promoCode?.message || error}
         </Text>
       )}

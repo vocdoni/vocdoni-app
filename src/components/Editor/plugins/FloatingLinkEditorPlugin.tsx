@@ -21,6 +21,7 @@ import { Dispatch, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { LuCheck, LuPencil, LuTrash2, LuX } from 'react-icons/lu'
+import { statusPalette } from '~theme/status'
 import { getSelectedNode } from './FloatingTextFormatToolbarPlugin'
 
 const VERTICAL_GAP = 10
@@ -290,7 +291,7 @@ function FloatingLinkEditor({
           <IconButton
             aria-label={t('editor.link.remove', { defaultValue: 'Remove link' })}
             size='xs'
-            colorPalette='red'
+            colorPalette={statusPalette.destructive}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)}
           >

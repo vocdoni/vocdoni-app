@@ -111,7 +111,7 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
             <LuArrowLeft />
           </IconButton>
         </Flex>
-        <Box color='red.500' textAlign='center'>
+        <Box color='status.error.alt.500' textAlign='center'>
           {t('error.title', { defaultValue: 'Error' })}: {checkoutState.error.message}
         </Box>
       </Box>
@@ -270,7 +270,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
 
   if (!stripePromise) {
     return (
-      <Box id='checkout' p={4} color='red.500' textAlign='center'>
+      <Box id='checkout' p={4} color='status.error.alt.500' textAlign='center'>
         {t('payment.stripe_unavailable', {
           defaultValue: 'Payments are temporarily unavailable. Please try again later.',
         })}

@@ -41,6 +41,7 @@ import { Markdown } from '~components/ui/Markdown'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { resultsProgressRecipe } from '~theme/recipes/election'
+import { statusPalette, statusPaletteAlt } from '~theme/status'
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
 
@@ -74,7 +75,8 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   ElectionStatusBadge: defineComponent<'ElectionStatusBadge', TagRootProps>(({ label, tone, ...props }) => {
-    const palette = tone === 'success' ? 'green' : tone === 'warning' ? 'yellow' : 'red'
+    const palette =
+      tone === 'success' ? statusPalette.success : tone === 'warning' ? statusPaletteAlt.warning : statusPalette.error
     return (
       <Tag.Root colorPalette={palette} {...props}>
         <Tag.Label>{label}</Tag.Label>

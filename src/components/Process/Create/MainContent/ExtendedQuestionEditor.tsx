@@ -18,6 +18,7 @@ import { LuGripVertical, LuPlus, LuTrash2 } from 'react-icons/lu'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
 import { ImageUploader } from '~components/Layout/Uploader'
+import { statusPalette } from '~theme/status'
 
 const ExtendedQuestionEditor = ({
   index,
@@ -121,7 +122,7 @@ const SortableExtendedOption = ({
           <IconButton
             aria-label={t('process_create.remove_option', { defaultValue: 'Remove option' })}
             size='sm'
-            colorPalette='red'
+            colorPalette={statusPalette.destructive}
             onClick={onRemove}
             position='absolute'
             top={2}

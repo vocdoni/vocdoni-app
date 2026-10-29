@@ -43,6 +43,7 @@ import { PaginatedTableFooter } from '~components/Pagination/PaginatedTableFoote
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
 import { Group, useDeleteGroup, useGroupMembers, useGroups, useUpdateGroup } from '~src/queries/groups'
+import { statusPalette } from '~theme/status'
 import { TableProvider, useTable } from './TableProvider'
 
 type GroupActionsProps = {
@@ -335,7 +336,7 @@ const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteMo
             {!group.isAutoGroup && (
               <>
                 <MenuSeparator />
-                <MenuItem value='delete' color='red.500' onClick={onDeleteModalOpen}>
+                <MenuItem value='delete' color='destructive.alt.500' onClick={onDeleteModalOpen}>
                   <HStack gap={2}>
                     <Icon boxSize={4} as={LuTrash} />
                     <Text as='span'>{t('group.actions.delete_group', { defaultValue: 'Delete Group' })}</Text>
@@ -387,7 +388,12 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
                   defaults='Selected: <strong>{{count}} member</strong>'
                 />
               </Text>
-              <Button onClick={() => setDeleteMembersModalOpen(true)} size='sm' colorPalette='red' variant='outline'>
+              <Button
+                onClick={() => setDeleteMembersModalOpen(true)}
+                size='sm'
+                colorPalette={statusPalette.destructive}
+                variant='outline'
+              >
                 <Icon as={LuTrash} />
                 {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
               </Button>
@@ -483,7 +489,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
           </Button>
           <Button
             loading={deleteGroupMembers.isPending}
-            colorPalette='red'
+            colorPalette={statusPalette.destructive}
             onClick={() => {
               onDeleteMember(selectedRows.map((row) => row.id))
               setDeleteMembersModalOpen(false)
@@ -553,7 +559,7 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
                     <Icon as={LuPencil} boxSize={4} />
                     {t('actions.edit', { defaultValue: 'Edit' })}
                   </Button>
-                  <Button onClick={openDeleteModal} colorPalette='red' size='xs'>
+                  <Button onClick={openDeleteModal} colorPalette={statusPalette.destructive} size='xs'>
                     <Icon as={LuTrash} boxSize={4} />
                     {t('group.delete_group', { defaultValue: 'Delete group' })}
                   </Button>
@@ -669,7 +675,7 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
         <Button variant='outline' onClick={onClose}>
           {t('group.actions.cancel', { defaultValue: 'Cancel' })}
         </Button>
-        <Button colorPalette='red' onClick={handleDelete}>
+        <Button colorPalette={statusPalette.destructive} onClick={handleDelete}>
           {t('group.actions.delete', { defaultValue: 'Delete' })}
         </Button>
       </Flex>
