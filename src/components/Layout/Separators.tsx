@@ -3,7 +3,7 @@ import { Trans } from 'react-i18next'
 
 export const HSeparator = (props: { variant?: string; [x: string]: any }) => {
   const { variant, ...rest } = props
-  return <Flex h='px' w='full' bg='separator' {...rest} />
+  return <Flex h='1px' w='full' bg='separator' {...rest} />
 }
 
 export const OrSeparator = (props: FlexProps) => (

@@ -41,7 +41,7 @@ const RoutedPaginatedTableFooter = ({ summary }: RoutedPaginatedTableFooterProps
         </Text>
         <RoutedPagination
           pagination={pagination}
-          buttonProps={{ size: 'xs', colorScheme: 'gray', variant: 'outline', marginInlineStart: 0 }}
+          buttonProps={{ size: 'xs', colorPalette: 'gray', variant: 'outline', marginInlineStart: 0 }}
           display='flex'
         />
       </Box>
@@ -65,7 +65,7 @@ export const PaginatedTableFooter = () => {
             Page {{ page: currentPage }} of {{ total }}
           </Trans>
         </Text>
-        <Pagination pagination={pagination} buttonProps={{ size: 'xs', colorScheme: 'gray', variant: 'outline' }} />
+        <Pagination pagination={pagination} buttonProps={{ size: 'xs', colorPalette: 'gray', variant: 'outline' }} />
       </Box>
     </Box>
   )
