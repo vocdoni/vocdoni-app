@@ -19,8 +19,7 @@ const LayoutIntegratorsAuth = () => {
         <AuthLayoutHeader isSignin={isSignin} signInRoute={Routes.integrators.signIn} />
         <Box
           w='full'
-          border='1px solid'
-          borderColor='auth.card.border'
+          _light={{ border: '1px solid', borderColor: 'auth.card.border' }}
           borderRadius='sm'
           bgColor='auth.card.bg'
           p={{ base: 6, sm: 8 }}
