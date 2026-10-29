@@ -41,7 +41,7 @@ const ProcessHeader = () => {
         </Box>
       )}
       <Flex flexDir='column'>
-        <ElectionTitle fontSize='4xl' textAlign='left' mb={5} />
+        <ElectionTitle size='hero' />
         <Flex gap={2} flexDirection={{ base: 'column', xl: 'row' }} alignItems={{ base: 'start', xl: 'center' }} mb={4}>
           <ElectionStatusBadge whiteSpace='nowrap' />
           <ElectionSchedule
