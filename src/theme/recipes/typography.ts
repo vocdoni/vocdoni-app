@@ -6,7 +6,6 @@ const sidebarTitle = {
 
 const sidebarSubtitle = {
   py: 4,
-  textTransform: 'capitalize',
 }
 
 export const heading = defineRecipe({
