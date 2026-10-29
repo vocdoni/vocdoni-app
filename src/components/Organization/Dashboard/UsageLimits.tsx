@@ -3,7 +3,6 @@ import {
   AlertDescription,
   AlertIndicator,
   Box,
-  Button,
   chakra,
   Flex,
   HStack,
@@ -19,26 +18,26 @@ import {
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuInfo, LuMail, LuMessageSquare, LuUsers, LuVote } from 'react-icons/lu'
-import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
-import { TwoFACodePrice } from '~constants'
+import { MaxMembersPerOrg, TwoFACodePrice } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { usePaginatedMembers } from '~queries/members'
-import { Routes } from '~routes'
+import { quantity } from '~utils/numbers'
 
 type UsageMetric = {
   icon: React.ElementType
   label: string
   current: number
-  max: number
+  // Absent for a metric with no cap, which then shows its count alone
+  max?: number
   tooltip?: string
   isSoftLimit?: boolean
   color: string
 }
 
 const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: UsageMetric) => {
-  const percentage = max > 0 ? Math.min((current / max) * 100, 100) : 0
+  const percentage = max !== undefined && max > 0 ? Math.min((current / max) * 100, 100) : 0
   // Ensure a minimum visible percentage for the progress bar (0.5% represents "0" in the UI)
   const displayPercentage = percentage < 0.5 ? 0.5 : percentage
   const isNearLimit = percentage >= 80 && !isSoftLimit
@@ -71,16 +70,20 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
           <Text fontSize='lg' fontWeight='bold' color='texts.primary'>
             {current.toLocaleString()}
           </Text>
-          <Text fontSize='sm' color='texts.subtle'>
-            / {max.toLocaleString()}
-          </Text>
+          {max !== undefined && (
+            <Text fontSize='sm' color='texts.subtle'>
+              / {max.toLocaleString()}
+            </Text>
+          )}
         </HStack>
       </Flex>
-      <Progress.Root value={displayPercentage} size='sm' colorPalette={progressColor} shape='full'>
-        <Progress.Track bg='bg.emphasized'>
-          <Progress.Range borderRadius='full' />
-        </Progress.Track>
-      </Progress.Root>
+      {max !== undefined && (
+        <Progress.Root value={displayPercentage} size='sm' colorPalette={progressColor} shape='full'>
+          <Progress.Track bg='bg.emphasized'>
+            <Progress.Range borderRadius='full' />
+          </Progress.Track>
+        </Progress.Root>
+      )}
     </Box>
   )
 }
@@ -97,11 +100,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
     return null
   }
 
-  const { plan, usage, subscriptionDetails } = subscription
-
-  const maxProcesses = plan.organization.maxProcesses
-  const maxCensus = plan.organization.maxCensus
-  const maxCensusSize = subscriptionDetails.maxCensusSize || maxCensus
+  const { plan, usage } = subscription
 
   const email2FA = plan.features['2FAemail'] || 0
   const sms2FA = plan.features['2FAsms'] || 0
@@ -117,18 +116,13 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
       icon: LuVote,
       label: t('dashboard.usage.voting_processes', { defaultValue: 'Voting processes' }),
       current: usage.processes || 0,
-      max: maxProcesses,
       color: 'blue',
-      tooltip: t('dashboard.usage.voting_processes_tooltip', {
-        defaultValue:
-          'Number of voting processes created this year. Votes with 10 members or fewer are not counted towards the limits.',
-      }),
     },
     {
       icon: LuUsers,
       label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase size' }),
       current: membersData?.pagination?.totalItems || 0,
-      max: maxCensusSize,
+      max: MaxMembersPerOrg,
       color: 'purple',
       tooltip: t('dashboard.usage.memberbase_tooltip', {
         defaultValue: 'Maximum number of members allowed per voting process.',
@@ -169,7 +163,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
   // Check if any hard limit has been exceeded (not counting soft limits like 2FA)
   const hasExceededLimit = usageMetrics.some(
-    (metric) => !metric.isSoftLimit && metric.max > 0 && metric.current >= metric.max
+    (metric) => !metric.isSoftLimit && metric.max !== undefined && metric.max > 0 && metric.current >= metric.max
   )
 
   return (
@@ -185,24 +179,12 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
         {hasExceededLimit && (
           <Alert status='warning' variant='subtle' borderRadius='lg' py={3} px={4}>
             <AlertIndicator />
-            <Flex
-              flex='1'
-              direction={{ base: 'column', md: 'row' }}
-              align={{ base: 'flex-start', md: 'center' }}
-              gap={3}
-            >
-              <AlertDescription fontSize='sm' fontWeight='medium' flex='1'>
-                {t('dashboard.usage.limit_exceeded_message', {
-                  defaultValue:
-                    'Your current plan has reached its limits. Upgrade now to continue working without restrictions.',
-                })}
-              </AlertDescription>
-              <Button asChild size='sm' colorPalette='orange' variant='solid' flexShrink={0} fontWeight='semibold'>
-                <ReactRouterLink to={generatePath(Routes.dashboard.settings.subscription)}>
-                  {t('dashboard.usage.upgrade_plan', { defaultValue: 'Upgrade plan' })}
-                </ReactRouterLink>
-              </Button>
-            </Flex>
+            <AlertDescription fontSize='sm' fontWeight='medium'>
+              {t('dashboard.usage.limit_exceeded_message', {
+                defaultValue: 'Your memberbase has reached the limit of {{max}} members.',
+                max: quantity(MaxMembersPerOrg),
+              })}
+            </AlertDescription>
           </Alert>
         )}
 

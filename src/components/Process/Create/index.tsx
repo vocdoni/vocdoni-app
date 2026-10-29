@@ -36,7 +36,6 @@ import {
   type Location,
 } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
-import { useSubscription } from '~components/Auth/Subscription'
 import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
@@ -57,7 +56,7 @@ import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
-import { SubscriptionPermission } from '~constants'
+import { MaxDraftsPerOrg } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { clearPendingCheckout, enqueuedJobId, readPendingCheckout } from '~queries/process-checkout'
 import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
@@ -532,7 +531,6 @@ const useUpdateProcess = () => {
 
 export const useFormToVotingProcessRequest = () => {
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
-  const { permission } = useSubscription()
   const { organization } = useOrganization()
 
   const parseLocalDateTime = (dateStr?: string, timeStr?: string): string | undefined => {
@@ -601,15 +599,10 @@ export const useFormToVotingProcessRequest = () => {
       description: form.description ? { default: form.description } : undefined,
       startDate: parsedStart,
       endDate,
-      streamUri: permission(SubscriptionPermission.LiveStreaming) ? form.streamUri || undefined : undefined,
-      // Same treatment as streamUri: the plan gates blind-CSP censuses, and the
-      // backend rejects the publish (opaquely, inside the job) rather than the
-      // draft, so never let the flag through on a plan without the feature or
-      // when the anonymous voting option is not offered.
-      census:
-        permission(SubscriptionPermission.Anonymous) && !disableAnonymousVoting
-          ? censusSpec
-          : { ...censusSpec, anonymous: undefined },
+      streamUri: form.streamUri || undefined,
+      // The backend rejects an anonymous census inside the publish job rather than at the draft,
+      // so never let the flag through when the anonymous voting option is not offered.
+      census: disableAnonymousVoting ? { ...censusSpec, anonymous: undefined } : censusSpec,
       questions,
     }
   }
@@ -701,7 +694,6 @@ const ProcessCreateView = () => {
     storeDraftId,
     saveCooldown
   )
-  const { permission } = useSubscription()
   const { data: formDraft } = useDraft(effectiveDraftId)
   // Above the self-service limit the backend refuses any payment: only a custom quote publishes
   // it, which ProcessQuoteAlert points to, so publishing is not offered.
@@ -761,14 +753,12 @@ const ProcessCreateView = () => {
   }
 
   const showDraftSaveError = (error: unknown) => {
-    const limit = permission(SubscriptionPermission.Drafts)
     let description = draftSavePaymentErrorMessage(t, error) ?? (error instanceof Error ? error.message : String(error))
 
     if (isDraftLimitError(error)) {
       description = t('process.create.limit_reached.message', {
-        defaultValue:
-          "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan.",
-        count: limit,
+        defaultValue: "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft.",
+        count: MaxDraftsPerOrg,
       })
     }
 
