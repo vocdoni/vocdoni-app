@@ -20,8 +20,6 @@ import {
   NativeSelect,
   Progress,
   Skeleton,
-  Tag,
-  type TagRootProps,
   Text,
   type RecipeVariantProps,
   type TextProps,
@@ -41,10 +39,10 @@ import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
 import { ConfirmDialogContent } from '~components/ui/ConfirmDialog'
 import { Markdown } from '~components/ui/Markdown'
+import { StatusBadge, type StatusBadgeProps } from '~components/ui/StatusBadge'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ElectionTitle as electionTitleRecipe, resultsProgressRecipe } from '~theme/recipes/election'
-import { statusPalette } from '~theme/status'
 
 type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
 
@@ -81,15 +79,13 @@ export const electionComponents: ComponentsPartialDefinition = {
       </Text>
     )
   }),
-  ElectionStatusBadge: defineComponent<'ElectionStatusBadge', TagRootProps>(({ label, tone, ...props }) => {
-    const palette =
-      tone === 'success' ? statusPalette.success : tone === 'warning' ? statusPalette.warning : statusPalette.error
-    return (
-      <Tag.Root colorPalette={palette} {...props}>
-        <Tag.Label>{label}</Tag.Label>
-      </Tag.Root>
+  ElectionStatusBadge: defineComponent<'ElectionStatusBadge', Omit<StatusBadgeProps, 'tone' | 'children'>>(
+    ({ label, tone, ...props }) => (
+      <StatusBadge tone={tone === 'success' || tone === 'warning' ? tone : 'error'} variant='surface' {...props}>
+        {label}
+      </StatusBadge>
     )
-  }),
+  ),
   ElectionHeader: defineComponent<'ElectionHeader', ImageProps>(({ src, alt, ...props }) =>
     src ? <Image src={src} alt={alt} {...props} /> : null
   ),

@@ -57,6 +57,9 @@ const statusLabel = (t: TFunction, status: QuestionStatus | null) => {
   }
 }
 
+// The countdown is the summary's headline figure, not a status chip, so it keeps its large look.
+const headline = { size: 'md', fontWeight: 'bold', fontSize: 'lg' } as const
+
 type CountdownStatProps = { target?: Date; upcoming: boolean; status: QuestionStatus | null }
 
 const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
@@ -66,7 +69,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   // Once the deadline is reached, show the process status instead of a zeroed-out countdown.
   if (left <= 0) {
     return (
-      <Badge colorPalette={statusPalette.neutral} size='md' fontWeight='bold' fontSize='lg' alignSelf='end'>
+      <Badge {...headline} colorPalette={statusPalette.neutral} alignSelf='end'>
         {statusLabel(t, status)}
       </Badge>
     )
@@ -82,7 +85,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
       <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
         {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
       </Stat.Label>
-      <Badge colorPalette={statusPalette.success} size='md' fontWeight='bold' fontSize='lg'>
+      <Badge {...headline} colorPalette={statusPalette.success}>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
       </Badge>
     </Stat.Root>

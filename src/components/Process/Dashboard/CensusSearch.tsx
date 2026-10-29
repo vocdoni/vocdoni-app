@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   chakra,
   HStack,
@@ -21,13 +20,13 @@ import { LuCircleHelp, LuSearch } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { SidebarSubtitle } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import {
   isParticipantLookupField,
   ProcessParticipantEntry,
   ProcessParticipantLookupField,
   useProcessParticipants,
 } from '~queries/participants'
-import { statusPalette } from '~theme/status'
 
 // Maps a census credential field to a human label. Unknown fields fall back to their raw key.
 const fieldLabel = (t: TFunction, field: string) => {
@@ -93,19 +92,19 @@ const VotedBadge = ({ participant }: { participant: ProcessParticipantEntry }) =
 
   if (voted > 0 && voted < total) {
     return (
-      <Badge colorPalette={statusPalette.warning} flexShrink={0}>
+      <StatusBadge tone='warning' flexShrink={0}>
         {t('census.search.voted_partial', { defaultValue: 'Voted {{voted}}/{{total}}', voted, total })}
-      </Badge>
+      </StatusBadge>
     )
   }
 
   const hasVoted = total > 0 && voted === total
   return (
-    <Badge colorPalette={hasVoted ? statusPalette.success : statusPalette.neutral} flexShrink={0}>
+    <StatusBadge tone={hasVoted ? 'success' : 'neutral'} flexShrink={0}>
       {hasVoted
         ? t('census.search.voted', { defaultValue: 'Voted' })
         : t('census.search.not_voted', { defaultValue: 'Not voted' })}
-    </Badge>
+    </StatusBadge>
   )
 }
 

@@ -1,7 +1,7 @@
 import { Box, HStack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
-import { statusPalette } from '~theme/status'
+import { statusPalette, type StatusTone } from '~theme/status'
 import { CodeMethod, PRIVATE_AUTH_FIELDS } from './utils'
 
 export type ProtectionLevel = 'unset' | 'basic' | 'good' | 'strong'
@@ -27,11 +27,11 @@ export const getProtectionLevel = (credentials: readonly string[], codeMethod: C
 
 // Red is kept for what blocks saving (members who can't sign in); a basic but
 // valid configuration is a caution, not an error.
-export const protectionLevelPalettes: Record<ProtectionLevel, string> = {
-  unset: statusPalette.neutral,
-  basic: statusPalette.warning,
-  good: statusPalette.success,
-  strong: statusPalette.success,
+export const protectionLevelTones: Record<ProtectionLevel, StatusTone> = {
+  unset: 'neutral',
+  basic: 'warning',
+  good: 'success',
+  strong: 'success',
 }
 
 const filledSegments: Record<ProtectionLevel, number> = {
@@ -90,7 +90,7 @@ export const ProtectionMeter = ({
 }) => {
   const { t } = useTranslation()
   const level = getProtectionLevel(credentials, codeMethod)
-  const palette = protectionLevelPalettes[level]
+  const palette = statusPalette[protectionLevelTones[level]]
 
   return (
     <Box data-level={level}>

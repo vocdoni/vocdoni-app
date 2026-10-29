@@ -114,7 +114,7 @@ export const colors = defineSemanticTokens.colors({
         value: '{colors.bg.panel}',
       },
     },
-    // Dialogs; drawers keep the sidebar colour (the mobile dashboard menu is one).
+    // Dialogs and drawers; `drawer` is the sidebar colour for the mobile dashboard menu.
     overlay: {
       DEFAULT: {
         value: '{colors.bg.panel}',

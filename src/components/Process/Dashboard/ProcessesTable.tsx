@@ -10,7 +10,6 @@ import {
   Portal,
   Stack,
   Table,
-  Tag,
   Text,
   type TextProps,
   useBreakpointValue,
@@ -29,6 +28,7 @@ import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 're
 import { generatePath, Link as RouterLink } from 'react-router'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
@@ -150,17 +150,13 @@ const ProcessResultsTag = () => {
     hasResults(election) || ((status === 'ENDED' || status === 'ONGOING') && !isSecretUntilTheEnd(election))
 
   return resultsVisible ? (
-    <Tag.Root colorPalette='gray' variant='solid' size='sm'>
-      <Tag.Label>
-        <Trans i18nKey='process_list.results_live'>Live</Trans>
-      </Tag.Label>
-    </Tag.Root>
+    <StatusBadge tone='neutral' variant='solid'>
+      <Trans i18nKey='process_list.results_live'>Live</Trans>
+    </StatusBadge>
   ) : (
-    <Tag.Root colorPalette='gray' variant='surface' size='sm'>
-      <Tag.Label>
-        <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
-      </Tag.Label>
-    </Tag.Root>
+    <StatusBadge tone='neutral' variant='surface'>
+      <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
+    </StatusBadge>
   )
 }
 
@@ -180,7 +176,7 @@ const ProcessCard = () => {
       <Card.Body>
         <HStack flexWrap='wrap' gap={2}>
           <ProcessTypeBadge />
-          <ElectionStatusBadge size='sm' />
+          <ElectionStatusBadge />
           <ProcessResultsTag />
         </HStack>
         <Text>
@@ -217,7 +213,7 @@ const ProcessRow = () => {
         <ProcessTypeBadge />
       </Table.Cell>
       <Table.Cell>
-        <ElectionStatusBadge size='sm' />
+        <ElectionStatusBadge />
       </Table.Cell>
       <Table.Cell textAlign='end'>{processVoteCount(results)}</Table.Cell>
       <Table.Cell>
