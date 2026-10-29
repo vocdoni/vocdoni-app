@@ -205,7 +205,7 @@ const Faqs = (props: BoxProps) => {
           {t('home.faqs.title')}
         </Text>
         <Text
-          mb='60px'
+          mb={16}
           maxW={{ base: '100%', sm: '70%', md: '80%', lg: '840px' }}
           mx='auto'
           fontSize='xl'

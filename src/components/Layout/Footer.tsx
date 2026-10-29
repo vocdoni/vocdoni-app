@@ -15,13 +15,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
 
   return (
     <>
-      <Flex
-        pt={6}
-        flexDirection={{ base: 'column', xl: 'row' }}
-        alignItems='start'
-        pb={{ base: '50px', xl: 6 }}
-        gap={6}
-      >
+      <Flex pt={6} flexDirection={{ base: 'column', xl: 'row' }} alignItems='start' pb={{ base: 12, xl: 6 }} gap={6}>
         <Box flex='1 1 33%'>
           <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
             <Image src={vcdLogo} w='125px' mb={3} filter={invert} alt={t('vocdoni_logo')} />
@@ -35,7 +29,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             flex='1 1 67%'
             flexDirection={{ base: 'column', sm: 'row' }}
             justifyContent={{ sm: 'space-between', lg: 'space-between' }}
-            gap={{ base: '30px', sm: 0 }}
+            gap={{ base: 8, sm: 0 }}
             mt={1}
             ml={{ xl: 10 }}
             w='full'
@@ -43,7 +37,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             <Flex
               flexDirection={{ base: 'column', sm: 'row' }}
               justifyContent='space-between'
-              gap={{ base: '0px', xl: '90px' }}
+              gap={{ base: '0px', xl: 24 }}
               w='full'
             >
               <Text fontWeight='bold' fontSize='lg' lineHeight={1.15} mb={4} display='none'>
