@@ -94,13 +94,7 @@ const TOKEN_PROP_KEYWORDS = new Set([
 ])
 
 // Recipe paths whose non-color token is known to be dangling, pending their fix.
-// removed by fix/theme-dead-tokens (PR 1.1); delete this entry then
-const KNOWN_INVALID = new Set<string>([
-  'badge.variants.size.xs.lineHeight',
-  'badge.variants.size.sm.lineHeight',
-  'badge.variants.size.md.lineHeight',
-  'badge.variants.size.lg.lineHeight',
-])
+const KNOWN_INVALID = new Set<string>([])
 
 const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes, resultsProgress: resultsProgressRecipe }
 
