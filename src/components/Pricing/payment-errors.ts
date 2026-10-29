@@ -2,15 +2,9 @@ import type { TFunction } from 'i18next'
 import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { currency } from '~utils/numbers'
 
-// Pay-per-process billing (vocdoni-app#1767): the backend gates publication and census growth on
-// payment, answering with these error codes. Amounts are EUR cents, VAT excluded.
-
-// Payloads (`data`) the guards below read; amounts are integer cents:
-// - publish refused with 40178: the quote owed for the draft, `{ lines, totalCents, quoteRecommended, quoteRequired }`.
-// - census growth refused with 40178: what growing the census of a paid (or grandfathered) process
-//   would cost on top of what was paid, `{ processId, lines, totalCents, paidCents, dueCents, censusSize, currency }`.
-// - 40175: the integrator wallet shortfall, `{ requiredCents, availableCents }`; absent when the
-//   backend could not read the balance.
+// Pay-per-process billing (saas-backend#819): publish and census growth need payment. Amounts: EUR cents, no VAT.
+// 40178: publish carries `shortfallCents` (exact); census growth carries `dueCents` (an upper bound).
+// 40175 (managed orgs) carries `requiredCents` and `availableCents`, absent when the balance is unknown.
 
 const hasCents = <K extends string>(data: unknown, ...keys: K[]): data is Record<K, number> =>
   typeof data === 'object' &&
@@ -36,28 +30,39 @@ const quoteRequiredMessage = (t: TFunction) =>
     defaultValue: 'Voting processes with more than 50,000 voters need a custom quote. Contact us to publish this one.',
   })
 
+const censusGrowthQuoteRequiredMessage = (t: TFunction) =>
+  t('process.payment.error.census_growth_quote_required', {
+    defaultValue:
+      'These members would take the census of a voting process above 50,000 voters, which needs a custom quote. Contact us to grow it.',
+  })
+
 // A translated explanation of why publishing a draft was refused for payment reasons, or
 // undefined when the error is not a payment one.
 export const publishPaymentErrorMessage = (t: TFunction, error: unknown): string | undefined => {
   const details = apiErrorDetails(error)
   switch (details?.code) {
     case ErrorCode.PaymentRequired:
-      if (!hasCents(details.data, 'totalCents')) break
+      // A census-growth refusal (dueCents) can carry totalCents too: it is not a publish one.
+      if (!hasCents(details.data, 'totalCents') || hasCents(details.data, 'dueCents')) break
       // Above the self-service limit the quote is still sent, but checkout refuses it (40176):
       // asking the user to pay that price would send them to a dead end.
       if ((details.data as { quoteRequired?: unknown }).quoteRequired === true) return quoteRequiredMessage(t)
-      // The quote is the full price: for a draft that grew after it was paid, the backend does not
-      // say how much was paid, so the copy cannot claim the whole amount is due.
+      if (hasCents(details.data, 'balanceCents', 'shortfallCents')) {
+        return t('process.payment.error.publish_wallet_short', {
+          defaultValue:
+            'Your wallet has {{balance}}, and publishing this voting process needs {{shortfall}} more (VAT excluded). Top up your wallet in Settings → Wallet, then publish again.',
+          balance: currency(details.data.balanceCents),
+          shortfall: currency(details.data.shortfallCents),
+        })
+      }
       return t('process.payment.error.publish_payment_required', {
         defaultValue:
-          'This voting process costs {{amount}} in total (VAT excluded) and must be paid before it can be published. If part of it was already paid, only the difference is due.',
+          'This voting process costs {{amount}} in total (VAT excluded) and must be paid before it can be published. Top up your wallet in Settings → Wallet, then publish again.',
         amount: currency(details.data.totalCents),
       })
     case ErrorCode.InsufficientWalletBalance:
       if (hasCents(details.data, 'requiredCents', 'availableCents')) {
         const { requiredCents, availableCents } = details.data
-        // requiredCents is what is still due, not the full price: a process that grew after a
-        // wallet payment only owes the difference.
         return t('process.payment.error.wallet_insufficient_amounts', {
           defaultValue:
             'The integrator wallet has {{available}}, but {{required}} (VAT excluded) is still due to publish this voting process. The integrator managing this organization must top up its wallet before you publish again.',
@@ -69,32 +74,63 @@ export const publishPaymentErrorMessage = (t: TFunction, error: unknown): string
         defaultValue:
           'The integrator wallet does not cover the price of this voting process. The integrator managing this organization must top up its wallet before you publish again.',
       })
+    case ErrorCode.IntegratorOrgCannotOwnProcess:
+      return t('process.payment.error.publish_integrator_org', {
+        defaultValue:
+          'Your integrator organization cannot own voting processes, only the organizations it manages can. Publish this process from one of them.',
+      })
     case ErrorCode.QuoteRequired:
       return quoteRequiredMessage(t)
+    case ErrorCode.SpendCapReached:
+      return t('process.payment.error.spend_cap_reached', {
+        defaultValue:
+          'Publishing this voting process would exceed the spend cap the integrator set for this organization. The integrator must raise it before you publish again.',
+      })
     case ErrorCode.PaymentSessionConflict:
-      // Also answered for a pending checkout or an unfinished refund, not only a payment being
-      // processed, so the copy cannot promise that waiting is enough.
+      // Also answered for an open top-up checkout or an unfinished draft deletion, so the copy
+      // cannot promise that waiting is enough.
       return t('process.payment.error.payment_in_progress', {
         defaultValue:
-          'A payment, checkout or refund of this voting process is not finished yet, so it cannot be published right now. Try again later, and contact us if it keeps happening.',
+          'This voting process cannot be published right now because of its payment: a top-up checkout may still be open, a payment may be being credited, or a change (such as adding branding after payment) may not be allowed. Check the draft and its payment, then try again.',
       })
   }
   return undefined
+}
+
+// Whether a publish refusal is a standard organization's wallet shortfall, which the wallet page
+// can fix: the toast offers a way there only then.
+export const publishNeedsWalletTopUp = (error: unknown): boolean => {
+  const details = apiErrorDetails(error)
+  return (
+    details?.code === ErrorCode.PaymentRequired &&
+    hasCents(details.data, 'totalCents') &&
+    !hasCents(details.data, 'dueCents') &&
+    (details.data as { quoteRequired?: unknown }).quoteRequired !== true
+  )
 }
 
 // Payment explanations are longer than a usual error toast, so they stay up long enough to read
 // and can be dismissed. Spread into the toast options when a payment message is shown.
 export const paymentErrorToastOptions = { duration: 10000, isClosable: true } as const
 
-// A translated explanation of why a draft could not be saved because its payment is being
-// processed (the backend locks it meanwhile), or undefined for any other error.
+// A translated explanation of why a draft could not be saved because of its payment, or
+// undefined for any other error.
 export const draftSavePaymentErrorMessage = (t: TFunction, error: unknown): string | undefined => {
-  if (apiErrorDetails(error)?.code !== ErrorCode.PaymentSessionConflict) return undefined
-  // The same code refuses adding branding to a draft paid without it, which retrying never fixes.
-  return t('process.payment.error.draft_payment_in_progress', {
-    defaultValue:
-      'This draft cannot be saved because of its payment: either the payment is still being processed, or the change is not allowed once paid (such as adding branding). Contact us if it keeps happening.',
-  })
+  switch (apiErrorDetails(error)?.code) {
+    case ErrorCode.IntegratorOrgCannotOwnProcess:
+      return t('process.payment.error.draft_integrator_org', {
+        defaultValue:
+          'Your integrator organization cannot own voting processes, only the organizations it manages can. Save this draft from one of them.',
+      })
+    case ErrorCode.PaymentSessionConflict:
+      // The same code also refuses adding branding or a custom URL to a draft paid without them,
+      // which retrying never fixes.
+      return t('process.payment.error.draft_payment_in_progress', {
+        defaultValue:
+          'This draft cannot be saved because of its payment. Branding or a custom URL cannot be added once it is paid: remove them. If a payment is being credited, wait a moment and try again.',
+      })
+  }
+  return undefined
 }
 
 // A translated explanation of why adding members was refused because it would grow the census of
@@ -104,21 +140,42 @@ export const draftSavePaymentErrorMessage = (t: TFunction, error: unknown): stri
 export const censusGrowthPaymentErrorMessage = (t: TFunction, error: unknown): string | undefined => {
   const details = apiErrorDetails(error)
   switch (details?.code) {
-    case ErrorCode.PaymentRequired:
+    case ErrorCode.PaymentRequired: {
       if (!hasCents(details.data, 'dueCents')) break
-      if (exceedsSelfServiceLimit(details.data)) {
-        return t('process.payment.error.census_growth_quote_required', {
-          defaultValue:
-            'These members would take the census of a voting process above 50,000 voters, which needs a custom quote. Contact us to grow it.',
-        })
-      }
+      if (exceedsSelfServiceLimit(details.data)) return censusGrowthQuoteRequiredMessage(t)
       // An upper bound: a bulk import is priced on every submitted row, including members the
       // census already has.
+      const { dueCents, shortfallCents } = details.data as { dueCents: number; shortfallCents?: unknown }
+      if (typeof shortfallCents === 'number' && shortfallCents > 0) {
+        return t('process.payment.error.census_growth_payment_shortfall', {
+          defaultValue:
+            'These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members. Your wallet lacks {{shortfall}} of that amount.',
+          amount: currency(dueCents),
+          shortfall: currency(shortfallCents),
+        })
+      }
       return t('process.payment.error.census_growth_payment_required', {
         defaultValue:
-          'These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded).',
-        amount: currency(details.data.dueCents),
+          'These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members.',
+        amount: currency(dueCents),
       })
+    }
+    case ErrorCode.InsufficientWalletBalance:
+      if (hasCents(details.data, 'requiredCents', 'availableCents')) {
+        const { requiredCents, availableCents } = details.data
+        return t('process.payment.error.census_growth_wallet_insufficient_amounts', {
+          defaultValue:
+            'The integrator wallet has {{available}}, but {{required}} (VAT excluded) is needed to add these members to a voting process. The integrator managing this organization must top up its wallet first.',
+          available: currency(availableCents),
+          required: currency(requiredCents),
+        })
+      }
+      return t('process.payment.error.census_growth_wallet_insufficient', {
+        defaultValue:
+          'The integrator wallet does not cover the cost of adding these members to a voting process. The integrator managing this organization must top up its wallet first.',
+      })
+    case ErrorCode.QuoteRequired:
+      return censusGrowthQuoteRequiredMessage(t)
     case ErrorCode.PaymentSessionConflict:
       return t('process.payment.error.census_growth_payment_in_progress', {
         defaultValue:
@@ -126,4 +183,14 @@ export const censusGrowthPaymentErrorMessage = (t: TFunction, error: unknown): s
       })
   }
   return undefined
+}
+
+// A translated explanation of why an invitation or a role change was refused because the
+// organization already has its maximum of admins and managers, or undefined for any other error.
+export const teamWriterLimitErrorMessage = (t: TFunction, error: unknown): string | undefined => {
+  if (apiErrorDetails(error)?.code !== ErrorCode.MaxWritersReached) return undefined
+  return t('team.max_writers_reached', {
+    defaultValue:
+      'This organization already has 5 admins and managers, pending invitations included. Remove one or cancel a pending invitation to free a slot. Viewers are not limited.',
+  })
 }

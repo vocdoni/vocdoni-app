@@ -5,6 +5,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { useSubscription } from '~components/Auth/Subscription'
 import InputBasic from '~components/Form/InputBasic'
 import { RoleSelector } from '~components/Layout/SaasSelector'
+import { teamWriterLimitErrorMessage } from '~components/Pricing/payment-errors'
 import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
@@ -39,7 +40,7 @@ const InviteForm = () => {
         onError: (error: Error) => {
           toast({
             title: t('invite.error', { defaultValue: 'Error' }),
-            description: error.message,
+            description: teamWriterLimitErrorMessage(t, error) ?? error.message,
             type: 'error',
             duration: 5000,
             isClosable: true,
