@@ -109,7 +109,7 @@ export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
 
   return (
     // Hidden overflow keeps the table header's fill inside the rounded corners.
-    <Card.Root variant='frame' borderRadius='sm' overflow='hidden'>
+    <Card.Root variant='frame' overflow='hidden'>
       <Table.ScrollArea>
         <Table.Root variant='outline'>
           <Table.Header>

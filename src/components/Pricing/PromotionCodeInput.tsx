@@ -92,7 +92,7 @@ export const PromotionCodeInput = () => {
       )}
     </Box>
   ) : (
-    <Card.Root variant='section' p={3}>
+    <Card.Root variant='section' size='sm'>
       <Flex justify='space-between' align='center'>
         <Flex align='center' gap={2}>
           <Icon as={LuCheck} color='status.success.fg' />

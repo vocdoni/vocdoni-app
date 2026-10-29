@@ -115,15 +115,7 @@ const ProcessInfoPanel = () => {
       />
       {showOrgInformation && <ProcessInfoCard label={t('process.created_by')} description={<CreatedBy />} />}
       {status === 'PAUSED' && !sameAddress(election?.orgAddress, currentAddress) && (
-        <Card.Root
-          variant='highlight'
-          size='sm'
-          borderRadius='lg'
-          p={2}
-          flexDirection='row'
-          gap={2}
-          alignItems='center'
-        >
+        <Card.Root variant='highlight' size='sm' flexDirection='row' gap={2} alignItems='center'>
           <Icon as={RiErrorWarningLine} />
           <ProcessInfoCard label={t('process.status.paused')} description={t('process.status.paused_description')} />
         </Card.Root>

@@ -379,8 +379,8 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
 
   return (
     <HStack flexDirection='column' gap={4} w='full' alignItems='flex-start'>
-      <Card.Root variant='section' size='sm' borderRadius='lg' w='full'>
-        <Card.Root variant='section' size='sm' borderRadius='lg' flexDirection='row' gap={3} mb={2}>
+      <Card.Root variant='section' size='sm' w='full'>
+        <Card.Root variant='section' size='sm' flexDirection='row' gap={3} mb={2}>
           <Icon as={LuTriangleAlert} boxSize={4} color='fg.muted' />
           <HStack flexDirection='column' gap={0} alignItems='flex-start'>
             <Heading size='sm' fontWeight='bold'>
@@ -443,7 +443,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.importer.data_preview', { defaultValue: 'Data Preview' })}
       </Heading>
-      <Card.Root variant='frame' borderRadius='lg' overflowX='auto' w='full'>
+      <Card.Root variant='frame' overflowX='auto' w='full'>
         <TableRoot>
           <TableHeader>
             <TableRow>

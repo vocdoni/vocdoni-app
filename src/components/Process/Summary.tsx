@@ -123,7 +123,7 @@ const ParticipationCard = () => {
       : ''
 
   return (
-    <Card.Root size='lg'>
+    <Card.Root>
       <Card.Body gap={6}>
         <Flex justify='space-between' align='start' gap={4} wrap='wrap'>
           <Box flex='1' minW='0'>
@@ -253,7 +253,7 @@ const ResultsNotice = () => {
         <Separator flex='1' />
       </Flex>
       {electionHasResults ? (
-        <Card.Root size='lg'>
+        <Card.Root>
           <Card.Body>
             <ElectionResults />
           </Card.Body>
@@ -305,7 +305,7 @@ const CertifiedTech = () => {
   // The card is dark in both colour modes, so its accents take the dark-mode tokens. The palette is
   // set again because the one inherited from the page was resolved for the page's mode.
   return (
-    <Card.Root variant='inverse' className='dark' colorPalette={defaultColorPalette(PRIMARY_COLOR)} size='lg'>
+    <Card.Root variant='inverse' className='dark' colorPalette={defaultColorPalette(PRIMARY_COLOR)}>
       <Card.Body>
         <Flex direction={{ base: 'column', lg: 'row' }} gap={8}>
           <Box flex='1'>

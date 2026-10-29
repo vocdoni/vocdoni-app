@@ -54,7 +54,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
   if (hasPermission) return children({ isLocked })
 
   return (
-    <Card.Root variant='frame' borderRadius='lg' display='grid'>
+    <Card.Root variant='frame' display='grid'>
       <Box
         gridArea='1 / 1'
         pointerEvents='none'

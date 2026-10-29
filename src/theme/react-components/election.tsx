@@ -457,7 +457,6 @@ export const electionComponents: ComponentsPartialDefinition = {
                 key={`${item.question}-${index}`}
                 variant='section'
                 size='sm'
-                borderRadius='lg'
                 flexDirection='row'
                 gap={3}
                 alignItems='flex-start'

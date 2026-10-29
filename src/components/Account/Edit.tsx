@@ -16,7 +16,7 @@ export const AccountEdit = () => {
 
   return (
     <Flex flexDirection='column' gap={6}>
-      <DashboardBox size='md' pt={4}>
+      <DashboardBox size='md'>
         <AccountForm profile={profile} />
       </DashboardBox>
       <DashboardBox size='md'>

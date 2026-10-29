@@ -69,7 +69,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
   }
 
   return (
-    <Card.Root variant='frame' borderRadius='sm' w='full'>
+    <Card.Root variant='frame' w='full'>
       <Table.ScrollArea>
         <Table.Root variant='outline'>
           <Table.Header>

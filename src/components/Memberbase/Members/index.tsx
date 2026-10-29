@@ -966,7 +966,7 @@ const MembersTable = () => {
   return (
     <>
       <ImportProgress />
-      <Card.Root variant='frame' borderRadius='sm'>
+      <Card.Root variant='frame'>
         <Flex direction={{ base: 'column', lg: 'row' }} p={4} gap={2}>
           <Flex direction='column' flex={1} gap={2}>
             <MemberFilters onDelete={openDeleteAll} />

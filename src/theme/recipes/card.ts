@@ -62,7 +62,6 @@ const listItem = {
     bgColor: 'transparent',
     border: '{borderWidths.hairline} solid',
     borderColor: 'border',
-    borderRadius: 'sm',
     p: 4,
     gap: 2,
   },
@@ -115,7 +114,6 @@ export const Card = defineSlotRecipe({
       sunken: {
         root: {
           bg: 'surface.sunken',
-          borderRadius: 'sm',
           p: 'var(--card-padding)',
         },
       },
@@ -144,7 +142,6 @@ export const Card = defineSlotRecipe({
       standalone: {
         root: {
           bgColor: 'auth.card.bg',
-          borderRadius: 'sm',
           _light: {
             borderWidth: 'hairline',
             borderColor: 'auth.card.border',

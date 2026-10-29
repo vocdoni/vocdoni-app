@@ -386,7 +386,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
             defaultValue: 'Current Role',
           })}
         </Text>
-        <Card.Root variant='section' p={2}>
+        <Card.Root variant='section' size='sm'>
           <Flex gap={2} align='center'>
             <Text>{roleIcons[currentRole]}</Text>
             <Text fontWeight='semibold' textTransform='capitalize'>

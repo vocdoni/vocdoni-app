@@ -99,7 +99,7 @@ const SupportTicketForm = () => {
 
   return (
     <FormProvider {...methods}>
-      <Card.Root as='form' variant='section' borderRadius='lg' onSubmit={handleSubmit(onSubmit)}>
+      <Card.Root as='form' variant='section' onSubmit={handleSubmit(onSubmit)}>
         <Heading size='md' mb={2}>
           {t('form.support.open_ticket', { defaultValue: 'Open a Support Ticket' })}
         </Heading>

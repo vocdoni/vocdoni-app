@@ -674,7 +674,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
   return (
     <>
-      <Card.Root variant='outline' p={4} pt={2}>
+      <Card.Root variant='outline' p={4}>
         <Card.Header p={0}>
           <Flex justify='space-between' align='center'>
             <Heading size='md'>{displayTitle}</Heading>
