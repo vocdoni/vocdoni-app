@@ -146,7 +146,7 @@ const PhoneSupportCard = () => {
       <Heading size='md' mb={1}>
         {t('organization_settings.phone_support.title', { defaultValue: 'Phone Support' })}
       </Heading>
-      <Text fontSize='sm' color='text.subtle' mb={6}>
+      <Text fontSize='sm' mb={6}>
         {t('organization_settings.phone_support.description', {
           defaultValue: 'Call our team directly for priority help.',
         })}

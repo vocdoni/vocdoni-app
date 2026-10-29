@@ -119,7 +119,7 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
     <Box mb={44} mx='auto'>
       <Header />
 
-      <Text as='h2' fontSize='heading-sm' fontWeight='bold' mb={4} textAlign={{ base: 'center', md: 'start' }}>
+      <Text as='h2' fontWeight='bold' mb={4} textAlign={{ base: 'center', md: 'start' }}>
         {t('organization.elections')}
       </Text>
 
