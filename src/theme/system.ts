@@ -5,6 +5,9 @@ import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import tokens from './tokens'
 
+// The palette `colorPalette`-aware components fall back to when none is set.
+export const defaultColorPalette = (primaryColor?: string) => (normalizeHexColor(primaryColor) ? 'brand' : 'gray')
+
 /**
  * Builds the chakra system for a given primary/accent color.
  *
@@ -15,9 +18,6 @@ import tokens from './tokens'
  * every accent token follow the configured color. Dark-mode surfaces live on
  * the separate `ink` scale and are unaffected either way.
  */
-// The palette `colorPalette`-aware components fall back to when none is set.
-export const defaultColorPalette = (primaryColor?: string) => (normalizeHexColor(primaryColor) ? 'brand' : 'gray')
-
 export const createAppSystem = (primaryColor?: string) => {
   const brand = normalizeHexColor(primaryColor)
   const scale = generatePaletteScale(brand ?? DEFAULT_PRIMARY_COLOR)
