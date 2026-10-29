@@ -1,13 +1,5 @@
-// Screens the UI snapshot renders. See README.md ("Add a route").
-//
-// - slug:   output file prefix, also the name used by `--routes`.
-// - path:   app path without the language; the snapshot opens /en<path>.
-// - auth:   false renders the page logged out. Logged-in pages get a fake token in localStorage.
-// - states: optional overlays (dialogs, menus, validation) captured after the route itself, on the
-//           same page; a second state on one route reloads it first. `open` is a list of steps;
-//           each step clicks the first VISIBLE match of its candidates, tried in order:
-//           [role, accessible name] or ['css', selector]. The state is captured viewport-only.
-//           `viewports` limits a state to some widths (default: every width of the run).
+// Screens the UI snapshot renders; README.md ("Add a route") explains the fields. States are
+// captured viewport-only on the route's own page, and a second state on one route reloads it first.
 import { P_DRAFT, P_ENDED, P_ONGOING } from './mock-saas.mjs'
 
 // At phone width these triggers sit behind a drawer or menu, so their states are desktop only.

@@ -1,11 +1,4 @@
-// Dependency-free fake of the Vocdoni SaaS API, used by the offline UI snapshot (see README.md).
-//
-// - Listens on 127.0.0.1 only and never makes an outbound request: there is nothing to forward
-//   credentials to. Every value below is invented.
-// - Dates are fixed around FIXED_NOW so two runs on different days render the same screens. The
-//   ranges are wide on purpose: the dev server renders the public SSR pages with the real clock
-//   while the browser runs on FIXED_NOW, and both must agree on whether a vote is ongoing.
-//
+// Dependency-free fake of the Vocdoni SaaS API for the offline UI snapshot (see README.md).
 // Standalone: node scripts/ui-snapshot/mock-saas.mjs [port]   (logs every request to stdout)
 import http from 'node:http'
 import { pathToFileURL } from 'node:url'
@@ -179,6 +172,8 @@ const GROUPS = [
 ]
 
 // ---- processes ----------------------------------------------------------------------------
+// Vote dates sit far from FIXED_NOW on purpose: the public SSR pages are rendered with the real
+// clock (see README.md "Known limits"), and both clocks must agree on whether a vote is ongoing.
 const hex64 = (seed) => seed.repeat(64).slice(0, 64)
 const ballot = (n) => ({
   maxCount: 1,
@@ -452,10 +447,8 @@ const isLocalOrigin = (origin) => {
   }
 }
 
-/**
- * Starts the mock. Resolves to { server, url, unmatched, close() } once it listens.
- * `log(line)` receives one line per request; `unmatched` collects the requests no handler knew.
- */
+// Starts the mock; resolves to { server, url, unmatched, close() } once it listens. `log` gets one
+// line per request and `unmatched` collects the requests no handler knew.
 export const startMock = ({ port = MOCK_PORT, log = () => {} } = {}) =>
   new Promise((resolve, reject) => {
     const unmatched = []
