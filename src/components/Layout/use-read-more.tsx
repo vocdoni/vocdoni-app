@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next'
 interface ReadMoreMarkdownWrapperProps {
   children: ReactNode
   from?: string
-  toLight?: string
-  toDark?: string
+  to?: string
 }
 
 export const useReadMoreMarkdown = (containerMaxHeightPx: number, tantPerCentGradient?: number) => {
@@ -31,8 +30,7 @@ export const useReadMoreMarkdown = (containerMaxHeightPx: number, tantPerCentGra
     children,
     from = 'transparent',
     // `bg` is a semantic token, so a single CSS var resolves per color mode
-    toLight = 'var(--chakra-colors-bg)',
-    toDark = 'var(--chakra-colors-bg)',
+    to = 'var(--chakra-colors-bg)',
     ...props
   }: ReadMoreMarkdownWrapperProps) => {
     return (
@@ -53,10 +51,7 @@ export const useReadMoreMarkdown = (containerMaxHeightPx: number, tantPerCentGra
           w='full'
           bottom={0}
           pointerEvents='none'
-          background={isTruncated && readMore ? `linear-gradient(to bottom, ${from} 0%, ${toLight} 100%)` : 'none'}
-          _dark={{
-            background: isTruncated && readMore ? `linear-gradient(to bottom, ${from} 0%, ${toDark} 100%)` : 'none',
-          }}
+          background={isTruncated && readMore ? `linear-gradient(to bottom, ${from} 0%, ${to} 100%)` : 'none'}
         ></Box>
         {children}
       </Box>

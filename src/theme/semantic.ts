@@ -4,6 +4,7 @@ import { stateColors } from './states'
 import { statusColors } from './status'
 import { ballotColors } from './ballot'
 import { recipeColors } from './recipeColors'
+import { illustrationColors } from './illustration'
 
 /**
  * Semantic tokens allow us to define tokens, like colors, based on their usage
@@ -213,6 +214,7 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  ...illustrationColors,
   dashboard: {
     // Borrowed by the support cards and the chat header; the sidebar reads `surface.sidebar`.
     menu: {
