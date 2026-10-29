@@ -22,6 +22,7 @@ import {
   Tag,
   type TagRootProps,
   Text,
+  type RecipeVariantProps,
   type TextProps,
   useRecipe,
   useSlotRecipe,
@@ -40,21 +41,25 @@ import { FaCircleCheck } from 'react-icons/fa6'
 import { Markdown } from '~components/ui/Markdown'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
-import { resultsProgressRecipe } from '~theme/recipes/election'
+import { ElectionTitle as electionTitleRecipe, resultsProgressRecipe } from '~theme/recipes/election'
+
+type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
 
 export const electionComponents: ComponentsPartialDefinition = {
   HR: defineComponent<'HR', BoxProps>((props) => <Box as='hr' borderColor='table.border' {...props} />),
-  ElectionTitle: defineComponent<'ElectionTitle', HeadingProps>(({ title, ...props }) => {
-    const recipe = useRecipe({ key: 'ElectionTitle' })
-    const styles = recipe()
-    return (
-      <Heading as='h1' css={styles} {...props}>
-        {title}
-      </Heading>
-    )
-  }),
+  ElectionTitle: defineComponent<'ElectionTitle', Omit<HeadingProps, 'size'> & ElectionTitleVariantProps>(
+    ({ title, size, ...props }) => {
+      const recipe = useRecipe({ recipe: electionTitleRecipe })
+      const styles = recipe({ size })
+      return (
+        <Heading as='h1' css={styles} {...props}>
+          {title}
+        </Heading>
+      )
+    }
+  ),
   ElectionDescription: defineComponent<'ElectionDescription', BoxProps>(({ description, ...props }) => {
     const recipe = useRecipe({ key: 'ElectionDescription' })
     const styles = recipe()
@@ -259,15 +264,14 @@ export const electionComponents: ComponentsPartialDefinition = {
                 w='18px'
                 h='18px'
                 borderWidth='2px'
-                borderColor={selected ? 'gray.700' : 'table.border'}
+                borderColor={selected ? 'ballot.choice.ring.checked' : 'ballot.choice.ring'}
                 borderRadius='full'
-                bg='white'
-                _dark={{ bg: 'gray.800', borderColor: selected ? 'gray.100' : 'gray.500' }}
+                bg='ballot.choice.bg'
                 display='flex'
                 alignItems='center'
                 justifyContent='center'
               >
-                {selected ? <Box w='8px' h='8px' borderRadius='full' bg='gray.900' _dark={{ bg: 'gray.100' }} /> : null}
+                {selected ? <Box w='8px' h='8px' borderRadius='full' bg='ballot.choice.dot' /> : null}
               </Box>
             </Box>
             {media}
@@ -384,7 +388,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    <Text color='red.500' {...props}>
+    <Text color='ballot.error' {...props}>
       {error}
     </Text>
   )),

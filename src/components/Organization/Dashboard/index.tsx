@@ -291,7 +291,7 @@ const RecentProcess = () => {
       <Box flex='1' minW={0} mr={4}>
         <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='500' display='block'>
           <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-            <ElectionTitle mb={0} fontSize='md' textAlign='left' fontWeight='500' truncate />
+            <ElectionTitle size='row' />
           </ReactRouterLink>
         </Link>
         <Text fontSize='sm' color='texts.subtle' truncate>
