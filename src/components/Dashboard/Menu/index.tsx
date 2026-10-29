@@ -7,7 +7,6 @@ import {
   HStack,
   Icon,
   IconButton,
-  Progress,
   Text,
   useMediaQuery,
   useToken,
@@ -18,6 +17,7 @@ import { LuPanelLeft, LuPlus } from 'react-icons/lu'
 import { generatePath, Link as ReactRouterLink, Link as RouterLink } from 'react-router'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { VocdoniLogo } from '~components/Layout/Logo'
+import { ListLoader } from '~components/ui/Loader'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useTutorials } from '~src/queries/organization'
 import { Routes } from '~src/router/routes'
@@ -83,13 +83,7 @@ const SidebarTutorial = () => {
   const { isSidebarTutorialClosed, isLoading, closeSidebarTutorial } = useTutorials()
 
   if (isLoading) {
-    return (
-      <Progress.Root value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   if (isSidebarTutorialClosed) return null

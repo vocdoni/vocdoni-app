@@ -1,19 +1,10 @@
-import {
-  AlertRoot as Alert,
-  AlertDescription,
-  AlertIndicator,
-  Box,
-  Flex,
-  Grid,
-  GridItem,
-  Spinner,
-  Text,
-} from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, AlertIndicator, Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ListLoader } from '~components/ui/Loader'
 import type { ElectionsPageData } from '~src/ssr/public-pages'
 import { useAuth } from '~components/Auth/useAuth'
 import { useApiClient } from '~src/providers/ApiClientProvider'
@@ -134,7 +125,7 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
       </Grid>
 
       <Flex justifyContent='center' my={4}>
-        {loading && <Spinner />}
+        {loading && <ListLoader />}
 
         {loaded && !electionsList.length && <NoElections />}
       </Flex>

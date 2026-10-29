@@ -14,7 +14,6 @@ import {
   Icon,
   IconButton,
   Image,
-  Spinner,
   Text,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
@@ -27,6 +26,7 @@ import { LuUpload } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
+import { InlineLoader } from '~components/ui/Loader'
 import { statusPalette } from '~theme/status'
 import { dropRejectionMessage, useLatestDrop } from './dropzone'
 
@@ -211,7 +211,7 @@ export const AvatarUploader = (props: FormControlProps) => {
               justifyContent='center'
             >
               <input {...getInputProps()} />
-              {isPending ? <Spinner /> : <Icon as={LuUpload} boxSize={8} color='fg.muted' />}
+              {isPending ? <InlineLoader /> : <Icon as={LuUpload} boxSize={8} color='fg.muted' />}
             </Box>
             <Button variant='outline'>
               <Icon as={LuUpload} boxSize={4} />
@@ -262,7 +262,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
             {/* A new image dropped over the current one is uploading */}
             {isPending && (
               <Flex position='absolute' inset={0} align='center' justify='center' bg='blackAlpha.500'>
-                <Spinner color='white' />
+                <InlineLoader color='white' />
               </Flex>
             )}
           </Flex>
@@ -279,7 +279,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
             borderColor={isDragActive ? 'green.400' : 'gray.600'}
           >
             <input {...getInputProps()} />
-            {isPending ? <Spinner color='white' /> : <Icon as={LuUpload} boxSize={6} color='gray.400' />}
+            {isPending ? <InlineLoader color='white' /> : <Icon as={LuUpload} boxSize={6} color='gray.400' />}
           </Flex>
         )}
       </Flex>
@@ -312,7 +312,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
         {isDragActive ? (
           <Text textAlign='center'>{t('uploader.drop_here', { defaultValue: 'Drop the file here' })}</Text>
         ) : isLoading ? (
-          <Spinner />
+          <InlineLoader />
         ) : (
           <Flex direction='column' align='center' textAlign='center'>
             <Trans

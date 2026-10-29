@@ -1019,10 +1019,8 @@
       "weight": "Voting power (Weight)"
     },
     "list": {
-      "empty": "No members found",
       "empty_description": "Add your first member to get started.",
       "error": "Unable to load members",
-      "no_search_results": "No members match your search",
       "no_search_results_description": "Try adjusting your search terms."
     },
     "table": {
@@ -1685,12 +1683,8 @@
     }
   },
   "processes": {
-    "empty": "No voting processes found",
-    "empty_description": "Create a voting process to get started.",
     "load_error": "Unable to load voting processes",
-    "load_error_description": "Please try again.",
-    "no_results": "No results for this filter",
-    "no_results_description": "Try adjusting your filters."
+    "load_error_description": "Please try again."
   },
   "profile": {
     "error": "Failed to update profile",

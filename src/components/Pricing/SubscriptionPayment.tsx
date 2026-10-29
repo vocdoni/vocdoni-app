@@ -8,6 +8,7 @@ import {
 } from '@stripe/react-stripe-js/checkout'
 import { loadStripe, Stripe, StripeCheckoutOptions } from '@stripe/stripe-js'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { PageLoader } from '~components/ui/Loader'
 import { ensure0x } from '~utils/address'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -96,11 +97,7 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
   }
 
   if (checkoutState.type === 'loading') {
-    return (
-      <Box textAlign='center' py={8}>
-        {t('loading', { defaultValue: 'Loading...' })}
-      </Box>
-    )
+    return <PageLoader />
   }
 
   if (checkoutState.type === 'error') {

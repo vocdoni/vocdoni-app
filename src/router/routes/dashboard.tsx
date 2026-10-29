@@ -11,7 +11,8 @@ import ProtectedRoutes from '~src/router/ProtectedRoutes'
 import { Routes } from '.'
 import AccountProtectedRoute from '../AccountProtectedRoute'
 import OrganizationTypeGuard from '../OrganizationTypeGuard'
-import { Loading, SuspenseLoader } from '../SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
+import { SuspenseLoader } from '../SuspenseLoader'
 
 // elements/pages
 const DashboardCreateOrg = lazy(() => import('~elements/dashboard/organization/create'))
@@ -110,7 +111,7 @@ export const useDashboardRoutes = () => {
                         <DashboardProcessView />
                       </SuspenseLoader>
                     ),
-                    HydrateFallback: Loading,
+                    HydrateFallback: PageLoader,
                     loader: async ({ params }: { params: Params<string> }) => {
                       const rawElection = await client.elections.get(params.id!)
                       // Pre-seed the ElectionProvider query so the view renders without re-fetching

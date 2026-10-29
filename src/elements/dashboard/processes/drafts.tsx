@@ -11,7 +11,6 @@ import {
   MenuSeparator,
   MenuTrigger,
   Portal,
-  Progress,
   Stack,
   Table,
   Text,
@@ -30,6 +29,8 @@ import { useCreateProcess } from '~components/Process/Create'
 import { Process, SelectorTypes } from '~components/Process/Create/common'
 import { votingProcessToCreateRequest, votingProcessToForm } from '~components/Process/Create/draft-mapping'
 import { clearStoredDraftId } from '~components/Process/Create/draft-storage'
+import { EmptyState } from '~components/ui/EmptyState'
+import { ListLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
@@ -314,15 +315,6 @@ const Drafts = () => {
   const { data, isLoading, error } = useDrafts()
   const hasError = !!error && !isLoading
   const isEmpty = (data?.processes?.length ?? 0) === 0 && !isLoading && !hasError
-  const showAlert = hasError || isEmpty
-  const alertTitle = hasError
-    ? t('drafts.load_error', { defaultValue: 'Unable to load drafts' })
-    : t('drafts.empty', { defaultValue: 'No drafts found' })
-  const alertDescription = hasError
-    ? error instanceof Error
-      ? error.message
-      : t('drafts.load_error_description', { defaultValue: 'Please try again.' })
-    : t('drafts.empty_description', { defaultValue: 'Create a draft to get started.' })
 
   const pagination = data?.pagination || {
     totalItems: 0,
@@ -333,21 +325,30 @@ const Drafts = () => {
   }
 
   if (isLoading) {
-    return (
-      <Progress.Root size='xs' value={null} colorPalette='gray'>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   return (
     <RoutedPaginationProvider path={Routes.dashboard.processes.drafts} pagination={pagination}>
-      {showAlert && (
-        <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
+      <ListStateAlert
+        show={hasError}
+        status='error'
+        title={t('drafts.load_error', { defaultValue: 'Unable to load drafts' })}
+        description={
+          error instanceof Error
+            ? error.message
+            : t('drafts.load_error_description', { defaultValue: 'Please try again.' })
+        }
+      />
+      {isEmpty ? (
+        <EmptyState
+          size='lg'
+          title={t('drafts.empty', { defaultValue: 'No drafts found' })}
+          description={t('drafts.empty_description', { defaultValue: 'Create a draft to get started.' })}
+        />
+      ) : (
+        <DraftsTable drafts={data?.processes ?? []} />
       )}
-      <DraftsTable drafts={data?.processes ?? []} />
     </RoutedPaginationProvider>
   )
 }

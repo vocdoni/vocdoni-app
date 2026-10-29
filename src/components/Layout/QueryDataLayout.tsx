@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
 import ErrorComponent from '~components/Layout/ErrorComponent'
-import { Loading } from '~src/router/SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
 
 interface IUserQueryLayout {
   isLoading: boolean
@@ -11,7 +11,7 @@ interface IUserQueryLayout {
 
 const QueryDataLayout = ({ isLoading, isEmpty, isError, error, children }: IUserQueryLayout & PropsWithChildren) => {
   if (isLoading) {
-    return <Loading minHeight={1} />
+    return <PageLoader minHeight={1} />
   }
   if (isError) {
     return <ErrorComponent error={error} />

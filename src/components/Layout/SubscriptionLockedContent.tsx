@@ -1,4 +1,5 @@
-import { Progress, Box, Button, Card, HStack, Icon, Stack, TagLabel, TagRoot, Text, Wrap } from '@chakra-ui/react'
+import { Box, Button, Card, HStack, Icon, Stack, TagLabel, TagRoot, Text, Wrap } from '@chakra-ui/react'
+import { ListLoader } from '~components/ui/Loader'
 import { dotobject } from '~utils/objects'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,13 +43,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
   }, [loading, hasPermission, permissionType, subscription?.plan?.name, trackEvent])
 
   if (loading) {
-    return (
-      <Progress.Root size='xs' colorPalette='gray' value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   if (hasPermission) return children({ isLocked })

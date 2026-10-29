@@ -3,14 +3,12 @@ import {
   Badge,
   Box,
   Card,
-  Center,
   Code,
   Flex,
   HStack,
   Icon,
   IconButton,
   SimpleGrid,
-  Spinner,
   Stack,
   Table,
   Text,
@@ -23,6 +21,8 @@ import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
+import { EmptyState } from '~components/ui/EmptyState'
+import { ListLoader } from '~components/ui/Loader'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
 import type { StatusTone } from '~theme/status'
@@ -147,11 +147,7 @@ const ApiKeysPanel = () => {
   }
 
   if (keys.isLoading) {
-    return (
-      <Center py={12}>
-        <Spinner />
-      </Center>
-    )
+    return <ListLoader />
   }
 
   if (keys.error) {
@@ -181,17 +177,13 @@ const ApiKeysPanel = () => {
       </Flex>
 
       {list.length === 0 ? (
-        <Alert.Root status='info'>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>{t('integrators.api_keys.empty_title', { defaultValue: 'No API keys yet' })}</Alert.Title>
-            <Alert.Description>
-              {t('integrators.api_keys.empty_description', {
-                defaultValue: 'Create a key to access the API without signing in.',
-              })}
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Root>
+        <EmptyState
+          size='lg'
+          title={t('integrators.api_keys.empty_title', { defaultValue: 'No API keys yet' })}
+          description={t('integrators.api_keys.empty_description', {
+            defaultValue: 'Create a key to access the API without signing in.',
+          })}
+        />
       ) : isMobile ? (
         // Stacked cards on small screens: the 7-column table overflows horizontally on mobile.
         <Stack gap={3}>

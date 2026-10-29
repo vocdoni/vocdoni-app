@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router'
 import { Routes } from './routes'
-import { Loading } from '~src/router/SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { useProfile } from '~src/queries/account'
@@ -21,7 +21,7 @@ const OrganizationTypeGuard = ({ redirectPath }: OrganizationTypeGuardProps) => 
   const { data: profile, isLoading: isProfileLoading } = useProfile()
 
   if (isAuthLoading || isProfileLoading) {
-    return <Loading />
+    return <PageLoader />
   }
 
   if (!isAuthenticated) {
