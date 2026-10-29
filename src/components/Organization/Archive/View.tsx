@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Editor from '~components/Editor'
 import { RouterAwareLink } from '~components/RouterAwareLink'
+import { EmptyState } from '~components/ui/EmptyState'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
@@ -118,11 +119,12 @@ export const ArchiveOrganizationView = ({
       <VStack align='stretch' gap={3}>
         <Heading size='md'>{t('organization.elections_list', { defaultValue: 'Voting processes' })}</Heading>
         {elections.length === 0 && (
-          <Text color='fg.muted'>
-            {t('organization.elections_list_empty.not_owner', {
+          <EmptyState
+            size='sm'
+            title={t('organization.elections_list_empty.not_owner', {
               defaultValue: 'This organization has no voting processes yet.',
             })}
-          </Text>
+          />
         )}
         {elections.map((election) => (
           <ElectionRow key={election.id} election={election} />

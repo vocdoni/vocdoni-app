@@ -37,7 +37,7 @@ const Votings = ({ path }: VotingsProps) => {
   // unmounted until it resolves — but show progress rather than a blank page while it (or
   // the first page of results) is still loading.
   if (!organization || isLoading) {
-    return <ListLoader size='xs' colorPalette='gray' />
+    return <ListLoader />
   }
 
   return (
@@ -51,26 +51,20 @@ const VotingsList = ({ data, status, error }: VotingsListProps) => {
   const { t } = useTranslation()
   const processes = data?.processes
   const hasError = !!error
-  const showAlert = hasError || !processes?.length
 
-  const alertTitle = hasError
-    ? t('processes.load_error', { defaultValue: 'Unable to load voting processes' })
-    : status
-      ? t('processes.no_results', { defaultValue: 'No results for this filter' })
-      : t('processes.empty', { defaultValue: 'No voting processes found' })
-  const alertDescription = hasError
-    ? error instanceof Error
-      ? error.message
-      : t('processes.load_error_description', { defaultValue: 'Please try again.' })
-    : status
-      ? t('processes.no_results_description', { defaultValue: 'Try adjusting your filters.' })
-      : t('processes.empty_description', { defaultValue: 'Create a voting process to get started.' })
-
+  // An empty list shows NoElections / NoResultsFiltering below; only a failure gets an alert.
   return (
     <Flex flexDirection='column' flexGrow={1} gap={5} height='full'>
-      {showAlert && (
-        <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
-      )}
+      <ListStateAlert
+        show={hasError}
+        status='error'
+        title={t('processes.load_error', { defaultValue: 'Unable to load voting processes' })}
+        description={
+          error instanceof Error
+            ? error.message
+            : t('processes.load_error_description', { defaultValue: 'Please try again.' })
+        }
+      />
       {!!processes?.length ? (
         <ProcessesTable processes={processes} />
       ) : hasError ? null : !!status ? (

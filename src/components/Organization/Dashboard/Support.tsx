@@ -139,7 +139,7 @@ const PhoneSupportCard = ({ isLocked }) => {
   const prioritySupportPhone = useAppEnv().PRIORITY_SUPPORT_PHONE
 
   if (isLoading) {
-    return <ListLoader size='xs' colorPalette='gray' />
+    return <ListLoader />
   }
 
   return (

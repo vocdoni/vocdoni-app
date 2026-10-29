@@ -35,6 +35,13 @@ export const EmptyState = defineSlotRecipe({
         title: { fontSize: 'lg', lineHeight: 1.5, fontWeight: 'bold' },
         description: { fontSize: 'md', lineHeight: 1.5 },
       },
+      // In place of a whole list or section with nothing in it: md with room above and below.
+      lg: {
+        root: { px: 0, py: 10, gap: 3 },
+        indicator: { _icon: { boxSize: 12 } },
+        title: { fontSize: 'lg', lineHeight: 1.5, fontWeight: 'bold' },
+        description: { fontSize: 'md', lineHeight: 1.5 },
+      },
     },
   },
 })

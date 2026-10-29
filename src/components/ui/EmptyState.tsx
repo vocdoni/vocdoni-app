@@ -15,8 +15,9 @@ export interface EmptyStateProps extends Omit<EmptyStateRootProps, 'title'> {
 }
 
 /**
- * The one empty state, styled by the `emptyState` recipe (`size` sm in a table or list, md in a card).
- * Content only, no card of its own. The illustration keeps its `invert(70%)` dark treatment.
+ * The one empty state, styled by the `emptyState` recipe: `size` sm in a table row, md in a card,
+ * lg in place of a whole list.
+ * Content only, no card of its own; the illustration keeps its `invert(70%)` dark treatment.
  */
 export const EmptyState = ({
   icon: IconComponent,

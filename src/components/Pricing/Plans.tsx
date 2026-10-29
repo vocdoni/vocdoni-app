@@ -17,6 +17,7 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { EmptyState } from '~components/ui/EmptyState'
 import { ListLoader } from '~components/ui/Loader'
 import { getPlanKey, isPlanNamed, PlanName } from '~constants'
 import { QueryKeys } from '~src/queries/keys'
@@ -330,27 +331,27 @@ export const SubscriptionPlans = () => {
   const error = plansError ?? subscriptionError
   const hasError = !!error && !isLoading
   const isEmpty = (plans?.length ?? 0) === 0 && !isLoading && !hasError
-  const showAlert = hasError || isEmpty
-  const alertTitle = hasError
-    ? t('pricing.load_error', { defaultValue: 'Unable to load plans' })
-    : t('pricing.empty', { defaultValue: 'No plans found' })
-  const alertDescription = hasError
-    ? error instanceof Error
-      ? error.message.toString()
-      : t('pricing.load_error_description', { defaultValue: 'Please try again.' })
-    : t('pricing.empty_description', { defaultValue: 'Check back later for available plans.' })
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex flexDir='column' gap={4}>
           {isLoading && <ListLoader />}
-          {showAlert && (
-            <ListStateAlert
-              show
-              status={hasError ? 'error' : 'info'}
-              title={alertTitle}
-              description={alertDescription}
+          <ListStateAlert
+            show={hasError}
+            status='error'
+            title={t('pricing.load_error', { defaultValue: 'Unable to load plans' })}
+            description={
+              error instanceof Error
+                ? error.message.toString()
+                : t('pricing.load_error_description', { defaultValue: 'Please try again.' })
+            }
+          />
+          {isEmpty && (
+            <EmptyState
+              size='lg'
+              title={t('pricing.empty', { defaultValue: 'No plans found' })}
+              description={t('pricing.empty_description', { defaultValue: 'Check back later for available plans.' })}
             />
           )}
           <Tabs.Root

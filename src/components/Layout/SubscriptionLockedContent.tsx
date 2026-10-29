@@ -43,7 +43,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
   }, [loading, hasPermission, permissionType, subscription?.plan?.name, trackEvent])
 
   if (loading) {
-    return <ListLoader size='xs' colorPalette='gray' />
+    return <ListLoader />
   }
 
   if (hasPermission) return children({ isLocked })

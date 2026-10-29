@@ -88,14 +88,9 @@ const IntegratorOrgGuard = () => {
 const ProvisioningState = () => {
   const { t } = useTranslation()
   return (
-    <Center py={16}>
-      <Stack align='center' gap={3}>
-        <PageLoader minHeight={1} />
-        <Text fontSize='sm' color='gray.500'>
-          {t('integrators.setting_up_account', { defaultValue: 'Setting up your integrator account…' })}
-        </Text>
-      </Stack>
-    </Center>
+    <PageLoader>
+      {t('integrators.setting_up_account', { defaultValue: 'Setting up your integrator account…' })}
+    </PageLoader>
   )
 }
 

@@ -10,7 +10,7 @@ import { SubscriptionPlans } from '~components/Pricing/Plans'
 import { SubscriptionCheckoutProvider } from '~components/Pricing/SubscriptionCheckoutProvider'
 import { SubscriptionPayment } from '~components/Pricing/SubscriptionPayment'
 import { useSubscriptionCheckout } from '~components/Pricing/use-subscription-checkout'
-import { ListLoader } from '~components/ui/Loader'
+import { PageLoader } from '~components/ui/Loader'
 import { usePortalSession } from '~queries/stripe'
 import { Routes } from '~routes'
 
@@ -37,7 +37,7 @@ const SubscriptionPageContent = () => {
   const toggleComparisonTable = () => setShowComparisonTable((prev) => !prev)
 
   if (loading) {
-    return <ListLoader />
+    return <PageLoader />
   }
   if (error) {
     return (

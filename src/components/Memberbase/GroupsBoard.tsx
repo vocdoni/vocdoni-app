@@ -411,9 +411,8 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
           <EmptyState
             size='sm'
             height='200px'
-            title={t('members.table.no_results', {
-              defaultValue: 'No members found',
-            })}
+            title={t('group.members.empty', { defaultValue: 'No members found' })}
+            description={t('group.members.empty_description', { defaultValue: 'Add members to see them listed here.' })}
           />
         ) : (
           <>
@@ -577,19 +576,16 @@ const GroupMembersWithPagination = ({ group, isOpen }: GroupMembersProps) => {
   const { data, isLoading, error } = useGroupMembers(group.id, page, isOpen)
   const members = data?.members ?? []
   const hasError = !!error && !isLoading
-  const isEmpty = members.length === 0 && !isLoading && !hasError
-  const showAlert = hasError || isEmpty
-  const alertStatus = hasError ? 'error' : 'info'
-  const alertTitle = hasError
-    ? t('group.members.error', { defaultValue: 'Unable to load group members' })
-    : t('group.members.empty', { defaultValue: 'No members found' })
-  const alertDescription = hasError
-    ? error?.message?.toString()
-    : t('group.members.empty_description', { defaultValue: 'Add members to see them listed here.' })
 
+  // An empty group is the table's own empty state; only a failure gets an alert.
   return (
     <>
-      {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
+      <ListStateAlert
+        show={hasError}
+        status='error'
+        title={t('group.members.error', { defaultValue: 'Unable to load group members' })}
+        description={error?.message?.toString()}
+      />
       <TableProvider
         data={members}
         isLoading={isLoading}
@@ -730,19 +726,23 @@ const GroupsBoard = () => {
   const { data: groups, isLoading, error, isFetched, fetchNextPage, hasNextPage, isFetchingNextPage } = useGroups()
   const hasError = !!error && !isLoading
   const noGroups = isFetched && (!groups || groups.length === 0) && !isLoading && !hasError
-  const showAlert = hasError || noGroups
-  const alertStatus = hasError ? 'error' : 'info'
-  const alertTitle = hasError
-    ? t('groups_board.load_error', { defaultValue: 'Unable to load groups' })
-    : t('groups_board.no_groups', { defaultValue: 'No groups found' })
-  const alertDescription = hasError
-    ? error?.message?.toString()
-    : t('groups_board.create_group', { defaultValue: 'Create a new group to get started.' })
 
   return (
     <>
       {isLoading && <ListLoader />}
-      {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
+      <ListStateAlert
+        show={hasError}
+        status='error'
+        title={t('groups_board.load_error', { defaultValue: 'Unable to load groups' })}
+        description={error?.message?.toString()}
+      />
+      {noGroups && (
+        <EmptyState
+          size='lg'
+          title={t('groups_board.no_groups', { defaultValue: 'No groups found' })}
+          description={t('groups_board.create_group', { defaultValue: 'Create a new group to get started.' })}
+        />
+      )}
       {!hasError && !isLoading && groups && groups.length > 0 && (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
           {groups.map((group) => (

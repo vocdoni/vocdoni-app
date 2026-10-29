@@ -762,6 +762,13 @@ const EmptyMembersMessage = () => {
                 defaultValue: 'No members found',
               })
       }
+      description={
+        error
+          ? undefined
+          : debouncedSearch
+            ? t('members.list.no_search_results_description', { defaultValue: 'Try adjusting your search terms.' })
+            : t('members.list.empty_description', { defaultValue: 'Add your first member to get started.' })
+      }
     />
   )
 }
@@ -990,7 +997,7 @@ const MembersTable = () => {
             />
           </Flex>
         </Flex>
-        {isLoadingOrImporting && <ListLoader size='xs' />}
+        {isLoadingOrImporting && <ListLoader />}
         {isMobile ? (
           <Box p={4}>
             <Flex justify='space-between' align='center' mb={3}>

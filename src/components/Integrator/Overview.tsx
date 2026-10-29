@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { LuNetwork, LuRocket, LuTerminal } from 'react-icons/lu'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
-import { InlineLoader } from '~components/ui/Loader'
+import { PageLoader } from '~components/ui/Loader'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useIntegratorInfo } from '~src/queries/integrators'
 import { DocsCard } from './DocsCard'
@@ -23,7 +23,7 @@ export const IntegratorOverview = () => {
   if (isLoading) {
     return (
       <DashboardContents>
-        <InlineLoader />
+        <PageLoader />
       </DashboardContents>
     )
   }

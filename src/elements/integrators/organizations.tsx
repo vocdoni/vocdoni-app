@@ -1,11 +1,12 @@
-import { Alert, ButtonGroup, Center, Flex, IconButton, SimpleGrid, Text } from '@chakra-ui/react'
+import { Alert, ButtonGroup, Flex, IconButton, SimpleGrid, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuBookOpen, LuChevronLeft, LuChevronRight } from 'react-icons/lu'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { DocsCard } from '~components/Integrator/DocsCard'
 import { ManagedOrganizationsTable } from '~components/Integrator/ManagedOrganizationsTable'
-import { InlineLoader } from '~components/ui/Loader'
+import { EmptyState } from '~components/ui/EmptyState'
+import { ListLoader } from '~components/ui/Loader'
 import { useManagedOrganizations } from '~src/queries/integrators'
 
 const LIMIT = 10
@@ -32,9 +33,7 @@ const IntegratorManagedOrganizations = () => {
       />
 
       {isLoading ? (
-        <Center py={16}>
-          <InlineLoader />
-        </Center>
+        <ListLoader />
       ) : error ? (
         <Alert.Root status='error'>
           <Alert.Indicator />
@@ -47,20 +46,14 @@ const IntegratorManagedOrganizations = () => {
         </Alert.Root>
       ) : organizations.length === 0 ? (
         <Flex direction='column' gap={4}>
-          <Alert.Root status='info'>
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Title>
-                {t('integrators.managed.empty_title', { defaultValue: 'No organizations yet' })}
-              </Alert.Title>
-              <Alert.Description>
-                {t('integrators.managed.empty_description', {
-                  defaultValue:
-                    'Organizations are created through the API, not from this dashboard. Once you provision your first organization it will appear here.',
-                })}
-              </Alert.Description>
-            </Alert.Content>
-          </Alert.Root>
+          <EmptyState
+            size='lg'
+            title={t('integrators.managed.empty_title', { defaultValue: 'No organizations yet' })}
+            description={t('integrators.managed.empty_description', {
+              defaultValue:
+                'Organizations are created through the API, not from this dashboard. Once you provision your first organization it will appear here.',
+            })}
+          />
           {/* Docs shortcut shown only until the first organization exists */}
           <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
             <DocsCard

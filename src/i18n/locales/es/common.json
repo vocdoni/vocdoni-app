@@ -1031,10 +1031,8 @@
       "weight": "Poder de voto (Peso)"
     },
     "list": {
-      "empty": "No se han encontrado miembros",
       "empty_description": "Añade tu primer miembro para empezar.",
       "error": "No se pudieron cargar los miembros",
-      "no_search_results": "No hay miembros que coincidan con tu búsqueda",
       "no_search_results_description": "Prueba a ajustar los términos de búsqueda."
     },
     "table": {
@@ -1716,12 +1714,8 @@
     }
   },
   "processes": {
-    "empty": "No se han encontrado procesos de votación",
-    "empty_description": "Crea un proceso de votación para empezar.",
     "load_error": "No se pudieron cargar los procesos de votación",
-    "load_error_description": "Inténtalo de nuevo.",
-    "no_results": "No hay resultados para este filtro",
-    "no_results_description": "Prueba a ajustar los filtros."
+    "load_error_description": "Inténtalo de nuevo."
   },
   "profile": {
     "error": "Error al actualizar el perfil",

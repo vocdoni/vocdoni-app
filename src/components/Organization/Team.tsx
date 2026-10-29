@@ -564,7 +564,7 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
   return (
     <>
       <Menu.Item value='resend-invitation' disabled={isLoading} onClick={resendInvitationHandler}>
-        {isLoading ? <InlineLoader size='xs' /> : <Icon as={LuRefreshCw} />}
+        {isLoading ? <InlineLoader /> : <Icon as={LuRefreshCw} />}
         <Box>{t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}</Box>
       </Menu.Item>
       <Menu.Item value='cancel-invitation' color='destructive.fg' disabled={isLoading} onClick={openCancelInvitation}>
@@ -740,15 +740,6 @@ export const OrganizationUsers = () => {
   const { users, isLoading, isError, error } = useAllUsers()
   const hasError = isError && !isLoading
   const isEmpty = users.length === 0 && !isLoading && !hasError
-  const showAlert = hasError || isEmpty
-  const alertTitle = hasError
-    ? t('team.load_error', { defaultValue: 'Unable to load team members' })
-    : t('team.empty', { defaultValue: 'No team members found' })
-  const alertDescription = hasError
-    ? error instanceof Error
-      ? error.message
-      : t('team.load_error_description', { defaultValue: 'Please try again.' })
-    : t('team.empty_description', { defaultValue: 'Invite teammates to get started.' })
 
   if (isLoading) {
     return <ListLoader />
@@ -756,8 +747,22 @@ export const OrganizationUsers = () => {
 
   return (
     <>
-      {showAlert && (
-        <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
+      <ListStateAlert
+        show={hasError}
+        status='error'
+        title={t('team.load_error', { defaultValue: 'Unable to load team members' })}
+        description={
+          error instanceof Error
+            ? error.message
+            : t('team.load_error_description', { defaultValue: 'Please try again.' })
+        }
+      />
+      {isEmpty && (
+        <EmptyState
+          size='lg'
+          title={t('team.empty', { defaultValue: 'No team members found' })}
+          description={t('team.empty_description', { defaultValue: 'Invite teammates to get started.' })}
+        />
       )}
       {!hasError && (users.length === 1 ? <UsersEmpty /> : users.length > 1 ? <UsersList users={users} /> : null)}
     </>

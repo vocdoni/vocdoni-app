@@ -8,6 +8,7 @@ import {
   useOrganization,
 } from '@vocdoni/react-components'
 import { processVoteCount } from '@vocdoni/api-client'
+import { EmptyState } from '~components/ui/EmptyState'
 import { ListLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
@@ -182,10 +183,11 @@ const Processes = () => {
   // way forward — the button that creates the missing organization.
   if (!organization) {
     return (
-      <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
-        <Text color='fg.muted'>
-          {t('dashboard.welcome.no_organization', { defaultValue: 'No organization found' })}
-        </Text>
+      <EmptyState
+        size='lg'
+        flexGrow={1}
+        title={t('dashboard.welcome.no_organization', { defaultValue: 'No organization found' })}
+      >
         <Button asChild colorPalette='gray' variant='outline'>
           <ReactRouterLink to={generatePath(Routes.dashboard.organizationCreate)}>
             {t('dashboard.welcome.create_first_organization', {
@@ -193,7 +195,7 @@ const Processes = () => {
             })}
           </ReactRouterLink>
         </Button>
-      </Flex>
+      </EmptyState>
     )
   }
 
@@ -214,17 +216,16 @@ const Processes = () => {
 
   if (!elections?.processes?.length) {
     return (
-      <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
-        <ListStateAlert
-          show
-          status='info'
-          title={t('dashboard.welcome.empty', {
-            defaultValue: 'No voting processes found',
-          })}
-          description={t('dashboard.welcome.empty_description', {
-            defaultValue: 'Create your first vote to get started.',
-          })}
-        />
+      <EmptyState
+        size='lg'
+        flexGrow={1}
+        title={t('dashboard.welcome.empty', {
+          defaultValue: 'No voting processes found',
+        })}
+        description={t('dashboard.welcome.empty_description', {
+          defaultValue: 'Create your first vote to get started.',
+        })}
+      >
         <Button asChild colorPalette='gray' variant='outline'>
           <ReactRouterLink to={generatePath(Routes.processes.create)}>
             {t('dashboard.welcome.create_first_vote', {
@@ -232,7 +233,7 @@ const Processes = () => {
             })}
           </ReactRouterLink>
         </Button>
-      </Flex>
+      </EmptyState>
     )
   }
 

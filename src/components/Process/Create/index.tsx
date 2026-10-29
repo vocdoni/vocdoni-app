@@ -33,7 +33,7 @@ import {
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
 import { ApiError, ErrorCode } from '~components/Auth/api'
-import { ListLoader } from '~components/ui/Loader'
+import { PageLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
@@ -808,7 +808,7 @@ const ProcessCreateView = () => {
   }
 
   if (!formDraftLoaded) {
-    return <ListLoader size='xs' />
+    return <PageLoader />
   }
 
   return (

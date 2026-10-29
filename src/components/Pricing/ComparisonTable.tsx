@@ -122,7 +122,7 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
   const translations = usePlanTranslations()
 
   if (isLoading) {
-    return <ListLoader size='sm' />
+    return <ListLoader />
   }
 
   // The custom plan is no longer returned by the API, so all returned plans are shown.

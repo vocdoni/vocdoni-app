@@ -19,6 +19,7 @@ import { LuCircleHelp, LuSearch } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { SidebarSubtitle } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
+import { EmptyState } from '~components/ui/EmptyState'
 import { InlineLoader } from '~components/ui/Loader'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import {
@@ -199,17 +200,20 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
             </Text>
           ) : isLoading && !data ? (
             <HStack gap={2}>
-              <InlineLoader size='sm' />
+              <InlineLoader />
               <Text fontSize='sm' color='fg.muted'>
                 <Trans i18nKey='census.search.loading'>Searching census…</Trans>
               </Text>
             </HStack>
           ) : participants.length === 0 ? (
-            <Text fontSize='sm' color='fg.muted'>
-              <Trans i18nKey='census.search.no_results'>
-                There is no one in the census matching those credentials.
-              </Trans>
-            </Text>
+            <EmptyState
+              size='sm'
+              title={
+                <Trans i18nKey='census.search.no_results'>
+                  There is no one in the census matching those credentials.
+                </Trans>
+              }
+            />
           ) : (
             <Box maxH='240px' overflowY='auto' display='flex' flexDirection='column' gap={3}>
               {participants.map((participant) => (
