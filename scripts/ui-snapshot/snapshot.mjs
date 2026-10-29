@@ -15,7 +15,8 @@ const USAGE = `pnpm ui:snapshot -- --label <name> [--primary-color <hex>] [--url
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT_ROOT = path.join(ROOT, '.ui-snapshot')
-const APP_PORT = 3000
+// Port 3000 is often taken by another checkout's dev server; UI_SNAPSHOT_PORT picks another one.
+const APP_PORT = Number(process.env.UI_SNAPSHOT_PORT || 3000)
 const DEFAULT_BASE = `http://localhost:${APP_PORT}`
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1'])
 const TIMEZONE = 'Europe/Madrid'
@@ -193,7 +194,7 @@ const stripAnsi = (s) => s.replace(/\x1b\[[0-9;]*m/g, '')
 // the app's own `host: true` would expose the mock-backed app on the LAN, and allow a symlinked
 // node_modules. Vike rejects --host on its CLI, hence VITE_CONFIG, which `vike dev` merges in.
 const viteConfigEnv = () => {
-  const server = { host: '127.0.0.1' }
+  const server = { host: '127.0.0.1', port: APP_PORT, strictPort: true }
   const link = path.join(ROOT, 'node_modules')
   try {
     const real = fs.realpathSync(link)

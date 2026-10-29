@@ -45,7 +45,8 @@ minutes and writes about 18 MB.
 2. Starts the dev server (`pnpm exec vike dev`, the same server as `pnpm dev`) on `127.0.0.1:3000` only, with `SAAS_URL` pointing at the mock, every
    third-party integration (GTM, Plausible, PostHog, Crisp, Stripe, Cal.com) switched off, and
    `PRIMARY_COLOR` when given. The values go in the process env, which wins over any `.env` file.
-   If port 3000 is taken it stops with a message instead of letting vite move to another port.
+   If port 3000 is taken it stops with a message instead of letting vite move to another port;
+   set `UI_SNAPSHOT_PORT=3005` (or any free port) to use another one.
    When `node_modules` is a symlink into another checkout (a shared worktree install), vite would
    refuse to serve the font files from there; the script then runs `pnpm exec vike dev`, the same
    server, with that path allowed through `VITE_CONFIG`.
