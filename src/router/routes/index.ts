@@ -23,6 +23,7 @@ export const Routes = {
       base: '/integrators/configuration',
       subscription: '/integrators/configuration/subscription',
       support: '/integrators/configuration/support',
+      wallet: '/integrators/configuration/wallet',
     },
   },
   dashboard: {
@@ -49,6 +50,7 @@ export const Routes = {
       team: '/admin/settings/team',
       subscription: '/admin/settings/subscription',
       support: '/admin/settings/support',
+      wallet: '/admin/settings/wallet',
     },
   },
   plans: '/plans',

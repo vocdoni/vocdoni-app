@@ -19,16 +19,18 @@ export type IntegratorLimits = {
   maxEmails: number
 }
 
-// Current usage counters (shared pools summed across the integrator's managed orgs).
+// Current usage counters (shared pools summed across the integrator's managed orgs). Optional
+// because pay-per-process drops `managedProcesses`; the Overview only shows the counters it gets.
 export type IntegratorUsage = {
-  managedOrgs: number
-  managedProcesses: number
-  sentVotes: number
-  sentSMS: number
-  sentEmails: number
+  managedOrgs?: number
+  managedProcesses?: number
+  sentVotes?: number
+  sentSMS?: number
+  sentEmails?: number
 }
 
-// Response of GET /integrator. `limits` is only present when `enabled` is true.
+// Response of GET /integrator. Under pay-per-process `limits` is absent: integrators are bounded
+// by their prepaid wallet, not by plan caps.
 export type IntegratorInfo = {
   enabled: boolean
   limits?: IntegratorLimits
