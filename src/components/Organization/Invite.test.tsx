@@ -1,5 +1,6 @@
+import { ApiErrorCode } from '@vocdoni/api-client'
 import userEvent from '@testing-library/user-event'
-import { ApiError, ErrorCode } from '~components/Auth/api'
+import { ApiError } from '~components/Auth/api'
 import { render, screen, waitFor } from '~src/test-utils'
 import { InviteToTeamModal } from './Invite'
 
@@ -67,7 +68,7 @@ describe('InviteToTeamModal', () => {
     mutation.mutate.mockImplementation((_body, options) =>
       options.onError(
         new ApiError(
-          { error: 'raw backend message', code: ErrorCode.MaxWritersReached },
+          { error: 'raw backend message', code: ApiErrorCode.MaxWritersReached },
           new Response(null, { status: 400 })
         )
       )
