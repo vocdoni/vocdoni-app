@@ -46,6 +46,9 @@ export const WALLET_TOPUP_MAX_CENTS = 10_000_000
 // letting `ensure0x` throw an opaque TypeError inside the request.
 const noAddressSelected = () => Promise.reject(new Error('No organization address selected'))
 
+const isWalletClientError = (error: unknown) =>
+  error instanceof ApiError && error.response?.status >= 400 && error.response?.status < 500
+
 /** True when the backend refuses the wallet because the organization is managed by an integrator. */
 export const isManagedOrgWalletError = (error: unknown): boolean =>
   error instanceof ApiError && error.apiError?.code === ErrorCode.ManagedOrgHasNoWallet
@@ -65,8 +68,8 @@ export const useWallet = ({ page = 1, limit = 10, refetchInterval }: UseWalletOp
     queryKey: QueryKeys.organization.wallet(address, page, limit),
     enabled: !!address,
     refetchInterval,
-    // A managed organization gets the same 403 every time, so retrying only delays the error.
-    retry: (failureCount, error) => !isManagedOrgWalletError(error) && failureCount < 3,
+    // A 4xx (a managed org's 403, a backend without wallets' 404) answers the same every time.
+    retry: (failureCount, error) => !isWalletClientError(error) && failureCount < 3,
     queryFn: () => {
       if (!address) return noAddressSelected()
       return bearedFetch<Wallet>(

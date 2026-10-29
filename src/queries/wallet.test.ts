@@ -61,8 +61,8 @@ describe('wallet queries', () => {
       expect(mockBearedFetch).not.toHaveBeenCalled()
     })
 
-    it('does not retry the managed organization error', async () => {
-      const error = new ApiError({ error: 'managed', code: 40181 })
+    it('does not retry client errors such as the managed organization one', async () => {
+      const error = new ApiError({ error: 'managed', code: 40181 }, new Response(null, { status: 403 }))
       mockBearedFetch.mockRejectedValue(error)
 
       const { result } = renderHook(() => useWallet(), { wrapper })
