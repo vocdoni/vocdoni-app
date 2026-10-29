@@ -716,19 +716,13 @@ const GroupCard = ({ group }: GroupCardProps) => {
             </Flex>
             <Flex align='center' gap={2}>
               <Icon as={LuUsers} boxSize={3.5} />
-              <Text
-                onClick={onMembersDrawerOpen}
-                fontWeight='bold'
-                fontSize='sm'
-                cursor='pointer'
-                _hover={{ textDecoration: 'underline' }}
-              >
+              <Button variant='text-link' onClick={onMembersDrawerOpen}>
                 {t('group.members', {
                   defaultValue: '{{count}} member',
                   defaultValue_other: '{{count}} members',
                   count: group.membersCount || 0,
                 })}
-              </Text>
+              </Button>
             </Flex>
             <Text fontSize='sm' color='fg.muted'>
               {displayDescription}

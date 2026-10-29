@@ -40,6 +40,27 @@ const linkUnderline = defineStyle({
   textDecoration: 'underline',
 })
 
+// Reads as the text around it: no box, the parent's line height (support chat teaser).
+const text = defineStyle({
+  h: 'auto',
+  minW: 0,
+  p: 0,
+  borderWidth: 0,
+  // One level down: the size's `textStyle` is applied after a plain `lineHeight` and would win.
+  '&': { lineHeight: 'inherit' },
+  whiteSpace: 'normal',
+  fontWeight: 'normal',
+})
+
+// Same, bold and underlined on hover, for a count that opens its list.
+const textLink = defineStyle({
+  ...text,
+  fontWeight: 'bold',
+  _hover: {
+    textDecoration: 'underline',
+  },
+})
+
 // Dashboard sidebar entry, used with `size='xs'`.
 const navItem = defineStyle({
   display: 'flex',
@@ -149,6 +170,8 @@ export const Button = defineRecipe({
     variant: {
       link,
       'link-underline': linkUnderline,
+      text,
+      'text-link': textLink,
       'nav-item': navItem,
       'menu-item': menuItem,
       'menu-item-strong': { ...menuItem, fontWeight: 'bold' },
