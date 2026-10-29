@@ -1,6 +1,6 @@
 import type { i18n as I18nInstance } from 'i18next'
 import { setActiveI18n } from '~i18n/active-language'
-import { currency } from './numbers'
+import { currency, quantity } from './numbers'
 
 describe('currency', () => {
   afterEach(() => setActiveI18n(undefined))
@@ -19,5 +19,16 @@ describe('currency', () => {
     expect(currency(29710)).toBe('297,10 €')
     setActiveI18n({ resolvedLanguage: 'en' } as I18nInstance)
     expect(currency(29710)).toBe('€297.10')
+  })
+})
+
+describe('quantity', () => {
+  afterEach(() => setActiveI18n(undefined))
+
+  it('groups digits as the language the page renders in does', () => {
+    setActiveI18n({ resolvedLanguage: 'en' } as I18nInstance)
+    expect(quantity(50000)).toBe('50,000')
+    setActiveI18n({ resolvedLanguage: 'es' } as I18nInstance)
+    expect(quantity(50000)).toBe('50.000')
   })
 })

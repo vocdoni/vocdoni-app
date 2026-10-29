@@ -1424,6 +1424,30 @@
     "people_in_census_one": "Un votant",
     "people_in_census_many": "{{ count }} votants",
     "people_in_census_other": "{{ count }} votants",
+    "price": {
+      "error": "No s'ha pogut carregar el preu.",
+      "free": "Aquest procés de votació és gratuït: es publica sense pagament.",
+      "line": {
+        "base": "Procés de votació",
+        "branding": "Marca personalitzada i marca blanca",
+        "custom_url": "URL personalitzada",
+        "email_two_fa": "Codi de verificació per correu electrònic",
+        "minimum_charge": "Càrrec mínim",
+        "signed_certificate": "Certificat de resultats signat",
+        "sms_two_fa": "Codi de verificació per SMS"
+      },
+      "paid": "Pagat: publicar aquest procés de votació no costa res més.",
+      "pending": "Hi ha obert un pagament de recàrrega del wallet per a aquest esborrany.",
+      "quote_only": "El preu d'aquest procés de votació el fixa un pressupost personalitzat.",
+      "quote_recommended": "Per a processos de votació de més de {{limit}} votants et recomanem un pressupost personalitzat. <contact>Demana un pressupost</contact>, o publica'l al preu que es mostra a la configuració.",
+      "quote_required": "Els processos de votació de més de {{limit}} votants només es poden publicar amb un pressupost personalitzat. <contact>Demana un pressupost</contact> per publicar aquest.",
+      "total": "Total",
+      "unavailable": "El preu apareixerà aquí un cop desis l'esborrany amb els votants i la seva autenticació configurada.",
+      "vat_excluded": "Els preus no inclouen l'IVA, que s'afegeix en recarregar el teu wallet.",
+      "wallet_covers": "El saldo del teu wallet ({{balance}}) cobreix aquest total: en publicar-lo es paga del teu wallet.",
+      "wallet_short": "El teu wallet té {{balance}}, i et falten {{shortfall}} per a aquest total.",
+      "wallet_top_up": "Recarrega el wallet"
+    },
     "question_type": {
       "label": "Tipus de pregunta",
       "multiple": "Elecció múltiple",
@@ -1559,6 +1583,7 @@
       "placeholder": "Opció {{number}}",
       "remove": "Esborra l'opció"
     },
+    "price": "Preu",
     "question": {
       "description": {
         "placeholder": "Afegeix aquí la descripció de la pregunta (opcional)..."
