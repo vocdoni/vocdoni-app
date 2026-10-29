@@ -109,6 +109,23 @@
   "cancel": "Utzi",
   "cancel_vote": "Utzi botoa",
   "census": {
+    "checkout": {
+      "admin_only": "Administratzaileek bakarrik gehi ditzakete botogile-lekuak.",
+      "amount_net": "Lekuak (BEZ gabe)",
+      "back_to_members": "Itzuli kideetara",
+      "balance": "Zure wallet-ak {{balance}} ditu.",
+      "bought": "Botogile-lekuak gehitu dira: {{amount}} kobratu dira zure wallet-etik. Saiatu berriro kideak gehitzen.",
+      "buy": "Gehitu botogile-lekuak",
+      "intro": "{{size}} botogilerentzako lekuak, {{due}} gehiagotan (BEZ gabe).",
+      "intro_no_price": "{{size}} botogilerentzako lekuak.",
+      "invalid": "Orri honek botogile kopurua behar du, lekuak gehitzeko. Ireki ukatutako aldaketatik.",
+      "pay": "Ordaindu {{amount}}",
+      "shortfall": "Zure wallet-ak {{shortfall}} falta du.",
+      "timeout": "Zure ordainketa berretsi da; lekuak prozesatu bezain pronto gehituko dira. Saiatu berriro kideak gehitzen une batean.",
+      "timeout_redirected": "Oraindik lekuak gehitzeko zain gaude. Saiatu berriro kideak gehitzen une batean.",
+      "title": "Gehitu botogile-lekuak",
+      "waiting": "Ordainketa jaso da. Botogile-lekuak gehitzen…"
+    },
     "search": {
       "description": "Bilatu botogile bat bere kredentzialak erabiliz erroldean dagoen eta dagoeneko bozka eman duen egiaztatzeko.",
       "error": "Ezin izan da erroldea bilatu.",
@@ -1402,6 +1419,7 @@
         "census_growth_payment_required": "Kide hauek boto-ematearen prozesu baten erroldea ordaindutakoaren gainetik handituko lukete. Handitzeak {{amount}} gehiago kostatzen du gehienez (BEZ gabe), eta kide hauek gehitu aurretik erosi egin behar duzu.",
         "census_growth_payment_shortfall": "Kide hauek boto-ematearen prozesu baten erroldea ordaindutakoaren gainetik handituko lukete. Handitzeak {{amount}} gehiago kostatzen du gehienez (BEZ gabe), eta kide hauek gehitu aurretik erosi egin behar duzu. Zure wallet-ak ez du {{shortfall}} estaltzen horretatik.",
         "census_growth_quote_required": "Kide hauek boto-ematearen prozesu baten erroldea 50.000 botogiletik gora eramango lukete, eta horrek aurrekontu pertsonalizatua behar du. Jarri gurekin harremanetan handitzeko.",
+        "census_growth_spend_cap_reached": "Botogile-leku hauek erakunde honentzat integratzaileak ezarritako gastu-muga gainditu lukete. Integratzaileak igo behar du lehenik.",
         "census_growth_wallet_insufficient": "Integratzailearen wallet-ak ez du estaltzen kide hauek boto-ematearen prozesu batera gehitzeko kostua. Erakunde hau kudeatzen duen integratzaileak lehenik wallet-a kargatu behar du.",
         "census_growth_wallet_insufficient_amounts": "Integratzailearen wallet-ak {{available}} ditu, baina kide hauek boto-ematearen prozesu batera gehitzeko {{required}} behar dira (BEZa kanpo). Erakunde hau kudeatzen duen integratzaileak lehenik wallet-a kargatu behar du.",
         "draft_integrator_org": "Integratzaile gisa duzun erakundeak ezin ditu boto-ematearen prozesuak izan, kudeatzen dituen erakundeek bakarrik izan ditzakete. Gorde zirriborro hau horietako batean.",

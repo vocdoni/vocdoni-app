@@ -2,6 +2,7 @@ import { ApiErrorCode, isCensusGrowthQuote } from '@vocdoni/api-client'
 import type { CensusGrowthQuote, InsufficientWalletBalanceData, PaymentRequiredData } from '@vocdoni/api-types'
 import type { TFunction } from 'i18next'
 import { apiErrorDetails } from '~components/Auth/api'
+import { isProcessId } from '~queries/process-price'
 import { currency } from '~utils/numbers'
 
 // Pay-per-process billing (saas-backend#819): publish and census growth need payment. Amounts: EUR cents, no VAT.
@@ -137,6 +138,34 @@ export const draftSavePaymentErrorMessage = (t: TFunction, error: unknown): stri
   return undefined
 }
 
+// The room a census-growth refusal (40178) would buy through checkout: the process, the census size
+// it must reach and what it costs, EUR cents VAT excluded. Undefined when checkout cannot sell it:
+// a refusal without the process, or one above the self-service limit (checkout refuses it, 40176).
+export type CensusGrowthCheckoutTarget = {
+  processId: string
+  censusSize: number
+  dueCents: number
+  shortfallCents?: number
+}
+
+export const censusGrowthCheckoutTarget = (error: unknown): CensusGrowthCheckoutTarget | undefined => {
+  const details = apiErrorDetails(error)
+  if (details?.code !== ApiErrorCode.PaymentRequired || !hasNumbers(details.data, 'dueCents', 'censusSize')) {
+    return undefined
+  }
+  const quote = details.data as PaymentRequiredData | CensusGrowthQuote
+  if (!isCensusGrowthQuote(quote)) return undefined
+  const { processId, censusSize, dueCents, shortfallCents } = quote
+  if (typeof processId !== 'string' || !isProcessId(processId)) return undefined
+  if (censusSize < 1 || exceedsSelfServiceLimit(quote)) return undefined
+  return {
+    processId,
+    censusSize,
+    dueCents,
+    shortfallCents: hasNumbers(quote, 'shortfallCents') ? shortfallCents : undefined,
+  }
+}
+
 // A translated explanation of why adding members was refused because it would grow the census of
 // a voting process past what was paid for it, or undefined when the error is not a payment one.
 // Every memberbase change that grows a census (adding, importing or editing members, adding them
@@ -181,6 +210,12 @@ export const censusGrowthPaymentErrorMessage = (t: TFunction, error: unknown): s
       })
     case ApiErrorCode.QuoteRequired:
       return censusGrowthQuoteRequiredMessage(t)
+    case ApiErrorCode.SpendCapReached:
+      // The backend may send this without data (40183), so the copy does not read it.
+      return t('process.payment.error.census_growth_spend_cap_reached', {
+        defaultValue:
+          'These voter places would exceed the spend cap the integrator set for this organization. The integrator must raise it first.',
+      })
     case ApiErrorCode.PaymentSessionConflict:
       return t('process.payment.error.census_growth_payment_in_progress', {
         defaultValue:

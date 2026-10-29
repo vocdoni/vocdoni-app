@@ -111,6 +111,23 @@
   "cancel": "Cancel·la",
   "cancel_vote": "Cancel·la el procés",
   "census": {
+    "checkout": {
+      "admin_only": "Només els administradors poden afegir places al cens.",
+      "amount_net": "Places (sense IVA)",
+      "back_to_members": "Torna als membres",
+      "balance": "El teu wallet té {{balance}}.",
+      "bought": "Places al cens afegides: s'han cobrat {{amount}} del teu wallet. Torna a intentar afegir els membres.",
+      "buy": "Afegeix places al cens",
+      "intro": "Places per a {{size}} votants, per {{due}} més (sense IVA).",
+      "intro_no_price": "Places per a {{size}} votants.",
+      "invalid": "Aquesta pàgina necessita el nombre de votants per als quals afegir places al cens. Obre-la des del canvi rebutjat.",
+      "pay": "Paga {{amount}}",
+      "shortfall": "Al wallet li falten {{shortfall}}.",
+      "timeout": "El pagament està confirmat; les places s'afegeixen tan bon punt es processi. Torna a intentar afegir els membres d'aquí a un moment.",
+      "timeout_redirected": "Encara esperem que s'afegeixin les places. Torna a intentar afegir els membres d'aquí a un moment.",
+      "title": "Afegeix places al cens",
+      "waiting": "Pagament rebut. S'estan afegint les places de votants…"
+    },
     "search": {
       "description": "Cerca un votant per les seves credencials per comprovar si és al cens i si ja ha votat.",
       "error": "No s'ha pogut cercar al cens.",
@@ -1429,6 +1446,7 @@
         "census_growth_payment_required": "Aquests membres farien créixer el cens d'un procés de votació més enllà del que s'ha pagat. Ampliar-lo costa fins a {{amount}} més (sense IVA) i l'has de comprar abans d'afegir aquests membres.",
         "census_growth_payment_shortfall": "Aquests membres farien créixer el cens d'un procés de votació més enllà del que s'ha pagat. Ampliar-lo costa fins a {{amount}} més (sense IVA) i l'has de comprar abans d'afegir aquests membres. El teu wallet no cobreix {{shortfall}} d'aquest import.",
         "census_growth_quote_required": "Aquests membres farien que el cens d'un procés de votació superés els 50.000 votants, i això necessita un pressupost personalitzat. Contacta amb nosaltres per ampliar-lo.",
+        "census_growth_spend_cap_reached": "Aquestes places al cens superarien el límit de despesa que l'integrador ha fixat per a aquesta organització. L'integrador l'ha d'apujar primer.",
         "census_growth_wallet_insufficient": "El wallet de l'integrador no cobreix el cost d'afegir aquests membres a un procés de votació. L'integrador que gestiona aquesta organització ha de recarregar primer el seu wallet.",
         "census_growth_wallet_insufficient_amounts": "El wallet de l'integrador té {{available}}, però per afegir aquests membres a un procés de votació calen {{required}} (sense IVA). L'integrador que gestiona aquesta organització ha de recarregar primer el seu wallet.",
         "draft_integrator_org": "L'integrador no pot tenir processos de votació, només ho poden fer les organitzacions que gestiona. Desa aquest esborrany des d'una d'elles.",

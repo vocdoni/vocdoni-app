@@ -111,6 +111,23 @@
   "cancel": "Annuler",
   "cancel_vote": "Annuler le vote",
   "census": {
+    "checkout": {
+      "admin_only": "Seuls les administrateurs peuvent ajouter des places d'électeurs.",
+      "amount_net": "Places (HT)",
+      "back_to_members": "Retour aux membres",
+      "balance": "Votre wallet contient {{balance}}.",
+      "bought": "Places d'électeurs ajoutées : {{amount}} ont été débités de votre wallet. Essayez à nouveau d'ajouter les membres.",
+      "buy": "Ajouter des places d'électeurs",
+      "intro": "Places pour {{size}} électeurs, pour {{due}} de plus (HT).",
+      "intro_no_price": "Places pour {{size}} électeurs.",
+      "invalid": "Cette page a besoin du nombre d'électeurs pour lequel ajouter des places. Ouvrez-la depuis la modification refusée.",
+      "pay": "Payer {{amount}}",
+      "shortfall": "Votre wallet est à court de {{shortfall}}.",
+      "timeout": "Votre paiement est confirmé ; les places sont ajoutées dès leur traitement. Essayez à nouveau d'ajouter les membres dans quelques instants.",
+      "timeout_redirected": "Nous attendons toujours l'ajout des places. Essayez à nouveau d'ajouter les membres dans quelques instants.",
+      "title": "Ajouter des places d'électeurs",
+      "waiting": "Paiement reçu. Ajout des places d'électeurs en cours…"
+    },
     "search": {
       "description": "Recherchez un électeur à partir de ses identifiants pour vérifier s'il figure sur la liste électorale et s'il a déjà voté.",
       "error": "Impossible d'effectuer la recherche dans la liste électorale.",
@@ -1429,6 +1446,7 @@
         "census_growth_payment_required": "Ces membres feraient croître la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte jusqu'à {{amount}} de plus (hors TVA) et doit être acheté avant d'ajouter ces membres.",
         "census_growth_payment_shortfall": "Ces membres feraient croître la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte jusqu'à {{amount}} de plus (hors TVA) et doit être acheté avant d'ajouter ces membres. Votre wallet ne couvre pas {{shortfall}} de ce montant.",
         "census_growth_quote_required": "Ces membres porteraient la liste électorale d'un processus de vote au-delà de 50 000 électeurs, ce qui nécessite un devis personnalisé. Contactez-nous pour l'agrandir.",
+        "census_growth_spend_cap_reached": "Ces places d'électeurs dépasseraient le plafond de dépenses défini par l'intégrateur pour cette organisation. L'intégrateur doit d'abord le relever.",
         "census_growth_wallet_insufficient": "Le wallet de l'organisation intégratrice ne couvre pas le coût d'ajout de ces membres à un processus de vote. L'intégrateur qui gère cette organisation doit d'abord recharger le wallet.",
         "census_growth_wallet_insufficient_amounts": "Le wallet de l'organisation intégratrice contient {{available}}, mais l'ajout de ces membres à un processus de vote nécessite {{required}} (hors TVA). L'intégrateur qui gère cette organisation doit d'abord recharger le wallet.",
         "draft_integrator_org": "Votre organisation intégratrice ne peut pas posséder de processus de vote : seules les organisations qu'elle gère le peuvent. Enregistrez ce brouillon depuis l'une d'elles.",

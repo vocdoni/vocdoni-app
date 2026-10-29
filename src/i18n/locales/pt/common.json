@@ -111,6 +111,23 @@
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar voto",
   "census": {
+    "checkout": {
+      "admin_only": "Só os administradores podem adicionar lugares para votantes.",
+      "amount_net": "Lugares (sem IVA)",
+      "back_to_members": "Voltar aos membros",
+      "balance": "A tua wallet tem {{balance}}.",
+      "bought": "Lugares para votantes adicionados: {{amount}} foram debitados da tua wallet. Tenta adicionar os membros novamente.",
+      "buy": "Adicionar lugares para votantes",
+      "intro": "Lugares para {{size}} votantes, por mais {{due}} (sem IVA).",
+      "intro_no_price": "Lugares para {{size}} votantes.",
+      "invalid": "Esta página precisa do número de votantes para o qual adicionar lugares. Abre-a a partir da alteração recusada.",
+      "pay": "Pagar {{amount}}",
+      "shortfall": "Faltam {{shortfall}} à tua wallet.",
+      "timeout": "O pagamento está confirmado; os lugares são adicionados assim que for processado. Tenta adicionar os membros novamente daqui a pouco.",
+      "timeout_redirected": "Ainda estamos a aguardar que os lugares sejam adicionados. Tenta adicionar os membros novamente daqui a pouco.",
+      "title": "Adicionar lugares para votantes",
+      "waiting": "Pagamento recebido. A adicionar os lugares para votantes…"
+    },
     "search": {
       "description": "Pesquisa um votante pelas suas credenciais para verificar se está na lista de participantes e se já votou.",
       "error": "Ocorreu um erro ao pesquisar o votante. Por favor, tenta novamente.",
@@ -1429,6 +1446,7 @@
         "census_growth_payment_required": "Estes membros aumentariam a lista de participantes de um processo de votação para além do já pago. Alargá-la custa até {{amount}} a mais (sem IVA) e tens de a comprar antes de adicionar estes membros.",
         "census_growth_payment_shortfall": "Estes membros aumentariam a lista de participantes de um processo de votação para além do já pago. Alargá-la custa até {{amount}} a mais (sem IVA) e tens de a comprar antes de adicionar estes membros. A tua wallet não cobre {{shortfall}} desse valor.",
         "census_growth_quote_required": "Estes membros levariam a lista de participantes de um processo de votação para além dos 50.000 votantes, o que exige um orçamento personalizado. Contacta-nos para a aumentar.",
+        "census_growth_spend_cap_reached": "Estes lugares para votantes ultrapassariam o limite de gastos que o integrador definiu para esta organização. O integrador tem de o aumentar primeiro.",
         "census_growth_wallet_insufficient": "A wallet da organização integradora não cobre o custo de adicionar estes membros a um processo de votação. O integrador que gere esta organização tem de carregar primeiro a wallet.",
         "census_growth_wallet_insufficient_amounts": "A wallet da organização integradora tem {{available}}, mas adicionar estes membros a um processo de votação exige {{required}} (sem IVA). O integrador que gere esta organização tem de carregar primeiro a wallet.",
         "draft_integrator_org": "A tua organização integradora não pode ter processos de votação, só as organizações que gere podem. Guarda este rascunho numa delas.",

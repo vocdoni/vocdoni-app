@@ -111,6 +111,23 @@
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar voto",
   "census": {
+    "checkout": {
+      "admin_only": "Solo los administradores pueden añadir plazas para votantes.",
+      "amount_net": "Plazas (sin IVA)",
+      "back_to_members": "Volver a los miembros",
+      "balance": "Tu wallet tiene {{balance}}.",
+      "bought": "Plazas para votantes añadidas: se han cobrado {{amount}} de tu wallet. Vuelve a intentar añadir los miembros.",
+      "buy": "Añadir plazas para votantes",
+      "intro": "Plazas para {{size}} votantes, por {{due}} más (sin IVA).",
+      "intro_no_price": "Plazas para {{size}} votantes.",
+      "invalid": "Esta página necesita el número de votantes para el que añadir plazas. Ábrela desde el cambio rechazado.",
+      "pay": "Pagar {{amount}}",
+      "shortfall": "A tu wallet le faltan {{shortfall}}.",
+      "timeout": "Tu pago está confirmado; las plazas se añaden en cuanto se procese. Vuelve a intentar añadir los miembros en un momento.",
+      "timeout_redirected": "Seguimos esperando a que se añadan las plazas. Vuelve a intentar añadir los miembros en un momento.",
+      "title": "Añadir plazas para votantes",
+      "waiting": "Pago recibido. Añadiendo las plazas para votantes…"
+    },
     "search": {
       "description": "Busca a un votante por sus credenciales para comprobar si está en el censo y si ya ha votado.",
       "error": "No se pudo buscar en el censo.",
@@ -1429,6 +1446,7 @@
         "census_growth_payment_required": "Estos miembros harían crecer el censo de un proceso de votación más allá de lo pagado. Ampliarlo cuesta hasta {{amount}} más (sin IVA) y debes comprarlo antes de añadir a estos miembros.",
         "census_growth_payment_shortfall": "Estos miembros harían crecer el censo de un proceso de votación más allá de lo pagado. Ampliarlo cuesta hasta {{amount}} más (sin IVA) y debes comprarlo antes de añadir a estos miembros. Tu wallet no cubre {{shortfall}} de ese importe.",
         "census_growth_quote_required": "Estos miembros harían que el censo de un proceso de votación superara los 50.000 votantes, lo que requiere un presupuesto personalizado. Contacta con nosotros para ampliarlo.",
+        "census_growth_spend_cap_reached": "Estas plazas para votantes superarían el límite de gasto que la organización integradora ha fijado para esta organización. La integradora debe aumentarlo primero.",
         "census_growth_wallet_insufficient": "La wallet de la organización integradora no cubre el coste de añadir estos miembros a un proceso de votación. La integradora que gestiona esta organización debe recargar su wallet primero.",
         "census_growth_wallet_insufficient_amounts": "La wallet de la organización integradora tiene {{available}}, pero para añadir estos miembros a un proceso de votación hacen falta {{required}} (sin IVA). La integradora que gestiona esta organización debe recargar su wallet primero.",
         "draft_integrator_org": "Tu organización integradora no puede tener procesos de votación, solo pueden tenerlos las organizaciones que gestiona. Guarda este borrador desde una de ellas.",

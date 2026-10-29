@@ -1,12 +1,20 @@
 import '@testing-library/jest-dom'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ApiErrorCode } from '@vocdoni/api-client'
+import { ApiError } from '~components/Auth/api'
 import { render } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { MemberManager } from './Manager'
 
 const editMutate = vi.hoisted(() => vi.fn())
 const addMutate = vi.hoisted(() => vi.fn())
+const buyRoomAction = vi.hoisted(() => vi.fn())
+
+// The toast action needs the router and the signed-in account, which this test does not set up
+vi.mock('~components/Pricing/useBuyRoomAction', () => ({
+  useBuyRoomAction: () => buyRoomAction,
+}))
 
 vi.mock('~src/queries/members', () => ({
   useAddMembers: () => ({ mutate: addMutate, isPending: false }),
@@ -36,7 +44,10 @@ const member = {
 }
 
 describe('MemberManager edit', () => {
-  beforeEach(() => editMutate.mockClear())
+  beforeEach(() => {
+    editMutate.mockClear()
+    buyRoomAction.mockReset().mockReturnValue(undefined)
+  })
 
   it('sends only the fields the user changed, an emptied one as an empty string', async () => {
     const user = userEvent.setup()
@@ -50,6 +61,29 @@ describe('MemberManager edit', () => {
     // surname and the hidden phone were not touched, so they are left out and kept
     expect(editMutate).toHaveBeenCalledTimes(1)
     expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', name: 'Augusta', email: '' })
+  })
+
+  it('offers Add voter places on a census-growth refusal of the edit', async () => {
+    const user = userEvent.setup()
+    const onBuyRoom = vi.fn()
+    const refusal = new ApiError(
+      {
+        error: 'payment required',
+        code: ApiErrorCode.PaymentRequired,
+        data: { processId: '6650f0c0c0c0c0c0c0c0c0c0', censusSize: 700, dueCents: 2000, totalCents: 31000 },
+      },
+      new Response(null, { status: 402 })
+    )
+    buyRoomAction.mockReturnValue({ label: 'Add voter places', onClick: onBuyRoom })
+    editMutate.mockImplementation((_payload, options) => options.onError(refusal))
+    render(<MemberManager member={member} open />)
+
+    await user.clear(await screen.findByLabelText('Email'))
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+    await user.click(await screen.findByRole('button', { name: 'Add voter places' }))
+
+    expect(buyRoomAction).toHaveBeenCalledWith(refusal)
+    expect(onBuyRoom).toHaveBeenCalledTimes(1)
   })
 
   it('sends an emptied phone so the stored one is cleared', async () => {

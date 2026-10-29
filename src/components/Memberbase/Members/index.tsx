@@ -29,6 +29,7 @@ import type { QuestionStatus } from '@vocdoni/api-types'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
+import { useBuyRoomAction } from '~components/Pricing/useBuyRoomAction'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -121,6 +122,7 @@ type MemberTableItemProps = {
 const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
   const { data: allGroups } = useGroups()
   const data = (allGroups ?? []).filter((g) => !g.isAutoGroup)
   const [selectedGroup, setSelectedGroup] = useState<{ id: string; title: string } | null>(null)
@@ -149,6 +151,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
             type: 'error',
             duration: 3000,
             isClosable: true,
+            action: buyRoomAction(error),
             ...(paymentMessage ? paymentErrorToastOptions : {}),
           })
         },
@@ -231,6 +234,7 @@ const ACTIVE_PROCESS_STATUSES: QuestionStatus[] = ['ONGOING', 'UPCOMING', 'PAUSE
 const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
   const { client } = useApiClient()
   const { currentAddress } = useAuth()
   const [selectedProcess, setSelectedProcess] = useState<{ id: string; title: string } | null>(null)
@@ -285,6 +289,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
             type: 'error',
             duration: 3000,
             isClosable: true,
+            action: buyRoomAction(error),
             ...(paymentMessage ? paymentErrorToastOptions : {}),
           })
         },
