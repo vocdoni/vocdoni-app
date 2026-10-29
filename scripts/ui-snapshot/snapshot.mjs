@@ -1,8 +1,5 @@
-// Offline UI snapshot: renders the app's main screens against a local SaaS mock and saves, per
-// route × viewport × colour mode, a PNG and a JSON of computed styles. See README.md.
-//
-//   pnpm ui:snapshot -- --label <name> [--primary-color <hex>] [--url <base>] [--routes a,b]
-//                       [--viewports 1440,390] [--modes light,dark] [--no-warmup]
+// Offline UI snapshot: renders the app's main screens against a local SaaS mock and saves a PNG and
+// the computed styles per route, viewport and colour mode. See README.md.
 import { chromium } from '@playwright/test'
 import { execFileSync, spawn } from 'node:child_process'
 import fs from 'node:fs'
@@ -12,6 +9,9 @@ import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { FAKE_TOKEN, FIXED_NOW, MOCK_PORT, ORG, TOKEN_EXPIRY, startMock } from './mock-saas.mjs'
 import { ROUTES } from './routes.mjs'
+
+const USAGE = `pnpm ui:snapshot -- --label <name> [--primary-color <hex>] [--url <base>] [--routes a,b]
+                    [--viewports 1440,390] [--modes light,dark] [--no-warmup]`
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT_ROOT = path.join(ROOT, '.ui-snapshot')
@@ -86,13 +86,7 @@ const parseCli = () => {
     },
   })
   if (values.help) {
-    console.log(
-      fs
-        .readFileSync(fileURLToPath(import.meta.url), 'utf8')
-        .split('\n')
-        .slice(0, 6)
-        .join('\n')
-    )
+    console.log(USAGE)
     process.exit(0)
   }
   if (!values.label || !/^[A-Za-z0-9_][\w.-]*$/.test(values.label)) {
