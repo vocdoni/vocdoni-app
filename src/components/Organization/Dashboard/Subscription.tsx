@@ -1,4 +1,4 @@
-import { AlertRoot as Alert, AlertDescription, Button, Flex, Link, Progress, Text } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, Button, Flex, Link, Text } from '@chakra-ui/react'
 import { isBefore, isValid, parseISO } from 'date-fns'
 import { ReactNode, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -10,6 +10,7 @@ import { SubscriptionPlans } from '~components/Pricing/Plans'
 import { SubscriptionCheckoutProvider } from '~components/Pricing/SubscriptionCheckoutProvider'
 import { SubscriptionPayment } from '~components/Pricing/SubscriptionPayment'
 import { useSubscriptionCheckout } from '~components/Pricing/use-subscription-checkout'
+import { PageLoader } from '~components/ui/Loader'
 import { usePortalSession } from '~queries/stripe'
 import { Routes } from '~routes'
 
@@ -36,13 +37,7 @@ const SubscriptionPageContent = () => {
   const toggleComparisonTable = () => setShowComparisonTable((prev) => !prev)
 
   if (loading) {
-    return (
-      <Progress.Root value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <PageLoader />
   }
   if (error) {
     return (

@@ -1019,10 +1019,8 @@
       "weight": "Stimmgewicht"
     },
     "list": {
-      "empty": "Keine Mitglieder gefunden",
       "empty_description": "Füge dein erstes Mitglied hinzu, um zu beginnen.",
       "error": "Mitglieder konnten nicht geladen werden",
-      "no_search_results": "Keine Mitglieder entsprechen deiner Suche",
       "no_search_results_description": "Versuche, deine Suchbegriffe anzupassen."
     },
     "table": {
@@ -1685,12 +1683,8 @@
     }
   },
   "processes": {
-    "empty": "Keine Abstimmungsprozesse gefunden",
-    "empty_description": "Erstelle einen Abstimmungsprozess, um zu beginnen.",
     "load_error": "Abstimmungsprozesse konnten nicht geladen werden",
-    "load_error_description": "Bitte versuche es erneut.",
-    "no_results": "Keine Ergebnisse für diesen Filter",
-    "no_results_description": "Passe deine Filter an."
+    "load_error_description": "Bitte versuche es erneut."
   },
   "profile": {
     "error": "Profil konnte nicht aktualisiert werden",

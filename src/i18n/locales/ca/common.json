@@ -1031,10 +1031,8 @@
       "weight": "Poder de votació (Pes)"
     },
     "list": {
-      "empty": "No s'han trobat membres",
       "empty_description": "Afegeix el teu primer membre per començar.",
       "error": "No s'han pogut carregar els membres",
-      "no_search_results": "No hi ha membres que coincideixin amb la cerca",
       "no_search_results_description": "Prova d'ajustar els termes de cerca."
     },
     "table": {
@@ -1716,12 +1714,8 @@
     }
   },
   "processes": {
-    "empty": "No s'han trobat processos de votació",
-    "empty_description": "Crea un procés de votació per començar.",
     "load_error": "No s'han pogut carregar els processos de votació",
-    "load_error_description": "Torna-ho a provar.",
-    "no_results": "No hi ha resultats per a aquest filtre",
-    "no_results_description": "Prova d'ajustar els filtres."
+    "load_error_description": "Torna-ho a provar."
   },
   "profile": {
     "error": "No s'ha pogut actualitzar el perfil",

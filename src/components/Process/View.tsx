@@ -9,17 +9,16 @@ import {
   Icon,
   Link,
   Portal,
-  Spinner,
   TabsContent,
   TabsContentGroup,
   TabsList,
   TabsRoot,
   TabsTrigger,
   Text,
-  VStack,
 } from '@chakra-ui/react'
 import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
 import { hasResults } from '@vocdoni/api-client'
+import { PageLoader } from '~components/ui/Loader'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ReactNode, useEffect, useRef, useState } from 'react'
@@ -410,12 +409,7 @@ export const VotingVoteModal = () => {
                 </Text>
               </>
             ) : (
-              <>
-                <VStack>
-                  <Spinner mb={5} w={10} h={10} />
-                </VStack>
-                <Text textAlign='center'>{t('process.voting')}</Text>
-              </>
+              <PageLoader minHeight={1}>{t('process.voting')}</PageLoader>
             )}
           </Dialog.Body>
           {showFailure && (

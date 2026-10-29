@@ -8,7 +8,6 @@ import {
   Icon,
   IconButton,
   Input,
-  Progress,
   Spacer,
   VStack,
 } from '@chakra-ui/react'
@@ -34,6 +33,7 @@ import {
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
 import { ApiError, ErrorCode } from '~components/Auth/api'
+import { PageLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
@@ -808,13 +808,7 @@ const ProcessCreateView = () => {
   }
 
   if (!formDraftLoaded) {
-    return (
-      <Progress.Root size='xs' value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <PageLoader />
   }
 
   return (

@@ -6,7 +6,6 @@ import {
   FieldLabel as FormLabel,
   Heading,
   Icon,
-  Progress,
   SimpleGrid,
   SimpleGridProps,
   Stack,
@@ -23,6 +22,7 @@ import InputBasic from '~components/Form/InputBasic'
 import { IssueTypeSelector, SelectOptionType } from '~components/Layout/SaasSelector'
 import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
 import { useToast } from '~components/Toast'
+import { ListLoader } from '~components/ui/Loader'
 import { SubscriptionPermission } from '~constants'
 import { useAppEnv } from '~src/app-env'
 import { useSendSupportTicket } from '~src/queries/support'
@@ -139,13 +139,7 @@ const PhoneSupportCard = ({ isLocked }) => {
   const prioritySupportPhone = useAppEnv().PRIORITY_SUPPORT_PHONE
 
   if (isLoading) {
-    return (
-      <Progress.Root size='xs' colorPalette='gray' value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   return (

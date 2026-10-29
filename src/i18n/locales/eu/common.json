@@ -1019,10 +1019,8 @@
       "weight": "Boto-pisua (Pisua)"
     },
     "list": {
-      "empty": "Ez da kiderik aurkitu",
       "empty_description": "Gehitu zure lehen kidea hasiera emateko.",
       "error": "Ezin izan dira kideak kargatu",
-      "no_search_results": "Ez dago zure bilaketarekin bat datorren kiderik",
       "no_search_results_description": "Saiatu bilaketa-terminoak aldatzen."
     },
     "table": {
@@ -1685,12 +1683,8 @@
     }
   },
   "processes": {
-    "empty": "Ez da bozketa-prozesurik aurkitu",
-    "empty_description": "Sortu bozketa-prozesu bat hasteko.",
     "load_error": "Ezin izan dira bozketa-prozesuak kargatu",
-    "load_error_description": "Saiatu berriro.",
-    "no_results": "Ez dago iragazki honentzat emaitzarik",
-    "no_results_description": "Saiatu iragazkiak doitzen."
+    "load_error_description": "Saiatu berriro."
   },
   "profile": {
     "error": "Errorea profila eguneratzean",
