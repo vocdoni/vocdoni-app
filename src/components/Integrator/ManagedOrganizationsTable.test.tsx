@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { useUpdateManagedOrganization } from '~src/queries/integrators'
-import type { ManagedOrganization } from '~src/queries/integrators'
+import type { ManagedOrganizationRow } from '~src/queries/integrators'
 import { render, screen, waitFor } from '~src/test-utils'
 import { ManagedOrganizationsTable } from './ManagedOrganizationsTable'
 
@@ -12,13 +13,12 @@ vi.mock('~src/queries/integrators', () => ({
 
 const ADDRESS = '0x1234567890abcdef1234567890abcdef12345678'
 
-const org = (overrides: Partial<ManagedOrganization> = {}): ManagedOrganization => ({
+// Without spend fields, as an older backend returns it; tests that need spend set them explicitly
+const org = (overrides: Partial<ManagedOrganizationRow> = {}): ManagedOrganizationRow => ({
   address: ADDRESS,
   website: '',
   createdAt: '2025-01-15T00:00:00Z',
   type: 'others',
-  spendCapCents: null,
-  spentCents: 0,
   ...overrides,
 })
 
@@ -112,7 +112,7 @@ describe('ManagedOrganizationsTable', () => {
   })
 
   describe('edit cap', () => {
-    const withSpend = (overrides: Partial<ManagedOrganization> = {}) =>
+    const withSpend = (overrides: Partial<ManagedOrganizationRow> = {}) =>
       org({ spentCents: 1000, spendCapCents: 5000, ...overrides })
 
     it('is not offered to a user who cannot edit caps', () => {
@@ -187,7 +187,9 @@ describe('ManagedOrganizationsTable', () => {
 
     it('shows the API error in the dialog and keeps it open', async () => {
       const user = userEvent.setup()
-      mutateAsync.mockRejectedValue(new Error('Organization not managed by you'))
+      mutateAsync.mockRejectedValue(
+        new VocdoniApiError(404, { error: 'Organization not managed by you' }, 'Organization not managed by you')
+      )
       render(<ManagedOrganizationsTable organizations={[withSpend()]} canEditCaps />)
 
       await user.click(editButton())
