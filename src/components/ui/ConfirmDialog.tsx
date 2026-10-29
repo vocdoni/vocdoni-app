@@ -53,17 +53,14 @@ export const ConfirmDialogContent = ({
   children,
 }: ConfirmDialogContentProps) => {
   const { t } = useTranslation()
-  const styles = useSlotRecipe({ recipe: ConfirmModal })({ layout, destructive })
-  const shell = layout === 'shell' || layout === 'summary'
+  const styles = useSlotRecipe({ recipe: ConfirmModal })({ layout })
   const descriptionText = description && <Text css={styles.description}>{description}</Text>
 
   const cancel = (
-    <Button variant={shell ? 'ghost' : 'outline'} css={styles.cancel} disabled={cancelDisabled} onClick={onCancel}>
+    <Button variant='outline' disabled={cancelDisabled} onClick={onCancel}>
       {cancelText || t('actions.cancel', { defaultValue: 'Cancel' })}
     </Button>
   )
-  // The panel's cancel is a CloseTrigger, so it also takes that slot's absolute position.
-  const Trigger = layout === 'panel' ? Dialog.CloseTrigger : Dialog.ActionTrigger
 
   return (
     <>
@@ -76,11 +73,11 @@ export const ConfirmDialogContent = ({
         {children}
       </Dialog.Body>
       <Dialog.Footer css={styles.footer}>
-        {onCancel ? cancel : <Trigger asChild>{cancel}</Trigger>}
+        {/* ActionTrigger, not CloseTrigger: that one carries the close button's absolute position. */}
+        {onCancel ? cancel : <Dialog.ActionTrigger asChild>{cancel}</Dialog.ActionTrigger>}
         {separateCancel && <Spacer />}
         <Button
-          colorPalette={destructive && !shell ? statusPalette.destructive : undefined}
-          css={styles.confirm}
+          colorPalette={destructive ? statusPalette.destructive : undefined}
           loading={loading}
           onClick={onConfirm}
           {...confirmProps}

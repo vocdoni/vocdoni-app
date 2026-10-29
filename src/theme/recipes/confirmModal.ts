@@ -4,9 +4,9 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 const mutedDescription = { color: 'fg.muted', fontWeight: 'normal' }
 
 // Styles of ui/ConfirmDialog. Each layout keeps the spacing and title of one of the confirm shells the app
-// had before they were merged into it.
+// had before they were merged into it; the buttons are the same everywhere (outline Cancel, solid confirm).
 export const ConfirmModal = defineSlotRecipe({
-  slots: ['header', 'title', 'body', 'description', 'footer', 'cancel', 'confirm'],
+  slots: ['header', 'title', 'body', 'description', 'footer'],
   variants: {
     layout: {
       panel: {
@@ -32,33 +32,14 @@ export const ConfirmModal = defineSlotRecipe({
       // header inherits from the dialog content.
       shell: {
         title: { fontSize: 'lg', lineHeight: '1.25rem', fontWeight: 'extrabold' },
-        cancel: { border: '1px solid', borderColor: 'border' },
       },
       // The vote confirmation: heading-sized title with the description under it, in the header.
       summary: {
         header: { flexDirection: 'column' },
         title: { fontFamily: 'heading', textStyle: 'xl', fontWeight: 'extrabold' },
         description: mutedDescription,
-        cancel: { border: '1px solid', borderColor: 'border' },
       },
-    },
-    destructive: {
-      true: {},
-      false: {},
     },
   },
-  compoundVariants: [
-    {
-      layout: 'shell',
-      destructive: true,
-      css: {
-        confirm: {
-          bg: 'destructive.solid',
-          color: 'destructive.contrast',
-          _hover: { bg: 'destructive.solid/90' },
-        },
-      },
-    },
-  ],
-  defaultVariants: { layout: 'panel', destructive: true },
+  defaultVariants: { layout: 'panel' },
 })
