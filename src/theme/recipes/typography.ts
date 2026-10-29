@@ -117,7 +117,7 @@ export const text = defineRecipe({
     size: sizes,
     variant: {
       subheader: {
-        color: 'texts.subtle',
+        color: 'fg.muted',
         fontWeight: 'normal',
       },
     },

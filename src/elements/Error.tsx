@@ -45,7 +45,7 @@ export const ErrorView = ({ isNotFound = false, onReturnHome, returnHomeHref, re
 
   return (
     <Flex direction='column' align='center' justify='center' textAlign='center' gap={3} minH='30vh' px={4}>
-      <Icon as={RiErrorWarningLine} boxSize={12} color='texts.subtle' />
+      <Icon as={RiErrorWarningLine} boxSize={12} color='fg.muted' />
       <Heading size='lg'>{t('error.crash_title', { defaultValue: 'Something went wrong' })}</Heading>
       <SubHeading m={0} maxW='45ch'>
         {t('error.crash_description', {

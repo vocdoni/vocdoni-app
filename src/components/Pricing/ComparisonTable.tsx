@@ -171,7 +171,7 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
         </Table.Root>
       </Table.ScrollArea>
       <Separator mt={6} mb={1} />
-      <Flex textAlign='left' color='texts.subtle' flexDirection='column'>
+      <Flex textAlign='left' color='fg.muted' flexDirection='column'>
         <Text fontSize='xs'>
           <Trans i18nKey='pricing.comparison_table.footnote_1'>
             ¹ Votes with fewer than 10 participants are treated as test runs and don't count towards your plan limits.

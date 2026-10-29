@@ -59,14 +59,14 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
           )}
         </HStack>
         <Heading size='2xl'>{title}</Heading>
-        <Text color='texts.subtle' fontSize='sm' mt={2}>
+        <Text color='fg.muted' fontSize='sm' mt={2}>
           {election.startDate &&
             `${t('process.date.starts', { defaultValue: 'Starts' })} ${format(election.startDate, t('organization.date_format'))}`}
           {election.startDate && election.endDate && ' · '}
           {election.endDate &&
             `${t('process.date.ends', { defaultValue: 'Ends' })} ${format(election.endDate, t('organization.date_format'))}`}
         </Text>
-        <Text color='texts.subtle' fontSize='sm'>
+        <Text color='fg.muted' fontSize='sm'>
           {t('process.summary.votes_cast', {
             defaultValue: '{{votes}} votes cast',
             votes: election.voteCount,
@@ -89,14 +89,14 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
             <Card.Header>
               <Heading size='md'>{localize(question.title)}</Heading>
               {localize(question.description) && (
-                <Text color='texts.subtle' fontSize='sm'>
+                <Text color='fg.muted' fontSize='sm'>
                   {localize(question.description)}
                 </Text>
               )}
             </Card.Header>
             <Card.Body>
               {!election.resultsAvailable ? (
-                <Text color='texts.subtle' fontSize='sm'>
+                <Text color='fg.muted' fontSize='sm'>
                   {t('process_pdf.voting_process.results_hidden', {
                     defaultValue: 'Results are hidden until the process reaches the final results stage.',
                   })}
@@ -107,7 +107,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
                     <Box key={choiceIndex}>
                       <Flex justify='space-between' fontSize='sm' mb={1} gap={4}>
                         <Text>{localize(choice.title)}</Text>
-                        <Text color='texts.subtle' whiteSpace='nowrap'>
+                        <Text color='fg.muted' whiteSpace='nowrap'>
                           {choice.votes === null
                             ? t('public_process.no_tally', { defaultValue: 'No tally' })
                             : `${choice.votes} · ${choice.percentage === null ? '—' : `${choice.percentage.toFixed(1)}%`}`}
@@ -128,7 +128,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
       </VStack>
 
       <Box>
-        <Text fontSize='sm' color='texts.subtle' mb={1}>
+        <Text fontSize='sm' color='fg.muted' mb={1}>
           {t('public_process.verify', { defaultValue: 'Verify on the blockchain explorer:' })}
         </Text>
         <Link

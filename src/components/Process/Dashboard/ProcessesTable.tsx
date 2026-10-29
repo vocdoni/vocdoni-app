@@ -70,7 +70,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
   }
 
   return (
-    <Box border='1px solid' borderColor='table.border' borderRadius='sm' w='full'>
+    <Box border='1px solid' borderColor='border' borderRadius='sm' w='full'>
       <Table.ScrollArea>
         <Table.Root variant='outline'>
           <Table.Header>
