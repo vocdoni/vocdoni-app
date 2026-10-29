@@ -1,4 +1,5 @@
 import { defineSemanticTokens } from '@chakra-ui/react'
+import { statusColors } from './status'
 
 /**
  * Semantic tokens allow us to define tokens, like colors, based on their usage
@@ -229,6 +230,7 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   texts,
+  ...statusColors,
 })
 
 const semanticTokens = {

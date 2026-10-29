@@ -114,7 +114,7 @@ export const OrganizationSwitcher = () => {
                 </Text>
                 <HStack gap={1} flexShrink={0}>
                   {org.isIntegrator && (
-                    <TagRoot colorPalette='purple'>
+                    <TagRoot>
                       {/* "API" is a universal acronym, not translated in any locale */}
                       <TagLabel>API</TagLabel>
                     </TagRoot>

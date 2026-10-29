@@ -6,6 +6,7 @@ import { DashboardBox } from '~components/Dashboard/Contents'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { Routes } from '~routes'
 import { useProfile } from '~src/queries/account'
+import { statusPalette } from '~theme/status'
 import AccountForm from './Form'
 
 export const AccountEdit = () => {
@@ -25,7 +26,7 @@ export const AccountEdit = () => {
         <Text fontSize='sm' color='texts.subtle'>
           {t('delete.delete_subtitle', { defaultValue: 'Permanently delete your account and all associated data' })}
         </Text>
-        <Button colorPalette='red' alignSelf={'flex-end'} onClick={() => setOpen(true)}>
+        <Button colorPalette={statusPalette.destructive} alignSelf={'flex-end'} onClick={() => setOpen(true)}>
           <Trans i18nKey='delete_my_account'>Delete Account</Trans>
         </Button>
       </DashboardBox>

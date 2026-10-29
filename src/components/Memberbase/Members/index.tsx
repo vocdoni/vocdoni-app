@@ -54,6 +54,7 @@ import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useDeleteMembers, usePaginatedMembers, useUrlPagination } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
+import { statusPalette } from '~theme/status'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
@@ -375,7 +376,7 @@ const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: Member
               {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
             </Menu.Item>
             <Menu.Separator />
-            <Menu.Item value='delete' color='red.400' onSelect={onDelete}>
+            <Menu.Item value='delete' color='destructive.fg' onSelect={onDelete}>
               {t('members.table.delete', { defaultValue: 'Delete' })}
             </Menu.Item>
           </Menu.Content>
@@ -481,7 +482,7 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
         />
       </InputGroup>
       {data?.members?.length >= 1 && (
-        <Button variant='outline' colorPalette='red' onClick={onDelete}>
+        <Button variant='outline' colorPalette={statusPalette.destructive} onClick={onDelete}>
           <Icon as={LuTrash2} />
           {t('members.table.delete_all', {
             defaultValue: 'Delete (All)',
@@ -675,7 +676,7 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
             <Icon as={LuListPlus} />
             {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
           </Button>
-          <Button size='sm' colorPalette='red' variant='outline' onClick={() => onDelete()}>
+          <Button size='sm' colorPalette={statusPalette.destructive} variant='outline' onClick={() => onDelete()}>
             <Icon as={LuTrash2} />
             {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
           </Button>
@@ -880,7 +881,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         </Button>
         <Button
           loading={deleteMutation.isPending || isFetchingAll}
-          colorPalette='red'
+          colorPalette={statusPalette.destructive}
           onClick={handleDelete}
           disabled={isFetchingAll || selectedMembers.length === 0}
         >
