@@ -44,6 +44,15 @@ export const QueryKeys = {
       spec,
     ],
     apikeys: (address?: string) => ['organizations', 'apikeys', address].filter(Boolean),
+    // `walletAll` is the prefix for invalidating every paginated wallet page at once.
+    wallet: (address?: string, page?: number, limit?: number) => [
+      'organizations',
+      'wallet',
+      address ?? null,
+      page ?? null,
+      limit ?? null,
+    ],
+    walletAll: (address?: string) => ['organizations', 'wallet', address ?? null],
   },
   process: {
     participants: (processId?: string, field?: string, value?: string) =>

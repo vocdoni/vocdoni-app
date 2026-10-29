@@ -1,8 +1,13 @@
-import { render, screen } from '~src/test-utils'
+import { currency } from '~utils/numbers'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import { IntegratorOverview } from './Overview'
 
 vi.mock('~src/queries/integrators', () => ({
   useIntegratorInfo: vi.fn(),
+}))
+
+vi.mock('~src/queries/wallet', () => ({
+  useWallet: vi.fn(),
 }))
 
 // Avoid loading the Cal.com embed (@calcom/embed-react) in jsdom.
@@ -11,9 +16,26 @@ vi.mock('~components/Dashboard/Booker', () => ({
 }))
 
 import { useIntegratorInfo } from '~src/queries/integrators'
+import { useWallet } from '~src/queries/wallet'
 
 const mockInfo = (overrides: Partial<ReturnType<typeof useIntegratorInfo>> = {}) =>
   ({ data: undefined, isLoading: false, error: null, ...overrides }) as any
+
+const mockWallet = (overrides: Partial<ReturnType<typeof useWallet>> = {}) =>
+  ({ data: undefined, isLoading: false, error: null, ...overrides }) as any
+
+const walletData = {
+  balanceCents: 12345,
+  currency: 'eur',
+  history: [],
+  pagination: { currentPage: 1, lastPage: 1, nextPage: null, previousPage: null, totalItems: 0 },
+}
+
+// Pay-per-process: no limits and no managedProcesses.
+const payPerProcessData = {
+  enabled: true,
+  usage: { managedOrgs: 2, sentVotes: 5, sentSMS: 1, sentEmails: 0 },
+}
 
 const enabledData = {
   enabled: true,
@@ -24,6 +46,7 @@ const enabledData = {
 describe('IntegratorOverview', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(useWallet).mockReturnValue(mockWallet())
   })
 
   it('renders quota cards with usage and limits', () => {
@@ -61,5 +84,40 @@ describe('IntegratorOverview', () => {
 
     expect(screen.getByText('Unable to load integrator quota')).toBeInTheDocument()
     expect(screen.queryByText('Organizations created')).not.toBeInTheDocument()
+  })
+
+  it('renders without limits and managedProcesses, counting the metrics it gets as used', () => {
+    vi.mocked(useIntegratorInfo).mockReturnValue(mockInfo({ data: payPerProcessData }))
+
+    render(<IntegratorOverview />, { wrapper: TestMemoryRouter })
+
+    expect(screen.queryByText('Unable to load integrator quota')).not.toBeInTheDocument()
+    expect(screen.queryByText('Voting processes created')).not.toBeInTheDocument()
+    expect(screen.getByText('Organizations created')).toBeInTheDocument()
+    expect(screen.getAllByText('used')).toHaveLength(4)
+  })
+
+  it('shows the wallet balance and a link to manage it', () => {
+    vi.mocked(useIntegratorInfo).mockReturnValue(mockInfo({ data: enabledData }))
+    vi.mocked(useWallet).mockReturnValue(mockWallet({ data: walletData }))
+
+    render(<IntegratorOverview />, { wrapper: TestMemoryRouter })
+
+    expect(screen.getByText('Wallet balance')).toBeInTheDocument()
+    expect(screen.getByText(currency(12345, 'EUR'))).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Manage wallet' })).toHaveAttribute(
+      'href',
+      '/integrators/configuration/wallet'
+    )
+  })
+
+  it('hides the wallet card when the wallet cannot be loaded', () => {
+    vi.mocked(useIntegratorInfo).mockReturnValue(mockInfo({ data: enabledData }))
+    vi.mocked(useWallet).mockReturnValue(mockWallet({ error: new Error('no wallet') }))
+
+    render(<IntegratorOverview />, { wrapper: TestMemoryRouter })
+
+    expect(screen.queryByText('Wallet balance')).not.toBeInTheDocument()
+    expect(screen.getByText('Organizations created')).toBeInTheDocument()
   })
 })
