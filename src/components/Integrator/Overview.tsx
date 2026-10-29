@@ -121,7 +121,7 @@ export const IntegratorOverview = () => {
               {t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}
             </Text>
             <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
-              {currency(wallet.data.balanceCents, wallet.data.currency.toUpperCase())}
+              {currency(wallet.data.balanceCents, wallet.data.currency?.toUpperCase())}
             </Text>
             <Box minH='22px'>
               <Link asChild fontSize='sm' fontWeight='bold' color='texts.subtle'>
