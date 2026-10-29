@@ -8,11 +8,11 @@ export const colors = {
   // and the default black accent. Kept separate from `brand` on purpose: a
   // configured PRIMARY_COLOR must recolor the accent, never tint the surfaces.
   ink: {
-    500: { value: '#000000' }, // base solid
-    550: { value: '#262626' }, // dark footer band on organisation pages (footer.bg.muted)
-    650: { value: '#0a0a0a' }, // custom
-    700: { value: '#2e2e2e' }, // solid active
-    800: { value: '#3f3f3f' }, // link active (dark)
+    500: { value: '#000000' },
+    550: { value: '#262626' }, // dark surface for muted bands (organisation footer)
+    650: { value: '#0a0a0a' },
+    700: { value: '#2e2e2e' },
+    800: { value: '#3f3f3f' },
   },
 
   // Partial override of chakra's default gray scale — only the shades that
