@@ -1,13 +1,6 @@
 import { defineRecipe, defineSlotRecipe } from '@chakra-ui/react'
 import { switchAnatomy } from '@chakra-ui/react/anatomy'
 
-export const formLabel = defineRecipe({
-  base: {
-    fontSize: 'sm',
-    fontWeight: 'normal',
-  },
-})
-
 const baseStyle = {
   textStyle: 'md',
   _placeholder: {

@@ -65,7 +65,7 @@ export const SelectCustom = ({
   return (
     <FormControl invalid={!!errors[name]} required={required}>
       {label && (
-        <FormLabel htmlFor={name} display='flex' ms={1} fontSize='sm' fontWeight='500' mb={2}>
+        <FormLabel htmlFor={name} display='flex' ms={1} fontSize='sm' mb={2}>
           {label}
         </FormLabel>
       )}
