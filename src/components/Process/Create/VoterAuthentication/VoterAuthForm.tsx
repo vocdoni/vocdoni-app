@@ -312,9 +312,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                             <CheckboxCard.HiddenInput />
                             <CheckboxCard.Control px={3} py={2} gap={2} alignItems='center'>
                               <CheckboxCard.Indicator />
-                              <CheckboxCard.Label fontSize='sm' fontWeight='normal'>
-                                {getAuthFieldLabel(t, id)}
-                              </CheckboxCard.Label>
+                              <CheckboxCard.Label fontSize='sm'>{getAuthFieldLabel(t, id)}</CheckboxCard.Label>
                             </CheckboxCard.Control>
                           </CheckboxCard.Root>
                         )
@@ -338,7 +336,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                     onValueChange={({ value }) => field.onChange(value)}
                     aria-describedby='voter-auth-code-help'
                   >
-                    <RadioCard.Label fontSize='sm' fontWeight='semibold'>
+                    <RadioCard.Label fontSize='sm'>
                       {t('voter_auth.code.heading', { defaultValue: '2. Also send a one-time code?' })}
                     </RadioCard.Label>
                     <Text id='voter-auth-code-help' fontSize='sm' color='fg.muted' mt={1} mb={3}>
