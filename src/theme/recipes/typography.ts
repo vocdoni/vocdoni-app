@@ -24,20 +24,18 @@ export const heading = defineRecipe({
   },
 })
 
+// Chakra colours links with the palette in its plain and underline variants, which would also
+// win in dark mode; keep the palette in light mode and the shared link colour in dark.
+const paletteLink = { color: { base: 'colorPalette.fg', _dark: 'link.fg' } }
+
 export const link = defineRecipe({
   base: {
-    color: 'gray.800',
+    color: 'link.fg',
     textDecoration: 'underline',
     textDecorationThickness: 'from-font',
     textUnderlineOffset: '0.15em',
-    _dark: {
-      color: 'gray.400',
-      _hover: {
-        color: 'gray.200',
-      },
-    },
     _hover: {
-      color: 'gray.500',
+      color: 'link.fg.hover',
     },
   },
   variants: {
@@ -47,11 +45,13 @@ export const link = defineRecipe({
       // fighting the base styles above — pin both so hover keeps a solid,
       // consistent underline.
       plain: {
+        ...paletteLink,
         _hover: {
           textDecorationColor: 'currentColor',
           textUnderlineOffset: '0.15em',
         },
       },
+      underline: paletteLink,
       unstyled: {
         textDecoration: 'none',
         _hover: {
@@ -65,7 +65,7 @@ export const link = defineRecipe({
         borderRadius: 'sm',
         minW: '30px',
         h: '30px',
-        border: '1px solid',
+        border: '{borderWidths.hairline} solid',
         cursor: 'pointer',
         textDecoration: 'none',
       },

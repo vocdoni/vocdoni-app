@@ -7,10 +7,7 @@ const baseStyle = defineStyle({
   fontSize: 'sm',
   _currentPage: {
     fontWeight: 'bold',
-    backgroundColor: {
-      _dark: 'colorPalette.800',
-      _light: 'colorPalette.200',
-    },
+    backgroundColor: 'colorPalette.muted',
   },
   _selected: {
     fontWeight: 'bold',

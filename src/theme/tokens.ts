@@ -16,6 +16,11 @@ const fontWeights = defineTokens.fontWeights({
   bolder: { value: '500' },
 })
 
+const borderWidths = defineTokens.borderWidths({
+  hairline: { value: '1px' },
+  thick: { value: '2px' },
+})
+
 const radii = defineTokens.radii({
   none: { value: '0rem' },
   xxs: { value: '2px' },
@@ -65,6 +70,7 @@ const zIndex = defineTokens.zIndex({
 })
 
 const tokens = defineTokens({
+  borderWidths,
   colors,
   radii,
   sizes,
