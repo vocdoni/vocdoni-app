@@ -1,5 +1,4 @@
 import {
-  Box,
   Card,
   HStack,
   Icon,
@@ -12,7 +11,6 @@ import {
   Table,
   Text,
   type TextProps,
-  useBreakpointValue,
 } from '@chakra-ui/react'
 import {
   ElectionProvider,
@@ -35,6 +33,7 @@ import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
@@ -44,7 +43,7 @@ type ProcessesListProps = {
 
 const ProcessesTable = ({ processes }: ProcessesListProps) => {
   const { t } = useTranslation()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
 
   const rows =
     processes &&
@@ -70,7 +69,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
   }
 
   return (
-    <Box border='1px solid' borderColor='border' borderRadius='sm' w='full'>
+    <Card.Root variant='frame' w='full'>
       <Table.ScrollArea>
         <Table.Root variant='outline'>
           <Table.Header>
@@ -93,7 +92,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
           </Table.Caption>
         </Table.Root>
       </Table.ScrollArea>
-    </Box>
+    </Card.Root>
   )
 }
 
@@ -132,7 +131,7 @@ const ProcessRowFallback = ({ process }: { process: VotingProcessResponse }) => 
 )
 
 const ProcessCardFallback = ({ process }: { process: VotingProcessResponse }) => (
-  <Card.Root variant='data-list-item'>
+  <Card.Root variant='list-item'>
     <Card.Header>
       <ProcessTitleLink process={process} textProps={cardTitleProps} />
     </Card.Header>
@@ -168,7 +167,7 @@ const ProcessCard = () => {
   if (!election) return null
 
   return (
-    <Card.Root variant='data-list-item'>
+    <Card.Root variant='list-item'>
       <Card.Header>
         <ProcessTitleLink process={election} textProps={cardTitleProps} />
         <ProcessContextMenu />

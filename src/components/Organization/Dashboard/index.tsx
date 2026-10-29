@@ -62,7 +62,7 @@ const Tutorial = () => {
   }
 
   return (
-    <DashboardBox p={6} mb={6} display='flex' gap={10} position='relative' flexDirection='row'>
+    <DashboardBox size='md' mb={6} display='flex' gap={10} position='relative' flexDirection='row'>
       <Box flex='1 1 60%'>
         <Text fontWeight='bold' mb={2} size='2xl'>
           {t('dashboard.welcome.hello', {
@@ -137,7 +137,7 @@ const OrganizationProcesses = () => {
 
   return (
     <Flex flexDirection={{ base: 'column', md: 'row' }} gap={4}>
-      <DashboardBox p={6} minH='324px' flex='1 1 66%'>
+      <DashboardBox size='md' minH='324px' flex='1 1 66%'>
         <Box mb={4}>
           <Text fontWeight='bold' mb={1.5} size='2xl'>
             {t('dashboard.welcome.recent_voting_title', { defaultValue: 'Recent voting processes' })}
@@ -314,7 +314,7 @@ const RecentProcess = () => {
 const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
   const { t } = useTranslation()
   return (
-    <DashboardBox p={6} flex='1 1 33%' justifyContent='normal' gap={0} {...props}>
+    <DashboardBox size='md' flex='1 1 33%' justifyContent='normal' gap={0} {...props}>
       <Text fontWeight='bold' mb={1.5} size='2xl'>
         {t('dashboard.welcome.quick_actions', {
           defaultValue: 'Quick actions',

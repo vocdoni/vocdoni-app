@@ -55,7 +55,7 @@ const IntegratorSubscriptionTab = () => {
   const isPaid = !plan.default && (plan.monthlyPrice > 0 || plan.yearlyPrice > 0)
 
   return (
-    <DashboardBox p={6} justifyContent='flex-start'>
+    <DashboardBox size='md' justifyContent='flex-start'>
       <Flex justify='space-between' align='flex-start' gap={4} wrap='wrap'>
         <Stack gap={1}>
           <Text fontSize='sm' color='fg.muted'>

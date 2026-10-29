@@ -1,4 +1,14 @@
-import { Box, BoxProps, Heading as CHeading, Flex, FlexProps, HeadingProps, Text, TextProps } from '@chakra-ui/react'
+import {
+  Box,
+  BoxProps,
+  Card,
+  Heading as CHeading,
+  Flex,
+  FlexProps,
+  HeadingProps,
+  Text,
+  TextProps,
+} from '@chakra-ui/react'
 import { ReactNode, forwardRef } from 'react'
 
 export type DashboardCardHeaderProps = BoxProps & {
@@ -6,19 +16,8 @@ export type DashboardCardHeaderProps = BoxProps & {
   subtitle?: ReactNode
 }
 
-export const DashboardBox = (props: BoxProps) => (
-  <Box
-    borderRadius='md'
-    border='1px solid'
-    borderColor='border'
-    p={4}
-    minW={0}
-    display='flex'
-    flexDirection='column'
-    justifyContent='space-between'
-    gap={4}
-    {...props}
-  />
+export const DashboardBox = (props: Card.RootProps) => (
+  <Card.Root variant='section' size='sm' justifyContent='space-between' gap={4} {...props} />
 )
 
 export const DashboardCardHeader = ({ title, subtitle, ...props }: DashboardCardHeaderProps) => (
@@ -38,7 +37,10 @@ export const DashboardContents = (props: FlexProps) => (
   <Flex flexDirection='column' w='full' mx='auto' p={6} {...props} />
 )
 
-export const DashboardSection = (props: BoxProps) => <Box bg='surface.sunken' p={4} borderRadius='sm' {...props} />
+// A block, not the card's flex column: its content runs inline text and selects together.
+export const DashboardSection = (props: Card.RootProps) => (
+  <Card.Root variant='sunken' size='sm' display='block' {...props} />
+)
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref) => (
   <CHeading size='2xl' fontWeight='bold' display='flex' gap={2} alignItems='center' ref={ref} {...props} />

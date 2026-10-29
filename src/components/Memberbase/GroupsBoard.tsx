@@ -116,7 +116,7 @@ const GroupsInfo = () => {
   if (!isOpen) return null
 
   return (
-    <DashboardBox position='relative' flexDirection='column' display='flex' gap={2} p={6} borderColor='border'>
+    <DashboardBox size='md' position='relative' flexDirection='column' display='flex' gap={2}>
       <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorPalette='gray' size='sm' />
       <Flex flexDirection='row' gap={4}>
         <Icon as={LuUsers} boxSize={8} />
@@ -405,7 +405,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
           )}
         </Flex>
       )}
-      <Table.ScrollArea border='1px' borderRadius='sm' borderColor='border' overflowX='visible' overflowY='visible'>
+      <Table.ScrollArea overflowX='visible' overflowY='visible'>
         {isEmpty ? (
           <Flex justify='center' align='center' height='200px'>
             <Text color='fg.muted' fontSize='sm'>
@@ -674,7 +674,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
   return (
     <>
-      <Card.Root variant='outline' borderColor='border' p={4} pt={2}>
+      <Card.Root variant='outline' p={4}>
         <Card.Header p={0}>
           <Flex justify='space-between' align='center'>
             <Heading size='md'>{displayTitle}</Heading>

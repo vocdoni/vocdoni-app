@@ -1,4 +1,4 @@
-import { Box, HStack, Icon, Stack, Text } from '@chakra-ui/react'
+import { Card, HStack, Icon, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
 import type { IconType } from 'react-icons'
 import { useTranslation } from 'react-i18next'
@@ -45,7 +45,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
   const level = getProtectionLevel(credentials, codeMethod)
 
   return (
-    <Box p={4} borderWidth='1px' borderColor='border' borderRadius='md'>
+    <Card.Root variant='section' size='sm'>
       <HStack justify='space-between' mb={3}>
         <Text fontWeight='semibold'>{t('voter_auth.summary.title', { defaultValue: 'Voter sign-in' })}</Text>
         <StatusBadge tone={protectionLevelTones[level]}>{getProtectionLevelTitle(t, level)}</StatusBadge>
@@ -92,6 +92,6 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
           </HStack>
         )}
       </Stack>
-    </Box>
+    </Card.Root>
   )
 }

@@ -4,6 +4,7 @@ import {
   Badge,
   Box,
   Button,
+  Card,
   CloseButton,
   Dialog,
   type DialogRootProps,
@@ -365,7 +366,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
   return (
     <FormProvider {...methods}>
       <Flex as='form' direction='column' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
-        <Flex border='1px solid' borderColor='border' p={4} borderRadius='md' alignItems='center'>
+        <Card.Root variant='section' size='sm' flexDirection='row' alignItems='center'>
           <Avatar.Root>
             <Avatar.Fallback name={fullName} />
           </Avatar.Root>
@@ -379,20 +380,20 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
               </Text>
             </Flex>
           </Box>
-        </Flex>
+        </Card.Root>
         <Text fontSize='sm' fontWeight='bold'>
           {t('role.update.current_role', {
             defaultValue: 'Current Role',
           })}
         </Text>
-        <Box p={2} border='1px solid' borderColor='border' borderRadius='md'>
+        <Card.Root variant='section' size='sm'>
           <Flex gap={2} align='center'>
             <Text>{roleIcons[currentRole]}</Text>
             <Text fontWeight='semibold' textTransform='capitalize'>
               {currentRole}
             </Text>
           </Flex>
-        </Box>
+        </Card.Root>
         <RoleRadioGroup currentRole={currentRole} />
         <Flex gap={2} justifyContent='flex-end' mt={4}>
           <Button variant='outline' onClick={onClose}>

@@ -1,4 +1,4 @@
-import { Code, Stack, Table, Text } from '@chakra-ui/react'
+import { Card, Code, Stack, Table, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { ManagedOrganization } from '~src/queries/integrators'
 
@@ -17,51 +17,54 @@ export const ManagedOrganizationsTable = ({ organizations }: { organizations: Ma
   const { t } = useTranslation()
 
   return (
-    <Table.ScrollArea borderWidth='1px' borderRadius='md'>
-      <Table.Root variant='outline' interactive>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader>
-              {t('integrators.managed.organization', { defaultValue: 'Organization' })}
-            </Table.ColumnHeader>
-            <Table.ColumnHeader textAlign='end'>
-              {t('integrators.managed.processes', { defaultValue: 'Processes' })}
-            </Table.ColumnHeader>
-            <Table.ColumnHeader textAlign='end'>
-              {t('integrators.managed.sms', { defaultValue: 'SMS' })}
-            </Table.ColumnHeader>
-            <Table.ColumnHeader textAlign='end'>
-              {t('integrators.managed.emails', { defaultValue: 'Emails' })}
-            </Table.ColumnHeader>
-            <Table.ColumnHeader>{t('integrators.managed.created', { defaultValue: 'Created' })}</Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {organizations.map((org) => {
-            const name = org.name?.default?.trim() || org.website?.trim() || undefined
-            return (
-              <Table.Row key={org.address}>
-                <Table.Cell>
-                  {name ? (
-                    <Stack gap={0.5}>
-                      <Text fontWeight='medium'>{name}</Text>
-                      <Code fontSize='xs' color='fg.muted' title={org.address}>
-                        {shortAddress(org.address)}
-                      </Code>
-                    </Stack>
-                  ) : (
-                    <Code title={org.address}>{shortAddress(org.address)}</Code>
-                  )}
-                </Table.Cell>
-                <Table.Cell textAlign='end'>{formatCount(org.counters?.processes)}</Table.Cell>
-                <Table.Cell textAlign='end'>{formatCount(org.counters?.sentSMS)}</Table.Cell>
-                <Table.Cell textAlign='end'>{formatCount(org.counters?.sentEmails)}</Table.Cell>
-                <Table.Cell>{formatDate(org.createdAt)}</Table.Cell>
-              </Table.Row>
-            )
-          })}
-        </Table.Body>
-      </Table.Root>
-    </Table.ScrollArea>
+    // Hidden overflow keeps the table header's fill inside the rounded corners.
+    <Card.Root variant='frame' overflow='hidden'>
+      <Table.ScrollArea>
+        <Table.Root variant='outline' interactive>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>
+                {t('integrators.managed.organization', { defaultValue: 'Organization' })}
+              </Table.ColumnHeader>
+              <Table.ColumnHeader textAlign='end'>
+                {t('integrators.managed.processes', { defaultValue: 'Processes' })}
+              </Table.ColumnHeader>
+              <Table.ColumnHeader textAlign='end'>
+                {t('integrators.managed.sms', { defaultValue: 'SMS' })}
+              </Table.ColumnHeader>
+              <Table.ColumnHeader textAlign='end'>
+                {t('integrators.managed.emails', { defaultValue: 'Emails' })}
+              </Table.ColumnHeader>
+              <Table.ColumnHeader>{t('integrators.managed.created', { defaultValue: 'Created' })}</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {organizations.map((org) => {
+              const name = org.name?.default?.trim() || org.website?.trim() || undefined
+              return (
+                <Table.Row key={org.address}>
+                  <Table.Cell>
+                    {name ? (
+                      <Stack gap={0.5}>
+                        <Text fontWeight='medium'>{name}</Text>
+                        <Code fontSize='xs' color='fg.muted' title={org.address}>
+                          {shortAddress(org.address)}
+                        </Code>
+                      </Stack>
+                    ) : (
+                      <Code title={org.address}>{shortAddress(org.address)}</Code>
+                    )}
+                  </Table.Cell>
+                  <Table.Cell textAlign='end'>{formatCount(org.counters?.processes)}</Table.Cell>
+                  <Table.Cell textAlign='end'>{formatCount(org.counters?.sentSMS)}</Table.Cell>
+                  <Table.Cell textAlign='end'>{formatCount(org.counters?.sentEmails)}</Table.Cell>
+                  <Table.Cell>{formatDate(org.createdAt)}</Table.Cell>
+                </Table.Row>
+              )
+            })}
+          </Table.Body>
+        </Table.Root>
+      </Table.ScrollArea>
+    </Card.Root>
   )
 }

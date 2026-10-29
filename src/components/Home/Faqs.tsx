@@ -219,7 +219,7 @@ const Faqs = (props: BoxProps) => {
           {faqs.map((el, idx) => {
             if (!showAll && idx > 7) return null
             return (
-              <Card.Root key={idx} variant='faqs' flex={{ base: '1 1 100%', lg: '1 1 45%' }}>
+              <Card.Root key={idx} variant='divided' flex={{ base: '1 1 100%', lg: '1 1 45%' }}>
                 <Card.Header>{el.title}</Card.Header>
                 <Card.Body>{el.description}</Card.Body>
               </Card.Root>

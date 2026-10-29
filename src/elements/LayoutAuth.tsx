@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text } from '@chakra-ui/react'
+import { Box, Card, Flex, Heading, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { AuthLayoutHeader } from '~components/Auth/AuthLayoutHeader'
@@ -35,19 +35,18 @@ const LayoutAuth = () => {
         {/* The sign-in link carries the vertical like every other auth link; the home link is the
             marketing site and takes no param. */}
         <AuthLayoutHeader isSignin={isSignin} signInRoute={withVerticalParam(Routes.auth.signIn, slug)} />
-        <Flex
+        <Card.Root
+          variant='standalone'
+          flexDirection='row'
           w='full'
           // Floor, not a fixed height: the row still grows for a long form or a long quote. It only
           // stops the panel from collapsing to the height of whichever form sits next to it — the
           // verify and recovery screens are barely three fields tall.
           minH={{ md: '34rem', lg: '38rem' }}
-          _light={{ border: '1px solid', borderColor: 'auth.card.border' }}
-          borderRadius='sm'
           // No `overflow='hidden'` here: it would also clip the form column's dropdown menus — the
           // create-organization screen renders chakra-react-select menus without a portal, and a
           // clipped ancestor cuts them off at the card edge. The showcase panel rounds and clips
           // its own corners instead (see `AuthShowcase`).
-          bgColor='auth.card.bg'
         >
           <Flex
             p={{ base: 6, sm: 8, lg: 10 }}
@@ -73,7 +72,7 @@ const LayoutAuth = () => {
             <Outlet context={{ setTitle, setSubtitle } satisfies AuthOutletContextType} />
           </Flex>
           <AuthShowcase vertical={vertical} />
-        </Flex>
+        </Card.Root>
         <AuthTrustBar vertical={vertical} />
       </Flex>
     </Flex>

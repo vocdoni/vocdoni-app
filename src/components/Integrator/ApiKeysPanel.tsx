@@ -2,6 +2,7 @@ import {
   Alert,
   Badge,
   Box,
+  Card,
   Center,
   Code,
   Flex,
@@ -13,7 +14,6 @@ import {
   Stack,
   Table,
   Text,
-  useBreakpointValue,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,6 +26,7 @@ import { useToast } from '~components/Toast'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
 import type { StatusTone } from '~theme/status'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 import { CreateApiKeyButton } from './CreateApiKeyModal'
 
 const formatDate = (value?: string) => {
@@ -127,7 +128,7 @@ const ApiKeysPanel = () => {
   const revoke = useRevokeApiKey()
   const { currentAddress } = useAuth()
   const status = useStatus()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
   const [keyToRevoke, setKeyToRevoke] = useState<ApiKey | null>(null)
 
   const onRevoke = async () => {
@@ -205,67 +206,72 @@ const ApiKeysPanel = () => {
           ))}
         </Stack>
       ) : (
-        <Table.ScrollArea borderWidth='1px' borderRadius='md'>
-          <Table.Root variant='outline'>
-            <Table.Header>
-              <Table.Row>
-                <Table.ColumnHeader>{t('integrators.api_keys.label', { defaultValue: 'Label' })}</Table.ColumnHeader>
-                <Table.ColumnHeader>{t('integrators.api_keys.key', { defaultValue: 'Key' })}</Table.ColumnHeader>
-                <Table.ColumnHeader>
-                  {t('integrators.api_keys.scopes_legend', { defaultValue: 'Scopes' })}
-                </Table.ColumnHeader>
-                <Table.ColumnHeader>
-                  {t('integrators.api_keys.last_used', { defaultValue: 'Last used' })}
-                </Table.ColumnHeader>
-                <Table.ColumnHeader>
-                  {t('integrators.api_keys.expires', { defaultValue: 'Expires' })}
-                </Table.ColumnHeader>
-                <Table.ColumnHeader>{t('integrators.api_keys.status', { defaultValue: 'Status' })}</Table.ColumnHeader>
-                <Table.ColumnHeader textAlign='end'>
-                  {t('integrators.api_keys.actions', { defaultValue: 'Actions' })}
-                </Table.ColumnHeader>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {list.map((k) => {
-                const s = status(k)
-                return (
-                  <Table.Row key={k.id}>
-                    <Table.Cell>{k.label}</Table.Cell>
-                    <Table.Cell>
-                      <Code>{k.prefix}…</Code>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <HStack gap={1} wrap='wrap'>
-                        {k.scopes.map((sc) => (
-                          <Badge key={sc} variant='subtle'>
-                            {sc}
-                          </Badge>
-                        ))}
-                      </HStack>
-                    </Table.Cell>
-                    <Table.Cell>{formatDate(k.lastUsedAt)}</Table.Cell>
-                    <Table.Cell>{formatDate(k.expiresAt)}</Table.Cell>
-                    <Table.Cell>
-                      <StatusBadge tone={s.tone}>{s.label}</StatusBadge>
-                    </Table.Cell>
-                    <Table.Cell textAlign='end'>
-                      <IconButton
-                        aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
-                        variant='danger'
-                        size='sm'
-                        disabled={k.revoked || revoke.isPending || !currentAddress}
-                        onClick={() => setKeyToRevoke(k)}
-                      >
-                        <Icon as={LuTrash2} />
-                      </IconButton>
-                    </Table.Cell>
-                  </Table.Row>
-                )
-              })}
-            </Table.Body>
-          </Table.Root>
-        </Table.ScrollArea>
+        // Hidden overflow keeps the table header's fill inside the rounded corners.
+        <Card.Root variant='frame' overflow='hidden'>
+          <Table.ScrollArea>
+            <Table.Root variant='outline'>
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeader>{t('integrators.api_keys.label', { defaultValue: 'Label' })}</Table.ColumnHeader>
+                  <Table.ColumnHeader>{t('integrators.api_keys.key', { defaultValue: 'Key' })}</Table.ColumnHeader>
+                  <Table.ColumnHeader>
+                    {t('integrators.api_keys.scopes_legend', { defaultValue: 'Scopes' })}
+                  </Table.ColumnHeader>
+                  <Table.ColumnHeader>
+                    {t('integrators.api_keys.last_used', { defaultValue: 'Last used' })}
+                  </Table.ColumnHeader>
+                  <Table.ColumnHeader>
+                    {t('integrators.api_keys.expires', { defaultValue: 'Expires' })}
+                  </Table.ColumnHeader>
+                  <Table.ColumnHeader>
+                    {t('integrators.api_keys.status', { defaultValue: 'Status' })}
+                  </Table.ColumnHeader>
+                  <Table.ColumnHeader textAlign='end'>
+                    {t('integrators.api_keys.actions', { defaultValue: 'Actions' })}
+                  </Table.ColumnHeader>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {list.map((k) => {
+                  const s = status(k)
+                  return (
+                    <Table.Row key={k.id}>
+                      <Table.Cell>{k.label}</Table.Cell>
+                      <Table.Cell>
+                        <Code>{k.prefix}…</Code>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <HStack gap={1} wrap='wrap'>
+                          {k.scopes.map((sc) => (
+                            <Badge key={sc} variant='subtle'>
+                              {sc}
+                            </Badge>
+                          ))}
+                        </HStack>
+                      </Table.Cell>
+                      <Table.Cell>{formatDate(k.lastUsedAt)}</Table.Cell>
+                      <Table.Cell>{formatDate(k.expiresAt)}</Table.Cell>
+                      <Table.Cell>
+                        <StatusBadge tone={s.tone}>{s.label}</StatusBadge>
+                      </Table.Cell>
+                      <Table.Cell textAlign='end'>
+                        <IconButton
+                          aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
+                          variant='danger'
+                          size='sm'
+                          disabled={k.revoked || revoke.isPending || !currentAddress}
+                          onClick={() => setKeyToRevoke(k)}
+                        >
+                          <Icon as={LuTrash2} />
+                        </IconButton>
+                      </Table.Cell>
+                    </Table.Row>
+                  )
+                })}
+              </Table.Body>
+            </Table.Root>
+          </Table.ScrollArea>
+        </Card.Root>
       )}
 
       <ConfirmDialog
