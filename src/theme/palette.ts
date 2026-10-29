@@ -138,11 +138,8 @@ const pickReadableStep = (
 // text, so they are held to this bar rather than the 3:1 non-text one.
 const MIN_TEXT_CONTRAST = 4.5
 
-// The `fg` slot is brand-coloured text on the page itself (links, outline
-// buttons, active tabs), so it is held to the text bar against the page
-// background. It starts at chakra's 700 (light) / 300 (dark) and only walks
-// further when that step does not clear the bar, so palettes that already read
-// keep the same step.
+// `fg` is brand text on the page itself (links, outline buttons, active tabs), so it is held
+// to the text bar; it keeps chakra's 700/300 whenever that step already reads.
 const LIGHT_FG_STEPS: Array<keyof PaletteScale> = [700, 800, 900, 950]
 const DARK_FG_STEPS: Array<keyof PaletteScale> = [300, 200, 100, 50]
 
@@ -179,20 +176,9 @@ export type PaletteSemanticTokens = Record<(typeof PALETTE_SLOTS)[number], Palet
 type Backgrounds = { light: string; dark: string }
 
 /**
- * Semantic slots for a generated scale, mirroring the mapping chakra ships for
- * its own colored palettes (fg 700/300, muted 200/800, subtle 100/900,
- * emphasized 300/700). `fg` starts at those steps and walks the scale only when
- * they fall under 4.5:1 on the page background (a pale brand's 700 is still a
- * washed-out olive on white). `solid` differs on purpose: it is the exact configured
- * color (500) unless that is unreadable on the page background of a color
- * mode — a near-black brand on the dark surface, a pale one on white — in
- * which case it walks the scale until it is. `contrast` follows whichever step
- * `solid` ended on.
- *
- * `focusRing` and `border` reuse those same steps rather than chakra's fixed
- * 500/400: both have to stay visible against the page, which 500 guarantees for
- * chakra's hand-tuned mid-tone palettes but not for an arbitrary brand (a navy
- * focus ring on the dark page reads at 1.15:1, a pale one on white at 1.27:1).
+ * Semantic slots for a generated scale on chakra's mapping (fg 700/300, muted 200/800, subtle
+ * 100/900, emphasized 300/700). `solid` (500) and `fg` walk the scale only when unreadable on a
+ * mode's page background; `contrast`, `focusRing` and `border` follow the step `solid` lands on.
  */
 export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Backgrounds): PaletteSemanticTokens => {
   const lightSolid = pickReadableStep(scale, LIGHT_SOLID_STEPS, backgrounds.light)
