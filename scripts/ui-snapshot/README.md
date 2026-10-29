@@ -42,7 +42,7 @@ minutes and writes about 18 MB.
 ### What the snapshot does
 
 1. Starts the mock (`mock-saas.mjs`) on `127.0.0.1:3999`.
-2. Starts the dev server (`pnpm dev`) on port 3000 with `SAAS_URL` pointing at the mock, every
+2. Starts the dev server (`pnpm exec vike dev`, the same server as `pnpm dev`) on `127.0.0.1:3000` only, with `SAAS_URL` pointing at the mock, every
    third-party integration (GTM, Plausible, PostHog, Crisp, Stripe, Cal.com) switched off, and
    `PRIMARY_COLOR` when given. The values go in the process env, which wins over any `.env` file.
    If port 3000 is taken it stops with a message instead of letting vite move to another port.

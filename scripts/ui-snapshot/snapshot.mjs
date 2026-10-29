@@ -95,7 +95,9 @@ const parseCli = () => {
     )
     process.exit(0)
   }
-  if (!values.label || !/^[\w.-]+$/.test(values.label)) fail('--label <name> is required (letters, digits, . _ -)')
+  if (!values.label || !/^[A-Za-z0-9_][\w.-]*$/.test(values.label)) {
+    fail('--label <name> is required (letters, digits, . _ -; must not start with a dot)')
+  }
   const primaryColor = values['primary-color']
   if (primaryColor && !/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(primaryColor)) {
     fail(`--primary-color must be #rgb or #rrggbb (got "${primaryColor}")`)
@@ -193,20 +195,19 @@ const appEnv = (mockUrl, primaryColor) => ({
 
 const stripAnsi = (s) => s.replace(/\x1b\[[0-9;]*m/g, '')
 
-// A checkout whose node_modules is a symlink to another checkout (a shared worktree install) has
-// its font files outside vite's serving allow list, so the app would render with fallback fonts.
-// `vike dev` (same server as `pnpm dev`, which runs vite with Vike's plugin) merges VITE_CONFIG
-// into the vite config, so in that case it is started that way with the real path allowed.
+// `vike dev` is the same server as `pnpm dev` (vite with Vike's plugin).
+// The dev server binds to 127.0.0.1 only (the app's own config uses `host: true`, which would expose the
+// mock-backed app on the LAN during a run). Vike rejects --host on its CLI, so the override goes through
+// VITE_CONFIG, which `vike dev` merges into the vite config. When node_modules is a symlink into another
+// checkout, its real path is also added to vite's fs allow list, or the font files would not be served.
 const viteConfigEnv = () => {
+  const server = { host: '127.0.0.1' }
   const link = path.join(ROOT, 'node_modules')
-  let real
   try {
-    real = fs.realpathSync(link)
-  } catch {
-    return null
-  }
-  if (real === link || real.startsWith(`${ROOT}${path.sep}`)) return null
-  return { VITE_CONFIG: JSON.stringify({ server: { fs: { allow: [ROOT, real] } } }) }
+    const real = fs.realpathSync(link)
+    if (real !== link && !real.startsWith(`${ROOT}${path.sep}`)) server.fs = { allow: [ROOT, real] }
+  } catch {}
+  return { VITE_CONFIG: JSON.stringify({ server }) }
 }
 
 // Set as soon as the dev server is spawned, so an interrupt during its start-up still stops it.
@@ -221,13 +222,9 @@ const startDevServer = async ({ mockUrl, primaryColor, logFile }) => {
   }
   const log = fs.createWriteStream(logFile)
   let output = ''
-  const linked = viteConfigEnv()
-  const command = linked ? ['exec', 'vike', 'dev'] : ['dev']
-  if (linked)
-    console.log('node_modules is a symlink to another checkout: starting `pnpm exec vike dev` instead of `pnpm dev`.')
-  const child = spawn('pnpm', command, {
+  const child = spawn('pnpm', ['exec', 'vike', 'dev'], {
     cwd: ROOT,
-    env: { ...process.env, ...appEnv(mockUrl, primaryColor), ...linked, FORCE_COLOR: '0', BROWSER: 'none' },
+    env: { ...process.env, ...appEnv(mockUrl, primaryColor), ...viteConfigEnv(), FORCE_COLOR: '0', BROWSER: 'none' },
     detached: true,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
@@ -370,11 +367,10 @@ const newPage = async (browser, { width, mode, auth, authKey, blocked }) => {
         if (auth) {
           localStorage.setItem(`${authKey}.token`, token)
           localStorage.setItem(`${authKey}.expiry`, expiry)
-          localStorage.setItem('signerAddress', org)
+          // The active organisation is the first one /users/me returns (the mock has one).
         } else {
           localStorage.removeItem(`${authKey}.token`)
           localStorage.removeItem(`${authKey}.expiry`)
-          localStorage.removeItem('signerAddress')
         }
       } catch {}
       // Init scripts run before <html> exists: add the style as soon as it does.
@@ -541,6 +537,8 @@ const main = async () => {
   const opts = parseCli()
   const authKey = readAuthStorageKey()
   const outDir = path.join(OUT_ROOT, opts.label)
+  // Never delete anything outside .ui-snapshot/<label>.
+  if (path.dirname(outDir) !== OUT_ROOT) fail(`refusing to write outside ${path.relative(ROOT, OUT_ROOT)}/`)
   fs.rmSync(outDir, { recursive: true, force: true })
   fs.mkdirSync(outDir, { recursive: true })
   const startedAt = Date.now()
