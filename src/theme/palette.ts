@@ -135,6 +135,18 @@ const pickReadableStep = (scale: PaletteScale, candidates: Array<keyof PaletteSc
 // text, so they are held to this bar rather than the 3:1 non-text one.
 const MIN_TEXT_CONTRAST = 4.5
 
+// The `fg` slot is brand-coloured text on the page itself (links, outline
+// buttons, active tabs), so it is held to the text bar against the page
+// background. It starts at chakra's 700 (light) / 300 (dark) and only walks
+// further when that step does not clear the bar, so palettes that already read
+// keep the same step.
+const LIGHT_FG_STEPS: Array<keyof PaletteScale> = [700, 800, 900, 950]
+const DARK_FG_STEPS: Array<keyof PaletteScale> = [300, 200, 100, 50]
+
+const pickReadableTextStep = (scale: PaletteScale, candidates: Array<keyof PaletteScale>, background: string) =>
+  candidates.find((step) => contrastRatio(scale[step], background) >= MIN_TEXT_CONTRAST) ??
+  candidates[candidates.length - 1]
+
 // Text color for a filled surface of the given color. White is preferred as
 // long as it clears the text bar: raw luminance would pick black on most mid
 // tones (a mid blue scores 4.66 for black vs 4.51 for white), which is not what
@@ -170,7 +182,9 @@ type Backgrounds = { light: string; dark: string }
 /**
  * Semantic slots for a generated scale, mirroring the mapping chakra ships for
  * its own colored palettes (fg 700/300, muted 200/800, subtle 100/900,
- * emphasized 300/700). `solid` differs on purpose: it is the exact configured
+ * emphasized 300/700). `fg` starts at those steps and walks the scale only when
+ * they fall under 4.5:1 on the page background (a pale brand's 700 is still a
+ * washed-out olive on white). `solid` differs on purpose: it is the exact configured
  * color (500) unless that is unreadable on the page background of a color
  * mode — a near-black brand on the dark surface, a pale one on white — in
  * which case it walks the scale until it is. `contrast` follows whichever step
@@ -184,12 +198,14 @@ type Backgrounds = { light: string; dark: string }
 export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Backgrounds): PaletteSemanticTokens => {
   const lightSolid = pickReadableStep(scale, LIGHT_SOLID_STEPS, backgrounds.light)
   const darkSolid = pickReadableStep(scale, DARK_SOLID_STEPS, backgrounds.dark)
+  const lightFg = pickReadableTextStep(scale, LIGHT_FG_STEPS, backgrounds.light)
+  const darkFg = pickReadableTextStep(scale, DARK_FG_STEPS, backgrounds.dark)
   const ref = (step: keyof PaletteScale) => `{colors.brand.${step}}`
 
   return {
     solid: { _light: ref(lightSolid), _dark: ref(darkSolid) },
     contrast: { _light: contrastColor(scale[lightSolid]), _dark: contrastColor(scale[darkSolid]) },
-    fg: { _light: ref(700), _dark: ref(300) },
+    fg: { _light: ref(lightFg), _dark: ref(darkFg) },
     muted: { _light: ref(200), _dark: ref(800) },
     subtle: { _light: ref(100), _dark: ref(900) },
     emphasized: { _light: ref(300), _dark: ref(700) },

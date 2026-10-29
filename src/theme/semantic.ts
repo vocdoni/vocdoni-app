@@ -185,6 +185,18 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  // Chakra's own `gray.focusRing` is gray.400 in both modes (#b2b2b2 in this
+  // app's scale), 2.12:1 on a white page, under the 3:1 WCAG asks of focus
+  // indicators. Light mode steps to gray.800 (#27272a, 14.9:1); dark keeps
+  // gray.400 (9.3:1 on the dark page). Merges with chakra's other gray slots.
+  gray: {
+    focusRing: {
+      value: {
+        _light: '{colors.gray.800}',
+        _dark: '{colors.gray.400}',
+      },
+    },
+  },
   input: {
     placeholder: {
       value: '{colors.gray.500}',

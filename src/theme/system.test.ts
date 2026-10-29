@@ -1,6 +1,7 @@
 import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
-import { PALETTE_SLOTS } from './palette'
+import { PAGE_BACKGROUNDS } from './colors'
+import { contrastRatio, PALETTE_SLOTS } from './palette'
 import { resultsProgressRecipe } from './recipes/election'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
@@ -211,6 +212,23 @@ describe('PRIMARY_COLOR-driven system', () => {
     expect(conditions(BRANDED, 'brand.solid')).toEqual({ _light: '{colors.brand.500}', _dark: '{colors.brand.500}' })
     expect(conditions(BRANDED, 'brand.contrast')).toEqual({ _light: '#ffffff', _dark: '#ffffff' })
     expect(conditions(BRANDED, 'brand.fg')).toEqual({ _light: '{colors.brand.700}', _dark: '{colors.brand.300}' })
+  })
+
+  // Chakra's own gray.focusRing is gray.400 (#b2b2b2): 2.12:1 on white, under the
+  // 3:1 WCAG asks of focus indicators. The stock theme (no PRIMARY_COLOR) draws
+  // every focus ring with it, so it is locked against the real page backgrounds.
+  it('keeps the stock focus ring at 3:1 or better on the page in both modes', () => {
+    const ring = conditions(system, 'gray.focusRing')
+    const resolve = (ref: string) => system.tokens.getByName(ref.replace(/^\{|\}$/g, ''))?.value as string
+    expect(ring).toEqual({ _light: '{colors.gray.800}', _dark: '{colors.gray.400}' })
+    expect(contrastRatio(resolve(ring!._light), PAGE_BACKGROUNDS.light)).toBeGreaterThanOrEqual(3)
+    expect(contrastRatio(resolve(ring!._dark), PAGE_BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
+  })
+
+  it("keeps chakra's other gray semantic slots when overriding the focus ring", () => {
+    for (const slot of ['solid', 'fg', 'muted', 'subtle', 'emphasized', 'contrast', 'border']) {
+      expect(colorTokenExists(`gray.${slot}`), `gray.${slot}`).toBe(true)
+    }
   })
 
   it('leaves dark-mode surfaces on the neutral ink scale rather than tinting them', () => {
