@@ -7,7 +7,7 @@ const pricingCard = {
     flexDirection: 'column',
     gap: 4,
     position: 'relative',
-    border: '1px solid',
+    border: '{borderWidths.hairline} solid',
     borderRadius: 'md',
     bgColor: 'card.pricing.bg',
     p: 6,
@@ -49,8 +49,8 @@ const pricingCard = {
       mb: 2,
       w: 'full',
       borderRadius: 'md',
-      border: '1px',
-      borderColor: 'gray.300',
+      border: '{borderWidths.hairline}',
+      borderColor: 'control.border',
       p: 4,
     },
   },
@@ -118,7 +118,7 @@ export const Card = defineSlotRecipe({
       faqs: {
         root: {
           borderRadius: 'none',
-          borderBottomWidth: '1px',
+          borderBottomWidth: 'hairline',
           borderBottomStyle: 'solid',
           borderBottomColor: 'border',
           backgroundColor: 'transparent',
@@ -128,7 +128,7 @@ export const Card = defineSlotRecipe({
             border: 'none',
           },
           '&:nth-last-of-type(2)': {
-            borderBottomWidth: { base: '1px', lg: '0' },
+            borderBottomWidth: { base: 'hairline', lg: '0' },
           },
         },
         header: {
@@ -152,7 +152,7 @@ export const Card = defineSlotRecipe({
         root: {
           w: 'full',
           bgColor: 'transparent',
-          border: '1px solid',
+          border: '{borderWidths.hairline} solid',
           borderColor: 'border',
           borderRadius: 'sm',
           p: 4,
