@@ -140,7 +140,6 @@ export const Card = defineSlotRecipe({
       },
       // One entry of a list shown as cards, the small-screen form of a table.
       'list-item': listItem,
-      'data-list-item': listItem,
       'pricing-card': pricingCard,
       'custom-pricing-card': customPricingCard,
       client: {

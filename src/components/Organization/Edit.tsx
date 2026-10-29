@@ -106,7 +106,7 @@ const EditOrganization = () => {
   }
 
   return (
-    <DashboardBox p={6}>
+    <DashboardBox size='md'>
       <FormProvider {...methods}>
         <Flex as='form' id='process-create-form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap={6}>
           <Flex flexDir='column'>
