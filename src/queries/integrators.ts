@@ -171,3 +171,23 @@ export const useProvisionIntegratorOrganization = () => {
     },
   })
 }
+
+/**
+ * Sets (or lifts, with `null`) the spend cap of a managed organization
+ * (PUT /integrator/organizations/{orgAddress}, integrator Admin only). Resolves with the updated organization.
+ */
+export const useUpdateManagedOrganization = () => {
+  const { bearedFetch } = useAuth()
+  const queryClient = useQueryClient()
+
+  return useMutation<ManagedOrganization, Error, { address: string; spendCapCents: number | null }>({
+    mutationFn: ({ address, spendCapCents }) =>
+      bearedFetch<ManagedOrganization>(ApiEndpoints.ManagedOrganization.replace('{orgAddress}', ensure0x(address)), {
+        method: 'PUT',
+        body: { spendCapCents },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.integrator.managed() })
+    },
+  })
+}

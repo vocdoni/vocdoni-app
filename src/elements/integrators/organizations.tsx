@@ -7,6 +7,7 @@ import { DocsCard } from '~components/Integrator/DocsCard'
 import { ManagedOrganizationsTable } from '~components/Integrator/ManagedOrganizationsTable'
 import { PrevNextPagination } from '~components/Pagination/PrevNextPagination'
 import { useManagedOrganizations } from '~src/queries/integrators'
+import { useWalletAccess } from '~src/queries/wallet'
 
 const LIMIT = 10
 
@@ -18,6 +19,7 @@ const IntegratorManagedOrganizations = () => {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const { data, isLoading, error, isPlaceholderData } = useManagedOrganizations(page, LIMIT)
+  const { canTopUp: isAdmin } = useWalletAccess()
 
   const pagination = data?.pagination
   const organizations = data?.organizations ?? []
@@ -75,7 +77,7 @@ const IntegratorManagedOrganizations = () => {
         </Flex>
       ) : (
         <Flex direction='column' gap={4}>
-          <ManagedOrganizationsTable organizations={organizations} />
+          <ManagedOrganizationsTable organizations={organizations} canEditCaps={isAdmin} />
           {pagination && pagination.lastPage > 1 && (
             <PrevNextPagination
               text={t('integrators.managed.pagination', {
