@@ -221,6 +221,20 @@ describe('censusGrowthPaymentErrorMessage', () => {
     )
   })
 
+  it('explains a growth refused at the spend cap, without reading its data', () => {
+    expect(censusGrowthPaymentErrorMessage(t, sdkError(ApiErrorCode.SpendCapReached))).toBe(
+      'These voter places would exceed the spend cap the integrator set for this organization. The integrator must raise it first.'
+    )
+    expect(
+      censusGrowthPaymentErrorMessage(
+        t,
+        sdkError(ApiErrorCode.SpendCapReached, { capCents: 100, spentCents: 90, requiredCents: 20 })
+      )
+    ).toBe(
+      'These voter places would exceed the spend cap the integrator set for this organization. The integrator must raise it first.'
+    )
+  })
+
   it('explains a growth refused while a payment is in flight', () => {
     expect(censusGrowthPaymentErrorMessage(t, apiError(ApiErrorCode.PaymentSessionConflict))).toMatch(
       /still being processed/
@@ -289,34 +303,34 @@ describe('selfServiceVoterLimit', () => {
 
 describe('censusGrowthCheckoutTarget', () => {
   it('reads the room a census-growth refusal would buy', () => {
-    expect(censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, growth))).toEqual({
+    expect(censusGrowthCheckoutTarget(apiError(ApiErrorCode.PaymentRequired, growth))).toEqual({
       processId: growth.processId,
       censusSize: 700,
       dueCents: 2000,
       shortfallCents: undefined,
     })
     expect(
-      censusGrowthCheckoutTarget(sdkError(ErrorCode.PaymentRequired, { ...growth, shortfallCents: 1500 }))
+      censusGrowthCheckoutTarget(sdkError(ApiErrorCode.PaymentRequired, { ...growth, shortfallCents: 1500 }))
     ).toEqual(expect.objectContaining({ shortfallCents: 1500 }))
   })
 
   it('has no target for a publish refusal, a refusal of another code or a refusal without the process', () => {
     expect(
-      censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, { totalCents: 2000, shortfallCents: 1 }))
+      censusGrowthCheckoutTarget(apiError(ApiErrorCode.PaymentRequired, { totalCents: 2000, shortfallCents: 1 }))
     ).toBe(undefined)
-    expect(censusGrowthCheckoutTarget(apiError(ErrorCode.InsufficientWalletBalance, growth))).toBeUndefined()
-    expect(censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, { ...growth, processId: 'a/b' }))).toBe(
+    expect(censusGrowthCheckoutTarget(apiError(ApiErrorCode.InsufficientWalletBalance, growth))).toBeUndefined()
+    expect(censusGrowthCheckoutTarget(apiError(ApiErrorCode.PaymentRequired, { ...growth, processId: 'a/b' }))).toBe(
       undefined
     )
     expect(censusGrowthCheckoutTarget(new Error('network down'))).toBeUndefined()
   })
 
   it('has no target above the self-service limit, which checkout refuses', () => {
-    expect(censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, { ...growth, censusSize: 50001 }))).toBe(
+    expect(censusGrowthCheckoutTarget(apiError(ApiErrorCode.PaymentRequired, { ...growth, censusSize: 50001 }))).toBe(
       undefined
     )
     expect(
-      censusGrowthCheckoutTarget(apiError(ErrorCode.PaymentRequired, { ...growth, quoteRequired: true }))
+      censusGrowthCheckoutTarget(apiError(ApiErrorCode.PaymentRequired, { ...growth, quoteRequired: true }))
     ).toBeUndefined()
   })
 })

@@ -1,5 +1,6 @@
+import { ApiErrorCode } from '@vocdoni/api-client'
 import { act, renderHook } from '@testing-library/react'
-import { ApiError, ErrorCode } from '~components/Auth/api'
+import { ApiError } from '~components/Auth/api'
 import { censusCheckoutPath, useBuyRoomAction } from './useBuyRoomAction'
 
 const navigate = vi.hoisted(() => vi.fn())
@@ -21,7 +22,7 @@ const growth = (data: Record<string, unknown> = {}) =>
   new ApiError(
     {
       error: 'payment required',
-      code: ErrorCode.PaymentRequired,
+      code: ApiErrorCode.PaymentRequired,
       data: { processId, censusSize: 700, dueCents: 2000, totalCents: 31000, shortfallCents: 1500, ...data },
     },
     new Response(null, { status: 402 })

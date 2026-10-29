@@ -1,47 +1,29 @@
 import { useMutation } from '@tanstack/react-query'
+import type { ProcessCensusCheckoutRequest, ProcessCheckoutResponse, WalletLedgerEntry } from '@vocdoni/api-types'
 import { useCallback } from 'react'
-import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ensure0x } from '~utils/address'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { defaultSleep, isPermanentFailure } from './process-checkout'
 import { isProcessId } from './process-price'
-import type { Wallet, WalletEntry } from './wallet'
 
-export type CensusCheckoutBody = {
-  // The census size to buy room for, in voters
-  censusSize: number
-  locale?: string
-  returnURL?: string
-}
-
-// Without a session the wallet covered the room and `amountCents` is already debited. With one, the
-// debit follows once the embedded checkout is paid and credited.
-export type CensusCheckoutResponse = {
-  amountCents: number
-  currency: string
-  clientSecret?: string
-  sessionId?: string
-}
-
-export type CensusCheckoutRequest = CensusCheckoutBody & { processId: string }
+// The SDK request, plus the process it is for. `returnURL` is where Stripe sends the browser back.
+export type CensusCheckoutRequest = ProcessCensusCheckoutRequest & { processId: string }
 
 /** Buys room in a process census (POST /processes/{processId}/census/checkout, admin only). */
 export const useCensusCheckout = () => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
-  return useMutation<CensusCheckoutResponse, Error, CensusCheckoutRequest>({
+  return useMutation<ProcessCheckoutResponse, Error, CensusCheckoutRequest>({
     mutationFn: ({ processId, ...body }) => {
       if (!isProcessId(processId)) return Promise.reject(new Error(`invalid process id: ${processId}`))
-      return bearedFetch<CensusCheckoutResponse>(ApiEndpoints.ProcessCensusCheckout.replace('{processId}', processId), {
-        method: 'POST',
-        body,
-      })
+      return client.elections.censusCheckout(processId, body)
     },
   })
 }
 
 // The ledger lines of the payments that bought room for a process
-export const censusPaymentIds = (history: WalletEntry[], processId: string): string[] =>
+export const censusPaymentIds = (history: WalletLedgerEntry[], processId: string): string[] =>
   history.filter((entry) => entry.kind === 'payment' && entry.processId === processId).map((entry) => entry.id)
 
 /**
@@ -49,14 +31,15 @@ export const censusPaymentIds = (history: WalletEntry[], processId: string): str
  * a new payment is on top of it.
  */
 export const useReadWalletHistory = () => {
-  const { bearedFetch, currentAddress } = useAuth()
+  const { client } = useApiClient()
+  const { currentAddress } = useAuth()
 
   return useCallback(() => {
     if (!currentAddress) return Promise.reject(new Error('No organization address selected'))
-    return bearedFetch<Wallet>(
-      `${ApiEndpoints.OrganizationWallet.replace('{address}', ensure0x(currentAddress))}?page=1&limit=10`
-    ).then((wallet) => wallet.history)
-  }, [bearedFetch, currentAddress])
+    return client.organizations
+      .getWallet(ensure0x(currentAddress), { page: 1, limit: 10 })
+      .then((wallet) => wallet.history)
+  }, [client, currentAddress])
 }
 
 export type WaitForCensusPaymentOptions = {
@@ -72,7 +55,7 @@ export type WaitForCensusPaymentOptions = {
   signal?: AbortSignal
 }
 
-export type CensusPaymentWait = { status: 'paid'; entry: WalletEntry } | { status: 'timeout' }
+export type CensusPaymentWait = { status: 'paid'; entry: WalletLedgerEntry } | { status: 'timeout' }
 
 /**
  * Polls the wallet history until a payment for the process appears that was not in `knownIds`, the
@@ -80,7 +63,7 @@ export type CensusPaymentWait = { status: 'paid'; entry: WalletEntry } | { statu
  * credited. `timeout` means the debit may still land, so callers do not say it failed.
  */
 export const waitForCensusPayment = async (
-  readHistory: () => Promise<WalletEntry[]>,
+  readHistory: () => Promise<WalletLedgerEntry[]>,
   processId: string,
   knownIds: string[],
   {
