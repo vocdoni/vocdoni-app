@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { MultilingualText } from '@vocdoni/api-types'
+import type { IntegratorInfo, ManagedOrganizationInfo } from '@vocdoni/api-types'
 import { ensure0x } from '~utils/address'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
@@ -7,35 +7,6 @@ import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { QueryKeys } from './keys'
 
 type ProvisionedOrganization = { address: string }
-
-// Effective caps for the integrator dashboard. Mirrors the backend `IntegratorLimits`. Note the
-// zero semantics are not uniform: `maxVotes === 0` means unlimited, while the other caps at 0 mean
-// no allowance (or "unknown" when an override integrator has no subscription plan to source them).
-export type IntegratorLimits = {
-  maxManagedOrgs: number
-  maxManagedProcesses: number
-  maxVotes: number
-  maxSMS: number
-  maxEmails: number
-}
-
-// Current usage counters (shared pools summed across the integrator's managed orgs). Optional
-// because pay-per-process drops `managedProcesses`; the Overview only shows the counters it gets.
-export type IntegratorUsage = {
-  managedOrgs?: number
-  managedProcesses?: number
-  sentVotes?: number
-  sentSMS?: number
-  sentEmails?: number
-}
-
-// Response of GET /integrator. Under pay-per-process `limits` is absent: integrators are bounded
-// by their prepaid wallet, not by plan caps.
-export type IntegratorInfo = {
-  enabled: boolean
-  limits?: IntegratorLimits
-  usage: IntegratorUsage
-}
 
 /**
  * Reads the signed-in integrator's quota and usage (GET /integrator, path-less — the org is
@@ -51,26 +22,8 @@ export const useIntegratorInfo = () => {
   })
 }
 
-// Per-managed-org usage counters (backend SubscriptionUsage). Fields default to 0.
-export type OrganizationCounters = {
-  sentSMS: number
-  sentEmails: number
-  subOrgs: number
-  users: number
-  processes: number
-}
-
-// A single organization managed by the integrator. `name` is the localized display name set at
-// creation; the rest mirror the backend OrganizationInfo fields we surface.
-export type ManagedOrganization = {
-  address: string
-  counters?: OrganizationCounters
-  createdAt: string
-  name?: MultilingualText
-  description?: MultilingualText
-  type: string
-  website: string
-}
+// A single organization managed by the integrator, with its spend cap and spend (SDK type).
+export type ManagedOrganization = ManagedOrganizationInfo
 
 export type ManagedOrganizationsResponse = {
   pagination: {

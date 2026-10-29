@@ -146,7 +146,11 @@ describe('WalletTopUp', () => {
 
       expect(await screen.findByText('payment-element')).toBeInTheDocument()
       await waitFor(() => expect(mutateAsync).toHaveBeenCalledTimes(1))
-      expect(mutateAsync).toHaveBeenCalledWith({ amountCents: 5000, locale: 'en' })
+      expect(mutateAsync).toHaveBeenCalledWith({
+        amountCents: 5000,
+        locale: 'en',
+        returnURL: expect.stringMatching(/\/return$/),
+      })
     })
 
     it('shows the net amount and the checkout VAT and total', async () => {
@@ -171,12 +175,7 @@ describe('WalletTopUp', () => {
       await user.click(await screen.findByRole('button', { name: 'Pay €50' }))
 
       await waitFor(() => expect(onDone).toHaveBeenCalledWith(5000))
-      expect(confirm).toHaveBeenCalledWith(
-        expect.objectContaining({
-          redirect: 'if_required',
-          returnUrl: expect.stringContaining('session_id=cs_session'),
-        })
-      )
+      expect(confirm).toHaveBeenCalledWith({ redirect: 'if_required' })
     })
 
     it('shows the error and stays when the payment is rejected', async () => {

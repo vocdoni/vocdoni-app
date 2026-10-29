@@ -1,12 +1,13 @@
 import { Alert, Button, Center, Code, Flex, Link, Spinner, Stack, Table, Text } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, Link as RouterLink, useSearchParams } from 'react-router'
+import type { WalletLedgerEntry, WalletLedgerKind } from '@vocdoni/api-types'
+import { generatePath, Link as RouterLink, useLocation, useNavigate, useParams } from 'react-router'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
 import { PrevNextPagination } from '~components/Pagination/PrevNextPagination'
 import { useToast } from '~components/Toast'
-import { isManagedOrgWalletError, useWallet, useWalletAccess, WalletEntry } from '~queries/wallet'
-import { Routes } from '~src/router/routes'
+import { isManagedOrgWalletError, useWallet, useWalletAccess } from '~queries/wallet'
+import { Routes, stripCheckoutReturn } from '~src/router/routes'
 import { shortAddress } from '~utils/address'
 import { currency } from '~utils/numbers'
 import { WalletTopUp } from './TopUp'
@@ -26,12 +27,12 @@ type TopUpWait = TopUpSnapshot & { redirected: boolean }
 
 const NO_SNAPSHOT: TopUpSnapshot = { knownTopupIds: null, amountCents: null }
 
-const topUpIds = (history: WalletEntry[] = []) =>
+const topUpIds = (history: WalletLedgerEntry[] = []) =>
   history.filter((entry) => entry.kind === 'topup').map((entry) => entry.id)
 
 // A top-up is ours when the ledger has a topup entry that was not there before the payment and carries the
 // requested amount. An older top-up or a concurrent debit cannot match, and without a snapshot nothing does.
-const isCredited = (history: WalletEntry[], { knownTopupIds, amountCents }: TopUpSnapshot) =>
+const isCredited = (history: WalletLedgerEntry[], { knownTopupIds, amountCents }: TopUpSnapshot) =>
   knownTopupIds !== null &&
   history.some(
     (entry) =>
@@ -72,7 +73,7 @@ type WalletPanelProps = {
   processLinks?: boolean
 }
 
-const EntryDetail = ({ entry, processLinks }: { entry: WalletEntry } & WalletPanelProps) => {
+const EntryDetail = ({ entry, processLinks }: { entry: WalletLedgerEntry } & WalletPanelProps) => {
   if (!entry.processId && !entry.processOrgAddress) return <Text color='texts.subtle'>-</Text>
 
   return (
@@ -103,14 +104,16 @@ const EntryDetail = ({ entry, processLinks }: { entry: WalletEntry } & WalletPan
 const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const { sessionId } = useParams()
   const { canTopUp } = useWalletAccess()
   const [page, setPage] = useState(1)
   const [view, setView] = useState<'overview' | 'topup'>('overview')
   // Snapshot of the payment being submitted, read back by the inline path; the redirect path reads storage.
   const pendingTopUp = useRef<StoredTopUp | null>(null)
   // Coming back from a redirect-based payment (3DS, bank redirect) starts the same wait as an inline top-up.
-  const [returnedFromCheckout] = useState(() => searchParams.get('topup') === 'return')
+  const [returnedFromCheckout] = useState(() => sessionId !== undefined)
   const [wait, setWait] = useState<TopUpWait | null>(() =>
     returnedFromCheckout ? { ...(readStoredTopUp() ?? NO_SNAPSHOT), redirected: true } : null
   )
@@ -127,18 +130,12 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
   const pagination = wallet.data?.pagination
   const history = wallet.data?.history ?? []
 
+  // Once the return is handled, the wallet tab replaces the return URL so a reload does not repeat it.
   useEffect(() => {
-    if (returnedFromCheckout) clearStoredTopUp()
-    if (!searchParams.has('topup') && !searchParams.has('session_id')) return
-    setSearchParams(
-      (params) => {
-        params.delete('topup')
-        params.delete('session_id')
-        return params
-      },
-      { replace: true }
-    )
-  }, [returnedFromCheckout, searchParams, setSearchParams])
+    if (!sessionId) return
+    clearStoredTopUp()
+    navigate(stripCheckoutReturn(pathname), { replace: true })
+  }, [sessionId, pathname, navigate])
 
   // Polling stops after the timeout; the message then switches to the timed-out one.
   useEffect(() => {
@@ -171,7 +168,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
     setPollRound((round) => round + 1)
   }
 
-  const kindLabels: Record<WalletEntry['kind'], string> = {
+  const kindLabels: Record<WalletLedgerKind, string> = {
     topup: t('wallet.kind.topup', { defaultValue: 'Top-up' }),
     payment: t('wallet.kind.payment', { defaultValue: 'Payment' }),
     creditBack: t('wallet.kind.creditBack', { defaultValue: 'Credit back' }),

@@ -236,6 +236,14 @@ export const useDashboardRoutes = () => {
                         ),
                       },
                       {
+                        path: Routes.dashboard.settings.walletReturn,
+                        element: (
+                          <SuspenseLoader>
+                            <WalletPanel processLinks />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
                         path: Routes.dashboard.settings.subscription,
                         element: (
                           <SuspenseLoader>

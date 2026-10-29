@@ -6,7 +6,7 @@ import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
 import QueryDataLayout from '~components/Layout/QueryDataLayout'
 import { useWalletAccess } from '~queries/wallet'
-import { Routes } from '~src/router/routes'
+import { Routes, stripCheckoutReturn } from '~src/router/routes'
 
 type MenuItem = {
   label: string
@@ -50,7 +50,8 @@ const Settings = () => {
   ]
 
   const currentTabIndex = useMemo(
-    () => menuItems.findIndex((item) => (item.route ? location.pathname.endsWith(item.route) : false)),
+    () =>
+      menuItems.findIndex((item) => (item.route ? stripCheckoutReturn(location.pathname).endsWith(item.route) : false)),
     [location.pathname, menuItems]
   )
   const activeTabValue = currentTabIndex === -1 ? menuItems[0]?.route : menuItems[currentTabIndex]?.route

@@ -31,6 +31,16 @@ export const useCheckoutAppearance = (): Appearance => {
   }
 }
 
+// Base for a redirect-based payment's return URL: the current page without query or hash, with
+// `segment` appended. Stripe adds `/{sessionId}` after it, so the route is `<page>/<segment>/:sessionId`.
+export const checkoutReturnBase = (segment = 'return'): string => {
+  const url = new URL(window.location.href)
+  url.search = ''
+  url.hash = ''
+  url.pathname = `${url.pathname.replace(/\/+$/, '')}/${segment}`
+  return url.toString()
+}
+
 // Current URL with the given search params set (null/undefined skipped) and the hash removed,
 // so the user lands back on the same locale after the checkout process.
 export const checkoutReturnUrl = (params: Record<string, string | null | undefined>): string => {

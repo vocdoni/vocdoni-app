@@ -10,7 +10,7 @@ import type { StripeCheckoutOptions } from '@stripe/stripe-js'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
-import { checkoutReturnUrl, useCheckoutAppearance, useStripePromise } from '~components/Pricing/stripe'
+import { checkoutReturnBase, useCheckoutAppearance, useStripePromise } from '~components/Pricing/stripe'
 import { useWalletTopUp, WALLET_TOPUP_MAX_CENTS, WALLET_TOPUP_MIN_CENTS } from '~queries/wallet'
 import { currency } from '~utils/numbers'
 
@@ -92,13 +92,12 @@ type PaymentStepProps = {
 
 type CheckoutFormProps = {
   amountCents: number
-  sessionId: string | null
   onBack: () => void
   onStart?: (amountCents: number) => void
   onDone: (amountCents: number) => void
 }
 
-const CheckoutForm = ({ amountCents, sessionId, onBack, onStart, onDone }: CheckoutFormProps) => {
+const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProps) => {
   const { t } = useTranslation()
   const checkoutState = useCheckout()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -114,10 +113,8 @@ const CheckoutForm = ({ amountCents, sessionId, onBack, onStart, onDone }: Check
     onStart?.(amountCents)
 
     try {
-      const result = await checkoutState.checkout.confirm({
-        redirect: 'if_required',
-        returnUrl: checkoutReturnUrl({ topup: 'return', session_id: sessionId }),
-      })
+      // No returnUrl here: the session already carries the return URL sent with the top-up.
+      const result = await checkoutState.checkout.confirm({ redirect: 'if_required' })
       if (result.type === 'error') {
         setError(result.error.message)
         setIsSubmitting(false)
@@ -215,15 +212,14 @@ const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps)
   const stripePromise = useStripePromise()
   const appearance = useCheckoutAppearance()
   const { mutateAsync: createTopUp } = useWalletTopUp()
-  const [sessionId, setSessionId] = useState<string | null>(null)
 
-  // The return URL is passed to checkout.confirm() instead, so the body does not carry one.
+  // Stripe redirects a bank-redirect payment to returnURL + /{sessionId}; the wallet return route takes it from there.
   const fetchClientSecret = useCallback(async () => {
-    const { clientSecret, sessionId: newSessionId } = await createTopUp({
+    const { clientSecret } = await createTopUp({
       amountCents,
       locale: i18n.resolvedLanguage,
+      returnURL: checkoutReturnBase(),
     })
-    setSessionId(newSessionId)
     return clientSecret
   }, [createTopUp, amountCents, i18n.resolvedLanguage])
 
@@ -251,7 +247,7 @@ const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps)
 
   return (
     <CheckoutProvider stripe={stripePromise} options={options}>
-      <CheckoutForm amountCents={amountCents} sessionId={sessionId} onBack={onBack} onStart={onStart} onDone={onDone} />
+      <CheckoutForm amountCents={amountCents} onBack={onBack} onStart={onStart} onDone={onDone} />
     </CheckoutProvider>
   )
 }
