@@ -33,7 +33,7 @@ export const OrganizationsUnavailable = ({ onRetry }: OrganizationsUnavailablePr
 
   return (
     <Flex flexDirection='column'>
-      <Card.Root variant='no-elections' minH='100%' maxW='650px' mx='auto'>
+      <Card.Root variant='plain' minH='100%' maxW='650px' mx='auto'>
         <Card.Body>
           <EmptyState
             icon={RefreshIcon}

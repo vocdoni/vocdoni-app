@@ -108,7 +108,8 @@ export const Card = defineSlotRecipe({
           },
         },
       },
-      'no-elections': {
+      // A filled card without a border, around a page-level empty state.
+      plain: {
         root: {
           bgColor: 'bg.panel',
         },

@@ -16,7 +16,7 @@ const NoElections = () => {
   const isOwner = sameAddress(currentAddress, organization?.address)
 
   return (
-    <Card.Root variant='no-elections' minH='100%'>
+    <Card.Root variant='plain' minH='100%'>
       <Card.Body>
         <EmptyState
           image={empty}
