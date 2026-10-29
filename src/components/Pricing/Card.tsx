@@ -4,7 +4,7 @@ import gsap from 'gsap'
 import { ReactNode, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCircleCheckBig } from 'react-icons/lu'
+import { IncludedIcon } from '~theme/icons'
 import { Link as RouterLink, useLocation } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import ContactButton from '~components/ContactLink'
@@ -148,7 +148,7 @@ const PricingCard = ({
             <Separator />
             {!isCustomPlan && plan.freeTrialDays > 0 && !hadSubscribed && period === 'year' && (
               <Text fontWeight='extrabold' display='flex' flexDir='row' alignItems='center' mt={1}>
-                <Icon as={LuCircleCheckBig} mr={1} />
+                <Icon as={IncludedIcon} mr={1} />
                 <Trans
                   i18nKey='pricing_card.free_trial'
                   defaults='{{ freeDays }}-day free trial'

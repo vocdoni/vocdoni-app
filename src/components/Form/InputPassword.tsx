@@ -9,8 +9,7 @@ import {
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { MdOutlineRemoveRedEye } from 'react-icons/md'
-import { RiEyeCloseLine } from 'react-icons/ri'
+import { LegacyPasswordHideIcon, LegacyPasswordViewIcon } from '~theme/icons'
 
 export interface InputPasswordProps {
   formValue: string
@@ -58,7 +57,7 @@ const InputPassword = ({
         endElement={
           <Icon
             _hover={{ cursor: 'pointer' }}
-            as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+            as={show ? LegacyPasswordHideIcon : LegacyPasswordViewIcon}
             onClick={handleClick}
           />
         }

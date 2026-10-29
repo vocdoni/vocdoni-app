@@ -33,7 +33,7 @@ import { PaginationProvider, usePagination } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCalendar, LuClock, LuEllipsis, LuEye, LuPencil, LuTrash, LuUsers, LuVote } from 'react-icons/lu'
+import { CalendarIcon, ClockIcon, EditIcon, MoreIcon, TrashIcon, UsersIcon, ViewIcon, VoteIcon } from '~theme/icons'
 import { generatePath, useNavigate } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { DashboardBox } from '~components/Dashboard/Contents'
@@ -119,7 +119,7 @@ const GroupsInfo = () => {
     <DashboardBox position='relative' flexDirection='column' display='flex' gap={2} p={6} borderColor='border'>
       <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorPalette='gray' size='sm' />
       <Flex flexDirection='row' gap={4}>
-        <Icon as={LuUsers} boxSize={8} />
+        <Icon as={UsersIcon} boxSize={8} />
         <Flex flexDirection='column' gap={4}>
           <Text fontSize='md' fontWeight='bold'>
             {t('groups_board.info.title', { defaultValue: 'About Groups' })}
@@ -302,7 +302,7 @@ const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteMo
       <MenuRoot>
         <MenuTrigger asChild>
           <IconButton aria-label={t('actions.more', { defaultValue: 'More options' })} variant='ghost' size='sm'>
-            <Icon as={LuEllipsis} />
+            <Icon as={MoreIcon} />
           </IconButton>
         </MenuTrigger>
         <MenuPositioner>
@@ -310,26 +310,26 @@ const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteMo
             {!group.isAutoGroup && (
               <MenuItem value='edit' onClick={onEditDrawerOpen}>
                 <HStack gap={2}>
-                  <Icon boxSize={4} as={LuPencil} />
+                  <Icon as={EditIcon} />
                   <Text as='span'>{t('actions.edit', { defaultValue: 'Edit' })}</Text>
                 </HStack>
               </MenuItem>
             )}
             <MenuItem value='members' onClick={onMembersDrawerOpen}>
               <HStack gap={2}>
-                <Icon boxSize={4} as={LuEye} />
+                <Icon as={ViewIcon} />
                 <Text as='span'>{t('group.actions.view_members', { defaultValue: 'View Members' })}</Text>
               </HStack>
             </MenuItem>
             <MenuItem value='vote' onClick={() => navigateToVote(group.id)}>
               <HStack gap={2}>
-                <Icon boxSize={4} as={LuVote} />
+                <Icon as={VoteIcon} />
                 <Text as='span'>{t('group.actions.create_vote', { defaultValue: 'Create a Vote' })}</Text>
               </HStack>
             </MenuItem>
             <MenuItem value='history' disabled onClick={onHistoryOpen}>
               <HStack gap={2}>
-                <Icon boxSize={4} as={LuClock} />
+                <Icon as={ClockIcon} />
                 <Text as='span'>{t('group.actions.history', { defaultValue: 'History' })}</Text>
               </HStack>
             </MenuItem>
@@ -338,7 +338,7 @@ const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteMo
                 <MenuSeparator />
                 <MenuItem value='delete' color='destructive.fg' onClick={onDeleteModalOpen}>
                   <HStack gap={2}>
-                    <Icon boxSize={4} as={LuTrash} />
+                    <Icon as={TrashIcon} />
                     <Text as='span'>{t('group.actions.delete_group', { defaultValue: 'Delete Group' })}</Text>
                   </HStack>
                 </MenuItem>
@@ -394,7 +394,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
                 colorPalette={statusPalette.destructive}
                 variant='outline'
               >
-                <Icon as={LuTrash} />
+                <Icon as={TrashIcon} />
                 {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
               </Button>
             </>
@@ -536,17 +536,17 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
             </Flex>
             <Flex justify='space-between' mt={4} gap={2}>
               <Button size='xs' onClick={() => navigateToVote(group.id)}>
-                <Icon as={LuVote} boxSize={4} />
+                <Icon as={VoteIcon} boxSize='icon.sm' />
                 {t('group.create_vote', { defaultValue: 'Create a Vote' })}
               </Button>
               {!group.isAutoGroup && (
                 <>
                   <Button variant='outline' onClick={onEditDrawerOpen} size='xs'>
-                    <Icon as={LuPencil} boxSize={4} />
+                    <Icon as={EditIcon} boxSize='icon.sm' />
                     {t('actions.edit', { defaultValue: 'Edit' })}
                   </Button>
                   <Button onClick={openDeleteModal} colorPalette={statusPalette.destructive} size='xs'>
-                    <Icon as={LuTrash} boxSize={4} />
+                    <Icon as={TrashIcon} boxSize='icon.sm' />
                     {t('group.delete_group', { defaultValue: 'Delete group' })}
                   </Button>
                 </>
@@ -689,7 +689,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
         <Card.Body p={0}>
           <Flex direction='column' gap={2}>
             <Flex align='center' gap={2}>
-              <Icon as={LuCalendar} boxSize={3.5} />
+              <Icon as={CalendarIcon} boxSize={3.5} />
               <Text color='fg.muted' fontSize='sm'>
                 {t('group.created_on', {
                   defaultValue: 'Created {{date}}',
@@ -702,7 +702,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
               </Text>
             </Flex>
             <Flex align='center' gap={2}>
-              <Icon as={LuUsers} boxSize={3.5} />
+              <Icon as={UsersIcon} boxSize={3.5} />
               <Button variant='text-link' onClick={onMembersDrawerOpen}>
                 {t('group.members', {
                   defaultValue: '{{count}} member',
@@ -718,7 +718,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
         </Card.Body>
         <Card.Footer px={0} pb={0} mt={3}>
           <Button w='full' size='xs' onClick={() => navigateToVote(group.id)}>
-            <Icon boxSize={4} as={LuVote} />
+            <Icon boxSize='icon.sm' as={VoteIcon} />
             {t('group.create_vote', { defaultValue: 'Create a Vote' })}
           </Button>
         </Card.Footer>

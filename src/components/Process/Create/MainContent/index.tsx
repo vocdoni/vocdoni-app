@@ -13,7 +13,7 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuPlus } from 'react-icons/lu'
+import { AddIcon } from '~theme/icons'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { defaultQuestion } from '../common'
 import { QuestionForm } from './QuestionForm'
@@ -103,7 +103,7 @@ export const Questions = () => {
 
       <Button variant='outline' onClick={addQuestion}>
         <HStack gap={2}>
-          <Icon as={LuPlus} />
+          <Icon as={AddIcon} />
           <Text as='span'>
             <Trans i18nKey='process.create.question.add'>Add question</Trans>
           </Text>

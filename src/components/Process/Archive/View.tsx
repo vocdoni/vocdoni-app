@@ -1,6 +1,6 @@
 import { Badge, Box, Card, Flex, Heading, HStack, Image, Link, Progress, Text, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuExternalLink } from 'react-icons/lu'
+import { ExternalLinkIcon } from '~theme/icons'
 import Editor from '~components/Editor'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { useDateFns } from '~i18n/use-date-fns'
@@ -135,12 +135,12 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
           href={`${explorerUrl}/process/${election.id}`}
           target='_blank'
           rel='noopener noreferrer'
-          fontSize='sm'
+          size='sm'
           display='inline-flex'
           alignItems='center'
           gap={1}
         >
-          <LuExternalLink />
+          <ExternalLinkIcon />
           {t('public_process.verify_process', { defaultValue: 'View process' })}
         </Link>
       </Box>

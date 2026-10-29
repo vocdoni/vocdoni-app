@@ -1,7 +1,7 @@
 import { Box, Button, HStack, Icon, Link, Spinner, Text } from '@chakra-ui/react'
 import { forwardRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuCircleAlert, LuCircleCheck, LuExternalLink, LuTriangleAlert } from 'react-icons/lu'
+import { ErrorIcon, ExternalLinkIcon, SuccessIcon, WarningIcon } from '~theme/icons'
 import { Routes } from '~routes'
 import { CensusCheckIssues, CensusCheckOutcome, CensusCheckStatus } from './useCensusCheck'
 
@@ -77,7 +77,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
       } else if (passwordOnly) {
         // Save is disabled in this state, so the line says what to change rather than just refusing.
         content = (
-          <Line icon={<Icon as={LuCircleAlert} boxSize={4} />} color='fg.error'>
+          <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' />} color='fg.error'>
             {t('voter_auth.password_needs_another_credential', {
               defaultValue:
                 'A password alone cannot identify voters. Pick another detail too, or send a one-time code.',
@@ -86,14 +86,14 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
         )
       } else if (emptyAttempt) {
         content = (
-          <Line icon={<Icon as={LuCircleAlert} boxSize={4} />} color='fg.error'>
+          <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' />} color='fg.error'>
             {t('voter_auth.status.empty', { defaultValue: 'Choose at least one detail or a code.' })}
           </Line>
         )
       }
     } else if (shown.status === 'valid') {
       content = (
-        <Line icon={<Icon as={LuCircleCheck} boxSize={4} color='fg.success' />} busy={rechecking}>
+        <Line icon={<Icon as={SuccessIcon} boxSize='icon.sm' color='fg.success' />} busy={rechecking}>
           {membersCount
             ? t('voter_auth.status.valid_count', {
                 defaultValue: 'All {{count}} members can sign in.',
@@ -105,13 +105,13 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
     } else if (shown.status === 'rejected') {
       // Saving is refused in this state too, so the line must not promise otherwise.
       content = (
-        <Line icon={<Icon as={LuCircleAlert} boxSize={4} color='fg.error' />} busy={rechecking}>
+        <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' color='fg.error' />} busy={rechecking}>
           {t('voter_auth.status.rejected', { defaultValue: "This sign-in can't be used with your member list." })}
         </Line>
       )
     } else if (shown.status === 'unavailable') {
       content = (
-        <Line icon={<Icon as={LuTriangleAlert} boxSize={4} color='fg.warning' />} busy={rechecking}>
+        <Line icon={<Icon as={WarningIcon} boxSize='icon.sm' color='fg.warning' />} busy={rechecking}>
           {t('voter_auth.status.unavailable', {
             defaultValue: "We couldn't check your member list. You can still save.",
           })}{' '}
@@ -131,7 +131,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
       // blocked either way (a duplicate makes the backend refuse the whole
       // census), so no guessed consequence and no advice on what to pick.
       content = (
-        <Line icon={<Icon as={LuCircleAlert} boxSize={4} color='fg.error' />} busy={rechecking}>
+        <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' color='fg.error' />} busy={rechecking}>
           {duplicates > 0 && (
             <Text as='span' fontSize='inherit' fontWeight='medium' color='fg.error'>
               {t('voter_auth.status.duplicated_members', {
@@ -153,9 +153,9 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
                 </Text>
               )
             )}
-          <Link href={Routes.dashboard.memberbase.base} target='_blank' rel='noopener noreferrer' fontWeight='medium'>
+          <Link href={Routes.dashboard.memberbase.base} target='_blank' rel='noopener noreferrer' emphasis='medium'>
             {t('voter_auth.status.fix', { defaultValue: 'Fix your member list' })}
-            <Icon as={LuExternalLink} boxSize={3} />
+            <Icon as={ExternalLinkIcon} boxSize={3} />
           </Link>
         </Line>
       )

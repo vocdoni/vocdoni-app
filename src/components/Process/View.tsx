@@ -24,7 +24,7 @@ import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { RiBarChartBoxLine, RiErrorWarningLine } from 'react-icons/ri'
+import { LegacyErrorIcon, LegacyResultsIcon } from '~theme/icons'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { getPublicProcessSummaryPath } from '~src/ssr/public-pages'
@@ -133,14 +133,14 @@ const ProcessInfoPanel = () => {
           borderRadius='lg'
           p={2}
         >
-          <Icon as={RiErrorWarningLine} />
+          <Icon as={LegacyErrorIcon} />
           <ProcessInfoCard label={t('process.status.paused')} description={t('process.status.paused_description')} />
         </Flex>
       )}
       <Button asChild variant='outline' size='sm' alignSelf='start'>
         {/* Plain anchor (not a router Link): the public process view renders without a router context. */}
         <a href={getPublicProcessSummaryPath({ id: election.id, language })}>
-          <Icon as={RiBarChartBoxLine} />
+          <Icon as={LegacyResultsIcon} />
           {t('process.summary.view_summary')}
         </a>
       </Button>

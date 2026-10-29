@@ -4,15 +4,15 @@ import { useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import {
-  LuChartColumn,
-  LuCircleCheckBig,
-  LuMail,
-  LuPalette,
-  LuShield,
-  LuUserCheck,
-  LuUsers,
-  LuVote,
-} from 'react-icons/lu'
+  CustomizationIcon,
+  IncludedIcon,
+  MailIcon,
+  ResultsIcon,
+  SecurityIcon,
+  UserCheckIcon,
+  UsersIcon,
+  VoteIcon,
+} from '~theme/icons'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
@@ -121,39 +121,39 @@ export const usePlanTranslations = (plans?: Plan[]) => {
       }),
       features: [
         {
-          icon: LuUsers,
+          icon: UsersIcon,
           text: t('pricing.core_voting', {
             defaultValue: 'Up to {{ count }} members',
             count: getMembers(PlanName.Free, 100),
           }),
         },
         {
-          icon: LuVote,
+          icon: VoteIcon,
           text: t('pricing.yearly_processes', {
             defaultValue: '{{ count }} votes per year¹',
             count: getProcesses(PlanName.Free, 10),
           }),
         },
         {
-          icon: LuUserCheck,
+          icon: UserCheckIcon,
           text: t('pricing.up_to_admins', {
             defaultValue: '{{ count }} admins',
             count: getTeamMembers(PlanName.Free, 1),
           }),
         },
         {
-          icon: LuCircleCheckBig,
+          icon: IncludedIcon,
           text: t('pricing.different_voting_methods', { defaultValue: 'Different voting methods' }),
         },
         {
-          icon: LuShield,
+          icon: SecurityIcon,
           text: t('pricing.2fa', {
             suffix: get2FA(PlanName.Free),
             defaultValue: '2FA authentication² ({{suffix}})',
           }),
         },
-        { icon: LuChartColumn, text: t('pricing.basic_analytics', { defaultValue: 'Basic analytics' }) },
-        { icon: LuMail, text: t('pricing.ticket_support_72', { defaultValue: 'Email support (72h)' }) },
+        { icon: ResultsIcon, text: t('pricing.basic_analytics', { defaultValue: 'Basic analytics' }) },
+        { icon: MailIcon, text: t('pricing.ticket_support_72', { defaultValue: 'Email support (72h)' }) },
       ],
     },
     [PlanName.Starter]: {
@@ -163,32 +163,32 @@ export const usePlanTranslations = (plans?: Plan[]) => {
       }),
       features: [
         {
-          icon: LuUsers,
+          icon: UsersIcon,
           text: t('pricing.core_voting', {
             count: getMembers(PlanName.Starter, 500),
           }),
         },
         {
-          icon: LuVote,
+          icon: VoteIcon,
           text: t('pricing.yearly_processes', {
             count: getProcesses(PlanName.Starter, 20),
           }),
         },
         {
-          icon: LuUserCheck,
+          icon: UserCheckIcon,
           text: t('pricing.up_to_admins', {
             count: getTeamMembers(PlanName.Starter, 1),
           }),
         },
-        { icon: LuCircleCheckBig, text: t('pricing.different_voting_methods') },
+        { icon: IncludedIcon, text: t('pricing.different_voting_methods') },
         {
-          icon: LuShield,
+          icon: SecurityIcon,
           text: t('pricing.2fa', {
             suffix: get2FA(PlanName.Starter),
           }),
         },
-        { icon: LuChartColumn, text: t('pricing.basic_analytics', { defaultValue: 'Basic analytics' }) },
-        { icon: LuMail, text: t('pricing.ticket_support_48', { defaultValue: 'Email support (48h)' }) },
+        { icon: ResultsIcon, text: t('pricing.basic_analytics', { defaultValue: 'Basic analytics' }) },
+        { icon: MailIcon, text: t('pricing.ticket_support_48', { defaultValue: 'Email support (48h)' }) },
       ],
     },
     [PlanName.Professional]: {
@@ -198,32 +198,32 @@ export const usePlanTranslations = (plans?: Plan[]) => {
       }),
       features: [
         {
-          icon: LuUsers,
+          icon: UsersIcon,
           text: t('pricing.core_voting', {
             count: getMembers(PlanName.Professional, 2000),
           }),
         },
         {
-          icon: LuVote,
+          icon: VoteIcon,
           text: t('pricing.yearly_processes', {
             count: getProcesses(PlanName.Professional, 50),
           }),
         },
         {
-          icon: LuUserCheck,
+          icon: UserCheckIcon,
           text: t('pricing.up_to_admins', {
             count: getTeamMembers(PlanName.Professional, 5),
           }),
         },
-        { icon: LuCircleCheckBig, text: t('pricing.different_voting_methods') },
+        { icon: IncludedIcon, text: t('pricing.different_voting_methods') },
         {
-          icon: LuShield,
+          icon: SecurityIcon,
           text: t('pricing.2fa', {
             suffix: get2FA(PlanName.Professional),
           }),
         },
-        { icon: LuPalette, text: t('pricing.custom_branding', { defaultValue: 'Custom branding*' }) },
-        { icon: LuMail, text: t('pricing.priority_support', { defaultValue: 'Priority email support (24h)' }) },
+        { icon: CustomizationIcon, text: t('pricing.custom_branding', { defaultValue: 'Custom branding*' }) },
+        { icon: MailIcon, text: t('pricing.priority_support', { defaultValue: 'Priority email support (24h)' }) },
       ],
     },
   }

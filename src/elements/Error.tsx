@@ -2,8 +2,7 @@ import { Button, Flex, Icon } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isRouteErrorResponse, useLocation, useNavigate, useRouteError } from 'react-router'
-import { LuHouse, LuLayoutDashboard, LuRotateCw } from 'react-icons/lu'
-import { RiErrorWarningLine } from 'react-icons/ri'
+import { DashboardIcon, HomeIcon, LegacyErrorIcon, RetryIcon } from '~theme/icons'
 import { useAuth } from '~components/Auth/useAuth'
 import { Heading, SubHeading } from '~components/Dashboard/Contents'
 import { Routes } from '~src/router/routes'
@@ -33,19 +32,19 @@ export const ErrorView = ({ isNotFound = false, onReturnHome, returnHomeHref, re
   const returnContent =
     returnTo === 'dashboard' ? (
       <>
-        <Icon as={LuLayoutDashboard} />
+        <Icon as={DashboardIcon} />
         {t('error.go_to_dashboard', { defaultValue: 'Go to dashboard' })}
       </>
     ) : (
       <>
-        <Icon as={LuHouse} />
+        <Icon as={HomeIcon} />
         {t('error.return_to_home')}
       </>
     )
 
   return (
     <Flex direction='column' align='center' justify='center' textAlign='center' gap={3} minH='30vh' px={4}>
-      <Icon as={RiErrorWarningLine} boxSize={12} color='fg.muted' />
+      <Icon as={LegacyErrorIcon} boxSize='icon.xl' color='fg.muted' />
       <Heading size='lg'>{t('error.crash_title', { defaultValue: 'Something went wrong' })}</Heading>
       <SubHeading m={0} maxW='45ch'>
         {t('error.crash_description', {
@@ -55,7 +54,7 @@ export const ErrorView = ({ isNotFound = false, onReturnHome, returnHomeHref, re
 
       <Flex gap={3} wrap='wrap' justify='center'>
         <Button variant='outline' onClick={() => window.location.reload()}>
-          <Icon as={LuRotateCw} />
+          <Icon as={RetryIcon} />
           {t('error.reload', { defaultValue: 'Reload' })}
         </Button>
         {returnHomeHref ? (

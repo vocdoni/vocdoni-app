@@ -16,7 +16,7 @@ import { useElection } from '@vocdoni/react-components'
 import { TFunction } from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCircleHelp, LuSearch } from 'react-icons/lu'
+import { HelpIcon, SearchIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { SidebarSubtitle } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
@@ -155,7 +155,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
         <TooltipRoot positioning={{ placement: 'top' }}>
           <TooltipTrigger asChild>
             <chakra.span display='inline-flex' alignItems='center' cursor='default' color='fg.muted' opacity={0.5}>
-              <Icon as={LuCircleHelp} boxSize={3} />
+              <Icon as={HelpIcon} boxSize={3} />
             </chakra.span>
           </TooltipTrigger>
           <TooltipPositioner>
@@ -182,7 +182,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
         onChange={(option: { value: ProcessParticipantLookupField } | null) => option && setFieldName(option.value)}
         aria-label={t('census.search.field_selector', { defaultValue: 'Search field' })}
       />
-      <InputGroup endElement={<Icon as={LuSearch} color='fg.muted' />}>
+      <InputGroup endElement={<Icon as={SearchIcon} color='fg.muted' />}>
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}

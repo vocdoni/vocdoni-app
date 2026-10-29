@@ -1,7 +1,7 @@
 import { Button, Card, Flex } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Trans } from 'react-i18next'
-import { LuRefreshCw } from 'react-icons/lu'
+import { RefreshIcon } from '~theme/icons'
 import { useAuth } from '~components/Auth/useAuth'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { EmptyState } from '~components/ui/EmptyState'
@@ -31,7 +31,7 @@ export const OrganizationsUnavailable = () => {
       <Card.Root variant='no-elections' minH='100%' maxW='650px' mx='auto'>
         <Card.Body>
           <EmptyState
-            icon={LuRefreshCw}
+            icon={RefreshIcon}
             title={<Trans i18nKey='organization.unavailable_title'>We couldn't load your organizations</Trans>}
             description={
               <Trans i18nKey='organization.unavailable_description'>

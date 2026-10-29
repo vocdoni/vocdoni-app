@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuPanelLeft, LuPlus } from 'react-icons/lu'
+import { AddIcon, SidebarIcon } from '~theme/icons'
 import { generatePath, Link as ReactRouterLink, Link as RouterLink } from 'react-router'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { VocdoniLogo } from '~components/Layout/Logo'
@@ -188,14 +188,14 @@ const DashboardMenuContent = ({
             pointerEvents={reduced ? 'none' : 'auto'}
             zIndex='contents'
           >
-            <Icon as={LuPanelLeft} />
+            <Icon as={SidebarIcon} />
           </IconButton>
         </Flex>
         {menu.newVote && (
           <Button asChild w='full' minW={0} mt={2} mb={8} size={'xs'}>
             <RouterLink to={generatePath(Routes.processes.create)}>
               <HStack gap={reduced ? 0 : 2}>
-                <Icon as={LuPlus} boxSize={4} />
+                <Icon as={AddIcon} boxSize='icon.sm' />
                 {!reduced && (
                   <Text as='span'>
                     <Trans i18nKey='new_vote'>New vote</Trans>

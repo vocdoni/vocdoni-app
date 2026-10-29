@@ -6,7 +6,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import { useState } from 'react'
 import type { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
-import { LuFileDown } from 'react-icons/lu'
+import { DownloadFileIcon } from '~theme/icons'
 
 import { useToast } from '~components/Toast'
 import { Tooltip } from '~components/ui/Tooltip'
@@ -154,7 +154,7 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
         <Box w='full'>
           <Button disabled variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
             <HStack gap={2}>
-              <Icon as={LuFileDown} />
+              <Icon as={DownloadFileIcon} />
               <Text as='span'>{t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}</Text>
             </HStack>
           </Button>
@@ -175,7 +175,7 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
       onClick={download}
     >
       <HStack gap={2}>
-        <Icon as={LuFileDown} />
+        <Icon as={DownloadFileIcon} />
         <Text as='span'>{t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}</Text>
       </HStack>
     </Button>

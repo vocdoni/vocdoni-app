@@ -33,16 +33,16 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import {
-  LuEllipsis,
-  LuListPlus,
-  LuPlus,
-  LuSearch,
-  LuSettings,
-  LuTrash2,
-  LuUserPlus,
-  LuUsers,
-  LuX,
-} from 'react-icons/lu'
+  AddIcon,
+  AddToListIcon,
+  AddUserIcon,
+  CloseIcon,
+  DeleteIcon,
+  MoreIcon,
+  SearchIcon,
+  SettingsIcon,
+  UsersIcon,
+} from '~theme/icons'
 import { generatePath, useNavigate, useOutletContext } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
@@ -166,7 +166,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
               size='sm'
               onClick={onClose}
             >
-              <LuX />
+              <CloseIcon />
             </IconButton>
           </Drawer.Header>
 
@@ -178,7 +178,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
                 <Flex align='center' gap={2}>
                   {option.title}
                   <Box fontSize='sm' color='fg.muted'>
-                    <Icon as={LuUsers} />
+                    <Icon as={UsersIcon} />
                     {option.membersCount}
                   </Box>
                 </Flex>
@@ -305,7 +305,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
               size='sm'
               onClick={handleClose}
             >
-              <LuX />
+              <CloseIcon />
             </IconButton>
           </Drawer.Header>
 
@@ -362,7 +362,7 @@ const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: Member
       <Menu.Root>
         <Menu.Trigger asChild>
           <IconButton variant='ghost' size='sm' aria-label={t('members.table.actions', { defaultValue: 'Actions' })}>
-            <LuEllipsis />
+            <MoreIcon />
           </IconButton>
         </Menu.Trigger>
         <Menu.Positioner>
@@ -406,7 +406,7 @@ const ColumnManager = () => {
         size='sm'
         onClick={onOpen}
       >
-        <LuSettings />
+        <SettingsIcon />
       </IconButton>
       <Drawer.Root open={isOpen} placement='end' onOpenChange={({ open }) => (!open ? onClose() : undefined)}>
         <Drawer.Backdrop />
@@ -472,7 +472,7 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
         onSubmit={handleSubmit}
         endElement={
           <IconButton size='xs' variant='plain' aria-label='search' type='submit'>
-            <Icon as={LuSearch} />
+            <Icon as={SearchIcon} />
           </IconButton>
         }
       >
@@ -484,7 +484,7 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
       </InputGroup>
       {data?.members?.length >= 1 && (
         <Button variant='outline' colorPalette={statusPalette.destructive} onClick={onDelete}>
-          <Icon as={LuTrash2} />
+          <Icon as={DeleteIcon} />
           {t('members.table.delete_all', {
             defaultValue: 'Delete (All)',
           })}
@@ -554,7 +554,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
   return (
     <>
       <Button size='sm' variant='outline' onClick={onOpen} {...rest}>
-        <Icon as={LuUsers} />
+        <Icon as={UsersIcon} />
         {children}
       </Button>
       <Drawer.Root open={isOpen} placement='end' onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
@@ -568,7 +568,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
               right={1.5}
               onClick={onClose}
             >
-              <Icon as={LuX} />
+              <Icon as={CloseIcon} />
             </IconButton>
             <Drawer.Header display='flex' flexDirection='column' gap={2}>
               <Heading size='md'>
@@ -670,15 +670,15 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
           </Text>
           <CreateGroupButton>{t('members.table.create_group', { defaultValue: 'Create group' })}</CreateGroupButton>
           <Button size='sm' variant='outline' onClick={() => onAddToGroup()}>
-            <Icon as={LuUserPlus} />
+            <Icon as={AddUserIcon} />
             {t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
           </Button>
           <Button size='sm' variant='outline' onClick={() => onAddToCensus()}>
-            <Icon as={LuListPlus} />
+            <Icon as={AddToListIcon} />
             {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
           </Button>
           <Button size='sm' colorPalette={statusPalette.destructive} variant='outline' onClick={() => onDelete()}>
-            <Icon as={LuTrash2} />
+            <Icon as={DeleteIcon} />
             {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
           </Button>
         </>
@@ -980,7 +980,7 @@ const MembersTable = () => {
             <MemberManager
               control={
                 <Button>
-                  <Icon as={LuPlus} />
+                  <Icon as={AddIcon} />
                   {t('memberbase.add_member.button', { defaultValue: 'Add Member' })}
                 </Button>
               }

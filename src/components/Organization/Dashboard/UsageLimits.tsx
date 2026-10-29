@@ -18,7 +18,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuInfo, LuMail, LuMessageSquare, LuUsers, LuVote } from 'react-icons/lu'
+import { InfoIcon, MailIcon, MessageIcon, UsersIcon, VoteIcon } from '~theme/icons'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
@@ -51,14 +51,14 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
     <Box>
       <Flex justify='space-between' align='center' mb={2}>
         <HStack gap={2}>
-          <Icon as={icon} boxSize={4} color={`${color}.icon`} />
+          <Icon as={icon} color={`${color}.icon`} />
           <Text fontSize='sm' fontWeight='medium' color='fg'>
             {label}
             {tooltip && (
               <TooltipRoot>
                 <TooltipTrigger asChild>
                   <chakra.span verticalAlign='middle'>
-                    <Icon as={LuInfo} ml={1} />
+                    <Icon as={InfoIcon} ml={1} />
                   </chakra.span>
                 </TooltipTrigger>
                 <TooltipPositioner>
@@ -115,7 +115,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
   const usageMetrics: UsageMetric[] = [
     {
-      icon: LuVote,
+      icon: VoteIcon,
       label: t('dashboard.usage.voting_processes', { defaultValue: 'Voting processes' }),
       current: usage.processes || 0,
       max: maxProcesses,
@@ -126,7 +126,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
       }),
     },
     {
-      icon: LuUsers,
+      icon: UsersIcon,
       label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase size' }),
       current: membersData?.pagination?.totalItems || 0,
       max: maxCensusSize,
@@ -140,7 +140,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
   // Add 2FA metrics if they exist
   if (email2FA > 0) {
     usageMetrics.push({
-      icon: LuMail,
+      icon: MailIcon,
       label: t('dashboard.usage.2fa_email', { defaultValue: '2FA email codes' }),
       current: usage.sentEmails || 0,
       max: email2FA,
@@ -155,7 +155,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
   if (sms2FA > 0) {
     usageMetrics.push({
-      icon: LuMessageSquare,
+      icon: MessageIcon,
       label: t('dashboard.usage.2fa_sms', { defaultValue: '2FA SMS codes' }),
       current: usage.sentSMS || 0,
       max: sms2FA,

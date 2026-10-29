@@ -43,24 +43,24 @@ import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
-  LuCalendar,
-  LuCirclePlay,
-  LuCircleStop,
-  LuClock,
-  LuCopy,
-  LuExternalLink,
-  LuEye,
-  LuInfo,
-  LuPause,
-  LuRotateCw,
-  LuSearch,
-  LuSettings,
-  LuTrash2,
-  LuUnlink,
-  LuUsers,
-  LuVote,
-  LuX,
-} from 'react-icons/lu'
+  CalendarIcon,
+  ClockIcon,
+  CloseIcon,
+  CopyIcon,
+  DeleteIcon,
+  ExternalLinkIcon,
+  InfoIcon,
+  PauseIcon,
+  ResumeIcon,
+  RetryIcon,
+  SearchIcon,
+  SettingsIcon,
+  StopIcon,
+  UnlinkIcon,
+  UsersIcon,
+  ViewIcon,
+  VoteIcon,
+} from '~theme/icons'
 import ReactPlayer from 'react-player'
 import { generatePath, matchPath, useLocation, useNavigate } from 'react-router'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
@@ -216,7 +216,7 @@ const ProcessViewContent = () => {
               variant='outline'
               onClick={toggleSidebar}
             >
-              <Icon as={LuSettings} />
+              <Icon as={SettingsIcon} />
             </IconButton>
           </HStack>
 
@@ -235,19 +235,19 @@ const ProcessViewContent = () => {
             gap={4}
           >
             <Heading>
-              <Icon as={LuCalendar} />
+              <Icon as={CalendarIcon} />
               <Trans i18nKey='calendar.title'>Schedule</Trans>
             </Heading>
             <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
               <SettingsField
-                icon={LuCalendar}
+                icon={CalendarIcon}
                 text={t('start_date', 'Start date')}
                 subtext={
                   election && formatDate(election.startDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
                 }
               />
               <SettingsField
-                icon={LuClock}
+                icon={ClockIcon}
                 text={t('start_time', 'Start time')}
                 subtext={election && formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))}
               />
@@ -256,7 +256,7 @@ const ProcessViewContent = () => {
                   is null whenever the process ran its course, which falls back to the configured one.
                   The PDF certifies both dates instead — there the schedule is part of the record. */}
               <SettingsField
-                icon={LuCalendar}
+                icon={CalendarIcon}
                 text={t('end_date', 'End date')}
                 subtext={
                   election &&
@@ -264,7 +264,7 @@ const ProcessViewContent = () => {
                 }
               />
               <SettingsField
-                icon={LuClock}
+                icon={ClockIcon}
                 text={t('end_time', 'End time')}
                 subtext={
                   election && formatDate(earlyEndDate ?? election.endDate, t('dashboard.process_view.time_format', 'p'))
@@ -278,7 +278,7 @@ const ProcessViewContent = () => {
           <DashboardBox>
             <Box>
               <Heading>
-                <Icon as={LuExternalLink} />
+                <Icon as={ExternalLinkIcon} />
                 <Trans i18nKey='voting_link.title'>Voting Link</Trans>
               </Heading>
               <Text color='fg.muted' fontSize='sm'>
@@ -291,11 +291,11 @@ const ProcessViewContent = () => {
             <Flex justifyContent='space-between' gap={2} wrap='wrap'>
               <Input readOnly value={votingLink} flex='1 1 18rem' minW={0} />
               <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
-                <Icon as={LuCopy} />
+                <Icon as={CopyIcon} />
               </IconButton>
               <IconButton asChild variant='outline' title={t('preview', 'Preview')} aria-label={t('preview')}>
                 <Link href={votingLink} target='_blank' rel='noopener noreferrer'>
-                  <Icon as={LuEye} />
+                  <Icon as={ViewIcon} />
                 </Link>
               </IconButton>
             </Flex>
@@ -378,7 +378,7 @@ const ResultsStateBadge = (props: Omit<StatusBadgeProps, 'tone'>) => {
       tooltip = null
     }
     const badge = (
-      <StatusBadge tone={tone} endElement={tooltip ? <Icon as={LuInfo} /> : undefined} {...props}>
+      <StatusBadge tone={tone} endElement={tooltip ? <Icon as={InfoIcon} /> : undefined} {...props}>
         {text}
       </StatusBadge>
     )
@@ -434,7 +434,7 @@ const ProcessViewSidebar = () => {
             right={2}
             onClick={closeSidebar}
           >
-            <Icon as={LuX} />
+            <Icon as={CloseIcon} />
           </IconButton>
         )}
       </SidebarContents>
@@ -446,7 +446,7 @@ const ProcessViewSidebar = () => {
           <ActionsProvider>
             {election && isLive(election) && (
               <ActionPause variant='outline' aria-label={t('process_actions.pause', { defaultValue: 'Pause' })}>
-                <ControlIcon as={LuPause} color='status.warning.fg' />
+                <ControlIcon as={PauseIcon} color='status.warning.fg' />
                 <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                   <Trans i18nKey='pause_vote'>Pause vote</Trans>
                 </Text>
@@ -457,20 +457,20 @@ const ProcessViewSidebar = () => {
                 variant='outline'
                 aria-label={t('process_actions.continue', { defaultValue: 'Continue' })}
               >
-                <ControlIcon as={LuCirclePlay} color='status.success.fg' />
+                <ControlIcon as={ResumeIcon} color='status.success.fg' />
                 <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                   <Trans i18nKey='resume_vote'>Resume</Trans>
                 </Text>
               </ActionContinue>
             )}
             <ActionEnd variant='outline' aria-label={t('process_actions.end', { defaultValue: 'End' })}>
-              <ControlIcon as={LuCircleStop} color='destructive.fg' />
+              <ControlIcon as={StopIcon} color='destructive.fg' />
               <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                 <Trans i18nKey='end_vote'>End vote</Trans>
               </Text>
             </ActionEnd>
             <ActionCancel variant='outline' aria-label={t('process_actions.cancel', { defaultValue: 'Cancel' })}>
-              <ControlIcon as={LuTrash2} color='destructive.fg' />
+              <ControlIcon as={DeleteIcon} color='destructive.fg' />
               <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                 <Trans i18nKey='cancel_vote'>Cancel vote</Trans>
               </Text>
@@ -483,7 +483,7 @@ const ProcessViewSidebar = () => {
           <DashboardBox display='flex' flexDir='column' gap={3} alignContent='start'>
             <Box display='flex' justifyContent='space-between' w='full'>
               <Box display='flex' gap={2} alignItems='center'>
-                <Icon as={LuVote} />
+                <Icon as={VoteIcon} />
                 <Text>
                   <Trans i18nKey='total_votes'>Total votes</Trans>
                 </Text>
@@ -505,7 +505,7 @@ const ProcessViewSidebar = () => {
             </Box>
             <Box display='flex' justifyContent='space-between' fontSize='sm'>
               <Text display='flex' gap={2} alignItems='center' fontSize='inherit'>
-                <Icon as={LuUsers} />
+                <Icon as={UsersIcon} />
                 <Trans i18nKey='census_size'>Census size</Trans>
               </Text>
               <Text fontSize='inherit'>{censusSize || ''}</Text>
@@ -520,12 +520,12 @@ const ProcessViewSidebar = () => {
             <Trans i18nKey='voting_settings'>Voting settings</Trans>
           </SidebarSubtitle>
           <SettingsField
-            icon={LuVote}
+            icon={VoteIcon}
             text={t('results_type.title', 'Results type')}
             subtext={resultTypeLabel || undefined}
           />
           <SettingsField
-            icon={LuEye}
+            icon={ViewIcon}
             text={t('result_visibility', 'Results visibility')}
             subtext={
               election
@@ -536,13 +536,13 @@ const ProcessViewSidebar = () => {
             }
           />
           <SettingsField
-            icon={LuUnlink}
+            icon={UnlinkIcon}
             text={t('voter_anonymity', 'Voter anonymity')}
             subtext={election ? anonymityLabel : undefined}
             tooltip={election ? anonymityMechanism : undefined}
           />
           <SettingsField
-            icon={LuRotateCw}
+            icon={RetryIcon}
             text={t('vote_overwrite', 'Vote overwrite')}
             subtext={
               election
@@ -561,7 +561,7 @@ const ProcessViewSidebar = () => {
             <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
               <Link href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
                 <HStack gap={2}>
-                  <Icon as={LuSearch} />
+                  <Icon as={SearchIcon} />
                   <Text as='span'>
                     <Trans i18nKey='view_in_explorer'>View in explorer</Trans>
                   </Text>
@@ -583,7 +583,7 @@ const SettingsField = ({
   tooltip,
 }: {
   subtext?: string
-  icon: typeof LuCalendar
+  icon: typeof CalendarIcon
   text: ReactNode
   /** Explains the value in more words than `subtext` has room for — it is `nowrap`. */
   tooltip?: string
@@ -591,7 +591,7 @@ const SettingsField = ({
   const label = (
     <Text fontSize='sm' fontWeight='bold'>
       {text}
-      {tooltip && <Icon as={LuInfo} ms={1} />}
+      {tooltip && <Icon as={InfoIcon} ms={1} />}
     </Text>
   )
 
@@ -607,7 +607,7 @@ const SettingsField = ({
         p={2}
         borderRadius='md'
       >
-        <Icon as={icon} boxSize={5} />
+        <Icon as={icon} boxSize='icon.md' />
       </Box>
       <Box flex='1 1 0' minW={0} display='flex' flexDirection='column'>
         {tooltip ? (
@@ -629,5 +629,5 @@ const SettingsField = ({
 }
 
 const ControlIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-  <Icon mr={3} boxSize={4} ref={ref} {...props} />
+  <Icon mr={3} boxSize='icon.sm' ref={ref} {...props} />
 ))

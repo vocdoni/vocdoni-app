@@ -82,6 +82,31 @@ export const link = defineRecipe({
         textDecoration: 'none',
       },
     },
+    size: {
+      xs: { fontSize: 'xs' },
+      sm: { fontSize: 'sm' },
+    },
+    emphasis: {
+      medium: { fontWeight: 'medium' },
+      strong: { fontWeight: 'bold' },
+    },
+    // The base repeats its colour under `.dark &` and on hover, which beats a plain `color`
+    // in a variant, so a tone sets every state it changes.
+    tone: {
+      // Secondary links (legal notices): grey in every state and mode.
+      muted: {
+        color: 'fg.muted',
+        _hover: { color: 'fg.muted' },
+        _dark: { color: 'fg.muted', _hover: { color: 'fg.muted' } },
+      },
+      // Navigation-style links: text colour, underlined only on hover.
+      quiet: {
+        color: 'fg',
+        textDecoration: 'none',
+        _hover: { color: 'fg', textDecoration: 'underline' },
+        _dark: { color: 'fg', _hover: { color: 'fg' } },
+      },
+    },
   },
 })
 

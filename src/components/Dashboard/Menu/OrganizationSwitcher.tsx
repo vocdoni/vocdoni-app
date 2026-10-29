@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuPlus, LuSquareStack } from 'react-icons/lu'
+import { AddIcon, StackIcon } from '~theme/icons'
 import { Link as ReactRouterLink } from 'react-router'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { Routes } from '~routes'
@@ -101,12 +101,12 @@ export const OrganizationSwitcher = () => {
             <Button key={idx} onClick={() => handleOrgChange(org)} variant='menu-item-strong'>
               <Stack direction='row' w='full' align='center'>
                 <Icon
-                  as={LuSquareStack}
+                  as={StackIcon}
                   border='1px solid'
                   borderColor='border'
                   borderRadius='xs'
                   p={1}
-                  boxSize={6}
+                  boxSize='icon.lg'
                   flexShrink={0}
                 />
                 <Text as='span' fontSize='sm' flex='1' minW={0} textAlign='start' truncate>
@@ -143,7 +143,7 @@ export const OrganizationSwitcher = () => {
                 h='22px'
                 borderRadius='xs'
               >
-                <Icon as={LuPlus} boxSize={4} ml={2} mr={2} />
+                <Icon as={AddIcon} boxSize='icon.sm' ml={2} mr={2} />
               </Flex>
               <Text as={'span'} h='unset' fontWeight={'bold'} fontSize='sm'>
                 {t('add_new_org', { defaultValue: 'Add a new organization' })}

@@ -157,7 +157,7 @@ const SignIn = ({
                 placeholder={t('password_placeholder', { defaultValue: 'Enter your password' })}
                 required
               />
-              <Link asChild fontSize='xs' fontWeight='bold' alignSelf='end'>
+              <Link asChild size='xs' emphasis='strong' alignSelf='end'>
                 <NavLink to={recoveryRoute}>{t('forgot_password_title')}</NavLink>
               </Link>
             </Flex>
@@ -172,7 +172,7 @@ const SignIn = ({
 
       <Text display={'flex'} justifyContent={'center'} alignItems={'center'} fontWeight='bold' fontSize='sm' mt={6}>
         {t('not_registred_yet')}
-        <Link asChild ml={1} fontWeight={'bold'} fontSize='sm'>
+        <Link asChild ml={1} emphasis='strong' size='sm'>
           <NavLink to={signUpRoute}>{t('signup_title')}</NavLink>
         </Link>
       </Text>
