@@ -85,75 +85,30 @@ export const Card = defineSlotRecipe({
       },
       // One entry of a list shown as cards, the small-screen form of a table.
       'list-item': listItem,
-      client: {
+      // A page whose whole content is one card, such as the sign-in forms.
+      standalone: {
         root: {
-          border: 'none',
-          backgroundColor: 'none',
-          w: 'full',
-
-          _hover: {
-            lg: {
-              '& div:first-of-type': {
-                filter: 'none',
-              },
-              '& span': {
-                display: 'block',
-                position: 'relative',
-              },
-            },
-          },
-        },
-        header: {
-          p: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          filter: 'grayscale(100%)',
-          h: { base: '35px', lg: '45px' },
-        },
-        body: {
-          p: 0,
-          fontSize: '2xs',
-          minH: '60px',
-          display: 'flex',
-          justifyContent: 'center',
-
-          span: {
-            display: 'none',
-            textAlign: 'center',
-            fontSize: 'xs',
-            fontWeight: 'bold',
-            color: 'fg.muted',
-            marginTop: 3,
+          bgColor: 'auth.card.bg',
+          borderRadius: 'sm',
+          _light: {
+            borderWidth: 'hairline',
+            borderColor: 'auth.card.border',
           },
         },
       },
-      faqs: {
+      // A file drop target. A control rather than a card, so it keeps its own radius and padding; set
+      // `data-dragging` while a file is over it.
+      dropzone: {
         root: {
-          borderRadius: 'none',
-          borderBottomWidth: 'hairline',
-          borderBottomStyle: 'solid',
-          borderBottomColor: 'border',
-          backgroundColor: 'transparent',
-          py: { base: 6, lg: 8 },
-
-          '&:last-of-type': {
-            border: 'none',
+          borderWidth: 'hairline',
+          borderStyle: 'dashed',
+          borderColor: 'border',
+          borderRadius: 'xl',
+          p: 10,
+          cursor: 'pointer',
+          _dragging: {
+            borderColor: 'border.emphasized',
           },
-          '&:nth-last-of-type(2)': {
-            borderBottomWidth: { base: 'hairline', lg: '0' },
-          },
-        },
-        header: {
-          p: 0,
-          fontWeight: 'bold',
-          mb: 4.5,
-          fontSize: 'xl',
-        },
-        body: {
-          p: 0,
-          color: 'fg.muted',
-          fontSize: 'xl',
         },
       },
       'no-elections': {

@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   Button,
+  Card,
   Checkbox,
   Clipboard,
   CloseButton,
@@ -159,7 +160,7 @@ export const CreateApiKeyButton = () => {
                       </Alert.Content>
                     </Alert.Root>
                     <Clipboard.Root value={created.secret}>
-                      <Box borderWidth='1px' borderRadius='md' p={3} display='flex' alignItems='center' gap={3}>
+                      <Card.Root variant='section' p={3} flexDirection='row' alignItems='center' gap={3}>
                         <Code flex='1' overflowX='auto' whiteSpace='nowrap'>
                           {created.secret}
                         </Code>
@@ -169,7 +170,7 @@ export const CreateApiKeyButton = () => {
                             {t('integrators.api_keys.copy', { defaultValue: 'Copy' })}
                           </Button>
                         </Clipboard.Trigger>
-                      </Box>
+                      </Card.Root>
                     </Clipboard.Root>
                   </Stack>
                 </Dialog.Body>

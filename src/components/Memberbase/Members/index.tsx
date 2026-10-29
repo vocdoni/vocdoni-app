@@ -19,7 +19,6 @@ import {
   Table,
   Tag,
   Text,
-  useBreakpointValue,
   useDisclosure,
   Wrap,
   WrapItem,
@@ -71,6 +70,7 @@ import {
   useUrlPagination,
 } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 import { MemberbaseTabsContext } from '..'
 import { TableColumn, useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
@@ -1075,7 +1075,7 @@ const MembersTable = () => {
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
   const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isPlaceholderData } =
     useTable()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
   const [searchParams] = useSearchParams()
   const goToFirstPage = useGoToFirstPage()
   const urlSort = parseMemberSort(searchParams)

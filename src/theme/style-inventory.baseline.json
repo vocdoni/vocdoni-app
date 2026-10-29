@@ -2,9 +2,7 @@
   "colorModeLogic": {
     "src/components/Process/Create/VoterAuthentication/VoterAuthForm.tsx": 1,
     "src/components/Process/Summary.tsx": 1,
-    "src/components/ui/EmptyState.tsx": 1,
-    "src/elements/LayoutAuth.tsx": 1,
-    "src/elements/LayoutIntegratorsAuth.tsx": 1
+    "src/components/ui/EmptyState.tsx": 1
   },
   "deprecatedAlias": {},
   "hex": {
@@ -17,9 +15,7 @@
   "pxFontSize": {
     "src/components/Organization/Header.tsx": 1
   },
-  "pxRadius": {
-    "src/components/Layout/Uploader.tsx": 1
-  },
+  "pxRadius": {},
   "pxSize": {
     "src/components/Auth/Verify.tsx": 1,
     "src/components/Auth/vertical/AuthShowcase.tsx": 3,
