@@ -44,7 +44,7 @@ export const Card = defineSlotRecipe({
             fontSize: '12px',
             fontWeight: 'bold',
             color: 'fg.muted',
-            marginTop: '12px',
+            marginTop: 3,
           },
         },
       },
@@ -67,7 +67,7 @@ export const Card = defineSlotRecipe({
         header: {
           p: 0,
           fontWeight: 'bold',
-          mb: '18px',
+          mb: 4.5,
           fontSize: 'xl',
         },
         body: {

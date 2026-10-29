@@ -164,7 +164,7 @@ const PhoneSupportCard = () => {
             display='flex'
             alignItems='center'
             justifyContent='center'
-            mt='2px'
+            mt={0.5}
             mr={3}
           >
             ?

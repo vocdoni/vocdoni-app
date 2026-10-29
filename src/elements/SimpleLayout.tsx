@@ -22,7 +22,7 @@ const Layout = () => {
         top={0}
         w='full'
         backdropFilter='blur(40px)'
-        zIndex={30}
+        zIndex='public-header'
         px={{ base: 4, md: 6, xl: 10 }}
         py={3}
         maxW='navbar'
@@ -42,12 +42,12 @@ const Layout = () => {
         as='main'
         flexGrow={1}
         mb={{ base: 20, lg: 32 }}
-        maxW='1600px'
+        maxW='content.public'
         mx='auto'
         px={{
-          base: '10px',
-          sm: '20px',
-          md: '80px',
+          base: 2.5,
+          sm: 5,
+          md: 20,
         }}
         w='full'
       >

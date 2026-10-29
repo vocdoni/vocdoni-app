@@ -55,6 +55,9 @@ const sizes = defineTokens.sizes({
   'max-window-width': { value: '2560px' },
   'max-content-width': { value: '1200px' },
   navbar: { value: '1920px' },
+  content: {
+    public: { value: '1600px' },
+  },
   sidebar: { value: sidebarWidth },
   'user-profile': { value: '280px' },
   voting: {
@@ -71,9 +74,9 @@ const zIndex = defineTokens.zIndex({
   contents: { value: 1 },
   sidebar: { value: 2 },
   topbar: { value: 3 },
-  modal: { value: 1400 },
-  hovering: { value: 1500 },
   top: { value: 9999 },
+  'public-header': { value: 30 },
+  'dashboard-menu': { value: 100 },
 })
 
 const tokens = defineTokens({

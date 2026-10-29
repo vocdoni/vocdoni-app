@@ -170,7 +170,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
         aria-busy={status === 'checking'}
         outline='none'
         opacity={rechecking ? 0.6 : 1}
-        transition='opacity 0.15s'
+        transition='opacity {durations.fast}'
         data-status={status}
       >
         {content}
