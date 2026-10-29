@@ -224,6 +224,19 @@ const RAW_LENGTH_RE = /(?<![\w.#-])-?(\d*\.?\d+)(px|rem|em|pt)\b/g
 const DURATION_RE = /(?<![\w.#-])\d*\.?\d+m?s\b/
 const NUMERIC_RE = /^-?\d*\.?\d+$/
 const TOKEN_LOOKING_RE = /^[a-zA-Z][\w]*(?:[.-][\w]+)+$/
+const BARE_WORD_RE = /^[a-zA-Z_]\w*$/
+// CSS colour keywords that are valid without being tokens or named colours
+const COLOR_KEYWORDS = new Set([
+  'transparent',
+  'currentColor',
+  'currentcolor',
+  'inherit',
+  'initial',
+  'unset',
+  'revert',
+  'none',
+  'auto',
+])
 
 const hasRawLength = (value: string) =>
   [...value.matchAll(RAW_LENGTH_RE)].some((match) => Number.parseFloat(match[1]) !== 0)
@@ -384,10 +397,13 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
         else if (
           category === 'colors' &&
           words.length === 1 &&
-          TOKEN_LOOKING_RE.test(base) &&
+          (TOKEN_LOOKING_RE.test(base) || BARE_WORD_RE.test(base)) &&
           !isCssLiteral(base) &&
+          !COLOR_KEYWORDS.has(base) &&
           !tokenExists('colors', base)
         ) {
+          // Dotted or dashed names (`process.paused`) and bare words (`error`) that resolve to no token: Chakra emits
+          // them verbatim and the browser drops the declaration.
           record('unknownToken', node)
         }
       }
