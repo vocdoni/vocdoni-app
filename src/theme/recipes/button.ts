@@ -83,7 +83,6 @@ const menuItem = defineStyle({
   w: 'full',
   px: 2,
   py: 1.5,
-  borderRadius: 'xs',
   display: 'flex',
   justifyContent: 'start',
   bg: 'transparent',
@@ -189,13 +188,16 @@ export const Button = defineRecipe({
     multiline: {
       true: {
         h: 'auto',
-        py: 2,
+        py: 1.5,
         whiteSpace: 'normal',
       },
     },
   },
+  // A one-line label keeps the size's height.
   compoundVariants: [
-    { multiline: true, size: 'sm', css: { minH: 8 } },
+    { multiline: true, size: 'xs', css: { minH: 8 } },
+    { multiline: true, size: 'sm', css: { minH: 9 } },
     { multiline: true, size: 'md', css: { minH: 10 } },
+    { multiline: true, size: 'xl', css: { minH: 12 } },
   ],
 })

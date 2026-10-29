@@ -161,9 +161,6 @@ export const ChangePasswordButton = () => {
         onClick={onOpen}
         aria-label={t('change_password.title', { defaultValue: 'Change password' })}
         variant={'outline'}
-        size='sm'
-        w='40px'
-        h='40px'
       >
         <LuPencil />
       </IconButton>

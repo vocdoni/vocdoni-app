@@ -55,7 +55,6 @@ const UserProfile = () => {
           w='full'
           colorPalette='gray'
           variant='menu-trigger'
-          borderRadius='none'
           mt={2}
           minW={0}
         >

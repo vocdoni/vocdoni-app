@@ -98,7 +98,7 @@ export const OrganizationSwitcher = () => {
         </Text>
         <Flex flexDirection={'column'} maxH={'130px'} overflowY={'scroll'}>
           {organizations.map((org, idx) => (
-            <Button key={idx} onClick={() => handleOrgChange(org)} variant='menu-item-strong' py={5}>
+            <Button key={idx} onClick={() => handleOrgChange(org)} variant='menu-item-strong'>
               <Stack direction='row' w='full' align='center'>
                 <Icon
                   as={LuSquareStack}
@@ -132,7 +132,7 @@ export const OrganizationSwitcher = () => {
       </PopoverBody>
       {!selectedIsIntegrator && (
         <PopoverFooter minH={'unset'}>
-          <Button asChild aria-label={t('create_org.title')} variant='menu-item' h={'unset'} mt={1}>
+          <Button asChild aria-label={t('create_org.title')} variant='menu-item' mt={1}>
             <ReactRouterLink to={Routes.dashboard.organizationCreate}>
               <Flex
                 justifyContent={'center'}

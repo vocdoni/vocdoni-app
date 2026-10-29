@@ -229,7 +229,6 @@ export const ChatPanel = ({
             aria-label={t('support_chat.send_label', { defaultValue: 'Send message' })}
             onClick={submit}
             disabled={!canSend}
-            borderRadius='full'
             size='sm'
           >
             <LuSend />
