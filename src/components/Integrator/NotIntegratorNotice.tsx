@@ -52,7 +52,7 @@ const NotIntegratorNotice = () => {
   }
 
   return (
-    <DashboardContents gap={5} p={{ base: 4, md: 6 }} alignItems='flex-start'>
+    <DashboardContents gap={5} alignItems='flex-start'>
       <Alert.Root status='info' w='full'>
         <Alert.Indicator />
         <Alert.Content>

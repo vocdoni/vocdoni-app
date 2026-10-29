@@ -109,7 +109,7 @@ const Error = () => {
   )
 
   // A dashboard page's error renders inside the shell, so it takes the shell's page container.
-  return inDashboard ? <DashboardContents p={0}>{view}</DashboardContents> : view
+  return inDashboard ? <DashboardContents>{view}</DashboardContents> : view
 }
 
 export default Error
