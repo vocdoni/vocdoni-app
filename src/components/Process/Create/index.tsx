@@ -40,6 +40,7 @@ import { DashboardContents } from '~components/Dashboard/Contents'
 import {
   draftSavePaymentErrorMessage,
   paymentErrorToastOptions,
+  publishNeedsWalletTopUp,
   publishPaymentErrorMessage,
 } from '~components/Pricing/payment-errors'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
@@ -796,6 +797,14 @@ const ProcessCreateView = () => {
         type: 'error',
         duration: 4000,
         ...(paymentMessage ? paymentErrorToastOptions : {}),
+        ...(publishNeedsWalletTopUp(error)
+          ? {
+              action: {
+                label: t('process.payment.error.open_wallet', { defaultValue: 'Open wallet' }),
+                onClick: () => navigate(Routes.dashboard.settings.wallet),
+              },
+            }
+          : {}),
       })
     }
   }

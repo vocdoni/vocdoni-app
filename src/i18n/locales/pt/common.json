@@ -1403,12 +1403,20 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "O pagamento de um processo de votação que usa estes membros ainda está a ser processado. Tenta novamente quando terminar.",
-        "census_growth_payment_required": "Estes membros aumentariam a lista de participantes de um processo de votação para além do que foi pago. Aumentá-la custa até {{amount}} a mais (IVA não incluído).",
+        "census_growth_payment_required": "Estes membros aumentariam a lista de participantes de um processo de votação para além do já pago. Alargá-la custa até {{amount}} a mais (sem IVA) e tens de a comprar antes de adicionar estes membros.",
+        "census_growth_payment_shortfall": "Estes membros aumentariam a lista de participantes de um processo de votação para além do já pago. Alargá-la custa até {{amount}} a mais (sem IVA) e tens de a comprar antes de adicionar estes membros. A tua wallet não cobre {{shortfall}} desse valor.",
         "census_growth_quote_required": "Estes membros levariam a lista de participantes de um processo de votação para além dos 50.000 votantes, o que exige um orçamento personalizado. Contacta-nos para a aumentar.",
-        "draft_payment_in_progress": "Este rascunho não pode ser guardado devido ao seu pagamento: ou o pagamento ainda está a ser processado, ou a alteração não é permitida depois de pago (como adicionar personalização da marca). Contacta-nos se continuar a acontecer.",
-        "payment_in_progress": "Um pagamento, uma compra ou um reembolso deste processo de votação ainda não está concluído, por isso o processo não pode ser publicado agora. Tenta novamente mais tarde e contacta-nos se continuar a acontecer.",
-        "publish_payment_required": "Este processo de votação custa {{amount}} no total (IVA não incluído) e tem de ser pago antes de ser publicado. Se parte dele já foi paga, só falta pagar a diferença.",
+        "census_growth_wallet_insufficient": "A wallet da organização integradora não cobre o custo de adicionar estes membros a um processo de votação. O integrador que gere esta organização tem de carregar primeiro a wallet.",
+        "census_growth_wallet_insufficient_amounts": "A wallet da organização integradora tem {{available}}, mas adicionar estes membros a um processo de votação exige {{required}} (sem IVA). O integrador que gere esta organização tem de carregar primeiro a wallet.",
+        "draft_integrator_org": "A tua organização integradora não pode ter processos de votação, só as organizações que gere podem. Guarda este rascunho numa delas.",
+        "draft_payment_in_progress": "Este rascunho não pode ser guardado por causa do seu pagamento. Depois de pago, não é possível acrescentar a personalização de marca nem um URL próprio: remove-os. Se houver um pagamento a ser creditado, aguarda um momento e tenta de novo.",
+        "open_wallet": "Abrir wallet",
+        "payment_in_progress": "Este processo de votação não pode ser publicado neste momento por causa do seu pagamento: pode haver um carregamento ainda em aberto, um pagamento a ser creditado, ou uma alteração (como acrescentar a personalização de marca depois de pago) pode não ser permitida. Verifica o rascunho e o seu pagamento e tenta de novo.",
+        "publish_integrator_org": "A tua organização integradora não pode ter processos de votação, só as organizações que gere podem. Publica este processo numa delas.",
+        "publish_payment_required": "Este processo de votação custa {{amount}} no total (sem IVA) e tem de ser pago antes de ser publicado. Carrega a tua wallet em Definições → Wallet e volta a publicar.",
+        "publish_wallet_short": "A tua wallet tem {{balance}}, e publicar este processo de votação exige mais {{shortfall}} (sem IVA). Carrega a tua wallet em Definições → Wallet e volta a publicar.",
         "quote_required": "Os processos de votação com mais de 50.000 votantes precisam de um orçamento personalizado. Contacta-nos para publicar este.",
+        "spend_cap_reached": "Publicar este processo de votação ultrapassaria o limite de gastos que o integrador definiu para esta organização. O integrador tem de o aumentar antes de voltares a publicar.",
         "wallet_insufficient": "O saldo do integrador não cobre o preço deste processo de votação. O integrador que gere esta organização tem de carregar o seu saldo antes de voltares a publicar.",
         "wallet_insufficient_amounts": "O saldo do integrador é de {{available}}, mas ainda faltam {{required}} (IVA não incluído) para publicar este processo de votação. O integrador que gere esta organização tem de carregar o seu saldo antes de voltares a publicar."
       }
@@ -1905,6 +1913,7 @@
     "expires_in": "Expira em {{time}}",
     "load_error": "Não foi possível carregar os membros da equipa",
     "load_error_description": "Tenta novamente.",
+    "max_writers_reached": "Esta organização já tem 5 administradores e gestores, incluindo convites pendentes. Remove um ou cancela um convite pendente para libertar um lugar. Os visualizadores não têm limite.",
     "only_one_member": {
       "add_team_member": "Adicionar membro à equipa",
       "subtitle": "Adiciona membros à equipa para colaborar na tua organização",

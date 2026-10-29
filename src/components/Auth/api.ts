@@ -65,10 +65,13 @@ export enum ErrorCode {
   UserAlreadyVerified = 40015,
   DraftLimitReached = 40031,
   // Pay-per-process billing
+  IntegratorOrgCannotOwnProcess = 40174,
   InsufficientWalletBalance = 40175,
   QuoteRequired = 40176,
   PaymentSessionConflict = 40177,
   PaymentRequired = 40178,
+  MaxWritersReached = 40182,
+  SpendCapReached = 40183,
 }
 
 interface IApiError {

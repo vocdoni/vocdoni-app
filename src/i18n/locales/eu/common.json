@@ -1376,12 +1376,20 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Kide hauek erabiltzen dituen boto-ematearen prozesu baten ordainketa oraindik prozesatzen ari da. Saiatu berriro amaitzen denean.",
-        "census_growth_payment_required": "Kide hauek boto-ematearen prozesu baten erroldea ordaindutakoaz haratago handituko lukete. Handitzeak gehienez {{amount}} gehiago balio du (BEZa kanpo).",
+        "census_growth_payment_required": "Kide hauek boto-ematearen prozesu baten erroldea ordaindutakoaren gainetik handituko lukete. Handitzeak {{amount}} gehiago kostatzen du gehienez (BEZ gabe), eta kide hauek gehitu aurretik erosi egin behar duzu.",
+        "census_growth_payment_shortfall": "Kide hauek boto-ematearen prozesu baten erroldea ordaindutakoaren gainetik handituko lukete. Handitzeak {{amount}} gehiago kostatzen du gehienez (BEZ gabe), eta kide hauek gehitu aurretik erosi egin behar duzu. Zure wallet-ak ez du {{shortfall}} estaltzen horretatik.",
         "census_growth_quote_required": "Kide hauek boto-ematearen prozesu baten erroldea 50.000 botogiletik gora eramango lukete, eta horrek aurrekontu pertsonalizatua behar du. Jarri gurekin harremanetan handitzeko.",
-        "draft_payment_in_progress": "Zirriborro hau ezin da gorde bere ordainketagatik: edo ordainketa oraindik prozesatzen ari da, edo aldaketa ez da onartzen ordaindu ondoren (adibidez, marka pertsonalizatua gehitzea). Jarri gurekin harremanetan horrela jarraitzen badu.",
-        "payment_in_progress": "Boto-ematearen prozesu honen ordainketa, erosketa edo itzulketa bat oraindik ez da amaitu, beraz ezin da orain argitaratu. Saiatu berriro geroago, eta jarri gurekin harremanetan horrela jarraitzen badu.",
-        "publish_payment_required": "Boto-ematearen prozesu honek guztira {{amount}} balio du (BEZa kanpo) eta argitaratu aurretik ordaindu behar da. Zati bat dagoeneko ordaindu bada, aldea bakarrik ordaindu behar da.",
+        "census_growth_wallet_insufficient": "Integratzailearen wallet-ak ez du estaltzen kide hauek boto-ematearen prozesu batera gehitzeko kostua. Erakunde hau kudeatzen duen integratzaileak lehenik wallet-a kargatu behar du.",
+        "census_growth_wallet_insufficient_amounts": "Integratzailearen wallet-ak {{available}} ditu, baina kide hauek boto-ematearen prozesu batera gehitzeko {{required}} behar dira (BEZa kanpo). Erakunde hau kudeatzen duen integratzaileak lehenik wallet-a kargatu behar du.",
+        "draft_integrator_org": "Integratzaile gisa duzun erakundeak ezin ditu boto-ematearen prozesuak izan, kudeatzen dituen erakundeek bakarrik izan ditzakete. Gorde zirriborro hau horietako batean.",
+        "draft_payment_in_progress": "Zirriborro hau ezin da gorde bere ordainketa dela eta. Ordaindu ondoren ezin dira markaren pertsonalizazioa edo URL pertsonalizatua gehitu: kendu itzazu. Ordainketa bat kreditatzen ari bada, itxaron pixka bat eta saiatu berriro.",
+        "open_wallet": "Ireki wallet-a",
+        "payment_in_progress": "Boto-ematearen prozesu hau ezin da orain argitaratu bere ordainketagatik: baliteke kargatze irekia egotea, ordainketa bat kreditatzen ari izatea, edo aldaketa bat (adibidez, ordainketaren ondoren markaren pertsonalizazioa gehitzea) ez onartzea. Begiratu zirriborroa eta bere ordainketa, eta saiatu berriro.",
+        "publish_integrator_org": "Integratzaile gisa duzun erakundeak ezin ditu boto-ematearen prozesuak izan, kudeatzen dituen erakundeek bakarrik izan ditzakete. Argitaratu prozesu hau horietako batean.",
+        "publish_payment_required": "Boto-ematearen prozesu honek guztira {{amount}} balio du (BEZ gabe), eta argitaratu aurretik ordaindu behar da. Kargatu zure wallet-a Ezarpenak → Wallet atalean eta argitaratu berriro.",
+        "publish_wallet_short": "Zure wallet-ak {{balance}} ditu, eta boto-ematearen prozesu hau argitaratzeko {{shortfall}} gehiago behar dira (BEZ gabe). Kargatu zure wallet-a Ezarpenak → Wallet atalean eta argitaratu berriro.",
         "quote_required": "50.000 botogile baino gehiagoko boto-ematearen prozesuek aurrekontu pertsonalizatua behar dute. Jarri gurekin harremanetan hau argitaratzeko.",
+        "spend_cap_reached": "Boto-ematearen prozesu hau argitaratzeak gastu-muga gaindituko luke, integratzaileak erakunde honentzat ezarri duena. Integratzaileak igo behar du, argitaratu aurretik.",
         "wallet_insufficient": "Integratzailearen saldoak ez du boto-ematearen prozesu honen prezioa estaltzen. Erakunde hau kudeatzen duen integratzaileak bere saldoa kargatu behar du berriro argitaratu aurretik.",
         "wallet_insufficient_amounts": "Integratzailearen saldoa {{available}} da, baina boto-ematearen prozesu hau argitaratzeko {{required}} (BEZa kanpo) ordaintzeke daude. Erakunde hau kudeatzen duen integratzaileak bere saldoa kargatu behar du berriro argitaratu aurretik."
       }
@@ -1874,6 +1882,7 @@
     "expires_in": "Iraungipena: {{time}}",
     "load_error": "Ezin izan dira taldeko kideak kargatu",
     "load_error_description": "Saiatu berriro.",
+    "max_writers_reached": "Erakunde honek jada 5 administratzaile eta kudeatzaile ditu, bidean dauden gonbidapenak barne. Kendu bat edo utzi bertan behera bidean dagoen gonbidapen bat leku bat askatzeko. Ikusleak ez dira mugatuak.",
     "only_one_member": {
       "add_team_member": "Gehitu kidea taldera",
       "subtitle": "Gehitu kideak zure erakundean lankidetzan jarduteko",

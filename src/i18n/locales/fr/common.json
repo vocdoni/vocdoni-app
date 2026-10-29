@@ -1403,12 +1403,20 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Le paiement d'un processus de vote utilisant ces membres est encore en cours de traitement. Réessayez une fois qu'il sera terminé.",
-        "census_growth_payment_required": "Ces membres agrandiraient la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte jusqu'à {{amount}} de plus (HT).",
+        "census_growth_payment_required": "Ces membres feraient croître la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte jusqu'à {{amount}} de plus (hors TVA) et doit être acheté avant d'ajouter ces membres.",
+        "census_growth_payment_shortfall": "Ces membres feraient croître la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte jusqu'à {{amount}} de plus (hors TVA) et doit être acheté avant d'ajouter ces membres. Votre wallet ne couvre pas {{shortfall}} de ce montant.",
         "census_growth_quote_required": "Ces membres porteraient la liste électorale d'un processus de vote au-delà de 50 000 électeurs, ce qui nécessite un devis personnalisé. Contactez-nous pour l'agrandir.",
-        "draft_payment_in_progress": "Ce brouillon ne peut pas être enregistré à cause de son paiement : soit le paiement est encore en cours de traitement, soit la modification n'est plus autorisée une fois le paiement effectué (comme l'ajout d'une marque personnalisée). Contactez-nous si le problème persiste.",
-        "payment_in_progress": "Un paiement, un achat ou un remboursement de ce processus de vote n'est pas encore terminé, le processus ne peut donc pas être publié pour le moment. Réessayez plus tard et contactez-nous si le problème persiste.",
-        "publish_payment_required": "Ce processus de vote coûte {{amount}} au total (HT) et doit être payé avant de pouvoir être publié. Si une partie a déjà été payée, seule la différence reste due.",
+        "census_growth_wallet_insufficient": "Le wallet de l'organisation intégratrice ne couvre pas le coût d'ajout de ces membres à un processus de vote. L'intégrateur qui gère cette organisation doit d'abord recharger le wallet.",
+        "census_growth_wallet_insufficient_amounts": "Le wallet de l'organisation intégratrice contient {{available}}, mais l'ajout de ces membres à un processus de vote nécessite {{required}} (hors TVA). L'intégrateur qui gère cette organisation doit d'abord recharger le wallet.",
+        "draft_integrator_org": "Votre organisation intégratrice ne peut pas posséder de processus de vote : seules les organisations qu'elle gère le peuvent. Enregistrez ce brouillon depuis l'une d'elles.",
+        "draft_payment_in_progress": "Ce brouillon ne peut pas être enregistré en raison de son paiement. Une fois payé, la personnalisation de marque et l'URL personnalisée ne peuvent plus être ajoutées : supprimez-les. Si un paiement est en cours de crédit, patientez un instant puis réessayez.",
+        "open_wallet": "Ouvrir le wallet",
+        "payment_in_progress": "Ce processus de vote ne peut pas être publié pour l'instant en raison de son paiement : une recharge peut encore être ouverte, un paiement peut être en cours de crédit, ou une modification (comme l'ajout de personnalisation de marque après le paiement) peut ne pas être autorisée. Vérifiez le brouillon et son paiement, puis réessayez.",
+        "publish_integrator_org": "Votre organisation intégratrice ne peut pas posséder de processus de vote : seules les organisations qu'elle gère le peuvent. Publiez ce processus depuis l'une d'elles.",
+        "publish_payment_required": "Ce processus de vote coûte {{amount}} au total (hors TVA) et doit être payé avant d'être publié. Rechargez votre wallet dans Paramètres → Wallet, puis publiez à nouveau.",
+        "publish_wallet_short": "Votre wallet contient {{balance}}, et la publication de ce processus de vote nécessite encore {{shortfall}} (hors TVA). Rechargez votre wallet dans Paramètres → Wallet, puis publiez à nouveau.",
         "quote_required": "Les processus de vote de plus de 50 000 électeurs nécessitent un devis personnalisé. Contactez-nous pour publier celui-ci.",
+        "spend_cap_reached": "La publication de ce processus de vote dépasserait le plafond de dépenses défini par l'intégrateur pour cette organisation. L'intégrateur doit le relever avant que vous ne publiiez à nouveau.",
         "wallet_insufficient": "Le solde de l'intégrateur ne couvre pas le prix de ce processus de vote. L'intégrateur qui gère cette organisation doit recharger son solde avant toute nouvelle publication.",
         "wallet_insufficient_amounts": "Le solde de l'intégrateur est de {{available}}, mais il reste {{required}} (HT) à payer pour publier ce processus de vote. L'intégrateur qui gère cette organisation doit recharger son solde avant toute nouvelle publication."
       }
@@ -1905,6 +1913,7 @@
     "expires_in": "Expire dans {{time}}",
     "load_error": "Impossible de charger les membres de l'équipe",
     "load_error_description": "Veuillez réessayer.",
+    "max_writers_reached": "Cette organisation compte déjà 5 administrateurs et gestionnaires, invitations en attente comprises. Retirez-en un ou annulez une invitation en attente pour libérer une place. Les observateurs ne sont pas limités.",
     "only_one_member": {
       "add_team_member": "Ajouter un membre à l'équipe",
       "subtitle": "Ajoutez des membres à l'équipe pour collaborer dans votre organisation",

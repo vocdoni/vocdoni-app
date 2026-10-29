@@ -1403,12 +1403,20 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Encara s'està processant el pagament d'un procés de votació que fa servir aquests membres. Torna-ho a provar quan acabi.",
-        "census_growth_payment_required": "Aquests membres ampliarien el cens d'un procés de votació més enllà del que se'n va pagar. Ampliar-lo costa fins a {{amount}} més (IVA no inclòs).",
+        "census_growth_payment_required": "Aquests membres farien créixer el cens d'un procés de votació més enllà del que s'ha pagat. Ampliar-lo costa fins a {{amount}} més (sense IVA) i l'has de comprar abans d'afegir aquests membres.",
+        "census_growth_payment_shortfall": "Aquests membres farien créixer el cens d'un procés de votació més enllà del que s'ha pagat. Ampliar-lo costa fins a {{amount}} més (sense IVA) i l'has de comprar abans d'afegir aquests membres. El teu wallet no cobreix {{shortfall}} d'aquest import.",
         "census_growth_quote_required": "Aquests membres farien que el cens d'un procés de votació superés els 50.000 votants, i això necessita un pressupost personalitzat. Contacta amb nosaltres per ampliar-lo.",
-        "draft_payment_in_progress": "Aquest esborrany no es pot desar a causa del seu pagament: o bé el pagament encara s'està processant, o bé el canvi no es permet un cop pagat (com ara afegir una marca personalitzada). Contacta amb nosaltres si continua passant.",
-        "payment_in_progress": "Un pagament, una compra o un reemborsament d'aquest procés de votació encara no ha acabat, així que no es pot publicar ara. Torna-ho a provar més tard i contacta amb nosaltres si continua passant.",
-        "publish_payment_required": "Aquest procés de votació costa {{amount}} en total (IVA no inclòs) i cal pagar-lo abans de publicar-lo. Si ja se n'ha pagat una part, només cal pagar la diferència.",
+        "census_growth_wallet_insufficient": "El wallet de l'integrador no cobreix el cost d'afegir aquests membres a un procés de votació. L'integrador que gestiona aquesta organització ha de recarregar primer el seu wallet.",
+        "census_growth_wallet_insufficient_amounts": "El wallet de l'integrador té {{available}}, però per afegir aquests membres a un procés de votació calen {{required}} (sense IVA). L'integrador que gestiona aquesta organització ha de recarregar primer el seu wallet.",
+        "draft_integrator_org": "L'integrador no pot tenir processos de votació, només ho poden fer les organitzacions que gestiona. Desa aquest esborrany des d'una d'elles.",
+        "draft_payment_in_progress": "Aquest esborrany no es pot desar pel seu pagament. Un cop pagat, no es poden afegir la personalització de marca ni una URL pròpia: treu-les. Si hi ha un pagament que s'està abonant, espera una mica i torna-ho a provar.",
+        "open_wallet": "Obrir wallet",
+        "payment_in_progress": "Aquest procés de votació no es pot publicar ara pel seu pagament: potser hi ha una sessió de recàrrega oberta, un pagament que s'està abonant o un canvi (com afegir la personalització de marca després del pagament) que no es permet. Revisa l'esborrany i el seu pagament, i després torna-ho a provar.",
+        "publish_integrator_org": "L'integrador no pot tenir processos de votació, només ho poden fer les organitzacions que gestiona. Publica aquest procés des d'una d'elles.",
+        "publish_payment_required": "Aquest procés de votació costa {{amount}} en total (sense IVA) i s'ha de pagar abans de publicar-lo. Recarrega el teu wallet a Configuració → Wallet i després torna a publicar-lo.",
+        "publish_wallet_short": "El teu wallet té {{balance}}, i per publicar aquest procés de votació calen {{shortfall}} més (sense IVA). Recarrega el teu wallet a Configuració → Wallet i després torna a publicar-lo.",
         "quote_required": "Els processos de votació de més de 50.000 votants necessiten un pressupost personalitzat. Contacta amb nosaltres per publicar aquest.",
+        "spend_cap_reached": "Publicar aquest procés de votació superaria el límit de despesa que l'integrador ha fixat per a aquesta organització. L'integrador l'ha d'apujar abans que tornis a publicar.",
         "wallet_insufficient": "El saldo de l'integrador no cobreix el preu d'aquest procés de votació. L'integrador que gestiona aquesta organització ha de recarregar el saldo abans que el tornis a publicar.",
         "wallet_insufficient_amounts": "El saldo de l'integrador és de {{available}}, però encara falten {{required}} (IVA no inclòs) per publicar aquest procés de votació. L'integrador que gestiona aquesta organització ha de recarregar el saldo abans que el tornis a publicar."
       }
@@ -1905,6 +1913,7 @@
     "expires_in": "Caduca en {{time}}",
     "load_error": "No s'han pogut carregar els membres de l'equip",
     "load_error_description": "Torna-ho a provar.",
+    "max_writers_reached": "Aquesta organització ja té 5 administradors i gestors, incloses les invitacions pendents. Elimina'n un o cancel·la una invitació pendent per alliberar una plaça. Els visualitzadors no tenen límit.",
     "only_one_member": {
       "add_team_member": "Afegeix un membre a l'equip",
       "subtitle": "Afegeix membres de l'equip per col·laborar a la teva organització",

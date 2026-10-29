@@ -1376,12 +1376,20 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "A payment for a voting process using these members is still being processed. Try again once it completes.",
-        "census_growth_payment_required": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded).",
+        "census_growth_payment_required": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members.",
+        "census_growth_payment_shortfall": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members. Your wallet lacks {{shortfall}} of that amount.",
         "census_growth_quote_required": "These members would take the census of a voting process above 50,000 voters, which needs a custom quote. Contact us to grow it.",
-        "draft_payment_in_progress": "This draft cannot be saved because of its payment: either the payment is still being processed, or the change is not allowed once paid (such as adding branding). Contact us if it keeps happening.",
-        "payment_in_progress": "A payment, checkout or refund of this voting process is not finished yet, so it cannot be published right now. Try again later, and contact us if it keeps happening.",
-        "publish_payment_required": "This voting process costs {{amount}} in total (VAT excluded) and must be paid before it can be published. If part of it was already paid, only the difference is due.",
+        "census_growth_wallet_insufficient": "The integrator wallet does not cover the cost of adding these members to a voting process. The integrator managing this organization must top up its wallet first.",
+        "census_growth_wallet_insufficient_amounts": "The integrator wallet has {{available}}, but {{required}} (VAT excluded) is needed to add these members to a voting process. The integrator managing this organization must top up its wallet first.",
+        "draft_integrator_org": "Your integrator organization cannot own voting processes, only the organizations it manages can. Save this draft from one of them.",
+        "draft_payment_in_progress": "This draft cannot be saved because of its payment. Branding or a custom URL cannot be added once it is paid: remove them. If a payment is being credited, wait a moment and try again.",
+        "open_wallet": "Open wallet",
+        "payment_in_progress": "This voting process cannot be published right now because of its payment: a top-up checkout may still be open, a payment may be being credited, or a change (such as adding branding after payment) may not be allowed. Check the draft and its payment, then try again.",
+        "publish_integrator_org": "Your integrator organization cannot own voting processes, only the organizations it manages can. Publish this process from one of them.",
+        "publish_payment_required": "This voting process costs {{amount}} in total (VAT excluded) and must be paid before it can be published. Top up your wallet in Settings → Wallet, then publish again.",
+        "publish_wallet_short": "Your wallet has {{balance}}, and publishing this voting process needs {{shortfall}} more (VAT excluded). Top up your wallet in Settings → Wallet, then publish again.",
         "quote_required": "Voting processes with more than 50,000 voters need a custom quote. Contact us to publish this one.",
+        "spend_cap_reached": "Publishing this voting process would exceed the spend cap the integrator set for this organization. The integrator must raise it before you publish again.",
         "wallet_insufficient": "The integrator wallet does not cover the price of this voting process. The integrator managing this organization must top up its wallet before you publish again.",
         "wallet_insufficient_amounts": "The integrator wallet has {{available}}, but {{required}} (VAT excluded) is still due to publish this voting process. The integrator managing this organization must top up its wallet before you publish again."
       }
@@ -1874,6 +1882,7 @@
     "expires_in": "Expires in {{time}}",
     "load_error": "Unable to load team members",
     "load_error_description": "Please try again.",
+    "max_writers_reached": "This organization already has 5 admins and managers, pending invitations included. Remove one or cancel a pending invitation to free a slot. Viewers are not limited.",
     "only_one_member": {
       "add_team_member": "Add team member",
       "subtitle": "Add team members to collaborate on your organization",
