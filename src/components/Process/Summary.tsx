@@ -1,4 +1,17 @@
-import { Box, Button, Card, Flex, Heading, List, Progress, Separator, SimpleGrid, Stat, Text } from '@chakra-ui/react'
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  List,
+  Progress,
+  Separator,
+  SimpleGrid,
+  Stat,
+  Text,
+} from '@chakra-ui/react'
 import { ElectionResults, getElectionTitle, useElection } from '@vocdoni/react-components'
 import { hasResults, isSecretUntilTheEnd, isUpcoming, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -6,7 +19,6 @@ import { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiBarChartBoxLine, RiLock2Line, RiSearchEyeLine, RiShieldCheckLine } from 'react-icons/ri'
-import { StatusBadge } from '~components/ui/StatusBadge'
 import { useCensusSize } from '~queries/census'
 import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
@@ -44,6 +56,9 @@ const statusLabel = (t: TFunction, status: QuestionStatus | null) => {
   }
 }
 
+// The countdown is the summary's headline figure, not a status chip, so it keeps its large look.
+const headline = { size: 'md', fontWeight: 'bold', fontSize: 'lg' } as const
+
 type CountdownStatProps = { target?: Date; upcoming: boolean; status: QuestionStatus | null }
 
 const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
@@ -53,9 +68,9 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   // Once the deadline is reached, show the process status instead of a zeroed-out countdown.
   if (left <= 0) {
     return (
-      <StatusBadge colorPalette='gray' alignSelf='end'>
+      <Badge {...headline} colorPalette='gray' alignSelf='end'>
         {statusLabel(t, status)}
-      </StatusBadge>
+      </Badge>
     )
   }
 
@@ -69,9 +84,9 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
       <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
         {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
       </Stat.Label>
-      <StatusBadge colorPalette='success'>
+      <Badge {...headline} colorPalette='success'>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
-      </StatusBadge>
+      </Badge>
     </Stat.Root>
   )
 }
