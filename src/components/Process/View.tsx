@@ -412,7 +412,7 @@ export const VotingVoteModal = () => {
             ) : (
               <>
                 <VStack>
-                  <Spinner color='process.spinner' mb={5} w={10} h={10} />
+                  <Spinner mb={5} w={10} h={10} />
                 </VStack>
                 <Text textAlign='center'>{t('process.voting')}</Text>
               </>

@@ -184,7 +184,7 @@ export const VerificationPending = ({
   return (
     <>
       <Flex flexDirection='column' gap={4}>
-        <Text fontWeight='bold' fontSize='md' color='auth.secondary_text'>
+        <Text fontWeight='bold' fontSize='md'>
           <Trans i18nKey='verify.sent_to_email' values={{ email }}>
             Email sent to {{ email }}
           </Trans>
