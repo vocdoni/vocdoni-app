@@ -1,7 +1,5 @@
 import {
   AspectRatio,
-  Badge,
-  BadgeProps,
   Box,
   Button,
   Flex,
@@ -77,6 +75,7 @@ import {
 } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
+import { StatusBadge, type StatusBadgeColor, type StatusBadgeProps } from '~components/ui/StatusBadge'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { useProcessEarlyEndDate } from '~queries/process-end-date'
@@ -351,14 +350,14 @@ const ProcessViewContent = () => {
   )
 }
 
-const ResultsStateBadge = (props: BadgeProps) => {
+const ResultsStateBadge = (props: Omit<StatusBadgeProps, 'colorPalette'>) => {
   const { election } = useElection()
   const { t } = useTranslation()
 
   if (!election) return null
 
   if (isLive(election) || hasResults(election)) {
-    let color: string = 'info'
+    let color: StatusBadgeColor = 'info'
     let text = t('results_state.live_results', 'Live results')
     let tooltip = t(
       'results_state.live_results_tooltip',
@@ -378,10 +377,10 @@ const ResultsStateBadge = (props: BadgeProps) => {
       tooltip = null
     }
     const badge = (
-      <Badge colorPalette={color} {...props}>
+      <StatusBadge colorPalette={color} {...props}>
         {text}
         {tooltip && <Icon as={LuInfo} />}
-      </Badge>
+      </StatusBadge>
     )
 
     if (!tooltip) return badge

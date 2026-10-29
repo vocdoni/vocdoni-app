@@ -34,7 +34,6 @@ const OrganizationVotings = () => {
       <Heading>{t('voting_processes')}</Heading>
       <SubHeading>{t('voting_processes_description')}</SubHeading>
       <Tabs.Root
-        variant='settings'
         value={activeTabValue}
         onValueChange={({ value }) => {
           const item = menuItems.find((entry) => entry.route === value)

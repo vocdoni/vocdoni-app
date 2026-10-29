@@ -60,7 +60,12 @@ const DashboardMenu = ({
       </Box>
 
       {/* Sidebar for small screens */}
-      <Drawer.Root open={isOpen} placement='start' onOpenChange={({ open }) => (!open ? onClose() : undefined)}>
+      <Drawer.Root
+        variant='sidebar'
+        open={isOpen}
+        placement='start'
+        onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      >
         <Drawer.Backdrop />
         <Drawer.Positioner>
           <Drawer.Content p={4}>

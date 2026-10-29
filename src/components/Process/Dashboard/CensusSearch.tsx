@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   chakra,
   HStack,
@@ -21,6 +20,7 @@ import { LuCircleHelp, LuSearch } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { SidebarSubtitle } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import {
   isParticipantLookupField,
   ProcessParticipantEntry,
@@ -92,19 +92,19 @@ const VotedBadge = ({ participant }: { participant: ProcessParticipantEntry }) =
 
   if (voted > 0 && voted < total) {
     return (
-      <Badge colorPalette='warning' flexShrink={0}>
+      <StatusBadge colorPalette='warning' flexShrink={0}>
         {t('census.search.voted_partial', { defaultValue: 'Voted {{voted}}/{{total}}', voted, total })}
-      </Badge>
+      </StatusBadge>
     )
   }
 
   const hasVoted = total > 0 && voted === total
   return (
-    <Badge colorPalette={hasVoted ? 'success' : 'gray'} flexShrink={0}>
+    <StatusBadge colorPalette={hasVoted ? 'success' : 'gray'} flexShrink={0}>
       {hasVoted
         ? t('census.search.voted', { defaultValue: 'Voted' })
         : t('census.search.not_voted', { defaultValue: 'Not voted' })}
-    </Badge>
+    </StatusBadge>
   )
 }
 
