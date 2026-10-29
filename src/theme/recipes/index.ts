@@ -4,6 +4,7 @@ import { Button } from './button'
 import { Card } from './card'
 import { checkbox } from './checkbox'
 import { ConfirmModal } from './confirmModal'
+import { Dialog } from './dialog'
 import { Drawer } from './drawer'
 import {
   ElectionDescription,
@@ -61,6 +62,7 @@ export const recipes: Record<string, RecipeDefinition> = {
 export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   card: Card,
   checkbox,
+  dialog: Dialog,
   drawer: Drawer,
   list: listSlotRecipe,
   menu: Menu,

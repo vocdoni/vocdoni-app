@@ -3,7 +3,8 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 
 const baseStyle = {
   content: {
-    bg: 'dashboard.menu',
+    bg: 'surface.overlay.drawer',
+    boxShadow: 'shadow.overlay',
   },
 }
 
