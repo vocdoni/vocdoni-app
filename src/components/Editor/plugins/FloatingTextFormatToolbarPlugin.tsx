@@ -33,7 +33,16 @@ import {
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
-import { LuBold, LuItalic, LuLink, LuList, LuListOrdered, LuStrikethrough, LuText, LuUnderline } from 'react-icons/lu'
+import {
+  BoldIcon,
+  BulletListIcon,
+  ItalicIcon,
+  LinkIcon,
+  NumberedListIcon,
+  ParagraphIcon,
+  StrikethroughIcon,
+  UnderlineIcon,
+} from '~theme/icons'
 
 export function getSelectedNode(selection: RangeSelection): TextNode | ElementNode {
   const anchor = selection.anchor
@@ -255,7 +264,7 @@ export function TextFormatFloatingToolbar({
             size='sm'
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
           >
-            <Icon as={LuBold} />
+            <Icon as={BoldIcon} />
           </IconButton>
           <IconButton
             aria-label={t('editor.italic', 'Italic')}
@@ -263,7 +272,7 @@ export function TextFormatFloatingToolbar({
             size='sm'
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')}
           >
-            <Icon as={LuItalic} />
+            <Icon as={ItalicIcon} />
           </IconButton>
           <IconButton
             aria-label={t('editor.underline', 'Underline')}
@@ -271,7 +280,7 @@ export function TextFormatFloatingToolbar({
             size='sm'
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')}
           >
-            <Icon as={LuUnderline} />
+            <Icon as={UnderlineIcon} />
           </IconButton>
           <IconButton
             aria-label={t('editor.strikethrough', 'Strikethrough')}
@@ -279,7 +288,7 @@ export function TextFormatFloatingToolbar({
             size='sm'
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')}
           >
-            <Icon as={LuStrikethrough} />
+            <Icon as={StrikethroughIcon} />
           </IconButton>
           <IconButton
             aria-label={t('editor.link.title', 'Link')}
@@ -287,17 +296,17 @@ export function TextFormatFloatingToolbar({
             size='sm'
             onClick={insertLink}
           >
-            <Icon as={LuLink} />
+            <Icon as={LinkIcon} />
           </IconButton>
           <MenuRoot>
             <MenuTrigger asChild>
               <IconButton aria-label={t('editor.paragraph', 'Paragraph')} variant='ghost' size='sm'>
                 {textType === 'text' ? (
-                  <Icon as={LuText} />
+                  <Icon as={ParagraphIcon} />
                 ) : textType === 'list' ? (
-                  <Icon as={LuList} />
+                  <Icon as={BulletListIcon} />
                 ) : (
-                  <Icon as={LuListOrdered} />
+                  <Icon as={NumberedListIcon} />
                 )}
               </IconButton>
             </MenuTrigger>
@@ -310,7 +319,7 @@ export function TextFormatFloatingToolbar({
                     editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined)
                   }}
                 >
-                  <Icon as={LuText} />
+                  <Icon as={ParagraphIcon} />
                 </MenuItem>
                 <MenuItem
                   value='list'
@@ -334,7 +343,7 @@ export function TextFormatFloatingToolbar({
                     })
                   }}
                 >
-                  <Icon as={LuList} />
+                  <Icon as={BulletListIcon} />
                 </MenuItem>
                 <MenuItem
                   value='ordered-list'
@@ -343,7 +352,7 @@ export function TextFormatFloatingToolbar({
                     editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)
                   }}
                 >
-                  <Icon as={LuListOrdered} />
+                  <Icon as={NumberedListIcon} />
                 </MenuItem>
               </MenuContent>
             </MenuPositioner>

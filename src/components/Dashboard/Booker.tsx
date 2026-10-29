@@ -2,7 +2,7 @@ import Cal, { getCalApi } from '@calcom/embed-react'
 import { Button, ButtonProps, CloseButton, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCalendar } from 'react-icons/lu'
+import { CalendarIcon } from '~theme/icons'
 import { useAppEnv } from '~src/app-env'
 import { useColorMode } from '~theme/color-mode'
 
@@ -62,7 +62,7 @@ export const BookerModalButton = ({
   ...props
 }: BookerModalButtonProps) => {
   const content = children ?? <Trans i18nKey='home.support.btn_watch' />
-  const icon = leftIcon ?? <Icon as={LuCalendar} boxSize={4} />
+  const icon = leftIcon ?? <Icon as={CalendarIcon} boxSize='icon.sm' />
 
   const triggerNode = trigger ?? (
     <Button colorPalette='gray' variant='ghost' size='md' {...props}>

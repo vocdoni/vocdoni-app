@@ -11,7 +11,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ensure0x } from '~utils/address'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowLeft } from 'react-icons/lu'
+import { BackIcon } from '~theme/icons'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { SubscriptionType, useSubscription } from '~components/Auth/Subscription'
@@ -108,7 +108,7 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
       <Box>
         <Flex justifyContent='flex-start' mb={4}>
           <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={showPlans} variant='ghost'>
-            <LuArrowLeft />
+            <BackIcon />
           </IconButton>
         </Flex>
         <Box color='status.error.fg' textAlign='center'>
@@ -124,7 +124,7 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
     <Box as='form' onSubmit={handleSubmit}>
       <Flex justifyContent='flex-start' mb={6}>
         <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={showPlans} variant='ghost'>
-          <LuArrowLeft />
+          <BackIcon />
         </IconButton>
       </Flex>
 

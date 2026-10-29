@@ -36,7 +36,7 @@ import {
 } from '@vocdoni/react-components'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaCircleCheck } from 'react-icons/fa6'
+import { SuccessIcon } from '~theme/icons'
 import { ConfirmDialogContent } from '~components/ui/ConfirmDialog'
 import { Markdown } from '~components/ui/Markdown'
 import { StatusBadge, type StatusBadgeProps } from '~components/ui/StatusBadge'
@@ -461,7 +461,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                 gap={3}
                 align='flex-start'
               >
-                <Icon as={FaCircleCheck} mt={1} />
+                <Icon as={SuccessIcon} mt={1} />
                 <Flex direction='column' gap={1} flex='1'>
                   <Text fontWeight='extrabold'>{item.question}</Text>
                   {item.answers.length <= 1 ? (
@@ -514,7 +514,6 @@ export const electionComponents: ComponentsPartialDefinition = {
                 target='_blank'
                 rel='noreferrer'
                 wordBreak='break-all'
-                css={{ textDecoration: 'underline' }}
               >
                 {id}
               </Link>,

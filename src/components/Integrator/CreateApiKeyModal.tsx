@@ -18,7 +18,7 @@ import {
 import { useState } from 'react'
 import { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
-import { LuKey } from 'react-icons/lu'
+import { KeyIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { API_KEY_SCOPES, CreatedApiKey, useCreateApiKey } from '~src/queries/integrators'
@@ -122,7 +122,7 @@ export const CreateApiKeyButton = () => {
       <Dialog.Trigger asChild>
         {/* Creating scopes the request to the active org, so keep it shut until one is selected. */}
         <Button size='sm' disabled={!currentAddress}>
-          <Icon as={LuKey} />
+          <Icon as={KeyIcon} />
           {t('integrators.api_keys.create', { defaultValue: 'Create API key' })}
         </Button>
       </Dialog.Trigger>

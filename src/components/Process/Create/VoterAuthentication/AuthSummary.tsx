@@ -1,8 +1,8 @@
 import { Box, HStack, Icon, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
-import type { IconType } from 'react-icons'
+import { IdCardIcon, KeyIcon, MailIcon, MessagesIcon, SmsIcon, UnlinkIcon, WarningIcon } from '~theme/icons'
+import type { IconType } from '~theme/icons'
 import { useTranslation } from 'react-i18next'
-import { LuIdCard, LuKeyRound, LuMail, LuMessagesSquare, LuSmartphone, LuTriangleAlert, LuUnlink } from 'react-icons/lu'
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { getAuthFieldLabel } from '~components/Process/CSP/fields'
@@ -12,10 +12,10 @@ import { CensusCheckStatus } from './useCensusCheck'
 import { CodeMethod, fromCensus } from './utils'
 
 const codeIcons: Record<CodeMethod, IconType> = {
-  none: LuKeyRound,
-  email: LuMail,
-  sms: LuSmartphone,
-  voter_choice: LuMessagesSquare,
+  none: KeyIcon,
+  email: MailIcon,
+  sms: SmsIcon,
+  voter_choice: MessagesIcon,
 }
 
 export const getCodeMethodSummary = (t: TFunction, method: CodeMethod) => {
@@ -53,7 +53,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
       <Stack gap={2} fontSize='sm'>
         {credentials.length > 0 && (
           <HStack gap={2} align='start'>
-            <Icon as={LuIdCard} color='fg.muted' mt={0.5} />
+            <Icon as={IdCardIcon} color='fg.muted' mt={0.5} />
             <Text fontSize='inherit'>
               {t('voter_auth.summary.details', {
                 defaultValue: 'Voters type: {{fields}}',
@@ -71,7 +71,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
             rung of it. Set in the settings panel, echoed here so the census reads
             whole. */}
         <HStack gap={2}>
-          <Icon as={LuUnlink} color='fg.muted' />
+          <Icon as={UnlinkIcon} color='fg.muted' />
           <Text color='fg.muted' fontSize='inherit'>
             {t('voter_auth.anonymity', {
               defaultValue: 'Ballot anonymity: {{ mode }}',
@@ -83,7 +83,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
             saving: the settings were only ever validated against the old ones. */}
         {(checkStatus === 'invalid' || checkStatus === 'rejected') && (
           <HStack gap={2} align='start' color='fg.error'>
-            <Icon as={LuTriangleAlert} mt={0.5} />
+            <Icon as={WarningIcon} mt={0.5} />
             <Text fontSize='inherit'>
               {t('voter_auth.summary.member_list_mismatch', {
                 defaultValue: "These settings don't fit your member list. Edit them to see why.",

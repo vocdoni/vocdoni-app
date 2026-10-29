@@ -67,6 +67,13 @@ const sizes = defineTokens.sizes({
     default: { value: '255px' },
     reduced: { value: '48px' },
   },
+  // The four icon sizes (inline, control, feature, empty state), in rem like spacing 4/5/6/12.
+  icon: {
+    sm: { value: '1rem' },
+    md: { value: '1.25rem' },
+    lg: { value: '1.5rem' },
+    xl: { value: '3rem' },
+  },
   'max-window-width': { value: '2560px' },
   'max-content-width': { value: '1200px' },
   navbar: { value: '1920px' },

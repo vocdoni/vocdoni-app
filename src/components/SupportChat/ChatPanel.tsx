@@ -1,8 +1,7 @@
 import { Box, Button, CloseButton, Flex, Icon, IconButton, Text, Textarea } from '@chakra-ui/react'
 import { Fragment, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuCalendar, LuCheck, LuHeadset, LuSend } from 'react-icons/lu'
-import { MdOutlineWhatsapp } from 'react-icons/md'
+import { CalendarIcon, CheckIcon, SendIcon, SupportIcon, WhatsappIcon } from '~theme/icons'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { useAppEnv } from '~src/app-env'
 import { MessageBubble, TypingIndicator } from './Messages'
@@ -30,7 +29,7 @@ const ContactActionsRow = () => {
           size='xs'
           variant='outline'
           colorPalette='gray'
-          leftIcon={<Icon as={LuCalendar} boxSize={3.5} />}
+          leftIcon={<Icon as={CalendarIcon} boxSize='icon.sm' />}
         >
           {t('support_chat.book_call', { defaultValue: 'Book a call' })}
         </BookerModalButton>
@@ -38,7 +37,7 @@ const ContactActionsRow = () => {
       {phoneNumber && (
         <Button asChild size='xs' variant='outline' colorPalette='gray'>
           <a href={`https://wa.me/${phoneNumber}`} target='_blank' rel='noopener noreferrer'>
-            <Icon as={MdOutlineWhatsapp} boxSize={3.5} />
+            <Icon as={WhatsappIcon} boxSize='icon.sm' />
             {t('support_chat.whatsapp', { defaultValue: 'Chat on WhatsApp' })}
           </a>
         </Button>
@@ -130,7 +129,7 @@ export const ChatPanel = ({
     >
       <Flex align='center' gap={3} px={4} py={3} borderBottomWidth='1px' borderColor='border' bg='dashboard.menu'>
         <Flex align='center' justify='center' w='38px' h='38px' borderRadius='full' bg='bg.emphasized' flexShrink={0}>
-          <Icon as={LuHeadset} boxSize={5} />
+          <Icon as={SupportIcon} boxSize='icon.md' />
         </Flex>
         <Box flex='1' minW={0}>
           <Text fontWeight='bold' fontSize='sm' truncate>
@@ -196,7 +195,7 @@ export const ChatPanel = ({
           {/* role='status' sits on the non-interactive text only — a live region
               must not contain the button next to it */}
           <Flex role='status' align='center' gap={1.5} fontSize='xs' color='fg.muted' minW={0}>
-            <Icon as={LuCheck} boxSize={3.5} flexShrink={0} />
+            <Icon as={CheckIcon} boxSize='icon.sm' flexShrink={0} />
             <Text fontSize='xs'>
               {t('support_chat.sent_status', { defaultValue: "Request sent — we'll reply by email" })}
             </Text>
@@ -231,7 +230,7 @@ export const ChatPanel = ({
             disabled={!canSend}
             size='sm'
           >
-            <LuSend />
+            <SendIcon />
           </IconButton>
         </Flex>
       )}

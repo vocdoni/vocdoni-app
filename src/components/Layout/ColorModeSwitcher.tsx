@@ -2,9 +2,8 @@ import { ButtonGroup, ButtonGroupProps, Icon, IconButton, IconButtonProps } from
 import { useTheme } from 'next-themes'
 import { type FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { IconType } from 'react-icons'
-import { IoMdMoon, IoMdSunny } from 'react-icons/io'
-import { LuMonitor, LuMoon, LuSun } from 'react-icons/lu'
+import { DarkModeIcon, LightModeIcon, SystemModeIcon } from '~theme/icons'
+import type { IconType } from '~theme/icons'
 import { Tooltip } from '~components/ui/Tooltip'
 import { useColorMode, useColorModeValue } from '~theme/color-mode'
 
@@ -14,7 +13,7 @@ export const ColorModeSwitcher: FC<ColorModeSwitcherProps> = (props) => {
   const { t } = useTranslation()
   const { toggleColorMode } = useColorMode()
   const text = useColorModeValue('dark', 'light')
-  const SwitchIcon = useColorModeValue(IoMdMoon, IoMdSunny)
+  const SwitchIcon = useColorModeValue(DarkModeIcon, LightModeIcon)
 
   return (
     <IconButton
@@ -37,9 +36,9 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
   const selected: Mode = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system'
 
   const modes: { mode: Mode; label: string; icon: IconType }[] = [
-    { mode: 'system', label: t('system', 'System'), icon: LuMonitor },
-    { mode: 'light', label: t('light', 'Light'), icon: LuSun },
-    { mode: 'dark', label: t('dark', 'Dark'), icon: LuMoon },
+    { mode: 'system', label: t('system', 'System'), icon: SystemModeIcon },
+    { mode: 'light', label: t('light', 'Light'), icon: LightModeIcon },
+    { mode: 'dark', label: t('dark', 'Dark'), icon: DarkModeIcon },
   ]
 
   return (
@@ -61,7 +60,7 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
             variant='toggle'
             size='xs'
           >
-            <Icon as={icon} boxSize={4} />
+            <Icon as={icon} boxSize='icon.sm' />
           </IconButton>
         </Tooltip>
       ))}

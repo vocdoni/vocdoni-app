@@ -1,7 +1,6 @@
 import { Box, Flex, Icon, Image, Link, Text } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
-import { FaDiscord, FaGithub } from 'react-icons/fa'
-import { FaXTwitter } from 'react-icons/fa6'
+import { DiscordIcon, GithubIcon, TwitterXIcon } from '~theme/icons'
 import { useAppEnv } from '~src/app-env'
 import vcdLogo from '/assets/logo-classic.svg'
 
@@ -42,7 +41,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
                 {t('footer.company')}
               </Text>
               <Link
-                fontWeight='bold'
+                emphasis='strong'
                 variant='footer'
                 href='https://www.vocdoni.io'
                 target='_blank'
@@ -51,7 +50,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
                 Vocdoni
               </Link>
               <Link
-                fontWeight='bold'
+                emphasis='strong'
                 variant='footer'
                 href='https://www.vocdoni.io/contact'
                 target='_blank'
@@ -60,7 +59,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
                 {t('footer.contact')}
               </Link>
               <Link
-                fontWeight='bold'
+                emphasis='strong'
                 variant='footer'
                 href='https://blog.vocdoni.io'
                 target='_blank'
@@ -87,22 +86,22 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
           <Trans
             i18nKey='footer.terms_and_privacy'
             components={{
-              link1: <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' color='fg.muted' />,
-              link2: <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' color='fg.muted' />,
+              link1: <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' tone='muted' />,
+              link2: <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' tone='muted' />,
             }}
           />
         </Text>
         <Flex gap={2.5}>
           <Link variant='icon' href='https://twitter.com/vocdoni' target='_blank' rel='noopener noreferrer'>
-            <Icon aria-label={t('link.twitter').toString()} as={FaXTwitter} />
+            <Icon aria-label={t('link.twitter').toString()} as={TwitterXIcon} />
           </Link>
 
           <Link variant='icon' href='https://chat.vocdoni.io/' target='_blank' rel='noopener noreferrer'>
-            <Icon aria-label={t('link.discord').toString()} as={FaDiscord} />
+            <Icon aria-label={t('link.discord').toString()} as={DiscordIcon} />
           </Link>
 
           <Link variant='icon' href='https://github.com/vocdoni' target='_blank' rel='noopener noreferrer'>
-            <Icon aria-label={t('link.github').toString()} as={FaGithub} />
+            <Icon aria-label={t('link.github').toString()} as={GithubIcon} />
           </Link>
         </Flex>
       </Flex>

@@ -24,7 +24,7 @@ import {
 import { hasResults, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
+import { CopyIcon, ExternalLinkIcon, InfoIcon, MoreIcon, SearchIcon } from '~theme/icons'
 import { generatePath, Link as RouterLink } from 'react-router'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
@@ -248,7 +248,7 @@ const ProcessContextMenu = () => {
     <Menu.Root>
       <Menu.Trigger asChild>
         <IconButton variant='ghost' size='sm' aria-label='Open actions'>
-          <LuEllipsisVertical />
+          <MoreIcon />
         </IconButton>
       </Menu.Trigger>
       <Portal>
@@ -256,27 +256,27 @@ const ProcessContextMenu = () => {
           <Menu.Content>
             <Menu.Item value='more-info' asChild>
               <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-                <Icon as={LuInfo} boxSize={4} />
+                <Icon as={InfoIcon} />
                 <Trans i18nKey='process_context.more_info'>More info</Trans>
               </RouterLink>
             </Menu.Item>
             <Menu.Item value='public-voting-page' asChild>
               <a href={publicProcessPath} target='_blank' rel='noopener noreferrer'>
-                <Icon as={LuExternalLink} boxSize={4} />
+                <Icon as={ExternalLinkIcon} />
                 <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
               </a>
             </Menu.Item>
             {explorerProcessId && (
               <Menu.Item value='explorer' asChild>
                 <a href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
-                  <Icon as={LuSearch} boxSize={4} />
+                  <Icon as={SearchIcon} />
                   <Trans i18nKey='process_context.explorer'>Explorer</Trans>
                 </a>
               </Menu.Item>
             )}
             <VotingReportPdfMenuItem election={election} />
             <Menu.Item value='clone-draft' onClick={cloneAsDraft}>
-              <Icon as={LuCopy} boxSize={4} />
+              <Icon as={CopyIcon} />
               <Trans i18nKey='process_context.clone_as_draft'>Clone as draft</Trans>
             </Menu.Item>
           </Menu.Content>

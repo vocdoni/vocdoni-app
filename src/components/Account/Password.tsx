@@ -11,7 +11,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuPencil } from 'react-icons/lu'
+import { EditIcon } from '~theme/icons'
 import { ApiEndpoints } from '~components/Auth/api'
 import type { LoginResponse } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
@@ -162,7 +162,7 @@ export const ChangePasswordButton = () => {
         aria-label={t('change_password.title', { defaultValue: 'Change password' })}
         variant={'outline'}
       >
-        <LuPencil />
+        <EditIcon />
       </IconButton>
       <ChangePasswordModal isOpen={isOpen} onClose={onClose} />
     </>

@@ -43,7 +43,7 @@ export const recipes: Record<string, RecipeDefinition> = {
   text,
   icon: defineRecipe({
     base: {
-      boxSize: 4,
+      boxSize: 'icon.sm',
     },
   }),
   textarea,

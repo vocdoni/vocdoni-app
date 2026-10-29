@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuInfo } from 'react-icons/lu'
+import { InfoIcon } from '~theme/icons'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
 import InputBasic from '~components/Form/InputBasic'
@@ -227,7 +227,7 @@ const PhoneSupportCard = ({ isLocked }) => {
       </Stack>
 
       <Flex align='center' mb={6}>
-        <Icon as={LuInfo} boxSize={4} mr={2} />
+        <Icon as={InfoIcon} mr={2} />
         <Text fontSize='sm' color='fg.muted'>
           {t('organization_settings.phone_support.info', {
             defaultValue: 'Please have your organization ID ready when calling.',

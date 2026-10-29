@@ -13,7 +13,14 @@ import {
 } from '@chakra-ui/react'
 import { useContext, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuBuilding, LuChevronLeft, LuChevronRight, LuChevronsUpDown, LuLogOut, LuUserPen } from 'react-icons/lu'
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsUpDownIcon,
+  LogoutIcon,
+  OrganizationIcon,
+  ProfileIcon,
+} from '~theme/icons'
 import { Link as ReactRouterLink } from 'react-router'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { useAuth } from '~components/Auth/useAuth'
@@ -80,7 +87,7 @@ const UserProfile = () => {
                 </Text>
               </Flex>
             )}
-            {!reduced && <Icon as={LuChevronsUpDown} color='fg.muted' ml='auto' />}
+            {!reduced && <Icon as={ChevronsUpDownIcon} color='fg.muted' ml='auto' />}
           </Flex>
         </Button>
       </Popover.Trigger>
@@ -112,7 +119,7 @@ const UserProfile = () => {
                     asChild
                   >
                     <Link>
-                      <Icon as={LuChevronLeft} boxSize={3} />
+                      <Icon as={ChevronLeftIcon} boxSize='icon.sm' />
                       {t('back')}
                     </Link>
                   </Button>
@@ -132,15 +139,15 @@ const UserProfile = () => {
                 <Box borderBottom='1px solid' borderBottomColor='border' py={1}>
                   <Button colorPalette='gray' variant='menu-item' onClick={() => setSwitchOrg(true)}>
                     <Flex alignItems='center' gap={2} w='full'>
-                      <Icon as={LuBuilding} />
+                      <Icon as={OrganizationIcon} />
                       <Trans i18nKey={'switch_organization'} />
-                      <Icon as={LuChevronRight} marginLeft='auto' />
+                      <Icon as={ChevronRightIcon} marginLeft='auto' />
                     </Flex>
                   </Button>
                   <Button colorPalette='gray' variant='menu-item' asChild>
                     <ReactRouterLink to={Routes.dashboard.profile}>
                       <HStack gap={2}>
-                        <Icon as={LuUserPen} />
+                        <Icon as={ProfileIcon} />
                         <Trans i18nKey={'user_settings'} />
                       </HStack>
                     </ReactRouterLink>
@@ -166,18 +173,18 @@ const UserProfile = () => {
                 </Box>
                 <Button colorPalette='gray' variant='menu-item-strong' onClick={logout}>
                   <HStack gap={2}>
-                    <Icon as={LuLogOut} />
+                    <Icon as={LogoutIcon} />
                     <Trans i18nKey={'logout'} />
                   </HStack>
                 </Button>
               </Popover.Body>
               <Popover.Footer pt={1}>
                 <Flex gap={2} alignItems='center' justifyContent='center' w='full'>
-                  <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' fontSize='xs'>
+                  <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' size='xs'>
                     <Trans i18nKey='privacy_policy'>Privacy policy</Trans>
                   </Link>
                   <Text fontSize='xs'>•</Text>
-                  <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' fontSize='xs'>
+                  <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' size='xs'>
                     <Trans i18nKey='terms_of_service'>Terms of Service</Trans>
                   </Link>
                 </Flex>

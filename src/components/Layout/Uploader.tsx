@@ -21,8 +21,7 @@ import { useRef, useState } from 'react'
 import { DropzoneInputProps, DropzoneRootProps, FileRejection, useDropzone } from 'react-dropzone'
 import { SetValueConfig, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { BiTrash } from 'react-icons/bi'
-import { LuUpload } from 'react-icons/lu'
+import { DeleteIcon, UploadIcon } from '~theme/icons'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
@@ -190,7 +189,7 @@ export const AvatarUploader = (props: FormControlProps) => {
                 size='sm'
                 colorPalette={statusPalette.destructive}
               >
-                <BiTrash />
+                <DeleteIcon />
               </IconButton>
             </Flex>
           </Box>
@@ -210,10 +209,10 @@ export const AvatarUploader = (props: FormControlProps) => {
               justifyContent='center'
             >
               <input {...getInputProps()} />
-              {isPending ? <Spinner /> : <Icon as={LuUpload} boxSize={8} color='fg.muted' />}
+              {isPending ? <Spinner /> : <Icon as={UploadIcon} boxSize='icon.lg' color='fg.muted' />}
             </Box>
             <Button variant='outline'>
-              <Icon as={LuUpload} boxSize={4} />
+              <Icon as={UploadIcon} boxSize='icon.sm' />
               {t('uploader.click_or_drag_and_drop_image', { defaultValue: 'Upload Image' })}
             </Button>
           </Flex>
@@ -278,7 +277,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
             borderColor={isDragActive ? 'green.400' : 'gray.600'}
           >
             <input {...getInputProps()} />
-            {isPending ? <Spinner color='white' /> : <Icon as={LuUpload} boxSize={6} color='gray.400' />}
+            {isPending ? <Spinner color='white' /> : <Icon as={UploadIcon} boxSize='icon.lg' color='gray.400' />}
           </Flex>
         )}
       </Flex>
@@ -309,7 +308,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
     >
       <input {...getInputProps()} />
       <Flex justifyContent='center' alignItems='center' p={2}>
-        <Icon color='fg.muted' as={LuUpload} boxSize={10} />
+        <Icon color='fg.muted' as={UploadIcon} boxSize='icon.xl' />
       </Flex>
       <Box>
         {isDragActive ? (

@@ -22,7 +22,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuGripVertical, LuX } from 'react-icons/lu'
+import { CloseIcon, DragHandleIcon } from '~theme/icons'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
 import { Process, SelectorTypes } from '../common'
@@ -96,7 +96,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                 variant='ghost'
                 onClick={() => onRemove(index)}
               >
-                <Icon as={LuX} />
+                <Icon as={CloseIcon} />
               </IconButton>
             )}
           </HStack>
@@ -114,7 +114,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                 color='fg.subtle'
                 _hover={{ color: 'fg.muted' }}
               >
-                <Icon as={LuGripVertical} />
+                <Icon as={DragHandleIcon} />
               </Box>
             )}
 

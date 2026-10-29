@@ -14,7 +14,7 @@ import { linkSaasOAuth } from '@vocdoni/rainbowkit-wallets'
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { BsGoogle, BsLink } from 'react-icons/bs'
+import { GoogleIcon, LinkIcon } from '~theme/icons'
 import { api, ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
@@ -57,8 +57,8 @@ const AccountForm = ({ profile }: { profile?: User }) => {
   const hasPassword = profile?.hasPassword ?? true
   const linkedProviders = useMemo(() => new Set(profile?.providers ?? []), [profile?.providers])
 
-  const providerIcons: Partial<Record<OAuthProvider, typeof BsGoogle>> = {
-    google: BsGoogle,
+  const providerIcons: Partial<Record<OAuthProvider, typeof GoogleIcon>> = {
+    google: GoogleIcon,
   }
 
   const linkProvider = useMutation({
@@ -234,7 +234,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
               defaultValue: 'Unlink {{provider}}',
               provider: providerLabel,
             })
-            const providerIcon = providerIcons[provider] || BsLink
+            const providerIcon = providerIcons[provider] || LinkIcon
 
             return (
               <HStack key={provider} justify='space-between' flexWrap='wrap' gap={3}>

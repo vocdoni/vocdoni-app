@@ -14,7 +14,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuGripVertical, LuPlus, LuTrash2 } from 'react-icons/lu'
+import { AddIcon, DeleteIcon, DragHandleIcon } from '~theme/icons'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
 import { ImageUploader } from '~components/Layout/Uploader'
@@ -66,7 +66,7 @@ const ExtendedQuestionEditor = ({
         _hover={{ bg: 'state.hover.bg' }}
       >
         <VStack justify='center' align='center' height='100%'>
-          <Icon as={LuPlus} boxSize={6} />
+          <Icon as={AddIcon} boxSize='icon.lg' />
           <Text>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
         </VStack>
       </DashboardBox>
@@ -113,7 +113,7 @@ const SortableExtendedOption = ({
             color='fg.subtle'
             _hover={{ color: 'fg.muted', bg: 'state.hover.bg' }}
           >
-            <Icon as={LuGripVertical} size='sm' />
+            <Icon as={DragHandleIcon} size='sm' />
           </Box>
         )}
 
@@ -129,7 +129,7 @@ const SortableExtendedOption = ({
             right={2}
             zIndex='contents'
           >
-            <Icon as={LuTrash2} />
+            <Icon as={DeleteIcon} />
           </IconButton>
         )}
 

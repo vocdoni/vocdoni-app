@@ -2,7 +2,7 @@ import { Progress, Box, Button, HStack, Icon, Stack, TagLabel, TagRoot, Text, Wr
 import { dotobject } from '~utils/objects'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuLock, LuSparkles } from 'react-icons/lu'
+import { LockIcon, SparklesIcon } from '~theme/icons'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -77,7 +77,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
         p={4}
         zIndex='contents'
       >
-        <Icon as={LuLock} boxSize={8} mb={1} />
+        <Icon as={LockIcon} boxSize='icon.lg' mb={1} />
         <Text fontWeight='bold' textAlign='center'>
           {t(`subscription.locked_content.title`, {
             defaultValue: 'Your current {{ plan }} plan does not include {{ permissionName }}',
@@ -110,7 +110,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
         <Button asChild>
           <ReactRouterLink to={generatePath(Routes.dashboard.settings.subscription)}>
             <HStack gap={2}>
-              <Icon as={LuSparkles} />
+              <Icon as={SparklesIcon} />
               <Text as='span'>
                 {t(`subscription.locked_content.unlock`, {
                   defaultValue: 'Unlock {{ permissionName }}',
