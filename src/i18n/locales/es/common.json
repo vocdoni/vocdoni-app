@@ -1406,8 +1406,8 @@
         "census_growth_payment_required": "Estos miembros harían crecer el censo de un proceso de votación más allá de lo pagado. Ampliarlo cuesta hasta {{amount}} más (sin IVA) y debes comprarlo antes de añadir a estos miembros.",
         "census_growth_payment_shortfall": "Estos miembros harían crecer el censo de un proceso de votación más allá de lo pagado. Ampliarlo cuesta hasta {{amount}} más (sin IVA) y debes comprarlo antes de añadir a estos miembros. Tu wallet no cubre {{shortfall}} de ese importe.",
         "census_growth_quote_required": "Estos miembros harían que el censo de un proceso de votación superara los 50.000 votantes, lo que requiere un presupuesto personalizado. Contacta con nosotros para ampliarlo.",
-        "census_growth_wallet_insufficient": "El wallet de la organización integradora no cubre el coste de añadir estos miembros a un proceso de votación. La integradora que gestiona esta organización debe recargar su wallet primero.",
-        "census_growth_wallet_insufficient_amounts": "El wallet de la organización integradora tiene {{available}}, pero para añadir estos miembros a un proceso de votación hacen falta {{required}} (sin IVA). La integradora que gestiona esta organización debe recargar su wallet primero.",
+        "census_growth_wallet_insufficient": "La wallet de la organización integradora no cubre el coste de añadir estos miembros a un proceso de votación. La integradora que gestiona esta organización debe recargar su wallet primero.",
+        "census_growth_wallet_insufficient_amounts": "La wallet de la organización integradora tiene {{available}}, pero para añadir estos miembros a un proceso de votación hacen falta {{required}} (sin IVA). La integradora que gestiona esta organización debe recargar su wallet primero.",
         "draft_integrator_org": "Tu organización integradora no puede tener procesos de votación, solo pueden tenerlos las organizaciones que gestiona. Guarda este borrador desde una de ellas.",
         "draft_payment_in_progress": "Este borrador no se puede guardar por su pago. Una vez pagado, no se pueden añadir la personalización de marca ni una URL propia: quítalas. Si hay un pago acreditándose, espera un momento y vuelve a intentarlo.",
         "open_wallet": "Abrir wallet",
@@ -1432,14 +1432,21 @@
         "branding": "Marca personalizada y marca blanca",
         "custom_url": "URL personalizada",
         "email_two_fa": "Código de verificación por correo electrónico",
+        "minimum_charge": "Cargo mínimo",
         "signed_certificate": "Certificado de resultados firmado",
         "sms_two_fa": "Código de verificación por SMS"
       },
+      "paid": "Pagado: publicar este proceso de votación no cuesta nada más.",
+      "pending": "Hay un pago de recarga de la wallet abierto para este borrador.",
+      "quote_only": "El precio de este proceso de votación lo fija un presupuesto personalizado.",
       "quote_recommended": "Para procesos de votación de más de {{limit}} votantes te recomendamos un presupuesto personalizado. <contact>Pide un presupuesto</contact>, o publícalo al precio que se muestra en los ajustes.",
       "quote_required": "Los procesos de votación de más de {{limit}} votantes solo se pueden publicar con un presupuesto personalizado. <contact>Pide un presupuesto</contact> para publicar este.",
       "total": "Total",
       "unavailable": "El precio aparecerá aquí cuando guardes el borrador con los votantes y su autenticación configurada.",
-      "vat_excluded": "IVA no incluido. Se añade en el momento del pago."
+      "vat_excluded": "Precios sin IVA. El IVA se añade al recargar tu wallet.",
+      "wallet_covers": "El saldo de tu wallet ({{balance}}) cubre este total: al publicar se paga con tu wallet.",
+      "wallet_short": "Tu wallet tiene {{balance}}, le faltan {{shortfall}} para este total.",
+      "wallet_top_up": "Recargar wallet"
     },
     "question_type": {
       "label": "Tipo de pregunta",

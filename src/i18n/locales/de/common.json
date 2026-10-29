@@ -1404,14 +1404,21 @@
         "branding": "Branding und White-Label",
         "custom_url": "Eigene URL",
         "email_two_fa": "Bestätigungscode per E-Mail",
+        "minimum_charge": "Mindestbetrag",
         "signed_certificate": "Signiertes Ergebniszertifikat",
         "sms_two_fa": "Bestätigungscode per SMS"
       },
+      "paid": "Bezahlt: Die Veröffentlichung dieses Abstimmungsprozesses kostet nichts mehr.",
+      "pending": "Für diesen Entwurf ist ein Checkout zum Aufladen des Wallets geöffnet.",
+      "quote_only": "Der Preis dieses Abstimmungsprozesses wird durch ein individuelles Angebot festgelegt.",
       "quote_recommended": "Für Abstimmungsprozesse mit mehr als {{limit}} Wählenden empfehlen wir ein individuelles Angebot. <contact>Fordere ein Angebot an</contact> oder veröffentliche ihn zum Preis, der in den Einstellungen angezeigt wird.",
       "quote_required": "Abstimmungsprozesse mit mehr als {{limit}} Wählenden können nur mit einem individuellen Angebot veröffentlicht werden. <contact>Fordere ein Angebot an</contact>, um diesen zu veröffentlichen.",
       "total": "Gesamt",
       "unavailable": "Der Preis wird hier angezeigt, sobald der Entwurf mit den Wählenden und ihrer Authentifizierung gespeichert ist.",
-      "vat_excluded": "Zzgl. MwSt. Sie wird an der Kasse hinzugefügt."
+      "vat_excluded": "Preise ohne MwSt., die beim Aufladen deines Wallets hinzugerechnet wird.",
+      "wallet_covers": "Dein Wallet-Guthaben ({{balance}}) deckt diesen Gesamtbetrag: Beim Veröffentlichen wird er aus deinem Wallet bezahlt.",
+      "wallet_short": "Dein Wallet hat {{balance}}, dir fehlen {{shortfall}} für diesen Gesamtbetrag.",
+      "wallet_top_up": "Wallet aufladen"
     },
     "question_type": {
       "label": "Fragetyp",

@@ -11,10 +11,14 @@ const price = (overrides: Partial<ProcessPrice> = {}): ProcessPrice => ({
 })
 
 describe('isQuoteOnly', () => {
-  it('holds above the self-service limit until a payment settled the quote', () => {
+  it('holds above the self-service limit, whatever was paid', () => {
     expect(isQuoteOnly(price())).toBe(true)
     expect(isQuoteOnly(price({ paymentStatus: 'pending' }))).toBe(true)
-    expect(isQuoteOnly(price({ paymentStatus: 'paid' }))).toBe(false)
+    expect(isQuoteOnly(price({ paymentStatus: 'paid' }))).toBe(true)
+  })
+
+  it('holds for the zero total of a quote-only price, which is not a free process', () => {
+    expect(isQuoteOnly(price({ lines: [], totalCents: 0 }))).toBe(true)
   })
 
   it('does not hold below the limit, nor without a price', () => {

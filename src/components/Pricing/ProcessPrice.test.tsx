@@ -7,10 +7,15 @@ import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { ProcessPriceBreakdown, ProcessQuoteAlert } from './ProcessPrice'
 
 const bearedFetch = vi.fn()
+const walletQuery = vi.fn()
 const processId = '6650f0c0c0c0c0c0c0c0c0c0'
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({ bearedFetch }),
+}))
+
+vi.mock('~queries/wallet', () => ({
+  useWallet: () => walletQuery(),
 }))
 
 const price = (overrides: Partial<ProcessPrice> = {}): ProcessPrice => ({
@@ -25,12 +30,15 @@ const price = (overrides: Partial<ProcessPrice> = {}): ProcessPrice => ({
   ...overrides,
 })
 
+const wallet = (balanceCents: number) => ({ data: { balanceCents, currency: 'eur' } })
+
 const renderWithRouter = (ui: React.ReactElement) =>
   render(ui, { wrapper: ({ children }) => <TestMemoryRouter>{children}</TestMemoryRouter> })
 
 describe('ProcessPriceBreakdown', () => {
   beforeEach(() => {
     bearedFetch.mockReset()
+    walletQuery.mockReturnValue({ data: undefined })
   })
 
   it("lists the backend's price of the draft, VAT excluded", async () => {
@@ -44,7 +52,76 @@ describe('ProcessPriceBreakdown', () => {
     expect(screen.getByText('Email verification code')).toBeInTheDocument()
     expect(screen.getByText('€7')).toBeInTheDocument()
     expect(screen.getByText('€297')).toBeInTheDocument()
-    expect(screen.getByText(/VAT excluded/)).toBeInTheDocument()
+    expect(screen.getByText(/Prices exclude VAT, which is added when you top up your wallet/)).toBeInTheDocument()
+  })
+
+  it('labels the minimum charge that raises a sub-euro total to one euro', async () => {
+    bearedFetch.mockResolvedValue(
+      price({ lines: [{ kind: 'minimumCharge', description: 'minimum charge', amountCents: 100 }], totalCents: 100 })
+    )
+
+    renderWithRouter(<ProcessPriceBreakdown processId={processId} />)
+
+    expect(await screen.findByText('Minimum charge')).toBeInTheDocument()
+    expect(screen.getAllByText('€1')).toHaveLength(2)
+  })
+
+  it('never calls a quote-only price free, nor offers the wallet for it', async () => {
+    walletQuery.mockReturnValue(wallet(50_000))
+    bearedFetch.mockResolvedValue(price({ lines: [], totalCents: 0, quoteRecommended: true, quoteRequired: true }))
+
+    renderWithRouter(<ProcessPriceBreakdown processId={processId} />)
+
+    expect(await screen.findByText(/set by a custom quote/)).toBeInTheDocument()
+    expect(screen.queryByText(/publishes without payment/)).not.toBeInTheDocument()
+    expect(screen.queryByText('Total')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Your wallet/)).not.toBeInTheDocument()
+  })
+
+  it('says the wallet balance covers a price it can pay', async () => {
+    walletQuery.mockReturnValue(wallet(50_000))
+    bearedFetch.mockResolvedValue(price())
+
+    renderWithRouter(<ProcessPriceBreakdown processId={processId} />)
+
+    expect(
+      await screen.findByText('Your wallet balance (€500) covers this total: publishing pays it from your wallet.')
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Top up wallet' })).not.toBeInTheDocument()
+  })
+
+  it('names the shortfall and links to the wallet when the balance does not cover the price', async () => {
+    walletQuery.mockReturnValue(wallet(10_000))
+    bearedFetch.mockResolvedValue(price())
+
+    renderWithRouter(<ProcessPriceBreakdown processId={processId} />)
+
+    expect(await screen.findByText('Your wallet has €100, €197 short of this total.')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Top up wallet' })).toHaveAttribute(
+      'href',
+      Routes.dashboard.settings.wallet
+    )
+  })
+
+  it('says a paid process costs nothing more, and offers no wallet line', async () => {
+    walletQuery.mockReturnValue(wallet(0))
+    bearedFetch.mockResolvedValue(price({ paymentStatus: 'paid' }))
+
+    renderWithRouter(<ProcessPriceBreakdown processId={processId} />)
+
+    expect(await screen.findByText(/Paid: publishing this voting process costs nothing more/)).toBeInTheDocument()
+    expect(screen.getByText('€297')).toBeInTheDocument()
+    expect(screen.queryByText(/Your wallet/)).not.toBeInTheDocument()
+  })
+
+  it('says a top-up checkout is open, and offers no wallet line', async () => {
+    walletQuery.mockReturnValue(wallet(0))
+    bearedFetch.mockResolvedValue(price({ paymentStatus: 'pending' }))
+
+    renderWithRouter(<ProcessPriceBreakdown processId={processId} />)
+
+    expect(await screen.findByText('A wallet top-up checkout is open for this draft.')).toBeInTheDocument()
+    expect(screen.queryByText(/Your wallet/)).not.toBeInTheDocument()
   })
 
   it("falls back to the backend's description for a line kind it does not know", async () => {
@@ -65,7 +142,7 @@ describe('ProcessPriceBreakdown', () => {
     renderWithRouter(<ProcessPriceBreakdown processId={processId} />)
 
     expect(await screen.findByText(/publishes without payment/)).toBeInTheDocument()
-    expect(screen.queryByText(/VAT excluded/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/exclude VAT/)).not.toBeInTheDocument()
   })
 
   it('explains when the price shows up before the draft is saved', () => {
@@ -90,6 +167,18 @@ describe('ProcessPriceBreakdown', () => {
 describe('ProcessPriceBreakdown failures', () => {
   beforeEach(() => {
     bearedFetch.mockReset()
+    walletQuery.mockReturnValue({ data: undefined })
+  })
+
+  it('shows no wallet line while the balance cannot be read, such as a managed organization', async () => {
+    walletQuery.mockReturnValue({ data: undefined, isError: true })
+    bearedFetch.mockResolvedValue(price())
+
+    renderWithRouter(<ProcessPriceBreakdown processId={processId} />)
+
+    expect(await screen.findByText('€297')).toBeInTheDocument()
+    expect(screen.queryByText(/Your wallet/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Top up wallet' })).not.toBeInTheDocument()
   })
 
   it('says the price could not be loaded on any other error, and lets the user retry', async () => {
@@ -105,7 +194,7 @@ describe('ProcessPriceBreakdown failures', () => {
   })
 
   it('drops a price the backend no longer stands by when re-reading it fails', async () => {
-    bearedFetch.mockResolvedValueOnce(price({ quoteRecommended: true, quoteRequired: true }))
+    bearedFetch.mockResolvedValueOnce(price({ quoteRecommended: true }))
     bearedFetch.mockRejectedValueOnce(
       new BadRequestApiError({ error: 'census size must be between 1 and 10000000', code: ErrorCode.MalformedJSONBody })
     )
@@ -118,7 +207,7 @@ describe('ProcessPriceBreakdown failures', () => {
     )
 
     expect(await screen.findByText('€297')).toBeInTheDocument()
-    expect(screen.getByText(/can only be published with a custom quote/)).toBeInTheDocument()
+    expect(screen.getByText(/we recommend a custom quote/)).toBeInTheDocument()
     await act(() => queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) }))
 
     expect(await screen.findByText(/once the draft is saved/)).toBeInTheDocument()
@@ -139,8 +228,18 @@ describe('ProcessQuoteAlert', () => {
     bearedFetch.mockReset()
   })
 
-  it('asks nothing of a process whose quote is already paid', async () => {
+  it('keeps a quote-only process blocked after a payment, which the backend refuses too', async () => {
     bearedFetch.mockResolvedValue(price({ quoteRecommended: true, quoteRequired: true, paymentStatus: 'paid' }))
+
+    renderWithRouter(<ProcessQuoteAlert processId={processId} />)
+
+    expect(
+      await screen.findByText(/more than 50,000 voters can only be published with a custom quote/)
+    ).toBeInTheDocument()
+  })
+
+  it('asks nothing more of a paid process that is only recommended a quote', async () => {
+    bearedFetch.mockResolvedValue(price({ quoteRecommended: true, paymentStatus: 'paid' }))
 
     renderWithRouter(<ProcessQuoteAlert processId={processId} />)
 

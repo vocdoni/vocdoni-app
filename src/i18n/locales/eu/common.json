@@ -1404,14 +1404,21 @@
         "branding": "Marka pertsonalizatua eta marka zuria",
         "custom_url": "URL pertsonalizatua",
         "email_two_fa": "Egiaztapen-kodea posta elektronikoz",
+        "minimum_charge": "Gutxieneko kargua",
         "signed_certificate": "Emaitzen ziurtagiri sinatua",
         "sms_two_fa": "Egiaztapen-kodea SMS bidez"
       },
+      "paid": "Ordainduta: prozesu hau argitaratzeak ez du beste ezer ordaindu behar.",
+      "pending": "Ordainketa bat dago irekita wallet-a kargatzeko zirriborro honetarako.",
+      "quote_only": "Boto-ematearen prozesu honen prezioa aurrekontu pertsonalizatu batek ezartzen du.",
       "quote_recommended": "{{limit}} botogile baino gehiagoko boto-ematearen prozesuetarako aurrekontu pertsonalizatua gomendatzen dizugu. <contact>Eskatu aurrekontua</contact>, edo argitaratu ezarpenetan agertzen den prezioan.",
       "quote_required": "{{limit}} botogile baino gehiagoko boto-ematearen prozesuak aurrekontu pertsonalizatu batekin bakarrik argitara daitezke. <contact>Eskatu aurrekontua</contact> hau argitaratzeko.",
       "total": "Guztira",
       "unavailable": "Prezioa hemen agertuko da zirriborroa botogileekin eta haien autentifikazioa konfiguratuta gordetzen duzunean.",
-      "vat_excluded": "BEZa kanpo. Ordaintzean gehitzen da."
+      "vat_excluded": "Prezioek BEZa kanpo dute. BEZa zure wallet-a kargatzean gehitzen da.",
+      "wallet_covers": "Zure wallet-aren saldoak ({{balance}}) totala estaltzen du: argitaratzean zure wallet-etik ordaintzen da.",
+      "wallet_short": "Zure wallet-ak {{balance}} du: {{shortfall}} falta zaizkio totala lortzeko.",
+      "wallet_top_up": "Kargatu wallet-a"
     },
     "question_type": {
       "label": "Galdera mota",

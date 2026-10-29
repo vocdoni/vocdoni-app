@@ -1432,14 +1432,21 @@
         "branding": "Marca personalizada e marca branca",
         "custom_url": "URL personalizada",
         "email_two_fa": "Código de verificação por e-mail",
+        "minimum_charge": "Valor mínimo",
         "signed_certificate": "Certificado de resultados assinado",
         "sms_two_fa": "Código de verificação por SMS"
       },
+      "paid": "Pago: publicar este processo de votação não custa mais nada.",
+      "pending": "Há um pagamento de recarga da wallet aberto para este rascunho.",
+      "quote_only": "O preço deste processo de votação é definido por um orçamento personalizado.",
       "quote_recommended": "Para processos de votação com mais de {{limit}} eleitores, recomendamos um orçamento personalizado. <contact>Solicite um orçamento</contact> ou publique pelo preço mostrado nas configurações.",
       "quote_required": "Processos de votação com mais de {{limit}} eleitores só podem ser publicados com um orçamento personalizado. <contact>Solicite um orçamento</contact> para publicar este.",
       "total": "Total",
       "unavailable": "O preço aparece aqui assim que o rascunho for salvo com os eleitores e a autenticação deles configurada.",
-      "vat_excluded": "Impostos não incluídos. Eles são adicionados no pagamento."
+      "vat_excluded": "Preços sem impostos. Os impostos são adicionados ao recarregar sua wallet.",
+      "wallet_covers": "O saldo da sua wallet ({{balance}}) cobre este total: ao publicar, ele é pago pela sua wallet.",
+      "wallet_short": "Sua wallet tem {{balance}}, faltam {{shortfall}} para este total.",
+      "wallet_top_up": "Recarregar wallet"
     },
     "question_type": {
       "label": "Tipo de pergunta",

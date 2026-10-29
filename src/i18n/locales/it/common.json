@@ -1432,14 +1432,21 @@
         "branding": "Branding e white-label",
         "custom_url": "URL personalizzato",
         "email_two_fa": "Codice di verifica via email",
+        "minimum_charge": "Costo minimo",
         "signed_certificate": "Certificato dei risultati firmato",
         "sms_two_fa": "Codice di verifica via SMS"
       },
+      "paid": "Pagato: pubblicare questo processo di voto non costa nulla in più.",
+      "pending": "È aperto un pagamento per ricaricare il wallet per questa bozza.",
+      "quote_only": "Il prezzo di questo processo di voto è fissato da un preventivo personalizzato.",
       "quote_recommended": "Per i processi di voto con più di {{limit}} votanti ti consigliamo un preventivo personalizzato. <contact>Richiedi un preventivo</contact>, oppure pubblicalo al prezzo indicato nelle impostazioni.",
       "quote_required": "I processi di voto con più di {{limit}} votanti possono essere pubblicati solo con un preventivo personalizzato. <contact>Richiedi un preventivo</contact> per pubblicare questo.",
       "total": "Totale",
       "unavailable": "Il prezzo appare qui una volta salvata la bozza con i votanti e la loro autenticazione configurata.",
-      "vat_excluded": "IVA esclusa. Viene aggiunta al momento del pagamento."
+      "vat_excluded": "IVA esclusa. L'IVA viene aggiunta quando ricarichi il tuo wallet.",
+      "wallet_covers": "Il saldo del tuo wallet ({{balance}}) copre questo totale: la pubblicazione lo paga dal tuo wallet.",
+      "wallet_short": "Il tuo wallet ha {{balance}}, ti mancano {{shortfall}} per questo totale.",
+      "wallet_top_up": "Ricarica il wallet"
     },
     "question_type": {
       "label": "Tipo di domanda",
