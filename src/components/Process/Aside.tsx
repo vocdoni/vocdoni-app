@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Card, Flex, Text } from '@chakra-ui/react'
 import { VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
 import { isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -28,16 +28,8 @@ const ProcessAside = () => {
   const votes = processVoteCount(results)
 
   return (
-    <Flex direction='column' border='1px solid' borderRadius='lg' borderColor='border' p={4} gap={2}>
-      <Flex
-        flexDirection='column'
-        gap={5}
-        flexWrap='wrap'
-        border='1px solid'
-        borderRadius='lg'
-        borderColor='border'
-        p={4}
-      >
+    <Card.Root variant='section' size='sm' borderRadius='lg' gap={2}>
+      <Card.Root variant='section' size='sm' borderRadius='lg' gap={5} flexWrap='wrap'>
         <Text textAlign='center' fontSize='xl' textTransform='uppercase'>
           {getStatusText(t, status).toUpperCase()}
         </Text>
@@ -73,7 +65,7 @@ const ProcessAside = () => {
             </Flex>
           </Flex>
         )}
-      </Flex>
+      </Card.Root>
       {connected ? <LogoutButton /> : <CensusConnectButton />}
       {/* The v2 context doesn't expose a separate "membership check in flight" loading
           flag (unlike the old loading.census/loaded.census pair), so this may flash
@@ -106,7 +98,7 @@ const ProcessAside = () => {
           )}
         </Flex>
       )}
-    </Flex>
+    </Card.Root>
   )
 }
 
