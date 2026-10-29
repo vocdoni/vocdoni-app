@@ -26,6 +26,7 @@ import { TwoFACodePrice } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { usePaginatedMembers } from '~queries/members'
 import { Routes } from '~routes'
+import { statusPalette } from '~theme/status'
 
 type UsageMetric = {
   icon: React.ElementType
@@ -197,7 +198,14 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
                     'Your current plan has reached its limits. Upgrade now to continue working without restrictions.',
                 })}
               </AlertDescription>
-              <Button asChild size='sm' colorPalette='orange' variant='solid' flexShrink={0} fontWeight='semibold'>
+              <Button
+                asChild
+                size='sm'
+                colorPalette={statusPalette.warning}
+                variant='solid'
+                flexShrink={0}
+                fontWeight='semibold'
+              >
                 <ReactRouterLink to={generatePath(Routes.dashboard.settings.subscription)}>
                   {t('dashboard.usage.upgrade_plan', { defaultValue: 'Upgrade plan' })}
                 </ReactRouterLink>

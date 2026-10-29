@@ -15,6 +15,7 @@ import {
   type LegacyOrganization,
 } from '~src/legacy/vochain-archive'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { statusPalette } from '~theme/status'
 
 const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
   const { t } = useTranslation()
@@ -42,7 +43,9 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
             </Text>
           </Box>
           <Flex align='center' gap={3} flexShrink={0}>
-            <Badge colorPalette={election.status === 'ONGOING' ? 'green' : 'gray'}>{election.status}</Badge>
+            <Badge colorPalette={election.status === 'ONGOING' ? statusPalette.success : statusPalette.neutral}>
+              {election.status}
+            </Badge>
             <Text fontSize='sm' whiteSpace='nowrap'>
               {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: election.voteCount })}
             </Text>
