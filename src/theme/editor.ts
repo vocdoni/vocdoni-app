@@ -50,7 +50,7 @@ const editor: SystemStyleObject = {
   '& [class*="lexical-h"]': {
     fontWeight: 'bold',
     marginY: '1.25rem',
-    lineHeight: '1.25',
+    lineHeight: 'shorter',
   },
   '& .lexical-h1': {
     fontSize: '3xl',
