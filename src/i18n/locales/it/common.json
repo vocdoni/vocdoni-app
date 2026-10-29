@@ -2176,6 +2176,7 @@
     "load_error": "Impossibile caricare il wallet",
     "managed": "I processi di voto di questa organizzazione sono pagati dall'integratore che la gestisce.",
     "negative_balance": "Il tuo saldo è negativo dopo un rimborso. Ricarica per pagare nuovi processi di voto.",
+    "no_access": "Solo gli amministratori e i gestori possono vedere il wallet.",
     "pagination": "Pagina {{page}} di {{total}} · {{items}} in totale",
     "processing": "Pagamento ricevuto. Il saldo si aggiornerà non appena il pagamento sarà confermato.",
     "processing_timeout": "Ci sta volendo più del previsto. Il saldo si aggiornerà quando il pagamento sarà confermato; ricontrolla più tardi.",

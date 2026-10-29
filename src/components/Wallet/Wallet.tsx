@@ -107,7 +107,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { sessionId } = useParams()
-  const { canTopUp } = useWalletAccess()
+  const { canView, canTopUp } = useWalletAccess()
   const [page, setPage] = useState(1)
   const [view, setView] = useState<'overview' | 'topup'>('overview')
   // Snapshot of the payment being submitted, read back by the inline path; the redirect path reads storage.
@@ -122,9 +122,9 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
   const [pollRound, setPollRound] = useState(0)
 
   const pollInterval = polling ? POLL_INTERVAL_MS : undefined
-  const wallet = useWallet({ page, limit: LIMIT, refetchInterval: pollInterval })
+  const wallet = useWallet({ page, limit: LIMIT, refetchInterval: pollInterval, enabled: canView })
   // The credit is looked for on the first page whatever page is on screen.
-  const firstPage = useWallet({ page: 1, limit: LIMIT, refetchInterval: pollInterval })
+  const firstPage = useWallet({ page: 1, limit: LIMIT, refetchInterval: pollInterval, enabled: canView })
   const balanceCents = wallet.data?.balanceCents
   const currencyCode = wallet.data?.currency?.toUpperCase()
   const pagination = wallet.data?.pagination
@@ -196,6 +196,20 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
   }
 
   const renderBody = () => {
+    // The backend reads the wallet only for admins and managers; a direct link gets a notice, not a 403
+    if (!canView) {
+      return (
+        <Alert.Root status='info'>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Description>
+              {t('wallet.no_access', { defaultValue: 'Only admins and managers can see the wallet.' })}
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      )
+    }
+
     if (wallet.isLoading) {
       return (
         <Center py={16}>

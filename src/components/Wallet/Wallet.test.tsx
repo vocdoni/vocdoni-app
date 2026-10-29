@@ -238,6 +238,16 @@ describe('WalletPanel', () => {
       expect(screen.getByText('Only admins can top up the wallet.')).toBeInTheDocument()
       expect(screen.getByText('€123.45')).toBeInTheDocument()
     })
+
+    it('shows viewers a notice instead of a wallet error', () => {
+      walletAccess.current = { canView: false, canTopUp: false }
+      walletState.current = { ...walletState.current, data: undefined, error: new Error('forbidden') }
+
+      renderPanel()
+
+      expect(screen.getByText('Only admins and managers can see the wallet.')).toBeInTheDocument()
+      expect(screen.queryByText('Unable to load the wallet')).not.toBeInTheDocument()
+    })
   })
 
   describe('inline top-up', () => {

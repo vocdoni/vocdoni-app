@@ -2176,6 +2176,7 @@
     "load_error": "Não foi possível carregar a wallet",
     "managed": "Os processos de votação desta organização são pagos pelo integrador que a gere.",
     "negative_balance": "O teu saldo é negativo após um reembolso. Carrega o saldo para pagar novos processos de votação.",
+    "no_access": "Só os administradores e os gestores podem ver a wallet.",
     "pagination": "Página {{page}} de {{total}} · {{items}} no total",
     "processing": "Pagamento recebido. O teu saldo será atualizado assim que for confirmado.",
     "processing_timeout": "Está a demorar mais do que o esperado. O teu saldo será atualizado quando o pagamento for confirmado; volta a verificar mais tarde.",

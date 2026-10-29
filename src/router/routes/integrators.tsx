@@ -8,8 +8,16 @@ import LayoutIntegratorsAuth from '~elements/LayoutIntegratorsAuth'
 import AccountProtectedRoute from '~src/router/AccountProtectedRoute'
 import IntegratorOrgGuard from '~src/router/IntegratorOrgGuard'
 import NonLoggedRoute from '~src/router/NonLoggedRoute'
+import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '.'
 import { SuspenseLoader } from '../SuspenseLoader'
+
+// Viewers cannot read the wallet, so they land on the subscription tab instead
+const ConfigurationIndex = () => {
+  const { canView } = useWalletAccess()
+  const target = canView ? Routes.integrators.configuration.wallet : Routes.integrators.configuration.subscription
+  return <Navigate to={target} replace />
+}
 
 const IntegratorsDashboard = lazy(() => import('~elements/integrators'))
 const IntegratorsSignin = lazy(() => import('~elements/integrators/signin'))
@@ -132,7 +140,7 @@ export const useIntegratorsRoutes = () => {
                 children: [
                   {
                     index: true,
-                    element: <Navigate to={Routes.integrators.configuration.wallet} replace />,
+                    element: <ConfigurationIndex />,
                   },
                   {
                     path: Routes.integrators.configuration.wallet,

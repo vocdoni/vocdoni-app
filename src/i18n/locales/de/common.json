@@ -2140,6 +2140,7 @@
     "load_error": "Wallet konnte nicht geladen werden",
     "managed": "Die Abstimmungsprozesse dieser Organisation werden vom Integrator bezahlt, der sie verwaltet.",
     "negative_balance": "Dein Guthaben ist nach einer Erstattung negativ. Lade es auf, um neue Abstimmungsprozesse zu bezahlen.",
+    "no_access": "Nur Administratoren und Manager können das Wallet sehen.",
     "pagination": "Seite {{page}} von {{total}} · {{items}} insgesamt",
     "processing": "Zahlung eingegangen. Dein Guthaben wird aktualisiert, sobald sie bestätigt ist.",
     "processing_timeout": "Das dauert länger als erwartet. Dein Guthaben wird aktualisiert, sobald die Zahlung bestätigt ist. Schau später noch einmal nach.",

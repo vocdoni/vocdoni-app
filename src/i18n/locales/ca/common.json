@@ -2176,6 +2176,7 @@
     "load_error": "No s'ha pogut carregar el wallet",
     "managed": "Els processos de votació d'aquesta organització els paga l'integrador que la gestiona.",
     "negative_balance": "El saldo és negatiu després d'un reemborsament. Recarrega'l per pagar nous processos de votació.",
+    "no_access": "Només els administradors i els gestors poden veure el wallet.",
     "pagination": "Pàgina {{page}} de {{total}} · {{items}} en total",
     "processing": "Pagament rebut. El saldo s'actualitzarà tan bon punt es confirmi.",
     "processing_timeout": "Triga més del previst. El saldo s'actualitzarà quan es confirmi el pagament; torna a mirar-ho més tard.",

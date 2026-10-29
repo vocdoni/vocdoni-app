@@ -2140,6 +2140,7 @@
     "load_error": "Unable to load the wallet",
     "managed": "This organization's voting processes are paid by the integrator that manages it.",
     "negative_balance": "Your balance is negative after a refund. Top up to pay for new voting processes.",
+    "no_access": "Only admins and managers can see the wallet.",
     "pagination": "Page {{page}} of {{total}} · {{items}} total",
     "processing": "Payment received. Your balance updates as soon as it is confirmed.",
     "processing_timeout": "This is taking longer than expected. Your balance updates once the payment is confirmed; check back later.",

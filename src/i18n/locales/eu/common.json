@@ -2140,6 +2140,7 @@
     "load_error": "Ezin izan da wallet-a kargatu",
     "managed": "Erakunde honen boto-prozesuak kudeatzen dituen integratzaileak ordaintzen ditu.",
     "negative_balance": "Zure saldoa negatiboa da itzulketa baten ondoren. Kargatu saldoa boto-prozesu berriak ordaintzeko.",
+    "no_access": "Administratzaileek eta kudeatzaileek bakarrik ikus dezakete wallet-a.",
     "pagination": "{{page}}/{{total}} orria · guztira {{items}}",
     "processing": "Ordainketa jasota. Zure saldoa eguneratuko da berretsi bezain pronto.",
     "processing_timeout": "Espero baino denbora gehiago behar da. Zure saldoa eguneratuko da ordainketa berretsi bezain pronto; begiratu berriro geroago.",
