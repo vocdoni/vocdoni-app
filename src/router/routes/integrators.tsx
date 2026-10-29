@@ -143,6 +143,14 @@ export const useIntegratorsRoutes = () => {
                     ),
                   },
                   {
+                    path: Routes.integrators.configuration.walletReturn,
+                    element: (
+                      <SuspenseLoader>
+                        <WalletPanel />
+                      </SuspenseLoader>
+                    ),
+                  },
+                  {
                     path: Routes.integrators.configuration.subscription,
                     element: (
                       <SuspenseLoader>

@@ -33,8 +33,6 @@ export enum ApiEndpoints {
   OrganizationsRoles = 'organizations/roles',
   OrganizationsTypes = 'organizations/types',
   OrganizationSubscription = 'organizations/{address}/subscription',
-  OrganizationWallet = 'organizations/{address}/wallet',
-  OrganizationWalletTopUp = 'organizations/{address}/wallet/topup',
   OrganizationsSupport = 'organizations/{address}/ticket',
   OrganizationMeta = 'organizations/{address}/meta',
   OrganizationMembers = 'organizations/{address}/members',
@@ -65,7 +63,6 @@ export enum ErrorCode {
   UserNotVerified = 40014,
   UserAlreadyVerified = 40015,
   DraftLimitReached = 40031,
-  ManagedOrgHasNoWallet = 40181,
 }
 
 interface IApiError {

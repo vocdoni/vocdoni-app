@@ -4,9 +4,7 @@ import { DashboardBox } from '~components/Dashboard/Contents'
 
 export type QuotaCardProps = {
   label: string
-  // Both optional: the integrator endpoint may omit a metric, and reports 0 as "unlimited" for the
-  // pooled caps. See the IntegratorLimits note in ~queries/integrators — the backend's zero
-  // semantics are not uniform, but we mirror the reference dashboard's simple rendering here.
+  // Both optional: the integrator endpoint may omit a metric.
   usage?: number
   limit?: number
 }

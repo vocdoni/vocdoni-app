@@ -24,6 +24,8 @@ export const Routes = {
       subscription: '/integrators/configuration/subscription',
       support: '/integrators/configuration/support',
       wallet: '/integrators/configuration/wallet',
+      // Stripe sends a redirect-based top-up back here, with the checkout session id appended
+      walletReturn: '/integrators/configuration/wallet/return/:sessionId',
     },
   },
   dashboard: {
@@ -51,6 +53,7 @@ export const Routes = {
       subscription: '/admin/settings/subscription',
       support: '/admin/settings/support',
       wallet: '/admin/settings/wallet',
+      walletReturn: '/admin/settings/wallet/return/:sessionId',
     },
   },
   plans: '/plans',
@@ -62,3 +65,6 @@ export const Routes = {
   },
   vocdoni: 'https://vocdoni.io',
 }
+
+// The tab a checkout return belongs to: `<tab>/return/<sessionId>` -> `<tab>`.
+export const stripCheckoutReturn = (pathname: string) => pathname.replace(/\/return\/[^/]+\/?$/, '')

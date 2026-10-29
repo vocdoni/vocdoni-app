@@ -1,6 +1,6 @@
-import { useLocation } from 'react-router'
+import { Route, Routes, useLocation } from 'react-router'
 import { act, fireEvent, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
-import type { Wallet, WalletEntry } from '~queries/wallet'
+import type { WalletLedgerEntry, WalletResponse } from '@vocdoni/api-types'
 import WalletPanel from './Wallet'
 
 const walletState = vi.hoisted(() => ({ current: {} as any }))
@@ -52,7 +52,7 @@ vi.mock('./TopUp', async () => {
   }
 })
 
-const entry = (overrides: Partial<WalletEntry>): WalletEntry => ({
+const entry = (overrides: Partial<WalletLedgerEntry>): WalletLedgerEntry => ({
   id: 'e1',
   orgAddress: '0x1234',
   amountCents: 1000,
@@ -61,7 +61,7 @@ const entry = (overrides: Partial<WalletEntry>): WalletEntry => ({
   ...overrides,
 })
 
-const pageOf = (history: WalletEntry[]): Wallet['pagination'] => ({
+const pageOf = (history: WalletLedgerEntry[]): WalletResponse['pagination'] => ({
   currentPage: 1,
   lastPage: 1,
   nextPage: null,
@@ -69,7 +69,7 @@ const pageOf = (history: WalletEntry[]): Wallet['pagination'] => ({
   totalItems: history.length,
 })
 
-const mockWallet = (data: Partial<Wallet> = {}, extra: Record<string, unknown> = {}) => {
+const mockWallet = (data: Partial<WalletResponse> = {}, extra: Record<string, unknown> = {}) => {
   const history = data.history ?? []
   walletState.current = {
     isLoading: false,
@@ -85,12 +85,16 @@ const mockWallet = (data: Partial<Wallet> = {}, extra: Record<string, unknown> =
   }
 }
 
-const LocationProbe = () => <div data-testid='location'>{useLocation().search}</div>
+const PathProbe = () => <div data-testid='pathname'>{useLocation().pathname}</div>
 
+// Both tab routes share the panel, like the app's settings and return routes do.
 const panel = (props: { processLinks?: boolean } = {}, initialEntry = '/admin/settings/wallet') => (
   <TestMemoryRouter initialEntries={[initialEntry]}>
-    <WalletPanel {...props} />
-    <LocationProbe />
+    <Routes>
+      <Route path='/admin/settings/wallet' element={<WalletPanel {...props} />} />
+      <Route path='/admin/settings/wallet/return/:sessionId' element={<WalletPanel {...props} />} />
+    </Routes>
+    <PathProbe />
   </TestMemoryRouter>
 )
 
@@ -150,7 +154,7 @@ describe('WalletPanel', () => {
   })
 
   it('shows the raw kind for an unknown kind', () => {
-    mockWallet({ history: [entry({ kind: 'adjustment' as WalletEntry['kind'] })] })
+    mockWallet({ history: [entry({ kind: 'adjustment' as WalletLedgerEntry['kind'] })] })
 
     renderPanel()
 
@@ -395,13 +399,13 @@ describe('WalletPanel', () => {
     it('credits a redirect return against the snapshot stored before the payment', async () => {
       sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ knownTopupIds: ['old'], amountCents: 5000 }))
       mockWallet({ history: [entry({ id: 'old' })] })
-      const result = renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_1')
+      const result = renderPanel({}, '/admin/settings/wallet/return/cs_1')
 
       expect(screen.getByText(CHECKING)).toBeInTheDocument()
       expect(sessionStorage.getItem(SNAPSHOT_KEY)).toBeNull()
 
       mockWallet({ history: [entry({ id: 'new', amountCents: 5000 }), entry({ id: 'old' })] })
-      result.rerender(panel({}, '/admin/settings/wallet'))
+      result.rerender(panel())
 
       await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: TOPPED_UP })))
     })
@@ -409,7 +413,7 @@ describe('WalletPanel', () => {
     it('uses the neutral message on a redirect return, never "Payment received"', () => {
       sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ knownTopupIds: [], amountCents: 5000 }))
 
-      renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_1')
+      renderPanel({}, '/admin/settings/wallet/return/cs_1')
 
       expect(screen.getByText(CHECKING)).toBeInTheDocument()
       expect(screen.queryByText(PROCESSING)).not.toBeInTheDocument()
@@ -419,7 +423,7 @@ describe('WalletPanel', () => {
       vi.useFakeTimers({ shouldAdvanceTime: true })
       sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ knownTopupIds: [], amountCents: 5000 }))
 
-      renderPanel({}, '/admin/settings/wallet?topup=return')
+      renderPanel({}, '/admin/settings/wallet/return/cs_1')
       act(() => {
         vi.advanceTimersByTime(2 * 60 * 1000)
       })
@@ -431,12 +435,12 @@ describe('WalletPanel', () => {
     it('never toasts a redirect return without a stored snapshot', () => {
       vi.useFakeTimers({ shouldAdvanceTime: true })
       mockWallet({ history: [entry({ id: 'old' })] })
-      const result = renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_1')
+      const result = renderPanel({}, '/admin/settings/wallet/return/cs_1')
 
       expect(screen.getByText(CHECKING)).toBeInTheDocument()
 
       mockWallet({ history: [entry({ id: 'new', amountCents: 5000 }), entry({ id: 'old' })] })
-      result.rerender(panel({}, '/admin/settings/wallet'))
+      result.rerender(panel())
       expect(toast).not.toHaveBeenCalled()
 
       act(() => {
@@ -447,10 +451,12 @@ describe('WalletPanel', () => {
       expect(toast).not.toHaveBeenCalled()
     })
 
-    it('removes the redirect params when returning from checkout', () => {
-      renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_123')
+    it('replaces the return route with the wallet tab, keeping the waiting message', async () => {
+      sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ knownTopupIds: [], amountCents: 5000 }))
+      renderPanel({}, '/admin/settings/wallet/return/cs_123')
 
-      expect(screen.getByTestId('location')).toHaveTextContent('')
+      await waitFor(() => expect(screen.getByTestId('pathname')).toHaveTextContent(/^\/admin\/settings\/wallet$/))
+      expect(screen.getByText(CHECKING)).toBeInTheDocument()
     })
   })
 })

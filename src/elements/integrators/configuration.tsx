@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
 import { useWalletAccess } from '~queries/wallet'
-import { Routes } from '~src/router/routes'
+import { Routes, stripCheckoutReturn } from '~src/router/routes'
 
 type ConfigTab = {
   label: string
@@ -42,7 +42,7 @@ const IntegratorConfiguration = () => {
   ]
 
   const currentTabIndex = useMemo(
-    () => tabs.findIndex((tab) => location.pathname.endsWith(tab.route)),
+    () => tabs.findIndex((tab) => stripCheckoutReturn(location.pathname).endsWith(tab.route)),
     [location.pathname, tabs]
   )
   const activeTabValue = currentTabIndex === -1 ? tabs[0]?.route : tabs[currentTabIndex]?.route
