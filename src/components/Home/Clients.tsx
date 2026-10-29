@@ -43,7 +43,7 @@ export const ClientsGrid = (props: GridProps) => {
       w='full'
       {...props}
     >
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={barca} h={'40px'} alt={t('alt.images.barca')} />
         </Card.Header>
@@ -51,7 +51,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>F.C. Barcelona</Text>
         </Card.Body>
       </Card.Root>
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={omnium} h={'57px'} alt={t('alt.images.omnium')} />
         </Card.Header>
@@ -59,7 +59,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>Omnium Cultural</Text>
         </Card.Body>
       </Card.Root>
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={berga} h={'41px'} alt={t('alt.images.berga')} />
         </Card.Header>
@@ -67,7 +67,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>Ajuntament Berga</Text>
         </Card.Body>
       </Card.Root>
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={bisbal} h={'33px'} alt={t('alt.images.bisbal')} />
         </Card.Header>
@@ -75,7 +75,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>Ajuntament la Bisbal</Text>
         </Card.Body>
       </Card.Root>
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={coec} h={'20px'} alt={t('alt.images.coec')} />
         </Card.Header>
@@ -83,7 +83,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>COEC</Text>
         </Card.Body>
       </Card.Root>
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={erc} h={'32px'} alt={t('alt.images.esquerra')} />
         </Card.Header>
@@ -91,7 +91,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>Esquerra Republicana</Text>
         </Card.Body>
       </Card.Root>
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={bellpuig} h={'33px'} alt={t('alt.images.bellpuig')} />
         </Card.Header>
@@ -99,7 +99,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>Ajuntament Bellpuig</Text>
         </Card.Body>
       </Card.Root>
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={ticanoia} h={'18px'} alt={t('alt.images.ticanoia')} />
         </Card.Header>
@@ -107,7 +107,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>TIC Anoia</Text>
         </Card.Body>
       </Card.Root>
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={decidim} h={'30px'} alt={t('alt.images.decidim')} />
         </Card.Header>
@@ -115,7 +115,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>Decidim</Text>
         </Card.Body>
       </Card.Root>
-      <Card.Root variant='client'>
+      <Card.Root variant='logo-tile'>
         <Card.Header>
           <Image src={bloock} h={'17px'} alt={t('alt.images.bloock')} />
         </Card.Header>

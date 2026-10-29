@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text } from '@chakra-ui/react'
+import { Box, Card, Flex, Heading, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { AuthLayoutHeader } from '~components/Auth/AuthLayoutHeader'
@@ -17,13 +17,8 @@ const LayoutIntegratorsAuth = () => {
     <Flex justifyContent='center' minH='100dvh' p={{ base: 6, md: 10 }}>
       <Flex w='full' maxW='md' flexDir='column' gap={2} my='auto'>
         <AuthLayoutHeader isSignin={isSignin} signInRoute={Routes.integrators.signIn} />
-        <Box
-          w='full'
-          _light={{ border: '1px solid', borderColor: 'auth.card.border' }}
-          borderRadius='sm'
-          bgColor='auth.card.bg'
-          p={{ base: 6, sm: 8 }}
-        >
+        {/* A block, not the card's flex column: the routed pages below lay themselves out. */}
+        <Card.Root variant='standalone' display='block' w='full' p={{ base: 6, sm: 8 }}>
           {(title || subtitle) && (
             <Box mb={6}>
               {title && (
@@ -39,7 +34,7 @@ const LayoutIntegratorsAuth = () => {
             </Box>
           )}
           <Outlet context={{ setTitle, setSubtitle } satisfies AuthOutletContextType} />
-        </Box>
+        </Card.Root>
       </Flex>
     </Flex>
   )

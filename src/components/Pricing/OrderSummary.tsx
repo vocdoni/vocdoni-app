@@ -1,4 +1,4 @@
-import { Box, Flex, Separator, Text, VStack } from '@chakra-ui/react'
+import { Box, Card, Flex, Separator, Text, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { usePlanNameTranslator } from './Plans'
 
@@ -25,7 +25,7 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
   const taxPercent = ((dueNext.taxExclusive.minorUnitsAmount / dueNext.subtotal.minorUnitsAmount) * 100).toPrecision(2)
 
   return (
-    <Box borderWidth={1} borderRadius='md' p={6}>
+    <Card.Root variant='section'>
       <VStack align='stretch' gap={4}>
         <Text fontSize='lg' fontWeight='bold'>
           {t('order_summary', { defaultValue: 'Order Summary' })}
@@ -113,6 +113,6 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
           </Flex>
         )}
       </VStack>
-    </Box>
+    </Card.Root>
   )
 }

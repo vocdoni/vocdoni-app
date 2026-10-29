@@ -58,7 +58,7 @@ const SubscriptionPageContent = () => {
     (!isValid(lastPaymentDate) || isBefore(lastPaymentDate, new Date('1971-01-01')))
 
   return (
-    <DashboardBox p={6}>
+    <DashboardBox size='md'>
       <Flex direction={{ base: 'column', md: 'row' }}>
         <SectionHeader>
           <SectionHeading>{t('subscription_plan.title', { defaultValue: 'Subscription plan' })}</SectionHeading>
