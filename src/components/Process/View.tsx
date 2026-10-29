@@ -2,6 +2,7 @@ import {
   Box,
   BoxProps,
   Button,
+  Card,
   Dialog,
   Flex,
   Grid,
@@ -92,16 +93,7 @@ const ProcessInfoPanel = () => {
   const showOrgInformation = loading || !!organization?.name?.default
 
   return (
-    <Flex
-      border='1px solid'
-      borderColor='border'
-      borderRadius='md'
-      p={4}
-      flexDirection='column'
-      flexWrap='wrap'
-      gap={4}
-      h='fit-content'
-    >
+    <Card.Root variant='section' size='sm' flexWrap='wrap' gap={4} h='fit-content'>
       <Box flexDir='row' display='flex' justifyContent='space-between' w={{ xl: 'full' }}>
         {status !== 'CANCELED' ? (
           <ProcessDate />
@@ -123,19 +115,18 @@ const ProcessInfoPanel = () => {
       />
       {showOrgInformation && <ProcessInfoCard label={t('process.created_by')} description={<CreatedBy />} />}
       {status === 'PAUSED' && !sameAddress(election?.orgAddress, currentAddress) && (
-        <Flex
-          color='brand.fg'
-          _dark={{ color: 'white' }}
-          gap={2}
-          alignItems='center'
-          border='1px solid'
-          borderColor='brand.fg'
+        <Card.Root
+          variant='highlight'
+          size='sm'
           borderRadius='lg'
           p={2}
+          flexDirection='row'
+          gap={2}
+          alignItems='center'
         >
           <Icon as={RiErrorWarningLine} />
           <ProcessInfoCard label={t('process.status.paused')} description={t('process.status.paused_description')} />
-        </Flex>
+        </Card.Root>
       )}
       <Button asChild variant='outline' size='sm' alignSelf='start'>
         {/* Plain anchor (not a router Link): the public process view renders without a router context. */}
@@ -144,7 +135,7 @@ const ProcessInfoPanel = () => {
           {t('process.summary.view_summary')}
         </a>
       </Button>
-    </Flex>
+    </Card.Root>
   )
 }
 
@@ -235,13 +226,10 @@ export const ProcessView = () => {
               </TabsList>
               <TabsContentGroup mt={6}>
                 <TabsContent value='questions' p={0}>
-                  <Box
+                  <Card.Root
                     ref={electionRef}
-                    p={6}
+                    variant='section'
                     mt={6}
-                    border='1px solid'
-                    borderColor='border'
-                    borderRadius='md'
                     scrollMarginTop='70px'
                     // Ballot content must never appear in analytics/session replays,
                     // even when an org admin previews the process from the dashboard
@@ -252,16 +240,16 @@ export const ProcessView = () => {
                         setFormErrors(args)
                       }}
                     />
-                  </Box>
+                  </Card.Root>
                   <Box position='sticky' bottom={0} left={0} pb={1} pt={1}>
                     <VoteButton setQuestionsTab={setQuestionsTab} />
                   </Box>
                 </TabsContent>
                 {election && status !== 'CANCELED' && (
                   <TabsContent value='results' p={0}>
-                    <Box p={6} border='1px solid' borderColor='border' borderRadius='md'>
+                    <Card.Root variant='section'>
                       <ElectionResults />
-                    </Box>
+                    </Card.Root>
                   </TabsContent>
                 )}
               </TabsContentGroup>

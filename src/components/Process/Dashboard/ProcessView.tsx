@@ -2,6 +2,7 @@ import {
   AspectRatio,
   Box,
   Button,
+  Card,
   Flex,
   HStack,
   Icon,
@@ -325,19 +326,19 @@ const ProcessViewContent = () => {
               </TabsList>
               <TabsContentGroup mt={6}>
                 <TabsContent value='questions' p={0}>
-                  <Box p={6} border='1px solid' borderColor='border' borderRadius='md'>
+                  <Card.Root variant='section'>
                     <ErrorBoundary fallback={sectionFallback} resetKeys={[election]}>
                       <ElectionQuestions />
                     </ErrorBoundary>
-                  </Box>
+                  </Card.Root>
                 </TabsContent>
                 {showResultsTab && (
                   <TabsContent value='results' p={0}>
-                    <Box p={6} border='1px solid' borderColor='border' borderRadius='md'>
+                    <Card.Root variant='section'>
                       <ErrorBoundary fallback={sectionFallback} resetKeys={[election, results]}>
                         <ElectionResults />
                       </ErrorBoundary>
-                    </Box>
+                    </Card.Root>
                   </TabsContent>
                 )}
               </TabsContentGroup>

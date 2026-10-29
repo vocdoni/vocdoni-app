@@ -305,14 +305,7 @@ const CertifiedTech = () => {
   // The card is dark in both colour modes, so its accents take the dark-mode tokens. The palette is
   // set again because the one inherited from the page was resolved for the page's mode.
   return (
-    <Card.Root
-      className='dark'
-      colorPalette={defaultColorPalette(PRIMARY_COLOR)}
-      bg='gray.800'
-      color='white'
-      size='lg'
-      borderWidth='0'
-    >
+    <Card.Root variant='inverse' className='dark' colorPalette={defaultColorPalette(PRIMARY_COLOR)} size='lg'>
       <Card.Body>
         <Flex direction={{ base: 'column', lg: 'row' }} gap={8}>
           <Box flex='1'>

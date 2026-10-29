@@ -43,7 +43,10 @@ const COLOR_PROPS = new Set([
 ])
 
 // Exact string literals that are intentionally raw (each entry needs a reason)
-const RAW_LITERAL_ALLOWLIST = new Set<string>([])
+const RAW_LITERAL_ALLOWLIST = new Set<string>([
+  // Chakra's card `size` variants set it; card variants that pad their root read it.
+  'var(--card-padding)',
+])
 
 // Non-color style props whose token-looking string values must resolve in their token category
 const RADIUS_PROPS = [

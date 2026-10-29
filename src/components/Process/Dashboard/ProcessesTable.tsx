@@ -1,5 +1,4 @@
 import {
-  Box,
   Card,
   HStack,
   Icon,
@@ -70,7 +69,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
   }
 
   return (
-    <Box border='1px solid' borderColor='border' borderRadius='sm' w='full'>
+    <Card.Root variant='frame' borderRadius='sm' w='full'>
       <Table.ScrollArea>
         <Table.Root variant='outline'>
           <Table.Header>
@@ -93,7 +92,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
           </Table.Caption>
         </Table.Root>
       </Table.ScrollArea>
-    </Box>
+    </Card.Root>
   )
 }
 
@@ -132,7 +131,7 @@ const ProcessRowFallback = ({ process }: { process: VotingProcessResponse }) => 
 )
 
 const ProcessCardFallback = ({ process }: { process: VotingProcessResponse }) => (
-  <Card.Root variant='data-list-item'>
+  <Card.Root variant='list-item'>
     <Card.Header>
       <ProcessTitleLink process={process} textProps={cardTitleProps} />
     </Card.Header>
@@ -168,7 +167,7 @@ const ProcessCard = () => {
   if (!election) return null
 
   return (
-    <Card.Root variant='data-list-item'>
+    <Card.Root variant='list-item'>
       <Card.Header>
         <ProcessTitleLink process={election} textProps={cardTitleProps} />
         <ProcessContextMenu />

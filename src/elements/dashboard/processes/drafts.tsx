@@ -108,26 +108,29 @@ export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   }
 
   return (
-    <Table.ScrollArea border='1px solid' borderColor='border' borderRadius='sm'>
-      <Table.Root variant='outline'>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader>{t('process_list.title', { defaultValue: 'Title' })}</Table.ColumnHeader>
-            <Table.ColumnHeader>{t('process_list.start_date', { defaultValue: 'Start date' })}</Table.ColumnHeader>
-            <Table.ColumnHeader>{t('process_list.end_date', { defaultValue: 'End date' })}</Table.ColumnHeader>
-            <Table.ColumnHeader colSpan={2}>{t('process_list.type', { defaultValue: 'Type' })}</Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {drafts.map((draft) => (
-            <DraftsRow key={draft.id} draft={draft} />
-          ))}
-        </Table.Body>
-        <Table.Caption>
-          <RoutedPaginatedTableFooter />
-        </Table.Caption>
-      </Table.Root>
-    </Table.ScrollArea>
+    // Hidden overflow keeps the table header's fill inside the rounded corners.
+    <Card.Root variant='frame' borderRadius='sm' overflow='hidden'>
+      <Table.ScrollArea>
+        <Table.Root variant='outline'>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>{t('process_list.title', { defaultValue: 'Title' })}</Table.ColumnHeader>
+              <Table.ColumnHeader>{t('process_list.start_date', { defaultValue: 'Start date' })}</Table.ColumnHeader>
+              <Table.ColumnHeader>{t('process_list.end_date', { defaultValue: 'End date' })}</Table.ColumnHeader>
+              <Table.ColumnHeader colSpan={2}>{t('process_list.type', { defaultValue: 'Type' })}</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {drafts.map((draft) => (
+              <DraftsRow key={draft.id} draft={draft} />
+            ))}
+          </Table.Body>
+          <Table.Caption>
+            <RoutedPaginatedTableFooter />
+          </Table.Caption>
+        </Table.Root>
+      </Table.ScrollArea>
+    </Card.Root>
   )
 }
 
@@ -182,7 +185,7 @@ const DraftCard = ({ draft }: { draft: Draft }) => {
   const metadata = votingProcessToForm(draft)
 
   return (
-    <Card.Root variant='data-list-item'>
+    <Card.Root variant='list-item'>
       <Card.Header>
         <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
           <RouterLink
