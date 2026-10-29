@@ -11,8 +11,8 @@ type ConfigTab = {
 }
 
 /**
- * Integrator Configuration: a tabbed container (Subscription + Support) mirroring the admin
- * settings screen, but limited to the two tabs integrators need. Tabs are child routes so they are
+ * Integrator Configuration: a tabbed container (Wallet, Subscription + Support) mirroring the admin
+ * settings screen, but limited to the tabs integrators need. Tabs are child routes so they are
  * deep-linkable.
  */
 const IntegratorConfiguration = () => {
@@ -21,6 +21,10 @@ const IntegratorConfiguration = () => {
   const location = useLocation()
 
   const tabs: ConfigTab[] = [
+    {
+      label: t('wallet.title', { defaultValue: 'Wallet' }),
+      route: Routes.integrators.configuration.wallet,
+    },
     {
       label: t('subscription.title', { defaultValue: 'Subscription plan' }),
       route: Routes.integrators.configuration.subscription,
@@ -42,7 +46,7 @@ const IntegratorConfiguration = () => {
       <Heading>{t('integrators.configuration.title', { defaultValue: 'Configuration' })}</Heading>
       <SubHeading>
         {t('integrators.configuration.subtitle', {
-          defaultValue: 'Manage your subscription and get support.',
+          defaultValue: 'Manage your wallet, subscription and support.',
         })}
       </SubHeading>
       <TabsRoot

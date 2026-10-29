@@ -95,6 +95,15 @@ describe('WalletTopUp', () => {
       expect(screen.getByText('Use at most 2 decimals.')).toBeInTheDocument()
     })
 
+    it('converts a decimal amount to cents exactly', async () => {
+      const user = userEvent.setup()
+      render(<WalletTopUp onDone={vi.fn()} onCancel={vi.fn()} />)
+
+      await continueToPayment(user, '19.99')
+
+      await waitFor(() => expect(mutateAsync).toHaveBeenCalledWith(expect.objectContaining({ amountCents: 1999 })))
+    })
+
     it('accepts whole amounts and amounts with two decimals', async () => {
       const user = userEvent.setup()
       render(<WalletTopUp onDone={vi.fn()} onCancel={vi.fn()} />)

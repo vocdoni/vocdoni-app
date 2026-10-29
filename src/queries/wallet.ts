@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
 import { ensure0x } from '~utils/address'
 import { ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
@@ -68,6 +68,8 @@ export const useWallet = ({ page = 1, limit = 10, refetchInterval }: UseWalletOp
     queryKey: QueryKeys.organization.wallet(address, page, limit),
     enabled: !!address,
     refetchInterval,
+    // Keeps the last page on screen while another one loads, instead of flashing the spinner
+    placeholderData: keepPreviousData,
     // A 4xx (a managed org's 403, a backend without wallets' 404) answers the same every time.
     retry: (failureCount, error) => !isWalletClientError(error) && failureCount < 3,
     queryFn: () => {

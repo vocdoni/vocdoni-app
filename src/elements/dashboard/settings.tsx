@@ -30,6 +30,10 @@ const Settings = () => {
       route: Routes.dashboard.settings.team,
     },
     {
+      label: t('wallet.title', { defaultValue: 'Wallet' }),
+      route: Routes.dashboard.settings.wallet,
+    },
+    {
       label: t('pricing.page_title', { defaultValue: 'Pricing' }),
       route: Routes.dashboard.settings.subscription,
     },
