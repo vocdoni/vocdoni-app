@@ -1,9 +1,10 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { IntegratorInfo, ManagedOrganizationInfo } from '@vocdoni/api-types'
+import type { IntegratorInfo, ManagedOrganizationInfo, UpdateManagedOrganizationRequest } from '@vocdoni/api-types'
 import { ensure0x } from '~utils/address'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from './keys'
 
 type ProvisionedOrganization = { address: string }
@@ -25,6 +26,10 @@ export const useIntegratorInfo = () => {
 // A single organization managed by the integrator, with its spend cap and spend (SDK type).
 export type ManagedOrganization = ManagedOrganizationInfo
 
+// As the list returns it: an older backend omits the spend fields the SDK type requires.
+export type ManagedOrganizationRow = Omit<ManagedOrganization, 'spendCapCents' | 'spentCents'> &
+  Partial<Pick<ManagedOrganization, 'spendCapCents' | 'spentCents'>>
+
 export type ManagedOrganizationsResponse = {
   pagination: {
     totalItems: number
@@ -33,7 +38,7 @@ export type ManagedOrganizationsResponse = {
     previousPage: number | null
     nextPage: number | null
   }
-  organizations: ManagedOrganization[]
+  organizations: ManagedOrganizationRow[]
 }
 
 /**
@@ -177,15 +182,12 @@ export const useProvisionIntegratorOrganization = () => {
  * (PUT /integrator/organizations/{orgAddress}, integrator Admin only). Resolves with the updated organization.
  */
 export const useUpdateManagedOrganization = () => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
   const queryClient = useQueryClient()
 
-  return useMutation<ManagedOrganization, Error, { address: string; spendCapCents: number | null }>({
+  return useMutation<ManagedOrganization, Error, { address: string } & UpdateManagedOrganizationRequest>({
     mutationFn: ({ address, spendCapCents }) =>
-      bearedFetch<ManagedOrganization>(ApiEndpoints.ManagedOrganization.replace('{orgAddress}', ensure0x(address)), {
-        method: 'PUT',
-        body: { spendCapCents },
-      }),
+      client.organizations.updateManaged(ensure0x(address), { spendCapCents }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.integrator.managed() })
     },

@@ -2,11 +2,11 @@ import { Alert, Button, Checkbox, CloseButton, Dialog, Field, Flex, Input, Porta
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiErrorMessage } from '~components/Auth/api'
-import { ManagedOrganization, useUpdateManagedOrganization } from '~src/queries/integrators'
+import { ManagedOrganizationRow, useUpdateManagedOrganization } from '~src/queries/integrators'
 import { parseEuroAmountCents } from '~utils/numbers'
 
 type EditSpendCapDialogProps = {
-  organization: ManagedOrganization | null
+  organization: ManagedOrganizationRow | null
   onClose: () => void
 }
 
@@ -35,7 +35,7 @@ export const EditSpendCapDialog = ({ organization, onClose }: EditSpendCapDialog
   )
 }
 
-const SpendCapForm = ({ organization, onDone }: { organization: ManagedOrganization; onDone: () => void }) => {
+const SpendCapForm = ({ organization, onDone }: { organization: ManagedOrganizationRow; onDone: () => void }) => {
   const { t } = useTranslation()
   const update = useUpdateManagedOrganization()
   const currentCap = organization.spendCapCents ?? null

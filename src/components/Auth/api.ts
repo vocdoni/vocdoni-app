@@ -19,7 +19,6 @@ export enum ApiEndpoints {
   // Path-less: the integrator organization is resolved server-side from the authenticated session.
   Integrator = 'integrator',
   ManagedOrganizations = 'integrator/organizations',
-  ManagedOrganization = 'integrator/organizations/{orgAddress}',
   OrganizationApiKeys = 'integrator/organizations/{orgAddress}/apikeys',
   OrganizationApiKey = 'integrator/organizations/{orgAddress}/apikeys/{keyId}',
   Login = 'auth/login',

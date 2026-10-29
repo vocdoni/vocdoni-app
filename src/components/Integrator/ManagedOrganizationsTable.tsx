@@ -2,7 +2,7 @@ import { Badge, Button, Code, Stack, Table, Text } from '@chakra-ui/react'
 import { Fragment, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { EditSpendCapDialog } from '~components/Integrator/EditSpendCapDialog'
-import { ManagedOrganization } from '~src/queries/integrators'
+import { ManagedOrganizationRow } from '~src/queries/integrators'
 import { shortAddress } from '~utils/address'
 import { currency } from '~utils/numbers'
 
@@ -15,14 +15,14 @@ const formatDate = (value: string) => {
 const formatCount = (value?: number) => (value ?? 0).toLocaleString()
 
 type ManagedOrganizationsTableProps = {
-  organizations: ManagedOrganization[]
+  organizations: ManagedOrganizationRow[]
   // Integrator admins may edit the spend cap of each organization
   canEditCaps?: boolean
 }
 
 export const ManagedOrganizationsTable = ({ organizations, canEditCaps = false }: ManagedOrganizationsTableProps) => {
   const { t } = useTranslation()
-  const [editing, setEditing] = useState<ManagedOrganization | null>(null)
+  const [editing, setEditing] = useState<ManagedOrganizationRow | null>(null)
   // The spend columns and the cap editor only appear once the backend reports spend, so the table
   // looks unchanged against a backend without them.
   const showSpend = organizations.some((org) => org.spentCents !== undefined)
