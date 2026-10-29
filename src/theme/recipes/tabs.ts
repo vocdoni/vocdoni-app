@@ -1,7 +1,7 @@
 import { defineSlotRecipe } from '@chakra-ui/react'
 import { tabsAnatomy } from '@chakra-ui/react/anatomy'
 
-const settings = {
+const pill = {
   root: {
     '--tabs-height': 'auto',
   },
@@ -36,7 +36,7 @@ const settings = {
 export const Tabs = defineSlotRecipe({
   slots: tabsAnatomy.keys(),
   variants: {
-    variant: { settings },
+    variant: { pill },
   },
-  defaultVariants: { variant: 'settings' },
+  defaultVariants: { variant: 'pill' },
 })

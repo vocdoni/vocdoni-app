@@ -60,7 +60,6 @@ const Settings = () => {
       </SubHeading>
       <QueryDataLayout isLoading={isLoading} isError={isError} error={error}>
         <TabsRoot
-          variant='settings'
           value={activeTabValue}
           onValueChange={({ value }) => {
             const item = menuItems.find((entry) => entry.route === value)

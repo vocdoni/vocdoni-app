@@ -1,8 +1,9 @@
-import { Avatar, Badge, Box, Button, Card, Flex, Heading, Link, Text, VStack } from '@chakra-ui/react'
+import { Avatar, Box, Button, Card, Flex, Heading, Link, Text, VStack } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Editor from '~components/Editor'
 import { RouterAwareLink } from '~components/RouterAwareLink'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useAppEnv } from '~src/app-env'
@@ -15,7 +16,6 @@ import {
   type LegacyOrganization,
 } from '~src/legacy/vochain-archive'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
-import { statusPalette } from '~theme/status'
 
 const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
   const { t } = useTranslation()
@@ -43,9 +43,7 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
             </Text>
           </Box>
           <Flex align='center' gap={3} flexShrink={0}>
-            <Badge colorPalette={election.status === 'ONGOING' ? statusPalette.success : statusPalette.neutral}>
-              {election.status}
-            </Badge>
+            <StatusBadge tone={election.status === 'ONGOING' ? 'success' : 'neutral'}>{election.status}</StatusBadge>
             <Text fontSize='sm' whiteSpace='nowrap'>
               {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: election.voteCount })}
             </Text>

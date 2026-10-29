@@ -24,8 +24,9 @@ import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
-import { statusPalette } from '~theme/status'
+import { statusPalette, type StatusTone } from '~theme/status'
 import { CreateApiKeyButton } from './CreateApiKeyModal'
 
 const formatDate = (value?: string) => {
@@ -36,20 +37,20 @@ const formatDate = (value?: string) => {
 
 const useStatus = () => {
   const { t } = useTranslation()
-  return (k: ApiKey): { label: string; palette: string } => {
+  return (k: ApiKey): { label: string; tone: StatusTone } => {
     if (k.revoked)
       return {
         label: t('integrators.api_keys.status_revoked', { defaultValue: 'Revoked' }),
-        palette: statusPalette.error,
+        tone: 'error',
       }
     if (k.expiresAt && new Date(k.expiresAt).getTime() < Date.now())
       return {
         label: t('integrators.api_keys.status_expired', { defaultValue: 'Expired' }),
-        palette: statusPalette.warning,
+        tone: 'warning',
       }
     return {
       label: t('integrators.api_keys.status_active', { defaultValue: 'Active' }),
-      palette: statusPalette.success,
+      tone: 'success',
     }
   }
 }
@@ -66,7 +67,7 @@ const ApiKeyCard = ({
   onRevoke,
 }: {
   apiKey: ApiKey
-  status: { label: string; palette: string }
+  status: { label: string; tone: StatusTone }
   revokeDisabled: boolean
   onRevoke: () => void
 }) => {
@@ -78,9 +79,9 @@ const ApiKeyCard = ({
         <Text fontWeight='bold' truncate>
           {k.label}
         </Text>
-        <Badge colorPalette={status.palette} variant='subtle' flexShrink={0}>
+        <StatusBadge tone={status.tone} flexShrink={0}>
           {status.label}
-        </Badge>
+        </StatusBadge>
         <IconButton
           aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
           variant='ghost'
@@ -248,9 +249,7 @@ const ApiKeysPanel = () => {
                     <Table.Cell>{formatDate(k.lastUsedAt)}</Table.Cell>
                     <Table.Cell>{formatDate(k.expiresAt)}</Table.Cell>
                     <Table.Cell>
-                      <Badge colorPalette={s.palette} variant='subtle'>
-                        {s.label}
-                      </Badge>
+                      <StatusBadge tone={s.tone}>{s.label}</StatusBadge>
                     </Table.Cell>
                     <Table.Cell textAlign='end'>
                       <IconButton

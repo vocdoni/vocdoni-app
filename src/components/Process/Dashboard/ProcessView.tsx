@@ -1,7 +1,5 @@
 import {
   AspectRatio,
-  Badge,
-  BadgeProps,
   Box,
   Button,
   Flex,
@@ -77,13 +75,14 @@ import {
 } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
+import { StatusBadge, type StatusBadgeProps } from '~components/ui/StatusBadge'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { useProcessEarlyEndDate } from '~queries/process-end-date'
 import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
-import { statusPalette } from '~theme/status'
+import type { StatusTone } from '~theme/status'
 import { useAnonymityLabels } from '../anonymityLabels'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
@@ -352,21 +351,21 @@ const ProcessViewContent = () => {
   )
 }
 
-const ResultsStateBadge = (props: BadgeProps) => {
+const ResultsStateBadge = (props: Omit<StatusBadgeProps, 'tone'>) => {
   const { election } = useElection()
   const { t } = useTranslation()
 
   if (!election) return null
 
   if (isLive(election) || hasResults(election)) {
-    let color: string = statusPalette.info
+    let tone: StatusTone = 'info'
     let text = t('results_state.live_results', 'Live results')
     let tooltip = t(
       'results_state.live_results_tooltip',
       'This voting process shows live results. However, it is still in progress, so the results may change before the vote ends.'
     )
     if (isLive(election) && isSecretUntilTheEnd(election)) {
-      color = statusPalette.warning
+      tone = 'warning'
       text = t('results_state.secret_until_end', 'Awaiting results')
       tooltip = t(
         'results_state.secret_until_end_tooltip',
@@ -374,15 +373,14 @@ const ResultsStateBadge = (props: BadgeProps) => {
       )
     }
     if (hasResults(election)) {
-      color = statusPalette.success
+      tone = 'success'
       text = t('results_state.results_available', 'Results available')
       tooltip = null
     }
     const badge = (
-      <Badge colorPalette={color} {...props}>
+      <StatusBadge tone={tone} endElement={tooltip ? <Icon as={LuInfo} /> : undefined} {...props}>
         {text}
-        {tooltip && <Icon as={LuInfo} />}
-      </Badge>
+      </StatusBadge>
     )
 
     if (!tooltip) return badge

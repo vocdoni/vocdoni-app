@@ -46,7 +46,6 @@ const IntegratorConfiguration = () => {
         })}
       </SubHeading>
       <TabsRoot
-        variant='settings'
         value={activeTabValue}
         onValueChange={({ value }) => {
           const tab = tabs.find((entry) => entry.route === value)
