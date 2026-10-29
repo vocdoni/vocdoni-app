@@ -32,6 +32,7 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { roleIcons } from '~components/Layout/SaasSelector'
+import { teamWriterLimitErrorMessage } from '~components/Pricing/payment-errors'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { EmptyState } from '~components/ui/EmptyState'
 import { useToast } from '~components/Toast'
@@ -349,7 +350,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
         onError: (error: Error): void => {
           toast({
             title: t('role.update.error', { defaultValue: 'Error updating role' }),
-            description: error.message,
+            description: teamWriterLimitErrorMessage(t, error) ?? error.message,
             type: 'error',
             duration: 5000,
             isClosable: true,
