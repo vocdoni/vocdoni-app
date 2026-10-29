@@ -822,7 +822,7 @@
       "title": "APIren gakoak"
     },
     "configuration": {
-      "subtitle": "Kudeatu zure harpidetzea eta lortu laguntza.",
+      "subtitle": "Kudeatu zure wallet-a, harpidetza eta lortu laguntza.",
       "title": "Konfigurazioa"
     },
     "create_account": {
@@ -891,7 +891,11 @@
       "portal_error": "Ezin da fakturazio portala ireki",
       "unavailable": "Harpidetzaren xehetasunak ez daude erabilgarri"
     },
-    "upgrade_plan": "Hobetu plana"
+    "upgrade_plan": "Hobetu plana",
+    "wallet": {
+      "balance": "Wallet-aren saldoa",
+      "manage": "Kudeatu wallet-a"
+    }
   },
   "invalid_promo_code": "Sustapen-kodea ez da baliozkoa",
   "invite": {
@@ -2114,6 +2118,45 @@
   "voting_processes_description": "Kudeatu eta gainbegiratu zure bozketa-prozesuak",
   "voting_settings": "Bozketa-ezarpenak",
   "voting_status": "Bozketaren egoera",
+  "wallet": {
+    "balance": "Saldoa",
+    "balance_note": "Aurrez ordaindutako kredituak, BEZ gabe. Ordainpeko boto-prozesu bat argitaratzean saldo honetatik kobratzen da.",
+    "history": {
+      "amount": "Zenbatekoa",
+      "date": "Data",
+      "detail": "Xehetasuna",
+      "empty": "Oraindik ez dago mugimendurik.",
+      "kind": "Mota",
+      "title": "Mugimenduak"
+    },
+    "kind": {
+      "creditBack": "Kreditua itzulita",
+      "payment": "Ordainketa",
+      "refund": "Stripe-ren itzulketa",
+      "topup": "Kargatzea"
+    },
+    "load_error": "Ezin izan da wallet-a kargatu",
+    "managed": "Erakunde honen boto-prozesuak kudeatzen dituen integratzaileak ordaintzen ditu.",
+    "negative_balance": "Zure saldoa negatiboa da itzulketa baten ondoren. Kargatu saldoa boto-prozesu berriak ordaintzeko.",
+    "pagination": "{{page}}/{{total}} orria · guztira {{items}}",
+    "processing": "Ordainketa jasota. Zure saldoa eguneratuko da berretsi bezain pronto.",
+    "processing_timeout": "Espero baino denbora gehiago behar da. Zure saldoa eguneratuko da ordainketa berretsi bezain pronto; begiratu berriro geroago.",
+    "title": "Wallet-a",
+    "topup": {
+      "amount": "Zenbatekoa (EUR, BEZ gabe)",
+      "amount_decimals": "Erabili gehienez 2 hamartar.",
+      "amount_net": "Kargatzea (BEZ gabe)",
+      "amount_range": "Idatzi {{min}} eta {{max}} arteko zenbatekoa.",
+      "continue": "Jarraitu ordainketara",
+      "hint": "BEZa ordainketan gehituko da, zure fakturazio-datuen arabera.",
+      "open": "Kargatu",
+      "pay": "Ordaindu {{amount}}",
+      "success_toast": "Zure wallet-a kargatu da",
+      "title": "Kargatu zure wallet-a",
+      "total": "Guztira",
+      "vat": "BEZ"
+    }
+  },
   "wallet_not_connected": "Zorroa ez dago konektatuta",
   "website": "Webgunea",
   "whatsapp_contact": "Hitz egin gurekin!",

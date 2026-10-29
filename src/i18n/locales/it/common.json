@@ -830,7 +830,7 @@
       "title": "Chiavi API"
     },
     "configuration": {
-      "subtitle": "Gestisci il tuo abbonamento e ottieni supporto.",
+      "subtitle": "Gestisci il tuo wallet, l'abbonamento e ottieni supporto.",
       "title": "Configurazione"
     },
     "create_account": {
@@ -899,7 +899,11 @@
       "portal_error": "Impossibile aprire il portale di fatturazione",
       "unavailable": "Dettagli dell'abbonamento non disponibili"
     },
-    "upgrade_plan": "Migliora il piano"
+    "upgrade_plan": "Migliora il piano",
+    "wallet": {
+      "balance": "Saldo del wallet",
+      "manage": "Gestisci il wallet"
+    }
   },
   "invalid_promo_code": "Codice promozione non valido",
   "invite": {
@@ -2150,6 +2154,45 @@
   "voting_processes_description": "Gestisci e monitora i tuoi processi di voto",
   "voting_settings": "Impostazioni di voto",
   "voting_status": "Stato del voto",
+  "wallet": {
+    "balance": "Saldo",
+    "balance_note": "Credito prepagato, IVA esclusa. La pubblicazione di un processo di voto a pagamento viene addebitata da questo saldo.",
+    "history": {
+      "amount": "Importo",
+      "date": "Data",
+      "detail": "Dettaglio",
+      "empty": "Nessun movimento per ora.",
+      "kind": "Tipo",
+      "title": "Movimenti"
+    },
+    "kind": {
+      "creditBack": "Accredito",
+      "payment": "Pagamento",
+      "refund": "Rimborso Stripe",
+      "topup": "Ricarica"
+    },
+    "load_error": "Impossibile caricare il wallet",
+    "managed": "I processi di voto di questa organizzazione sono pagati dall'integratore che la gestisce.",
+    "negative_balance": "Il tuo saldo è negativo dopo un rimborso. Ricarica per pagare nuovi processi di voto.",
+    "pagination": "Pagina {{page}} di {{total}} · {{items}} in totale",
+    "processing": "Pagamento ricevuto. Il saldo si aggiornerà non appena il pagamento sarà confermato.",
+    "processing_timeout": "Ci sta volendo più del previsto. Il saldo si aggiornerà quando il pagamento sarà confermato; ricontrolla più tardi.",
+    "title": "Wallet",
+    "topup": {
+      "amount": "Importo (EUR, IVA esclusa)",
+      "amount_decimals": "Usa al massimo 2 decimali.",
+      "amount_net": "Ricarica (IVA esclusa)",
+      "amount_range": "Inserisci un importo compreso tra {{min}} e {{max}}.",
+      "continue": "Continua al pagamento",
+      "hint": "L'IVA viene aggiunta al pagamento in base ai tuoi dati di fatturazione.",
+      "open": "Ricarica",
+      "pay": "Paga {{amount}}",
+      "success_toast": "Il tuo wallet è stato ricaricato",
+      "title": "Ricarica il tuo wallet",
+      "total": "Totale",
+      "vat": "IVA"
+    }
+  },
   "wallet_not_connected": "Wallet non connesso",
   "website": "Sito web",
   "whatsapp_contact": "Parla con noi!",

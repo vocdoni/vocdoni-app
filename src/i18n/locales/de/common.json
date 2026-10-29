@@ -822,7 +822,7 @@
       "title": "API-Schlüssel"
     },
     "configuration": {
-      "subtitle": "Verwalte dein Abonnement und erhalte Support.",
+      "subtitle": "Verwalte dein Wallet, dein Abonnement und erhalte Support.",
       "title": "Konfiguration"
     },
     "create_account": {
@@ -891,7 +891,11 @@
       "portal_error": "Das Abrechnungsportal konnte nicht geöffnet werden",
       "unavailable": "Abonnementdetails sind nicht verfügbar"
     },
-    "upgrade_plan": "Plan upgraden"
+    "upgrade_plan": "Plan upgraden",
+    "wallet": {
+      "balance": "Wallet-Guthaben",
+      "manage": "Wallet verwalten"
+    }
   },
   "invalid_promo_code": "Ungültiger Aktionscode",
   "invite": {
@@ -2114,6 +2118,45 @@
   "voting_processes_description": "Deine Abstimmungsprozesse verwalten und überwachen",
   "voting_settings": "Abstimmungseinstellungen",
   "voting_status": "Abstimmungsstatus",
+  "wallet": {
+    "balance": "Guthaben",
+    "balance_note": "Prepaid-Guthaben, ohne MwSt. Die Veröffentlichung eines kostenpflichtigen Abstimmungsprozesses wird davon abgebucht.",
+    "history": {
+      "amount": "Betrag",
+      "date": "Datum",
+      "detail": "Details",
+      "empty": "Noch keine Bewegungen.",
+      "kind": "Art",
+      "title": "Bewegungen"
+    },
+    "kind": {
+      "creditBack": "Gutschrift",
+      "payment": "Zahlung",
+      "refund": "Stripe-Erstattung",
+      "topup": "Aufladung"
+    },
+    "load_error": "Wallet konnte nicht geladen werden",
+    "managed": "Die Abstimmungsprozesse dieser Organisation werden vom Integrator bezahlt, der sie verwaltet.",
+    "negative_balance": "Dein Guthaben ist nach einer Erstattung negativ. Lade es auf, um neue Abstimmungsprozesse zu bezahlen.",
+    "pagination": "Seite {{page}} von {{total}} · {{items}} insgesamt",
+    "processing": "Zahlung eingegangen. Dein Guthaben wird aktualisiert, sobald sie bestätigt ist.",
+    "processing_timeout": "Das dauert länger als erwartet. Dein Guthaben wird aktualisiert, sobald die Zahlung bestätigt ist. Schau später noch einmal nach.",
+    "title": "Wallet",
+    "topup": {
+      "amount": "Betrag (EUR, ohne MwSt.)",
+      "amount_decimals": "Verwende höchstens 2 Nachkommastellen.",
+      "amount_net": "Aufladung (ohne MwSt.)",
+      "amount_range": "Gib einen Betrag zwischen {{min}} und {{max}} ein.",
+      "continue": "Weiter zur Zahlung",
+      "hint": "Die MwSt. wird an der Kasse anhand deiner Rechnungsdaten hinzugefügt.",
+      "open": "Aufladen",
+      "pay": "{{amount}} bezahlen",
+      "success_toast": "Dein Wallet wurde aufgeladen",
+      "title": "Wallet aufladen",
+      "total": "Gesamt",
+      "vat": "MwSt."
+    }
+  },
   "wallet_not_connected": "Wallet nicht verbunden",
   "website": "Website",
   "whatsapp_contact": "Schreib uns!",

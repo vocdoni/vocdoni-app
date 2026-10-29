@@ -29,6 +29,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | ballot secrecy / secret vote | segretezza del voto | **Distinct concept — do not conflate with anonymity.** English "secret"/"secrecy" → "segreto"/"segretezza" ("il voto è completamente segreto", "la segretezza del voto"). Anonymity means a vote can't be linked to a voter; secrecy means the ballot content stays hidden. Translate each English term with its matching Italian term — never use "segreto" for the anonymous-voting feature, nor "anonimo" for ballot secrecy |
 | private ballot / pseudonymous | voto privato / pseudonimo | The default mode, opposite the anonymous one: the ballot carries a one-time code instead of a name, but platform records could still connect it to a member. Translate "private ballot" as "voto privato" and "pseudonymous" as "pseudonimo" — never as "anonimo" (that is the other mode) nor "segreto" (that is ballot secrecy) |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| wallet (prepaid credit balance) | wallet | Keep in English, so it is not confused with a crypto wallet |
 | open source | Open Source | Keep in English — do not translate |
 | overwrite vote / correct vote | modificare il voto / correggere il voto | Prefer "modificare" for buttons, "correggere" for descriptions |
 | abstain | astenersi / astensione | Use "astenersi" for actions, "astensione" for the noun form |

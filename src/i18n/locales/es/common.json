@@ -830,7 +830,7 @@
       "title": "Claves API"
     },
     "configuration": {
-      "subtitle": "Gestiona tu suscripción y obtén soporte.",
+      "subtitle": "Gestiona tu wallet, tu suscripción y obtén soporte.",
       "title": "Configuración"
     },
     "create_account": {
@@ -899,7 +899,11 @@
       "portal_error": "No se pudo abrir el portal de facturación",
       "unavailable": "Los detalles de la suscripción no están disponibles"
     },
-    "upgrade_plan": "Mejorar plan"
+    "upgrade_plan": "Mejorar plan",
+    "wallet": {
+      "balance": "Saldo de la wallet",
+      "manage": "Gestionar la wallet"
+    }
   },
   "invalid_promo_code": "Código promocional no válido",
   "invite": {
@@ -2150,6 +2154,45 @@
   "voting_processes_description": "Gestiona y supervisa tus procesos de votación",
   "voting_settings": "Ajustes de votación",
   "voting_status": "Estado de la votación",
+  "wallet": {
+    "balance": "Saldo",
+    "balance_note": "Saldo prepagado, sin IVA. Publicar un proceso de votación de pago se cobra de este saldo.",
+    "history": {
+      "amount": "Importe",
+      "date": "Fecha",
+      "detail": "Detalle",
+      "empty": "Todavía no hay movimientos.",
+      "kind": "Tipo",
+      "title": "Movimientos"
+    },
+    "kind": {
+      "creditBack": "Devolución de crédito",
+      "payment": "Pago",
+      "refund": "Reembolso de Stripe",
+      "topup": "Recarga"
+    },
+    "load_error": "No se pudo cargar la wallet",
+    "managed": "Los procesos de votación de esta organización los paga el integrador que la gestiona.",
+    "negative_balance": "Tu saldo es negativo tras un reembolso. Recarga para pagar nuevos procesos de votación.",
+    "pagination": "Página {{page}} de {{total}} · {{items}} en total",
+    "processing": "Pago recibido. Tu saldo se actualizará en cuanto se confirme.",
+    "processing_timeout": "Esto está tardando más de lo esperado. Tu saldo se actualizará cuando se confirme el pago; vuelve a consultarlo más tarde.",
+    "title": "Wallet",
+    "topup": {
+      "amount": "Importe (EUR, sin IVA)",
+      "amount_decimals": "Usa como máximo 2 decimales.",
+      "amount_net": "Recarga (sin IVA)",
+      "amount_range": "Introduce un importe entre {{min}} y {{max}}.",
+      "continue": "Continuar al pago",
+      "hint": "El IVA se añade en el pago según tus datos de facturación.",
+      "open": "Recargar",
+      "pay": "Pagar {{amount}}",
+      "success_toast": "Tu wallet se ha recargado",
+      "title": "Recargar tu wallet",
+      "total": "Total",
+      "vat": "IVA"
+    }
+  },
   "wallet_not_connected": "Cartera no conectada",
   "website": "Sitio web",
   "whatsapp_contact": "¡Habla con nosotros!",

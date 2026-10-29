@@ -18,6 +18,7 @@ const IntegratorsPasswordForgot = lazy(() => import('~elements/integrators/passw
 const IntegratorsPasswordReset = lazy(() => import('~elements/integrators/password/reset'))
 const IntegratorsConfiguration = lazy(() => import('~elements/integrators/configuration'))
 const IntegratorSubscriptionTab = lazy(() => import('~components/Integrator/SubscriptionTab'))
+const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
 const IntegratorsManagedOrganizations = lazy(() => import('~elements/integrators/organizations'))
 const IntegratorsApiKeys = lazy(() => import('~elements/integrators/api-keys'))
 
@@ -131,7 +132,15 @@ export const useIntegratorsRoutes = () => {
                 children: [
                   {
                     index: true,
-                    element: <Navigate to={Routes.integrators.configuration.subscription} replace />,
+                    element: <Navigate to={Routes.integrators.configuration.wallet} replace />,
+                  },
+                  {
+                    path: Routes.integrators.configuration.wallet,
+                    element: (
+                      <SuspenseLoader>
+                        <WalletPanel />
+                      </SuspenseLoader>
+                    ),
                   },
                   {
                     path: Routes.integrators.configuration.subscription,
