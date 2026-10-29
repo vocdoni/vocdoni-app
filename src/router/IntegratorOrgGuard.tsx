@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Navigate, Outlet } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
+import { DashboardContents } from '~components/Dashboard/Contents'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useProfile } from '~src/queries/account'
 import NotIntegratorNotice from '~components/Integrator/NotIntegratorNotice'
@@ -68,16 +69,18 @@ const IntegratorOrgGuard = () => {
 
   if (provision.isError) {
     return (
-      <Center py={16}>
-        <Stack align='center' gap={3}>
-          <Text fontSize='sm' color='gray.500'>
-            <Trans i18nKey='integrators.provision_failed'>We couldn't set up your integrator account.</Trans>
-          </Text>
-          <Button onClick={() => provision.reset()}>
-            <Trans i18nKey='common.retry'>Try again</Trans>
-          </Button>
-        </Stack>
-      </Center>
+      <DashboardContents p={0}>
+        <Center py={16}>
+          <Stack align='center' gap={3}>
+            <Text fontSize='sm' color='gray.500'>
+              <Trans i18nKey='integrators.provision_failed'>We couldn't set up your integrator account.</Trans>
+            </Text>
+            <Button onClick={() => provision.reset()}>
+              <Trans i18nKey='common.retry'>Try again</Trans>
+            </Button>
+          </Stack>
+        </Center>
+      </DashboardContents>
     )
   }
 

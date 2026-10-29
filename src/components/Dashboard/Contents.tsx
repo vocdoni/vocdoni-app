@@ -33,9 +33,7 @@ export const DashboardCardHeader = ({ title, subtitle, ...props }: DashboardCard
   </Box>
 )
 
-export const DashboardContents = (props: FlexProps) => (
-  <Flex flexDirection='column' w='full' mx='auto' p={6} {...props} />
-)
+export const DashboardContents = (props: FlexProps) => <Flex flexDirection='column' w='full' p={6} {...props} />
 
 // A block, not the card's flex column: its content runs inline text and selects together.
 export const DashboardSection = (props: Card.RootProps) => (
@@ -93,7 +91,7 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
   >
     <Box
       height='100%'
-      width={{ base: '100vw', md: 'sidebar' }}
+      width={{ base: '100vw', md: 'dashboard.panel' }}
       bg='surface.content'
       borderLeft='1px solid'
       borderColor='border'

@@ -1,6 +1,7 @@
 import { Box, Link, Text } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
 import { Trans } from 'react-i18next'
+import { PageSection } from '~components/ui/PageContainer'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
 import { getOrganizationName } from '~utils/organization'
 
@@ -12,11 +13,10 @@ export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
   if (!orgName) return null
 
   return (
-    <Box
+    <PageSection
+      size='legal'
       data-testid='layout-legal-notice'
       mt={{ base: 10, xl: 12 }}
-      maxW='6xl'
-      mx='auto'
       color='fg.muted'
       fontSize='sm'
       lineHeight='taller'
@@ -36,7 +36,7 @@ export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
         </Link>
         .
       </Text>
-    </Box>
+    </PageSection>
   )
 }
 

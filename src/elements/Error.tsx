@@ -1,10 +1,11 @@
 import { Button, Flex, Icon } from '@chakra-ui/react'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isRouteErrorResponse, useLocation, useNavigate, useRouteError } from 'react-router'
 import { DashboardIcon, ErrorIcon, HomeIcon, RefreshIcon } from '~theme/icons'
 import { useAuth } from '~components/Auth/useAuth'
-import { Heading, SubHeading } from '~components/Dashboard/Contents'
+import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
+import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { Routes } from '~src/router/routes'
 import { isPublicPageNotFoundError } from '~src/ssr/public-pages'
 import { capturePosthogException } from '~utils/analytics'
@@ -88,6 +89,7 @@ const Error = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
   const { pathname } = useLocation()
+  const inDashboard = useContext(DashboardLayoutContext) !== undefined
 
   useEffect(() => {
     reportRouteError(error, pathname)
@@ -97,13 +99,16 @@ const Error = () => {
 
   const returnPath = getNotFoundReturnPath({ isAuthenticated, pathname })
 
-  return (
+  const view = (
     <ErrorView
       isNotFound={isNotFoundError(error)}
       returnTo={returnPath === Routes.dashboard.base ? 'dashboard' : 'home'}
       onReturnHome={() => navigate(returnPath)}
     />
   )
+
+  // A dashboard page's error renders inside the shell, so it takes the shell's page container.
+  return inDashboard ? <DashboardContents p={0}>{view}</DashboardContents> : view
 }
 
 export default Error

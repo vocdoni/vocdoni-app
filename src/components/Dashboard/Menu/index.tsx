@@ -1,16 +1,4 @@
-import {
-  Box,
-  Button,
-  CloseButton,
-  Drawer,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Text,
-  useMediaQuery,
-  useToken,
-} from '@chakra-ui/react'
+import { Box, Button, CloseButton, Drawer, Flex, HStack, Icon, IconButton, Text, useMediaQuery } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { AddIcon, SidebarIcon } from '~theme/icons'
@@ -38,7 +26,6 @@ const DashboardMenu = ({
   menu: DashboardMenuConfig
 }) => {
   const { reduced } = useContext(DashboardLayoutContext)
-  const [width, rWidth] = useToken('sizes', ['dashboard-menu.default', 'dashboard-menu.reduced'])
 
   return (
     <>
@@ -51,8 +38,8 @@ const DashboardMenu = ({
         flexDirection='column'
         position='sticky'
         top={0}
-        w={reduced ? rWidth : width}
-        h='100dvh'
+        w={reduced ? 'dashboard.menu.collapsed' : 'dashboard.menu.expanded'}
+        h='dvh'
         zIndex='dashboard-menu'
         transition='width {durations.slow} ease'
       >
@@ -139,7 +126,7 @@ const DashboardMenuContent = ({
         <Flex
           alignItems='center'
           justifyContent={alignLogoCenter ? 'center' : 'flex-start'}
-          h='47px'
+          h='dashboard.header'
           mb={2}
           role='group'
           position='relative'

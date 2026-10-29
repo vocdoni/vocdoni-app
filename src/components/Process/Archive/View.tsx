@@ -9,6 +9,7 @@ import { useLocalizedText } from '~src/legacy/use-localized-text'
 import type { LegacyElection, LegacyElectionStatus } from '~src/legacy/vochain-archive'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import type { StatusTone } from '~theme/status'
+import { PageSection } from '~components/ui/PageContainer'
 
 const ElectionStatus = ({ status }: { status: LegacyElectionStatus }) => {
   const { t } = useTranslation()
@@ -48,7 +49,16 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
   const description = localize(election.description)
 
   return (
-    <VStack align='stretch' gap={6} maxW='4xl' mx='auto' px={4} py={8} w='full'>
+    <PageSection
+      size='archive'
+      display='flex'
+      flexDirection='column'
+      alignItems='stretch'
+      gap={6}
+      px={4}
+      py={8}
+      w='full'
+    >
       {election.header && <Image src={election.header} alt='' borderRadius='md' maxH='240px' objectFit='cover' />}
 
       <Box>
@@ -144,7 +154,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
           {t('public_process.verify_process', { defaultValue: 'View process' })}
         </Link>
       </Box>
-    </VStack>
+    </PageSection>
   )
 }
 

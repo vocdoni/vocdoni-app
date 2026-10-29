@@ -345,10 +345,18 @@ describe('PRIMARY_COLOR-driven system', () => {
 describe('layout tokens', () => {
   const value = (name: string) => system.tokens.getByName(name)?.value
 
-  it('keeps the app layers and the public content width at the values the layouts used', () => {
+  it('keeps the app layers and the page widths at the values the layouts used', () => {
     expect(value('zIndex.public-header')).toBe(30)
     expect(value('zIndex.dashboard-menu')).toBe(100)
-    expect(value('sizes.content.public')).toBe('1600px')
+    expect(value('sizes.content.wide')).toBe('1600px')
+    expect(value('sizes.content.medium')).toBe('1200px')
+  })
+
+  it('keeps the dashboard shell sizes', () => {
+    expect(value('sizes.dashboard.menu.expanded')).toBe('255px')
+    expect(value('sizes.dashboard.menu.collapsed')).toBe('48px')
+    expect(value('sizes.dashboard.header')).toBe('47px')
+    expect(value('sizes.dashboard.panel')).toBe('350px')
   })
 
   it('resolves the chakra names the layouts rely on to their literal values', () => {

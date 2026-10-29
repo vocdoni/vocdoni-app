@@ -24,6 +24,7 @@ import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
 import { statusPalette } from '~theme/status'
 import { defaultColorPalette } from '~theme/system'
+import { PageSection } from '~components/ui/PageContainer'
 
 // Returns the milliseconds left until the relevant deadline (start when upcoming, end otherwise).
 const useTimeLeft = (target?: Date) => {
@@ -358,12 +359,12 @@ const ProcessSummary = () => {
   if (!election) return null
 
   return (
-    <Flex direction='column' gap={8} mx='auto' w='full' maxW='breakpoint-lg' py={6}>
+    <PageSection size='summary' display='flex' flexDirection='column' gap={8} w='full' py={6}>
       <ParticipationCard />
       <KeyIndicators />
       <ResultsNotice />
       <CertifiedTech />
-    </Flex>
+    </PageSection>
   )
 }
 
