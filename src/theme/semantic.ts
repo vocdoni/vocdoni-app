@@ -79,6 +79,13 @@ export const colors = defineSemanticTokens.colors({
         _dark: '{colors.black}',
       },
     },
+    // Chakra's red.500 reads 3.76:1 on white; red.600 clears 4.5:1 (dark keeps Chakra's red.400).
+    error: {
+      value: {
+        _light: '{colors.red.600}',
+        _dark: '{colors.red.400}',
+      },
+    },
   },
   // Surface layers. A sub-role is a member that paints a different colour from its layer (tooltip vs
   // menu, drawer vs dialog).
@@ -290,14 +297,17 @@ export const colors = defineSemanticTokens.colors({
   },
   input: {
     placeholder: {
-      value: '{colors.gray.500}',
+      value: {
+        _light: '{colors.gray.500}',
+        _dark: '{colors.gray.400}',
+      },
     },
   },
   tabs: {
     tab: {
       color: {
         value: {
-          _light: '{colors.gray.500}',
+          _light: '{colors.gray.600}',
           _dark: '{colors.gray.400}',
         },
       },

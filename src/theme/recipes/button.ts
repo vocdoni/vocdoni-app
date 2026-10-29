@@ -152,7 +152,8 @@ const floating = defineStyle({
 // WhatsApp contact button, in the brand's own green.
 const whatsapp = defineStyle({
   bg: 'whatsapp.500',
-  color: 'white',
+  // White on the brand green is 1.98:1.
+  color: 'black',
   _hover: { bg: 'whatsapp.600' },
   transition: 'background-color {durations.moderate} ease-in-out',
 })
