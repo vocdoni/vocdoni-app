@@ -36,7 +36,8 @@ export const EmptyState = ({
       </ChakraEmptyState.Indicator>
     )}
     {image && <Image src={image} alt={imageAlt ?? ''} _dark={{ filter: 'invert(70%)' }} {...imageProps} />}
-    <ChakraEmptyState.Title>{title}</ChakraEmptyState.Title>
+    {/* In a table row or search result the message is a line of text, not a section heading. */}
+    <ChakraEmptyState.Title as={rest.size === 'sm' ? 'p' : undefined}>{title}</ChakraEmptyState.Title>
     {description && <ChakraEmptyState.Description>{description}</ChakraEmptyState.Description>}
     {children}
   </ChakraEmptyState.Root>
