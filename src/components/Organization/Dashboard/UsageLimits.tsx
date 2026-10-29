@@ -44,13 +44,13 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
   const isNearLimit = percentage >= 80 && !isSoftLimit
   const isAtLimit = percentage >= 100 && !isSoftLimit
 
-  const progressColor = isAtLimit ? 'red' : isNearLimit ? 'orange' : color
+  const fillColor = isAtLimit ? 'meter.critical' : isNearLimit ? 'meter.warning' : color
 
   return (
     <Box>
       <Flex justify='space-between' align='center' mb={2}>
         <HStack gap={2}>
-          <Icon as={icon} boxSize={4} color={`${color}.500`} />
+          <Icon as={icon} boxSize={4} color={`${color}.icon`} />
           <Text fontSize='sm' fontWeight='medium' color='texts.primary'>
             {label}
             {tooltip && (
@@ -76,9 +76,9 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
           </Text>
         </HStack>
       </Flex>
-      <Progress.Root value={displayPercentage} size='sm' colorPalette={progressColor} shape='full'>
-        <Progress.Track bg='bg.emphasized'>
-          <Progress.Range borderRadius='full' />
+      <Progress.Root value={displayPercentage} size='sm' shape='full'>
+        <Progress.Track bg='chart.track'>
+          <Progress.Range bgColor={fillColor} borderRadius='full' />
         </Progress.Track>
       </Progress.Root>
     </Box>
@@ -118,7 +118,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
       label: t('dashboard.usage.voting_processes', { defaultValue: 'Voting processes' }),
       current: usage.processes || 0,
       max: maxProcesses,
-      color: 'blue',
+      color: 'chart.1',
       tooltip: t('dashboard.usage.voting_processes_tooltip', {
         defaultValue:
           'Number of voting processes created this year. Votes with 10 members or fewer are not counted towards the limits.',
@@ -129,7 +129,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
       label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase size' }),
       current: membersData?.pagination?.totalItems || 0,
       max: maxCensusSize,
-      color: 'purple',
+      color: 'chart.2',
       tooltip: t('dashboard.usage.memberbase_tooltip', {
         defaultValue: 'Maximum number of members allowed per voting process.',
       }),
@@ -143,7 +143,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
       label: t('dashboard.usage.2fa_email', { defaultValue: '2FA email codes' }),
       current: usage.sentEmails || 0,
       max: email2FA,
-      color: 'green',
+      color: 'chart.3',
       isSoftLimit: true,
       tooltip: t('dashboard.usage.2fa_email_tooltip', {
         defaultValue: 'Email verification codes sent. Exceeding the limit costs €{{price}} per code.',
@@ -158,7 +158,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
       label: t('dashboard.usage.2fa_sms', { defaultValue: '2FA SMS codes' }),
       current: usage.sentSMS || 0,
       max: sms2FA,
-      color: 'cyan',
+      color: 'chart.4',
       isSoftLimit: true,
       tooltip: t('dashboard.usage.2fa_sms_tooltip', {
         defaultValue: 'SMS verification codes sent. Exceeding the limit costs €{{price}} per code.',

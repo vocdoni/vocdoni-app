@@ -11,20 +11,12 @@ const baseStyle = {
   item: {
     bg: 'chakra.body.bg',
     _selected: {
-      bg: 'gray.100',
-      color: 'black',
-      _dark: {
-        bg: 'ink.700',
-        color: 'white',
-      },
+      bg: 'state.selected.bg',
+      color: 'state.selected.fg',
     },
     _focus: {
-      bg: 'gray.100',
-      color: 'black',
-      _dark: {
-        bg: 'ink.800',
-        color: 'white',
-      },
+      bg: 'state.hover.bg',
+      color: 'state.hover.fg',
     },
   },
 
