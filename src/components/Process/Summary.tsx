@@ -141,9 +141,9 @@ const ParticipationCard = () => {
               {t('process.summary.votes_cast', { count: voteCount, votes: nf(voteCount) })}
             </Text>
           </Flex>
-          <Progress.Root value={percent} colorPalette='blue' size='lg' striped>
+          <Progress.Root value={percent} size='lg' striped>
             <Progress.Track borderRadius='full'>
-              <Progress.Range />
+              <Progress.Range bgColor='chart.1' />
             </Progress.Track>
           </Progress.Root>
         </Box>

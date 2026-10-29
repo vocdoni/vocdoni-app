@@ -1,4 +1,6 @@
 import { defineSemanticTokens } from '@chakra-ui/react'
+import { chartColors } from './charts'
+import { stateColors } from './states'
 
 /**
  * Semantic tokens allow us to define tokens, like colors, based on their usage
@@ -28,6 +30,8 @@ const texts = {
 }
 
 export const colors = defineSemanticTokens.colors({
+  ...stateColors,
+  ...chartColors,
   chakra,
   // Overrides of the chakra built-in semantic scale — the canonical vocabulary
   // for surfaces and text (bg, bg.subtle, bg.muted, fg, fg.muted, border, …)
