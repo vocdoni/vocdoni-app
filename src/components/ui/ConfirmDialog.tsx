@@ -91,12 +91,8 @@ export const ConfirmDialogContent = ({
 }
 
 /**
- * The app's one confirm/destructive-action dialog, with a built-in Cancel + confirm footer.
- *
- * Use this (not `useConfirm`) when the confirmed action is async: `useConfirm` closes the
- * dialog the moment the user clicks, before the mutation runs. Here the caller controls
- * `open` and closes it in `onSuccess`, so the confirm button can show `loading` state and
- * the dialog stays in context if the operation fails.
+ * The app's one confirm dialog. Prefer it over `useConfirm` for async actions: the caller owns `open`,
+ * so the dialog stays open with a loading confirm until the mutation succeeds.
  */
 export const ConfirmDialog = ({
   title,
