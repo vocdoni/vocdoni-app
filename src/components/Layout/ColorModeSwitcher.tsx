@@ -2,7 +2,7 @@ import { ButtonGroup, ButtonGroupProps, Icon, IconButton, IconButtonProps } from
 import { useTheme } from 'next-themes'
 import { type FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DarkModeIcon, LegacyDarkModeIcon, LegacyLightModeIcon, LightModeIcon, SystemModeIcon } from '~theme/icons'
+import { DarkModeIcon, LightModeIcon, SystemModeIcon } from '~theme/icons'
 import type { IconType } from '~theme/icons'
 import { Tooltip } from '~components/ui/Tooltip'
 import { useColorMode, useColorModeValue } from '~theme/color-mode'
@@ -13,7 +13,7 @@ export const ColorModeSwitcher: FC<ColorModeSwitcherProps> = (props) => {
   const { t } = useTranslation()
   const { toggleColorMode } = useColorMode()
   const text = useColorModeValue('dark', 'light')
-  const SwitchIcon = useColorModeValue(LegacyDarkModeIcon, LegacyLightModeIcon)
+  const SwitchIcon = useColorModeValue(DarkModeIcon, LightModeIcon)
 
   return (
     <IconButton

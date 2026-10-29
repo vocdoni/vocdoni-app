@@ -13,7 +13,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useTranslation } from 'react-i18next'
-import { LegacyCopyIcon, LegacyExternalLinkIcon, LegacyMoreCircleIcon } from '~theme/icons'
+import { CopyIcon, ExternalLinkIcon, MoreCircleIcon } from '~theme/icons'
 import { useToast } from '~components/Toast'
 import { addressTextOverflow } from '~constants'
 
@@ -32,7 +32,7 @@ const AddressBtn = ({ ...props }) => {
       <MenuTrigger asChild>
         <Button>
           {addressTextOverflow(address as string, 3)}
-          <LegacyMoreCircleIcon />
+          <MoreCircleIcon />
         </Button>
       </MenuTrigger>
       <MenuPositioner>
@@ -52,7 +52,7 @@ const AddressBtn = ({ ...props }) => {
               borderRadius='sm'
               mb={1}
             >
-              <LegacyCopyIcon />
+              <CopyIcon />
               {t('copy.address')}
             </Button>
           </MenuItem>
@@ -66,7 +66,7 @@ const AddressBtn = ({ ...props }) => {
               borderRadius='sm'
             >
               <HStack gap={2}>
-                <LegacyExternalLinkIcon />
+                <ExternalLinkIcon />
                 <Text as='span'>{t('open_in_explorer')}</Text>
               </HStack>
             </Button>

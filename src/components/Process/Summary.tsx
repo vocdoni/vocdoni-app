@@ -18,7 +18,7 @@ import type { QuestionStatus } from '@vocdoni/api-types'
 import { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LegacyLockIcon, LegacyResultsIcon, LegacyScanEyeIcon, LegacyShieldCheckIcon } from '~theme/icons'
+import { LockIcon, ResultsIcon, ScanEyeIcon, ShieldCheckIcon } from '~theme/icons'
 import { useCensusSize } from '~queries/census'
 import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
@@ -268,7 +268,7 @@ const ResultsNotice = () => {
           _dark={{ color: 'colorPalette.100' }}
         >
           <Flex gap={3} align='start'>
-            <Box as={LegacyResultsIcon} boxSize='icon.md' flexShrink={0} mt={0.5} />
+            <Box as={ResultsIcon} boxSize='icon.md' flexShrink={0} mt={0.5} />
             <Text fontSize='sm'>
               <Trans
                 i18nKey='process.summary.results_private'
@@ -292,9 +292,9 @@ const ResultsNotice = () => {
 // The privacy claim has to match what the process actually does: only a
 // blind-CSP census can promise nothing links a ballot to its voter.
 const techItems = (anonymous?: boolean) => [
-  { key: anonymous ? 'process.summary.tech_privacy' : 'process.summary.tech_pseudonymity', icon: LegacyLockIcon },
-  { key: 'process.summary.tech_integrity', icon: LegacyShieldCheckIcon },
-  { key: 'process.summary.tech_verifiability', icon: LegacyScanEyeIcon },
+  { key: anonymous ? 'process.summary.tech_privacy' : 'process.summary.tech_pseudonymity', icon: LockIcon },
+  { key: 'process.summary.tech_integrity', icon: ShieldCheckIcon },
+  { key: 'process.summary.tech_verifiability', icon: ScanEyeIcon },
 ]
 
 const CertifiedTech = () => {

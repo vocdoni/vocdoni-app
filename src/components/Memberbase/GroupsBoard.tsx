@@ -119,7 +119,7 @@ const GroupsInfo = () => {
     <DashboardBox position='relative' flexDirection='column' display='flex' gap={2} p={6} borderColor='border'>
       <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorPalette='gray' size='sm' />
       <Flex flexDirection='row' gap={4}>
-        <Icon as={UsersIcon} boxSize={8} />
+        <Icon as={UsersIcon} boxSize='icon.lg' />
         <Flex flexDirection='column' gap={4}>
           <Text fontSize='md' fontWeight='bold'>
             {t('groups_board.info.title', { defaultValue: 'About Groups' })}
@@ -689,7 +689,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
         <Card.Body p={0}>
           <Flex direction='column' gap={2}>
             <Flex align='center' gap={2}>
-              <Icon as={CalendarIcon} boxSize={3.5} />
+              <Icon as={CalendarIcon} boxSize='icon.sm' />
               <Text color='fg.muted' fontSize='sm'>
                 {t('group.created_on', {
                   defaultValue: 'Created {{date}}',
@@ -702,7 +702,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
               </Text>
             </Flex>
             <Flex align='center' gap={2}>
-              <Icon as={UsersIcon} boxSize={3.5} />
+              <Icon as={UsersIcon} boxSize='icon.sm' />
               <Button variant='text-link' onClick={onMembersDrawerOpen}>
                 {t('group.members', {
                   defaultValue: '{{count}} member',

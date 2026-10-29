@@ -77,7 +77,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
         p={4}
         zIndex='contents'
       >
-        <Icon as={LockIcon} boxSize={8} mb={1} />
+        <Icon as={LockIcon} boxSize='icon.lg' mb={1} />
         <Text fontWeight='bold' textAlign='center'>
           {t(`subscription.locked_content.title`, {
             defaultValue: 'Your current {{ plan }} plan does not include {{ permissionName }}',

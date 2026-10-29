@@ -21,7 +21,7 @@ import { useRef, useState } from 'react'
 import { DropzoneInputProps, DropzoneRootProps, FileRejection, useDropzone } from 'react-dropzone'
 import { SetValueConfig, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LegacyDeleteIcon, UploadIcon } from '~theme/icons'
+import { DeleteIcon, UploadIcon } from '~theme/icons'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
@@ -189,7 +189,7 @@ export const AvatarUploader = (props: FormControlProps) => {
                 size='sm'
                 colorPalette={statusPalette.destructive}
               >
-                <LegacyDeleteIcon />
+                <DeleteIcon />
               </IconButton>
             </Flex>
           </Box>
@@ -209,7 +209,7 @@ export const AvatarUploader = (props: FormControlProps) => {
               justifyContent='center'
             >
               <input {...getInputProps()} />
-              {isPending ? <Spinner /> : <Icon as={UploadIcon} boxSize={8} color='fg.muted' />}
+              {isPending ? <Spinner /> : <Icon as={UploadIcon} boxSize='icon.lg' color='fg.muted' />}
             </Box>
             <Button variant='outline'>
               <Icon as={UploadIcon} boxSize='icon.sm' />
@@ -308,7 +308,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
     >
       <input {...getInputProps()} />
       <Flex justifyContent='center' alignItems='center' p={2}>
-        <Icon color='fg.muted' as={UploadIcon} boxSize={10} />
+        <Icon color='fg.muted' as={UploadIcon} boxSize='icon.xl' />
       </Flex>
       <Box>
         {isDragActive ? (

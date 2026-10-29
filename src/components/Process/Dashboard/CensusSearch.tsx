@@ -155,7 +155,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
         <TooltipRoot positioning={{ placement: 'top' }}>
           <TooltipTrigger asChild>
             <chakra.span display='inline-flex' alignItems='center' cursor='default' color='fg.muted' opacity={0.5}>
-              <Icon as={HelpIcon} boxSize={3} />
+              <Icon as={HelpIcon} boxSize='icon.sm' />
             </chakra.span>
           </TooltipTrigger>
           <TooltipPositioner>

@@ -396,7 +396,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
               onClick={() => setPreviewOpen((open) => !open)}
             >
               <HStack gap={1.5}>
-                <Icon as={ViewIcon} boxSize={3.5} />
+                <Icon as={ViewIcon} boxSize='icon.sm' />
                 {t('voter_auth.preview.title', { defaultValue: 'What voters will see' })}
               </HStack>
               <Icon as={ChevronDownIcon} transform={previewOpen ? 'rotate(180deg)' : undefined} />

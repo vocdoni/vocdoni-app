@@ -1,10 +1,7 @@
 import { Image } from '@chakra-ui/react'
-import { BiTrash } from 'react-icons/bi'
-import { BsGoogle, BsLink } from 'react-icons/bs'
-import { FaCog, FaDiscord, FaEye, FaEyeSlash, FaGithub, FaGlobeAmericas } from 'react-icons/fa'
-import { FaCircleCheck, FaXTwitter } from 'react-icons/fa6'
-import { HiOutlineEllipsisHorizontalCircle } from 'react-icons/hi2'
-import { IoMdMoon, IoMdSunny } from 'react-icons/io'
+import { BsGoogle } from 'react-icons/bs'
+import { FaDiscord, FaGithub } from 'react-icons/fa'
+import { FaXTwitter } from 'react-icons/fa6'
 import {
   LuArrowLeft,
   LuArrowUpRight,
@@ -18,10 +15,12 @@ import {
   LuChevronDown,
   LuChevronLeft,
   LuChevronRight,
+  LuChevronUp,
   LuChevronsUpDown,
   LuCircleAlert,
   LuCircleCheck,
   LuCircleCheckBig,
+  LuCircleEllipsis,
   LuCircleHelp,
   LuCirclePlay,
   LuCircleStop,
@@ -31,9 +30,11 @@ import {
   LuEllipsisVertical,
   LuExternalLink,
   LuEye,
+  LuEyeOff,
   LuFileCheck,
   LuFileDown,
   LuFileSpreadsheet,
+  LuGlobe,
   LuGripVertical,
   LuHeadset,
   LuHouse,
@@ -66,10 +67,12 @@ import {
   LuRocket,
   LuRotateCcw,
   LuRotateCw,
+  LuScanEye,
   LuSearch,
   LuSend,
   LuSettings,
   LuShield,
+  LuShieldCheck,
   LuSlidersHorizontal,
   LuSmartphone,
   LuSparkles,
@@ -94,19 +97,7 @@ import {
   LuX,
   LuZap,
 } from 'react-icons/lu'
-import { MdOutlineRemoveRedEye, MdOutlineWhatsapp } from 'react-icons/md'
-import {
-  RiArrowDownSLine,
-  RiArrowUpSLine,
-  RiBarChartBoxLine,
-  RiErrorWarningLine,
-  RiExternalLinkLine,
-  RiEyeCloseLine,
-  RiFileCopyLine,
-  RiLock2Line,
-  RiSearchEyeLine,
-  RiShieldCheckLine,
-} from 'react-icons/ri'
+import { MdOutlineWhatsapp } from 'react-icons/md'
 
 export type { IconType } from 'react-icons'
 
@@ -124,7 +115,9 @@ export const DownloadFileIcon = LuFileDown
 export const EditIcon = LuPencil
 export const ExternalLinkIcon = LuExternalLink
 export const GoToIcon = LuArrowUpRight
+export const HideIcon = LuEyeOff
 export const LogoutIcon = LuLogOut
+export const MoreCircleIcon = LuCircleEllipsis
 export const MoreIcon = LuEllipsis
 export const MoreVerticalIcon = LuEllipsisVertical
 export const PauseIcon = LuPause
@@ -143,6 +136,7 @@ export const BackIcon = LuArrowLeft
 export const ChevronDownIcon = LuChevronDown
 export const ChevronLeftIcon = LuChevronLeft
 export const ChevronRightIcon = LuChevronRight
+export const ChevronUpIcon = LuChevronUp
 export const ChevronsUpDownIcon = LuChevronsUpDown
 export const DragHandleIcon = LuGripVertical
 export const SidebarIcon = LuPanelLeft
@@ -170,6 +164,7 @@ export const HelpCenterIcon = LuLifeBuoy
 export const HomeIcon = LuHouse
 export const IdCardIcon = LuIdCard
 export const KeyRoundIcon = LuKeyRound
+export const LanguageIcon = LuGlobe
 export const LinkIcon = LuLink
 export const LockIcon = LuLock
 export const MailIcon = LuMail
@@ -182,8 +177,10 @@ export const PhoneIcon = LuSmartphone
 export const PreferencesIcon = LuSlidersHorizontal
 export const ResultsIcon = LuChartColumn
 export const RocketIcon = LuRocket
+export const ScanEyeIcon = LuScanEye
 export const SecurityIcon = LuShield
 export const SettingsIcon = LuSettings
+export const ShieldCheckIcon = LuShieldCheck
 export const SparklesIcon = LuSparkles
 export const SpreadsheetIcon = LuFileSpreadsheet
 export const StackIcon = LuSquareStack
@@ -211,35 +208,12 @@ export const ParagraphIcon = LuText
 export const StrikethroughIcon = LuStrikethrough
 export const UnderlineIcon = LuUnderline
 
-// Brand marks
+// Brand marks: Lucide ships none, so they keep their packs
 export const DiscordIcon = FaDiscord
 export const GithubIcon = FaGithub
 export const GoogleIcon = BsGoogle
 export const TwitterXIcon = FaXTwitter
 export const WhatsappIcon = MdOutlineWhatsapp
-
-// Non-Lucide glyphs (each one becomes its Lucide concept in the next commit)
-export const LegacyChevronDownIcon = RiArrowDownSLine
-export const LegacyChevronUpIcon = RiArrowUpSLine
-export const LegacyCopyIcon = RiFileCopyLine
-export const LegacyDarkModeIcon = IoMdMoon
-export const LegacyDeleteIcon = BiTrash
-export const LegacyErrorIcon = RiErrorWarningLine
-export const LegacyExternalLinkIcon = RiExternalLinkLine
-export const LegacyHideIcon = FaEyeSlash
-export const LegacyLanguageIcon = FaGlobeAmericas
-export const LegacyLightModeIcon = IoMdSunny
-export const LegacyLinkIcon = BsLink
-export const LegacyLockIcon = RiLock2Line
-export const LegacyMoreCircleIcon = HiOutlineEllipsisHorizontalCircle
-export const LegacyPasswordHideIcon = RiEyeCloseLine
-export const LegacyPasswordViewIcon = MdOutlineRemoveRedEye
-export const LegacyResultsIcon = RiBarChartBoxLine
-export const LegacyScanEyeIcon = RiSearchEyeLine
-export const LegacySettingsIcon = FaCog
-export const LegacyShieldCheckIcon = RiShieldCheckLine
-export const LegacySuccessIcon = FaCircleCheck
-export const LegacyViewIcon = FaEye
 
 export const Logo = () => <Image src='/assets/logo_vocdoni.png' alt='vocdoni icon' maxWidth='125px' />
 
