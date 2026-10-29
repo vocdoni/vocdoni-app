@@ -29,6 +29,13 @@ describe('icons by concept', () => {
     for (const [name, icon] of concepts) expect(typeof icon, name).toBe('function')
   })
 
+  it('draws each glyph for one concept only', () => {
+    const concepts = Object.entries(icons).filter(([name]) => name.endsWith('Icon'))
+    const names = new Map<unknown, string[]>()
+    for (const [name, icon] of concepts) names.set(icon, [...(names.get(icon) ?? []), name])
+    expect([...names.values()].filter((shared) => shared.length > 1)).toEqual([])
+  })
+
   it('defines the four icon sizes and sizes the icon recipe with the smallest', () => {
     const value = (name: string) => system.tokens.getByName(name)?.value
     expect([value('sizes.icon.sm'), value('sizes.icon.md'), value('sizes.icon.lg'), value('sizes.icon.xl')]).toEqual([

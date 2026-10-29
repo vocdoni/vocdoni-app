@@ -2,7 +2,7 @@ import { Alert, Button, CloseButton, Dialog, Flex, Portal, Text } from '@chakra-
 import { RefCallback, useCallback, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { KeyRoundIcon } from '~theme/icons'
+import { KeyIcon } from '~theme/icons'
 import { useToast } from '~components/Toast'
 import type { Group } from '~src/queries/groups'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
@@ -132,7 +132,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
       {isPending && (
         <Alert.Root status={censusError ? 'error' : 'warning'} role={censusError ? 'alert' : 'status'}>
           <Alert.Indicator>
-            <KeyRoundIcon />
+            <KeyIcon />
           </Alert.Indicator>
           <Alert.Content>
             <Alert.Title>

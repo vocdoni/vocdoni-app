@@ -7,7 +7,6 @@ import {
   LuArrowUpRight,
   LuBold,
   LuBookOpen,
-  LuBuilding,
   LuBuilding2,
   LuCalendar,
   LuChartColumn,
@@ -18,16 +17,13 @@ import {
   LuChevronUp,
   LuChevronsUpDown,
   LuCircleAlert,
-  LuCircleCheck,
   LuCircleCheckBig,
-  LuCircleEllipsis,
   LuCircleHelp,
   LuCirclePlay,
   LuCircleStop,
   LuClock,
   LuCopy,
   LuEllipsis,
-  LuEllipsisVertical,
   LuExternalLink,
   LuEye,
   LuEyeOff,
@@ -41,10 +37,8 @@ import {
   LuIdCard,
   LuInfo,
   LuItalic,
-  LuKey,
   LuKeyRound,
   LuLayoutDashboard,
-  LuLifeBuoy,
   LuLink,
   LuList,
   LuListOrdered,
@@ -53,7 +47,6 @@ import {
   LuLogOut,
   LuMail,
   LuMessageCircle,
-  LuMessageSquare,
   LuMessagesSquare,
   LuMonitor,
   LuMoon,
@@ -66,22 +59,17 @@ import {
   LuRefreshCw,
   LuRocket,
   LuRotateCcw,
-  LuRotateCw,
   LuScanEye,
   LuSearch,
   LuSend,
   LuSettings,
   LuShield,
-  LuShieldCheck,
-  LuSlidersHorizontal,
   LuSmartphone,
   LuSparkles,
-  LuSquareStack,
   LuStrikethrough,
   LuSun,
   LuTerminal,
   LuText,
-  LuTrash,
   LuTrash2,
   LuTriangleAlert,
   LuUnderline,
@@ -91,7 +79,6 @@ import {
   LuUserCog,
   LuUserPen,
   LuUserPlus,
-  LuUserRoundCog,
   LuUsers,
   LuVote,
   LuX,
@@ -110,21 +97,17 @@ export const AddUserIcon = LuUserPlus
 export const CloseIcon = LuX
 export const CopyIcon = LuCopy
 export const DeleteIcon = LuTrash2
-export const TrashIcon = LuTrash
 export const DownloadFileIcon = LuFileDown
 export const EditIcon = LuPencil
 export const ExternalLinkIcon = LuExternalLink
 export const GoToIcon = LuArrowUpRight
 export const HideIcon = LuEyeOff
 export const LogoutIcon = LuLogOut
-export const MoreCircleIcon = LuCircleEllipsis
 export const MoreIcon = LuEllipsis
-export const MoreVerticalIcon = LuEllipsisVertical
 export const PauseIcon = LuPause
 export const RefreshIcon = LuRefreshCw
 export const ResetIcon = LuRotateCcw
 export const ResumeIcon = LuCirclePlay
-export const RetryIcon = LuRotateCw
 export const SearchIcon = LuSearch
 export const SendIcon = LuSend
 export const StopIcon = LuCircleStop
@@ -145,13 +128,11 @@ export const SidebarIcon = LuPanelLeft
 export const CheckIcon = LuCheck
 export const ErrorIcon = LuCircleAlert
 export const HelpIcon = LuCircleHelp
-export const IncludedIcon = LuCircleCheckBig
 export const InfoIcon = LuInfo
-export const SuccessIcon = LuCircleCheck
+export const SuccessIcon = LuCircleCheckBig
 export const WarningIcon = LuTriangleAlert
 
 // Menus and sections
-export const ApiKeyIcon = LuKey
 export const CalendarIcon = LuCalendar
 export const ChatIcon = LuMessageCircle
 export const ClockIcon = LuClock
@@ -160,36 +141,29 @@ export const CustomizationIcon = LuPalette
 export const DashboardIcon = LuLayoutDashboard
 export const DocsIcon = LuBookOpen
 export const ExtraFeaturesIcon = LuZap
-export const HelpCenterIcon = LuLifeBuoy
 export const HomeIcon = LuHouse
 export const IdCardIcon = LuIdCard
-export const KeyRoundIcon = LuKeyRound
+export const KeyIcon = LuKeyRound
 export const LanguageIcon = LuGlobe
 export const LinkIcon = LuLink
 export const LockIcon = LuLock
 export const MailIcon = LuMail
-export const MessageIcon = LuMessageSquare
 export const MessagesIcon = LuMessagesSquare
 export const NetworkIcon = LuNetwork
 export const OrganizationIcon = LuBuilding2
-export const OrganizationProfileIcon = LuBuilding
-export const PhoneIcon = LuSmartphone
-export const PreferencesIcon = LuSlidersHorizontal
+export const SmsIcon = LuSmartphone
 export const ResultsIcon = LuChartColumn
 export const RocketIcon = LuRocket
 export const ScanEyeIcon = LuScanEye
 export const SecurityIcon = LuShield
 export const SettingsIcon = LuSettings
-export const ShieldCheckIcon = LuShieldCheck
 export const SparklesIcon = LuSparkles
 export const SpreadsheetIcon = LuFileSpreadsheet
-export const StackIcon = LuSquareStack
 export const SupportIcon = LuHeadset
 export const TerminalIcon = LuTerminal
 export const UnlinkIcon = LuUnlink
 export const UserCheckIcon = LuUserCheck
 export const UserCogIcon = LuUserCog
-export const UserRoundCogIcon = LuUserRoundCog
 export const UsersIcon = LuUsers
 export const VoteIcon = LuVote
 export const ProfileIcon = LuUserPen

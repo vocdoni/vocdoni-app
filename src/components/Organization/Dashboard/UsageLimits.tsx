@@ -18,7 +18,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { InfoIcon, MailIcon, MessageIcon, UsersIcon, VoteIcon } from '~theme/icons'
+import { InfoIcon, MailIcon, SmsIcon, UsersIcon, VoteIcon } from '~theme/icons'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
@@ -155,7 +155,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
   if (sms2FA > 0) {
     usageMetrics.push({
-      icon: MessageIcon,
+      icon: SmsIcon,
       label: t('dashboard.usage.2fa_sms', { defaultValue: '2FA SMS codes' }),
       current: usage.sentSMS || 0,
       max: sms2FA,

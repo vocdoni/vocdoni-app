@@ -24,7 +24,7 @@ import {
 import { hasResults, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { Trans, useTranslation } from 'react-i18next'
-import { CopyIcon, ExternalLinkIcon, InfoIcon, MoreVerticalIcon, SearchIcon } from '~theme/icons'
+import { CopyIcon, ExternalLinkIcon, InfoIcon, MoreIcon, SearchIcon } from '~theme/icons'
 import { generatePath, Link as RouterLink } from 'react-router'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
@@ -248,7 +248,7 @@ const ProcessContextMenu = () => {
     <Menu.Root>
       <Menu.Trigger asChild>
         <IconButton variant='ghost' size='sm' aria-label='Open actions'>
-          <MoreVerticalIcon />
+          <MoreIcon />
         </IconButton>
       </Menu.Trigger>
       <Portal>

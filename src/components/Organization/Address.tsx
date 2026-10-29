@@ -13,7 +13,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useTranslation } from 'react-i18next'
-import { CopyIcon, ExternalLinkIcon, MoreCircleIcon } from '~theme/icons'
+import { CopyIcon, ExternalLinkIcon, MoreIcon } from '~theme/icons'
 import { useToast } from '~components/Toast'
 import { addressTextOverflow } from '~constants'
 
@@ -32,7 +32,7 @@ const AddressBtn = ({ ...props }) => {
       <MenuTrigger asChild>
         <Button>
           {addressTextOverflow(address as string, 3)}
-          <MoreCircleIcon />
+          <MoreIcon />
         </Button>
       </MenuTrigger>
       <MenuPositioner>

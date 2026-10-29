@@ -13,7 +13,7 @@ import {
 import { Props as SelectProps, chakraComponents } from 'chakra-react-select'
 import { Controller, type ControllerProps, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { ApiKeyIcon, UserRoundCogIcon, UsersIcon, ViewIcon } from '~theme/icons'
+import { KeyIcon, UserCogIcon, UsersIcon, ViewIcon } from '~theme/icons'
 import { baseLanguages } from '~i18n/languages'
 import { Role, useOrganizationLanguages, useOrganizationTypes, useRoles } from '~src/queries/organization'
 import { Select } from '../Form/Select'
@@ -210,8 +210,8 @@ export const IssueTypeSelector = ({ defaultValue, ...props }: Omit<SelectCustomP
 }
 
 export const roleIcons: Record<string, JSX.Element> = {
-  admin: <Icon as={ApiKeyIcon} />,
-  manager: <Icon as={UserRoundCogIcon} />,
+  admin: <Icon as={KeyIcon} />,
+  manager: <Icon as={UserCogIcon} />,
   viewer: <Icon as={ViewIcon} />,
   any: <Icon as={UsersIcon} />,
 }

@@ -18,7 +18,7 @@ import type { QuestionStatus } from '@vocdoni/api-types'
 import { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LockIcon, ResultsIcon, ScanEyeIcon, ShieldCheckIcon } from '~theme/icons'
+import { LockIcon, ResultsIcon, ScanEyeIcon, SecurityIcon } from '~theme/icons'
 import { useCensusSize } from '~queries/census'
 import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
@@ -293,7 +293,7 @@ const ResultsNotice = () => {
 // blind-CSP census can promise nothing links a ballot to its voter.
 const techItems = (anonymous?: boolean) => [
   { key: anonymous ? 'process.summary.tech_privacy' : 'process.summary.tech_pseudonymity', icon: LockIcon },
-  { key: 'process.summary.tech_integrity', icon: ShieldCheckIcon },
+  { key: 'process.summary.tech_integrity', icon: SecurityIcon },
   { key: 'process.summary.tech_verifiability', icon: ScanEyeIcon },
 ]
 

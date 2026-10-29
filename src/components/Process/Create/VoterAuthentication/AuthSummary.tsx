@@ -1,6 +1,6 @@
 import { Box, HStack, Icon, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
-import { IdCardIcon, KeyRoundIcon, MailIcon, MessagesIcon, PhoneIcon, UnlinkIcon, WarningIcon } from '~theme/icons'
+import { IdCardIcon, KeyIcon, MailIcon, MessagesIcon, SmsIcon, UnlinkIcon, WarningIcon } from '~theme/icons'
 import type { IconType } from '~theme/icons'
 import { useTranslation } from 'react-i18next'
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
@@ -12,9 +12,9 @@ import { CensusCheckStatus } from './useCensusCheck'
 import { CodeMethod, fromCensus } from './utils'
 
 const codeIcons: Record<CodeMethod, IconType> = {
-  none: KeyRoundIcon,
+  none: KeyIcon,
   email: MailIcon,
-  sms: PhoneIcon,
+  sms: SmsIcon,
   voter_choice: MessagesIcon,
 }
 

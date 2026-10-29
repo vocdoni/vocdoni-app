@@ -2,7 +2,7 @@ import { Button, Flex, Icon } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isRouteErrorResponse, useLocation, useNavigate, useRouteError } from 'react-router'
-import { DashboardIcon, ErrorIcon, HomeIcon, RetryIcon } from '~theme/icons'
+import { DashboardIcon, ErrorIcon, HomeIcon, RefreshIcon } from '~theme/icons'
 import { useAuth } from '~components/Auth/useAuth'
 import { Heading, SubHeading } from '~components/Dashboard/Contents'
 import { Routes } from '~src/router/routes'
@@ -54,7 +54,7 @@ export const ErrorView = ({ isNotFound = false, onReturnHome, returnHomeHref, re
 
       <Flex gap={3} wrap='wrap' justify='center'>
         <Button variant='outline' onClick={() => window.location.reload()}>
-          <Icon as={RetryIcon} />
+          <Icon as={RefreshIcon} />
           {t('error.reload', { defaultValue: 'Reload' })}
         </Button>
         {returnHomeHref ? (

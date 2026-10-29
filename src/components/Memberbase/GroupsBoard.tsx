@@ -33,7 +33,7 @@ import { PaginationProvider, usePagination } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { CalendarIcon, ClockIcon, EditIcon, MoreIcon, TrashIcon, UsersIcon, ViewIcon, VoteIcon } from '~theme/icons'
+import { CalendarIcon, ClockIcon, DeleteIcon, EditIcon, MoreIcon, UsersIcon, ViewIcon, VoteIcon } from '~theme/icons'
 import { generatePath, useNavigate } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { DashboardBox } from '~components/Dashboard/Contents'
@@ -338,7 +338,7 @@ const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteMo
                 <MenuSeparator />
                 <MenuItem value='delete' color='destructive.fg' onClick={onDeleteModalOpen}>
                   <HStack gap={2}>
-                    <Icon as={TrashIcon} />
+                    <Icon as={DeleteIcon} />
                     <Text as='span'>{t('group.actions.delete_group', { defaultValue: 'Delete Group' })}</Text>
                   </HStack>
                 </MenuItem>
@@ -394,7 +394,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
                 colorPalette={statusPalette.destructive}
                 variant='outline'
               >
-                <Icon as={TrashIcon} />
+                <Icon as={DeleteIcon} />
                 {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
               </Button>
             </>
@@ -546,7 +546,7 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
                     {t('actions.edit', { defaultValue: 'Edit' })}
                   </Button>
                   <Button onClick={openDeleteModal} colorPalette={statusPalette.destructive} size='xs'>
-                    <Icon as={TrashIcon} boxSize='icon.sm' />
+                    <Icon as={DeleteIcon} boxSize='icon.sm' />
                     {t('group.delete_group', { defaultValue: 'Delete group' })}
                   </Button>
                 </>

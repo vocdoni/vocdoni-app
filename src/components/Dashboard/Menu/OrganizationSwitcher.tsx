@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { AddIcon, StackIcon } from '~theme/icons'
+import { AddIcon, OrganizationIcon } from '~theme/icons'
 import { Link as ReactRouterLink } from 'react-router'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { Routes } from '~routes'
@@ -101,7 +101,7 @@ export const OrganizationSwitcher = () => {
             <Button key={idx} onClick={() => handleOrgChange(org)} variant='menu-item-strong'>
               <Stack direction='row' w='full' align='center'>
                 <Icon
-                  as={StackIcon}
+                  as={OrganizationIcon}
                   border='1px solid'
                   borderColor='border'
                   borderRadius='xs'

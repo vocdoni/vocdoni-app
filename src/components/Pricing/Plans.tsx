@@ -5,10 +5,10 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import {
   CustomizationIcon,
-  IncludedIcon,
   MailIcon,
   ResultsIcon,
   SecurityIcon,
+  SuccessIcon,
   UserCheckIcon,
   UsersIcon,
   VoteIcon,
@@ -142,7 +142,7 @@ export const usePlanTranslations = (plans?: Plan[]) => {
           }),
         },
         {
-          icon: IncludedIcon,
+          icon: SuccessIcon,
           text: t('pricing.different_voting_methods', { defaultValue: 'Different voting methods' }),
         },
         {
@@ -180,7 +180,7 @@ export const usePlanTranslations = (plans?: Plan[]) => {
             count: getTeamMembers(PlanName.Starter, 1),
           }),
         },
-        { icon: IncludedIcon, text: t('pricing.different_voting_methods') },
+        { icon: SuccessIcon, text: t('pricing.different_voting_methods') },
         {
           icon: SecurityIcon,
           text: t('pricing.2fa', {
@@ -215,7 +215,7 @@ export const usePlanTranslations = (plans?: Plan[]) => {
             count: getTeamMembers(PlanName.Professional, 5),
           }),
         },
-        { icon: IncludedIcon, text: t('pricing.different_voting_methods') },
+        { icon: SuccessIcon, text: t('pricing.different_voting_methods') },
         {
           icon: SecurityIcon,
           text: t('pricing.2fa', {

@@ -22,7 +22,7 @@ import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
 import { RoutedPaginationProvider } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
-import { CopyIcon, EditIcon, MoreVerticalIcon, TrashIcon } from '~theme/icons'
+import { CopyIcon, DeleteIcon, EditIcon, MoreIcon } from '~theme/icons'
 import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
@@ -267,7 +267,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
           variant='ghost'
           size='sm'
         >
-          <Icon as={MoreVerticalIcon} />
+          <Icon as={MoreIcon} />
         </IconButton>
       </MenuTrigger>
       <Portal>
@@ -295,7 +295,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
             <MenuSeparator />
             <MenuItem value='delete' color='destructive.fg' onClick={deleteDraft}>
               <HStack gap={2} align='center'>
-                <Icon as={TrashIcon} />
+                <Icon as={DeleteIcon} />
                 <span>{t('drafts.delete', { defaultValue: 'Delete Draft' })}</span>
               </HStack>
             </MenuItem>
