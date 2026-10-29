@@ -50,7 +50,7 @@ const ProcessHeader = () => {
           {!getElectionDescription(election)?.length && <Text color='fg.muted'>{t('process.no_description')}</Text>}
           <Box className='md-sizes'>
             <ReadMoreMarkdownWrapper>
-              <ElectionDescription mb={0} fontSize='lg' lineHeight={1.5} color='fg.muted' />
+              <ElectionDescription mb={0} fontSize='lg' lineHeight='moderate' color='fg.muted' />
             </ReadMoreMarkdownWrapper>
           </Box>
           <ReadMoreMarkdownButton alignSelf='center' />

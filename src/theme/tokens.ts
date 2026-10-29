@@ -28,6 +28,20 @@ const fontWeights = defineTokens.fontWeights({
   black: weight(500),
 })
 
+// Display-text tracking that falls between Chakra's letterSpacings steps.
+const letterSpacings = defineTokens.letterSpacings({
+  heading: {
+    tight: { value: '-0.6px' },
+    snug: { value: '-0.4px' },
+  },
+  quote: {
+    tight: { value: '-0.3px' },
+  },
+  eyebrow: {
+    wide: { value: '0.14em' },
+  },
+})
+
 const radii = defineTokens.radii({
   none: { value: '0rem' },
   xs: { value: '4px' },
@@ -79,6 +93,7 @@ const tokens = defineTokens({
   zIndex,
   fonts,
   fontWeights,
+  letterSpacings,
 })
 
 export default tokens

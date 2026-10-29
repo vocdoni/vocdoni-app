@@ -204,7 +204,7 @@ const SignUp = ({
                     <CheckboxHiddenInput name={field.name} />
                     <CheckboxControl />
                     <CheckboxLabel>
-                      <Text fontSize={'14px'}>
+                      <Text fontSize='sm'>
                         <Trans
                           i18nKey='signup_agree_promotions'
                           defaultValue='I agree to receive promotions and offers for digital voting services offered by Vocdoni.'
@@ -226,25 +226,15 @@ const SignUp = ({
                     <CheckboxHiddenInput name={field.name} />
                     <CheckboxControl />
                     <CheckboxLabel>
-                      <Text fontSize={'14px'}>
+                      <Text fontSize='sm'>
                         <Trans
                           i18nKey='signup_agree_terms'
                           components={{
                             termsLink: (
-                              <Link
-                                href={termsOfServiceUrl}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                fontSize={'14px'}
-                              />
+                              <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' fontSize='sm' />
                             ),
                             privacyLink: (
-                              <Link
-                                href={privacyPolicyUrl}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                fontSize={'14px'}
-                              />
+                              <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' fontSize='sm' />
                             ),
                           }}
                         />

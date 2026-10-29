@@ -100,7 +100,7 @@ export const Card = defineSlotRecipe({
         },
         body: {
           p: 0,
-          fontSize: '10px',
+          fontSize: '2xs',
           minH: '60px',
           display: 'flex',
           justifyContent: 'center',
@@ -108,7 +108,7 @@ export const Card = defineSlotRecipe({
           span: {
             display: 'none',
             textAlign: 'center',
-            fontSize: '12px',
+            fontSize: 'xs',
             fontWeight: 'bold',
             color: 'fg.muted',
             marginTop: '12px',

@@ -72,7 +72,7 @@ const OrganizationHeader = () => {
             <OrganizationName
               as='h1'
               fontSize={32}
-              lineHeight={1.5}
+              lineHeight='moderate'
               title={organization?.name?.default || organization?.address}
               maxW={{ base: '250px', sm: '300px', md: '450px', lg: '500px', xl: '650px' }}
             />
