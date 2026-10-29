@@ -10,12 +10,9 @@ const fonts = defineTokens.fonts({
   mono: { value: FONT_STACKS.mono },
 })
 
-// Every weight token maps to a weight the app actually loads (see fonts.ts), so
-// no name can make the browser synthesize a faux bold. Inter ships 300/400/500
-// here: anything meant to stand out (headings, `bold`, <b>/<strong>) is 500,
-// running text and labels are 400. Chakra's stock names that would ask for a
-// missing file (100, 200, 600, 700, 800, 900) are pinned to the nearest loaded
-// weight instead.
+// Only loaded weights (see fonts.ts): a name with no file behind it makes the browser fake it.
+// Headings, `bold` and <b>/<strong> are 500, running text and labels 400; chakra's stock names
+// for weights that do not ship are pinned to the nearest loaded one.
 const weight = (value: LoadedFontWeight) => ({ value: String(value) })
 
 const fontWeights = defineTokens.fontWeights({

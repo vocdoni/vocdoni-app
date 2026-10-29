@@ -1,16 +1,7 @@
 /**
- * The app's one font config: which family it uses and which weights it ships.
- *
- * - `tokens.ts` builds the `fonts` stacks and the `fontWeights` ladder from it,
- *   and every weight token must be one of `LOADED_FONT_WEIGHTS` (a weight with
- *   no file behind it makes the browser fake it: faux bold).
- * - `Theme.tsx` loads exactly these weights through static side-effect imports
- *   of `${FONT_PACKAGE}/<weight>.css`. They stay static so Vite bundles the
- *   CSS and Vike links it from the SSR HTML; `fonts.test.ts` keeps them in sync
- *   with this list.
- *
- * Keep this module free of CSS imports: `tokens.ts` (and through it
- * `system.ts`, which `chakra typegen` reads) imports it.
+ * The one font config: the family and the weights that ship. `tokens.ts` derives the stacks and
+ * weight ladder from it; `Theme.tsx` imports one `${FONT_PACKAGE}/<weight>.css` per entry and
+ * fonts.test.ts keeps them in sync. No CSS imports here: `chakra typegen` loads this via system.ts.
  */
 
 export const FONT_FAMILY = 'Inter'

@@ -6,7 +6,7 @@ import { system } from './system'
 const themeSource = readFileSync(resolve(__dirname, 'Theme.tsx'), 'utf-8')
 
 const importedFontCss = () =>
-  Array.from(themeSource.matchAll(/^import\s+['"](@fontsource\/[^'"]+)['"]/gm), (match) => match[1])
+  Array.from(themeSource.matchAll(/\bimport\s*['"](@fontsource\/[^'"]+)['"]/g), (match) => match[1])
 
 describe('font config', () => {
   it('Theme.tsx loads exactly the configured weights, one static import each', () => {
