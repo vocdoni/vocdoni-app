@@ -76,6 +76,8 @@
 - Prefer behavior-focused tests over implementation-detail assertions.
 - Keep tests close to the module being validated.
 - Run targeted tests while iterating (example: `pnpm test src/queries/groups.test.ts`).
+- Visual no-regression checks (theme, recipe or styling refactors that should change nothing on screen): take
+  `pnpm ui:snapshot` before and after and compare with `pnpm ui:diff`; see `scripts/ui-snapshot/README.md`.
 
 ### End-to-end tests
 - `e2e/` holds a Playwright suite (`*.e2e.ts`) that drives a real browser against a disposable
