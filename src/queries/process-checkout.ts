@@ -1,39 +1,46 @@
 import { VocdoniApiError } from '@vocdoni/api-client'
+import type { ProcessCheckoutRequest, ProcessPaymentStatusResponse } from '@vocdoni/api-types'
 import { useMemo } from 'react'
-import { ApiEndpoints, ApiError } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
-import { isProcessId, type ProcessPaymentStatus } from './process-price'
+import { useApiClient } from '~src/providers/ApiClientProvider'
+import { isProcessId } from './process-price'
 
-// Top-up checkout of a process (saas-backend#819): an embedded Stripe session that tops the wallet
-// up by the shortfall of the draft. `amountCents` is what it charges, VAT excluded.
-export type ProcessCheckout = {
-  clientSecret: string
-  sessionId: string
-  amountCents: number
-  currency: string
-}
-
-export type ProcessCheckoutBody = {
-  locale?: string
-  // Left out on purpose: the return URL goes to checkout.confirm(), as the wallet top-up does
-  returnURL?: string
-}
-
-// The payment of a process, with the live state of its Stripe session when it has one
-export type ProcessCheckoutStatus = {
-  status: ProcessPaymentStatus
-  amountCents: number
-  currency: string
-  paidAt?: string
-  sessionStatus?: 'open' | 'complete' | 'expired' | (string & {})
-  sessionPaymentStatus?: 'paid' | 'unpaid' | 'no_payment_required' | (string & {})
-}
-
-// The id may come from the URL (?draftId=); one that is not a process id could point the request
-// at another endpoint (see isProcessId), so it is refused instead
-export const processCheckoutEndpoint = (processId: string) => {
+// The id may come from the URL (?draftId=) or from storage; one that is not a process id could point
+// the request at another endpoint (see isProcessId), so it is refused instead
+export const validProcessId = (processId: string) => {
   if (!isProcessId(processId)) throw new Error(`invalid process id: ${processId}`)
-  return ApiEndpoints.ProcessCheckout.replace('{processId}', processId)
+  return processId
+}
+
+// The draft a redirect-based payment was opened for. Stripe sends the browser back to the wizard
+// with only the session id, so the draft id is kept here until the return route reads it.
+const pendingCheckoutKey = 'process-checkout-pending'
+
+// sessionStorage can be blocked (private windows), so every access is guarded
+export const storePendingCheckout = (draftId: string) => {
+  try {
+    sessionStorage.setItem(pendingCheckoutKey, JSON.stringify({ draftId }))
+  } catch {
+    // Without storage the return has no draft to reopen, and says so
+  }
+}
+
+export const readPendingCheckout = (): string | undefined => {
+  try {
+    const value = sessionStorage.getItem(pendingCheckoutKey)
+    if (value === null) return undefined
+    const { draftId } = JSON.parse(value) as { draftId?: unknown }
+    return typeof draftId === 'string' && isProcessId(draftId) ? draftId : undefined
+  } catch {
+    return undefined
+  }
+}
+
+export const clearPendingCheckout = () => {
+  try {
+    sessionStorage.removeItem(pendingCheckoutKey)
+  } catch {
+    // Nothing to clear when storage is unavailable
+  }
 }
 
 // The job a publish was enqueued as: a publish already done answers without one
@@ -42,30 +49,27 @@ export const enqueuedJobId = (response: unknown): string | undefined => {
   return typeof jobId === 'string' ? jobId : undefined
 }
 
-// The HTTP status of a refusal from either client: the app's own `api()` or the integrator SDK
+// The HTTP status of a refusal from the integrator SDK
 export const httpStatus = (error: unknown): number | undefined => {
-  if (error instanceof ApiError) return error.response?.status
   if (error instanceof VocdoniApiError) return error.status
   return undefined
 }
 
-// Same names and shapes as the SDK's `elections.checkout`, `getCheckout` and `cancelCheckout`, so
-// a later move to the SDK is mechanical.
+// The checkout calls of the SDK, with the process id checked first
 export const useProcessCheckoutApi = () => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
   return useMemo(
     () => ({
       // Opens the checkout, or resumes the open session for the same price and shortfall (admin only)
-      checkout: (processId: string, body: ProcessCheckoutBody = {}) =>
-        bearedFetch<ProcessCheckout>(processCheckoutEndpoint(processId), { method: 'POST', body }),
+      checkout: (processId: string, body: ProcessCheckoutRequest) =>
+        client.elections.checkout(validProcessId(processId), body),
       // The stored payment, for polling only: a browser success is never proof of payment
-      getCheckout: (processId: string) => bearedFetch<ProcessCheckoutStatus>(processCheckoutEndpoint(processId)),
+      getCheckout: (processId: string) => client.elections.getCheckout(validProcessId(processId)),
       // Cancels the open checkout and expires its session (admin only)
-      cancelCheckout: (processId: string) =>
-        bearedFetch<void>(processCheckoutEndpoint(processId), { method: 'DELETE' }),
+      cancelCheckout: (processId: string) => client.elections.cancelCheckout(validProcessId(processId)),
     }),
-    [bearedFetch]
+    [client]
   )
 }
 
@@ -80,7 +84,7 @@ export const isPermanentFailure = (error: unknown) => {
  * A checkout Stripe completed but has not confirmed as paid: a delayed method (such as SEPA debit)
  * clears for days, and nothing is left to wait on the browser for.
  */
-export const isUnconfirmedPayment = ({ status, sessionStatus, sessionPaymentStatus }: ProcessCheckoutStatus) =>
+export const isUnconfirmedPayment = ({ status, sessionStatus, sessionPaymentStatus }: ProcessPaymentStatusResponse) =>
   status === 'pending' && sessionStatus === 'complete' && sessionPaymentStatus === 'unpaid'
 
 export type PublicationWait = 'published' | 'unconfirmed' | 'unpaid' | 'timeout'
@@ -97,7 +101,7 @@ export type WaitForPublicationOptions = {
   // How long a checkout may stay open after the payment before the payment counts as unpaid
   openGraceMs?: number
   // Reads the payment too. A failed read never fails the wait.
-  readPayment?: () => Promise<ProcessCheckoutStatus>
+  readPayment?: () => Promise<ProcessPaymentStatusResponse>
   sleep?: (ms: number, signal?: AbortSignal) => Promise<void>
   now?: () => number
   // Stops waiting (e.g. the view was left); resolves to `undefined`

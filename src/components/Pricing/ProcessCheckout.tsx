@@ -10,25 +10,26 @@ import type { StripeCheckoutOptions } from '@stripe/stripe-js'
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
-import { JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
-import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
+import { useHref } from 'react-router'
+import { ApiErrorCode, isApiError, JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
+import type { ProcessCheckoutResponse } from '@vocdoni/api-types'
+import { apiErrorDetails } from '~components/Auth/api'
+import { Routes } from '~routes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import {
   enqueuedJobId,
   httpStatus,
   isPermanentFailure,
+  clearPendingCheckout,
+  storePendingCheckout,
   useProcessCheckoutApi,
   waitForPublication,
-  type ProcessCheckout as ProcessCheckoutSession,
 } from '~queries/process-checkout'
 import { useProcessPrice } from '~queries/process-price'
 import { useWallet } from '~queries/wallet'
 import { currency } from '~utils/numbers'
 import { publishNeedsWalletTopUp, publishPaymentErrorMessage } from './payment-errors'
-import { checkoutReturnUrl, useCheckoutAppearance, useStripePromise } from './stripe'
-
-// The URL param Stripe's return URL carries after a redirect-based payment: ?draftId=…&checkout=return
-export const checkoutReturnParam = 'checkout'
+import { useCheckoutAppearance, useStripePromise } from './stripe'
 
 // What a 40178 refusal says the top-up must cover, in EUR cents, VAT excluded
 export type WalletShortfall = { shortfallCents: number; balanceCents: number }
@@ -47,7 +48,7 @@ export type ProcessCheckoutStart =
 type Step =
   | { name: 'conflict' }
   | { name: 'opening' }
-  | { name: 'checkout'; session: ProcessCheckoutSession }
+  | { name: 'checkout'; session: ProcessCheckoutResponse }
   | { name: 'publishing' }
   | { name: 'waiting'; afterPayment: boolean; paid?: boolean; jobId?: string }
   | { name: 'unconfirmed' }
@@ -82,7 +83,7 @@ export const checkoutStartForRefusal = (error: unknown): ProcessCheckoutStart | 
         : undefined,
     }
   }
-  if (apiErrorDetails(error)?.code === ErrorCode.PaymentSessionConflict) return { kind: 'conflict' }
+  if (isApiError(error, ApiErrorCode.PaymentSessionConflict)) return { kind: 'conflict' }
   return undefined
 }
 
@@ -120,9 +121,11 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
   const walletPublishRef = useRef(false)
   // The client and checkout API change with the bearer token: the waits read them from here, so a
   // refreshed token does not restart them
-  const latest = useRef({ client, checkoutApi, t, language: i18n.resolvedLanguage, onPublished })
+  // Stripe appends the session id to the return URL, so the redirect lands on the wizard's return route
+  const returnURL = new URL(useHref(Routes.processes.createReturn.split('/:sessionId')[0]), window.location.origin)
+  const latest = useRef({ client, checkoutApi, t, language: i18n.resolvedLanguage, onPublished, returnURL })
   useEffect(() => {
-    latest.current = { client, checkoutApi, t, language: i18n.resolvedLanguage, onPublished }
+    latest.current = { client, checkoutApi, t, language: i18n.resolvedLanguage, onPublished, returnURL }
   })
 
   const resume = (next: ProcessCheckoutStart) => {
@@ -151,14 +154,14 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
       setStep({ name: 'error', message: publishPaymentErrorMessage(latest.current.t, error) ?? errorMessage(error) })
     }
     latest.current.checkoutApi
-      .checkout(processId, { locale: latest.current.language })
+      .checkout(processId, { locale: latest.current.language, returnURL: latest.current.returnURL.toString() })
       .then((session) => {
         if (!stale) setStep({ name: 'checkout', session })
       })
       .catch((error) => {
         if (stale) return
         const status = httpStatus(error)
-        if (status === 409 && apiErrorDetails(error)?.code === ErrorCode.PaymentSessionConflict) {
+        if (status === 409 && isApiError(error, ApiErrorCode.PaymentSessionConflict)) {
           // Paid, or completed and being credited: never a second charge, so read which before deciding
           latest.current.checkoutApi.getCheckout(processId).then(
             (payment) => {
@@ -412,7 +415,7 @@ const Frame = ({ title, onBack, children }: { title: string; onBack: () => void;
 type CheckoutStepProps = {
   title: string
   processId: string
-  session: ProcessCheckoutSession
+  session: ProcessCheckoutResponse
   shortfall?: WalletShortfall
   stripePromise: ReturnType<typeof useStripePromise>
   totalCents?: number
@@ -476,7 +479,7 @@ type CheckoutFormFieldsProps = Pick<
   CheckoutStepProps,
   'processId' | 'shortfall' | 'totalCents' | 'balanceCents' | 'onPaid'
 > & {
-  session: ProcessCheckoutSession
+  session: ProcessCheckoutResponse
 }
 
 const CheckoutFormFields = ({
@@ -518,18 +521,21 @@ const CheckoutFormFields = ({
     setIsSubmitting(true)
     setError(null)
     try {
-      const result = await checkout.confirm({
-        redirect: 'if_required',
-        returnUrl: checkoutReturnUrl({ draftId: processId, [checkoutReturnParam]: 'return' }),
-      })
+      // Stripe's redirect drops the page: the return route reads the draft from here
+      storePendingCheckout(processId)
+      const result = await checkout.confirm({ redirect: 'if_required' })
+      // No redirect happened, so the return route will not need the draft
       if (result.type === 'error') {
+        clearPendingCheckout()
         setError(result.error.message)
         setIsSubmitting(false)
         return
       }
+      clearPendingCheckout()
       // Stripe accepted the payment; whether the wallet was credited is the backend's to say
       onPaid()
     } catch (err) {
+      clearPendingCheckout()
       setError(errorMessage(err))
       setIsSubmitting(false)
     }

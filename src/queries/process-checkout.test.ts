@@ -1,22 +1,27 @@
 import { renderHook } from '@testing-library/react'
-import { ApiError, BadRequestApiError, ErrorCode } from '~components/Auth/api'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import type { ProcessPaymentStatusResponse } from '@vocdoni/api-types'
 import {
+  clearPendingCheckout,
   isUnconfirmedPayment,
-  processCheckoutEndpoint,
+  readPendingCheckout,
+  storePendingCheckout,
   useProcessCheckoutApi,
+  validProcessId,
   waitForPublication,
-  type ProcessCheckoutStatus,
 } from './process-checkout'
 
-const mockBearedFetch = vi.hoisted(() => vi.fn())
+const mockClient = vi.hoisted(() => ({
+  elections: { checkout: vi.fn(), getCheckout: vi.fn(), cancelCheckout: vi.fn() },
+}))
 
-vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ bearedFetch: mockBearedFetch }),
+vi.mock('~src/providers/ApiClientProvider', () => ({
+  useApiClient: () => ({ client: mockClient }),
 }))
 
 const processId = '6650f0c0c0c0c0c0c0c0c0c0'
 
-const status = (overrides: Partial<ProcessCheckoutStatus> = {}): ProcessCheckoutStatus => ({
+const status = (overrides: Partial<ProcessPaymentStatusResponse> = {}): ProcessPaymentStatusResponse => ({
   status: 'pending',
   amountCents: 2000,
   currency: 'eur',
@@ -40,41 +45,50 @@ const fakeClock = () => {
   }
 }
 
-describe('processCheckoutEndpoint', () => {
-  it('only names a process', () => {
-    expect(processCheckoutEndpoint(processId)).toBe(`processes/${processId}/checkout`)
+describe('validProcessId', () => {
+  it('accepts a process id', () => {
+    expect(validProcessId(processId)).toBe(processId)
+  })
+
+  it('refuses anything else, which could resolve to another endpoint', () => {
     // Both survive encoding and would resolve to another endpoint
-    expect(() => processCheckoutEndpoint('..')).toThrow()
-    expect(() => processCheckoutEndpoint('.')).toThrow()
+    expect(() => validProcessId('..')).toThrow()
+    expect(() => validProcessId('.')).toThrow()
   })
 })
 
 describe('useProcessCheckoutApi', () => {
   beforeEach(() => {
-    mockBearedFetch.mockReset()
+    vi.clearAllMocks()
   })
 
-  it('posts the checkout body to the process checkout', async () => {
-    mockBearedFetch.mockResolvedValue({ clientSecret: 'cs', sessionId: 's', amountCents: 2000 })
+  it('opens the checkout with the SDK body, return URL included', async () => {
+    const body = { returnURL: 'https://app.test/admin/processes/create/return', locale: 'es' }
+    mockClient.elections.checkout.mockResolvedValue({ clientSecret: 'cs', sessionId: 's', amountCents: 2000 })
     const { result } = renderHook(() => useProcessCheckoutApi())
 
-    await result.current.checkout(processId, { locale: 'es' })
+    await result.current.checkout(processId, body)
 
-    expect(mockBearedFetch).toHaveBeenCalledWith(`processes/${processId}/checkout`, {
-      method: 'POST',
-      body: { locale: 'es' },
-    })
+    expect(mockClient.elections.checkout).toHaveBeenCalledWith(processId, body)
   })
 
-  it('reads the stored payment and cancels the open checkout with the matching methods', async () => {
-    mockBearedFetch.mockResolvedValue(undefined)
+  it('reads the stored payment and cancels the open checkout with the matching SDK methods', async () => {
+    mockClient.elections.getCheckout.mockResolvedValue(status())
+    mockClient.elections.cancelCheckout.mockResolvedValue(undefined)
     const { result } = renderHook(() => useProcessCheckoutApi())
 
     await result.current.getCheckout(processId)
     await result.current.cancelCheckout(processId)
 
-    expect(mockBearedFetch).toHaveBeenNthCalledWith(1, `processes/${processId}/checkout`)
-    expect(mockBearedFetch).toHaveBeenNthCalledWith(2, `processes/${processId}/checkout`, { method: 'DELETE' })
+    expect(mockClient.elections.getCheckout).toHaveBeenCalledWith(processId)
+    expect(mockClient.elections.cancelCheckout).toHaveBeenCalledWith(processId)
+  })
+
+  it('refuses a process id that is not one before any request', () => {
+    const { result } = renderHook(() => useProcessCheckoutApi())
+
+    expect(() => result.current.getCheckout('..')).toThrow()
+    expect(mockClient.elections.getCheckout).not.toHaveBeenCalled()
   })
 
   it('keeps the same functions across renders, so effects depending on them do not restart', () => {
@@ -84,6 +98,46 @@ describe('useProcessCheckoutApi', () => {
     rerender()
 
     expect(result.current).toBe(first)
+  })
+})
+
+describe('the pending checkout in sessionStorage', () => {
+  afterEach(() => {
+    clearPendingCheckout()
+    vi.restoreAllMocks()
+  })
+
+  it('reads back the draft it was stored for, and forgets it once cleared', () => {
+    storePendingCheckout(processId)
+
+    expect(readPendingCheckout()).toBe(processId)
+
+    clearPendingCheckout()
+    expect(readPendingCheckout()).toBeUndefined()
+  })
+
+  it('ignores a stored value that does not name a process', () => {
+    sessionStorage.setItem('process-checkout-pending', JSON.stringify({ draftId: '..' }))
+    expect(readPendingCheckout()).toBeUndefined()
+
+    sessionStorage.setItem('process-checkout-pending', 'not json')
+    expect(readPendingCheckout()).toBeUndefined()
+  })
+
+  it('does not throw when storage is blocked', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('blocked')
+    })
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked')
+    })
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+      throw new Error('blocked')
+    })
+
+    expect(() => storePendingCheckout(processId)).not.toThrow()
+    expect(readPendingCheckout()).toBeUndefined()
+    expect(() => clearPendingCheckout()).not.toThrow()
   })
 })
 
@@ -144,7 +198,7 @@ describe('waitForPublication', () => {
 
   it('does not wait on a process it is refused to read', async () => {
     const clock = fakeClock()
-    const refusal = new ApiError({ error: 'not found' }, new Response(null, { status: 404 }))
+    const refusal = new VocdoniApiError(404, { error: 'not found' }, 'not found')
     const isPublished = vi.fn().mockRejectedValue(refusal)
 
     await expect(waitForPublication(isPublished, clock)).rejects.toBe(refusal)
@@ -203,9 +257,7 @@ describe('waitForPublication', () => {
   it('does not report a payment it is refused to read as unconfirmed', async () => {
     const clock = fakeClock()
     const isPublished = vi.fn().mockResolvedValue(false)
-    const readPayment = vi
-      .fn()
-      .mockRejectedValue(new BadRequestApiError({ error: 'no payment', code: ErrorCode.BadRequest }))
+    const readPayment = vi.fn().mockRejectedValue(new VocdoniApiError(400, { error: 'no payment' }, 'no payment'))
 
     await expect(waitForPublication(isPublished, { ...clock, readPayment, timeoutMs: 60 * 1000 })).resolves.toBe(
       'timeout'

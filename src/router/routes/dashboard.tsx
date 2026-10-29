@@ -272,6 +272,15 @@ export const useDashboardRoutes = () => {
                         ),
                         errorElement: <Error />,
                       },
+                      {
+                        path: Routes.processes.createReturn,
+                        element: (
+                          <SuspenseLoader>
+                            <ProcessCreate />
+                          </SuspenseLoader>
+                        ),
+                        errorElement: <Error />,
+                      },
                     ]),
                   },
                 ],
