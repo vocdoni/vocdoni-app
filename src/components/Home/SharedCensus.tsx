@@ -156,7 +156,7 @@ const SharedCensusHomeContent = () => {
       )}
       <LogoutButton />
       {canViewProcesses && (
-        <Text mt='50px' maxW='800px' textAlign='center'>
+        <Text mt={12} maxW='800px' textAlign='center'>
           {t('shared_census.instructions.vote', {
             defaultValue:
               'Select the election to open a new window with the voting instructions. Once your vote is submitted, close the window to return here.',

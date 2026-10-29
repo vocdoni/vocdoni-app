@@ -562,8 +562,8 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
             <IconButton
               aria-label={t('common.close_drawer', { defaultValue: 'Close drawer' })}
               position='absolute'
-              top='6px'
-              right='6px'
+              top={1.5}
+              right={1.5}
               onClick={onClose}
             >
               <Icon as={LuX} />

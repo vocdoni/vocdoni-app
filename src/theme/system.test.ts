@@ -344,3 +344,21 @@ describe('PRIMARY_COLOR-driven system', () => {
     expect(getAppSystem('#1a73e8')).not.toBe(system)
   })
 })
+
+describe('layout tokens', () => {
+  const value = (name: string) => system.tokens.getByName(name)?.value
+
+  it('keeps the app layers and the public content width at the values the layouts used', () => {
+    expect(value('zIndex.public-header')).toBe(30)
+    expect(value('zIndex.dashboard-menu')).toBe(100)
+    expect(value('sizes.content.public')).toBe('1600px')
+  })
+
+  it('resolves the chakra names the layouts rely on to their literal values', () => {
+    expect(value('zIndex.docked')).toBe(10)
+    expect(value('zIndex.modal')).toBe(1400)
+    expect(value('durations.fast')).toBe('150ms')
+    expect(value('durations.moderate')).toBe('200ms')
+    expect(value('durations.slow')).toBe('300ms')
+  })
+})

@@ -180,7 +180,7 @@ export const AvatarUploader = (props: FormControlProps) => {
               bg='blackAlpha.400'
               opacity={0}
               _hover={{ opacity: 1 }}
-              transition='opacity 0.2s'
+              transition='opacity {durations.moderate}'
               borderRadius='full'
             >
               <IconButton
@@ -203,7 +203,7 @@ export const AvatarUploader = (props: FormControlProps) => {
               borderRadius='full'
               border='2px solid'
               borderColor={isDragActive ? 'green.400' : 'transparent'}
-              transition='all 0.2s ease-in-out'
+              transition='all {durations.moderate} ease-in-out'
               display='flex'
               alignItems='center'
               justifyContent='center'

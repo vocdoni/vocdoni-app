@@ -70,14 +70,14 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
     right={0}
     top={0}
     bottom={0}
-    zIndex={10}
+    zIndex='docked'
     // `visibility` flips at once on open and waits out the slide on close: an
     // opening panel must take focus straight away (a blocked publish moves it to
     // the failing setting), and a transitioned one stays hidden for a while.
     transition={
       show
-        ? 'transform 0.2s ease, opacity 0.2s ease, visibility 0s'
-        : 'transform 0.2s ease, opacity 0.2s ease, visibility 0s linear 0.2s'
+        ? 'transform {durations.moderate} ease, opacity {durations.moderate} ease, visibility 0s'
+        : 'transform {durations.moderate} ease, opacity {durations.moderate} ease, visibility 0s linear {durations.moderate}'
     }
     transform={show ? 'translateX(0)' : 'translateX(100%)'}
     opacity={show ? 1 : 0}
