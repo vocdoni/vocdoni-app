@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuTrash2 } from 'react-icons/lu'
+import { DeleteIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox } from '~components/Dashboard/Contents'
@@ -90,7 +90,7 @@ const ApiKeyCard = ({
           disabled={revokeDisabled}
           onClick={onRevoke}
         >
-          <Icon as={LuTrash2} />
+          <Icon as={DeleteIcon} />
         </IconButton>
       </Flex>
       <Box opacity={k.revoked ? 0.6 : 1}>
@@ -254,7 +254,7 @@ const ApiKeysPanel = () => {
                           disabled={k.revoked || revoke.isPending || !currentAddress}
                           onClick={() => setKeyToRevoke(k)}
                         >
-                          <Icon as={LuTrash2} />
+                          <Icon as={DeleteIcon} />
                         </IconButton>
                       </Table.Cell>
                     </Table.Row>

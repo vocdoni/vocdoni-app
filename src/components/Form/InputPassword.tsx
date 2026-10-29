@@ -9,8 +9,7 @@ import {
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { MdOutlineRemoveRedEye } from 'react-icons/md'
-import { RiEyeCloseLine } from 'react-icons/ri'
+import { HideIcon, ViewIcon } from '~theme/icons'
 
 export interface InputPasswordProps {
   formValue: string
@@ -55,13 +54,7 @@ const InputPassword = ({
     <FormControl invalid={!!errors[formValue]} required={required}>
       {label && <FormLabel fontSize='sm'>{label}</FormLabel>}
       <InputGroup
-        endElement={
-          <Icon
-            _hover={{ cursor: 'pointer' }}
-            as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-            onClick={handleClick}
-          />
-        }
+        endElement={<Icon _hover={{ cursor: 'pointer' }} as={show ? HideIcon : ViewIcon} onClick={handleClick} />}
         endElementProps={{ display: 'flex', alignItems: 'center' }}
       >
         <Input {...register(formValue, validationRules)} type={inputType} placeholder={placeholder} required={false} />

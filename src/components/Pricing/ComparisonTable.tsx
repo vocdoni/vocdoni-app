@@ -4,16 +4,16 @@ import { dotobject } from '~utils/objects'
 import { forwardRef, isValidElement } from 'react'
 import { Trans } from 'react-i18next'
 import {
-  LuChartColumn,
-  LuFileCheck,
-  LuHeadset,
-  LuInfo,
-  LuPalette,
-  LuShield,
-  LuUsers,
-  LuVote,
-  LuZap,
-} from 'react-icons/lu'
+  ComplianceIcon,
+  CustomizationIcon,
+  ExtraFeaturesIcon,
+  InfoIcon,
+  ResultsIcon,
+  SecurityIcon,
+  SupportIcon,
+  UsersIcon,
+  VoteIcon,
+} from '~theme/icons'
 import { BooleanIcon } from '~components/Layout/BooleanIcon'
 import { getPlanKey, PlanName } from '~constants'
 import { CategorizedSpecs, CategoryTitleKeys, FeatureSpec } from './Features'
@@ -35,15 +35,15 @@ const renderValue = (value: React.ReactNode | number | boolean) => {
 }
 
 const SubcategoryIcon: Record<string, React.ElementType> = {
-  generalLimits: LuChartColumn,
-  votingTypes: LuVote,
-  memberbaseManagement: LuUsers,
-  authenticationSecurity: LuShield,
-  customization: LuPalette,
-  extraFeatures: LuZap,
-  analyticsAndReporting: LuChartColumn,
-  support: LuHeadset,
-  complianceAndSecurity: LuFileCheck,
+  generalLimits: ResultsIcon,
+  votingTypes: VoteIcon,
+  memberbaseManagement: UsersIcon,
+  authenticationSecurity: SecurityIcon,
+  customization: CustomizationIcon,
+  extraFeatures: ExtraFeaturesIcon,
+  analyticsAndReporting: ResultsIcon,
+  support: SupportIcon,
+  complianceAndSecurity: ComplianceIcon,
 }
 
 const ComparisonSectionTable = ({ titleKey, plans, category, specs }: ComparisonSectionTableProps) => {
@@ -53,7 +53,7 @@ const ComparisonSectionTable = ({ titleKey, plans, category, specs }: Comparison
         <Table.Row>
           <Table.ColumnHeader colSpan={4}>
             <Flex alignItems='center' gap={2}>
-              <Icon boxSize={4} as={SubcategoryIcon[category]} />
+              <Icon as={SubcategoryIcon[category]} />
               <Text as={'span'} textTransform='uppercase' fontSize='sm'>
                 <Trans i18nKey={titleKey} />
               </Text>
@@ -72,7 +72,7 @@ const ComparisonSectionTable = ({ titleKey, plans, category, specs }: Comparison
                   <Tooltip.Root positioning={{ placement: 'top' }}>
                     <Tooltip.Trigger asChild>
                       <chakra.span verticalAlign='middle'>
-                        <Icon as={LuInfo} ml={1} />
+                        <Icon as={InfoIcon} ml={1} />
                       </chakra.span>
                     </Tooltip.Trigger>
                     <Tooltip.Positioner>

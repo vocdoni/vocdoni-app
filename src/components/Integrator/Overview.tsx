@@ -2,7 +2,7 @@ import { Alert, Box, Flex, SimpleGrid } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
-import { LuNetwork, LuRocket, LuTerminal } from 'react-icons/lu'
+import { NetworkIcon, RocketIcon, TerminalIcon } from '~theme/icons'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { PageLoader } from '~components/ui/Loader'
@@ -47,7 +47,7 @@ export const IntegratorOverview = () => {
   const docs = [
     {
       href: 'https://vocdoni.io/developers/docs/quickstart',
-      icon: LuRocket,
+      icon: RocketIcon,
       title: t('integrators.docs.quickstart_title', { defaultValue: 'Quickstart' }),
       description: t('integrators.docs.quickstart_description', {
         defaultValue:
@@ -56,7 +56,7 @@ export const IntegratorOverview = () => {
     },
     {
       href: 'https://vocdoni.io/developers/docs',
-      icon: LuNetwork,
+      icon: NetworkIcon,
       title: t('integrators.docs.api_title', { defaultValue: 'API reference' }),
       description: t('integrators.docs.api_description', {
         defaultValue:
@@ -65,7 +65,7 @@ export const IntegratorOverview = () => {
     },
     {
       href: 'https://vocdoni.io/developers/docs/sdk-quickstart',
-      icon: LuTerminal,
+      icon: TerminalIcon,
       title: t('integrators.docs.sdk_title', { defaultValue: 'SDK' }),
       description: t('integrators.docs.sdk_description', {
         defaultValue:

@@ -3,7 +3,7 @@ import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
 import { ControllerRenderProps, useController, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCheck, LuUsers } from 'react-icons/lu'
+import { CheckIcon, UsersIcon } from '~theme/icons'
 import { Link as ReactRouterLink } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { useToast } from '~components/Toast'
@@ -50,7 +50,7 @@ const StepMarker = ({ step, status }: { step: number; status: StepStatus }) => (
     fontWeight='bold'
     {...stepMarkerStyles[status]}
   >
-    {status === 'done' ? <LuCheck /> : step}
+    {status === 'done' ? <CheckIcon /> : step}
   </Flex>
 )
 
@@ -88,7 +88,7 @@ export const formatGroupOptionLabel = (group: Group, { context }: GroupOptionLab
     <HStack gap={4} align='center' justifyContent='space-between' w='full'>
       <Text as='span'>{group.title}</Text>
       <HStack gap={1.5} color='fg.muted' fontSize='sm' flexShrink={0}>
-        <LuUsers />
+        <UsersIcon />
         <Text as='span'>{group.membersCount || 0}</Text>
       </HStack>
     </HStack>
@@ -213,7 +213,7 @@ const GroupCensusCreation = () => {
   } = useController({ control, name: 'census', rules: { required } })
 
   const TLink = ({ children }) => (
-    <Link asChild textDecoration='underline'>
+    <Link asChild>
       <ReactRouterLink to={Routes.dashboard.memberbase.base}>{children}</ReactRouterLink>
     </Link>
   )

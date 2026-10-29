@@ -19,7 +19,7 @@ import { addDays } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuRotateCcw, LuSettings } from 'react-icons/lu'
+import { ResetIcon, SettingsIcon } from '~theme/icons'
 import {
   createPath,
   generatePath,
@@ -850,7 +850,7 @@ const ProcessCreateView = () => {
                       defaultValue: 'Reset form',
                     })}
                   >
-                    <Icon as={LuRotateCcw} />
+                    <Icon as={ResetIcon} />
                   </IconButton>
                 )}
                 {/* data-testid: icon-only, so its only other handle is a
@@ -864,7 +864,7 @@ const ProcessCreateView = () => {
                   variant='outline'
                   onClick={toggleSidebar}
                 >
-                  <Icon as={LuSettings} />
+                  <Icon as={SettingsIcon} />
                 </IconButton>
                 {/* Both writes need the owner org address; keep them disabled until it resolves. */}
                 <Button

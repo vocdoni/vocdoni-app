@@ -1,7 +1,7 @@
 import { Alert, ButtonGroup, Flex, IconButton, SimpleGrid, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuBookOpen, LuChevronLeft, LuChevronRight } from 'react-icons/lu'
+import { ChevronLeftIcon, ChevronRightIcon, DocsIcon } from '~theme/icons'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { DocsCard } from '~components/Integrator/DocsCard'
 import { ManagedOrganizationsTable } from '~components/Integrator/ManagedOrganizationsTable'
@@ -58,7 +58,7 @@ const IntegratorManagedOrganizations = () => {
           <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
             <DocsCard
               href='https://vocdoni.io/en/developers/docs/organizations#creating-an-organization'
-              icon={LuBookOpen}
+              icon={DocsIcon}
               title={t('integrators.managed.docs_card_title', { defaultValue: 'Creating an organization' })}
               description={t('integrators.managed.docs_card_description', {
                 defaultValue: 'Learn how to create and manage organizations programmatically through the API.',
@@ -85,14 +85,14 @@ const IntegratorManagedOrganizations = () => {
                   disabled={pagination.previousPage === null}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
-                  <LuChevronLeft />
+                  <ChevronLeftIcon />
                 </IconButton>
                 <IconButton
                   aria-label={t('pagination.next', { defaultValue: 'Next page' })}
                   disabled={pagination.nextPage === null}
                   onClick={() => setPage((p) => p + 1)}
                 >
-                  <LuChevronRight />
+                  <ChevronRightIcon />
                 </IconButton>
               </ButtonGroup>
             </Flex>

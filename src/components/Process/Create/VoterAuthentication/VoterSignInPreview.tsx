@@ -2,7 +2,7 @@ import { Box, Button, HStack, Icon, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuEye } from 'react-icons/lu'
+import { ViewIcon } from '~theme/icons'
 import { getAuthFieldLabel, getContactFieldLabel } from '~components/Process/CSP/fields'
 import { CodeMethod, getCodeTwoFaFields, hasAuthConfig, PASSWORD_CREDENTIAL } from './utils'
 
@@ -188,7 +188,7 @@ export const VoterSignInPreview = ({
         {/* Muted, with an icon: a label for this zone, not a third step. On
             phones the fold button above already carries the same words. */}
         <HStack gap={1.5} color='fg.muted' display={{ base: 'none', md: 'flex' }}>
-          <Icon as={LuEye} boxSize={3.5} />
+          <Icon as={ViewIcon} boxSize='icon.sm' />
           <Text id='voter-signin-preview-title' fontSize='sm' fontWeight='medium' whiteSpace='nowrap'>
             {t('voter_auth.preview.title', { defaultValue: 'What voters will see' })}
           </Text>

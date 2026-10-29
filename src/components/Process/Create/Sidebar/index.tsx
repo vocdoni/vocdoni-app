@@ -1,6 +1,6 @@
 import { Flex, Icon, IconButton, useBreakpointValue } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuX } from 'react-icons/lu'
+import { CloseIcon } from '~theme/icons'
 import { Sidebar, SidebarContents, SidebarSubtitle, SidebarTitle } from '~components/Dashboard/Contents'
 import { useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { BasicConfig } from './BasicConfig'
@@ -31,7 +31,7 @@ export const CreateSidebar = () => {
             right={2}
             onClick={closeSidebar}
           >
-            <Icon as={LuX} />
+            <Icon as={CloseIcon} />
           </IconButton>
         )}
       </SidebarContents>

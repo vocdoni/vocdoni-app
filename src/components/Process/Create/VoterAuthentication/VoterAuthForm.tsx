@@ -18,7 +18,7 @@ import type { TFunction } from 'i18next'
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuChevronDown, LuEye } from 'react-icons/lu'
+import { ChevronDownIcon, ViewIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { AUTH_FIELDS, getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { useToast } from '~components/Toast'
@@ -396,10 +396,10 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
               onClick={() => setPreviewOpen((open) => !open)}
             >
               <HStack gap={1.5}>
-                <Icon as={LuEye} boxSize={3.5} />
+                <Icon as={ViewIcon} boxSize='icon.sm' />
                 {t('voter_auth.preview.title', { defaultValue: 'What voters will see' })}
               </HStack>
-              <Icon as={LuChevronDown} transform={previewOpen ? 'rotate(180deg)' : undefined} />
+              <Icon as={ChevronDownIcon} transform={previewOpen ? 'rotate(180deg)' : undefined} />
             </Button>
             <Box
               display={{ base: previewOpen ? 'block' : 'none', md: 'block' }}

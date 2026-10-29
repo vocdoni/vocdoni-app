@@ -22,7 +22,7 @@ const SubscriptionPageContent = () => {
   const { view, checkout, showPlans } = useSubscriptionCheckout()
 
   const SupportLink = ({ children }: { children?: ReactNode }) => (
-    <Link fontWeight='extrabold' fontSize='sm' asChild>
+    <Link emphasis='strong' size='sm' asChild>
       <ReactRouterLink to={Routes.dashboard.settings.support}>{children}</ReactRouterLink>
     </Link>
   )

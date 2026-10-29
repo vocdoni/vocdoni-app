@@ -20,7 +20,7 @@ import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
 import { RoutedPaginationProvider } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
-import { LuCopy, LuEllipsisVertical, LuPencil, LuTrash } from 'react-icons/lu'
+import { CopyIcon, DeleteIcon, EditIcon, MoreIcon } from '~theme/icons'
 import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
@@ -158,7 +158,7 @@ const DraftsRow = ({ draft }: { draft: Draft }) => {
   return (
     <Table.Row key={draft.id} position='relative'>
       <Table.Cell>
-        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
+        <Link asChild emphasis='medium'>
           <RouterLink
             to={{
               pathname: generatePath(Routes.processes.create),
@@ -188,7 +188,7 @@ const DraftCard = ({ draft }: { draft: Draft }) => {
   return (
     <Card.Root variant='list-item'>
       <Card.Header>
-        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
+        <Link asChild emphasis='medium'>
           <RouterLink
             to={{
               pathname: generatePath(Routes.processes.create),
@@ -271,7 +271,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
           variant='ghost'
           size='sm'
         >
-          <Icon as={LuEllipsisVertical} />
+          <Icon as={MoreIcon} />
         </IconButton>
       </MenuTrigger>
       <Portal>
@@ -285,21 +285,21 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
                 }}
               >
                 <HStack gap={2} align='center'>
-                  <Icon as={LuPencil} boxSize={4} />
+                  <Icon as={EditIcon} />
                   <span>{t('drafts.edit', { defaultValue: 'Edit Draft' })}</span>
                 </HStack>
               </RouterLink>
             </MenuItem>
             <MenuItem value='clone' onClick={cloneDraft}>
               <HStack gap={2} align='center'>
-                <Icon as={LuCopy} boxSize={4} />
+                <Icon as={CopyIcon} />
                 <span>{t('drafts.clone', { defaultValue: 'Clone Draft' })}</span>
               </HStack>
             </MenuItem>
             <MenuSeparator />
             <MenuItem value='delete' color='destructive.fg' onClick={deleteDraft}>
               <HStack gap={2} align='center'>
-                <Icon as={LuTrash} boxSize={4} />
+                <Icon as={DeleteIcon} />
                 <span>{t('drafts.delete', { defaultValue: 'Delete Draft' })}</span>
               </HStack>
             </MenuItem>

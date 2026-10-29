@@ -7,7 +7,7 @@ import {
 } from '@vocdoni/react-components'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { HideIcon, ViewIcon } from '~theme/icons'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import AddressBtn from './Address'
 import fallback from '/assets/default-avatar.png'
@@ -84,7 +84,7 @@ const OrganizationHeader = () => {
                   aria-label={t('organization.title.read_more')}
                   onClick={handleReadMore}
                 >
-                  {readMore ? <FaEye /> : <FaEyeSlash />}
+                  {readMore ? <ViewIcon /> : <HideIcon />}
                 </IconButton>
               )}
             </Box>

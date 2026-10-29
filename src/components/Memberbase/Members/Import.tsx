@@ -32,7 +32,7 @@ import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
+import { CheckIcon, UploadIcon, WarningIcon } from '~theme/icons'
 import { useOutletContext } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
@@ -380,7 +380,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
     <HStack flexDirection='column' gap={4} w='full' alignItems='flex-start'>
       <Card.Root variant='section' size='sm' w='full'>
         <Card.Root variant='section' size='sm' flexDirection='row' gap={3} mb={2}>
-          <Icon as={LuTriangleAlert} boxSize={4} color='fg.muted' />
+          <Icon as={WarningIcon} color='fg.muted' />
           <HStack flexDirection='column' gap={0} alignItems='flex-start'>
             <Heading size='sm' fontWeight='bold'>
               {t('memberbase.importer.warning.title', { defaultValue: 'Warning' })}
@@ -425,7 +425,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
                         return (
                           <chakraComponents.Option {...props}>
                             <Flex align='center' gap={2}>
-                              {isSelected && <Icon as={LuCheck} boxSize={4} color='fg.muted' />}
+                              {isSelected && <Icon as={CheckIcon} boxSize='icon.sm' color='fg.muted' />}
                               {children}
                             </Flex>
                           </chakraComponents.Option>
@@ -573,7 +573,7 @@ export const ImportMembers = () => {
             drawer's own submit ("Import Data"), so the e2e suite has no
             unambiguous copy-free handle for this trigger. */}
         <Button ref={btnRef} variant='outline' data-testid='members-import-open'>
-          <Icon as={LuUpload} />
+          <Icon as={UploadIcon} />
           {t('memberbase.importer.button', { defaultValue: 'Import' })}
         </Button>
       </Drawer.Trigger>

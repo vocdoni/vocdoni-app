@@ -15,7 +15,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuFileSpreadsheet } from 'react-icons/lu'
+import { SpreadsheetIcon } from '~theme/icons'
 import { useSubscription } from '~components/Auth/Subscription'
 import { dropRejectionMessage, useLatestDrop } from '~components/Layout/dropzone'
 import Uploader from '~components/Layout/Uploader'
@@ -180,7 +180,7 @@ export const MembersCsvManager = () => {
               pointerEvents={visibleColumns.length ? 'auto' : 'none'}
               variant='button'
             >
-              <LuFileSpreadsheet />
+              <SpreadsheetIcon />
               {t('memberbase.importer.download_template_btn', {
                 defaultValue: 'Download Template',
               })}

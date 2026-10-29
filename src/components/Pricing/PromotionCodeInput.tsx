@@ -3,7 +3,7 @@ import { useCheckout } from '@stripe/react-stripe-js/checkout'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCheck, LuX } from 'react-icons/lu'
+import { CheckIcon, CloseIcon } from '~theme/icons'
 
 type FormValues = {
   promoCode: string
@@ -95,14 +95,14 @@ export const PromotionCodeInput = () => {
     <Card.Root variant='section' size='sm'>
       <Flex justify='space-between' align='center'>
         <Flex align='center' gap={2}>
-          <Icon as={LuCheck} color='status.success.fg' />
+          <Icon as={CheckIcon} color='status.success.fg' />
           <Text fontSize='sm' fontWeight='medium'>
             <Trans i18nKey='code_applied'>Code "{{ appliedCode }}" applied</Trans>
           </Text>
         </Flex>
         <Button size='xs' variant='ghost' onClick={handleRemove} loading={isApplying}>
           <HStack gap={2}>
-            <Icon as={LuX} />
+            <Icon as={CloseIcon} />
             <Trans i18nKey='remove'>Remove</Trans>
           </HStack>
         </Button>
