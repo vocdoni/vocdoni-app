@@ -14,7 +14,7 @@ export const NoOrganizations = () => {
           <Trans i18nKey='view_plans_and_pricing'>View Plans & Pricing</Trans>
         </ReactRouterLink>
       </Button>
-      <Card.Root variant='no-elections' minH='100%' maxW='650px' mx='auto'>
+      <Card.Root variant='plain' minH='100%' maxW='650px' mx='auto'>
         <Card.Body>
           <EmptyState
             image={empty}

@@ -31,14 +31,14 @@ export const EmptyState = defineSlotRecipe({
       // Inside a card or panel, which gives the padding: an icon or illustration, a title and a call to action.
       md: {
         root: { px: 0, py: 0, gap: 3 },
-        indicator: { _icon: { boxSize: 12 } },
+        indicator: { _icon: { boxSize: 'icon.xl' } },
         title: { fontSize: 'lg', lineHeight: 1.5, fontWeight: 'bold' },
         description: { fontSize: 'md', lineHeight: 1.5 },
       },
       // In place of a whole list or section with nothing in it: md with room above and below.
       lg: {
         root: { px: 0, py: 10, gap: 3 },
-        indicator: { _icon: { boxSize: 12 } },
+        indicator: { _icon: { boxSize: 'icon.xl' } },
         title: { fontSize: 'lg', lineHeight: 1.5, fontWeight: 'bold' },
         description: { fontSize: 'md', lineHeight: 1.5 },
       },
