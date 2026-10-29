@@ -101,10 +101,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
         variant={census ? 'outline' : 'solid'}
         size={census ? 'sm' : 'md'}
         alignSelf={census ? 'start' : undefined}
-        h='auto'
-        minH={census ? 8 : 10}
-        py={2}
-        whiteSpace='normal'
+        multiline
       >
         {census ? (
           <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>

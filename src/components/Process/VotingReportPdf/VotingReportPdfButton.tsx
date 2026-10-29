@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Icon, Link, Text } from '@chakra-ui/react'
+import { Box, Button, HStack, Icon, Text } from '@chakra-ui/react'
 import * as ReactPDF from '@react-pdf/renderer'
 import { useQueryClient } from '@tanstack/react-query'
 import { Buffer as BufferPolyfill } from 'buffer'
@@ -165,7 +165,6 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
 
   return (
     <Button
-      asChild
       variant='outline'
       colorPalette='gray'
       w='full'
@@ -173,13 +172,12 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
       justifyContent='start'
       loading={isGenerating}
       loadingText={t('process_pdf.downloading', { defaultValue: 'Generating PDF' })}
+      onClick={download}
     >
-      <Link as='button' variant='button' onClick={download}>
-        <HStack gap={2}>
-          <Icon as={LuFileDown} />
-          <Text as='span'>{t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}</Text>
-        </HStack>
-      </Link>
+      <HStack gap={2}>
+        <Icon as={LuFileDown} />
+        <Text as='span'>{t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}</Text>
+      </HStack>
     </Button>
   )
 }

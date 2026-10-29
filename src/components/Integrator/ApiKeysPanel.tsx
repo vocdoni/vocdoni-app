@@ -83,9 +83,8 @@ const ApiKeyCard = ({
         </Badge>
         <IconButton
           aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
-          variant='ghost'
+          variant='danger'
           size='xs'
-          color='destructive.fg'
           ml='auto'
           disabled={revokeDisabled}
           onClick={onRevoke}
@@ -255,9 +254,8 @@ const ApiKeysPanel = () => {
                     <Table.Cell textAlign='end'>
                       <IconButton
                         aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
-                        variant='ghost'
+                        variant='danger'
                         size='sm'
-                        color='destructive.fg'
                         disabled={k.revoked || revoke.isPending || !currentAddress}
                         onClick={() => setKeyToRevoke(k)}
                       >

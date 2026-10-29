@@ -91,7 +91,6 @@ const GoogleAuth = () => {
         connect({ connector: wallet.createConnector({} as any) })
       }}
       w='full'
-      fontWeight={'bold'}
     >
       <Icon as={BsGoogle} />
       {t('signin_google')}

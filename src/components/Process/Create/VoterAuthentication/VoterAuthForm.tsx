@@ -388,12 +388,10 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                 so it folds away behind a toggle there. */}
             <Button
               display={{ base: 'flex', md: 'none' }}
-              variant='plain'
+              variant='disclosure'
               size='sm'
               w='full'
               justifyContent='space-between'
-              px={0}
-              color='fg.muted'
               aria-expanded={previewOpen}
               onClick={() => setPreviewOpen((open) => !open)}
             >
