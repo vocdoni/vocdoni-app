@@ -12,6 +12,7 @@
 /playwright-report
 /blob-report
 /.playwright
+/.ui-snapshot
 
 # production
 /dist
