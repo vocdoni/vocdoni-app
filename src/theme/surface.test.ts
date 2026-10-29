@@ -24,7 +24,7 @@ const resolve = (sys: Sys, name: string, mode: Mode): string | undefined => {
   )
 }
 
-// Each role and what it points at today, per mode: the layer it stands in for, or a literal.
+// Each role's first hop per mode: the layer it stands in for, or a literal.
 const ROLES: Record<string, Record<Mode, string>> = {
   'colors.surface.canvas': { light: '{colors.bg}', dark: '{colors.bg}' },
   'colors.surface.sidebar': { light: '{colors.dashboardMenu.light}', dark: '{colors.dashboardMenu.dark}' },
