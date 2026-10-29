@@ -171,7 +171,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
       <VStack gap={8} align='stretch'>
         <HStack>
           <FormControl invalid={!!errors.firstName}>
-            <FormLabel fontSize={'14px'}>{t('name', { defaultValue: 'Name' })}</FormLabel>
+            <FormLabel fontSize='sm'>{t('name', { defaultValue: 'Name' })}</FormLabel>
             <Input
               {...register('firstName', {
                 required: t('form.error.field_is_required'),
@@ -180,7 +180,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
             <FormErrorMessage>{errors.firstName?.message}</FormErrorMessage>
           </FormControl>
           <FormControl invalid={!!errors.lastName}>
-            <FormLabel fontSize={'14px'}>{t('lastname', { defaultValue: 'Last name' })}</FormLabel>
+            <FormLabel fontSize='sm'>{t('lastname', { defaultValue: 'Last name' })}</FormLabel>
             <Input
               {...register('lastName', {
                 required: t('form.error.field_is_required'),
@@ -191,13 +191,13 @@ const AccountForm = ({ profile }: { profile?: User }) => {
         </HStack>
 
         <FormControl invalid={!!errors.email}>
-          <FormLabel fontSize={'14px'}>{t('email', { defaultValue: 'Email' })}</FormLabel>
+          <FormLabel fontSize='sm'>{t('email', { defaultValue: 'Email' })}</FormLabel>
           <Input {...register('email')} disabled type='email' />
           <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
         </FormControl>
 
         <FormControl>
-          <FormLabel fontSize={'14px'}>{t('password', { defaultValue: 'Password' })}</FormLabel>
+          <FormLabel fontSize='sm'>{t('password', { defaultValue: 'Password' })}</FormLabel>
           {hasPassword ? (
             <HStack gap={2}>
               <Input placeholder={'• • • • • • • •'} type='password' disabled />
@@ -217,7 +217,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
         </FormControl>
 
         <VStack gap={3} align='stretch'>
-          <Text fontSize={'14px'} fontWeight='600'>
+          <Text fontSize='sm' fontWeight='600'>
             {t('oauth.title', { defaultValue: 'Connect accounts' })}
           </Text>
           {OAuthProviders.map((provider) => {

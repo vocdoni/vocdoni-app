@@ -19,7 +19,7 @@ export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
       mx='auto'
       color='texts.subtle'
       fontSize='sm'
-      lineHeight={2}
+      lineHeight='taller'
       textAlign='center'
     >
       <Text as='p'>

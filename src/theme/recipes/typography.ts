@@ -87,27 +87,27 @@ export const link = defineRecipe({
 // consumer overrides fontSize without changing the size variant.
 const sizes = {
   xs: {
-    fontSize: '12px',
+    fontSize: 'xs',
     lineHeight: 1.5,
   },
   sm: {
-    fontSize: '14px',
+    fontSize: 'sm',
     lineHeight: 1.43,
   },
   md: {
-    fontSize: '16px',
+    fontSize: 'md',
     lineHeight: 1.5,
   },
   lg: {
-    fontSize: '18px',
+    fontSize: 'lg',
     lineHeight: 1.56,
   },
   xl: {
-    fontSize: '20px',
+    fontSize: 'xl',
     lineHeight: 1.5,
   },
   '2xl': {
-    fontSize: '24px',
+    fontSize: '2xl',
     lineHeight: 1.3,
   },
 }
