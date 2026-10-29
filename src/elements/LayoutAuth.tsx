@@ -41,8 +41,7 @@ const LayoutAuth = () => {
           // stops the panel from collapsing to the height of whichever form sits next to it — the
           // verify and recovery screens are barely three fields tall.
           minH={{ md: '34rem', lg: '38rem' }}
-          border='1px solid'
-          borderColor='auth.card.border'
+          _light={{ border: '1px solid', borderColor: 'auth.card.border' }}
           borderRadius='sm'
           // No `overflow='hidden'` here: it would also clip the form column's dropdown menus — the
           // create-organization screen renders chakra-react-select menus without a portal, and a
