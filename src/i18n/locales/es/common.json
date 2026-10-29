@@ -1344,6 +1344,27 @@
       }
     },
     "census": "Censo",
+    "checkout": {
+      "cancel_open": "Cancelar el pago abierto",
+      "check_again": "Volver a comprobar",
+      "conflict": "Todavía hay abierta una recarga para este proceso de votación, así que aún no se puede publicar. Reanuda el pago para completarla, o cancélala y publica desde tu wallet.",
+      "draft_total": "Total del borrador (sin IVA)",
+      "pay": "Pagar {{amount}} y publicar",
+      "publish_again": "Publicar de nuevo",
+      "publish_title": "Publicar proceso de votación",
+      "publishing": "Publicando tu proceso de votación…",
+      "publishing_after_payment": "Pago recibido. Publicando tu proceso de votación…",
+      "rest_stays": "El resto se queda en tu wallet.",
+      "resume": "Reanudar el pago",
+      "shortfall": "Importe pendiente (sin IVA)",
+      "timeout": "Tu pago está confirmado y el proceso de votación se publicará en breve. Si no ocurre, publícalo de nuevo: se paga desde tu wallet.",
+      "timeout_unpaid": "El proceso de votación todavía se está publicando. Si no aparece en breve, publícalo de nuevo: se paga desde tu wallet.",
+      "title": "Recargar y publicar",
+      "top_up": "Recarga (sin IVA)",
+      "unconfirmed": "Tu pago todavía se está confirmando. Algunos métodos de pago tardan unos días en confirmarse. El proceso de votación se publica automáticamente cuando se confirme el pago, así que puedes salir de esta página.",
+      "unpaid": "El pago no se ha completado. Puedes intentarlo de nuevo.",
+      "wallet_balance": "Saldo de la wallet"
+    },
     "create": {
       "action": {
         "publish": "Publicar",

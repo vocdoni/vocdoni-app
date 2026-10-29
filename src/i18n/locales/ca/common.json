@@ -1344,6 +1344,27 @@
       }
     },
     "census": "Cens",
+    "checkout": {
+      "cancel_open": "Cancel·la el pagament obert",
+      "check_again": "Torna a comprovar",
+      "conflict": "Hi ha una recàrrega oberta per a aquest procés de votació, així que encara no es pot publicar. Reprèn el pagament per completar-la, o cancel·la-la i publica des del teu wallet.",
+      "draft_total": "Total de l'esborrany (sense IVA)",
+      "pay": "Paga {{amount}} i publica",
+      "publish_again": "Publica de nou",
+      "publish_title": "Publica el procés de votació",
+      "publishing": "S'està publicant el teu procés de votació…",
+      "publishing_after_payment": "Pagament rebut. S'està publicant el teu procés de votació…",
+      "rest_stays": "La resta es queda al teu wallet.",
+      "resume": "Reprèn el pagament",
+      "shortfall": "Diferència a cobrir (sense IVA)",
+      "timeout": "El teu pagament està confirmat i el procés de votació es publicarà aviat. Si no passa, publica'l de nou: es paga des del teu wallet.",
+      "timeout_unpaid": "El procés de votació encara s'està publicant. Si no apareix aviat, publica'l de nou: es paga des del teu wallet.",
+      "title": "Recarrega i publica",
+      "top_up": "Recàrrega (sense IVA)",
+      "unconfirmed": "El teu pagament encara s'està confirmant. Alguns mètodes de pagament triguen uns quants dies a confirmar-se. El procés de votació es publica automàticament quan el pagament es confirmi, així que pots sortir d'aquesta pàgina.",
+      "unpaid": "El pagament no s'ha completat. Pots tornar-ho a intentar.",
+      "wallet_balance": "Saldo del wallet"
+    },
     "create": {
       "action": {
         "publish": "Publica",

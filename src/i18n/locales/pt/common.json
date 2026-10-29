@@ -1344,6 +1344,27 @@
       }
     },
     "census": "Lista de participantes",
+    "checkout": {
+      "cancel_open": "Cancelar o pagamento em curso",
+      "check_again": "Verificar novamente",
+      "conflict": "Ainda há um carregamento aberto para este processo de votação, por isso ainda não pode ser publicado. Retoma o pagamento para o concluir, ou cancela-o e publica-o a partir da tua wallet.",
+      "draft_total": "Total do rascunho (sem IVA)",
+      "pay": "Pagar {{amount}} e publicar",
+      "publish_again": "Publicar novamente",
+      "publish_title": "Publicar o processo de votação",
+      "publishing": "A publicar o teu processo de votação…",
+      "publishing_after_payment": "Pagamento recebido. A publicar o teu processo de votação…",
+      "rest_stays": "O resto fica na tua wallet.",
+      "resume": "Retomar o pagamento",
+      "shortfall": "Valor em falta (sem IVA)",
+      "timeout": "O teu pagamento está confirmado e o processo de votação será publicado em breve. Se não for, publica-o novamente: é pago a partir da tua wallet.",
+      "timeout_unpaid": "O processo de votação ainda está a ser publicado. Se não aparecer em breve, publica-o novamente: é pago a partir da tua wallet.",
+      "title": "Carregar e publicar",
+      "top_up": "Carregamento (sem IVA)",
+      "unconfirmed": "O teu pagamento ainda está a ser confirmado. Alguns métodos de pagamento demoram alguns dias a confirmar. O processo de votação é publicado automaticamente assim que o pagamento for confirmado, por isso podes sair desta página.",
+      "unpaid": "O pagamento não foi concluído. Podes tentar novamente.",
+      "wallet_balance": "Saldo da wallet"
+    },
     "create": {
       "action": {
         "publish": "Publicar",

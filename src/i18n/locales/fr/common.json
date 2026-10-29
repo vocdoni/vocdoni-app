@@ -1344,6 +1344,27 @@
       }
     },
     "census": "Liste électorale",
+    "checkout": {
+      "cancel_open": "Annuler le paiement en cours",
+      "check_again": "Vérifier à nouveau",
+      "conflict": "Un rechargement pour ce processus de vote est encore en cours, il ne peut donc pas encore être publié. Reprenez le paiement pour le finaliser, ou annulez-le et publiez depuis votre wallet.",
+      "draft_total": "Total du brouillon (hors TVA)",
+      "pay": "Payer {{amount}} et publier",
+      "publish_again": "Publier à nouveau",
+      "publish_title": "Publier le processus de vote",
+      "publishing": "Publication de votre processus de vote…",
+      "publishing_after_payment": "Paiement reçu. Publication de votre processus de vote…",
+      "rest_stays": "Le surplus reste sur votre wallet.",
+      "resume": "Reprendre le paiement",
+      "shortfall": "Montant restant dû (hors TVA)",
+      "timeout": "Votre paiement est confirmé et le processus de vote sera publié sous peu. Si ce n'est pas le cas, publiez-le à nouveau : il est payé depuis votre wallet.",
+      "timeout_unpaid": "Le processus de vote est encore en cours de publication. S'il n'apparaît pas rapidement, publiez-le à nouveau : il est payé depuis votre wallet.",
+      "title": "Recharger et publier",
+      "top_up": "Rechargement (hors TVA)",
+      "unconfirmed": "Votre paiement est encore en cours de confirmation. Certains moyens de paiement mettent quelques jours à se confirmer. Le processus de vote est publié automatiquement dès que le paiement est confirmé : vous pouvez quitter cette page.",
+      "unpaid": "Le paiement n'a pas abouti. Vous pouvez réessayer.",
+      "wallet_balance": "Solde du wallet"
+    },
     "create": {
       "action": {
         "publish": "Publier",

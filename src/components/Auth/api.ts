@@ -46,6 +46,7 @@ export enum ApiEndpoints {
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
   Plans = 'plans',
+  ProcessCheckout = 'processes/{processId}/checkout',
   Refresh = 'auth/refresh',
   Register = 'users',
   SubscriptionCheckout = 'subscriptions/checkout',

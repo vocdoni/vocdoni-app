@@ -1318,6 +1318,27 @@
       }
     },
     "census": "Census",
+    "checkout": {
+      "cancel_open": "Cancel the open payment",
+      "check_again": "Check again",
+      "conflict": "A top-up for this voting process is still open, so it cannot be published yet. Resume the payment to finish it, or cancel it and publish from your wallet.",
+      "draft_total": "Draft total (VAT excluded)",
+      "pay": "Pay {{amount}} and publish",
+      "publish_again": "Publish again",
+      "publish_title": "Publish voting process",
+      "publishing": "Publishing your voting process…",
+      "publishing_after_payment": "Payment received. Publishing your voting process…",
+      "rest_stays": "The rest stays in your wallet.",
+      "resume": "Resume payment",
+      "shortfall": "Shortfall (VAT excluded)",
+      "timeout": "Your payment is confirmed and the voting process publishes shortly. If it does not, publish it again: it is paid from your wallet.",
+      "timeout_unpaid": "The voting process is still being published. If it does not appear shortly, publish it again: it is paid from your wallet.",
+      "title": "Top up and publish",
+      "top_up": "Top-up (VAT excluded)",
+      "unconfirmed": "Your payment is still being confirmed. Some payment methods take a few days to clear. The voting process is published automatically once the payment is confirmed, so you can leave this page.",
+      "unpaid": "The payment did not go through. You can try again.",
+      "wallet_balance": "Wallet balance"
+    },
     "create": {
       "action": {
         "publish": "Publish",

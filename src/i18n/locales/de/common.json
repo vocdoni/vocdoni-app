@@ -1318,6 +1318,27 @@
       }
     },
     "census": "Teilnehmerliste",
+    "checkout": {
+      "cancel_open": "Offene Zahlung abbrechen",
+      "check_again": "Erneut prüfen",
+      "conflict": "Für diesen Abstimmungsprozess ist noch eine Aufladung offen, daher kann er noch nicht veröffentlicht werden. Setze die Zahlung fort, um sie abzuschließen, oder brich sie ab und veröffentliche den Prozess von deinem Wallet aus.",
+      "draft_total": "Gesamtbetrag des Entwurfs (ohne MwSt.)",
+      "pay": "{{amount}} zahlen und veröffentlichen",
+      "publish_again": "Erneut veröffentlichen",
+      "publish_title": "Abstimmungsprozess veröffentlichen",
+      "publishing": "Dein Abstimmungsprozess wird veröffentlicht…",
+      "publishing_after_payment": "Zahlung eingegangen. Dein Abstimmungsprozess wird veröffentlicht…",
+      "rest_stays": "Der Rest bleibt in deinem Wallet.",
+      "resume": "Zahlung fortsetzen",
+      "shortfall": "Fehlbetrag (ohne MwSt.)",
+      "timeout": "Deine Zahlung ist bestätigt, und der Abstimmungsprozess wird in Kürze veröffentlicht. Falls nicht, veröffentliche ihn erneut: Er wird aus deinem Wallet bezahlt.",
+      "timeout_unpaid": "Der Abstimmungsprozess wird noch veröffentlicht. Falls er nicht bald erscheint, veröffentliche ihn erneut: Er wird aus deinem Wallet bezahlt.",
+      "title": "Aufladen und veröffentlichen",
+      "top_up": "Aufladung (ohne MwSt.)",
+      "unconfirmed": "Deine Zahlung wird noch bestätigt. Manche Zahlungsarten brauchen einige Tage dafür. Der Abstimmungsprozess wird automatisch veröffentlicht, sobald die Zahlung bestätigt ist, du kannst diese Seite also verlassen.",
+      "unpaid": "Die Zahlung ist nicht durchgegangen. Du kannst es noch einmal versuchen.",
+      "wallet_balance": "Guthaben im Wallet"
+    },
     "create": {
       "action": {
         "publish": "Veröffentlichen",
