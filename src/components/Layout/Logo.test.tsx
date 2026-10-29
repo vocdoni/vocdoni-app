@@ -104,6 +104,20 @@ describe('Logo', () => {
     svg.querySelectorAll('path').forEach((path) => expect(path).toHaveAttribute('fill', 'currentColor'))
   })
 
+  it('puts the organization logo on a light tile in dark mode only', async () => {
+    await renderLogo(<Logo organization={{ src: 'https://cdn/acme.png', name: 'Acme' }} />)
+    const logo = screen.getByAltText('Acme logo')
+
+    try {
+      document.documentElement.classList.remove('dark')
+      expect(getComputedStyle(logo).backgroundColor).not.toContain('auth-logo-tile-bg')
+      document.documentElement.classList.add('dark')
+      expect(getComputedStyle(logo).backgroundColor).toBe('var(--chakra-colors-auth-logo-tile-bg)')
+    } finally {
+      document.documentElement.classList.remove('dark')
+    }
+  })
+
   it('keeps linking to the app root', async () => {
     await renderLogo(<Logo organization={{ src: 'https://cdn/acme.png', name: 'Acme' }} />)
 
