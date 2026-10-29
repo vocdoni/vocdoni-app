@@ -3,19 +3,9 @@ import path from 'node:path'
 import ts from 'typescript'
 import { system } from './system'
 
-/**
- * Inventory of hardcoded styling outside the theme: raw colours, raw palette
- * steps, pixel sizes, numeric weights, colour-mode branches, chakra v2 props…
- *
- * It parses every source file with the TypeScript compiler API (syntax only,
- * no type checker) and only looks at literals in *style positions*: chakra
- * style props on JSX elements, `css`/`style`/condition objects, style objects
- * typed with a chakra type, `defineStyle`/recipe objects and react-select
- * style configs. Strings anywhere else (i18n keys, data, URLs) never count.
- *
- * Test-only: imported by `style-inventory.test.ts`, which compares the counts
- * against `style-inventory.baseline.json` so they can only go down.
- */
+// Syntax-only scan (no type checker) of the literals in chakra style positions: style props, `css`/condition/recipe
+// objects, chakra-typed objects and react-select configs. Strings anywhere else (i18n keys, data, URLs) never count.
+// Test-only: `style-inventory.test.ts` ratchets the counts against `style-inventory.baseline.json`.
 
 export const STYLE_CATEGORIES = [
   'hex',

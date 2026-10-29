@@ -13,14 +13,9 @@ import {
   StyleCounts,
 } from './style-inventory'
 
-/**
- * Ratchet on hardcoded styling outside the theme (see style-inventory.ts for
- * what counts). Counts per (category, file) live in the committed baseline and
- * may only go down: new hardcoded styling fails, and so does removing some
- * without lowering the baseline, so every cleanup locks in its progress.
- *
- *   UPDATE_STYLE_BASELINE=1 npx vitest run src/theme/style-inventory.test.ts
- */
+// Ratchet on hardcoded styling outside the theme (style-inventory.ts says what counts): per-(category, file) counts
+// may only go down from the committed baseline. A decrease fails too, until the baseline is lowered with
+// UPDATE_COMMAND, so every cleanup locks in its progress.
 
 const ROOT = path.resolve(__dirname, '../..')
 const BASELINE_PATH = path.join(ROOT, 'src/theme/style-inventory.baseline.json')
