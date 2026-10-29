@@ -1330,6 +1330,8 @@
       "publishing_after_payment": "Ordainketa jasota. Zure boto-ematearen prozesua argitaratzen…",
       "rest_stays": "Gainerakoa zure walletean geratzen da.",
       "resume": "Berrekin ordainketari",
+      "return_to_processes": "Itzuli zure boto-ematearen prozesuetara",
+      "return_unknown": "Ezin izan dugu zehaztu ordainketa hau zein boto-ematearen prozesurakoa zen. Ordainketa ondo joan bada, prozesua automatikoki argitaratuko da. Begiratu zure boto-ematearen prozesuei egoera ikusteko.",
       "shortfall": "Falta den zatia (BEZ gabe)",
       "timeout": "Zure ordainketa berretsi da, eta boto-ematearen prozesua laster argitaratuko da. Ez bada argitaratzen, argitaratu berriro: zure walletetik ordainduko da.",
       "timeout_unpaid": "Boto-ematearen prozesua oraindik argitaratzen ari da. Laster agertzen ez bada, argitaratu berriro: zure walletetik ordainduko da.",

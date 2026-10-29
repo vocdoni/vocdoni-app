@@ -7,7 +7,7 @@ import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultQuestion, Process, SelectorTypes } from './common'
-import { ApiError, ErrorCode } from '~components/Auth/api'
+import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
 import { Routes as AppRoutes } from '~routes'
 import ProcessCreate, {
   buildCensusSpec,
@@ -753,10 +753,10 @@ describe('useConfirmOnNavigate', () => {
 })
 
 describe('paymentCheckoutStart', () => {
-  const refusal = (status: number, code: ErrorCode, data?: unknown) =>
-    new ApiError({ error: 'refused', code, data }, new Response(null, { status }))
+  const refusal = (status: number, code: ApiErrorCode, data?: unknown) =>
+    new VocdoniApiError(status, { error: 'refused', code, data }, 'refused', code, data)
 
-  const shortfall = refusal(402, ErrorCode.PaymentRequired, {
+  const shortfall = refusal(402, ApiErrorCode.PaymentRequired, {
     lines: [],
     totalCents: 5000,
     balanceCents: 1000,
@@ -775,25 +775,25 @@ describe('paymentCheckoutStart', () => {
   })
 
   it('does not open the checkout for a managed organization, which has none', () => {
-    const managed = refusal(402, ErrorCode.InsufficientWalletBalance, { requiredCents: 5000, availableCents: 1000 })
-    const spendCap = refusal(402, ErrorCode.SpendCapReached)
+    const managed = refusal(402, ApiErrorCode.InsufficientWalletBalance, { requiredCents: 5000, availableCents: 1000 })
+    const spendCap = refusal(402, ApiErrorCode.SpendCapReached)
 
     expect(paymentCheckoutStart(managed, true)).toBeUndefined()
     expect(paymentCheckoutStart(spendCap, true)).toBeUndefined()
   })
 
   it('does not open the checkout for a price only a custom quote settles', () => {
-    expect(paymentCheckoutStart(refusal(422, ErrorCode.QuoteRequired), true)).toBeUndefined()
+    expect(paymentCheckoutStart(refusal(422, ApiErrorCode.QuoteRequired), true)).toBeUndefined()
     expect(
       paymentCheckoutStart(
-        refusal(402, ErrorCode.PaymentRequired, { lines: [], totalCents: 9000000, quoteRequired: true }),
+        refusal(402, ApiErrorCode.PaymentRequired, { lines: [], totalCents: 9000000, quoteRequired: true }),
         true
       )
     ).toBeUndefined()
   })
 
   it('offers the choice between resuming and cancelling an open top-up to who can top up only', () => {
-    const conflict = refusal(409, ErrorCode.PaymentSessionConflict)
+    const conflict = refusal(409, ApiErrorCode.PaymentSessionConflict)
 
     expect(paymentCheckoutStart(conflict, true)).toEqual({ kind: 'conflict' })
     expect(paymentCheckoutStart(conflict, false)).toBeUndefined()
@@ -808,11 +808,19 @@ describe('the wizard around the payment view', () => {
   const draftId = '6650f0c0c0c0c0c0c0c0c0c0'
   const admin = { organizations: [{ role: 'admin', organization: { address: '0xorg' } }] }
 
+  // Shows where the router is, to see the URL a return replaces
+  const LocationProbe = () => {
+    const { pathname, search } = useLocation()
+    return <p>{`at:${pathname}${search}`}</p>
+  }
+
   const renderWizard = (url: string) =>
     render(
       <TestMemoryRouter initialEntries={[url]}>
+        <LocationProbe />
         <Routes>
-          <Route path='/create' element={<ProcessCreate />} />
+          <Route path={AppRoutes.processes.create} element={<ProcessCreate />} />
+          <Route path={AppRoutes.processes.createReturn} element={<ProcessCreate />} />
           <Route path={AppRoutes.dashboard.process} element={<p>process page</p>} />
         </Routes>
       </TestMemoryRouter>
@@ -824,12 +832,20 @@ describe('the wizard around the payment view', () => {
     authState.bearedFetch.mockReset()
     authState.bearedFetch.mockResolvedValue(undefined)
     profileState.current = admin
+    // The stored draft reads back as the last body written to it, with no add-ons: a draft read then
+    // applies what the test typed, rather than resetting it
+    let lastWritten: Record<string, unknown> = {}
     mockApiClient.elections.create.mockReset()
-    mockApiClient.elections.create.mockResolvedValue(draftId)
+    mockApiClient.elections.create.mockImplementation(async (body: Record<string, unknown>) => {
+      lastWritten = body
+      return draftId
+    })
     mockApiClient.elections.update.mockReset()
-    // Pending forever: the draft is read, not applied, which keeps these tests about the publish flow
+    mockApiClient.elections.update.mockImplementation(async (_id: string, body: Record<string, unknown>) => {
+      lastWritten = body
+    })
     mockApiClient.elections.get.mockReset()
-    mockApiClient.elections.get.mockReturnValue(new Promise(() => undefined))
+    mockApiClient.elections.get.mockImplementation(async () => ({ ...lastWritten, addOns: {} }))
     mockApiClient.elections.publish.mockReset()
     setReactProvidersMock({
       useOrganization: () => ({ organization: { address: '0xorg' } }),
@@ -837,25 +853,55 @@ describe('the wizard around the payment view', () => {
     })
   })
 
-  it('reopens the view in its waiting state after a redirect return', async () => {
-    renderWizard(`/create?draftId=${draftId}&checkout=return`)
+  describe('the return route of a redirect-based payment', () => {
+    afterEach(() => sessionStorage.clear())
 
-    expect(await screen.findByText(`view:${draftId}:{"kind":"return"}`)).toBeInTheDocument()
-    expect(screen.queryByPlaceholderText('Voting Process Title')).not.toBeInTheDocument()
+    it('recovers the draft the payment was opened for, and opens the view in its waiting step', async () => {
+      sessionStorage.setItem('process-checkout-pending', JSON.stringify({ draftId }))
+      renderWizard('/admin/processes/create/return/cs_test_123')
+
+      expect(await screen.findByText(`view:${draftId}:{"kind":"return"}`)).toBeInTheDocument()
+      // The URL moves on to the wizard for that draft, so a reload does not repeat the return
+      expect(screen.getByText(`at:/admin/processes/create?draftId=${draftId}`)).toBeInTheDocument()
+      expect(sessionStorage.getItem('process-checkout-pending')).toBeNull()
+      expect(screen.queryByPlaceholderText('Voting Process Title')).not.toBeInTheDocument()
+    })
+
+    it('says it could not tell which process the payment was for, with a way back to the processes, when no draft was stored', async () => {
+      renderWizard('/admin/processes/create/return/cs_test_123')
+
+      expect(
+        await screen.findByText(
+          'We could not tell which voting process this payment was for. If the payment went through, its voting process is published automatically. Check your voting processes to see where it stands.'
+        )
+      ).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Back to your voting processes' })).toHaveAttribute(
+        'href',
+        '/admin/processes'
+      )
+      expect(screen.queryByText(/^view:/)).not.toBeInTheDocument()
+      expect(screen.queryByPlaceholderText('Voting Process Title')).not.toBeInTheDocument()
+    })
+
+    it('says the same when the stored value does not name a draft', async () => {
+      sessionStorage.setItem('process-checkout-pending', JSON.stringify({ draftId: '..' }))
+      renderWizard('/admin/processes/create/return/cs_test_123')
+
+      expect(await screen.findByRole('link', { name: 'Back to your voting processes' })).toBeInTheDocument()
+      expect(screen.queryByText(/^view:/)).not.toBeInTheDocument()
+    })
   })
 
   it('opens the top-up checkout for an admin whose publish is refused for the wallet shortfall', async () => {
     mockApiClient.elections.publish.mockRejectedValue(
-      new ApiError(
-        {
-          error: 'short',
-          code: ErrorCode.PaymentRequired,
-          data: { lines: [], totalCents: 5000, balanceCents: 1000, shortfallCents: 4000 },
-        },
-        new Response(null, { status: 402 })
-      )
+      new VocdoniApiError(402, { error: 'short' }, 'short', ApiErrorCode.PaymentRequired, {
+        lines: [],
+        totalCents: 5000,
+        balanceCents: 1000,
+        shortfallCents: 4000,
+      })
     )
-    renderWizard('/create')
+    renderWizard('/admin/processes/create')
 
     await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
     await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
@@ -870,7 +916,7 @@ describe('the wizard around the payment view', () => {
 
   it('hands a published draft to the post-publish navigation', async () => {
     mockApiClient.elections.publish.mockResolvedValue({ jobId: 'job' })
-    renderWizard('/create')
+    renderWizard('/admin/processes/create')
 
     await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
     await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
@@ -884,7 +930,7 @@ describe('the wizard around the payment view', () => {
   it('tracks the creation of a process published directly, with the submitted values', async () => {
     mockTrackEvent.mockClear()
     mockApiClient.elections.publish.mockResolvedValue({ jobId: 'job' })
-    renderWizard('/create')
+    renderWizard('/admin/processes/create')
 
     await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
     await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
@@ -898,7 +944,7 @@ describe('the wizard around the payment view', () => {
 
   it('saves edits again after going back from a direct publish that did not finish', async () => {
     mockApiClient.elections.publish.mockResolvedValue({ jobId: 'job' })
-    renderWizard('/create')
+    renderWizard('/admin/processes/create')
 
     const user = userEvent.setup()
     await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
@@ -915,16 +961,14 @@ describe('the wizard around the payment view', () => {
   it('leaves a manager with the toast, not the view, when the wallet is short', async () => {
     profileState.current = { organizations: [{ role: 'manager', organization: { address: '0xorg' } }] }
     mockApiClient.elections.publish.mockRejectedValue(
-      new ApiError(
-        {
-          error: 'short',
-          code: ErrorCode.PaymentRequired,
-          data: { lines: [], totalCents: 5000, shortfallCents: 4000, balanceCents: 1000 },
-        },
-        new Response(null, { status: 402 })
-      )
+      new VocdoniApiError(402, { error: 'short' }, 'short', ApiErrorCode.PaymentRequired, {
+        lines: [],
+        totalCents: 5000,
+        shortfallCents: 4000,
+        balanceCents: 1000,
+      })
     )
-    renderWizard('/create')
+    renderWizard('/admin/processes/create')
 
     await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
     await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))

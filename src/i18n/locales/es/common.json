@@ -1356,6 +1356,8 @@
       "publishing_after_payment": "Pago recibido. Publicando tu proceso de votación…",
       "rest_stays": "El resto se queda en tu wallet.",
       "resume": "Reanudar el pago",
+      "return_to_processes": "Volver a tus procesos de votación",
+      "return_unknown": "No hemos podido saber a qué proceso de votación correspondía este pago. Si el pago se ha completado, el proceso de votación se publicará automáticamente. Revisa tus procesos de votación para ver en qué estado está.",
       "shortfall": "Importe pendiente (sin IVA)",
       "timeout": "Tu pago está confirmado y el proceso de votación se publicará en breve. Si no ocurre, publícalo de nuevo: se paga desde tu wallet.",
       "timeout_unpaid": "El proceso de votación todavía se está publicando. Si no aparece en breve, publícalo de nuevo: se paga desde tu wallet.",

@@ -1,8 +1,7 @@
-import { JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
+import { ApiErrorCode, JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
 import { act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ApiError, BadRequestApiError, ErrorCode } from '~components/Auth/api'
-import { render, screen, waitFor } from '~src/test-utils'
+import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import type { PublicationWait } from '~queries/process-checkout'
 import { ProcessCheckout, type ProcessCheckoutStart } from './ProcessCheckout'
 
@@ -18,22 +17,28 @@ const api = vi.hoisted(() => ({
   checkout: vi.fn(),
   cancel: vi.fn(),
   getCheckout: vi.fn(),
+  getPrice: vi.fn(),
   publish: vi.fn(),
   waitForPublication: vi.fn(),
   waitForJob: vi.fn(),
 }))
 
-const mockBearedFetch = vi.hoisted(() => vi.fn())
-
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ bearedFetch: mockBearedFetch, currentAddress: '0xabc' }),
+  useAuth: () => ({ currentAddress: '0xabc' }),
 }))
 
 vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
   useApiClient: () => ({
     client: {
-      elections: { publish: api.publish },
+      elections: {
+        publish: api.publish,
+        checkout: (...args: unknown[]) => api.checkout(...args),
+        getCheckout: (...args: unknown[]) => api.getCheckout(...args),
+        cancelCheckout: (...args: unknown[]) => api.cancel(...args),
+        getPrice: (...args: unknown[]) => api.getPrice(...args),
+      },
+      organizations: { getWallet: async () => state.wallet },
       jobs: { waitFor: (...args: unknown[]) => api.waitForJob(...args) },
     },
   }),
@@ -83,14 +88,18 @@ const readyCheckout = (confirm = vi.fn().mockResolvedValue({ type: 'success' }))
 })
 
 const apiError = (status: number, code?: number, data?: unknown) =>
-  new ApiError({ error: 'refused', code, data }, new Response(null, { status }))
+  new VocdoniApiError(status, { error: 'refused', code, data }, 'refused', code, data)
 
 const renderView = ({
   start = { kind: 'checkout' } as ProcessCheckoutStart,
   onPublished = vi.fn(),
   onClose = vi.fn(),
 }: { start?: ProcessCheckoutStart; onPublished?: () => void; onClose?: () => void } = {}) => {
-  render(<ProcessCheckout processId={processId} start={start} onPublished={onPublished} onClose={onClose} />)
+  render(
+    <TestMemoryRouter>
+      <ProcessCheckout processId={processId} start={start} onPublished={onPublished} onClose={onClose} />
+    </TestMemoryRouter>
+  )
   return { onPublished, onClose }
 }
 
@@ -108,22 +117,22 @@ const jobWaitTimesOut =
   }
 
 describe('ProcessCheckout', () => {
-  afterEach(() => clockSpy?.mockRestore())
+  afterEach(() => {
+    clockSpy?.mockRestore()
+    sessionStorage.clear()
+  })
 
   beforeEach(() => {
     vi.clearAllMocks()
     state.wallet = { balanceCents: 0, currency: 'eur', history: [], pagination: {} }
     state.checkout = readyCheckout()
     state.stripePromise = Promise.resolve({})
-    mockBearedFetch.mockReset()
-    mockBearedFetch.mockImplementation(async (path: string, init?: { method?: string }) => {
-      if (path.endsWith('/price')) {
-        return { lines: [], totalCents: 1000, currency: 'eur', quoteRecommended: false, quoteRequired: false }
-      }
-      if (path.includes('/wallet')) return state.wallet
-      if (init?.method === 'POST') return api.checkout()
-      if (init?.method === 'DELETE') return api.cancel()
-      return api.getCheckout()
+    api.getPrice.mockResolvedValue({
+      lines: [],
+      totalCents: 1000,
+      currency: 'eur',
+      quoteRecommended: false,
+      quoteRequired: false,
     })
     api.checkout.mockResolvedValue(session())
     api.cancel.mockResolvedValue(undefined)
@@ -190,13 +199,13 @@ describe('ProcessCheckout', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
 
-    it('opens the checkout for the process with the locale and no return URL', async () => {
+    it('opens the checkout for the process with the locale and the wizard return route', async () => {
       renderView()
 
       await payButton()
-      expect(mockBearedFetch).toHaveBeenCalledWith(`processes/${processId}/checkout`, {
-        method: 'POST',
-        body: { locale: 'en' },
+      expect(api.checkout).toHaveBeenCalledWith(processId, {
+        locale: 'en',
+        returnURL: expect.stringMatching(/\/admin\/processes\/create\/return$/),
       })
     })
   })
@@ -213,22 +222,44 @@ describe('ProcessCheckout', () => {
       expect(api.publish).not.toHaveBeenCalled()
     })
 
-    it('confirms the payment with a return URL that reopens the wizard on the draft', async () => {
+    it('stores the draft right before confirming, so a redirect back can reopen it', async () => {
       const user = userEvent.setup()
-      const confirm = vi.fn().mockResolvedValue({ type: 'success' })
+      let stored: string | null = null
+      const confirm = vi.fn(async () => {
+        stored = sessionStorage.getItem('process-checkout-pending')
+        return { type: 'success' }
+      })
       state.checkout = readyCheckout(confirm)
       renderView()
 
       await user.click(await payButton())
 
       await waitFor(() => expect(confirm).toHaveBeenCalledTimes(1))
-      expect(confirm).toHaveBeenCalledWith(
-        expect.objectContaining({
-          redirect: 'if_required',
-          returnUrl: expect.stringContaining(`draftId=${processId}`),
-        })
-      )
-      expect(confirm.mock.calls[0][0].returnUrl).toContain('checkout=return')
+      // The return URL comes from the session: confirm() is not given one
+      expect(confirm).toHaveBeenCalledWith({ redirect: 'if_required' })
+      expect(JSON.parse(stored ?? 'null')).toEqual({ draftId: processId })
+    })
+
+    it('forgets the stored draft when Stripe refuses the payment, since no redirect is coming', async () => {
+      const user = userEvent.setup()
+      state.checkout = readyCheckout(vi.fn().mockResolvedValue({ type: 'error', error: { message: 'Card declined' } }))
+      renderView()
+
+      await user.click(await payButton())
+
+      expect(await screen.findByText('Card declined')).toBeInTheDocument()
+      expect(sessionStorage.getItem('process-checkout-pending')).toBeNull()
+    })
+
+    it('forgets the stored draft when confirming throws, since no redirect is coming', async () => {
+      const user = userEvent.setup()
+      state.checkout = readyCheckout(vi.fn().mockRejectedValue(new Error('network down')))
+      renderView()
+
+      await user.click(await payButton())
+
+      expect(await screen.findByText('network down')).toBeInTheDocument()
+      expect(sessionStorage.getItem('process-checkout-pending')).toBeNull()
     })
 
     it('shows the waiting state while the publication is awaited, and reads the payment as it waits', async () => {
@@ -475,9 +506,7 @@ describe('ProcessCheckout', () => {
 
   describe('refusals of the checkout', () => {
     it('publishes once from the wallet when the wallet now covers the price (400)', async () => {
-      api.checkout.mockRejectedValue(
-        new BadRequestApiError({ error: 'already covered' }, new Response(null, { status: 400 }))
-      )
+      api.checkout.mockRejectedValue(apiError(400))
       const { onPublished } = renderView()
 
       await waitFor(() => expect(api.publish).toHaveBeenCalledWith(processId))
@@ -486,11 +515,14 @@ describe('ProcessCheckout', () => {
     })
 
     it('shows the refusal, rather than reopening the checkout, when the wallet publish is refused again', async () => {
-      api.checkout.mockRejectedValue(
-        new BadRequestApiError({ error: 'already covered' }, new Response(null, { status: 400 }))
-      )
+      api.checkout.mockRejectedValue(apiError(400))
       api.publish.mockRejectedValue(
-        apiError(402, ErrorCode.PaymentRequired, { lines: [], totalCents: 1000, balanceCents: 0, shortfallCents: 1000 })
+        apiError(402, ApiErrorCode.PaymentRequired, {
+          lines: [],
+          totalCents: 1000,
+          balanceCents: 0,
+          shortfallCents: 1000,
+        })
       )
       renderView()
 
@@ -501,7 +533,7 @@ describe('ProcessCheckout', () => {
     })
 
     it('reads the payment on a 409 (40177): paid publishes, a completed one waits, anything else is an error', async () => {
-      const conflict = apiError(409, ErrorCode.PaymentSessionConflict)
+      const conflict = apiError(409, ApiErrorCode.PaymentSessionConflict)
       api.checkout.mockRejectedValue(conflict)
       api.getCheckout.mockResolvedValue({ status: 'paid', amountCents: 1000, currency: 'eur' })
       const { onPublished } = renderView()
@@ -511,10 +543,15 @@ describe('ProcessCheckout', () => {
     })
 
     it('ends in the error step, after one publish, when the publish of a paid payment is refused (40178)', async () => {
-      api.checkout.mockRejectedValue(apiError(409, ErrorCode.PaymentSessionConflict))
+      api.checkout.mockRejectedValue(apiError(409, ApiErrorCode.PaymentSessionConflict))
       api.getCheckout.mockResolvedValue({ status: 'paid', amountCents: 1000, currency: 'eur' })
       api.publish.mockRejectedValue(
-        apiError(402, ErrorCode.PaymentRequired, { lines: [], totalCents: 1000, balanceCents: 0, shortfallCents: 1000 })
+        apiError(402, ApiErrorCode.PaymentRequired, {
+          lines: [],
+          totalCents: 1000,
+          balanceCents: 0,
+          shortfallCents: 1000,
+        })
       )
       renderView()
 
@@ -525,7 +562,7 @@ describe('ProcessCheckout', () => {
 
     it('waits for the outcome of a completed payment on a 409 (40177), without charging again', async () => {
       api.waitForPublication.mockReturnValue(new Promise(() => undefined))
-      api.checkout.mockRejectedValue(apiError(409, ErrorCode.PaymentSessionConflict))
+      api.checkout.mockRejectedValue(apiError(409, ApiErrorCode.PaymentSessionConflict))
       api.getCheckout.mockResolvedValue({
         status: 'pending',
         amountCents: 1000,
@@ -540,7 +577,7 @@ describe('ProcessCheckout', () => {
     })
 
     it('shows the backend message when a 409 leaves nothing to wait for', async () => {
-      api.checkout.mockRejectedValue(apiError(409, ErrorCode.PaymentSessionConflict))
+      api.checkout.mockRejectedValue(apiError(409, ApiErrorCode.PaymentSessionConflict))
       api.getCheckout.mockRejectedValue(apiError(404))
       renderView()
 
@@ -548,7 +585,7 @@ describe('ProcessCheckout', () => {
     })
 
     it('explains a refusal only a custom quote can settle (422 / 40176)', async () => {
-      api.checkout.mockRejectedValue(apiError(422, ErrorCode.QuoteRequired))
+      api.checkout.mockRejectedValue(apiError(422, ApiErrorCode.QuoteRequired))
       renderView()
 
       expect(

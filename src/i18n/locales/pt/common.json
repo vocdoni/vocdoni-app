@@ -1356,6 +1356,8 @@
       "publishing_after_payment": "Pagamento recebido. A publicar o teu processo de votação…",
       "rest_stays": "O resto fica na tua wallet.",
       "resume": "Retomar o pagamento",
+      "return_to_processes": "Voltar aos teus processos de votação",
+      "return_unknown": "Não conseguimos saber a que processo de votação correspondia este pagamento. Se o pagamento foi concluído, o processo de votação é publicado automaticamente. Vê os teus processos de votação para confirmar o estado.",
       "shortfall": "Valor em falta (sem IVA)",
       "timeout": "O teu pagamento está confirmado e o processo de votação será publicado em breve. Se não for, publica-o novamente: é pago a partir da tua wallet.",
       "timeout_unpaid": "O processo de votação ainda está a ser publicado. Se não aparecer em breve, publica-o novamente: é pago a partir da tua wallet.",

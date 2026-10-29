@@ -1330,6 +1330,8 @@
       "publishing_after_payment": "Zahlung eingegangen. Dein Abstimmungsprozess wird veröffentlicht…",
       "rest_stays": "Der Rest bleibt in deinem Wallet.",
       "resume": "Zahlung fortsetzen",
+      "return_to_processes": "Zurück zu deinen Abstimmungsprozessen",
+      "return_unknown": "Wir konnten nicht feststellen, zu welchem Abstimmungsprozess diese Zahlung gehörte. Wenn die Zahlung abgeschlossen wurde, wird der Abstimmungsprozess automatisch veröffentlicht. Prüfe deine Abstimmungsprozesse, um den Stand zu sehen.",
       "shortfall": "Fehlbetrag (ohne MwSt.)",
       "timeout": "Deine Zahlung ist bestätigt, und der Abstimmungsprozess wird in Kürze veröffentlicht. Falls nicht, veröffentliche ihn erneut: Er wird aus deinem Wallet bezahlt.",
       "timeout_unpaid": "Der Abstimmungsprozess wird noch veröffentlicht. Falls er nicht bald erscheint, veröffentliche ihn erneut: Er wird aus deinem Wallet bezahlt.",

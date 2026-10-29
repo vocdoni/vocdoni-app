@@ -1330,6 +1330,8 @@
       "publishing_after_payment": "Payment received. Publishing your voting process…",
       "rest_stays": "The rest stays in your wallet.",
       "resume": "Resume payment",
+      "return_to_processes": "Back to your voting processes",
+      "return_unknown": "We could not tell which voting process this payment was for. If the payment went through, its voting process is published automatically. Check your voting processes to see where it stands.",
       "shortfall": "Shortfall (VAT excluded)",
       "timeout": "Your payment is confirmed and the voting process publishes shortly. If it does not, publish it again: it is paid from your wallet.",
       "timeout_unpaid": "The voting process is still being published. If it does not appear shortly, publish it again: it is paid from your wallet.",

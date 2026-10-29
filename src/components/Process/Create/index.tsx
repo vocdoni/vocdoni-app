@@ -1,8 +1,10 @@
 import {
+  Alert,
   Box,
   Button,
   ButtonGroup,
   Flex,
+  Link,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   HStack,
@@ -25,6 +27,7 @@ import { LuRotateCcw, LuSettings } from 'react-icons/lu'
 import {
   createPath,
   generatePath,
+  Link as RouterLink,
   useBlocker,
   useLocation,
   useNavigate,
@@ -44,7 +47,6 @@ import {
   publishPaymentErrorMessage,
 } from '~components/Pricing/payment-errors'
 import {
-  checkoutReturnParam,
   checkoutStartForRefusal,
   ProcessCheckout,
   type ProcessCheckoutStart,
@@ -56,8 +58,8 @@ import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
-import { enqueuedJobId } from '~queries/process-checkout'
-import { isProcessId, isQuoteOnly, useProcessPrice } from '~queries/process-price'
+import { clearPendingCheckout, enqueuedJobId, readPendingCheckout } from '~queries/process-checkout'
+import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
 import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
@@ -634,7 +636,7 @@ const ProcessCreateView = () => {
   const toast = useToast()
   const [formDraftLoaded, setFormDraftLoaded] = useState(false)
   const [nextId, setNextId] = useState('')
-  const { groupId } = useParams()
+  const { groupId, sessionId } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
   const draftId = searchParams.get('draftId')
   const navigate = useNavigate()
@@ -657,6 +659,11 @@ const ProcessCreateView = () => {
   const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
   const { isSubmitting, isSubmitSuccessful, isDirty: isFormDirty } = methods.formState
+  // Back from a redirect-based payment (the return route), the draft it was opened for is read from storage
+  const returningFromCheckout = sessionId !== undefined
+  const [returnDraftId] = useState(() => (returningFromCheckout ? readPendingCheckout() : undefined))
+  // A return with nothing stored cannot be placed: it gets a neutral message, never the form
+  const returnWithoutDraft = returningFromCheckout && returnDraftId === undefined
   // The top-up view stands in for the form while it is open: the draft is not auto-saved meanwhile,
   // and leaving is not guarded, since a payment may redirect to the bank
   // `form` is what was submitted, for the post-publish analytics; a return from a payment has none
@@ -664,11 +671,7 @@ const ProcessCreateView = () => {
     processId: string
     start: ProcessCheckoutStart
     form: Process | null
-  } | null>(() =>
-    isProcessId(draftId) && searchParams.get(checkoutReturnParam) === 'return'
-      ? { processId: draftId, start: { kind: 'return' }, form: null }
-      : null
-  )
+  } | null>(() => (returnDraftId ? { processId: returnDraftId, start: { kind: 'return' }, form: null } : null))
   const isDirty = isFormDirty && !checkout
   const { canTopUp } = useWalletAccess()
   const { trackEvent } = useAnalytics()
@@ -695,17 +698,17 @@ const ProcessCreateView = () => {
   // it, which ProcessQuoteAlert points to, so publishing is not offered.
   const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).price)
 
-  // The return flag has done its job once the view is open: a reload must not reopen it
+  // The return has been read: the URL moves on to the wizard for its draft, so a reload does not repeat it
   useEffect(() => {
-    if (!searchParams.has(checkoutReturnParam)) return
-    setSearchParams(
-      (params) => {
-        params.delete(checkoutReturnParam)
-        return params
-      },
-      { replace: true }
-    )
-  }, [searchParams, setSearchParams])
+    if (!returningFromCheckout) return
+    clearPendingCheckout()
+    if (returnDraftId) {
+      navigate(
+        { pathname: generatePath(Routes.processes.create), search: `?draftId=${returnDraftId}` },
+        { replace: true }
+      )
+    }
+  }, [returningFromCheckout, returnDraftId, navigate])
 
   // A draft id that loads nothing (deleted, or published since, e.g. by its payment) is forgotten,
   // so the form stops saving onto it
@@ -957,6 +960,29 @@ const ProcessCreateView = () => {
           <Progress.Range />
         </Progress.Track>
       </Progress.Root>
+    )
+  }
+
+  if (returnWithoutDraft) {
+    return (
+      <VStack align='stretch' gap={4} maxW='2xl' p={{ base: 4, md: 8 }}>
+        <Alert.Root status='info'>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Description>
+              {t('process.checkout.return_unknown', {
+                defaultValue:
+                  'We could not tell which voting process this payment was for. If the payment went through, its voting process is published automatically. Check your voting processes to see where it stands.',
+              })}
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+        <Link asChild alignSelf='flex-start'>
+          <RouterLink to={generatePath(Routes.dashboard.processes.base)}>
+            {t('process.checkout.return_to_processes', { defaultValue: 'Back to your voting processes' })}
+          </RouterLink>
+        </Link>
+      </VStack>
     )
   }
 

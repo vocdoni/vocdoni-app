@@ -1356,6 +1356,8 @@
       "publishing_after_payment": "Pagament rebut. S'està publicant el teu procés de votació…",
       "rest_stays": "La resta es queda al teu wallet.",
       "resume": "Reprèn el pagament",
+      "return_to_processes": "Torna als teus processos de votació",
+      "return_unknown": "No hem pogut saber a quin procés de votació corresponia aquest pagament. Si el pagament s'ha completat, el procés de votació es publicarà automàticament. Consulta els teus processos de votació per veure'n l'estat.",
       "shortfall": "Diferència a cobrir (sense IVA)",
       "timeout": "El teu pagament està confirmat i el procés de votació es publicarà aviat. Si no passa, publica'l de nou: es paga des del teu wallet.",
       "timeout_unpaid": "El procés de votació encara s'està publicant. Si no apareix aviat, publica'l de nou: es paga des del teu wallet.",
