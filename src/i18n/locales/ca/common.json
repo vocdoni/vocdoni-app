@@ -830,7 +830,7 @@
       "title": "Claus API"
     },
     "configuration": {
-      "subtitle": "Gestiona la teva subscripció i obtén suport.",
+      "subtitle": "Gestiona el teu wallet, la teva subscripció i obtén suport.",
       "title": "Configuració"
     },
     "create_account": {
@@ -873,7 +873,7 @@
     },
     "overview": "Vista general",
     "overview_error": "No s'ha pogut carregar la quota d'integrador",
-    "overview_subtitle": "La teva quota d'integrador i l'ús actual.",
+    "overview_subtitle": "El teu ús com a integrador i el saldo del wallet.",
     "overview_title": "Vista general",
     "provision_failed": "No hem pogut configurar el teu compte d'integrador.",
     "quota": {
@@ -899,7 +899,11 @@
       "portal_error": "No s'ha pogut obrir el portal de facturació",
       "unavailable": "Els detalls de la subscripció no estan disponibles"
     },
-    "upgrade_plan": "Millorar el pla"
+    "upgrade_plan": "Millorar el pla",
+    "wallet": {
+      "balance": "Saldo del wallet",
+      "manage": "Gestiona el wallet"
+    }
   },
   "invalid_promo_code": "Codi de promoció no vàlid",
   "invite": {
@@ -2150,6 +2154,49 @@
   "voting_processes_description": "Gestiona i supervisa els teus processos de votació",
   "voting_settings": "Configuració de la votació",
   "voting_status": "Estat de la votació",
+  "wallet": {
+    "balance": "Saldo",
+    "balance_note": "Crèdit prepagat, sense IVA. La publicació d'un procés de votació de pagament es cobra d'aquest saldo.",
+    "checking": "Comprovant el teu pagament. El saldo s'actualitzarà tan bon punt Stripe ho confirmi.",
+    "checking_timeout": "Encara no hem pogut confirmar una recàrrega. Si has pagat, apareixerà aquí aviat; si el pagament no s'ha completat, pots tornar a recarregar el wallet.",
+    "history": {
+      "amount": "Import",
+      "date": "Data",
+      "detail": "Detall",
+      "empty": "Encara no hi ha moviments.",
+      "kind": "Tipus",
+      "title": "Moviments"
+    },
+    "kind": {
+      "creditBack": "Crèdit retornat",
+      "payment": "Pagament",
+      "refund": "Reemborsament de Stripe",
+      "topup": "Recàrrega"
+    },
+    "load_error": "No s'ha pogut carregar el wallet",
+    "managed": "Els processos de votació d'aquesta organització els paga l'integrador que la gestiona.",
+    "negative_balance": "El saldo és negatiu després d'un reemborsament. Recarrega'l per pagar nous processos de votació.",
+    "no_access": "Només els administradors i els gestors poden veure el wallet.",
+    "pagination": "Pàgina {{page}} de {{total}} · {{items}} en total",
+    "processing": "Pagament rebut. El saldo s'actualitzarà tan bon punt es confirmi.",
+    "processing_timeout": "Triga més del previst. El saldo s'actualitzarà quan es confirmi el pagament; torna a mirar-ho més tard.",
+    "title": "Wallet",
+    "topup": {
+      "admin_only": "Només els administradors poden recarregar el wallet.",
+      "amount": "Import (EUR, sense IVA)",
+      "amount_decimals": "Fes servir com a màxim 2 decimals.",
+      "amount_net": "Recàrrega (sense IVA)",
+      "amount_range": "Introdueix un import entre {{min}} i {{max}}.",
+      "continue": "Continua al pagament",
+      "hint": "L'IVA s'afegeix al pagament a partir de les teves dades de facturació.",
+      "open": "Recarrega",
+      "pay": "Paga {{amount}}",
+      "success_toast": "El teu wallet s'ha recarregat",
+      "title": "Recarrega el teu wallet",
+      "total": "Total",
+      "vat": "IVA"
+    }
+  },
   "wallet_not_connected": "Cartera no connectada",
   "website": "Lloc web",
   "whatsapp_contact": "Parla amb nosaltres!",

@@ -8,8 +8,16 @@ import LayoutIntegratorsAuth from '~elements/LayoutIntegratorsAuth'
 import AccountProtectedRoute from '~src/router/AccountProtectedRoute'
 import IntegratorOrgGuard from '~src/router/IntegratorOrgGuard'
 import NonLoggedRoute from '~src/router/NonLoggedRoute'
+import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '.'
 import { SuspenseLoader } from '../SuspenseLoader'
+
+// Viewers cannot read the wallet, so they land on the subscription tab instead
+const ConfigurationIndex = () => {
+  const { canView } = useWalletAccess()
+  const target = canView ? Routes.integrators.configuration.wallet : Routes.integrators.configuration.subscription
+  return <Navigate to={target} replace />
+}
 
 const IntegratorsDashboard = lazy(() => import('~elements/integrators'))
 const IntegratorsSignin = lazy(() => import('~elements/integrators/signin'))
@@ -18,6 +26,7 @@ const IntegratorsPasswordForgot = lazy(() => import('~elements/integrators/passw
 const IntegratorsPasswordReset = lazy(() => import('~elements/integrators/password/reset'))
 const IntegratorsConfiguration = lazy(() => import('~elements/integrators/configuration'))
 const IntegratorSubscriptionTab = lazy(() => import('~components/Integrator/SubscriptionTab'))
+const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
 const IntegratorsManagedOrganizations = lazy(() => import('~elements/integrators/organizations'))
 const IntegratorsApiKeys = lazy(() => import('~elements/integrators/api-keys'))
 
@@ -131,7 +140,23 @@ export const useIntegratorsRoutes = () => {
                 children: [
                   {
                     index: true,
-                    element: <Navigate to={Routes.integrators.configuration.subscription} replace />,
+                    element: <ConfigurationIndex />,
+                  },
+                  {
+                    path: Routes.integrators.configuration.wallet,
+                    element: (
+                      <SuspenseLoader>
+                        <WalletPanel />
+                      </SuspenseLoader>
+                    ),
+                  },
+                  {
+                    path: Routes.integrators.configuration.walletReturn,
+                    element: (
+                      <SuspenseLoader>
+                        <WalletPanel />
+                      </SuspenseLoader>
+                    ),
                   },
                   {
                     path: Routes.integrators.configuration.subscription,

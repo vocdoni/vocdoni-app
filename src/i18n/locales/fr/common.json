@@ -830,7 +830,7 @@
       "title": "Clés API"
     },
     "configuration": {
-      "subtitle": "Gérez votre abonnement et obtenez du support.",
+      "subtitle": "Gérez votre wallet, votre abonnement et obtenez du support.",
       "title": "Configuration"
     },
     "create_account": {
@@ -873,7 +873,7 @@
     },
     "overview": "Aperçu",
     "overview_error": "Impossible de charger le quota d'intégrateur",
-    "overview_subtitle": "Votre quota d'intégrateur et votre utilisation actuelle.",
+    "overview_subtitle": "Votre utilisation en tant qu'intégrateur et le solde de votre wallet.",
     "overview_title": "Aperçu",
     "provision_failed": "Nous n'avons pas pu configurer votre compte intégrateur.",
     "quota": {
@@ -899,7 +899,11 @@
       "portal_error": "Impossible d'ouvrir le portail de facturation",
       "unavailable": "Les détails de l'abonnement ne sont pas disponibles"
     },
-    "upgrade_plan": "Passer au plan supérieur"
+    "upgrade_plan": "Passer au plan supérieur",
+    "wallet": {
+      "balance": "Solde du wallet",
+      "manage": "Gérer le wallet"
+    }
   },
   "invalid_promo_code": "Code promotionnel invalide",
   "invite": {
@@ -2150,6 +2154,49 @@
   "voting_processes_description": "Gérez et surveillez vos processus de vote",
   "voting_settings": "Paramètres de vote",
   "voting_status": "Statut du vote",
+  "wallet": {
+    "balance": "Solde",
+    "balance_note": "Crédit prépayé, TVA exclue. La publication d'un processus de vote payant est débitée de ce solde.",
+    "checking": "Vérification de votre paiement. Votre solde sera mis à jour dès que Stripe l'aura confirmé.",
+    "checking_timeout": "Nous n'avons pas encore pu confirmer une recharge. Si vous avez payé, elle apparaîtra ici sous peu ; si le paiement n'a pas abouti, vous pouvez recharger votre wallet.",
+    "history": {
+      "amount": "Montant",
+      "date": "Date",
+      "detail": "Détail",
+      "empty": "Aucun mouvement pour le moment.",
+      "kind": "Type",
+      "title": "Mouvements"
+    },
+    "kind": {
+      "creditBack": "Crédit restitué",
+      "payment": "Paiement",
+      "refund": "Remboursement Stripe",
+      "topup": "Rechargement"
+    },
+    "load_error": "Impossible de charger le wallet",
+    "managed": "Les processus de vote de cette organisation sont payés par l'intégrateur qui la gère.",
+    "negative_balance": "Votre solde est négatif suite à un remboursement. Rechargez-le pour payer de nouveaux processus de vote.",
+    "no_access": "Seuls les administrateurs et les gestionnaires peuvent voir le wallet.",
+    "pagination": "Page {{page}} sur {{total}} · {{items}} au total",
+    "processing": "Paiement reçu. Votre solde sera mis à jour dès sa confirmation.",
+    "processing_timeout": "Cela prend plus de temps que prévu. Votre solde sera mis à jour une fois le paiement confirmé ; revenez consulter cette page plus tard.",
+    "title": "Wallet",
+    "topup": {
+      "admin_only": "Seuls les administrateurs peuvent recharger le wallet.",
+      "amount": "Montant (EUR, TVA exclue)",
+      "amount_decimals": "Utilisez au maximum 2 décimales.",
+      "amount_net": "Rechargement (TVA exclue)",
+      "amount_range": "Saisissez un montant compris entre {{min}} et {{max}}.",
+      "continue": "Continuer vers le paiement",
+      "hint": "La TVA est ajoutée au paiement, selon vos informations de facturation.",
+      "open": "Recharger",
+      "pay": "Payer {{amount}}",
+      "success_toast": "Votre wallet a été rechargé",
+      "title": "Recharger votre wallet",
+      "total": "Total",
+      "vat": "TVA"
+    }
+  },
   "wallet_not_connected": "Portefeuille non connecté",
   "website": "Site web",
   "whatsapp_contact": "Discutez avec nous !",

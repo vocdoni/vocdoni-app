@@ -16,3 +16,7 @@ export const sameAddress = (a?: string | null, b?: string | null): boolean =>
  * prefix (orgs/auth) when the value came from a SAAS process read (unprefixed).
  */
 export const ensureAddressPrefix = (address: string) => `0x${normalizeAddress(address)}`
+
+/** Abbreviated address or id for tables: the first 8 and last 4 characters. */
+export const shortAddress = (address: string) =>
+  address && address.length > 14 ? `${address.slice(0, 8)}…${address.slice(-4)}` : address

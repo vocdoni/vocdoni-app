@@ -830,7 +830,7 @@
       "title": "Chaves de API"
     },
     "configuration": {
-      "subtitle": "Gerencie sua assinatura e obtenha suporte.",
+      "subtitle": "Gerencie sua wallet, sua assinatura e obtenha suporte.",
       "title": "Configuração"
     },
     "create_account": {
@@ -873,7 +873,7 @@
     },
     "overview": "Visão geral",
     "overview_error": "Não foi possível carregar a cota da integradora",
-    "overview_subtitle": "Sua cota de integradora e uso atual.",
+    "overview_subtitle": "Seu uso como integradora e o saldo da wallet.",
     "overview_title": "Visão geral",
     "provision_failed": "Não conseguimos configurar sua conta de integrador.",
     "quota": {
@@ -899,7 +899,11 @@
       "portal_error": "Não foi possível abrir o portal de cobrança",
       "unavailable": "Os detalhes da assinatura não estão disponíveis"
     },
-    "upgrade_plan": "Fazer upgrade do plano"
+    "upgrade_plan": "Fazer upgrade do plano",
+    "wallet": {
+      "balance": "Saldo da wallet",
+      "manage": "Gerenciar wallet"
+    }
   },
   "invalid_promo_code": "Código promocional inválido",
   "invite": {
@@ -2150,6 +2154,49 @@
   "voting_processes_description": "Gerencie e acompanhe seus processos de votação",
   "voting_settings": "Configurações de votação",
   "voting_status": "Status da votação",
+  "wallet": {
+    "balance": "Saldo",
+    "balance_note": "Crédito pré-pago, sem IVA. A publicação de um processo de votação pago é debitada deste saldo.",
+    "checking": "Verificando seu pagamento. Seu saldo será atualizado assim que a Stripe confirmar.",
+    "checking_timeout": "Ainda não foi possível confirmar uma recarga. Se você pagou, ela aparecerá aqui em breve; se o pagamento não foi concluído, você pode recarregar a wallet.",
+    "history": {
+      "amount": "Valor",
+      "date": "Data",
+      "detail": "Detalhes",
+      "empty": "Nenhuma movimentação ainda.",
+      "kind": "Tipo",
+      "title": "Movimentações"
+    },
+    "kind": {
+      "creditBack": "Crédito devolvido",
+      "payment": "Pagamento",
+      "refund": "Reembolso Stripe",
+      "topup": "Recarga"
+    },
+    "load_error": "Não foi possível carregar a wallet",
+    "managed": "Os processos de votação desta organização são pagos pelo integrador que a gerencia.",
+    "negative_balance": "Seu saldo ficou negativo após um reembolso. Recarregue para pagar novos processos de votação.",
+    "no_access": "Somente administradores e gerentes podem ver a wallet.",
+    "pagination": "Página {{page}} de {{total}} · {{items}} no total",
+    "processing": "Pagamento recebido. Seu saldo será atualizado assim que for confirmado.",
+    "processing_timeout": "Está demorando mais do que o esperado. Seu saldo será atualizado quando o pagamento for confirmado; verifique novamente mais tarde.",
+    "title": "Wallet",
+    "topup": {
+      "admin_only": "Somente administradores podem recarregar a wallet.",
+      "amount": "Valor (EUR, sem IVA)",
+      "amount_decimals": "Use no máximo 2 casas decimais.",
+      "amount_net": "Recarga (sem IVA)",
+      "amount_range": "Insira um valor entre {{min}} e {{max}}.",
+      "continue": "Continuar para o pagamento",
+      "hint": "O IVA é adicionado no checkout com base nos seus dados de cobrança.",
+      "open": "Recarregar",
+      "pay": "Pagar {{amount}}",
+      "success_toast": "Sua wallet foi recarregada",
+      "title": "Recarregar sua wallet",
+      "total": "Total",
+      "vat": "IVA"
+    }
+  },
   "wallet_not_connected": "Carteira não conectada",
   "website": "Site",
   "whatsapp_contact": "Fale conosco!",

@@ -830,7 +830,7 @@
       "title": "Chaves de API"
     },
     "configuration": {
-      "subtitle": "Gerir a tua subscrição e pedir apoio.",
+      "subtitle": "Gere a tua wallet, a tua subscrição e pede apoio.",
       "title": "Configuração"
     },
     "create_account": {
@@ -873,7 +873,7 @@
     },
     "overview": "Visão geral",
     "overview_error": "Não foi possível carregar a quota de integrador",
-    "overview_subtitle": "A tua quota de integrador e o teu uso atual.",
+    "overview_subtitle": "A tua utilização como integrador e o saldo da wallet.",
     "overview_title": "Visão geral",
     "provision_failed": "Não conseguimos configurar a tua conta de integrador.",
     "quota": {
@@ -899,7 +899,11 @@
       "portal_error": "Não foi possível abrir o portal de faturação",
       "unavailable": "Os detalhes da subscrição não estão disponíveis"
     },
-    "upgrade_plan": "Melhorar o plano"
+    "upgrade_plan": "Melhorar o plano",
+    "wallet": {
+      "balance": "Saldo da wallet",
+      "manage": "Gerir wallet"
+    }
   },
   "invalid_promo_code": "Código promocional inválido",
   "invite": {
@@ -2150,6 +2154,49 @@
   "voting_processes_description": "Faz a gestão e o acompanhamento dos teus processos de votação",
   "voting_settings": "Definições de votação",
   "voting_status": "Estado da votação",
+  "wallet": {
+    "balance": "Saldo",
+    "balance_note": "Crédito pré-pago, sem IVA. A publicação de um processo de votação pago é debitada deste saldo.",
+    "checking": "A verificar o teu pagamento. O saldo será atualizado assim que a Stripe o confirmar.",
+    "checking_timeout": "Ainda não foi possível confirmar um carregamento. Se pagaste, aparecerá aqui em breve; se o pagamento não foi concluído, podes voltar a carregar a wallet.",
+    "history": {
+      "amount": "Montante",
+      "date": "Data",
+      "detail": "Detalhe",
+      "empty": "Ainda não há movimentos.",
+      "kind": "Tipo",
+      "title": "Movimentos"
+    },
+    "kind": {
+      "creditBack": "Crédito devolvido",
+      "payment": "Pagamento",
+      "refund": "Reembolso Stripe",
+      "topup": "Carregamento"
+    },
+    "load_error": "Não foi possível carregar a wallet",
+    "managed": "Os processos de votação desta organização são pagos pelo integrador que a gere.",
+    "negative_balance": "O teu saldo é negativo após um reembolso. Carrega o saldo para pagar novos processos de votação.",
+    "no_access": "Só os administradores e os gestores podem ver a wallet.",
+    "pagination": "Página {{page}} de {{total}} · {{items}} no total",
+    "processing": "Pagamento recebido. O teu saldo será atualizado assim que for confirmado.",
+    "processing_timeout": "Está a demorar mais do que o esperado. O teu saldo será atualizado quando o pagamento for confirmado; volta a verificar mais tarde.",
+    "title": "Wallet",
+    "topup": {
+      "admin_only": "Só os administradores podem carregar a wallet.",
+      "amount": "Montante (EUR, sem IVA)",
+      "amount_decimals": "Usa no máximo 2 casas decimais.",
+      "amount_net": "Carregamento (sem IVA)",
+      "amount_range": "Introduz um montante entre {{min}} e {{max}}.",
+      "continue": "Continuar para o pagamento",
+      "hint": "O IVA é acrescentado no pagamento, com base nos teus dados de faturação.",
+      "open": "Carregar",
+      "pay": "Pagar {{amount}}",
+      "success_toast": "A tua wallet foi carregada",
+      "title": "Carregar a tua wallet",
+      "total": "Total",
+      "vat": "IVA"
+    }
+  },
   "wallet_not_connected": "Carteira não ligada",
   "website": "Website",
   "whatsapp_contact": "Fala connosco!",

@@ -29,6 +29,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | ballot secrecy / secret vote | secret del vot | **Distinct concept — do not conflate with anonymity.** English "secret"/"secrecy" → "secret" ("el vot és completament secret", "el secret del vot"). Anonymity means a vote can't be linked to a voter; secrecy means the ballot content stays hidden. Translate each English term with its matching Catalan term — never use "secret" for the anonymous-voting feature, nor "anònim" for ballot secrecy |
 | private ballot / pseudonymous | vot privat / pseudònim | The default mode, opposite the anonymous one: the ballot carries a one-time code instead of a name, but platform records could still connect it to a member. Translate "private ballot" as "vot privat" and "pseudonymous" as "pseudònim" — never as "anònim" (that is the other mode) nor "secret" (that is ballot secrecy) |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| wallet (prepaid credit balance) | wallet | Keep in English, so it is not confused with a crypto wallet |
 | overwrite vote / correct vote | modificar el vot / corregir el vot | Prefer "modificar" for buttons, "corregir" for descriptions |
 | abstain | abstenir-se / abstenció | Use "abstenir-se" for actions, "abstenció" for the noun form |
 | census size | mida del cens | Or "nombre de votants" |

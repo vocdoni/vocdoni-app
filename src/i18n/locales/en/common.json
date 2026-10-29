@@ -822,7 +822,7 @@
       "title": "API keys"
     },
     "configuration": {
-      "subtitle": "Manage your subscription and get support.",
+      "subtitle": "Manage your wallet, subscription and support.",
       "title": "Configuration"
     },
     "create_account": {
@@ -865,7 +865,7 @@
     },
     "overview": "Overview",
     "overview_error": "Unable to load integrator quota",
-    "overview_subtitle": "Your integrator quota and current usage.",
+    "overview_subtitle": "Your integrator usage and wallet balance.",
     "overview_title": "Overview",
     "provision_failed": "We couldn't set up your integrator account.",
     "quota": {
@@ -891,7 +891,11 @@
       "portal_error": "Could not open the billing portal",
       "unavailable": "Subscription details are unavailable"
     },
-    "upgrade_plan": "Upgrade plan"
+    "upgrade_plan": "Upgrade plan",
+    "wallet": {
+      "balance": "Wallet balance",
+      "manage": "Manage wallet"
+    }
   },
   "invalid_promo_code": "Invalid promotion code",
   "invite": {
@@ -2114,6 +2118,49 @@
   "voting_processes_description": "Manage and monitor your voting processes",
   "voting_settings": "Voting settings",
   "voting_status": "Voting status",
+  "wallet": {
+    "balance": "Balance",
+    "balance_note": "Prepaid credit, VAT excluded. Publishing a paid voting process is charged from it.",
+    "checking": "Checking your payment. Your balance updates as soon as Stripe confirms it.",
+    "checking_timeout": "We could not confirm a top-up yet. If you paid, it will appear here shortly; if the payment did not go through, you can top up again.",
+    "history": {
+      "amount": "Amount",
+      "date": "Date",
+      "detail": "Detail",
+      "empty": "No movements yet.",
+      "kind": "Type",
+      "title": "Movements"
+    },
+    "kind": {
+      "creditBack": "Credit back",
+      "payment": "Payment",
+      "refund": "Stripe refund",
+      "topup": "Top-up"
+    },
+    "load_error": "Unable to load the wallet",
+    "managed": "This organization's voting processes are paid by the integrator that manages it.",
+    "negative_balance": "Your balance is negative after a refund. Top up to pay for new voting processes.",
+    "no_access": "Only admins and managers can see the wallet.",
+    "pagination": "Page {{page}} of {{total}} · {{items}} total",
+    "processing": "Payment received. Your balance updates as soon as it is confirmed.",
+    "processing_timeout": "This is taking longer than expected. Your balance updates once the payment is confirmed; check back later.",
+    "title": "Wallet",
+    "topup": {
+      "admin_only": "Only admins can top up the wallet.",
+      "amount": "Amount (EUR, VAT excluded)",
+      "amount_decimals": "Use at most 2 decimals.",
+      "amount_net": "Top-up (VAT excluded)",
+      "amount_range": "Enter an amount between {{min}} and {{max}}.",
+      "continue": "Continue to payment",
+      "hint": "VAT is added at checkout from your billing details.",
+      "open": "Top up",
+      "pay": "Pay {{amount}}",
+      "success_toast": "Your wallet was topped up",
+      "title": "Top up your wallet",
+      "total": "Total",
+      "vat": "VAT"
+    }
+  },
   "wallet_not_connected": "Wallet not connected",
   "website": "Website",
   "whatsapp_contact": "Talk with us!",

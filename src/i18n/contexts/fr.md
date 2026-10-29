@@ -30,6 +30,7 @@ Address the user with formal **vous / votre** throughout — in French this is t
 | anonymous voting | vote anonyme | Prefer "vote anonyme" over "vote secret" for accuracy |
 | private ballot / pseudonymous | vote privé / pseudonyme | The default mode, opposite the anonymous one: the ballot carries a one-time code instead of a name, but platform records could still connect it to a member. Never use "anonyme" (that is the other mode) nor "secret" (that is ballot secrecy) |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| wallet (prepaid credit balance) | wallet | Keep in English, so it is not confused with a crypto wallet |
 | open source | open source | Keep in English — the calques "code ouvert" and "logiciel libre" are barely used in this domain. Use it as an adjective ("un protocole open source", "une infrastructure open source") or noun ("l'open source") |
 | overwrite vote / correct vote | modifier son vote / corriger son vote | Prefer "modifier" for buttons, "corriger" for descriptions |
 | abstain | s'abstenir | |

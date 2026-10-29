@@ -3,7 +3,8 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
-import { Routes } from '~src/router/routes'
+import { useWalletAccess } from '~queries/wallet'
+import { Routes, stripCheckoutReturn } from '~src/router/routes'
 
 type ConfigTab = {
   label: string
@@ -11,16 +12,25 @@ type ConfigTab = {
 }
 
 /**
- * Integrator Configuration: a tabbed container (Subscription + Support) mirroring the admin
- * settings screen, but limited to the two tabs integrators need. Tabs are child routes so they are
+ * Integrator Configuration: a tabbed container (Wallet, Subscription + Support) mirroring the admin
+ * settings screen, but limited to the tabs integrators need. Tabs are child routes so they are
  * deep-linkable.
  */
 const IntegratorConfiguration = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
+  const { canView: canViewWallet } = useWalletAccess()
 
   const tabs: ConfigTab[] = [
+    ...(canViewWallet
+      ? [
+          {
+            label: t('wallet.title', { defaultValue: 'Wallet' }),
+            route: Routes.integrators.configuration.wallet,
+          },
+        ]
+      : []),
     {
       label: t('subscription.title', { defaultValue: 'Subscription plan' }),
       route: Routes.integrators.configuration.subscription,
@@ -32,7 +42,7 @@ const IntegratorConfiguration = () => {
   ]
 
   const currentTabIndex = useMemo(
-    () => tabs.findIndex((tab) => location.pathname.endsWith(tab.route)),
+    () => tabs.findIndex((tab) => stripCheckoutReturn(location.pathname).endsWith(tab.route)),
     [location.pathname, tabs]
   )
   const activeTabValue = currentTabIndex === -1 ? tabs[0]?.route : tabs[currentTabIndex]?.route
@@ -42,7 +52,7 @@ const IntegratorConfiguration = () => {
       <Heading>{t('integrators.configuration.title', { defaultValue: 'Configuration' })}</Heading>
       <SubHeading>
         {t('integrators.configuration.subtitle', {
-          defaultValue: 'Manage your subscription and get support.',
+          defaultValue: 'Manage your wallet, subscription and support.',
         })}
       </SubHeading>
       <TabsRoot

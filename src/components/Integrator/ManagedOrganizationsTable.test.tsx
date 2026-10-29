@@ -7,6 +7,8 @@ const org = (overrides: Partial<ManagedOrganization> = {}): ManagedOrganization 
   website: '',
   createdAt: '2025-01-15T00:00:00Z',
   type: 'others',
+  spendCapCents: null,
+  spentCents: 0,
   ...overrides,
 })
 
@@ -17,7 +19,7 @@ describe('ManagedOrganizationsTable', () => {
         organizations={[
           org({
             name: { default: 'Acme' },
-            counters: { processes: 7, sentSMS: 3, sentEmails: 9, subOrgs: 0, users: 0 },
+            counters: { processes: 7, sentSMS: 3, sentEmails: 9, sentVotes: 0, subOrgs: 0, users: 0 },
           }),
         ]}
       />
