@@ -139,6 +139,7 @@ const sizes = {
   },
 }
 
+// No default size: a Text without one inherits its container's size and line height, as plain text does.
 export const text = defineRecipe({
   variants: {
     size: sizes,
@@ -148,8 +149,5 @@ export const text = defineRecipe({
         fontWeight: 'normal',
       },
     },
-  },
-  defaultVariants: {
-    size: 'md',
   },
 })
