@@ -2,7 +2,6 @@ import {
   Alert,
   Badge,
   Box,
-  Button,
   Center,
   Code,
   Flex,
@@ -22,7 +21,7 @@ import { LuTrash2 } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox } from '~components/Dashboard/Contents'
-import DeleteModal from '~components/Modal/DeleteModal'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
 import { statusPalette } from '~theme/status'
@@ -272,25 +271,21 @@ const ApiKeysPanel = () => {
         </Table.ScrollArea>
       )}
 
-      <DeleteModal
+      <ConfirmDialog
+        layout='inline'
         title={t('integrators.api_keys.revoke_confirm_title', { defaultValue: 'Revoke API key?' })}
-        subtitle={t('integrators.api_keys.revoke_confirm_description', {
+        description={t('integrators.api_keys.revoke_confirm_description', {
           defaultValue:
             'This permanently disables "{{label}}". Any integration using it will stop working immediately.',
           label: keyToRevoke?.label,
         })}
         open={!!keyToRevoke}
         onOpenChange={({ open }) => !open && setKeyToRevoke(null)}
-      >
-        <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' onClick={() => setKeyToRevoke(null)}>
-            {t('integrators.api_keys.revoke_cancel', { defaultValue: 'Cancel' })}
-          </Button>
-          <Button loading={revoke.isPending} colorPalette={statusPalette.destructive} onClick={onRevoke}>
-            {t('integrators.api_keys.revoke_confirm', { defaultValue: 'Revoke' })}
-          </Button>
-        </Flex>
-      </DeleteModal>
+        cancelText={t('integrators.api_keys.revoke_cancel', { defaultValue: 'Cancel' })}
+        confirmText={t('integrators.api_keys.revoke_confirm', { defaultValue: 'Revoke' })}
+        loading={revoke.isPending}
+        onConfirm={onRevoke}
+      />
     </Stack>
   )
 }

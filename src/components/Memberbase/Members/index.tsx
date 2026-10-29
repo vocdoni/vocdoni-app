@@ -3,6 +3,7 @@ import {
   Button,
   type ButtonProps,
   Checkbox,
+  type DialogRootProps,
   Drawer,
   Flex,
   Heading,
@@ -45,7 +46,7 @@ import {
 import { generatePath, useNavigate, useOutletContext } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
-import DeleteModal, { DeleteModalProps } from '~components/Modal/DeleteModal'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
@@ -84,7 +85,7 @@ type DeleteMemberModalProps = {
   isOpen: boolean
   onClose: () => void
   mode: DeleteModes
-} & Omit<DeleteModalProps, 'children' | 'title' | 'subtitle'>
+} & Omit<DialogRootProps, 'children'>
 
 type CreateGroupButtonProps = {
   members?: Member[]
@@ -858,9 +859,10 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
   }
 
   return (
-    <DeleteModal
+    <ConfirmDialog
+      layout='inline'
       title={t('memberbase.delete_member.title', { defaultValue: 'Delete Members' })}
-      subtitle={
+      description={
         isFetchingAll
           ? t('memberbase.delete_member.loading', {
               defaultValue: 'Loading members to delete...',
@@ -873,22 +875,13 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
       }
       open={isOpen}
       onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      cancelText={t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
+      confirmText={t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
+      loading={deleteMutation.isPending || isFetchingAll}
+      onConfirm={handleDelete}
+      confirmProps={{ disabled: isFetchingAll || selectedMembers.length === 0 }}
       {...props}
-    >
-      <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={onClose}>
-          {t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
-        </Button>
-        <Button
-          loading={deleteMutation.isPending || isFetchingAll}
-          colorPalette={statusPalette.destructive}
-          onClick={handleDelete}
-          disabled={isFetchingAll || selectedMembers.length === 0}
-        >
-          {t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
-        </Button>
-      </Flex>
-    </DeleteModal>
+    />
   )
 }
 
