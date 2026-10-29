@@ -336,14 +336,14 @@ export const electionComponents: ComponentsPartialDefinition = {
         <NativeSelect.Root
           size='sm'
           width='auto'
+          disabled={disabled}
           alignSelf={layout === 'grid' ? 'start' : undefined}
           mt={layout === 'grid' ? 2 : undefined}
           data-choice-control={layout === 'list' ? dataAttrs?.['data-choice-control'] : undefined}
         >
           <NativeSelect.Field
             id={`rank-${choice.value}`}
-            value={position ?? ''}
-            disabled={disabled}
+            value={position === null || position === undefined ? '' : String(position)}
             bg='bg'
             onChange={(event) => onRank(event.target.value === '' ? null : Number(event.target.value))}
           >
