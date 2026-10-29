@@ -52,16 +52,11 @@ const UserProfile = () => {
         <Button
           aria-label={t('user_menu', 'User menu')}
           size='xl'
-          display={'flex'}
-          alignItems={'center'}
-          gap={2}
           w='full'
           colorPalette='gray'
-          variant='subtle'
-          justifyContent='start'
+          variant='menu-trigger'
           borderRadius='none'
           mt={2}
-          p={2}
           minW={0}
         >
           <Flex alignItems='center' gap={2} w='full'>
@@ -136,19 +131,14 @@ const UserProfile = () => {
             <>
               <Popover.Body>
                 <Box borderBottom='1px solid' borderBottomColor='border' py={1}>
-                  <Button
-                    fontWeight='normal'
-                    colorPalette='gray'
-                    variant='profilemenu'
-                    onClick={() => setSwitchOrg(true)}
-                  >
+                  <Button colorPalette='gray' variant='menu-item' onClick={() => setSwitchOrg(true)}>
                     <Flex alignItems='center' gap={2} w='full'>
                       <Icon as={LuBuilding} />
                       <Trans i18nKey={'switch_organization'} />
                       <Icon as={LuChevronRight} marginLeft='auto' />
                     </Flex>
                   </Button>
-                  <Button fontWeight='normal' colorPalette='gray' variant='profilemenu' asChild>
+                  <Button colorPalette='gray' variant='menu-item' asChild>
                     <ReactRouterLink to={Routes.dashboard.profile}>
                       <HStack gap={2}>
                         <Icon as={LuUserPen} />
@@ -175,7 +165,7 @@ const UserProfile = () => {
                   </Field.Root>
                   <LanguageListDashboard px={2} py={1.5} />
                 </Box>
-                <Button colorPalette='gray' fontWeight='bold' variant='profilemenu' onClick={logout}>
+                <Button colorPalette='gray' variant='menu-item-strong' onClick={logout}>
                   <HStack gap={2}>
                     <Icon as={LuLogOut} />
                     <Trans i18nKey={'logout'} />

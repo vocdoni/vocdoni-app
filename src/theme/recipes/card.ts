@@ -43,16 +43,6 @@ const pricingCard = {
   footer: {
     p: 0,
     display: 'flex',
-    '& > button': {
-      mx: 'auto',
-      mt: 3,
-      mb: 2,
-      w: 'full',
-      borderRadius: 'md',
-      border: '{borderWidths.hairline}',
-      borderColor: 'control.border',
-      p: 4,
-    },
   },
 }
 
