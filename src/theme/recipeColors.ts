@@ -18,7 +18,7 @@ const link = {
   },
 }
 
-// Border of a secondary action sitting on a card. Same grey in both color modes today.
+// Border of a secondary action sitting on a card. Same grey in both color modes.
 const control = {
   border: {
     value: '{colors.gray.300}',
