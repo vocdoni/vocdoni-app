@@ -92,16 +92,34 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
           />
         </Text>
         <Flex gap={2.5}>
-          <Link variant='icon' href='https://twitter.com/vocdoni' target='_blank' rel='noopener noreferrer'>
-            <Icon aria-label={t('link.twitter').toString()} as={TwitterXIcon} />
+          <Link
+            variant='icon'
+            href='https://twitter.com/vocdoni'
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label={t('link.twitter')}
+          >
+            <Icon as={TwitterXIcon} />
           </Link>
 
-          <Link variant='icon' href='https://chat.vocdoni.io/' target='_blank' rel='noopener noreferrer'>
-            <Icon aria-label={t('link.discord').toString()} as={DiscordIcon} />
+          <Link
+            variant='icon'
+            href='https://chat.vocdoni.io/'
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label={t('link.discord')}
+          >
+            <Icon as={DiscordIcon} />
           </Link>
 
-          <Link variant='icon' href='https://github.com/vocdoni' target='_blank' rel='noopener noreferrer'>
-            <Icon aria-label={t('link.github').toString()} as={GithubIcon} />
+          <Link
+            variant='icon'
+            href='https://github.com/vocdoni'
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label={t('link.github')}
+          >
+            <Icon as={GithubIcon} />
           </Link>
         </Flex>
       </Flex>

@@ -1,16 +1,5 @@
-import {
-  Box,
-  Button,
-  CloseButton,
-  Drawer,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Text,
-  useMediaQuery,
-  useToken,
-} from '@chakra-ui/react'
+import { Box, Button, Drawer, Flex, HStack, Icon, IconButton, Text, useMediaQuery, useToken } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { AddIcon, SidebarIcon } from '~theme/icons'

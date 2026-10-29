@@ -1,4 +1,5 @@
-import { Button, ButtonProps, CloseButton, Dialog, Flex, HStack, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Dialog, Flex, HStack, Text } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
