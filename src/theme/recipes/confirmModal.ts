@@ -3,8 +3,7 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 // Text's `subheader` look.
 const mutedDescription = { color: 'fg.muted', fontWeight: 'normal' }
 
-// Styles of ui/ConfirmDialog. Each layout keeps the spacing and title of one of the confirm shells the app
-// had before they were merged into it; the buttons are the same everywhere (outline Cancel, solid confirm).
+// Styles of ui/ConfirmDialog. Layouts differ only in spacing and title; the buttons are the same everywhere.
 export const ConfirmModal = defineSlotRecipe({
   slots: ['header', 'title', 'body', 'description', 'footer'],
   variants: {
