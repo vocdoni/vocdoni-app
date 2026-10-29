@@ -5,30 +5,7 @@ import { defineSemanticTokens } from '@chakra-ui/react'
  * https://v2.chakra-ui.com/docs/styled-system/semantic-tokens
  */
 
-// @deprecated: use the chakra built-in `bg` token directly
-const chakra = {
-  body: {
-    bg: {
-      value: '{colors.bg}',
-    },
-  },
-}
-
-// @deprecated: use the chakra built-in `fg`/`fg.muted` tokens directly
-const texts = {
-  primary: {
-    value: '{colors.fg}',
-  },
-  subtle: {
-    value: '{colors.fg.muted}',
-  },
-  dark: {
-    value: '{colors.fg.muted}',
-  },
-}
-
 export const colors = defineSemanticTokens.colors({
-  chakra,
   // Overrides of the chakra built-in semantic scale — the canonical vocabulary
   // for surfaces and text (bg, bg.subtle, bg.muted, fg, fg.muted, border, …)
   bg: {
@@ -46,12 +23,6 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   auth: {
-    bg: {
-      value: {
-        _light: '{colors.gray.50}',
-        _dark: '{colors.ink.550}',
-      },
-    },
     card: {
       bg: {
         value: {
@@ -74,13 +45,10 @@ export const colors = defineSemanticTokens.colors({
           value: '{colors.gray.400}',
         },
       },
-      ring: {
-        value: '{colors.separator}',
-      },
       // Hairline between the quote and its attribution. Neutral white alpha rather than
       // `separator`, which is faintly blue and reads as a tint of its own on a coloured panel.
       rule: {
-        value: 'rgba(255, 255, 255, 0.16)',
+        value: '{colors.whiteAlpha.300}',
       },
     },
     // Tile the customer logos sit on, in the showcase panel and in the trust bar alike. Light in
@@ -101,10 +69,6 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   border: {
-    // @deprecated: use the chakra built-in `border` token directly
-    dashboard: {
-      value: '{colors.border}',
-    },
     pagination: {
       active: {
         value: {
@@ -120,31 +84,6 @@ export const colors = defineSemanticTokens.colors({
         value: {
           _light: '{colors.white}',
           _dark: '{colors.ink.650}',
-        },
-      },
-      border: {
-        value: {
-          _light: '{colors.gray.200}',
-          _dark: '{colors.ink.700}',
-        },
-      },
-      current: {
-        bg: {
-          value: {
-            _light: '{colors.gray.100}',
-            _dark: '{colors.ink.600}',
-          },
-        },
-        // Accent tokens read the generated `brand.fg` / `brand.solid` /
-        // `brand.contrast` slots rather than the raw 500 step: 500 is the exact
-        // configured PRIMARY_COLOR, which carries no readability guarantee (a
-        // pale brand renders this label at ~1.3:1 on white). With no
-        // PRIMARY_COLOR these resolve to the same black/white as before.
-        color: {
-          value: {
-            _light: '{colors.brand.fg}',
-            _dark: '{colors.white}',
-          },
         },
       },
       featured: {
@@ -190,12 +129,6 @@ export const colors = defineSemanticTokens.colors({
       value: '{colors.gray.500}',
     },
   },
-  // @deprecated: use the chakra built-in `border` token directly
-  table: {
-    border: {
-      value: '{colors.border}',
-    },
-  },
   tabs: {
     tab: {
       color: {
@@ -228,7 +161,6 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
-  texts,
 })
 
 const semanticTokens = {
