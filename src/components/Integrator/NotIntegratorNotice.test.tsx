@@ -12,22 +12,19 @@ vi.mock('~src/queries/integrators', () => ({
   useProvisionIntegratorOrganization: vi.fn(() => ({ mutateAsync: provisionMutateAsync, isPending: false })),
 }))
 
-// Capture the props DeleteModal is rendered with so we can assert the dialog is locked while
+// Capture the props ConfirmDialog is rendered with so we can assert the dialog is locked while
 // provisioning (ESC + outside interaction disabled) without simulating Chakra's dismiss internals.
 let deleteModalProps: Record<string, any> = {}
-vi.mock('~components/Modal/DeleteModal', () => ({
-  default: (props: any) => {
-    deleteModalProps = props
-    if (!props.open) return null
-    return (
-      <div>
-        <div>{props.title}</div>
-        <div>{props.subtitle}</div>
-        {props.children}
-      </div>
-    )
-  },
-}))
+vi.mock('~components/ui/ConfirmDialog', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~components/ui/ConfirmDialog')>()
+  return {
+    ...actual,
+    ConfirmDialog: (props: any) => {
+      deleteModalProps = props
+      return <actual.ConfirmDialog {...props} />
+    },
+  }
+})
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => getAuthMock(),
