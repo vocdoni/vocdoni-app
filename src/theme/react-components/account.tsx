@@ -3,7 +3,12 @@ import { defineComponent, type ComponentsPartialDefinition } from '@vocdoni/reac
 
 export const accountComponents: ComponentsPartialDefinition = {
   AccountBalance: defineComponent<'AccountBalance', TextProps>(({ label, tone, ...props }) => {
-    const color = tone === 'success' ? 'green.500' : tone === 'warning' ? 'orange.500' : 'red.500'
+    const color =
+      tone === 'success'
+        ? 'ballot.balance.success'
+        : tone === 'warning'
+          ? 'ballot.balance.warning'
+          : 'ballot.balance.error'
     return (
       <Text color={color} {...props}>
         {label}

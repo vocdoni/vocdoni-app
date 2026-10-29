@@ -222,7 +222,7 @@ const ProcessViewContent = () => {
           </HStack>
 
           <Box as='header'>
-            <ElectionTitle textAlign={'start'} fontWeight={'bold'} />
+            <ElectionTitle size='page' />
             <ElectionVideo mb='3' maxW='4xl' />
             <ElectionDescription color='fg.muted' />
           </Box>

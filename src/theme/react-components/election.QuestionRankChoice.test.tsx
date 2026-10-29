@@ -55,6 +55,27 @@ describe('electionComponents.QuestionRankChoice', () => {
     expect(select.querySelectorAll('option')).toHaveLength(options.length + 1)
   })
 
+  it('disables the ranking select when the choice is disabled', () => {
+    render(
+      <QuestionRankChoice
+        choice={{ value: 1, title: { default: 'Option' } } as any}
+        value='1'
+        label='Option'
+        presentation='basic'
+        compact={true}
+        hasImage={false}
+        canOpenImageModal={false}
+        dataAttrs={{ 'data-layout': 'list' }}
+        position={null}
+        options={options}
+        onRank={() => {}}
+        disabled
+      />
+    )
+
+    expect(document.querySelector('select')).toBeDisabled()
+  })
+
   it('reports the chosen position as a number, or null when cleared', () => {
     const onRank = vi.fn()
     render(

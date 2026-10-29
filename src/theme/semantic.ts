@@ -1,4 +1,5 @@
 import { defineSemanticTokens } from '@chakra-ui/react'
+import { ballotColors } from './ballot'
 import { chartColors } from './charts'
 import { stateColors } from './states'
 import { statusColors } from './status'
@@ -321,6 +322,7 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   ...statusColors,
+  ...ballotColors,
 })
 
 // Elevation by role; each points at a Chakra size, which carries its own dark-mode value.
