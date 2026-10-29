@@ -19,7 +19,7 @@ export const DocsCard = ({ href, icon, title, description }: DocsCardProps) => (
     as={LinkBox}
     gap={3}
     justifyContent='flex-start'
-    transition='border-color 0.15s'
+    transition='border-color {durations.fast}'
     _hover={{ _light: { borderColor: 'blue.400' }, _dark: { borderColor: 'blue.400' } }}
   >
     <HStack justify='space-between'>

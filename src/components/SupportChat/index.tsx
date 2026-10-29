@@ -129,7 +129,7 @@ const SupportChatWidget = () => {
         // The panel is lazily mounted, so only reference it once it exists
         aria-controls={open ? 'support-chat-panel' : undefined}
         onClick={open ? close : openChat}
-        transition='transform 0.15s'
+        transition='transform {durations.fast}'
         _hover={{ transform: 'scale(1.06)' }}
         _active={{ transform: 'scale(0.96)' }}
         _motionReduce={{ transition: 'none', _hover: { transform: 'none' }, _active: { transform: 'none' } }}

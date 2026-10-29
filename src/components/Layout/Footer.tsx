@@ -16,15 +16,15 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
   return (
     <>
       <Flex
-        pt='24px'
+        pt={6}
         flexDirection={{ base: 'column', xl: 'row' }}
         alignItems='start'
-        pb={{ base: '50px', xl: '24px' }}
+        pb={{ base: '50px', xl: 6 }}
         gap={6}
       >
         <Box flex='1 1 33%'>
           <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
-            <Image src={vcdLogo} w='125px' mb='12px' filter={invert} alt={t('vocdoni_logo')} />
+            <Image src={vcdLogo} w='125px' mb={3} filter={invert} alt={t('vocdoni_logo')} />
           </Link>
           <Text fontSize='md' lineHeight={1.75}>
             {t('footer.footer_subtitle')}
@@ -84,10 +84,10 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
         width='full'
         m='0 auto'
         flexDirection={{ base: 'column', md: 'row' }}
-        gap={{ base: '20px', md: '10px' }}
+        gap={{ base: 5, md: 2.5 }}
         justifyContent='space-between'
         alignItems='center'
-        py='12px'
+        py={3}
         borderTop='1px solid'
         borderTopColor='border'
       >
@@ -100,7 +100,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             }}
           />
         </Text>
-        <Flex gap='10px'>
+        <Flex gap={2.5}>
           <Link variant='icon' href='https://twitter.com/vocdoni' target='_blank' rel='noopener noreferrer'>
             <Icon aria-label={t('link.twitter').toString()} as={FaXTwitter} />
           </Link>

@@ -201,7 +201,7 @@ const ProcessViewContent = () => {
           flex={1}
           minW={0}
           marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
-          transition='margin-right 0.3s'
+          transition='margin-right {durations.slow}'
           display='flex'
           flexDirection='column'
           gap={8}

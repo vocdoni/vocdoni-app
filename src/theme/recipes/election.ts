@@ -238,7 +238,8 @@ export const QuestionChoice = defineSlotRecipe({
           borderWidth: '1px',
           borderColor: 'gray.200',
           _dark: { borderColor: 'ink.700' },
-          transition: 'border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease',
+          transition:
+            'border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease',
           bg: 'transparent',
           p: 3,
           '&[data-state="checked"]': {
