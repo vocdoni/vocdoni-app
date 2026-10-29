@@ -31,6 +31,37 @@ export const ElectionTitle = defineRecipe({
     lineHeight: 1.3,
     mb: 3,
   },
+  variants: {
+    size: {
+      md: {},
+      // Public process page header.
+      hero: {
+        fontSize: '4xl',
+        textAlign: 'left',
+        mb: 5,
+      },
+      // Process page of the organization dashboard.
+      page: {
+        textAlign: 'start',
+      },
+      // Shared-census process cards.
+      card: {
+        fontSize: 'lg',
+        mb: 0,
+      },
+      // One-line process rows of the organization dashboard.
+      row: {
+        fontSize: 'md',
+        textAlign: 'left',
+        fontWeight: '500',
+        mb: 0,
+        truncate: true,
+      },
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+  },
 })
 
 export const ElectionQuestions = defineSlotRecipe({
@@ -172,12 +203,12 @@ export const resultsProgressRecipe = defineSlotRecipe({
     },
     track: {
       h: '100%',
-      bg: { base: 'gray.100', _dark: 'gray.800' },
+      bg: 'ballot.results.track',
       borderRadius: 'inherit',
     },
     range: {
       h: '100%',
-      bg: { base: 'gray.400', _dark: 'gray.500' },
+      bg: 'ballot.results.range',
       borderRadius: 'inherit',
     },
   },
@@ -189,7 +220,7 @@ export const ElectionSchedule = defineRecipe({
     fontSize: 'sm',
     textAlign: 'center',
     fontStyle: 'italic',
-    color: 'gray.400',
+    color: 'ballot.schedule',
   },
 })
 
@@ -236,15 +267,13 @@ export const QuestionChoice = defineSlotRecipe({
         wrapper: {
           borderRadius: 'md',
           borderWidth: '1px',
-          borderColor: 'gray.200',
-          _dark: { borderColor: 'ink.700' },
+          borderColor: 'ballot.choice.border',
           transition:
             'border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease',
           bg: 'transparent',
           p: 3,
           '&[data-state="checked"]': {
-            borderColor: 'black',
-            _dark: { borderColor: 'white' },
+            borderColor: 'ballot.choice.border.checked',
           },
           '&[data-disabled="true"]': {
             opacity: 0.6,
