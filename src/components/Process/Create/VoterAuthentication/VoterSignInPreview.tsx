@@ -90,7 +90,7 @@ const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly strin
           </Text>
           <FakeInput>{getSampleContact(t, codeMethod)}</FakeInput>
           <Text textStyle='caption' color='fg.muted' mt={1}>
-            <Text as='span' fontSize='inherit' fontWeight='bold'>
+            <Text as='span' fontWeight='bold'>
               {t('csp.important', { defaultValue: 'Important' })}:
             </Text>{' '}
             {t('csp.contact_match_help', 'Must match the one registered in the system')}
@@ -100,14 +100,14 @@ const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly strin
       <HStack align='start' gap={1.5} fontSize='xs' color='fg.muted'>
         <Box boxSize={3} flexShrink={0} mt={0.5} borderWidth='1px' borderColor='border.emphasized' borderRadius='xs' />
         {/* Same children as the real form, so the <2>/<6> slots resolve alike. */}
-        <Text fontSize='inherit'>
+        <Text>
           <Trans i18nKey='csp.terms_acceptance'>
             I have read and accept the{' '}
-            <Text as='span' fontSize='inherit' textDecoration='underline'>
+            <Text as='span' textDecoration='underline'>
               Terms and Conditions
             </Text>{' '}
             and the{' '}
-            <Text as='span' fontSize='inherit' textDecoration='underline'>
+            <Text as='span' textDecoration='underline'>
               Privacy Policy
             </Text>
             .
@@ -136,7 +136,7 @@ const CodeScreen = () => {
         <Trans
           i18nKey='csp.step1.resend_text'
           defaults="Didn't receive the code? <resendBtn>Resend it</resendBtn>"
-          components={{ resendBtn: <Text as='span' fontSize='inherit' textDecoration='underline' /> }}
+          components={{ resendBtn: <Text as='span' textDecoration='underline' /> }}
         />
       </Text>
       <FakeButton>{t('csp.authenticate', 'Authenticate')}</FakeButton>

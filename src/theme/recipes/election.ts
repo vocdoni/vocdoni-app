@@ -248,13 +248,24 @@ export const QuestionChoice = defineSlotRecipe({
       objectPosition: 'center',
     },
 
+    // Body size on both controls: the checkbox label would otherwise pass on its smaller one.
     label: {
+      textStyle: 'body',
       fontWeight: 'semibold',
       wordBreak: 'break-word',
     },
 
     description: {
+      textStyle: 'body',
       wordBreak: 'break-word',
+    },
+
+    modalLabel: {
+      textStyle: 'body',
+    },
+
+    modalDescription: {
+      textStyle: 'body',
     },
   },
   variants: {

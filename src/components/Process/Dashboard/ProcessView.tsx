@@ -505,11 +505,11 @@ const ProcessViewSidebar = () => {
               </Progress.Root>
             </Box>
             <Box display='flex' justifyContent='space-between' fontSize='sm'>
-              <Text display='flex' gap={2} alignItems='center' fontSize='inherit'>
+              <Text display='flex' gap={2} alignItems='center'>
                 <Icon as={UsersIcon} />
                 <Trans i18nKey='census_size'>Census size</Trans>
               </Text>
-              <Text fontSize='inherit'>{censusSize || ''}</Text>
+              <Text>{censusSize || ''}</Text>
             </Box>
           </DashboardBox>
 
