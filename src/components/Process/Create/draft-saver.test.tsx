@@ -1,7 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { ErrorCode } from '~components/Auth/api'
 import { QueryKeys } from '~queries/keys'
 import { createTestQueryClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -12,6 +11,7 @@ import { useFormDraftSaver } from './index'
 
 const create = vi.fn()
 const update = vi.fn()
+const get = vi.fn()
 const toast = vi.fn()
 
 vi.mock('~components/Toast', () => ({
@@ -35,7 +35,7 @@ vi.mock('~elements/dashboard/processes/drafts', () => ({
 }))
 
 vi.mock('~src/providers/ApiClientProvider', () => ({
-  useApiClient: () => ({ client: { elections: { create, update } } }),
+  useApiClient: () => ({ client: { elections: { create, update, get } } }),
 }))
 
 /** A promise plus the handle to settle it, so a request can be held in flight. */
@@ -83,6 +83,7 @@ describe('useFormDraftSaver', () => {
     })
     create.mockResolvedValue('draft-1')
     update.mockResolvedValue(undefined)
+    get.mockResolvedValue({ id: 'draft-1', published: false })
   })
 
   it('holds a queued write until the one in flight finishes', async () => {
@@ -166,6 +167,20 @@ describe('useFormDraftSaver', () => {
     expect(storeDraftId).toHaveBeenCalledWith('draft-1')
     expect(publishedId).toBe('draft-1')
     expect(update).toHaveBeenCalledWith('draft-1', { published: true })
+  })
+
+  it('sends the draft add-ons it holds on every update, which the PUT would otherwise clear', async () => {
+    // Add-ons are set outside the wizard (an integrator's API), so each save reads them afresh
+    get.mockResolvedValueOnce({ id: 'draft-1', published: false, addOns: { branding: true } })
+    get.mockResolvedValueOnce({ id: 'draft-1', published: false, addOns: { customUrl: true } })
+    const { result } = renderSaver('draft-1')
+
+    await act(() => result.current.saveDraft(false))
+    await act(() => result.current.saveDraft(false))
+
+    expect(get).toHaveBeenCalledWith('draft-1')
+    expect(update).toHaveBeenNthCalledWith(1, 'draft-1', expect.objectContaining({ addOns: { branding: true } }))
+    expect(update).toHaveBeenNthCalledWith(2, 'draft-1', expect.objectContaining({ addOns: { customUrl: true } }))
   })
 
   // The backend rebuilds the census from its group on every save, so any save may change the price

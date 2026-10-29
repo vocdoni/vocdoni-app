@@ -495,7 +495,12 @@ const useUpdateProcess = () => {
   const queryClient = useQueryClient()
 
   return useMutation<void, Error, UpdateProcessRequest>({
-    mutationFn: ({ processId, body }) => client.elections.update(processId, body),
+    mutationFn: async ({ processId, body }) => {
+      // The PUT replaces the draft's add-ons, and an integrator can set them through the API while
+      // the wizard is open: read the draft's current ones, rather than a copy from when it loaded.
+      const { addOns } = await client.elections.get(processId)
+      return client.elections.update(processId, { ...body, addOns })
+    },
     // Every save re-prices the draft, even one that only touched its texts: the backend rebuilds
     // its census from the group each time, and the group may have changed since the last save.
     // Not awaited: a returned promise would hold the save, and every write queued behind it,

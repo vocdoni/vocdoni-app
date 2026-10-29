@@ -1,42 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { ApiEndpoints, apiErrorDetails, ErrorCode } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
+import { isApiError } from '@vocdoni/api-client'
+import type { ProcessPriceResponse } from '@vocdoni/api-types'
+import { ErrorCode } from '~components/Auth/api'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from './keys'
-
-// Kinds of the priced components of a voting process, as the backend names them.
-export type ProcessPriceLineKind =
-  | 'base'
-  | 'emailTwoFA'
-  | 'smsTwoFA'
-  | 'signedCertificate'
-  | 'customUrl'
-  | 'branding'
-  | 'minimumCharge'
-
-export type ProcessPriceLine = {
-  // Typed loosely on purpose: a kind added by the backend must still render, with its own description
-  kind: ProcessPriceLineKind | (string & {})
-  // English only; the UI translates known kinds and falls back to it for unknown ones
-  description: string
-  amountCents: number
-}
-
-// 'pending': a wallet top-up checkout is open for the draft. 'failed' and 'refunded': a wallet payment
-// was credited back, so the draft is unpaid again.
-export type ProcessPaymentStatus = 'pending' | 'failed' | 'paid' | 'refunded'
-
-// Pay-per-process price of a draft (vocdoni-app#1767): EUR cents, VAT excluded (a wallet top-up adds it).
-export type ProcessPrice = {
-  lines: ProcessPriceLine[]
-  totalCents: number
-  currency: string
-  // Census above 15,000 voters: a custom quote is recommended
-  quoteRecommended: boolean
-  // Census above 50,000 voters: no price, and no payment path or publish accepts it, whatever was paid
-  quoteRequired: boolean
-  // Absent until a wallet payment has touched the draft
-  paymentStatus?: ProcessPaymentStatus
-}
 
 // Process ids are MongoDB ObjectIDs. The id priced comes from the URL (?draftId=), and encoding it
 // is not enough: "." and ".." survive encodeURIComponent and the URL would resolve them, pointing
@@ -54,12 +21,12 @@ export const isProcessId = (id?: string | null): id is string => !!id && /^[0-9a
  * `query`: it only re-renders the caller for the fields it reads.
  */
 export const useProcessPrice = (processId?: string | null) => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
-  const query = useQuery<ProcessPrice, Error>({
+  const query = useQuery<ProcessPriceResponse, Error>({
     queryKey: QueryKeys.process.price(processId ?? undefined),
     enabled: isProcessId(processId),
-    queryFn: () => bearedFetch<ProcessPrice>(ApiEndpoints.ProcessPrice.replace('{processId}', processId!)),
+    queryFn: () => client.elections.getPrice(processId!),
     // Most failures are a draft the backend cannot price yet (isUnpriceableDraft): retrying them
     // only delays the hint
     retry: false,
@@ -71,8 +38,8 @@ export const useProcessPrice = (processId?: string | null) => {
 
 // The backend refuses to price a draft without voters (a census of size 0 fails its price formula),
 // which drafts lack until their voters and authentication are set up.
-export const isUnpriceableDraft = (error: unknown) => apiErrorDetails(error)?.code === ErrorCode.MalformedJSONBody
+export const isUnpriceableDraft = (error: unknown) => isApiError(error, ErrorCode.MalformedJSONBody)
 
 // Above the self-service limit the zero total is not a free process: the backend refuses every
 // publish of it, so the app offers no way to publish it.
-export const isQuoteOnly = (price?: ProcessPrice) => !!price?.quoteRequired
+export const isQuoteOnly = (price?: ProcessPriceResponse) => !!price?.quoteRequired
