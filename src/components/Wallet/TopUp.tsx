@@ -103,7 +103,7 @@ const CheckoutForm = ({ amountCents, sessionId, onBack, onDone }: CheckoutFormPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (checkoutState.type !== 'success') return
+    if (checkoutState.type !== 'success' || isSubmitting) return
 
     setIsSubmitting(true)
     setError(null)
