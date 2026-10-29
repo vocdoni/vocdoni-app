@@ -5,11 +5,11 @@ const baseStyle = {
   content: {
     p: 1,
     borderRadius: 'sm',
-    boxShadow: 'md',
-    bg: 'bg',
+    boxShadow: 'shadow.raised',
+    bg: 'surface.raised',
   },
   item: {
-    bg: 'bg',
+    bg: 'surface.raised',
     _selected: {
       bg: 'gray.100',
       color: 'black',

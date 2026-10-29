@@ -46,7 +46,7 @@ const DashboardMenu = ({
       <Box
         borderRight='1px solid'
         borderRightColor='border'
-        bgColor='dashboard.menu'
+        bgColor='surface.sidebar'
         display={{ base: 'none', md: 'flex' }}
         flexDirection='column'
         position='sticky'
