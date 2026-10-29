@@ -7,7 +7,7 @@ export const NoResultsFiltering = () => {
   const { t } = useTranslation()
 
   return (
-    <Card.Root variant='no-elections' minH='100%' maxW='650' m='80px auto'>
+    <Card.Root variant='no-elections' minH='100%' maxW='650px' m='80px auto'>
       <Card.Body>
         <EmptyState
           image={empty}
