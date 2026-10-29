@@ -336,7 +336,7 @@ const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteMo
             {!group.isAutoGroup && (
               <>
                 <MenuSeparator />
-                <MenuItem value='delete' color='destructive.alt.500' onClick={onDeleteModalOpen}>
+                <MenuItem value='delete' color='destructive.fg' onClick={onDeleteModalOpen}>
                   <HStack gap={2}>
                     <Icon boxSize={4} as={LuTrash} />
                     <Text as='span'>{t('group.actions.delete_group', { defaultValue: 'Delete Group' })}</Text>

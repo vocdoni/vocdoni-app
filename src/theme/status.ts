@@ -13,19 +13,6 @@ export const statusPalette = {
   destructive: 'red',
 } as const satisfies Record<StatusTone | 'destructive', string>
 
-// Hues a few screens pick instead of the shared ones above.
-export const statusPaletteAlt = {
-  warning: 'yellow',
-  success: 'teal',
-} as const
-
-// Fixed hues that don't follow PRIMARY_COLOR.
-export const accentPalette = {
-  blue: 'blue',
-  purple: 'purple',
-  teal: 'teal',
-} as const
-
 // fg/bg/border alias chakra's own status roles (`fg.error`, `bg.warning`…), so code that reads
 // those directly and code that reads `status.*` render the same.
 const tone = (name: Exclude<StatusTone, 'neutral'>, palette: string) => ({
@@ -38,27 +25,9 @@ const tone = (name: Exclude<StatusTone, 'neutral'>, palette: string) => ({
 
 export const statusColors = defineSemanticTokens.colors({
   status: {
-    success: {
-      ...tone('success', statusPalette.success),
-      // Steps single call sites use instead of `fg`.
-      alt: {
-        400: { value: '{colors.green.400}' },
-        500: { value: '{colors.green.500}' },
-        paired: { value: { _light: '{colors.green.500}', _dark: '{colors.green.300}' } },
-      },
-    },
-    warning: {
-      ...tone('warning', statusPalette.warning),
-      alt: {
-        400: { value: '{colors.orange.400}' },
-      },
-    },
-    error: {
-      ...tone('error', statusPalette.error),
-      alt: {
-        500: { value: '{colors.red.500}' },
-      },
-    },
+    success: tone('success', statusPalette.success),
+    warning: tone('warning', statusPalette.warning),
+    error: tone('error', statusPalette.error),
     info: tone('info', statusPalette.info),
     neutral: {
       fg: { value: '{colors.fg.muted}' },
@@ -68,22 +37,11 @@ export const statusColors = defineSemanticTokens.colors({
       contrast: { value: '{colors.gray.contrast}' },
     },
   },
-  // Actions that delete or end something: menu items, icon buttons, confirm buttons.
+  // Actions that delete or end something: menu items, icon buttons, confirm buttons. Text steps up
+  // to red.400 in dark mode, where red.600 is too dark to read on the dark surfaces.
   destructive: {
-    fg: { value: '{colors.fg.error}' },
+    fg: { value: { _light: '{colors.red.600}', _dark: '{colors.red.400}' } },
     solid: { value: '{colors.red.solid}' },
     contrast: { value: '{colors.red.contrast}' },
-    alt: {
-      400: { value: '{colors.red.400}' },
-      500: { value: '{colors.red.500}' },
-      solid: { value: { _light: '{colors.red.600}', _dark: '{colors.red.800}' } },
-      hover: { value: { _light: '{colors.red.700}', _dark: '{colors.red.900}' } },
-    },
-  },
-  accent: {
-    blue: {
-      400: { value: '{colors.blue.400}' },
-      500: { value: '{colors.blue.500}' },
-    },
   },
 })

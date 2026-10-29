@@ -448,7 +448,7 @@ const ProcessViewSidebar = () => {
           <ActionsProvider>
             {election && isLive(election) && (
               <ActionPause variant='outline' aria-label={t('process_actions.pause', { defaultValue: 'Pause' })}>
-                <ControlIcon as={LuPause} color='status.warning.alt.400' />
+                <ControlIcon as={LuPause} color='status.warning.fg' />
                 <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                   <Trans i18nKey='pause_vote'>Pause vote</Trans>
                 </Text>
@@ -459,20 +459,20 @@ const ProcessViewSidebar = () => {
                 variant='outline'
                 aria-label={t('process_actions.continue', { defaultValue: 'Continue' })}
               >
-                <ControlIcon as={LuCirclePlay} color='status.success.alt.400' />
+                <ControlIcon as={LuCirclePlay} color='status.success.fg' />
                 <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                   <Trans i18nKey='resume_vote'>Resume</Trans>
                 </Text>
               </ActionContinue>
             )}
             <ActionEnd variant='outline' aria-label={t('process_actions.end', { defaultValue: 'End' })}>
-              <ControlIcon as={LuCircleStop} color='destructive.alt.500' />
+              <ControlIcon as={LuCircleStop} color='destructive.fg' />
               <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                 <Trans i18nKey='end_vote'>End vote</Trans>
               </Text>
             </ActionEnd>
             <ActionCancel variant='outline' aria-label={t('process_actions.cancel', { defaultValue: 'Cancel' })}>
-              <ControlIcon as={LuTrash2} color='destructive.alt.400' />
+              <ControlIcon as={LuTrash2} color='destructive.fg' />
               <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                 <Trans i18nKey='cancel_vote'>Cancel vote</Trans>
               </Text>

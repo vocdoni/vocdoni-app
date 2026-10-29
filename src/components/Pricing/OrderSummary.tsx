@@ -82,7 +82,7 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
           discountAmounts.map((discount) => {
             if (!discount || !discount.amount || parseFloat(discount.amount) === 0) return null
             return (
-              <Flex key={discount.displayName} justify='space-between' color='status.success.alt.500'>
+              <Flex key={discount.displayName} justify='space-between' color='status.success.fg'>
                 <Text>{t('discount', { defaultValue: 'Discount' })}</Text>
                 <Text>-{discount.amount}</Text>
               </Flex>

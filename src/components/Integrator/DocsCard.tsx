@@ -20,10 +20,10 @@ export const DocsCard = ({ href, icon, title, description }: DocsCardProps) => (
     gap={3}
     justifyContent='flex-start'
     transition='border-color 0.15s'
-    _hover={{ _light: { borderColor: 'accent.blue.400' }, _dark: { borderColor: 'accent.blue.400' } }}
+    _hover={{ _light: { borderColor: 'colorPalette.solid' }, _dark: { borderColor: 'colorPalette.solid' } }}
   >
     <HStack justify='space-between'>
-      <Icon as={icon} boxSize={6} color='accent.blue.500' />
+      <Icon as={icon} boxSize={6} color='colorPalette.fg' />
       <Icon as={LuArrowUpRight} boxSize={4} color='texts.subtle' />
     </HStack>
     <LinkOverlay href={href} target='_blank' rel='noopener noreferrer' fontWeight='bold' fontSize='md'>

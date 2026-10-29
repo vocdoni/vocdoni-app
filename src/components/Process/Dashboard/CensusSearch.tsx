@@ -195,7 +195,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
       {hasSearch && (
         <Box>
           {isError ? (
-            <Text fontSize='sm' color='status.error.alt.500'>
+            <Text fontSize='sm' color='status.error.fg'>
               {getApiErrorMessage(error) ?? t('census.search.error', { defaultValue: 'Could not search the census.' })}
             </Text>
           ) : isLoading && !data ? (

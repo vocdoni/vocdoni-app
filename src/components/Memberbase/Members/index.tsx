@@ -376,7 +376,7 @@ const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: Member
               {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
             </Menu.Item>
             <Menu.Separator />
-            <Menu.Item value='delete' color='destructive.alt.400' onSelect={onDelete}>
+            <Menu.Item value='delete' color='destructive.fg' onSelect={onDelete}>
               {t('members.table.delete', { defaultValue: 'Delete' })}
             </Menu.Item>
           </Menu.Content>
