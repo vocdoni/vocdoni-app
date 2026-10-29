@@ -208,7 +208,9 @@ export const resultsProgressRecipe = defineSlotRecipe({
     },
     range: {
       h: '100%',
-      bg: 'ballot.results.range',
+      // Choice titles and tallies sit on top of the bar, so a full-strength fill would hide them (stock
+      // `solid` is near-black in light mode and white in dark mode): a 30% tint keeps them readable.
+      bg: 'colorPalette.solid/30',
       borderRadius: 'inherit',
     },
   },
@@ -272,7 +274,7 @@ export const QuestionChoice = defineSlotRecipe({
           bg: 'transparent',
           p: 3,
           '&[data-state="checked"]': {
-            borderColor: 'ballot.choice.border.checked',
+            borderColor: 'colorPalette.solid',
           },
           '&[data-disabled="true"]': {
             opacity: 0.6,

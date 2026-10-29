@@ -258,20 +258,27 @@ export const electionComponents: ComponentsPartialDefinition = {
                 checked={selected}
                 disabled={disabled}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => onSelect(event.target.checked)}
+                className='peer'
                 style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
               />
               <Box
                 w='18px'
                 h='18px'
                 borderWidth='2px'
-                borderColor={selected ? 'ballot.choice.ring.checked' : 'ballot.choice.ring'}
+                borderColor={selected ? 'colorPalette.solid' : 'ballot.choice.ring'}
                 borderRadius='full'
                 bg='ballot.choice.bg'
+                // The input is invisible, so its keyboard focus is drawn here, as Chakra's radiomark draws it.
+                _peerFocusVisible={{
+                  outline: '2px solid',
+                  outlineColor: 'colorPalette.focusRing',
+                  outlineOffset: '2px',
+                }}
                 display='flex'
                 alignItems='center'
                 justifyContent='center'
               >
-                {selected ? <Box w='8px' h='8px' borderRadius='full' bg='ballot.choice.dot' /> : null}
+                {selected ? <Box w='8px' h='8px' borderRadius='full' bg='colorPalette.solid' /> : null}
               </Box>
             </Box>
             {media}

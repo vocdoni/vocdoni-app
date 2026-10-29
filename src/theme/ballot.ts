@@ -5,34 +5,19 @@ import { defineSemanticTokens } from '@chakra-ui/react'
 export const ballotColors = defineSemanticTokens.colors({
   ballot: {
     choice: {
-      // Outline of a choice card.
+      // Unselected states only: a selected choice reads `colorPalette.solid`, like Chakra's checkbox, so it
+      // follows the brand.
       border: {
-        DEFAULT: {
-          value: {
-            _light: '{colors.gray.200}',
-            _dark: '{colors.ink.700}',
-          },
-        },
-        checked: {
-          value: {
-            _light: '{colors.black}',
-            _dark: '{colors.white}',
-          },
+        value: {
+          _light: '{colors.gray.200}',
+          _dark: '{colors.ink.700}',
         },
       },
-      // The single-choice radio: its circle, its fill and the dot of the selected choice.
+      // Circle and fill of the single-choice radio.
       ring: {
-        DEFAULT: {
-          value: {
-            _light: '{colors.border}',
-            _dark: '{colors.gray.500}',
-          },
-        },
-        checked: {
-          value: {
-            _light: '{colors.gray.700}',
-            _dark: '{colors.gray.100}',
-          },
+        value: {
+          _light: '{colors.border}',
+          _dark: '{colors.gray.500}',
         },
       },
       bg: {
@@ -41,24 +26,12 @@ export const ballotColors = defineSemanticTokens.colors({
           _dark: '{colors.gray.800}',
         },
       },
-      dot: {
-        value: {
-          _light: '{colors.gray.900}',
-          _dark: '{colors.gray.100}',
-        },
-      },
     },
     results: {
       track: {
         value: {
           _light: '{colors.gray.100}',
           _dark: '{colors.gray.800}',
-        },
-      },
-      range: {
-        value: {
-          _light: '{colors.gray.400}',
-          _dark: '{colors.gray.500}',
         },
       },
     },
