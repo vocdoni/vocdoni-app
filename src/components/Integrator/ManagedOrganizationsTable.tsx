@@ -1,15 +1,13 @@
 import { Code, Stack, Table, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { ManagedOrganization } from '~src/queries/integrators'
+import { shortAddress } from '~utils/address'
 
 const formatDate = (value: string) => {
   if (!value) return '-'
   const date = new Date(value)
   return isNaN(date.getTime()) ? value : date.toLocaleDateString()
 }
-
-const shortAddress = (address: string) =>
-  address && address.length > 14 ? `${address.slice(0, 8)}…${address.slice(-4)}` : address
 
 const formatCount = (value?: number) => (value ?? 0).toLocaleString()
 

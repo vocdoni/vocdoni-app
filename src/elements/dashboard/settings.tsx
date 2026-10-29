@@ -5,6 +5,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
 import QueryDataLayout from '~components/Layout/QueryDataLayout'
+import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '~src/router/routes'
 
 type MenuItem = {
@@ -19,6 +20,7 @@ const Settings = () => {
   const { isLoading, isError, error, organization } = useSaasAccount()
   const navigate = useNavigate()
   const location = useLocation()
+  const { canView: canViewWallet } = useWalletAccess()
 
   const menuItems: MenuItem[] = [
     {
@@ -29,10 +31,14 @@ const Settings = () => {
       label: t('team.title', { defaultValue: 'Team' }),
       route: Routes.dashboard.settings.team,
     },
-    {
-      label: t('wallet.title', { defaultValue: 'Wallet' }),
-      route: Routes.dashboard.settings.wallet,
-    },
+    ...(canViewWallet
+      ? [
+          {
+            label: t('wallet.title', { defaultValue: 'Wallet' }),
+            route: Routes.dashboard.settings.wallet,
+          },
+        ]
+      : []),
     {
       label: t('subscription.title', { defaultValue: 'Subscription plan' }),
       route: Routes.dashboard.settings.subscription,

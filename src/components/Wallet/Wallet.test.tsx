@@ -1,10 +1,11 @@
-import userEvent from '@testing-library/user-event'
 import { useLocation } from 'react-router'
 import { act, fireEvent, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import type { Wallet, WalletEntry } from '~queries/wallet'
 import WalletPanel from './Wallet'
 
 const walletState = vi.hoisted(() => ({ current: {} as any }))
+const walletAccess = vi.hoisted(() => ({ current: { canView: true, canTopUp: true } }))
+const topUpAmount = vi.hoisted(() => ({ current: 5000 }))
 const toast = vi.hoisted(() => vi.fn())
 
 vi.mock('~components/Toast', async (importOriginal) => ({
@@ -15,14 +16,39 @@ vi.mock('~components/Toast', async (importOriginal) => ({
 vi.mock('~queries/wallet', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~queries/wallet')>()),
   useWallet: () => walletState.current,
+  useWalletAccess: () => walletAccess.current,
   isManagedOrgWalletError: (error: unknown) => (error as { managed?: boolean } | null)?.managed === true,
 }))
 
+// The real checkout needs Stripe. The mock reports a payment the way WalletTopUp does: submitted (onStart),
+// then confirmed (onDone) with the requested amount.
 vi.mock('./TopUp', async () => {
   const React = await import('react')
   return {
-    WalletTopUp: ({ onDone }: { onDone: (amountCents: number) => void }) =>
-      React.createElement('button', { onClick: () => onDone(5000) }, 'finish-topup'),
+    WalletTopUp: ({
+      onStart,
+      onDone,
+      onCancel,
+    }: {
+      onStart?: (amountCents: number) => void
+      onDone: (amountCents: number) => void
+      onCancel: () => void
+    }) =>
+      React.createElement(
+        React.Fragment,
+        null,
+        React.createElement(
+          'button',
+          {
+            onClick: () => {
+              onStart?.(topUpAmount.current)
+              onDone(topUpAmount.current)
+            },
+          },
+          'finish-topup'
+        ),
+        React.createElement('button', { onClick: onCancel }, 'cancel-topup')
+      ),
   }
 })
 
@@ -73,18 +99,23 @@ const renderPanel = (props?: { processLinks?: boolean }, initialEntry?: string) 
 const PROCESSING = 'Payment received. Your balance updates as soon as it is confirmed.'
 const TIMED_OUT =
   'This is taking longer than expected. Your balance updates once the payment is confirmed; check back later.'
+const CHECKING = 'Checking your payment. Your balance updates as soon as Stripe confirms it.'
+const REDIRECT_TIMED_OUT =
+  'We could not confirm a top-up yet. If you paid, it will appear here shortly; if the payment did not go through, you can top up again.'
 const TOPPED_UP = 'Your wallet was topped up'
+const SNAPSHOT_KEY = 'wallet-topup-pending'
 
-// Opens the dialog and reports a finished payment through the mocked TopUp. The dialog content
-// mounts after a tick, so fake timers are advanced first when they are in use.
+// Opens the inline top-up and reports a finished payment through the mocked WalletTopUp.
 const finishTopUp = async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Top up' }))
-  const finish = await screen.findByRole('button', { name: 'finish-topup' })
-  fireEvent.click(finish)
+  fireEvent.click(await screen.findByRole('button', { name: 'finish-topup' }))
 }
 
 describe('WalletPanel', () => {
   beforeEach(() => {
+    walletAccess.current = { canView: true, canTopUp: true }
+    topUpAmount.current = 5000
+    toast.mockClear()
     mockWallet()
   })
 
@@ -186,23 +217,81 @@ describe('WalletPanel', () => {
     )
   })
 
-  it('shows the processing notice and removes the redirect params when returning from checkout', () => {
-    renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_123')
+  describe('role gating', () => {
+    it('offers the top-up to admins', () => {
+      renderPanel()
 
-    expect(screen.getByText('Payment received. Your balance updates as soon as it is confirmed.')).toBeInTheDocument()
-    expect(screen.getByTestId('location')).toHaveTextContent('')
+      expect(screen.getByRole('button', { name: 'Top up' })).toBeInTheDocument()
+      expect(screen.queryByText('Only admins can top up the wallet.')).not.toBeInTheDocument()
+    })
+
+    it('hides the top-up from managers and says why', () => {
+      walletAccess.current = { canView: true, canTopUp: false }
+
+      renderPanel()
+
+      expect(screen.queryByRole('button', { name: 'Top up' })).not.toBeInTheDocument()
+      expect(screen.getByText('Only admins can top up the wallet.')).toBeInTheDocument()
+      expect(screen.getByText('€123.45')).toBeInTheDocument()
+    })
   })
 
-  it('shows the processing notice once a top-up dialog reports it is paid', async () => {
-    const user = userEvent.setup()
-    renderPanel()
+  describe('inline top-up', () => {
+    it('shows the top-up in place of the balance instead of opening a dialog', async () => {
+      renderPanel()
 
-    await user.click(screen.getByRole('button', { name: 'Top up' }))
-    await user.click(await screen.findByRole('button', { name: 'finish-topup' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Top up' }))
 
-    expect(
-      await screen.findByText('Payment received. Your balance updates as soon as it is confirmed.')
-    ).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: 'finish-topup' })).toBeInTheDocument()
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(screen.queryByText('Balance')).not.toBeInTheDocument()
+    })
+
+    it('returns to the balance when the top-up is cancelled', async () => {
+      renderPanel()
+
+      fireEvent.click(screen.getByRole('button', { name: 'Top up' }))
+      fireEvent.click(await screen.findByRole('button', { name: 'cancel-topup' }))
+
+      expect(screen.getByText('Balance')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'finish-topup' })).not.toBeInTheDocument()
+    })
+
+    it('shows the processing notice once a payment is confirmed', async () => {
+      renderPanel()
+
+      await finishTopUp()
+
+      expect(await screen.findByText(PROCESSING)).toBeInTheDocument()
+    })
+  })
+
+  describe('pagination', () => {
+    const paged = {
+      currentPage: 2,
+      lastPage: 3,
+      nextPage: 3,
+      previousPage: 1,
+      totalItems: 25,
+    }
+
+    it('disables Previous and Next while the page on screen is placeholder data', () => {
+      mockWallet({ history: [entry({ id: 'a' })], pagination: paged }, { isPlaceholderData: true })
+
+      renderPanel()
+
+      expect(screen.getByRole('button', { name: 'Previous page' })).toBeDisabled()
+      expect(screen.getByRole('button', { name: 'Next page' })).toBeDisabled()
+    })
+
+    it('enables the buttons once the requested page has loaded', () => {
+      mockWallet({ history: [entry({ id: 'a' })], pagination: paged }, { isPlaceholderData: false })
+
+      renderPanel()
+
+      expect(screen.getByRole('button', { name: 'Previous page' })).toBeEnabled()
+      expect(screen.getByRole('button', { name: 'Next page' })).toBeEnabled()
+    })
   })
 
   describe('top-up confirmation', () => {
@@ -215,58 +304,61 @@ describe('WalletPanel', () => {
       vi.useRealTimers()
     })
 
-    it('credits a redirect return against the balance stored before the payment', async () => {
-      sessionStorage.setItem('wallet-topup-baseline', '10000')
-      renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_1')
-
-      await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: TOPPED_UP })))
-      expect(screen.queryByText(PROCESSING)).not.toBeInTheDocument()
-      expect(sessionStorage.getItem('wallet-topup-baseline')).toBeNull()
-    })
-
-    it('keeps waiting on a redirect return while the stored balance is unchanged', () => {
-      sessionStorage.setItem('wallet-topup-baseline', '12345')
-      renderPanel({}, '/admin/settings/wallet?topup=return')
-
-      expect(screen.getByText(PROCESSING)).toBeInTheDocument()
-    })
-
-    it('credits a redirect return when a top-up from the last 15 minutes is in the history', async () => {
-      mockWallet({
-        balanceCents: 12345,
-        history: [entry({ kind: 'topup', amountCents: 2000, createdAt: new Date().toISOString() })],
-      })
-      renderPanel({}, '/admin/settings/wallet?topup=return')
-
-      await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: TOPPED_UP })))
-    })
-
-    it('keeps waiting when the only top-up in the history is older than 15 minutes', () => {
-      mockWallet({
-        balanceCents: 12345,
-        history: [
-          entry({ kind: 'topup', amountCents: 2000, createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString() }),
-        ],
-      })
-      renderPanel({}, '/admin/settings/wallet?topup=return')
-
-      expect(screen.getByText(PROCESSING)).toBeInTheDocument()
-    })
-
-    it('waits for the full amount of a dialog top-up before confirming', async () => {
+    it('credits a new top-up entry that has the requested amount', async () => {
+      mockWallet({ history: [entry({ id: 'old', amountCents: 2000 })] })
       const result = renderPanel()
       await finishTopUp()
 
-      mockWallet({ balanceCents: 13345 })
+      mockWallet({ history: [entry({ id: 'new', amountCents: 5000 }), entry({ id: 'old', amountCents: 2000 })] })
       result.rerender(panel())
-      expect(screen.getByText(PROCESSING)).toBeInTheDocument()
 
-      mockWallet({ balanceCents: 17345 })
+      await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: TOPPED_UP })))
+      expect(screen.queryByText(PROCESSING)).not.toBeInTheDocument()
+    })
+
+    it('does not let a concurrent debit hide the credit', async () => {
+      mockWallet({ history: [entry({ id: 'old', amountCents: 2000 })] })
+      const result = renderPanel()
+      await finishTopUp()
+
+      mockWallet({
+        balanceCents: 12345 + 5000 - 575,
+        history: [
+          entry({ id: 'pay', kind: 'payment', amountCents: -575 }),
+          entry({ id: 'new', amountCents: 5000 }),
+          entry({ id: 'old', amountCents: 2000 }),
+        ],
+      })
       result.rerender(panel())
+
       await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: TOPPED_UP })))
     })
 
-    it('switches to the neutral message after two minutes without a credit', async () => {
+    it('does not let an older top-up confirm the new payment', async () => {
+      mockWallet({ history: [entry({ id: 'old', amountCents: 5000 })] })
+      const result = renderPanel()
+      await finishTopUp()
+
+      mockWallet({ balanceCents: 17345, history: [entry({ id: 'old', amountCents: 5000 })] })
+      result.rerender(panel())
+
+      expect(screen.getByText(PROCESSING)).toBeInTheDocument()
+      expect(toast).not.toHaveBeenCalled()
+    })
+
+    it('ignores a new top-up for another amount', async () => {
+      mockWallet({ history: [] })
+      const result = renderPanel()
+      await finishTopUp()
+
+      mockWallet({ history: [entry({ id: 'new', amountCents: 2000 })] })
+      result.rerender(panel())
+
+      expect(screen.getByText(PROCESSING)).toBeInTheDocument()
+      expect(toast).not.toHaveBeenCalled()
+    })
+
+    it('switches to the timed-out message after two minutes without a credit', async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true })
       renderPanel()
       await finishTopUp()
@@ -287,7 +379,6 @@ describe('WalletPanel', () => {
       act(() => {
         vi.advanceTimersByTime(100 * 1000)
       })
-      await waitFor(() => expect(screen.queryByRole('button', { name: 'finish-topup' })).not.toBeInTheDocument())
       await finishTopUp()
       act(() => {
         vi.advanceTimersByTime(60 * 1000)
@@ -299,6 +390,67 @@ describe('WalletPanel', () => {
         vi.advanceTimersByTime(60 * 1000)
       })
       expect(screen.getByText(TIMED_OUT)).toBeInTheDocument()
+    })
+
+    it('credits a redirect return against the snapshot stored before the payment', async () => {
+      sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ knownTopupIds: ['old'], amountCents: 5000 }))
+      mockWallet({ history: [entry({ id: 'old' })] })
+      const result = renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_1')
+
+      expect(screen.getByText(CHECKING)).toBeInTheDocument()
+      expect(sessionStorage.getItem(SNAPSHOT_KEY)).toBeNull()
+
+      mockWallet({ history: [entry({ id: 'new', amountCents: 5000 }), entry({ id: 'old' })] })
+      result.rerender(panel({}, '/admin/settings/wallet'))
+
+      await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: TOPPED_UP })))
+    })
+
+    it('uses the neutral message on a redirect return, never "Payment received"', () => {
+      sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ knownTopupIds: [], amountCents: 5000 }))
+
+      renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_1')
+
+      expect(screen.getByText(CHECKING)).toBeInTheDocument()
+      expect(screen.queryByText(PROCESSING)).not.toBeInTheDocument()
+    })
+
+    it('shows the redirect timeout message after two minutes', () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true })
+      sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ knownTopupIds: [], amountCents: 5000 }))
+
+      renderPanel({}, '/admin/settings/wallet?topup=return')
+      act(() => {
+        vi.advanceTimersByTime(2 * 60 * 1000)
+      })
+
+      expect(screen.getByText(REDIRECT_TIMED_OUT)).toBeInTheDocument()
+      expect(toast).not.toHaveBeenCalled()
+    })
+
+    it('never toasts a redirect return without a stored snapshot', () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true })
+      mockWallet({ history: [entry({ id: 'old' })] })
+      const result = renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_1')
+
+      expect(screen.getByText(CHECKING)).toBeInTheDocument()
+
+      mockWallet({ history: [entry({ id: 'new', amountCents: 5000 }), entry({ id: 'old' })] })
+      result.rerender(panel({}, '/admin/settings/wallet'))
+      expect(toast).not.toHaveBeenCalled()
+
+      act(() => {
+        vi.advanceTimersByTime(2 * 60 * 1000)
+      })
+
+      expect(screen.getByText(REDIRECT_TIMED_OUT)).toBeInTheDocument()
+      expect(toast).not.toHaveBeenCalled()
+    })
+
+    it('removes the redirect params when returning from checkout', () => {
+      renderPanel({}, '/admin/settings/wallet?topup=return&session_id=cs_123')
+
+      expect(screen.getByTestId('location')).toHaveTextContent('')
     })
   })
 })

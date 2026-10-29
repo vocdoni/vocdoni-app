@@ -873,7 +873,7 @@
     },
     "overview": "Aperçu",
     "overview_error": "Impossible de charger le quota d'intégrateur",
-    "overview_subtitle": "Votre quota d'intégrateur et votre utilisation actuelle.",
+    "overview_subtitle": "Votre utilisation en tant qu'intégrateur et le solde de votre wallet.",
     "overview_title": "Aperçu",
     "provision_failed": "Nous n'avons pas pu configurer votre compte intégrateur.",
     "quota": {
@@ -2157,6 +2157,8 @@
   "wallet": {
     "balance": "Solde",
     "balance_note": "Crédit prépayé, TVA exclue. La publication d'un processus de vote payant est débitée de ce solde.",
+    "checking": "Vérification de votre paiement. Votre solde sera mis à jour dès que Stripe l'aura confirmé.",
+    "checking_timeout": "Nous n'avons pas encore pu confirmer une recharge. Si vous avez payé, elle apparaîtra ici sous peu ; si le paiement n'a pas abouti, vous pouvez recharger votre wallet.",
     "history": {
       "amount": "Montant",
       "date": "Date",
@@ -2179,6 +2181,7 @@
     "processing_timeout": "Cela prend plus de temps que prévu. Votre solde sera mis à jour une fois le paiement confirmé ; revenez consulter cette page plus tard.",
     "title": "Wallet",
     "topup": {
+      "admin_only": "Seuls les administrateurs peuvent recharger le wallet.",
       "amount": "Montant (EUR, TVA exclue)",
       "amount_decimals": "Utilisez au maximum 2 décimales.",
       "amount_net": "Rechargement (TVA exclue)",

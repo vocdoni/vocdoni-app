@@ -873,7 +873,7 @@
     },
     "overview": "Visão geral",
     "overview_error": "Não foi possível carregar a quota de integrador",
-    "overview_subtitle": "A tua quota de integrador e o teu uso atual.",
+    "overview_subtitle": "A tua utilização como integrador e o saldo da wallet.",
     "overview_title": "Visão geral",
     "provision_failed": "Não conseguimos configurar a tua conta de integrador.",
     "quota": {
@@ -2157,6 +2157,8 @@
   "wallet": {
     "balance": "Saldo",
     "balance_note": "Crédito pré-pago, sem IVA. A publicação de um processo de votação pago é debitada deste saldo.",
+    "checking": "A verificar o teu pagamento. O saldo será atualizado assim que a Stripe o confirmar.",
+    "checking_timeout": "Ainda não foi possível confirmar um carregamento. Se pagaste, aparecerá aqui em breve; se o pagamento não foi concluído, podes voltar a carregar a wallet.",
     "history": {
       "amount": "Montante",
       "date": "Data",
@@ -2179,6 +2181,7 @@
     "processing_timeout": "Está a demorar mais do que o esperado. O teu saldo será atualizado quando o pagamento for confirmado; volta a verificar mais tarde.",
     "title": "Wallet",
     "topup": {
+      "admin_only": "Só os administradores podem carregar a wallet.",
       "amount": "Montante (EUR, sem IVA)",
       "amount_decimals": "Usa no máximo 2 casas decimais.",
       "amount_net": "Carregamento (sem IVA)",

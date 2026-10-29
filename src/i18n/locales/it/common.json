@@ -873,7 +873,7 @@
     },
     "overview": "Panoramica",
     "overview_error": "Impossibile caricare la quota dell'integratore",
-    "overview_subtitle": "La tua quota di integratore e l'uso attuale.",
+    "overview_subtitle": "Il tuo utilizzo come integratore e il saldo del wallet.",
     "overview_title": "Panoramica",
     "provision_failed": "Non siamo riusciti a configurare il tuo account integratore.",
     "quota": {
@@ -2157,6 +2157,8 @@
   "wallet": {
     "balance": "Saldo",
     "balance_note": "Credito prepagato, IVA esclusa. La pubblicazione di un processo di voto a pagamento viene addebitata da questo saldo.",
+    "checking": "Verifica del pagamento in corso. Il saldo si aggiornerà non appena Stripe lo confermerà.",
+    "checking_timeout": "Non siamo ancora riusciti a confermare la ricarica. Se hai pagato, comparirà qui a breve; se il pagamento non è andato a buon fine, puoi ricaricare di nuovo il wallet.",
     "history": {
       "amount": "Importo",
       "date": "Data",
@@ -2179,6 +2181,7 @@
     "processing_timeout": "Ci sta volendo più del previsto. Il saldo si aggiornerà quando il pagamento sarà confermato; ricontrolla più tardi.",
     "title": "Wallet",
     "topup": {
+      "admin_only": "Solo gli amministratori possono ricaricare il wallet.",
       "amount": "Importo (EUR, IVA esclusa)",
       "amount_decimals": "Usa al massimo 2 decimali.",
       "amount_net": "Ricarica (IVA esclusa)",

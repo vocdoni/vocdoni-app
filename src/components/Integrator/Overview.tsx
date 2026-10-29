@@ -8,7 +8,7 @@ import { BookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardBox, DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useIntegratorInfo } from '~src/queries/integrators'
-import { useWallet } from '~src/queries/wallet'
+import { useWallet, useWalletAccess } from '~src/queries/wallet'
 import { Routes } from '~src/router/routes'
 import { currency } from '~utils/numbers'
 import { DocsCard } from './DocsCard'
@@ -22,8 +22,10 @@ import { QuotaCard } from './QuotaCard'
 export const IntegratorOverview = () => {
   const { t } = useTranslation()
   const { data, isLoading, error } = useIntegratorInfo()
-  // Hidden on error: the current backend has no wallet endpoint, and a managed org gets a 403.
-  const wallet = useWallet()
+  // Only admins and managers may read the wallet. Hidden on error too: the current backend has no wallet
+  // endpoint, and a managed org gets a 403.
+  const { canView } = useWalletAccess()
+  const wallet = useWallet({ enabled: canView })
   const layout = useContext(DashboardLayoutContext)
 
   if (isLoading) {
@@ -115,7 +117,7 @@ export const IntegratorOverview = () => {
           layout.headerActionsNode
         )}
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
-        {wallet.data && (
+        {canView && wallet.data && (
           <DashboardBox gap={3} justifyContent='flex-start'>
             <Text fontSize='sm' color='texts.subtle' fontWeight='medium'>
               {t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}

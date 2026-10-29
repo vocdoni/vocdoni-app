@@ -1,71 +1,72 @@
-import {
-  Alert,
-  Button,
-  ButtonGroup,
-  Center,
-  CloseButton,
-  Code,
-  Dialog,
-  Flex,
-  IconButton,
-  Link,
-  Portal,
-  Spinner,
-  Stack,
-  Table,
-  Text,
-} from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Alert, Button, Center, Code, Flex, Link, Spinner, Stack, Table, Text } from '@chakra-ui/react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'
 import { generatePath, Link as RouterLink, useSearchParams } from 'react-router'
-import { DashboardBox, DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
+import { PrevNextPagination } from '~components/Pagination/PrevNextPagination'
 import { useToast } from '~components/Toast'
-import { isManagedOrgWalletError, useWallet, WalletEntry } from '~queries/wallet'
+import { isManagedOrgWalletError, useWallet, useWalletAccess, WalletEntry } from '~queries/wallet'
 import { Routes } from '~src/router/routes'
+import { shortAddress } from '~utils/address'
 import { currency } from '~utils/numbers'
 import { WalletTopUp } from './TopUp'
 
 const LIMIT = 10
 const POLL_INTERVAL_MS = 3000
 const POLL_TIMEOUT_MS = 2 * 60 * 1000
-const RECENT_TOPUP_MS = 15 * 60 * 1000
-const TOPUP_BASELINE_KEY = 'wallet-topup-baseline'
+const TOPUP_PENDING_KEY = 'wallet-topup-pending'
 
-const shortId = (value: string) => (value.length > 14 ? `${value.slice(0, 8)}…${value.slice(-4)}` : value)
+// What a top-up is matched against in the ledger: the ids of the topup entries that existed before the
+// payment (null when that snapshot is unknown) and the requested net amount (null when unknown).
+type TopUpSnapshot = { knownTopupIds: string[] | null; amountCents: number | null }
+// Snapshot written to sessionStorage when a payment is submitted, so a bank redirect can find it again.
+type StoredTopUp = { knownTopupIds: string[]; amountCents: number | null }
+// A payment waiting for its ledger entry. `redirected` is set when the user came back from a bank redirect.
+type TopUpWait = TopUpSnapshot & { redirected: boolean }
+
+const NO_SNAPSHOT: TopUpSnapshot = { knownTopupIds: null, amountCents: null }
+
+const topUpIds = (history: WalletEntry[] = []) =>
+  history.filter((entry) => entry.kind === 'topup').map((entry) => entry.id)
+
+// A top-up is ours when the ledger has a topup entry that was not there before the payment and carries the
+// requested amount. An older top-up or a concurrent debit cannot match, and without a snapshot nothing does.
+const isCredited = (history: WalletEntry[], { knownTopupIds, amountCents }: TopUpSnapshot) =>
+  knownTopupIds !== null &&
+  history.some(
+    (entry) =>
+      entry.kind === 'topup' &&
+      !knownTopupIds.includes(entry.id) &&
+      (amountCents === null || entry.amountCents === amountCents)
+  )
 
 // sessionStorage can be blocked (private windows), so every access is guarded.
-const readStoredBaseline = (): number | null => {
+const readStoredTopUp = (): StoredTopUp | null => {
   try {
-    const value = sessionStorage.getItem(TOPUP_BASELINE_KEY)
-    return value !== null && Number.isFinite(Number(value)) ? Number(value) : null
+    const value = sessionStorage.getItem(TOPUP_PENDING_KEY)
+    if (value === null) return null
+    const stored = JSON.parse(value) as StoredTopUp
+    return Array.isArray(stored.knownTopupIds) ? stored : null
   } catch {
     return null
   }
 }
 
-const writeStoredBaseline = (balanceCents: number) => {
+const writeStoredTopUp = (topUp: StoredTopUp) => {
   try {
-    sessionStorage.setItem(TOPUP_BASELINE_KEY, String(balanceCents))
+    sessionStorage.setItem(TOPUP_PENDING_KEY, JSON.stringify(topUp))
   } catch {
-    // Without storage the return falls back to the history check
+    // Without storage a redirect return has no snapshot, so it never claims a top-up
   }
 }
 
-const clearStoredBaseline = () => {
+const clearStoredTopUp = () => {
   try {
-    sessionStorage.removeItem(TOPUP_BASELINE_KEY)
+    sessionStorage.removeItem(TOPUP_PENDING_KEY)
   } catch {
     // Nothing to clear when storage is unavailable
   }
 }
-
-// A payment waiting for its credit. `baseline` null: the first balance loads first, and the history decides.
-// `amountCents` null: the amount is unknown (redirect return), so any balance change counts.
-type Awaiting = { baseline: number | null; amountCents: number | null }
-
-const isCredited = (balanceCents: number, { baseline, amountCents }: Awaiting & { baseline: number }) =>
-  amountCents === null ? balanceCents !== baseline : balanceCents >= baseline + amountCents
 
 type WalletPanelProps = {
   processLinks?: boolean
@@ -80,15 +81,15 @@ const EntryDetail = ({ entry, processLinks }: { entry: WalletEntry } & WalletPan
         (processLinks ? (
           <Link asChild fontSize='sm'>
             <RouterLink to={generatePath(Routes.dashboard.process, { id: entry.processId })}>
-              <Code title={entry.processId}>{shortId(entry.processId)}</Code>
+              <Code title={entry.processId}>{shortAddress(entry.processId)}</Code>
             </RouterLink>
           </Link>
         ) : (
-          <Code title={entry.processId}>{shortId(entry.processId)}</Code>
+          <Code title={entry.processId}>{shortAddress(entry.processId)}</Code>
         ))}
       {entry.processOrgAddress && (
         <Code fontSize='xs' color='texts.subtle' title={entry.processOrgAddress}>
-          {shortId(entry.processOrgAddress)}
+          {shortAddress(entry.processOrgAddress)}
         </Code>
       )}
     </Stack>
@@ -103,27 +104,31 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
   const [searchParams, setSearchParams] = useSearchParams()
+  const { canTopUp } = useWalletAccess()
   const [page, setPage] = useState(1)
-  const [topUpOpen, setTopUpOpen] = useState(false)
-  const [topUpStartBalance, setTopUpStartBalance] = useState<number | null>(null)
-  const [pageLoadedAt] = useState(() => Date.now())
-  // Coming back from a redirect-based payment (3DS, bank redirect) starts the same wait as a dialog top-up.
+  const [view, setView] = useState<'overview' | 'topup'>('overview')
+  // Snapshot of the payment being submitted, read back by the inline path; the redirect path reads storage.
+  const pendingTopUp = useRef<StoredTopUp | null>(null)
+  // Coming back from a redirect-based payment (3DS, bank redirect) starts the same wait as an inline top-up.
   const [returnedFromCheckout] = useState(() => searchParams.get('topup') === 'return')
-  const [awaiting, setAwaiting] = useState<Awaiting | null>(() =>
-    returnedFromCheckout ? { baseline: readStoredBaseline(), amountCents: null } : null
+  const [wait, setWait] = useState<TopUpWait | null>(() =>
+    returnedFromCheckout ? { ...(readStoredTopUp() ?? NO_SNAPSHOT), redirected: true } : null
   )
   const [polling, setPolling] = useState(returnedFromCheckout)
   // Bumped on every payment so a second one restarts the timeout.
   const [pollRound, setPollRound] = useState(0)
 
-  const wallet = useWallet({ page, limit: LIMIT, refetchInterval: polling ? POLL_INTERVAL_MS : undefined })
+  const pollInterval = polling ? POLL_INTERVAL_MS : undefined
+  const wallet = useWallet({ page, limit: LIMIT, refetchInterval: pollInterval })
+  // The credit is looked for on the first page whatever page is on screen.
+  const firstPage = useWallet({ page: 1, limit: LIMIT, refetchInterval: pollInterval })
   const balanceCents = wallet.data?.balanceCents
   const currencyCode = wallet.data?.currency?.toUpperCase()
   const pagination = wallet.data?.pagination
   const history = wallet.data?.history ?? []
 
   useEffect(() => {
-    if (returnedFromCheckout) clearStoredBaseline()
+    if (returnedFromCheckout) clearStoredTopUp()
     if (!searchParams.has('topup') && !searchParams.has('session_id')) return
     setSearchParams(
       (params) => {
@@ -135,45 +140,33 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
     )
   }, [returnedFromCheckout, searchParams, setSearchParams])
 
-  // Polling stops after the timeout; the message then switches to the neutral one until the balance changes.
+  // Polling stops after the timeout; the message then switches to the timed-out one.
   useEffect(() => {
     if (!polling) return
     const timer = setTimeout(() => setPolling(false), POLL_TIMEOUT_MS)
     return () => clearTimeout(timer)
   }, [polling, pollRound])
 
+  // Only while polling: a timed-out wait never toasts, even if a later refetch shows the entry.
   useEffect(() => {
-    if (!awaiting || balanceCents === undefined) return
+    if (!wait || !polling || !firstPage.data) return
+    if (!isCredited(firstPage.data.history, wait)) return
 
-    if (awaiting.baseline === null) {
-      // A redirect whose baseline was not stored: a top-up made just before this page loaded is already in the history.
-      const creditedBeforeLoad =
-        awaiting.amountCents === null &&
-        history.some(
-          (entry) => entry.kind === 'topup' && Math.abs(pageLoadedAt - Date.parse(entry.createdAt)) <= RECENT_TOPUP_MS
-        )
-      if (!creditedBeforeLoad) {
-        setAwaiting({ ...awaiting, baseline: balanceCents })
-        return
-      }
-    } else if (!isCredited(balanceCents, { ...awaiting, baseline: awaiting.baseline })) {
-      return
-    }
-
-    setAwaiting(null)
+    setWait(null)
     setPolling(false)
     toast({ type: 'success', title: t('wallet.topup.success_toast', { defaultValue: 'Your wallet was topped up' }) })
-  }, [awaiting, balanceCents, history, pageLoadedAt, toast, t])
+  }, [wait, polling, firstPage.data, toast, t])
 
-  const openTopUp = () => {
-    if (balanceCents !== undefined) writeStoredBaseline(balanceCents)
-    setTopUpStartBalance(balanceCents ?? null)
-    setTopUpOpen(true)
+  // Runs when the payment is submitted, before Stripe may redirect the page away.
+  const handleTopUpStart = (amountCents: number) => {
+    const snapshot: StoredTopUp = { knownTopupIds: topUpIds(firstPage.data?.history), amountCents }
+    pendingTopUp.current = snapshot
+    writeStoredTopUp(snapshot)
   }
 
   const handleTopUpDone = (amountCents: number) => {
-    setTopUpOpen(false)
-    setAwaiting({ baseline: topUpStartBalance, amountCents })
+    setView('overview')
+    setWait({ knownTopupIds: pendingTopUp.current?.knownTopupIds ?? null, amountCents, redirected: false })
     setPolling(true)
     setPollRound((round) => round + 1)
   }
@@ -183,6 +176,26 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
     payment: t('wallet.kind.payment', { defaultValue: 'Payment' }),
     creditBack: t('wallet.kind.creditBack', { defaultValue: 'Credit back' }),
     refund: t('wallet.kind.refund', { defaultValue: 'Stripe refund' }),
+  }
+
+  const waitMessage = () => {
+    if (wait?.redirected) {
+      return polling
+        ? t('wallet.checking', {
+            defaultValue: 'Checking your payment. Your balance updates as soon as Stripe confirms it.',
+          })
+        : t('wallet.checking_timeout', {
+            defaultValue:
+              'We could not confirm a top-up yet. If you paid, it will appear here shortly; if the payment did not go through, you can top up again.',
+          })
+    }
+
+    return polling
+      ? t('wallet.processing', { defaultValue: 'Payment received. Your balance updates as soon as it is confirmed.' })
+      : t('wallet.processing_timeout', {
+          defaultValue:
+            'This is taking longer than expected. Your balance updates once the payment is confirmed; check back later.',
+        })
   }
 
   const renderBody = () => {
@@ -235,13 +248,20 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
                 {currency(balanceCents, currencyCode)}
               </Text>
             </Stack>
-            <Button onClick={openTopUp}>{t('wallet.topup.open', { defaultValue: 'Top up' })}</Button>
+            {canTopUp && (
+              <Button onClick={() => setView('topup')}>{t('wallet.topup.open', { defaultValue: 'Top up' })}</Button>
+            )}
           </Flex>
           <Text fontSize='sm' color='texts.subtle'>
             {t('wallet.balance_note', {
               defaultValue: 'Prepaid credit, VAT excluded. Publishing a paid voting process is charged from it.',
             })}
           </Text>
+          {!canTopUp && (
+            <Text fontSize='sm' color='texts.subtle'>
+              {t('wallet.topup.admin_only', { defaultValue: 'Only admins can top up the wallet.' })}
+            </Text>
+          )}
           {balanceCents < 0 && (
             <Alert.Root status='warning'>
               <Alert.Indicator />
@@ -302,32 +322,19 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
           )}
 
           {pagination && pagination.lastPage > 1 && (
-            <Flex justify='space-between' align='center' gap={4} wrap='wrap'>
-              <Text fontSize='sm' color='texts.subtle'>
-                {t('wallet.pagination', {
-                  defaultValue: 'Page {{page}} of {{total}} · {{items}} total',
-                  page: pagination.currentPage,
-                  total: pagination.lastPage,
-                  items: pagination.totalItems,
-                })}
-              </Text>
-              <ButtonGroup size='sm' variant='outline' attached>
-                <IconButton
-                  aria-label={t('pagination.previous', { defaultValue: 'Previous page' })}
-                  disabled={pagination.previousPage === null}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                >
-                  <LuChevronLeft />
-                </IconButton>
-                <IconButton
-                  aria-label={t('pagination.next', { defaultValue: 'Next page' })}
-                  disabled={pagination.nextPage === null}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  <LuChevronRight />
-                </IconButton>
-              </ButtonGroup>
-            </Flex>
+            <PrevNextPagination
+              text={t('wallet.pagination', {
+                defaultValue: 'Page {{page}} of {{total}} · {{items}} total',
+                page: pagination.currentPage,
+                total: pagination.lastPage,
+                items: pagination.totalItems,
+              })}
+              hasPrevious={pagination.previousPage !== null}
+              hasNext={pagination.nextPage !== null}
+              disabled={wallet.isPlaceholderData}
+              onPrevious={() => setPage((p) => Math.max(1, p - 1))}
+              onNext={() => setPage((p) => Math.min(p + 1, pagination.lastPage))}
+            />
           )}
         </Flex>
       </Flex>
@@ -335,53 +342,25 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
   }
 
   return (
-    <DashboardContents>
-      {awaiting && (
+    <>
+      {wait && view === 'overview' && (
         <Alert.Root status='info' mb={6}>
           <Alert.Indicator />
           <Alert.Content>
-            <Alert.Description>
-              {polling
-                ? t('wallet.processing', {
-                    defaultValue: 'Payment received. Your balance updates as soon as it is confirmed.',
-                  })
-                : t('wallet.processing_timeout', {
-                    defaultValue:
-                      'This is taking longer than expected. Your balance updates once the payment is confirmed; check back later.',
-                  })}
-            </Alert.Description>
+            <Alert.Description>{waitMessage()}</Alert.Description>
           </Alert.Content>
         </Alert.Root>
       )}
 
-      {renderBody()}
-
-      <Dialog.Root
-        open={topUpOpen}
-        onOpenChange={({ open }) => setTopUpOpen(open)}
-        placement='center'
-        size='lg'
-        lazyMount
-        unmountOnExit
-      >
-        <Portal>
-          <Dialog.Backdrop />
-          <Dialog.Positioner>
-            <Dialog.Content>
-              <Dialog.CloseTrigger asChild>
-                <CloseButton />
-              </Dialog.CloseTrigger>
-              <Dialog.Header>
-                <Dialog.Title>{t('wallet.topup.title', { defaultValue: 'Top up your wallet' })}</Dialog.Title>
-              </Dialog.Header>
-              <Dialog.Body>
-                <WalletTopUp onDone={handleTopUpDone} onCancel={() => setTopUpOpen(false)} />
-              </Dialog.Body>
-            </Dialog.Content>
-          </Dialog.Positioner>
-        </Portal>
-      </Dialog.Root>
-    </DashboardContents>
+      {view === 'topup' ? (
+        <DashboardBox p={6}>
+          <DashboardCardHeader title={t('wallet.topup.title', { defaultValue: 'Top up your wallet' })} />
+          <WalletTopUp onStart={handleTopUpStart} onDone={handleTopUpDone} onCancel={() => setView('overview')} />
+        </DashboardBox>
+      ) : (
+        renderBody()
+      )}
+    </>
   )
 }
 

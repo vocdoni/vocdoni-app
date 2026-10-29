@@ -865,7 +865,7 @@
     },
     "overview": "Übersicht",
     "overview_error": "Integrator-Kontingent konnte nicht geladen werden",
-    "overview_subtitle": "Dein Integrator-Kontingent und aktuelle Nutzung.",
+    "overview_subtitle": "Deine Integrator-Nutzung und dein Wallet-Guthaben.",
     "overview_title": "Übersicht",
     "provision_failed": "Wir konnten dein Integrator-Konto nicht einrichten.",
     "quota": {
@@ -2121,6 +2121,8 @@
   "wallet": {
     "balance": "Guthaben",
     "balance_note": "Prepaid-Guthaben, ohne MwSt. Die Veröffentlichung eines kostenpflichtigen Abstimmungsprozesses wird davon abgebucht.",
+    "checking": "Zahlung wird geprüft. Dein Guthaben wird aktualisiert, sobald Stripe sie bestätigt.",
+    "checking_timeout": "Eine Aufladung konnte noch nicht bestätigt werden. Wenn du bezahlt hast, erscheint sie hier in Kürze; falls die Zahlung nicht erfolgreich war, kannst du das Wallet erneut aufladen.",
     "history": {
       "amount": "Betrag",
       "date": "Datum",
@@ -2143,6 +2145,7 @@
     "processing_timeout": "Das dauert länger als erwartet. Dein Guthaben wird aktualisiert, sobald die Zahlung bestätigt ist. Schau später noch einmal nach.",
     "title": "Wallet",
     "topup": {
+      "admin_only": "Nur Administratoren können das Wallet aufladen.",
       "amount": "Betrag (EUR, ohne MwSt.)",
       "amount_decimals": "Verwende höchstens 2 Nachkommastellen.",
       "amount_net": "Aufladung (ohne MwSt.)",

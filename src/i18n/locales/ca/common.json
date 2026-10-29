@@ -873,7 +873,7 @@
     },
     "overview": "Vista general",
     "overview_error": "No s'ha pogut carregar la quota d'integrador",
-    "overview_subtitle": "La teva quota d'integrador i l'ús actual.",
+    "overview_subtitle": "El teu ús com a integrador i el saldo del wallet.",
     "overview_title": "Vista general",
     "provision_failed": "No hem pogut configurar el teu compte d'integrador.",
     "quota": {
@@ -2157,6 +2157,8 @@
   "wallet": {
     "balance": "Saldo",
     "balance_note": "Crèdit prepagat, sense IVA. La publicació d'un procés de votació de pagament es cobra d'aquest saldo.",
+    "checking": "Comprovant el teu pagament. El saldo s'actualitzarà tan bon punt Stripe ho confirmi.",
+    "checking_timeout": "Encara no hem pogut confirmar una recàrrega. Si has pagat, apareixerà aquí aviat; si el pagament no s'ha completat, pots tornar a recarregar el wallet.",
     "history": {
       "amount": "Import",
       "date": "Data",
@@ -2179,6 +2181,7 @@
     "processing_timeout": "Triga més del previst. El saldo s'actualitzarà quan es confirmi el pagament; torna a mirar-ho més tard.",
     "title": "Wallet",
     "topup": {
+      "admin_only": "Només els administradors poden recarregar el wallet.",
       "amount": "Import (EUR, sense IVA)",
       "amount_decimals": "Fes servir com a màxim 2 decimals.",
       "amount_net": "Recàrrega (sense IVA)",

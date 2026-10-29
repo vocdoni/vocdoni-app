@@ -1,7 +1,8 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
-import { ensure0x } from '~utils/address'
+import { ensure0x, sameAddress } from '~utils/address'
 import { ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { useProfile } from './account'
 import { QueryKeys } from './keys'
 
 export type WalletEntryKind = 'topup' | 'payment' | 'creditBack' | 'refund'
@@ -57,16 +58,17 @@ type UseWalletOptions = {
   page?: number
   limit?: number
   refetchInterval?: number
+  enabled?: boolean
 }
 
 /** Paginated wallet balance and ledger of the selected organization (GET /organizations/{address}/wallet). */
-export const useWallet = ({ page = 1, limit = 10, refetchInterval }: UseWalletOptions = {}) => {
+export const useWallet = ({ page = 1, limit = 10, refetchInterval, enabled = true }: UseWalletOptions = {}) => {
   const { bearedFetch, currentAddress } = useAuth()
   const address = currentAddress
 
   return useQuery<Wallet>({
     queryKey: QueryKeys.organization.wallet(address, page, limit),
-    enabled: !!address,
+    enabled: !!address && enabled,
     refetchInterval,
     // Keeps the last page on screen while another one loads, instead of flashing the spinner
     placeholderData: keepPreviousData,
@@ -79,6 +81,19 @@ export const useWallet = ({ page = 1, limit = 10, refetchInterval }: UseWalletOp
       )
     },
   })
+}
+
+/**
+ * What the current user may do with the wallet of the selected organization: admins and managers read it,
+ * only admins top it up (the backend enforces the same). Both are false until the profile has loaded.
+ */
+export const useWalletAccess = () => {
+  const { currentAddress } = useAuth()
+  const { data: profile } = useProfile()
+  const membership = profile?.organizations.find((org) => sameAddress(org.organization.address, currentAddress))
+  const role = membership?.role.toLowerCase()
+
+  return { canView: role === 'admin' || role === 'manager', canTopUp: role === 'admin' }
 }
 
 /**

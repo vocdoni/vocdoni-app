@@ -865,7 +865,7 @@
     },
     "overview": "Overview",
     "overview_error": "Unable to load integrator quota",
-    "overview_subtitle": "Your integrator quota and current usage.",
+    "overview_subtitle": "Your integrator usage and wallet balance.",
     "overview_title": "Overview",
     "provision_failed": "We couldn't set up your integrator account.",
     "quota": {
@@ -2121,6 +2121,8 @@
   "wallet": {
     "balance": "Balance",
     "balance_note": "Prepaid credit, VAT excluded. Publishing a paid voting process is charged from it.",
+    "checking": "Checking your payment. Your balance updates as soon as Stripe confirms it.",
+    "checking_timeout": "We could not confirm a top-up yet. If you paid, it will appear here shortly; if the payment did not go through, you can top up again.",
     "history": {
       "amount": "Amount",
       "date": "Date",
@@ -2143,6 +2145,7 @@
     "processing_timeout": "This is taking longer than expected. Your balance updates once the payment is confirmed; check back later.",
     "title": "Wallet",
     "topup": {
+      "admin_only": "Only admins can top up the wallet.",
       "amount": "Amount (EUR, VAT excluded)",
       "amount_decimals": "Use at most 2 decimals.",
       "amount_net": "Top-up (VAT excluded)",

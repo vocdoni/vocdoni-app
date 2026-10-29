@@ -865,7 +865,7 @@
     },
     "overview": "Gainbegirada",
     "overview_error": "Ezin izan da integrator kuota kargatu",
-    "overview_subtitle": "Zure integrator kuota eta uneko erabilpena.",
+    "overview_subtitle": "Zure integrator erabilera eta wallet-aren saldoa.",
     "overview_title": "Gainbegirada",
     "provision_failed": "Ezin izan dugu zure integrator kontua konfiguratu.",
     "quota": {
@@ -2121,6 +2121,8 @@
   "wallet": {
     "balance": "Saldoa",
     "balance_note": "Aurrez ordaindutako kredituak, BEZ gabe. Ordainpeko boto-prozesu bat argitaratzean saldo honetatik kobratzen da.",
+    "checking": "Zure ordainketa egiaztatzen ari da. Saldoa eguneratuko da Stripek berresten duenean.",
+    "checking_timeout": "Oraindik ezin izan dugu kargarik berretsi. Ordaindu baduzu, laster agertuko da hemen; ordainketa ez bada burutu, berriro karga dezakezu wallet-a.",
     "history": {
       "amount": "Zenbatekoa",
       "date": "Data",
@@ -2143,6 +2145,7 @@
     "processing_timeout": "Espero baino denbora gehiago behar da. Zure saldoa eguneratuko da ordainketa berretsi bezain pronto; begiratu berriro geroago.",
     "title": "Wallet-a",
     "topup": {
+      "admin_only": "Administratzaileek bakarrik karga dezakete wallet-a.",
       "amount": "Zenbatekoa (EUR, BEZ gabe)",
       "amount_decimals": "Erabili gehienez 2 hamartar.",
       "amount_net": "Kargatzea (BEZ gabe)",
