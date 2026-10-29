@@ -11,6 +11,9 @@ const baseStyle = {
     py: 1,
     px: 3,
   },
+  // Centre icons on their own box: inside a heading they would sit on its tall line instead.
+  startElement: { display: 'flex', alignItems: 'center' },
+  endElement: { display: 'flex', alignItems: 'center' },
 }
 
 export const Tag = defineSlotRecipe({
