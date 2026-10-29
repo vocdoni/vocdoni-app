@@ -1,4 +1,5 @@
 import { defineSemanticTokens } from '@chakra-ui/react'
+import { illustrationColors } from './illustration'
 
 /**
  * Semantic tokens allow us to define tokens, like colors, based on their usage
@@ -114,6 +115,7 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  ...illustrationColors,
   card: {
     pricing: {
       bg: {
