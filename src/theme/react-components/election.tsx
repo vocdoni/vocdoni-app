@@ -17,6 +17,7 @@ import {
   Image,
   type ImageProps,
   Link,
+  NativeSelect,
   Progress,
   Skeleton,
   Tag,
@@ -324,36 +325,26 @@ export const electionComponents: ComponentsPartialDefinition = {
       onRank,
       ...props
     }) => {
-      // The SDK default renders `description` as raw HTML; keep it on the markdown path.
+      const recipe = useSlotRecipe({ key: 'QuestionChoice' })
+      const layout = dataAttrs?.['data-layout'] === 'grid' ? 'grid' : 'list'
+      const styles = recipe({ layout, context: 'card' })
       const imageSrc = image?.thumbnail ?? image?.default
 
-      return (
-        <Box
-          as='label'
-          {...props}
-          data-presentation={presentation}
-          data-selection-mode='ranked'
-          data-choice-value={value}
-          data-choice-card={dataAttrs?.['data-choice-card']}
-          data-layout={dataAttrs?.['data-layout']}
+      // In the grid the select stays in the card body: the recipe pins `[data-choice-control]` over the image,
+      // where a select would cover the title of a card without one.
+      const select = (
+        <NativeSelect.Root
+          size='sm'
+          width='auto'
+          alignSelf={layout === 'grid' ? 'start' : undefined}
+          mt={layout === 'grid' ? 2 : undefined}
+          data-choice-control={layout === 'list' ? dataAttrs?.['data-choice-control'] : undefined}
         >
-          {imageSrc ? (
-            <Image
-              src={linkifyIpfs(imageSrc)}
-              alt={label}
-              data-choice-media={dataAttrs?.['data-choice-media']}
-              data-can-open-modal={canOpenImageModal ? 'true' : undefined}
-            />
-          ) : null}
-          <Box as='span' data-choice-body={dataAttrs?.['data-choice-body']} data-compact={compact ? '' : undefined}>
-            {label}
-          </Box>
-          {markdown(description)}
-          <select
+          <NativeSelect.Field
             id={`rank-${choice.value}`}
             value={position ?? ''}
             disabled={disabled}
-            data-choice-control={dataAttrs?.['data-choice-control']}
+            bg='bg'
             onChange={(event) => onRank(event.target.value === '' ? null : Number(event.target.value))}
           >
             <option value=''>—</option>
@@ -362,7 +353,43 @@ export const electionComponents: ComponentsPartialDefinition = {
                 {option.label}
               </option>
             ))}
-          </select>
+          </NativeSelect.Field>
+          <NativeSelect.Indicator />
+        </NativeSelect.Root>
+      )
+
+      return (
+        <Box
+          as='label'
+          css={styles.wrapper}
+          w='full'
+          {...props}
+          data-presentation={presentation}
+          data-selection-mode='ranked'
+          data-choice-value={value}
+          data-choice-card={dataAttrs?.['data-choice-card']}
+          data-disabled={disabled ? 'true' : undefined}
+          data-layout={layout}
+        >
+          {imageSrc ? (
+            <Box data-choice-media={dataAttrs?.['data-choice-media']}>
+              <Box css={styles.skeleton}>
+                <Image
+                  css={styles.image}
+                  src={linkifyIpfs(imageSrc)}
+                  alt={label}
+                  data-can-open-modal={canOpenImageModal ? 'true' : undefined}
+                />
+              </Box>
+            </Box>
+          ) : null}
+          <Box data-choice-body={dataAttrs?.['data-choice-body']} data-compact={compact ? '' : undefined}>
+            <Text css={styles.label}>{label}</Text>
+            {/* The SDK default renders `description` as raw HTML; keep it on the markdown path. */}
+            {description ? <Box css={styles.description}>{markdown(description)}</Box> : null}
+            {layout === 'grid' ? select : null}
+          </Box>
+          {layout === 'list' ? select : null}
         </Box>
       )
     }
