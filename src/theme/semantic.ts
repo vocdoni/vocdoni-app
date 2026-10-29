@@ -29,8 +29,7 @@ const texts = {
 
 export const colors = defineSemanticTokens.colors({
   chakra,
-  // Chakra's built-in neutral `bg`, `fg` and `border` slots, written out so this file owns them. Gray
-  // 50/100/400/500 are the app's neutrals (colors.ts), the other steps Chakra's zinc; status slots stay Chakra's.
+  // Chakra's neutral `bg`, `fg` and `border` slots, written out so this file owns them; status slots stay Chakra's.
   bg: {
     DEFAULT: {
       value: {
@@ -95,8 +94,8 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
-  // Surface layers, each set to what that layer paints today so the redesign can give it a
-  // value of its own. Sub-roles keep the layers whose members paint different colours today.
+  // Surface layers. A sub-role is a member that paints a different colour from its layer (tooltip vs
+  // menu, drawer vs dialog).
   surface: {
     canvas: {
       value: '{colors.bg}',
@@ -357,11 +356,10 @@ export const colors = defineSemanticTokens.colors({
   texts,
 })
 
-// Elevation by role rather than by size, each set to the Chakra shadow that role uses today.
-// Chakra's sizes carry their own dark-mode values.
+// Elevation by role; each points at a Chakra size, which carries its own dark-mode value.
 export const shadows = defineSemanticTokens.shadows({
   shadow: {
-    // Cards are told apart by their border today
+    // Cards are told apart by their border, not a shadow
     card: {
       value: 'none',
     },
