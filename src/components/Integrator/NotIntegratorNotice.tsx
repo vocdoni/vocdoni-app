@@ -11,6 +11,7 @@ import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { useProfile } from '~src/queries/account'
 import { useProvisionIntegratorOrganization } from '~src/queries/integrators'
+import { accentPalette } from '~theme/status'
 
 /**
  * Shown in the integrator dashboard content area (in place of the pages, via IntegratorOrgGuard's
@@ -106,7 +107,7 @@ const NotIntegratorNotice = () => {
                     {names[organization.address] || organization.address}
                   </Text>
                   {isIntegrator && (
-                    <TagRoot colorPalette='purple' ml='auto !important'>
+                    <TagRoot colorPalette={accentPalette.purple} ml='auto !important'>
                       {/* "API" is a universal acronym, not translated in any locale */}
                       <TagLabel>API</TagLabel>
                     </TagRoot>

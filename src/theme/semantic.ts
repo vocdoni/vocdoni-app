@@ -1,6 +1,7 @@
 import { defineSemanticTokens } from '@chakra-ui/react'
 import { chartColors } from './charts'
 import { stateColors } from './states'
+import { statusColors } from './status'
 
 /**
  * Semantic tokens allow us to define tokens, like colors, based on their usage
@@ -281,6 +282,7 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  ...statusColors,
 })
 
 // Elevation by role; each points at a Chakra size, which carries its own dark-mode value.

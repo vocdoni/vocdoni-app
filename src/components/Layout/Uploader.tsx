@@ -26,6 +26,7 @@ import { LuUpload } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
+import { statusPalette } from '~theme/status'
 import { dropRejectionMessage, useLatestDrop } from './dropzone'
 
 export type UploaderProps = {
@@ -187,7 +188,7 @@ export const AvatarUploader = (props: FormControlProps) => {
                 aria-label={t('remove_avatar', { defaultValue: 'Remove avatar' })}
                 onClick={() => setValue('avatar', '')}
                 size='sm'
-                colorPalette='red'
+                colorPalette={statusPalette.destructive}
               >
                 <BiTrash />
               </IconButton>

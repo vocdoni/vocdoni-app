@@ -63,6 +63,7 @@ import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
 import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
+import { statusPalette } from '~theme/status'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
@@ -482,12 +483,12 @@ const LeaveConfirmationModal = ({
         </Button>
         <Spacer />
         {isSamePath ? (
-          <Button colorPalette='red' onClick={() => onResetSamePath()}>
+          <Button colorPalette={statusPalette.destructive} onClick={() => onResetSamePath()}>
             {t('process.create.leave_confirmation.reset', { defaultValue: 'Reset' })}
           </Button>
         ) : (
           <>
-            <Button colorPalette='red' onClick={onLeave}>
+            <Button colorPalette={statusPalette.destructive} onClick={onLeave}>
               {t('process.create.leave_confirmation.leave', { defaultValue: 'Leave without saving' })}
             </Button>
             <Button onClick={onSaveAndLeave}>

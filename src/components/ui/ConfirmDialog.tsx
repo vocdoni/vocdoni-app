@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogRootProps, Text } from '@chakra-ui/react'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
+import { statusPalette } from '~theme/status'
 
 export interface ConfirmDialogProps extends Omit<DialogRootProps, 'children'> {
   title: React.ReactNode
@@ -55,7 +56,11 @@ export const ConfirmDialog = ({
             <Dialog.CloseTrigger asChild>
               <Button variant='outline'>{cancelText || t('actions.cancel', { defaultValue: 'Cancel' })}</Button>
             </Dialog.CloseTrigger>
-            <Button colorPalette={destructive ? 'red' : undefined} loading={loading} onClick={onConfirm}>
+            <Button
+              colorPalette={destructive ? statusPalette.destructive : undefined}
+              loading={loading}
+              onClick={onConfirm}
+            >
               {confirmText || t('actions.confirm', { defaultValue: 'Confirm' })}
             </Button>
           </Dialog.Footer>

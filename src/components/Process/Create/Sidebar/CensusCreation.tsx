@@ -24,6 +24,7 @@ import { useToast } from '~components/Toast'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { Routes } from '~routes'
 import { Group, useGroup, useGroups } from '~src/queries/groups'
+import { statusPalette } from '~theme/status'
 import { VoterAuthentication } from '../VoterAuthentication'
 import { Process } from '../common'
 import { StepStatus, useCensusSteps } from '../useCensusSteps'
@@ -32,9 +33,14 @@ type GroupsQuery = ReturnType<typeof useGroups>
 
 const stepMarkerStyles: Record<StepStatus, FlexProps> = {
   idle: { borderColor: 'border.emphasized', color: 'fg.muted' },
-  current: { borderColor: 'orange.solid', color: 'orange.fg' },
-  error: { borderColor: 'red.solid', color: 'red.fg' },
-  done: { borderColor: 'green.solid', bg: 'green.solid', color: 'green.contrast' },
+  current: { colorPalette: statusPalette.warning, borderColor: 'colorPalette.solid', color: 'colorPalette.fg' },
+  error: { colorPalette: statusPalette.error, borderColor: 'colorPalette.solid', color: 'colorPalette.fg' },
+  done: {
+    colorPalette: statusPalette.success,
+    borderColor: 'colorPalette.solid',
+    bg: 'colorPalette.solid',
+    color: 'colorPalette.contrast',
+  },
 }
 
 // Numbers the census' two parts (group, then voter authentication) so picking a
@@ -66,11 +72,15 @@ export const CensusStatusBadge = () => {
   const { stepsLeft } = useCensusSteps()
 
   if (!stepsLeft) {
-    return <Badge colorPalette='green'>{t('process_create.census.status.ready', { defaultValue: 'Ready' })}</Badge>
+    return (
+      <Badge colorPalette={statusPalette.success}>
+        {t('process_create.census.status.ready', { defaultValue: 'Ready' })}
+      </Badge>
+    )
   }
 
   return (
-    <Badge colorPalette='orange'>
+    <Badge colorPalette={statusPalette.warning}>
       {t('process_create.census.status.steps_left', {
         defaultValue_one: '{{ count }} step left',
         defaultValue_other: '{{ count }} steps left',
