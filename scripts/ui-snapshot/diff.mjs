@@ -1,7 +1,5 @@
 // Compares two UI snapshot runs (see README.md) and prints every element whose computed style or
 // rounded size changed. Exit code 0 = identical, 1 = differences (or captures missing on one side).
-//
-//   pnpm ui:diff -- <labelA> <labelB> [--ignore prop,prop] [--limit <n per capture>]
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'

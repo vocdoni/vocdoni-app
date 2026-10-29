@@ -195,11 +195,9 @@ const appEnv = (mockUrl, primaryColor) => ({
 
 const stripAnsi = (s) => s.replace(/\x1b\[[0-9;]*m/g, '')
 
-// `vike dev` is the same server as `pnpm dev` (vite with Vike's plugin).
-// The dev server binds to 127.0.0.1 only (the app's own config uses `host: true`, which would expose the
-// mock-backed app on the LAN during a run). Vike rejects --host on its CLI, so the override goes through
-// VITE_CONFIG, which `vike dev` merges into the vite config. When node_modules is a symlink into another
-// checkout, its real path is also added to vite's fs allow list, or the font files would not be served.
+// Vite overrides for the dev server (see README.md "What the snapshot does"): bind to 127.0.0.1, since
+// the app's own `host: true` would expose the mock-backed app on the LAN, and allow a symlinked
+// node_modules. Vike rejects --host on its CLI, hence VITE_CONFIG, which `vike dev` merges in.
 const viteConfigEnv = () => {
   const server = { host: '127.0.0.1' }
   const link = path.join(ROOT, 'node_modules')
