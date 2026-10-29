@@ -217,7 +217,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
         </FormControl>
 
         <VStack gap={3} align='stretch'>
-          <Text fontSize={'14px'} fontWeight='600'>
+          <Text fontSize={'14px'} fontWeight='bold'>
             {t('oauth.title', { defaultValue: 'Connect accounts' })}
           </Text>
           {OAuthProviders.map((provider) => {
