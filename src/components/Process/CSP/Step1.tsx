@@ -210,7 +210,7 @@ export const Step1Base = () => {
           <Button type='submit' w='full' loading={authPending}>
             {t('csp.authenticate', { defaultValue: 'Authenticate' })}
           </Button>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text fontSize='sm' color='fg.muted'>
             {t('csp.step1.footer_text', {
               defaultValue: 'If you experience any issues, contact your organization.',
             })}

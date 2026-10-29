@@ -6,7 +6,7 @@ const baseStyle = {
     bg: 'surface.raised',
     boxShadow: 'shadow.raised.popover',
     padding: 1,
-    borderColor: 'table.border',
+    borderColor: 'border',
   },
   header: {
     p: 0,

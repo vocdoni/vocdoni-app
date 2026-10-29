@@ -96,7 +96,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
             {/* Settings share the row with the question number, so the title and
                 description below keep the full width */}
             <Flex align='center' gap={2} flexWrap='wrap'>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('process.create.question.question_number', {
                   defaultValue: 'Question {{index}} of {{total}}',
                   index: index + 1,

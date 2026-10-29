@@ -15,7 +15,7 @@ const baseStyle = {
 
   cancel: {
     border: '1px solid',
-    borderColor: 'table.border',
+    borderColor: 'border',
   },
 }
 
