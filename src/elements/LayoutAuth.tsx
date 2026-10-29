@@ -1,7 +1,8 @@
-import { Box, Card, Flex, Heading, Text } from '@chakra-ui/react'
+import { Box, Card, Flex } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { AuthLayoutHeader } from '~components/Auth/AuthLayoutHeader'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { AuthShowcase, AuthTrustBar, useAuthVertical, useVerticalSlug } from '~components/Auth/vertical'
 import { withVerticalParam } from '~constants/verticals'
 import { Routes } from '~routes'
@@ -58,14 +59,14 @@ const LayoutAuth = () => {
             {(title || subtitle) && (
               <Box mb={6}>
                 {title && (
-                  <Heading size='lg' mb={1} letterSpacing='heading.tight'>
+                  <PageTitle textStyle='lg' mb={1} letterSpacing='heading.tight'>
                     {title}
-                  </Heading>
+                  </PageTitle>
                 )}
                 {subtitle && (
-                  <Text color='fg.muted' fontSize='sm'>
+                  <PageSubtitle textStyle='body-sm' mt={0} mb={0}>
                     {subtitle}
-                  </Text>
+                  </PageSubtitle>
                 )}
               </Box>
             )}

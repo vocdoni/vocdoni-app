@@ -89,7 +89,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
       ) : (
         <Stack as='figure' position='relative' m={0} gap={{ md: 5, lg: 7 }} minW={0}>
           <Text
-            fontSize='xs'
+            textStyle='caption'
             fontWeight='bolder'
             textTransform='uppercase'
             letterSpacing='eyebrow.wide'
@@ -135,7 +135,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
               />
             )}
             <Box minW={0}>
-              <Text fontSize='sm' fontWeight='bolder' color='auth.showcase.fg'>
+              <Text textStyle='body-sm' fontWeight='bolder' color='auth.showcase.fg'>
                 {testimonial.author}
               </Text>
               <Text fontSize='xs' lineHeight='1.35' color='auth.showcase.fg.muted'>

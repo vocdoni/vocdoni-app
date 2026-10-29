@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { isRouteErrorResponse, useLocation, useNavigate, useRouteError } from 'react-router'
 import { DashboardIcon, ErrorIcon, HomeIcon, RefreshIcon } from '~theme/icons'
 import { useAuth } from '~components/Auth/useAuth'
-import { Heading, SubHeading } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { Routes } from '~src/router/routes'
 import { isPublicPageNotFoundError } from '~src/ssr/public-pages'
 import { capturePosthogException } from '~utils/analytics'
@@ -45,12 +45,12 @@ export const ErrorView = ({ isNotFound = false, onReturnHome, returnHomeHref, re
   return (
     <Flex direction='column' align='center' justify='center' textAlign='center' gap={3} minH='30vh' px={4}>
       <Icon as={ErrorIcon} boxSize='icon.xl' color='fg.muted' />
-      <Heading size='lg'>{t('error.crash_title', { defaultValue: 'Something went wrong' })}</Heading>
-      <SubHeading m={0} maxW='45ch'>
+      <PageTitle textStyle='lg'>{t('error.crash_title', { defaultValue: 'Something went wrong' })}</PageTitle>
+      <PageSubtitle m={0} maxW='45ch'>
         {t('error.crash_description', {
           defaultValue: 'Reload the page or go back to the dashboard.',
         })}
-      </SubHeading>
+      </PageSubtitle>
 
       <Flex gap={3} wrap='wrap' justify='center'>
         <Button variant='outline' onClick={() => window.location.reload()}>

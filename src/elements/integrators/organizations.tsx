@@ -26,6 +26,7 @@ const IntegratorManagedOrganizations = () => {
   return (
     <DashboardContents>
       <DashboardCardHeader
+        titleAs='h1'
         title={t('integrators.managed.title', { defaultValue: 'Managed organizations' })}
         subtitle={t('integrators.managed.subtitle', {
           defaultValue: 'Organizations you manage on behalf of your customers.',
@@ -71,7 +72,7 @@ const IntegratorManagedOrganizations = () => {
           <ManagedOrganizationsTable organizations={organizations} />
           {pagination && pagination.lastPage > 1 && (
             <Flex justify='space-between' align='center' gap={4} wrap='wrap'>
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('integrators.managed.pagination', {
                   defaultValue: 'Page {{page}} of {{total}} · {{items}} total',
                   page: pagination.currentPage,

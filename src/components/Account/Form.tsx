@@ -166,7 +166,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
       <Text fontSize={'2xl'} fontWeight='bold' mb={1.5}>
         {t('account.title', { defaultValue: 'Account Information' })}
       </Text>
-      <Text fontSize={'sm'} color='fg.muted' mb={6}>
+      <Text textStyle='body-sm' color='fg.muted' mb={6}>
         {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
       </Text>
       <VStack gap={8} align='stretch'>
@@ -218,7 +218,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
         </FormControl>
 
         <VStack gap={3} align='stretch'>
-          <Text fontSize='sm' fontWeight='bold'>
+          <Text textStyle='body-sm' fontWeight='bold'>
             {t('oauth.title', { defaultValue: 'Connect accounts' })}
           </Text>
           {OAuthProviders.map((provider) => {

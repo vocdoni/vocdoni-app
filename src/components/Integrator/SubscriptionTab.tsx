@@ -55,13 +55,13 @@ const IntegratorSubscriptionTab = () => {
     <DashboardBox size='md' justifyContent='flex-start'>
       <Flex justify='space-between' align='flex-start' gap={4} wrap='wrap'>
         <Stack gap={1}>
-          <Text fontSize='sm' color='fg.muted'>
+          <Text textStyle='body-sm' color='fg.muted'>
             {t('integrators.subscription.current_plan', { defaultValue: 'Current plan' })}
           </Text>
           <Text size='2xl' fontWeight='bold'>
             {plan.name}
           </Text>
-          <Text fontSize='sm' color='fg.muted'>
+          <Text textStyle='body-sm' color='fg.muted'>
             {subscriptionDetails.active
               ? t('integrators.subscription.active', { defaultValue: 'Active' })
               : t('integrators.subscription.inactive', { defaultValue: 'Inactive' })}

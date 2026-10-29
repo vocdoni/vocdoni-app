@@ -91,7 +91,7 @@ export const OrganizationSwitcher = () => {
   return (
     <>
       <PopoverBody minH={'unset'}>
-        <Text fontSize='xs' fontWeight='bold' px={1.5} py={2}>
+        <Text textStyle='caption' fontWeight='bold' px={1.5} py={2}>
           <Trans i18nKey='organizations' values={{ numOrgs }}>
             Organizations ({{ numOrgs }})
           </Trans>
@@ -109,7 +109,7 @@ export const OrganizationSwitcher = () => {
                   boxSize='icon.lg'
                   flexShrink={0}
                 />
-                <Text as='span' fontSize='sm' flex='1' minW={0} textAlign='start' truncate>
+                <Text as='span' textStyle='body-sm' flex='1' minW={0} textAlign='start' truncate>
                   {org.label}
                 </Text>
                 <HStack gap={1} flexShrink={0}>
@@ -145,7 +145,7 @@ export const OrganizationSwitcher = () => {
               >
                 <Icon as={AddIcon} boxSize='icon.sm' ml={2} mr={2} />
               </Flex>
-              <Text as={'span'} h='unset' fontWeight={'bold'} fontSize='sm'>
+              <Text as={'span'} h='unset' fontWeight={'bold'} textStyle='body-sm'>
                 {t('add_new_org', { defaultValue: 'Add a new organization' })}
               </Text>
             </ReactRouterLink>

@@ -311,7 +311,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
           <Drawer.Content>
             <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
               <Drawer.Title>{title}</Drawer.Title>
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {description}
               </Text>
             </Drawer.Header>

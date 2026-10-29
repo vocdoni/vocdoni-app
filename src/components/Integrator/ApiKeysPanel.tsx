@@ -104,16 +104,16 @@ const ApiKeyCard = ({
         </HStack>
         <SimpleGrid columns={2} gap={2} mt={3} pt={3} borderTop='1px solid' borderColor='border'>
           <Box>
-            <Text fontSize='xs' color='fg.muted'>
+            <Text textStyle='caption' color='fg.muted'>
               {t('integrators.api_keys.last_used', { defaultValue: 'Last used' })}
             </Text>
-            <Text fontSize='sm'>{formatDate(k.lastUsedAt)}</Text>
+            <Text textStyle='body-sm'>{formatDate(k.lastUsedAt)}</Text>
           </Box>
           <Box>
-            <Text fontSize='xs' color='fg.muted'>
+            <Text textStyle='caption' color='fg.muted'>
               {t('integrators.api_keys.expires', { defaultValue: 'Expires' })}
             </Text>
-            <Text fontSize='sm'>{formatDate(k.expiresAt)}</Text>
+            <Text textStyle='body-sm'>{formatDate(k.expiresAt)}</Text>
           </Box>
         </SimpleGrid>
       </Box>
@@ -167,7 +167,7 @@ const ApiKeysPanel = () => {
   return (
     <Stack gap={5}>
       <Flex justify='space-between' align='center' gap={4} wrap='wrap'>
-        <Text color='fg.muted' fontSize='sm'>
+        <Text color='fg.muted' textStyle='body-sm'>
           {t('integrators.api_keys.intro', {
             defaultValue:
               'Programmatic credentials for calling the API as this organization. Secrets are shown only once.',

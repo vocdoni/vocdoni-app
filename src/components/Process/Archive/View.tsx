@@ -58,15 +58,17 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
             <Badge>{t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })}</Badge>
           )}
         </HStack>
-        <Heading size='2xl'>{title}</Heading>
-        <Text color='fg.muted' fontSize='sm' mt={2}>
+        <Heading as='h1' size='2xl'>
+          {title}
+        </Heading>
+        <Text color='fg.muted' textStyle='body-sm' mt={2}>
           {election.startDate &&
             `${t('process.date.starts', { defaultValue: 'Starts' })} ${format(election.startDate, t('organization.date_format'))}`}
           {election.startDate && election.endDate && ' · '}
           {election.endDate &&
             `${t('process.date.ends', { defaultValue: 'Ends' })} ${format(election.endDate, t('organization.date_format'))}`}
         </Text>
-        <Text color='fg.muted' fontSize='sm'>
+        <Text color='fg.muted' textStyle='body-sm'>
           {t('process.summary.votes_cast', {
             defaultValue: '{{votes}} votes cast',
             votes: election.voteCount,
@@ -89,14 +91,14 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
             <Card.Header>
               <Heading size='md'>{localize(question.title)}</Heading>
               {localize(question.description) && (
-                <Text color='fg.muted' fontSize='sm'>
+                <Text color='fg.muted' textStyle='body-sm'>
                   {localize(question.description)}
                 </Text>
               )}
             </Card.Header>
             <Card.Body>
               {!election.resultsAvailable ? (
-                <Text color='fg.muted' fontSize='sm'>
+                <Text color='fg.muted' textStyle='body-sm'>
                   {t('process_pdf.voting_process.results_hidden', {
                     defaultValue: 'Results are hidden until the process reaches the final results stage.',
                   })}
@@ -128,7 +130,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
       </VStack>
 
       <Box>
-        <Text fontSize='sm' color='fg.muted' mb={1}>
+        <Text textStyle='body-sm' color='fg.muted' mb={1}>
           {t('public_process.verify', { defaultValue: 'Verify on the blockchain explorer:' })}
         </Text>
         <Link

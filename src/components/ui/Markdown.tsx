@@ -12,21 +12,25 @@ const defaultComponents: NonNullable<Options['components']> = {
       {children}
     </Link>
   ),
+  // One level down: the page's h1 is the process or organisation name above the description.
   h1: ({ children, ...props }) => (
-    <Heading size='lg' mt={5} mb={4} {...props}>
+    <Heading as='h2' size='lg' mt={5} mb={4} {...props}>
       {children}
     </Heading>
   ),
   h2: ({ children, ...props }) => (
-    <Heading size='md' mt={5} mb={4} {...props}>
+    <Heading as='h3' size='md' mt={5} mb={4} {...props}>
       {children}
     </Heading>
   ),
   h3: ({ children, ...props }) => (
-    <Heading as='h3' size='sm' mt={5} mb={4} {...props}>
+    <Heading as='h4' size='sm' mt={5} mb={4} {...props}>
       {children}
     </Heading>
   ),
+  h4: ({ children, ...props }) => <chakra.h5 {...props}>{children}</chakra.h5>,
+  h5: ({ children, ...props }) => <chakra.h6 {...props}>{children}</chakra.h6>,
+  h6: ({ children, ...props }) => <chakra.h6 {...props}>{children}</chakra.h6>,
   ol: ({ children, ...props }) => (
     <List.Root as='ol' {...props}>
       {children}

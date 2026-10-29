@@ -80,6 +80,7 @@ export const IntegratorOverview = () => {
     <DashboardContents>
       <Flex justify='space-between' align='flex-start' gap={4} mb={4}>
         <DashboardCardHeader
+          titleAs='h1'
           mb={0}
           title={t('integrators.overview_title', { defaultValue: 'Overview' })}
           subtitle={t('integrators.overview_subtitle', {

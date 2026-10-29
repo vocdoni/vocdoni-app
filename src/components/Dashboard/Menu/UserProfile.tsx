@@ -124,7 +124,7 @@ const UserProfile = () => {
                     </Link>
                   </Button>
                 ) : (
-                  <Text title={profile.email} fontWeight='light' fontSize='xs' maxW='var(--size)' truncate>
+                  <Text title={profile.email} fontWeight='light' textStyle='caption' maxW='var(--size)' truncate>
                     {profile.email}
                   </Text>
                 )}
@@ -154,7 +154,7 @@ const UserProfile = () => {
                   </Button>
                 </Box>
                 <Box borderBottom='1px solid' borderBottomColor='border' py={1}>
-                  <Text fontWeight='extrabold' fontSize='sm' px={2} py={1.5}>
+                  <Text fontWeight='extrabold' textStyle='body-sm' px={2} py={1.5}>
                     {t('preferences', { defaultValue: 'Preferences' })}
                   </Text>
                   <Field.Root
@@ -183,7 +183,7 @@ const UserProfile = () => {
                   <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' size='xs'>
                     <Trans i18nKey='privacy_policy'>Privacy policy</Trans>
                   </Link>
-                  <Text fontSize='xs'>•</Text>
+                  <Text textStyle='caption'>•</Text>
                   <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' size='xs'>
                     <Trans i18nKey='terms_of_service'>Terms of Service</Trans>
                   </Link>

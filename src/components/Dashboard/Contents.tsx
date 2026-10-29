@@ -14,17 +14,18 @@ import { ReactNode, forwardRef } from 'react'
 export type DashboardCardHeaderProps = BoxProps & {
   title: ReactNode
   subtitle?: ReactNode
+  titleAs?: HeadingProps['as']
 }
 
 export const DashboardBox = (props: Card.RootProps) => (
   <Card.Root variant='section' size='sm' justifyContent='space-between' gap={4} {...props} />
 )
 
-export const DashboardCardHeader = ({ title, subtitle, ...props }: DashboardCardHeaderProps) => (
+export const DashboardCardHeader = ({ title, subtitle, titleAs = 'h2', ...props }: DashboardCardHeaderProps) => (
   <Box mb={4} {...props}>
-    <Text fontWeight='bold' size='2xl' mb={1}>
+    <CHeading as={titleAs} textStyle='section-title' mb={1}>
       {title}
-    </Text>
+    </CHeading>
     {subtitle && (
       <Text color='fg.muted' size='sm'>
         {subtitle}
@@ -46,10 +47,6 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref)
   <CHeading size='2xl' fontWeight='bold' display='flex' gap={2} alignItems='center' ref={ref} {...props} />
 ))
 
-export const SubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
-  <Text mt={2} mb={4} fontSize='md' color='fg.muted' display='flex' gap={2} alignItems='center' ref={ref} {...props} />
-))
-
 export const SectionHeader = forwardRef<HTMLDivElement, FlexProps>((props, ref) => (
   <Flex flex={1} direction='column' ref={ref} {...props} />
 ))
@@ -59,7 +56,7 @@ export const SectionHeading = forwardRef<HTMLHeadingElement, HeadingProps>((prop
 ))
 
 export const SectionSubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
-  <Text color='fg.muted' fontSize='sm' ref={ref} {...props} />
+  <Text color='fg.muted' textStyle='body-sm' ref={ref} {...props} />
 ))
 
 export type SidebarProps = BoxProps & {
@@ -108,8 +105,8 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
 export const SidebarContents = (props: BoxProps) => <Box px={4} pb={4} {...props} />
 
 export const SidebarTitle = (props: HeadingProps) => (
-  <Heading as='h4' size='lg' fontWeight='bold' variant='sidebar-title' {...props} />
+  <Heading as='h2' size='lg' fontWeight='bold' variant='sidebar-title' {...props} />
 )
 export const SidebarSubtitle = (props: HeadingProps) => (
-  <Heading as='h5' size='sm' variant='sidebar-subtitle' {...props} />
+  <Heading as='h3' size='sm' variant='sidebar-subtitle' {...props} />
 )
