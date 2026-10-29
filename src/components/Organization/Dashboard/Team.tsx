@@ -8,7 +8,7 @@ import { OrganizationUsers } from '~components/Organization/Team'
 const OrganizationTeam = () => {
   const { t } = useTranslation()
   return (
-    <DashboardBox p={6}>
+    <DashboardBox size='md'>
       <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
         <SectionHeader>
           <SectionHeading>{t('organization_settings.team.title', { defaultValue: 'Team members' })}</SectionHeading>
