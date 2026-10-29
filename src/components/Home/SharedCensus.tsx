@@ -16,7 +16,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { ManageProcessLink } from '~components/Process/ManageProcessLink'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
-import { InlineLoader } from '~components/ui/Loader'
+import { PageLoader } from '~components/ui/Loader'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { ensureAddressPrefix, sameAddress } from '~utils/address'
 
@@ -114,7 +114,7 @@ const SharedCensusHomeContent = () => {
     .join('\n\n')
 
   if (loading && !election) {
-    return <InlineLoader />
+    return <PageLoader />
   }
 
   if (!election) {

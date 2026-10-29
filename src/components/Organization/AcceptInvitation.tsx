@@ -6,7 +6,7 @@ import { generatePath, Link as RouterLink, useNavigate, useOutletContext } from 
 import { api, ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
 import SignUp, { InviteFields } from '~components/Auth/SignUp'
 import { useToast } from '~components/Toast'
-import { InlineLoader } from '~components/ui/Loader'
+import { PageLoader } from '~components/ui/Loader'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { Routes } from '~src/router/routes'
 
@@ -75,12 +75,9 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
 
   if (acceptInvitationMutation.isPending) {
     return (
-      <Flex justify='center' p={4} gap={3}>
-        <InlineLoader />
-        <Text>
-          <Trans i18nKey='invite.processing'>Processing your invitation...</Trans>
-        </Text>
-      </Flex>
+      <PageLoader minHeight={1}>
+        <Trans i18nKey='invite.processing'>Processing your invitation...</Trans>
+      </PageLoader>
     )
   }
 
@@ -110,7 +107,7 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
     return <Error error={error?.error || t('invite.unexpected_error', 'Unexpected error')} />
   }
 
-  return <InlineLoader />
+  return <PageLoader minHeight={1} />
 }
 
 export default AcceptInvitation

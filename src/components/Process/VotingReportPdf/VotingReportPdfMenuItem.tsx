@@ -34,7 +34,7 @@ export const VotingReportPdfMenuItem = ({ election }: VotingReportPdfProps) => {
 
   return (
     <Menu.Item value='download-pdf' onClick={download} disabled={isGenerating}>
-      {isGenerating ? <InlineLoader size='xs' /> : <Icon as={LuFileDown} boxSize={4} />}
+      {isGenerating ? <InlineLoader /> : <Icon as={LuFileDown} boxSize={4} />}
       {t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}
     </Menu.Item>
   )

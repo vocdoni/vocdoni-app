@@ -789,6 +789,13 @@ const EmptyMembersMessage = () => {
                 defaultValue: 'No members found',
               })
       }
+      description={
+        error
+          ? undefined
+          : debouncedSearch
+            ? t('members.list.no_search_results_description', { defaultValue: 'Try adjusting your search terms.' })
+            : t('members.list.empty_description', { defaultValue: 'Add your first member to get started.' })
+      }
     />
   )
 }

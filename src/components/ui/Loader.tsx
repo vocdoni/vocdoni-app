@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { PageLoader as pageLoaderRecipe } from '~theme/recipes/loader'
+import { statusPalette } from '~theme/status'
 
 export type PageLoaderProps = BoxProps
 
@@ -26,18 +27,18 @@ export const PageLoader = ({ children, ...props }: PageLoaderProps) => {
   )
 }
 
-export type ListLoaderProps = Omit<ProgressRootProps, 'value'>
+export type ListLoaderProps = Omit<ProgressRootProps, 'value' | 'size' | 'colorPalette' | 'variant'>
 
-/** A list, table or block of a page that is fetching: an indeterminate bar. */
+/** A list, table or block of a page that is fetching: a thin grey indeterminate bar across its width. */
 export const ListLoader = (props: ListLoaderProps) => (
-  <Progress.Root value={null} {...props}>
+  <Progress.Root value={null} size='xs' colorPalette={statusPalette.neutral} w='full' {...props}>
     <Progress.Track>
       <Progress.Range />
     </Progress.Track>
   </Progress.Root>
 )
 
-export type InlineLoaderProps = SpinnerProps
+export type InlineLoaderProps = Omit<SpinnerProps, 'size'>
 
-/** A wait inside a control, a menu item or a line of text: a spinner in the place of its icon. */
-export const InlineLoader = (props: InlineLoaderProps) => <Spinner {...props} />
+/** A wait inside a control, a menu item or a line of text: a 16px spinner, the size of the icon it replaces. */
+export const InlineLoader = (props: InlineLoaderProps) => <Spinner size='sm' {...props} />

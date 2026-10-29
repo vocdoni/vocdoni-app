@@ -31,7 +31,7 @@ type LineProps = { icon: ReactNode; busy?: boolean; color?: string; children: Re
 const Line = ({ icon, busy, color, children }: LineProps) => (
   <HStack gap={2} align='start' fontSize='sm' color={color}>
     <Box as='span' flexShrink={0} mt={0.5} display='inline-flex'>
-      {busy ? <InlineLoader size='xs' /> : icon}
+      {busy ? <InlineLoader /> : icon}
     </Box>
     <Box>{children}</Box>
   </HStack>
@@ -71,7 +71,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
     if (!shown) {
       if (status === 'checking') {
         content = (
-          <Line icon={<InlineLoader size='xs' />} color='fg.muted'>
+          <Line icon={<InlineLoader />} color='fg.muted'>
             {t('voter_auth.status.checking', { defaultValue: 'Checking your member list…' })}
           </Line>
         )
