@@ -53,11 +53,7 @@ const InputPassword = ({
 
   return (
     <FormControl invalid={!!errors[formValue]} required={required}>
-      {label && (
-        <FormLabel fontSize='sm' fontWeight='medium'>
-          {label}
-        </FormLabel>
-      )}
+      {label && <FormLabel fontSize='sm'>{label}</FormLabel>}
       <InputGroup
         endElement={
           <Icon
