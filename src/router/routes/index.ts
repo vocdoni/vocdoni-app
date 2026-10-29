@@ -60,6 +60,8 @@ export const Routes = {
   organization: '/organization/:address',
   processes: {
     create: '/admin/processes/create/:groupId?',
+    // Stripe sends a redirect-based top-up back here, with the checkout session id appended
+    createReturn: '/admin/processes/create/return/:sessionId',
     view: '/processes/:id',
     summary: '/processes/:id/summary',
   },

@@ -1,8 +1,10 @@
 import {
+  Alert,
   Box,
   Button,
   ButtonGroup,
   Flex,
+  Link,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   HStack,
@@ -25,6 +27,7 @@ import { LuRotateCcw, LuSettings } from 'react-icons/lu'
 import {
   createPath,
   generatePath,
+  Link as RouterLink,
   useBlocker,
   useLocation,
   useNavigate,
@@ -43,6 +46,11 @@ import {
   publishNeedsWalletTopUp,
   publishPaymentErrorMessage,
 } from '~components/Pricing/payment-errors'
+import {
+  checkoutStartForRefusal,
+  ProcessCheckout,
+  type ProcessCheckoutStart,
+} from '~components/Pricing/ProcessCheckout'
 import { ProcessQuoteAlert } from '~components/Pricing/ProcessPrice'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
@@ -50,7 +58,9 @@ import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
+import { clearPendingCheckout, enqueuedJobId, readPendingCheckout } from '~queries/process-checkout'
 import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
+import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
@@ -92,6 +102,13 @@ type UpdateProcessRequest = {
  * `api()` wrapper or through the integrator-sdk client, depending on the call.
  */
 const isDraftLimitError = (error: unknown) => apiErrorDetails(error)?.code === ErrorCode.DraftLimitReached
+
+/**
+ * The payment view a refused publish opens. Only who can top up the wallet may pay; a manager keeps
+ * the toast and its way to the wallet.
+ */
+export const paymentCheckoutStart = (error: unknown, canTopUp: boolean): ProcessCheckoutStart | undefined =>
+  canTopUp ? checkoutStartForRefusal(error) : undefined
 
 export const saveTimeoutMs = 30000
 
@@ -599,7 +616,10 @@ export const useDraft = (draftId?: string | null) => {
     enabled: !!draftId,
     queryFn: async () => {
       try {
-        return votingProcessToForm(await client.elections.get(draftId!))
+        const election = await client.elections.get(draftId!)
+        // Published since its id was stored (e.g. by its payment): it is no draft any more
+        if (election.published) return null
+        return votingProcessToForm(election)
       } catch (error) {
         // A stale draft id (deleted elsewhere, or left over from the legacy
         // draft store) must not break the wizard: fall back to a blank form.
@@ -616,8 +636,8 @@ const ProcessCreateView = () => {
   const toast = useToast()
   const [formDraftLoaded, setFormDraftLoaded] = useState(false)
   const [nextId, setNextId] = useState('')
-  const { groupId } = useParams()
-  const [searchParams] = useSearchParams()
+  const { groupId, sessionId } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const draftId = searchParams.get('draftId')
   const navigate = useNavigate()
   const location = useLocation()
@@ -638,7 +658,22 @@ const ProcessCreateView = () => {
   // resumes (and tries to update) a draft owned by a different org
   const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
-  const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
+  const { isSubmitting, isSubmitSuccessful, isDirty: isFormDirty } = methods.formState
+  // Back from a redirect-based payment (the return route), the draft it was opened for is read from storage
+  const returningFromCheckout = sessionId !== undefined
+  const [returnDraftId] = useState(() => (returningFromCheckout ? readPendingCheckout() : undefined))
+  // A return with nothing stored cannot be placed: it gets a neutral message, never the form
+  const returnWithoutDraft = returningFromCheckout && returnDraftId === undefined
+  // The top-up view stands in for the form while it is open: the draft is not auto-saved meanwhile,
+  // and leaving is not guarded, since a payment may redirect to the bank
+  // `form` is what was submitted, for the post-publish analytics; a return from a payment has none
+  const [checkout, setCheckout] = useState<{
+    processId: string
+    start: ProcessCheckoutStart
+    form: Process | null
+  } | null>(() => (returnDraftId ? { processId: returnDraftId, start: { kind: 'return' }, form: null } : null))
+  const isDirty = isFormDirty && !checkout
+  const { canTopUp } = useWalletAccess()
   const { trackEvent } = useAnalytics()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const effectiveDraftId = draftId ?? storedDraftId
@@ -662,6 +697,34 @@ const ProcessCreateView = () => {
   // Above the self-service limit the backend refuses any payment: only a custom quote publishes
   // it, which ProcessQuoteAlert points to, so publishing is not offered.
   const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).price)
+
+  // The return has been read: the URL moves on to the wizard for its draft, so a reload does not repeat it
+  useEffect(() => {
+    if (!returningFromCheckout) return
+    clearPendingCheckout()
+    if (returnDraftId) {
+      navigate(
+        { pathname: generatePath(Routes.processes.create), search: `?draftId=${returnDraftId}` },
+        { replace: true }
+      )
+    }
+  }, [returningFromCheckout, returnDraftId, navigate])
+
+  // A draft id that loads nothing (deleted, or published since, e.g. by its payment) is forgotten,
+  // so the form stops saving onto it
+  useEffect(() => {
+    if (!effectiveDraftId || formDraft !== null) return
+    clearPublishedDraftId(effectiveDraftId)
+    if (draftId === effectiveDraftId) {
+      setSearchParams(
+        (params) => {
+          params.delete('draftId')
+          return params
+        },
+        { replace: true }
+      )
+    }
+  }, [formDraft, effectiveDraftId, draftId, clearPublishedDraftId, setSearchParams])
 
   // Apply form draft if it exists
   useEffect(() => {
@@ -752,33 +815,22 @@ const ProcessCreateView = () => {
     }
   }
 
-  const onSubmit = async (form: Process) => {
-    // Clicking publish blurs whatever field was focused, which fires an
-    // auto-save: stop it, and queue this write behind any save still running,
-    // so the draft is never rewritten by two requests at once.
-    skipSave(true)
-    try {
-      const censusSpec = buildCensusSpec(form)
-      const request = formToVotingProcessRequest(form, censusSpec)
-      // The draft is the process: publish the one we have been saving instead of
-      // creating a second one and leaving the draft orphaned behind it. Going
-      // through `writeDraft` is what makes that hold — it resolves the draft id
-      // inside the queue, so a blur auto-save still in flight is updated rather
-      // than raced.
-      const processId = await writeDraft(() => request)
-      await apiClient.elections.publishAndWait(processId)
+  // A published draft is a process: the wizard leaves for its page. Shared by the form's publish and
+  // by the top-up view, which publishes the draft once it is paid.
+  const handlePublished = (processId: string, form: Process | null) => {
+    // Drop the cached elections pages so the processes index reflects the new
+    // vote without a full page refresh. The index loads through a route loader
+    // backed by ensureQueryData, which returns cached data without refetching
+    // when it is merely marked stale — so invalidateQueries isn't enough here.
+    // Removing the entries forces the loader to fetch fresh data on its next
+    // navigation. The key omits the pagination params so every paginated/status
+    // variant is evicted.
+    queryClient.removeQueries({
+      queryKey: QueryKeys.organization.elections(organization?.address),
+    })
 
-      // Drop the cached elections pages so the processes index reflects the new
-      // vote without a full page refresh. The index loads through a route loader
-      // backed by ensureQueryData, which returns cached data without refetching
-      // when it is merely marked stale — so invalidateQueries isn't enough here.
-      // Removing the entries forces the loader to fetch fresh data on its next
-      // navigation. The key omits the pagination params so every paginated/status
-      // variant is evicted.
-      queryClient.removeQueries({
-        queryKey: QueryKeys.organization.elections(organization?.address),
-      })
-
+    // Not sent when the draft values are missing (a return from a payment, for one): blank props would skew it
+    if (form) {
       trackEvent({
         name: AnalyticsEvents.ProcessCreated,
         props: {
@@ -789,24 +841,53 @@ const ProcessCreateView = () => {
           from_draft: !!effectiveDraftId,
         },
       })
+    }
 
-      toast({
-        title: t('form.process_create.success_title'),
-        description: t('form.process_create.success_description'),
-        type: 'success',
-        duration: 4000,
-      })
+    toast({
+      title: t('form.process_create.success_title'),
+      description: t('form.process_create.success_description'),
+      type: 'success',
+      duration: 4000,
+    })
 
-      methods.reset(defaultProcessValues)
+    methods.reset(defaultProcessValues)
 
-      clearPublishedDraftId(processId)
+    clearPublishedDraftId(processId)
 
-      navigate(generatePath(Routes.dashboard.process, { id: processId }))
+    navigate(generatePath(Routes.dashboard.process, { id: processId }))
+  }
+
+  const onSubmit = async (form: Process) => {
+    // Clicking publish blurs whatever field was focused, which fires an
+    // auto-save: stop it, and queue this write behind any save still running,
+    // so the draft is never rewritten by two requests at once.
+    skipSave(true)
+    let processId: string | null = null
+    try {
+      const censusSpec = buildCensusSpec(form)
+      const request = formToVotingProcessRequest(form, censusSpec)
+      // The draft is the process: publish the one we have been saving instead of
+      // creating a second one and leaving the draft orphaned behind it. Going
+      // through `writeDraft` is what makes that hold — it resolves the draft id
+      // inside the queue, so a blur auto-save still in flight is updated rather
+      // than raced.
+      processId = await writeDraft(() => request)
+      // The publish is answered at once; the view waits for the process, which can take minutes on a
+      // slow chain, instead of giving up after the SDK's one-minute job wait
+      const published = await apiClient.elections.publish(processId)
+      setCheckout({ processId, start: { kind: 'publishing', jobId: enqueuedJobId(published) }, form })
     } catch (error) {
       console.error('Error creating election:', error)
       // The draft is still a draft: let it keep auto-saving while the user fixes
       // whatever went wrong.
       skipSave(false)
+
+      const start = processId ? paymentCheckoutStart(error, canTopUp) : undefined
+      if (processId && start) {
+        // Left to the top-up view, which pays for the draft and publishes it
+        setCheckout({ processId, start, form })
+        return
+      }
 
       const paymentMessage = publishPaymentErrorMessage(t, error)
       toast({
@@ -825,6 +906,12 @@ const ProcessCreateView = () => {
           : {}),
       })
     }
+  }
+
+  const closeCheckout = () => {
+    // A direct publish paused the auto-save; the draft is editable again
+    skipSave(false)
+    setCheckout(null)
   }
 
   const onError = (errors) => {
@@ -876,123 +963,157 @@ const ProcessCreateView = () => {
     )
   }
 
+  if (returnWithoutDraft) {
+    return (
+      <VStack align='stretch' gap={4} maxW='2xl' p={{ base: 4, md: 8 }}>
+        <Alert.Root status='info'>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Description>
+              {t('process.checkout.return_unknown', {
+                defaultValue:
+                  'We could not tell which voting process this payment was for. If the payment went through, its voting process is published automatically. Check your voting processes to see where it stands.',
+              })}
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+        <Link asChild alignSelf='flex-start'>
+          <RouterLink to={generatePath(Routes.dashboard.processes.base)}>
+            {t('process.checkout.return_to_processes', { defaultValue: 'Back to your voting processes' })}
+          </RouterLink>
+        </Link>
+      </VStack>
+    )
+  }
+
   return (
     <FormProvider {...methods}>
-      <Box position='relative' w='full' overflow='hidden' height='full'>
-        <DashboardContents
-          as='form'
-          onSubmit={methods.handleSubmit(onSubmit, onError)}
-          display='flex'
-          flexDirection='row'
-          position='relative'
-          id='process-create'
-          overflow='hidden'
-        >
-          <Box
-            flex={1}
-            marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
-            transition='margin-right 0.3s'
+      {checkout ? (
+        <Box maxW='2xl' p={{ base: 4, md: 8 }}>
+          <ProcessCheckout
+            processId={checkout.processId}
+            start={checkout.start}
+            onPublished={(processId) => handlePublished(processId, checkout.form)}
+            onClose={closeCheckout}
+          />
+        </Box>
+      ) : (
+        <Box position='relative' w='full' overflow='hidden' height='full'>
+          <DashboardContents
+            as='form'
+            onSubmit={methods.handleSubmit(onSubmit, onError)}
             display='flex'
-            flexDirection='column'
-            gap={8}
-            paddingRight={4}
-            paddingBottom={4}
+            flexDirection='row'
+            position='relative'
+            id='process-create'
+            overflow='hidden'
           >
-            {/* Top bar with draft status and sidebar toggle */}
-            <HStack position='sticky' top='0px' p={2} bg='chakra.body.bg' zIndex='contents'>
-              {effectiveDraftId && (
-                <Box px={3} py={1} borderRadius='full' bg='bg.muted' fontSize='sm'>
-                  <Trans i18nKey='process.create.status.draft'>Draft</Trans>
-                </Box>
-              )}
-              <Spacer />
-              <ButtonGroup size='sm'>
-                {isDirty && (
-                  <IconButton
-                    onClick={openConfirmationModal}
-                    variant='outline'
-                    aria-label={t('dashboard.actions.reset_form', {
-                      defaultValue: 'Reset form',
-                    })}
-                  >
-                    <Icon as={LuRotateCcw} />
-                  </IconButton>
+            <Box
+              flex={1}
+              marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
+              transition='margin-right 0.3s'
+              display='flex'
+              flexDirection='column'
+              gap={8}
+              paddingRight={4}
+              paddingBottom={4}
+            >
+              {/* Top bar with draft status and sidebar toggle */}
+              <HStack position='sticky' top='0px' p={2} bg='chakra.body.bg' zIndex='contents'>
+                {effectiveDraftId && (
+                  <Box px={3} py={1} borderRadius='full' bg='bg.muted' fontSize='sm'>
+                    <Trans i18nKey='process.create.status.draft'>Draft</Trans>
+                  </Box>
                 )}
-                {/* data-testid: icon-only, so its only other handle is a
+                <Spacer />
+                <ButtonGroup size='sm'>
+                  {isDirty && (
+                    <IconButton
+                      onClick={openConfirmationModal}
+                      variant='outline'
+                      aria-label={t('dashboard.actions.reset_form', {
+                        defaultValue: 'Reset form',
+                      })}
+                    >
+                      <Icon as={LuRotateCcw} />
+                    </IconButton>
+                  )}
+                  {/* data-testid: icon-only, so its only other handle is a
                     translated aria-label — and below `md` the e2e suite must
                     open this drawer before it can reach any setting. */}
-                <IconButton
-                  data-testid='wizard-settings-toggle'
-                  aria-label={t('dashboard.actions.toggle_sidebar', {
-                    defaultValue: 'Toggle sidebar',
-                  })}
-                  variant='outline'
-                  onClick={toggleSidebar}
-                >
-                  <Icon as={LuSettings} />
-                </IconButton>
-                {/* Both writes need the owner org address; keep them disabled until it resolves. */}
-                <Button
-                  type='submit'
-                  alignSelf='flex-end'
-                  loading={methods.formState.isSubmitting}
-                  disabled={!organization?.address || quoteOnly}
-                >
-                  <Trans i18nKey='process.create.action.publish'>Publish</Trans>
-                </Button>
-                <Button
-                  type='button'
-                  variant='outline'
-                  onClick={handleManualSave}
-                  loading={isSaving}
-                  disabled={!organization?.address}
-                >
-                  <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
-                </Button>
-              </ButtonGroup>
-            </HStack>
+                  <IconButton
+                    data-testid='wizard-settings-toggle'
+                    aria-label={t('dashboard.actions.toggle_sidebar', {
+                      defaultValue: 'Toggle sidebar',
+                    })}
+                    variant='outline'
+                    onClick={toggleSidebar}
+                  >
+                    <Icon as={LuSettings} />
+                  </IconButton>
+                  {/* Both writes need the owner org address; keep them disabled until it resolves. */}
+                  <Button
+                    type='submit'
+                    alignSelf='flex-end'
+                    loading={methods.formState.isSubmitting}
+                    disabled={!organization?.address || quoteOnly}
+                  >
+                    <Trans i18nKey='process.create.action.publish'>Publish</Trans>
+                  </Button>
+                  <Button
+                    type='button'
+                    variant='outline'
+                    onClick={handleManualSave}
+                    loading={isSaving}
+                    disabled={!organization?.address}
+                  >
+                    <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
+                  </Button>
+                </ButtonGroup>
+              </HStack>
 
-            <ProcessQuoteAlert processId={effectiveDraftId} />
+              <ProcessQuoteAlert processId={effectiveDraftId} />
 
-            {/* Title, Video, and Description */}
-            <VStack as='header' align='stretch' gap={4}>
-              <FormControl invalid={!!methods.formState.errors.title}>
-                <Input
-                  variant='borderless'
-                  placeholder={t('process.create.description.title', {
-                    defaultValue: 'Voting Process Title',
-                  })}
-                  size='2xl'
-                  fontWeight='bold'
-                  {...methods.register('title', {
-                    required: t('form.error.required', 'This field is required'),
-                  })}
-                />
-                <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
-              </FormControl>
-
-              {/* Live streaming video URL */}
-              <LiveStreamingInput />
-              <Controller
-                name='description'
-                control={methods.control}
-                render={({ field }) => (
-                  <Editor
-                    key={nextId}
-                    onChange={field.onChange}
+              {/* Title, Video, and Description */}
+              <VStack as='header' align='stretch' gap={4}>
+                <FormControl invalid={!!methods.formState.errors.title}>
+                  <Input
                     variant='borderless'
-                    placeholder={t('process.create.description.placeholder', 'Add a description...')}
-                    defaultValue={field.value}
+                    placeholder={t('process.create.description.title', {
+                      defaultValue: 'Voting Process Title',
+                    })}
+                    size='2xl'
+                    fontWeight='bold'
+                    {...methods.register('title', {
+                      required: t('form.error.required', 'This field is required'),
+                    })}
                   />
-                )}
-              />
-            </VStack>
+                  <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
+                </FormControl>
 
-            <Questions />
-          </Box>
-        </DashboardContents>
-        <CreateSidebar draftId={effectiveDraftId} />
-      </Box>
+                {/* Live streaming video URL */}
+                <LiveStreamingInput />
+                <Controller
+                  name='description'
+                  control={methods.control}
+                  render={({ field }) => (
+                    <Editor
+                      key={nextId}
+                      onChange={field.onChange}
+                      variant='borderless'
+                      placeholder={t('process.create.description.placeholder', 'Add a description...')}
+                      defaultValue={field.value}
+                    />
+                  )}
+                />
+              </VStack>
+
+              <Questions />
+            </Box>
+          </DashboardContents>
+          <CreateSidebar draftId={effectiveDraftId} />
+        </Box>
+      )}
       <LeaveConfirmationModal
         isOpen={isLeaveConfirmationOpen}
         onCancel={cancel}

@@ -1,14 +1,25 @@
 import { act, renderHook } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import type { PropsWithChildren } from 'react'
 import type { Blocker } from 'react-router'
-import { useLocation, useNavigate } from 'react-router'
-import { TestMemoryRouter } from '~src/test-utils'
+import { Route, Routes, useLocation, useNavigate } from 'react-router'
+import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultQuestion, Process, SelectorTypes } from './common'
-import { buildCensusSpec, useConfirmOnNavigate, useFormToVotingProcessRequest } from './index'
+import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
+import { Routes as AppRoutes } from '~routes'
+import ProcessCreate, {
+  buildCensusSpec,
+  paymentCheckoutStart,
+  useConfirmOnNavigate,
+  useFormToVotingProcessRequest,
+} from './index'
 
 const mockPermission = vi.fn()
+const mockApiClient = vi.hoisted(() => ({
+  elections: { create: vi.fn(), update: vi.fn(), get: vi.fn(), publish: vi.fn(), publishAndWait: vi.fn() },
+}))
 
 const { mockUseBlocker } = vi.hoisted(() => ({ mockUseBlocker: vi.fn() }))
 
@@ -25,26 +36,69 @@ vi.mock('~components/Auth/Subscription', () => ({
 
 vi.mock('~utils/analytics', () => ({
   AnalyticsEvent: {},
+  AnalyticsEvents: { ProcessCreated: 'process_created', ProcessCreationFailed: 'process_creation_failed' },
 }))
+
+const mockTrackEvent = vi.hoisted(() => vi.fn())
 
 vi.mock('~components/AnalyticsProvider', () => ({
   useAnalytics: () => ({
-    trackEvent: vi.fn(),
+    trackEvent: mockTrackEvent,
   }),
 }))
 
+const authState = vi.hoisted(() => ({ currentAddress: undefined as string | undefined, bearedFetch: vi.fn() }))
+const profileState = vi.hoisted(() => ({ current: undefined as unknown }))
+
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({
-    bearedFetch: vi.fn(),
+    bearedFetch: authState.bearedFetch,
+    currentAddress: authState.currentAddress,
   }),
 }))
+
+vi.mock('~queries/account', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~queries/account')>()),
+  useProfile: () => ({ data: profileState.current }),
+}))
+
+// The wizard's sidebar, questions, editor and voter-auth dialog carry their own rules and state: the
+// tests here are about the publish flow around them
+vi.mock('./Sidebar', () => ({ CreateSidebar: () => null }))
+vi.mock('./MainContent', () => ({ Questions: () => null }))
+vi.mock('./LiveStreamingInput', () => ({ LiveStreamingInput: () => null }))
+vi.mock('~components/Editor', () => ({ default: () => null }))
+vi.mock('./VoterAuthentication/VoterAuthDialogContext', async (importOriginal) => {
+  const React = await import('react')
+  return {
+    ...(await importOriginal<typeof import('./VoterAuthentication/VoterAuthDialogContext')>()),
+    VoterAuthDialogProvider: ({ children }: { children: React.ReactNode }) => children,
+  }
+})
+
+// The view has its own suite; here it only reports what the wizard handed it
+vi.mock('~components/Pricing/ProcessCheckout', async (importOriginal) => {
+  const React = await import('react')
+  return {
+    ...(await importOriginal<typeof import('~components/Pricing/ProcessCheckout')>()),
+    ProcessCheckout: ({ processId, start, onPublished, onClose }: any) =>
+      React.createElement(
+        'div',
+        null,
+        React.createElement('p', null, `view:${processId}:${JSON.stringify(start)}`),
+        React.createElement('button', { onClick: () => onPublished(processId) }, 'view-published'),
+        React.createElement('button', { onClick: onClose }, 'view-back')
+      ),
+  }
+})
 
 vi.mock('~elements/dashboard/processes/drafts', () => ({
   useDeleteDraft: () => ({}),
 }))
 
-vi.mock('~src/providers/ApiClientProvider', () => ({
-  useApiClient: vi.fn(),
+vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
+  useApiClient: () => ({ client: mockApiClient }),
 }))
 
 describe('buildCensusSpec', () => {
@@ -695,5 +749,231 @@ describe('useConfirmOnNavigate', () => {
       expect(left).toBe(false)
       expect(paths.at(-1)).toBe('/admin/processes/create')
     })
+  })
+})
+
+describe('paymentCheckoutStart', () => {
+  const refusal = (status: number, code: ApiErrorCode, data?: unknown) =>
+    new VocdoniApiError(status, { error: 'refused', code, data }, 'refused', code, data)
+
+  const shortfall = refusal(402, ApiErrorCode.PaymentRequired, {
+    lines: [],
+    totalCents: 5000,
+    balanceCents: 1000,
+    shortfallCents: 4000,
+  })
+
+  it('opens the top-up checkout for who can top up the wallet, with the shortfall', () => {
+    expect(paymentCheckoutStart(shortfall, true)).toEqual({
+      kind: 'checkout',
+      shortfall: { shortfallCents: 4000, balanceCents: 1000 },
+    })
+  })
+
+  it('leaves a manager with the toast and its way to the wallet', () => {
+    expect(paymentCheckoutStart(shortfall, false)).toBeUndefined()
+  })
+
+  it('does not open the checkout for a managed organization, which has none', () => {
+    const managed = refusal(402, ApiErrorCode.InsufficientWalletBalance, { requiredCents: 5000, availableCents: 1000 })
+    const spendCap = refusal(402, ApiErrorCode.SpendCapReached)
+
+    expect(paymentCheckoutStart(managed, true)).toBeUndefined()
+    expect(paymentCheckoutStart(spendCap, true)).toBeUndefined()
+  })
+
+  it('does not open the checkout for a price only a custom quote settles', () => {
+    expect(paymentCheckoutStart(refusal(422, ApiErrorCode.QuoteRequired), true)).toBeUndefined()
+    expect(
+      paymentCheckoutStart(
+        refusal(402, ApiErrorCode.PaymentRequired, { lines: [], totalCents: 9000000, quoteRequired: true }),
+        true
+      )
+    ).toBeUndefined()
+  })
+
+  it('offers the choice between resuming and cancelling an open top-up to who can top up only', () => {
+    const conflict = refusal(409, ApiErrorCode.PaymentSessionConflict)
+
+    expect(paymentCheckoutStart(conflict, true)).toEqual({ kind: 'conflict' })
+    expect(paymentCheckoutStart(conflict, false)).toBeUndefined()
+  })
+
+  it('leaves any other refusal to the toast', () => {
+    expect(paymentCheckoutStart(new Error('network down'), true)).toBeUndefined()
+  })
+})
+
+describe('the wizard around the payment view', () => {
+  const draftId = '6650f0c0c0c0c0c0c0c0c0c0'
+  const admin = { organizations: [{ role: 'admin', organization: { address: '0xorg' } }] }
+
+  // Shows where the router is, to see the URL a return replaces
+  const LocationProbe = () => {
+    const { pathname, search } = useLocation()
+    return <p>{`at:${pathname}${search}`}</p>
+  }
+
+  const renderWizard = (url: string) =>
+    render(
+      <TestMemoryRouter initialEntries={[url]}>
+        <LocationProbe />
+        <Routes>
+          <Route path={AppRoutes.processes.create} element={<ProcessCreate />} />
+          <Route path={AppRoutes.processes.createReturn} element={<ProcessCreate />} />
+          <Route path={AppRoutes.dashboard.process} element={<p>process page</p>} />
+        </Routes>
+      </TestMemoryRouter>
+    )
+
+  beforeEach(() => {
+    mockUseBlocker.mockReturnValue({ state: 'unblocked', reset: vi.fn(), proceed: vi.fn() })
+    authState.currentAddress = '0xorg'
+    authState.bearedFetch.mockReset()
+    authState.bearedFetch.mockResolvedValue(undefined)
+    profileState.current = admin
+    // The stored draft reads back as the last body written to it, with no add-ons: a draft read then
+    // applies what the test typed, rather than resetting it
+    let lastWritten: Record<string, unknown> = {}
+    mockApiClient.elections.create.mockReset()
+    mockApiClient.elections.create.mockImplementation(async (body: Record<string, unknown>) => {
+      lastWritten = body
+      return draftId
+    })
+    mockApiClient.elections.update.mockReset()
+    mockApiClient.elections.update.mockImplementation(async (_id: string, body: Record<string, unknown>) => {
+      lastWritten = body
+    })
+    mockApiClient.elections.get.mockReset()
+    mockApiClient.elections.get.mockImplementation(async () => ({ ...lastWritten, addOns: {} }))
+    mockApiClient.elections.publish.mockReset()
+    setReactProvidersMock({
+      useOrganization: () => ({ organization: { address: '0xorg' } }),
+      useClient: () => ({ client: mockApiClient, connected: true }),
+    })
+  })
+
+  describe('the return route of a redirect-based payment', () => {
+    afterEach(() => sessionStorage.clear())
+
+    it('recovers the draft the payment was opened for, and opens the view in its waiting step', async () => {
+      sessionStorage.setItem('process-checkout-pending', JSON.stringify({ draftId }))
+      renderWizard('/admin/processes/create/return/cs_test_123')
+
+      expect(await screen.findByText(`view:${draftId}:{"kind":"return"}`)).toBeInTheDocument()
+      // The URL moves on to the wizard for that draft, so a reload does not repeat the return
+      expect(screen.getByText(`at:/admin/processes/create?draftId=${draftId}`)).toBeInTheDocument()
+      expect(sessionStorage.getItem('process-checkout-pending')).toBeNull()
+      expect(screen.queryByPlaceholderText('Voting Process Title')).not.toBeInTheDocument()
+    })
+
+    it('says it could not tell which process the payment was for, with a way back to the processes, when no draft was stored', async () => {
+      renderWizard('/admin/processes/create/return/cs_test_123')
+
+      expect(
+        await screen.findByText(
+          'We could not tell which voting process this payment was for. If the payment went through, its voting process is published automatically. Check your voting processes to see where it stands.'
+        )
+      ).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Back to your voting processes' })).toHaveAttribute(
+        'href',
+        '/admin/processes'
+      )
+      expect(screen.queryByText(/^view:/)).not.toBeInTheDocument()
+      expect(screen.queryByPlaceholderText('Voting Process Title')).not.toBeInTheDocument()
+    })
+
+    it('says the same when the stored value does not name a draft', async () => {
+      sessionStorage.setItem('process-checkout-pending', JSON.stringify({ draftId: '..' }))
+      renderWizard('/admin/processes/create/return/cs_test_123')
+
+      expect(await screen.findByRole('link', { name: 'Back to your voting processes' })).toBeInTheDocument()
+      expect(screen.queryByText(/^view:/)).not.toBeInTheDocument()
+    })
+  })
+
+  it('opens the top-up checkout for an admin whose publish is refused for the wallet shortfall', async () => {
+    mockApiClient.elections.publish.mockRejectedValue(
+      new VocdoniApiError(402, { error: 'short' }, 'short', ApiErrorCode.PaymentRequired, {
+        lines: [],
+        totalCents: 5000,
+        balanceCents: 1000,
+        shortfallCents: 4000,
+      })
+    )
+    renderWizard('/admin/processes/create')
+
+    await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
+
+    expect(
+      await screen.findByText(
+        `view:${draftId}:{"kind":"checkout","shortfall":{"shortfallCents":4000,"balanceCents":1000}}`
+      )
+    ).toBeInTheDocument()
+    expect(mockApiClient.elections.publish).toHaveBeenCalledWith(draftId)
+  })
+
+  it('hands a published draft to the post-publish navigation', async () => {
+    mockApiClient.elections.publish.mockResolvedValue({ jobId: 'job' })
+    renderWizard('/admin/processes/create')
+
+    await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
+
+    expect(await screen.findByText(`view:${draftId}:{"kind":"publishing","jobId":"job"}`)).toBeInTheDocument()
+    await userEvent.setup().click(screen.getByRole('button', { name: 'view-published' }))
+
+    await waitFor(() => expect(screen.getByText('process page')).toBeInTheDocument())
+  })
+
+  it('tracks the creation of a process published directly, with the submitted values', async () => {
+    mockTrackEvent.mockClear()
+    mockApiClient.elections.publish.mockResolvedValue({ jobId: 'job' })
+    renderWizard('/admin/processes/create')
+
+    await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
+    await userEvent.setup().click(await screen.findByRole('button', { name: 'view-published' }))
+
+    await waitFor(() => expect(screen.getByText('process page')).toBeInTheDocument())
+    expect(mockTrackEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ props: expect.objectContaining({ question_count: expect.any(Number) }) })
+    )
+  })
+
+  it('saves edits again after going back from a direct publish that did not finish', async () => {
+    mockApiClient.elections.publish.mockResolvedValue({ jobId: 'job' })
+    renderWizard('/admin/processes/create')
+
+    const user = userEvent.setup()
+    await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    await user.click(screen.getByRole('button', { name: 'Publish' }))
+    await user.click(await screen.findByRole('button', { name: 'view-back' }))
+    mockApiClient.elections.update.mockClear()
+
+    await user.type(await screen.findByPlaceholderText('Voting Process Title'), ' edited')
+    await user.tab()
+
+    await waitFor(() => expect(mockApiClient.elections.update).toHaveBeenCalled())
+  })
+
+  it('leaves a manager with the toast, not the view, when the wallet is short', async () => {
+    profileState.current = { organizations: [{ role: 'manager', organization: { address: '0xorg' } }] }
+    mockApiClient.elections.publish.mockRejectedValue(
+      new VocdoniApiError(402, { error: 'short' }, 'short', ApiErrorCode.PaymentRequired, {
+        lines: [],
+        totalCents: 5000,
+        shortfallCents: 4000,
+        balanceCents: 1000,
+      })
+    )
+    renderWizard('/admin/processes/create')
+
+    await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
+
+    await waitFor(() => expect(mockApiClient.elections.publish).toHaveBeenCalled())
+    expect(screen.queryByText(/^view:/)).not.toBeInTheDocument()
   })
 })

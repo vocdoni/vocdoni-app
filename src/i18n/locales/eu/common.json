@@ -1318,6 +1318,29 @@
       }
     },
     "census": "Errolda",
+    "checkout": {
+      "cancel_open": "Ordainketa irekia bertan behera utzi",
+      "check_again": "Berriro egiaztatu",
+      "conflict": "Boto-ematearen prozesu honen kargapen bat oraindik irekita dago, beraz ezin da oraindik argitaratu. Berrekin ordainketari hura osatzeko, edo utzi bertan behera eta argitaratu zure walletetik.",
+      "draft_total": "Zirriborroaren guztira (BEZ gabe)",
+      "pay": "Ordaindu {{amount}} eta argitaratu",
+      "publish_again": "Berriro argitaratu",
+      "publish_title": "Argitaratu boto-ematearen prozesua",
+      "publishing": "Zure boto-ematearen prozesua argitaratzen…",
+      "publishing_after_payment": "Ordainketa jasota. Zure boto-ematearen prozesua argitaratzen…",
+      "rest_stays": "Gainerakoa zure walletean geratzen da.",
+      "resume": "Berrekin ordainketari",
+      "return_to_processes": "Itzuli zure boto-ematearen prozesuetara",
+      "return_unknown": "Ezin izan dugu zehaztu ordainketa hau zein boto-ematearen prozesurakoa zen. Ordainketa ondo joan bada, prozesua automatikoki argitaratuko da. Begiratu zure boto-ematearen prozesuei egoera ikusteko.",
+      "shortfall": "Falta den zatia (BEZ gabe)",
+      "timeout": "Zure ordainketa berretsi da, eta boto-ematearen prozesua laster argitaratuko da. Ez bada argitaratzen, argitaratu berriro: zure walletetik ordainduko da.",
+      "timeout_unpaid": "Boto-ematearen prozesua oraindik argitaratzen ari da. Laster agertzen ez bada, argitaratu berriro: zure walletetik ordainduko da.",
+      "title": "Kargatu eta argitaratu",
+      "top_up": "Kargapena (BEZ gabe)",
+      "unconfirmed": "Zure ordainketa oraindik berresten ari da. Ordainketa-modu batzuek egun batzuk behar dituzte. Boto-ematearen prozesua automatikoki argitaratuko da ordainketa berretsi bezain pronto, beraz orri hau utz dezakezu.",
+      "unpaid": "Ordainketa ez da burutu. Berriro saia zaitezke.",
+      "wallet_balance": "Walleteko saldoa"
+    },
     "create": {
       "action": {
         "publish": "Argitaratu",

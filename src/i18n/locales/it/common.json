@@ -1344,6 +1344,29 @@
       }
     },
     "census": "Censimento",
+    "checkout": {
+      "cancel_open": "Annulla il pagamento aperto",
+      "check_again": "Ricontrolla",
+      "conflict": "Per questo processo di voto è ancora aperta una ricarica, quindi non può ancora essere pubblicato. Riprendi il pagamento per completarla, oppure annullala e pubblica dal tuo wallet.",
+      "draft_total": "Totale della bozza (IVA esclusa)",
+      "pay": "Paga {{amount}} e pubblica",
+      "publish_again": "Pubblica di nuovo",
+      "publish_title": "Pubblica il processo di voto",
+      "publishing": "Pubblicazione del tuo processo di voto…",
+      "publishing_after_payment": "Pagamento ricevuto. Pubblicazione del tuo processo di voto…",
+      "rest_stays": "Il resto rimane nel tuo wallet.",
+      "resume": "Riprendi il pagamento",
+      "return_to_processes": "Torna ai tuoi processi di voto",
+      "return_unknown": "Non siamo riusciti a capire a quale processo di voto si riferisse questo pagamento. Se il pagamento è andato a buon fine, il processo di voto viene pubblicato automaticamente. Controlla i tuoi processi di voto per vedere a che punto è.",
+      "shortfall": "Importo mancante (IVA esclusa)",
+      "timeout": "Il tuo pagamento è confermato e il processo di voto sarà pubblicato a breve. Se non accade, pubblicalo di nuovo: viene pagato dal tuo wallet.",
+      "timeout_unpaid": "Il processo di voto è ancora in pubblicazione. Se non compare a breve, pubblicalo di nuovo: viene pagato dal tuo wallet.",
+      "title": "Ricarica e pubblica",
+      "top_up": "Ricarica (IVA esclusa)",
+      "unconfirmed": "Il tuo pagamento è ancora in attesa di conferma. Alcuni metodi di pagamento impiegano alcuni giorni a confermarsi. Il processo di voto viene pubblicato automaticamente quando il pagamento sarà confermato, quindi puoi lasciare questa pagina.",
+      "unpaid": "Il pagamento non è andato a buon fine. Puoi riprovare.",
+      "wallet_balance": "Saldo del wallet"
+    },
     "create": {
       "action": {
         "publish": "Pubblica",
