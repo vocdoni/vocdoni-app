@@ -415,7 +415,7 @@ describe('useFormToVotingProcessRequest', () => {
   })
 
   describe('streamUri', () => {
-    it('includes streamUri without any plan', () => {
+    it('includes streamUri', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current({ ...mockForm, streamUri: 'https://stream.example.com/live' }, censusSpec())
       expect(req.streamUri).toBe('https://stream.example.com/live')
@@ -431,7 +431,7 @@ describe('useFormToVotingProcessRequest', () => {
   describe('anonymous census gating', () => {
     const anonymousSpec = () => ({ ...censusSpec(), anonymous: true })
 
-    it('keeps the anonymous census flag without any plan', () => {
+    it('keeps the anonymous census flag', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current(mockForm, anonymousSpec())
       expect(req.census?.anonymous).toBe(true)

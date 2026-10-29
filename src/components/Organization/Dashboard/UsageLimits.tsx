@@ -17,11 +17,10 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuInfo, LuMail, LuMessageSquare, LuUsers, LuVote } from 'react-icons/lu'
-import { useSubscription } from '~components/Auth/Subscription'
+import { LuInfo, LuUsers, LuVote } from 'react-icons/lu'
+import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
-import { MaxMembersPerOrg, TwoFACodePrice } from '~constants'
-import { usePublicLanguage } from '~i18n/usePublicLanguage'
+import { MaxMembersPerOrg } from '~constants'
 import { usePaginatedMembers } from '~queries/members'
 import { quantity } from '~utils/numbers'
 
@@ -32,16 +31,15 @@ type UsageMetric = {
   // Absent for a metric with no cap, which then shows its count alone
   max?: number
   tooltip?: string
-  isSoftLimit?: boolean
   color: string
 }
 
-const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: UsageMetric) => {
+const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) => {
   const percentage = max !== undefined && max > 0 ? Math.min((current / max) * 100, 100) : 0
   // Ensure a minimum visible percentage for the progress bar (0.5% represents "0" in the UI)
   const displayPercentage = percentage < 0.5 ? 0.5 : percentage
-  const isNearLimit = percentage >= 80 && !isSoftLimit
-  const isAtLimit = percentage >= 100 && !isSoftLimit
+  const isNearLimit = percentage >= 80
+  const isAtLimit = percentage >= 100
 
   const progressColor = isAtLimit ? 'red' : isNearLimit ? 'orange' : color
 
@@ -90,32 +88,20 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
 
 export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) => {
   const { t } = useTranslation()
-  const language = usePublicLanguage()
-  const { subscription, loading } = useSubscription()
+  const { organization, isLoading } = useSaasAccount()
 
   // Fetch memberbase data to get total count
   const { data: membersData } = usePaginatedMembers({ showAll: true })
 
-  if (loading || !subscription) {
+  if (isLoading || !organization) {
     return null
   }
-
-  const { plan, usage } = subscription
-
-  const email2FA = plan.features['2FAemail'] || 0
-  const sms2FA = plan.features['2FAsms'] || 0
-  const priceFormatter = new Intl.NumberFormat(language, {
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-  })
-  const formattedEmailPrice = priceFormatter.format(TwoFACodePrice.email)
-  const formattedSmsPrice = priceFormatter.format(TwoFACodePrice.sms)
 
   const usageMetrics: UsageMetric[] = [
     {
       icon: LuVote,
       label: t('dashboard.usage.voting_processes', { defaultValue: 'Voting processes' }),
-      current: usage.processes || 0,
+      current: organization.counters?.processes || 0,
       color: 'blue',
     },
     {
@@ -130,49 +116,17 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
     },
   ]
 
-  // Add 2FA metrics if they exist
-  if (email2FA > 0) {
-    usageMetrics.push({
-      icon: LuMail,
-      label: t('dashboard.usage.2fa_email', { defaultValue: '2FA email codes' }),
-      current: usage.sentEmails || 0,
-      max: email2FA,
-      color: 'green',
-      isSoftLimit: true,
-      tooltip: t('dashboard.usage.2fa_email_tooltip', {
-        defaultValue: 'Email verification codes sent. Exceeding the limit costs €{{price}} per code.',
-        price: formattedEmailPrice,
-      }),
-    })
-  }
-
-  if (sms2FA > 0) {
-    usageMetrics.push({
-      icon: LuMessageSquare,
-      label: t('dashboard.usage.2fa_sms', { defaultValue: '2FA SMS codes' }),
-      current: usage.sentSMS || 0,
-      max: sms2FA,
-      color: 'cyan',
-      isSoftLimit: true,
-      tooltip: t('dashboard.usage.2fa_sms_tooltip', {
-        defaultValue: 'SMS verification codes sent. Exceeding the limit costs €{{price}} per code.',
-        price: formattedSmsPrice,
-      }),
-    })
-  }
-
-  // Check if any hard limit has been exceeded (not counting soft limits like 2FA)
   const hasExceededLimit = usageMetrics.some(
-    (metric) => !metric.isSoftLimit && metric.max !== undefined && metric.max > 0 && metric.current >= metric.max
+    (metric) => metric.max !== undefined && metric.max > 0 && metric.current >= metric.max
   )
 
   return (
     <DashboardBox p={6} height='100%' {...props}>
       <VStack align='stretch' gap={4}>
         <DashboardCardHeader
-          title={t('dashboard.usage.plan_usage', { defaultValue: 'Plan usage' })}
-          subtitle={t('dashboard.usage.plan_usage_description', {
-            defaultValue: 'Track your current usage against your plan limits',
+          title={t('dashboard.usage.title', { defaultValue: 'Usage' })}
+          subtitle={t('dashboard.usage.description', {
+            defaultValue: 'Track your organization usage against its limits',
           })}
         />
 

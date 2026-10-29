@@ -22,10 +22,6 @@ vi.mock('~src/app-env', () => ({
   useAppEnv: () => ({ DISABLE_ANONYMOUS_VOTING: false }),
 }))
 
-vi.mock('~components/Auth/Subscription', () => ({
-  useSubscription: () => ({ permission: () => true }),
-}))
-
 vi.mock('~components/AnalyticsProvider', () => ({
   useAnalytics: () => ({ track: vi.fn(), trackEvent: vi.fn(), trackPlausibleEvent: vi.fn() }),
 }))

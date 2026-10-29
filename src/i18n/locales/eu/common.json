@@ -86,6 +86,9 @@
     "label": "Erakundearen avatarra"
   },
   "back": "Atzera",
+  "billing": {
+    "title": "Fakturazioa"
+  },
   "booking": {
     "unavailable": "Erreserba ez dago erabilgarri une honetan. Saiatu berriro geroago."
   },
@@ -254,15 +257,11 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "2FA kodeak posta elektronikoz",
-      "2fa_email_tooltip": "Posta elektronikoz bidalitako egiaztapen-kodeak. Muga gainditzeak {{price}} € kostatzen du kode bakoitzeko.",
-      "2fa_sms": "2FA kodeak SMS bidez",
-      "2fa_sms_tooltip": "SMS bidez bidalitako egiaztapen-kodeak. Muga gainditzeak {{price}} € kostatzen du kode bakoitzeko.",
+      "description": "Jarraitu zure erakundearen erabilera bere mugen arabera.",
       "limit_exceeded_message": "Zure kide-oinarriak {{max}} kideko muga iritsi du.",
       "memberbase_size": "Kide-oinarriaren tamaina",
       "memberbase_tooltip": "Zure kide-oinarrian onartutako gehienezko kide-kopurua.",
-      "plan_usage": "Planaren erabilera",
-      "plan_usage_description": "Kontrolatu zure egungo erabilera planaren mugen aldean",
+      "title": "Erabilera",
       "voting_processes": "Bozketa-prozesuak"
     },
     "welcome": {
@@ -275,7 +274,6 @@
       "hello": "Ongi etorri Vocdoni-ra, {{name}}!",
       "how_first_vote": "Nola sortu zure lehen bozketa",
       "no_organization": "Ez da erakunderik aurkitu",
-      "no_subscription": "Ez dago harpidetzarik eskuragarri. Sortu erakunde bat zure plana aktibatzeko.",
       "quick_actions": "Ekintza azkarrak",
       "recent_voting_description": "Zure erakundearen bozketa-prozesu berrienak",
       "recent_voting_title": "Azken bozketa-prozesuak",
@@ -363,24 +361,6 @@
     "reload": "Kargatu berriro",
     "return_to_home": "Itzuli hasierara",
     "title": "Errorea"
-  },
-  "features": {
-    "anonymous": "Bozketa anonimoa",
-    "approval": "Onarpen-bozketa",
-    "custom_url": "URL pertsonalizatua",
-    "email_notification": "Bi faktore posta elektronikoz",
-    "email_reminder": "Gogorarazleak posta elektronikoz",
-    "live_results": "Zuzeneko emaitzak",
-    "live_streaming": "Zuzeneko transmisioa",
-    "multiple": "Aukera anitzeko bozketa",
-    "overwrite": "Botoa aldatu",
-    "personalization": "Pertsonalizazioa",
-    "phone_support": "Telefono bidezko laguntza",
-    "single": "Aukera bakarreko bozketa",
-    "sms_notification": "Bi faktore SMS bidez",
-    "sub_orgs": "{{ count }} azpierakunde arte",
-    "weighted": "Ponderatutako botazioa",
-    "white_label": "Marka zuria"
   },
   "footer": {
     "company": "Konpainia",
@@ -581,13 +561,13 @@
       "title": "APIren gakoak"
     },
     "configuration": {
-      "subtitle": "Kudeatu zure wallet-a, harpidetza eta lortu laguntza.",
+      "subtitle": "Kudeatu zure fakturazioa eta lortu laguntza.",
       "title": "Konfigurazioa"
     },
     "create_account": {
       "cancel": "Utzi",
       "confirm": "Sortu kontua",
-      "description": "Integrator kontu berri bat sortuko da dohaineko planean eta zure erakunde aktibo gisa ezarriko da.",
+      "description": "Integrator kontu berri bat sortuko da eta zure erakunde aktibo gisa ezarriko da, integratzaileen panela desblokeatuz.",
       "error": "Ezin izan da integrator kontua sortu",
       "switch_instead": "Edo aldatu dagoen erakunde baten",
       "title": "Dohaineko integrator kontua sortu?"
@@ -653,15 +633,6 @@
     "signin_title": "Sartu",
     "signup_subtitle": "Izena eman integrator gisa erakundeak kudeatzeko.",
     "signup_title": "Sortu zure integrator kontua",
-    "subscription": {
-      "active": "Aktiboa",
-      "billing_details": "Fakturatze-xehetasunak",
-      "current_plan": "Uneko plana",
-      "inactive": "Inaktibo",
-      "portal_error": "Ezin da fakturazio portala ireki",
-      "unavailable": "Harpidetzaren xehetasunak ez daude erabilgarri"
-    },
-    "upgrade_plan": "Hobetu plana",
     "wallet": {
       "balance": "Wallet-aren saldoa",
       "manage": "Kudeatu wallet-a"
@@ -922,8 +893,6 @@
       "title": "Sortu zure lehen bozketa-prozesua"
     },
     "elections_list_load_more": "Kargatu gehiago",
-    "max_census": "Bozketako gehienezko errolda",
-    "max_processes": "Bozketak urteko¹",
     "no_organization_title": "Oraindik ez zara erakunde batekoa!",
     "organization": "Erakundearen xehetasunak",
     "title": {
@@ -944,7 +913,7 @@
       "priority_support_line_description": "Eskuragarri astelehenetik ostiralera, 9:00etatik 18:00etara CET",
       "title": "Telefono bidezko laguntza"
     },
-    "subtitle": "Kudeatu zure erakundea, taldeko kideak eta zure harpidetza-plana",
+    "subtitle": "Kudeatu zure erakundea, taldeko kideak eta fakturazioa",
     "support": {
       "description": "Lortu laguntza zure erakundearentzat.",
       "title": "Laguntza"
@@ -1003,19 +972,11 @@
   },
   "plan": {
     "encouragement": "Bozketa bat abiaraztea sinplea da, eta parte-hartzaileek edonondik elkar daitezke. Berme sendoak prezio txikiagoan: horregatik bihurtu da Vocdoni ehunka udal, elkarte, alderdi politiko eta enpresentzako hautu fidagarria.",
-    "free": "<0>Doako planean zaude</0>, eta horrek dagoeneko bozketak abiarazteko aukera ematen dizu. Funtzionalitate gehiago, muga handiagoak edo aukera espezifikoak behar badituzu, arakatu ordainpeko planak eta probatu doan.",
     "special_needs": "Laguntza edo zerbait espezifikoa behar duzu? Antolatu dei bat."
   },
   "please_check_email_to_verify": "Mesedez, begiratu zure posta elektronikoa kontua egiaztatzeko",
   "preferences": "Hobespenak",
   "preview": "Aurrebista",
-  "pricing": {
-    "essential_title": "Oinarrizkoa",
-    "free_title": "Doakoa",
-    "page_description": "Gure prezioak <pricingLink>vocdoni.io/pricing</pricingLink> helbidean daude eskuragarri.",
-    "page_title": "Prezioak",
-    "premium_title": "Premium"
-  },
   "privacy_policy": "Pribatutasun-politika",
   "process": {
     "anonymity": {
@@ -1574,9 +1535,6 @@
   },
   "start_date": "Hasiera-data",
   "start_time": "Hasiera-ordua",
-  "subscription": {
-    "title": "Harpidetza-plana"
-  },
   "support": "Laguntza",
   "support_chat": {
     "ask_name": "Bidali aurretik — nola duzu izena?",
@@ -1773,7 +1731,6 @@
     "verifying_title": "{{ email }} egiaztatzen"
   },
   "view_in_explorer": "Ikusi esploratzailean",
-  "view_plans_and_pricing": "Ikusi planak eta prezioak",
   "vocdoni_logo": "Vocdoniren logotipoa",
   "vote": {
     "anonymous_receipt": "Boto anonimoa: gorde egiaztagiri hau orain; plataformak ezin izango dizu berriro erakutsi.",
@@ -1912,7 +1869,6 @@
     "pagination": "{{page}}/{{total}} orria · guztira {{items}}",
     "processing": "Ordainketa jasota. Zure saldoa eguneratuko da berretsi bezain pronto.",
     "processing_timeout": "Espero baino denbora gehiago behar da. Zure saldoa eguneratuko da ordainketa berretsi bezain pronto; begiratu berriro geroago.",
-    "title": "Wallet-a",
     "topup": {
       "admin_only": "Administratzaileek bakarrik karga dezakete wallet-a.",
       "amount": "Zenbatekoa (EUR, BEZ gabe)",

@@ -9,13 +9,13 @@ import AccountProtectedRoute from '~src/router/AccountProtectedRoute'
 import IntegratorOrgGuard from '~src/router/IntegratorOrgGuard'
 import NonLoggedRoute from '~src/router/NonLoggedRoute'
 import { useWalletAccess } from '~queries/wallet'
-import { Routes } from '.'
+import { redirectLegacyPath, Routes } from '.'
 import { SuspenseLoader } from '../SuspenseLoader'
 
-// Viewers cannot read the wallet, so they land on the subscription tab instead
+// Admins and managers can read the wallet, so they open on billing; everyone else gets support.
 const ConfigurationIndex = () => {
   const { canView } = useWalletAccess()
-  const target = canView ? Routes.integrators.configuration.wallet : Routes.integrators.configuration.subscription
+  const target = canView ? Routes.integrators.configuration.billing : Routes.integrators.configuration.support
   return <Navigate to={target} replace />
 }
 
@@ -25,7 +25,6 @@ const IntegratorsSignup = lazy(() => import('~elements/integrators/signup'))
 const IntegratorsPasswordForgot = lazy(() => import('~elements/integrators/password'))
 const IntegratorsPasswordReset = lazy(() => import('~elements/integrators/password/reset'))
 const IntegratorsConfiguration = lazy(() => import('~elements/integrators/configuration'))
-const IntegratorSubscriptionTab = lazy(() => import('~components/Integrator/SubscriptionTab'))
 const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
 const IntegratorsManagedOrganizations = lazy(() => import('~elements/integrators/organizations'))
 const IntegratorsApiKeys = lazy(() => import('~elements/integrators/api-keys'))
@@ -143,7 +142,7 @@ export const useIntegratorsRoutes = () => {
                     element: <ConfigurationIndex />,
                   },
                   {
-                    path: Routes.integrators.configuration.wallet,
+                    path: Routes.integrators.configuration.billing,
                     element: (
                       <SuspenseLoader>
                         <WalletPanel />
@@ -151,7 +150,7 @@ export const useIntegratorsRoutes = () => {
                     ),
                   },
                   {
-                    path: Routes.integrators.configuration.walletReturn,
+                    path: Routes.integrators.configuration.billingReturn,
                     element: (
                       <SuspenseLoader>
                         <WalletPanel />
@@ -159,12 +158,16 @@ export const useIntegratorsRoutes = () => {
                     ),
                   },
                   {
-                    path: Routes.integrators.configuration.subscription,
-                    element: (
-                      <SuspenseLoader>
-                        <IntegratorSubscriptionTab />
-                      </SuspenseLoader>
-                    ),
+                    path: Routes.integrators.configuration.legacySubscription,
+                    ...redirectLegacyPath(Routes.integrators.configuration.billing),
+                  },
+                  {
+                    path: Routes.integrators.configuration.legacyWallet,
+                    ...redirectLegacyPath(Routes.integrators.configuration.billing),
+                  },
+                  {
+                    path: Routes.integrators.configuration.legacyWalletReturn,
+                    ...redirectLegacyPath(Routes.integrators.configuration.billingReturn),
                   },
                   {
                     path: Routes.integrators.configuration.support,

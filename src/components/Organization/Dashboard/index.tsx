@@ -15,11 +15,9 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuArrowUpRight, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
-import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Contents'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
-import { isPlanNamed, PlanName } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
@@ -52,7 +50,6 @@ const OrganizationDashboard = () => {
 const Tutorial = () => {
   const { t } = useTranslation()
   const { data: profile, isLoading } = useProfile()
-  const { subscription, loading } = useSubscription()
   const videoTutorials = useAppEnv().VIDEO_TUTORIAL ?? { en: '' }
   const language = usePublicLanguage()
   const videoTutorialSrc = videoTutorials[language] ?? videoTutorials.en
@@ -70,28 +67,12 @@ const Tutorial = () => {
             defaultValue: 'Welcome to Vocdoni, {{name}}!',
           })}
         </Text>
-        {loading || isLoading ? (
+        {isLoading && (
           <Progress.Root value={null} mb={4}>
             <Progress.Track>
               <Progress.Range />
             </Progress.Track>
           </Progress.Root>
-        ) : !subscription ? (
-          <Text color='fg.muted' mb={4}>
-            {t('dashboard.welcome.no_subscription', {
-              defaultValue: 'No subscription available. Please create an organization to activate your plan.',
-            })}
-          </Text>
-        ) : (
-          subscription &&
-          isPlanNamed(subscription.plan, PlanName.Free) && (
-            <Text color='fg.muted' mb={4}>
-              <Trans i18nKey='plan.free'>
-                <strong>You're on the Free Plan</strong>, which already lets you launch votes. If you need more
-                features, higher limits or specific options, explore the paid plans and try them for free.
-              </Trans>
-            </Text>
-          )
         )}
         <Text color='fg.muted' mb={4}>
           <Trans i18nKey='plan.encouragement'>

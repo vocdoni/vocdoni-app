@@ -40,14 +40,3 @@ export const checkoutReturnBase = (segment = 'return'): string => {
   url.pathname = `${url.pathname.replace(/\/+$/, '')}/${segment}`
   return url.toString()
 }
-
-// Current URL with the given search params set (null/undefined skipped) and the hash removed,
-// so the user lands back on the same locale after the checkout process.
-export const checkoutReturnUrl = (params: Record<string, string | null | undefined>): string => {
-  const url = new URL(window.location.href)
-  for (const [key, value] of Object.entries(params)) {
-    if (value != null) url.searchParams.set(key, value)
-  }
-  url.hash = ''
-  return url.toString()
-}

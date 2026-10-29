@@ -810,13 +810,13 @@ describe('posthog identity helpers', () => {
 
     analytics.initializePosthog({ key: 'phc_test', consent: 'accepted' })
     analytics.identifyPosthogUser('user-1', { email: 'a@b.com' })
-    analytics.setPosthogOrganization('0xabc', { plan_name: 'Free' })
+    analytics.setPosthogOrganization('0xabc', { type: 'company' })
     analytics.registerPosthogSuperProperties({ locale: 'ca' })
     analytics.resetPosthogUser()
 
     await vi.waitFor(() => expect(mockPosthog.reset).toHaveBeenCalledTimes(1))
     expect(mockPosthog.identify).toHaveBeenCalledWith('user-1', { email: 'a@b.com' })
-    expect(mockPosthog.group).toHaveBeenCalledWith('organization', '0xabc', { plan_name: 'Free' })
+    expect(mockPosthog.group).toHaveBeenCalledWith('organization', '0xabc', { type: 'company' })
     expect(mockPosthog.register).toHaveBeenCalledWith({ locale: 'ca' })
   })
 
@@ -897,6 +897,5 @@ describe('AnalyticsEvents export', () => {
     expect(events.OrganizationCreated).toBe('OrganizationCreated')
     expect(events.UserLoggedIn).toBe('LoggedIn')
     expect(events.ProcessCreated).toBe('ProcessCreated')
-    expect(events.SubscriptionSuccessful).toBe('SubscriptionSuccessful')
   })
 })

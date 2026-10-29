@@ -21,10 +21,7 @@ export const AnalyticsEvents = {
   OrganizationCreated: 'OrganizationCreated',
   UserLoggedIn: 'LoggedIn',
   ProcessCreated: 'ProcessCreated',
-  SubscriptionSuccessful: 'SubscriptionSuccessful',
   // Newer events use snake_case in every sink
-  CheckoutStarted: 'checkout_started',
-  BillingPortalOpened: 'billing_portal_opened',
   ProcessCreationFailed: 'process_creation_failed',
   ProcessAction: 'process_action',
   ProcessResultsViewed: 'process_results_viewed',
@@ -407,7 +404,6 @@ const posthogEventNames: Record<string, string> = {
   LoggedIn: 'user_logged_in',
   OrganizationCreated: 'organization_created',
   ProcessCreated: 'process_created',
-  SubscriptionSuccessful: 'subscription_completed',
 }
 
 export const trackPosthogEvent = (event: AnalyticsEvent): void => {

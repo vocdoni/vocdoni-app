@@ -1,22 +1,14 @@
 import { Button, Card, Flex, Text } from '@chakra-ui/react'
-import { Trans, useTranslation } from 'react-i18next'
+import { Trans } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router'
 import { DashboardContents } from '~components/Dashboard/Contents'
-import { pricingUrl } from '~components/Pricing/PricingLinkCard'
 import { EmptyState } from '~components/ui/EmptyState'
 import { Routes } from '~src/router/routes'
 import empty from '/assets/illustrations/9.png'
 
 export const NoOrganizations = () => {
-  const { i18n } = useTranslation()
-
   return (
     <Flex flexDirection={'column'}>
-      <Button asChild alignSelf='end' colorPalette='gray' size='xs'>
-        <a href={pricingUrl(i18n.language)} target='_blank' rel='noopener noreferrer'>
-          <Trans i18nKey='view_plans_and_pricing'>View Plans & Pricing</Trans>
-        </a>
-      </Button>
       <Card.Root variant='no-elections' minH='100%' maxW='650' mx='auto'>
         <Card.Body>
           <EmptyState

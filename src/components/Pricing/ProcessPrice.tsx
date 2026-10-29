@@ -88,7 +88,7 @@ const WalletCoverage = ({ totalCents }: { totalCents: number }) => {
         shortfall: currency(totalCents - balanceCents, currencyCode),
       })}{' '}
       <Link asChild fontWeight='semibold' textDecoration='underline'>
-        <RouterLink to={Routes.dashboard.settings.wallet}>
+        <RouterLink to={Routes.dashboard.settings.billing}>
           {t('process.price.wallet_top_up', { defaultValue: 'Top up wallet' })}
         </RouterLink>
       </Link>
