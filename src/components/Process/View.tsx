@@ -5,7 +5,6 @@ import {
   Card,
   Dialog,
   Flex,
-  Grid,
   GridItem,
   Icon,
   Link,
@@ -39,6 +38,7 @@ import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
 import { useAnonymityLabels } from './anonymityLabels'
+import { PageSection } from '~components/ui/PageContainer'
 
 type ProcessInfoCardProps = {
   label: string
@@ -189,13 +189,13 @@ export const ProcessView = () => {
     // One identify flow for the whole page: the floating Identify button and
     // the sidebar one must resume the same step.
     <CspAuthSession>
-      <Grid
-        templateColumns={{ base: '1fr', xl: 'minmax(0,1fr) var(--chakra-sizes-voting-sidebar)' }}
+      <PageSection
+        size='voting'
+        display='grid'
+        gridTemplateColumns={{ base: '1fr', xl: 'minmax(0,1fr) var(--chakra-sizes-voting-sidebar)' }}
         gap={10}
         alignItems='start'
-        mx='auto'
         minW={{ base: 'full', xl: 'voting.contents.min' }}
-        maxW='voting.contents.max'
       >
         <GridItem>
           <Flex direction='column' gap={4}>
@@ -253,7 +253,7 @@ export const ProcessView = () => {
         </GridItem>
         <VotingVoteModal />
         <SuccessVoteModal />
-      </Grid>
+      </PageSection>
     </CspAuthSession>
   )
 }
