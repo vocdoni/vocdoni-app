@@ -10,7 +10,6 @@ import {
   Icon,
   IconButton,
   SimpleGrid,
-  Spinner,
   Stack,
   Table,
   Text,
@@ -22,6 +21,7 @@ import { getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
+import { InlineLoader } from '~components/ui/Loader'
 import { StatusBadge, type StatusBadgeColor } from '~components/ui/StatusBadge'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
 import { useTableAsCards } from '~components/ui/useTableAsCards'
@@ -147,7 +147,7 @@ const ApiKeysPanel = () => {
   if (keys.isLoading) {
     return (
       <Center py={12}>
-        <Spinner />
+        <InlineLoader />
       </Center>
     )
   }

@@ -86,7 +86,7 @@ const DismissibleAnnouncementBanner = ({ limited }: { limited?: boolean }) => {
   }
 
   return (
-    <Alert status={announcement.status} borderRadius={0}>
+    <Alert status={announcement.status} layout='banner'>
       <HStack {...(limited ? limitStyles : {})} w='full' justifyContent='space-between'>
         <AlertDescription dangerouslySetInnerHTML={{ __html: message }} />
         <CloseButton onClick={() => setDismissed(true)} />

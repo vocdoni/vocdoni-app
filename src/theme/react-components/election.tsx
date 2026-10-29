@@ -529,7 +529,6 @@ export const electionComponents: ComponentsPartialDefinition = {
 
     return (
       <Alert.Root
-        variant='subtle'
         alignItems='center'
         justifyContent='center'
         textAlign='center'

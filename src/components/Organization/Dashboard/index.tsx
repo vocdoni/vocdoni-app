@@ -1,4 +1,4 @@
-import { AspectRatio, Box, Button, Flex, HStack, Icon, Link, Progress, Text } from '@chakra-ui/react'
+import { AspectRatio, Box, Button, Flex, HStack, Icon, Link, Text } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ElectionProvider,
@@ -8,6 +8,7 @@ import {
   useOrganization,
 } from '@vocdoni/react-components'
 import { processVoteCount } from '@vocdoni/api-client'
+import { ListLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { useDateFns } from '~i18n/use-date-fns'
@@ -67,13 +68,7 @@ const Tutorial = () => {
             defaultValue: 'Welcome to Vocdoni, {{name}}!',
           })}
         </Text>
-        {isLoading && (
-          <Progress.Root value={null} mb={4}>
-            <Progress.Track>
-              <Progress.Range />
-            </Progress.Track>
-          </Progress.Root>
-        )}
+        {isLoading && <ListLoader mb={4} />}
         <Text color='fg.muted' mb={4}>
           <Trans i18nKey='plan.encouragement'>
             Launching a vote is simple, and participants can join from anywhere. Strong guarantees at a lower cost have
@@ -158,13 +153,7 @@ const Processes = () => {
   })
 
   if (isLoading) {
-    return (
-      <Progress.Root value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   // Checked before the error state on purpose: with no organization this query never ran, and

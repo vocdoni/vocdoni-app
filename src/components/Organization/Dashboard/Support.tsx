@@ -7,7 +7,6 @@ import {
   FieldLabel as FormLabel,
   Heading,
   Icon,
-  Progress,
   SimpleGrid,
   SimpleGridProps,
   Stack,
@@ -23,6 +22,7 @@ import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '
 import InputBasic from '~components/Form/InputBasic'
 import { IssueTypeSelector, SelectOptionType } from '~components/Layout/SaasSelector'
 import { useToast } from '~components/Toast'
+import { ListLoader } from '~components/ui/Loader'
 import { useAppEnv } from '~src/app-env'
 import { useSendSupportTicket } from '~src/queries/support'
 
@@ -133,13 +133,7 @@ const PhoneSupportCard = () => {
   const prioritySupportPhone = useAppEnv().PRIORITY_SUPPORT_PHONE
 
   if (isLoading) {
-    return (
-      <Progress.Root size='xs' colorPalette='gray' value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader size='xs' colorPalette='gray' />
   }
 
   return (

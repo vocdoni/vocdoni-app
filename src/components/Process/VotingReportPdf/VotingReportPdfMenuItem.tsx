@@ -1,7 +1,8 @@
-import { Box, Icon, Menu, Spinner } from '@chakra-ui/react'
+import { Box, Icon, Menu } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuFileDown } from 'react-icons/lu'
 
+import { InlineLoader } from '~components/ui/Loader'
 import { Tooltip } from '~components/ui/Tooltip'
 
 import { type ElectionLike, pendingResultsHint, useVotingReportPdfDownload } from './VotingReportPdfButton'
@@ -33,7 +34,7 @@ export const VotingReportPdfMenuItem = ({ election }: VotingReportPdfProps) => {
 
   return (
     <Menu.Item value='download-pdf' onClick={download} disabled={isGenerating}>
-      {isGenerating ? <Spinner size='xs' /> : <Icon as={LuFileDown} boxSize={4} />}
+      {isGenerating ? <InlineLoader size='xs' /> : <Icon as={LuFileDown} boxSize={4} />}
       {t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}
     </Menu.Item>
   )

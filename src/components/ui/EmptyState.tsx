@@ -1,7 +1,7 @@
-import { Box, BoxProps, Icon, Image, ImageProps, Text } from '@chakra-ui/react'
+import { EmptyState as ChakraEmptyState, type EmptyStateRootProps, Image, ImageProps } from '@chakra-ui/react'
 import * as React from 'react'
 
-export interface EmptyStateProps extends Omit<BoxProps, 'title'> {
+export interface EmptyStateProps extends Omit<EmptyStateRootProps, 'title'> {
   /** Lucide/react-icons component for compact, in-list empty states. */
   icon?: React.ElementType
   /** Illustration source for full-page empty states. Mutually exclusive with `icon`. */
@@ -15,16 +15,11 @@ export interface EmptyStateProps extends Omit<BoxProps, 'title'> {
 }
 
 /**
- * Standard empty/zero state: an icon or illustration, a bold title, subtle description,
- * and an optional CTA. Replaces the near-identical `NoElections` / `NoOrganizations` /
- * `NoResultsFiltering` cards and the hand-rolled `UsersEmpty` in Team.tsx.
- *
- * Renders content only (no card) so it works both inside a surface (the `no-elections`
- * card) and standalone in a list. The illustration keeps the existing `invert(70%)` dark
- * treatment; replacing those PNGs with proper dark assets is tracked separately.
+ * The one empty state, styled by the `emptyState` recipe (`size` sm in a table or list, md in a card).
+ * Content only, no card of its own. The illustration keeps its `invert(70%)` dark treatment.
  */
 export const EmptyState = ({
-  icon,
+  icon: IconComponent,
   image,
   imageAlt,
   imageProps,
@@ -33,13 +28,15 @@ export const EmptyState = ({
   children,
   ...rest
 }: EmptyStateProps) => (
-  <Box display='flex' flexDirection='column' alignItems='center' textAlign='center' gap={3} {...rest}>
-    {icon && !image && <Icon as={icon} boxSize={12} color='fg.muted' />}
+  <ChakraEmptyState.Root {...rest}>
+    {IconComponent && !image && (
+      <ChakraEmptyState.Indicator>
+        <IconComponent />
+      </ChakraEmptyState.Indicator>
+    )}
     {image && <Image src={image} alt={imageAlt ?? ''} _dark={{ filter: 'invert(70%)' }} {...imageProps} />}
-    <Text fontWeight='bold' fontSize='lg'>
-      {title}
-    </Text>
-    {description && <Text color='fg.muted'>{description}</Text>}
+    <ChakraEmptyState.Title>{title}</ChakraEmptyState.Title>
+    {description && <ChakraEmptyState.Description>{description}</ChakraEmptyState.Description>}
     {children}
-  </Box>
+  </ChakraEmptyState.Root>
 )

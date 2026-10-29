@@ -1,4 +1,5 @@
 import { defineRecipe, RecipeDefinition, SlotRecipeDefinition } from '@chakra-ui/react'
+import { Alert } from './alert'
 import { Badge } from './badge'
 import { Button } from './button'
 import { Card } from './card'
@@ -20,6 +21,7 @@ import {
   Voted,
   VoteWeight,
 } from './election'
+import { EmptyState } from './emptyState'
 import { input, switchRecipe, textarea } from './form'
 import { listSlotRecipe } from './list'
 import { Menu } from './menu'
@@ -58,10 +60,12 @@ export const recipes: Record<string, RecipeDefinition> = {
 }
 
 export const slotRecipes: Record<string, SlotRecipeDefinition> = {
+  alert: Alert,
   card: Card,
   checkbox,
   dialog: Dialog,
   drawer: Drawer,
+  emptyState: EmptyState,
   list: listSlotRecipe,
   menu: Menu,
   popover: Popover,

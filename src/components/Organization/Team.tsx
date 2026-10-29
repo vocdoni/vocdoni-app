@@ -15,9 +15,7 @@ import {
   Icon,
   IconButton,
   Menu,
-  Progress,
   RadioGroup,
-  Spinner,
   Stack,
   Text,
   useDisclosure,
@@ -37,6 +35,7 @@ import { teamWriterLimitErrorMessage } from '~components/Pricing/payment-errors'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { EmptyState } from '~components/ui/EmptyState'
 import { useToast } from '~components/Toast'
+import { InlineLoader, ListLoader } from '~components/ui/Loader'
 import { useProfile } from '~src/queries/account'
 import { QueryKeys } from '~src/queries/keys'
 import { Role, useRemoveUserMutation, useRoles } from '~src/queries/organization'
@@ -295,13 +294,7 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
   return (
     <Field.Root>
       <Field.Label fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</Field.Label>
-      {rolesLoading && (
-        <Progress.Root value={null}>
-          <Progress.Track>
-            <Progress.Range />
-          </Progress.Track>
-        </Progress.Root>
-      )}
+      {rolesLoading && <ListLoader />}
       <Controller
         name='role'
         control={control}
@@ -573,7 +566,7 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
   return (
     <>
       <Menu.Item value='resend-invitation' disabled={isLoading} onClick={resendInvitationHandler}>
-        {isLoading ? <Spinner size='xs' /> : <Icon as={LuRefreshCw} />}
+        {isLoading ? <InlineLoader size='xs' /> : <Icon as={LuRefreshCw} />}
         <Box>{t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}</Box>
       </Menu.Item>
       <Menu.Item value='cancel-invitation' color='danger.action' disabled={isLoading} onClick={openCancelInvitation}>
@@ -760,13 +753,7 @@ export const OrganizationUsers = () => {
     : t('team.empty_description', { defaultValue: 'Invite teammates to get started.' })
 
   if (isLoading) {
-    return (
-      <Progress.Root value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   return (

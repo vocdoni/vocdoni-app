@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation, useOutletContext } from 'react-router'
 import { useAccountHealthTools } from '~components/Account/use-account-health-tools'
 import { useAuth } from '~components/Auth/useAuth'
-import { Loading } from '~src/router/SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
 import { Routes } from './routes'
 
 // redirectTo lets reusable auth groups (e.g. the integrators app) send already-authenticated
@@ -14,7 +14,7 @@ const NonLoggedRoute = ({ redirectTo }: { redirectTo?: string }) => {
   const context = useOutletContext()
 
   if (isAuthLoading) {
-    return <Loading />
+    return <PageLoader />
   }
 
   if (isAuthenticated && pathname !== Routes.auth.passwordReset) {

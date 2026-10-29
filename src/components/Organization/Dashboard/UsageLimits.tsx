@@ -131,7 +131,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
         />
 
         {hasExceededLimit && (
-          <Alert status='warning' variant='subtle' borderRadius='lg' py={3} px={4}>
+          <Alert status='warning' layout='compact'>
             <AlertIndicator />
             <AlertDescription fontSize='sm' fontWeight='medium'>
               {t('dashboard.usage.limit_exceeded_message', {
