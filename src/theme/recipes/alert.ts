@@ -12,7 +12,7 @@ export const Alert = defineSlotRecipe({
       // Edge-to-edge strip above the page (announcements).
       banner: { root: { borderRadius: 0 } },
       // A single line with an action beside it.
-      compact: { root: { borderRadius: 'lg', py: 3 } },
+      compact: { root: { py: 3 } },
       // A status panel with a title, several lines and its own close button.
       panel: { root: { px: 6, py: 6 } },
     },
