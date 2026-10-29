@@ -105,7 +105,7 @@
     "unavailable": "La réservation est actuellement indisponible. Veuillez réessayer plus tard."
   },
   "calendar": {
-    "max_duration_exceeded": "La durée dépasse la limite de {{ maxDuration }} jours de votre forfait. Réduisez la durée du vote ou <a>contactez-nous</a> si vous avez besoin de plus de jours.",
+    "max_duration_exceeded": "La durée dépasse la limite de {{ maxDuration }} jours. Réduisez la durée du vote.",
     "title": "Calendrier"
   },
   "cancel": "Annuler",
@@ -277,14 +277,12 @@
       "2fa_email_tooltip": "Codes de vérification envoyés par e-mail. Au-delà de la limite, chaque code coûte {{price}} €.",
       "2fa_sms": "Codes 2FA par SMS",
       "2fa_sms_tooltip": "Codes de vérification envoyés par SMS. Au-delà de la limite, chaque code coûte {{price}} €.",
-      "limit_exceeded_message": "Votre forfait actuel a atteint ses limites. Mettez-le à niveau pour continuer sans restriction.",
+      "limit_exceeded_message": "Votre base de membres a atteint la limite de {{max}} membres.",
       "memberbase_size": "Taille de la base de membres",
       "memberbase_tooltip": "Nombre maximum de membres autorisés dans votre base de membres.",
       "plan_usage": "Utilisation du plan",
       "plan_usage_description": "Suivez votre utilisation actuelle par rapport aux limites de votre plan",
-      "upgrade_plan": "Mettre le plan à niveau",
-      "voting_processes": "Processus de vote",
-      "voting_processes_tooltip": "Nombre de processus de vote créés cette année. Les votes comptant 10 membres ou moins ne sont pas pris en compte dans les limites."
+      "voting_processes": "Processus de vote"
     },
     "welcome": {
       "common_tasks_actions": "Tâches et actions courantes",
@@ -1155,9 +1153,6 @@
   "new_voting": "Nouveau vote",
   "no_results_filtering": "Votre filtre de recherche actuel ne renvoie aucun résultat",
   "not_registred_yet": "Vous n'avez pas de compte ?",
-  "number_of_members_one": "{{ count }} membre de l'équipe",
-  "number_of_members_many": "{{ count }} membres de l'équipe",
-  "number_of_members_other": "{{ count }} membres de l'équipe",
   "oauth": {
     "link": {
       "action": "Lier le compte {{provider}}",
@@ -1207,7 +1202,7 @@
   },
   "organization_settings": {
     "phone_support": {
-      "description": "Disponible uniquement pour les abonnés au plan personnalisé.",
+      "description": "Appelez directement notre équipe pour une aide prioritaire.",
       "id": "ID",
       "info": "Ayez l'ID de votre organisation à portée de main lors de l'appel.",
       "organization_id": "ID de votre organisation",
@@ -1277,16 +1272,6 @@
     "encouragement": "Lancer un vote est simple et les participants peuvent y prendre part depuis n'importe où. De solides garanties à un coût réduit ont fait de Vocdoni une référence pour des centaines de communes, associations, partis politiques et entreprises.",
     "free": "<0>Vous êtes sur le plan gratuit</0>, qui vous permet déjà de lancer des votes. Si vous avez besoin de plus de fonctionnalités, de limites supérieures ou d'options spécifiques, découvrez les plans payants et essayez-les gratuitement.",
     "special_needs": "Besoin d'aide ou d'une demande spécifique ? Réservez un appel."
-  },
-  "plan_upgrade": {
-    "cancel": "Annuler",
-    "generic_subtitle": "Votre forfait actuel limite cette action à {{limit}}. Mettez votre forfait à niveau pour continuer et débloquer des fonctionnalités avancées.",
-    "generic_title": "Mettez votre forfait à niveau pour augmenter ses limites",
-    "memberbase_subtitle": "Votre forfait actuel autorise jusqu'à {{limit}} membres dans votre base de membres. Mettez-le à niveau pour ajouter plus de membres et débloquer des fonctionnalités avancées.",
-    "memberbase_title": "Mettez votre forfait à niveau pour ajouter plus de membres à votre base de membres",
-    "see_plans": "Voir les forfaits",
-    "subtitle": "Votre forfait actuel n'autorise que {{limit}} pour la collaboration. Mettez-le à niveau pour ajouter plus de membres à l'équipe et débloquer des fonctionnalités avancées.",
-    "title": "Mettre à niveau pour ajouter plus de membres à l'équipe"
   },
   "please_check_email_to_verify": "Veuillez consulter votre boîte e-mail pour vérifier votre compte",
   "preferences": "Préférences",
@@ -1403,9 +1388,9 @@
         "title": "Enregistrement du brouillon"
       },
       "limit_reached": {
-        "message_one": "Vous avez atteint votre limite de {{ count }} brouillon. Pour enregistrer ce brouillon, supprimez-en un existant ou mettez votre forfait à niveau.",
-        "message_many": "Vous avez atteint votre limite de {{ count }} brouillons. Pour enregistrer ce brouillon, supprimez-en un existant ou mettez votre forfait à niveau.",
-        "message_other": "Vous avez atteint votre limite de {{ count }} brouillons. Pour enregistrer ce brouillon, supprimez-en un existant ou mettez votre forfait à niveau."
+        "message_one": "Vous avez atteint votre limite de {{ count }} brouillon. Pour enregistrer ce brouillon, supprimez-en un existant.",
+        "message_many": "Vous avez atteint votre limite de {{ count }} brouillons. Pour enregistrer ce brouillon, supprimez-en un existant.",
+        "message_other": "Vous avez atteint votre limite de {{ count }} brouillons. Pour enregistrer ce brouillon, supprimez-en un existant."
       },
       "question": {
         "add": "Ajouter une question",
@@ -1415,6 +1400,7 @@
           "description": "Voulez-vous vraiment supprimer cette question ?",
           "title": "Supprimer la question"
         },
+        "limit_reached": "Un processus de vote peut comporter au maximum {{ max }} questions.",
         "question_number": "Question {{index}} sur {{total}}"
       },
       "save_draft_error": {
@@ -1907,12 +1893,6 @@
   "start_time": "Heure de début",
   "subscribe": "S'abonner",
   "subscription": {
-    "locked_content": {
-      "available_in": "Disponible dans :",
-      "description": "Mettez votre forfait à niveau pour obtenir {{ permissionName }} et plus encore.",
-      "title": "Votre forfait actuel {{ plan }} ne comprend pas {{ permissionName }}",
-      "unlock": "Débloquer {{ permissionName }}"
-    },
     "title": "Forfait d'abonnement"
   },
   "subscription_plan": {
@@ -1979,7 +1959,7 @@
     "expires_in": "Expire dans {{time}}",
     "load_error": "Impossible de charger les membres de l'équipe",
     "load_error_description": "Veuillez réessayer.",
-    "max_writers_reached": "Cette organisation compte déjà 5 administrateurs et gestionnaires, invitations en attente comprises. Retirez-en un ou annulez une invitation en attente pour libérer une place. Les observateurs ne sont pas limités.",
+    "max_writers_reached": "Cette organisation compte déjà {{max}} administrateurs et gestionnaires, invitations en attente comprises. Retirez-en un ou annulez une invitation en attente pour libérer une place. Les observateurs ne sont pas limités.",
     "only_one_member": {
       "add_team_member": "Ajouter un membre à l'équipe",
       "subtitle": "Ajoutez des membres à l'équipe pour collaborer dans votre organisation",
@@ -2080,9 +2060,9 @@
     "avatar_upload_success": "Avatar chargé",
     "click_or_drag_and_drop": "<click>Cliquez pour charger ou glissez-déposez</click><formats>(Formats autorisés : {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Charger une image",
-    "csv_row_limit_exceeded_one": "Cette importation aboutirait à un total de {{count}} ligne, dépassant la limite de votre forfait fixée à {{max}}.",
-    "csv_row_limit_exceeded_many": "Cette importation aboutirait à un total de {{count}} lignes, dépassant la limite de votre forfait fixée à {{max}}.",
-    "csv_row_limit_exceeded_other": "Cette importation aboutirait à un total de {{count}} lignes, dépassant la limite de votre forfait fixée à {{max}}.",
+    "csv_row_limit_exceeded_one": "Cette importation aboutirait à un total de {{count}} ligne, dépassant la limite de {{max}} membres.",
+    "csv_row_limit_exceeded_many": "Cette importation aboutirait à un total de {{count}} lignes, dépassant la limite de {{max}} membres.",
+    "csv_row_limit_exceeded_other": "Cette importation aboutirait à un total de {{count}} lignes, dépassant la limite de {{max}} membres.",
     "drop_here": "Déposez le fichier ici",
     "error": {
       "invalid_image_type": "Ce type de fichier n'est pas pris en charge. Importez une image .png ou .jpg.",

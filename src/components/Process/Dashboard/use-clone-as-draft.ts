@@ -1,9 +1,9 @@
 import { useElection } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, useNavigate } from 'react-router'
-import { useSubscription } from '~components/Auth/Subscription'
+import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { useToast } from '~components/Toast'
-import { SubscriptionPermission } from '~constants'
+import { MaxDraftsPerOrg } from '~constants'
 import { Routes } from '~src/router/routes'
 import { useCreateProcess } from '../Create'
 import { votingProcessToCreateRequest } from '../Create/draft-mapping'
@@ -14,8 +14,6 @@ export const useCloneAsDraft = () => {
   const toast = useToast()
   const { election } = useElection()
   const createProcess = useCreateProcess()
-  const { permission } = useSubscription()
-  const limit = permission(SubscriptionPermission.Drafts)
 
   const cloneAsDraft = async () => {
     if (!election?.id || !election.questions?.length) return
@@ -40,13 +38,19 @@ export const useCloneAsDraft = () => {
         { replace: true }
       )
     } catch (error) {
+      // Any other refusal (a legacy process over today's question cap, for one) carries the backend's own reason
+      const isDraftLimit = apiErrorDetails(error)?.code === ErrorCode.DraftLimitReached
       toast({
         title: t('drafts.cloned_draft_error', { defaultValue: 'Error cloning draft' }),
-        description: t('process.create.limit_reached.message', {
-          defaultValue:
-            "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan.",
-          count: limit,
-        }),
+        description: isDraftLimit
+          ? t('process.create.limit_reached.message', {
+              defaultValue:
+                "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft.",
+              count: MaxDraftsPerOrg,
+            })
+          : error instanceof Error
+            ? error.message
+            : String(error),
         type: 'error',
         duration: 10000,
         isClosable: true,

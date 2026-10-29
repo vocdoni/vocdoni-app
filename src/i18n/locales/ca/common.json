@@ -105,7 +105,7 @@
     "unavailable": "La reserva no està disponible en aquest moment. Torna-ho a provar més tard."
   },
   "calendar": {
-    "max_duration_exceeded": "La durada supera el límit de {{ maxDuration }} dies del teu pla. Redueix la durada de la votació o <a>contacta'ns</a> si necessites més dies.",
+    "max_duration_exceeded": "La durada supera el límit de {{ maxDuration }} dies. Redueix la durada de la votació.",
     "title": "Calendari"
   },
   "cancel": "Cancel·la",
@@ -277,14 +277,12 @@
       "2fa_email_tooltip": "Codis de verificació per email enviats. Superar el límit costa {{price}}€ per codi.",
       "2fa_sms": "Codis 2FA per SMS",
       "2fa_sms_tooltip": "Codis de verificació per SMS enviats. Superar el límit costa {{price}}€ per codi.",
-      "limit_exceeded_message": "El teu pla actual ha assolit els seus límits. Actualitza ara per continuar treballant sense restriccions.",
+      "limit_exceeded_message": "La teva base de membres ha arribat al límit de {{max}} membres.",
       "memberbase_size": "Mida de la base de membres",
       "memberbase_tooltip": "Nombre màxim de membres permesos a la teva base de membres.",
       "plan_usage": "Ús del pla",
       "plan_usage_description": "Controla el teu ús actual enfront els límits del teu pla",
-      "upgrade_plan": "Actualitzar pla",
-      "voting_processes": "Processos de votació",
-      "voting_processes_tooltip": "Nombre de processos de votació creats aquest any. Les votacions amb 10 membres o menys no es compten per als límits."
+      "voting_processes": "Processos de votació"
     },
     "welcome": {
       "common_tasks_actions": "Tasques i accions comunes",
@@ -1155,9 +1153,6 @@
   "new_voting": "Nova votació",
   "no_results_filtering": "El filtre de cerca actual no retorna cap resultat",
   "not_registred_yet": "No tens un compte?",
-  "number_of_members_one": "{{ count }} membre de l'equip",
-  "number_of_members_many": "{{ count }} membres de l'equip",
-  "number_of_members_other": "{{ count }} membres de l'equip",
   "oauth": {
     "link": {
       "action": "Enllaça el compte de {{provider}}",
@@ -1207,7 +1202,7 @@
   },
   "organization_settings": {
     "phone_support": {
-      "description": "Disponible només per als subscriptors del pla Personalitzat.",
+      "description": "Truca directament al nostre equip per obtenir ajuda prioritària.",
       "id": "ID",
       "info": "Tingues a mà l'ID de la teva organització quan truquis.",
       "organization_id": "ID de la teva organització",
@@ -1277,16 +1272,6 @@
     "encouragement": "Llançar una votació és senzill, i els participants poden unir-s'hi des de qualsevol lloc. Les fortes garanties a un cost més baix han convertit Vocdoni en una opció de confiança per a centenars d'ajuntaments, associacions, partits polítics i empreses.",
     "free": "<0>Estàs al Pla Gratuït</0>, que ja et permet llançar votacions. Si necessites més funcionalitats, límits més alts o opcions específiques, explora els plans de pagament i prova'ls gratuïtament.",
     "special_needs": "Necessites ajuda o alguna cosa específica? Programa una trucada."
-  },
-  "plan_upgrade": {
-    "cancel": "Cancel·la",
-    "generic_subtitle": "El teu pla actual limita aquesta acció a {{limit}}. Actualitza el teu pla per continuar i desbloquejar funcions avançades.",
-    "generic_title": "Actualitza el teu pla per augmentar els límits",
-    "memberbase_subtitle": "El teu pla actual permet fins a {{limit}} membres a la memberbase. Actualitza el teu pla per afegir més membres i desbloquejar funcions avançades.",
-    "memberbase_title": "Actualitza el teu pla per afegir més membres a la memberbase",
-    "see_plans": "Veure plans",
-    "subtitle": "El teu pla actual només permet {{limit}} per a la col·laboració. Actualitza el teu pla per afegir més membres de l'equip i desbloquejar funcions avançades.",
-    "title": "Actualitza per afegir més membres de l'equip"
   },
   "please_check_email_to_verify": "Si us plau, comprova el teu correu electrònic per verificar el teu compte.",
   "preferences": "Preferències",
@@ -1403,9 +1388,9 @@
         "title": "Desant esborrany"
       },
       "limit_reached": {
-        "message_one": "Has arribat al límit de {{ count }} esborrany. Per desar aquest esborrany, elimina un esborrany existent o actualitza el teu pla.",
-        "message_many": "Has arribat al límit de {{ count }} esborranys. Per desar aquest esborrany, elimina un esborrany existent o actualitza el teu pla.",
-        "message_other": "Has arribat al límit de {{ count }} esborranys. Per desar aquest esborrany, elimina un esborrany existent o actualitza el teu pla."
+        "message_one": "Has arribat al límit de {{ count }} esborrany. Per desar aquest esborrany, elimina un esborrany existent.",
+        "message_many": "Has arribat al límit de {{ count }} esborranys. Per desar aquest esborrany, elimina un esborrany existent.",
+        "message_other": "Has arribat al límit de {{ count }} esborranys. Per desar aquest esborrany, elimina un esborrany existent."
       },
       "question": {
         "add": "Afegeix una pregunta",
@@ -1415,6 +1400,7 @@
           "description": "Segur que vols eliminar aquesta pregunta?",
           "title": "Eliminar pregunta"
         },
+        "limit_reached": "Un procés de votació pot tenir com a màxim {{ max }} preguntes.",
         "question_number": "Pregunta {{index}} de {{total}}"
       },
       "save_draft_error": {
@@ -1907,12 +1893,6 @@
   "start_time": "Hora d'inici",
   "subscribe": "Subscriu-te",
   "subscription": {
-    "locked_content": {
-      "available_in": "Disponible a:",
-      "description": "Actualitza el teu pla per obtenir {{ permissionName }} i més.",
-      "title": "El teu pla actual {{ plan }} no inclou {{ permissionName }}",
-      "unlock": "Desbloqueja {{ permissionName }}"
-    },
     "title": "Subscripció"
   },
   "subscription_plan": {
@@ -1979,7 +1959,7 @@
     "expires_in": "Caduca en {{time}}",
     "load_error": "No s'han pogut carregar els membres de l'equip",
     "load_error_description": "Torna-ho a provar.",
-    "max_writers_reached": "Aquesta organització ja té 5 administradors i gestors, incloses les invitacions pendents. Elimina'n un o cancel·la una invitació pendent per alliberar una plaça. Els visualitzadors no tenen límit.",
+    "max_writers_reached": "Aquesta organització ja té {{max}} administradors i gestors, incloses les invitacions pendents. Elimina'n un o cancel·la una invitació pendent per alliberar una plaça. Els visualitzadors no tenen límit.",
     "only_one_member": {
       "add_team_member": "Afegeix un membre a l'equip",
       "subtitle": "Afegeix membres de l'equip per col·laborar a la teva organització",
@@ -2080,9 +2060,9 @@
     "avatar_upload_success": "Avatar pujat",
     "click_or_drag_and_drop": "<click>Fes clic per pujar</click><formats>(Formats permesos: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Puja una imatge",
-    "csv_row_limit_exceeded_one": "Aquesta importació donaria un total de {{count}} fila, superant el límit del teu pla de {{max}}.",
-    "csv_row_limit_exceeded_many": "Aquesta importació donaria un total de {{count}} files, superant el límit del teu pla de {{max}}.",
-    "csv_row_limit_exceeded_other": "Aquesta importació donaria un total de {{count}} files, superant el límit del teu pla de {{max}}.",
+    "csv_row_limit_exceeded_one": "Aquesta importació donaria un total de {{count}} fila, superant el límit de {{max}} membres.",
+    "csv_row_limit_exceeded_many": "Aquesta importació donaria un total de {{count}} files, superant el límit de {{max}} membres.",
+    "csv_row_limit_exceeded_other": "Aquesta importació donaria un total de {{count}} files, superant el límit de {{max}} membres.",
     "drop_here": "Deixa-ho aquí",
     "error": {
       "invalid_image_type": "Aquest tipus de fitxer no és compatible. Puja una imatge .png o .jpg.",

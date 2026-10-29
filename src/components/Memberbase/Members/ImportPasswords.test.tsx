@@ -53,10 +53,6 @@ vi.mock('~components/Pricing/useBuyRoomAction', () => ({
   useBuyRoomAction: () => () => undefined,
 }))
 
-vi.mock('~components/Pricing/use-pricing-modal', () => ({
-  usePricingModal: () => ({ openModal: vi.fn(), closeModal: vi.fn(), modalType: null, modalData: null }),
-}))
-
 vi.mock('~components/Auth/Subscription', () => ({
   useSubscription: () => ({
     subscription: {

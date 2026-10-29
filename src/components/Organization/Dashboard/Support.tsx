@@ -21,12 +21,9 @@ import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
 import InputBasic from '~components/Form/InputBasic'
 import { IssueTypeSelector, SelectOptionType } from '~components/Layout/SaasSelector'
-import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
 import { useToast } from '~components/Toast'
-import { SubscriptionPermission } from '~constants'
 import { useAppEnv } from '~src/app-env'
 import { useSendSupportTicket } from '~src/queries/support'
-import { maskValue } from '~utils/strings'
 
 type FormData = {
   title: string
@@ -54,11 +51,7 @@ const OrganizationSupport = () => {
       </SectionHeader>
       <SimpleGrid columns={columns} gap={6}>
         <SupportTicketForm />
-        {PRIORITY_SUPPORT_PHONE && (
-          <SubscriptionLockedContent permissionType={SubscriptionPermission.PhoneSupport}>
-            {({ isLocked }) => <PhoneSupportCard isLocked={isLocked} />}
-          </SubscriptionLockedContent>
-        )}
+        {PRIORITY_SUPPORT_PHONE && <PhoneSupportCard />}
       </SimpleGrid>
     </DashboardBox>
   )
@@ -133,7 +126,7 @@ const SupportTicketForm = () => {
   )
 }
 
-const PhoneSupportCard = ({ isLocked }) => {
+const PhoneSupportCard = () => {
   const { t } = useTranslation()
   const { organization, isLoading } = useSaasAccount()
   const prioritySupportPhone = useAppEnv().PRIORITY_SUPPORT_PHONE
@@ -155,7 +148,7 @@ const PhoneSupportCard = ({ isLocked }) => {
       </Heading>
       <Text fontSize='sm' color='text.subtle' mb={6}>
         {t('organization_settings.phone_support.description', {
-          defaultValue: 'Available for Custom plan subscribers only.',
+          defaultValue: 'Call our team directly for priority help.',
         })}
       </Text>
 
@@ -183,7 +176,7 @@ const PhoneSupportCard = ({ isLocked }) => {
               })}
             </Text>
             <Text fontSize='lg' fontWeight='bold'>
-              {maskValue(prioritySupportPhone, isLocked)}
+              {prioritySupportPhone}
             </Text>
             <Text fontSize='sm' color='texts.dark'>
               {t('organization_settings.phone_support.priority_support_line_description', {
@@ -215,7 +208,7 @@ const PhoneSupportCard = ({ isLocked }) => {
               })}
             </Text>
             <Text fontFamily='mono' color='texts.subtle'>
-              {maskValue(organization.address ?? '', isLocked)}
+              {organization.address ?? ''}
             </Text>
             <Text fontSize='sm' color='texts.dark'>
               {t('organization_settings.phone_support.organization_id_description', {

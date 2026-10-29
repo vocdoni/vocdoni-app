@@ -9,6 +9,14 @@ export const TwoFACodePrice = {
 export const OAuthProviders = ['google'] as const
 export type OAuthProvider = (typeof OAuthProviders)[number]
 
+// Fixed limits every organization gets under pay-per-process. The question cap mirrors saas-backend's db/const.go,
+// the others its subscriptions/subscriptions.go.
+export const MaxWritersPerOrg = 5
+export const MaxDraftsPerOrg = 20
+export const MaxProcessDurationDays = 90
+export const MaxMembersPerOrg = 50_000
+export const MaxQuestionsPerProcess = 15
+
 export enum SubscriptionPermission {
   Name = 'name',
   StripeId = 'stripeId',

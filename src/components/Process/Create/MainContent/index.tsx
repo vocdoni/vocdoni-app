@@ -15,6 +15,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus } from 'react-icons/lu'
 import DeleteModal from '~components/Modal/DeleteModal'
+import { MaxQuestionsPerProcess } from '~constants'
 import { defaultQuestion } from '../common'
 import { QuestionForm } from './QuestionForm'
 
@@ -43,6 +44,7 @@ const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
 }
 
 export const Questions = () => {
+  const { t } = useTranslation()
   const { control } = useFormContext()
   const [isDeleteQuestionModalOpen, setDeleteQuestionModalOpen] = useState(false)
   const [pendingDeleteIndex, setPendingDeleteIndex] = useState<number | null>(null)
@@ -58,6 +60,7 @@ export const Questions = () => {
     })
   )
 
+  const canAddQuestion = fields.length < MaxQuestionsPerProcess
   const addQuestion = () => append(defaultQuestion)
 
   const removeQuestion = (index) => {
@@ -106,7 +109,7 @@ export const Questions = () => {
         removeQuestion={() => removeQuestion(pendingDeleteIndex)}
       />
 
-      <Button variant='outline' onClick={addQuestion}>
+      <Button variant='outline' onClick={addQuestion} disabled={!canAddQuestion}>
         <HStack gap={2}>
           <Icon as={LuPlus} />
           <Text as='span'>
@@ -114,6 +117,14 @@ export const Questions = () => {
           </Text>
         </HStack>
       </Button>
+      {!canAddQuestion && (
+        <Text fontSize='sm' color='texts.subtle'>
+          {t('process.create.question.limit_reached', {
+            defaultValue: 'A voting process can have at most {{ max }} questions.',
+            max: MaxQuestionsPerProcess,
+          })}
+        </Text>
+      )}
     </VStack>
   )
 }
