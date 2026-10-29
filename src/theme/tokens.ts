@@ -1,12 +1,13 @@
 import { defineTokens } from '@chakra-ui/react'
 import { colors } from './colors'
+import { FONT_STACKS } from './fonts'
 
 const sidebarWidth = '350px'
 
 const fonts = defineTokens.fonts({
-  body: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
-  heading: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
-  mono: { value: `'Menlo', monospace` },
+  body: { value: FONT_STACKS.body },
+  heading: { value: FONT_STACKS.heading },
+  mono: { value: FONT_STACKS.mono },
 })
 
 const fontWeights = defineTokens.fontWeights({
