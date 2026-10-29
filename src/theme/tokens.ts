@@ -1,19 +1,31 @@
 import { defineTokens } from '@chakra-ui/react'
 import { colors } from './colors'
+import { FONT_STACKS, type LoadedFontWeight } from './fonts'
 
 const sidebarWidth = '350px'
 
 const fonts = defineTokens.fonts({
-  body: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
-  heading: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
-  mono: { value: `'Menlo', monospace` },
+  body: { value: FONT_STACKS.body },
+  heading: { value: FONT_STACKS.heading },
+  mono: { value: FONT_STACKS.mono },
 })
 
+// Only loaded weights (see fonts.ts): a name with no file behind it makes the browser fake it.
+// Headings, `bold` and <b>/<strong> are 500, running text and labels 400; chakra's stock names
+// for weights that do not ship are pinned to the nearest loaded one.
+const weight = (value: LoadedFontWeight) => ({ value: String(value) })
+
 const fontWeights = defineTokens.fontWeights({
-  normal: { value: '300' },
-  medium: { value: '300' },
-  bold: { value: '400' },
-  bolder: { value: '500' },
+  thin: weight(300),
+  extralight: weight(300),
+  light: weight(300),
+  normal: weight(400),
+  medium: weight(400),
+  semibold: weight(500),
+  bold: weight(500),
+  bolder: weight(500),
+  extrabold: weight(500),
+  black: weight(500),
 })
 
 const radii = defineTokens.radii({

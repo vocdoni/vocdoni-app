@@ -23,7 +23,10 @@ export const NoOrganizations = () => {
             }
           >
             <Text>
-              <Trans i18nKey='new_organization.description1' components={{ span: <Text as='span' fontWeight='600' /> }}>
+              <Trans
+                i18nKey='new_organization.description1'
+                components={{ span: <Text as='span' fontWeight='bold' /> }}
+              >
                 Set up your{' '}
                 <Text as='span' fontWeight='bold'>
                   organization for free

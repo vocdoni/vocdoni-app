@@ -86,7 +86,7 @@ const NotIntegratorNotice = () => {
       >
         {hasMultipleOrgs && (
           <Stack gap={2} mt={4}>
-            <Text fontSize='sm' fontWeight={600}>
+            <Text fontSize='sm' fontWeight='bold'>
               {t('integrators.create_account.switch_instead', {
                 defaultValue: 'Or switch to an existing organization',
               })}
