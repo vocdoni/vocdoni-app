@@ -3,6 +3,7 @@ import { chartColors } from './charts'
 import { stateColors } from './states'
 import { statusColors } from './status'
 import { ballotColors } from './ballot'
+import { recipeColors } from './recipeColors'
 
 /**
  * Semantic tokens allow us to define tokens, like colors, based on their usage
@@ -12,6 +13,7 @@ import { ballotColors } from './ballot'
 export const colors = defineSemanticTokens.colors({
   ...stateColors,
   ...chartColors,
+  ...recipeColors,
   // Chakra's neutral `bg`, `fg` and `border` slots, written out so this file owns them; status slots stay Chakra's.
   bg: {
     DEFAULT: {

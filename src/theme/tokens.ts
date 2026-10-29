@@ -42,6 +42,11 @@ const letterSpacings = defineTokens.letterSpacings({
   },
 })
 
+const borderWidths = defineTokens.borderWidths({
+  hairline: { value: '1px' },
+  thick: { value: '2px' },
+})
+
 const radii = defineTokens.radii({
   none: { value: '0rem' },
   xs: { value: '4px' },
@@ -91,6 +96,7 @@ const zIndex = defineTokens.zIndex({
 })
 
 const tokens = defineTokens({
+  borderWidths,
   colors,
   radii,
   sizes,
