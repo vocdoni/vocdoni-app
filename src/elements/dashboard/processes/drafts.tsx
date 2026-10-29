@@ -15,7 +15,6 @@ import {
   Stack,
   Table,
   Text,
-  useBreakpointValue,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
@@ -36,6 +35,7 @@ import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
 import { useUrlPagination } from '~queries/members'
 import { Routes } from '~routes'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 
 type Draft = VotingProcessResponse
 
@@ -94,7 +94,7 @@ export const useDeleteDraft = () => {
 
 export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   const { t } = useTranslation()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
 
   if (isMobile) {
     return (

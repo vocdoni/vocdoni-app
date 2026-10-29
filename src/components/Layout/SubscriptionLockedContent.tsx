@@ -1,4 +1,4 @@
-import { Progress, Box, Button, HStack, Icon, Stack, TagLabel, TagRoot, Text, Wrap } from '@chakra-ui/react'
+import { Progress, Box, Button, Card, HStack, Icon, Stack, TagLabel, TagRoot, Text, Wrap } from '@chakra-ui/react'
 import { dotobject } from '~utils/objects'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -54,12 +54,12 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
   if (hasPermission) return children({ isLocked })
 
   return (
-    <Box borderWidth='1px' borderRadius='lg' display='grid'>
+    <Card.Root variant='frame' borderRadius='lg' display='grid'>
       <Box
         gridArea='1 / 1'
         pointerEvents='none'
         filter='blur(5px)'
-        borderRadius='lg'
+        borderRadius='inherit'
         overflow='hidden'
         aria-hidden={isLocked}
       >
@@ -73,7 +73,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
         justifyContent='center'
         flexDirection='column'
         gap={3}
-        borderRadius='lg'
+        borderRadius='inherit'
         p={4}
         zIndex='contents'
       >
@@ -121,6 +121,6 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
           </ReactRouterLink>
         </Button>
       </Box>
-    </Box>
+    </Card.Root>
   )
 }

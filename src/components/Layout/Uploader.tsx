@@ -5,6 +5,7 @@ import {
   Box,
   BoxProps,
   Button,
+  Card,
   Flex,
   FieldRoot as FormControl,
   FieldRootProps as FormControlProps,
@@ -295,16 +296,12 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
   }
 
   return (
-    <Flex
-      flexDirection='column'
+    <Card.Root
+      variant='dropzone'
       justifyContent='center'
       alignItems='center'
       gap={5}
-      p={10}
-      border='1px dashed'
-      borderColor={isDragActive ? 'border.emphasized' : 'border'}
-      cursor='pointer'
-      borderRadius={12}
+      data-dragging={isDragActive || undefined}
       {...getRootProps()}
     >
       <input {...getInputProps()} />
@@ -329,7 +326,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
           </Flex>
         )}
       </Box>
-    </Flex>
+    </Card.Root>
   )
 }
 

@@ -19,7 +19,6 @@ import {
   Table,
   Tag,
   Text,
-  useBreakpointValue,
   useDisclosure,
   Wrap,
   WrapItem,
@@ -57,6 +56,7 @@ import { QueryKeys } from '~src/queries/keys'
 import { Member, useDeleteMembers, usePaginatedMembers, useUrlPagination } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { statusPalette } from '~theme/status'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
@@ -931,7 +931,7 @@ const MembersTable = () => {
   const { isLoading, isFetching, allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } =
     useTable()
   const isLoadingOrImporting = isLoading || isFetching
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
 
   const openDeleteSelected = (member?: Member) => {
     setDeleteMode(DeleteModes.SELECTED)

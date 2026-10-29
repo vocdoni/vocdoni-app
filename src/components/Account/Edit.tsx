@@ -16,10 +16,10 @@ export const AccountEdit = () => {
 
   return (
     <Flex flexDirection='column' gap={6}>
-      <DashboardBox px={6} pb={6} pt={4}>
+      <DashboardBox size='md' pt={4}>
         <AccountForm profile={profile} />
       </DashboardBox>
-      <DashboardBox p={6}>
+      <DashboardBox size='md'>
         <Text size='2xl' fontWeight='bold'>
           {t('delete.delete_title', { defaultValue: 'Delete Account' })}
         </Text>

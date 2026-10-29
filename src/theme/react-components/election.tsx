@@ -5,6 +5,7 @@ import {
   type BoxProps,
   Button,
   type ButtonProps,
+  Card,
   Checkbox,
   CloseButton,
   Dialog,
@@ -452,14 +453,14 @@ export const electionComponents: ComponentsPartialDefinition = {
         >
           <Flex direction='column' gap={3}>
             {answersView.map((item, index) => (
-              <Flex
+              <Card.Root
                 key={`${item.question}-${index}`}
-                border='1px solid'
-                borderColor='border'
+                variant='section'
+                size='sm'
                 borderRadius='lg'
-                p={4}
+                flexDirection='row'
                 gap={3}
-                align='flex-start'
+                alignItems='flex-start'
               >
                 <Icon as={FaCircleCheck} mt={1} />
                 <Flex direction='column' gap={1} flex='1'>
@@ -476,7 +477,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                     </Flex>
                   )}
                 </Flex>
-              </Flex>
+              </Card.Root>
             ))}
           </Flex>
         </ConfirmDialogContent>

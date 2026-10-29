@@ -1,7 +1,7 @@
 import { cardAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe } from '@chakra-ui/react'
 
-const pricingCard = {
+const pricing = {
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -46,10 +46,10 @@ const pricingCard = {
   },
 }
 
-const customPricingCard = {
-  ...pricingCard,
+const featured = {
+  ...pricing,
   root: {
-    ...pricingCard.root,
+    ...pricing.root,
     bgColor: 'card.pricing.featured.bg',
     borderColor: 'card.pricing.featured.border',
     color: 'white',
@@ -140,9 +140,37 @@ export const Card = defineSlotRecipe({
       },
       // One entry of a list shown as cards, the small-screen form of a table.
       'list-item': listItem,
-      'pricing-card': pricingCard,
-      'custom-pricing-card': customPricingCard,
-      client: {
+      // A page whose whole content is one card, such as the sign-in forms.
+      standalone: {
+        root: {
+          bgColor: 'auth.card.bg',
+          borderRadius: 'sm',
+          _light: {
+            borderWidth: 'hairline',
+            borderColor: 'auth.card.border',
+          },
+        },
+      },
+      // A file drop target. A control rather than a card, so it keeps its own radius and padding; set
+      // `data-dragging` while a file is over it.
+      dropzone: {
+        root: {
+          borderWidth: 'hairline',
+          borderStyle: 'dashed',
+          borderColor: 'border',
+          borderRadius: 'xl',
+          p: 10,
+          cursor: 'pointer',
+          _dragging: {
+            borderColor: 'border.emphasized',
+          },
+        },
+      },
+      // A plan offer; `featured` is the highlighted one.
+      pricing,
+      featured,
+      // A customer logo with its name, shown on hover.
+      'logo-tile': {
         root: {
           border: 'none',
           backgroundColor: 'none',
@@ -185,7 +213,8 @@ export const Card = defineSlotRecipe({
           },
         },
       },
-      faqs: {
+      // Rows separated by a rule, not boxed: a question and its answer.
+      divided: {
         root: {
           borderRadius: 'none',
           borderBottomWidth: 'hairline',

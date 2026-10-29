@@ -11,7 +11,6 @@ import {
   Table,
   Text,
   type TextProps,
-  useBreakpointValue,
 } from '@chakra-ui/react'
 import {
   ElectionProvider,
@@ -34,6 +33,7 @@ import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
@@ -43,7 +43,7 @@ type ProcessesListProps = {
 
 const ProcessesTable = ({ processes }: ProcessesListProps) => {
   const { t } = useTranslation()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
 
   const rows =
     processes &&

@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Icon, Input, Text } from '@chakra-ui/react'
+import { Box, Button, Card, Flex, HStack, Icon, Input, Text } from '@chakra-ui/react'
 import { useCheckout } from '@stripe/react-stripe-js/checkout'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -92,7 +92,7 @@ export const PromotionCodeInput = () => {
       )}
     </Box>
   ) : (
-    <Box p={3} borderRadius='md' borderWidth={1}>
+    <Card.Root variant='section' p={3}>
       <Flex justify='space-between' align='center'>
         <Flex align='center' gap={2}>
           <Icon as={LuCheck} color='status.success.fg' />
@@ -107,6 +107,6 @@ export const PromotionCodeInput = () => {
           </HStack>
         </Button>
       </Flex>
-    </Box>
+    </Card.Root>
   )
 }
