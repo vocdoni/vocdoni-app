@@ -51,6 +51,15 @@ const Logo = ({ organization }: LogoProps) => {
           h={{ base: 8, lg: 10 }}
           maxW={{ base: '140px', lg: '180px' }}
           objectFit='contain'
+          // Many organisation logos are dark artwork on a transparent background and vanish on the
+          // dark header, so dark mode puts them on the same light tile the auth screens use.
+          _dark={{
+            bgColor: 'auth.logo.tile.bg',
+            border: '1px solid',
+            borderColor: 'auth.logo.tile.border',
+            borderRadius: 'md',
+            p: 1,
+          }}
           onError={() => setFailedSrc(src)}
         />
       ) : (
