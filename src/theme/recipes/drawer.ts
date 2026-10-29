@@ -15,5 +15,5 @@ export const Drawer = defineSlotRecipe({
       panel: { content: { bg: 'surface.overlay' } },
     },
   },
-  defaultVariants: { variant: 'sidebar' },
+  defaultVariants: { variant: 'panel' },
 })

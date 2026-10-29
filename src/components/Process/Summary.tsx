@@ -54,7 +54,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   // Once the deadline is reached, show the process status instead of a zeroed-out countdown.
   if (left <= 0) {
     return (
-      <StatusBadge tone='neutral' size='lg' alignSelf='end'>
+      <StatusBadge tone='neutral' alignSelf='end'>
         {statusLabel(t, status)}
       </StatusBadge>
     )
@@ -70,7 +70,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
       <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
         {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
       </Stat.Label>
-      <StatusBadge tone='success' size='lg'>
+      <StatusBadge tone='success'>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
       </StatusBadge>
     </Stat.Root>

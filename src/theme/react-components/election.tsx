@@ -80,12 +80,7 @@ export const electionComponents: ComponentsPartialDefinition = {
   }),
   ElectionStatusBadge: defineComponent<'ElectionStatusBadge', Omit<StatusBadgeProps, 'tone' | 'children'>>(
     ({ label, tone, ...props }) => (
-      <StatusBadge
-        tone={tone === 'success' || tone === 'warning' ? tone : 'error'}
-        size='md'
-        variant='surface'
-        {...props}
-      >
+      <StatusBadge tone={tone === 'success' || tone === 'warning' ? tone : 'error'} variant='surface' {...props}>
         {label}
       </StatusBadge>
     )

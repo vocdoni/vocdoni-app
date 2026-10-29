@@ -1,40 +1,18 @@
-import { Badge, type BadgeProps, Tag } from '@chakra-ui/react'
+import { Tag, type TagRootProps } from '@chakra-ui/react'
+import type { ReactNode } from 'react'
 import { statusPalette, type StatusTone } from '~theme/status'
 
-export type StatusBadgeSize = 'xs' | 'sm' | 'md' | 'lg'
-
-export type StatusBadgeProps = Omit<BadgeProps, 'colorPalette' | 'size' | 'variant'> & {
+export type StatusBadgeProps = Omit<TagRootProps, 'colorPalette' | 'size' | 'variant'> & {
   tone: StatusTone
-  size?: StatusBadgeSize
   variant?: 'subtle' | 'surface' | 'solid'
+  /** Trailing icon; kept outside the label, which clamps to one line. */
+  endElement?: ReactNode
 }
 
-/**
- * The status chip: its colour always comes from `statusPalette`. Sizes `sm` and `md` render a Tag and
- * `xs` and `lg` a Badge, since the two elements differ in weight and height.
- */
-export const StatusBadge = ({ tone, size = 'xs', variant, children, ...props }: StatusBadgeProps) => {
-  const colorPalette = statusPalette[tone]
-
-  if (size === 'sm' || size === 'md') {
-    return (
-      <Tag.Root colorPalette={colorPalette} size={size} variant={variant} {...props}>
-        <Tag.Label>{children}</Tag.Label>
-      </Tag.Root>
-    )
-  }
-
-  if (size === 'lg') {
-    return (
-      <Badge colorPalette={colorPalette} size='md' fontWeight='bold' fontSize='lg' variant={variant} {...props}>
-        {children}
-      </Badge>
-    )
-  }
-
-  return (
-    <Badge colorPalette={colorPalette} variant={variant} {...props}>
-      {children}
-    </Badge>
-  )
-}
+/** The one status chip, always small. Its colour comes from `statusPalette`. */
+export const StatusBadge = ({ tone, variant = 'subtle', endElement, children, ...props }: StatusBadgeProps) => (
+  <Tag.Root colorPalette={statusPalette[tone]} size='sm' variant={variant} {...props}>
+    <Tag.Label>{children}</Tag.Label>
+    {endElement && <Tag.EndElement>{endElement}</Tag.EndElement>}
+  </Tag.Root>
+)

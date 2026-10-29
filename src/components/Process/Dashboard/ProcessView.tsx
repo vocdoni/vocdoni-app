@@ -378,9 +378,8 @@ const ResultsStateBadge = (props: Omit<StatusBadgeProps, 'tone'>) => {
       tooltip = null
     }
     const badge = (
-      <StatusBadge tone={tone} {...props}>
+      <StatusBadge tone={tone} endElement={tooltip ? <Icon as={LuInfo} /> : undefined} {...props}>
         {text}
-        {tooltip && <Icon as={LuInfo} />}
       </StatusBadge>
     )
 
