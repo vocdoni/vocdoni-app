@@ -34,7 +34,7 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
                 <Text truncate>{title}</Text>
               </RouterAwareLink>
             </Link>
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text fontSize='sm' color='fg.muted'>
               {t('election.ends_on', {
                 defaultValue: 'Ends on {{date}}',
                 date: format(election.endDate, t('organization.date_format')),
@@ -102,7 +102,7 @@ export const ArchiveOrganizationView = ({
         </Avatar.Root>
         <Box>
           <Heading size='xl'>{name}</Heading>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text fontSize='sm' color='fg.muted'>
             {organization.address}
           </Text>
         </Box>
@@ -117,7 +117,7 @@ export const ArchiveOrganizationView = ({
       <VStack align='stretch' gap={3}>
         <Heading size='md'>{t('organization.elections_list', { defaultValue: 'Voting processes' })}</Heading>
         {elections.length === 0 && (
-          <Text color='texts.subtle'>
+          <Text color='fg.muted'>
             {t('organization.elections_list_empty.not_owner', {
               defaultValue: 'This organization has no voting processes yet.',
             })}

@@ -11,7 +11,7 @@ export const CreatedBy = (props: FlexProps) => {
         {organization?.logo?.default ? <AvatarImage src={organization.logo.default} /> : null}
         <AvatarFallback name={organization?.name?.default} />
       </AvatarRoot>
-      <LongOrganizationName size='sm' fontWeight='bold' color='texts.subtle' />
+      <LongOrganizationName size='sm' fontWeight='bold' color='fg.muted' />
     </Flex>
   )
 }

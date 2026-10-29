@@ -13,7 +13,7 @@ import {
 
 export const ElectionDescription = defineRecipe({
   base: {
-    color: 'texts.subtle',
+    color: 'fg.muted',
   },
 })
 
@@ -291,7 +291,7 @@ export const QuestionChoice = defineSlotRecipe({
           },
           '& [data-choice-control][data-control-type="checkbox"]': {
             borderWidth: '1px',
-            borderColor: 'table.border',
+            borderColor: 'border',
             boxShadow: 'sm',
           },
           '& [data-choice-control][data-control-type="radio"]': {
@@ -335,7 +335,7 @@ export const QuestionsConfirmation = defineSlotRecipe({
       },
     },
     description: {
-      color: 'texts.subtle',
+      color: 'fg.muted',
       fontSize: 'sm',
       whiteSpace: 'pre-line',
       mb: 4,
@@ -361,7 +361,7 @@ export const QuestionsEmpty = defineSlotRecipe({
     },
     description: {
       fontSize: 'sm',
-      color: 'texts.subtle',
+      color: 'fg.muted',
       textAlign: 'center',
     },
   },

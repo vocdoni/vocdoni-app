@@ -52,7 +52,7 @@ export const ProcessInfoCard = ({ label, description, ...props }: ProcessInfoCar
         {label}
       </Text>
       {typeof description === 'string' ? (
-        <Text color='texts.subtle' fontSize='sm'>
+        <Text color='fg.muted' fontSize='sm'>
           {description}
         </Text>
       ) : (
@@ -94,7 +94,7 @@ const ProcessInfoPanel = () => {
   return (
     <Flex
       border='1px solid'
-      borderColor='table.border'
+      borderColor='border'
       borderRadius='md'
       p={4}
       flexDirection='column'
@@ -116,7 +116,7 @@ const ProcessInfoPanel = () => {
       <ProcessInfoCard
         label={t('process.census')}
         description={
-          <Text color='texts.subtle' fontSize='sm'>
+          <Text color='fg.muted' fontSize='sm'>
             {t('process.people_in_census', { count: censusSize })}
           </Text>
         }
@@ -240,7 +240,7 @@ export const ProcessView = () => {
                     p={6}
                     mt={6}
                     border='1px solid'
-                    borderColor='table.border'
+                    borderColor='border'
                     borderRadius='md'
                     scrollMarginTop='70px'
                     // Ballot content must never appear in analytics/session replays,
@@ -259,7 +259,7 @@ export const ProcessView = () => {
                 </TabsContent>
                 {election && status !== 'CANCELED' && (
                   <TabsContent value='results' p={0}>
-                    <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+                    <Box p={6} border='1px solid' borderColor='border' borderRadius='md'>
                       <ElectionResults />
                     </Box>
                   </TabsContent>
@@ -336,7 +336,7 @@ export const SuccessVoteModal = () => {
                   id, and only while there is an id on screen to save: on a
                   return visit the receipt is already gone (the aside says so). */}
               {anonymous && voteId && (
-                <Text fontSize='sm' color='texts.subtle'>
+                <Text fontSize='sm' color='fg.muted'>
                   {t('vote.anonymous_receipt', {
                     defaultValue: 'Anonymous vote: save this receipt now, the platform cannot show it to you again.',
                   })}

@@ -76,7 +76,7 @@ export const PlanUpgradeModal = ({ open, onOpenChange, onClose, ...props }: Moda
             <Dialog.Title>
               <Trans i18nKey={titleI18nKey} defaults={titleDefault} />
             </Dialog.Title>
-            <Box fontSize='sm' color='texts.subtle'>
+            <Box fontSize='sm' color='fg.muted'>
               <Trans i18nKey={subtitleI18nKey} defaults={subtitleDefault} values={{ limit }} />
             </Box>
           </Dialog.Header>

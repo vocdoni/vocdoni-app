@@ -152,7 +152,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
           <Drawer.Header display='flex' justifyContent='space-between' alignItems='center'>
             <Box>
               <Heading size='md'>{t('members.table.add_to_group', { defaultValue: 'Add to Group' })}</Heading>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('members.table.add_to_group_description', {
                   defaultValue: 'Select a group to add the members to.',
                 })}
@@ -175,7 +175,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
               getOptionLabel={(option) => (
                 <Flex align='center' gap={2}>
                   {option.title}
-                  <Box fontSize='sm' color='texts.subtle'>
+                  <Box fontSize='sm' color='fg.muted'>
                     <Icon as={LuUsers} />
                     {option.membersCount}
                   </Box>
@@ -187,7 +187,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
             />
 
             {selectedGroup && (
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('members.table.add_to_group_confirmation', {
                   defaultValue: 'You will add {{count}} members to the "{{group}}" group.',
                   count: selectedRows.length,
@@ -291,7 +291,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
           <Drawer.Header display='flex' justifyContent='space-between' alignItems='center'>
             <Box>
               <Heading size='md'>{t('members.table.add_to_census', { defaultValue: 'Add to census' })}</Heading>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('members.table.add_to_census_description', {
                   defaultValue: 'Select an active voting process to add the members to its census.',
                 })}
@@ -322,7 +322,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
             />
 
             {selectedProcess && (
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('members.table.add_to_census_confirmation', {
                   defaultValue: 'You will add {{count}} member to the "{{process}}" process census.',
                   defaultValue_other: 'You will add {{count}} members to the "{{process}}" process census.',
@@ -412,7 +412,7 @@ const ColumnManager = () => {
           <Drawer.Content>
             <Drawer.Header>
               <Heading size='md'>{t('members.table.manage_columns', { defaultValue: 'Manage Columns' })}</Heading>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('members.table.manage_columns_description', {
                   defaultValue: 'Customize which columns are displayed in the members table.',
                 })}
@@ -572,7 +572,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
               <Heading size='md'>
                 {t('members.table.create_group_form_title', { defaultValue: 'Create New Group' })}
               </Heading>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('members.table.create_group_form_description', {
                   defaultValue:
                     'Create a new group from selected members. This will organize them for future voting processes.',
@@ -596,7 +596,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
                   />
                   <Box>
                     <Text mb={1}>{t('members.table.group_members', { defaultValue: 'Selected Members' })}</Text>
-                    <Box border='1px' borderColor='table.border' borderRadius='md' p={4}>
+                    <Box border='1px' borderColor='border' borderRadius='md' p={4}>
                       <Text fontSize='sm' mb={2}>
                         {t('members.table.group_members_count', {
                           defaultValue: '{{count}} members selected',
@@ -658,7 +658,7 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
     >
       {selectedRows.length > 0 ? (
         <>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text fontSize='sm' color='fg.muted'>
             <Trans
               i18nKey='members.table.selected'
               count={selectedRows.length}
@@ -681,7 +681,7 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
           </Button>
         </>
       ) : (
-        <Text fontSize='sm' color='texts.subtle'>
+        <Text fontSize='sm' color='fg.muted'>
           <Trans i18nKey='members.table.select_hint' defaults='Select members to perform bulk actions' />
         </Text>
       )}
@@ -746,7 +746,7 @@ const EmptyMembersMessage = () => {
 
   return (
     <Flex justify='center' align='center' height='150px'>
-      <Text color='texts.subtle' fontSize='sm'>
+      <Text color='fg.muted' fontSize='sm'>
         {debouncedSearch
           ? t('members.table.no_filter_results', {
               defaultValue: 'No members matching these attributes',
@@ -971,7 +971,7 @@ const MembersTable = () => {
   return (
     <>
       <ImportProgress />
-      <Box border='1px solid' borderRadius='sm' borderColor='table.border'>
+      <Box border='1px solid' borderRadius='sm' borderColor='border'>
         <Flex direction={{ base: 'column', lg: 'row' }} p={4} gap={2}>
           <Flex direction='column' flex={1} gap={2}>
             <MemberFilters onDelete={openDeleteAll} />

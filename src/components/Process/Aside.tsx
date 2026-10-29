@@ -28,14 +28,14 @@ const ProcessAside = () => {
   const votes = processVoteCount(results)
 
   return (
-    <Flex direction='column' border='1px solid' borderRadius='lg' borderColor='table.border' p={4} gap={2}>
+    <Flex direction='column' border='1px solid' borderRadius='lg' borderColor='border' p={4} gap={2}>
       <Flex
         flexDirection='column'
         gap={5}
         flexWrap='wrap'
         border='1px solid'
         borderRadius='lg'
-        borderColor='table.border'
+        borderColor='border'
         p={4}
       >
         <Text textAlign='center' fontSize='xl' textTransform='uppercase'>
@@ -106,7 +106,7 @@ const ProcessAside = () => {
               the id is actually gone: right after casting it is still on
               screen, in the Voted notice. */}
           {election.census?.anonymous && !voteId && (
-            <Text fontSize='xs' color='texts.subtle' textAlign='center'>
+            <Text fontSize='xs' color='fg.muted' textAlign='center'>
               {t('aside.anonymous_receipt_gone', {
                 defaultValue: 'Your receipt was shown when you voted and cannot be retrieved.',
               })}

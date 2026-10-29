@@ -113,7 +113,7 @@ const EditOrganization = () => {
             <Heading size='md'>
               {t('create_org.organization_details', { defaultValue: 'Organization details' })}
             </Heading>
-            <Text color='texts.subtle' fontSize='sm'>
+            <Text color='fg.muted' fontSize='sm'>
               {t('create_org.organization_details_description', {
                 defaultValue: "Manage your organization's profile and configuration settings.",
               })}
@@ -126,7 +126,7 @@ const EditOrganization = () => {
           <Flex align='center'>
             <HSeparator />
             <Text
-              color='texts.subtle'
+              color='fg.muted'
               fontWeight='bold'
               mx={3.5}
               whiteSpace='nowrap'

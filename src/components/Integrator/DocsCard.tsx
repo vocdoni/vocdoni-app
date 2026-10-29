@@ -24,12 +24,12 @@ export const DocsCard = ({ href, icon, title, description }: DocsCardProps) => (
   >
     <HStack justify='space-between'>
       <Icon as={icon} boxSize={6} color='blue.500' />
-      <Icon as={LuArrowUpRight} boxSize={4} color='texts.subtle' />
+      <Icon as={LuArrowUpRight} boxSize={4} color='fg.muted' />
     </HStack>
     <LinkOverlay href={href} target='_blank' rel='noopener noreferrer' fontWeight='bold' fontSize='md'>
       {title}
     </LinkOverlay>
-    <Text fontSize='sm' color='texts.subtle'>
+    <Text fontSize='sm' color='fg.muted'>
       {description}
     </Text>
   </DashboardBox>

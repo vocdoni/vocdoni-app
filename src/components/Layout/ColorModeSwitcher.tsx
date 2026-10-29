@@ -48,7 +48,7 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
       aria-label={t('color_mode_switcher', 'Color mode switcher')}
       {...props}
       border='1px solid'
-      borderColor='table.border'
+      borderColor='border'
       borderRadius='sm'
       p={1}
     >

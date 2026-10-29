@@ -45,7 +45,7 @@ import { resultsProgressRecipe } from '~theme/recipes/election'
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
 
 export const electionComponents: ComponentsPartialDefinition = {
-  HR: defineComponent<'HR', BoxProps>((props) => <Box as='hr' borderColor='table.border' {...props} />),
+  HR: defineComponent<'HR', BoxProps>((props) => <Box as='hr' borderColor='border' {...props} />),
   ElectionTitle: defineComponent<'ElectionTitle', HeadingProps>(({ title, ...props }) => {
     const recipe = useRecipe({ key: 'ElectionTitle' })
     const styles = recipe()
@@ -259,7 +259,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                 w='18px'
                 h='18px'
                 borderWidth='2px'
-                borderColor={selected ? 'gray.700' : 'table.border'}
+                borderColor={selected ? 'gray.700' : 'border'}
                 borderRadius='full'
                 bg='white'
                 _dark={{ bg: 'gray.800', borderColor: selected ? 'gray.100' : 'gray.500' }}
@@ -428,7 +428,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                 <Flex
                   key={`${item.question}-${index}`}
                   border='1px solid'
-                  borderColor='border.dashboard'
+                  borderColor='border'
                   borderRadius='lg'
                   p={4}
                   gap={3}
@@ -438,11 +438,11 @@ export const electionComponents: ComponentsPartialDefinition = {
                   <Flex direction='column' gap={1} flex='1'>
                     <Text fontWeight='extrabold'>{item.question}</Text>
                     {item.answers.length <= 1 ? (
-                      <Text color='texts.subtle'>{item.answers[0] || '-'}</Text>
+                      <Text color='fg.muted'>{item.answers[0] || '-'}</Text>
                     ) : (
                       <Flex direction='column' gap={1}>
                         {item.answers.map((answer, answerIndex) => (
-                          <Text key={`${item.question}-${index}-${answerIndex}`} color='texts.subtle'>
+                          <Text key={`${item.question}-${index}-${answerIndex}`} color='fg.muted'>
                             {answer}
                           </Text>
                         ))}
