@@ -1,17 +1,4 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  List,
-  Progress,
-  Separator,
-  SimpleGrid,
-  Stat,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Button, Card, Flex, Heading, List, Progress, Separator, SimpleGrid, Stat, Text } from '@chakra-ui/react'
 import { ElectionResults, getElectionTitle, useElection } from '@vocdoni/react-components'
 import { hasResults, isSecretUntilTheEnd, isUpcoming, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -19,6 +6,7 @@ import { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiBarChartBoxLine, RiLock2Line, RiSearchEyeLine, RiShieldCheckLine } from 'react-icons/ri'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { useCensusSize } from '~queries/census'
 import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
@@ -66,9 +54,9 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   // Once the deadline is reached, show the process status instead of a zeroed-out countdown.
   if (left <= 0) {
     return (
-      <Badge colorPalette={statusPalette.neutral} size='md' fontWeight='bold' fontSize='lg' alignSelf='end'>
+      <StatusBadge tone='neutral' size='lg' alignSelf='end'>
         {statusLabel(t, status)}
-      </Badge>
+      </StatusBadge>
     )
   }
 
@@ -82,9 +70,9 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
       <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
         {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
       </Stat.Label>
-      <Badge colorPalette={statusPalette.success} size='md' fontWeight='bold' fontSize='lg'>
+      <StatusBadge tone='success' size='lg'>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
-      </Badge>
+      </StatusBadge>
     </Stat.Root>
   )
 }
