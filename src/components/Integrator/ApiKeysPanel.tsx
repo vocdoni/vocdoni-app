@@ -25,7 +25,7 @@ import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
-import { statusPalette, type StatusTone } from '~theme/status'
+import type { StatusTone } from '~theme/status'
 import { CreateApiKeyButton } from './CreateApiKeyModal'
 
 const formatDate = (value?: string) => {
