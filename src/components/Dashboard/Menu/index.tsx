@@ -111,7 +111,7 @@ const SidebarTutorial = () => {
       <Text fontSize={'sm'} fontWeight={'bold'}>
         {t('need_help.title', { defaultValue: 'First steps' })}
       </Text>
-      <Text fontSize={'xs'} lineHeight={'16px'} color='dashboard.schedule_call.description'>
+      <Text fontSize={'xs'} lineHeight={'16px'}>
         {t('need_help.description', {
           defaultValue: 'Do you need some help with your first voting process? Watch this tutorial or schedule a call.',
         })}

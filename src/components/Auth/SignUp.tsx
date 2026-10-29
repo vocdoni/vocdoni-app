@@ -265,7 +265,6 @@ const SignUp = ({
       <GoogleAuth />
 
       <Text
-        color='account.description'
         display={'flex'}
         justifyContent='center'
         alignItems='start'
