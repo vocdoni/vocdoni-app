@@ -1,10 +1,10 @@
-import { Badge, TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, Outlet, useLocation, useNavigate } from 'react-router'
+import { generatePath } from 'react-router'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
+import { RoutedTabs, type RoutedTab } from '~components/ui/RoutedTabs'
 import { Routes } from '~routes'
 import { usePaginatedMembers } from '~src/queries/members'
 import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
@@ -20,17 +20,9 @@ export type MemberbaseTabsContext = {
 
 export type JobId = string | null
 
-type MenuItem = {
-  label: string
-  route: string
-  count?: number
-}
-
 export const MemberbaseTabs = () => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { currentAddress } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
   const accountId = currentAddress || localStorage.getItem(LocalStorageKeys.SignerAddress)
   const [jobId, setJobIdState] = useState<JobId>(() => getStoredImportJobId(accountId))
   const [search, setSearch] = useState('')
@@ -38,7 +30,7 @@ export const MemberbaseTabs = () => {
   // Unfiltered total: this query never carries the search term, so the badge keeps showing the
   // whole memberbase while the table is filtered.
   const { data: allMembersData } = usePaginatedMembers({ showAll: true })
-  const menuItems: MenuItem[] = [
+  const menuItems: RoutedTab[] = [
     {
       label: t('memberbase.members.title', { defaultValue: 'Members' }),
       route: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
@@ -46,9 +38,6 @@ export const MemberbaseTabs = () => {
     },
     { label: t('memberbase.groups.title', { defaultValue: 'Groups' }), route: Routes.dashboard.memberbase.groups },
   ]
-  const currentTabIndex = menuItems.findIndex((item) => location.pathname.endsWith(item.route))
-  const activeTabValue = currentTabIndex === -1 ? menuItems[0]?.route : menuItems[currentTabIndex]?.route
-
   const submitSearch = () => {
     setDebouncedSearch(search)
   }
@@ -82,34 +71,10 @@ export const MemberbaseTabs = () => {
           defaultValue: "Manage your organization's members and create groups",
         })}
       </PageSubtitle>
-      <TabsRoot
-        value={activeTabValue}
-        onValueChange={({ value }) => {
-          const item = menuItems.find((entry) => entry.route === value)
-          if (item) navigate(item.route)
-        }}
-        lazyMount
-      >
-        <TabsList mb='6'>
-          {menuItems.map((item) => (
-            <TabsTrigger key={item.route} value={item.route}>
-              {item.label}
-              {item.count !== undefined && (
-                <Badge
-                  colorPalette='gray'
-                  variant='subtle'
-                  borderRadius='full'
-                  px='1.5'
-                  fontVariantNumeric='tabular-nums'
-                >
-                  {item.count.toLocaleString(i18n.resolvedLanguage)}
-                </Badge>
-              )}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <Outlet context={{ setJobId, jobId, search, setSearch, debouncedSearch, submitSearch }} />
-      </TabsRoot>
+      <RoutedTabs
+        tabs={menuItems}
+        outletContext={{ setJobId, jobId, search, setSearch, debouncedSearch, submitSearch }}
+      />
     </>
   )
 }
