@@ -84,12 +84,13 @@ const sizes = defineTokens.sizes({
     header: { value: '47px' },
     panel: { value: '350px' },
   },
-  // The four icon sizes (inline, control, feature, empty state), in rem like spacing 4/5/6/12.
+  // The four icon sizes (inline, control, feature, empty state). sm–lg are Chakra's Icon sizes, so
+  // `boxSize='icon.md'` and `<Icon size='md'>` cannot drift apart.
   icon: {
-    sm: { value: '1rem' },
-    md: { value: '1.25rem' },
-    lg: { value: '1.5rem' },
-    xl: { value: '3rem' },
+    sm: { value: '{sizes.4}' },
+    md: { value: '{sizes.5}' },
+    lg: { value: '{sizes.6}' },
+    xl: { value: '{sizes.12}' },
   },
   // The three page widths, read through ui/PageContainer: the public shell, then two narrower columns.
   content: {
