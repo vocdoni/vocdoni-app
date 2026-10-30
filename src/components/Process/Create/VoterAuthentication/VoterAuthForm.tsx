@@ -129,7 +129,7 @@ const describeFields = (t: TFunction, language: string, { credentials, codeMetho
 // Outlined option cards, selected by a single solid border rather than the
 // recipe's extra ring, so a selection reads without shouting.
 const optionCardStyles = {
-  _checked: { boxShadow: 'none', borderColor: 'colorPalette.solid' },
+  _checked: { boxShadow: '[none]', borderColor: 'colorPalette.solid' },
   _hover: { borderColor: 'border.emphasized' },
 } as const
 
@@ -249,14 +249,14 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
   return (
     <>
       <Dialog.Header
-        px={6}
-        pt={5}
-        pb={4}
-        pe={12}
-        borderBottomWidth='1px'
+        px='6'
+        pt='5'
+        pb='4'
+        pe='12'
+        borderBottomWidth='hairline'
         flexDirection='column'
         alignItems='start'
-        gap={0.5}
+        gap='0.5'
       >
         <Dialog.Title>{t('voter_auth.modal.title', { defaultValue: 'How will voters sign in?' })}</Dialog.Title>
         {groupTitle && (
@@ -269,14 +269,14 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
           </Dialog.Description>
         )}
       </Dialog.Header>
-      <Dialog.Body p={0}>
+      <Dialog.Body p='[0]'>
         <Grid templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 20rem', lg: 'minmax(0, 1fr) 22rem' }}>
-          <Stack px={6} py={5} gap={6}>
+          <Stack px='6' py='5' gap='6'>
             <Box role='group' aria-labelledby='voter-auth-details-title' aria-describedby='voter-auth-details-help'>
               <Text id='voter-auth-details-title' textStyle='body-sm' fontWeight='semibold'>
                 {t('voter_auth.details.heading', { defaultValue: '1. What will voters type?' })}
               </Text>
-              <Text id='voter-auth-details-help' textStyle='body-sm' color='fg.muted' mt={1} mb={3}>
+              <Text id='voter-auth-details-help' textStyle='body-sm' color='fg.muted' mt='1' mb='3'>
                 {t('voter_auth.details.description', {
                   defaultValue:
                     'Pick up to {{max}} details from your member list. What voters type must match it exactly.',
@@ -295,7 +295,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                 control={control}
                 render={({ field }) => (
                   <CheckboxGroup value={field.value} onValueChange={(value) => field.onChange(value)}>
-                    <Flex wrap='wrap' gap={2}>
+                    <Flex wrap='wrap' gap='2'>
                       {[...AUTH_FIELDS, PASSWORD_CREDENTIAL].map((id: VoterAuthField) => {
                         const checked = field.value.includes(id)
                         // The password is not counted toward the limit (see countedCredentials).
@@ -310,7 +310,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                             {...optionCardStyles}
                           >
                             <CheckboxCard.HiddenInput />
-                            <CheckboxCard.Control px={3} py={2} gap={2} alignItems='center'>
+                            <CheckboxCard.Control px='3' py='2' gap='2' alignItems='center'>
                               <CheckboxCard.Indicator />
                               <CheckboxCard.Label fontSize='sm'>{getAuthFieldLabel(t, id)}</CheckboxCard.Label>
                             </CheckboxCard.Control>
@@ -339,19 +339,19 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                     <RadioCard.Label fontSize='sm'>
                       {t('voter_auth.code.heading', { defaultValue: '2. Also send a one-time code?' })}
                     </RadioCard.Label>
-                    <Text id='voter-auth-code-help' textStyle='body-sm' color='fg.muted' mt={1} mb={3}>
+                    <Text id='voter-auth-code-help' textStyle='body-sm' color='fg.muted' mt='1' mb='3'>
                       {t('voter_auth.code.description', {
                         defaultValue:
                           "Before voting, we send a 6-digit code to the voter's email or phone. It proves they own it, so nobody can vote with someone else's details.",
                       })}
                     </Text>
-                    <SimpleGrid columns={{ base: 1, sm: 2 }} gap={2}>
+                    <SimpleGrid columns={{ base: 1, sm: 2 }} gap='2'>
                       {codeMethods.map((value) => (
                         <RadioCard.Item key={value} value={value} {...optionCardStyles}>
                           <RadioCard.ItemHiddenInput />
-                          <RadioCard.ItemControl px={3} py={2.5} gap={2.5}>
-                            <RadioCard.ItemIndicator mt={0.5} />
-                            <RadioCard.ItemContent gap={0.5}>
+                          <RadioCard.ItemControl px='3' py='2.5' gap='2.5'>
+                            <RadioCard.ItemIndicator mt='0.5' />
+                            <RadioCard.ItemContent gap='0.5'>
                               <RadioCard.ItemText fontSize='sm' fontWeight='medium'>
                                 {getCodeMethodLabel(t, value)}
                               </RadioCard.ItemText>
@@ -366,7 +366,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                   </RadioCard.Root>
                 )}
               />
-              <Box mt={4}>
+              <Box mt='4'>
                 <ProtectionMeter credentials={credentials} codeMethod={codeMethod} />
               </Box>
             </Box>
@@ -376,13 +376,13 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
               hairline, is what makes it read as a separate zone. In dark mode the
               page colour sits one step below the dialog (bg.muted would be brighter). */}
           <Box
-            px={6}
-            pt={{ base: 3, md: 5 }}
-            pb={{ base: 4, md: 6 }}
+            px='6'
+            pt={{ base: '3', md: '5' }}
+            pb={{ base: '4', md: '6' }}
             bg='surface.inset'
             borderColor='border'
-            borderStartWidth={{ md: '1px' }}
-            borderTopWidth={{ base: '1px', md: 0 }}
+            borderStartWidth={{ md: 'hairline' }}
+            borderTopWidth={{ base: 'hairline', md: '[0]' }}
           >
             {/* On phones the preview would sit two screens below the controls,
                 so it folds away behind a toggle there. */}
@@ -395,7 +395,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
               aria-expanded={previewOpen}
               onClick={() => setPreviewOpen((open) => !open)}
             >
-              <HStack gap={1.5}>
+              <HStack gap='1.5'>
                 <Icon as={ViewIcon} boxSize='icon.sm' />
                 {t('voter_auth.preview.title', { defaultValue: 'What voters will see' })}
               </HStack>
@@ -403,9 +403,9 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             </Button>
             <Box
               display={{ base: previewOpen ? 'block' : 'none', md: 'block' }}
-              pt={{ base: 3, md: 0 }}
+              pt={{ base: '3', md: '[0]' }}
               position={{ md: 'sticky' }}
-              top={5}
+              top='5'
             >
               <VoterSignInPreview credentials={credentials} codeMethod={codeMethod} />
             </Box>
@@ -413,14 +413,14 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
         </Grid>
       </Dialog.Body>
       <Dialog.Footer
-        px={6}
-        py={3}
-        borderTopWidth='1px'
+        px='6'
+        py='3'
+        borderTopWidth='hairline'
         flexDirection={{ base: 'column', md: 'row' }}
         alignItems={{ base: 'stretch', md: 'center' }}
-        gap={3}
+        gap='3'
       >
-        <Box id='voter-auth-status' flex='1' minW={0}>
+        <Box id='voter-auth-status' flex='1' minW='[0]'>
           <MemberCheck
             ref={statusRef}
             status={censusCheck.status}
@@ -438,7 +438,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             onRetry={() => censusCheck.retry()}
           />
         </Box>
-        <HStack justify='end' gap={2} flexShrink={0}>
+        <HStack justify='end' gap='2' flexShrink={0}>
           <Button variant='ghost' onClick={onCancel}>
             {t('actions.cancel', { defaultValue: 'Cancel' })}
           </Button>

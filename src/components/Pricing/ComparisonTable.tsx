@@ -52,7 +52,7 @@ const ComparisonSectionTable = ({ titleKey, plans, category, specs }: Comparison
       <Table.Header id='section-header'>
         <Table.Row>
           <Table.ColumnHeader colSpan={4}>
-            <Flex alignItems='center' gap={2}>
+            <Flex alignItems='center' gap='2'>
               <Icon as={SubcategoryIcon[category]} />
               <Text as={'span'} textTransform='uppercase' textStyle='body-sm'>
                 <Trans i18nKey={titleKey} />
@@ -72,7 +72,7 @@ const ComparisonSectionTable = ({ titleKey, plans, category, specs }: Comparison
                   <Tooltip.Root positioning={{ placement: 'top' }}>
                     <Tooltip.Trigger asChild>
                       <chakra.span verticalAlign='middle'>
-                        <Icon as={InfoIcon} ml={1} />
+                        <Icon as={InfoIcon} ml='1' />
                       </chakra.span>
                     </Tooltip.Trigger>
                     <Tooltip.Positioner>
@@ -102,7 +102,7 @@ const ComparisonSectionTable = ({ titleKey, plans, category, specs }: Comparison
                 }
 
                 return (
-                  <Table.Cell key={plan.id} textAlign='center' w={40}>
+                  <Table.Cell key={plan.id} textAlign='center' w='40'>
                     <Flex alignItems='center' justifyContent='center'>
                       {cell}
                     </Flex>
@@ -131,7 +131,7 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
   return (
     <Flex ref={ref} justifyContent='center' w='full' display='block'>
       <Table.ScrollArea>
-        <Table.Root borderWidth={1} variant='outline'>
+        <Table.Root borderWidth='hairline' variant='outline'>
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeader>
@@ -165,7 +165,7 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
           ))}
         </Table.Root>
       </Table.ScrollArea>
-      <Separator mt={6} mb={1} />
+      <Separator mt='6' mb='1' />
       <Flex textAlign='left' color='fg.muted' flexDirection='column'>
         <Text textStyle='caption'>
           <Trans i18nKey='pricing.comparison_table.footnote_1'>

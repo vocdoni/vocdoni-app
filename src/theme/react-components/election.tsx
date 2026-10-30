@@ -48,10 +48,14 @@ import { ElectionTitle as electionTitleRecipe, resultsProgressRecipe } from '~th
 
 type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
 
+// A literal style prop next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
+const hrStyle: BoxProps = { as: 'hr', borderColor: 'border' }
+const questionsErrorStyle: TextProps = { color: 'ballot.error' }
+
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
 
 export const electionComponents: ComponentsPartialDefinition = {
-  HR: defineComponent<'HR', BoxProps>((props) => <Box as='hr' borderColor='border' {...props} />),
+  HR: defineComponent<'HR', BoxProps>((props) => <Box {...hrStyle} {...(props as BoxProps)} />),
   ElectionTitle: defineComponent<'ElectionTitle', Omit<HeadingProps, 'size'> & ElectionTitleVariantProps>(
     ({ title, size, ...props }) => {
       const recipe = useRecipe({ recipe: electionTitleRecipe })
@@ -284,7 +288,7 @@ export const electionComponents: ComponentsPartialDefinition = {
               <Box
                 w='4.5'
                 h='4.5'
-                borderWidth='2px'
+                borderWidth='[2px]'
                 borderColor={selected ? 'colorPalette.solid' : 'ballot.choice.ring'}
                 borderRadius='full'
                 bg='ballot.choice.bg'
@@ -354,10 +358,10 @@ export const electionComponents: ComponentsPartialDefinition = {
       const select = (
         <NativeSelect.Root
           size='sm'
-          width='auto'
+          width='[auto]'
           disabled={disabled}
           alignSelf={layout === 'grid' ? 'start' : undefined}
-          mt={layout === 'grid' ? 2 : undefined}
+          mt={layout === 'grid' ? '2' : undefined}
           data-choice-control={layout === 'list' ? dataAttrs?.['data-choice-control'] : undefined}
         >
           <NativeSelect.Field
@@ -441,7 +445,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    <Text color='ballot.error' {...props}>
+    <Text {...questionsErrorStyle} {...(props as TextProps)}>
       {error}
     </Text>
   )),
@@ -470,23 +474,23 @@ export const electionComponents: ComponentsPartialDefinition = {
           onCancel={onCancel}
           onConfirm={onConfirm}
         >
-          <Flex direction='column' gap={3}>
+          <Flex direction='column' gap='3'>
             {answersView.map((item, index) => (
               <Card.Root
                 key={`${item.question}-${index}`}
                 variant='section'
                 size='sm'
                 flexDirection='row'
-                gap={3}
+                gap='3'
                 alignItems='flex-start'
               >
-                <Icon as={SuccessIcon} mt={1} />
-                <Flex direction='column' gap={1} flex='1'>
+                <Icon as={SuccessIcon} mt='1' />
+                <Flex direction='column' gap='1' flex='1'>
                   <Text fontWeight='extrabold'>{item.question}</Text>
                   {item.answers.length <= 1 ? (
                     <Text color='fg.muted'>{item.answers[0] || '-'}</Text>
                   ) : (
-                    <Flex direction='column' gap={1}>
+                    <Flex direction='column' gap='1'>
                       {item.answers.map((answer, answerIndex) => (
                         <Text key={`${item.question}-${index}-${answerIndex}`} color='fg.muted'>
                           {answer}
@@ -553,7 +557,7 @@ export const electionComponents: ComponentsPartialDefinition = {
       >
         <Alert.Indicator css={styles.icon} />
         <Alert.Title css={styles.title}>{t('vote.voted_title')}</Alert.Title>
-        <Alert.Description css={styles.description} display='flex' flexDirection='column' gap={1}>
+        <Alert.Description css={styles.description} display='flex' flexDirection='column' gap='1'>
           {votes.map((vote, index) => {
             const line =
               votes.length === 1 || !vote.questionTitle
@@ -630,7 +634,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                         </Progress.Root>
                       </>
                     ) : null}
-                    {choice.description ? <Box mt={2}>{markdown(choice.description)}</Box> : null}
+                    {choice.description ? <Box mt='2'>{markdown(choice.description)}</Box> : null}
                   </Box>
                 )
               })}
@@ -641,7 +645,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   ElectionActions: defineComponent<'ElectionActions', FlexProps>(({ actions, ...props }) => (
-    <Flex gap={2} {...props}>
+    <Flex gap='2' {...props}>
       {actions}
     </Flex>
   )),

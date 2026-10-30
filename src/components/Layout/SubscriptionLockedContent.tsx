@@ -54,7 +54,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
         gridArea='1 / 1'
         pointerEvents='none'
         filter='blur(5px)'
-        borderRadius='inherit'
+        borderRadius='[inherit]'
         overflow='hidden'
         aria-hidden={isLocked}
       >
@@ -67,12 +67,12 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
         alignItems='center'
         justifyContent='center'
         flexDirection='column'
-        gap={3}
-        borderRadius='inherit'
-        p={4}
+        gap='3'
+        borderRadius='[inherit]'
+        p='4'
         zIndex='contents'
       >
-        <Icon as={LockIcon} boxSize='icon.lg' mb={1} />
+        <Icon as={LockIcon} boxSize='icon.lg' mb='1' />
         <Text fontWeight='bold' textAlign='center'>
           {t(`subscription.locked_content.title`, {
             defaultValue: 'Your current {{ plan }} plan does not include {{ permissionName }}',
@@ -88,11 +88,11 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
         </Text>
 
         {plansWithFeature.length > 0 && (
-          <Stack gap={2} align='center' mt={2}>
+          <Stack gap='2' align='center' mt='2'>
             <Text textStyle='body-sm' color='fg.muted'>
               {t('subscription.locked_content.available_in', { defaultValue: 'Available in:' })}
             </Text>
-            <Wrap justify='center' gap={2}>
+            <Wrap justify='center' gap='2'>
               {plansWithFeature.map((p) => (
                 <TagRoot key={p.id} size='md' variant='subtle' colorPalette='green'>
                   <TagLabel>{translations[p.id]?.title ?? p.name ?? p.id}</TagLabel>
@@ -104,7 +104,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
 
         <Button asChild>
           <ReactRouterLink to={generatePath(Routes.dashboard.settings.subscription)}>
-            <HStack gap={2}>
+            <HStack gap='2'>
               <Icon as={SparklesIcon} />
               <Text as='span'>
                 {t(`subscription.locked_content.unlock`, {

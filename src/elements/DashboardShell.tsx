@@ -53,23 +53,23 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
             menu={menu}
           />
 
-          <Flex flex='1 1 0' flexDirection='column' minW={0}>
+          <Flex flex='1 1 0' flexDirection='column' minW='[0]'>
             <AnnouncementBanner />
             <Flex
               alignItems='center'
               justifyContent='space-between'
-              px={4}
-              pt={3}
-              pb={2}
+              px='4'
+              pt='3'
+              pb='2'
               display={{ base: 'flex', md: 'none' }}
-              gap={2}
+              gap='2'
             >
               <IconButton aria-label={t('menu.open')} colorPalette='gray' variant='subtle' size='xs' onClick={onOpen}>
                 <SidebarIcon />
               </IconButton>
               {/* Slot for a page's top-right action (e.g. the integrator "Upgrade plan" button),
                   portaled here so it aligns with the sidebar toggle on mobile. */}
-              <Flex ref={isMobile ? setHeaderActionsNode : undefined} alignItems='center' gap={2} />
+              <Flex ref={isMobile ? setHeaderActionsNode : undefined} alignItems='center' gap='2' />
             </Flex>
             <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
           </Flex>

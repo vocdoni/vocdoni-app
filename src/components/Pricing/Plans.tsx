@@ -335,7 +335,7 @@ export const SubscriptionPlans = () => {
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Flex flexDir='column' gap={4}>
+        <Flex flexDir='column' gap='4'>
           {isLoading && <ListLoader />}
           <ListStateAlert
             show={hasError}
@@ -369,10 +369,10 @@ export const SubscriptionPlans = () => {
                   <Tag.Root
                     variant='subtle'
                     colorPalette={statusPalette.success}
-                    ml={2}
+                    ml='2'
                     fontSize='xs'
                     fontWeight='extrabold'
-                    py={0.5}
+                    py='0.5'
                   >
                     <Tag.Label>Save 40%</Tag.Label>
                   </Tag.Root>
@@ -380,7 +380,7 @@ export const SubscriptionPlans = () => {
               </Tabs.Trigger>
             </Tabs.List>
           </Tabs.Root>
-          <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={6}>
+          <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap='6'>
             {cards.map((card) => (
               <PricingCard key={card.plan.id} {...card} />
             ))}

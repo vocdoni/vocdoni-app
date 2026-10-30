@@ -24,12 +24,12 @@ const OrganizationHeader = () => {
     <Flex
       flexDirection={{ base: 'column', lg: 'row' }}
       alignItems={{ base: 'center', lg: 'start' }}
-      gap={{ base: 2, lg: 8 }}
-      mb={10}
-      pt={10}
+      gap={{ base: '2', lg: '8' }}
+      mb='10'
+      pt='10'
     >
-      <Box flex='1 1 10%' minW={40}>
-        <AspectRatio ratio={1.25 / 1} maxW={56}>
+      <Box flex='1 1 10%' minW='40'>
+        <AspectRatio ratio={1.25 / 1} maxW='56'>
           <Avatar
             mx='auto'
             fallbackSrc={fallback}
@@ -45,8 +45,8 @@ const OrganizationHeader = () => {
         justifyContent='space-between'
         alignItems={{ base: 'center', lg: 'start' }}
         flexDirection={{ base: 'column', lg: 'row' }}
-        gap={{ base: 2 }}
-        minW={0}
+        gap={{ base: '2' }}
+        minW='[0]'
         maxW='full'
       >
         <Flex
@@ -54,7 +54,7 @@ const OrganizationHeader = () => {
           direction='column'
           justifyContent={{ lg: 'space-between' }}
           alignItems={{ base: 'center', lg: 'start' }}
-          gap={2}
+          gap='2'
           order={{ base: 2, lg: 0 }}
         >
           <Flex

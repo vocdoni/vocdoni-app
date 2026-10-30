@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Icon, Link, Text } from '@chakra-ui/react'
+import { Box, Button, HStack, Icon, Link, type StackProps, Text } from '@chakra-ui/react'
 import { forwardRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ErrorIcon, ExternalLinkIcon, SuccessIcon, WarningIcon } from '~theme/icons'
@@ -25,12 +25,12 @@ type MemberCheckProps = {
   onRetry: () => void
 }
 
-type LineProps = { icon: ReactNode; busy?: boolean; color?: string; children: ReactNode }
+type LineProps = { icon: ReactNode; busy?: boolean; color?: StackProps['color']; children: ReactNode }
 
 // While a re-check runs, the spinner takes the icon's place.
 const Line = ({ icon, busy, color, children }: LineProps) => (
-  <HStack gap={2} align='start' fontSize='sm' color={color}>
-    <Box as='span' flexShrink={0} mt={0.5} display='inline-flex'>
+  <HStack gap='2' align='start' fontSize='sm' color={color}>
+    <Box as='span' flexShrink={0} mt='0.5' display='inline-flex'>
       {busy ? <InlineLoader /> : icon}
     </Box>
     <Box>{children}</Box>
@@ -170,8 +170,8 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
         aria-live='polite'
         aria-busy={status === 'checking'}
         outline='none'
-        opacity={rechecking ? 'disabled' : 1}
-        transition='opacity {durations.fast}'
+        opacity={rechecking ? 'inactive' : '[1]'}
+        transition='[opacity {durations.fast}]'
         data-status={status}
       >
         {content}

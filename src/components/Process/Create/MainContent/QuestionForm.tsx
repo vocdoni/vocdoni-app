@@ -81,11 +81,11 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
         <Flex
           direction={{ base: 'column', md: 'row' }}
           align={{ base: 'stretch', md: 'flex-start' }}
-          gap={{ base: 2, md: 4 }}
+          gap={{ base: '2', md: '4' }}
         >
           <HStack
             order={{ base: 0, md: 1 }}
-            gap={2}
+            gap='2'
             flexShrink={0}
             justifyContent={{ base: 'space-between', md: 'flex-end' }}
           >
@@ -102,7 +102,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
             )}
           </HStack>
 
-          <HStack order={{ base: 1, md: 0 }} flex='1' minW={0} align='stretch' gap={4}>
+          <HStack order={{ base: 1, md: 0 }} flex='1' minW='[0]' align='stretch' gap='4'>
             {/* Drag handle */}
             {questions.length > 1 && (
               <DragHandle {...attributes} {...listeners} placement='start' dragging={isDragging}>
@@ -110,7 +110,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
               </DragHandle>
             )}
 
-            <VStack flex='1' align='stretch' gap={2}>
+            <VStack flex='1' align='stretch' gap='2'>
               <Text textStyle='body-sm' color='fg.muted'>
                 {t('process.create.question.question_number', {
                   defaultValue: 'Question {{index}} of {{total}}',

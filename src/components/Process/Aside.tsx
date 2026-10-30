@@ -28,8 +28,8 @@ const ProcessAside = () => {
   const votes = processVoteCount(results)
 
   return (
-    <Card.Root variant='section' size='sm' gap={2}>
-      <Card.Root variant='section' size='sm' gap={5} flexWrap='wrap'>
+    <Card.Root variant='section' size='sm' gap='2'>
+      <Card.Root variant='section' size='sm' gap='5' flexWrap='wrap'>
         <Text textAlign='center' fontSize='xl' textTransform='uppercase'>
           {getStatusText(t, status).toUpperCase()}
         </Text>
@@ -39,7 +39,7 @@ const ProcessAside = () => {
             depending on the translated sentence around it. Exactly one of the
             two renders at a time, so the id stays unique. */}
         {showVoters && !showVotes && (
-          <Flex direction={'row'} justifyContent='center' alignItems='center' gap={2} data-testid='process-vote-count'>
+          <Flex direction={'row'} justifyContent='center' alignItems='center' gap='2' data-testid='process-vote-count'>
             <Trans
               i18nKey='aside.votes'
               components={{
@@ -52,8 +52,8 @@ const ProcessAside = () => {
         )}
 
         {showVotes && (
-          <Flex direction='column' justifyContent='center' alignItems='center' gap={2} data-testid='process-vote-count'>
-            <Flex direction={'row'} justifyContent='center' alignItems='center' gap={2}>
+          <Flex direction='column' justifyContent='center' alignItems='center' gap='2' data-testid='process-vote-count'>
+            <Flex direction={'row'} justifyContent='center' alignItems='center' gap='2'>
               <Trans
                 i18nKey='aside.votes_weight'
                 components={{
@@ -79,7 +79,7 @@ const ProcessAside = () => {
       {/* The explorer verify links live on the Voted notice (one per question,
           each with its own vote id) — the aside only confirms the vote landed. */}
       {renderVoteMenu && (
-        <Flex flexDirection='column' alignItems='center' gap={3} w='full'>
+        <Flex flexDirection='column' alignItems='center' gap='3' w='full'>
           <Text fontWeight='extrabold' textStyle='body-sm' color='status.success.fg' textAlign='center'>
             {t('aside.has_already_voted').toString()}
           </Text>
@@ -140,9 +140,9 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
       justifyContent='center'
       alignItems='center'
       background='transparent'
-      py={3}
-      px={{ base: 3, lg: 0 }}
-      gap={3}
+      py='3'
+      px={{ base: '3', lg: '[0]' }}
+      gap='3'
       {...props}
     >
       {!connected ? (

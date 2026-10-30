@@ -74,8 +74,8 @@ const ApiKeyCard = ({
   const { t } = useTranslation()
 
   return (
-    <DashboardBox gap={3} justifyContent='flex-start' flexWrap='nowrap'>
-      <Flex align='center' gap={2}>
+    <DashboardBox gap='3' justifyContent='flex-start' flexWrap='nowrap'>
+      <Flex align='center' gap='2'>
         <Text fontWeight='bold' truncate>
           {k.label}
         </Text>
@@ -86,23 +86,23 @@ const ApiKeyCard = ({
           aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
           variant='danger'
           size='xs'
-          ml='auto'
+          ml='[auto]'
           disabled={revokeDisabled}
           onClick={onRevoke}
         >
           <Icon as={DeleteIcon} />
         </IconButton>
       </Flex>
-      <Box opacity={k.revoked ? 'disabled' : 1}>
+      <Box opacity={k.revoked ? 'inactive' : '[1]'}>
         <Code>{k.prefix}…</Code>
-        <HStack gap={1} wrap='wrap' mt={3}>
+        <HStack gap='1' wrap='wrap' mt='3'>
           {k.scopes.map((sc) => (
             <Badge key={sc} variant='subtle'>
               {sc}
             </Badge>
           ))}
         </HStack>
-        <SimpleGrid columns={2} gap={2} mt={3} pt={3} borderTop='1px solid' borderColor='border'>
+        <SimpleGrid columns={2} gap='2' mt='3' pt='3' borderTop='sm' borderColor='border'>
           <Box>
             <Text textStyle='caption' color='fg.muted'>
               {t('integrators.api_keys.last_used', { defaultValue: 'Last used' })}
@@ -165,8 +165,8 @@ const ApiKeysPanel = () => {
   const list = keys.data ?? []
 
   return (
-    <Stack gap={5}>
-      <Flex justify='space-between' align='center' gap={4} wrap='wrap'>
+    <Stack gap='5'>
+      <Flex justify='space-between' align='center' gap='4' wrap='wrap'>
         <Text color='fg.muted' textStyle='body-sm'>
           {t('integrators.api_keys.intro', {
             defaultValue:
@@ -186,7 +186,7 @@ const ApiKeysPanel = () => {
         />
       ) : isMobile ? (
         // Stacked cards on small screens: the 7-column table overflows horizontally on mobile.
-        <Stack gap={3}>
+        <Stack gap='3'>
           {list.map((k) => (
             <ApiKeyCard
               key={k.id}
@@ -233,7 +233,7 @@ const ApiKeysPanel = () => {
                         <Code>{k.prefix}…</Code>
                       </Table.Cell>
                       <Table.Cell>
-                        <HStack gap={1} wrap='wrap'>
+                        <HStack gap='1' wrap='wrap'>
                           {k.scopes.map((sc) => (
                             <Badge key={sc} variant='subtle'>
                               {sc}

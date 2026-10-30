@@ -97,7 +97,7 @@ const PasswordForm = ({ onSuccess }: PasswordFormProps) => {
       }}
       ref={formRef}
     >
-      <VStack gap={6} align='stretch'>
+      <VStack gap='6' align='stretch'>
         <FormControl invalid={!!errors.oldPassword}>
           <FormLabel>{t('password_update.old.label', { defaultValue: 'Current Password' })}</FormLabel>
           <Input

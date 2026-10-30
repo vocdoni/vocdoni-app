@@ -231,20 +231,20 @@ const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }:
     <RadioGroup.Item
       value={value}
       disabled={disabled}
-      border='1px solid'
+      border='sm'
       borderRadius='md'
-      p={2}
-      cursor='pointer'
+      p='2'
+      cursor='button'
       _checked={{ borderColor: 'border.emphasized' }}
       _hover={{ borderColor: 'border.emphasized' }}
-      _disabled={{ opacity: 'disabled', cursor: 'not-allowed' }}
+      _disabled={{ opacity: 'inactive', cursor: 'disabled' }}
       {...props}
     >
       <RadioGroup.ItemHiddenInput />
-      <Flex align='start' gap={4}>
-        <RadioGroup.ItemIndicator mt={1} />
+      <Flex align='start' gap='4'>
+        <RadioGroup.ItemIndicator mt='1' />
         <Box flex='1'>
-          <Flex gap={2} align='center' mb={1}>
+          <Flex gap='2' align='center' mb='1'>
             <Text>{roleIcons[value]}</Text>
             <RadioGroup.ItemText as='span' fontWeight='semibold'>
               {title}
@@ -295,7 +295,7 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
         control={control}
         render={({ field }) => (
           <RadioGroup.Root value={field.value} onValueChange={({ value }) => field.onChange(value)} colorPalette='gray'>
-            <Stack direction='column' gap={2}>
+            <Stack direction='column' gap='2'>
               {roles?.map((role: Role) => (
                 <RoleRadio
                   key={role.role}
@@ -354,7 +354,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
 
   return (
     <FormProvider {...methods}>
-      <Flex as='form' direction='column' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
+      <Flex as='form' direction='column' gap='4' onSubmit={methods.handleSubmit(onSubmit)}>
         <Card.Root variant='section' size='sm' flexDirection='row' alignItems='center'>
           <Avatar.Root>
             <Avatar.Fallback name={fullName} />
@@ -376,7 +376,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
           })}
         </Text>
         <Card.Root variant='section' size='sm'>
-          <Flex gap={2} align='center'>
+          <Flex gap='2' align='center'>
             <Text>{roleIcons[currentRole]}</Text>
             <Text fontWeight='semibold' textTransform='capitalize'>
               {currentRole}
@@ -384,7 +384,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
           </Flex>
         </Card.Root>
         <RoleRadioGroup currentRole={currentRole} />
-        <Flex gap={2} justifyContent='flex-end' mt={4}>
+        <Flex gap='2' justifyContent='flex-end' mt='4'>
           <Button variant='outline' onClick={onClose}>
             {t('role.update.cancel', { defaultValue: 'Cancel' })}
           </Button>
@@ -407,7 +407,7 @@ const ChangeRoleModal = ({ open, onOpenChange, user }: ChangeRoleDialogProps) =>
     <Dialog.Root open={open} onOpenChange={onOpenChange} closeOnInteractOutside={false}>
       <Dialog.Backdrop />
       <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
-        <Dialog.Content maxW='xl' py={4}>
+        <Dialog.Content maxW='xl' py='4'>
           <Dialog.CloseTrigger>
             <CloseButton />
           </Dialog.CloseTrigger>
@@ -623,7 +623,7 @@ const UserActions = ({ user }: UserActionsProps) => {
         <Menu.Trigger asChild>
           <IconButton
             loading={isLoading}
-            ml='auto'
+            ml='[auto]'
             variant='ghost'
             aria-label={t('team.actions.options', { defaultValue: 'Options' })}
             onClick={openMenu}
@@ -632,7 +632,7 @@ const UserActions = ({ user }: UserActionsProps) => {
           </IconButton>
         </Menu.Trigger>
         <Menu.Positioner>
-          <Menu.Content minW='unset'>
+          <Menu.Content minW='[unset]'>
             <Menu.ItemGroup>
               {isActiveUser(user) ? (
                 <ActiveUserActions openChangeRole={openChangeRole} openRemoveUser={openRemoveUser} />
@@ -677,10 +677,10 @@ const UsersEmpty = () => {
       description={t('team.only_one_member.subtitle', {
         defaultValue: 'Add team members to collaborate on your organization',
       })}
-      p={10}
-      gap={6}
+      p='10'
+      gap='6'
     >
-      <InviteToTeamModal leftIcon={<Icon mr={2} as={AddIcon} />} whiteSpace='normal'>
+      <InviteToTeamModal leftIcon={<Icon mr='2' as={AddIcon} />} whiteSpace='normal'>
         {t('team.only_one_member.add_team_member', { defaultValue: 'Add team member' })}
       </InviteToTeamModal>
     </EmptyState>
@@ -701,7 +701,7 @@ const UsersList = ({ users }: UsersListProps) => {
         const avatarName = isActive && `${user.info.firstName} ${user.info.lastName}`
 
         return (
-          <Flex alignItems='center' p={2} key={i}>
+          <Flex alignItems='center' p='2' key={i}>
             <Avatar.Root>
               {!isActive ? <Avatar.Icon as={MailIcon} /> : <Avatar.Fallback name={avatarName} />}
             </Avatar.Root>

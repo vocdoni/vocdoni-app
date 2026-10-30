@@ -28,6 +28,8 @@ import { usePaginatedMembers } from '~queries/members'
 import { Routes } from '~routes'
 import { statusPalette } from '~theme/status'
 
+type UsageColor = 'chart.1' | 'chart.2' | 'chart.3' | 'chart.4'
+
 type UsageMetric = {
   icon: React.ElementType
   label: string
@@ -35,7 +37,7 @@ type UsageMetric = {
   max: number
   tooltip?: string
   isSoftLimit?: boolean
-  color: string
+  color: UsageColor
 }
 
 const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: UsageMetric) => {
@@ -49,8 +51,8 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
 
   return (
     <Box>
-      <Flex justify='space-between' align='center' mb={2}>
-        <HStack gap={2}>
+      <Flex justify='space-between' align='center' mb='2'>
+        <HStack gap='2'>
           <Icon as={icon} color={`${color}.icon`} />
           <Text textStyle='body-sm' fontWeight='medium' color='fg'>
             {label}
@@ -58,7 +60,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
               <TooltipRoot>
                 <TooltipTrigger asChild>
                   <chakra.span verticalAlign='middle'>
-                    <Icon as={InfoIcon} ml={1} />
+                    <Icon as={InfoIcon} ml='1' />
                   </chakra.span>
                 </TooltipTrigger>
                 <TooltipPositioner>
@@ -68,7 +70,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
             )}
           </Text>
         </HStack>
-        <HStack gap={2} align='baseline'>
+        <HStack gap='2' align='baseline'>
           <Text fontSize='lg' fontWeight='bold' color='fg'>
             {current.toLocaleString()}
           </Text>
@@ -175,7 +177,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
   return (
     <DashboardBox size='md' height='full' {...props}>
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         <DashboardCardHeader
           title={t('dashboard.usage.plan_usage', { defaultValue: 'Plan usage' })}
           subtitle={t('dashboard.usage.plan_usage_description', {
@@ -190,7 +192,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
               flex='1'
               direction={{ base: 'column', md: 'row' }}
               align={{ base: 'flex-start', md: 'center' }}
-              gap={3}
+              gap='3'
             >
               <AlertDescription fontSize='sm' fontWeight='medium' flex='1'>
                 {t('dashboard.usage.limit_exceeded_message', {
@@ -209,7 +211,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
         <Separator />
 
-        <VStack align='stretch' gap={4}>
+        <VStack align='stretch' gap='4'>
           {usageMetrics.map((metric, index) => (
             <UsageRow key={index} {...metric} />
           ))}

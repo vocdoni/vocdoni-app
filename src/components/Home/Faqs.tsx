@@ -195,13 +195,13 @@ const Faqs = (props: BoxProps) => {
   return (
     <Box position='relative' width='full' {...props}>
       <Box width='full' position='relative' zIndex='docked'>
-        <Text textStyle='display' textAlign='center' mb={2.5}>
+        <Text textStyle='display' textAlign='center' mb='2.5'>
           {t('home.faqs.title')}
         </Text>
         <Text
-          mb={16}
-          maxW={{ base: '100%', sm: '70%', md: '80%', lg: '840px' }}
-          mx='auto'
+          mb='16'
+          maxW={{ base: 'full', sm: '[70%]', md: '4/5', lg: '[840px]' }}
+          mx='[auto]'
           fontSize='xl'
           color='fg.muted'
           lineHeight='moderate'
@@ -209,7 +209,7 @@ const Faqs = (props: BoxProps) => {
         >
           {t('home.faqs.subtitle')}
         </Text>
-        <Flex flexWrap={'wrap'} gap={6}>
+        <Flex flexWrap={'wrap'} gap='6'>
           {faqs.map((el, idx) => {
             if (!showAll && idx > 7) return null
             return (
@@ -220,7 +220,7 @@ const Faqs = (props: BoxProps) => {
             )
           })}
         </Flex>
-        <Button mx='auto' mt={4} onClick={() => setShowAll((prev) => !prev)}>
+        <Button mx='[auto]' mt='4' onClick={() => setShowAll((prev) => !prev)}>
           {showAll ? t('home.faqs.show_less') : t('home.faqs.show_more')}
         </Button>
       </Box>

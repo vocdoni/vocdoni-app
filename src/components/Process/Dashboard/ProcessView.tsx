@@ -200,14 +200,14 @@ const ProcessViewContent = () => {
         {/* Main content area */}
         <Box
           flex={1}
-          minW={0}
-          marginRight={showSidebar ? { base: 0, md: 'dashboard.panel' } : 0}
-          transition='margin-right {durations.slow}'
+          minW='[0]'
+          marginRight={showSidebar ? { base: '[0]', md: 'dashboard.panel' } : '[0]'}
+          transition='[margin-right {durations.slow}]'
           display='flex'
           flexDirection='column'
-          gap={8}
-          paddingRight={4}
-          paddingBottom={4}
+          gap='8'
+          paddingRight='4'
+          paddingBottom='4'
         >
           {/* Title, schedule, and description */}
           <HStack justifyContent={'space-between'}>
@@ -233,13 +233,13 @@ const ProcessViewContent = () => {
             flexDirection='column'
             flexWrap={'wrap'}
             justifyContent={'space-between'}
-            gap={4}
+            gap='4'
           >
             <SectionTitle>
               <Icon as={CalendarIcon} />
               <Trans i18nKey='calendar.title'>Schedule</Trans>
             </SectionTitle>
-            <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
+            <SimpleGrid columns={{ base: 1, sm: 2 }} gap='4'>
               <SettingsField
                 icon={CalendarIcon}
                 text={t('start_date', 'Start date')}
@@ -289,8 +289,8 @@ const ProcessViewContent = () => {
               </Text>
             </Box>
 
-            <Flex justifyContent='space-between' gap={2} wrap='wrap'>
-              <Input readOnly value={votingLink} flex='1 1 18rem' minW={0} />
+            <Flex justifyContent='space-between' gap='2' wrap='wrap'>
+              <Input readOnly value={votingLink} flex='1 1 18rem' minW='[0]' />
               <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
                 <Icon as={CopyIcon} />
               </IconButton>
@@ -324,8 +324,8 @@ const ProcessViewContent = () => {
                 <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
                 {showResultsTab && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
               </TabsList>
-              <TabsContentGroup mt={6}>
-                <TabsContent value='questions' p={0}>
+              <TabsContentGroup mt='6'>
+                <TabsContent value='questions' p='[0]'>
                   <Card.Root variant='section'>
                     <ErrorBoundary fallback={sectionFallback} resetKeys={[election]}>
                       <ElectionQuestions />
@@ -333,7 +333,7 @@ const ProcessViewContent = () => {
                   </Card.Root>
                 </TabsContent>
                 {showResultsTab && (
-                  <TabsContent value='results' p={0}>
+                  <TabsContent value='results' p='[0]'>
                     <Card.Root variant='section'>
                       <ErrorBoundary fallback={sectionFallback} resetKeys={[election, results]}>
                         <ElectionResults />
@@ -421,7 +421,7 @@ const ProcessViewSidebar = () => {
 
   return (
     <Sidebar show={showSidebar}>
-      <SidebarContents borderBottom='1px solid' borderColor='border'>
+      <SidebarContents borderBottom='sm' borderColor='border'>
         <SidebarTitle>
           <Trans i18nKey='vote_information'>Vote information</Trans>
         </SidebarTitle>
@@ -431,8 +431,8 @@ const ProcessViewSidebar = () => {
             variant='ghost'
             size='sm'
             position='absolute'
-            top={2}
-            right={2}
+            top='2'
+            right='2'
             onClick={closeSidebar}
           >
             <Icon as={CloseIcon} />
@@ -481,9 +481,9 @@ const ProcessViewSidebar = () => {
             <Trans i18nKey='voting_status'>Voting status</Trans>
           </SidebarSubtitle>
           {/* Total Votes Submitted */}
-          <DashboardBox display='flex' flexDir='column' gap={3} alignContent='start'>
+          <DashboardBox display='flex' flexDir='column' gap='3' alignContent='start'>
             <Box display='flex' justifyContent='space-between' w='full'>
-              <Box display='flex' gap={2} alignItems='center'>
+              <Box display='flex' gap='2' alignItems='center'>
                 <Icon as={VoteIcon} />
                 <Text>
                   <Trans i18nKey='total_votes'>Total votes</Trans>
@@ -491,8 +491,8 @@ const ProcessViewSidebar = () => {
               </Box>
               <Text fontWeight='bold'>{voteCount}</Text>
             </Box>
-            <Box pb={6} borderBottom='1px solid' borderColor='border'>
-              <Box display='flex' w='full' justifyContent='space-between' alignItems='center' fontSize='xs' mb={1}>
+            <Box pb='6' borderBottom='sm' borderColor='border'>
+              <Box display='flex' w='full' justifyContent='space-between' alignItems='center' fontSize='xs' mb='1'>
                 <Box>
                   <Trans i18nKey='turnout'>Turnout</Trans>
                 </Box>
@@ -505,7 +505,7 @@ const ProcessViewSidebar = () => {
               </Progress.Root>
             </Box>
             <Box display='flex' justifyContent='space-between' fontSize='sm'>
-              <Text display='flex' gap={2} alignItems='center'>
+              <Text display='flex' gap='2' alignItems='center'>
                 <Icon as={UsersIcon} />
                 <Trans i18nKey='census_size'>Census size</Trans>
               </Text>
@@ -561,7 +561,7 @@ const ProcessViewSidebar = () => {
           {explorerProcessId && (
             <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
               <Link href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
-                <HStack gap={2}>
+                <HStack gap='2'>
                   <Icon as={SearchIcon} />
                   <Text as='span'>
                     <Trans i18nKey='view_in_explorer'>View in explorer</Trans>
@@ -592,12 +592,12 @@ const SettingsField = ({
   const label = (
     <Text textStyle='body-sm' fontWeight='bold'>
       {text}
-      {tooltip && <Icon as={InfoIcon} ms={1} />}
+      {tooltip && <Icon as={InfoIcon} ms='1' />}
     </Text>
   )
 
   return (
-    <Box display='flex' gap={2} flex='1 1 0' minW={0} alignItems='center'>
+    <Box display='flex' gap='2' flex='1 1 0' minW='[0]' alignItems='center'>
       <Box
         color='fg.muted'
         bg='bg.muted'
@@ -605,12 +605,12 @@ const SettingsField = ({
         alignItems='center'
         justifyContent='center'
         h='full'
-        p={2}
+        p='2'
         borderRadius='md'
       >
         <Icon as={icon} boxSize='icon.md' />
       </Box>
-      <Box flex='1 1 0' minW={0} display='flex' flexDirection='column'>
+      <Box flex='1 1 0' minW='[0]' display='flex' flexDirection='column'>
         {tooltip ? (
           <TooltipRoot positioning={{ placement: 'top' }}>
             <TooltipTrigger asChild>{label}</TooltipTrigger>
@@ -630,5 +630,5 @@ const SettingsField = ({
 }
 
 const ControlIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-  <Icon mr={3} boxSize='icon.sm' ref={ref} {...props} />
+  <Icon mr='3' boxSize='icon.sm' ref={ref} {...props} />
 ))

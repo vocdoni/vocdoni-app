@@ -69,7 +69,7 @@ const Settings = () => {
           }}
           lazyMount
         >
-          <TabsList mb={6}>
+          <TabsList mb='6'>
             {menuItems.map((item) => (
               <TabsTrigger key={item.route} value={item.route}>
                 {item.label}

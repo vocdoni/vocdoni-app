@@ -78,7 +78,7 @@ export const CountrySelector = ({ ...props }: Omit<SelectProps, 'options'>) => {
           />
         )}
       />
-      <FormErrorMessage mt={2}>{errors?.country?.message.toString()}</FormErrorMessage>
+      <FormErrorMessage mt='2'>{errors?.country?.message.toString()}</FormErrorMessage>
     </FormControl>
   )
 }

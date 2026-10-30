@@ -1,25 +1,25 @@
 import { cardAnatomy } from '@chakra-ui/react/anatomy'
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 
 const plan = {
   root: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 4,
+    gap: '4',
     position: 'relative',
-    border: '{borderWidths.hairline} solid',
+    border: 'sm',
     borderRadius: 'md',
-    bgColor: 'card.pricing.bg',
-    p: 6,
+    bgColor: 'card.plan.bg',
+    p: '6',
     flex: 1,
   },
   header: {
-    p: 0,
+    p: '[0]',
     // minH: 28,
     '& > p:first-of-type': {
-      pt: 1.5,
+      pt: '1.5',
       fontWeight: 'bold',
-      mb: 1.5,
+      mb: '1.5',
       fontSize: 'lg',
     },
     '& > p:nth-of-type(2)': {
@@ -31,54 +31,54 @@ const plan = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'start',
-    p: 0,
+    p: '[0]',
     '& > div > ul': {
-      m: 0,
-      mt: 4,
-      maxW: 'fit-content',
+      m: '[0]',
+      mt: '4',
+      maxW: 'fit',
       fontSize: 'sm',
       listStyleType: 'none',
     },
   },
   footer: {
-    p: 0,
+    p: '[0]',
     display: 'flex',
   },
-}
+} satisfies Partial<Record<string, SystemStyleObject>>
 
 const featured = {
   ...plan,
   root: {
     ...plan.root,
-    bgColor: 'card.pricing.featured.bg',
-    borderColor: 'card.pricing.featured.border',
-    color: 'white',
+    bgColor: 'card.plan.featured.bg',
+    borderColor: 'card.plan.featured.border',
+    color: 'surface.inverse.fg',
   },
-}
+} satisfies Partial<Record<string, SystemStyleObject>>
 
 const listItem = {
   root: {
     w: 'full',
     bgColor: 'transparent',
-    border: '{borderWidths.hairline} solid',
+    border: 'sm',
     borderColor: 'border',
-    p: 4,
-    gap: 2,
+    p: '4',
+    gap: '2',
   },
   header: {
-    p: 0,
+    p: '[0]',
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 2,
+    gap: '2',
   },
   body: {
-    p: 0,
-    gap: 1,
+    p: '[0]',
+    gap: '1',
     fontSize: 'sm',
     color: 'fg.muted',
   },
-}
+} satisfies Partial<Record<string, SystemStyleObject>>
 
 // Cards are named by what they are for. Radius comes from Chakra's base (`l3`) unless a variant sets
 // its own; `size` sets `--card-padding`, which the variants that pad their root read.
@@ -121,7 +121,7 @@ export const Card = defineSlotRecipe({
       inverse: {
         root: {
           bg: 'surface.inverse',
-          color: 'white',
+          color: 'surface.inverse.fg',
         },
       },
       // A notice outlined in the brand colour, such as a paused process.
@@ -153,11 +153,11 @@ export const Card = defineSlotRecipe({
       dropzone: {
         root: {
           borderWidth: 'hairline',
-          borderStyle: 'dashed',
+          borderStyle: '[dashed]',
           borderColor: 'border',
           borderRadius: 'xl',
-          p: 10,
-          cursor: 'pointer',
+          p: '10',
+          cursor: 'button',
           _dragging: {
             borderColor: 'border.emphasized',
           },
@@ -169,8 +169,8 @@ export const Card = defineSlotRecipe({
       // A customer logo with its name, shown on hover.
       'logo-tile': {
         root: {
-          border: 'none',
-          backgroundColor: 'none',
+          border: '[none]',
+          backgroundColor: '[none]',
           w: 'full',
 
           _hover: {
@@ -186,17 +186,17 @@ export const Card = defineSlotRecipe({
           },
         },
         header: {
-          p: 0,
+          p: '[0]',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           filter: 'grayscale(100%)',
-          h: { base: '35px', lg: '45px' },
+          h: { base: '[35px]', lg: '[45px]' },
         },
         body: {
-          p: 0,
+          p: '[0]',
           fontSize: 'xs',
-          minH: '60px',
+          minH: '[60px]',
           display: 'flex',
           justifyContent: 'center',
 
@@ -215,26 +215,26 @@ export const Card = defineSlotRecipe({
         root: {
           borderRadius: 'none',
           borderBottomWidth: 'hairline',
-          borderBottomStyle: 'solid',
+          borderBottomStyle: '[solid]',
           borderBottomColor: 'border',
           backgroundColor: 'transparent',
-          py: { base: 6, lg: 8 },
+          py: { base: '6', lg: '8' },
 
           '&:last-of-type': {
-            border: 'none',
+            border: '[none]',
           },
           '&:nth-last-of-type(2)': {
-            borderBottomWidth: { base: 'hairline', lg: '0' },
+            borderBottomWidth: { base: 'hairline', lg: '[0]' },
           },
         },
         header: {
-          p: 0,
+          p: '[0]',
           fontWeight: 'bold',
-          mb: 4.5,
+          mb: '4.5',
           fontSize: 'xl',
         },
         body: {
-          p: 0,
+          p: '[0]',
           color: 'fg.muted',
           fontSize: 'xl',
         },

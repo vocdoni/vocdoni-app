@@ -825,18 +825,18 @@ const ProcessCreateView = () => {
         >
           <Box
             flex={1}
-            marginRight={showSidebar ? { base: 0, md: 'dashboard.panel' } : 0}
-            transition='margin-right {durations.slow}'
+            marginRight={showSidebar ? { base: '[0]', md: 'dashboard.panel' } : '[0]'}
+            transition='[margin-right {durations.slow}]'
             display='flex'
             flexDirection='column'
-            gap={8}
-            paddingRight={4}
-            paddingBottom={4}
+            gap='8'
+            paddingRight='4'
+            paddingBottom='4'
           >
             {/* Top bar with draft status and sidebar toggle */}
-            <HStack position='sticky' top='0px' p={2} bg='bg' zIndex='contents'>
+            <HStack position='sticky' top='[0px]' p='2' bg='bg' zIndex='contents'>
               {effectiveDraftId && (
-                <Box px={3} py={1} borderRadius='full' bg='bg.muted' fontSize='sm'>
+                <Box px='3' py='1' borderRadius='full' bg='bg.muted' fontSize='sm'>
                   <Trans i18nKey='process.create.status.draft'>Draft</Trans>
                 </Box>
               )}
@@ -888,7 +888,7 @@ const ProcessCreateView = () => {
             </HStack>
 
             {/* Title, Video, and Description */}
-            <VStack as='header' align='stretch' gap={4}>
+            <VStack as='header' align='stretch' gap='4'>
               <FormControl invalid={!!methods.formState.errors.title}>
                 <Input
                   variant='inline'

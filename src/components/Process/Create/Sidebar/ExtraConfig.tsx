@@ -29,8 +29,8 @@ const LabelTooltip = ({ children }: { children: React.ReactNode }) => (
     <Box
       as='span'
       display='inline-flex'
-      ml={1}
-      cursor='help'
+      ml='1'
+      cursor='[help]'
       color='fg.muted'
       tabIndex={0}
       // This sits inside a <label>: without cancelling the click, tapping the
@@ -88,7 +88,7 @@ const VoterAnonymity = () => {
                   </Switch.Label>
                 </Switch.Root>
                 {field.value && (
-                  <Text textStyle='caption' color='fg.muted' mt={1}>
+                  <Text textStyle='caption' color='fg.muted' mt='1'>
                     {description}
                   </Text>
                 )}
@@ -120,7 +120,7 @@ export const ExtraConfig = () => {
   ]
 
   return (
-    <VStack align='stretch' gap={4}>
+    <VStack align='stretch' gap='4'>
       {/* Result visibility */}
       <Box>
         <FormControl invalid={!!errors.resultVisibility}>

@@ -32,17 +32,17 @@ const DashboardMenu = ({
     <>
       {/* Sidebar for large screens */}
       <Box
-        borderRight='1px solid'
+        borderRight='sm'
         borderRightColor='border'
         bgColor='surface.sidebar'
         display={{ base: 'none', md: 'flex' }}
         flexDirection='column'
         position='sticky'
-        top={0}
+        top='[0]'
         w={reduced ? 'dashboard.menu.collapsed' : 'dashboard.menu.expanded'}
         h='dvh'
         zIndex='dashboard-menu'
-        transition='width {durations.slow} ease'
+        transition='[width {durations.slow} ease]'
       >
         <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} />
       </Box>
@@ -56,7 +56,7 @@ const DashboardMenu = ({
       >
         <Drawer.Backdrop />
         <Drawer.Positioner>
-          <Drawer.Content p={4}>
+          <Drawer.Content p='4'>
             <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} alignLogoCenter />
           </Drawer.Content>
         </Drawer.Positioner>
@@ -81,16 +81,16 @@ const SidebarTutorial = () => {
       position={'relative'}
       flexDirection={'column'}
       display={reduced ? 'none' : 'flex'}
-      gap={2}
-      p={4}
-      m={2}
+      gap='2'
+      p='4'
+      m='2'
       bgColor='bg'
     >
       <CloseButton
         onClick={() => closeSidebarTutorial()}
         position={'absolute'}
-        top={1}
-        right={1}
+        top='1'
+        right='1'
         colorPalette='gray'
         size='sm'
       />
@@ -123,12 +123,12 @@ const DashboardMenuContent = ({
 
   return (
     <>
-      <Box p={2}>
+      <Box p='2'>
         <Flex
           alignItems='center'
           justifyContent={alignLogoCenter ? 'center' : 'flex-start'}
           h='dashboard.header'
-          mb={2}
+          mb='2'
           role='group'
           position='relative'
           w='full'
@@ -146,7 +146,7 @@ const DashboardMenuContent = ({
               if (reduced && isTouchLike) onToggleReduced()
             }}
           >
-            <VocdoniLogo width={reduced ? 'full' : '150px'} minimal={reduced} maxH='8' />
+            <VocdoniLogo width={reduced ? 'full' : '[150px]'} minimal={reduced} maxH='8' />
           </ReactRouterLink>
           <IconButton
             className='dashboard-collapse-toggle'
@@ -161,11 +161,11 @@ const DashboardMenuContent = ({
             onClick={onToggleReduced}
             display={{ base: 'none', md: 'inline-flex' }}
             position='absolute'
-            right={1}
-            top='50%'
-            left={reduced ? '50%' : undefined}
+            right='1'
+            top='[50%]'
+            left={reduced ? '[50%]' : undefined}
             transform={reduced ? 'translate(-50%, -50%)' : 'translateY(-50%)'}
-            opacity={reduced ? 0 : 1}
+            opacity={reduced ? '[0]' : '[1]'}
             pointerEvents={reduced ? 'none' : 'auto'}
             zIndex='contents'
           >
@@ -173,9 +173,9 @@ const DashboardMenuContent = ({
           </IconButton>
         </Flex>
         {menu.newVote && (
-          <Button asChild w='full' minW={0} mt={2} mb={8} size={'xs'}>
+          <Button asChild w='full' minW='[0]' mt='2' mb='8' size={'xs'}>
             <RouterLink to={generatePath(Routes.processes.create)}>
-              <HStack gap={reduced ? 0 : 2}>
+              <HStack gap={reduced ? '[0]' : '2'}>
                 <Icon as={AddIcon} boxSize='icon.sm' />
                 {!reduced && (
                   <Text as='span'>
@@ -189,7 +189,7 @@ const DashboardMenuContent = ({
 
         <DashboardMenuOptions sections={menu.sections} />
       </Box>
-      <Box mt='auto'>
+      <Box mt='[auto]'>
         {menu.tutorial && <SidebarTutorial />}
         <UserProfile />
       </Box>

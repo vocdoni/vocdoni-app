@@ -243,9 +243,9 @@ function FloatingLinkEditor({
   }
 
   return (
-    <Card.Root ref={editorRef} position='absolute' top={0} left={0} p={1} zIndex='contents'>
+    <Card.Root ref={editorRef} position='absolute' top='[0]' left='[0]' p='1' zIndex='contents'>
       {isLinkEditMode ? (
-        <HStack gap={2}>
+        <HStack gap='2'>
           <Input
             ref={inputRef}
             flex={1}
@@ -273,7 +273,7 @@ function FloatingLinkEditor({
           </IconButton>
         </HStack>
       ) : (
-        <HStack gap={2}>
+        <HStack gap='2'>
           <Link flex={1} href={linkUrl} target='_blank' rel='noopener noreferrer' size='sm'>
             {linkUrl}
           </Link>

@@ -1,5 +1,6 @@
 import { createSystem, defaultConfig, defineSemanticTokens, defineTokens } from '@chakra-ui/react'
 import { DEFAULT_PRIMARY_COLOR, PAGE_BACKGROUNDS } from './colors'
+import { withEscapeHatch } from './escapeHatch'
 import { generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
@@ -27,7 +28,9 @@ export const createAppSystem = (primaryColor?: string) => {
     Object.entries(generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS)).map(([slot, value]) => [slot, { value }])
   )
 
-  return createSystem(defaultConfig, {
+  const appSystem = createSystem(defaultConfig, {
+    // Style props only take theme tokens; `[value]` is the escape for non-design values (0, auto, 100%).
+    strictTokens: true,
     globalCss: {
       html: {
         colorPalette: defaultColorPalette(brand),
@@ -52,6 +55,8 @@ export const createAppSystem = (primaryColor?: string) => {
       slotRecipes,
     },
   })
+
+  return withEscapeHatch(appSystem)
 }
 
 export type AppSystem = ReturnType<typeof createAppSystem>

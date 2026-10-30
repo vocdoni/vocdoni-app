@@ -42,7 +42,7 @@ const ExtendedQuestionEditor = ({
   const cardStyles = choiceRecipe({ context: 'card', layout: 'grid' })
 
   return (
-    <SimpleGrid columns={{ base: 1, lg: 2, xl: 3, '2xl': 4 }} gap={4}>
+    <SimpleGrid columns={{ base: 1, lg: 2, xl: 3, '2xl': 4 }} gap='4'>
       {questionOptions.map((field, optionIndex) => (
         <SortableExtendedOption
           key={field.id}
@@ -62,8 +62,8 @@ const ExtendedQuestionEditor = ({
       {/* Add new option card */}
       <DashboardBox
         asChild
-        borderStyle='dashed'
-        cursor='pointer'
+        borderStyle='[dashed]'
+        cursor='button'
         focusVisibleRing='outside'
         _hover={{ bg: 'state.hover.bg' }}
       >
@@ -117,8 +117,8 @@ const SortableExtendedOption = ({
             colorPalette={statusPalette.destructive}
             onClick={onRemove}
             position='absolute'
-            top={2}
-            right={2}
+            top='2'
+            right='2'
             zIndex='contents'
           >
             <Icon as={DeleteIcon} />

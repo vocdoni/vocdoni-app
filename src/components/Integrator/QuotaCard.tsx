@@ -27,11 +27,11 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
         : t('integrators.quota.unlimited', { defaultValue: 'Unlimited' })
 
   return (
-    <DashboardBox gap={3} justifyContent='flex-start'>
+    <DashboardBox gap='3' justifyContent='flex-start'>
       <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
         {label}
       </Text>
-      <HStack align='baseline' gap={1}>
+      <HStack align='baseline' gap='1'>
         <Text fontSize='3xl' fontWeight='bold' lineHeight='shorter'>
           {used}
         </Text>
@@ -44,7 +44,7 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
           <Progress.Range bgColor={atLimit ? 'meter.critical' : 'meter.ok'} />
         </Progress.Track>
       </Progress.Root>
-      <Box minH='22px'>
+      <Box minH='[22px]'>
         {atLimit && (
           <StatusBadge tone='error'>
             {t('integrators.quota.limit_reached', { defaultValue: 'Limit reached' })}
