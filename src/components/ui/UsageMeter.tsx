@@ -1,4 +1,4 @@
-import { Box, chakra, Flex, HStack, Icon, Progress, Text } from '@chakra-ui/react'
+import { chakra, Icon, Progress, Stat } from '@chakra-ui/react'
 import { ElementType, ReactNode } from 'react'
 import { InfoIcon } from '~theme/icons'
 import { Tooltip } from './Tooltip'
@@ -18,89 +18,51 @@ export type UsageMeterProps = {
   color?: UsageMeterColor
   // Going over costs money but is allowed, so the bar never warns.
   softLimit?: boolean
-  // Temporary: the card (integrator quota) and row (plan usage) looks the two meters had.
-  layout: 'card' | 'row'
   children?: ReactNode
 }
 
-// A usage figure over its limit with a bar that warns at 80 % and turns critical at 100 %.
-export const UsageMeter = ({
-  label,
+// The bar's fill: the series colour, the warning tone from 80 % and the critical one at 100 % of a hard limit.
+export const usageMeterFill = ({
   value,
   max,
-  unit,
-  icon,
-  tooltip,
-  color,
   softLimit,
-  layout,
-  children,
-}: UsageMeterProps) => {
+  color,
+}: Pick<UsageMeterProps, 'value' | 'max' | 'softLimit' | 'color'>) => {
+  const percentage = max > 0 ? (value / max) * 100 : 0
+  if (max > 0 && !softLimit && percentage >= 100) return 'meter.critical'
+  if (max > 0 && !softLimit && percentage >= 80) return 'meter.warning'
+  return color ?? 'meter.ok'
+}
+
+// A usage figure over its limit, with a bar that changes tone as the limit nears.
+export const UsageMeter = ({ label, value, max, unit, icon, tooltip, color, softLimit, children }: UsageMeterProps) => {
   const hasLimit = max > 0
   const percentage = hasLimit ? Math.min((value / max) * 100, 100) : 0
 
-  if (layout === 'card') {
-    const atLimit = hasLimit && value >= max
-    return (
-      <>
-        <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
-          {label}
-        </Text>
-        <HStack align='baseline' gap='1'>
-          <Text fontSize='3xl' fontWeight='bold' lineHeight='shorter'>
-            {value}
-          </Text>
-          <Text textStyle='body' color='fg.muted'>
-            {unit}
-          </Text>
-        </HStack>
-        <Progress.Root value={hasLimit ? Math.min(value, max) : 0} max={hasLimit ? max : 1} size='sm'>
-          <Progress.Track>
-            <Progress.Range bgColor={atLimit ? 'meter.critical' : 'meter.ok'} />
-          </Progress.Track>
-        </Progress.Root>
-        {children}
-      </>
-    )
-  }
-
-  // 0.5 % keeps a dot on the track, so an unused meter still reads as a meter.
-  const displayPercentage = percentage < 0.5 ? 0.5 : percentage
-  const isNearLimit = percentage >= 80 && !softLimit
-  const isAtLimit = percentage >= 100 && !softLimit
-  const fillColor = isAtLimit ? 'meter.critical' : isNearLimit ? 'meter.warning' : (color ?? 'meter.ok')
-
   return (
-    <Box>
-      <Flex justify='space-between' align='center' mb='2'>
-        <HStack gap='2'>
-          {icon && color && <Icon as={icon} color={`${color}.icon`} />}
-          <Text textStyle='body-sm' fontWeight='medium' color='fg'>
-            {label}
-            {tooltip && (
-              <Tooltip portalled={false} content={tooltip}>
-                <chakra.span verticalAlign='middle'>
-                  <Icon as={InfoIcon} ml='1' />
-                </chakra.span>
-              </Tooltip>
-            )}
-          </Text>
-        </HStack>
-        <HStack gap='2' align='baseline'>
-          <Text fontSize='lg' fontWeight='bold' color='fg'>
-            {value.toLocaleString()}
-          </Text>
-          <Text textStyle='body-sm' color='fg.muted'>
-            {unit}
-          </Text>
-        </HStack>
-      </Flex>
-      <Progress.Root value={displayPercentage} size='sm' shape='full'>
+    <Stat.Root gap='2'>
+      <Stat.Label>
+        {icon && <Icon as={icon} color={color ? `${color}.icon` : undefined} />}
+        {label}
+        {tooltip && (
+          <Tooltip portalled={false} content={tooltip}>
+            <chakra.span verticalAlign='middle'>
+              <Icon as={InfoIcon} />
+            </chakra.span>
+          </Tooltip>
+        )}
+      </Stat.Label>
+      <Stat.ValueText>
+        {value.toLocaleString()}
+        <Stat.ValueUnit>{unit}</Stat.ValueUnit>
+      </Stat.ValueText>
+      {/* 0.5 % keeps a dot on the track, so an unused meter still reads as a meter. */}
+      <Progress.Root value={hasLimit ? Math.max(percentage, 0.5) : 0} size='sm' shape='full'>
         <Progress.Track bg='chart.track'>
-          <Progress.Range bgColor={fillColor} borderRadius='full' />
+          <Progress.Range bgColor={usageMeterFill({ value, max, softLimit, color })} borderRadius='full' />
         </Progress.Track>
       </Progress.Root>
       {children}
-    </Box>
+    </Stat.Root>
   )
 }

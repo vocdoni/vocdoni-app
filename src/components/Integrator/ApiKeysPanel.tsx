@@ -104,21 +104,13 @@ const ApiKeyCard = ({
           ))}
         </HStack>
         <SimpleGrid columns={2} gap='2' mt='3' pt='3' borderTop='sm' borderColor='border'>
-          <Stat.Root gap='[0]'>
-            <Stat.Label textStyle='caption'>
-              {t('integrators.api_keys.last_used', { defaultValue: 'Last used' })}
-            </Stat.Label>
-            <Stat.ValueText textStyle='body-sm' fontWeight='normal'>
-              {formatDate(k.lastUsedAt)}
-            </Stat.ValueText>
+          <Stat.Root size='sm'>
+            <Stat.Label>{t('integrators.api_keys.last_used', { defaultValue: 'Last used' })}</Stat.Label>
+            <Stat.ValueText>{formatDate(k.lastUsedAt)}</Stat.ValueText>
           </Stat.Root>
-          <Stat.Root gap='[0]'>
-            <Stat.Label textStyle='caption'>
-              {t('integrators.api_keys.expires', { defaultValue: 'Expires' })}
-            </Stat.Label>
-            <Stat.ValueText textStyle='body-sm' fontWeight='normal'>
-              {formatDate(k.expiresAt)}
-            </Stat.ValueText>
+          <Stat.Root size='sm'>
+            <Stat.Label>{t('integrators.api_keys.expires', { defaultValue: 'Expires' })}</Stat.Label>
+            <Stat.ValueText>{formatDate(k.expiresAt)}</Stat.ValueText>
           </Stat.Root>
         </SimpleGrid>
       </Box>

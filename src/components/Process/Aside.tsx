@@ -42,15 +42,15 @@ const ProcessAside = () => {
           <Stat.Root
             flexDirection='row'
             justifyContent='center'
-            alignItems='center'
+            alignItems='baseline'
             gap='2'
             data-testid='process-vote-count'
           >
             <Trans
               i18nKey='aside.votes'
               components={{
-                span: <Stat.ValueText fontWeight='bold' fontSize='3xl' lineHeight='shorter' />,
-                text: <Stat.ValueUnit color='fg' fontSize='xl' lineHeight='short' />,
+                span: <Stat.ValueText />,
+                text: <Stat.ValueUnit />,
               }}
               count={votes}
             />
@@ -59,12 +59,12 @@ const ProcessAside = () => {
 
         {showVotes && (
           <Flex direction='column' justifyContent='center' alignItems='center' gap='2' data-testid='process-vote-count'>
-            <Stat.Root flexDirection='row' justifyContent='center' alignItems='center' gap='2'>
+            <Stat.Root flexDirection='row' justifyContent='center' alignItems='baseline' gap='2'>
               <Trans
                 i18nKey='aside.votes_weight'
                 components={{
-                  span: <Stat.ValueText fontWeight='bold' fontSize='3xl' lineHeight='shorter' />,
-                  text: <Stat.ValueUnit color='fg' fontSize='xl' lineHeight='short' />,
+                  span: <Stat.ValueText />,
+                  text: <Stat.ValueUnit />,
                 }}
                 count={votes}
               />

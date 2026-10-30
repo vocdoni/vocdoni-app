@@ -84,9 +84,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
 
   return (
     <Stat.Root flex='0 0 auto' alignItems='end'>
-      <Stat.Label color='fg.muted' textStyle='eyebrow'>
-        {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
-      </Stat.Label>
+      <Stat.Label>{upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}</Stat.Label>
       <Badge {...headline} colorPalette={statusPalette.success}>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
       </Badge>
@@ -159,21 +157,13 @@ const ParticipationCard = () => {
         <Separator />
 
         <SimpleGrid columns={{ base: 1, md: 2 }} gap='6'>
-          <Stat.Root>
-            <Stat.Label color='fg.muted' textStyle='eyebrow'>
-              {t('process.summary.start_label')}
-            </Stat.Label>
-            <Stat.ValueText fontSize='md' fontWeight='bold' letterSpacing='tight'>
-              {datetime(startDate)}
-            </Stat.ValueText>
+          <Stat.Root size='md'>
+            <Stat.Label>{t('process.summary.start_label')}</Stat.Label>
+            <Stat.ValueText>{datetime(startDate)}</Stat.ValueText>
           </Stat.Root>
-          <Stat.Root>
-            <Stat.Label color='fg.muted' textStyle='eyebrow'>
-              {t('process.summary.end_label')}
-            </Stat.Label>
-            <Stat.ValueText fontSize='md' fontWeight='bold' letterSpacing='tight'>
-              {datetime(endDate)}
-            </Stat.ValueText>
+          <Stat.Root size='md'>
+            <Stat.Label>{t('process.summary.end_label')}</Stat.Label>
+            <Stat.ValueText>{datetime(endDate)}</Stat.ValueText>
           </Stat.Root>
         </SimpleGrid>
       </Card.Body>
@@ -186,16 +176,9 @@ type IndicatorProps = { label: string; value: string; accent?: boolean }
 const Indicator = ({ label, value, accent }: IndicatorProps) => (
   <Card.Root size='sm' textAlign='center'>
     <Card.Body>
-      <Stat.Root alignItems='center' gap='1'>
-        <Stat.ValueText
-          fontSize='3xl'
-          fontWeight='bold'
-          letterSpacing='tight'
-          color={accent ? 'colorPalette.fg' : undefined}
-        >
-          {value}
-        </Stat.ValueText>
-        <Stat.Label color='fg.muted'>{label}</Stat.Label>
+      <Stat.Root alignItems='center'>
+        <Stat.Label>{label}</Stat.Label>
+        <Stat.ValueText color={accent ? 'colorPalette.fg' : undefined}>{value}</Stat.ValueText>
       </Stat.Root>
     </Card.Body>
   </Card.Root>
