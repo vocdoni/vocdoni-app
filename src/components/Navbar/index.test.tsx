@@ -5,14 +5,6 @@ vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({ isAuthenticated: false, logout: vi.fn() }),
 }))
 
-vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router')>()
-  return {
-    ...actual,
-    useMatches: () => [],
-  }
-})
-
 describe('Navbar', () => {
   it('renders the login button when not authenticated', async () => {
     const i18nInstance = await createTestI18n({

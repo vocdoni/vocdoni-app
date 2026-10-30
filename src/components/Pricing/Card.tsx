@@ -101,7 +101,7 @@ const PricingCard = ({
   )
 
   return (
-    <Card.Root ref={container} variant={isCustomPlan ? 'featured' : 'pricing'}>
+    <Card.Root ref={container} variant={isCustomPlan ? 'featured' : 'plan'}>
       <Card.Header>
         <Text>{title}</Text>
         <Text color='fg.muted'>{subtitle}</Text>
@@ -246,8 +246,8 @@ const PricingCard = ({
           transform='translate(-50%, -50%)'
           px={3}
           size='xs'
-          backgroundColor='card.pricing.featured.badge.bg'
-          color='card.pricing.featured.badge.color'
+          backgroundColor='card.plan.featured.badge.bg'
+          color='card.plan.featured.badge.color'
           fontWeight='extrabold'
         >
           <Trans i18nKey='pricing_card.most_popular_plan'>Most popular plan</Trans>

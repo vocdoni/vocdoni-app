@@ -8,10 +8,10 @@ export const Drawer = defineSlotRecipe({
       boxShadow: 'shadow.overlay',
     },
   },
-  // `sidebar` is the mobile dashboard menu; `panel` paints like a dialog.
+  // `navigation` is the mobile dashboard menu; `panel` paints like a dialog.
   variants: {
     variant: {
-      sidebar: { content: { bg: 'surface.overlay.drawer' } },
+      navigation: { content: { bg: 'surface.overlay.drawer' } },
       panel: { content: { bg: 'surface.overlay' } },
     },
   },

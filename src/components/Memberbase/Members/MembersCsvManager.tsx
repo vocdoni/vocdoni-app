@@ -178,7 +178,7 @@ export const MembersCsvManager = () => {
               href={template.url}
               aria-disabled={!visibleColumns.length}
               pointerEvents={visibleColumns.length ? 'auto' : 'none'}
-              variant='button'
+              variant='unstyled'
             >
               <SpreadsheetIcon />
               {t('memberbase.importer.download_template_btn', {

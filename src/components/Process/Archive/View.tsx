@@ -90,7 +90,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
       </Box>
 
       {description && (
-        <Box className='md-sizes'>
+        <Box>
           <Editor defaultValue={description} isDisabled />
         </Box>
       )}

@@ -73,7 +73,6 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
   },
   {
     path: '*',
-    handle: { hideNavbar: true },
     element: (
       <SuspenseLoader>
         <NotFound />

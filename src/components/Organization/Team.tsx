@@ -417,9 +417,9 @@ const ChangeRoleModal = ({ open, onOpenChange, user }: ChangeRoleDialogProps) =>
           </Dialog.CloseTrigger>
           <Dialog.Header>
             <Dialog.Title>
-              <Heading variant='header'>{t('role.update.title', { defaultValue: 'Change team member role' })}</Heading>
+              <Heading variant='heavy'>{t('role.update.title', { defaultValue: 'Change team member role' })}</Heading>
             </Dialog.Title>
-            <Text variant='subheader'>
+            <Text variant='muted'>
               <Trans i18nKey='role.update.subtitle'>
                 Update the permissions for this team member by changing their role.
               </Trans>

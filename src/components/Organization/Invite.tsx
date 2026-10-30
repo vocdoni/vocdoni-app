@@ -135,7 +135,7 @@ export const InviteToTeamModal = ({
             <Dialog.Title>
               <Trans i18nKey='invite.title'>Add team member</Trans>
             </Dialog.Title>
-            <Text variant='subheader'>
+            <Text variant='muted'>
               <Trans i18nKey='invite.subtitle'>
                 Send an invitation to join your organization. They'll receive an email with instructions.
               </Trans>

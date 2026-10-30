@@ -45,7 +45,7 @@ export const input = defineRecipe({
       '2xl': xxl,
     },
     variant: {
-      borderless: {
+      inline: {
         border: 'none',
         px: 0,
         bg: 'transparent',
@@ -68,7 +68,7 @@ export const textarea = defineRecipe({
       md: mobileSafeFontSize,
     },
     variant: {
-      borderless: {
+      inline: {
         border: 'none',
         px: 0,
       },

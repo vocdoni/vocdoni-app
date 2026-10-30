@@ -1,6 +1,6 @@
 import { defineSlotRecipe } from '@chakra-ui/react'
 
-// Text's `subheader` look.
+// Text's `muted` variant.
 const mutedDescription = { color: 'fg.muted', fontWeight: 'normal' }
 
 // Styles of ui/ConfirmDialog. Layouts differ only in spacing and title; the buttons are the same everywhere.
