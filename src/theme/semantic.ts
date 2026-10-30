@@ -179,8 +179,9 @@ export const colors = defineSemanticTokens.colors({
           _dark: '{colors.ink.500}',
         },
       },
+      // Painted in light mode only (card `standalone`).
       border: {
-        value: '{colors.gray.200}',
+        value: '{colors.border}',
       },
     },
     // The showcase panel is dark in both color modes — it sits on a deep vertical accent
@@ -261,10 +262,7 @@ export const colors = defineSemanticTokens.colors({
   card: {
     plan: {
       bg: {
-        value: {
-          _light: '{colors.white}',
-          _dark: '{colors.ink.650}',
-        },
+        value: '{colors.bg}',
       },
       featured: {
         bg: {
@@ -307,10 +305,7 @@ export const colors = defineSemanticTokens.colors({
   footer: {
     bg: {
       DEFAULT: {
-        value: {
-          _light: '{colors.white}',
-          _dark: '{colors.ink.650}',
-        },
+        value: '{colors.bg}',
       },
       muted: {
         value: {
@@ -342,10 +337,7 @@ export const colors = defineSemanticTokens.colors({
   tabs: {
     tab: {
       color: {
-        value: {
-          _light: '{colors.gray.600}',
-          _dark: '{colors.gray.400}',
-        },
+        value: '{colors.fg.muted}',
       },
       active: {
         // `brand.fg`, not the raw 500: the active tab label sits on white, and
