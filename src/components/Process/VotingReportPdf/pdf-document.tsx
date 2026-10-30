@@ -222,7 +222,7 @@ const NumberedList = ({ items }: { items: string[] }) => (
   </View>
 )
 
-export const buildReportSections = (t: TFunction): ReportSection[] => [
+const buildReportSections = (t: TFunction): ReportSection[] => [
   {
     title: t('process_pdf.document.sections.voting_system', { defaultValue: '1. Technical Framework' }),
     href: `#${SECTION_IDS.s1}`,

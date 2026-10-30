@@ -1,7 +1,7 @@
 import { readCookie } from '~utils/cookies'
 
-export const PUBLIC_LANGUAGE_STORAGE_KEY = 'i18nextLng'
-export const PUBLIC_LANGUAGE_COOKIE_KEY = 'vocdoni-public-language'
+const PUBLIC_LANGUAGE_STORAGE_KEY = 'i18nextLng'
+const PUBLIC_LANGUAGE_COOKIE_KEY = 'vocdoni-public-language'
 const PUBLIC_LANGUAGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 
 export const getDefaultPublicLanguage = (supportedLanguages: string[]) =>

@@ -109,16 +109,6 @@ export const mockUseOrganization = (overrides: Record<string, unknown> = {}) => 
   ...overrides,
 })
 
-export const withReactProvidersMocks = (overrides?: {
-  useClient?: Record<string, unknown>
-  useElection?: Record<string, unknown>
-  useOrganization?: Record<string, unknown>
-}) => ({
-  useClient: () => mockUseClient(overrides?.useClient),
-  useElection: () => mockUseElection(overrides?.useElection),
-  useOrganization: () => mockUseOrganization(overrides?.useOrganization),
-})
-
 interface AllProvidersProps {
   children: ReactNode
   queryClient?: QueryClient

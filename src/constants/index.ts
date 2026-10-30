@@ -26,22 +26,6 @@ export const SessionStorageKeys = {
 } as const
 
 /**
- * Given an object of react-hook-form errors, returns the specified mapped field error message.
- *
- * @param {FieldErrors<FieldValues>} errors Object of errors obtained from formState in `useFormContext`.
- * @param {string} map The field map in dot notation.
- * @returns {null|string} Either returns the error message or null
- */
-export const fieldMapErrorMessage = (errors: FieldErrors<FieldValues>, map: string) => {
-  if (!errors) return null
-
-  const obj = dotobject(errors, map)
-  if (!obj || (obj && !obj.message)) return null
-
-  return obj.message
-}
-
-/**
  * Truncates an address-alike string by the middle, adding ellipsis. It considers
  * the addresses to be coming with 0x prefixed, so it cuts two less chars from the
  * front than the back

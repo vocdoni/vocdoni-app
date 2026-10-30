@@ -12,19 +12,19 @@ import { defaultProcessValues, Process, SelectorTypes } from './common'
 import { TwoFAMethod } from './VoterAuthentication/utils'
 
 /** Resolve a LocalizedInput (string | Record<string,string>) to a plain string. */
-export const localStr = (v?: LocalizedInput): string => (typeof v === 'string' ? v : (v?.default ?? ''))
+const localStr = (v?: LocalizedInput): string => (typeof v === 'string' ? v : (v?.default ?? ''))
 
 /** Per-choice extended info the create flow stores under `question.metadata.choices`. */
 type ChoiceMeta = { value: number; description?: string; image?: string }
 
-export const choiceMetas = (question: Pick<VotingProcessQuestion, 'metadata'>): ChoiceMeta[] => {
+const choiceMetas = (question: Pick<VotingProcessQuestion, 'metadata'>): ChoiceMeta[] => {
   const choices = question.metadata?.choices
   return Array.isArray(choices) ? (choices as ChoiceMeta[]) : []
 }
 
 // `VotingProcessQuestion.type` uses the API's canonical lowercase names
 // (VOTING_PROCESS_QUESTION_TYPES), not the app's camelCase SelectorTypes.
-export const MULTICHOICE_QUESTION_TYPE = 'multichoice'
+const MULTICHOICE_QUESTION_TYPE = 'multichoice'
 
 /** Inverse of `getTwoFaFields`: the wizard's 2FA method for a set of API fields. */
 const twoFaMethodOf = (fields: readonly string[]): TwoFAMethod | undefined => {

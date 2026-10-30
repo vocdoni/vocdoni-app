@@ -489,22 +489,18 @@ export const serializePublicPageErrorDetails = (error: unknown) => {
 }
 
 export {
-  getHomeProcessRouteMatch,
   getPublicLocalizedOrganizationRouteMatch,
   getPublicLocalizedProcessRouteMatch,
   getPublicLocalizedProcessSummaryRouteMatch,
 } from './public-routes'
 
-export { getDefaultPublicLanguage, normalizePublicLanguageCandidate }
+export { getDefaultPublicLanguage }
 
 export type {
   ElectionsPageData,
-  OrganizationData,
   OrganizationMetaSource,
   ProcessMetaSource,
-  PublicLanguageAlternate,
   PublicMeta,
   PublicOrganizationPageData,
-  PublicPageClient,
   PublicProcessPageData,
 }

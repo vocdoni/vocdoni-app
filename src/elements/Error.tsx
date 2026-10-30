@@ -21,7 +21,7 @@ export type ErrorViewProps = {
 }
 
 // SaaS 404/400 responses, archive VochainNotFoundError and router 404s all mean "not found".
-export const isNotFoundError = (error: unknown) =>
+const isNotFoundError = (error: unknown) =>
   isPublicPageNotFoundError(error) || (isRouteErrorResponse(error) && error.status === 404)
 
 export const ErrorView = ({ isNotFound = false, onReturnHome, returnHomeHref, returnTo = 'home' }: ErrorViewProps) => {
