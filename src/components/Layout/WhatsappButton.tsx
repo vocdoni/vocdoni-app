@@ -26,7 +26,7 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
               whiteSpace='nowrap'
               overflow='hidden'
               transition='max-width {durations.slow} ease, margin-left {durations.slow} ease, opacity {durations.moderate}'
-              _groupHover={{ maxW: '12rem', ml: 2, opacity: 1 }}
+              _groupHover={{ maxW: '48', ml: 2, opacity: 1 }}
             >
               {t('whatsapp_contact', 'Talk with us!')}
             </Text>
