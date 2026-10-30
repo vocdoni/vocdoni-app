@@ -55,8 +55,8 @@ export const ModalForm = ({ isOpen, onClose, title, subtitle, children, submitTe
               <CloseButton />
             </Dialog.CloseTrigger>
             <Dialog.Header>
-              <Heading variant='header'>{title}</Heading>
-              {subtitle && <Text variant='subheader'>{subtitle}</Text>}
+              <Heading variant='heavy'>{title}</Heading>
+              {subtitle && <Text variant='muted'>{subtitle}</Text>}
             </Dialog.Header>
 
             <Dialog.Body>{children}</Dialog.Body>

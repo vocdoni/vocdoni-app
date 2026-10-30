@@ -101,7 +101,7 @@ const PricingCard = ({
   )
 
   return (
-    <Card.Root ref={container} variant={isCustomPlan ? 'featured' : 'pricing'}>
+    <Card.Root ref={container} variant={isCustomPlan ? 'featured' : 'plan'}>
       <Card.Header>
         <Text>{title}</Text>
         <Text color='fg.muted'>{subtitle}</Text>
