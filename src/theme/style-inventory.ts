@@ -291,6 +291,8 @@ const HEX_RE = /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b|\b(?:rgba?
 const RAW_LENGTH_RE = /(?<![\w.#-])-?(\d*\.?\d+)(px|rem|em|pt)\b/g
 const DURATION_RE = /(?<![\w.#-])\d*\.?\d+m?s\b/
 const NUMERIC_RE = /^-?\d*\.?\d+$/
+// Same shape the escape hatch unwraps (no nested brackets), with an optional `!important`/`!` after it
+const ESCAPED_RE = /^\[([^[\]]+)\](?:\s*!(?:important)?)?$/
 const TOKEN_LOOKING_RE = /^[a-zA-Z][\w]*(?:[.-][\w]+)+$/
 const BARE_WORD_RE = /^[a-zA-Z_]\w*$/
 // CSS colour keywords that are valid without being tokens or named colours
@@ -453,7 +455,9 @@ export const scanSource = (
     return kind
   }
 
-  const classifyString = (prop: string, value: string, node: ts.Node, template = false) => {
+  const classifyString = (prop: string, raw: string, node: ts.Node, template = false) => {
+    // `[value]` is the strictTokens escape (src/theme/escapeHatch.ts): the rules apply to what is inside it
+    const value = raw.replace(ESCAPED_RE, '$1')
     const category = PROP_CATEGORY.get(prop)
 
     const hexCount = [...value.matchAll(HEX_RE)].length
@@ -463,7 +467,7 @@ export const scanSource = (
 
     if (category === 'colors' || isColorBearing(prop)) {
       if (template) return
-      const words = value.split(/[\s,()]+/).filter(Boolean)
+      const words = value.split(/[\s,()[\]]+/).filter(Boolean)
       for (const word of words) {
         const base = word.split('/')[0]
         const step = /^(.+)\.\d+$/.exec(base)

@@ -53,6 +53,13 @@ describe('style inventory scanner', () => {
     ['numericFontWeight', `<Text fontWeight={600} />`, `<Text fontWeight='semibold' />`],
     ['numericFontWeight', `<Text fontWeight='600' />`, `<Text fontWeight='bold' />`],
     ['rawZIndex', `<Box zIndex={10} />`, `<Box zIndex='sidebar' />`],
+    ['numericFontWeight', `<Text fontWeight='[600]' />`, `<Text fontWeight='[bold]' />`],
+    ['rawZIndex', `<Box zIndex='[9999]' />`, `<Box zIndex='[auto]' />`],
+    ['rawLineHeight', `<Text lineHeight='[1.4]' />`, `<Text lineHeight='[normal]' />`],
+    ['namedColor', `<Box bg='[red]' />`, `<Box bg='[transparent]' />`],
+    ['namedColor', `<Box border='[1px solid black]' />`, `<Box border='[none]' />`],
+    ['unknownToken', `<Box color='[nope.missing]' />`, `<Box color='[currentColor]' />`],
+    ['pxSpacing', `<Box p='[7px] !important' />`, `<Box p='[0] !important' mx='[auto]' />`],
     ['rawDuration', `<Box transition='all 0.2s ease' />`, `<Box transition='common' transitionDuration='fast' />`],
     ['colorModeLogic', `<Box _dark={{ bg: 'bg' }} />`, `<Box _hover={{ bg: 'bg.muted' }} />`],
     [
