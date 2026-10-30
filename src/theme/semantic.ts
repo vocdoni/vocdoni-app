@@ -130,9 +130,45 @@ export const colors = defineSemanticTokens.colors({
         value: '{colors.surface.sidebar}',
       },
     },
-    // Cards that stay dark in both colour modes
+    // A region set apart from the surface it sits on: muted in light mode, the page colour in dark mode,
+    // where `bg.muted` would be brighter than the dialog around it.
+    inset: {
+      value: {
+        _light: '{colors.bg.muted}',
+        _dark: '{colors.bg}',
+      },
+    },
+    // Cards and tiles that stay dark in both colour modes, with the greys that sit on them.
     inverse: {
-      value: '{colors.gray.800}',
+      DEFAULT: {
+        value: '{colors.gray.800}',
+      },
+      border: {
+        value: '{colors.gray.600}',
+      },
+      rule: {
+        value: '{colors.whiteAlpha.300}',
+      },
+      fg: {
+        DEFAULT: {
+          value: '{colors.white}',
+        },
+        muted: {
+          value: '{colors.gray.400}',
+        },
+      },
+    },
+  },
+  // Dims what is under it so a control on top stays legible: an image's hover action, an upload in progress.
+  scrim: {
+    DEFAULT: {
+      value: '{colors.blackAlpha.400}',
+    },
+    strong: {
+      value: '{colors.blackAlpha.500}',
+    },
+    fg: {
+      value: '{colors.white}',
     },
   },
   auth: {

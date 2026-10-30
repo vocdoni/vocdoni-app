@@ -99,7 +99,7 @@ const NotIntegratorNotice = () => {
                 defaultValue: 'Or switch to an existing organization',
               })}
             </Text>
-            <Stack gap={1} maxH='160px' overflowY='auto'>
+            <Stack gap={1} maxH='40' overflowY='auto'>
               {organizations.map(({ organization, isIntegrator }) => (
                 <Button
                   key={organization.address}

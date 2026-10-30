@@ -146,7 +146,7 @@ const DashboardMenuContent = ({
               if (reduced && isTouchLike) onToggleReduced()
             }}
           >
-            <VocdoniLogo width={reduced ? 'full' : '150px'} minimal={reduced} maxH='2rem' />
+            <VocdoniLogo width={reduced ? 'full' : '150px'} minimal={reduced} maxH='8' />
           </ReactRouterLink>
           <IconButton
             className='dashboard-collapse-toggle'

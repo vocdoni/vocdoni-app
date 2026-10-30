@@ -79,7 +79,7 @@ const Members = () => {
   const hasError = !!error && !(isLoading || isFetching)
 
   return (
-    <TableProvider data={members} initialColumns={columns} isLoading={isLoading} isFetching={isFetching} error={error}>
+    <TableProvider data={members} initialColumns={columns} loading={isLoading} isFetching={isFetching} error={error}>
       <RoutedPaginationProvider path={Routes.dashboard.memberbase.members} pagination={pagination}>
         <ListStateAlert
           show={hasError}

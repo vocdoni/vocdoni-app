@@ -203,7 +203,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
             <Button
               onClick={handleAddToGroup}
               mt={2}
-              width='100%'
+              width='full'
               disabled={!selectedGroup || selectedRows.length === 0}
             >
               {t('members.table.add_to_group_button', {
@@ -339,7 +339,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
             <Button
               onClick={handleAddToCensus}
               mt={2}
-              width='100%'
+              width='full'
               loading={addCensusParticipants.isPending}
               disabled={!selectedProcess || selectedRows.length === 0}
             >
@@ -656,7 +656,7 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
     <Flex
       gap={4}
       align='center'
-      minH='42px'
+      minH='toolbar'
       flexDir={{ base: 'column', md: 'row' }}
       alignItems={{ base: 'stretch', md: 'center' }}
     >
@@ -1026,7 +1026,7 @@ const MembersTable = () => {
             <Table.Root variant='outline'>
               <Table.Header>
                 <Table.Row>
-                  <Table.ColumnHeader width='50px'>
+                  <Table.ColumnHeader width='table.action'>
                     <Checkbox.Root
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
@@ -1040,7 +1040,7 @@ const MembersTable = () => {
                     .map((col) => (
                       <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
                     ))}
-                  <Table.ColumnHeader width='50px'>
+                  <Table.ColumnHeader width='table.action'>
                     <ColumnManager />
                   </Table.ColumnHeader>
                 </Table.Row>

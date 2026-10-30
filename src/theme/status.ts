@@ -19,6 +19,8 @@ const tone = (name: Exclude<StatusTone, 'neutral'>, palette: string) => ({
   fg: { value: `{colors.fg.${name}}` },
   bg: { value: `{colors.bg.${name}}` },
   border: { value: `{colors.border.${name}}` },
+  // Running text on the tone's own `bg`
+  emphasis: { value: { _light: `{colors.${palette}.900}`, _dark: `{colors.${palette}.100}` } },
   solid: { value: `{colors.${palette}.solid}` },
   contrast: { value: `{colors.${palette}.contrast}` },
 })

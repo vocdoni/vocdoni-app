@@ -149,7 +149,7 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
         <CensusConnectButton />
       ) : (
         <>
-          <CVoteButton w='100%' fontSize='lg' height='50px' onClick={setQuestionsTab} />
+          <CVoteButton w='full' fontSize='lg' height='50px' onClick={setQuestionsTab} />
           {isWeighted && <VoteWeight />}
         </>
       )}
