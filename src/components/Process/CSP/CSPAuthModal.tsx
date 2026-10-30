@@ -20,7 +20,7 @@ export const CspAuthModal = () => {
       </Dialog.Trigger>
       <Portal>
         <Dialog.Backdrop />
-        <Dialog.Positioner display='flex' alignItems='center' justifyContent='center' p={{ base: 4, md: 6 }}>
+        <Dialog.Positioner display='flex' alignItems='center' justifyContent='center' p={{ base: '4', md: '6' }}>
           <Dialog.Content w='full' maxW='lg'>
             <Dialog.CloseTrigger asChild>
               <CloseButton />

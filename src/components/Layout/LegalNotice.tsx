@@ -16,7 +16,7 @@ export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
     <PageSection
       size='medium'
       data-testid='layout-legal-notice'
-      mt={{ base: 10, xl: 12 }}
+      mt={{ base: '10', xl: '12' }}
       color='fg.muted'
       fontSize='sm'
       lineHeight='tall'

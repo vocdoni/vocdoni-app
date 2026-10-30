@@ -70,8 +70,8 @@ const IntegratorOrgGuard = () => {
   if (provision.isError) {
     return (
       <DashboardContents>
-        <Center py={16}>
-          <Stack align='center' gap={3}>
+        <Center py='16'>
+          <Stack align='center' gap='3'>
             <Text textStyle='body-sm' color='gray.500'>
               <Trans i18nKey='integrators.provision_failed'>We couldn't set up your integrator account.</Trans>
             </Text>

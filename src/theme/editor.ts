@@ -40,7 +40,7 @@ const editor: SystemStyleObject = {
   '& .lexical-quote': {
     paddingLeft: '4',
     marginY: '5',
-    borderLeft: '4px solid',
+    borderLeft: 'lg',
   },
   '& [class*="lexical-h"]': {
     fontWeight: 'bold',
@@ -52,7 +52,7 @@ const editor: SystemStyleObject = {
   ),
   '& .lexical-paragraph': {
     textStyle: 'sm',
-    margin: 0,
+    margin: '[0]',
   },
 }
 

@@ -255,7 +255,7 @@ export function TextFormatFloatingToolbar({
   }, [editor, updateTextFormatFloatingToolbar])
 
   return (
-    <Card.Root ref={popupCharStylesEditorRef} position='absolute' top={0} left={0} p={1} zIndex='contents'>
+    <Card.Root ref={popupCharStylesEditorRef} position='absolute' top='[0]' left='[0]' p='1' zIndex='contents'>
       {editor.isEditable() && (
         <HStack>
           <IconButton
@@ -311,7 +311,7 @@ export function TextFormatFloatingToolbar({
               </IconButton>
             </MenuTrigger>
             <MenuPositioner>
-              <MenuContent minW='unset'>
+              <MenuContent minW='[unset]'>
                 <MenuItem
                   value='text'
                   onClick={() => {

@@ -48,7 +48,7 @@ type ProcessInfoCardProps = {
 export const ProcessInfoCard = ({ label, description, ...props }: ProcessInfoCardProps) => {
   return (
     <Box {...props}>
-      <Text fontWeight='bold' mb={1}>
+      <Text fontWeight='bold' mb='1'>
         {label}
       </Text>
       {typeof description === 'string' ? (
@@ -92,7 +92,7 @@ const ProcessInfoPanel = () => {
   const showOrgInformation = loading || !!organization?.name?.default
 
   return (
-    <Card.Root variant='section' size='sm' flexWrap='wrap' gap={4} h='fit-content'>
+    <Card.Root variant='section' size='sm' flexWrap='wrap' gap='4' h='fit'>
       <Box flexDir='row' display='flex' justifyContent='space-between' w={{ xl: 'full' }}>
         {status !== 'CANCELED' ? (
           <ProcessDate />
@@ -114,7 +114,7 @@ const ProcessInfoPanel = () => {
       />
       {showOrgInformation && <ProcessInfoCard label={t('process.created_by')} description={<CreatedBy />} />}
       {status === 'PAUSED' && !sameAddress(election?.orgAddress, currentAddress) && (
-        <Card.Root variant='highlight' size='sm' flexDirection='row' gap={2} alignItems='center'>
+        <Card.Root variant='highlight' size='sm' flexDirection='row' gap='2' alignItems='center'>
           <Icon as={ErrorIcon} />
           <ProcessInfoCard label={t('process.status.paused')} description={t('process.status.paused_description')} />
         </Card.Root>
@@ -193,12 +193,12 @@ export const ProcessView = () => {
         size='wide'
         display='grid'
         gridTemplateColumns={{ base: '1fr', xl: 'minmax(0,1fr) var(--chakra-sizes-voting-sidebar)' }}
-        gap={10}
+        gap='10'
         alignItems='start'
         minW={{ base: 'full', xl: 'voting.contents.min' }}
       >
         <GridItem>
-          <Flex direction='column' gap={4}>
+          <Flex direction='column' gap='4'>
             <Header />
 
             <ElectionVideo ref={videoRef} />
@@ -215,13 +215,13 @@ export const ProcessView = () => {
                 <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
                 {election && status !== 'CANCELED' && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
               </TabsList>
-              <TabsContentGroup mt={6}>
-                <TabsContent value='questions' p={0}>
+              <TabsContentGroup mt='6'>
+                <TabsContent value='questions' p='[0]'>
                   <Card.Root
                     ref={electionRef}
                     variant='section'
-                    mt={6}
-                    scrollMarginTop='70px'
+                    mt='6'
+                    scrollMarginTop='[70px]'
                     // Ballot content must never appear in analytics/session replays,
                     // even when an org admin previews the process from the dashboard
                     className='ph-no-capture'
@@ -232,12 +232,12 @@ export const ProcessView = () => {
                       }}
                     />
                   </Card.Root>
-                  <Box position='sticky' bottom={0} left={0} pb={1} pt={1}>
+                  <Box position='sticky' bottom='[0]' left='[0]' pb='1' pt='1'>
                     <VoteButton setQuestionsTab={setQuestionsTab} />
                   </Box>
                 </TabsContent>
                 {election && status !== 'CANCELED' && (
-                  <TabsContent value='results' p={0}>
+                  <TabsContent value='results' p='[0]'>
                     <Card.Root variant='section'>
                       <ElectionResults />
                     </Card.Root>
@@ -247,7 +247,7 @@ export const ProcessView = () => {
             </TabsRoot>
           </Flex>
         </GridItem>
-        <GridItem display='grid' gap={6}>
+        <GridItem display='grid' gap='6'>
           <ProcessInfoPanel />
           <ProcessAside />
         </GridItem>
@@ -297,7 +297,7 @@ export const SuccessVoteModal = () => {
                   i18nKey='process.success_modal.text'
                   components={{
                     verify: <Link href={`${explorerUrl}/verify/${voteId}`} target='_blank' />,
-                    p: <Text mb={2} />,
+                    p: <Text mb='2' />,
                   }}
                 />
               ) : (
@@ -308,7 +308,7 @@ export const SuccessVoteModal = () => {
                 <Trans
                   i18nKey='process.success_modal.text_no_id'
                   defaults='<p>Your vote has been cast successfully.</p>'
-                  components={{ p: <Text mb={2} /> }}
+                  components={{ p: <Text mb='2' /> }}
                 />
               )}
               {/* The same one-line warning the Voted notice prints under the
@@ -372,10 +372,10 @@ export const VotingVoteModal = () => {
       <Dialog.Positioner>
         <Dialog.Content>
           {/* This dialog has no header, so the body has to supply the top padding it would provide. */}
-          <Dialog.Body pt={6}>
+          <Dialog.Body pt='6'>
             {showFailure ? (
               <>
-                <Text textAlign='center' fontWeight='bold' mb={2}>
+                <Text textAlign='center' fontWeight='bold' mb='2'>
                   {t('process.vote_failed.title', { defaultValue: 'Your vote could not be cast' })}
                 </Text>
                 <Text textAlign='center'>
@@ -389,7 +389,7 @@ export const VotingVoteModal = () => {
                 </Text>
               </>
             ) : (
-              <PageLoader minHeight={1}>{t('process.voting')}</PageLoader>
+              <PageLoader minHeight='1'>{t('process.voting')}</PageLoader>
             )}
           </Dialog.Body>
           {showFailure && (

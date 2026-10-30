@@ -36,7 +36,7 @@ const AddressBtn = ({ ...props }) => {
         </Button>
       </MenuTrigger>
       <MenuPositioner>
-        <MenuContent top='-32' left={{ md: -9 }} zIndex='public-header'>
+        <MenuContent top='-32' left={{ md: '-9' }} zIndex='public-header'>
           <MenuItem value='copy-address' asChild>
             <Button
               onClick={() => {
@@ -50,7 +50,7 @@ const AddressBtn = ({ ...props }) => {
               justifyContent='start'
               alignItems='center'
               borderRadius='sm'
-              mb={1}
+              mb='1'
             >
               <CopyIcon />
               {t('copy.address')}
@@ -65,7 +65,7 @@ const AddressBtn = ({ ...props }) => {
               alignItems='center'
               borderRadius='sm'
             >
-              <HStack gap={2}>
+              <HStack gap='2'>
                 <ExternalLinkIcon />
                 <Text as='span'>{t('open_in_explorer')}</Text>
               </HStack>

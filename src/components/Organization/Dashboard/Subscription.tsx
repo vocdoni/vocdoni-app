@@ -77,7 +77,7 @@ const SubscriptionPageContent = () => {
         <>
           <SubscriptionPlans />
           <Flex justifyContent='center'>
-            <Button variant='outline' onClick={toggleComparisonTable} mb={6}>
+            <Button variant='outline' onClick={toggleComparisonTable} mb='6'>
               {showComparisonTable
                 ? t('subscription_plan.hide_comparison_table', { defaultValue: 'Show less features' })
                 : t('subscription_plan.show_comparison_table', { defaultValue: 'View all features' })}
@@ -92,7 +92,7 @@ const SubscriptionPageContent = () => {
         <Text textStyle='body-sm' color='fg.muted' textAlign='center'>
           <Trans i18nKey='subscription_plan.gdpr_compliance'>All plans include GDPR compliance.</Trans>
         </Text>
-        <Flex gap={1}>
+        <Flex gap='1'>
           <Trans
             i18nKey='subscription_plan.need_help'
             components={[

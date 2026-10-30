@@ -24,20 +24,20 @@ export const EmptyState = defineSlotRecipe({
     size: {
       // One muted line inside a table or list.
       sm: {
-        root: { px: 0, py: 0, gap: 3 },
+        root: { px: '[0]', py: '[0]', gap: '3' },
         title: { fontSize: 'sm', lineHeight: 'moderate', fontWeight: 'normal', color: 'fg.muted' },
         description: { fontSize: 'sm', lineHeight: 'moderate' },
       },
       // Inside a card or panel, which gives the padding: an icon or illustration, a title and a call to action.
       md: {
-        root: { px: 0, py: 0, gap: 3 },
+        root: { px: '[0]', py: '[0]', gap: '3' },
         indicator: { _icon: { boxSize: 'icon.xl' } },
         title: { fontSize: 'lg', lineHeight: 'moderate', fontWeight: 'bold' },
         description: { fontSize: 'md', lineHeight: 'moderate' },
       },
       // In place of a whole list or section with nothing in it: md with room above and below.
       lg: {
-        root: { px: 0, py: 10, gap: 3 },
+        root: { px: '[0]', py: '10', gap: '3' },
         indicator: { _icon: { boxSize: 'icon.xl' } },
         title: { fontSize: 'lg', lineHeight: 'moderate', fontWeight: 'bold' },
         description: { fontSize: 'md', lineHeight: 'moderate' },

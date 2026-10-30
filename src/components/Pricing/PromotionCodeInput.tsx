@@ -70,10 +70,10 @@ export const PromotionCodeInput = () => {
 
   return !appliedCode ? (
     <Box>
-      <Text textStyle='body-sm' fontWeight='medium' mb={2}>
+      <Text textStyle='body-sm' fontWeight='medium' mb='2'>
         <Trans i18nKey='promo_code'>Promotion Code</Trans>
       </Text>
-      <Flex gap={2}>
+      <Flex gap='2'>
         <Input
           {...register('promoCode', {
             required: t('promo_code_required', { defaultValue: 'Promotion code is required' }),
@@ -86,7 +86,7 @@ export const PromotionCodeInput = () => {
         </Button>
       </Flex>
       {(errors.promoCode || error) && (
-        <Text color='status.error.fg' textStyle='body-sm' mt={1}>
+        <Text color='status.error.fg' textStyle='body-sm' mt='1'>
           {errors.promoCode?.message || error}
         </Text>
       )}
@@ -94,14 +94,14 @@ export const PromotionCodeInput = () => {
   ) : (
     <Card.Root variant='section' size='sm'>
       <Flex justify='space-between' align='center'>
-        <Flex align='center' gap={2}>
+        <Flex align='center' gap='2'>
           <Icon as={CheckIcon} color='status.success.fg' />
           <Text textStyle='body-sm' fontWeight='medium'>
             <Trans i18nKey='code_applied'>Code "{{ appliedCode }}" applied</Trans>
           </Text>
         </Flex>
         <Button size='xs' variant='ghost' onClick={handleRemove} loading={isApplying}>
-          <HStack gap={2}>
+          <HStack gap='2'>
             <Icon as={CloseIcon} />
             <Trans i18nKey='remove'>Remove</Trans>
           </HStack>

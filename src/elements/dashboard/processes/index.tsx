@@ -42,7 +42,7 @@ const OrganizationVotings = () => {
         }}
         lazyMount
       >
-        <Tabs.List mb={6}>
+        <Tabs.List mb='6'>
           {menuItems.map((item) => (
             <Tabs.Trigger key={item.route} value={item.route}>
               {item.label}

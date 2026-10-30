@@ -98,7 +98,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
         ref={setTriggerRef}
         disabled={!groupId}
         colorPalette='gray'
-        w={census ? 'auto' : 'full'}
+        w={census ? '[auto]' : 'full'}
         variant={census ? 'outline' : 'solid'}
         size={census ? 'sm' : 'md'}
         alignSelf={census ? 'start' : undefined}
@@ -146,7 +146,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
                 defaultValue: 'Pick the member details voters must enter to vote, like their ID or member number.',
               })}
             </Alert.Description>
-            <Flex mt={3}>{trigger}</Flex>
+            <Flex mt='3'>{trigger}</Flex>
           </Alert.Content>
         </Alert.Root>
       )}
@@ -158,10 +158,10 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
           {/* The phone-sized 'full' variant sets these; undo them from md up or
               the desktop dialog stretches to the whole viewport height. */}
           <Dialog.Content
-            maxW={{ md: '52rem' }}
-            minH={{ md: 'auto' }}
+            maxW={{ md: '[52rem]' }}
+            minH={{ md: '[auto]' }}
             borderRadius={{ md: 'l3' }}
-            mx={{ md: 4 }}
+            mx={{ md: '4' }}
             overflow='hidden'
           >
             <Dialog.CloseTrigger asChild>

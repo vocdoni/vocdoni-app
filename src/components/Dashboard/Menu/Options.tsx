@@ -10,18 +10,18 @@ export const DashboardMenuOptions = ({ sections }: { sections: DashboardMenuSect
   const { reduced } = useContext(DashboardLayoutContext)
 
   return (
-    <Flex flexDirection={'column'} gap={8}>
+    <Flex flexDirection={'column'} gap='8'>
       {sections.map((section, sectionIndex) => {
         if (reduced && section.hideWhenReduced) return null
 
         return (
           <Box key={sectionIndex}>
             {!reduced && section.title && (
-              <Text mx={2} mb={2} fontWeight={'bold'} textStyle='caption'>
+              <Text mx='2' mb='2' fontWeight={'bold'} textStyle='caption'>
                 {section.title}
               </Text>
             )}
-            <List.Root display='flex' flexDirection='column' listStyleType='none' ml={0}>
+            <List.Root display='flex' flexDirection='column' listStyleType='none' ml='[0]'>
               {section.items.map((item, index) => {
                 const activeMatch = item.activeMatch ?? (item.route ? [{ path: item.route, end: true }] : [])
                 const isActive = activeMatch.some((match) =>

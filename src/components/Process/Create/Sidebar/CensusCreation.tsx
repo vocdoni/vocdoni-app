@@ -40,12 +40,12 @@ const StepMarker = ({ step, status }: { step: number; status: StepStatus }) => (
     as='span'
     aria-hidden
     boxSize={4.5}
-    mt='1px'
+    mt='[1px]'
     flexShrink={0}
     align='center'
     justify='center'
     borderRadius='full'
-    borderWidth='1.5px'
+    borderWidth='[1.5px]'
     fontSize='xs'
     fontWeight='bold'
     {...stepMarkerStyles[status]}
@@ -85,9 +85,9 @@ export const formatGroupOptionLabel = (group: Group, { context }: GroupOptionLab
   if (context === 'value') return group.title
 
   return (
-    <HStack gap={4} align='center' justifyContent='space-between' w='full'>
+    <HStack gap='4' align='center' justifyContent='space-between' w='full'>
       <Text as='span'>{group.title}</Text>
-      <HStack gap={1.5} color='fg.muted' fontSize='sm' flexShrink={0}>
+      <HStack gap='1.5' color='fg.muted' fontSize='sm' flexShrink={0}>
         <UsersIcon />
         <Text as='span'>{group.membersCount || 0}</Text>
       </HStack>
@@ -138,7 +138,7 @@ export const GroupSelect = ({ groups, field, fetchNextPage, hasNextPage, isFetch
       <chakraComponents.MenuList {...props}>
         {props.children}
         {hasNextPage && (
-          <Box py={2} textAlign='center'>
+          <Box py='2' textAlign='center'>
             {isFetching ? <InlineLoader /> : t('process_create.groups.scroll_to_load', 'Scroll to load more...')}
           </Box>
         )}
@@ -153,7 +153,7 @@ export const GroupSelect = ({ groups, field, fetchNextPage, hasNextPage, isFetch
 
   return (
     <FieldRoot invalid={!!errors.groupId}>
-      <FieldLabel gap={2} alignItems='flex-start'>
+      <FieldLabel gap='2' alignItems='flex-start'>
         <StepMarker step={1} status={groupStatus} />
         <Trans i18nKey='process_create.census.memberbase.label'>Select a group of members to create the census</Trans>
       </FieldLabel>
@@ -219,7 +219,7 @@ const GroupCensusCreation = () => {
   )
 
   return (
-    <Box display='flex' flexDirection='column' gap={4}>
+    <Box display='flex' flexDirection='column' gap='4'>
       {groups?.length > 0 && (
         <>
           <GroupSelect
@@ -229,9 +229,9 @@ const GroupCensusCreation = () => {
             hasNextPage={hasNextPage}
             isFetching={isFetching}
           />
-          <Flex direction='column' gap={1.5}>
+          <Flex direction='column' gap='1.5'>
             {/* Styled after the group field's label above, so both steps read alike. */}
-            <HStack gap={2} align='flex-start' textStyle='sm' fontWeight='medium'>
+            <HStack gap='2' align='flex-start' textStyle='sm' fontWeight='medium'>
               <StepMarker step={2} status={authStatus} />
               {t('process_create.census.voter_auth.label', { defaultValue: 'Set how voters prove who they are' })}
             </HStack>

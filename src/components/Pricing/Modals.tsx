@@ -73,7 +73,7 @@ export const PlanUpgradeModal = ({ open, onOpenChange, onClose, ...props }: Moda
           <Dialog.CloseTrigger asChild>
             <CloseButton />
           </Dialog.CloseTrigger>
-          <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap={1}>
+          <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap='1'>
             <Dialog.Title>
               <Trans i18nKey={titleI18nKey} defaults={titleDefault} />
             </Dialog.Title>

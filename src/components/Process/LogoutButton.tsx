@@ -13,7 +13,7 @@ const LogoutButton = () => {
   if (!connected) return null
 
   return (
-    <Box alignSelf='center' mb={{ base: 10, md: 0 }}>
+    <Box alignSelf='center' mb={{ base: '10', md: '[0]' }}>
       <Button onClick={clearVoter}>{t('logout')}</Button>
     </Box>
   )

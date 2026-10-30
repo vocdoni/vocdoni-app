@@ -15,7 +15,7 @@ export const AccountEdit = () => {
   const { data: profile } = useProfile()
 
   return (
-    <Flex flexDirection='column' gap={6}>
+    <Flex flexDirection='column' gap='6'>
       <DashboardBox size='md'>
         <AccountForm profile={profile} />
       </DashboardBox>
@@ -38,7 +38,7 @@ export const AccountEdit = () => {
         onOpenChange={({ open }) => setOpen(open)}
         title={t('delete.confirm_title', { defaultValue: 'Delete Your Account' })}
         description={
-          <Flex flexDirection='column' gap={2}>
+          <Flex flexDirection='column' gap='2'>
             <Text textStyle='body-sm'>
               {t('delete.confirm_description', {
                 defaultValue: 'To delete your account, please contact our support team.',

@@ -75,7 +75,7 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
 
   if (acceptInvitationMutation.isPending) {
     return (
-      <PageLoader minHeight={1}>
+      <PageLoader minHeight='1'>
         <Trans i18nKey='invite.processing'>Processing your invitation...</Trans>
       </PageLoader>
     )
@@ -89,7 +89,7 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
 
     if (error?.code === ErrorCode.UserNotVerified) {
       return (
-        <Flex direction='column' justify='center' p={4} gap={4}>
+        <Flex direction='column' justify='center' p='4' gap='4'>
           <Text>
             <Trans i18nKey='invite.account_not_verified'>
               Your account is not verified. Please verify your account to continue.
@@ -107,7 +107,7 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
     return <Error error={error?.error || t('invite.unexpected_error', 'Unexpected error')} />
   }
 
-  return <PageLoader minHeight={1} />
+  return <PageLoader minHeight='1' />
 }
 
 export default AcceptInvitation

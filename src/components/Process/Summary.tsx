@@ -125,9 +125,9 @@ const ParticipationCard = () => {
 
   return (
     <Card.Root>
-      <Card.Body gap={6}>
-        <Flex justify='space-between' align='start' gap={4} wrap='wrap'>
-          <Box flex='1' minW='0'>
+      <Card.Body gap='6'>
+        <Flex justify='space-between' align='start' gap='4' wrap='wrap'>
+          <Box flex='1' minW='[0]'>
             <Heading as='h1' textStyle='display'>
               {getElectionTitle(election)}
             </Heading>
@@ -136,7 +136,7 @@ const ParticipationCard = () => {
         </Flex>
 
         <Box>
-          <Flex justify='space-between' align='baseline' mb={2} gap={2} wrap='wrap'>
+          <Flex justify='space-between' align='baseline' mb='2' gap='2' wrap='wrap'>
             <Text>
               <Trans
                 i18nKey='process.summary.participation_current'
@@ -157,7 +157,7 @@ const ParticipationCard = () => {
 
         <Separator />
 
-        <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+        <SimpleGrid columns={{ base: 1, md: 2 }} gap='6'>
           <Stat.Root>
             <Stat.Label color='fg.muted' textStyle='eyebrow'>
               {t('process.summary.start_label')}
@@ -185,7 +185,7 @@ type IndicatorProps = { label: string; value: string; accent?: boolean }
 const Indicator = ({ label, value, accent }: IndicatorProps) => (
   <Card.Root size='sm' textAlign='center'>
     <Card.Body>
-      <Stat.Root alignItems='center' gap={1}>
+      <Stat.Root alignItems='center' gap='1'>
         <Stat.ValueText fontSize='3xl' fontWeight='bold' color={accent ? 'colorPalette.fg' : undefined}>
           {value}
         </Stat.ValueText>
@@ -212,13 +212,13 @@ const KeyIndicators = () => {
 
   return (
     <Box>
-      <Flex align='center' gap={4} mb={4}>
+      <Flex align='center' gap='4' mb='4'>
         <Heading as='h2' size='lg' flexShrink={0}>
           {t('process.summary.indicators_title')}
         </Heading>
         <Separator flex='1' />
       </Flex>
-      <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
         <Indicator label={t('process.summary.stat_census')} value={nf(census)} />
         <Indicator label={t('process.summary.stat_votes_received')} value={nf(voteCount)} />
         <Indicator label={t('process.summary.stat_participation')} value={`${nf(percent, 2)}%`} accent />
@@ -247,7 +247,7 @@ const ResultsNotice = () => {
 
   return (
     <Box>
-      <Flex align='center' gap={4} mb={4}>
+      <Flex align='center' gap='4' mb='4'>
         <Heading as='h2' size='lg' flexShrink={0}>
           {t('process.summary.results_title')}
         </Heading>
@@ -260,9 +260,9 @@ const ResultsNotice = () => {
           </Card.Body>
         </Card.Root>
       ) : (
-        <Box colorPalette={statusPalette.info} bg='status.info.bg' color='status.info.emphasis' borderRadius='lg' p={4}>
-          <Flex gap={3} align='start'>
-            <Box as={ResultsIcon} boxSize='icon.md' flexShrink={0} mt={0.5} />
+        <Box colorPalette={statusPalette.info} bg='status.info.bg' color='status.info.emphasis' borderRadius='lg' p='4'>
+          <Flex gap='3' align='start'>
+            <Box as={ResultsIcon} boxSize='icon.md' flexShrink={0} mt='0.5' />
             <Text textStyle='body-sm'>
               <Trans
                 i18nKey='process.summary.results_private'
@@ -301,18 +301,18 @@ const CertifiedTech = () => {
   return (
     <Card.Root variant='inverse' className='dark' colorPalette={defaultColorPalette(PRIMARY_COLOR)}>
       <Card.Body>
-        <Flex direction={{ base: 'column', lg: 'row' }} gap={8}>
+        <Flex direction={{ base: 'column', lg: 'row' }} gap='8'>
           <Box flex='1'>
-            <Heading as='h2' size='lg' mb={3}>
+            <Heading as='h2' size='lg' mb='3'>
               {t('process.summary.tech_title')}
             </Heading>
-            <Text color='surface.inverse.fg.muted' mb={5}>
+            <Text color='surface.inverse.fg.muted' mb='5'>
               {t('process.summary.tech_description')}
             </Text>
-            <List.Root variant='plain' gap={3}>
+            <List.Root variant='plain' gap='3'>
               {techItems(election?.census?.anonymous).map(({ key, icon }) => (
-                <List.Item key={key} alignItems='start' gap={2}>
-                  <List.Indicator asChild color='colorPalette.fg' mt={1}>
+                <List.Item key={key} alignItems='start' gap='2'>
+                  <List.Indicator asChild color='colorPalette.fg' mt='1'>
                     <Box as={icon} />
                   </List.Indicator>
                   <Text textStyle='body-sm'>
@@ -326,15 +326,15 @@ const CertifiedTech = () => {
             direction='column'
             align='center'
             justify='center'
-            gap={2}
-            borderTopWidth={{ base: '1px', lg: '0' }}
-            borderLeftWidth={{ lg: '1px' }}
+            gap='2'
+            borderTopWidth={{ base: 'hairline', lg: '[0]' }}
+            borderLeftWidth={{ lg: 'hairline' }}
             borderColor='surface.inverse.rule'
-            pt={{ base: 6, lg: 0 }}
-            pl={{ lg: 8 }}
+            pt={{ base: '6', lg: '[0]' }}
+            pl={{ lg: '8' }}
             minW={{ lg: '60' }}
           >
-            <Button mt={2} asChild>
+            <Button mt='2' asChild>
               <a href={Routes.vocdoni} target='_blank' rel='noreferrer'>
                 {t('process.summary.learn_more')}
               </a>
@@ -352,7 +352,7 @@ const ProcessSummary = () => {
   if (!election) return null
 
   return (
-    <PageSection size='narrow' display='flex' flexDirection='column' gap={8} w='full' py={6}>
+    <PageSection size='narrow' display='flex' flexDirection='column' gap='8' w='full' py='6'>
       <ParticipationCard />
       <KeyIndicators />
       <ResultsNotice />

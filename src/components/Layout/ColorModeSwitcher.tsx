@@ -46,10 +46,10 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
       variant='outline'
       aria-label={t('color_mode_switcher', 'Color mode switcher')}
       {...props}
-      border='1px solid'
+      border='sm'
       borderColor='border'
       borderRadius='sm'
-      p={1}
+      p='1'
     >
       {modes.map(({ mode, label, icon }) => (
         <Tooltip content={label} key={mode} positioning={{ placement: 'top' }}>

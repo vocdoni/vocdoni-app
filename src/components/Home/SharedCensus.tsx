@@ -124,17 +124,17 @@ const SharedCensusHomeContent = () => {
   }
 
   return (
-    <PageSection size='medium' display='flex' flexDirection='column' gap={10} px={5} alignItems='center'>
+    <PageSection size='medium' display='flex' flexDirection='column' gap='10' px='5' alignItems='center'>
       <OrganizationImage h='100px' />
       {showTopContent && (
-        <Box w='90%' display='flex' flexDirection='column' gap={4}>
+        <Box w='[90%]' display='flex' flexDirection='column' gap='4'>
           {(showAlways || showDisconnected || showConnected) && (
             <Box className='shared-census' data-testid='shared-census-pretext'>
               <Editor key={pretextContent} disabled defaultValue={pretextContent} />
             </Box>
           )}
           {showStream && (
-            <Box data-testid='shared-census-stream' maxW='600px' alignSelf='center' w='full'>
+            <Box data-testid='shared-census-stream' maxW='[600px]' alignSelf='center' w='full'>
               <AspectRatio ratio={16 / 9}>
                 <ReactPlayer src={streamUrl} width='100%' height='100%' controls={true} />
               </AspectRatio>
@@ -144,11 +144,11 @@ const SharedCensusHomeContent = () => {
       )}
       <Box>{election && !isAdmin && <CensusConnectButton />}</Box>
       {canViewProcesses && (
-        <Box w='90%'>
-          <PageTitle alignSelf='start' mb={10} mt='-30px'>
+        <Box w='[90%]'>
+          <PageTitle alignSelf='start' mb='10' mt='[-30px]'>
             {t('shared_census.section_title', { defaultValue: 'Elections' })}
           </PageTitle>
-          <Flex gap={5} flexDirection={{ base: 'column' }}>
+          <Flex gap='5' flexDirection={{ base: 'column' }}>
             {processIds.map((processId, index) => (
               <ElectionProvider id={processId} key={processId} queryOptions={{ refetchInterval: 15_000 }}>
                 <ElectionItemList isAdmin={isAdmin} index={index} />
@@ -159,7 +159,7 @@ const SharedCensusHomeContent = () => {
       )}
       <LogoutButton />
       {canViewProcesses && (
-        <Text mt={12} maxW='800px' textAlign='center'>
+        <Text mt='12' maxW='[800px]' textAlign='center'>
           {t('shared_census.instructions.vote', {
             defaultValue:
               'Select the election to open a new window with the voting instructions. Once your vote is submitted, close the window to return here.',
@@ -178,7 +178,7 @@ const SharedCensusHomeContent = () => {
         </Text>
       )}
       {postText && (
-        <Text display='flex' flexDirection='column' gap={4} maxW='90%' mt={10}>
+        <Text display='flex' flexDirection='column' gap='4' maxW='[90%]' mt='10'>
           {getLocalizedMarkdown(postText)}
         </Text>
       )}
@@ -206,14 +206,14 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
           target={!isAdmin ? '_blank' : undefined}
           rel={!isAdmin ? 'noopener noreferrer' : undefined}
         >
-          <Box fontSize='lg' display='flex' alignItems='center' p={4}>
-            <Box as='span' mr={2} position='absolute' left={2} top={2} color='fg.subtle'>
+          <Box fontSize='lg' display='flex' alignItems='center' p='4'>
+            <Box as='span' mr='2' position='absolute' left='2' top='2' color='fg.subtle'>
               {index + 1}
             </Box>
             <ElectionTitle size='card' as='h2' />
             <ElectionStatusBadge position='absolute' top={1} right={1} />
             {hasVoted && (
-              <Text textStyle='body-sm' color='status.success.fg' position='absolute' bottom={0} right={1}>
+              <Text textStyle='body-sm' color='status.success.fg' position='absolute' bottom='[0]' right='1'>
                 {t('shared_census.voted', { defaultValue: 'You already voted' })}
               </Text>
             )}

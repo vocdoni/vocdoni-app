@@ -46,7 +46,7 @@ const InputBasic = ({
         {...props}
         required={false} // we don't want HTML5 validation
       />
-      <FormErrorMessage mt={2}>
+      <FormErrorMessage mt='2'>
         {errorMessage || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
       </FormErrorMessage>
     </FormControl>

@@ -46,14 +46,14 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
 
   return (
     <Card.Root variant='section' size='sm'>
-      <HStack justify='space-between' mb={3}>
+      <HStack justify='space-between' mb='3'>
         <Text fontWeight='semibold'>{t('voter_auth.summary.title', { defaultValue: 'Voter sign-in' })}</Text>
         <StatusBadge tone={protectionLevelTones[level]}>{getProtectionLevelTitle(t, level)}</StatusBadge>
       </HStack>
-      <Stack gap={2} fontSize='sm'>
+      <Stack gap='2' fontSize='sm'>
         {credentials.length > 0 && (
-          <HStack gap={2} align='start'>
-            <Icon as={IdCardIcon} color='fg.muted' mt={0.5} />
+          <HStack gap='2' align='start'>
+            <Icon as={IdCardIcon} color='fg.muted' mt='0.5' />
             <Text>
               {t('voter_auth.summary.details', {
                 defaultValue: 'Voters type: {{fields}}',
@@ -62,7 +62,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
             </Text>
           </HStack>
         )}
-        <HStack gap={2}>
+        <HStack gap='2'>
           <Icon as={codeIcons[codeMethod]} color='fg.muted' />
           <Text>{getCodeMethodSummary(t, codeMethod)}</Text>
         </HStack>
@@ -70,7 +70,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
             different axis from how strongly a voter is identified, not a further
             rung of it. Set in the settings panel, echoed here so the census reads
             whole. */}
-        <HStack gap={2}>
+        <HStack gap='2'>
           <Icon as={UnlinkIcon} color='fg.muted' />
           <Text color='fg.muted'>
             {t('voter_auth.anonymity', {
@@ -82,8 +82,8 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
         {/* Re-checked whenever the group or the chosen details change after
             saving: the settings were only ever validated against the old ones. */}
         {(checkStatus === 'invalid' || checkStatus === 'rejected') && (
-          <HStack gap={2} align='start' color='fg.error'>
-            <Icon as={WarningIcon} mt={0.5} />
+          <HStack gap='2' align='start' color='fg.error'>
+            <Icon as={WarningIcon} mt='0.5' />
             <Text>
               {t('voter_auth.summary.member_list_mismatch', {
                 defaultValue: "These settings don't fit your member list. Edit them to see why.",

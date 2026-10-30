@@ -3,13 +3,13 @@ import { Trans } from 'react-i18next'
 
 export const HSeparator = (props: { variant?: string; [x: string]: any }) => {
   const { variant, ...rest } = props
-  return <Flex h='1px' w='full' bg='separator' {...rest} />
+  return <Flex h='[1px]' w='full' bg='separator' {...rest} />
 }
 
 export const OrSeparator = (props: FlexProps) => (
-  <Flex align='center' mb={4} {...props}>
+  <Flex align='center' mb='4' {...props}>
     <HSeparator />
-    <Text color='fg.muted' fontWeight='bold' mx={3.5} whiteSpace='nowrap' textStyle='caption' textTransform='uppercase'>
+    <Text color='fg.muted' fontWeight='bold' mx='3.5' whiteSpace='nowrap' textStyle='caption' textTransform='uppercase'>
       <Trans i18nKey='or_continue_with'>or continue with</Trans>
     </Text>
     <HSeparator />

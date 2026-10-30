@@ -156,7 +156,7 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
       render: (plan) => {
         const { t } = useTranslation()
         return (
-          <Flex flexDirection='column' alignItems='center' gap={1}>
+          <Flex flexDirection='column' alignItems='center' gap='1'>
             <BooleanIcon value={true} />
             <Text textStyle='caption'>
               {isPlanNamed(plan, PlanName.Professional)
@@ -193,7 +193,7 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
         render: (plan) => {
           const { t } = useTranslation()
           return (
-            <Flex alignItems='center' justifyContent='center' gap={1}>
+            <Flex alignItems='center' justifyContent='center' gap='1'>
               <BooleanIcon value={true} />
               <Text textStyle='caption'>
                 {t('features.uptime_guaranteed', {

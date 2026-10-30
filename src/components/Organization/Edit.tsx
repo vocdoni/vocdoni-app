@@ -108,7 +108,7 @@ const EditOrganization = () => {
   return (
     <DashboardBox size='md'>
       <FormProvider {...methods}>
-        <Flex as='form' id='process-create-form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap={6}>
+        <Flex as='form' id='process-create-form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap='6'>
           <Flex flexDir='column'>
             <Heading size='md'>
               {t('create_org.organization_details', { defaultValue: 'Organization details' })}
@@ -119,8 +119,8 @@ const EditOrganization = () => {
               })}
             </Text>
           </Flex>
-          <Flex gap={6} flexDirection={{ base: 'column', sm: 'row' }}>
-            <AvatarUploader w='fit-content' />
+          <Flex gap='6' flexDirection={{ base: 'column', sm: 'row' }}>
+            <AvatarUploader w='fit' />
             <PublicOrgForm />
           </Flex>
           <Flex align='center'>
@@ -128,7 +128,7 @@ const EditOrganization = () => {
             <Text
               color='fg.muted'
               fontWeight='bold'
-              mx={3.5}
+              mx='3.5'
               whiteSpace='nowrap'
               textStyle='caption'
               textTransform='uppercase'
@@ -137,7 +137,7 @@ const EditOrganization = () => {
             </Text>
             <HSeparator />
           </Flex>
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+          <SimpleGrid columns={{ base: 1, md: 2 }} gap='6'>
             <PrivateOrgForm />
           </SimpleGrid>
 

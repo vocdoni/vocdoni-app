@@ -14,7 +14,7 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
       {children}
       <Toaster toaster={toaster}>
         {(toast) => (
-          <Toast.Root w='fit-content' maxW='sm' mx='auto'>
+          <Toast.Root w='fit' maxW='sm' mx='[auto]'>
             <Toast.Indicator />
             <Box flex='1'>
               {toast.title ? <Toast.Title>{toast.title}</Toast.Title> : null}

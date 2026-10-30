@@ -103,7 +103,7 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
   if (checkoutState.type === 'error') {
     return (
       <Box>
-        <Flex justifyContent='flex-start' mb={4}>
+        <Flex justifyContent='flex-start' mb='4'>
           <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={showPlans} variant='ghost'>
             <BackIcon />
           </IconButton>
@@ -119,21 +119,21 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
 
   return (
     <Box as='form' onSubmit={handleSubmit}>
-      <Flex justifyContent='flex-start' mb={6}>
+      <Flex justifyContent='flex-start' mb='6'>
         <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={showPlans} variant='ghost'>
           <BackIcon />
         </IconButton>
       </Flex>
 
-      <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={6}>
+      <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap='6'>
         {/* Left Column: Order Summary + Promo Code */}
-        <Flex as='section' flexDirection='column' gap={5}>
+        <Flex as='section' flexDirection='column' gap='5'>
           <OrderSummary checkout={checkout} />
           <PromotionCodeInput />
         </Flex>
 
         {/* Right Column: Payment Element + Submit */}
-        <Flex as='section' flexDirection='column' gap={5}>
+        <Flex as='section' flexDirection='column' gap='5'>
           <BillingAddressElement options={{ display: { name: 'split' } }} />
           <TaxIdElement
             options={{
@@ -148,7 +148,7 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
             </Alert>
           )}
 
-          <Button type='submit' w='full' mt={6} loading={isSubmitting} disabled={checkoutState.type !== 'success'}>
+          <Button type='submit' w='full' mt='6' loading={isSubmitting} disabled={checkoutState.type !== 'success'}>
             {t('subscribe', { defaultValue: 'Subscribe' })}
           </Button>
         </Flex>
@@ -267,7 +267,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
 
   if (!stripePromise) {
     return (
-      <Box id='checkout' p={4} color='status.error.fg' textAlign='center'>
+      <Box id='checkout' p='4' color='status.error.fg' textAlign='center'>
         {t('payment.stripe_unavailable', {
           defaultValue: 'Payments are temporarily unavailable. Please try again later.',
         })}
@@ -276,7 +276,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
   }
 
   return (
-    <Box id='checkout' p={4}>
+    <Box id='checkout' p='4'>
       <CheckoutProvider stripe={stripePromise} options={options}>
         <CheckoutForm onClose={onClose} onComplete={onComplete} sessionId={sessionId} />
       </CheckoutProvider>

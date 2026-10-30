@@ -1,23 +1,23 @@
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { stepsAnatomy } from '@chakra-ui/react/anatomy'
 
 const baseStyle = {
   separator: {
     display: { base: 'none', lg: 'inline-block' },
-    mt: { lg: 2 },
+    mt: { lg: '2' },
   },
   item: {
     '&:first-of-type': {
-      h: { lg: '600px' },
-      my: { lg: 10 },
+      h: { lg: '[600px]' },
+      my: { lg: '10' },
     },
   },
   title: {
-    mt: 1.5,
+    mt: '1.5',
     fontSize: 'xs',
     display: { base: 'none', lg: 'block' },
   },
-}
+} satisfies Partial<Record<string, SystemStyleObject>>
 
 export const Stepper = defineSlotRecipe({
   slots: stepsAnatomy.keys(),

@@ -1,9 +1,9 @@
 import { menuAnatomy } from '@chakra-ui/react/anatomy'
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 
 const baseStyle = {
   content: {
-    p: 1,
+    p: '1',
     borderRadius: 'sm',
     boxShadow: 'shadow.raised',
     bg: 'surface.raised',
@@ -21,9 +21,9 @@ const baseStyle = {
   },
 
   separator: {
-    m: 0,
+    m: '[0]',
   },
-}
+} satisfies Partial<Record<string, SystemStyleObject>>
 
 export const Menu = defineSlotRecipe({
   slots: menuAnatomy.keys(),

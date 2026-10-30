@@ -8,7 +8,7 @@ const stockSizes = (stockVariants?.size ?? {}) as StyleMap
 
 // No `fontSize` here: every size sets a `textStyle`, which would override it anyway.
 const baseStyle = defineStyle({
-  minW: 0,
+  minW: '[0]',
   fontWeight: 'bold',
   borderRadius: 'sm',
   _currentPage: {
@@ -23,9 +23,9 @@ const baseStyle = defineStyle({
 // Text-only action inside a sentence.
 const link = defineStyle({
   textAlign: 'left',
-  w: 'auto',
-  h: 'auto',
-  p: 0,
+  w: '[auto]',
+  h: '[auto]',
+  p: '[0]',
   verticalAlign: 'unset',
   _hover: {
     textDecoration: 'underline',
@@ -35,19 +35,19 @@ const link = defineStyle({
 // Same, always underlined and in the palette colour (e.g. "Check again" after a failed check).
 const linkUnderline = defineStyle({
   ...stock.plain,
-  h: 'auto',
-  p: 0,
+  h: '[auto]',
+  p: '[0]',
   textDecoration: 'underline',
 })
 
 // Reads as the text around it: no box, the parent's line height (support chat teaser).
 const text = defineStyle({
-  h: 'auto',
-  minW: 0,
-  p: 0,
-  borderWidth: 0,
+  h: '[auto]',
+  minW: '[0]',
+  p: '[0]',
+  borderWidth: '[0]',
   // One level down: the size's `textStyle` is applied after a plain `lineHeight` and would win.
-  '&': { lineHeight: 'inherit' },
+  '&': { lineHeight: '[inherit]' },
   whiteSpace: 'normal',
   fontWeight: 'normal',
 })
@@ -66,8 +66,8 @@ const navItem = defineStyle({
   display: 'flex',
   justifyContent: 'start',
   alignItems: 'center',
-  gap: 4,
-  p: 2,
+  gap: '4',
+  p: '2',
   fontSize: 'sm',
   fontWeight: 'normal',
   _active: {
@@ -81,8 +81,8 @@ const navItem = defineStyle({
 // Full-width row of a popover menu.
 const menuItem = defineStyle({
   w: 'full',
-  px: 2,
-  py: 1.5,
+  px: '2',
+  py: '1.5',
   display: 'flex',
   justifyContent: 'start',
   bg: 'transparent',
@@ -97,8 +97,8 @@ const menuTrigger = defineStyle({
   ...stock.subtle,
   display: 'flex',
   justifyContent: 'start',
-  gap: 2,
-  p: 2,
+  gap: '2',
+  p: '2',
 })
 
 // One option of a segmented switch; the selected one carries `aria-pressed`.
@@ -124,7 +124,7 @@ const toggle = defineStyle({
 // Show/hide toggle for a section, flush with the content it folds.
 const disclosure = defineStyle({
   color: 'fg.muted',
-  px: 0,
+  px: '[0]',
 })
 
 // Ghost button for an action that deletes or ends something (revoke a key).
@@ -136,17 +136,17 @@ const danger = defineStyle({
 // Round launcher pinned to a corner of the viewport (support chat).
 const floating = defineStyle({
   ...stock.solid,
-  w: '52px',
-  h: '52px',
+  w: '[52px]',
+  h: '[52px]',
   borderRadius: 'full',
   boxShadow: 'shadow.floating',
-  transition: 'transform {durations.fast}',
+  transition: '[transform {durations.fast}]',
   _hover: {
     ...stock.solid?._hover,
     transform: 'scale(1.06)',
   },
   _active: { transform: 'scale(0.96)' },
-  _motionReduce: { transition: 'none', _hover: { transform: 'none' }, _active: { transform: 'none' } },
+  _motionReduce: { transition: '[none]', _hover: { transform: 'none' }, _active: { transform: 'none' } },
 })
 
 // WhatsApp contact button, in the brand's own green.
@@ -155,13 +155,13 @@ const whatsapp = defineStyle({
   // White text fails AA on the brand green; black passes at rest and on hover.
   color: 'black',
   _hover: { bg: 'whatsapp.600' },
-  transition: 'background-color {durations.moderate} ease-in-out',
+  transition: '[background-color {durations.moderate} ease-in-out]',
 })
 
 // Header call to action: default height, wider padding.
 const cta = defineStyle({
   ...stockSizes.md,
-  px: 6,
+  px: '6',
 })
 
 export const Button = defineRecipe({
@@ -188,17 +188,17 @@ export const Button = defineRecipe({
     // Long labels wrap onto more lines instead of overflowing the button.
     multiline: {
       true: {
-        h: 'auto',
-        py: 1.5,
+        h: '[auto]',
+        py: '1.5',
         whiteSpace: 'normal',
       },
     },
   },
   // A one-line label keeps the size's height.
   compoundVariants: [
-    { multiline: true, size: 'xs', css: { minH: 8 } },
-    { multiline: true, size: 'sm', css: { minH: 9 } },
-    { multiline: true, size: 'md', css: { minH: 10 } },
-    { multiline: true, size: 'xl', css: { minH: 12 } },
+    { multiline: true, size: 'xs', css: { minH: '8' } },
+    { multiline: true, size: 'sm', css: { minH: '9' } },
+    { multiline: true, size: 'md', css: { minH: '10' } },
+    { multiline: true, size: 'xl', css: { minH: '12' } },
   ],
 })

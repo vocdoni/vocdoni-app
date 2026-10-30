@@ -67,7 +67,7 @@ export const LanguagesList = ({
             w='full'
             display='flex'
             justifyContent='start'
-            fontWeight={isSelected ? 'bold' : ''}
+            fontWeight={isSelected ? 'bold' : undefined}
             bg={isSelected ? 'bg.emphasized' : undefined}
             borderRadius='none'
           >
@@ -96,8 +96,8 @@ export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguag
           aria-label={t('form.select_language', { defaultValue: 'Language' })}
           variant='subtle'
           colorPalette='gray'
-          minW='none'
-          gap={1}
+          minW='[none]'
+          gap='1'
           {...props}
         >
           <Icon as={LanguageIcon} />
@@ -105,7 +105,7 @@ export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguag
         </Button>
       </MenuTrigger>
       <MenuPositioner>
-        <MenuContent minW={16} mt={2} maxH='60' overflowY='auto'>
+        <MenuContent minW='16' mt='2' maxH='60' overflowY='auto'>
           <LanguagesList closeOnSelect={true} publicLanguageLinks={publicLanguageLinks} />
         </MenuContent>
       </MenuPositioner>
@@ -126,7 +126,7 @@ const LanguageOptionLabel = ({
   isSelected: boolean
   context?: string
 }) => (
-  <Flex alignItems='center' gap={2} w='full' px={1}>
+  <Flex alignItems='center' gap='2' w='full' px='1'>
     {context === 'menu' && (
       <Box w='4' display='flex' alignItems='center' justifyContent='center'>
         {isSelected && <Icon as={CheckIcon} boxSize='icon.sm' />}
@@ -155,7 +155,7 @@ export const LanguageListDashboard = ({ ...props }) => {
 
   return (
     <FormControl w='full' display='flex' justifyContent='space-between' alignItems='center' flexDir='row' {...props}>
-      <FormLabel fontSize='sm' m='0'>
+      <FormLabel fontSize='sm' m='[0]'>
         {t('form.select_language', { defaultValue: 'Language' })}
       </FormLabel>
 

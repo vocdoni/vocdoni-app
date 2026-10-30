@@ -10,7 +10,7 @@ import { Routes } from '~routes'
  * everywhere else) and the language selector.
  */
 export const AuthLayoutHeader = ({ isSignin, signInRoute }: { isSignin: boolean; signInRoute: string }) => (
-  <Flex alignItems='center' justifyContent='space-between' gap={2}>
+  <Flex alignItems='center' justifyContent='space-between' gap='2'>
     <Link asChild display='flex' alignItems='center'>
       <RouterLink to={isSignin ? Routes.vocdoni : signInRoute}>
         <Icon as={BackIcon} />
