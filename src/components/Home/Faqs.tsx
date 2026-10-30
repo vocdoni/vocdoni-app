@@ -194,7 +194,7 @@ const Faqs = (props: BoxProps) => {
 
   return (
     <Box position='relative' width='full' {...props}>
-      <Box width='full' m='0 auto' maxW='navbar' position='relative' zIndex='docked'>
+      <Box width='full' position='relative' zIndex='docked'>
         <Text
           fontSize={{ base: '32px', xl: '42px' }}
           lineHeight={{ base: '36px', xl: '46px' }}

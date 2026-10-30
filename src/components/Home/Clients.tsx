@@ -1,4 +1,4 @@
-import { Box, BoxProps, Card, Grid, GridProps, Image, Text } from '@chakra-ui/react'
+import { Box, BoxProps, Card, Image, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import barca from '/assets/barca.png'
 import bellpuig from '/assets/bellpuig.svg.png'
@@ -10,6 +10,7 @@ import decidim from '/assets/decidim.png'
 import erc from '/assets/erc.svg'
 import omnium from '/assets/omnium.png'
 import ticanoia from '/assets/ticanoia.png'
+import { PageSection, type PageSectionProps } from '~components/ui/PageContainer'
 
 const Clients = (props: BoxProps) => {
   const { t } = useTranslation()
@@ -24,14 +25,14 @@ const Clients = (props: BoxProps) => {
   )
 }
 
-export const ClientsGrid = (props: GridProps) => {
+export const ClientsGrid = (props: PageSectionProps) => {
   const { t } = useTranslation()
 
   return (
-    <Grid
+    <PageSection
       as='section'
-      maxWidth='1400px'
-      mx='auto'
+      size='wide'
+      display='grid'
       mb={{ base: 10, lg: 20 }}
       px={{
         base: 2,
@@ -123,7 +124,7 @@ export const ClientsGrid = (props: GridProps) => {
           <Text as='span'>Bloock</Text>
         </Card.Body>
       </Card.Root>
-    </Grid>
+    </PageSection>
   )
 }
 

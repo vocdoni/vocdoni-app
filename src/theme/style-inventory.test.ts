@@ -37,7 +37,7 @@ describe('style inventory scanner', () => {
     ['rawPalette', `<Box color='gray.500' />`, `<Box color='fg.muted' />`],
     ['rawPalette', `<Box bg={{ base: 'whiteAlpha.200', _dark: 'ink.700' }} />`, `<Box colorPalette='gray' />`],
     ['unknownToken', `<Box color='nope.missing' />`, `<Box color='colorPalette.solid' />`],
-    ['unknownToken', `<Box w='nope-width' />`, `<Box w='max-content' maxW='max-content-width' />`],
+    ['unknownToken', `<Box w='nope-width' />`, `<Box w='max-content' maxW='content.medium' />`],
     ['unknownToken', `<Text color='error' />`, `<Text color='fg' bg='transparent' borderColor='currentColor' />`],
     ['pxFontSize', `<Text fontSize='14px' />`, `<Text fontSize='sm' />`],
     ['pxFontSize', `<Text fontSize={{ base: 12, md: 'lg' }} />`, `<Text fontSize='2xl' />`],
