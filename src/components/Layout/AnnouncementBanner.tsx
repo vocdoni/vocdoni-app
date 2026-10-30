@@ -2,6 +2,7 @@ import { AlertRoot as Alert, AlertDescription, CloseButton, HStack } from '@chak
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { PageContainer } from '~components/ui/PageContainer'
 import { useAppEnv } from '~src/app-env'
 
 type AnnouncementStatus = (typeof Statuses)[number]
@@ -80,17 +81,17 @@ const DismissibleAnnouncementBanner = ({ limited }: { limited?: boolean }) => {
 
   if (!message) return null
 
-  const limitStyles = {
-    mx: 'auto',
-    px: { base: 0, md: 6, xl: 10 },
-  }
+  const row = (
+    <HStack w='full' justifyContent='space-between'>
+      <AlertDescription dangerouslySetInnerHTML={{ __html: message }} />
+      <CloseButton onClick={() => setDismissed(true)} />
+    </HStack>
+  )
 
+  // Limited: the strip stays edge to edge, its content keeps to the page column of the header and footer.
   return (
-    <Alert status={announcement.status} layout='banner'>
-      <HStack {...(limited ? limitStyles : {})} w='full' justifyContent='space-between'>
-        <AlertDescription dangerouslySetInnerHTML={{ __html: message }} />
-        <CloseButton onClick={() => setDismissed(true)} />
-      </HStack>
+    <Alert status={announcement.status} layout='banner' px={limited ? 0 : undefined}>
+      {limited ? <PageContainer asChild>{row}</PageContainer> : row}
     </Alert>
   )
 }
