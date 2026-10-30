@@ -1,9 +1,10 @@
-import { Box, Flex, HStack } from '@chakra-ui/react'
-import { PropsWithChildren } from 'react'
+import { Box, Flex } from '@chakra-ui/react'
+import { PropsWithChildren, ReactNode } from 'react'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import CrispChat from '~components/Layout/CrispChat'
 import Footer from '~components/Layout/Footer'
 import Navbar from '~components/Navbar'
+import { PageContainer } from '~components/ui/PageContainer'
 import { stripPublicLanguagePrefix } from '~i18n/public-language'
 import { Routes } from '~routes'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
@@ -20,6 +21,13 @@ type PublicLayoutProps = PropsWithChildren<{
    * stays Vocdoni in every deployment.
    */
   organizationLogo?: HeaderOrganizationLogo
+  /** Replaces the navbar, for the shared-census home that brings its own logo and switchers. */
+  header?: ReactNode
+  // The shared-census home's other differences: no announcement banner, no space under the header
+  // and the short footer, without its band.
+  hideAnnouncement?: boolean
+  flushContent?: boolean
+  simpleFooter?: boolean
 }>
 
 const PublicLayout = ({
@@ -28,61 +36,55 @@ const PublicLayout = ({
   enableChat = true,
   showDashboardButton = true,
   organizationLogo,
+  header,
+  hideAnnouncement = false,
+  flushContent = false,
+  simpleFooter = false,
   children,
 }: PublicLayoutProps) => {
   const { SHOW_ORG_LOGO } = useAppEnv()
   const normalizedPathname = stripPublicLanguagePrefix(pathname, Object.keys(useLanguagesEnv()))
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
-  const showLimitedAnnouncementBanner = [Routes.root, Routes.plans].includes(normalizedPathname)
+  const footerBg = isOrganizationPage ? 'footer.bg.muted' : 'footer.bg'
+  const showLimitedAnnouncementBanner = !hideAnnouncement && [Routes.root, Routes.plans].includes(normalizedPathname)
 
   return (
-    <Flex position='relative' flexDirection='column' minH='100dvh' mx='auto'>
-      <HStack
-        as='header'
-        position='sticky'
-        top={0}
-        w='full'
-        backdropFilter='blur(40px)'
-        zIndex='public-header'
-        px={{ base: 4, md: 6, xl: 10 }}
-        maxW='navbar'
-        mx='auto'
-      >
-        <Navbar
-          publicLanguageLinks={publicLanguageLinks}
-          showDashboardButton={showDashboardButton}
-          organizationLogo={SHOW_ORG_LOGO ? organizationLogo : undefined}
-        />
-      </HStack>
+    <Flex position='relative' flexDirection='column' minH='dvh'>
+      <Box as='header' position='sticky' top={0} w='full' backdropFilter='blur(40px)' zIndex='public-header'>
+        <PageContainer w='full'>
+          {header ?? (
+            <Navbar
+              publicLanguageLinks={publicLanguageLinks}
+              showDashboardButton={showDashboardButton}
+              organizationLogo={SHOW_ORG_LOGO ? organizationLogo : undefined}
+            />
+          )}
+        </PageContainer>
+      </Box>
       {enableChat ? <CrispChat /> : null}
       {showLimitedAnnouncementBanner && <AnnouncementBanner limited />}
-      <Flex
-        flexDirection='column'
-        as='main'
-        flexGrow={1}
-        mt={{ base: 4, lg: 6, xl: 10 }}
-        mb={{ base: 20, lg: 32 }}
-        maxW='content.public'
-        mx='auto'
-        px={{
-          base: 2.5,
-          sm: 5,
-          md: 20,
-        }}
-        w='full'
-      >
-        {children}
-      </Flex>
+      <PageContainer asChild>
+        <Flex
+          flexDirection='column'
+          as='main'
+          flexGrow={1}
+          mt={flushContent ? undefined : { base: 4, lg: 6, xl: 10 }}
+          mb={{ base: 20, lg: 32 }}
+          w='full'
+        >
+          {children}
+        </Flex>
+      </PageContainer>
+      {/* The band spans the window; its content keeps to the page column. */}
       <Box
         as='footer'
-        bgColor={isOrganizationPage ? 'footer.bg.muted' : 'footer.bg'}
         w='full'
-        backdropFilter='blur(40px)'
-        px={{ base: 4, md: 6, xl: 10 }}
-        maxW='navbar'
-        mx={'auto'}
+        bgColor={simpleFooter ? undefined : footerBg}
+        backdropFilter={simpleFooter ? undefined : 'blur(40px)'}
       >
-        <Footer />
+        <PageContainer w='full'>
+          <Footer simplified={simpleFooter} />
+        </PageContainer>
       </Box>
     </Flex>
   )

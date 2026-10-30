@@ -2,8 +2,6 @@ import { defineTokens } from '@chakra-ui/react'
 import { colors } from './colors'
 import { FONT_STACKS, type LoadedFontWeight } from './fonts'
 
-const sidebarWidth = '350px'
-
 const fonts = defineTokens.fonts({
   body: { value: FONT_STACKS.body },
   heading: { value: FONT_STACKS.heading },
@@ -57,15 +55,23 @@ const radii = defineTokens.radii({
   full: { value: '9999px' },
 })
 
+// So a margin can make room for the dashboard's side panel.
 const spacing = defineTokens.spacing({
-  sidebar: { value: '{sizes.sidebar}' },
+  dashboard: {
+    panel: { value: '{sizes.dashboard.panel}' },
+  },
 })
 
 const sizes = defineTokens.sizes({
   'cookies-consent': { value: '720px' },
-  'dashboard-menu': {
-    default: { value: '255px' },
-    reduced: { value: '48px' },
+  // The dashboard shell: the menu expanded and collapsed, its logo row and the right side panel.
+  dashboard: {
+    menu: {
+      expanded: { value: '255px' },
+      collapsed: { value: '48px' },
+    },
+    header: { value: '47px' },
+    panel: { value: '350px' },
   },
   // The four icon sizes (inline, control, feature, empty state), in rem like spacing 4/5/6/12.
   icon: {
@@ -74,19 +80,17 @@ const sizes = defineTokens.sizes({
     lg: { value: '1.5rem' },
     xl: { value: '3rem' },
   },
-  'max-window-width': { value: '2560px' },
-  'max-content-width': { value: '1200px' },
-  navbar: { value: '1920px' },
+  // The three page widths, read through ui/PageContainer: the public shell, then two narrower columns.
   content: {
-    public: { value: '1600px' },
+    wide: { value: '1600px' },
+    medium: { value: '1200px' },
+    narrow: { value: '900px' },
   },
-  sidebar: { value: sidebarWidth },
   'user-profile': { value: '280px' },
   voting: {
     sidebar: { value: '320px' },
     contents: {
       min: { value: 'calc(640px + var(--chakra-sizes-voting-sidebar))' },
-      max: { value: '1560px' },
     },
   },
 })

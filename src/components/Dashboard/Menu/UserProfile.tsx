@@ -72,7 +72,7 @@ const UserProfile = () => {
             </Avatar.Root>
             {!reduced && (
               <Flex
-                css={{ '--size': 'calc(var(--chakra-sizes-dashboard-menu-default) - 7rem)' }}
+                css={{ '--size': 'calc(var(--chakra-sizes-dashboard-menu-expanded) - 7rem)' }}
                 flexDirection='column'
                 justifyContent='start'
                 alignItems='start'

@@ -195,13 +195,13 @@ const ProcessViewContent = () => {
   )
 
   return (
-    <Box position='relative' w='full' minH='100dvh' overflow='hidden'>
+    <Box position='relative' w='full' minH='dvh' overflow='hidden'>
       <DashboardContents display='flex' flexDirection='row' position='relative'>
         {/* Main content area */}
         <Box
           flex={1}
           minW={0}
-          marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
+          marginRight={showSidebar ? { base: 0, md: 'dashboard.panel' } : 0}
           transition='margin-right {durations.slow}'
           display='flex'
           flexDirection='column'

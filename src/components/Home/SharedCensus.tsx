@@ -19,6 +19,7 @@ import LogoutButton from '~components/Process/LogoutButton'
 import { PageLoader } from '~components/ui/Loader'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { ensureAddressPrefix, sameAddress } from '~utils/address'
+import { PageSection } from '~components/ui/PageContainer'
 
 export const parseProcessIds = (value: string | undefined) =>
   (value || '')
@@ -122,7 +123,7 @@ const SharedCensusHomeContent = () => {
   }
 
   return (
-    <Flex flexDirection='column' gap={10} maxW='max-content-width' mx='auto' px={5} alignItems='center'>
+    <PageSection size='medium' display='flex' flexDirection='column' gap={10} px={5} alignItems='center'>
       <OrganizationImage h='100px' />
       {showTopContent && (
         <Box w='90%' display='flex' flexDirection='column' gap={4}>
@@ -180,7 +181,7 @@ const SharedCensusHomeContent = () => {
           {getLocalizedMarkdown(postText)}
         </Text>
       )}
-    </Flex>
+    </PageSection>
   )
 }
 

@@ -17,6 +17,7 @@ import {
   type LegacyOrganization,
 } from '~src/legacy/vochain-archive'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { PageSection } from '~components/ui/PageContainer'
 
 const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
   const { t } = useTranslation()
@@ -96,7 +97,16 @@ export const ArchiveOrganizationView = ({
   }
 
   return (
-    <VStack align='stretch' gap={6} maxW='4xl' mx='auto' px={4} py={8} w='full'>
+    <PageSection
+      size='narrow'
+      display='flex'
+      flexDirection='column'
+      alignItems='stretch'
+      gap={6}
+      px={4}
+      py={8}
+      w='full'
+    >
       <Flex align='center' gap={4}>
         <Avatar.Root size='xl'>
           {organization.account?.avatar && <Avatar.Image src={organization.account.avatar} alt={name} />}
@@ -135,7 +145,7 @@ export const ArchiveOrganizationView = ({
           </Button>
         )}
       </VStack>
-    </VStack>
+    </PageSection>
   )
 }
 
