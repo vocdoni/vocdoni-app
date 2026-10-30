@@ -27,7 +27,7 @@ export const ElectionTitle = defineRecipe({
   // Typography lives in the variants: a variant with a `textStyle` must not also get these from the base.
   base: {
     textAlign: 'center',
-    mb: 3,
+    mb: '3',
   },
   variants: {
     size: {
@@ -36,7 +36,7 @@ export const ElectionTitle = defineRecipe({
       hero: {
         textStyle: 'display',
         textAlign: 'left',
-        mb: 5,
+        mb: '5',
       },
       // Process page of the organization dashboard: the page title.
       page: {
@@ -48,7 +48,7 @@ export const ElectionTitle = defineRecipe({
         fontSize: 'lg',
         fontWeight: 'bold',
         lineHeight: 'short',
-        mb: 0,
+        mb: '[0]',
       },
       // One-line process rows of the organization dashboard.
       row: {
@@ -56,7 +56,7 @@ export const ElectionTitle = defineRecipe({
         fontWeight: 'bold',
         lineHeight: 'short',
         textAlign: 'left',
-        mb: 0,
+        mb: '[0]',
         truncate: true,
       },
     },
@@ -75,7 +75,7 @@ export const ElectionQuestions = defineSlotRecipe({
       lineHeight: 'short',
       fontSize: 'lg',
       fontWeight: 'semibold',
-      mb: 6,
+      mb: '6',
     },
     body: {
       width: 'full',
@@ -91,26 +91,26 @@ export const ElectionQuestions = defineSlotRecipe({
       list: {
         container: {
           '& + &': {
-            mt: 10,
+            mt: '10',
           },
         },
         title: {
-          mb: 0,
+          mb: '[0]',
         },
         stack: {
           display: 'flex',
           flexDirection: 'column',
-          gap: 3,
+          gap: '3',
         },
       },
       grid: {
         container: {
           '& + &': {
-            mt: 10,
+            mt: '10',
           },
         },
         title: {
-          mb: 0,
+          mb: '[0]',
         },
         stack: {
           display: 'grid',
@@ -119,7 +119,7 @@ export const ElectionQuestions = defineSlotRecipe({
             md: 'repeat(2, minmax(0, 1fr))',
             lg: 'repeat(3, minmax(0, 1fr))',
           },
-          gap: 4,
+          gap: '4',
         },
       },
     },
@@ -136,34 +136,34 @@ export const ElectionResults = defineSlotRecipe({
       display: 'grid',
       gridTemplateColumns: '1fr',
       alignItems: 'start',
-      gap: 6,
+      gap: '6',
     },
     body: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 3,
+      gap: '3',
       fontWeight: 'bold',
       '& > div': {
         h: 'full',
-        minH: 8,
+        minH: '8',
         justifyContent: 'center',
         position: 'relative',
         display: 'grid',
         gridTemplateColumns: 'minmax(0,1fr) auto',
-        columnGap: 2,
+        columnGap: '2',
         alignItems: 'center',
       },
     },
     header: {
-      mb: 4,
+      mb: '4',
     },
     choiceTitle: {
       gridColumn: '1',
       zIndex: 'sidebar',
       color: 'fg',
-      pl: 2,
+      pl: '2',
       fontSize: 'sm',
-      minW: 0,
+      minW: '[0]',
       overflowWrap: 'break-word',
     },
     choiceVotes: {
@@ -171,22 +171,22 @@ export const ElectionResults = defineSlotRecipe({
       zIndex: 'sidebar',
       display: 'flex',
       alignItems: 'center',
-      pr: 2,
+      pr: '2',
       fontSize: 'sm',
       color: 'fg',
     },
     question: {
       width: 'full',
-      minW: 0,
+      minW: '[0]',
     },
     progress: {
       position: 'absolute',
-      inset: 0,
+      inset: '[0]',
       gridColumn: '1 / -1',
       gridRow: '1',
       alignSelf: 'stretch',
       h: 'full',
-      minH: 8,
+      minH: '8',
       zIndex: 'background',
     },
   },
@@ -199,21 +199,21 @@ export const resultsProgressRecipe = defineSlotRecipe({
   base: {
     root: {
       h: 'full',
-      minH: 8,
+      minH: '8',
       borderRadius: 'sm',
       overflow: 'hidden',
     },
     track: {
       h: 'full',
       bg: 'ballot.results.track',
-      borderRadius: 'inherit',
+      borderRadius: '[inherit]',
     },
     range: {
       h: 'full',
       // Choice titles and tallies sit on top of the bar, so a full-strength fill would hide them (stock
       // `solid` is near-black in light mode and white in dark mode): a 30% tint keeps them readable.
       bg: 'colorPalette.solid/30',
-      borderRadius: 'inherit',
+      borderRadius: '[inherit]',
     },
   },
 })
@@ -239,7 +239,7 @@ export const QuestionChoice = defineSlotRecipe({
 
     skeleton: {
       w: 'full',
-      aspectRatio: '4 / 3',
+      aspectRatio: 'landscape',
     },
 
     image: {
@@ -274,32 +274,32 @@ export const QuestionChoice = defineSlotRecipe({
     context: {
       content: {
         wrapper: {
-          gap: 2,
+          gap: '2',
           height: 'full',
         },
       },
       card: {
         wrapper: {
           borderRadius: 'md',
-          borderWidth: '1px',
+          borderWidth: 'hairline',
           borderColor: 'ballot.choice.border',
           transition:
-            'border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease',
+            '[border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease]',
           bg: 'transparent',
-          p: 3,
+          p: '3',
           '&[data-state="checked"]': {
             borderColor: 'colorPalette.solid',
           },
           '&[data-disabled="true"]': {
             opacity: 'disabled',
-            cursor: 'not-allowed',
+            cursor: 'disabled',
           },
         },
       },
       plain: {
         wrapper: {
-          border: 'none',
-          p: 0,
+          border: '[none]',
+          p: '[0]',
           bg: 'transparent',
         },
       },
@@ -309,13 +309,13 @@ export const QuestionChoice = defineSlotRecipe({
         wrapper: {
           display: 'flex',
           alignItems: 'center',
-          gap: 3,
+          gap: '3',
           '& [data-choice-body]': {
             display: 'flex',
             flexDirection: 'column',
-            gap: 1,
+            gap: '1',
             flex: 1,
-            minW: 0,
+            minW: '[0]',
           },
         },
       },
@@ -327,23 +327,23 @@ export const QuestionChoice = defineSlotRecipe({
           position: 'relative',
           alignItems: 'start',
           w: 'full',
-          p: 0,
+          p: '[0]',
           '& [data-choice-control]': {
             position: 'absolute',
-            top: 2,
-            right: 2,
+            top: '2',
+            right: '2',
             zIndex: 'docked',
           },
           '& [data-choice-control][data-control-type="checkbox"]': {
-            borderWidth: '1px',
+            borderWidth: 'hairline',
             borderColor: 'border',
             boxShadow: 'sm',
           },
           '& [data-choice-control][data-control-type="radio"]': {
             bg: 'transparent',
-            border: 'none',
-            boxShadow: 'none',
-            p: 0,
+            border: '[none]',
+            boxShadow: '[none]',
+            p: '[0]',
             borderRadius: 'full',
           },
           '& [data-choice-media]': {
@@ -352,15 +352,15 @@ export const QuestionChoice = defineSlotRecipe({
             overflow: 'hidden',
           },
           '& [data-choice-body]': {
-            p: 4,
+            p: '4',
             display: 'flex',
             flexDirection: 'column',
-            gap: 1,
+            gap: '1',
             flex: 1,
-            minW: 0,
+            minW: '[0]',
           },
           '& [data-choice-body][data-compact]': {
-            p: 0,
+            p: '[0]',
           },
         },
       },
@@ -376,14 +376,14 @@ export const QuestionsConfirmation = defineSlotRecipe({
   base: {
     question: {
       '& + &': {
-        mt: 4,
+        mt: '4',
       },
     },
     description: {
       color: 'fg.muted',
       fontSize: 'sm',
       whiteSpace: 'pre-line',
-      mb: 4,
+      mb: '4',
     },
     title: {
       fontWeight: 'bold',
@@ -398,8 +398,8 @@ export const QuestionsEmpty = defineSlotRecipe({
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      gap: 3,
-      py: 6,
+      gap: '3',
+      py: '6',
     },
     icon: {
       boxSize: 6,
@@ -416,7 +416,7 @@ export const QuestionsTip = defineSlotRecipe({
   slots: questionTipAnatomy,
   base: {
     wrapper: {
-      mt: 4,
+      mt: '4',
       w: 'full',
       display: 'flex',
       justifyContent: 'end',
@@ -435,7 +435,7 @@ export const QuestionsTypeBadge = defineSlotRecipe({
     box: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 2,
+      gap: '2',
     },
     title: {
       fontWeight: 'bold',
@@ -460,7 +460,7 @@ export const VoteWeight = defineSlotRecipe({
   base: {
     wrapper: {
       display: 'flex',
-      gap: 2,
+      gap: '2',
     },
     weight: {
       fontWeight: 'bold',

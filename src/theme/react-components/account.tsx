@@ -10,7 +10,8 @@ export const accountComponents: ComponentsPartialDefinition = {
           ? 'ballot.balance.warning'
           : 'ballot.balance.error'
     return (
-      <Text color={color} {...props}>
+      // Cast to the spread's own types: literals beside a spread of all the style props overflow TypeScript (TS2590).
+      <Text color={color as TextProps['color']} {...(props as TextProps)}>
         {label}
       </Text>
     )

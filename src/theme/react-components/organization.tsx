@@ -41,7 +41,8 @@ export const organizationComponents: ComponentsPartialDefinition = {
     return <Image css={styles} src={src} alt={alt} {...props} />
   }),
   QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    <Text color='status.error.fg' {...props}>
+    // Cast to the spread's own types: literals beside a spread of all the style props overflow TypeScript (TS2590).
+    <Text color={'status.error.fg' as TextProps['color']} {...(props as TextProps)}>
       {error}
     </Text>
   )),
