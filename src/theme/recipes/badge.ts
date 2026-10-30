@@ -33,7 +33,25 @@ const lg = defineStyle({
 
 export const Badge = defineRecipe({
   variants: {
+    variant: {
+      // A count next to a label, such as a tab's.
+      count: {
+        colorPalette: 'gray',
+        bg: 'colorPalette.subtle',
+        color: 'colorPalette.fg',
+        borderRadius: 'full',
+      },
+      // A neutral label showing a raw value (a role name), capitalised. Chakra's `surface` look.
+      label: {
+        bg: 'colorPalette.subtle',
+        color: 'colorPalette.fg',
+        boxShadow: '[inset 0 0 0 {borderWidths.hairline} {colors.colorPalette.muted}]',
+        textTransform: 'capitalize',
+      },
+    },
     size: { xs, sm, md, lg },
   },
+  // Padding is a `size` value, and sizes apply after the variant.
+  compoundVariants: [{ variant: 'count', css: { px: '1.5' } }],
   defaultVariants: { size: 'xs' },
 })
