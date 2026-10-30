@@ -28,6 +28,10 @@ describe('stress theme', () => {
     expect(getAppSystem('#1a73e8')).toBe(stressSystem)
   })
 
+  it('unwraps [value] escapes like the app system, so the captures render what users get', () => {
+    expect(stressSystem.css({ p: '[0]', mx: '[auto]' })).toEqual({ padding: '0', marginInline: 'auto' })
+  })
+
   it('gives every semantic colour its own non-grey value in both modes, never a palette step', () => {
     const tokens = semantic('colors')
     expect(tokens.length).toBeGreaterThan(200)

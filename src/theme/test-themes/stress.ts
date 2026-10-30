@@ -1,4 +1,5 @@
 import { createSystem, type SystemConfig } from '@chakra-ui/react'
+import { withEscapeHatch } from '../escapeHatch'
 import { createAppSystem } from '../system'
 
 // A loud alternate theme for `pnpm ui:snapshot -- --theme stress` (scripts/ui-snapshot/README.md): the app's
@@ -33,8 +34,8 @@ const stockPixels = (category: string) =>
     .map((token) => [token.name.slice(category.length + 1), pixels(token.value)] as const)
     .filter((entry): entry is readonly [string, number] => entry[1] !== undefined && entry[1] !== 0)
 
-// Stock radii, font sizes and spacing are all even pixel values: one pixel more keeps the layout and makes every
-// themed value odd, so a stock value left on screen did not come from the scale.
+// One pixel more keeps the layout and lands off the stock scale (stress.test.ts checks every nudged value), so a
+// stock value left on screen did not come from it.
 const nudged = (category: string) =>
   Object.fromEntries(stockPixels(category).map(([name, px]) => [name, { value: `${px + 1}px` }]))
 
@@ -129,17 +130,20 @@ const shadows = remap(stockSemantic.shadows, (path, index) => {
   return { _light: shadow(45), _dark: shadow(60) }
 })
 
-export const stressSystem = createSystem(stock._config, {
-  theme: {
-    tokens: {
-      fonts,
-      radii: nudged('radii'),
-      fontSizes: nudged('fontSizes'),
-      spacing: nudged('spacing'),
+// A fresh system has its own token dictionary, so it needs the app's `[value]` unwrapping too.
+export const stressSystem = withEscapeHatch(
+  createSystem(stock._config, {
+    theme: {
+      tokens: {
+        fonts,
+        radii: nudged('radii'),
+        fontSizes: nudged('fontSizes'),
+        spacing: nudged('spacing'),
+      },
+      semanticTokens: { colors, shadows } as NonNullable<SystemConfig['theme']>['semanticTokens'],
     },
-    semanticTokens: { colors, shadows } as NonNullable<SystemConfig['theme']>['semanticTokens'],
-  },
-})
+  })
+)
 
 export const system = stressSystem
 export const getAppSystem = (_primaryColor?: string) => stressSystem

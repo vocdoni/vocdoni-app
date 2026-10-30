@@ -186,36 +186,28 @@
     "spacing 2px": 8
   },
   "plans-loggedin-1440-dark": {
-    "font-size 16px": 6,
-    "grey color #ffffff": 3
+    "font-size 16px": 6
   },
   "plans-loggedin-1440-light": {
-    "font-size 16px": 6,
-    "grey color #ffffff": 3
+    "font-size 16px": 6
   },
   "plans-loggedin-390-dark": {
-    "font-size 16px": 6,
-    "grey color #ffffff": 3
+    "font-size 16px": 6
   },
   "plans-loggedin-390-light": {
-    "font-size 16px": 6,
-    "grey color #ffffff": 3
+    "font-size 16px": 6
   },
   "plans-public-1440-dark": {
-    "font-size 16px": 6,
-    "grey color #ffffff": 3
+    "font-size 16px": 6
   },
   "plans-public-1440-light": {
-    "font-size 16px": 6,
-    "grey color #ffffff": 3
+    "font-size 16px": 6
   },
   "plans-public-390-dark": {
-    "font-size 16px": 6,
-    "grey color #ffffff": 3
+    "font-size 16px": 6
   },
   "plans-public-390-light": {
-    "font-size 16px": 6,
-    "grey color #ffffff": 3
+    "font-size 16px": 6
   },
   "process-ongoing--end-vote-confirm-1440-dark": {
     "font-size 16px": 5,
@@ -346,32 +338,16 @@
     "spacing 2px": 8
   },
   "settings-subscription--contact-dialog-1440-dark": {
-    "grey background #000000/36": 1,
-    "grey color #ffffff": 3
+    "grey background #000000/36": 1
   },
   "settings-subscription--contact-dialog-1440-light": {
-    "grey background #000000/36": 1,
-    "grey color #ffffff": 3
+    "grey background #000000/36": 1
   },
   "settings-subscription--contact-dialog-390-dark": {
-    "grey background #000000/36": 1,
-    "grey color #ffffff": 3
+    "grey background #000000/36": 1
   },
   "settings-subscription--contact-dialog-390-light": {
-    "grey background #000000/36": 1,
-    "grey color #ffffff": 3
-  },
-  "settings-subscription-1440-dark": {
-    "grey color #ffffff": 3
-  },
-  "settings-subscription-1440-light": {
-    "grey color #ffffff": 3
-  },
-  "settings-subscription-390-dark": {
-    "grey color #ffffff": 3
-  },
-  "settings-subscription-390-light": {
-    "grey color #ffffff": 3
+    "grey background #000000/36": 1
   },
   "settings-support-1440-dark": {
     "grey background #3b3b3b": 1,
