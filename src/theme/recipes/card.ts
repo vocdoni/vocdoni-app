@@ -9,7 +9,7 @@ const plan = {
     position: 'relative',
     border: '{borderWidths.hairline} solid',
     borderRadius: 'md',
-    bgColor: 'card.pricing.bg',
+    bgColor: 'card.plan.bg',
     p: 6,
     flex: 1,
   },
@@ -50,8 +50,8 @@ const featured = {
   ...plan,
   root: {
     ...plan.root,
-    bgColor: 'card.pricing.featured.bg',
-    borderColor: 'card.pricing.featured.border',
+    bgColor: 'card.plan.featured.bg',
+    borderColor: 'card.plan.featured.border',
     color: 'surface.inverse.fg',
   },
 }

@@ -259,7 +259,7 @@ export const colors = defineSemanticTokens.colors({
   },
   ...illustrationColors,
   card: {
-    pricing: {
+    plan: {
       bg: {
         value: {
           _light: '{colors.white}',
