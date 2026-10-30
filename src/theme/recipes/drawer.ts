@@ -4,6 +4,9 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 export const Drawer = defineSlotRecipe({
   slots: parts.keys(),
   base: {
+    backdrop: {
+      bg: 'scrim.strong',
+    },
     content: {
       boxShadow: 'shadow.overlay',
     },

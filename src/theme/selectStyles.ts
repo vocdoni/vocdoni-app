@@ -1,6 +1,12 @@
 import type { ChakraStylesConfig } from 'chakra-react-select'
 
 export const selectStyles: ChakraStylesConfig<any, boolean> = {
+  // chakra-react-select spaces the input with raw rems (0.125rem); the same step from the spacing scale.
+  inputContainer: (base) => ({
+    ...base,
+    marginX: '0.5',
+    paddingY: '0.5',
+  }),
   placeholder: (base) => ({
     ...base,
     color: 'var(--chakra-colors-input-placeholder)',
