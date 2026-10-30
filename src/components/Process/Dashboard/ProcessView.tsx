@@ -18,10 +18,6 @@ import {
   TabsRoot,
   TabsTrigger,
   Text,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
   useClipboard,
   useRecipe,
   VStack,
@@ -88,6 +84,7 @@ import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
 import { useIsMobile } from '~components/ui/useIsMobile'
+import { Tooltip } from '~components/ui/Tooltip'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -387,12 +384,9 @@ const ResultsStateBadge = (props: Omit<StatusBadgeProps, 'tone'>) => {
     if (!tooltip) return badge
 
     return (
-      <TooltipRoot positioning={{ placement: 'top' }}>
-        <TooltipTrigger asChild>{badge}</TooltipTrigger>
-        <TooltipPositioner>
-          <TooltipContent>{tooltip}</TooltipContent>
-        </TooltipPositioner>
-      </TooltipRoot>
+      <Tooltip portalled={false} positioning={{ placement: 'top' }} content={tooltip}>
+        {badge}
+      </Tooltip>
     )
   }
 
@@ -612,12 +606,9 @@ const SettingsField = ({
       </Box>
       <Box flex='1 1 0' minW='[0]' display='flex' flexDirection='column'>
         {tooltip ? (
-          <TooltipRoot positioning={{ placement: 'top' }}>
-            <TooltipTrigger asChild>{label}</TooltipTrigger>
-            <TooltipPositioner>
-              <TooltipContent>{tooltip}</TooltipContent>
-            </TooltipPositioner>
-          </TooltipRoot>
+          <Tooltip portalled={false} positioning={{ placement: 'top' }} content={tooltip}>
+            {label}
+          </Tooltip>
         ) : (
           label
         )}

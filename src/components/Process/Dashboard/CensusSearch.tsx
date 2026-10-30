@@ -1,16 +1,4 @@
-import {
-  Box,
-  chakra,
-  HStack,
-  Icon,
-  Input,
-  InputGroup,
-  Text,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
-} from '@chakra-ui/react'
+import { Box, chakra, HStack, Icon, Input, InputGroup, Text } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
 import { TFunction } from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
@@ -28,6 +16,7 @@ import {
   ProcessParticipantLookupField,
   useProcessParticipants,
 } from '~queries/participants'
+import { Tooltip } from '~components/ui/Tooltip'
 
 // Maps a census credential field to a human label. Unknown fields fall back to their raw key.
 const fieldLabel = (t: TFunction, field: string) => {
@@ -153,16 +142,16 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
         <SidebarSubtitle py='[0]'>
           <Trans i18nKey='census.search.title'>Check participants</Trans>
         </SidebarSubtitle>
-        <TooltipRoot positioning={{ placement: 'top' }}>
-          <TooltipTrigger asChild>
-            <chakra.span display='inline-flex' alignItems='center' cursor='[default]' color='fg.muted' opacity='dimmed'>
-              <Icon as={HelpIcon} boxSize='icon.sm' />
-            </chakra.span>
-          </TooltipTrigger>
-          <TooltipPositioner>
-            <TooltipContent maxW='64'>{memberbaseNote}</TooltipContent>
-          </TooltipPositioner>
-        </TooltipRoot>
+        <Tooltip
+          portalled={false}
+          positioning={{ placement: 'top' }}
+          content={memberbaseNote}
+          contentProps={{ maxW: '64' }}
+        >
+          <chakra.span display='inline-flex' alignItems='center' cursor='[default]' color='fg.muted' opacity='dimmed'>
+            <Icon as={HelpIcon} boxSize='icon.sm' />
+          </chakra.span>
+        </Tooltip>
       </HStack>
       <Text textStyle='body-sm' color='fg.muted'>
         <Trans i18nKey='census.search.description'>

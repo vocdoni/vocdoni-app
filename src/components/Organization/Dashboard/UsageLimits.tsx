@@ -11,10 +11,6 @@ import {
   Progress,
   Separator,
   Text,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
   VStack,
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
@@ -27,6 +23,7 @@ import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { usePaginatedMembers } from '~queries/members'
 import { Routes } from '~routes'
 import { statusPalette } from '~theme/status'
+import { Tooltip } from '~components/ui/Tooltip'
 
 type UsageColor = 'chart.1' | 'chart.2' | 'chart.3' | 'chart.4'
 
@@ -57,16 +54,11 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
           <Text textStyle='body-sm' fontWeight='medium' color='fg'>
             {label}
             {tooltip && (
-              <TooltipRoot>
-                <TooltipTrigger asChild>
-                  <chakra.span verticalAlign='middle'>
-                    <Icon as={InfoIcon} ml='1' />
-                  </chakra.span>
-                </TooltipTrigger>
-                <TooltipPositioner>
-                  <TooltipContent>{tooltip}</TooltipContent>
-                </TooltipPositioner>
-              </TooltipRoot>
+              <Tooltip portalled={false} content={tooltip}>
+                <chakra.span verticalAlign='middle'>
+                  <Icon as={InfoIcon} ml='1' />
+                </chakra.span>
+              </Tooltip>
             )}
           </Text>
         </HStack>

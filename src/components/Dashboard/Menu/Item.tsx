@@ -1,14 +1,7 @@
-import {
-  Button,
-  ButtonProps,
-  Icon,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
-} from '@chakra-ui/react'
+import { Button, ButtonProps, Icon } from '@chakra-ui/react'
 import { ForwardedRef, forwardRef } from 'react'
 import { Link as ReactRouterLink, generatePath } from 'react-router'
+import { Tooltip } from '~components/ui/Tooltip'
 
 export type DashboardMenuItem = {
   label: string
@@ -68,12 +61,9 @@ export const DashboardMenuItemButton = forwardRef(
     )
 
     return reduced ? (
-      <TooltipRoot positioning={{ placement: 'right-end' }}>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipPositioner>
-          <TooltipContent>{item.label}</TooltipContent>
-        </TooltipPositioner>
-      </TooltipRoot>
+      <Tooltip portalled={false} positioning={{ placement: 'right-end' }} content={item.label}>
+        {button}
+      </Tooltip>
     ) : (
       button
     )
