@@ -31,6 +31,7 @@ pnpm ui:diff -- before after
 | `--primary-color <hex>` | unset         | starts the app with `PRIMARY_COLOR`, to see a brand colour change         |
 | `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                  |
 | `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")           |
+| `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")        |
 
 `pnpm ui:diff -- <labelA> <labelB>` options: `--ignore width,height` drops properties from the
 comparison; `--limit <n>` caps the elements printed per capture (default 50; totals always count
@@ -98,6 +99,34 @@ Two runs on the same commit and machine must give `0` differences. What makes th
 Compare runs from the same machine and browser: `ui:diff` warns when the browser versions differ.
 The browser is Playwright's bundled Chromium, or Chrome when that is not installed; force one with
 `UI_SNAPSHOT_CHANNEL=chrome` (or `chromium`, `msedge`).
+
+## Stress theme
+
+```bash
+pnpm ui:snapshot -- --label stress --theme stress
+```
+
+`src/theme/test-themes/stress.ts` keeps the app's tokens and recipes and moves every value they resolve
+to: each semantic colour (surface layers, states, statuses, charts, palette slots) gets its own saturated
+colour, shadows are coloured, fonts are named `Stress …`, and radii, font sizes and spacing are one pixel
+off the stock scale. The dev server swaps it in for `~theme/system` with a vite
+alias, so the app code is untouched. Whatever still shows a stock value on screen bypasses the theme.
+
+After each capture the script lists, per visible element: text not in a `Stress` font, a stock font size,
+radius, padding or gap, a grey colour, background, border or shadow, and a palette step (`gray.500`)
+read directly. `stress-report.json` holds the counts with examples. The run fails on any count above
+`stress-baseline.json`, the leaks known on the branch it was written on; after a fix, lower it with
+`--update-stress-baseline` (a `--routes` run updates only its captures). Elements that keep stock values on
+purpose are listed with a reason in `STRESS_EXCEPTIONS` (`stress.mjs`). CI runs it on pull requests that
+touch `src/` (the `stress-theme` job in `.github/workflows/test.yml`) and keeps the run as an artifact.
+
+With your own dev server, start it with the alias and pass `--url`; the run stops if the stress theme is
+not the one rendering:
+
+```bash
+SAAS_URL=http://127.0.0.1:3999 \
+  VITE_CONFIG="{\"resolve\":{\"alias\":{\"~theme/system\":\"$PWD/src/theme/test-themes/stress.ts\"}}}" pnpm dev
+```
 
 ## Use your own dev server
 

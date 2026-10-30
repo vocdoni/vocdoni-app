@@ -5,7 +5,8 @@ import { system } from './system'
 
 // Syntax-only scan (no type checker) of the literals in chakra style positions: style props, `css`/condition/recipe
 // objects, chakra-typed objects and react-select configs. Strings anywhere else (i18n keys, data, URLs) never count.
-// Test-only: `style-inventory.test.ts` ratchets the counts against `style-inventory.baseline.json`.
+// Test-only: `style-inventory.test.ts` fails on any occurrence of a hard category and ratchets the others against
+// `style-inventory.baseline.json`.
 
 export const STYLE_CATEGORIES = [
   'hex',
@@ -28,6 +29,34 @@ export const STYLE_CATEGORIES = [
 
 export type StyleCategory = (typeof STYLE_CATEGORIES)[number]
 
+// Categories that still have occurrences and only ratchet down. Every other one is at zero and is a hard rule: a new
+// occurrence fails whatever the baseline says. style-inventory.test.ts fails when one of these reaches zero.
+export const RATCHET_CATEGORIES: readonly StyleCategory[] = ['pxSize', 'pxSpacing', 'rawPalette']
+
+export const HARD_CATEGORIES: readonly StyleCategory[] = STYLE_CATEGORIES.filter(
+  (category) => !RATCHET_CATEGORIES.includes(category)
+)
+
+// What to use instead, shown next to each new occurrence
+export const STYLE_FIXES: Record<StyleCategory, string> = {
+  hex: 'a semantic colour token (src/theme/semantic.ts) or a recipe variant',
+  namedColor: 'a semantic colour token (bg, fg, border, surface.*, status.*)',
+  rawPalette: 'a semantic colour token instead of a palette step',
+  unknownToken: 'an existing token: this name resolves to nothing and the browser drops it',
+  pxFontSize: 'a textStyle (src/theme/textStyles.ts) or a fontSizes token',
+  pxRadius: 'a radii token (xs…2xl, full)',
+  pxSpacing: 'a spacing token (1, 2, 4…)',
+  pxSize: 'a sizes token (src/theme/tokens.ts) or a relative size',
+  rawLineHeight: 'a lineHeights token (shorter, short, moderate, tall) or a textStyle',
+  rawLetterSpacing: 'a letterSpacings token',
+  numericFontWeight: 'a fontWeights token (normal, semibold, bold)',
+  rawZIndex: 'a zIndex token (src/theme/tokens.ts)',
+  rawDuration: 'a durations token (fast, moderate, slow) or a recipe animation',
+  colorModeLogic: 'a semantic token with _light/_dark values in src/theme, not a mode check in the component',
+  deprecatedAlias: 'the current token name',
+  v2Prop: 'the Chakra v3 prop (colorPalette, lineClamp, invalid, disabled, loading, css)',
+}
+
 export type StyleOccurrence = {
   category: StyleCategory
   file: string
@@ -39,6 +68,8 @@ export type StyleException = {
   /** Repo-relative posix glob (`*` within a segment, `**` across segments) */
   glob: string
   categories: readonly StyleCategory[] | '*'
+  /** Only occurrences whose source text matches; without it the whole file is excused */
+  match?: RegExp
   reason: string
 }
 
@@ -69,6 +100,38 @@ export const STYLE_EXCEPTIONS: readonly StyleException[] = [
     categories: ['colorModeLogic'],
     reason: 'the colour-mode implementation itself (useColorMode / useColorModeValue)',
   },
+  ...[
+    'src/components/Layout/SaasSelector.tsx',
+    'src/components/Memberbase/Members/index.tsx',
+    'src/components/Process/Create/MainContent/SelectionLimits.tsx',
+    'src/components/Process/Create/Sidebar/CensusCreation.tsx',
+  ].map((glob) => ({
+    glob,
+    categories: ['v2Prop'] as const,
+    match: /^is(Loading|Invalid)$/,
+    reason: 'isLoading/isInvalid on the react-select wrapper (~components/Form/Select) are react-select props',
+  })),
+  {
+    glob: 'src/components/Layout/Logo.tsx',
+    categories: ['colorModeLogic'],
+    match: /auth\.logo\.tile/,
+    reason:
+      'organisation logos are dark artwork on transparent backgrounds: dark mode puts them on the white logo tile',
+  },
+  ...['src/components/Layout/Footer.tsx', 'src/components/Layout/Logo.tsx', 'src/components/ui/EmptyState.tsx'].map(
+    (glob) => ({
+      glob,
+      categories: ['colorModeLogic'] as const,
+      match: /^_dark=\{\{ filter: 'invert\(\d+%\)' \}\}$/,
+      reason: 'dark artwork in an image (Vocdoni logo, empty-state illustrations) that colour tokens cannot recolour',
+    })
+  ),
+  {
+    glob: 'src/components/SupportChat/Messages.tsx',
+    categories: ['rawDuration'],
+    match: /dotBounce/,
+    reason: 'the typing indicator loops a 1.2s bounce with a per-dot delay; durations tokens are for transitions',
+  },
 ]
 
 // Theme definition files, semantic token modules included, are guarded by system.test.ts instead.
@@ -96,6 +159,7 @@ export const isScannedFile = (file: string) =>
   !/\.test\.[^/]+$/.test(file) &&
   !file.startsWith('src/__mocks__/') &&
   !file.startsWith('src/theme/recipes/') &&
+  !file.startsWith('src/theme/test-themes/') &&
   !EXCLUDED_FILES.has(file)
 
 const globToRegExp = (glob: string) =>
@@ -111,12 +175,13 @@ const globToRegExp = (glob: string) =>
       .join('.*')}$`
   )
 
-const EXCEPTION_MATCHERS = STYLE_EXCEPTIONS.map((exception) => ({ ...exception, re: globToRegExp(exception.glob) }))
+const EXCEPTION_MATCHERS = STYLE_EXCEPTIONS.map((exception) => ({ exception, re: globToRegExp(exception.glob) }))
 
-const isExcepted = (file: string, category: StyleCategory) =>
-  EXCEPTION_MATCHERS.some(
-    ({ re, categories }) => re.test(file) && (categories === '*' || categories.includes(category))
-  )
+const findException = (file: string, category: StyleCategory, text: string) =>
+  EXCEPTION_MATCHERS.find(
+    ({ exception: { categories, match }, re }) =>
+      re.test(file) && (categories === '*' || categories.includes(category)) && (!match || match.test(text))
+  )?.exception
 
 // ---------------------------------------------------------------------------
 // What the built system knows
@@ -226,6 +291,8 @@ const HEX_RE = /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b|\b(?:rgba?
 const RAW_LENGTH_RE = /(?<![\w.#-])-?(\d*\.?\d+)(px|rem|em|pt)\b/g
 const DURATION_RE = /(?<![\w.#-])\d*\.?\d+m?s\b/
 const NUMERIC_RE = /^-?\d*\.?\d+$/
+// Same shape the escape hatch unwraps (no nested brackets), with an optional `!important`/`!` after it
+const ESCAPED_RE = /^\[([^[\]]+)\](?:\s*!(?:important)?)?$/
 const TOKEN_LOOKING_RE = /^[a-zA-Z][\w]*(?:[.-][\w]+)+$/
 const BARE_WORD_RE = /^[a-zA-Z_]\w*$/
 // CSS colour keywords that are valid without being tokens or named colours
@@ -331,7 +398,12 @@ const isColorish = (value: string) => {
   )
 }
 
-export const scanSource = (code: string, file: string): StyleOccurrence[] => {
+// `onExcepted` sees the occurrences an exception excused, so stale exceptions can be found.
+export const scanSource = (
+  code: string,
+  file: string,
+  onExcepted?: (occurrence: StyleOccurrence, exception: StyleException) => void
+): StyleOccurrence[] => {
   const source = ts.createSourceFile(
     file,
     code,
@@ -343,10 +415,13 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
   const classified = new Set<ts.Node>()
 
   const record = (category: StyleCategory, node: ts.Node, count = 1) => {
-    if (isExcepted(file, category)) return
     const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1
     const text = node.getText(source).replace(/\s+/g, ' ').slice(0, 100)
-    for (let i = 0; i < count; i++) occurrences.push({ category, file, line, text })
+    const exception = findException(file, category, text)
+    for (let i = 0; i < count; i++) {
+      if (exception) onExcepted?.({ category, file, line, text }, exception)
+      else occurrences.push({ category, file, line, text })
+    }
   }
 
   // Type names imported from chakra (`SystemStyleObject`, `BoxProps`, …) and react-select style configs
@@ -380,7 +455,9 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
     return kind
   }
 
-  const classifyString = (prop: string, value: string, node: ts.Node, template = false) => {
+  const classifyString = (prop: string, raw: string, node: ts.Node, template = false) => {
+    // `[value]` is the strictTokens escape (src/theme/escapeHatch.ts): the rules apply to what is inside it
+    const value = raw.replace(ESCAPED_RE, '$1')
     const category = PROP_CATEGORY.get(prop)
 
     const hexCount = [...value.matchAll(HEX_RE)].length
@@ -390,7 +467,7 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
 
     if (category === 'colors' || isColorBearing(prop)) {
       if (template) return
-      const words = value.split(/[\s,()]+/).filter(Boolean)
+      const words = value.split(/[\s,()[\]]+/).filter(Boolean)
       for (const word of words) {
         const base = word.split('/')[0]
         const step = /^(.+)\.\d+$/.exec(base)
@@ -628,7 +705,7 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
     const name = ts.isIdentifier(attribute.name) ? attribute.name.text : undefined
     if (!name) return
     if (V2_PROPS.has(name)) record('v2Prop', attribute.name)
-    if (name === '_dark' || name === '_light') record('colorModeLogic', attribute.name)
+    if (name === '_dark' || name === '_light') record('colorModeLogic', attribute)
 
     const initializer = attribute.initializer
     const expression =
@@ -677,7 +754,7 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
       }
     } else if (ts.isPropertyAssignment(node) || ts.isShorthandPropertyAssignment(node)) {
       const key = propertyName(node.name)
-      if (key === '_dark' || key === '_light') record('colorModeLogic', node.name)
+      if (key === '_dark' || key === '_light') record('colorModeLogic', node)
     } else if (ts.isCallExpression(node)) {
       const callee = node.expression
       if (ts.isIdentifier(callee) && DEFINE_STYLE_FNS.has(callee.text)) {
@@ -714,6 +791,7 @@ export type StyleCounts = Record<StyleCategory, Record<string, number>>
 export type StyleInventory = {
   counts: StyleCounts
   occurrences: StyleOccurrence[]
+  excepted: { occurrence: StyleOccurrence; exception: StyleException }[]
   files: number
 }
 
@@ -730,13 +808,15 @@ export const collectStyleInventory = (root: string): StyleInventory => {
   const files = listScannedFiles(root)
   const counts = emptyCounts()
   const occurrences: StyleOccurrence[] = []
+  const excepted: StyleInventory['excepted'] = []
   for (const file of files) {
-    for (const occurrence of scanSource(fs.readFileSync(path.join(root, file), 'utf8'), file)) {
+    const code = fs.readFileSync(path.join(root, file), 'utf8')
+    for (const occurrence of scanSource(code, file, (o, exception) => excepted.push({ occurrence: o, exception }))) {
       occurrences.push(occurrence)
       counts[occurrence.category][file] = (counts[occurrence.category][file] ?? 0) + 1
     }
   }
-  return { counts, occurrences, files: files.length }
+  return { counts, occurrences, excepted, files: files.length }
 }
 
 // Stable, sorted serialization for the committed baseline
