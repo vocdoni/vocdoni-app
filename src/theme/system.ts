@@ -29,6 +29,8 @@ export const createAppSystem = (primaryColor?: string) => {
   )
 
   const appSystem = createSystem(defaultConfig, {
+    // Style props only take theme tokens; `[value]` is the escape for non-design values (0, auto, 100%).
+    strictTokens: true,
     globalCss: {
       html: {
         colorPalette: defaultColorPalette(brand),
