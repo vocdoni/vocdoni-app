@@ -73,7 +73,7 @@ export function CookieConsent() {
       bottom={{ base: 4, md: 6 }}
       left='50%'
       transform='translateX(-50%)'
-      w='calc(100% - 2rem)'
+      w='calc(100% - {sizes.8})'
       maxW='cookies-consent'
       zIndex='top'
       flexDirection={{ base: 'column', md: 'row' }}

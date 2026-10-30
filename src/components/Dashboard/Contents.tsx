@@ -73,8 +73,8 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
     // the failing setting), and a transitioned one stays hidden for a while.
     transition={
       show
-        ? 'transform {durations.moderate} ease, opacity {durations.moderate} ease, visibility 0s'
-        : 'transform {durations.moderate} ease, opacity {durations.moderate} ease, visibility 0s linear {durations.moderate}'
+        ? 'transform {durations.moderate} ease, opacity {durations.moderate} ease, visibility {durations.instant}'
+        : 'transform {durations.moderate} ease, opacity {durations.moderate} ease, visibility {durations.instant} linear {durations.moderate}'
     }
     transform={show ? 'translateX(0)' : 'translateX(100%)'}
     opacity={show ? 1 : 0}
@@ -87,7 +87,7 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
     pointerEvents={show ? 'auto' : 'none'}
   >
     <Box
-      height='100%'
+      height='full'
       width={{ base: '100vw', md: 'dashboard.panel' }}
       bg='surface.content'
       borderLeft='1px solid'
