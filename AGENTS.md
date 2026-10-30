@@ -62,6 +62,14 @@
 - Prefer configured path aliases over long relative imports. Common aliases include `~components/*`, `~queries/*`, `~theme/*`, `~i18n/*`, and `~utils/*`.
 - Naming patterns: components/files in PascalCase, hooks in `useX` format, tests as `*.test.ts` or `*.test.tsx` near related code.
 
+## UI & Theme
+- Read `docs/ui-guidelines.md` before touching styles, the theme or a shared component. It lists the token roles, recipe
+  variants, `src/components/ui/` components, the allowed exceptions and how to add a token.
+- Components pick roles from the theme and never carry raw values: no hex, named colour, palette step, px font size or
+  radius, and no colour-mode logic. `src/theme/style-inventory.test.ts` fails on them (part of `pnpm test`).
+- When a cleanup lowers a ratchet count, lock it in with `UPDATE_STYLE_BASELINE=1 npx vitest run src/theme/style-inventory.test.ts`.
+  For UI changes also run `pnpm ui:snapshot` and `pnpm ui:diff` (see `scripts/ui-snapshot/README.md`).
+
 ## Internationalization Workflow
 - Any new user-facing text must go through i18next (`t(...)`/translation keys), not hardcoded strings.
 - After adding or changing translation keys, always run `pnpm translations`.
