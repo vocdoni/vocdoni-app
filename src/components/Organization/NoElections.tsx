@@ -16,7 +16,7 @@ const NoElections = () => {
   const isOwner = sameAddress(currentAddress, organization?.address)
 
   return (
-    <Card.Root variant='plain' minH='100%'>
+    <Card.Root variant='plain' minH='full'>
       <Card.Body>
         <EmptyState
           image={empty}
@@ -27,7 +27,7 @@ const NoElections = () => {
           description={isOwner ? t('organization.elections_list_empty.description') : undefined}
         >
           {isOwner && (
-            <Button mt={4} w='100%' asChild>
+            <Button mt={4} w='full' asChild>
               <RouterAwareLink to={generatePath(Routes.processes.create)}>{t('menu.create')}</RouterAwareLink>
             </Button>
           )}

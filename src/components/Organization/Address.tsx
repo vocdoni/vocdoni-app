@@ -36,7 +36,7 @@ const AddressBtn = ({ ...props }) => {
         </Button>
       </MenuTrigger>
       <MenuPositioner>
-        <MenuContent top='-32' left={{ md: -9 }} zIndex={30}>
+        <MenuContent top='-32' left={{ md: -9 }} zIndex='public-header'>
           <MenuItem value='copy-address' asChild>
             <Button
               onClick={() => {
