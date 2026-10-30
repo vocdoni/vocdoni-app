@@ -79,7 +79,7 @@ export const colors = defineSemanticTokens.colors({
         _dark: '{colors.black}',
       },
     },
-    // Chakra's red.500 reads 3.76:1 on white; red.600 clears 4.5:1 (dark keeps Chakra's red.400).
+    // Chakra's red.500 fails AA on white, so light mode takes red.600; dark keeps Chakra's red.400.
     error: {
       value: {
         _light: '{colors.red.600}',
