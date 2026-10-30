@@ -8,7 +8,7 @@ import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox } from '~components/Dashboard/Contents'
-import { HSeparator } from '~components/Layout/Separators'
+import { LabelledSeparator } from '~components/Layout/Separators'
 import { AvatarUploader } from '~components/Layout/Uploader'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { useToast } from '~components/Toast'
@@ -123,20 +123,7 @@ const EditOrganization = () => {
             <AvatarUploader w='fit' />
             <PublicOrgForm />
           </Flex>
-          <Flex align='center'>
-            <HSeparator />
-            <Text
-              color='fg.muted'
-              fontWeight='bold'
-              mx='3.5'
-              whiteSpace='nowrap'
-              textStyle='caption'
-              textTransform='uppercase'
-            >
-              {t('other_details', { defaultValue: 'Other details' })}
-            </Text>
-            <HSeparator />
-          </Flex>
+          <LabelledSeparator>{t('other_details', { defaultValue: 'Other details' })}</LabelledSeparator>
           <SimpleGrid columns={{ base: 1, md: 2 }} gap='6'>
             <PrivateOrgForm />
           </SimpleGrid>

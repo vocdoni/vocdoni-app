@@ -1,17 +1,19 @@
-import { Flex, FlexProps, Text } from '@chakra-ui/react'
+import { Flex, FlexProps, Separator, Text } from '@chakra-ui/react'
 import { Trans } from 'react-i18next'
 
-export const HSeparator = (props: { variant?: string; [x: string]: any }) => {
-  const { variant, ...rest } = props
-  return <Flex h='[1px]' w='full' bg='separator' {...rest} />
-}
+// A hairline on each side of a short uppercase label, splitting a form or a list of options in two.
+export const LabelledSeparator = ({ children, ...props }: FlexProps) => (
+  <Flex align='center' {...props}>
+    <Separator w='full' borderColor='separator' />
+    <Text color='fg.muted' fontWeight='bold' mx='3.5' whiteSpace='nowrap' textStyle='caption' textTransform='uppercase'>
+      {children}
+    </Text>
+    <Separator w='full' borderColor='separator' />
+  </Flex>
+)
 
 export const OrSeparator = (props: FlexProps) => (
-  <Flex align='center' mb='4' {...props}>
-    <HSeparator />
-    <Text color='fg.muted' fontWeight='bold' mx='3.5' whiteSpace='nowrap' textStyle='caption' textTransform='uppercase'>
-      <Trans i18nKey='or_continue_with'>or continue with</Trans>
-    </Text>
-    <HSeparator />
-  </Flex>
+  <LabelledSeparator mb='4' {...props}>
+    <Trans i18nKey='or_continue_with'>or continue with</Trans>
+  </LabelledSeparator>
 )
