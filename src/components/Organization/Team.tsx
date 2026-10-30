@@ -238,7 +238,7 @@ const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }:
       cursor='pointer'
       _checked={{ borderColor: 'border.emphasized' }}
       _hover={{ borderColor: 'border.emphasized' }}
-      _disabled={{ opacity: 'disabled', cursor: 'not-allowed' }}
+      _disabled={{ opacity: 'inactive', cursor: 'not-allowed' }}
       {...props}
     >
       <RadioGroup.ItemHiddenInput />
