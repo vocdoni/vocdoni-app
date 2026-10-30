@@ -117,11 +117,11 @@ const GroupsInfo = () => {
   if (!isOpen) return null
 
   return (
-    <DashboardBox size='md' position='relative' flexDirection='column' display='flex' gap={2}>
-      <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorPalette='gray' size='sm' />
-      <Flex flexDirection='row' gap={4}>
+    <DashboardBox size='md' position='relative' flexDirection='column' display='flex' gap='2'>
+      <CloseButton onClick={onClose} position='absolute' top='2' right='2' colorPalette='gray' size='sm' />
+      <Flex flexDirection='row' gap='4'>
         <Icon as={UsersIcon} boxSize='icon.lg' />
-        <Flex flexDirection='column' gap={4}>
+        <Flex flexDirection='column' gap='4'>
           <Text textStyle='body' fontWeight='bold'>
             {t('groups_board.info.title', { defaultValue: 'About Groups' })}
           </Text>
@@ -255,7 +255,7 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
           </Drawer.Header>
           <FormProvider {...methods}>
             <Box as='form' onSubmit={onSubmit}>
-              <Drawer.Body display='flex' flexDirection='column' gap={4}>
+              <Drawer.Body display='flex' flexDirection='column' gap='4'>
                 <InputBasic
                   formValue='title'
                   label={t('members.table.group_name', { defaultValue: 'Group name' })}
@@ -277,7 +277,7 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
                   <FormErrorMessage>{formState.errors.description?.message?.toString()}</FormErrorMessage>
                 </FormControl>
               </Drawer.Body>
-              <Flex justifyContent='flex-end' gap={2} p={4}>
+              <Flex justifyContent='flex-end' gap='2' p='4'>
                 <Button variant='outline' onClick={onClose}>
                   {t('actions.cancel', { defaultValue: 'Cancel' })}
                 </Button>
@@ -307,29 +307,29 @@ const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteMo
           </IconButton>
         </MenuTrigger>
         <MenuPositioner>
-          <MenuContent minW='100px' fontSize='sm'>
+          <MenuContent minW='[100px]' fontSize='sm'>
             {!group.isAutoGroup && (
               <MenuItem value='edit' onClick={onEditDrawerOpen}>
-                <HStack gap={2}>
+                <HStack gap='2'>
                   <Icon as={EditIcon} />
                   <Text as='span'>{t('actions.edit', { defaultValue: 'Edit' })}</Text>
                 </HStack>
               </MenuItem>
             )}
             <MenuItem value='members' onClick={onMembersDrawerOpen}>
-              <HStack gap={2}>
+              <HStack gap='2'>
                 <Icon as={ViewIcon} />
                 <Text as='span'>{t('group.actions.view_members', { defaultValue: 'View Members' })}</Text>
               </HStack>
             </MenuItem>
             <MenuItem value='vote' onClick={() => navigateToVote(group.id)}>
-              <HStack gap={2}>
+              <HStack gap='2'>
                 <Icon as={VoteIcon} />
                 <Text as='span'>{t('group.actions.create_vote', { defaultValue: 'Create a Vote' })}</Text>
               </HStack>
             </MenuItem>
             <MenuItem value='history' disabled onClick={onHistoryOpen}>
-              <HStack gap={2}>
+              <HStack gap='2'>
                 <Icon as={ClockIcon} />
                 <Text as='span'>{t('group.actions.history', { defaultValue: 'History' })}</Text>
               </HStack>
@@ -338,7 +338,7 @@ const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteMo
               <>
                 <MenuSeparator />
                 <MenuItem value='delete' color='destructive.fg' onClick={onDeleteModalOpen}>
-                  <HStack gap={2}>
+                  <HStack gap='2'>
                     <Icon as={DeleteIcon} />
                     <Text as='span'>{t('group.actions.delete_group', { defaultValue: 'Delete Group' })}</Text>
                   </HStack>
@@ -378,7 +378,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
   return (
     <>
       {!group.isAutoGroup && (
-        <Flex gap={4} align='center' minH='toolbar' mb={2}>
+        <Flex gap='4' align='center' minH='toolbar' mb='2'>
           {selectedRows.length > 0 ? (
             <>
               <Text textStyle='body-sm' color='fg.muted'>
@@ -412,7 +412,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
         {isEmpty ? (
           <EmptyState
             size='sm'
-            height='200px'
+            height='[200px]'
             title={t('group.members.empty', { defaultValue: 'No members found' })}
             description={t('group.members.empty_description', { defaultValue: 'Add members to see them listed here.' })}
           />
@@ -518,8 +518,8 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
           </Drawer.Header>
           <Drawer.Body>
             <GroupMembersDisplay group={group} isOpen={isOpen} />
-            <Separator my={4} />
-            <Flex direction='column' gap={4}>
+            <Separator my='4' />
+            <Flex direction='column' gap='4'>
               <Text fontWeight='extrabold' textStyle='body-sm'>
                 {t('group.actions_title', { defaultValue: 'Actions' })}
               </Text>
@@ -530,7 +530,7 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
                 })}
               </Text>
             </Flex>
-            <Flex justify='space-between' mt={4} gap={2}>
+            <Flex justify='space-between' mt='4' gap='2'>
               <Button size='xs' onClick={() => navigateToVote(group.id)}>
                 <Icon as={VoteIcon} boxSize='icon.sm' />
                 {t('group.create_vote', { defaultValue: 'Create a Vote' })}
@@ -661,8 +661,8 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
   return (
     <>
-      <Card.Root variant='outline' p={4}>
-        <Card.Header p={0}>
+      <Card.Root variant='outline' p='4'>
+        <Card.Header p='[0]'>
           <Flex justify='space-between' align='center'>
             <Heading size='md'>{displayTitle}</Heading>
             <GroupActions
@@ -673,9 +673,9 @@ const GroupCard = ({ group }: GroupCardProps) => {
             />
           </Flex>
         </Card.Header>
-        <Card.Body p={0}>
-          <Flex direction='column' gap={2}>
-            <Flex align='center' gap={2}>
+        <Card.Body p='[0]'>
+          <Flex direction='column' gap='2'>
+            <Flex align='center' gap='2'>
               <Icon as={CalendarIcon} boxSize='icon.sm' />
               <Text color='fg.muted' textStyle='body-sm'>
                 {t('group.created_on', {
@@ -688,7 +688,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
                 })}
               </Text>
             </Flex>
-            <Flex align='center' gap={2}>
+            <Flex align='center' gap='2'>
               <Icon as={UsersIcon} boxSize='icon.sm' />
               <Button variant='text-link' onClick={onMembersDrawerOpen}>
                 {t('group.members', {
@@ -703,7 +703,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
             </Text>
           </Flex>
         </Card.Body>
-        <Card.Footer px={0} pb={0} mt={3}>
+        <Card.Footer px='[0]' pb='[0]' mt='3'>
           <Button w='full' size='xs' onClick={() => navigateToVote(group.id)}>
             <Icon boxSize='icon.sm' as={VoteIcon} />
             {t('group.create_vote', { defaultValue: 'Create a Vote' })}
@@ -746,7 +746,7 @@ const GroupsBoard = () => {
         />
       )}
       {!hasError && !isLoading && groups && groups.length > 0 && (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap='4'>
           {groups.map((group) => (
             <GroupCard key={group.id} group={group} />
           ))}
@@ -754,7 +754,7 @@ const GroupsBoard = () => {
       )}
       {hasNextPage && !hasError && !isLoading && groups && groups.length > 0 && (
         <Button
-          mt={4}
+          mt='4'
           alignSelf='center'
           onClick={() => fetchNextPage()}
           loading={isFetchingNextPage}
@@ -769,7 +769,7 @@ const GroupsBoard = () => {
 
 const Groups = () => {
   return (
-    <Flex direction='column' gap={4}>
+    <Flex direction='column' gap='4'>
       <GroupsInfo />
       <GroupsBoard />
     </Flex>

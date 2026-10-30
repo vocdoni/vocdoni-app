@@ -70,7 +70,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email, sign
 
   return (
     <FormProvider {...methods}>
-      <Flex as='form' onSubmit={methods.handleSubmit(onSubmit)} flexDirection='column' gap={6}>
+      <Flex as='form' onSubmit={methods.handleSubmit(onSubmit)} flexDirection='column' gap='6'>
         <InputBasic
           formValue='email'
           label={t('email')}

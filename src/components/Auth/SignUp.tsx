@@ -164,8 +164,8 @@ const SignUp = ({
   return (
     <>
       <FormProvider {...methods}>
-        <Flex as='form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap={6}>
-          <Flex flexDirection={'column'} gap={4} mb={4}>
+        <Flex as='form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap='6'>
+          <Flex flexDirection={'column'} gap='4' mb='4'>
             <InputBasic formValue='firstName' label={t('signup_firstname')} placeholder='John' required />
             <InputBasic formValue='lastName' label={t('signup_lastname')} placeholder='Doe' required />
 
@@ -259,12 +259,12 @@ const SignUp = ({
         justifyContent='center'
         alignItems='start'
         maxW='full'
-        mt={6}
+        mt='6'
         textStyle='body-sm'
         fontWeight={'bold'}
       >
         {t('already_member')}
-        <Link asChild ml={1} emphasis='strong' size='sm'>
+        <Link asChild ml='1' emphasis='strong' size='sm'>
           <NavLink to={signInRoute}>{t('signin')}</NavLink>
         </Link>
       </Text>

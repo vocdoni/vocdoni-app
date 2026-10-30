@@ -45,7 +45,7 @@ export const ManagedOrganizationsTable = ({ organizations }: { organizations: Ma
                 <Table.Row key={org.address}>
                   <Table.Cell>
                     {name ? (
-                      <Stack gap={0.5}>
+                      <Stack gap='0.5'>
                         <Text fontWeight='medium'>{name}</Text>
                         <Code fontSize='xs' color='fg.muted' title={org.address}>
                           {shortAddress(org.address)}

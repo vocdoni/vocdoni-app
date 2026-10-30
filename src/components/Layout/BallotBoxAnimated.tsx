@@ -71,8 +71,8 @@ export function BallotBoxAnimated({ size = 200, ...props }: BallotBoxAnimatedPro
   return (
     <chakra.svg
       viewBox='0 0 400 400'
-      width={size}
-      height={size}
+      width={`[${size}px]`}
+      height={`[${size}px]`}
       xmlns='http://www.w3.org/2000/svg'
       aria-hidden='true'
       focusable='false'

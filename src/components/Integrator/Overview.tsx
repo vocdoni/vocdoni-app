@@ -79,10 +79,10 @@ export const IntegratorOverview = () => {
 
   return (
     <DashboardContents>
-      <Flex justify='space-between' align='flex-start' gap={4} mb={4}>
+      <Flex justify='space-between' align='flex-start' gap='4' mb='4'>
         <Box>
           <PageTitle>{t('integrators.overview_title', { defaultValue: 'Overview' })}</PageTitle>
-          <PageSubtitle mb={0}>
+          <PageSubtitle mb='[0]'>
             {t('integrators.overview_subtitle', {
               defaultValue: 'Your integrator quota and current usage.',
             })}
@@ -109,7 +109,7 @@ export const IntegratorOverview = () => {
           </BookerModalButton>,
           layout.headerActionsNode
         )}
-      <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
         <QuotaCard
           label={t('integrators.quota.managed_orgs', { defaultValue: 'Organizations created' })}
           usage={usage.managedOrgs}
@@ -137,14 +137,14 @@ export const IntegratorOverview = () => {
         />
       </SimpleGrid>
 
-      <Box mt={8}>
+      <Box mt='8'>
         <DashboardCardHeader
           title={t('integrators.docs.title', { defaultValue: 'Documentation' })}
           subtitle={t('integrators.docs.subtitle', {
             defaultValue: 'Guides and references to start building with Vocdoni.',
           })}
         />
-        <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
           {docs.map((doc) => (
             <DocsCard key={doc.href} {...doc} />
           ))}

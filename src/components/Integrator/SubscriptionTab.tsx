@@ -53,8 +53,8 @@ const IntegratorSubscriptionTab = () => {
 
   return (
     <DashboardBox size='md' justifyContent='flex-start'>
-      <Flex justify='space-between' align='flex-start' gap={4} wrap='wrap'>
-        <Stack gap={1}>
+      <Flex justify='space-between' align='flex-start' gap='4' wrap='wrap'>
+        <Stack gap='1'>
           <Text textStyle='body-sm' color='fg.muted'>
             {t('integrators.subscription.current_plan', { defaultValue: 'Current plan' })}
           </Text>
@@ -67,7 +67,7 @@ const IntegratorSubscriptionTab = () => {
               : t('integrators.subscription.inactive', { defaultValue: 'Inactive' })}
           </Text>
         </Stack>
-        <Flex gap={2} wrap='wrap'>
+        <Flex gap='2' wrap='wrap'>
           <BookerModalButton variant='solid' colorPalette='gray'>
             {t('integrators.upgrade_plan', { defaultValue: 'Upgrade plan' })}
           </BookerModalButton>

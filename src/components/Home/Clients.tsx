@@ -17,7 +17,7 @@ const Clients = (props: BoxProps) => {
 
   return (
     <Box {...props}>
-      <Text textAlign='center' mb={10} fontSize={'lg'} fontWeight='normal'>
+      <Text textAlign='center' mb='10' fontSize={'lg'} fontWeight='normal'>
         {t('home.clients_title')}
       </Text>
       <ClientsGrid />
@@ -33,11 +33,11 @@ export const ClientsGrid = (props: PageSectionProps) => {
       as='section'
       size='wide'
       display='grid'
-      mb={{ base: 10, lg: 20 }}
+      mb={{ base: '10', lg: '20' }}
       px={{
-        base: 2,
-        sm: 4,
-        lg: 6,
+        base: '2',
+        sm: '4',
+        lg: '6',
       }}
       gridTemplateColumns={{ base: 'repeat(5, 1fr)', md: 'repeat(10, 1fr)' }}
       justifyContent='end'
@@ -54,7 +54,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
       </Card.Root>
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={omnium} h={'57px'} alt={t('alt.images.omnium')} />
+          <Image src={omnium} h='[57px]' alt={t('alt.images.omnium')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>Omnium Cultural</Text>
@@ -62,7 +62,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
       </Card.Root>
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={berga} h={'41px'} alt={t('alt.images.berga')} />
+          <Image src={berga} h='[41px]' alt={t('alt.images.berga')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>Ajuntament Berga</Text>
@@ -70,7 +70,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
       </Card.Root>
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={bisbal} h={'33px'} alt={t('alt.images.bisbal')} />
+          <Image src={bisbal} h='[33px]' alt={t('alt.images.bisbal')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>Ajuntament la Bisbal</Text>
@@ -94,7 +94,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
       </Card.Root>
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={bellpuig} h={'33px'} alt={t('alt.images.bellpuig')} />
+          <Image src={bellpuig} h='[33px]' alt={t('alt.images.bellpuig')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>Ajuntament Bellpuig</Text>
@@ -110,7 +110,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
       </Card.Root>
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={decidim} h={'30px'} alt={t('alt.images.decidim')} />
+          <Image src={decidim} h='[30px]' alt={t('alt.images.decidim')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>Decidim</Text>
@@ -118,7 +118,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
       </Card.Root>
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={bloock} h={'17px'} alt={t('alt.images.bloock')} />
+          <Image src={bloock} h='[17px]' alt={t('alt.images.bloock')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>Bloock</Text>

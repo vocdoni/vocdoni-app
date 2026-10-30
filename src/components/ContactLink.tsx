@@ -17,7 +17,7 @@ const ContactButton = ({ children, leftIcon, ...buttonProps }: ContactLinkProps)
       {isAuthenticated ? (
         <RouterLink to={Routes.dashboard.settings.support}>
           {leftIcon ? (
-            <HStack gap={2}>
+            <HStack gap='2'>
               {leftIcon}
               <Text as='span'>{children}</Text>
             </HStack>
@@ -28,7 +28,7 @@ const ContactButton = ({ children, leftIcon, ...buttonProps }: ContactLinkProps)
       ) : (
         <a href='https://vocdoni.io/contact' target='_blank' rel='noopener noreferrer'>
           {leftIcon ? (
-            <HStack gap={2}>
+            <HStack gap='2'>
               {leftIcon}
               <Text as='span'>{children}</Text>
             </HStack>
