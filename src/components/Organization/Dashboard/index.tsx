@@ -19,7 +19,7 @@ import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
@@ -184,11 +184,10 @@ const Processes = () => {
       <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap='4'>
         <ListStateAlert
           show
-          status='error'
           title={t('dashboard.welcome.error_loading_processes', {
             defaultValue: 'Error loading voting processes',
           })}
-          description={error instanceof Error ? error.message : undefined}
+          error={error}
         />
       </Flex>
     )
