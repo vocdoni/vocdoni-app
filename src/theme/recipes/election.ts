@@ -28,7 +28,7 @@ export const ElectionTitle = defineRecipe({
     fontWeight: 'bold',
     fontSize: 'xl',
     textAlign: 'center',
-    lineHeight: 'shorter',
+    lineHeight: 'short',
     mb: 3,
   },
   variants: {
@@ -71,7 +71,7 @@ export const ElectionQuestions = defineSlotRecipe({
     title: {
       display: 'block',
       textAlign: 'start',
-      lineHeight: 'shorter',
+      lineHeight: 'short',
       fontSize: 'lg',
       fontWeight: 'semibold',
       mb: 6,

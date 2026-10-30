@@ -79,10 +79,17 @@ const UserProfile = () => {
                 gap={0.5}
                 ml={0}
               >
-                <Text fontWeight='light' fontSize='sm' lineHeight='none' maxW='var(--size)' truncate>
+                <Text fontWeight='light' fontSize='sm' lineHeight='shorter' maxW='var(--size)' truncate>
                   {profile.firstName}
                 </Text>
-                <Text fontWeight='light' fontSize='xs' lineHeight='none' color='fg.muted' maxW='var(--size)' truncate>
+                <Text
+                  fontWeight='light'
+                  fontSize='xs'
+                  lineHeight='shorter'
+                  color='fg.muted'
+                  maxW='var(--size)'
+                  truncate
+                >
                   {organization?.account?.name?.default}
                 </Text>
               </Flex>
@@ -105,7 +112,14 @@ const UserProfile = () => {
                 justifyContent='start'
                 gap={0.5}
               >
-                <Text fontSize='sm' lineHeight='none' textAlign='start' fontWeight='bolder' maxW='var(--size)' truncate>
+                <Text
+                  fontSize='sm'
+                  lineHeight='shorter'
+                  textAlign='start'
+                  fontWeight='bolder'
+                  maxW='var(--size)'
+                  truncate
+                >
                   {profile.firstName}
                 </Text>
                 {switchOrg ? (

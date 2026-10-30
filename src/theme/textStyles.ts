@@ -9,10 +9,10 @@ export const textStyles = defineTextStyles({
   caption: { value: { fontSize: 'xs', lineHeight: 'moderate' } },
   // Small uppercase labels over a figure or a group.
   eyebrow: { value: { fontSize: 'xs', lineHeight: 'moderate', letterSpacing: 'wide', textTransform: 'uppercase' } },
-  'page-title': { value: { fontSize: '2xl', lineHeight: 'shorter', fontWeight: 'bold' } },
-  'section-title': { value: { fontSize: '2xl', lineHeight: 'shorter', fontWeight: 'bold' } },
+  'page-title': { value: { fontSize: '2xl', lineHeight: 'short', fontWeight: 'bold' } },
+  'section-title': { value: { fontSize: '2xl', lineHeight: 'short', fontWeight: 'bold' } },
   // Public process and organisation names.
-  display: { value: { fontSize: { base: '3xl', md: '4xl' }, lineHeight: 'shorter', fontWeight: 'bold' } },
+  display: { value: { fontSize: { base: '3xl', md: '4xl' }, lineHeight: 'short', fontWeight: 'bold' } },
 })
 
 // Heading sizes of user-written content by Markdown level, shared by the editor and the rendered Markdown.

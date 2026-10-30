@@ -43,8 +43,8 @@ const ProcessAside = () => {
             <Trans
               i18nKey='aside.votes'
               components={{
-                span: <Text as='span' fontWeight='bold' fontSize='3xl' lineHeight='none' />,
-                text: <Text fontSize='xl' lineHeight='shorter' />,
+                span: <Text as='span' fontWeight='bold' fontSize='3xl' lineHeight='shorter' />,
+                text: <Text fontSize='xl' lineHeight='short' />,
               }}
               count={votes}
             />
@@ -57,8 +57,8 @@ const ProcessAside = () => {
               <Trans
                 i18nKey='aside.votes_weight'
                 components={{
-                  span: <Text as='span' fontWeight='bold' fontSize='3xl' lineHeight='none' />,
-                  text: <Text fontSize='xl' lineHeight='shorter' />,
+                  span: <Text as='span' fontWeight='bold' fontSize='3xl' lineHeight='shorter' />,
+                  text: <Text fontSize='xl' lineHeight='short' />,
                 }}
                 count={votes}
               />

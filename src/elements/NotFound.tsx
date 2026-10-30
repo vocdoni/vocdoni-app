@@ -28,7 +28,7 @@ export const NotFoundView = ({ onReturnHome, returnHomeHref }: NotFoundViewProps
 
   return (
     <Flex direction='column' align='center' justify='center' textAlign='center' gap={3} minH='30vh'>
-      <Text as='div' fontSize='6xl' fontWeight='extrabold' lineHeight='none'>
+      <Text as='div' fontSize='6xl' fontWeight='extrabold' lineHeight='shorter'>
         404
       </Text>
       <PageTitle>{t('error.not_found')}</PageTitle>
