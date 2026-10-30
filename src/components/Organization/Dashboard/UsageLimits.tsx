@@ -6,6 +6,7 @@ import { DashboardBox } from '~components/Dashboard/Contents'
 import { SectionHeader } from '~components/ui/SectionHeader'
 import { UsageMeter, type UsageMeterColor } from '~components/ui/UsageMeter'
 import { MaxMembersPerOrg } from '~constants'
+import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { usePaginatedMembers } from '~queries/members'
 import { quantity } from '~utils/numbers'
 
@@ -22,6 +23,7 @@ type UsageMetric = {
 export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) => {
   const { t } = useTranslation()
   const { organization, isLoading } = useSaasAccount()
+  const language = usePublicLanguage()
 
   // Fetch memberbase data to get total count
   const { data: membersData } = usePaginatedMembers({ showAll: true })
@@ -86,7 +88,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
               label={label}
               value={current}
               max={max}
-              unit={max !== undefined ? `/ ${max.toLocaleString()}` : undefined}
+              unit={max !== undefined ? `/ ${max.toLocaleString(language)}` : undefined}
               tooltip={tooltip}
               color={color}
             />
