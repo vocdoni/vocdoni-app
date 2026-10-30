@@ -7,7 +7,8 @@ import {
   Card,
   Dialog,
   type DialogRootProps,
-  Field,
+  FieldRoot as FormControl,
+  FieldLabel as FormLabel,
   Flex,
   Heading,
   HStack,
@@ -287,8 +288,8 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
   if (rolesError) return <Alert.Root status='error'>{rolesFetchError?.message || t('error.loading_roles')}</Alert.Root>
 
   return (
-    <Field.Root>
-      <Field.Label fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</Field.Label>
+    <FormControl>
+      <FormLabel fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</FormLabel>
       {rolesLoading && <ListLoader />}
       <Controller
         name='role'
@@ -309,7 +310,7 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
           </RadioGroup.Root>
         )}
       />
-    </Field.Root>
+    </FormControl>
   )
 }
 

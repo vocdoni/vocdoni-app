@@ -2,7 +2,8 @@ import {
   Avatar,
   Box,
   Button,
-  Field,
+  FieldRoot as FormControl,
+  FieldLabel as FormLabel,
   Flex,
   HStack,
   Icon,
@@ -171,18 +172,18 @@ const UserProfile = () => {
                   <Text fontWeight='extrabold' textStyle='body-sm' px='2' py='1.5'>
                     {t('preferences', { defaultValue: 'Preferences' })}
                   </Text>
-                  <Field.Root
+                  <FormControl
                     display='flex'
                     justifyContent='space-between'
                     p='2'
                     alignItems='center'
                     flexDirection='row'
                   >
-                    <Field.Label m='[0]' htmlFor='theme-toggle'>
+                    <FormLabel m='[0]' htmlFor='theme-toggle'>
                       <Trans i18nKey='theme'>Theme</Trans>
-                    </Field.Label>
+                    </FormLabel>
                     <ThemeToggleGroup />
-                  </Field.Root>
+                  </FormControl>
                   <LanguageListDashboard px={2} py={1.5} />
                 </Box>
                 <Button colorPalette='gray' variant='menu-item-strong' onClick={logout}>
