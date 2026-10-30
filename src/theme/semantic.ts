@@ -320,13 +320,9 @@ export const colors = defineSemanticTokens.colors({
         value: '{colors.fg.muted}',
       },
       active: {
-        // `brand.fg`, not the raw 500: the active tab label sits on white, and
-        // an arbitrary PRIMARY_COLOR at 500 carries no contrast guarantee there.
+        // The accent text step, not the raw 500: an arbitrary PRIMARY_COLOR at 500 carries no contrast guarantee.
         color: {
-          value: {
-            _light: '{colors.brand.fg}',
-            _dark: '{colors.white}',
-          },
+          value: '{colors.accent.fg}',
         },
         bg: {
           value: {

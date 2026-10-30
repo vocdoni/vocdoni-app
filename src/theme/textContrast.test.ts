@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import { contrastRatio } from './palette'
-import { system } from './system'
+import { createAppSystem, system } from './system'
 
 type Mode = 'light' | 'dark'
 
 // Resolves a semantic colour token to a hex value for one colour mode, following `{colors.*}` references.
-const resolve = (name: string, mode: Mode, depth = 0): string => {
-  const token = system.tokens.getByName(`colors.${name}`)
+const resolve = (name: string, mode: Mode, sys = system, depth = 0): string => {
+  const token = sys.tokens.getByName(`colors.${name}`)
   if (!token || depth > 20) throw new Error(`cannot resolve colors.${name}`)
   const conditions = token.extensions?.conditions as Record<string, string> | undefined
   const value = conditions ? (conditions[mode === 'dark' ? '_dark' : '_light'] ?? conditions.base) : token.value
   const ref = /^\{colors\.([\w.-]+)\}$/.exec(String(value))
-  return ref ? resolve(ref[1], mode, depth + 1) : String(value)
+  return ref ? resolve(ref[1], mode, sys, depth + 1) : String(value)
 }
 
 // Composites a translucent surface (e.g. `surface.sunken` in dark mode) over the page it sits on.
@@ -45,6 +45,23 @@ describe('text colour contrast (WCAG AA)', () => {
   it('keeps the inactive tab label readable on the tab list', () => {
     for (const mode of ['light', 'dark'] as const) {
       expect(contrastRatio(resolve('tabs.tab.color', mode), resolve('tabs.bg', mode))).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  it.each([
+    ['stock', system],
+    ['branded', createAppSystem('#1a73e8')],
+  ])('keeps the brand accents readable in both modes (%s system)', (_name, sys) => {
+    for (const mode of ['light', 'dark'] as const) {
+      const pairs = [
+        ['tabs.tab.active.color', 'tabs.tab.active.bg'],
+        ['card.plan.featured.badge.color', 'card.plan.featured.badge.bg'],
+        ['accent.fg', 'bg'],
+      ]
+      for (const [text, surface] of pairs) {
+        const ratio = contrastRatio(resolve(text, mode, sys), resolve(surface, mode, sys))
+        expect(ratio, `${text} on ${surface} (${mode})`).toBeGreaterThanOrEqual(4.5)
+      }
     }
   })
 

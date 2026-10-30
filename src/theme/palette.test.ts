@@ -3,6 +3,7 @@ import { PAGE_BACKGROUNDS } from './colors'
 import {
   contrastColor,
   contrastRatio,
+  generateAccentTokens,
   generateBrandSemanticTokens,
   generatePaletteScale,
   normalizeHexColor,
@@ -187,5 +188,22 @@ describe('generateBrandSemanticTokens', () => {
     // Dark mode keeps the yellow at 500, so the label has to go black.
     expect(tokens.solid._dark).toBe('{colors.brand.500}')
     expect(tokens.contrast._dark).toBe('#000000')
+  })
+})
+
+describe('generateAccentTokens', () => {
+  it('keeps the stock black accent white on the dark page instead of its grey readable step', () => {
+    expect(generateAccentTokens(generatePaletteScale('#000000'), BACKGROUNDS)).toEqual({
+      fg: { _light: '{colors.brand.fg}', _dark: '{colors.white}' },
+      solid: { _light: '{colors.brand.solid}', _dark: '{colors.white}' },
+      contrast: { _light: '{colors.brand.contrast}', _dark: '#000000' },
+    })
+  })
+
+  it.each(['#1a73e8', '#ffd600', '#0b1a3a', '#cccccc'])('follows the brand in both modes for %s', (base) => {
+    const tokens = generateAccentTokens(generatePaletteScale(base), BACKGROUNDS)
+    expect(tokens.fg).toEqual({ _light: '{colors.brand.fg}', _dark: '{colors.brand.fg}' })
+    expect(tokens.solid).toEqual({ _light: '{colors.brand.solid}', _dark: '{colors.brand.solid}' })
+    expect(tokens.contrast).toEqual({ _light: '{colors.brand.contrast}', _dark: '{colors.brand.contrast}' })
   })
 })
