@@ -2,12 +2,6 @@ import { read, utils, WorkBook } from 'xlsx'
 import ErrorMissingData from './errors/ErrorMissingData'
 import ErrorMissingHeader from './errors/ErrorMissingHeader'
 
-export enum ErrorType {
-  InvalidRowLength,
-  InvalidWeight,
-  InvalidCellData,
-}
-
 export class SpreadsheetManager {
   protected readonly reader
   protected heading: string[]

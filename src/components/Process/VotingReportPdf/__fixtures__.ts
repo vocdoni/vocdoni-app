@@ -9,7 +9,7 @@ import { isValidElement, type ReactNode } from 'react'
 
 export const PROCESS_ID = '6a3cfc6b3af4e390f5f79291'
 
-export const singleChoiceBallotProtocol: BallotProtocol = {
+const singleChoiceBallotProtocol: BallotProtocol = {
   costExponent: 1,
   costFromWeight: false,
   maxCount: 1,

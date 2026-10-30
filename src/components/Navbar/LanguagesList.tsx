@@ -36,7 +36,7 @@ export const navigateToLanguage = (
   })
 }
 
-export const LanguagesList = ({
+const LanguagesList = ({
   closeOnSelect,
   publicLanguageLinks,
 }: {

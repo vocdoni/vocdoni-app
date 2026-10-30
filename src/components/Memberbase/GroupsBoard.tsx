@@ -102,7 +102,7 @@ const useGroupDisplay = (group: Group) => {
   }
 }
 
-export const useNavigateToVote = () => {
+const useNavigateToVote = () => {
   const navigate = useNavigate()
 
   return (groupId: string) => {

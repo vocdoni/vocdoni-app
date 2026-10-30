@@ -37,7 +37,7 @@ export type SelectCustomProps = {
   valueMode?: 'option' | 'value'
 } & SelectProps
 
-export const SelectCustom = ({
+const SelectCustom = ({
   name,
   label,
   helper,
@@ -229,7 +229,7 @@ const getRoleBadge = (role: Role) => {
   return <Trans i18nKey='role.read_only.badge' defaults='(Read-only)' />
 }
 
-export const createRoleDisplay = (type: 'Option' | 'SingleValue') => {
+const createRoleDisplay = (type: 'Option' | 'SingleValue') => {
   const BaseComponent = chakraComponents[type]
 
   return (props: any) => {

@@ -13,7 +13,7 @@ import { EmptyState } from '~components/ui/EmptyState'
  * and there is nothing here to recover it on its own — the query sits at the
  * app root and never remounts.
  */
-export const OrganizationsUnavailable = () => {
+const OrganizationsUnavailable = () => {
   const { refreshAddresses } = useAuth()
   const [isRetrying, setRetrying] = useState(false)
 

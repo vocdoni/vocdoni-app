@@ -11,7 +11,7 @@ import { statusColors } from './status'
  * https://v2.chakra-ui.com/docs/styled-system/semantic-tokens
  */
 
-export const colors = defineSemanticTokens.colors({
+const colors = defineSemanticTokens.colors({
   ...stateColors,
   ...chartColors,
   ...recipeColors,
@@ -367,7 +367,7 @@ export const colors = defineSemanticTokens.colors({
 })
 
 // Elevation by role; each points at a Chakra size, which carries its own dark-mode value.
-export const shadows = defineSemanticTokens.shadows({
+const shadows = defineSemanticTokens.shadows({
   shadow: {
     // Cards are told apart by their border, not a shadow
     card: {

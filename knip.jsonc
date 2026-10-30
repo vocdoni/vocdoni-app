@@ -1,0 +1,26 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "i18next.config.ts", // read by i18next-cli (pnpm translations)
+    "scripts/**/*.mjs",
+    "integration/seed-plan.js", // loaded by scripts/integration-stack.sh
+    "stress/loadgen.mjs", // spawned by stress/loadgen.test.ts and run-stress.sh
+    "src/utils/use-feature-flag.ts" // documented API (docs/analytics.md), no caller yet
+  ],
+  "project": [
+    "src/**/*.{ts,tsx,mjs}",
+    "server/**/*.mjs",
+    "scripts/**/*.mjs",
+    "integration/**/*.js",
+    "stress/**/*.{ts,mjs}",
+    "e2e/**/*.ts",
+    "*.config.ts"
+  ],
+  // buffer: knip resolves the bare import to Node's built-in; plausible: loaded with `??= import()`, which knip misses
+  "ignoreDependencies": ["buffer", "@plausible-analytics/tracker"],
+  "ignoreBinaries": ["gh", "printf", "scripts/integration-stack.sh"],
+  // A component's props type stays exported next to it even when only that file uses it
+  "ignoreExportsUsedInFile": { "interface": true, "type": true, "enum": true },
+  // The snapshot harness aliases the stress theme over ~theme/system, so it mirrors that module's exports
+  "ignoreIssues": { "src/theme/test-themes/**": ["exports", "duplicates"] }
+}

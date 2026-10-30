@@ -18,7 +18,7 @@ const codeIcons: Record<CodeMethod, IconType> = {
   voter_choice: MessagesIcon,
 }
 
-export const getCodeMethodSummary = (t: TFunction, method: CodeMethod) => {
+const getCodeMethodSummary = (t: TFunction, method: CodeMethod) => {
   switch (method) {
     case 'email':
       return t('voter_auth.summary.code_email', { defaultValue: 'One-time code by email' })

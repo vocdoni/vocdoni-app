@@ -39,13 +39,11 @@ export enum ApiEndpoints {
   OrganizationGroups = 'organizations/{address}/groups',
   OrganizationGroup = 'organizations/{address}/groups/{groupId}',
   OrganizationGroupMembers = 'organizations/{address}/groups/{groupId}/members',
-  OAuthLink = 'auth/oauth',
   OAuthUnlink = 'auth/oauth/{provider}',
   Password = 'users/password',
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
   Plans = 'plans',
-  Refresh = 'auth/refresh',
   Register = 'users',
   SubscriptionCheckout = 'subscriptions/checkout',
   SubscriptionPortal = 'subscriptions/{address}/portal',
@@ -83,11 +81,11 @@ export class ApiError extends Error {
 
 export class UnauthorizedApiError extends ApiError {}
 
-export class BadRequestApiError extends ApiError {}
+class BadRequestApiError extends ApiError {}
 
 export class UnverifiedApiError extends ApiError {}
 
-export class UserAlreadyVerifiedApiError extends ApiError {}
+class UserAlreadyVerifiedApiError extends ApiError {}
 
 export const getApiErrorMessage = (error: unknown) => {
   if (!error) return undefined
