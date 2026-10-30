@@ -471,6 +471,7 @@
       "password_min_length": "8 caractères minimum",
       "required": "Ce champ est obligatoire"
     },
+    "hide_password": "Masquer le mot de passe",
     "member": {
       "error": {
         "invalid_birth_date": "La date de naissance ne peut pas être dans le futur",
@@ -486,6 +487,7 @@
       "success_title": "Processus de vote créé avec succès"
     },
     "select_language": "Langue",
+    "show_password": "Afficher le mot de passe",
     "support": {
       "billing_issue": "Problème de facturation",
       "custom_request": "Demande personnalisée",

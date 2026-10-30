@@ -60,15 +60,18 @@ const ExtendedQuestionEditor = ({
 
       {/* Add new option card */}
       <DashboardBox
-        onClick={() => append({ option: '', description: '' })}
+        asChild
         borderStyle='dashed'
         cursor='pointer'
+        focusVisibleRing='outside'
         _hover={{ bg: 'state.hover.bg' }}
       >
-        <VStack justify='center' align='center' height='100%'>
-          <Icon as={AddIcon} boxSize='icon.lg' />
-          <Text>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
-        </VStack>
+        <button type='button' onClick={() => append({ option: '', description: '' })}>
+          <VStack justify='center' align='center' height='100%'>
+            <Icon as={AddIcon} boxSize='icon.lg' />
+            <Text>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
+          </VStack>
+        </button>
       </DashboardBox>
     </SimpleGrid>
   )

@@ -181,6 +181,7 @@ export const AvatarUploader = (props: FormControlProps) => {
               bg='blackAlpha.400'
               opacity={0}
               _hover={{ opacity: 1 }}
+              _focusWithin={{ opacity: 1 }}
               transition='opacity {durations.moderate}'
               borderRadius='full'
             >

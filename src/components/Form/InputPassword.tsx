@@ -3,6 +3,7 @@ import {
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
   Icon,
+  IconButton,
   Input,
   InputGroup,
 } from '@chakra-ui/react'
@@ -54,7 +55,21 @@ const InputPassword = ({
     <FormControl invalid={!!errors[formValue]} required={required}>
       {label && <FormLabel fontSize='sm'>{label}</FormLabel>}
       <InputGroup
-        endElement={<Icon _hover={{ cursor: 'pointer' }} as={show ? HideIcon : ViewIcon} onClick={handleClick} />}
+        endElement={
+          <IconButton
+            variant='plain'
+            size='xs'
+            color='fg'
+            aria-label={
+              show
+                ? t('form.hide_password', { defaultValue: 'Hide password' })
+                : t('form.show_password', { defaultValue: 'Show password' })
+            }
+            onClick={handleClick}
+          >
+            <Icon as={show ? HideIcon : ViewIcon} />
+          </IconButton>
+        }
         endElementProps={{ display: 'flex', alignItems: 'center' }}
       >
         <Input {...register(formValue, validationRules)} type={inputType} placeholder={placeholder} required={false} />

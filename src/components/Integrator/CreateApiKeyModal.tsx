@@ -4,7 +4,6 @@ import {
   Card,
   Checkbox,
   Clipboard,
-  CloseButton,
   Code,
   Dialog,
   Field,
@@ -15,6 +14,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useState } from 'react'
 import { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'

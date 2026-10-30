@@ -8,7 +8,6 @@ import {
   CheckboxControl,
   CheckboxHiddenInput,
   CheckboxRoot,
-  CloseButton,
   Drawer,
   Flex,
   Heading,
@@ -28,6 +27,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { PaginationProvider, usePagination } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'

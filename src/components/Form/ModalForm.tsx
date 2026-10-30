@@ -1,4 +1,5 @@
-import { Button, CloseButton, Dialog, Heading, Text } from '@chakra-ui/react'
+import { Button, Dialog, Heading, Text } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 

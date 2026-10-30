@@ -467,6 +467,7 @@
       "password_min_length": "Min. 8 characters",
       "required": "This field is required"
     },
+    "hide_password": "Hide password",
     "member": {
       "error": {
         "invalid_birth_date": "Birth date cannot be in the future",
@@ -482,6 +483,7 @@
       "success_title": "Voting process successfully created"
     },
     "select_language": "Language",
+    "show_password": "Show password",
     "support": {
       "billing_issue": "Billing issue",
       "custom_request": "Custom request",
