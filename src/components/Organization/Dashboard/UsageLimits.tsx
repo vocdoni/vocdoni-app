@@ -154,7 +154,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
               label={label}
               value={current}
               max={max}
-              unit={`/ ${max.toLocaleString()}`}
+              unit={`/ ${max.toLocaleString(language)}`}
               tooltip={tooltip}
               color={color}
               softLimit={isSoftLimit}
