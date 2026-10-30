@@ -28,7 +28,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { AddIcon, AddUserIcon, MailIcon, MoreIcon, RefreshIcon, UserCogIcon } from '~theme/icons'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { roleIcons } from '~components/Layout/SaasSelector'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { EmptyState } from '~components/ui/EmptyState'
@@ -748,13 +748,9 @@ export const OrganizationUsers = () => {
     <>
       <ListStateAlert
         show={hasError}
-        status='error'
         title={t('team.load_error', { defaultValue: 'Unable to load team members' })}
-        description={
-          error instanceof Error
-            ? error.message
-            : t('team.load_error_description', { defaultValue: 'Please try again.' })
-        }
+        error={error}
+        fallback={t('team.load_error_description', { defaultValue: 'Please try again.' })}
       />
       {isEmpty && (
         <EmptyState
