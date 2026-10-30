@@ -142,78 +142,31 @@ export const ElectionResults = defineSlotRecipe({
       display: 'flex',
       flexDirection: 'column',
       gap: '3',
-      fontWeight: 'bold',
-      '& > div': {
-        h: 'full',
-        minH: '8',
-        justifyContent: 'center',
-        position: 'relative',
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0,1fr) auto',
-        columnGap: '2',
-        alignItems: 'center',
-      },
     },
     header: {
       mb: '4',
     },
+    // The choice's title and tally, on one line above its `results` bar.
+    choiceHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      gap: '4',
+      mb: '1',
+    },
     choiceTitle: {
-      gridColumn: '1',
-      zIndex: 'sidebar',
       color: 'fg',
-      pl: '2',
       fontSize: 'sm',
       minW: '[0]',
       overflowWrap: 'break-word',
     },
     choiceVotes: {
-      gridColumn: '2',
-      zIndex: 'sidebar',
-      display: 'flex',
-      alignItems: 'center',
-      pr: '2',
+      color: 'fg.muted',
       fontSize: 'sm',
-      color: 'fg',
+      whiteSpace: 'nowrap',
     },
     question: {
       width: 'full',
       minW: '[0]',
-    },
-    progress: {
-      position: 'absolute',
-      inset: '[0]',
-      gridColumn: '1 / -1',
-      gridRow: '1',
-      alignSelf: 'stretch',
-      h: 'full',
-      minH: '8',
-      zIndex: 'background',
-    },
-  },
-})
-
-const resultsProgressBarAnatomy = ['root', 'track', 'range'] as const
-
-export const resultsProgressRecipe = defineSlotRecipe({
-  slots: resultsProgressBarAnatomy,
-  base: {
-    root: {
-      h: 'full',
-      minH: '8',
-      borderRadius: 'sm',
-      overflow: 'hidden',
-    },
-    track: {
-      h: 'full',
-      bg: 'ballot.results.track',
-      borderRadius: '[inherit]',
-    },
-    range: {
-      h: 'full',
-      // Choice titles and tallies sit on top of the bar, so a full-strength fill would hide them (stock
-      // `solid` is near-black in light mode and white in dark mode): a 30% tint keeps them readable.
-      bg: 'colorPalette.solid/30',
-      borderRadius: '[inherit]',
     },
   },
 })

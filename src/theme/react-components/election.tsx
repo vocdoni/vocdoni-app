@@ -44,7 +44,7 @@ import { Markdown } from '~components/ui/Markdown'
 import { StatusBadge, type StatusBadgeProps } from '~components/ui/StatusBadge'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
-import { ElectionTitle as electionTitleRecipe, resultsProgressRecipe } from '~theme/recipes/election'
+import { ElectionTitle as electionTitleRecipe } from '~theme/recipes/election'
 
 type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
 
@@ -600,8 +600,6 @@ export const electionComponents: ComponentsPartialDefinition = {
   ElectionResults: defineComponent<'ElectionResults', BoxProps>(({ secretText, questions, ...props }) => {
     const recipe = useSlotRecipe({ key: 'ElectionResults' })
     const styles = recipe()
-    const progressRecipe = useSlotRecipe({ recipe: resultsProgressRecipe })
-    const progressStyles = progressRecipe()
     const { t } = useTranslation('react-components')
     const hasMultipleQuestions = (questions?.length ?? 0) > 1
     return (
@@ -616,24 +614,26 @@ export const electionComponents: ComponentsPartialDefinition = {
               {question.choices.map((choice) => {
                 const percent = Number(choice.percent.replace('%', '')) || 0
                 return (
-                  <Box key={choice.title} position='relative'>
-                    <Text css={styles.choiceTitle}>{choice.title}</Text>
+                  <Box key={choice.title}>
                     {/* `votes` is empty for a question whose ballot type can't be inferred (e.g. a legacy
                         process with no type nor ballotProtocol): there is no tally to show, not a zero one. */}
-                    {choice.votes ? (
-                      <>
+                    <Flex css={styles.choiceHeader}>
+                      <Text css={styles.choiceTitle}>{choice.title}</Text>
+                      {choice.votes ? (
                         <Text css={styles.choiceVotes}>
                           {t('results.votes', {
                             votes: choice.votes,
                             percent: choice.percent,
                           })}
                         </Text>
-                        <Progress.Root css={[styles.progress, progressStyles.root]} value={percent} max={100}>
-                          <Progress.Track css={progressStyles.track}>
-                            <Progress.Range css={progressStyles.range} />
-                          </Progress.Track>
-                        </Progress.Root>
-                      </>
+                      ) : null}
+                    </Flex>
+                    {choice.votes ? (
+                      <Progress.Root variant='results' value={percent} max={100}>
+                        <Progress.Track>
+                          <Progress.Range />
+                        </Progress.Track>
+                      </Progress.Root>
                     ) : null}
                     {choice.description ? <Box mt='2'>{markdown(choice.description)}</Box> : null}
                   </Box>

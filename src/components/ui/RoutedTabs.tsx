@@ -36,15 +36,7 @@ export const RoutedTabs = ({ tabs, value, outletContext }: RoutedTabsProps) => {
           <Tabs.Trigger key={tab.route} value={tab.route}>
             {tab.label}
             {tab.count !== undefined && (
-              <Badge
-                colorPalette='gray'
-                variant='subtle'
-                borderRadius='full'
-                px='1.5'
-                fontVariantNumeric='tabular-nums'
-              >
-                {tab.count.toLocaleString(i18n.resolvedLanguage)}
-              </Badge>
+              <Badge variant='count'>{tab.count.toLocaleString(i18n.resolvedLanguage)}</Badge>
             )}
           </Tabs.Trigger>
         ))}

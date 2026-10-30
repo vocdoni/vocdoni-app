@@ -2,7 +2,6 @@ import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
 import { PAGE_BACKGROUNDS } from './colors'
 import { contrastRatio, PALETTE_SLOTS } from './palette'
-import { resultsProgressRecipe } from './recipes/election'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import { createAppSystem, getAppSystem, system } from './system'
@@ -99,7 +98,7 @@ const TOKEN_PROP_KEYWORDS = new Set([
 // Recipe paths whose non-color token is known to be dangling, pending their fix.
 const KNOWN_INVALID = new Set<string>([])
 
-const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes, resultsProgress: resultsProgressRecipe }
+const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes }
 
 const isTokenPath = (value: string) => /^[a-zA-Z][\w-]*(\.[\w-]+)+$/.test(value)
 
@@ -324,8 +323,8 @@ describe('PRIMARY_COLOR-driven system', () => {
   })
 
   it('leaves dark-mode surfaces on the neutral ink scale rather than tinting them', () => {
-    expect(conditions(BRANDED, 'bg')).toEqual({ _light: '{colors.white}', _dark: '{colors.ink.650}' })
-    expect(BRANDED.tokens.getByName('colors.ink.650')?.value).toBe('#0a0a0a')
+    expect(conditions(BRANDED, 'bg')).toEqual({ _light: '{colors.white}', _dark: '{colors.ink.900}' })
+    expect(BRANDED.tokens.getByName('colors.ink.900')?.value).toBe('#0a0a0a')
   })
 
   it('treats an invalid color as unset', () => {
