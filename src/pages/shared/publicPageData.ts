@@ -14,43 +14,9 @@ import {
   loadProcessPageData,
   resolvePublicLanguage,
 } from '~src/ssr/public-pages'
+import { resolvePublicOrigin } from './publicOrigin'
 
 const getSupportedPublicLanguages = () => Object.keys(getServerAppEnv().LANGUAGES ?? {})
-
-// Same host shape server/ssr-cache.mjs accepts; anything else is never echoed into URLs.
-const FORWARDED_HOST_PATTERN = /^[a-zA-Z0-9.-]+(:\d+)?$/
-const FORWARDED_PROTOCOLS = ['http', 'https']
-
-const resolvePublicOrigin = (pageContext: PageContextServer) => {
-  const configuredOrigin = getServerAppEnv().APP_URL?.trim()
-
-  if (configuredOrigin) {
-    try {
-      return new URL(configuredOrigin).origin
-    } catch {
-      return undefined
-    }
-  }
-
-  const headers = pageContext.headers
-
-  if (!headers) return undefined
-
-  const host = String(headers['x-forwarded-host'] || headers.host || '')
-    .split(',')[0]
-    .trim()
-
-  if (!FORWARDED_HOST_PATTERN.test(host)) return undefined
-
-  const forwardedProtocol = String(headers['x-forwarded-proto'] || '')
-    .split(',')[0]
-    .trim()
-    .toLowerCase()
-  const defaultProtocol = host.startsWith('localhost') ? 'http' : 'https'
-  const protocol = FORWARDED_PROTOCOLS.includes(forwardedProtocol) ? forwardedProtocol : defaultProtocol
-
-  return `${protocol}://${host}`
-}
 
 const resolvePageLanguage = (pageContext: PageContextServer) => {
   const supportedLanguages = getSupportedPublicLanguages()
@@ -87,7 +53,7 @@ export const loadOrganizationPublicPageData = async (pageContext: PageContextSer
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
   const client = createVocdoniApiClient(getServerAppEnv().SAAS_URL!, language)
   const vochainGateway = getVochainGatewayUrl(getServerAppEnv().VOCDONI_ENVIRONMENT)
-  const origin = resolvePublicOrigin(pageContext)
+  const origin = resolvePublicOrigin(pageContext, getServerAppEnv().APP_URL)
   const address = pageContext.routeParams.address
   const pathnameByLanguage = Object.fromEntries(
     supportedLanguages.map((supportedLanguage) => [
@@ -123,7 +89,7 @@ const loadProcessPublicPageDataWith = async (pageContext: PageContextServer, bui
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
   const client = createVocdoniApiClient(getServerAppEnv().SAAS_URL!, language)
   const vochainGateway = getVochainGatewayUrl(getServerAppEnv().VOCDONI_ENVIRONMENT)
-  const origin = resolvePublicOrigin(pageContext)
+  const origin = resolvePublicOrigin(pageContext, getServerAppEnv().APP_URL)
   const id = pageContext.routeParams.id
   const pathnameByLanguage = Object.fromEntries(
     supportedLanguages.map((supportedLanguage) => [

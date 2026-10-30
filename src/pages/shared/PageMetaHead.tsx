@@ -26,6 +26,12 @@ const PageMetaHead = ({ meta, structuredData = [] }: PageMetaHeadProps) => {
       ))}
       <meta property='og:type' content={meta.openGraph.type} />
       <meta property='og:image' content={meta.openGraph.image} />
+      {meta.openGraph.imageWidth ? (
+        <meta property='og:image:width' content={String(meta.openGraph.imageWidth)} />
+      ) : null}
+      {meta.openGraph.imageHeight ? (
+        <meta property='og:image:height' content={String(meta.openGraph.imageHeight)} />
+      ) : null}
       <meta property='og:site_name' content={meta.openGraph.siteName} />
       {meta.openGraph.url ? <meta property='og:url' content={meta.openGraph.url} /> : null}
       <meta name='twitter:card' content={meta.twitter.card} />
