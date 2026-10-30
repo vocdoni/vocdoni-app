@@ -12,7 +12,7 @@ export const PageLoader = defineSlotRecipe({
       flexShrink: 0,
       flexGrow: 0,
       boxSize: 'full',
-      minH: '[300px]',
+      minH: 'loader',
     },
     spinner: {
       mr: '3',

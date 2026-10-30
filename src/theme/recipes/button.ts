@@ -136,8 +136,8 @@ const danger = defineStyle({
 // Round launcher pinned to a corner of the viewport (support chat).
 const floating = defineStyle({
   ...stock.solid,
-  w: '[52px]',
-  h: '[52px]',
+  w: 'control.floating',
+  h: 'control.floating',
   borderRadius: 'full',
   boxShadow: 'shadow.floating',
   transition: '[transform {durations.fast}]',

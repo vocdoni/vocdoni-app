@@ -23,7 +23,7 @@ export const languagesListSelectStyles = (longestLabelLength = 0): ChakraStylesC
     // Longest label width plus a small offset for the dropdown indicator. `ch`
     // already overestimates proportional text, so this slack also covers the
     // option check icon and gaps without leaving a large trailing gap.
-    w: longestLabelLength ? `[calc(${longestLabelLength}ch + 1.5rem)]` : 'fit',
+    w: longestLabelLength ? `[calc(${longestLabelLength}ch + {spacing.6})]` : 'fit',
   }),
   control: (base) => ({
     ...base,
