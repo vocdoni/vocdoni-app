@@ -82,7 +82,7 @@ export const switchRecipe = defineSlotRecipe({
     control: {
       _focusVisible: {
         _dark: {
-          boxShadow: '[0 0 0 2px {colors.gray.focusRing}]',
+          boxShadow: '[0 0 0 {borderWidths.focusRing} {colors.gray.focusRing}]',
         },
       },
     },
