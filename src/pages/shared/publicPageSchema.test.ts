@@ -32,6 +32,18 @@ const processMeta = {
 }
 
 describe('publicPageSchema', () => {
+  it('emits the Organization logo only when the organization has one', () => {
+    const meta = { ...processMeta, canonicalUrl: 'https://app.example.org/ca/organization/0xabc' }
+    const [withoutLogo] = buildOrganizationStructuredData({ organization: organization as any, meta })
+    const [withLogo] = buildOrganizationStructuredData({
+      organization: organization as any,
+      meta: { ...meta, organizationLogo: 'https://cdn.example.org/logo.png' },
+    })
+
+    expect(withoutLogo).not.toHaveProperty('logo')
+    expect(withLogo).toMatchObject({ logo: 'https://cdn.example.org/logo.png' })
+  })
+
   it('builds organization structured data for canonical organization pages', () => {
     const [organizationSchema, collectionSchema, breadcrumbSchema] = buildOrganizationStructuredData({
       organization: organization as any,

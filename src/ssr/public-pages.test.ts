@@ -328,7 +328,48 @@ describe('metadata builders', () => {
     expect(meta.canonicalUrl).toBe('https://app.example.org/organization/0xabc')
     expect(meta.openGraph.title).toBe('Vocdoni Association | Vocdoni')
     expect(meta.openGraph.url).toBe('https://app.example.org/organization/0xabc')
+    expect(meta.twitter.card).toBe('summary_large_image')
+    expect(meta.openGraph.image).toBe('https://app.example.org/assets/og/en.png')
+    expect(meta.openGraph.imageWidth).toBe(1200)
+    expect(meta.openGraph.imageHeight).toBe(630)
+    expect(meta.organizationLogo).toBeUndefined()
+  })
+
+  it('uses the localized card of the page language when there is no logo', () => {
+    const meta = buildOrganizationMeta({
+      organization: createOrganization(),
+      canonicalUrl: 'https://app.example.org/ca/organization/0xabc',
+      language: 'ca',
+      alternates: [],
+    })
+
+    expect(meta.openGraph.image).toBe('https://app.example.org/assets/og/ca.png')
+    expect(meta.twitter.image).toBe('https://app.example.org/assets/og/ca.png')
+  })
+
+  it('keeps the organization logo as a summary card without card dimensions', () => {
+    const meta = buildOrganizationMeta({
+      organization: createOrganization({ logo: { default: 'https://cdn.example.org/logo.png' } }),
+      canonicalUrl: 'https://app.example.org/organization/0xabc',
+      language: 'en',
+      alternates: [],
+    })
+
+    expect(meta.openGraph.image).toBe('https://cdn.example.org/logo.png')
+    expect(meta.openGraph.imageWidth).toBeUndefined()
+    expect(meta.openGraph.imageHeight).toBeUndefined()
     expect(meta.twitter.card).toBe('summary')
+    expect(meta.organizationLogo).toBe('https://cdn.example.org/logo.png')
+  })
+
+  it('falls back to the relative card path without a canonical url', () => {
+    const meta = buildOrganizationMeta({
+      organization: createOrganization(),
+      language: 'xx',
+      alternates: [],
+    })
+
+    expect(meta.openGraph.image).toBe('/assets/og/en.png')
   })
 
   it('falls back to organization display data when the description is missing', () => {
