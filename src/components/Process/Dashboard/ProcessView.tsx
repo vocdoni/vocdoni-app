@@ -63,12 +63,11 @@ import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider }
 import {
   DashboardBox,
   DashboardContents,
-  SectionTitle,
   Sidebar,
   SidebarContents,
   SidebarSubtitle,
-  SidebarTitle,
 } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import { StatusBadge, type StatusBadgeColor, type StatusBadgeProps } from '~components/ui/StatusBadge'
@@ -231,10 +230,7 @@ const ProcessViewContent = () => {
             justifyContent={'space-between'}
             gap='4'
           >
-            <SectionTitle>
-              <Icon as={CalendarIcon} />
-              <Trans i18nKey='calendar.title'>Schedule</Trans>
-            </SectionTitle>
+            <SectionHeader icon={CalendarIcon} title={<Trans i18nKey='calendar.title'>Schedule</Trans>} />
             <SimpleGrid columns={{ base: 1, sm: 2 }} gap='4'>
               <SettingsField
                 icon={CalendarIcon}
@@ -273,17 +269,15 @@ const ProcessViewContent = () => {
           {/* Voting link */}
 
           <DashboardBox>
-            <Box>
-              <SectionTitle>
-                <Icon as={ExternalLinkIcon} />
-                <Trans i18nKey='voting_link.title'>Voting Link</Trans>
-              </SectionTitle>
-              <Text color='fg.muted' textStyle='body-sm'>
+            <SectionHeader
+              icon={ExternalLinkIcon}
+              title={<Trans i18nKey='voting_link.title'>Voting Link</Trans>}
+              description={
                 <Trans i18nKey='voting_link.description'>
                   Share this link with your voters to participate in the voting process
                 </Trans>
-              </Text>
-            </Box>
+              }
+            />
 
             <Flex justifyContent='space-between' gap='2' wrap='wrap'>
               <Input readOnly value={votingLink} flex='1 1 18rem' minW='0' />
@@ -300,10 +294,12 @@ const ProcessViewContent = () => {
 
           {/* Questions & Results */}
           <DashboardBox>
-            <SectionTitle alignContent='center' justifyContent='space-between'>
-              <Trans i18nKey='questions_and_results'>Questions and results</Trans>
-              <ResultsStateBadge />
-            </SectionTitle>
+            <SectionHeader
+              title={<Trans i18nKey='questions_and_results'>Questions and results</Trans>}
+              actions={<ResultsStateBadge />}
+              direction='row'
+              align='center'
+            />
             <TabsRoot
               fitted
               value={tabValue}
@@ -415,9 +411,7 @@ const ProcessViewSidebar = () => {
   return (
     <Sidebar show={showSidebar}>
       <SidebarContents borderBottom='sm' borderColor='border'>
-        <SidebarTitle>
-          <Trans i18nKey='vote_information'>Vote information</Trans>
-        </SidebarTitle>
+        <SectionHeader title={<Trans i18nKey='vote_information'>Vote information</Trans>} size='lg' pt='4' />
         {isMobile && (
           <IconButton
             aria-label={t('drawer.close', { defaultValue: 'Close drawer' })}

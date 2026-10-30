@@ -12,6 +12,7 @@ import {
   Stat,
   Text,
 } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { ElectionResults, getElectionTitle, useElection } from '@vocdoni/react-components'
 import { hasResults, isSecretUntilTheEnd, isUpcoming, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -161,7 +162,7 @@ const ParticipationCard = () => {
             <Stat.Label color='fg.muted' textStyle='eyebrow'>
               {t('process.summary.start_label')}
             </Stat.Label>
-            <Stat.ValueText fontSize='md' fontWeight='bold'>
+            <Stat.ValueText fontSize='md' fontWeight='bold' letterSpacing='tight'>
               {datetime(startDate)}
             </Stat.ValueText>
           </Stat.Root>
@@ -169,7 +170,7 @@ const ParticipationCard = () => {
             <Stat.Label color='fg.muted' textStyle='eyebrow'>
               {t('process.summary.end_label')}
             </Stat.Label>
-            <Stat.ValueText fontSize='md' fontWeight='bold'>
+            <Stat.ValueText fontSize='md' fontWeight='bold' letterSpacing='tight'>
               {datetime(endDate)}
             </Stat.ValueText>
           </Stat.Root>
@@ -185,7 +186,12 @@ const Indicator = ({ label, value, accent }: IndicatorProps) => (
   <Card.Root size='sm' textAlign='center'>
     <Card.Body>
       <Stat.Root alignItems='center' gap='1'>
-        <Stat.ValueText fontSize='3xl' fontWeight='bold' color={accent ? 'colorPalette.fg' : undefined}>
+        <Stat.ValueText
+          fontSize='3xl'
+          fontWeight='bold'
+          letterSpacing='tight'
+          color={accent ? 'colorPalette.fg' : undefined}
+        >
           {value}
         </Stat.ValueText>
         <Stat.Label color='fg.muted'>{label}</Stat.Label>
@@ -211,12 +217,7 @@ const KeyIndicators = () => {
 
   return (
     <Box>
-      <Flex align='center' gap='4' mb='4'>
-        <Heading as='h2' size='lg' flexShrink={0}>
-          {t('process.summary.indicators_title')}
-        </Heading>
-        <Separator flex='1' />
-      </Flex>
+      <SectionHeader title={t('process.summary.indicators_title')} size='lg' rule mb='4' />
       <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
         <Indicator label={t('process.summary.stat_census')} value={nf(census)} />
         <Indicator label={t('process.summary.stat_votes_received')} value={nf(voteCount)} />
@@ -246,12 +247,7 @@ const ResultsNotice = () => {
 
   return (
     <Box>
-      <Flex align='center' gap='4' mb='4'>
-        <Heading as='h2' size='lg' flexShrink={0}>
-          {t('process.summary.results_title')}
-        </Heading>
-        <Separator flex='1' />
-      </Flex>
+      <SectionHeader title={t('process.summary.results_title')} size='lg' rule mb='4' />
       {electionHasResults ? (
         <Card.Root>
           <Card.Body>
@@ -302,9 +298,7 @@ const CertifiedTech = () => {
       <Card.Body>
         <Flex direction={{ base: 'column', lg: 'row' }} gap='8'>
           <Box flex='1'>
-            <Heading as='h2' size='lg' mb='3'>
-              {t('process.summary.tech_title')}
-            </Heading>
+            <SectionHeader title={t('process.summary.tech_title')} size='lg' mb='3' />
             <Text color='surface.inverse.fg.muted' mb='5'>
               {t('process.summary.tech_description')}
             </Text>

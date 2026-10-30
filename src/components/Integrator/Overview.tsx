@@ -2,7 +2,8 @@ import { Alert, Box, Link, SimpleGrid, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { NetworkIcon, RocketIcon, TerminalIcon } from '~theme/icons'
 import { Link as RouterLink } from 'react-router'
-import { DashboardBox, DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardBox, DashboardContents } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { PageLoader } from '~components/ui/Loader'
 import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { useIntegratorInfo } from '~src/queries/integrators'
@@ -142,11 +143,13 @@ export const IntegratorOverview = () => {
       </SimpleGrid>
 
       <Box mt='8'>
-        <DashboardCardHeader
+        <SectionHeader
           title={t('integrators.docs.title', { defaultValue: 'Documentation' })}
-          subtitle={t('integrators.docs.subtitle', {
+          description={t('integrators.docs.subtitle', {
             defaultValue: 'Guides and references to start building with Vocdoni.',
           })}
+          titleGap='1'
+          mb='4'
         />
         <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
           {docs.map((doc) => (

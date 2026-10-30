@@ -1,36 +1,7 @@
-import {
-  Box,
-  BoxProps,
-  Card,
-  Heading as CHeading,
-  Flex,
-  FlexProps,
-  HeadingProps,
-  Text,
-  TextProps,
-} from '@chakra-ui/react'
-import { ReactNode, forwardRef } from 'react'
-
-export type DashboardCardHeaderProps = BoxProps & {
-  title: ReactNode
-  subtitle?: ReactNode
-}
+import { Box, BoxProps, Card, Heading as CHeading, Flex, FlexProps, HeadingProps } from '@chakra-ui/react'
 
 export const DashboardBox = (props: Card.RootProps) => (
   <Card.Root variant='section' size='sm' justifyContent='space-between' gap='4' {...props} />
-)
-
-export const DashboardCardHeader = ({ title, subtitle, ...props }: DashboardCardHeaderProps) => (
-  <Box mb='4' {...props}>
-    <CHeading as='h2' textStyle='section-title' mb='1'>
-      {title}
-    </CHeading>
-    {subtitle && (
-      <Text color='fg.muted' textStyle='body-sm'>
-        {subtitle}
-      </Text>
-    )}
-  </Box>
 )
 
 export const DashboardContents = (props: FlexProps) => <Flex flexDirection='column' w='full' p='6' {...props} />
@@ -39,26 +10,6 @@ export const DashboardContents = (props: FlexProps) => <Flex flexDirection='colu
 export const DashboardSection = (props: Card.RootProps) => (
   <Card.Root variant='sunken' size='sm' display='block' {...props} />
 )
-
-// A card's title, with room for a leading icon or a trailing badge.
-export const SectionTitle = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref) => (
-  <CHeading textStyle='section-title' display='flex' gap='2' alignItems='center' ref={ref} {...props} />
-))
-
-export const SectionHeader = forwardRef<HTMLDivElement, FlexProps>((props, ref) => (
-  <Flex flex={1} direction='column' ref={ref} {...props} />
-))
-
-export const SectionHeading = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref) => (
-  <CHeading size='md' ref={ref} {...props} />
-))
-
-// A literal `color` next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
-const subHeadingStyle: TextProps = { color: 'fg.muted', textStyle: 'body-sm' }
-
-export const SectionSubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
-  <Text {...subHeadingStyle} ref={ref} {...props} />
-))
 
 export type SidebarProps = BoxProps & {
   show: boolean
@@ -105,9 +56,6 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
 
 export const SidebarContents = (props: BoxProps) => <Box px='4' pb='4' {...props} />
 
-export const SidebarTitle = (props: HeadingProps) => (
-  <CHeading as='h2' size='lg' display='flex' gap='2' alignItems='center' variant='section' {...props} />
-)
 export const SidebarSubtitle = (props: HeadingProps) => (
   <CHeading as='h3' size='sm' display='flex' gap='2' alignItems='center' variant='subsection' {...props} />
 )
