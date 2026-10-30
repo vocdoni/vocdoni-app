@@ -1,6 +1,5 @@
 import {
   Button,
-  Drawer,
   Flex,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
@@ -9,7 +8,6 @@ import {
   Input,
   NumberInput,
   Stack,
-  Text,
   useDisclosure,
 } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
@@ -18,6 +16,7 @@ import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
+import { PanelDrawer } from '~components/ui/Drawer'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
 import { hashMemberPassword, isValidMemberPassword } from '~utils/member-password'
@@ -299,117 +298,108 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   return (
     <FormProvider {...methods}>
       {control && cloneElement(control, { ref: btnRef, onClick })}
-      <Drawer.Root
+      <PanelDrawer
         open={isOpen}
         placement='end'
         onOpenChange={({ open }) => (!open ? handleClose() : undefined)}
         finalFocusEl={btnRef ? () => btnRef.current : undefined}
         size='sm'
+        title={title}
+        description={description}
+        closeVariant='none'
+        headerProps={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
       >
-        <Drawer.Backdrop />
-        <Drawer.Positioner>
-          <Drawer.Content>
-            <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-              <Drawer.Title>{title}</Drawer.Title>
-              <Text textStyle='body-sm' color='fg.muted'>
-                {description}
-              </Text>
-            </Drawer.Header>
-            <Drawer.Body>
-              <Stack as='form' id='member-form' gap='4' onSubmit={methods.handleSubmit(onSubmit)}>
-                {columns.map((col) => {
-                  const isPhone = col.id === 'phone'
-                  const isPassword = col.id === 'password'
-                  const isBirthdate = col.id === 'birthDate'
-                  const isWeighted = col.id === 'weight'
+        <Stack as='form' id='member-form' gap='4' onSubmit={methods.handleSubmit(onSubmit)}>
+          {columns.map((col) => {
+            const isPhone = col.id === 'phone'
+            const isPassword = col.id === 'password'
+            const isBirthdate = col.id === 'birthDate'
+            const isWeighted = col.id === 'weight'
 
-                  return (
-                    <FormControl key={col.id} invalid={!!methods.formState.errors[col.id]}>
-                      <FormLabel>{col.label}</FormLabel>
-                      {isWeighted ? (
-                        <Controller
-                          name={col.id}
-                          control={methods.control}
-                          rules={fieldValidations[col.id]}
-                          render={({ field }) => (
-                            <NumberInput.Root
-                              w='full'
-                              value={field.value === '' ? '' : String(field.value ?? '')}
-                              onValueChange={(details) => field.onChange(details.value)}
-                            >
-                              <NumberInput.Input />
-                              <NumberInput.Control>
-                                <NumberInput.IncrementTrigger />
-                                <NumberInput.DecrementTrigger />
-                              </NumberInput.Control>
-                            </NumberInput.Root>
-                          )}
-                        />
-                      ) : (
-                        <Input
-                          {...methods.register(col.id, {
-                            ...(fieldValidations[col.id] || {}),
-                            ...(isPhone && {
-                              onChange: () => {
-                                setPhoneEdited(true)
-                              },
-                            }),
-                            ...(isPassword && {
-                              onChange: () => {
-                                setPasswordEdited(true)
-                              },
-                            }),
-                          })}
-                          placeholder={(hadPhone && isPhone) || (hadPassword && isPassword) ? '•••••••••••' : ''}
-                          type={isBirthdate ? 'date' : isPhone ? 'tel' : isPassword ? 'password' : 'text'}
-                          autoComplete={isPassword ? 'new-password' : undefined}
-                          required={false} // we don't want HTML5 validation
-                        />
-                      )}
-                      {isPhone && phoneWillBeRemoved ? (
-                        <FormHelperText color='fg.error'>
-                          {t('memberbase.form.phone_will_be_removed', {
-                            defaultValue: 'The stored phone number will be removed when you save.',
-                          })}
-                        </FormHelperText>
-                      ) : isPhone && hadPhone ? (
-                        <FormHelperText>
-                          {t('memberbase.form.phone_warning', {
-                            defaultValue: 'Phone number hidden. Any changes here will overwrite it.',
-                          })}
-                        </FormHelperText>
-                      ) : isPassword && passwordWillBeRemoved ? (
-                        <FormHelperText color='fg.error'>
-                          {t('memberbase.form.password_will_be_removed', {
-                            defaultValue: 'The stored password will be removed when you save.',
-                          })}
-                        </FormHelperText>
-                      ) : isPassword && hadPassword ? (
-                        <FormHelperText>
-                          {t('memberbase.form.password_set', {
-                            defaultValue: 'A password is set. Type a new one to replace it.',
-                          })}
-                        </FormHelperText>
-                      ) : null}
-                      <FormErrorMessage mt='2'>
-                        {methods.formState.errors[col.id]?.message?.toString() || 'Error performing the operation'}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )
-                })}
-              </Stack>
-              <Flex justify='flex-end' gap='2' mt='4'>
-                <Button variant='outline' onClick={handleClose}>
-                  {t('memberbase.form.cancel', { defaultValue: 'Cancel' })}
-                </Button>
-                <Button type='submit' loading={isSubmitting} form='member-form'>
-                  {t('memberbase.form.save', { defaultValue: 'Save changes' })}
-                </Button>
-              </Flex>
-            </Drawer.Body>
-          </Drawer.Content>
-        </Drawer.Positioner>
-      </Drawer.Root>
+            return (
+              <FormControl key={col.id} invalid={!!methods.formState.errors[col.id]}>
+                <FormLabel>{col.label}</FormLabel>
+                {isWeighted ? (
+                  <Controller
+                    name={col.id}
+                    control={methods.control}
+                    rules={fieldValidations[col.id]}
+                    render={({ field }) => (
+                      <NumberInput.Root
+                        w='full'
+                        value={field.value === '' ? '' : String(field.value ?? '')}
+                        onValueChange={(details) => field.onChange(details.value)}
+                      >
+                        <NumberInput.Input />
+                        <NumberInput.Control>
+                          <NumberInput.IncrementTrigger />
+                          <NumberInput.DecrementTrigger />
+                        </NumberInput.Control>
+                      </NumberInput.Root>
+                    )}
+                  />
+                ) : (
+                  <Input
+                    {...methods.register(col.id, {
+                      ...(fieldValidations[col.id] || {}),
+                      ...(isPhone && {
+                        onChange: () => {
+                          setPhoneEdited(true)
+                        },
+                      }),
+                      ...(isPassword && {
+                        onChange: () => {
+                          setPasswordEdited(true)
+                        },
+                      }),
+                    })}
+                    placeholder={(hadPhone && isPhone) || (hadPassword && isPassword) ? '•••••••••••' : ''}
+                    type={isBirthdate ? 'date' : isPhone ? 'tel' : isPassword ? 'password' : 'text'}
+                    autoComplete={isPassword ? 'new-password' : undefined}
+                    required={false} // we don't want HTML5 validation
+                  />
+                )}
+                {isPhone && phoneWillBeRemoved ? (
+                  <FormHelperText color='fg.error'>
+                    {t('memberbase.form.phone_will_be_removed', {
+                      defaultValue: 'The stored phone number will be removed when you save.',
+                    })}
+                  </FormHelperText>
+                ) : isPhone && hadPhone ? (
+                  <FormHelperText>
+                    {t('memberbase.form.phone_warning', {
+                      defaultValue: 'Phone number hidden. Any changes here will overwrite it.',
+                    })}
+                  </FormHelperText>
+                ) : isPassword && passwordWillBeRemoved ? (
+                  <FormHelperText color='fg.error'>
+                    {t('memberbase.form.password_will_be_removed', {
+                      defaultValue: 'The stored password will be removed when you save.',
+                    })}
+                  </FormHelperText>
+                ) : isPassword && hadPassword ? (
+                  <FormHelperText>
+                    {t('memberbase.form.password_set', {
+                      defaultValue: 'A password is set. Type a new one to replace it.',
+                    })}
+                  </FormHelperText>
+                ) : null}
+                <FormErrorMessage mt='2'>
+                  {methods.formState.errors[col.id]?.message?.toString() || 'Error performing the operation'}
+                </FormErrorMessage>
+              </FormControl>
+            )
+          })}
+        </Stack>
+        <Flex justify='flex-end' gap='2' mt='4'>
+          <Button variant='outline' onClick={handleClose}>
+            {t('memberbase.form.cancel', { defaultValue: 'Cancel' })}
+          </Button>
+          <Button type='submit' loading={isSubmitting} form='member-form'>
+            {t('memberbase.form.save', { defaultValue: 'Save changes' })}
+          </Button>
+        </Flex>
+      </PanelDrawer>
     </FormProvider>
   )
 }

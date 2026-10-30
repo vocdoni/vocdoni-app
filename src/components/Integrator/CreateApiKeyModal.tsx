@@ -17,6 +17,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { useState } from 'react'
 import { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
@@ -135,13 +136,13 @@ export const CreateApiKeyButton = () => {
             <Dialog.CloseTrigger asChild>
               <CloseButton />
             </Dialog.CloseTrigger>
-            <Dialog.Header>
-              <Dialog.Title>
-                {created
+            <DialogHeader
+              title={
+                created
                   ? t('integrators.api_keys.created_title', { defaultValue: 'API key created' })
-                  : t('integrators.api_keys.create', { defaultValue: 'Create API key' })}
-              </Dialog.Title>
-            </Dialog.Header>
+                  : t('integrators.api_keys.create', { defaultValue: 'Create API key' })
+              }
+            />
 
             {created ? (
               <>

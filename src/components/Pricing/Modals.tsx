@@ -1,5 +1,6 @@
-import { Box, Button, Dialog } from '@chakra-ui/react'
+import { Button, Dialog } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { Routes } from '~routes'
@@ -73,14 +74,14 @@ export const PlanUpgradeModal = ({ open, onOpenChange, onClose, ...props }: Moda
           <Dialog.CloseTrigger asChild>
             <CloseButton />
           </Dialog.CloseTrigger>
-          <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap='1'>
-            <Dialog.Title>
-              <Trans i18nKey={titleI18nKey} defaults={titleDefault} />
-            </Dialog.Title>
-            <Box fontSize='sm' color='fg.muted'>
-              <Trans i18nKey={subtitleI18nKey} defaults={subtitleDefault} values={{ limit }} />
-            </Box>
-          </Dialog.Header>
+          <DialogHeader
+            display='flex'
+            flexDirection='column'
+            alignItems='flex-start'
+            gap='1'
+            title={<Trans i18nKey={titleI18nKey} defaults={titleDefault} />}
+            description={<Trans i18nKey={subtitleI18nKey} defaults={subtitleDefault} values={{ limit }} />}
+          />
           <Dialog.Footer>
             <Button variant='outline' onClick={onClose}>
               <Trans i18nKey='plan_upgrade.cancel' defaults={t('plan_upgrade.cancel', 'Cancel')} />

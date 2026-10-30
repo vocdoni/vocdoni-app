@@ -1,5 +1,6 @@
 import { Button, ButtonProps, Dialog, Flex, HStack, Text } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -131,16 +132,18 @@ export const InviteToTeamModal = ({
           <Dialog.CloseTrigger asChild>
             <CloseButton size='sm' />
           </Dialog.CloseTrigger>
-          <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap='1'>
-            <Dialog.Title>
-              <Trans i18nKey='invite.title'>Add team member</Trans>
-            </Dialog.Title>
-            <Text variant='muted'>
+          <DialogHeader
+            display='flex'
+            flexDirection='column'
+            alignItems='flex-start'
+            gap='1'
+            title={<Trans i18nKey='invite.title'>Add team member</Trans>}
+            description={
               <Trans i18nKey='invite.subtitle'>
                 Send an invitation to join your organization. They'll receive an email with instructions.
               </Trans>
-            </Text>
-          </Dialog.Header>
+            }
+          />
           <Dialog.Body>
             <InviteForm />
           </Dialog.Body>

@@ -1,4 +1,5 @@
-import { Button, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
+import { Button, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChatIcon, CloseIcon } from '~theme/icons'

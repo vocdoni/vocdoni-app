@@ -1,5 +1,6 @@
 import { Button, Dialog, Portal } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { useElection } from '@vocdoni/react-components'
 import type { ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -25,11 +26,7 @@ export const CspAuthModal = () => {
             <Dialog.CloseTrigger asChild>
               <CloseButton />
             </Dialog.CloseTrigger>
-            <Dialog.Header>
-              <Dialog.Title>
-                <Trans i18nKey='csp.step1.title'>Authentication</Trans>
-              </Dialog.Title>
-            </Dialog.Header>
+            <DialogHeader title={<Trans i18nKey='csp.step1.title'>Authentication</Trans>} />
             <Dialog.Body>{currentStep === 0 ? <Step0Base /> : <Step1Base />}</Dialog.Body>
           </Dialog.Content>
         </Dialog.Positioner>
