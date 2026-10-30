@@ -492,7 +492,7 @@ const ProcessViewSidebar = () => {
                 </Box>
                 <Box>{participation}%</Box>
               </Box>
-              <Progress.Root colorPalette='gray' w='full' value={participation}>
+              <Progress.Root variant='turnout' w='full' value={participation}>
                 <Progress.Track>
                   <Progress.Range />
                 </Progress.Track>
