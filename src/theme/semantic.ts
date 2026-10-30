@@ -285,26 +285,14 @@ export const colors = defineSemanticTokens.colors({
         },
         badge: {
           bg: {
-            value: {
-              _light: '{colors.brand.solid}',
-              _dark: '{colors.white}',
-            },
+            value: '{colors.accent.solid}',
           },
           color: {
-            value: {
-              _light: '{colors.brand.contrast}',
-              // The dark-mode badge is a *white* chip, so its label needs the
-              // light-surface accent step (700), not the raw 500: a pale brand
-              // at 500 reads ~1.3:1 on white. Still black without PRIMARY_COLOR.
-              _dark: '{colors.brand.700}',
-            },
+            value: '{colors.accent.contrast}',
           },
         },
         border: {
-          value: {
-            _light: '{colors.brand.solid}',
-            _dark: '{colors.white}',
-          },
+          value: '{colors.accent.solid}',
         },
       },
     },
@@ -355,13 +343,9 @@ export const colors = defineSemanticTokens.colors({
         value: '{colors.fg.muted}',
       },
       active: {
-        // `brand.fg`, not the raw 500: the active tab label sits on white, and
-        // an arbitrary PRIMARY_COLOR at 500 carries no contrast guarantee there.
+        // The accent text step, not the raw 500: an arbitrary PRIMARY_COLOR at 500 carries no contrast guarantee.
         color: {
-          value: {
-            _light: '{colors.brand.fg}',
-            _dark: '{colors.white}',
-          },
+          value: '{colors.accent.fg}',
         },
         bg: {
           value: {
