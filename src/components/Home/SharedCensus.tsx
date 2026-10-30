@@ -130,11 +130,11 @@ const SharedCensusHomeContent = () => {
         <Box w='90%' display='flex' flexDirection='column' gap={4}>
           {(showAlways || showDisconnected || showConnected) && (
             <Box className='shared-census' data-testid='shared-census-pretext'>
-              <Editor key={pretextContent} isDisabled defaultValue={pretextContent} />
+              <Editor key={pretextContent} disabled defaultValue={pretextContent} />
             </Box>
           )}
           {showStream && (
-            <Box data-testid='shared-census-stream' maxW='600px' alignSelf='center' w='100%'>
+            <Box data-testid='shared-census-stream' maxW='600px' alignSelf='center' w='full'>
               <AspectRatio ratio={16 / 9}>
                 <ReactPlayer src={streamUrl} width='100%' height='100%' controls={true} />
               </AspectRatio>
@@ -195,28 +195,7 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
 
   return (
     <Flex>
-      <Link
-        asChild
-        flexGrow={1}
-        display='flex'
-        justifyContent='center'
-        alignItems='center'
-        flexWrap='wrap'
-        h={{ base: '100px' }}
-        borderRadius='md'
-        color='fg'
-        textDecoration='none'
-        textAlign='center'
-        fontWeight='bold'
-        boxShadow='lg'
-        _hover={{
-          bgColor: 'gray.500',
-        }}
-        _active={{
-          transform: 'scale(0.9)',
-        }}
-        position='relative'
-      >
+      <Link asChild variant='tile'>
         <ReactRouterLink
           to={`/processes/${election?.id}/${window.location.hash}`}
           // The ballot is a server-routed Vike document (the SPA route only
