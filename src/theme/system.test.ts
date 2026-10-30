@@ -323,8 +323,8 @@ describe('PRIMARY_COLOR-driven system', () => {
   })
 
   it('leaves dark-mode surfaces on the neutral ink scale rather than tinting them', () => {
-    expect(conditions(BRANDED, 'bg')).toEqual({ _light: '{colors.white}', _dark: '{colors.ink.650}' })
-    expect(BRANDED.tokens.getByName('colors.ink.650')?.value).toBe('#0a0a0a')
+    expect(conditions(BRANDED, 'bg')).toEqual({ _light: '{colors.white}', _dark: '{colors.ink.900}' })
+    expect(BRANDED.tokens.getByName('colors.ink.900')?.value).toBe('#0a0a0a')
   })
 
   it('treats an invalid color as unset', () => {

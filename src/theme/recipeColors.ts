@@ -47,7 +47,7 @@ const progress = {
   stripe: {
     value: {
       _light: '{colors.white/30}',
-      _dark: '{colors.ink.500/30}',
+      _dark: '{colors.ink.950/30}',
     },
   },
 }
