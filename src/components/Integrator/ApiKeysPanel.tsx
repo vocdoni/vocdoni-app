@@ -10,6 +10,7 @@ import {
   IconButton,
   SimpleGrid,
   Stack,
+  Stat,
   Table,
   Text,
 } from '@chakra-ui/react'
@@ -103,18 +104,22 @@ const ApiKeyCard = ({
           ))}
         </HStack>
         <SimpleGrid columns={2} gap='2' mt='3' pt='3' borderTop='sm' borderColor='border'>
-          <Box>
-            <Text textStyle='caption' color='fg.muted'>
+          <Stat.Root gap='[0]'>
+            <Stat.Label textStyle='caption'>
               {t('integrators.api_keys.last_used', { defaultValue: 'Last used' })}
-            </Text>
-            <Text textStyle='body-sm'>{formatDate(k.lastUsedAt)}</Text>
-          </Box>
-          <Box>
-            <Text textStyle='caption' color='fg.muted'>
+            </Stat.Label>
+            <Stat.ValueText textStyle='body-sm' fontWeight='normal'>
+              {formatDate(k.lastUsedAt)}
+            </Stat.ValueText>
+          </Stat.Root>
+          <Stat.Root gap='[0]'>
+            <Stat.Label textStyle='caption'>
               {t('integrators.api_keys.expires', { defaultValue: 'Expires' })}
-            </Text>
-            <Text textStyle='body-sm'>{formatDate(k.expiresAt)}</Text>
-          </Box>
+            </Stat.Label>
+            <Stat.ValueText textStyle='body-sm' fontWeight='normal'>
+              {formatDate(k.expiresAt)}
+            </Stat.ValueText>
+          </Stat.Root>
         </SimpleGrid>
       </Box>
     </DashboardBox>

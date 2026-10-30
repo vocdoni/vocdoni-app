@@ -1,4 +1,5 @@
-import { AlertRoot as Alert, AlertDescription, AlertIndicator, Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, AlertIndicator, Box, Flex, Grid, GridItem } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useQueryClient } from '@tanstack/react-query'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
@@ -110,9 +111,7 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
     <Box mb='44' mx='[auto]'>
       <Header />
 
-      <Text as='h2' fontWeight='bold' mb='4' textAlign={{ base: 'center', md: 'start' }}>
-        {t('organization.elections')}
-      </Text>
+      <SectionHeader title={t('organization.elections')} size='md' mb='4' textAlign={{ base: 'center', md: 'start' }} />
 
       <Grid templateColumns='repeat(auto-fill, minmax(350px, 1fr))' columnGap={{ base: '3', lg: '4' }} rowGap='12'>
         {electionsList?.map((election, idx) => (

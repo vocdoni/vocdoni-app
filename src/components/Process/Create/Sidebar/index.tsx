@@ -1,7 +1,8 @@
 import { Flex, Icon, IconButton } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
 import { CloseIcon } from '~theme/icons'
-import { Sidebar, SidebarContents, SidebarSubtitle, SidebarTitle } from '~components/Dashboard/Contents'
+import { Sidebar, SidebarContents, SidebarSubtitle } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { BasicConfig } from './BasicConfig'
 import CensusCreation, { CensusStatusBadge } from './CensusCreation'
@@ -16,9 +17,7 @@ export const CreateSidebar = () => {
   return (
     <Sidebar show={showSidebar}>
       <SidebarContents borderBottom='sm' borderColor='border'>
-        <SidebarTitle>
-          <Trans i18nKey='process_create.settings'>Settings</Trans>
-        </SidebarTitle>
+        <SectionHeader title={<Trans i18nKey='process_create.settings'>Settings</Trans>} size='lg' pt='4' />
         {isMobile && (
           /* data-testid: same reason as the toggle in Create/index.tsx. The open
              drawer covers the Publish button, so the suite must close it. */

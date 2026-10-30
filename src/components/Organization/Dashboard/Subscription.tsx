@@ -4,7 +4,8 @@ import { ReactNode, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
-import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { ComparisonTable } from '~components/Pricing/ComparisonTable'
 import { SubscriptionPlans } from '~components/Pricing/Plans'
 import { SubscriptionCheckoutProvider } from '~components/Pricing/SubscriptionCheckoutProvider'
@@ -55,9 +56,9 @@ const SubscriptionPageContent = () => {
   return (
     <DashboardBox size='md'>
       <Flex direction={{ base: 'column', md: 'row' }}>
-        <SectionHeader>
-          <SectionHeading>{t('subscription_plan.title', { defaultValue: 'Subscription plan' })}</SectionHeading>
-          <SectionSubHeading>
+        <SectionHeader
+          title={t('subscription_plan.title', { defaultValue: 'Subscription plan' })}
+          description={
             <Trans i18nKey='subscription_plan.subtitle'>
               With our subscriptions, you get more than a plan. You gain access to the most innovative governance
               platform. Thanks to this model, we can offer the best price in the market: whether you need 1, 5, or 20
@@ -65,8 +66,10 @@ const SubscriptionPageContent = () => {
               platform is fully self-service, yet our team is always available to provide assistance or tailor solutions
               to your specific needs.
             </Trans>
-          </SectionSubHeading>
-        </SectionHeader>
+          }
+          size='md'
+          flex='1'
+        />
         {!isFree && view === 'plans' && (
           <Button onClick={() => handleChangeClick()} loading={isPending}>
             {t('billing_details', { defaultValue: 'Billing details' })}

@@ -1,4 +1,5 @@
 import { Avatar, Box, Button, Card, Flex, Heading, Link, Text, VStack } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Editor from '~components/Editor'
@@ -129,7 +130,7 @@ export const ArchiveOrganizationView = ({
       )}
 
       <VStack align='stretch' gap='3'>
-        <Heading size='md'>{t('organization.elections_list', { defaultValue: 'Voting processes' })}</Heading>
+        <SectionHeader title={t('organization.elections_list', { defaultValue: 'Voting processes' })} size='md' />
         {elections.length === 0 && (
           <EmptyState
             size='sm'

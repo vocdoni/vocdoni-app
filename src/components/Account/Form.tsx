@@ -3,13 +3,13 @@ import {
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
-  Heading,
   HStack,
   Icon,
   Input,
   Text,
   VStack,
 } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { linkSaasOAuth } from '@vocdoni/rainbowkit-wallets'
 import { useMemo, useState } from 'react'
@@ -164,12 +164,12 @@ const AccountForm = ({ profile }: { profile?: User }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Heading as='h2' textStyle='section-title' mb='1.5'>
-        {t('account.title', { defaultValue: 'Account Information' })}
-      </Heading>
-      <Text textStyle='body-sm' color='fg.muted' mb='6'>
-        {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
-      </Text>
+      <SectionHeader
+        title={t('account.title', { defaultValue: 'Account Information' })}
+        description={t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}
+        titleGap='1.5'
+        mb='6'
+      />
       <VStack gap='8' align='stretch'>
         <HStack>
           <FormControl invalid={!!errors.firstName}>

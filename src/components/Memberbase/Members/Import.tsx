@@ -25,6 +25,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { CloseButton } from '~components/ui/CloseButton'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
@@ -111,15 +112,15 @@ const TemplateUploader = () => {
 
   return (
     <Stack gap='4'>
-      <Heading size='md' fontWeight='extrabold'>
-        {t('memberbase.download_template.title', { defaultValue: 'Download Import Template' })}
-      </Heading>
-      <Text color='fg.muted' textStyle='body-sm'>
-        {t('memberbase.download_template.subtitle', {
+      <SectionHeader
+        title={t('memberbase.download_template.title', { defaultValue: 'Download Import Template' })}
+        description={t('memberbase.download_template.subtitle', {
           defaultValue:
             'Download the template with your chosen columns, add your member data, and upload the file to set up your memberbase. Once it’s ready, you can start creating votes.',
         })}
-      </Text>
+        size='md'
+        titleGap='4'
+      />
       <MembersCsvManager />
     </Stack>
   )
@@ -439,9 +440,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
           ))}
         </Flex>
       </Card.Root>
-      <Heading size='md' fontWeight='extrabold'>
-        {t('memberbase.importer.data_preview', { defaultValue: 'Data Preview' })}
-      </Heading>
+      <SectionHeader title={t('memberbase.importer.data_preview', { defaultValue: 'Data Preview' })} size='md' />
       <Card.Root variant='frame' overflowX='auto' w='full'>
         <TableRoot>
           <TableHeader>
@@ -483,15 +482,15 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
 
   return (
     <Flex flexDirection='column' gap='4'>
-      <Heading size='md' fontWeight='extrabold'>
-        {t('memberbase.importer.map_columns.title', { defaultValue: 'Map Columns' })}
-      </Heading>
-      <Text color='fg.muted' textStyle='body-sm'>
-        {t('memberbase.importer.map_columns.subtitle', {
+      <SectionHeader
+        title={t('memberbase.importer.map_columns.title', { defaultValue: 'Map Columns' })}
+        description={t('memberbase.importer.map_columns.subtitle', {
           defaultValue:
             'Map columns from your file to the corresponding fields in our system. Required fields are marked with an asterisk (*).',
         })}
-      </Text>
+        size='md'
+        titleGap='4'
+      />
       <FieldsMapper manager={spreadsheet} columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
       <Flex justify='space-between' gap='2' mt='4'>
         <Button type='button' variant='outline' onClick={resetImport}>

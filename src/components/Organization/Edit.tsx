@@ -1,4 +1,5 @@
-import { Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
+import { Button, Flex, SimpleGrid } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { organizationQueryKeys } from '@vocdoni/react-components'
 import { useState } from 'react'
@@ -109,16 +110,13 @@ const EditOrganization = () => {
     <DashboardBox size='md'>
       <FormProvider {...methods}>
         <Flex as='form' id='process-create-form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap='6'>
-          <Flex flexDir='column'>
-            <Heading size='md'>
-              {t('create_org.organization_details', { defaultValue: 'Organization details' })}
-            </Heading>
-            <Text color='fg.muted' textStyle='body-sm'>
-              {t('create_org.organization_details_description', {
-                defaultValue: "Manage your organization's profile and configuration settings.",
-              })}
-            </Text>
-          </Flex>
+          <SectionHeader
+            title={t('create_org.organization_details', { defaultValue: 'Organization details' })}
+            description={t('create_org.organization_details_description', {
+              defaultValue: "Manage your organization's profile and configuration settings.",
+            })}
+            size='md'
+          />
           <Flex gap='6' flexDirection={{ base: 'column', sm: 'row' }}>
             <AvatarUploader w='fit' />
             <PublicOrgForm />
