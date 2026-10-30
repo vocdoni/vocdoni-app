@@ -174,7 +174,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
   )
 
   return (
-    <DashboardBox size='md' height='100%' {...props}>
+    <DashboardBox size='md' height='full' {...props}>
       <VStack align='stretch' gap={4}>
         <DashboardCardHeader
           title={t('dashboard.usage.plan_usage', { defaultValue: 'Plan usage' })}

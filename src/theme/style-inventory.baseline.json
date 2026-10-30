@@ -23,7 +23,6 @@
     "src/components/Home/Clients.tsx": 10,
     "src/components/Home/Faqs.tsx": 1,
     "src/components/Home/SharedCensus.tsx": 3,
-    "src/components/Integrator/NotIntegratorNotice.tsx": 1,
     "src/components/Integrator/QuotaCard.tsx": 1,
     "src/components/Layout/Footer.tsx": 1,
     "src/components/Layout/Logo.tsx": 2,
@@ -31,11 +30,8 @@
     "src/components/Memberbase/GroupsBoard.tsx": 2,
     "src/components/Memberbase/Members/index.tsx": 3,
     "src/components/Navbar/LanguagesList.tsx": 2,
-    "src/components/Organization/Dashboard/Support.tsx": 4,
     "src/components/Organization/Dashboard/index.tsx": 1,
     "src/components/Organization/Header.tsx": 5,
-    "src/components/Organization/NoOrganizations.tsx": 1,
-    "src/components/Organization/OrganizationsUnavailable.tsx": 1,
     "src/components/Process/Aside.tsx": 1,
     "src/components/Process/Create/VoterAuthentication/index.tsx": 1,
     "src/components/Process/Dashboard/ProcessesTable.tsx": 1,
@@ -61,9 +57,7 @@
   "rawPalette": {
     "src/router/IntegratorOrgGuard.tsx": 1
   },
-  "rawZIndex": {
-    "src/components/Organization/Address.tsx": 1
-  },
+  "rawZIndex": {},
   "unknownToken": {},
   "v2Prop": {
     "src/components/Layout/SaasSelector.tsx": 3,

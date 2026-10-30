@@ -14,7 +14,7 @@ export const NoOrganizations = () => {
           <Trans i18nKey='view_plans_and_pricing'>View Plans & Pricing</Trans>
         </ReactRouterLink>
       </Button>
-      <Card.Root variant='plain' minH='100%' maxW='650px' mx='auto'>
+      <Card.Root variant='plain' minH='full' maxW='card.empty' mx='auto'>
         <Card.Body>
           <EmptyState
             image={empty}
@@ -39,7 +39,7 @@ export const NoOrganizations = () => {
                 If your organization is already on Vocdoni, ask its administrator to invite you.
               </Trans>
             </Text>
-            <Button mt={4} w='100%' asChild>
+            <Button mt={4} w='full' asChild>
               <ReactRouterLink to={Routes.dashboard.organizationCreate}>
                 <Trans i18nKey='create_org.create_button'>Create your organization</Trans>
               </ReactRouterLink>
