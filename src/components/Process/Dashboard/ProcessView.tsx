@@ -22,7 +22,6 @@ import {
   TooltipPositioner,
   TooltipRoot,
   TooltipTrigger,
-  useBreakpointValue,
   useClipboard,
   useRecipe,
   VStack,
@@ -88,6 +87,7 @@ import { useAnonymityLabels } from '../anonymityLabels'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
+import { useIsMobile } from '~components/ui/useIsMobile'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -409,7 +409,7 @@ const ProcessViewSidebar = () => {
   const { size: censusSize } = useCensusSize()
   const voteCount = processVoteCount(results)
   const participation = censusSize > 0 ? Math.round((voteCount / censusSize) * 1e4) / 100 : 0
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
   const { showSidebar, closeSidebar } = useSidebarVisibility()
   const firstQuestion = election?.questions[0]
   const resultTypeLabel = useResultTypeLabel(firstQuestion ? tryInferQuestionBallotType(firstQuestion) : undefined, '')

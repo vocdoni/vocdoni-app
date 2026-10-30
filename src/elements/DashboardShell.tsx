@@ -1,4 +1,4 @@
-import { Flex, IconButton, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
+import { Flex, IconButton, useDisclosure } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { OrganizationProvider } from '@vocdoni/react-components'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
@@ -13,6 +13,7 @@ import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
 import SupportChat from '~components/SupportChat'
 import { LocalStorageKeys } from '~constants'
 import { DashboardLayoutContext, DashboardOutletContext } from '~elements/DashboardLayoutContext'
+import { useIsMobile } from '~components/ui/useIsMobile'
 
 /**
  * Shared dashboard layout (sidebar + user menu + content) used by both the admin and integrator
@@ -20,7 +21,7 @@ import { DashboardLayoutContext, DashboardOutletContext } from '~elements/Dashbo
  */
 const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
   const { open: isOpen, onOpen, onClose } = useDisclosure()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
   const [reduced, setReduced] = useLocalStorage(LocalStorageKeys.DashboardMenuReduced, false)
   const [headerActionsNode, setHeaderActionsNode] = useState<HTMLDivElement | null>(null)
   const { t } = useTranslation()

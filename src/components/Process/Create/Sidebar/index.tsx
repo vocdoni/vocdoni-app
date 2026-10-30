@@ -1,4 +1,4 @@
-import { Flex, Icon, IconButton, useBreakpointValue } from '@chakra-ui/react'
+import { Flex, Icon, IconButton } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
 import { CloseIcon } from '~theme/icons'
 import { Sidebar, SidebarContents, SidebarSubtitle, SidebarTitle } from '~components/Dashboard/Contents'
@@ -6,10 +6,11 @@ import { useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { BasicConfig } from './BasicConfig'
 import CensusCreation, { CensusStatusBadge } from './CensusCreation'
 import { ExtraConfig } from './ExtraConfig'
+import { useIsMobile } from '~components/ui/useIsMobile'
 
 export const CreateSidebar = () => {
   const { t } = useTranslation()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
   const { showSidebar, closeSidebar } = useSidebarVisibility()
 
   return (
