@@ -59,7 +59,7 @@ const Settings = () => {
           defaultValue: 'Manage your organization, team members and your subscription plan',
         })}
       </PageSubtitle>
-      <QueryDataLayout isLoading={isLoading} isError={isError} error={error}>
+      <QueryDataLayout loading={isLoading} isError={isError} error={error}>
         <TabsRoot
           value={activeTabValue}
           onValueChange={({ value }) => {

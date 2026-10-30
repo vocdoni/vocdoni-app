@@ -3,14 +3,14 @@ import ErrorComponent from '~components/Layout/ErrorComponent'
 import { PageLoader } from '~components/ui/Loader'
 
 interface IUserQueryLayout {
-  isLoading: boolean
+  loading: boolean
   isEmpty?: boolean
   isError: boolean
   error?: Error | string
 }
 
-const QueryDataLayout = ({ isLoading, isEmpty, isError, error, children }: IUserQueryLayout & PropsWithChildren) => {
-  if (isLoading) {
+const QueryDataLayout = ({ loading, isEmpty, isError, error, children }: IUserQueryLayout & PropsWithChildren) => {
+  if (loading) {
     return <PageLoader minHeight={1} />
   }
   if (isError) {
