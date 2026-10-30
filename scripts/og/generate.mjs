@@ -58,11 +58,13 @@ const copyFor = (lang) => {
   const components = readJson(join(localesDir, lang, 'react-components.json'))
   const title = common.head?.title
   const description = common.head?.description
+  const vote = components.vote?.button
   if (!title || !description) throw new Error(`${lang}/common.json has no head.title / head.description`)
+  if (!vote) throw new Error(`${lang}/react-components.json has no vote.button`)
   return {
     title: title.replace(/^Vocdoni\s*\|\s*/, ''),
     tagline: description.split(/(?<=\.)\s+/)[0],
-    vote: components.vote?.button || 'Vote',
+    vote,
   }
 }
 
