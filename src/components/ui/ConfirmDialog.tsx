@@ -114,7 +114,7 @@ export const ConfirmDialog = ({
   children,
   ...dialogProps
 }: ConfirmDialogProps) => (
-  <Dialog.Root placement='center' {...dialogProps}>
+  <Dialog.Root {...dialogProps}>
     <Dialog.Backdrop />
     <Dialog.Positioner>
       <Dialog.Content>

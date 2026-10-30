@@ -298,7 +298,6 @@ export const ImportProgress = () => {
       {/* Error modal */}
       <Dialog.Root
         size='xl'
-        placement='center'
         open={isErrorModalOpen}
         onOpenChange={({ open }) => (open ? onOpenErrors() : onCloseErrors())}
       >

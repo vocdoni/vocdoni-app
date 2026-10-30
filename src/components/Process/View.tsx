@@ -287,7 +287,7 @@ export const SuccessVoteModal = () => {
           {/* data-testid: this modal is the confirmation the e2e voting flow
               asserts on, and its only other handle is a translated title. */}
           <Dialog.Content className='ph-no-capture' data-testid='vote-success-modal'>
-            <DialogHeader display='flex' flexDirection='column' title={t('process.success_modal.title')}>
+            <DialogHeader title={t('process.success_modal.title')}>
               <BallotBoxAnimated alignSelf='center' />
             </DialogHeader>
             <Dialog.Body>
