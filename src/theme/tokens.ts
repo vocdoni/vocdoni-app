@@ -50,6 +50,9 @@ const letterSpacings = defineTokens.letterSpacings({
 
 const borderWidths = defineTokens.borderWidths({
   hairline: { value: '1px' },
+  thick: { value: '2px' },
+  // Hand-drawn focus rings (outline or box-shadow), as wide as Chakra's own.
+  focusRing: { value: '{borderWidths.thick}' },
 })
 
 const radii = defineTokens.radii({
@@ -81,12 +84,13 @@ const sizes = defineTokens.sizes({
     header: { value: '47px' },
     panel: { value: '350px' },
   },
-  // The four icon sizes (inline, control, feature, empty state), in rem like spacing 4/5/6/12.
+  // The four icon sizes (inline, control, feature, empty state). sm–lg are Chakra's Icon sizes, so
+  // `boxSize='icon.md'` and `<Icon size='md'>` cannot drift apart.
   icon: {
-    sm: { value: '1rem' },
-    md: { value: '1.25rem' },
-    lg: { value: '1.5rem' },
-    xl: { value: '3rem' },
+    sm: { value: '{sizes.4}' },
+    md: { value: '{sizes.5}' },
+    lg: { value: '{sizes.6}' },
+    xl: { value: '{sizes.12}' },
   },
   // The three page widths, read through ui/PageContainer: the public shell, then two narrower columns.
   content: {
@@ -103,6 +107,15 @@ const sizes = defineTokens.sizes({
   },
   // Minimum height of a row of controls, so a row with a button and one without line up.
   toolbar: { value: '42px' },
+  // Square controls drawn by recipes: the support chat launcher (button `floating`) and link `icon-button`.
+  control: {
+    floating: { value: '52px' },
+    'icon-link': { value: '30px' },
+  },
+  // Minimum height of ui/Loader's PageLoader, so a page with nothing yet does not collapse.
+  loader: { value: '300px' },
+  // Width of the Vocdoni wordmark image.
+  wordmark: { value: '125px' },
   'user-profile': { value: '280px' },
   voting: {
     sidebar: { value: '320px' },

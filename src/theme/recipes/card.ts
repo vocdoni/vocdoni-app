@@ -127,13 +127,10 @@ export const Card = defineSlotRecipe({
       // A notice outlined in the brand colour, such as a paused process.
       highlight: {
         root: {
-          color: 'brand.fg',
+          color: 'accent.fg',
           borderWidth: 'hairline',
           borderColor: 'brand.fg',
           p: 'var(--card-padding)',
-          _dark: {
-            color: 'white',
-          },
         },
       },
       // One entry of a list shown as cards, the small-screen form of a table.
