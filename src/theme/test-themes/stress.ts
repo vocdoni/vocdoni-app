@@ -1,4 +1,5 @@
 import { createSystem, type SystemConfig } from '@chakra-ui/react'
+import { withEscapeHatch } from '../escapeHatch'
 import { createAppSystem } from '../system'
 
 // A loud alternate theme for `pnpm ui:snapshot -- --theme stress` (scripts/ui-snapshot/README.md): the app's
@@ -129,17 +130,20 @@ const shadows = remap(stockSemantic.shadows, (path, index) => {
   return { _light: shadow(45), _dark: shadow(60) }
 })
 
-export const stressSystem = createSystem(stock._config, {
-  theme: {
-    tokens: {
-      fonts,
-      radii: nudged('radii'),
-      fontSizes: nudged('fontSizes'),
-      spacing: nudged('spacing'),
+// A fresh system has its own token dictionary, so it needs the app's `[value]` unwrapping too.
+export const stressSystem = withEscapeHatch(
+  createSystem(stock._config, {
+    theme: {
+      tokens: {
+        fonts,
+        radii: nudged('radii'),
+        fontSizes: nudged('fontSizes'),
+        spacing: nudged('spacing'),
+      },
+      semanticTokens: { colors, shadows } as NonNullable<SystemConfig['theme']>['semanticTokens'],
     },
-    semanticTokens: { colors, shadows } as NonNullable<SystemConfig['theme']>['semanticTokens'],
-  },
-})
+  })
+)
 
 export const system = stressSystem
 export const getAppSystem = (_primaryColor?: string) => stressSystem
