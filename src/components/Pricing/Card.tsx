@@ -239,17 +239,7 @@ const PricingCard = ({
         </Flex>
       </Card.Footer>
       {popular && (
-        <Badge
-          position='absolute'
-          top='[0]'
-          left='[50%]'
-          transform='translate(-50%, -50%)'
-          px='3'
-          size='xs'
-          backgroundColor='card.plan.featured.badge.bg'
-          color='card.plan.featured.badge.color'
-          fontWeight='extrabold'
-        >
+        <Badge position='absolute' top='[0]' left='[50%]' transform='translate(-50%, -50%)' variant='featured'>
           <Trans i18nKey='pricing_card.most_popular_plan'>Most popular plan</Trans>
         </Badge>
       )}

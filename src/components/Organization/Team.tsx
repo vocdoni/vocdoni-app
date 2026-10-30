@@ -709,9 +709,7 @@ const UsersList = ({ users }: UsersListProps) => {
             <Box ml='3'>
               <HStack align='center'>
                 <Text fontWeight='bold'>{name}</Text>
-                <Badge variant='surface' textTransform='capitalize'>
-                  {user.role}
-                </Badge>
+                <Badge variant='label'>{user.role}</Badge>
               </HStack>
               <Flex direction='column'>
                 <Text textStyle='body-sm' color='fg.muted'>
