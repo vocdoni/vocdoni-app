@@ -7,5 +7,5 @@ export const PageTitle = forwardRef<HTMLHeadingElement, HeadingProps>((props, re
 ))
 
 export const PageSubtitle = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
-  <Text textStyle='body' color='fg.muted' mt={2} mb={4} ref={ref} {...props} />
+  <Text textStyle='body-sm' color='fg.muted' mt={2} mb={4} ref={ref} {...props} />
 ))

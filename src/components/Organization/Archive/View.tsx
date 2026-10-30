@@ -105,7 +105,7 @@ export const ArchiveOrganizationView = ({
           <Avatar.Fallback name={name} />
         </Avatar.Root>
         <Box>
-          <Heading as='h1' size='xl'>
+          <Heading as='h1' textStyle='display'>
             {name}
           </Heading>
           <Text textStyle='body-sm' color='fg.muted'>

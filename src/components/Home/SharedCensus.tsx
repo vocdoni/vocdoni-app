@@ -17,6 +17,7 @@ import { ManageProcessLink } from '~components/Process/ManageProcessLink'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
 import { PageLoader } from '~components/ui/Loader'
+import { PageTitle } from '~components/ui/PageTitle'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { ensureAddressPrefix, sameAddress } from '~utils/address'
 
@@ -143,9 +144,9 @@ const SharedCensusHomeContent = () => {
       <Box>{election && !isAdmin && <CensusConnectButton />}</Box>
       {canViewProcesses && (
         <Box w='90%'>
-          <Text alignSelf='start' mb={10} as='h1' fontWeight='bold' fontSize='2xl' mt='-30px'>
+          <PageTitle alignSelf='start' mb={10} mt='-30px'>
             {t('shared_census.section_title', { defaultValue: 'Elections' })}
-          </Text>
+          </PageTitle>
           <Flex gap={5} flexDirection={{ base: 'column' }}>
             {processIds.map((processId, index) => (
               <ElectionProvider id={processId} key={processId} queryOptions={{ refetchInterval: 15_000 }}>

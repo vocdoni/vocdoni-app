@@ -58,13 +58,9 @@ const LayoutAuth = () => {
           >
             {(title || subtitle) && (
               <Box mb={6}>
-                {title && (
-                  <PageTitle textStyle='lg' mb={1} letterSpacing='heading.tight'>
-                    {title}
-                  </PageTitle>
-                )}
+                {title && <PageTitle mb={1}>{title}</PageTitle>}
                 {subtitle && (
-                  <PageSubtitle textStyle='body-sm' mt={0} mb={0}>
+                  <PageSubtitle mt={0} mb={0}>
                     {subtitle}
                   </PageSubtitle>
                 )}

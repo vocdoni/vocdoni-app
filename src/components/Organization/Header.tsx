@@ -71,8 +71,7 @@ const OrganizationHeader = () => {
           >
             <OrganizationName
               as='h1'
-              fontSize={32}
-              lineHeight='moderate'
+              textStyle='display'
               title={organization?.name?.default || organization?.address}
               maxW={{ base: '250px', sm: '300px', md: '450px', lg: '500px', xl: '650px' }}
             />
@@ -90,7 +89,7 @@ const OrganizationHeader = () => {
             </Box>
           </Flex>
           <ReadMoreMarkdownWrapper>
-            <OrganizationDescription fontSize='lg' lineHeight={1.7} />
+            <OrganizationDescription fontSize='lg' lineHeight='tall' />
           </ReadMoreMarkdownWrapper>
           <ReadMoreMarkdownButton alignSelf='center' />
         </Flex>
