@@ -259,6 +259,21 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   ...illustrationColors,
+  // Raw values kept as semantic tokens so a retheme (and the stress theme) can move them: the horizontal
+  // rule of Layout/Separators, translucent so it works over both color modes.
+  separator: {
+    value: 'rgba(135, 140, 189, 0.3)',
+  },
+  // Accents of the per-vertical auth showcase, read as `${accent}.900` (src/components/Auth/vertical).
+  // 900 is the panel surface: a deep, desaturated tone, dark enough to carry white type at roughly 13:1.
+  verticals: {
+    generic: {
+      900: { value: '#251a42' },
+    },
+    professional: {
+      900: { value: '#0c2e3e' },
+    },
+  },
   card: {
     plan: {
       bg: {
