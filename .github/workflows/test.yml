@@ -90,3 +90,58 @@ jobs:
           STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
           CALCOM_EVENT_SLUG: ${{ secrets.CALCOM_EVENT_SLUG }}
           SAAS_URL: https://saas-api-stg.vocdoni.net
+
+  # Renders the app with the stress theme against the snapshot's mock SaaS (no docker, no backend) and fails on
+  # elements that kept a stock value. See scripts/ui-snapshot/README.md, "Stress theme".
+  stress-theme:
+    name: Stress theme
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for app changes
+        id: changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if git diff --quiet "$BASE_SHA" HEAD -- src scripts/ui-snapshot; then
+            echo "Nothing changed under src/ or scripts/ui-snapshot/: no stress run."
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node.js
+        if: steps.changes.outputs.run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install pnpm
+        if: steps.changes.outputs.run == 'true'
+        uses: pnpm/action-setup@v4
+
+      - name: Install
+        if: steps.changes.outputs.run == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browser
+        if: steps.changes.outputs.run == 'true'
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Render with the stress theme
+        if: steps.changes.outputs.run == 'true'
+        run: pnpm ui:snapshot -- --label stress --theme stress
+
+      - name: Upload the stress run
+        if: always() && steps.changes.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stress-theme
+          path: .ui-snapshot/stress
+          retention-days: 7
