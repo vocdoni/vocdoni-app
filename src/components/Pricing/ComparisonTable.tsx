@@ -131,7 +131,7 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
   return (
     <Flex ref={ref} justifyContent='center' w='full' display='block'>
       <Table.ScrollArea>
-        <Table.Root borderWidth='[1]' variant='outline'>
+        <Table.Root borderWidth='hairline' variant='outline'>
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeader>
