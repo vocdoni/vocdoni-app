@@ -6,11 +6,11 @@ import {
   Flex,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
-  Heading,
   Link,
   Stack,
   Text,
 } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useCallback, useMemo, useState } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
@@ -204,15 +204,13 @@ export const MembersCsvManager = () => {
         display={manager?.data.length ? 'none' : 'block'}
       >
         <Stack gap='4'>
-          <Heading size='md' fontWeight='extrabold'>
-            {t('memberbase.import_file.title', { defaultValue: 'Import File' })}
-          </Heading>
-          <Text color='fg.muted' textStyle='body-sm'>
-            {t('memberbase.import_file.subtitle', {
+          <SectionHeader
+            title={t('memberbase.import_file.title', { defaultValue: 'Import File' })}
+            description={t('memberbase.import_file.subtitle', {
               defaultValue:
                 'Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.',
             })}
-          </Text>
+          />
           <Uploader
             getInputProps={getInputProps}
             getRootProps={getRootProps}

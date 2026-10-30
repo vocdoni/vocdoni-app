@@ -1,31 +1,16 @@
-import {
-  AlertRoot as Alert,
-  AlertDescription,
-  AlertIndicator,
-  Box,
-  Button,
-  chakra,
-  Flex,
-  HStack,
-  Icon,
-  Progress,
-  Separator,
-  Text,
-  VStack,
-} from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, AlertIndicator, Button, Flex, Separator, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { InfoIcon, MailIcon, SmsIcon, UsersIcon, VoteIcon } from '~theme/icons'
+import { MailIcon, SmsIcon, UsersIcon, VoteIcon } from '~theme/icons'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
-import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
+import { UsageMeter, type UsageMeterColor } from '~components/ui/UsageMeter'
 import { TwoFACodePrice } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { usePaginatedMembers } from '~queries/members'
 import { Routes } from '~routes'
 import { statusPalette } from '~theme/status'
-import { Tooltip } from '~components/ui/Tooltip'
-
-type UsageColor = 'chart.1' | 'chart.2' | 'chart.3' | 'chart.4'
 
 type UsageMetric = {
   icon: React.ElementType
@@ -34,50 +19,7 @@ type UsageMetric = {
   max: number
   tooltip?: string
   isSoftLimit?: boolean
-  color: UsageColor
-}
-
-const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: UsageMetric) => {
-  const percentage = max > 0 ? Math.min((current / max) * 100, 100) : 0
-  // Ensure a minimum visible percentage for the progress bar (0.5% represents "0" in the UI)
-  const displayPercentage = percentage < 0.5 ? 0.5 : percentage
-  const isNearLimit = percentage >= 80 && !isSoftLimit
-  const isAtLimit = percentage >= 100 && !isSoftLimit
-
-  const fillColor = isAtLimit ? 'meter.critical' : isNearLimit ? 'meter.warning' : color
-
-  return (
-    <Box>
-      <Flex justify='space-between' align='center' mb='2'>
-        <HStack gap='2'>
-          <Icon as={icon} color={`${color}.icon`} />
-          <Text textStyle='body-sm' fontWeight='medium' color='fg'>
-            {label}
-            {tooltip && (
-              <Tooltip portalled={false} content={tooltip}>
-                <chakra.span verticalAlign='middle'>
-                  <Icon as={InfoIcon} ml='1' />
-                </chakra.span>
-              </Tooltip>
-            )}
-          </Text>
-        </HStack>
-        <HStack gap='2' align='baseline'>
-          <Text fontSize='lg' fontWeight='bold' color='fg'>
-            {current.toLocaleString()}
-          </Text>
-          <Text textStyle='body-sm' color='fg.muted'>
-            / {max.toLocaleString()}
-          </Text>
-        </HStack>
-      </Flex>
-      <Progress.Root value={displayPercentage} size='sm' shape='full'>
-        <Progress.Track bg='chart.track'>
-          <Progress.Range bgColor={fillColor} borderRadius='full' />
-        </Progress.Track>
-      </Progress.Root>
-    </Box>
-  )
+  color: UsageMeterColor
 }
 
 export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) => {
@@ -170,11 +112,12 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
   return (
     <DashboardBox size='md' height='full' {...props}>
       <VStack align='stretch' gap='4'>
-        <DashboardCardHeader
+        <SectionHeader
           title={t('dashboard.usage.plan_usage', { defaultValue: 'Plan usage' })}
-          subtitle={t('dashboard.usage.plan_usage_description', {
+          description={t('dashboard.usage.plan_usage_description', {
             defaultValue: 'Track your current usage against your plan limits',
           })}
+          mb='4'
         />
 
         {hasExceededLimit && (
@@ -204,8 +147,18 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
         <Separator />
 
         <VStack align='stretch' gap='4'>
-          {usageMetrics.map((metric, index) => (
-            <UsageRow key={index} {...metric} />
+          {usageMetrics.map(({ icon, label, current, max, tooltip, isSoftLimit, color }, index) => (
+            <UsageMeter
+              key={index}
+              icon={icon}
+              label={label}
+              value={current}
+              max={max}
+              unit={`/ ${max.toLocaleString()}`}
+              tooltip={tooltip}
+              color={color}
+              softLimit={isSoftLimit}
+            />
           ))}
         </VStack>
       </VStack>

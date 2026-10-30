@@ -1,9 +1,5 @@
 import { defineRecipe, defineStyle, type SystemStyleObject } from '@chakra-ui/react'
 
-const sectionTitle = defineStyle({
-  pt: '4',
-})
-
 const sectionSubtitle = defineStyle({
   py: '4',
 })
@@ -17,7 +13,6 @@ export const heading = defineRecipe({
       heavy: {
         fontWeight: 'extrabold',
       },
-      section: sectionTitle,
       subsection: sectionSubtitle,
     },
   },

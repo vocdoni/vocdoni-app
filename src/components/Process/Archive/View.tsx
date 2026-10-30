@@ -1,4 +1,5 @@
 import { Badge, Box, Card, Flex, Heading, HStack, Image, Link, Progress, Text, VStack } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useTranslation } from 'react-i18next'
 import { ExternalLinkIcon } from '~theme/icons'
 import Editor from '~components/Editor'
@@ -99,12 +100,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
         {election.questions.map((question, questionIndex) => (
           <Card.Root key={questionIndex} variant='outline'>
             <Card.Header>
-              <Heading size='md'>{localize(question.title)}</Heading>
-              {localize(question.description) && (
-                <Text color='fg.muted' textStyle='body-sm'>
-                  {localize(question.description)}
-                </Text>
-              )}
+              <SectionHeader title={localize(question.title)} description={localize(question.description)} />
             </Card.Header>
             <Card.Body>
               {!election.resultsAvailable ? (

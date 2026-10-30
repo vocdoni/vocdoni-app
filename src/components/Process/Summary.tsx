@@ -12,6 +12,7 @@ import {
   Stat,
   Text,
 } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { ElectionResults, getElectionTitle, useElection } from '@vocdoni/react-components'
 import { hasResults, isSecretUntilTheEnd, isUpcoming, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -83,9 +84,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
 
   return (
     <Stat.Root flex='0 0 auto' alignItems='end'>
-      <Stat.Label color='fg.muted' textStyle='eyebrow'>
-        {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
-      </Stat.Label>
+      <Stat.Label>{upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}</Stat.Label>
       <Badge {...headline} colorPalette={statusPalette.success}>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
       </Badge>
@@ -158,21 +157,13 @@ const ParticipationCard = () => {
         <Separator />
 
         <SimpleGrid columns={{ base: 1, md: 2 }} gap='6'>
-          <Stat.Root>
-            <Stat.Label color='fg.muted' textStyle='eyebrow'>
-              {t('process.summary.start_label')}
-            </Stat.Label>
-            <Stat.ValueText fontSize='md' fontWeight='bold'>
-              {datetime(startDate)}
-            </Stat.ValueText>
+          <Stat.Root size='md'>
+            <Stat.Label>{t('process.summary.start_label')}</Stat.Label>
+            <Stat.ValueText>{datetime(startDate)}</Stat.ValueText>
           </Stat.Root>
-          <Stat.Root>
-            <Stat.Label color='fg.muted' textStyle='eyebrow'>
-              {t('process.summary.end_label')}
-            </Stat.Label>
-            <Stat.ValueText fontSize='md' fontWeight='bold'>
-              {datetime(endDate)}
-            </Stat.ValueText>
+          <Stat.Root size='md'>
+            <Stat.Label>{t('process.summary.end_label')}</Stat.Label>
+            <Stat.ValueText>{datetime(endDate)}</Stat.ValueText>
           </Stat.Root>
         </SimpleGrid>
       </Card.Body>
@@ -185,11 +176,9 @@ type IndicatorProps = { label: string; value: string; accent?: boolean }
 const Indicator = ({ label, value, accent }: IndicatorProps) => (
   <Card.Root size='sm' textAlign='center'>
     <Card.Body>
-      <Stat.Root alignItems='center' gap='1'>
-        <Stat.ValueText fontSize='3xl' fontWeight='bold' color={accent ? 'colorPalette.fg' : undefined}>
-          {value}
-        </Stat.ValueText>
-        <Stat.Label color='fg.muted'>{label}</Stat.Label>
+      <Stat.Root alignItems='center'>
+        <Stat.Label>{label}</Stat.Label>
+        <Stat.ValueText color={accent ? 'colorPalette.fg' : undefined}>{value}</Stat.ValueText>
       </Stat.Root>
     </Card.Body>
   </Card.Root>
@@ -212,12 +201,7 @@ const KeyIndicators = () => {
 
   return (
     <Box>
-      <Flex align='center' gap='4' mb='4'>
-        <Heading as='h2' size='lg' flexShrink={0}>
-          {t('process.summary.indicators_title')}
-        </Heading>
-        <Separator flex='1' />
-      </Flex>
+      <SectionHeader title={t('process.summary.indicators_title')} rule mb='4' />
       <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
         <Indicator label={t('process.summary.stat_census')} value={nf(census)} />
         <Indicator label={t('process.summary.stat_votes_received')} value={nf(voteCount)} />
@@ -247,12 +231,7 @@ const ResultsNotice = () => {
 
   return (
     <Box>
-      <Flex align='center' gap='4' mb='4'>
-        <Heading as='h2' size='lg' flexShrink={0}>
-          {t('process.summary.results_title')}
-        </Heading>
-        <Separator flex='1' />
-      </Flex>
+      <SectionHeader title={t('process.summary.results_title')} rule mb='4' />
       {electionHasResults ? (
         <Card.Root>
           <Card.Body>
@@ -303,12 +282,11 @@ const CertifiedTech = () => {
       <Card.Body>
         <Flex direction={{ base: 'column', lg: 'row' }} gap='8'>
           <Box flex='1'>
-            <Heading as='h2' size='lg' mb='3'>
-              {t('process.summary.tech_title')}
-            </Heading>
-            <Text color='surface.inverse.fg.muted' mb='5'>
-              {t('process.summary.tech_description')}
-            </Text>
+            <SectionHeader
+              title={t('process.summary.tech_title')}
+              description={t('process.summary.tech_description')}
+              mb='5'
+            />
             <List.Root variant='plain' gap='3'>
               {techItems(election?.census?.anonymous).map(({ key, icon }) => (
                 <List.Item key={key} alignItems='start' gap='2'>
