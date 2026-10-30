@@ -183,8 +183,8 @@ export const electionComponents: ComponentsPartialDefinition = {
                 type='button'
                 aria-haspopup='dialog'
                 display='block'
-                w='100%'
-                h='100%'
+                w='full'
+                h='full'
                 borderTopRadius='lg'
                 focusVisibleRing='inside'
                 onClick={(event) => {
@@ -282,8 +282,8 @@ export const electionComponents: ComponentsPartialDefinition = {
                 style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
               />
               <Box
-                w='18px'
-                h='18px'
+                w='4.5'
+                h='4.5'
                 borderWidth='2px'
                 borderColor={selected ? 'colorPalette.solid' : 'ballot.choice.ring'}
                 borderRadius='full'
@@ -298,7 +298,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                 alignItems='center'
                 justifyContent='center'
               >
-                {selected ? <Box w='8px' h='8px' borderRadius='full' bg='colorPalette.solid' /> : null}
+                {selected ? <Box w='2' h='2' borderRadius='full' bg='colorPalette.solid' /> : null}
               </Box>
             </Box>
             {media}

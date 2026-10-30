@@ -144,7 +144,7 @@ export const ElectionResults = defineSlotRecipe({
       gap: 3,
       fontWeight: 'bold',
       '& > div': {
-        h: '100%',
+        h: 'full',
         minH: 8,
         justifyContent: 'center',
         position: 'relative',
@@ -185,7 +185,7 @@ export const ElectionResults = defineSlotRecipe({
       gridColumn: '1 / -1',
       gridRow: '1',
       alignSelf: 'stretch',
-      h: '100%',
+      h: 'full',
       minH: 8,
       zIndex: 'background',
     },
@@ -198,18 +198,18 @@ export const resultsProgressRecipe = defineSlotRecipe({
   slots: resultsProgressBarAnatomy,
   base: {
     root: {
-      h: '100%',
+      h: 'full',
       minH: 8,
       borderRadius: 'sm',
       overflow: 'hidden',
     },
     track: {
-      h: '100%',
+      h: 'full',
       bg: 'ballot.results.track',
       borderRadius: 'inherit',
     },
     range: {
-      h: '100%',
+      h: 'full',
       // Choice titles and tallies sit on top of the bar, so a full-strength fill would hide them (stock
       // `solid` is near-black in light mode and white in dark mode): a 30% tint keeps them readable.
       bg: 'colorPalette.solid/30',
@@ -238,13 +238,13 @@ export const QuestionChoice = defineSlotRecipe({
     },
 
     skeleton: {
-      w: '100%',
+      w: 'full',
       aspectRatio: '4 / 3',
     },
 
     image: {
-      w: '100%',
-      h: '100%',
+      w: 'full',
+      h: 'full',
       borderTopRadius: 'lg',
       objectFit: 'cover',
       objectPosition: 'center',
@@ -275,7 +275,7 @@ export const QuestionChoice = defineSlotRecipe({
       content: {
         wrapper: {
           gap: 2,
-          height: '100%',
+          height: 'full',
         },
       },
       card: {
@@ -291,7 +291,7 @@ export const QuestionChoice = defineSlotRecipe({
             borderColor: 'colorPalette.solid',
           },
           '&[data-disabled="true"]': {
-            opacity: 0.6,
+            opacity: 'disabled',
             cursor: 'not-allowed',
           },
         },
@@ -323,7 +323,7 @@ export const QuestionChoice = defineSlotRecipe({
         wrapper: {
           display: 'flex',
           flexDirection: 'column',
-          height: '100%',
+          height: 'full',
           position: 'relative',
           alignItems: 'start',
           w: 'full',
@@ -347,7 +347,7 @@ export const QuestionChoice = defineSlotRecipe({
             borderRadius: 'full',
           },
           '& [data-choice-media]': {
-            width: '100%',
+            width: 'full',
             display: 'block',
             overflow: 'hidden',
           },

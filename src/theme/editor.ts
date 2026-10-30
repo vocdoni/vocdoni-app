@@ -18,8 +18,8 @@ const editor: SystemStyleObject = {
     textDecoration: 'underline line-through',
   },
   '& .lexical-ul, & .lexical-ol': {
-    paddingInlineStart: '1rem',
-    marginBlock: '1rem',
+    paddingInlineStart: '4',
+    marginBlock: '4',
   },
   '& .lexical-ul': {
     listStyleType: 'disc',
@@ -28,7 +28,7 @@ const editor: SystemStyleObject = {
     listStyleType: 'decimal',
   },
   '& .lexical-li': {
-    marginBlock: '0.125rem',
+    marginBlock: '0.5',
   },
   '& .lexical-link': {
     color: 'link.fg',
@@ -38,13 +38,13 @@ const editor: SystemStyleObject = {
     },
   },
   '& .lexical-quote': {
-    paddingLeft: '1rem',
-    marginY: '1.25rem',
+    paddingLeft: '4',
+    marginY: '5',
     borderLeft: '4px solid',
   },
   '& [class*="lexical-h"]': {
     fontWeight: 'bold',
-    marginY: '1.25rem',
+    marginY: '5',
     lineHeight: 'short',
   },
   ...Object.fromEntries(
