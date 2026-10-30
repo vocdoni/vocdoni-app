@@ -66,7 +66,7 @@ export const Card = defineSlotRecipe({
       inverse: {
         root: {
           bg: 'surface.inverse',
-          color: 'white',
+          color: 'surface.inverse.fg',
         },
       },
       // A notice outlined in the brand colour, such as a paused process.
