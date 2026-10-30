@@ -31,7 +31,7 @@ const ProcessAside = () => {
     <Card.Root variant='section' size='sm' gap={2}>
       <Card.Root variant='section' size='sm' gap={5} flexWrap='wrap'>
         <Text textAlign='center' fontSize='xl' textTransform='uppercase'>
-          {getStatusText(t, status)}
+          {getStatusText(t, status).toUpperCase()}
         </Text>
 
         {/* data-testid on both branches: the count is interpolated into a
