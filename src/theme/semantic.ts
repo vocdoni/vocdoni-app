@@ -168,7 +168,7 @@ export const colors = defineSemanticTokens.colors({
       value: '{colors.blackAlpha.500}',
     },
     fg: {
-      value: '{colors.white}',
+      value: '{colors.surface.inverse.fg}',
     },
   },
   auth: {
@@ -188,16 +188,16 @@ export const colors = defineSemanticTokens.colors({
     showcase: {
       fg: {
         DEFAULT: {
-          value: '{colors.white}',
+          value: '{colors.surface.inverse.fg}',
         },
         muted: {
-          value: '{colors.gray.400}',
+          value: '{colors.surface.inverse.fg.muted}',
         },
       },
       // Hairline between the quote and its attribution. Neutral white alpha rather than
       // `separator`, which is faintly blue and reads as a tint of its own on a coloured panel.
       rule: {
-        value: '{colors.whiteAlpha.300}',
+        value: '{colors.surface.inverse.rule}',
       },
     },
     // Tile the customer logos sit on, in the showcase panel and in the trust bar alike. Light in
@@ -259,7 +259,7 @@ export const colors = defineSemanticTokens.colors({
   },
   ...illustrationColors,
   card: {
-    pricing: {
+    plan: {
       bg: {
         value: {
           _light: '{colors.white}',

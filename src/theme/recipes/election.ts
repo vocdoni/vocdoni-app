@@ -291,7 +291,7 @@ export const QuestionChoice = defineSlotRecipe({
             borderColor: 'colorPalette.solid',
           },
           '&[data-disabled="true"]': {
-            opacity: 'disabled',
+            opacity: 'inactive',
             cursor: 'disabled',
           },
         },

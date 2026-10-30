@@ -93,7 +93,7 @@ const ApiKeyCard = ({
           <Icon as={DeleteIcon} />
         </IconButton>
       </Flex>
-      <Box opacity={k.revoked ? 'disabled' : '[1]'}>
+      <Box opacity={k.revoked ? 'inactive' : '[1]'}>
         <Code>{k.prefix}…</Code>
         <HStack gap='1' wrap='wrap' mt='3'>
           {k.scopes.map((sc) => (

@@ -146,8 +146,8 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
   })
 
   return (
-    // pt mirrors the sidebar-subtitle's top padding for separation from the section above; the subtitle's
-    // own py is zeroed so the title→description gap matches the uniform gap between the other items.
+    // pt mirrors SidebarSubtitle's top padding (heading `subsection`) for separation from the section above;
+    // the subtitle's own py is zeroed so the title→description gap matches the uniform gap between the other items.
     <Box display='flex' flexDirection='column' gap='3' pt='4'>
       <HStack gap='1' alignItems='center'>
         <SidebarSubtitle py='[0]'>

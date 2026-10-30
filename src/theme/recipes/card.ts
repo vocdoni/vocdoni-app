@@ -9,7 +9,7 @@ const plan = {
     position: 'relative',
     border: 'sm',
     borderRadius: 'md',
-    bgColor: 'card.pricing.bg',
+    bgColor: 'card.plan.bg',
     p: '6',
     flex: 1,
   },
@@ -50,9 +50,9 @@ const featured = {
   ...plan,
   root: {
     ...plan.root,
-    bgColor: 'card.pricing.featured.bg',
-    borderColor: 'card.pricing.featured.border',
-    color: 'white',
+    bgColor: 'card.plan.featured.bg',
+    borderColor: 'card.plan.featured.border',
+    color: 'surface.inverse.fg',
   },
 } satisfies Partial<Record<string, SystemStyleObject>>
 
@@ -121,7 +121,7 @@ export const Card = defineSlotRecipe({
       inverse: {
         root: {
           bg: 'surface.inverse',
-          color: 'white',
+          color: 'surface.inverse.fg',
         },
       },
       // A notice outlined in the brand colour, such as a paused process.
