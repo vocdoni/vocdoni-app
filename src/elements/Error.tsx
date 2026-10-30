@@ -45,7 +45,7 @@ export const ErrorView = ({ isNotFound = false, onReturnHome, returnHomeHref, re
   return (
     <Flex direction='column' align='center' justify='center' textAlign='center' gap={3} minH='30vh' px={4}>
       <Icon as={ErrorIcon} boxSize='icon.xl' color='fg.muted' />
-      <PageTitle textStyle='lg'>{t('error.crash_title', { defaultValue: 'Something went wrong' })}</PageTitle>
+      <PageTitle>{t('error.crash_title', { defaultValue: 'Something went wrong' })}</PageTitle>
       <PageSubtitle m={0} maxW='45ch'>
         {t('error.crash_description', {
           defaultValue: 'Reload the page or go back to the dashboard.',

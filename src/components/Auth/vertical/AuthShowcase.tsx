@@ -103,7 +103,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
             as='blockquote'
             m={0}
             fontWeight='bold'
-            lineHeight='1.4'
+            lineHeight='moderate'
             letterSpacing='quote.tight'
             color='auth.showcase.fg'
             fontSize={isLongQuote ? { md: 'md', lg: 'xl' } : { md: 'lg', lg: '2xl' }}
@@ -138,7 +138,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
               <Text textStyle='body-sm' fontWeight='bolder' color='auth.showcase.fg'>
                 {testimonial.author}
               </Text>
-              <Text fontSize='xs' lineHeight='1.35' color='auth.showcase.fg.muted'>
+              <Text fontSize='xs' lineHeight='shorter' color='auth.showcase.fg.muted'>
                 {testimonial.position} · {testimonial.company}
               </Text>
             </Box>

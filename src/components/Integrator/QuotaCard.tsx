@@ -32,7 +32,7 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
         {label}
       </Text>
       <HStack align='baseline' gap={1}>
-        <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
+        <Text fontSize='3xl' fontWeight='bold' lineHeight='none'>
           {used}
         </Text>
         <Text textStyle='body' color='fg.muted'>

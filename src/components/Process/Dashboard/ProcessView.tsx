@@ -68,7 +68,7 @@ import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider }
 import {
   DashboardBox,
   DashboardContents,
-  Heading,
+  SectionTitle,
   Sidebar,
   SidebarContents,
   SidebarSubtitle,
@@ -235,10 +235,10 @@ const ProcessViewContent = () => {
             justifyContent={'space-between'}
             gap={4}
           >
-            <Heading>
+            <SectionTitle>
               <Icon as={CalendarIcon} />
               <Trans i18nKey='calendar.title'>Schedule</Trans>
-            </Heading>
+            </SectionTitle>
             <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
               <SettingsField
                 icon={CalendarIcon}
@@ -278,10 +278,10 @@ const ProcessViewContent = () => {
 
           <DashboardBox>
             <Box>
-              <Heading>
+              <SectionTitle>
                 <Icon as={ExternalLinkIcon} />
                 <Trans i18nKey='voting_link.title'>Voting Link</Trans>
-              </Heading>
+              </SectionTitle>
               <Text color='fg.muted' textStyle='body-sm'>
                 <Trans i18nKey='voting_link.description'>
                   Share this link with your voters to participate in the voting process
@@ -304,10 +304,10 @@ const ProcessViewContent = () => {
 
           {/* Questions & Results */}
           <DashboardBox>
-            <Heading alignContent='center' justifyContent='space-between'>
+            <SectionTitle alignContent='center' justifyContent='space-between'>
               <Trans i18nKey='questions_and_results'>Questions and results</Trans>
               <ResultsStateBadge />
-            </Heading>
+            </SectionTitle>
             <TabsRoot
               fitted
               value={tabValue}

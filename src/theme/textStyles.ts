@@ -4,13 +4,16 @@ import { defineTextStyles } from '@chakra-ui/react'
 // Roles hold typography only: colour stays a separate prop, because a textStyle and a prop setting the
 // same property resolve in prop order (and chakra memoizes that per sorted key set), so never pass both.
 export const textStyles = defineTextStyles({
-  body: { value: { fontSize: 'md', lineHeight: 1.5 } },
-  'body-sm': { value: { fontSize: 'sm', lineHeight: 1.5 } },
-  caption: { value: { fontSize: 'xs', lineHeight: 1.5 } },
+  body: { value: { fontSize: 'md', lineHeight: 'moderate' } },
+  'body-sm': { value: { fontSize: 'sm', lineHeight: 'moderate' } },
+  caption: { value: { fontSize: 'xs', lineHeight: 'moderate' } },
   // Small uppercase labels over a figure or a group.
-  eyebrow: { value: { fontSize: 'xs', letterSpacing: 'wide', textTransform: 'uppercase' } },
-  'page-title': { value: { fontSize: '2xl', lineHeight: '2rem', fontWeight: 'bold' } },
-  'section-title': { value: { fontSize: '2xl', lineHeight: 1.3, fontWeight: 'bold' } },
-  // The public process name.
-  display: { value: { fontSize: '4xl', lineHeight: 1.3, fontWeight: 'bold' } },
+  eyebrow: { value: { fontSize: 'xs', lineHeight: 'moderate', letterSpacing: 'wide', textTransform: 'uppercase' } },
+  'page-title': { value: { fontSize: '2xl', lineHeight: 'shorter', fontWeight: 'bold' } },
+  'section-title': { value: { fontSize: '2xl', lineHeight: 'shorter', fontWeight: 'bold' } },
+  // Public process and organisation names.
+  display: { value: { fontSize: { base: '3xl', md: '4xl' }, lineHeight: 'shorter', fontWeight: 'bold' } },
 })
+
+// Heading sizes of user-written content by Markdown level, shared by the editor and the rendered Markdown.
+export const proseHeadingSizes = { h1: '2xl', h2: 'xl', h3: 'lg', h4: 'md', h5: 'md', h6: 'md' } as const

@@ -28,7 +28,7 @@ export const ElectionTitle = defineRecipe({
     fontWeight: 'bold',
     fontSize: 'xl',
     textAlign: 'center',
-    lineHeight: 1.3,
+    lineHeight: 'shorter',
     mb: 3,
   },
   variants: {
@@ -40,8 +40,9 @@ export const ElectionTitle = defineRecipe({
         textAlign: 'left',
         mb: 5,
       },
-      // Process page of the organization dashboard.
+      // Process page of the organization dashboard: the page title.
       page: {
+        textStyle: 'page-title',
         textAlign: 'start',
       },
       // Shared-census process cards.
@@ -70,7 +71,7 @@ export const ElectionQuestions = defineSlotRecipe({
     title: {
       display: 'block',
       textAlign: 'start',
-      lineHeight: 1.3,
+      lineHeight: 'shorter',
       fontSize: 'lg',
       fontWeight: 'semibold',
       mb: 6,

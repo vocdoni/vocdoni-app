@@ -127,7 +127,7 @@ const ParticipationCard = () => {
       <Card.Body gap={6}>
         <Flex justify='space-between' align='start' gap={4} wrap='wrap'>
           <Box flex='1' minW='0'>
-            <Heading as='h1' size='2xl' lineHeight={1.1}>
+            <Heading as='h1' textStyle='display'>
               {getElectionTitle(election)}
             </Heading>
           </Box>

@@ -2,7 +2,8 @@ import { Alert, ButtonGroup, Flex, IconButton, SimpleGrid, Text } from '@chakra-
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeftIcon, ChevronRightIcon, DocsIcon } from '~theme/icons'
-import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { DocsCard } from '~components/Integrator/DocsCard'
 import { ManagedOrganizationsTable } from '~components/Integrator/ManagedOrganizationsTable'
 import { EmptyState } from '~components/ui/EmptyState'
@@ -25,13 +26,12 @@ const IntegratorManagedOrganizations = () => {
 
   return (
     <DashboardContents>
-      <DashboardCardHeader
-        titleAs='h1'
-        title={t('integrators.managed.title', { defaultValue: 'Managed organizations' })}
-        subtitle={t('integrators.managed.subtitle', {
+      <PageTitle>{t('integrators.managed.title', { defaultValue: 'Managed organizations' })}</PageTitle>
+      <PageSubtitle>
+        {t('integrators.managed.subtitle', {
           defaultValue: 'Organizations you manage on behalf of your customers.',
         })}
-      />
+      </PageSubtitle>
 
       {isLoading ? (
         <ListLoader />

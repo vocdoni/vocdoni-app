@@ -125,13 +125,13 @@ const GroupsInfo = () => {
           <Text textStyle='body' fontWeight='bold'>
             {t('groups_board.info.title', { defaultValue: 'About Groups' })}
           </Text>
-          <Text fontSize='sm' lineHeight='16px'>
+          <Text fontSize='sm' lineHeight='shorter'>
             {t('groups_board.info.description', {
               defaultValue:
                 'Groups are collections of members within your memberbase that can be used to create censuses for voting processes.',
             })}
           </Text>
-          <Text fontSize='sm' lineHeight='16px'>
+          <Text fontSize='sm' lineHeight='shorter'>
             {t('groups_board.info.extra', {
               defaultValue:
                 'When you initiate a vote, a census is created as a time-specific snapshot of the group. Any subsequent changes to the group will not affect existing censuses, but will be reflected in future voting processes.',

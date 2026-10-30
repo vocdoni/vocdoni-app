@@ -17,7 +17,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
           <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
             <Image src={vcdLogo} w='125px' mb={3} _dark={{ filter: 'invert(100%)' }} alt={t('vocdoni_logo')} />
           </Link>
-          <Text fontSize='md' lineHeight={1.75}>
+          <Text fontSize='md' lineHeight='tall'>
             {t('footer.footer_subtitle')}
           </Text>
         </Box>
@@ -37,7 +37,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               gap={{ base: '0px', xl: 24 }}
               w='full'
             >
-              <Text fontWeight='bold' fontSize='lg' lineHeight={1.15} mb={4} display='none'>
+              <Text fontWeight='bold' fontSize='lg' lineHeight='shorter' mb={4} display='none'>
                 {t('footer.company')}
               </Text>
               <Link

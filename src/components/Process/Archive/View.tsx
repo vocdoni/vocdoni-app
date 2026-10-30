@@ -58,7 +58,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
             <Badge>{t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })}</Badge>
           )}
         </HStack>
-        <Heading as='h1' size='2xl'>
+        <Heading as='h1' textStyle='display'>
           {title}
         </Heading>
         <Text color='fg.muted' textStyle='body-sm' mt={2}>

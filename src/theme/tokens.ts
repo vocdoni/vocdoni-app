@@ -28,10 +28,18 @@ const fontWeights = defineTokens.fontWeights({
   black: weight(500),
 })
 
+// The app's four line heights: one-line figures, titles, running text, long reads. Chakra's other
+// steps (`short`, `taller`) stay for its own recipes.
+const lineHeights = defineTokens.lineHeights({
+  none: { value: 1 },
+  shorter: { value: 1.25 },
+  moderate: { value: 1.5 },
+  tall: { value: 1.625 },
+})
+
 // Display-text tracking that falls between Chakra's letterSpacings steps.
 const letterSpacings = defineTokens.letterSpacings({
   heading: {
-    tight: { value: '-0.6px' },
     snug: { value: '-0.4px' },
   },
   quote: {
@@ -110,6 +118,7 @@ const tokens = defineTokens({
   zIndex,
   fonts,
   fontWeights,
+  lineHeights,
   letterSpacings,
 })
 

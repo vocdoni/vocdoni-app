@@ -3,6 +3,7 @@ import {
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
+  Heading,
   HStack,
   Icon,
   Input,
@@ -163,9 +164,9 @@ const AccountForm = ({ profile }: { profile?: User }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Text fontSize={'2xl'} fontWeight='bold' mb={1.5}>
+      <Heading as='h2' textStyle='section-title' mb={1.5}>
         {t('account.title', { defaultValue: 'Account Information' })}
-      </Text>
+      </Heading>
       <Text textStyle='body-sm' color='fg.muted' mb={6}>
         {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
       </Text>

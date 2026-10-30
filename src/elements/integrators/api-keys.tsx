@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import ApiKeysPanel from '~components/Integrator/ApiKeysPanel'
 
 /**
@@ -10,13 +11,12 @@ const IntegratorApiKeys = () => {
 
   return (
     <DashboardContents>
-      <DashboardCardHeader
-        titleAs='h1'
-        title={t('integrators.api_keys.title', { defaultValue: 'API keys' })}
-        subtitle={t('integrators.api_keys.subtitle', {
+      <PageTitle>{t('integrators.api_keys.title', { defaultValue: 'API keys' })}</PageTitle>
+      <PageSubtitle>
+        {t('integrators.api_keys.subtitle', {
           defaultValue: 'Create and manage API keys to access the API programmatically.',
         })}
-      />
+      </PageSubtitle>
       <ApiKeysPanel />
     </DashboardContents>
   )
