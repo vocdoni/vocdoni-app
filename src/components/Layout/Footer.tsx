@@ -12,10 +12,16 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
 
   return (
     <>
-      <Flex pt={6} flexDirection={{ base: 'column', xl: 'row' }} alignItems='start' pb={{ base: 12, xl: 6 }} gap={6}>
+      <Flex
+        pt='6'
+        flexDirection={{ base: 'column', xl: 'row' }}
+        alignItems='start'
+        pb={{ base: '12', xl: '6' }}
+        gap='6'
+      >
         <Box flex='1 1 33%'>
           <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
-            <Image src={vcdLogo} w='125px' mb={3} _dark={{ filter: 'invert(100%)' }} alt={t('vocdoni_logo')} />
+            <Image src={vcdLogo} w='[125px]' mb='3' _dark={{ filter: 'invert(100%)' }} alt={t('vocdoni_logo')} />
           </Link>
           <Text fontSize='md' lineHeight='tall'>
             {t('footer.footer_subtitle')}
@@ -26,18 +32,18 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             flex='1 1 67%'
             flexDirection={{ base: 'column', sm: 'row' }}
             justifyContent={{ sm: 'space-between', lg: 'space-between' }}
-            gap={{ base: 8, sm: 0 }}
-            mt={1}
-            ml={{ xl: 10 }}
+            gap={{ base: '8', sm: '[0]' }}
+            mt='1'
+            ml={{ xl: '10' }}
             w='full'
           >
             <Flex
               flexDirection={{ base: 'column', sm: 'row' }}
               justifyContent='space-between'
-              gap={{ base: '0px', xl: 24 }}
+              gap={{ base: '[0px]', xl: '24' }}
               w='full'
             >
-              <Text fontWeight='bold' fontSize='lg' lineHeight='short' mb={4} display='none'>
+              <Text fontWeight='bold' fontSize='lg' lineHeight='short' mb='4' display='none'>
                 {t('footer.company')}
               </Text>
               <Link
@@ -73,13 +79,13 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
       </Flex>
       <Flex
         width='full'
-        m='0 auto'
+        m='[0 auto]'
         flexDirection={{ base: 'column', md: 'row' }}
-        gap={{ base: 5, md: 2.5 }}
+        gap={{ base: '5', md: '2.5' }}
         justifyContent='space-between'
         alignItems='center'
-        py={3}
-        borderTop='1px solid'
+        py='3'
+        borderTop='sm'
         borderTopColor='border'
       >
         <Text as='span' textAlign='center'>
@@ -91,7 +97,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             }}
           />
         </Text>
-        <Flex gap={2.5}>
+        <Flex gap='2.5'>
           <Link
             variant='icon-button'
             href='https://twitter.com/vocdoni'

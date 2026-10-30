@@ -87,8 +87,8 @@ const VerifyForm = ({
 
   if (autoSubmit && codeString && !isVerifyError) {
     return (
-      <Box height={'100px'}>
-        <PageLoader minHeight={1} />
+      <Box height='[100px]'>
+        <PageLoader minHeight='1' />
       </Box>
     )
   }
@@ -183,7 +183,7 @@ export const VerificationPending = ({
 
   return (
     <>
-      <Flex flexDirection='column' gap={4}>
+      <Flex flexDirection='column' gap='4'>
         <Text fontWeight='bold' textStyle='body'>
           <Trans i18nKey='verify.sent_to_email' values={{ email }}>
             Email sent to {{ email }}
@@ -206,7 +206,7 @@ export const VerificationPending = ({
       </Flex>
 
       {!code && (
-        <Button variant={'outline'} loading={isResendPending} onClick={resendMail} mt={6} w='full'>
+        <Button variant={'outline'} loading={isResendPending} onClick={resendMail} mt='6' w='full'>
           <Trans i18nKey={'verify.resend_confirmation_mail'}>Resend Email</Trans>
         </Button>
       )}

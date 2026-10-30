@@ -107,14 +107,14 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
   }, [page, error, finished, organization?.address])
 
   return (
-    <Box mb={44} mx='auto'>
+    <Box mb='44' mx='[auto]'>
       <Header />
 
-      <Text as='h2' fontWeight='bold' mb={4} textAlign={{ base: 'center', md: 'start' }}>
+      <Text as='h2' fontWeight='bold' mb='4' textAlign={{ base: 'center', md: 'start' }}>
         {t('organization.elections')}
       </Text>
 
-      <Grid templateColumns='repeat(auto-fill, minmax(350px, 1fr))' columnGap={{ base: 3, lg: 4 }} rowGap={12}>
+      <Grid templateColumns='repeat(auto-fill, minmax(350px, 1fr))' columnGap={{ base: '3', lg: '4' }} rowGap='12'>
         {electionsList?.map((election, idx) => (
           <GridItem key={idx} display='flex' justifyContent='center' alignItems='start'>
             <ProcessCardDetailed election={election} />
@@ -124,7 +124,7 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
         {loaded && <div ref={setRefObserver}></div>}
       </Grid>
 
-      <Flex justifyContent='center' my={4}>
+      <Flex justifyContent='center' my='4'>
         {loading && <ListLoader />}
 
         {loaded && !electionsList.length && <NoElections />}

@@ -26,7 +26,7 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
 
   return (
     <Card.Root variant='section'>
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         <Text fontSize='lg' fontWeight='bold'>
           {t('order_summary', { defaultValue: 'Order Summary' })}
         </Text>

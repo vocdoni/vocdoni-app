@@ -52,7 +52,7 @@ const NotIntegratorNotice = () => {
   }
 
   return (
-    <DashboardContents gap={5} alignItems='flex-start'>
+    <DashboardContents gap='5' alignItems='flex-start'>
       <Alert.Root status='info' w='full'>
         <Alert.Indicator />
         <Alert.Content>
@@ -93,19 +93,19 @@ const NotIntegratorNotice = () => {
         onConfirm={onCreate}
       >
         {hasMultipleOrgs && (
-          <Stack gap={2} mt={4}>
+          <Stack gap='2' mt='4'>
             <Text textStyle='body-sm' fontWeight='bold'>
               {t('integrators.create_account.switch_instead', {
                 defaultValue: 'Or switch to an existing organization',
               })}
             </Text>
-            <Stack gap={1} maxH='40' overflowY='auto'>
+            <Stack gap='1' maxH='40' overflowY='auto'>
               {organizations.map(({ organization, isIntegrator }) => (
                 <Button
                   key={organization.address}
                   variant='outline'
                   justifyContent='flex-start'
-                  gap={2}
+                  gap='2'
                   disabled={provision.isPending}
                   onClick={() => selectOrganization(organization, isIntegrator)}
                 >
@@ -114,7 +114,7 @@ const NotIntegratorNotice = () => {
                     {names[organization.address] || organization.address}
                   </Text>
                   {isIntegrator && (
-                    <TagRoot ml='auto !important'>
+                    <TagRoot ml='[auto !important]'>
                       {/* "API" is a universal acronym, not translated in any locale */}
                       <TagLabel>API</TagLabel>
                     </TagRoot>

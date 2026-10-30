@@ -42,7 +42,7 @@ const SimpleQuestionEditor = ({
   const cardStyles = choiceRecipe({ context: 'plain', layout: 'list' })
 
   return (
-    <VStack align='stretch' gap={2}>
+    <VStack align='stretch' gap='2'>
       {questionOptions.map((field, optionIndex) => (
         <SortableOption
           key={field.id}
@@ -65,7 +65,7 @@ const SimpleQuestionEditor = ({
         onClick={() => append({ option: '' })}
         alignSelf='flex-start'
       >
-        <HStack gap={2}>
+        <HStack gap='2'>
           <Icon as={AddIcon} />
           <Text as='span'>
             <Trans i18nKey='process_create.new_option'>Add option</Trans>
@@ -108,7 +108,7 @@ const SortableOption = ({
         )}
 
         {questionType === SelectorTypes.Single ? (
-          <Box data-choice-control boxSize={4} border='1px solid' borderColor='border.emphasized' borderRadius='full' />
+          <Box data-choice-control boxSize={4} border='sm' borderColor='border.emphasized' borderRadius='full' />
         ) : (
           <Checkbox.Root checked={false} readOnly tabIndex={-1}>
             <Checkbox.HiddenInput />

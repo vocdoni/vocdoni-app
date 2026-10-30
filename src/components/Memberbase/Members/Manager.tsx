@@ -316,7 +316,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
               </Text>
             </Drawer.Header>
             <Drawer.Body>
-              <Stack as='form' id='member-form' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
+              <Stack as='form' id='member-form' gap='4' onSubmit={methods.handleSubmit(onSubmit)}>
                 {columns.map((col) => {
                   const isPhone = col.id === 'phone'
                   const isPassword = col.id === 'password'
@@ -391,14 +391,14 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                           })}
                         </FormHelperText>
                       ) : null}
-                      <FormErrorMessage mt={2}>
+                      <FormErrorMessage mt='2'>
                         {methods.formState.errors[col.id]?.message?.toString() || 'Error performing the operation'}
                       </FormErrorMessage>
                     </FormControl>
                   )
                 })}
               </Stack>
-              <Flex justify='flex-end' gap={2} mt={4}>
+              <Flex justify='flex-end' gap='2' mt='4'>
                 <Button variant='outline' onClick={handleClose}>
                   {t('memberbase.form.cancel', { defaultValue: 'Cancel' })}
                 </Button>

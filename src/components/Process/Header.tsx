@@ -20,8 +20,8 @@ const ProcessHeader = () => {
   return (
     <>
       {election?.header && (
-        <Box w='full' mx='auto' my={8} overflow='hidden'>
-          <AspectRatio ratio={3 / 1} maxH='300px'>
+        <Box w='full' mx='[auto]' my='8' overflow='hidden'>
+          <AspectRatio ratio={3 / 1} maxH='[300px]'>
             <Image
               src={election?.header}
               alt={
@@ -42,7 +42,7 @@ const ProcessHeader = () => {
       )}
       <Flex flexDir='column'>
         <ElectionTitle size='hero' />
-        <Flex gap={2} flexDirection={{ base: 'column', xl: 'row' }} alignItems={{ base: 'start', xl: 'center' }} mb={4}>
+        <Flex gap='2' flexDirection={{ base: 'column', xl: 'row' }} alignItems={{ base: 'start', xl: 'center' }} mb='4'>
           <ElectionStatusBadge whiteSpace='nowrap' />
           <ElectionSchedule textAlign='left' display='block' fontSize='sm' lineHeight='moderate' />
         </Flex>

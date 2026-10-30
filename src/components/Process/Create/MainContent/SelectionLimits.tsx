@@ -35,8 +35,8 @@ const SelectionLimits = ({ index }) => {
   if (questionType === SelectorTypes.Single) return null
 
   return (
-    <DashboardSection p={4} mb={4}>
-      <Text fontWeight='medium' mb={1}>
+    <DashboardSection p='4' mb='4'>
+      <Text fontWeight='medium' mb='1'>
         <Trans i18nKey='process.create.selectionLimits.title'>Selection limits:</Trans>
       </Text>
       <Text as='span' textStyle='body-sm'>

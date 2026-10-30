@@ -48,26 +48,26 @@ const Logo = ({ organization }: LogoProps) => {
               ? t('alt.images.org_logo', { defaultValue: '{{org}} logo', org: organization.name })
               : t('alt.images.organization_logo', { defaultValue: 'Organization logo' })
           }
-          h={{ base: 8, lg: 10 }}
-          maxW={{ base: '140px', lg: '180px' }}
+          h={{ base: '8', lg: '10' }}
+          maxW={{ base: '[140px]', lg: '[180px]' }}
           objectFit='contain'
           // Many organisation logos are dark artwork on a transparent background and vanish on the
           // dark header, so dark mode puts them on the same light tile the auth screens use.
           _dark={{
             bgColor: 'auth.logo.tile.bg',
-            border: '1px solid',
+            border: 'sm',
             borderColor: 'auth.logo.tile.border',
             borderRadius: 'md',
-            p: 1,
+            p: '1',
           }}
           onError={() => setFailedSrc(src)}
         />
       ) : (
         <>
-          <Flex alignItems='center' gap={2} display={{ base: 'none', lg: 'flex' }} _dark={{ filter: 'invert(100%)' }}>
+          <Flex alignItems='center' gap='2' display={{ base: 'none', lg: 'flex' }} _dark={{ filter: 'invert(100%)' }}>
             <LogoImage />
           </Flex>
-          <Flex alignItems='center' gap={2} display={{ base: 'flex', lg: 'none' }} _dark={{ filter: 'invert(100%)' }}>
+          <Flex alignItems='center' gap='2' display={{ base: 'flex', lg: 'none' }} _dark={{ filter: 'invert(100%)' }}>
             <LogoMbl />
           </Flex>
         </>
@@ -80,12 +80,15 @@ interface VocdoniLogoProps extends HTMLChakraProps<'svg'> {
   minimal?: boolean
 }
 
+// A literal `color` next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
+const svgStyle: HTMLChakraProps<'svg'> = { fill: '[none]', color: 'logo.fg', xmlns: 'http://www.w3.org/2000/svg' }
+
 export const VocdoniLogo = ({ minimal = false, ...props }: VocdoniLogoProps) => {
   // Adjust viewBox depending on whether minimal is true or false
   const viewBox = minimal ? '0 0 251.37 215' : '0 0 1000 215'
 
   return (
-    <chakra.svg viewBox={viewBox} fill='none' color='logo.fg' xmlns='http://www.w3.org/2000/svg' {...props}>
+    <chakra.svg viewBox={viewBox} {...svgStyle} {...props}>
       <path
         d='M188.921 116.288L126.071 152.578L63.2306 116.298L0.390625 80.0079V142.858L63.2306 179.138L126.071 215.418L188.911 179.138L251.761 142.858V80.0079L188.921 116.288Z'
         fill='currentColor'

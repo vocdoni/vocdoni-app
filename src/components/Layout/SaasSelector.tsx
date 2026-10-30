@@ -65,7 +65,7 @@ export const SelectCustom = ({
   return (
     <FormControl invalid={!!errors[name]} required={required}>
       {label && (
-        <FormLabel htmlFor={name} display='flex' ms={1} fontSize='sm' mb={2}>
+        <FormLabel htmlFor={name} display='flex' ms='1' fontSize='sm' mb='2'>
           {label}
         </FormLabel>
       )}
@@ -108,7 +108,7 @@ export const SelectCustom = ({
         )}
       />
       {helper && <FormHelperText>{helper}</FormHelperText>}
-      <FormErrorMessage mt={2}>
+      <FormErrorMessage mt='2'>
         {getErrorMessage(errors[name]) || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
       </FormErrorMessage>
     </FormControl>
@@ -240,7 +240,7 @@ export const createRoleDisplay = (type: 'Option' | 'SingleValue') => {
 
     return (
       <BaseComponent {...props}>
-        <Flex align='center' gap={2} alignItems='center'>
+        <Flex align='center' gap='2' alignItems='center'>
           <Box as='span' role='img'>
             {icon}
           </Box>

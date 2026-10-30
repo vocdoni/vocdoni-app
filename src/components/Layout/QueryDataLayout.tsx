@@ -11,7 +11,7 @@ interface IUserQueryLayout {
 
 const QueryDataLayout = ({ loading, isEmpty, isError, error, children }: IUserQueryLayout & PropsWithChildren) => {
   if (loading) {
-    return <PageLoader minHeight={1} />
+    return <PageLoader minHeight='1' />
   }
   if (isError) {
     return <ErrorComponent error={error} />

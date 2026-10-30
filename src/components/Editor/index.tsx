@@ -82,7 +82,7 @@ const MarkdownEditor = (props: EditorProps) => {
                 aria-multiline='true'
                 overflow='auto'
                 role='textbox'
-                minH='30px'
+                minH='[30px]'
                 w='full'
                 h='full'
                 css={[textareaStyles, editor]}

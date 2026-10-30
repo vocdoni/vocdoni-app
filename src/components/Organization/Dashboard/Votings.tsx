@@ -54,7 +54,7 @@ const VotingsList = ({ data, status, error }: VotingsListProps) => {
 
   // An empty list shows NoElections / NoResultsFiltering below; only a failure gets an alert.
   return (
-    <Flex flexDirection='column' flexGrow={1} gap={5} height='full'>
+    <Flex flexDirection='column' flexGrow={1} gap='5' height='full'>
       <ListStateAlert
         show={hasError}
         status='error'

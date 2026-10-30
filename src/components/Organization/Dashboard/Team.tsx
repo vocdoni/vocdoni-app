@@ -9,7 +9,7 @@ const OrganizationTeam = () => {
   const { t } = useTranslation()
   return (
     <DashboardBox size='md'>
-      <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
+      <Flex direction={{ base: 'column', md: 'row' }} gap='4'>
         <SectionHeader>
           <SectionHeading>{t('organization_settings.team.title', { defaultValue: 'Team members' })}</SectionHeading>
           <SectionSubHeading>
@@ -18,7 +18,7 @@ const OrganizationTeam = () => {
             })}
           </SectionSubHeading>
         </SectionHeader>
-        <InviteToTeamModal leftIcon={<Icon mr={2} as={AddUserIcon} />} whiteSpace='normal'>
+        <InviteToTeamModal leftIcon={<Icon mr='2' as={AddUserIcon} />} whiteSpace='normal'>
           {t('organization_settings.team.add_team_member', { defaultValue: 'Add team member' })}
         </InviteToTeamModal>
       </Flex>

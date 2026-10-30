@@ -137,7 +137,7 @@ export const BasicConfig = () => {
   }
 
   return (
-    <VStack align='stretch' gap={4}>
+    <VStack align='stretch' gap='4'>
       <Switch.Root checked={autoStart} onCheckedChange={(details) => handleAutoStartChange(details.checked)}>
         <Switch.HiddenInput {...register('autoStart')} />
         <Switch.Control>
@@ -150,7 +150,7 @@ export const BasicConfig = () => {
 
       {!autoStart && (
         <>
-          <FormControl invalid={!!errors.startDate || !!errors.startTime} mb={2}>
+          <FormControl invalid={!!errors.startDate || !!errors.startTime} mb='2'>
             <FormLabel htmlFor='startDate'>
               <Trans i18nKey='process_create.start_datetime'>Start date and time</Trans>
             </FormLabel>
@@ -186,11 +186,11 @@ export const BasicConfig = () => {
       )}
 
       {/* End date and time */}
-      <FormControl invalid={!!errors.endDate || !!errors.endTime} mb={2}>
+      <FormControl invalid={!!errors.endDate || !!errors.endTime} mb='2'>
         <FormLabel htmlFor='endDate'>
           <Trans i18nKey='process_create.end_datetime'>End date and time</Trans>
         </FormLabel>
-        <HStack gap={4} align='start'>
+        <HStack gap='4' align='start'>
           <Box flex='1'>
             <Input
               id='endDate'

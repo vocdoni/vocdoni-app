@@ -30,8 +30,8 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
   return (
     <Card.Root variant='outline' size='sm'>
       <Card.Body>
-        <Flex justify='space-between' align='center' gap={4} flexWrap='wrap'>
-          <Box flex='1' minW={0}>
+        <Flex justify='space-between' align='center' gap='4' flexWrap='wrap'>
+          <Box flex='1' minW='[0]'>
             <Link asChild emphasis='medium'>
               <RouterAwareLink to={getPublicProcessPath({ id: election.id, language: publicLanguage })}>
                 <Text truncate>{title}</Text>
@@ -44,7 +44,7 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
               })}
             </Text>
           </Box>
-          <Flex align='center' gap={3} flexShrink={0}>
+          <Flex align='center' gap='3' flexShrink={0}>
             <StatusBadge tone={election.status === 'ONGOING' ? 'success' : 'neutral'}>{election.status}</StatusBadge>
             <Text textStyle='body-sm' whiteSpace='nowrap'>
               {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: election.voteCount })}
@@ -102,12 +102,12 @@ export const ArchiveOrganizationView = ({
       display='flex'
       flexDirection='column'
       alignItems='stretch'
-      gap={6}
-      px={4}
-      py={8}
+      gap='6'
+      px='4'
+      py='8'
       w='full'
     >
-      <Flex align='center' gap={4}>
+      <Flex align='center' gap='4'>
         <Avatar.Root size='xl'>
           {organization.account?.avatar && <Avatar.Image src={organization.account.avatar} alt={name} />}
           <Avatar.Fallback name={name} />
@@ -128,7 +128,7 @@ export const ArchiveOrganizationView = ({
         </Box>
       )}
 
-      <VStack align='stretch' gap={3}>
+      <VStack align='stretch' gap='3'>
         <Heading size='md'>{t('organization.elections_list', { defaultValue: 'Voting processes' })}</Heading>
         {elections.length === 0 && (
           <EmptyState

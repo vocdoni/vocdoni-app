@@ -28,7 +28,7 @@ export const OrganizationsUnavailable = () => {
 
   return (
     <Flex flexDirection='column'>
-      <Card.Root variant='plain' minH='full' maxW='card.empty' mx='auto'>
+      <Card.Root variant='plain' minH='full' maxW='card.empty' mx='[auto]'>
         <Card.Body>
           <EmptyState
             icon={RefreshIcon}
@@ -39,7 +39,7 @@ export const OrganizationsUnavailable = () => {
               </Trans>
             }
           >
-            <Button mt={4} onClick={retry} loading={isRetrying}>
+            <Button mt='4' onClick={retry} loading={isRetrying}>
               <Trans i18nKey='organization.unavailable_retry'>Try again</Trans>
             </Button>
           </EmptyState>

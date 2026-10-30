@@ -27,6 +27,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { InlineLoader } from '~components/ui/Loader'
 import { statusPalette } from '~theme/status'
+import { chakraProps } from '~utils/chakraProps'
 import { dropRejectionMessage, useLatestDrop } from './dropzone'
 
 export type UploaderProps = {
@@ -163,7 +164,7 @@ export const AvatarUploader = (props: FormControlProps) => {
   return (
     <FormControl invalid={!!error} {...props}>
       <FormLabel>{t('avatar.label', { defaultValue: 'Logo/Avatar' })}</FormLabel>
-      <Box borderRadius='full' px={6}>
+      <Box borderRadius='full' px='6'>
         {avatar ? (
           <Box position='relative' borderRadius='full' w='32' h='32'>
             <AvatarRoot w='full' h='full'>
@@ -172,17 +173,17 @@ export const AvatarUploader = (props: FormControlProps) => {
             </AvatarRoot>
             <Flex
               position='absolute'
-              top={0}
-              left={0}
+              top='[0]'
+              left='[0]'
               w='full'
               h='full'
               align='center'
               justify='center'
               bg='scrim'
-              opacity={0}
-              _hover={{ opacity: 1 }}
-              _focusWithin={{ opacity: 1 }}
-              transition='opacity {durations.moderate}'
+              opacity='[0]'
+              _hover={{ opacity: '[1]' }}
+              _focusWithin={{ opacity: '[1]' }}
+              transition='[opacity {durations.moderate}]'
               borderRadius='full'
             >
               <IconButton
@@ -196,16 +197,22 @@ export const AvatarUploader = (props: FormControlProps) => {
             </Flex>
           </Box>
         ) : (
-          <Flex flexDirection='column' justifyContent='center' alignItems='center' gap={2} {...getRootProps()}>
+          <Flex
+            flexDirection='column'
+            justifyContent='center'
+            alignItems='center'
+            gap='2'
+            {...chakraProps(getRootProps())}
+          >
             <Box
               w='32'
               h='32'
               backgroundColor='bg.emphasized'
-              cursor='pointer'
+              cursor='button'
               borderRadius='full'
-              border='2px solid'
+              border='md'
               borderColor={isDragActive ? 'state.dragover.border' : 'transparent'}
-              transition='all {durations.moderate} ease-in-out'
+              transition='[all {durations.moderate} ease-in-out]'
               display='flex'
               alignItems='center'
               justifyContent='center'
@@ -225,7 +232,7 @@ export const AvatarUploader = (props: FormControlProps) => {
   )
 }
 
-export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }: ImageUploaderProps) => {
+export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '[150px]' }: ImageUploaderProps) => {
   const { t } = useTranslation()
   const { watch } = useFormContext()
   const { getRootProps, getInputProps, isDragActive, isPending, error } = useImageDropUpload({
@@ -240,16 +247,16 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
 
   return (
     <FormControl invalid={!!error}>
-      <Flex direction='column' gap={2} align='center' w='full'>
+      <Flex direction='column' gap='2' align='center' w='full'>
         {value ? (
           <Flex
-            {...getRootProps()}
+            {...chakraProps(getRootProps())}
             w={w}
             h={h}
             position='relative'
             overflow='hidden'
             borderTopRadius={borderTopRadius}
-            cursor='pointer'
+            cursor='button'
           >
             <input {...getInputProps()} />
             <Image
@@ -261,20 +268,20 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
             />
             {/* A new image dropped over the current one is uploading */}
             {isPending && (
-              <Flex position='absolute' inset={0} align='center' justify='center' bg='scrim.strong'>
+              <Flex position='absolute' inset='[0]' align='center' justify='center' bg='scrim.strong'>
                 <InlineLoader color='scrim.fg' />
               </Flex>
             )}
           </Flex>
         ) : (
           <Flex
-            {...getRootProps()}
+            {...chakraProps(getRootProps())}
             w={w}
             h={h}
             bg='surface.inverse'
             justify='center'
             align='center'
-            cursor='pointer'
+            cursor='button'
             borderTopRadius={borderTopRadius}
             borderColor={isDragActive ? 'state.dragover.border' : 'surface.inverse.border'}
           >
@@ -304,12 +311,12 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, loading, formats 
       variant='dropzone'
       justifyContent='center'
       alignItems='center'
-      gap={5}
+      gap='5'
       data-dragging={isDragActive || undefined}
-      {...getRootProps()}
+      {...chakraProps(getRootProps())}
     >
       <input {...getInputProps()} />
-      <Flex justifyContent='center' alignItems='center' p={2}>
+      <Flex justifyContent='center' alignItems='center' p='2'>
         <Icon color='fg.muted' as={UploadIcon} boxSize='icon.xl' />
       </Flex>
       <Box>

@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Image, Stack, Text } from '@chakra-ui/react'
+import { Box, Flex, type FlexProps, Heading, Image, Stack, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LogoTones } from '~theme/logoTones'
 import { TrustLogos } from './logos'
@@ -36,7 +36,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
   const { accent, copy, testimonial } = vertical
   const logo = testimonial ? TrustLogos[testimonial.logo] : undefined
   const isLongQuote = (testimonial?.quote.length ?? 0) > LongQuote
-  const surface = (logo && LogoTones[logo.id]) ?? `${accent}.900`
+  const surface = ((logo && LogoTones[logo.id]) ?? `${accent}.900`) as FlexProps['bgColor']
 
   return (
     <Flex
@@ -49,18 +49,18 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
       flexDirection='column'
       justifyContent='center'
       flex={{ md: '0 0 48%', lg: '0 0 54%' }}
-      minW={0}
-      p={{ md: 8, lg: 12 }}
+      minW='[0]'
+      p={{ md: '8', lg: '12' }}
       bgColor={surface}
     >
       {logo && (
         <Box
           position='absolute'
-          right={{ md: '-50px', lg: '-70px' }}
-          bottom={{ md: '-40px', lg: '-55px' }}
+          right={{ md: '[-50px]', lg: '[-70px]' }}
+          bottom={{ md: '[-40px]', lg: '[-55px]' }}
           boxSize={{ md: '305px', lg: '420px' }}
-          opacity={0.09}
-          backgroundImage={`url(${logo.src})`}
+          opacity='[0.09]'
+          backgroundImage={`[url(${logo.src})]`}
           backgroundSize='contain'
           backgroundRepeat='no-repeat'
           // Fades the mark out towards the type instead of painting a scrim over it, which would
@@ -81,13 +81,13 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
           size={{ md: 'md', lg: 'lg' }}
           fontWeight='bolder'
           letterSpacing='heading.snug'
-          maxW='20ch'
+          maxW='[20ch]'
           color='auth.showcase.fg'
         >
           {t('auth.showcase.fallback_headline', { defaultValue: 'Decisions your members can verify' })}
         </Heading>
       ) : (
-        <Stack as='figure' position='relative' m={0} gap={{ md: 5, lg: 7 }} minW={0}>
+        <Stack as='figure' position='relative' m='[0]' gap={{ md: '5', lg: '7' }} minW='[0]'>
           <Text
             textStyle='caption'
             fontWeight='bolder'
@@ -101,23 +101,23 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
               flex column in a stretch row, so a long one grows the card instead of overflowing. */}
           <Box
             as='blockquote'
-            m={0}
+            m='[0]'
             fontWeight='bold'
             lineHeight='moderate'
             letterSpacing='quote.tight'
             color='auth.showcase.fg'
             fontSize={isLongQuote ? { md: 'md', lg: 'xl' } : { md: 'lg', lg: '2xl' }}
-            maxW={isLongQuote ? '40ch' : '32ch'}
+            maxW={isLongQuote ? '[40ch]' : '[32ch]'}
           >
             {testimonial.quote}
           </Box>
           <Flex
             as='figcaption'
             align='center'
-            gap={3}
-            minW={0}
-            pt={{ md: 5, lg: 6 }}
-            borderTop='1px solid'
+            gap='3'
+            minW='[0]'
+            pt={{ md: '5', lg: '6' }}
+            borderTop='sm'
             borderColor='auth.showcase.rule'
           >
             {logo && (
@@ -131,10 +131,10 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
                 borderRadius='md'
                 objectFit='contain'
                 bgColor='auth.logo.tile.bg'
-                p='5px'
+                p='[5px]'
               />
             )}
-            <Box minW={0}>
+            <Box minW='[0]'>
               <Text textStyle='body-sm' fontWeight='bolder' color='auth.showcase.fg'>
                 {testimonial.author}
               </Text>
