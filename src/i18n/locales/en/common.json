@@ -142,7 +142,6 @@
   "color_mode_switcher": "Color mode switcher",
   "common": {
     "back": "Back",
-    "close_drawer": "Close drawer",
     "home": "Home",
     "retry": "Try again"
   },
@@ -1046,7 +1045,6 @@
       "add_to_group_success": "Members added to group successfully",
       "bulk_delete": "Delete",
       "cancel": "Cancel",
-      "close_drawer": "Close",
       "create_group": "Create group",
       "create_group_error": "Error creating group",
       "create_group_form_description": "Create a new group from selected members. This will organize them for future voting processes.",

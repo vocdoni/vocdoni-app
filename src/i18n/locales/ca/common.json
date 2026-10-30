@@ -144,7 +144,6 @@
   "color_mode_switcher": "Commutador de mode de color",
   "common": {
     "back": "Enrere",
-    "close_drawer": "Tanca el panell lateral",
     "home": "Inici",
     "retry": "Torna-ho a intentar"
   },
@@ -1063,7 +1062,6 @@
       "add_to_group_success": "Membres afegits al grup correctament",
       "bulk_delete": "Elimina",
       "cancel": "Cancel·la",
-      "close_drawer": "Tanca",
       "create_group": "Crea un grup",
       "create_group_error": "Error en crear el grup",
       "create_group_form_description": "Crea un nou grup a partir dels membres seleccionats. Això els organitzarà per a futurs processos de votació.",

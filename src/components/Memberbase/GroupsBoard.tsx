@@ -8,7 +8,7 @@ import {
   CheckboxControl,
   CheckboxHiddenInput,
   CheckboxRoot,
-  Drawer,
+  Stack,
   Flex,
   Heading,
   HStack,
@@ -29,7 +29,7 @@ import {
 } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
 import { PaginationProvider, usePagination } from '@vocdoni/react-components'
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { CalendarIcon, ClockIcon, DeleteIcon, EditIcon, MoreIcon, UsersIcon, ViewIcon, VoteIcon } from '~theme/icons'
@@ -157,15 +157,12 @@ const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
       description={t('groups_board.history.description', {
         defaultValue: 'View the history of this group and its associated censuses',
       })}
-      headerProps={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
-      closeLabel={t('drawer.close', 'Close drawer')}
-    >
-      <Flex justify='flex-end'>
+      footer={
         <Button variant='outline' onClick={onClose}>
           {t('groups_board.history.close', { defaultValue: 'Close' })}
         </Button>
-      </Flex>
-    </PanelDrawer>
+      }
+    />
   )
 }
 
@@ -178,6 +175,7 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const updateGroup = useUpdateGroup()
+  const formId = useId()
   const methods = useForm<EditGroupFormData>({
     defaultValues: {
       title: group.title,
@@ -237,13 +235,20 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
       description={t('group.actions.edit_description', {
         defaultValue: 'Update the name and description of this group.',
       })}
-      headerProps={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
-      closeLabel={t('drawer.close', 'Close drawer')}
-      rawBody
+      footer={
+        <>
+          <Button variant='outline' onClick={onClose}>
+            {t('actions.cancel', { defaultValue: 'Cancel' })}
+          </Button>
+          <Button type='submit' loading={updateGroup.isPending} form={formId}>
+            {t('actions.save', { defaultValue: 'Save changes' })}
+          </Button>
+        </>
+      }
     >
       <FormProvider {...methods}>
-        <Box as='form' onSubmit={onSubmit}>
-          <Drawer.Body display='flex' flexDirection='column' gap='4'>
+        <Box as='form' id={formId} onSubmit={onSubmit}>
+          <Stack gap='4'>
             <InputBasic
               formValue='title'
               label={t('members.table.group_name', { defaultValue: 'Group name' })}
@@ -262,15 +267,7 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
               />
               <FormErrorMessage>{formState.errors.description?.message?.toString()}</FormErrorMessage>
             </FormControl>
-          </Drawer.Body>
-          <Flex justifyContent='flex-end' gap='2' p='4'>
-            <Button variant='outline' onClick={onClose}>
-              {t('actions.cancel', { defaultValue: 'Cancel' })}
-            </Button>
-            <Button type='submit' loading={updateGroup.isPending}>
-              {t('actions.save', { defaultValue: 'Save changes' })}
-            </Button>
-          </Flex>
+          </Stack>
         </Box>
       </FormProvider>
     </PanelDrawer>
@@ -493,8 +490,6 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
         defaultValue_other: '{{count}} members',
         count: group.membersCount || 0,
       })}`}
-      headerProps={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
-      closeLabel={t('drawer.close', 'Close drawer')}
     >
       <GroupMembersDisplay group={group} isOpen={isOpen} />
       <Separator my='4' />

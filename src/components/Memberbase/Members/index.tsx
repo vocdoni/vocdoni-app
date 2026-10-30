@@ -5,9 +5,7 @@ import {
   Card,
   Checkbox,
   type DialogRootProps,
-  Drawer,
   Flex,
-  Heading,
   Icon,
   IconButton,
   Input,
@@ -30,7 +28,7 @@ import { EmptyState } from '~components/ui/EmptyState'
 import { ListLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import {
@@ -154,13 +152,10 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
       placement='end'
       onOpenChange={({ open }) => (!open ? onClose() : undefined)}
       size='sm'
-      title={<Heading size='md'>{t('members.table.add_to_group', { defaultValue: 'Add to Group' })}</Heading>}
+      title={t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
       description={t('members.table.add_to_group_description', {
         defaultValue: 'Select a group to add the members to.',
       })}
-      closeVariant='inline'
-      closeLabel={t('members.table.close_drawer', { defaultValue: 'Close' })}
-      headerProps={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       bodyProps={{ display: 'flex', flexDirection: 'column', gap: '4' }}
     >
       <Select
@@ -270,13 +265,10 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
       placement='end'
       onOpenChange={({ open }) => (!open ? handleClose() : undefined)}
       size='sm'
-      title={<Heading size='md'>{t('members.table.add_to_census', { defaultValue: 'Add to census' })}</Heading>}
+      title={t('members.table.add_to_census', { defaultValue: 'Add to census' })}
       description={t('members.table.add_to_census_description', {
         defaultValue: 'Select an active voting process to add the members to its census.',
       })}
-      closeVariant='inline'
-      closeLabel={t('members.table.close_drawer', { defaultValue: 'Close' })}
-      headerProps={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       bodyProps={{ display: 'flex', flexDirection: 'column', gap: '4' }}
     >
       <Select
@@ -376,12 +368,10 @@ const ColumnManager = () => {
         open={isOpen}
         placement='end'
         onOpenChange={({ open }) => (!open ? onClose() : undefined)}
-        title={<Heading size='md'>{t('members.table.manage_columns', { defaultValue: 'Manage Columns' })}</Heading>}
+        title={t('members.table.manage_columns', { defaultValue: 'Manage Columns' })}
         description={t('members.table.manage_columns_description', {
           defaultValue: 'Customize which columns are displayed in the members table.',
         })}
-        closeVariant='none'
-        titleProps={{ flex: 'initial' }}
       >
         {/* The API never returns the password, so it has nothing to show; it stays in the column list because the member form, CSV mapper and template read their fields from it. */}
         {columns
@@ -460,6 +450,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
   const { selectedRows } = useTable()
   const navigate = useNavigate()
   const createGroupMutation = useCreateGroup()
+  const formId = useId()
   const methods = useForm({
     defaultValues: {
       title: '',
@@ -521,23 +512,25 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
         placement='end'
         onOpenChange={({ open }) => (!open ? onClose() : undefined)}
         size='sm'
-        title={
-          <Heading size='md'>
-            {t('members.table.create_group_form_title', { defaultValue: 'Create New Group' })}
-          </Heading>
-        }
+        title={t('members.table.create_group_form_title', { defaultValue: 'Create New Group' })}
         description={t('members.table.create_group_form_description', {
           defaultValue:
             'Create a new group from selected members. This will organize them for future voting processes.',
         })}
-        closeVariant='solid'
-        closeLabel={t('common.close_drawer', { defaultValue: 'Close drawer' })}
-        headerProps={{ display: 'flex', flexDirection: 'column', gap: '2' }}
-        rawBody
+        footer={
+          <>
+            <Button variant='outline' onClick={onClose}>
+              {t('members.table.cancel', { defaultValue: 'Cancel' })}
+            </Button>
+            <Button disabled={!selectedCount} type='submit' form={formId}>
+              {t('members.table.create_group', { defaultValue: 'Create group' })}
+            </Button>
+          </>
+        }
       >
         <FormProvider {...methods}>
-          <Box as='form' onSubmit={methods.handleSubmit(createGroup)}>
-            <Drawer.Body p='4' display='flex' flexDirection='column' gap='4'>
+          <Box as='form' id={formId} onSubmit={methods.handleSubmit(createGroup)}>
+            <Stack gap='4'>
               <InputBasic
                 formValue='title'
                 label={t('members.table.group_name', { defaultValue: 'Group name' })}
@@ -582,15 +575,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
                   </Wrap>
                 </Box>
               </Box>
-            </Drawer.Body>
-            <Flex justifyContent='flex-end' p='4'>
-              <Button variant='outline' onClick={onClose}>
-                {t('members.table.cancel', { defaultValue: 'Cancel' })}
-              </Button>
-              <Button disabled={!selectedCount} ml='2' type='submit'>
-                {t('members.table.create_group', { defaultValue: 'Create group' })}
-              </Button>
-            </Flex>
+            </Stack>
           </Box>
         </FormProvider>
       </PanelDrawer>

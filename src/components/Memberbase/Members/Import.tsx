@@ -581,7 +581,6 @@ export const ImportMembers = () => {
       description={t('memberbase.importer.subtitle', {
         defaultValue: 'Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.',
       })}
-      headerProps={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
       bodyProps={{ display: 'flex', flexDirection: 'column', gap: '4' }}
     >
       <FormProvider {...methods}>

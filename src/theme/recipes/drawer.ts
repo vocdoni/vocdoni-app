@@ -15,8 +15,10 @@ export const Drawer = defineSlotRecipe({
   variants: {
     variant: {
       navigation: { content: { bg: 'surface.overlay.drawer' } },
+      // The header stacks the title over its description; the end padding keeps both clear of the close button.
       panel: {
         content: { bg: 'surface.overlay' },
+        header: { flexDirection: 'column', alignItems: 'flex-start', pe: '12' },
         description: { textStyle: 'body-sm', color: 'fg.muted' },
       },
     },

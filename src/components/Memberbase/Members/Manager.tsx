@@ -1,6 +1,5 @@
 import {
   Button,
-  Flex,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldHelperText as FormHelperText,
@@ -12,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
-import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
+import { cloneElement, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
@@ -61,6 +60,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   const defaultValues: MemberFormData = useMemo(() => Object.fromEntries(columns.map((col) => [col.id, ''])), [columns])
 
   const methods = useForm({ defaultValues })
+  const formId = useId()
   // read during render so react-hook-form tracks it
   const { dirtyFields } = methods.formState
   const isControlled = typeof controlledOpen === 'boolean'
@@ -306,10 +306,18 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         size='sm'
         title={title}
         description={description}
-        closeVariant='none'
-        headerProps={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
+        footer={
+          <>
+            <Button variant='outline' onClick={handleClose}>
+              {t('memberbase.form.cancel', { defaultValue: 'Cancel' })}
+            </Button>
+            <Button type='submit' loading={isSubmitting} form={formId}>
+              {t('memberbase.form.save', { defaultValue: 'Save changes' })}
+            </Button>
+          </>
+        }
       >
-        <Stack as='form' id='member-form' gap='4' onSubmit={methods.handleSubmit(onSubmit)}>
+        <Stack as='form' id={formId} gap='4' onSubmit={methods.handleSubmit(onSubmit)}>
           {columns.map((col) => {
             const isPhone = col.id === 'phone'
             const isPassword = col.id === 'password'
@@ -391,14 +399,6 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
             )
           })}
         </Stack>
-        <Flex justify='flex-end' gap='2' mt='4'>
-          <Button variant='outline' onClick={handleClose}>
-            {t('memberbase.form.cancel', { defaultValue: 'Cancel' })}
-          </Button>
-          <Button type='submit' loading={isSubmitting} form='member-form'>
-            {t('memberbase.form.save', { defaultValue: 'Save changes' })}
-          </Button>
-        </Flex>
       </PanelDrawer>
     </FormProvider>
   )
