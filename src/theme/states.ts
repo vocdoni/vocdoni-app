@@ -20,7 +20,7 @@ export const stateColors = defineSemanticTokens.colors({
       fg: { value: { _light: '{colors.black}', _dark: '{colors.white}' } },
     },
     current: {
-      bg: { value: { _light: '{colors.gray.200}', _dark: '{colors.gray.800}' } },
+      bg: { value: '{colors.bg.emphasized}' },
       fg: { value: '{colors.fg}' },
     },
     // A file dragged over a drop target
