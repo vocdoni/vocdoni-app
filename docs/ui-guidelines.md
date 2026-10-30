@@ -54,7 +54,7 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}` (the info, warning and error `solid`)                                           | `charts.ts`       |
 | Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                       | `ballot.ts`       |
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                       | `illustration.ts` |
-| Links                            | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`                                                                                                                            | `recipeColors.ts` |
+| Links, switch, turnout stripes   | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `progress.stripe`                                                        | `recipeColors.ts` |
 | Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`                                                                     | `semantic.ts`     |
 
 Rules of thumb:
@@ -73,6 +73,10 @@ Rules of thumb:
 - **Text on a coloured fill**: use the pair the token family ships (`status.error.contrast` on `status.error.solid`,
   `surface.inverse.fg` on `surface.inverse`, `accent.contrast` on `accent.solid`), not an ad hoc black or white.
   `textContrast.test.ts` and `palette.test.ts` check contrast.
+- **Dark greys**: the raw `ink` scale in `colors.ts` is numbered by lightness, like Chakra's scales, so a higher step is
+  darker: `ink.950` (#000000), `ink.900` (#0a0a0a, the dark page), `ink.850` (#1f1f22), `ink.800` (#262626), `ink.700`
+  (#2e2e2e). Components never read it; the semantic tokens do. The dark `bg.muted` is `ink.850`, so the dark steps run
+  `bg.subtle` < `bg.muted` (hover) < `bg.emphasized` (pressed, current), the same order as light.
 - **A token that repeats another role**: alias it (`state.current.bg` is `{colors.bg.emphasized}`, `meter.ok` is
   `{colors.status.info.solid}`) instead of copying the raw steps, so the two cannot drift.
 
@@ -86,13 +90,17 @@ Typography is a role, not three props.
 </Text>
 ```
 
-App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow`, `page-title`, `section-title`, `display`.
-Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
+App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (12px, uppercase, wide tracking),
+`page-title` (24px, 500), `section-title` (18px, 500), `display`. Chakra's own `2xs` to `7xl` and `label` keep their
+names. Rules:
 
 - A role holds typography only. Colour stays a separate prop. Do not pass a `textStyle` and a prop that sets the same
   property: they resolve in prop order.
-- The page has one `h1`: `PageTitle` from `~components/ui/PageTitle` (`PageSubtitle` is the line under it). Section
-  titles use `textStyle='section-title'` on an `h2`.
+- The page has one `h1`: `PageTitle` from `~components/ui/PageTitle` (`PageSubtitle` is the line under it). Every
+  card, section or settings-block title is a `SectionHeader` (below): an `h2` in the `section-title` role over a 14px
+  muted description. Do not write that pair by hand.
+- A labelled figure (a usage count, a date on a card) is the `stat` recipe, not a `Text` with a bigger size: a 12px
+  eyebrow label over a 24px figure with an optional muted unit. See `UsageMeter` below.
 - Body copy needs no `textStyle`: `body` in `globalCss` (`system.ts`) gives it the `body` role (1rem, line height
   `moderate`), so a bare `Text`, markdown or a list item inherits that. The `text` recipe has no default size, so set
   `textStyle` or `size` on any `Text` that should be something else, and inside a smaller parent (nested text ignores
@@ -146,10 +154,14 @@ What exists today:
 | `alert`           | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                    |
 | `link`            | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                         |
 | `tabs`            | `variant`: `pill`                                                                                                                                                                                                                                                      |
-| `drawer`          | `variant`: `navigation`, `panel` (dialog and drawer backdrops both paint `scrim.strong`)                                                                                                                                                                               |
+| `drawer`          | `variant`: `navigation`, `panel` (the shell of `PanelDrawer`; dialog and drawer backdrops both paint `scrim.strong`)                                                                                                                                                   |
+| `dialog`          | `placement` defaults to `center`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                |
+| `menu`            | Items highlight through `_highlighted` with `state.hover`, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                                                                |
+| `progress`        | `variant`: `results` (thin 8px bar, one per choice), `turnout` (large striped bar for the share that voted)                                                                                                                                                            |
+| `stat`            | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                          |
 | `emptyState`      | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                               |
-| `text`, `heading` | `text`: `size`, `variant='muted'`; `heading`: `heavy`, `section`, `subsection`                                                                                                                                                                                         |
-| `badge`, `tag`    | Badge `size` (`xs` to `lg`); Tag has one look, use `StatusBadge`                                                                                                                                                                                                       |
+| `text`, `heading` | `text`: `size`, `variant='muted'`; `heading`: `heavy`, `subsection`                                                                                                                                                                                                    |
+| `badge`, `tag`    | Badge `size` (`xs` to `lg`), `variant`: `featured` (plan ribbon), `count` (tab counter), `label` (neutral role chip); Tag has one look (radius `sm` by default, so never repeat it) and `size='xs'` for a chip inside a control; status chips use `StatusBadge`        |
 
 To add a variant:
 
@@ -178,6 +190,8 @@ All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 | `PageContainer`, `PageSection`             | A page column: `size` (`wide`, `medium`, `narrow`) and `gutter`. `PageSection` is the same without gutters                                  |
 | `PageTitle`, `PageSubtitle`                | The page's one `h1` and the line under it                                                                                                   |
 | `PageHeader`                               | Title and subtitle with the page's own actions on the right (`PageTitle.tsx`): `title`, `subtitle`, `actions`                               |
+| `SectionHeader`                            | The title of a card, section or settings block: `title`, `description`, `actions`, `icon`, `rule`. Actions drop below the title under `md`  |
+| `UsageMeter`                               | A usage figure over its limit with a bar: `label`, `value`, `max`, `unit`, `icon`, `tooltip`, `color`, `softLimit`                          |
 | `RoutedTabs`                               | Tabs that are child routes: `tabs` (`{ label, route, count? }`), optional `value`, `outletContext`; renders the `Outlet`                    |
 | `ListStateAlert`                           | A list or block that failed to load: `error`, `title`, `fallback` (for a non-`Error`), `show`. Use it instead of a hand-built error `Alert` |
 | `Tooltip`                                  | Every tooltip: `content`, `showArrow`, `contentProps`, `portalled` (off inside another portal). No raw `Tooltip.Root`                       |
@@ -187,8 +201,8 @@ All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 | `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                                          |
 | `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`                           |
 | `CloseButton`                              | A close control with a translated `aria-label`                                                                                              |
-| `PanelDrawer` (`ui/Drawer`)                | Every side panel: `title`, `description`, `footer` (pinned actions), `trigger`; the corner close button is built in                         |
-| `DialogHeader`                             | A dialog's `title` (its accessible name) and muted `description`. Dialogs are centred by the recipe                                         |
+| `PanelDrawer` (`ui/Drawer`)                | Every side panel: `title`, `description`, `footer` (pinned actions), `trigger`; the ghost close button in the corner is built in            |
+| `DialogHeader`                             | A dialog's `title` (its accessible name) and muted `description`. Dialogs are centred by default; do not set `placement`                    |
 | `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                                      |
 
 Not in `ui/`: `LabelledSeparator` (`~components/Layout/Separators`), a hairline on each side of a short label, such as
@@ -211,6 +225,38 @@ import { ListStateAlert } from '~components/ui/ListStateAlert'
 <ConfirmDialog layout='inline' open={open} title={title} onConfirm={revoke} loading={isPending} />
 ```
 
+A section title, a usage meter and a side panel:
+
+```tsx
+import { SectionHeader } from '~components/ui/SectionHeader'
+import { UsageMeter } from '~components/ui/UsageMeter'
+import { PanelDrawer } from '~components/ui/Drawer'
+
+<SectionHeader title={t('team')} description={t('team_hint')} actions={<Button>{t('invite')}</Button>} />
+
+<UsageMeter label={t('votes')} value={used} max={limit} unit={`/ ${limit}`} color='chart.1' />
+
+<PanelDrawer open={open} onOpenChange={(e) => setOpen(e.open)} title={t('add_group')} footer={<Button type='submit' form={formId}>{t('save')}</Button>}>
+  <form id={formId}>…</form>
+</PanelDrawer>
+```
+
+`UsageMeter` keeps its series colour (`chart.1` to `chart.4`, so the brand cannot recolour it), turns `meter.warning`
+at 80 % of its limit and `meter.critical` at 100 %. A `softLimit` (going over is billed, not blocked) never warns, and
+a `max` of `0` means no limit: the bar stays empty.
+
+The two bars on the `progress` recipe are not interchangeable. `variant='results'` is for one choice of a vote: the
+title and tally sit above a thin 8px bar, in the archive and in the public ballot alike. `variant='turnout'` is the
+large striped bar for the share of the census that voted, in the process summary and the dashboard aside:
+
+```tsx
+<Progress.Root variant='turnout' value={participation}>
+  <Progress.Track>
+    <Progress.Range />
+  </Progress.Track>
+</Progress.Root>
+```
+
 New user-facing text in any of these goes through `t(…)`, like everywhere else (see `AGENTS.md`).
 
 ### Icons
@@ -220,7 +266,6 @@ on one glyph exported under two concept names.
 
 ```tsx
 import { DeleteIcon, ErrorIcon } from '~theme/icons'
-
 ;<Icon as={DeleteIcon} boxSize='icon.sm' />
 ```
 

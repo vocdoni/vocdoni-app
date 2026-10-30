@@ -1,73 +1,59 @@
 {
   "create-draft--voter-auth-dialog-1440-dark": {
     "grey color #ffffff": 5,
-    "palette background gray.600": 4,
     "spacing 2px": 5,
     "spacing 8px": 8
   },
   "create-draft--voter-auth-dialog-1440-light": {
-    "grey background #ffffff": 4,
     "grey color #ffffff": 5,
     "spacing 2px": 5,
     "spacing 8px": 8
   },
   "create-draft-1440-dark": {
-    "palette background gray.600": 4,
     "spacing 2px": 5,
     "spacing 8px": 8
   },
   "create-draft-1440-light": {
-    "grey background #ffffff": 4,
     "spacing 2px": 5,
     "spacing 8px": 8
   },
   "create-draft-390-dark": {
-    "palette background gray.600": 2,
     "spacing 2px": 2,
     "spacing 8px": 4
   },
   "create-draft-390-light": {
-    "grey background #ffffff": 2,
     "spacing 2px": 2,
     "spacing 8px": 4
   },
   "create-empty--publish-errors-1440-dark": {
-    "palette background gray.600": 3,
     "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty--publish-errors-1440-light": {
-    "grey background #ffffff": 2,
     "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty--publish-errors-390-dark": {
-    "palette background gray.600": 3,
     "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty--publish-errors-390-light": {
-    "grey background #ffffff": 2,
     "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty-1440-dark": {
-    "palette background gray.600": 3,
     "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty-1440-light": {
-    "grey background #ffffff": 2,
     "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty-390-dark": {
-    "palette background gray.600": 1,
     "spacing 2px": 1,
     "spacing 8px": 3
   },
   "create-empty-390-light": {
-    "grey background #ffffff": 1,
     "spacing 2px": 1,
     "spacing 8px": 3
   },
