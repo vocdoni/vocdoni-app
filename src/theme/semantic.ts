@@ -20,7 +20,7 @@ export const colors = defineSemanticTokens.colors({
     DEFAULT: {
       value: {
         _light: '{colors.white}',
-        _dark: '{colors.ink.650}',
+        _dark: '{colors.ink.900}',
       },
     },
     subtle: {
@@ -32,7 +32,7 @@ export const colors = defineSemanticTokens.colors({
     muted: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.ink.800}',
+        _dark: '{colors.ink.850}',
       },
     },
     emphasized: {
@@ -176,7 +176,7 @@ export const colors = defineSemanticTokens.colors({
       bg: {
         value: {
           _light: '{colors.white}',
-          _dark: '{colors.ink.500}',
+          _dark: '{colors.ink.950}',
         },
       },
       // Painted in light mode only (card `standalone`).
@@ -313,7 +313,7 @@ export const colors = defineSemanticTokens.colors({
       muted: {
         value: {
           _light: '{colors.gray.100}',
-          _dark: '{colors.ink.550}',
+          _dark: '{colors.ink.800}',
         },
       },
     },
@@ -350,7 +350,7 @@ export const colors = defineSemanticTokens.colors({
         bg: {
           value: {
             _light: '{colors.white}',
-            _dark: '{colors.ink.500}',
+            _dark: '{colors.ink.950}',
           },
         },
       },

@@ -125,7 +125,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
                             : `${choice.votes} · ${choice.percentage === null ? '—' : `${choice.percentage.toFixed(1)}%`}`}
                         </Text>
                       </Flex>
-                      <Progress.Root value={choice.percentage ?? 0} size='sm'>
+                      <Progress.Root value={choice.percentage ?? 0} variant='results'>
                         <Progress.Track>
                           <Progress.Range />
                         </Progress.Track>

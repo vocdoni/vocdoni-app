@@ -362,14 +362,7 @@ export const SubscriptionPlans = () => {
               <Tabs.Trigger value='year'>
                 <Trans i18nKey='annual'>
                   Annual
-                  <Tag.Root
-                    variant='subtle'
-                    colorPalette={statusPalette.success}
-                    ml='2'
-                    fontSize='xs'
-                    fontWeight='extrabold'
-                    py='0.5'
-                  >
+                  <Tag.Root variant='subtle' size='xs' colorPalette={statusPalette.success} ml='2'>
                     <Tag.Label>Save 40%</Tag.Label>
                   </Tag.Root>
                 </Trans>

@@ -148,8 +148,8 @@ const ParticipationCard = () => {
               {t('process.summary.votes_cast', { count: voteCount, votes: nf(voteCount) })}
             </Text>
           </Flex>
-          <Progress.Root value={percent} size='lg' striped>
-            <Progress.Track borderRadius='full'>
+          <Progress.Root value={percent} variant='turnout'>
+            <Progress.Track>
               <Progress.Range />
             </Progress.Track>
           </Progress.Root>

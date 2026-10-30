@@ -19,4 +19,20 @@ const baseStyle = {
 export const Tag = defineSlotRecipe({
   slots: tagAnatomy.keys(),
   base: baseStyle,
+  variants: {
+    size: {
+      // Inside a control, such as a tab: Chakra's `md` with less vertical padding, for a label with no icon.
+      xs: {
+        root: {
+          px: '1.5',
+          py: '0.5',
+          minH: '5',
+          gap: '1',
+          fontSize: 'xs',
+          fontWeight: 'extrabold',
+        },
+        label: { textStyle: 'xs' },
+      },
+    },
+  },
 })

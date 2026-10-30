@@ -610,14 +610,14 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
                       <Wrap>
                         {visible.map((member) => (
                           <WrapItem key={member.id}>
-                            <Tag.Root borderRadius='sm' size='sm' variant='subtle' colorPalette='gray'>
+                            <Tag.Root size='sm' variant='subtle' colorPalette='gray'>
                               <Tag.Label>{memberAlias(member)}</Tag.Label>
                             </Tag.Root>
                           </WrapItem>
                         ))}
                         {remainingCount > 0 && (
                           <WrapItem>
-                            <Tag.Root borderRadius='sm' size='sm' variant='outline' colorPalette='brand'>
+                            <Tag.Root size='sm' variant='outline' colorPalette='brand'>
                               <Tag.Label>
                                 {t('members.table.remaining_members', {
                                   defaultValue: '+{{count}} more',
