@@ -55,27 +55,26 @@ const SubscriptionPageContent = () => {
 
   return (
     <DashboardBox size='md'>
-      <Flex direction={{ base: 'column', md: 'row' }}>
-        <SectionHeader
-          title={t('subscription_plan.title', { defaultValue: 'Subscription plan' })}
-          description={
-            <Trans i18nKey='subscription_plan.subtitle'>
-              With our subscriptions, you get more than a plan. You gain access to the most innovative governance
-              platform. Thanks to this model, we can offer the best price in the market: whether you need 1, 5, or 20
-              votes per year, you'll always benefit from the most competitive costs and unmatched guarantees. The
-              platform is fully self-service, yet our team is always available to provide assistance or tailor solutions
-              to your specific needs.
-            </Trans>
-          }
-          size='md'
-          flex='1'
-        />
-        {!isFree && view === 'plans' && (
-          <Button onClick={() => handleChangeClick()} loading={isPending}>
-            {t('billing_details', { defaultValue: 'Billing details' })}
-          </Button>
-        )}
-      </Flex>
+      <SectionHeader
+        title={t('subscription_plan.title', { defaultValue: 'Subscription plan' })}
+        description={
+          <Trans i18nKey='subscription_plan.subtitle'>
+            With our subscriptions, you get more than a plan. You gain access to the most innovative governance
+            platform. Thanks to this model, we can offer the best price in the market: whether you need 1, 5, or 20
+            votes per year, you'll always benefit from the most competitive costs and unmatched guarantees. The platform
+            is fully self-service, yet our team is always available to provide assistance or tailor solutions to your
+            specific needs.
+          </Trans>
+        }
+        actions={
+          !isFree &&
+          view === 'plans' && (
+            <Button onClick={() => handleChangeClick()} loading={isPending}>
+              {t('billing_details', { defaultValue: 'Billing details' })}
+            </Button>
+          )
+        }
+      />
       {view === 'plans' ? (
         <>
           <SubscriptionPlans />

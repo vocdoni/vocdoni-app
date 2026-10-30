@@ -118,8 +118,6 @@ const TemplateUploader = () => {
           defaultValue:
             'Download the template with your chosen columns, add your member data, and upload the file to set up your memberbase. Once it’s ready, you can start creating votes.',
         })}
-        size='md'
-        titleGap='4'
       />
       <MembersCsvManager />
     </Stack>
@@ -440,7 +438,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
           ))}
         </Flex>
       </Card.Root>
-      <SectionHeader title={t('memberbase.importer.data_preview', { defaultValue: 'Data Preview' })} size='md' />
+      <SectionHeader title={t('memberbase.importer.data_preview', { defaultValue: 'Data Preview' })} />
       <Card.Root variant='frame' overflowX='auto' w='full'>
         <TableRoot>
           <TableHeader>
@@ -488,8 +486,6 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
           defaultValue:
             'Map columns from your file to the corresponding fields in our system. Required fields are marked with an asterisk (*).',
         })}
-        size='md'
-        titleGap='4'
       />
       <FieldsMapper manager={spreadsheet} columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
       <Flex justify='space-between' gap='2' mt='4'>

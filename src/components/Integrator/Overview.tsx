@@ -142,7 +142,6 @@ export const IntegratorOverview = () => {
           description={t('integrators.docs.subtitle', {
             defaultValue: 'Guides and references to start building with Vocdoni.',
           })}
-          titleGap='1'
           mb='4'
         />
         <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>

@@ -17,7 +17,7 @@ export const CreateSidebar = () => {
   return (
     <Sidebar show={showSidebar}>
       <SidebarContents borderBottom='sm' borderColor='border'>
-        <SectionHeader title={<Trans i18nKey='process_create.settings'>Settings</Trans>} size='lg' pt='4' />
+        <SectionHeader title={<Trans i18nKey='process_create.settings'>Settings</Trans>} pt='4' />
         {isMobile && (
           /* data-testid: same reason as the toggle in Create/index.tsx. The open
              drawer covers the Publish button, so the suite must close it. */

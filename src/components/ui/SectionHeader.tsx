@@ -9,27 +9,11 @@ export type SectionHeaderProps = Omit<FlexProps, 'title'> & {
   icon?: ElementType
   // A hairline from the title to the end of the row.
   rule?: boolean
-  // Temporary: the sizes and title-to-description gaps the sites had before the one section title size.
-  size?: 'md' | 'lg'
-  titleGap?: FlexProps['gap']
 }
 
 // The title (h2) and muted one-liner over a card, settings block or page section.
-export const SectionHeader = ({
-  title,
-  description,
-  actions,
-  icon,
-  rule,
-  size,
-  titleGap,
-  ...props
-}: SectionHeaderProps) => {
-  const heading = size ? (
-    <Heading as='h2' size={size} flexShrink={rule ? 0 : undefined}>
-      {title}
-    </Heading>
-  ) : (
+export const SectionHeader = ({ title, description, actions, icon, rule, ...props }: SectionHeaderProps) => {
+  const heading = (
     <Heading as='h2' textStyle='section-title' flexShrink={rule ? 0 : undefined}>
       {title}
     </Heading>
@@ -53,7 +37,7 @@ export const SectionHeader = ({
   }
 
   const block = (rest?: FlexProps) => (
-    <Flex direction='column' gap={titleGap} {...rest}>
+    <Flex direction='column' gap='1.5' {...rest}>
       {titleRow}
       {description && (
         <Text textStyle='body-sm' color='fg.muted'>

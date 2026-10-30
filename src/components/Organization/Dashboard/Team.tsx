@@ -20,7 +20,6 @@ const OrganizationTeam = () => {
             {t('organization_settings.team.add_team_member', { defaultValue: 'Add team member' })}
           </InviteToTeamModal>
         }
-        size='md'
       />
       <OrganizationUsers />
     </DashboardBox>

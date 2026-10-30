@@ -111,7 +111,7 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
     <Box mb='44' mx='[auto]'>
       <Header />
 
-      <SectionHeader title={t('organization.elections')} size='md' mb='4' textAlign={{ base: 'center', md: 'start' }} />
+      <SectionHeader title={t('organization.elections')} mb='4' textAlign={{ base: 'center', md: 'start' }} />
 
       <Grid templateColumns='repeat(auto-fill, minmax(350px, 1fr))' columnGap={{ base: '3', lg: '4' }} rowGap='12'>
         {electionsList?.map((election, idx) => (

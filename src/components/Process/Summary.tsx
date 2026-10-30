@@ -218,7 +218,7 @@ const KeyIndicators = () => {
 
   return (
     <Box>
-      <SectionHeader title={t('process.summary.indicators_title')} size='lg' rule mb='4' />
+      <SectionHeader title={t('process.summary.indicators_title')} rule mb='4' />
       <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
         <Indicator label={t('process.summary.stat_census')} value={nf(census)} />
         <Indicator label={t('process.summary.stat_votes_received')} value={nf(voteCount)} />
@@ -248,7 +248,7 @@ const ResultsNotice = () => {
 
   return (
     <Box>
-      <SectionHeader title={t('process.summary.results_title')} size='lg' rule mb='4' />
+      <SectionHeader title={t('process.summary.results_title')} rule mb='4' />
       {electionHasResults ? (
         <Card.Root>
           <Card.Body>
@@ -299,10 +299,11 @@ const CertifiedTech = () => {
       <Card.Body>
         <Flex direction={{ base: 'column', lg: 'row' }} gap='8'>
           <Box flex='1'>
-            <SectionHeader title={t('process.summary.tech_title')} size='lg' mb='3' />
-            <Text color='surface.inverse.fg.muted' mb='5'>
-              {t('process.summary.tech_description')}
-            </Text>
+            <SectionHeader
+              title={t('process.summary.tech_title')}
+              description={t('process.summary.tech_description')}
+              mb='5'
+            />
             <List.Root variant='plain' gap='3'>
               {techItems(election?.census?.anonymous).map(({ key, icon }) => (
                 <List.Item key={key} alignItems='start' gap='2'>

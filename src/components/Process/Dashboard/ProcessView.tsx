@@ -412,7 +412,7 @@ const ProcessViewSidebar = () => {
   return (
     <Sidebar show={showSidebar}>
       <SidebarContents borderBottom='sm' borderColor='border'>
-        <SectionHeader title={<Trans i18nKey='vote_information'>Vote information</Trans>} size='lg' pt='4' />
+        <SectionHeader title={<Trans i18nKey='vote_information'>Vote information</Trans>} pt='4' />
         {isMobile && (
           <IconButton
             aria-label={t('drawer.close', { defaultValue: 'Close drawer' })}

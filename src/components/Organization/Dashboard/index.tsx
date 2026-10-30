@@ -144,7 +144,6 @@ const OrganizationProcesses = () => {
           description={t('dashboard.welcome.recent_voting_description', {
             defaultValue: "Your organization's latest voting activities",
           })}
-          titleGap='1.5'
           mb='4'
         />
         <Flex flexDirection='column' flex='1'>
@@ -301,7 +300,6 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
         description={t('dashboard.welcome.common_tasks_actions', {
           defaultValue: 'Common tasks and actions',
         })}
-        titleGap='1.5'
         mb='6'
       />
       <Flex flexDirection='column' gap='4' minW='[0]'>

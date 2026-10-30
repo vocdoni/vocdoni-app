@@ -210,8 +210,6 @@ export const MembersCsvManager = () => {
               defaultValue:
                 'Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.',
             })}
-            size='md'
-            titleGap='4'
           />
           <Uploader
             getInputProps={getInputProps}

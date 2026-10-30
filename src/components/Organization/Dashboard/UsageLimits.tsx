@@ -117,7 +117,6 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
           description={t('dashboard.usage.plan_usage_description', {
             defaultValue: 'Track your current usage against your plan limits',
           })}
-          titleGap='1'
           mb='4'
         />
 

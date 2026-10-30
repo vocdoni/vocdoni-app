@@ -167,7 +167,6 @@ const AccountForm = ({ profile }: { profile?: User }) => {
       <SectionHeader
         title={t('account.title', { defaultValue: 'Account Information' })}
         description={t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}
-        titleGap='1.5'
         mb='6'
       />
       <VStack gap='8' align='stretch'>

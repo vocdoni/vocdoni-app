@@ -100,12 +100,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
         {election.questions.map((question, questionIndex) => (
           <Card.Root key={questionIndex} variant='outline'>
             <Card.Header>
-              <SectionHeader
-                title={localize(question.title)}
-                description={localize(question.description)}
-                size='md'
-                titleGap='1.5'
-              />
+              <SectionHeader title={localize(question.title)} description={localize(question.description)} />
             </Card.Header>
             <Card.Body>
               {!election.resultsAvailable ? (

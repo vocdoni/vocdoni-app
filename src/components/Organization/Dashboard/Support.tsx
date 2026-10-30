@@ -50,7 +50,6 @@ const OrganizationSupport = () => {
         description={t('organization_settings.support.description', {
           defaultValue: 'Get help and support for your organization.',
         })}
-        size='md'
       />
       <SimpleGrid columns={columns} gap='6'>
         <SupportTicketForm />
@@ -104,8 +103,6 @@ const SupportTicketForm = () => {
           description={t('form.support.subtitle', {
             defaultValue: 'Submit a ticket and our support team will get back to you as soon as possible.',
           })}
-          size='md'
-          titleGap='2'
           mb='6'
         />
         <VStack gap='4' align='stretch'>
@@ -147,14 +144,11 @@ const PhoneSupportCard = ({ isLocked }) => {
     <Box p='6'>
       <SectionHeader
         title={t('organization_settings.phone_support.title', { defaultValue: 'Phone Support' })}
-        size='md'
-        mb='1'
-      />
-      <Text textStyle='body-sm' mb='6'>
-        {t('organization_settings.phone_support.description', {
+        description={t('organization_settings.phone_support.description', {
           defaultValue: 'Available for Custom plan subscribers only.',
         })}
-      </Text>
+        mb='6'
+      />
 
       <Stack gap='4' mb='6'>
         <Flex p='4' borderRadius='md' bg='dashboard.menu' align='flex-start'>

@@ -130,7 +130,7 @@ export const ArchiveOrganizationView = ({
       )}
 
       <VStack align='stretch' gap='3'>
-        <SectionHeader title={t('organization.elections_list', { defaultValue: 'Voting processes' })} size='md' />
+        <SectionHeader title={t('organization.elections_list', { defaultValue: 'Voting processes' })} />
         {elections.length === 0 && (
           <EmptyState
             size='sm'
