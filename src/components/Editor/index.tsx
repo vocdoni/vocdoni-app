@@ -26,7 +26,7 @@ import PlaceholderPlugin from './plugins/PlaceholderPlugin'
 import ReadOnlyPlugin from './plugins/ReadOnlyPlugin'
 
 type EditorProps = {
-  isDisabled?: boolean
+  disabled?: boolean
   maxLength?: number
   onChange?: (value: string) => void
   placeholder?: string
@@ -99,11 +99,11 @@ const MarkdownEditor = (props: EditorProps) => {
       <HistoryPlugin />
       <ListPlugin />
       <LinkPlugin />
-      <ReadOnlyPlugin isDisabled={props.isDisabled} />
+      <ReadOnlyPlugin disabled={props.disabled} />
       <MarkdownValuePlugin value={props.value} transformers={TRANSFORMERS} />
       <OnChangeMarkdown onChange={onChange} transformers={TRANSFORMERS} />
       {props.maxLength && props.maxLength > 0 && <CharacterLimitPlugin maxLength={props.maxLength} charset='UTF-8' />}
-      {floatingAnchorElem && !props.isDisabled && (
+      {floatingAnchorElem && !props.disabled && (
         <>
           <FloatingLinkEditorPlugin
             anchorElem={floatingAnchorElem}
