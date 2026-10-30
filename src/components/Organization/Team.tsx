@@ -7,7 +7,8 @@ import {
   Card,
   Dialog,
   type DialogRootProps,
-  Field,
+  FieldRoot as FormControl,
+  FieldLabel as FormLabel,
   Flex,
   Heading,
   HStack,
@@ -28,7 +29,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { AddIcon, AddUserIcon, MailIcon, MoreIcon, RefreshIcon, UserCogIcon } from '~theme/icons'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { roleIcons } from '~components/Layout/SaasSelector'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { EmptyState } from '~components/ui/EmptyState'
@@ -287,8 +288,8 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
   if (rolesError) return <Alert.Root status='error'>{rolesFetchError?.message || t('error.loading_roles')}</Alert.Root>
 
   return (
-    <Field.Root>
-      <Field.Label fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</Field.Label>
+    <FormControl>
+      <FormLabel fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</FormLabel>
       {rolesLoading && <ListLoader />}
       <Controller
         name='role'
@@ -309,7 +310,7 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
           </RadioGroup.Root>
         )}
       />
-    </Field.Root>
+    </FormControl>
   )
 }
 
@@ -408,7 +409,7 @@ const ChangeRoleModal = ({ open, onOpenChange, user }: ChangeRoleDialogProps) =>
       <Dialog.Backdrop />
       <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
         <Dialog.Content maxW='xl' py='4'>
-          <Dialog.CloseTrigger>
+          <Dialog.CloseTrigger asChild>
             <CloseButton />
           </Dialog.CloseTrigger>
           <Dialog.Header>
@@ -748,13 +749,9 @@ export const OrganizationUsers = () => {
     <>
       <ListStateAlert
         show={hasError}
-        status='error'
         title={t('team.load_error', { defaultValue: 'Unable to load team members' })}
-        description={
-          error instanceof Error
-            ? error.message
-            : t('team.load_error_description', { defaultValue: 'Please try again.' })
-        }
+        error={error}
+        fallback={t('team.load_error_description', { defaultValue: 'Please try again.' })}
       />
       {isEmpty && (
         <EmptyState

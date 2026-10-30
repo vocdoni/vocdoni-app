@@ -6,7 +6,9 @@ import {
   Clipboard,
   Code,
   Dialog,
-  Field,
+  FieldRoot as FormControl,
+  FieldHelperText as FormHelperText,
+  FieldLabel as FormLabel,
   Fieldset,
   Icon,
   Input,
@@ -187,14 +189,14 @@ export const CreateApiKeyButton = () => {
                         <Alert.Title>{error}</Alert.Title>
                       </Alert.Root>
                     )}
-                    <Field.Root required>
-                      <Field.Label>{t('integrators.api_keys.label', { defaultValue: 'Label' })}</Field.Label>
+                    <FormControl required>
+                      <FormLabel>{t('integrators.api_keys.label', { defaultValue: 'Label' })}</FormLabel>
                       <Input
                         placeholder={t('integrators.api_keys.label_placeholder', { defaultValue: 'e.g. CI pipeline' })}
                         value={label}
                         onChange={(e) => setLabel(e.target.value)}
                       />
-                    </Field.Root>
+                    </FormControl>
 
                     <Fieldset.Root>
                       <Fieldset.Legend>
@@ -226,17 +228,15 @@ export const CreateApiKeyButton = () => {
                       </Stack>
                     </Fieldset.Root>
 
-                    <Field.Root>
-                      <Field.Label>
-                        {t('integrators.api_keys.expiry', { defaultValue: 'Expiry (optional)' })}
-                      </Field.Label>
+                    <FormControl>
+                      <FormLabel>{t('integrators.api_keys.expiry', { defaultValue: 'Expiry (optional)' })}</FormLabel>
                       <Input type='date' value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
-                      <Field.HelperText>
+                      <FormHelperText>
                         {t('integrators.api_keys.expiry_help', {
                           defaultValue: 'Leave empty for a key that never expires.',
                         })}
-                      </Field.HelperText>
-                    </Field.Root>
+                      </FormHelperText>
+                    </FormControl>
                   </Stack>
                 </Dialog.Body>
                 <Dialog.Footer>

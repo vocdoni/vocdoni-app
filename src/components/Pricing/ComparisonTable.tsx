@@ -1,4 +1,4 @@
-import { chakra, Flex, Icon, Separator, Table, Text, Tooltip } from '@chakra-ui/react'
+import { chakra, Flex, Icon, Separator, Table, Text } from '@chakra-ui/react'
 import { ListLoader } from '~components/ui/Loader'
 import { dotobject } from '~utils/objects'
 import { forwardRef, isValidElement } from 'react'
@@ -18,6 +18,7 @@ import { BooleanIcon } from '~components/Layout/BooleanIcon'
 import { getPlanKey, PlanName } from '~constants'
 import { CategorizedSpecs, CategoryTitleKeys, FeatureSpec } from './Features'
 import { Plan, usePlans, usePlanTranslations } from './Plans'
+import { Tooltip } from '~components/ui/Tooltip'
 
 type ComparisonTableProps = {}
 
@@ -69,18 +70,15 @@ const ComparisonSectionTable = ({ titleKey, plans, category, specs }: Comparison
               <Table.Cell fontWeight='medium'>
                 <Trans i18nKey={spec.labelKey} />
                 {spec.tooltip && (
-                  <Tooltip.Root positioning={{ placement: 'top' }}>
-                    <Tooltip.Trigger asChild>
-                      <chakra.span verticalAlign='middle'>
-                        <Icon as={InfoIcon} ml='1' />
-                      </chakra.span>
-                    </Tooltip.Trigger>
-                    <Tooltip.Positioner>
-                      <Tooltip.Content>
-                        <Trans i18nKey={spec.tooltip} />
-                      </Tooltip.Content>
-                    </Tooltip.Positioner>
-                  </Tooltip.Root>
+                  <Tooltip
+                    portalled={false}
+                    positioning={{ placement: 'top' }}
+                    content={<Trans i18nKey={spec.tooltip} />}
+                  >
+                    <chakra.span verticalAlign='middle'>
+                      <Icon as={InfoIcon} ml='1' />
+                    </chakra.span>
+                  </Tooltip>
                 )}
               </Table.Cell>
 

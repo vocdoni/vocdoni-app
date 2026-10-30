@@ -16,7 +16,7 @@ import {
 import { ApiEndpoints } from '~components/Auth/api'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { EmptyState } from '~components/ui/EmptyState'
 import { ListLoader } from '~components/ui/Loader'
 import { getPlanKey, isPlanNamed, PlanName } from '~constants'
@@ -339,13 +339,9 @@ export const SubscriptionPlans = () => {
           {isLoading && <ListLoader />}
           <ListStateAlert
             show={hasError}
-            status='error'
             title={t('pricing.load_error', { defaultValue: 'Unable to load plans' })}
-            description={
-              error instanceof Error
-                ? error.message.toString()
-                : t('pricing.load_error_description', { defaultValue: 'Please try again.' })
-            }
+            error={error}
+            fallback={t('pricing.load_error_description', { defaultValue: 'Please try again.' })}
           />
           {isEmpty && (
             <EmptyState

@@ -1,27 +1,16 @@
-import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet, useLocation, useNavigate } from 'react-router'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
+import { RoutedTabs, type RoutedTab } from '~components/ui/RoutedTabs'
 import QueryDataLayout from '~components/Layout/QueryDataLayout'
 import { Routes } from '~src/router/routes'
-
-type MenuItem = {
-  label: string
-  component?: React.ReactNode
-  href?: string
-  route?: string
-}
 
 const Settings = () => {
   const { t } = useTranslation()
   const { isLoading, isError, error, organization } = useSaasAccount()
-  const navigate = useNavigate()
-  const location = useLocation()
 
-  const menuItems: MenuItem[] = [
+  const menuItems: RoutedTab[] = [
     {
       label: t('organization.organization', { defaultValue: 'Organization details' }),
       route: Routes.dashboard.settings.organization,
@@ -40,12 +29,6 @@ const Settings = () => {
     },
   ]
 
-  const currentTabIndex = useMemo(
-    () => menuItems.findIndex((item) => (item.route ? location.pathname.endsWith(item.route) : false)),
-    [location.pathname, menuItems]
-  )
-  const activeTabValue = currentTabIndex === -1 ? menuItems[0]?.route : menuItems[currentTabIndex]?.route
-
   return (
     <DashboardContents>
       <PageTitle>
@@ -60,24 +43,7 @@ const Settings = () => {
         })}
       </PageSubtitle>
       <QueryDataLayout loading={isLoading} isError={isError} error={error}>
-        <TabsRoot
-          value={activeTabValue}
-          onValueChange={({ value }) => {
-            const item = menuItems.find((entry) => entry.route === value)
-            if (!item?.route) return
-            navigate(item.route)
-          }}
-          lazyMount
-        >
-          <TabsList mb='6'>
-            {menuItems.map((item) => (
-              <TabsTrigger key={item.route} value={item.route}>
-                {item.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          <Outlet />
-        </TabsRoot>
+        <RoutedTabs tabs={menuItems} />
       </QueryDataLayout>
     </DashboardContents>
   )

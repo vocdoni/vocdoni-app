@@ -2,7 +2,7 @@ import { RoutedPaginationProvider } from '@vocdoni/react-components'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOutletContext } from 'react-router'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { MemberbaseTabsContext } from '~components/Memberbase'
 import MembersTable from '~components/Memberbase/Members'
 import { TableProvider } from '~components/Memberbase/TableProvider'
@@ -83,9 +83,8 @@ const Members = () => {
       <RoutedPaginationProvider path={Routes.dashboard.memberbase.members} pagination={pagination}>
         <ListStateAlert
           show={hasError}
-          status='error'
           title={t('members.list.error', { defaultValue: 'Unable to load members' })}
-          description={error?.message?.toString()}
+          error={error}
         />
         <MembersTable />
       </RoutedPaginationProvider>

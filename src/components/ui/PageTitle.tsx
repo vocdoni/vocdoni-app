@@ -1,5 +1,5 @@
-import { Heading, type HeadingProps, Text, type TextProps } from '@chakra-ui/react'
-import { forwardRef } from 'react'
+import { Box, Flex, Heading, type HeadingProps, Text, type TextProps } from '@chakra-ui/react'
+import { forwardRef, type ReactNode } from 'react'
 
 // The page's one h1. Section titles inside it are h2 (`section-title` role).
 export const PageTitle = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref) => (
@@ -12,3 +12,20 @@ const subtitleStyle: TextProps = { textStyle: 'body-sm', color: 'fg.muted', mt: 
 export const PageSubtitle = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
   <Text ref={ref} {...subtitleStyle} {...props} />
 ))
+
+type PageHeaderProps = {
+  title: ReactNode
+  subtitle?: ReactNode
+  actions?: ReactNode
+}
+
+// Title and subtitle with the page's own actions on their right.
+export const PageHeader = ({ title, subtitle, actions }: PageHeaderProps) => (
+  <Flex justify='space-between' align='flex-start' gap='4' mb='4'>
+    <Box>
+      <PageTitle>{title}</PageTitle>
+      {subtitle && <PageSubtitle mb='[0]'>{subtitle}</PageSubtitle>}
+    </Box>
+    {actions}
+  </Flex>
+)

@@ -1,4 +1,14 @@
-import { Box, FieldErrorText, FieldLabel, FieldRoot, Flex, FlexProps, HStack, Link, Text } from '@chakra-ui/react'
+import {
+  Box,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
+  Flex,
+  FlexProps,
+  HStack,
+  Link,
+  Text,
+} from '@chakra-ui/react'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
 import { ControllerRenderProps, useController, useFormContext } from 'react-hook-form'
@@ -152,16 +162,16 @@ export const GroupSelect = ({ groups, field, fetchNextPage, hasNextPage, isFetch
   }, [isFetching])
 
   return (
-    <FieldRoot invalid={!!errors.groupId}>
-      <FieldLabel gap='2' alignItems='flex-start'>
+    <FormControl invalid={!!errors.groupId}>
+      <FormLabel gap='2' alignItems='flex-start'>
         <StepMarker step={1} status={groupStatus} />
         <Trans i18nKey='process_create.census.memberbase.label'>Select a group of members to create the census</Trans>
-      </FieldLabel>
+      </FormLabel>
       <Select
         // Lets a blocked publish focus the combobox when no group is picked.
         ref={field.ref}
         // Stable handle for the group combobox (labelled by the
-        // FieldLabel above, which Chakra wires up by id).
+        // FormLabel above, which Chakra wires up by id).
         inputId='groupId'
         options={groups ?? []}
         value={selected}
@@ -184,8 +194,8 @@ export const GroupSelect = ({ groups, field, fetchNextPage, hasNextPage, isFetch
         maxMenuHeight={200}
         components={{ MenuList: CustomMenuList }}
       />
-      <FieldErrorText>{errors.groupId?.message?.toString()}</FieldErrorText>
-    </FieldRoot>
+      <FormErrorMessage>{errors.groupId?.message?.toString()}</FormErrorMessage>
+    </FormControl>
   )
 }
 

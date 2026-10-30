@@ -25,24 +25,37 @@ describe('ListStateAlert', () => {
     })
   })
 
-  it('renders title and description when show is true', () => {
+  it("renders the title and the error's own message", () => {
     render(
       <ChakraProvider value={system}>
         <ColorModeProvider>
-          <ListStateAlert show status='info' title='No items found' description='Try again later' />
+          <ListStateAlert error={new Error('Try again later')} title='Unable to load items' fallback='Fallback' />
         </ColorModeProvider>
       </ChakraProvider>
     )
 
-    expect(screen.getByText('No items found')).toBeInTheDocument()
+    expect(screen.getByText('Unable to load items')).toBeInTheDocument()
     expect(screen.getByText('Try again later')).toBeInTheDocument()
+    expect(screen.queryByText('Fallback')).not.toBeInTheDocument()
+  })
+
+  it('falls back to the given description when the error carries no message', () => {
+    render(
+      <ChakraProvider value={system}>
+        <ColorModeProvider>
+          <ListStateAlert error='failed' title='Unable to load items' fallback='Please try again.' />
+        </ColorModeProvider>
+      </ChakraProvider>
+    )
+
+    expect(screen.getByText('Please try again.')).toBeInTheDocument()
   })
 
   it('returns null when show is false', () => {
     render(
       <ChakraProvider value={system}>
         <ColorModeProvider>
-          <ListStateAlert show={false} status='info' title='Hidden' description='Hidden description' />
+          <ListStateAlert show={false} error={new Error('Hidden description')} title='Hidden' />
         </ColorModeProvider>
       </ChakraProvider>
     )

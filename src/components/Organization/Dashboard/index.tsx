@@ -20,7 +20,7 @@ import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
 import { isPlanNamed, PlanName } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
@@ -205,11 +205,10 @@ const Processes = () => {
       <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap='4'>
         <ListStateAlert
           show
-          status='error'
           title={t('dashboard.welcome.error_loading_processes', {
             defaultValue: 'Error loading voting processes',
           })}
-          description={error instanceof Error ? error.message : undefined}
+          error={error}
         />
       </Flex>
     )
