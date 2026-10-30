@@ -76,9 +76,9 @@ const h = (type, style = {}, children = [], extra = {}) => {
 
 const logo = (src, height) => h('img', { height }, [], { src, width: Math.round(height * LOGO_RATIO), height })
 
-// Picks the largest headline size that keeps the longest word on one line and the whole
-// text within two lines. Widths are estimates (Inter 500 averages ~0.46em per character,
-// Greek runs wider), so new copy is still checked by eye after generating.
+// Picks the largest headline size that keeps the longest word on one line and aims for two lines
+// of text. Widths are estimates (Inter 500 averages ~0.46em per character; Greek is set at 0.5 and
+// still runs wider, so the Greek card takes three lines), so new copy is checked by eye after generating.
 const fitHeadline = (text, maxWidth, { max = 56, min = 38, lines = 2 } = {}) => {
   const perChar = /\p{Script=Greek}/u.test(text) ? 0.5 : 0.46
   const longest = Math.max(...text.split(/\s+/).map((word) => word.length))
