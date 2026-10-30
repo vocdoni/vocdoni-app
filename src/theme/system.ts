@@ -35,6 +35,11 @@ export const createAppSystem = (primaryColor?: string) => {
       html: {
         colorPalette: defaultColorPalette(brand),
       },
+      // Text that sets no size (a bare Text, markdown, list items) inherits the body role, so a new type
+      // scale reaches it too.
+      body: {
+        textStyle: 'body',
+      },
       // The CSS default (`bolder`) would ask for 700, a weight the app does not
       // load, and the browser would fake it.
       'b, strong': {
