@@ -13,10 +13,10 @@ export const illustrationColors = defineSemanticTokens.colors({
     },
   },
   logo: {
-    // Pure black (`ink.500`), not chakra's `black`, which is #09090B.
+    // Pure black (`ink.950`), not chakra's `black`, which is #09090B.
     fg: {
       value: {
-        _light: '{colors.ink.500}',
+        _light: '{colors.ink.950}',
         _dark: '{colors.white}',
       },
     },
