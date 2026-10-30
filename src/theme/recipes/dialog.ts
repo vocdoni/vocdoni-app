@@ -9,6 +9,9 @@ const baseStyle = {
     bg: 'surface.overlay',
     boxShadow: 'shadow.overlay',
   },
+  description: {
+    color: 'fg.muted',
+  },
 } satisfies Partial<Record<string, SystemStyleObject>>
 
 export const Dialog = defineSlotRecipe({

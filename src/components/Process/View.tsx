@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react'
 import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
 import { hasResults } from '@vocdoni/api-client'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { PageLoader } from '~components/ui/Loader'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
@@ -286,10 +287,9 @@ export const SuccessVoteModal = () => {
           {/* data-testid: this modal is the confirmation the e2e voting flow
               asserts on, and its only other handle is a translated title. */}
           <Dialog.Content className='ph-no-capture' data-testid='vote-success-modal'>
-            <Dialog.Header display='flex' flexDirection='column'>
-              <Dialog.Title>{t('process.success_modal.title')}</Dialog.Title>
+            <DialogHeader display='flex' flexDirection='column' title={t('process.success_modal.title')}>
               <BallotBoxAnimated alignSelf='center' />
-            </Dialog.Header>
+            </DialogHeader>
             <Dialog.Body>
               {voteId ? (
                 <Trans
@@ -369,7 +369,13 @@ export const VotingVoteModal = () => {
     >
       <Dialog.Backdrop />
       <Dialog.Positioner>
-        <Dialog.Content>
+        <Dialog.Content
+          aria-label={
+            showFailure
+              ? t('process.vote_failed.title', { defaultValue: 'Your vote could not be cast' })
+              : t('process.voting')
+          }
+        >
           {/* This dialog has no header, so the body has to supply the top padding it would provide. */}
           <Dialog.Body pt='6'>
             {showFailure ? (

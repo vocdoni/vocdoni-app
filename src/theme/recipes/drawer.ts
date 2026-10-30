@@ -11,11 +11,14 @@ export const Drawer = defineSlotRecipe({
       boxShadow: 'shadow.overlay',
     },
   },
-  // `sidebar` is the mobile dashboard menu; `panel` paints like a dialog.
+  // `sidebar` is the mobile dashboard menu; `panel` paints like a dialog and is ui/Drawer's shell.
   variants: {
     variant: {
       sidebar: { content: { bg: 'surface.overlay.drawer' } },
-      panel: { content: { bg: 'surface.overlay' } },
+      panel: {
+        content: { bg: 'surface.overlay' },
+        description: { textStyle: 'body-sm', color: 'fg.muted' },
+      },
     },
   },
   defaultVariants: { variant: 'panel' },
