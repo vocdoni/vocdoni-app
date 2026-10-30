@@ -367,3 +367,20 @@ describe('layout tokens', () => {
     expect(value('durations.slow')).toBe('300ms')
   })
 })
+
+describe('escape hatch', () => {
+  it('unwraps [value] so strictTokens opt-outs reach the CSS as plain values', () => {
+    expect(system.css({ p: '[0]', mx: '[auto]', w: '[calc(100% - {sizes.8})]' })).toEqual({
+      padding: '0',
+      marginInline: 'auto',
+      width: 'calc(100% - var(--chakra-sizes-8))',
+    })
+  })
+
+  it('still resolves tokens and leaves other values alone', () => {
+    expect(system.css({ p: '4', w: 'full' })).toEqual({
+      padding: 'var(--chakra-spacing-4)',
+      width: 'var(--chakra-sizes-full)',
+    })
+  })
+})
