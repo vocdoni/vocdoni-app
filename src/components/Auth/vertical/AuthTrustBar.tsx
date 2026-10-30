@@ -56,7 +56,7 @@ const AuthTrustBar = ({ vertical }: { vertical: ResolvedVertical }) => {
               md: index < VisibleLogos.md ? 'block' : 'none',
               lg: index < VisibleLogos.lg ? 'block' : 'none',
             }}
-            boxSize={{ base: '48px', md: '52px' }}
+            boxSize={{ base: '12', md: '52px' }}
             flexShrink={0}
             borderRadius='lg'
             objectFit='contain'

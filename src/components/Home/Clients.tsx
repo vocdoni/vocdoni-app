@@ -46,7 +46,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
     >
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={barca} h={'40px'} alt={t('alt.images.barca')} />
+          <Image src={barca} h='10' alt={t('alt.images.barca')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>F.C. Barcelona</Text>
@@ -78,7 +78,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
       </Card.Root>
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={coec} h={'20px'} alt={t('alt.images.coec')} />
+          <Image src={coec} h='5' alt={t('alt.images.coec')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>COEC</Text>
@@ -86,7 +86,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
       </Card.Root>
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={erc} h={'32px'} alt={t('alt.images.esquerra')} />
+          <Image src={erc} h='8' alt={t('alt.images.esquerra')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>Esquerra Republicana</Text>
@@ -102,7 +102,7 @@ export const ClientsGrid = (props: PageSectionProps) => {
       </Card.Root>
       <Card.Root variant='logo-tile'>
         <Card.Header>
-          <Image src={ticanoia} h={'18px'} alt={t('alt.images.ticanoia')} />
+          <Image src={ticanoia} h='4.5' alt={t('alt.images.ticanoia')} />
         </Card.Header>
         <Card.Body>
           <Text as='span'>TIC Anoia</Text>
