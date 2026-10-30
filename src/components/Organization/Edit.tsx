@@ -115,7 +115,6 @@ const EditOrganization = () => {
             description={t('create_org.organization_details_description', {
               defaultValue: "Manage your organization's profile and configuration settings.",
             })}
-            size='md'
           />
           <Flex gap='6' flexDirection={{ base: 'column', sm: 'row' }}>
             <AvatarUploader w='fit' />

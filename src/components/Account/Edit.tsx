@@ -25,7 +25,6 @@ export const AccountEdit = () => {
           description={t('delete.delete_subtitle', {
             defaultValue: 'Permanently delete your account and all associated data',
           })}
-          titleGap='4'
         />
         <Button colorPalette={'danger'} alignSelf={'flex-end'} onClick={() => setOpen(true)}>
           <Trans i18nKey='delete_my_account'>Delete Account</Trans>
