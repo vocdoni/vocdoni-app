@@ -103,8 +103,8 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
 export const SidebarContents = (props: BoxProps) => <Box px={4} pb={4} {...props} />
 
 export const SidebarTitle = (props: HeadingProps) => (
-  <CHeading as='h2' size='lg' display='flex' gap={2} alignItems='center' variant='sidebar-title' {...props} />
+  <CHeading as='h2' size='lg' display='flex' gap={2} alignItems='center' variant='section' {...props} />
 )
 export const SidebarSubtitle = (props: HeadingProps) => (
-  <CHeading as='h3' size='sm' display='flex' gap={2} alignItems='center' variant='sidebar-subtitle' {...props} />
+  <CHeading as='h3' size='sm' display='flex' gap={2} alignItems='center' variant='subsection' {...props} />
 )
