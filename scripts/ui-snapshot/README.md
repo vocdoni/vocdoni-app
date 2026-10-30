@@ -32,6 +32,7 @@ pnpm ui:diff -- before after
 | `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                  |
 | `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")           |
 | `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")        |
+| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                |
 
 `pnpm ui:diff -- <labelA> <labelB>` options: `--ignore width,height` drops properties from the
 comparison; `--limit <n>` caps the elements printed per capture (default 50; totals always count
@@ -127,6 +128,23 @@ not the one rendering:
 SAAS_URL=http://127.0.0.1:3999 \
   VITE_CONFIG="{\"resolve\":{\"alias\":{\"~theme/system\":\"$PWD/src/theme/test-themes/stress.ts\"}}}" pnpm dev
 ```
+
+## Accessibility (axe)
+
+```bash
+pnpm ui:snapshot -- --label a11y --a11y
+```
+
+After each capture (stock theme only; `--a11y` with `--theme stress` stops) the script runs axe-core on the page and
+lists the violations of the WCAG 2.2 A and AA rules, by rule with a node count and a few examples. Only violations are
+listed, not "needs review" items or best-practice rules. `a11y-report.json` holds the result per capture. axe is read
+from `node_modules`, so nothing is fetched. Colour contrast is only checked reliably in a real browser, which is why
+this runs inside the snapshot.
+
+The run fails on any count above `a11y-baseline.json`. While that file does not exist the run only reports. Once it
+exists, lower it after a fix with `--update-a11y-baseline` (a `--routes` run updates only its captures). Write the
+baseline from a CI run, not from your machine: fonts and layout change the colour-contrast results. A deliberate case
+goes with a reason in `A11Y_EXCEPTIONS` (`a11y.mjs`); violations still waiting for a fix belong in the baseline.
 
 ## Use your own dev server
 
