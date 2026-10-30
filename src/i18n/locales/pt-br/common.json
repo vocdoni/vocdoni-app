@@ -144,7 +144,6 @@
   "color_mode_switcher": "Alternar modo de cor",
   "common": {
     "back": "Voltar",
-    "close_drawer": "Fechar painel",
     "home": "Início",
     "retry": "Tente novamente"
   },
@@ -1063,7 +1062,6 @@
       "add_to_group_success": "Membros adicionados ao grupo com sucesso",
       "bulk_delete": "Excluir",
       "cancel": "Cancelar",
-      "close_drawer": "Fechar",
       "create_group": "Criar grupo",
       "create_group_error": "Erro ao criar o grupo",
       "create_group_form_description": "Crie um novo grupo a partir dos membros selecionados. Isso os organizará para futuros processos de votação.",

@@ -1,4 +1,5 @@
-import { Box, Button, CloseButton, Flex, Icon, IconButton, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Flex, Icon, IconButton, Text, Textarea } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { Fragment, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CalendarIcon, CheckIcon, SendIcon, SupportIcon, WhatsappIcon } from '~theme/icons'

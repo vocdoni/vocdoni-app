@@ -142,7 +142,6 @@
   "color_mode_switcher": "Farbmodus-Umschalter",
   "common": {
     "back": "Zurück",
-    "close_drawer": "Seitenleiste schließen",
     "home": "Startseite",
     "retry": "Nochmal versuchen"
   },
@@ -1046,7 +1045,6 @@
       "add_to_group_success": "Mitglieder erfolgreich zur Gruppe hinzugefügt",
       "bulk_delete": "Löschen",
       "cancel": "Abbrechen",
-      "close_drawer": "Schließen",
       "create_group": "Gruppe erstellen",
       "create_group_error": "Fehler beim Erstellen der Gruppe",
       "create_group_form_description": "Erstelle eine neue Gruppe aus den ausgewählten Mitgliedern. Diese wird für zukünftige Abstimmungsprozesse organisiert.",

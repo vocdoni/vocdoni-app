@@ -1,6 +1,7 @@
 import { Button, type ButtonProps, Dialog, type DialogRootProps, Spacer, Text, useSlotRecipe } from '@chakra-ui/react'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { ConfirmModal } from '~theme/recipes/confirmModal'
 import { statusPalette } from '~theme/status'
 
@@ -64,10 +65,13 @@ export const ConfirmDialogContent = ({
 
   return (
     <>
-      <Dialog.Header css={styles.header}>
-        <Dialog.Title css={styles.title}>{title}</Dialog.Title>
-        {layout === 'summary' && descriptionText}
-      </Dialog.Header>
+      <DialogHeader
+        css={styles.header}
+        title={title}
+        titleProps={{ css: styles.title }}
+        description={layout === 'summary' ? description : undefined}
+        descriptionProps={{ css: styles.description }}
+      />
       <Dialog.Body css={styles.body}>
         {layout !== 'summary' && descriptionText}
         {children}
@@ -111,7 +115,7 @@ export const ConfirmDialog = ({
   children,
   ...dialogProps
 }: ConfirmDialogProps) => (
-  <Dialog.Root placement='center' {...dialogProps}>
+  <Dialog.Root {...dialogProps}>
     <Dialog.Backdrop />
     <Dialog.Positioner>
       <Dialog.Content>

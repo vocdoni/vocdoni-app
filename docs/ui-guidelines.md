@@ -187,6 +187,8 @@ All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 | `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                                          |
 | `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`                           |
 | `CloseButton`                              | A close control with a translated `aria-label`                                                                                              |
+| `PanelDrawer` (`ui/Drawer`)                | Every side panel: `title`, `description`, `footer` (pinned actions), `trigger`; the corner close button is built in                         |
+| `DialogHeader`                             | A dialog's `title` (its accessible name) and muted `description`. Dialogs are centred by the recipe                                         |
 | `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                                      |
 
 Not in `ui/`: `LabelledSeparator` (`~components/Layout/Separators`), a hairline on each side of a short label, such as

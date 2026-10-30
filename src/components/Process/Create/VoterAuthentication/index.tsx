@@ -119,7 +119,6 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
       finalFocusEl={() => triggerEl.current}
       onOpenChange={(details) => (details.open ? onOpen() : onClose())}
       size={{ base: 'full', md: 'xl' }}
-      placement='center'
       scrollBehavior='inside'
       // Mounted only while open: closing the dialog discards unsaved edits,
       // and the next opening starts again from the saved settings.
