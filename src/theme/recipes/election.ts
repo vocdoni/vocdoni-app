@@ -24,16 +24,14 @@ export const ElectionVideo = defineRecipe({
 })
 
 export const ElectionTitle = defineRecipe({
+  // Typography lives in the variants: a variant with a `textStyle` must not also get these from the base.
   base: {
-    fontWeight: 'bold',
-    fontSize: 'xl',
     textAlign: 'center',
-    lineHeight: 'short',
     mb: 3,
   },
   variants: {
     size: {
-      md: {},
+      md: { fontSize: 'xl', fontWeight: 'bold', lineHeight: 'short' },
       // Public process page header.
       hero: {
         textStyle: 'display',
@@ -48,13 +46,16 @@ export const ElectionTitle = defineRecipe({
       // Shared-census process cards.
       card: {
         fontSize: 'lg',
+        fontWeight: 'bold',
+        lineHeight: 'short',
         mb: 0,
       },
       // One-line process rows of the organization dashboard.
       row: {
         fontSize: 'md',
-        textAlign: 'left',
         fontWeight: 'bold',
+        lineHeight: 'short',
+        textAlign: 'left',
         mb: 0,
         truncate: true,
       },
