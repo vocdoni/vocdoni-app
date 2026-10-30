@@ -1,4 +1,5 @@
-import { Button, CloseButton, Dialog, Portal } from '@chakra-ui/react'
+import { Button, Dialog, Portal } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useElection } from '@vocdoni/react-components'
 import type { ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'

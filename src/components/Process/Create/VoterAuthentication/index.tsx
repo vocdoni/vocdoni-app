@@ -1,4 +1,5 @@
-import { Alert, Button, CloseButton, Dialog, Flex, Portal, Text } from '@chakra-ui/react'
+import { Alert, Button, Dialog, Flex, Portal, Text } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { RefCallback, useCallback, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'

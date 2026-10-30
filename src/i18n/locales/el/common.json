@@ -467,6 +467,7 @@
       "password_min_length": "Ελάχ. 8 χαρακτήρες",
       "required": "Αυτό το πεδίο είναι υποχρεωτικό"
     },
+    "hide_password": "Απόκρυψη κωδικού πρόσβασης",
     "member": {
       "error": {
         "invalid_birth_date": "Η ημερομηνία γέννησης δεν μπορεί να είναι στο μέλλον",
@@ -482,6 +483,7 @@
       "success_title": "Η ψηφοφορία δημιουργήθηκε με επιτυχία"
     },
     "select_language": "Γλώσσα",
+    "show_password": "Εμφάνιση κωδικού πρόσβασης",
     "support": {
       "billing_issue": "Θέμα χρέωσης",
       "custom_request": "Ειδικό αίτημα",

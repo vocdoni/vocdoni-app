@@ -6,8 +6,8 @@ import {
   Button,
   type ButtonProps,
   Card,
+  chakra,
   Checkbox,
-  CloseButton,
   Dialog,
   Field,
   Flex,
@@ -27,6 +27,7 @@ import {
   useRecipe,
   useSlotRecipe,
 } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import {
   type ComponentsPartialDefinition,
   defineComponent,
@@ -161,23 +162,41 @@ export const electionComponents: ComponentsPartialDefinition = {
         setLoaded(imageRef.current?.complete ?? false)
       }, [imageThumbnail])
 
+      const thumbnail = (
+        <Image
+          ref={imageRef}
+          css={styles.image}
+          src={imageThumbnail}
+          alt={label}
+          onLoad={() => setLoaded(true)}
+          // Don't let a failed request hang as an eternal skeleton either.
+          onError={() => setLoaded(true)}
+        />
+      )
+
       const media = hasImage ? (
         <Box data-choice-media={dataAttrs?.['data-choice-media']}>
           <Skeleton loading={!loaded} css={styles.skeleton}>
-            <Image
-              ref={imageRef}
-              css={styles.image}
-              src={imageThumbnail}
-              alt={label}
-              onLoad={() => setLoaded(true)}
-              // Don't let a failed request hang as an eternal skeleton either.
-              onError={() => setLoaded(true)}
-              onClick={(event) => {
-                if (!canOpenImageModal) return
-                event.preventDefault()
-                setIsOpen(true)
-              }}
-            />
+            {canOpenImageModal && imageDefault ? (
+              // Named by the image's alt: a name of its own would also end up in the choice's accessible name.
+              <chakra.button
+                type='button'
+                aria-haspopup='dialog'
+                display='block'
+                w='100%'
+                h='100%'
+                borderTopRadius='lg'
+                focusVisibleRing='inside'
+                onClick={(event) => {
+                  event.preventDefault()
+                  setIsOpen(true)
+                }}
+              >
+                {thumbnail}
+              </chakra.button>
+            ) : (
+              thumbnail
+            )}
           </Skeleton>
         </Box>
       ) : null

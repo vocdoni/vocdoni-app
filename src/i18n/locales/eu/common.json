@@ -467,6 +467,7 @@
       "password_min_length": "Gut. 8 karaktere",
       "required": "Eremu hau bete beharrekoa da"
     },
+    "hide_password": "Ezkutatu pasahitza",
     "member": {
       "error": {
         "invalid_birth_date": "Jaioteguna ezin da etorkizunean egon",
@@ -482,6 +483,7 @@
       "success_title": "Bozketa-prozesua behar bezala sortu da"
     },
     "select_language": "Hizkuntza",
+    "show_password": "Erakutsi pasahitza",
     "support": {
       "billing_issue": "Fakturazio-arazoa",
       "custom_request": "Eskaera pertsonalizatua",

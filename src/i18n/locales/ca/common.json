@@ -471,6 +471,7 @@
       "password_min_length": "Mín. 8 caràcters",
       "required": "Aquest camp és obligatori"
     },
+    "hide_password": "Amaga la contrasenya",
     "member": {
       "error": {
         "invalid_birth_date": "La data de naixement no pot ser en el futur",
@@ -486,6 +487,7 @@
       "success_title": "Procés de votació creat amb èxit"
     },
     "select_language": "Idioma",
+    "show_password": "Mostra la contrasenya",
     "support": {
       "billing_issue": "Problema de facturació",
       "custom_request": "Sol·licitud personalitzada",
