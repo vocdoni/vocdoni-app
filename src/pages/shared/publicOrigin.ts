@@ -29,5 +29,11 @@ export const resolvePublicOrigin = (
 
   if (!host || !protocol) return undefined
 
-  return `${protocol}://${host}`
+  // Proxy chains can leave lists ("a, b") or junk in these headers; an origin that does not
+  // parse would make every `new URL(path, origin)` downstream throw inside the head render.
+  try {
+    return new URL(`${protocol}://${host}`).origin
+  } catch {
+    return undefined
+  }
 }

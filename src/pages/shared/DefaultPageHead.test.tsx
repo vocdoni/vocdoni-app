@@ -42,6 +42,6 @@ describe('DefaultPageHead', () => {
   it('emits a relative path when no origin can be resolved', () => {
     const html = render({ routeParams: {} })
 
-    expect(html).toMatch(/property="og:image" content="\/assets\/og\/[a-z-]+\.png"/)
+    expect(html).toContain('property="og:image" content="/assets/og/en.png"')
   })
 })
