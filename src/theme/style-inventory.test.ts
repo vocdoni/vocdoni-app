@@ -1,21 +1,24 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import {
   collectStyleInventory,
   emptyCounts,
+  HARD_CATEGORIES,
   isScannedFile,
+  RATCHET_CATEGORIES,
   scanSource,
   serializeCounts,
   STYLE_CATEGORIES,
   STYLE_EXCEPTIONS,
+  STYLE_FIXES,
   StyleCategory,
   StyleCounts,
 } from './style-inventory'
 
-// Ratchet on hardcoded styling outside the theme (style-inventory.ts says what counts): per-(category, file) counts
-// may only go down from the committed baseline. A decrease fails too, until the baseline is lowered with
-// UPDATE_COMMAND, so every cleanup locks in its progress.
+// Hardcoded styling outside the theme (style-inventory.ts says what counts). Hard categories must stay at zero. The
+// ratchet ones may only go down per (category, file) from the committed baseline; a decrease fails too, until the
+// baseline is lowered with UPDATE_COMMAND, so every cleanup locks in its progress.
 
 const ROOT = path.resolve(__dirname, '../..')
 const BASELINE_PATH = path.join(ROOT, 'src/theme/style-inventory.baseline.json')
@@ -121,12 +124,22 @@ describe('style inventory scanner', () => {
     expect(categoriesOf(select, 'src/components/Layout/Other.tsx')).toEqual(['rawZIndex'])
   })
 
+  it('limits an exception with `match` to the occurrences it names', () => {
+    const file = 'src/components/Layout/Footer.tsx'
+    expect(categoriesOf(`<Image _dark={{ filter: 'invert(100%)' }} />`, file)).toEqual([])
+    expect(categoriesOf(`<Box _dark={{ bg: 'bg.muted' }} />`, file)).toEqual(['colorModeLogic'])
+    const members = 'src/components/Memberbase/Members/index.tsx'
+    expect(categoriesOf(`<Select isLoading />`, members)).toEqual([])
+    expect(categoriesOf(`<Button colorScheme='red' />`, members)).toEqual(['v2Prop'])
+  })
+
   it('scans components, react-components and editor styles but not the theme definition or tests', () => {
     expect(isScannedFile('src/components/Layout/Footer.tsx')).toBe(true)
     expect(isScannedFile('src/theme/react-components/election.tsx')).toBe(true)
     expect(isScannedFile('src/theme/editor.ts')).toBe(true)
     expect(isScannedFile('src/theme/semantic.ts')).toBe(false)
     expect(isScannedFile('src/theme/recipes/badge.ts')).toBe(false)
+    expect(isScannedFile('src/theme/test-themes/stress.ts')).toBe(false)
     expect(isScannedFile('src/components/Layout/Footer.test.tsx')).toBe(false)
     expect(isScannedFile('src/__mocks__/posthog-js.ts')).toBe(false)
   })
@@ -149,10 +162,51 @@ const summaryTable = (counts: StyleCounts, files: number) => {
   return [`Style inventory (${files} files scanned)`, ...lines, `  ${'total'.padEnd(18)} ${String(total).padStart(5)}`]
 }
 
-describe('style inventory ratchet', () => {
-  it('does not increase hardcoded styling outside the theme', () => {
-    const { counts, occurrences, files } = collectStyleInventory(ROOT)
-    console.info(summaryTable(counts, files).join('\n'))
+const ratchetOnly = (counts: StyleCounts): StyleCounts => ({
+  ...emptyCounts(),
+  ...Object.fromEntries(RATCHET_CATEGORIES.map((category) => [category, counts[category]])),
+})
+
+describe('style inventory rules', () => {
+  let inventory: ReturnType<typeof collectStyleInventory>
+  beforeAll(() => {
+    inventory = collectStyleInventory(ROOT)
+  })
+
+  it('has no hardcoded styling of a category at zero', () => {
+    const found = inventory.occurrences.filter((o) => HARD_CATEGORIES.includes(o.category))
+    const messages = found.length
+      ? [
+          'Hardcoded styling that the theme already covers. These categories are at zero and stay there:',
+          ...found.map((o) => `  ${o.file}:${o.line}  ${o.category}: ${o.text}\n    use ${STYLE_FIXES[o.category]}`),
+          'A real exception (a third-party API that takes raw CSS, a brand mark) goes in STYLE_EXCEPTIONS in',
+          'src/theme/style-inventory.ts, with a reason. The baseline cannot hold these categories.',
+        ]
+      : []
+    expect(messages, `\n${messages.join('\n')}\n`).toEqual([])
+  })
+
+  it('keeps the baseline to the ratchet categories, each with occurrences left', () => {
+    const baseline = readBaseline()
+    const inBaseline = HARD_CATEGORIES.filter((category) => Object.keys(baseline[category] ?? {}).length > 0)
+    expect(inBaseline, `the baseline lists hard categories: ${inBaseline.join(', ')}`).toEqual([])
+    const cleared = RATCHET_CATEGORIES.filter((category) => Object.keys(inventory.counts[category]).length === 0)
+    expect(cleared, `at zero now, move them out of RATCHET_CATEGORIES: ${cleared.join(', ')}`).toEqual([])
+  })
+
+  // A '*' entry fences off code that renders outside chakra (react-pdf), so it may excuse nothing today.
+  it('has no stale exception', () => {
+    const used = new Set(inventory.excepted.map(({ exception }) => exception))
+    const stale = STYLE_EXCEPTIONS.filter((exception) => exception.categories !== '*' && !used.has(exception)).map(
+      ({ glob }) => glob
+    )
+    expect(stale, `STYLE_EXCEPTIONS entries that excuse nothing, remove them: ${stale.join(', ')}`).toEqual([])
+  })
+
+  it('does not increase the ratchet categories', () => {
+    const { occurrences, files } = inventory
+    const counts = ratchetOnly(inventory.counts)
+    console.info(summaryTable(inventory.counts, files).join('\n'))
 
     if (process.env.UPDATE_STYLE_BASELINE) {
       fs.writeFileSync(BASELINE_PATH, serializeCounts(counts))
@@ -162,7 +216,7 @@ describe('style inventory ratchet', () => {
     const baseline = readBaseline()
     const increased: Finding[] = []
     const decreased: Finding[] = []
-    for (const category of STYLE_CATEGORIES) {
+    for (const category of RATCHET_CATEGORIES) {
       const keys = new Set([...Object.keys(baseline[category] ?? {}), ...Object.keys(counts[category])])
       for (const file of keys) {
         const before = baseline[category]?.[file] ?? 0
@@ -177,6 +231,7 @@ describe('style inventory ratchet', () => {
       messages.push('New hardcoded styling (use theme tokens or recipes instead):')
       for (const { category, file, baseline: before, current } of increased) {
         messages.push(`  ${category} in ${file}: ${current} (baseline ${before}${before ? '' : ', new'})`)
+        messages.push(`    use ${STYLE_FIXES[category]}`)
         for (const o of occurrences.filter((o) => o.category === category && o.file === file)) {
           messages.push(`    ${o.file}:${o.line}  ${o.text}`)
         }
