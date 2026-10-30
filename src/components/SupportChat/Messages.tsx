@@ -30,7 +30,7 @@ export const TypingIndicator = () => (
         borderRadius='full'
         bg='fg.muted'
         css={{ animation: `${dotBounce} 1.2s ease-in-out ${dot * 0.15}s infinite` }}
-        _motionReduce={{ animation: '[none]', opacity: 'disabled' }}
+        _motionReduce={{ animation: '[none]', opacity: 'inactive' }}
       />
     ))}
   </Flex>
