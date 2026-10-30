@@ -10,10 +10,6 @@ import {
   Progress,
   Separator,
   Text,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
   VStack,
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
@@ -23,6 +19,7 @@ import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Content
 import { MaxMembersPerOrg } from '~constants'
 import { usePaginatedMembers } from '~queries/members'
 import { quantity } from '~utils/numbers'
+import { Tooltip } from '~components/ui/Tooltip'
 
 type UsageColor = 'chart.1' | 'chart.2' | 'chart.3' | 'chart.4'
 
@@ -53,16 +50,11 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
           <Text textStyle='body-sm' fontWeight='medium' color='fg'>
             {label}
             {tooltip && (
-              <TooltipRoot>
-                <TooltipTrigger asChild>
-                  <chakra.span verticalAlign='middle'>
-                    <Icon as={InfoIcon} ml='1' />
-                  </chakra.span>
-                </TooltipTrigger>
-                <TooltipPositioner>
-                  <TooltipContent>{tooltip}</TooltipContent>
-                </TooltipPositioner>
-              </TooltipRoot>
+              <Tooltip portalled={false} content={tooltip}>
+                <chakra.span verticalAlign='middle'>
+                  <Icon as={InfoIcon} ml='1' />
+                </chakra.span>
+              </Tooltip>
             )}
           </Text>
         </HStack>
