@@ -2,7 +2,8 @@ import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router'
-import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { Routes } from '~src/router/routes'
 
 type ConfigTab = {
@@ -39,12 +40,12 @@ const IntegratorConfiguration = () => {
 
   return (
     <DashboardContents>
-      <Heading>{t('integrators.configuration.title', { defaultValue: 'Configuration' })}</Heading>
-      <SubHeading>
+      <PageTitle>{t('integrators.configuration.title', { defaultValue: 'Configuration' })}</PageTitle>
+      <PageSubtitle>
         {t('integrators.configuration.subtitle', {
           defaultValue: 'Manage your subscription and get support.',
         })}
-      </SubHeading>
+      </PageSubtitle>
       <TabsRoot
         value={activeTabValue}
         onValueChange={({ value }) => {

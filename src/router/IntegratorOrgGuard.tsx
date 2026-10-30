@@ -72,7 +72,7 @@ const IntegratorOrgGuard = () => {
       <DashboardContents>
         <Center py={16}>
           <Stack align='center' gap={3}>
-            <Text fontSize='sm' color='gray.500'>
+            <Text textStyle='body-sm' color='gray.500'>
               <Trans i18nKey='integrators.provision_failed'>We couldn't set up your integrator account.</Trans>
             </Text>
             <Button onClick={() => provision.reset()}>

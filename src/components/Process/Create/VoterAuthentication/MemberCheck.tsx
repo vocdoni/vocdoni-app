@@ -134,7 +134,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
       content = (
         <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' color='fg.error' />} busy={rechecking}>
           {duplicates > 0 && (
-            <Text as='span' fontSize='inherit' fontWeight='medium' color='fg.error'>
+            <Text as='span' fontWeight='medium' color='fg.error'>
               {t('voter_auth.status.duplicated_members', {
                 defaultValue: "{{count}} members share the same {{fields}}, so they can't be told apart.",
                 count: duplicates,
@@ -145,7 +145,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
           {missing > 0 &&
             (missingByField?.length ? missingByField : [{ label: missingFields, count: missing }]).map(
               ({ label, count }) => (
-                <Text key={label} as='span' fontSize='inherit' fontWeight='medium' color='fg.error'>
+                <Text key={label} as='span' fontWeight='medium' color='fg.error'>
                   {t('voter_auth.status.missing_members', {
                     defaultValue: '{{count}} members are missing {{fields}}.',
                     count,

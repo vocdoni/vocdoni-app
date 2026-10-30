@@ -89,7 +89,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
       ) : (
         <Stack as='figure' position='relative' m={0} gap={{ md: 5, lg: 7 }} minW={0}>
           <Text
-            fontSize='xs'
+            textStyle='caption'
             fontWeight='bolder'
             textTransform='uppercase'
             letterSpacing='eyebrow.wide'
@@ -103,7 +103,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
             as='blockquote'
             m={0}
             fontWeight='bold'
-            lineHeight='1.4'
+            lineHeight='moderate'
             letterSpacing='quote.tight'
             color='auth.showcase.fg'
             fontSize={isLongQuote ? { md: 'md', lg: 'xl' } : { md: 'lg', lg: '2xl' }}
@@ -135,10 +135,10 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
               />
             )}
             <Box minW={0}>
-              <Text fontSize='sm' fontWeight='bolder' color='auth.showcase.fg'>
+              <Text textStyle='body-sm' fontWeight='bolder' color='auth.showcase.fg'>
                 {testimonial.author}
               </Text>
-              <Text fontSize='xs' lineHeight='1.35' color='auth.showcase.fg.muted'>
+              <Text fontSize='xs' lineHeight='shorter' color='auth.showcase.fg.muted'>
                 {testimonial.position} · {testimonial.company}
               </Text>
             </Box>

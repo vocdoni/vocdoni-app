@@ -567,7 +567,7 @@ export const electionComponents: ComponentsPartialDefinition = {
             return <Text key={vote.questionId || index}>{linkifyToExplorer(line, vote.voteId)}</Text>
           })}
           {anonymous && (
-            <Text fontSize='sm' fontWeight='bold'>
+            <Text textStyle='body-sm' fontWeight='bold'>
               {t('vote.anonymous_receipt', {
                 defaultValue: 'Anonymous vote: save this receipt now, the platform cannot show it to you again.',
               })}

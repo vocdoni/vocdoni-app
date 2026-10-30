@@ -1,4 +1,5 @@
 import { SystemStyleObject } from '@chakra-ui/react'
+import { proseHeadingSizes } from './textStyles'
 
 const editor: SystemStyleObject = {
   '& .lexical-bold': {
@@ -44,23 +45,11 @@ const editor: SystemStyleObject = {
   '& [class*="lexical-h"]': {
     fontWeight: 'bold',
     marginY: '1.25rem',
-    lineHeight: 'shorter',
+    lineHeight: 'short',
   },
-  '& .lexical-h1': {
-    fontSize: '3xl',
-  },
-  '& .lexical-h2': {
-    fontSize: '2xl',
-  },
-  '& .lexical-h3': {
-    fontSize: 'xl',
-  },
-  '& .lexical-h4': {
-    fontSize: 'lg',
-  },
-  '& .lexical-h5': {
-    fontSize: 'md',
-  },
+  ...Object.fromEntries(
+    Object.entries(proseHeadingSizes).map(([level, fontSize]) => [`& .lexical-${level}`, { fontSize }])
+  ),
   '& .lexical-paragraph': {
     textStyle: 'sm',
     margin: 0,

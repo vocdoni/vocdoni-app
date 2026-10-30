@@ -89,14 +89,14 @@ const SubscriptionPageContent = () => {
         <SubscriptionPayment lookupKey={checkout?.planId} billingPeriod={checkout?.billingPeriod} onClose={showPlans} />
       )}
       <Flex justifyContent='center' alignItems='center' flexDirection='column'>
-        <Text fontSize='sm' color='fg.muted' textAlign='center'>
+        <Text textStyle='body-sm' color='fg.muted' textAlign='center'>
           <Trans i18nKey='subscription_plan.gdpr_compliance'>All plans include GDPR compliance.</Trans>
         </Text>
         <Flex gap={1}>
           <Trans
             i18nKey='subscription_plan.need_help'
             components={[
-              <Text key='help-text' fontSize='sm' color='fg.muted' textAlign='center' />,
+              <Text key='help-text' textStyle='body-sm' color='fg.muted' textAlign='center' />,
               <SupportLink key='support-link' />,
             ]}
           />

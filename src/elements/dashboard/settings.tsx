@@ -3,7 +3,8 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
-import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import QueryDataLayout from '~components/Layout/QueryDataLayout'
 import { Routes } from '~src/router/routes'
 
@@ -47,17 +48,17 @@ const Settings = () => {
 
   return (
     <DashboardContents>
-      <Heading>
+      <PageTitle>
         {t('organization_settings.title', {
           defaultValue: '{{organization}} Settings',
           organization: organization.account.name.default,
         })}
-      </Heading>
-      <SubHeading>
+      </PageTitle>
+      <PageSubtitle>
         {t('organization_settings.subtitle', {
           defaultValue: 'Manage your organization, team members and your subscription plan',
         })}
-      </SubHeading>
+      </PageSubtitle>
       <QueryDataLayout isLoading={isLoading} isError={isError} error={error}>
         <TabsRoot
           value={activeTabValue}

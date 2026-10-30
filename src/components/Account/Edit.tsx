@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from '@chakra-ui/react'
+import { Button, Flex, Heading, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
@@ -20,10 +20,10 @@ export const AccountEdit = () => {
         <AccountForm profile={profile} />
       </DashboardBox>
       <DashboardBox size='md'>
-        <Text size='2xl' fontWeight='bold'>
+        <Heading as='h2' textStyle='section-title'>
           {t('delete.delete_title', { defaultValue: 'Delete Account' })}
-        </Text>
-        <Text fontSize='sm' color='fg.muted'>
+        </Heading>
+        <Text textStyle='body-sm' color='fg.muted'>
           {t('delete.delete_subtitle', { defaultValue: 'Permanently delete your account and all associated data' })}
         </Text>
         <Button colorPalette={statusPalette.destructive} alignSelf={'flex-end'} onClick={() => setOpen(true)}>
@@ -39,7 +39,7 @@ export const AccountEdit = () => {
         title={t('delete.confirm_title', { defaultValue: 'Delete Your Account' })}
         description={
           <Flex flexDirection='column' gap={2}>
-            <Text fontSize='sm'>
+            <Text textStyle='body-sm'>
               {t('delete.confirm_description', {
                 defaultValue: 'To delete your account, please contact our support team.',
               })}

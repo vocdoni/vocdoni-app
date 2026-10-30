@@ -52,7 +52,7 @@ export const ProcessInfoCard = ({ label, description, ...props }: ProcessInfoCar
         {label}
       </Text>
       {typeof description === 'string' ? (
-        <Text color='fg.muted' fontSize='sm'>
+        <Text color='fg.muted' textStyle='body-sm'>
           {description}
         </Text>
       ) : (
@@ -107,7 +107,7 @@ const ProcessInfoPanel = () => {
       <ProcessInfoCard
         label={t('process.census')}
         description={
-          <Text color='fg.muted' fontSize='sm'>
+          <Text color='fg.muted' textStyle='body-sm'>
             {t('process.people_in_census', { count: censusSize })}
           </Text>
         }
@@ -315,7 +315,7 @@ export const SuccessVoteModal = () => {
                   id, and only while there is an id on screen to save: on a
                   return visit the receipt is already gone (the aside says so). */}
               {anonymous && voteId && (
-                <Text fontSize='sm' color='fg.muted'>
+                <Text textStyle='body-sm' color='fg.muted'>
                   {t('vote.anonymous_receipt', {
                     defaultValue: 'Anonymous vote: save this receipt now, the platform cannot show it to you again.',
                   })}

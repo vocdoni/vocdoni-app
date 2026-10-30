@@ -215,7 +215,7 @@ export const CreateApiKeyButton = () => {
                                 <Text as='span' fontWeight='medium'>
                                   {meta.label}
                                 </Text>
-                                <Text as='span' color='fg.muted' fontSize='sm'>
+                                <Text as='span' color='fg.muted' textStyle='body-sm'>
                                   {' '}
                                   — {meta.description}
                                 </Text>

@@ -172,7 +172,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
         </Dialog.Positioner>
       </Portal>
       {!groupId && (
-        <Text color='fg.muted' fontSize='xs'>
+        <Text color='fg.muted' textStyle='caption'>
           {t('voter_auth.no_group_description', {
             defaultValue: 'Please select a group first to configure authentication.',
           })}

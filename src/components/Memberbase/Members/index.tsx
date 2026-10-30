@@ -156,7 +156,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
           <Drawer.Header display='flex' justifyContent='space-between' alignItems='center'>
             <Box>
               <Heading size='md'>{t('members.table.add_to_group', { defaultValue: 'Add to Group' })}</Heading>
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('members.table.add_to_group_description', {
                   defaultValue: 'Select a group to add the members to.',
                 })}
@@ -191,7 +191,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
             />
 
             {selectedGroup && (
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('members.table.add_to_group_confirmation', {
                   defaultValue: 'You will add {{count}} members to the "{{group}}" group.',
                   count: selectedRows.length,
@@ -295,7 +295,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
           <Drawer.Header display='flex' justifyContent='space-between' alignItems='center'>
             <Box>
               <Heading size='md'>{t('members.table.add_to_census', { defaultValue: 'Add to census' })}</Heading>
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('members.table.add_to_census_description', {
                   defaultValue: 'Select an active voting process to add the members to its census.',
                 })}
@@ -326,7 +326,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
             />
 
             {selectedProcess && (
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('members.table.add_to_census_confirmation', {
                   defaultValue: 'You will add {{count}} member to the "{{process}}" process census.',
                   defaultValue_other: 'You will add {{count}} members to the "{{process}}" process census.',
@@ -416,7 +416,7 @@ const ColumnManager = () => {
           <Drawer.Content>
             <Drawer.Header>
               <Heading size='md'>{t('members.table.manage_columns', { defaultValue: 'Manage Columns' })}</Heading>
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('members.table.manage_columns_description', {
                   defaultValue: 'Customize which columns are displayed in the members table.',
                 })}
@@ -576,7 +576,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
               <Heading size='md'>
                 {t('members.table.create_group_form_title', { defaultValue: 'Create New Group' })}
               </Heading>
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('members.table.create_group_form_description', {
                   defaultValue:
                     'Create a new group from selected members. This will organize them for future voting processes.',
@@ -601,7 +601,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
                   <Box>
                     <Text mb={1}>{t('members.table.group_members', { defaultValue: 'Selected Members' })}</Text>
                     <Box p={4}>
-                      <Text fontSize='sm' mb={2}>
+                      <Text textStyle='body-sm' mb={2}>
                         {t('members.table.group_members_count', {
                           defaultValue: '{{count}} members selected',
                           count: selectedCount,
@@ -662,11 +662,11 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
     >
       {selectedRows.length > 0 ? (
         <>
-          <Text fontSize='sm' color='fg.muted'>
+          <Text textStyle='body-sm' color='fg.muted'>
             <Trans
               i18nKey='members.table.selected'
               count={selectedRows.length}
-              components={{ strong: <Text as='span' fontSize='sm' fontWeight='extrabold' display='inline' /> }}
+              components={{ strong: <Text as='span' textStyle='body-sm' fontWeight='extrabold' display='inline' /> }}
               defaults='Selected: <strong>{{count}} member</strong>'
             />
           </Text>
@@ -685,7 +685,7 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
           </Button>
         </>
       ) : (
-        <Text fontSize='sm' color='fg.muted'>
+        <Text textStyle='body-sm' color='fg.muted'>
           <Trans i18nKey='members.table.select_hint' defaults='Select members to perform bulk actions' />
         </Text>
       )}
@@ -912,7 +912,7 @@ const MembersRangeSummary = () => {
   const to = from + data.length - 1
 
   return (
-    <Text fontSize='sm'>
+    <Text textStyle='body-sm'>
       {debouncedSearch
         ? t('members.table.showing_results', {
             defaultValue: 'Showing {{from, number}}–{{to, number}} of {{count, number}} result',

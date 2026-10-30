@@ -70,7 +70,7 @@ export const PromotionCodeInput = () => {
 
   return !appliedCode ? (
     <Box>
-      <Text fontSize='sm' fontWeight='medium' mb={2}>
+      <Text textStyle='body-sm' fontWeight='medium' mb={2}>
         <Trans i18nKey='promo_code'>Promotion Code</Trans>
       </Text>
       <Flex gap={2}>
@@ -86,7 +86,7 @@ export const PromotionCodeInput = () => {
         </Button>
       </Flex>
       {(errors.promoCode || error) && (
-        <Text color='status.error.fg' fontSize='sm' mt={1}>
+        <Text color='status.error.fg' textStyle='body-sm' mt={1}>
           {errors.promoCode?.message || error}
         </Text>
       )}
@@ -96,7 +96,7 @@ export const PromotionCodeInput = () => {
       <Flex justify='space-between' align='center'>
         <Flex align='center' gap={2}>
           <Icon as={CheckIcon} color='status.success.fg' />
-          <Text fontSize='sm' fontWeight='medium'>
+          <Text textStyle='body-sm' fontWeight='medium'>
             <Trans i18nKey='code_applied'>Code "{{ appliedCode }}" applied</Trans>
           </Text>
         </Flex>

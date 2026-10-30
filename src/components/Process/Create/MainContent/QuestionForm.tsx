@@ -119,7 +119,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
             )}
 
             <VStack flex='1' align='stretch' gap={2}>
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('process.create.question.question_number', {
                   defaultValue: 'Question {{index}} of {{total}}',
                   index: index + 1,

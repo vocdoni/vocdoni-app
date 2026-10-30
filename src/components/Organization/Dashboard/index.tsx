@@ -1,4 +1,4 @@
-import { AspectRatio, Box, Button, Flex, HStack, Icon, Link, Text } from '@chakra-ui/react'
+import { AspectRatio, Box, Button, Flex, Heading, HStack, Icon, Link, Text } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ElectionProvider,
@@ -18,7 +18,8 @@ import { AddIcon, GoToIcon, UsersIcon, VoteIcon } from '~theme/icons'
 import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
-import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Contents'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
 import { isPlanNamed, PlanName } from '~constants'
@@ -35,12 +36,12 @@ const OrganizationDashboard = () => {
 
   return (
     <>
-      <Heading>{t('dashboard.welcome.title', { defaultValue: 'Dashboard' })}</Heading>
-      <SubHeading>
+      <PageTitle>{t('dashboard.welcome.title', { defaultValue: 'Dashboard' })}</PageTitle>
+      <PageSubtitle>
         {t('dashboard.welcome.subtitle', {
           defaultValue: "Here's an overview of your organization's voting activities",
         })}
-      </SubHeading>
+      </PageSubtitle>
       <Tutorial />
       <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={6} mb={6} alignItems='stretch'>
         <UsageLimits flex='1 1 60%' />
@@ -66,12 +67,12 @@ const Tutorial = () => {
   return (
     <DashboardBox size='md' mb={6} display='flex' gap={10} position='relative' flexDirection='row'>
       <Box flex='1 1 60%'>
-        <Text fontWeight='bold' mb={2} size='2xl'>
+        <Heading as='h2' textStyle='section-title' mb={2}>
           {t('dashboard.welcome.hello', {
             name: profile?.firstName,
             defaultValue: 'Welcome to Vocdoni, {{name}}!',
           })}
-        </Text>
+        </Heading>
         {loading || isLoading ? (
           <ListLoader mb={4} />
         ) : !subscription ? (
@@ -137,10 +138,10 @@ const OrganizationProcesses = () => {
     <Flex flexDirection={{ base: 'column', md: 'row' }} gap={4}>
       <DashboardBox size='md' minH='324px' flex='1 1 66%'>
         <Box mb={4}>
-          <Text fontWeight='bold' mb={1.5} size='2xl'>
+          <Heading as='h2' textStyle='section-title' mb={1.5}>
             {t('dashboard.welcome.recent_voting_title', { defaultValue: 'Recent voting processes' })}
-          </Text>
-          <Text color='fg.muted' fontSize='sm'>
+          </Heading>
+          <Text color='fg.muted' textStyle='body-sm'>
             {t('dashboard.welcome.recent_voting_description', {
               defaultValue: "Your organization's latest voting activities",
             })}
@@ -270,10 +271,10 @@ const RecentProcess = () => {
       <Box flex='1' minW={0} mr={4}>
         <Link asChild emphasis='strong' display='block'>
           <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-            <ElectionTitle size='row' />
+            <ElectionTitle size='row' as='h3' />
           </ReactRouterLink>
         </Link>
-        <Text fontSize='sm' color='fg.muted' truncate>
+        <Text textStyle='body-sm' color='fg.muted' truncate>
           {t('election.ends_on', {
             defaultValue: 'Ends on {{date}}',
             date: format(election.endDate, t('organization.date_format')),
@@ -294,12 +295,12 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
   const { t } = useTranslation()
   return (
     <DashboardBox size='md' flex='1 1 33%' justifyContent='normal' gap={0} {...props}>
-      <Text fontWeight='bold' mb={1.5} size='2xl'>
+      <Heading as='h2' textStyle='section-title' mb={1.5}>
         {t('dashboard.welcome.quick_actions', {
           defaultValue: 'Quick actions',
         })}
-      </Text>
-      <Text color='fg.muted' fontSize='sm' mb={6}>
+      </Heading>
+      <Text color='fg.muted' textStyle='body-sm' mb={6}>
         {t('dashboard.welcome.common_tasks_actions', {
           defaultValue: 'Common tasks and actions',
         })}

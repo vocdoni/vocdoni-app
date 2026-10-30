@@ -1,10 +1,16 @@
-import { Box, Code, Heading, Link, List, Table, Text, chakra } from '@chakra-ui/react'
+import { Box, chakra, Code, Heading, type HeadingProps, Link, List, Table, Text } from '@chakra-ui/react'
 import ReactMarkdown, { type Options } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { proseHeadingSizes } from '~theme/textStyles'
 
 type MarkdownProps = Options & {
   children?: string
 }
+
+// Sized like the editor's headings (`proseHeadingSizes`), so what organizers type is what voters read.
+const ProseHeading = ({ level, ...props }: HeadingProps & { level: keyof typeof proseHeadingSizes }) => (
+  <Heading fontSize={proseHeadingSizes[level]} lineHeight='short' mt={5} mb={4} {...props} />
+)
 
 const defaultComponents: NonNullable<Options['components']> = {
   a: ({ children, ...props }) => (
@@ -12,20 +18,36 @@ const defaultComponents: NonNullable<Options['components']> = {
       {children}
     </Link>
   ),
+  // One level down: the page's h1 is the process or organisation name above the description.
   h1: ({ children, ...props }) => (
-    <Heading size='lg' mt={5} mb={4} {...props}>
+    <ProseHeading as='h2' level='h1' {...props}>
       {children}
-    </Heading>
+    </ProseHeading>
   ),
   h2: ({ children, ...props }) => (
-    <Heading size='md' mt={5} mb={4} {...props}>
+    <ProseHeading as='h3' level='h2' {...props}>
       {children}
-    </Heading>
+    </ProseHeading>
   ),
   h3: ({ children, ...props }) => (
-    <Heading as='h3' size='sm' mt={5} mb={4} {...props}>
+    <ProseHeading as='h4' level='h3' {...props}>
       {children}
-    </Heading>
+    </ProseHeading>
+  ),
+  h4: ({ children, ...props }) => (
+    <ProseHeading as='h5' level='h4' {...props}>
+      {children}
+    </ProseHeading>
+  ),
+  h5: ({ children, ...props }) => (
+    <ProseHeading as='h6' level='h5' {...props}>
+      {children}
+    </ProseHeading>
+  ),
+  h6: ({ children, ...props }) => (
+    <ProseHeading as='h6' level='h6' {...props}>
+      {children}
+    </ProseHeading>
   ),
   ol: ({ children, ...props }) => (
     <List.Root as='ol' {...props}>

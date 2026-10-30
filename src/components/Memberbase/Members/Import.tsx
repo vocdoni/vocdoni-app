@@ -114,7 +114,7 @@ const TemplateUploader = () => {
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.download_template.title', { defaultValue: 'Download Import Template' })}
       </Heading>
-      <Text color='fg.muted' fontSize='sm'>
+      <Text color='fg.muted' textStyle='body-sm'>
         {t('memberbase.download_template.subtitle', {
           defaultValue:
             'Download the template with your chosen columns, add your member data, and upload the file to set up your memberbase. Once it’s ready, you can start creating votes.',
@@ -256,7 +256,7 @@ export const ImportProgress = () => {
               'Your member data has been imported, but some errors occurred, and because of that some users have missing fields.',
           })}
         </Text>
-        <Text fontSize='sm'>
+        <Text textStyle='body-sm'>
           {t('import_progress.note', {
             defaultValue: 'You can safely close this page. An email will be sent to you upon completion.',
           })}
@@ -385,7 +385,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
             <Heading size='sm' fontWeight='bold'>
               {t('memberbase.importer.warning.title', { defaultValue: 'Warning' })}
             </Heading>
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('memberbase.importer.warning.subtitle', {
                 defaultValue: 'The information of columns that are not mapped will not be imported.',
               })}
@@ -486,7 +486,7 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.importer.map_columns.title', { defaultValue: 'Map Columns' })}
       </Heading>
-      <Text color='fg.muted' fontSize='sm'>
+      <Text color='fg.muted' textStyle='body-sm'>
         {t('memberbase.importer.map_columns.subtitle', {
           defaultValue:
             'Map columns from your file to the corresponding fields in our system. Required fields are marked with an asterisk (*).',
@@ -584,7 +584,7 @@ export const ImportMembers = () => {
           </Drawer.CloseTrigger>
           <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
             <Drawer.Title>{t('memberbase.importer.title', { defaultValue: 'Import Members' })}</Drawer.Title>
-            <Text color='fg.muted' fontSize='sm'>
+            <Text color='fg.muted' textStyle='body-sm'>
               {t('memberbase.importer.subtitle', {
                 defaultValue: 'Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.',
               })}

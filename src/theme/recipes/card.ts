@@ -24,7 +24,7 @@ const pricing = {
     },
     '& > p:nth-of-type(2)': {
       fontSize: 'sm',
-      lineHeight: 1.2,
+      lineHeight: 'shorter',
     },
   },
   body: {
@@ -195,7 +195,7 @@ export const Card = defineSlotRecipe({
         },
         body: {
           p: 0,
-          fontSize: '2xs',
+          fontSize: 'xs',
           minH: '60px',
           display: 'flex',
           justifyContent: 'center',

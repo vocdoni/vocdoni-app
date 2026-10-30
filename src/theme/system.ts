@@ -3,6 +3,7 @@ import { DEFAULT_PRIMARY_COLOR, PAGE_BACKGROUNDS } from './colors'
 import { generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
+import { textStyles } from './textStyles'
 import tokens from './tokens'
 
 // The palette `colorPalette`-aware components fall back to when none is set.
@@ -46,6 +47,7 @@ export const createAppSystem = (primaryColor?: string) => {
         ...semanticTokens,
         colors: { ...semanticTokens.colors, brand: brandSemantic },
       }),
+      textStyles,
       recipes,
       slotRecipes,
     },

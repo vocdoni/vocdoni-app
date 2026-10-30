@@ -83,7 +83,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
 
   return (
     <Stat.Root flex='0 0 auto' alignItems='end'>
-      <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
+      <Stat.Label color='fg.muted' textStyle='eyebrow'>
         {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
       </Stat.Label>
       <Badge {...headline} colorPalette={statusPalette.success}>
@@ -128,7 +128,7 @@ const ParticipationCard = () => {
       <Card.Body gap={6}>
         <Flex justify='space-between' align='start' gap={4} wrap='wrap'>
           <Box flex='1' minW='0'>
-            <Heading as='h1' size='2xl' lineHeight={1.1}>
+            <Heading as='h1' textStyle='display'>
               {getElectionTitle(election)}
             </Heading>
           </Box>
@@ -144,7 +144,7 @@ const ParticipationCard = () => {
                 components={{ b: <Text as='span' color='colorPalette.fg' fontWeight='bold' /> }}
               />
             </Text>
-            <Text color='fg.muted' fontSize='sm'>
+            <Text color='fg.muted' textStyle='body-sm'>
               {t('process.summary.votes_cast', { count: voteCount, votes: nf(voteCount) })}
             </Text>
           </Flex>
@@ -159,7 +159,7 @@ const ParticipationCard = () => {
 
         <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
           <Stat.Root>
-            <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
+            <Stat.Label color='fg.muted' textStyle='eyebrow'>
               {t('process.summary.start_label')}
             </Stat.Label>
             <Stat.ValueText fontSize='md' fontWeight='bold'>
@@ -167,7 +167,7 @@ const ParticipationCard = () => {
             </Stat.ValueText>
           </Stat.Root>
           <Stat.Root>
-            <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
+            <Stat.Label color='fg.muted' textStyle='eyebrow'>
               {t('process.summary.end_label')}
             </Stat.Label>
             <Stat.ValueText fontSize='md' fontWeight='bold'>
@@ -270,7 +270,7 @@ const ResultsNotice = () => {
         >
           <Flex gap={3} align='start'>
             <Box as={ResultsIcon} boxSize='icon.md' flexShrink={0} mt={0.5} />
-            <Text fontSize='sm'>
+            <Text textStyle='body-sm'>
               <Trans
                 i18nKey='process.summary.results_private'
                 values={{ date: closeDate }}
@@ -322,7 +322,7 @@ const CertifiedTech = () => {
                   <List.Indicator asChild color='colorPalette.fg' mt={1}>
                     <Box as={icon} />
                   </List.Indicator>
-                  <Text fontSize='sm'>
+                  <Text textStyle='body-sm'>
                     <Trans i18nKey={key} components={{ b: <Text as='span' fontWeight='bold' /> }} />
                   </Text>
                 </List.Item>

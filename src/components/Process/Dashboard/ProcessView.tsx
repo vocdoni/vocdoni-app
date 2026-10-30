@@ -68,7 +68,7 @@ import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider }
 import {
   DashboardBox,
   DashboardContents,
-  Heading,
+  SectionTitle,
   Sidebar,
   SidebarContents,
   SidebarSubtitle,
@@ -235,10 +235,10 @@ const ProcessViewContent = () => {
             justifyContent={'space-between'}
             gap={4}
           >
-            <Heading>
+            <SectionTitle>
               <Icon as={CalendarIcon} />
               <Trans i18nKey='calendar.title'>Schedule</Trans>
-            </Heading>
+            </SectionTitle>
             <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
               <SettingsField
                 icon={CalendarIcon}
@@ -278,11 +278,11 @@ const ProcessViewContent = () => {
 
           <DashboardBox>
             <Box>
-              <Heading>
+              <SectionTitle>
                 <Icon as={ExternalLinkIcon} />
                 <Trans i18nKey='voting_link.title'>Voting Link</Trans>
-              </Heading>
-              <Text color='fg.muted' fontSize='sm'>
+              </SectionTitle>
+              <Text color='fg.muted' textStyle='body-sm'>
                 <Trans i18nKey='voting_link.description'>
                   Share this link with your voters to participate in the voting process
                 </Trans>
@@ -304,10 +304,10 @@ const ProcessViewContent = () => {
 
           {/* Questions & Results */}
           <DashboardBox>
-            <Heading as='h4' alignContent='center' justifyContent='space-between'>
+            <SectionTitle alignContent='center' justifyContent='space-between'>
               <Trans i18nKey='questions_and_results'>Questions and results</Trans>
               <ResultsStateBadge />
-            </Heading>
+            </SectionTitle>
             <TabsRoot
               fitted
               value={tabValue}
@@ -448,7 +448,7 @@ const ProcessViewSidebar = () => {
             {election && isLive(election) && (
               <ActionPause variant='outline' aria-label={t('process_actions.pause', { defaultValue: 'Pause' })}>
                 <ControlIcon as={PauseIcon} color='status.warning.fg' />
-                <Text as='span' flex={1} textAlign='left' fontSize='sm'>
+                <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                   <Trans i18nKey='pause_vote'>Pause vote</Trans>
                 </Text>
               </ActionPause>
@@ -459,20 +459,20 @@ const ProcessViewSidebar = () => {
                 aria-label={t('process_actions.continue', { defaultValue: 'Continue' })}
               >
                 <ControlIcon as={ResumeIcon} color='status.success.fg' />
-                <Text as='span' flex={1} textAlign='left' fontSize='sm'>
+                <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                   <Trans i18nKey='resume_vote'>Resume</Trans>
                 </Text>
               </ActionContinue>
             )}
             <ActionEnd variant='outline' aria-label={t('process_actions.end', { defaultValue: 'End' })}>
               <ControlIcon as={StopIcon} color='destructive.fg' />
-              <Text as='span' flex={1} textAlign='left' fontSize='sm'>
+              <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                 <Trans i18nKey='end_vote'>End vote</Trans>
               </Text>
             </ActionEnd>
             <ActionCancel variant='outline' aria-label={t('process_actions.cancel', { defaultValue: 'Cancel' })}>
               <ControlIcon as={DeleteIcon} color='destructive.fg' />
-              <Text as='span' flex={1} textAlign='left' fontSize='sm'>
+              <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                 <Trans i18nKey='cancel_vote'>Cancel vote</Trans>
               </Text>
             </ActionCancel>
@@ -505,11 +505,11 @@ const ProcessViewSidebar = () => {
               </Progress.Root>
             </Box>
             <Box display='flex' justifyContent='space-between' fontSize='sm'>
-              <Text display='flex' gap={2} alignItems='center' fontSize='inherit'>
+              <Text display='flex' gap={2} alignItems='center'>
                 <Icon as={UsersIcon} />
                 <Trans i18nKey='census_size'>Census size</Trans>
               </Text>
-              <Text fontSize='inherit'>{censusSize || ''}</Text>
+              <Text>{censusSize || ''}</Text>
             </Box>
           </DashboardBox>
 
@@ -590,7 +590,7 @@ const SettingsField = ({
   tooltip?: string
 }) => {
   const label = (
-    <Text fontSize='sm' fontWeight='bold'>
+    <Text textStyle='body-sm' fontWeight='bold'>
       {text}
       {tooltip && <Icon as={InfoIcon} ms={1} />}
     </Text>
@@ -621,7 +621,7 @@ const SettingsField = ({
         ) : (
           label
         )}
-        <Text whiteSpace='nowrap' color='fg.muted' fontSize='sm'>
+        <Text whiteSpace='nowrap' color='fg.muted' textStyle='body-sm'>
           {subtext}
         </Text>
       </Box>

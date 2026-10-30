@@ -50,7 +50,7 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
         {/* "Then XX€/period" row - only shown when trial exists */}
         {hasTrial && (
           <Flex justify='flex-end'>
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('then_price_per_period', {
                 defaultValue: 'Then {{price}}/{{period}}',
                 price: dueNext.total.amount,
@@ -104,10 +104,10 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
         {/* Total after trial - only shown when trial exists */}
         {hasTrial && (
           <Flex justify='space-between'>
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('total_after_trial', { defaultValue: 'Total after trial' })}
             </Text>
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {dueNext.total.amount}
             </Text>
           </Flex>

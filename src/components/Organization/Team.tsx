@@ -254,7 +254,7 @@ const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }:
               {title}
             </RadioGroup.ItemText>
           </Flex>
-          <Text fontSize='sm' color='fg.muted'>
+          <Text textStyle='body-sm' color='fg.muted'>
             {description}
           </Text>
         </Box>
@@ -368,13 +368,13 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
               <Text fontWeight='bold'>{fullName}</Text>
             </HStack>
             <Flex direction='column'>
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {user?.info.email}
               </Text>
             </Flex>
           </Box>
         </Card.Root>
-        <Text fontSize='sm' fontWeight='bold'>
+        <Text textStyle='body-sm' fontWeight='bold'>
           {t('role.update.current_role', {
             defaultValue: 'Current Role',
           })}
@@ -717,11 +717,11 @@ const UsersList = ({ users }: UsersListProps) => {
                 </Badge>
               </HStack>
               <Flex direction='column'>
-                <Text fontSize='sm' color='fg.muted'>
+                <Text textStyle='body-sm' color='fg.muted'>
                   {email}
                 </Text>
                 {user.expiration && (
-                  <Text fontSize='xs' color='fg.muted'>
+                  <Text textStyle='caption' color='fg.muted'>
                     {t('team.expires_in', {
                       defaultValue: 'Expires in {{time}}',
                       time: formatDistanceToNow(new Date(user.expiration)),

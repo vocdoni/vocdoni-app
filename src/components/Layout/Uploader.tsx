@@ -319,7 +319,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
               i18nKey='uploader.click_or_drag_and_drop'
               components={{
                 click: <Text as='span' color='fg' />,
-                formats: <Text as='span' fontSize='sm' color='fg.muted' />,
+                formats: <Text as='span' textStyle='body-sm' color='fg.muted' />,
               }}
               values={{ formats }}
             />
