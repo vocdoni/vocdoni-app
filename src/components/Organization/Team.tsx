@@ -10,7 +10,6 @@ import {
   FieldRoot as FormControl,
   FieldLabel as FormLabel,
   Flex,
-  Heading,
   HStack,
   Icon,
   IconButton,
@@ -21,6 +20,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ComponentProps, ReactNode, useState } from 'react'
@@ -407,21 +407,19 @@ const ChangeRoleModal = ({ open, onOpenChange, user }: ChangeRoleDialogProps) =>
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange} closeOnInteractOutside={false}>
       <Dialog.Backdrop />
-      <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
+      <Dialog.Positioner>
         <Dialog.Content maxW='xl' py='4'>
           <Dialog.CloseTrigger asChild>
             <CloseButton />
           </Dialog.CloseTrigger>
-          <Dialog.Header>
-            <Dialog.Title>
-              <Heading variant='heavy'>{t('role.update.title', { defaultValue: 'Change team member role' })}</Heading>
-            </Dialog.Title>
-            <Text variant='muted'>
+          <DialogHeader
+            title={t('role.update.title', { defaultValue: 'Change team member role' })}
+            description={
               <Trans i18nKey='role.update.subtitle'>
                 Update the permissions for this team member by changing their role.
               </Trans>
-            </Text>
-          </Dialog.Header>
+            }
+          />
           <Dialog.Body>
             <ChangeRoleForm user={user} onClose={onClose} />
           </Dialog.Body>

@@ -22,6 +22,7 @@ import { ChevronDownIcon, ViewIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { AUTH_FIELDS, getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { useToast } from '~components/Toast'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import type { Group } from '~src/queries/groups'
 import { buildCensusSpec } from '../census-spec'
 import { Census, Process } from '../common'
@@ -248,27 +249,23 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
 
   return (
     <>
-      <Dialog.Header
+      <DialogHeader
         px='6'
         pt='5'
         pb='4'
         pe='12'
         borderBottomWidth='hairline'
-        flexDirection='column'
-        alignItems='start'
         gap='0.5'
-      >
-        <Dialog.Title>{t('voter_auth.modal.title', { defaultValue: 'How will voters sign in?' })}</Dialog.Title>
-        {groupTitle && (
-          <Dialog.Description fontSize='sm' color='fg.muted'>
-            {t('voter_auth.modal.group_summary', {
-              defaultValue: '{{group}} · {{count}} members',
-              group: groupTitle,
-              count: group?.membersCount ?? 0,
-            })}
-          </Dialog.Description>
-        )}
-      </Dialog.Header>
+        title={t('voter_auth.modal.title', { defaultValue: 'How will voters sign in?' })}
+        description={
+          groupTitle &&
+          t('voter_auth.modal.group_summary', {
+            defaultValue: '{{group}} · {{count}} members',
+            group: groupTitle,
+            count: group?.membersCount ?? 0,
+          })
+        }
+      />
       <Dialog.Body p='[0]'>
         <Grid templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 20rem', lg: 'minmax(0, 1fr) 22rem' }}>
           <Stack px='6' py='5' gap='6'>

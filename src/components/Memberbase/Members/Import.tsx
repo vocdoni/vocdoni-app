@@ -27,6 +27,8 @@ import {
 } from '@chakra-ui/react'
 import { SectionHeader } from '~components/ui/SectionHeader'
 import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
+import { PanelDrawer } from '~components/ui/Drawer'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { chakraComponents } from 'chakra-react-select'
@@ -292,7 +294,6 @@ export const ImportProgress = () => {
       {/* Error modal */}
       <Dialog.Root
         size='xl'
-        placement='center'
         open={isErrorModalOpen}
         onOpenChange={({ open }) => (open ? onOpenErrors() : onCloseErrors())}
       >
@@ -302,13 +303,11 @@ export const ImportProgress = () => {
             <Dialog.CloseTrigger asChild>
               <CloseButton />
             </Dialog.CloseTrigger>
-            <Dialog.Header>
-              <Dialog.Title>
-                {t('import_progress.error_modal_title', {
-                  defaultValue: 'Import Errors',
-                })}
-              </Dialog.Title>
-            </Dialog.Header>
+            <DialogHeader
+              title={t('import_progress.error_modal_title', {
+                defaultValue: 'Import Errors',
+              })}
+            />
             <Dialog.Body>
               {/* ph-no-capture: import errors quote the offending CSV rows */}
               <List.Root
@@ -552,7 +551,7 @@ export const ImportMembers = () => {
   }
 
   return (
-    <Drawer.Root
+    <PanelDrawer
       open={isOpen}
       placement='end'
       onOpenChange={({ open }) => (open ? onOpen() : onClose())}
@@ -561,50 +560,39 @@ export const ImportMembers = () => {
       // The native file picker blurs the window and Zag's dismissable layer reads
       // the focus return as an outside interaction, closing the drawer mid-import.
       closeOnInteractOutside={false}
+      trigger={
+        <Drawer.Trigger asChild>
+          {/* data-testid: the accessible name ("Import") is a prefix of the
+              drawer's own submit ("Import Data"), so the e2e suite has no
+              unambiguous copy-free handle for this trigger. */}
+          <Button ref={btnRef} variant='outline' data-testid='members-import-open'>
+            <Icon as={UploadIcon} />
+            {t('memberbase.importer.button', { defaultValue: 'Import' })}
+          </Button>
+        </Drawer.Trigger>
+      }
+      title={t('memberbase.importer.title', { defaultValue: 'Import Members' })}
+      description={t('memberbase.importer.subtitle', {
+        defaultValue: 'Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.',
+      })}
+      bodyProps={{ display: 'flex', flexDirection: 'column', gap: '4' }}
     >
-      <Drawer.Backdrop />
-      <Drawer.Trigger asChild>
-        {/* data-testid: the accessible name ("Import") is a prefix of the
-            drawer's own submit ("Import Data"), so the e2e suite has no
-            unambiguous copy-free handle for this trigger. */}
-        <Button ref={btnRef} variant='outline' data-testid='members-import-open'>
-          <Icon as={UploadIcon} />
-          {t('memberbase.importer.button', { defaultValue: 'Import' })}
-        </Button>
-      </Drawer.Trigger>
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.CloseTrigger asChild>
-            <CloseButton />
-          </Drawer.CloseTrigger>
-          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-            <Drawer.Title>{t('memberbase.importer.title', { defaultValue: 'Import Members' })}</Drawer.Title>
-            <Text color='fg.muted' textStyle='body-sm'>
-              {t('memberbase.importer.subtitle', {
-                defaultValue: 'Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.',
-              })}
-            </Text>
-          </Drawer.Header>
-          <Drawer.Body display='flex' flexDirection='column' gap='4'>
-            <FormProvider {...methods}>
-              <Box as='form' id='import-members' onSubmit={methods.handleSubmit(onSubmit)}>
-                {!hasSpreadsheet ? (
-                  <TemplateUploader />
-                ) : (
-                  <ImportDataPreview columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
-                )}
-              </Box>
-            </FormProvider>
-            <Flex justify='flex-end' gap='4'>
-              <Drawer.ActionTrigger asChild>
-                <Button type='button' variant='outline'>
-                  {t('memberbase.importer.cancel', { defaultValue: 'Cancel' })}
-                </Button>
-              </Drawer.ActionTrigger>
-            </Flex>
-          </Drawer.Body>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+      <FormProvider {...methods}>
+        <Box as='form' id='import-members' onSubmit={methods.handleSubmit(onSubmit)}>
+          {!hasSpreadsheet ? (
+            <TemplateUploader />
+          ) : (
+            <ImportDataPreview columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
+          )}
+        </Box>
+      </FormProvider>
+      <Flex justify='flex-end' gap='4'>
+        <Drawer.ActionTrigger asChild>
+          <Button type='button' variant='outline'>
+            {t('memberbase.importer.cancel', { defaultValue: 'Cancel' })}
+          </Button>
+        </Drawer.ActionTrigger>
+      </Flex>
+    </PanelDrawer>
   )
 }

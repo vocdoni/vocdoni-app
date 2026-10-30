@@ -8,7 +8,7 @@ import {
   CheckboxControl,
   CheckboxHiddenInput,
   CheckboxRoot,
-  Drawer,
+  Stack,
   Flex,
   Heading,
   HStack,
@@ -29,7 +29,7 @@ import {
 } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
 import { PaginationProvider, usePagination } from '@vocdoni/react-components'
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { CalendarIcon, ClockIcon, DeleteIcon, EditIcon, MoreIcon, UsersIcon, ViewIcon, VoteIcon } from '~theme/icons'
@@ -38,6 +38,7 @@ import InputBasic from '~components/Form/InputBasic'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
+import { PanelDrawer } from '~components/ui/Drawer'
 import { PaginatedTableFooter } from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
 import { EmptyState } from '~components/ui/EmptyState'
@@ -148,33 +149,20 @@ const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
   const { displayTitle } = useGroupDisplay(group)
 
   return (
-    <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
-      <Drawer.Backdrop />
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.CloseTrigger asChild>
-            <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
-          </Drawer.CloseTrigger>
-          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-            <Drawer.Title>
-              {t('groups_board.history.title', { defaultValue: '{{ title }} History', title: displayTitle })}
-            </Drawer.Title>
-            <Text color='fg.muted' textStyle='body-sm'>
-              {t('groups_board.history.description', {
-                defaultValue: 'View the history of this group and its associated censuses',
-              })}
-            </Text>
-          </Drawer.Header>
-          <Drawer.Body>
-            <Flex justify='flex-end'>
-              <Button variant='outline' onClick={onClose}>
-                {t('groups_board.history.close', { defaultValue: 'Close' })}
-              </Button>
-            </Flex>
-          </Drawer.Body>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+    <PanelDrawer
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      size='sm'
+      title={t('groups_board.history.title', { defaultValue: '{{ title }} History', title: displayTitle })}
+      description={t('groups_board.history.description', {
+        defaultValue: 'View the history of this group and its associated censuses',
+      })}
+      footer={
+        <Button variant='outline' onClick={onClose}>
+          {t('groups_board.history.close', { defaultValue: 'Close' })}
+        </Button>
+      }
+    />
   )
 }
 
@@ -187,6 +175,7 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const updateGroup = useUpdateGroup()
+  const formId = useId()
   const methods = useForm<EditGroupFormData>({
     defaultValues: {
       title: group.title,
@@ -238,58 +227,50 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
   })
 
   return (
-    <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
-      <Drawer.Backdrop />
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.CloseTrigger asChild>
-            <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
-          </Drawer.CloseTrigger>
-          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-            <Drawer.Title>{t('actions.edit', { defaultValue: 'Edit' })}</Drawer.Title>
-            <Text color='fg.muted' textStyle='body-sm'>
-              {t('group.actions.edit_description', {
-                defaultValue: 'Update the name and description of this group.',
-              })}
-            </Text>
-          </Drawer.Header>
-          <FormProvider {...methods}>
-            <Box as='form' onSubmit={onSubmit}>
-              <Drawer.Body display='flex' flexDirection='column' gap='4'>
-                <InputBasic
-                  formValue='title'
-                  label={t('members.table.group_name', { defaultValue: 'Group name' })}
-                  required
-                  validation={{
-                    setValueAs: (value) => (typeof value === 'string' ? value.trim() : value),
-                  }}
-                />
-                <FormControl invalid={!!formState.errors.description}>
-                  <FormLabel>
-                    {t('members.table.group_description', { defaultValue: 'Description (Optional)' })}
-                  </FormLabel>
-                  <Textarea
-                    {...register('description')}
-                    placeholder={t('members.table.group_description_placeholder', {
-                      defaultValue: 'Enter a brief description of the group',
-                    })}
-                  />
-                  <FormErrorMessage>{formState.errors.description?.message?.toString()}</FormErrorMessage>
-                </FormControl>
-              </Drawer.Body>
-              <Flex justifyContent='flex-end' gap='2' p='4'>
-                <Button variant='outline' onClick={onClose}>
-                  {t('actions.cancel', { defaultValue: 'Cancel' })}
-                </Button>
-                <Button type='submit' loading={updateGroup.isPending}>
-                  {t('actions.save', { defaultValue: 'Save changes' })}
-                </Button>
-              </Flex>
-            </Box>
-          </FormProvider>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+    <PanelDrawer
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      size='sm'
+      title={t('actions.edit', { defaultValue: 'Edit' })}
+      description={t('group.actions.edit_description', {
+        defaultValue: 'Update the name and description of this group.',
+      })}
+      footer={
+        <>
+          <Button variant='outline' onClick={onClose}>
+            {t('actions.cancel', { defaultValue: 'Cancel' })}
+          </Button>
+          <Button type='submit' loading={updateGroup.isPending} form={formId}>
+            {t('actions.save', { defaultValue: 'Save changes' })}
+          </Button>
+        </>
+      }
+    >
+      <FormProvider {...methods}>
+        <Box as='form' id={formId} onSubmit={onSubmit}>
+          <Stack gap='4'>
+            <InputBasic
+              formValue='title'
+              label={t('members.table.group_name', { defaultValue: 'Group name' })}
+              required
+              validation={{
+                setValueAs: (value) => (typeof value === 'string' ? value.trim() : value),
+              }}
+            />
+            <FormControl invalid={!!formState.errors.description}>
+              <FormLabel>{t('members.table.group_description', { defaultValue: 'Description (Optional)' })}</FormLabel>
+              <Textarea
+                {...register('description')}
+                placeholder={t('members.table.group_description_placeholder', {
+                  defaultValue: 'Enter a brief description of the group',
+                })}
+              />
+              <FormErrorMessage>{formState.errors.description?.message?.toString()}</FormErrorMessage>
+            </FormControl>
+          </Stack>
+        </Box>
+      </FormProvider>
+    </PanelDrawer>
   )
 }
 
@@ -492,66 +473,56 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
   const { displayTitle } = useGroupDisplay(group)
 
   return (
-    <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='lg'>
-      <Drawer.Backdrop />
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.CloseTrigger asChild>
-            <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
-          </Drawer.CloseTrigger>
-          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-            <Drawer.Title>{displayTitle}</Drawer.Title>
-            <Text color='fg.muted' textStyle='body-sm'>
-              {`${t('group.created_on', {
-                defaultValue: 'Created {{date}}',
-                date: new Date(group.createdAt).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                }),
-              })} • ${t('group.members', {
-                defaultValue: '{{count}} member',
-                defaultValue_other: '{{count}} members',
-                count: group.membersCount || 0,
-              })}`}
-            </Text>
-          </Drawer.Header>
-          <Drawer.Body>
-            <GroupMembersDisplay group={group} isOpen={isOpen} />
-            <Separator my='4' />
-            <Flex direction='column' gap='4'>
-              <Text fontWeight='extrabold' textStyle='body-sm'>
-                {t('group.actions_title', { defaultValue: 'Actions' })}
-              </Text>
-              <Text textStyle='caption' color='fg.muted'>
-                {t('group.actions_description', {
-                  defaultValue:
-                    "When a new vote is created, the system takes a snapshot of the group's members at that moment. Any changes to the member list afterward will not affect the created census.",
-                })}
-              </Text>
-            </Flex>
-            <Flex justify='space-between' mt='4' gap='2'>
-              <Button size='xs' onClick={() => navigateToVote(group.id)}>
-                <Icon as={VoteIcon} boxSize='icon.sm' />
-                {t('group.create_vote', { defaultValue: 'Create a Vote' })}
-              </Button>
-              {!group.isAutoGroup && (
-                <>
-                  <Button variant='outline' onClick={onEditDrawerOpen} size='xs'>
-                    <Icon as={EditIcon} boxSize='icon.sm' />
-                    {t('actions.edit', { defaultValue: 'Edit' })}
-                  </Button>
-                  <Button onClick={openDeleteModal} colorPalette={statusPalette.destructive} size='xs'>
-                    <Icon as={DeleteIcon} boxSize='icon.sm' />
-                    {t('group.delete_group', { defaultValue: 'Delete group' })}
-                  </Button>
-                </>
-              )}
-            </Flex>
-          </Drawer.Body>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+    <PanelDrawer
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      size='lg'
+      title={displayTitle}
+      description={`${t('group.created_on', {
+        defaultValue: 'Created {{date}}',
+        date: new Date(group.createdAt).toLocaleDateString(undefined, {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        }),
+      })} • ${t('group.members', {
+        defaultValue: '{{count}} member',
+        defaultValue_other: '{{count}} members',
+        count: group.membersCount || 0,
+      })}`}
+    >
+      <GroupMembersDisplay group={group} isOpen={isOpen} />
+      <Separator my='4' />
+      <Flex direction='column' gap='4'>
+        <Text fontWeight='extrabold' textStyle='body-sm'>
+          {t('group.actions_title', { defaultValue: 'Actions' })}
+        </Text>
+        <Text textStyle='caption' color='fg.muted'>
+          {t('group.actions_description', {
+            defaultValue:
+              "When a new vote is created, the system takes a snapshot of the group's members at that moment. Any changes to the member list afterward will not affect the created census.",
+          })}
+        </Text>
+      </Flex>
+      <Flex justify='space-between' mt='4' gap='2'>
+        <Button size='xs' onClick={() => navigateToVote(group.id)}>
+          <Icon as={VoteIcon} boxSize='icon.sm' />
+          {t('group.create_vote', { defaultValue: 'Create a Vote' })}
+        </Button>
+        {!group.isAutoGroup && (
+          <>
+            <Button variant='outline' onClick={onEditDrawerOpen} size='xs'>
+              <Icon as={EditIcon} boxSize='icon.sm' />
+              {t('actions.edit', { defaultValue: 'Edit' })}
+            </Button>
+            <Button onClick={openDeleteModal} colorPalette={statusPalette.destructive} size='xs'>
+              <Icon as={DeleteIcon} boxSize='icon.sm' />
+              {t('group.delete_group', { defaultValue: 'Delete group' })}
+            </Button>
+          </>
+        )}
+      </Flex>
+    </PanelDrawer>
   )
 }
 

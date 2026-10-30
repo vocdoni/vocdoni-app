@@ -62,6 +62,7 @@ export const BookerModalButton = ({
   trigger,
   ...props
 }: BookerModalButtonProps) => {
+  const { t } = useTranslation()
   const content = children ?? <Trans i18nKey='home.support.btn_watch' />
   const icon = leftIcon ?? <Icon as={CalendarIcon} boxSize='icon.sm' />
 
@@ -80,7 +81,8 @@ export const BookerModalButton = ({
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          {/* No title on screen, so the label names the dialog. */}
+          <Dialog.Content aria-label={t('home.support.btn_watch', { defaultValue: 'Schedule a call' })}>
             <Dialog.Body>
               <Booker callback={callback} />
             </Dialog.Body>
