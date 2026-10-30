@@ -5,8 +5,8 @@
  * and the `vote.button` label from `react-components.json`, so re-run it after changing any of
  * those, then review the PNGs by eye (long words can push a headline to a third line).
  *
- *   pnpm og:generate            # all locales, light theme
- *   pnpm og:generate -- --theme dark   # or `tinted`; see themes in template.mjs
+ *   pnpm og:generate            # all locales, tinted theme (the default)
+ *   pnpm og:generate -- --theme light   # or `dark`; see themes in template.mjs
  *
  * satori lays the card out from a flex tree and resvg rasterises it, so the output is identical
  * on every machine. Inter comes from the `@fontsource/inter` package the app already ships; the
@@ -25,7 +25,7 @@ const localesDir = join(root, 'src/i18n/locales')
 const outDir = join(root, 'public/assets/og')
 
 const themeArg = process.argv.indexOf('--theme')
-const theme = themeArg === -1 ? 'light' : process.argv[themeArg + 1]
+const theme = themeArg === -1 ? 'tinted' : process.argv[themeArg + 1]
 if (!themes[theme]) {
   console.error(`Unknown theme "${theme}". Available: ${Object.keys(themes).join(', ')}.`)
   process.exit(1)
