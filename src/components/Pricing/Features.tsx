@@ -158,7 +158,7 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
         return (
           <Flex flexDirection='column' alignItems='center' gap={1}>
             <BooleanIcon value={true} />
-            <Text fontSize='xs'>
+            <Text textStyle='caption'>
               {isPlanNamed(plan, PlanName.Professional)
                 ? t('features.email_support_premium', { defaultValue: '(24h resp.)' })
                 : isPlanNamed(plan, PlanName.Starter)
@@ -181,7 +181,7 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
     staticFeature('audit', 'features.audit', {
       available: () => true,
       render: () => (
-        <Text fontSize='xs'>
+        <Text textStyle='caption'>
           <Trans i18nKey='features.audit_blockchain'>Fully auditable on blockchain</Trans>
         </Text>
       ),
@@ -195,7 +195,7 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
           return (
             <Flex alignItems='center' justifyContent='center' gap={1}>
               <BooleanIcon value={true} />
-              <Text fontSize='xs'>
+              <Text textStyle='caption'>
                 {t('features.uptime_guaranteed', {
                   suffix: isPlanNamed(plan, PlanName.Professional)
                     ? t('features.generic_sla', { defaultValue: 'Generic SLA' })

@@ -273,10 +273,10 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
         <Grid templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 20rem', lg: 'minmax(0, 1fr) 22rem' }}>
           <Stack px={6} py={5} gap={6}>
             <Box role='group' aria-labelledby='voter-auth-details-title' aria-describedby='voter-auth-details-help'>
-              <Text id='voter-auth-details-title' fontSize='sm' fontWeight='semibold'>
+              <Text id='voter-auth-details-title' textStyle='body-sm' fontWeight='semibold'>
                 {t('voter_auth.details.heading', { defaultValue: '1. What will voters type?' })}
               </Text>
-              <Text id='voter-auth-details-help' fontSize='sm' color='fg.muted' mt={1} mb={3}>
+              <Text id='voter-auth-details-help' textStyle='body-sm' color='fg.muted' mt={1} mb={3}>
                 {t('voter_auth.details.description', {
                   defaultValue:
                     'Pick up to {{max}} details from your member list. What voters type must match it exactly.',
@@ -339,7 +339,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                     <RadioCard.Label fontSize='sm'>
                       {t('voter_auth.code.heading', { defaultValue: '2. Also send a one-time code?' })}
                     </RadioCard.Label>
-                    <Text id='voter-auth-code-help' fontSize='sm' color='fg.muted' mt={1} mb={3}>
+                    <Text id='voter-auth-code-help' textStyle='body-sm' color='fg.muted' mt={1} mb={3}>
                       {t('voter_auth.code.description', {
                         defaultValue:
                           "Before voting, we send a 6-digit code to the voter's email or phone. It proves they own it, so nobody can vote with someone else's details.",

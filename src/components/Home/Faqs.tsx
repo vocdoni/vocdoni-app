@@ -195,13 +195,7 @@ const Faqs = (props: BoxProps) => {
   return (
     <Box position='relative' width='full' {...props}>
       <Box width='full' m='0 auto' maxW='navbar' position='relative' zIndex='docked'>
-        <Text
-          fontSize={{ base: '32px', xl: '42px' }}
-          lineHeight={{ base: '36px', xl: '46px' }}
-          fontWeight='bold'
-          textAlign='center'
-          mb={2.5}
-        >
+        <Text textStyle='display' textAlign='center' mb={2.5}>
           {t('home.faqs.title')}
         </Text>
         <Text
@@ -210,7 +204,7 @@ const Faqs = (props: BoxProps) => {
           mx='auto'
           fontSize='xl'
           color='fg.muted'
-          lineHeight={1.4}
+          lineHeight='moderate'
           textAlign='center'
         >
           {t('home.faqs.subtitle')}

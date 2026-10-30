@@ -29,7 +29,7 @@ export const DocsCard = ({ href, icon, title, description }: DocsCardProps) => (
     <LinkOverlay href={href} target='_blank' rel='noopener noreferrer' fontWeight='bold' fontSize='md'>
       {title}
     </LinkOverlay>
-    <Text fontSize='sm' color='fg.muted'>
+    <Text textStyle='body-sm' color='fg.muted'>
       {description}
     </Text>
   </DashboardBox>

@@ -119,7 +119,7 @@ const PricingCard = ({
                 values={{ price: currency(price) }}
                 components={{
                   price: <Text fontSize='3xl' fontWeight='extrabold' className='pricing-card-price' />,
-                  time: <Text fontSize='sm' color='fg.muted' />,
+                  time: <Text textStyle='body-sm' color='fg.muted' />,
                 }}
                 defaults='<price>{{ price }}</price>/<time>month</time>'
               />
@@ -129,7 +129,7 @@ const PricingCard = ({
             {!isCustomPlan &&
               price > 0 &&
               (period === 'month' ? (
-                <Text fontSize='sm'>
+                <Text textStyle='body-sm'>
                   <Trans
                     i18nKey='pricing_card.annual_savings'
                     defaultValue='Save {{ savings }}/year with annual'
@@ -137,7 +137,7 @@ const PricingCard = ({
                   />
                 </Text>
               ) : (
-                <Text fontSize='sm' color='fg.muted'>
+                <Text textStyle='body-sm' color='fg.muted'>
                   <Trans
                     i18nKey='pricing_card.annual_total_cost'
                     defaults='{{ price }} billed annually'
@@ -158,7 +158,7 @@ const PricingCard = ({
             )}
           </Box>
           {isCustomPlan ? (
-            <Text fontSize='sm'>
+            <Text textStyle='body-sm'>
               <Trans i18nKey='pricing_card.custom_plan_description'>
                 Do you have special governance requirements? We can adapt to your needs with a fully customized
                 solution. A dedicated account manager will support you throughout the entire collaboration.
@@ -179,7 +179,7 @@ const PricingCard = ({
         </Flex>
       </Card.Body>
       {(isPlanNamed(plan, PlanName.Professional) || isPlanNamed(plan, PlanName.Starter)) && (
-        <Text fontSize='xs' fontStyle='italic' textAlign='center'>
+        <Text textStyle='caption' fontStyle='italic' textAlign='center'>
           <Trans i18nKey='pricing_card.need_more_members' components={{ 2: <ContactLink /> }} />
         </Text>
       )}
@@ -193,7 +193,7 @@ const PricingCard = ({
                   <ContactButton fontWeight='extrabold' whiteSpace='unset' textAlign='center'>
                     Contact our sales team
                   </ContactButton>
-                  <Text as='span' fontSize='sm' color='fg.muted' textAlign='center'>
+                  <Text as='span' textStyle='body-sm' color='fg.muted' textAlign='center'>
                     or
                   </Text>
                 </Trans>

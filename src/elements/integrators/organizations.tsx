@@ -2,7 +2,8 @@ import { Alert, ButtonGroup, Flex, IconButton, SimpleGrid, Text } from '@chakra-
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeftIcon, ChevronRightIcon, DocsIcon } from '~theme/icons'
-import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { DocsCard } from '~components/Integrator/DocsCard'
 import { ManagedOrganizationsTable } from '~components/Integrator/ManagedOrganizationsTable'
 import { EmptyState } from '~components/ui/EmptyState'
@@ -25,12 +26,12 @@ const IntegratorManagedOrganizations = () => {
 
   return (
     <DashboardContents>
-      <DashboardCardHeader
-        title={t('integrators.managed.title', { defaultValue: 'Managed organizations' })}
-        subtitle={t('integrators.managed.subtitle', {
+      <PageTitle>{t('integrators.managed.title', { defaultValue: 'Managed organizations' })}</PageTitle>
+      <PageSubtitle>
+        {t('integrators.managed.subtitle', {
           defaultValue: 'Organizations you manage on behalf of your customers.',
         })}
-      />
+      </PageSubtitle>
 
       {isLoading ? (
         <ListLoader />
@@ -71,7 +72,7 @@ const IntegratorManagedOrganizations = () => {
           <ManagedOrganizationsTable organizations={organizations} />
           {pagination && pagination.lastPage > 1 && (
             <Flex justify='space-between' align='center' gap={4} wrap='wrap'>
-              <Text fontSize='sm' color='fg.muted'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('integrators.managed.pagination', {
                   defaultValue: 'Page {{page}} of {{total}} · {{items}} total',
                   page: pagination.currentPage,

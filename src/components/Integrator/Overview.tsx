@@ -6,6 +6,7 @@ import { NetworkIcon, RocketIcon, TerminalIcon } from '~theme/icons'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { PageLoader } from '~components/ui/Loader'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useIntegratorInfo } from '~src/queries/integrators'
 import { DocsCard } from './DocsCard'
@@ -79,13 +80,14 @@ export const IntegratorOverview = () => {
   return (
     <DashboardContents>
       <Flex justify='space-between' align='flex-start' gap={4} mb={4}>
-        <DashboardCardHeader
-          mb={0}
-          title={t('integrators.overview_title', { defaultValue: 'Overview' })}
-          subtitle={t('integrators.overview_subtitle', {
-            defaultValue: 'Your integrator quota and current usage.',
-          })}
-        />
+        <Box>
+          <PageTitle>{t('integrators.overview_title', { defaultValue: 'Overview' })}</PageTitle>
+          <PageSubtitle mb={0}>
+            {t('integrators.overview_subtitle', {
+              defaultValue: 'Your integrator quota and current usage.',
+            })}
+          </PageSubtitle>
+        </Box>
         {/* Desktop: sits at the top-right of the page header. On mobile the layout exposes a slot
             in the shared top bar (next to the sidebar toggle) and the button is portaled there
             instead, so only one instance is ever mounted. */}

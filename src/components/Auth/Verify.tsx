@@ -184,20 +184,20 @@ export const VerificationPending = ({
   return (
     <>
       <Flex flexDirection='column' gap={4}>
-        <Text fontWeight='bold' fontSize='md'>
+        <Text fontWeight='bold' textStyle='body'>
           <Trans i18nKey='verify.sent_to_email' values={{ email }}>
             Email sent to {{ email }}
           </Trans>
         </Text>
         <Alert status='info'>
           <AlertIndicator />
-          <Text fontSize='sm' fontStyle='italic'>
+          <Text textStyle='body-sm' fontStyle='italic'>
             {t('verify.check_spam_folder', {
               defaultValue: "Please check your spam folder if you don't see the email in your inbox.",
             })}
           </Text>
         </Alert>
-        <Text fontWeight='bold' fontSize='sm'>
+        <Text fontWeight='bold' textStyle='body-sm'>
           {t('verify.enter_code', {
             defaultValue: 'Enter the code below to activate your account',
           })}

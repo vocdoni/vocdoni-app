@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { generatePath, Outlet, useLocation, useNavigate } from 'react-router'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
-import { Heading, SubHeading } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { Routes } from '~routes'
 import { usePaginatedMembers } from '~src/queries/members'
 import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
@@ -72,16 +72,16 @@ export const MemberbaseTabs = () => {
 
   return (
     <>
-      <Heading>
+      <PageTitle>
         {t('memberbase.title', {
           defaultValue: 'Memberbase',
         })}
-      </Heading>
-      <SubHeading>
+      </PageTitle>
+      <PageSubtitle>
         {t('memberbase.subtitle', {
           defaultValue: "Manage your organization's members and create groups",
         })}
-      </SubHeading>
+      </PageSubtitle>
       <TabsRoot
         value={activeTabValue}
         onValueChange={({ value }) => {

@@ -54,7 +54,7 @@ const ComparisonSectionTable = ({ titleKey, plans, category, specs }: Comparison
           <Table.ColumnHeader colSpan={4}>
             <Flex alignItems='center' gap={2}>
               <Icon as={SubcategoryIcon[category]} />
-              <Text as={'span'} textTransform='uppercase' fontSize='sm'>
+              <Text as={'span'} textTransform='uppercase' textStyle='body-sm'>
                 <Trans i18nKey={titleKey} />
               </Text>
             </Flex>
@@ -167,19 +167,19 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
       </Table.ScrollArea>
       <Separator mt={6} mb={1} />
       <Flex textAlign='left' color='fg.muted' flexDirection='column'>
-        <Text fontSize='xs'>
+        <Text textStyle='caption'>
           <Trans i18nKey='pricing.comparison_table.footnote_1'>
             ¹ Votes with fewer than 10 participants are treated as test runs and don't count towards your plan limits.
           </Trans>
         </Text>
-        <Text fontSize='xs'>
+        <Text textStyle='caption'>
           <Trans i18nKey='pricing.comparison_table.footnote_2'>
             ² 2FA credits are only consumed when a user actually requests verification in a voting process. You'll never
             unexpectedly run out: if you exceed your included credits during a vote, each additional code will be
             charged at €0.015 as it's sent. You can also pre-purchase extra credits in convenient packages.
           </Trans>
         </Text>
-        <Text fontSize='xs'>
+        <Text textStyle='caption'>
           <Trans i18nKey='pricing.comparison_table.footnote_on_demand'>
             * Requested features will be evaluated individually and may incur additional fees.
           </Trans>

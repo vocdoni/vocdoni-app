@@ -87,6 +87,7 @@ const EXCLUDED_FILES = new Set(
     'recipeColors',
     'states',
     'status',
+    'textStyles',
   ].map((name) => `src/theme/${name}.ts`)
 )
 
