@@ -54,16 +54,12 @@ export const paginationComponents: ComponentsPartialDefinition = {
   ),
   PaginationEllipsisButton: defineComponent<'PaginationEllipsisButton', ButtonProps & InputProps>(
     ({ isInput, placeholder, onToggle, onSubmitPage, buttonProps, inputProps, className }) => {
-      const recipe = useSlotRecipe({ key: 'EllipsisButton' })
-      const styles = recipe()
-
       if (isInput) {
         return (
           <Input
             size='xs'
             w='8'
             className={className}
-            css={styles.input}
             placeholder={placeholder}
             onBlur={onToggle}
             onKeyDown={(event) => {
@@ -80,7 +76,6 @@ export const paginationComponents: ComponentsPartialDefinition = {
       return (
         <Button
           className={className}
-          css={styles.button}
           onClick={(event) => {
             event.preventDefault()
             onToggle()
