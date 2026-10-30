@@ -34,8 +34,8 @@ const stockPixels = (category: string) =>
     .map((token) => [token.name.slice(category.length + 1), pixels(token.value)] as const)
     .filter((entry): entry is readonly [string, number] => entry[1] !== undefined && entry[1] !== 0)
 
-// Stock radii, font sizes and spacing are all even pixel values: one pixel more keeps the layout and makes every
-// themed value odd, so a stock value left on screen did not come from the scale.
+// One pixel more keeps the layout and lands off the stock scale (stress.test.ts checks every nudged value), so a
+// stock value left on screen did not come from it.
 const nudged = (category: string) =>
   Object.fromEntries(stockPixels(category).map(([name, px]) => [name, { value: `${px + 1}px` }]))
 
