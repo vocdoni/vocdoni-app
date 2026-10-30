@@ -16,6 +16,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
+import { DragHandle } from '~components/ui/DragHandle'
 import { AddIcon, CloseIcon, DragHandleIcon } from '~theme/icons'
 import { SelectorTypes } from '../common'
 
@@ -101,17 +102,9 @@ const SortableOption = ({
       <Box css={cardStyles.wrapper} data-choice-card data-layout='list'>
         {/* Drag handle for options */}
         {fieldsLength > 1 && (
-          <Box
-            {...attributes}
-            {...listeners}
-            cursor={isDragging ? 'grabbing' : 'grab'}
-            display='flex'
-            alignItems='center'
-            color='fg.subtle'
-            _hover={{ color: 'fg.muted' }}
-          >
+          <DragHandle {...attributes} {...listeners} placement='center' dragging={isDragging}>
             <Icon as={DragHandleIcon} size='sm' />
-          </Box>
+          </DragHandle>
         )}
 
         {questionType === SelectorTypes.Single ? (
