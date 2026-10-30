@@ -7,9 +7,9 @@ import {
   CheckboxHiddenInput,
   CheckboxLabel,
   CheckboxRoot,
-  FieldHelperText,
-  FieldLabel,
-  FieldRoot,
+  FieldHelperText as FormHelperText,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
   Input,
   Link,
   Stack,
@@ -180,25 +180,25 @@ export const Step0Base = () => {
           {/* Render auth fields, the password always last */}
           {[...authFields.filter((f) => f !== 'password'), ...authFields.filter((f) => f === 'password')].map(
             (field) => (
-              <FieldRoot key={field} invalid={!!errors[field]} required>
-                <FieldLabel>{getAuthFieldLabel(t, field)}</FieldLabel>
+              <FormControl key={field} invalid={!!errors[field]} required>
+                <FormLabel>{getAuthFieldLabel(t, field)}</FormLabel>
                 <Input {...register(field, { required: true })} type={getAuthFieldInputType(field)} />
-              </FieldRoot>
+              </FormControl>
             )
           )}
 
           {/* Render 2FA field */}
           {is2Factor && (
-            <FieldRoot invalid={!!errors.contact} required>
-              <FieldLabel>{getContactFieldLabel(t, twoFaFields)}</FieldLabel>
+            <FormControl invalid={!!errors.contact} required>
+              <FormLabel>{getContactFieldLabel(t, twoFaFields)}</FormLabel>
               <Input {...register('contact', { required: true })} type='text' />
-              <FieldHelperText>
+              <FormHelperText>
                 <Text as='span' fontWeight='bold'>
                   {t('csp.important', { defaultValue: 'Important' })}:
                 </Text>{' '}
                 {t('csp.contact_match_help', 'Must match the one registered in the system')}
-              </FieldHelperText>
-            </FieldRoot>
+              </FormHelperText>
+            </FormControl>
           )}
 
           {auth.isError && (
@@ -208,7 +208,7 @@ export const Step0Base = () => {
             </Alert>
           )}
 
-          <FieldRoot required>
+          <FormControl required>
             <CheckboxRoot>
               <CheckboxHiddenInput />
               <CheckboxControl />
@@ -226,7 +226,7 @@ export const Step0Base = () => {
                 </Trans>
               </CheckboxLabel>
             </CheckboxRoot>
-          </FieldRoot>
+          </FormControl>
 
           <Button
             type='submit'
