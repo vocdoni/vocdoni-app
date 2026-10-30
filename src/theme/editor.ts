@@ -45,7 +45,7 @@ const editor: SystemStyleObject = {
   '& [class*="lexical-h"]': {
     fontWeight: 'bold',
     marginY: '1.25rem',
-    lineHeight: 'shorter',
+    lineHeight: 'short',
   },
   ...Object.fromEntries(
     Object.entries(proseHeadingSizes).map(([level, fontSize]) => [`& .lexical-${level}`, { fontSize }])

@@ -9,7 +9,7 @@ type MarkdownProps = Options & {
 
 // Sized like the editor's headings (`proseHeadingSizes`), so what organizers type is what voters read.
 const ProseHeading = ({ level, ...props }: HeadingProps & { level: keyof typeof proseHeadingSizes }) => (
-  <Heading fontSize={proseHeadingSizes[level]} lineHeight='shorter' mt={5} mb={4} {...props} />
+  <Heading fontSize={proseHeadingSizes[level]} lineHeight='short' mt={5} mb={4} {...props} />
 )
 
 const defaultComponents: NonNullable<Options['components']> = {

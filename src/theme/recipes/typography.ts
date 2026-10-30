@@ -117,7 +117,7 @@ const sizes = {
   md: { fontSize: 'md', lineHeight: 'moderate' },
   lg: { fontSize: 'lg', lineHeight: 'moderate' },
   xl: { fontSize: 'xl', lineHeight: 'moderate' },
-  '2xl': { fontSize: '2xl', lineHeight: 'shorter' },
+  '2xl': { fontSize: '2xl', lineHeight: 'short' },
 }
 
 // No default size: a Text without one inherits its container's size and line height, as plain text does.

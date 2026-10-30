@@ -37,7 +37,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               gap={{ base: '0px', xl: 24 }}
               w='full'
             >
-              <Text fontWeight='bold' fontSize='lg' lineHeight='shorter' mb={4} display='none'>
+              <Text fontWeight='bold' fontSize='lg' lineHeight='short' mb={4} display='none'>
                 {t('footer.company')}
               </Text>
               <Link
