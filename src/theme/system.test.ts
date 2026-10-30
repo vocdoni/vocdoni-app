@@ -384,3 +384,48 @@ describe('escape hatch', () => {
     })
   })
 })
+
+// A raw token whose dashed name equals a nested semantic path (raw `elevation-rest`, semantic `elevation.rest`)
+// shares its CSS variable and white-screens the app at runtime, while lint, typegen and the other tests pass.
+type TokenTree = { [key: string]: unknown }
+
+const cssVarOwners = (trees: Record<'raw' | 'semantic', TokenTree | undefined>) => {
+  const owners = new Map<string, Set<string>>()
+  const dashed = (segment: string) => segment.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
+  const visit = (node: unknown, path: string[], kind: string) => {
+    if (typeof node !== 'object' || node === null) return
+    if ('value' in node) {
+      const name = path.join('.')
+      const cssVar = path.map(dashed).join('-')
+      owners.set(cssVar, (owners.get(cssVar) ?? new Set()).add(`${kind} ${name}`))
+    }
+    for (const [key, child] of Object.entries(node)) {
+      if (key !== 'value') visit(child, key === 'DEFAULT' ? path : [...path, key], kind)
+    }
+  }
+  visit(trees.raw, [], 'raw')
+  visit(trees.semantic, [], 'semantic')
+  return [...owners.values()].map((names) => [...names]).filter(isCollision)
+}
+
+// A raw and a semantic token under the same dotted name are an override, not a collision.
+const isCollision = (names: string[]) => {
+  const dotted = new Set(names.map((name) => name.split(' ')[1]))
+  return dotted.size > 1 && names.some((name) => name.startsWith('raw '))
+}
+
+describe('token names', () => {
+  it('catches a raw token named like a nested semantic path', () => {
+    const raw = { shadows: { 'elevation-rest': { value: '0 1px 2px black' } } }
+    const semantic = { shadows: { elevation: { rest: { value: '{shadows.sm}' } } } }
+    expect(cssVarOwners({ raw, semantic })).toEqual([['raw shadows.elevation-rest', 'semantic shadows.elevation.rest']])
+  })
+
+  it.each([
+    ['stock', system],
+    ['branded', BRANDED],
+  ])('gives every raw token a CSS variable no semantic token shares (%s system)', (_name, sys) => {
+    const { tokens, semanticTokens: semantic } = sys._config.theme ?? {}
+    expect(cssVarOwners({ raw: tokens as TokenTree, semantic: semantic as TokenTree })).toEqual([])
+  })
+})

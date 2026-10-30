@@ -37,7 +37,11 @@ describe('icons by concept', () => {
   })
 
   it('defines the four icon sizes and sizes the icon recipe with the smallest', () => {
-    const value = (name: string) => system.tokens.getByName(name)?.value
+    // Each icon size is a step of the size scale, read through its CSS variable.
+    const value = (name: string) => {
+      const ref = /^var\((--[\w-]+)\)$/.exec(String(system.tokens.getByName(name)?.value))?.[1]
+      return system.tokens.allTokens.find((token) => token.extensions.cssVar?.var === ref)?.value
+    }
     expect([value('sizes.icon.sm'), value('sizes.icon.md'), value('sizes.icon.lg'), value('sizes.icon.xl')]).toEqual([
       '1rem',
       '1.25rem',

@@ -39,10 +39,10 @@ export const statusColors = defineSemanticTokens.colors({
       contrast: { value: '{colors.gray.contrast}' },
     },
   },
-  // Actions that delete or end something: menu items, icon buttons, confirm buttons. Text steps up
-  // to red.400 in dark mode, where red.600 is too dark to read on the dark surfaces.
+  // Actions that delete or end something: menu items, icon buttons, confirm buttons. Text is the error
+  // text colour, which steps up to red.400 in dark mode.
   destructive: {
-    fg: { value: { _light: '{colors.red.600}', _dark: '{colors.red.400}' } },
+    fg: { value: '{colors.fg.error}' },
     solid: { value: '{colors.red.solid}' },
     contrast: { value: '{colors.red.contrast}' },
   },

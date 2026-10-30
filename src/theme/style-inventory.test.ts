@@ -112,6 +112,21 @@ describe('style inventory scanner', () => {
     ])
   })
 
+  it('counts only px and palette values in recipes', () => {
+    const code = `
+      export const r = defineRecipe({
+        base: { h: '[52px]', p: '[3px]', color: 'gray.500', fontSize: '13px', _dark: { color: 'white' } },
+      })
+    `
+    expect(categoriesOf(code, 'src/theme/recipes/fixture.ts').sort()).toEqual([
+      'pxFontSize',
+      'pxSize',
+      'pxSpacing',
+      'rawPalette',
+    ])
+    expect(categoriesOf(code)).toContain('colorModeLogic')
+  })
+
   it('reads react-select style configs', () => {
     const code = `<Select chakraStyles={{ menu: (base) => ({ ...base, zIndex: 20, bg: 'gray.50' }) }} />`
     expect(categoriesOf(code).sort()).toEqual(['rawPalette', 'rawZIndex'])
@@ -140,12 +155,13 @@ describe('style inventory scanner', () => {
     expect(categoriesOf(`<Button colorScheme='red' />`, members)).toEqual(['v2Prop'])
   })
 
-  it('scans components, react-components and editor styles but not the theme definition or tests', () => {
+  it('scans components, react-components, recipes and editor styles but not the theme definition or tests', () => {
     expect(isScannedFile('src/components/Layout/Footer.tsx')).toBe(true)
     expect(isScannedFile('src/theme/react-components/election.tsx')).toBe(true)
     expect(isScannedFile('src/theme/editor.ts')).toBe(true)
+    expect(isScannedFile('src/theme/recipes/badge.ts')).toBe(true)
+    expect(isScannedFile('src/theme/recipes/badge.test.ts')).toBe(false)
     expect(isScannedFile('src/theme/semantic.ts')).toBe(false)
-    expect(isScannedFile('src/theme/recipes/badge.ts')).toBe(false)
     expect(isScannedFile('src/theme/test-themes/stress.ts')).toBe(false)
     expect(isScannedFile('src/components/Layout/Footer.test.tsx')).toBe(false)
     expect(isScannedFile('src/__mocks__/posthog-js.ts')).toBe(false)

@@ -2,6 +2,9 @@ import { dialogAnatomy as parts } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 
 const baseStyle = {
+  backdrop: {
+    bg: 'scrim.strong',
+  },
   content: {
     bg: 'surface.overlay',
     boxShadow: 'shadow.overlay',

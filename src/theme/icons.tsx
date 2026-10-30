@@ -189,7 +189,7 @@ export const GoogleIcon = BsGoogle
 export const TwitterXIcon = FaXTwitter
 export const WhatsappIcon = MdOutlineWhatsapp
 
-export const Logo = () => <Image src='/assets/logo_vocdoni.png' alt='vocdoni icon' maxWidth='[125px]' />
+export const Logo = () => <Image src='/assets/logo_vocdoni.png' alt='vocdoni icon' maxWidth='wordmark' />
 
 export const LogoMbl = ({ ...props }) => (
   <Image src='/assets/vocdoni_icon.png' alt='vocdoni icon' maxWidth='10' {...props} />
