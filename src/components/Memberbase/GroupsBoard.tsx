@@ -378,7 +378,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
   return (
     <>
       {!group.isAutoGroup && (
-        <Flex gap={4} align='center' minH='42px' mb={2}>
+        <Flex gap={4} align='center' minH='toolbar' mb={2}>
           {selectedRows.length > 0 ? (
             <>
               <Text textStyle='body-sm' color='fg.muted'>
@@ -422,7 +422,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
             <Table.Root variant='outline'>
               <Table.Header>
                 <Table.Row>
-                  <Table.ColumnHeader width='50px'>
+                  <Table.ColumnHeader width='table.action'>
                     <CheckboxRoot
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
@@ -590,7 +590,7 @@ const GroupMembersWithPagination = ({ group, isOpen }: GroupMembersProps) => {
       />
       <TableProvider
         data={members}
-        isLoading={isLoading}
+        loading={isLoading}
         initialColumns={[
           { id: 'name', label: t('group.name', { defaultValue: 'Name' }) },
           { id: 'email', label: t('group.email', { defaultValue: 'Email' }) },

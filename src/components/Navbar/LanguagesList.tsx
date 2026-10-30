@@ -105,7 +105,7 @@ export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguag
         </Button>
       </MenuTrigger>
       <MenuPositioner>
-        <MenuContent minW={16} mt={2} maxH='15rem' overflowY='auto'>
+        <MenuContent minW={16} mt={2} maxH='60' overflowY='auto'>
           <LanguagesList closeOnSelect={true} publicLanguageLinks={publicLanguageLinks} />
         </MenuContent>
       </MenuPositioner>
@@ -128,7 +128,7 @@ const LanguageOptionLabel = ({
 }) => (
   <Flex alignItems='center' gap={2} w='full' px={1}>
     {context === 'menu' && (
-      <Box w='1rem' display='flex' alignItems='center' justifyContent='center'>
+      <Box w='4' display='flex' alignItems='center' justifyContent='center'>
         {isSelected && <Icon as={CheckIcon} boxSize='icon.sm' />}
       </Box>
     )}

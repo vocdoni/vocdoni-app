@@ -25,6 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { CloseIcon, DragHandleIcon } from '~theme/icons'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
+import { DragHandle } from '~components/ui/DragHandle'
 import { Process, SelectorTypes } from '../common'
 import ExtendedQuestionEditor from './ExtendedQuestionEditor'
 import { QuestionSettings } from './QuestionSettings'
@@ -104,18 +105,9 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
           <HStack order={{ base: 1, md: 0 }} flex='1' minW={0} align='stretch' gap={4}>
             {/* Drag handle */}
             {questions.length > 1 && (
-              <Box
-                {...attributes}
-                {...listeners}
-                cursor={isDragging ? 'grabbing' : 'grab'}
-                display='flex'
-                alignItems='flex-start'
-                pt={2}
-                color='fg.subtle'
-                _hover={{ color: 'fg.muted' }}
-              >
+              <DragHandle {...attributes} {...listeners} placement='start' dragging={isDragging}>
                 <Icon as={DragHandleIcon} />
-              </Box>
+              </DragHandle>
             )}
 
             <VStack flex='1' align='stretch' gap={2}>

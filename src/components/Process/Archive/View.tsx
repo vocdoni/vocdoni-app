@@ -59,7 +59,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
       py={8}
       w='full'
     >
-      {election.header && <Image src={election.header} alt='' borderRadius='md' maxH='240px' objectFit='cover' />}
+      {election.header && <Image src={election.header} alt='' borderRadius='md' maxH='60' objectFit='cover' />}
 
       <Box>
         <HStack mb={2} gap={2} flexWrap='wrap'>
@@ -91,7 +91,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
 
       {description && (
         <Box className='md-sizes'>
-          <Editor defaultValue={description} isDisabled />
+          <Editor defaultValue={description} disabled />
         </Box>
       )}
 

@@ -77,7 +77,7 @@ const PasswordForgotForm: React.FC<PasswordForgotFormProps> = ({ resetRoute = Ro
             type='email'
             required
           />
-          <Button type='submit' w='100%'>
+          <Button type='submit' w='full'>
             {t('forgot_password_reset_link')}
           </Button>
         </Flex>

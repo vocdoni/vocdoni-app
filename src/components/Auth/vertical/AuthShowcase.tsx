@@ -66,8 +66,8 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
           // Fades the mark out towards the type instead of painting a scrim over it, which would
           // mean a third layer and would dull the panel tone along with the logo.
           css={{
-            maskImage: 'linear-gradient(to left, #000 30%, transparent 85%)',
-            WebkitMaskImage: 'linear-gradient(to left, #000 30%, transparent 85%)',
+            maskImage: 'linear-gradient(to left, black 30%, transparent 85%)',
+            WebkitMaskImage: 'linear-gradient(to left, black 30%, transparent 85%)',
           }}
         />
       )}
@@ -124,7 +124,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
               <Image
                 src={logo.src}
                 alt={t('alt.images.org_logo', { defaultValue: '{{org}} logo', org: logo.name })}
-                boxSize='40px'
+                boxSize='10'
                 flexShrink={0}
                 // A tile, not a disc: the logo set mixes round badges with square marks, heraldic
                 // crests and wordmarks, and a circle clips or strands everything that isn't round.

@@ -33,7 +33,7 @@ export type UploaderProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T) => T
   getInputProps: <T extends DropzoneInputProps>(props?: T) => T
   isDragActive: boolean
-  isLoading?: boolean
+  loading?: boolean
   formats?: string[]
 }
 
@@ -165,7 +165,7 @@ export const AvatarUploader = (props: FormControlProps) => {
       <FormLabel>{t('avatar.label', { defaultValue: 'Logo/Avatar' })}</FormLabel>
       <Box borderRadius='full' px={6}>
         {avatar ? (
-          <Box position='relative' borderRadius='full' w='128px' h='128px'>
+          <Box position='relative' borderRadius='full' w='32' h='32'>
             <AvatarRoot w='full' h='full'>
               <AvatarImage src={avatar} />
               <AvatarFallback name={name?.toString() || ''} />
@@ -178,7 +178,7 @@ export const AvatarUploader = (props: FormControlProps) => {
               h='full'
               align='center'
               justify='center'
-              bg='blackAlpha.400'
+              bg='scrim'
               opacity={0}
               _hover={{ opacity: 1 }}
               _focusWithin={{ opacity: 1 }}
@@ -198,13 +198,13 @@ export const AvatarUploader = (props: FormControlProps) => {
         ) : (
           <Flex flexDirection='column' justifyContent='center' alignItems='center' gap={2} {...getRootProps()}>
             <Box
-              w='128px'
-              h='128px'
+              w='32'
+              h='32'
               backgroundColor='bg.emphasized'
               cursor='pointer'
               borderRadius='full'
               border='2px solid'
-              borderColor={isDragActive ? 'green.400' : 'transparent'}
+              borderColor={isDragActive ? 'state.dragover.border' : 'transparent'}
               transition='all {durations.moderate} ease-in-out'
               display='flex'
               alignItems='center'
@@ -255,14 +255,14 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
             <Image
               src={value}
               alt={t('uploaded_image_preview', { defaultValue: 'Preview of the uploaded image' })}
-              w='100%'
-              h='100%'
+              w='full'
+              h='full'
               objectFit='cover'
             />
             {/* A new image dropped over the current one is uploading */}
             {isPending && (
-              <Flex position='absolute' inset={0} align='center' justify='center' bg='blackAlpha.500'>
-                <InlineLoader color='white' />
+              <Flex position='absolute' inset={0} align='center' justify='center' bg='scrim.strong'>
+                <InlineLoader color='scrim.fg' />
               </Flex>
             )}
           </Flex>
@@ -271,15 +271,19 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
             {...getRootProps()}
             w={w}
             h={h}
-            bg='gray.800'
+            bg='surface.inverse'
             justify='center'
             align='center'
             cursor='pointer'
             borderTopRadius={borderTopRadius}
-            borderColor={isDragActive ? 'green.400' : 'gray.600'}
+            borderColor={isDragActive ? 'state.dragover.border' : 'surface.inverse.border'}
           >
             <input {...getInputProps()} />
-            {isPending ? <InlineLoader color='white' /> : <Icon as={UploadIcon} boxSize='icon.lg' color='gray.400' />}
+            {isPending ? (
+              <InlineLoader color='surface.inverse.fg' />
+            ) : (
+              <Icon as={UploadIcon} boxSize='icon.lg' color='surface.inverse.fg.muted' />
+            )}
           </Flex>
         )}
       </Flex>
@@ -288,7 +292,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
   )
 }
 
-const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, formats }: UploaderProps) => {
+const Uploader = ({ getRootProps, getInputProps, isDragActive, loading, formats }: UploaderProps) => {
   const { t } = useTranslation()
 
   if (!formats) {
@@ -311,7 +315,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
       <Box>
         {isDragActive ? (
           <Text textAlign='center'>{t('uploader.drop_here', { defaultValue: 'Drop the file here' })}</Text>
-        ) : isLoading ? (
+        ) : loading ? (
           <InlineLoader />
         ) : (
           <Flex direction='column' align='center' textAlign='center'>

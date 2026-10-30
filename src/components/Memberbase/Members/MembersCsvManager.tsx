@@ -173,7 +173,7 @@ export const MembersCsvManager = () => {
           </CheckboxGroup>
         </Card.Body>
         <Card.Footer display='flex' flexDirection='column' gap={2}>
-          <Button asChild variant='outline' disabled={!visibleColumns.length} w='100%'>
+          <Button asChild variant='outline' disabled={!visibleColumns.length} w='full'>
             <Link
               href={template.url}
               aria-disabled={!visibleColumns.length}
@@ -217,7 +217,7 @@ export const MembersCsvManager = () => {
             getInputProps={getInputProps}
             getRootProps={getRootProps}
             isDragActive={isDragActive}
-            isLoading={reading}
+            loading={reading}
           />
           <FormErrorMessage display='flex' justifyContent='center'>
             {errors?.spreadsheet?.message?.toString()}

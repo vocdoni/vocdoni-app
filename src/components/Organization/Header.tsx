@@ -47,7 +47,7 @@ const OrganizationHeader = () => {
         flexDirection={{ base: 'column', lg: 'row' }}
         gap={{ base: 2 }}
         minW={0}
-        maxW='100%'
+        maxW='full'
       >
         <Flex
           flex='1 1 100%'
@@ -58,7 +58,7 @@ const OrganizationHeader = () => {
           order={{ base: 2, lg: 0 }}
         >
           <Flex
-            w='100%'
+            w='full'
             ref={containerRef}
             flexDirection='row'
             justifyContent='space-between'

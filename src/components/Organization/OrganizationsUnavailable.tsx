@@ -28,7 +28,7 @@ export const OrganizationsUnavailable = () => {
 
   return (
     <Flex flexDirection='column'>
-      <Card.Root variant='plain' minH='100%' maxW='650px' mx='auto'>
+      <Card.Root variant='plain' minH='full' maxW='card.empty' mx='auto'>
         <Card.Body>
           <EmptyState
             icon={RefreshIcon}

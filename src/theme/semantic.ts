@@ -130,9 +130,45 @@ export const colors = defineSemanticTokens.colors({
         value: '{colors.surface.sidebar}',
       },
     },
-    // Cards that stay dark in both colour modes
+    // A region set apart from the surface it sits on: muted in light mode, the page colour in dark mode,
+    // where `bg.muted` would be brighter than the dialog around it.
+    inset: {
+      value: {
+        _light: '{colors.bg.muted}',
+        _dark: '{colors.bg}',
+      },
+    },
+    // Cards and tiles that stay dark in both colour modes, with the greys that sit on them.
     inverse: {
-      value: '{colors.gray.800}',
+      DEFAULT: {
+        value: '{colors.gray.800}',
+      },
+      border: {
+        value: '{colors.gray.600}',
+      },
+      rule: {
+        value: '{colors.whiteAlpha.300}',
+      },
+      fg: {
+        DEFAULT: {
+          value: '{colors.white}',
+        },
+        muted: {
+          value: '{colors.gray.400}',
+        },
+      },
+    },
+  },
+  // Dims what is under it so a control on top stays legible: an image's hover action, an upload in progress.
+  scrim: {
+    DEFAULT: {
+      value: '{colors.blackAlpha.400}',
+    },
+    strong: {
+      value: '{colors.blackAlpha.500}',
+    },
+    fg: {
+      value: '{colors.surface.inverse.fg}',
     },
   },
   auth: {
@@ -152,16 +188,16 @@ export const colors = defineSemanticTokens.colors({
     showcase: {
       fg: {
         DEFAULT: {
-          value: '{colors.white}',
+          value: '{colors.surface.inverse.fg}',
         },
         muted: {
-          value: '{colors.gray.400}',
+          value: '{colors.surface.inverse.fg.muted}',
         },
       },
       // Hairline between the quote and its attribution. Neutral white alpha rather than
       // `separator`, which is faintly blue and reads as a tint of its own on a coloured panel.
       rule: {
-        value: '{colors.whiteAlpha.300}',
+        value: '{colors.surface.inverse.rule}',
       },
     },
     // Tile the customer logos sit on, in the showcase panel and in the trust bar alike. Light in

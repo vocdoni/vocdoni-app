@@ -81,6 +81,33 @@ export const link = defineRecipe({
       button: {
         textDecoration: 'none',
       },
+      // A whole row-sized link used as a tile: a centred label with badges laid over its corners.
+      tile: {
+        flexGrow: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        h: '100px',
+        borderRadius: 'md',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        boxShadow: 'lg',
+        position: 'relative',
+        // The label keeps the text colour and no underline in every state: the base repeats its colour
+        // under `.dark &` and on hover.
+        color: 'fg',
+        textDecoration: 'none',
+        _hover: {
+          color: 'fg',
+          textDecoration: 'none',
+          bgColor: 'link.tile.hover.bg',
+        },
+        _dark: { color: 'fg', _hover: { color: 'fg' } },
+        _active: {
+          transform: 'scale(0.9)',
+        },
+      },
     },
     size: {
       xs: { fontSize: 'xs' },

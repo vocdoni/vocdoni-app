@@ -18,7 +18,6 @@ import {
   Stack,
   Text,
   useDisclosure,
-  useRadioGroupContext,
 } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
@@ -228,20 +227,17 @@ const useResendInvitationMutation = () => {
 }
 
 const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }: RoleRadioProps) => {
-  const group = useRadioGroupContext()
-  const isSelected = group?.value === value
-
   return (
     <RadioGroup.Item
       value={value}
       disabled={disabled}
       border='1px solid'
       borderRadius='md'
-      borderColor={isSelected ? 'border.emphasized' : undefined}
       p={2}
-      cursor={disabled ? 'not-allowed' : 'pointer'}
-      opacity={disabled ? 0.6 : 1}
-      _hover={!disabled ? { borderColor: 'border.emphasized' } : undefined}
+      cursor='pointer'
+      _checked={{ borderColor: 'border.emphasized' }}
+      _hover={{ borderColor: 'border.emphasized' }}
+      _disabled={{ opacity: 'inactive', cursor: 'not-allowed' }}
       {...props}
     >
       <RadioGroup.ItemHiddenInput />

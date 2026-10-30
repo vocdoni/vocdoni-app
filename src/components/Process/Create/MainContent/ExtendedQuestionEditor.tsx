@@ -18,6 +18,7 @@ import { AddIcon, DeleteIcon, DragHandleIcon } from '~theme/icons'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
 import { ImageUploader } from '~components/Layout/Uploader'
+import { DragHandle } from '~components/ui/DragHandle'
 import { statusPalette } from '~theme/status'
 
 const ExtendedQuestionEditor = ({
@@ -67,7 +68,7 @@ const ExtendedQuestionEditor = ({
         _hover={{ bg: 'state.hover.bg' }}
       >
         <button type='button' onClick={() => append({ option: '', description: '' })}>
-          <VStack justify='center' align='center' height='100%'>
+          <VStack justify='center' align='center' height='full'>
             <Icon as={AddIcon} boxSize='icon.lg' />
             <Text>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
           </VStack>
@@ -103,21 +104,9 @@ const SortableExtendedOption = ({
       <Box css={cardStyles.wrapper} data-choice-card data-layout='grid' position='relative'>
         {/* Drag handle */}
         {fieldsLength > 1 && (
-          <Box
-            {...attributes}
-            {...listeners}
-            cursor={isDragging ? 'grabbing' : 'grab'}
-            position='absolute'
-            top={2}
-            left={2}
-            zIndex='contents'
-            p={1}
-            borderRadius='md'
-            color='fg.subtle'
-            _hover={{ color: 'fg.muted', bg: 'state.hover.bg' }}
-          >
+          <DragHandle {...attributes} {...listeners} placement='corner' dragging={isDragging}>
             <Icon as={DragHandleIcon} size='sm' />
-          </Box>
+          </DragHandle>
         )}
 
         {/* Trash button */}

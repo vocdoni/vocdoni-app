@@ -20,7 +20,7 @@ const ProcessHeader = () => {
   return (
     <>
       {election?.header && (
-        <Box w='100%' mx='auto' my={8} overflow='hidden'>
+        <Box w='full' mx='auto' my={8} overflow='hidden'>
           <AspectRatio ratio={3 / 1} maxH='300px'>
             <Image
               src={election?.header}
@@ -31,8 +31,8 @@ const ProcessHeader = () => {
                     : (election.title.default ?? '')
                   : ''
               }
-              w='100%'
-              h='100%'
+              w='full'
+              h='full'
               objectFit='cover'
               loading='eager'
               fetchPriority='high'

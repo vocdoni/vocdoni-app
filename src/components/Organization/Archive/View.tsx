@@ -124,7 +124,7 @@ export const ArchiveOrganizationView = ({
 
       {description && (
         <Box className='md-sizes'>
-          <Editor defaultValue={description} isDisabled />
+          <Editor defaultValue={description} disabled />
         </Box>
       )}
 
