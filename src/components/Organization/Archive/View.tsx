@@ -123,7 +123,7 @@ export const ArchiveOrganizationView = ({
       </Flex>
 
       {description && (
-        <Box className='md-sizes'>
+        <Box>
           <Editor defaultValue={description} isDisabled />
         </Box>
       )}
