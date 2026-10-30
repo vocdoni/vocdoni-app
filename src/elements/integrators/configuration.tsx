@@ -1,15 +1,8 @@
-import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet, useLocation, useNavigate } from 'react-router'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
+import { RoutedTabs, type RoutedTab } from '~components/ui/RoutedTabs'
 import { Routes } from '~src/router/routes'
-
-type ConfigTab = {
-  label: string
-  route: string
-}
 
 /**
  * Integrator Configuration: a tabbed container (Subscription + Support) mirroring the admin
@@ -18,10 +11,8 @@ type ConfigTab = {
  */
 const IntegratorConfiguration = () => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
-  const location = useLocation()
 
-  const tabs: ConfigTab[] = [
+  const tabs: RoutedTab[] = [
     {
       label: t('subscription.title', { defaultValue: 'Subscription plan' }),
       route: Routes.integrators.configuration.subscription,
@@ -32,12 +23,6 @@ const IntegratorConfiguration = () => {
     },
   ]
 
-  const currentTabIndex = useMemo(
-    () => tabs.findIndex((tab) => location.pathname.endsWith(tab.route)),
-    [location.pathname, tabs]
-  )
-  const activeTabValue = currentTabIndex === -1 ? tabs[0]?.route : tabs[currentTabIndex]?.route
-
   return (
     <DashboardContents>
       <PageTitle>{t('integrators.configuration.title', { defaultValue: 'Configuration' })}</PageTitle>
@@ -46,23 +31,7 @@ const IntegratorConfiguration = () => {
           defaultValue: 'Manage your subscription and get support.',
         })}
       </PageSubtitle>
-      <TabsRoot
-        value={activeTabValue}
-        onValueChange={({ value }) => {
-          const tab = tabs.find((entry) => entry.route === value)
-          if (tab) navigate(tab.route)
-        }}
-        lazyMount
-      >
-        <TabsList mb='6'>
-          {tabs.map((tab) => (
-            <TabsTrigger key={tab.route} value={tab.route}>
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <Outlet />
-      </TabsRoot>
+      <RoutedTabs tabs={tabs} />
     </DashboardContents>
   )
 }

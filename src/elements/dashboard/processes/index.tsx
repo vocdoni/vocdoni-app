@@ -1,13 +1,12 @@
-import { Tabs } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, matchPath, Outlet, useLocation, useNavigate } from 'react-router'
+import { generatePath, matchPath, useLocation } from 'react-router'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
+import { RoutedTabs } from '~components/ui/RoutedTabs'
 import { Routes } from '~routes'
 
 const OrganizationVotings = () => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const location = useLocation()
   const menuItems = [
     {
@@ -34,23 +33,7 @@ const OrganizationVotings = () => {
     <DashboardContents>
       <PageTitle>{t('voting_processes')}</PageTitle>
       <PageSubtitle>{t('voting_processes_description')}</PageSubtitle>
-      <Tabs.Root
-        value={activeTabValue}
-        onValueChange={({ value }) => {
-          const item = menuItems.find((entry) => entry.route === value)
-          if (item) navigate(item.route)
-        }}
-        lazyMount
-      >
-        <Tabs.List mb='6'>
-          {menuItems.map((item) => (
-            <Tabs.Trigger key={item.route} value={item.route}>
-              {item.label}
-            </Tabs.Trigger>
-          ))}
-        </Tabs.List>
-        <Outlet />
-      </Tabs.Root>
+      <RoutedTabs tabs={menuItems} value={activeTabValue} />
     </DashboardContents>
   )
 }

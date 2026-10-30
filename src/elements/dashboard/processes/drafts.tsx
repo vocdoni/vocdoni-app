@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { CopyIcon, DeleteIcon, EditIcon, MoreIcon } from '~theme/icons'
 import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useCreateProcess } from '~components/Process/Create'
 import { Process, SelectorTypes } from '~components/Process/Create/common'
@@ -332,13 +332,9 @@ const Drafts = () => {
     <RoutedPaginationProvider path={Routes.dashboard.processes.drafts} pagination={pagination}>
       <ListStateAlert
         show={hasError}
-        status='error'
         title={t('drafts.load_error', { defaultValue: 'Unable to load drafts' })}
-        description={
-          error instanceof Error
-            ? error.message
-            : t('drafts.load_error_description', { defaultValue: 'Please try again.' })
-        }
+        error={error}
+        fallback={t('drafts.load_error_description', { defaultValue: 'Please try again.' })}
       />
       {isEmpty ? (
         <EmptyState

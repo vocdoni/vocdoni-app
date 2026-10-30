@@ -1,4 +1,4 @@
-import { Alert, Box, Flex, SimpleGrid } from '@chakra-ui/react'
+import { Alert, Box, SimpleGrid } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
@@ -6,7 +6,7 @@ import { NetworkIcon, RocketIcon, TerminalIcon } from '~theme/icons'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { PageLoader } from '~components/ui/Loader'
-import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
+import { PageHeader } from '~components/ui/PageTitle'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useIntegratorInfo } from '~src/queries/integrators'
 import { DocsCard } from './DocsCard'
@@ -79,29 +79,27 @@ export const IntegratorOverview = () => {
 
   return (
     <DashboardContents>
-      <Flex justify='space-between' align='flex-start' gap='4' mb='4'>
-        <Box>
-          <PageTitle>{t('integrators.overview_title', { defaultValue: 'Overview' })}</PageTitle>
-          <PageSubtitle mb='[0]'>
-            {t('integrators.overview_subtitle', {
-              defaultValue: 'Your integrator quota and current usage.',
-            })}
-          </PageSubtitle>
-        </Box>
-        {/* Desktop: sits at the top-right of the page header. On mobile the layout exposes a slot
-            in the shared top bar (next to the sidebar toggle) and the button is portaled there
-            instead, so only one instance is ever mounted. */}
-        {!layout?.headerActionsNode && (
-          <BookerModalButton
-            variant='solid'
-            colorPalette='gray'
-            flexShrink={0}
-            display={{ base: 'none', md: 'inline-flex' }}
-          >
-            {upgradeLabel}
-          </BookerModalButton>
-        )}
-      </Flex>
+      <PageHeader
+        title={t('integrators.overview_title', { defaultValue: 'Overview' })}
+        subtitle={t('integrators.overview_subtitle', {
+          defaultValue: 'Your integrator quota and current usage.',
+        })}
+        // Desktop: sits at the top-right of the page header. On mobile the layout exposes a slot
+        // in the shared top bar (next to the sidebar toggle) and the button is portaled there
+        // instead, so only one instance is ever mounted.
+        actions={
+          !layout?.headerActionsNode && (
+            <BookerModalButton
+              variant='solid'
+              colorPalette='gray'
+              flexShrink={0}
+              display={{ base: 'none', md: 'inline-flex' }}
+            >
+              {upgradeLabel}
+            </BookerModalButton>
+          )
+        }
+      />
       {layout?.headerActionsNode &&
         createPortal(
           <BookerModalButton variant='solid' colorPalette='gray' size='xs'>

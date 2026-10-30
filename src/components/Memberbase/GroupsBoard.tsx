@@ -36,7 +36,7 @@ import { CalendarIcon, ClockIcon, DeleteIcon, EditIcon, MoreIcon, UsersIcon, Vie
 import { generatePath, useNavigate } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { DashboardBox } from '~components/Dashboard/Contents'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { PaginatedTableFooter } from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
@@ -584,9 +584,8 @@ const GroupMembersWithPagination = ({ group, isOpen }: GroupMembersProps) => {
     <>
       <ListStateAlert
         show={hasError}
-        status='error'
         title={t('group.members.error', { defaultValue: 'Unable to load group members' })}
-        description={error?.message?.toString()}
+        error={error}
       />
       <TableProvider
         data={members}
@@ -734,9 +733,8 @@ const GroupsBoard = () => {
       {isLoading && <ListLoader />}
       <ListStateAlert
         show={hasError}
-        status='error'
         title={t('groups_board.load_error', { defaultValue: 'Unable to load groups' })}
-        description={error?.message?.toString()}
+        error={error}
       />
       {noGroups && (
         <EmptyState

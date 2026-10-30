@@ -11,30 +11,22 @@ export type ContactLinkProps = {
 
 const ContactButton = ({ children, leftIcon, ...buttonProps }: ContactLinkProps) => {
   const { isAuthenticated } = useAuth()
+  const content = leftIcon ? (
+    <HStack gap='2'>
+      {leftIcon}
+      <Text as='span'>{children}</Text>
+    </HStack>
+  ) : (
+    children
+  )
 
   return (
     <Button {...buttonProps} asChild>
       {isAuthenticated ? (
-        <RouterLink to={Routes.dashboard.settings.support}>
-          {leftIcon ? (
-            <HStack gap='2'>
-              {leftIcon}
-              <Text as='span'>{children}</Text>
-            </HStack>
-          ) : (
-            children
-          )}
-        </RouterLink>
+        <RouterLink to={Routes.dashboard.settings.support}>{content}</RouterLink>
       ) : (
         <a href='https://vocdoni.io/contact' target='_blank' rel='noopener noreferrer'>
-          {leftIcon ? (
-            <HStack gap='2'>
-              {leftIcon}
-              <Text as='span'>{children}</Text>
-            </HStack>
-          ) : (
-            children
-          )}
+          {content}
         </a>
       )}
     </Button>
