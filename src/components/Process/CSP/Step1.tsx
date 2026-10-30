@@ -99,10 +99,10 @@ export const Step1Base = () => {
   }
 
   return (
-    <VStack gap={6} align='stretch' w='full'>
+    <VStack gap='6' align='stretch' w='full'>
       <Text fontWeight='medium'>{t('csp.step1.subtitle', { defaultValue: 'Enter the verification code' })}</Text>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <VStack gap={5} align='stretch'>
+        <VStack gap='5' align='stretch'>
           <FieldRoot invalid={!!errors.code}>
             <Controller
               control={control}
@@ -138,7 +138,7 @@ export const Step1Base = () => {
                     count={6}
                   >
                     <PinInputHiddenInput />
-                    <PinInputControl w='full' gap={3}>
+                    <PinInputControl w='full' gap='3'>
                       {Array.from({ length: 6 }).map((_, index) => (
                         <PinInputInput key={index} index={index} />
                       ))}
@@ -148,8 +148,8 @@ export const Step1Base = () => {
               }}
             />
             {errors.code && <FieldErrorText textAlign='center'>{errors.code.message}</FieldErrorText>}
-            <FieldHelperText mt={3}>
-              <VStack gap={2} align='stretch'>
+            <FieldHelperText mt='3'>
+              <VStack gap='2' align='stretch'>
                 <Text>
                   <Trans i18nKey='csp.step1.helper_text'>
                     We've sent a code to your phone number or email address. If you chose to receive it by email, please

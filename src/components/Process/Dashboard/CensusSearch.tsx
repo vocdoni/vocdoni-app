@@ -148,14 +148,14 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
   return (
     // pt mirrors the sidebar-subtitle's top padding for separation from the section above; the subtitle's
     // own py is zeroed so the title→description gap matches the uniform gap between the other items.
-    <Box display='flex' flexDirection='column' gap={3} pt={4}>
-      <HStack gap={1} alignItems='center'>
-        <SidebarSubtitle py={0}>
+    <Box display='flex' flexDirection='column' gap='3' pt='4'>
+      <HStack gap='1' alignItems='center'>
+        <SidebarSubtitle py='[0]'>
           <Trans i18nKey='census.search.title'>Check participants</Trans>
         </SidebarSubtitle>
         <TooltipRoot positioning={{ placement: 'top' }}>
           <TooltipTrigger asChild>
-            <chakra.span display='inline-flex' alignItems='center' cursor='default' color='fg.muted' opacity='dimmed'>
+            <chakra.span display='inline-flex' alignItems='center' cursor='[default]' color='fg.muted' opacity='dimmed'>
               <Icon as={HelpIcon} boxSize='icon.sm' />
             </chakra.span>
           </TooltipTrigger>
@@ -199,7 +199,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
               {getApiErrorMessage(error) ?? t('census.search.error', { defaultValue: 'Could not search the census.' })}
             </Text>
           ) : isLoading && !data ? (
-            <HStack gap={2}>
+            <HStack gap='2'>
               <InlineLoader />
               <Text textStyle='body-sm' color='fg.muted'>
                 <Trans i18nKey='census.search.loading'>Searching census…</Trans>
@@ -215,16 +215,16 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
               }
             />
           ) : (
-            <Box maxH='60' overflowY='auto' display='flex' flexDirection='column' gap={3}>
+            <Box maxH='60' overflowY='auto' display='flex' flexDirection='column' gap='3'>
               {participants.map((participant) => (
                 <Box
                   key={participant.memberId}
                   display='flex'
                   justifyContent='space-between'
                   alignItems='center'
-                  gap={2}
+                  gap='2'
                 >
-                  <Box minW={0}>
+                  <Box minW='[0]'>
                     <Text textStyle='body-sm' fontWeight='bold' truncate>
                       {[participant.name, participant.surname].filter(Boolean).join(' ')}
                     </Text>

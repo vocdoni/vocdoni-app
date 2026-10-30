@@ -107,7 +107,7 @@ const PricingCard = ({
         <Text color='fg.muted'>{subtitle}</Text>
       </Card.Header>
       <Card.Body>
-        <Flex direction='column' h='full' gap={4}>
+        <Flex direction='column' h='full' gap='4'>
           <Flex align='center'>
             {isCustomPlan ? (
               <Text fontSize='3xl' fontWeight='extrabold'>
@@ -147,8 +147,8 @@ const PricingCard = ({
               ))}
             <Separator />
             {!isCustomPlan && plan.freeTrialDays > 0 && !hadSubscribed && period === 'year' && (
-              <Text fontWeight='extrabold' display='flex' flexDir='row' alignItems='center' mt={1}>
-                <Icon as={SuccessIcon} mr={1} />
+              <Text fontWeight='extrabold' display='flex' flexDir='row' alignItems='center' mt='1'>
+                <Icon as={SuccessIcon} mr='1' />
                 <Trans
                   i18nKey='pricing_card.free_trial'
                   defaults='{{ freeDays }}-day free trial'
@@ -165,7 +165,7 @@ const PricingCard = ({
               </Trans>
             </Text>
           ) : (
-            <List.Root display='flex' flexDirection='column' gap={3} pl={4} listStyleType='disc'>
+            <List.Root display='flex' flexDirection='column' gap='3' pl='4' listStyleType='disc'>
               {features.map((feature, idx) => (
                 <List.Item key={idx}>
                   <List.Indicator>
@@ -185,10 +185,10 @@ const PricingCard = ({
       )}
       {!isCustomPlan && isDashboard && <Separator />}
       <Card.Footer>
-        <Flex flexDirection='column' w='full' gap={2} alignItems='center' justifyContent='flex-end'>
+        <Flex flexDirection='column' w='full' gap='2' alignItems='center' justifyContent='flex-end'>
           {isCustomPlan ? (
             <>
-              <Flex gap={1} flexWrap='wrap' flexDir='column' w='full'>
+              <Flex gap='1' flexWrap='wrap' flexDir='column' w='full'>
                 <Trans i18nKey='pricing_card.contact_sales'>
                   <ContactButton fontWeight='extrabold' whiteSpace='unset' textAlign='center'>
                     Contact our sales team
@@ -241,10 +241,10 @@ const PricingCard = ({
       {popular && (
         <Badge
           position='absolute'
-          top={0}
-          left='50%'
+          top='[0]'
+          left='[50%]'
           transform='translate(-50%, -50%)'
-          px={3}
+          px='3'
           size='xs'
           backgroundColor='card.pricing.featured.badge.bg'
           color='card.pricing.featured.badge.color'

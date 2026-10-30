@@ -80,7 +80,7 @@ export const Questions = () => {
   }
 
   return (
-    <VStack align='stretch' gap={4}>
+    <VStack align='stretch' gap='4'>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -102,7 +102,7 @@ export const Questions = () => {
       />
 
       <Button variant='outline' onClick={addQuestion}>
-        <HStack gap={2}>
+        <HStack gap='2'>
           <Icon as={AddIcon} />
           <Text as='span'>
             <Trans i18nKey='process.create.question.add'>Add question</Trans>

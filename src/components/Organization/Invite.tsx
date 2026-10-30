@@ -51,7 +51,7 @@ const InviteForm = () => {
 
   return (
     <FormProvider {...methods}>
-      <Flex as='form' onSubmit={methods.handleSubmit(onSubmit)} flexDirection='column' gap={6}>
+      <Flex as='form' onSubmit={methods.handleSubmit(onSubmit)} flexDirection='column' gap='6'>
         <InputBasic
           formValue='email'
           label={t('email')}
@@ -60,7 +60,7 @@ const InviteForm = () => {
           required
         />
         <RoleSelector name='role' required />
-        <Flex justifyContent='flex-end' gap={2}>
+        <Flex justifyContent='flex-end' gap='2'>
           <Dialog.ActionTrigger asChild>
             <Button colorPalette='gray' variant='outline'>
               <Trans i18nKey='cancel'>Cancel</Trans>
@@ -116,7 +116,7 @@ export const InviteToTeamModal = ({
           loadingText={t('loading')}
         >
           {leftIcon ? (
-            <HStack gap={2}>
+            <HStack gap='2'>
               {leftIcon}
               <Text as='span'>{children}</Text>
             </HStack>
@@ -131,7 +131,7 @@ export const InviteToTeamModal = ({
           <Dialog.CloseTrigger asChild>
             <CloseButton size='sm' />
           </Dialog.CloseTrigger>
-          <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap={1}>
+          <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap='1'>
             <Dialog.Title>
               <Trans i18nKey='invite.title'>Add team member</Trans>
             </Dialog.Title>

@@ -94,14 +94,14 @@ export const ProtectionMeter = ({
 
   return (
     <Box data-level={level}>
-      <HStack gap={2} fontSize='sm' w='full'>
+      <HStack gap='2' fontSize='sm' w='full'>
         <Text color='fg.muted'>{t('voter_auth.protection.label', { defaultValue: 'Protection' })}</Text>
-        <HStack gap={0.5} flex='1' aria-hidden>
+        <HStack gap='0.5' flex='1' aria-hidden>
           {[0, 1, 2].map((segment) => (
             <Box
               key={segment}
               flex='1'
-              h={1}
+              h='1'
               borderRadius='full'
               bg={segment < filledSegments[level] ? `${palette}.solid` : 'bg.emphasized'}
             />
@@ -111,7 +111,7 @@ export const ProtectionMeter = ({
           {getProtectionLevelTitle(t, level)}
         </Text>
       </HStack>
-      <Text textStyle='body-sm' color='fg.muted' mt={1}>
+      <Text textStyle='body-sm' color='fg.muted' mt='1'>
         {getProtectionLevelDescription(t, level, codeMethod)}
       </Text>
     </Box>
