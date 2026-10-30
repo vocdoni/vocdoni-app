@@ -176,12 +176,25 @@ const ballot = (t, voteLabel, width) =>
     ]
   )
 
+// A headline made of short sentences ("Vote online. Verify every result.") breaks after each
+// sentence rather than wherever the width runs out, as long as every sentence fits on one line.
+const headlineLines = (title, maxWidth, size) => {
+  const sentences = title.split(/(?<=[.!?])\s+/)
+  if (sentences.length < 2) return [title]
+  const perChar = /\p{Script=Greek}/u.test(title) ? 0.5 : 0.46
+  return sentences.every((sentence) => sentence.length * perChar * size <= maxWidth) ? sentences : [title]
+}
+
 const headline = (copy, t, maxWidth) => {
   const size = fitHeadline(copy.title, maxWidth)
+  const lines = headlineLines(copy.title, maxWidth, size)
+  const textStyle = { fontSize: size, fontWeight: 500, lineHeight: 1.08, letterSpacing: -(size * 0.025), color: t.fg }
   return h('div', { display: 'flex', flexDirection: 'column', gap: 22, width: maxWidth }, [
-    h('div', { fontSize: size, fontWeight: 500, lineHeight: 1.08, letterSpacing: -(size * 0.025), color: t.fg }, [
-      copy.title,
-    ]),
+    h(
+      'div',
+      { display: 'flex', flexDirection: 'column' },
+      lines.map((line) => h('div', textStyle, [line]))
+    ),
     h('div', { fontSize: 24, lineHeight: 1.4, color: t.muted, fontWeight: 400 }, [copy.tagline]),
   ])
 }
