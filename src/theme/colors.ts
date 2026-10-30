@@ -24,18 +24,6 @@ export const colors = {
     500: { value: '#737373' },
   },
 
-  // Accents for the per-vertical auth showcase (see src/components/Auth/vertical).
-  // 900 is the panel surface: a deep, desaturated tone, dark enough to carry white type at
-  // roughly 13:1.
-  verticals: {
-    generic: {
-      900: { value: '#251a42' },
-    },
-    professional: {
-      900: { value: '#0c2e3e' },
-    },
-  },
-
   dashboardMenu: {
     light: { value: '#fbfbfb' },
     dark: { value: '#18181b' },
@@ -45,9 +33,6 @@ export const colors = {
     500: { value: '#25D366' },
     600: { value: '#20BA5A' },
   },
-
-  // Translucent so it works over both color modes
-  separator: { value: 'rgba(135, 140, 189, 0.3)' },
 }
 
 // The page backgrounds a generated brand palette must stay readable against —
