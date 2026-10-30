@@ -127,9 +127,10 @@ const durations = defineTokens.durations({
   instant: { value: '0s' },
 })
 
-// Two fades: what cannot be used (disabled, revoked, busy) and what is only de-emphasised.
+// Two fades. `inactive` is content that cannot be used right now (a revoked key, a busy check, an unavailable
+// option); `dimmed` is only de-emphasised and matches Chakra's own `_disabled` layer style (0.5).
 const opacity = defineTokens.opacity({
-  disabled: { value: 0.6 },
+  inactive: { value: 0.6 },
   dimmed: { value: 0.5 },
 })
 
