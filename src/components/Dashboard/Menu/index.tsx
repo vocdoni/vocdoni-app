@@ -49,7 +49,7 @@ const DashboardMenu = ({
 
       {/* Sidebar for small screens */}
       <Drawer.Root
-        variant='sidebar'
+        variant='navigation'
         open={isOpen}
         placement='start'
         onOpenChange={({ open }) => (!open ? onClose() : undefined)}

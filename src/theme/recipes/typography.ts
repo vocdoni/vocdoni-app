@@ -1,10 +1,10 @@
 import { defineRecipe } from '@chakra-ui/react'
 
-const sidebarTitle = {
+const sectionTitle = {
   pt: 4,
 }
 
-const sidebarSubtitle = {
+const sectionSubtitle = {
   py: 4,
 }
 
@@ -14,11 +14,11 @@ export const heading = defineRecipe({
   },
   variants: {
     variant: {
-      header: {
+      heavy: {
         fontWeight: 'extrabold',
       },
-      ['sidebar-title']: sidebarTitle,
-      ['sidebar-subtitle']: sidebarSubtitle,
+      section: sectionTitle,
+      subsection: sectionSubtitle,
     },
   },
 })
@@ -60,7 +60,7 @@ export const link = defineRecipe({
           textDecoration: 'none',
         },
       },
-      icon: {
+      'icon-button': {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -71,15 +71,13 @@ export const link = defineRecipe({
         cursor: 'pointer',
         textDecoration: 'none',
       },
-      footer: {
+      // Grey, underlined only on hover; the hover colour still follows the base.
+      subtle: {
         textDecoration: 'none',
         color: 'fg.muted',
         _hover: {
           textDecoration: 'underline',
         },
-      },
-      button: {
-        textDecoration: 'none',
       },
       // A whole row-sized link used as a tile: a centred label with badges laid over its corners.
       tile: {
@@ -152,7 +150,7 @@ export const text = defineRecipe({
   variants: {
     size: sizes,
     variant: {
-      subheader: {
+      muted: {
         color: 'fg.muted',
         fontWeight: 'normal',
       },

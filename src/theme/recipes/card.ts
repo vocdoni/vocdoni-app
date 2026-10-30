@@ -1,7 +1,7 @@
 import { cardAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe } from '@chakra-ui/react'
 
-const pricing = {
+const plan = {
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -47,9 +47,9 @@ const pricing = {
 }
 
 const featured = {
-  ...pricing,
+  ...plan,
   root: {
-    ...pricing.root,
+    ...plan.root,
     bgColor: 'card.pricing.featured.bg',
     borderColor: 'card.pricing.featured.border',
     color: 'white',
@@ -164,7 +164,7 @@ export const Card = defineSlotRecipe({
         },
       },
       // A plan offer; `featured` is the highlighted one.
-      pricing,
+      plan,
       featured,
       // A customer logo with its name, shown on hover.
       'logo-tile': {

@@ -42,7 +42,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               </Text>
               <Link
                 emphasis='strong'
-                variant='footer'
+                variant='subtle'
                 href='https://www.vocdoni.io'
                 target='_blank'
                 rel='noopener noreferrer'
@@ -51,7 +51,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               </Link>
               <Link
                 emphasis='strong'
-                variant='footer'
+                variant='subtle'
                 href='https://www.vocdoni.io/contact'
                 target='_blank'
                 rel='noopener noreferrer'
@@ -60,7 +60,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               </Link>
               <Link
                 emphasis='strong'
-                variant='footer'
+                variant='subtle'
                 href='https://blog.vocdoni.io'
                 target='_blank'
                 rel='noopener noreferrer'
@@ -93,7 +93,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
         </Text>
         <Flex gap={2.5}>
           <Link
-            variant='icon'
+            variant='icon-button'
             href='https://twitter.com/vocdoni'
             target='_blank'
             rel='noopener noreferrer'
@@ -103,7 +103,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
           </Link>
 
           <Link
-            variant='icon'
+            variant='icon-button'
             href='https://chat.vocdoni.io/'
             target='_blank'
             rel='noopener noreferrer'
@@ -113,7 +113,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
           </Link>
 
           <Link
-            variant='icon'
+            variant='icon-button'
             href='https://github.com/vocdoni'
             target='_blank'
             rel='noopener noreferrer'

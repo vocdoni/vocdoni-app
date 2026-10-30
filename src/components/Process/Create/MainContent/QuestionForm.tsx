@@ -121,7 +121,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
               <FormControl invalid={!!errors.questions?.[index]?.title}>
                 <Input
                   placeholder={t('process_create.question.title.placeholder', 'Add a title to the question')}
-                  variant='borderless'
+                  variant='inline'
                   fontSize='lg'
                   fontWeight='bold'
                   {...register(`questions.${index}.title`, {
@@ -136,7 +136,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                 render={({ field }) => (
                   <Editor
                     onChange={field.onChange}
-                    variant='borderless'
+                    variant='inline'
                     placeholder={t(
                       'process_create.question.description.placeholder',
                       'Add the description of the question here (optional)...'
