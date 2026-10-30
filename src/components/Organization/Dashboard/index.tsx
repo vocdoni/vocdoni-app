@@ -1,4 +1,5 @@
-import { AspectRatio, Box, Button, Flex, Heading, HStack, Icon, Link, Text } from '@chakra-ui/react'
+import { AspectRatio, Box, Button, Flex, HStack, Icon, Link, Text } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ElectionProvider,
@@ -67,12 +68,13 @@ const Tutorial = () => {
   return (
     <DashboardBox size='md' mb='6' display='flex' gap='10' position='relative' flexDirection='row'>
       <Box flex='1 1 60%'>
-        <Heading as='h2' textStyle='section-title' mb='2'>
-          {t('dashboard.welcome.hello', {
+        <SectionHeader
+          title={t('dashboard.welcome.hello', {
             name: profile?.firstName,
             defaultValue: 'Welcome to Vocdoni, {{name}}!',
           })}
-        </Heading>
+          mb='2'
+        />
         {loading || isLoading ? (
           <ListLoader mb='4' />
         ) : !subscription ? (
@@ -137,16 +139,13 @@ const OrganizationProcesses = () => {
   return (
     <Flex flexDirection={{ base: 'column', md: 'row' }} gap='4'>
       <DashboardBox size='md' minH='[324px]' flex='1 1 66%'>
-        <Box mb='4'>
-          <Heading as='h2' textStyle='section-title' mb='1.5'>
-            {t('dashboard.welcome.recent_voting_title', { defaultValue: 'Recent voting processes' })}
-          </Heading>
-          <Text color='fg.muted' textStyle='body-sm'>
-            {t('dashboard.welcome.recent_voting_description', {
-              defaultValue: "Your organization's latest voting activities",
-            })}
-          </Text>
-        </Box>
+        <SectionHeader
+          title={t('dashboard.welcome.recent_voting_title', { defaultValue: 'Recent voting processes' })}
+          description={t('dashboard.welcome.recent_voting_description', {
+            defaultValue: "Your organization's latest voting activities",
+          })}
+          mb='4'
+        />
         <Flex flexDirection='column' flex='1'>
           <Processes />
         </Flex>
@@ -294,16 +293,15 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
   const { t } = useTranslation()
   return (
     <DashboardBox size='md' flex='1 1 33%' justifyContent='normal' gap='[0]' {...props}>
-      <Heading as='h2' textStyle='section-title' mb='1.5'>
-        {t('dashboard.welcome.quick_actions', {
+      <SectionHeader
+        title={t('dashboard.welcome.quick_actions', {
           defaultValue: 'Quick actions',
         })}
-      </Heading>
-      <Text color='fg.muted' textStyle='body-sm' mb='6'>
-        {t('dashboard.welcome.common_tasks_actions', {
+        description={t('dashboard.welcome.common_tasks_actions', {
           defaultValue: 'Common tasks and actions',
         })}
-      </Text>
+        mb='6'
+      />
       <Flex flexDirection='column' gap='4' minW='[0]'>
         <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW='[0]'>
           <ReactRouterLink to={generatePath(Routes.processes.create)}>

@@ -4,7 +4,8 @@ import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { NetworkIcon, RocketIcon, TerminalIcon } from '~theme/icons'
 import { BookerModalButton } from '~components/Dashboard/Booker'
-import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { PageLoader } from '~components/ui/Loader'
 import { PageHeader } from '~components/ui/PageTitle'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
@@ -136,11 +137,12 @@ export const IntegratorOverview = () => {
       </SimpleGrid>
 
       <Box mt='8'>
-        <DashboardCardHeader
+        <SectionHeader
           title={t('integrators.docs.title', { defaultValue: 'Documentation' })}
-          subtitle={t('integrators.docs.subtitle', {
+          description={t('integrators.docs.subtitle', {
             defaultValue: 'Guides and references to start building with Vocdoni.',
           })}
+          mb='4'
         />
         <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
           {docs.map((doc) => (

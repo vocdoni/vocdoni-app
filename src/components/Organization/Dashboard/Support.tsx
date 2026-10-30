@@ -5,7 +5,6 @@ import {
   Flex,
   FieldRoot as FormControl,
   FieldLabel as FormLabel,
-  Heading,
   Icon,
   SimpleGrid,
   SimpleGridProps,
@@ -18,7 +17,8 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { InfoIcon } from '~theme/icons'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
-import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import InputBasic from '~components/Form/InputBasic'
 import { IssueTypeSelector, SelectOptionType } from '~components/Layout/SaasSelector'
 import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
@@ -45,14 +45,12 @@ const OrganizationSupport = () => {
 
   return (
     <DashboardBox size='md'>
-      <SectionHeader>
-        <SectionHeading>{t('organization_settings.support.title', { defaultValue: 'Support' })}</SectionHeading>
-        <SectionSubHeading>
-          {t('organization_settings.support.description', {
-            defaultValue: 'Get help and support for your organization.',
-          })}
-        </SectionSubHeading>
-      </SectionHeader>
+      <SectionHeader
+        title={t('organization_settings.support.title', { defaultValue: 'Support' })}
+        description={t('organization_settings.support.description', {
+          defaultValue: 'Get help and support for your organization.',
+        })}
+      />
       <SimpleGrid columns={columns} gap='6'>
         <SupportTicketForm />
         {PRIORITY_SUPPORT_PHONE && (
@@ -100,14 +98,13 @@ const SupportTicketForm = () => {
   return (
     <FormProvider {...methods}>
       <Card.Root as='form' variant='section' onSubmit={handleSubmit(onSubmit)}>
-        <Heading size='md' mb='2'>
-          {t('form.support.open_ticket', { defaultValue: 'Open a Support Ticket' })}
-        </Heading>
-        <Text textStyle='body-sm' color='fg.muted' mb='6'>
-          {t('form.support.subtitle', {
+        <SectionHeader
+          title={t('form.support.open_ticket', { defaultValue: 'Open a Support Ticket' })}
+          description={t('form.support.subtitle', {
             defaultValue: 'Submit a ticket and our support team will get back to you as soon as possible.',
           })}
-        </Text>
+          mb='6'
+        />
         <VStack gap='4' align='stretch'>
           <InputBasic
             formValue='title'
@@ -145,14 +142,13 @@ const PhoneSupportCard = ({ isLocked }) => {
 
   return (
     <Box p='6'>
-      <Heading size='md' mb='1'>
-        {t('organization_settings.phone_support.title', { defaultValue: 'Phone Support' })}
-      </Heading>
-      <Text textStyle='body-sm' mb='6'>
-        {t('organization_settings.phone_support.description', {
+      <SectionHeader
+        title={t('organization_settings.phone_support.title', { defaultValue: 'Phone Support' })}
+        description={t('organization_settings.phone_support.description', {
           defaultValue: 'Available for Custom plan subscribers only.',
         })}
-      </Text>
+        mb='6'
+      />
 
       <Stack gap='4' mb='6'>
         <Flex p='4' borderRadius='md' bg='dashboard.menu' align='flex-start'>

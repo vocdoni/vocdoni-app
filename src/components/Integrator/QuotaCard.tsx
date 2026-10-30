@@ -1,7 +1,8 @@
-import { Box, HStack, Progress, Text } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { StatusBadge } from '~components/ui/StatusBadge'
+import { UsageMeter } from '~components/ui/UsageMeter'
 
 export type QuotaCardProps = {
   label: string
@@ -28,29 +29,15 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
 
   return (
     <DashboardBox gap='3' justifyContent='flex-start'>
-      <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
-        {label}
-      </Text>
-      <HStack align='baseline' gap='1'>
-        <Text fontSize='3xl' fontWeight='bold' lineHeight='shorter'>
-          {used}
-        </Text>
-        <Text textStyle='body' color='fg.muted'>
-          {denominator}
-        </Text>
-      </HStack>
-      <Progress.Root value={hasLimit ? Math.min(used, limit) : 0} max={hasLimit ? limit : 1} size='sm'>
-        <Progress.Track>
-          <Progress.Range bgColor={atLimit ? 'meter.critical' : 'meter.ok'} />
-        </Progress.Track>
-      </Progress.Root>
-      <Box minH='[22px]'>
-        {atLimit && (
-          <StatusBadge tone='error'>
-            {t('integrators.quota.limit_reached', { defaultValue: 'Limit reached' })}
-          </StatusBadge>
-        )}
-      </Box>
+      <UsageMeter label={label} value={used} max={hasLimit ? limit : 0} unit={denominator}>
+        <Box minH='[22px]'>
+          {atLimit && (
+            <StatusBadge tone='error'>
+              {t('integrators.quota.limit_reached', { defaultValue: 'Limit reached' })}
+            </StatusBadge>
+          )}
+        </Box>
+      </UsageMeter>
     </DashboardBox>
   )
 }
