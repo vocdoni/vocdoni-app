@@ -37,6 +37,18 @@ export const HARD_CATEGORIES: readonly StyleCategory[] = STYLE_CATEGORIES.filter
   (category) => !RATCHET_CATEGORIES.includes(category)
 )
 
+// Recipes are where design values live, so they count only toward the px and palette rules: a recipe may branch on
+// the colour mode or win specificity with `_dark`, and system.test.ts checks its token names.
+export const RECIPE_CATEGORIES: readonly StyleCategory[] = [
+  'pxSize',
+  'pxSpacing',
+  'pxFontSize',
+  'pxRadius',
+  'rawPalette',
+]
+
+const isRecipeFile = (file: string) => file.startsWith('src/theme/recipes/')
+
 // What to use instead, shown next to each new occurrence
 export const STYLE_FIXES: Record<StyleCategory, string> = {
   hex: 'a semantic colour token (src/theme/semantic.ts) or a recipe variant',
@@ -158,7 +170,6 @@ export const isScannedFile = (file: string) =>
   /\.(ts|tsx)$/.test(file) &&
   !/\.test\.[^/]+$/.test(file) &&
   !file.startsWith('src/__mocks__/') &&
-  !file.startsWith('src/theme/recipes/') &&
   !file.startsWith('src/theme/test-themes/') &&
   !EXCLUDED_FILES.has(file)
 
@@ -415,6 +426,7 @@ export const scanSource = (
   const classified = new Set<ts.Node>()
 
   const record = (category: StyleCategory, node: ts.Node, count = 1) => {
+    if (isRecipeFile(file) && !RECIPE_CATEGORIES.includes(category)) return
     const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1
     const text = node.getText(source).replace(/\s+/g, ' ').slice(0, 100)
     const exception = findException(file, category, text)
