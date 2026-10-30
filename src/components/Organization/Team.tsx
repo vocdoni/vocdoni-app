@@ -409,7 +409,7 @@ const ChangeRoleModal = ({ open, onOpenChange, user }: ChangeRoleDialogProps) =>
       <Dialog.Backdrop />
       <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
         <Dialog.Content maxW='xl' py='4'>
-          <Dialog.CloseTrigger>
+          <Dialog.CloseTrigger asChild>
             <CloseButton />
           </Dialog.CloseTrigger>
           <Dialog.Header>
