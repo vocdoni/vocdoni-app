@@ -106,6 +106,15 @@ const sizes = defineTokens.sizes({
   },
   // Minimum height of a row of controls, so a row with a button and one without line up.
   toolbar: { value: '42px' },
+  // Square controls drawn by recipes: the support chat launcher (button `floating`) and link `icon-button`.
+  control: {
+    floating: { value: '52px' },
+    'icon-link': { value: '30px' },
+  },
+  // Minimum height of ui/Loader's PageLoader, so a page with nothing yet does not collapse.
+  loader: { value: '300px' },
+  // Width of the Vocdoni wordmark image.
+  wordmark: { value: '125px' },
   'user-profile': { value: '280px' },
   voting: {
     sidebar: { value: '320px' },
