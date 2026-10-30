@@ -50,6 +50,9 @@ const letterSpacings = defineTokens.letterSpacings({
 
 const borderWidths = defineTokens.borderWidths({
   hairline: { value: '1px' },
+  thick: { value: '2px' },
+  // Hand-drawn focus rings (outline or box-shadow), as wide as Chakra's own.
+  focusRing: { value: '{borderWidths.thick}' },
 })
 
 const radii = defineTokens.radii({

@@ -288,15 +288,16 @@ export const electionComponents: ComponentsPartialDefinition = {
               <Box
                 w='4.5'
                 h='4.5'
-                borderWidth='[2px]'
+                borderWidth='thick'
                 borderColor={selected ? 'colorPalette.solid' : 'ballot.choice.ring'}
                 borderRadius='full'
                 bg='ballot.choice.bg'
                 // The input is invisible, so its keyboard focus is drawn here, as Chakra's radiomark draws it.
                 _peerFocusVisible={{
-                  outline: '2px solid',
+                  outlineWidth: '{borderWidths.focusRing}',
+                  outlineStyle: 'solid',
                   outlineColor: 'colorPalette.focusRing',
-                  outlineOffset: '2px',
+                  outlineOffset: '{spacing.0.5}',
                 }}
                 display='flex'
                 alignItems='center'
