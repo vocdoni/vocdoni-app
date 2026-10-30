@@ -148,7 +148,6 @@
   "color_mode_switcher": "Aldatu kolore-modua",
   "common": {
     "back": "Atzera",
-    "close_drawer": "Itxi panela",
     "home": "Hasiera",
     "retry": "Berriro saiatu"
   },
@@ -792,7 +791,6 @@
       "bulk_delete": "Ezabatu",
       "cancel": "Utzi",
       "clear_sort": "Kendu ordenazioa",
-      "close_drawer": "Itxi",
       "create_group": "Sortu taldea",
       "create_group_error": "Errorea taldea sortzean",
       "create_group_form_description": "Sortu talde berri bat hautatutako kideetatik. Honek antolatuko ditu etorkizuneko boto-emate-prozesuetarako.",

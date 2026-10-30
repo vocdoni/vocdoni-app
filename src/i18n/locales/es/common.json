@@ -150,7 +150,6 @@
   "color_mode_switcher": "Cambiar modo de color",
   "common": {
     "back": "Atrás",
-    "close_drawer": "Cerrar panel",
     "home": "Inicio",
     "retry": "Reintentar"
   },
@@ -808,7 +807,6 @@
       "bulk_delete": "Eliminar",
       "cancel": "Cancelar",
       "clear_sort": "Quitar ordenación",
-      "close_drawer": "Cerrar",
       "create_group": "Crear grupo",
       "create_group_error": "Error al crear grupo",
       "create_group_form_description": "Crea un nuevo grupo a partir de los miembros seleccionados. Esto los organizará para futuros procesos de votación.",
