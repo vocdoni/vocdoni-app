@@ -42,8 +42,8 @@ export const resultsAnatomy = [
   'header',
   'title',
   'body',
-  'progress',
   'secret',
+  'choiceHeader',
   'choiceTitle',
   'choiceVotes',
 ] as const

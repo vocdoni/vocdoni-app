@@ -14,7 +14,7 @@ export const Progress = defineSlotRecipe({
   variants: {
     variant: {
       // A vote result: one bar per choice, its title and tally above it.
-      results: { track, range },
+      results: { track: { ...track, bgColor: 'ballot.results.track' }, range },
       // The share of the census that voted.
       turnout: {
         track,
