@@ -48,8 +48,7 @@ describe('ProcessAside', () => {
   it('renders status and the CSP identify flow', () => {
     render(<ProcessAside />)
 
-    // Uppercased by CSS (`textTransform`), which follows the page language, so the DOM keeps the source text.
-    expect(screen.getByText('process.status.active')).toBeInTheDocument()
+    expect(screen.getByText('PROCESS.STATUS.ACTIVE')).toBeInTheDocument()
     expect(screen.getByText('CSP')).toBeInTheDocument()
   })
 
