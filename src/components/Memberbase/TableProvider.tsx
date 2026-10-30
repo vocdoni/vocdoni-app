@@ -9,7 +9,7 @@ export type TableColumn = {
 type TableProviderProps = {
   data?: any[]
   error?: Error | null
-  isLoading?: boolean
+  loading?: boolean
   isFetching?: boolean
   initialColumns: TableColumn[]
   children: ReactNode
@@ -57,7 +57,7 @@ const computeColumns = (params: {
 const useTableProvider = ({
   data = [],
   error = null,
-  isLoading = false,
+  loading = false,
   isFetching = false,
   initialColumns,
 }: Omit<TableProviderProps, 'children'>) => {
@@ -115,7 +115,7 @@ const useTableProvider = ({
   return {
     data,
     error,
-    isLoading,
+    isLoading: loading,
     isFetching,
     selectedRows,
     allVisibleSelected,
@@ -136,12 +136,12 @@ const TableContext = createContext<TableContextType>(undefined)
 export const TableProvider = ({
   data = [],
   error = null,
-  isLoading = false,
+  loading = false,
   isFetching = false,
   initialColumns,
   children,
 }: TableProviderProps) => {
-  const value = useTableProvider({ data, error, isLoading, isFetching, initialColumns })
+  const value = useTableProvider({ data, error, loading, isFetching, initialColumns })
 
   return <TableContext.Provider value={value}>{children}</TableContext.Provider>
 }
