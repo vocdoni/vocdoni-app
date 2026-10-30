@@ -109,7 +109,7 @@ pnpm ui:snapshot -- --label stress --theme stress
 `src/theme/test-themes/stress.ts` keeps the app's tokens and recipes and moves every value they resolve
 to: each semantic colour (surface layers, states, statuses, charts, palette slots) gets its own saturated
 colour, shadows are coloured, fonts are named `Stress …`, and radii, font sizes and spacing are one pixel
-off the stock scale (stock values are all even). The dev server swaps it in for `~theme/system` with a vite
+off the stock scale. The dev server swaps it in for `~theme/system` with a vite
 alias, so the app code is untouched. Whatever still shows a stock value on screen bypasses the theme.
 
 After each capture the script lists, per visible element: text not in a `Stress` font, a stock font size,
