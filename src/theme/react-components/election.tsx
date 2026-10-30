@@ -48,13 +48,14 @@ import { ElectionTitle as electionTitleRecipe, resultsProgressRecipe } from '~th
 
 type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
 
+// A literal style prop next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
+const hrStyle: BoxProps = { as: 'hr', borderColor: 'border' }
+const questionsErrorStyle: TextProps = { color: 'ballot.error' }
+
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
 
 export const electionComponents: ComponentsPartialDefinition = {
-  HR: defineComponent<'HR', BoxProps>((props) => (
-    // Cast so the literal has the spread's own type: it overflows TypeScript otherwise (TS2590).
-    <Box as='hr' borderColor={'border' as BoxProps['borderColor']} {...props} />
-  )),
+  HR: defineComponent<'HR', BoxProps>((props) => <Box {...hrStyle} {...(props as BoxProps)} />),
   ElectionTitle: defineComponent<'ElectionTitle', Omit<HeadingProps, 'size'> & ElectionTitleVariantProps>(
     ({ title, size, ...props }) => {
       const recipe = useRecipe({ recipe: electionTitleRecipe })
@@ -444,8 +445,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    // Cast to the spread's own types: literals beside a spread of all the style props overflow TypeScript (TS2590).
-    <Text color={'ballot.error' as TextProps['color']} {...(props as TextProps)}>
+    <Text {...questionsErrorStyle} {...(props as TextProps)}>
       {error}
     </Text>
   )),
