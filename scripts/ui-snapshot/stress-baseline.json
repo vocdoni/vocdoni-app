@@ -1,112 +1,99 @@
 {
   "create-draft--voter-auth-dialog-1440-dark": {
-    "font-size 16px": 1,
-    "grey background #000000/36": 1,
     "grey color #ffffff": 5,
     "palette background gray.600": 4,
-    "spacing 2px": 10,
+    "spacing 2px": 5,
     "spacing 8px": 8
   },
   "create-draft--voter-auth-dialog-1440-light": {
-    "font-size 16px": 1,
-    "grey background #000000/36": 1,
     "grey background #ffffff": 4,
     "grey color #ffffff": 5,
-    "spacing 2px": 10,
+    "spacing 2px": 5,
     "spacing 8px": 8
   },
   "create-draft-1440-dark": {
-    "font-size 16px": 1,
     "palette background gray.600": 4,
-    "spacing 2px": 10,
+    "spacing 2px": 5,
     "spacing 8px": 8
   },
   "create-draft-1440-light": {
-    "font-size 16px": 1,
     "grey background #ffffff": 4,
-    "spacing 2px": 10,
+    "spacing 2px": 5,
     "spacing 8px": 8
   },
   "create-draft-390-dark": {
     "palette background gray.600": 2,
-    "spacing 2px": 7,
+    "spacing 2px": 2,
     "spacing 8px": 4
   },
   "create-draft-390-light": {
     "grey background #ffffff": 2,
-    "spacing 2px": 7,
+    "spacing 2px": 2,
     "spacing 8px": 4
   },
   "create-empty--publish-errors-1440-dark": {
     "palette background gray.600": 3,
-    "spacing 2px": 8,
+    "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty--publish-errors-1440-light": {
     "grey background #ffffff": 2,
-    "spacing 2px": 8,
+    "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty--publish-errors-390-dark": {
     "palette background gray.600": 3,
-    "spacing 2px": 8,
+    "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty--publish-errors-390-light": {
     "grey background #ffffff": 2,
-    "spacing 2px": 8,
+    "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty-1440-dark": {
     "palette background gray.600": 3,
-    "spacing 2px": 8,
+    "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty-1440-light": {
     "grey background #ffffff": 2,
-    "spacing 2px": 8,
+    "spacing 2px": 4,
     "spacing 8px": 5
   },
   "create-empty-390-dark": {
     "palette background gray.600": 1,
-    "spacing 2px": 5,
+    "spacing 2px": 1,
     "spacing 8px": 3
   },
   "create-empty-390-light": {
     "grey background #ffffff": 1,
-    "spacing 2px": 5,
+    "spacing 2px": 1,
     "spacing 8px": 3
   },
   "dashboard--user-menu-1440-dark": {
-    "font-size 16px": 2,
     "grey color #09090b": 2,
     "spacing 2px": 1,
     "spacing 8px": 1
   },
   "dashboard--user-menu-1440-light": {
-    "font-size 16px": 2,
     "grey color #09090b": 2,
     "spacing 2px": 1,
     "spacing 8px": 1
   },
   "dashboard-1440-dark": {
-    "font-size 16px": 2,
     "grey color #09090b": 2
   },
   "dashboard-1440-light": {
-    "font-size 16px": 2,
     "grey color #09090b": 2
   },
   "dashboard-390-dark": {
-    "font-size 16px": 2,
     "grey color #09090b": 2
   },
   "dashboard-390-light": {
-    "font-size 16px": 2,
     "grey color #09090b": 2
   },
   "memberbase-members--add-member-1440-dark": {
-    "grey background #000000/36": 1,
     "grey color #ffffff": 11,
     "radius 6px": 2,
     "spacing 2px": 1,
@@ -114,7 +101,6 @@
     "spacing 8px": 1
   },
   "memberbase-members--add-member-1440-light": {
-    "grey background #000000/36": 1,
     "grey color #ffffff": 11,
     "radius 6px": 2,
     "spacing 2px": 1,
@@ -122,8 +108,6 @@
     "spacing 8px": 1
   },
   "memberbase-members--add-member-390-dark": {
-    "font-size 16px": 10,
-    "grey background #000000/36": 1,
     "grey color #ffffff": 11,
     "radius 6px": 2,
     "spacing 2px": 1,
@@ -131,8 +115,6 @@
     "spacing 8px": 1
   },
   "memberbase-members--add-member-390-light": {
-    "font-size 16px": 10,
-    "grey background #000000/36": 1,
     "grey color #ffffff": 11,
     "radius 6px": 2,
     "spacing 2px": 1,
@@ -152,115 +134,73 @@
     "spacing 8px": 1
   },
   "memberbase-members-390-dark": {
-    "font-size 16px": 10,
     "grey color #ffffff": 11,
     "spacing 2px": 1,
     "spacing 40px": 1,
     "spacing 8px": 1
   },
   "memberbase-members-390-light": {
-    "font-size 16px": 10,
     "grey color #ffffff": 11,
     "spacing 2px": 1,
     "spacing 40px": 1,
     "spacing 8px": 1
   },
   "organization-create-1440-dark": {
-    "font-size 16px": 1,
     "grey background #3b3b3b": 3,
-    "spacing 2px": 8
+    "spacing 2px": 4
   },
   "organization-create-1440-light": {
-    "font-size 16px": 1,
     "grey background #ffffff": 3,
-    "spacing 2px": 8
+    "spacing 2px": 4
   },
   "organization-create-390-dark": {
-    "font-size 16px": 1,
     "grey background #3b3b3b": 3,
-    "spacing 2px": 8
+    "spacing 2px": 4
   },
   "organization-create-390-light": {
-    "font-size 16px": 1,
     "grey background #ffffff": 3,
-    "spacing 2px": 8
-  },
-  "plans-loggedin-1440-dark": {
-    "font-size 16px": 6
-  },
-  "plans-loggedin-1440-light": {
-    "font-size 16px": 6
-  },
-  "plans-loggedin-390-dark": {
-    "font-size 16px": 6
-  },
-  "plans-loggedin-390-light": {
-    "font-size 16px": 6
-  },
-  "plans-public-1440-dark": {
-    "font-size 16px": 6
-  },
-  "plans-public-1440-light": {
-    "font-size 16px": 6
-  },
-  "plans-public-390-dark": {
-    "font-size 16px": 6
-  },
-  "plans-public-390-light": {
-    "font-size 16px": 6
+    "spacing 2px": 4
   },
   "process-ongoing--end-vote-confirm-1440-dark": {
-    "font-size 16px": 5,
-    "grey background #000000/36": 1,
     "spacing 2px": 1,
     "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-ongoing--end-vote-confirm-1440-light": {
-    "font-size 16px": 5,
-    "grey background #000000/36": 1,
     "spacing 2px": 1,
     "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-ongoing-1440-dark": {
-    "font-size 16px": 5,
     "spacing 2px": 1,
     "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-ongoing-1440-light": {
-    "font-size 16px": 5,
     "spacing 2px": 1,
     "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-ongoing-390-dark": {
-    "font-size 16px": 3,
     "spacing 8px": 1
   },
   "process-ongoing-390-light": {
-    "font-size 16px": 3,
     "spacing 8px": 1
   },
   "process-results-1440-dark": {
-    "font-size 16px": 5,
     "spacing 2px": 1,
     "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-results-1440-light": {
-    "font-size 16px": 5,
     "spacing 2px": 1,
     "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-results-390-dark": {
-    "font-size 16px": 3,
     "spacing 8px": 1
   },
   "process-results-390-light": {
-    "font-size 16px": 3,
     "spacing 8px": 1
   },
   "processes-all-1440-dark": {
@@ -270,11 +210,9 @@
     "spacing 2px": 1
   },
   "processes-all-390-dark": {
-    "font-size 16px": 2,
     "spacing 2px": 1
   },
   "processes-all-390-light": {
-    "font-size 16px": 2,
     "spacing 2px": 1
   },
   "processes-drafts-1440-dark": {
@@ -284,11 +222,9 @@
     "spacing 2px": 1
   },
   "processes-drafts-390-dark": {
-    "font-size 16px": 1,
     "spacing 2px": 1
   },
   "processes-drafts-390-light": {
-    "font-size 16px": 1,
     "spacing 2px": 1
   },
   "processes-ended-1440-dark": {
@@ -298,11 +234,9 @@
     "spacing 2px": 1
   },
   "processes-ended-390-dark": {
-    "font-size 16px": 2,
     "spacing 2px": 1
   },
   "processes-ended-390-light": {
-    "font-size 16px": 2,
     "spacing 2px": 1
   },
   "profile-1440-dark": {
@@ -318,163 +252,103 @@
     "spacing 8px": 1
   },
   "settings-organization-1440-dark": {
-    "font-size 16px": 1,
     "grey background #3b3b3b": 1,
-    "spacing 2px": 8
+    "spacing 2px": 4
   },
   "settings-organization-1440-light": {
-    "font-size 16px": 1,
     "grey background #ffffff": 1,
-    "spacing 2px": 8
+    "spacing 2px": 4
   },
   "settings-organization-390-dark": {
-    "font-size 16px": 1,
     "grey background #3b3b3b": 1,
-    "spacing 2px": 8
+    "spacing 2px": 4
   },
   "settings-organization-390-light": {
-    "font-size 16px": 1,
     "grey background #ffffff": 1,
-    "spacing 2px": 8
-  },
-  "settings-subscription--contact-dialog-1440-dark": {
-    "grey background #000000/36": 1
-  },
-  "settings-subscription--contact-dialog-1440-light": {
-    "grey background #000000/36": 1
-  },
-  "settings-subscription--contact-dialog-390-dark": {
-    "grey background #000000/36": 1
-  },
-  "settings-subscription--contact-dialog-390-light": {
-    "grey background #000000/36": 1
+    "spacing 2px": 4
   },
   "settings-support-1440-dark": {
     "grey background #3b3b3b": 1,
-    "spacing 2px": 2
+    "spacing 2px": 1
   },
   "settings-support-1440-light": {
     "grey background #ffffff": 1,
-    "spacing 2px": 2
+    "spacing 2px": 1
   },
   "settings-support-390-dark": {
     "grey background #3b3b3b": 1,
-    "spacing 2px": 2
+    "spacing 2px": 1
   },
   "settings-support-390-light": {
     "grey background #ffffff": 1,
-    "spacing 2px": 2
+    "spacing 2px": 1
   },
   "settings-team--invite-1440-dark": {
-    "font-size 16px": 4,
-    "grey background #000000/36": 1,
     "grey background #3b3b3b": 1,
-    "spacing 2px": 2,
+    "spacing 2px": 1,
     "spacing 8px": 4
   },
   "settings-team--invite-1440-light": {
-    "font-size 16px": 4,
-    "grey background #000000/36": 1,
     "grey background #ffffff": 1,
-    "spacing 2px": 2,
+    "spacing 2px": 1,
     "spacing 8px": 4
   },
   "settings-team--invite-390-dark": {
-    "font-size 16px": 4,
-    "grey background #000000/36": 1,
     "grey background #3b3b3b": 1,
-    "spacing 2px": 2,
+    "spacing 2px": 1,
     "spacing 8px": 4
   },
   "settings-team--invite-390-light": {
-    "font-size 16px": 4,
-    "grey background #000000/36": 1,
     "grey background #ffffff": 1,
-    "spacing 2px": 2,
+    "spacing 2px": 1,
     "spacing 8px": 4
   },
   "settings-team-1440-dark": {
-    "font-size 16px": 4,
     "spacing 8px": 4
   },
   "settings-team-1440-light": {
-    "font-size 16px": 4,
     "spacing 8px": 4
   },
   "settings-team-390-dark": {
-    "font-size 16px": 4,
     "spacing 8px": 4
   },
   "settings-team-390-light": {
-    "font-size 16px": 4,
     "spacing 8px": 4
   },
   "signin-1440-dark": {
-    "font-size 16px": 1,
     "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signin-1440-light": {
-    "font-size 16px": 1,
     "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signin-390-dark": {
-    "font-size 16px": 1,
     "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signin-390-light": {
-    "font-size 16px": 1,
     "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signup-1440-dark": {
-    "font-size 16px": 1,
     "grey color #ffffff": 2,
     "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signup-1440-light": {
-    "font-size 16px": 1,
     "grey color #ffffff": 2,
     "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signup-390-dark": {
-    "font-size 16px": 1,
     "grey color #ffffff": 2,
     "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signup-390-light": {
-    "font-size 16px": 1,
     "grey color #ffffff": 2,
     "spacing 40px": 1,
     "spacing 8px": 1
-  },
-  "vote-ongoing-1440-dark": {
-    "font-size 16px": 12
-  },
-  "vote-ongoing-1440-light": {
-    "font-size 16px": 12
-  },
-  "vote-ongoing-390-dark": {
-    "font-size 16px": 12
-  },
-  "vote-ongoing-390-light": {
-    "font-size 16px": 12
-  },
-  "vote-results-1440-dark": {
-    "font-size 16px": 12
-  },
-  "vote-results-1440-light": {
-    "font-size 16px": 12
-  },
-  "vote-results-390-dark": {
-    "font-size 16px": 12
-  },
-  "vote-results-390-light": {
-    "font-size 16px": 12
   }
 }
