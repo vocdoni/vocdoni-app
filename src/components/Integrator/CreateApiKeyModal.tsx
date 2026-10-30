@@ -121,7 +121,7 @@ export const CreateApiKeyButton = () => {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={(e) => (e.open ? setOpen(true) : close())} placement='center' size='lg'>
+    <Dialog.Root open={open} onOpenChange={(e) => (e.open ? setOpen(true) : close())} size='lg'>
       <Dialog.Trigger asChild>
         {/* Creating scopes the request to the active org, so keep it shut until one is selected. */}
         <Button size='sm' disabled={!currentAddress}>

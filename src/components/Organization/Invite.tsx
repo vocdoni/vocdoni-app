@@ -127,16 +127,12 @@ export const InviteToTeamModal = ({
         </Button>
       </Dialog.Trigger>
       <Dialog.Backdrop />
-      <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
+      <Dialog.Positioner>
         <Dialog.Content maxW='xl'>
           <Dialog.CloseTrigger asChild>
             <CloseButton size='sm' />
           </Dialog.CloseTrigger>
           <DialogHeader
-            display='flex'
-            flexDirection='column'
-            alignItems='flex-start'
-            gap='1'
             title={<Trans i18nKey='invite.title'>Add team member</Trans>}
             description={
               <Trans i18nKey='invite.subtitle'>

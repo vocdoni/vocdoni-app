@@ -10,7 +10,6 @@ import {
   FieldRoot as FormControl,
   FieldLabel as FormLabel,
   Flex,
-  Heading,
   HStack,
   Icon,
   IconButton,
@@ -408,15 +407,13 @@ const ChangeRoleModal = ({ open, onOpenChange, user }: ChangeRoleDialogProps) =>
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange} closeOnInteractOutside={false}>
       <Dialog.Backdrop />
-      <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
+      <Dialog.Positioner>
         <Dialog.Content maxW='xl' py='4'>
           <Dialog.CloseTrigger asChild>
             <CloseButton />
           </Dialog.CloseTrigger>
           <DialogHeader
-            title={
-              <Heading variant='heavy'>{t('role.update.title', { defaultValue: 'Change team member role' })}</Heading>
-            }
+            title={t('role.update.title', { defaultValue: 'Change team member role' })}
             description={
               <Trans i18nKey='role.update.subtitle'>
                 Update the permissions for this team member by changing their role.

@@ -67,7 +67,7 @@ export const PlanUpgradeModal = ({ open, onOpenChange, onClose, ...props }: Moda
           )
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange} placement='center'>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Backdrop />
       <Dialog.Positioner>
         <Dialog.Content>
@@ -75,10 +75,6 @@ export const PlanUpgradeModal = ({ open, onOpenChange, onClose, ...props }: Moda
             <CloseButton />
           </Dialog.CloseTrigger>
           <DialogHeader
-            display='flex'
-            flexDirection='column'
-            alignItems='flex-start'
-            gap='1'
             title={<Trans i18nKey={titleI18nKey} defaults={titleDefault} />}
             description={<Trans i18nKey={subtitleI18nKey} defaults={subtitleDefault} values={{ limit }} />}
           />

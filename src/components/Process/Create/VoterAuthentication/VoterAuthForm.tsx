@@ -255,8 +255,6 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
         pb='4'
         pe='12'
         borderBottomWidth='hairline'
-        flexDirection='column'
-        alignItems='start'
         gap='0.5'
         title={t('voter_auth.modal.title', { defaultValue: 'How will voters sign in?' })}
         description={
@@ -267,7 +265,6 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             count: group?.membersCount ?? 0,
           })
         }
-        descriptionProps={{ fontSize: 'sm' }}
       />
       <Dialog.Body p='[0]'>
         <Grid templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 20rem', lg: 'minmax(0, 1fr) 22rem' }}>
