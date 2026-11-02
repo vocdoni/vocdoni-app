@@ -1256,7 +1256,8 @@
     "comparison_table": {
       "footnote_1": "¹ Votes with fewer than 10 participants are treated as test runs and don't count towards your plan limits.",
       "footnote_2": "² 2FA credits are only consumed when a user actually requests verification in a voting process. You'll never unexpectedly run out: if you exceed your included credits during a vote, each additional code will be charged at €0.015 as it's sent. You can also pre-purchase extra credits in convenient packages.",
-      "footnote_on_demand": "* Requested features will be evaluated individually and may incur additional fees."
+      "footnote_on_demand": "* Requested features will be evaluated individually and may incur additional fees.",
+      "region_label": "Plan comparison table"
     },
     "core_voting_one": "Up to {{ count }} member",
     "core_voting_other": "Up to {{ count }} members",

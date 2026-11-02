@@ -1256,7 +1256,8 @@
     "comparison_table": {
       "footnote_1": "¹ 10 parte-hartzaile baino gutxiago dituzten bozketak proba gisa hartzen dira eta ez dira zure planaren mugetarako kontatzen.",
       "footnote_2": "² 2FA kredituak erabiltzaile batek bozketa-prozesu batean egiaztapen-eskaera egiten duenean soilik kontsumitzen dira. Inoiz ez zaizu ustekabean amaituko: bozketa batean barne hartutako kredituak gainditzen badituzu, bidalitako kode bakoitza 0,015 € kobratuko da bidaltze-unean. Aurrez ere kreditu osagarriak eros ditzakezu pakete erosoetan.",
-      "footnote_on_demand": "* Eskatutako funtzionalitateak banaka aztertuko dira eta kostu gehigarriak ekar ditzakete."
+      "footnote_on_demand": "* Eskatutako funtzionalitateak banaka aztertuko dira eta kostu gehigarriak ekar ditzakete.",
+      "region_label": "Planen konparazio-taula"
     },
     "core_voting_one": "Kide bakar bat",
     "core_voting_other": "{{ count }} kide arte",

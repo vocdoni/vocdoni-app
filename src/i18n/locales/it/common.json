@@ -1279,7 +1279,8 @@
     "comparison_table": {
       "footnote_1": "¹ I voti con meno di 10 partecipanti sono trattati come prove e non contano ai fini dei limiti del piano.",
       "footnote_2": "² I crediti 2FA vengono consumati solo quando un utente richiede effettivamente la verifica in un processo di voto. Non rimarrai mai inaspettatamente senza: se superi i crediti inclusi durante una votazione, ogni codice aggiuntivo verrà addebitato a 0,015 € man mano che viene inviato. Puoi anche pre-acquistare crediti extra in comodi pacchetti.",
-      "footnote_on_demand": "* Le funzionalità richieste verranno valutate individualmente e potrebbero comportare costi aggiuntivi."
+      "footnote_on_demand": "* Le funzionalità richieste verranno valutate individualmente e potrebbero comportare costi aggiuntivi.",
+      "region_label": "Tabella di confronto dei piani"
     },
     "core_voting_one": "Fino a {{ count }} membro",
     "core_voting_many": "Fino a {{ count }} membri",

@@ -1279,7 +1279,8 @@
     "comparison_table": {
       "footnote_1": "¹ As votações com menos de 10 participantes são consideradas testes e não contam para os limites do teu plano.",
       "footnote_2": "² Os créditos 2FA só são consumidos quando um utilizador pede efetivamente a verificação num processo de votação. Não correrás o risco de surpresas: se excederes os créditos incluídos durante uma votação, cada código adicional será cobrado a 0,015 € no momento do envio. Também podes comprar antecipadamente créditos extra em pacotes vantajosos.",
-      "footnote_on_demand": "* As funcionalidades pedidas serão avaliadas individualmente e podem implicar custos adicionais."
+      "footnote_on_demand": "* As funcionalidades pedidas serão avaliadas individualmente e podem implicar custos adicionais.",
+      "region_label": "Tabela comparativa de planos"
     },
     "core_voting_one": "Um único membro",
     "core_voting_many": "Até {{ count }} membros",

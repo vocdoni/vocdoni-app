@@ -1256,7 +1256,8 @@
     "comparison_table": {
       "footnote_1": "¹ Abstimmungen mit weniger als 10 Teilnehmenden werden als Testläufe gewertet und zählen nicht auf deine Planlimits an.",
       "footnote_2": "² 2FA-Guthaben werden nur verbraucht, wenn ein Nutzer während eines Abstimmungsprozesses tatsächlich eine Verifizierung anfordert. Du wirst nie unerwartet aufgebraucht sein: Wenn du dein enthaltenes Guthaben während einer Abstimmung überschreitest, wird jeder weitere Code mit €0,015 berechnet, sobald er gesendet wird. Du kannst auch zusätzliche Guthaben in praktischen Paketen im Voraus kaufen.",
-      "footnote_on_demand": "* Angeforderte Funktionen werden individuell geprüft und können zusätzliche Kosten verursachen."
+      "footnote_on_demand": "* Angeforderte Funktionen werden individuell geprüft und können zusätzliche Kosten verursachen.",
+      "region_label": "Vergleichstabelle der Pläne"
     },
     "core_voting_one": "Bis zu {{ count }} Mitglied",
     "core_voting_other": "Bis zu {{ count }} Mitglieder",

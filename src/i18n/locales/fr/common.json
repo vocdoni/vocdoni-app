@@ -1279,7 +1279,8 @@
     "comparison_table": {
       "footnote_1": "¹ Les votes comptant moins de 10 participants sont considérés comme des essais et ne sont pas pris en compte dans les limites de votre forfait.",
       "footnote_2": "² Les crédits 2FA ne sont consommés que lorsqu'un utilisateur demande effectivement une vérification dans un processus de vote. Vous ne risquez aucune mauvaise surprise : si vous dépassez les crédits inclus pendant un vote, chaque code supplémentaire sera facturé 0,015 € à son envoi. Vous pouvez aussi acheter à l'avance des crédits supplémentaires en lots avantageux.",
-      "footnote_on_demand": "* Les fonctionnalités demandées seront évaluées au cas par cas et peuvent entraîner des frais supplémentaires."
+      "footnote_on_demand": "* Les fonctionnalités demandées seront évaluées au cas par cas et peuvent entraîner des frais supplémentaires.",
+      "region_label": "Tableau comparatif des plans"
     },
     "core_voting_one": "Un seul membre",
     "core_voting_many": "Jusqu'à {{ count }} membres",
