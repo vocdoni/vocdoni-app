@@ -40,6 +40,7 @@ export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
                   variant='outline'
                   padding='4'
                   placeholder={t('form.account_create.description_placeholder')}
+                  ariaLabel={t('description', { defaultValue: 'Description' })}
                 />
               )}
             />
