@@ -217,7 +217,7 @@ export const AvatarUploader = (props: FormControlProps) => {
               alignItems='center'
               justifyContent='center'
             >
-              <input {...getInputProps()} />
+              <input {...getInputProps({ 'aria-label': t('avatar.label', { defaultValue: 'Logo/Avatar' }) })} />
               {isPending ? <InlineLoader /> : <Icon as={UploadIcon} boxSize='icon.lg' color='fg.muted' />}
             </Box>
             <Button variant='outline'>

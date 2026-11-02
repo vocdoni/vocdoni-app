@@ -124,6 +124,10 @@ describe('MembersTable layout', () => {
       expect(screen.getByRole('columnheader', { name: 'Email' })).toBeInTheDocument()
       // The labelled "Select all" checkbox is specific to the mobile header.
       expect(screen.queryByText('Select all')).not.toBeInTheDocument()
+      // The checkboxes carry no visible text, so they are named by aria-label.
+      expect(screen.getByRole('checkbox', { name: 'Select all' })).toBeInTheDocument()
+      expect(screen.getByRole('checkbox', { name: 'Select Ada Lovelace' })).toBeInTheDocument()
+      expect(screen.getByRole('checkbox', { name: 'Select Alan Turing' })).toBeInTheDocument()
     } finally {
       Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
     }

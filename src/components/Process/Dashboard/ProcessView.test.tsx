@@ -383,6 +383,12 @@ describe('ProcessView voting settings', () => {
     )
   }
 
+  it('names the read-only voting link field', async () => {
+    renderWithCensus(false)
+
+    expect(await screen.findByLabelText('Voting Link')).toHaveAttribute('readonly')
+  })
+
   it('reports an anonymous census in the voting settings', async () => {
     renderWithCensus(true)
 

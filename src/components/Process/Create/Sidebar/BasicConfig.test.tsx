@@ -95,3 +95,12 @@ describe('BasicConfig plan duration limit', () => {
     expect(screen.queryByText(/7-day limit/)).not.toBeInTheDocument()
   })
 })
+
+describe('BasicConfig time inputs', () => {
+  it('names the start and end time inputs', () => {
+    render(<Harness endInDays={3} values={{ autoStart: false, startDate: inDays(1), startTime: '10:00' }} />)
+
+    expect(screen.getByLabelText('Start time')).toHaveAttribute('type', 'time')
+    expect(screen.getByLabelText('End time')).toHaveAttribute('type', 'time')
+  })
+})

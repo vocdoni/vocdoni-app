@@ -285,7 +285,13 @@ const ProcessViewContent = () => {
             />
 
             <Flex justifyContent='space-between' gap='2' wrap='wrap'>
-              <Input readOnly value={votingLink} flex='1 1 18rem' minW='[0]' />
+              <Input
+                readOnly
+                aria-label={t('voting_link.title', 'Voting Link')}
+                value={votingLink}
+                flex='1 1 18rem'
+                minW='[0]'
+              />
               <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
                 <Icon as={CopyIcon} />
               </IconButton>

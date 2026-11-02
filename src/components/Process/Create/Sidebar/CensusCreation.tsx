@@ -163,15 +163,15 @@ export const GroupSelect = ({ groups, field, fetchNextPage, hasNextPage, isFetch
 
   return (
     <FormControl invalid={!!errors.groupId}>
-      <FormLabel gap='2' alignItems='flex-start'>
+      <FormLabel htmlFor='groupId' gap='2' alignItems='flex-start'>
         <StepMarker step={1} status={groupStatus} />
         <Trans i18nKey='process_create.census.memberbase.label'>Select a group of members to create the census</Trans>
       </FormLabel>
       <Select
         // Lets a blocked publish focus the combobox when no group is picked.
         ref={field.ref}
-        // Stable handle for the group combobox (labelled by the
-        // FormLabel above, which Chakra wires up by id).
+        // Stable handle for the group combobox. It replaces the Field's generated id,
+        // so the FormLabel above points at it explicitly with htmlFor.
         inputId='groupId'
         options={groups ?? []}
         value={selected}
