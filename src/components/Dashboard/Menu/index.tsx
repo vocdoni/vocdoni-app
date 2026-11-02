@@ -27,6 +27,7 @@ const DashboardMenu = ({
   menu: DashboardMenuConfig
 }) => {
   const { reduced } = useContext(DashboardLayoutContext)
+  const { t } = useTranslation()
 
   return (
     <>
@@ -47,8 +48,9 @@ const DashboardMenu = ({
         <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} />
       </Box>
 
-      {/* Sidebar for small screens */}
+      {/* Sidebar for small screens. It has no visible title, so the label is its accessible name. */}
       <Drawer.Root
+        aria-label={t('menu.title', { defaultValue: 'Menu' })}
         variant='navigation'
         open={isOpen}
         placement='start'
