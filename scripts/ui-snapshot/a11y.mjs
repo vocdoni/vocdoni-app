@@ -3,7 +3,7 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(HERE, '../..')
@@ -93,6 +93,9 @@ export const compareA11y = (ran, baseline) => {
   return { added, fixed }
 }
 
+// a11y-report.json ({ [captureFile]: summary }) back into captures, so a CI report can seed the baseline.
+export const capturesFromReport = (report) => Object.entries(report).map(([file, a11y]) => ({ file, a11y }))
+
 // Rules by total node count, as a markdown table for the GitHub job summary.
 const summaryTable = (ran) => {
   const rules = {}
@@ -154,4 +157,19 @@ export const checkA11y = (captures, { update, baselinePath = A11Y_BASELINE }) =>
     ].join('\n')
   )
   return true
+}
+
+// `node a11y.mjs --baseline-from <a11y-report.json>` writes the baseline from a report (the CI artifact), through
+// the same checkA11y path as --update-a11y-baseline. Importing this module never runs it.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const flag = process.argv.indexOf('--baseline-from')
+  const source = flag === -1 ? undefined : process.argv[flag + 1]
+  let report
+  try {
+    report = JSON.parse(fs.readFileSync(source, 'utf8'))
+  } catch {
+    console.error('Usage: node scripts/ui-snapshot/a11y.mjs --baseline-from <path/to/a11y-report.json>')
+    process.exit(2)
+  }
+  checkA11y(capturesFromReport(report), { update: true })
 }

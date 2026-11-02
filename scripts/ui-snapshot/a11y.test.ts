@@ -2,7 +2,16 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import { A11Y_TAGS, audit, checkA11y, compareA11y, runA11y, safeAudit, summarizeAxe } from './a11y.mjs'
+import {
+  A11Y_TAGS,
+  audit,
+  capturesFromReport,
+  checkA11y,
+  compareA11y,
+  runA11y,
+  safeAudit,
+  summarizeAxe,
+} from './a11y.mjs'
 
 const run = (html: string, exceptions: { selector: string; rules: string[] | '*'; reason: string }[] = []) => {
   // The page-level rules (title, lang) would fire on jsdom's bare document.
@@ -143,6 +152,35 @@ describe('checkA11y', () => {
     expect(md).toContain('| Rule | Impact | Nodes | Captures |')
     expect(md.indexOf('| label |')).toBeLessThan(md.indexOf('| button-name |'))
     expect(md).toContain('| label | serious | 5 | 2 |')
+  })
+})
+
+describe('capturesFromReport', () => {
+  const report = {
+    'home-1280-light': { label: entry(2), 'button-name': entry(1, 'critical') },
+    'clean-390-dark': {},
+  }
+
+  it('turns each report key into a capture, keeping clean ones', () => {
+    expect(capturesFromReport(report)).toEqual([
+      { file: 'home-1280-light', a11y: report['home-1280-light'] },
+      { file: 'clean-390-dark', a11y: {} },
+    ])
+  })
+
+  it('feeds checkA11y so the baseline holds the sorted counts', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'a11y-'))
+    const baselinePath = path.join(dir, 'a11y-baseline.json')
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+    try {
+      checkA11y(capturesFromReport(report), { update: true, baselinePath })
+      const text = fs.readFileSync(baselinePath, 'utf8')
+      expect(JSON.parse(text)).toEqual({ 'home-1280-light': { 'button-name': 1, label: 2 } })
+      expect(Object.keys(JSON.parse(text)['home-1280-light'])).toEqual(['button-name', 'label'])
+    } finally {
+      vi.restoreAllMocks()
+      fs.rmSync(dir, { recursive: true, force: true })
+    }
   })
 })
 
