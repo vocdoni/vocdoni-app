@@ -819,7 +819,9 @@ const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableCol
 }
 
 const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCensus }: MemberTableItemProps) => {
+  const { t } = useTranslation()
   const { isSelected, toggleOne, columns } = useTable()
+  const alias = [member.name, member.surname].filter(Boolean).join(' ') || member.email || member.memberNumber
 
   return (
     <Table.Row>
@@ -828,7 +830,9 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCens
           checked={isSelected(member.id)}
           onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
         >
-          <Checkbox.HiddenInput />
+          <Checkbox.HiddenInput
+            aria-label={t('members.table.select_member', { defaultValue: 'Select {{name}}', name: alias })}
+          />
           <Checkbox.Control />
         </Checkbox.Root>
       </Table.Cell>
@@ -1128,7 +1132,9 @@ const MembersTable = () => {
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
                       disabled={isPlaceholderData}
                     >
-                      <Checkbox.HiddenInput />
+                      <Checkbox.HiddenInput
+                        aria-label={t('members.table.select_all', { defaultValue: 'Select all' })}
+                      />
                       <Checkbox.Control />
                     </Checkbox.Root>
                   </Table.ColumnHeader>

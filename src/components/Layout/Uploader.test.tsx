@@ -16,7 +16,7 @@ vi.mock('react-dropzone', async (importOriginal) => ({
     dropHandler = options.onDrop
     return {
       getRootProps: () => ({}),
-      getInputProps: () => ({}),
+      getInputProps: (props?: object) => ({ ...props }),
       isDragActive: false,
     }
   },
@@ -219,5 +219,17 @@ describe('ImageUploader in a field array', () => {
     await finish()
 
     expect(screen.getByTestId('values')).toHaveTextContent(JSON.stringify([{ image: '' }, { image: '' }]))
+  })
+})
+
+describe('AvatarUploader accessible name', () => {
+  it('names the file input after the avatar label', () => {
+    render(
+      <Form>
+        <AvatarUploader />
+      </Form>
+    )
+
+    expect(screen.getByLabelText('Logo/Avatar', { selector: 'input' })).toBeInTheDocument()
   })
 })
