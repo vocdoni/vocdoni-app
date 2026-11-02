@@ -1,6 +1,8 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": [
+    "src/pages/**/+*.{ts,tsx}", // Vike page files (the vike plugin is off, see below)
+    "vite.config.ts",
     "i18next.config.ts", // read by i18next-cli (pnpm translations)
     "scripts/**/*.mjs",
     "integration/seed-plan.js", // loaded by scripts/integration-stack.sh
@@ -16,6 +18,11 @@
     "e2e/**/*.ts",
     "*.config.ts",
   ],
+  // Loading vite.config.ts runs vike/plugin, whose esbuild builds outlive knip and crash with a Go stack trace.
+  // Read it statically instead: no vite or vike plugin, and vitest only from its own configs.
+  "vike": false,
+  "vite": false,
+  "vitest": { "config": ["vitest.config.ts", "stress/vitest.config.ts"] },
   // buffer: knip resolves the bare import to Node's built-in; plausible: loaded with `??= import()`, which knip misses
   "ignoreDependencies": ["buffer", "@plausible-analytics/tracker"],
   "ignoreBinaries": ["gh", "printf", "scripts/integration-stack.sh"],
