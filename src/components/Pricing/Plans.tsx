@@ -351,6 +351,8 @@ export const SubscriptionPlans = () => {
             />
           )}
           <Tabs.Root
+            display='flex'
+            flexDirection='column'
             gap='4'
             value={period}
             onValueChange={({ value }) => methods.setValue('billingPeriod', value as 'month' | 'year')}
