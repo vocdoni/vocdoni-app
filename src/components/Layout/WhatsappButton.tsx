@@ -13,7 +13,7 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
   const whatsappUrl = `https://wa.me/${phoneNumber}`
 
   return (
-    <Button asChild role='group' variant='whatsapp' overflow='hidden'>
+    <Button asChild className='group' variant='whatsapp' overflow='hidden'>
       <a
         href={whatsappUrl}
         target='_blank'
