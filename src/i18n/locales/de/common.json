@@ -312,6 +312,9 @@
       "mixed": "Gemischt"
     }
   },
+  "drag_handle": {
+    "label": "Zum Neuordnen ziehen"
+  },
   "drawer": {
     "close": "Seitenleiste schließen"
   },

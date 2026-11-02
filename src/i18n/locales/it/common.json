@@ -316,6 +316,9 @@
       "mixed": "Misto"
     }
   },
+  "drag_handle": {
+    "label": "Trascina per riordinare"
+  },
   "drawer": {
     "close": "Chiudi cassetto"
   },

@@ -316,6 +316,9 @@
       "mixed": "Mixte"
     }
   },
+  "drag_handle": {
+    "label": "Faites glisser pour réorganiser"
+  },
   "drawer": {
     "close": "Fermer le panneau"
   },

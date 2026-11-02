@@ -316,6 +316,9 @@
       "mixed": "Mixto"
     }
   },
+  "drag_handle": {
+    "label": "Arrastra para reordenar"
+  },
   "drawer": {
     "close": "Cerrar panel"
   },

@@ -316,6 +316,9 @@
       "mixed": "Misto"
     }
   },
+  "drag_handle": {
+    "label": "Arrasta para reordenar"
+  },
   "drawer": {
     "close": "Fechar painel"
   },
