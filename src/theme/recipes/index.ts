@@ -29,10 +29,12 @@ import { OrganizationDescription, OrganizationImage, OrganizationName } from './
 import { Pagination, PaginationButton } from './pagination'
 import { Popover } from './popover'
 import { Progress } from './progress'
+import { RadioCard } from './radioCard'
 import { Stat } from './stat'
 import { Table } from './table'
 import { Tabs } from './tabs'
 import { Tag } from './tag'
+import { Toast } from './toast'
 import { Tooltip } from './tooltip'
 import { heading, link, text } from './typography'
 
@@ -70,11 +72,13 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   menu: Menu,
   popover: Popover,
   progress: Progress,
+  radioCard: RadioCard,
   stat: Stat,
   switch: switchRecipe,
   table: Table,
   tabs: Tabs,
   tag: Tag,
+  toast: Toast,
   tooltip: Tooltip,
   ElectionQuestions,
   ElectionResults,
