@@ -1150,6 +1150,10 @@
       "success": "Fornecedor desassociado com sucesso"
     }
   },
+  "og": {
+    "headline": "Votação online segura para a tua organização",
+    "tagline": "Votação verificável para organizações de qualquer dimensão, fácil de usar e gratuita até 25 votantes."
+  },
   "open_in_explorer": "Abrir no Explorer",
   "or_continue_with": "ou continuar com",
   "order_summary": "Resumo da encomenda",

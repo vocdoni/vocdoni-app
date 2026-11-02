@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
+import i18n from '~i18n'
 
 const pageContext = vi.hoisted(() => ({ current: {} as any }))
 
@@ -23,7 +24,7 @@ describe('DefaultPageHead', () => {
     expect(html).toContain('name="twitter:image" content="https://app.example.org/assets/og/ca.png"')
     expect(html).toContain('property="og:image:width" content="1200"')
     expect(html).toContain('property="og:image:height" content="630"')
-    expect(html).toContain('property="og:image:alt"')
+    expect(html).toContain(`property="og:image:alt" content="${i18n.t('og.headline', { lng: 'ca' })}"`)
     expect(html).toContain('name="twitter:card" content="summary_large_image"')
     expect(html).toContain('property="og:type" content="website"')
     expect(html).toContain('property="og:site_name" content="Vocdoni"')

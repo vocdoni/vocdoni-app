@@ -1150,6 +1150,10 @@
       "success": "Proveedor desvinculado correctamente"
     }
   },
+  "og": {
+    "headline": "Votación en línea segura para tu organización",
+    "tagline": "Votación verificable para organizaciones de cualquier tamaño, fácil de usar y gratuita hasta 25 votantes."
+  },
   "open_in_explorer": "Abrir en el explorador",
   "or_continue_with": "o continuar con",
   "order_summary": "Order Summary",
