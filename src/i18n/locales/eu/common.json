@@ -1441,11 +1441,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Bertan behera utzi prozesua",
-    "continue": "Jarraitu",
-    "end": "Amaitu bozketa",
-    "manage": "Kudeatu panelean",
-    "pause": "Pausatu"
+    "manage": "Kudeatu panelean"
   },
   "process_context": {
     "clone_as_draft": "Klonatu zirriborro gisa",

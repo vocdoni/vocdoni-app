@@ -1470,11 +1470,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Annuler le processus",
-    "continue": "Continuer",
-    "end": "Clôturer le vote",
-    "manage": "Gérer dans le tableau de bord",
-    "pause": "Mettre en pause"
+    "manage": "Gérer dans le tableau de bord"
   },
   "process_context": {
     "clone_as_draft": "Cloner comme brouillon",

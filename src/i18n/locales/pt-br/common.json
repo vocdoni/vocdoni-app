@@ -1470,11 +1470,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Cancelar processo",
-    "continue": "Continuar",
-    "end": "Encerrar votação",
-    "manage": "Gerenciar no painel",
-    "pause": "Pausar"
+    "manage": "Gerenciar no painel"
   },
   "process_context": {
     "clone_as_draft": "Clonar como rascunho",

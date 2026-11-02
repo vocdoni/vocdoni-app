@@ -198,10 +198,7 @@ const PricingCard = ({
                   </Text>
                 </Trans>
               </Flex>
-              <BookerModalButton
-                {...commonButtonProps}
-                aria-label={isCurrentPlan ? t('current_plan') : t('contact_us')}
-              >
+              <BookerModalButton {...commonButtonProps}>
                 {isCurrentPlan
                   ? t('current_plan', { defaultValue: 'Current Plan' })
                   : t('home.support.btn_watch', { defaultValue: 'Schedule a call' })}
@@ -225,7 +222,6 @@ const PricingCard = ({
                 }}
                 type={hasActiveSubscription ? 'button' : 'submit'}
                 loading={isPending}
-                aria-label={isCurrentPlan ? t('current_plan') : t('subscribe')}
               >
                 {isCurrentPlan
                   ? t('current_plan', { defaultValue: 'Current Plan' })

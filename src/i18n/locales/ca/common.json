@@ -1470,11 +1470,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Cancel·la",
-    "continue": "Continua",
-    "end": "Finalitza el procés",
-    "manage": "Gestiona al tauler",
-    "pause": "Pausa"
+    "manage": "Gestiona al tauler"
   },
   "process_context": {
     "clone_as_draft": "Clona com a esborrany",
