@@ -16,4 +16,15 @@ describe('description slots', () => {
     expect(system.getSlotRecipe('toast').base?.description).toMatchObject({ display: 'inline', textStyle: 'sm' })
     expect(system.getSlotRecipe('radioCard').base?.itemDescription).toMatchObject({ textStyle: 'sm' })
   })
+
+  // Declaring a short slot list replaces Chakra's and strips the other slots of their styles.
+  it('keeps the default styles of the other slots', () => {
+    expect(system.getSlotRecipe('toast').base?.root).toMatchObject({
+      bg: expect.anything(),
+      borderRadius: expect.anything(),
+    })
+    expect(system.getSlotRecipe('toast').slots).toContain('root')
+    expect(system.getSlotRecipe('radioCard').base?.root).toMatchObject({ gap: expect.anything() })
+    expect(system.getSlotRecipe('radioCard').slots).toContain('root')
+  })
 })
