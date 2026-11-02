@@ -45,10 +45,13 @@ if (summaryA.browser?.version !== summaryB.browser?.version) {
   )
 }
 
+// Files the snapshot writes next to the captures that are not a capture's styles.
+const NOT_CAPTURES = new Set(['summary.json', 'stress-report.json', 'a11y-report.json'])
+
 const captures = (dir) =>
   fs
     .readdirSync(dir)
-    .filter((f) => f.endsWith('.json') && f !== 'summary.json')
+    .filter((f) => f.endsWith('.json') && !NOT_CAPTURES.has(f))
     .map((f) => f.slice(0, -5))
     .sort()
 
