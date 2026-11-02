@@ -14,7 +14,13 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
 
   return (
     <Button asChild role='group' variant='whatsapp' overflow='hidden'>
-      <a href={whatsappUrl} target='_blank' rel='noopener noreferrer'>
+      <a
+        href={whatsappUrl}
+        target='_blank'
+        rel='noopener noreferrer'
+        // The hover label is invisible until hover, so it does not count as the link's name
+        aria-label={t('whatsapp_contact', 'Talk with us!')}
+      >
         <HStack gap='[0]'>
           <Icon as={WhatsappIcon} boxSize='icon.lg' flexShrink={0} />
           {!noExpand && (
