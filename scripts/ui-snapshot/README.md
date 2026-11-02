@@ -141,12 +141,13 @@ listed, not "needs review" items or best-practice rules. `a11y-report.json` hold
 from `node_modules`, so nothing is fetched. Colour contrast is only checked reliably in a real browser, which is why
 this runs inside the snapshot.
 
-The run fails on any count above `a11y-baseline.json`. While that file does not exist the run only reports. Once it
-exists, lower it after a fix with `--update-a11y-baseline` (a `--routes` run updates only its captures). Write the
-baseline from a CI run, not from your machine: fonts and layout change the colour-contrast results. A deliberate case
-goes with a reason in `A11Y_EXCEPTIONS` (`a11y.mjs`); violations still waiting for a fix belong in the baseline.
-CI runs it as the `Accessibility (axe)` leg of the same job, report-only until the baseline exists; the run is the
-`a11y` artifact and the rule table lands in the job summary. If axe itself fails on a page, the capture is kept and
+The run fails on any count above `a11y-baseline.json`. To write or refresh it from CI, download the `a11y` artifact of a
+PR run and run `node scripts/ui-snapshot/a11y.mjs --baseline-from <artifact>/a11y-report.json`. Write it from CI, not
+from your machine: fonts and layout change the colour-contrast results. After a fix, lower it locally with
+`--update-a11y-baseline` (a `--routes` run updates only its captures). A deliberate case goes with a reason in
+`A11Y_EXCEPTIONS` (`a11y.mjs`); violations still waiting for a fix belong in the baseline.
+CI runs it as the `Accessibility (axe)` leg of the same job and fails like the stress leg; the run is the `a11y`
+artifact and the rule table lands in the job summary. If axe itself fails on a page, the capture is kept and
 the report lists an `axe-error` entry for it.
 
 ## Use your own dev server

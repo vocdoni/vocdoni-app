@@ -91,9 +91,9 @@ jobs:
           CALCOM_EVENT_SLUG: ${{ secrets.CALCOM_EVENT_SLUG }}
           SAAS_URL: https://saas-api-stg.vocdoni.net
 
-  # Renders the app against the snapshot's mock SaaS (no docker, no backend) in two legs. The stress theme fails on
-  # elements that kept a stock value; the axe leg is report-only until scripts/ui-snapshot/a11y-baseline.json exists,
-  # since without a baseline it has nothing to ratchet against. See scripts/ui-snapshot/README.md.
+  # Renders the app against the snapshot's mock SaaS (no docker, no backend) in two legs. Both fail on counts above
+  # their baseline: stress-baseline.json (leaks of stock values) and a11y-baseline.json (axe violations).
+  # See scripts/ui-snapshot/README.md.
   ui-snapshot:
     name: ${{ matrix.name }}
     runs-on: ubuntu-22.04
@@ -103,8 +103,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { name: Stress theme, label: stress, args: --theme stress, report-only: false }
-          - { name: Accessibility (axe), label: a11y, args: --a11y, report-only: true }
+          - { name: Stress theme, label: stress, args: --theme stress }
+          - { name: Accessibility (axe), label: a11y, args: --a11y }
 
     steps:
       - name: Checkout
@@ -143,7 +143,6 @@ jobs:
 
       - name: Render and check
         if: steps.changes.outputs.run == 'true'
-        continue-on-error: ${{ matrix.report-only }}
         run: pnpm ui:snapshot -- --label ${{ matrix.label }} ${{ matrix.args }}
 
       - name: Upload the run
