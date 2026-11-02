@@ -86,7 +86,7 @@ const isDraftLimitError = (error: unknown) =>
   (error instanceof ApiError && error.apiError?.code === ErrorCode.DraftLimitReached) ||
   (error instanceof VocdoniApiError && error.code === ErrorCode.DraftLimitReached)
 
-export const saveTimeoutMs = 30000
+const saveTimeoutMs = 30000
 
 export const useConfirmOnNavigate = ({
   isDirty,
@@ -219,7 +219,7 @@ export const useConfirmOnNavigate = ({
   return { isSamePath, cancel, proceed, resetSamePath, saveCooldown }
 }
 
-export const useSafeReset = (externalReset?) => {
+const useSafeReset = (externalReset?) => {
   const { groupId } = useParams()
   let contextReset
 
@@ -545,7 +545,7 @@ export const useFormToVotingProcessRequest = () => {
   }
 }
 
-export const useDraft = (draftId?: string | null) => {
+const useDraft = (draftId?: string | null) => {
   const { client } = useApiClient()
 
   return useQuery<Process | null, Error>({
@@ -938,7 +938,7 @@ const ProcessCreateView = () => {
   )
 }
 
-export const ProcessCreate = () => (
+const ProcessCreate = () => (
   <SidebarVisibilityProvider>
     <VoterAuthDialogProvider>
       <ProcessCreateView />

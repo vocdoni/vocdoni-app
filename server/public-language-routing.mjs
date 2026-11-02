@@ -36,7 +36,7 @@ export const getSupportedPublicLanguagesFromEnv = (env = process.env) => {
   return Object.keys(DEFAULT_LANGUAGES)
 }
 
-export const getDefaultPublicLanguage = (supportedLanguages) =>
+const getDefaultPublicLanguage = (supportedLanguages) =>
   supportedLanguages.includes('en') ? 'en' : supportedLanguages[0]
 
 export const normalizePublicLanguageCandidate = (candidate, supportedLanguages) => {

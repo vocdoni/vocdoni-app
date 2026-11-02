@@ -1,5 +1,4 @@
 import { Flex, TagLabel, TagRoot, Text } from '@chakra-ui/react'
-import { dotobject } from '~utils/objects'
 import { Trans, useTranslation } from 'react-i18next'
 import { BooleanIcon } from '~components/Layout/BooleanIcon'
 import { isPlanNamed, PlanName, SubscriptionPermission } from '~constants'
@@ -64,14 +63,14 @@ export const CategoryTitleKeys = {
 }
 
 // Helper to quickly create specs
-export const planFeature = (path: string, labelKey: string, tooltip?: string): PlanFeatureSpec => ({
+const planFeature = (path: string, labelKey: string, tooltip?: string): PlanFeatureSpec => ({
   kind: 'plan',
   path,
   labelKey,
   tooltip,
 })
 
-export const staticFeature = (
+const staticFeature = (
   id: string,
   labelKey: string,
   options?: {
@@ -210,68 +209,6 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
       'features.tooltips.uptime'
     ),
   ],
-}
-
-/**
- * Checks if the specified feature exists in the plan.
- *
- * @param plan  - The plan object to check.
- * @param featurePath  - Dot notation path to the feature (e.g., 'organization.users').
- * @returns boolean - `true` if the feature exists, `false` otherwise.
- */
-export const hasFeature = (plan: Plan, featurePath: string) => dotobject(plan, featurePath) !== 'undefined'
-
-/**
- * Checks if a given feature exists and meets the required condition in a plan.
- *
- * @param plan - The plan object to check.
- * @param featurePath - Dot notation path to the feature (e.g., 'organization.users').
- * @param expectedValue - Expected value or comparison object.
- *                         - If a number, checks for >= comparison.
- *                         - If an object, supports { operator, value } (e.g., { operator: '>=', value: 10 }).
- * @returns boolean - `true` if the feature meets the condition, `false` otherwise.
- */
-export const isFeatureAvailable = (
-  plan: Plan,
-  featurePath: string,
-  expectedValue?: number | { operator: '===' | '>' | '>=' | '<' | '<='; value: number }
-): boolean => {
-  const featureValue = dotobject(plan, featurePath) // Get the feature value using dot notation
-
-  if (typeof featureValue === 'undefined') {
-    return false // If the feature doesn't exist, return false
-  }
-
-  // If no expected value is provided, return true if the feature exists
-  if (typeof expectedValue === 'undefined') {
-    return true
-  }
-
-  // Handle exact match or comparison
-  if (typeof expectedValue === 'number') {
-    return featureValue >= expectedValue // Default to "greater than or equal to" for numbers
-  }
-
-  if (typeof expectedValue === 'object' && expectedValue.operator && expectedValue.value !== undefined) {
-    const { operator, value } = expectedValue
-
-    switch (operator) {
-      case '===':
-        return featureValue === value
-      case '>':
-        return featureValue > value
-      case '>=':
-        return featureValue >= value
-      case '<':
-        return featureValue < value
-      case '<=':
-        return featureValue <= value
-      default:
-        throw new Error(`Unsupported operator: ${operator}`)
-    }
-  }
-
-  throw new Error('Invalid expectedValue type')
 }
 
 // We need to include all the translations in a way the extractor does not remove them, that's why this is here

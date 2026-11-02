@@ -62,10 +62,10 @@ const readIssues = (error: unknown): CensusCheckIssues | null => {
  * Order-insensitive identity of a census spec: the check's cache key. Anonymity
  * and weighting are left out: the backend's member check does not depend on them.
  */
-export const censusSpecSignature = (spec: CensusSpec) =>
+const censusSpecSignature = (spec: CensusSpec) =>
   JSON.stringify([spec.groupId ?? null, [...(spec.authFields ?? [])].sort(), [...(spec.twoFaFields ?? [])].sort()])
 
-export const hasAuthFields = (spec: CensusSpec) => !!spec.authFields?.length || !!spec.twoFaFields?.length
+const hasAuthFields = (spec: CensusSpec) => !!spec.authFields?.length || !!spec.twoFaFields?.length
 
 type ApiClient = ReturnType<typeof useApiClient>['client']
 

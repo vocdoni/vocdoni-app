@@ -39,13 +39,7 @@ export const HARD_CATEGORIES: readonly StyleCategory[] = STYLE_CATEGORIES.filter
 
 // Recipes are where design values live, so they count only toward the px and palette rules: a recipe may branch on
 // the colour mode or win specificity with `_dark`, and system.test.ts checks its token names.
-export const RECIPE_CATEGORIES: readonly StyleCategory[] = [
-  'pxSize',
-  'pxSpacing',
-  'pxFontSize',
-  'pxRadius',
-  'rawPalette',
-]
+const RECIPE_CATEGORIES: readonly StyleCategory[] = ['pxSize', 'pxSpacing', 'pxFontSize', 'pxRadius', 'rawPalette']
 
 const isRecipeFile = (file: string) => file.startsWith('src/theme/recipes/')
 
@@ -807,7 +801,7 @@ export type StyleInventory = {
   files: number
 }
 
-export const listScannedFiles = (root: string): string[] =>
+const listScannedFiles = (root: string): string[] =>
   (fs.readdirSync(path.join(root, 'src'), { recursive: true }) as string[])
     .map((entry) => `src/${entry.split(path.sep).join('/')}`)
     .filter(isScannedFile)

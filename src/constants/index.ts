@@ -1,6 +1,3 @@
-import { dotobject } from '~utils/objects'
-import { FieldErrors, FieldValues } from 'react-hook-form'
-
 export const TwoFACodePrice = {
   email: 0.015,
   sms: 0.015,
@@ -55,7 +52,7 @@ export type PlanName = (typeof PlanName)[keyof typeof PlanName]
  * Normalizes a plan name for case-insensitive comparison. The API returns names
  * in TitleCase, but matching defensively avoids breakage on casing drift.
  */
-export const normalizePlanName = (value?: string | null) => value?.trim().toLowerCase() || undefined
+const normalizePlanName = (value?: string | null) => value?.trim().toLowerCase() || undefined
 
 /**
  * Whether a plan matches a given name (case-insensitively).
@@ -86,22 +83,6 @@ export const SessionStorageKeys = {
   // the query string — see `~components/Auth/vertical/useAuthVertical`.
   AuthVertical: 'auth.vertical',
 } as const
-
-/**
- * Given an object of react-hook-form errors, returns the specified mapped field error message.
- *
- * @param {FieldErrors<FieldValues>} errors Object of errors obtained from formState in `useFormContext`.
- * @param {string} map The field map in dot notation.
- * @returns {null|string} Either returns the error message or null
- */
-export const fieldMapErrorMessage = (errors: FieldErrors<FieldValues>, map: string) => {
-  if (!errors) return null
-
-  const obj = dotobject(errors, map)
-  if (!obj || (obj && !obj.message)) return null
-
-  return obj.message
-}
 
 /**
  * Truncates an address-alike string by the middle, adding ellipsis. It considers

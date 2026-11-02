@@ -94,12 +94,12 @@ export type CertificateData = {
   disclaimerBullets: string[]
 }
 
-export const notAvailable = (t: TFunction) => t('process_pdf.not_available', { defaultValue: 'Not available' })
+const notAvailable = (t: TFunction) => t('process_pdf.not_available', { defaultValue: 'Not available' })
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
-export const isVotingProcess = (value: unknown): value is VotingProcessResponse =>
+const isVotingProcess = (value: unknown): value is VotingProcessResponse =>
   isRecord(value) &&
   typeof value.id === 'string' &&
   typeof value.published === 'boolean' &&

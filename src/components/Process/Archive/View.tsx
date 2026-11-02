@@ -39,7 +39,7 @@ const ElectionStatus = ({ status }: { status: LegacyElectionStatus }) => {
  * dates, census size, per-choice tallies and an explorer verification link.
  * All archive elections are finished, so this view never needs to vote.
  */
-export const ArchiveProcessView = ({ election }: { election: LegacyElection }) => {
+const ArchiveProcessView = ({ election }: { election: LegacyElection }) => {
   const { t } = useTranslation()
   const { format } = useDateFns()
   const localize = useLocalizedText()

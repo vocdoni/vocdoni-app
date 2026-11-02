@@ -340,4 +340,3 @@ const ProcessSummary = () => {
 }
 
 export { ProcessSummary }
-export default ProcessSummary

@@ -25,7 +25,7 @@ const Clients = (props: BoxProps) => {
   )
 }
 
-export const ClientsGrid = (props: PageSectionProps) => {
+const ClientsGrid = (props: PageSectionProps) => {
   const { t } = useTranslation()
 
   return (

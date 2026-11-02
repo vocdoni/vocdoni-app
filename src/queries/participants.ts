@@ -7,12 +7,7 @@ export type { ProcessParticipantEntry, ProcessParticipantLookupField }
 
 // The credential fields the admin participants lookup accepts. Narrower than the census
 // authFields: name/surname/birthDate are census auth credentials but not queryable.
-export const PARTICIPANT_LOOKUP_FIELDS: ProcessParticipantLookupField[] = [
-  'email',
-  'phone',
-  'memberNumber',
-  'nationalId',
-]
+const PARTICIPANT_LOOKUP_FIELDS: ProcessParticipantLookupField[] = ['email', 'phone', 'memberNumber', 'nationalId']
 
 export const isParticipantLookupField = (field: string): field is ProcessParticipantLookupField =>
   (PARTICIPANT_LOOKUP_FIELDS as string[]).includes(field)

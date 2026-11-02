@@ -7,13 +7,14 @@ import net from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
+import { A11Y_UPDATE_FLAG, checkA11y, safeAudit } from './a11y.mjs'
 import { FAKE_TOKEN, FIXED_NOW, MOCK_PORT, ORG, TOKEN_EXPIRY, startMock } from './mock-saas.mjs'
 import { ROUTES } from './routes.mjs'
 import { checkStress, loadSpec, probe, STRESS_MODULE, stressAlias, UPDATE_FLAG } from './stress.mjs'
 
 const USAGE = `pnpm ui:snapshot -- --label <name> [--primary-color <hex>] [--url <base>] [--routes a,b]
                     [--viewports 1440,390] [--modes light,dark] [--no-warmup]
-                    [--theme stress] [${UPDATE_FLAG}]`
+                    [--theme stress] [${UPDATE_FLAG}] [--a11y] [${A11Y_UPDATE_FLAG}]`
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT_ROOT = path.join(ROOT, '.ui-snapshot')
@@ -87,6 +88,8 @@ const parseCli = () => {
       'no-warmup': { type: 'boolean', default: false },
       theme: { type: 'string', default: 'stock' },
       'update-stress-baseline': { type: 'boolean', default: false },
+      a11y: { type: 'boolean', default: false },
+      'update-a11y-baseline': { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
   })
@@ -106,6 +109,8 @@ const parseCli = () => {
   const stress = values.theme === 'stress'
   if (stress && primaryColor) fail('--theme stress ignores PRIMARY_COLOR; drop --primary-color')
   if (values['update-stress-baseline'] && !stress) fail(`${UPDATE_FLAG} needs --theme stress`)
+  if (values.a11y && stress) fail('--a11y needs the stock theme: the stress palette makes colour-contrast meaningless')
+  if (values['update-a11y-baseline'] && !values.a11y) fail(`${A11Y_UPDATE_FLAG} needs --a11y`)
   let base = DEFAULT_BASE
   if (values.url) {
     let u
@@ -135,6 +140,8 @@ const parseCli = () => {
     warmup: !values['no-warmup'],
     stress,
     updateStressBaseline: values['update-stress-baseline'],
+    a11y: values.a11y,
+    updateA11yBaseline: values['update-a11y-baseline'],
   }
 }
 
@@ -702,6 +709,7 @@ const main = async () => {
         const name = `${route.slug}-${width}-${mode}`
         const elements = await save(visited.page, name, true)
         const stress = stressSpec && (await probe(visited.page, stressSpec))
+        const a11y = opts.a11y && (await safeAudit(visited.page))
         captures.push({
           ...base,
           state: null,
@@ -714,6 +722,7 @@ const main = async () => {
           failedRequests: [...visited.record.failedRequests],
           blockedHosts: [...visited.record.blockedHosts].sort(),
           ...(stress && { stress }),
+          ...(a11y && { a11y }),
         })
         console.log(`${name}: ${elements} elements, ${Date.now() - t0} ms`)
       } catch (e) {
@@ -739,6 +748,7 @@ const main = async () => {
           await settle(visited.page, warnings)
           const elements = await save(visited.page, name, false)
           const stress = stressSpec && (await probe(visited.page, stressSpec))
+          const a11y = opts.a11y && (await safeAudit(visited.page))
           captures.push({
             ...base,
             state: state.slug,
@@ -751,6 +761,7 @@ const main = async () => {
             failedRequests: visited.record.failedRequests.slice(failedBefore),
             blockedHosts: [...visited.record.blockedHosts].sort(),
             ...(stress && { stress }),
+            ...(a11y && { a11y }),
           })
           console.log(`${name}: ${elements} elements, ${Date.now() - s0} ms`)
         } catch (e) {
@@ -779,6 +790,7 @@ const main = async () => {
       devServer: opts.external ? 'external' : 'spawned',
       primaryColor: opts.primaryColor ?? null,
       theme: opts.stress ? 'stress' : 'stock',
+      a11y: opts.a11y,
       fixedTime: new Date(FIXED_NOW).toISOString(),
       timezone: TIMEZONE,
       locale: LOCALE,
@@ -811,6 +823,11 @@ const main = async () => {
       const report = Object.fromEntries(captures.filter((c) => c.stress).map((c) => [c.file, c.stress]))
       fs.writeFileSync(path.join(outDir, 'stress-report.json'), `${JSON.stringify(report, null, 2)}\n`)
       if (checkStress(captures, { update: opts.updateStressBaseline })) process.exitCode = 1
+    }
+    if (opts.a11y) {
+      const report = Object.fromEntries(captures.filter((c) => c.a11y).map((c) => [c.file, c.a11y]))
+      fs.writeFileSync(path.join(outDir, 'a11y-report.json'), `${JSON.stringify(report, null, 2)}\n`)
+      if (checkA11y(captures, { update: opts.updateA11yBaseline })) process.exitCode = 1
     }
   } finally {
     await cleanup()

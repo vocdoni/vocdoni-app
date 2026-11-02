@@ -128,7 +128,7 @@ export const usePaginatedElections = () => {
   })
 }
 
-export const useOrganizationMeta = () => {
+const useOrganizationMeta = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
