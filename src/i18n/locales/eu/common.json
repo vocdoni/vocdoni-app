@@ -315,6 +315,9 @@
       "mixed": "Nahasia"
     }
   },
+  "drag_handle": {
+    "label": "Arrastatu berrantolatzeko"
+  },
   "drawer": {
     "close": "Itxi panela"
   },

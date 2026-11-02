@@ -315,6 +315,9 @@
       "mixed": "Mixed"
     }
   },
+  "drag_handle": {
+    "label": "Drag to reorder"
+  },
   "drawer": {
     "close": "Close drawer"
   },

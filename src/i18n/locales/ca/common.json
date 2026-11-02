@@ -319,6 +319,9 @@
       "mixed": "Mixt"
     }
   },
+  "drag_handle": {
+    "label": "Arrossega per reordenar"
+  },
   "drawer": {
     "close": "Tanca el panell lateral"
   },
