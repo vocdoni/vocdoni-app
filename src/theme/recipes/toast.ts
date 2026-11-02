@@ -8,6 +8,8 @@ export const Toast = defineSlotRecipe({
   slots: toastAnatomy.keys(),
   base: {
     description: { opacity: '[1]' },
+    // Chakra's 60% leaves the X at 2.51:1 on the error toast; 80% is 3.5 or more on every type.
+    closeTrigger: { color: '[{currentColor/80}]' },
     root: {
       '&[data-type=success]': { bg: 'toast.success.bg' },
       '&[data-type=warning]': { bg: 'toast.warning.bg' },
