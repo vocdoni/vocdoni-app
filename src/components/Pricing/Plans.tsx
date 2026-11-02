@@ -371,7 +371,8 @@ export const SubscriptionPlans = () => {
               </Tabs.Trigger>
             </Tabs.List>
             {/* The cards are the panel the selected trigger controls (aria-controls); the recipe's padding is cancelled. */}
-            <Tabs.Content value={period} p='[0]'>
+            {/* tabIndex -1: the panel always holds focusable cards, so it is not an extra keyboard stop. */}
+            <Tabs.Content value={period} p='[0]' tabIndex={-1}>
               <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap='6'>
                 {cards.map((card) => (
                   <PricingCard key={card.plan.id} {...card} />

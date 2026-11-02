@@ -1103,6 +1103,7 @@
       "showing_results_one": "Mostrant {{from, number}}–{{to, number}} d'{{count, number}} resultat",
       "showing_results_many": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} resultats",
       "showing_results_other": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} resultats",
+      "this_member": "aquest membre",
       "toggle_column": "Commuta la columna {{column}}"
     }
   },

@@ -1081,6 +1081,7 @@
       "showing_members_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} kide",
       "showing_results_one": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
       "showing_results_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
+      "this_member": "kide hau",
       "toggle_column": "Txandakatu {{column}} zutabea"
     }
   },

@@ -1103,6 +1103,7 @@
       "showing_results_one": "Visualizzato {{from, number}}–{{to, number}} di {{count, number}} risultato",
       "showing_results_many": "Visualizzati {{from, number}}–{{to, number}} di {{count, number}} risultati",
       "showing_results_other": "Visualizzati {{from, number}}–{{to, number}} di {{count, number}} risultati",
+      "this_member": "questo membro",
       "toggle_column": "Attiva/disattiva colonna {{column}}"
     }
   },

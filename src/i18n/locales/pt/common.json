@@ -1103,6 +1103,7 @@
       "showing_results_one": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultado",
       "showing_results_many": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultados",
       "showing_results_other": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultados",
+      "this_member": "este membro",
       "toggle_column": "Mostrar/ocultar coluna {{column}}"
     }
   },

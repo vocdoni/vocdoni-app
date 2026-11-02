@@ -63,8 +63,8 @@ const SharedCensusOrganizationBoundary = ({ children }: { children: ReactNode })
 
 const SharedCensusHomeContent = () => {
   const { t, i18n } = useTranslation()
-  const videoRef = useIframeTitle(t('video.title', { defaultValue: 'Video' }))
   const { loading, election, connected } = useElection()
+  const videoRef = useIframeTitle(election?.title?.default || t('video.title', { defaultValue: 'Video' }))
   const { currentAddress, isAuthenticated } = useAuth()
 
   const isAdmin = isAuthenticated && sameAddress(currentAddress, election?.orgAddress)

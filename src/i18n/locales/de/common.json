@@ -1081,6 +1081,7 @@
       "showing_members_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Mitgliedern",
       "showing_results_one": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnis",
       "showing_results_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnissen",
+      "this_member": "dieses Mitglied",
       "toggle_column": "Spalte {{column}} ein-/ausblenden"
     }
   },

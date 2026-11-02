@@ -101,7 +101,7 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
   const { t } = useTranslation()
   const { election } = useElection()
   const { ...rest } = props
-  const videoRef = useIframeTitle(t('video.title', { defaultValue: 'Video' }))
+  const videoRef = useIframeTitle(election?.title?.default || t('video.title', { defaultValue: 'Video' }))
   const recipe = useRecipe({ key: 'ElectionVideo' })
   const styles = recipe()
 

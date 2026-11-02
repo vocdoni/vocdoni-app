@@ -42,7 +42,8 @@ export const RoutedTabs = ({ tabs, value, outletContext }: RoutedTabsProps) => {
         ))}
       </Tabs.List>
       {/* The panel the selected trigger controls (aria-controls); the recipe's padding is cancelled. */}
-      <Tabs.Content value={activeValue ?? ''} p='[0]'>
+      {/* tabIndex -1: the panel always holds focusable content, so it is not an extra keyboard stop. */}
+      <Tabs.Content value={activeValue ?? ''} p='[0]' tabIndex={-1}>
         <Outlet context={outletContext} />
       </Tabs.Content>
     </Tabs.Root>

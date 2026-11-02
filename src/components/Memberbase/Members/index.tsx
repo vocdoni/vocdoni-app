@@ -724,7 +724,11 @@ const EmptyMembers = () => {
 const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCensus }: MemberTableItemProps) => {
   const { t } = useTranslation()
   const { isSelected, toggleOne, columns } = useTable()
-  const alias = [member.name, member.surname].filter(Boolean).join(' ') || member.email || member.memberNumber
+  const alias =
+    [member.name, member.surname].filter(Boolean).join(' ') ||
+    member.email ||
+    member.memberNumber ||
+    t('members.table.this_member', { defaultValue: 'this member' })
 
   return (
     <Table.Row>
