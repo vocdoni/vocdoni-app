@@ -46,4 +46,13 @@ describe('SignIn', () => {
 
     expect(screen.getByRole('heading', { name: 'Bienvenido' })).toBeInTheDocument()
   })
+
+  // WCAG 2.5.8: a lone link under the password field needs a 24px target (sizes.6 = 1.5rem).
+  it('gives the forgot-password link a minimum hit area of the 24px spacing token', () => {
+    renderSignIn()
+
+    expect(screen.getByRole('link', { name: 'forgot_password_title' })).toHaveStyle({
+      minHeight: 'var(--chakra-sizes-6)',
+    })
+  })
 })
