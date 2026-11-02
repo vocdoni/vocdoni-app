@@ -52,6 +52,13 @@ describe('ProcessAside', () => {
     expect(screen.getByText('CSP')).toBeInTheDocument()
   })
 
+  it('renders the vote count without a definition list', () => {
+    render(<ProcessAside />)
+
+    expect(screen.getByTestId('process-vote-count')).toBeInTheDocument()
+    expect(document.querySelector('dl')).toBeNull()
+  })
+
   it('shows the identify flow in sidebar and floating CTA when disconnected', () => {
     render(
       <>

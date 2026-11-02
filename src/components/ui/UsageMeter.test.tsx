@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { usageMeterFill } from './UsageMeter'
+import { render, screen } from '~src/test-utils'
+import { UsageMeter, usageMeterFill } from './UsageMeter'
 
 describe('usageMeterFill', () => {
   it.each([
@@ -18,5 +19,14 @@ describe('usageMeterFill', () => {
 
   it('falls back to the meter colour with no series and no limit', () => {
     expect(usageMeterFill({ value: 5, max: 0 })).toBe('meter.ok')
+  })
+})
+
+describe('UsageMeter', () => {
+  it('renders its figures without a definition list, whose content model it does not follow', () => {
+    const { container } = render(<UsageMeter label='Members' value={5} max={10} unit='/ 10' />)
+
+    expect(screen.getByText('Members')).toBeInTheDocument()
+    expect(container.querySelector('dl')).toBeNull()
   })
 })
