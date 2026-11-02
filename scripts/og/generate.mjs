@@ -1,9 +1,9 @@
 /**
  * Renders the localized Open Graph images the SSR head points at (`/assets/og/<lang>.png`), one
- * per locale directory in `src/i18n/locales/`. The copy comes from each locale's `head.title`
- * (headline, without the "Vocdoni |" prefix), the first sentence of `head.description` (tagline)
- * and the `vote.button` label from `react-components.json`, so re-run it after changing any of
- * those, then review the PNGs by eye (long words can push a headline to a third line).
+ * per locale directory in `src/i18n/locales/`. The copy comes from each locale's `og.headline` and
+ * `og.tagline` in `common.json` and the `vote.button` label from `react-components.json`, so re-run
+ * it after changing any of those, then review the PNGs by eye. The headline size is measured with
+ * satori itself (measure.mjs) so it takes two lines whenever 42px or more allows it.
  *
  *   pnpm og:generate            # all locales, tinted theme (the default)
  *   pnpm og:generate -- --theme light   # or `dark`; see themes in template.mjs
@@ -18,7 +18,8 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import satori from 'satori'
-import { buildOpenGraphCard, HEIGHT, themes, WIDTH } from './template.mjs'
+import { createLineCounter } from './measure.mjs'
+import { buildOpenGraphCard, fitHeadline, HEIGHT, themes, WIDTH } from './template.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const localesDir = join(root, 'src/i18n/locales')
@@ -56,16 +57,12 @@ const readJson = (file) => (existsSync(file) ? JSON.parse(readFileSync(file, 'ut
 const copyFor = (lang) => {
   const common = readJson(join(localesDir, lang, 'common.json'))
   const components = readJson(join(localesDir, lang, 'react-components.json'))
-  const title = common.head?.title
-  const description = common.head?.description
+  const title = common.og?.headline
+  const tagline = common.og?.tagline
   const vote = components.vote?.button
-  if (!title || !description) throw new Error(`${lang}/common.json has no head.title / head.description`)
+  if (!title || !tagline) throw new Error(`${lang}/common.json has no og.headline / og.tagline`)
   if (!vote) throw new Error(`${lang}/react-components.json has no vote.button`)
-  return {
-    title: title.replace(/^Vocdoni\s*\|\s*/, ''),
-    tagline: description.split(/(?<=\.)\s+/)[0],
-    vote,
-  }
+  return { title, tagline, vote }
 }
 
 const languages = readdirSync(localesDir, { withFileTypes: true })
@@ -75,11 +72,16 @@ const languages = readdirSync(localesDir, { withFileTypes: true })
 
 mkdirSync(outDir, { recursive: true })
 
+const countLines = createLineCounter(fonts)
+
 for (const lang of languages) {
   const copy = copyFor(lang)
-  const svg = await satori(buildOpenGraphCard(copy, { logo, theme }), { width: WIDTH, height: HEIGHT, fonts })
+  const headline = await fitHeadline(copy.title, countLines)
+  const svg = await satori(buildOpenGraphCard(copy, { logo, theme, headline }), { width: WIDTH, height: HEIGHT, fonts })
   const png = new Resvg(svg, { fitTo: { mode: 'width', value: WIDTH } }).render().asPng()
   const file = join(outDir, `${lang}.png`)
   writeFileSync(file, png)
-  console.log(`${lang.padEnd(6)} ${(png.length / 1024).toFixed(0).padStart(4)} KB  ${copy.title}  [${copy.vote}]`)
+  console.log(
+    `${lang.padEnd(6)} ${(png.length / 1024).toFixed(0).padStart(4)} KB  ${String(headline.size).padStart(2)}px/${headline.lines.length}  ${copy.title}  [${copy.vote}]`
+  )
 }

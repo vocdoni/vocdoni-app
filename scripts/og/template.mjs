@@ -1,7 +1,7 @@
 /**
- * Open Graph card for the app (1200x630): the Vocdoni wordmark, the localized head title as
- * headline, the first sentence of the head description as tagline, and a ballot drawn with the
- * app's own component styling (card choices, a checked radio, the solid Vote button).
+ * Open Graph card for the app (1200x630): the Vocdoni wordmark, the localized `og.headline` and
+ * `og.tagline` copy, and a ballot drawn with the app's own component styling (card choices, a
+ * checked radio, the solid Vote button).
  *
  * Built as a satori element tree. Two satori rules shape the helpers below: every `div` with
  * element children needs `display: flex`, and a lone text child must be a plain string.
@@ -62,6 +62,9 @@ export const themes = {
 
 export const WIDTH = 1200
 export const HEIGHT = 630
+// The copy column; the headline is sized to fit it on two lines when it can.
+export const HEADLINE_WIDTH = 600
+const HEADLINE_SIZES = { max: 56, min: 42, fallback: 46 }
 
 const LOGO_RATIO = 1001 / 216
 
@@ -76,16 +79,40 @@ const h = (type, style = {}, children = [], extra = {}) => {
 
 const logo = (src, height) => h('img', { height }, [], { src, width: Math.round(height * LOGO_RATIO), height })
 
-// Picks the largest headline size that keeps the longest word on one line and aims for two lines
-// of text. Widths are estimates (Inter 500 averages ~0.46em per character; Greek is set at 0.5 and
-// still runs wider, so the Greek card takes three lines), so new copy is checked by eye after generating.
-const fitHeadline = (text, maxWidth, { max = 56, min = 38, lines = 2 } = {}) => {
+// Width estimate used only when no measurer is given (mockups): Inter 500 averages ~0.46em per
+// character, Greek runs wider. `fitHeadline` below is what the generator uses.
+const estimateHeadlineSize = (text, maxWidth, { max, min } = HEADLINE_SIZES, lines = 2) => {
   const perChar = /\p{Script=Greek}/u.test(text) ? 0.5 : 0.46
   const longest = Math.max(...text.split(/\s+/).map((word) => word.length))
   for (let size = max; size >= min; size -= 2) {
     if (longest * 0.56 * size <= maxWidth && text.length * perChar * size <= maxWidth * lines * 0.9) return size
   }
   return min
+}
+
+const splitSentences = (title) => title.split(/(?<=[.!?])\s+/)
+
+/**
+ * Picks the largest size (56 down to 42, in steps of 2) at which the headline takes two lines in
+ * the copy column, falling back to 46 on three lines when none does (Greek). A headline made of
+ * short sentences breaks after each sentence when every sentence fits on one line at that size.
+ * `countLines(text, size, width)` is the satori-backed measurer from measure.mjs.
+ */
+export const fitHeadline = async (title, countLines) => {
+  const { max, min, fallback } = HEADLINE_SIZES
+  let size = fallback
+  for (let candidate = max; candidate >= min; candidate -= 2) {
+    if ((await countLines(title, candidate, HEADLINE_WIDTH)) <= 2) {
+      size = candidate
+      break
+    }
+  }
+  const sentences = splitSentences(title)
+  if (sentences.length > 1) {
+    const fits = await Promise.all(sentences.map((sentence) => countLines(sentence, size, HEADLINE_WIDTH)))
+    if (fits.every((lines) => lines === 1)) return { size, lines: sentences }
+  }
+  return { size, lines: [title] }
 }
 
 const bar = (width, height, color) => h('div', { width, height, background: color, borderRadius: 9999 })
@@ -176,18 +203,17 @@ const ballot = (t, voteLabel, width) =>
     ]
   )
 
-// A headline made of short sentences ("Vote online. Verify every result.") breaks after each
-// sentence rather than wherever the width runs out, as long as every sentence fits on one line.
-const headlineLines = (title, maxWidth, size) => {
-  const sentences = title.split(/(?<=[.!?])\s+/)
+// Estimate-only sentence split for mockups; the generator passes measured lines instead.
+const estimateHeadlineLines = (title, maxWidth, size) => {
+  const sentences = splitSentences(title)
   if (sentences.length < 2) return [title]
   const perChar = /\p{Script=Greek}/u.test(title) ? 0.5 : 0.46
   return sentences.every((sentence) => sentence.length * perChar * size <= maxWidth) ? sentences : [title]
 }
 
-const headline = (copy, t, maxWidth) => {
-  const size = fitHeadline(copy.title, maxWidth)
-  const lines = headlineLines(copy.title, maxWidth, size)
+const headline = (copy, t, maxWidth, fit) => {
+  const size = fit?.size ?? estimateHeadlineSize(copy.title, maxWidth)
+  const lines = fit?.lines ?? estimateHeadlineLines(copy.title, maxWidth, size)
   const textStyle = { fontSize: size, fontWeight: 500, lineHeight: 1.08, letterSpacing: -(size * 0.025), color: t.fg }
   return h('div', { display: 'flex', flexDirection: 'column', gap: 22, width: maxWidth }, [
     h(
@@ -201,9 +227,10 @@ const headline = (copy, t, maxWidth) => {
 
 /**
  * @param {{ title: string, tagline: string, vote: string }} copy localized strings
- * @param {{ logo: string, theme?: keyof typeof themes }} options logo as a data URI
+ * @param {{ logo: string, theme?: keyof typeof themes, headline?: { size: number, lines: string[] } }} options
+ *   logo as a data URI; `headline` is the result of `fitHeadline` (measured), estimated when absent
  */
-export const buildOpenGraphCard = (copy, { logo: logoSrc, theme = 'light' }) => {
+export const buildOpenGraphCard = (copy, { logo: logoSrc, theme = 'light', headline: fit }) => {
   const t = themes[theme]
   const layers = []
   if (t.glow) {
@@ -222,9 +249,11 @@ export const buildOpenGraphCard = (copy, { logo: logoSrc, theme = 'light' }) => 
   layers.push(
     h('div', { position: 'absolute', left: 72, top: 72, display: 'flex' }, [logo(logoSrc, 40)]),
     h('div', { display: 'flex', width: WIDTH, height: HEIGHT, padding: 72, gap: 56 }, [
-      h('div', { display: 'flex', flexDirection: 'column', justifyContent: 'center', width: 600, paddingTop: 40 }, [
-        headline(copy, t, 600),
-      ]),
+      h(
+        'div',
+        { display: 'flex', flexDirection: 'column', justifyContent: 'center', width: HEADLINE_WIDTH, paddingTop: 40 },
+        [headline(copy, t, HEADLINE_WIDTH, fit)]
+      ),
       h('div', { display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'flex-end' }, [
         ballot(t, copy.vote, 400),
       ]),
