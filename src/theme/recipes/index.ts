@@ -33,6 +33,7 @@ import { Stat } from './stat'
 import { Table } from './table'
 import { Tabs } from './tabs'
 import { Tag } from './tag'
+import { Toast } from './toast'
 import { Tooltip } from './tooltip'
 import { heading, link, text } from './typography'
 
@@ -75,6 +76,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   table: Table,
   tabs: Tabs,
   tag: Tag,
+  toast: Toast,
   tooltip: Tooltip,
   ElectionQuestions,
   ElectionResults,
