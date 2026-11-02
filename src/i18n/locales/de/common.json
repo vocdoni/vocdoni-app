@@ -1198,11 +1198,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Prozess abbrechen",
-    "continue": "Weiter",
-    "end": "Abstimmung beenden",
-    "manage": "Im Dashboard verwalten",
-    "pause": "Pausieren"
+    "manage": "Im Dashboard verwalten"
   },
   "process_context": {
     "clone_as_draft": "Als Entwurf klonen",

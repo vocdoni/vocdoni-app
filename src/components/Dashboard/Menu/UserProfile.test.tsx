@@ -38,4 +38,28 @@ describe('UserProfile', () => {
 
     expect(screen.getAllByText('Jane')[0]).toBeInTheDocument()
   })
+
+  it('names the menu trigger after its visible text', () => {
+    render(
+      <TestMemoryRouter>
+        <DashboardLayoutContext.Provider value={{ reduced: false } as any}>
+          <UserProfile />
+        </DashboardLayoutContext.Provider>
+      </TestMemoryRouter>
+    )
+
+    expect(screen.getByRole('button', { name: /Jane/ })).toBeInTheDocument()
+  })
+
+  it('keeps the "User menu" label when the sidebar is reduced', () => {
+    render(
+      <TestMemoryRouter>
+        <DashboardLayoutContext.Provider value={{ reduced: true } as any}>
+          <UserProfile />
+        </DashboardLayoutContext.Provider>
+      </TestMemoryRouter>
+    )
+
+    expect(screen.getByRole('button', { name: 'User menu' })).toBeInTheDocument()
+  })
 })

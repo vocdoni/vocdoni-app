@@ -1222,11 +1222,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Cancelar processo",
-    "continue": "Continuar",
-    "end": "Terminar votação",
-    "manage": "Gerir no painel",
-    "pause": "Pausar"
+    "manage": "Gerir no painel"
   },
   "process_context": {
     "clone_as_draft": "Clonar como rascunho",
