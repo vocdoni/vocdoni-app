@@ -118,7 +118,7 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           if git diff --quiet "$BASE_SHA" HEAD -- src scripts/ui-snapshot; then
-            echo "Nothing changed under src/ or scripts/ui-snapshot/: no stress run."
+            echo "Nothing changed under src/ or scripts/ui-snapshot/: no snapshot run."
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi

@@ -5,7 +5,7 @@
     "scripts/**/*.mjs",
     "integration/seed-plan.js", // loaded by scripts/integration-stack.sh
     "stress/loadgen.mjs", // spawned by stress/loadgen.test.ts and run-stress.sh
-    "src/utils/use-feature-flag.ts" // documented API (docs/analytics.md), no caller yet
+    "src/utils/use-feature-flag.ts", // documented API (docs/analytics.md), no caller yet
   ],
   "project": [
     "src/**/*.{ts,tsx,mjs}",
@@ -14,7 +14,7 @@
     "integration/**/*.js",
     "stress/**/*.{ts,mjs}",
     "e2e/**/*.ts",
-    "*.config.ts"
+    "*.config.ts",
   ],
   // buffer: knip resolves the bare import to Node's built-in; plausible: loaded with `??= import()`, which knip misses
   "ignoreDependencies": ["buffer", "@plausible-analytics/tracker"],
@@ -22,5 +22,5 @@
   // A component's props type stays exported next to it even when only that file uses it
   "ignoreExportsUsedInFile": { "interface": true, "type": true, "enum": true },
   // The snapshot harness aliases the stress theme over ~theme/system, so it mirrors that module's exports
-  "ignoreIssues": { "src/theme/test-themes/**": ["exports", "duplicates"] }
+  "ignoreIssues": { "src/theme/test-themes/**": ["exports", "duplicates"] },
 }
