@@ -1090,7 +1090,8 @@
     "dashboard": "Dashboard",
     "expand": "Expand menu",
     "login": "Login",
-    "open": "Open Menu"
+    "open": "Open Menu",
+    "title": "Menu"
   },
   "month": "month",
   "monthly": "Monthly",

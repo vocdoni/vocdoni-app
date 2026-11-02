@@ -1090,7 +1090,8 @@
     "dashboard": "Dashboard",
     "expand": "Menü ausklappen",
     "login": "Anmelden",
-    "open": "Menü öffnen"
+    "open": "Menü öffnen",
+    "title": "Menü"
   },
   "month": "Monat",
   "monthly": "Monatlich",

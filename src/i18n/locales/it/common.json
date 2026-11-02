@@ -1112,7 +1112,8 @@
     "dashboard": "Dashboard",
     "expand": "Espandi menu",
     "login": "Accedi",
-    "open": "Apri menu"
+    "open": "Apri menu",
+    "title": "Menu"
   },
   "month": "mese",
   "monthly": "Mensile",

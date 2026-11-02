@@ -1112,7 +1112,8 @@
     "dashboard": "Dashboard",
     "expand": "Expandir menu",
     "login": "Iniciar sessão",
-    "open": "Abrir menu"
+    "open": "Abrir menu",
+    "title": "Menu"
   },
   "month": "mês",
   "monthly": "Mensal",
