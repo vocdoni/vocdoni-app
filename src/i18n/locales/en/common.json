@@ -1729,6 +1729,9 @@
     "verifying_subtitle": "Await until we verify your email address. You will be redirect on success.",
     "verifying_title": "Verifying {{ email }}"
   },
+  "video": {
+    "title": "Video"
+  },
   "view_in_explorer": "View in explorer",
   "vocdoni_logo": "Vocdoni logo",
   "vote": {

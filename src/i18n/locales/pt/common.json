@@ -1756,6 +1756,9 @@
     "verifying_subtitle": "Aguarda enquanto confirmamos o teu endereço de email. Serás redirecionado em caso de sucesso.",
     "verifying_title": "A verificar {{ email }}"
   },
+  "video": {
+    "title": "Vídeo"
+  },
   "view_in_explorer": "Ver no Explorer",
   "vocdoni_logo": "Logótipo do Vocdoni",
   "vote": {

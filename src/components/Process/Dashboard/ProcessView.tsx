@@ -84,6 +84,7 @@ import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { Tooltip } from '~components/ui/Tooltip'
+import { useIframeTitle } from '~utils/use-iframe-title'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -96,8 +97,10 @@ export const getProcessViewPathForTab = (id: string, tab: ProcessViewTab): strin
 type ElectionVideoProps = HTMLChakraProps<'div'>
 
 export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((props, ref) => {
+  const { t } = useTranslation()
   const { election } = useElection()
   const { ...rest } = props
+  const videoRef = useIframeTitle(t('video.title', { defaultValue: 'Video' }))
   const recipe = useRecipe({ key: 'ElectionVideo' })
   const styles = recipe()
 
@@ -110,7 +113,7 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
   return (
     <Box ref={ref} css={styles} {...rest}>
       <AspectRatio ratio={16 / 9} width='full' height='full'>
-        <ReactPlayer src={streamUri} width='100%' controls height='100%' />
+        <ReactPlayer ref={videoRef} src={streamUri} width='100%' controls height='100%' />
       </AspectRatio>
     </Box>
   )
