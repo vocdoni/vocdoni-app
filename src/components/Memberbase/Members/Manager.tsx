@@ -207,7 +207,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
       setPhoneEdited(false)
       setPasswordEdited(false)
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.members(organization.address),
+        queryKey: QueryKeys.organization.members(organization?.address),
         exact: false,
       })
       closeDrawer()

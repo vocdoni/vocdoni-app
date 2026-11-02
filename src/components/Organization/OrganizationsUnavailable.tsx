@@ -11,11 +11,10 @@ type OrganizationsUnavailableProps = {
 }
 
 /**
- * Shown when the organization address list could not be read. Deliberately
- * distinct from `NoOrganizations`: telling an org owner they have no
- * organizations because a request failed is worse than reporting the failure,
- * and there is nothing here to recover it on its own — the query sits at the
- * app root and never remounts.
+ * Shown when the organization address list could not be read, or when the active
+ * organization itself could not be loaded (used by `OrganizationGate` with an `onRetry`).
+ * Deliberately distinct from `NoOrganizations`: a request failure is not the same as
+ * having no organizations, and the query never remounts on its own.
  */
 export const OrganizationsUnavailable = ({ onRetry }: OrganizationsUnavailableProps = {}) => {
   const { refreshAddresses } = useAuth()

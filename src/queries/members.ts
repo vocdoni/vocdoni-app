@@ -5,6 +5,7 @@ import { useOutletContext, useParams, useSearchParams } from 'react-router'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import type { MemberbaseTabsContext } from '~components/Memberbase'
+import { requireOrganizationAddress } from '~utils/organization'
 import { QueryKeys } from './keys'
 
 export type Member = {
@@ -90,13 +91,12 @@ export const useAddMembers = (isAsync: boolean = false) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
 
-  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization.address)
-  const fetchUrl = `${baseUrl}?async=${isAsync}`
-
   return useMutation<AddMembersResponse, Error, Record<string, any>>({
     mutationKey: QueryKeys.organization.members(organization?.address),
-    mutationFn: async (members) =>
-      await bearedFetch<AddMembersResponse>(fetchUrl, { body: { members }, method: 'POST' }),
+    mutationFn: async (members) => {
+      const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', requireOrganizationAddress(organization))
+      return await bearedFetch<AddMembersResponse>(`${baseUrl}?async=${isAsync}`, { body: { members }, method: 'POST' })
+    },
   })
 }
 
@@ -104,12 +104,12 @@ export const useEditMember = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
 
-  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization.address)
-
   return useMutation<void, Error, EditMemberPayload>({
     mutationKey: QueryKeys.organization.members(organization?.address),
-    mutationFn: async ({ id, ...member }) =>
-      await bearedFetch<void>(baseUrl, { body: { id, ...member }, method: 'PUT' }),
+    mutationFn: async ({ id, ...member }) => {
+      const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', requireOrganizationAddress(organization))
+      return await bearedFetch<void>(baseUrl, { body: { id, ...member }, method: 'PUT' })
+    },
   })
 }
 
@@ -120,10 +120,10 @@ export const useDeleteMembers = () => {
   return useMutation<void, Error, MembersData>({
     mutationKey: QueryKeys.organization.members(organization?.address),
     mutationFn: async (body: MembersData) =>
-      await bearedFetch<void>(ApiEndpoints.OrganizationMembers.replace('{address}', organization.address), {
-        body,
-        method: 'DELETE',
-      }),
+      await bearedFetch<void>(
+        ApiEndpoints.OrganizationMembers.replace('{address}', requireOrganizationAddress(organization)),
+        { body, method: 'DELETE' }
+      ),
   })
 }
 
@@ -137,8 +137,8 @@ export const useImportJobProgress = () => {
   const url = ApiEndpoints.Job.replace('{jobId}', jobId)
 
   return useQuery({
-    enabled: Boolean(jobId),
-    queryKey: QueryKeys.organization.membersImportProgress(organization.address, jobId),
+    enabled: Boolean(jobId && organization?.address),
+    queryKey: QueryKeys.organization.membersImportProgress(organization?.address, jobId),
     queryFn: () => bearedFetch<ImportJob>(url),
     retry: false,
     refetchInterval: (query) => {

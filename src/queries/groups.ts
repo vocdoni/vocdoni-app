@@ -6,6 +6,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~src/queries/keys'
 import { Member } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { requireOrganizationAddress } from '~utils/organization'
 
 export type Group = {
   id: string
@@ -98,10 +99,13 @@ export const useCreateGroup = () => {
 
   return useMutation({
     mutationFn: async (body: GroupData) => {
-      await bearedFetch(ApiEndpoints.OrganizationGroups.replace('{address}', organization.address), {
-        method: 'POST',
-        body,
-      })
+      await bearedFetch(
+        ApiEndpoints.OrganizationGroups.replace('{address}', requireOrganizationAddress(organization)),
+        {
+          method: 'POST',
+          body,
+        }
+      )
     },
     onSuccess: (_data, body) => {
       trackAnalyticsEvent({
@@ -109,7 +113,7 @@ export const useCreateGroup = () => {
         props: { group_size: body?.memberIDs?.length ?? 0 },
       })
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.groups(organization.address),
+        queryKey: QueryKeys.organization.groups(organization?.address),
       })
     },
   })
@@ -123,16 +127,17 @@ export const useDeleteGroup = () => {
   return useMutation({
     mutationFn: async (groupId: string) => {
       await bearedFetch<void>(
-        ApiEndpoints.OrganizationGroup.replace('{address}', organization.address).replace('{groupId}', groupId),
-        {
-          method: 'DELETE',
-        }
+        ApiEndpoints.OrganizationGroup.replace('{address}', requireOrganizationAddress(organization)).replace(
+          '{groupId}',
+          groupId
+        ),
+        { method: 'DELETE' }
       )
     },
     onSuccess: () => {
       trackAnalyticsEvent({ name: AnalyticsEvents.MemberGroupDeleted })
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.groups(organization.address),
+        queryKey: QueryKeys.organization.groups(organization?.address),
         exact: false,
       })
     },
@@ -165,16 +170,16 @@ export const useUpdateGroup = () => {
   return useMutation({
     mutationFn: async ({ groupId, body }: { groupId: string; body: UpdateGroupData }) => {
       await bearedFetch(
-        ApiEndpoints.OrganizationGroup.replace('{address}', organization.address).replace('{groupId}', groupId),
-        {
-          method: 'PUT',
-          body,
-        }
+        ApiEndpoints.OrganizationGroup.replace('{address}', requireOrganizationAddress(organization)).replace(
+          '{groupId}',
+          groupId
+        ),
+        { method: 'PUT', body }
       )
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.groups(organization.address),
+        queryKey: QueryKeys.organization.groups(organization?.address),
       })
     },
   })
