@@ -52,4 +52,11 @@ const progress = {
   },
 }
 
-export const recipeColors = defineSemanticTokens.colors({ link, switch: switchColors, progress })
+// Solid toast fills. Chakra's green.600 and orange.600 leave white text at 3.30 and 3.56; these reach 6.8 and 7.9.
+// Dark mode keeps orange.500 under black text (7.49).
+const toast = {
+  success: { bg: { value: '{colors.green.700}' } },
+  warning: { bg: { value: { _light: '{colors.orange.700}', _dark: '{colors.orange.500}' } } },
+}
+
+export const recipeColors = defineSemanticTokens.colors({ link, switch: switchColors, progress, toast })
