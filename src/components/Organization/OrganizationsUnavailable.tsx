@@ -6,6 +6,10 @@ import { useAuth } from '~components/Auth/useAuth'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { EmptyState } from '~components/ui/EmptyState'
 
+type OrganizationsUnavailableProps = {
+  onRetry?: () => Promise<unknown>
+}
+
 /**
  * Shown when the organization address list could not be read. Deliberately
  * distinct from `NoOrganizations`: telling an org owner they have no
@@ -13,14 +17,16 @@ import { EmptyState } from '~components/ui/EmptyState'
  * and there is nothing here to recover it on its own — the query sits at the
  * app root and never remounts.
  */
-export const OrganizationsUnavailable = () => {
+export const OrganizationsUnavailable = ({ onRetry }: OrganizationsUnavailableProps = {}) => {
   const { refreshAddresses } = useAuth()
   const [isRetrying, setRetrying] = useState(false)
 
   const retry = async () => {
     setRetrying(true)
     try {
-      await refreshAddresses()
+      await (onRetry ?? refreshAddresses)()
+    } catch {
+      // rejection stays on screen; the caller already shows the error state
     } finally {
       setRetrying(false)
     }
@@ -49,8 +55,8 @@ export const OrganizationsUnavailable = () => {
   )
 }
 
-export const OrganizationsUnavailablePage = () => (
+export const OrganizationsUnavailablePage = ({ onRetry }: OrganizationsUnavailableProps = {}) => (
   <DashboardContents>
-    <OrganizationsUnavailable />
+    <OrganizationsUnavailable onRetry={onRetry} />
   </DashboardContents>
 )
