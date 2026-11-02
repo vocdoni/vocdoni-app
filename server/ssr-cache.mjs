@@ -134,7 +134,7 @@ function sendEntry(req, res, entry) {
 // Origin helper
 // ---------------------------------------------------------------------------
 
-// Same host shape publicPageData.ts accepts; anything else is never echoed into URLs.
+// Same host shape src/pages/shared/publicOrigin.ts accepts; anything else is never echoed into URLs.
 const FORWARDED_HOST_PATTERN = /^[a-zA-Z0-9.-]+(:\d+)?$/
 const FORWARDED_PROTOS = ['http', 'https']
 

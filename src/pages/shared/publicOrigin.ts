@@ -4,6 +4,10 @@ type PublicOriginContext = Partial<Pick<PageContextServer, 'headers'>> & {
   globalContext?: { appEnv?: { APP_URL?: string } }
 }
 
+// Same host shape server/ssr-cache.mjs accepts; anything else is never echoed into URLs.
+const FORWARDED_HOST_PATTERN = /^[a-zA-Z0-9.-]+(:\d+)?$/
+const FORWARDED_PROTOCOLS = ['http', 'https']
+
 // APP_URL wins; otherwise the origin is rebuilt from the proxy headers. `appUrl`
 // lets callers that already hold the resolved env pass it explicitly.
 export const resolvePublicOrigin = (
@@ -24,16 +28,21 @@ export const resolvePublicOrigin = (
 
   if (!headers) return undefined
 
-  const host = headers['x-forwarded-host'] || headers.host
-  const protocol = headers['x-forwarded-proto'] || (host?.startsWith('localhost') ? 'http' : 'https')
+  // Proxy chains leave hop lists ("a, b") in these headers and clients can send junk; only the
+  // first hop is used, and only when it is a plain host, so `new URL(path, origin)` downstream
+  // never throws and a crafted value is never echoed into a URL.
+  const host = String(headers['x-forwarded-host'] || headers.host || '')
+    .split(',')[0]
+    .trim()
 
-  if (!host || !protocol) return undefined
+  if (!FORWARDED_HOST_PATTERN.test(host)) return undefined
 
-  // Proxy chains can leave lists ("a, b") or junk in these headers; an origin that does not
-  // parse would make every `new URL(path, origin)` downstream throw inside the head render.
-  try {
-    return new URL(`${protocol}://${host}`).origin
-  } catch {
-    return undefined
-  }
+  const forwardedProtocol = String(headers['x-forwarded-proto'] || '')
+    .split(',')[0]
+    .trim()
+    .toLowerCase()
+  const defaultProtocol = host.startsWith('localhost') ? 'http' : 'https'
+  const protocol = FORWARDED_PROTOCOLS.includes(forwardedProtocol) ? forwardedProtocol : defaultProtocol
+
+  return `${protocol}://${host}`
 }
