@@ -2029,6 +2029,9 @@
     "verifying_subtitle": "Espera mentre verifiquem la teva adreça de correu electrònic. Se't redirigirà si té èxit.",
     "verifying_title": "Verificant {{ email }}"
   },
+  "video": {
+    "title": "Vídeo"
+  },
   "view_in_explorer": "Mostra a l'explorador",
   "view_plans_and_pricing": "Veure plans i preus",
   "vocdoni_logo": "Logotip de Vocdoni",

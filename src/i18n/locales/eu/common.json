@@ -1997,6 +1997,9 @@
     "verifying_subtitle": "Itxaron zure posta elektronikoaren helbidea egiaztatzen ari garen bitartean. Birbideratuko zaitugu egiaztapena ondo gauzatzen bada.",
     "verifying_title": "{{ email }} egiaztatzen"
   },
+  "video": {
+    "title": "Bideoa"
+  },
   "view_in_explorer": "Ikusi esploratzailean",
   "view_plans_and_pricing": "Ikusi planak eta prezioak",
   "vocdoni_logo": "Vocdoniren logotipoa",

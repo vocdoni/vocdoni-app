@@ -2029,6 +2029,9 @@
     "verifying_subtitle": "Aguarda enquanto confirmamos o teu endereço de email. Serás redirecionado em caso de sucesso.",
     "verifying_title": "A verificar {{ email }}"
   },
+  "video": {
+    "title": "Vídeo"
+  },
   "view_in_explorer": "Ver no Explorer",
   "view_plans_and_pricing": "Ver planos e preços",
   "vocdoni_logo": "Logótipo do Vocdoni",
