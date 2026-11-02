@@ -1,0 +1,436 @@
+{
+  "create-draft--voter-auth-dialog-1440-dark": {
+    "color-contrast": 4
+  },
+  "create-draft--voter-auth-dialog-1440-light": {
+    "color-contrast": 4
+  },
+  "create-draft-1440-dark": {
+    "aria-command-name": 6,
+    "aria-input-field-name": 3,
+    "label": 3,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "create-draft-1440-light": {
+    "aria-command-name": 6,
+    "aria-input-field-name": 3,
+    "label": 3,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "create-draft-390-dark": {
+    "aria-command-name": 6,
+    "aria-input-field-name": 3
+  },
+  "create-draft-390-light": {
+    "aria-command-name": 6,
+    "aria-input-field-name": 3
+  },
+  "create-empty--publish-errors-1440-dark": {
+    "aria-command-name": 2,
+    "aria-input-field-name": 2,
+    "color-contrast": 1,
+    "label": 2,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "create-empty--publish-errors-1440-light": {
+    "aria-command-name": 2,
+    "aria-input-field-name": 2,
+    "color-contrast": 1,
+    "label": 2,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "create-empty--publish-errors-390-dark": {
+    "aria-command-name": 2,
+    "aria-input-field-name": 2,
+    "label": 2
+  },
+  "create-empty--publish-errors-390-light": {
+    "aria-command-name": 2,
+    "aria-input-field-name": 2,
+    "label": 2
+  },
+  "create-empty-1440-dark": {
+    "aria-command-name": 2,
+    "aria-input-field-name": 2,
+    "label": 2,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "create-empty-1440-light": {
+    "aria-command-name": 2,
+    "aria-input-field-name": 2,
+    "label": 2,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "create-empty-390-dark": {
+    "aria-command-name": 2,
+    "aria-input-field-name": 2
+  },
+  "create-empty-390-light": {
+    "aria-command-name": 2,
+    "aria-input-field-name": 2
+  },
+  "dashboard--user-menu-1440-dark": {
+    "definition-list": 4,
+    "frame-title": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 2
+  },
+  "dashboard--user-menu-1440-light": {
+    "definition-list": 4,
+    "frame-title": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 2
+  },
+  "dashboard-1440-dark": {
+    "definition-list": 4,
+    "frame-title": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 2
+  },
+  "dashboard-1440-light": {
+    "definition-list": 4,
+    "frame-title": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 2
+  },
+  "dashboard-390-dark": {
+    "definition-list": 4,
+    "link-name": 1
+  },
+  "dashboard-390-light": {
+    "definition-list": 4,
+    "link-name": 1
+  },
+  "memberbase-groups--group-menu-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "memberbase-groups--group-menu-1440-light": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "memberbase-groups--group-menu-390-dark": {
+    "aria-valid-attr-value": 1
+  },
+  "memberbase-groups--group-menu-390-light": {
+    "aria-valid-attr-value": 1
+  },
+  "memberbase-groups-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "memberbase-groups-1440-light": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "memberbase-groups-390-dark": {
+    "aria-valid-attr-value": 1
+  },
+  "memberbase-groups-390-light": {
+    "aria-valid-attr-value": 1
+  },
+  "memberbase-members-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label": 12,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "memberbase-members-1440-light": {
+    "aria-valid-attr-value": 1,
+    "label": 12,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "memberbase-members-390-dark": {
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "memberbase-members-390-light": {
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "organization-create-1440-dark": {
+    "aria-input-field-name": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "organization-create-1440-light": {
+    "aria-input-field-name": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "organization-create-390-dark": {
+    "aria-input-field-name": 1
+  },
+  "organization-create-390-light": {
+    "aria-input-field-name": 1
+  },
+  "plans-loggedin-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1
+  },
+  "plans-loggedin-1440-light": {
+    "aria-valid-attr-value": 1,
+    "color-contrast": 2,
+    "label-content-name-mismatch": 1
+  },
+  "plans-loggedin-390-dark": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "scrollable-region-focusable": 1
+  },
+  "plans-loggedin-390-light": {
+    "aria-valid-attr-value": 1,
+    "color-contrast": 2,
+    "label-content-name-mismatch": 1,
+    "scrollable-region-focusable": 1
+  },
+  "plans-public-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1
+  },
+  "plans-public-1440-light": {
+    "aria-valid-attr-value": 1,
+    "color-contrast": 2,
+    "label-content-name-mismatch": 1
+  },
+  "plans-public-390-dark": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "scrollable-region-focusable": 1
+  },
+  "plans-public-390-light": {
+    "aria-valid-attr-value": 1,
+    "color-contrast": 2,
+    "label-content-name-mismatch": 1,
+    "scrollable-region-focusable": 1
+  },
+  "process-ongoing-1440-dark": {
+    "label": 1,
+    "label-content-name-mismatch": 4,
+    "link-name": 1
+  },
+  "process-ongoing-1440-light": {
+    "label": 1,
+    "label-content-name-mismatch": 4,
+    "link-name": 1
+  },
+  "process-ongoing-390-dark": {
+    "label": 1
+  },
+  "process-ongoing-390-light": {
+    "label": 1
+  },
+  "process-results-1440-dark": {
+    "label": 1,
+    "label-content-name-mismatch": 3,
+    "link-name": 1
+  },
+  "process-results-1440-light": {
+    "label": 1,
+    "label-content-name-mismatch": 3,
+    "link-name": 1
+  },
+  "process-results-390-dark": {
+    "label": 1
+  },
+  "process-results-390-light": {
+    "label": 1
+  },
+  "processes-all-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "processes-all-1440-light": {
+    "aria-valid-attr-value": 1,
+    "label": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "processes-all-390-dark": {
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "processes-all-390-light": {
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "processes-drafts-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "processes-drafts-1440-light": {
+    "aria-valid-attr-value": 1,
+    "label": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "processes-drafts-390-dark": {
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "processes-drafts-390-light": {
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "processes-ended-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "processes-ended-1440-light": {
+    "aria-valid-attr-value": 1,
+    "label": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "processes-ended-390-dark": {
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "processes-ended-390-light": {
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "profile-1440-dark": {
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "profile-1440-light": {
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "settings-organization-1440-dark": {
+    "aria-input-field-name": 1,
+    "aria-valid-attr-value": 1,
+    "label": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "settings-organization-1440-light": {
+    "aria-input-field-name": 1,
+    "aria-valid-attr-value": 1,
+    "label": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "settings-organization-390-dark": {
+    "aria-input-field-name": 1,
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "settings-organization-390-light": {
+    "aria-input-field-name": 1,
+    "aria-valid-attr-value": 1,
+    "label": 1
+  },
+  "settings-subscription--contact-dialog-1440-light": {
+    "color-contrast": 2
+  },
+  "settings-subscription--contact-dialog-390-light": {
+    "color-contrast": 2
+  },
+  "settings-subscription-1440-dark": {
+    "aria-valid-attr-value": 2,
+    "label-content-name-mismatch": 4,
+    "link-name": 1
+  },
+  "settings-subscription-1440-light": {
+    "aria-valid-attr-value": 2,
+    "color-contrast": 2,
+    "label-content-name-mismatch": 4,
+    "link-name": 1
+  },
+  "settings-subscription-390-dark": {
+    "aria-valid-attr-value": 2,
+    "label-content-name-mismatch": 3
+  },
+  "settings-subscription-390-light": {
+    "aria-valid-attr-value": 2,
+    "color-contrast": 2,
+    "label-content-name-mismatch": 3
+  },
+  "settings-support-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "settings-support-1440-light": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "settings-support-390-dark": {
+    "aria-valid-attr-value": 1
+  },
+  "settings-support-390-light": {
+    "aria-valid-attr-value": 1
+  },
+  "settings-team-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "settings-team-1440-light": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "settings-team-390-dark": {
+    "aria-valid-attr-value": 1
+  },
+  "settings-team-390-light": {
+    "aria-valid-attr-value": 1
+  },
+  "signin-1440-dark": {
+    "target-size": 1
+  },
+  "signin-1440-light": {
+    "target-size": 1
+  },
+  "signin-390-dark": {
+    "target-size": 1
+  },
+  "signin-390-light": {
+    "target-size": 1
+  },
+  "vote-ongoing-1440-dark": {
+    "definition-list": 1
+  },
+  "vote-ongoing-1440-light": {
+    "definition-list": 1
+  },
+  "vote-ongoing-390-dark": {
+    "definition-list": 1
+  },
+  "vote-ongoing-390-light": {
+    "definition-list": 1
+  },
+  "vote-results-1440-dark": {
+    "definition-list": 1
+  },
+  "vote-results-1440-light": {
+    "definition-list": 1
+  },
+  "vote-results-390-dark": {
+    "definition-list": 1
+  },
+  "vote-results-390-light": {
+    "definition-list": 1
+  }
+}
