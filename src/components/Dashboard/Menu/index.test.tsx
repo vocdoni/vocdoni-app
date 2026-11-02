@@ -73,4 +73,10 @@ describe('DashboardMenu', () => {
     renderMenu(false, vi.fn(), true)
     expect(screen.getByRole('dialog', { name: 'Menu' })).toBeInTheDocument()
   })
+
+  it('names the logo link after its destination', () => {
+    renderMenu(false)
+    // The sidebar is display:none below the lg breakpoint, which is what jsdom applies
+    expect(screen.getByRole('link', { name: 'Dashboard', hidden: true })).toHaveAttribute('href', Routes.dashboard.base)
+  })
 })
