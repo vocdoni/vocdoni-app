@@ -319,6 +319,9 @@
       "mixed": "Mixt"
     }
   },
+  "drag_handle": {
+    "label": "Arrossega per reordenar"
+  },
   "drawer": {
     "close": "Tanca el panell lateral"
   },
@@ -1100,6 +1103,7 @@
       "showing_results_one": "Mostrant {{from, number}}–{{to, number}} d'{{count, number}} resultat",
       "showing_results_many": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} resultats",
       "showing_results_other": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} resultats",
+      "this_member": "aquest membre",
       "toggle_column": "Commuta la columna {{column}}"
     }
   },
@@ -1276,7 +1280,8 @@
     "comparison_table": {
       "footnote_1": "¹ Les votacions amb menys de 10 participants es tracten com a proves i no compten per als límits del teu pla.",
       "footnote_2": "² Els crèdits de 2FA només es consumeixen en el moment que un usuari sol·licita la verificació en un procés de votació. No et quedaràs mai sense avís: si superes els crèdits inclosos durant una votació, cada codi addicional es cobrarà a 0,015 € en el moment de l'enviament. També pots comprar crèdits addicionals per avançat en paquets còmodes.",
-      "footnote_on_demand": "* Les funcionalitats sol·licitades s'avaluaran individualment i poden comportar costos addicionals."
+      "footnote_on_demand": "* Les funcionalitats sol·licitades s'avaluaran individualment i poden comportar costos addicionals.",
+      "region_label": "Taula de comparació de plans"
     },
     "core_voting_one": "Un únic membre",
     "core_voting_many": "Fins a {{ count }} membres",
@@ -1467,11 +1472,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Cancel·la",
-    "continue": "Continua",
-    "end": "Finalitza el procés",
-    "manage": "Gestiona al tauler",
-    "pause": "Pausa"
+    "manage": "Gestiona al tauler"
   },
   "process_context": {
     "clone_as_draft": "Clona com a esborrany",
@@ -2025,6 +2026,9 @@
     "success": "Correu electrònic verificat correctament",
     "verifying_subtitle": "Espera mentre verifiquem la teva adreça de correu electrònic. Se't redirigirà si té èxit.",
     "verifying_title": "Verificant {{ email }}"
+  },
+  "video": {
+    "title": "Vídeo"
   },
   "view_in_explorer": "Mostra a l'explorador",
   "view_plans_and_pricing": "Veure plans i preus",

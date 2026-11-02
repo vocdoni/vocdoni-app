@@ -24,6 +24,8 @@ export type DashboardMenuSection = {
 // admin-specific "New vote" button and first-steps tutorial box are present.
 export type DashboardMenuConfig = {
   homeRoute: string
+  // Accessible name of the logo link: the page homeRoute opens.
+  homeLabel: string
   newVote?: boolean
   tutorial?: boolean
   sections: DashboardMenuSection[]
@@ -34,6 +36,7 @@ export const useAdminMenuConfig = (): DashboardMenuConfig => {
 
   return {
     homeRoute: Routes.dashboard.base,
+    homeLabel: t('menu.dashboard', { defaultValue: 'Dashboard' }),
     newVote: true,
     tutorial: true,
     sections: [
@@ -89,6 +92,7 @@ export const useIntegratorMenuConfig = (): DashboardMenuConfig => {
 
   return {
     homeRoute: Routes.integrators.base,
+    homeLabel: t('integrators.overview', { defaultValue: 'Overview' }),
     newVote: false,
     tutorial: false,
     sections: [

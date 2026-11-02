@@ -77,14 +77,39 @@ const columns = [
   { id: 'email', label: 'Email', visible: true },
 ]
 
-const renderMembers = () =>
+const renderMembers = (data = members) =>
   render(
-    <TableProvider data={members} initialColumns={columns}>
+    <TableProvider data={data} initialColumns={columns}>
       <MembersTable />
     </TableProvider>
   )
 
 describe('MembersTable layout', () => {
+  it('names the row checkbox of a member with no name, email or number', () => {
+    const original = window.matchMedia
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: true,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+      }),
+    })
+
+    try {
+      renderMembers([{ id: '3', name: '', surname: '', email: '', memberNumber: '' }] as any)
+
+      expect(screen.getByRole('checkbox', { name: 'Select this member' })).toBeInTheDocument()
+    } finally {
+      Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
+    }
+  })
+
   // The global matchMedia stub matches nothing, so useBreakpointValue resolves the `base`
   // value and the list renders stacked member cards instead of the desktop table.
   it('renders stacked member cards without a table on mobile', () => {
@@ -124,6 +149,10 @@ describe('MembersTable layout', () => {
       expect(screen.getByRole('columnheader', { name: 'Email' })).toBeInTheDocument()
       // The labelled "Select all" checkbox is specific to the mobile header.
       expect(screen.queryByText('Select all')).not.toBeInTheDocument()
+      // The checkboxes carry no visible text, so they are named by aria-label.
+      expect(screen.getByRole('checkbox', { name: 'Select all' })).toBeInTheDocument()
+      expect(screen.getByRole('checkbox', { name: 'Select Ada Lovelace' })).toBeInTheDocument()
+      expect(screen.getByRole('checkbox', { name: 'Select Alan Turing' })).toBeInTheDocument()
     } finally {
       Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
     }

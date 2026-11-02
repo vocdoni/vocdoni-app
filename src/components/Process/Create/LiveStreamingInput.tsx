@@ -18,9 +18,11 @@ import ReactPlayer from 'react-player'
 import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
 import { SubscriptionPermission } from '~constants'
 import type { Process } from './common'
+import { useIframeTitle } from '~utils/use-iframe-title'
 
 export const LiveStreamingInput = () => {
   const { t } = useTranslation()
+  const videoRef = useIframeTitle(t('video.title', { defaultValue: 'Video' }))
   const methods = useFormContext<Process>()
   const { errors } = methods.formState
   const streamUri = methods.watch('streamUri')
@@ -68,7 +70,7 @@ export const LiveStreamingInput = () => {
                     />
                     <FormErrorMessage>{errors.streamUri?.message?.toString()}</FormErrorMessage>
                   </FormControl>
-                  {streamUri && <ReactPlayer src={streamUri} controls />}
+                  {streamUri && <ReactPlayer ref={videoRef} src={streamUri} controls />}
                 </>
               )}
             </SubscriptionLockedContent>

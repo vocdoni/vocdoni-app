@@ -319,6 +319,9 @@
       "mixed": "Misto"
     }
   },
+  "drag_handle": {
+    "label": "Arrasta para reordenar"
+  },
   "drawer": {
     "close": "Fechar painel"
   },
@@ -1100,6 +1103,7 @@
       "showing_results_one": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultado",
       "showing_results_many": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultados",
       "showing_results_other": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultados",
+      "this_member": "este membro",
       "toggle_column": "Mostrar/ocultar coluna {{column}}"
     }
   },
@@ -1276,7 +1280,8 @@
     "comparison_table": {
       "footnote_1": "¹ As votações com menos de 10 participantes são consideradas testes e não contam para os limites do teu plano.",
       "footnote_2": "² Os créditos 2FA só são consumidos quando um utilizador pede efetivamente a verificação num processo de votação. Não correrás o risco de surpresas: se excederes os créditos incluídos durante uma votação, cada código adicional será cobrado a 0,015 € no momento do envio. Também podes comprar antecipadamente créditos extra em pacotes vantajosos.",
-      "footnote_on_demand": "* As funcionalidades pedidas serão avaliadas individualmente e podem implicar custos adicionais."
+      "footnote_on_demand": "* As funcionalidades pedidas serão avaliadas individualmente e podem implicar custos adicionais.",
+      "region_label": "Tabela comparativa de planos"
     },
     "core_voting_one": "Um único membro",
     "core_voting_many": "Até {{ count }} membros",
@@ -1467,11 +1472,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Cancelar processo",
-    "continue": "Continuar",
-    "end": "Terminar votação",
-    "manage": "Gerir no painel",
-    "pause": "Pausar"
+    "manage": "Gerir no painel"
   },
   "process_context": {
     "clone_as_draft": "Clonar como rascunho",
@@ -2025,6 +2026,9 @@
     "success": "Email confirmado com sucesso",
     "verifying_subtitle": "Aguarda enquanto confirmamos o teu endereço de email. Serás redirecionado em caso de sucesso.",
     "verifying_title": "A verificar {{ email }}"
+  },
+  "video": {
+    "title": "Vídeo"
   },
   "view_in_explorer": "Ver no Explorer",
   "view_plans_and_pricing": "Ver planos e preços",

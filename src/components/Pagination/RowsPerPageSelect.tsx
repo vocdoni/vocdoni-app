@@ -30,6 +30,7 @@ const RowsPerPageSelect = (props: SelectProps) => {
     <Box display='flex' alignItems='center' gap='2'>
       <Text textStyle='body-sm'>{t('pagination.rows_per_page', 'Rows per page')}</Text>
       <Select
+        aria-label={t('pagination.rows_per_page', 'Rows per page')}
         value={value}
         onChange={(newValue) => {
           searchParams.set('limit', String(newValue?.value))

@@ -319,6 +319,9 @@
       "mixed": "Misto"
     }
   },
+  "drag_handle": {
+    "label": "Arraste para reordenar"
+  },
   "drawer": {
     "close": "Fechar painel"
   },
@@ -1100,6 +1103,7 @@
       "showing_results_one": "Mostrando {{from, number}}–{{to, number}} de {{count, number}} resultado",
       "showing_results_many": "Mostrando {{from, number}}–{{to, number}} de {{count, number}} resultados",
       "showing_results_other": "Mostrando {{from, number}}–{{to, number}} de {{count, number}} resultados",
+      "this_member": "este membro",
       "toggle_column": "Alternar coluna {{column}}"
     }
   },
@@ -1276,7 +1280,8 @@
     "comparison_table": {
       "footnote_1": "¹ Votações com menos de 10 participantes são tratadas como testes e não contam para os limites do seu plano.",
       "footnote_2": "² Os créditos 2FA só são consumidos quando um usuário solicita efetivamente a verificação em um processo de votação. Você nunca ficará sem créditos de surpresa: se exceder os créditos incluídos durante uma votação, cada código adicional será cobrado a €0,015 no momento do envio. Você também pode pré-comprar créditos extras em pacotes convenientes.",
-      "footnote_on_demand": "* As funcionalidades solicitadas serão avaliadas individualmente e podem gerar custos adicionais."
+      "footnote_on_demand": "* As funcionalidades solicitadas serão avaliadas individualmente e podem gerar custos adicionais.",
+      "region_label": "Tabela comparativa de planos"
     },
     "core_voting_one": "Um único membro",
     "core_voting_many": "Até {{ count }} membros",
@@ -1467,11 +1472,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Cancelar processo",
-    "continue": "Continuar",
-    "end": "Encerrar votação",
-    "manage": "Gerenciar no painel",
-    "pause": "Pausar"
+    "manage": "Gerenciar no painel"
   },
   "process_context": {
     "clone_as_draft": "Clonar como rascunho",
@@ -2025,6 +2026,9 @@
     "success": "E-mail verificado com sucesso",
     "verifying_subtitle": "Aguarde enquanto verificamos seu endereço de e-mail. Você será redirecionado em caso de sucesso.",
     "verifying_title": "Verificando {{ email }}"
+  },
+  "video": {
+    "title": "Vídeo"
   },
   "view_in_explorer": "Ver no Explorer",
   "view_plans_and_pricing": "Ver planos e preços",

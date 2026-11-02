@@ -142,11 +142,12 @@ const DashboardMenuContent = ({
         >
           <ReactRouterLink
             to={menu.homeRoute}
+            aria-label={menu.homeLabel}
             onClick={() => {
               if (reduced && isTouchLike) onToggleReduced()
             }}
           >
-            <VocdoniLogo width={reduced ? 'full' : '[150px]'} minimal={reduced} maxH='8' />
+            <VocdoniLogo width={reduced ? 'full' : '[150px]'} minimal={reduced} maxH='8' aria-hidden />
           </ReactRouterLink>
           <IconButton
             className='dashboard-collapse-toggle'

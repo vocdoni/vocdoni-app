@@ -5,6 +5,7 @@ import SimpleLayout from '~elements/SimpleLayout'
 import type { AppEnv } from '~src/app-env-build'
 import { act, render, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
+import { useIframeTitle } from '~utils/use-iframe-title'
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => getAuthMock(),
@@ -69,6 +70,8 @@ vi.mock('react-i18next', async (importOriginal) => {
     }),
   }
 })
+
+vi.mock('~utils/use-iframe-title', () => ({ useIframeTitle: vi.fn(() => vi.fn()) }))
 
 vi.mock('~components/Process/ManageProcessLink', () => ({
   ManageProcessLink: () => <div>ManageProcessLink</div>,
@@ -199,6 +202,17 @@ describe('SharedCensus', () => {
     expect(editorValues[0]).toEqual({ value: 'Siempre ES\n\nSolo ES', type: 'string' })
     expect(getByTestId('shared-census-pretext')).toBeInTheDocument()
     expect(getByText('Connect')).toBeInTheDocument()
+  })
+
+  it('titles the video player after the election, or generically when it has no title', async () => {
+    const { default: SharedCensus } = await import('./SharedCensus')
+
+    await renderSharedCensus(<SharedCensus />)
+    expect(useIframeTitle).toHaveBeenLastCalledWith('Video')
+
+    states.election.election = { ...states.election.election, title: { default: 'Board election' } } as any
+    await renderSharedCensus(<SharedCensus />)
+    expect(useIframeTitle).toHaveBeenLastCalledWith('Board election')
   })
 
   it('renders always-visible and connected text when connected/admin', async () => {

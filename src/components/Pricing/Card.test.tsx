@@ -26,7 +26,7 @@ vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
   return {
     ...actual,
-    useLocation: () => ({ pathname: '/dashboard' }),
+    useLocation: () => ({ pathname: Routes.dashboard.base }),
   }
 })
 
@@ -131,5 +131,43 @@ describe('PricingCard', () => {
     })
 
     expect(screen.getByRole('link', { name: 'Contact us' })).toHaveAttribute('href', Routes.dashboard.settings.support)
+  })
+
+  it('names the upgrade button after its visible text', () => {
+    const Wrapper = () => {
+      const form = useForm({ defaultValues: { billingPeriod: 'year' } })
+
+      return (
+        <FormProvider {...form}>
+          <PricingCard
+            title='Starter'
+            subtitle='For small teams'
+            price={10}
+            popular={false}
+            isDisabled={false}
+            isCurrentPlan={false}
+            isCustom={false}
+            plan={
+              {
+                id: 'prod_starter',
+                name: 'Starter',
+                monthlyPrice: 10,
+                yearlyPrice: 100,
+                freeTrialDays: 0,
+                organization: {},
+              } as any
+            }
+            features={[]}
+          />
+        </FormProvider>
+      )
+    }
+
+    render(<Wrapper />, {
+      i18nInstance: i18n,
+      wrapper: ({ children }) => <TestMemoryRouter>{children}</TestMemoryRouter>,
+    })
+
+    expect(screen.getByRole('button', { name: 'Upgrade to Starter' })).toBeInTheDocument()
   })
 })

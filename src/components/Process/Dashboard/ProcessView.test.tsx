@@ -2,7 +2,8 @@ import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from './ProcessView'
+import { useIframeTitle } from '~utils/use-iframe-title'
+import { ElectionVideo, getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from './ProcessView'
 
 const navigateSpy = vi.fn()
 let currentPathname = '/admin/process/0xabc'
@@ -47,6 +48,8 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ElectionTitle: () => <div>ElectionTitle</div>,
   }
 })
+
+vi.mock('~utils/use-iframe-title', () => ({ useIframeTitle: vi.fn(() => vi.fn()) }))
 
 vi.mock('react-player', () => ({
   default: () => null,
@@ -383,6 +386,12 @@ describe('ProcessView voting settings', () => {
     )
   }
 
+  it('names the read-only voting link field', async () => {
+    renderWithCensus(false)
+
+    expect(await screen.findByLabelText('Voting Link')).toHaveAttribute('readonly')
+  })
+
   it('reports an anonymous census in the voting settings', async () => {
     renderWithCensus(true)
 
@@ -413,5 +422,24 @@ describe('ProcessView voting settings', () => {
     const label = await screen.findByText('Voter anonymity')
 
     expect(label.closest('[data-part="trigger"]')).toBeNull()
+  })
+})
+
+describe('ElectionVideo', () => {
+  const renderVideo = (election: Record<string, unknown>) => {
+    setReactProvidersMock({ useElection: () => ({ election }) })
+    render(<ElectionVideo />)
+  }
+
+  it('titles the player after the election', () => {
+    renderVideo({ streamUri: 'https://example.test/live', title: { default: 'Board election' } })
+
+    expect(useIframeTitle).toHaveBeenLastCalledWith('Board election')
+  })
+
+  it('falls back to a generic title when the election has none', () => {
+    renderVideo({ streamUri: 'https://example.test/live' })
+
+    expect(useIframeTitle).toHaveBeenLastCalledWith('Video')
   })
 })

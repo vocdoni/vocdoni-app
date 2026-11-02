@@ -85,6 +85,7 @@ import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { Tooltip } from '~components/ui/Tooltip'
+import { useIframeTitle } from '~utils/use-iframe-title'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -97,8 +98,10 @@ export const getProcessViewPathForTab = (id: string, tab: ProcessViewTab): strin
 type ElectionVideoProps = HTMLChakraProps<'div'>
 
 export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((props, ref) => {
+  const { t } = useTranslation()
   const { election } = useElection()
   const { ...rest } = props
+  const videoRef = useIframeTitle(election?.title?.default || t('video.title', { defaultValue: 'Video' }))
   const recipe = useRecipe({ key: 'ElectionVideo' })
   const styles = recipe()
 
@@ -111,7 +114,7 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
   return (
     <Box ref={ref} css={styles} {...rest}>
       <AspectRatio ratio={16 / 9} width='full' height='full'>
-        <ReactPlayer src={streamUri} width='100%' controls height='100%' />
+        <ReactPlayer ref={videoRef} src={streamUri} width='100%' controls height='100%' />
       </AspectRatio>
     </Box>
   )
@@ -282,7 +285,13 @@ const ProcessViewContent = () => {
             />
 
             <Flex justifyContent='space-between' gap='2' wrap='wrap'>
-              <Input readOnly value={votingLink} flex='1 1 18rem' minW='[0]' />
+              <Input
+                readOnly
+                aria-label={t('voting_link.title', 'Voting Link')}
+                value={votingLink}
+                flex='1 1 18rem'
+                minW='[0]'
+              />
               <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
                 <Icon as={CopyIcon} />
               </IconButton>
@@ -434,7 +443,7 @@ const ProcessViewSidebar = () => {
           </SidebarSubtitle>
           <ActionsProvider>
             {election && isLive(election) && (
-              <ActionPause variant='outline' aria-label={t('process_actions.pause', { defaultValue: 'Pause' })}>
+              <ActionPause variant='outline'>
                 <ControlIcon as={PauseIcon} color='status.warning.fg' />
                 <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                   <Trans i18nKey='pause_vote'>Pause vote</Trans>
@@ -442,23 +451,20 @@ const ProcessViewSidebar = () => {
               </ActionPause>
             )}
             {election && status === 'PAUSED' && (
-              <ActionContinue
-                variant='outline'
-                aria-label={t('process_actions.continue', { defaultValue: 'Continue' })}
-              >
+              <ActionContinue variant='outline'>
                 <ControlIcon as={ResumeIcon} color='status.success.fg' />
                 <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                   <Trans i18nKey='resume_vote'>Resume</Trans>
                 </Text>
               </ActionContinue>
             )}
-            <ActionEnd variant='outline' aria-label={t('process_actions.end', { defaultValue: 'End' })}>
+            <ActionEnd variant='outline'>
               <ControlIcon as={StopIcon} color='destructive.fg' />
               <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                 <Trans i18nKey='end_vote'>End vote</Trans>
               </Text>
             </ActionEnd>
-            <ActionCancel variant='outline' aria-label={t('process_actions.cancel', { defaultValue: 'Cancel' })}>
+            <ActionCancel variant='outline'>
               <ControlIcon as={DeleteIcon} color='destructive.fg' />
               <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                 <Trans i18nKey='cancel_vote'>Cancel vote</Trans>

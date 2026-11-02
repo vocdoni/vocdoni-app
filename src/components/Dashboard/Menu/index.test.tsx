@@ -6,8 +6,15 @@ import { DashboardMenuConfig } from './menus'
 
 const adminMenu: DashboardMenuConfig = {
   homeRoute: Routes.dashboard.base,
+  homeLabel: 'Dashboard',
   newVote: true,
   tutorial: true,
+  sections: [],
+}
+
+const integratorMenu: DashboardMenuConfig = {
+  homeRoute: Routes.integrators.base,
+  homeLabel: 'Overview',
   sections: [],
 }
 
@@ -38,11 +45,11 @@ vi.mock('./Options', () => ({
   DashboardMenuOptions: () => <div>MenuOptions</div>,
 }))
 
-const renderMenu = (reduced: boolean, onToggleReduced = vi.fn()) =>
+const renderMenu = (reduced: boolean, onToggleReduced = vi.fn(), menu = adminMenu) =>
   render(
     <DashboardLayoutContext.Provider value={{ reduced } as any}>
       <TestMemoryRouter>
-        <DashboardMenu isOpen={false} onClose={vi.fn()} onToggleReduced={onToggleReduced} menu={adminMenu} />
+        <DashboardMenu isOpen={false} onClose={vi.fn()} onToggleReduced={onToggleReduced} menu={menu} />
       </TestMemoryRouter>
     </DashboardLayoutContext.Provider>
   )
@@ -67,5 +74,19 @@ describe('DashboardMenu', () => {
     expect(logoLink).toBeTruthy()
     fireEvent.click(logoLink as Element)
     expect(onToggleReduced).toHaveBeenCalledTimes(1)
+  })
+
+  it('names the integrator logo link after the page it opens', () => {
+    renderMenu(false, vi.fn(), integratorMenu)
+    expect(screen.getByRole('link', { name: 'Overview', hidden: true })).toHaveAttribute(
+      'href',
+      Routes.integrators.base
+    )
+  })
+
+  it('names the logo link after its destination', () => {
+    renderMenu(false)
+    // The sidebar is display:none below the lg breakpoint, which is what jsdom applies
+    expect(screen.getByRole('link', { name: 'Dashboard', hidden: true })).toHaveAttribute('href', Routes.dashboard.base)
   })
 })

@@ -9,7 +9,7 @@ export const ROUTES = [
   {
     slug: 'dashboard',
     path: '/admin',
-    states: [{ slug: 'user-menu', open: [[['button', /^User menu$/]]], viewports: DESKTOP }],
+    states: [{ slug: 'user-menu', open: [[['css', '[data-scope="popover"][data-part="trigger"]']]], viewports: DESKTOP }],
   },
   { slug: 'processes-all', path: '/admin/processes/all' },
   { slug: 'processes-ended', path: '/admin/processes/ended' },
@@ -17,7 +17,7 @@ export const ROUTES = [
   {
     slug: 'process-ongoing',
     path: `/admin/process/${P_ONGOING}`,
-    states: [{ slug: 'end-vote-confirm', open: [[['button', /^End voting$/i]]], viewports: DESKTOP }],
+    states: [{ slug: 'end-vote-confirm', open: [[['button', /^End vote$/i]]], viewports: DESKTOP }],
   },
   { slug: 'process-results', path: `/admin/process/${P_ENDED}/results` },
   {
@@ -55,7 +55,7 @@ export const ROUTES = [
   {
     slug: 'settings-subscription',
     path: '/admin/settings/subscription',
-    states: [{ slug: 'contact-dialog', open: [[['button', /^Contact us$/]]] }],
+    states: [{ slug: 'contact-dialog', open: [[['button', /^Schedule a call$/]]] }],
   },
   { slug: 'settings-support', path: '/admin/settings/support' },
   { slug: 'profile', path: '/admin/profile' },

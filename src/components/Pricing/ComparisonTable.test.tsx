@@ -34,4 +34,11 @@ describe('ComparisonTable', () => {
     expect(screen.getByText('spec.max_members')).toBeInTheDocument()
     expect(screen.getByText('10')).toBeInTheDocument()
   })
+
+  // The table scrolls sideways on phones: keyboard users need to focus the scroller.
+  it('exposes the scrollable table as a focusable, named region', () => {
+    render(<ComparisonTable />)
+
+    expect(screen.getByRole('region', { name: 'Plan comparison table' })).toHaveAttribute('tabindex', '0')
+  })
 })

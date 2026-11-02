@@ -21,6 +21,7 @@ import { PageTitle } from '~components/ui/PageTitle'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { ensureAddressPrefix, sameAddress } from '~utils/address'
 import { PageSection } from '~components/ui/PageContainer'
+import { useIframeTitle } from '~utils/use-iframe-title'
 
 export const parseProcessIds = (value: string | undefined) =>
   (value || '')
@@ -63,6 +64,7 @@ const SharedCensusOrganizationBoundary = ({ children }: { children: ReactNode })
 const SharedCensusHomeContent = () => {
   const { t, i18n } = useTranslation()
   const { loading, election, connected } = useElection()
+  const videoRef = useIframeTitle(election?.title?.default || t('video.title', { defaultValue: 'Video' }))
   const { currentAddress, isAuthenticated } = useAuth()
 
   const isAdmin = isAuthenticated && sameAddress(currentAddress, election?.orgAddress)
@@ -136,7 +138,7 @@ const SharedCensusHomeContent = () => {
           {showStream && (
             <Box data-testid='shared-census-stream' maxW='[600px]' alignSelf='center' w='full'>
               <AspectRatio ratio={16 / 9}>
-                <ReactPlayer src={streamUrl} width='100%' height='100%' controls={true} />
+                <ReactPlayer ref={videoRef} src={streamUrl} width='100%' height='100%' controls={true} />
               </AspectRatio>
             </Box>
           )}

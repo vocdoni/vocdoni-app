@@ -2,7 +2,7 @@ import { chakra, Flex, Icon, Separator, Table, Text } from '@chakra-ui/react'
 import { ListLoader } from '~components/ui/Loader'
 import { dotobject } from '~utils/objects'
 import { forwardRef, isValidElement } from 'react'
-import { Trans } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import {
   ComplianceIcon,
   CustomizationIcon,
@@ -116,6 +116,7 @@ const ComparisonSectionTable = ({ titleKey, plans, category, specs }: Comparison
 }
 
 export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>((props, ref) => {
+  const { t } = useTranslation()
   const { data: plans, isLoading } = usePlans()
   const translations = usePlanTranslations()
 
@@ -128,7 +129,12 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
 
   return (
     <Flex ref={ref} justifyContent='center' w='full' display='block'>
-      <Table.ScrollArea>
+      {/* Wide on phones: focusable and named so keyboard users can scroll it. */}
+      <Table.ScrollArea
+        tabIndex={0}
+        role='region'
+        aria-label={t('pricing.comparison_table.region_label', 'Plan comparison table')}
+      >
         <Table.Root borderWidth='hairline' variant='outline'>
           <Table.Header>
             <Table.Row>

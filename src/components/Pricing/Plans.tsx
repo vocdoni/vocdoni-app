@@ -351,11 +351,13 @@ export const SubscriptionPlans = () => {
             />
           )}
           <Tabs.Root
-            alignSelf='center'
+            display='flex'
+            flexDirection='column'
+            gap='4'
             value={period}
             onValueChange={({ value }) => methods.setValue('billingPeriod', value as 'month' | 'year')}
           >
-            <Tabs.List>
+            <Tabs.List alignSelf='center'>
               <Tabs.Trigger value='month'>
                 <Trans i18nKey='monthly'>Monthly</Trans>
               </Tabs.Trigger>
@@ -368,12 +370,16 @@ export const SubscriptionPlans = () => {
                 </Trans>
               </Tabs.Trigger>
             </Tabs.List>
+            {/* The cards are the panel the selected trigger controls (aria-controls); the recipe's padding is cancelled. */}
+            {/* tabIndex -1: the panel always holds focusable cards, so it is not an extra keyboard stop. */}
+            <Tabs.Content value={period} p='[0]' tabIndex={-1}>
+              <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap='6'>
+                {cards.map((card) => (
+                  <PricingCard key={card.plan.id} {...card} />
+                ))}
+              </SimpleGrid>
+            </Tabs.Content>
           </Tabs.Root>
-          <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap='6'>
-            {cards.map((card) => (
-              <PricingCard key={card.plan.id} {...card} />
-            ))}
-          </SimpleGrid>
         </Flex>
       </form>
     </FormProvider>
