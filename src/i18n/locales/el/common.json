@@ -830,6 +830,7 @@
       "sort_by": "Ταξινόμηση κατά {{column}}",
       "sorted_by_asc": "Ταξινομημένα κατά {{column}}, αύξουσα σειρά",
       "sorted_by_desc": "Ταξινομημένα κατά {{column}}, φθίνουσα σειρά",
+      "this_member": "αυτού του μέλους",
       "toggle_column": "Εναλλαγή στήλης {{column}}"
     }
   },

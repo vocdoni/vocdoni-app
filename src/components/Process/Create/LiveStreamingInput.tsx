@@ -20,9 +20,7 @@ import { useIframeTitle } from '~utils/use-iframe-title'
 
 export const LiveStreamingInput = () => {
   const { t } = useTranslation()
-  const videoRef = useIframeTitle(
-    t('process_create.youtube.accordion_title', { defaultValue: 'Attach video (optional)' })
-  )
+  const videoRef = useIframeTitle(t('video.title', { defaultValue: 'Video' }))
   const methods = useFormContext<Process>()
   const { errors } = methods.formState
   const streamUri = methods.watch('streamUri')

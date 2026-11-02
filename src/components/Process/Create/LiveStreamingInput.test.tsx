@@ -1,8 +1,11 @@
 import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm } from 'react-hook-form'
 import { render, screen } from '~src/test-utils'
+import { useIframeTitle } from '~utils/use-iframe-title'
 import type { Process } from './common'
 import { LiveStreamingInput } from './LiveStreamingInput'
+
+vi.mock('~utils/use-iframe-title', () => ({ useIframeTitle: vi.fn(() => vi.fn()) }))
 
 const Wrapper = () => {
   const methods = useForm<Process>({
@@ -19,6 +22,12 @@ const Wrapper = () => {
 }
 
 describe('LiveStreamingInput', () => {
+  it('titles the preview iframe as a video, not as the form section', () => {
+    render(<Wrapper />)
+
+    expect(useIframeTitle).toHaveBeenCalledWith('Video')
+  })
+
   it('renders the live streaming accordion and input when expanded', async () => {
     const user = userEvent.setup()
 

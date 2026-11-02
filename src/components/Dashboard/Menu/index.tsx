@@ -144,7 +144,7 @@ const DashboardMenuContent = ({
         >
           <ReactRouterLink
             to={menu.homeRoute}
-            aria-label={t('menu.dashboard', { defaultValue: 'Dashboard' })}
+            aria-label={menu.homeLabel}
             onClick={() => {
               if (reduced && isTouchLike) onToggleReduced()
             }}

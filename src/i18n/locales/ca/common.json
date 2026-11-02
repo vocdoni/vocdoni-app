@@ -851,6 +851,7 @@
       "sort_by": "Ordena per {{column}}",
       "sorted_by_asc": "Ordenat per {{column}}, ascendent",
       "sorted_by_desc": "Ordenat per {{column}}, descendent",
+      "this_member": "aquest membre",
       "toggle_column": "Commuta la columna {{column}}"
     }
   },

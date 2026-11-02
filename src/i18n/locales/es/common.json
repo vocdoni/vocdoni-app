@@ -851,6 +851,7 @@
       "sort_by": "Ordenar por {{column}}",
       "sorted_by_asc": "Ordenado por {{column}}, ascendente",
       "sorted_by_desc": "Ordenado por {{column}}, descendente",
+      "this_member": "este miembro",
       "toggle_column": "Alternar columna {{column}}"
     }
   },

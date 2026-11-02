@@ -6,8 +6,15 @@ import { DashboardMenuConfig } from './menus'
 
 const adminMenu: DashboardMenuConfig = {
   homeRoute: Routes.dashboard.base,
+  homeLabel: 'Dashboard',
   newVote: true,
   tutorial: true,
+  sections: [],
+}
+
+const integratorMenu: DashboardMenuConfig = {
+  homeRoute: Routes.integrators.base,
+  homeLabel: 'Overview',
   sections: [],
 }
 
@@ -38,11 +45,11 @@ vi.mock('./Options', () => ({
   DashboardMenuOptions: () => <div>MenuOptions</div>,
 }))
 
-const renderMenu = (reduced: boolean, onToggleReduced = vi.fn(), isOpen = false) =>
+const renderMenu = (reduced: boolean, onToggleReduced = vi.fn(), isOpen = false, menu = adminMenu) =>
   render(
     <DashboardLayoutContext.Provider value={{ reduced } as any}>
       <TestMemoryRouter>
-        <DashboardMenu isOpen={isOpen} onClose={vi.fn()} onToggleReduced={onToggleReduced} menu={adminMenu} />
+        <DashboardMenu isOpen={isOpen} onClose={vi.fn()} onToggleReduced={onToggleReduced} menu={menu} />
       </TestMemoryRouter>
     </DashboardLayoutContext.Provider>
   )
@@ -72,6 +79,14 @@ describe('DashboardMenu', () => {
   it('names the mobile menu drawer for screen readers', () => {
     renderMenu(false, vi.fn(), true)
     expect(screen.getByRole('dialog', { name: 'Menu' })).toBeInTheDocument()
+  })
+
+  it('names the integrator logo link after the page it opens', () => {
+    renderMenu(false, vi.fn(), false, integratorMenu)
+    expect(screen.getByRole('link', { name: 'Overview', hidden: true })).toHaveAttribute(
+      'href',
+      Routes.integrators.base
+    )
   })
 
   it('names the logo link after its destination', () => {

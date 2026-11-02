@@ -830,6 +830,7 @@
       "sort_by": "Sort by {{column}}",
       "sorted_by_asc": "Sorted by {{column}}, ascending",
       "sorted_by_desc": "Sorted by {{column}}, descending",
+      "this_member": "this member",
       "toggle_column": "Toggle column {{column}}"
     }
   },

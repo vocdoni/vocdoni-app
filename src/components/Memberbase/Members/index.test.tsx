@@ -124,6 +124,13 @@ const renderMembers = (
   )
 
 describe('MembersTable layout', () => {
+  it('names the row checkbox of a member with no name, email or number', () => {
+    setDesktop(true)
+    renderMembers(undefined, {}, [{ id: '3', name: '', surname: '', email: '', memberNumber: '' }])
+
+    expect(screen.getByRole('checkbox', { name: 'Select this member' })).toBeInTheDocument()
+  })
+
   // The global matchMedia stub matches nothing, so useBreakpointValue resolves the `base`
   // value and the list renders stacked member cards instead of the desktop table.
   it('renders stacked member cards without a table on mobile', () => {

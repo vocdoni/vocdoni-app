@@ -830,6 +830,7 @@
       "sort_by": "Ordenatu honen arabera: {{column}}",
       "sorted_by_asc": "Honen arabera ordenatuta: {{column}}, gorantz",
       "sorted_by_desc": "Honen arabera ordenatuta: {{column}}, beherantz",
+      "this_member": "kide hau",
       "toggle_column": "Txandakatu {{column}} zutabea"
     }
   },
