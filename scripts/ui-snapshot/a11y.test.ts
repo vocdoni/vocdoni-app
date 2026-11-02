@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import { A11Y_TAGS, audit, checkA11y, compareA11y, runA11y, summarizeAxe } from './a11y.mjs'
+import { A11Y_TAGS, audit, checkA11y, compareA11y, runA11y, safeAudit, summarizeAxe } from './a11y.mjs'
 
 const run = (html: string, exceptions: { selector: string; rules: string[] | '*'; reason: string }[] = []) => {
   // The page-level rules (title, lang) would fire on jsdom's bare document.
@@ -163,5 +163,25 @@ describe('audit', () => {
     await audit(page)
     expect(first).toEqual({ label: { impact: 'minor', count: 1, examples: 'input', help: 'u' } })
     expect(evaluate.mock.calls.filter(([arg]) => typeof arg === 'string')).toHaveLength(1)
+  })
+})
+
+describe('safeAudit', () => {
+  it('records an axe-error entry instead of throwing, so the capture survives', async () => {
+    const page = {
+      evaluate: vi.fn().mockRejectedValue(new Error('Execution context was destroyed ' + 'x'.repeat(300))),
+    }
+    const found = await safeAudit(page)
+    expect(Object.keys(found)).toEqual(['axe-error'])
+    expect(found['axe-error']).toMatchObject({ impact: 'n/a', count: 1, help: '' })
+    expect(found['axe-error'].examples).toMatch(/^Execution context was destroyed/)
+    expect(found['axe-error'].examples.length).toBeLessThanOrEqual(200)
+  })
+
+  it('returns the audit result when axe works', async () => {
+    const page = {
+      evaluate: vi.fn(async (arg: unknown) => (typeof arg === 'string' || typeof arg === 'function' ? [] : true)),
+    }
+    expect(await safeAudit(page)).toEqual({})
   })
 })

@@ -119,7 +119,7 @@ read directly. `stress-report.json` holds the counts with examples. The run fail
 `stress-baseline.json`, the leaks known on the branch it was written on; after a fix, lower it with
 `--update-stress-baseline` (a `--routes` run updates only its captures). Elements that keep stock values on
 purpose are listed with a reason in `STRESS_EXCEPTIONS` (`stress.mjs`). CI runs it on pull requests that
-touch `src/`, the snapshot scripts, dependencies, `vite.config.ts`, `index.html`, `public/` or the workflow (the `stress-theme` job in `.github/workflows/test.yml`) and keeps the run as an artifact.
+touch `src/`, the snapshot scripts, dependencies, `vite.config.ts`, `public/` or the workflow (the `Stress theme` leg of the `ui-snapshot` job in `.github/workflows/test.yml`) and keeps the run as the `stress` artifact.
 
 With your own dev server, start it with the alias and pass `--url`; the run stops if the stress theme is
 not the one rendering:
@@ -145,6 +145,9 @@ The run fails on any count above `a11y-baseline.json`. While that file does not 
 exists, lower it after a fix with `--update-a11y-baseline` (a `--routes` run updates only its captures). Write the
 baseline from a CI run, not from your machine: fonts and layout change the colour-contrast results. A deliberate case
 goes with a reason in `A11Y_EXCEPTIONS` (`a11y.mjs`); violations still waiting for a fix belong in the baseline.
+CI runs it as the `Accessibility (axe)` leg of the same job, report-only until the baseline exists; the run is the
+`a11y` artifact and the rule table lands in the job summary. If axe itself fails on a page, the capture is kept and
+the report lists an `axe-error` entry for it.
 
 ## Use your own dev server
 

@@ -7,7 +7,7 @@ import net from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
-import { A11Y_UPDATE_FLAG, audit, checkA11y } from './a11y.mjs'
+import { A11Y_UPDATE_FLAG, checkA11y, safeAudit } from './a11y.mjs'
 import { FAKE_TOKEN, FIXED_NOW, MOCK_PORT, ORG, TOKEN_EXPIRY, startMock } from './mock-saas.mjs'
 import { ROUTES } from './routes.mjs'
 import { checkStress, loadSpec, probe, STRESS_MODULE, stressAlias, UPDATE_FLAG } from './stress.mjs'
@@ -709,7 +709,7 @@ const main = async () => {
         const name = `${route.slug}-${width}-${mode}`
         const elements = await save(visited.page, name, true)
         const stress = stressSpec && (await probe(visited.page, stressSpec))
-        const a11y = opts.a11y && (await audit(visited.page))
+        const a11y = opts.a11y && (await safeAudit(visited.page))
         captures.push({
           ...base,
           state: null,
@@ -748,7 +748,7 @@ const main = async () => {
           await settle(visited.page, warnings)
           const elements = await save(visited.page, name, false)
           const stress = stressSpec && (await probe(visited.page, stressSpec))
-          const a11y = opts.a11y && (await audit(visited.page))
+          const a11y = opts.a11y && (await safeAudit(visited.page))
           captures.push({
             ...base,
             state: state.slug,

@@ -117,8 +117,8 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          if git diff --quiet "$BASE_SHA" HEAD -- src scripts/ui-snapshot package.json pnpm-lock.yaml vite.config.ts index.html public .github/workflows/test.yml; then
-            echo "Nothing that changes what renders was touched: no stress run."
+          if git diff --quiet "$BASE_SHA" HEAD -- src scripts/ui-snapshot package.json pnpm-lock.yaml vite.config.ts public .github/workflows/test.yml; then
+            echo "Nothing that changes what renders was touched: no snapshot run."
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi

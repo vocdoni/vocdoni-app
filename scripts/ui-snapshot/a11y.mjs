@@ -64,6 +64,16 @@ export const audit = async (page) => {
   return page.evaluate(runA11y, { tags: A11Y_TAGS, exceptions: A11Y_EXCEPTIONS }).then(summarizeAxe)
 }
 
+// An axe failure (page navigating mid-audit, evaluate timeout) must not turn a saved capture into a capture error;
+// it is recorded as a pseudo-rule so the report shows it and the ratchet counts it.
+export const safeAudit = async (page) => {
+  try {
+    return await audit(page)
+  } catch (e) {
+    return { 'axe-error': { impact: 'n/a', count: 1, examples: String(e?.message ?? e).slice(0, 200), help: '' } }
+  }
+}
+
 const sortKeys = (object) => Object.fromEntries(Object.entries(object).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
 
 // Pure. `ran` holds the captures that were audited; those that did not run are ignored.
