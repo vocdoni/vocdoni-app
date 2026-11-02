@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import { getAuthMock, setAuthMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { AllProviders, createTestQueryClient, mockUseOrganization } from '~src/test-utils'
+import { AllProviders, mockUseOrganization } from '~src/test-utils'
 import { useAddMembers, useEditMember, useImportJobProgress } from './members'
 
 // Explicit file-level mock so renderHook sees the stubbed useAuth; the setup-file

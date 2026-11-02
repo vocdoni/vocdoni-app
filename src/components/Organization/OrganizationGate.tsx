@@ -10,10 +10,12 @@ import { Loading } from '~src/router/SuspenseLoader'
  * cache is cleared on an org switch.
  */
 export const OrganizationGate = ({ children }: PropsWithChildren) => {
-  const { currentAddress } = useAuth()
+  const { currentAddress, addresses } = useAuth()
   const { organization, error, fetch } = useOrganization()
 
-  if (!currentAddress || organization) return <>{children}</>
+  // No currentAddress can mean "no orgs" (pass through) or "selection not applied yet"
+  // (addresses exist but effect hasn't run). Only pass through in the first case.
+  if ((!currentAddress && !addresses.length) || organization) return <>{children}</>
   if (error) return <OrganizationsUnavailablePage onRetry={() => fetch()} />
   return <Loading />
 }

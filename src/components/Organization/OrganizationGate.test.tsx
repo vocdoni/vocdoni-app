@@ -10,9 +10,9 @@ vi.mock('~components/Auth/useAuth', () => ({
 }))
 
 describe('OrganizationGate', () => {
-  it('passes children through when there is no active address', () => {
-    // No address → onboarding and no-org screens must not be blocked by the gate
-    setAuthMock({ currentAddress: undefined })
+  it('passes children through when there is no active address and no addresses', () => {
+    // No address and no addresses → account has no orgs; pass through to onboarding
+    setAuthMock({ currentAddress: undefined, addresses: [] })
     setReactProvidersMock({
       useOrganization: () => ({ organization: null, error: null, fetch: vi.fn() }),
     })
@@ -22,6 +22,21 @@ describe('OrganizationGate', () => {
       </OrganizationGate>
     )
     expect(screen.getByText('content')).toBeInTheDocument()
+  })
+
+  it('shows the loader when currentAddress is undefined but addresses exist and organization is null', () => {
+    // Addresses loaded but selection not applied yet (useEffect pending) → keep gate closed
+    setAuthMock({ currentAddress: undefined, addresses: ['0x123'] })
+    setReactProvidersMock({
+      useOrganization: () => ({ organization: null, error: null, fetch: vi.fn() }),
+    })
+    render(
+      <OrganizationGate>
+        <div>content</div>
+      </OrganizationGate>
+    )
+    expect(screen.queryByText('content')).not.toBeInTheDocument()
+    expect(screen.getByText('loading')).toBeInTheDocument()
   })
 
   it('shows the loader when address is set but organization has not loaded yet', () => {
