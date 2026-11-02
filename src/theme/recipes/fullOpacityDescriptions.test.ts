@@ -47,4 +47,11 @@ describe('toast contrast', () => {
       _dark: '{colors.orange.500}',
     })
   })
+
+  // Chakra draws the X at 60%, which is 2.51:1 on the red error toast.
+  it('draws the close button at 80%', () => {
+    const styles = system.getSlotRecipe('toast').base?.closeTrigger as Record<string, unknown>
+    expect(styles).toMatchObject({ color: '[{currentColor/80}]' })
+    expect(JSON.stringify(system.css(styles as any))).toMatch(/currentColor 80%/)
+  })
 })
