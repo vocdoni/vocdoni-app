@@ -123,14 +123,7 @@ const UserProfile = () => {
                     </Link>
                   </Button>
                 ) : (
-                  <Text
-                    title={profile.email}
-                    fontWeight='light'
-                    fontSize='xs'
-                    color='dashboard.profile.email'
-                    maxW='var(--size)'
-                    truncate
-                  >
+                  <Text title={profile.email} fontWeight='light' fontSize='xs' maxW='var(--size)' truncate>
                     {profile.email}
                   </Text>
                 )}
@@ -191,23 +184,11 @@ const UserProfile = () => {
               </Popover.Body>
               <Popover.Footer pt={1}>
                 <Flex gap={2} alignItems='center' justifyContent='center' w='full'>
-                  <Link
-                    href={privacyPolicyUrl}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    fontSize='xs'
-                    color='dashboard.support_link'
-                  >
+                  <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' fontSize='xs'>
                     <Trans i18nKey='privacy_policy'>Privacy policy</Trans>
                   </Link>
                   <Text fontSize='xs'>•</Text>
-                  <Link
-                    href={termsOfServiceUrl}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    fontSize='xs'
-                    color='dashboard.support_link'
-                  >
+                  <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' fontSize='xs'>
                     <Trans i18nKey='terms_of_service'>Terms of Service</Trans>
                   </Link>
                 </Flex>

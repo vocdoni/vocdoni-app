@@ -185,6 +185,24 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  // Footer band of the public layout (elements/PublicLayout.tsx): the page surface everywhere except on
+  // organisation pages, where it is a muted band.
+  footer: {
+    bg: {
+      DEFAULT: {
+        value: {
+          _light: '{colors.white}',
+          _dark: '{colors.ink.650}',
+        },
+      },
+      muted: {
+        value: {
+          _light: '{colors.gray.100}',
+          _dark: '{colors.ink.550}',
+        },
+      },
+    },
+  },
   input: {
     placeholder: {
       value: '{colors.gray.500}',

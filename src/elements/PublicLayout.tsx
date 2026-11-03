@@ -75,7 +75,7 @@ const PublicLayout = ({
       </Flex>
       <Box
         as='footer'
-        bgColor={`${isOrganizationPage ? 'footer.gray' : 'footer.white'}`}
+        bgColor={isOrganizationPage ? 'footer.bg.muted' : 'footer.bg'}
         w='full'
         backdropFilter='blur(40px)'
         px={{ base: 4, md: 6, xl: 10 }}

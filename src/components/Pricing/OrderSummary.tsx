@@ -25,7 +25,7 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
   const taxPercent = ((dueNext.taxExclusive.minorUnitsAmount / dueNext.subtotal.minorUnitsAmount) * 100).toPrecision(2)
 
   return (
-    <Box borderWidth={1} borderRadius='md' p={6} bg='card.bg'>
+    <Box borderWidth={1} borderRadius='md' p={6}>
       <VStack align='stretch' gap={4}>
         <Text fontSize='lg' fontWeight='bold'>
           {t('order_summary', { defaultValue: 'Order Summary' })}
