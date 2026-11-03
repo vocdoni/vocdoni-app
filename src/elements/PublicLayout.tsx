@@ -43,7 +43,7 @@ const PublicLayout = ({
         top={0}
         w='full'
         backdropFilter='blur(40px)'
-        zIndex={30}
+        zIndex='public-header'
         px={{ base: 4, md: 6, xl: 10 }}
         maxW='navbar'
         mx='auto'
@@ -62,12 +62,12 @@ const PublicLayout = ({
         flexGrow={1}
         mt={{ base: 4, lg: 6, xl: 10 }}
         mb={{ base: 20, lg: 32 }}
-        maxW='1600px'
+        maxW='content.public'
         mx='auto'
         px={{
-          base: '10px',
-          sm: '20px',
-          md: '80px',
+          base: 2.5,
+          sm: 5,
+          md: 20,
         }}
         w='full'
       >
@@ -79,7 +79,7 @@ const PublicLayout = ({
         w='full'
         backdropFilter='blur(40px)'
         px={{ base: 4, md: 6, xl: 10 }}
-        maxW={'1920px'}
+        maxW='navbar'
         mx={'auto'}
       >
         <Footer />

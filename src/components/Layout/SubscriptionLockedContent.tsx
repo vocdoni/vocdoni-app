@@ -75,7 +75,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
         gap={3}
         borderRadius='lg'
         p={4}
-        zIndex={1}
+        zIndex='contents'
       >
         <Icon as={LuLock} boxSize={8} mb={1} />
         <Text fontWeight='bold' textAlign='center'>
