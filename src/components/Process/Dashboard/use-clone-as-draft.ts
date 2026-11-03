@@ -4,6 +4,7 @@ import { createSearchParams, generatePath, useNavigate } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
+import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
 import { useCreateProcess } from '../Create'
 import { votingProcessToCreateRequest } from '../Create/draft-mapping'
@@ -16,12 +17,15 @@ export const useCloneAsDraft = () => {
   const createProcess = useCreateProcess()
   const { permission } = useSubscription()
   const limit = permission(SubscriptionPermission.Drafts)
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
 
   const cloneAsDraft = async () => {
     if (!election?.id || !election.questions?.length) return
 
     try {
-      const clonedDraftId = await createProcess.mutateAsync(votingProcessToCreateRequest(election, election.orgAddress))
+      const clonedDraftId = await createProcess.mutateAsync(
+        votingProcessToCreateRequest(election, election.orgAddress, disableAnonymousVoting)
+      )
 
       toast({
         title: t('drafts.cloned_draft', {

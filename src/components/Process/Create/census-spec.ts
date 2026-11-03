@@ -9,7 +9,7 @@ type CensusSpecSource = Pick<Process, 'groupId' | 'weightedVote' | 'anonymousVot
  * voter sign-in modal validates before saving, so the pre-flight check and the
  * publish can never disagree on what they send.
  */
-export const buildCensusSpec = (form: CensusSpecSource): CensusSpec => {
+export const buildCensusSpec = (form: CensusSpecSource, disableAnonymous?: boolean): CensusSpec => {
   const spec: CensusSpec = {
     // The backend builds the group's voter list on every save, keyed on the
     // voters' credentials. Without them every voter collides and the save fails,
@@ -18,8 +18,8 @@ export const buildCensusSpec = (form: CensusSpecSource): CensusSpec => {
     groupId: (form.census && form.groupId) || undefined,
     weighted: form.weightedVote || undefined,
     // Blind-CSP census: omitted rather than sent as `false`, matching how the
-    // other optional flags are built here.
-    anonymous: form.anonymousVoting || undefined,
+    // other optional flags are built here. Also omitted when the option is off.
+    anonymous: (!disableAnonymous && form.anonymousVoting) || undefined,
   }
   if (form.census?.credentials?.length) {
     spec.authFields = form.census.credentials as OrgMemberAuthField[]

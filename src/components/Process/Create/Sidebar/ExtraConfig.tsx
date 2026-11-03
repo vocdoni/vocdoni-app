@@ -16,6 +16,7 @@ import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLocked
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
 import { Tooltip } from '~components/ui/Tooltip'
 import { SubscriptionPermission } from '~constants'
+import { useAppEnv } from '~src/app-env'
 import { useValidations } from '~utils/validation'
 import { Process } from '../common'
 
@@ -108,6 +109,7 @@ export const ExtraConfig = () => {
     formState: { errors },
   } = useFormContext<Process>()
   const { required } = useValidations()
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
 
   const resultVisibilityOptions: SelectOption[] = [
     { value: 'live', label: t('process_create.result_visibility.live', 'Live results') },
@@ -171,7 +173,7 @@ export const ExtraConfig = () => {
           <FormErrorMessage>{errors.weightedVote?.message?.toString()}</FormErrorMessage>
         </FormControl>
       </Box>
-      <VoterAnonymity />
+      {!disableAnonymousVoting && <VoterAnonymity />}
     </VStack>
   )
 }

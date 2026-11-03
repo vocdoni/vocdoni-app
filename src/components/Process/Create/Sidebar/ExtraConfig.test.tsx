@@ -34,6 +34,13 @@ describe('ExtraConfig voter anonymity', () => {
     expect(screen.queryByText(/no vote can be traced back/)).not.toBeInTheDocument()
   })
 
+  it('hides the anonymous voting toggle when the option is disabled', () => {
+    render(<Harness />, { appEnv: { DISABLE_ANONYMOUS_VOTING: true } })
+
+    expect(screen.queryByRole('checkbox', { name: /Anonymous voting/ })).not.toBeInTheDocument()
+    expect(screen.getByTestId('form-anonymousVoting')).toHaveTextContent('false')
+  })
+
   it('sets the form flag and explains anonymity once switched on', async () => {
     const user = userEvent.setup()
     render(<Harness />)

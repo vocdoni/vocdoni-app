@@ -10,7 +10,14 @@ import { buildCensusSpec, useConfirmOnNavigate, useFormToVotingProcessRequest } 
 
 const mockPermission = vi.fn()
 
-const { mockUseBlocker } = vi.hoisted(() => ({ mockUseBlocker: vi.fn() }))
+const { mockUseBlocker, mockUseAppEnv } = vi.hoisted(() => ({
+  mockUseBlocker: vi.fn(),
+  mockUseAppEnv: vi.fn(() => ({ DISABLE_ANONYMOUS_VOTING: false })),
+}))
+
+vi.mock('~src/app-env', () => ({
+  useAppEnv: () => mockUseAppEnv(),
+}))
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal<typeof import('react-router')>()),
@@ -402,6 +409,35 @@ describe('useFormToVotingProcessRequest', () => {
       expect(req.census?.anonymous).toBeUndefined()
       expect(req.census?.groupId).toBe('test-group-id')
     })
+
+    it('strips the anonymous flag when the option is disabled, even with plan permission', () => {
+      mockUseAppEnv.mockReturnValueOnce({ DISABLE_ANONYMOUS_VOTING: true })
+      const { result } = renderHook(() => useFormToVotingProcessRequest())
+      mockPermission.mockReturnValue(true)
+      const req = result.current(mockForm, anonymousSpec())
+      expect(req.census?.anonymous).toBeUndefined()
+    })
+
+    it('leaves census unchanged when the option is not disabled', () => {
+      const { result } = renderHook(() => useFormToVotingProcessRequest())
+      mockPermission.mockReturnValue(true)
+      const req = result.current(mockForm, anonymousSpec())
+      expect(req.census?.anonymous).toBe(true)
+    })
+  })
+})
+
+describe('buildCensusSpec with disabled option', () => {
+  const form = (overrides: Partial<Process> = {}): Process =>
+    ({ groupId: 'g1', weightedVote: false, anonymousVoting: true, census: null, ...overrides }) as Process
+
+  it('omits anonymous when the option is disabled', () => {
+    expect(buildCensusSpec(form(), true).anonymous).toBeUndefined()
+  })
+
+  it('includes anonymous when the option is not disabled', () => {
+    expect(buildCensusSpec(form(), false).anonymous).toBe(true)
+    expect(buildCensusSpec(form()).anonymous).toBe(true)
   })
 })
 

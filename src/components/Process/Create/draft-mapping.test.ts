@@ -421,4 +421,30 @@ describe('votingProcessToCreateRequest', () => {
     expect(request.census).toMatchObject({ weighted: true, authFields: ['memberNumber'], twoFaFields: ['email'] })
     expect(request.questions[0].secretUntilTheEnd).toBe(true)
   })
+
+  it('strips the anonymous flag when the option is disabled', () => {
+    const request = votingProcessToCreateRequest(process({ census: { anonymous: true } }), '0xorg', true)
+
+    expect(request.census?.anonymous).toBeUndefined()
+  })
+
+  it('keeps the anonymous flag when the option is not disabled', () => {
+    const request = votingProcessToCreateRequest(process({ census: { anonymous: true } }), '0xorg', false)
+
+    expect(request.census?.anonymous).toBe(true)
+  })
+})
+
+describe('votingProcessToForm with disabled option', () => {
+  it('forces anonymousVoting to false when the option is disabled, even for an anonymous draft', () => {
+    const form = votingProcessToForm(process({ census: { anonymous: true } }), true)
+
+    expect(form.anonymousVoting).toBe(false)
+  })
+
+  it('restores anonymousVoting normally when the option is not disabled', () => {
+    const form = votingProcessToForm(process({ census: { anonymous: true } }), false)
+
+    expect(form.anonymousVoting).toBe(true)
+  })
 })

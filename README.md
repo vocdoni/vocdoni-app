@@ -112,6 +112,8 @@ there, here's a list of variables you can use:
   them (the dashboard, auth, pricing…) keep the Vocdoni logo, and so does an organization that has no logo
   set or whose logo URL fails to load. Only the header is affected: the footer logo is always Vocdoni. It is
   read at runtime, so a single build/image can be branded with `docker run -e SHOW_ORG_LOGO=true`.
+- `DISABLE_ANONYMOUS_VOTING` set it to `true` to hide the anonymous voting option from the process
+  creation wizard. Unset or any other value leaves the option available. Read at runtime.
 
 You can also start the app by prefixing these vars instead of defining your
 custom `.env` file:
