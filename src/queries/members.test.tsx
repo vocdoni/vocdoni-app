@@ -3,26 +3,48 @@ import { ReactNode } from 'react'
 import { useNavigate } from 'react-router'
 import { AllProviders, createTestQueryClient, TestMemoryRouter } from '~src/test-utils'
 import { getAuthMock, setAuthMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { nextMemberSort, usePaginatedMembers } from './members'
+import { nextMemberSort, parseMemberSort, usePaginatedMembers } from './members'
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => getAuthMock(),
 }))
 
-describe('nextMemberSort', () => {
-  it('starts an unsorted column ascending', () => {
-    expect(nextMemberSort(null, 'name')).toEqual({ sortBy: 'name', sortOrder: 'asc' })
-  })
-
-  it('cycles the same column asc -> desc -> unsorted', () => {
-    expect(nextMemberSort({ sortBy: 'email', sortOrder: 'asc' }, 'email')).toEqual({
+describe('parseMemberSort', () => {
+  it('reads a valid sort from the URL', () => {
+    expect(parseMemberSort(new URLSearchParams('sortBy=email&sortOrder=desc'))).toEqual({
       sortBy: 'email',
       sortOrder: 'desc',
     })
-    expect(nextMemberSort({ sortBy: 'email', sortOrder: 'desc' }, 'email')).toBeNull()
   })
 
-  it('switches to a different column ascending', () => {
+  it('returns null when there is no valid sort, leaving the default to the caller', () => {
+    expect(parseMemberSort(new URLSearchParams(''))).toBeNull()
+    expect(parseMemberSort(new URLSearchParams('sortBy=phone&sortOrder=desc'))).toBeNull()
+  })
+})
+
+describe('nextMemberSort', () => {
+  it('starts a column other than the active one ascending', () => {
+    expect(nextMemberSort({ sortBy: 'name', sortOrder: 'asc' }, 'surname')).toEqual({
+      sortBy: 'surname',
+      sortOrder: 'asc',
+    })
+  })
+
+  it('drops the sort instead of writing the default order explicitly', () => {
+    expect(nextMemberSort({ sortBy: 'surname', sortOrder: 'desc' }, 'name')).toBeNull()
+  })
+
+  it('cycles the active column asc -> desc -> unsorted', () => {
+    // The default sort (name asc) is the active one when the URL has no sort.
+    expect(nextMemberSort({ sortBy: 'name', sortOrder: 'asc' }, 'name')).toEqual({
+      sortBy: 'name',
+      sortOrder: 'desc',
+    })
+    expect(nextMemberSort({ sortBy: 'name', sortOrder: 'desc' }, 'name')).toBeNull()
+  })
+
+  it('switches to a different column ascending from a descending one', () => {
     expect(nextMemberSort({ sortBy: 'name', sortOrder: 'desc' }, 'memberNumber')).toEqual({
       sortBy: 'memberNumber',
       sortOrder: 'asc',
@@ -45,8 +67,8 @@ describe('usePaginatedMembers sorting', () => {
     return { bearedFetch, queryClient }
   }
 
-  it('sends the URL sort to the backend and keys the cache by it', async () => {
-    const { bearedFetch, queryClient } = renderMembersHook('/?limit=20&sortBy=surname&sortOrder=desc', {
+  it('sends the URL sort to the backend', async () => {
+    const { bearedFetch } = renderMembersHook('/?limit=20&sortBy=surname&sortOrder=desc', {
       search: 'ada',
     })
 
@@ -54,11 +76,38 @@ describe('usePaginatedMembers sorting', () => {
     expect(bearedFetch).toHaveBeenCalledWith(
       'organizations/0xorg/members?page=1&limit=20&search=ada&sortBy=surname&sortOrder=desc'
     )
-    const keys = queryClient
-      .getQueryCache()
-      .getAll()
-      .map((q) => q.queryKey)
-    expect(keys).toContainEqual(expect.arrayContaining([1, 20, 'ada', 'surname', 'desc']))
+  })
+
+  it('fetches again with the new sort when the URL sort changes', async () => {
+    const bearedFetch = vi.fn().mockResolvedValue({ members: [], pagination: {} })
+    setAuthMock({ bearedFetch })
+    setReactProvidersMock({ useOrganization: () => ({ organization: { address: '0xorg' } }) })
+    const queryClient = createTestQueryClient()
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <AllProviders queryClient={queryClient}>
+        <TestMemoryRouter initialEntries={['/?sortBy=surname&sortOrder=asc']}>{children}</TestMemoryRouter>
+      </AllProviders>
+    )
+    const { result } = renderHook(() => ({ query: usePaginatedMembers({}), navigate: useNavigate() }), { wrapper })
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(1))
+    act(() => {
+      result.current.navigate('/?sortBy=surname&sortOrder=desc')
+    })
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(2))
+    expect(bearedFetch).toHaveBeenLastCalledWith(
+      'organizations/0xorg/members?page=1&limit=10&search=&sortBy=surname&sortOrder=desc'
+    )
+  })
+
+  it('keeps the sort when the search contains ? and &', async () => {
+    const { bearedFetch } = renderMembersHook('/?sortBy=name&sortOrder=desc', { search: 'a?b&sortBy=email' })
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
+    expect(bearedFetch).toHaveBeenCalledWith(
+      'organizations/0xorg/members?page=1&limit=10&search=a%3Fb%26sortBy%3Demail&sortBy=name&sortOrder=desc'
+    )
   })
 
   it('omits the sort params when the URL has no valid sort', async () => {

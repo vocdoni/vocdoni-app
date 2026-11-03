@@ -65,6 +65,8 @@ const useTableProvider = ({
   initialColumns,
 }: Omit<TableProviderProps, 'children'>) => {
   const [selectedRows, setSelectedRows] = useState<SelectedRow[]>([])
+  // Rows are on screen while a fetch replaces them (a refetch, or placeholder rows of a new page or sort).
+  const isUpdatingRows = isFetching && data.length > 0
   const [columns, setColumnsState] = useState<TableColumn[]>(() => {
     const storedVisibleIds = getStoredVisibleIds()
     return computeColumns({ initialColumns, storedVisibleIds })
@@ -121,6 +123,7 @@ const useTableProvider = ({
     isLoading,
     isFetching,
     isPlaceholderData,
+    isUpdatingRows,
     selectedRows,
     allVisibleSelected,
     someSelected,

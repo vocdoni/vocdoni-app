@@ -1046,6 +1046,7 @@
       "add_to_group_success": "Members added to group successfully",
       "bulk_delete": "Delete",
       "cancel": "Cancel",
+      "clear_sort": "Clear sort",
       "close_drawer": "Close",
       "create_group": "Create group",
       "create_group_error": "Error creating group",
@@ -1081,6 +1082,8 @@
       "showing_results_one": "Showing {{from, number}}–{{to, number}} of {{count, number}} result",
       "showing_results_other": "Showing {{from, number}}–{{to, number}} of {{count, number}} results",
       "sort_by": "Sort by {{column}}",
+      "sorted_by_asc": "Sorted by {{column}}, ascending",
+      "sorted_by_desc": "Sorted by {{column}}, descending",
       "toggle_column": "Toggle column {{column}}"
     }
   },

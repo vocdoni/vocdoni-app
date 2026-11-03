@@ -1,11 +1,11 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, type PlaceholderDataFunction } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '~src/queries/pagination'
-import { generatePath, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router'
+import { useOutletContext, useParams, useSearchParams } from 'react-router'
+import { useCallback } from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import type { MemberbaseTabsContext } from '~components/Memberbase'
-import { Routes } from '~routes'
 import { QueryKeys } from './keys'
 
 export type Member = {
@@ -76,46 +76,33 @@ export type MemberSortField = (typeof MEMBER_SORT_FIELDS)[number]
 
 export type SortOrder = 'asc' | 'desc'
 
-export type MemberSort = {
-  sortBy: MemberSortField
-  sortOrder: SortOrder
-} | null
+export type MemberSort = { sortBy: MemberSortField; sortOrder: SortOrder }
+
+// What the backend orders by when the URL carries no sort. The UI shows it as the active sort too.
+export const DEFAULT_MEMBER_SORT: MemberSort = { sortBy: 'name', sortOrder: 'asc' }
 
 export const isMemberSortField = (value: unknown): value is MemberSortField =>
   MEMBER_SORT_FIELDS.includes(value as MemberSortField)
 
-// Header click cycle: asc -> desc -> unsorted. A different column always starts at asc.
-export const nextMemberSort = (current: MemberSort, field: MemberSortField): MemberSort => {
-  if (current?.sortBy !== field) return { sortBy: field, sortOrder: 'asc' }
+// Header click cycle, starting from the active sort: a different column starts at asc, the same
+// column goes asc -> desc, and desc -> null, which drops the sort params from the URL. The default
+// order is also null, so it never gets a redundant explicit URL sort.
+export const nextMemberSort = (current: MemberSort | null, field: MemberSortField): MemberSort | null => {
+  if (current?.sortBy !== field) {
+    const next: MemberSort = { sortBy: field, sortOrder: 'asc' }
+    const isDefault = next.sortBy === DEFAULT_MEMBER_SORT.sortBy && next.sortOrder === DEFAULT_MEMBER_SORT.sortOrder
+    return isDefault ? null : next
+  }
   if (current.sortOrder === 'asc') return { sortBy: field, sortOrder: 'desc' }
   return null
 }
 
-// The member sort lives in the URL next to `limit`; unknown values are ignored so a
+// The explicit member sort from the URL, next to `limit`. Unknown values are ignored so a
 // hand-edited URL falls back to the server's default order instead of a 400.
-export const useUrlMemberSort = () => {
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
+export const parseMemberSort = (searchParams: URLSearchParams): MemberSort | null => {
   const sortBy = searchParams.get('sortBy')
   const sortOrder: SortOrder = searchParams.get('sortOrder') === 'desc' ? 'desc' : 'asc'
-  const sort: MemberSort = isMemberSortField(sortBy) ? { sortBy, sortOrder } : null
-
-  const toggleSort = (field: MemberSortField) => {
-    const next = nextMemberSort(sort, field)
-    const params = new URLSearchParams(searchParams)
-    if (next) {
-      params.set('sortBy', next.sortBy)
-      params.set('sortOrder', next.sortOrder)
-    } else {
-      params.delete('sortBy')
-      params.delete('sortOrder')
-    }
-    const query = params.toString()
-    // A new order invalidates the current page, so go back to the first one.
-    navigate(`${generatePath(Routes.dashboard.memberbase.members, { page: '1' })}${query ? `?${query}` : ''}`)
-  }
-
-  return { sort, toggleSort }
+  return isMemberSortField(sortBy) ? { sortBy, sortOrder } : null
 }
 
 // Only a query of the same organization may lend its rows as placeholder data. The check is
@@ -131,34 +118,43 @@ export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedM
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
   const { page, limit } = useUrlPagination()
-  const { sort: urlSort } = useUrlMemberSort()
+  const [searchParams] = useSearchParams()
+  const address = organization?.address
 
   const effectivePage = showAll ? 1 : page
   const effectiveLimit = showAll ? 0 : limit
   // showAll callers only need totals or the full set, so skip the sort to share one cached query.
-  const sort = showAll ? null : urlSort
+  const sort = showAll ? null : parseMemberSort(searchParams)
 
-  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization?.address)
-  const sortQuery = sort ? `&sortBy=${sort.sortBy}&sortOrder=${sort.sortOrder}` : ''
-  const fetchUrl = `${baseUrl}?page=${effectivePage}&limit=${effectiveLimit}&search=${search}${sortQuery}`
+  // Built with URLSearchParams so a search containing `?` or `&` can't break the query string.
+  const query = new URLSearchParams({ page: String(effectivePage), limit: String(effectiveLimit), search })
+  if (sort) {
+    query.set('sortBy', sort.sortBy)
+    query.set('sortOrder', sort.sortOrder)
+  }
+  const fetchUrl = `${ApiEndpoints.OrganizationMembers.replace('{address}', address)}?${query}`
+
+  // Stable across renders, so TanStack Query doesn't treat it as a new option on every render.
+  const keepSameOrganizationRows = useCallback<PlaceholderDataFunction<MembersResponse, Error>>(
+    (previousData, previousQuery) =>
+      previousQuery && isSameOrganizationQuery(previousQuery.queryKey, address) ? previousData : undefined,
+    [address]
+  )
 
   return useQuery<MembersResponse, Error>({
     queryKey: [
-      ...QueryKeys.organization.members(organization?.address),
+      ...QueryKeys.organization.members(address),
       effectivePage,
       effectiveLimit,
       search,
       sort?.sortBy ?? null,
       sort?.sortOrder ?? null,
     ],
-    enabled: !!organization?.address,
+    enabled: !!address,
     queryFn: () => bearedFetch<MembersResponse>(fetchUrl),
     // Keep showing the current rows while another page, sort or search loads, so the table doesn't
     // collapse and jump. Only within the same organization, never another org's members.
-    placeholderData: (previousData, previousQuery) =>
-      previousQuery && isSameOrganizationQuery(previousQuery.queryKey, organization?.address)
-        ? previousData
-        : undefined,
+    placeholderData: keepSameOrganizationRows,
   })
 }
 

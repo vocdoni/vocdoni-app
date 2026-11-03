@@ -43,7 +43,7 @@ import {
   LuX,
 } from 'react-icons/lu'
 import { FaCaretDown, FaCaretUp } from 'react-icons/fa6'
-import { generatePath, useNavigate, useOutletContext } from 'react-router'
+import { generatePath, useNavigate, useOutletContext, useSearchParams } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
 import DeleteModal, { DeleteModalProps } from '~components/Modal/DeleteModal'
@@ -54,13 +54,16 @@ import { useAddCensusParticipants } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
 import {
+  DEFAULT_MEMBER_SORT,
   isMemberSortField,
   Member,
+  MemberSort,
   MemberSortField,
+  nextMemberSort,
+  parseMemberSort,
   SortOrder,
   useDeleteMembers,
   usePaginatedMembers,
-  useUrlMemberSort,
   useUrlPagination,
 } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
@@ -364,19 +367,12 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
 const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: MemberActionsProps) => {
   const { t } = useTranslation()
   const { open: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
-  const { isPlaceholderData } = useTable()
 
   return (
     <>
       <Menu.Root>
         <Menu.Trigger asChild>
-          <IconButton
-            variant='ghost'
-            size='sm'
-            aria-label={t('members.table.actions', { defaultValue: 'Actions' })}
-            // Placeholder rows are about to be replaced, so no action may start from them.
-            disabled={isPlaceholderData}
-          >
+          <IconButton variant='ghost' size='sm' aria-label={t('members.table.actions', { defaultValue: 'Actions' })}>
             <LuEllipsis />
           </IconButton>
         </Menu.Trigger>
@@ -707,26 +703,12 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
 }
 
 const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching, isPlaceholderData } = useTable()
-  const isLoadingOrImporting = isLoading || isFetching
-  const isEmpty = data.length === 0 && !isLoadingOrImporting
+  const { data = [], isFetching, isUpdatingRows } = useTable()
 
-  if (isLoading && !data.length) {
-    return (
-      <Table.Body>
-        <MembersLoadingRow />
-      </Table.Body>
-    )
-  }
-  if (isEmpty) {
-    return (
-      <Table.Body>
-        <EmptyMembers />
-      </Table.Body>
-    )
-  }
   return (
-    <Table.Body {...placeholderRowsStyle(isPlaceholderData)}>
+    <Table.Body {...placeholderRowsStyle(isUpdatingRows)}>
+      {!data.length && isFetching && <MembersLoadingRow />}
+      {!data.length && !isFetching && <EmptyMembers />}
       {data.map((member) => (
         <MemberTableItem
           key={member.id}
@@ -741,15 +723,12 @@ const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: Member
 }
 
 const MembersCardList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching, isPlaceholderData } = useTable()
-  const isLoadingOrImporting = isLoading || isFetching
-  const isEmpty = data.length === 0 && !isLoadingOrImporting
+  const { data = [], isFetching, isUpdatingRows } = useTable()
 
-  if (isLoading && !data.length) return <MembersLoading />
-  if (isEmpty) return <EmptyMembersMessage />
+  if (!data.length) return isFetching ? <MembersLoading /> : <EmptyMembersMessage />
 
   return (
-    <Stack gap={3} {...placeholderRowsStyle(isPlaceholderData)}>
+    <Stack gap={3} {...placeholderRowsStyle(isUpdatingRows)}>
       {data.map((member) => (
         <MemberCard
           key={member.id}
@@ -790,12 +769,12 @@ const EmptyMembersMessage = () => {
   )
 }
 
-// While the next page or sort loads, the previous rows stay in place but faded, so the table
-// gives feedback without changing height. Their checkboxes and action menus are disabled meanwhile
-// (see `isPlaceholderData` below), so nothing can select or act on rows about to be replaced.
-const placeholderRowsStyle = (isPlaceholderData: boolean) => ({
-  'aria-busy': isPlaceholderData || undefined,
-  opacity: isPlaceholderData ? 0.5 : 1,
+// Rows a fetch will replace stay in place but faded, and `inert` locks their controls until it
+// settles; select-all sits outside this container and is disabled instead.
+const placeholderRowsStyle = (isUpdatingRows: boolean) => ({
+  'aria-busy': isUpdatingRows || undefined,
+  inert: isUpdatingRows || undefined,
+  opacity: isUpdatingRows ? 0.5 : 1,
   transition: 'opacity 0.15s ease-out',
 })
 
@@ -835,10 +814,17 @@ const sortCaretStyle = (active: boolean) =>
 
 const ARIA_SORT: Record<SortOrder, 'ascending' | 'descending'> = { asc: 'ascending', desc: 'descending' }
 
-const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: MemberSortField }) => {
+type SortableColumnHeaderProps = {
+  column: TableColumn
+  field: MemberSortField
+  // The active sort, the default one included when the URL has none.
+  sort: MemberSort
+  onToggleSort: (field: MemberSortField) => void
+}
+
+const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableColumnHeaderProps) => {
   const { t } = useTranslation()
-  const { sort, toggleSort } = useUrlMemberSort()
-  const order = sort?.sortBy === field ? sort.sortOrder : null
+  const order = sort.sortBy === field ? sort.sortOrder : null
   return (
     // aria-sort goes on the active column only, as the ARIA spec recommends.
     <Table.ColumnHeader aria-sort={order ? ARIA_SORT[order] : undefined}>
@@ -851,7 +837,7 @@ const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: M
         fontWeight='inherit'
         color='inherit'
         gap={1}
-        onClick={() => toggleSort(field)}
+        onClick={() => onToggleSort(field)}
         title={t('members.table.sort_by', { defaultValue: 'Sort by {{column}}', column: column.label })}
       >
         {column.label}
@@ -865,7 +851,7 @@ const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: M
 }
 
 const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCensus }: MemberTableItemProps) => {
-  const { isSelected, toggleOne, columns, isPlaceholderData } = useTable()
+  const { isSelected, toggleOne, columns } = useTable()
 
   return (
     <Table.Row>
@@ -873,7 +859,6 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCens
         <Checkbox.Root
           checked={isSelected(member.id)}
           onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
-          disabled={isPlaceholderData}
         >
           <Checkbox.HiddenInput />
           <Checkbox.Control />
@@ -899,6 +884,55 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCens
   )
 }
 
+// Page 1 of the members list, keeping the other query params (page size, sort). React Router's
+// navigate is used directly: RoutedPaginationProvider's setPage treats an empty query as "keep the
+// current one", so it could not drop the sort params.
+const useGoToFirstPage = () => {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  return (update?: (params: URLSearchParams) => void) => {
+    const params = new URLSearchParams(searchParams)
+    update?.(params)
+    const query = params.toString()
+    navigate(`${generatePath(Routes.dashboard.memberbase.members, { page: '1' })}${query ? `?${query}` : ''}`)
+  }
+}
+
+// `null` drops both params, which is the default order.
+const writeMemberSort = (params: URLSearchParams, sort: MemberSort | null) => {
+  if (sort) {
+    params.set('sortBy', sort.sortBy)
+    params.set('sortOrder', sort.sortOrder)
+  } else {
+    params.delete('sortBy')
+    params.delete('sortOrder')
+  }
+}
+
+type SortIndicatorProps = {
+  sort: MemberSort
+  label: string
+  onClear: () => void
+}
+
+const SortIndicator = ({ sort, label, onClear }: SortIndicatorProps) => {
+  const { t } = useTranslation()
+  const text =
+    sort.sortOrder === 'asc'
+      ? t('members.table.sorted_by_asc', { defaultValue: 'Sorted by {{column}}, ascending', column: label })
+      : t('members.table.sorted_by_desc', { defaultValue: 'Sorted by {{column}}, descending', column: label })
+
+  return (
+    <Flex align='center' gap={2} flexWrap='wrap' fontSize='sm' color='texts.subtle'>
+      <Text>{text}</Text>
+      <Button size='xs' variant='outline' onClick={onClear}>
+        {t('members.table.clear_sort', { defaultValue: 'Clear sort' })}
+      </Button>
+    </Flex>
+  )
+}
+
 const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModalProps) => {
   const { t } = useTranslation()
   const toast = useToast()
@@ -907,7 +941,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
   const { data: allMembersData, isFetching: isFetchingAll } = usePaginatedMembers({ showAll: true })
   const { selectedRows, resetSelectedRows } = useTable()
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const goToFirstPage = useGoToFirstPage()
   const selectedMembers = mode === DeleteModes.SELECTED ? selectedRows : allMembersData?.members
   const ids = selectedRows.map((member) => member.id)
   const isDeleteAllMode = mode === DeleteModes.ALL
@@ -927,7 +961,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         duration: 3000,
         isClosable: true,
       })
-      navigate(generatePath(Routes.dashboard.memberbase.members, { page: '1' }))
+      goToFirstPage()
       onClose()
       await queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.members(organization?.address),
@@ -990,10 +1024,11 @@ const MembersRangeSummary = () => {
   const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
   const { page, pagination } = useRoutedPagination()
   const { limit } = useUrlPagination()
-  const { data } = useTable()
+  const { data, isPlaceholderData } = useTable()
   const count = pagination?.totalItems
 
-  if (!count || !data.length) return null
+  // Placeholder rows belong to the previous page or sort, so the range would be wrong until the new rows arrive.
+  if (isPlaceholderData || !count || !data.length) return null
 
   const from = (page - 1) * limit + 1
   const to = from + data.length - 1
@@ -1025,9 +1060,17 @@ const MembersTable = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { open: isAddToGroupOpen, onOpen: onOpenAddToGroup, onClose: onAddToGroupClose } = useDisclosure()
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
-  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isPlaceholderData } =
+  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isUpdatingRows } =
     useTable()
   const isMobile = useBreakpointValue({ base: true, md: false })
+  const [searchParams] = useSearchParams()
+  const goToFirstPage = useGoToFirstPage()
+  const urlSort = parseMemberSort(searchParams)
+  const activeSort = urlSort ?? DEFAULT_MEMBER_SORT
+  const toggleSort = (field: MemberSortField) =>
+    goToFirstPage((params) => writeMemberSort(params, nextMemberSort(activeSort, field)))
+  // Sort headers exist only in the desktop table, so a URL sort on mobile or on a hidden column needs the indicator.
+  const unreachableSortColumn = columns.find((col) => col.id === urlSort?.sortBy && (isMobile || !col.visible))
 
   const openDeleteSelected = (member?: Member) => {
     setDeleteMode(DeleteModes.SELECTED)
@@ -1059,6 +1102,8 @@ const MembersTable = () => {
     setDeleteModalOpen(true)
   }
 
+  const clearSort = () => goToFirstPage((params) => writeMemberSort(params, null))
+
   return (
     <>
       <ImportProgress />
@@ -1084,13 +1129,18 @@ const MembersTable = () => {
             />
           </Flex>
         </Flex>
+        {urlSort && unreachableSortColumn && (
+          <Box px={4} pb={4}>
+            <SortIndicator sort={urlSort} label={unreachableSortColumn.label} onClear={clearSort} />
+          </Box>
+        )}
         {isMobile ? (
           <Box p={4}>
             <Flex justify='space-between' align='center' mb={3}>
               <Checkbox.Root
                 checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                 onCheckedChange={({ checked }) => toggleAll(checked === true)}
-                disabled={isPlaceholderData}
+                disabled={isUpdatingRows}
               >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control />
@@ -1118,7 +1168,7 @@ const MembersTable = () => {
                     <Checkbox.Root
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
-                      disabled={isPlaceholderData}
+                      disabled={isUpdatingRows}
                     >
                       <Checkbox.HiddenInput />
                       <Checkbox.Control />
@@ -1128,7 +1178,13 @@ const MembersTable = () => {
                     .filter((col) => col.visible)
                     .map((col) =>
                       isMemberSortField(col.id) ? (
-                        <SortableColumnHeader key={col.id} column={col} field={col.id} />
+                        <SortableColumnHeader
+                          key={col.id}
+                          column={col}
+                          field={col.id}
+                          sort={activeSort}
+                          onToggleSort={toggleSort}
+                        />
                       ) : (
                         <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
                       )
