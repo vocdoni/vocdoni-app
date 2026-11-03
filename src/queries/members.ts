@@ -1,7 +1,8 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, type PlaceholderDataFunction } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '~src/queries/pagination'
 import { useOutletContext, useParams, useSearchParams } from 'react-router'
+import { useCallback } from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import type { MemberbaseTabsContext } from '~components/Memberbase'
@@ -68,21 +69,92 @@ export const useUrlPagination = () => {
   }
 }
 
+// Member fields the backend can order the list by (`sortBy` query param).
+export const MEMBER_SORT_FIELDS = ['name', 'surname', 'email', 'memberNumber'] as const
+
+export type MemberSortField = (typeof MEMBER_SORT_FIELDS)[number]
+
+export type SortOrder = 'asc' | 'desc'
+
+export type MemberSort = { sortBy: MemberSortField; sortOrder: SortOrder }
+
+// What the backend orders by when the URL carries no sort. The UI shows it as the active sort too.
+export const DEFAULT_MEMBER_SORT: MemberSort = { sortBy: 'name', sortOrder: 'asc' }
+
+export const isMemberSortField = (value: unknown): value is MemberSortField =>
+  MEMBER_SORT_FIELDS.includes(value as MemberSortField)
+
+// Header click cycle, starting from the active sort: a different column starts at asc, the same
+// column goes asc -> desc, and desc -> null, which drops the sort params from the URL. The default
+// order is also null, so it never gets a redundant explicit URL sort.
+export const nextMemberSort = (current: MemberSort | null, field: MemberSortField): MemberSort | null => {
+  if (current?.sortBy !== field) {
+    const next: MemberSort = { sortBy: field, sortOrder: 'asc' }
+    const isDefault = next.sortBy === DEFAULT_MEMBER_SORT.sortBy && next.sortOrder === DEFAULT_MEMBER_SORT.sortOrder
+    return isDefault ? null : next
+  }
+  if (current.sortOrder === 'asc') return { sortBy: field, sortOrder: 'desc' }
+  return null
+}
+
+// The explicit member sort from the URL, next to `limit`. Unknown values are ignored so a
+// hand-edited URL falls back to the server's default order instead of a 400.
+export const parseMemberSort = (searchParams: URLSearchParams): MemberSort | null => {
+  const sortBy = searchParams.get('sortBy')
+  const sortOrder: SortOrder = searchParams.get('sortOrder') === 'desc' ? 'desc' : 'asc'
+  return isMemberSortField(sortBy) ? { sortBy, sortOrder } : null
+}
+
+// Only a query of the same organization may lend its rows as placeholder data. The check is
+// positional on the members key prefix: `search` is also part of the key, so looking for the
+// address anywhere in it would match another organization whose search term equals this address.
+const isSameOrganizationQuery = (queryKey: readonly unknown[], address?: string) => {
+  if (!address) return false
+  const prefix = QueryKeys.organization.members(address)
+  return prefix.every((part, index) => queryKey[index] === part)
+}
+
 export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedMembersProps) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
   const { page, limit } = useUrlPagination()
+  const [searchParams] = useSearchParams()
+  const address = organization?.address
 
   const effectivePage = showAll ? 1 : page
   const effectiveLimit = showAll ? 0 : limit
+  // showAll callers only need totals or the full set, so skip the sort to share one cached query.
+  const sort = showAll ? null : parseMemberSort(searchParams)
 
-  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization?.address)
-  const fetchUrl = `${baseUrl}?page=${effectivePage}&limit=${effectiveLimit}&search=${search}`
+  // Built with URLSearchParams so a search containing `?` or `&` can't break the query string.
+  const query = new URLSearchParams({ page: String(effectivePage), limit: String(effectiveLimit), search })
+  if (sort) {
+    query.set('sortBy', sort.sortBy)
+    query.set('sortOrder', sort.sortOrder)
+  }
+  const fetchUrl = `${ApiEndpoints.OrganizationMembers.replace('{address}', address)}?${query}`
+
+  // Stable across renders, so TanStack Query doesn't treat it as a new option on every render.
+  const keepSameOrganizationRows = useCallback<PlaceholderDataFunction<MembersResponse, Error>>(
+    (previousData, previousQuery) =>
+      previousQuery && isSameOrganizationQuery(previousQuery.queryKey, address) ? previousData : undefined,
+    [address]
+  )
 
   return useQuery<MembersResponse, Error>({
-    queryKey: [...QueryKeys.organization.members(organization?.address), effectivePage, effectiveLimit, search],
-    enabled: !!organization?.address,
+    queryKey: [
+      ...QueryKeys.organization.members(address),
+      effectivePage,
+      effectiveLimit,
+      search,
+      sort?.sortBy ?? null,
+      sort?.sortOrder ?? null,
+    ],
+    enabled: !!address,
     queryFn: () => bearedFetch<MembersResponse>(fetchUrl),
+    // Keep showing the current rows while another page, sort or search loads, so the table doesn't
+    // collapse and jump. Only within the same organization, never another org's members.
+    placeholderData: keepSameOrganizationRows,
   })
 }
 

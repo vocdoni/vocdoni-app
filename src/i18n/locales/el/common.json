@@ -1046,6 +1046,7 @@
       "add_to_group_success": "Τα μέλη προστέθηκαν στην ομάδα με επιτυχία",
       "bulk_delete": "Διαγραφή",
       "cancel": "Ακύρωση",
+      "clear_sort": "Κατάργηση ταξινόμησης",
       "close_drawer": "Κλείσιμο",
       "create_group": "Δημιουργία ομάδας",
       "create_group_error": "Σφάλμα κατά τη δημιουργία ομάδας",
@@ -1080,6 +1081,9 @@
       "showing_members_other": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} μέλη",
       "showing_results_one": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} αποτέλεσμα",
       "showing_results_other": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} αποτελέσματα",
+      "sort_by": "Ταξινόμηση κατά {{column}}",
+      "sorted_by_asc": "Ταξινομημένα κατά {{column}}, αύξουσα σειρά",
+      "sorted_by_desc": "Ταξινομημένα κατά {{column}}, φθίνουσα σειρά",
       "toggle_column": "Εναλλαγή στήλης {{column}}"
     }
   },
