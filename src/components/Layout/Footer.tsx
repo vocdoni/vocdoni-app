@@ -3,13 +3,11 @@ import { Trans, useTranslation } from 'react-i18next'
 import { FaDiscord, FaGithub } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
 import { useAppEnv } from '~src/app-env'
-import { useColorModeValue } from '~theme/color-mode'
 import vcdLogo from '/assets/logo-classic.svg'
 
 const Footer = ({ simplified }: { simplified?: boolean }) => {
   const { t } = useTranslation()
   const appEnv = useAppEnv()
-  const invert = useColorModeValue('invert(0%)', 'invert(100%)')
   const privacyPolicyUrl = appEnv.PRIVACY_POLICY_URL
   const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
 
@@ -24,7 +22,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
       >
         <Box flex='1 1 33%'>
           <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
-            <Image src={vcdLogo} w='125px' mb='12px' filter={invert} alt={t('vocdoni_logo')} />
+            <Image src={vcdLogo} w='125px' mb='12px' _dark={{ filter: 'invert(100%)' }} alt={t('vocdoni_logo')} />
           </Link>
           <Text fontSize='md' lineHeight={1.75}>
             {t('footer.footer_subtitle')}
