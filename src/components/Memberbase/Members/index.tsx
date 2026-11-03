@@ -703,10 +703,10 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
 }
 
 const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isFetching, isUpdatingRows } = useTable()
+  const { data = [], isFetching, isUpdatingRows, isPlaceholderData } = useTable()
 
   return (
-    <Table.Body {...placeholderRowsStyle(isUpdatingRows)}>
+    <Table.Body {...placeholderRowsStyle(isUpdatingRows, isPlaceholderData)}>
       {!data.length && isFetching && <MembersLoadingRow />}
       {!data.length && !isFetching && <EmptyMembers />}
       {data.map((member) => (
@@ -723,12 +723,12 @@ const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: Member
 }
 
 const MembersCardList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isFetching, isUpdatingRows } = useTable()
+  const { data = [], isFetching, isUpdatingRows, isPlaceholderData } = useTable()
 
   if (!data.length) return isFetching ? <MembersLoading /> : <EmptyMembersMessage />
 
   return (
-    <Stack gap={3} {...placeholderRowsStyle(isUpdatingRows)}>
+    <Stack gap={3} {...placeholderRowsStyle(isUpdatingRows, isPlaceholderData)}>
       {data.map((member) => (
         <MemberCard
           key={member.id}
@@ -769,11 +769,12 @@ const EmptyMembersMessage = () => {
   )
 }
 
-// Rows a fetch will replace stay in place but faded, and `inert` locks their controls until it
-// settles; select-all sits outside this container and is disabled instead.
-const placeholderRowsStyle = (isUpdatingRows: boolean) => ({
+// Rows a fetch will replace stay in place but faded. Only placeholder rows (another page, sort or
+// search) are `inert`: a same-key refetch can land while a row's menu or edit drawer, rendered
+// inside this container, is open. Select-all sits outside and is disabled instead.
+const placeholderRowsStyle = (isUpdatingRows: boolean, isPlaceholderData: boolean) => ({
   'aria-busy': isUpdatingRows || undefined,
-  inert: isUpdatingRows || undefined,
+  inert: isPlaceholderData || undefined,
   opacity: isUpdatingRows ? 0.5 : 1,
   transition: 'opacity 0.15s ease-out',
 })
@@ -1060,7 +1061,7 @@ const MembersTable = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { open: isAddToGroupOpen, onOpen: onOpenAddToGroup, onClose: onAddToGroupClose } = useDisclosure()
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
-  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isUpdatingRows } =
+  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isPlaceholderData } =
     useTable()
   const isMobile = useBreakpointValue({ base: true, md: false })
   const [searchParams] = useSearchParams()
@@ -1140,7 +1141,7 @@ const MembersTable = () => {
               <Checkbox.Root
                 checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                 onCheckedChange={({ checked }) => toggleAll(checked === true)}
-                disabled={isUpdatingRows}
+                disabled={isPlaceholderData}
               >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control />
@@ -1168,7 +1169,7 @@ const MembersTable = () => {
                     <Checkbox.Root
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
-                      disabled={isUpdatingRows}
+                      disabled={isPlaceholderData}
                     >
                       <Checkbox.HiddenInput />
                       <Checkbox.Control />

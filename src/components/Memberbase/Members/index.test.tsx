@@ -449,11 +449,11 @@ describe('MembersTable placeholder rows', () => {
     expectRowsLocked(true)
   })
 
-  it('locks the rows while a refetch replaces them, not only for placeholder data', () => {
+  it('marks the rows busy during a same-key refetch, without locking an open row menu or drawer', () => {
     setDesktop(true)
     renderMembers('/admin/memberbase/members/2', { isFetching: true })
 
-    expectRowsLocked(true)
+    expectRowsLocked(false)
     expect(screen.getByRole('cell', { name: 'Ada' }).closest('tbody')).toHaveAttribute('aria-busy', 'true')
   })
 
