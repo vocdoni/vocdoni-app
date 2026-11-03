@@ -1063,6 +1063,7 @@
       "add_to_group_success": "Membres afegits al grup correctament",
       "bulk_delete": "Elimina",
       "cancel": "Cancel·la",
+      "clear_sort": "Esborra l'ordenació",
       "close_drawer": "Tanca",
       "create_group": "Crea un grup",
       "create_group_error": "Error en crear el grup",
@@ -1102,6 +1103,9 @@
       "showing_results_one": "Mostrant {{from, number}}–{{to, number}} d'{{count, number}} resultat",
       "showing_results_many": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} resultats",
       "showing_results_other": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} resultats",
+      "sort_by": "Ordena per {{column}}",
+      "sorted_by_asc": "Ordenat per {{column}}, ascendent",
+      "sorted_by_desc": "Ordenat per {{column}}, descendent",
       "toggle_column": "Commuta la columna {{column}}"
     }
   },

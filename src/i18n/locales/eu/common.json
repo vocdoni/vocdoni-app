@@ -1046,6 +1046,7 @@
       "add_to_group_success": "Kideak behar bezala gehitu dira taldera",
       "bulk_delete": "Ezabatu",
       "cancel": "Utzi",
+      "clear_sort": "Kendu ordenazioa",
       "close_drawer": "Itxi",
       "create_group": "Sortu taldea",
       "create_group_error": "Errorea taldea sortzean",
@@ -1080,6 +1081,9 @@
       "showing_members_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} kide",
       "showing_results_one": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
       "showing_results_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
+      "sort_by": "Ordenatu honen arabera: {{column}}",
+      "sorted_by_asc": "Honen arabera ordenatuta: {{column}}, gorantz",
+      "sorted_by_desc": "Honen arabera ordenatuta: {{column}}, beherantz",
       "toggle_column": "Txandakatu {{column}} zutabea"
     }
   },

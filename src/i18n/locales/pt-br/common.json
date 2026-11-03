@@ -1063,6 +1063,7 @@
       "add_to_group_success": "Membros adicionados ao grupo com sucesso",
       "bulk_delete": "Excluir",
       "cancel": "Cancelar",
+      "clear_sort": "Limpar ordenação",
       "close_drawer": "Fechar",
       "create_group": "Criar grupo",
       "create_group_error": "Erro ao criar o grupo",
@@ -1102,6 +1103,9 @@
       "showing_results_one": "Mostrando {{from, number}}–{{to, number}} de {{count, number}} resultado",
       "showing_results_many": "Mostrando {{from, number}}–{{to, number}} de {{count, number}} resultados",
       "showing_results_other": "Mostrando {{from, number}}–{{to, number}} de {{count, number}} resultados",
+      "sort_by": "Ordenar por {{column}}",
+      "sorted_by_asc": "Ordenado por {{column}}, crescente",
+      "sorted_by_desc": "Ordenado por {{column}}, decrescente",
       "toggle_column": "Alternar coluna {{column}}"
     }
   },
