@@ -26,18 +26,21 @@ export const heading = defineRecipe({
 
 export const link = defineRecipe({
   base: {
-    color: 'gray.800',
+    color: 'link.fg',
     textDecoration: 'underline',
     textDecorationThickness: 'from-font',
     textUnderlineOffset: '0.15em',
+    // Repeats the token on purpose: `.dark &` is more specific than a single class, so in dark mode
+    // it beats the palette colour of Chakra's plain/underline variants and of a Button rendering a
+    // Link (`asChild`), as the dashboard's report download does.
     _dark: {
-      color: 'gray.400',
+      color: 'link.fg',
       _hover: {
-        color: 'gray.200',
+        color: 'link.fg.hover',
       },
     },
     _hover: {
-      color: 'gray.500',
+      color: 'link.fg.hover',
     },
   },
   variants: {
@@ -65,7 +68,7 @@ export const link = defineRecipe({
         borderRadius: 'sm',
         minW: '30px',
         h: '30px',
-        border: '1px solid',
+        border: '{borderWidths.hairline} solid',
         cursor: 'pointer',
         textDecoration: 'none',
       },

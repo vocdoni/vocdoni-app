@@ -30,16 +30,10 @@ const editor: SystemStyleObject = {
     marginBlock: '0.125rem',
   },
   '& .lexical-link': {
-    color: 'gray.800',
-    _dark: {
-      color: 'gray.400',
-      _hover: {
-        color: 'gray.200',
-      },
-    },
+    color: 'link.fg',
     _hover: {
       textDecoration: 'underline',
-      color: 'gray.500',
+      color: 'link.fg.hover',
     },
   },
   '& .lexical-quote': {
