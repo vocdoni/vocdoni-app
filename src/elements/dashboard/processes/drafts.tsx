@@ -108,7 +108,7 @@ export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   }
 
   return (
-    <Table.ScrollArea border='1px solid' borderColor='table.border' borderRadius='sm'>
+    <Table.ScrollArea border='1px solid' borderColor='border' borderRadius='sm'>
       <Table.Root variant='outline'>
         <Table.Header>
           <Table.Row>

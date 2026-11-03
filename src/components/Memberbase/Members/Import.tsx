@@ -113,7 +113,7 @@ const TemplateUploader = () => {
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.download_template.title', { defaultValue: 'Download Import Template' })}
       </Heading>
-      <Text color='texts.subtle' fontSize='sm'>
+      <Text color='fg.muted' fontSize='sm'>
         {t('memberbase.download_template.subtitle', {
           defaultValue:
             'Download the template with your chosen columns, add your member data, and upload the file to set up your memberbase. Once it’s ready, you can start creating votes.',
@@ -378,14 +378,14 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
 
   return (
     <HStack flexDirection='column' gap={4} w='full' alignItems='flex-start'>
-      <Box borderRadius='lg' borderColor='table.border' borderWidth='1px' p={4} w='full'>
-        <Flex borderRadius='lg' borderColor='table.border' borderWidth='1px' p={4} gap={3} mb={2}>
-          <Icon as={LuTriangleAlert} boxSize={4} color='texts.subtle' />
+      <Box borderRadius='lg' borderColor='border' borderWidth='1px' p={4} w='full'>
+        <Flex borderRadius='lg' borderColor='border' borderWidth='1px' p={4} gap={3} mb={2}>
+          <Icon as={LuTriangleAlert} boxSize={4} color='fg.muted' />
           <HStack flexDirection='column' gap={0} alignItems='flex-start'>
             <Heading size='sm' fontWeight='bold'>
               {t('memberbase.importer.warning.title', { defaultValue: 'Warning' })}
             </Heading>
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text fontSize='sm' color='fg.muted'>
               {t('memberbase.importer.warning.subtitle', {
                 defaultValue: 'The information of columns that are not mapped will not be imported.',
               })}
@@ -425,7 +425,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
                         return (
                           <chakraComponents.Option {...props}>
                             <Flex align='center' gap={2}>
-                              {isSelected && <Icon as={LuCheck} boxSize={4} color='texts.subtle' />}
+                              {isSelected && <Icon as={LuCheck} boxSize={4} color='fg.muted' />}
                               {children}
                             </Flex>
                           </chakraComponents.Option>
@@ -442,7 +442,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.importer.data_preview', { defaultValue: 'Data Preview' })}
       </Heading>
-      <Box borderColor='table.border' borderWidth='1px' borderRadius='lg' overflowX='auto' w='full'>
+      <Box borderColor='border' borderWidth='1px' borderRadius='lg' overflowX='auto' w='full'>
         <TableRoot>
           <TableHeader>
             <TableRow>
@@ -486,7 +486,7 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.importer.map_columns.title', { defaultValue: 'Map Columns' })}
       </Heading>
-      <Text color='texts.subtle' fontSize='sm'>
+      <Text color='fg.muted' fontSize='sm'>
         {t('memberbase.importer.map_columns.subtitle', {
           defaultValue:
             'Map columns from your file to the corresponding fields in our system. Required fields are marked with an asterisk (*).',
@@ -584,7 +584,7 @@ export const ImportMembers = () => {
           </Drawer.CloseTrigger>
           <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
             <Drawer.Title>{t('memberbase.importer.title', { defaultValue: 'Import Members' })}</Drawer.Title>
-            <Text color='texts.subtle' fontSize='sm'>
+            <Text color='fg.muted' fontSize='sm'>
               {t('memberbase.importer.subtitle', {
                 defaultValue: 'Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.',
               })}

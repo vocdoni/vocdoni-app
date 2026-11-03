@@ -27,7 +27,7 @@ export const DashboardCardHeader = ({ title, subtitle, ...props }: DashboardCard
       {title}
     </Text>
     {subtitle && (
-      <Text color='texts.subtle' size='sm'>
+      <Text color='fg.muted' size='sm'>
         {subtitle}
       </Text>
     )}
@@ -47,17 +47,7 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref)
 ))
 
 export const SubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
-  <Text
-    mt={2}
-    mb={4}
-    fontSize='md'
-    color='texts.subtle'
-    display='flex'
-    gap={2}
-    alignItems='center'
-    ref={ref}
-    {...props}
-  />
+  <Text mt={2} mb={4} fontSize='md' color='fg.muted' display='flex' gap={2} alignItems='center' ref={ref} {...props} />
 ))
 
 export const SectionHeader = forwardRef<HTMLDivElement, FlexProps>((props, ref) => (
@@ -69,7 +59,7 @@ export const SectionHeading = forwardRef<HTMLHeadingElement, HeadingProps>((prop
 ))
 
 export const SectionSubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
-  <Text color='texts.subtle' fontSize='sm' ref={ref} {...props} />
+  <Text color='fg.muted' fontSize='sm' ref={ref} {...props} />
 ))
 
 export type SidebarProps = BoxProps & {
@@ -104,9 +94,9 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
     <Box
       height='100%'
       width={{ base: '100vw', md: 'sidebar' }}
-      bg='chakra.body.bg'
+      bg='bg'
       borderLeft='1px solid'
-      borderColor='table.border'
+      borderColor='border'
       as='aside'
       display='flex'
       flexDirection='column'

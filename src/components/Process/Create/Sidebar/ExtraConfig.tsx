@@ -31,7 +31,7 @@ const LabelTooltip = ({ children }: { children: React.ReactNode }) => (
       display='inline-flex'
       ml={1}
       cursor='help'
-      color='texts.subtle'
+      color='fg.muted'
       tabIndex={0}
       // This sits inside a <label>: without cancelling the click, tapping the
       // icon to read the tooltip would activate the label's control (and flip
@@ -88,7 +88,7 @@ const VoterAnonymity = () => {
                   </Switch.Label>
                 </Switch.Root>
                 {field.value && (
-                  <Text fontSize='xs' color='texts.subtle' mt={1}>
+                  <Text fontSize='xs' color='fg.muted' mt={1}>
                     {description}
                   </Text>
                 )}

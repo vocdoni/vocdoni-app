@@ -104,7 +104,7 @@ const PricingCard = ({
     <Card.Root ref={container} variant={isCustomPlan ? 'custom-pricing-card' : 'pricing-card'}>
       <Card.Header>
         <Text>{title}</Text>
-        <Text color='texts.subtle'>{subtitle}</Text>
+        <Text color='fg.muted'>{subtitle}</Text>
       </Card.Header>
       <Card.Body>
         <Flex direction='column' h='full' gap={4}>
@@ -119,7 +119,7 @@ const PricingCard = ({
                 values={{ price: currency(price) }}
                 components={{
                   price: <Text fontSize='3xl' fontWeight='extrabold' className='pricing-card-price' />,
-                  time: <Text fontSize='sm' color='texts.subtle' />,
+                  time: <Text fontSize='sm' color='fg.muted' />,
                 }}
                 defaults='<price>{{ price }}</price>/<time>month</time>'
               />
@@ -137,7 +137,7 @@ const PricingCard = ({
                   />
                 </Text>
               ) : (
-                <Text fontSize='sm' color='texts.subtle'>
+                <Text fontSize='sm' color='fg.muted'>
                   <Trans
                     i18nKey='pricing_card.annual_total_cost'
                     defaults='{{ price }} billed annually'
@@ -193,7 +193,7 @@ const PricingCard = ({
                   <ContactButton fontWeight='extrabold' whiteSpace='unset' textAlign='center'>
                     Contact our sales team
                   </ContactButton>
-                  <Text as='span' fontSize='sm' color='texts.subtle' textAlign='center'>
+                  <Text as='span' fontSize='sm' color='fg.muted' textAlign='center'>
                     or
                   </Text>
                 </Trans>

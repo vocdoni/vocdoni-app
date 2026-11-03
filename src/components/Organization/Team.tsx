@@ -254,7 +254,7 @@ const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }:
               {title}
             </RadioGroup.ItemText>
           </Flex>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text fontSize='sm' color='fg.muted'>
             {description}
           </Text>
         </Box>
@@ -365,7 +365,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
   return (
     <FormProvider {...methods}>
       <Flex as='form' direction='column' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
-        <Flex border='1px solid' borderColor='table.border' p={4} borderRadius='md' alignItems='center'>
+        <Flex border='1px solid' borderColor='border' p={4} borderRadius='md' alignItems='center'>
           <Avatar.Root>
             <Avatar.Fallback name={fullName} />
           </Avatar.Root>
@@ -374,7 +374,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
               <Text fontWeight='bold'>{fullName}</Text>
             </HStack>
             <Flex direction='column'>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {user?.info.email}
               </Text>
             </Flex>
@@ -385,7 +385,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
             defaultValue: 'Current Role',
           })}
         </Text>
-        <Box p={2} border='1px solid' borderColor='table.border' borderRadius='md'>
+        <Box p={2} border='1px solid' borderColor='border' borderRadius='md'>
           <Flex gap={2} align='center'>
             <Text>{roleIcons[currentRole]}</Text>
             <Text fontWeight='semibold' textTransform='capitalize'>
@@ -721,11 +721,11 @@ const UsersList = ({ users }: UsersListProps) => {
                 </Badge>
               </HStack>
               <Flex direction='column'>
-                <Text fontSize='sm' color='texts.subtle'>
+                <Text fontSize='sm' color='fg.muted'>
                   {email}
                 </Text>
                 {user.expiration && (
-                  <Text fontSize='xs' color='texts.subtle'>
+                  <Text fontSize='xs' color='fg.muted'>
                     {t('team.expires_in', {
                       defaultValue: 'Expires in {{time}}',
                       time: formatDistanceToNow(new Date(user.expiration)),

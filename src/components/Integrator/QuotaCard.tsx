@@ -27,14 +27,14 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
 
   return (
     <DashboardBox gap={3} justifyContent='flex-start'>
-      <Text fontSize='sm' color='texts.subtle' fontWeight='medium'>
+      <Text fontSize='sm' color='fg.muted' fontWeight='medium'>
         {label}
       </Text>
       <HStack align='baseline' gap={1}>
         <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
           {used}
         </Text>
-        <Text fontSize='md' color='texts.subtle'>
+        <Text fontSize='md' color='fg.muted'>
           {denominator}
         </Text>
       </HStack>

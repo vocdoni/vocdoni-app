@@ -76,7 +76,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
 
   return (
     <Stat.Root flex='0 0 auto' alignItems='end'>
-      <Stat.Label color='texts.subtle' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
+      <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
         {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
       </Stat.Label>
       <Badge colorPalette='green' size='md' fontWeight='bold' fontSize='lg'>
@@ -137,7 +137,7 @@ const ParticipationCard = () => {
                 components={{ b: <Text as='span' color='blue.500' fontWeight='bold' /> }}
               />
             </Text>
-            <Text color='texts.subtle' fontSize='sm'>
+            <Text color='fg.muted' fontSize='sm'>
               {t('process.summary.votes_cast', { count: voteCount, votes: nf(voteCount) })}
             </Text>
           </Flex>
@@ -152,7 +152,7 @@ const ParticipationCard = () => {
 
         <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
           <Stat.Root>
-            <Stat.Label color='texts.subtle' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
+            <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
               {t('process.summary.start_label')}
             </Stat.Label>
             <Stat.ValueText fontSize='md' fontWeight='bold'>
@@ -160,7 +160,7 @@ const ParticipationCard = () => {
             </Stat.ValueText>
           </Stat.Root>
           <Stat.Root>
-            <Stat.Label color='texts.subtle' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
+            <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
               {t('process.summary.end_label')}
             </Stat.Label>
             <Stat.ValueText fontSize='md' fontWeight='bold'>
@@ -182,7 +182,7 @@ const Indicator = ({ label, value, accent }: IndicatorProps) => (
         <Stat.ValueText fontSize='3xl' fontWeight='bold' color={accent ? 'blue.500' : undefined}>
           {value}
         </Stat.ValueText>
-        <Stat.Label color='texts.subtle'>{label}</Stat.Label>
+        <Stat.Label color='fg.muted'>{label}</Stat.Label>
       </Stat.Root>
     </Card.Body>
   </Card.Root>

@@ -14,7 +14,7 @@ export const CreateSidebar = () => {
 
   return (
     <Sidebar show={showSidebar}>
-      <SidebarContents borderBottom='1px solid' borderColor='table.border'>
+      <SidebarContents borderBottom='1px solid' borderColor='border'>
         <SidebarTitle>
           <Trans i18nKey='process_create.settings'>Settings</Trans>
         </SidebarTitle>
@@ -44,12 +44,12 @@ export const CreateSidebar = () => {
         </SidebarSubtitle>
         <BasicConfig />
 
-        <SidebarSubtitle borderTop='1px solid' borderColor='table.border' mt={4}>
+        <SidebarSubtitle borderTop='1px solid' borderColor='border' mt={4}>
           <Trans i18nKey='process_create.extra_configuration'>Extra Configuration</Trans>
         </SidebarSubtitle>
         <ExtraConfig />
 
-        <Flex borderTop='1px solid' borderColor='table.border' mt={4} pt={4} justify='space-between' align='center'>
+        <Flex borderTop='1px solid' borderColor='border' mt={4} pt={4} justify='space-between' align='center'>
           <SidebarSubtitle m={0}>
             <Trans i18nKey='process_create.census_creation'>Census Creation</Trans>
           </SidebarSubtitle>

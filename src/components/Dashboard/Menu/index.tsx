@@ -45,7 +45,7 @@ const DashboardMenu = ({
       {/* Sidebar for large screens */}
       <Box
         borderRight='1px solid'
-        borderRightColor='table.border'
+        borderRightColor='border'
         bgColor='dashboard.menu'
         display={{ base: 'none', md: 'flex' }}
         flexDirection='column'
@@ -97,8 +97,8 @@ const SidebarTutorial = () => {
       gap={2}
       p={4}
       m={2}
-      bgColor='chakra.body.bg'
-      borderColor='table.border'
+      bgColor='bg'
+      borderColor='border'
     >
       <CloseButton
         onClick={() => closeSidebarTutorial()}

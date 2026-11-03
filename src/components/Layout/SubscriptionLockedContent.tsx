@@ -85,7 +85,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
             permissionName,
           })}
         </Text>
-        <Text fontSize='sm' color='texts.dark' textAlign='center'>
+        <Text fontSize='sm' color='fg.muted' textAlign='center'>
           {t(`subscription.locked_content.description`, {
             defaultValue: 'Upgrade your plan to get {{ permissionName }} and more.',
             permissionName,
@@ -94,7 +94,7 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
 
         {plansWithFeature.length > 0 && (
           <Stack gap={2} align='center' mt={2}>
-            <Text fontSize='sm' color='texts.dark'>
+            <Text fontSize='sm' color='fg.muted'>
               {t('subscription.locked_content.available_in', { defaultValue: 'Available in:' })}
             </Text>
             <Wrap justify='center' gap={2}>

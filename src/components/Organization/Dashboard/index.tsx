@@ -192,7 +192,7 @@ const Processes = () => {
   if (!organization) {
     return (
       <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
-        <Text color='texts.subtle'>
+        <Text color='fg.muted'>
           {t('dashboard.welcome.no_organization', { defaultValue: 'No organization found' })}
         </Text>
         <Button asChild colorPalette='gray' variant='outline'>
@@ -294,7 +294,7 @@ const RecentProcess = () => {
             <ElectionTitle mb={0} fontSize='md' textAlign='left' fontWeight='500' truncate />
           </ReactRouterLink>
         </Link>
-        <Text fontSize='sm' color='texts.subtle' truncate>
+        <Text fontSize='sm' color='fg.muted' truncate>
           {t('election.ends_on', {
             defaultValue: 'Ends on {{date}}',
             date: format(election.endDate, t('organization.date_format')),

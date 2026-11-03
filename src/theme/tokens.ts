@@ -18,20 +18,17 @@ const fontWeights = defineTokens.fontWeights({
 
 const radii = defineTokens.radii({
   none: { value: '0rem' },
-  xxs: { value: '2px' },
   xs: { value: '4px' },
   sm: { value: '6px' },
   md: { value: '8px' },
   lg: { value: '10px' },
   xl: { value: '12px' },
   '2xl': { value: '16px' },
-  '3xl': { value: '20px' },
-  '4xl': { value: '24px' },
   full: { value: '9999px' },
 })
 
 const spacing = defineTokens.spacing({
-  sidebar: { value: sidebarWidth },
+  sidebar: { value: '{sizes.sidebar}' },
 })
 
 const sizes = defineTokens.sizes({
@@ -59,8 +56,6 @@ const zIndex = defineTokens.zIndex({
   contents: { value: 1 },
   sidebar: { value: 2 },
   topbar: { value: 3 },
-  modal: { value: 1400 },
-  hovering: { value: 1500 },
   top: { value: 9999 },
 })
 

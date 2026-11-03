@@ -77,7 +77,7 @@ const IntegratorManagedOrganizations = () => {
           <ManagedOrganizationsTable organizations={organizations} />
           {pagination && pagination.lastPage > 1 && (
             <Flex justify='space-between' align='center' gap={4} wrap='wrap'>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('integrators.managed.pagination', {
                   defaultValue: 'Page {{page}} of {{total}} · {{items}} total',
                   page: pagination.currentPage,

@@ -142,7 +142,7 @@ const UserProfile = () => {
           ) : (
             <>
               <Popover.Body>
-                <Box borderBottom='1px solid' borderBottomColor='table.border' py={1}>
+                <Box borderBottom='1px solid' borderBottomColor='border' py={1}>
                   <Button
                     fontWeight='normal'
                     colorPalette='gray'
@@ -164,7 +164,7 @@ const UserProfile = () => {
                     </ReactRouterLink>
                   </Button>
                 </Box>
-                <Box borderBottom='1px solid' borderBottomColor='table.border' py={1}>
+                <Box borderBottom='1px solid' borderBottomColor='border' py={1}>
                   <Text fontWeight='extrabold' fontSize='sm' px={2} py={1.5}>
                     {t('preferences', { defaultValue: 'Preferences' })}
                   </Text>
