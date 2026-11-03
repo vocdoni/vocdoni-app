@@ -155,9 +155,10 @@ See `integration/README.md` ("Pinning upstream commits") for the details.
 - Follow existing Conventional Commit patterns from repo history (`fix(scope): ...`, `chore(scope): ...`, `refactor(scope): ...`).
 - Keep commits scoped to one concern and use imperative summaries.
 - PR descriptions should explain what changed, why, and how it was verified.
-- Before starting work that no GitHub issue tracks yet, suggest the user open one first (offer to draft it), so the
-  problem and its scope are agreed before the code. Link it from the PR (e.g. `Closes #123`). Skip this when the user
-  says the work does not need one.
+- Before starting a feature or bug fix that no GitHub issue or open PR tracks yet, suggest the user open an issue first
+  (offer to draft it), so the problem and its scope are agreed before the code. Link it from the PR: `Closes #123` when
+  the PR completes it, `Refs #123` for partial or phased work. Skip this for small fixes, dependency bumps, release PRs
+  and reviews, when the user says no issue is needed, and when running as a delegated subagent with no user to ask.
 
 ## Agent Working Rules
 - Treat this file as execution guidance for repository tasks.
