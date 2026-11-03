@@ -23,6 +23,7 @@ import { getApiErrorMessage } from '~components/Auth/api'
 import { AUTH_FIELDS, getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { useToast } from '~components/Toast'
 import type { Group } from '~src/queries/groups'
+import { useAppEnv } from '~src/app-env'
 import { buildCensusSpec } from '../census-spec'
 import { Census, Process } from '../common'
 import { MemberCheck } from './MemberCheck'
@@ -149,6 +150,7 @@ type VoterAuthFormProps = {
 export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthFormProps) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
   const { watch: watchProcess } = useFormContext<Process>()
   const [groupId, anonymousVoting, weightedVote] = watchProcess(['groupId', 'anonymousVoting', 'weightedVote'])
 
@@ -160,7 +162,10 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
   // A password alone is refused before saving, so the backend never gets a census it would reject.
   const passwordAlone = passwordNeedsAnotherCredential(credentials, codeMethod)
 
-  const spec = buildCensusSpec({ groupId, anonymousVoting, weightedVote, census: toCensus(values) })
+  const spec = buildCensusSpec(
+    { groupId, anonymousVoting, weightedVote, census: toCensus(values) },
+    disableAnonymousVoting
+  )
   const censusCheck = useCensusCheck(spec, { enabled: !passwordAlone })
   const statusRef = useRef<HTMLDivElement>(null)
 
