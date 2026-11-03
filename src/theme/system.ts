@@ -28,6 +28,11 @@ export const createAppSystem = (primaryColor?: string) => {
       html: {
         colorPalette: brand ? 'brand' : 'gray',
       },
+      // The CSS default (`bolder`) would ask for 700, a weight the app does not
+      // load, and the browser would fake it.
+      'b, strong': {
+        fontWeight: 'bold',
+      },
     },
     theme: {
       tokens: defineTokens({
