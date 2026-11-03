@@ -38,14 +38,9 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
           {denominator}
         </Text>
       </HStack>
-      <Progress.Root
-        value={hasLimit ? Math.min(used, limit) : 0}
-        max={hasLimit ? limit : 1}
-        size='sm'
-        colorPalette={atLimit ? 'red' : 'blue'}
-      >
+      <Progress.Root value={hasLimit ? Math.min(used, limit) : 0} max={hasLimit ? limit : 1} size='sm'>
         <Progress.Track>
-          <Progress.Range />
+          <Progress.Range bgColor={atLimit ? 'meter.critical' : 'meter.ok'} />
         </Progress.Track>
       </Progress.Root>
       <Box minH='22px'>
