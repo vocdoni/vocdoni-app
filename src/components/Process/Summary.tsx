@@ -20,7 +20,10 @@ import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiBarChartBoxLine, RiLock2Line, RiSearchEyeLine, RiShieldCheckLine } from 'react-icons/ri'
 import { useCensusSize } from '~queries/census'
+import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
+import { statusPalette } from '~theme/status'
+import { defaultColorPalette } from '~theme/system'
 
 // Returns the milliseconds left until the relevant deadline (start when upcoming, end otherwise).
 const useTimeLeft = (target?: Date) => {
@@ -63,7 +66,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   // Once the deadline is reached, show the process status instead of a zeroed-out countdown.
   if (left <= 0) {
     return (
-      <Badge colorPalette='gray' size='md' fontWeight='bold' fontSize='lg' alignSelf='end'>
+      <Badge colorPalette={statusPalette.neutral} size='md' fontWeight='bold' fontSize='lg' alignSelf='end'>
         {statusLabel(t, status)}
       </Badge>
     )
@@ -79,7 +82,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
       <Stat.Label color='texts.subtle' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
         {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
       </Stat.Label>
-      <Badge colorPalette='green' size='md' fontWeight='bold' fontSize='lg'>
+      <Badge colorPalette={statusPalette.success} size='md' fontWeight='bold' fontSize='lg'>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
       </Badge>
     </Stat.Root>
@@ -134,14 +137,14 @@ const ParticipationCard = () => {
               <Trans
                 i18nKey='process.summary.participation_current'
                 values={{ percent: nf(percent, 1) }}
-                components={{ b: <Text as='span' color='blue.500' fontWeight='bold' /> }}
+                components={{ b: <Text as='span' color='colorPalette.fg' fontWeight='bold' /> }}
               />
             </Text>
             <Text color='texts.subtle' fontSize='sm'>
               {t('process.summary.votes_cast', { count: voteCount, votes: nf(voteCount) })}
             </Text>
           </Flex>
-          <Progress.Root value={percent} colorPalette='blue' size='lg' striped>
+          <Progress.Root value={percent} size='lg' striped>
             <Progress.Track borderRadius='full'>
               <Progress.Range />
             </Progress.Track>
@@ -179,7 +182,7 @@ const Indicator = ({ label, value, accent }: IndicatorProps) => (
   <Card.Root size='sm' textAlign='center'>
     <Card.Body>
       <Stat.Root alignItems='center' gap={1}>
-        <Stat.ValueText fontSize='3xl' fontWeight='bold' color={accent ? 'blue.500' : undefined}>
+        <Stat.ValueText fontSize='3xl' fontWeight='bold' color={accent ? 'colorPalette.fg' : undefined}>
           {value}
         </Stat.ValueText>
         <Stat.Label color='texts.subtle'>{label}</Stat.Label>
@@ -253,7 +256,14 @@ const ResultsNotice = () => {
           </Card.Body>
         </Card.Root>
       ) : (
-        <Box bg='blue.50' color='blue.900' borderRadius='lg' p={4} _dark={{ bg: 'blue.950', color: 'blue.100' }}>
+        <Box
+          colorPalette={statusPalette.info}
+          bg='status.info.bg'
+          color='colorPalette.900'
+          borderRadius='lg'
+          p={4}
+          _dark={{ color: 'colorPalette.100' }}
+        >
           <Flex gap={3} align='start'>
             <Box as={RiBarChartBoxLine} boxSize={5} flexShrink={0} mt={0.5} />
             <Text fontSize='sm'>
@@ -287,9 +297,19 @@ const techItems = (anonymous?: boolean) => [
 const CertifiedTech = () => {
   const { t } = useTranslation()
   const { election } = useElection()
+  const { PRIMARY_COLOR } = useAppEnv()
 
+  // The card is dark in both colour modes, so its accents take the dark-mode tokens. The palette is
+  // set again because the one inherited from the page was resolved for the page's mode.
   return (
-    <Card.Root bg='gray.800' color='white' size='lg' borderWidth='0'>
+    <Card.Root
+      className='dark'
+      colorPalette={defaultColorPalette(PRIMARY_COLOR)}
+      bg='gray.800'
+      color='white'
+      size='lg'
+      borderWidth='0'
+    >
       <Card.Body>
         <Flex direction={{ base: 'column', lg: 'row' }} gap={8}>
           <Box flex='1'>
@@ -302,7 +322,7 @@ const CertifiedTech = () => {
             <List.Root variant='plain' gap={3}>
               {techItems(election?.census?.anonymous).map(({ key, icon }) => (
                 <List.Item key={key} alignItems='start' gap={2}>
-                  <List.Indicator asChild color='blue.400' mt={1}>
+                  <List.Indicator asChild color='colorPalette.fg' mt={1}>
                     <Box as={icon} />
                   </List.Indicator>
                   <Text fontSize='sm'>
@@ -324,7 +344,7 @@ const CertifiedTech = () => {
             pl={{ lg: 8 }}
             minW={{ lg: '240px' }}
           >
-            <Button colorPalette='blue' mt={2} asChild>
+            <Button mt={2} asChild>
               <a href={Routes.vocdoni} target='_blank' rel='noreferrer'>
                 {t('process.summary.learn_more')}
               </a>

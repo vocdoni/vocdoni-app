@@ -86,7 +86,7 @@ export const PromotionCodeInput = () => {
         </Button>
       </Flex>
       {(errors.promoCode || error) && (
-        <Text color='red.500' fontSize='sm' mt={1}>
+        <Text color='status.error.fg' fontSize='sm' mt={1}>
           {errors.promoCode?.message || error}
         </Text>
       )}
@@ -95,7 +95,7 @@ export const PromotionCodeInput = () => {
     <Box p={3} borderRadius='md' borderWidth={1}>
       <Flex justify='space-between' align='center'>
         <Flex align='center' gap={2}>
-          <LuCheck color='green' />
+          <Icon as={LuCheck} color='status.success.fg' />
           <Text fontSize='sm' fontWeight='medium'>
             <Trans i18nKey='code_applied'>Code "{{ appliedCode }}" applied</Trans>
           </Text>

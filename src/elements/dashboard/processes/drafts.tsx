@@ -293,7 +293,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
               </HStack>
             </MenuItem>
             <MenuSeparator />
-            <MenuItem value='delete' color='fg.error' onClick={deleteDraft}>
+            <MenuItem value='delete' color='destructive.fg' onClick={deleteDraft}>
               <HStack gap={2} align='center'>
                 <Icon as={LuTrash} boxSize={4} />
                 <span>{t('drafts.delete', { defaultValue: 'Delete Draft' })}</span>

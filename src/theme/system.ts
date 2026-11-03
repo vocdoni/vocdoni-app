@@ -5,6 +5,9 @@ import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import tokens from './tokens'
 
+// The palette `colorPalette`-aware components fall back to when none is set.
+export const defaultColorPalette = (primaryColor?: string) => (normalizeHexColor(primaryColor) ? 'brand' : 'gray')
+
 /**
  * Builds the chakra system for a given primary/accent color.
  *
@@ -26,7 +29,7 @@ export const createAppSystem = (primaryColor?: string) => {
   return createSystem(defaultConfig, {
     globalCss: {
       html: {
-        colorPalette: brand ? 'brand' : 'gray',
+        colorPalette: defaultColorPalette(brand),
       },
     },
     theme: {

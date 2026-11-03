@@ -574,7 +574,7 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
         {isLoading ? <Spinner size='xs' /> : <Icon as={LuRefreshCw} />}
         <Box>{t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}</Box>
       </Menu.Item>
-      <Menu.Item value='cancel-invitation' color='red.400' disabled={isLoading} onClick={openCancelInvitation}>
+      <Menu.Item value='cancel-invitation' color='destructive.fg' disabled={isLoading} onClick={openCancelInvitation}>
         {t('team.actions.cancel_invitation', { defaultValue: 'Cancel Invitation' })}
       </Menu.Item>
     </>
@@ -591,7 +591,7 @@ const ActiveUserActions = ({ openChangeRole, openRemoveUser }: ActiveUserActions
         <Box>{t('team.actions.change_role', { defaultValue: 'Change role' })}</Box>
       </Menu.Item>
       <Menu.Separator />
-      <Menu.Item value='remove-user' color='red.400' fontSize='sm' onClick={openRemoveUser}>
+      <Menu.Item value='remove-user' color='destructive.fg' fontSize='sm' onClick={openRemoveUser}>
         {t('team.actions.remove_user', { defaultValue: 'Remove user' })}
       </Menu.Item>
     </>

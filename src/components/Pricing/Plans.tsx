@@ -19,6 +19,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { getPlanKey, isPlanNamed, PlanName } from '~constants'
 import { QueryKeys } from '~src/queries/keys'
+import { statusPalette } from '~theme/status'
 import PricingCard from './Card'
 import { useSubscriptionCheckout } from './use-subscription-checkout'
 
@@ -369,7 +370,14 @@ export const SubscriptionPlans = () => {
               <Tabs.Trigger value='year'>
                 <Trans i18nKey='annual'>
                   Annual
-                  <Tag.Root variant='subtle' colorPalette='green' ml={2} fontSize='xs' fontWeight='extrabold' py={0.5}>
+                  <Tag.Root
+                    variant='subtle'
+                    colorPalette={statusPalette.success}
+                    ml={2}
+                    fontSize='xs'
+                    fontWeight='extrabold'
+                    py={0.5}
+                  >
                     <Tag.Label>Save 40%</Tag.Label>
                   </Tag.Root>
                 </Trans>

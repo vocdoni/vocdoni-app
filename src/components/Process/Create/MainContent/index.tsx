@@ -15,6 +15,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus } from 'react-icons/lu'
 import DeleteModal from '~components/Modal/DeleteModal'
+import { statusPalette } from '~theme/status'
 import { defaultQuestion } from '../common'
 import { QuestionForm } from './QuestionForm'
 
@@ -34,7 +35,7 @@ const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
         <Button variant='outline' onClick={() => onOpenChange({ open: false })}>
           {t('process.create.question.delete.cancel_button', { defaultValue: 'Cancel' })}
         </Button>
-        <Button colorPalette='red' onClick={removeQuestion}>
+        <Button colorPalette={statusPalette.destructive} onClick={removeQuestion}>
           {t('process.create.question.delete.delete_button', { defaultValue: 'Delete' })}
         </Button>
       </Flex>
