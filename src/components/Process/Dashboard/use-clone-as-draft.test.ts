@@ -11,6 +11,10 @@ const mockMutateAsync = vi.fn()
 const mockPermission = vi.fn()
 let mockElection: VotingProcessResponse | null = null
 
+vi.mock('~src/app-env', () => ({
+  useAppEnv: () => ({ DISABLE_ANONYMOUS_VOTING: false }),
+}))
+
 vi.mock('react-router', () => ({
   useNavigate: () => mockNavigate,
   generatePath: vi.fn((path: string) => path.replace(':page', '1')),

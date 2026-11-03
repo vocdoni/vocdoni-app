@@ -5,6 +5,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuKeyRound } from 'react-icons/lu'
 import { useToast } from '~components/Toast'
 import type { Group } from '~src/queries/groups'
+import { useAppEnv } from '~src/app-env'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { buildCensusSpec } from '../census-spec'
 import { Census, Process } from '../common'
@@ -27,6 +28,7 @@ type VoterAuthenticationProps = {
 export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationProps) => {
   const { t } = useTranslation()
   const toast = useToast()
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
   const { watch, setValue } = useFormContext<Process>()
   const { open: isOpen, onOpen, onClose } = useVoterAuthDialog()
   const { isAuthPending: isPending, hasAuthError: censusError } = useCensusSteps()
@@ -58,9 +60,10 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
   // The saved settings were validated against the group and the chosen details
   // of that moment; this re-checks them whenever either changes.
   // Same cache as the dialog's own check, so an unchanged census costs nothing.
-  const savedCheck = useCensusCheck(buildCensusSpec({ groupId, anonymousVoting, weightedVote, census }), {
-    enabled: !!census && !!groupId,
-  })
+  const savedCheck = useCensusCheck(
+    buildCensusSpec({ groupId, anonymousVoting, weightedVote, census }, disableAnonymousVoting),
+    { enabled: !!census && !!groupId }
+  )
 
   const handleSave = (next: Census) => {
     // The dialog doubles as the "Edit" entry point, so a save that changes

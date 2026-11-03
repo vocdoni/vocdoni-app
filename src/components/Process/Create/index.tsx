@@ -41,6 +41,7 @@ import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Das
 import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
+import { useAppEnv } from '~src/app-env'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
@@ -249,6 +250,7 @@ export const useFormDraftSaver = (
   storeDraftId: (id: string | null) => void,
   saveCooldown?: (ms: number) => void
 ) => {
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
   const createProcess = useCreateProcess()
   const updateProcess = useUpdateProcess()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
@@ -335,7 +337,7 @@ export const useFormDraftSaver = (
         // waited for its turn still sends the latest form.
         await writeDraft(() => {
           const form = getValues()
-          return formToVotingProcessRequest(form, buildCensusSpec(form))
+          return formToVotingProcessRequest(form, buildCensusSpec(form, disableAnonymousVoting))
         })
         saveCooldown?.(saveTimeoutMs)
         setDraftLimitReached(false)
@@ -472,6 +474,7 @@ const useUpdateProcess = () => {
 }
 
 export const useFormToVotingProcessRequest = () => {
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
   const { permission } = useSubscription()
   const { organization } = useOrganization()
 
@@ -544,8 +547,12 @@ export const useFormToVotingProcessRequest = () => {
       streamUri: permission(SubscriptionPermission.LiveStreaming) ? form.streamUri || undefined : undefined,
       // Same treatment as streamUri: the plan gates blind-CSP censuses, and the
       // backend rejects the publish (opaquely, inside the job) rather than the
-      // draft, so never let the flag through on a plan without the feature.
-      census: permission(SubscriptionPermission.Anonymous) ? censusSpec : { ...censusSpec, anonymous: undefined },
+      // draft, so never let the flag through on a plan without the feature or
+      // when the anonymous voting option is not offered.
+      census:
+        permission(SubscriptionPermission.Anonymous) && !disableAnonymousVoting
+          ? censusSpec
+          : { ...censusSpec, anonymous: undefined },
       questions,
     }
   }
@@ -553,13 +560,14 @@ export const useFormToVotingProcessRequest = () => {
 
 export const useDraft = (draftId?: string | null) => {
   const { client } = useApiClient()
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
 
   return useQuery<Process | null, Error>({
     queryKey: ['draft', draftId],
     enabled: !!draftId,
     queryFn: async () => {
       try {
-        return votingProcessToForm(await client.elections.get(draftId!))
+        return votingProcessToForm(await client.elections.get(draftId!), disableAnonymousVoting)
       } catch (error) {
         // A stale draft id (deleted elsewhere, or left over from the legacy
         // draft store) must not break the wizard: fall back to a blank form.
@@ -574,6 +582,7 @@ export const useDraft = (draftId?: string | null) => {
 const ProcessCreateView = () => {
   const { t } = useTranslation()
   const toast = useToast()
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
   const [formDraftLoaded, setFormDraftLoaded] = useState(false)
   const [nextId, setNextId] = useState('')
   const { groupId } = useParams()
@@ -715,7 +724,7 @@ const ProcessCreateView = () => {
     // so the draft is never rewritten by two requests at once.
     skipSave(true)
     try {
-      const censusSpec = buildCensusSpec(form)
+      const censusSpec = buildCensusSpec(form, disableAnonymousVoting)
       const request = formToVotingProcessRequest(form, censusSpec)
       // The draft is the process: publish the one we have been saving instead of
       // creating a second one and leaving the draft orphaned behind it. Going

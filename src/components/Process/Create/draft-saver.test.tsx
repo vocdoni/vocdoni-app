@@ -10,6 +10,10 @@ import { useFormDraftSaver } from './index'
 const create = vi.fn()
 const update = vi.fn()
 
+vi.mock('~src/app-env', () => ({
+  useAppEnv: () => ({ DISABLE_ANONYMOUS_VOTING: false }),
+}))
+
 vi.mock('~components/Auth/Subscription', () => ({
   useSubscription: () => ({ permission: () => true }),
 }))
