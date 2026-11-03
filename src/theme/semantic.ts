@@ -29,8 +29,7 @@ const texts = {
 
 export const colors = defineSemanticTokens.colors({
   chakra,
-  // Overrides of the chakra built-in semantic scale — the canonical vocabulary
-  // for surfaces and text (bg, bg.subtle, bg.muted, fg, fg.muted, border, …)
+  // Chakra's neutral `bg`, `fg` and `border` slots, written out so this file owns them; status slots stay Chakra's.
   bg: {
     DEFAULT: {
       value: {
@@ -38,11 +37,109 @@ export const colors = defineSemanticTokens.colors({
         _dark: '{colors.ink.650}',
       },
     },
+    subtle: {
+      value: {
+        _light: '{colors.gray.50}',
+        _dark: '{colors.gray.950}',
+      },
+    },
     muted: {
       value: {
         _light: '{colors.gray.100}',
         _dark: '{colors.ink.800}',
       },
+    },
+    emphasized: {
+      value: {
+        _light: '{colors.gray.200}',
+        _dark: '{colors.gray.800}',
+      },
+    },
+    inverted: {
+      value: {
+        _light: '{colors.black}',
+        _dark: '{colors.white}',
+      },
+    },
+    panel: {
+      value: {
+        _light: '{colors.white}',
+        _dark: '{colors.gray.950}',
+      },
+    },
+  },
+  fg: {
+    DEFAULT: {
+      value: {
+        _light: '{colors.black}',
+        _dark: '{colors.gray.50}',
+      },
+    },
+    muted: {
+      value: {
+        _light: '{colors.gray.600}',
+        _dark: '{colors.gray.400}',
+      },
+    },
+    subtle: {
+      value: {
+        _light: '{colors.gray.400}',
+        _dark: '{colors.gray.500}',
+      },
+    },
+    inverted: {
+      value: {
+        _light: '{colors.gray.50}',
+        _dark: '{colors.black}',
+      },
+    },
+  },
+  // Surface layers. A sub-role is a member that paints a different colour from its layer (tooltip vs
+  // menu, drawer vs dialog).
+  surface: {
+    canvas: {
+      value: '{colors.bg}',
+    },
+    sidebar: {
+      value: {
+        _light: '{colors.dashboardMenu.light}',
+        _dark: '{colors.dashboardMenu.dark}',
+      },
+    },
+    // The dashboard's right side panel; the content column itself has no fill.
+    content: {
+      value: '{colors.bg}',
+    },
+    card: {
+      value: '{colors.bg.panel}',
+    },
+    sunken: {
+      value: {
+        _light: '{colors.bg.subtle}',
+        _dark: '{colors.whiteAlpha.50}',
+      },
+    },
+    // Menus and popovers
+    raised: {
+      DEFAULT: {
+        value: '{colors.bg}',
+      },
+      tooltip: {
+        value: '{colors.bg.panel}',
+      },
+    },
+    // Dialogs; drawers keep the sidebar colour (the mobile dashboard menu is one).
+    overlay: {
+      DEFAULT: {
+        value: '{colors.bg.panel}',
+      },
+      drawer: {
+        value: '{colors.surface.sidebar}',
+      },
+    },
+    // Cards that stay dark in both colour modes
+    inverse: {
+      value: '{colors.gray.800}',
     },
   },
   auth: {
@@ -101,6 +198,36 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   border: {
+    DEFAULT: {
+      value: {
+        _light: '{colors.gray.200}',
+        _dark: '{colors.gray.800}',
+      },
+    },
+    muted: {
+      value: {
+        _light: '{colors.gray.100}',
+        _dark: '{colors.gray.900}',
+      },
+    },
+    subtle: {
+      value: {
+        _light: '{colors.gray.50}',
+        _dark: '{colors.gray.950}',
+      },
+    },
+    emphasized: {
+      value: {
+        _light: '{colors.gray.300}',
+        _dark: '{colors.gray.700}',
+      },
+    },
+    inverted: {
+      value: {
+        _light: '{colors.gray.800}',
+        _dark: '{colors.gray.200}',
+      },
+    },
     // @deprecated: use the chakra built-in `border` token directly
     dashboard: {
       value: '{colors.border}',
@@ -149,7 +276,7 @@ export const colors = defineSemanticTokens.colors({
       },
       featured: {
         bg: {
-          value: '{colors.gray.800}',
+          value: '{colors.surface.inverse}',
         },
         badge: {
           bg: {
@@ -178,11 +305,9 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   dashboard: {
+    // Borrowed by the support cards and the chat header; the sidebar reads `surface.sidebar`.
     menu: {
-      value: {
-        _light: '{colors.dashboardMenu.light}',
-        _dark: '{colors.dashboardMenu.dark}',
-      },
+      value: '{colors.surface.sidebar}',
     },
   },
   input: {
@@ -231,8 +356,45 @@ export const colors = defineSemanticTokens.colors({
   texts,
 })
 
+// Elevation by role; each points at a Chakra size, which carries its own dark-mode value.
+export const shadows = defineSemanticTokens.shadows({
+  shadow: {
+    // Cards are told apart by their border, not a shadow
+    card: {
+      value: 'none',
+    },
+    raised: {
+      // Menus
+      DEFAULT: {
+        value: '{shadows.md}',
+      },
+      // Chakra's popover shadow
+      popover: {
+        value: '{shadows.lg}',
+      },
+      tooltip: {
+        value: '{shadows.xs}',
+      },
+    },
+    // The support chat launcher and teaser bubble; `panel` is the open chat.
+    floating: {
+      DEFAULT: {
+        value: '{shadows.lg}',
+      },
+      panel: {
+        value: '{shadows.xl}',
+      },
+    },
+    // Dialogs and drawers (Chakra's own)
+    overlay: {
+      value: '{shadows.lg}',
+    },
+  },
+})
+
 const semanticTokens = {
   colors,
+  shadows,
 }
 
 export default semanticTokens
