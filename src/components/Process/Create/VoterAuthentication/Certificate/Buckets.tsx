@@ -77,8 +77,9 @@ const BucketShell = ({ id, title, count, open, onToggle, flagged, toggleRef, chi
   </Box>
 )
 
+// ph-no-capture: member names and national IDs are never recorded in session replays
 const Rows = ({ children }: { children: React.ReactNode }) => (
-  <Stack gap={0} border='1px solid' borderColor='border' borderRadius='sm' bg='bg'>
+  <Stack gap={0} border='1px solid' borderColor='border' borderRadius='sm' bg='bg' className='ph-no-capture'>
     {children}
   </Stack>
 )
@@ -97,12 +98,12 @@ const Row = ({ first, children }: { first?: boolean; children: React.ReactNode }
   </Flex>
 )
 
-type DownloadProps = { label: string; file: string; onClick: () => void }
+type DownloadProps = { label: string; onClick: () => void }
 
-const Download = ({ label, file, onClick }: DownloadProps) => (
+const Download = ({ label, onClick }: DownloadProps) => (
   <Button variant='plain' size='sm' px={0} mt={2} h='auto' textDecoration='underline' onClick={onClick}>
     <Icon as={LuDownload} />
-    {label} {file}
+    {label}
   </Button>
 )
 
@@ -183,11 +184,10 @@ const MissingBucketBody = ({ ids, groupId, bucketOpen }: MissingBucketBodyProps)
         </Text>
       )}
       <Download
-        label={t('voter_auth.certificate.download', { defaultValue: 'Download {{file}}', file: '' }).replace(
-          '{{file}}',
-          ''
-        )}
-        file='members-without-dni-nie.csv'
+        label={t('voter_auth.certificate.download', {
+          defaultValue: 'Download {{file}}',
+          file: 'members-without-dni-nie.csv',
+        })}
         onClick={handleDownload}
       />
     </>
@@ -280,11 +280,10 @@ const InvalidBucketBody = ({ entries, groupId, bucketOpen }: InvalidBucketBodyPr
         </Text>
       )}
       <Download
-        label={t('voter_auth.certificate.download', { defaultValue: 'Download {{file}}', file: '' }).replace(
-          '{{file}}',
-          ''
-        )}
-        file='invalid-dni-nie.csv'
+        label={t('voter_auth.certificate.download', {
+          defaultValue: 'Download {{file}}',
+          file: 'invalid-dni-nie.csv',
+        })}
         onClick={handleDownload}
       />
     </>
@@ -367,11 +366,10 @@ const DupBucketBody = ({ ids, groupId, bucketOpen }: DupBucketBodyProps) => {
         </Text>
       )}
       <Download
-        label={t('voter_auth.certificate.download', { defaultValue: 'Download {{file}}', file: '' }).replace(
-          '{{file}}',
-          ''
-        )}
-        file='duplicate-dni-nie.csv'
+        label={t('voter_auth.certificate.download', {
+          defaultValue: 'Download {{file}}',
+          file: 'duplicate-dni-nie.csv',
+        })}
         onClick={handleDownload}
       />
     </>

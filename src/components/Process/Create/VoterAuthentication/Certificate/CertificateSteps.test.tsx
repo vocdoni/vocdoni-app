@@ -180,4 +180,38 @@ describe('CertificateSteps', () => {
     expect(screen.getByText('Protection')).toBeInTheDocument()
     expect(screen.getByText('Strong')).toBeInTheDocument()
   })
+
+  it('bucket rows sit inside a ph-no-capture container so member names and IDs are excluded from session replays', async () => {
+    const user = userEvent.setup()
+    const members = Array.from({ length: 3 }, (_, i) => ({
+      id: `miss${i}`,
+      name: `Name${i}`,
+      surname: `Sur${i}`,
+      nationalId: '',
+    }))
+    setAuthMock({ bearedFetch: makeMemberFetch(members) })
+
+    render(
+      <CertificateSteps
+        {...defaultProps}
+        coverage={{
+          cannotSignIn: 3,
+          missing: ['miss0', 'miss1', 'miss2'],
+          invalid: [],
+          duplicates: [],
+          counts: { missing: 3, letter: 0, otherId: 0 },
+        }}
+        open={['missing']}
+        onToggle={vi.fn()}
+      />,
+      { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } }
+    )
+
+    await waitFor(() => expect(screen.queryByText('Loading these members…')).not.toBeInTheDocument())
+
+    // Every rendered member name must sit inside a .ph-no-capture container.
+    for (const name of ['Name0 Sur0', 'Name1 Sur1', 'Name2 Sur2']) {
+      expect(screen.getByText(name).closest('.ph-no-capture')).not.toBeNull()
+    }
+  })
 })
