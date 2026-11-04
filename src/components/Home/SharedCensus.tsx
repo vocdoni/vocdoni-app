@@ -228,7 +228,7 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
             <Box as='span' mr={2} position='absolute' left={2} top={2} color='fg.subtle'>
               {index + 1}
             </Box>
-            <ElectionTitle fontSize='lg' mb={0} />
+            <ElectionTitle size='card' />
             <ElectionStatusBadge position='absolute' top={1} right={1} />
             {hasVoted && (
               <Text fontSize='sm' color='green.400' position='absolute' bottom={0} right={1}>
