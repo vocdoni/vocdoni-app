@@ -36,6 +36,7 @@ export type Question = {
 }
 
 export type Census = {
+  method?: 'details' | 'certificate'
   credentials: string[]
   use2FA: boolean
   use2FAMethod: TwoFAMethod

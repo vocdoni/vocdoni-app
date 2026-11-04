@@ -4,6 +4,9 @@ import type { CensusSpec } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
 import { useEffect, useRef, useState } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
+import type { AppCensusSpec } from '~src/queries/certificateAuth/census'
+import type { NationalIdWarning } from '~src/queries/certificateAuth/warnings'
+import { readNationalIdWarnings } from '~src/queries/certificateAuth/warnings'
 import { QueryKeys } from '~src/queries/keys'
 import { PASSWORD_CREDENTIAL } from './utils'
 
@@ -20,6 +23,7 @@ export type CensusCheckIssues = {
   duplicates: string[]
   missingData: string[]
   notFound: string[]
+  nationalIdWarnings: NationalIdWarning[] | null
 }
 
 /**
@@ -27,7 +31,9 @@ export type CensusCheckIssues = {
  * the admin has to act on, not a failure: it is returned, not thrown. Anything
  * else (network, 5xx, 403) throws and leaves the census unchecked.
  */
-export type CensusCheckResult = { valid: true } | { valid: false; issues: CensusCheckIssues }
+export type CensusCheckResult =
+  | { valid: true; nationalIdWarnings: NationalIdWarning[] | null }
+  | { valid: false; issues: CensusCheckIssues }
 
 /** `rejected`: the backend refused the census itself (e.g. its group is gone), so it cannot be saved. */
 export type CensusCheckStatus = 'idle' | 'checking' | 'valid' | 'invalid' | 'rejected' | 'unavailable'
@@ -37,6 +43,7 @@ export type CensusCheckOutcome = {
   status: Exclude<CensusCheckStatus, 'idle' | 'checking'>
   issues: CensusCheckIssues | null
   missingByField?: MissingFieldCount[] | null
+  nationalIdWarnings: NationalIdWarning[] | null
 }
 
 const DEBOUNCE_MS = 450
@@ -54,6 +61,7 @@ const readIssues = (error: unknown): CensusCheckIssues | null => {
     duplicates: toList(data.duplicates),
     missingData: toList(data.missingData),
     notFound: toList(data.notFound),
+    nationalIdWarnings: readNationalIdWarnings(data),
   }
   return issues.duplicates.length || issues.missingData.length ? issues : null
 }
@@ -63,7 +71,12 @@ const readIssues = (error: unknown): CensusCheckIssues | null => {
  * and weighting are left out: the backend's member check does not depend on them.
  */
 export const censusSpecSignature = (spec: CensusSpec) =>
-  JSON.stringify([spec.groupId ?? null, [...(spec.authFields ?? [])].sort(), [...(spec.twoFaFields ?? [])].sort()])
+  JSON.stringify([
+    spec.groupId ?? null,
+    [...(spec.authFields ?? [])].sort(),
+    [...(spec.twoFaFields ?? [])].sort(),
+    ...((spec as AppCensusSpec).authMethod ? [(spec as AppCensusSpec).authMethod] : []),
+  ])
 
 export const hasAuthFields = (spec: CensusSpec) => !!spec.authFields?.length || !!spec.twoFaFields?.length
 
@@ -73,8 +86,8 @@ const censusCheckQuery = (client: ApiClient, orgAddress: string | undefined, spe
   queryKey: QueryKeys.organization.censusCheck(orgAddress, censusSpecSignature(spec)),
   queryFn: async (): Promise<CensusCheckResult> => {
     try {
-      await client.elections.validateCensus({ orgAddress: orgAddress ?? '', census: spec })
-      return { valid: true }
+      const body = await client.elections.validateCensus({ orgAddress: orgAddress ?? '', census: spec })
+      return { valid: true, nationalIdWarnings: readNationalIdWarnings(body as unknown) }
     } catch (error) {
       const issues = readIssues(error)
       if (issues) return { valid: false, issues }
@@ -108,7 +121,10 @@ const fieldParts = (spec: CensusSpec) => [
  * Checks that every member targeted by a census spec can sign in with it. Debounced
  * while the admin is still choosing; `check()` asks the backend afresh, for the moment they save.
  */
-export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?: boolean } = {}) => {
+export const useCensusCheck = (
+  spec: CensusSpec,
+  { enabled = true, refetchOnFocus = false }: { enabled?: boolean; refetchOnFocus?: boolean } = {}
+) => {
   const { client } = useApiClient()
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
@@ -127,7 +143,9 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
   const query = useQuery({
     ...censusCheckQuery(client, orgAddress, settled.spec),
     enabled: active && hasAuthFields(settled.spec),
-    refetchOnWindowFocus: false,
+    // react-query v5 fires refetchOnWindowFocus on visibilitychange; 'always' bypasses the
+    // staleTime so a quick tab switch still re-checks after the user fixes their member data.
+    refetchOnWindowFocus: refetchOnFocus ? 'always' : false,
   })
 
   const pending = settled.signature !== signature
@@ -141,6 +159,9 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
 
   const result = query.data
   const issues = result && result.valid === false ? result.issues : null
+  let nationalIdWarnings: NationalIdWarning[] | null = null
+  if (result && result.valid === true) nationalIdWarnings = result.nationalIdWarnings
+  else if (result && result.valid === false) nationalIdWarnings = result.issues.nationalIdWarnings
 
   const parts = fieldParts(settled.spec)
   const fieldCount = (settled.spec.authFields?.length ?? 0) + (settled.spec.twoFaFields?.length ? 1 : 0)
@@ -172,7 +193,7 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
   const lastOutcome = useRef<CensusCheckOutcome | null>(null)
   if (!active) lastOutcome.current = null
   else if (status === 'valid' || status === 'invalid' || status === 'rejected' || status === 'unavailable') {
-    lastOutcome.current = { status, issues, missingByField }
+    lastOutcome.current = { status, issues, missingByField, nationalIdWarnings }
   }
 
   // Always asks the backend: the member list may have been fixed since the cached answer.
@@ -182,6 +203,7 @@ export const useCensusCheck = (spec: CensusSpec, { enabled = true }: { enabled?:
     status,
     issues,
     missingByField,
+    nationalIdWarnings,
     /** While checking: the previous outcome, to keep showing until the new one lands. */
     previous: status === 'checking' ? lastOutcome.current : null,
     retry: query.refetch,
