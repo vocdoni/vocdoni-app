@@ -1,13 +1,13 @@
 import { Alert, Box, Button, Field, Flex, HStack, IconButton, Input, Separator, Text, VStack } from '@chakra-ui/react'
 import {
   BillingAddressElement,
-  CheckoutProvider,
+  CheckoutElementsProvider,
   PaymentElement,
   TaxIdElement,
-  useCheckout,
+  useCheckoutElements,
 } from '@stripe/react-stripe-js/checkout'
-import type { StripeCheckoutOptions } from '@stripe/stripe-js'
-import { useCallback, useState } from 'react'
+import type { StripeCheckoutElementsSdkOptions } from '@stripe/stripe-js'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
 import { checkoutReturnBase, useCheckoutAppearance, useStripePromise } from '~components/Pricing/stripe'
@@ -98,7 +98,7 @@ type CheckoutFormProps = {
 
 const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProps) => {
   const { t } = useTranslation()
-  const checkoutState = useCheckout()
+  const checkoutState = useCheckoutElements()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -206,21 +206,77 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
   )
 }
 
-const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps) => {
+type TopUpCheckoutProps = CheckoutFormProps & {
+  stripePromise: NonNullable<ReturnType<typeof useStripePromise>>
+}
+
+const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error))
+
+// Opens the top-up session once for this amount, then mounts the provider with its client secret
+const TopUpCheckout = ({ stripePromise, amountCents, onBack, onStart, onDone }: TopUpCheckoutProps) => {
   const { t, i18n } = useTranslation()
-  const stripePromise = useStripePromise()
   const appearance = useCheckoutAppearance()
   const { mutateAsync: createTopUp } = useWalletTopUp()
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  // StrictMode runs the effect twice in development: the ref keeps the session from being created twice
+  const startedRef = useRef(false)
 
   // Stripe redirects a bank-redirect payment to returnURL + /{sessionId}; the wallet return route takes it from there.
-  const fetchClientSecret = useCallback(async () => {
-    const { clientSecret } = await createTopUp({
+  useEffect(() => {
+    if (startedRef.current) return
+    startedRef.current = true
+    createTopUp({
       amountCents,
       locale: i18n.resolvedLanguage,
       returnURL: checkoutReturnBase(),
-    })
-    return clientSecret
+    }).then(
+      (topUp) => setClientSecret(topUp.clientSecret),
+      (err) => setLoadError(errorMessage(err))
+    )
   }, [createTopUp, amountCents, i18n.resolvedLanguage])
+
+  if (loadError) {
+    return (
+      <VStack align='stretch' gap={4}>
+        <Flex justify='flex-start'>
+          <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost'>
+            <LuArrowLeft />
+          </IconButton>
+        </Flex>
+        <Alert.Root status='error'>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Description>{loadError}</Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      </VStack>
+    )
+  }
+
+  if (!clientSecret) {
+    return (
+      <Box textAlign='center' py={8}>
+        {t('loading', { defaultValue: 'Loading...' })}
+      </Box>
+    )
+  }
+
+  const options: StripeCheckoutElementsSdkOptions = {
+    clientSecret,
+    elementsOptions: { appearance },
+  }
+
+  return (
+    <CheckoutElementsProvider stripe={stripePromise} options={options}>
+      <CheckoutForm amountCents={amountCents} onBack={onBack} onStart={onStart} onDone={onDone} />
+    </CheckoutElementsProvider>
+  )
+}
+
+const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps) => {
+  const { t } = useTranslation()
+  const stripePromise = useStripePromise()
 
   if (!stripePromise) {
     return (
@@ -239,15 +295,14 @@ const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps)
     )
   }
 
-  const options: StripeCheckoutOptions = {
-    fetchClientSecret,
-    elementsOptions: { appearance },
-  }
-
   return (
-    <CheckoutProvider stripe={stripePromise} options={options}>
-      <CheckoutForm amountCents={amountCents} onBack={onBack} onStart={onStart} onDone={onDone} />
-    </CheckoutProvider>
+    <TopUpCheckout
+      stripePromise={stripePromise}
+      amountCents={amountCents}
+      onBack={onBack}
+      onStart={onStart}
+      onDone={onDone}
+    />
   )
 }
 

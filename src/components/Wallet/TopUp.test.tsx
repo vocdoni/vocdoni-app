@@ -1,22 +1,21 @@
 import userEvent from '@testing-library/user-event'
+import { StrictMode } from 'react'
 import { render, screen, waitFor } from '~src/test-utils'
 import { WalletTopUp } from './TopUp'
 
 const checkoutState = vi.hoisted(() => ({ current: {} as any }))
 const stripePromise = vi.hoisted(() => ({ current: Promise.resolve({}) as Promise<any> | null }))
 const mutateAsync = vi.hoisted(() => vi.fn())
+const providerOptions = vi.hoisted(() => ({ current: undefined as any }))
 
 vi.mock('@stripe/react-stripe-js/checkout', async () => {
   const React = await import('react')
   return {
-    // Like Stripe, the client secret is requested once when the checkout mounts
-    CheckoutProvider: ({ children, options }: { children: React.ReactNode; options: any }) => {
-      React.useEffect(() => {
-        options.fetchClientSecret().catch(() => undefined)
-      }, [])
+    CheckoutElementsProvider: ({ children, options }: { children: React.ReactNode; options: any }) => {
+      providerOptions.current = options
       return React.createElement(React.Fragment, null, children)
     },
-    useCheckout: () => checkoutState.current,
+    useCheckoutElements: () => checkoutState.current,
     BillingAddressElement: () => React.createElement('div', null, 'billing-address'),
     TaxIdElement: () => React.createElement('div', null, 'tax-id'),
     PaymentElement: () => React.createElement('div', null, 'payment-element'),
@@ -151,6 +150,39 @@ describe('WalletTopUp', () => {
         locale: 'en',
         returnURL: expect.stringMatching(/\/return$/),
       })
+      expect(providerOptions.current.clientSecret).toBe('cs_test')
+    })
+
+    it('requests the top-up once under StrictMode', async () => {
+      const user = userEvent.setup()
+      render(
+        <StrictMode>
+          <WalletTopUp onDone={vi.fn()} onCancel={vi.fn()} />
+        </StrictMode>,
+        // At the root, so React double-runs mount effects as the app's StrictMode does
+        { reactStrictMode: true }
+      )
+
+      await continueToPayment(user, '50')
+
+      expect(await screen.findByText('payment-element')).toBeInTheDocument()
+      expect(mutateAsync).toHaveBeenCalledTimes(1)
+    })
+
+    it('shows the top-up error with a way back when the session cannot be created', async () => {
+      const user = userEvent.setup()
+      const onCancel = vi.fn()
+      mutateAsync.mockRejectedValue(new Error('Amount rejected by the server'))
+      render(<WalletTopUp onDone={vi.fn()} onCancel={onCancel} />)
+
+      await continueToPayment(user, '50')
+
+      expect(await screen.findByText('Amount rejected by the server')).toBeInTheDocument()
+      expect(screen.queryByText('payment-element')).not.toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: /back/i }))
+
+      expect(amountInput()).toHaveValue(50)
+      expect(onCancel).not.toHaveBeenCalled()
     })
 
     it('shows the net amount and the checkout VAT and total', async () => {

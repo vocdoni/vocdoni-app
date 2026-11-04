@@ -1,13 +1,12 @@
 import { Alert, Button, Flex, HStack, IconButton, Separator, Spinner, Text, VStack } from '@chakra-ui/react'
 import {
   BillingAddressElement,
-  CheckoutProvider,
+  CheckoutElementsProvider,
   PaymentElement,
   TaxIdElement,
-  useCheckout,
+  useCheckoutElements,
 } from '@stripe/react-stripe-js/checkout'
-import type { StripeCheckoutOptions } from '@stripe/stripe-js'
-import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
 import { useHref } from 'react-router'
@@ -119,6 +118,8 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
   )
   // A publish from the wallet after a 400 is tried once: a second refusal ends in the error step
   const walletPublishRef = useRef(false)
+  // The session request of the current 'opening' step: StrictMode runs its effect twice, and only one POST may go out
+  const openingRef = useRef<{ step: Step; processId: string; request: Promise<ProcessCheckoutResponse> } | null>(null)
   // The client and checkout API change with the bearer token: the waits read them from here, so a
   // refreshed token does not restart them
   // Stripe appends the session id to the return URL, so the redirect lands on the wizard's return route
@@ -153,8 +154,17 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
     const fail = (error: unknown) => {
       setStep({ name: 'error', message: publishPaymentErrorMessage(latest.current.t, error) ?? errorMessage(error) })
     }
-    latest.current.checkoutApi
-      .checkout(processId, { locale: latest.current.language, returnURL: latest.current.returnURL.toString() })
+    if (openingRef.current?.step !== step || openingRef.current.processId !== processId) {
+      openingRef.current = {
+        step,
+        processId,
+        request: latest.current.checkoutApi.checkout(processId, {
+          locale: latest.current.language,
+          returnURL: latest.current.returnURL.toString(),
+        }),
+      }
+    }
+    openingRef.current.request
       .then((session) => {
         if (!stale) setStep({ name: 'checkout', session })
       })
@@ -437,8 +447,6 @@ const CheckoutStep = ({
 }: CheckoutStepProps) => {
   const { t } = useTranslation()
   const appearance = useCheckoutAppearance()
-  // The session is already open: Stripe only needs to hear its secret, once per mount
-  const fetchClientSecret = useCallback(() => Promise.resolve(session.clientSecret), [session.clientSecret])
 
   if (!stripePromise) {
     return (
@@ -454,7 +462,11 @@ const CheckoutStep = ({
 
   return (
     <Frame title={title} onBack={onBack}>
-      <CheckoutProvider stripe={stripePromise} options={{ fetchClientSecret, elementsOptions: { appearance } }}>
+      {/* The session is already open, so Stripe only needs its client secret */}
+      <CheckoutElementsProvider
+        stripe={stripePromise}
+        options={{ clientSecret: session.clientSecret, elementsOptions: { appearance } }}
+      >
         <CheckoutFormFields
           processId={processId}
           session={session}
@@ -463,7 +475,7 @@ const CheckoutStep = ({
           balanceCents={balanceCents}
           onPaid={onPaid}
         />
-      </CheckoutProvider>
+      </CheckoutElementsProvider>
     </Frame>
   )
 }
@@ -491,7 +503,7 @@ const CheckoutFormFields = ({
   onPaid,
 }: CheckoutFormFieldsProps) => {
   const { t } = useTranslation()
-  const checkoutState = useCheckout()
+  const checkoutState = useCheckoutElements()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
