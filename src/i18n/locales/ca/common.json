@@ -2140,7 +2140,7 @@
       "certificate_all_one": "El {{count}} membre pot iniciar sessió.",
       "certificate_all_many": "Tots els {{count}} membres poden iniciar sessió.",
       "certificate_all_other": "Tots els {{count}} membres poden iniciar sessió.",
-      "certificate_matched": "Associat al DNI/NIE del teu llistat de membres.",
+      "certificate_matched": "Associat al DNI/NIE de la teva base de membres.",
       "certificate_method": "Certificat digital (DNI/NIE)",
       "certificate_missing_one": "{{count}} membre no té DNI/NIE i no pot iniciar sessió.",
       "certificate_missing_many": "{{count}} membres no tenen DNI/NIE i no poden iniciar sessió.",
@@ -2167,8 +2167,9 @@
       "details": "Els votants escriuen: {{fields}}",
       "member_list_mismatch": "Aquesta configuració no encaixa amb la teva base de membres. Edita-la per veure per què.",
       "opens_new_tab": "(s'obre en una pestanya nova)",
-      "rechecking": "S'està comprovant el teu llistat de membres…",
-      "title": "Accés dels votants"
+      "rechecking": "Tornant a comprovar la teva base de membres…",
+      "title": "Accés dels votants",
+      "unavailable": "No hem pogut comprovar la teva base de membres."
     }
   },
   "voting_link": {

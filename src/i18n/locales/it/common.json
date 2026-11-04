@@ -2140,7 +2140,7 @@
       "certificate_all_one": "{{count}} membro può accedere.",
       "certificate_all_many": "Tutti i {{count}} membri possono accedere.",
       "certificate_all_other": "Tutti i {{count}} membri possono accedere.",
-      "certificate_matched": "Associato al DNI/NIE nell'elenco dei tuoi membri.",
+      "certificate_matched": "Associato al DNI/NIE del tuo database membri.",
       "certificate_method": "Certificato digitale (DNI/NIE)",
       "certificate_missing_one": "{{count}} membro non ha un DNI/NIE e non può accedere.",
       "certificate_missing_many": "{{count}} membri non hanno un DNI/NIE e non possono accedere.",
@@ -2167,8 +2167,9 @@
       "details": "I votanti scrivono: {{fields}}",
       "member_list_mismatch": "Queste impostazioni non corrispondono al tuo database membri. Modificale per vedere perché.",
       "opens_new_tab": "(si apre in una nuova scheda)",
-      "rechecking": "Verifica dell'elenco dei membri in corso…",
-      "title": "Accesso dei votanti"
+      "rechecking": "Nuova verifica del tuo database membri…",
+      "title": "Accesso dei votanti",
+      "unavailable": "Non siamo riusciti a verificare il tuo database membri."
     }
   },
   "voting_link": {

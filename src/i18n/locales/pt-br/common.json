@@ -2168,7 +2168,8 @@
       "member_list_mismatch": "Essas configurações não correspondem à sua lista de membros. Edite-as para ver o motivo.",
       "opens_new_tab": "(abre em uma nova aba)",
       "rechecking": "Verificando sua lista de membros novamente…",
-      "title": "Login do eleitor"
+      "title": "Login do eleitor",
+      "unavailable": "Não foi possível verificar sua lista de membros."
     }
   },
   "voting_link": {

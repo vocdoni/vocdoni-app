@@ -2140,7 +2140,7 @@
       "certificate_all_one": "{{count}} membro pode iniciar sessão.",
       "certificate_all_many": "Todos os {{count}} membros podem iniciar sessão.",
       "certificate_all_other": "Todos os {{count}} membros podem iniciar sessão.",
-      "certificate_matched": "Associado ao DNI/NIE da sua lista de membros.",
+      "certificate_matched": "Associado ao DNI/NIE da tua base de membros.",
       "certificate_method": "Certificado digital (DNI/NIE)",
       "certificate_missing_one": "{{count}} membro não tem DNI/NIE e não pode iniciar sessão.",
       "certificate_missing_many": "{{count}} membros não têm DNI/NIE e não podem iniciar sessão.",
@@ -2167,8 +2167,9 @@
       "details": "Os votantes escrevem: {{fields}}",
       "member_list_mismatch": "Estas definições não correspondem à tua base de membros. Edita-as para ver porquê.",
       "opens_new_tab": "(abre num novo separador)",
-      "rechecking": "A verificar a sua lista de membros novamente…",
-      "title": "Início de sessão dos votantes"
+      "rechecking": "A verificar novamente a tua base de membros…",
+      "title": "Início de sessão dos votantes",
+      "unavailable": "Não foi possível verificar a tua base de membros."
     }
   },
   "voting_link": {

@@ -2103,7 +2103,7 @@
     "summary": {
       "certificate_all_one": "{{count}} kideak saioa has dezake.",
       "certificate_all_other": "{{count}} kide guztiek saioa has dezakete.",
-      "certificate_matched": "Zure kideen zerrendako DNI/NIErekin lotuta.",
+      "certificate_matched": "Zure kide-zerrendako DNI/NIErekin lotuta.",
       "certificate_method": "Ziurtagiri digitala (DNI/NIE)",
       "certificate_missing_one": "{{count}} kideak ez du DNI/NIE eta ezin du saioa hasi.",
       "certificate_missing_other": "{{count}} kidek ez dute DNI/NIE eta ezin dute saioa hasi.",
@@ -2124,8 +2124,9 @@
       "details": "Botogileek idazten dutena: {{fields}}",
       "member_list_mismatch": "Ezarpen hauek ez datoz bat zure kide-zerrendarekin. Editatu zergatik ikusteko.",
       "opens_new_tab": "(fitxa berri batean irekitzen da)",
-      "rechecking": "Zure kideen zerrenda berriro egiaztatzen…",
-      "title": "Botogilearen saio-hasiera"
+      "rechecking": "Zure kide-zerrenda berriro egiaztatzen…",
+      "title": "Botogilearen saio-hasiera",
+      "unavailable": "Ezin izan dugu zure kide-zerrenda egiaztatu."
     }
   },
   "voting_link": {

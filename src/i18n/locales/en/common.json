@@ -2125,7 +2125,8 @@
       "member_list_mismatch": "These settings don't fit your member list. Edit them to see why.",
       "opens_new_tab": "(opens in a new tab)",
       "rechecking": "Checking your member list again…",
-      "title": "Voter sign-in"
+      "title": "Voter sign-in",
+      "unavailable": "We couldn't check your member list."
     }
   },
   "voting_link": {

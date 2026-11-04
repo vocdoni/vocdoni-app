@@ -2168,7 +2168,8 @@
       "member_list_mismatch": "Ces paramètres ne correspondent pas à votre liste de membres. Modifiez-les pour voir pourquoi.",
       "opens_new_tab": "(s'ouvre dans un nouvel onglet)",
       "rechecking": "Vérification de votre liste de membres en cours…",
-      "title": "Connexion des électeurs"
+      "title": "Connexion des électeurs",
+      "unavailable": "Nous n'avons pas pu vérifier votre liste de membres."
     }
   },
   "voting_link": {

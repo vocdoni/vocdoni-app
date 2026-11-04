@@ -2115,7 +2115,7 @@
       "certificate_mixed_missing_other": "{{count}} haben kein DNI/NIE",
       "certificate_mixed_other_one": "{{count}} hat eine andere Art von Ausweis, z. B. einen Reisepass",
       "certificate_mixed_other_other": "{{count}} haben eine andere Art von Ausweis, z. B. einen Reisepass",
-      "certificate_rest_one": "Das andere {{count}} kann sich anmelden.",
+      "certificate_rest_one": "Das andere Mitglied kann sich anmelden.",
       "certificate_rest_other": "Die anderen {{count}} können sich anmelden.",
       "code_choice": "Einmaliger Code per E-Mail oder SMS",
       "code_email": "Einmaliger Code per E-Mail",
@@ -2125,7 +2125,8 @@
       "member_list_mismatch": "Diese Einstellungen passen nicht zu deiner Mitgliederliste. Bearbeite sie, um den Grund zu sehen.",
       "opens_new_tab": "(wird in einem neuen Tab geöffnet)",
       "rechecking": "Deine Mitgliederliste wird erneut überprüft…",
-      "title": "Anmeldung der Wählenden"
+      "title": "Anmeldung der Wählenden",
+      "unavailable": "Wir konnten deine Mitgliederliste nicht prüfen."
     }
   },
   "voting_link": {
