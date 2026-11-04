@@ -48,7 +48,7 @@ Address the user with formal **vous / votre** throughout — in French this is t
 | resume | reprendre | |
 | sign (cryptographic) | signer | Technical term in common use — keep |
 | digital certificate | certificat électronique | The term public administrations use for a PKI-based identity credential |
-| Access with your digital certificate | Accédez avec votre certificat électronique | V1 button — formal vous per this file |
+| Access with your digital certificate | Accédez avec votre certificat électronique | V1 button: formal vous per this file |
 | voter list | liste électorale | The word voters read; matches existing `process.census` and `aside.is_not_in_census` wording |
 | Reference code | Code de référence | V6 support code shown to the voter |
 | sign in (organizer copy) | se connecter | Matches existing `voter_auth.*` strings |

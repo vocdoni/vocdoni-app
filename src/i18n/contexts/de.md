@@ -46,7 +46,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | resume | Fortsetzen | |
 | sign (cryptographic) | Signieren | Technical term in common use — keep |
 | digital certificate | digitales Zertifikat | The term public administrations use for a PKI-based identity credential |
-| Access with your digital certificate | Mit deinem digitalen Zertifikat anmelden | V1 button — informal du per this file |
+| Access with your digital certificate | Mit deinem digitalen Zertifikat anmelden | V1 button: informal du per this file |
 | voter list | Teilnehmerliste | The word voters read; matches existing `process.census` and `aside.is_not_in_census` wording |
 | Reference code | Referenzcode | V6 support code shown to the voter |
 | sign in (organizer copy) | anmelden | Matches existing `voter_auth.*` strings |
