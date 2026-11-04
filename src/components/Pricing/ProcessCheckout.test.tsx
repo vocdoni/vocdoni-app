@@ -1,6 +1,7 @@
 import { ApiErrorCode, JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
 import { act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { StrictMode } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import type { PublicationWait } from '~queries/process-checkout'
 import { ProcessCheckout, type ProcessCheckoutStart } from './ProcessCheckout'
@@ -11,6 +12,7 @@ const state = vi.hoisted(() => ({
   wallet: undefined as unknown,
   checkout: {} as any,
   stripePromise: Promise.resolve({}) as Promise<any> | null,
+  providerOptions: undefined as any,
 }))
 
 const api = vi.hoisted(() => ({
@@ -53,9 +55,11 @@ vi.mock('~queries/process-checkout', async (importOriginal) => ({
 vi.mock('@stripe/react-stripe-js/checkout', async () => {
   const React = await import('react')
   return {
-    CheckoutProvider: ({ children }: { children: React.ReactNode }) =>
-      React.createElement(React.Fragment, null, children),
-    useCheckout: () => state.checkout,
+    CheckoutElementsProvider: ({ children, options }: { children: React.ReactNode; options: any }) => {
+      state.providerOptions = options
+      return React.createElement(React.Fragment, null, children)
+    },
+    useCheckoutElements: () => state.checkout,
     BillingAddressElement: () => React.createElement('div', null, 'billing-address'),
     TaxIdElement: () => React.createElement('div', null, 'tax-id'),
     PaymentElement: () => React.createElement('div', null, 'payment-element'),
@@ -207,6 +211,27 @@ describe('ProcessCheckout', () => {
         locale: 'en',
         returnURL: expect.stringMatching(/\/admin\/processes\/create\/return$/),
       })
+      expect(state.providerOptions.clientSecret).toBe('cs_test')
+    })
+
+    it('opens the checkout once under StrictMode', async () => {
+      render(
+        <StrictMode>
+          <TestMemoryRouter>
+            <ProcessCheckout
+              processId={processId}
+              start={{ kind: 'checkout' }}
+              onPublished={vi.fn()}
+              onClose={vi.fn()}
+            />
+          </TestMemoryRouter>
+        </StrictMode>,
+        // At the root, so React double-runs mount effects as the app's StrictMode does
+        { reactStrictMode: true }
+      )
+
+      await payButton()
+      expect(api.checkout).toHaveBeenCalledTimes(1)
     })
   })
 

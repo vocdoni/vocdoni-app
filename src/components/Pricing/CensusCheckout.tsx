@@ -1,10 +1,10 @@
 import { Alert, Button, Flex, Separator, Spinner, Text, VStack } from '@chakra-ui/react'
 import {
   BillingAddressElement,
-  CheckoutProvider,
+  CheckoutElementsProvider,
   PaymentElement,
   TaxIdElement,
-  useCheckout,
+  useCheckoutElements,
 } from '@stripe/react-stripe-js/checkout'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
@@ -396,8 +396,6 @@ const CheckoutStep = ({
 }: CheckoutStepProps) => {
   const { t } = useTranslation()
   const appearance = useCheckoutAppearance()
-  // The session is already open: Stripe only needs to hear its secret, once per mount
-  const fetchClientSecret = useCallback(() => Promise.resolve(clientSecret), [clientSecret])
 
   if (!stripePromise) {
     return (
@@ -410,7 +408,8 @@ const CheckoutStep = ({
   }
 
   return (
-    <CheckoutProvider stripe={stripePromise} options={{ fetchClientSecret, elementsOptions: { appearance } }}>
+    // The session is already open, so Stripe only needs its client secret
+    <CheckoutElementsProvider stripe={stripePromise} options={{ clientSecret, elementsOptions: { appearance } }}>
       <CheckoutFormFields
         processId={processId}
         amountCents={amountCents}
@@ -419,7 +418,7 @@ const CheckoutStep = ({
         snapshotPayments={snapshotPayments}
         onPaid={onPaid}
       />
-    </CheckoutProvider>
+    </CheckoutElementsProvider>
   )
 }
 
@@ -437,7 +436,7 @@ const CheckoutFormFields = ({
   onPaid,
 }: CheckoutFormFieldsProps) => {
   const { t } = useTranslation()
-  const checkoutState = useCheckout()
+  const checkoutState = useCheckoutElements()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

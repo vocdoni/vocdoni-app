@@ -12,18 +12,16 @@ const mutateAsync = vi.hoisted(() => vi.fn())
 const readHistory = vi.hoisted(() => vi.fn())
 const waitForCensusPayment = vi.hoisted(() => vi.fn())
 const access = vi.hoisted(() => ({ canTopUp: true }))
+const providerOptions = vi.hoisted(() => ({ current: undefined as any }))
 
 vi.mock('@stripe/react-stripe-js/checkout', async () => {
   const React = await import('react')
   return {
-    // Like Stripe, the client secret is requested once when the checkout mounts
-    CheckoutProvider: ({ children, options }: { children: React.ReactNode; options: any }) => {
-      React.useEffect(() => {
-        options.fetchClientSecret().catch(() => undefined)
-      }, [])
+    CheckoutElementsProvider: ({ children, options }: { children: React.ReactNode; options: any }) => {
+      providerOptions.current = options
       return React.createElement(React.Fragment, null, children)
     },
-    useCheckout: () => checkoutState.current,
+    useCheckoutElements: () => checkoutState.current,
     BillingAddressElement: () => React.createElement('div', null, 'billing-address'),
     TaxIdElement: () => React.createElement('div', null, 'tax-id'),
     PaymentElement: () => React.createElement('div', null, 'payment-element'),
@@ -162,6 +160,7 @@ describe('CensusCheckout', () => {
       ).toBeInTheDocument()
     )
     expect(confirm).toHaveBeenCalledWith({ redirect: 'if_required' })
+    expect(providerOptions.current.clientSecret).toBe('cs_test')
     // The snapshot is taken before the payment and the wait looks for a debit that is not in it
     expect(waitForCensusPayment).toHaveBeenCalledWith(expect.any(Function), processId, [], expect.any(Object))
   })
