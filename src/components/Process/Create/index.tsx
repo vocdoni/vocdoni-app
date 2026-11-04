@@ -43,6 +43,7 @@ import {
   publishNeedsWalletTopUp,
   publishPaymentErrorMessage,
 } from '~components/Pricing/payment-errors'
+import { ProcessQuoteAlert } from '~components/Pricing/ProcessPrice'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
@@ -50,6 +51,7 @@ import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
+import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
@@ -492,9 +494,22 @@ export const useCreateProcess = () => {
 
 const useUpdateProcess = () => {
   const { client } = useApiClient()
+  const queryClient = useQueryClient()
 
   return useMutation<void, Error, UpdateProcessRequest>({
-    mutationFn: ({ processId, body }) => client.elections.update(processId, body),
+    mutationFn: async ({ processId, body }) => {
+      // The PUT replaces the draft's add-ons, and an integrator can set them through the API while
+      // the wizard is open: read the draft's current ones, rather than a copy from when it loaded.
+      const { addOns } = await client.elections.get(processId)
+      return client.elections.update(processId, { ...body, addOns })
+    },
+    // Every save re-prices the draft, even one that only touched its texts: the backend rebuilds
+    // its census from the group each time, and the group may have changed since the last save.
+    // Not awaited: a returned promise would hold the save, and every write queued behind it,
+    // until the price is read again.
+    onSuccess: (_, { processId }) => {
+      void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
+    },
   })
 }
 
@@ -653,6 +668,9 @@ const ProcessCreateView = () => {
   )
   const { permission } = useSubscription()
   const { data: formDraft } = useDraft(effectiveDraftId)
+  // Above the self-service limit the backend refuses any payment: only a custom quote publishes
+  // it, which ProcessQuoteAlert points to, so publishing is not offered.
+  const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).price)
 
   // Apply form draft if it exists
   useEffect(() => {
@@ -927,7 +945,7 @@ const ProcessCreateView = () => {
                   type='submit'
                   alignSelf='flex-end'
                   loading={methods.formState.isSubmitting}
-                  disabled={!organization?.address}
+                  disabled={!organization?.address || quoteOnly}
                 >
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
@@ -942,6 +960,8 @@ const ProcessCreateView = () => {
                 </Button>
               </ButtonGroup>
             </HStack>
+
+            <ProcessQuoteAlert processId={effectiveDraftId} />
 
             {/* Title, Video, and Description */}
             <VStack as='header' align='stretch' gap={4}>
@@ -980,7 +1000,7 @@ const ProcessCreateView = () => {
             <Questions />
           </Box>
         </DashboardContents>
-        <CreateSidebar />
+        <CreateSidebar draftId={effectiveDraftId} />
       </Box>
       <LeaveConfirmationModal
         isOpen={isLeaveConfirmationOpen}
