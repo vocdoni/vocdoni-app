@@ -72,6 +72,16 @@ describe('pending marker and return stash', () => {
     setPending('p1', { state: 's', startedAt: Date.now() })
     expect(readPending('p1')?.state).toBe('s')
   })
+  it('ignores a pending marker whose state is missing or outside the token grammar', () => {
+    localStorage.setItem('vocdoni.cert.pending.p1', JSON.stringify({ startedAt: Date.now() }))
+    expect(readPending('p1')).toBeNull()
+    localStorage.setItem('vocdoni.cert.pending.p1', JSON.stringify({ state: 42, startedAt: Date.now() }))
+    expect(readPending('p1')).toBeNull()
+    localStorage.setItem('vocdoni.cert.pending.p1', JSON.stringify({ state: '../x', startedAt: Date.now() }))
+    expect(readPending('p1')).toBeNull()
+    setPending('p1', { state: 'ok-state', startedAt: Date.now() })
+    expect(readPending('p1')?.state).toBe('ok-state')
+  })
   it('validates the stash again and expires it after 5 minutes', () => {
     sessionStorage.setItem(RETURN_STASH_KEY, JSON.stringify({ code: 'c', state: 's', at: Date.now() }))
     expect(readReturnStash()).toMatchObject({ code: 'c', state: 's' })

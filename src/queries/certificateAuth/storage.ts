@@ -113,10 +113,12 @@ export const purgeExpiredVerifiers = (now = Date.now()) => {
 export const setPending = (processId: string, attempt: PendingAttempt) =>
   write(local(), PENDING_PREFIX + processId, attempt)
 
+/** The attempt this tab started, or null. Its state is page-writable input: it must pass the token grammar. */
 export const readPending = (processId: string, now = Date.now()): PendingAttempt | null => {
-  const entry = read<PendingAttempt>(local(), PENDING_PREFIX + processId)
-  if (!entry || typeof entry.startedAt !== 'number' || now - entry.startedAt > PENDING_TTL_MS) return null
-  return entry
+  const entry = read<Partial<PendingAttempt>>(local(), PENDING_PREFIX + processId)
+  if (!entry || typeof entry.state !== 'string' || !TOKEN.test(entry.state)) return null
+  if (typeof entry.startedAt !== 'number' || now - entry.startedAt > PENDING_TTL_MS) return null
+  return { state: entry.state, startedAt: entry.startedAt }
 }
 
 export const clearPending = (processId: string) => remove(local(), PENDING_PREFIX + processId)
