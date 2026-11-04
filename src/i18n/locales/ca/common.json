@@ -135,6 +135,37 @@
     }
   },
   "census_size": "Mida del cens",
+  "cert_auth": {
+    "actions": {
+      "try_again": "Torna-ho a intentar"
+    },
+    "checking": {
+      "body": "Pot trigar fins a 30 segons.",
+      "slow_body": "Mantén la pàgina oberta. Pot trigar fins a 30 segons.",
+      "slow_title": "Continuant la comprovació amb el proveïdor del teu certificat...",
+      "title": "Comprovant el certificat..."
+    },
+    "document_title": {
+      "error": "Error: {{title}} - {{vote}}",
+      "status": "{{title}} - {{vote}}"
+    },
+    "identify": {
+      "button": "Accedeix amb el teu certificat digital",
+      "consent": "En continuar acceptes els <terms>Termes</terms> i la <privacy>Política de privacitat</privacy>.",
+      "only_check": "Usem el teu certificat només per comprovar que ets al cens.",
+      "resume": "Acabem d'identificar-te. Prem el botó per continuar.",
+      "title": "Identifica't per votar",
+      "works_with": "Compatible amb idCAT Certificat i certificats FNMT."
+    },
+    "opening": {
+      "body": "Tria el certificat amb el teu nom i prem D'acord.",
+      "title": "S'obre la finestra del certificat..."
+    },
+    "stalled": {
+      "body": "Sol passar per una connexió lenta. Prem Torna-ho a intentar: no caldrà que tornis a triar el certificat.",
+      "title": "La comprovació no ha acabat"
+    }
+  },
   "change_password": {
     "subtitle": "Introdueix la contrasenya actual i una de nova per actualitzar les teves credencials.",
     "title": "Canvia la contrasenya"

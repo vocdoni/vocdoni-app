@@ -135,6 +135,37 @@
     }
   },
   "census_size": "Dimensione del censimento",
+  "cert_auth": {
+    "actions": {
+      "try_again": "Riprova"
+    },
+    "checking": {
+      "body": "Potrebbe richiedere fino a 30 secondi.",
+      "slow_body": "Tieni aperta questa pagina. Potrebbe richiedere fino a 30 secondi.",
+      "slow_title": "Verifica in corso con il tuo provider di certificati...",
+      "title": "Verifica del certificato..."
+    },
+    "document_title": {
+      "error": "Errore: {{title}} - {{vote}}",
+      "status": "{{title}} - {{vote}}"
+    },
+    "identify": {
+      "button": "Accedi con il tuo certificato digitale",
+      "consent": "Continuando accetti i <terms>Termini</terms> e la <privacy>Informativa sulla privacy</privacy>.",
+      "only_check": "Usiamo il tuo certificato solo per verificare che sei nel censimento.",
+      "resume": "Finiamo di identificarti. Premi il pulsante per continuare.",
+      "title": "Identificati per votare",
+      "works_with": "Funziona con idCAT Certificat e i certificati FNMT."
+    },
+    "opening": {
+      "body": "Scegli il certificato con il tuo nome e premi OK.",
+      "title": "Apertura della finestra del certificato..."
+    },
+    "stalled": {
+      "body": "Di solito è dovuto a una connessione lenta. Premi Riprova: non dovrai scegliere di nuovo il certificato.",
+      "title": "La verifica non è completata"
+    }
+  },
   "change_password": {
     "subtitle": "Inserire la password attuale e una nuova password per aggiornare le credenziali.",
     "title": "Cambia password"

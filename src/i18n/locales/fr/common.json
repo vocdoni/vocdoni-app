@@ -135,6 +135,37 @@
     }
   },
   "census_size": "Nombre d'inscrits",
+  "cert_auth": {
+    "actions": {
+      "try_again": "Réessayer"
+    },
+    "checking": {
+      "body": "Cela peut prendre jusqu'à 30 secondes.",
+      "slow_body": "Gardez cette page ouverte. Cela peut prendre jusqu'à 30 secondes.",
+      "slow_title": "Vérification en cours avec votre fournisseur de certificat...",
+      "title": "Vérification de votre certificat..."
+    },
+    "document_title": {
+      "error": "Erreur: {{title}} - {{vote}}",
+      "status": "{{title}} - {{vote}}"
+    },
+    "identify": {
+      "button": "Accédez avec votre certificat électronique",
+      "consent": "En continuant, vous acceptez les <terms>Conditions</terms> et la <privacy>Politique de confidentialité</privacy>.",
+      "only_check": "Nous utilisons votre certificat uniquement pour vérifier que vous êtes sur la liste électorale.",
+      "resume": "Finissons votre identification. Appuyez sur le bouton pour continuer.",
+      "title": "Identifiez-vous pour voter",
+      "works_with": "Compatible avec idCAT Certificat et les certificats FNMT."
+    },
+    "opening": {
+      "body": "Choisissez le certificat à votre nom et appuyez sur OK.",
+      "title": "Ouverture de la fenêtre du certificat..."
+    },
+    "stalled": {
+      "body": "C'est généralement dû à une connexion lente. Appuyez sur Réessayer: vous n'aurez pas besoin de choisir à nouveau votre certificat.",
+      "title": "La vérification n'a pas abouti"
+    }
+  },
   "change_password": {
     "subtitle": "Saisissez votre mot de passe actuel et un nouveau mot de passe pour mettre à jour vos identifiants.",
     "title": "Changer le mot de passe"

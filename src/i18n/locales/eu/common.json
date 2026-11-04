@@ -133,6 +133,37 @@
     }
   },
   "census_size": "Erroldeko tamaina",
+  "cert_auth": {
+    "actions": {
+      "try_again": "Berriro saiatu"
+    },
+    "checking": {
+      "body": "30 segundo iraun dezake.",
+      "slow_body": "Mantendu orrialde hau irekita. 30 segundo iraun dezake.",
+      "slow_title": "Ziurtagiri-hornitzailearekin egiaztatzen jarraitzen...",
+      "title": "Ziurtagiria egiaztatzen..."
+    },
+    "document_title": {
+      "error": "Errorea: {{title}} - {{vote}}",
+      "status": "{{title}} - {{vote}}"
+    },
+    "identify": {
+      "button": "Sartu zure ziurtagiri digitalarekin",
+      "consent": "Jarraitzean, <terms>Baldintzak</terms> eta <privacy>Pribatutasun-politika</privacy> onartzen dituzu.",
+      "only_check": "Zure ziurtagiria soilik erabiltzen dugu erroldaren egiaztapenerako.",
+      "resume": "Identifikazio-prozesua amaitu dezagun. Sakatu botoia jarraitzeko.",
+      "title": "Identifikatu botoa emateko",
+      "works_with": "idCAT Certificat eta FNMT ziurtagiriekin funtzionatzen du."
+    },
+    "opening": {
+      "body": "Aukeratu zure izenarekin dagoen ziurtagiria eta sakatu Onartu.",
+      "title": "Ziurtagiriaren leihoa irekitzen..."
+    },
+    "stalled": {
+      "body": "Normalean konexio motelaren ondorioa da. Sakatu Berriro saiatu: ez dituzu ziurtagiria berriro aukeratu beharko.",
+      "title": "Egiaztapenak ez du amaitu"
+    }
+  },
   "change_password": {
     "subtitle": "Sartu zure egungo pasahitza eta berri bat zure kredentzialak eguneratzeko.",
     "title": "Aldatu pasahitza"

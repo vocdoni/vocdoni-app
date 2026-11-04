@@ -133,6 +133,37 @@
     }
   },
   "census_size": "Teilnehmerzahl",
+  "cert_auth": {
+    "actions": {
+      "try_again": "Erneut versuchen"
+    },
+    "checking": {
+      "body": "Das kann bis zu 30 Sekunden dauern.",
+      "slow_body": "Lass diese Seite offen. Das kann bis zu 30 Sekunden dauern.",
+      "slow_title": "Prüfung mit deinem Zertifikatsanbieter läuft noch...",
+      "title": "Zertifikat wird überprüft..."
+    },
+    "document_title": {
+      "error": "Fehler: {{title}} - {{vote}}",
+      "status": "{{title}} - {{vote}}"
+    },
+    "identify": {
+      "button": "Mit deinem digitalen Zertifikat anmelden",
+      "consent": "Mit dem Fortfahren akzeptierst du die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzrichtlinie</privacy>.",
+      "only_check": "Wir nutzen dein Zertifikat nur, um zu prüfen, ob du auf der Teilnehmerliste stehst.",
+      "resume": "Lass uns die Identifizierung abschließen. Drücke den Button, um fortzufahren.",
+      "title": "Identifizieren um abzustimmen",
+      "works_with": "Funktioniert mit idCAT Certificat und FNMT-Zertifikaten."
+    },
+    "opening": {
+      "body": "Wähle das Zertifikat mit deinem Namen und drücke OK.",
+      "title": "Zertifikatsfenster wird geöffnet..."
+    },
+    "stalled": {
+      "body": "Das liegt meistens an einer langsamen Verbindung. Drücke Erneut versuchen: du musst dein Zertifikat nicht nochmal auswählen.",
+      "title": "Die Prüfung wurde nicht abgeschlossen"
+    }
+  },
   "change_password": {
     "subtitle": "Gib dein aktuelles Passwort und ein neues Passwort ein, um deine Zugangsdaten zu aktualisieren.",
     "title": "Passwort ändern"

@@ -135,6 +135,37 @@
     }
   },
   "census_size": "Número de participantes",
+  "cert_auth": {
+    "actions": {
+      "try_again": "Tentar novamente"
+    },
+    "checking": {
+      "body": "Isso pode levar até 30 segundos.",
+      "slow_body": "Mantenha esta página aberta. Pode levar até 30 segundos.",
+      "slow_title": "Verificação em andamento com seu provedor de certificados...",
+      "title": "Verificando seu certificado..."
+    },
+    "document_title": {
+      "error": "Erro: {{title}} - {{vote}}",
+      "status": "{{title}} - {{vote}}"
+    },
+    "identify": {
+      "button": "Acesse com seu certificado digital",
+      "consent": "Ao continuar, você aceita os <terms>Termos</terms> e a <privacy>Política de privacidade</privacy>.",
+      "only_check": "Usamos seu certificado apenas para verificar que você está na lista de participantes.",
+      "resume": "Vamos terminar sua identificação. Pressione o botão para continuar.",
+      "title": "Identifique-se para votar",
+      "works_with": "Funciona com idCAT Certificat e certificados FNMT."
+    },
+    "opening": {
+      "body": "Escolha o certificado com seu nome e pressione OK.",
+      "title": "Abrindo a janela do certificado..."
+    },
+    "stalled": {
+      "body": "Geralmente é por causa de uma conexão lenta. Pressione Tentar novamente: você não precisará escolher o certificado de novo.",
+      "title": "A verificação não foi concluída"
+    }
+  },
   "change_password": {
     "subtitle": "Insira sua senha atual e uma nova senha para atualizar suas credenciais.",
     "title": "Alterar senha"
