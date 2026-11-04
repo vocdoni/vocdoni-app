@@ -83,4 +83,36 @@ describe('useBucketMembers', () => {
     // Both found on page 1, page 2 never fetched.
     expect(bearedFetch).toHaveBeenCalledTimes(1)
   })
+
+  it('two buckets with different id sets get independent cache entries (18 missing + 6 invalid scenario)', async () => {
+    // Simulate two buckets opening in sequence with disjoint id sets.
+    // The missing bucket has miss0..miss17, the invalid bucket has inv0..inv5.
+    // All members are on the same page. Each hook must resolve its own members correctly.
+    const allMembers = [
+      ...Array.from({ length: 18 }, (_, i) => ({ id: `miss${i}`, name: `Missing${i}`, nationalId: '' })),
+      ...Array.from({ length: 6 }, (_, i) => ({ id: `inv${i}`, name: `Invalid${i}`, nationalId: `1234${i}A` })),
+    ]
+    setAuthMock({ bearedFetch: makeBearedFetch([{ members: allMembers }]) })
+
+    const missingIds = Array.from({ length: 18 }, (_, i) => `miss${i}`)
+    const invalidIds = Array.from({ length: 6 }, (_, i) => `inv${i}`)
+
+    const { result: missingResult } = renderHook(() => useBucketMembers('grp1', missingIds, true), { wrapper })
+    const { result: invalidResult } = renderHook(() => useBucketMembers('grp1', invalidIds, true), { wrapper })
+
+    await waitFor(() => expect(missingResult.current.isSuccess).toBe(true))
+    await waitFor(() => expect(invalidResult.current.isSuccess).toBe(true))
+
+    // Missing bucket resolves only the missing members
+    for (let i = 0; i < 18; i++) {
+      expect(missingResult.current.data!.get(`miss${i}`)).toMatchObject({ id: `miss${i}`, name: `Missing${i}` })
+    }
+    expect(missingResult.current.data!.get('inv0')).toBeUndefined()
+
+    // Invalid bucket resolves only the invalid members
+    for (let i = 0; i < 6; i++) {
+      expect(invalidResult.current.data!.get(`inv${i}`)).toMatchObject({ id: `inv${i}`, name: `Invalid${i}` })
+    }
+    expect(invalidResult.current.data!.get('miss0')).toBeUndefined()
+  })
 })

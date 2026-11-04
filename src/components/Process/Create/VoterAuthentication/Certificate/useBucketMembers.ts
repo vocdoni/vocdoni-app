@@ -18,7 +18,12 @@ export const useBucketMembers = (groupId: string | undefined, ids: string[], ena
 
   return useQuery({
     enabled: enabled && !!address && !!groupId && ids.length > 0,
-    queryKey: [...QueryKeys.organization.groups(address), groupId, 'certificate-bucket-members'],
+    queryKey: [
+      ...QueryKeys.organization.groups(address),
+      groupId,
+      'certificate-bucket-members',
+      [...ids].sort().join(','),
+    ],
     staleTime: 60_000,
     queryFn: async (): Promise<Map<string, Partial<Member>>> => {
       const result = new Map<string, Partial<Member>>()
