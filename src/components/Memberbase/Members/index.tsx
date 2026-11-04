@@ -1164,9 +1164,7 @@ const MembersTable = () => {
               >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control />
-                <Checkbox.Label fontWeight='normal'>
-                  {t('members.table.select_all', { defaultValue: 'Select all' })}
-                </Checkbox.Label>
+                <Checkbox.Label>{t('members.table.select_all', { defaultValue: 'Select all' })}</Checkbox.Label>
               </Checkbox.Root>
               <ColumnManager />
             </Flex>

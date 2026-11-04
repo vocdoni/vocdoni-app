@@ -20,7 +20,7 @@ import {
   Voted,
   VoteWeight,
 } from './election'
-import { formLabel, input, switchRecipe, textarea } from './form'
+import { input, switchRecipe, textarea } from './form'
 import { listSlotRecipe } from './list'
 import { Menu } from './menu'
 import { OrganizationDescription, OrganizationImage, OrganizationName } from './organization'
@@ -37,7 +37,6 @@ import { heading, link, text } from './typography'
 export const recipes: Record<string, RecipeDefinition> = {
   badge: Badge,
   button: Button,
-  formLabel,
   heading,
   input,
   link,
