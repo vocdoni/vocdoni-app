@@ -1,6 +1,7 @@
 import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import ProcessAside, { VoteButton } from './Aside'
+import { MetadataVerificationContext, type MetadataVerificationContextValue } from './MetadataVerification/context'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
@@ -167,5 +168,56 @@ describe('ProcessAside', () => {
     expect(screen.getByText('aside.has_already_voted')).toBeInTheDocument()
     // The explorer verify links moved to the Voted notice (one per question).
     expect(screen.queryByText('aside.verify_vote_on_explorer')).not.toBeInTheDocument()
+  })
+
+  describe('vote gate', () => {
+    const withGate = (gate: MetadataVerificationContextValue['gate']) => {
+      setReactProvidersMock({
+        useElection: () =>
+          mockUseElection({
+            election: baseElection,
+            status: 'ONGOING',
+            results: baseResults,
+            isInCensus: true,
+            hasVoted: false,
+            voteId: null,
+            isAbleToVote: true,
+            connected: true,
+          }),
+      })
+      const value: MetadataVerificationContextValue = {
+        enabled: true,
+        pending: gate === 'pending',
+        failed: false,
+        gate,
+        srcFor: (url) => url,
+      }
+      render(
+        <MetadataVerificationContext.Provider value={value}>
+          <VoteButton setQuestionsTab={vi.fn()} />
+        </MetadataVerificationContext.Provider>
+      )
+    }
+
+    it('keeps the vote disabled while the ballot is being checked', () => {
+      withGate('pending')
+
+      expect(screen.getByText('Vote')).toBeDisabled()
+      expect(screen.getByText('Checking the ballot content before you vote…')).toBeInTheDocument()
+    })
+
+    it('blocks the vote when the ballot does not match what was committed', () => {
+      withGate('blocked')
+
+      expect(screen.getByText('Vote')).toBeDisabled()
+      expect(screen.getByRole('alert')).toHaveTextContent(/doesn't match what the organizer committed/)
+    })
+
+    it('lets a verified ballot be cast', () => {
+      withGate('allowed')
+
+      expect(screen.getByText('Vote')).toBeEnabled()
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
   })
 })

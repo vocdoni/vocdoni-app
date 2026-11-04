@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Flex, Spinner, Text } from '@chakra-ui/react'
 import { VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
 import { isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -7,6 +7,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
+import { useMetadataVerificationContext } from './MetadataVerification/context'
 
 const ProcessAside = () => {
   const { t } = useTranslation()
@@ -132,8 +133,36 @@ export const CensusConnectButton = () => {
   return <CspAuth />
 }
 
+/**
+ * Why the vote cannot be cast yet, from the ballot verification: the chain cannot tell what
+ * the voter was shown, so a ballot that does not match what the organizer committed is
+ * refused here, and the vote waits while the check runs rather than going out unverified.
+ */
+const VoteGateNotice = ({ gate }: { gate: 'pending' | 'blocked' }) => {
+  const { t } = useTranslation()
+
+  if (gate === 'pending') {
+    return (
+      <Flex alignItems='center' gap={2} fontSize='sm' color='texts.subtle' role='status'>
+        <Spinner size='xs' />
+        <Text>{t('process.vote_gate.pending', { defaultValue: 'Checking the ballot content before you vote…' })}</Text>
+      </Flex>
+    )
+  }
+
+  return (
+    <Text fontSize='sm' color='red.500' textAlign='center' role='alert'>
+      {t('process.vote_gate.blocked', {
+        defaultValue:
+          "The ballot content doesn't match what the organizer committed, so the vote can't be cast. Try again later or contact the organizer.",
+      })}
+    </Text>
+  )
+}
+
 export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () => void }) => {
   const { election, status, connected, isAbleToVote } = useElection()
+  const gate = useMetadataVerificationContext()?.gate ?? 'allowed'
 
   if (!election || status === 'CANCELED') {
     return null
@@ -165,7 +194,8 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
         <CensusConnectButton />
       ) : (
         <>
-          <CVoteButton w='100%' fontSize='lg' height='50px' onClick={setQuestionsTab} />
+          <CVoteButton w='100%' fontSize='lg' height='50px' onClick={setQuestionsTab} disabled={gate !== 'allowed'} />
+          {gate !== 'allowed' && <VoteGateNotice gate={gate} />}
           {isWeighted && <VoteWeight />}
         </>
       )}
