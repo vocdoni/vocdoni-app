@@ -52,6 +52,7 @@ export const Routes = {
     },
   },
   plans: '/plans',
+  pricing: '/pricing',
   organization: '/organization/:address',
   processes: {
     create: '/admin/processes/create/:groupId?',

@@ -1,6 +1,6 @@
 import { VocdoniApiError, type VocdoniApiClient } from '@vocdoni/api-client'
 import { lazy } from 'react'
-import { Params, redirectDocument, type LoaderFunctionArgs } from 'react-router'
+import { Navigate, Params, redirectDocument, type LoaderFunctionArgs } from 'react-router'
 // These aren't lazy loaded since they are main layouts and related components
 import ErrorElement from '~elements/Error'
 import Layout from '~elements/Layout'
@@ -17,7 +17,7 @@ import { Loading, SuspenseLoader } from '../SuspenseLoader'
 // elements / pages
 const NotFound = lazy(() => import('~elements/NotFound'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
-const PlansPublicPage = lazy(() => import('~elements/plans'))
+const PricingPublicPage = lazy(() => import('~elements/pricing'))
 
 const isSaasNotFoundError = (error: unknown) =>
   error instanceof VocdoniApiError && (error.status === 404 || error.status === 400)
@@ -63,12 +63,17 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
     errorElement: <ErrorElement />,
   },
   {
-    path: Routes.plans,
+    path: Routes.pricing,
     element: (
       <SuspenseLoader>
-        <PlansPublicPage />
+        <PricingPublicPage />
       </SuspenseLoader>
     ),
+  },
+  // Keeps old links to the former plans page working
+  {
+    path: Routes.plans,
+    element: <Navigate to={Routes.pricing} replace />,
   },
   {
     path: '*',

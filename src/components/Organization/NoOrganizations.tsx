@@ -10,7 +10,7 @@ export const NoOrganizations = () => {
   return (
     <Flex flexDirection={'column'}>
       <Button asChild alignSelf='end' colorPalette='gray' size='xs'>
-        <ReactRouterLink to={Routes.plans}>
+        <ReactRouterLink to={Routes.pricing}>
           <Trans i18nKey='view_plans_and_pricing'>View Plans & Pricing</Trans>
         </ReactRouterLink>
       </Button>

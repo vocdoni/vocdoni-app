@@ -30,22 +30,10 @@
   "already_member": "Bereits ein Konto?",
   "alt": {
     "images": {
-      "barca": "Barça-Wappen",
-      "bellpuig": "Wappen der Gemeinde Bellpuig",
-      "berga": "Wappen der Gemeinde Berga",
-      "bisbal": "Wappen der Gemeinde La Bisbal",
-      "bloock": "Bloock-Logo",
-      "coec": "COEC-Logo",
-      "decidim": "Decidim-Logo",
-      "esquerra": "Esquerra Republicana de Catalunya-Logo",
-      "omnium": "Òmnium Cultural-Logo",
       "org_logo": "Logo von {{org}}",
-      "organization_logo": "Logo der Organisation",
-      "ticanoia": "TIC Anoia-Logo"
+      "organization_logo": "Logo der Organisation"
     }
   },
-  "annual": "Jährlich<1>40 % sparen</1>",
-  "apply": "Anwenden",
   "aside": {
     "anonymous_receipt_gone": "Dein Beleg wurde bei der Stimmabgabe angezeigt und kann nicht erneut abgerufen werden.",
     "has_already_voted": "Deine Stimme wurde erfolgreich abgegeben",
@@ -98,7 +86,6 @@
     "label": "Organisations-Avatar"
   },
   "back": "Zurück",
-  "billing_details": "Rechnungsdetails",
   "booking": {
     "unavailable": "Die Buchung ist derzeit nicht verfügbar. Bitte versuche es später erneut."
   },
@@ -138,7 +125,6 @@
     "title": "Passwort ändern"
   },
   "close": "Schließen",
-  "code_applied": "Code „{{appliedCode}}\" angewendet",
   "color_mode_switcher": "Farbmodus-Umschalter",
   "common": {
     "back": "Zurück",
@@ -240,7 +226,6 @@
     "terms_acceptance": "Ich habe die <2>Allgemeinen Geschäftsbedingungen</2> und die <6>Datenschutzrichtlinie</6> gelesen und akzeptiere sie."
   },
   "current": "Aktuell",
-  "current_plan": "Aktueller Plan",
   "dark": "Dunkel",
   "dashboard": {
     "actions": {
@@ -296,7 +281,6 @@
   },
   "delete_my_account": "Mein Konto löschen",
   "description": "Beschreibung",
-  "discount": "Rabatt",
   "do_it_later": "Später erledigen",
   "draft_processes": "Entwürfe",
   "drafts": {
@@ -348,7 +332,6 @@
   "end_time": "Endzeit",
   "end_vote": "Abstimmung beenden",
   "ended_processes": "Beendet",
-  "enter_promo_code": "Code eingeben",
   "error": {
     "crash_description": "Lade die Seite neu oder kehre zum Dashboard zurück.",
     "crash_title": "Etwas ist schiefgelaufen",
@@ -366,71 +349,21 @@
     "return_to_home": "Zurück zur Startseite",
     "title": "Fehler"
   },
-  "error_removing_code": "Fehler beim Entfernen des Codes",
   "features": {
     "anonymous": "Anonyme Abstimmung",
     "approval": "Zustimmungsabstimmung",
-    "audit": "Prüfung",
-    "audit_blockchain": "100 % blockchain-prüfbar",
-    "basic_analytics": "Basis-Analyse",
-    "basic_branding": "Einfaches Branding",
-    "basic_sla": "Best-Effort",
-    "cumulative": "Kumulative Abstimmung",
-    "custom_reports": "Benutzerdefinierte Berichte",
     "custom_url": "Eigene Domain",
-    "dedicated_account_manager": "Persönlicher Kundenbetreuer",
     "email_notification": "2FA per E-Mail",
-    "email_notifications": "E-Mail-Benachrichtigungen an Wählende",
     "email_reminder": "E-Mail-Erinnerungen",
-    "email_support": "E-Mail",
-    "email_support_basic": "(Antwort in 72 Std.)",
-    "email_support_essential": "(Antwort in 48 Std.)",
-    "email_support_premium": "(Antwort in 24 Std.)",
-    "GDPR_compliance": "DSGVO-Konformität",
-    "generic_sla": "Allgemeines SLA",
     "live_results": "Live-Ergebnisse",
     "live_streaming": "Live-Streaming-Integration",
-    "memberbase_all_in_one_management": "Mitgliederverwaltung aus einer Hand",
     "multiple": "Mehrfachauswahl",
-    "on_demand": "Auf Anfrage*",
     "overwrite": "Stimme ändern",
-    "participatory_budgeting": "Partizipatives Budgetieren",
     "personalization": "Vollständige Anpassung",
     "phone_support": "Telefon",
-    "priority_support": "Vorrangiger Support",
-    "ranked": "Rangfolgeabstimmung",
-    "section": {
-      "analytics_and_reporting": "Analyse & Berichte",
-      "authentication_security": "Authentifizierung & Sicherheit",
-      "compliance_and_security": "Compliance & Sicherheit",
-      "customization": "Anpassung",
-      "extra_features": "Zusatzfunktionen",
-      "features": "Funktionen",
-      "general_limits": "Allgemeine Limits",
-      "memberbase_management": "Mitgliederverwaltung",
-      "organization": "Organisation",
-      "support": "Support",
-      "voting_types": "Abstimmungsarten"
-    },
     "single": "Einzelne Auswahl",
     "sms_notification": "2FA SMS",
-    "sms_notifications": "SMS-Benachrichtigungen an Wählende",
     "sub_orgs": "Bis zu {{ count }} Unterorganisationen",
-    "team_members": "Teammitglieder",
-    "tooltips": {
-      "anonymous": "Dies ist eine optionale Funktion, die Organisatoren wählen können. Wenn aktiviert, sind Stimmen vollständig anonym – selbst wir können nicht nachvollziehen, wer für eine bestimmte Option gestimmt hat. Alternativ können Organisatoren die Ergebnisse bis zum Ende der Abstimmung verschlüsseln oder die Abstimmung vollständig öffentlich machen.",
-      "live_results": "Dies ist eine optionale Funktion, die Organisatoren wählen können. Ergebnisse können in Echtzeit angezeigt werden, während Stimmen abgegeben werden, oder Organisatoren können die Ergebnisse bis zum Ende des Abstimmungszeitraums verschlüsselt und verborgen halten.",
-      "memberbase_all_in_one": "Importiere deine Mitgliederbasis, um Gruppen berechtigter Wählender zu erstellen und Abstimmungsberechtigungen ganz einfach zu verwalten.",
-      "multiple": "Wählende können mehrere Optionen aus den verfügbaren Auswahlmöglichkeiten auswählen. Ideal für Umfragen und Entscheidungen, bei denen mehrere Auswahlen erlaubt sind.",
-      "overwrite": "Wählende können ihre Stimme vor Ende des Abstimmungszeitraums ändern. Diese Funktion hilft, Fehler zu vermeiden und Zwang zu verhindern, indem Wählende ihre Auswahl korrigieren können.",
-      "single": "Wählende können nur eine Option aus den verfügbaren Auswahlmöglichkeiten auswählen. Perfekt für Abstimmungen und einfache Ja/Nein-Entscheidungen.",
-      "team_members": "Lade Teammitglieder ein und weise rollenbasierte Berechtigungen zu, damit du deine Organisation mühelos verwalten kannst.",
-      "uptime": "Wir garantieren eine Verfügbarkeit von 99,99 %, in den kostenpflichtigen Plänen wird dies vertraglich mit Garantien abgesichert."
-    },
-    "total_orgs": "Verfügbare Unterorganisationen insgesamt",
-    "total_users": "Verfügbare Benutzer insgesamt",
-    "uptime": "99,99 % Verfügbarkeit",
-    "uptime_guaranteed": "Garantiert ({{suffix}})",
     "weighted": "Gewichtete Abstimmung",
     "white_label": "White-Label (kein Vocdoni-Branding)"
   },
@@ -501,8 +434,6 @@
       "voting_issue": "Problem bei der Abstimmung"
     }
   },
-  "free_trial_days_one": "Ein kostenloser Tag",
-  "free_trial_days_other": "{{count}} kostenlose Tage",
   "google_oauth_conflict_error": "Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte melde dich mit deiner bisherigen Methode an.",
   "google_oauth_error": "Google OAuth-Fehler",
   "google_oauth_error_description": "Google OAuth-Fehler, bitte versuche es erneut",
@@ -567,193 +498,6 @@
     "title": "Vocdoni | Sichere & überprüfbare Abstimmungsinfrastruktur"
   },
   "home": {
-    "clients_title": "Von über 100 Organisationen vertraut",
-    "faqs": {
-      "faq_1": {
-        "description": "Vocdoni zeichnet sich durch eine reibungslose Nutzererfahrung, fortschrittliche Sicherheitsfunktionen und unübertroffene Transparenz aus. Unsere Plattform nutzt modernste Technologien wie Zero-Knowledge-Beweise und eine eigene Blockchain, um sichere und geheime Abstimmungen zu gewährleisten und gleichzeitig einen transparenten und nachvollziehbaren Abstimmungsprozess bereitzustellen.",
-        "title": "Was unterscheidet Vocdoni von anderen Abstimmungsplattformen?"
-      },
-      "faq_10": {
-        "description": "Wir bieten technischen Support, um Wählenden bei der Lösung von Problemen zu helfen. Außerdem ist das System so gestaltet, dass es für alle intuitiv und zugänglich ist.",
-        "title": "Was passiert, wenn eine wählende Person Probleme beim Zugang oder bei der Stimmabgabe hat?"
-      },
-      "faq_11": {
-        "description": "Vocdoni ist dank Blockchain und weiterer fortschrittlicher Sicherheitsmaßnahmen widerstandsfähig gegen Angriffe. Herkömmliche Systeme können anfällig für Manipulationen sein, doch bei Vocdoni ist jede Stimme kryptographisch geschützt und kann nicht verändert werden.",
-        "title": "Welche Sicherheit bietet Vocdoni gegen Cyberangriffe?"
-      },
-      "faq_12": {
-        "description": "Vocdoni ermöglicht jede Art von Abstimmung: interne Abstimmungen, Versammlungen, Volksentscheide, Umfragen und Beteiligungsprozesse. Die Plattform passt sich den Bedürfnissen von Behörden, Unternehmen, Genossenschaften, Vereinen und anderen Organisationen an.",
-        "title": "Welche Arten von Abstimmungen kann ich mit Vocdoni durchführen?"
-      },
-      "faq_13": {
-        "description": "Nein. Wählende erhalten einen sicheren Link oder eine eindeutige Zugangsberechtigung, mit der sie abstimmen können, ohne sich registrieren zu müssen. Das vereinfacht den Vorgang und gewährleistet die Anonymität.",
-        "title": "Müssen Wählende ein Konto erstellen, um abstimmen zu können?"
-      },
-      "faq_14": {
-        "description": "Das hängt von der Konfiguration der Abstimmung ab. In manchen Fällen können Wählende ihre Stimme ändern, bis der Prozess endet.",
-        "title": "Können abgegebene Stimmen noch geändert werden?"
-      },
-      "faq_15": {
-        "description": "Ja, die Plattform ermöglicht erweiterte Konfigurationen wie gewichtete Abstimmung (bei der eine Stimme je nach bestimmten Kriterien mehr zählt) und delegierte Abstimmung (bei der eine Person ihre Stimme auf eine andere übertragen kann).",
-        "title": "Unterstützt Vocdoni gewichtete oder delegierte Abstimmungen?"
-      },
-      "faq_16": {
-        "description": "Ja, digitale Abstimmungen können mit persönlichen Abstimmungen kombiniert und die Ergebnisse anschließend in einer einheitlichen Auszählung zusammengeführt werden. Wir bieten verschiedene Systeme für hybride Abstimmungen an.",
-        "title": "Können hybride Abstimmungen (digital und persönlich) durchgeführt werden?"
-      },
-      "faq_17": {
-        "description": "Das hängt von den Regeln des jeweiligen Prozesses ab. Kriterien zur Stichentscheidung können vor dem Start der Abstimmung festgelegt werden, z. B. zweite Runden oder spezifische Regeln zur Ermittlung des Siegers.",
-        "title": "Was passiert bei einem Gleichstand in einer Abstimmung?"
-      },
-      "faq_18": {
-        "description": "Die Ergebnisse werden automatisch erstellt, sobald die Abstimmung endet. Eine manuelle Auszählung ist nicht erforderlich, und die Ergebnisse können dank der Blockchain-Technologie sofort überprüft werden.",
-        "title": "Wie lange dauert es, bis die Ergebnisse veröffentlicht werden?"
-      },
-      "faq_19": {
-        "description": "Ja, Vocdoni ermöglicht die Konfiguration einer privaten Abstimmung, auf die nur Mitglieder einer bestimmten Teilnehmerliste zugreifen können.",
-        "title": "Können vollständig private Abstimmungen durchgeführt werden?"
-      },
-      "faq_2": {
-        "description": "Ja, Vocdoni hält sich strikt an die DSGVO-Vorgaben und stellt sicher, dass Nutzerdaten mit größter Sorgfalt und Vertraulichkeit behandelt werden. Unsere Plattform legt in jeder Phase des Abstimmungsprozesses höchsten Wert auf Datenschutz und Datensicherheit.",
-        "title": "Entspricht Vocdoni den Datenschutzbestimmungen?"
-      },
-      "faq_20": {
-        "description": "Dank der Transparenz der Blockchain kann jede Person die Ergebnisse überprüfen. Darüber hinaus stellen wir Werkzeuge zur Verfügung, um den Abstimmungsprozess zu prüfen und seine Zuverlässigkeit sicherzustellen.",
-        "title": "Wie kann die Richtigkeit der Ergebnisse überprüft werden?"
-      },
-      "faq_21": {
-        "description": "Ja. Die Plattform wurde nach Barrierefreiheitsstandards (WCAG) entwickelt und eignet sich daher für Menschen mit visuellen, auditiven oder motorischen Einschränkungen.",
-        "title": "Ist Vocdoni für Menschen mit Behinderungen zugänglich?"
-      },
-      "faq_22": {
-        "description": "Vocdoni funktioniert auf jedem Gerät mit Internetverbindung, einschließlich Computern, Tablets und Mobiltelefonen. Die Plattform ist für alle modernen Browser optimiert und erfordert keine Downloads oder Installationen.",
-        "title": "Welche Geräte sind mit Vocdoni kompatibel?"
-      },
-      "faq_23": {
-        "description": "Wählende können eine Einladung per E-Mail, SMS oder über einen sicheren Link erhalten, den die Organisation teilt.",
-        "title": "Wie werden Wählende zur Teilnahme an einer Abstimmung eingeladen?"
-      },
-      "faq_24": {
-        "description": "Vocdoni kann alles abwickeln – von kleinen Gruppen bis hin zu großen Abstimmungen mit Hunderttausenden von Teilnehmenden – dank seiner skalierbaren, blockchain-basierten Infrastruktur.",
-        "title": "Wie viele Wählende kann Vocdoni gleichzeitig verwalten?"
-      },
-      "faq_25": {
-        "description": "Ja, die Plattform ermöglicht es, Rollen und Berechtigungen für Administratoren zu definieren, und schränkt den Zugang zu bestimmten Funktionen entsprechend den Anforderungen der Organisation ein.",
-        "title": "Können für Administratoren verschiedene Zugriffsebenen festgelegt werden?"
-      },
-      "faq_26": {
-        "description": "Vocdoni unterstützt verschiedene Authentifizierungsmethoden wie E-Mail, eID, SMS-Code, elektronische Signatur oder die Integration mit bestehenden Identifizierungssystemen.",
-        "title": "Wie kann ich sicherstellen, dass nur berechtigte Personen abstimmen?"
-      },
-      "faq_27": {
-        "description": "Wir bieten technischen Support und Wiederherstellungswerkzeuge an, um sicherzustellen, dass alle Wählenden ihr Stimmrecht ohne Probleme ausüben können.",
-        "title": "Was passiert, wenn jemand während der Abstimmung technische Probleme hat?"
-      },
-      "faq_28": {
-        "description": "Geschlossene Teilnehmerliste: Nur Personen, die zuvor in der Teilnehmerliste registriert wurden, können abstimmen. Offene Teilnehmerliste: Jede Person, die bestimmte Kriterien erfüllt (z. B. eID-Verifizierung), kann abstimmen.",
-        "title": "Was ist der Unterschied zwischen einer geschlossenen und einer offenen Teilnehmerliste?"
-      },
-      "faq_29": {
-        "description": "Beobachter können den Abstimmungsprozess in Echtzeit verfolgen und die Ergebnisse mithilfe der Transparenz- und Verifizierungswerkzeuge von Vocdoni prüfen.",
-        "title": "Wie funktioniert die Ergebnisverifizierung für Beobachter?"
-      },
-      "faq_3": {
-        "description": "Aber natürlich! Vocdoni bietet Anpassungsoptionen, damit deine Organisation ihr Corporate Design einbinden und eine nahtlose Integration in bestehende Systeme gewährleisten kann – für ein einheitliches Markenerlebnis für Wählende. Kontaktiere uns für mehr Informationen!",
-        "title": "Kann Vocdoni an das Corporate Design unserer Organisation angepasst werden?"
-      },
-      "faq_30": {
-        "description": "Ja, du kannst genaue Daten und Uhrzeiten für Beginn und Ende der Abstimmung festlegen, sodass kein manuelles Eingreifen erforderlich ist.",
-        "title": "Kann ich eine Abstimmung so planen, dass sie automatisch startet und endet?"
-      },
-      "faq_31": {
-        "description": "Ja, die Plattform unterstützt verschiedene Abstimmungsformate, darunter Mehrfachauswahlfragen, gewichtete Abstimmung und Systeme wie Präferenzabstimmung oder STV.",
-        "title": "Können Fragen mehrere Antwortmöglichkeiten haben?"
-      },
-      "faq_32": {
-        "description": "Ja, Vocdoni erleichtert die Teilnahme an Beratungsprozessen, Versammlungen und Steuerungsmechanismen und passt sich an verschiedene Entscheidungssysteme an.",
-        "title": "Eignet sich Vocdoni für kollaborative Entscheidungsprozesse?"
-      },
-      "faq_33": {
-        "description": "Ja, Vocdoni ermöglicht die Umsetzung ausgefeilterer Abstimmungsmethoden entsprechend den Bedürfnissen jeder Organisation oder jedes Abstimmungsprozesses.",
-        "title": "Können fortgeschrittene Abstimmungsmethoden wie Quadratic Voting oder Zustimmungsabstimmung integriert werden?"
-      },
-      "faq_34": {
-        "description": "Je nach Abstimmungskonfiguration kannst du Echtzeitergebnisse oder eine abschließende Auszählung nach Ende der Abstimmung wählen.",
-        "title": "Sind die Ergebnisse in Echtzeit abrufbar?"
-      },
-      "faq_35": {
-        "description": "Dank der Transparenz und Nachvollziehbarkeit der Blockchain kann jede teilnehmende oder beobachtende Person die Ergebnisse prüfen, um mögliche Unregelmäßigkeiten zu erkennen.",
-        "title": "Wie können Abstimmungsergebnisse angefochten werden?"
-      },
-      "faq_36": {
-        "description": "Ja, du kannst problemlos eine vordefinierte Teilnehmerliste per CSV-Datei hochladen oder sie mit vorhandenen Datenbanken verknüpfen.",
-        "title": "Kann eine bestehende Wähler-Teilnehmerliste importiert werden?"
-      },
-      "faq_37": {
-        "description": "Ja, wir befolgen bewährte Sicherheits- und Transparenzstandards und können uns an spezifische Vorschriften verschiedener Länder und Institutionen anpassen.",
-        "title": "Erfüllt Vocdoni die offiziellen Anforderungen für elektronische Abstimmungen?"
-      },
-      "faq_38": {
-        "description": "Ja, es ist ein ideales Werkzeug für öffentliche Befragungen, Volksabstimmungen und Bürgerbeteiligungsprozesse jeder Größenordnung.",
-        "title": "Kann Vocdoni Volksabstimmungen und Bürgerkonsultationen durchführen?"
-      },
-      "faq_39": {
-        "description": "Vocdoni-Pläne beinhalten eine Grundanzahl an Wählenden, aber du kannst je nach Bedarf deiner Organisation weitere hinzufügen. Die Plattform ist skalierbar – von kleinen Versammlungen bis hin zu großen Abstimmungen.",
-        "title": "Gibt es Grenzen bei der Anzahl der Wählenden oder Abstimmungsprozesse?"
-      },
-      "faq_4": {
-        "description": "Wir bieten die Bibliotheken Vocdoni SDK & Vocdoni UI Components an, die für eine einfache Integration in deine Software oder Plattform entwickelt wurden. Wir haben sie mit Fokus auf Benutzerfreundlichkeit für Entwickler konzipiert, damit von Anfang an Ergebnisse erzielt werden können. Unser Expertenteam begleitet dich durch den Integrationsprozess, um einen reibungslosen Übergang mit minimalen Unterbrechungen zu gewährleisten.",
-        "title": "Wie einfach lässt sich Vocdoni in bestehende Systeme integrieren?"
-      },
-      "faq_40": {
-        "description": "Ja, Vocdoni ermöglicht gewichtete Abstimmungen, bei denen jede Stimme je nach den von der Organisation festgelegten Kriterien einen unterschiedlichen Wert haben kann.",
-        "title": "Können unterschiedliche Stimmgewichte festgelegt werden?"
-      },
-      "faq_41": {
-        "description": "Vocdoni ist für alle Geräte und Browser zugänglich. Bei Problemen bieten wir technischen Support und Optionen zur Stimmwiederherstellung, damit niemand von der Teilnahme ausgeschlossen wird.",
-        "title": "Was passiert, wenn eine wählende Person technische Probleme beim Abstimmen hat?"
-      },
-      "faq_42": {
-        "description": "Vocdoni verwendet fortschrittliche Verschlüsselung, Zero-Knowledge-Beweise und eine dezentrale Blockchain-Architektur, um Sicherheit und Widerstandsfähigkeit gegen Angriffe zu gewährleisten.",
-        "title": "Wie ist das System gegen Cyberangriffe geschützt?"
-      },
-      "faq_43": {
-        "description": "Ja, wir unterstützen verschiedene Abstimmungssysteme, darunter einfache Mehrheitswahl, Präferenzwahl (wie das STV-System), Multiple-Choice-Fragen und mehr.",
-        "title": "Können Fragen mit mehreren Optionen oder Präferenzwahl erstellt werden?"
-      },
-      "faq_44": {
-        "description": "Ja, wir bieten die Möglichkeit, Probeabstimmungen durchzuführen, damit sich Organisatoren und Wählende vor einer offiziellen Abstimmung mit dem System vertraut machen können.",
-        "title": "Kann vor einer echten Abstimmung ein Test durchgeführt werden?"
-      },
-      "faq_45": {
-        "description": "Du kannst dich registrieren und in wenigen Minuten mit der Erstellung von Abstimmungen beginnen. Wenn du Unterstützung oder eine individuelle Konfiguration benötigst, steht dir unser Team gerne zur Verfügung.",
-        "title": "Wie kann ich Vocdoni nutzen?"
-      },
-      "faq_5": {
-        "description": "Vocdoni bietet umfassenden Support, der dich bei jedem Schritt deiner Abstimmung begleitet. Von der Ersteinrichtung und Anpassung bis hin zu laufender Wartung und Fehlerbehebung – unser engagiertes Support-Team hilft dir, das Beste aus unserer Plattform herauszuholen.",
-        "title": "Welche Art von Support bietet Vocdoni?"
-      },
-      "faq_6": {
-        "description": "Ja, Vocdoni ist für Abstimmungen jeder Größe geeignet – von kleinen Gemeinschaftsabstimmungen bis hin zu groß angelegten öffentlichen Wahlen. Unsere skalierbare Infrastruktur gewährleistet zuverlässige Leistung auch in Spitzenlastzeiten und ermöglicht eine effiziente Einbindung der Wählenden.",
-        "title": "Kann Vocdoni groß angelegte Abstimmungen verwalten?"
-      },
-      "faq_7": {
-        "description": "Sicherheit hat bei Vocdoni höchste Priorität. Unsere Plattform nutzt fortschrittliche kryptografische Verfahren und Blockchain-Technologie, um ein Höchstmaß an Sicherheit zu gewährleisten, die Integrität der Stimmen zu wahren und die Anonymität der Wählenden zu schützen. Mit Vocdoni kannst du darauf vertrauen, dass dein Abstimmungsprozess sicher und manipulationssicher ist.",
-        "title": "Wie sicher ist die Vocdoni-Plattform?"
-      },
-      "faq_8": {
-        "description": "Vocdoni sichert die Integrität von Abstimmungsprozessen, indem jede Stimme als unveränderliche Blockchain-Transaktion aufgezeichnet wird, was Transparenz und Nachvollziehbarkeit gewährleistet.",
-        "title": "Wie stellt Vocdoni die Integrität von Abstimmungsprozessen sicher?"
-      },
-      "faq_9": {
-        "description": "Vocdoni verwendet fortschrittliche kryptografische Verfahren wie Zero-Knowledge-Beweise (zk-SNARKs), um sicherzustellen, dass keine Stimme mit der Identität einer wählenden Person verknüpft werden kann.",
-        "title": "Wie wird die Anonymität der Wählenden geschützt?"
-      },
-      "show_less": "Weniger anzeigen",
-      "show_more": "Mehr anzeigen",
-      "subtitle": "Hier findest du Antworten auf die häufigsten Fragen unserer Nutzer. Damit du deiner digitalen Abstimmungserfahrung mit Klarheit und Vertrauen begegnen kannst.",
-      "title": "Häufig gestellte Fragen"
-    },
     "support": {
       "btn_watch": "Gespräch vereinbaren"
     }
@@ -893,7 +637,6 @@
     },
     "upgrade_plan": "Plan upgraden"
   },
-  "invalid_promo_code": "Ungültiger Aktionscode",
   "invite": {
     "account_not_verified": "Dein Konto ist nicht verifiziert. Bitte verifiziere dein Konto, um fortzufahren.",
     "create_account_subtitle": "Du benötigst zuerst ein Konto, um deine Einladung anzunehmen",
@@ -1098,8 +841,6 @@
     "login": "Anmelden",
     "open": "Menü öffnen"
   },
-  "month": "Monat",
-  "monthly": "Monatlich",
   "name": "Name",
   "need_help": {
     "description": "Benötigst du Hilfe bei deinem ersten Abstimmungsprozess? Schau dir dieses Tutorial an oder vereinbare einen Anruf.",
@@ -1133,7 +874,6 @@
   },
   "open_in_explorer": "Im Explorer öffnen",
   "or_continue_with": "oder weiter mit",
-  "order_summary": "Bestellübersicht",
   "org_type_selector": {
     "selector_label": "Organisationstyp"
   },
@@ -1229,9 +969,6 @@
   },
   "passwords_do_not_match": "Passwörter stimmen nicht überein",
   "pause_vote": "Abstimmung pausieren",
-  "payment": {
-    "stripe_unavailable": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuche es später erneut."
-  },
   "plan": {
     "encouragement": "Eine Abstimmung zu starten ist einfach, und Teilnehmende können von überall mitmachen. Starke Garantien zu niedrigen Kosten haben Vocdoni zur vertrauenswürdigen Wahl für Hunderte von Gemeinden, Vereinen, politischen Parteien und Unternehmen gemacht.",
     "free": "<0>Du nutzt den kostenlosen Plan</0>, mit dem du bereits Abstimmungen starten kannst. Wenn du mehr Funktionen, höhere Limits oder bestimmte Optionen benötigst, erkunde die kostenpflichtigen Pläne und teste sie kostenlos.",
@@ -1256,25 +993,16 @@
     "2fa_suffix_email": "E-Mail",
     "2fa_suffix_sms": "SMS",
     "basic_analytics": "Basis-Analysen",
-    "comparison_table": {
-      "footnote_1": "¹ Abstimmungen mit weniger als 10 Teilnehmenden werden als Testläufe gewertet und zählen nicht auf deine Planlimits an.",
-      "footnote_2": "² 2FA-Guthaben werden nur verbraucht, wenn ein Nutzer während eines Abstimmungsprozesses tatsächlich eine Verifizierung anfordert. Du wirst nie unerwartet aufgebraucht sein: Wenn du dein enthaltenes Guthaben während einer Abstimmung überschreitest, wird jeder weitere Code mit €0,015 berechnet, sobald er gesendet wird. Du kannst auch zusätzliche Guthaben in praktischen Paketen im Voraus kaufen.",
-      "footnote_on_demand": "* Angeforderte Funktionen werden individuell geprüft und können zusätzliche Kosten verursachen."
-    },
     "core_voting_one": "Bis zu {{ count }} Mitglied",
     "core_voting_other": "Bis zu {{ count }} Mitglieder",
     "custom_branding": "Eigenes Branding*",
-    "custom_subtitle": "Auf deine Bedürfnisse zugeschnitten",
-    "custom_title": "Individuell",
     "different_voting_methods": "Verschiedene Abstimmungsmethoden",
-    "empty": "Keine Tarife gefunden",
-    "empty_description": "Schau später wieder vorbei für verfügbare Tarife.",
     "essential_subtitle": "Für wachsende Organisationen",
     "essential_title": "Essential",
     "free_subtitle": "Perfekt für den Einstieg",
     "free_title": "Free",
-    "load_error": "Tarife konnten nicht geladen werden",
-    "load_error_description": "Bitte versuche es erneut.",
+    "page_description": "Unsere Preise findest du unter <pricingLink>vocdoni.io/pricing</pricingLink>.",
+    "page_title": "Preise",
     "premium_subtitle": "Für etablierte Organisationen",
     "premium_title": "Premium",
     "priority_support": "Priorisierter E-Mail-Support (24h)",
@@ -1284,17 +1012,6 @@
     "up_to_admins_other": "{{ count }} Administratoren",
     "yearly_processes_one": "{{ count }} Abstimmung pro Jahr¹",
     "yearly_processes_other": "{{ count }} Abstimmungen pro Jahr¹"
-  },
-  "pricing_card": {
-    "annual_savings": "{{ savings }}/Jahr sparen mit Jahresabo",
-    "annual_total_cost": "{{ price }} jährlich abgerechnet",
-    "contact_sales": "<0>Kontaktiere unser Vertriebsteam</0> <1>oder</1>",
-    "custom_plan": "Preis auf Anfrage",
-    "custom_plan_description": "Hast du besondere Governance-Anforderungen? Wir passen uns mit einer vollständig maßgeschneiderten Lösung an deine Bedürfnisse an. Ein persönlicher Ansprechpartner begleitet dich durch die gesamte Zusammenarbeit.",
-    "free_trial": "{{ freeDays }}-tägige kostenlose Testphase",
-    "from": "<price>{{ price }}</price><time>/Monat zzgl. MwSt.</time>",
-    "most_popular_plan": "Am beliebtesten",
-    "need_more_members": "Mehr Mitglieder benötigt? <2>Kontaktiere uns</2>"
   },
   "privacy_policy": "Datenschutzerklärung",
   "process": {
@@ -1700,8 +1417,6 @@
     "error": "Profil konnte nicht aktualisiert werden",
     "success": "Profil erfolgreich aktualisiert"
   },
-  "promo_code": "Aktionscode",
-  "promo_code_required": "Aktionscode ist erforderlich",
   "public_process": {
     "no_tally": "Keine Auszählung",
     "verify": "Auf dem Blockchain-Explorer überprüfen:",
@@ -1710,7 +1425,6 @@
   "questions_and_results": "Fragen und Ergebnisse",
   "registration_failed": "Registrierung fehlgeschlagen",
   "registration_successful": "Registrierung erfolgreich",
-  "remove": "Entfernen",
   "remove_avatar": "Avatar entfernen",
   "reset_password_button": "Passwort zurücksetzen",
   "result_visibility": "Sichtbarkeit der Ergebnisse",
@@ -1786,7 +1500,6 @@
   },
   "start_date": "Startdatum",
   "start_time": "Startzeit",
-  "subscribe": "Abonnieren",
   "subscription": {
     "locked_content": {
       "available_in": "Verfügbar in:",
@@ -1796,15 +1509,6 @@
     },
     "title": "Abonnementplan"
   },
-  "subscription_plan": {
-    "gdpr_compliance": "Alle Pläne erfüllen die DSGVO-Anforderungen.",
-    "hide_comparison_table": "Weniger Funktionen anzeigen",
-    "need_help": "<0>Hilfe bei der Auswahl?</0> <1>Kontaktiere unser Vertriebsteam</1>",
-    "show_comparison_table": "Alle Funktionen anzeigen",
-    "subtitle": "Mit unseren Abonnements erhältst du mehr als einen Plan. Du bekommst Zugang zur innovativsten Governance-Plattform. Dank dieses Modells können wir den besten Preis auf dem Markt anbieten: ob du 1, 5 oder 20 Abstimmungen pro Jahr benötigst – du profitierst immer von den wettbewerbsfähigsten Kosten und unübertroffenen Garantien. Die Plattform ist vollständig selbstverwaltend, und unser Team steht jederzeit für Unterstützung oder maßgeschneiderte Lösungen bereit.",
-    "title": "Abonnementplan"
-  },
-  "subtotal": "Zwischensumme",
   "support": "Support",
   "support_chat": {
     "ask_name": "Bevor wir das senden — wie heißt du?",
@@ -1836,7 +1540,6 @@
   "switch_mode": "Zum {{ mode }}-Modus wechseln",
   "switch_organization": "Organisation wechseln",
   "system": "System",
-  "tax": "Steuer ({{percent}}%)",
   "team": {
     "actions": {
       "cancel_invitation": "Einladung abbrechen",
@@ -1948,12 +1651,8 @@
     }
   },
   "theme": "Design",
-  "then_price_per_period": "Danach {{price}}/{{period}}",
-  "total_after_trial": "Gesamtbetrag nach der Testphase",
-  "total_due_today": "Heute fälliger Betrag",
   "total_votes": "Stimmen gesamt",
   "turnout": "Beteiligung",
-  "upgrade_plan": "Auf {{plan}} upgraden",
   "uploaded_image_preview": "Vorschau des hochgeladenen Bildes",
   "uploader": {
     "avatar_upload_failed": "Avatar-Upload fehlgeschlagen",
@@ -2118,8 +1817,6 @@
   "voting_processes_description": "Deine Abstimmungsprozesse verwalten und überwachen",
   "voting_settings": "Abstimmungseinstellungen",
   "voting_status": "Abstimmungsstatus",
-  "wallet_not_connected": "Wallet nicht verbunden",
   "website": "Website",
-  "whatsapp_contact": "Schreib uns!",
-  "year": "Jahr"
+  "whatsapp_contact": "Schreib uns!"
 }
