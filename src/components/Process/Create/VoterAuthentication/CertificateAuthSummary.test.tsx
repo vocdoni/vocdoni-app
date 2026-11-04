@@ -78,13 +78,12 @@ describe('CertificateAuthSummary', () => {
   })
 
   it('shows the previous verdict dimmed and aria-busy while re-checking after a tab return', () => {
-    const previous = missingCoverage(24, 430)
     render(
       <CertificateAuthSummary
         membersCount={430}
         status='checking'
         coverage={emptyCoverage()}
-        previousCoverage={previous}
+        previous={{ status: 'valid', coverage: missingCoverage(24, 430) }}
       />
     )
 
@@ -93,6 +92,47 @@ describe('CertificateAuthSummary', () => {
     expect(screen.getByText(/24 members are missing a DNI\/NIE/)).toBeInTheDocument()
     const statusRegion = screen.getByRole('status')
     expect(statusRegion).toHaveAttribute('aria-busy', 'true')
+  })
+
+  it('claims no coverage while the first check is still running', () => {
+    render(<CertificateAuthSummary membersCount={430} status='checking' coverage={emptyCoverage()} />)
+
+    const statusRegion = screen.getByRole('status')
+    expect(statusRegion).toHaveTextContent('Checking your member list…')
+    expect(statusRegion).toHaveAttribute('aria-busy', 'true')
+    expect(screen.queryByText(/can sign in/i)).not.toBeInTheDocument()
+  })
+
+  it('says the member list could not be checked instead of claiming coverage', () => {
+    render(<CertificateAuthSummary membersCount={430} status='unavailable' coverage={emptyCoverage()} />)
+
+    expect(screen.getByRole('status')).toHaveTextContent("We couldn't check your member list.")
+    expect(screen.queryByText(/can sign in/i)).not.toBeInTheDocument()
+  })
+
+  it('keeps an unverified previous result unverified while re-checking over it', () => {
+    const { unmount } = render(
+      <CertificateAuthSummary
+        membersCount={430}
+        status='checking'
+        coverage={emptyCoverage()}
+        previous={{ status: 'rejected', coverage: emptyCoverage() }}
+      />
+    )
+    expect(screen.getByText(/these settings don't fit your member list/i)).toBeInTheDocument()
+    expect(screen.queryByText(/can sign in/i)).not.toBeInTheDocument()
+    unmount()
+
+    render(
+      <CertificateAuthSummary
+        membersCount={430}
+        status='checking'
+        coverage={emptyCoverage()}
+        previous={{ status: 'unavailable', coverage: emptyCoverage() }}
+      />
+    )
+    expect(screen.getByText("We couldn't check your member list.")).toBeInTheDocument()
+    expect(screen.queryByText(/can sign in/i)).not.toBeInTheDocument()
   })
 
   it('shows the mismatch line for duplicates or a rejected census', () => {

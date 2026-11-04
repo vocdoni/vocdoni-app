@@ -168,10 +168,11 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
           membersCount={group?.membersCount ?? 0}
           status={savedCheck.status}
           coverage={coverageFromCheck(savedCheck.nationalIdWarnings, savedCheck.issues)}
-          previousCoverage={
-            savedCheck.previous
-              ? coverageFromCheck(savedCheck.previous.nationalIdWarnings, savedCheck.previous.issues)
-              : undefined
+          previous={
+            savedCheck.previous && {
+              status: savedCheck.previous.status,
+              coverage: coverageFromCheck(savedCheck.previous.nationalIdWarnings, savedCheck.previous.issues),
+            }
           }
         />
       ) : (

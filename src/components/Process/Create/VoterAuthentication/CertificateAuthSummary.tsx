@@ -1,17 +1,24 @@
 import { Badge, Box, Flex, HStack, Icon, Link, List, Spinner, Stack, Text, VisuallyHidden } from '@chakra-ui/react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuCircleCheck, LuExternalLink, LuIdCard, LuTriangleAlert } from 'react-icons/lu'
+import { LuCircleCheck, LuExternalLink, LuIdCard, LuInfo, LuTriangleAlert } from 'react-icons/lu'
 import type { CertificateCoverage } from '~src/queries/certificateAuth/warnings'
 import { Routes } from '~routes'
 import { getProtectionLevelTitle, protectionLevelPalettes } from './ProtectionLevel'
 import type { CensusCheckStatus } from './useCensusCheck'
 
+/** A finished check and the coverage it found. */
+export type CoverageOutcome = {
+  status: Exclude<CensusCheckStatus, 'idle' | 'checking'>
+  coverage: CertificateCoverage
+}
+
 export type CertificateAuthSummaryProps = {
   membersCount: number
   status: CensusCheckStatus
   coverage: CertificateCoverage
-  previousCoverage?: CertificateCoverage | null
+  /** While checking: the last finished outcome, kept on screen until the new one lands. */
+  previous?: CoverageOutcome | null
 }
 
 // Icon + children side-by-side, used for every row in the card body.
@@ -80,33 +87,36 @@ const Rechecking = () => {
  * The saved certificate sign-in summary in the Settings panel: method, grade, and
  * a live coverage verdict re-checked whenever the admin returns from fixing members.
  */
-export const CertificateAuthSummary = ({
-  membersCount,
-  status,
-  coverage,
-  previousCoverage,
-}: CertificateAuthSummaryProps) => {
+export const CertificateAuthSummary = ({ membersCount, status, coverage, previous }: CertificateAuthSummaryProps) => {
   const { t } = useTranslation()
   const titleId = 'cert-auth-summary'
 
-  // While re-checking, the previous verdict stays visible (dimmed) so there is
-  // no flicker between "some missing" and "checking…".
-  const isRechecking = status === 'checking' && !!previousCoverage
-  const displayed = isRechecking ? previousCoverage! : coverage
+  // A verdict is only ever drawn from a finished check: zero problems found and
+  // no answer yet look the same in the coverage, and only one of them is green.
+  const busy = status === 'checking'
+  const isRechecking = busy && !!previous
+  let shown: CoverageOutcome | null = null
+  if (status === 'valid' || status === 'invalid' || status === 'rejected' || status === 'unavailable') {
+    shown = { status, coverage }
+  } else if (isRechecking) shown = previous!
+  const displayed = shown?.coverage ?? coverage
+  const verified = shown?.status === 'valid' || shown?.status === 'invalid'
 
   // Duplicates prevent reliable sign-in; the admin must fix the census itself.
-  const isMismatch = status === 'rejected' || displayed.duplicates.length > 0
+  const isMismatch = shown?.status === 'rejected' || (verified && displayed.duplicates.length > 0)
+  const isUnavailable = shown?.status === 'unavailable'
 
-  const isAllCovered = !isMismatch && displayed.cannotSignIn === 0
+  const isAllCovered = verified && !isMismatch && displayed.cannotSignIn === 0
   // All problems are simply absent nationalIds: one sentence is enough.
   const isOnlyMissing =
+    verified &&
     !isMismatch &&
     !isAllCovered &&
     displayed.counts.letter === 0 &&
     displayed.counts.otherId === 0 &&
     displayed.counts.missing > 0
   // Multiple problem kinds: show a total + one line per non-zero reason.
-  const isMixed = !isMismatch && !isAllCovered && !isOnlyMissing
+  const isMixed = verified && !isMismatch && !isAllCovered && !isOnlyMissing
 
   const restCanSignIn = membersCount - displayed.cannotSignIn
 
@@ -135,15 +145,33 @@ export const CertificateAuthSummary = ({
 
         {isRechecking && <Rechecking />}
 
-        {/* The coverage verdict is live: a re-check result is announced once it settles. */}
+        {/* The coverage verdict is live: a re-check result is announced once it settles.
+            Counts only, never names or DNI/NIE values, so session recordings may keep it. */}
         <Stack
           gap={3}
           role='status'
           aria-live='polite'
-          aria-busy={isRechecking}
+          aria-busy={busy}
           opacity={isRechecking ? 0.6 : 1}
           transition='opacity 0.15s'
         >
+          {busy && !shown && (
+            <HStack gap={2} color='fg.muted'>
+              <Spinner size='xs' />
+              <Text fontSize='sm' lineHeight='1.5'>
+                {t('voter_auth.status.checking', { defaultValue: 'Checking your member list…' })}
+              </Text>
+            </HStack>
+          )}
+
+          {isUnavailable && (
+            <Row icon={<Icon as={LuInfo} boxSize={4} />}>
+              <Text fontSize='sm' color='fg.muted' lineHeight='1.5'>
+                {t('voter_auth.summary.unavailable', { defaultValue: "We couldn't check your member list." })}
+              </Text>
+            </Row>
+          )}
+
           {isMismatch && (
             <HStack gap={2} align='start' color='fg.error'>
               <Flex as='span' aria-hidden flexShrink={0} mt={0.5}>
@@ -171,7 +199,7 @@ export const CertificateAuthSummary = ({
 
           {isOnlyMissing && (
             <Notice>
-              <Text fontSize='sm' fontWeight='semibold' color='orange.fg' lineHeight='1.5' className='ph-no-capture'>
+              <Text fontSize='sm' fontWeight='semibold' color='orange.fg' lineHeight='1.5'>
                 {t('voter_auth.summary.certificate_missing', {
                   count: displayed.counts.missing,
                   defaultValue_one: "{{count}} member is missing a DNI/NIE, so they can't sign in.",
@@ -193,7 +221,7 @@ export const CertificateAuthSummary = ({
 
           {isMixed && (
             <Notice>
-              <Text fontSize='sm' fontWeight='semibold' color='orange.fg' lineHeight='1.5' className='ph-no-capture'>
+              <Text fontSize='sm' fontWeight='semibold' color='orange.fg' lineHeight='1.5'>
                 {t('voter_auth.summary.certificate_mixed', {
                   count: displayed.cannotSignIn,
                   defaultValue_one: "{{count}} member has a missing or invalid DNI/NIE, so they can't sign in:",
