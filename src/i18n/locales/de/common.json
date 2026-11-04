@@ -2020,11 +2020,52 @@
       "configure": "Wähler-Authentifizierung konfigurieren",
       "edit": "Wähler-Authentifizierung bearbeiten"
     },
+    "certificate": {
+      "all_valid": "Alle Mitglieder haben eine gültige DNI/NIE.",
+      "bucket_duplicates": "Gleiche DNI/NIE bei mehr als einem Mitglied: beheben, um zu speichern",
+      "bucket_invalid": "Ungültige DNI/NIE: können sich nicht anmelden",
+      "bucket_missing": "Keine DNI/NIE: können sich nicht anmelden",
+      "csv_reason": "Grund",
+      "download": "{{file}} herunterladen",
+      "duplicates_body": "Gib jedem Mitglied seine eigene DNI/NIE in der Mitgliederliste. Du kannst speichern, sobald das behoben ist.",
+      "empty": "leer",
+      "heading": "2. Wer kann sich anmelden?",
+      "hint_attempted_one": "Zum Speichern gib dem Mitglied, das eine DNI/NIE teilt, eine eigene.",
+      "hint_attempted_other": "Zum Speichern gib den {{count}} Mitgliedern, die eine DNI/NIE teilen, jeweils eine eigene.",
+      "hint_blocked": "Du kannst speichern, sobald jedes Mitglied seine eigene DNI/NIE hat.",
+      "loading_members": "Mitglieder werden geladen…",
+      "members_to_review": "Zu prüfende Mitglieder",
+      "missing_body": "Korrigiere ihre DNI/NIE in deiner Mitgliederliste. Wenn du jetzt speicherst, können sie sich nicht anmelden.",
+      "missing_title_one": "{{count}} Mitglied hat keine gültige DNI/NIE und kann sich nicht anmelden.",
+      "missing_title_other": "{{count}} Mitglieder haben keine gültige DNI/NIE und können sich nicht anmelden.",
+      "more_in_csv_one": "und {{count}} weiteres im CSV",
+      "more_in_csv_other": "und {{count}} weitere im CSV",
+      "opens_new_tab": "(wird in einem neuen Tab geöffnet)",
+      "reason_letter": "Buchstabe stimmt nicht überein",
+      "reason_not_dni": "Kein DNI oder NIE",
+      "review_one": "Dieses Mitglied überprüfen",
+      "review_other": "Diese {{count}} überprüfen",
+      "save_anyway_one": "Trotzdem speichern ({{count}} kann sich nicht anmelden)",
+      "save_anyway_other": "Trotzdem speichern ({{count}} können sich nicht anmelden)",
+      "status_missing_one": "{{count}} Mitglied kann sich nicht anmelden: fehlende gültige DNI/NIE.",
+      "status_missing_other": "{{count}} Mitglieder können sich nicht anmelden: fehlende gültige DNI/NIE.",
+      "tell_heading": "Informiere deine Mitglieder",
+      "tell_installed": "Wähler benötigen ein installiertes Zertifikat.",
+      "tell_not_certificates": "Die App idCAT Mòbil und Cl@ve sind keine Zertifikate und funktionieren nicht."
+    },
+    "certificate_preview": {
+      "button": "Mit deinem digitalen Zertifikat anmelden",
+      "consent": "Mit dem Fortfahren akzeptierst du die Nutzungsbedingungen und die Datenschutzrichtlinie.",
+      "help_cert": "Kompatibel mit idCAT Certificat und FNMT-Zertifikaten.",
+      "help_privacy": "Wir verwenden dein Zertifikat nur, um zu prüfen, ob du auf der Wählerliste stehst.",
+      "identify_to_vote": "Identifiziere dich zum Abstimmen"
+    },
     "code": {
       "description": "Vor der Abstimmung senden wir einen 6-stelligen Code an die E-Mail-Adresse oder Telefonnummer der Wählenden. So ist belegt, dass sie ihnen gehört, und niemand kann mit fremden Angaben abstimmen.",
       "email_description": "Wird an die E-Mail-Adresse in deiner Mitgliederliste gesendet.",
       "email_label": "E-Mail",
       "heading": "2. Zusätzlich einen einmaligen Code senden?",
+      "heading_numbered": "3. Zusätzlich einen einmaligen Code senden?",
       "none": "Kein Code",
       "none_description": "Wählende melden sich nur mit ihren Angaben an.",
       "sms_description": "Wird an die Telefonnummer in deiner Mitgliederliste gesendet.",
@@ -2035,6 +2076,7 @@
     "details": {
       "description": "Wähle bis zu {{max}} Angaben aus deiner Mitgliederliste. Was Wählende eingeben, muss genau damit übereinstimmen.",
       "heading": "1. Was geben Wählende ein?",
+      "heading_numbered": "2. Was geben Wählende ein?",
       "optional": "Optional, wenn du einen einmaligen Code sendest: Wählende können sich dann nur mit dem Code anmelden.",
       "password_not_counted": "Das Passwort zählt nicht zu dieser Grenze."
     },
@@ -2043,6 +2085,17 @@
       "good": "Gut",
       "strong": "Stark",
       "unset": "Nicht festgelegt"
+    },
+    "method": {
+      "certificate_description": "Wählende melden sich mit ihrem eigenen digitalen Zertifikat an.",
+      "certificate_info_accepted": "Wir akzeptieren idCAT Certificat und FNMT, die spanischen digitalen Zertifikate.",
+      "certificate_info_ask": "Benötigst du ein anderes digitales Zertifikat? Frage das Vocdoni-Team.",
+      "certificate_info_label": "Welche digitalen Zertifikate funktionieren?",
+      "certificate_title": "Digitales Zertifikat (DNI/NIE)",
+      "details_description": "Wählende geben Angaben aus deiner Mitgliederliste ein, z. B. ihre Mitgliedsnummer.",
+      "details_title": "Mitgliederangaben",
+      "heading": "1. Wie weisen Wählende ihre Identität nach?",
+      "required": "Wähle, wie Wählende ihre Identität nachweisen."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} Mitglied",

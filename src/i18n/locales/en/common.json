@@ -2020,11 +2020,52 @@
       "configure": "Configure Voter Authentication",
       "edit": "Edit Voter Authentication"
     },
+    "certificate": {
+      "all_valid": "Every member has a valid DNI/NIE.",
+      "bucket_duplicates": "Same DNI/NIE on more than one member: fix to save",
+      "bucket_invalid": "Invalid DNI/NIE: can't sign in",
+      "bucket_missing": "No DNI/NIE: can't sign in",
+      "csv_reason": "Reason",
+      "download": "Download {{file}}",
+      "duplicates_body": "Give each one their own DNI/NIE in your member list. You can save once it's fixed.",
+      "empty": "empty",
+      "heading": "2. Who can sign in?",
+      "hint_attempted_one": "To save, give the {{count}} member who shares a DNI/NIE their own.",
+      "hint_attempted_other": "To save, give the {{count}} members who share a DNI/NIE their own.",
+      "hint_blocked": "You can save once each member has their own DNI/NIE.",
+      "loading_members": "Loading these members…",
+      "members_to_review": "Members to review",
+      "missing_body": "Fix their DNI/NIE in your member list. If you save now, they won't be able to sign in.",
+      "missing_title_one": "{{count}} member is missing a valid DNI/NIE and can't sign in.",
+      "missing_title_other": "{{count}} members are missing a valid DNI/NIE and can't sign in.",
+      "more_in_csv_one": "and {{count}} more in the CSV",
+      "more_in_csv_other": "and {{count}} more in the CSV",
+      "opens_new_tab": "(opens in a new tab)",
+      "reason_letter": "Letter doesn't match",
+      "reason_not_dni": "Not a DNI or NIE",
+      "review_one": "Review this member",
+      "review_other": "Review these {{count}}",
+      "save_anyway_one": "Save anyway ({{count}} can't sign in)",
+      "save_anyway_other": "Save anyway ({{count}} can't sign in)",
+      "status_missing_one": "{{count}} member can't sign in: missing a valid DNI/NIE.",
+      "status_missing_other": "{{count}} members can't sign in: missing a valid DNI/NIE.",
+      "tell_heading": "Tell your members",
+      "tell_installed": "Voters need a certificate already installed.",
+      "tell_not_certificates": "The idCAT Mòbil app and Cl@ve are not certificates and won't work."
+    },
+    "certificate_preview": {
+      "button": "Access with your digital certificate",
+      "consent": "By continuing you accept the Terms and Privacy Policy.",
+      "help_cert": "Works with idCAT Certificat and FNMT certificates.",
+      "help_privacy": "We only use your certificate to check you're on the voter list.",
+      "identify_to_vote": "Identify to vote"
+    },
     "code": {
       "description": "Before voting, we send a 6-digit code to the voter's email or phone. It proves they own it, so nobody can vote with someone else's details.",
       "email_description": "Sent to the email in your member list.",
       "email_label": "Email",
       "heading": "2. Also send a one-time code?",
+      "heading_numbered": "3. Also send a one-time code?",
       "none": "No code",
       "none_description": "Voters sign in with their details only.",
       "sms_description": "Sent to the phone number in your member list.",
@@ -2035,6 +2076,7 @@
     "details": {
       "description": "Pick up to {{max}} details from your member list. What voters type must match it exactly.",
       "heading": "1. What will voters type?",
+      "heading_numbered": "2. What will voters type?",
       "optional": "Optional if you send a one-time code: voters can then sign in with the code alone.",
       "password_not_counted": "The password does not count toward that limit."
     },
@@ -2043,6 +2085,17 @@
       "good": "Good",
       "strong": "Strong",
       "unset": "Not set"
+    },
+    "method": {
+      "certificate_description": "Voters sign in with their own digital certificate.",
+      "certificate_info_accepted": "We accept idCAT Certificat and FNMT, the Spanish digital certificates.",
+      "certificate_info_ask": "Need another type of digital certificate? Ask the Vocdoni team.",
+      "certificate_info_label": "Which digital certificates work?",
+      "certificate_title": "Digital certificate (DNI/NIE)",
+      "details_description": "Voters type in details from your member list, like their member number.",
+      "details_title": "Member details",
+      "heading": "1. How will voters prove who they are?",
+      "required": "Choose how voters prove who they are."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} member",

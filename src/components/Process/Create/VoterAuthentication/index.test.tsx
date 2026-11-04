@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { VocdoniApiError } from '@vocdoni/api-client'
+import { CERTIFICATE_CENSUS } from './utils'
 import { FormProvider, useController, useForm, useFormContext } from 'react-hook-form'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { act, mockUseOrganization, render, screen, waitFor, within } from '~src/test-utils'
@@ -13,6 +14,12 @@ import { useVoterAuthDialog, VoterAuthDialogProvider } from './VoterAuthDialogCo
 const mockValidateCensus = vi.fn()
 const mockToast = vi.fn()
 const mockCloseToast = vi.fn()
+
+// useBucketMembers calls useAuth (app AuthContext), which the test AllProviders
+// does not supply; mock it so the dup-bucket body can render in tests.
+vi.mock('~components/Process/Create/VoterAuthentication/Certificate/useBucketMembers', () => ({
+  useBucketMembers: () => ({ data: undefined, isLoading: false }),
+}))
 
 // The test render wraps everything in the real ToastProvider, so keep it.
 vi.mock('~components/Toast', async (importOriginal) => ({
@@ -580,6 +587,211 @@ describe('VoterAuthentication', () => {
     expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
       name: 'census_configured',
       props: { auth_fields_count: 1, password: false, two_fa: false, two_fa_method: 'none' },
+    })
+  })
+
+  describe('digital certificate method', () => {
+    beforeAll(() => {
+      // jsdom has no scrollIntoView; the component calls it on the bucket toggle / ballot container.
+      Element.prototype.scrollIntoView = vi.fn()
+    })
+
+    const certCensus: Census = CERTIFICATE_CENSUS
+
+    const certWarnings = [
+      { memberId: 'm1', class: 'missing' },
+      { memberId: 'm2', class: 'letter_mismatch' },
+    ]
+
+    const dupError = () =>
+      new VocdoniApiError(
+        400,
+        {
+          data: {
+            memberIds: [],
+            duplicates: ['a', 'b'],
+            missingData: [],
+            notFound: [],
+            nationalIdWarnings: [
+              { memberId: 'a', class: 'duplicate_after_normalization' },
+              { memberId: 'b', class: 'duplicate_after_normalization' },
+            ],
+          },
+        },
+        'bad'
+      )
+
+    it('1. flag off: dialog has no method step and still shows "1. What will voters type?"', async () => {
+      const user = userEvent.setup()
+      // No appEnv: flag is off, develop behavior.
+      render(<TestForm initialCensus={null} />)
+      const dialog = await openDialog(user)
+
+      expect(dialog.queryByRole('radiogroup', { name: /how will voters prove/i })).not.toBeInTheDocument()
+      expect(dialog.getByText('1. What will voters type?')).toBeInTheDocument()
+    })
+
+    it('2. flag on, no census: Save with no method shows the method required alert and focuses the status slot', async () => {
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+      const dialog = await openDialog(user)
+
+      await user.click(dialog.getByTestId('voter-auth-save'))
+
+      expect(dialog.getByRole('alert')).toHaveTextContent('Choose how voters prove who they are.')
+      await waitFor(() => expect(document.getElementById('voter-auth-status')).toHaveFocus())
+      expect(storedCensus()).toBeNull()
+    })
+
+    it('3. choosing "Member details" reveals the two steps and saves census without a method key', async () => {
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+      const dialog = await openDialog(user)
+
+      const detailsInput = document.querySelector<HTMLInputElement>('input[name="method"][value="details"]')!
+      await user.click(detailsInput)
+
+      expect(dialog.getByText('2. What will voters type?')).toBeInTheDocument()
+      expect(dialog.getByText('3. Also send a one-time code?')).toBeInTheDocument()
+
+      await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+      await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
+      await user.click(dialog.getByTestId('voter-auth-save'))
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      const saved = storedCensus()
+      expect(saved).not.toHaveProperty('method')
+      expect(saved).toMatchObject({ credentials: ['memberNumber'], use2FA: false })
+    })
+
+    it('4. certificate with warnings shows "Save anyway (N)" and saves CERTIFICATE_CENSUS', async () => {
+      mockValidateCensus.mockResolvedValue({ nationalIdWarnings: certWarnings })
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+      const dialog = await openDialog(user)
+
+      const certInput = document.querySelector<HTMLInputElement>('input[name="method"][value="certificate"]')!
+      await user.click(certInput)
+
+      await waitFor(() => expect(dialog.getByTestId('voter-auth-save')).toHaveTextContent(/save anyway \(2/i))
+
+      await user.click(dialog.getByTestId('voter-auth-save'))
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      expect(storedCensus()).toEqual(certCensus)
+      expect(mockValidateCensus).toHaveBeenCalledWith(
+        expect.objectContaining({
+          census: expect.objectContaining({
+            groupId: 'group-1',
+            authMethod: 'certificate',
+            authFields: ['nationalId'],
+          }),
+        })
+      )
+    })
+
+    it('5. clean certificate check: Save reads "Save"', async () => {
+      // Default mock resolves with 'ok' (no nationalIdWarnings): all members can sign in.
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+      const dialog = await openDialog(user)
+
+      const certInput = document.querySelector<HTMLInputElement>('input[name="method"][value="certificate"]')!
+      await user.click(certInput)
+
+      // Wait for the check to settle (cannotSignIn=0, no duplicates).
+      await waitFor(() => expect(dialog.getByTestId('voter-auth-save')).not.toHaveTextContent(/save anyway/i))
+      expect(dialog.getByTestId('voter-auth-save')).toHaveTextContent(/^save$/i)
+    })
+
+    it('6. duplicates: Save is aria-disabled, pressing it focuses the dup bucket toggle without saving', async () => {
+      mockValidateCensus.mockRejectedValue(dupError())
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+      const dialog = await openDialog(user)
+
+      const certInput = document.querySelector<HTMLInputElement>('input[name="method"][value="certificate"]')!
+      await user.click(certInput)
+
+      // Wait for the check to settle with duplicates.
+      await waitFor(() => expect(dialog.getByTestId('voter-auth-save')).toHaveAttribute('aria-disabled', 'true'))
+      expect(dialog.getByTestId('voter-auth-save')).toHaveAttribute('aria-describedby', 'voter-auth-certificate-hint')
+
+      await user.click(dialog.getByTestId('voter-auth-save'))
+
+      expect(storedCensus()).toBeNull()
+      await waitFor(() => expect(document.activeElement?.getAttribute('aria-controls')).toBe('bucket-dup'))
+      // Hint changes to the "attempted" version.
+      expect(dialog.getByRole('status')).toHaveTextContent(/to save, give the 2 members/i)
+    })
+
+    it('7. backend without nationalIdWarnings: 400 with missingData and no warnings does not block save', async () => {
+      mockValidateCensus.mockRejectedValue(
+        new VocdoniApiError(400, { data: { memberIds: [], duplicates: [], missingData: ['x'], notFound: [] } }, 'bad')
+      )
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={null} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+      const dialog = await openDialog(user)
+
+      const certInput = document.querySelector<HTMLInputElement>('input[name="method"][value="certificate"]')!
+      await user.click(certInput)
+
+      await waitFor(() => expect(dialog.getByTestId('voter-auth-save')).toHaveTextContent(/save anyway \(1/i))
+
+      await user.click(dialog.getByTestId('voter-auth-save'))
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      expect(storedCensus()).toEqual(certCensus)
+    })
+
+    it('8. reopening a saved certificate census shows the certificate card checked and compact', async () => {
+      const user = userEvent.setup()
+      render(<TestForm initialCensus={certCensus} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+      const dialog = await openDialog(user)
+
+      const certInput = document.querySelector<HTMLInputElement>('input[name="method"][value="certificate"]')!
+      expect(certInput).toBeChecked()
+      // In compact mode the method headings are visible (the grid is rendered).
+      expect(dialog.getByText('2. Who can sign in?')).toBeInTheDocument()
+    })
+
+    it('9. analytics: flag on adds method: "certificate"; flag off omits it', async () => {
+      mockValidateCensus.mockResolvedValue({ nationalIdWarnings: [] })
+      const user = userEvent.setup()
+
+      // Flag on + certificate.
+      const { unmount } = render(<TestForm initialCensus={null} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+      let dialog = await openDialog(user)
+
+      const certInput = document.querySelector<HTMLInputElement>('input[name="method"][value="certificate"]')!
+      await user.click(certInput)
+      await waitFor(() => expect(dialog.getByTestId('voter-auth-save')).toHaveTextContent(/^save$/i))
+      await user.click(dialog.getByTestId('voter-auth-save'))
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+
+      expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'census_configured',
+          props: expect.objectContaining({ method: 'certificate' }),
+        })
+      )
+
+      // Unmount before second render so there is only one trigger button.
+      unmount()
+
+      // Flag off: existing develop props, no method key.
+      mockTrackAnalyticsEvent.mockClear()
+      render(<TestForm initialCensus={null} />)
+      dialog = await openDialog(user)
+      await user.click(dialog.getByRole('checkbox', { name: /member number/i }))
+      await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
+      await user.click(dialog.getByTestId('voter-auth-save'))
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+
+      expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
+        name: 'census_configured',
+        props: { auth_fields_count: 1, password: false, two_fa: false, two_fa_method: 'none' },
+      })
     })
   })
 
