@@ -40,9 +40,7 @@ const CertificateProtection = () => {
   )
 }
 
-type TellMembersProps = Record<never, never>
-
-const TellMembers = (_: TellMembersProps) => {
+const TellMembers = () => {
   const { t } = useTranslation()
   return (
     <Stack gap={2}>
@@ -100,7 +98,6 @@ const CleanCoverage = ({ membersCount }: CleanCoverageProps) => {
 
 type IssuesReviewProps = {
   coverage: CertificateCoverage
-  membersCount: number
   groupId: string | undefined
   open: string[]
   onToggle: (id: string) => void
@@ -109,7 +106,7 @@ type IssuesReviewProps = {
 }
 
 /** Summary of who cannot sign in and why, before the per-bucket detail. */
-const Coverage = ({ coverage, membersCount }: { coverage: CertificateCoverage; membersCount: number }) => {
+const Coverage = ({ coverage }: { coverage: CertificateCoverage }) => {
   const { t } = useTranslation()
   const hasDuplicates = coverage.duplicates.length > 0
   const hasIssues = coverage.cannotSignIn > 0
@@ -136,7 +133,7 @@ const Coverage = ({ coverage, membersCount }: { coverage: CertificateCoverage; m
                 {t('voter_auth.certificate.review', {
                   defaultValue: 'Review these {{count}}',
                   count: coverage.duplicates.length,
-                  defaultValue_one: 'Review these {{count}}',
+                  defaultValue_one: 'Review this member',
                   defaultValue_other: 'Review these {{count}}',
                 })}
               </Link>
@@ -164,7 +161,7 @@ const Coverage = ({ coverage, membersCount }: { coverage: CertificateCoverage; m
                 {t('voter_auth.certificate.review', {
                   defaultValue: 'Review these {{count}}',
                   count: coverage.cannotSignIn,
-                  defaultValue_one: 'Review these {{count}}',
+                  defaultValue_one: 'Review this member',
                   defaultValue_other: 'Review these {{count}}',
                 })}
               </Link>
@@ -176,20 +173,9 @@ const Coverage = ({ coverage, membersCount }: { coverage: CertificateCoverage; m
   )
 }
 
-const IssuesReview = ({
-  coverage,
-  membersCount,
-  groupId,
-  open,
-  onToggle,
-  attempted,
-  duplicatesToggleRef,
-}: IssuesReviewProps) => (
+const IssuesReview = ({ coverage, groupId, open, onToggle, attempted, duplicatesToggleRef }: IssuesReviewProps) => (
   <>
-    <Coverage coverage={coverage} membersCount={membersCount} />
-    <Text fontSize='sm' fontWeight='semibold' id='members-to-review' mt={1}>
-      {/* Visible heading and anchor target for the "Review these N" links. */}
-    </Text>
+    <Coverage coverage={coverage} />
     <Buckets
       coverage={coverage}
       groupId={groupId}
@@ -263,7 +249,6 @@ export const CertificateSteps = ({
     ) : (
       <IssuesReview
         coverage={coverage}
-        membersCount={membersCount}
         groupId={groupId}
         open={open}
         onToggle={onToggle}
