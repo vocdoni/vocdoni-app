@@ -26,7 +26,9 @@ const { mockUseBlocker, mockUseAppEnv } = vi.hoisted(() => ({
   mockUseAppEnv: vi.fn(() => ({ DISABLE_ANONYMOUS_VOTING: false })),
 }))
 
-vi.mock('~src/app-env', () => ({
+// The rest of the module stays real: the payment view tests render the whole wizard, providers included
+vi.mock('~src/app-env', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~src/app-env')>()),
   useAppEnv: () => mockUseAppEnv(),
 }))
 
