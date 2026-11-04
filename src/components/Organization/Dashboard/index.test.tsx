@@ -20,10 +20,6 @@ vi.mock('~src/queries/account', () => ({
   useProfile: () => ({ data: { firstName: 'Jane' }, isLoading: false }),
 }))
 
-vi.mock('~components/Auth/Subscription', () => ({
-  useSubscription: () => ({ subscription: null, loading: false }),
-}))
-
 vi.mock('~src/queries/organization', () => ({
   paginatedElectionsQuery: () => ({ queryKey: ['elections'], queryFn: vi.fn() }),
 }))

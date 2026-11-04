@@ -1,9 +1,22 @@
 import { Fragment } from 'react'
-import { renderHook } from '@testing-library/react'
-import { matchRoutes } from 'react-router'
+import { render, renderHook, waitFor } from '@testing-library/react'
+import {
+  createMemoryRouter,
+  matchRoutes,
+  RouterProvider,
+  type LoaderFunction,
+  type LoaderFunctionArgs,
+  type RouteObject,
+} from 'react-router'
 import { Routes } from '.'
 import { mockUseClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+
+const walletAccess = vi.hoisted(() => ({ current: { canView: true, canTopUp: true } }))
+
+vi.mock('~queries/wallet', () => ({
+  useWalletAccess: () => walletAccess.current,
+}))
 
 vi.mock('@tanstack/react-query', () => ({
   useQueryClient: () => ({
@@ -102,5 +115,84 @@ describe('integrators auth routes', () => {
     const paths = pages.map((c: any) => c.path)
     expect(paths).toContain(Routes.integrators.recovery)
     expect(paths).toContain(Routes.integrators.passwordReset)
+  })
+})
+
+const findRoute = (routes: RouteObject[] | undefined, path: string): RouteObject | undefined => {
+  for (const route of routes ?? []) {
+    if (route.path === path) return route
+    const found = findRoute(route.children, path)
+    if (found) return found
+  }
+}
+
+describe('integrator configuration routes', () => {
+  beforeEach(() => {
+    walletAccess.current = { canView: true, canTopUp: true }
+    setReactProvidersMock({
+      useClient: () => mockUseClient({}),
+    })
+  })
+
+  const configurationChildren = async () => {
+    const { useIntegratorsRoutes } = await import('./integrators')
+    const { result } = renderHook(() => useIntegratorsRoutes())
+    return findRoute([result.current], Routes.integrators.configuration.base)?.children ?? []
+  }
+
+  it.each([
+    ['admins and managers', true, Routes.integrators.configuration.billing],
+    ['other members', false, Routes.integrators.configuration.support],
+  ])('opens the configuration index on billing for %s, and support otherwise', async (_, canView, target) => {
+    walletAccess.current = { canView, canTopUp: canView }
+    const index = (await configurationChildren()).find((route) => route.index)!
+    const router = createMemoryRouter(
+      [
+        {
+          path: Routes.integrators.configuration.base,
+          children: [
+            index,
+            { path: Routes.integrators.configuration.billing, element: <p>billing page</p> },
+            { path: Routes.integrators.configuration.support, element: <p>support page</p> },
+          ],
+        },
+      ],
+      { initialEntries: [Routes.integrators.configuration.base] }
+    )
+
+    render(<RouterProvider router={router} />)
+
+    await waitFor(() => expect(router.state.location.pathname).toBe(target))
+  })
+
+  it('redirects the retired subscription and wallet tabs to billing', async () => {
+    const children = await configurationChildren()
+
+    for (const path of [
+      Routes.integrators.configuration.legacySubscription,
+      Routes.integrators.configuration.legacyWallet,
+    ]) {
+      const route = findRoute(children, path)!
+      const response = (await (route.loader as LoaderFunction)({
+        request: new Request(`https://app.test${path}`),
+        params: {},
+      } as LoaderFunctionArgs)) as Response
+
+      expect(response.status).toBe(302)
+      expect(response.headers.get('Location')).toBe(Routes.integrators.configuration.billing)
+    }
+  })
+
+  // A top-up started on the old wallet tab still returns to the old path with its session id
+  it('keeps the session id when a wallet return URL is redirected', async () => {
+    const children = await configurationChildren()
+    const route = findRoute(children, Routes.integrators.configuration.legacyWalletReturn)!
+
+    const response = (await (route.loader as LoaderFunction)({
+      request: new Request('https://app.test/integrators/configuration/wallet/return/cs_123'),
+      params: { sessionId: 'cs_123' },
+    } as unknown as LoaderFunctionArgs)) as Response
+
+    expect(response.headers.get('Location')).toBe('/integrators/configuration/billing/return/cs_123')
   })
 })

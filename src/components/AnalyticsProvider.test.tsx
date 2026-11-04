@@ -44,7 +44,6 @@ vi.mock('~src/app-env', async (importOriginal) => {
 })
 vi.mock('~components/Auth/useAuth', () => ({ useAuth: () => ({ isAuthenticated: true }) }))
 vi.mock('~queries/account', () => ({ useProfile: () => ({ data: undefined }) }))
-vi.mock('~components/Auth/Subscription', () => ({ useSubscription: () => ({ subscription: undefined }) }))
 vi.mock('~components/Account/SaasAccountProvider', () => ({
   useSaasAccount: () => ({
     organization: {

@@ -88,6 +88,9 @@
     "label": "Avatar de l'organisation"
   },
   "back": "Retour",
+  "billing": {
+    "title": "Facturation"
+  },
   "booking": {
     "unavailable": "La réservation est actuellement indisponible. Veuillez réessayer plus tard."
   },
@@ -258,15 +261,11 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "Codes 2FA par e-mail",
-      "2fa_email_tooltip": "Codes de vérification envoyés par e-mail. Au-delà de la limite, chaque code coûte {{price}} €.",
-      "2fa_sms": "Codes 2FA par SMS",
-      "2fa_sms_tooltip": "Codes de vérification envoyés par SMS. Au-delà de la limite, chaque code coûte {{price}} €.",
+      "description": "Suivez l'utilisation de votre organisation par rapport à ses limites.",
       "limit_exceeded_message": "Votre base de membres a atteint la limite de {{max}} membres.",
       "memberbase_size": "Taille de la base de membres",
       "memberbase_tooltip": "Nombre maximum de membres autorisés dans votre base de membres.",
-      "plan_usage": "Utilisation du plan",
-      "plan_usage_description": "Suivez votre utilisation actuelle par rapport aux limites de votre plan",
+      "title": "Utilisation",
       "voting_processes": "Processus de vote"
     },
     "welcome": {
@@ -279,7 +278,6 @@
       "hello": "Bienvenue sur Vocdoni, {{name}} !",
       "how_first_vote": "Comment créer votre premier vote",
       "no_organization": "Aucune organisation trouvée",
-      "no_subscription": "Aucun abonnement disponible. Créez une organisation pour activer votre plan.",
       "quick_actions": "Actions rapides",
       "recent_voting_description": "Les dernières activités de vote de votre organisation",
       "recent_voting_title": "Processus de vote récents",
@@ -367,24 +365,6 @@
     "reload": "Recharger",
     "return_to_home": "Retour à l'accueil",
     "title": "Erreur"
-  },
-  "features": {
-    "anonymous": "Vote anonyme",
-    "approval": "Vote par approbation",
-    "custom_url": "Domaine personnalisé",
-    "email_notification": "2FA par e-mail",
-    "email_reminder": "Rappels par e-mail",
-    "live_results": "Résultats en direct",
-    "live_streaming": "Intégration de la diffusion en direct",
-    "multiple": "Choix multiple",
-    "overwrite": "Modification du vote",
-    "personalization": "Personnalisation complète",
-    "phone_support": "Téléphone",
-    "single": "Choix unique",
-    "sms_notification": "2FA par SMS",
-    "sub_orgs": "Jusqu'à {{ count }} sous-organisations",
-    "weighted": "Vote pondéré",
-    "white_label": "Marque blanche (sans branding Vocdoni)"
   },
   "footer": {
     "company": "Entreprise",
@@ -588,13 +568,13 @@
       "title": "Clés API"
     },
     "configuration": {
-      "subtitle": "Gérez votre wallet, votre abonnement et obtenez du support.",
+      "subtitle": "Gérez votre facturation et obtenez du support.",
       "title": "Configuration"
     },
     "create_account": {
       "cancel": "Annuler",
       "confirm": "Créer le compte",
-      "description": "Un nouveau compte intégrateur au plan gratuit sera créé et défini comme votre organisation active.",
+      "description": "Un nouveau compte intégrateur sera créé et défini comme votre organisation active, ce qui débloque le tableau de bord intégrateur.",
       "error": "Impossible de créer le compte intégrateur",
       "switch_instead": "Ou basculez vers une organisation existante",
       "title": "Créer un compte intégrateur gratuit ?"
@@ -660,15 +640,6 @@
     "signin_title": "Se connecter",
     "signup_subtitle": "Inscrivez-vous pour gérer les organisations en tant qu'intégrateur.",
     "signup_title": "Créer votre compte intégrateur",
-    "subscription": {
-      "active": "Actif",
-      "billing_details": "Détails de facturation",
-      "current_plan": "Plan actuel",
-      "inactive": "Inactif",
-      "portal_error": "Impossible d'ouvrir le portail de facturation",
-      "unavailable": "Les détails de l'abonnement ne sont pas disponibles"
-    },
-    "upgrade_plan": "Passer au plan supérieur",
     "wallet": {
       "balance": "Solde du wallet",
       "manage": "Gérer le wallet"
@@ -943,8 +914,6 @@
       "title": "Créez votre premier processus de vote"
     },
     "elections_list_load_more": "Charger plus",
-    "max_census": "Liste électorale maximale par vote",
-    "max_processes": "Votes par an¹",
     "no_organization_title": "Vous n'appartenez encore à aucune organisation !",
     "organization": "Détails de l'organisation",
     "title": {
@@ -965,7 +934,7 @@
       "priority_support_line_description": "Disponible du lundi au vendredi, de 9 h à 18 h CET",
       "title": "Assistance téléphonique"
     },
-    "subtitle": "Gérez votre organisation, les membres de l'équipe et votre forfait d'abonnement",
+    "subtitle": "Gérez votre organisation, les membres de l'équipe et la facturation",
     "support": {
       "description": "Obtenez de l'aide et de l'assistance pour votre organisation.",
       "title": "Assistance"
@@ -1024,19 +993,11 @@
   },
   "plan": {
     "encouragement": "Lancer un vote est simple et les participants peuvent y prendre part depuis n'importe où. De solides garanties à un coût réduit ont fait de Vocdoni une référence pour des centaines de communes, associations, partis politiques et entreprises.",
-    "free": "<0>Vous êtes sur le plan gratuit</0>, qui vous permet déjà de lancer des votes. Si vous avez besoin de plus de fonctionnalités, de limites supérieures ou d'options spécifiques, découvrez les plans payants et essayez-les gratuitement.",
     "special_needs": "Besoin d'aide ou d'une demande spécifique ? Réservez un appel."
   },
   "please_check_email_to_verify": "Veuillez consulter votre boîte e-mail pour vérifier votre compte",
   "preferences": "Préférences",
   "preview": "Aperçu",
-  "pricing": {
-    "essential_title": "Essentiel",
-    "free_title": "Gratuit",
-    "page_description": "Nos tarifs sont disponibles sur <pricingLink>vocdoni.io/pricing</pricingLink>.",
-    "page_title": "Tarifs",
-    "premium_title": "Premium"
-  },
   "privacy_policy": "Politique de confidentialité",
   "process": {
     "anonymity": {
@@ -1600,9 +1561,6 @@
   },
   "start_date": "Date de début",
   "start_time": "Heure de début",
-  "subscription": {
-    "title": "Forfait d'abonnement"
-  },
   "support": "Assistance",
   "support_chat": {
     "ask_name": "Avant d'envoyer — quel est votre nom ?",
@@ -1800,7 +1758,6 @@
     "verifying_title": "Vérification de {{ email }}"
   },
   "view_in_explorer": "Voir dans l'Explorer",
-  "view_plans_and_pricing": "Voir les forfaits et tarifs",
   "vocdoni_logo": "Logo de Vocdoni",
   "vote": {
     "anonymous_receipt": "Vote anonyme : enregistrez ce reçu maintenant, la plateforme ne pourra plus vous l'afficher.",
@@ -1943,7 +1900,6 @@
     "pagination": "Page {{page}} sur {{total}} · {{items}} au total",
     "processing": "Paiement reçu. Votre solde sera mis à jour dès sa confirmation.",
     "processing_timeout": "Cela prend plus de temps que prévu. Votre solde sera mis à jour une fois le paiement confirmé ; revenez consulter cette page plus tard.",
-    "title": "Wallet",
     "topup": {
       "admin_only": "Seuls les administrateurs peuvent recharger le wallet.",
       "amount": "Montant (EUR, TVA exclue)",
