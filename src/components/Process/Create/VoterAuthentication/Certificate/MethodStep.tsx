@@ -105,38 +105,38 @@ const CertificateInfo = () => {
 
 type MethodDef = {
   value: AuthMethodChoice
-  titleKey: string
-  titleDefault: string
-  descriptionKey: string
-  descriptionDefault: string
+  title: string
+  description: string
   icon: IconType
   info?: boolean
 }
 
-const METHOD_DEFS: MethodDef[] = [
-  {
-    value: 'details',
-    titleKey: 'voter_auth.method.details_title',
-    titleDefault: 'Member details',
-    descriptionKey: 'voter_auth.method.details_description',
-    descriptionDefault: 'Voters type in details from your member list, like their member number.',
-    icon: LuKeyboard,
-  },
-  {
-    value: 'certificate',
-    titleKey: 'voter_auth.method.certificate_title',
-    titleDefault: 'Digital certificate (DNI/NIE)',
-    descriptionKey: 'voter_auth.method.certificate_description',
-    descriptionDefault: 'Voters sign in with their own digital certificate.',
-    icon: LuIdCard,
-    info: true,
-  },
-]
+// Defined inside MethodStep so t() calls are literal strings the extractor can find.
+const useMethodDefs = (): MethodDef[] => {
+  const { t } = useTranslation()
+  return [
+    {
+      value: 'details',
+      title: t('voter_auth.method.details_title', { defaultValue: 'Member details' }),
+      description: t('voter_auth.method.details_description', {
+        defaultValue: 'Voters type in details from your member list, like their member number.',
+      }),
+      icon: LuKeyboard,
+    },
+    {
+      value: 'certificate',
+      title: t('voter_auth.method.certificate_title', { defaultValue: 'Digital certificate (DNI/NIE)' }),
+      description: t('voter_auth.method.certificate_description', {
+        defaultValue: 'Voters sign in with their own digital certificate.',
+      }),
+      icon: LuIdCard,
+      info: true,
+    },
+  ]
+}
 
 const MethodCard = ({ def, selected, compact }: { def: MethodDef; selected: boolean; compact: boolean }) => {
-  const { t } = useTranslation()
-  const title = t(def.titleKey, { defaultValue: def.titleDefault })
-  const description = t(def.descriptionKey, { defaultValue: def.descriptionDefault })
+  const { title, description } = def
 
   return (
     <RadioCard.Item
@@ -225,6 +225,7 @@ type MethodStepProps = {
 
 export const MethodStep = ({ method, onChange, disabled }: MethodStepProps) => {
   const { t } = useTranslation()
+  const methodDefs = useMethodDefs()
   return (
     <RadioCard.Root
       name='method'
@@ -237,7 +238,7 @@ export const MethodStep = ({ method, onChange, disabled }: MethodStepProps) => {
         {t('voter_auth.method.heading', { defaultValue: '1. How will voters prove who they are?' })}
       </RadioCard.Label>
       <SimpleGrid columns={{ base: 1, sm: 2 }} gap={3} mt={3}>
-        {METHOD_DEFS.map((def) => (
+        {methodDefs.map((def) => (
           <MethodCard key={def.value} def={def} selected={method === def.value} compact={method !== null} />
         ))}
       </SimpleGrid>
