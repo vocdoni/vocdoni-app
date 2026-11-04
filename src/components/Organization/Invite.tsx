@@ -2,18 +2,19 @@ import { Button, ButtonProps, CloseButton, Dialog, Flex, HStack, Text } from '@c
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { useSubscription } from '~components/Auth/Subscription'
 import InputBasic from '~components/Form/InputBasic'
-import { RoleSelector } from '~components/Layout/SaasSelector'
-import { teamWriterLimitErrorMessage } from '~components/Pricing/payment-errors'
-import { usePricingModal } from '~components/Pricing/use-pricing-modal'
+import { RoleSelector, SelectOptionType } from '~components/Layout/SaasSelector'
+import { teamWriterLimitErrorMessage, teamWriterLimitMessage } from '~components/Pricing/payment-errors'
 import { useToast } from '~components/Toast'
-import { SubscriptionPermission } from '~constants'
+import { MaxWritersPerOrg } from '~constants'
 import { useInviteMemberMutation } from '~src/queries/organization'
 import { useAllUsers } from './Team'
 
+// Only admins and managers count against MaxWritersPerOrg; viewers are never limited.
+const isWriterRole = (role: string) => ['admin', 'manager'].includes(role.toLowerCase())
+
 // Invite form component
-const InviteForm = () => {
+const InviteForm = ({ writersFull }: { writersFull: boolean }) => {
   const { t } = useTranslation()
   const toast = useToast()
   const mutation = useInviteMemberMutation()
@@ -59,7 +60,12 @@ const InviteForm = () => {
           type='email'
           required
         />
-        <RoleSelector name='role' required />
+        <RoleSelector
+          name='role'
+          required
+          helper={writersFull ? teamWriterLimitMessage(t) : undefined}
+          isOptionDisabled={(option: SelectOptionType) => writersFull && isWriterRole(option.value)}
+        />
         <Flex justifyContent='flex-end' gap={2}>
           <Dialog.ActionTrigger asChild>
             <Button colorPalette='gray' variant='outline'>
@@ -81,40 +87,19 @@ export const InviteToTeamModal = ({
   ...props
 }: ButtonProps & { leftIcon?: React.ReactNode; children?: React.ReactNode }) => {
   const [open, setOpen] = useState(false)
-  const { permission } = useSubscription()
   const { t } = useTranslation()
   const { users, isLoading } = useAllUsers()
-  const { openModal } = usePricingModal()
-
-  const memberships = permission(SubscriptionPermission.Users)
-  const canInvite = memberships > (users?.length || 0)
+  // Pending invitations take a slot until they expire, as the backend counts them.
+  const now = new Date()
+  const writers = users.filter(
+    (user) => isWriterRole(user.role) && (!!user.info || !user.expiration || new Date(user.expiration) > now)
+  )
+  const writersFull = writers.length >= MaxWritersPerOrg
 
   return (
-    <Dialog.Root
-      open={open}
-      onOpenChange={(details) => {
-        if (details.open && !canInvite) return
-        setOpen(details.open)
-      }}
-    >
+    <Dialog.Root open={open} onOpenChange={(details) => setOpen(details.open)}>
       <Dialog.Trigger asChild>
-        <Button
-          onClick={(e) => {
-            if (!canInvite) {
-              e.preventDefault()
-              openModal('planUpgrade', {
-                context: 'collaboration',
-                limit: t('number_of_members', {
-                  defaultValue: '{{ count }} team member',
-                  count: memberships,
-                }),
-              })
-            }
-          }}
-          {...props}
-          loading={isLoading}
-          loadingText={t('loading')}
-        >
+        <Button {...props} loading={isLoading} loadingText={t('loading')}>
           {leftIcon ? (
             <HStack gap={2}>
               {leftIcon}
@@ -142,7 +127,7 @@ export const InviteToTeamModal = ({
             </Text>
           </Dialog.Header>
           <Dialog.Body>
-            <InviteForm />
+            <InviteForm writersFull={writersFull} />
           </Dialog.Body>
         </Dialog.Content>
       </Dialog.Positioner>

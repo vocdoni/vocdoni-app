@@ -25,8 +25,6 @@ export const AnalyticsEvents = {
   // Newer events use snake_case in every sink
   CheckoutStarted: 'checkout_started',
   BillingPortalOpened: 'billing_portal_opened',
-  PaywallViewed: 'paywall_viewed',
-  FeatureBlocked: 'feature_blocked',
   ProcessCreationFailed: 'process_creation_failed',
   ProcessAction: 'process_action',
   ProcessResultsViewed: 'process_results_viewed',
