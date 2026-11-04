@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
+import { focusManager } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { FormProvider, useController, useForm, useFormContext } from 'react-hook-form'
 import { CensusTypes } from '~components/Process/Census/CensusType'
@@ -713,5 +714,44 @@ describe('VoterAuthentication', () => {
       expect(status).toHaveTextContent('2 members are missing Password.')
       expect(mockValidateCensus.mock.calls.map(([{ census }]) => census.authFields)).not.toContainEqual(['password'])
     })
+  })
+
+  const certCensus: Census = {
+    method: 'certificate',
+    credentials: ['nationalId'],
+    use2FA: false,
+    use2FAMethod: 'email',
+  }
+
+  it('shows the certificate summary instead of AuthSummary for a saved certificate census (flag on)', async () => {
+    mockValidateCensus.mockResolvedValue({ nationalIdWarnings: [] })
+    render(<TestForm initialCensus={certCensus} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+
+    expect(screen.getByText('Digital certificate (DNI/NIE)')).toBeInTheDocument()
+    // AuthSummary would render "Voters type: …"; certificate summary does not.
+    expect(screen.queryByText(/voters type:/i)).not.toBeInTheDocument()
+  })
+
+  it('re-validates the certificate census when the window regains focus', async () => {
+    mockValidateCensus.mockResolvedValue({ nationalIdWarnings: [] })
+    render(<TestForm initialCensus={certCensus} />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+
+    await waitFor(() => expect(mockValidateCensus).toHaveBeenCalledTimes(1))
+
+    // Simulate the tab losing and regaining focus (e.g. admin fixes members then returns).
+    await act(async () => {
+      focusManager.setFocused(false)
+      focusManager.setFocused(true)
+    })
+
+    await waitFor(() => expect(mockValidateCensus).toHaveBeenCalledTimes(2))
+  })
+
+  it('shows the develop AuthSummary for a certificate census when the flag is off (parity)', () => {
+    render(<TestForm initialCensus={certCensus} />)
+
+    // No certificate-specific summary: flag is off, so the generic summary renders.
+    expect(screen.queryByText('Digital certificate (DNI/NIE)')).not.toBeInTheDocument()
+    expect(screen.getByText('Edit Voter Authentication')).toBeInTheDocument()
   })
 })

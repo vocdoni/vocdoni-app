@@ -6,12 +6,15 @@ import { LuKeyRound } from 'react-icons/lu'
 import { useToast } from '~components/Toast'
 import type { Group } from '~src/queries/groups'
 import { useAppEnv } from '~src/app-env'
+import { useCertificateAuthMode } from '~src/queries/certificateAuth/mode'
+import { coverageFromCheck } from '~src/queries/certificateAuth/warnings'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { buildCensusSpec } from '../census-spec'
 import { Census, Process } from '../common'
 import { CENSUS_SETUP_TOAST_ID } from '../useCensusSetupToast'
 import { useCensusSteps } from '../useCensusSteps'
 import { AuthSummary } from './AuthSummary'
+import { CertificateAuthSummary } from './CertificateAuthSummary'
 import { useCensusCheck } from './useCensusCheck'
 import { censusConfigSignature, countedCredentials, PASSWORD_CREDENTIAL } from './utils'
 import { useVoterAuthDialog } from './VoterAuthDialogContext'
@@ -57,12 +60,17 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
     [triggerRef]
   )
 
+  // Certificate summaries re-check on window focus so the admin sees fresh
+  // coverage after returning from fixing their member list.
+  const mode = useCertificateAuthMode()
+  const certificateSummary = mode !== 'off' && census?.method === 'certificate'
+
   // The saved settings were validated against the group and the chosen details
   // of that moment; this re-checks them whenever either changes.
   // Same cache as the dialog's own check, so an unchanged census costs nothing.
   const savedCheck = useCensusCheck(
     buildCensusSpec({ groupId, anonymousVoting, weightedVote, census }, disableAnonymousVoting),
-    { enabled: !!census && !!groupId }
+    { enabled: !!census && !!groupId, refetchOnFocus: certificateSummary }
   )
 
   const handleSave = (next: Census) => {
@@ -155,7 +163,20 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
           </Alert.Content>
         </Alert.Root>
       )}
-      {census && <AuthSummary census={census} anonymousVoting={anonymousVoting} checkStatus={savedCheck.status} />}
+      {census && certificateSummary ? (
+        <CertificateAuthSummary
+          membersCount={group?.membersCount ?? 0}
+          status={savedCheck.status}
+          coverage={coverageFromCheck(savedCheck.nationalIdWarnings, savedCheck.issues)}
+          previousCoverage={
+            savedCheck.previous
+              ? coverageFromCheck(savedCheck.previous.nationalIdWarnings, savedCheck.previous.issues)
+              : undefined
+          }
+        />
+      ) : (
+        census && <AuthSummary census={census} anonymousVoting={anonymousVoting} checkStatus={savedCheck.status} />
+      )}
       {!isPending && trigger}
       <Portal>
         <Dialog.Backdrop />
