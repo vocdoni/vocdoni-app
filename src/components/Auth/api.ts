@@ -52,6 +52,8 @@ export enum ApiEndpoints {
   Verify = 'users/verify',
   VerifyCode = 'users/verify/code',
   Storage = 'storage',
+  CertAuth = 'processes/{processId}/auth/cert',
+  CertAuthRedeem = 'processes/{processId}/auth/cert/redeem',
 }
 
 export enum ErrorCode {
@@ -68,6 +70,7 @@ export enum ErrorCode {
 interface IApiError {
   error: string
   code?: number
+  data?: unknown
 }
 
 export class ApiError extends Error {
@@ -107,11 +110,12 @@ export type ApiParams = {
   body?: unknown
   method?: MethodTypes
   headers?: Headers
+  signal?: AbortSignal
 }
 
 export const api = <T>(
   path: string,
-  { body, method = 'GET', headers = new Headers({}) }: ApiParams = {}
+  { body, method = 'GET', headers = new Headers({}), signal }: ApiParams = {}
 ): Promise<T> => {
   const isFormData = typeof body === 'object' && body instanceof FormData
   // Append headers when not present
@@ -141,6 +145,7 @@ export const api = <T>(
     method,
     headers,
     body: formatted,
+    signal,
   })
     .then(async (response) => {
       const sanitized = (await response.text()).replace('\n', '')

@@ -87,3 +87,35 @@ describe('api() language parameter', () => {
     expect(langOfLastRequest()).toBe('en')
   })
 })
+
+describe('api() signal and error data', () => {
+  let fetchMock: ReturnType<typeof vi.spyOn>
+
+  beforeEach(() => {
+    configureApiBaseUrl('https://saas-api.example.test')
+    fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(() => Promise.resolve(new Response('{}', { status: 200 })))
+  })
+
+  afterEach(() => {
+    fetchMock.mockRestore()
+  })
+
+  it('passes signal to fetch', async () => {
+    const signal = new AbortController().signal
+    await api('x', { method: 'POST', body: {}, signal })
+    expect(fetchMock.mock.calls[0][1].signal).toBe(signal)
+  })
+
+  it('rejects with ApiError carrying data from a 422 response', async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: 'e', code: 40950, data: { reason: 'expired' } }), {
+        status: 422,
+      })
+    )
+    await expect(api('x', { method: 'POST', body: {} })).rejects.toMatchObject({
+      apiError: { data: { reason: 'expired' } },
+    })
+  })
+})
