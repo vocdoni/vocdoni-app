@@ -1154,6 +1154,10 @@
       "success": "Provider scollegato con successo"
     }
   },
+  "og": {
+    "headline": "Voto online sicuro per la tua organizzazione",
+    "tagline": "Voto verificabile per organizzazioni di ogni dimensione, facile da usare e gratuito fino a 25 votanti."
+  },
   "open_in_explorer": "Apri nell'explorer",
   "or_continue_with": "o continua con",
   "order_summary": "Riepilogo ordine",

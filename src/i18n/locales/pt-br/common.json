@@ -1154,6 +1154,10 @@
       "success": "Provedor desvinculado com sucesso"
     }
   },
+  "og": {
+    "headline": "Votação online segura para sua organização",
+    "tagline": "Votação verificável para organizações de qualquer porte, fácil de usar e gratuita para até 25 eleitores."
+  },
   "open_in_explorer": "Abrir no Explorer",
   "or_continue_with": "ou continue com",
   "order_summary": "Resumo do pedido",

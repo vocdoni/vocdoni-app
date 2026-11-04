@@ -1154,6 +1154,10 @@
       "success": "Proveïdor desenllaçat correctament"
     }
   },
+  "og": {
+    "headline": "Votació en línia segura per a la teva organització",
+    "tagline": "Votació verificable per a organitzacions de qualsevol mida, fàcil d'utilitzar i gratuïta fins a 25 votants."
+  },
   "open_in_explorer": "Obre a l'explorador",
   "or_continue_with": "o continua amb",
   "order_summary": "Resum de la comanda",
