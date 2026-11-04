@@ -398,10 +398,12 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
         {method !== null && (
           <Grid
             key={method}
-            animationName='fade-in, slide-from-bottom'
-            animationDuration='240ms'
-            animationTimingFunction='cubic-bezier(0.2, 0, 0, 1)'
-            _motionReduce={{ animationName: 'fade-in', animationDuration: '120ms' }}
+            {...(offerCertificate && {
+              animationName: 'fade-in, slide-from-bottom',
+              animationDuration: '240ms',
+              animationTimingFunction: 'cubic-bezier(0.2, 0, 0, 1)',
+              _motionReduce: { animationName: 'fade-in', animationDuration: '120ms' },
+            })}
             templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 20rem', lg: 'minmax(0, 1fr) 22rem' }}
           >
             <Stack px={6} py={5} gap={6}>
