@@ -44,6 +44,13 @@ export const QueryKeys = {
       spec,
     ],
     apikeys: (address?: string) => ['organizations', 'apikeys', address].filter(Boolean),
+    wallet: (address?: string, page?: number, limit?: number) => [
+      'organizations',
+      'wallet',
+      address ?? null,
+      page ?? null,
+      limit ?? null,
+    ],
   },
   process: {
     participants: (processId?: string, field?: string, value?: string) =>

@@ -1,10 +1,11 @@
-import { Alert, ButtonGroup, Center, Flex, IconButton, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
+import { Alert, Center, Flex, SimpleGrid, Spinner } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuBookOpen, LuChevronLeft, LuChevronRight } from 'react-icons/lu'
+import { LuBookOpen } from 'react-icons/lu'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { DocsCard } from '~components/Integrator/DocsCard'
 import { ManagedOrganizationsTable } from '~components/Integrator/ManagedOrganizationsTable'
+import { PrevNextPagination } from '~components/Pagination/PrevNextPagination'
 import { useManagedOrganizations } from '~src/queries/integrators'
 
 const LIMIT = 10
@@ -16,7 +17,7 @@ const LIMIT = 10
 const IntegratorManagedOrganizations = () => {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
-  const { data, isLoading, error } = useManagedOrganizations(page, LIMIT)
+  const { data, isLoading, error, isPlaceholderData } = useManagedOrganizations(page, LIMIT)
 
   const pagination = data?.pagination
   const organizations = data?.organizations ?? []
@@ -76,32 +77,19 @@ const IntegratorManagedOrganizations = () => {
         <Flex direction='column' gap={4}>
           <ManagedOrganizationsTable organizations={organizations} />
           {pagination && pagination.lastPage > 1 && (
-            <Flex justify='space-between' align='center' gap={4} wrap='wrap'>
-              <Text fontSize='sm' color='texts.subtle'>
-                {t('integrators.managed.pagination', {
-                  defaultValue: 'Page {{page}} of {{total}} · {{items}} total',
-                  page: pagination.currentPage,
-                  total: pagination.lastPage,
-                  items: pagination.totalItems,
-                })}
-              </Text>
-              <ButtonGroup size='sm' variant='outline' attached>
-                <IconButton
-                  aria-label={t('pagination.previous', { defaultValue: 'Previous page' })}
-                  disabled={pagination.previousPage === null}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                >
-                  <LuChevronLeft />
-                </IconButton>
-                <IconButton
-                  aria-label={t('pagination.next', { defaultValue: 'Next page' })}
-                  disabled={pagination.nextPage === null}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  <LuChevronRight />
-                </IconButton>
-              </ButtonGroup>
-            </Flex>
+            <PrevNextPagination
+              text={t('integrators.managed.pagination', {
+                defaultValue: 'Page {{page}} of {{total}} · {{items}} total',
+                page: pagination.currentPage,
+                total: pagination.lastPage,
+                items: pagination.totalItems,
+              })}
+              hasPrevious={pagination.previousPage !== null}
+              hasNext={pagination.nextPage !== null}
+              disabled={isPlaceholderData}
+              onPrevious={() => setPage((p) => Math.max(1, p - 1))}
+              onNext={() => setPage((p) => Math.min(p + 1, pagination.lastPage))}
+            />
           )}
         </Flex>
       )}

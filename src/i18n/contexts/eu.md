@@ -28,6 +28,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | anonymous voting | bozketa anonimoa / boto anonimoa | Use "anonimoa" for the anonymity mode, as the anonymity strings do; "sekretua" means ballot secrecy, which the private mode also has, so it would blur the two |
 | private ballot / pseudonymous | boto pribatua / sasizena | The default mode, opposite the anonymous one: the ballot carries a one-time code instead of a name, but platform records could still connect it to a member. Never translate it with the term used for anonymous voting, nor with one for ballot secrecy |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| wallet (prepaid credit balance) | wallet | Keep in English, so it is not confused with a crypto wallet |
 | overwrite vote / correct vote | botoa aldatu / botoa zuzendu | Prefer "aldatu" for buttons, "zuzendu" for descriptions |
 | abstain | abstenitu | |
 | census size | erroldeko tamaina | |

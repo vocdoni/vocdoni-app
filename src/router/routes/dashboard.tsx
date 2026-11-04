@@ -23,6 +23,7 @@ const DashboardProcessView = lazy(() => import('~elements/dashboard/processes/vi
 const ProcessCreate = lazy(() => import('~elements/dashboard/processes/create'))
 const OrganizationEdit = lazy(() => import('~components/Organization/Dashboard/Organization'))
 const SubscriptionPage = lazy(() => import('~components/Organization/Dashboard/Subscription'))
+const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
 const OrganizationSupport = lazy(() => import('~components/Organization/Dashboard/Support'))
 const OrganizationTeam = lazy(() => import('~components/Organization/Dashboard/Team'))
 const Profile = lazy(() => import('~elements/dashboard/profile'))
@@ -223,6 +224,22 @@ export const useDashboardRoutes = () => {
                         element: (
                           <SuspenseLoader>
                             <OrganizationTeam />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.settings.wallet,
+                        element: (
+                          <SuspenseLoader>
+                            <WalletPanel processLinks />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.settings.walletReturn,
+                        element: (
+                          <SuspenseLoader>
+                            <WalletPanel processLinks />
                           </SuspenseLoader>
                         ),
                       },

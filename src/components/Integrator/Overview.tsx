@@ -1,22 +1,31 @@
-import { Alert, Box, Flex, SimpleGrid, Spinner } from '@chakra-ui/react'
+import { Alert, Box, Flex, Link, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { LuNetwork, LuRocket, LuTerminal } from 'react-icons/lu'
+import { Link as RouterLink } from 'react-router'
 import { BookerModalButton } from '~components/Dashboard/Booker'
-import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardBox, DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useIntegratorInfo } from '~src/queries/integrators'
+import { useWallet, useWalletAccess } from '~src/queries/wallet'
+import { Routes } from '~src/router/routes'
+import { currency } from '~utils/numbers'
 import { DocsCard } from './DocsCard'
 import { QuotaCard } from './QuotaCard'
 
 /**
- * Integrator landing page: quota cards driven by GET /integrator, plus an "Upgrade plan" action
- * that opens the shared Cal.com scheduling modal (same contact flow as the admin custom plan card).
+ * Integrator landing page: quota cards driven by GET /integrator, a wallet balance card, plus an
+ * "Upgrade plan" action that opens the shared Cal.com scheduling modal (same contact flow as the
+ * admin custom plan card).
  */
 export const IntegratorOverview = () => {
   const { t } = useTranslation()
   const { data, isLoading, error } = useIntegratorInfo()
+  // Only admins and managers may read the wallet. Hidden on error too: the current backend has no wallet
+  // endpoint, and a managed org gets a 403.
+  const { canView } = useWalletAccess()
+  const wallet = useWallet({ enabled: canView })
   const layout = useContext(DashboardLayoutContext)
 
   if (isLoading) {
@@ -27,7 +36,7 @@ export const IntegratorOverview = () => {
     )
   }
 
-  if (error || !data?.limits) {
+  if (error || !data) {
     return (
       <DashboardContents>
         <Alert.Root status='error'>
@@ -40,6 +49,7 @@ export const IntegratorOverview = () => {
     )
   }
 
+  // `limits` and the managed processes counter are absent under pay-per-process.
   const { limits, usage } = data
 
   // Documentation shortcuts, mirroring the developer portal pillars (Quickstart / API / SDK).
@@ -82,7 +92,7 @@ export const IntegratorOverview = () => {
           mb={0}
           title={t('integrators.overview_title', { defaultValue: 'Overview' })}
           subtitle={t('integrators.overview_subtitle', {
-            defaultValue: 'Your integrator quota and current usage.',
+            defaultValue: 'Your integrator usage and wallet balance.',
           })}
         />
         {/* Desktop: sits at the top-right of the page header. On mobile the layout exposes a slot
@@ -107,31 +117,58 @@ export const IntegratorOverview = () => {
           layout.headerActionsNode
         )}
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
-        <QuotaCard
-          label={t('integrators.quota.managed_orgs', { defaultValue: 'Organizations created' })}
-          usage={usage.managedOrgs}
-          limit={limits.maxManagedOrgs}
-        />
-        <QuotaCard
-          label={t('integrators.quota.voting_processes', { defaultValue: 'Voting processes created' })}
-          usage={usage.managedProcesses}
-          limit={limits.maxManagedProcesses}
-        />
-        <QuotaCard
-          label={t('integrators.quota.votes', { defaultValue: 'Votes cast' })}
-          usage={usage.sentVotes}
-          limit={limits.maxVotes}
-        />
-        <QuotaCard
-          label={t('integrators.quota.sms', { defaultValue: 'Voter verifications by SMS' })}
-          usage={usage.sentSMS}
-          limit={limits.maxSMS}
-        />
-        <QuotaCard
-          label={t('integrators.quota.emails', { defaultValue: 'Voter verifications by email' })}
-          usage={usage.sentEmails}
-          limit={limits.maxEmails}
-        />
+        {canView && wallet.data && (
+          <DashboardBox gap={3} justifyContent='flex-start'>
+            <Text fontSize='sm' color='texts.subtle' fontWeight='medium'>
+              {t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}
+            </Text>
+            <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
+              {currency(wallet.data.balanceCents, wallet.data.currency?.toUpperCase())}
+            </Text>
+            <Box minH='22px'>
+              <Link asChild fontSize='sm' fontWeight='bold' color='texts.subtle'>
+                <RouterLink to={Routes.integrators.configuration.wallet}>
+                  {t('integrators.wallet.manage', { defaultValue: 'Manage wallet' })}
+                </RouterLink>
+              </Link>
+            </Box>
+          </DashboardBox>
+        )}
+        {typeof usage.managedOrgs === 'number' && (
+          <QuotaCard
+            label={t('integrators.quota.managed_orgs', { defaultValue: 'Organizations created' })}
+            usage={usage.managedOrgs}
+            limit={limits?.maxManagedOrgs}
+          />
+        )}
+        {typeof usage.managedProcesses === 'number' && (
+          <QuotaCard
+            label={t('integrators.quota.voting_processes', { defaultValue: 'Voting processes created' })}
+            usage={usage.managedProcesses}
+            limit={limits?.maxManagedProcesses}
+          />
+        )}
+        {typeof usage.sentVotes === 'number' && (
+          <QuotaCard
+            label={t('integrators.quota.votes', { defaultValue: 'Votes cast' })}
+            usage={usage.sentVotes}
+            limit={limits?.maxVotes}
+          />
+        )}
+        {typeof usage.sentSMS === 'number' && (
+          <QuotaCard
+            label={t('integrators.quota.sms', { defaultValue: 'Voter verifications by SMS' })}
+            usage={usage.sentSMS}
+            limit={limits?.maxSMS}
+          />
+        )}
+        {typeof usage.sentEmails === 'number' && (
+          <QuotaCard
+            label={t('integrators.quota.emails', { defaultValue: 'Voter verifications by email' })}
+            usage={usage.sentEmails}
+            limit={limits?.maxEmails}
+          />
+        )}
       </SimpleGrid>
 
       <Box mt={8}>
