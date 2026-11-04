@@ -81,3 +81,10 @@ export const censusConfigSignature = (census: Census) => {
   const { credentials, codeMethod } = fromCensus(census)
   return JSON.stringify([[...credentials].sort(), codeMethod])
 }
+
+// Outlined option cards, selected by a solid border rather than the recipe's
+// extra ring, so a selection reads without shouting.
+export const optionCardStyles = {
+  _checked: { boxShadow: 'none', borderColor: 'colorPalette.solid' },
+  _hover: { borderColor: 'border.emphasized' },
+} as const

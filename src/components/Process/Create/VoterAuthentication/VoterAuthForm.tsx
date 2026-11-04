@@ -36,6 +36,7 @@ import {
   getCodeTwoFaFields,
   hasAuthConfig,
   MAX_AUTH_FIELDS,
+  optionCardStyles,
   PASSWORD_CREDENTIAL,
   passwordNeedsAnotherCredential,
   toCensus,
@@ -126,13 +127,6 @@ const describeFields = (t: TFunction, language: string, { credentials, codeMetho
     of: (field: string) => (field === 'contact' ? (missingContact ?? field) : getAuthFieldLabel(t, field)),
   }
 }
-
-// Outlined option cards, selected by a single solid border rather than the
-// recipe's extra ring, so a selection reads without shouting.
-const optionCardStyles = {
-  _checked: { boxShadow: 'none', borderColor: 'colorPalette.solid' },
-  _hover: { borderColor: 'border.emphasized' },
-} as const
 
 type VoterAuthFormProps = {
   census?: Census | null
