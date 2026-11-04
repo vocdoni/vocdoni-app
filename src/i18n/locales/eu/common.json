@@ -973,6 +973,9 @@
   },
   "passwords_do_not_match": "Pasahitzak ez datoz bat",
   "pause_vote": "Pausatu bozketa",
+  "payment": {
+    "stripe_unavailable": "Ordainketak aldi baterako ez daude erabilgarri. Saiatu berriro geroago."
+  },
   "plan": {
     "encouragement": "Bozketa bat abiaraztea sinplea da, eta parte-hartzaileek edonondik elkar daitezke. Berme sendoak prezio txikiagoan: horregatik bihurtu da Vocdoni ehunka udal, elkarte, alderdi politiko eta enpresentzako hautu fidagarria.",
     "free": "<0>Doako planean zaude</0>, eta horrek dagoeneko bozketak abiarazteko aukera ematen dizu. Funtzionalitate gehiago, muga handiagoak edo aukera espezifikoak behar badituzu, arakatu ordainpeko planak eta probatu doan.",
