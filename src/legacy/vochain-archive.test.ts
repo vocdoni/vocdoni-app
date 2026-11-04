@@ -144,7 +144,7 @@ describe('fetchLegacyOrganizationElections', () => {
   it('lists a page and resolves titles through per-election detail reads', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
       const url = String(input)
-      if (url.includes('/elections/page/')) {
+      if (url.includes('/elections?')) {
         return new Response(
           JSON.stringify({
             elections: [
@@ -175,6 +175,9 @@ describe('fetchLegacyOrganizationElections', () => {
       status: 'RESULTS',
     })
     expect(page.pagination).toEqual({ totalItems: 1, previousPage: null, currentPage: 0, nextPage: null, lastPage: 0 })
+    expect(String(fetchSpy.mock.calls[0][0])).toBe(
+      `${gateway}/elections?organizationId=${rawElection.organizationId.replace(/^0x/i, '').toLowerCase()}&page=0`
+    )
     expect(fetchSpy).toHaveBeenCalledTimes(2)
   })
 })

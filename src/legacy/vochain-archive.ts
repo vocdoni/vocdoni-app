@@ -313,7 +313,7 @@ export const fetchLegacyOrganizationElections = async (
   const normalized = strip0x(address)
   const raw = await gatewayFetch<RawElectionsPage>(
     gateway,
-    `/accounts/${normalized}/elections/page/${page}`,
+    `/elections?organizationId=${normalized}&page=${page}`,
     `account ${address} elections`
   )
 
