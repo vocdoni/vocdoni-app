@@ -2044,6 +2044,16 @@
       "strong": "Ισχυρή",
       "unset": "Δεν έχει οριστεί"
     },
+    "method": {
+      "certificate_description": "Οι ψηφοφόροι συνδέονται με το δικό τους ψηφιακό πιστοποιητικό.",
+      "certificate_info_accepted": "Αποδεχόμαστε τα idCAT Certificat και FNMT, τα ισπανικά ψηφιακά πιστοποιητικά.",
+      "certificate_info_ask": "Χρειάζεστε άλλο τύπο ψηφιακού πιστοποιητικού; Επικοινωνήστε με την ομάδα της Vocdoni.",
+      "certificate_info_label": "Ποια ψηφιακά πιστοποιητικά γίνονται αποδεκτά;",
+      "certificate_title": "Ψηφιακό πιστοποιητικό (DNI/NIE)",
+      "details_description": "Οι ψηφοφόροι εισάγουν στοιχεία από τον κατάλογο μελών σας, όπως τον αριθμό μέλους τους.",
+      "details_title": "Στοιχεία μέλους",
+      "heading": "1. Πώς θα αποδεικνύουν την ταυτότητά τους οι ψηφοφόροι;"
+    },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} μέλος",
       "group_summary_other": "{{group}} · {{count}} μέλη",

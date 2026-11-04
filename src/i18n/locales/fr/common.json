@@ -2076,6 +2076,16 @@
       "strong": "Forte",
       "unset": "Non défini"
     },
+    "method": {
+      "certificate_description": "Les électeurs se connectent avec leur propre certificat électronique.",
+      "certificate_info_accepted": "Nous acceptons idCAT Certificat et FNMT, les certificats électroniques espagnols.",
+      "certificate_info_ask": "Vous avez besoin d'un autre type de certificat électronique ? Contactez l'équipe Vocdoni.",
+      "certificate_info_label": "Quels certificats électroniques fonctionnent ?",
+      "certificate_title": "Certificat électronique (DNI/NIE)",
+      "details_description": "Les électeurs saisissent des informations de votre liste de membres, comme leur numéro d'adhérent.",
+      "details_title": "Informations du membre",
+      "heading": "1. Comment les électeurs prouveront-ils leur identité ?"
+    },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} membre",
       "group_summary_many": "{{group}} · {{count}} membres",

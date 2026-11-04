@@ -92,7 +92,7 @@ const CertificateInfo = () => {
               })}
             </Text>
             <Text fontSize='sm' lineHeight='1.5' mt={1.5}>
-              {t('voter_auth.method.certificate_info_other', {
+              {t('voter_auth.method.certificate_info_ask', {
                 defaultValue: 'Need another type of digital certificate? Ask the Vocdoni team.',
               })}
             </Text>

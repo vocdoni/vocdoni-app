@@ -2044,6 +2044,16 @@
       "strong": "Sendoa",
       "unset": "Ezarri gabe"
     },
+    "method": {
+      "certificate_description": "Botogileek beren ziurtagiri digitalarekin sartzen dira.",
+      "certificate_info_accepted": "idCAT Certificat eta FNMT onartzen ditugu, Espainiako ziurtagiri digitalak.",
+      "certificate_info_ask": "Beste mota bateko ziurtagiri digitala behar duzu? Jarri harremanetan Vocdoni taldearekin.",
+      "certificate_info_label": "Zein ziurtagiri digital funtzionatzen du?",
+      "certificate_title": "Ziurtagiri digitala (DNI/NIE)",
+      "details_description": "Botogileek zure kide-zerrendako datuak sartzen dituzte, esate baterako, kide-zenbakia.",
+      "details_title": "Kideen datuak",
+      "heading": "1. Nola egiaztatuko dute beren nortasuna botogileek?"
+    },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} kide",
       "group_summary_other": "{{group}} · {{count}} kide",

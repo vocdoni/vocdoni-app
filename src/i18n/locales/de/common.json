@@ -2044,6 +2044,16 @@
       "strong": "Stark",
       "unset": "Nicht festgelegt"
     },
+    "method": {
+      "certificate_description": "Wählende melden sich mit ihrem eigenen digitalen Zertifikat an.",
+      "certificate_info_accepted": "Wir akzeptieren idCAT Certificat und FNMT, die spanischen digitalen Zertifikate.",
+      "certificate_info_ask": "Benötigst du ein anderes digitales Zertifikat? Frage das Vocdoni-Team.",
+      "certificate_info_label": "Welche digitalen Zertifikate funktionieren?",
+      "certificate_title": "Digitales Zertifikat (DNI/NIE)",
+      "details_description": "Wählende geben Angaben aus deiner Mitgliederliste ein, z. B. ihre Mitgliedsnummer.",
+      "details_title": "Mitgliederangaben",
+      "heading": "1. Wie weisen Wählende ihre Identität nach?"
+    },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} Mitglied",
       "group_summary_other": "{{group}} · {{count}} Mitglieder",

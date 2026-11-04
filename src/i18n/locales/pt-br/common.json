@@ -2076,6 +2076,16 @@
       "strong": "Forte",
       "unset": "Não definida"
     },
+    "method": {
+      "certificate_description": "Os eleitores entram com seu próprio certificado digital.",
+      "certificate_info_accepted": "Aceitamos idCAT Certificat e FNMT, os certificados digitais espanhóis.",
+      "certificate_info_ask": "Precisa de outro tipo de certificado digital? Entre em contato com a equipe da Vocdoni.",
+      "certificate_info_label": "Quais certificados digitais funcionam?",
+      "certificate_title": "Certificado digital (DNI/NIE)",
+      "details_description": "Os eleitores inserem dados da sua lista de membros, como o número de associado.",
+      "details_title": "Dados do membro",
+      "heading": "1. Como os eleitores vão provar sua identidade?"
+    },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} membro",
       "group_summary_many": "{{group}} · {{count}} membros",

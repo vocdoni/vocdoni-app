@@ -2044,6 +2044,16 @@
       "strong": "Strong",
       "unset": "Not set"
     },
+    "method": {
+      "certificate_description": "Voters sign in with their own digital certificate.",
+      "certificate_info_accepted": "We accept idCAT Certificat and FNMT, the Spanish digital certificates.",
+      "certificate_info_ask": "Need another type of digital certificate? Ask the Vocdoni team.",
+      "certificate_info_label": "Which digital certificates work?",
+      "certificate_title": "Digital certificate (DNI/NIE)",
+      "details_description": "Voters type in details from your member list, like their member number.",
+      "details_title": "Member details",
+      "heading": "1. How will voters prove who they are?"
+    },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} member",
       "group_summary_other": "{{group}} · {{count}} members",

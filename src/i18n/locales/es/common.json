@@ -2076,6 +2076,16 @@
       "strong": "Fuerte",
       "unset": "Sin configurar"
     },
+    "method": {
+      "certificate_description": "Los votantes se identifican con su propio certificado digital.",
+      "certificate_info_accepted": "Aceptamos idCAT Certificat y FNMT, los certificados digitales españoles.",
+      "certificate_info_ask": "¿Necesitas otro tipo de certificado digital? Contacta con el equipo de Vocdoni.",
+      "certificate_info_label": "¿Qué certificados digitales funcionan?",
+      "certificate_title": "Certificado digital (DNI/NIE)",
+      "details_description": "Los votantes introducen datos de tu base de miembros, como su número de socio.",
+      "details_title": "Datos del miembro",
+      "heading": "1. ¿Cómo demostrarán su identidad los votantes?"
+    },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} miembro",
       "group_summary_many": "{{group}} · {{count}} miembros",
