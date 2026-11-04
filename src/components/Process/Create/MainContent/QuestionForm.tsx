@@ -75,50 +75,27 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
   return (
     <div ref={setNodeRef} style={style}>
       <DashboardBox>
-        {/* Question header: settings sit above the question on narrow screens and
-            on its top right corner from there on */}
-        <Flex
-          direction={{ base: 'column', md: 'row' }}
-          align={{ base: 'stretch', md: 'flex-start' }}
-          gap={{ base: 2, md: 4 }}
-        >
-          <HStack
-            order={{ base: 0, md: 1 }}
-            gap={2}
-            flexShrink={0}
-            justifyContent={{ base: 'space-between', md: 'flex-end' }}
-          >
-            <QuestionSettings index={index} />
-            {questions.length > 1 && (
-              <IconButton
-                aria-label={t('process_create.question.remove', 'Remove question')}
-                size='sm'
-                variant='ghost'
-                onClick={() => onRemove(index)}
-              >
-                <Icon as={LuX} />
-              </IconButton>
-            )}
-          </HStack>
+        <HStack align='stretch' gap={4}>
+          {/* Drag handle */}
+          {questions.length > 1 && (
+            <Box
+              {...attributes}
+              {...listeners}
+              cursor={isDragging ? 'grabbing' : 'grab'}
+              display='flex'
+              alignItems='flex-start'
+              pt={2}
+              color='fg.subtle'
+              _hover={{ color: 'fg.muted' }}
+            >
+              <Icon as={LuGripVertical} />
+            </Box>
+          )}
 
-          <HStack order={{ base: 1, md: 0 }} flex='1' minW={0} align='stretch' gap={4}>
-            {/* Drag handle */}
-            {questions.length > 1 && (
-              <Box
-                {...attributes}
-                {...listeners}
-                cursor={isDragging ? 'grabbing' : 'grab'}
-                display='flex'
-                alignItems='flex-start'
-                pt={2}
-                color='fg.subtle'
-                _hover={{ color: 'fg.muted' }}
-              >
-                <Icon as={LuGripVertical} />
-              </Box>
-            )}
-
-            <VStack flex='1' align='stretch' gap={2}>
+          <VStack flex='1' minW={0} align='stretch' gap={2}>
+            {/* Settings share the row with the question number, so the title and
+                description below keep the full width */}
+            <Flex align='center' justify='space-between' gap={2} flexWrap='wrap'>
               <Text fontSize='sm' color='texts.subtle'>
                 {t('process.create.question.question_number', {
                   defaultValue: 'Question {{index}} of {{total}}',
@@ -126,36 +103,49 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                   total: questions.length,
                 })}
               </Text>
-              <FormControl invalid={!!errors.questions?.[index]?.title}>
-                <Input
-                  placeholder={t('process_create.question.title.placeholder', 'Add a title to the question')}
-                  variant='borderless'
-                  fontSize='lg'
-                  fontWeight='bold'
-                  {...register(`questions.${index}.title`, {
-                    required: t('form.error.required', 'This field is required'),
-                  })}
-                />
-                <FormErrorMessage>{errors.questions?.[index]?.title?.message?.toString()}</FormErrorMessage>
-              </FormControl>
-              <Controller
-                name={`questions.${index}.description`}
-                control={control}
-                render={({ field }) => (
-                  <Editor
-                    onChange={field.onChange}
-                    variant='borderless'
-                    placeholder={t(
-                      'process_create.question.description.placeholder',
-                      'Add the description of the question here (optional)...'
-                    )}
-                    defaultValue={field.value}
-                  />
+              <HStack gap={2} ms='auto'>
+                <QuestionSettings index={index} />
+                {questions.length > 1 && (
+                  <IconButton
+                    aria-label={t('process_create.question.remove', 'Remove question')}
+                    size='sm'
+                    variant='ghost'
+                    onClick={() => onRemove(index)}
+                  >
+                    <Icon as={LuX} />
+                  </IconButton>
                 )}
+              </HStack>
+            </Flex>
+            <FormControl invalid={!!errors.questions?.[index]?.title}>
+              <Input
+                placeholder={t('process_create.question.title.placeholder', 'Add a title to the question')}
+                variant='borderless'
+                fontSize='lg'
+                fontWeight='bold'
+                {...register(`questions.${index}.title`, {
+                  required: t('form.error.required', 'This field is required'),
+                })}
               />
-            </VStack>
-          </HStack>
-        </Flex>
+              <FormErrorMessage>{errors.questions?.[index]?.title?.message?.toString()}</FormErrorMessage>
+            </FormControl>
+            <Controller
+              name={`questions.${index}.description`}
+              control={control}
+              render={({ field }) => (
+                <Editor
+                  onChange={field.onChange}
+                  variant='borderless'
+                  placeholder={t(
+                    'process_create.question.description.placeholder',
+                    'Add the description of the question here (optional)...'
+                  )}
+                  defaultValue={field.value}
+                />
+              )}
+            />
+          </VStack>
+        </HStack>
 
         {/* Selection limits */}
         {questionType === SelectorTypes.Multiple && <SelectionLimits index={index} />}
