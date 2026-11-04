@@ -2045,6 +2045,8 @@
       "reason_not_dni": "Kein DNI oder NIE",
       "review_one": "Diese {{count}} überprüfen",
       "review_other": "Diese {{count}} überprüfen",
+      "save_anyway_one": "Trotzdem speichern ({{count}} kann sich nicht anmelden)",
+      "save_anyway_other": "Trotzdem speichern ({{count}} können sich nicht anmelden)",
       "status_missing_one": "{{count}} Mitglied kann sich nicht anmelden: fehlende gültige DNI/NIE.",
       "status_missing_other": "{{count}} Mitglieder können sich nicht anmelden: fehlende gültige DNI/NIE.",
       "tell_heading": "Informiere deine Mitglieder",
@@ -2063,6 +2065,7 @@
       "email_description": "Wird an die E-Mail-Adresse in deiner Mitgliederliste gesendet.",
       "email_label": "E-Mail",
       "heading": "2. Zusätzlich einen einmaligen Code senden?",
+      "heading_numbered": "3. Zusätzlich einen einmaligen Code senden?",
       "none": "Kein Code",
       "none_description": "Wählende melden sich nur mit ihren Angaben an.",
       "sms_description": "Wird an die Telefonnummer in deiner Mitgliederliste gesendet.",
@@ -2073,6 +2076,7 @@
     "details": {
       "description": "Wähle bis zu {{max}} Angaben aus deiner Mitgliederliste. Was Wählende eingeben, muss genau damit übereinstimmen.",
       "heading": "1. Was geben Wählende ein?",
+      "heading_numbered": "2. Was geben Wählende ein?",
       "optional": "Optional, wenn du einen einmaligen Code sendest: Wählende können sich dann nur mit dem Code anmelden.",
       "password_not_counted": "Das Passwort zählt nicht zu dieser Grenze."
     },
@@ -2090,7 +2094,8 @@
       "certificate_title": "Digitales Zertifikat (DNI/NIE)",
       "details_description": "Wählende geben Angaben aus deiner Mitgliederliste ein, z. B. ihre Mitgliedsnummer.",
       "details_title": "Mitgliederangaben",
-      "heading": "1. Wie weisen Wählende ihre Identität nach?"
+      "heading": "1. Wie weisen Wählende ihre Identität nach?",
+      "required": "Wähle, wie Wählende ihre Identität nachweisen."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} Mitglied",

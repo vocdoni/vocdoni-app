@@ -2081,6 +2081,9 @@
       "review_one": "Revisar estes {{count}}",
       "review_many": "Revisar estes {{count}}",
       "review_other": "Revisar estes {{count}}",
+      "save_anyway_one": "Salvar mesmo assim ({{count}} não consegue entrar)",
+      "save_anyway_many": "Salvar mesmo assim ({{count}} não conseguem entrar)",
+      "save_anyway_other": "Salvar mesmo assim ({{count}} não conseguem entrar)",
       "status_missing_one": "{{count}} membro não pode entrar: DNI/NIE válido ausente.",
       "status_missing_many": "{{count}} membros não podem entrar: DNI/NIE válido ausente.",
       "status_missing_other": "{{count}} membros não podem entrar: DNI/NIE válido ausente.",
@@ -2100,6 +2103,7 @@
       "email_description": "Enviado para o e-mail da sua lista de membros.",
       "email_label": "E-mail",
       "heading": "2. Enviar também um código único?",
+      "heading_numbered": "3. Enviar também um código único?",
       "none": "Sem código",
       "none_description": "Os eleitores entram apenas com seus dados.",
       "sms_description": "Enviado para o número de telefone da sua lista de membros.",
@@ -2110,6 +2114,7 @@
     "details": {
       "description": "Escolha até {{max}} dados da sua lista de membros. O que os eleitores digitarem deve corresponder exatamente.",
       "heading": "1. O que os eleitores vão digitar?",
+      "heading_numbered": "2. O que os eleitores vão digitar?",
       "optional": "Opcional se você enviar um código único: os eleitores poderão entrar apenas com o código.",
       "password_not_counted": "A senha não conta para esse limite."
     },
@@ -2127,7 +2132,8 @@
       "certificate_title": "Certificado digital (DNI/NIE)",
       "details_description": "Os eleitores inserem dados da sua lista de membros, como o número de associado.",
       "details_title": "Dados do membro",
-      "heading": "1. Como os eleitores vão provar sua identidade?"
+      "heading": "1. Como os eleitores vão provar sua identidade?",
+      "required": "Escolha como os eleitores vão provar sua identidade."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} membro",

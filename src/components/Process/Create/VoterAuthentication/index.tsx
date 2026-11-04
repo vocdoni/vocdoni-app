@@ -6,6 +6,7 @@ import { LuKeyRound } from 'react-icons/lu'
 import { useToast } from '~components/Toast'
 import type { Group } from '~src/queries/groups'
 import { useAppEnv } from '~src/app-env'
+import { useCertificateAuthMode } from '~src/queries/certificateAuth/mode'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { buildCensusSpec } from '../census-spec'
 import { Census, Process } from '../common'
@@ -29,6 +30,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
   const { t } = useTranslation()
   const toast = useToast()
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
+  const offerCertificate = useCertificateAuthMode() !== 'off'
   const { watch, setValue } = useFormContext<Process>()
   const { open: isOpen, onOpen, onClose } = useVoterAuthDialog()
   const { isAuthPending: isPending, hasAuthError: censusError } = useCensusSteps()
@@ -78,6 +80,9 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
           password: next.credentials.includes(PASSWORD_CREDENTIAL),
           two_fa: next.use2FA,
           two_fa_method: next.use2FA ? next.use2FAMethod : 'none',
+          // Track the sign-in method when the feature flag is on so it shows
+          // up in analytics as a dimension alongside the census structure.
+          ...(offerCertificate && { method: next.method ?? 'details' }),
         },
       })
     }

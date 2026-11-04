@@ -2045,6 +2045,8 @@
       "reason_not_dni": "Ez da DNI edo NIE",
       "review_one": "Berrikusi hauek {{count}}",
       "review_other": "Berrikusi hauek {{count}}",
+      "save_anyway_one": "Gorde hala ere ({{count}} ezin da saioa hasi)",
+      "save_anyway_other": "Gorde hala ere ({{count}} ezin dira saioa hasi)",
       "status_missing_one": "{{count}} kidek ezin du saioa hasi: DNI/NIE balioduna falta da.",
       "status_missing_other": "{{count}} kidek ezin dute saioa hasi: DNI/NIE balioduna falta zaie.",
       "tell_heading": "Jakinarazi zure kideei",
@@ -2063,6 +2065,7 @@
       "email_description": "Zure kide-zerrendako helbide elektronikora bidaltzen da.",
       "email_label": "Helbide elektronikoa",
       "heading": "2. Behin erabiltzeko kode bat ere bidali?",
+      "heading_numbered": "3. Behin erabiltzeko kode bat ere bidali?",
       "none": "Koderik ez",
       "none_description": "Botogileek beren datuekin soilik hasten dute saioa.",
       "sms_description": "Zure kide-zerrendako telefono-zenbakira bidaltzen da.",
@@ -2073,6 +2076,7 @@
     "details": {
       "description": "Hautatu gehienez {{max}} datu zure kide-zerrendatik. Botogileek idazten dutenak zehatz-mehatz bat etorri behar du horrekin.",
       "heading": "1. Zer idatziko dute botogileek?",
+      "heading_numbered": "2. Zer idatziko dute botogileek?",
       "optional": "Aukerakoa behin erabiltzeko kode bat bidaltzen baduzu: orduan botogileek kodearekin bakarrik hasi dezakete saioa.",
       "password_not_counted": "Pasahitza ez da muga horretan kontatzen."
     },
@@ -2090,7 +2094,8 @@
       "certificate_title": "Ziurtagiri digitala (DNI/NIE)",
       "details_description": "Botogileek zure kide-zerrendako datuak sartzen dituzte, esate baterako, kide-zenbakia.",
       "details_title": "Kideen datuak",
-      "heading": "1. Nola egiaztatuko dute beren nortasuna botogileek?"
+      "heading": "1. Nola egiaztatuko dute beren nortasuna botogileek?",
+      "required": "Aukeratu botogileek nortasuna egiaztatzeko modua."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} kide",

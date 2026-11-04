@@ -2081,6 +2081,9 @@
       "review_one": "Rever estes {{count}}",
       "review_many": "Rever estes {{count}}",
       "review_other": "Rever estes {{count}}",
+      "save_anyway_one": "Guardar mesmo assim ({{count}} não consegue iniciar sessão)",
+      "save_anyway_many": "Guardar mesmo assim ({{count}} não conseguem iniciar sessão)",
+      "save_anyway_other": "Guardar mesmo assim ({{count}} não conseguem iniciar sessão)",
       "status_missing_one": "{{count}} membro não pode iniciar sessão: DNI/NIE válido em falta.",
       "status_missing_many": "{{count}} membros não podem iniciar sessão: DNI/NIE válido em falta.",
       "status_missing_other": "{{count}} membros não podem iniciar sessão: DNI/NIE válido em falta.",
@@ -2100,6 +2103,7 @@
       "email_description": "Enviado para o email da tua base de membros.",
       "email_label": "Email",
       "heading": "2. Enviar também um código único?",
+      "heading_numbered": "3. Enviar também um código único?",
       "none": "Sem código",
       "none_description": "Os votantes iniciam sessão apenas com os seus dados.",
       "sms_description": "Enviado para o número de telefone da tua base de membros.",
@@ -2110,6 +2114,7 @@
     "details": {
       "description": "Escolhe até {{max}} dados da tua base de membros. O que os votantes escreverem tem de coincidir exatamente.",
       "heading": "1. O que vão escrever os votantes?",
+      "heading_numbered": "2. O que vão escrever os votantes?",
       "optional": "Opcional se enviares um código único: os votantes podem então iniciar sessão só com o código.",
       "password_not_counted": "A palavra-passe não conta para esse limite."
     },
@@ -2127,7 +2132,8 @@
       "certificate_title": "Certificado digital (DNI/NIE)",
       "details_description": "Os votantes introduzem dados da tua base de membros, como o número de sócio.",
       "details_title": "Dados do membro",
-      "heading": "1. Como vão os votantes provar a sua identidade?"
+      "heading": "1. Como vão os votantes provar a sua identidade?",
+      "required": "Escolhe como os votantes vão provar a sua identidade."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} membro",

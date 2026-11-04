@@ -2081,6 +2081,9 @@
       "review_one": "Vérifier ces {{count}}",
       "review_many": "Vérifier ces {{count}}",
       "review_other": "Vérifier ces {{count}}",
+      "save_anyway_one": "Sauvegarder quand même ({{count}} ne peut pas se connecter)",
+      "save_anyway_many": "Sauvegarder quand même ({{count}} ne peuvent pas se connecter)",
+      "save_anyway_other": "Sauvegarder quand même ({{count}} ne peuvent pas se connecter)",
       "status_missing_one": "{{count}} membre ne peut pas se connecter : DNI/NIE valide manquant.",
       "status_missing_many": "{{count}} membres ne peuvent pas se connecter : DNI/NIE valide manquant.",
       "status_missing_other": "{{count}} membres ne peuvent pas se connecter : DNI/NIE valide manquant.",
@@ -2100,6 +2103,7 @@
       "email_description": "Envoyé à l'adresse e-mail de votre liste de membres.",
       "email_label": "E-mail",
       "heading": "2. Envoyer aussi un code à usage unique ?",
+      "heading_numbered": "3. Envoyer aussi un code à usage unique ?",
       "none": "Aucun code",
       "none_description": "Les électeurs se connectent uniquement avec leurs informations.",
       "sms_description": "Envoyé au numéro de téléphone de votre liste de membres.",
@@ -2110,6 +2114,7 @@
     "details": {
       "description": "Choisissez jusqu'à {{max}} informations dans votre liste de membres. Ce que saisissent les électeurs doit correspondre exactement.",
       "heading": "1. Que saisiront les électeurs ?",
+      "heading_numbered": "2. Que saisiront les électeurs ?",
       "optional": "Facultatif si vous envoyez un code à usage unique : les électeurs pourront alors se connecter avec le code seul.",
       "password_not_counted": "Le mot de passe ne compte pas dans cette limite."
     },
@@ -2127,7 +2132,8 @@
       "certificate_title": "Certificat électronique (DNI/NIE)",
       "details_description": "Les électeurs saisissent des informations de votre liste de membres, comme leur numéro d'adhérent.",
       "details_title": "Informations du membre",
-      "heading": "1. Comment les électeurs prouveront-ils leur identité ?"
+      "heading": "1. Comment les électeurs prouveront-ils leur identité ?",
+      "required": "Choisissez comment les électeurs prouveront leur identité."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} membre",

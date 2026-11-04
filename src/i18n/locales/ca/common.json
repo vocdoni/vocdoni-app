@@ -2081,6 +2081,9 @@
       "review_one": "Revisa aquest {{count}}",
       "review_many": "Revisa aquests {{count}}",
       "review_other": "Revisa aquests {{count}}",
+      "save_anyway_one": "Desa igualment ({{count}} no pot iniciar sessió)",
+      "save_anyway_many": "Desa igualment ({{count}} no poden iniciar sessió)",
+      "save_anyway_other": "Desa igualment ({{count}} no poden iniciar sessió)",
       "status_missing_one": "{{count}} membre no pot iniciar sessió: li falta un DNI/NIE vàlid.",
       "status_missing_many": "{{count}} membres no poden iniciar sessió: els falta un DNI/NIE vàlid.",
       "status_missing_other": "{{count}} membres no poden iniciar sessió: els falta un DNI/NIE vàlid.",
@@ -2100,6 +2103,7 @@
       "email_description": "S'envia al correu electrònic de la teva base de membres.",
       "email_label": "Correu",
       "heading": "2. Enviem també un codi d'un sol ús?",
+      "heading_numbered": "3. Enviem també un codi d'un sol ús?",
       "none": "Sense codi",
       "none_description": "Els votants inicien sessió només amb les seves dades.",
       "sms_description": "S'envia al telèfon de la teva base de membres.",
@@ -2110,6 +2114,7 @@
     "details": {
       "description": "Tria fins a {{max}} dades de la teva base de membres. El que escriguin els votants hi ha de coincidir exactament.",
       "heading": "1. Què escriuran els votants?",
+      "heading_numbered": "2. Què escriuran els votants?",
       "optional": "És opcional si envies un codi d'un sol ús: els votants podran iniciar sessió només amb el codi.",
       "password_not_counted": "La contrasenya no compta per a aquest límit."
     },
@@ -2127,7 +2132,8 @@
       "certificate_title": "Certificat digital (DNI/NIE)",
       "details_description": "Els votants introdueixen dades de la teva base de membres, com ara el seu número de soci.",
       "details_title": "Dades del membre",
-      "heading": "1. Com demostraran la seva identitat els votants?"
+      "heading": "1. Com demostraran la seva identitat els votants?",
+      "required": "Tria com demostraran la seva identitat els votants."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} membre",

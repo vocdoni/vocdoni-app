@@ -2045,6 +2045,8 @@
       "reason_not_dni": "Not a DNI or NIE",
       "review_one": "Review these {{count}}",
       "review_other": "Review these {{count}}",
+      "save_anyway_one": "Save anyway ({{count}} can't sign in)",
+      "save_anyway_other": "Save anyway ({{count}} can't sign in)",
       "status_missing_one": "{{count}} member can't sign in: missing a valid DNI/NIE.",
       "status_missing_other": "{{count}} members can't sign in: missing a valid DNI/NIE.",
       "tell_heading": "Tell your members",
@@ -2063,6 +2065,7 @@
       "email_description": "Sent to the email in your member list.",
       "email_label": "Email",
       "heading": "2. Also send a one-time code?",
+      "heading_numbered": "3. Also send a one-time code?",
       "none": "No code",
       "none_description": "Voters sign in with their details only.",
       "sms_description": "Sent to the phone number in your member list.",
@@ -2073,6 +2076,7 @@
     "details": {
       "description": "Pick up to {{max}} details from your member list. What voters type must match it exactly.",
       "heading": "1. What will voters type?",
+      "heading_numbered": "2. What will voters type?",
       "optional": "Optional if you send a one-time code: voters can then sign in with the code alone.",
       "password_not_counted": "The password does not count toward that limit."
     },
@@ -2090,7 +2094,8 @@
       "certificate_title": "Digital certificate (DNI/NIE)",
       "details_description": "Voters type in details from your member list, like their member number.",
       "details_title": "Member details",
-      "heading": "1. How will voters prove who they are?"
+      "heading": "1. How will voters prove who they are?",
+      "required": "Choose how voters prove who they are."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} member",
