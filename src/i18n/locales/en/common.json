@@ -135,7 +135,14 @@
   "census_size": "Census size",
   "cert_auth": {
     "actions": {
-      "try_again": "Try again"
+      "check_different": "Check a different certificate",
+      "copy_link": "Copy link for another device",
+      "copy_link_failed": "Couldn't copy. Copy the address from your browser's address bar.",
+      "get_new": "Get a new {{issuer}} certificate",
+      "link_copied": "Link copied",
+      "opens_new_tab": "(opens in a new tab)",
+      "try_again": "Try again",
+      "use_different": "Use a different certificate"
     },
     "checking": {
       "body": "This can take up to 30 seconds.",
@@ -147,6 +154,83 @@
       "error": "Error: {{title}} - {{vote}}",
       "status": "{{title}} - {{vote}}"
     },
+    "errors": {
+      "dni_not_in_census": {
+        "sentence": "It belongs to <bold>{{name}}</bold> ({{docType}} ending in {{ending}}).",
+        "sentence_unknown": "The certificate belongs to a different person.",
+        "title": "This certificate isn't on the voter list"
+      },
+      "expired": {
+        "sentence": "Your {{issuer}} certificate is no longer valid.",
+        "sentence_date": "Your {{issuer}} certificate expired on {{date}}.",
+        "title": "Your certificate has expired"
+      },
+      "identity_invalid": {
+        "sentence": "Choose another certificate if you have one.",
+        "title": "We couldn't read the identity in this certificate"
+      },
+      "identity_unsupported_document": {
+        "sentence": "You need a certificate issued with your DNI or NIE.",
+        "title": "This certificate has no DNI or NIE"
+      },
+      "internal": {
+        "sentence": "Try again in a few minutes.",
+        "title": "Something went wrong on our side"
+      },
+      "network": {
+        "sentence": "Check your connection and try again. On a work or school network, try mobile data or another network.",
+        "title": "We couldn't reach the certificate check"
+      },
+      "no_certificate": {
+        "sentence": "This browser may not have one installed, or the window to choose it was closed.",
+        "title": "No certificate found in this browser"
+      },
+      "not_yet_valid": {
+        "sentence": "If you got it today, try again later. If not, check your device's date and time.",
+        "title": "This certificate isn't active yet"
+      },
+      "revocation_unavailable": {
+        "sentence": "This is temporary and not caused by you. Try again in a few minutes.",
+        "title": "We couldn't check your certificate right now"
+      },
+      "revocation_unknown": {
+        "sentence": "Contact {{issuer}} and give them the reference code.",
+        "sentence_no_issuer": "Contact your certificate issuer and give them the reference code.",
+        "title": "We couldn't confirm this certificate with {{issuer}}",
+        "title_no_issuer": "We couldn't confirm this certificate"
+      },
+      "revoked": {
+        "sentence": "Its issuer cancelled it. This usually happens after a renewal or when it was reported lost.",
+        "title": "This certificate is no longer valid"
+      },
+      "test_certificate": {
+        "sentence": "Use your real certificate.",
+        "title": "This is a test certificate"
+      },
+      "too_many_attempts": {
+        "sentence": "For your security, try again after {{time}}.",
+        "sentence_no_time": "For your security, please wait before trying again.",
+        "title": "Too many attempts"
+      },
+      "unsupported_profile": {
+        "sentence": "This one is for a company, a representative or an employee. Choose the certificate issued to you as a person.",
+        "title": "Use your personal certificate"
+      },
+      "unsupported_purpose": {
+        "sentence": "Choose the certificate you use to identify yourself.",
+        "title": "This certificate can't be used to sign in"
+      },
+      "untrusted_issuer": {
+        "sentence": "We accept idCAT Certificat and FNMT certificates.",
+        "title": "This certificate can't be used here"
+      },
+      "weak_algorithm": {
+        "sentence": "Get a new certificate to vote.",
+        "sentence_issuer": "Get a new one from {{issuer}}.",
+        "title": "This certificate is too old to use here"
+      }
+    },
+    "help": "If you keep having problems, contact {{organization}}.",
     "identify": {
       "button": "Access with your digital certificate",
       "consent": "By continuing you accept the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
@@ -155,9 +239,21 @@
       "title": "Identify to vote",
       "works_with": "Works with idCAT Certificat and FNMT certificates."
     },
+    "note": {
+      "closes_today": "Voting closes today at {{time}}.",
+      "closes_tomorrow": "Voting closes tomorrow at {{time}}.",
+      "still_time": "You still have time: voting opens on {{date}}."
+    },
     "opening": {
       "body": "Choose the certificate with your name and press OK.",
       "title": "Opening the certificate window..."
+    },
+    "reference": {
+      "copied": "Copied",
+      "copied_sr": "Reference code copied",
+      "copy": "Copy",
+      "failed": "Couldn't copy. Select the code and copy it.",
+      "label": "Reference code:"
     },
     "stalled": {
       "body": "This is usually a slow connection. Press Try again: you won't need to choose your certificate again.",

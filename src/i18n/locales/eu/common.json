@@ -135,7 +135,14 @@
   "census_size": "Erroldeko tamaina",
   "cert_auth": {
     "actions": {
-      "try_again": "Berriro saiatu"
+      "check_different": "Ziurtagiri desberdina egiaztatu",
+      "copy_link": "Kopiatu esteka beste gailu baterako",
+      "copy_link_failed": "Ezin izan da kopiatu. Kopiatu helbidea nabigatzailearen helbide-barratik.",
+      "get_new": "Lortu {{issuer}} ziurtagiri berria",
+      "link_copied": "Esteka kopiatua",
+      "opens_new_tab": "(fitxa berrian irekitzen da)",
+      "try_again": "Berriro saiatu",
+      "use_different": "Erabili ziurtagiri desberdina"
     },
     "checking": {
       "body": "30 segundo iraun dezake.",
@@ -147,6 +154,83 @@
       "error": "Errorea: {{title}} - {{vote}}",
       "status": "{{title}} - {{vote}}"
     },
+    "errors": {
+      "dni_not_in_census": {
+        "sentence": "<bold>{{name}}</bold>-rena da ({{docType}}, {{ending}} zenbakian amaituta).",
+        "sentence_unknown": "Ziurtagiria beste pertsona batenak da.",
+        "title": "Ziurtagiri hau ez dago botogile-zerrendan"
+      },
+      "expired": {
+        "sentence": "Zure {{issuer}} ziurtagiria ez da gehiago baliozkoa.",
+        "sentence_date": "Zure {{issuer}} ziurtagiria {{date}}an iraungitu zen.",
+        "title": "Zure ziurtagiria iraungitu da"
+      },
+      "identity_invalid": {
+        "sentence": "Aukeratu beste ziurtagiri bat badaukazu.",
+        "title": "Ezin izan da ziurtagiri honetako nortasuna irakurri"
+      },
+      "identity_unsupported_document": {
+        "sentence": "Zure DNI edo NIEarekin emandako ziurtagiri bat behar duzu.",
+        "title": "Ziurtagiri honek ez du DNI edo NIErik"
+      },
+      "internal": {
+        "sentence": "Saiatu berriz zenbait minuturen buruan.",
+        "title": "Zerbait gaizki joan da gure aldetik"
+      },
+      "network": {
+        "sentence": "Egiaztatu konexioa eta saiatu berriro. Lan edo eskola sare batean bazaude, saiatu datu mugikorrekin edo beste sare batekin.",
+        "title": "Ezin izan da ziurtagiri-egiaztapenera iritsi"
+      },
+      "no_certificate": {
+        "sentence": "Baliteke nabigatzaile honetan instalaturik ez egotea, edo aukeratzeko leihoa itxi izana.",
+        "title": "Ez da ziurtagiririk aurkitu nabigatzaile honetan"
+      },
+      "not_yet_valid": {
+        "sentence": "Gaur lortu baduzu, saiatu berriro geroago. Bestela, egiaztatu gailuaren data eta ordua.",
+        "title": "Ziurtagiri hau oraindik ez dago aktibo"
+      },
+      "revocation_unavailable": {
+        "sentence": "Hau aldi baterakoa da eta ez da zure errua. Saiatu berriz zenbait minuturen buruan.",
+        "title": "Ezin izan da zure ziurtagiria orain egiaztatu"
+      },
+      "revocation_unknown": {
+        "sentence": "Jarri harremanetan {{issuer}}-rekin eta eman erreferentzia-kodea.",
+        "sentence_no_issuer": "Jarri harremanetan zure ziurtagiriaren emailearekin eta eman erreferentzia-kodea.",
+        "title": "Ezin izan da ziurtagiri hau {{issuer}}-rekin berretsi",
+        "title_no_issuer": "Ezin izan da ziurtagiri hau berretsi"
+      },
+      "revoked": {
+        "sentence": "Emaileak baliogabetu du. Hau normalean berritze baten ondoren edo galdutzat salatu ondoren gertatzen da.",
+        "title": "Ziurtagiri hau ez da gehiago baliozkoa"
+      },
+      "test_certificate": {
+        "sentence": "Erabili zure benetako ziurtagiria.",
+        "title": "Hau proba-ziurtagiria da"
+      },
+      "too_many_attempts": {
+        "sentence": "Zure segurtasunerako, saiatu berriro {{time}} ostean.",
+        "sentence_no_time": "Zure segurtasunerako, itxaron berriro saiatu aurretik.",
+        "title": "Ahalegin gehiegi"
+      },
+      "unsupported_profile": {
+        "sentence": "Hau enpresa, ordezkari edo langile batentzat da. Aukeratu pertsona bezala zuri emandako ziurtagiria.",
+        "title": "Erabili zure ziurtagiri pertsonala"
+      },
+      "unsupported_purpose": {
+        "sentence": "Aukeratu identifikatzeko erabiltzen duzun ziurtagiria.",
+        "title": "Ziurtagiri hau ezin da saioa hasteko erabili"
+      },
+      "untrusted_issuer": {
+        "sentence": "idCAT Certificat eta FNMT ziurtagiriak onartzen ditugu.",
+        "title": "Ziurtagiri hau ezin da hemen erabili"
+      },
+      "weak_algorithm": {
+        "sentence": "Lortu ziurtagiri berria botoa emateko.",
+        "sentence_issuer": "Lortu berria {{issuer}}-n.",
+        "title": "Ziurtagiri hau zaharra da hemen erabiltzeko"
+      }
+    },
+    "help": "Arazoak jarraitzen badute, jarri harremanetan {{organization}}-rekin.",
     "identify": {
       "button": "Sartu zure ziurtagiri digitalarekin",
       "consent": "Jarraitzean, <terms>Baldintzak</terms> eta <privacy>Pribatutasun-politika</privacy> onartzen dituzu.",
@@ -155,9 +239,21 @@
       "title": "Identifikatu botoa emateko",
       "works_with": "idCAT Certificat eta FNMT ziurtagiriekin funtzionatzen du."
     },
+    "note": {
+      "closes_today": "Botazioa gaur itxiko da {{time}}etan.",
+      "closes_tomorrow": "Botazioa bihar itxiko da {{time}}etan.",
+      "still_time": "Denbora daukazu oraindik: botazioa {{date}}an irekiko da."
+    },
     "opening": {
       "body": "Aukeratu zure izenarekin dagoen ziurtagiria eta sakatu Onartu.",
       "title": "Ziurtagiriaren leihoa irekitzen..."
+    },
+    "reference": {
+      "copied": "Kopiatua",
+      "copied_sr": "Erreferentzia-kodea kopiatua",
+      "copy": "Kopiatu",
+      "failed": "Ezin izan da kopiatu. Hautatu kodea eta kopiatu.",
+      "label": "Erreferentzia-kodea:"
     },
     "stalled": {
       "body": "Normalean konexio motelaren ondorioa da. Sakatu Berriro saiatu: ez dituzu ziurtagiria berriro aukeratu beharko.",

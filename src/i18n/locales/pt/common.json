@@ -137,7 +137,14 @@
   "census_size": "Número de participantes",
   "cert_auth": {
     "actions": {
-      "try_again": "Tentar novamente"
+      "check_different": "Verificar um certificado diferente",
+      "copy_link": "Copiar ligação para outro dispositivo",
+      "copy_link_failed": "Não foi possível copiar. Copia o endereço da barra de endereços do navegador.",
+      "get_new": "Obter um novo certificado {{issuer}}",
+      "link_copied": "Ligação copiada",
+      "opens_new_tab": "(abre numa nova aba)",
+      "try_again": "Tentar novamente",
+      "use_different": "Usar um certificado diferente"
     },
     "checking": {
       "body": "Pode demorar até 30 segundos.",
@@ -149,6 +156,83 @@
       "error": "Erro: {{title}} - {{vote}}",
       "status": "{{title}} - {{vote}}"
     },
+    "errors": {
+      "dni_not_in_census": {
+        "sentence": "Pertence a <bold>{{name}}</bold> ({{docType}} a terminar em {{ending}}).",
+        "sentence_unknown": "O certificado pertence a outra pessoa.",
+        "title": "Este certificado não está na lista de participantes"
+      },
+      "expired": {
+        "sentence": "O teu certificado {{issuer}} já não é válido.",
+        "sentence_date": "O teu certificado {{issuer}} expirou a {{date}}.",
+        "title": "O teu certificado expirou"
+      },
+      "identity_invalid": {
+        "sentence": "Escolhe outro certificado se tiveres um.",
+        "title": "Não foi possível ler a identidade neste certificado"
+      },
+      "identity_unsupported_document": {
+        "sentence": "Precisas de um certificado emitido com o teu DNI ou NIE.",
+        "title": "Este certificado não tem DNI nem NIE"
+      },
+      "internal": {
+        "sentence": "Tenta novamente daqui a alguns minutos.",
+        "title": "Algo correu mal da nossa parte"
+      },
+      "network": {
+        "sentence": "Verifica a tua ligação e tenta novamente. Numa rede escolar ou empresarial, tenta com dados móveis ou outra rede.",
+        "title": "Não foi possível contactar o serviço de verificação"
+      },
+      "no_certificate": {
+        "sentence": "Talvez não tenhas nenhum instalado neste navegador, ou a janela de seleção foi fechada.",
+        "title": "Nenhum certificado encontrado neste navegador"
+      },
+      "not_yet_valid": {
+        "sentence": "Se o obtiveste hoje, tenta mais tarde. Caso contrário, verifica a data e a hora do dispositivo.",
+        "title": "Este certificado ainda não está ativo"
+      },
+      "revocation_unavailable": {
+        "sentence": "Isto é temporário e não é por tua causa. Tenta novamente daqui a alguns minutos.",
+        "title": "Não foi possível verificar o teu certificado agora"
+      },
+      "revocation_unknown": {
+        "sentence": "Contacta o {{issuer}} e fornece o código de referência.",
+        "sentence_no_issuer": "Contacta o emissor do teu certificado e fornece o código de referência.",
+        "title": "Não foi possível confirmar este certificado com o {{issuer}}",
+        "title_no_issuer": "Não foi possível confirmar este certificado"
+      },
+      "revoked": {
+        "sentence": "O emissor cancelou-o. Costuma acontecer após uma renovação ou quando foi reportado como perdido.",
+        "title": "Este certificado já não é válido"
+      },
+      "test_certificate": {
+        "sentence": "Usa o teu certificado real.",
+        "title": "Este é um certificado de teste"
+      },
+      "too_many_attempts": {
+        "sentence": "Por tua segurança, tenta novamente depois das {{time}}.",
+        "sentence_no_time": "Por tua segurança, aguarda antes de tentar novamente.",
+        "title": "Demasiadas tentativas"
+      },
+      "unsupported_profile": {
+        "sentence": "Este é para uma empresa, representante ou funcionário. Escolhe o certificado emitido em teu nome como pessoa.",
+        "title": "Usa o teu certificado pessoal"
+      },
+      "unsupported_purpose": {
+        "sentence": "Escolhe o certificado que usas para te identificares.",
+        "title": "Este certificado não pode ser usado para iniciar sessão"
+      },
+      "untrusted_issuer": {
+        "sentence": "Aceitamos idCAT Certificat e certificados FNMT.",
+        "title": "Este certificado não pode ser usado aqui"
+      },
+      "weak_algorithm": {
+        "sentence": "Obtém um novo certificado para votar.",
+        "sentence_issuer": "Obtém um novo em {{issuer}}.",
+        "title": "Este certificado é demasiado antigo para ser usado aqui"
+      }
+    },
+    "help": "Se continuares com problemas, contacta {{organization}}.",
     "identify": {
       "button": "Acede com o teu certificado digital",
       "consent": "Ao continuar, aceitas os <terms>Termos</terms> e a <privacy>Política de privacidade</privacy>.",
@@ -157,9 +241,21 @@
       "title": "Identifica-te para votar",
       "works_with": "Funciona com idCAT Certificat e certificados FNMT."
     },
+    "note": {
+      "closes_today": "A votação fecha hoje às {{time}}.",
+      "closes_tomorrow": "A votação fecha amanhã às {{time}}.",
+      "still_time": "Ainda tens tempo: a votação abre a {{date}}."
+    },
     "opening": {
       "body": "Escolhe o certificado com o teu nome e carrega em OK.",
       "title": "A abrir a janela do certificado..."
+    },
+    "reference": {
+      "copied": "Copiado",
+      "copied_sr": "Código de referência copiado",
+      "copy": "Copiar",
+      "failed": "Não foi possível copiar. Seleciona o código e copia-o.",
+      "label": "Código de referência:"
     },
     "stalled": {
       "body": "Geralmente deve-se a uma ligação lenta. Carrega em Tentar novamente: não precisas de escolher o certificado de novo.",

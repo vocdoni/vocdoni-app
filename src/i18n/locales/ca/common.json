@@ -137,7 +137,14 @@
   "census_size": "Mida del cens",
   "cert_auth": {
     "actions": {
-      "try_again": "Torna-ho a intentar"
+      "check_different": "Comprova un certificat diferent",
+      "copy_link": "Copia l'enllaç per a un altre dispositiu",
+      "copy_link_failed": "No s'ha pogut copiar. Copia l'adreça de la barra d'adreces del navegador.",
+      "get_new": "Obtén un nou certificat de {{issuer}}",
+      "link_copied": "Enllaç copiat",
+      "opens_new_tab": "(s'obre en una pestanya nova)",
+      "try_again": "Torna-ho a intentar",
+      "use_different": "Utilitza un certificat diferent"
     },
     "checking": {
       "body": "Pot trigar fins a 30 segons.",
@@ -149,6 +156,83 @@
       "error": "Error: {{title}} - {{vote}}",
       "status": "{{title}} - {{vote}}"
     },
+    "errors": {
+      "dni_not_in_census": {
+        "sentence": "Pertany a <bold>{{name}}</bold> ({{docType}} que acaba en {{ending}}).",
+        "sentence_unknown": "El certificat pertany a una altra persona.",
+        "title": "Aquest certificat no és al cens de votants"
+      },
+      "expired": {
+        "sentence": "El teu certificat de {{issuer}} ja no és vàlid.",
+        "sentence_date": "El teu certificat de {{issuer}} va caducar el {{date}}.",
+        "title": "El teu certificat ha caducat"
+      },
+      "identity_invalid": {
+        "sentence": "Tria un altre certificat si en tens.",
+        "title": "No hem pogut llegir la identitat d'aquest certificat"
+      },
+      "identity_unsupported_document": {
+        "sentence": "Necessites un certificat emès amb el teu DNI o NIE.",
+        "title": "Aquest certificat no té DNI ni NIE"
+      },
+      "internal": {
+        "sentence": "Torna-ho a intentar d'aquí a uns minuts.",
+        "title": "Ha passat alguna cosa al nostre servidor"
+      },
+      "network": {
+        "sentence": "Comprova la connexió i torna-ho a intentar. En una xarxa de feina o escola, prova amb dades mòbils o una altra xarxa.",
+        "title": "No hem pogut arribar a la comprovació del certificat"
+      },
+      "no_certificate": {
+        "sentence": "Potser aquest navegador no en té cap instal·lat, o la finestra per triar-lo s'ha tancat.",
+        "title": "No s'ha trobat cap certificat en aquest navegador"
+      },
+      "not_yet_valid": {
+        "sentence": "Si l'has obtingut avui, torna-ho a intentar més tard. Si no, comprova la data i l'hora del dispositiu.",
+        "title": "Aquest certificat encara no és actiu"
+      },
+      "revocation_unavailable": {
+        "sentence": "Això és temporal i no és culpa teva. Torna-ho a intentar d'aquí a uns minuts.",
+        "title": "No hem pogut comprovar el teu certificat ara"
+      },
+      "revocation_unknown": {
+        "sentence": "Contacta amb {{issuer}} i indica'ls el codi de referència.",
+        "sentence_no_issuer": "Contacta amb l'emissor del teu certificat i indica'ls el codi de referència.",
+        "title": "No hem pogut confirmar aquest certificat amb {{issuer}}",
+        "title_no_issuer": "No hem pogut confirmar aquest certificat"
+      },
+      "revoked": {
+        "sentence": "L'emissor l'ha cancel·lat. Sol passar després d'una renovació o quan s'ha notificat com a perdut.",
+        "title": "Aquest certificat ja no és vàlid"
+      },
+      "test_certificate": {
+        "sentence": "Utilitza el teu certificat real.",
+        "title": "Aquest és un certificat de prova"
+      },
+      "too_many_attempts": {
+        "sentence": "Per la teva seguretat, torna-ho a intentar a les {{time}}.",
+        "sentence_no_time": "Per la teva seguretat, espera una mica abans de tornar-ho a intentar.",
+        "title": "Massa intents"
+      },
+      "unsupported_profile": {
+        "sentence": "Aquest és per a una empresa, un representant o un empleat. Tria el certificat emès a tu com a persona.",
+        "title": "Utilitza el teu certificat personal"
+      },
+      "unsupported_purpose": {
+        "sentence": "Tria el certificat que fas servir per identificar-te.",
+        "title": "Aquest certificat no es pot utilitzar per iniciar sessió"
+      },
+      "untrusted_issuer": {
+        "sentence": "Acceptem idCAT Certificat i certificats de FNMT.",
+        "title": "Aquest certificat no es pot utilitzar aquí"
+      },
+      "weak_algorithm": {
+        "sentence": "Obtén un certificat nou per votar.",
+        "sentence_issuer": "Obtén-ne un de nou a {{issuer}}.",
+        "title": "Aquest certificat és massa antic per usar-se aquí"
+      }
+    },
+    "help": "Si continues tenint problemes, contacta amb {{organization}}.",
     "identify": {
       "button": "Accedeix amb el teu certificat digital",
       "consent": "En continuar acceptes els <terms>Termes</terms> i la <privacy>Política de privacitat</privacy>.",
@@ -157,9 +241,21 @@
       "title": "Identifica't per votar",
       "works_with": "Compatible amb idCAT Certificat i certificats FNMT."
     },
+    "note": {
+      "closes_today": "La votació tanca avui a les {{time}}.",
+      "closes_tomorrow": "La votació tanca demà a les {{time}}.",
+      "still_time": "Encara tens temps: la votació s'obre el {{date}}."
+    },
     "opening": {
       "body": "Tria el certificat amb el teu nom i prem D'acord.",
       "title": "S'obre la finestra del certificat..."
+    },
+    "reference": {
+      "copied": "Copiat",
+      "copied_sr": "Codi de referència copiat",
+      "copy": "Copia",
+      "failed": "No s'ha pogut copiar. Selecciona el codi i copia'l.",
+      "label": "Codi de referència:"
     },
     "stalled": {
       "body": "Sol passar per una connexió lenta. Prem Torna-ho a intentar: no caldrà que tornis a triar el certificat.",
