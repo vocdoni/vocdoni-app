@@ -9,6 +9,8 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - Token name: **VOC**
 - Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
+- Certificate product names and document identifiers (keep exactly as written): **idCAT Certificat**, **idCAT**, **idCAT Mòbil**, **FNMT**, **Cl@ve**, **DNI**, **NIE**, **DNI/NIE**
+- Never use an em dash (—) in UI strings; use a colon, comma or full stop instead
 
 ## Place & proper names
 - Translate geographic place names (countries, regions, cities) to their established German form when one exists (e.g. Catalonia → Katalonien, Sardinia → Sardinien). Keep the original spelling when there is no common German form (e.g. small towns such as Bellpuig).
@@ -43,6 +45,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | end / finish | Beenden | |
 | resume | Fortsetzen | |
 | sign (cryptographic) | Signieren | Technical term in common use — keep |
+| digital certificate | digitales Zertifikat | The term public administrations use for a PKI-based identity credential |
+| Access with your digital certificate | Mit deinem digitalen Zertifikat anmelden | V1 button — informal du per this file |
+| voter list | Teilnehmerliste | The word voters read; matches existing `process.census` and `aside.is_not_in_census` wording |
+| Reference code | Referenzcode | V6 support code shown to the voter |
+| sign in (organizer copy) | anmelden | Matches existing `voter_auth.*` strings |
 
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. German uses the same two-form pattern — translate accordingly.

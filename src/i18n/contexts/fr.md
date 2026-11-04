@@ -11,6 +11,8 @@ Address the user with formal **vous / votre** throughout — in French this is t
 - Token name: **VOC**
 - Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
+- Certificate product names and document identifiers (keep exactly as written): **idCAT Certificat**, **idCAT**, **idCAT Mòbil**, **FNMT**, **Cl@ve**, **DNI**, **NIE**, **DNI/NIE**
+- Never use an em dash (—) in UI strings; use a colon, comma or full stop instead
 
 ## Place & proper names
 - Translate geographic place names (countries, regions, cities) to their established French form when one exists (e.g. Belarus → Biélorussie, Catalonia → Catalogne). Keep the original spelling when there is no common French form (e.g. small towns such as Bellpuig).
@@ -45,6 +47,11 @@ Address the user with formal **vous / votre** throughout — in French this is t
 | end / finish | terminer | |
 | resume | reprendre | |
 | sign (cryptographic) | signer | Technical term in common use — keep |
+| digital certificate | certificat électronique | The term public administrations use for a PKI-based identity credential |
+| Access with your digital certificate | Accédez avec votre certificat électronique | V1 button — formal vous per this file |
+| voter list | liste électorale | The word voters read; matches existing `process.census` and `aside.is_not_in_census` wording |
+| Reference code | Code de référence | V6 support code shown to the voter |
+| sign in (organizer copy) | se connecter | Matches existing `voter_auth.*` strings |
 
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. French uses the same two-form pattern — translate accordingly. Note that CLDR puts 0 in the singular form for French (`_one` covers 0 and 1), unlike English: never hardcode "1" or "Un" in a `_one` value whose count can be 0 — use `{{count}}` so 0 renders as "0".

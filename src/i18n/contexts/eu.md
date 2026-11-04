@@ -9,6 +9,8 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - Token name: **VOC**
 - Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
+- Certificate product names and document identifiers (keep exactly as written): **idCAT Certificat**, **idCAT**, **idCAT Mòbil**, **FNMT**, **Cl@ve**, **DNI**, **NIE**, **DNI/NIE**
+- Never use an em dash (—) in UI strings; use a colon, comma or full stop instead
 
 ## Place & proper names
 - Translate geographic place names (countries, regions, cities) to their established Basque form when one exists (e.g. Belarus → Bielorrusia, Catalonia → Katalunia). Keep the original spelling when there is no common Basque form (e.g. small towns such as Bellpuig).
@@ -42,6 +44,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | end / finish | amaitu | |
 | resume | berrekin | |
 | sign (cryptographic) | sinatu | Technical term in common use — keep |
+| digital certificate | ziurtagiri digitala | The term public administrations use for a PKI-based identity credential |
+| Access with your digital certificate | Sartu zure ziurtagiri digitalarekin | V1 button — informal zure per this file |
+| voter list | errolda | The word voters read; matches existing `process.census` and `aside.is_not_in_census` wording |
+| Reference code | Erreferentzia-kodea | V6 support code shown to the voter |
+| sign in (organizer copy) | saioa hasi | Matches existing `voter_auth.*` strings |
 
 ## Verb forms — standard Batua (aditzoina)
 With the **potential** auxiliaries (`daiteke`, `daitezke`, `dezake`, `ditzake`, `dezakezu`, `ditzakezu`, `dezakete`, `gaitezke`, `zaitezke`, etc.) and with **subjunctive / purpose** auxiliaries (`dadin`, `daitezen`, `dezan`, `ditzan`, `dezagun`, `dezala`, …), the non-finite verb must take the **aditzoina (radical)**, not the `-tu`/`-i` participle. This is the standard Batua norm (Euskaltzaindia, Arau 28).
