@@ -114,6 +114,7 @@ there, here's a list of variables you can use:
   read at runtime, so a single build/image can be branded with `docker run -e SHOW_ORG_LOGO=true`.
 - `DISABLE_ANONYMOUS_VOTING` set it to `true` to hide the anonymous voting option from the process
   creation wizard. Unset or any other value leaves the option available. Read at runtime.
+- `ENABLE_CERTIFICATE_AUTH` set it to `true` to offer the digital certificate (DNI/NIE) voter sign-in, which needs a backend with the certificate endpoints, or to `mock` to try it locally without one (ignored when `VOCDONI_ENVIRONMENT` is `prod`). Unset or any other value hides it. Read at runtime.
 
 You can also start the app by prefixing these vars instead of defining your
 custom `.env` file:

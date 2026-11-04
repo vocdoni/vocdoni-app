@@ -106,4 +106,15 @@ describe('buildAppEnv', () => {
     expect(buildAppEnv({ STREAM_URL: 'not a url' }).STREAM_URL).toBeUndefined()
     vi.restoreAllMocks()
   })
+
+  it('resolves ENABLE_CERTIFICATE_AUTH: "true" is on, "mock" only outside prod, anything else off', () => {
+    expect(buildAppEnv({}).ENABLE_CERTIFICATE_AUTH).toBeUndefined()
+    expect(buildAppEnv({ ENABLE_CERTIFICATE_AUTH: 'true' }).ENABLE_CERTIFICATE_AUTH).toBe('on')
+    expect(buildAppEnv({ ENABLE_CERTIFICATE_AUTH: 'mock' }).ENABLE_CERTIFICATE_AUTH).toBe('mock')
+    expect(
+      buildAppEnv({ ENABLE_CERTIFICATE_AUTH: 'mock', VOCDONI_ENVIRONMENT: 'prod' }).ENABLE_CERTIFICATE_AUTH
+    ).toBeUndefined()
+    expect(buildAppEnv({ ENABLE_CERTIFICATE_AUTH: '1' }).ENABLE_CERTIFICATE_AUTH).toBeUndefined()
+    expect(buildAppEnv({ ENABLE_CERTIFICATE_AUTH: 'TRUE' }).ENABLE_CERTIFICATE_AUTH).toBeUndefined()
+  })
 })
