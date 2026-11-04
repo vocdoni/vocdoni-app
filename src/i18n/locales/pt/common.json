@@ -2078,7 +2078,7 @@
       "opens_new_tab": "(abre numa nova aba)",
       "reason_letter": "A letra não coincide",
       "reason_not_dni": "Não é um DNI nem um NIE",
-      "review_one": "Rever estes {{count}}",
+      "review_one": "Rever este membro",
       "review_many": "Rever estes {{count}}",
       "review_other": "Rever estes {{count}}",
       "save_anyway_one": "Guardar mesmo assim ({{count}} não consegue iniciar sessão)",

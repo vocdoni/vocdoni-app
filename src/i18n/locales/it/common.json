@@ -2078,7 +2078,7 @@
       "opens_new_tab": "(si apre in una nuova scheda)",
       "reason_letter": "La lettera non corrisponde",
       "reason_not_dni": "Non è un DNI o un NIE",
-      "review_one": "Rivedi questi {{count}}",
+      "review_one": "Rivedi questo membro",
       "review_many": "Rivedi questi {{count}}",
       "review_other": "Rivedi questi {{count}}",
       "save_anyway_one": "Salva comunque ({{count}} non può accedere)",

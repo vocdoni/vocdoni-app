@@ -2043,7 +2043,7 @@
       "opens_new_tab": "(opens in a new tab)",
       "reason_letter": "Letter doesn't match",
       "reason_not_dni": "Not a DNI or NIE",
-      "review_one": "Review these {{count}}",
+      "review_one": "Review this member",
       "review_other": "Review these {{count}}",
       "save_anyway_one": "Save anyway ({{count}} can't sign in)",
       "save_anyway_other": "Save anyway ({{count}} can't sign in)",

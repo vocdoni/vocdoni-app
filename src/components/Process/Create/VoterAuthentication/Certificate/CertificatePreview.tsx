@@ -4,7 +4,7 @@ import { LuEye, LuIdCard, LuShieldCheck } from 'react-icons/lu'
 
 /**
  * Rail panel showing what the voter will see when they open a certificate census
- * vote. Ported from the validated V1 mockup without the "I don't have a certificate" link.
+ * vote: the voter identify panel, condensed. Excludes the "I don't have a certificate" link.
  */
 export const CertificatePreview = () => {
   const { t } = useTranslation()

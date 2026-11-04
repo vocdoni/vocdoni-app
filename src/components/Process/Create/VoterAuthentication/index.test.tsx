@@ -725,7 +725,7 @@ describe('VoterAuthentication', () => {
       expect(dialog.getByRole('status')).toHaveTextContent(/to save, give the 2 members/i)
     })
 
-    it('7. pre-SP1 backend: 400 with missingData and no warnings does not block save', async () => {
+    it('7. backend without nationalIdWarnings: 400 with missingData and no warnings does not block save', async () => {
       mockValidateCensus.mockRejectedValue(
         new VocdoniApiError(400, { data: { memberIds: [], duplicates: [], missingData: ['x'], notFound: [] } }, 'bad')
       )

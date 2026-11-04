@@ -2043,7 +2043,7 @@
       "opens_new_tab": "(ανοίγει σε νέα καρτέλα)",
       "reason_letter": "Το γράμμα δεν ταιριάζει",
       "reason_not_dni": "Δεν είναι DNI ή NIE",
-      "review_one": "Ελέγξτε αυτό {{count}}",
+      "review_one": "Ελέγξτε αυτό το μέλος",
       "review_other": "Ελέγξτε αυτά {{count}}",
       "save_anyway_one": "Αποθήκευση παρ' όλα αυτά ({{count}} δεν μπορεί να συνδεθεί)",
       "save_anyway_other": "Αποθήκευση παρ' όλα αυτά ({{count}} δεν μπορούν να συνδεθούν)",

@@ -2078,7 +2078,7 @@
       "opens_new_tab": "(s'obre en una nova pestanya)",
       "reason_letter": "La lletra no coincideix",
       "reason_not_dni": "No és un DNI ni un NIE",
-      "review_one": "Revisa aquest {{count}}",
+      "review_one": "Revisa aquest membre",
       "review_many": "Revisa aquests {{count}}",
       "review_other": "Revisa aquests {{count}}",
       "save_anyway_one": "Desa igualment ({{count}} no pot iniciar sessió)",

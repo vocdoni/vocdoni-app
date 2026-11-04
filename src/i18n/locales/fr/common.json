@@ -2078,7 +2078,7 @@
       "opens_new_tab": "(s'ouvre dans un nouvel onglet)",
       "reason_letter": "La lettre ne correspond pas",
       "reason_not_dni": "Ce n'est pas un DNI ou un NIE",
-      "review_one": "Vérifier ces {{count}}",
+      "review_one": "Vérifier ce membre",
       "review_many": "Vérifier ces {{count}}",
       "review_other": "Vérifier ces {{count}}",
       "save_anyway_one": "Sauvegarder quand même ({{count}} ne peut pas se connecter)",

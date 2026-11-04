@@ -2078,7 +2078,7 @@
       "opens_new_tab": "(se abre en una nueva pestaña)",
       "reason_letter": "La letra no coincide",
       "reason_not_dni": "No es un DNI ni un NIE",
-      "review_one": "Revisar estos {{count}}",
+      "review_one": "Revisa este miembro",
       "review_many": "Revisar estos {{count}}",
       "review_other": "Revisar estos {{count}}",
       "save_anyway_one": "Guardar igualmente ({{count}} no puede iniciar sesión)",

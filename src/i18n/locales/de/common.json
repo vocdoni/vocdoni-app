@@ -2043,7 +2043,7 @@
       "opens_new_tab": "(wird in einem neuen Tab geöffnet)",
       "reason_letter": "Buchstabe stimmt nicht überein",
       "reason_not_dni": "Kein DNI oder NIE",
-      "review_one": "Diese {{count}} überprüfen",
+      "review_one": "Dieses Mitglied überprüfen",
       "review_other": "Diese {{count}} überprüfen",
       "save_anyway_one": "Trotzdem speichern ({{count}} kann sich nicht anmelden)",
       "save_anyway_other": "Trotzdem speichern ({{count}} können sich nicht anmelden)",
