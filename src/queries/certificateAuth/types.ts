@@ -1,4 +1,4 @@
-/** Wire types of the certificate sign-in contract (.delivery/certificats-digitals/contract-cert-auth.md). */
+/** Wire types of the certificate sign-in contract. */
 export type CertAuthPurpose = 'vote' | 'check'
 
 export type CreateCertAuthRequest = {

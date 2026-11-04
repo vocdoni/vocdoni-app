@@ -1,4 +1,4 @@
-/** SP1: POST /processes/census/validation reports who can't sign in by DNI/NIE (memberId + class only). */
+/** National ID validation warnings from census validation: who cannot sign in and why. */
 export const NATIONAL_ID_WARNING_CLASSES = [
   'missing',
   'letter_mismatch',

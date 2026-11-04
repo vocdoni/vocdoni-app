@@ -1,7 +1,7 @@
 import type { CensusSpec } from '@vocdoni/api-types'
 import type { CertificateAuthMode } from './mode'
 
-/** Until @vocdoni/api-types ships it (SP3): contract section 2. */
+/** Certificate census type; will merge into @vocdoni/api-types. */
 export type CensusAuthMethod = 'certificate'
 export type AppCensusSpec = CensusSpec & { authMethod?: CensusAuthMethod }
 

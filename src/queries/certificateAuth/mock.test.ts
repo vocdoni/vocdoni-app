@@ -111,5 +111,13 @@ describe('createMockCertificateAuthApi', () => {
       const result = await a.redeem('pid', { code, verifier: 'v' })
       expect(result.reference).toBe(MOCK_REFERENCE)
     })
+
+    it('rejects immediately if signal is already aborted', async () => {
+      const { code, a } = await getCode('vote', 'ok')
+      const controller = new AbortController()
+      controller.abort()
+      const promise = a.redeem('pid', { code, verifier: 'v' }, controller.signal)
+      await expect(promise).rejects.toThrow('aborted')
+    })
   })
 })

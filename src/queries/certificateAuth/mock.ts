@@ -42,14 +42,16 @@ export const createMockCertificateAuthApi = ({
     const outcome = readOutcome().replace(/[^a-z_]/g, '') || 'ok'
     return {
       state,
-      // Bare hex weight per Ruling R106; code embeds outcome and purpose for redeem to decode.
+      // Code embeds outcome and purpose for redeem to decode.
       authUrl: `${returnUrl}#code=mock.${outcome}.${purpose}.${random()}&state=${state}`,
       expiresAt: new Date(Date.now() + 15 * 60_000).toISOString(),
     }
   },
   redeem: async (_processId, { code }, signal) => {
     const [, outcome = 'ok', purpose = 'vote'] = code.split('.')
-    // Race the wait against the abort so mock `slow` stalls at the real 45 s timeout (preflight F9).
+    // Reject immediately if signal is already aborted.
+    if (signal?.aborted) throw signal.reason
+    // Race the wait against the abort so mock `slow` stalls at the real 45 s timeout.
     await Promise.race([
       wait(outcome === 'slow' ? 50_000 : delayMs),
       new Promise((_, reject) => signal?.addEventListener('abort', () => reject(signal?.reason), { once: true })),
@@ -58,7 +60,7 @@ export const createMockCertificateAuthApi = ({
       return {
         purpose: purpose === 'check' ? 'check' : 'vote',
         authToken: purpose === 'check' ? null : 'mock-token',
-        // Bare hex like AuthResponse.weight, never "0x1" (Ruling R106).
+        // Weight as bare hex (e.g. '01'), never with 0x prefix.
         weight: purpose === 'check' ? undefined : '01',
         voterRef: 'mock-voter-ref',
         holder: MOCK_HOLDER,
