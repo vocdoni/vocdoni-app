@@ -109,7 +109,7 @@ export type WaitForPublicationOptions = {
 }
 
 // Resolves early when aborted, so an abandoned wait does not hold its timer
-const defaultSleep = (ms: number, signal?: AbortSignal) =>
+export const defaultSleep = (ms: number, signal?: AbortSignal) =>
   new Promise<void>((resolve) => {
     if (signal?.aborted) return resolve()
     const timer = setTimeout(resolve, ms)

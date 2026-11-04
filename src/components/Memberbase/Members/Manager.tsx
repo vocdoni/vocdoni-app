@@ -18,6 +18,7 @@ import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
+import { useBuyRoomAction } from '~components/Pricing/useBuyRoomAction'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
@@ -45,6 +46,7 @@ const stringifyObjectValues = (obj: Record<string, any>) =>
 export const MemberManager = ({ control, member = null, open: controlledOpen, onOpenChange }: MemberManagerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
   const { open: disclosureOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef(null)
   const { columns } = useTable()
@@ -222,6 +224,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         type: 'error',
         duration: 3000,
         isClosable: true,
+        action: buyRoomAction(error),
         ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }

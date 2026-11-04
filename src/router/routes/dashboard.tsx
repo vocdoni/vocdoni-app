@@ -31,6 +31,7 @@ const Settings = lazy(() => import('~elements/dashboard/settings'))
 const Memberbase = lazy(() => import('~elements/dashboard/memberbase'))
 const Members = lazy(() => import('~elements/dashboard/memberbase/members'))
 const Groups = lazy(() => import('~elements/dashboard/memberbase/groups'))
+const CensusCheckout = lazy(() => import('~elements/dashboard/processes/census-checkout'))
 
 // others
 const Dashboard = lazy(() => import('~elements/dashboard'))
@@ -124,6 +125,24 @@ export const useDashboardRoutes = () => {
                       { index: true, element: <Fragment /> },
                       { path: Routes.dashboard.processResults, element: <Fragment /> },
                     ],
+                  },
+                  {
+                    path: Routes.dashboard.census.checkout,
+                    element: (
+                      <SuspenseLoader>
+                        <CensusCheckout />
+                      </SuspenseLoader>
+                    ),
+                    errorElement: <Error />,
+                  },
+                  {
+                    path: Routes.dashboard.census.checkoutReturn,
+                    element: (
+                      <SuspenseLoader>
+                        <CensusCheckout />
+                      </SuspenseLoader>
+                    ),
+                    errorElement: <Error />,
                   },
                   {
                     path: Routes.dashboard.processes.base,

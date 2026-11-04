@@ -1,3 +1,5 @@
+const censusCheckoutReturnBase = '/admin/process/:id/census/checkout/return'
+
 export const Routes = {
   root: '/',
   auth: {
@@ -45,6 +47,12 @@ export const Routes = {
       base: '/admin/memberbase',
       members: '/admin/memberbase/members/:page?',
       groups: '/admin/memberbase/groups',
+    },
+    census: {
+      checkout: '/admin/process/:id/census/checkout',
+      // Stripe appends the session id to the return URL
+      checkoutReturnBase: censusCheckoutReturnBase,
+      checkoutReturn: `${censusCheckoutReturnBase}/:sessionId`,
     },
     settings: {
       base: '/admin/settings',
