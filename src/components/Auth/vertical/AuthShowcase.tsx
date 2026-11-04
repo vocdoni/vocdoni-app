@@ -80,7 +80,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
         <Heading
           size={{ md: 'md', lg: 'lg' }}
           fontWeight='bolder'
-          letterSpacing='-0.4px'
+          letterSpacing='heading.snug'
           maxW='20ch'
           color='auth.showcase.fg'
         >
@@ -92,7 +92,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
             fontSize='xs'
             fontWeight='bolder'
             textTransform='uppercase'
-            letterSpacing='0.14em'
+            letterSpacing='eyebrow.wide'
             color='auth.showcase.fg.muted'
           >
             {copy.label}
@@ -104,7 +104,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
             m={0}
             fontWeight='bold'
             lineHeight='1.4'
-            letterSpacing='-0.3px'
+            letterSpacing='quote.tight'
             color='auth.showcase.fg'
             fontSize={isLongQuote ? { md: 'md', lg: 'xl' } : { md: 'lg', lg: '2xl' }}
             maxW={isLongQuote ? '40ch' : '32ch'}
