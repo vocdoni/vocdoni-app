@@ -51,7 +51,6 @@ export const Routes = {
       support: '/admin/settings/support',
     },
   },
-  plans: '/plans',
   organization: '/organization/:address',
   processes: {
     create: '/admin/processes/create/:groupId?',

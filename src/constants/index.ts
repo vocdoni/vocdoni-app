@@ -65,15 +65,6 @@ export const isPlanNamed = (plan: { name?: string } | null | undefined, name?: s
   return !!a && a === normalizePlanName(name)
 }
 
-/**
- * Resolves a plan to its canonical PlanName key (or undefined if it doesn't match
- * any known plan). Useful to look up plan-specific translations by name.
- */
-export const getPlanKey = (plan: { name?: string } | null | undefined): PlanName | undefined =>
-  (Object.values(PlanName) as string[]).find((n) => normalizePlanName(n) === normalizePlanName(plan?.name)) as
-    | PlanName
-    | undefined
-
 export const LocalStorageKeys = {
   DashboardMenuReduced: 'dashboard.menu.reduced',
 } as const

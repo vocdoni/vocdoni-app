@@ -33,7 +33,7 @@ const PublicLayout = ({
   const { SHOW_ORG_LOGO } = useAppEnv()
   const normalizedPathname = stripPublicLanguagePrefix(pathname, Object.keys(useLanguagesEnv()))
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
-  const showLimitedAnnouncementBanner = [Routes.root, Routes.plans].includes(normalizedPathname)
+  const showLimitedAnnouncementBanner = normalizedPathname === Routes.root
 
   return (
     <Flex position='relative' flexDirection='column' minH='100dvh' mx='auto'>

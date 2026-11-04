@@ -2,10 +2,9 @@ import React, { ReactNode, useState } from 'react'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { AnalyticsEvents } from '~utils/analytics'
 import { PlanUpgradeData, PlanUpgradeModal } from './Modals'
-import { SubscriptionPaymentData } from './SubscriptionPayment'
 import { PricingModalProviderContext, PricingModalType } from './use-pricing-modal'
 
-type ModalData = PlanUpgradeData | SubscriptionPaymentData | null
+type ModalData = PlanUpgradeData | null
 
 export const PricingModalProvider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false)

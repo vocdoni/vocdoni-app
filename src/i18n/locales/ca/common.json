@@ -30,22 +30,10 @@
   "already_member": "Ja tens un compte?",
   "alt": {
     "images": {
-      "barca": "escut del Barça",
-      "bellpuig": "escut de l'Ajuntament de Bellpuig",
-      "berga": "escut de l'Ajuntament de Berga",
-      "bisbal": "escut de l'Ajuntament de la Bisbal",
-      "bloock": "logo Bloock",
-      "coec": "logo COEC",
-      "decidim": "logo Decidim",
-      "esquerra": "logo Esquerra Republicana de Catalunya",
-      "omnium": "logo Òmnium Cultural",
       "org_logo": "Logotip de {{org}}",
-      "organization_logo": "Logotip de l'organització",
-      "ticanoia": "logo TIC Anoia"
+      "organization_logo": "Logotip de l'organització"
     }
   },
-  "annual": "Anual<1>40% d'estalvi</1>",
-  "apply": "Aplica",
   "aside": {
     "anonymous_receipt_gone": "El teu comprovant es va mostrar en votar i no es pot recuperar.",
     "has_already_voted": "El teu vot s'ha registrat correctament",
@@ -100,7 +88,6 @@
     "label": "Avatar de l'organització"
   },
   "back": "Enrere",
-  "billing_details": "Detalls de Facturació",
   "booking": {
     "unavailable": "La reserva no està disponible en aquest moment. Torna-ho a provar més tard."
   },
@@ -140,7 +127,6 @@
     "title": "Canvia la contrasenya"
   },
   "close": "Tanca",
-  "code_applied": "Codi \"{{appliedCode}}\" aplicat",
   "color_mode_switcher": "Commutador de mode de color",
   "common": {
     "back": "Enrere",
@@ -244,7 +230,6 @@
     "terms_acceptance": "He llegit i accepto els <2>Termes i Condicions</2> i la <6>Política de Privacitat.</6>"
   },
   "current": "Actual",
-  "current_plan": "Pla Actual",
   "dark": "Fosc",
   "dashboard": {
     "actions": {
@@ -300,7 +285,6 @@
   },
   "delete_my_account": "Elimina el meu compte",
   "description": "Descripció",
-  "discount": "Descompte",
   "do_it_later": "Fes-ho més tard",
   "draft_processes": "Esborranys",
   "drafts": {
@@ -352,7 +336,6 @@
   "end_time": "Hora de finalització",
   "end_vote": "Finalitza votació",
   "ended_processes": "Acabats",
-  "enter_promo_code": "Introdueix el codi",
   "error": {
     "crash_description": "Recarrega la pàgina o torna al tauler.",
     "crash_title": "Alguna cosa ha anat malament",
@@ -370,71 +353,21 @@
     "return_to_home": "Torna a l'inici",
     "title": "Error"
   },
-  "error_removing_code": "Hi ha hagut un error eliminant el codi",
   "features": {
     "anonymous": "Votació anònima",
     "approval": "Per aprovació",
-    "audit": "Auditoria",
-    "audit_blockchain": "100% auditable a la blockchain",
-    "basic_analytics": "Analítiques bàsiques",
-    "basic_branding": "Marca bàsica",
-    "basic_sla": "Millor esforç",
-    "cumulative": "Votació acumulativa",
-    "custom_reports": "Informes personalitzats",
     "custom_url": "Adreça URL personalitzada",
-    "dedicated_account_manager": "Gestor de comptes dedicat",
     "email_notification": "Doble factor per correu electrònic",
-    "email_notifications": "Notificacions per correu als votants",
     "email_reminder": "Recordatoris per correu electrònic",
-    "email_support": "Correu electrònic",
-    "email_support_basic": "(72h resp.)",
-    "email_support_essential": "(48h resp.)",
-    "email_support_premium": "(24h resp.)",
-    "GDPR_compliance": "Compliment del RGPD",
-    "generic_sla": "SLA genèric",
     "live_results": "Resultats en directe",
     "live_streaming": "Streaming en directe",
-    "memberbase_all_in_one_management": "Gestió integral de membres",
     "multiple": "Elecció múltiple",
-    "on_demand": "Sota demanda*",
     "overwrite": "Sobre-escriptura del vot",
-    "participatory_budgeting": "Pressupost participatiu",
     "personalization": "Personalització",
     "phone_support": "Suport telefònic",
-    "priority_support": "Suport prioritari",
-    "ranked": "Votació ordenada",
-    "section": {
-      "analytics_and_reporting": "Analítiques i informes",
-      "authentication_security": "Autenticació i seguretat",
-      "compliance_and_security": "Compliment i seguretat",
-      "customization": "Personalització",
-      "extra_features": "Funcionalitats addicionals",
-      "features": "Funcionalitats",
-      "general_limits": "Límits generals",
-      "memberbase_management": "Gestió de membres",
-      "organization": "Organització",
-      "support": "Suport",
-      "voting_types": "Tipus de votacions"
-    },
     "single": "Elecció simple",
     "sms_notification": "Doble factor via missatges de text SMS",
-    "sms_notifications": "Notificacions SMS als votants",
     "sub_orgs": "Fins a {{ value }} suborganitzacions",
-    "team_members": "Membres de l'equip",
-    "tooltips": {
-      "anonymous": "Aquesta és una funcionalitat opcional que els organitzadors poden triar. Quan s'activa, els vots són completament anònims: ni tan sols nosaltres podem saber qui ha votat quina opció. Alternativament, els organitzadors poden triar xifrar els resultats fins que acabi la votació, o fer la votació completament pública.",
-      "live_results": "Aquesta és una funcionalitat opcional que els organitzadors poden triar. Els resultats es poden mostrar en temps real a mesura que es registren els vots, o els organitzadors poden triar mantenir els resultats xifrats i ocults fins que acabi el període de votació.",
-      "memberbase_all_in_one": "Importa la teva base de membres per crear grups de votants elegibles i gestionar els permisos de votació de manera molt fàcil.",
-      "multiple": "Els votants poden seleccionar múltiples opcions de les opcions disponibles. Ideal per a enquestes i decisions on es permeten múltiples seleccions.",
-      "overwrite": "Els votants poden canviar el seu vot abans que acabi el període de votació. Aquesta funcionalitat ajuda a evitar errors i prevenir la coerció permetent als votants corregir les seves tries.",
-      "single": "Els votants només poden seleccionar una opció de les opcions disponibles. Perfecte per a eleccions i decisions simples de sí/no.",
-      "team_members": "Convida membres de l'equip i assigna permisos basats en rols per poder gestionar fàcilment la teva organització",
-      "uptime": "Garantim un 99.99% de temps actiu, però només en els plans de pagament aquests són exigits per contracte amb garanties."
-    },
-    "total_orgs": "Sub-organitzacions disponibles",
-    "total_users": "Total d'usuaris disponibles",
-    "uptime": "99.99% de temps actiu",
-    "uptime_guaranteed": "Garantit ({{suffix}})",
     "weighted": "Amb pes",
     "white_label": "Marca blanca"
   },
@@ -505,9 +438,6 @@
       "voting_issue": "Problema de votació"
     }
   },
-  "free_trial_days_one": "Un dia gratuït",
-  "free_trial_days_many": "{{count}} dies gratuïts",
-  "free_trial_days_other": "{{count}} dies gratuïts",
   "google_oauth_conflict_error": "Ja existeix un compte amb aquest correu electrònic. Si us plau, inicia sessió amb el teu mètode existent.",
   "google_oauth_error": "Error d'OAuth de Google",
   "google_oauth_error_description": "Error d'OAuth de Google, si us plau torna-ho a provar",
@@ -574,193 +504,6 @@
     "title": "Vocdoni | Infraestructura de votació segura i verificable"
   },
   "home": {
-    "clients_title": "Més de 100 organitzacions confien en nosaltres",
-    "faqs": {
-      "faq_1": {
-        "description": "Vocdoni és una plataforma de vot digital basada en tecnologia blockchain, que ofereix processos de votació segurs, transparents i verificables.",
-        "title": "Què és Vocdoni?"
-      },
-      "faq_10": {
-        "description": "Oferim suport tècnic per ajudar els votants a resoldre qualsevol incidència. A més, el sistema està dissenyat perquè sigui intuïtu i accessible per a tothom.",
-        "title": "Què passa si un votant té problemes per accedir o votar?"
-      },
-      "faq_11": {
-        "description": "Vocdoni és resistent a atacs gràcies a l'ús de blockchain i altres mesures de seguretat avançades. Els sistemes tradicionals poden ser vulnerables a manipulacions, però en Vocdoni cada vot està protegit criptogràficament i és impossible d'alterar.",
-        "title": "Quina seguretat ofereix Vocdoni contra atacs informàtics?"
-      },
-      "faq_12": {
-        "description": "Vocdoni permet realitzar qualsevol tipus de votació: eleccions internes, assemblees, referèndums, enquestes i processos participatius. La plataforma s'adapta a les necessitats de governs, empreses, cooperatives, associacions i altres organitzacions.",
-        "title": "Quins tipus de votacions puc fer amb Vocdoni?"
-      },
-      "faq_13": {
-        "description": "No. Els votants reben un enllaç segur o una credencial única que els permet votar sense necessitat de registrar-se, simplificant l'experiència i garantint l'anonimat.",
-        "title": "Els votants necessiten crear un compte per votar?"
-      },
-      "faq_14": {
-        "description": "Depèn de la configuració de la votació. En alguns casos, es permet als votants canviar el seu vot fins que es tanqui el procés.",
-        "title": "Es poden modificar els vots un cop emesos?"
-      },
-      "faq_15": {
-        "description": "Sí, la plataforma permet configuracions avançades com el vot ponderat (on un vot val més segons determinats criteris) i el vot delegat (on un usuari pot cedir el seu vot a una altra persona).",
-        "title": "Vocdoni permet el vot ponderat o delegat?"
-      },
-      "faq_16": {
-        "description": "Sí, es pot combinar la votació digital amb la votació presencial i després integrar els resultats en un recompte unificat. Oferim diversos sistemes per realitzar votacions híbrides.",
-        "title": "Es poden fer votacions híbrides (digitals i presencials)?"
-      },
-      "faq_17": {
-        "description": "Això depèn de les regles de cada procés. Es poden establir criteris de desempat abans d'iniciar la votació, com segones rondes o normes específiques per determinar el guanyador.",
-        "title": "Què passa si hi ha un empat en una votació?"
-      },
-      "faq_18": {
-        "description": "Els resultats es generen automàticament un cop tancada la votació. No cal recompte manual, i es poden verificar immediatament gràcies a la tecnologia blockchain.",
-        "title": "Quant de temps triguen a publicar-se els resultats?"
-      },
-      "faq_19": {
-        "description": "Sí, Vocdoni permet configurar votacions privades on només poden accedir els membres d'un cens determinat.",
-        "title": "Es poden fer votacions totalment privades?"
-      },
-      "faq_2": {
-        "description": "Vocdoni utilitza una combinació de blockchain, criptografia avançada i proves de coneixement zero per garantir la seguretat, anonimat i verificabilitat de les votacions.",
-        "title": "Com funciona Vocdoni?"
-      },
-      "faq_20": {
-        "description": "Qualsevol persona pot verificar els resultats gràcies a la transparència de la blockchain. A més, oferim eines per auditar el procés de votació i garantir-ne la fiabilitat.",
-        "title": "Com es pot verificar que els resultats són correctes?"
-      },
-      "faq_21": {
-        "description": "Sí. La plataforma està dissenyada seguint els estàndards d'accessibilitat (WCAG), fent-la apta per a persones amb discapacitats visuals, auditives o motrius.",
-        "title": "Vocdoni és accessible per a persones amb discapacitat?"
-      },
-      "faq_22": {
-        "description": "Vocdoni funciona a qualsevol dispositiu amb connexió a internet, incloent ordinadors, tauletes i mòbils. La plataforma està optimitzada per a tots els navegadors moderns sense necessitat de descàrregues o instal·lacions.",
-        "title": "Quins dispositius són compatibles amb Vocdoni?"
-      },
-      "faq_23": {
-        "description": "Els votants poden rebre una invitació per correu electrònic, SMS o a través d'un enllaç segur compartit per l'organització.",
-        "title": "Com es convida els votants a participar en una votació?"
-      },
-      "faq_24": {
-        "description": "Vocdoni pot gestionar des de petits grups fins a votacions massives amb centenars de milers de participants, gràcies a la seva infraestructura escalable basada en blockchain.",
-        "title": "Quants votants pot gestionar Vocdoni alhora?"
-      },
-      "faq_25": {
-        "description": "Sí, la plataforma permet definir rols i permisos per als administradors, limitant l'accés a certes funcionalitats segons les necessitats de l'organització.",
-        "title": "Es poden establir diferents nivells d'accés per als administradors?"
-      },
-      "faq_26": {
-        "description": "Vocdoni permet diversos mètodes d'autenticació, com correu electrònic, eID, codi SMS, signatura electrònica o integració amb sistemes d'identificació existents.",
-        "title": "Com puc assegurar-me que només les persones autoritzades poden votar?"
-      },
-      "faq_27": {
-        "description": "Oferim suport tècnic i eines de recuperació per garantir que tots els votants puguin exercir el seu dret a vot sense problemes.",
-        "title": "Què passa si un votant té problemes tècnics durant la votació?"
-      },
-      "faq_28": {
-        "description": "Cens tancat: Només poden votar persones prèviament registrades en el cens. Cens obert: Qualsevol persona que compleixi certs criteris (per exemple, verificació per eID) pot votar.",
-        "title": "Quina diferència hi ha entre un cens tancat i un cens obert?"
-      },
-      "faq_29": {
-        "description": "Els observadors poden verificar el procés electoral en temps real i auditar els resultats mitjançant les eines de transparència i verificació de Vocdoni.",
-        "title": "Com funciona la verificació dels resultats per part d'observadors?"
-      },
-      "faq_3": {
-        "description": "Vocdoni ofereix transparència, seguretat, resistència a manipulacions i accessibilitat global sense necessitat d'infraestructura física.",
-        "title": "Quins avantatges té Vocdoni sobre els sistemes de votació tradicionals?"
-      },
-      "faq_30": {
-        "description": "Sí, pots definir dates i hores exactes per a l'inici i la finalització de la votació, evitant la necessitat d'una intervenció manual.",
-        "title": "Puc programar una votació perquè s'iniciï i acabi automàticament?"
-      },
-      "faq_31": {
-        "description": "Sí, la plataforma admet diferents formats de votació, incloent preguntes de selecció múltiple, vot ponderat i sistemes com el vot preferencial o STV.",
-        "title": "Es poden fer preguntes amb múltiples opcions de resposta?"
-      },
-      "faq_32": {
-        "description": "Sí, Vocdoni facilita la participació en processos deliberatius, assemblees i mecanismes de governança, adaptant-se a diversos sistemes de presa de decisions.",
-        "title": "Vocdoni és adequat per a processos de presa de decisions col·laboratius?"
-      },
-      "faq_33": {
-        "description": "Sí, Vocdoni permet implementar mètodes de votació més sofisticats segons les necessitats de cada organització o procés electoral.",
-        "title": "Es poden integrar mètodes de votació avançats com Quadratic Voting o Approval Voting?"
-      },
-      "faq_34": {
-        "description": "Depenent de la configuració de la votació, es pot optar per resultats en temps real o per un recompte final un cop tancada la votació.",
-        "title": "Els resultats són accessibles en temps real?"
-      },
-      "faq_35": {
-        "description": "Gràcies a la transparència i verificabilitat de la blockchain, qualsevol participant o observador pot auditar els resultats per detectar possibles anomalies.",
-        "title": "Com es poden impugnar els resultats d'una votació?"
-      },
-      "faq_36": {
-        "description": "Sí, pots carregar fàcilment un cens predefinit mitjançant un fitxer CSV o integrar-lo amb bases de dades existents.",
-        "title": "És possible importar un cens de votants existent?"
-      },
-      "faq_37": {
-        "description": "Sí, seguim les millors pràctiques de seguretat i transparència i podem adaptar-nos a normatives específiques de diferents països i institucions.",
-        "title": "Vocdoni compleix amb normatives de vot electrònic oficials?"
-      },
-      "faq_38": {
-        "description": "Sí, és una eina ideal per a consultes públiques, referèndums i processos de participació ciutadana de qualsevol escala.",
-        "title": "Vocdoni pot gestionar referèndums i consultes ciutadanes?"
-      },
-      "faq_39": {
-        "description": "Els plans de Vocdoni inclouen un nombre base de votants, però pots afegir-ne més segons les necessitats de la teva organització. La plataforma és escalable per gestionar des de petites assemblees fins a grans eleccions.",
-        "title": "Hi ha límits en el nombre de votants o processos de votació?"
-      },
-      "faq_4": {
-        "description": "Vocdoni està pensat per a governs, empreses, cooperatives, associacions i qualsevol organització que necessiti un sistema de vot segur i transparent.",
-        "title": "Qui pot utilitzar Vocdoni?"
-      },
-      "faq_40": {
-        "description": "Sí, Vocdoni permet votacions ponderades, on cada vot pot tenir un valor diferent en funció de criteris definits per l'organització.",
-        "title": "Es poden establir diferents pesos de vot?"
-      },
-      "faq_41": {
-        "description": "Vocdoni està dissenyat per ser accessible des de qualsevol dispositiu i navegador. En cas de problemes, oferim suport tècnic i opcions de recuperació de vot per garantir que ningú es quedi sense participar.",
-        "title": "Què passa si un votant té problemes tècnics durant la votació?"
-      },
-      "faq_42": {
-        "description": "Vocdoni utilitza encriptació avançada, proves de coneixement zero i una arquitectura descentralitzada basada en blockchain per garantir la seguretat i resistència contra atacs.",
-        "title": "Com es protegeix el sistema contra atacs cibernètics?"
-      },
-      "faq_43": {
-        "description": "Sí, suportem diferents sistemes de vot, incloent-hi votació per majoria simple, votació preferencial (com el sistema STV), preguntes de resposta múltiple i més.",
-        "title": "Es poden crear preguntes amb opcions múltiples o votacions preferencials?"
-      },
-      "faq_44": {
-        "description": "Sí, oferim la possibilitat de fer votacions de prova perquè els organitzadors i votants es familiaritzin amb el sistema abans d'una elecció oficial.",
-        "title": "És possible fer proves abans d'una votació real?"
-      },
-      "faq_45": {
-        "description": "Pots registrar-te i començar a crear votacions en pocs minuts. Si necessites suport o una configuració personalitzada, el nostre equip està disponible per ajudar-te.",
-        "title": "Com puc començar a utilitzar Vocdoni?"
-      },
-      "faq_5": {
-        "description": "Depèn del marc legal de cada país. Vocdoni compleix amb les millors pràctiques de seguretat i privacitat i pot adaptar-se a normatives específiques.",
-        "title": "És legal el vot electrònic amb Vocdoni?"
-      },
-      "faq_6": {
-        "description": "Vocdoni utilitza encriptació avançada, blockchain i tècniques criptogràfiques com zk-SNARKs per garantir la privacitat i seguretat dels vots.",
-        "title": "Com garanteix Vocdoni la seguretat del vot?"
-      },
-      "faq_7": {
-        "description": "Sí, gràcies a la blockchain, qualsevol persona pot verificar la integritat dels resultats sense comprometre l'anonimat dels votants.",
-        "title": "És possible auditar una votació feta amb Vocdoni?"
-      },
-      "faq_8": {
-        "description": "Els votants només necessiten un dispositiu amb connexió a Internet i un navegador web. No calen aplicacions o programes específics.",
-        "title": "Quins requisits tècnics necessiten els votants?"
-      },
-      "faq_9": {
-        "description": "Vocdoni utilitza tècniques criptogràfiques avançades, com les proves de coneixement zero (zk-SNARKs), per garantir que ningú pugui vincular un vot amb la identitat d'un votant.",
-        "title": "Com es protegeix l'anonimat dels votants?"
-      },
-      "show_less": "Mostrar Menys",
-      "show_more": "Mostrar Més",
-      "subtitle": "A continuació trobaràs respostes a les preguntes més freqüents dels nostres usuaris. Proporciona claredat i confiança a la teva experiència de votació digital.",
-      "title": "Preguntes Freqüents"
-    },
     "support": {
       "btn_watch": "Programa una trucada"
     }
@@ -901,7 +644,6 @@
     },
     "upgrade_plan": "Millorar el pla"
   },
-  "invalid_promo_code": "Codi de promoció no vàlid",
   "invite": {
     "account_not_verified": "El teu compte no està verificat. Si us plau, verifica'l per continuar.",
     "create_account_subtitle": "Primer necessites un compte per poder acceptar la invitació",
@@ -1120,8 +862,6 @@
     "login": "Iniciar sessió",
     "open": "Obre menú"
   },
-  "month": "mes",
-  "monthly": "Mensual",
   "name": "Nom",
   "need_help": {
     "description": "Necessites ajuda amb el teu primer procés de votació? Mira aquest tutorial o programa una trucada.",
@@ -1156,7 +896,6 @@
   },
   "open_in_explorer": "Obre a l'explorador",
   "or_continue_with": "o continua amb",
-  "order_summary": "Resum de la comanda",
   "org_type_selector": {
     "selector_label": "Selecciona el tipus d'organització"
   },
@@ -1252,9 +991,6 @@
   },
   "passwords_do_not_match": "Les contrasenyes no coincideixen",
   "pause_vote": "Pausa votació",
-  "payment": {
-    "stripe_unavailable": "Els pagaments no estan disponibles temporalment. Torna-ho a provar més tard."
-  },
   "plan": {
     "encouragement": "Llançar una votació és senzill, i els participants poden unir-s'hi des de qualsevol lloc. Les fortes garanties a un cost més baix han convertit Vocdoni en una opció de confiança per a centenars d'ajuntaments, associacions, partits polítics i empreses.",
     "free": "<0>Estàs al Pla Gratuït</0>, que ja et permet llançar votacions. Si necessites més funcionalitats, límits més alts o opcions específiques, explora els plans de pagament i prova'ls gratuïtament.",
@@ -1274,53 +1010,11 @@
   "preferences": "Preferències",
   "preview": "Vista prèvia",
   "pricing": {
-    "2fa": "Autenticació 2FA² ({{suffix}})",
-    "2fa_suffix_both": "Correu i SMS",
-    "2fa_suffix_email": "Correu electrònic",
-    "2fa_suffix_sms": "SMS",
-    "basic_analytics": "Informes i anàlisis bàsiques",
-    "comparison_table": {
-      "footnote_1": "¹ Les votacions amb menys de 10 participants es tracten com a proves i no compten per als límits del teu pla.",
-      "footnote_2": "² Els crèdits de 2FA només es consumeixen en el moment que un usuari sol·licita la verificació en un procés de votació. No et quedaràs mai sense avís: si superes els crèdits inclosos durant una votació, cada codi addicional es cobrarà a 0,015 € en el moment de l'enviament. També pots comprar crèdits addicionals per avançat en paquets còmodes.",
-      "footnote_on_demand": "* Les funcionalitats sol·licitades s'avaluaran individualment i poden comportar costos addicionals."
-    },
-    "core_voting_one": "Un únic membre",
-    "core_voting_many": "Fins a {{ count }} membres",
-    "core_voting_other": "Fins a {{ count }} membres",
-    "custom_branding": "Marca personalitzada*",
-    "custom_subtitle": "Adaptat a les teves necessitats",
-    "custom_title": "Personalitzat",
-    "different_voting_methods": "Diferents mètodes de votació",
-    "empty": "No s'han trobat plans",
-    "empty_description": "Torna-ho a provar més tard per veure els plans disponibles.",
-    "essential_subtitle": "Organitzacions petites o mitjanes o grups comunitaris amb necessitats bàsiques de votació.",
     "essential_title": "Bàsic",
-    "free_subtitle": "Organitzacions petites o grups comunitaris amb necessitats bàsiques de votació.",
     "free_title": "Gratuït",
-    "load_error": "No s'han pogut carregar els plans",
-    "load_error_description": "Torna-ho a provar.",
-    "premium_subtitle": "un volum més gran que requereix funcions més avançades.",
-    "premium_title": "Prèmium",
-    "priority_support": "Suport prioritari per correu electrònic (24h)",
-    "ticket_support_48": "Suport per correu electrònic (48h)",
-    "ticket_support_72": "Suport per correu electrònic (72h)",
-    "up_to_admins_one": "Un únic administrador",
-    "up_to_admins_many": "{{ count }} administradors",
-    "up_to_admins_other": "{{ count }} administradors",
-    "yearly_processes_one": "{{ count }} procés anual",
-    "yearly_processes_many": "{{ count }} processos anuals",
-    "yearly_processes_other": "{{ count }} processos anuals"
-  },
-  "pricing_card": {
-    "annual_savings": "Estalvia {{ savings }}/any amb l'anual",
-    "annual_total_cost": "{{ price }} facturats anualment",
-    "contact_sales": "<0>Contacta amb els nostres comercials</0> <1>o</1>",
-    "custom_plan": "Preu sota consulta",
-    "custom_plan_description": "Tens requisits de governança especials? Ens podem adaptar a les teves necessitats amb una solució personalitzada. Contacta'ns.",
-    "free_trial": "{{ freeDays }} dies gratuïts",
-    "from": "<price>{{ price }}</price><time>/mes+IVA</time>",
-    "most_popular_plan": "Recomanat",
-    "need_more_members": "Necessites més membres? <2>Contacta'ns</2>"
+    "page_description": "Els nostres preus estan disponibles a <pricingLink>vocdoni.io/pricing</pricingLink>.",
+    "page_title": "Preus",
+    "premium_title": "Prèmium"
   },
   "privacy_policy": "Política de Privacitat",
   "process": {
@@ -1731,8 +1425,6 @@
     "error": "No s'ha pogut actualitzar el perfil",
     "success": "Perfil actualitzat correctament"
   },
-  "promo_code": "Codi promocional",
-  "promo_code_required": "Cal introduir un codi",
   "public_process": {
     "no_tally": "Sense recompte",
     "verify": "Verifica a l’explorador de la blockchain:",
@@ -1741,7 +1433,6 @@
   "questions_and_results": "Preguntes i resultats",
   "registration_failed": "El registre ha fallat",
   "registration_successful": "Registre completat correctament",
-  "remove": "Elimina",
   "remove_avatar": "Elimina l'avatar",
   "reset_password_button": "Restableix la contrasenya",
   "result_visibility": "Visibilitat dels resultats",
@@ -1817,7 +1508,6 @@
   },
   "start_date": "Data d'inici",
   "start_time": "Hora d'inici",
-  "subscribe": "Subscriu-te",
   "subscription": {
     "locked_content": {
       "available_in": "Disponible a:",
@@ -1827,15 +1517,6 @@
     },
     "title": "Subscripció"
   },
-  "subscription_plan": {
-    "gdpr_compliance": "Tots els plans inclouen compliment del RGPD.",
-    "hide_comparison_table": "Mostra menys funcionalitats",
-    "need_help": "<0>Necessites ajuda per triar?</0> <1>Contacta amb el nostre equip comercial</1>",
-    "show_comparison_table": "Veure totes les funcionalitats",
-    "subtitle": "Amb les nostres subscripcions, obtens més que un pla. Aconsegueixes accés a la plataforma de governança més innovadora. Gràcies a aquest model, podem oferir el millor preu del mercat: tant si necessites 1, 5 o 20 votacions a l'any, sempre gaudiràs dels costos més competitius i de garanties incomparables. La plataforma és totalment d'autoservei, però el nostre equip està sempre disponible per oferir-te assistència o adaptar solucions a les teves necessitats específiques.",
-    "title": "Pla de subscripció"
-  },
-  "subtotal": "Subtotal",
   "support": "Suport",
   "support_chat": {
     "ask_name": "Abans d'enviar-ho, com et dius?",
@@ -1867,7 +1548,6 @@
   "switch_mode": "Canvia al mode {{ mode }}",
   "switch_organization": "Canvia d'organització",
   "system": "Sistema",
-  "tax": "IVA ({{percent}}%)",
   "team": {
     "actions": {
       "cancel_invitation": "Cancel·la la invitació",
@@ -1979,12 +1659,8 @@
     }
   },
   "theme": "Tema",
-  "then_price_per_period": "Llavors {{price}}/{{period}}",
-  "total_after_trial": "Total després de la prova",
-  "total_due_today": "Total a pagar avui",
   "total_votes": "Total de vots",
   "turnout": "Participació",
-  "upgrade_plan": "Canvia a {{plan}}",
   "uploaded_image_preview": "Previsualització de la imatge carregada",
   "uploader": {
     "avatar_upload_failed": "Error en pujar l'avatar",
@@ -2154,8 +1830,6 @@
   "voting_processes_description": "Gestiona i supervisa els teus processos de votació",
   "voting_settings": "Configuració de la votació",
   "voting_status": "Estat de la votació",
-  "wallet_not_connected": "Cartera no connectada",
   "website": "Lloc web",
-  "whatsapp_contact": "Parla amb nosaltres!",
-  "year": "any"
+  "whatsapp_contact": "Parla amb nosaltres!"
 }
