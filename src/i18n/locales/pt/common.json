@@ -243,6 +243,7 @@
     "escape": {
       "blocked": "O teu navegador não abriu. A aplicação pode não o permitir: copia o link e cola-o no teu navegador.",
       "blocked_hint": "Copia o link e cola-o no teu navegador.",
+      "cancel": "Cancelar",
       "copied": "Link copiado",
       "copied_status": "Link copiado. Abre agora o teu navegador e cola-o.",
       "copy": "Copiar link",
@@ -258,6 +259,8 @@
       "open": "Abrir no teu navegador",
       "open_again": "Tentar novamente",
       "opening": "A abrir o teu navegador...",
+      "resume_body": "O teu navegador vai pedir-te que escolhas um certificado. Escolhe o que tem o teu nome e carrega em OK.",
+      "resume_title": "A pedir o teu certificado...",
       "returned": "O teu navegador abriu esta votação? Continua lá. Se não, copia o link abaixo.",
       "share": "Enviar o link para mim",
       "step_sr": "Passo {{n}}: ",

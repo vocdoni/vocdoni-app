@@ -241,6 +241,7 @@
     "escape": {
       "blocked": "Dein Browser hat sich nicht geöffnet. Die App erlaubt es möglicherweise nicht: Kopiere den Link und füge ihn in deinen Browser ein.",
       "blocked_hint": "Kopiere den Link und füge ihn in deinen Browser ein.",
+      "cancel": "Abbrechen",
       "copied": "Link kopiert",
       "copied_status": "Link kopiert. Öffne jetzt deinen Browser und füge ihn ein.",
       "copy": "Link kopieren",
@@ -256,6 +257,8 @@
       "open": "Im Browser öffnen",
       "open_again": "Erneut versuchen",
       "opening": "Browser wird geöffnet...",
+      "resume_body": "Dein Browser bittet dich, ein Zertifikat auszuwählen. Wähle das mit deinem Namen und drücke OK.",
+      "resume_title": "Dein Zertifikat wird angefragt...",
       "returned": "Hat dein Browser die Abstimmung geöffnet? Mache dort weiter. Falls nicht, kopiere den Link unten.",
       "share": "Link an mich senden",
       "step_sr": "Schritt {{n}}: ",

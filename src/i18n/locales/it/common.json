@@ -243,6 +243,7 @@
     "escape": {
       "blocked": "Il tuo browser non si è aperto. L'app potrebbe non consentirlo: copia il link e incollalo nel tuo browser.",
       "blocked_hint": "Copia il link e incollalo nel tuo browser.",
+      "cancel": "Annulla",
       "copied": "Link copiato",
       "copied_status": "Link copiato. Apri ora il tuo browser e incollalo.",
       "copy": "Copia link",
@@ -258,6 +259,8 @@
       "open": "Apri nel tuo browser",
       "open_again": "Riprova",
       "opening": "Apertura del tuo browser...",
+      "resume_body": "Il browser ti chiederà di scegliere un certificato. Scegli quello con il tuo nome e premi OK.",
+      "resume_title": "Richiesta del tuo certificato...",
       "returned": "Il tuo browser ha aperto questa votazione? Continua lì. Se no, copia il link qui sotto.",
       "share": "Inviami il link",
       "step_sr": "Passo {{n}}: ",

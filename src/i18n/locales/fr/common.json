@@ -243,6 +243,7 @@
     "escape": {
       "blocked": "Ton navigateur ne s'est pas ouvert. L'application ne le permet peut-être pas: copie le lien et colle-le dans ton navigateur.",
       "blocked_hint": "Copie le lien et colle-le dans ton navigateur.",
+      "cancel": "Annuler",
       "copied": "Lien copié",
       "copied_status": "Lien copié. Ouvre maintenant ton navigateur et colle-le.",
       "copy": "Copier le lien",
@@ -258,6 +259,8 @@
       "open": "Ouvrir dans ton navigateur",
       "open_again": "Réessayer",
       "opening": "Ouverture de ton navigateur...",
+      "resume_body": "Votre navigateur va vous demander de choisir un certificat. Choisissez celui à votre nom et appuyez sur OK.",
+      "resume_title": "Demande de votre certificat...",
       "returned": "Ton navigateur a-t-il ouvert ce vote? Continue là-bas. Si non, copie le lien ci-dessous.",
       "share": "M'envoyer le lien",
       "step_sr": "Étape {{n}} : ",

@@ -243,6 +243,7 @@
     "escape": {
       "blocked": "El teu navegador no s'ha obert. És possible que l'aplicació no ho permeti: copia l'enllaç i enganxa'l al navegador.",
       "blocked_hint": "Copia l'enllaç i enganxa'l al teu navegador.",
+      "cancel": "Cancel·la",
       "copied": "Enllaç copiat",
       "copied_status": "Enllaç copiat. Ara obre el teu navegador i enganxa'l.",
       "copy": "Copia l'enllaç",
@@ -258,6 +259,8 @@
       "open": "Obre-ho al teu navegador",
       "open_again": "Torna a intentar-ho",
       "opening": "Obrint el teu navegador...",
+      "resume_body": "El navegador et demanarà que triïs un certificat. Tria el que porta el teu nom i prem D'acord.",
+      "resume_title": "Demanant el teu certificat...",
       "returned": "Ha obert el teu navegador la votació? Continua allà. Si no ho ha fet, copia l'enllaç de sota.",
       "share": "Enviar-me l'enllaç",
       "step_sr": "Pas {{n}}: ",

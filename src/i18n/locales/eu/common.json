@@ -241,6 +241,7 @@
     "escape": {
       "blocked": "Zure nabigatzailea ez da ireki. Aplikazioak ez dio baimenik ematen agian: kopiatu esteka eta itsatsi zure nabigatzailean.",
       "blocked_hint": "Kopiatu esteka eta itsatsi zure nabigatzailean.",
+      "cancel": "Utzi",
       "copied": "Esteka kopiatu da",
       "copied_status": "Esteka kopiatu da. Ireki orain zure nabigatzailea eta itsatsi.",
       "copy": "Kopiatu esteka",
@@ -256,6 +257,8 @@
       "open": "Ireki zure nabigatzailean",
       "open_again": "Saiatu berriro",
       "opening": "Zure nabigatzailea irekitzen...",
+      "resume_body": "Zure nabigatzaileak ziurtagiri bat aukeratzeko eskatuko dizu. Aukeratu zure izena duena eta sakatu Onartu.",
+      "resume_title": "Zure ziurtagiria eskatzen...",
       "returned": "Zure nabigatzailean ireki al da boto-prozesua? Jarraitu han. Ez bada, kopiatu beheko esteka.",
       "share": "Bidali nire buruari esteka",
       "step_sr": "{{n}}. urratsa: ",
