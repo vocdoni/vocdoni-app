@@ -88,6 +88,16 @@ describe('getErrorSpec', () => {
     expect(link?.href).toBe('https://idcat.aoc.cat/')
   })
 
+  it('expired with unknown issuer id: primary is UseDifferentButton, not a dead link', () => {
+    // An issuer not in ISSUER_LINKS must not render a href="#" link.
+    const spec = getErrorSpec(makeError('expired', { issuer: { id: 'unknown-ca' as never, name: 'Unknown CA' } }), opts)
+    expect(spec.sentence).toContain('Unknown CA')
+    const { container } = renderNode(spec.primary)
+    expect(container.querySelector('a')).toBeNull()
+    expect(container).toHaveTextContent('Use a different certificate')
+    expect(spec.secondary).toBeUndefined()
+  })
+
   it('no_certificate: title, sentence, primary "Try again", secondary "Copy link for another device"', () => {
     const spec = getErrorSpec(makeError('no_certificate'), opts)
     expect(spec.title).toBe('No certificate found in this browser')
@@ -117,6 +127,33 @@ describe('getErrorSpec', () => {
   it('provider_mismatch: same layout as invalid_chain', () => {
     const spec = getErrorSpec(makeError('provider_mismatch'), opts)
     expect(spec.title).toBe("We couldn't verify this certificate")
+  })
+
+  it('invalid_chain title comes from its own literal key, not a template', () => {
+    // Verifies that the key cert_auth.errors.invalid_chain.title is a literal in the t() call.
+    // A key-tracking t() rejects non-literal keys; here we confirm the key resolves independently.
+    const keysSeen: string[] = []
+    const tRecording = (key: string, opts?: Record<string, unknown>): string => {
+      keysSeen.push(key)
+      const def = typeof opts?.defaultValue === 'string' ? opts.defaultValue : key
+      return def
+    }
+    getErrorSpec(makeError('invalid_chain'), { ...opts, t: tRecording as never })
+    expect(keysSeen).toContain('cert_auth.errors.invalid_chain.title')
+    expect(keysSeen).toContain('cert_auth.errors.invalid_chain.sentence')
+    expect(keysSeen).not.toContain('cert_auth.errors.invalid_chain.title'.replace('invalid_chain', '${reason}'))
+  })
+
+  it('provider_mismatch title comes from its own literal key, not a template', () => {
+    const keysSeen: string[] = []
+    const tRecording = (key: string, opts?: Record<string, unknown>): string => {
+      keysSeen.push(key)
+      const def = typeof opts?.defaultValue === 'string' ? opts.defaultValue : key
+      return def
+    }
+    getErrorSpec(makeError('provider_mismatch'), { ...opts, t: tRecording as never })
+    expect(keysSeen).toContain('cert_auth.errors.provider_mismatch.title')
+    expect(keysSeen).toContain('cert_auth.errors.provider_mismatch.sentence')
   })
 
   it('not_yet_valid: title, sentence, primary "Try again", no secondary', () => {

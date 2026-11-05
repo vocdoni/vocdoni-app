@@ -179,6 +179,10 @@
         "sentence": "Torna-ho a intentar d'aquí a uns minuts.",
         "title": "Ha passat alguna cosa al nostre servidor"
       },
+      "invalid_chain": {
+        "title": "No hem pogut verificar aquest certificat",
+        "sentence": "Torna-ho a intentar o tria un altre certificat si en tens un."
+      },
       "network": {
         "sentence": "Comprova la connexió i torna-ho a intentar. En una xarxa de feina o escola, prova amb dades mòbils o una altra xarxa.",
         "title": "No hem pogut arribar a la comprovació del certificat"
@@ -190,6 +194,10 @@
       "not_yet_valid": {
         "sentence": "Si l'has obtingut avui, torna-ho a intentar més tard. Si no, comprova la data i l'hora del dispositiu.",
         "title": "Aquest certificat encara no és actiu"
+      },
+      "provider_mismatch": {
+        "title": "No hem pogut verificar aquest certificat",
+        "sentence": "Torna-ho a intentar o tria un altre certificat si en tens un."
       },
       "revocation_unavailable": {
         "sentence": "Això és temporal i no és culpa teva. Torna-ho a intentar d'aquí a uns minuts.",

@@ -179,6 +179,10 @@
         "sentence": "Réessayez dans quelques minutes.",
         "title": "Une erreur s'est produite de notre côté"
       },
+      "invalid_chain": {
+        "title": "Nous n'avons pas pu vérifier ce certificat",
+        "sentence": "Réessayez ou sélectionnez un autre certificat si vous en avez un."
+      },
       "network": {
         "sentence": "Vérifiez votre connexion et réessayez. Sur un réseau scolaire ou professionnel, essayez avec les données mobiles ou un autre réseau.",
         "title": "Nous n'avons pas pu contacter le service de vérification"
@@ -190,6 +194,10 @@
       "not_yet_valid": {
         "sentence": "Si vous l'avez obtenu aujourd'hui, réessayez plus tard. Sinon, vérifiez la date et l'heure de votre appareil.",
         "title": "Ce certificat n'est pas encore actif"
+      },
+      "provider_mismatch": {
+        "title": "Nous n'avons pas pu vérifier ce certificat",
+        "sentence": "Réessayez ou sélectionnez un autre certificat si vous en avez un."
       },
       "revocation_unavailable": {
         "sentence": "C'est temporaire et indépendant de votre volonté. Réessayez dans quelques minutes.",

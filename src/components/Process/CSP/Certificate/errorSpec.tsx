@@ -174,8 +174,10 @@ export const getErrorSpec = (error: CertAuthError, opts: ErrorSpecOptions): Erro
   }
 
   if (reason === 'expired') {
-    const issuer = issuerData ?? (error.data?.issuer ? { name: error.data.issuer.name, href: '#' } : undefined)
-    const issuerName = issuer?.name ?? 'your certificate issuer'
+    // Use the issuer name in the sentence when known, even for providers without a renewal link.
+    // The primary button is a renewal link only when the issuer id is recognised (issuerData);
+    // an unknown issuer id keeps "Use a different certificate" as primary to avoid a dead link.
+    const issuerName = issuerData?.name ?? error.data?.issuer?.name ?? 'your certificate issuer'
     const notAfter = error.data?.notAfter ? new Date(error.data.notAfter) : undefined
     const sentence = notAfter
       ? t('cert_auth.errors.expired.sentence_date', {
@@ -191,12 +193,12 @@ export const getErrorSpec = (error: CertAuthError, opts: ErrorSpecOptions): Erro
       icon: LuCalendarX,
       title: t('cert_auth.errors.expired.title', { defaultValue: 'Your certificate has expired' }),
       sentence,
-      primary: issuer ? (
-        <GetNewCertButton t={t} issuer={issuer} />
+      primary: issuerData ? (
+        <GetNewCertButton t={t} issuer={issuerData} />
       ) : (
         <UseDifferentButton t={t} mode={mode} onRetry={onRetry} primary />
       ),
-      secondary: issuer ? <UseDifferentButton t={t} mode={mode} onRetry={onRetry} /> : undefined,
+      secondary: issuerData ? <UseDifferentButton t={t} mode={mode} onRetry={onRetry} /> : undefined,
       note,
     }
   }
@@ -226,11 +228,23 @@ export const getErrorSpec = (error: CertAuthError, opts: ErrorSpecOptions): Erro
     }
   }
 
-  if (reason === 'invalid_chain' || reason === 'provider_mismatch') {
+  if (reason === 'invalid_chain') {
     return {
       icon: LuShieldX,
-      title: t(`cert_auth.errors.${reason}.title`, { defaultValue: "We couldn't verify this certificate" }),
-      sentence: t(`cert_auth.errors.${reason}.sentence`, {
+      title: t('cert_auth.errors.invalid_chain.title', { defaultValue: "We couldn't verify this certificate" }),
+      sentence: t('cert_auth.errors.invalid_chain.sentence', {
+        defaultValue: 'Try again, or choose another certificate if you have one.',
+      }),
+      primary: <UseDifferentButton t={t} mode={mode} onRetry={onRetry} primary />,
+      note,
+    }
+  }
+
+  if (reason === 'provider_mismatch') {
+    return {
+      icon: LuShieldX,
+      title: t('cert_auth.errors.provider_mismatch.title', { defaultValue: "We couldn't verify this certificate" }),
+      sentence: t('cert_auth.errors.provider_mismatch.sentence', {
         defaultValue: 'Try again, or choose another certificate if you have one.',
       }),
       primary: <UseDifferentButton t={t} mode={mode} onRetry={onRetry} primary />,

@@ -177,6 +177,10 @@
         "sentence": "Try again in a few minutes.",
         "title": "Something went wrong on our side"
       },
+      "invalid_chain": {
+        "sentence": "Try again, or choose another certificate if you have one.",
+        "title": "We couldn't verify this certificate"
+      },
       "network": {
         "sentence": "Check your connection and try again. On a work or school network, try mobile data or another network.",
         "title": "We couldn't reach the certificate check"
@@ -188,6 +192,10 @@
       "not_yet_valid": {
         "sentence": "If you got it today, try again later. If not, check your device's date and time.",
         "title": "This certificate isn't active yet"
+      },
+      "provider_mismatch": {
+        "sentence": "Try again, or choose another certificate if you have one.",
+        "title": "We couldn't verify this certificate"
       },
       "revocation_unavailable": {
         "sentence": "This is temporary and not caused by you. Try again in a few minutes.",

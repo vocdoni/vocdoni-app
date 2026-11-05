@@ -177,6 +177,10 @@
         "sentence": "Saiatu berriz zenbait minuturen buruan.",
         "title": "Zerbait gaizki joan da gure aldetik"
       },
+      "invalid_chain": {
+        "title": "Ezin izan dugu ziurtagiri hau egiaztatu",
+        "sentence": "Saiatu berriz edo hautatu beste ziurtagiri bat baduzu."
+      },
       "network": {
         "sentence": "Egiaztatu konexioa eta saiatu berriro. Lan edo eskola sare batean bazaude, saiatu datu mugikorrekin edo beste sare batekin.",
         "title": "Ezin izan da ziurtagiri-egiaztapenera iritsi"
@@ -188,6 +192,10 @@
       "not_yet_valid": {
         "sentence": "Gaur lortu baduzu, saiatu berriro geroago. Bestela, egiaztatu gailuaren data eta ordua.",
         "title": "Ziurtagiri hau oraindik ez dago aktibo"
+      },
+      "provider_mismatch": {
+        "title": "Ezin izan dugu ziurtagiri hau egiaztatu",
+        "sentence": "Saiatu berriz edo hautatu beste ziurtagiri bat baduzu."
       },
       "revocation_unavailable": {
         "sentence": "Hau aldi baterakoa da eta ez da zure errua. Saiatu berriz zenbait minuturen buruan.",

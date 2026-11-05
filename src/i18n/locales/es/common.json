@@ -179,6 +179,10 @@
         "sentence": "Vuelve a intentarlo en unos minutos.",
         "title": "Algo ha fallado en nuestro servidor"
       },
+      "invalid_chain": {
+        "title": "No hemos podido verificar este certificado",
+        "sentence": "Vuelve a intentarlo o elige otro certificado si tienes uno."
+      },
       "network": {
         "sentence": "Comprueba tu conexión y vuelve a intentarlo. En una red del trabajo o colegio, prueba con datos móviles u otra red.",
         "title": "No hemos podido conectar con la verificación de certificado"
@@ -190,6 +194,10 @@
       "not_yet_valid": {
         "sentence": "Si lo obtuviste hoy, vuelve a intentarlo más tarde. Si no, comprueba la fecha y la hora de tu dispositivo.",
         "title": "Este certificado aún no está activo"
+      },
+      "provider_mismatch": {
+        "title": "No hemos podido verificar este certificado",
+        "sentence": "Vuelve a intentarlo o elige otro certificado si tienes uno."
       },
       "revocation_unavailable": {
         "sentence": "Esto es temporal y no es por tu parte. Vuelve a intentarlo en unos minutos.",
