@@ -5,6 +5,8 @@ import type { QuestionStatus } from '@vocdoni/api-types'
 import { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
+import { CertificateStickyAction } from './CSP/Certificate/CertificateIdentify'
+import { useIsCertificateVote } from './CSP/Certificate/useIsCertificateVote'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
 
@@ -120,8 +122,10 @@ const ProcessAside = () => {
 
 export const CensusConnectButton = () => {
   const { election, status, connected } = useElection()
+  // A certificate vote signs in from the panel above the ballot, never through the CSP form.
+  const certificate = useIsCertificateVote()
 
-  if (!election || status === 'CANCELED' || connected) {
+  if (!election || status === 'CANCELED' || connected || certificate) {
     return null
   }
 
@@ -134,6 +138,7 @@ export const CensusConnectButton = () => {
 
 export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () => void }) => {
   const { election, status, connected, isAbleToVote } = useElection()
+  const certificate = useIsCertificateVote()
 
   if (!election || status === 'CANCELED') {
     return null
@@ -162,7 +167,11 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
       {...props}
     >
       {!connected ? (
-        <CensusConnectButton />
+        certificate ? (
+          <CertificateStickyAction />
+        ) : (
+          <CensusConnectButton />
+        )
       ) : (
         <>
           <CVoteButton w='100%' fontSize='lg' height='50px' onClick={setQuestionsTab} />

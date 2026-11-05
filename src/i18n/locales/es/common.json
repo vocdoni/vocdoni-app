@@ -135,6 +135,146 @@
     }
   },
   "census_size": "Tamaño del censo",
+  "cert_auth": {
+    "actions": {
+      "check_different": "Verificar un certificado diferente",
+      "copy_link": "Copiar enlace para otro dispositivo",
+      "copy_link_failed": "No se ha podido copiar. Copia la dirección de la barra de direcciones del navegador.",
+      "get_new": "Obtener un nuevo certificado de {{issuer}}",
+      "link_copied": "Enlace copiado",
+      "opens_new_tab": "(se abre en una pestaña nueva)",
+      "try_again": "Volver a intentar",
+      "use_different": "Usar un certificado diferente"
+    },
+    "checking": {
+      "body": "Puede tardar hasta 30 segundos.",
+      "slow_body": "Mantén esta página abierta. Puede tardar hasta 30 segundos.",
+      "slow_title": "Continuando la verificación con tu proveedor de certificado...",
+      "title": "Comprobando tu certificado..."
+    },
+    "document_title": {
+      "error": "Error: {{title}} - {{vote}}",
+      "status": "{{title}} - {{vote}}"
+    },
+    "errors": {
+      "dni_not_in_census": {
+        "sentence": "Pertenece a <bold>{{name}}</bold> ({{docType}} que acaba en {{ending}}).",
+        "sentence_unknown": "El certificado pertenece a otra persona.",
+        "title": "Este certificado no está en el censo de votantes"
+      },
+      "expired": {
+        "sentence": "Tu certificado de {{issuer}} ya no es válido.",
+        "sentence_date": "Tu certificado de {{issuer}} caducó el {{date}}.",
+        "title": "Tu certificado ha caducado"
+      },
+      "identity_invalid": {
+        "sentence": "Elige otro certificado si tienes uno.",
+        "title": "No hemos podido leer la identidad de este certificado"
+      },
+      "identity_unsupported_document": {
+        "sentence": "Necesitas un certificado emitido con tu DNI o NIE.",
+        "title": "Este certificado no tiene DNI ni NIE"
+      },
+      "internal": {
+        "sentence": "Vuelve a intentarlo en unos minutos.",
+        "title": "Algo ha fallado en nuestro servidor"
+      },
+      "invalid_chain": {
+        "sentence": "Vuelve a intentarlo o elige otro certificado si tienes uno.",
+        "title": "No hemos podido verificar este certificado"
+      },
+      "network": {
+        "sentence": "Comprueba tu conexión y vuelve a intentarlo. En una red del trabajo o colegio, prueba con datos móviles u otra red.",
+        "title": "No hemos podido conectar con la verificación de certificado"
+      },
+      "no_certificate": {
+        "sentence": "Puede que este navegador no tenga ninguno instalado, o se cerró la ventana para elegirlo.",
+        "title": "No se ha encontrado ningún certificado en este navegador"
+      },
+      "not_yet_valid": {
+        "sentence": "Si lo obtuviste hoy, vuelve a intentarlo más tarde. Si no, comprueba la fecha y la hora de tu dispositivo.",
+        "title": "Este certificado aún no está activo"
+      },
+      "provider_mismatch": {
+        "sentence": "Vuelve a intentarlo o elige otro certificado si tienes uno.",
+        "title": "No hemos podido verificar este certificado"
+      },
+      "revocation_unavailable": {
+        "sentence": "Esto es temporal y no es por tu parte. Vuelve a intentarlo en unos minutos.",
+        "title": "No hemos podido comprobar tu certificado ahora"
+      },
+      "revocation_unknown": {
+        "sentence": "Contacta con {{issuer}} y dales el código de referencia.",
+        "sentence_no_issuer": "Contacta con el emisor de tu certificado y dales el código de referencia.",
+        "title": "No hemos podido confirmar este certificado con {{issuer}}",
+        "title_no_issuer": "No hemos podido confirmar este certificado"
+      },
+      "revoked": {
+        "sentence": "Su emisor lo ha cancelado. Suele ocurrir después de una renovación o cuando se notificó como perdido.",
+        "title": "Este certificado ya no es válido"
+      },
+      "test_certificate": {
+        "sentence": "Usa tu certificado real.",
+        "title": "Este es un certificado de prueba"
+      },
+      "too_many_attempts": {
+        "sentence": "Por tu seguridad, vuelve a intentarlo a las {{time}}.",
+        "sentence_no_time": "Por tu seguridad, espera un poco antes de volver a intentarlo.",
+        "title": "Demasiados intentos"
+      },
+      "unsupported_profile": {
+        "sentence": "Este es para una empresa, representante o empleado. Elige el certificado emitido a ti como persona.",
+        "title": "Usa tu certificado personal"
+      },
+      "unsupported_purpose": {
+        "sentence": "Elige el certificado que usas para identificarte.",
+        "title": "Este certificado no se puede usar para iniciar sesión"
+      },
+      "untrusted_issuer": {
+        "sentence": "Aceptamos idCAT Certificat y certificados de FNMT.",
+        "title": "Este certificado no se puede usar aquí"
+      },
+      "weak_algorithm": {
+        "sentence": "Obtén un certificado nuevo para votar.",
+        "sentence_issuer": "Obtén uno nuevo en {{issuer}}.",
+        "title": "Este certificado es demasiado antiguo para usarse aquí"
+      }
+    },
+    "help": "Si sigues teniendo problemas, contacta con {{organization}}.",
+    "identified": {
+      "line": "Estás identificado como <b>{{name}}</b> ({{docType}} que acaba en {{ending}}).",
+      "logout": "¿No eres tú? Cerrar sesión",
+      "privacy": "Tu certificado se usó solo para comprobar que estás en el censo; no queda vinculado a tu voto."
+    },
+    "identify": {
+      "button": "Accede con tu certificado digital",
+      "consent": "Al continuar aceptas los <terms>Términos</terms> y la <privacy>Política de privacidad</privacy>.",
+      "only_check": "Usamos tu certificado solo para comprobar que estás en el censo.",
+      "resume": "Terminemos de identificarte. Pulsa el botón para continuar.",
+      "title": "Identifícate para votar",
+      "works_with": "Funciona con idCAT Certificat y certificados FNMT."
+    },
+    "note": {
+      "closes_today": "La votación cierra hoy a las {{time}}.",
+      "closes_tomorrow": "La votación cierra mañana a las {{time}}.",
+      "still_time": "Todavía tienes tiempo: la votación abre el {{date}}."
+    },
+    "opening": {
+      "body": "Elige el certificado con tu nombre y pulsa Aceptar.",
+      "title": "Abriendo la ventana del certificado..."
+    },
+    "reference": {
+      "copied": "Copiado",
+      "copied_sr": "Código de referencia copiado",
+      "copy": "Copiar",
+      "failed": "No se ha podido copiar. Selecciona el código y cópialo.",
+      "label": "Código de referencia:"
+    },
+    "stalled": {
+      "body": "Suele deberse a una conexión lenta. Pulsa Volver a intentar: no tendrás que elegir tu certificado de nuevo.",
+      "title": "La comprobación no ha terminado"
+    }
+  },
   "change_password": {
     "subtitle": "Introduce tu contraseña actual y una nueva para actualizar tus credenciales.",
     "title": "Cambiar contraseña"

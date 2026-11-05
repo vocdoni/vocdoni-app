@@ -35,6 +35,9 @@ import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
 import { CreatedBy } from './CreatedBy'
 import { CspAuthSession } from './CSP/CSPAuthModal'
+import { CertificateAuthProvider } from './CSP/Certificate/CertificateAuthProvider'
+import { CertificateBallotState, CertificateIdentify } from './CSP/Certificate/CertificateIdentify'
+import { useIsCertificateVote } from './CSP/Certificate/useIsCertificateVote'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
@@ -157,6 +160,7 @@ export const ProcessView = () => {
   const electionRef = useRef<HTMLDivElement>(null)
   const [tabValue, setTabValue] = useState<'questions' | 'results'>('questions')
   const [formErrors, setFormErrors] = useState<any>(null)
+  const certificate = useIsCertificateVote()
 
   const setQuestionsTab = () => setTabValue('questions')
 
@@ -203,78 +207,104 @@ export const ProcessView = () => {
     }
   }, [hasVoted])
 
+  const focusBallot = () => {
+    electionRef.current?.focus({ preventScroll: true })
+    electionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const ballot = (busy?: boolean) => (
+    <Box
+      ref={electionRef}
+      p={6}
+      mt={6}
+      border='1px solid'
+      borderColor='table.border'
+      borderRadius='md'
+      scrollMarginTop='70px'
+      // Ballot content must never appear in analytics/session replays,
+      // even when an org admin previews the process from the dashboard
+      className='ph-no-capture'
+      // Certificate votes move focus here once the voter is identified.
+      tabIndex={certificate ? -1 : undefined}
+      outline={certificate ? 'none' : undefined}
+      aria-busy={busy || undefined}
+      opacity={busy ? 0.45 : undefined}
+    >
+      <ElectionQuestions
+        onInvalid={(args) => {
+          setFormErrors(args)
+        }}
+      />
+    </Box>
+  )
+
+  const grid = (
+    <Grid
+      templateColumns={{ base: '1fr', xl: 'minmax(0,1fr) var(--chakra-sizes-voting-sidebar)' }}
+      gap={10}
+      alignItems='start'
+      mx='auto'
+      minW={{ base: 'full', xl: 'voting.contents.min' }}
+      maxW='voting.contents.max'
+    >
+      <GridItem>
+        <Flex direction='column' gap={4}>
+          <Header />
+
+          <ElectionVideo ref={videoRef} />
+
+          {certificate && <CertificateIdentify onIdentified={focusBallot} />}
+
+          <TabsRoot
+            fitted
+            order={{ base: 2, xl: 1 }}
+            value={tabValue}
+            onValueChange={({ value }) => setTabValue(value as 'questions' | 'results')}
+            flex={{ xl: '0 0 75%' }}
+            w='full'
+          >
+            <TabsList w='full'>
+              <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
+              {election && status !== 'CANCELED' && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
+            </TabsList>
+            <TabsContentGroup mt={6}>
+              <TabsContent value='questions' p={0}>
+                {certificate ? <CertificateBallotState>{ballot}</CertificateBallotState> : ballot()}
+                <Box position='sticky' bottom={0} left={0} pb={1} pt={1}>
+                  <VoteButton setQuestionsTab={setQuestionsTab} />
+                </Box>
+              </TabsContent>
+              {election && status !== 'CANCELED' && (
+                <TabsContent value='results' p={0}>
+                  <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+                    <ElectionResults />
+                  </Box>
+                </TabsContent>
+              )}
+            </TabsContentGroup>
+          </TabsRoot>
+        </Flex>
+      </GridItem>
+      <GridItem display='grid' gap={6}>
+        <ProcessInfoPanel />
+        <ProcessAside />
+      </GridItem>
+      <VotingVoteModal />
+      <SuccessVoteModal />
+    </Grid>
+  )
+
   return (
     // One identify flow for the whole page: the floating Identify button and
     // the sidebar one must resume the same step.
     <CspAuthSession>
-      <Grid
-        templateColumns={{ base: '1fr', xl: 'minmax(0,1fr) var(--chakra-sizes-voting-sidebar)' }}
-        gap={10}
-        alignItems='start'
-        mx='auto'
-        minW={{ base: 'full', xl: 'voting.contents.min' }}
-        maxW='voting.contents.max'
-      >
-        <GridItem>
-          <Flex direction='column' gap={4}>
-            <Header />
-
-            <ElectionVideo ref={videoRef} />
-
-            <TabsRoot
-              fitted
-              order={{ base: 2, xl: 1 }}
-              value={tabValue}
-              onValueChange={({ value }) => setTabValue(value as 'questions' | 'results')}
-              flex={{ xl: '0 0 75%' }}
-              w='full'
-            >
-              <TabsList w='full'>
-                <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
-                {election && status !== 'CANCELED' && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
-              </TabsList>
-              <TabsContentGroup mt={6}>
-                <TabsContent value='questions' p={0}>
-                  <Box
-                    ref={electionRef}
-                    p={6}
-                    mt={6}
-                    border='1px solid'
-                    borderColor='table.border'
-                    borderRadius='md'
-                    scrollMarginTop='70px'
-                    // Ballot content must never appear in analytics/session replays,
-                    // even when an org admin previews the process from the dashboard
-                    className='ph-no-capture'
-                  >
-                    <ElectionQuestions
-                      onInvalid={(args) => {
-                        setFormErrors(args)
-                      }}
-                    />
-                  </Box>
-                  <Box position='sticky' bottom={0} left={0} pb={1} pt={1}>
-                    <VoteButton setQuestionsTab={setQuestionsTab} />
-                  </Box>
-                </TabsContent>
-                {election && status !== 'CANCELED' && (
-                  <TabsContent value='results' p={0}>
-                    <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
-                      <ElectionResults />
-                    </Box>
-                  </TabsContent>
-                )}
-              </TabsContentGroup>
-            </TabsRoot>
-          </Flex>
-        </GridItem>
-        <GridItem display='grid' gap={6}>
-          <ProcessInfoPanel />
-          <ProcessAside />
-        </GridItem>
-        <VotingVoteModal />
-        <SuccessVoteModal />
-      </Grid>
+      {certificate ? (
+        <CertificateAuthProvider processId={election?.id} purpose='vote'>
+          {grid}
+        </CertificateAuthProvider>
+      ) : (
+        grid
+      )}
     </CspAuthSession>
   )
 }

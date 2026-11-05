@@ -133,6 +133,146 @@
     }
   },
   "census_size": "Teilnehmerzahl",
+  "cert_auth": {
+    "actions": {
+      "check_different": "Anderes Zertifikat prüfen",
+      "copy_link": "Link für ein anderes Gerät kopieren",
+      "copy_link_failed": "Kopieren fehlgeschlagen. Kopiere die Adresse aus der Adressleiste des Browsers.",
+      "get_new": "Neues {{issuer}}-Zertifikat beantragen",
+      "link_copied": "Link kopiert",
+      "opens_new_tab": "(öffnet sich in einem neuen Tab)",
+      "try_again": "Erneut versuchen",
+      "use_different": "Anderes Zertifikat verwenden"
+    },
+    "checking": {
+      "body": "Das kann bis zu 30 Sekunden dauern.",
+      "slow_body": "Lass diese Seite offen. Das kann bis zu 30 Sekunden dauern.",
+      "slow_title": "Prüfung mit deinem Zertifikatsanbieter läuft noch...",
+      "title": "Zertifikat wird überprüft..."
+    },
+    "document_title": {
+      "error": "Fehler: {{title}} - {{vote}}",
+      "status": "{{title}} - {{vote}}"
+    },
+    "errors": {
+      "dni_not_in_census": {
+        "sentence": "Es gehört zu <bold>{{name}}</bold> ({{docType}}, endet auf {{ending}}).",
+        "sentence_unknown": "Das Zertifikat gehört einer anderen Person.",
+        "title": "Dieses Zertifikat steht nicht auf der Teilnehmerliste"
+      },
+      "expired": {
+        "sentence": "Dein {{issuer}}-Zertifikat ist nicht mehr gültig.",
+        "sentence_date": "Dein {{issuer}}-Zertifikat ist am {{date}} abgelaufen.",
+        "title": "Dein Zertifikat ist abgelaufen"
+      },
+      "identity_invalid": {
+        "sentence": "Wähle ein anderes Zertifikat, falls du eines hast.",
+        "title": "Die Identität in diesem Zertifikat konnte nicht gelesen werden"
+      },
+      "identity_unsupported_document": {
+        "sentence": "Du brauchst ein Zertifikat, das mit deinem DNI oder NIE ausgestellt wurde.",
+        "title": "Dieses Zertifikat hat keine DNI oder NIE"
+      },
+      "internal": {
+        "sentence": "Versuche es in wenigen Minuten noch einmal.",
+        "title": "Bei uns ist etwas schiefgelaufen"
+      },
+      "invalid_chain": {
+        "sentence": "Versuche es erneut oder wähle ein anderes Zertifikat, falls du eines hast.",
+        "title": "Dieses Zertifikat konnte nicht verifiziert werden"
+      },
+      "network": {
+        "sentence": "Überprüfe deine Verbindung und versuche es erneut. In einem Schul- oder Firmennetz, versuche es mit mobilen Daten oder einem anderen Netz.",
+        "title": "Die Zertifikatsprüfung war nicht erreichbar"
+      },
+      "no_certificate": {
+        "sentence": "Möglicherweise ist keines in diesem Browser installiert, oder das Auswahlfenster wurde geschlossen.",
+        "title": "Kein Zertifikat in diesem Browser gefunden"
+      },
+      "not_yet_valid": {
+        "sentence": "Wenn du es heute erhalten hast, versuche es später noch einmal. Andernfalls überprüfe Datum und Uhrzeit deines Geräts.",
+        "title": "Dieses Zertifikat ist noch nicht aktiv"
+      },
+      "provider_mismatch": {
+        "sentence": "Versuche es erneut oder wähle ein anderes Zertifikat, falls du eines hast.",
+        "title": "Dieses Zertifikat konnte nicht verifiziert werden"
+      },
+      "revocation_unavailable": {
+        "sentence": "Das ist vorübergehend und nicht deine Schuld. Versuche es in wenigen Minuten noch einmal.",
+        "title": "Dein Zertifikat konnte gerade nicht überprüft werden"
+      },
+      "revocation_unknown": {
+        "sentence": "Kontaktiere {{issuer}} und gib den Referenzcode an.",
+        "sentence_no_issuer": "Kontaktiere deinen Zertifikatsaussteller und gib den Referenzcode an.",
+        "title": "Dieses Zertifikat konnte mit {{issuer}} nicht bestätigt werden",
+        "title_no_issuer": "Dieses Zertifikat konnte nicht bestätigt werden"
+      },
+      "revoked": {
+        "sentence": "Der Aussteller hat es widerrufen. Das passiert meist nach einer Erneuerung oder wenn es als verloren gemeldet wurde.",
+        "title": "Dieses Zertifikat ist nicht mehr gültig"
+      },
+      "test_certificate": {
+        "sentence": "Verwende dein echtes Zertifikat.",
+        "title": "Dies ist ein Testzertifikat"
+      },
+      "too_many_attempts": {
+        "sentence": "Zu deiner Sicherheit versuche es nach {{time}} erneut.",
+        "sentence_no_time": "Zu deiner Sicherheit warte bitte, bevor du es erneut versuchst.",
+        "title": "Zu viele Versuche"
+      },
+      "unsupported_profile": {
+        "sentence": "Dieses ist für ein Unternehmen, einen Vertreter oder Mitarbeiter. Wähle das Zertifikat, das auf dich als Person ausgestellt wurde.",
+        "title": "Verwende dein persönliches Zertifikat"
+      },
+      "unsupported_purpose": {
+        "sentence": "Wähle das Zertifikat, das du zur Identifikation verwendest.",
+        "title": "Dieses Zertifikat kann nicht zum Anmelden verwendet werden"
+      },
+      "untrusted_issuer": {
+        "sentence": "Wir akzeptieren idCAT Certificat und FNMT-Zertifikate.",
+        "title": "Dieses Zertifikat kann hier nicht verwendet werden"
+      },
+      "weak_algorithm": {
+        "sentence": "Beantrage ein neues Zertifikat zum Abstimmen.",
+        "sentence_issuer": "Beantrage ein neues bei {{issuer}}.",
+        "title": "Dieses Zertifikat ist zu alt für die Verwendung hier"
+      }
+    },
+    "help": "Wenn die Probleme anhalten, wende dich an {{organization}}.",
+    "identified": {
+      "line": "Du bist identifiziert als <b>{{name}}</b> ({{docType}}, endet auf {{ending}}).",
+      "logout": "Nicht du? Abmelden",
+      "privacy": "Dein Zertifikat wurde nur genutzt, um zu prüfen, ob du auf der Teilnehmerliste stehst; es ist nicht mit deiner Stimmabgabe verknüpft."
+    },
+    "identify": {
+      "button": "Mit deinem digitalen Zertifikat anmelden",
+      "consent": "Mit dem Fortfahren akzeptierst du die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzrichtlinie</privacy>.",
+      "only_check": "Wir nutzen dein Zertifikat nur, um zu prüfen, ob du auf der Teilnehmerliste stehst.",
+      "resume": "Lass uns die Identifizierung abschließen. Drücke den Button, um fortzufahren.",
+      "title": "Identifizieren um abzustimmen",
+      "works_with": "Funktioniert mit idCAT Certificat und FNMT-Zertifikaten."
+    },
+    "note": {
+      "closes_today": "Die Abstimmung endet heute um {{time}} Uhr.",
+      "closes_tomorrow": "Die Abstimmung endet morgen um {{time}} Uhr.",
+      "still_time": "Du hast noch Zeit: Die Abstimmung beginnt am {{date}}."
+    },
+    "opening": {
+      "body": "Wähle das Zertifikat mit deinem Namen und drücke OK.",
+      "title": "Zertifikatsfenster wird geöffnet..."
+    },
+    "reference": {
+      "copied": "Kopiert",
+      "copied_sr": "Referenzcode kopiert",
+      "copy": "Kopieren",
+      "failed": "Kopieren fehlgeschlagen. Markiere den Code und kopiere ihn.",
+      "label": "Referenzcode:"
+    },
+    "stalled": {
+      "body": "Das liegt meistens an einer langsamen Verbindung. Drücke Erneut versuchen: du musst dein Zertifikat nicht nochmal auswählen.",
+      "title": "Die Prüfung wurde nicht abgeschlossen"
+    }
+  },
   "change_password": {
     "subtitle": "Gib dein aktuelles Passwort und ein neues Passwort ein, um deine Zugangsdaten zu aktualisieren.",
     "title": "Passwort ändern"

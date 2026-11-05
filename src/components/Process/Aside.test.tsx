@@ -169,3 +169,68 @@ describe('ProcessAside', () => {
     expect(screen.queryByText('aside.verify_vote_on_explorer')).not.toBeInTheDocument()
   })
 })
+
+describe('ProcessAside with a certificate census', () => {
+  const certElection = {
+    ...baseElection,
+    census: { weighted: false, authMethod: 'certificate', authFields: ['nationalId'] },
+  }
+
+  const setElection = (connected: boolean) =>
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: certElection,
+          status: 'ONGOING',
+          results: baseResults,
+          isInCensus: true,
+          hasVoted: false,
+          voteId: null,
+          isAbleToVote: true,
+          connected,
+        }),
+      useClient: () => mockUseClient({ env: 'prod' }),
+    })
+
+  it('never offers the CSP sign-in when the flag is on', () => {
+    setElection(false)
+
+    render(
+      <>
+        <ProcessAside />
+        <VoteButton setQuestionsTab={vi.fn()} />
+      </>,
+      { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } }
+    )
+
+    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
+  })
+
+  it('keeps the logout and the vote button once connected', () => {
+    setElection(true)
+
+    render(
+      <>
+        <ProcessAside />
+        <VoteButton setQuestionsTab={vi.fn()} />
+      </>,
+      { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } }
+    )
+
+    expect(screen.getByText('logout')).toBeInTheDocument()
+    expect(screen.getByText('Vote')).toBeEnabled()
+  })
+
+  it('keeps the CSP sign-in when the flag is off', () => {
+    setElection(false)
+
+    render(
+      <>
+        <ProcessAside />
+        <VoteButton setQuestionsTab={vi.fn()} />
+      </>
+    )
+
+    expect(screen.getAllByText('CSP')).toHaveLength(2)
+  })
+})
