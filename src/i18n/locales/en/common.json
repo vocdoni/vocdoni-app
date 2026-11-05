@@ -231,6 +231,11 @@
       }
     },
     "help": "If you keep having problems, contact {{organization}}.",
+    "identified": {
+      "line": "You're identified as <b>{{name}}</b> ({{docType}} ending in {{ending}}).",
+      "logout": "Not you? Log out",
+      "privacy": "Your certificate was only used to check you're on the voter list; it's not attached to your ballot."
+    },
     "identify": {
       "button": "Access with your digital certificate",
       "consent": "By continuing you accept the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",

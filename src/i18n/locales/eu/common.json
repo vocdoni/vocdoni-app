@@ -231,6 +231,11 @@
       }
     },
     "help": "Arazoak jarraitzen badute, jarri harremanetan {{organization}}-rekin.",
+    "identified": {
+      "line": "<b>{{name}}</b> bezala identifikatu zaituzte ({{docType}}, {{ending}} zenbakian amaituta).",
+      "logout": "Ez al zara zu? Amaitu saioa",
+      "privacy": "Zure ziurtagiria erroldaren egiaztapenerako soilik erabili da; ez dago zure botoari lotuta."
+    },
     "identify": {
       "button": "Sartu zure ziurtagiri digitalarekin",
       "consent": "Jarraitzean, <terms>Baldintzak</terms> eta <privacy>Pribatutasun-politika</privacy> onartzen dituzu.",

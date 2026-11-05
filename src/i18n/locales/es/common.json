@@ -233,6 +233,11 @@
       }
     },
     "help": "Si sigues teniendo problemas, contacta con {{organization}}.",
+    "identified": {
+      "line": "Estás identificado como <b>{{name}}</b> ({{docType}} que acaba en {{ending}}).",
+      "logout": "¿No eres tú? Cerrar sesión",
+      "privacy": "Tu certificado se usó solo para comprobar que estás en el censo; no queda vinculado a tu voto."
+    },
     "identify": {
       "button": "Accede con tu certificado digital",
       "consent": "Al continuar aceptas los <terms>Términos</terms> y la <privacy>Política de privacidad</privacy>.",

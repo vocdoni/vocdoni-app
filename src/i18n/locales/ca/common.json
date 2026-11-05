@@ -233,6 +233,11 @@
       }
     },
     "help": "Si continues tenint problemes, contacta amb {{organization}}.",
+    "identified": {
+      "line": "Estàs identificat com a <b>{{name}}</b> ({{docType}} que acaba en {{ending}}).",
+      "logout": "No ets tu? Tanca la sessió",
+      "privacy": "El teu certificat s'ha usat només per comprovar que ets al cens; no queda associat a la teva papereta."
+    },
     "identify": {
       "button": "Accedeix amb el teu certificat digital",
       "consent": "En continuar acceptes els <terms>Termes</terms> i la <privacy>Política de privacitat</privacy>.",

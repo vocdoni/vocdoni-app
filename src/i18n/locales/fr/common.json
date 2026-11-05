@@ -233,6 +233,11 @@
       }
     },
     "help": "Si le problème persiste, contactez {{organization}}.",
+    "identified": {
+      "line": "Vous êtes identifié comme <b>{{name}}</b> ({{docType}} se terminant par {{ending}}).",
+      "logout": "Pas vous ? Se déconnecter",
+      "privacy": "Votre certificat a uniquement servi à vérifier que vous êtes sur la liste électorale ; il n'est pas attaché à votre bulletin de vote."
+    },
     "identify": {
       "button": "Accédez avec votre certificat électronique",
       "consent": "En continuant, vous acceptez les <terms>Conditions</terms> et la <privacy>Politique de confidentialité</privacy>.",

@@ -231,6 +231,11 @@
       }
     },
     "help": "Wenn die Probleme anhalten, wende dich an {{organization}}.",
+    "identified": {
+      "line": "Du bist identifiziert als <b>{{name}}</b> ({{docType}}, endet auf {{ending}}).",
+      "logout": "Nicht du? Abmelden",
+      "privacy": "Dein Zertifikat wurde nur genutzt, um zu prüfen, ob du auf der Teilnehmerliste stehst; es ist nicht mit deiner Stimmabgabe verknüpft."
+    },
     "identify": {
       "button": "Mit deinem digitalen Zertifikat anmelden",
       "consent": "Mit dem Fortfahren akzeptierst du die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzrichtlinie</privacy>.",
