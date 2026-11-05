@@ -58,7 +58,7 @@ type IdentifyPanelProps = {
 }
 
 /**
- * Treatment B: a prominent panel above the ballot questions.
+ * Prominent sign-in panel above the ballot questions.
  * title/buttonLabel let other panels (e.g. pre-check) reuse this layout with different copy.
  */
 export const IdentifyPanel = forwardRef(function IdentifyPanel(

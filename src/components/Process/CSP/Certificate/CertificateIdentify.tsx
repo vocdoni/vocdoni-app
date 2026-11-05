@@ -80,7 +80,7 @@ const CertificatePanel = ({ flow }: { flow: Flow }) => {
   )
 }
 
-/** The certificate sign-in above the ballot: V1, its progress panels, the error block and the identified strip. */
+/** The certificate sign-in panel above the ballot: progress panels, the error block and the identified strip. */
 export const CertificateIdentify = ({ onIdentified }: { onIdentified(): void }) => {
   const flow = useCertificateAuthContext()
   const open = useVotingOpen()
@@ -115,8 +115,19 @@ export const CertificateIdentify = ({ onIdentified }: { onIdentified(): void }) 
 export const CertificateStickyAction = () => {
   const flow = useCertificateAuthContext()
   const open = useVotingOpen()
-  if (!flow || !open || flow.phase.kind !== 'idle') return null
-  return <CertButton size='md' onClick={() => void flow.start()} />
+  if (!flow || !open) return null
+  const button = <CertButton size='md' onClick={() => void flow.start()} />
+  // During SSR and hydration the phase is 'ssr': place the button in the idle slot so the head
+  // script hides it on returns before first paint, avoiding a pop-in on slow devices.
+  if (flow.phase.kind === 'ssr') {
+    return (
+      <CertificateSlot phase={flow.phase} idle={button} returning={null}>
+        {null}
+      </CertificateSlot>
+    )
+  }
+  if (flow.phase.kind !== 'idle') return null
+  return button
 }
 
 /** Tells the ballot whether a certificate attempt is in flight, so it can dim and mark itself busy. */

@@ -56,9 +56,12 @@ export const StalledPanel = forwardRef<HTMLHeadingElement, StalledPanelProps>(fu
   const { t } = useTranslation()
   return (
     <Panel>
-      <Heading as='h2' ref={ref} tabIndex={-1} outline='none' fontSize='xl' fontWeight='semibold' mb={2}>
-        {t('cert_auth.stalled.title', { defaultValue: "The check didn't finish" })}
-      </Heading>
+      <HStack gap={3} mb={2} align='center'>
+        <Icon as={LuRefreshCw} boxSize={6} mt='2px' flexShrink={0} aria-hidden />
+        <Heading as='h2' ref={ref} tabIndex={-1} outline='none' fontSize='xl' fontWeight='semibold'>
+          {t('cert_auth.stalled.title', { defaultValue: "The check didn't finish" })}
+        </Heading>
+      </HStack>
       <P mb={4}>
         {t('cert_auth.stalled.body', {
           defaultValue:

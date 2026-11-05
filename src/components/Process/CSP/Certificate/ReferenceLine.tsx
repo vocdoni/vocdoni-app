@@ -18,12 +18,13 @@ export const ReferenceLine = ({ reference }: ReferenceLineProps) => {
   const { result, copy } = useCopy(ref?.copy ?? '')
 
   // Push the compact reference prefix to Crisp so support can find the backend log.
+  // Depend on the stable string rather than the object so this fires once per reference.
   useEffect(() => {
     if (!ref || typeof window === 'undefined') return
     const crisp = (window as typeof window & { $crisp?: unknown[] }).$crisp
     if (!Array.isArray(crisp)) return
     crisp.push(['set', 'session:data', [[[`certificate_reference`, ref.copy]]]])
-  }, [ref])
+  }, [ref?.copy])
 
   if (!ref) return null
 
