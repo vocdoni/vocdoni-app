@@ -1,17 +1,21 @@
 import { VocdoniApiClient } from '@vocdoni/api-client'
 
-export type VocdoniEnv = 'dev' | 'prod'
+export type VocdoniEnv = 'dev' | 'stg' | 'prod'
+
+// Explorer base per environment, kept here so explorer links can be built without any chain client.
+const explorerUrls: Record<VocdoniEnv, string> = {
+  dev: 'https://dev.explorer.vote',
+  stg: 'https://stg.explorer.vote',
+  prod: 'https://explorer.vote',
+}
 
 // Resolves the Vocdoni network configuration from the runtime environment.
 // The environment string is provided by the caller — React code passes
 // useAppEnv().VOCDONI_ENVIRONMENT; server code passes getServerAppEnv().VOCDONI_ENVIRONMENT.
 export const getVocdoniClientConfig = (environment: string = 'dev') => {
-  const clientEnv: VocdoniEnv = environment.toLowerCase() === 'prod' ? 'prod' : 'dev'
-  // Explorer base matching the legacy SDK's default for each env — kept here so
-  // explorer links can be built without any chain client.
-  const explorerUrl = clientEnv === 'prod' ? 'https://explorer.vote' : 'https://dev.explorer.vote'
-
-  return { clientEnv, explorerUrl }
+  const env = environment.toLowerCase()
+  const clientEnv: VocdoniEnv = env === 'prod' || env === 'stg' ? env : 'dev'
+  return { clientEnv, explorerUrl: explorerUrls[clientEnv] }
 }
 
 // Unauthenticated v2 SaaS client for SSR public page loads. `lang` is a plain value,

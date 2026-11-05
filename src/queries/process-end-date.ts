@@ -8,11 +8,11 @@ import { QueryKeys } from './keys'
 /**
  * The gateway serving the chain a process was anchored to.
  *
- * Derived from the process' own `chainId` rather than from `VOCDONI_ENVIRONMENT`, because the two
- * do not always agree: the staging SaaS backend anchors its processes to the production chain
- * (`vocdoni/LTS/…`), so an environment-keyed lookup would query the dev gateway and miss them.
+ * Derived from the process' own `chainId` rather than from `VOCDONI_ENVIRONMENT`, because a process can
+ * live on another environment's chain: `/LTS/` → production, `/STG/` → staging, otherwise dev.
  */
-const getGatewayUrlForChain = (chainId?: string) => getVochainGatewayUrl(chainId?.includes('/LTS/') ? 'prod' : 'dev')
+const getGatewayUrlForChain = (chainId?: string) =>
+  getVochainGatewayUrl(chainId?.includes('/LTS/') ? 'prod' : chainId?.includes('/STG/') ? 'stg' : 'dev')
 
 /**
  * A process left to run its course still ends a few seconds either side of its schedule — the chain
