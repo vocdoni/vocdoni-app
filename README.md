@@ -115,6 +115,7 @@ there, here's a list of variables you can use:
 - `DISABLE_ANONYMOUS_VOTING` set it to `true` to hide the anonymous voting option from the process
   creation wizard. Unset or any other value leaves the option available. Read at runtime.
 - `ENABLE_CERTIFICATE_AUTH` set it to `true` to offer the digital certificate (DNI/NIE) voter sign-in, which needs a backend with the certificate endpoints, or to `mock` to try it locally without one (ignored when `VOCDONI_ENVIRONMENT` is `prod`). Unset or any other value hides it. Read at runtime.
+- `DISABLE_CERTIFICATE_IOS_OPEN_LINK` set it to `true` to remove the "Try opening it for me" link from the certificate escape screen (kill switch for the undocumented x-safari-https scheme). Unset = link shown. Read at runtime.
 
 You can also start the app by prefixing these vars instead of defining your
 custom `.env` file:

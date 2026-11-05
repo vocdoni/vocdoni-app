@@ -4,12 +4,16 @@ import { useTranslation } from 'react-i18next'
 import { CertButton } from './CertButton'
 import { useCertificateAuthContext } from './CertificateAuthProvider'
 import { CertificateSlot } from './CertificateSlot'
+import type { CertificateBrowser } from './browser-support'
 import { ErrorBlock } from './ErrorBlock'
 import { getErrorSpec } from './errorSpec'
 import { IdentifiedStrip } from './IdentifiedStrip'
 import { IdentifyPanel } from './IdentifyPanel'
+import { EscapePanel, EscapeStickyAction, useEscape, type EscapeVariant } from './EscapePanel'
 import { CheckingPanel, OpeningPanel, StalledPanel } from './ProgressPanels'
+import { ResumePanel } from './ResumePanel'
 import type { CertPhase } from './useCertificateAuth'
+import { HANDOFF_DELAY_MS } from './useEscapeHandoff'
 import { usePanelFocus } from './usePanelFocus'
 
 type Flow = NonNullable<ReturnType<typeof useCertificateAuthContext>>
@@ -21,13 +25,36 @@ const useVotingOpen = () => {
 }
 
 // The server pass already shows the idle panel, so settling on idle after hydration must not move focus.
-const focusKey = (phase: CertPhase) => (phase.kind === 'ssr' ? 'idle' : phase.kind)
+const focusKey = (phase: CertPhase, resuming: boolean) =>
+  phase.kind === 'ssr' ? 'idle' : phase.kind === 'idle' && resuming ? 'resuming' : phase.kind
+
+// Browsers that can't use a certificate get the escape panel: in-app viewers by platform, the rest copy-first.
+const escapeLayout = (
+  browser: CertificateBrowser
+): { platform: 'android' | 'ios' | 'other'; variant: EscapeVariant } | null => {
+  if (browser.kind === 'supported') return null
+  if (browser.kind === 'in-app') return { platform: browser.platform, variant: 'in-app' }
+  return { platform: browser.kind === 'ios-other-browser' ? 'ios' : 'other', variant: browser.kind }
+}
 
 const CertificatePanel = ({ flow }: { flow: Flow }) => {
   const { t, i18n } = useTranslation()
   const { election } = useElection()
   const headingRef = useRef<HTMLHeadingElement>(null)
   const { phase, start, retry } = flow
+  const { browser, resuming, endResume, actions } = useEscape()
+  const resumeNow = resuming && phase.kind === 'idle'
+  const escape = escapeLayout(browser)
+
+  // The hand-off from an app's viewer starts the certificate flow on its own, once, unless cancelled.
+  useEffect(() => {
+    if (!resumeNow) return
+    const timer = window.setTimeout(() => {
+      endResume()
+      void start()
+    }, HANDOFF_DELAY_MS)
+    return () => window.clearTimeout(timer)
+  }, [resumeNow, endResume, start])
 
   const spec =
     phase.kind === 'error'
@@ -49,9 +76,10 @@ const CertificatePanel = ({ flow }: { flow: Flow }) => {
       ? t('cert_auth.checking.slow_title', { defaultValue: 'Still checking with your certificate provider...' })
       : t('cert_auth.checking.title', { defaultValue: 'Checking your certificate...' })
   else if (phase.kind === 'stalled') title = t('cert_auth.stalled.title', { defaultValue: "The check didn't finish" })
+  else if (resumeNow) title = t('cert_auth.escape.resume_title', { defaultValue: 'Asking for your certificate...' })
   else title = t('cert_auth.identify.title', { defaultValue: 'Identify to vote' })
 
-  usePanelFocus(headingRef, focusKey(phase), {
+  usePanelFocus(headingRef, focusKey(phase, resumeNow), {
     title,
     vote: getElectionTitle(election),
     error: phase.kind === 'error',
@@ -71,6 +99,8 @@ const CertificatePanel = ({ flow }: { flow: Flow }) => {
   else if (phase.kind === 'starting') panel = <OpeningPanel ref={headingRef} />
   else if (phase.kind === 'checking') panel = <CheckingPanel ref={headingRef} slow={phase.slow} />
   else if (phase.kind === 'stalled') panel = <StalledPanel ref={headingRef} onRetry={retry} />
+  else if (resumeNow) panel = <ResumePanel ref={headingRef} onCancel={endResume} />
+  else if (escape && actions) panel = <EscapePanel {...escape} actions={actions} />
   else panel = <IdentifyPanel ref={headingRef} resume={phase.kind === 'idle' && phase.resume} onStart={start} />
 
   return (
@@ -111,10 +141,11 @@ export const CertificateIdentify = ({ onIdentified }: { onIdentified(): void }) 
   return <CertificatePanel flow={flow} />
 }
 
-/** The sticky action under the ballot: the certificate button while the voter has not started. */
+/** The sticky action under the ballot while the voter has not started: the certificate or the escape action. */
 export const CertificateStickyAction = () => {
   const flow = useCertificateAuthContext()
   const open = useVotingOpen()
+  const { browser, resuming, actions } = useEscape()
   if (!flow || !open) return null
   const button = <CertButton size='md' onClick={() => void flow.start()} />
   // During SSR and hydration the phase is 'ssr': place the button in the idle slot so the head
@@ -126,7 +157,18 @@ export const CertificateStickyAction = () => {
       </CertificateSlot>
     )
   }
-  if (flow.phase.kind !== 'idle') return null
+  if (flow.phase.kind !== 'idle' || resuming) return null
+  const escape = escapeLayout(browser)
+  if (escape && actions)
+    return (
+      <EscapeStickyAction
+        {...escape}
+        openPhase={actions.openPhase}
+        copyPhase={actions.copyPhase}
+        onOpen={actions.onOpen}
+        onCopy={actions.onCopy}
+      />
+    )
   return button
 }
 

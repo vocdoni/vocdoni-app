@@ -117,4 +117,12 @@ describe('buildAppEnv', () => {
     expect(buildAppEnv({ ENABLE_CERTIFICATE_AUTH: '1' }).ENABLE_CERTIFICATE_AUTH).toBeUndefined()
     expect(buildAppEnv({ ENABLE_CERTIFICATE_AUTH: 'TRUE' }).ENABLE_CERTIFICATE_AUTH).toBeUndefined()
   })
+
+  it('resolves DISABLE_CERTIFICATE_IOS_OPEN_LINK: true only for the exact string "true"', () => {
+    expect(buildAppEnv({}).DISABLE_CERTIFICATE_IOS_OPEN_LINK).toBe(false)
+    expect(buildAppEnv({ DISABLE_CERTIFICATE_IOS_OPEN_LINK: 'true' }).DISABLE_CERTIFICATE_IOS_OPEN_LINK).toBe(true)
+    expect(buildAppEnv({ DISABLE_CERTIFICATE_IOS_OPEN_LINK: 'True' }).DISABLE_CERTIFICATE_IOS_OPEN_LINK).toBe(false)
+    expect(buildAppEnv({ DISABLE_CERTIFICATE_IOS_OPEN_LINK: '1' }).DISABLE_CERTIFICATE_IOS_OPEN_LINK).toBe(false)
+    expect(buildAppEnv({ DISABLE_CERTIFICATE_IOS_OPEN_LINK: '' }).DISABLE_CERTIFICATE_IOS_OPEN_LINK).toBe(false)
+  })
 })

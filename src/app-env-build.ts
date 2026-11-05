@@ -44,6 +44,8 @@ export type AppEnv = {
   DISABLE_ANONYMOUS_VOTING?: boolean
   // Digital certificate voter sign-in: 'on' talks to the backend, 'mock' fakes it (never in prod). Absent = off.
   ENABLE_CERTIFICATE_AUTH?: 'on' | 'mock'
+  // When true, the "Try opening it for me" link is removed from the certificate escape screen.
+  DISABLE_CERTIFICATE_IOS_OPEN_LINK?: boolean
 }
 
 type AppEnvObject = AppEnv
@@ -249,5 +251,6 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     SHOW_ORG_LOGO: env.SHOW_ORG_LOGO === 'true',
     DISABLE_ANONYMOUS_VOTING: env.DISABLE_ANONYMOUS_VOTING === 'true',
     ENABLE_CERTIFICATE_AUTH: resolveCertificateAuth(env.ENABLE_CERTIFICATE_AUTH, env.VOCDONI_ENVIRONMENT || 'dev'),
+    DISABLE_CERTIFICATE_IOS_OPEN_LINK: env.DISABLE_CERTIFICATE_IOS_OPEN_LINK === 'true',
   }
 }

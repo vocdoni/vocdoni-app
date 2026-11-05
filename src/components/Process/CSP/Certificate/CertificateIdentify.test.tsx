@@ -1,9 +1,11 @@
+import { act, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { mockUseElection, render, screen } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CertAuthError, type CertHolder } from '~queries/certificateAuth/types'
 import { CertificateIdentify, CertificateStickyAction } from './CertificateIdentify'
+import { EscapeProvider } from './EscapePanel'
 import type { CertPhase } from './useCertificateAuth'
 
 beforeAll(() => {
@@ -151,5 +153,85 @@ describe('CertificateStickyAction', () => {
     render(<CertificateStickyAction />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+})
+
+describe('leaving an in-app viewer', () => {
+  const IOS_IN_APP_UA =
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 350.0'
+
+  const renderPage = (phase: CertPhase) => {
+    setPage()
+    flow.phase = phase
+    return render(
+      <EscapeProvider>
+        <CertificateIdentify onIdentified={vi.fn()} />
+        <div data-testid='sticky'>
+          <CertificateStickyAction />
+        </div>
+      </EscapeProvider>,
+      { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } }
+    )
+  }
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+    sessionStorage.clear()
+    window.history.replaceState(null, '', '/')
+    delete (navigator as Navigator & { clipboard?: unknown }).clipboard
+  })
+
+  it('shows the escape panel and the escape sticky action in an in-app viewer, sharing one state', async () => {
+    vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(IOS_IN_APP_UA)
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
+    window.history.replaceState(null, '', '/processes/p1')
+    renderPage({ kind: 'idle' })
+
+    expect(screen.getByRole('heading', { name: 'Continue in your browser' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Identify to vote' })).not.toBeInTheDocument()
+    const sticky = screen.getByTestId('sticky')
+    expect(sticky).toHaveTextContent('Copy the link to vote in your browser')
+    expect(sticky).not.toHaveTextContent('Access with your digital certificate')
+
+    await userEvent.click(screen.getByTestId('sticky-copy'))
+
+    expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/processes/p1?identify=cert-escape`)
+    expect(screen.getByTestId('copy')).toHaveTextContent('Link copied')
+    expect(flow.start).not.toHaveBeenCalled()
+  })
+
+  it('resumes in the real browser: asks for the certificate and starts after a short pause', () => {
+    vi.useFakeTimers()
+    vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(IOS_IN_APP_UA)
+    window.history.replaceState(null, '', '/processes/p1?identify=cert-escape')
+    renderPage({ kind: 'idle' })
+
+    expect(window.location.search).toBe('')
+    expect(screen.getByRole('heading', { name: 'Asking for your certificate...' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
+    expect(screen.queryByText(/By continuing you accept/)).not.toBeInTheDocument()
+    expect(screen.getByTestId('sticky')).toBeEmptyDOMElement()
+
+    act(() => vi.advanceTimersByTime(1199))
+    expect(flow.start).not.toHaveBeenCalled()
+    act(() => vi.advanceTimersByTime(1))
+    expect(flow.start).toHaveBeenCalledTimes(1)
+  })
+
+  it('cancelling the resume lands on the identify panel and never starts', () => {
+    vi.useFakeTimers()
+    vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(IOS_IN_APP_UA)
+    window.history.replaceState(null, '', '/processes/p1?identify=cert-escape')
+    renderPage({ kind: 'idle' })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    act(() => vi.advanceTimersByTime(5000))
+
+    expect(flow.start).not.toHaveBeenCalled()
+    expect(screen.getByRole('heading', { name: 'Identify to vote' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Continue in your browser' })).not.toBeInTheDocument()
+    expect(screen.getByTestId('sticky')).toHaveTextContent('Access with your digital certificate')
   })
 })
