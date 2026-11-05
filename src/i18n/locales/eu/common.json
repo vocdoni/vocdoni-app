@@ -158,7 +158,7 @@
       "dni_not_in_census": {
         "sentence": "<bold>{{name}}</bold>-rena da ({{docType}}, {{ending}} zenbakian amaituta).",
         "sentence_unknown": "Ziurtagiria beste pertsona batenak da.",
-        "title": "Ziurtagiri hau ez dago botogile-zerrendan"
+        "title": "Ziurtagiri hau ez dago erroldan"
       },
       "expired": {
         "sentence": "Zure {{issuer}} ziurtagiria ez da gehiago baliozkoa.",

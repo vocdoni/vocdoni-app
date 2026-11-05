@@ -229,19 +229,19 @@
       "weak_algorithm": {
         "sentence": "Obtén un certificat nou per votar.",
         "sentence_issuer": "Obtén-ne un de nou a {{issuer}}.",
-        "title": "Aquest certificat és massa antic per usar-se aquí"
+        "title": "Aquest certificat és massa antic per fer-se servir aquí"
       }
     },
     "help": "Si continues tenint problemes, contacta amb {{organization}}.",
     "identified": {
       "line": "Estàs identificat com a <b>{{name}}</b> ({{docType}} que acaba en {{ending}}).",
       "logout": "No ets tu? Tanca la sessió",
-      "privacy": "El teu certificat s'ha usat només per comprovar que ets al cens; no queda associat a la teva papereta."
+      "privacy": "El teu certificat s'ha fet servir només per comprovar que ets al cens; no queda associat a la teva papereta."
     },
     "identify": {
       "button": "Accedeix amb el teu certificat digital",
       "consent": "En continuar acceptes els <terms>Termes</terms> i la <privacy>Política de privacitat</privacy>.",
-      "only_check": "Usem el teu certificat només per comprovar que ets al cens.",
+      "only_check": "Fem servir el teu certificat només per comprovar que ets al cens.",
       "resume": "Acabem d'identificar-te. Prem el botó per continuar.",
       "title": "Identifica't per votar",
       "works_with": "Compatible amb idCAT Certificat i certificats FNMT."
