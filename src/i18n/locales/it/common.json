@@ -180,8 +180,8 @@
         "title": "Si è verificato un problema da parte nostra"
       },
       "invalid_chain": {
-        "title": "Non siamo riusciti a verificare questo certificato",
-        "sentence": "Riprova o scegli un altro certificato se ne hai uno."
+        "sentence": "Riprova o scegli un altro certificato se ne hai uno.",
+        "title": "Non siamo riusciti a verificare questo certificato"
       },
       "network": {
         "sentence": "Controlla la connessione e riprova. Su una rete scolastica o aziendale, prova con i dati mobili o un'altra rete.",
@@ -196,8 +196,8 @@
         "title": "Questo certificato non è ancora attivo"
       },
       "provider_mismatch": {
-        "title": "Non siamo riusciti a verificare questo certificato",
-        "sentence": "Riprova o scegli un altro certificato se ne hai uno."
+        "sentence": "Riprova o scegli un altro certificato se ne hai uno.",
+        "title": "Non siamo riusciti a verificare questo certificato"
       },
       "revocation_unavailable": {
         "sentence": "È temporaneo e non dipende da te. Riprova tra qualche minuto.",

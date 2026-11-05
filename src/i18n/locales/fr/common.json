@@ -180,8 +180,8 @@
         "title": "Une erreur s'est produite de notre côté"
       },
       "invalid_chain": {
-        "title": "Nous n'avons pas pu vérifier ce certificat",
-        "sentence": "Réessayez ou sélectionnez un autre certificat si vous en avez un."
+        "sentence": "Réessayez ou sélectionnez un autre certificat si vous en avez un.",
+        "title": "Nous n'avons pas pu vérifier ce certificat"
       },
       "network": {
         "sentence": "Vérifiez votre connexion et réessayez. Sur un réseau scolaire ou professionnel, essayez avec les données mobiles ou un autre réseau.",
@@ -196,8 +196,8 @@
         "title": "Ce certificat n'est pas encore actif"
       },
       "provider_mismatch": {
-        "title": "Nous n'avons pas pu vérifier ce certificat",
-        "sentence": "Réessayez ou sélectionnez un autre certificat si vous en avez un."
+        "sentence": "Réessayez ou sélectionnez un autre certificat si vous en avez un.",
+        "title": "Nous n'avons pas pu vérifier ce certificat"
       },
       "revocation_unavailable": {
         "sentence": "C'est temporaire et indépendant de votre volonté. Réessayez dans quelques minutes.",

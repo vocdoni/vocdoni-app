@@ -178,8 +178,8 @@
         "title": "Bei uns ist etwas schiefgelaufen"
       },
       "invalid_chain": {
-        "title": "Dieses Zertifikat konnte nicht verifiziert werden",
-        "sentence": "Versuche es erneut oder wähle ein anderes Zertifikat, falls du eines hast."
+        "sentence": "Versuche es erneut oder wähle ein anderes Zertifikat, falls du eines hast.",
+        "title": "Dieses Zertifikat konnte nicht verifiziert werden"
       },
       "network": {
         "sentence": "Überprüfe deine Verbindung und versuche es erneut. In einem Schul- oder Firmennetz, versuche es mit mobilen Daten oder einem anderen Netz.",
@@ -194,8 +194,8 @@
         "title": "Dieses Zertifikat ist noch nicht aktiv"
       },
       "provider_mismatch": {
-        "title": "Dieses Zertifikat konnte nicht verifiziert werden",
-        "sentence": "Versuche es erneut oder wähle ein anderes Zertifikat, falls du eines hast."
+        "sentence": "Versuche es erneut oder wähle ein anderes Zertifikat, falls du eines hast.",
+        "title": "Dieses Zertifikat konnte nicht verifiziert werden"
       },
       "revocation_unavailable": {
         "sentence": "Das ist vorübergehend und nicht deine Schuld. Versuche es in wenigen Minuten noch einmal.",

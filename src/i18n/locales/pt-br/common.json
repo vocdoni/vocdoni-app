@@ -180,8 +180,8 @@
         "title": "Algo deu errado do nosso lado"
       },
       "invalid_chain": {
-        "title": "Não foi possível verificar este certificado",
-        "sentence": "Tente novamente ou escolha outro certificado se tiver um."
+        "sentence": "Tente novamente ou escolha outro certificado se tiver um.",
+        "title": "Não foi possível verificar este certificado"
       },
       "network": {
         "sentence": "Verifique sua conexão e tente novamente. Em uma rede escolar ou corporativa, tente com dados móveis ou outra rede.",
@@ -196,8 +196,8 @@
         "title": "Este certificado ainda não está ativo"
       },
       "provider_mismatch": {
-        "title": "Não foi possível verificar este certificado",
-        "sentence": "Tente novamente ou escolha outro certificado se tiver um."
+        "sentence": "Tente novamente ou escolha outro certificado se tiver um.",
+        "title": "Não foi possível verificar este certificado"
       },
       "revocation_unavailable": {
         "sentence": "Isso é temporário e não foi causado por você. Tente novamente em alguns minutos.",
