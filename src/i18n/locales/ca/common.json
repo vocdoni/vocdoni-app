@@ -253,7 +253,7 @@
       "ios_note": "A l'iPhone i l'iPad, fes servir el navegador que ja tenia el teu dispositiu. Els navegadors que has instal·lat tu mateix no poden fer servir certificats.",
       "ios_other_browser": "Aquest navegador no pot fer servir el teu certificat digital. El navegador que ve amb el teu dispositiu sí que pot.",
       "link_label": "Enllaç a aquesta votació",
-      "menu": "O fes servir el menú de l'aplicació. Moltes aplicacions tenen un botó de menú a la part superior o inferior de la pantalla, amb una opció per obrir la pàgina al navegador.",
+      "menu": "<b>O fes servir el menú de l'aplicació.</b> Moltes aplicacions tenen un botó de menú a la part superior o inferior de la pantalla, amb una opció per obrir la pàgina al navegador.",
       "menu_ios": "Si obre un navegador que has instal·lat tu, torna aquí i copia l'enllaç.",
       "old_firefox": "Aquesta versió del navegador no pot fer servir el teu certificat digital. Actualitza'l o obre aquesta pàgina en un altre navegador.",
       "open": "Obre-ho al teu navegador",
@@ -271,8 +271,8 @@
       "sticky_open": "Obre-ho al teu navegador per votar",
       "title": "Continua al teu navegador",
       "try_open": "Prova d'obrir-ho per mi",
-      "try_open_blocked": "No ha funcionat en aquesta aplicació. Fes servir Copia l'enllaç d'abans.",
-      "try_open_returned": "Ha obert el teu navegador la votació? Continua allà. Si no, fes servir Copia l'enllaç d'abans."
+      "try_open_blocked": "No ha funcionat en aquesta aplicació. Fes servir Copia l'enllaç de dalt.",
+      "try_open_returned": "Ha obert el teu navegador la votació? Continua allà. Si no, fes servir Copia l'enllaç de dalt."
     },
     "help": "Si continues tenint problemes, contacta amb {{organization}}.",
     "identified": {

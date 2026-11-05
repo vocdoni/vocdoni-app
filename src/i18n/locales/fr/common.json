@@ -241,7 +241,7 @@
       }
     },
     "escape": {
-      "blocked": "Votre navigateur ne s'est pas ouvert. L'application ne le permet peut-être pas: copiez le lien et collez-le dans votre navigateur.",
+      "blocked": "Votre navigateur ne s'est pas ouvert. L'application ne le permet peut-être pas : copiez le lien et collez-le dans votre navigateur.",
       "blocked_hint": "Copiez le lien et collez-le dans votre navigateur.",
       "cancel": "Annuler",
       "copied": "Lien copié",
@@ -253,14 +253,14 @@
       "ios_note": "Sur iPhone et iPad, utilisez le navigateur déjà présent sur votre appareil. Les navigateurs que vous avez installés vous-même ne peuvent pas utiliser de certificats.",
       "ios_other_browser": "Ce navigateur ne peut pas utiliser votre certificat électronique. Le navigateur fourni avec votre appareil le peut.",
       "link_label": "Lien vers ce vote",
-      "menu": "Ou utilisez le menu de l'application. Beaucoup d'applications ont un bouton de menu en haut ou en bas de l'écran, avec une option pour ouvrir la page dans votre navigateur.",
+      "menu": "<b>Ou utilisez le menu de l'application.</b> Beaucoup d'applications ont un bouton de menu en haut ou en bas de l'écran, avec une option pour ouvrir la page dans votre navigateur.",
       "menu_ios": "Si un navigateur que vous avez installé s'ouvre, revenez ici et copiez le lien.",
       "old_firefox": "Cette version du navigateur ne peut pas utiliser votre certificat électronique. Mettez-le à jour ou ouvrez cette page dans un autre navigateur.",
       "open": "Ouvrir dans votre navigateur",
       "open_again": "Réessayer",
       "opening": "Ouverture de votre navigateur...",
       "resume_title": "Demande de votre certificat...",
-      "returned": "Votre navigateur a-t-il ouvert ce vote? Continuez là-bas. Si non, copiez le lien ci-dessous.",
+      "returned": "Votre navigateur a-t-il ouvert ce vote ? Continuez là-bas. Si non, copiez le lien ci-dessous.",
       "share": "M'envoyer le lien",
       "step_sr": "Étape {{n}} : ",
       "step1_sr": "Copier le lien",
@@ -272,7 +272,7 @@
       "title": "Continuer dans votre navigateur",
       "try_open": "Essayer de l'ouvrir pour moi",
       "try_open_blocked": "Cela n'a pas fonctionné dans cette application. Utilisez Copier le lien ci-dessus.",
-      "try_open_returned": "Votre navigateur a-t-il ouvert ce vote? Continuez là-bas. Si non, utilisez Copier le lien ci-dessus."
+      "try_open_returned": "Votre navigateur a-t-il ouvert ce vote ? Continuez là-bas. Si non, utilisez Copier le lien ci-dessus."
     },
     "help": "Si le problème persiste, contactez {{organization}}.",
     "identified": {

@@ -251,7 +251,7 @@
       "ios_note": "On iPhone and iPad, use the browser that was already on your device. Browsers you installed yourself can't use certificates.",
       "ios_other_browser": "This browser can't use your digital certificate. The browser that came with your device can.",
       "link_label": "Link to this vote",
-      "menu": "Or use this app's menu. Many apps have a menu button at the top or bottom of the screen, with an option to open the page in your browser.",
+      "menu": "<b>Or use this app's menu.</b> Many apps have a menu button at the top or bottom of the screen, with an option to open the page in your browser.",
       "menu_ios": "If it opens a browser you installed yourself, come back and copy the link instead.",
       "old_firefox": "This browser version can't use your digital certificate. Update it, or open this page in another browser.",
       "open": "Open in your browser",

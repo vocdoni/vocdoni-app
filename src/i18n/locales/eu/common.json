@@ -251,7 +251,7 @@
       "ios_note": "iPhone eta iPad-en, erabili zure gailuan dagoeneko zegoen nabigatzailea. Zuk instalatutako nabigatzaileek ezin dituzte ziurtagiriak erabili.",
       "ios_other_browser": "Nabigatzaile honek ezin du zure ziurtagiri digitala erabili. Zure gailuarekin datorren nabigatzaileak bai.",
       "link_label": "Boto-prozesurako esteka",
-      "menu": "Edo erabili aplikazioaren menua. Aplikazio askok menu botoi bat dute pantailaren goian edo behean, orria nabigatzailean irekitzeko aukera duena.",
+      "menu": "<b>Edo erabili aplikazioaren menua.</b> Aplikazio askok menu botoi bat dute pantailaren goian edo behean, orria nabigatzailean irekitzeko aukera duena.",
       "menu_ios": "Zuk instalatutako nabigatzaile bat irekitzen badu, itzuli hona eta kopiatu esteka.",
       "old_firefox": "Nabigatzaile bertsio honek ezin du zure ziurtagiri digitala erabili. Eguneratu edo ireki orri hau beste nabigatzaile batean.",
       "open": "Ireki zure nabigatzailean",

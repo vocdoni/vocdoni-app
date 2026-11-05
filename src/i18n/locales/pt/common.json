@@ -253,7 +253,7 @@
       "ios_note": "No iPhone e iPad, usa o navegador que já estava no teu dispositivo. Os navegadores que instalaste não podem usar certificados.",
       "ios_other_browser": "Este navegador não pode usar o teu certificado digital. O navegador que veio com o teu dispositivo pode.",
       "link_label": "Link para esta votação",
-      "menu": "Ou usa o menu da aplicação. Muitas apps têm um botão de menu no topo ou fundo do ecrã, com uma opção para abrir a página no navegador.",
+      "menu": "<b>Ou usa o menu da aplicação.</b> Muitas apps têm um botão de menu no topo ou fundo do ecrã, com uma opção para abrir a página no navegador.",
       "menu_ios": "Se abrir um navegador que instalaste, volta aqui e copia o link.",
       "old_firefox": "Esta versão do navegador não pode usar o teu certificado digital. Atualiza-o ou abre esta página noutro navegador.",
       "open": "Abrir no teu navegador",

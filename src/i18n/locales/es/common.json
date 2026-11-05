@@ -253,7 +253,7 @@
       "ios_note": "En iPhone e iPad, usa el navegador que ya tenía tu dispositivo. Los navegadores que has instalado tú no pueden usar certificados.",
       "ios_other_browser": "Este navegador no puede usar tu certificado digital. El navegador que viene con tu dispositivo sí puede.",
       "link_label": "Enlace a esta votación",
-      "menu": "O usa el menú de la aplicación. Muchas apps tienen un botón de menú en la parte superior o inferior de la pantalla, con una opción para abrir la página en tu navegador.",
+      "menu": "<b>O usa el menú de la aplicación.</b> Muchas apps tienen un botón de menú en la parte superior o inferior de la pantalla, con una opción para abrir la página en tu navegador.",
       "menu_ios": "Si abre un navegador que has instalado tú, vuelve aquí y copia el enlace.",
       "old_firefox": "Esta versión del navegador no puede usar tu certificado digital. Actualízalo o abre esta página en otro navegador.",
       "open": "Abrir en tu navegador",
@@ -271,7 +271,7 @@
       "sticky_open": "Abrir en tu navegador para votar",
       "title": "Continuar en tu navegador",
       "try_open": "Intentar abrirlo por mí",
-      "try_open_blocked": "Eso no funcionó en esta aplicación. Usa Copiar enlace de arriba.",
+      "try_open_blocked": "Eso no ha funcionado en esta aplicación. Usa Copiar enlace de arriba.",
       "try_open_returned": "¿Ha abierto tu navegador esta votación? Continúa allí. Si no, usa Copiar enlace de arriba."
     },
     "help": "Si sigues teniendo problemas, contacta con {{organization}}.",

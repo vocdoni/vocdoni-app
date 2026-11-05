@@ -251,7 +251,7 @@
       "ios_note": "Auf iPhone und iPad nutze den Browser, der bereits auf deinem Gerät war. Browser, die du selbst installiert hast, können keine Zertifikate verwenden.",
       "ios_other_browser": "Dieser Browser kann dein digitales Zertifikat nicht verwenden. Der Browser, der mit deinem Gerät geliefert wurde, kann es.",
       "link_label": "Link zu dieser Abstimmung",
-      "menu": "Oder nutze das Menü der App. Viele Apps haben einen Menüknopf oben oder unten auf dem Bildschirm, mit einer Option, die Seite im Browser zu öffnen.",
+      "menu": "<b>Oder nutze das Menü der App.</b> Viele Apps haben einen Menüknopf oben oder unten auf dem Bildschirm, mit einer Option, die Seite im Browser zu öffnen.",
       "menu_ios": "Falls ein von dir installierter Browser geöffnet wird, komm zurück und kopiere den Link.",
       "old_firefox": "Diese Browser-Version kann dein digitales Zertifikat nicht verwenden. Aktualisiere ihn oder öffne diese Seite in einem anderen Browser.",
       "open": "Im Browser öffnen",
