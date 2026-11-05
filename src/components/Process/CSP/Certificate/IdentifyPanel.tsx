@@ -8,11 +8,11 @@ import { CertButton } from './CertButton'
 import { P, Panel, Small, Tiny } from './kit'
 
 /** Consent line rendered under the button with links to Terms and Privacy Policy. */
-const Consent = () => {
+export const Consent = ({ align = 'center' }: { align?: 'center' | 'start' }) => {
   const { TERMS_OF_SERVICE_URL, PRIVACY_POLICY_URL } = useAppEnv()
   const { t } = useTranslation()
   return (
-    <Tiny color='fg.muted' textAlign='center'>
+    <Tiny color='fg.muted' textAlign={align}>
       <Trans
         i18nKey='cert_auth.identify.consent'
         defaults='By continuing you accept the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.'
