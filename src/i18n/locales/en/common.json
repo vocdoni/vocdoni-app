@@ -241,6 +241,7 @@
     "escape": {
       "blocked": "Your browser didn't open. This app may not allow it: copy the link below and paste it into your browser.",
       "blocked_hint": "Copy the link and paste it into your browser.",
+      "cancel": "Cancel",
       "copied": "Link copied",
       "copied_status": "Link copied. Now open your browser and paste it.",
       "copy": "Copy link",
@@ -256,6 +257,8 @@
       "open": "Open in your browser",
       "open_again": "Try opening it again",
       "opening": "Opening your browser...",
+      "resume_body": "Your browser will ask you to choose a certificate. Choose the one with your name and press OK.",
+      "resume_title": "Asking for your certificate...",
       "returned": "Did your browser open this vote? Continue there. If it didn't, copy the link below.",
       "share": "Send the link to yourself",
       "step_sr": "Step {{n}}: ",

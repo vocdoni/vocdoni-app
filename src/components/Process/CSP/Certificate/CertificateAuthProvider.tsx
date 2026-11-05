@@ -2,6 +2,7 @@ import { createContext, useContext, type ReactNode } from 'react'
 import { useCertificateAuthMode } from '~queries/certificateAuth/mode'
 import type { CertAuthPurpose } from '~queries/certificateAuth/types'
 import { useCertificateAuthApi } from '~queries/certificateAuth/useCertificateAuthApi'
+import { EscapeProvider } from './EscapePanel'
 import { useCertificateAuth } from './useCertificateAuth'
 
 type CertificateAuthValue = ReturnType<typeof useCertificateAuth> & { purpose: CertAuthPurpose }
@@ -33,7 +34,11 @@ export const CertificateAuthProvider = ({
     navigate: mode === 'mock' ? mockNavigate : undefined,
     allowInsecureAuthUrl: mode === 'mock',
   })
-  return <CertificateAuthContext.Provider value={{ ...value, purpose }}>{children}</CertificateAuthContext.Provider>
+  return (
+    <CertificateAuthContext.Provider value={{ ...value, purpose }}>
+      <EscapeProvider>{children}</EscapeProvider>
+    </CertificateAuthContext.Provider>
+  )
 }
 
 /** Null outside a certificate vote: callers render nothing new then. */

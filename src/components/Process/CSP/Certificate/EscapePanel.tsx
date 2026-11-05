@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading, HStack, Icon, Spinner, Stack, Text, VisuallyHidden } from '@chakra-ui/react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import type { IconType } from 'react-icons'
 import {
   LuCheck,
@@ -15,7 +15,14 @@ import { useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
 import { Panel, Small, Tiny } from './kit'
 import { Consent } from './IdentifyPanel'
-import { cleanPageUrl, handoffUrl, intentUrl, iosOpenUrl } from './useEscapeHandoff'
+import {
+  cleanPageUrl,
+  handoffUrl,
+  intentUrl,
+  iosOpenUrl,
+  useEscapeHandoff,
+  type EscapeHandoff,
+} from './useEscapeHandoff'
 
 export type EscapeVariant = 'in-app' | 'ios-other-browser' | 'old-firefox-android'
 
@@ -406,18 +413,20 @@ const CopyFirstActions = ({
   )
 }
 
-// ---------- main panel ----------
+// ---------- shared open and copy state ----------
 
-/** Panel shown when the voter opened the process page inside an app's built-in browser. */
-export const EscapePanel = ({
-  platform,
-  variant,
-}: {
-  platform: 'android' | 'ios' | 'other'
-  variant: EscapeVariant
-}) => {
-  const { t } = useTranslation()
-  const { DISABLE_CERTIFICATE_IOS_OPEN_LINK: disableIosOpenLink = false } = useAppEnv()
+export type EscapeActions = {
+  openPhase: OpenPhase
+  copyPhase: CopyPhase
+  onOpen: (e: React.MouseEvent) => void
+  onCopy: () => void
+  onShare: () => void
+  linkRef: React.RefObject<HTMLParagraphElement | null>
+  openRef: React.RefObject<HTMLAnchorElement | null>
+}
+
+/** Open and copy mechanics, owned once per page so the panel and the sticky action stay in step. */
+export const useEscapeActions = (): EscapeActions => {
   const [openPhase, setOpenPhase] = useState<OpenPhase>('idle')
   const [copyPhase, setCopyPhase] = useState<CopyPhase>('idle')
   const linkRef = useRef<HTMLParagraphElement | null>(null)
@@ -435,7 +444,7 @@ export const EscapePanel = ({
     return () => window.removeEventListener('pageshow', onPageShow)
   }, [])
 
-  const onOpen = (e: React.MouseEvent) => {
+  const onOpen = () => {
     if (openPhase === 'opening') return
     // Let the link navigate; watch visibilitychange for 2.5 s.
     setCopyPhase('idle')
@@ -487,9 +496,20 @@ export const EscapePanel = ({
   }
 
   const onShare = () => {
-    // Share the clean URL — never the hand-off param.
+    // Share the clean URL: whoever receives it gets normal detection, never the hand-off param.
     navigator.share?.({ url: cleanPageUrl() }).catch(() => {})
   }
+
+  return { openPhase, copyPhase, onOpen, onCopy: () => void onCopy(), onShare, linkRef, openRef }
+}
+
+// ---------- main panel ----------
+
+type EscapePanelProps = { platform: 'android' | 'ios' | 'other'; variant: EscapeVariant }
+
+const EscapePanelBody = ({ platform, variant, actions }: EscapePanelProps & { actions: EscapeActions }) => {
+  const { t } = useTranslation()
+  const { DISABLE_CERTIFICATE_IOS_OPEN_LINK: disableIosOpenLink = false } = useAppEnv()
 
   const hasShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function'
 
@@ -508,17 +528,7 @@ export const EscapePanel = ({
               "You opened this link inside an app. Its built-in viewer can't use your digital certificate, but your browser can.",
           })
 
-  const handlers: EscapeHandlers = {
-    openPhase,
-    copyPhase,
-    onOpen,
-    onCopy,
-    onShare,
-    linkRef,
-    openRef,
-    hasShare,
-    disableIosOpenLink,
-  }
+  const handlers: EscapeHandlers = { ...actions, hasShare, disableIosOpenLink }
 
   return (
     <Panel as='section' aria-labelledby='escape-title' p={{ base: 4, md: 6 }}>
@@ -536,6 +546,15 @@ export const EscapePanel = ({
     </Panel>
   )
 }
+
+const OwnEscapePanel = (props: EscapePanelProps) => <EscapePanelBody {...props} actions={useEscapeActions()} />
+
+/**
+ * Panel shown when the voter opened the process page inside an app's built-in browser. Pass the page's
+ * `actions` to share them with the sticky action; without them the panel keeps its own.
+ */
+export const EscapePanel = ({ actions, ...props }: EscapePanelProps & { actions?: EscapeActions }) =>
+  actions ? <EscapePanelBody {...props} actions={actions} /> : <OwnEscapePanel {...props} />
 
 // ---------- sticky action ----------
 
@@ -597,3 +616,25 @@ export const EscapeStickyAction = ({
     </Stack>
   )
 }
+
+// ---------- page state ----------
+
+export type EscapeState = EscapeHandoff & { endResume(): void; actions: EscapeActions | null }
+
+const NO_ESCAPE: EscapeState = { browser: { kind: 'supported' }, resuming: false, endResume: () => {}, actions: null }
+
+const EscapeContext = createContext<EscapeState | null>(null)
+
+/** One escape state per page: the panel above the ballot and the sticky action read the same one. */
+export const EscapeProvider = ({ children }: { children: ReactNode }) => {
+  const { browser, resuming } = useEscapeHandoff()
+  const actions = useEscapeActions()
+  // Cancel or the auto-start ends the hand-off for this page load, so it never starts twice.
+  const [resumeOver, setResumeOver] = useState(false)
+  const endResume = useCallback(() => setResumeOver(true), [])
+  const value: EscapeState = { browser, resuming: resuming && !resumeOver, endResume, actions }
+  return <EscapeContext.Provider value={value}>{children}</EscapeContext.Provider>
+}
+
+/** Outside an `EscapeProvider` the browser counts as supported and nothing resumes. */
+export const useEscape = () => useContext(EscapeContext) ?? NO_ESCAPE
