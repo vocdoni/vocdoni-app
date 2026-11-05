@@ -1,7 +1,7 @@
-import { Box, Button, Heading, HStack, Spinner } from '@chakra-ui/react'
+import { Button, Heading, HStack, Spinner } from '@chakra-ui/react'
 import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { P, Panel } from './kit'
+import { Panel } from './kit'
 
 /**
  * Shown in the real browser after the escape hand-off, just before the certificate flow starts on its
@@ -14,7 +14,7 @@ export const ResumePanel = forwardRef<HTMLHeadingElement, { onCancel(): void }>(
   const { t } = useTranslation()
   return (
     <Panel as='section' aria-labelledby='resume-title'>
-      <HStack gap={3} mb={2} align='center'>
+      <HStack gap={3} mb={4} align='center' role='status'>
         <Spinner size='md' flexShrink={0} />
         <Heading
           id='resume-title'
@@ -29,14 +29,6 @@ export const ResumePanel = forwardRef<HTMLHeadingElement, { onCancel(): void }>(
           {t('cert_auth.escape.resume_title', { defaultValue: 'Asking for your certificate...' })}
         </Heading>
       </HStack>
-      <Box role='status'>
-        <P mb={4}>
-          {t('cert_auth.escape.resume_body', {
-            defaultValue:
-              'Your browser will ask you to choose a certificate. Choose the one with your name and press OK.',
-          })}
-        </P>
-      </Box>
       <Button variant='outline' size='lg' w={{ base: 'full', sm: 'auto' }} onClick={onCancel}>
         {t('cert_auth.escape.cancel', { defaultValue: 'Cancel' })}
       </Button>

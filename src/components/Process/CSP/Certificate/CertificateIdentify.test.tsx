@@ -210,9 +210,6 @@ describe('leaving an in-app viewer', () => {
 
     expect(window.location.search).toBe('')
     expect(screen.getByRole('heading', { name: 'Asking for your certificate...' })).toBeInTheDocument()
-    expect(
-      screen.getByText('Your browser will ask you to choose a certificate. Choose the one with your name and press OK.')
-    ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
     expect(screen.queryByText(/By continuing you accept/)).not.toBeInTheDocument()
     expect(screen.getByTestId('sticky')).toBeEmptyDOMElement()
