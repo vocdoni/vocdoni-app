@@ -97,10 +97,8 @@ describe('Android in-app layout', () => {
     // After timeout the button label changes to "Try opening it again" (outline)
     expect(screen.getByTestId('open').textContent).toContain('Try opening it again')
     expect(screen.getByRole('status').textContent).toContain("didn't open")
-    // Copy link becomes solid
-    const copyBtn = screen.getByTestId('copy')
-    // The variant 'solid' is applied; check it doesn't have the outline data attribute
-    expect(copyBtn.closest('button, a')).toBeTruthy()
+    // blocked=true drives solid={blocked} on the copy button; the hint text confirms blocked layout
+    expect(screen.getByText('Copy the link and paste it into your browser.')).toBeTruthy()
     vi.useRealTimers()
   })
 
@@ -242,10 +240,11 @@ describe('ios-other-browser and old-firefox-android variants', () => {
   })
 
   it('old-firefox-android: shows its own sentence, copy-first layout, no app-menu box', () => {
-    renderPanel('android', 'old-firefox-android')
+    renderPanel('other', 'old-firefox-android')
     expect(screen.getByText(/This browser version can't use your digital certificate/)).toBeTruthy()
     expect(screen.getByTestId('copy')).toBeTruthy()
     expect(screen.queryByText(/use this app's menu/i)).toBeNull()
+    expect(screen.queryByTestId('open')).toBeNull()
   })
 })
 

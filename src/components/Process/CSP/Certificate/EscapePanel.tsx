@@ -11,9 +11,9 @@ import {
   LuRotateCcw,
   LuShare,
 } from 'react-icons/lu'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
-import { Panel, Small, Tiny } from './kit'
+import { P, Panel, Small, Tiny } from './kit'
 import { Consent } from './IdentifyPanel'
 import {
   cleanPageUrl,
@@ -179,7 +179,7 @@ const OpenLink = ({
     <Button {...bigButton} {...(compact ? { size: 'md', minH: 11 } : {})} variant={variant} asChild>
       <a ref={openRef} href={intentUrl()} onClick={onOpen} aria-disabled={opening || undefined} data-testid='open'>
         {opening ? <Spinner size='sm' /> : <Icon as={phase === 'blocked' ? LuRotateCcw : LuExternalLink} boxSize={5} />}
-        {opening ? <span>{label}</span> : <span>{label}</span>}
+        <span>{label}</span>
       </a>
     </Button>
   )
@@ -395,12 +395,11 @@ const CopyFirstActions = ({
       {showMenu && (
         <Box bg='bg.subtle' borderRadius='md' px={4} py={3}>
           <Small>
-            <b>
-              {t('cert_auth.escape.menu', {
-                defaultValue:
-                  "Or use this app's menu. Many apps have a menu button at the top or bottom of the screen, with an option to open the page in your browser.",
-              })}
-            </b>
+            <Trans
+              i18nKey='cert_auth.escape.menu'
+              components={{ b: <b /> }}
+              defaults="<b>Or use this app's menu.</b> Many apps have a menu button at the top or bottom of the screen, with an option to open the page in your browser."
+            />
             {isIos &&
               ' ' +
                 t('cert_auth.escape.menu_ios', {
@@ -432,8 +431,19 @@ export const useEscapeActions = (): EscapeActions => {
   const linkRef = useRef<HTMLParagraphElement | null>(null)
   const openRef = useRef<HTMLAnchorElement | null>(null)
   const timer = useRef<number | undefined>(undefined)
+  // Tracks whichever visibilitychange listener is currently active so it can be removed on unmount.
+  const activeListenerRef = useRef<(() => void) | undefined>(undefined)
 
-  useEffect(() => () => window.clearTimeout(timer.current), [])
+  useEffect(
+    () => () => {
+      window.clearTimeout(timer.current)
+      if (activeListenerRef.current) {
+        document.removeEventListener('visibilitychange', activeListenerRef.current)
+        activeListenerRef.current = undefined
+      }
+    },
+    []
+  )
 
   // Back from a bfcache restore should not leave the button stuck on "Opening".
   useEffect(() => {
@@ -444,8 +454,11 @@ export const useEscapeActions = (): EscapeActions => {
     return () => window.removeEventListener('pageshow', onPageShow)
   }, [])
 
-  const onOpen = () => {
-    if (openPhase === 'opening') return
+  const onOpen = (e: React.MouseEvent) => {
+    if (openPhase === 'opening') {
+      e.preventDefault()
+      return
+    }
     // Let the link navigate; watch visibilitychange for 2.5 s.
     setCopyPhase('idle')
     setOpenPhase('opening')
@@ -454,19 +467,24 @@ export const useEscapeActions = (): EscapeActions => {
     const onHide = () => {
       if (!document.hidden) return
       document.removeEventListener('visibilitychange', onHide)
+      activeListenerRef.current = undefined
       window.clearTimeout(timer.current)
       // Page hidden = browser probably opened; wait for it to become visible again.
       const onShow = () => {
         if (document.hidden) return
         document.removeEventListener('visibilitychange', onShow)
+        activeListenerRef.current = undefined
         setOpenPhase('returned')
       }
       document.addEventListener('visibilitychange', onShow)
+      activeListenerRef.current = onShow
     }
     document.addEventListener('visibilitychange', onHide)
+    activeListenerRef.current = onHide
 
     timer.current = window.setTimeout(() => {
       document.removeEventListener('visibilitychange', onHide)
+      activeListenerRef.current = undefined
       setOpenPhase('blocked')
     }, 2500)
   }
@@ -535,9 +553,9 @@ const EscapePanelBody = ({ platform, variant, actions }: EscapePanelProps & { ac
       <Heading id='escape-title' as='h2' fontSize='xl' fontWeight='semibold' lineHeight='1.3' tabIndex={-1}>
         {t('cert_auth.escape.title', { defaultValue: 'Continue in your browser' })}
       </Heading>
-      <Small mt={1} mb={4} as='p'>
+      <P mt={1} mb={4} as='p'>
         {sentence}
-      </Small>
+      </P>
       {platform === 'android' ? (
         <AndroidActions {...handlers} />
       ) : (

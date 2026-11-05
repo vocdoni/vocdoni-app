@@ -14,7 +14,7 @@ export const ResumePanel = forwardRef<HTMLHeadingElement, { onCancel(): void }>(
   const { t } = useTranslation()
   return (
     <Panel as='section' aria-labelledby='resume-title'>
-      <HStack gap={3} mb={4} align='center' role='status'>
+      <HStack gap={3} mb={4} align='center'>
         <Spinner size='md' flexShrink={0} />
         <Heading
           id='resume-title'
