@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react'
 import { getMemberField, MEMBER_FIELD_IDS, MEMBER_FIELDS, useMemberFields } from './fields'
+import { TOGGLEABLE_COLUMNS } from './People/useColumnVisibility'
 
 describe('MEMBER_FIELDS', () => {
   it('keeps the API ids, in order', () => {
@@ -15,6 +16,10 @@ describe('MEMBER_FIELDS', () => {
       'weight',
       'password',
     ])
+  })
+
+  it('never offers the password as a column: the API only says whether there is one', () => {
+    expect(TOGGLEABLE_COLUMNS).not.toContain('password')
   })
 
   it('marks only the fields the server can sort by as sortable', () => {
