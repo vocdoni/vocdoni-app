@@ -30,6 +30,7 @@ import {
   type ComponentsPartialDefinition,
   defineComponent,
   getElectionTitle,
+  linkifyIpfs,
   useElection,
   useReactComponentsLocalize,
 } from '@vocdoni/react-components'
@@ -294,6 +295,67 @@ export const electionComponents: ComponentsPartialDefinition = {
       )
     }
   ),
+  QuestionRankChoice: defineComponent<'QuestionRankChoice', BoxProps>(
+    ({
+      choice,
+      value,
+      label,
+      description,
+      image,
+      compact,
+      hasImage: _hasImage,
+      canOpenImageModal,
+      dataAttrs,
+      presentation,
+      position,
+      options,
+      disabled,
+      onRank,
+      ...props
+    }) => {
+      // The SDK default renders `description` as raw HTML; keep it on the markdown path.
+      const imageSrc = image?.thumbnail ?? image?.default
+
+      return (
+        <Box
+          as='label'
+          {...props}
+          data-presentation={presentation}
+          data-selection-mode='ranked'
+          data-choice-value={value}
+          data-choice-card={dataAttrs?.['data-choice-card']}
+          data-layout={dataAttrs?.['data-layout']}
+        >
+          {imageSrc ? (
+            <Image
+              src={linkifyIpfs(imageSrc)}
+              alt={label}
+              data-choice-media={dataAttrs?.['data-choice-media']}
+              data-can-open-modal={canOpenImageModal ? 'true' : undefined}
+            />
+          ) : null}
+          <Box as='span' data-choice-body={dataAttrs?.['data-choice-body']} data-compact={compact ? '' : undefined}>
+            {label}
+          </Box>
+          {markdown(description)}
+          <select
+            id={`rank-${choice.value}`}
+            value={position ?? ''}
+            disabled={disabled}
+            data-choice-control={dataAttrs?.['data-choice-control']}
+            onChange={(event) => onRank(event.target.value === '' ? null : Number(event.target.value))}
+          >
+            <option value=''>—</option>
+            {options.map((option) => (
+              <option key={option.position} value={option.position} data-taken={option.taken ? '' : undefined}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </Box>
+      )
+    }
+  ),
   QuestionsTypeBadge: defineComponent<'QuestionsTypeBadge', BoxProps>(({ title, tooltip, ...props }) => {
     const recipe = useSlotRecipe({ key: 'QuestionsTypeBadge' })
     const styles = recipe()
@@ -516,17 +578,23 @@ export const electionComponents: ComponentsPartialDefinition = {
                 return (
                   <Box key={choice.title} position='relative'>
                     <Text css={styles.choiceTitle}>{choice.title}</Text>
-                    <Text css={styles.choiceVotes}>
-                      {t('results.votes', {
-                        votes: choice.votes,
-                        percent: choice.percent,
-                      })}
-                    </Text>
-                    <Progress.Root css={[styles.progress, progressStyles.root]} value={percent} max={100}>
-                      <Progress.Track css={progressStyles.track}>
-                        <Progress.Range css={progressStyles.range} />
-                      </Progress.Track>
-                    </Progress.Root>
+                    {/* `votes` is empty for a question whose ballot type can't be inferred (e.g. a legacy
+                        process with no type nor ballotProtocol): there is no tally to show, not a zero one. */}
+                    {choice.votes ? (
+                      <>
+                        <Text css={styles.choiceVotes}>
+                          {t('results.votes', {
+                            votes: choice.votes,
+                            percent: choice.percent,
+                          })}
+                        </Text>
+                        <Progress.Root css={[styles.progress, progressStyles.root]} value={percent} max={100}>
+                          <Progress.Track css={progressStyles.track}>
+                            <Progress.Range css={progressStyles.range} />
+                          </Progress.Track>
+                        </Progress.Root>
+                      </>
+                    ) : null}
                     {choice.description ? <Box mt={2}>{markdown(choice.description)}</Box> : null}
                   </Box>
                 )

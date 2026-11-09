@@ -13,7 +13,7 @@ const IntegratorsSignup = () => {
   useEffect(() => {
     setTitle(t('integrators.signup_title', { defaultValue: 'Create your integrator account' }))
     setSubtitle(t('integrators.signup_subtitle', { defaultValue: 'Sign up to manage organizations as an integrator.' }))
-  }, [])
+  }, [setTitle, setSubtitle, t])
 
   // Integrators have no standalone verify route: render the verification form inline right after
   // registering, and send the verified user to the integrators app (where the org is provisioned).

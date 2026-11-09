@@ -26,7 +26,9 @@ services:
 
   vocone:
     platform: linux/amd64
-    image: ghcr.io/vocdoni/vocdoni-node:main
+    # Override to run against a vocdoni-node built from source, e.g. VOCDONI_NODE_IMAGE=<image>
+    # printed by scripts/integration-build-image.sh (see integration/README.md).
+    image: ${VOCDONI_NODE_IMAGE:-ghcr.io/vocdoni/vocdoni-node:main}
     entrypoint: /app/voconed
     environment:
       VOCONED_DIR: /app/run
@@ -90,7 +92,9 @@ services:
 
   api:
     platform: linux/amd64
-    image: ghcr.io/vocdoni/saas-backend:main
+    # Override to run against a saas-backend built from source, e.g. SAAS_BACKEND_IMAGE=<image>
+    # printed by scripts/integration-build-image.sh (see integration/README.md).
+    image: ${SAAS_BACKEND_IMAGE:-ghcr.io/vocdoni/saas-backend:main}
     environment:
       VOCDONI_SERVERURL: http://localhost:${INTEGRATION_HOST_PORT:-8080}
       VOCDONI_HOST: 0.0.0.0
@@ -120,8 +124,8 @@ services:
       VOCDONI_EMAILFROMADDRESS: admin@test.local
       VOCDONI_EMAILFROMNAME: Vocdoni
     ports:
-      - '${INTEGRATION_HOST_PORT:-8080}:8080'
-      - '${INTEGRATION_MAILHOG_PORT:-8025}:8025'
+      - '127.0.0.1:${INTEGRATION_HOST_PORT:-8080}:8080'
+      - '127.0.0.1:${INTEGRATION_MAILHOG_PORT:-8025}:8025'
     depends_on:
       mongo:
         condition: service_healthy

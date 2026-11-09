@@ -1,6 +1,7 @@
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
-import { SelectorTypes } from './common'
+import { defaultProcessValues, SelectorTypes } from './common'
 import { votingProcessToCreateRequest, votingProcessToForm } from './draft-mapping'
+import { buildCensusSpec } from '.'
 
 const BALLOT_PROTOCOL = {
   costExponent: 1,
@@ -258,6 +259,25 @@ describe('votingProcessToForm', () => {
       expect(votingProcessToForm(process()).census).toBeNull()
     })
 
+    // The auth dialog confirms a two-factor-only setup; reloading it as unset
+    // blocked publishing a draft that was ready.
+    it.each([
+      [['email'], 'email'],
+      [['phone'], 'sms'],
+      [['email', 'phone'], 'voter_choice'],
+    ] as const)('restores a two-factor-only census from %s', (twoFaFields, method) => {
+      const form = votingProcessToForm(process({ census: { authFields: [], twoFaFields: [...twoFaFields] } as any }))
+
+      expect(form.census).toEqual({ credentials: [], use2FA: true, use2FAMethod: method })
+    })
+
+    it('round-trips a two-factor-only census through the census spec', () => {
+      const census = { credentials: [], use2FA: true, use2FAMethod: 'sms' as const }
+      const spec = buildCensusSpec({ ...defaultProcessValues, groupId: 'group-1', census })
+
+      expect(votingProcessToForm(process({ census: spec as any })).census).toEqual(census)
+    })
+
     it('restores anonymous voting', () => {
       expect(votingProcessToForm(process({ census: { anonymous: true } })).anonymousVoting).toBe(true)
     })
@@ -400,5 +420,31 @@ describe('votingProcessToCreateRequest', () => {
 
     expect(request.census).toMatchObject({ weighted: true, authFields: ['memberNumber'], twoFaFields: ['email'] })
     expect(request.questions[0].secretUntilTheEnd).toBe(true)
+  })
+
+  it('strips the anonymous flag when the option is disabled', () => {
+    const request = votingProcessToCreateRequest(process({ census: { anonymous: true } }), '0xorg', true)
+
+    expect(request.census?.anonymous).toBeUndefined()
+  })
+
+  it('keeps the anonymous flag when the option is not disabled', () => {
+    const request = votingProcessToCreateRequest(process({ census: { anonymous: true } }), '0xorg', false)
+
+    expect(request.census?.anonymous).toBe(true)
+  })
+})
+
+describe('votingProcessToForm with disabled option', () => {
+  it('forces anonymousVoting to false when the option is disabled, even for an anonymous draft', () => {
+    const form = votingProcessToForm(process({ census: { anonymous: true } }), true)
+
+    expect(form.anonymousVoting).toBe(false)
+  })
+
+  it('restores anonymousVoting normally when the option is not disabled', () => {
+    const form = votingProcessToForm(process({ census: { anonymous: true } }), false)
+
+    expect(form.anonymousVoting).toBe(true)
   })
 })

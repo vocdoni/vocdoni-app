@@ -2,6 +2,12 @@ import { toOpenGraphLocale } from '~i18n/languages'
 import type { StructuredData } from './publicPageSchema'
 import type { PublicMeta } from '~src/ssr/public-pages'
 
+// JSON.stringify leaves `<`, `>`, `&` and U+2028/U+2029 untouched, so a name containing
+// `</script>` would close the script element. Escaping them as JSON unicode escapes keeps
+// the output valid JSON that parses back to the same object.
+const serializeJsonLd = (data: StructuredData) =>
+  JSON.stringify(data).replace(/[<>&\u2028\u2029]/g, (char) => `\\u${char.charCodeAt(0).toString(16).padStart(4, '0')}`)
+
 type PageMetaHeadProps = {
   meta: PublicMeta
   structuredData?: StructuredData[]
@@ -41,7 +47,7 @@ const PageMetaHead = ({ meta, structuredData = [] }: PageMetaHeadProps) => {
         <script
           key={`structured-data-${index}`}
           type='application/ld+json'
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(entry) }}
         />
       ))}
     </>

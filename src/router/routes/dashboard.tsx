@@ -8,7 +8,7 @@ import LayoutDashboard from '~elements/LayoutDashboard'
 import { QueryKeys } from '~queries/keys'
 import OrganizationProtectedRoute from '~src/router/OrganizationProtectedRoute'
 import ProtectedRoutes from '~src/router/ProtectedRoutes'
-import { Routes } from '.'
+import { redirectLegacyPath, Routes } from '.'
 import AccountProtectedRoute from '../AccountProtectedRoute'
 import OrganizationTypeGuard from '../OrganizationTypeGuard'
 import { Loading, SuspenseLoader } from '../SuspenseLoader'
@@ -22,7 +22,7 @@ const Drafts = lazy(() => import('~elements/dashboard/processes/drafts'))
 const DashboardProcessView = lazy(() => import('~elements/dashboard/processes/view'))
 const ProcessCreate = lazy(() => import('~elements/dashboard/processes/create'))
 const OrganizationEdit = lazy(() => import('~components/Organization/Dashboard/Organization'))
-const SubscriptionPage = lazy(() => import('~components/Organization/Dashboard/Subscription'))
+const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
 const OrganizationSupport = lazy(() => import('~components/Organization/Dashboard/Support'))
 const OrganizationTeam = lazy(() => import('~components/Organization/Dashboard/Team'))
 const Profile = lazy(() => import('~elements/dashboard/profile'))
@@ -32,6 +32,7 @@ const MemberbaseTabs = lazy(() => import('~elements/dashboard/memberbase/tabs'))
 const MembersImport = lazy(() => import('~elements/dashboard/memberbase/import'))
 const Members = lazy(() => import('~elements/dashboard/memberbase/members'))
 const Groups = lazy(() => import('~elements/dashboard/memberbase/groups'))
+const CensusCheckout = lazy(() => import('~elements/dashboard/processes/census-checkout'))
 
 // others
 const Dashboard = lazy(() => import('~elements/dashboard'))
@@ -125,6 +126,24 @@ export const useDashboardRoutes = () => {
                       { index: true, element: <Fragment /> },
                       { path: Routes.dashboard.processResults, element: <Fragment /> },
                     ],
+                  },
+                  {
+                    path: Routes.dashboard.census.checkout,
+                    element: (
+                      <SuspenseLoader>
+                        <CensusCheckout />
+                      </SuspenseLoader>
+                    ),
+                    errorElement: <Error />,
+                  },
+                  {
+                    path: Routes.dashboard.census.checkoutReturn,
+                    element: (
+                      <SuspenseLoader>
+                        <CensusCheckout />
+                      </SuspenseLoader>
+                    ),
+                    errorElement: <Error />,
                   },
                   {
                     path: Routes.dashboard.processes.base,
@@ -247,12 +266,32 @@ export const useDashboardRoutes = () => {
                         ),
                       },
                       {
-                        path: Routes.dashboard.settings.subscription,
+                        path: Routes.dashboard.settings.billing,
                         element: (
                           <SuspenseLoader>
-                            <SubscriptionPage />
+                            <WalletPanel processLinks />
                           </SuspenseLoader>
                         ),
+                      },
+                      {
+                        path: Routes.dashboard.settings.billingReturn,
+                        element: (
+                          <SuspenseLoader>
+                            <WalletPanel processLinks />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.settings.legacySubscription,
+                        ...redirectLegacyPath(Routes.dashboard.settings.billing),
+                      },
+                      {
+                        path: Routes.dashboard.settings.legacyWallet,
+                        ...redirectLegacyPath(Routes.dashboard.settings.billing),
+                      },
+                      {
+                        path: Routes.dashboard.settings.legacyWalletReturn,
+                        ...redirectLegacyPath(Routes.dashboard.settings.billingReturn),
                       },
                       {
                         path: Routes.dashboard.settings.support,
@@ -268,6 +307,15 @@ export const useDashboardRoutes = () => {
                     ...ProtectedRoutes([
                       {
                         path: Routes.processes.create,
+                        element: (
+                          <SuspenseLoader>
+                            <ProcessCreate />
+                          </SuspenseLoader>
+                        ),
+                        errorElement: <Error />,
+                      },
+                      {
+                        path: Routes.processes.createReturn,
                         element: (
                           <SuspenseLoader>
                             <ProcessCreate />

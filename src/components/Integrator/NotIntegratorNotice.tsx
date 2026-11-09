@@ -75,7 +75,7 @@ const NotIntegratorNotice = () => {
         title={t('integrators.create_account.title', { defaultValue: 'Create a free integrator account?' })}
         subtitle={t('integrators.create_account.description', {
           defaultValue:
-            'A new integrator account on the free plan will be created and set as your active organization.',
+            'A new integrator account will be created and set as your active organization, which unlocks the integrator dashboard.',
         })}
         open={open}
         // While the org is being created, keep the modal locked: block ESC and outside clicks so the

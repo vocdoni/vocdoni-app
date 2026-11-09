@@ -1,3 +1,4 @@
+import { VocdoniApiError } from '@vocdoni/api-client'
 import i18n from '~i18n'
 import { getActiveLanguage } from '~i18n/active-language'
 
@@ -32,7 +33,6 @@ export enum ApiEndpoints {
   OrganizationsLanguages = 'organizations/languages',
   OrganizationsRoles = 'organizations/roles',
   OrganizationsTypes = 'organizations/types',
-  OrganizationSubscription = 'organizations/{address}/subscription',
   OrganizationsSupport = 'organizations/{address}/ticket',
   OrganizationMeta = 'organizations/{address}/meta',
   OrganizationMembers = 'organizations/{address}/members',
@@ -44,11 +44,8 @@ export enum ApiEndpoints {
   Password = 'users/password',
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
-  Plans = 'plans',
   Refresh = 'auth/refresh',
   Register = 'users',
-  SubscriptionCheckout = 'subscriptions/checkout',
-  SubscriptionPortal = 'subscriptions/{address}/portal',
   Verify = 'users/verify',
   VerifyCode = 'users/verify/code',
   Storage = 'storage',
@@ -68,6 +65,8 @@ export enum ErrorCode {
 interface IApiError {
   error: string
   code?: number
+  // Error-specific payload, e.g. the quote of a 402 payment error
+  data?: unknown
 }
 
 export class ApiError extends Error {
@@ -88,6 +87,23 @@ export class BadRequestApiError extends ApiError {}
 export class UnverifiedApiError extends ApiError {}
 
 export class UserAlreadyVerifiedApiError extends ApiError {}
+
+export type ApiErrorDetails = {
+  code?: number
+  data?: unknown
+}
+
+// The app talks to the backend through both its own `api()` (ApiError) and the integrator SDK
+// (VocdoniApiError); both carry the parsed error body, just under different names. Undefined
+// for any other error.
+export const apiErrorDetails = (error: unknown): ApiErrorDetails | undefined => {
+  if (error instanceof ApiError) return { code: error.apiError?.code, data: error.apiError?.data }
+  if (error instanceof VocdoniApiError) {
+    const body = error.body as { data?: unknown } | undefined
+    return { code: error.code, data: error.data ?? body?.data }
+  }
+  return undefined
+}
 
 export const getApiErrorMessage = (error: unknown) => {
   if (!error) return undefined

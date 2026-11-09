@@ -29,6 +29,7 @@ chakra-config.json
 # AI related
 .codex
 .agents
+.claude/skills
 .pi
 skills-lock.json
 

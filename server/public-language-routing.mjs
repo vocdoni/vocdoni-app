@@ -60,7 +60,11 @@ const readCookieValue = (cookieHeader, key) => {
 
   if (!entry) return null
 
-  return decodeURIComponent(entry.slice(key.length + 1))
+  try {
+    return decodeURIComponent(entry.slice(key.length + 1))
+  } catch {
+    return null
+  }
 }
 
 const getPublicLanguageFromCookie = ({ cookieHeader, supportedLanguages }) => {

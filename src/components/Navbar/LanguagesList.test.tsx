@@ -20,7 +20,7 @@ vi.mock('react-i18next', async (importOriginal) => {
   return {
     ...actual,
     useTranslation: () => ({
-      t: (_key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? 'User menu',
+      t: (_key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? _key,
       i18n: {
         language: 'en',
         changeLanguage,
@@ -45,7 +45,7 @@ describe('LanguagesList', () => {
       </ChakraProvider>
     )
 
-    expect(screen.getByRole('button', { name: /user menu/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Language' })).toBeInTheDocument()
   })
 
   it('navigates to the localized public url instead of only changing i18n state', async () => {

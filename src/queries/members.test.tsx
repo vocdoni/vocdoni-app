@@ -57,7 +57,7 @@ describe('member queries', () => {
 
     await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
     expect(bearedFetch).toHaveBeenCalledWith(
-      'organizations/0xorg/members?page=1&limit=10&search=a%2Bb%40x.org%20%26%20co'
+      'organizations/0xorg/members?page=1&limit=10&search=a%2Bb%40x.org+%26+co'
     )
   })
 
@@ -71,6 +71,82 @@ describe('member queries', () => {
     expect(bearedFetch).toHaveBeenCalledWith(
       'organizations/0xorg/members?page=3&limit=50&search=&sortBy=surname&sortOrder=desc'
     )
+  })
+
+  it('keeps the sort when the search contains ? and &', async () => {
+    bearedFetch.mockResolvedValue({ members: [], pagination: { totalItems: 0 } })
+    renderHook(() => usePaginatedMembers({ search: 'a?b&sortBy=email', sortBy: 'name', sortOrder: 'desc' }), {
+      wrapper,
+    })
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
+    expect(bearedFetch).toHaveBeenCalledWith(
+      'organizations/0xorg/members?page=1&limit=10&search=a%3Fb%26sortBy%3Demail&sortBy=name&sortOrder=desc'
+    )
+  })
+})
+
+describe('usePaginatedMembers placeholder data', () => {
+  // One client for the whole render, so the cache survives a rerender.
+  const stableWrapper = () => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    return ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={['/admin/memberbase/members/1']}>{children}</MemoryRouter>
+      </QueryClientProvider>
+    )
+  }
+
+  afterEach(() => {
+    resetReactProvidersMock()
+  })
+
+  it('keeps the current rows while a new sort loads', async () => {
+    const firstPage = { members: [{ id: '1', name: 'Ada' }], pagination: {} }
+    // The second request never resolves, so the hook stays in the "loading the new sort" state.
+    bearedFetch
+      .mockReset()
+      .mockResolvedValueOnce(firstPage)
+      .mockReturnValue(new Promise(() => {}))
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
+    })
+    const { result, rerender } = renderHook(
+      ({ sortOrder }: { sortOrder: 'asc' | 'desc' }) =>
+        usePaginatedMembers({ sortBy: 'name', sortOrder, keepPrevious: true }),
+      { wrapper: stableWrapper(), initialProps: { sortOrder: 'asc' } }
+    )
+
+    await waitFor(() => expect(result.current.data?.members).toEqual(firstPage.members))
+    rerender({ sortOrder: 'desc' })
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(2))
+    expect(result.current.isPlaceholderData).toBe(true)
+    expect(result.current.data?.members).toEqual(firstPage.members)
+  })
+
+  it('never lends another organization its rows, even when its search equals the new address', async () => {
+    const orgARows = { members: [{ id: '1', name: 'Ada' }], pagination: {} }
+    bearedFetch
+      .mockReset()
+      .mockResolvedValueOnce(orgARows)
+      .mockReturnValue(new Promise(() => {}))
+    // The mock reads `address` on every call, so flipping it and rerendering switches the organization.
+    let address = '0xa'
+    setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address } }) })
+    // Organization A is searching for the very string that is organization B's address, so B's
+    // key contains A's search term and a loose "address anywhere in the key" check would match.
+    const { result, rerender } = renderHook(() => usePaginatedMembers({ search: '0xb', keepPrevious: true }), {
+      wrapper: stableWrapper(),
+    })
+    await waitFor(() => expect(result.current.data?.members).toEqual(orgARows.members))
+
+    address = '0xb'
+    rerender()
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(2))
+    expect(result.current.isPlaceholderData).toBe(false)
+    expect(result.current.data).toBeUndefined()
   })
 })
 

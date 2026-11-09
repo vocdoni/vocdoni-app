@@ -1,9 +1,16 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 import i18n from 'i18next'
+import { webcrypto } from 'node:crypto'
 import type { ReactNode } from 'react'
 import { initReactI18next } from 'react-i18next'
 import { afterEach, vi } from 'vitest'
+
+// hashMemberPassword (src/utils/member-password.ts) reads globalThis.crypto.subtle, which the jsdom
+// environment may lack: fall back to Node's own Web Crypto implementation.
+if (!globalThis.crypto?.subtle) {
+  Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true })
+}
 
 function createToastMock() {
   const toastFn = ((options?: { id?: string }) => ({ id: options?.id ?? 'toast' })) as any

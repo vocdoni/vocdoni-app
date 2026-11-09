@@ -3,7 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import React from 'react'
 import { mockUseOrganization } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { getNextGroupsPageParam, useAllGroups } from './groups'
+import { getNextGroupsPageParam, useAllGroups, withMembersCount } from './groups'
 
 const bearedFetch = vi.fn()
 
@@ -59,5 +59,17 @@ describe('useAllGroups', () => {
       'organizations/0xorg/groups?page=1&limit=100',
       'organizations/0xorg/groups?page=2&limit=100',
     ])
+  })
+})
+
+describe('withMembersCount', () => {
+  it('counts an ordinary group from its member ids, which is all the single-group endpoint sends', () => {
+    expect(withMembersCount({ id: 'g', title: 'Board', memberIds: ['a', 'b'] } as never).membersCount).toBe(2)
+  })
+
+  it('keeps the count the auto group comes with', () => {
+    expect(withMembersCount({ id: 'g', title: 'All', isAutoGroup: true, membersCount: 9 } as never).membersCount).toBe(
+      9
+    )
   })
 })

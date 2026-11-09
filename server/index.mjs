@@ -3,6 +3,8 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createDevMiddleware, renderPage } from 'vike/server'
 import { getSupportedPublicLanguagesFromEnv, resolvePublicLanguageRedirect } from './public-language-routing.mjs'
+import { robotsTxtHandler } from './robots.mjs'
+import { securityHeaders } from './security-headers.mjs'
 import { createSsrCacheMiddleware } from './ssr-cache.mjs'
 import { isStaticAssetPath } from './static-asset-guard.mjs'
 import { isViteInternalPath } from './vite-path-guard.mjs'
@@ -13,6 +15,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 const port = Number(process.env.PORT || 3000)
 
 const app = express()
+app.disable('x-powered-by')
 const supportedPublicLanguages = getSupportedPublicLanguagesFromEnv(process.env)
 let viteServer
 
@@ -26,6 +29,10 @@ if (isProduction && !process.env.APP_URL?.trim()) {
       '  Set APP_URL environment variable to ensure consistent cache partitioning.'
   )
 }
+
+app.use(securityHeaders({ isProduction }))
+// Before the static and dev middleware, which would otherwise serve public/ files.
+app.use(robotsTxtHandler())
 
 if (isProduction) {
   await import(pathToFileURL(join(root, 'dist/server/entry.mjs')).href)

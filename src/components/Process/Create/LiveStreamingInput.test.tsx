@@ -4,10 +4,6 @@ import { render, screen } from '~src/test-utils'
 import type { Process } from './common'
 import { LiveStreamingInput } from './LiveStreamingInput'
 
-vi.mock('~components/Layout/SubscriptionLockedContent', () => ({
-  SubscriptionLockedContent: ({ children }) => <>{children({ isLocked: false })}</>,
-}))
-
 const Wrapper = () => {
   const methods = useForm<Process>({
     defaultValues: {

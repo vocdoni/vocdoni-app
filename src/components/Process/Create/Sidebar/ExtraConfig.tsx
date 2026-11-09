@@ -12,10 +12,9 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCircleHelp } from 'react-icons/lu'
 import { Select } from '~components/Form/Select'
-import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
 import { Tooltip } from '~components/ui/Tooltip'
-import { SubscriptionPermission } from '~constants'
+import { useAppEnv } from '~src/app-env'
 import { useValidations } from '~utils/validation'
 import { Process } from '../common'
 
@@ -47,9 +46,6 @@ const LabelTooltip = ({ children }: { children: React.ReactNode }) => (
  * Voter anonymity as an on/off setting, in the same shape as "Start immediately"
  * in the block above. Off is the ordinary vote and needs no explaining; on adds
  * the blind-signature layer, and that is the only state that gets a sentence.
- *
- * A plan feature: the backend refuses to publish a blind-CSP census on a plan
- * without it, so the switch is locked the same way live streaming is.
  */
 const VoterAnonymity = () => {
   const { t } = useTranslation()
@@ -57,47 +53,42 @@ const VoterAnonymity = () => {
   const { description } = useAnonymityLabels(true)
 
   return (
-    <SubscriptionLockedContent permissionType={SubscriptionPermission.Anonymous}>
-      {({ isLocked }) => (
-        <Box>
-          <Controller
-            control={control}
-            name='anonymousVoting'
-            render={({ field }) => (
-              <>
-                <Switch.Root
-                  // `name` lands on the hidden input, which is the structural handle
-                  // the e2e suite toggles this with — no test id needed.
-                  name={field.name}
-                  checked={field.value}
-                  disabled={isLocked}
-                  onCheckedChange={({ checked }) => field.onChange(checked)}
-                >
-                  <Switch.HiddenInput onBlur={field.onBlur} />
-                  <Switch.Control>
-                    <Switch.Thumb />
-                  </Switch.Control>
-                  <Switch.Label display='flex' alignItems='center'>
-                    <Trans i18nKey='process_create.anonymity.title'>Anonymous voting</Trans>
-                    <LabelTooltip>
-                      {t('process_create.anonymity.tooltip', {
-                        defaultValue:
-                          "Either way, your organization can't see how anyone voted. Voter anonymity adds a cryptographic layer that makes it impossible to link a vote to a person.",
-                      })}
-                    </LabelTooltip>
-                  </Switch.Label>
-                </Switch.Root>
-                {field.value && (
-                  <Text fontSize='xs' color='texts.subtle' mt={1}>
-                    {description}
-                  </Text>
-                )}
-              </>
+    <Box>
+      <Controller
+        control={control}
+        name='anonymousVoting'
+        render={({ field }) => (
+          <>
+            <Switch.Root
+              // `name` lands on the hidden input, which is the structural handle
+              // the e2e suite toggles this with — no test id needed.
+              name={field.name}
+              checked={field.value}
+              onCheckedChange={({ checked }) => field.onChange(checked)}
+            >
+              <Switch.HiddenInput onBlur={field.onBlur} />
+              <Switch.Control>
+                <Switch.Thumb />
+              </Switch.Control>
+              <Switch.Label display='flex' alignItems='center'>
+                <Trans i18nKey='process_create.anonymity.title'>Anonymous voting</Trans>
+                <LabelTooltip>
+                  {t('process_create.anonymity.tooltip', {
+                    defaultValue:
+                      "Either way, your organization can't see how anyone voted. Voter anonymity adds a cryptographic layer that makes it impossible to link a vote to a person.",
+                  })}
+                </LabelTooltip>
+              </Switch.Label>
+            </Switch.Root>
+            {field.value && (
+              <Text fontSize='xs' color='texts.subtle' mt={1}>
+                {description}
+              </Text>
             )}
-          />
-        </Box>
-      )}
-    </SubscriptionLockedContent>
+          </>
+        )}
+      />
+    </Box>
   )
 }
 
@@ -108,6 +99,7 @@ export const ExtraConfig = () => {
     formState: { errors },
   } = useFormContext<Process>()
   const { required } = useValidations()
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
 
   const resultVisibilityOptions: SelectOption[] = [
     { value: 'live', label: t('process_create.result_visibility.live', 'Live results') },
@@ -171,7 +163,7 @@ export const ExtraConfig = () => {
           <FormErrorMessage>{errors.weightedVote?.message?.toString()}</FormErrorMessage>
         </FormControl>
       </Box>
-      <VoterAnonymity />
+      {!disableAnonymousVoting && <VoterAnonymity />}
     </VStack>
   )
 }

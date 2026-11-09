@@ -1,4 +1,4 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, type PlaceholderDataFunction } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { useOrganization } from '@vocdoni/react-components'
@@ -21,6 +21,8 @@ export type Member = {
   nationalId: string
   birthDate: string
   weight?: string
+  // Read-only: the API never returns the password, only whether the member has one.
+  hasPassword?: boolean
 }
 
 export type MembersResponse = {
@@ -76,6 +78,15 @@ export const useUrlPagination = () => {
   }
 }
 
+// Only a query of the same organization may lend its rows as placeholder data. The check is
+// positional on the members key prefix: `search` is also part of the key, so looking for the
+// address anywhere in it would match another organization whose search term equals this address.
+const isSameOrganizationQuery = (queryKey: readonly unknown[], address?: string) => {
+  if (!address) return false
+  const prefix = QueryKeys.organization.members(address)
+  return prefix.every((part, index) => queryKey[index] === part)
+}
+
 export const usePaginatedMembers = ({
   search = '',
   page: pageProp,
@@ -89,22 +100,36 @@ export const usePaginatedMembers = ({
   const urlPagination = useUrlPagination()
   const page = pageProp ?? urlPagination.page
   const limit = limitProp ?? urlPagination.limit
+  const address = organization?.address
 
-  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization?.address)
-  const sort = sortBy ? `&sortBy=${sortBy}&sortOrder=${sortOrder ?? 'asc'}` : ''
-  const fetchUrl = `${baseUrl}?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}${sort}`
+  // Built with URLSearchParams so a search containing `?` or `&` can't break the query string.
+  const query = new URLSearchParams({ page: String(page), limit: String(limit), search })
+  if (sortBy) {
+    query.set('sortBy', sortBy)
+    query.set('sortOrder', sortOrder ?? 'asc')
+  }
+  const fetchUrl = `${ApiEndpoints.OrganizationMembers.replace('{address}', address)}?${query}`
+
+  // Stable across renders, so TanStack Query doesn't treat it as a new option on every render.
+  const keepSameOrganizationRows = useCallback<PlaceholderDataFunction<MembersResponse, Error>>(
+    (previousData, previousQuery) =>
+      previousQuery && isSameOrganizationQuery(previousQuery.queryKey, address) ? previousData : undefined,
+    [address]
+  )
 
   return useQuery<MembersResponse, Error>({
     queryKey: [
-      ...QueryKeys.organization.members(organization?.address),
+      ...QueryKeys.organization.members(address),
       page,
       limit,
       search,
       ...(sortBy ? [sortBy, sortOrder ?? 'asc'] : []),
     ],
-    enabled: !!organization?.address,
+    enabled: !!address,
     queryFn: () => bearedFetch<MembersResponse>(fetchUrl),
-    placeholderData: keepPrevious ? keepPreviousData : undefined,
+    // Keeps the current rows while another page, sort or search loads, so the table doesn't
+    // collapse and jump. Only within the same organization, never another org's members.
+    placeholderData: keepPrevious ? keepSameOrganizationRows : undefined,
   })
 }
 
