@@ -2004,6 +2004,9 @@
     "avatar_upload_success": "Avatar enviado",
     "click_or_drag_and_drop": "<click>Clique para enviar ou arraste e solte</click><formats>(Formatos permitidos: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Enviar imagem",
+    "csv_row_limit_exceeded_one": "Esta importação resultaria em {{count}} linha no total, excedendo o limite de {{max}} membros.",
+    "csv_row_limit_exceeded_many": "Esta importação resultaria em {{count}} linhas no total, excedendo o limite de {{max}} membros.",
+    "csv_row_limit_exceeded_other": "Esta importação resultaria em {{count}} linhas no total, excedendo o limite de {{max}} membros.",
     "drop_here": "Solte o arquivo aqui",
     "error": {
       "invalid_image_type": "Este tipo de arquivo não é compatível. Envie uma imagem .png ou .jpg.",

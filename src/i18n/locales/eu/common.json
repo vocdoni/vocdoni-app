@@ -1945,6 +1945,8 @@
     "avatar_upload_success": "Avatarra kargatu da",
     "click_or_drag_and_drop": "<click>Egin klik kargatzeko edo arrastatu eta jaregin</click><formats>(Onartutako formatuak: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Kargatu irudia",
+    "csv_row_limit_exceeded_one": "Inportazio honek guztira {{count}} errenkada emango luke, {{max}} kideko muga gaindituz.",
+    "csv_row_limit_exceeded_other": "Inportazio honek guztira {{count}} errenkada emango lituzke, {{max}} kideko muga gaindituz.",
     "drop_here": "Jaregin hemen",
     "error": {
       "invalid_image_type": "Fitxategi mota hau ez da onartzen. Igo .png edo .jpg irudi bat.",

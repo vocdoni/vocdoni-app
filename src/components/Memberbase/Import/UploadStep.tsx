@@ -16,8 +16,11 @@ import {
   type Table,
 } from '~components/Spreadsheet/readTable'
 import { SectionCard } from '~components/ui/SectionCard'
+import { MaxMembersPerOrg } from '~constants'
+import { useMembersCount } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { downloadBlob } from '~utils/download'
+import { quantity } from '~utils/numbers'
 import { useMemberFields } from '../fields'
 import { isKnownHeader } from './autoMatch'
 import { TEMPLATE_FILE_NAMES, templateBlob, type TemplateFormat, templateRows } from './template'
@@ -68,6 +71,7 @@ export const UploadStep = ({ table, onTable, onContinue }: UploadStepProps) => {
   const [error, setError] = useState<string>()
   const [reading, setReading] = useState(false)
   const downloadTemplate = useDownloadTemplate('import')
+  const { count: existingMembers } = useMembersCount()
   // A slow read of an earlier drop must not replace a newer one, nor write after the page is left
   const latestDrop = useRef(0)
   useEffect(
@@ -106,6 +110,21 @@ export const UploadStep = ({ table, onTable, onContinue }: UploadStepProps) => {
       try {
         const next = await readTable(file, { isKnownHeader, untitledColumn })
         if (drop !== latestDrop.current) return
+        // Every organization holds at most 50,000 members, the ones it has included
+        const total = existingMembers + next.rows.length
+        if (total > MaxMembersPerOrg) {
+          setError(
+            t('uploader.csv_row_limit_exceeded', {
+              count: total,
+              max: quantity(MaxMembersPerOrg),
+              defaultValue_one:
+                'This import would result in {{count}} total row, exceeding the limit of {{max}} members.',
+              defaultValue_other:
+                'This import would result in {{count}} total rows, exceeding the limit of {{max}} members.',
+            })
+          )
+          return
+        }
         onTable(next)
       } catch (e) {
         if (drop !== latestDrop.current) return
@@ -142,7 +161,7 @@ export const UploadStep = ({ table, onTable, onContinue }: UploadStepProps) => {
         if (drop === latestDrop.current) setReading(false)
       }
     },
-    [onTable, t, i18n, untitledColumn]
+    [onTable, t, i18n, untitledColumn, existingMembers]
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

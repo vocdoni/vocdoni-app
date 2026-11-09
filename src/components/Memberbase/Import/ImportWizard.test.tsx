@@ -7,6 +7,7 @@ import { MembersImport } from './index'
 const members = vi.hoisted(() => ({
   mutateAsync: vi.fn(),
   job: undefined as unknown,
+  existing: 0,
 }))
 const track = vi.hoisted(() => vi.fn())
 
@@ -14,6 +15,7 @@ vi.mock('~src/queries/members', () => ({
   useAddMembers: () => ({ mutateAsync: members.mutateAsync, isPending: false }),
   useImportJobProgress: (jobId: string | null) => ({ data: jobId ? members.job : undefined, isError: false }),
   useInvalidateMembers: () => vi.fn(),
+  useMembersCount: () => ({ count: members.existing, isLoading: false, known: true }),
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({
@@ -52,6 +54,7 @@ describe('MembersImport', () => {
     localStorage.clear()
     members.mutateAsync.mockReset().mockResolvedValue({ jobId: 'job-1' })
     members.job = undefined
+    members.existing = 0
     track.mockReset()
   })
 
@@ -218,5 +221,18 @@ describe('MembersImport', () => {
         '1 row was not imported because its password does not meet the requirements (at least 6 characters, including a letter and a number): line 3.'
       )
     ).toBeInTheDocument()
+  })
+
+  it('refuses a file that takes the organization past the member limit', async () => {
+    // The members it has count too: 49,999 plus the two people in the file
+    members.existing = 49_999
+    const user = userEvent.setup()
+    renderWizard()
+    await upload(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'This import would result in 50001 total rows, exceeding the limit of 50,000 members.'
+    )
+    expect(screen.queryByText(/We matched/)).toBeNull()
   })
 })

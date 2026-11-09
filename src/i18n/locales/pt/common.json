@@ -2004,6 +2004,9 @@
     "avatar_upload_success": "Avatar carregado",
     "click_or_drag_and_drop": "<click>Clica para carregar ou arrasta e larga</click><formats>(Formatos permitidos: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Carregar imagem",
+    "csv_row_limit_exceeded_one": "Esta importação resultaria num total de {{count}} linha, excedendo o limite de {{max}} membros.",
+    "csv_row_limit_exceeded_many": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite de {{max}} membros.",
+    "csv_row_limit_exceeded_other": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite de {{max}} membros.",
     "drop_here": "Larga o ficheiro aqui",
     "error": {
       "invalid_image_type": "Este tipo de ficheiro não é suportado. Carrega uma imagem .png ou .jpg.",

@@ -1945,6 +1945,8 @@
     "avatar_upload_success": "Avatar hochgeladen",
     "click_or_drag_and_drop": "<click>Zum Hochladen klicken oder per Drag & Drop</click><formats>(Erlaubte Formate: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Bild hochladen",
+    "csv_row_limit_exceeded_one": "Dieser Import würde {{count}} Zeile ergeben und damit das Limit von {{max}} Mitgliedern überschreiten.",
+    "csv_row_limit_exceeded_other": "Dieser Import würde {{count}} Zeilen ergeben und damit das Limit von {{max}} Mitgliedern überschreiten.",
     "drop_here": "Datei hier ablegen",
     "error": {
       "invalid_image_type": "Dieser Dateityp wird nicht unterstützt. Lade ein .png- oder .jpg-Bild hoch.",
