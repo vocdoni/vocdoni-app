@@ -710,6 +710,8 @@ const ProcessCreateView = () => {
     submitted: SubmittedProcess | null
   } | null>(() => (returnDraftId ? { processId: returnDraftId, start: { kind: 'return' }, submitted: null } : null))
   const isDirty = isFormDirty && !checkout
+  // Kept from the first render: the return URL moves on to the wizard's own once it has been read
+  const [openedOnCheckoutReturn] = useState(returningFromCheckout)
   const { canTopUp } = useWalletAccess()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const effectiveDraftId = draftId ?? storedDraftId
@@ -733,6 +735,7 @@ const ProcessCreateView = () => {
     draftId,
     effectiveDraftId,
     formDraft,
+    skipStart: openedOnCheckoutReturn,
   })
   // Above the self-service limit the backend refuses any payment: only a custom quote publishes
   // it, which ProcessQuoteAlert points to, so publishing is not offered.

@@ -26,6 +26,8 @@ type Options = {
   effectiveDraftId: string | null
   /** The loaded draft values; `null` when the draft no longer exists */
   formDraft: Process | null | undefined
+  /** The form was opened by a return from a payment redirect: that continues a journey, it does not start one */
+  skipStart?: boolean
 }
 
 /**
@@ -33,7 +35,7 @@ type Options = {
  * `process_create_started` opens it, and every submit attempt ends it in either
  * `process_creation_failed` or `process_created`.
  */
-export const useProcessCreateAnalytics = ({ draftId, effectiveDraftId, formDraft }: Options) => {
+export const useProcessCreateAnalytics = ({ draftId, effectiveDraftId, formDraft, skipStart = false }: Options) => {
   const { organization } = useOrganization()
   const location = useLocation()
   const queryClient = useQueryClient()
@@ -48,7 +50,7 @@ export const useProcessCreateAnalytics = ({ draftId, effectiveDraftId, formDraft
   // and is read straight from storage because `useStoredDraftId` only catches
   // up with a newly resolved address one render later.
   useEffect(() => {
-    if (startedAtRef.current !== null || !address) return
+    if (skipStart || startedAtRef.current !== null || !address) return
     startedAtRef.current = Date.now()
     const startDraftId = draftId ?? getStoredDraftId(address)
     if (startDraftId) startDraftRef.current = { id: startDraftId, via: draftId ? 'link' : 'auto' }
@@ -56,7 +58,7 @@ export const useProcessCreateAnalytics = ({ draftId, effectiveDraftId, formDraft
       name: AnalyticsEvents.ProcessCreateStarted,
       props: { source: getProcessCreateSource(location.state), from_draft: !!startDraftId },
     })
-  }, [address, draftId, location.state])
+  }, [address, draftId, location.state, skipStart])
 
   // Only the draft the form was opened with counts as resumed: the first
   // auto-save of a new form creates a draft too, which is then loaded as well.

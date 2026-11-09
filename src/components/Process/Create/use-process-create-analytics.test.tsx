@@ -92,6 +92,22 @@ describe('useProcessCreateAnalytics', () => {
     ])
   })
 
+  it('does not start the funnel again on a return from a payment redirect', () => {
+    const draftId = draftIdAged(1)
+    const { rerender } = renderAnalytics({
+      draftId: null,
+      effectiveDraftId: null,
+      formDraft: undefined,
+      skipStart: true,
+    })
+
+    // The return then moves on to the wizard for its draft, with the same form mounted
+    rerender({ draftId, effectiveDraftId: draftId, formDraft: form, skipStart: true })
+
+    expect(eventsNamed('process_create_started')).toHaveLength(0)
+    expect(eventsNamed('draft_resumed')).toHaveLength(0)
+  })
+
   it('tracks resuming the stored draft the form reopened with', () => {
     const storedId = draftIdAged(5)
     storeDraftId(orgAddress, storedId)
