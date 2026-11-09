@@ -36,12 +36,13 @@ vi.mock('react-router', async (importOriginal) => ({
   useBlocker: () => mockUseBlocker(),
 }))
 
-vi.mock('~utils/analytics', () => ({
-  AnalyticsEvent: {},
-  AnalyticsEvents: { ProcessCreated: 'process_created', ProcessCreationFailed: 'process_creation_failed' },
-}))
-
 const mockTrackEvent = vi.hoisted(() => vi.fn())
+
+// Keep the real AnalyticsEvents taxonomy the form reads, intercept only the sink.
+vi.mock('~utils/analytics', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/analytics')>()),
+  trackAnalyticsEvent: (...args: unknown[]) => mockTrackEvent(...args),
+}))
 
 vi.mock('~components/AnalyticsProvider', () => ({
   useAnalytics: () => ({
@@ -939,7 +940,11 @@ describe('the wizard around the payment view', () => {
 
     await waitFor(() => expect(screen.getByText('process page')).toBeInTheDocument())
     expect(mockTrackEvent).toHaveBeenCalledWith(
-      expect.objectContaining({ props: expect.objectContaining({ question_count: expect.any(Number) }) })
+      expect.objectContaining({
+        // The legacy event name, renamed to process_created for PostHog only
+        name: 'ProcessCreated',
+        props: expect.objectContaining({ question_count: expect.any(Number), voter_auth: 'member_fields' }),
+      })
     )
   })
 

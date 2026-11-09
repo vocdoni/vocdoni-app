@@ -19,11 +19,14 @@ import { LuFileSpreadsheet } from 'react-icons/lu'
 import { dropRejectionMessage, useLatestDrop } from '~components/Layout/dropzone'
 import Uploader from '~components/Layout/Uploader'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
+import ErrorMissingData from '~components/Spreadsheet/errors/ErrorMissingData'
+import ErrorMissingHeader from '~components/Spreadsheet/errors/ErrorMissingHeader'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
 import SpreadsheetError from '~components/Spreadsheet/errors/SpreadsheetError'
-import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
+import { getSpreadsheetFileType, SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { MaxMembersPerOrg } from '~constants'
 import { usePaginatedMembers } from '~queries/members'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { quantity } from '~utils/numbers'
 import { useTable } from '../TableProvider'
 
@@ -48,6 +51,13 @@ const generateFakeValue = (columnId: string): string => {
     default:
       return ''
   }
+}
+
+const getImportFailureReason = (error: unknown) => {
+  if (error instanceof CsvRowLimitExceededError) return 'row_limit'
+  if (error instanceof ErrorMissingHeader) return 'missing_header'
+  if (error instanceof ErrorMissingData) return 'missing_data'
+  return 'parse_error'
 }
 
 export const MembersCsvManager = () => {
@@ -90,11 +100,21 @@ export const MembersCsvManager = () => {
       setValue('spreadsheet', undefined)
       clearErrors('spreadsheet')
       if (rejected) {
+        const [rejection] = rejections
+        trackAnalyticsEvent({
+          name: AnalyticsEvents.MembersImportFailed,
+          props: {
+            reason: 'rejected_file',
+            file_type: getSpreadsheetFileType(rejection?.file?.name),
+            // `file-invalid-type`, or `too-many-files` when several were dropped
+            rejection_code: rejection?.errors?.[0]?.code ?? 'unknown',
+          },
+        })
         setError('spreadsheet', { type: 'validate', message: rejected })
         return
       }
+      const spreadsheet = new SpreadsheetManager(file, true)
       try {
-        const spreadsheet = new SpreadsheetManager(file, true)
         await spreadsheet.read()
         if (!isLatest(drop)) return
         const totalMembers = spreadsheet.data.length + existingMembers
@@ -111,6 +131,14 @@ export const MembersCsvManager = () => {
         setValue('spreadsheet', spreadsheet)
       } catch (e) {
         if (!isLatest(drop)) return
+        trackAnalyticsEvent({
+          name: AnalyticsEvents.MembersImportFailed,
+          props: {
+            reason: getImportFailureReason(e),
+            file_type: spreadsheet.fileType,
+            ...(spreadsheet.encoding && { encoding: spreadsheet.encoding }),
+          },
+        })
         if (e instanceof CsvRowLimitExceededError) {
           setError('spreadsheet', { type: e.name, message: e.message })
           return

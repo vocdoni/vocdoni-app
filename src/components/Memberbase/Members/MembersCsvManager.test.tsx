@@ -3,6 +3,7 @@ import { act, screen } from '@testing-library/react'
 import type { FileRejection } from 'react-dropzone'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import ErrorMissingData from '~components/Spreadsheet/errors/ErrorMissingData'
+import ErrorMissingHeader from '~components/Spreadsheet/errors/ErrorMissingHeader'
 import { MaxMembersPerOrg } from '~constants'
 import { render } from '~src/test-utils'
 import { MembersCsvManager } from './MembersCsvManager'
@@ -13,6 +14,13 @@ let dropHandler: DropHandler | undefined
 let mockRowCount = 0
 let mockReadError: Error | undefined
 let mockRead: (() => Promise<void>) | undefined
+const mockTrackAnalyticsEvent = vi.fn()
+
+// Partial mock: keep the real AnalyticsEvents taxonomy, intercept only the sink.
+vi.mock('~utils/analytics', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/analytics')>()),
+  trackAnalyticsEvent: (...args: unknown[]) => mockTrackAnalyticsEvent(...args),
+}))
 
 vi.mock('react-dropzone', async (importOriginal) => ({
   ...(await importOriginal<typeof import('react-dropzone')>()),
@@ -26,13 +34,20 @@ vi.mock('react-dropzone', async (importOriginal) => ({
   },
 }))
 
-vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {
+vi.mock('~components/Spreadsheet/SpreadsheetManager', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~components/Spreadsheet/SpreadsheetManager')>()
+
   class SpreadsheetManager {
     data: string[][]
+    encoding = 'utf-8'
     static Accept = { 'text/csv': ['.csv'] }
 
-    constructor() {
+    constructor(public file: File) {
       this.data = Array.from({ length: mockRowCount }, () => ['row'])
+    }
+
+    get fileType() {
+      return actual.getSpreadsheetFileType(this.file.name)
     }
 
     async read() {
@@ -41,7 +56,7 @@ vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {
     }
   }
 
-  return { SpreadsheetManager }
+  return { ...actual, SpreadsheetManager }
 })
 
 vi.mock('~queries/members', () => ({
@@ -85,6 +100,7 @@ describe('MembersCsvManager', () => {
     mockRowCount = 0
     mockReadError = undefined
     mockRead = undefined
+    mockTrackAnalyticsEvent.mockClear()
     dropHandler = undefined
   })
 
@@ -100,6 +116,10 @@ describe('MembersCsvManager', () => {
 
     // Tests render the i18n key for this message, so the key stands in for the copy
     expect(await screen.findByText('uploader.csv_row_limit_exceeded')).toBeInTheDocument()
+    expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
+      name: 'members_import_failed',
+      props: { reason: 'row_limit', file_type: 'csv', encoding: 'utf-8' },
+    })
   })
 
   it('accepts an import that ends exactly at the member limit', async () => {
@@ -112,6 +132,50 @@ describe('MembersCsvManager', () => {
     })
 
     expect(screen.queryByText('uploader.csv_row_limit_exceeded')).not.toBeInTheDocument()
+    expect(mockTrackAnalyticsEvent).not.toHaveBeenCalled()
+  })
+
+  const drop = async (files: File[], rejections: FileRejection[] = []) => {
+    await act(async () => {
+      await dropHandler?.(files, rejections)
+    })
+  }
+
+  it('explains and tracks a file the dropzone rejected', async () => {
+    render(<MembersCsvManagerForm />)
+
+    const file = new File(['png'], 'photo.png', { type: 'image/png' })
+    await drop([], [{ file, errors: [{ code: 'file-invalid-type', message: 'invalid' }] }])
+
+    expect(await screen.findByText(/This file type isn't supported/)).toBeInTheDocument()
+    expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
+      name: 'members_import_failed',
+      props: { reason: 'rejected_file', file_type: 'other', rejection_code: 'file-invalid-type' },
+    })
+  })
+
+  it('tracks a spreadsheet without a header as missing_header', async () => {
+    mockReadError = new ErrorMissingHeader()
+    render(<MembersCsvManagerForm />)
+
+    await drop([new File([''], 'members.CSV', { type: 'text/csv' })])
+
+    expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
+      name: 'members_import_failed',
+      props: { reason: 'missing_header', file_type: 'csv', encoding: 'utf-8' },
+    })
+  })
+
+  it('tracks any other read failure as parse_error', async () => {
+    mockReadError = new Error('File is password-protected')
+    render(<MembersCsvManagerForm />)
+
+    await drop([new File(['data'], 'members.xlsx')])
+
+    expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
+      name: 'members_import_failed',
+      props: { reason: 'parse_error', file_type: 'xlsx', encoding: 'utf-8' },
+    })
   })
 
   it('applies the dropzone root props only once', () => {

@@ -29,14 +29,17 @@ import { useAppEnv } from '~src/app-env'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useCreateProcess } from '~components/Process/Create'
+import { getDraftAgeDays } from '~components/Process/Create/analytics'
 import { Process, SelectorTypes } from '~components/Process/Create/common'
 import { votingProcessToCreateRequest, votingProcessToForm } from '~components/Process/Create/draft-mapping'
 import { clearStoredDraftId } from '~components/Process/Create/draft-storage'
+import { processCreateLinkState } from '~components/Process/Create/source'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
 import { useUrlPagination } from '~queries/members'
 import { Routes } from '~routes'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
 type Draft = VotingProcessResponse
 
@@ -75,6 +78,11 @@ export const useDeleteDraft = () => {
       // Only forget the resumable draft pointer once the server actually deleted
       // it, and only when it points at this draft
       clearStoredDraftId(organization?.address, variables.draftId)
+      const ageDays = getDraftAgeDays(variables.draftId)
+      trackAnalyticsEvent({
+        name: AnalyticsEvents.DraftDiscarded,
+        props: { method: 'deleted', ...(ageDays !== undefined && { age_days: ageDays }) },
+      })
       if (!variables?.silent) {
         toast({
           title: t('drafts.deleted_draft', {
@@ -161,6 +169,7 @@ const DraftsRow = ({ draft }: { draft: Draft }) => {
               pathname: generatePath(Routes.processes.create),
               search: createSearchParams({ draftId: draft.id }).toString(),
             }}
+            state={processCreateLinkState('drafts')}
           >
             {metadata.title || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
           </RouterLink>
@@ -191,6 +200,7 @@ const DraftCard = ({ draft }: { draft: Draft }) => {
               pathname: generatePath(Routes.processes.create),
               search: createSearchParams({ draftId: draft.id }).toString(),
             }}
+            state={processCreateLinkState('drafts')}
           >
             <Text lineClamp={2}>{metadata.title || notDefined}</Text>
           </RouterLink>
@@ -244,7 +254,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
           pathname: generatePath(Routes.processes.create, { page: '1' }),
           search: createSearchParams({ draftId: clonedDraftId }).toString(),
         },
-        { replace: true }
+        { replace: true, state: processCreateLinkState('clone') }
       )
     } catch (error) {
       toast({
@@ -283,6 +293,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
                   pathname: generatePath(Routes.processes.create),
                   search: createSearchParams({ draftId: draft.id }).toString(),
                 }}
+                state={processCreateLinkState('drafts')}
               >
                 <HStack gap={2} align='center'>
                   <Icon as={LuPencil} boxSize={4} />

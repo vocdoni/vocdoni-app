@@ -126,7 +126,11 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
       anchor.remove()
       window.setTimeout(() => URL.revokeObjectURL(url), 1000)
       trackAnalyticsEvent({ name: AnalyticsEvents.PdfReportDownloaded, props: { election_id: election.id } })
-    } catch {
+    } catch (error) {
+      trackAnalyticsEvent({
+        name: AnalyticsEvents.PdfReportFailed,
+        props: { election_id: report.election.id, error_name: error instanceof Error ? error.name : 'unknown' },
+      })
       toast({
         title: t('process_pdf.download_error', { defaultValue: 'Could not generate the PDF report' }),
         type: 'error',

@@ -86,15 +86,37 @@ marketing site), which is more durable than `$host` across preview hosts and cus
 ## Tracking events
 
 Use `useAnalytics().trackEvent(...)` in components, or `trackAnalyticsEvent(...)` from
-`~utils/analytics` in hooks/query files. Event names live in `AnalyticsEvents`; the six legacy names
+`~utils/analytics` in hooks/query files. Event names live in `AnalyticsEvents`; the four legacy names
 keep their historical strings for Plausible/GTM and are renamed to snake_case for PostHog via
 `posthogEventNames`. New events are snake_case everywhere. Properties must be primitives and must never
 contain voter identifiers, ballot content, emails, or tokens.
 
-Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `organization_created`,
-`process_created`, `process_creation_failed`, `process_action`, `process_results_viewed`, `members_import_started`,
-`members_import_completed`, `member_group_created`, `member_group_deleted`, `census_configured`,
-`team_member_invited`, `team_member_removed`, `pdf_report_downloaded`.
+Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `auth_failed`,
+`organization_created`, `process_created`, `process_create_started`, `process_creation_failed`,
+`draft_saved`, `draft_save_failed`, `draft_resumed`, `draft_discarded`, `process_action`,
+`process_dashboard_viewed`, `process_results_viewed`, `voting_link_copied`, `members_import_started`,
+`members_import_completed`, `members_import_failed`, `member_group_created`, `member_group_deleted`,
+`census_configured`, `team_member_invited`, `team_member_removed`, `pdf_report_downloaded`,
+`pdf_report_failed`.
+
+The admin journey, in the order it happens:
+
+- **Create-vote form.** `process_create_started` (`source`: where the form was opened from, passed as
+  React Router state; `direct` when there is none) opens a funnel that every submit ends in either
+  `process_creation_failed` (`stage` validation/publish, `first_error_path` such as
+  `questions.0.options.2.option`, `attempt`) or `process_created` (vote shape, `voter_auth`,
+  `time_to_publish_s`, `failed_attempts`). A publish refused for payment is a `publish` failure with
+  its `error_code`, even when it opens the payment view; `process_created` fires once that view
+  publishes the vote, and not at all on a return from a payment redirect.
+- **Drafts.** `draft_saved` / `draft_save_failed` carry the `trigger` (auto/manual/leave) and, on
+  failure, the HTTP `status` and backend `error_code`. Auto-save runs every 30 s and on every blur, so
+  it is only tracked when its outcome changes. `draft_resumed` / `draft_discarded` carry `age_days`,
+  read from the draft's ObjectID since drafts have no timestamps.
+- **Member imports.** `members_import_failed` (`reason`: rejected_file / row_limit / missing_header /
+  missing_data / parse_error) and `members_import_completed` carry `file_type` and `encoding`
+  (`non-utf-8` flags legacy exports that SheetJS silently garbles).
+- **After publishing.** Voting pages are untracked, so `voting_link_copied` is the in-app sign that a
+  vote is being distributed; `process_dashboard_viewed` carries the lifecycle `status`.
 
 Organization-level BI: every session registers `org_address`/`org_name` super properties, and
 the `organization` group profile carries name, type, country, size and creation date (see
@@ -151,8 +173,8 @@ What it provisions:
 
 | Dashboard                  | Insights                                                                                                                                                                                                                                                                                                                                                            |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Activation**             | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed; organizations created by name                                                                                                                                                                                                           |
-| **Elections & engagement** | wizard funnel `census_configured` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type`                                                                                                                                                                                                        |
+| **Activation**             | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; import failures by `reason`; onboarding steps completed; organizations created by name                                                                                                                                                                              |
+| **Elections & engagement** | wizard funnel `process_create_started` → `census_configured` → `process_created` → `process_results_viewed`; started vs failed; which errors (`first_error_path`) block publishing; created → link copied → results; draft save failures by `status`; weekly active organizations; elections by `census_type`                                                       |
 | **Web → app**              | website visit → CTA → signup → org → first election (by first-touch campaign); which vertical converts; blog and learn article → signup; docs → integrator signup; sales assist `demo_requested` → `demo_booked`; marketing-sourced revenue; activation by locale; revenue by first-touch channel; event volume by `site`; CTA clicks by `page_type` |
 
 The **Web → app** dashboard is the one that needs both properties in the project. Every funnel on it
