@@ -116,6 +116,10 @@ describe('MembersCsvManager', () => {
 
     // Tests render the i18n key for this message, so the key stands in for the copy
     expect(await screen.findByText('uploader.csv_row_limit_exceeded')).toBeInTheDocument()
+    expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
+      name: 'members_import_failed',
+      props: { reason: 'row_limit', file_type: 'csv', encoding: 'utf-8' },
+    })
   })
 
   it('accepts an import that ends exactly at the member limit', async () => {
@@ -128,6 +132,7 @@ describe('MembersCsvManager', () => {
     })
 
     expect(screen.queryByText('uploader.csv_row_limit_exceeded')).not.toBeInTheDocument()
+    expect(mockTrackAnalyticsEvent).not.toHaveBeenCalled()
   })
 
   const drop = async (files: File[], rejections: FileRejection[] = []) => {

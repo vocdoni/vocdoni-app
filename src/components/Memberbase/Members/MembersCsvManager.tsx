@@ -54,6 +54,7 @@ const generateFakeValue = (columnId: string): string => {
 }
 
 const getImportFailureReason = (error: unknown) => {
+  if (error instanceof CsvRowLimitExceededError) return 'row_limit'
   if (error instanceof ErrorMissingHeader) return 'missing_header'
   if (error instanceof ErrorMissingData) return 'missing_data'
   return 'parse_error'
@@ -130,10 +131,6 @@ export const MembersCsvManager = () => {
         setValue('spreadsheet', spreadsheet)
       } catch (e) {
         if (!isLatest(drop)) return
-        if (e instanceof CsvRowLimitExceededError) {
-          setError('spreadsheet', { type: e.name, message: e.message })
-          return
-        }
         trackAnalyticsEvent({
           name: AnalyticsEvents.MembersImportFailed,
           props: {
@@ -142,6 +139,10 @@ export const MembersCsvManager = () => {
             ...(spreadsheet.encoding && { encoding: spreadsheet.encoding }),
           },
         })
+        if (e instanceof CsvRowLimitExceededError) {
+          setError('spreadsheet', { type: e.name, message: e.message })
+          return
+        }
         // Only our own errors carry a translated message; anything else (FileReader, xlsx) is raw browser text
         const known = e instanceof SpreadsheetError
         setError('spreadsheet', {
