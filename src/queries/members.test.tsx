@@ -56,9 +56,7 @@ describe('member queries', () => {
     renderHook(() => usePaginatedMembers({ search: 'a+b@x.org & co' }), { wrapper })
 
     await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
-    expect(bearedFetch).toHaveBeenCalledWith(
-      'organizations/0xorg/members?page=1&limit=10&search=a%2Bb%40x.org+%26+co'
-    )
+    expect(bearedFetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=10&search=a%2Bb%40x.org+%26+co')
   })
 
   it('asks the server for the page, size and sort it is given', async () => {

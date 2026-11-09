@@ -122,7 +122,9 @@ export const People = () => {
     selection.members.find((member) => member.id === url.memberId) ??
     attention.find((member) => member.id === url.memberId)
 
-  const visibleColumns = fields.filter((field) => !ALWAYS_VISIBLE.includes(field.id) && columns.isVisible(field.id))
+  const visibleColumns = fields.filter(
+    (field) => !field.writeOnly && !ALWAYS_VISIBLE.includes(field.id) && columns.isVisible(field.id)
+  )
   const surnameFirst = url.sortedBy === 'surname'
   const pageSelection = selection.pageState(members.map((member) => member.id))
   // Shown in the bar: how many of the selected aren't among the rows on screen

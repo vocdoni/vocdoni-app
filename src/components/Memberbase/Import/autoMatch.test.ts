@@ -11,6 +11,7 @@ const LABEL_KEYS: Record<MemberFieldId, string> = {
   nationalId: 'national_id',
   birthDate: 'birth_date',
   weight: 'weight',
+  password: 'password',
 }
 
 const localeLabels = async (locale: string) => {

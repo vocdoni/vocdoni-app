@@ -402,7 +402,8 @@
     "member": {
       "error": {
         "invalid_birth_date": "Jaioteguna ezin da etorkizunean egon",
-        "invalid_email": "Posta elektronikoaren helbidea ez da baliozkoa"
+        "invalid_email": "Posta elektronikoaren helbidea ez da baliozkoa",
+        "password_requirements": "Erabili gutxienez 6 karaktere, letra bat eta zenbaki bat barne."
       }
     },
     "process_create": {
@@ -665,8 +666,17 @@
       "delete": "Ezabatu"
     },
     "description": "Zure erakundeko guztiak. Zuk erabakitzen duzu nork bozkatzen duen bozketa bakoitzean.",
+    "form": {
+      "password_set": "Pasahitz bat gordeta dago. Idatzi berri bat ordezkatzeko.",
+      "password_will_be_removed": "Gordetako pasahitza kendu egingo da gordetzean.",
+      "phone_will_be_removed": "Gordetako telefono-zenbakia kendu egingo da gordetzean."
+    },
     "groups": {
       "title": "Taldeak"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} errenkada ez da inportatu, bere pasahitzak ez dituelako betetzen baldintzak (gutxienez 6 karaktere, letra bat eta zenbaki bat barne): {{lines}}. lerroa.",
+      "password_rows_skipped_other": "{{count}} errenkada ez dira inportatu, haien pasahitzek ez dituztelako betetzen baldintzak (gutxienez 6 karaktere, letra bat eta zenbaki bat barne): {{lines}} lerroak."
     },
     "importer": {
       "button": "Inportatu"
@@ -863,6 +873,7 @@
         "fix_contact": "Gehitu posta elektroniko bat edo mugikor bat; bestela, ez du bozketa-koderik jasoko.",
         "fix_email": "Posta elektroniko hau ez da baliozkoa. Zuzendu, edo hura gabe inportatuko da.",
         "fix_name": "Gehitu haren izena.",
+        "fix_password": "Pasahitz hau ahulegia da: erabili gutxienez 6 karaktere, letra bat eta zenbaki bat barne; bestela, errenkada ez da inportatuko.",
         "fix_phone": "Mugikor hau ez da baliozkoa. Erabili zenbakiak, herrialde-kodearekin (+34…) atzerrikoa bada.",
         "fixed": "Zuzenduta",
         "keep_all": "Gorde guztiak",
@@ -969,7 +980,6 @@
       "add_title": "Gehitu pertsona bat",
       "added": "Zure kideetara gehitu da",
       "cancel": "Utzi",
-      "cant_clear": "Eremu bat hustea ez da oraindik gordetzen: uneko balioa mantentzen da.",
       "edit": "Editatu",
       "edit_everywhere": "Aldaketak kide honi aplikatzen zaizkio leku guztietan, baita martxan dauden bozketen erroldetan ere.",
       "error": {

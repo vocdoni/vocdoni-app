@@ -402,7 +402,8 @@
     "member": {
       "error": {
         "invalid_birth_date": "Birth date cannot be in the future",
-        "invalid_email": "Invalid email address"
+        "invalid_email": "Invalid email address",
+        "password_requirements": "Use at least 6 characters, including a letter and a number."
       }
     },
     "process_create": {
@@ -665,8 +666,17 @@
       "delete": "Delete"
     },
     "description": "Everyone in your organization. You choose who votes in each vote.",
+    "form": {
+      "password_set": "A password is set. Type a new one to replace it.",
+      "password_will_be_removed": "The stored password will be removed when you save.",
+      "phone_will_be_removed": "The stored phone number will be removed when you save."
+    },
     "groups": {
       "title": "Groups"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} row was not imported because its password does not meet the requirements (at least 6 characters, including a letter and a number): line {{lines}}.",
+      "password_rows_skipped_other": "{{count}} rows were not imported because their password does not meet the requirements (at least 6 characters, including a letter and a number): lines {{lines}}."
     },
     "importer": {
       "button": "Import"
@@ -863,6 +873,7 @@
         "fix_contact": "Add an email or mobile, or they won’t get a voting code.",
         "fix_email": "This email isn’t valid. Fix it, or they’re imported without it.",
         "fix_name": "Add their name.",
+        "fix_password": "This password is too weak: use at least 6 characters, including a letter and a number, or the row isn’t imported.",
         "fix_phone": "This mobile isn’t valid. Use digits, with the country code (+34…) if it’s from abroad.",
         "fixed": "Fixed",
         "keep_all": "Keep all",
@@ -969,7 +980,6 @@
       "add_title": "Add a person",
       "added": "Added to your members",
       "cancel": "Cancel",
-      "cant_clear": "Emptying a field isn't saved yet: the current value stays.",
       "edit": "Edit",
       "edit_everywhere": "Changes apply to this member everywhere, including the censuses of votes in progress.",
       "error": {

@@ -12,6 +12,7 @@ export const MEMBER_FIELD_IDS = [
   'nationalId',
   'birthDate',
   'weight',
+  'password',
 ] as const
 
 export type MemberFieldId = (typeof MEMBER_FIELD_IDS)[number]
@@ -45,6 +46,11 @@ export type MemberFieldDefinition = {
   sortable: boolean
   /** Shown as a table column unless the admin hides it */
   defaultVisible: boolean
+  /**
+   * Set by the organizer but never read back: the API only says whether there is one. Not a
+   * table column, and never shown, not even from the organizer's own file.
+   */
+  writeOnly: boolean
   mask: (value?: string | null) => MemberFieldDisplay
 }
 
@@ -72,6 +78,7 @@ const field = (
   authEligible: false,
   sortable: false,
   defaultVisible: true,
+  writeOnly: false,
   mask: plain,
   ...options,
 })
@@ -95,7 +102,17 @@ export const MEMBER_FIELDS: readonly MemberFieldDefinition[] = [
     mask: hidden,
   }),
   field('weight', 'members.fields.weight'),
+  // Asked as a sign-in detail through its own option, not the credentials list
+  field('password', 'members.fields.password', {
+    sensitive: true,
+    defaultVisible: false,
+    writeOnly: true,
+    mask: hidden,
+  }),
 ]
+
+/** The fields an organizer can see again once saved: every one but the password. */
+export const READABLE_MEMBER_FIELDS = MEMBER_FIELDS.filter((definition) => !definition.writeOnly)
 
 export const getMemberField = (id: string) => MEMBER_FIELDS.find((definition) => definition.id === id)
 
@@ -120,6 +137,7 @@ export const useMemberFields = (): MemberField[] => {
       nationalId: t('members.fields.national_id', { defaultValue: 'National ID' }),
       birthDate: t('members.fields.birth_date', { defaultValue: 'Birth Date' }),
       weight: t('members.fields.weight', { defaultValue: 'Voting power (Weight)' }),
+      password: t('members.fields.password', { defaultValue: 'Password' }),
     }
     const onFileLabel = t('members.fields.on_file', { defaultValue: 'Saved (hidden for privacy)' })
 

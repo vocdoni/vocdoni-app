@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { LuArrowRight, LuTriangleAlert } from 'react-icons/lu'
 import type { Table } from '~components/Spreadsheet/readTable'
 import { Banner } from '~components/ui/Banner'
+import { MASK_DOTS } from '~components/ui/MaskedValue'
 import { useMemberFields } from '../fields'
 import { type ColumnTarget, isSensitiveHeader } from './autoMatch'
 import { MAX_EXTRA_COLUMNS } from './payload'
@@ -57,6 +58,8 @@ export const MatchStep = ({ table, targets, autoMatched, onChange, onBack, onCon
       .map((row) => row[column])
       .filter(Boolean)
       .slice(0, 3)
+      // A password is never shown, not even from the organizer's own file
+      .map((value) => (targets[column] === 'password' ? MASK_DOTS : value))
 
   return (
     <Stack

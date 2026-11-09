@@ -406,7 +406,8 @@
     "member": {
       "error": {
         "invalid_birth_date": "A data de nascimento não pode estar no futuro",
-        "invalid_email": "Endereço de email inválido"
+        "invalid_email": "Endereço de email inválido",
+        "password_requirements": "Usa pelo menos 6 caracteres, com uma letra e um número."
       }
     },
     "process_create": {
@@ -671,8 +672,18 @@
       "delete": "Eliminar"
     },
     "description": "Todas as pessoas da tua organização. Tu escolhes quem vota em cada votação.",
+    "form": {
+      "password_set": "Existe uma palavra-passe guardada. Escreve uma nova para a substituir.",
+      "password_will_be_removed": "A palavra-passe guardada será removida ao guardar.",
+      "phone_will_be_removed": "O número de telefone guardado será removido ao guardar."
+    },
     "groups": {
       "title": "Grupos"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} linha não foi importada porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linha {{lines}}.",
+      "password_rows_skipped_many": "{{count}} linhas não foram importadas porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}.",
+      "password_rows_skipped_other": "{{count}} linhas não foram importadas porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}."
     },
     "importer": {
       "button": "Importar"
@@ -895,6 +906,7 @@
         "fix_contact": "Adiciona um email ou telemóvel, ou não vai receber um código de votação.",
         "fix_email": "Este email não é válido. Corrige-o ou a pessoa é importada sem ele.",
         "fix_name": "Adiciona o nome.",
+        "fix_password": "Esta palavra-passe é demasiado fraca: usa pelo menos 6 caracteres, com uma letra e um número, ou a linha não é importada.",
         "fix_phone": "Este telemóvel não é válido. Usa algarismos, com o indicativo do país (+34…) se for do estrangeiro.",
         "fixed": "Corrigido",
         "keep_all": "Manter todos",
@@ -1008,7 +1020,6 @@
       "add_title": "Adicionar uma pessoa",
       "added": "Adicionada aos teus membros",
       "cancel": "Cancelar",
-      "cant_clear": "Esvaziar um campo ainda não é guardado: o valor atual mantém-se.",
       "edit": "Editar",
       "edit_everywhere": "As alterações aplicam-se a este membro em todo o lado, incluindo nas listas de participantes das votações em curso.",
       "error": {

@@ -13,6 +13,11 @@ const mocks = vi.hoisted(() => ({
   fetch: vi.fn(),
 }))
 
+// The toast action needs the router and the signed-in account, which this test does not set up
+vi.mock('~components/Pricing/useBuyRoomAction', () => ({
+  useBuyRoomAction: () => () => undefined,
+}))
+
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({ bearedFetch: mocks.fetch, currentAddress: '0xorg' }),
 }))

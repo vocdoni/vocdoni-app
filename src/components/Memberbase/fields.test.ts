@@ -13,6 +13,7 @@ describe('MEMBER_FIELDS', () => {
       'nationalId',
       'birthDate',
       'weight',
+      'password',
     ])
   })
 

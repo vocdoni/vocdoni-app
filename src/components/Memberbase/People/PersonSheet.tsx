@@ -184,7 +184,14 @@ export const PersonSheet = ({ memberId, member, loading, onClose, onDelete, onSt
                 <DataList.Item key={field.id}>
                   <DataList.ItemLabel minW='9rem'>{field.label}</DataList.ItemLabel>
                   <DataList.ItemValue>
-                    {field.mask(member[field.id as keyof SelectedMember] as string).kind === 'empty' ? (
+                    {field.writeOnly ? (
+                      // Never returned, only whether there is one
+                      <Text as='span' color={member.hasPassword ? undefined : 'fg.muted'}>
+                        {member.hasPassword
+                          ? t('members.fields.on_file', { defaultValue: 'Saved (hidden for privacy)' })
+                          : t('members.person.not_set', { defaultValue: 'Not set' })}
+                      </Text>
+                    ) : field.mask(member[field.id as keyof SelectedMember] as string).kind === 'empty' ? (
                       <Text as='span' color='fg.muted'>
                         {t('members.person.not_set', { defaultValue: 'Not set' })}
                       </Text>

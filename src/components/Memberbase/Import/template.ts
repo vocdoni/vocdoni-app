@@ -19,6 +19,8 @@ export const TEMPLATE_EXAMPLE: Record<MemberFieldId, string> = {
   nationalId: '12345678Z',
   birthDate: '1990-05-14',
   weight: '1',
+  // Meets the password requirements: at least 6 characters, a letter and a number
+  password: 'Ch4nge-me',
 }
 
 /**

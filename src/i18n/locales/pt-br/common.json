@@ -406,7 +406,8 @@
     "member": {
       "error": {
         "invalid_birth_date": "A data de nascimento não pode estar no futuro",
-        "invalid_email": "Endereço de e-mail inválido"
+        "invalid_email": "Endereço de e-mail inválido",
+        "password_requirements": "Use pelo menos 6 caracteres, com uma letra e um número."
       }
     },
     "process_create": {
@@ -671,8 +672,18 @@
       "delete": "Excluir"
     },
     "description": "Todas as pessoas da sua organização. Você escolhe quem vota em cada votação.",
+    "form": {
+      "password_set": "Há uma senha salva. Digite uma nova para substituí-la.",
+      "password_will_be_removed": "A senha salva será removida ao salvar.",
+      "phone_will_be_removed": "O número de telefone salvo será removido ao salvar."
+    },
     "groups": {
       "title": "Grupos"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} linha não foi importada porque a senha dela não atende aos requisitos (pelo menos 6 caracteres, com uma letra e um número): linha {{lines}}.",
+      "password_rows_skipped_many": "{{count}} linhas não foram importadas porque a senha delas não atende aos requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}.",
+      "password_rows_skipped_other": "{{count}} linhas não foram importadas porque a senha delas não atende aos requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}."
     },
     "importer": {
       "button": "Importar"
@@ -895,6 +906,7 @@
         "fix_contact": "Adicione um e-mail ou celular, ou a pessoa não vai receber um código de votação.",
         "fix_email": "Este e-mail não é válido. Corrija-o ou a pessoa será importada sem ele.",
         "fix_name": "Adicione o nome.",
+        "fix_password": "Esta senha é fraca demais: use pelo menos 6 caracteres, com uma letra e um número, ou a linha não será importada.",
         "fix_phone": "Este celular não é válido. Use números, com o código do país (+34…) se for do exterior.",
         "fixed": "Corrigido",
         "keep_all": "Manter todos",
@@ -1008,7 +1020,6 @@
       "add_title": "Adicionar uma pessoa",
       "added": "Adicionada aos seus membros",
       "cancel": "Cancelar",
-      "cant_clear": "Esvaziar um campo ainda não é salvo: o valor atual continua.",
       "edit": "Editar",
       "edit_everywhere": "As alterações valem para este membro em todo lugar, inclusive nas listas de participantes das votações em andamento.",
       "error": {

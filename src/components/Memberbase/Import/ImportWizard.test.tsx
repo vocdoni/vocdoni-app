@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { render, screen, waitFor } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { MembersImport } from './index'
 
 const members = vi.hoisted(() => ({
@@ -177,5 +178,45 @@ describe('MembersImport', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }))
     expect(screen.getByText('We matched 2 of 2 columns. Check them, then continue.')).toBeInTheDocument()
+  })
+
+  it('sends passwords hashed and leaves out the rows whose password is too weak', async () => {
+    // The hash of 's3cret' for this organization: see utils/member-password
+    const S3CRET_HASH = '2f7e83a0b19a82fa9a5dc6ecc6ff44ec82679ea87012a7187bd3313366bf277e'
+    setReactProvidersMock({
+      useOrganization: () => ({ organization: { address: '0x00000000000000000000000000000000000000AA' } }),
+    })
+    const user = userEvent.setup()
+    renderWizard()
+    await upload(
+      user,
+      'Name;Email;Password\nAnna;anna@example.org;s3cret\nPere;pere@example.org;abc\nJoan;joan@example.org;\n'
+    )
+
+    expect(await screen.findByText('We matched 3 of 3 columns. Check them, then continue.')).toBeInTheDocument()
+    expect(document.querySelector('select[data-column="Password"]')).toHaveValue('password')
+    // A password is never shown, not even from the organizer's own file
+    expect(screen.queryByText(/s3cret/)).toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(
+      screen.getByText(
+        'This password is too weak: use at least 6 characters, including a letter and a number, or the row isn’t imported.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByLabelText('Password, row 3')).toHaveAttribute('type', 'password')
+    await user.click(screen.getByRole('button', { name: 'Import 2 members' }))
+
+    await waitFor(() => expect(members.mutateAsync).toHaveBeenCalledTimes(1))
+    expect(members.mutateAsync).toHaveBeenCalledWith([
+      { name: 'Anna', email: 'anna@example.org', password: S3CRET_HASH },
+      { name: 'Joan', email: 'joan@example.org' },
+    ])
+    expect(JSON.stringify(members.mutateAsync.mock.calls)).not.toContain('s3cret')
+    expect(
+      await screen.findByText(
+        '1 row was not imported because its password does not meet the requirements (at least 6 characters, including a letter and a number): line 3.'
+      )
+    ).toBeInTheDocument()
   })
 })

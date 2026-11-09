@@ -406,7 +406,8 @@
     "member": {
       "error": {
         "invalid_birth_date": "La date de naissance ne peut pas être dans le futur",
-        "invalid_email": "Adresse e-mail invalide"
+        "invalid_email": "Adresse e-mail invalide",
+        "password_requirements": "Utilisez au moins 6 caractères, dont une lettre et un chiffre."
       }
     },
     "process_create": {
@@ -671,8 +672,18 @@
       "delete": "Supprimer"
     },
     "description": "Toutes les personnes de votre organisation. Vous choisissez qui participe à chaque vote.",
+    "form": {
+      "password_set": "Un mot de passe est enregistré. Saisissez-en un nouveau pour le remplacer.",
+      "password_will_be_removed": "Le mot de passe enregistré sera supprimé lors de l'enregistrement.",
+      "phone_will_be_removed": "Le numéro de téléphone enregistré sera supprimé lors de l'enregistrement."
+    },
     "groups": {
       "title": "Groupes"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} ligne n'a pas été importée car son mot de passe ne respecte pas les exigences (au moins 6 caractères, dont une lettre et un chiffre) : ligne {{lines}}.",
+      "password_rows_skipped_many": "{{count}} lignes n'ont pas été importées car leur mot de passe ne respecte pas les exigences (au moins 6 caractères, dont une lettre et un chiffre) : lignes {{lines}}.",
+      "password_rows_skipped_other": "{{count}} lignes n'ont pas été importées car leur mot de passe ne respecte pas les exigences (au moins 6 caractères, dont une lettre et un chiffre) : lignes {{lines}}."
     },
     "importer": {
       "button": "Importer"
@@ -895,6 +906,7 @@
         "fix_contact": "Ajoutez un e-mail ou un mobile, sinon cette personne ne recevra pas de code de vote.",
         "fix_email": "Cet e-mail n'est pas valide. Corrigez-le, sinon la personne sera importée sans.",
         "fix_name": "Ajoutez son nom.",
+        "fix_password": "Ce mot de passe est trop faible : utilisez au moins 6 caractères, dont une lettre et un chiffre, sinon la ligne ne sera pas importée.",
         "fix_phone": "Ce mobile n'est pas valide. Utilisez des chiffres, avec l'indicatif du pays (+33…) s'il est étranger.",
         "fixed": "Corrigé",
         "keep_all": "Tout garder",
@@ -1008,7 +1020,6 @@
       "add_title": "Ajouter une personne",
       "added": "Ajoutée à vos membres",
       "cancel": "Annuler",
-      "cant_clear": "Vider un champ n'est pas encore enregistré : la valeur actuelle est conservée.",
       "edit": "Modifier",
       "edit_everywhere": "Les modifications s'appliquent à ce membre partout, y compris dans les listes électorales des votes en cours.",
       "error": {

@@ -10,6 +10,8 @@ import { LuUsers } from 'react-icons/lu'
 import { useAuth } from '~components/Auth/useAuth'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
+import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
+import { useBuyRoomAction } from '~components/Pricing/useBuyRoomAction'
 import { useToast } from '~components/Toast'
 import { Banner } from '~components/ui/Banner'
 import { Sheet } from '~components/ui/Sheet'
@@ -263,6 +265,7 @@ type GroupSheetProps = BulkSheetProps & {
 const SavedCensusSheet = ({ open, onOpenChange, members, everyone, onDone, mode }: GroupSheetProps) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
   // Every saved census, not just the first page; "Everyone" can't be changed by hand
   const { data: allGroups, isLoading } = useAllGroups({ enabled: open })
   const groups = (allGroups ?? []).filter((group) => !group.isAutoGroup)
@@ -311,6 +314,8 @@ const SavedCensusSheet = ({ open, onOpenChange, members, everyone, onDone, mode 
     } catch (error) {
       if (isAbortError(error)) return
       const signed = getSignedMemberIds(error)
+      // Adding to a census a live vote uses can need more voter places than it paid for
+      const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
       toast({
         title: done
           ? t('members.saved_census.partial', {
@@ -323,12 +328,12 @@ const SavedCensusSheet = ({ open, onOpenChange, members, everyone, onDone, mode 
           ? t('members.saved_census.signed', {
               defaultValue: 'Some of them have already started voting in a live vote that uses this census.',
             })
-          : error instanceof Error
-            ? error.message
-            : undefined,
+          : (paymentMessage ?? (error instanceof Error ? error.message : undefined)),
         type: 'error',
         duration: 6000,
         isClosable: true,
+        action: buyRoomAction(error),
+        ...(paymentMessage && !signed ? paymentErrorToastOptions : {}),
       })
     } finally {
       setProgress(null)
@@ -448,6 +453,7 @@ type VoteOption = {
 export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }: BulkSheetProps) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
   const { client } = useApiClient()
   const { currentAddress } = useAuth()
   const queryClient = useQueryClient()
@@ -515,6 +521,7 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
       onDone?.()
     } catch (error) {
       if (isAbortError(error)) return
+      const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
       toast({
         title: added
           ? t('members.add_to_vote.stopped', {
@@ -522,10 +529,12 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
               added: format(added),
             })
           : t('members.add_to_vote.error', { defaultValue: "They couldn't be added" }),
-        description: error instanceof Error ? error.message : undefined,
+        description: paymentMessage ?? (error instanceof Error ? error.message : undefined),
         type: 'error',
         duration: 6000,
         isClosable: true,
+        action: buyRoomAction(error),
+        ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     } finally {
       setProgress(null)

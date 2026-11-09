@@ -15,6 +15,11 @@ const state = vi.hoisted(() => ({
   fetch: vi.fn(async (_url: string, _params?: unknown): Promise<unknown> => ({})),
 }))
 
+// The toast action needs the router and the signed-in account, which this test does not set up
+vi.mock('~components/Pricing/useBuyRoomAction', () => ({
+  useBuyRoomAction: () => () => undefined,
+}))
+
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({ bearedFetch: state.fetch, currentAddress: '0xorg' }),
 }))

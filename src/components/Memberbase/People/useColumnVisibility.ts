@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MEMBER_FIELDS, type MemberFieldId } from '../fields'
+import { READABLE_MEMBER_FIELDS, type MemberFieldId } from '../fields'
 
 /** The name is always shown (it opens the person), so it can't be hidden. */
 export const ALWAYS_VISIBLE: readonly MemberFieldId[] = ['name', 'surname']
 
-export const TOGGLEABLE_COLUMNS = MEMBER_FIELDS.filter((field) => !ALWAYS_VISIBLE.includes(field.id)).map(
+export const TOGGLEABLE_COLUMNS = READABLE_MEMBER_FIELDS.filter((field) => !ALWAYS_VISIBLE.includes(field.id)).map(
   (field) => field.id
 )
 
-const DEFAULT_VISIBLE = MEMBER_FIELDS.filter((field) => field.defaultVisible && !ALWAYS_VISIBLE.includes(field.id)).map(
-  (field) => field.id
-)
+const DEFAULT_VISIBLE = READABLE_MEMBER_FIELDS.filter(
+  (field) => field.defaultVisible && !ALWAYS_VISIBLE.includes(field.id)
+).map((field) => field.id)
 
 export const columnsStorageKey = (orgAddress?: string) => `members-columns:${orgAddress ?? ''}`
 

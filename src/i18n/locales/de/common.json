@@ -402,7 +402,8 @@
     "member": {
       "error": {
         "invalid_birth_date": "Geburtsdatum darf nicht in der Zukunft liegen",
-        "invalid_email": "Ungültige E-Mail-Adresse"
+        "invalid_email": "Ungültige E-Mail-Adresse",
+        "password_requirements": "Verwende mindestens 6 Zeichen, darunter einen Buchstaben und eine Zahl."
       }
     },
     "process_create": {
@@ -665,8 +666,17 @@
       "delete": "Löschen"
     },
     "description": "Alle in deiner Organisation. Du entscheidest, wer bei jeder Abstimmung abstimmt.",
+    "form": {
+      "password_set": "Ein Passwort ist gespeichert. Gib ein neues ein, um es zu ersetzen.",
+      "password_will_be_removed": "Das gespeicherte Passwort wird beim Speichern entfernt.",
+      "phone_will_be_removed": "Die gespeicherte Telefonnummer wird beim Speichern entfernt."
+    },
     "groups": {
       "title": "Gruppen"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} Zeile wurde nicht importiert, weil das Passwort die Anforderungen nicht erfüllt (mindestens 6 Zeichen, darunter ein Buchstabe und eine Zahl): Zeile {{lines}}.",
+      "password_rows_skipped_other": "{{count}} Zeilen wurden nicht importiert, weil das Passwort die Anforderungen nicht erfüllt (mindestens 6 Zeichen, darunter ein Buchstabe und eine Zahl): Zeilen {{lines}}."
     },
     "importer": {
       "button": "Importieren"
@@ -863,6 +873,7 @@
         "fix_contact": "Füge eine E-Mail-Adresse oder Handynummer hinzu, sonst bekommt die Person keinen Abstimmungscode.",
         "fix_email": "Diese E-Mail-Adresse ist ungültig. Korrigiere sie, sonst wird die Person ohne sie importiert.",
         "fix_name": "Füge den Namen hinzu.",
+        "fix_password": "Dieses Passwort ist zu schwach: Verwende mindestens 6 Zeichen, darunter einen Buchstaben und eine Zahl, sonst wird die Zeile nicht importiert.",
         "fix_phone": "Diese Handynummer ist ungültig. Nutze Ziffern, bei ausländischen Nummern mit Ländervorwahl (+49…).",
         "fixed": "Korrigiert",
         "keep_all": "Alle behalten",
@@ -969,7 +980,6 @@
       "add_title": "Person hinzufügen",
       "added": "Zu deinen Mitgliedern hinzugefügt",
       "cancel": "Abbrechen",
-      "cant_clear": "Ein Feld zu leeren wird noch nicht gespeichert: Der aktuelle Wert bleibt.",
       "edit": "Bearbeiten",
       "edit_everywhere": "Änderungen gelten für dieses Mitglied überall, auch auf den Teilnehmerlisten laufender Abstimmungen.",
       "error": {

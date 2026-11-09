@@ -1,9 +1,10 @@
+import { isValidMemberPassword } from '~utils/member-password'
 import type { MemberFieldId } from '../fields'
 
 /** A file row as member fields */
 export type MemberRecord = Partial<Record<MemberFieldId, string>>
 
-export type IssueKind = 'invalid_email' | 'invalid_phone' | 'no_contact' | 'no_name'
+export type IssueKind = 'invalid_email' | 'invalid_phone' | 'no_contact' | 'no_name' | 'invalid_password'
 
 /** A problem in a row, and the field that fixes it */
 export type RowIssue = { kind: IssueKind; field: MemberFieldId }
@@ -33,6 +34,10 @@ export const isValidPhone = (value?: string) => Boolean(value && PHONE_PATTERN.t
 
 const filled = (value?: string) => Boolean(value?.trim())
 
+/** A password set in the file that doesn't meet the requirements: its row isn't imported. */
+export const hasInvalidPassword = (record: MemberRecord) =>
+  filled(record.password) && !isValidMemberPassword(record.password!)
+
 /** The problems of one row, in the order they're best fixed. */
 export const rowIssues = (record: MemberRecord): RowIssue[] => {
   const issues: RowIssue[] = []
@@ -40,6 +45,7 @@ export const rowIssues = (record: MemberRecord): RowIssue[] => {
   if (filled(record.email) && !isValidEmail(record.email)) issues.push({ kind: 'invalid_email', field: 'email' })
   if (filled(record.phone) && !isValidPhone(record.phone)) issues.push({ kind: 'invalid_phone', field: 'phone' })
   if (!filled(record.email) && !filled(record.phone)) issues.push({ kind: 'no_contact', field: 'email' })
+  if (hasInvalidPassword(record)) issues.push({ kind: 'invalid_password', field: 'password' })
   return issues
 }
 

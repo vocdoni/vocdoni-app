@@ -10,6 +10,14 @@ describe('rowIssues', () => {
     expect(rowIssues({ email: 'anna@x.org' })).toEqual([{ kind: 'no_name', field: 'name' }])
     expect(rowIssues({ name: 'Anna', phone: '+34 612 345 678' })).toEqual([])
   })
+
+  it('flags a password that does not meet the requirements, but not a missing one', () => {
+    expect(rowIssues({ name: 'Anna', email: 'anna@x.org', password: 'abc' })).toEqual([
+      { kind: 'invalid_password', field: 'password' },
+    ])
+    expect(rowIssues({ name: 'Anna', email: 'anna@x.org', password: 's3cret' })).toEqual([])
+    expect(rowIssues({ name: 'Anna', email: 'anna@x.org', password: '  ' })).toEqual([])
+  })
 })
 
 describe('isValidPhone', () => {

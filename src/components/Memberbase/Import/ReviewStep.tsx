@@ -9,6 +9,7 @@ import { type MemberFieldId, useMemberFields } from '../fields'
 import {
   countReadiness,
   type DuplicateGroup,
+  hasInvalidPassword,
   type DuplicateKey,
   type IssueKind,
   type IssueReport,
@@ -61,7 +62,9 @@ export const ReviewStep = ({
     .filter((group) => !decisions[group.id])
     .reduce((sum, group) => sum + group.rows.length, 0)
   const problemCount = issueRows.length + undecidedRows
-  const readiness = useMemo(() => countReadiness(included.map((row) => records[row])), [included, records])
+  // A row whose password doesn't meet the requirements stays listed, to be fixed, but isn't sent
+  const importable = useMemo(() => included.filter((row) => !hasInvalidPassword(records[row])), [included, records])
+  const readiness = useMemo(() => countReadiness(importable.map((row) => records[row])), [importable, records])
 
   const [filter, setFilter] = useState<Filter>(() => (problemCount > 0 ? 'problems' : 'all'))
   const [shown, setShown] = useState(PAGE)
@@ -122,12 +125,17 @@ export const ReviewStep = ({
       defaultValue: 'Add an email or mobile, or they won’t get a voting code.',
     }),
     no_name: t('members.import.review.fix_name', { defaultValue: 'Add their name.' }),
+    invalid_password: t('members.import.review.fix_password', {
+      defaultValue:
+        'This password is too weak: use at least 6 characters, including a letter and a number, or the row isn’t imported.',
+    }),
   }
   const placeholders: Record<IssueKind, string> = {
     invalid_email: t('members.import.review.placeholder_email', { defaultValue: 'Email' }),
     invalid_phone: t('members.import.review.placeholder_phone', { defaultValue: 'Mobile' }),
     no_contact: t('members.import.review.placeholder_contact', { defaultValue: 'Email or mobile' }),
     no_name: t('members.import.review.placeholder_name', { defaultValue: 'Name' }),
+    invalid_password: t('members.fields.password', { defaultValue: 'Password' }),
   }
 
   const tiles = [
@@ -284,7 +292,9 @@ export const ReviewStep = ({
                           }}
                           size='sm'
                           fontSize={{ base: 'md', md: 'sm' }}
-                          autoComplete='off'
+                          autoComplete={field === 'password' ? 'new-password' : 'off'}
+                          // A password is never shown, not even from the organizer's own file
+                          type={field === 'password' ? 'password' : 'text'}
                           defaultValue={record[field] ?? ''}
                           placeholder={placeholders[issue.kind]}
                           aria-label={t('members.import.review.edit_label', {
@@ -353,10 +363,10 @@ export const ReviewStep = ({
               })}
             </Text>
           )}
-          <Button type='submit' loading={submitting} disabled={!included.length}>
+          <Button type='submit' loading={submitting} disabled={!importable.length}>
             {t('members.import.review.submit', {
-              count: included.length,
-              formattedCount: format(included.length),
+              count: importable.length,
+              formattedCount: format(importable.length),
               defaultValue_one: 'Import {{formattedCount}} member',
               defaultValue_other: 'Import {{formattedCount}} members',
             })}

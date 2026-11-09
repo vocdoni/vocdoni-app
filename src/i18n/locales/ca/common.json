@@ -406,7 +406,8 @@
     "member": {
       "error": {
         "invalid_birth_date": "La data de naixement no pot ser en el futur",
-        "invalid_email": "Adreça de correu electrònic no vàlida"
+        "invalid_email": "Adreça de correu electrònic no vàlida",
+        "password_requirements": "Utilitza almenys 6 caràcters, amb una lletra i un número."
       }
     },
     "process_create": {
@@ -671,8 +672,18 @@
       "delete": "Elimina"
     },
     "description": "Tothom de la teva organització. Tu tries qui vota a cada votació.",
+    "form": {
+      "password_set": "Hi ha una contrasenya desada. Escriu-ne una de nova per substituir-la.",
+      "password_will_be_removed": "La contrasenya desada s'eliminarà en desar.",
+      "phone_will_be_removed": "El número de telèfon desat s'eliminarà en desar."
+    },
     "groups": {
       "title": "Grups"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} fila no s'ha importat perquè la seva contrasenya no compleix els requisits (almenys 6 caràcters, amb una lletra i un número): línia {{lines}}.",
+      "password_rows_skipped_many": "{{count}} files no s'han importat perquè la seva contrasenya no compleix els requisits (almenys 6 caràcters, amb una lletra i un número): línies {{lines}}.",
+      "password_rows_skipped_other": "{{count}} files no s'han importat perquè la seva contrasenya no compleix els requisits (almenys 6 caràcters, amb una lletra i un número): línies {{lines}}."
     },
     "importer": {
       "button": "Importa"
@@ -895,6 +906,7 @@
         "fix_contact": "Afegeix un correu o mòbil, o no rebrà cap codi de votació.",
         "fix_email": "Aquest correu no és vàlid. Corregeix-lo, o s'importarà sense.",
         "fix_name": "Afegeix-hi el nom.",
+        "fix_password": "Aquesta contrasenya és massa feble: utilitza almenys 6 caràcters, amb una lletra i un número, o la fila no s'importarà.",
         "fix_phone": "Aquest mòbil no és vàlid. Fes servir xifres, amb el prefix del país (+34…) si és de l'estranger.",
         "fixed": "Corregit",
         "keep_all": "Conserva-les totes",
@@ -1008,7 +1020,6 @@
       "add_title": "Afegeix una persona",
       "added": "S'ha afegit als teus membres",
       "cancel": "Cancel·la",
-      "cant_clear": "Encara no es pot buidar un camp: es manté el valor actual.",
       "edit": "Edita",
       "edit_everywhere": "Els canvis s'apliquen a aquest membre a tot arreu, també als censos de les votacions en curs.",
       "error": {

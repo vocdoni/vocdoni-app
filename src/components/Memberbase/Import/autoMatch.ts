@@ -213,6 +213,16 @@ export const HEADER_SYNONYMS: Record<MemberFieldId, string[]> = {
     'boto-pisua (pisua)',
     'δύναμη ψήφου (βάρος)',
   ],
+  password: [
+    'password',
+    'contrasenya',
+    'contraseña',
+    'mot de passe',
+    'passwort',
+    'senha',
+    'pasahitza',
+    'κωδικός πρόσβασης',
+  ],
 }
 
 // Too generic to match inside a longer header: "Nom del pare" isn't the member's name

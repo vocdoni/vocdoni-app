@@ -406,7 +406,8 @@
     "member": {
       "error": {
         "invalid_birth_date": "La data di nascita non può essere futura",
-        "invalid_email": "Indirizzo email non valido"
+        "invalid_email": "Indirizzo email non valido",
+        "password_requirements": "Usa almeno 6 caratteri, con una lettera e un numero."
       }
     },
     "process_create": {
@@ -671,8 +672,18 @@
       "delete": "Elimina"
     },
     "description": "Tutte le persone della tua organizzazione. Scegli tu chi vota in ogni votazione.",
+    "form": {
+      "password_set": "È impostata una password. Digitane una nuova per sostituirla.",
+      "password_will_be_removed": "La password salvata verrà rimossa al salvataggio.",
+      "phone_will_be_removed": "Il numero di telefono salvato verrà rimosso al salvataggio."
+    },
     "groups": {
       "title": "Gruppi"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} riga non è stata importata perché la sua password non rispetta i requisiti (almeno 6 caratteri, con una lettera e un numero): riga {{lines}}.",
+      "password_rows_skipped_many": "{{count}} righe non sono state importate perché la loro password non rispetta i requisiti (almeno 6 caratteri, con una lettera e un numero): righe {{lines}}.",
+      "password_rows_skipped_other": "{{count}} righe non sono state importate perché la loro password non rispetta i requisiti (almeno 6 caratteri, con una lettera e un numero): righe {{lines}}."
     },
     "importer": {
       "button": "Importa"
@@ -895,6 +906,7 @@
         "fix_contact": "Aggiungi un’email o un cellulare, altrimenti non riceverà un codice di voto.",
         "fix_email": "Questa email non è valida. Correggila, altrimenti la persona verrà importata senza.",
         "fix_name": "Aggiungi il nome.",
+        "fix_password": "Questa password è troppo debole: usa almeno 6 caratteri, con una lettera e un numero, altrimenti la riga non verrà importata.",
         "fix_phone": "Questo cellulare non è valido. Usa solo cifre, con il prefisso internazionale (+39…) se è estero.",
         "fixed": "Corretto",
         "keep_all": "Tienili tutti",
@@ -1008,7 +1020,6 @@
       "add_title": "Aggiungi una persona",
       "added": "Aggiunta ai tuoi membri",
       "cancel": "Annulla",
-      "cant_clear": "Svuotare un campo non viene ancora salvato: resta il valore attuale.",
       "edit": "Modifica",
       "edit_everywhere": "Le modifiche valgono per questo membro ovunque, anche nei censimenti delle votazioni in corso.",
       "error": {

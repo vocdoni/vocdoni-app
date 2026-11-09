@@ -406,7 +406,8 @@
     "member": {
       "error": {
         "invalid_birth_date": "La fecha de nacimiento no puede estar en el futuro",
-        "invalid_email": "Dirección de correo electrónico no válida"
+        "invalid_email": "Dirección de correo electrónico no válida",
+        "password_requirements": "Usa al menos 6 caracteres, con una letra y un número."
       }
     },
     "process_create": {
@@ -671,8 +672,18 @@
       "delete": "Eliminar"
     },
     "description": "Todas las personas de tu organización. Tú eliges quién vota en cada votación.",
+    "form": {
+      "password_set": "Hay una contraseña guardada. Escribe una nueva para sustituirla.",
+      "password_will_be_removed": "La contraseña guardada se eliminará al guardar.",
+      "phone_will_be_removed": "El número de teléfono guardado se eliminará al guardar."
+    },
     "groups": {
       "title": "Grupos"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} fila no se ha importado porque su contraseña no cumple los requisitos (al menos 6 caracteres, con una letra y un número): línea {{lines}}.",
+      "password_rows_skipped_many": "{{count}} filas no se han importado porque su contraseña no cumple los requisitos (al menos 6 caracteres, con una letra y un número): líneas {{lines}}.",
+      "password_rows_skipped_other": "{{count}} filas no se han importado porque su contraseña no cumple los requisitos (al menos 6 caracteres, con una letra y un número): líneas {{lines}}."
     },
     "importer": {
       "button": "Importar"
@@ -895,6 +906,7 @@
         "fix_contact": "Añade un correo o móvil, o no recibirá un código de votación.",
         "fix_email": "Este correo no es válido. Corrígelo, o se importará sin él.",
         "fix_name": "Añade su nombre.",
+        "fix_password": "Esta contraseña es demasiado débil: usa al menos 6 caracteres, con una letra y un número, o la fila no se importará.",
         "fix_phone": "Este móvil no es válido. Usa dígitos, con el prefijo del país (+34…) si es del extranjero.",
         "fixed": "Corregido",
         "keep_all": "Conservar todas",
@@ -1008,7 +1020,6 @@
       "add_title": "Añadir una persona",
       "added": "Añadida a tus miembros",
       "cancel": "Cancelar",
-      "cant_clear": "Todavía no se puede vaciar un campo: se mantiene el valor actual.",
       "edit": "Editar",
       "edit_everywhere": "Los cambios se aplican a este miembro en todas partes, también en los censos de las votaciones en curso.",
       "error": {

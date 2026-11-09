@@ -3,16 +3,20 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
 import { generatePath, Link as RouterLink, useNavigate, useSearchParams } from 'react-router'
+import { useOrganization } from '@vocdoni/react-components'
 import { useAuth } from '~components/Auth/useAuth'
+import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
+import { useBuyRoomAction } from '~components/Pricing/useBuyRoomAction'
 import type { Table } from '~components/Spreadsheet/readTable'
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
 import { useAddMembers } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { hashMemberPassword } from '~utils/member-password'
 import { type MemberFieldId, useMemberFields } from '../fields'
 import { getStoredImportJobId, readAccountId, setStoredImportJobId } from '../importJobStorage'
 import { autoMatch, type ColumnTarget } from './autoMatch'
-import { detectIssues, type DuplicateGroup } from './detectIssues'
+import { detectIssues, type DuplicateGroup, hasInvalidPassword } from './detectIssues'
 import { DoneStep, type NextAction } from './DoneStep'
 import { MatchStep } from './MatchStep'
 import { buildMembersPayload, type DuplicateDecision, includedRows, type RowEdits, toRecords } from './payload'
@@ -50,6 +54,8 @@ const useLeaveGuard = (active: boolean) => {
 export const MembersImport = () => {
   const { t } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
+  const { organization } = useOrganization()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const { currentAddress } = useAuth()
@@ -112,8 +118,20 @@ export const MembersImport = () => {
 
   const submit = async () => {
     if (!table) return
-    const payload = buildMembersPayload(table, targets, records, included)
+    // A password that doesn't meet the requirements leaves its whole row out
+    const skipped = included.filter((row) => hasInvalidPassword(records[row]))
+    const rows = included.filter((row) => !hasInvalidPassword(records[row]))
+    if (!rows.length) return
+    const payload = buildMembersPayload(table, targets, records, rows)
     try {
+      // The plaintext never leaves the browser: each password is sent as its hash
+      payload.members = await Promise.all(
+        payload.members.map(async ({ password, ...member }) =>
+          typeof password === 'string' && password.trim()
+            ? { ...member, password: await hashMemberPassword(organization?.address ?? '', password) }
+            : member
+        )
+      )
       trackAnalyticsEvent({
         name: AnalyticsEvents.MembersImportStarted,
         props: { total_rows: payload.members.length, method: 'file' },
@@ -128,12 +146,30 @@ export const MembersImport = () => {
         europeanDates: payload.europeanDates,
       })
       setStep('done')
+      if (skipped.length) {
+        toast({
+          type: 'warning',
+          description: t('memberbase.import.password_rows_skipped', {
+            defaultValue_one:
+              '{{count}} row was not imported because its password does not meet the requirements (at least 6 characters, including a letter and a number): line {{lines}}.',
+            defaultValue_other:
+              '{{count}} rows were not imported because their password does not meet the requirements (at least 6 characters, including a letter and a number): lines {{lines}}.',
+            count: skipped.length,
+            lines: skipped.map((row) => table.rowNumbers[row]).join(', '),
+          }),
+          duration: null,
+          isClosable: true,
+        })
+      }
     } catch (error) {
       console.error(error)
+      const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
       toast({
         type: 'error',
         title: t('members.import.failed', { defaultValue: 'The import couldn’t start' }),
-        description: error instanceof Error ? error.message : undefined,
+        description: paymentMessage ?? (error instanceof Error ? error.message : undefined),
+        action: buyRoomAction(error),
+        ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }
   }
