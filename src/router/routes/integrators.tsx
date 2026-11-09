@@ -8,8 +8,16 @@ import LayoutIntegratorsAuth from '~elements/LayoutIntegratorsAuth'
 import AccountProtectedRoute from '~src/router/AccountProtectedRoute'
 import IntegratorOrgGuard from '~src/router/IntegratorOrgGuard'
 import NonLoggedRoute from '~src/router/NonLoggedRoute'
-import { Routes } from '.'
+import { useWalletAccess } from '~queries/wallet'
+import { redirectLegacyPath, Routes } from '.'
 import { SuspenseLoader } from '../SuspenseLoader'
+
+// Admins and managers can read the wallet, so they open on billing; everyone else gets support.
+const ConfigurationIndex = () => {
+  const { canView } = useWalletAccess()
+  const target = canView ? Routes.integrators.configuration.billing : Routes.integrators.configuration.support
+  return <Navigate to={target} replace />
+}
 
 const IntegratorsDashboard = lazy(() => import('~elements/integrators'))
 const IntegratorsSignin = lazy(() => import('~elements/integrators/signin'))
@@ -17,7 +25,7 @@ const IntegratorsSignup = lazy(() => import('~elements/integrators/signup'))
 const IntegratorsPasswordForgot = lazy(() => import('~elements/integrators/password'))
 const IntegratorsPasswordReset = lazy(() => import('~elements/integrators/password/reset'))
 const IntegratorsConfiguration = lazy(() => import('~elements/integrators/configuration'))
-const IntegratorSubscriptionTab = lazy(() => import('~components/Integrator/SubscriptionTab'))
+const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
 const IntegratorsManagedOrganizations = lazy(() => import('~elements/integrators/organizations'))
 const IntegratorsApiKeys = lazy(() => import('~elements/integrators/api-keys'))
 
@@ -131,15 +139,35 @@ export const useIntegratorsRoutes = () => {
                 children: [
                   {
                     index: true,
-                    element: <Navigate to={Routes.integrators.configuration.subscription} replace />,
+                    element: <ConfigurationIndex />,
                   },
                   {
-                    path: Routes.integrators.configuration.subscription,
+                    path: Routes.integrators.configuration.billing,
                     element: (
                       <SuspenseLoader>
-                        <IntegratorSubscriptionTab />
+                        <WalletPanel />
                       </SuspenseLoader>
                     ),
+                  },
+                  {
+                    path: Routes.integrators.configuration.billingReturn,
+                    element: (
+                      <SuspenseLoader>
+                        <WalletPanel />
+                      </SuspenseLoader>
+                    ),
+                  },
+                  {
+                    path: Routes.integrators.configuration.legacySubscription,
+                    ...redirectLegacyPath(Routes.integrators.configuration.billing),
+                  },
+                  {
+                    path: Routes.integrators.configuration.legacyWallet,
+                    ...redirectLegacyPath(Routes.integrators.configuration.billing),
+                  },
+                  {
+                    path: Routes.integrators.configuration.legacyWalletReturn,
+                    ...redirectLegacyPath(Routes.integrators.configuration.billingReturn),
                   },
                   {
                     path: Routes.integrators.configuration.support,

@@ -35,6 +35,13 @@ describe('buildAppEnv', () => {
     expect(buildAppEnv({ SHOW_ORG_LOGO: '1' }).SHOW_ORG_LOGO).toBe(false)
   })
 
+  it('only enables DISABLE_ANONYMOUS_VOTING for the exact string "true"', () => {
+    expect(buildAppEnv({}).DISABLE_ANONYMOUS_VOTING).toBe(false)
+    expect(buildAppEnv({ DISABLE_ANONYMOUS_VOTING: 'true' }).DISABLE_ANONYMOUS_VOTING).toBe(true)
+    expect(buildAppEnv({ DISABLE_ANONYMOUS_VOTING: 'false' }).DISABLE_ANONYMOUS_VOTING).toBe(false)
+    expect(buildAppEnv({ DISABLE_ANONYMOUS_VOTING: '1' }).DISABLE_ANONYMOUS_VOTING).toBe(false)
+  })
+
   it('resolves HOME_PROCESS_ID, treating blank values as unset', () => {
     expect(buildAppEnv({}).HOME_PROCESS_ID).toBeUndefined()
     expect(buildAppEnv({ HOME_PROCESS_ID: '   ' }).HOME_PROCESS_ID).toBeUndefined()

@@ -33,7 +33,6 @@ export enum ApiEndpoints {
   OrganizationsLanguages = 'organizations/languages',
   OrganizationsRoles = 'organizations/roles',
   OrganizationsTypes = 'organizations/types',
-  OrganizationSubscription = 'organizations/{address}/subscription',
   OrganizationsSupport = 'organizations/{address}/ticket',
   OrganizationMeta = 'organizations/{address}/meta',
   OrganizationMembers = 'organizations/{address}/members',
@@ -45,11 +44,8 @@ export enum ApiEndpoints {
   Password = 'users/password',
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
-  Plans = 'plans',
   Refresh = 'auth/refresh',
   Register = 'users',
-  SubscriptionCheckout = 'subscriptions/checkout',
-  SubscriptionPortal = 'subscriptions/{address}/portal',
   Verify = 'users/verify',
   VerifyCode = 'users/verify/code',
   Storage = 'storage',
@@ -64,11 +60,6 @@ export enum ErrorCode {
   UserNotVerified = 40014,
   UserAlreadyVerified = 40015,
   DraftLimitReached = 40031,
-  // Pay-per-process billing
-  InsufficientWalletBalance = 40175,
-  QuoteRequired = 40176,
-  PaymentSessionConflict = 40177,
-  PaymentRequired = 40178,
 }
 
 interface IApiError {
@@ -109,7 +100,7 @@ export const apiErrorDetails = (error: unknown): ApiErrorDetails | undefined => 
   if (error instanceof ApiError) return { code: error.apiError?.code, data: error.apiError?.data }
   if (error instanceof VocdoniApiError) {
     const body = error.body as { data?: unknown } | undefined
-    return { code: error.code, data: body?.data }
+    return { code: error.code, data: error.data ?? body?.data }
   }
   return undefined
 }

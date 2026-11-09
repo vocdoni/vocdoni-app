@@ -117,14 +117,48 @@
 - CI follows the base branch (`.github/workflows/test.yml`): PRs to `develop` run lint, tests and the dev build; PRs to
   `stage` or `d/**` run them with the stg build. PRs to any other base (`main`, an `h/` branch, or a feature branch in a
   stacked PR) get neither job, so a green check there means lint and tests never ran: run `pnpm lint` and `pnpm test`
-  locally. The integration workflow (`.github/workflows/integration.yml`) runs on merges into `develop` and on every PR
-  to `stage` or `main`, release and hotfix alike.
+  locally. The integration workflow (`.github/workflows/integration.yml`) runs on merges into `develop`, on PRs to
+  `stage` or `main` (release and hotfix alike), on any PR with sticky `/integration` pins, and on a `/integration` PR
+  comment from a user with write access.
 - The full flow and deploy links are in the README's "Branching and deploys" section.
+
+## Integration Tests Against Unmerged Upstream Changes
+The integration suite (`.github/workflows/integration.yml`) runs against the published `:main` images of
+`vocdoni/vocdoni-node` and `vocdoni/saas-backend` and the npm `@vocdoni/*` packages from the lockfile. When a change
+here depends on upstream work that is not merged yet, that run fails or proves nothing. **Rule: when a PR depends on
+an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change, open the PR with its usual description
+(linking the upstream PR), then post a separate PR comment with the `/integration` command pointing at that upstream
+PR, e.g. `/integration saas-backend=760` (bare PR number; `#760` also works, but GitHub autolinks it to this
+repo).** The command does nothing in the PR description; only a comment triggers it. That comment holds the command
+alone, with no signature or other text.
+- Keys: `vocdoni-node=`, `saas-backend=`, `integrator-sdk=` (the SDK repo, built, packed and installed through pnpm
+  overrides for that run only). Each is optional. A ref is a SHA, branch, tag, or a PR number (bare `760` or `#760`).
+  Upstreams are built from source, so the run takes longer.
+- A comment whose refs are all branches, tags or PRs is **sticky**: every later push re-runs against those refs at
+  their current heads. Any SHA makes it a one-shot run, and so does a bare `/integration` (`:main` images and npm
+  packages), without changing the sticky refs. `/integration reset` goes back to the `:main` images and npm packages.
+- Only users with write access can trigger it. The comment trigger runs the workflow from `develop` and replies with a
+  PR comment, and a failed run's reply includes the failing step's output. Sticky re-runs on push
+  show up as the Integration check and post a new PR comment each time, with the same output.
+- This workflow does not run on every PR: its triggers are listed under Branching Model above. A sticky pin also runs
+  the e2e job on PRs into `develop`, which otherwise skip it.
+- Pushes to the upstream PR do not re-run anything here. Push to this PR or comment again.
+- Do not treat a green pinned run as ready to merge. For `saas-backend` or `vocdoni-node`, merge only after the
+  upstream change is merged and deployed to the environment the base branch uses (`develop` → api-dev and vochain
+  dev). For `integrator-sdk`, merge only after it is published to npm and bumped here, since the pinned run commits
+  nothing. The pin only reaches the e2e job: lint, type checks and unit tests (`test.yml`) still use the lockfile
+  packages, so a PR that needs unpublished SDK API stays red there until the bump.
+
+See `integration/README.md` ("Pinning upstream commits") for the details.
 
 ## Commit & Pull Request Guidelines
 - Follow existing Conventional Commit patterns from repo history (`fix(scope): ...`, `chore(scope): ...`, `refactor(scope): ...`).
 - Keep commits scoped to one concern and use imperative summaries.
 - PR descriptions should explain what changed, why, and how it was verified.
+- Before starting a feature or bug fix that no GitHub issue or open PR tracks yet, suggest the user open an issue first
+  (offer to draft it), so the problem and its scope are agreed before the code. Link it from the PR: `Closes #123` when
+  the PR completes it, `Refs #123` for partial or phased work. Skip this for small fixes, dependency bumps, release PRs
+  and reviews, when the user says no issue is needed, and when running as a delegated subagent with no user to ask.
 
 ## Agent Working Rules
 - Treat this file as execution guidance for repository tasks.

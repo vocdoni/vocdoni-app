@@ -4,10 +4,6 @@ import { render, screen } from '~src/test-utils'
 import { defaultProcessValues, Process } from '../common'
 import { ExtraConfig } from './ExtraConfig'
 
-vi.mock('~components/Layout/SubscriptionLockedContent', () => ({
-  SubscriptionLockedContent: ({ children }) => <>{children({ isLocked: false })}</>,
-}))
-
 const AnonymityWatcher = () => {
   const { watch } = useFormContext<Process>()
 
@@ -30,8 +26,16 @@ describe('ExtraConfig voter anonymity', () => {
     render(<Harness />)
 
     expect(screen.getByRole('checkbox', { name: /Anonymous voting/ })).not.toBeChecked()
+    expect(screen.getByRole('checkbox', { name: /Anonymous voting/ })).toBeEnabled()
     expect(screen.getByTestId('form-anonymousVoting')).toHaveTextContent('false')
     expect(screen.queryByText(/no vote can be traced back/)).not.toBeInTheDocument()
+  })
+
+  it('hides the anonymous voting toggle when the option is disabled', () => {
+    render(<Harness />, { appEnv: { DISABLE_ANONYMOUS_VOTING: true } })
+
+    expect(screen.queryByRole('checkbox', { name: /Anonymous voting/ })).not.toBeInTheDocument()
+    expect(screen.getByTestId('form-anonymousVoting')).toHaveTextContent('false')
   })
 
   it('sets the form flag and explains anonymity once switched on', async () => {

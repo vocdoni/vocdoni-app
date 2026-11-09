@@ -5,7 +5,8 @@ import { Outlet, useLocation, useNavigate } from 'react-router'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
 import QueryDataLayout from '~components/Layout/QueryDataLayout'
-import { Routes } from '~src/router/routes'
+import { useWalletAccess } from '~queries/wallet'
+import { Routes, stripCheckoutReturn } from '~src/router/routes'
 
 type MenuItem = {
   label: string
@@ -19,6 +20,7 @@ const Settings = () => {
   const { isLoading, isError, error, organization } = useSaasAccount()
   const navigate = useNavigate()
   const location = useLocation()
+  const { canView: canViewWallet } = useWalletAccess()
 
   const menuItems: MenuItem[] = [
     {
@@ -29,10 +31,14 @@ const Settings = () => {
       label: t('team.title', { defaultValue: 'Team' }),
       route: Routes.dashboard.settings.team,
     },
-    {
-      label: t('subscription.title', { defaultValue: 'Subscription plan' }),
-      route: Routes.dashboard.settings.subscription,
-    },
+    ...(canViewWallet
+      ? [
+          {
+            label: t('billing.title', { defaultValue: 'Billing' }),
+            route: Routes.dashboard.settings.billing,
+          },
+        ]
+      : []),
     {
       label: t('support', { defaultValue: 'Support' }),
       route: Routes.dashboard.settings.support,
@@ -40,7 +46,8 @@ const Settings = () => {
   ]
 
   const currentTabIndex = useMemo(
-    () => menuItems.findIndex((item) => (item.route ? location.pathname.endsWith(item.route) : false)),
+    () =>
+      menuItems.findIndex((item) => (item.route ? stripCheckoutReturn(location.pathname).endsWith(item.route) : false)),
     [location.pathname, menuItems]
   )
   const activeTabValue = currentTabIndex === -1 ? menuItems[0]?.route : menuItems[currentTabIndex]?.route
@@ -55,7 +62,7 @@ const Settings = () => {
       </Heading>
       <SubHeading>
         {t('organization_settings.subtitle', {
-          defaultValue: 'Manage your organization, team members and your subscription plan',
+          defaultValue: 'Manage your organization, team members and billing',
         })}
       </SubHeading>
       <QueryDataLayout isLoading={isLoading} isError={isError} error={error}>

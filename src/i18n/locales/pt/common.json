@@ -30,22 +30,10 @@
   "already_member": "Já tens uma conta?",
   "alt": {
     "images": {
-      "barca": "Emblema do Barça",
-      "bellpuig": "Brasão da Câmara Municipal de Bellpuig",
-      "berga": "Brasão da Câmara Municipal de Berga",
-      "bisbal": "Brasão da Câmara Municipal de la Bisbal",
-      "bloock": "Logótipo da Bloock",
-      "coec": "Logótipo do COEC",
-      "decidim": "Logótipo do Decidim",
-      "esquerra": "Logótipo da Esquerra Republicana de Catalunya",
-      "omnium": "Logótipo da Òmnium Cultural",
       "org_logo": "Logótipo de {{org}}",
-      "organization_logo": "Logótipo da organização",
-      "ticanoia": "Logótipo da TIC Anoia"
+      "organization_logo": "Logótipo da organização"
     }
   },
-  "annual": "Anual<1>40% de desconto</1>",
-  "apply": "Aplicar",
   "aside": {
     "anonymous_receipt_gone": "O teu comprovativo foi mostrado quando votaste e não pode ser recuperado.",
     "has_already_voted": "O teu voto foi registado corretamente",
@@ -100,17 +88,36 @@
     "label": "Avatar da organização"
   },
   "back": "Voltar",
-  "billing_details": "Dados de faturação",
+  "billing": {
+    "title": "Faturação"
+  },
   "booking": {
     "unavailable": "A marcação está indisponível de momento. Tente novamente mais tarde."
   },
   "calendar": {
-    "max_duration_exceeded": "A duração excede o limite de {{ maxDuration }} dias do teu plano. Reduz a duração da votação ou <a>contacta-nos</a> se precisares de mais dias.",
+    "max_duration_exceeded": "A duração excede o limite de {{ maxDuration }} dias. Reduz a duração da votação.",
     "title": "Calendário"
   },
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar voto",
   "census": {
+    "checkout": {
+      "admin_only": "Só os administradores podem adicionar lugares para votantes.",
+      "amount_net": "Lugares (sem IVA)",
+      "back_to_members": "Voltar aos membros",
+      "balance": "A tua wallet tem {{balance}}.",
+      "bought": "Lugares para votantes adicionados: {{amount}} foram debitados da tua wallet. Tenta adicionar os membros novamente.",
+      "buy": "Adicionar lugares para votantes",
+      "intro": "Lugares para {{size}} votantes, por mais {{due}} (sem IVA).",
+      "intro_no_price": "Lugares para {{size}} votantes.",
+      "invalid": "Esta página precisa do número de votantes para o qual adicionar lugares. Abre-a a partir da alteração recusada.",
+      "pay": "Pagar {{amount}}",
+      "shortfall": "Faltam {{shortfall}} à tua wallet.",
+      "timeout": "O pagamento está confirmado; os lugares são adicionados assim que for processado. Tenta adicionar os membros novamente daqui a pouco.",
+      "timeout_redirected": "Ainda estamos a aguardar que os lugares sejam adicionados. Tenta adicionar os membros novamente daqui a pouco.",
+      "title": "Adicionar lugares para votantes",
+      "waiting": "Pagamento recebido. A adicionar os lugares para votantes…"
+    },
     "search": {
       "description": "Pesquisa um votante pelas suas credenciais para verificar se está na lista de participantes e se já votou.",
       "error": "Ocorreu um erro ao pesquisar o votante. Por favor, tenta novamente.",
@@ -140,14 +147,11 @@
     "title": "Alterar palavra-passe"
   },
   "close": "Fechar",
-  "code_applied": "Código «{{appliedCode}}» aplicado",
   "color_mode_switcher": "Alternar modo de cor",
   "common": {
     "back": "Voltar",
     "close_drawer": "Fechar painel",
-    "confirm": "Confirmar",
     "home": "Início",
-    "next": "Seguinte",
     "retry": "Tenta de novo"
   },
   "confirm": {
@@ -202,8 +206,16 @@
     "code_sent": "Código de verificação enviado",
     "contact_match_help": "Tens de corresponder ao registado no sistema",
     "errors": {
+      "credentials_or_password_incorrect": "Não foi possível verificar a tua identidade. Confirma as tuas credenciais e a tua palavra-passe e tenta novamente.",
       "participant_not_found": "O votante não consta da lista de participantes ou as credenciais fornecidas estão incorretas.",
       "requests_on_cooldown": "Demasiados pedidos. Aguarda um momento antes de tentar novamente.",
+      "too_many_attempts": "Demasiadas tentativas. Tenta novamente mais tarde.",
+      "too_many_attempts_hours_one": "Demasiadas tentativas. Tenta novamente daqui a {{count}} hora.",
+      "too_many_attempts_hours_many": "Demasiadas tentativas. Tenta novamente daqui a {{count}} horas.",
+      "too_many_attempts_hours_other": "Demasiadas tentativas. Tenta novamente daqui a {{count}} horas.",
+      "too_many_attempts_minutes_one": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minuto.",
+      "too_many_attempts_minutes_many": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minutos.",
+      "too_many_attempts_minutes_other": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minutos.",
       "zero_voting_weight": "Não tens poder de voto suficiente para aceder à votação."
     },
     "fields": {
@@ -214,10 +226,12 @@
       "memberNumber": "Número de sócio",
       "name": "Nome próprio",
       "nationalId": "Cartão de cidadão",
+      "password": "Palavra-passe",
       "phone": "Telefone",
       "surname": "Apelido"
     },
     "important": "Importante",
+    "password_unavailable": "Não é possível verificar a palavra-passe neste momento. Recarrega a página e tenta novamente.",
     "receive_code": "Receber código",
     "step1": {
       "footer_text": "Se tiveres algum problema, contacta a tua organização.",
@@ -236,7 +250,6 @@
     "terms_acceptance": "Li e aceito os <2>Termos e Condições</2> e a <6>Política de Privacidade</6>."
   },
   "current": "Atual",
-  "current_plan": "Plano atual",
   "dark": "Escuro",
   "dashboard": {
     "actions": {
@@ -248,18 +261,12 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "Códigos 2FA por email",
-      "2fa_email_tooltip": "Códigos de verificação enviados por email. Ao exceder o limite, cada código custa {{price}} €.",
-      "2fa_sms": "Códigos 2FA por SMS",
-      "2fa_sms_tooltip": "Códigos de verificação enviados por SMS. Ao exceder o limite, cada código custa {{price}} €.",
-      "limit_exceeded_message": "O teu plano atual atingiu os limites. Atualiza agora para continuar a trabalhar sem restrições.",
+      "description": "Acompanha a utilização da tua organização em relação aos seus limites.",
+      "limit_exceeded_message": "A tua base de membros atingiu o limite de {{max}} membros.",
       "memberbase_size": "Tamanho da base de membros",
       "memberbase_tooltip": "Número máximo de membros permitido na tua base de membros.",
-      "plan_usage": "Utilização do plano",
-      "plan_usage_description": "Acompanha a tua utilização atual face aos limites do plano",
-      "upgrade_plan": "Atualizar plano",
-      "voting_processes": "Processos de votação",
-      "voting_processes_tooltip": "Número de processos de votação criados este ano. As votações com 10 membros ou menos não contam para os limites."
+      "title": "Utilização",
+      "voting_processes": "Processos de votação"
     },
     "welcome": {
       "common_tasks_actions": "Tarefas e ações comuns",
@@ -271,7 +278,6 @@
       "hello": "Bem-vindo ao Vocdoni, {{name}}!",
       "how_first_vote": "Como criar a tua primeira votação",
       "no_organization": "Não foi encontrada nenhuma organização",
-      "no_subscription": "Não há subscrição disponível. Cria uma organização para ativar o teu plano.",
       "quick_actions": "Ações rápidas",
       "recent_voting_description": "As últimas atividades de votação da tua organização",
       "recent_voting_title": "Processos de votação recentes",
@@ -292,7 +298,6 @@
   },
   "delete_my_account": "Eliminar a minha conta",
   "description": "Descrição",
-  "discount": "Desconto",
   "do_it_later": "Fazer mais tarde",
   "draft_processes": "Rascunhos",
   "drafts": {
@@ -344,7 +349,6 @@
   "end_time": "Hora de fim",
   "end_vote": "Terminar votação",
   "ended_processes": "Terminados",
-  "enter_promo_code": "Introduzir código",
   "error": {
     "crash_description": "Recarrega a página ou volta ao Dashboard.",
     "crash_title": "Algo correu mal",
@@ -361,74 +365,6 @@
     "reload": "Recarregar",
     "return_to_home": "Voltar ao início",
     "title": "Erro"
-  },
-  "error_removing_code": "Erro ao remover o código",
-  "features": {
-    "anonymous": "Votação anónima",
-    "approval": "Votação de aprovação",
-    "audit": "Auditoria",
-    "audit_blockchain": "100% auditável na blockchain",
-    "basic_analytics": "Análises básicas",
-    "basic_branding": "Personalização básica",
-    "basic_sla": "Melhor esforço",
-    "cumulative": "Votação cumulativa",
-    "custom_reports": "Relatórios personalizados",
-    "custom_url": "Domínio personalizado",
-    "dedicated_account_manager": "Gestor de conta dedicado",
-    "email_notification": "2FA por email",
-    "email_notifications": "Notificações por email aos votantes",
-    "email_reminder": "Lembretes por email",
-    "email_support": "Email",
-    "email_support_basic": "(resp. 72 h)",
-    "email_support_essential": "(resp. 48 h)",
-    "email_support_premium": "(resp. 24 h)",
-    "GDPR_compliance": "Conformidade com o RGPD",
-    "generic_sla": "SLA genérico",
-    "live_results": "Resultados em direto",
-    "live_streaming": "Integração de transmissão em direto",
-    "memberbase_all_in_one_management": "Gestão integrada da base de membros",
-    "multiple": "Escolha múltipla",
-    "on_demand": "A pedido*",
-    "overwrite": "Alteração do voto",
-    "participatory_budgeting": "Orçamento participativo",
-    "personalization": "Personalização total",
-    "phone_support": "Telefone",
-    "priority_support": "Apoio prioritário",
-    "ranked": "Voto por ordenação",
-    "section": {
-      "analytics_and_reporting": "Análises e relatórios",
-      "authentication_security": "Autenticação e segurança",
-      "compliance_and_security": "Conformidade e segurança",
-      "customization": "Personalização",
-      "extra_features": "Funcionalidades adicionais",
-      "features": "Funcionalidades",
-      "general_limits": "Limites gerais",
-      "memberbase_management": "Gestão da base de membros",
-      "organization": "Organização",
-      "support": "Apoio",
-      "voting_types": "Tipos de votação"
-    },
-    "single": "Escolha única",
-    "sms_notification": "2FA por SMS",
-    "sms_notifications": "Notificações SMS aos votantes",
-    "sub_orgs": "Até {{ count }} suborganizações",
-    "team_members": "Membros da equipa",
-    "tooltips": {
-      "anonymous": "Esta funcionalidade opcional pode ser escolhida pelos organizadores. Quando ativada, os votos são totalmente anónimos: nem nós conseguimos saber quem votou em qual opção. Em alternativa, os organizadores podem optar por cifrar os resultados até ao fim da votação ou tornar a votação totalmente pública.",
-      "live_results": "Esta funcionalidade opcional pode ser escolhida pelos organizadores. Os resultados podem ser apresentados em tempo real à medida que os votos são submetidos, ou os organizadores podem manter os resultados cifrados e ocultos até ao fim do período de votação.",
-      "memberbase_all_in_one": "Importa a tua base de membros para criar grupos de votantes elegíveis e gerir as permissões de votação de forma muito simples.",
-      "multiple": "Os votantes podem selecionar várias opções entre as disponíveis. Ideal para inquéritos e decisões em que são permitidas várias seleções.",
-      "overwrite": "Os votantes podem alterar o seu voto antes do fim do período de votação. Esta funcionalidade ajuda a evitar erros e a prevenir coerção, permitindo que os votantes corrijam as suas escolhas.",
-      "single": "Os votantes só podem selecionar uma opção entre as disponíveis. Ideal para eleições e decisões simples de sim/não.",
-      "team_members": "Convida membros da equipa e atribui permissões baseadas em perfis para gerir a tua organização sem esforço",
-      "uptime": "Garantimos uma disponibilidade de 99,99%, mas só nos planos pagos isso é assegurado por contrato com garantias."
-    },
-    "total_orgs": "Total de suborganizações disponíveis",
-    "total_users": "Total de utilizadores disponíveis",
-    "uptime": "99,99% de disponibilidade",
-    "uptime_guaranteed": "Garantida ({{suffix}})",
-    "weighted": "Votação ponderada",
-    "white_label": "Marca branca (sem branding Vocdoni)"
   },
   "footer": {
     "company": "Empresa",
@@ -467,7 +403,8 @@
       "error": {
         "invalid_birth_date": "A data de nascimento não pode estar no futuro",
         "invalid_email": "Endereço de email inválido",
-        "invalid_phone": "Número de telefone inválido"
+        "invalid_phone": "Número de telefone inválido",
+        "password_requirements": "Usa pelo menos 6 caracteres, com uma letra e um número."
       }
     },
     "process_create": {
@@ -496,9 +433,6 @@
       "voting_issue": "Problema de votação"
     }
   },
-  "free_trial_days_one": "Um dia gratuito",
-  "free_trial_days_many": "{{count}} dias gratuitos",
-  "free_trial_days_other": "{{count}} dias gratuitos",
   "google_oauth_conflict_error": "Já existe uma conta com este email. Inicia sessão com o método existente.",
   "google_oauth_error": "Erro de OAuth do Google",
   "google_oauth_error_description": "Erro de OAuth do Google, tenta novamente",
@@ -565,193 +499,6 @@
     "title": "Vocdoni | Infraestrutura de votação segura e verificável"
   },
   "home": {
-    "clients_title": "Mais de 100 organizações confiam em nós",
-    "faqs": {
-      "faq_1": {
-        "description": "O Vocdoni é uma plataforma de votação digital baseada em tecnologia blockchain, que oferece processos de votação seguros, transparentes e verificáveis.",
-        "title": "O que é o Vocdoni?"
-      },
-      "faq_10": {
-        "description": "Disponibilizamos apoio técnico para ajudar os votantes a resolver qualquer problema. Para além disso, o sistema foi pensado para ser intuitivo e acessível a todos.",
-        "title": "O que acontece se um votante tiver problemas para aceder ou votar?"
-      },
-      "faq_11": {
-        "description": "O Vocdoni é resistente a ataques graças à blockchain e a outras medidas avançadas de segurança. Os sistemas tradicionais podem ser vulneráveis a manipulações, mas no Vocdoni cada voto está protegido criptograficamente e é impossível de alterar.",
-        "title": "Que segurança oferece o Vocdoni contra ciberataques?"
-      },
-      "faq_12": {
-        "description": "O Vocdoni permite realizar todo o tipo de votações: eleições internas, assembleias, referendos, inquéritos e processos participativos. A plataforma adapta-se às necessidades de governos, empresas, cooperativas, associações e outras organizações.",
-        "title": "Que tipos de votação posso fazer com o Vocdoni?"
-      },
-      "faq_13": {
-        "description": "Não. Os votantes recebem uma ligação segura ou uma credencial única que lhes permite votar sem necessidade de registo, simplificando a experiência e garantindo o anonimato.",
-        "title": "Os votantes precisam de criar uma conta para votar?"
-      },
-      "faq_14": {
-        "description": "Depende da configuração da votação. Em alguns casos, é permitido aos votantes alterarem o seu voto até ao encerramento do processo.",
-        "title": "É possível alterar um voto depois de submetido?"
-      },
-      "faq_15": {
-        "description": "Sim, a plataforma permite configurações avançadas como a votação ponderada (em que um voto vale mais consoante determinados critérios) e a votação delegada (em que um utilizador pode transferir o seu voto para outra pessoa).",
-        "title": "O Vocdoni permite votação ponderada ou delegada?"
-      },
-      "faq_16": {
-        "description": "Sim, é possível combinar a votação digital com a votação presencial e depois integrar os resultados numa contagem unificada. Disponibilizamos vários sistemas para realizar votações híbridas.",
-        "title": "É possível realizar votações híbridas (digitais e presenciais)?"
-      },
-      "faq_17": {
-        "description": "Isso depende das regras de cada processo. Podem ser definidos critérios de desempate antes do início da votação, como segundas voltas ou regras específicas para determinar o vencedor.",
-        "title": "O que acontece em caso de empate numa votação?"
-      },
-      "faq_18": {
-        "description": "Os resultados são gerados automaticamente assim que a votação encerra. Não é necessária qualquer contagem manual e os resultados podem ser verificados de imediato graças à tecnologia blockchain.",
-        "title": "Quanto tempo demora a publicação dos resultados?"
-      },
-      "faq_19": {
-        "description": "Sim, o Vocdoni permite configurar votações privadas em que apenas os membros de uma determinada lista de participantes podem aceder.",
-        "title": "É possível realizar votações totalmente privadas?"
-      },
-      "faq_2": {
-        "description": "O Vocdoni combina blockchain, criptografia avançada e provas de conhecimento zero para garantir a segurança, o anonimato e a verificabilidade de cada voto.",
-        "title": "Como funciona o Vocdoni?"
-      },
-      "faq_20": {
-        "description": "Qualquer pessoa pode verificar os resultados graças à transparência da blockchain. Para além disso, disponibilizamos ferramentas para auditar o processo de votação e garantir a sua fiabilidade.",
-        "title": "Como se pode verificar a correção dos resultados?"
-      },
-      "faq_21": {
-        "description": "Sim. A plataforma foi concebida segundo as normas de acessibilidade (WCAG), tornando-a adequada a pessoas com deficiência visual, auditiva ou motora.",
-        "title": "O Vocdoni é acessível a pessoas com deficiência?"
-      },
-      "faq_22": {
-        "description": "O Vocdoni funciona em qualquer dispositivo com ligação à Internet, incluindo computadores, tablets e telemóveis. A plataforma está otimizada para todos os navegadores modernos, sem necessidade de transferências ou instalações.",
-        "title": "Que dispositivos são compatíveis com o Vocdoni?"
-      },
-      "faq_23": {
-        "description": "Os votantes podem receber um convite por email, SMS ou através de uma ligação segura partilhada pela organização.",
-        "title": "Como são convidados os votantes a participar numa votação?"
-      },
-      "faq_24": {
-        "description": "O Vocdoni consegue gerir desde pequenos grupos a votações massivas com centenas de milhares de participantes, graças à sua infraestrutura blockchain escalável.",
-        "title": "Quantos votantes consegue o Vocdoni gerir em simultâneo?"
-      },
-      "faq_25": {
-        "description": "Sim, a plataforma permite definir perfis e permissões para administradores, limitando o acesso a determinadas funcionalidades de acordo com as necessidades da organização.",
-        "title": "É possível definir diferentes níveis de acesso para administradores?"
-      },
-      "faq_26": {
-        "description": "O Vocdoni suporta vários métodos de autenticação, como email, eID, código por SMS, assinatura eletrónica ou integração com sistemas de identificação existentes.",
-        "title": "Como posso garantir que apenas pessoas autorizadas votam?"
-      },
-      "faq_27": {
-        "description": "Disponibilizamos apoio técnico e ferramentas de recuperação para garantir que todos os votantes possam exercer o seu direito de voto sem problemas.",
-        "title": "O que acontece se um votante tiver problemas técnicos durante a votação?"
-      },
-      "faq_28": {
-        "description": "Lista fechada de participantes: só podem votar as pessoas previamente registadas na lista de participantes. Lista aberta de participantes: qualquer pessoa que cumpra determinados critérios (por exemplo, verificação por eID) pode votar.",
-        "title": "Qual é a diferença entre uma lista fechada e uma lista aberta de participantes?"
-      },
-      "faq_29": {
-        "description": "Os observadores podem verificar o processo de votação em tempo real e auditar os resultados utilizando as ferramentas de transparência e verificação do Vocdoni.",
-        "title": "Como funciona a verificação dos resultados pelos observadores?"
-      },
-      "faq_3": {
-        "description": "O Vocdoni oferece transparência, segurança, resistência a manipulações e acessibilidade global, sem necessidade de infraestrutura física.",
-        "title": "Que vantagens tem o Vocdoni face aos sistemas de votação tradicionais?"
-      },
-      "faq_30": {
-        "description": "Sim, podes definir datas e horas exatas para o início e o fim da votação, eliminando a necessidade de intervenção manual.",
-        "title": "Posso programar uma votação para começar e terminar automaticamente?"
-      },
-      "faq_31": {
-        "description": "Sim, a plataforma suporta diferentes formatos de votação, incluindo perguntas de escolha múltipla, votação ponderada e sistemas como o voto preferencial ou STV.",
-        "title": "As perguntas podem ter várias opções de resposta?"
-      },
-      "faq_32": {
-        "description": "Sim, o Vocdoni facilita a participação em processos deliberativos, assembleias e mecanismos de governança, adaptando-se a vários sistemas de tomada de decisão.",
-        "title": "O Vocdoni é adequado para processos colaborativos de decisão?"
-      },
-      "faq_33": {
-        "description": "Sim, o Vocdoni permite implementar métodos de votação mais sofisticados consoante as necessidades de cada organização ou processo de votação.",
-        "title": "É possível integrar métodos de votação avançados como o voto quadrático ou por aprovação?"
-      },
-      "faq_34": {
-        "description": "Consoante a configuração da votação, podes optar por resultados em tempo real ou por uma contagem final após o encerramento.",
-        "title": "Os resultados estão acessíveis em tempo real?"
-      },
-      "faq_35": {
-        "description": "Graças à transparência e verificabilidade da blockchain, qualquer participante ou observador pode auditar os resultados para detetar eventuais anomalias.",
-        "title": "Como se podem contestar os resultados de uma votação?"
-      },
-      "faq_36": {
-        "description": "Sim, podes carregar facilmente uma lista de participantes predefinida através de um ficheiro CSV ou integrá-la com bases de dados existentes.",
-        "title": "É possível importar uma lista de participantes existente?"
-      },
-      "faq_37": {
-        "description": "Sim, seguimos as melhores práticas de segurança e transparência e podemos adaptar-nos a regulamentações específicas de diferentes países e instituições.",
-        "title": "O Vocdoni cumpre as regulamentações oficiais de voto eletrónico?"
-      },
-      "faq_38": {
-        "description": "Sim, é uma ferramenta ideal para consultas públicas, referendos e processos de participação cidadã de qualquer dimensão.",
-        "title": "O Vocdoni pode gerir referendos e consultas cidadãs?"
-      },
-      "faq_39": {
-        "description": "Os planos do Vocdoni incluem um número base de votantes, mas podes adicionar mais consoante as necessidades da tua organização. A plataforma é escalável e gere desde pequenas assembleias a grandes votações.",
-        "title": "Existem limites no número de votantes ou de processos de votação?"
-      },
-      "faq_4": {
-        "description": "O Vocdoni foi pensado para administrações públicas, empresas, cooperativas, associações e qualquer organização que precise de um sistema de votação seguro e transparente.",
-        "title": "Quem pode utilizar o Vocdoni?"
-      },
-      "faq_40": {
-        "description": "Sim, o Vocdoni permite a votação ponderada, em que cada voto pode ter um valor diferente consoante critérios definidos pela organização.",
-        "title": "É possível definir diferentes pesos de voto?"
-      },
-      "faq_41": {
-        "description": "O Vocdoni foi concebido para ser acessível a partir de qualquer dispositivo e navegador. Em caso de problemas, oferecemos apoio técnico e opções de recuperação do voto para garantir que ninguém fica sem participar.",
-        "title": "O que acontece se um votante tiver problemas técnicos durante a votação?"
-      },
-      "faq_42": {
-        "description": "O Vocdoni utiliza cifragem avançada, provas de conhecimento zero e uma arquitetura blockchain descentralizada para garantir a segurança e a resistência a ataques.",
-        "title": "Como é protegido o sistema contra ciberataques?"
-      },
-      "faq_43": {
-        "description": "Sim, suportamos vários sistemas de votação, incluindo voto por maioria simples, voto preferencial (como o sistema STV), perguntas de escolha múltipla e muito mais.",
-        "title": "É possível criar perguntas com várias opções ou voto preferencial?"
-      },
-      "faq_44": {
-        "description": "Sim, oferecemos a possibilidade de realizar votações de teste para que organizadores e votantes se familiarizem com o sistema antes de uma votação oficial.",
-        "title": "É possível fazer testes antes de uma votação real?"
-      },
-      "faq_45": {
-        "description": "Podes registar-te e começar a criar votações em poucos minutos. Se precisares de apoio ou de uma configuração personalizada, a nossa equipa está disponível para te ajudar.",
-        "title": "Como posso começar a usar o Vocdoni?"
-      },
-      "faq_5": {
-        "description": "Depende do quadro legal de cada país. O Vocdoni cumpre as melhores práticas de segurança e privacidade e pode adaptar-se a regulamentações específicas.",
-        "title": "O voto eletrónico com o Vocdoni é legal?"
-      },
-      "faq_6": {
-        "description": "O Vocdoni utiliza cifragem avançada, blockchain e técnicas criptográficas como zk-SNARK para garantir a privacidade e a segurança de cada voto.",
-        "title": "Como garante o Vocdoni a segurança dos votos?"
-      },
-      "faq_7": {
-        "description": "Sim: graças à blockchain, qualquer pessoa pode verificar a integridade dos resultados sem comprometer o anonimato dos votantes.",
-        "title": "É possível auditar uma votação realizada com o Vocdoni?"
-      },
-      "faq_8": {
-        "description": "Os votantes só precisam de um dispositivo com ligação à Internet e de um navegador web. Não é necessária qualquer aplicação ou software específico.",
-        "title": "De que requisitos técnicos precisam os votantes?"
-      },
-      "faq_9": {
-        "description": "O Vocdoni utiliza técnicas criptográficas avançadas, como as provas de conhecimento zero (zk-SNARK), para garantir que ninguém possa associar um voto à identidade de um votante.",
-        "title": "Como é protegido o anonimato dos votantes?"
-      },
-      "show_less": "Mostrar menos",
-      "show_more": "Mostrar mais",
-      "subtitle": "Encontrarás a seguir as respostas às perguntas mais frequentes dos nossos utilizadores. Traz clareza e confiança à tua experiência de votação digital.",
-      "title": "Perguntas frequentes"
-    },
     "support": {
       "btn_watch": "Marcar uma chamada"
     }
@@ -821,13 +568,13 @@
       "title": "Chaves de API"
     },
     "configuration": {
-      "subtitle": "Gerir a tua subscrição e pedir apoio.",
+      "subtitle": "Gere a tua faturação e pede apoio.",
       "title": "Configuração"
     },
     "create_account": {
       "cancel": "Cancelar",
       "confirm": "Criar conta",
-      "description": "Será criada uma nova conta de integrador no plano grátis e definida como a tua organização ativa.",
+      "description": "Será criada uma nova conta de integrador e definida como a tua organização ativa, o que desbloqueia o painel de integrador.",
       "error": "Não foi possível criar a conta de integrador",
       "switch_instead": "Ou alterna para uma organização existente",
       "title": "Criar uma conta de integrador grátis?"
@@ -843,17 +590,28 @@
       "title": "Documentação"
     },
     "managed": {
+      "actions": "Ações",
+      "cap_amount": "Limite de gastos (EUR, sem IVA)",
+      "cap_hint": "O montante que os processos de votação desta organização podem ter debitado da tua wallet, sem IVA. Baixar o limite abaixo do que já foi gasto só bloqueia novos débitos.",
+      "cap_invalid": "Indica um montante igual ou superior a 0, com no máximo 2 casas decimais.",
+      "cap_reached": "Limite atingido",
       "created": "Criada",
       "docs_card_description": "Aprende a criar e gerir organizações de forma programática através da API.",
       "docs_card_title": "Criar uma organização",
+      "edit_cap": "Editar limite",
+      "edit_cap_title": "Editar limite de gastos",
       "emails": "E-mails",
       "empty_description": "As organizações são criadas através da API, não a partir deste painel. Quando criares a tua primeira organização, aparecerá aqui.",
       "empty_title": "Ainda não há organizações",
       "error": "Não foi possível carregar as organizações",
+      "no_cap": "Sem limite",
       "organization": "Organização",
       "pagination": "Página {{page}} de {{total}} · {{items}} no total",
       "processes": "Processos",
+      "save_cap": "Guardar",
       "sms": "SMS",
+      "spend_cap": "Limite de gastos",
+      "spent": "Gasto",
       "subtitle": "Organizações que geres em nome dos teus clientes.",
       "title": "Organizações geridas"
     },
@@ -864,7 +622,7 @@
     },
     "overview": "Visão geral",
     "overview_error": "Não foi possível carregar a quota de integrador",
-    "overview_subtitle": "A tua quota de integrador e o teu uso atual.",
+    "overview_subtitle": "A tua utilização como integrador e o saldo da wallet.",
     "overview_title": "Visão geral",
     "provision_failed": "Não conseguimos configurar a tua conta de integrador.",
     "quota": {
@@ -882,18 +640,11 @@
     "signin_title": "Iniciar sessão",
     "signup_subtitle": "Regista-te para gerir organizações como integrador.",
     "signup_title": "Cria a tua conta de integrador",
-    "subscription": {
-      "active": "Ativo",
-      "billing_details": "Detalhes de faturação",
-      "current_plan": "Plano atual",
-      "inactive": "Inativo",
-      "portal_error": "Não foi possível abrir o portal de faturação",
-      "unavailable": "Os detalhes da subscrição não estão disponíveis"
-    },
-    "upgrade_plan": "Melhorar o plano"
+    "wallet": {
+      "balance": "Saldo da wallet",
+      "manage": "Gerir wallet"
+    }
   },
-  "internal_server_error": "Erro interno do servidor",
-  "invalid_promo_code": "Código promocional inválido",
   "invite": {
     "account_not_verified": "A tua conta não está verificada. Verifica a tua conta para continuar.",
     "create_account_subtitle": "Precisas primeiro de uma conta para aceitar o convite",
@@ -958,12 +709,19 @@
     },
     "form": {
       "cancel": "Cancelar",
+      "password_set": "Existe uma palavra-passe guardada. Escreve uma nova para a substituir.",
+      "password_will_be_removed": "A palavra-passe guardada será removida ao guardar.",
       "phone_warning": "Número de telefone oculto. Qualquer alteração aqui irá substituí-lo.",
       "phone_will_be_removed": "O número de telefone guardado será removido ao guardar.",
       "save": "Guardar alterações"
     },
     "groups": {
       "title": "Grupos"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} linha não foi importada porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linha {{lines}}.",
+      "password_rows_skipped_many": "{{count}} linhas não foram importadas porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}.",
+      "password_rows_skipped_other": "{{count}} linhas não foram importadas porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}."
     },
     "import_file": {
       "subtitle": "Importa o teu ficheiro CSV, XLS, XLSX ou ODS com os dados dos membros. Certifica-te de que os cabeçalhos das colunas correspondem ao modelo para uma associação correta.",
@@ -1010,6 +768,7 @@
       "firstname": "Nome próprio",
       "member_number": "Número de sócio",
       "national_id": "Cartão de cidadão",
+      "password": "Palavra-passe",
       "phone": "Telefone",
       "surname": "Apelido",
       "weight": "Poder de voto (peso)"
@@ -1048,6 +807,7 @@
       "add_to_group_success": "Membros adicionados ao grupo com sucesso",
       "bulk_delete": "Eliminar",
       "cancel": "Cancelar",
+      "clear_sort": "Limpar ordenação",
       "close_drawer": "Fechar",
       "create_group": "Criar grupo",
       "create_group_error": "Erro ao criar o grupo",
@@ -1087,6 +847,9 @@
       "showing_results_one": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultado",
       "showing_results_many": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultados",
       "showing_results_other": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultados",
+      "sort_by": "Ordenar por {{column}}",
+      "sorted_by_asc": "Ordenado por {{column}}, ascendente",
+      "sorted_by_desc": "Ordenado por {{column}}, descendente",
       "toggle_column": "Mostrar/ocultar coluna {{column}}"
     }
   },
@@ -1101,8 +864,6 @@
     "login": "Iniciar sessão",
     "open": "Abrir menu"
   },
-  "month": "mês",
-  "monthly": "Mensal",
   "name": "Nome",
   "need_help": {
     "description": "Precisas de ajuda com o teu primeiro processo de votação? Vê este tutorial ou marca uma chamada.",
@@ -1118,9 +879,6 @@
   "new_voting": "Nova votação",
   "no_results_filtering": "O teu filtro de pesquisa atual não devolve resultados",
   "not_registred_yet": "Ainda não tens conta?",
-  "number_of_members_one": "{{ count }} membro da equipa",
-  "number_of_members_many": "{{ count }} membros da equipa",
-  "number_of_members_other": "{{ count }} membros da equipa",
   "oauth": {
     "link": {
       "action": "Associar conta {{provider}}",
@@ -1137,7 +895,6 @@
   },
   "open_in_explorer": "Abrir no Explorer",
   "or_continue_with": "ou continuar com",
-  "order_summary": "Resumo da encomenda",
   "org_type_selector": {
     "selector_label": "Tipo de organização"
   },
@@ -1157,8 +914,6 @@
       "title": "Cria o teu primeiro processo de votação"
     },
     "elections_list_load_more": "Carregar mais",
-    "max_census": "Participantes máx. por votação",
-    "max_processes": "Votações por ano¹",
     "no_organization_title": "Ainda não pertences a nenhuma organização!",
     "organization": "Dados da organização",
     "title": {
@@ -1170,7 +925,7 @@
   },
   "organization_settings": {
     "phone_support": {
-      "description": "Disponível apenas para subscritores do plano personalizado.",
+      "description": "Liga diretamente para a nossa equipa para obter ajuda prioritária.",
       "id": "ID",
       "info": "Tem à mão o ID da tua organização ao ligar.",
       "organization_id": "ID da tua organização",
@@ -1179,7 +934,7 @@
       "priority_support_line_description": "Disponível de segunda a sexta, das 9 h às 18 h CET",
       "title": "Apoio telefónico"
     },
-    "subtitle": "Faz a gestão da tua organização, dos membros da equipa e do teu plano de subscrição",
+    "subtitle": "Faz a gestão da tua organização, dos membros da equipa e da faturação",
     "support": {
       "description": "Obtém ajuda e apoio para a tua organização.",
       "title": "Apoio"
@@ -1238,71 +993,11 @@
   },
   "plan": {
     "encouragement": "Lançar uma votação é simples e os participantes podem aderir a partir de qualquer lugar. Garantias sólidas a um custo mais baixo fizeram do Vocdoni uma escolha de confiança para centenas de municípios, associações, partidos políticos e empresas.",
-    "free": "<0>Estás no plano gratuito</0>, que já te permite lançar votações. Se precisares de mais funcionalidades, limites mais elevados ou opções específicas, explora os planos pagos e experimenta-os gratuitamente.",
     "special_needs": "Precisas de ajuda ou de algo específico? Marca uma chamada."
-  },
-  "plan_upgrade": {
-    "cancel": "Cancelar",
-    "generic_subtitle": "O teu plano atual limita esta ação a {{limit}}. Atualiza o plano para continuar e desbloquear funcionalidades avançadas.",
-    "generic_title": "Atualiza o plano para aumentar os limites",
-    "memberbase_subtitle": "O teu plano atual permite até {{limit}} membros na tua base de membros. Atualiza-o para adicionar mais membros e desbloquear funcionalidades avançadas.",
-    "memberbase_title": "Atualiza o plano para adicionar mais membros à tua base de membros",
-    "see_plans": "Ver planos",
-    "subtitle": "O teu plano atual só permite {{limit}} para colaboração. Atualiza-o para adicionar mais membros à equipa e desbloquear funcionalidades avançadas.",
-    "title": "Atualiza para adicionar mais membros à equipa"
   },
   "please_check_email_to_verify": "Verifica o teu email para confirmar a conta",
   "preferences": "Preferências",
   "preview": "Pré-visualizar",
-  "pricing": {
-    "2fa": "Autenticação 2FA² ({{suffix}})",
-    "2fa_suffix_both": "Email e SMS",
-    "2fa_suffix_email": "Email",
-    "2fa_suffix_sms": "SMS",
-    "basic_analytics": "Análises básicas",
-    "comparison_table": {
-      "footnote_1": "¹ As votações com menos de 10 participantes são consideradas testes e não contam para os limites do teu plano.",
-      "footnote_2": "² Os créditos 2FA só são consumidos quando um utilizador pede efetivamente a verificação num processo de votação. Não correrás o risco de surpresas: se excederes os créditos incluídos durante uma votação, cada código adicional será cobrado a 0,015 € no momento do envio. Também podes comprar antecipadamente créditos extra em pacotes vantajosos.",
-      "footnote_on_demand": "* As funcionalidades pedidas serão avaliadas individualmente e podem implicar custos adicionais."
-    },
-    "core_voting_one": "Um único membro",
-    "core_voting_many": "Até {{ count }} membros",
-    "core_voting_other": "Até {{ count }} membros",
-    "custom_branding": "Personalização da marca*",
-    "custom_subtitle": "À medida das tuas necessidades",
-    "custom_title": "Personalizado",
-    "different_voting_methods": "Diferentes métodos de votação",
-    "empty": "Não foram encontrados planos",
-    "empty_description": "Volta mais tarde para ver os planos disponíveis.",
-    "essential_subtitle": "Para organizações em crescimento",
-    "essential_title": "Essencial",
-    "free_subtitle": "Ideal para começar",
-    "free_title": "Gratuito",
-    "load_error": "Não foi possível carregar os planos",
-    "load_error_description": "Tenta novamente.",
-    "premium_subtitle": "Para organizações consolidadas",
-    "premium_title": "Premium",
-    "priority_support": "Apoio prioritário por email (24 h)",
-    "ticket_support_48": "Apoio por email (48 h)",
-    "ticket_support_72": "Apoio por email (72 h)",
-    "up_to_admins_one": "Um administrador",
-    "up_to_admins_many": "{{ count }} administradores",
-    "up_to_admins_other": "{{ count }} administradores",
-    "yearly_processes_one": "{{ count }} votação por ano¹",
-    "yearly_processes_many": "{{ count }} votações por ano¹",
-    "yearly_processes_other": "{{ count }} votações por ano¹"
-  },
-  "pricing_card": {
-    "annual_savings": "Poupa {{ savings }}/ano com o plano anual",
-    "annual_total_cost": "{{ price }} faturados anualmente",
-    "contact_sales": "<0>Contacta a nossa equipa comercial</0> <1>ou</1>",
-    "custom_plan": "Preço sob consulta",
-    "custom_plan_description": "Tens requisitos de governança especiais? Podemos adaptar-nos às tuas necessidades com uma solução totalmente personalizada. Um gestor de conta dedicado irá acompanhar-te durante toda a colaboração.",
-    "free_trial": "Período experimental gratuito de {{ freeDays }} dias",
-    "from": "<price>{{ price }}</price><time>/mês+IVA</time>",
-    "most_popular_plan": "Mais popular",
-    "need_more_members": "Precisas de mais membros? <2>Contacta-nos</2>"
-  },
   "privacy_policy": "Política de privacidade",
   "process": {
     "anonymity": {
@@ -1324,6 +1019,29 @@
       }
     },
     "census": "Lista de participantes",
+    "checkout": {
+      "cancel_open": "Cancelar o pagamento em curso",
+      "check_again": "Verificar novamente",
+      "conflict": "Ainda há um carregamento aberto para este processo de votação, por isso ainda não pode ser publicado. Retoma o pagamento para o concluir, ou cancela-o e publica-o a partir da tua wallet.",
+      "draft_total": "Total do rascunho (sem IVA)",
+      "pay": "Pagar {{amount}} e publicar",
+      "publish_again": "Publicar novamente",
+      "publish_title": "Publicar o processo de votação",
+      "publishing": "A publicar o teu processo de votação…",
+      "publishing_after_payment": "Pagamento recebido. A publicar o teu processo de votação…",
+      "rest_stays": "O resto fica na tua wallet.",
+      "resume": "Retomar o pagamento",
+      "return_to_processes": "Voltar aos teus processos de votação",
+      "return_unknown": "Não conseguimos saber a que processo de votação correspondia este pagamento. Se o pagamento foi concluído, o processo de votação é publicado automaticamente. Vê os teus processos de votação para confirmar o estado.",
+      "shortfall": "Valor em falta (sem IVA)",
+      "timeout": "O teu pagamento está confirmado e o processo de votação será publicado em breve. Se não for, publica-o novamente: é pago a partir da tua wallet.",
+      "timeout_unpaid": "O processo de votação ainda está a ser publicado. Se não aparecer em breve, publica-o novamente: é pago a partir da tua wallet.",
+      "title": "Carregar e publicar",
+      "top_up": "Carregamento (sem IVA)",
+      "unconfirmed": "O teu pagamento ainda está a ser confirmado. Alguns métodos de pagamento demoram alguns dias a confirmar. O processo de votação é publicado automaticamente assim que o pagamento for confirmado, por isso podes sair desta página.",
+      "unpaid": "O pagamento não foi concluído. Podes tentar novamente.",
+      "wallet_balance": "Saldo da wallet"
+    },
     "create": {
       "action": {
         "publish": "Publicar",
@@ -1343,9 +1061,9 @@
         "title": "A guardar rascunho"
       },
       "limit_reached": {
-        "message_one": "Atingiste o limite de {{ count }} rascunho. Para guardar este rascunho, elimina um rascunho existente ou atualiza o teu plano.",
-        "message_many": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente ou atualiza o teu plano.",
-        "message_other": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente ou atualiza o teu plano."
+        "message_one": "Atingiste o limite de {{ count }} rascunho. Para guardar este rascunho, elimina um rascunho existente.",
+        "message_many": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente.",
+        "message_other": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente."
       },
       "question": {
         "add": "Adicionar pergunta",
@@ -1355,6 +1073,7 @@
           "description": "Tens a certeza de que queres eliminar esta pergunta?",
           "title": "Eliminar pergunta"
         },
+        "limit_reached": "Um processo de votação pode ter no máximo {{ max }} perguntas.",
         "question_number": "Pergunta {{index}} de {{total}}"
       },
       "save_draft_error": {
@@ -1383,12 +1102,21 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "O pagamento de um processo de votação que usa estes membros ainda está a ser processado. Tenta novamente quando terminar.",
-        "census_growth_payment_required": "Estes membros aumentariam a lista de participantes de um processo de votação para além do que foi pago. Aumentá-la custa até {{amount}} a mais (IVA não incluído).",
+        "census_growth_payment_required": "Estes membros aumentariam a lista de participantes de um processo de votação para além do já pago. Alargá-la custa até {{amount}} a mais (sem IVA) e tens de a comprar antes de adicionar estes membros.",
+        "census_growth_payment_shortfall": "Estes membros aumentariam a lista de participantes de um processo de votação para além do já pago. Alargá-la custa até {{amount}} a mais (sem IVA) e tens de a comprar antes de adicionar estes membros. A tua wallet não cobre {{shortfall}} desse valor.",
         "census_growth_quote_required": "Estes membros levariam a lista de participantes de um processo de votação para além dos 50.000 votantes, o que exige um orçamento personalizado. Contacta-nos para a aumentar.",
-        "draft_payment_in_progress": "Este rascunho não pode ser guardado devido ao seu pagamento: ou o pagamento ainda está a ser processado, ou a alteração não é permitida depois de pago (como adicionar personalização da marca). Contacta-nos se continuar a acontecer.",
-        "payment_in_progress": "Um pagamento, uma compra ou um reembolso deste processo de votação ainda não está concluído, por isso o processo não pode ser publicado agora. Tenta novamente mais tarde e contacta-nos se continuar a acontecer.",
-        "publish_payment_required": "Este processo de votação custa {{amount}} no total (IVA não incluído) e tem de ser pago antes de ser publicado. Se parte dele já foi paga, só falta pagar a diferença.",
+        "census_growth_spend_cap_reached": "Estes lugares para votantes ultrapassariam o limite de gastos que o integrador definiu para esta organização. O integrador tem de o aumentar primeiro.",
+        "census_growth_wallet_insufficient": "A wallet da organização integradora não cobre o custo de adicionar estes membros a um processo de votação. O integrador que gere esta organização tem de carregar primeiro a wallet.",
+        "census_growth_wallet_insufficient_amounts": "A wallet da organização integradora tem {{available}}, mas adicionar estes membros a um processo de votação exige {{required}} (sem IVA). O integrador que gere esta organização tem de carregar primeiro a wallet.",
+        "draft_integrator_org": "A tua organização integradora não pode ter processos de votação, só as organizações que gere podem. Guarda este rascunho numa delas.",
+        "draft_payment_in_progress": "Este rascunho não pode ser guardado por causa do seu pagamento. Depois de pago, não é possível acrescentar a personalização de marca nem um URL próprio: remove-os. Se houver um pagamento a ser creditado, aguarda um momento e tenta de novo.",
+        "open_wallet": "Abrir wallet",
+        "payment_in_progress": "Este processo de votação não pode ser publicado neste momento por causa do seu pagamento: pode haver um carregamento ainda em aberto, um pagamento a ser creditado, ou uma alteração (como acrescentar a personalização de marca depois de pago) pode não ser permitida. Verifica o rascunho e o seu pagamento e tenta de novo.",
+        "publish_integrator_org": "A tua organização integradora não pode ter processos de votação, só as organizações que gere podem. Publica este processo numa delas.",
+        "publish_payment_required": "Este processo de votação custa {{amount}} no total (sem IVA) e tem de ser pago antes de ser publicado. Carrega a tua wallet em Definições → Wallet e volta a publicar.",
+        "publish_wallet_short": "A tua wallet tem {{balance}}, e publicar este processo de votação exige mais {{shortfall}} (sem IVA). Carrega a tua wallet em Definições → Wallet e volta a publicar.",
         "quote_required": "Os processos de votação com mais de 50.000 votantes precisam de um orçamento personalizado. Contacta-nos para publicar este.",
+        "spend_cap_reached": "Publicar este processo de votação ultrapassaria o limite de gastos que o integrador definiu para esta organização. O integrador tem de o aumentar antes de voltares a publicar.",
         "wallet_insufficient": "O saldo do integrador não cobre o preço deste processo de votação. O integrador que gere esta organização tem de carregar o seu saldo antes de voltares a publicar.",
         "wallet_insufficient_amounts": "O saldo do integrador é de {{available}}, mas ainda faltam {{required}} (IVA não incluído) para publicar este processo de votação. O integrador que gere esta organização tem de carregar o seu saldo antes de voltares a publicar."
       }
@@ -1396,6 +1124,30 @@
     "people_in_census_one": "{{ count }} votante",
     "people_in_census_many": "{{ count }} votantes",
     "people_in_census_other": "{{ count }} votantes",
+    "price": {
+      "error": "Não foi possível carregar o preço.",
+      "free": "Este processo de votação é gratuito: é publicado sem pagamento.",
+      "line": {
+        "base": "Processo de votação",
+        "branding": "Personalização da marca e marca branca",
+        "custom_url": "URL personalizado",
+        "email_two_fa": "Código de verificação por email",
+        "minimum_charge": "Valor mínimo",
+        "signed_certificate": "Certificado de resultados assinado",
+        "sms_two_fa": "Código de verificação por SMS"
+      },
+      "paid": "Pago: publicar este processo de votação não custa mais nada.",
+      "pending": "Há um pagamento de carregamento da wallet aberto para este rascunho.",
+      "quote_only": "O preço deste processo de votação é definido por um orçamento personalizado.",
+      "quote_recommended": "Para processos de votação com mais de {{limit}} votantes recomendamos um orçamento personalizado. <contact>Pede um orçamento</contact>, ou publica-o ao preço indicado nas definições.",
+      "quote_required": "Os processos de votação com mais de {{limit}} votantes só podem ser publicados com um orçamento personalizado. <contact>Pede um orçamento</contact> para publicar este.",
+      "total": "Total",
+      "unavailable": "O preço aparece aqui assim que o rascunho for guardado com os votantes e a respetiva autenticação configurada.",
+      "vat_excluded": "Preços sem IVA. O IVA é adicionado ao carregares a tua wallet.",
+      "wallet_covers": "O saldo da tua wallet ({{balance}}) cobre este total: ao publicar, é pago pela tua wallet.",
+      "wallet_short": "A tua wallet tem {{balance}}, faltam-lhe {{shortfall}} para este total.",
+      "wallet_top_up": "Carregar a wallet"
+    },
     "question_type": {
       "label": "Tipo de pergunta",
       "multiple": "Escolha múltipla",
@@ -1531,6 +1283,7 @@
       "placeholder": "Opção {{number}}",
       "remove": "Remover opção"
     },
+    "price": "Preço",
     "question": {
       "description": {
         "placeholder": "Adiciona aqui a descrição da pergunta (opcional)…"
@@ -1725,8 +1478,6 @@
     "error": "Falha ao atualizar o perfil",
     "success": "Perfil atualizado com sucesso"
   },
-  "promo_code": "Código promocional",
-  "promo_code_required": "O código promocional é obrigatório",
   "public_process": {
     "no_tally": "Sem contagem",
     "verify": "Verifique no explorador da blockchain:",
@@ -1735,7 +1486,6 @@
   "questions_and_results": "Perguntas e resultados",
   "registration_failed": "Falha no registo",
   "registration_successful": "Registo concluído com sucesso",
-  "remove": "Remover",
   "remove_avatar": "Remover avatar",
   "reset_password_button": "Repor palavra-passe",
   "result_visibility": "Visibilidade dos resultados",
@@ -1811,25 +1561,6 @@
   },
   "start_date": "Data de início",
   "start_time": "Hora de início",
-  "subscribe": "Subscrever",
-  "subscription": {
-    "locked_content": {
-      "available_in": "Disponível em:",
-      "description": "Atualiza o teu plano para obteres {{ permissionName }} e mais.",
-      "title": "O teu plano atual {{ plan }} não inclui {{ permissionName }}",
-      "unlock": "Desbloquear {{ permissionName }}"
-    },
-    "title": "Plano de subscrição"
-  },
-  "subscription_plan": {
-    "gdpr_compliance": "Todos os planos incluem conformidade com o RGPD.",
-    "hide_comparison_table": "Mostrar menos funcionalidades",
-    "need_help": "<0>Precisas de ajuda para escolher?</0> <1>Contacta a nossa equipa comercial</1>",
-    "show_comparison_table": "Ver todas as funcionalidades",
-    "subtitle": "Com as nossas subscrições, recebes muito mais do que um plano. Tens acesso à plataforma de governança mais inovadora. Graças a este modelo, conseguimos oferecer o melhor preço do mercado: precises de 1, 5 ou 20 votações por ano, beneficiarás sempre dos custos mais competitivos e de garantias incomparáveis. A plataforma é totalmente self-service, mas a nossa equipa está sempre disponível para prestar apoio ou adaptar soluções às tuas necessidades específicas.",
-    "title": "Plano de subscrição"
-  },
-  "subtotal": "Subtotal",
   "support": "Apoio",
   "support_chat": {
     "ask_name": "Antes de enviar — como te chamas?",
@@ -1861,7 +1592,6 @@
   "switch_mode": "Mudar para o modo {{ mode }}",
   "switch_organization": "Mudar de organização",
   "system": "Sistema",
-  "tax": "IVA ({{percent}}%)",
   "team": {
     "actions": {
       "cancel_invitation": "Cancelar convite",
@@ -1885,6 +1615,7 @@
     "expires_in": "Expira em {{time}}",
     "load_error": "Não foi possível carregar os membros da equipa",
     "load_error_description": "Tenta novamente.",
+    "max_writers_reached": "Esta organização já tem {{max}} administradores e gestores, incluindo convites pendentes. Remove um ou cancela um convite pendente para libertar um lugar. Os visualizadores não têm limite.",
     "only_one_member": {
       "add_team_member": "Adicionar membro à equipa",
       "subtitle": "Adiciona membros à equipa para colaborar na tua organização",
@@ -1973,21 +1704,17 @@
     }
   },
   "theme": "Tema",
-  "then_price_per_period": "Depois {{price}}/{{period}}",
-  "total_after_trial": "Total após o período experimental",
-  "total_due_today": "Total a pagar hoje",
   "total_votes": "Total de votos",
   "turnout": "Participação",
-  "upgrade_plan": "Mudar para {{plan}}",
   "uploaded_image_preview": "Pré-visualização da imagem carregada",
   "uploader": {
     "avatar_upload_failed": "Falha no carregamento do avatar",
     "avatar_upload_success": "Avatar carregado",
     "click_or_drag_and_drop": "<click>Clica para carregar ou arrasta e larga</click><formats>(Formatos permitidos: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Carregar imagem",
-    "csv_row_limit_exceeded_one": "Esta importação resultaria num total de {{count}} linha, excedendo o limite do teu plano de {{max}}.",
-    "csv_row_limit_exceeded_many": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite do teu plano de {{max}}.",
-    "csv_row_limit_exceeded_other": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite do teu plano de {{max}}.",
+    "csv_row_limit_exceeded_one": "Esta importação resultaria num total de {{count}} linha, excedendo o limite de {{max}} membros.",
+    "csv_row_limit_exceeded_many": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite de {{max}} membros.",
+    "csv_row_limit_exceeded_other": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite de {{max}} membros.",
     "drop_here": "Larga o ficheiro aqui",
     "error": {
       "invalid_image_type": "Este tipo de ficheiro não é suportado. Carrega uma imagem .png ou .jpg.",
@@ -2031,7 +1758,6 @@
     "verifying_title": "A verificar {{ email }}"
   },
   "view_in_explorer": "Ver no Explorer",
-  "view_plans_and_pricing": "Ver planos e preços",
   "vocdoni_logo": "Logótipo do Vocdoni",
   "vote": {
     "anonymous_receipt": "Voto anónimo: guarda este comprovativo agora, a plataforma não o pode voltar a mostrar.",
@@ -2041,83 +1767,104 @@
   "vote_overwrite": "Alteração do voto",
   "voter_anonymity": "Anonimato dos votantes",
   "voter_auth": {
-    "2fa_badge": "2FA",
-    "2fa_description": "Acrescenta uma camada extra de segurança exigindo aos votantes que verifiquem a sua identidade",
-    "2fa_email": "<email /> Verificação por email",
-    "2fa_email_description": "Os votantes receberão um código de verificação por email",
-    "2fa_enable": "Ativar autenticação em dois passos",
-    "2fa_method_title": "Selecionar método de verificação",
-    "2fa_security_description": "A autenticação em dois passos aumenta significativamente a segurança do teu processo de votação, garantindo que apenas os membros autorizados possam votar.",
-    "2fa_security_title": "Segurança reforçada",
-    "2fa_sms": "<phone /> Verificação por SMS",
-    "2fa_sms_description": "Os votantes receberão um código de verificação por SMS",
-    "2fa_voter_choice": "<email /> ou <phone /> Escolha do votante",
-    "2fa_voter_choice_description": "Os votantes podem escolher o método de verificação que preferirem",
     "anonymity": "Anonimato do voto: {{ mode }}",
     "button": {
       "configure": "Configurar autenticação dos votantes",
       "edit": "Editar autenticação dos votantes"
     },
-    "configured": "Autenticação dos votantes configurada",
-    "configured_auth": "Autenticação dos votantes",
-    "credentials": "Credenciais",
-    "description": "Define como os votantes se autenticarão para participar neste processo de votação.",
-    "email": "Por verificação de email",
-    "guarantees": "Garantias de autenticação",
-    "guarantees_mid_description_intro": "A tua configuração oferece garantias de autenticação de nível intermédio com 3 credenciais.",
-    "guarantees_mid_list_1": "Ativa a autenticação em dois passos para obter garantias fortes",
-    "guarantees_mid_title": "Garantias de autenticação de nível intermédio",
-    "guarantees_strong_description": "A tua configuração oferece garantias de autenticação fortes com verificação em dois passos.",
-    "guarantees_strong_title": "Garantias de autenticação fortes",
-    "guarantees_sub_mid": "Garantias de autenticação de nível intermédio com 3 credenciais mas sem verificação em dois passos.",
-    "guarantees_sub_strong": "Garantias de autenticação fortes com a verificação em dois passos ativada.",
-    "guarantees_sub_weak": "Garantias de autenticação básicas com 1 credencial e sem verificação em dois passos.",
-    "guarantees_weak_description_intro": "A tua configuração atual oferece garantias mínimas de autenticação. Recomendamos vivamente:",
-    "guarantees_weak_list_1": "Adicionar mais credenciais (objetivo: 2) para uma melhor verificação de identidade",
-    "guarantees_weak_list_2": "Ativar a autenticação em dois passos para uma camada adicional de verificação",
-    "guarantees_weak_title": "Garantias de autenticação fracas",
-    "level_mid": "Médio",
-    "level_strong": "Forte",
-    "level_weak": "Fraco",
+    "code": {
+      "description": "Antes de votar, enviamos um código de 6 dígitos para o email ou telemóvel do votante. Isto prova que lhe pertence, para que ninguém vote com os dados de outra pessoa.",
+      "email_description": "Enviado para o email da tua base de membros.",
+      "email_label": "Email",
+      "heading": "2. Enviar também um código único?",
+      "none": "Sem código",
+      "none_description": "Os votantes iniciam sessão apenas com os seus dados.",
+      "sms_description": "Enviado para o número de telefone da tua base de membros.",
+      "sms_label": "SMS",
+      "voter_choice": "Email ou SMS",
+      "voter_choice_description": "Cada votante escolhe onde o receber."
+    },
+    "details": {
+      "description": "Escolhe até {{max}} dados da tua base de membros. O que os votantes escreverem tem de coincidir exatamente.",
+      "heading": "1. O que vão escrever os votantes?",
+      "optional": "Opcional se enviares um código único: os votantes podem então iniciar sessão só com o código.",
+      "password_not_counted": "A palavra-passe não conta para esse limite."
+    },
+    "level": {
+      "basic": "Básica",
+      "good": "Boa",
+      "strong": "Forte",
+      "unset": "Não definida"
+    },
+    "modal": {
+      "group_summary_one": "{{group}} · {{count}} membro",
+      "group_summary_many": "{{group}} · {{count}} membros",
+      "group_summary_other": "{{group}} · {{count}} membros",
+      "title": "Como vão os votantes iniciar sessão?"
+    },
     "no_group_description": "Seleciona primeiro um grupo para configurar a autenticação.",
+    "password_needs_another_credential": "Uma palavra-passe sozinha não consegue identificar os votantes. Escolhe também outro dado ou envia um código único.",
     "pending": {
       "description": "Escolhe os dados de membro que os votantes têm de introduzir para votar, como o cartão de cidadão ou o número de sócio.",
       "error_title": "Precisas disto para publicar",
       "title": "Obrigatório antes de publicar"
     },
-    "security_level": "Boa segurança",
-    "security_recommendation_1": "Para uma melhor segurança, recomendamos selecionar pelo menos 2 credenciais.",
-    "security_recommendation_2_one": "Selecionaste {{ count }} credencial, o que oferece uma boa segurança aos teus votantes.",
-    "security_recommendation_2_many": "Selecionaste {{ count }} credenciais, o que oferece uma boa segurança aos teus votantes.",
-    "security_recommendation_2_other": "Selecionaste {{ count }} credenciais, o que oferece uma boa segurança aos teus votantes.",
-    "security_recommendation_title": "Recomendação de segurança",
-    "select_credentials": "Seleciona as credenciais necessárias para a autenticação dos votantes",
-    "select_credentials_description": "Escolhe os campos que os votantes terão de fornecer para se autenticarem. Seleciona até 3 para o melhor equilíbrio entre segurança e facilidade de utilização. Se planeias usar apenas email ou telefone para 2FA, ignora este passo e clica em Seguinte para o configurar",
-    "selected_credentials_count_one": "{{ count }}/3 credencial selecionada",
-    "selected_credentials_count_many": "{{ count }}/3 credenciais selecionadas",
-    "selected_credentials_count_other": "{{ count }}/3 credenciais selecionadas",
-    "sms": "Via verificação por SMS",
-    "summary": "Resumo",
-    "summary_2fa_enable": "Autenticação em dois passos",
-    "summary_2fa_enabled": "Ativada",
-    "summary_credentials": "Credenciais necessárias",
-    "summary_title": "Resumo da configuração de autenticação",
-    "title": "Configurar autenticação dos votantes",
-    "two_factor": "Dois fatores",
-    "validation_duplicates_one": "{{count}} utilizador duplicado",
-    "validation_duplicates_many": "{{count}} utilizadores duplicados",
-    "validation_duplicates_other": "{{count}} utilizadores duplicados",
-    "validation_error_title": "Erro de validação",
-    "validation_failed": "A validação falhou",
-    "validation_missing_data_one": "{{count}} utilizador com campos obrigatórios em falta",
-    "validation_missing_data_many": "{{count}} utilizadores com campos obrigatórios em falta",
-    "validation_missing_data_other": "{{count}} utilizadores com campos obrigatórios em falta",
-    "validation_review_members": "Rever os membros",
-    "validation_summary": "A validação falhou para alguns utilizadores.",
-    "validation_total_one": "{{count}} utilizador no total",
-    "validation_total_many": "{{count}} utilizadores no total",
-    "validation_total_other": "{{count}} utilizadores no total",
-    "voters_choice": "Escolha do votante"
+    "preview": {
+      "first_step": "Primeiro passo",
+      "second_step": "Segundo passo",
+      "title": "O que os votantes vão ver"
+    },
+    "protection": {
+      "basic_risk": "Qualquer pessoa que conheça estes dados poderia votar no lugar de um membro.",
+      "good_code_risk": "Qualquer pessoa que consiga aceder ao email ou telemóvel de um membro poderia votar no seu lugar.",
+      "good_details_risk": "Alguém precisaria de vários dados, pelo menos um deles privado, para votar no lugar de um membro.",
+      "label": "Proteção",
+      "strong": "Alguém precisaria dos dados de um membro e do respetivo email ou telemóvel para votar no seu lugar.",
+      "unset": "Escolhe pelo menos um dado ou um código."
+    },
+    "sample": {
+      "birthDate": "14/03/1979",
+      "email": "laura@example.org",
+      "memberNumber": "00482",
+      "name": "Laura",
+      "nationalId": "12345678Z",
+      "phone": "+351 912 345 678",
+      "surname": "Silva"
+    },
+    "save": {
+      "failed": "Definições de início de sessão não guardadas",
+      "submit": "Guardar",
+      "unchecked": "Guardado, mas não foi possível verificar a tua base de membros"
+    },
+    "saved": "Definições de início de sessão guardadas",
+    "status": {
+      "both_contacts": "ambos {{contacts}}",
+      "checking": "A verificar a tua base de membros…",
+      "duplicated_members_one": "{{count}} membro partilha o mesmo valor de {{fields}} que outro, pelo que não é possível distingui-los.",
+      "duplicated_members_many": "{{count}} membros partilham o mesmo valor de {{fields}}, pelo que não é possível distingui-los.",
+      "duplicated_members_other": "{{count}} membros partilham o mesmo valor de {{fields}}, pelo que não é possível distingui-los.",
+      "empty": "Escolhe pelo menos um dado ou um código.",
+      "fix": "Corrige a tua base de membros",
+      "missing_members_one": "A {{count}} membro falta {{fields}}.",
+      "missing_members_many": "A {{count}} membros falta {{fields}}.",
+      "missing_members_other": "A {{count}} membros falta {{fields}}.",
+      "rejected": "Este início de sessão não pode ser usado com a tua base de membros.",
+      "retry": "Verificar novamente",
+      "unavailable": "Não foi possível verificar a tua base de membros. Podes guardar na mesma.",
+      "valid": "Todos os membros podem iniciar sessão.",
+      "valid_count_one": "O único membro deste grupo pode iniciar sessão.",
+      "valid_count_many": "Todos os {{count}} membros podem iniciar sessão.",
+      "valid_count_other": "Todos os {{count}} membros podem iniciar sessão."
+    },
+    "summary": {
+      "code_choice": "Código único por email ou SMS",
+      "code_email": "Código único por email",
+      "code_none": "Sem código único",
+      "code_sms": "Código único por SMS",
+      "details": "Os votantes escrevem: {{fields}}",
+      "member_list_mismatch": "Estas definições não correspondem à tua base de membros. Edita-as para ver porquê.",
+      "title": "Início de sessão dos votantes"
+    }
   },
   "voting_link": {
     "description": "Partilha esta ligação com os teus votantes para que participem no processo de votação",
@@ -2127,8 +1874,48 @@
   "voting_processes_description": "Faz a gestão e o acompanhamento dos teus processos de votação",
   "voting_settings": "Definições de votação",
   "voting_status": "Estado da votação",
-  "wallet_not_connected": "Carteira não ligada",
+  "wallet": {
+    "balance": "Saldo",
+    "balance_note": "Crédito pré-pago, sem IVA. A publicação de um processo de votação pago é debitada deste saldo.",
+    "checking": "A verificar o teu pagamento. O saldo será atualizado assim que a Stripe o confirmar.",
+    "checking_timeout": "Ainda não foi possível confirmar um carregamento. Se pagaste, aparecerá aqui em breve; se o pagamento não foi concluído, podes voltar a carregar a wallet.",
+    "history": {
+      "amount": "Montante",
+      "date": "Data",
+      "detail": "Detalhe",
+      "empty": "Ainda não há movimentos.",
+      "kind": "Tipo",
+      "title": "Movimentos"
+    },
+    "kind": {
+      "creditBack": "Crédito devolvido",
+      "payment": "Pagamento",
+      "refund": "Reembolso Stripe",
+      "topup": "Carregamento"
+    },
+    "load_error": "Não foi possível carregar a wallet",
+    "managed": "Os processos de votação desta organização são pagos pelo integrador que a gere.",
+    "negative_balance": "O teu saldo é negativo após um reembolso. Carrega o saldo para pagar novos processos de votação.",
+    "no_access": "Só os administradores e os gestores podem ver a wallet.",
+    "pagination": "Página {{page}} de {{total}} · {{items}} no total",
+    "processing": "Pagamento recebido. O teu saldo será atualizado assim que for confirmado.",
+    "processing_timeout": "Está a demorar mais do que o esperado. O teu saldo será atualizado quando o pagamento for confirmado; volta a verificar mais tarde.",
+    "topup": {
+      "admin_only": "Só os administradores podem carregar a wallet.",
+      "amount": "Montante (EUR, sem IVA)",
+      "amount_decimals": "Usa no máximo 2 casas decimais.",
+      "amount_net": "Carregamento (sem IVA)",
+      "amount_range": "Introduz um montante entre {{min}} e {{max}}.",
+      "continue": "Continuar para o pagamento",
+      "hint": "O IVA é acrescentado no pagamento, com base nos teus dados de faturação.",
+      "open": "Carregar",
+      "pay": "Pagar {{amount}}",
+      "success_toast": "A tua wallet foi carregada",
+      "title": "Carregar a tua wallet",
+      "total": "Total",
+      "vat": "IVA"
+    }
+  },
   "website": "Website",
-  "whatsapp_contact": "Fala connosco!",
-  "year": "ano"
+  "whatsapp_contact": "Fala connosco!"
 }

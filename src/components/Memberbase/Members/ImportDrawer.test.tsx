@@ -4,6 +4,11 @@ import userEvent from '@testing-library/user-event'
 import { render } from '~src/test-utils'
 import { ImportMembers } from './Import'
 
+// The toast action needs the router and the signed-in account, which this test does not set up
+vi.mock('~components/Pricing/useBuyRoomAction', () => ({
+  useBuyRoomAction: () => () => undefined,
+}))
+
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
   return {
@@ -33,24 +38,6 @@ vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {
 
   return { SpreadsheetManager }
 })
-
-vi.mock('~components/Pricing/use-pricing-modal', () => ({
-  usePricingModal: () => ({
-    openModal: vi.fn(),
-    closeModal: vi.fn(),
-    modalType: null,
-    modalData: null,
-  }),
-}))
-
-vi.mock('~components/Auth/Subscription', () => ({
-  useSubscription: () => ({
-    subscription: {
-      subscriptionDetails: { maxCensusSize: 1000 },
-      plan: { organization: { maxCensus: 1000 } },
-    },
-  }),
-}))
 
 vi.mock('../TableProvider', () => ({
   useTable: () => ({

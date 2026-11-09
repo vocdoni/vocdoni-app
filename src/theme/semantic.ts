@@ -114,69 +114,6 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
-  card: {
-    pricing: {
-      bg: {
-        value: {
-          _light: '{colors.white}',
-          _dark: '{colors.ink.650}',
-        },
-      },
-      border: {
-        value: {
-          _light: '{colors.gray.200}',
-          _dark: '{colors.ink.700}',
-        },
-      },
-      current: {
-        bg: {
-          value: {
-            _light: '{colors.gray.100}',
-            _dark: '{colors.ink.600}',
-          },
-        },
-        // Accent tokens read the generated `brand.fg` / `brand.solid` /
-        // `brand.contrast` slots rather than the raw 500 step: 500 is the exact
-        // configured PRIMARY_COLOR, which carries no readability guarantee (a
-        // pale brand renders this label at ~1.3:1 on white). With no
-        // PRIMARY_COLOR these resolve to the same black/white as before.
-        color: {
-          value: {
-            _light: '{colors.brand.fg}',
-            _dark: '{colors.white}',
-          },
-        },
-      },
-      featured: {
-        bg: {
-          value: '{colors.gray.800}',
-        },
-        badge: {
-          bg: {
-            value: {
-              _light: '{colors.brand.solid}',
-              _dark: '{colors.white}',
-            },
-          },
-          color: {
-            value: {
-              _light: '{colors.brand.contrast}',
-              // The dark-mode badge is a *white* chip, so its label needs the
-              // light-surface accent step (700), not the raw 500: a pale brand
-              // at 500 reads ~1.3:1 on white. Still black without PRIMARY_COLOR.
-              _dark: '{colors.brand.700}',
-            },
-          },
-        },
-        border: {
-          value: {
-            _light: '{colors.brand.solid}',
-            _dark: '{colors.white}',
-          },
-        },
-      },
-    },
-  },
   dashboard: {
     menu: {
       value: {

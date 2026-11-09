@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event'
 import i18n from 'i18next'
 import { FieldErrors, FormProvider, useController, useForm, UseFormReturn, useFormContext } from 'react-hook-form'
-import { Group } from '~src/queries/groups'
+import { Group, withMembersCount } from '~src/queries/groups'
 import { act, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { Census, defaultProcessValues, Process } from '../common'
 import CensusCreation, { CensusStatusBadge, formatGroupOptionLabel, GroupSelect } from './CensusCreation'
@@ -14,17 +14,29 @@ vi.mock('~components/Toast', async (importOriginal) => ({
   useToast: () => mockToast,
 }))
 
-vi.mock('~src/queries/groups', () => ({
+// The groups on the first page (what useGroups has loaded), and the lookup for one group.
+let mockListedGroups: Group[] = []
+const mockUseGroup = vi.fn()
+
+vi.mock('~src/queries/groups', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~src/queries/groups')>()),
   useGroups: () => ({
-    data: [],
+    data: mockListedGroups,
     fetchNextPage: vi.fn(),
     hasNextPage: false,
     isFetching: false,
   }),
+  useGroup: (...args: unknown[]) => mockUseGroup(...args),
 }))
 
-const CensusCreationHarness = ({ onInvalid = vi.fn() }: { onInvalid?: (errors: FieldErrors<Process>) => void }) => {
-  const methods = useForm<Process>({ defaultValues: defaultProcessValues })
+const CensusCreationHarness = ({
+  onInvalid = vi.fn(),
+  groupId = '',
+}: {
+  onInvalid?: (errors: FieldErrors<Process>) => void
+  groupId?: string
+}) => {
+  const methods = useForm<Process>({ defaultValues: { ...defaultProcessValues, groupId } })
 
   return (
     <TestMemoryRouter>
@@ -144,6 +156,25 @@ describe('CensusStatusBadge', () => {
 })
 
 describe('CensusCreation', () => {
+  afterEach(() => {
+    mockListedGroups = []
+  })
+
+  // A draft's group can sit on a page the list hasn't loaded: the dialog still names it.
+  it('names the group of a draft that is not on the loaded pages', async () => {
+    mockListedGroups = groups
+    // The endpoint's real shape: member ids, no count, for an ordinary group.
+    const memberIds = Array.from({ length: 42 }, (_, index) => `member-${index}`)
+    mockUseGroup.mockReturnValue({ data: withMembersCount({ id: 'group-9', title: 'Archive', memberIds } as never) })
+    const user = userEvent.setup()
+    render(<CensusCreationHarness groupId='group-9' />)
+
+    await user.click(screen.getByRole('button', { name: /configure voter authentication/i }))
+
+    expect(await screen.findByRole('dialog')).toHaveTextContent('Archive · 42 members')
+    expect(mockUseGroup).toHaveBeenCalledWith('group-9', true)
+  })
+
   it('renders group empty state without crashing', () => {
     i18n.addResource(
       'en',

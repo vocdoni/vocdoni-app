@@ -8,6 +8,11 @@ on:
       - d/**
   pull_request:
 
+# Least privilege: these jobs only read the repo. Overrides the repo's
+# write-all default so a compromised dependency in install/test can't push.
+permissions:
+  contents: read
+
 jobs:
   build-dev:
     name: Build (dev)

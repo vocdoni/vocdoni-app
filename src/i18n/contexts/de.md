@@ -28,6 +28,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | anonymous voting | Anonyme Abstimmung / anonyme Stimmabgabe | Use "anonym" for the anonymity mode, as the anonymity strings do; "geheim" means ballot secrecy, which the private mode also has, so it would blur the two |
 | private ballot / pseudonymous | private Stimmabgabe / pseudonym | The default mode, opposite the anonymous one: the ballot carries a one-time code instead of a name, but platform records could still connect it to a member. Never translate it with the term used for anonymous voting, nor with one for ballot secrecy |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| wallet (prepaid credit balance) | wallet | Keep in English, so it is not confused with a crypto wallet |
 | open source | Open Source | Keep in English, capitalized as a German noun — do not translate (not "quelloffen") |
 | overwrite vote / correct vote | Stimme ändern / Stimme korrigieren | Prefer "ändern" for buttons, "korrigieren" for descriptions |
 | abstain | Enthalten | As in "sich enthalten" |

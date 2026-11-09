@@ -1,7 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import { VocdoniApiError } from '@vocdoni/api-client'
+import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { ErrorCode } from '~components/Auth/api'
+import { QueryKeys } from '~queries/keys'
 import { createTestQueryClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
@@ -11,6 +11,7 @@ import { useFormDraftSaver } from './index'
 
 const create = vi.fn()
 const update = vi.fn()
+const get = vi.fn()
 const toast = vi.fn()
 const mockTrackAnalyticsEvent = vi.fn()
 
@@ -24,8 +25,8 @@ vi.mock('~utils/analytics', async (importOriginal) => ({
   trackAnalyticsEvent: (...args: unknown[]) => mockTrackAnalyticsEvent(...args),
 }))
 
-vi.mock('~components/Auth/Subscription', () => ({
-  useSubscription: () => ({ permission: () => true }),
+vi.mock('~src/app-env', () => ({
+  useAppEnv: () => ({ DISABLE_ANONYMOUS_VOTING: false }),
 }))
 
 vi.mock('~components/AnalyticsProvider', () => ({
@@ -41,7 +42,7 @@ vi.mock('~elements/dashboard/processes/drafts', () => ({
 }))
 
 vi.mock('~src/providers/ApiClientProvider', () => ({
-  useApiClient: () => ({ client: { elections: { create, update } } }),
+  useApiClient: () => ({ client: { elections: { create, update, get } } }),
 }))
 
 /** A promise plus the handle to settle it, so a request can be held in flight. */
@@ -77,7 +78,7 @@ const renderSaver = (draftId: string | null = null, { persist = false }: { persi
     wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
   })
 
-  return { result, storeDraftId }
+  return { result, storeDraftId, queryClient }
 }
 
 describe('useFormDraftSaver', () => {
@@ -89,6 +90,7 @@ describe('useFormDraftSaver', () => {
     })
     create.mockResolvedValue('draft-1')
     update.mockResolvedValue(undefined)
+    get.mockResolvedValue({ id: 'draft-1', published: false })
   })
 
   it('holds a queued write until the one in flight finishes', async () => {
@@ -174,12 +176,39 @@ describe('useFormDraftSaver', () => {
     expect(update).toHaveBeenCalledWith('draft-1', { published: true })
   })
 
+  it('sends the draft add-ons it holds on every update, which the PUT would otherwise clear', async () => {
+    // Add-ons are set outside the wizard (an integrator's API), so each save reads them afresh
+    get.mockResolvedValueOnce({ id: 'draft-1', published: false, addOns: { branding: true } })
+    get.mockResolvedValueOnce({ id: 'draft-1', published: false, addOns: { customUrl: true } })
+    const { result } = renderSaver('draft-1')
+
+    await act(() => result.current.saveDraft('manual'))
+    await act(() => result.current.saveDraft('manual'))
+
+    expect(get).toHaveBeenCalledWith('draft-1')
+    expect(update).toHaveBeenNthCalledWith(1, 'draft-1', expect.objectContaining({ addOns: { branding: true } }))
+    expect(update).toHaveBeenNthCalledWith(2, 'draft-1', expect.objectContaining({ addOns: { customUrl: true } }))
+  })
+
+  // The backend rebuilds the census from its group on every save, so any save may change the price
+  it('re-prices the draft after every save, without waiting for it', async () => {
+    const { result, queryClient } = renderSaver('draft-2')
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries').mockReturnValue(new Promise(() => {}))
+
+    await act(() => result.current.saveDraft('manual'))
+    await act(() => result.current.saveDraft('manual'))
+
+    expect(update).toHaveBeenCalledTimes(2)
+    expect(invalidate).toHaveBeenCalledTimes(2)
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-2') })
+  })
+
   it('explains a draft locked by its payment once, not on every auto-save', async () => {
     const locked = new VocdoniApiError(
       409,
-      { error: 'draft locked', code: ErrorCode.PaymentSessionConflict },
+      { error: 'draft locked', code: ApiErrorCode.PaymentSessionConflict },
       'draft locked',
-      ErrorCode.PaymentSessionConflict
+      ApiErrorCode.PaymentSessionConflict
     )
     update.mockRejectedValue(locked)
     vi.spyOn(console, 'error').mockImplementation(() => {})

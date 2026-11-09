@@ -66,10 +66,6 @@ vi.mock('~components/Auth/useAuth', () => ({
   }),
 }))
 
-vi.mock('~components/Auth/Subscription', () => ({
-  SubscriptionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-}))
-
 vi.mock('~components/Account/SaasAccountProvider', () => ({
   SaasAccountProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
 }))
