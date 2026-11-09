@@ -941,8 +941,9 @@ describe('the wizard around the payment view', () => {
     await waitFor(() => expect(screen.getByText('process page')).toBeInTheDocument())
     expect(mockTrackEvent).toHaveBeenCalledWith(
       expect.objectContaining({
-        name: 'process_created',
-        props: expect.objectContaining({ question_count: expect.any(Number) }),
+        // The legacy event name, renamed to process_created for PostHog only
+        name: 'ProcessCreated',
+        props: expect.objectContaining({ question_count: expect.any(Number), voter_auth: 'member_fields' }),
       })
     )
   })
