@@ -193,4 +193,63 @@ describe('public page data loaders', () => {
     expect(result.meta.canonicalUrl).toBe('https://app.vocdoni.io/en/organization/0xorganization')
     expect(result.meta.alternates.every((alternate) => alternate.href.startsWith('https://app.vocdoni.io'))).toBe(true)
   })
+
+  it('uses only the first forwarded host when building public URLs without APP_URL', async () => {
+    createVocdoniApiClient.mockReturnValue({
+      organizations: {
+        get: vi.fn().mockResolvedValue({ address: '0xorganization', name: { en: 'Example Org' } }),
+      },
+      elections: {
+        get: vi.fn(),
+        list: vi.fn().mockResolvedValue({ processes: [], pagination: { currentPage: 1, lastPage: 1 } }),
+      },
+    })
+
+    const result = await loadOrganizationPublicPageData({
+      routeParams: { lang: 'en', address: '0xorganization' },
+      headers: { 'x-forwarded-host': 'localhost:13000,@evil.example', 'x-forwarded-proto': 'http' },
+    } as any)
+
+    expect(result.meta.canonicalUrl).toBe('http://localhost:13000/en/organization/0xorganization')
+  })
+
+  it('ignores a junk forwarded proto and uses the default scheme', async () => {
+    createVocdoniApiClient.mockReturnValue({
+      organizations: {
+        get: vi.fn().mockResolvedValue({ address: '0xorganization', name: { en: 'Example Org' } }),
+      },
+      elections: {
+        get: vi.fn(),
+        list: vi.fn().mockResolvedValue({ processes: [], pagination: { currentPage: 1, lastPage: 1 } }),
+      },
+    })
+
+    const result = await loadOrganizationPublicPageData({
+      routeParams: { lang: 'en', address: '0xorganization' },
+      headers: { 'x-forwarded-host': 'app.example.org', 'x-forwarded-proto': 'https://evil.example/?' },
+    } as any)
+
+    expect(result.meta.canonicalUrl).toBe('https://app.example.org/en/organization/0xorganization')
+    expect(result.meta.canonicalUrl).not.toContain('evil.example')
+  })
+
+  it('omits public URLs when the first forwarded host is invalid', async () => {
+    createVocdoniApiClient.mockReturnValue({
+      organizations: {
+        get: vi.fn().mockResolvedValue({ address: '0xorganization', name: { en: 'Example Org' } }),
+      },
+      elections: {
+        get: vi.fn(),
+        list: vi.fn().mockResolvedValue({ processes: [], pagination: { currentPage: 1, lastPage: 1 } }),
+      },
+    })
+
+    const result = await loadOrganizationPublicPageData({
+      routeParams: { lang: 'en', address: '0xorganization' },
+      headers: { 'x-forwarded-host': '@evil.example', 'x-forwarded-proto': 'https' },
+    } as any)
+
+    expect(result.meta.canonicalUrl).toBeUndefined()
+    expect(result.meta.alternates.every((alternate) => !alternate.href.includes('evil.example'))).toBe(true)
+  })
 })

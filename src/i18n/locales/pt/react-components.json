@@ -32,6 +32,7 @@
     "vote_failed": "Não foi possível registar o teu voto: {{ detail }}",
     "vote_failed_unknown": "Não foi possível registar o teu voto. Tenta novamente.",
     "vote_partial": "Só parte do teu voto foi registada: foram registadas {{ cast }} de {{ total }} perguntas. {{ detail }} Submete novamente para repetir as que falharam.",
+    "vote_unconfirmed": "Ainda não foi possível confirmar o teu voto. Pode, no entanto, ter sido registado: submete-o novamente daqui a pouco para verificar.",
     "wrong_data_description": "Os dados indicados não estão corretos",
     "wrong_data_title": "Dados incorretos"
   },
@@ -110,11 +111,14 @@
       "not_in_census": "Não podes votar neste processo",
       "not_open": "A votação não está aberta",
       "paused": "A votação está em pausa",
+      "signed": "O teu voto já tinha sido autorizado. Não pode ser confirmado a partir deste dispositivo.",
+      "unconfirmed": "O teu voto foi autorizado, mas não chegou ao registo, e este dispositivo não o pode voltar a enviar. Contacta a organização.",
       "upcoming": "A votação ainda não abriu",
       "upcoming_at": "A votação abre a {{ date }}",
       "upcoming_date_format": "PPp",
       "voted": "Já votaste"
     },
+    "pending_resend": "O teu voto para esta pergunta está a ser reenviado.",
     "rank_position": "#{{ position }}",
     "sign": "Assina primeiro",
     "voted_description": "Para verificares o teu voto, podes utilizar este identificador único: {{ id }}",

@@ -32,6 +32,7 @@
     "vote_failed": "Ezin izan da zure botoa eman: {{ detail }}",
     "vote_failed_unknown": "Ezin izan da zure botoa eman. Saiatu berriro.",
     "vote_partial": "Zure botoaren zati bat bakarrik eman da: {{ total }} galderatik {{ cast }} erregistratu dira. {{ detail }} Bidali berriro huts egin dutenak berriz saiatzeko.",
+    "vote_unconfirmed": "Oraindik ezin izan da zure botoa berretsi. Baliteke erregistratuta egotea: bidali berriro une batzuk barru, egiaztatzeko.",
     "wrong_data_description": "Emandako datuak ez dira zuzenak",
     "wrong_data_title": "Datu okerrak"
   },
@@ -110,11 +111,14 @@
       "not_in_census": "Ezin duzu prozesu honetan bozkatu",
       "not_open": "Bozketa ez dago irekita",
       "paused": "Bozketa pausatuta dago",
+      "signed": "Zure botoa dagoeneko baimendu zen. Ezin da gailu honetatik berretsi.",
+      "unconfirmed": "Zure botoa baimendu zen, baina ez zen erregistrora iritsi, eta gailu honek ezin du berriro bidali. Jarri harremanetan erakundearekin.",
       "upcoming": "Bozketa ez da oraindik ireki",
       "upcoming_at": "Bozketa {{ date }}(e)an irekiko da",
       "upcoming_date_format": "PPp",
       "voted": "Dagoeneko bozkatu duzu"
     },
+    "pending_resend": "Galdera honetarako zure botoa berriro bidaltzen ari da.",
     "rank_position": "#{{ position }}",
     "sign": "Sinatu lehenik",
     "voted_description": "Zure botoa egiaztatzeko, identifikatzaile bakar hau erabil dezakezu: {{ id }}",

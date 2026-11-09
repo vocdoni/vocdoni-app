@@ -112,6 +112,8 @@ there, here's a list of variables you can use:
   them (the dashboard, auth, pricing…) keep the Vocdoni logo, and so does an organization that has no logo
   set or whose logo URL fails to load. Only the header is affected: the footer logo is always Vocdoni. It is
   read at runtime, so a single build/image can be branded with `docker run -e SHOW_ORG_LOGO=true`.
+- `DISABLE_ANONYMOUS_VOTING` set it to `true` to hide the anonymous voting option from the process
+  creation wizard. Unset or any other value leaves the option available. Read at runtime.
 
 You can also start the app by prefixing these vars instead of defining your
 custom `.env` file:
@@ -176,6 +178,8 @@ Three branches are linked to deploys:
 - [![GitHub Actions Workflow Status][build badge develop]][app-dev.vocdoni.io] linked to SaaS api-dev and vochain dev.
 - [![GitHub Actions Workflow Status][build badge stage]][app-stg.vocdoni.io] linked to SaaS api-stg and vochain LTS.
 - [![GitHub Actions Workflow Status][build badge main]][app.vocdoni.io] linked to SaaS api-lts and vochain LTS.
+
+Only `app.vocdoni.io` allows search engines to crawl: every other hostname serves a `robots.txt` with `Disallow: /`, decided per request in `server/robots.mjs`.
 
 Pushes and pull requests to `develop` and `stage` are validated by the GitHub
 Actions test workflow, which runs lint, test, and env-specific production

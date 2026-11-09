@@ -12,6 +12,8 @@ export class SpreadsheetManager {
   protected readonly reader
   protected heading: string[]
   protected filedata: string[][]
+  // 1-based line of each `filedata` row in the original file, kept because blank rows are dropped
+  protected linenumbers: number[] = []
 
   public workBook: WorkBook | undefined
   public errors: number[] = []
@@ -56,6 +58,11 @@ export class SpreadsheetManager {
     return this.heading
   }
 
+  /** The 1-based file line of each row in `data`. */
+  public get lineNumbers(): number[] {
+    return this.linenumbers
+  }
+
   public get data(): string[][] {
     return this.filedata
   }
@@ -71,6 +78,7 @@ export class SpreadsheetManager {
           this.filedata = this.getSheetsData(this.workBook)
           if (this.headed) {
             this.heading = this.filedata.splice(0, 1)[0]
+            this.linenumbers.splice(0, 1)
           }
           resolve(this)
         } catch (error) {
@@ -86,7 +94,15 @@ export class SpreadsheetManager {
     const firstSheetName = xlsFile.SheetNames[0]
     const worksheet = xlsFile.Sheets[firstSheetName]
     const data: string[][] = utils.sheet_to_json(worksheet, { header: 1, raw: false })
-    const filtered = data.filter((row) => row.length > 0)
+    // sheet_to_json starts at the first used row, so blank rows before it are not in `data`
+    const firstRow = worksheet?.['!ref'] ? utils.decode_range(worksheet['!ref']).s.r : 0
+    const lines: number[] = []
+    const filtered = data.filter((row, index) => {
+      if (row.length === 0) return false
+      lines.push(firstRow + index + 1)
+      return true
+    })
+    this.linenumbers = lines
 
     return filtered.map((row) => row.map((cell) => cell.trim()))
   }

@@ -1,13 +1,23 @@
 import '@testing-library/jest-dom'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ApiErrorCode } from '@vocdoni/api-client'
+import { ApiError } from '~components/Auth/api'
 import { render } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { MemberManager } from './Manager'
 
 const editMutate = vi.hoisted(() => vi.fn())
+const addMutate = vi.hoisted(() => vi.fn())
+const buyRoomAction = vi.hoisted(() => vi.fn())
+
+// The toast action needs the router and the signed-in account, which this test does not set up
+vi.mock('~components/Pricing/useBuyRoomAction', () => ({
+  useBuyRoomAction: () => buyRoomAction,
+}))
 
 vi.mock('~src/queries/members', () => ({
-  useAddMembers: () => ({ mutate: vi.fn(), isPending: false }),
+  useAddMembers: () => ({ mutate: addMutate, isPending: false }),
   useEditMember: () => ({ mutate: editMutate, isPending: false }),
 }))
 
@@ -19,6 +29,7 @@ vi.mock('../TableProvider', () => ({
       { id: 'email', label: 'Email' },
       { id: 'phone', label: 'Phone' },
       { id: 'weight', label: 'Weight' },
+      { id: 'password', label: 'Password' },
     ],
   }),
 }))
@@ -33,7 +44,10 @@ const member = {
 }
 
 describe('MemberManager edit', () => {
-  beforeEach(() => editMutate.mockClear())
+  beforeEach(() => {
+    editMutate.mockClear()
+    buyRoomAction.mockReset().mockReturnValue(undefined)
+  })
 
   it('sends only the fields the user changed, an emptied one as an empty string', async () => {
     const user = userEvent.setup()
@@ -47,6 +61,29 @@ describe('MemberManager edit', () => {
     // surname and the hidden phone were not touched, so they are left out and kept
     expect(editMutate).toHaveBeenCalledTimes(1)
     expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', name: 'Augusta', email: '' })
+  })
+
+  it('offers Add voter places on a census-growth refusal of the edit', async () => {
+    const user = userEvent.setup()
+    const onBuyRoom = vi.fn()
+    const refusal = new ApiError(
+      {
+        error: 'payment required',
+        code: ApiErrorCode.PaymentRequired,
+        data: { processId: '6650f0c0c0c0c0c0c0c0c0c0', censusSize: 700, dueCents: 2000, totalCents: 31000 },
+      },
+      new Response(null, { status: 402 })
+    )
+    buyRoomAction.mockReturnValue({ label: 'Add voter places', onClick: onBuyRoom })
+    editMutate.mockImplementation((_payload, options) => options.onError(refusal))
+    render(<MemberManager member={member} open />)
+
+    await user.clear(await screen.findByLabelText('Email'))
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+    await user.click(await screen.findByRole('button', { name: 'Add voter places' }))
+
+    expect(buyRoomAction).toHaveBeenCalledWith(refusal)
+    expect(onBuyRoom).toHaveBeenCalledTimes(1)
   })
 
   it('sends an emptied phone so the stored one is cleared', async () => {
@@ -154,5 +191,98 @@ describe('MemberManager edit', () => {
     await user.click(screen.getByRole('button', { name: 'Save changes' }))
 
     expect(editMutate).not.toHaveBeenCalled()
+  })
+})
+
+describe('MemberManager password', () => {
+  // hashMemberPassword(ORG, 's3cret'), the shared test vector
+  const ORG = '0x00000000000000000000000000000000000000AA'
+  const S3CRET_HASH = '2f7e83a0b19a82fa9a5dc6ecc6ff44ec82679ea87012a7187bd3313366bf277e'
+  const withPassword = { ...member, hasPassword: true }
+
+  beforeEach(() => {
+    editMutate.mockClear()
+    addMutate.mockClear()
+    setReactProvidersMock({ useOrganization: () => ({ organization: { address: ORG } }) })
+  })
+
+  it('masks the password input and leaves it blank', async () => {
+    render(<MemberManager member={withPassword} open />)
+
+    const password = await screen.findByLabelText('Password')
+    expect(password).toHaveAttribute('type', 'password')
+    expect(password).toHaveValue('')
+    expect(screen.getByText(/a password is set/i)).toBeInTheDocument()
+  })
+
+  it('sends the hash of a typed password, never the plaintext', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={member} open />)
+
+    await user.type(await screen.findByLabelText('Password'), '  s3cret ')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(editMutate).toHaveBeenCalledTimes(1))
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', password: S3CRET_HASH })
+    expect(JSON.stringify(editMutate.mock.calls)).not.toContain('s3cret')
+  })
+
+  it('rejects a typed password that does not meet the requirements, without calling the API', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={member} open />)
+
+    await user.type(await screen.findByLabelText('Password'), 'abc')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    expect(await screen.findByText('Use at least 6 characters, including a letter and a number.')).toBeInTheDocument()
+    expect(editMutate).not.toHaveBeenCalled()
+  })
+
+  it('sends the hash of a password that meets the requirements', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={member} open />)
+
+    await user.type(await screen.findByLabelText('Password'), 'abc123')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(editMutate).toHaveBeenCalledTimes(1))
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', password: expect.stringMatching(/^[0-9a-f]{64}$/) })
+  })
+
+  it('keeps a stored password the user did not touch', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={withPassword} open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'X')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', name: 'AdaX' })
+  })
+
+  it('clears a stored password once the field is emptied, after warning', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={withPassword} open />)
+
+    const password = await screen.findByLabelText('Password')
+    await user.type(password, 'x')
+    await user.clear(password)
+    expect(screen.getByText(/stored password will be removed/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(editMutate).toHaveBeenCalledTimes(1))
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', password: '' })
+  })
+
+  it('hashes the password of a new member', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'Ada')
+    await user.type(screen.getByLabelText('Password'), 's3cret')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    await waitFor(() => expect(addMutate).toHaveBeenCalledTimes(1))
+    expect(addMutate.mock.calls[0][0]).toEqual([expect.objectContaining({ name: 'Ada', password: S3CRET_HASH })])
+    expect(JSON.stringify(addMutate.mock.calls)).not.toContain('s3cret')
   })
 })

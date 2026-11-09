@@ -34,13 +34,17 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
 import { useOutletContext } from 'react-router'
 import { Select } from '~components/Form/Select'
+import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
+import { useBuyRoomAction } from '~components/Pricing/useBuyRoomAction'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { hashMemberPasswords, isValidMemberPassword } from '~utils/member-password'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
+import { maskIfNeeded } from './maskIfNeeded'
 import { MembersCsvManager } from './MembersCsvManager'
 
 type SpreadsheetRow = Record<string, string>
@@ -74,6 +78,33 @@ const mapSpreadsheetData = (data: SpreadsheetRow[], mapping: ColumnMapping): Map
 
     return mappedRow
   })
+}
+
+/**
+ * The members to import from an uploaded spreadsheet, mapped to member fields. Passwords are
+ * replaced by their hashes here, so the plaintext never leaves the browser. A row whose password
+ * is set but does not meet the requirements is left out entirely; its spreadsheet line number
+ * (the header is line 1) is returned in `skippedLines`
+ * (`lineNumbers` carries the real file line of each row, as blank rows are dropped on read).
+ */
+export const buildImportRows = async (
+  orgAddress: string,
+  spreadsheet: { heading: string[]; filedata: string[][]; lineNumbers?: number[] },
+  mapping: ColumnMapping
+): Promise<{ rows: MappedRow[]; skippedLines: number[] }> => {
+  const parsedRows: SpreadsheetRow[] = spreadsheet.filedata.map((row) =>
+    spreadsheet.heading.reduce((acc: SpreadsheetRow, key, index) => {
+      acc[key] = row[index]
+      return acc
+    }, {})
+  )
+  const skippedLines: number[] = []
+  const valid = mapSpreadsheetData(parsedRows, mapping).filter(({ password }, index) => {
+    if (!password?.trim() || isValidMemberPassword(password)) return true
+    skippedLines.push(spreadsheet.lineNumbers?.[index] ?? index + 2)
+    return false
+  })
+  return { rows: await hashMemberPasswords(orgAddress, valid), skippedLines }
 }
 
 const TemplateUploader = () => {
@@ -334,7 +365,9 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
   const getCellValue = (row: string[], fieldId: string) => {
     const columnName = columnMapping[fieldId]
     const columnIndex = manager.header.indexOf(columnName)
-    return columnIndex !== -1 ? row[columnIndex] : '-'
+    if (columnIndex === -1) return '-'
+    // a password is never shown, not even from the organizer's own file
+    return fieldId === 'password' ? maskIfNeeded(fieldId, row[columnIndex]) : row[columnIndex]
   }
 
   const getAvailableOptions = (fieldId: string) => {
@@ -477,6 +510,7 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
 export const ImportMembers = () => {
   const { t } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
   const { open: isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef<HTMLButtonElement>(null)
   const methods = useForm({ defaultValues: { spreadsheet: null } })
@@ -486,21 +520,29 @@ export const ImportMembers = () => {
   })
   const [columnMapping, setColumnMapping] = useState<ColumnMapping>({})
   const addMembers = useAddMembers(true)
+  const { organization } = useOrganization()
   const { setJobId } = useOutletContext<MemberbaseTabsContext>()
 
   const hasSpreadsheet = Boolean(spreadsheet?.filedata)
 
   const onSubmit = async ({ spreadsheet }: { spreadsheet: any }) => {
-    const parsedRows: SpreadsheetRow[] = spreadsheet.filedata.map((row: string[]) => {
-      return spreadsheet.heading.reduce((acc: SpreadsheetRow, key: string, index: number) => {
-        acc[key] = row[index]
-        return acc
-      }, {})
-    })
-
-    const finalData = mapSpreadsheetData(parsedRows, columnMapping)
-
     try {
+      const { rows: finalData, skippedLines } = await buildImportRows(organization.address, spreadsheet, columnMapping)
+      if (skippedLines.length > 0) {
+        // Not an Alert in the drawer: it closes as soon as the valid rows are sent.
+        toast({
+          type: 'warning',
+          description: t('memberbase.import.password_rows_skipped', {
+            defaultValue:
+              '{{count}} rows were not imported because their password does not meet the requirements (at least 6 characters, including a letter and a number): lines {{lines}}.',
+            count: skippedLines.length,
+            lines: skippedLines.join(', '),
+          }),
+          duration: null,
+          isClosable: true,
+        })
+        if (finalData.length === 0) return
+      }
       trackAnalyticsEvent({ name: AnalyticsEvents.MembersImportStarted, props: { total_rows: finalData.length } })
       const data = await addMembers.mutateAsync(finalData)
       setJobId(data?.jobId)
@@ -509,10 +551,18 @@ export const ImportMembers = () => {
       onClose()
     } catch (error) {
       console.error(error)
+      const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
       toast({
         type: 'error',
-        title: 'Import failed',
-        description: error?.message ?? 'Unexpected error while importing members',
+        title: t('import_progress.error_title', { defaultValue: 'Import Error' }),
+        description:
+          paymentMessage ??
+          error?.message ??
+          t('import_progress.error_description', {
+            defaultValue: 'An error occurred while importing your member data. Please try again later.',
+          }),
+        action: buyRoomAction(error),
+        ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }
   }

@@ -32,6 +32,7 @@
     "vote_failed": "Non è stato possibile esprimere il tuo voto: {{ detail }}",
     "vote_failed_unknown": "Non è stato possibile esprimere il tuo voto. Riprova.",
     "vote_partial": "Il tuo voto è stato espresso solo in parte: sono state registrate {{ cast }} domande su {{ total }}. {{ detail }} Invialo di nuovo per riprovare quelle non riuscite.",
+    "vote_unconfirmed": "Non è stato ancora possibile confermare il tuo voto. Potrebbe comunque essere stato registrato: invialo di nuovo tra poco per verificarlo.",
     "wrong_data_description": "I dati specificati non sono corretti",
     "wrong_data_title": "Dati errati"
   },
@@ -110,11 +111,14 @@
       "not_in_census": "Non puoi votare in questo processo",
       "not_open": "La votazione non è aperta",
       "paused": "La votazione è in pausa",
+      "signed": "Il tuo voto era già stato autorizzato. Non può essere confermato da questo dispositivo.",
+      "unconfirmed": "Il tuo voto è stato autorizzato ma non è arrivato al registro, e questo dispositivo non può inviarlo di nuovo. Contatta l'organizzazione.",
       "upcoming": "La votazione non è ancora aperta",
       "upcoming_at": "La votazione si apre il {{ date }}",
       "upcoming_date_format": "PPp",
       "voted": "Hai già votato"
     },
+    "pending_resend": "Il tuo voto per questa domanda è in fase di reinvio.",
     "rank_position": "#{{ position }}",
     "sign": "Firma prima",
     "voted_description": "Per verificare il voto, è possibile utilizzare questo identificatore univoco: {{ id }}",

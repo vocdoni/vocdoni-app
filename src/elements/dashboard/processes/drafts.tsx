@@ -25,6 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuPencil, LuTrash } from 'react-icons/lu'
 import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
+import { useAppEnv } from '~src/app-env'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useCreateProcess } from '~components/Process/Create'
@@ -219,10 +220,13 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
   const createProcess = useCreateProcess()
   const { currentAddress } = useAuth()
   const navigate = useNavigate()
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
 
   const cloneDraft = async () => {
     try {
-      const clonedDraftId = await createProcess.mutateAsync(votingProcessToCreateRequest(draft, currentAddress))
+      const clonedDraftId = await createProcess.mutateAsync(
+        votingProcessToCreateRequest(draft, currentAddress, disableAnonymousVoting)
+      )
       toast({
         title: t('drafts.cloned_draft', {
           defaultValue: 'Draft cloned successfully',

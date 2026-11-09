@@ -66,6 +66,31 @@ export const useGroups = (limit: number = 6) => {
   })
 }
 
+// The single-group endpoint counts members only for the auto group; ordinary groups send their member ids.
+type GroupDetails = Omit<Group, 'membersCount'> & { membersCount?: number; memberIds?: string[] }
+
+export const withMembersCount = (group: GroupDetails): Group => ({
+  ...group,
+  membersCount: group.membersCount ?? group.memberIds?.length ?? 0,
+})
+
+// For a group outside the pages useGroups has loaded (e.g. a draft's group on page 2+).
+export const useGroup = (groupId: string, enabled: boolean = true) => {
+  const { bearedFetch } = useAuth()
+  const { organization } = useOrganization()
+
+  return useQuery<GroupDetails, Error, Group>({
+    queryKey: [...QueryKeys.organization.groups(organization?.address), groupId],
+    enabled: enabled && !!organization?.address && !!groupId,
+    refetchOnWindowFocus: false,
+    queryFn: () =>
+      bearedFetch<GroupDetails>(
+        ApiEndpoints.OrganizationGroup.replace('{address}', organization?.address).replace('{groupId}', groupId)
+      ),
+    select: withMembersCount,
+  })
+}
+
 export const useCreateGroup = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()

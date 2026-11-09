@@ -1,12 +1,7 @@
-import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
 import ProcessCreate from '~components/Process/Create'
 
 const ProcessCreatePage = () => {
-  return (
-    <PricingModalProvider>
-      <ProcessCreate />
-    </PricingModalProvider>
-  )
+  return <ProcessCreate />
 }
 
 export default ProcessCreatePage

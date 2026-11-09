@@ -22,6 +22,8 @@ export type TestMember = {
   memberNumber: string
   /** Voting power for weighted processes. Optional: omitted, the CSV has no weight column. */
   weight?: number
+  /** Member password, in plaintext as the organizer types it. Optional: omitted, the CSV has no password column. */
+  password?: string
 }
 
 /**
@@ -53,14 +55,18 @@ export const makeMembers = (count: number, seed: string, weights?: number[]): Te
 
 /**
  * The members as a CSV buffer, matching the importer's expected header names.
- * The weight column only exists when the members carry weights — the mapper in
- * `importMembers` mirrors this, so both derive from the same data.
+ * The weight and password columns only exist when the members carry them — the
+ * mapper in `importMembers` mirrors this, so both derive from the same data.
  */
 export const membersCsv = (members: TestMember[]): Buffer => {
   const weighted = members.some((m) => m.weight !== undefined)
-  const header = `name,surname,email,memberNumber${weighted ? ',weight' : ''}`
+  const withPasswords = members.some((m) => m.password !== undefined)
+  const header = `name,surname,email,memberNumber${weighted ? ',weight' : ''}${withPasswords ? ',password' : ''}`
   const rows = members.map(
-    (m) => `${m.name},${m.surname},${m.email},${m.memberNumber}${weighted ? `,${m.weight}` : ''}`
+    (m) =>
+      `${m.name},${m.surname},${m.email},${m.memberNumber}${weighted ? `,${m.weight}` : ''}${
+        withPasswords ? `,${m.password ?? ''}` : ''
+      }`
   )
   return Buffer.from([header, ...rows].join('\n'), 'utf8')
 }

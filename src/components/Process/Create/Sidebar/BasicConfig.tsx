@@ -8,18 +8,14 @@ import {
   FieldLabel as FormLabel,
   HStack,
   Input,
-  Link,
   Switch,
   VStack,
 } from '@chakra-ui/react'
-import { MutableRefObject, ReactNode, useRef } from 'react'
+import { MutableRefObject, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router'
-import { useSubscription } from '~components/Auth/Subscription'
-import { SubscriptionPermission } from '~constants'
+import { MaxProcessDurationDays } from '~constants'
 import { useDateFns } from '~i18n/use-date-fns'
-import { Routes } from '~routes'
 import { parseFormDateTime, Process } from '../common'
 
 const DateFormatHtml = 'yyyy-MM-dd'
@@ -30,19 +26,9 @@ type ScheduleValues = Pick<Process, 'autoStart' | 'startDate' | 'startTime' | 'e
 const getStart = ({ autoStart, startDate, startTime }: ScheduleValues) =>
   startDate && !autoStart ? parseFormDateTime(startDate, startTime) : new Date()
 
-// Trans replaces its component's children with the translated text, so the RouterLink must live
-// inside a wrapper; passed inline, `asChild` would be left without a child and Chakra would throw.
-const SupportLink = ({ children }: { children?: ReactNode }) => (
-  <Link asChild>
-    <RouterLink to={Routes.dashboard.settings.support}>{children}</RouterLink>
-  </Link>
-)
-
 export const BasicConfig = () => {
   const { t } = useTranslation()
-  const { permission } = useSubscription()
   const { format } = useDateFns()
-  const maxDuration = permission(SubscriptionPermission.MaxDuration)
   const {
     register,
     formState: { errors, isSubmitted },
@@ -68,15 +54,15 @@ export const BasicConfig = () => {
     message: t('form.error.field_is_required'),
   }
 
-  // Whether an end date goes past the plan's duration limit; shared by the field validation and the warning.
+  // Whether an end date goes past the maximum process duration; shared by the field validation and the warning.
   // Validators pass RHF's current form values: `deps`/`trigger` can run before a re-render refreshes these closures.
   const exceedsMaxDuration = (value: string, values: ScheduleValues) => {
-    if (!value || !maxDuration) return false
+    if (!value) return false
 
     const end = parseFormDateTime(value, values.endTime)
     const durationDays = (end.getTime() - getStart(values).getTime()) / (1000 * 60 * 60 * 24)
 
-    return durationDays > parseInt(maxDuration)
+    return durationDays > MaxProcessDurationDays
   }
 
   // Derived on render, so it also clears when the end date is emptied or the limit goes away.
@@ -87,7 +73,7 @@ export const BasicConfig = () => {
       !exceedsMaxDuration(value, values) ||
       t('form.create_process.error.max_duration_exceeded', {
         defaultValue: 'Exceeds max duration.',
-        days: maxDuration,
+        days: MaxProcessDurationDays,
       })
     )
   }
@@ -236,9 +222,8 @@ export const BasicConfig = () => {
           <AlertDescription fontSize='sm'>
             <Trans
               i18nKey='calendar.max_duration_exceeded'
-              values={{ maxDuration }}
-              components={{ a: <SupportLink /> }}
-              defaults="Duration exceeds your plan's {{ maxDuration }}-day limit. Reduce the voting length, or <a>contact us</a> if you need more days."
+              values={{ maxDuration: MaxProcessDurationDays }}
+              defaults='Duration exceeds the {{ maxDuration }}-day limit. Reduce the voting length.'
             />
           </AlertDescription>
         </Alert>

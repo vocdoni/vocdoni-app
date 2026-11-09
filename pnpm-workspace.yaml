@@ -20,3 +20,9 @@ overrides:
   # cloning) plus several moderate prototype-pollution/DoS advisories. Drop this
   # once @coinbase/cdp-sdk pins axios >= 1.18.0.
   axios: ^1.18.0
+  # GHSA-mrhx-c7xc-m3w5 (alert #293) has no zod 3 fix. @coinbase/cdp-sdk and
+  # @chakra-ui/cli ask for ^3.25.76 and @reown/appkit-wallet pins 3.22.4; all of
+  # them only use basic schema API, which zod >= 4.6 still provides (one-argument
+  # z.record() included), and none of their zod code reaches dist/. Drop this
+  # once those packages move to zod 4.
+  'zod@<4.6.6': ^4.6.7

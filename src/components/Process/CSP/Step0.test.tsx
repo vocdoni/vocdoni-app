@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { Step0Base } from './Step0'
 
 const csp = vi.hoisted(() => ({
@@ -10,7 +11,20 @@ const csp = vi.hoisted(() => ({
   mutateAsync: vi.fn(),
   toast: vi.fn(),
   pending: false,
+  // when set, hashMemberPassword resolves only once this promise does
+  hashGate: undefined as Promise<void> | undefined,
 }))
+
+vi.mock('~utils/member-password', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~utils/member-password')>()
+  return {
+    ...actual,
+    hashMemberPassword: async (...args: Parameters<typeof actual.hashMemberPassword>) => {
+      await csp.hashGate
+      return actual.hashMemberPassword(...args)
+    },
+  }
+})
 
 vi.mock('./CSPStepsProvider', () => ({
   useCspAuthContext: () => ({
@@ -36,10 +50,18 @@ vi.mock('~components/Toast', async (importOriginal) => ({
   useToast: () => csp.toast,
 }))
 
-const renderStep0 = ({ authFields = [], twoFaFields = [] }: { authFields?: string[]; twoFaFields?: string[] }) => {
+const renderStep0 = ({
+  authFields = [],
+  twoFaFields = [],
+  crispWebsiteId,
+}: {
+  authFields?: string[]
+  twoFaFields?: string[]
+  crispWebsiteId?: string
+}) => {
   csp.authFields = authFields
   csp.twoFaFields = twoFaFields
-  return render(<Step0Base />)
+  return render(<Step0Base />, crispWebsiteId ? { appEnv: { CRISP_WEBSITE_ID: crispWebsiteId } } : undefined)
 }
 
 // The form fields have no accessible name tying them to their label, so address them by
@@ -53,6 +75,14 @@ describe('Step0Base', () => {
     csp.mutateAsync.mockReset().mockResolvedValue(undefined)
     csp.toast.mockReset()
     csp.pending = false
+    csp.hashGate = undefined
+  })
+
+  it('renders the password after the other auth fields, whatever order the census lists them in', () => {
+    renderStep0({ authFields: ['password', 'memberNumber', 'name'], twoFaFields: ['email'] })
+
+    const names = Array.from(document.querySelectorAll('input[name]')).map((i) => i.getAttribute('name'))
+    expect(names).toEqual(['memberNumber', 'name', 'password', 'contact'])
   })
 
   it('sends the trimmed credentials and moves on to the code step when 2FA is required', async () => {
@@ -149,5 +179,102 @@ describe('Step0Base', () => {
     renderStep0({})
 
     expect(screen.getByRole('button', { name: 'Authenticate' })).toBeDisabled()
+  })
+
+  describe('member password', () => {
+    // process reads return the organization address unprefixed; the hash is the shared test vector
+    const S3CRET_HASH = '2f7e83a0b19a82fa9a5dc6ecc6ff44ec82679ea87012a7187bd3313366bf277e'
+
+    beforeEach(() => {
+      setReactProvidersMock({
+        useElection: () => ({ election: { orgAddress: '00000000000000000000000000000000000000aa' } }),
+      })
+    })
+
+    afterEach(() => {
+      delete window.$crisp
+    })
+
+    it('asks for the password in a masked input', () => {
+      renderStep0({ authFields: ['memberNumber', 'password'] })
+
+      expect(field('password')).toHaveAttribute('type', 'password')
+    })
+
+    it('sends the hash of the trimmed password, never the plaintext', async () => {
+      const user = userEvent.setup()
+      renderStep0({ authFields: ['memberNumber', 'password'] })
+
+      await user.type(field('memberNumber'), '00123')
+      await user.type(field('password'), ' s3cret ')
+      await user.click(screen.getByRole('checkbox'))
+      await user.click(screen.getByRole('button', { name: 'Authenticate' }))
+
+      await waitFor(() =>
+        expect(csp.mutateAsync).toHaveBeenCalledWith({ memberNumber: '00123', password: S3CRET_HASH })
+      )
+      expect(JSON.stringify(csp.mutateAsync.mock.calls)).not.toContain('s3cret')
+    })
+
+    it('ignores a second submit while the password is still being hashed', async () => {
+      let release!: () => void
+      csp.hashGate = new Promise<void>((resolve) => (release = resolve))
+      const user = userEvent.setup()
+      renderStep0({ authFields: ['memberNumber', 'password'] })
+
+      await user.type(field('memberNumber'), '00123')
+      await user.type(field('password'), 's3cret')
+      await user.click(screen.getByRole('checkbox'))
+      const button = screen.getByRole('button', { name: 'Authenticate' })
+      await user.click(button)
+      await user.click(button)
+      release()
+
+      await waitFor(() => expect(csp.mutateAsync).toHaveBeenCalledTimes(1))
+      // let any stray second submit settle before asserting the count stayed at one
+      await new Promise((resolve) => setTimeout(resolve, 50))
+      expect(csp.mutateAsync).toHaveBeenCalledTimes(1)
+    })
+
+    it('shows a translated error, not the developer message, when the password cannot be hashed', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+      setReactProvidersMock({ useElection: () => ({ election: undefined }) })
+      const user = userEvent.setup()
+      renderStep0({ authFields: ['memberNumber', 'password'] })
+
+      await user.type(field('memberNumber'), '00123')
+      await user.type(field('password'), 's3cret')
+      await user.click(screen.getByRole('checkbox'))
+      await user.click(screen.getByRole('button', { name: 'Authenticate' }))
+
+      await waitFor(() =>
+        expect(csp.toast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'error',
+            description: 'The password cannot be checked right now. Reload the page and try again.',
+          })
+        )
+      )
+      expect(JSON.stringify(csp.toast.mock.calls)).not.toContain('Cannot hash')
+      expect(csp.mutateAsync).not.toHaveBeenCalled()
+    })
+
+    it('never pushes the password to Crisp, even when it is the first credential', async () => {
+      const push = vi.fn()
+      window.$crisp = { push } as unknown as typeof window.$crisp
+      const user = userEvent.setup()
+      renderStep0({ authFields: ['password', 'memberNumber'], crispWebsiteId: 'crisp-site' })
+
+      await user.type(field('password'), 's3cret')
+      await user.type(field('memberNumber'), '00123')
+      await user.click(screen.getByRole('checkbox'))
+      await user.click(screen.getByRole('button', { name: 'Authenticate' }))
+
+      await waitFor(() => expect(push).toHaveBeenCalled())
+      expect(push).toHaveBeenCalledWith(['set', 'user:nickname', ['memberNumber 00123']])
+      const pushed = JSON.stringify(push.mock.calls)
+      expect(pushed).not.toContain('s3cret')
+      expect(pushed).not.toContain(S3CRET_HASH)
+    })
   })
 })

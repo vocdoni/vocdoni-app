@@ -11,7 +11,7 @@ import {
   Input,
   InputGroup,
   Menu,
-  Progress,
+  Spinner,
   Stack,
   Switch,
   Table,
@@ -28,6 +28,8 @@ import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
+import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
+import { useBuyRoomAction } from '~components/Pricing/useBuyRoomAction'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -42,7 +44,8 @@ import {
   LuUsers,
   LuX,
 } from 'react-icons/lu'
-import { generatePath, useNavigate, useOutletContext } from 'react-router'
+import { FaCaretDown, FaCaretUp } from 'react-icons/fa6'
+import { generatePath, useNavigate, useOutletContext, useSearchParams } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
 import DeleteModal, { DeleteModalProps } from '~components/Modal/DeleteModal'
@@ -52,10 +55,22 @@ import { Routes } from '~routes'
 import { useAddCensusParticipants } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
-import { Member, useDeleteMembers, usePaginatedMembers, useUrlPagination } from '~src/queries/members'
+import {
+  DEFAULT_MEMBER_SORT,
+  isMemberSortField,
+  Member,
+  MemberSort,
+  MemberSortField,
+  nextMemberSort,
+  parseMemberSort,
+  SortOrder,
+  useDeleteMembers,
+  usePaginatedMembers,
+  useUrlPagination,
+} from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { MemberbaseTabsContext } from '..'
-import { useTable } from '../TableProvider'
+import { TableColumn, useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
 import { MemberManager } from './Manager'
 import { maskIfNeeded } from './maskIfNeeded'
@@ -120,6 +135,7 @@ type MemberTableItemProps = {
 const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
   const { data: allGroups } = useGroups()
   const data = (allGroups ?? []).filter((g) => !g.isAutoGroup)
   const [selectedGroup, setSelectedGroup] = useState<{ id: string; title: string } | null>(null)
@@ -139,6 +155,18 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
           })
           resetSelectedRows()
           onClose()
+        },
+        onError: (error: Error) => {
+          const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
+          toast({
+            title: t('members.table.add_to_group_error', { defaultValue: 'Error adding members to the group' }),
+            description: paymentMessage ?? error.message,
+            type: 'error',
+            duration: 3000,
+            isClosable: true,
+            action: buyRoomAction(error),
+            ...(paymentMessage ? paymentErrorToastOptions : {}),
+          })
         },
       }
     )
@@ -219,6 +247,7 @@ const ACTIVE_PROCESS_STATUSES: QuestionStatus[] = ['ONGOING', 'UPCOMING', 'PAUSE
 const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
+  const buyRoomAction = useBuyRoomAction()
   const { client } = useApiClient()
   const { currentAddress } = useAuth()
   const [selectedProcess, setSelectedProcess] = useState<{ id: string; title: string } | null>(null)
@@ -266,12 +295,15 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
           handleClose()
         },
         onError: (error: Error) => {
+          const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
           toast({
             title: t('members.table.add_to_census_error', { defaultValue: 'Error adding members to the census' }),
-            description: error.message,
+            description: paymentMessage ?? error.message,
             type: 'error',
             duration: 3000,
             isClosable: true,
+            action: buyRoomAction(error),
+            ...(paymentMessage ? paymentErrorToastOptions : {}),
           })
         },
       }
@@ -419,24 +451,27 @@ const ColumnManager = () => {
               </Text>
             </Drawer.Header>
             <Drawer.Body>
-              {columns.map((col) => (
-                <Flex key={col.id} justify='space-between' align='center' my={2}>
-                  <Text>{col.label}</Text>
-                  <Switch.Root
-                    checked={col.visible}
-                    onCheckedChange={({ checked }) => toggleColumn(col.id, checked === true)}
-                    aria-label={t('members.table.toggle_column', {
-                      defaultValue: `Toggle column {{column}}`,
-                      column: col.label,
-                    })}
-                  >
-                    <Switch.HiddenInput />
-                    <Switch.Control>
-                      <Switch.Thumb />
-                    </Switch.Control>
-                  </Switch.Root>
-                </Flex>
-              ))}
+              {/* The API never returns the password, so it has nothing to show; it stays in the column list because the member form, CSV mapper and template read their fields from it. */}
+              {columns
+                .filter((col) => col.id !== 'password')
+                .map((col) => (
+                  <Flex key={col.id} justify='space-between' align='center' my={2}>
+                    <Text>{col.label}</Text>
+                    <Switch.Root
+                      checked={col.visible}
+                      onCheckedChange={({ checked }) => toggleColumn(col.id, checked === true)}
+                      aria-label={t('members.table.toggle_column', {
+                        defaultValue: `Toggle column {{column}}`,
+                        column: col.label,
+                      })}
+                    >
+                      <Switch.HiddenInput />
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                    </Switch.Root>
+                  </Flex>
+                ))}
             </Drawer.Body>
           </Drawer.Content>
         </Drawer.Positioner>
@@ -687,37 +722,32 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
 }
 
 const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching } = useTable()
-  const isLoadingOrImporting = isLoading || isFetching
-  const isEmpty = data.length === 0 && !isLoadingOrImporting
+  const { data = [], isFetching, isUpdatingRows, isPlaceholderData } = useTable()
+
   return (
-    <Table.Body>
-      {isEmpty ? (
-        <EmptyMembers />
-      ) : (
-        data.map((member) => (
-          <MemberTableItem
-            key={member.id}
-            member={member}
-            openDeleteSelected={() => openDeleteSelected(member)}
-            onAddToGroup={() => onAddToGroup(member)}
-            onAddToCensus={() => onAddToCensus(member)}
-          />
-        ))
-      )}
+    <Table.Body {...placeholderRowsStyle(isUpdatingRows, isPlaceholderData)}>
+      {!data.length && isFetching && <MembersLoadingRow />}
+      {!data.length && !isFetching && <EmptyMembers />}
+      {data.map((member) => (
+        <MemberTableItem
+          key={member.id}
+          member={member}
+          openDeleteSelected={() => openDeleteSelected(member)}
+          onAddToGroup={() => onAddToGroup(member)}
+          onAddToCensus={() => onAddToCensus(member)}
+        />
+      ))}
     </Table.Body>
   )
 }
 
 const MembersCardList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching } = useTable()
-  const isLoadingOrImporting = isLoading || isFetching
-  const isEmpty = data.length === 0 && !isLoadingOrImporting
+  const { data = [], isFetching, isUpdatingRows, isPlaceholderData } = useTable()
 
-  if (isEmpty) return <EmptyMembersMessage />
+  if (!data.length) return isFetching ? <MembersLoading /> : <EmptyMembersMessage />
 
   return (
-    <Stack gap={3}>
+    <Stack gap={3} {...placeholderRowsStyle(isUpdatingRows, isPlaceholderData)}>
       {data.map((member) => (
         <MemberCard
           key={member.id}
@@ -758,6 +788,34 @@ const EmptyMembersMessage = () => {
   )
 }
 
+// Rows a fetch will replace stay in place but faded. Only placeholder rows (another page, sort or
+// search) are `inert`: a same-key refetch can land while a row's menu or edit drawer, rendered
+// inside this container, is open. Select-all sits outside and is disabled instead.
+const placeholderRowsStyle = (isUpdatingRows: boolean, isPlaceholderData: boolean) => ({
+  'aria-busy': isUpdatingRows || undefined,
+  inert: isPlaceholderData || undefined,
+  opacity: isUpdatingRows ? 0.5 : 1,
+  transition: 'opacity 0.15s ease-out',
+})
+
+const MembersLoading = () => (
+  <Flex justify='center' align='center' height='150px'>
+    <Spinner size='sm' color='texts.subtle' />
+  </Flex>
+)
+
+const MembersLoadingRow = () => {
+  const { columns } = useTable()
+
+  return (
+    <Table.Row>
+      <Table.Cell colSpan={columns.filter((c) => c.visible).length + 2}>
+        <MembersLoading />
+      </Table.Cell>
+    </Table.Row>
+  )
+}
+
 const EmptyMembers = () => {
   const { columns } = useTable()
 
@@ -767,6 +825,48 @@ const EmptyMembers = () => {
         <EmptyMembersMessage />
       </Table.Cell>
     </Table.Row>
+  )
+}
+
+// The caret for the active direction is drawn at full strength, the other one stays faint.
+const sortCaretStyle = (active: boolean) =>
+  active ? { color: 'texts.primary' } : { color: 'texts.subtle', opacity: 0.5 }
+
+const ARIA_SORT: Record<SortOrder, 'ascending' | 'descending'> = { asc: 'ascending', desc: 'descending' }
+
+type SortableColumnHeaderProps = {
+  column: TableColumn
+  field: MemberSortField
+  // The active sort, the default one included when the URL has none.
+  sort: MemberSort
+  onToggleSort: (field: MemberSortField) => void
+}
+
+const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableColumnHeaderProps) => {
+  const { t } = useTranslation()
+  const order = sort.sortBy === field ? sort.sortOrder : null
+  return (
+    // aria-sort goes on the active column only, as the ARIA spec recommends.
+    <Table.ColumnHeader aria-sort={order ? ARIA_SORT[order] : undefined}>
+      <Button
+        variant='plain'
+        size='sm'
+        px={0}
+        h='auto'
+        minW={0}
+        fontWeight='inherit'
+        color='inherit'
+        gap={1}
+        onClick={() => onToggleSort(field)}
+        title={t('members.table.sort_by', { defaultValue: 'Sort by {{column}}', column: column.label })}
+      >
+        {column.label}
+        <Flex direction='column' aria-hidden gap={0} lineHeight={0} ms={0.5}>
+          <Icon as={FaCaretUp} boxSize={3} mb='-3.5px' {...sortCaretStyle(order === 'asc')} />
+          <Icon as={FaCaretDown} boxSize={3} mt='-3.5px' {...sortCaretStyle(order === 'desc')} />
+        </Flex>
+      </Button>
+    </Table.ColumnHeader>
   )
 }
 
@@ -804,6 +904,55 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCens
   )
 }
 
+// Page 1 of the members list, keeping the other query params (page size, sort). React Router's
+// navigate is used directly: RoutedPaginationProvider's setPage treats an empty query as "keep the
+// current one", so it could not drop the sort params.
+const useGoToFirstPage = () => {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  return (update?: (params: URLSearchParams) => void) => {
+    const params = new URLSearchParams(searchParams)
+    update?.(params)
+    const query = params.toString()
+    navigate(`${generatePath(Routes.dashboard.memberbase.members, { page: '1' })}${query ? `?${query}` : ''}`)
+  }
+}
+
+// `null` drops both params, which is the default order.
+const writeMemberSort = (params: URLSearchParams, sort: MemberSort | null) => {
+  if (sort) {
+    params.set('sortBy', sort.sortBy)
+    params.set('sortOrder', sort.sortOrder)
+  } else {
+    params.delete('sortBy')
+    params.delete('sortOrder')
+  }
+}
+
+type SortIndicatorProps = {
+  sort: MemberSort
+  label: string
+  onClear: () => void
+}
+
+const SortIndicator = ({ sort, label, onClear }: SortIndicatorProps) => {
+  const { t } = useTranslation()
+  const text =
+    sort.sortOrder === 'asc'
+      ? t('members.table.sorted_by_asc', { defaultValue: 'Sorted by {{column}}, ascending', column: label })
+      : t('members.table.sorted_by_desc', { defaultValue: 'Sorted by {{column}}, descending', column: label })
+
+  return (
+    <Flex align='center' gap={2} flexWrap='wrap' fontSize='sm' color='texts.subtle'>
+      <Text>{text}</Text>
+      <Button size='xs' variant='outline' onClick={onClear}>
+        {t('members.table.clear_sort', { defaultValue: 'Clear sort' })}
+      </Button>
+    </Flex>
+  )
+}
+
 const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModalProps) => {
   const { t } = useTranslation()
   const toast = useToast()
@@ -812,7 +961,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
   const { data: allMembersData, isFetching: isFetchingAll } = usePaginatedMembers({ showAll: true })
   const { selectedRows, resetSelectedRows } = useTable()
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const goToFirstPage = useGoToFirstPage()
   const selectedMembers = mode === DeleteModes.SELECTED ? selectedRows : allMembersData?.members
   const ids = selectedRows.map((member) => member.id)
   const isDeleteAllMode = mode === DeleteModes.ALL
@@ -832,7 +981,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         duration: 3000,
         isClosable: true,
       })
-      navigate(generatePath(Routes.dashboard.memberbase.members, { page: '1' }))
+      goToFirstPage()
       onClose()
       await queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.members(organization?.address),
@@ -895,10 +1044,11 @@ const MembersRangeSummary = () => {
   const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
   const { page, pagination } = useRoutedPagination()
   const { limit } = useUrlPagination()
-  const { data } = useTable()
+  const { data, isPlaceholderData } = useTable()
   const count = pagination?.totalItems
 
-  if (!count || !data.length) return null
+  // Placeholder rows belong to the previous page or sort, so the range would be wrong until the new rows arrive.
+  if (isPlaceholderData || !count || !data.length) return null
 
   const from = (page - 1) * limit + 1
   const to = from + data.length - 1
@@ -930,10 +1080,17 @@ const MembersTable = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { open: isAddToGroupOpen, onOpen: onOpenAddToGroup, onClose: onAddToGroupClose } = useDisclosure()
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
-  const { isLoading, isFetching, allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } =
+  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isPlaceholderData } =
     useTable()
-  const isLoadingOrImporting = isLoading || isFetching
   const isMobile = useBreakpointValue({ base: true, md: false })
+  const [searchParams] = useSearchParams()
+  const goToFirstPage = useGoToFirstPage()
+  const urlSort = parseMemberSort(searchParams)
+  const activeSort = urlSort ?? DEFAULT_MEMBER_SORT
+  const toggleSort = (field: MemberSortField) =>
+    goToFirstPage((params) => writeMemberSort(params, nextMemberSort(activeSort, field)))
+  // Sort headers exist only in the desktop table, so a URL sort on mobile or on a hidden column needs the indicator.
+  const unreachableSortColumn = columns.find((col) => col.id === urlSort?.sortBy && (isMobile || !col.visible))
 
   const openDeleteSelected = (member?: Member) => {
     setDeleteMode(DeleteModes.SELECTED)
@@ -965,6 +1122,8 @@ const MembersTable = () => {
     setDeleteModalOpen(true)
   }
 
+  const clearSort = () => goToFirstPage((params) => writeMemberSort(params, null))
+
   return (
     <>
       <ImportProgress />
@@ -990,12 +1149,10 @@ const MembersTable = () => {
             />
           </Flex>
         </Flex>
-        {isLoadingOrImporting && (
-          <Progress.Root size='xs' value={null}>
-            <Progress.Track>
-              <Progress.Range />
-            </Progress.Track>
-          </Progress.Root>
+        {urlSort && unreachableSortColumn && (
+          <Box px={4} pb={4}>
+            <SortIndicator sort={urlSort} label={unreachableSortColumn.label} onClear={clearSort} />
+          </Box>
         )}
         {isMobile ? (
           <Box p={4}>
@@ -1003,6 +1160,7 @@ const MembersTable = () => {
               <Checkbox.Root
                 checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                 onCheckedChange={({ checked }) => toggleAll(checked === true)}
+                disabled={isPlaceholderData}
               >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control />
@@ -1030,6 +1188,7 @@ const MembersTable = () => {
                     <Checkbox.Root
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
+                      disabled={isPlaceholderData}
                     >
                       <Checkbox.HiddenInput />
                       <Checkbox.Control />
@@ -1037,9 +1196,19 @@ const MembersTable = () => {
                   </Table.ColumnHeader>
                   {columns
                     .filter((col) => col.visible)
-                    .map((col) => (
-                      <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
-                    ))}
+                    .map((col) =>
+                      isMemberSortField(col.id) ? (
+                        <SortableColumnHeader
+                          key={col.id}
+                          column={col}
+                          field={col.id}
+                          sort={activeSort}
+                          onToggleSort={toggleSort}
+                        />
+                      ) : (
+                        <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
+                      )
+                    )}
                   <Table.ColumnHeader width='50px'>
                     <ColumnManager />
                   </Table.ColumnHeader>

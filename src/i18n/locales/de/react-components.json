@@ -32,6 +32,7 @@
     "vote_failed": "Deine Stimme konnte nicht abgegeben werden: {{ detail }}",
     "vote_failed_unknown": "Deine Stimme konnte nicht abgegeben werden. Bitte versuche es erneut.",
     "vote_partial": "Deine Stimme wurde nur teilweise abgegeben: {{ cast }} von {{ total }} Fragen wurden erfasst. {{ detail }} Sende sie erneut, um die fehlgeschlagenen zu wiederholen.",
+    "vote_unconfirmed": "Deine Stimme konnte noch nicht bestätigt werden. Sie wurde eventuell trotzdem erfasst: Sende sie in einem Moment erneut, um es zu überprüfen.",
     "wrong_data_description": "Die angegebenen Daten sind nicht korrekt",
     "wrong_data_title": "Falsche Daten"
   },
@@ -110,11 +111,14 @@
       "not_in_census": "Du bist für diese Abstimmung nicht stimmberechtigt",
       "not_open": "Die Abstimmung ist nicht geöffnet",
       "paused": "Die Abstimmung ist pausiert",
+      "signed": "Deine Stimme wurde bereits autorisiert. Sie kann von diesem Gerät aus nicht bestätigt werden.",
+      "unconfirmed": "Deine Stimme wurde autorisiert, hat das Register aber nicht erreicht, und dieses Gerät kann sie nicht erneut senden. Bitte wende dich an die Organisation.",
       "upcoming": "Die Abstimmung ist noch nicht geöffnet",
       "upcoming_at": "Die Abstimmung beginnt am {{ date }}",
       "upcoming_date_format": "PPp",
       "voted": "Du hast bereits abgestimmt"
     },
+    "pending_resend": "Deine Stimme für diese Frage wird erneut gesendet.",
     "rank_position": "#{{ position }}",
     "sign": "Zuerst unterzeichnen",
     "voted_description": "Zur Überprüfung deiner Stimme kannst du diese eindeutige Kennung verwenden: {{ id }}",

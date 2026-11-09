@@ -33,6 +33,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | ballot secrecy / secret vote | μυστικότητα (της ψήφου) | **Distinct concept — do not conflate with anonymity.** English "secret"/"secrecy" → "μυστική"/"μυστικότητα". Anonymity means a vote can't be linked to a voter; secrecy means the ballot content stays hidden. Translate each English term with its matching Greek term — never use "μυστική" for the anonymous-voting feature, nor "ανώνυμη" for ballot secrecy |
 | private ballot / pseudonymous | ιδιωτική ψήφος / ψευδώνυμη | The default mode, opposite the anonymous one: the ballot carries a one-time code instead of a name, but platform records could still connect it to a member. Never use "ανώνυμη" (that is the other mode) nor "μυστική" (that is ballot secrecy) |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| wallet (prepaid credit balance) | wallet | Keep in English, so it is not confused with a crypto wallet |
 | open source | ανοιχτού κώδικα | Translate to "ανοιχτού κώδικα" (idiomatic Greek). Use one spelling consistently: the everyday "ανοιχτ-" form (not "ανοικτ-"). Do not leave it in English |
 | overwrite vote / correct vote | τροποποίηση ψήφου / διόρθωση ψήφου | Prefer "τροποποίηση" for buttons, "διόρθωση" for descriptions |
 | abstain | αποχή | Use "απέχω" for the verb, "αποχή" for the noun |

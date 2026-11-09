@@ -40,6 +40,8 @@ export type AppEnv = {
   HIDE_VOTER_COUNT?: boolean
   PRIMARY_COLOR?: string
   SHOW_ORG_LOGO?: boolean
+  // When true, the anonymous voting option is not offered in the process wizard.
+  DISABLE_ANONYMOUS_VOTING?: boolean
 }
 
 type AppEnvObject = AppEnv
@@ -237,5 +239,6 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     STREAM_URL: resolveStreamUrl(env.STREAM_URL),
     PRIMARY_COLOR: resolvePrimaryColor(env.PRIMARY_COLOR),
     SHOW_ORG_LOGO: env.SHOW_ORG_LOGO === 'true',
+    DISABLE_ANONYMOUS_VOTING: env.DISABLE_ANONYMOUS_VOTING === 'true',
   }
 }

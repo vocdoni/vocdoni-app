@@ -45,7 +45,7 @@ const twoFaMethodOf = (fields: readonly string[]): TwoFAMethod | undefined => {
  * counterpart. The census `groupId` does round-trip (saas-backend#606) and is
  * absent, rather than a zero id, for an organization-wide census.
  */
-export const votingProcessToForm = (process: VotingProcessResponse): Process => {
+export const votingProcessToForm = (process: VotingProcessResponse, disableAnonymous?: boolean): Process => {
   const questions = process.questions ?? []
 
   const startDate = process.startDate ? new Date(process.startDate) : undefined
@@ -67,15 +67,19 @@ export const votingProcessToForm = (process: VotingProcessResponse): Process => 
     streamUri: process.streamUri ?? '',
     resultVisibility: isSecretUntilTheEnd(process) ? 'hidden' : 'live',
     weightedVote: process.census?.weighted ?? false,
-    anonymousVoting: process.census?.anonymous ?? false,
+    // Force off when the anonymous voting option is not offered.
+    anonymousVoting: !disableAnonymous && (process.census?.anonymous ?? false),
     groupId: process.census?.groupId ?? defaultProcessValues.groupId,
-    census: authFields.length
-      ? {
-          credentials: [...authFields],
-          use2FA: twoFaFields.length > 0,
-          use2FAMethod: twoFaMethod ?? 'email',
-        }
-      : defaultProcessValues.census,
+    // Two-factor alone is a complete configuration (the auth dialog confirms it
+    // without credentials), so either half restores it.
+    census:
+      authFields.length || twoFaMethod
+        ? {
+            credentials: [...authFields],
+            use2FA: twoFaFields.length > 0,
+            use2FAMethod: twoFaMethod ?? 'email',
+          }
+        : defaultProcessValues.census,
     // A process always has at least one question (the API rejects an empty list),
     // but keep the wizard's default question rather than rendering an empty form.
     questions: questions.length
@@ -147,7 +151,8 @@ const questionToRequest = (question: VotingProcessQuestion): VotingProcessQuesti
  */
 export const votingProcessToCreateRequest = (
   process: VotingProcessResponse,
-  orgAddress: string
+  orgAddress: string,
+  disableAnonymous?: boolean
 ): CreateVotingProcessRequest => ({
   orgAddress,
   title: process.title,
@@ -156,7 +161,8 @@ export const votingProcessToCreateRequest = (
   streamUri: process.streamUri,
   census: {
     weighted: process.census?.weighted,
-    anonymous: process.census?.anonymous,
+    // Omit when the anonymous voting option is not offered.
+    anonymous: disableAnonymous ? undefined : process.census?.anonymous,
     authFields: process.census?.authFields,
     twoFaFields: process.census?.twoFaFields,
     // Absent for an organization-wide census, which is exactly what we want to

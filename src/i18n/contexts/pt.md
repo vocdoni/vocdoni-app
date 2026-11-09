@@ -28,6 +28,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | anonymous voting | votação anónima | Note PT-PT spelling: "anónima", not "anônima" (Brazilian) |
 | private ballot / pseudonymous | voto privado / pseudónimo | The default mode, opposite the anonymous one: the ballot carries a one-time code instead of a name, but platform records could still connect it to a member. Never use "anónimo" (that is the other mode) nor "secreto" (that is ballot secrecy) |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| wallet (prepaid credit balance) | wallet | Keep in English, so it is not confused with a crypto wallet |
 | open source | código aberto | Use the idiomatic PT-PT "código aberto". As an adjective use "de código aberto" (e.g. "infraestrutura de código aberto", "protocolo de votação de código aberto"). Do not use "fonte aberta" and do not leave it in English |
 | overwrite vote / correct vote | alterar voto / corrigir voto | Prefer "alterar" for buttons, "corrigir" for descriptions |
 | abstain | abster-se / abstenção | Use "abster-se" for actions, "abstenção" for the noun form |
