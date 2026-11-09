@@ -1,39 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { MultilingualText } from '@vocdoni/api-types'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { IntegratorInfo, ManagedOrganizationInfo, UpdateManagedOrganizationRequest } from '@vocdoni/api-types'
 import { ensure0x } from '~utils/address'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from './keys'
 
 type ProvisionedOrganization = { address: string }
-
-// Effective caps for the integrator dashboard. Mirrors the backend `IntegratorLimits`. Note the
-// zero semantics are not uniform: `maxVotes === 0` means unlimited, while the other caps at 0 mean
-// no allowance (or "unknown" when an override integrator has no subscription plan to source them).
-export type IntegratorLimits = {
-  maxManagedOrgs: number
-  maxManagedProcesses: number
-  maxVotes: number
-  maxSMS: number
-  maxEmails: number
-}
-
-// Current usage counters (shared pools summed across the integrator's managed orgs).
-export type IntegratorUsage = {
-  managedOrgs: number
-  managedProcesses: number
-  sentVotes: number
-  sentSMS: number
-  sentEmails: number
-}
-
-// Response of GET /integrator. `limits` is only present when `enabled` is true.
-export type IntegratorInfo = {
-  enabled: boolean
-  limits?: IntegratorLimits
-  usage: IntegratorUsage
-}
 
 /**
  * Reads the signed-in integrator's quota and usage (GET /integrator, path-less — the org is
@@ -49,26 +23,12 @@ export const useIntegratorInfo = () => {
   })
 }
 
-// Per-managed-org usage counters (backend SubscriptionUsage). Fields default to 0.
-export type OrganizationCounters = {
-  sentSMS: number
-  sentEmails: number
-  subOrgs: number
-  users: number
-  processes: number
-}
+// A single organization managed by the integrator, with its spend cap and spend (SDK type).
+export type ManagedOrganization = ManagedOrganizationInfo
 
-// A single organization managed by the integrator. `name` is the localized display name set at
-// creation; the rest mirror the backend OrganizationInfo fields we surface.
-export type ManagedOrganization = {
-  address: string
-  counters?: OrganizationCounters
-  createdAt: string
-  name?: MultilingualText
-  description?: MultilingualText
-  type: string
-  website: string
-}
+// As the list returns it: an older backend omits the spend fields the SDK type requires.
+export type ManagedOrganizationRow = Omit<ManagedOrganization, 'spendCapCents' | 'spentCents'> &
+  Partial<Pick<ManagedOrganization, 'spendCapCents' | 'spentCents'>>
 
 export type ManagedOrganizationsResponse = {
   pagination: {
@@ -78,7 +38,7 @@ export type ManagedOrganizationsResponse = {
     previousPage: number | null
     nextPage: number | null
   }
-  organizations: ManagedOrganization[]
+  organizations: ManagedOrganizationRow[]
 }
 
 /**
@@ -91,6 +51,8 @@ export const useManagedOrganizations = (page: number, limit: number) => {
 
   return useQuery<ManagedOrganizationsResponse>({
     queryKey: QueryKeys.integrator.managed(selectedAddress, page, limit),
+    // Keeps the previous page on screen while the next one loads, so pagination can be disabled meanwhile
+    placeholderData: keepPreviousData,
     queryFn: () =>
       bearedFetch<ManagedOrganizationsResponse>(`${ApiEndpoints.ManagedOrganizations}?page=${page}&limit=${limit}`),
   })
@@ -211,6 +173,23 @@ export const useProvisionIntegratorOrganization = () => {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.profile })
+    },
+  })
+}
+
+/**
+ * Sets (or lifts, with `null`) the spend cap of a managed organization
+ * (PUT /integrator/organizations/{orgAddress}, integrator Admin only). Resolves with the updated organization.
+ */
+export const useUpdateManagedOrganization = () => {
+  const { client } = useApiClient()
+  const queryClient = useQueryClient()
+
+  return useMutation<ManagedOrganization, Error, { address: string } & UpdateManagedOrganizationRequest>({
+    mutationFn: ({ address, spendCapCents }) =>
+      client.organizations.updateManaged(ensure0x(address), { spendCapCents }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.integrator.managed() })
     },
   })
 }

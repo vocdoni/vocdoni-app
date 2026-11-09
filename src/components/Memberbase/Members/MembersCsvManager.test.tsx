@@ -3,6 +3,7 @@ import { act, screen } from '@testing-library/react'
 import type { FileRejection } from 'react-dropzone'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import ErrorMissingData from '~components/Spreadsheet/errors/ErrorMissingData'
+import { MaxMembersPerOrg } from '~constants'
 import { render } from '~src/test-utils'
 import { MembersCsvManager } from './MembersCsvManager'
 
@@ -12,7 +13,6 @@ let dropHandler: DropHandler | undefined
 let mockRowCount = 0
 let mockReadError: Error | undefined
 let mockRead: (() => Promise<void>) | undefined
-const openModal = vi.fn()
 
 vi.mock('react-dropzone', async (importOriginal) => ({
   ...(await importOriginal<typeof import('react-dropzone')>()),
@@ -43,24 +43,6 @@ vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {
 
   return { SpreadsheetManager }
 })
-
-vi.mock('~components/Pricing/use-pricing-modal', () => ({
-  usePricingModal: () => ({
-    openModal,
-    closeModal: vi.fn(),
-    modalType: null,
-    modalData: null,
-  }),
-}))
-
-vi.mock('~components/Auth/Subscription', () => ({
-  useSubscription: () => ({
-    subscription: {
-      subscriptionDetails: { maxCensusSize: 1000 },
-      plan: { organization: { maxCensus: 1000 } },
-    },
-  }),
-}))
 
 vi.mock('~queries/members', () => ({
   usePaginatedMembers: () => ({
@@ -103,12 +85,12 @@ describe('MembersCsvManager', () => {
     mockRowCount = 0
     mockReadError = undefined
     mockRead = undefined
-    openModal.mockClear()
     dropHandler = undefined
   })
 
-  it('opens the plan upgrade modal when the import exceeds member limit', async () => {
-    mockRowCount = 901
+  it('rejects an import that takes the organization past the member limit', async () => {
+    // The 100 existing members from usePaginatedMembers count too
+    mockRowCount = MaxMembersPerOrg - 100 + 1
     render(<MembersCsvManagerForm />)
 
     const file = new File(['data'], 'members.csv', { type: 'text/csv' })
@@ -116,7 +98,20 @@ describe('MembersCsvManager', () => {
       await dropHandler?.([file])
     })
 
-    expect(openModal).toHaveBeenCalledWith('planUpgrade', { context: 'memberbase', limit: '1000' })
+    // Tests render the i18n key for this message, so the key stands in for the copy
+    expect(await screen.findByText('uploader.csv_row_limit_exceeded')).toBeInTheDocument()
+  })
+
+  it('accepts an import that ends exactly at the member limit', async () => {
+    mockRowCount = MaxMembersPerOrg - 100
+    render(<MembersCsvManagerForm />)
+
+    const file = new File(['data'], 'members.csv', { type: 'text/csv' })
+    await act(async () => {
+      await dropHandler?.([file])
+    })
+
+    expect(screen.queryByText('uploader.csv_row_limit_exceeded')).not.toBeInTheDocument()
   })
 
   it('applies the dropzone root props only once', () => {
@@ -260,7 +255,7 @@ describe('MembersCsvManager', () => {
       await slowDrop
     })
 
-    expect(openModal).not.toHaveBeenCalled()
+    expect(screen.queryByText('uploader.csv_row_limit_exceeded')).not.toBeInTheDocument()
   })
 
   it('shows the dropzone as busy while the latest file is read, and not once a newer drop replaces it', async () => {

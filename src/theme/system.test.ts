@@ -140,7 +140,6 @@ const formatViolations = (violations: Violation[]) =>
 
 describe('theme system integrity', () => {
   it('sanity: known tokens resolve through the registry', () => {
-    expect(colorTokenExists('card.pricing.bg')).toBe(true)
     expect(colorTokenExists('bg.panel')).toBe(true)
     expect(colorTokenExists('fg.muted')).toBe(true)
     expect(colorTokenExists('colorPalette.solid')).toBe(true)

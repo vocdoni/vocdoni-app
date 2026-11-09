@@ -16,15 +16,15 @@ import { FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuFileSpreadsheet } from 'react-icons/lu'
-import { useSubscription } from '~components/Auth/Subscription'
 import { dropRejectionMessage, useLatestDrop } from '~components/Layout/dropzone'
 import Uploader from '~components/Layout/Uploader'
-import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
 import SpreadsheetError from '~components/Spreadsheet/errors/SpreadsheetError'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
+import { MaxMembersPerOrg } from '~constants'
 import { usePaginatedMembers } from '~queries/members'
+import { quantity } from '~utils/numbers'
 import { useTable } from '../TableProvider'
 
 const generateFakeValue = (columnId: string): string => {
@@ -61,11 +61,8 @@ export const MembersCsvManager = () => {
     formState: { errors },
   } = useFormContext()
   const { columns } = useTable()
-  const { subscription } = useSubscription()
-  const { openModal } = usePricingModal()
   const { data: membersData } = usePaginatedMembers({ showAll: true })
   const manager: SpreadsheetManager | undefined = watch('spreadsheet')
-  const maxCensusSize = subscription?.subscriptionDetails?.maxCensusSize || subscription?.plan?.organization?.maxCensus
   const existingMembers = membersData?.pagination?.totalItems ?? 0
 
   // File dropzone
@@ -103,19 +100,19 @@ export const MembersCsvManager = () => {
         const totalMembers = spreadsheet.data.length + existingMembers
         const limitErrorMessage = t('uploader.csv_row_limit_exceeded', {
           count: totalMembers,
-          max: maxCensusSize ?? 0,
+          max: quantity(MaxMembersPerOrg),
         })
         enforceCsvRowLimit({
           rowCount: spreadsheet.data.length,
           baseCount: existingMembers,
-          max: maxCensusSize,
+          max: MaxMembersPerOrg,
           errorMessage: limitErrorMessage,
         })
         setValue('spreadsheet', spreadsheet)
       } catch (e) {
         if (!isLatest(drop)) return
         if (e instanceof CsvRowLimitExceededError) {
-          openModal('planUpgrade', { context: 'memberbase', limit: String(maxCensusSize ?? '') })
+          setError('spreadsheet', { type: e.name, message: e.message })
           return
         }
         // Only our own errors carry a translated message; anything else (FileReader, xlsx) is raw browser text
@@ -133,7 +130,7 @@ export const MembersCsvManager = () => {
         finish(drop)
       }
     },
-    [clearErrors, existingMembers, finish, isLatest, maxCensusSize, openModal, setError, setValue, start, t]
+    [clearErrors, existingMembers, finish, isLatest, setError, setValue, start, t]
   )
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

@@ -28,7 +28,6 @@ export const QueryKeys = {
     languages: ['organizations', 'languages'],
     roles: ['organizations', 'roles'],
     types: ['organizations', 'types'],
-    subscription: (address?: string) => ['organizations', 'subscription', address].filter(Boolean),
     meta: (address?: string) => ['organizations', 'meta', address].filter(Boolean),
     members: (address?: string) => ['organizations', 'members', address].filter(Boolean),
     membersImportProgress: (address?: string, jobID?: string) =>
@@ -44,17 +43,24 @@ export const QueryKeys = {
       spec,
     ],
     apikeys: (address?: string) => ['organizations', 'apikeys', address].filter(Boolean),
+    wallet: (address?: string, page?: number, limit?: number) => [
+      'organizations',
+      'wallet',
+      address ?? null,
+      page ?? null,
+      limit ?? null,
+    ],
   },
   process: {
     participants: (processId?: string, field?: string, value?: string) =>
       ['process', 'participants', processId, field, value].filter(Boolean),
     endDate: (processId?: string) => ['process', 'end-date', processId].filter(Boolean),
+    price: (processId?: string) => ['process', 'price', processId].filter(Boolean),
   },
   integrator: {
     info: (address?: string) => ['integrator', 'info', address].filter(Boolean),
     managed: (address?: string, page?: number, limit?: number) =>
       ['integrator', 'managed', address, page, limit].filter((v) => v !== undefined && v !== null),
   },
-  plans: ['plans'],
   profile: ['profile'],
 }

@@ -17,7 +17,6 @@ import { Loading, SuspenseLoader } from '../SuspenseLoader'
 // elements / pages
 const NotFound = lazy(() => import('~elements/NotFound'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
-const PlansPublicPage = lazy(() => import('~elements/plans'))
 
 const isSaasNotFoundError = (error: unknown) =>
   error instanceof VocdoniApiError && (error.status === 404 || error.status === 400)
@@ -61,14 +60,6 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
       return { era: 'archive', legacyOrganization, legacyElectionsPage } as const
     },
     errorElement: <ErrorElement />,
-  },
-  {
-    path: Routes.plans,
-    element: (
-      <SuspenseLoader>
-        <PlansPublicPage />
-      </SuspenseLoader>
-    ),
   },
   {
     path: '*',

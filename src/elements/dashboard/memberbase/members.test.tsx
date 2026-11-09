@@ -19,6 +19,11 @@ vi.mock('~src/queries/members', () => ({
 // from the REAL TableProvider the page mounts.
 vi.mock('~components/Memberbase/Members', () => ({ default: () => <MemberManager open /> }))
 
+// The toast action needs the router and the signed-in account, which this test does not set up
+vi.mock('~components/Pricing/useBuyRoomAction', () => ({
+  useBuyRoomAction: () => () => undefined,
+}))
+
 describe('members page', () => {
   it('gives the member form a password input', async () => {
     render(

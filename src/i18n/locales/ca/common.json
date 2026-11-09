@@ -30,22 +30,10 @@
   "already_member": "Ja tens un compte?",
   "alt": {
     "images": {
-      "barca": "escut del Barça",
-      "bellpuig": "escut de l'Ajuntament de Bellpuig",
-      "berga": "escut de l'Ajuntament de Berga",
-      "bisbal": "escut de l'Ajuntament de la Bisbal",
-      "bloock": "logo Bloock",
-      "coec": "logo COEC",
-      "decidim": "logo Decidim",
-      "esquerra": "logo Esquerra Republicana de Catalunya",
-      "omnium": "logo Òmnium Cultural",
       "org_logo": "Logotip de {{org}}",
-      "organization_logo": "Logotip de l'organització",
-      "ticanoia": "logo TIC Anoia"
+      "organization_logo": "Logotip de l'organització"
     }
   },
-  "annual": "Anual<1>40% d'estalvi</1>",
-  "apply": "Aplica",
   "aside": {
     "anonymous_receipt_gone": "El teu comprovant es va mostrar en votar i no es pot recuperar.",
     "has_already_voted": "El teu vot s'ha registrat correctament",
@@ -100,17 +88,36 @@
     "label": "Avatar de l'organització"
   },
   "back": "Enrere",
-  "billing_details": "Detalls de Facturació",
+  "billing": {
+    "title": "Facturació"
+  },
   "booking": {
     "unavailable": "La reserva no està disponible en aquest moment. Torna-ho a provar més tard."
   },
   "calendar": {
-    "max_duration_exceeded": "La durada supera el límit de {{ maxDuration }} dies del teu pla. Redueix la durada de la votació o <a>contacta'ns</a> si necessites més dies.",
+    "max_duration_exceeded": "La durada supera el límit de {{ maxDuration }} dies. Redueix la durada de la votació.",
     "title": "Calendari"
   },
   "cancel": "Cancel·la",
   "cancel_vote": "Cancel·la el procés",
   "census": {
+    "checkout": {
+      "admin_only": "Només els administradors poden afegir places al cens.",
+      "amount_net": "Places (sense IVA)",
+      "back_to_members": "Torna als membres",
+      "balance": "El teu wallet té {{balance}}.",
+      "bought": "Places al cens afegides: s'han cobrat {{amount}} del teu wallet. Torna a intentar afegir els membres.",
+      "buy": "Afegeix places al cens",
+      "intro": "Places per a {{size}} votants, per {{due}} més (sense IVA).",
+      "intro_no_price": "Places per a {{size}} votants.",
+      "invalid": "Aquesta pàgina necessita el nombre de votants per als quals afegir places al cens. Obre-la des del canvi rebutjat.",
+      "pay": "Paga {{amount}}",
+      "shortfall": "Al wallet li falten {{shortfall}}.",
+      "timeout": "El pagament està confirmat; les places s'afegeixen tan bon punt es processi. Torna a intentar afegir els membres d'aquí a un moment.",
+      "timeout_redirected": "Encara esperem que s'afegeixin les places. Torna a intentar afegir els membres d'aquí a un moment.",
+      "title": "Afegeix places al cens",
+      "waiting": "Pagament rebut. S'estan afegint les places de votants…"
+    },
     "search": {
       "description": "Cerca un votant per les seves credencials per comprovar si és al cens i si ja ha votat.",
       "error": "No s'ha pogut cercar al cens.",
@@ -140,7 +147,6 @@
     "title": "Canvia la contrasenya"
   },
   "close": "Tanca",
-  "code_applied": "Codi \"{{appliedCode}}\" aplicat",
   "color_mode_switcher": "Commutador de mode de color",
   "common": {
     "back": "Enrere",
@@ -244,7 +250,6 @@
     "terms_acceptance": "He llegit i accepto els <2>Termes i Condicions</2> i la <6>Política de Privacitat.</6>"
   },
   "current": "Actual",
-  "current_plan": "Pla Actual",
   "dark": "Fosc",
   "dashboard": {
     "actions": {
@@ -256,18 +261,12 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "Codis 2FA per email",
-      "2fa_email_tooltip": "Codis de verificació per email enviats. Superar el límit costa {{price}}€ per codi.",
-      "2fa_sms": "Codis 2FA per SMS",
-      "2fa_sms_tooltip": "Codis de verificació per SMS enviats. Superar el límit costa {{price}}€ per codi.",
-      "limit_exceeded_message": "El teu pla actual ha assolit els seus límits. Actualitza ara per continuar treballant sense restriccions.",
+      "description": "Segueix l'ús de la teva organització respecte als seus límits.",
+      "limit_exceeded_message": "La teva base de membres ha arribat al límit de {{max}} membres.",
       "memberbase_size": "Mida de la base de membres",
       "memberbase_tooltip": "Nombre màxim de membres permesos a la teva base de membres.",
-      "plan_usage": "Ús del pla",
-      "plan_usage_description": "Controla el teu ús actual enfront els límits del teu pla",
-      "upgrade_plan": "Actualitzar pla",
-      "voting_processes": "Processos de votació",
-      "voting_processes_tooltip": "Nombre de processos de votació creats aquest any. Les votacions amb 10 membres o menys no es compten per als límits."
+      "title": "Ús",
+      "voting_processes": "Processos de votació"
     },
     "welcome": {
       "common_tasks_actions": "Tasques i accions comunes",
@@ -279,7 +278,6 @@
       "hello": "Benvingut a Vocdoni, {{name}}!",
       "how_first_vote": "Com crear la teva primera votació",
       "no_organization": "No s'ha trobat cap organització",
-      "no_subscription": "No hi ha cap subscripció disponible. Crea una organització per activar el teu pla.",
       "quick_actions": "Accions ràpides",
       "recent_voting_description": "Les darreres activitats de votació de la teva organització",
       "recent_voting_title": "Processos de votació recents",
@@ -300,7 +298,6 @@
   },
   "delete_my_account": "Elimina el meu compte",
   "description": "Descripció",
-  "discount": "Descompte",
   "do_it_later": "Fes-ho més tard",
   "draft_processes": "Esborranys",
   "drafts": {
@@ -352,7 +349,6 @@
   "end_time": "Hora de finalització",
   "end_vote": "Finalitza votació",
   "ended_processes": "Acabats",
-  "enter_promo_code": "Introdueix el codi",
   "error": {
     "crash_description": "Recarrega la pàgina o torna al tauler.",
     "crash_title": "Alguna cosa ha anat malament",
@@ -369,74 +365,6 @@
     "reload": "Recarrega",
     "return_to_home": "Torna a l'inici",
     "title": "Error"
-  },
-  "error_removing_code": "Hi ha hagut un error eliminant el codi",
-  "features": {
-    "anonymous": "Votació anònima",
-    "approval": "Per aprovació",
-    "audit": "Auditoria",
-    "audit_blockchain": "100% auditable a la blockchain",
-    "basic_analytics": "Analítiques bàsiques",
-    "basic_branding": "Marca bàsica",
-    "basic_sla": "Millor esforç",
-    "cumulative": "Votació acumulativa",
-    "custom_reports": "Informes personalitzats",
-    "custom_url": "Adreça URL personalitzada",
-    "dedicated_account_manager": "Gestor de comptes dedicat",
-    "email_notification": "Doble factor per correu electrònic",
-    "email_notifications": "Notificacions per correu als votants",
-    "email_reminder": "Recordatoris per correu electrònic",
-    "email_support": "Correu electrònic",
-    "email_support_basic": "(72h resp.)",
-    "email_support_essential": "(48h resp.)",
-    "email_support_premium": "(24h resp.)",
-    "GDPR_compliance": "Compliment del RGPD",
-    "generic_sla": "SLA genèric",
-    "live_results": "Resultats en directe",
-    "live_streaming": "Streaming en directe",
-    "memberbase_all_in_one_management": "Gestió integral de membres",
-    "multiple": "Elecció múltiple",
-    "on_demand": "Sota demanda*",
-    "overwrite": "Sobre-escriptura del vot",
-    "participatory_budgeting": "Pressupost participatiu",
-    "personalization": "Personalització",
-    "phone_support": "Suport telefònic",
-    "priority_support": "Suport prioritari",
-    "ranked": "Votació ordenada",
-    "section": {
-      "analytics_and_reporting": "Analítiques i informes",
-      "authentication_security": "Autenticació i seguretat",
-      "compliance_and_security": "Compliment i seguretat",
-      "customization": "Personalització",
-      "extra_features": "Funcionalitats addicionals",
-      "features": "Funcionalitats",
-      "general_limits": "Límits generals",
-      "memberbase_management": "Gestió de membres",
-      "organization": "Organització",
-      "support": "Suport",
-      "voting_types": "Tipus de votacions"
-    },
-    "single": "Elecció simple",
-    "sms_notification": "Doble factor via missatges de text SMS",
-    "sms_notifications": "Notificacions SMS als votants",
-    "sub_orgs": "Fins a {{ value }} suborganitzacions",
-    "team_members": "Membres de l'equip",
-    "tooltips": {
-      "anonymous": "Aquesta és una funcionalitat opcional que els organitzadors poden triar. Quan s'activa, els vots són completament anònims: ni tan sols nosaltres podem saber qui ha votat quina opció. Alternativament, els organitzadors poden triar xifrar els resultats fins que acabi la votació, o fer la votació completament pública.",
-      "live_results": "Aquesta és una funcionalitat opcional que els organitzadors poden triar. Els resultats es poden mostrar en temps real a mesura que es registren els vots, o els organitzadors poden triar mantenir els resultats xifrats i ocults fins que acabi el període de votació.",
-      "memberbase_all_in_one": "Importa la teva base de membres per crear grups de votants elegibles i gestionar els permisos de votació de manera molt fàcil.",
-      "multiple": "Els votants poden seleccionar múltiples opcions de les opcions disponibles. Ideal per a enquestes i decisions on es permeten múltiples seleccions.",
-      "overwrite": "Els votants poden canviar el seu vot abans que acabi el període de votació. Aquesta funcionalitat ajuda a evitar errors i prevenir la coerció permetent als votants corregir les seves tries.",
-      "single": "Els votants només poden seleccionar una opció de les opcions disponibles. Perfecte per a eleccions i decisions simples de sí/no.",
-      "team_members": "Convida membres de l'equip i assigna permisos basats en rols per poder gestionar fàcilment la teva organització",
-      "uptime": "Garantim un 99.99% de temps actiu, però només en els plans de pagament aquests són exigits per contracte amb garanties."
-    },
-    "total_orgs": "Sub-organitzacions disponibles",
-    "total_users": "Total d'usuaris disponibles",
-    "uptime": "99.99% de temps actiu",
-    "uptime_guaranteed": "Garantit ({{suffix}})",
-    "weighted": "Amb pes",
-    "white_label": "Marca blanca"
   },
   "footer": {
     "company": "Empresa",
@@ -505,9 +433,6 @@
       "voting_issue": "Problema de votació"
     }
   },
-  "free_trial_days_one": "Un dia gratuït",
-  "free_trial_days_many": "{{count}} dies gratuïts",
-  "free_trial_days_other": "{{count}} dies gratuïts",
   "google_oauth_conflict_error": "Ja existeix un compte amb aquest correu electrònic. Si us plau, inicia sessió amb el teu mètode existent.",
   "google_oauth_error": "Error d'OAuth de Google",
   "google_oauth_error_description": "Error d'OAuth de Google, si us plau torna-ho a provar",
@@ -574,193 +499,6 @@
     "title": "Vocdoni | Infraestructura de votació segura i verificable"
   },
   "home": {
-    "clients_title": "Més de 100 organitzacions confien en nosaltres",
-    "faqs": {
-      "faq_1": {
-        "description": "Vocdoni és una plataforma de vot digital basada en tecnologia blockchain, que ofereix processos de votació segurs, transparents i verificables.",
-        "title": "Què és Vocdoni?"
-      },
-      "faq_10": {
-        "description": "Oferim suport tècnic per ajudar els votants a resoldre qualsevol incidència. A més, el sistema està dissenyat perquè sigui intuïtu i accessible per a tothom.",
-        "title": "Què passa si un votant té problemes per accedir o votar?"
-      },
-      "faq_11": {
-        "description": "Vocdoni és resistent a atacs gràcies a l'ús de blockchain i altres mesures de seguretat avançades. Els sistemes tradicionals poden ser vulnerables a manipulacions, però en Vocdoni cada vot està protegit criptogràficament i és impossible d'alterar.",
-        "title": "Quina seguretat ofereix Vocdoni contra atacs informàtics?"
-      },
-      "faq_12": {
-        "description": "Vocdoni permet realitzar qualsevol tipus de votació: eleccions internes, assemblees, referèndums, enquestes i processos participatius. La plataforma s'adapta a les necessitats de governs, empreses, cooperatives, associacions i altres organitzacions.",
-        "title": "Quins tipus de votacions puc fer amb Vocdoni?"
-      },
-      "faq_13": {
-        "description": "No. Els votants reben un enllaç segur o una credencial única que els permet votar sense necessitat de registrar-se, simplificant l'experiència i garantint l'anonimat.",
-        "title": "Els votants necessiten crear un compte per votar?"
-      },
-      "faq_14": {
-        "description": "Depèn de la configuració de la votació. En alguns casos, es permet als votants canviar el seu vot fins que es tanqui el procés.",
-        "title": "Es poden modificar els vots un cop emesos?"
-      },
-      "faq_15": {
-        "description": "Sí, la plataforma permet configuracions avançades com el vot ponderat (on un vot val més segons determinats criteris) i el vot delegat (on un usuari pot cedir el seu vot a una altra persona).",
-        "title": "Vocdoni permet el vot ponderat o delegat?"
-      },
-      "faq_16": {
-        "description": "Sí, es pot combinar la votació digital amb la votació presencial i després integrar els resultats en un recompte unificat. Oferim diversos sistemes per realitzar votacions híbrides.",
-        "title": "Es poden fer votacions híbrides (digitals i presencials)?"
-      },
-      "faq_17": {
-        "description": "Això depèn de les regles de cada procés. Es poden establir criteris de desempat abans d'iniciar la votació, com segones rondes o normes específiques per determinar el guanyador.",
-        "title": "Què passa si hi ha un empat en una votació?"
-      },
-      "faq_18": {
-        "description": "Els resultats es generen automàticament un cop tancada la votació. No cal recompte manual, i es poden verificar immediatament gràcies a la tecnologia blockchain.",
-        "title": "Quant de temps triguen a publicar-se els resultats?"
-      },
-      "faq_19": {
-        "description": "Sí, Vocdoni permet configurar votacions privades on només poden accedir els membres d'un cens determinat.",
-        "title": "Es poden fer votacions totalment privades?"
-      },
-      "faq_2": {
-        "description": "Vocdoni utilitza una combinació de blockchain, criptografia avançada i proves de coneixement zero per garantir la seguretat, anonimat i verificabilitat de les votacions.",
-        "title": "Com funciona Vocdoni?"
-      },
-      "faq_20": {
-        "description": "Qualsevol persona pot verificar els resultats gràcies a la transparència de la blockchain. A més, oferim eines per auditar el procés de votació i garantir-ne la fiabilitat.",
-        "title": "Com es pot verificar que els resultats són correctes?"
-      },
-      "faq_21": {
-        "description": "Sí. La plataforma està dissenyada seguint els estàndards d'accessibilitat (WCAG), fent-la apta per a persones amb discapacitats visuals, auditives o motrius.",
-        "title": "Vocdoni és accessible per a persones amb discapacitat?"
-      },
-      "faq_22": {
-        "description": "Vocdoni funciona a qualsevol dispositiu amb connexió a internet, incloent ordinadors, tauletes i mòbils. La plataforma està optimitzada per a tots els navegadors moderns sense necessitat de descàrregues o instal·lacions.",
-        "title": "Quins dispositius són compatibles amb Vocdoni?"
-      },
-      "faq_23": {
-        "description": "Els votants poden rebre una invitació per correu electrònic, SMS o a través d'un enllaç segur compartit per l'organització.",
-        "title": "Com es convida els votants a participar en una votació?"
-      },
-      "faq_24": {
-        "description": "Vocdoni pot gestionar des de petits grups fins a votacions massives amb centenars de milers de participants, gràcies a la seva infraestructura escalable basada en blockchain.",
-        "title": "Quants votants pot gestionar Vocdoni alhora?"
-      },
-      "faq_25": {
-        "description": "Sí, la plataforma permet definir rols i permisos per als administradors, limitant l'accés a certes funcionalitats segons les necessitats de l'organització.",
-        "title": "Es poden establir diferents nivells d'accés per als administradors?"
-      },
-      "faq_26": {
-        "description": "Vocdoni permet diversos mètodes d'autenticació, com correu electrònic, eID, codi SMS, signatura electrònica o integració amb sistemes d'identificació existents.",
-        "title": "Com puc assegurar-me que només les persones autoritzades poden votar?"
-      },
-      "faq_27": {
-        "description": "Oferim suport tècnic i eines de recuperació per garantir que tots els votants puguin exercir el seu dret a vot sense problemes.",
-        "title": "Què passa si un votant té problemes tècnics durant la votació?"
-      },
-      "faq_28": {
-        "description": "Cens tancat: Només poden votar persones prèviament registrades en el cens. Cens obert: Qualsevol persona que compleixi certs criteris (per exemple, verificació per eID) pot votar.",
-        "title": "Quina diferència hi ha entre un cens tancat i un cens obert?"
-      },
-      "faq_29": {
-        "description": "Els observadors poden verificar el procés electoral en temps real i auditar els resultats mitjançant les eines de transparència i verificació de Vocdoni.",
-        "title": "Com funciona la verificació dels resultats per part d'observadors?"
-      },
-      "faq_3": {
-        "description": "Vocdoni ofereix transparència, seguretat, resistència a manipulacions i accessibilitat global sense necessitat d'infraestructura física.",
-        "title": "Quins avantatges té Vocdoni sobre els sistemes de votació tradicionals?"
-      },
-      "faq_30": {
-        "description": "Sí, pots definir dates i hores exactes per a l'inici i la finalització de la votació, evitant la necessitat d'una intervenció manual.",
-        "title": "Puc programar una votació perquè s'iniciï i acabi automàticament?"
-      },
-      "faq_31": {
-        "description": "Sí, la plataforma admet diferents formats de votació, incloent preguntes de selecció múltiple, vot ponderat i sistemes com el vot preferencial o STV.",
-        "title": "Es poden fer preguntes amb múltiples opcions de resposta?"
-      },
-      "faq_32": {
-        "description": "Sí, Vocdoni facilita la participació en processos deliberatius, assemblees i mecanismes de governança, adaptant-se a diversos sistemes de presa de decisions.",
-        "title": "Vocdoni és adequat per a processos de presa de decisions col·laboratius?"
-      },
-      "faq_33": {
-        "description": "Sí, Vocdoni permet implementar mètodes de votació més sofisticats segons les necessitats de cada organització o procés electoral.",
-        "title": "Es poden integrar mètodes de votació avançats com Quadratic Voting o Approval Voting?"
-      },
-      "faq_34": {
-        "description": "Depenent de la configuració de la votació, es pot optar per resultats en temps real o per un recompte final un cop tancada la votació.",
-        "title": "Els resultats són accessibles en temps real?"
-      },
-      "faq_35": {
-        "description": "Gràcies a la transparència i verificabilitat de la blockchain, qualsevol participant o observador pot auditar els resultats per detectar possibles anomalies.",
-        "title": "Com es poden impugnar els resultats d'una votació?"
-      },
-      "faq_36": {
-        "description": "Sí, pots carregar fàcilment un cens predefinit mitjançant un fitxer CSV o integrar-lo amb bases de dades existents.",
-        "title": "És possible importar un cens de votants existent?"
-      },
-      "faq_37": {
-        "description": "Sí, seguim les millors pràctiques de seguretat i transparència i podem adaptar-nos a normatives específiques de diferents països i institucions.",
-        "title": "Vocdoni compleix amb normatives de vot electrònic oficials?"
-      },
-      "faq_38": {
-        "description": "Sí, és una eina ideal per a consultes públiques, referèndums i processos de participació ciutadana de qualsevol escala.",
-        "title": "Vocdoni pot gestionar referèndums i consultes ciutadanes?"
-      },
-      "faq_39": {
-        "description": "Els plans de Vocdoni inclouen un nombre base de votants, però pots afegir-ne més segons les necessitats de la teva organització. La plataforma és escalable per gestionar des de petites assemblees fins a grans eleccions.",
-        "title": "Hi ha límits en el nombre de votants o processos de votació?"
-      },
-      "faq_4": {
-        "description": "Vocdoni està pensat per a governs, empreses, cooperatives, associacions i qualsevol organització que necessiti un sistema de vot segur i transparent.",
-        "title": "Qui pot utilitzar Vocdoni?"
-      },
-      "faq_40": {
-        "description": "Sí, Vocdoni permet votacions ponderades, on cada vot pot tenir un valor diferent en funció de criteris definits per l'organització.",
-        "title": "Es poden establir diferents pesos de vot?"
-      },
-      "faq_41": {
-        "description": "Vocdoni està dissenyat per ser accessible des de qualsevol dispositiu i navegador. En cas de problemes, oferim suport tècnic i opcions de recuperació de vot per garantir que ningú es quedi sense participar.",
-        "title": "Què passa si un votant té problemes tècnics durant la votació?"
-      },
-      "faq_42": {
-        "description": "Vocdoni utilitza encriptació avançada, proves de coneixement zero i una arquitectura descentralitzada basada en blockchain per garantir la seguretat i resistència contra atacs.",
-        "title": "Com es protegeix el sistema contra atacs cibernètics?"
-      },
-      "faq_43": {
-        "description": "Sí, suportem diferents sistemes de vot, incloent-hi votació per majoria simple, votació preferencial (com el sistema STV), preguntes de resposta múltiple i més.",
-        "title": "Es poden crear preguntes amb opcions múltiples o votacions preferencials?"
-      },
-      "faq_44": {
-        "description": "Sí, oferim la possibilitat de fer votacions de prova perquè els organitzadors i votants es familiaritzin amb el sistema abans d'una elecció oficial.",
-        "title": "És possible fer proves abans d'una votació real?"
-      },
-      "faq_45": {
-        "description": "Pots registrar-te i començar a crear votacions en pocs minuts. Si necessites suport o una configuració personalitzada, el nostre equip està disponible per ajudar-te.",
-        "title": "Com puc començar a utilitzar Vocdoni?"
-      },
-      "faq_5": {
-        "description": "Depèn del marc legal de cada país. Vocdoni compleix amb les millors pràctiques de seguretat i privacitat i pot adaptar-se a normatives específiques.",
-        "title": "És legal el vot electrònic amb Vocdoni?"
-      },
-      "faq_6": {
-        "description": "Vocdoni utilitza encriptació avançada, blockchain i tècniques criptogràfiques com zk-SNARKs per garantir la privacitat i seguretat dels vots.",
-        "title": "Com garanteix Vocdoni la seguretat del vot?"
-      },
-      "faq_7": {
-        "description": "Sí, gràcies a la blockchain, qualsevol persona pot verificar la integritat dels resultats sense comprometre l'anonimat dels votants.",
-        "title": "És possible auditar una votació feta amb Vocdoni?"
-      },
-      "faq_8": {
-        "description": "Els votants només necessiten un dispositiu amb connexió a Internet i un navegador web. No calen aplicacions o programes específics.",
-        "title": "Quins requisits tècnics necessiten els votants?"
-      },
-      "faq_9": {
-        "description": "Vocdoni utilitza tècniques criptogràfiques avançades, com les proves de coneixement zero (zk-SNARKs), per garantir que ningú pugui vincular un vot amb la identitat d'un votant.",
-        "title": "Com es protegeix l'anonimat dels votants?"
-      },
-      "show_less": "Mostrar Menys",
-      "show_more": "Mostrar Més",
-      "subtitle": "A continuació trobaràs respostes a les preguntes més freqüents dels nostres usuaris. Proporciona claredat i confiança a la teva experiència de votació digital.",
-      "title": "Preguntes Freqüents"
-    },
     "support": {
       "btn_watch": "Programa una trucada"
     }
@@ -830,13 +568,13 @@
       "title": "Claus API"
     },
     "configuration": {
-      "subtitle": "Gestiona la teva subscripció i obtén suport.",
+      "subtitle": "Gestiona la teva facturació i obtén suport.",
       "title": "Configuració"
     },
     "create_account": {
       "cancel": "Cancel·lar",
       "confirm": "Crear el compte",
-      "description": "Es crearà un compte d'integrador nou en el pla gratuït i s'establirà com la teva organització activa.",
+      "description": "Es crearà un compte d'integrador nou i s'establirà com la teva organització activa, cosa que desbloqueja el tauler d'integrador.",
       "error": "No s'ha pogut crear el compte d'integrador",
       "switch_instead": "O canvia a una organització existent",
       "title": "Crear un compte d'integrador gratuït?"
@@ -852,17 +590,28 @@
       "title": "Documentació"
     },
     "managed": {
+      "actions": "Accions",
+      "cap_amount": "Límit de despesa (EUR, sense IVA)",
+      "cap_hint": "El que els processos de votació d'aquesta organització poden tenir cobrat del teu wallet, sense IVA. Si el baixes per sota del que ja s'ha gastat, només es bloquejaran els nous cobraments.",
+      "cap_invalid": "Introdueix un import igual o superior a 0, amb un màxim de 2 decimals.",
+      "cap_reached": "Límit assolit",
       "created": "Creada",
       "docs_card_description": "Aprèn a crear i gestionar organitzacions de manera programàtica a través de l'API.",
       "docs_card_title": "Crear una organització",
+      "edit_cap": "Edita el límit",
+      "edit_cap_title": "Edita el límit de despesa",
       "emails": "Correus electrònics",
       "empty_description": "Les organitzacions es creen a través de l'API, no des d'aquest tauler. Quan creïs la teva primera organització, apareixerà aquí.",
       "empty_title": "Encara no hi ha organitzacions",
       "error": "No s'han pogut carregar les organitzacions",
+      "no_cap": "Sense límit",
       "organization": "Organització",
       "pagination": "Pàgina {{page}} de {{total}} · {{items}} total",
       "processes": "Processos",
+      "save_cap": "Desa",
       "sms": "SMS",
+      "spend_cap": "Límit de despesa",
+      "spent": "Gastat",
       "subtitle": "Organitzacions que gestions en nom dels teus clients.",
       "title": "Organitzacions gestionades"
     },
@@ -873,7 +622,7 @@
     },
     "overview": "Vista general",
     "overview_error": "No s'ha pogut carregar la quota d'integrador",
-    "overview_subtitle": "La teva quota d'integrador i l'ús actual.",
+    "overview_subtitle": "El teu ús com a integrador i el saldo del wallet.",
     "overview_title": "Vista general",
     "provision_failed": "No hem pogut configurar el teu compte d'integrador.",
     "quota": {
@@ -891,17 +640,11 @@
     "signin_title": "Iniciar sessió",
     "signup_subtitle": "Registra't per gestionar organitzacions com a integrador.",
     "signup_title": "Crea el teu compte d'integrador",
-    "subscription": {
-      "active": "Activa",
-      "billing_details": "Detalls de facturació",
-      "current_plan": "Pla actual",
-      "inactive": "Inactiva",
-      "portal_error": "No s'ha pogut obrir el portal de facturació",
-      "unavailable": "Els detalls de la subscripció no estan disponibles"
-    },
-    "upgrade_plan": "Millorar el pla"
+    "wallet": {
+      "balance": "Saldo del wallet",
+      "manage": "Gestiona el wallet"
+    }
   },
-  "invalid_promo_code": "Codi de promoció no vàlid",
   "invite": {
     "account_not_verified": "El teu compte no està verificat. Si us plau, verifica'l per continuar.",
     "create_account_subtitle": "Primer necessites un compte per poder acceptar la invitació",
@@ -1060,6 +803,7 @@
       "add_to_group_confirmation_many": "Afegiràs {{count}} membres al grup \"{{group}}\".",
       "add_to_group_confirmation_other": "Afegiràs {{count}} membres al grup \"{{group}}\".",
       "add_to_group_description": "Selecciona un grup on afegir els membres.",
+      "add_to_group_error": "Error en afegir membres al grup",
       "add_to_group_success": "Membres afegits al grup correctament",
       "bulk_delete": "Elimina",
       "cancel": "Cancel·la",
@@ -1120,8 +864,6 @@
     "login": "Iniciar sessió",
     "open": "Obre menú"
   },
-  "month": "mes",
-  "monthly": "Mensual",
   "name": "Nom",
   "need_help": {
     "description": "Necessites ajuda amb el teu primer procés de votació? Mira aquest tutorial o programa una trucada.",
@@ -1137,9 +879,6 @@
   "new_voting": "Nova votació",
   "no_results_filtering": "El filtre de cerca actual no retorna cap resultat",
   "not_registred_yet": "No tens un compte?",
-  "number_of_members_one": "{{ count }} membre de l'equip",
-  "number_of_members_many": "{{ count }} membres de l'equip",
-  "number_of_members_other": "{{ count }} membres de l'equip",
   "oauth": {
     "link": {
       "action": "Enllaça el compte de {{provider}}",
@@ -1156,7 +895,6 @@
   },
   "open_in_explorer": "Obre a l'explorador",
   "or_continue_with": "o continua amb",
-  "order_summary": "Resum de la comanda",
   "org_type_selector": {
     "selector_label": "Selecciona el tipus d'organització"
   },
@@ -1176,8 +914,6 @@
       "title": "Crea la teva primera votació"
     },
     "elections_list_load_more": "Carrega’n més",
-    "max_census": "Cens màxim per votació",
-    "max_processes": "Votacions per any¹",
     "no_organization_title": "Encara no pertanys a cap organització!",
     "organization": "Detalls de l'organització",
     "title": {
@@ -1189,7 +925,7 @@
   },
   "organization_settings": {
     "phone_support": {
-      "description": "Disponible només per als subscriptors del pla Personalitzat.",
+      "description": "Truca directament al nostre equip per obtenir ajuda prioritària.",
       "id": "ID",
       "info": "Tingues a mà l'ID de la teva organització quan truquis.",
       "organization_id": "ID de la teva organització",
@@ -1198,7 +934,7 @@
       "priority_support_line_description": "Disponible de dilluns a divendres, de 9:00 a 18:00 CET",
       "title": "Suport telefònic"
     },
-    "subtitle": "Gestiona la teva organització, els membres de l'equip i el teu pla de subscripció",
+    "subtitle": "Gestiona la teva organització, els membres de l'equip i la facturació",
     "support": {
       "description": "Obtén ajuda i suport per a la teva organització.",
       "title": "Suport"
@@ -1257,71 +993,11 @@
   },
   "plan": {
     "encouragement": "Llançar una votació és senzill, i els participants poden unir-s'hi des de qualsevol lloc. Les fortes garanties a un cost més baix han convertit Vocdoni en una opció de confiança per a centenars d'ajuntaments, associacions, partits polítics i empreses.",
-    "free": "<0>Estàs al Pla Gratuït</0>, que ja et permet llançar votacions. Si necessites més funcionalitats, límits més alts o opcions específiques, explora els plans de pagament i prova'ls gratuïtament.",
     "special_needs": "Necessites ajuda o alguna cosa específica? Programa una trucada."
-  },
-  "plan_upgrade": {
-    "cancel": "Cancel·la",
-    "generic_subtitle": "El teu pla actual limita aquesta acció a {{limit}}. Actualitza el teu pla per continuar i desbloquejar funcions avançades.",
-    "generic_title": "Actualitza el teu pla per augmentar els límits",
-    "memberbase_subtitle": "El teu pla actual permet fins a {{limit}} membres a la memberbase. Actualitza el teu pla per afegir més membres i desbloquejar funcions avançades.",
-    "memberbase_title": "Actualitza el teu pla per afegir més membres a la memberbase",
-    "see_plans": "Veure plans",
-    "subtitle": "El teu pla actual només permet {{limit}} per a la col·laboració. Actualitza el teu pla per afegir més membres de l'equip i desbloquejar funcions avançades.",
-    "title": "Actualitza per afegir més membres de l'equip"
   },
   "please_check_email_to_verify": "Si us plau, comprova el teu correu electrònic per verificar el teu compte.",
   "preferences": "Preferències",
   "preview": "Vista prèvia",
-  "pricing": {
-    "2fa": "Autenticació 2FA² ({{suffix}})",
-    "2fa_suffix_both": "Correu i SMS",
-    "2fa_suffix_email": "Correu electrònic",
-    "2fa_suffix_sms": "SMS",
-    "basic_analytics": "Informes i anàlisis bàsiques",
-    "comparison_table": {
-      "footnote_1": "¹ Les votacions amb menys de 10 participants es tracten com a proves i no compten per als límits del teu pla.",
-      "footnote_2": "² Els crèdits de 2FA només es consumeixen en el moment que un usuari sol·licita la verificació en un procés de votació. No et quedaràs mai sense avís: si superes els crèdits inclosos durant una votació, cada codi addicional es cobrarà a 0,015 € en el moment de l'enviament. També pots comprar crèdits addicionals per avançat en paquets còmodes.",
-      "footnote_on_demand": "* Les funcionalitats sol·licitades s'avaluaran individualment i poden comportar costos addicionals."
-    },
-    "core_voting_one": "Un únic membre",
-    "core_voting_many": "Fins a {{ count }} membres",
-    "core_voting_other": "Fins a {{ count }} membres",
-    "custom_branding": "Marca personalitzada*",
-    "custom_subtitle": "Adaptat a les teves necessitats",
-    "custom_title": "Personalitzat",
-    "different_voting_methods": "Diferents mètodes de votació",
-    "empty": "No s'han trobat plans",
-    "empty_description": "Torna-ho a provar més tard per veure els plans disponibles.",
-    "essential_subtitle": "Organitzacions petites o mitjanes o grups comunitaris amb necessitats bàsiques de votació.",
-    "essential_title": "Bàsic",
-    "free_subtitle": "Organitzacions petites o grups comunitaris amb necessitats bàsiques de votació.",
-    "free_title": "Gratuït",
-    "load_error": "No s'han pogut carregar els plans",
-    "load_error_description": "Torna-ho a provar.",
-    "premium_subtitle": "un volum més gran que requereix funcions més avançades.",
-    "premium_title": "Prèmium",
-    "priority_support": "Suport prioritari per correu electrònic (24h)",
-    "ticket_support_48": "Suport per correu electrònic (48h)",
-    "ticket_support_72": "Suport per correu electrònic (72h)",
-    "up_to_admins_one": "Un únic administrador",
-    "up_to_admins_many": "{{ count }} administradors",
-    "up_to_admins_other": "{{ count }} administradors",
-    "yearly_processes_one": "{{ count }} procés anual",
-    "yearly_processes_many": "{{ count }} processos anuals",
-    "yearly_processes_other": "{{ count }} processos anuals"
-  },
-  "pricing_card": {
-    "annual_savings": "Estalvia {{ savings }}/any amb l'anual",
-    "annual_total_cost": "{{ price }} facturats anualment",
-    "contact_sales": "<0>Contacta amb els nostres comercials</0> <1>o</1>",
-    "custom_plan": "Preu sota consulta",
-    "custom_plan_description": "Tens requisits de governança especials? Ens podem adaptar a les teves necessitats amb una solució personalitzada. Contacta'ns.",
-    "free_trial": "{{ freeDays }} dies gratuïts",
-    "from": "<price>{{ price }}</price><time>/mes+IVA</time>",
-    "most_popular_plan": "Recomanat",
-    "need_more_members": "Necessites més membres? <2>Contacta'ns</2>"
-  },
   "privacy_policy": "Política de Privacitat",
   "process": {
     "anonymity": {
@@ -1343,6 +1019,29 @@
       }
     },
     "census": "Cens",
+    "checkout": {
+      "cancel_open": "Cancel·la el pagament obert",
+      "check_again": "Torna a comprovar",
+      "conflict": "Hi ha una recàrrega oberta per a aquest procés de votació, així que encara no es pot publicar. Reprèn el pagament per completar-la, o cancel·la-la i publica des del teu wallet.",
+      "draft_total": "Total de l'esborrany (sense IVA)",
+      "pay": "Paga {{amount}} i publica",
+      "publish_again": "Publica de nou",
+      "publish_title": "Publica el procés de votació",
+      "publishing": "S'està publicant el teu procés de votació…",
+      "publishing_after_payment": "Pagament rebut. S'està publicant el teu procés de votació…",
+      "rest_stays": "La resta es queda al teu wallet.",
+      "resume": "Reprèn el pagament",
+      "return_to_processes": "Torna als teus processos de votació",
+      "return_unknown": "No hem pogut saber a quin procés de votació corresponia aquest pagament. Si el pagament s'ha completat, el procés de votació es publicarà automàticament. Consulta els teus processos de votació per veure'n l'estat.",
+      "shortfall": "Diferència a cobrir (sense IVA)",
+      "timeout": "El teu pagament està confirmat i el procés de votació es publicarà aviat. Si no passa, publica'l de nou: es paga des del teu wallet.",
+      "timeout_unpaid": "El procés de votació encara s'està publicant. Si no apareix aviat, publica'l de nou: es paga des del teu wallet.",
+      "title": "Recarrega i publica",
+      "top_up": "Recàrrega (sense IVA)",
+      "unconfirmed": "El teu pagament encara s'està confirmant. Alguns mètodes de pagament triguen uns quants dies a confirmar-se. El procés de votació es publica automàticament quan el pagament es confirmi, així que pots sortir d'aquesta pàgina.",
+      "unpaid": "El pagament no s'ha completat. Pots tornar-ho a intentar.",
+      "wallet_balance": "Saldo del wallet"
+    },
     "create": {
       "action": {
         "publish": "Publica",
@@ -1362,9 +1061,9 @@
         "title": "Desant esborrany"
       },
       "limit_reached": {
-        "message_one": "Has arribat al límit de {{ count }} esborrany. Per desar aquest esborrany, elimina un esborrany existent o actualitza el teu pla.",
-        "message_many": "Has arribat al límit de {{ count }} esborranys. Per desar aquest esborrany, elimina un esborrany existent o actualitza el teu pla.",
-        "message_other": "Has arribat al límit de {{ count }} esborranys. Per desar aquest esborrany, elimina un esborrany existent o actualitza el teu pla."
+        "message_one": "Has arribat al límit de {{ count }} esborrany. Per desar aquest esborrany, elimina un esborrany existent.",
+        "message_many": "Has arribat al límit de {{ count }} esborranys. Per desar aquest esborrany, elimina un esborrany existent.",
+        "message_other": "Has arribat al límit de {{ count }} esborranys. Per desar aquest esborrany, elimina un esborrany existent."
       },
       "question": {
         "add": "Afegeix una pregunta",
@@ -1374,6 +1073,7 @@
           "description": "Segur que vols eliminar aquesta pregunta?",
           "title": "Eliminar pregunta"
         },
+        "limit_reached": "Un procés de votació pot tenir com a màxim {{ max }} preguntes.",
         "question_number": "Pregunta {{index}} de {{total}}"
       },
       "save_draft_error": {
@@ -1399,9 +1099,55 @@
     "extended_info": "Informació ampliada",
     "is_invalid": "Aquest procés té dades no vàlides i per tant no pot carregar-se",
     "no_description": "No hi ha cap descripció proporcionada",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "Encara s'està processant el pagament d'un procés de votació que fa servir aquests membres. Torna-ho a provar quan acabi.",
+        "census_growth_payment_required": "Aquests membres farien créixer el cens d'un procés de votació més enllà del que s'ha pagat. Ampliar-lo costa fins a {{amount}} més (sense IVA) i l'has de comprar abans d'afegir aquests membres.",
+        "census_growth_payment_shortfall": "Aquests membres farien créixer el cens d'un procés de votació més enllà del que s'ha pagat. Ampliar-lo costa fins a {{amount}} més (sense IVA) i l'has de comprar abans d'afegir aquests membres. El teu wallet no cobreix {{shortfall}} d'aquest import.",
+        "census_growth_quote_required": "Aquests membres farien que el cens d'un procés de votació superés els 50.000 votants, i això necessita un pressupost personalitzat. Contacta amb nosaltres per ampliar-lo.",
+        "census_growth_spend_cap_reached": "Aquestes places al cens superarien el límit de despesa que l'integrador ha fixat per a aquesta organització. L'integrador l'ha d'apujar primer.",
+        "census_growth_wallet_insufficient": "El wallet de l'integrador no cobreix el cost d'afegir aquests membres a un procés de votació. L'integrador que gestiona aquesta organització ha de recarregar primer el seu wallet.",
+        "census_growth_wallet_insufficient_amounts": "El wallet de l'integrador té {{available}}, però per afegir aquests membres a un procés de votació calen {{required}} (sense IVA). L'integrador que gestiona aquesta organització ha de recarregar primer el seu wallet.",
+        "draft_integrator_org": "L'integrador no pot tenir processos de votació, només ho poden fer les organitzacions que gestiona. Desa aquest esborrany des d'una d'elles.",
+        "draft_payment_in_progress": "Aquest esborrany no es pot desar pel seu pagament. Un cop pagat, no es poden afegir la personalització de marca ni una URL pròpia: treu-les. Si hi ha un pagament que s'està abonant, espera una mica i torna-ho a provar.",
+        "open_wallet": "Obrir wallet",
+        "payment_in_progress": "Aquest procés de votació no es pot publicar ara pel seu pagament: potser hi ha una sessió de recàrrega oberta, un pagament que s'està abonant o un canvi (com afegir la personalització de marca després del pagament) que no es permet. Revisa l'esborrany i el seu pagament, i després torna-ho a provar.",
+        "publish_integrator_org": "L'integrador no pot tenir processos de votació, només ho poden fer les organitzacions que gestiona. Publica aquest procés des d'una d'elles.",
+        "publish_payment_required": "Aquest procés de votació costa {{amount}} en total (sense IVA) i s'ha de pagar abans de publicar-lo. Recarrega el teu wallet a Configuració → Wallet i després torna a publicar-lo.",
+        "publish_wallet_short": "El teu wallet té {{balance}}, i per publicar aquest procés de votació calen {{shortfall}} més (sense IVA). Recarrega el teu wallet a Configuració → Wallet i després torna a publicar-lo.",
+        "quote_required": "Els processos de votació de més de 50.000 votants necessiten un pressupost personalitzat. Contacta amb nosaltres per publicar aquest.",
+        "spend_cap_reached": "Publicar aquest procés de votació superaria el límit de despesa que l'integrador ha fixat per a aquesta organització. L'integrador l'ha d'apujar abans que tornis a publicar.",
+        "wallet_insufficient": "El saldo de l'integrador no cobreix el preu d'aquest procés de votació. L'integrador que gestiona aquesta organització ha de recarregar el saldo abans que el tornis a publicar.",
+        "wallet_insufficient_amounts": "El saldo de l'integrador és de {{available}}, però encara falten {{required}} (IVA no inclòs) per publicar aquest procés de votació. L'integrador que gestiona aquesta organització ha de recarregar el saldo abans que el tornis a publicar."
+      }
+    },
     "people_in_census_one": "Un votant",
     "people_in_census_many": "{{ count }} votants",
     "people_in_census_other": "{{ count }} votants",
+    "price": {
+      "error": "No s'ha pogut carregar el preu.",
+      "free": "Aquest procés de votació és gratuït: es publica sense pagament.",
+      "line": {
+        "base": "Procés de votació",
+        "branding": "Marca personalitzada i marca blanca",
+        "custom_url": "URL personalitzada",
+        "email_two_fa": "Codi de verificació per correu electrònic",
+        "minimum_charge": "Càrrec mínim",
+        "signed_certificate": "Certificat de resultats signat",
+        "sms_two_fa": "Codi de verificació per SMS"
+      },
+      "paid": "Pagat: publicar aquest procés de votació no costa res més.",
+      "pending": "Hi ha obert un pagament de recàrrega del wallet per a aquest esborrany.",
+      "quote_only": "El preu d'aquest procés de votació el fixa un pressupost personalitzat.",
+      "quote_recommended": "Per a processos de votació de més de {{limit}} votants et recomanem un pressupost personalitzat. <contact>Demana un pressupost</contact>, o publica'l al preu que es mostra a la configuració.",
+      "quote_required": "Els processos de votació de més de {{limit}} votants només es poden publicar amb un pressupost personalitzat. <contact>Demana un pressupost</contact> per publicar aquest.",
+      "total": "Total",
+      "unavailable": "El preu apareixerà aquí un cop desis l'esborrany amb els votants i la seva autenticació configurada.",
+      "vat_excluded": "Els preus no inclouen l'IVA, que s'afegeix en recarregar el teu wallet.",
+      "wallet_covers": "El saldo del teu wallet ({{balance}}) cobreix aquest total: en publicar-lo es paga del teu wallet.",
+      "wallet_short": "El teu wallet té {{balance}}, i et falten {{shortfall}} per a aquest total.",
+      "wallet_top_up": "Recarrega el wallet"
+    },
     "question_type": {
       "label": "Tipus de pregunta",
       "multiple": "Elecció múltiple",
@@ -1537,6 +1283,7 @@
       "placeholder": "Opció {{number}}",
       "remove": "Esborra l'opció"
     },
+    "price": "Preu",
     "question": {
       "description": {
         "placeholder": "Afegeix aquí la descripció de la pregunta (opcional)..."
@@ -1731,8 +1478,6 @@
     "error": "No s'ha pogut actualitzar el perfil",
     "success": "Perfil actualitzat correctament"
   },
-  "promo_code": "Codi promocional",
-  "promo_code_required": "Cal introduir un codi",
   "public_process": {
     "no_tally": "Sense recompte",
     "verify": "Verifica a l’explorador de la blockchain:",
@@ -1741,7 +1486,6 @@
   "questions_and_results": "Preguntes i resultats",
   "registration_failed": "El registre ha fallat",
   "registration_successful": "Registre completat correctament",
-  "remove": "Elimina",
   "remove_avatar": "Elimina l'avatar",
   "reset_password_button": "Restableix la contrasenya",
   "result_visibility": "Visibilitat dels resultats",
@@ -1817,25 +1561,6 @@
   },
   "start_date": "Data d'inici",
   "start_time": "Hora d'inici",
-  "subscribe": "Subscriu-te",
-  "subscription": {
-    "locked_content": {
-      "available_in": "Disponible a:",
-      "description": "Actualitza el teu pla per obtenir {{ permissionName }} i més.",
-      "title": "El teu pla actual {{ plan }} no inclou {{ permissionName }}",
-      "unlock": "Desbloqueja {{ permissionName }}"
-    },
-    "title": "Subscripció"
-  },
-  "subscription_plan": {
-    "gdpr_compliance": "Tots els plans inclouen compliment del RGPD.",
-    "hide_comparison_table": "Mostra menys funcionalitats",
-    "need_help": "<0>Necessites ajuda per triar?</0> <1>Contacta amb el nostre equip comercial</1>",
-    "show_comparison_table": "Veure totes les funcionalitats",
-    "subtitle": "Amb les nostres subscripcions, obtens més que un pla. Aconsegueixes accés a la plataforma de governança més innovadora. Gràcies a aquest model, podem oferir el millor preu del mercat: tant si necessites 1, 5 o 20 votacions a l'any, sempre gaudiràs dels costos més competitius i de garanties incomparables. La plataforma és totalment d'autoservei, però el nostre equip està sempre disponible per oferir-te assistència o adaptar solucions a les teves necessitats específiques.",
-    "title": "Pla de subscripció"
-  },
-  "subtotal": "Subtotal",
   "support": "Suport",
   "support_chat": {
     "ask_name": "Abans d'enviar-ho, com et dius?",
@@ -1867,7 +1592,6 @@
   "switch_mode": "Canvia al mode {{ mode }}",
   "switch_organization": "Canvia d'organització",
   "system": "Sistema",
-  "tax": "IVA ({{percent}}%)",
   "team": {
     "actions": {
       "cancel_invitation": "Cancel·la la invitació",
@@ -1891,6 +1615,7 @@
     "expires_in": "Caduca en {{time}}",
     "load_error": "No s'han pogut carregar els membres de l'equip",
     "load_error_description": "Torna-ho a provar.",
+    "max_writers_reached": "Aquesta organització ja té {{max}} administradors i gestors, incloses les invitacions pendents. Elimina'n un o cancel·la una invitació pendent per alliberar una plaça. Els visualitzadors no tenen límit.",
     "only_one_member": {
       "add_team_member": "Afegeix un membre a l'equip",
       "subtitle": "Afegeix membres de l'equip per col·laborar a la teva organització",
@@ -1979,21 +1704,17 @@
     }
   },
   "theme": "Tema",
-  "then_price_per_period": "Llavors {{price}}/{{period}}",
-  "total_after_trial": "Total després de la prova",
-  "total_due_today": "Total a pagar avui",
   "total_votes": "Total de vots",
   "turnout": "Participació",
-  "upgrade_plan": "Canvia a {{plan}}",
   "uploaded_image_preview": "Previsualització de la imatge carregada",
   "uploader": {
     "avatar_upload_failed": "Error en pujar l'avatar",
     "avatar_upload_success": "Avatar pujat",
     "click_or_drag_and_drop": "<click>Fes clic per pujar</click><formats>(Formats permesos: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Puja una imatge",
-    "csv_row_limit_exceeded_one": "Aquesta importació donaria un total de {{count}} fila, superant el límit del teu pla de {{max}}.",
-    "csv_row_limit_exceeded_many": "Aquesta importació donaria un total de {{count}} files, superant el límit del teu pla de {{max}}.",
-    "csv_row_limit_exceeded_other": "Aquesta importació donaria un total de {{count}} files, superant el límit del teu pla de {{max}}.",
+    "csv_row_limit_exceeded_one": "Aquesta importació donaria un total de {{count}} fila, superant el límit de {{max}} membres.",
+    "csv_row_limit_exceeded_many": "Aquesta importació donaria un total de {{count}} files, superant el límit de {{max}} membres.",
+    "csv_row_limit_exceeded_other": "Aquesta importació donaria un total de {{count}} files, superant el límit de {{max}} membres.",
     "drop_here": "Deixa-ho aquí",
     "error": {
       "invalid_image_type": "Aquest tipus de fitxer no és compatible. Puja una imatge .png o .jpg.",
@@ -2037,7 +1758,6 @@
     "verifying_title": "Verificant {{ email }}"
   },
   "view_in_explorer": "Mostra a l'explorador",
-  "view_plans_and_pricing": "Veure plans i preus",
   "vocdoni_logo": "Logotip de Vocdoni",
   "vote": {
     "anonymous_receipt": "Vot anònim: desa ara aquest comprovant, la plataforma no te’l podrà tornar a mostrar.",
@@ -2154,8 +1874,48 @@
   "voting_processes_description": "Gestiona i supervisa els teus processos de votació",
   "voting_settings": "Configuració de la votació",
   "voting_status": "Estat de la votació",
-  "wallet_not_connected": "Cartera no connectada",
+  "wallet": {
+    "balance": "Saldo",
+    "balance_note": "Crèdit prepagat, sense IVA. La publicació d'un procés de votació de pagament es cobra d'aquest saldo.",
+    "checking": "Comprovant el teu pagament. El saldo s'actualitzarà tan bon punt Stripe ho confirmi.",
+    "checking_timeout": "Encara no hem pogut confirmar una recàrrega. Si has pagat, apareixerà aquí aviat; si el pagament no s'ha completat, pots tornar a recarregar el wallet.",
+    "history": {
+      "amount": "Import",
+      "date": "Data",
+      "detail": "Detall",
+      "empty": "Encara no hi ha moviments.",
+      "kind": "Tipus",
+      "title": "Moviments"
+    },
+    "kind": {
+      "creditBack": "Crèdit retornat",
+      "payment": "Pagament",
+      "refund": "Reemborsament de Stripe",
+      "topup": "Recàrrega"
+    },
+    "load_error": "No s'ha pogut carregar el wallet",
+    "managed": "Els processos de votació d'aquesta organització els paga l'integrador que la gestiona.",
+    "negative_balance": "El saldo és negatiu després d'un reemborsament. Recarrega'l per pagar nous processos de votació.",
+    "no_access": "Només els administradors i els gestors poden veure el wallet.",
+    "pagination": "Pàgina {{page}} de {{total}} · {{items}} en total",
+    "processing": "Pagament rebut. El saldo s'actualitzarà tan bon punt es confirmi.",
+    "processing_timeout": "Triga més del previst. El saldo s'actualitzarà quan es confirmi el pagament; torna a mirar-ho més tard.",
+    "topup": {
+      "admin_only": "Només els administradors poden recarregar el wallet.",
+      "amount": "Import (EUR, sense IVA)",
+      "amount_decimals": "Fes servir com a màxim 2 decimals.",
+      "amount_net": "Recàrrega (sense IVA)",
+      "amount_range": "Introdueix un import entre {{min}} i {{max}}.",
+      "continue": "Continua al pagament",
+      "hint": "L'IVA s'afegeix al pagament a partir de les teves dades de facturació.",
+      "open": "Recarrega",
+      "pay": "Paga {{amount}}",
+      "success_toast": "El teu wallet s'ha recarregat",
+      "title": "Recarrega el teu wallet",
+      "total": "Total",
+      "vat": "IVA"
+    }
+  },
   "website": "Lloc web",
-  "whatsapp_contact": "Parla amb nosaltres!",
-  "year": "any"
+  "whatsapp_contact": "Parla amb nosaltres!"
 }

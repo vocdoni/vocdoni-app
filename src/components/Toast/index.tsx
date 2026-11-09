@@ -19,7 +19,8 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
               {toast.description ? <Toast.Description>{toast.description}</Toast.Description> : null}
             </Box>
             {toast.action ? (
-              <Toast.ActionTrigger onClick={toast.action.onClick}>{toast.action.label}</Toast.ActionTrigger>
+              // Zag already runs `action.onClick` and dismisses the toast: passing it again ran it twice
+              <Toast.ActionTrigger>{toast.action.label}</Toast.ActionTrigger>
             ) : null}
             {toast.closable ? <Toast.CloseTrigger /> : null}
           </Toast.Root>
