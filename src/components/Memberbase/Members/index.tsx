@@ -829,8 +829,7 @@ const EmptyMembers = () => {
 }
 
 // The caret for the active direction is drawn at full strength, the other one stays faint.
-const sortCaretStyle = (active: boolean) =>
-  active ? { color: 'texts.primary' } : { color: 'texts.subtle', opacity: 0.5 }
+const sortCaretStyle = (active: boolean) => (active ? { color: 'fg' } : { color: 'fg.muted', opacity: 0.5 })
 
 const ARIA_SORT: Record<SortOrder, 'ascending' | 'descending'> = { asc: 'ascending', desc: 'descending' }
 
