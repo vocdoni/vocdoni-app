@@ -1,26 +1,19 @@
-import { Badge, TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Button, Icon, Tabs, Text } from '@chakra-ui/react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, Outlet, useLocation, useNavigate } from 'react-router'
-import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
+import { LuUpload, LuUserPlus } from 'react-icons/lu'
+import { generatePath, Outlet, Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
-import { Heading, SubHeading } from '~components/Dashboard/Contents'
+import { PageHeader } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
-import { usePaginatedMembers } from '~src/queries/members'
-import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
+import { useMembersCount } from '~src/queries/members'
+import { getStoredImportJobId, readAccountId, setStoredImportJobId } from './importJobStorage'
+import { JobId, MembersPageProvider } from './MembersPageContext'
+import { AddPersonSheet } from './People/AddPersonSheet'
 
-export type MemberbaseTabsContext = {
-  setJobId: (jobId: JobId) => void
-  jobId: JobId
-  search: string
-  setSearch: (search: string) => void
-  debouncedSearch: string
-  submitSearch: () => void
-}
+export type { JobId } from './MembersPageContext'
 
-export type JobId = string | null
-
-type MenuItem = {
+type TabItem = {
   label: string
   route: string
   count?: number
@@ -31,86 +24,86 @@ export const MemberbaseTabs = () => {
   const { currentAddress } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const accountId = currentAddress || localStorage.getItem(LocalStorageKeys.SignerAddress)
+  const accountId = readAccountId(currentAddress)
   const [jobId, setJobIdState] = useState<JobId>(() => getStoredImportJobId(accountId))
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState(search)
-  // Unfiltered total: this query never carries the search term, so the badge keeps showing the
-  // whole memberbase while the table is filtered.
-  const { data: allMembersData } = usePaginatedMembers({ showAll: true })
-  const menuItems: MenuItem[] = [
+  const [addPersonOpen, setAddPersonOpen] = useState(false)
+  // Unfiltered total: this query never carries the search term, so the count keeps showing the
+  // whole member list while the table is filtered.
+  const members = useMembersCount()
+
+  const tabs: TabItem[] = [
     {
-      label: t('memberbase.members.title', { defaultValue: 'Members' }),
+      label: t('memberbase.members.title', { defaultValue: 'People' }),
       route: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
-      count: allMembersData?.pagination?.totalItems,
+      count: members.known ? members.count : undefined,
     },
     { label: t('memberbase.groups.title', { defaultValue: 'Groups' }), route: Routes.dashboard.memberbase.groups },
   ]
-  const currentTabIndex = menuItems.findIndex((item) => location.pathname.endsWith(item.route))
-  const activeTabValue = currentTabIndex === -1 ? menuItems[0]?.route : menuItems[currentTabIndex]?.route
-
-  const submitSearch = () => {
-    setDebouncedSearch(search)
-  }
-
-  const setJobId = (newJobId: string | null) => {
-    setStoredImportJobId(newJobId, accountId)
-    setJobIdState(newJobId)
-  }
+  const isGroups = location.pathname.startsWith(Routes.dashboard.memberbase.groups)
+  const activeTab = isGroups ? tabs[1].route : tabs[0].route
 
   useEffect(() => {
     setJobIdState(getStoredImportJobId(accountId))
   }, [accountId])
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search)
-    }, 500)
-
-    return () => clearTimeout(timer)
-  }, [search])
+  const context = useMemo(
+    () => ({
+      jobId,
+      setJobId: (next: JobId) => {
+        setStoredImportJobId(next, accountId)
+        setJobIdState(next)
+      },
+      openImport: () => navigate(Routes.dashboard.memberbase.import),
+      openAddPerson: () => setAddPersonOpen(true),
+    }),
+    [jobId, accountId, navigate]
+  )
 
   return (
-    <>
-      <Heading>
-        {t('memberbase.title', {
-          defaultValue: 'Memberbase',
+    <MembersPageProvider value={context}>
+      <PageHeader
+        title={t('memberbase.title', { defaultValue: 'Members' })}
+        description={t('memberbase.description', {
+          defaultValue: 'Everyone in your organization. You choose who votes in each vote.',
         })}
-      </Heading>
-      <SubHeading>
-        {t('memberbase.subtitle', {
-          defaultValue: "Manage your organization's members and create groups",
-        })}
-      </SubHeading>
-      <TabsRoot
-        variant='settings'
-        value={activeTabValue}
+        actions={
+          <>
+            {/* data-testid: the e2e suite's copy-free handle for the way into the import */}
+            <Button asChild variant='outline'>
+              <RouterLink to={Routes.dashboard.memberbase.import} data-testid='members-import-open'>
+                <Icon as={LuUpload} />
+                {t('memberbase.importer.button', { defaultValue: 'Import' })}
+              </RouterLink>
+            </Button>
+            <Button onClick={() => setAddPersonOpen(true)}>
+              <Icon as={LuUserPlus} />
+              {t('memberbase.add_person', { defaultValue: 'Add person' })}
+            </Button>
+          </>
+        }
+      />
+      <Tabs.Root
+        variant='line'
+        value={activeTab}
         onValueChange={({ value }) => {
-          const item = menuItems.find((entry) => entry.route === value)
-          if (item) navigate(item.route)
+          if (value !== activeTab) navigate(value)
         }}
-        lazyMount
       >
-        <TabsList mb={6}>
-          {menuItems.map((item) => (
-            <TabsTrigger key={item.route} value={item.route}>
-              {item.label}
-              {item.count !== undefined && (
-                <Badge
-                  colorPalette='gray'
-                  variant='subtle'
-                  borderRadius='full'
-                  px={1.5}
-                  fontVariantNumeric='tabular-nums'
-                >
-                  {item.count.toLocaleString(i18n.resolvedLanguage)}
-                </Badge>
+        <Tabs.List mb={5} overflowX='auto' overflowY='hidden'>
+          {tabs.map((tab) => (
+            <Tabs.Trigger key={tab.route} value={tab.route}>
+              {tab.label}
+              {!!tab.count && (
+                <Text as='span' fontSize='xs' color='fg.muted' fontVariantNumeric='tabular-nums'>
+                  {tab.count.toLocaleString(i18n.resolvedLanguage)}
+                </Text>
               )}
-            </TabsTrigger>
+            </Tabs.Trigger>
           ))}
-        </TabsList>
-        <Outlet context={{ setJobId, jobId, search, setSearch, debouncedSearch, submitSearch }} />
-      </TabsRoot>
-    </>
+        </Tabs.List>
+      </Tabs.Root>
+      <Outlet />
+      <AddPersonSheet open={addPersonOpen} onOpenChange={setAddPersonOpen} />
+    </MembersPageProvider>
   )
 }

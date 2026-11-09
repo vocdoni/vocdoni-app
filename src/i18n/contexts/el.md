@@ -19,7 +19,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | English | Greek | Notes |
 |---|---|---|
 | election / voting process | εκλογή / διαδικασία ψηφοφορίας | Use consistently |
-| census | μητρώο (μελών) / κατάλογος ψηφοφόρων | The existing translations use "μητρώο μελών" and "κατάλογος ψηφοφόρων". Not "απογραφή" (that means a population census and is confusing here) |
+| census | κατάλογος ψηφοφόρων | The people who can vote in a vote. Not "απογραφή" (that means a population census and is confusing here), and no longer "μητρώο μελών": that was the old name of the Members section |
+| Members (section) | Μέλη | The dashboard section with the organization's people. Formerly "Memberbase" ("Μητρώο μελών"): don't use the old name |
+| People (tab) | Άτομα | The tab in Members that lists every member |
+| saved census | αποθηκευμένος κατάλογος ψηφοφόρων | A reusable selection of people, copied into a vote when used |
+| Activity (tab) | Ιστορικό αλλαγών | The tab with the dated history of imports and votes |
 | organization | οργανισμός | |
 | voter | ψηφοφόρος | |
 | voting power / weight | βαρύτητα ψήφου | |

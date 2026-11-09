@@ -1,3 +1,4 @@
+import type { CapturedNetworkRequest } from 'posthog-js'
 const mockPlausibleInit = vi.fn()
 const mockPlausibleTrack = vi.fn()
 
@@ -252,6 +253,38 @@ describe('posthog url sanitization', () => {
     )
   })
 
+  it('strips member search terms and member ids from urls', async () => {
+    const sanitize = await sanitizerFromInit()
+
+    expect(sanitize('https://app.vocdoni.io/admin/memberbase/members/2?q=jordi%20serra&sort=surname&member=m1')).toBe(
+      'https://app.vocdoni.io/admin/memberbase/members/2?sort=surname'
+    )
+    expect(sanitize('https://app.vocdoni.io/admin/memberbase/members?person=m1')).toBe(
+      'https://app.vocdoni.io/admin/memberbase/members'
+    )
+  })
+
+  it('scrubs the page urls and network requests session replay keeps', async () => {
+    const { posthogMaskNetworkRequest } = await import('./analytics')
+
+    expect(
+      posthogMaskNetworkRequest({
+        name: 'https://api.vocdoni.io/organizations/0xorg/members?page=1&limit=100&search=12345678Z',
+        requestBody: '{"email":"anna@example.org"}',
+        responseBody: '{"members":[]}',
+      } as CapturedNetworkRequest)
+    ).toEqual({
+      name: 'https://api.vocdoni.io/organizations/0xorg/members?page=1&limit=100',
+      requestBody: null,
+      responseBody: null,
+    })
+    expect(
+      posthogMaskNetworkRequest({
+        name: 'https://app.vocdoni.io/admin/memberbase/members/1?q=anna%40x.org',
+      } as CapturedNetworkRequest)
+    ).toEqual(expect.objectContaining({ name: 'https://app.vocdoni.io/admin/memberbase/members/1' }))
+  })
+
   it('leaves clean or unparseable urls untouched', async () => {
     const sanitize = await sanitizerFromInit()
 
@@ -478,7 +511,11 @@ describe('posthog initialization', () => {
     expect(config.persistence).toBe('memory')
     expect(config.person_profiles).toBe('identified_only')
     expect(config.disable_session_recording).toBe(true)
-    expect(config.session_recording).toEqual({ maskAllInputs: true, maskInputFn: expect.any(Function) })
+    expect(config.session_recording).toEqual({
+      maskAllInputs: true,
+      maskInputFn: expect.any(Function),
+      maskCapturedNetworkRequestFn: expect.any(Function),
+    })
     expect(config.capture_exceptions).toBe(true)
   })
 

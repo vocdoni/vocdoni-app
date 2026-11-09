@@ -57,7 +57,7 @@ export const useAdminMenuConfig = (): DashboardMenuConfig => {
             ],
           },
           {
-            label: t('memberbase.title', { defaultValue: 'Memberbase' }),
+            label: t('memberbase.title', { defaultValue: 'Members' }),
             icon: LuUsers,
             route: Routes.dashboard.memberbase.base,
             activeMatch: [{ path: Routes.dashboard.memberbase.base, end: false }],

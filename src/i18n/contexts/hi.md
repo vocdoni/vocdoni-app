@@ -25,7 +25,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | vote (noun) | वोट | |
 | cast a vote | वोट डालना | Not "वोट देना" for the act of casting in the app flow |
 | voting (as a product label) | वोटिंग | **See "Naming vs describing" below.** Only in product labels and loan-modified compounds: "ऑनलाइन वोटिंग", "ई-वोटिंग", "वोटिंग प्लेटफ़ॉर्म". Never as a verb, and never as the object of "कराना" |
-| census | मतदाता सूची | The list of eligible voters. **Not "जनगणना"** — that means a population census and is badly misleading here |
+| census | मतदाता सूची | The people who can vote in a vote. **Not "जनगणना"** — that means a population census and is badly misleading here. Keep this one noun everywhere |
+| Members (section) | सदस्य | The dashboard section with the organization's people. Formerly "Memberbase": don't use the old name |
+| People (tab) | लोग | The tab in Members that lists every member |
+| saved census | सहेजी गई मतदाता सूची | A reusable selection of people, copied into a vote when used |
+| Activity (tab) | बदलावों का इतिहास | The tab with the dated history of imports and votes |
 | census size | मतदाता सूची का आकार | Or "मतदाताओं की संख्या" |
 | organization | संगठन | |
 | voter | मतदाता | Invariant in the plural; oblique plural is "मतदाताओं" |

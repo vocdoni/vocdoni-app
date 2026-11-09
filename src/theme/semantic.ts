@@ -45,6 +45,28 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  // Status text at AA contrast: chakra's defaults (orange.600, green.600, red.500) fall short of
+  // 4.5:1 on white for small text
+  fg: {
+    error: {
+      value: {
+        _light: '{colors.red.700}',
+        _dark: '{colors.red.400}',
+      },
+    },
+    warning: {
+      value: {
+        _light: '{colors.orange.700}',
+        _dark: '{colors.orange.300}',
+      },
+    },
+    success: {
+      value: {
+        _light: '{colors.green.700}',
+        _dark: '{colors.green.300}',
+      },
+    },
+  },
   auth: {
     bg: {
       value: {

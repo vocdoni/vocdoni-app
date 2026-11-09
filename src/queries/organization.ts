@@ -97,6 +97,32 @@ export const paginatedElectionsQuery = (
   },
 })
 
+type DraftsParams = {
+  page?: number
+  limit?: number
+}
+
+/**
+ * The organization's unpublished processes. `published: false` is the drafts-only view; it
+ * requires a Manager/Admin session (401 otherwise) and must not be combined with a status
+ * filter, which never matches a draft's not-yet-on-chain questions.
+ */
+export const draftsQuery = (address: string | undefined, client: VocdoniApiClient, params: DraftsParams) => ({
+  enabled: !!address,
+  queryKey: [...QueryKeys.organization.drafts(address), params.page ?? 1, params.limit],
+  queryFn: () => {
+    if (!address) {
+      throw new Error('Cannot list drafts with no organization address selected')
+    }
+    return client.elections.list({
+      orgAddress: address,
+      published: false,
+      page: params.page ?? 1,
+      limit: params.limit,
+    })
+  },
+})
+
 /**
  * The dashboard elections list, keyed by the active organization address.
  *

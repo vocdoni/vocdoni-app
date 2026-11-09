@@ -19,7 +19,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | English | Spanish | Notes |
 |---|---|---|
 | election / voting process | elección / proceso de votación | Use consistently — don't drift to a bare "votación" for the process |
-| census | censo | The established Spanish electoral term — list of eligible voters |
+| census | censo | The established Spanish electoral term. In the app it means the people who can vote in a vote. Use "censo" everywhere, never a paraphrase like "lista de votantes" |
+| Members (section) | Miembros | The dashboard section with the organization's people. Formerly "Memberbase" ("Base de miembros"): don't use the old name |
+| People (tab) | Personas | The tab in Members that lists every member |
+| saved census | censo guardado | A reusable selection of people, copied into a vote when used |
+| Activity (tab) | Historial de cambios | The tab with the dated history of imports and votes. Not "Actividad" |
 | organization | organización | |
 | voter | votante | Gender-neutral; prefer over "elector/electora" in most contexts |
 | voting power / weight | peso del voto | |

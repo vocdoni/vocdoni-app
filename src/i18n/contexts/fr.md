@@ -21,7 +21,11 @@ Address the user with formal **vous / votre** throughout — in French this is t
 | English | French | Notes |
 |---|---|---|
 | election / voting process | élection / processus de vote | Use these consistently; don't drift to "scrutin" or a bare "vote" for the process |
-| census | liste électorale | The established French electoral term — equivalent of Spanish "censo" / Catalan "cens". Not "recensement" (that means a population census and is confusing here) |
+| census | liste électorale | The established French electoral term — equivalent of Spanish "censo" / Catalan "cens". In the app it means the people who can vote in a vote; keep this one noun everywhere. Not "recensement" (that means a population census and is confusing here) |
+| Members (section) | Membres | The dashboard section with the organization's people. Formerly "Memberbase" ("Base de membres"): don't use the old name |
+| People (tab) | Personnes | The tab in Members that lists every member |
+| saved census | liste électorale enregistrée | A reusable selection of people, copied into a vote when used |
+| Activity (tab) | Historique des modifications | The tab with the dated history of imports and votes |
 | organization | organisation | |
 | voter | électeur / électrice | Use "les électeurs" as the generic plural; add "(trices)" only in formal written contexts |
 | voting power / weight | poids de vote | |

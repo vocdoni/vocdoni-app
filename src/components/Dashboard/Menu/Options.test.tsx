@@ -39,7 +39,7 @@ describe('DashboardMenuOptions', () => {
 
     const dashboard = getMenuItemElement('organization.dashboard')
     const votingProcesses = getMenuItemElement('voting_processes')
-    const memberbase = getMenuItemElement('Memberbase')
+    const memberbase = getMenuItemElement('Members')
     const settings = getMenuItemElement('settings')
 
     expect(dashboard).toHaveAttribute('data-active', '')
@@ -65,7 +65,7 @@ describe('DashboardMenuOptions', () => {
 
   it('marks memberbase as active on memberbase subroutes', () => {
     renderMenu('/admin/memberbase/groups')
-    expect(getMenuItemElement('Memberbase')).toHaveAttribute('data-active', '')
+    expect(getMenuItemElement('Members')).toHaveAttribute('data-active', '')
   })
 
   it('marks settings as active on settings subroutes', () => {

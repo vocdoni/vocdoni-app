@@ -21,7 +21,7 @@ import { LuInfo, LuUsers, LuVote } from 'react-icons/lu'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
 import { MaxMembersPerOrg } from '~constants'
-import { usePaginatedMembers } from '~queries/members'
+import { useMembersCount } from '~queries/members'
 import { quantity } from '~utils/numbers'
 
 type UsageMetric = {
@@ -90,8 +90,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
   const { t } = useTranslation()
   const { organization, isLoading } = useSaasAccount()
 
-  // Fetch memberbase data to get total count
-  const { data: membersData } = usePaginatedMembers({ showAll: true })
+  const { count: membersCount } = useMembersCount()
 
   if (isLoading || !organization) {
     return null
@@ -107,7 +106,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
     {
       icon: LuUsers,
       label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase size' }),
-      current: membersData?.pagination?.totalItems || 0,
+      current: membersCount,
       max: MaxMembersPerOrg,
       color: 'purple',
       tooltip: t('dashboard.usage.memberbase_tooltip', {

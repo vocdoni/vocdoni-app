@@ -12,6 +12,8 @@ export interface ConfirmDialogProps extends Omit<DialogRootProps, 'children'> {
   loading?: boolean
   /** Red confirm button for destructive actions (default). Set false for a neutral confirm. */
   destructive?: boolean
+  /** Keeps the confirm button off until the user has done what the dialog asks (e.g. typed a count) */
+  confirmDisabled?: boolean
   /** Optional extra body content rendered below the description. */
   children?: React.ReactNode
 }
@@ -34,6 +36,7 @@ export const ConfirmDialog = ({
   onConfirm,
   loading = false,
   destructive = true,
+  confirmDisabled = false,
   children,
   ...dialogProps
 }: ConfirmDialogProps) => {
@@ -52,10 +55,15 @@ export const ConfirmDialog = ({
             {children}
           </Dialog.Body>
           <Dialog.Footer justifyContent='flex-end' gap={2}>
-            <Dialog.CloseTrigger asChild>
+            <Dialog.CloseTrigger asChild position='static'>
               <Button variant='outline'>{cancelText || t('actions.cancel', { defaultValue: 'Cancel' })}</Button>
             </Dialog.CloseTrigger>
-            <Button colorPalette={destructive ? 'red' : undefined} loading={loading} onClick={onConfirm}>
+            <Button
+              colorPalette={destructive ? 'red' : undefined}
+              loading={loading}
+              disabled={confirmDisabled}
+              onClick={onConfirm}
+            >
               {confirmText || t('actions.confirm', { defaultValue: 'Confirm' })}
             </Button>
           </Dialog.Footer>

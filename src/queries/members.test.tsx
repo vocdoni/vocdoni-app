@@ -1,177 +1,142 @@
-import { act, renderHook, waitFor } from '@testing-library/react'
-import { ReactNode } from 'react'
-import { useNavigate } from 'react-router'
-import { AllProviders, createTestQueryClient, TestMemoryRouter } from '~src/test-utils'
-import { getAuthMock, setAuthMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { nextMemberSort, parseMemberSort, usePaginatedMembers } from './members'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { renderHook, waitFor } from '@testing-library/react'
+import React from 'react'
+import { MemoryRouter } from 'react-router'
+import { mockUseOrganization } from '~src/test-utils'
+import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import { ApiError } from '~components/Auth/api'
+import {
+  collectMembers,
+  getSignedMemberIds,
+  computeReadiness,
+  isAbortError,
+  type Member,
+  MEMBERS_COLLECT_CAP,
+  useMembersCount,
+  usePaginatedMembers,
+  useSignInReadiness,
+} from './members'
+
+const bearedFetch = vi.fn()
 
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => getAuthMock(),
+  useAuth: () => ({ bearedFetch }),
 }))
 
-describe('parseMemberSort', () => {
-  it('reads a valid sort from the URL', () => {
-    expect(parseMemberSort(new URLSearchParams('sortBy=email&sortOrder=desc'))).toEqual({
-      sortBy: 'email',
-      sortOrder: 'desc',
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+    <MemoryRouter initialEntries={['/admin/memberbase/members/1']}>{children}</MemoryRouter>
+  </QueryClientProvider>
+)
+
+describe('member queries', () => {
+  beforeEach(() => {
+    bearedFetch.mockReset()
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
     })
   })
 
-  it('returns null when there is no valid sort, leaving the default to the caller', () => {
-    expect(parseMemberSort(new URLSearchParams(''))).toBeNull()
-    expect(parseMemberSort(new URLSearchParams('sortBy=phone&sortOrder=desc'))).toBeNull()
-  })
-})
-
-describe('nextMemberSort', () => {
-  it('starts a column other than the active one ascending', () => {
-    expect(nextMemberSort({ sortBy: 'name', sortOrder: 'asc' }, 'surname')).toEqual({
-      sortBy: 'surname',
-      sortOrder: 'asc',
-    })
+  afterEach(() => {
+    resetReactProvidersMock()
   })
 
-  it('drops the sort instead of writing the default order explicitly', () => {
-    expect(nextMemberSort({ sortBy: 'surname', sortOrder: 'desc' }, 'name')).toBeNull()
+  it('counts the memberbase with a one-row request', async () => {
+    bearedFetch.mockResolvedValue({ members: [{}], pagination: { totalItems: 1742 } })
+    const { result } = renderHook(() => useMembersCount(), { wrapper })
+
+    await waitFor(() => expect(result.current.known).toBe(true))
+    expect(result.current.count).toBe(1742)
+    expect(bearedFetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=1')
   })
 
-  it('cycles the active column asc -> desc -> unsorted', () => {
-    // The default sort (name asc) is the active one when the URL has no sort.
-    expect(nextMemberSort({ sortBy: 'name', sortOrder: 'asc' }, 'name')).toEqual({
-      sortBy: 'name',
-      sortOrder: 'desc',
-    })
-    expect(nextMemberSort({ sortBy: 'name', sortOrder: 'desc' }, 'name')).toBeNull()
+  it('encodes the search term', async () => {
+    bearedFetch.mockResolvedValue({ members: [], pagination: { totalItems: 0 } })
+    renderHook(() => usePaginatedMembers({ search: 'a+b@x.org & co' }), { wrapper })
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
+    expect(bearedFetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=10&search=a%2Bb%40x.org+%26+co')
   })
 
-  it('switches to a different column ascending from a descending one', () => {
-    expect(nextMemberSort({ sortBy: 'name', sortOrder: 'desc' }, 'memberNumber')).toEqual({
-      sortBy: 'memberNumber',
-      sortOrder: 'asc',
-    })
-  })
-})
-
-describe('usePaginatedMembers sorting', () => {
-  const renderMembersHook = (url: string, props: Parameters<typeof usePaginatedMembers>[0] = {}) => {
-    const bearedFetch = vi.fn().mockResolvedValue({ members: [], pagination: {} })
-    setAuthMock({ bearedFetch })
-    setReactProvidersMock({ useOrganization: () => ({ organization: { address: '0xorg' } }) })
-    const queryClient = createTestQueryClient()
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <AllProviders queryClient={queryClient}>
-        <TestMemoryRouter initialEntries={[url]}>{children}</TestMemoryRouter>
-      </AllProviders>
-    )
-    renderHook(() => usePaginatedMembers(props), { wrapper })
-    return { bearedFetch, queryClient }
-  }
-
-  it('sends the URL sort to the backend', async () => {
-    const { bearedFetch } = renderMembersHook('/?limit=20&sortBy=surname&sortOrder=desc', {
-      search: 'ada',
+  it('asks the server for the page, size and sort it is given', async () => {
+    bearedFetch.mockResolvedValue({ members: [], pagination: { totalItems: 0 } })
+    renderHook(() => usePaginatedMembers({ search: '', page: 3, limit: 50, sortBy: 'surname', sortOrder: 'desc' }), {
+      wrapper,
     })
 
     await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
     expect(bearedFetch).toHaveBeenCalledWith(
-      'organizations/0xorg/members?page=1&limit=20&search=ada&sortBy=surname&sortOrder=desc'
-    )
-  })
-
-  it('fetches again with the new sort when the URL sort changes', async () => {
-    const bearedFetch = vi.fn().mockResolvedValue({ members: [], pagination: {} })
-    setAuthMock({ bearedFetch })
-    setReactProvidersMock({ useOrganization: () => ({ organization: { address: '0xorg' } }) })
-    const queryClient = createTestQueryClient()
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <AllProviders queryClient={queryClient}>
-        <TestMemoryRouter initialEntries={['/?sortBy=surname&sortOrder=asc']}>{children}</TestMemoryRouter>
-      </AllProviders>
-    )
-    const { result } = renderHook(() => ({ query: usePaginatedMembers({}), navigate: useNavigate() }), { wrapper })
-
-    await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(1))
-    act(() => {
-      result.current.navigate('/?sortBy=surname&sortOrder=desc')
-    })
-
-    await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(2))
-    expect(bearedFetch).toHaveBeenLastCalledWith(
-      'organizations/0xorg/members?page=1&limit=10&search=&sortBy=surname&sortOrder=desc'
+      'organizations/0xorg/members?page=3&limit=50&search=&sortBy=surname&sortOrder=desc'
     )
   })
 
   it('keeps the sort when the search contains ? and &', async () => {
-    const { bearedFetch } = renderMembersHook('/?sortBy=name&sortOrder=desc', { search: 'a?b&sortBy=email' })
+    bearedFetch.mockResolvedValue({ members: [], pagination: { totalItems: 0 } })
+    renderHook(() => usePaginatedMembers({ search: 'a?b&sortBy=email', sortBy: 'name', sortOrder: 'desc' }), {
+      wrapper,
+    })
 
     await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
     expect(bearedFetch).toHaveBeenCalledWith(
       'organizations/0xorg/members?page=1&limit=10&search=a%3Fb%26sortBy%3Demail&sortBy=name&sortOrder=desc'
     )
   })
-
-  it('omits the sort params when the URL has no valid sort', async () => {
-    const { bearedFetch } = renderMembersHook('/?sortBy=phone&sortOrder=desc')
-
-    await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
-    expect(bearedFetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=10&search=')
-  })
-
-  it('ignores the sort for showAll queries', async () => {
-    const { bearedFetch } = renderMembersHook('/?sortBy=name&sortOrder=asc', { showAll: true })
-
-    await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
-    expect(bearedFetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=0&search=')
-  })
 })
 
 describe('usePaginatedMembers placeholder data', () => {
+  // One client for the whole render, so the cache survives a rerender.
+  const stableWrapper = () => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    return ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={['/admin/memberbase/members/1']}>{children}</MemoryRouter>
+      </QueryClientProvider>
+    )
+  }
+
+  afterEach(() => {
+    resetReactProvidersMock()
+  })
+
   it('keeps the current rows while a new sort loads', async () => {
     const firstPage = { members: [{ id: '1', name: 'Ada' }], pagination: {} }
     // The second request never resolves, so the hook stays in the "loading the new sort" state.
-    const bearedFetch = vi
-      .fn()
+    bearedFetch
+      .mockReset()
       .mockResolvedValueOnce(firstPage)
       .mockReturnValue(new Promise(() => {}))
-    setAuthMock({ bearedFetch })
-    setReactProvidersMock({ useOrganization: () => ({ organization: { address: '0xorg' } }) })
-    const queryClient = createTestQueryClient()
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <AllProviders queryClient={queryClient}>
-        <TestMemoryRouter initialEntries={['/']}>{children}</TestMemoryRouter>
-      </AllProviders>
-    )
-    const { result } = renderHook(() => ({ query: usePaginatedMembers({}), navigate: useNavigate() }), { wrapper })
-
-    await waitFor(() => expect(result.current.query.data?.members).toEqual(firstPage.members))
-    act(() => {
-      result.current.navigate('/?sortBy=name&sortOrder=asc')
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
     })
+    const { result, rerender } = renderHook(
+      ({ sortOrder }: { sortOrder: 'asc' | 'desc' }) =>
+        usePaginatedMembers({ sortBy: 'name', sortOrder, keepPrevious: true }),
+      { wrapper: stableWrapper(), initialProps: { sortOrder: 'asc' } }
+    )
+
+    await waitFor(() => expect(result.current.data?.members).toEqual(firstPage.members))
+    rerender({ sortOrder: 'desc' })
 
     await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(2))
-    expect(result.current.query.isPlaceholderData).toBe(true)
-    expect(result.current.query.data?.members).toEqual(firstPage.members)
+    expect(result.current.isPlaceholderData).toBe(true)
+    expect(result.current.data?.members).toEqual(firstPage.members)
   })
 
   it('never lends another organization its rows, even when its search equals the new address', async () => {
     const orgARows = { members: [{ id: '1', name: 'Ada' }], pagination: {} }
-    const bearedFetch = vi
-      .fn()
+    bearedFetch
+      .mockReset()
       .mockResolvedValueOnce(orgARows)
       .mockReturnValue(new Promise(() => {}))
-    setAuthMock({ bearedFetch })
     // The mock reads `address` on every call, so flipping it and rerendering switches the organization.
     let address = '0xa'
-    setReactProvidersMock({ useOrganization: () => ({ organization: { address } }) })
-    const queryClient = createTestQueryClient()
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <AllProviders queryClient={queryClient}>
-        <TestMemoryRouter initialEntries={['/']}>{children}</TestMemoryRouter>
-      </AllProviders>
-    )
+    setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address } }) })
     // Organization A is searching for the very string that is organization B's address, so B's
     // key contains A's search term and a loose "address anywhere in the key" check would match.
-    const { result, rerender } = renderHook(() => usePaginatedMembers({ search: '0xb' }), { wrapper })
+    const { result, rerender } = renderHook(() => usePaginatedMembers({ search: '0xb', keepPrevious: true }), {
+      wrapper: stableWrapper(),
+    })
     await waitFor(() => expect(result.current.data?.members).toEqual(orgARows.members))
 
     address = '0xb'
@@ -180,5 +145,142 @@ describe('usePaginatedMembers placeholder data', () => {
     await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(2))
     expect(result.current.isPlaceholderData).toBe(false)
     expect(result.current.data).toBeUndefined()
+  })
+})
+
+describe('sign-in readiness', () => {
+  const validateCensus = vi.fn()
+  const missing = (ids: string[]) =>
+    new VocdoniApiError(400, { error: 'invalid', data: { missingData: ids } }, 'invalid')
+
+  beforeEach(() => {
+    bearedFetch.mockReset().mockResolvedValue({ members: [{}], pagination: { totalItems: 5 } })
+    validateCensus.mockReset()
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
+      useClient: () => ({ client: { elections: { validateCensus } } }),
+    })
+  })
+
+  afterEach(() => {
+    resetReactProvidersMock()
+  })
+
+  it('counts as unreachable only the members missing both email and phone', () => {
+    expect(computeReadiness(['a', 'b', 'c'], ['b', 'c', 'd'])).toEqual({
+      missingEmail: 3,
+      missingPhone: 3,
+      unreachable: 2,
+      unreachableIds: ['b', 'c'],
+    })
+  })
+
+  it('asks the validation endpoint once for email and once for phone', async () => {
+    validateCensus.mockImplementation(({ census }) =>
+      Promise.reject(census.twoFaFields[0] === 'email' ? missing(['a', 'b']) : missing(['b', 'c']))
+    )
+    const { result } = renderHook(() => useSignInReadiness(), { wrapper })
+
+    await waitFor(() => expect(result.current.available).toBe(true))
+    expect(result.current).toMatchObject({ total: 5, ready: 4, unreachable: 1 })
+    expect(validateCensus).toHaveBeenCalledWith({
+      orgAddress: '0xorg',
+      census: { authFields: [], twoFaFields: ['email'] },
+    })
+    expect(validateCensus).toHaveBeenCalledWith({
+      orgAddress: '0xorg',
+      census: { authFields: [], twoFaFields: ['phone'] },
+    })
+  })
+
+  it('reads a 200 as everyone reachable', async () => {
+    validateCensus.mockResolvedValue('OK')
+    const { result } = renderHook(() => useSignInReadiness(), { wrapper })
+
+    await waitFor(() => expect(result.current.available).toBe(true))
+    expect(result.current).toMatchObject({ ready: 5, unreachable: 0 })
+  })
+
+  it('stays unavailable when validation fails for another reason', async () => {
+    validateCensus.mockRejectedValue(new VocdoniApiError(500, { error: 'boom' }, 'boom'))
+    const { result } = renderHook(() => useSignInReadiness(), { wrapper })
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current.available).toBe(false)
+  })
+})
+
+/** A fake `GET /members` over `total` people, 100 a page. */
+const fakeMembersApi = (total: number) =>
+  vi.fn(async ({ page, limit }: { page: number; limit: number; search: string }) => {
+    const from = (page - 1) * limit
+    const count = Math.max(0, Math.min(limit, total - from))
+    return {
+      members: Array.from({ length: count }, (_, index) => ({ id: `m${from + index}` }) as Member),
+      pagination: {
+        totalItems: total,
+        lastPage: Math.max(1, Math.ceil(total / limit)),
+        currentPage: page,
+        previousPage: null,
+        nextPage: null,
+      },
+    }
+  })
+
+describe('collectMembers', () => {
+  it('pages through every match, 100 at a time, reporting progress', async () => {
+    const fetchPage = fakeMembersApi(250)
+    const onProgress = vi.fn()
+
+    const result = await collectMembers(fetchPage, { search: 'serra', onProgress })
+
+    expect(result.members).toHaveLength(250)
+    expect(result).toMatchObject({ total: 250, capped: false })
+    expect(fetchPage.mock.calls.map(([params]) => params)).toEqual([
+      { page: 1, limit: 100, search: 'serra' },
+      { page: 2, limit: 100, search: 'serra' },
+      { page: 3, limit: 100, search: 'serra' },
+    ])
+    expect(onProgress).toHaveBeenLastCalledWith({ collected: 250, total: 250 })
+  })
+
+  it('stops at the cap and says there were more', async () => {
+    const fetchPage = fakeMembersApi(12345)
+
+    const result = await collectMembers(fetchPage, { max: MEMBERS_COLLECT_CAP })
+
+    expect(result.members).toHaveLength(5000)
+    expect(result).toMatchObject({ total: 12345, capped: true })
+    expect(fetchPage).toHaveBeenCalledTimes(50)
+  })
+
+  it('stops between pages once aborted', async () => {
+    const fetchPage = fakeMembersApi(1000)
+    const controller = new AbortController()
+
+    const run = collectMembers(fetchPage, {
+      signal: controller.signal,
+      onProgress: ({ collected }) => collected >= 200 && controller.abort(),
+    })
+
+    const error = await run.catch((reason: unknown) => reason)
+    expect(isAbortError(error)).toBe(true)
+    expect(fetchPage).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('getSignedMemberIds', () => {
+  const conflict = (data?: unknown, status = 409) =>
+    new ApiError({ error: 'conflict', data } as never, new Response(null, { status }))
+
+  it('lists who already started voting from a 409', () => {
+    expect(getSignedMemberIds(conflict({ signedMemberIds: ['a', 'b'] }))).toEqual(['a', 'b'])
+  })
+
+  it('is null for a 409 that names nobody, or any other error', () => {
+    expect(getSignedMemberIds(conflict())).toBeNull()
+    expect(getSignedMemberIds(conflict({ signedMemberIds: [] }))).toBeNull()
+    expect(getSignedMemberIds(conflict({ signedMemberIds: ['a'] }, 500))).toBeNull()
+    expect(getSignedMemberIds(new Error('offline'))).toBeNull()
   })
 })

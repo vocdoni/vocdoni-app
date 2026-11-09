@@ -10,6 +10,7 @@ import DashboardMenu from '~components/Dashboard/Menu'
 import { DashboardMenuConfig } from '~components/Dashboard/Menu/menus'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import SupportChat from '~components/SupportChat'
+import { SupportChatControlsProvider } from '~components/SupportChat/controls'
 import { LocalStorageKeys } from '~constants'
 import { DashboardLayoutContext, DashboardOutletContext } from '~elements/DashboardLayoutContext'
 
@@ -84,7 +85,9 @@ const DashboardLayoutProviders = (props: PropsWithChildren) => {
     // API-reported one): both this provider and useSaasOrganization key their query by
     // address, so feeding them the same value is what keeps them on a single cache entry
     // even when the API echoes the address back in a different case.
-    <OrganizationProvider id={currentAddress}>{props.children}</OrganizationProvider>
+    <OrganizationProvider id={currentAddress}>
+      <SupportChatControlsProvider>{props.children}</SupportChatControlsProvider>
+    </OrganizationProvider>
   )
 }
 
