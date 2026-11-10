@@ -1,0 +1,25 @@
+# Opt-in Stripe mode, layered over docker-compose.ci.yml with -f only when
+# INTEGRATION_STRIPE_SECRET_KEY is set (scripts/integration-stack.sh). See
+# integration/README.md#stripe-mode-opt-in.
+
+services:
+  api:
+    environment:
+      VOCDONI_STRIPEAPISECRET: ${INTEGRATION_STRIPE_SECRET_KEY:-}
+      VOCDONI_STRIPEWEBHOOKSECRET: ${INTEGRATION_STRIPE_WEBHOOK_SECRET:-}
+
+  # Forwards sandbox webhooks to the api, signed with the secret that
+  # scripts/integration-stack.sh derives. --events lists exactly the types the backend's
+  # /payments/webhook handles; stripe-cli v1.55.3 `listen` exits without it.
+  stripe-listen:
+    image: ${INTEGRATION_STRIPE_CLI_IMAGE:-stripe/stripe-cli:v1.55.3@sha256:7bd92a6315b5716767e96727f921abedc131e60648299d4cf6b3a7d5f108b39d}
+    environment:
+      STRIPE_API_KEY: ${INTEGRATION_STRIPE_SECRET_KEY:-}
+    command:
+      - listen
+      - --forward-to
+      - http://api:8080/payments/webhook
+      - --events
+      - checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed,checkout.session.expired,refund.created,refund.updated,charge.dispute.funds_withdrawn,charge.dispute.funds_reinstated
+    depends_on:
+      - api

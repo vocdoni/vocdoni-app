@@ -84,8 +84,11 @@
 - It is deliberately **not** part of `pnpm test`, which stays fast and unit-only. Run it with
   `pnpm test:e2e:stack` (needs docker); it takes a few minutes.
 - It covers what only this app owns: the OTP signup journey and the CSP + email-2FA voter
-  journey. The generic voting lifecycle is covered upstream in integrator-sdk — don't duplicate
-  it here.
+  journey, plus the pay-per-process Stripe checkout. The suite runs in Stripe mode (the whole
+  suite on the Stripe sandbox) when `INTEGRATION_STRIPE_SECRET_KEY` and
+  `INTEGRATION_STRIPE_PUBLIC_KEY` are set; without them the checkout spec skips. See
+  `integration/README.md`. The generic voting lifecycle is covered upstream in integrator-sdk —
+  don't duplicate it here.
 - While the stack is up, every email the backend sends is browsable at `localhost:8025`. This is
   the practical way to debug 2FA/verification flows by hand.
 - Prefer structural selectors (`name`, `data-value`, `button[type="submit"]`) over translated

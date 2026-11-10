@@ -237,13 +237,11 @@ const fillQuestion = async (page: Page, index: number, question: QuestionSpec): 
 }
 
 /**
- * Creates and publishes a process whose census authenticates voters by
- * `memberNumber` and challenges them with an emailed OTP — the configuration
- * the CSP 2FA voting flow exists to exercise.
- *
- * Returns the published process id, read off the URL the wizard redirects to.
+ * Fills the create wizard up to its Settings panel, stopping before Publish, so
+ * the caller can publish or assert on what Publish does. `twoFactor` (on by
+ * default) adds the emailed OTP to the memberNumber census.
  */
-export const createAndPublishTwoFactorProcess = async (page: Page, spec: ProcessSpec): Promise<string> => {
+export const fillProcessWizard = async (page: Page, spec: ProcessSpec): Promise<void> => {
   await page.goto('/admin/processes/create')
   await expect(page.locator('input[name="title"]')).toBeVisible()
 
@@ -341,6 +339,17 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   await expect(dialog).toBeHidden({ timeout: 60_000 })
 
   await closeWizardSettings(page)
+}
+
+/**
+ * Creates and publishes a process whose census authenticates voters by
+ * `memberNumber` and challenges them with an emailed OTP — the configuration
+ * the CSP 2FA voting flow exists to exercise.
+ *
+ * Returns the published process id, read off the URL the wizard redirects to.
+ */
+export const createAndPublishTwoFactorProcess = async (page: Page, spec: ProcessSpec): Promise<string> => {
+  await fillProcessWizard(page, spec)
 
   await page.getByRole('button', { name: /^Publish$/ }).click()
 
