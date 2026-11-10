@@ -860,7 +860,8 @@
     "dashboard": "Dashboard",
     "expand": "Développer le menu",
     "login": "Connexion",
-    "open": "Ouvrir le menu"
+    "open": "Ouvrir le menu",
+    "title": "Menu"
   },
   "name": "Nom",
   "need_help": {

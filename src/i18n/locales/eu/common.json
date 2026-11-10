@@ -839,7 +839,8 @@
     "dashboard": "Panela",
     "expand": "Zabaldu menua",
     "login": "Hasi saioa",
-    "open": "Ireki menua"
+    "open": "Ireki menua",
+    "title": "Menua"
   },
   "name": "Izena",
   "need_help": {

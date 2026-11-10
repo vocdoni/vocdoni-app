@@ -860,7 +860,8 @@
     "dashboard": "Panel",
     "expand": "Expandir menú",
     "login": "Iniciar sesión",
-    "open": "Abrir menú"
+    "open": "Abrir menú",
+    "title": "Menú"
   },
   "name": "Nombre",
   "need_help": {
