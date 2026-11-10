@@ -120,21 +120,24 @@ export const questionsText = (t: TFunction, questions: number) =>
 /** The headline: who votes on what, and for how long. The verb agrees with the voters. */
 export const leadSentence = (t: TFunction, form: Process, voters: number | undefined, locale?: string) => {
   const { start, end } = publishDates(form)
+  // Unknown voters read as "the voters", a plural. Passed as a literal `count` below, not
+  // through the spread, so `pnpm translations` extracts these keys as plurals
+  const count = voters ?? 2
   const values = {
-    // Unknown voters read as "the voters", a plural
-    count: voters ?? 2,
     voters: votersText(t, voters),
     questions: questionsText(t, form.questions.length),
     end: formatLongDateTime(end, locale),
   }
   if (!start) {
     return t('process.publish_review.lead_now', {
+      count,
       ...values,
       defaultValue_one: '{{voters}} can vote on {{questions}}, from when you publish until {{end}}.',
       defaultValue_other: '{{voters}} can vote on {{questions}}, from when you publish until {{end}}.',
     })
   }
   return t('process.publish_review.lead_scheduled', {
+    count,
     ...values,
     start: formatLongDateTime(start, locale),
     defaultValue_one: '{{voters}} can vote on {{questions}}, from {{start}} until {{end}}.',
