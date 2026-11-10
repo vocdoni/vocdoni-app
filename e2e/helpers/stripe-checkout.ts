@@ -61,18 +61,30 @@ export const fillStripeCheckout = async (page: Page): Promise<void> => {
   await address.locator(ADDRESS_POSTAL_CODE).fill('10117')
   await address.locator(ADDRESS_CITY).fill('Berlin')
 
+  // Stripe's test card that succeeds without 3D Secure. The Payment Element can re-render
+  // (e.g. once tax is computed) and drop the selection, so the card is re-checked until it holds.
+  await expect(async () => {
+    await selectCard(page)
+    const card = await stripeFrame(page, CARD_NUMBER, 10_000)
+    await card.locator(CARD_NUMBER).fill('4242424242424242')
+    await card.locator(CARD_EXPIRY).fill('12 / 34')
+    await card.locator(CARD_CVC).fill('123')
+    await page.waitForTimeout(1_500)
+    const settled = await stripeFrame(page, CARD_NUMBER, 5_000)
+    await expect(settled.locator(CARD_NUMBER)).toHaveValue(/4242/, { timeout: 1_000 })
+  }).toPass({ timeout: 90_000 })
+}
+
+/** Opens the card method when the Payment Element lists several methods. */
+const selectCard = async (page: Page): Promise<void> => {
   // With a single method Stripe may skip the accordion, so either handle will do.
   const payment = await stripeFrame(page, `${CARD_METHOD}, ${CARD_NUMBER}`)
   const cardMethod = payment.locator(CARD_METHOD)
   if ((await cardMethod.count()) > 0 && (await cardMethod.getAttribute('aria-expanded')) !== 'true') {
-    await cardMethod.click()
+    // Stripe keeps resizing its frame, so a click never sees the button stable; Enter needs no stability.
+    await cardMethod.focus()
+    await cardMethod.press('Enter')
   }
-
-  // Stripe's test card that succeeds without 3D Secure.
-  const card = await stripeFrame(page, CARD_NUMBER)
-  await card.locator(CARD_NUMBER).fill('4242424242424242')
-  await card.locator(CARD_EXPIRY).fill('12 / 34')
-  await card.locator(CARD_CVC).fill('123')
 }
 
 /** Submits the checkout form. Call after `fillStripeCheckout`. */
