@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react'
 import type { ProcessPriceResponse } from '@vocdoni/api-types'
-import { useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuChevronDown } from 'react-icons/lu'
 import { currency } from '~utils/numbers'
@@ -218,6 +218,12 @@ const CostBox = ({ price, primary, voters, wallet, currencyCode, onRetry, retryi
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const panelId = useId()
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  // Opened at the bottom of the scroll area, the breakdown would appear below the fold
+  useEffect(() => {
+    if (open) panelRef.current?.scrollIntoView?.({ block: 'nearest' })
+  }, [open])
 
   if (primary.kind === 'waiting' && primary.reason === 'error') {
     return (
@@ -264,7 +270,7 @@ const CostBox = ({ price, primary, voters, wallet, currencyCode, onRetry, retryi
         </PublishReviewCostAction>
       </PublishReviewCostToggle>
       {open && (
-        <PublishReviewCostPanel id={panelId}>
+        <PublishReviewCostPanel id={panelId} ref={panelRef}>
           <PublishReviewCostTitle>
             {t('process.publish_review.cost.title', { defaultValue: 'What you pay for' })}
           </PublishReviewCostTitle>

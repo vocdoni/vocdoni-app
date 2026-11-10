@@ -70,6 +70,9 @@ export const PublishReviewSkeleton = withContext<HTMLDivElement, HTMLChakraProps
 /** The lock line under the card form; the icon goes first. */
 export const PublishReviewSecureNote = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'secureNote')
 
+const StripeFieldBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'stripeField')
+const StripeMount = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'stripeMount')
+
 const FactRowBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'factRow')
 const FactLabel = withContext<HTMLElement, HTMLChakraProps<'dt'>>('dt', 'factLabel')
 const FactValue = withContext<HTMLElement, HTMLChakraProps<'dd'>>('dd', 'factValue')
@@ -171,6 +174,24 @@ export const PublishReviewCallout = ({ tone, children }: PublishReviewCalloutPro
     </CalloutIcon>
     <span>{children}</span>
   </CalloutBox>
+)
+
+export type PublishReviewStripeFieldProps = {
+  /** Set once Stripe's element has painted: until then a skeleton holds its place. */
+  ready: boolean
+  /** The Stripe elements; none while the session opens. */
+  children?: ReactNode
+}
+
+/**
+ * Where a Stripe element goes. The element mounts hidden under its skeleton, since it paints a moment
+ * after it is rendered, and takes the skeleton's place once ready, so nothing jumps in between.
+ */
+export const PublishReviewStripeField = ({ ready, children }: PublishReviewStripeFieldProps) => (
+  <StripeFieldBox data-ready={flag(ready)}>
+    {!ready && <PublishReviewSkeleton data-kind='field' />}
+    {children && <StripeMount>{children}</StripeMount>}
+  </StripeFieldBox>
 )
 
 export type PublishReviewFooterProps = {

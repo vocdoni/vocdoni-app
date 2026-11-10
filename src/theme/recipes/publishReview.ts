@@ -65,6 +65,8 @@ export const PublishReview = defineSlotRecipe({
     'body',
     'status',
     'skeleton',
+    'stripeField',
+    'stripeMount',
     'secureNote',
   ],
   base: {
@@ -118,7 +120,8 @@ export const PublishReview = defineSlotRecipe({
       display: 'inline-flex',
       alignItems: 'center',
       gap: 1.5,
-      h: 8,
+      // 44px targets on phones
+      h: { base: 11, md: 8 },
       p: 0,
       bg: 'transparent',
       fontSize: 'sm',
@@ -132,6 +135,8 @@ export const PublishReview = defineSlotRecipe({
     close: {
       color: 'fg.muted',
       me: -2,
+      boxSize: { base: 11, md: 8 },
+      minW: { base: 11, md: 8 },
     },
     lead: {
       m: 0,
@@ -251,10 +256,14 @@ export const PublishReview = defineSlotRecipe({
     },
     costToggle: {
       display: 'flex',
+      // "Review the details" drops under a long summary instead of squeezing it
+      flexWrap: 'wrap',
       alignItems: 'baseline',
       justifyContent: 'space-between',
-      gap: 3,
+      columnGap: 3,
+      rowGap: 1,
       w: 'full',
+      minH: 11,
       px: 3.5,
       py: 2.5,
       bg: 'transparent',
@@ -268,6 +277,7 @@ export const PublishReview = defineSlotRecipe({
       _focusVisible: { outline: '2px solid', outlineColor: 'colorPalette.focusRing', outlineOffset: '2px' },
     },
     costSummary: {
+      flex: '1 1 12rem',
       fontWeight: 'semibold',
     },
     costAction: {
@@ -277,7 +287,7 @@ export const PublishReview = defineSlotRecipe({
       flex: '0 0 auto',
       fontWeight: 'semibold',
       color: 'fg.muted',
-      '& svg': { transition: 'transform 0.15s' },
+      '& svg': { _motionSafe: { transitionProperty: 'transform', transitionDuration: 'fast' } },
     },
     costPanel: {
       display: 'flex',
@@ -356,7 +366,8 @@ export const PublishReview = defineSlotRecipe({
       zIndex: 1,
       px: gutter,
       pt: { base: 4, md: 4.5 },
-      pb: { base: 6, md: 5 },
+      // Clear of the home indicator when the page runs edge to edge
+      pb: { base: 'max({spacing.6}, env(safe-area-inset-bottom))', md: 5 },
       bg: 'bg.subtle',
       borderTopWidth: '1px',
       borderColor: 'border',
@@ -380,19 +391,26 @@ export const PublishReview = defineSlotRecipe({
       ms: { base: 0, md: 'auto' },
       '& > *': { w: { base: 'full', md: 'auto' }, h: { base: 11, md: 10 } },
     },
+    // A wait or an outcome is about as tall as the summary, so the dialog keeps its size between steps
     body: {
       ...scrollArea,
+      minH: { base: 0, md: '22rem' },
+      [shortScreen]: { ...scrollArea[shortScreen], minH: 0 },
       display: 'flex',
       flexDirection: 'column',
+      justifyContent: 'center',
       gap: 4,
       px: gutter,
       pb: 6,
     },
     status: {
       ...scrollArea,
+      minH: { base: 0, md: '22rem' },
+      [shortScreen]: { ...scrollArea[shortScreen], minH: 0 },
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      justifyContent: 'center',
       gap: 4,
       px: gutter,
       pt: 4,
@@ -409,6 +427,21 @@ export const PublishReview = defineSlotRecipe({
       '&[data-kind=lead]': { h: 8, maxW: '24rem' },
       '&[data-kind=amounts]': { h: 12 },
       '&[data-kind=field]': { h: 40, borderRadius: 'l3' },
+    },
+    // A Stripe element mounts hidden, laid out at its final width, under the skeleton that holds its place
+    stripeField: {
+      position: 'relative',
+    },
+    stripeMount: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 3,
+      '.publish-review__stripeField:not([data-ready]) > &': {
+        position: 'absolute',
+        top: 0,
+        insetInline: 0,
+        visibility: 'hidden',
+      },
     },
     secureNote: {
       display: 'flex',
