@@ -68,17 +68,15 @@ billing, because that run checks out the fork's code and CI never gives it the s
 
 The sandbox needs:
 
-- Products that the backend's plan sync can read. Every product it does not skip
-  needs valid JSON metadata `organization`, `votingTypes` and `features`. One
-  product that fails to parse makes the whole Stripe setup fail. Use a sandbox that
-  holds only the plan product(s).
+- Plan products: the sync turns every active product with `organization`,
+  `votingTypes` and `features` metadata (JSON) into a plan. It skips other
+  products, and skips with a warning one whose metadata does not parse.
 - A product whose default price has metadata `Default=true`. The backend's
   startup plan sync keeps no default plan without it, and `POST /organizations`
   needs one.
-- A default plan whose `features` permit what `integration/seed-plan.js` grants,
-  at least `twoFaEmail`. Every spec runs on this plan, and the CSP 2FA journeys are
-  refused without it. `up` checks the plan in mongo and fails naming the missing
-  condition.
+- A default plan that allows what the specs use: email 2FA (`2FAemail` > 0),
+  anonymous and weighted voting, and a census limit of at least 26. `up` checks
+  only that there is exactly one synced default plan with email 2FA.
 - A tax origin address (Settings > Tax). The backend's checkout sessions enable
   automatic tax.
 - An API version on the same release train as the backend's stripe-go (`endive`
