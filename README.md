@@ -93,6 +93,10 @@ there, here's a list of variables you can use:
 - `BUILD_PATH` Specifies the destination of built files.
 - `CUSTOM_ORGANIZATION_DOMAINS` A JSON.stringified object of custom domains mapped to organization ids, to
   replace the homepage with their profile page.
+- `LANGUAGES` comma-separated language codes the app offers (e.g. `en,es,ca`), from `ca`, `de`, `el`, `en`, `es`,
+  `eu`, `fr`, `it`, `pt` and `pt-br`. The first one is the fallback: a missing translation falls back to it, and the
+  SharedCensus texts must include it. Unset, every language is offered and Catalan (`ca`) is the fallback. Read at
+  runtime.
 - `HOME_PROCESS_ID` a single process id that turns the app root into that process' voting page — the same
   view served at `/<lang>/processes/<id>`, server-rendered by Vike. Both `/` and every localized root
   (`/en`, `/es`, …) render it, and its `<title>`, description, canonical URL, `hreflang` alternates and
@@ -141,7 +145,7 @@ with id `0x000000000000000000000000000000000000dead` as the homepage of the app.
 The SharedCensus page uses the following env vars to drive its UI:
 
 - `PROCESS_IDS`: comma-separated election IDs to display.
-- `SHARED_CENSUS_ALWAYS_VISIBLE_TEXT`: JSON object mapping language codes to markdown (e.g. `{"en":"...", "es":"..."}`) rendered via the read-only Editor. Must include the default language (first entry from `LANGUAGES`, default `en`), otherwise the build fails. Always shown at the top of the SharedCensus page.
+- `SHARED_CENSUS_ALWAYS_VISIBLE_TEXT`: JSON object mapping language codes to markdown (e.g. `{"en":"...", "es":"..."}`) rendered via the read-only Editor. Must include the default language (first entry from `LANGUAGES`, default `ca`), otherwise the build fails. Always shown at the top of the SharedCensus page.
 - `SHARED_CENSUS_DISCONNECTED_TEXT`: JSON object mapping language codes to markdown, shown only when the user is not connected/admin. Must include the default language if set, or the build fails.
 - `SHARED_CENSUS_CONNECTED_TEXT`: JSON object mapping language codes to markdown, shown only when the user is connected or an admin. Must include the default language if set, or the build fails.
 - `STREAM_URL`: single `http(s)` URL for an embeddable stream (e.g. YouTube). Validated at build time. When the session starts (connected or admin), it renders in a 16:9 player floated right so text flows around it. If only the stream is provided, it renders alone.
