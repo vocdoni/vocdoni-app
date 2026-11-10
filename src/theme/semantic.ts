@@ -119,7 +119,7 @@ export const colors = defineSemanticTokens.colors({
         _dark: '{colors.whiteAlpha.50}',
       },
     },
-    // Menus and popovers
+    // Menus, popovers and tooltips
     raised: {
       DEFAULT: {
         value: '{colors.bg}',
