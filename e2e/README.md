@@ -105,7 +105,7 @@ pulls fresh every run.
 | `weighted-question-matrix.e2e.ts` | The manual QA "creating processes matrix", folded into one journey: a **weighted** census (memberbase weight column → voting power) and one process mixing single+extended, multi+plain and multi+extended questions — each question its own on-chain election, voted in one batch. Asserts the voter sees their weight and that public tallies count it (7, not 1) per selected choice. |
 | `anonymous-voting.e2e.ts`         | The CSP + 2FA journey again, with **anonymous ballots** switched on in the wizard: the CSP blind-signs a ballot it never sees (a `blindPoint` → `blindSign` proof) instead of signing the voter's address. Asserts the public page announces the anonymity promise, the one-time receipt notice after casting, and that a never-authenticated observer sees the ballot counted on-chain. |
 | `member-password-voting.e2e.ts`   | A census authenticated by `memberNumber` + **member password**, no 2FA: the passwords come in through the CSV import, a wrong password gets the generic not-in-census error, the right one logs in and votes. Asserts no request from either browser carries a plaintext password (the app sends only the org-salted hash).                                                              |
-| `payg-checkout.e2e.ts`            | Opt-in (Stripe mode, see below): a census above the free size is refused at Publish for lack of balance → pay through Stripe Checkout Elements in the test sandbox → the backend credits the wallet, debits the process and publishes it.                                                                                                                                                |
+| `payg-checkout.e2e.ts`            | Opt-in (Stripe mode, see below): a census above the free size is refused at Publish for lack of balance → pay through Stripe Checkout Elements in the test sandbox → the backend credits the wallet, debits the process and publishes it. Also a wallet top-up from the billing page, checked against the ledger.                                                                        |
 
 Everything runs through the UI. Nothing is provisioned behind the app's back, so
 a break anywhere along that chain fails here.
@@ -117,6 +117,8 @@ pay-per-process checkout, paying with Stripe Checkout Elements in Stripe's test
 sandbox. The census is larger than the free allowance, so the wizard's Publish
 is refused for lack of balance. The test pays, then asserts that the backend
 credited the wallet, debited the process and published it.
+A second test tops the wallet up from the billing page (`Top up`, EUR 50) and polls
+until the backend's balance and ledger show the credit.
 
 It needs the stack in Stripe mode, which `pnpm test:e2e:stack` picks up from the
 environment. The rest of the suite runs in the same mode, on the sandbox's default

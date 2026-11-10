@@ -1,14 +1,16 @@
-import type { Frame, Page } from '@playwright/test'
+import type { TestInfo } from '@playwright/test'
 import type { ProcessCheckoutResponse } from '@vocdoni/api-types'
 import { makeMembers } from './helpers/data'
 import { fillProcessWizard, importMembers, signUpWithOrganization } from './helpers/flows'
 import { expect, test } from './helpers/fixtures'
-import { localStack, type SaasClient } from './helpers/stripe'
+import { fillStripeCheckout, payStripeCheckout } from './helpers/stripe-checkout'
+import { localStack, type StripeClient, type SaasClient } from './helpers/stripe'
 
 /**
  * Flow 5 — pay-per-process top-up against Stripe's test sandbox. Publishing past
  * the free census size is refused for lack of balance; the test pays through
  * Checkout Elements and checks the backend credited, debited and published.
+ * A second test tops the wallet up from the billing page and checks the credit.
  */
 
 /** Above the backend's free census size (25): the process is not free. */
@@ -17,68 +19,41 @@ const PAID_CENSUS_SIZE = 26
 /** `POST /processes/{id}/checkout`, the top-up view's session request. */
 const CHECKOUT_PATH = /\/processes\/([^/]+)\/checkout$/
 
-/** The checkout form is the only form on screen while the top-up view is open. */
-const PAY_BUTTON = 'form:has(iframe[name^="__privateStripeFrame"]) button[type="submit"]'
+/** `POST /organizations/{address}/wallet/topup`, the wallet top-up request. */
+const WALLET_TOPUP_PATH = /\/organizations\/[^/]+\/wallet\/topup$/
 
-/*
- * Stripe's frame names and field selectors are unverified against a live sandbox:
- * autocomplete tokens are the standard, the name attributes are the fallback.
- */
-const CARD_NUMBER = 'input[autocomplete="cc-number"], input[name="number"]'
-const CARD_EXPIRY = 'input[autocomplete="cc-exp"], input[name="expiry"]'
-const CARD_CVC = 'input[autocomplete="cc-csc"], input[name="cvc"]'
-const ADDRESS_FIRST_NAME = '[autocomplete="given-name"], [name="firstName"]'
-const ADDRESS_LAST_NAME = '[autocomplete="family-name"], [name="lastName"]'
-const ADDRESS_LINE1 = '[autocomplete="address-line1"], [name="addressLine1"]'
-const ADDRESS_CITY = '[autocomplete="address-level2"], [name="locality"]'
-const ADDRESS_POSTAL_CODE = '[autocomplete="postal-code"], [name="postalCode"]'
-const ADDRESS_COUNTRY = '[autocomplete="country"], [name="country"]'
-
-/**
- * The Stripe frame holding `selector`. Frames appear while the Elements mount and
- * can detach mid-search, so each frame is probed defensively and the search repeats.
- */
-const stripeFrame = async (page: Page, selector: string, timeoutMs = 60_000): Promise<Frame> => {
-  const deadline = Date.now() + timeoutMs
-  while (Date.now() < deadline) {
-    for (const frame of page.frames()) {
-      if (!frame.name().startsWith('__privateStripeFrame')) continue
-      if (
-        (await frame
-          .locator(selector)
-          .count()
-          .catch(() => 0)) > 0
-      )
-        return frame
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500))
-  }
-  throw new Error(`No Stripe frame has ${selector} after ${timeoutMs}ms`)
-}
-
-/** A German address needs no state or province, so automatic tax can compute. */
-const fillStripeCheckout = async (page: Page): Promise<void> => {
-  // Split names (ProcessCheckout), so the name is two fields. Country first: it re-renders the rest.
-  const address = await stripeFrame(page, ADDRESS_LINE1)
-  await address.locator(ADDRESS_COUNTRY).selectOption('DE')
-  await address.locator(ADDRESS_FIRST_NAME).fill('E2E')
-  await address.locator(ADDRESS_LAST_NAME).fill('Runner')
-  await address.locator(ADDRESS_LINE1).fill('Unter den Linden 1')
-  await address.locator(ADDRESS_POSTAL_CODE).fill('10117')
-  await address.locator(ADDRESS_CITY).fill('Berlin')
-
-  // Stripe's test card that succeeds without 3D Secure.
-  const card = await stripeFrame(page, CARD_NUMBER)
-  await card.locator(CARD_NUMBER).fill('4242424242424242')
-  await card.locator(CARD_EXPIRY).fill('12 / 34')
-  await card.locator(CARD_CVC).fill('123')
-}
+/** The wallet top-up amount, typed in EUR and VAT excluded: the backend credits exactly this. */
+const WALLET_TOPUP_EUR = '50'
+const WALLET_TOPUP_CENTS = 5000
 
 /** The organization the signup just created: the only one the new user belongs to. */
 const organizationAddressOf = async (saas: SaasClient, token: string): Promise<string> => {
   const [address] = await saas.getOrganizationAddresses(token)
   if (!address) throw new Error('The new user has no organization')
   return address
+}
+
+/**
+ * Expires and deletes the Stripe objects this run opened. A cleanup error is
+ * annotated, never thrown: a rethrow makes Playwright's CI retry re-run the paid
+ * journey. The sweep step in CI is the backstop.
+ */
+const cleanUpCheckoutSessions = async (
+  stripe: StripeClient,
+  orgAddress: string | undefined,
+  sinceUnix: number,
+  testInfo: TestInfo
+): Promise<void> => {
+  if (!orgAddress) return
+  await stripe.cleanupCheckoutSessions(orgAddress, sinceUnix).catch((error: unknown) => {
+    const detail =
+      error instanceof AggregateError
+        ? error.errors.map((cause) => (cause instanceof Error ? cause.message : String(cause))).join('; ')
+        : String(error)
+    const message = `Stripe cleanup left checkout objects behind: ${detail}`
+    console.warn(message)
+    testInfo.annotations.push({ type: 'stripe-cleanup', description: message })
+  })
 }
 
 test.describe('pay-per-process checkout', () => {
@@ -132,9 +107,8 @@ test.describe('pay-per-process checkout', () => {
       const walletBefore = await saas.getWallet(token, orgAddress)
       expect(walletBefore.balanceCents).toBeLessThan(price.totalCents)
 
-      await expect(page.locator(PAY_BUTTON)).toBeVisible({ timeout: 60_000 })
       await fillStripeCheckout(page)
-      await page.locator(PAY_BUTTON).click()
+      await payStripeCheckout(page)
 
       // The page opens only after the webhook credited the wallet, the wallet paid
       // the publish and the backend published the process.
@@ -154,19 +128,57 @@ test.describe('pay-per-process checkout', () => {
       expect(debit?.amountCents).toBe(-price.totalCents)
       expect(walletAfter.balanceCents).toBe(walletBefore.balanceCents + session.amountCents - price.totalCents)
     } finally {
-      // Runs after a failure too. A cleanup error is annotated, never thrown: a rethrow makes
-      // Playwright's CI retry re-run the paid journey. The sweep step in CI is the backstop.
-      if (orgAddress) {
-        await stripe.cleanupCheckoutSessions(orgAddress, sinceUnix).catch((error: unknown) => {
-          const detail =
-            error instanceof AggregateError
-              ? error.errors.map((cause) => (cause instanceof Error ? cause.message : String(cause))).join('; ')
-              : String(error)
-          const message = `Stripe cleanup left checkout objects behind: ${detail}`
-          console.warn(message)
-          testInfo.annotations.push({ type: 'stripe-cleanup', description: message })
-        })
-      }
+      await cleanUpCheckoutSessions(stripe, orgAddress, sinceUnix, testInfo)
+    }
+  })
+
+  test('tops up the wallet from the billing page', async ({ page }, testInfo) => {
+    test.setTimeout(10 * 60_000)
+
+    const { stripe, saas } = localStack()
+    const seed = String(Date.now()).slice(-6)
+    // Only sessions created from here on belong to this run.
+    const sinceUnix = Math.floor(Date.now() / 1000)
+    let orgAddress: string | undefined
+
+    try {
+      const user = await signUpWithOrganization(page, `Top-up Org ${seed}`)
+
+      const token = await saas.login(user.email, user.password)
+      const address = await organizationAddressOf(saas, token)
+      orgAddress = address
+
+      await page.goto('/admin/settings/billing')
+      await page.getByRole('button', { name: 'Top up', exact: true }).click()
+      // The top-up view's amount is the only number field on screen.
+      await page.getByRole('spinbutton').fill(WALLET_TOPUP_EUR)
+
+      // Listened for before the click: the session is requested as soon as the amount step is left.
+      const topUpRequested = page.waitForResponse(
+        (response) =>
+          response.request().method() === 'POST' && WALLET_TOPUP_PATH.test(new URL(response.url()).pathname),
+        { timeout: 60_000 }
+      )
+      await page.getByRole('button', { name: 'Continue to payment' }).click()
+      const topUp = await topUpRequested
+      expect(topUp.ok()).toBe(true)
+      const session = (await topUp.json()) as ProcessCheckoutResponse
+      expect(session.amountCents).toBe(WALLET_TOPUP_CENTS)
+
+      const before = await saas.getWallet(token, address)
+      await fillStripeCheckout(page)
+      await payStripeCheckout(page)
+
+      // The credit arrives with the verified webhook, so the balance is polled, not read once.
+      await expect
+        .poll(async () => (await saas.getWallet(token, address)).balanceCents, { timeout: 3 * 60_000 })
+        .toBe(before.balanceCents + WALLET_TOPUP_CENTS)
+
+      const wallet = await saas.getWallet(token, address)
+      const credit = wallet.history.find((entry) => entry.kind === 'topup')
+      expect(credit?.amountCents).toBe(WALLET_TOPUP_CENTS)
+    } finally {
+      await cleanUpCheckoutSessions(stripe, orgAddress, sinceUnix, testInfo)
     }
   })
 })
