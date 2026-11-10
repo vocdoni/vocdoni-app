@@ -6,12 +6,13 @@
 # Adapted from integrator-sdk's scripts/integration-stack.sh. The notable
 # difference: there is no integrator-key bootstrap here. This suite registers its
 # own user *through the browser* — that signup is flow #1 under test — so the
-# stack only has to come up empty and seeded.
+# stack only has to come up empty and seeded (or, in Stripe mode, synced).
 #
 # Usage:
-#   scripts/integration-stack.sh up    # start the stack and seed the default plan
-#   scripts/integration-stack.sh down  # tear the stack down (drops volumes)
-#   scripts/integration-stack.sh run   # up, build, run the e2e suite, then stop
+#   scripts/integration-stack.sh up          # start the stack and seed the default plan (Stripe mode: sync it)
+#   scripts/integration-stack.sh down        # tear the stack down (drops volumes)
+#   scripts/integration-stack.sh run         # up, build, run the e2e suite, sweep Stripe objects, then stop
+#   scripts/integration-stack.sh logs <dir>  # one redacted log file per service, written into <dir>
 #
 # `up` leaves the stack running (that is its job — iterate against it, browse
 # the inbox). `run` is one-shot and stops the containers when it is done, unless
@@ -25,8 +26,8 @@
 #   INTEGRATION_STRIPE_SECRET_KEY  opt-in Stripe mode: a Stripe TEST secret key (sk_test_...).
 #                            Creates real test-mode payments in that sandbox. See integration/README.md.
 #   INTEGRATION_STRIPE_PUBLIC_KEY  the matching publishable key (pk_test_...), read by the app at boot.
-#                            Needed by the checkout spec; `up` warns when it is unset in Stripe mode.
-#   INTEGRATION_STRIPE_CLI_IMAGE  stripe-cli image for stripe-listen (default stripe/stripe-cli:v1.55.3)
+#                            Required in Stripe mode: `up` fails without it.
+#   INTEGRATION_STRIPE_CLI_IMAGE  stripe-cli image for stripe-listen (default: v1.55.3, pinned by digest)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -44,8 +45,9 @@ INTEGRATION_API_URL="http://localhost:${INTEGRATION_HOST_PORT}"
 INTEGRATION_MAILHOG_URL="http://localhost:${INTEGRATION_MAILHOG_PORT}"
 
 # The stripe-cli image is defined once here and read by docker-compose.stripe.yml
-# through the same variable, so the script and compose cannot drift apart.
-INTEGRATION_STRIPE_CLI_IMAGE="${INTEGRATION_STRIPE_CLI_IMAGE:-stripe/stripe-cli:v1.55.3}"
+# through the same variable, so the script and compose cannot drift apart. Pinned
+# by the digest of the multi-arch index, so a re-tagged image cannot change the run.
+INTEGRATION_STRIPE_CLI_IMAGE="${INTEGRATION_STRIPE_CLI_IMAGE:-stripe/stripe-cli:v1.55.3@sha256:7bd92a6315b5716767e96727f921abedc131e60648299d4cf6b3a7d5f108b39d}"
 export INTEGRATION_STRIPE_CLI_IMAGE
 
 # Stripe mode is on when INTEGRATION_STRIPE_SECRET_KEY is set. Live keys are
@@ -157,24 +159,19 @@ derive_stripe_webhook_secret() {
 }
 
 # Stripe mode has no seed to fall back on: the default plan must come from the
-# Stripe product sync, which marks it with the default price's Default=true.
+# Stripe product sync. Checked in mongo, not GET /plans: that endpoint lists only
+# public plans, and the backend's default-plan lookup ignores visibility.
 assert_stripe_default_plan() {
-  local plans_json="$1" found
-  found=$(printf '%s' "$plans_json" | node -e "
-let raw = ''
-process.stdin.on('data', (chunk) => (raw += chunk))
-process.stdin.on('end', () => {
-  try {
-    const parsed = JSON.parse(raw)
-    const ok = Array.isArray(parsed) && parsed.some((plan) => plan.default === true && String(plan.id).startsWith('prod_'))
-    console.log(ok ? 1 : 0)
-  } catch {
-    console.log(0)
-  }
-})
-" 2>/dev/null || echo 0)
-  if [ "$found" != 1 ]; then
-    echo "ERROR: the Stripe product sync did not produce a default plan: GET $INTEGRATION_API_URL/plans has no plan with default: true and an id starting with prod_. Check the api logs and that the sandbox has a product whose default price has metadata Default=true." >&2
+  local verdict
+  verdict=$(compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' --eval "
+    const defaults = db.getSiblingDB('saasdb').plans.find({ default: true }).toArray()
+    if (defaults.length !== 1) print('expected exactly one plan with default: true, found ' + defaults.length)
+    else if (!String(defaults[0]._id).startsWith('prod_')) print('the default plan ' + defaults[0]._id + ' has no Stripe product id (_id must start with prod_)')
+    else if (!(Number(defaults[0].features && defaults[0].features.twoFaEmail) > 0)) print('the default plan has no features.twoFaEmail quota, so the email 2FA journeys would be refused')
+    else print('ok')
+  " 2>/dev/null) || verdict="could not query saasdb.plans in mongo"
+  if [ "$verdict" != ok ]; then
+    echo "ERROR: the Stripe product sync did not produce a usable default plan: $verdict. Check the api logs, and that the sandbox has a product whose default price has metadata Default=true (integration/README.md)." >&2
     exit 1
   fi
 }
@@ -219,10 +216,11 @@ cmd_up() {
   fi
 
   if [ -n "$STRIPE_MODE" ]; then
-    derive_stripe_webhook_secret
     if [ -z "${INTEGRATION_STRIPE_PUBLIC_KEY:-}" ]; then
-      echo "WARNING: INTEGRATION_STRIPE_PUBLIC_KEY is not set. The app will not show Stripe checkout, and the checkout spec will fail." >&2
+      echo "ERROR: INTEGRATION_STRIPE_SECRET_KEY is set but INTEGRATION_STRIPE_PUBLIC_KEY is not. The app needs the test publishable key (pk_test_...) to render Stripe Checkout, and the checkout spec cannot run without it." >&2
+      exit 1
     fi
+    derive_stripe_webhook_secret
   fi
 
   echo "== starting stack" >&2
@@ -230,13 +228,15 @@ cmd_up() {
   if [ -n "$STRIPE_MODE" ]; then
     echo "== billing: Stripe test sandbox, plans from the Stripe product sync" >&2
   fi
-  compose up -d
+  # --remove-orphans drops a stripe-listen left behind by an earlier Stripe-mode boot on this stack.
+  compose up -d --remove-orphans
 
   echo "== waiting for mongo and vocone to be healthy" >&2
   wait_container_healthy mongo 60
   if [ -n "$STRIPE_MODE" ]; then
-    # `run` keeps volumes, so a stack seeded in default mode still holds its local-dev
-    # plan. Drop it, or the default-plan check below would pass on the stale plan.
+    # Mongo's data lives in an anonymous volume: `run` keeps it, `down -v` drops it. A
+    # local-dev plan seeded by an earlier default-mode boot would pass the default-plan
+    # check below, so drop it.
     compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' \
       --eval "db.getSiblingDB('saasdb').plans.deleteOne({ _id: 'local-dev' })" >/dev/null
   fi
@@ -251,6 +251,10 @@ cmd_up() {
   else
     echo "== seeding default plan" >&2
     compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' <"$SEED_FILE"
+    # A Stripe-mode run on this same running stack leaves synced plans behind, and a second
+    # default plan beside local-dev breaks organization creation. The seed does not remove them.
+    compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' \
+      --eval "db.getSiblingDB('saasdb').plans.deleteMany({ _id: /^prod_/ })" >/dev/null
   fi
 
   echo "== waiting for api to answer /ping" >&2
@@ -258,13 +262,11 @@ cmd_up() {
 
   if [ -n "$STRIPE_MODE" ]; then
     assert_stripe_listener_running
-  fi
-
-  if [ -n "$STRIPE_MODE" ]; then
-    echo "== asserting GET /plans has a default plan from the Stripe sync" >&2
+    echo "== asserting the default plan from the Stripe sync" >&2
   else
     echo "== asserting the plan seed took" >&2
   fi
+
   PLANS_JSON=$(curl -fsS -m 10 "$INTEGRATION_API_URL/plans" || echo "")
   # Separate "could not ask" from "asked, got nothing". Without this the seed
   # assertion below blames db.Plan bson tags for what is really a dead API.
@@ -273,7 +275,7 @@ cmd_up() {
     exit 1
   fi
   if [ -n "$STRIPE_MODE" ]; then
-    assert_stripe_default_plan "$PLANS_JSON"
+    assert_stripe_default_plan
   else
     # Parsed with node, not python3: node is already a hard requirement of this
     # repo (this script ends by running pnpm), so this adds no new dependency —
@@ -316,7 +318,31 @@ cmd_down() {
   compose down -v --remove-orphans
 }
 
+# One log file per service, redacted. Written even when a service is silent, so the
+# artifact always lists the same files. The raw `docker compose logs` of stripe-listen
+# holds the whsec_ signing secret, so never copy those.
+cmd_logs() {
+  local dir="${1:-}"
+  if [ -z "$dir" ]; then
+    echo "usage: $0 logs <dir>" >&2
+    exit 1
+  fi
+  mkdir -p "$dir"
+  local services=(api vocone mongo mailhog)
+  if [ -n "$STRIPE_MODE" ]; then
+    services+=(stripe-listen)
+  fi
+  local service
+  for service in "${services[@]}"; do
+    { compose logs --no-color "$service" 2>&1 || true; } | redact_stripe_secrets >"$dir/$service.log"
+  done
+}
+
 cmd_run() {
+  # Stripe mode's sweep takes only the checkout sessions created from here on, so it
+  # never touches objects from an earlier run on the same sandbox.
+  local since
+  since="$(date +%s)"
   # cmd_up is called DIRECTLY, not as `out=$(cmd_up)`: bash disables errexit
   # inside a command substitution that feeds an assignment, so every failure in
   # cmd_up (compose up, health waits, the seed, the /ping wait) would be
@@ -334,6 +360,12 @@ cmd_run() {
   local status=0
   pnpm test:e2e || status=$?
 
+  if [ -n "$STRIPE_MODE" ]; then
+    # Best effort: the sweep is a backstop, so it must not change the run's status. It runs
+    # before the teardown below, because it asks the running stack which organizations are its own.
+    node "$REPO_ROOT/scripts/integration-stripe-sweep.mjs" --since "$since" || true
+  fi
+
   # `run` is the one-shot command, so it cleans up after itself rather than
   # leaving four containers running on a laptop. Two deliberate exceptions:
   #
@@ -349,10 +381,7 @@ cmd_run() {
   elif [ "$status" -ne 0 ]; then
     echo "== suite FAILED — leaving the stack up so you can inspect it:" >&2
     echo "     inbox: $INTEGRATION_MAILHOG_URL" >&2
-    echo "     logs:  docker compose -f integration/docker-compose.ci.yml logs api" >&2
-    if [ -n "$STRIPE_MODE" ]; then
-      echo "            (Stripe mode: add -f integration/docker-compose.stripe.yml; its stripe-listen logs show the webhook secret)" >&2
-    fi
+    echo "     logs:  scripts/integration-stack.sh logs <dir>   (redacted, one file per service)" >&2
     echo "     stop:  scripts/integration-stack.sh down" >&2
   else
     echo "== suite passed — stopping containers (volumes kept for a fast next boot)" >&2
@@ -366,8 +395,9 @@ case "${1:-}" in
   up) cmd_up ;;
   down) cmd_down ;;
   run) cmd_run ;;
+  logs) cmd_logs "${2:-}" ;;
   *)
-    echo "usage: $0 {up|down|run}" >&2
+    echo "usage: $0 {up|down|run|logs <dir>}" >&2
     exit 1
     ;;
 esac

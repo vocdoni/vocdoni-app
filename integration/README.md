@@ -16,9 +16,10 @@ The app under test is **not** part of the stack — it runs on the host
 ## Usage
 
 ```bash
-scripts/integration-stack.sh up     # start + seed the default plan, leave it running
-scripts/integration-stack.sh down   # tear down, dropping volumes
-scripts/integration-stack.sh run    # up, build the app, run the e2e suite, then stop
+scripts/integration-stack.sh up          # start + seed the default plan (Stripe mode: sync it), leave it running
+scripts/integration-stack.sh down        # tear down, dropping volumes
+scripts/integration-stack.sh run         # up, build the app, run the e2e suite, then stop
+scripts/integration-stack.sh logs <dir>  # one redacted log file per service, written into <dir>
 ```
 
 `up` leaves the stack running — that is its job: iterate against it and browse
@@ -51,35 +52,35 @@ backend syncs its plans from the sandbox's products, and a `stripe-listen`
 container forwards the sandbox's webhooks to the api
 (`integration/docker-compose.stripe.yml`). Also set
 `INTEGRATION_STRIPE_PUBLIC_KEY` to the matching test publishable key
-(`pk_test_...`): the app gets it at boot, and the checkout spec needs it.
-`up` warns if it is missing.
+(`pk_test_...`): the app gets it at boot, and `up` fails without it.
 
 ```bash
 INTEGRATION_STRIPE_SECRET_KEY=sk_test_... INTEGRATION_STRIPE_PUBLIC_KEY=pk_test_... \
-  scripts/integration-stack.sh up
+  pnpm test:e2e:stack
 ```
 
-It runs the default `:main` saas-backend, the one `develop` deploys. Run
-`scripts/integration-stack.sh down` before switching between default and Stripe
-mode: `run` keeps volumes, so a stack seeded in one mode keeps that mode's plans.
-`up` in Stripe mode deletes the seeded `local-dev` plan, but it does not undo
-anything else. Concurrent Stripe-mode runs on the same sandbox receive each
-other's webhooks. This is harmless: `stripe listen` does not retry a failed
-delivery, and cleanup filters by org metadata. The sandbox needs:
+In CI, `.github/workflows/integration.yml` runs the whole e2e suite in Stripe mode
+when the `INTEGRATION_STRIPE_SECRET_KEY` secret and the `INTEGRATION_STRIPE_PUBLIC_KEY`
+variable (or secret) are set. Without the secret (fork PRs, or a repo with no
+sandbox) the stack seeds its plan, the payg checkout spec skips, and the job warns
+that billing was not exercised. A `/integration` comment on a fork PR also skips
+billing, because that run checks out the fork's code and CI never gives it the secrets.
+
+The sandbox needs:
 
 - Products that the backend's plan sync can read. Every product it does not skip
   needs valid JSON metadata `organization`, `votingTypes` and `features`. One
-  product that fails to parse makes the whole Stripe setup fail, and the only
-  symptom from `up` is "no default plan". Use a sandbox that holds only the plan
-  product(s).
+  product that fails to parse makes the whole Stripe setup fail. Use a sandbox that
+  holds only the plan product(s).
 - A product whose default price has metadata `Default=true`. The backend's
   startup plan sync keeps no default plan without it, and `POST /organizations`
   needs one.
+- A default plan whose `features` permit what `integration/seed-plan.js` grants,
+  at least `twoFaEmail`. Every spec runs on this plan, and the CSP 2FA journeys are
+  refused without it. `up` checks the plan in mongo and fails naming the missing
+  condition.
 - A tax origin address (Settings > Tax). The backend's checkout sessions enable
   automatic tax.
-- Running the full suite (`pnpm test:e2e`) in this mode also needs the default
-  plan's `features` to permit email 2FA, as `integration/seed-plan.js` does
-  (`twoFaEmail`). The checkout spec alone does not.
 - An API version on the same release train as the backend's stripe-go (`endive`
   today). The backend's webhook check rejects events from another train. No
   `--latest` flag is needed on `stripe listen`.
@@ -91,21 +92,29 @@ Stripe mode is for a sandbox you own: the run creates real test-mode payments
 there. Live keys (`sk_live_`, `rk_live_`) and live publishable keys (`pk_live_`)
 are refused before anything starts.
 
-- The script never prints the key or the webhook signing secret, and it redacts
-  both from the stripe-cli and container output it shows on failure. But
-  `docker compose ... logs stripe-listen` does show the `whsec_` secret, because
-  stripe-cli prints it. Do not share raw container logs from this mode.
-- The webhook signing secret is derived from the key with the Stripe CLI.
-- The plan seed is skipped. The default plan must come from the Stripe sync, and
-  `up` fails with a clear error if it does not. `up` also fails if the
-  `stripe-listen` container is not running after startup, and prints its last
-  log lines with secrets redacted.
-- The stripe-cli image defaults to `stripe/stripe-cli:v1.55.3`. Override it with
-  `INTEGRATION_STRIPE_CLI_IMAGE`.
-- CI runs this mode in the `e2e-stripe` job of `.github/workflows/integration.yml`.
-  It needs the repo secret `INTEGRATION_STRIPE_SECRET_KEY` and a publishable key
-  in `INTEGRATION_STRIPE_PUBLIC_KEY` (a repo variable or secret), and it skips
-  with a notice naming whichever is missing.
+- The script never prints the key or the webhook signing secret. `docker compose
+  ... logs stripe-listen` does show the `whsec_` secret, because stripe-cli prints
+  it, so use `scripts/integration-stack.sh logs <dir>` (redacted) and do not share
+  raw container logs from this mode.
+- The webhook signing secret is derived from the key with the Stripe CLI. The
+  stripe-cli image is pinned by digest; override it with `INTEGRATION_STRIPE_CLI_IMAGE`.
+- The default plan must come from the Stripe sync, and `up` fails with a clear
+  error if it does not. `up` also fails if the `stripe-listen` container is not
+  running after startup, and prints its last log lines with secrets redacted.
+- `run` ends with `scripts/integration-stripe-sweep.mjs`. It expires the checkout
+  sessions still open and deletes the customers of this stack's organizations, for
+  runs that were cancelled before the checkout spec's own cleanup. Organizations
+  that are not this stack's are never touched, so concurrent runs on one sandbox
+  are safe. CI runs the same sweep as its own step.
+- Concurrent Stripe-mode runs on the same sandbox receive each other's webhooks.
+  This is harmless: `stripe listen` does not retry a failed delivery, and cleanup
+  filters by org metadata.
+
+Switching modes on a running stack: `up` reconciles it. Stripe mode deletes the
+seeded `local-dev` plan, and default mode deletes the plans synced from Stripe
+(`prod_` ids) and removes an orphaned `stripe-listen`. Mongo keeps its data in an
+anonymous volume: `run` keeps it, and `down` (`down -v`) drops it. So after `run`,
+the next `up` finds the last run's plans, and `up` reconciles them as described.
 
 ## Pinning upstream commits
 

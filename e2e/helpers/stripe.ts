@@ -1,4 +1,4 @@
-import type { ProcessPriceResponse, WalletResponse } from '@vocdoni/api-types'
+import { VocdoniApiClient } from '@vocdoni/api-client'
 
 /**
  * Stripe and saas-backend clients for the pay-per-process checkout spec. Stripe
@@ -6,6 +6,9 @@ import type { ProcessPriceResponse, WalletResponse } from '@vocdoni/api-types'
  */
 
 const STRIPE_API_URL = 'https://api.stripe.com/v1'
+
+/** Waits before each retry of a 429 or 5xx answer; the list's length caps the retries. */
+const RETRY_DELAYS_MS = [1000, 2000, 4000]
 
 /** Refuses live keys (secret, restricted or publishable): the e2e suite must never touch production. */
 export const assertTestKey = (key: string, variable: string): string => {
@@ -25,11 +28,13 @@ export class StripeError extends Error {
   }
 }
 
-/** Lets a cleanup step pass when the object is already gone. */
-const ignoreNotFound = (error: unknown): undefined => {
-  if (error instanceof StripeError && error.status === 404) return undefined
-  throw error
-}
+/** Lets a cleanup step pass when Stripe says the object is gone, or no longer open. */
+const ignoreStatus =
+  (...statuses: number[]) =>
+  (error: unknown): undefined => {
+    if (error instanceof StripeError && statuses.includes(error.status)) return undefined
+    throw error
+  }
 
 export type StripeCheckoutSession = {
   id: string
@@ -42,20 +47,29 @@ export type StripeCheckoutSession = {
  * Stripe REST client for one account. Writes are form-encoded, which is what
  * Stripe expects.
  */
-export const createStripeClient = (secretKey: string, baseUrl = STRIPE_API_URL) => {
+export const createStripeClient = (secretKey: string) => {
+  const send = async (method: 'GET' | 'POST' | 'DELETE', path: string, form?: Record<string, string>) => {
+    for (let attempt = 0; ; attempt += 1) {
+      const response = await fetch(`${STRIPE_API_URL}${path}`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${secretKey}`,
+          ...(form ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+        },
+        body: form ? new URLSearchParams(form) : undefined,
+      })
+      const retryDelay = RETRY_DELAYS_MS[attempt]
+      if (retryDelay === undefined || (response.status !== 429 && response.status < 500)) return response
+      await new Promise((resolve) => setTimeout(resolve, retryDelay))
+    }
+  }
+
   const request = async <T>(
     method: 'GET' | 'POST' | 'DELETE',
     path: string,
     form?: Record<string, string>
   ): Promise<T> => {
-    const response = await fetch(`${baseUrl}${path}`, {
-      method,
-      headers: {
-        Authorization: `Bearer ${secretKey}`,
-        ...(form ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
-      },
-      body: form ? new URLSearchParams(form) : undefined,
-    })
+    const response = await send(method, path, form)
     // Read as text first, so an error body that is not JSON still reports its status.
     const text = await response.text()
     let body: (T & { error?: { message?: string } }) | undefined
@@ -109,11 +123,17 @@ export const createStripeClient = (secretKey: string, baseUrl = STRIPE_API_URL) 
     )
     const errors: unknown[] = []
     for (const session of sessions) {
-      try {
-        if (session.status === 'open') await expireCheckoutSession(session.id).catch(ignoreNotFound)
-        if (session.customer) await deleteCustomer(session.customer).catch(ignoreNotFound)
-      } catch (error) {
-        errors.push(error)
+      // A 400 is Stripe's "no longer open" answer, which counts as expired.
+      if (session.status === 'open') {
+        await expireCheckoutSession(session.id)
+          .catch(ignoreStatus(400, 404))
+          .catch((error: unknown) => errors.push(error))
+      }
+      // Its own step: a failed expire must not skip the customer.
+      if (session.customer) {
+        await deleteCustomer(session.customer)
+          .catch(ignoreStatus(404))
+          .catch((error: unknown) => errors.push(error))
       }
     }
     if (errors.length > 0) {
@@ -126,60 +146,33 @@ export const createStripeClient = (secretKey: string, baseUrl = STRIPE_API_URL) 
 
 export type StripeClient = ReturnType<typeof createStripeClient>
 
-export type SaasOrganization = {
-  address: string
-}
-
-export type SaasUserOrganization = {
-  role: string
-  organization: SaasOrganization | null
-}
-
 /**
- * saas-backend client for the reads the spec needs. Every call except `login`
- * needs the JWT that `login` returns.
+ * saas-backend reads for the spec, through the Integrator SDK. The SDK keeps one
+ * bearer per client, and each user's JWT is its own, so every authenticated call
+ * builds a client for its token.
  */
-export const createSaasClient = (baseUrl: string) => {
-  const request = async <T>(path: string, init: RequestInit = {}): Promise<T> => {
-    const response = await fetch(`${baseUrl}${path}`, init)
-    if (!response.ok) {
-      throw new Error(
-        `saas-backend ${init.method ?? 'GET'} ${path} failed: ${response.status} ${await response.text()}`
-      )
-    }
-    return (await response.json()) as T
-  }
-
-  const bearer = (token: string): RequestInit => ({ headers: { Authorization: `Bearer ${token}` } })
+export const createSaasClient = (apiUrl: string) => {
+  const asUser = (token: string) => new VocdoniApiClient({ apiUrl, authToken: token })
 
   return {
     /** POST /auth/login. Returns the JWT for the authenticated calls below. */
     login: async (email: string, password: string): Promise<string> => {
-      const data = await request<{ token: string }>('/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
-      return data.token
+      const session = await new VocdoniApiClient({ apiUrl }).auth.login(email, password)
+      return session.token
     },
 
-    /** The organizations the logged-in user belongs to (GET /users/me). */
-    getUserOrganizations: async (token: string): Promise<SaasUserOrganization[]> => {
-      const data = await request<{ organizations: SaasUserOrganization[] }>('/users/me', bearer(token))
-      return data.organizations
-    },
+    /** The addresses of the organizations the logged-in user belongs to (GET /auth/addresses). */
+    getOrganizationAddresses: async (token: string): Promise<string[]> =>
+      (await asUser(token).auth.addresses()).addresses,
 
     /** Wallet balance and ledger of an organization (GET /organizations/{address}/wallet). */
-    getWallet: (token: string, address: string): Promise<WalletResponse> =>
-      request<WalletResponse>(`/organizations/${address}/wallet?limit=100`, bearer(token)),
+    getWallet: (token: string, address: string) => asUser(token).organizations.getWallet(address, { limit: 100 }),
 
     /** Quote and payment status of a process (GET /processes/{id}/price). */
-    getProcessPrice: (token: string, processId: string): Promise<ProcessPriceResponse> =>
-      request<ProcessPriceResponse>(`/processes/${processId}/price`, bearer(token)),
+    getProcessPrice: (token: string, processId: string) => asUser(token).elections.getPrice(processId),
 
     /** A process as the backend stores it (GET /processes/{id}). `published` flips once the publish lands. */
-    getProcess: (token: string, processId: string): Promise<{ published: boolean }> =>
-      request<{ published: boolean }>(`/processes/${processId}`, bearer(token)),
+    getProcess: (token: string, processId: string) => asUser(token).elections.get(processId),
   }
 }
 

@@ -42,6 +42,10 @@ It cleans up after itself, with two deliberate exceptions:
 
 Set `INTEGRATION_KEEP_STACK=1` to always leave it running.
 
+With the Stripe sandbox keys set (`INTEGRATION_STRIPE_SECRET_KEY` and
+`INTEGRATION_STRIPE_PUBLIC_KEY`), the same command runs the whole suite in Stripe
+mode, the checkout spec included. See [Pay-per-process checkout](#pay-per-process-checkout).
+
 To iterate (keep one stack, run the suite repeatedly):
 
 ```bash
@@ -106,7 +110,7 @@ pulls fresh every run.
 Everything runs through the UI. Nothing is provisioned behind the app's back, so
 a break anywhere along that chain fails here.
 
-## Pay-per-process checkout (opt-in)
+## Pay-per-process checkout
 
 `payg-checkout.e2e.ts` tops up an organization's wallet through the app's
 pay-per-process checkout, paying with Stripe Checkout Elements in Stripe's test
@@ -114,27 +118,22 @@ sandbox. The census is larger than the free allowance, so the wizard's Publish
 is refused for lack of balance. The test pays, then asserts that the backend
 credited the wallet, debited the process and published it.
 
-It needs the stack in Stripe mode (see
-[integration/README.md](../integration/README.md#stripe-mode-opt-in)), with two
-Stripe test keys. Run it alone, as CI does: Stripe mode skips the mongo seed, so
-the other specs would run on the sandbox's default plan, which may lack the
-`twoFaEmail` feature they need.
+It needs the stack in Stripe mode, which `pnpm test:e2e:stack` picks up from the
+environment. The rest of the suite runs in the same mode, on the sandbox's default
+plan, so that plan must permit email 2FA (see
+[integration/README.md](../integration/README.md#stripe-mode-opt-in)).
 
 ```bash
 INTEGRATION_STRIPE_SECRET_KEY=sk_test_... \
 INTEGRATION_STRIPE_PUBLIC_KEY=pk_test_... \
-scripts/integration-stack.sh up
-pnpm build
-INTEGRATION_STRIPE_SECRET_KEY=sk_test_... \
-INTEGRATION_STRIPE_PUBLIC_KEY=pk_test_... \
-pnpm exec playwright test --project=chromium e2e/payg-checkout.e2e.ts
+pnpm test:e2e:stack
 ```
 
 - `INTEGRATION_STRIPE_SECRET_KEY` (`sk_test_`) drives the spec's Stripe API calls.
-  Without it the spec skips, so the default run is unaffected.
+  Without it the spec skips, and the rest of the suite runs on the seeded plan.
 - `INTEGRATION_STRIPE_PUBLIC_KEY` (`pk_test_`) is forwarded to the app, which
-  needs it to render Stripe Elements. With the secret key set but this one
-  missing, the spec fails at its start.
+  needs it to render Stripe Elements. `up` fails when the secret is set and this
+  one is not.
 
 Both reject live keys (`sk_live_`, `rk_live_`, `pk_live_`). The spec runs in the
 `chromium` project only.
@@ -142,7 +141,8 @@ Both reject live keys (`sk_live_`, `rk_live_`, `pk_live_`). The spec runs in the
 It creates Stripe test-mode checkout sessions (and their customers) for the
 organization it signs up. Afterwards it expires the sessions still open and
 deletes their customers. A completed payment cannot be deleted in Stripe, so it
-stays in the test account.
+stays in the test account. A run cancelled before that cleanup is swept by
+`scripts/integration-stripe-sweep.mjs`, which `run` and CI both call.
 
 ## Layout
 
@@ -156,9 +156,9 @@ stays in the test account.
   `@playwright/test` (it suppresses the cookie banner, which otherwise blocks
   clicks), plus helpers for Chakra's checkbox / switch / pin-input / combobox.
 - `helpers/data.ts` — unique emails and the generated members CSV.
-- `helpers/stripe.ts` — Stripe and saas-backend API clients for the checkout
-  spec: refuses live keys, lists and cleans up the checkout sessions a run
-  opened, and reads the wallet and process.
+- `helpers/stripe.ts` — the Stripe REST client (refuses live keys, lists and
+  cleans up the checkout sessions a run opened) and saas-backend reads through
+  `@vocdoni/api-client`: the wallet and the process.
 
 ## Writing specs here
 
@@ -183,8 +183,8 @@ stays in the test account.
 - **The create-process wizard auto-saves on every focusout**, and when the
   resulting draft read resolves it writes the server's copy back over the form.
   Anything typed in that window is silently discarded.
-  `createAndPublishTwoFactorProcess` works around it by creating the draft
-  first, reloading, and only then filling the form — see the comment there.
+  `fillProcessWizard` works around it by creating the draft first, reloading,
+  and only then filling the form — see the comment there.
 - **A voter's CSP session does not survive a page reload**, so "did the vote
   stick" is asserted from a fresh anonymous context reading the process's vote
   count, not by reloading the voter's tab.
@@ -201,6 +201,8 @@ stays in the test account.
 `develop` (the integration branch), on pull requests targeting `stage` or `main`
 (the two promotions that actually reach users), and on any pull request with
 pinned `/integration` refs (see [integration/README.md](../integration/README.md)).
+It runs in Stripe mode when the Stripe secrets are set, and on the seeded plan with
+a warning when they are not.
 Other feature PRs into `develop` do not run it (they are covered by `test.yml`);
 use **Run workflow** on the Actions tab to trigger it by hand on any branch.
 
@@ -211,7 +213,6 @@ the normal lint/unit/build job. The workflow prints the resolved image digests s
 such a run is reproducible locally, and uploads the Playwright report (with
 traces and video) plus all container logs on failure.
 
-The separate `e2e-stripe` job runs only `payg-checkout.e2e.ts`, on chromium
-only. It is gated on the Stripe secrets (it skips with a notice without them)
-and ignores `/integration` pins. See
+The Stripe checkout spec needs no job of its own: it runs inside this one, on
+chromium only, whenever the Stripe secrets are set. See
 [integration/README.md](../integration/README.md#stripe-mode-opt-in).
