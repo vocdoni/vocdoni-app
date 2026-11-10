@@ -606,6 +606,148 @@ jobs:
         if: always()
         run: scripts/integration-stack.sh down
 
+  # Separate from `e2e` on purpose: it needs the Stripe keys, and it drives Stripe-hosted
+  # checkout pages, whose iframes are flaky. So it does not gate feature PRs: it runs on pushes
+  # to develop, on manual dispatch, and on pull requests promoting develop to stage or main.
+  # Fork PRs never receive the secrets, and the gate below skips the job for them.
+  #
+  # Always tests the :main images and the lockfile packages. Pinned refs from a /integration
+  # comment are ignored here: this job has no resolve step.
+  #
+  # The secrets are set on the gate, Start stack and spec steps only, so the install and build
+  # steps (which run the PR's code) never see them. The spec step calls Stripe to clean up.
+  e2e-stripe:
+    name: End-to-end Stripe checkout
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && (github.base_ref == 'stage' || github.base_ref == 'main')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      group: integration-stripe-${{ github.ref }}
+      # A push to develop is never cancelled by a newer one, so its run always finishes.
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    permissions:
+      contents: read
+      packages: read # pull ghcr.io/vocdoni/saas-backend
+    steps:
+      - name: Check for the Stripe keys
+        id: gate
+        env:
+          SECRET_KEY: ${{ secrets.INTEGRATION_STRIPE_SECRET_KEY }}
+          PUBLIC_KEY: ${{ vars.INTEGRATION_STRIPE_PUBLIC_KEY || secrets.INTEGRATION_STRIPE_PUBLIC_KEY }}
+        run: |
+          missing=""
+          [ -n "$SECRET_KEY" ] || missing="INTEGRATION_STRIPE_SECRET_KEY"
+          [ -n "$PUBLIC_KEY" ] || missing="${missing:+$missing, }INTEGRATION_STRIPE_PUBLIC_KEY"
+          if [ -z "$missing" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::$missing not set (or this is a fork PR), so the Stripe checkout suite is skipped."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.gate.outputs.enabled == 'true'
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Print resolved image digests
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ github.token }}
+        run: |
+          # Logged out on any exit, as in the e2e job: the token must not stay in ~/.docker/config.json.
+          trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+          docker pull ghcr.io/vocdoni/vocdoni-node:main
+          docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/vocdoni-node:main
+          docker pull ghcr.io/vocdoni/saas-backend:main
+          docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/saas-backend:main
+
+      - name: Install pnpm
+        if: steps.gate.outputs.enabled == 'true'
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        if: steps.gate.outputs.enabled == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        if: steps.gate.outputs.enabled == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browser
+        if: steps.gate.outputs.enabled == 'true'
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Start stack
+        id: stack
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          INTEGRATION_STRIPE_SECRET_KEY: ${{ secrets.INTEGRATION_STRIPE_SECRET_KEY }}
+          INTEGRATION_STRIPE_PUBLIC_KEY: ${{ vars.INTEGRATION_STRIPE_PUBLIC_KEY || secrets.INTEGRATION_STRIPE_PUBLIC_KEY }}
+        run: scripts/integration-stack.sh up
+
+      - name: Build app against the stack
+        if: steps.gate.outputs.enabled == 'true'
+        # SAAS_URL is read by the SSR server at boot, not baked in here, but the
+        # build must exist before Playwright's webServer can serve it.
+        run: pnpm build
+        env:
+          SAAS_URL: http://localhost:8080
+          APP_URL: http://localhost:3000
+          VOCDONI_ENVIRONMENT: dev
+
+      - name: Run Stripe checkout suite
+        if: steps.gate.outputs.enabled == 'true'
+        run: pnpm exec playwright test --project=chromium e2e/payg-checkout.e2e.ts
+        env:
+          SAAS_URL: http://localhost:8080
+          MAILHOG_URL: http://localhost:8025
+          APP_URL: http://localhost:3000
+          # Read by playwright.config.ts, which hands the publishable key to the app's SSR server.
+          INTEGRATION_STRIPE_SECRET_KEY: ${{ secrets.INTEGRATION_STRIPE_SECRET_KEY }}
+          INTEGRATION_STRIPE_PUBLIC_KEY: ${{ vars.INTEGRATION_STRIPE_PUBLIC_KEY || secrets.INTEGRATION_STRIPE_PUBLIC_KEY }}
+
+      - name: Collect container logs
+        if: ${{ failure() && steps.gate.outputs.enabled == 'true' }}
+        run: |
+          mkdir -p /tmp/integration-logs
+          # stripe-listen exists only in Stripe mode, which is the only mode this job runs in.
+          # Its log holds the webhook signing secret, so every service goes through the same redaction
+          # as scripts/integration-stack.sh before it is written to the artifact.
+          for service in api vocone mongo mailhog stripe-listen; do
+            docker compose -f integration/docker-compose.ci.yml -f integration/docker-compose.stripe.yml logs --no-color "$service" 2>&1 |
+              sed -E 's/(^|[^A-Za-z0-9_])(whsec|sk|rk|pk)_[A-Za-z0-9_]+/\1\2_[redacted]/g' \
+              > "/tmp/integration-logs/$service.log" || true
+          done
+
+      - name: Upload container logs
+        if: ${{ failure() && steps.gate.outputs.enabled == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-stripe-container-logs
+          path: /tmp/integration-logs
+
+      - name: Upload Playwright report
+        if: ${{ failure() && steps.gate.outputs.enabled == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          # Named apart from the e2e job's `playwright-report`: artifact names are unique per run.
+          name: playwright-report-stripe
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
+
+      - name: Tear down stack
+        if: ${{ always() && steps.gate.outputs.enabled == 'true' }}
+        run: scripts/integration-stack.sh down
+
   report:
     name: Report to PR
     needs: [resolve, images, e2e]

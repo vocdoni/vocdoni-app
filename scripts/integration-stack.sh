@@ -22,11 +22,17 @@
 #   INTEGRATION_MAILHOG_PORT host port the MailHog HTTP API is published on (default 8025)
 #   INTEGRATION_APP_PORT     host port the app under test is served on (default 3000)
 #   INTEGRATION_KEEP_STACK   set to any value to make `run` leave the stack up
+#   INTEGRATION_STRIPE_SECRET_KEY  opt-in Stripe mode: a Stripe TEST secret key (sk_test_...).
+#                            Creates real test-mode payments in that sandbox. See integration/README.md.
+#   INTEGRATION_STRIPE_PUBLIC_KEY  the matching publishable key (pk_test_...), read by the app at boot.
+#                            Needed by the checkout spec; `up` warns when it is unset in Stripe mode.
+#   INTEGRATION_STRIPE_CLI_IMAGE  stripe-cli image for stripe-listen (default stripe/stripe-cli:v1.55.3)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 COMPOSE_FILE="$REPO_ROOT/integration/docker-compose.ci.yml"
+STRIPE_COMPOSE_FILE="$REPO_ROOT/integration/docker-compose.stripe.yml"
 SEED_FILE="$REPO_ROOT/integration/seed-plan.js"
 
 INTEGRATION_HOST_PORT="${INTEGRATION_HOST_PORT:-8080}"
@@ -37,8 +43,42 @@ export INTEGRATION_HOST_PORT INTEGRATION_MAILHOG_PORT INTEGRATION_APP_PORT
 INTEGRATION_API_URL="http://localhost:${INTEGRATION_HOST_PORT}"
 INTEGRATION_MAILHOG_URL="http://localhost:${INTEGRATION_MAILHOG_PORT}"
 
+# The stripe-cli image is defined once here and read by docker-compose.stripe.yml
+# through the same variable, so the script and compose cannot drift apart.
+INTEGRATION_STRIPE_CLI_IMAGE="${INTEGRATION_STRIPE_CLI_IMAGE:-stripe/stripe-cli:v1.55.3}"
+export INTEGRATION_STRIPE_CLI_IMAGE
+
+# Stripe mode is on when INTEGRATION_STRIPE_SECRET_KEY is set. Live keys are
+# refused before anything runs, so no command can reach a production account.
+STRIPE_MODE=""
+if [ -n "${INTEGRATION_STRIPE_SECRET_KEY:-}" ]; then
+  case "$INTEGRATION_STRIPE_SECRET_KEY" in
+    sk_live_* | rk_live_*)
+      echo "ERROR: INTEGRATION_STRIPE_SECRET_KEY is a live Stripe key. Use a test-mode key (sk_test_...): this stack creates and cancels real objects." >&2
+      exit 1
+      ;;
+  esac
+  case "${INTEGRATION_STRIPE_PUBLIC_KEY:-}" in
+    pk_live_*)
+      echo "ERROR: INTEGRATION_STRIPE_PUBLIC_KEY is a live Stripe key. Use a test-mode key (pk_test_...)." >&2
+      exit 1
+      ;;
+  esac
+  STRIPE_MODE=1
+fi
+
+# Hides the secrets stripe-cli and the api print (a `whsec_` signing secret in
+# `listen` output, a key in an error) before any of their output reaches a log.
+redact_stripe_secrets() {
+  sed -E 's/(^|[^A-Za-z0-9_])(whsec|sk|rk|pk)_[A-Za-z0-9_]+/\1\2_[redacted]/g'
+}
+
 compose() {
-  docker compose -f "$COMPOSE_FILE" "$@"
+  if [ -n "$STRIPE_MODE" ]; then
+    docker compose -f "$COMPOSE_FILE" -f "$STRIPE_COMPOSE_FILE" "$@"
+  else
+    docker compose -f "$COMPOSE_FILE" "$@"
+  fi
 }
 
 # True (exit 0) if nothing is listening on 127.0.0.1:$1. Uses bash's built-in
@@ -95,6 +135,67 @@ wait_url_ready() {
   done
 }
 
+# Stripe mode: derives the webhook signing secret that the stripe-listen container
+# signs with (the account-level one, `listen --print-secret`) and exports it for
+# compose. The key reaches docker by name (-e), never on the command line.
+derive_stripe_webhook_secret() {
+  local secret stderr_file
+  stderr_file="$(mktemp)"
+  secret=$(STRIPE_API_KEY="$INTEGRATION_STRIPE_SECRET_KEY" docker run --rm -e STRIPE_API_KEY \
+    "$INTEGRATION_STRIPE_CLI_IMAGE" listen --print-secret 2>"$stderr_file") || secret=""
+  case "$secret" in
+    whsec_*) ;;
+    *)
+      echo "ERROR: could not derive the Stripe webhook secret (stripe-cli --print-secret gave no whsec_ value). Check that INTEGRATION_STRIPE_SECRET_KEY is a valid test key and that docker can run $INTEGRATION_STRIPE_CLI_IMAGE. stripe-cli said:" >&2
+      redact_stripe_secrets <"$stderr_file" >&2
+      rm -f "$stderr_file"
+      exit 1
+      ;;
+  esac
+  rm -f "$stderr_file"
+  export INTEGRATION_STRIPE_WEBHOOK_SECRET="$secret"
+}
+
+# Stripe mode has no seed to fall back on: the default plan must come from the
+# Stripe product sync, which marks it with the default price's Default=true.
+assert_stripe_default_plan() {
+  local plans_json="$1" found
+  found=$(printf '%s' "$plans_json" | node -e "
+let raw = ''
+process.stdin.on('data', (chunk) => (raw += chunk))
+process.stdin.on('end', () => {
+  try {
+    const parsed = JSON.parse(raw)
+    const ok = Array.isArray(parsed) && parsed.some((plan) => plan.default === true && String(plan.id).startsWith('prod_'))
+    console.log(ok ? 1 : 0)
+  } catch {
+    console.log(0)
+  }
+})
+" 2>/dev/null || echo 0)
+  if [ "$found" != 1 ]; then
+    echo "ERROR: the Stripe product sync did not produce a default plan: GET $INTEGRATION_API_URL/plans has no plan with default: true and an id starting with prod_. Check the api logs and that the sandbox has a product whose default price has metadata Default=true." >&2
+    exit 1
+  fi
+}
+
+# Stripe mode: stripe-listen exits at once on a bad setup (a stripe-cli that
+# refuses its flags, or a key it cannot use), so check it survived startup. The
+# short retry only covers the gap between `up -d` and the container settling.
+assert_stripe_listener_running() {
+  local waited=0
+  while [ -z "$(compose ps --status running -q stripe-listen 2>/dev/null)" ]; do
+    if [ "$waited" -ge 15 ]; then
+      echo "ERROR: the stripe-listen container is not running, so no Stripe webhooks reach the api. Its last log lines:" >&2
+      compose logs --tail 20 stripe-listen 2>&1 | redact_stripe_secrets >&2 || true
+      echo "hint: check that INTEGRATION_STRIPE_SECRET_KEY is a valid sk_test_ key for the sandbox you mean to use." >&2
+      return 1
+    fi
+    sleep 3
+    waited=$((waited + 3))
+  done
+}
+
 # True when this project's own containers are already running. `compose up -d`
 # is idempotent, so the point of asking is the port check below: without this,
 # re-running `up` on a live stack reports "port 8080 already in use" and blames
@@ -117,25 +218,53 @@ cmd_up() {
     fi
   fi
 
+  if [ -n "$STRIPE_MODE" ]; then
+    derive_stripe_webhook_secret
+    if [ -z "${INTEGRATION_STRIPE_PUBLIC_KEY:-}" ]; then
+      echo "WARNING: INTEGRATION_STRIPE_PUBLIC_KEY is not set. The app will not show Stripe checkout, and the checkout spec will fail." >&2
+    fi
+  fi
+
   echo "== starting stack" >&2
   echo "== images: ${VOCDONI_NODE_IMAGE:-ghcr.io/vocdoni/vocdoni-node:main} ${SAAS_BACKEND_IMAGE:-ghcr.io/vocdoni/saas-backend:main}" >&2
+  if [ -n "$STRIPE_MODE" ]; then
+    echo "== billing: Stripe test sandbox, plans from the Stripe product sync" >&2
+  fi
   compose up -d
 
   echo "== waiting for mongo and vocone to be healthy" >&2
   wait_container_healthy mongo 60
+  if [ -n "$STRIPE_MODE" ]; then
+    # `run` keeps volumes, so a stack seeded in default mode still holds its local-dev
+    # plan. Drop it, or the default-plan check below would pass on the stale plan.
+    compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' \
+      --eval "db.getSiblingDB('saasdb').plans.deleteOne({ _id: 'local-dev' })" >/dev/null
+  fi
   # Kept above vocone's own healthcheck window (~420s, see the compose file):
   # `compose up -d` already gates on that via depends_on/service_healthy, so
   # this is only a backstop for the case where the container is healthy-but-slow
   # to report. Do not tighten it below the compose window.
   wait_container_healthy vocone 450
 
-  echo "== seeding default plan" >&2
-  compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' <"$SEED_FILE"
+  if [ -n "$STRIPE_MODE" ]; then
+    echo "== skipping plan seed: plans come from the Stripe product sync" >&2
+  else
+    echo "== seeding default plan" >&2
+    compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' <"$SEED_FILE"
+  fi
 
   echo "== waiting for api to answer /ping" >&2
   wait_url_ready "$INTEGRATION_API_URL/ping" "api" 60
 
-  echo "== asserting the plan seed took" >&2
+  if [ -n "$STRIPE_MODE" ]; then
+    assert_stripe_listener_running
+  fi
+
+  if [ -n "$STRIPE_MODE" ]; then
+    echo "== asserting GET /plans has a default plan from the Stripe sync" >&2
+  else
+    echo "== asserting the plan seed took" >&2
+  fi
   PLANS_JSON=$(curl -fsS -m 10 "$INTEGRATION_API_URL/plans" || echo "")
   # Separate "could not ask" from "asked, got nothing". Without this the seed
   # assertion below blames db.Plan bson tags for what is really a dead API.
@@ -143,10 +272,13 @@ cmd_up() {
     echo "ERROR: GET $INTEGRATION_API_URL/plans did not respond — the api container is not serving. This is NOT a seed problem; check the api logs." >&2
     exit 1
   fi
-  # Parsed with node, not python3: node is already a hard requirement of this
-  # repo (this script ends by running pnpm), so this adds no new dependency —
-  # whereas python3 is not guaranteed on a contributor's machine.
-  PLANS_COUNT=$(printf '%s' "$PLANS_JSON" | node -e "
+  if [ -n "$STRIPE_MODE" ]; then
+    assert_stripe_default_plan "$PLANS_JSON"
+  else
+    # Parsed with node, not python3: node is already a hard requirement of this
+    # repo (this script ends by running pnpm), so this adds no new dependency —
+    # whereas python3 is not guaranteed on a contributor's machine.
+    PLANS_COUNT=$(printf '%s' "$PLANS_JSON" | node -e "
 let raw = ''
 process.stdin.on('data', (chunk) => (raw += chunk))
 process.stdin.on('end', () => {
@@ -158,9 +290,10 @@ process.stdin.on('end', () => {
   }
 })
 " 2>/dev/null || echo 0)
-  if [ "${PLANS_COUNT:-0}" -lt 1 ] 2>/dev/null; then
-    echo "plan seed did not take — check db.Plan bson tags against integration/seed-plan.js" >&2
-    exit 1
+    if [ "${PLANS_COUNT:-0}" -lt 1 ] 2>/dev/null; then
+      echo "plan seed did not take — check db.Plan bson tags against integration/seed-plan.js" >&2
+      exit 1
+    fi
   fi
 
   echo "== waiting for the MailHog inbox" >&2
@@ -179,7 +312,8 @@ process.stdin.on('end', () => {
 }
 
 cmd_down() {
-  compose down -v
+  # --remove-orphans also removes stripe-listen when this run is not in Stripe mode.
+  compose down -v --remove-orphans
 }
 
 cmd_run() {
@@ -219,7 +353,7 @@ cmd_run() {
     echo "     stop:  scripts/integration-stack.sh down" >&2
   else
     echo "== suite passed — stopping containers (volumes kept for a fast next boot)" >&2
-    compose down
+    compose down --remove-orphans
   fi
 
   return "$status"

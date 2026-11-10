@@ -87,7 +87,12 @@ export default defineConfig({
       POSTHOG_KEY: '',
       CRISP_WEBSITE_ID: '',
       ANALYTICS_CLIENT_ID: '',
-      STRIPE_PUBLIC_KEY: '',
+      // Only in Stripe mode (INTEGRATION_STRIPE_SECRET_KEY set, see integration/README.md) does the
+      // app get a publishable key, so the checkout spec can reach Stripe. Otherwise it stays empty
+      // and payments stay off in the default suite.
+      STRIPE_PUBLIC_KEY: process.env.INTEGRATION_STRIPE_SECRET_KEY
+        ? process.env.INTEGRATION_STRIPE_PUBLIC_KEY || ''
+        : '',
     },
   },
 })
