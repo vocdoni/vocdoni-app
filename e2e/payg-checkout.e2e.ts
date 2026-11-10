@@ -7,9 +7,10 @@ import { fillStripeCheckout, payStripeCheckout } from './helpers/stripe-checkout
 import { localStack, type StripeClient, type SaasClient } from './helpers/stripe'
 
 /**
- * Flow 5 — pay-per-process top-up against Stripe's test sandbox. Publishing past
- * the free census size is refused for lack of balance; the test pays through
- * Checkout Elements and checks the backend credited, debited and published.
+ * Flow 5 — pay-per-process top-up against Stripe's test sandbox. Past the free
+ * census size the wallet cannot cover the publish, so the review dialog leads to
+ * its card step; the test pays through Checkout Elements and checks the backend
+ * credited, debited and published.
  * A second test tops the wallet up from the billing page and checks the credit.
  */
 
@@ -89,12 +90,19 @@ test.describe('pay-per-process checkout', () => {
         twoFactor: false,
       })
 
-      // Listened for before the click: the refused publish makes the top-up view open its session.
+      // Publish saves the draft and opens the review dialog. Its primary, the last button of its
+      // footer, reads "Add … and publish" once the price and the short wallet are read.
+      await page.getByRole('button', { name: /^Publish$/ }).click()
+      const reviewPrimary = page.getByRole('dialog').getByRole('button').last()
+      await expect(reviewPrimary).toHaveText(/and publish$/, { timeout: 60_000 })
+      await expect(reviewPrimary).toBeEnabled()
+
+      // Listened for before the click: the card step opens the top-up session.
       const checkoutOpened = page.waitForResponse(
         (response) => response.request().method() === 'POST' && CHECKOUT_PATH.test(new URL(response.url()).pathname),
         { timeout: 60_000 }
       )
-      await page.getByRole('button', { name: /^Publish$/ }).click()
+      await reviewPrimary.click()
       const checkout = await checkoutOpened
       expect(checkout.ok()).toBe(true)
       const session = (await checkout.json()) as ProcessCheckoutResponse
