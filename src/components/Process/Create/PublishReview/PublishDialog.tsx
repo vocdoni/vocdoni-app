@@ -1,5 +1,5 @@
 import { Dialog, Portal, useSlotRecipe, VisuallyHidden } from '@chakra-ui/react'
-import { type RefObject, useEffect, useId, useRef } from 'react'
+import { type RefObject, useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isPublishing, type PublishFlowStart, useProcessCheckout } from '~components/Pricing/ProcessCheckout'
 import { useAppEnv } from '~src/app-env'
@@ -12,6 +12,7 @@ import { ProcessCheckoutContent } from './CheckoutContent'
 import { PublishSummary } from './PublishSummary'
 import { stepAnnouncement } from './step-copy'
 import { resolvePublishPrimary } from './summary-facts'
+import { useAnimatedHeight } from './useAnimatedHeight'
 import { WalletStep } from './WalletStep'
 
 export type PublishDialogProps = {
@@ -41,13 +42,20 @@ export const PublishDialog = ({
   const titleId = useId()
   const descriptionId = useId()
   const frame = useSlotRecipe({ key: 'publishReview' })({}).frame
-  const contentRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement | null>(null)
+  // The frame as state too, for the height easing to follow it across the card step's remount
+  const [frameEl, setFrameEl] = useState<HTMLDivElement | null>(null)
+  const frameRef = useCallback((node: HTMLDivElement | null) => {
+    contentRef.current = node
+    setFrameEl(node)
+  }, [])
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymous } = useAppEnv()
   const { price, query: priceQuery } = useProcessPrice(processId)
   const walletQuery = useWallet()
   const { data: group } = useGroup(form?.groupId ?? '', !!form?.groupId)
   const flow = useProcessCheckout({ processId, start, canTopUp, onPublished })
   const { step } = flow
+  useAnimatedHeight(frameEl, step.name)
   // An unreadable wallet (a managed organization) is no wallet; one being re-read is not known yet
   const wallet = walletQuery.isError ? undefined : walletQuery.data
   const locked = isPublishing(step)
@@ -161,7 +169,7 @@ export const PublishDialog = ({
       <Portal>
         <Dialog.Backdrop _open={remounted ? { animationName: 'none' } : undefined} />
         <Dialog.Positioner>
-          <Dialog.Content ref={contentRef} css={frame}>
+          <Dialog.Content ref={frameRef} css={frame}>
             {content}
             {/* Always mounted, so a change of its text is read out (one inserted already filled is not) */}
             <VisuallyHidden role='status' aria-live='polite'>
