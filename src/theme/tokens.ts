@@ -11,7 +11,7 @@ const fonts = defineTokens.fonts({
 })
 
 // Only loaded weights (see fonts.ts): a name with no file behind it makes the browser fake it.
-// Headings, `bold` and <b>/<strong> are 500, running text and labels 400; chakra's stock names
+// Headings, `bold` and <b>/<strong> are 500, running text and default labels 400; chakra's stock names
 // for weights that do not ship are pinned to the nearest loaded one.
 const weight = (value: LoadedFontWeight) => ({ value: String(value) })
 

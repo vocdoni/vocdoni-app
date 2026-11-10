@@ -1,15 +1,26 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { FONT_FAMILY, FONT_PACKAGE, FONT_STACKS, LOADED_FONT_WEIGHTS } from './fonts'
 import { system } from './system'
 
-const themeSource = readFileSync(resolve(__dirname, 'Theme.tsx'), 'utf-8')
+const srcRoot = resolve(__dirname, '..')
+
+// Every @fontsource specifier in src/, whatever the import form, so a font
+// loaded elsewhere cannot slip past the check.
+const sourceFiles = (dir: string): string[] =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = resolve(dir, entry.name)
+    if (entry.isDirectory()) return sourceFiles(path)
+    return /\.(ts|tsx|css)$/.test(entry.name) && !entry.name.endsWith('.test.ts') ? [path] : []
+  })
 
 const importedFontCss = () =>
-  Array.from(themeSource.matchAll(/\bimport\s*['"](@fontsource\/[^'"]+)['"]/g), (match) => match[1])
+  sourceFiles(srcRoot).flatMap((file) =>
+    Array.from(readFileSync(file, 'utf-8').matchAll(/['"](@fontsource\/[^'"]+\.css)['"]/g), (match) => match[1])
+  )
 
 describe('font config', () => {
-  it('Theme.tsx loads exactly the configured weights, one static import each', () => {
+  it('the app loads exactly the configured weights, one static import each', () => {
     expect(importedFontCss()).toEqual(LOADED_FONT_WEIGHTS.map((weight) => `${FONT_PACKAGE}/${weight}.css`))
   })
 
@@ -32,7 +43,7 @@ describe('font config', () => {
     expect(offenders).toEqual([])
   })
 
-  it('renders headings, bold and <b>/<strong> at 500, labels and running text at 400', () => {
+  it('renders headings, bold and <b>/<strong> at 500, default labels and running text at 400', () => {
     expect(system.token('fontWeights.bold')).toBe('500')
     expect(system.token('fontWeights.semibold')).toBe('500')
     expect(system.token('fontWeights.medium')).toBe('400')
