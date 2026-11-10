@@ -1155,6 +1155,7 @@
         "lead_balance": "El saldo de l'entitat cobreix {{balance}}. La resta es paga ara, amb l'IVA.",
         "lead_whole": "Pagues la votació sencera ara, amb l'IVA.",
         "note_zero": "Després de publicar, el saldo queda a zero.",
+        "processing": "Processant el pagament…",
         "secure": "Pagament segur processat per Stripe. Vocdoni no veu ni desa les dades de la targeta.",
         "short": "Falta",
         "title": "Paga {{amount}} i la votació es publica.",
@@ -1203,6 +1204,7 @@
         "weight": "Pes del vot",
         "weighted": "Ponderat"
       },
+      "failed": "No s'ha pogut publicar la votació.",
       "free_trial": "Si només vols fer una prova, tria un cens de {{limit}} persones o menys: és gratis.",
       "how_you_pay": "Com pagues",
       "intro": "Això és el resum de la votació i el que costarà. Si tot és correcte, la pots pagar i publicar des d'aquí mateix.",

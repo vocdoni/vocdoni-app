@@ -1132,6 +1132,7 @@
         "lead_balance": "Das Guthaben der Organisation deckt {{balance}}. Der Rest wird jetzt bezahlt, inklusive MwSt.",
         "lead_whole": "Du bezahlst die ganze Abstimmung jetzt, inklusive MwSt.",
         "note_zero": "Nach der Veröffentlichung bleibt kein Guthaben übrig.",
+        "processing": "Zahlung wird verarbeitet…",
         "secure": "Sichere Zahlung über Stripe. Vocdoni sieht und speichert die Kartendaten nicht.",
         "short": "Fehlt",
         "title": "Zahle {{amount}} und die Abstimmung wird veröffentlicht.",
@@ -1178,6 +1179,7 @@
         "weight": "Stimmgewicht",
         "weighted": "Gewichtet"
       },
+      "failed": "Die Abstimmung konnte nicht veröffentlicht werden.",
       "free_trial": "Wenn du es nur ausprobieren willst, wähle eine Teilnehmerliste mit höchstens {{limit}} Personen: Das ist kostenlos.",
       "how_you_pay": "So zahlst du",
       "intro": "Das ist die Zusammenfassung der Abstimmung und was sie kosten wird. Wenn alles stimmt, kannst du sie gleich hier bezahlen und veröffentlichen.",

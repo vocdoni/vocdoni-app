@@ -1155,6 +1155,7 @@
         "lead_balance": "Il saldo dell'organizzazione copre {{balance}}. Il resto si paga ora, con l'IVA.",
         "lead_whole": "Paghi l'intera votazione ora, con l'IVA.",
         "note_zero": "Dopo la pubblicazione, il saldo sarà a zero.",
+        "processing": "Elaborazione del pagamento…",
         "secure": "Pagamento sicuro elaborato da Stripe. Vocdoni non vede né conserva i dati della carta.",
         "short": "Manca",
         "title": "Paga {{amount}} e la votazione viene pubblicata.",
@@ -1203,6 +1204,7 @@
         "weight": "Peso del voto",
         "weighted": "Ponderato"
       },
+      "failed": "Non è stato possibile pubblicare la votazione.",
       "free_trial": "Se vuoi solo fare una prova, scegli un censimento di {{limit}} persone o meno: è gratis.",
       "how_you_pay": "Come paghi",
       "intro": "Questo è il riepilogo della votazione e di quanto costerà. Se tutto è corretto, puoi pagarla e pubblicarla da qui.",

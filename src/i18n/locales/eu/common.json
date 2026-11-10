@@ -1132,6 +1132,7 @@
         "lead_balance": "Erakundearen saldoak {{balance}} estaltzen ditu. Gainerakoa orain ordaintzen da, BEZarekin.",
         "lead_whole": "Botazio osoa orain ordaintzen duzu, BEZarekin.",
         "note_zero": "Argitaratu ondoren, saldoa zero izango da.",
+        "processing": "Ordainketa prozesatzen…",
         "secure": "Stripek prozesatutako ordainketa segurua. Vocdonik ez ditu txartelaren datuak ikusten ez gordetzen.",
         "short": "Falta da",
         "title": "Ordaindu {{amount}} eta botazioa argitaratuko da.",
@@ -1178,6 +1179,7 @@
         "weight": "Boto-pisua",
         "weighted": "Ponderatua"
       },
+      "failed": "Ezin izan da botazioa argitaratu.",
       "free_trial": "Proba bat egin nahi baduzu soilik, aukeratu {{limit}} lagunekoa edo txikiagoa den erroldea: doakoa da.",
       "how_you_pay": "Nola ordaintzen duzun",
       "intro": "Hau botazioaren laburpena da, eta zenbat kostatuko den. Dena zuzena bada, hemendik bertatik ordaindu eta argitaratu dezakezu.",

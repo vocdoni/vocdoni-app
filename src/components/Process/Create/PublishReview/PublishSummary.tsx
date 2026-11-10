@@ -53,7 +53,10 @@ export type PublishSummaryProps = {
   /** Members of the selected group; undefined while unknown. */
   voters?: number
   price?: ProcessPriceResponse
+  /** No price to show yet: skeletons, primary disabled. */
   priceLoading?: boolean
+  /** A price (or the wallet) being re-read: the last one stays on screen, the primary waits. */
+  priceRefreshing?: boolean
   priceError?: boolean
   priceRetrying?: boolean
   onRetryPrice?: () => void
@@ -75,6 +78,7 @@ export const PublishSummary = ({
   voters,
   price,
   priceLoading,
+  priceRefreshing,
   priceError,
   priceRetrying,
   onRetryPrice,
@@ -88,8 +92,9 @@ export const PublishSummary = ({
 }: PublishSummaryProps) => {
   const { t, i18n } = useTranslation()
   const locale = i18n.resolvedLanguage ?? i18n.language
-  // A price being re-read is not one to act on: the census may have changed since
   const shownPrice = priceLoading ? undefined : price
+  // A price being re-read stays in view, but is not one to act on: the census may have changed since
+  const refreshing = !!priceRefreshing && !!shownPrice
   const primary = resolvePublishPrimary({ price: shownPrice, priceError, wallet, canTopUp })
   const action = primaryAction(primary)
   const code = shownPrice?.currency?.toUpperCase()
@@ -160,8 +165,10 @@ export const PublishSummary = ({
         </Button>
         <Button
           disabled={!action}
+          loading={refreshing && !!action}
+          loadingText={primaryLabel(t, primary, code)}
           onClick={() => {
-            if (action) onPrimary(action)
+            if (action && !refreshing) onPrimary(action)
           }}
         >
           {primaryLabel(t, primary, code)}
