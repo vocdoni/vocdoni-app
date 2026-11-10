@@ -98,10 +98,9 @@ export const createStripeClient = (secretKey: string, baseUrl = STRIPE_API_URL) 
     request<{ deleted: boolean }>('DELETE', `/customers/${customerId}`)
 
   /**
-   * Expires this organization's open top-up sessions created since `sinceUnix` and
-   * deletes their customers. Every session is attempted; failures are collected into
-   * one AggregateError. Completed payments cannot be deleted in Stripe, so only their
-   * customer goes.
+   * Expires this org's open top-up sessions since `sinceUnix` and deletes their
+   * customers, collecting every failure into one AggregateError. Paid sessions
+   * cannot be deleted, so only their customer goes.
    */
   const cleanupCheckoutSessions = async (orgAddress: string, sinceUnix: number): Promise<void> => {
     const wanted = orgAddress.toLowerCase()

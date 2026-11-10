@@ -27,6 +27,12 @@ const PAY_BUTTON = 'form:has(iframe[name^="__privateStripeFrame"]) button[type="
 const CARD_NUMBER = 'input[autocomplete="cc-number"], input[name="number"]'
 const CARD_EXPIRY = 'input[autocomplete="cc-exp"], input[name="expiry"]'
 const CARD_CVC = 'input[autocomplete="cc-csc"], input[name="cvc"]'
+const ADDRESS_FIRST_NAME = '[autocomplete="given-name"], [name="firstName"]'
+const ADDRESS_LAST_NAME = '[autocomplete="family-name"], [name="lastName"]'
+const ADDRESS_LINE1 = '[autocomplete="address-line1"], [name="addressLine1"]'
+const ADDRESS_CITY = '[autocomplete="address-level2"], [name="locality"]'
+const ADDRESS_POSTAL_CODE = '[autocomplete="postal-code"], [name="postalCode"]'
+const ADDRESS_COUNTRY = '[autocomplete="country"], [name="country"]'
 
 /**
  * The Stripe frame holding `selector`. Frames appear while the Elements mount and
@@ -53,13 +59,13 @@ const stripeFrame = async (page: Page, selector: string, timeoutMs = 60_000): Pr
 /** A German address needs no state or province, so automatic tax can compute. */
 const fillStripeCheckout = async (page: Page): Promise<void> => {
   // Split names (ProcessCheckout), so the name is two fields. Country first: it re-renders the rest.
-  const address = await stripeFrame(page, '[autocomplete="address-line1"]')
-  await address.locator('[autocomplete="country"]').selectOption('DE')
-  await address.locator('[autocomplete="given-name"]').fill('E2E')
-  await address.locator('[autocomplete="family-name"]').fill('Runner')
-  await address.locator('[autocomplete="address-line1"]').fill('Unter den Linden 1')
-  await address.locator('[autocomplete="postal-code"]').fill('10117')
-  await address.locator('[autocomplete="address-level2"]').fill('Berlin')
+  const address = await stripeFrame(page, ADDRESS_LINE1)
+  await address.locator(ADDRESS_COUNTRY).selectOption('DE')
+  await address.locator(ADDRESS_FIRST_NAME).fill('E2E')
+  await address.locator(ADDRESS_LAST_NAME).fill('Runner')
+  await address.locator(ADDRESS_LINE1).fill('Unter den Linden 1')
+  await address.locator(ADDRESS_POSTAL_CODE).fill('10117')
+  await address.locator(ADDRESS_CITY).fill('Berlin')
 
   // Stripe's test card that succeeds without 3D Secure.
   const card = await stripeFrame(page, CARD_NUMBER)
@@ -94,6 +100,7 @@ test.describe('pay-per-process checkout', () => {
     // Only sessions created from here on belong to this run.
     const sinceUnix = Math.floor(Date.now() / 1000)
     let orgAddress: string | undefined
+    let bodyPassed = false
 
     try {
       const user = await signUpWithOrganization(page, `PAYG Org ${seed}`)
@@ -148,10 +155,13 @@ test.describe('pay-per-process checkout', () => {
       )
       expect(debit?.amountCents).toBe(-price.totalCents)
       expect(walletAfter.balanceCents).toBe(walletBefore.balanceCents + session.amountCents - price.totalCents)
+      bodyPassed = true
     } finally {
       // Runs after a failure too. A cleanup error is reported, never thrown over the test's own failure.
       if (orgAddress) {
         await stripe.cleanupCheckoutSessions(orgAddress, sinceUnix).catch((error: unknown) => {
+          // A green run must not hide leaked Stripe objects; a failed run keeps its own error.
+          if (bodyPassed) throw error
           const detail =
             error instanceof AggregateError
               ? error.errors.map((cause) => (cause instanceof Error ? cause.message : String(cause))).join('; ')
