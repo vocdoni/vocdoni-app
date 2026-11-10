@@ -3,7 +3,7 @@ import type { ProcessPriceResponse } from '@vocdoni/api-types'
 import { useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuChevronDown } from 'react-icons/lu'
-import { currency } from '~utils/numbers'
+import { currencyExact } from '~utils/numbers'
 import type { Process } from '../common'
 import {
   PublishReviewAmountRow,
@@ -185,12 +185,12 @@ const primaryLabel = (t: T, primary: PublishPrimary, code?: string) => {
     case 'wallet':
       return t('process.publish_review.primary.wallet', {
         defaultValue: 'Publish and pay {{total}}',
-        total: currency(primary.totalCents, code),
+        total: currencyExact(primary.totalCents, code),
       })
     case 'card':
       return t('process.publish_review.primary.card', {
         defaultValue: 'Add {{shortfall}} and publish',
-        shortfall: currency(primary.shortfallCents, code),
+        shortfall: currencyExact(primary.shortfallCents, code),
       })
     default:
       return t('process.publish_review.primary.publish', { defaultValue: 'Publish' })
@@ -200,7 +200,7 @@ const primaryLabel = (t: T, primary: PublishPrimary, code?: string) => {
 const blockedNote = (t: T, shortfallCents: number, code?: string) =>
   t('process.publish_review.blocked', {
     defaultValue: '{{shortfall}} short in the balance. Only an admin can top it up.',
-    shortfall: currency(shortfallCents, code),
+    shortfall: currencyExact(shortfallCents, code),
   })
 
 type CostBoxProps = {
@@ -245,13 +245,13 @@ const CostBox = ({ price, primary, voters, wallet, currencyCode, onRetry, retryi
   // A quote-only price has no lines and its zero total is not a price
   if (primary.kind === 'waiting') return <PublishReviewNote>{costNote(t, price, primary)}</PublishReviewNote>
 
-  const total = currency(price.totalCents, currencyCode)
+  const total = currencyExact(price.totalCents, currencyCode)
   const short = primary.kind === 'card' || primary.kind === 'blocked'
   const summary = short
     ? t('process.publish_review.cost.summary_short', {
         defaultValue: 'Cost: {{total}}. {{shortfall}} short in the balance',
         total,
-        shortfall: currency(primary.shortfallCents, currencyCode),
+        shortfall: currencyExact(primary.shortfallCents, currencyCode),
       })
     : t('process.publish_review.cost.summary', { defaultValue: 'Cost: {{total}}', total })
 

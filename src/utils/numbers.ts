@@ -26,6 +26,9 @@ export const currency = (amount: number, currency: string = 'EUR', options: Curr
   return options.minus === 'true' ? text.replace('-', '\u2212') : text
 }
 
+/** An amount with both cent digits whatever its size ("€33.00"): the publish dialog writes every amount this way. */
+export const currencyExact = (amount: number, code?: string) => currency(amount, code, { cents: 'always' })
+
 /** An amount in a column of amounts (a receipt-like table): always with cents, with a real minus. */
 export const amountFigure = (amount: number, code?: string) =>
   currency(amount, code, { cents: 'always', minus: 'true' })

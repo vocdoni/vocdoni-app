@@ -251,7 +251,7 @@ describe('CardStep', () => {
       state.checkout = { type: 'success', checkout: { confirm: vi.fn() } }
       renderView()
 
-      expect(await screen.findByRole('button', { name: 'Pay €10 and publish' })).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: 'Pay €10.00 and publish' })).toBeInTheDocument()
     })
 
     it('explains that the rest stays in the wallet when the €1 minimum is above the shortfall', async () => {

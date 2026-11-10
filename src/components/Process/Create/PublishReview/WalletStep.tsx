@@ -1,7 +1,7 @@
 import { Button } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import type { ProcessCheckoutFlow } from '~components/Pricing/ProcessCheckout'
-import { amountFigure, currency } from '~utils/numbers'
+import { amountFigure, currencyExact } from '~utils/numbers'
 import {
   PublishReviewAmountRow,
   PublishReviewAmounts,
@@ -24,7 +24,7 @@ export const WalletStep = ({ flow, titleId, currencyCode, onClose }: WalletStepP
   const { t } = useTranslation()
   if (flow.step.name !== 'wallet') return null
   const { totalCents, afterCents } = flow.step
-  const total = currency(totalCents, currencyCode)
+  const total = currencyExact(totalCents, currencyCode)
 
   return (
     <PublishReviewStep>
@@ -66,7 +66,7 @@ export const WalletStep = ({ flow, titleId, currencyCode, onClose }: WalletStepP
           <PublishReviewNote>
             {t('process.publish_review.wallet.note', {
               defaultValue: 'After publishing, the balance will have {{after}} left.',
-              after: currency(afterCents, currencyCode),
+              after: currencyExact(afterCents, currencyCode),
             })}
           </PublishReviewNote>
         </PublishReviewColumn>
