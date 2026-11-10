@@ -5,15 +5,59 @@ import {
   type HTMLChakraProps,
   Skeleton,
 } from '@chakra-ui/react'
-import { forwardRef, type ReactNode } from 'react'
+import { forwardRef, type ReactNode, type RefObject, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft, LuCheck, LuTriangleAlert } from 'react-icons/lu'
 
 // Every piece reads its look from the `publishReview` slot recipe, so a re-theme edits only that file
 const { withProvider, withContext } = createSlotRecipeContext({ key: 'publishReview' })
 
+const StepRoot = withProvider<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'root')
+
+const scrollAreas = '.publish-review__columns, .publish-review__body, .publish-review__status'
+
+// Marks the footer (`data-covering`) while content is scrolled under it, so the recipe can soften its
+// edge. The scrolling part is the step itself on a phone and the middle from md up; both are read, and
+// re-read as the step scrolls, resizes or changes (the cost panel opens, Stripe's frames grow)
+const useFooterHint = (rootRef: RefObject<HTMLElement | null>) => {
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return
+    const update = () => {
+      const footer = root.querySelector('.publish-review__footer')
+      if (!footer) return
+      const covered = [root, ...Array.from(root.querySelectorAll<HTMLElement>(scrollAreas))].some((area) => {
+        const overflow = getComputedStyle(area).overflowY
+        return (
+          (overflow === 'auto' || overflow === 'scroll') &&
+          area.scrollHeight - area.scrollTop - area.clientHeight > 1
+        )
+      })
+      footer.toggleAttribute('data-covering', covered)
+    }
+    update()
+    // Scroll events do not bubble: caught on the way down
+    root.addEventListener('scroll', update, true)
+    window.addEventListener('resize', update)
+    const resize = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(update)
+    resize?.observe(root)
+    const mutations = typeof MutationObserver === 'undefined' ? undefined : new MutationObserver(update)
+    mutations?.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'height'] })
+    return () => {
+      root.removeEventListener('scroll', update, true)
+      window.removeEventListener('resize', update)
+      resize?.disconnect()
+      mutations?.disconnect()
+    }
+  }, [rootRef])
+}
+
 /** One step of the dialog. Render it directly inside `Dialog.Content`; it provides the recipe. */
-export const PublishReviewStep = withProvider<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'root')
+export const PublishReviewStep = (props: HTMLChakraProps<'div'>) => {
+  const ref = useRef<HTMLDivElement>(null)
+  useFooterHint(ref)
+  return <StepRoot ref={ref} {...props} />
+}
 
 const HeaderBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'header')
 const TopBar = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'topBar')

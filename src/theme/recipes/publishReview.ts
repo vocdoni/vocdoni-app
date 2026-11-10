@@ -23,6 +23,16 @@ const scrollArea = {
  * Per-row and per-callout looks are data attributes (`data-strong`, `data-tone`...), not variants,
  * because one step mixes several of them.
  */
+// The settle-in of a step and of the cost panel: motion-safe only
+const settleIn = {
+  _motionSafe: {
+    animationName: 'publish-review-in',
+    animationDuration: 'fast',
+    animationTimingFunction: 'ease-out',
+    animationFillMode: 'backwards',
+  },
+} as const
+
 export const PublishReview = defineSlotRecipe({
   className: 'publish-review',
   slots: [
@@ -82,6 +92,11 @@ export const PublishReview = defineSlotRecipe({
       mb: { md: 12 },
       [shortScreen]: { mt: { md: 4 }, mb: { md: 4 } },
       overflow: 'hidden',
+      // While the dialog eases to the next step's height (useAnimatedHeight) the middle is cut off at the
+      // frame instead of showing a scrollbar for a moment
+      '&[data-resizing]': {
+        '& .publish-review__columns, & .publish-review__body, & .publish-review__status': { overflowY: 'hidden' },
+      },
     },
     // Fills Dialog.Content (a flex column capped at the viewport) and may shrink below its content,
     // so the middle part scrolls while the header and the footer stay in view
@@ -97,6 +112,7 @@ export const PublishReview = defineSlotRecipe({
       fontFamily: 'body',
       fontSize: 'sm',
       lineHeight: 1.5,
+      ...settleIn,
     },
     header: {
       display: 'flex',
@@ -308,6 +324,7 @@ export const PublishReview = defineSlotRecipe({
       // In dark mode `bg.muted` is lighter than the dialog, which raises the box instead of sinking it
       _dark: { bg: 'black' },
       borderRadius: 'l3',
+      ...settleIn,
     },
     costTitle: {
       m: 0,
@@ -371,7 +388,7 @@ export const PublishReview = defineSlotRecipe({
       gap: { base: 3.5, md: 6 },
       mt: 'auto',
       flexShrink: 0,
-      position: { base: 'sticky', md: 'static' },
+      position: { base: 'sticky', md: 'relative' },
       [shortScreen]: { position: 'sticky' },
       bottom: 0,
       zIndex: 1,
@@ -383,6 +400,22 @@ export const PublishReview = defineSlotRecipe({
       borderTopWidth: '1px',
       borderColor: 'border',
       borderBottomRadius: { base: 0, md: 'inherit' },
+      // A soft edge above the footer while content is scrolled under it (set by PublishReviewStep)
+      _before: {
+        content: '""',
+        position: 'absolute',
+        insetInline: 0,
+        bottom: '100%',
+        h: 6,
+        pointerEvents: 'none',
+        bgGradient: 'to-t',
+        gradientFrom: 'blackAlpha.100',
+        gradientTo: 'transparent',
+        _dark: { gradientFrom: 'whiteAlpha.100' },
+        opacity: 0,
+        _motionSafe: { transitionProperty: 'opacity', transitionDuration: 'fast' },
+      },
+      '&[data-covering]::before': { opacity: 1 },
     },
     footerNote: {
       flex: { base: '0 0 auto', md: '1 1 15rem' },
