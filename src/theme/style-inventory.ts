@@ -50,7 +50,7 @@ export const STYLE_EXCEPTIONS: readonly StyleException[] = [
     reason: 'react-pdf renders outside chakra: no tokens, no colour mode, raw values are the only option',
   },
   {
-    glob: 'src/components/Pricing/SubscriptionPayment.tsx',
+    glob: 'src/components/Pricing/stripe.ts',
     categories: ['hex', 'namedColor', 'colorModeLogic'],
     reason: 'Stripe Elements appearance API takes raw CSS colours and its own light/dark themes',
   },
@@ -216,17 +216,7 @@ const NUMERIC_RE = /^-?\d*\.?\d+$/
 const TOKEN_LOOKING_RE = /^[a-zA-Z][\w]*(?:[.-][\w]+)+$/
 const BARE_WORD_RE = /^[a-zA-Z_]\w*$/
 // CSS colour keywords that are valid without being tokens or named colours
-const COLOR_KEYWORDS = new Set([
-  'transparent',
-  'currentColor',
-  'currentcolor',
-  'inherit',
-  'initial',
-  'unset',
-  'revert',
-  'none',
-  'auto',
-])
+const COLOR_KEYWORDS = new Set(['transparent', 'currentcolor', 'inherit', 'initial', 'unset', 'revert', 'none', 'auto'])
 
 const hasRawLength = (value: string) =>
   [...value.matchAll(RAW_LENGTH_RE)].some((match) => Number.parseFloat(match[1]) !== 0)
@@ -328,6 +318,8 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
   )
   const occurrences: StyleOccurrence[] = []
   const classified = new Set<ts.Node>()
+  // A shared `const` is one node read by several props, so dedupe per (node, prop), not per node
+  const classifiedProps = new Map<ts.Node, Set<string>>()
 
   const record = (category: StyleCategory, node: ts.Node, count = 1) => {
     if (isExcepted(file, category)) return
@@ -389,7 +381,7 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
           words.length === 1 &&
           (TOKEN_LOOKING_RE.test(base) || BARE_WORD_RE.test(base)) &&
           !isCssLiteral(base) &&
-          !COLOR_KEYWORDS.has(base) &&
+          !COLOR_KEYWORDS.has(base.toLowerCase()) &&
           !tokenExists('colors', base)
         ) {
           // Dotted or dashed names (`process.paused`) and bare words (`error`) that resolve to no token: Chakra emits
@@ -493,7 +485,10 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
     if (!expression) return
     const node = unwrap(expression)
     if (classified.has(node)) return
-    classified.add(node)
+    const seen = classifiedProps.get(node) ?? new Set<string>()
+    if (seen.has(prop)) return
+    seen.add(prop)
+    classifiedProps.set(node, seen)
 
     if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
       classifyString(prop, node.text, node)
@@ -523,7 +518,7 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
           if (ts.isPropertyAssignment(property)) propValue(prop, property.initializer)
         }
       } else {
-        classified.delete(node)
+        seen.delete(prop)
         styleObject(node)
       }
     } else if (

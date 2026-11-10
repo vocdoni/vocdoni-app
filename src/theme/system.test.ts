@@ -92,14 +92,16 @@ const TOKEN_PROP_KEYWORDS = new Set([
   'revert',
 ])
 
-// Recipe paths whose non-color token is known to be dangling, pending their fix.
-// removed by fix/theme-dead-tokens (PR 1.1); delete this entry then
+// Badge size recipes use lineHeight xs-lg, which are not lineHeights tokens. Tolerated until #1914 fixes them; the
+// test below fails once an entry stops being invalid, so it must then be deleted.
 const KNOWN_INVALID = new Set<string>([
   'badge.variants.size.xs.lineHeight',
   'badge.variants.size.sm.lineHeight',
   'badge.variants.size.md.lineHeight',
   'badge.variants.size.lg.lineHeight',
 ])
+
+const confirmedInvalid = new Set<string>()
 
 const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes, resultsProgress: resultsProgressRecipe }
 
@@ -123,10 +125,14 @@ type Violation = { path: string; value: string; reason: string }
 
 // Checks a string used as the value of a non-color token prop (lineHeight, fontSize, radius, …)
 const checkTokenValue = (value: string, path: string, category: string, violations: Violation[]) => {
-  if (KNOWN_INVALID.has(path) || CSS_KEYWORDS.has(value) || TOKEN_PROP_KEYWORDS.has(value)) return
+  if (CSS_KEYWORDS.has(value) || TOKEN_PROP_KEYWORDS.has(value)) return
   // Numbers, lengths and composite values (`0 0 0 1px …`) are not token references
   if (!/^[a-zA-Z][\w-]*(\.[\w-]+)*$/.test(value)) return
   if (system.tokens.getByName(`${category}.${value}`) === undefined) {
+    if (KNOWN_INVALID.has(path)) {
+      confirmedInvalid.add(path)
+      return
+    }
     violations.push({ path, value, reason: `${category} token not found in the built system` })
   }
 }
@@ -245,6 +251,10 @@ describe('theme system integrity', () => {
     const violations: Violation[] = []
     walk(recipe, name, false, violations, recipeSlotNames(recipe))
     expect(violations, `\n${formatViolations(violations)}`).toEqual([])
+  })
+
+  it('KNOWN_INVALID only lists recipe paths that are still invalid', () => {
+    expect([...KNOWN_INVALID].filter((path) => !confirmedInvalid.has(path))).toEqual([])
   })
 
   it.each([

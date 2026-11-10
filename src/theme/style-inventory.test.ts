@@ -5,6 +5,7 @@ import {
   collectStyleInventory,
   emptyCounts,
   isScannedFile,
+  listScannedFiles,
   scanSource,
   serializeCounts,
   STYLE_CATEGORIES,
@@ -102,6 +103,14 @@ describe('style inventory scanner', () => {
     ])
   })
 
+  it('counts a shared const once per prop that reads it', () => {
+    expect(categoriesOf(`const w = '240px'\nexport const A = () => <Box w={w} h={w} />`)).toEqual(['pxSize', 'pxSize'])
+  })
+
+  it('treats CSS colour keywords case-insensitively', () => {
+    expect(categoriesOf(`<Box bg='CurrentColor' color='Transparent' />`)).toEqual([])
+  })
+
   it('reads react-select style configs', () => {
     const code = `<Select chakraStyles={{ menu: (base) => ({ ...base, zIndex: 20, bg: 'gray.50' }) }} />`
     expect(categoriesOf(code).sort()).toEqual(['rawPalette', 'rawZIndex'])
@@ -114,6 +123,12 @@ describe('style inventory scanner', () => {
 
   it('applies the documented exceptions', () => {
     expect(STYLE_EXCEPTIONS.every((exception) => exception.reason.trim().length > 0)).toBe(true)
+    const files = listScannedFiles(ROOT)
+    for (const exception of STYLE_EXCEPTIONS) {
+      const prefix = exception.glob.replace(/\*\*$/, '')
+      const matches = files.some((file) => (exception.glob.endsWith('**') ? file.startsWith(prefix) : file === prefix))
+      expect(matches, `exception ${exception.glob} matches no scanned file`).toBe(true)
+    }
     const pdf = `<View style={{ color: '#123456', fontSize: 12 }} />`
     expect(categoriesOf(pdf, 'src/components/Process/VotingReportPdf/Report.tsx')).toEqual([])
     const select = `<Select styles={{ menuPortal: (base) => ({ ...base, zIndex: 1600 }) }} />`
