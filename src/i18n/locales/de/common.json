@@ -1195,6 +1195,12 @@
         "publish": "Veröffentlichen",
         "wallet": "Veröffentlichen und {{total}} zahlen"
       },
+      "progress": {
+        "hint": "Das kann eine Minute dauern.",
+        "payment": "Zahlung eingegangen",
+        "published": "Abstimmung veröffentlicht",
+        "publishing": "Die Abstimmung wird veröffentlicht…"
+      },
       "questions_one": "{{count}} Frage",
       "questions_other": "{{count}} Fragen",
       "this_vote": "Diese Abstimmung",

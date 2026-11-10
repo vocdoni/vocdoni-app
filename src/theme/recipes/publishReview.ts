@@ -74,6 +74,10 @@ export const PublishReview = defineSlotRecipe({
     'actions',
     'body',
     'status',
+    'progress',
+    'progressItem',
+    'statusHint',
+    'publishedMark',
     'skeleton',
     'stripeField',
     'stripeMount',
@@ -463,6 +467,37 @@ export const PublishReview = defineSlotRecipe({
       textAlign: 'center',
       fontSize: 'md',
       '& > p': { m: 0 },
+    },
+    // The stages of a wait: done ones muted, the one under way in full
+    progress: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      gap: 3,
+      m: 0,
+      p: 0,
+      listStyle: 'none',
+    },
+    progressItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 2.5,
+      '&[data-state=done]': { color: 'fg.muted' },
+      '&[data-state=done] svg': { boxSize: 5, color: 'green.fg' },
+    },
+    statusHint: {
+      color: 'fg.muted',
+      fontSize: 'sm',
+    },
+    publishedMark: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      boxSize: 12,
+      borderRadius: 'full',
+      bg: 'green.subtle',
+      color: 'green.fg',
+      '& svg': { boxSize: 6 },
     },
     // Stand-ins for what Stripe renders once loaded, sized like it
     skeleton: {

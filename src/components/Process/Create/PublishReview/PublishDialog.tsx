@@ -22,6 +22,8 @@ export type PublishDialogProps = {
   start: PublishFlowStart
   canTopUp: boolean
   onPublished: (processId: string) => void
+  /** How long "Vote published" shows before `onPublished`; see `useProcessCheckout`. */
+  successMs?: number
   /** Closes the dialog; never called while a publish is under way. */
   onClose: () => void
   /** Gets focus back when the dialog closes and focus would otherwise be lost (the wizard's Publish). */
@@ -35,6 +37,7 @@ export const PublishDialog = ({
   start,
   canTopUp,
   onPublished,
+  successMs,
   onClose,
   returnFocusRef,
 }: PublishDialogProps) => {
@@ -53,7 +56,7 @@ export const PublishDialog = ({
   const { price, query: priceQuery } = useProcessPrice(processId)
   const walletQuery = useWallet()
   const { data: group } = useGroup(form?.groupId ?? '', !!form?.groupId)
-  const flow = useProcessCheckout({ processId, start, canTopUp, onPublished })
+  const flow = useProcessCheckout({ processId, start, canTopUp, onPublished, successMs })
   const { step } = flow
   useAnimatedHeight(frameEl, step.name)
   // An unreadable wallet (a managed organization) is no wallet; one being re-read is not known yet

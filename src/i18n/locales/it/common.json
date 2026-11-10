@@ -1222,6 +1222,12 @@
         "publish": "Pubblica",
         "wallet": "Pubblica e paga {{total}}"
       },
+      "progress": {
+        "hint": "Può richiedere un minuto.",
+        "payment": "Pagamento ricevuto",
+        "published": "Votazione pubblicata",
+        "publishing": "Pubblicazione della votazione…"
+      },
       "questions_one": "{{count}} domanda",
       "questions_many": "{{count}} domande",
       "questions_other": "{{count}} domande",

@@ -109,6 +109,12 @@ export const PublishReviewNote = withContext<HTMLParagraphElement, HTMLChakraPro
 export const PublishReviewBody = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'body')
 /** Centred spinner and message of a wait. */
 export const PublishReviewStatus = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'status')
+/** The stages of a wait; each item has `data-state` `done` or `active`. */
+export const PublishReviewProgress = withContext<HTMLUListElement, HTMLChakraProps<'ul'>>('ul', 'progress')
+export const PublishReviewProgressItem = withContext<HTMLLIElement, HTMLChakraProps<'li'>>('li', 'progressItem')
+export const PublishReviewStatusHint = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'statusHint')
+/** The round check of the success moment. */
+export const PublishReviewPublishedMark = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'publishedMark')
 /** Placeholder while Stripe loads; `data-kind` is `lead`, `amounts` or `field`. */
 export const PublishReviewSkeleton = withContext<HTMLDivElement, HTMLChakraProps<'div'>>(Skeleton, 'skeleton')
 /** The lock line under the card form; the icon goes first. */

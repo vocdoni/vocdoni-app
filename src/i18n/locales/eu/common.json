@@ -1195,6 +1195,12 @@
         "publish": "Argitaratu",
         "wallet": "Argitaratu eta ordaindu {{total}}"
       },
+      "progress": {
+        "hint": "Minutu bat behar izan dezake.",
+        "payment": "Ordainketa jasota",
+        "published": "Boto-ematea argitaratuta",
+        "publishing": "Boto-ematea argitaratzen…"
+      },
       "questions_one": "{{count}} galdera",
       "questions_other": "{{count}} galdera",
       "this_vote": "Botazio hau",

@@ -1222,6 +1222,12 @@
         "publish": "Publica",
         "wallet": "Publica i paga {{total}}"
       },
+      "progress": {
+        "hint": "Pot trigar un minut.",
+        "payment": "Pagament rebut",
+        "published": "Votació publicada",
+        "publishing": "Publicant la votació…"
+      },
       "questions_one": "{{count}} pregunta",
       "questions_many": "{{count}} preguntes",
       "questions_other": "{{count}} preguntes",

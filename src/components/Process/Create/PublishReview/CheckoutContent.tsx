@@ -7,8 +7,8 @@ import { useStripePromise } from '~components/Pricing/stripe'
 import { Routes } from '~routes'
 import { CardLayout, CardStep } from './CardStep'
 import { ExitButton, Outcome, OutcomeStep } from './OutcomeStep'
-import { StatusStep } from './StatusStep'
-import { failedLead, outcomeText, waitText } from './step-copy'
+import { PublishedStep, StatusStep } from './StatusStep'
+import { failedLead, outcomeText, paymentReceived, publishedText, waitText } from './step-copy'
 
 type ProcessCheckoutContentProps = {
   flow: ProcessCheckoutFlow
@@ -116,10 +116,33 @@ export const ProcessCheckoutContent = ({
     case 'publishing':
     case 'waiting':
       return (
-        <StatusStep title={title} titleId={titleId} descriptionId={descriptionId}>
+        <StatusStep
+          title={title}
+          titleId={titleId}
+          descriptionId={descriptionId}
+          progress={[
+            ...(paymentReceived(step, flow.paymentSeen)
+              ? [
+                  {
+                    key: 'payment',
+                    label: t('process.publish_review.progress.payment', { defaultValue: 'Payment received' }),
+                    state: 'done' as const,
+                  },
+                ]
+              : []),
+            {
+              key: 'publishing',
+              label: t('process.publish_review.progress.publishing', { defaultValue: 'Publishing the vote…' }),
+              state: 'active' as const,
+            },
+          ]}
+          hint={t('process.publish_review.progress.hint', { defaultValue: 'This can take a minute.' })}
+        >
           {waitText(t, step, flow.paymentSeen)}
         </StatusStep>
       )
+    case 'published':
+      return <PublishedStep title={title} titleId={titleId} label={publishedText(t)} />
     case 'unconfirmed':
       return outcome(
         <Outcome status='info'>{outcomeText(t, step)}</Outcome>,
