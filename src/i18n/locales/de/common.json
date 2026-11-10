@@ -1128,6 +1128,7 @@
       "blocked": "Es fehlen {{shortfall}} Guthaben. Nur ein Admin kann es aufladen.",
       "card": {
         "billing": "Rechnungsdaten",
+        "cta_loading": "Bezahlen und veröffentlichen",
         "lead_balance": "Das Guthaben der Organisation deckt {{balance}}. Der Rest wird jetzt bezahlt, inklusive MwSt.",
         "lead_whole": "Du bezahlst die ganze Abstimmung jetzt, inklusive MwSt.",
         "note_zero": "Nach der Veröffentlichung bleibt kein Guthaben übrig.",

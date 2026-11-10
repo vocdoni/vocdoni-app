@@ -87,7 +87,7 @@ export const formatLongDateTime = (date: Date, locale?: string) =>
     weekday: 'long',
     day: 'numeric',
     month: 'long',
-    hour: '2-digit',
+    hour: 'numeric',
     minute: '2-digit',
   }).format(date)
 
@@ -96,7 +96,7 @@ export const formatShortDateTime = (date: Date, locale?: string) =>
     weekday: 'short',
     day: 'numeric',
     month: 'short',
-    hour: '2-digit',
+    hour: 'numeric',
     minute: '2-digit',
   }).format(date)
 

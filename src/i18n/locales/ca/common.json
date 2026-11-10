@@ -1151,6 +1151,7 @@
       "blocked": "Falten {{shortfall}} de saldo. Només un administrador el pot recarregar.",
       "card": {
         "billing": "Dades de facturació",
+        "cta_loading": "Paga i publica",
         "lead_balance": "El saldo de l'entitat cobreix {{balance}}. La resta es paga ara, amb l'IVA.",
         "lead_whole": "Pagues la votació sencera ara, amb l'IVA.",
         "note_zero": "Després de publicar, el saldo queda a zero.",

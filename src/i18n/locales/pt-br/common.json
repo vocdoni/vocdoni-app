@@ -1151,6 +1151,7 @@
       "blocked": "Faltam {{shortfall}} de saldo. Só um administrador pode recarregá-lo.",
       "card": {
         "billing": "Dados de faturamento",
+        "cta_loading": "Pagar e publicar",
         "lead_balance": "O saldo da organização cobre {{balance}}. O restante é pago agora, com IVA.",
         "lead_whole": "Você paga a votação inteira agora, com IVA.",
         "note_zero": "Depois de publicar, o saldo fica zerado.",

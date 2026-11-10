@@ -1,4 +1,4 @@
-import { Button, Dialog, Portal } from '@chakra-ui/react'
+import { Button, Dialog, Portal, useSlotRecipe } from '@chakra-ui/react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -45,6 +45,7 @@ export type PublishDialogProps = {
 /** Review, pay and publish a saved draft, in one dialog over the wizard. */
 export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, onClose }: PublishDialogProps) => {
   const titleId = useId()
+  const frame = useSlotRecipe({ key: 'publishReview' })({}).frame
   const contentRef = useRef<HTMLDivElement>(null)
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymous } = useAppEnv()
   const { price, query: priceQuery } = useProcessPrice(processId)
@@ -135,15 +136,7 @@ export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, o
       <Portal>
         <Dialog.Backdrop _open={remounted ? { animationName: 'none' } : undefined} />
         <Dialog.Positioner>
-          {/* The phone-sized 'full' size sets these; undo them from md up or the dialog fills the viewport */}
-          <Dialog.Content
-            ref={contentRef}
-            maxW={{ md: '820px' }}
-            minH={{ md: 'auto' }}
-            borderRadius={{ md: 'l3' }}
-            mx={{ md: 4 }}
-            overflow='hidden'
-          >
+          <Dialog.Content ref={contentRef} css={frame}>
             {content}
           </Dialog.Content>
         </Dialog.Positioner>

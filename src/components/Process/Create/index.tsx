@@ -39,11 +39,7 @@ import { PageLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { draftSavePaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
-import {
-  checkoutStartForRefusal,
-  type ProcessCheckoutStart,
-  type PublishFlowStart,
-} from '~components/Pricing/ProcessCheckout'
+import type { PublishFlowStart } from '~components/Pricing/ProcessCheckout'
 import { ProcessQuoteAlert } from '~components/Pricing/ProcessPrice'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
@@ -73,7 +69,6 @@ export { buildCensusSpec }
 type ConfirmOnNavigateOptions = {
   isDirty: boolean
   isSubmitting?: boolean
-  isSubmitSuccessful?: boolean
   onOpen: () => void
   onClose: () => void
 }
@@ -98,26 +93,13 @@ type UpdateProcessRequest = {
  */
 const isDraftLimitError = (error: unknown) => apiErrorDetails(error)?.code === ErrorCode.DraftLimitReached
 
-/**
- * The payment view a refused publish opens. Only who can top up the wallet may pay; a manager keeps
- * the toast and its way to the wallet.
- */
-export const paymentCheckoutStart = (error: unknown, canTopUp: boolean): ProcessCheckoutStart | undefined =>
-  canTopUp ? checkoutStartForRefusal(error) : undefined
-
 const saveTimeoutMs = 30000
 
-export const useConfirmOnNavigate = ({
-  isDirty,
-  isSubmitting,
-  isSubmitSuccessful,
-  onOpen,
-  onClose,
-}: ConfirmOnNavigateOptions) => {
+export const useConfirmOnNavigate = ({ isDirty, isSubmitting, onOpen, onClose }: ConfirmOnNavigateOptions) => {
   const [snoozeUntil, setSnoozeUntil] = useState<number | null>(null)
   const isSnoozed = snoozeUntil !== null && Date.now() < snoozeUntil
 
-  const shouldBlock = isDirty && !isSubmitting && !isSubmitSuccessful && !isSnoozed
+  const shouldBlock = isDirty && !isSubmitting && !isSnoozed
   const blocker = useBlocker(shouldBlock)
 
   const isOpenRef = useRef(false)
@@ -649,7 +631,7 @@ const ProcessCreateView = () => {
   // resumes (and tries to update) a draft owned by a different org
   const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
-  const { isSubmitting, isSubmitSuccessful, isDirty: isFormDirty } = methods.formState
+  const { isSubmitting, isDirty: isFormDirty } = methods.formState
   // Back from a redirect-based payment (the return route), the draft it was opened for is read from storage
   const returningFromCheckout = sessionId !== undefined
   const [returnDraftId] = useState(() => (returningFromCheckout ? readPendingCheckout() : undefined))
@@ -672,7 +654,6 @@ const ProcessCreateView = () => {
   const { isSamePath, cancel, proceed, resetSamePath, saveCooldown } = useConfirmOnNavigate({
     isDirty,
     isSubmitting,
-    isSubmitSuccessful,
     onOpen: openConfirmationModal,
     onClose: () => setLeaveConfirmationOpen(false),
   })
@@ -945,7 +926,7 @@ const ProcessCreateView = () => {
 
   return (
     <FormProvider {...methods}>
-      <Box position='relative' w='full' overflow='hidden' height='full'>
+      <Box position='relative' w='full' overflow='hidden' height='full' inert={!!publishDialog}>
         <DashboardContents
           as='form'
           onSubmit={methods.handleSubmit(onSubmit, onError)}

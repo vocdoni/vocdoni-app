@@ -1128,6 +1128,7 @@
       "blocked": "{{shortfall}} short in the balance. Only an admin can top it up.",
       "card": {
         "billing": "Billing details",
+        "cta_loading": "Pay and publish",
         "lead_balance": "The organization's balance covers {{balance}}. The rest is paid now, with VAT.",
         "lead_whole": "You pay the whole vote now, with VAT.",
         "note_zero": "After publishing, the balance is left at zero.",

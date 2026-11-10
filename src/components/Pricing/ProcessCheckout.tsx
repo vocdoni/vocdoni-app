@@ -746,10 +746,9 @@ const CardForm = ({
             </Button>
           )}
           <Button type='submit' loading={busy} disabled={loading}>
-            {t('process.checkout.pay', {
-              defaultValue: 'Pay {{amount}} and publish',
-              amount: payAmount ?? '',
-            })}
+            {payAmount
+              ? t('process.checkout.pay', { defaultValue: 'Pay {{amount}} and publish', amount: payAmount })
+              : t('process.publish_review.card.cta_loading', { defaultValue: 'Pay and publish' })}
           </Button>
         </PublishReviewFooter>
       </form>

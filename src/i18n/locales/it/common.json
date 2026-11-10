@@ -1151,6 +1151,7 @@
       "blocked": "Mancano {{shortfall}} di saldo. Solo un amministratore può ricaricarlo.",
       "card": {
         "billing": "Dati di fatturazione",
+        "cta_loading": "Paga e pubblica",
         "lead_balance": "Il saldo dell'organizzazione copre {{balance}}. Il resto si paga ora, con l'IVA.",
         "lead_whole": "Paghi l'intera votazione ora, con l'IVA.",
         "note_zero": "Dopo la pubblicazione, il saldo sarà a zero.",

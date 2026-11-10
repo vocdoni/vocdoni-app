@@ -1151,6 +1151,7 @@
       "blocked": "Il manque {{shortfall}} de solde. Seul un administrateur peut le recharger.",
       "card": {
         "billing": "Données de facturation",
+        "cta_loading": "Payer et publier",
         "lead_balance": "Le solde de l'organisation couvre {{balance}}. Le reste se paie maintenant, TVA comprise.",
         "lead_whole": "Vous payez maintenant le vote en entier, TVA comprise.",
         "note_zero": "Après la publication, le solde sera à zéro.",

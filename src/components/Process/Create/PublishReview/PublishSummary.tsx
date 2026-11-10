@@ -61,8 +61,6 @@ export type PublishSummaryProps = {
   wallet?: PublishWallet
   canTopUp: boolean
   disableAnonymous?: boolean
-  /** Disables both buttons and spins the primary, e.g. while publishing straight from here. */
-  busy?: boolean
   /** Id for the eyebrow, to label the dialog with it. */
   titleId?: string
   onKeepEditing: () => void
@@ -83,7 +81,6 @@ export const PublishSummary = ({
   wallet,
   canTopUp,
   disableAnonymous,
-  busy,
   titleId,
   onKeepEditing,
   onClose,
@@ -158,12 +155,11 @@ export const PublishSummary = ({
       </PublishReviewColumns>
 
       <PublishReviewFooter note={primary.kind === 'blocked' ? blockedNote(t, primary.shortfallCents, code) : null}>
-        <Button variant='outline' onClick={onKeepEditing} disabled={busy}>
+        <Button variant='outline' onClick={onKeepEditing}>
           {t('process.publish_review.keep_editing', { defaultValue: 'Keep editing' })}
         </Button>
         <Button
           disabled={!action}
-          loading={busy}
           onClick={() => {
             if (action) onPrimary(action)
           }}

@@ -1128,6 +1128,7 @@
       "blocked": "{{shortfall}} falta dira saldoan. Administratzaile batek soilik kargatu dezake.",
       "card": {
         "billing": "Fakturazio-datuak",
+        "cta_loading": "Ordaindu eta argitaratu",
         "lead_balance": "Erakundearen saldoak {{balance}} estaltzen ditu. Gainerakoa orain ordaintzen da, BEZarekin.",
         "lead_whole": "Botazio osoa orain ordaintzen duzu, BEZarekin.",
         "note_zero": "Argitaratu ondoren, saldoa zero izango da.",
@@ -1183,8 +1184,8 @@
       "keep_editing": "Jarraitu editatzen",
       "lead_now_one": "{{voters}}arentzat {{questions}} bozkatzeko aukera dago, argitaratzen duzunetik {{end}} arte.",
       "lead_now_other": "{{voters}}entzat {{questions}} bozkatzeko aukera dago, argitaratzen duzunetik {{end}} arte.",
-      "lead_scheduled_one": "{{voters}}arentzat {{questions}} bozkatzeko aukera dago, {{start}}tik {{end}} arte.",
-      "lead_scheduled_other": "{{voters}}entzat {{questions}} bozkatzeko aukera dago, {{start}}tik {{end}} arte.",
+      "lead_scheduled_one": "{{voters}}arentzat {{questions}} bozkatzeko aukera dago, {{start}} eta {{end}} bitartean.",
+      "lead_scheduled_other": "{{voters}}entzat {{questions}} bozkatzeko aukera dago, {{start}} eta {{end}} bitartean.",
       "org_balance": "Erakundearen saldoa",
       "pay_now": "Zer ordaintzen duzun orain",
       "primary": {
