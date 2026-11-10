@@ -606,16 +606,9 @@ jobs:
         if: always()
         run: scripts/integration-stack.sh down
 
-  # Separate from `e2e` on purpose: it needs the Stripe keys, and it drives Stripe-hosted
-  # checkout pages, whose iframes are flaky. So it does not gate feature PRs: it runs on pushes
-  # to develop, on manual dispatch, and on pull requests promoting develop to stage or main.
-  # Fork PRs never receive the secrets, and the gate below skips the job for them.
-  #
-  # Always tests the :main images and the lockfile packages. Pinned refs from a /integration
-  # comment are ignored here: this job has no resolve step.
-  #
-  # The secrets are set on the gate, Start stack and spec steps only, so the install and build
-  # steps (which run the PR's code) never see them. The spec step calls Stripe to clean up.
+  # Separate from `e2e`: it needs the Stripe keys and drives Stripe's Elements iframes, which can
+  # be flaky, so it skips feature PRs and runs without the secrets (forks) as a no-op. Always :main
+  # images and lockfile packages (no pins). Secrets reach only the gate, stack and spec steps.
   e2e-stripe:
     name: End-to-end Stripe checkout
     if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && (github.base_ref == 'stage' || github.base_ref == 'main')) }}
