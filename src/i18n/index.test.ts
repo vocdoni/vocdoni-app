@@ -112,6 +112,16 @@ describe('on-demand languages', () => {
 
     await loadLanguages(['pt-BR', 'es-AR', 'xx', undefined])
 
-    expect(getLoadedLanguages().sort()).toEqual(['en', 'es', 'pt-br'])
+    expect(getLoadedLanguages().sort()).toEqual(['en', 'es', 'pt', 'pt-br'])
+  })
+
+  // i18next resolves pt-br through pt before the fallback and waits for the whole chain.
+  it('loads the base language of a regional one, so it renders without waiting', async () => {
+    const { createPageI18nInstance, loadLanguages } = await import('./index')
+    await loadLanguages(['pt-br'])
+
+    const instance = createPageI18nInstance('pt-br')
+    expect(instance.isInitialized).toBe(true)
+    expect(instance.hasLoadedNamespace('common')).toBe(true)
   })
 })

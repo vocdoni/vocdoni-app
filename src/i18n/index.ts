@@ -261,8 +261,21 @@ export const createPageI18nInstance = (language: string, languageOptions?: Langu
  * afterwards start with them. A failed fetch is logged and the language falls back.
  */
 export const loadLanguages = async (languages: (string | undefined)[]) => {
-  const codes = [...new Set(languages.map(toBundleLanguage).filter((lang): lang is string => Boolean(lang)))]
   const base = getBaseI18n()
+  const languageUtils = base.services?.languageUtils
+  // i18next waits for the whole chain (pt-br, then pt, then the fallback) before it
+  // renders, so load the chain it resolves rather than the requested code alone.
+  const chain = (lang: string) => (languageUtils ? languageUtils.toResolveHierarchy(lang) : [lang])
+  const codes = [
+    ...new Set(
+      languages
+        .map(toBundleLanguage)
+        .filter((lang): lang is string => Boolean(lang))
+        .flatMap(chain)
+        .map(toBundleLanguage)
+        .filter((lang): lang is string => Boolean(lang))
+    ),
+  ]
 
   await Promise.all(
     codes.map(async (lang) => {
