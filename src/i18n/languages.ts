@@ -32,10 +32,14 @@ export const openGraphLocaleMap: Record<string, string> = {
 
 export const toOpenGraphLocale = (language: string): string => openGraphLocaleMap[language] ?? language
 
+// The first configured language is the default and fallback one, so the
+// unconfigured list puts English first, then the rest in their usual order.
+const defaultLanguagesSlice = (): Record<string, string> => ({ en: baseLanguages.en, ...baseLanguages })
+
 /**
  * Resolves the configured `LANGUAGES` env value (a comma-separated list of
  * language codes) into an ordered slice of `baseLanguages`. Returns every base
- * language when unset or when no valid code is provided.
+ * language, English first, when unset or when no valid code is provided.
  *
  * Runs at runtime during globalContext creation, so it is lenient: unsupported
  * codes are logged and dropped rather than thrown, mirroring the SHARED_CENSUS_*
@@ -43,7 +47,7 @@ export const toOpenGraphLocale = (language: string): string => openGraphLocaleMa
  */
 export const resolveLanguagesSlice = (rawValue?: string): Record<string, string> => {
   if (!rawValue) {
-    return { ...baseLanguages }
+    return defaultLanguagesSlice()
   }
 
   const requested = rawValue
@@ -60,7 +64,7 @@ export const resolveLanguagesSlice = (rawValue?: string): Record<string, string>
 
   const validLanguages = requested.filter((lang) => baseLanguages[lang as keyof typeof baseLanguages])
   if (validLanguages.length === 0) {
-    return { ...baseLanguages }
+    return defaultLanguagesSlice()
   }
 
   return validLanguages.reduce(

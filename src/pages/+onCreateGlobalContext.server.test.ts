@@ -1,6 +1,9 @@
 import type { GlobalContextServer } from 'vike/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+const loadLanguages = vi.fn(async (_languages: string[]) => {})
+vi.mock('~i18n', () => ({ loadLanguages: (languages: string[]) => loadLanguages(languages) }))
+
 // Producer side of the runtime-env chain: process.env -> getServerAppEnv() ->
 // globalContext.appEnv. Nothing else exercises this hook, so a rename or a
 // dropped assignment would only surface as "the env vars stopped working" in a
@@ -33,5 +36,14 @@ describe('onCreateGlobalContext', () => {
 
     expect(globalContext.appEnv).toBeDefined()
     expect(globalContext.appEnv?.PRIMARY_COLOR).toBeUndefined()
+  })
+
+  // The browser fetches one language; the server renders pages and titles in all of them.
+  it('loads every language before the server renders', async () => {
+    const { default: onCreateGlobalContext } = await import('./+onCreateGlobalContext.server')
+
+    await onCreateGlobalContext({} as GlobalContextServer)
+
+    expect(loadLanguages).toHaveBeenCalledWith(['ca', 'de', 'el', 'en', 'es', 'eu', 'fr', 'it', 'pt', 'pt-br'])
   })
 })

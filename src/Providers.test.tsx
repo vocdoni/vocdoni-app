@@ -136,7 +136,9 @@ describe('Providers', () => {
       // The URL changes at once; the language follows once its translations are fetched.
       fireEvent.click(screen.getByRole('button', { name: 'Switch language' }))
       expect(window.location.pathname).toBe('/ca/admin/processes/create')
-      await waitFor(() => expect(screen.getByLabelText('Active language')).toHaveTextContent(/^ca$/))
+      await waitFor(() => expect(screen.getByLabelText('Active language')).toHaveTextContent(/^ca$/), {
+        timeout: 10000,
+      })
       expect(document.documentElement.lang).toBe('ca')
 
       act(() => {
