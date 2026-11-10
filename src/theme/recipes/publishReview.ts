@@ -77,6 +77,10 @@ export const PublishReview = defineSlotRecipe({
       minH: { md: 'auto' },
       borderRadius: { md: 'l3' },
       mx: { md: 4 },
+      // The phone's full size zeroes the margins too; pinned to the top, keep the canvas's gap
+      mt: { md: 16 },
+      mb: { md: 12 },
+      [shortScreen]: { mt: { md: 4 }, mb: { md: 4 } },
       overflow: 'hidden',
     },
     // Fills Dialog.Content (a flex column capped at the viewport) and may shrink below its content,
@@ -389,7 +393,8 @@ export const PublishReview = defineSlotRecipe({
       alignItems: { base: 'stretch', md: 'center' },
       gap: { base: 2, md: 2.5 },
       ms: { base: 0, md: 'auto' },
-      '& > *': { w: { base: 'full', md: 'auto' }, h: { base: 11, md: 10 } },
+      // Two classes deep, so it beats the button's own size whatever order the styles load in
+      '& > *, & > .chakra-button': { w: { base: 'full', md: 'auto' }, h: { base: 11, md: 10 } },
     },
     // A wait or an outcome is about as tall as the summary, so the dialog keeps its size between steps
     body: {
