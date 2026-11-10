@@ -13,7 +13,7 @@ import { useAppEnv } from '~src/app-env'
 import { useGroup } from '~queries/groups'
 import { useProcessPrice } from '~queries/process-price'
 import { useWallet } from '~queries/wallet'
-import { currency } from '~utils/numbers'
+import { amountFigure, currency } from '~utils/numbers'
 import type { Process } from '../common'
 import {
   PublishReviewAmountRow,
@@ -108,6 +108,7 @@ export const PublishDialog = ({
   }, [stripeMounted])
 
   const announcement = stepAnnouncement(t, flow)
+  const currencyCode = price?.currency?.toUpperCase()
 
   const content =
     step.name === 'summary' && form ? (
@@ -137,13 +138,14 @@ export const PublishDialog = ({
         }}
       />
     ) : step.name === 'wallet' ? (
-      <WalletStep flow={flow} titleId={titleId} onClose={close} />
+      <WalletStep flow={flow} titleId={titleId} currencyCode={currencyCode} onClose={close} />
     ) : (
       <ProcessCheckoutContent
         flow={flow}
         processId={processId}
         titleId={titleId}
         descriptionId={descriptionId}
+        currencyCode={currencyCode}
         totalCents={price?.totalCents}
         balanceCents={wallet?.balanceCents}
         onBack={form ? flow.backToSummary : undefined}
@@ -189,14 +191,14 @@ export const PublishDialog = ({
   )
 }
 
-type WalletStepProps = { flow: ProcessCheckoutFlow; titleId: string; onClose: () => void }
+type WalletStepProps = { flow: ProcessCheckoutFlow; titleId: string; currencyCode?: string; onClose: () => void }
 
 // The wallet covers the whole price: nothing to pay by card
-const WalletStep = ({ flow, titleId, onClose }: WalletStepProps) => {
+const WalletStep = ({ flow, titleId, currencyCode, onClose }: WalletStepProps) => {
   const { t } = useTranslation()
   if (flow.step.name !== 'wallet') return null
   const { totalCents, afterCents } = flow.step
-  const total = currency(totalCents)
+  const total = currency(totalCents, currencyCode)
 
   return (
     <PublishReviewStep>
@@ -222,15 +224,15 @@ const WalletStep = ({ flow, titleId, onClose }: WalletStepProps) => {
           <PublishReviewAmounts>
             <PublishReviewAmountRow
               label={t('process.publish_review.this_vote', { defaultValue: 'This vote' })}
-              value={total}
+              value={amountFigure(totalCents, currencyCode)}
             />
             <PublishReviewAmountRow
               label={t('process.publish_review.org_balance', { defaultValue: 'Organization balance' })}
-              value={currency(-totalCents)}
+              value={amountFigure(-totalCents, currencyCode)}
             />
             <PublishReviewAmountRow
               label={t('process.publish_review.total_now', { defaultValue: 'Total to pay now' })}
-              value={currency(0)}
+              value={amountFigure(0, currencyCode)}
               strong
               ruled
             />
@@ -238,7 +240,7 @@ const WalletStep = ({ flow, titleId, onClose }: WalletStepProps) => {
           <PublishReviewNote>
             {t('process.publish_review.wallet.note', {
               defaultValue: 'After publishing, the balance will have {{after}} left.',
-              after: currency(afterCents),
+              after: currency(afterCents, currencyCode),
             })}
           </PublishReviewNote>
         </PublishReviewColumn>

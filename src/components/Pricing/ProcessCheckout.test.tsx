@@ -184,9 +184,10 @@ describe('ProcessCheckout', () => {
         screen.getByText("The organization's balance covers €4.50. The rest is paid now, with VAT.")
       ).toBeInTheDocument()
       const amount = (label: string) => screen.getByText(label).nextElementSibling
-      expect(amount('This vote')).toHaveTextContent('€10')
-      expect(amount('Organization balance')).toHaveTextContent('-€4.50')
-      expect(amount('Short')).toHaveTextContent('€5.50')
+      // Amount columns keep both cent digits, with a real minus sign
+      expect(amount('This vote')).toHaveTextContent(/^€10\.00$/)
+      expect(amount('Organization balance')).toHaveTextContent(/^\u2212€4\.50$/)
+      expect(amount('Short')).toHaveTextContent(/^€5\.50$/)
       // The top-up is exactly the shortfall, so it is not repeated
       expect(screen.queryByText('Top-up, VAT excluded')).not.toBeInTheDocument()
       expect(amount('VAT')).toHaveTextContent('€1.00')
@@ -199,7 +200,7 @@ describe('ProcessCheckout', () => {
       renderView({ start: { kind: 'checkout', shortfall: { shortfallCents: 50, balanceCents: 950 } } })
 
       await payButton()
-      expect(screen.getByText('Top-up, VAT excluded').nextElementSibling).toHaveTextContent('€1')
+      expect(screen.getByText('Top-up, VAT excluded').nextElementSibling).toHaveTextContent(/^€1\.00$/)
     })
 
     it('shows the billing details and the payment form, with the secure payment note', async () => {

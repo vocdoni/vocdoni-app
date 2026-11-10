@@ -239,7 +239,7 @@ describe('costLines', () => {
       }),
       { primary: { kind: 'publish' } }
     )
-    expect(rows(lines).slice(0, 2)).toEqual(['Voting process: €29', 'Email verification code: €7'])
+    expect(rows(lines).slice(0, 2)).toEqual(['Voting process: €29.00', 'Email verification code: €7.00'])
   })
 
   it('adds the balance and what remains after publishing when the wallet covers it', () => {
