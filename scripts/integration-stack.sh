@@ -6,10 +6,10 @@
 # Adapted from integrator-sdk's scripts/integration-stack.sh. The notable
 # difference: there is no integrator-key bootstrap here. This suite registers its
 # own user *through the browser* — that signup is flow #1 under test — so the
-# stack only has to come up empty and seeded (or, in Stripe mode, synced).
+# stack only has to come up empty and answer /ping.
 #
 # Usage:
-#   scripts/integration-stack.sh up          # start the stack and seed the default plan (Stripe mode: sync it)
+#   scripts/integration-stack.sh up          # start the stack and wait until the api answers /ping
 #   scripts/integration-stack.sh down        # tear the stack down (drops volumes)
 #   scripts/integration-stack.sh run         # up, build, run the e2e suite, sweep Stripe objects, then stop
 #   scripts/integration-stack.sh logs <dir>  # one redacted log file per service, written into <dir>
@@ -34,7 +34,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 COMPOSE_FILE="$REPO_ROOT/integration/docker-compose.ci.yml"
 STRIPE_COMPOSE_FILE="$REPO_ROOT/integration/docker-compose.stripe.yml"
-SEED_FILE="$REPO_ROOT/integration/seed-plan.js"
 
 INTEGRATION_HOST_PORT="${INTEGRATION_HOST_PORT:-8080}"
 INTEGRATION_MAILHOG_PORT="${INTEGRATION_MAILHOG_PORT:-8025}"
@@ -158,24 +157,6 @@ derive_stripe_webhook_secret() {
   export INTEGRATION_STRIPE_WEBHOOK_SECRET="$secret"
 }
 
-# Stripe mode has no seed to fall back on: the default plan must come from the
-# Stripe product sync. Checked in mongo, not GET /plans: that endpoint lists only
-# public plans, and the backend's default-plan lookup ignores visibility.
-assert_stripe_default_plan() {
-  local verdict
-  verdict=$(compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' --eval "
-    const defaults = db.getSiblingDB('saasdb').plans.find({ default: true }).toArray()
-    if (defaults.length !== 1) print('expected exactly one plan with default: true, found ' + defaults.length)
-    else if (!String(defaults[0]._id).startsWith('prod_')) print('the default plan ' + defaults[0]._id + ' has no Stripe product id (_id must start with prod_)')
-    else if (!(Number(defaults[0].features && defaults[0].features.twoFaEmail) > 0)) print('the default plan has no features.twoFaEmail quota, so the email 2FA journeys would be refused')
-    else print('ok')
-  " 2>/dev/null) || verdict="could not query saasdb.plans in mongo"
-  if [ "$verdict" != ok ]; then
-    echo "ERROR: the Stripe product sync did not produce a usable default plan: $verdict. Check the api logs, and that the sandbox has a product whose default price has metadata Default=true (integration/README.md)." >&2
-    exit 1
-  fi
-}
-
 # Stripe mode: stripe-listen exits at once on a bad setup (a stripe-cli that
 # refuses its flags, or a key it cannot use), so check it survived startup. The
 # short retry only covers the gap between `up -d` and the container settling.
@@ -226,76 +207,24 @@ cmd_up() {
   echo "== starting stack" >&2
   echo "== images: ${VOCDONI_NODE_IMAGE:-ghcr.io/vocdoni/vocdoni-node:main} ${SAAS_BACKEND_IMAGE:-ghcr.io/vocdoni/saas-backend:main}" >&2
   if [ -n "$STRIPE_MODE" ]; then
-    echo "== billing: Stripe test sandbox, plans from the Stripe product sync" >&2
+    echo "== billing: Stripe test sandbox" >&2
   fi
   # --remove-orphans drops a stripe-listen left behind by an earlier Stripe-mode boot on this stack.
   compose up -d --remove-orphans
 
   echo "== waiting for mongo and vocone to be healthy" >&2
   wait_container_healthy mongo 60
-  if [ -n "$STRIPE_MODE" ]; then
-    # Mongo's data lives in an anonymous volume: `run` keeps it, `down -v` drops it. A
-    # local-dev plan seeded by an earlier default-mode boot would pass the default-plan
-    # check below, so drop it.
-    compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' \
-      --eval "db.getSiblingDB('saasdb').plans.deleteOne({ _id: 'local-dev' })" >/dev/null
-  fi
   # Kept above vocone's own healthcheck window (~420s, see the compose file):
   # `compose up -d` already gates on that via depends_on/service_healthy, so
   # this is only a backstop for the case where the container is healthy-but-slow
   # to report. Do not tighten it below the compose window.
   wait_container_healthy vocone 450
 
-  if [ -n "$STRIPE_MODE" ]; then
-    echo "== skipping plan seed: plans come from the Stripe product sync" >&2
-  else
-    echo "== seeding default plan" >&2
-    compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' <"$SEED_FILE"
-    # A Stripe-mode run on this same running stack leaves synced plans behind, and a second
-    # default plan beside local-dev breaks organization creation. The seed does not remove them.
-    compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' \
-      --eval "db.getSiblingDB('saasdb').plans.deleteMany({ _id: /^prod_/ })" >/dev/null
-  fi
-
   echo "== waiting for api to answer /ping" >&2
   wait_url_ready "$INTEGRATION_API_URL/ping" "api" 60
 
   if [ -n "$STRIPE_MODE" ]; then
     assert_stripe_listener_running
-    echo "== asserting the default plan from the Stripe sync" >&2
-  else
-    echo "== asserting the plan seed took" >&2
-  fi
-
-  PLANS_JSON=$(curl -fsS -m 10 "$INTEGRATION_API_URL/plans" || echo "")
-  # Separate "could not ask" from "asked, got nothing". Without this the seed
-  # assertion below blames db.Plan bson tags for what is really a dead API.
-  if [ -z "$PLANS_JSON" ]; then
-    echo "ERROR: GET $INTEGRATION_API_URL/plans did not respond — the api container is not serving. This is NOT a seed problem; check the api logs." >&2
-    exit 1
-  fi
-  if [ -n "$STRIPE_MODE" ]; then
-    assert_stripe_default_plan
-  else
-    # Parsed with node, not python3: node is already a hard requirement of this
-    # repo (this script ends by running pnpm), so this adds no new dependency —
-    # whereas python3 is not guaranteed on a contributor's machine.
-    PLANS_COUNT=$(printf '%s' "$PLANS_JSON" | node -e "
-let raw = ''
-process.stdin.on('data', (chunk) => (raw += chunk))
-process.stdin.on('end', () => {
-  try {
-    const parsed = JSON.parse(raw)
-    console.log(Array.isArray(parsed) ? parsed.length : 0)
-  } catch {
-    console.log(0)
-  }
-})
-" 2>/dev/null || echo 0)
-    if [ "${PLANS_COUNT:-0}" -lt 1 ] 2>/dev/null; then
-      echo "plan seed did not take — check db.Plan bson tags against integration/seed-plan.js" >&2
-      exit 1
-    fi
   fi
 
   echo "== waiting for the MailHog inbox" >&2
@@ -345,9 +274,8 @@ cmd_run() {
   since="$(date +%s)"
   # cmd_up is called DIRECTLY, not as `out=$(cmd_up)`: bash disables errexit
   # inside a command substitution that feeds an assignment, so every failure in
-  # cmd_up (compose up, health waits, the seed, the /ping wait) would be
-  # swallowed and we would run the suite against a stack that never came up —
-  # reporting a misleading "plan seed did not take" instead of the real cause.
+  # cmd_up (compose up, health waits, the /ping wait) would be swallowed and we
+  # would run the suite against a stack that never came up.
   cmd_up
   export SAAS_URL="$INTEGRATION_API_URL"
   export MAILHOG_URL="$INTEGRATION_MAILHOG_URL"

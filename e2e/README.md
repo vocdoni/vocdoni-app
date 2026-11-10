@@ -22,7 +22,7 @@ codes out of it programmatically, and **you can browse it at
 
 ## Running
 
-The one-liner — boots the stack, seeds it, builds the app, runs the suite, and
+The one-liner — boots the stack, builds the app, runs the suite, and
 stops the containers again:
 
 ```bash
@@ -94,7 +94,8 @@ the public count stays at 0, and `curl localhost:8080/jobs/<jobId>` reports
 `census origin not compatible`), the cached `vocdoni-node:main` image is older
 than the feature under test. `docker compose -f integration/docker-compose.ci.yml pull`
 and boot again: `up` reuses whatever `:main` docker already has, and only CI
-pulls fresh every run.
+pulls fresh every run. The same goes for `saas-backend:main`: an image from before
+plans were retired fails signup with `no default plan available`.
 
 ## What it covers
 
@@ -121,8 +122,7 @@ A second test tops the wallet up from the billing page (`Top up`, EUR 50) and po
 until the backend's balance and ledger show the credit.
 
 It needs the stack in Stripe mode, which `pnpm test:e2e:stack` picks up from the
-environment. The rest of the suite runs in the same mode, on the sandbox's default
-plan, so that plan must permit email 2FA (see
+environment. The rest of the suite runs in the same mode (see
 [integration/README.md](../integration/README.md#stripe-mode-opt-in)).
 
 ```bash
@@ -132,7 +132,7 @@ pnpm test:e2e:stack
 ```
 
 - `INTEGRATION_STRIPE_SECRET_KEY` (`sk_test_`) drives the spec's Stripe API calls.
-  Without it the spec skips, and the rest of the suite runs on the seeded plan.
+  Without it the spec skips, and the rest of the suite runs on dummy Stripe keys.
 - `INTEGRATION_STRIPE_PUBLIC_KEY` (`pk_test_`) is forwarded to the app, which
   needs it to render Stripe Elements. `up` fails when the secret is set and this
   one is not.
@@ -203,7 +203,7 @@ stays in the test account. A run cancelled before that cleanup is swept by
 `develop` (the integration branch), on pull requests targeting `stage` or `main`
 (the two promotions that actually reach users), and on any pull request with
 pinned `/integration` refs (see [integration/README.md](../integration/README.md)).
-It runs in Stripe mode when the Stripe secrets are set, and on the seeded plan with
+It runs in Stripe mode when the Stripe secrets are set, and on dummy Stripe keys with
 a warning when they are not.
 Other feature PRs into `develop` do not run it (they are covered by `test.yml`);
 use **Run workflow** on the Actions tab to trigger it by hand on any branch.

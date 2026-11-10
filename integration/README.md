@@ -16,7 +16,7 @@ The app under test is **not** part of the stack — it runs on the host
 ## Usage
 
 ```bash
-scripts/integration-stack.sh up          # start + seed the default plan (Stripe mode: sync it), leave it running
+scripts/integration-stack.sh up          # start and wait for the api, leave it running
 scripts/integration-stack.sh down        # tear down, dropping volumes
 scripts/integration-stack.sh run         # up, build the app, run the e2e suite, then stop
 scripts/integration-stack.sh logs <dir>  # one redacted log file per service, written into <dir>
@@ -45,11 +45,10 @@ commits instead, see [Pinning upstream commits](#pinning-upstream-commits).
 
 ## Stripe mode (opt-in)
 
-By default the backend gets dummy Stripe keys and a plan is seeded into mongo,
-so Stripe is never called. Set `INTEGRATION_STRIPE_SECRET_KEY` to a Stripe
-**test** key (`sk_test_...`) to run against a real Stripe sandbox instead: the
-backend syncs its plans from the sandbox's products, and a `stripe-listen`
-container forwards the sandbox's webhooks to the api
+By default the backend gets dummy Stripe keys, so Stripe is never called. Set
+`INTEGRATION_STRIPE_SECRET_KEY` to a Stripe **test** key (`sk_test_...`) to run
+against a real Stripe sandbox instead: a `stripe-listen` container forwards the
+sandbox's webhooks to the api's `/payments/webhook`
 (`integration/docker-compose.stripe.yml`). Also set
 `INTEGRATION_STRIPE_PUBLIC_KEY` to the matching test publishable key
 (`pk_test_...`): the app gets it at boot, and `up` fails without it.
@@ -62,21 +61,12 @@ INTEGRATION_STRIPE_SECRET_KEY=sk_test_... INTEGRATION_STRIPE_PUBLIC_KEY=pk_test_
 In CI, `.github/workflows/integration.yml` runs the whole e2e suite in Stripe mode
 when the `INTEGRATION_STRIPE_SECRET_KEY` secret and the `INTEGRATION_STRIPE_PUBLIC_KEY`
 variable (or secret) are set. Without the secret (fork PRs, or a repo with no
-sandbox) the stack seeds its plan, the payg checkout spec skips, and the job warns
+sandbox) the stack runs on dummy Stripe keys, the payg checkout spec skips, and the job warns
 that billing was not exercised. A `/integration` comment on a fork PR also skips
 billing, because that run checks out the fork's code and CI never gives it the secrets.
 
 The sandbox needs:
 
-- Plan products: the sync turns every active product with `organization`,
-  `votingTypes` and `features` metadata (JSON) into a plan. It skips other
-  products, and skips with a warning one whose metadata does not parse.
-- A product whose default price has metadata `Default=true`. The backend's
-  startup plan sync keeps no default plan without it, and `POST /organizations`
-  needs one.
-- A default plan that allows what the specs use: email 2FA (`2FAemail` > 0),
-  anonymous and weighted voting, and a census limit of at least 26. `up` checks
-  only that there is exactly one synced default plan with email 2FA.
 - A tax origin address and a default tax code (Settings > Tax; e.g. `txcd_10000000`).
   The backend's checkout sessions enable automatic tax but send no per-item tax code.
 - An API version on the same release train as the backend's stripe-go (`endive`
@@ -96,9 +86,8 @@ are refused before anything starts.
   raw container logs from this mode.
 - The webhook signing secret is derived from the key with the Stripe CLI. The
   stripe-cli image is pinned by digest; override it with `INTEGRATION_STRIPE_CLI_IMAGE`.
-- The default plan must come from the Stripe sync, and `up` fails with a clear
-  error if it does not. `up` also fails if the `stripe-listen` container is not
-  running after startup, and prints its last log lines with secrets redacted.
+- `up` fails if the `stripe-listen` container is not running after startup, and
+  prints its last log lines with secrets redacted.
 - `run` ends with `scripts/integration-stripe-sweep.mjs`. It expires the checkout
   sessions still open and deletes the customers of this stack's organizations, for
   runs that were cancelled before the checkout spec's own cleanup. Organizations
@@ -108,11 +97,9 @@ are refused before anything starts.
   This is harmless: `stripe listen` does not retry a failed delivery, and cleanup
   filters by org metadata.
 
-Switching modes on a running stack: `up` reconciles it. Stripe mode deletes the
-seeded `local-dev` plan, and default mode deletes the plans synced from Stripe
-(`prod_` ids) and removes an orphaned `stripe-listen`. Mongo keeps its data in an
-anonymous volume: `run` keeps it, and `down` (`down -v`) drops it. So after `run`,
-the next `up` finds the last run's plans, and `up` reconciles them as described.
+Switching modes on a running stack: `up` reconciles it. Default mode removes an
+orphaned `stripe-listen`. Mongo keeps its data in an anonymous volume: `run` keeps
+it, and `down` (`down -v`) drops it.
 
 ## Pinning upstream commits
 
@@ -216,18 +203,6 @@ purpose. saas-backend only permits credential-less SMTP when the server is
 `localhost`/`127.0.0.1` (`notifications/smtp/smtp.go`), and Go's `net/smtp`
 refuses `PlainAuth` over an unencrypted connection — so sharing the namespace is
 what lets `VOCDONI_SMTPSERVER=127.0.0.1` work with no credentials at all.
-
-## The plan seed
-
-`seed-plan.js` inserts one default subscription plan. It is not optional: a
-fresh `saasdb.plans` collection is empty, and without a default plan
-`POST /organizations` fails with `no default plan available` — the first thing
-the signup journey does after verifying an account. Its `features.twoFaEmail`
-quota is also what permits the email 2FA channel the voting suite depends on.
-
-`scripts/integration-stack.sh` asserts the seed took (`GET /plans` must return a
-non-empty list) rather than letting a silent mismatch surface later as a
-confusing organization-creation error.
 
 ## Upstream drift
 

@@ -85,7 +85,7 @@
   `pnpm test:e2e:stack` (needs docker); it takes a few minutes.
 - It covers what only this app owns: the OTP signup journey and the CSP + email-2FA voter
   journey, plus the pay-per-process Stripe checkout. The suite runs in Stripe mode (the whole
-  suite on the Stripe sandbox's plans) when `INTEGRATION_STRIPE_SECRET_KEY` and
+  suite on the Stripe sandbox) when `INTEGRATION_STRIPE_SECRET_KEY` and
   `INTEGRATION_STRIPE_PUBLIC_KEY` are set; without them the checkout spec skips. See
   `integration/README.md`. The generic voting lifecycle is covered upstream in integrator-sdk —
   don't duplicate it here.

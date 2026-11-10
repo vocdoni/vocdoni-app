@@ -9,8 +9,8 @@ services:
       VOCDONI_STRIPEWEBHOOKSECRET: ${INTEGRATION_STRIPE_WEBHOOK_SECRET:-}
 
   # Forwards sandbox webhooks to the api, signed with the secret that
-  # scripts/integration-stack.sh derives. --events lists the types the backend handles;
-  # stripe-cli v1.55.3 `listen` exits without it.
+  # scripts/integration-stack.sh derives. --events lists exactly the types the backend's
+  # /payments/webhook handles; stripe-cli v1.55.3 `listen` exits without it.
   stripe-listen:
     image: ${INTEGRATION_STRIPE_CLI_IMAGE:-stripe/stripe-cli:v1.55.3@sha256:7bd92a6315b5716767e96727f921abedc131e60648299d4cf6b3a7d5f108b39d}
     environment:
@@ -18,8 +18,8 @@ services:
     command:
       - listen
       - --forward-to
-      - http://api:8080/subscriptions/webhook
+      - http://api:8080/payments/webhook
       - --events
-      - checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed,checkout.session.expired,product.created,product.updated,product.deleted,refund.created,refund.updated,charge.dispute.funds_withdrawn,charge.dispute.funds_reinstated
+      - checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed,checkout.session.expired,refund.created,refund.updated,charge.dispute.funds_withdrawn,charge.dispute.funds_reinstated
     depends_on:
       - api
