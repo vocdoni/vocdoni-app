@@ -77,8 +77,8 @@ The sandbox needs:
 - A default plan that allows what the specs use: email 2FA (`2FAemail` > 0),
   anonymous and weighted voting, and a census limit of at least 26. `up` checks
   only that there is exactly one synced default plan with email 2FA.
-- A tax origin address (Settings > Tax). The backend's checkout sessions enable
-  automatic tax.
+- A tax origin address and a default tax code (Settings > Tax; e.g. `txcd_10000000`).
+  The backend's checkout sessions enable automatic tax but send no per-item tax code.
 - An API version on the same release train as the backend's stripe-go (`endive`
   today). The backend's webhook check rejects events from another train. No
   `--latest` flag is needed on `stripe listen`.
