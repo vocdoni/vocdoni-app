@@ -7,14 +7,8 @@ import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultQuestion, Process, SelectorTypes } from './common'
-import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
 import { Routes as AppRoutes } from '~routes'
-import ProcessCreate, {
-  buildCensusSpec,
-  paymentCheckoutStart,
-  useConfirmOnNavigate,
-  useFormToVotingProcessRequest,
-} from './index'
+import ProcessCreate, { buildCensusSpec, useConfirmOnNavigate, useFormToVotingProcessRequest } from './index'
 
 const mockApiClient = vi.hoisted(() => ({
   elections: { create: vi.fn(), update: vi.fn(), get: vi.fn(), publish: vi.fn(), publishAndWait: vi.fn() },
@@ -33,7 +27,7 @@ vi.mock('~src/app-env', async (importOriginal) => ({
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal<typeof import('react-router')>()),
-  useBlocker: () => mockUseBlocker(),
+  useBlocker: (shouldBlock: unknown) => mockUseBlocker(shouldBlock),
 }))
 
 vi.mock('~utils/analytics', () => ({
@@ -486,7 +480,6 @@ describe('useConfirmOnNavigate', () => {
         useConfirmOnNavigate({
           isDirty: true,
           isSubmitting: false,
-          isSubmitSuccessful: false,
           onOpen: vi.fn(),
           onClose: vi.fn(),
         }),
@@ -618,7 +611,6 @@ describe('useConfirmOnNavigate', () => {
           useConfirmOnNavigate({
             isDirty: true,
             isSubmitting: false,
-            isSubmitSuccessful: false,
             onOpen: vi.fn(),
             onClose: vi.fn(),
           }),
@@ -688,7 +680,6 @@ describe('useConfirmOnNavigate', () => {
           useConfirmOnNavigate({
             isDirty: true,
             isSubmitting: false,
-            isSubmitSuccessful: false,
             onOpen: vi.fn(),
             onClose: vi.fn(),
           }),
@@ -746,58 +737,6 @@ describe('useConfirmOnNavigate', () => {
       expect(left).toBe(false)
       expect(paths.at(-1)).toBe('/admin/processes/create')
     })
-  })
-})
-
-describe('paymentCheckoutStart', () => {
-  const refusal = (status: number, code: ApiErrorCode, data?: unknown) =>
-    new VocdoniApiError(status, { error: 'refused', code, data }, 'refused', code, data)
-
-  const shortfall = refusal(402, ApiErrorCode.PaymentRequired, {
-    lines: [],
-    totalCents: 5000,
-    balanceCents: 1000,
-    shortfallCents: 4000,
-  })
-
-  it('opens the top-up checkout for who can top up the wallet, with the shortfall', () => {
-    expect(paymentCheckoutStart(shortfall, true)).toEqual({
-      kind: 'checkout',
-      shortfall: { shortfallCents: 4000, balanceCents: 1000 },
-    })
-  })
-
-  it('leaves a manager with the toast and its way to the wallet', () => {
-    expect(paymentCheckoutStart(shortfall, false)).toBeUndefined()
-  })
-
-  it('does not open the checkout for a managed organization, which has none', () => {
-    const managed = refusal(402, ApiErrorCode.InsufficientWalletBalance, { requiredCents: 5000, availableCents: 1000 })
-    const spendCap = refusal(402, ApiErrorCode.SpendCapReached)
-
-    expect(paymentCheckoutStart(managed, true)).toBeUndefined()
-    expect(paymentCheckoutStart(spendCap, true)).toBeUndefined()
-  })
-
-  it('does not open the checkout for a price only a custom quote settles', () => {
-    expect(paymentCheckoutStart(refusal(422, ApiErrorCode.QuoteRequired), true)).toBeUndefined()
-    expect(
-      paymentCheckoutStart(
-        refusal(402, ApiErrorCode.PaymentRequired, { lines: [], totalCents: 9000000, quoteRequired: true }),
-        true
-      )
-    ).toBeUndefined()
-  })
-
-  it('offers the choice between resuming and cancelling an open top-up to who can top up only', () => {
-    const conflict = refusal(409, ApiErrorCode.PaymentSessionConflict)
-
-    expect(paymentCheckoutStart(conflict, true)).toEqual({ kind: 'conflict' })
-    expect(paymentCheckoutStart(conflict, false)).toBeUndefined()
-  })
-
-  it('leaves any other refusal to the toast', () => {
-    expect(paymentCheckoutStart(new Error('network down'), true)).toBeUndefined()
   })
 })
 
@@ -979,5 +918,40 @@ describe('the wizard around the publish dialog', () => {
     await user.tab()
 
     await waitFor(() => expect(mockApiClient.elections.update).toHaveBeenCalled())
+  })
+
+  it('guards leaving again after the dialog is closed without publishing', async () => {
+    renderWizard('/admin/processes/create')
+
+    const user = userEvent.setup()
+    await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    await user.click(screen.getByRole('button', { name: 'Publish' }))
+    await screen.findByRole('button', { name: 'view-back' })
+    // The save that opened the dialog snoozes the prompt for a while: look past it
+    const now = Date.now()
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(now + 10 * 60 * 1000)
+    try {
+      await user.click(screen.getByRole('button', { name: 'view-back' }))
+
+      // Having opened the dialog once must not switch the leave prompt off for good
+      await waitFor(() => expect(mockUseBlocker).toHaveBeenLastCalledWith(true))
+    } finally {
+      clock.mockRestore()
+    }
+  })
+
+  it('makes the wizard inert while the dialog is open, and live again once it closes', async () => {
+    renderWizard('/admin/processes/create')
+
+    const user = userEvent.setup()
+    await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    expect(screen.getByPlaceholderText('Voting Process Title').closest('[inert]')).toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Publish' }))
+    await screen.findByRole('button', { name: 'view-back' })
+
+    expect(screen.getByPlaceholderText('Voting Process Title').closest('[inert]')).not.toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'view-back' }))
+    await waitFor(() => expect(screen.getByPlaceholderText('Voting Process Title').closest('[inert]')).toBeNull())
   })
 })

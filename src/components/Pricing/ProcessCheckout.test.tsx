@@ -209,8 +209,9 @@ describe('ProcessCheckout', () => {
       state.checkout = { type: 'loading' }
       renderView()
 
-      // Its label waits for Stripe's total, so it is found by its type
-      await waitFor(() => expect(document.querySelector('button[type="submit"]')).toBeDisabled())
+      // Its label waits for Stripe's total, so it names no amount yet. The loading button hides its
+      // text from the accessibility tree, so it is found by that text
+      expect((await screen.findByText('Pay and publish')).closest('button')).toBeDisabled()
       expect(screen.queryByText('payment-element')).not.toBeInTheDocument()
       expect(screen.queryByText(/and the vote is published/)).not.toBeInTheDocument()
     })

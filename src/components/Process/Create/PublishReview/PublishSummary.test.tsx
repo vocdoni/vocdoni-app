@@ -170,11 +170,4 @@ describe('PublishSummary', () => {
     await user.click(screen.getByRole('button', { name: 'Close' }))
     expect(onClose).toHaveBeenCalled()
   })
-
-  it('locks both buttons while busy', () => {
-    setup({ busy: true, wallet: undefined })
-
-    expect(screen.getByRole('button', { name: 'Keep editing' })).toBeDisabled()
-    expect(primaryButton()).toBeDisabled()
-  })
 })

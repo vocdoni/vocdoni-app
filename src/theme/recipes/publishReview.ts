@@ -21,6 +21,7 @@ const scrollArea = {
 export const PublishReview = defineSlotRecipe({
   className: 'publish-review',
   slots: [
+    'frame',
     'root',
     'header',
     'topBar',
@@ -62,6 +63,15 @@ export const PublishReview = defineSlotRecipe({
     'secureNote',
   ],
   base: {
+    // Dialog.Content itself. Its phone-sized 'full' size fills the viewport: undone from md up, or the
+    // dialog would too
+    frame: {
+      maxW: { md: '820px' },
+      minH: { md: 'auto' },
+      borderRadius: { md: 'l3' },
+      mx: { md: 4 },
+      overflow: 'hidden',
+    },
     // Fills Dialog.Content (a flex column capped at the viewport) and may shrink below its content,
     // so the middle part scrolls while the header and the footer stay in view
     root: {
