@@ -1826,13 +1826,32 @@
       "valid_count_other": "{{count}} kide guztiek hasi dezakete saioa."
     },
     "summary": {
+      "certificate_all_one": "{{count}} kideak saioa has dezake.",
+      "certificate_all_other": "{{count}} kide guztiek saioa has dezakete.",
+      "certificate_matched": "Zure kide-zerrendako DNI/NIErekin lotuta.",
+      "certificate_method": "Ziurtagiri digitala (DNI/NIE)",
+      "certificate_missing_one": "{{count}} kideak ez du DNI/NIE eta ezin du saioa hasi.",
+      "certificate_missing_other": "{{count}} kidek ez dute DNI/NIE eta ezin dute saioa hasi.",
+      "certificate_mixed_one": "{{count}} kideak DNI/NIE falta edo baliogabea du eta ezin du saioa hasi:",
+      "certificate_mixed_other": "{{count}} kidek DNI/NIE falta edo baliogabea dute eta ezin dute saioa hasi:",
+      "certificate_mixed_letter_one": "{{count}}ek zenbakiarekin bat ez datorren letra du",
+      "certificate_mixed_letter_other": "{{count}}ek zenbakiarekin bat ez datorren letra dute",
+      "certificate_mixed_missing_one": "{{count}}ek ez du DNI/NIE",
+      "certificate_mixed_missing_other": "{{count}}ek ez dute DNI/NIE",
+      "certificate_mixed_other_one": "{{count}}ek beste identifikazio mota bat du, pasaporte bat bezala",
+      "certificate_mixed_other_other": "{{count}}ek beste identifikazio mota bat dute, pasaporte bat bezala",
+      "certificate_rest_one": "Beste {{count}}ak saioa has dezake.",
+      "certificate_rest_other": "Beste {{count}}ek saioa has dezakete.",
       "code_choice": "Behin erabiltzeko kodea helbide elektronikoz edo SMSz",
       "code_email": "Behin erabiltzeko kodea helbide elektronikoz",
       "code_none": "Behin erabiltzeko koderik ez",
       "code_sms": "Behin erabiltzeko kodea SMSz",
       "details": "Botogileek idazten dutena: {{fields}}",
       "member_list_mismatch": "Ezarpen hauek ez datoz bat zure kide-zerrendarekin. Editatu zergatik ikusteko.",
-      "title": "Botogilearen saio-hasiera"
+      "opens_new_tab": "(fitxa berri batean irekitzen da)",
+      "rechecking": "Zure kide-zerrenda berriro egiaztatzen…",
+      "title": "Botogilearen saio-hasiera",
+      "unavailable": "Ezin izan dugu zure kide-zerrenda egiaztatu."
     }
   },
   "voting_link": {

@@ -1826,13 +1826,32 @@
       "valid_count_other": "All {{count}} members can sign in."
     },
     "summary": {
+      "certificate_all_one": "All {{count}} member can sign in.",
+      "certificate_all_other": "All {{count}} members can sign in.",
+      "certificate_matched": "Matched to the DNI/NIE in your member list.",
+      "certificate_method": "Digital certificate (DNI/NIE)",
+      "certificate_missing_one": "{{count}} member is missing a DNI/NIE, so they can't sign in.",
+      "certificate_missing_other": "{{count}} members are missing a DNI/NIE, so they can't sign in.",
+      "certificate_mixed_one": "{{count}} member has a missing or invalid DNI/NIE, so they can't sign in:",
+      "certificate_mixed_other": "{{count}} members have a missing or invalid DNI/NIE, so they can't sign in:",
+      "certificate_mixed_letter_one": "{{count}} has a letter that doesn't match the number",
+      "certificate_mixed_letter_other": "{{count}} have a letter that doesn't match the number",
+      "certificate_mixed_missing_one": "{{count}} has no DNI/NIE",
+      "certificate_mixed_missing_other": "{{count}} have no DNI/NIE",
+      "certificate_mixed_other_one": "{{count}} has another kind of ID, like a passport",
+      "certificate_mixed_other_other": "{{count}} have another kind of ID, like a passport",
+      "certificate_rest_one": "The other {{count}} can.",
+      "certificate_rest_other": "The other {{count}} can.",
       "code_choice": "One-time code by email or SMS",
       "code_email": "One-time code by email",
       "code_none": "No one-time code",
       "code_sms": "One-time code by SMS",
       "details": "Voters type: {{fields}}",
       "member_list_mismatch": "These settings don't fit your member list. Edit them to see why.",
-      "title": "Voter sign-in"
+      "opens_new_tab": "(opens in a new tab)",
+      "rechecking": "Checking your member list again…",
+      "title": "Voter sign-in",
+      "unavailable": "We couldn't check your member list."
     }
   },
   "voting_link": {
