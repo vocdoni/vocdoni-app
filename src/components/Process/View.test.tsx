@@ -1,7 +1,8 @@
 import userEvent from '@testing-library/user-event'
 import { mockUseElection, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { AnonymityInfoCard, ProcessInfoCard, SuccessVoteModal, VotingVoteModal } from './View'
+import type { CertPhase } from './CSP/Certificate/useCertificateAuth'
+import { AnonymityInfoCard, ProcessInfoCard, ProcessView, SuccessVoteModal, VotingVoteModal } from './View'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
@@ -9,6 +10,35 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   return {
     ...actual,
     ...getReactProvidersMock(),
+    // The process page cases only need the ballot container, not the SDK's question form.
+    ElectionQuestions: () => <div>ballot questions</div>,
+    ElectionResults: () => null,
+  }
+})
+
+vi.mock('./Header', () => ({ default: () => null }))
+
+vi.mock('~components/Auth/useAuth', async () => {
+  const { getAuthMock } = await import('~src/test-utils-react-providers-mock')
+  return { useAuth: () => getAuthMock() }
+})
+
+// Lets a case pin the certificate phase; without one the real provider runs.
+const certFlow = vi.hoisted(() => ({ value: null as null | Record<string, unknown> }))
+vi.mock('./CSP/Certificate/CertificateAuthProvider', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./CSP/Certificate/CertificateAuthProvider')>()
+  const { createContext, createElement, useContext } = await import('react')
+  const Pinned = createContext<unknown>(null)
+  return {
+    CertificateAuthProvider: (props: Parameters<typeof actual.CertificateAuthProvider>[0]) =>
+      certFlow.value
+        ? createElement(Pinned.Provider, { value: certFlow.value }, props.children)
+        : createElement(actual.CertificateAuthProvider, props),
+    useCertificateAuthContext: () => {
+      const pinned = useContext(Pinned)
+      const real = actual.useCertificateAuthContext()
+      return (pinned ?? real) as ReturnType<typeof actual.useCertificateAuthContext>
+    },
   }
 })
 
@@ -158,5 +188,79 @@ describe('SuccessVoteModal', () => {
     expect(await screen.findByText(/cast successfully/)).toBeInTheDocument()
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
     expect(screen.queryByText(/save this receipt now/)).not.toBeInTheDocument()
+  })
+})
+
+describe('ProcessView with a certificate census', () => {
+  const CERT_BUTTON = 'Access with your digital certificate'
+
+  beforeAll(() => {
+    // jsdom has no scrollIntoView; the component calls it on the bucket toggle / ballot container.
+    Element.prototype.scrollIntoView = vi.fn()
+  })
+
+  beforeEach(() => {
+    certFlow.value = null
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: {
+            id: 'p1',
+            title: 'Board election',
+            census: { authMethod: 'certificate', authFields: ['nationalId'] },
+            questions: [{ id: 'q1', secretUntilTheEnd: false }],
+          },
+          status: 'ONGOING',
+          results: { id: 'p1', questions: [] },
+          voteStatus: {},
+        }),
+    })
+  })
+
+  const pinPhase = (phase: CertPhase) => {
+    certFlow.value = { phase, start: vi.fn(), retry: vi.fn(), reset: vi.fn(), logout: vi.fn(), purpose: 'vote' }
+  }
+
+  const ballot = () => screen.getByText('ballot questions').parentElement as HTMLElement
+
+  it('renders the develop page when the flag is off', () => {
+    render(<ProcessView />)
+
+    expect(screen.getAllByRole('button', { name: 'Login' }).length).toBeGreaterThan(0)
+    expect(screen.queryByText(CERT_BUTTON)).not.toBeInTheDocument()
+    expect(ballot()).not.toHaveAttribute('tabindex')
+    expect(ballot()).not.toHaveAttribute('aria-busy')
+  })
+
+  it('puts the certificate panel above the tabs and the certificate button in the sticky bar', async () => {
+    render(<ProcessView />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+
+    const heading = await screen.findByRole('heading', { name: 'Identify to vote' })
+    expect(heading.compareDocumentPosition(screen.getByRole('tablist')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    // One in the panel, one in the sticky bar under the ballot.
+    expect(screen.getAllByRole('button', { name: CERT_BUTTON })).toHaveLength(2)
+    expect(screen.queryByRole('button', { name: 'Login' })).not.toBeInTheDocument()
+  })
+
+  it.each<CertPhase>([{ kind: 'starting' }, { kind: 'checking', slow: false }])(
+    'marks the ballot busy while the phase is $kind',
+    (phase) => {
+      pinPhase(phase)
+      render(<ProcessView />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+
+      expect(ballot()).toHaveAttribute('aria-busy', 'true')
+    }
+  )
+
+  it('moves focus to the ballot once the voter is identified', async () => {
+    pinPhase({
+      kind: 'identified',
+      holder: { fullName: 'Maria García López', documentType: 'DNI', documentEnding: '678Z' },
+    })
+    setReactProvidersMock({ useElectionAuth: () => ({ connected: true, authToken: 't', weight: null }) })
+    render(<ProcessView />, { appEnv: { ENABLE_CERTIFICATE_AUTH: 'on' } })
+
+    await waitFor(() => expect(ballot()).toHaveFocus())
+    expect(ballot()).not.toHaveAttribute('aria-busy')
   })
 })
