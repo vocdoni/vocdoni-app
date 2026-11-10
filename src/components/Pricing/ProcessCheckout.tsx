@@ -1,6 +1,4 @@
-import { Alert, Button, Card, Flex, HStack, IconButton, Separator, Text, VStack } from '@chakra-ui/react'
-import { SectionHeader } from '~components/ui/SectionHeader'
-import { InlineLoader, ListLoader } from '~components/ui/Loader'
+import { Alert, Button, Spinner } from '@chakra-ui/react'
 import {
   BillingAddressElement,
   CheckoutElementsProvider,
@@ -10,11 +8,28 @@ import {
 } from '@stripe/react-stripe-js/checkout'
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackIcon } from '~theme/icons'
-import { useHref } from 'react-router'
+import { LuLock } from 'react-icons/lu'
+import { Link as RouterLink, useHref } from 'react-router'
 import { ApiErrorCode, isApiError, JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
 import type { ProcessCheckoutResponse } from '@vocdoni/api-types'
 import { apiErrorDetails } from '~components/Auth/api'
+import {
+  PublishReviewAmountRow,
+  PublishReviewAmounts,
+  PublishReviewBody,
+  PublishReviewColumn,
+  PublishReviewColumns,
+  PublishReviewFooter,
+  PublishReviewHeader,
+  PublishReviewIntro,
+  PublishReviewLead,
+  PublishReviewNote,
+  PublishReviewSecureNote,
+  PublishReviewSectionTitle,
+  PublishReviewSkeleton,
+  PublishReviewStatus,
+  PublishReviewStep,
+} from '~components/Process/Create/PublishReview/anatomy'
 import { Routes } from '~routes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import {
@@ -26,8 +41,6 @@ import {
   useProcessCheckoutApi,
   waitForPublication,
 } from '~queries/process-checkout'
-import { useProcessPrice } from '~queries/process-price'
-import { useWallet } from '~queries/wallet'
 import { currency } from '~utils/numbers'
 import { publishNeedsWalletTopUp, publishPaymentErrorMessage } from './payment-errors'
 import { useCheckoutAppearance, useStripePromise } from './stripe'
@@ -35,7 +48,7 @@ import { useCheckoutAppearance, useStripePromise } from './stripe'
 // What a 40178 refusal says the top-up must cover, in EUR cents, VAT excluded
 export type WalletShortfall = { shortfallCents: number; balanceCents: number }
 
-/** Where the view starts. */
+/** Where the checkout starts. */
 export type ProcessCheckoutStart =
   // A publish refused for the wallet shortfall (40178)
   | { kind: 'checkout'; shortfall?: WalletShortfall }
@@ -43,10 +56,16 @@ export type ProcessCheckoutStart =
   | { kind: 'conflict' }
   // Back from a redirect-based payment: wait for its outcome
   | { kind: 'return' }
-  // The wizard published the draft: wait for the process, on its publish job when it has one
+  // The draft was published: wait for the process, on its publish job when it has one
   | { kind: 'publishing'; jobId?: string }
 
-type Step =
+/** Where the publish dialog starts: on its summary, or in one of the checkout's states. */
+export type PublishFlowStart = { kind: 'summary' } | ProcessCheckoutStart
+
+export type ProcessCheckoutStep =
+  | { name: 'summary' }
+  // The wallet covers the price: what it takes and what is left, as the summary showed them
+  | { name: 'wallet'; totalCents: number; afterCents: number }
   | { name: 'conflict' }
   | { name: 'opening' }
   | { name: 'checkout'; session: ProcessCheckoutResponse }
@@ -55,14 +74,8 @@ type Step =
   | { name: 'unconfirmed' }
   | { name: 'unpaid' }
   | { name: 'timeout'; paid: boolean }
-  | { name: 'error'; message: string }
-
-type ProcessCheckoutProps = {
-  processId: string
-  start: ProcessCheckoutStart
-  onPublished: (processId: string) => void
-  onClose: () => void
-}
+  // `openWallet`: a wallet shortfall the wallet page can settle
+  | { name: 'error'; message: string; openWallet?: boolean }
 
 // The backend may take about 15 minutes on a slow chain
 const publicationTimeoutMs = 15 * 60 * 1000
@@ -88,8 +101,10 @@ export const checkoutStartForRefusal = (error: unknown): ProcessCheckoutStart | 
   return undefined
 }
 
-const initialStep = (start: ProcessCheckoutStart): Step => {
+const initialStep = (start: PublishFlowStart): ProcessCheckoutStep => {
   switch (start.kind) {
+    case 'summary':
+      return { name: 'summary' }
     case 'conflict':
       return { name: 'conflict' }
     case 'return':
@@ -101,18 +116,27 @@ const initialStep = (start: ProcessCheckoutStart): Step => {
   }
 }
 
+const paymentSteps: ProcessCheckoutStep['name'][] = ['conflict', 'opening', 'checkout']
+
+type UseProcessCheckoutOptions = {
+  processId: string
+  start: PublishFlowStart
+  /** Only who may top up the wallet is taken to the payment when a publish is refused for it. */
+  canTopUp: boolean
+  onPublished: (processId: string) => void
+}
+
 /**
- * Top up and publish (vocdoni-app#1767). Inline, not a Dialog: a modal focus trap breaks Stripe's
- * 3D Secure lightbox. It waits for the backend to publish: a browser success proves nothing.
+ * Publish, top up and publish (vocdoni-app#1767), and wait for the outcome. It waits for the backend
+ * to publish: a browser success proves nothing.
  */
-export const ProcessCheckout = ({ processId, start, onPublished, onClose }: ProcessCheckoutProps) => {
+export const useProcessCheckout = ({ processId, start, canTopUp, onPublished }: UseProcessCheckoutOptions) => {
   const { t, i18n } = useTranslation()
   const { client } = useApiClient()
   const checkoutApi = useProcessCheckoutApi()
-  const stripePromise = useStripePromise()
-  const { price } = useProcessPrice(processId)
-  const { data: wallet } = useWallet()
-  const [step, setStep] = useState<Step>(() => initialStep(start))
+  const [step, setStep] = useState<ProcessCheckoutStep>(() => initialStep(start))
+  // Whether a payment is part of this publish: it names the outcome views
+  const [topUp, setTopUp] = useState(start.kind !== 'summary' && start.kind !== 'publishing')
   // Set once a read of the payment says it is paid, for a return that starts without knowing
   const [paymentSeen, setPaymentSeen] = useState(false)
   const [shortfall, setShortfall] = useState<WalletShortfall | undefined>(
@@ -120,16 +144,26 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
   )
   // A publish from the wallet after a 400 is tried once: a second refusal ends in the error step
   const walletPublishRef = useRef(false)
+  // The publish request in flight: a second click must not send another
+  const publishingRef = useRef(false)
   // The session request of the current 'opening' step: StrictMode runs its effect twice, and only one POST may go out
-  const openingRef = useRef<{ step: Step; processId: string; request: Promise<ProcessCheckoutResponse> } | null>(null)
+  const openingRef = useRef<{
+    step: ProcessCheckoutStep
+    processId: string
+    request: Promise<ProcessCheckoutResponse>
+  } | null>(null)
   // The client and checkout API change with the bearer token: the waits read them from here, so a
   // refreshed token does not restart them
   // Stripe appends the session id to the return URL, so the redirect lands on the wizard's return route
   const returnURL = new URL(useHref(Routes.processes.createReturn.split('/:sessionId')[0]), window.location.origin)
-  const latest = useRef({ client, checkoutApi, t, language: i18n.resolvedLanguage, onPublished, returnURL })
+  const latest = useRef({ client, checkoutApi, t, language: i18n.resolvedLanguage, onPublished, returnURL, canTopUp })
   useEffect(() => {
-    latest.current = { client, checkoutApi, t, language: i18n.resolvedLanguage, onPublished, returnURL }
+    latest.current = { client, checkoutApi, t, language: i18n.resolvedLanguage, onPublished, returnURL, canTopUp }
   })
+
+  useEffect(() => {
+    if (paymentSteps.includes(step.name)) setTopUp(true)
+  }, [step])
 
   const resume = (next: ProcessCheckoutStart) => {
     if (next.kind === 'checkout') setShortfall(next.shortfall)
@@ -139,14 +173,23 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
   // Publishes the draft, paid from the wallet. `before` runs first (cancelling an open top-up). With
   // `reopen` off, a refusal ends in the error step instead of reopening the checkout.
   const publishDraft = (before?: () => Promise<unknown>, reopen = true) => {
+    if (publishingRef.current) return
+    publishingRef.current = true
     setStep({ name: 'publishing' })
     Promise.resolve(before?.())
       .then(() => latest.current.client.elections.publish(processId))
       .then((response) => setStep({ name: 'waiting', afterPayment: false, jobId: enqueuedJobId(response) }))
       .catch((error) => {
-        const next = reopen ? checkoutStartForRefusal(error) : undefined
+        const next = reopen && latest.current.canTopUp ? checkoutStartForRefusal(error) : undefined
         if (next) return resume(next)
-        setStep({ name: 'error', message: publishPaymentErrorMessage(latest.current.t, error) ?? errorMessage(error) })
+        setStep({
+          name: 'error',
+          message: publishPaymentErrorMessage(latest.current.t, error) ?? errorMessage(error),
+          openWallet: publishNeedsWalletTopUp(error),
+        })
+      })
+      .finally(() => {
+        publishingRef.current = false
       })
   }
 
@@ -259,111 +302,161 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
     return () => controller.abort()
   }, [step, processId])
 
-  const title =
-    start.kind === 'publishing'
-      ? t('process.checkout.publish_title', { defaultValue: 'Publish voting process' })
-      : t('process.checkout.title', { defaultValue: 'Top up and publish' })
-  const frame = (children: ReactNode) => (
-    <Frame title={title} onBack={onClose}>
-      {children}
-    </Frame>
-  )
-  const publishAgain = (
-    <Button onClick={() => publishDraft()}>
-      {t('process.checkout.publish_again', { defaultValue: 'Publish again' })}
-    </Button>
+  return {
+    step,
+    topUp,
+    paymentSeen,
+    shortfall,
+    /** Publishes from the wallet (a free or wallet-paid vote), or after a timeout. */
+    publish: () => publishDraft(),
+    showWallet: (quote: { totalCents: number; afterCents: number }) => setStep({ name: 'wallet', ...quote }),
+    /** Opens the card checkout for what the wallet lacks. */
+    payByCard: (known?: WalletShortfall) => {
+      setShortfall(known)
+      setStep({ name: 'opening' })
+    },
+    backToSummary: () => setStep({ name: 'summary' }),
+    resumePayment: () => setStep({ name: 'opening' }),
+    cancelOpenPayment: () =>
+      publishDraft(() =>
+        // Nothing open to cancel is fine: the publish is what is left to do
+        latest.current.checkoutApi.cancelCheckout(processId).catch((error) => {
+          if (httpStatus(error) !== 404) throw error
+        })
+      ),
+    checkAgain: () => setStep({ name: 'waiting', afterPayment: true, paid: false }),
+    paid: () => setStep({ name: 'waiting', afterPayment: true, paid: true }),
+  }
+}
+
+export type ProcessCheckoutFlow = ReturnType<typeof useProcessCheckout>
+
+/** Whether the dialog must stay open: a publish was sent and its outcome is not known yet. */
+export const isPublishing = (step: ProcessCheckoutStep) => step.name === 'publishing' || step.name === 'waiting'
+
+type ProcessCheckoutContentProps = {
+  flow: ProcessCheckoutFlow
+  processId: string
+  /** Id of the element that names the dialog. */
+  titleId: string
+  /** The draft's price, VAT excluded, and the wallet balance, when known. */
+  totalCents?: number
+  balanceCents?: number
+  /** Back to the summary; left out when the dialog has none (the return from a payment). */
+  onBack?: () => void
+  onClose: () => void
+}
+
+/** The dialog body for every checkout state: the card payment, the waits and the outcomes. */
+export const ProcessCheckoutContent = ({
+  flow,
+  processId,
+  titleId,
+  totalCents,
+  balanceCents,
+  onBack,
+  onClose,
+}: ProcessCheckoutContentProps) => {
+  const { t } = useTranslation()
+  const stripePromise = useStripePromise()
+  const { step } = flow
+  const title = flow.topUp
+    ? t('process.checkout.title', { defaultValue: 'Top up and publish' })
+    : t('process.checkout.publish_title', { defaultValue: 'Publish voting process' })
+
+  const outcome = (body: ReactNode, actions?: ReactNode) => (
+    <OutcomeStep title={title} titleId={titleId} onClose={onClose} actions={actions}>
+      {body}
+    </OutcomeStep>
   )
 
   switch (step.name) {
+    case 'summary':
+    case 'wallet':
+      // The dialog's own steps
+      return null
     case 'conflict':
-      return frame(
+      return outcome(
+        <Outcome status='warning'>
+          {t('process.checkout.conflict', {
+            defaultValue:
+              'A top-up for this voting process is still open, so it cannot be published yet. Resume the payment to finish it, or cancel it and publish from your wallet.',
+          })}
+        </Outcome>,
         <>
-          <Outcome status='warning'>
-            {t('process.checkout.conflict', {
-              defaultValue:
-                'A top-up for this voting process is still open, so it cannot be published yet. Resume the payment to finish it, or cancel it and publish from your wallet.',
-            })}
-          </Outcome>
-          <HStack gap='3' wrap='wrap'>
-            <Button onClick={() => setStep({ name: 'opening' })}>
-              {t('process.checkout.resume', { defaultValue: 'Resume payment' })}
-            </Button>
-            <Button
-              variant='outline'
-              onClick={() =>
-                publishDraft(() =>
-                  // Nothing open to cancel is fine: the publish is what is left to do
-                  latest.current.checkoutApi.cancelCheckout(processId).catch((error) => {
-                    if (httpStatus(error) !== 404) throw error
-                  })
-                )
-              }
-            >
-              {t('process.checkout.cancel_open', { defaultValue: 'Cancel the open payment' })}
-            </Button>
-          </HStack>
+          <Button variant='outline' onClick={flow.cancelOpenPayment}>
+            {t('process.checkout.cancel_open', { defaultValue: 'Cancel the open payment' })}
+          </Button>
+          <Button onClick={flow.resumePayment}>
+            {t('process.checkout.resume', { defaultValue: 'Resume payment' })}
+          </Button>
         </>
       )
     case 'opening':
-      return <Waiting />
+      return <StatusStep title={title} titleId={titleId} onClose={onClose} />
     case 'checkout':
+      if (!stripePromise) {
+        return outcome(
+          <Outcome status='error'>
+            {t('payment.stripe_unavailable', {
+              defaultValue: 'Payments are temporarily unavailable. Please try again later.',
+            })}
+          </Outcome>
+        )
+      }
       return (
-        <CheckoutStep
+        <CardStep
           title={title}
+          titleId={titleId}
           processId={processId}
           session={step.session}
-          shortfall={shortfall}
+          shortfall={flow.shortfall}
           stripePromise={stripePromise}
-          totalCents={price?.totalCents}
-          balanceCents={wallet?.balanceCents}
-          onPaid={() => setStep({ name: 'waiting', afterPayment: true, paid: true })}
-          onBack={onClose}
+          totalCents={totalCents}
+          balanceCents={balanceCents}
+          onPaid={flow.paid}
+          onBack={onBack}
+          onClose={onClose}
         />
       )
     case 'publishing':
-      return <Waiting>{t('process.checkout.publishing', { defaultValue: 'Publishing your voting process…' })}</Waiting>
+      return (
+        <StatusStep title={title} titleId={titleId}>
+          {t('process.checkout.publishing', { defaultValue: 'Publishing your voting process…' })}
+        </StatusStep>
+      )
     case 'waiting':
       return (
-        <Waiting>
-          {step.afterPayment && (step.paid || paymentSeen)
+        <StatusStep title={title} titleId={titleId}>
+          {step.afterPayment && (step.paid || flow.paymentSeen)
             ? t('process.checkout.publishing_after_payment', {
                 defaultValue: 'Payment received. Publishing your voting process…',
               })
             : t('process.checkout.publishing', { defaultValue: 'Publishing your voting process…' })}
-        </Waiting>
+        </StatusStep>
       )
     case 'unconfirmed':
-      return frame(
-        <Outcome
-          status='info'
-          action={
-            <Button variant='outline' onClick={() => setStep({ name: 'waiting', afterPayment: true, paid: false })}>
-              {t('process.checkout.check_again', { defaultValue: 'Check again' })}
-            </Button>
-          }
-        >
+      return outcome(
+        <Outcome status='info'>
           {t('process.checkout.unconfirmed', {
             defaultValue:
               'Your payment is still being confirmed. Some payment methods take a few days to clear. The voting process is published automatically once the payment is confirmed, so you can leave this page.',
           })}
-        </Outcome>
+        </Outcome>,
+        <Button variant='outline' onClick={flow.checkAgain}>
+          {t('process.checkout.check_again', { defaultValue: 'Check again' })}
+        </Button>
       )
     case 'unpaid':
-      return frame(
-        <Outcome
-          status='error'
-          action={
-            <Button onClick={() => setStep({ name: 'opening' })}>
-              {t('common.retry', { defaultValue: 'Try again' })}
-            </Button>
-          }
-        >
+      return outcome(
+        <Outcome status='error'>
           {t('process.checkout.unpaid', { defaultValue: 'The payment did not go through. You can try again.' })}
-        </Outcome>
+        </Outcome>,
+        <Button onClick={flow.resumePayment}>{t('common.retry', { defaultValue: 'Try again' })}</Button>
       )
     case 'timeout':
-      return frame(
-        <Outcome status='warning' action={publishAgain}>
+      return outcome(
+        <Outcome status='warning'>
           {step.paid
             ? t('process.checkout.timeout', {
                 defaultValue:
@@ -373,158 +466,133 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
                 defaultValue:
                   'The voting process is still being published. If it does not appear shortly, publish it again: it is paid from your wallet.',
               })}
-        </Outcome>
+        </Outcome>,
+        <Button onClick={flow.publish}>{t('process.checkout.publish_again', { defaultValue: 'Publish again' })}</Button>
       )
     case 'error':
-      return frame(<Outcome status='error'>{step.message}</Outcome>)
+      return outcome(
+        <Outcome status='error'>{step.message}</Outcome>,
+        (onBack || step.openWallet) && (
+          <>
+            {onBack && (
+              <Button variant='outline' onClick={onBack}>
+                {t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
+              </Button>
+            )}
+            {step.openWallet && (
+              <Button asChild variant={onBack ? 'solid' : 'outline'}>
+                <RouterLink to={Routes.dashboard.settings.billing}>
+                  {t('process.payment.error.open_wallet', { defaultValue: 'Open wallet' })}
+                </RouterLink>
+              </Button>
+            )}
+          </>
+        )
+      )
   }
 }
 
-const Waiting = ({ children }: { children?: ReactNode }) => (
-  <Flex direction='column' align='center' gap='4' py='10' textAlign='center' role='status'>
-    <InlineLoader />
-    {children && <Text>{children}</Text>}
-  </Flex>
+type StepFrameProps = { title: string; titleId: string; onClose?: () => void; children?: ReactNode }
+
+// A wait: no close button when given no onClose, since the publish is under way
+const StatusStep = ({ title, titleId, onClose, children }: StepFrameProps) => (
+  <PublishReviewStep>
+    <PublishReviewHeader eyebrow={title} titleId={titleId} onClose={onClose} />
+    <PublishReviewStatus role='status'>
+      <Spinner size='lg' />
+      {children && <p>{children}</p>}
+    </PublishReviewStatus>
+  </PublishReviewStep>
 )
 
-const Outcome = ({
-  status,
-  action,
-  children,
-}: {
-  status: 'info' | 'warning' | 'error'
-  action?: ReactNode
-  children: ReactNode
-}) => (
-  <VStack align='stretch' gap='4'>
-    <Alert.Root status={status}>
-      <Alert.Indicator />
-      <Alert.Content>
-        <Alert.Description>{children}</Alert.Description>
-      </Alert.Content>
-    </Alert.Root>
-    {action}
-  </VStack>
+const OutcomeStep = ({ title, titleId, onClose, actions, children }: StepFrameProps & { actions?: ReactNode }) => (
+  <PublishReviewStep>
+    <PublishReviewHeader eyebrow={title} titleId={titleId} onClose={onClose} />
+    <PublishReviewBody>{children}</PublishReviewBody>
+    {actions && <PublishReviewFooter>{actions}</PublishReviewFooter>}
+  </PublishReviewStep>
 )
 
-const Frame = ({ title, onBack, children }: { title: string; onBack: () => void; children: ReactNode }) => {
-  const { t } = useTranslation()
-  return (
-    <VStack align='stretch' gap='5'>
-      <Flex align='center' gap='2'>
-        <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost' size='sm'>
-          <BackIcon />
-        </IconButton>
-        <SectionHeader title={title} />
-      </Flex>
-      {children}
-    </VStack>
-  )
-}
+const Outcome = ({ status, children }: { status: 'info' | 'warning' | 'error'; children: ReactNode }) => (
+  <Alert.Root status={status}>
+    <Alert.Indicator />
+    <Alert.Content>
+      <Alert.Description>{children}</Alert.Description>
+    </Alert.Content>
+  </Alert.Root>
+)
 
-type CheckoutStepProps = {
+type CardStepProps = {
   title: string
+  titleId: string
   processId: string
   session: ProcessCheckoutResponse
   shortfall?: WalletShortfall
-  stripePromise: ReturnType<typeof useStripePromise>
+  stripePromise: NonNullable<ReturnType<typeof useStripePromise>>
   totalCents?: number
   balanceCents?: number
   onPaid: () => void
-  onBack: () => void
+  onBack?: () => void
+  onClose: () => void
 }
 
-const CheckoutStep = ({
+const CardStep = ({ stripePromise, session, ...props }: CardStepProps) => {
+  const appearance = useCheckoutAppearance()
+
+  return (
+    // The session is already open, so Stripe only needs its client secret
+    <CheckoutElementsProvider
+      stripe={stripePromise}
+      options={{ clientSecret: session.clientSecret, elementsOptions: { appearance } }}
+    >
+      <CardForm session={session} {...props} />
+    </CheckoutElementsProvider>
+  )
+}
+
+const CardForm = ({
   title,
+  titleId,
   processId,
   session,
   shortfall,
-  stripePromise,
   totalCents,
   balanceCents,
   onPaid,
   onBack,
-}: CheckoutStepProps) => {
-  const { t } = useTranslation()
-  const appearance = useCheckoutAppearance()
-
-  if (!stripePromise) {
-    return (
-      <Frame title={title} onBack={onBack}>
-        <Outcome status='error'>
-          {t('payment.stripe_unavailable', {
-            defaultValue: 'Payments are temporarily unavailable. Please try again later.',
-          })}
-        </Outcome>
-      </Frame>
-    )
-  }
-
-  return (
-    <Frame title={title} onBack={onBack}>
-      {/* The session is already open, so Stripe only needs its client secret */}
-      <CheckoutElementsProvider
-        stripe={stripePromise}
-        options={{ clientSecret: session.clientSecret, elementsOptions: { appearance } }}
-      >
-        <CheckoutFormFields
-          processId={processId}
-          session={session}
-          shortfall={shortfall}
-          totalCents={totalCents}
-          balanceCents={balanceCents}
-          onPaid={onPaid}
-        />
-      </CheckoutElementsProvider>
-    </Frame>
-  )
-}
-
-const SummaryRow = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
-  <Flex justify='space-between' gap='4'>
-    <Text fontWeight={bold ? 'bold' : undefined}>{label}</Text>
-    <Text fontWeight={bold ? 'bold' : undefined}>{value}</Text>
-  </Flex>
-)
-
-type CheckoutFormFieldsProps = Pick<
-  CheckoutStepProps,
-  'processId' | 'shortfall' | 'totalCents' | 'balanceCents' | 'onPaid'
-> & {
-  session: ProcessCheckoutResponse
-}
-
-const CheckoutFormFields = ({
-  processId,
-  session,
-  shortfall,
-  totalCents,
-  balanceCents,
-  onPaid,
-}: CheckoutFormFieldsProps) => {
+  onClose,
+}: Omit<CardStepProps, 'stripePromise'>) => {
   const { t } = useTranslation()
   const checkoutState = useCheckoutElements()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  if (checkoutState.type === 'loading') {
-    return <ListLoader />
-  }
-
   if (checkoutState.type === 'error') {
-    return <Outcome status='error'>{checkoutState.error.message}</Outcome>
+    return (
+      <OutcomeStep title={title} titleId={titleId} onClose={onClose}>
+        <Outcome status='error'>{checkoutState.error.message}</Outcome>
+      </OutcomeStep>
+    )
   }
 
-  const { checkout } = checkoutState
-  // Only a 40178 refusal tells the shortfall; without one there is nothing to compare the top-up with
-  const restStaysInWallet = shortfall !== undefined && session.amountCents > shortfall.shortfallCents
-  // The amount Stripe charges, VAT included, when it says so
-  const payAmount = checkout.total?.total.amount ?? currency(session.amountCents)
+  const checkout = checkoutState.type === 'success' ? checkoutState.checkout : undefined
+  const loading = !checkout
   const walletBalanceCents = shortfall?.balanceCents ?? balanceCents
+  // The refusal's shortfall when there was one; otherwise what the price and the balance leave
+  const shortCents =
+    shortfall?.shortfallCents ??
+    (totalCents !== undefined && walletBalanceCents !== undefined
+      ? Math.max(totalCents - walletBalanceCents, 0)
+      : undefined)
+  // Above the shortfall when the €1 minimum top-up is more than what is short
+  const restStaysInWallet = shortCents !== undefined && session.amountCents > shortCents
+  // The amount Stripe charges, VAT included, when it says so
+  const payAmount = checkout ? (checkout.total?.total.amount ?? currency(session.amountCents)) : undefined
+  const busy = isSubmitting || loading
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (isSubmitting) return
+    if (isSubmitting || !checkout) return
 
     setIsSubmitting(true)
     setError(null)
@@ -549,68 +617,142 @@ const CheckoutFormFields = ({
     }
   }
 
+  const lead =
+    walletBalanceCents === undefined
+      ? null
+      : walletBalanceCents > 0
+        ? t('process.publish_review.card.lead_balance', {
+            defaultValue: "The organization's balance covers {{balance}}. The rest is paid now, with VAT.",
+            balance: currency(walletBalanceCents),
+          })
+        : t('process.publish_review.card.lead_whole', { defaultValue: 'You pay the whole vote now, with VAT.' })
+
+  const note = restStaysInWallet
+    ? t('process.checkout.rest_stays', { defaultValue: 'The rest stays in your wallet.' })
+    : shortCents !== undefined
+      ? t('process.publish_review.card.note_zero', { defaultValue: 'After publishing, the balance is left at zero.' })
+      : null
+
   return (
-    <form onSubmit={handleSubmit}>
-      <VStack align='stretch' gap='5'>
-        <Card.Root variant='section' size='md' gap='3'>
-          {shortfall ? (
-            <SummaryRow
-              label={t('process.checkout.shortfall', { defaultValue: 'Shortfall (VAT excluded)' })}
-              value={currency(shortfall.shortfallCents)}
-            />
-          ) : (
-            totalCents !== undefined && (
-              <SummaryRow
-                label={t('process.checkout.draft_total', { defaultValue: 'Draft total (VAT excluded)' })}
-                value={currency(totalCents)}
-              />
-            )
-          )}
-          {walletBalanceCents !== undefined && (
-            <SummaryRow
-              label={t('process.checkout.wallet_balance', { defaultValue: 'Wallet balance' })}
-              value={currency(walletBalanceCents)}
-            />
-          )}
-          <SummaryRow
-            label={t('process.checkout.top_up', { defaultValue: 'Top-up (VAT excluded)' })}
-            value={currency(session.amountCents)}
-            bold
-          />
-          {checkout.total && (
-            <>
-              <SummaryRow
-                label={t('wallet.topup.vat', { defaultValue: 'VAT' })}
-                value={checkout.total.taxExclusive.amount}
-              />
-              <Separator />
-              <SummaryRow
-                label={t('wallet.topup.total', { defaultValue: 'Total' })}
-                value={checkout.total.total.amount}
-                bold
-              />
-            </>
-          )}
-          {restStaysInWallet && (
-            <Text textStyle='body-sm' color='fg.muted'>
-              {t('process.checkout.rest_stays', { defaultValue: 'The rest stays in your wallet.' })}
-            </Text>
-          )}
-        </Card.Root>
+    <PublishReviewStep asChild>
+      <form onSubmit={handleSubmit}>
+        <PublishReviewHeader
+          eyebrow={onBack ? undefined : title}
+          titleId={onBack ? undefined : titleId}
+          onBack={onBack && !isSubmitting ? onBack : undefined}
+          onClose={isSubmitting ? undefined : onClose}
+        >
+          <PublishReviewLead id={onBack ? titleId : undefined}>
+            {payAmount ? (
+              t('process.publish_review.card.title', {
+                defaultValue: 'Pay {{amount}} and the vote is published.',
+                amount: payAmount,
+              })
+            ) : (
+              // A span: the lead is a paragraph
+              <PublishReviewSkeleton data-kind='lead' asChild>
+                <span />
+              </PublishReviewSkeleton>
+            )}
+          </PublishReviewLead>
+          {lead && <PublishReviewIntro>{lead}</PublishReviewIntro>}
+        </PublishReviewHeader>
 
-        <BillingAddressElement options={{ display: { name: 'split' } }} />
-        <TaxIdElement options={{ visibility: 'auto' }} />
-        <PaymentElement />
+        <PublishReviewColumns>
+          <PublishReviewColumn>
+            <PublishReviewSectionTitle>
+              {t('process.publish_review.pay_now', { defaultValue: 'What you pay now' })}
+            </PublishReviewSectionTitle>
+            <PublishReviewAmounts>
+              {totalCents !== undefined && (
+                <PublishReviewAmountRow
+                  label={t('process.publish_review.this_vote', { defaultValue: 'This vote' })}
+                  value={currency(totalCents)}
+                />
+              )}
+              {walletBalanceCents !== undefined && walletBalanceCents > 0 && (
+                <PublishReviewAmountRow
+                  label={t('process.publish_review.org_balance', { defaultValue: 'Organization balance' })}
+                  value={currency(-walletBalanceCents)}
+                />
+              )}
+              {shortCents !== undefined && (
+                <PublishReviewAmountRow
+                  label={t('process.publish_review.card.short', { defaultValue: 'Short' })}
+                  value={currency(shortCents)}
+                  ruled
+                />
+              )}
+              {(session.amountCents !== shortCents || (checkout && !checkout.total)) && (
+                <PublishReviewAmountRow
+                  label={t('process.publish_review.card.top_up', { defaultValue: 'Top-up, VAT excluded' })}
+                  value={currency(session.amountCents)}
+                />
+              )}
+              {loading ? (
+                <PublishReviewSkeleton data-kind='amounts' />
+              ) : (
+                checkout?.total && (
+                  <>
+                    <PublishReviewAmountRow
+                      label={t('wallet.topup.vat', { defaultValue: 'VAT' })}
+                      value={checkout.total.taxExclusive.amount}
+                    />
+                    <PublishReviewAmountRow
+                      label={t('process.publish_review.total_now', { defaultValue: 'Total to pay now' })}
+                      value={checkout.total.total.amount}
+                      strong
+                      ruled
+                    />
+                  </>
+                )
+              )}
+            </PublishReviewAmounts>
+            {note && <PublishReviewNote>{note}</PublishReviewNote>}
+            <PublishReviewSectionTitle>
+              {t('process.publish_review.card.billing', { defaultValue: 'Billing details' })}
+            </PublishReviewSectionTitle>
+            {loading ? (
+              <PublishReviewSkeleton data-kind='field' />
+            ) : (
+              <>
+                <BillingAddressElement options={{ display: { name: 'split' } }} />
+                <TaxIdElement options={{ visibility: 'auto' }} />
+              </>
+            )}
+          </PublishReviewColumn>
 
-        {error && <Outcome status='error'>{error}</Outcome>}
+          <PublishReviewColumn>
+            <PublishReviewSectionTitle>
+              {t('process.publish_review.how_you_pay', { defaultValue: 'How you pay' })}
+            </PublishReviewSectionTitle>
+            {loading ? <PublishReviewSkeleton data-kind='field' /> : <PaymentElement />}
+            <PublishReviewSecureNote>
+              <LuLock aria-hidden />
+              <span>
+                {t('process.publish_review.card.secure', {
+                  defaultValue: 'Secure payment processed by Stripe. Vocdoni neither sees nor stores the card details.',
+                })}
+              </span>
+            </PublishReviewSecureNote>
+            {error && <Outcome status='error'>{error}</Outcome>}
+          </PublishReviewColumn>
+        </PublishReviewColumns>
 
-        <Button type='submit' w='full' loading={isSubmitting}>
-          {t('process.checkout.pay', {
-            defaultValue: 'Pay {{amount}} and publish',
-            amount: payAmount,
-          })}
-        </Button>
-      </VStack>
-    </form>
+        <PublishReviewFooter>
+          {onBack && (
+            <Button variant='outline' onClick={onBack} disabled={isSubmitting}>
+              {t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
+            </Button>
+          )}
+          <Button type='submit' loading={busy} disabled={loading}>
+            {t('process.checkout.pay', {
+              defaultValue: 'Pay {{amount}} and publish',
+              amount: payAmount ?? '',
+            })}
+          </Button>
+        </PublishReviewFooter>
+      </form>
+    </PublishReviewStep>
   )
 }

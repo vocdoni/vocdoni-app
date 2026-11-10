@@ -1,0 +1,230 @@
+import { Button, Dialog, Portal } from '@chakra-ui/react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import {
+  isPublishing,
+  ProcessCheckoutContent,
+  type ProcessCheckoutFlow,
+  type PublishFlowStart,
+  useProcessCheckout,
+} from '~components/Pricing/ProcessCheckout'
+import { useAppEnv } from '~src/app-env'
+import { useGroup } from '~queries/groups'
+import { useProcessPrice } from '~queries/process-price'
+import { useWallet } from '~queries/wallet'
+import { currency } from '~utils/numbers'
+import type { Process } from '../common'
+import {
+  PublishReviewAmountRow,
+  PublishReviewAmounts,
+  PublishReviewCallout,
+  PublishReviewColumn,
+  PublishReviewColumns,
+  PublishReviewFooter,
+  PublishReviewHeader,
+  PublishReviewIntro,
+  PublishReviewLead,
+  PublishReviewNote,
+  PublishReviewSectionTitle,
+  PublishReviewStep,
+} from './anatomy'
+import { PublishSummary } from './PublishSummary'
+import { resolvePublishPrimary } from './summary-facts'
+
+export type PublishDialogProps = {
+  processId: string
+  /** The form as saved before opening; null on the return from a payment, which has no summary. */
+  form: Process | null
+  start: PublishFlowStart
+  canTopUp: boolean
+  onPublished: (processId: string) => void
+  /** Closes the dialog; never called while a publish is under way. */
+  onClose: () => void
+}
+
+/** Review, pay and publish a saved draft, in one dialog over the wizard. */
+export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, onClose }: PublishDialogProps) => {
+  const titleId = useId()
+  const contentRef = useRef<HTMLDivElement>(null)
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymous } = useAppEnv()
+  const { price, query: priceQuery } = useProcessPrice(processId)
+  const walletQuery = useWallet()
+  const { data: group } = useGroup(form?.groupId ?? '', !!form?.groupId)
+  const flow = useProcessCheckout({ processId, start, canTopUp, onPublished })
+  const { step } = flow
+  // An unreadable wallet (a managed organization) is no wallet; one being re-read is not known yet
+  const wallet = walletQuery.isError ? undefined : walletQuery.data
+  const locked = isPublishing(step)
+  const stripeMounted = step.name === 'checkout'
+  const close = () => {
+    if (!locked) onClose()
+  }
+
+  // Zag reads `modal` only when the dialog opens, so switching it remounts the root; the remount
+  // skips the open animation, or every switch would flash the dialog in again
+  const mode = stripeMounted ? 'stripe' : 'modal'
+  const [firstMode] = useState(mode)
+  const [switched, setSwitched] = useState(false)
+  if (mode !== firstMode && !switched) setSwitched(true)
+  const remounted = switched || mode !== firstMode
+  useEffect(() => {
+    // Nothing gets focus in a dialog without a focus trap: start from its content
+    if (stripeMounted) contentRef.current?.focus()
+  }, [stripeMounted])
+
+  const content =
+    step.name === 'summary' && form ? (
+      <PublishSummary
+        form={form}
+        voters={group?.membersCount}
+        price={price}
+        // Re-read after the save that opened the dialog: the census may have changed
+        priceLoading={priceQuery.isFetching || walletQuery.isFetching}
+        priceError={priceQuery.isError}
+        priceRetrying={priceQuery.isError && priceQuery.isFetching}
+        onRetryPrice={() => void priceQuery.refetch()}
+        wallet={wallet}
+        canTopUp={canTopUp}
+        disableAnonymous={disableAnonymous}
+        titleId={titleId}
+        onKeepEditing={close}
+        onClose={close}
+        onPrimary={(action) => {
+          const primary = resolvePublishPrimary({ price, wallet, canTopUp })
+          if (action === 'wallet' && primary.kind === 'wallet') {
+            flow.showWallet({ totalCents: primary.totalCents, afterCents: primary.afterCents })
+          } else if (action === 'card' && primary.kind === 'card') {
+            flow.payByCard({ shortfallCents: primary.shortfallCents, balanceCents: primary.balanceCents })
+          } else if (action === 'publish') flow.publish()
+        }}
+      />
+    ) : step.name === 'wallet' ? (
+      <WalletStep flow={flow} titleId={titleId} onClose={close} />
+    ) : (
+      <ProcessCheckoutContent
+        flow={flow}
+        processId={processId}
+        titleId={titleId}
+        totalCents={price?.totalCents}
+        balanceCents={wallet?.balanceCents}
+        onBack={form ? flow.backToSummary : undefined}
+        onClose={close}
+      />
+    )
+
+  return (
+    <Dialog.Root
+      key={mode}
+      open
+      onOpenChange={(details) => {
+        if (!details.open) close()
+      }}
+      ids={{ title: titleId }}
+      size={{ base: 'full', md: 'xl' }}
+      placement='center'
+      scrollBehavior='inside'
+      lazyMount
+      unmountOnExit
+      skipAnimationOnMount={remounted}
+      // A modal focus trap and pointer blocking break Stripe's 3D Secure lightbox, which opens
+      // outside the dialog: off while the card form is mounted, with outside clicks ignored
+      modal={!stripeMounted}
+      closeOnInteractOutside={!locked && !stripeMounted}
+      closeOnEscape={!locked && !stripeMounted}
+    >
+      <Portal>
+        <Dialog.Backdrop _open={remounted ? { animationName: 'none' } : undefined} />
+        <Dialog.Positioner>
+          {/* The phone-sized 'full' size sets these; undo them from md up or the dialog fills the viewport */}
+          <Dialog.Content
+            ref={contentRef}
+            maxW={{ md: '820px' }}
+            minH={{ md: 'auto' }}
+            borderRadius={{ md: 'l3' }}
+            mx={{ md: 4 }}
+            overflow='hidden'
+          >
+            {content}
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
+  )
+}
+
+type WalletStepProps = { flow: ProcessCheckoutFlow; titleId: string; onClose: () => void }
+
+// The wallet covers the whole price: nothing to pay by card
+const WalletStep = ({ flow, titleId, onClose }: WalletStepProps) => {
+  const { t } = useTranslation()
+  if (flow.step.name !== 'wallet') return null
+  const { totalCents, afterCents } = flow.step
+  const total = currency(totalCents)
+
+  return (
+    <PublishReviewStep>
+      <PublishReviewHeader onBack={flow.backToSummary} onClose={onClose}>
+        <PublishReviewLead id={titleId}>
+          {t('process.publish_review.wallet.title', {
+            defaultValue: 'Pay {{total}} from the balance and the vote is published.',
+            total,
+          })}
+        </PublishReviewLead>
+        <PublishReviewIntro>
+          {t('process.publish_review.wallet.lead', {
+            defaultValue: 'There is nothing more to pay: it is taken from the prepaid balance.',
+          })}
+        </PublishReviewIntro>
+      </PublishReviewHeader>
+
+      <PublishReviewColumns>
+        <PublishReviewColumn>
+          <PublishReviewSectionTitle>
+            {t('process.publish_review.pay_now', { defaultValue: 'What you pay now' })}
+          </PublishReviewSectionTitle>
+          <PublishReviewAmounts>
+            <PublishReviewAmountRow
+              label={t('process.publish_review.this_vote', { defaultValue: 'This vote' })}
+              value={total}
+            />
+            <PublishReviewAmountRow
+              label={t('process.publish_review.org_balance', { defaultValue: 'Organization balance' })}
+              value={currency(-totalCents)}
+            />
+            <PublishReviewAmountRow
+              label={t('process.publish_review.total_now', { defaultValue: 'Total to pay now' })}
+              value={currency(0)}
+              strong
+              ruled
+            />
+          </PublishReviewAmounts>
+          <PublishReviewNote>
+            {t('process.publish_review.wallet.note', {
+              defaultValue: 'After publishing, the balance will have {{after}} left.',
+              after: currency(afterCents),
+            })}
+          </PublishReviewNote>
+        </PublishReviewColumn>
+        <PublishReviewColumn>
+          <PublishReviewSectionTitle>
+            {t('process.publish_review.how_you_pay', { defaultValue: 'How you pay' })}
+          </PublishReviewSectionTitle>
+          <PublishReviewCallout tone='positive'>
+            {t('process.publish_review.wallet.covers', {
+              defaultValue: "The organization's balance covers the whole cost. No card is needed.",
+            })}
+          </PublishReviewCallout>
+        </PublishReviewColumn>
+      </PublishReviewColumns>
+
+      <PublishReviewFooter>
+        <Button variant='outline' onClick={flow.backToSummary}>
+          {t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
+        </Button>
+        <Button onClick={flow.publish}>
+          {t('process.publish_review.wallet.cta', { defaultValue: 'Pay from the balance and publish' })}
+        </Button>
+      </PublishReviewFooter>
+    </PublishReviewStep>
+  )
+}

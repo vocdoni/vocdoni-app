@@ -353,9 +353,25 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
 
   await page.getByRole('button', { name: /^Publish$/ }).click()
 
+  // Publish saves the draft and opens the review dialog. Its primary is the last
+  // button of its footer, enabled once the price is read: "Publish" for the
+  // stack's small, free census.
+  const review = page.getByRole('dialog')
+  const reviewPrimary = review.getByRole('button').last()
+  await expect(reviewPrimary).toBeEnabled({ timeout: 60_000 })
+  await reviewPrimary.click()
+
   // Publishing creates the on-chain elections, so this is the slowest step in
   // the suite by a wide margin.
-  await page.waitForURL(/\/admin\/process\/[^/]+$/, { timeout: 180_000 })
+  const published = page.waitForURL(/\/admin\/process\/[^/]+$/, { timeout: 180_000 })
+  // A vote the organization's balance pays for asks once more, on its wallet step
+  const walletPrimary = review.getByRole('button', { name: 'Pay from the balance and publish' })
+  const walletStep = walletPrimary.waitFor({ state: 'visible', timeout: 180_000 }).then(
+    () => true,
+    () => false
+  )
+  if (await Promise.race([published.then(() => false), walletStep])) await walletPrimary.click()
+  await published
 
   const processId = page.url().split('/').pop()
   if (!processId) throw new Error(`Could not read the process id from ${page.url()}`)

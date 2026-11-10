@@ -78,21 +78,17 @@ vi.mock('./VoterAuthentication/VoterAuthDialogContext', async (importOriginal) =
   }
 })
 
-// The view has its own suite; here it only reports what the wizard handed it
-vi.mock('~components/Pricing/ProcessCheckout', async (importOriginal) => {
-  const React = await import('react')
-  return {
-    ...(await importOriginal<typeof import('~components/Pricing/ProcessCheckout')>()),
-    ProcessCheckout: ({ processId, start, onPublished, onClose }: any) =>
-      React.createElement(
-        'div',
-        null,
-        React.createElement('p', null, `view:${processId}:${JSON.stringify(start)}`),
-        React.createElement('button', { onClick: () => onPublished(processId) }, 'view-published'),
-        React.createElement('button', { onClick: onClose }, 'view-back')
-      ),
-  }
-})
+// The dialog has its own suite; here it only reports what the wizard handed it
+vi.mock('./PublishReview/PublishDialog', () => ({
+  PublishDialog: ({ processId, start, form, canTopUp, onPublished, onClose }: any) => (
+    <div role='dialog'>
+      <p>{`view:${processId}:${JSON.stringify(start)}`}</p>
+      <p>{`form:${form ? form.title : 'none'}:${canTopUp ? 'can-top-up' : 'cannot-top-up'}`}</p>
+      <button onClick={() => onPublished(processId)}>view-published</button>
+      <button onClick={onClose}>view-back</button>
+    </div>
+  ),
+}))
 
 vi.mock('~elements/dashboard/processes/drafts', () => ({
   useDeleteDraft: () => ({}),
@@ -805,7 +801,7 @@ describe('paymentCheckoutStart', () => {
   })
 })
 
-describe('the wizard around the payment view', () => {
+describe('the wizard around the publish dialog', () => {
   const draftId = '6650f0c0c0c0c0c0c0c0c0c0'
   const admin = { organizations: [{ role: 'admin', organization: { address: '0xorg' } }] }
 
@@ -857,15 +853,18 @@ describe('the wizard around the payment view', () => {
   describe('the return route of a redirect-based payment', () => {
     afterEach(() => sessionStorage.clear())
 
-    it('recovers the draft the payment was opened for, and opens the view in its waiting step', async () => {
+    it('recovers the draft the payment was opened for, and opens the dialog over its wizard, waiting', async () => {
       sessionStorage.setItem('process-checkout-pending', JSON.stringify({ draftId }))
       renderWizard('/admin/processes/create/return/cs_test_123')
 
       expect(await screen.findByText(`view:${draftId}:{"kind":"return"}`)).toBeInTheDocument()
+      // A return has no submitted form to sum up
+      expect(screen.getByText('form:none:can-top-up')).toBeInTheDocument()
       // The URL moves on to the wizard for that draft, so a reload does not repeat the return
       expect(screen.getByText(`at:/admin/processes/create?draftId=${draftId}`)).toBeInTheDocument()
       expect(sessionStorage.getItem('process-checkout-pending')).toBeNull()
-      expect(screen.queryByPlaceholderText('Voting Process Title')).not.toBeInTheDocument()
+      // The wizard stays behind the dialog, no longer swapped out for a full-page view
+      expect(screen.getByPlaceholderText('Voting Process Title')).toBeInTheDocument()
     })
 
     it('says it could not tell which process the payment was for, with a way back to the processes, when no draft was stored', async () => {
@@ -893,44 +892,68 @@ describe('the wizard around the payment view', () => {
     })
   })
 
-  it('opens the top-up checkout for an admin whose publish is refused for the wallet shortfall', async () => {
-    mockApiClient.elections.publish.mockRejectedValue(
-      new VocdoniApiError(402, { error: 'short' }, 'short', ApiErrorCode.PaymentRequired, {
-        lines: [],
-        totalCents: 5000,
-        balanceCents: 1000,
-        shortfallCents: 4000,
-      })
-    )
+  it('saves the draft and opens the dialog on its summary, without publishing', async () => {
     renderWizard('/admin/processes/create')
 
     await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
     await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
 
-    expect(
-      await screen.findByText(
-        `view:${draftId}:{"kind":"checkout","shortfall":{"shortfallCents":4000,"balanceCents":1000}}`
-      )
-    ).toBeInTheDocument()
-    expect(mockApiClient.elections.publish).toHaveBeenCalledWith(draftId)
+    expect(await screen.findByText(`view:${draftId}:{"kind":"summary"}`)).toBeInTheDocument()
+    expect(screen.getByText('form:My vote:can-top-up')).toBeInTheDocument()
+    expect(mockApiClient.elections.create).toHaveBeenCalledWith(
+      expect.objectContaining({ title: { default: 'My vote' } })
+    )
+    // The dialog publishes, once the user confirms there
+    expect(mockApiClient.elections.publish).not.toHaveBeenCalled()
+  })
+
+  it('tells the dialog who cannot top up the wallet', async () => {
+    profileState.current = { organizations: [{ role: 'manager', organization: { address: '0xorg' } }] }
+    renderWizard('/admin/processes/create')
+
+    await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
+
+    expect(await screen.findByText('form:My vote:cannot-top-up')).toBeInTheDocument()
+  })
+
+  it('shows the save error and keeps the dialog closed when the draft cannot be saved', async () => {
+    // A draft id stored by an earlier test makes the save an update: both refuse
+    mockApiClient.elections.create.mockRejectedValue(new Error('backend down'))
+    mockApiClient.elections.update.mockRejectedValue(new Error('backend down'))
+    const writes = () =>
+      mockApiClient.elections.create.mock.calls.length + mockApiClient.elections.update.mock.calls.length
+    renderWizard('/admin/processes/create')
+
+    const user = userEvent.setup()
+    await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    await user.click(screen.getByRole('button', { name: 'Publish' }))
+
+    await waitFor(() => expect(writes()).toBeGreaterThan(0))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(mockApiClient.elections.publish).not.toHaveBeenCalled()
+
+    // Auto-save picks up again after the failed save
+    const before = writes()
+    await user.type(screen.getByPlaceholderText('Voting Process Title'), ' edited')
+    await user.tab()
+    await waitFor(() => expect(writes()).toBeGreaterThan(before))
   })
 
   it('hands a published draft to the post-publish navigation', async () => {
-    mockApiClient.elections.publish.mockResolvedValue({ jobId: 'job' })
     renderWizard('/admin/processes/create')
 
     await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
     await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
 
-    expect(await screen.findByText(`view:${draftId}:{"kind":"publishing","jobId":"job"}`)).toBeInTheDocument()
+    expect(await screen.findByText(`view:${draftId}:{"kind":"summary"}`)).toBeInTheDocument()
     await userEvent.setup().click(screen.getByRole('button', { name: 'view-published' }))
 
     await waitFor(() => expect(screen.getByText('process page')).toBeInTheDocument())
   })
 
-  it('tracks the creation of a process published directly, with the submitted values', async () => {
+  it('tracks the creation of a process published from the dialog, with the submitted values', async () => {
     mockTrackEvent.mockClear()
-    mockApiClient.elections.publish.mockResolvedValue({ jobId: 'job' })
     renderWizard('/admin/processes/create')
 
     await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
@@ -943,8 +966,7 @@ describe('the wizard around the payment view', () => {
     )
   })
 
-  it('saves edits again after going back from a direct publish that did not finish', async () => {
-    mockApiClient.elections.publish.mockResolvedValue({ jobId: 'job' })
+  it('saves edits again after the dialog is closed without publishing', async () => {
     renderWizard('/admin/processes/create')
 
     const user = userEvent.setup()
@@ -957,24 +979,5 @@ describe('the wizard around the payment view', () => {
     await user.tab()
 
     await waitFor(() => expect(mockApiClient.elections.update).toHaveBeenCalled())
-  })
-
-  it('leaves a manager with the toast, not the view, when the wallet is short', async () => {
-    profileState.current = { organizations: [{ role: 'manager', organization: { address: '0xorg' } }] }
-    mockApiClient.elections.publish.mockRejectedValue(
-      new VocdoniApiError(402, { error: 'short' }, 'short', ApiErrorCode.PaymentRequired, {
-        lines: [],
-        totalCents: 5000,
-        shortfallCents: 4000,
-        balanceCents: 1000,
-      })
-    )
-    renderWizard('/admin/processes/create')
-
-    await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
-
-    await waitFor(() => expect(mockApiClient.elections.publish).toHaveBeenCalled())
-    expect(screen.queryByText(/^view:/)).not.toBeInTheDocument()
   })
 })
