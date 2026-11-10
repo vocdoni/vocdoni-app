@@ -114,13 +114,22 @@ is refused for lack of balance. The test pays, then asserts that the backend
 credited the wallet, debited the process and published it.
 
 It needs the stack in Stripe mode (see
-[integration/README.md](../integration/README.md#stripe-mode-opt-in)):
+[integration/README.md](../integration/README.md#stripe-mode-opt-in)), with two
+Stripe test keys:
 
 ```bash
-INTEGRATION_STRIPE_SECRET_KEY=sk_test_... pnpm test:e2e:stack
+INTEGRATION_STRIPE_SECRET_KEY=sk_test_... \
+INTEGRATION_STRIPE_PUBLIC_KEY=pk_test_... \
+pnpm test:e2e:stack
 ```
 
-Without the key the spec skips, so the default run is unaffected. It runs in the
+- `INTEGRATION_STRIPE_SECRET_KEY` (`sk_test_`) drives the spec's Stripe API calls.
+  Without it the spec skips, so the default run is unaffected.
+- `INTEGRATION_STRIPE_PUBLIC_KEY` (`pk_test_`) is forwarded to the app, which
+  needs it to render Stripe Elements. With the secret key set but this one
+  missing, the spec fails at its start.
+
+Both reject live keys (`sk_live_`, `rk_live_`, `pk_live_`). The spec runs in the
 `chromium` project only.
 
 It creates Stripe test-mode checkout sessions (and their customers) for the

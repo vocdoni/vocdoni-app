@@ -608,8 +608,7 @@ const CheckoutFormFields = ({
 
         {error && <Outcome status='error'>{error}</Outcome>}
 
-        {/* Test handle: the label carries the amount and is translated, and Stripe's frames hold the other fields. */}
-        <Button type='submit' w='full' loading={isSubmitting} data-testid='process-checkout-pay'>
+        <Button type='submit' w='full' loading={isSubmitting}>
           {t('process.checkout.pay', {
             defaultValue: 'Pay {{amount}} and publish',
             amount: payAmount,

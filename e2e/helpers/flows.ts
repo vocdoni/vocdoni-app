@@ -237,13 +237,9 @@ const fillQuestion = async (page: Page, index: number, question: QuestionSpec): 
 }
 
 /**
- * Fills the create wizard for a process, up to and including its Settings
- * panel, and stops before Publish. Callers publish it themselves, or assert on
- * what Publish does (the pay-per-process top-up view, for one).
- *
- * The census authenticates voters by `memberNumber` and, unless `twoFactor` is
- * off, challenges them with an emailed OTP — the configuration the CSP 2FA
- * voting flow exists to exercise.
+ * Fills the create wizard up to its Settings panel, stopping before Publish, so
+ * the caller can publish or assert on what Publish does. `twoFactor` (on by
+ * default) adds the emailed OTP to the memberNumber census.
  */
 export const fillProcessWizard = async (page: Page, spec: ProcessSpec): Promise<void> => {
   await page.goto('/admin/processes/create')

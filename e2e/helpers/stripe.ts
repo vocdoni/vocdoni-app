@@ -7,9 +7,9 @@ import type { ProcessPriceResponse, WalletResponse } from '@vocdoni/api-types'
 
 const STRIPE_API_URL = 'https://api.stripe.com/v1'
 
-/** Refuses live keys: every client here writes test objects, and must never touch production. */
+/** Refuses live keys (secret, restricted or publishable): the e2e suite must never touch production. */
 export const assertTestKey = (key: string, variable: string): string => {
-  if (/^(sk|rk)_live_/.test(key)) {
+  if (/^(sk|rk|pk)_live_/.test(key)) {
     throw new Error(`${variable} is a live key: refusing to create objects in a production account`)
   }
   return key
@@ -56,14 +56,21 @@ export const createStripeClient = (secretKey: string, baseUrl = STRIPE_API_URL) 
       },
       body: form ? new URLSearchParams(form) : undefined,
     })
-    const body = (await response.json()) as T & { error?: { message?: string } }
+    // Read as text first, so an error body that is not JSON still reports its status.
+    const text = await response.text()
+    let body: (T & { error?: { message?: string } }) | undefined
+    try {
+      body = JSON.parse(text)
+    } catch {
+      body = undefined
+    }
     if (!response.ok) {
       throw new StripeError(
         response.status,
-        `Stripe ${method} ${path} failed: ${response.status} ${body.error?.message ?? 'no error message'}`
+        `Stripe ${method} ${path} failed: ${response.status} ${body?.error?.message ?? (text.slice(0, 200) || 'no error message')}`
       )
     }
-    return body
+    return body as T
   }
 
   /** Every checkout session created at or after `sinceUnix`, following Stripe's pagination. */
@@ -91,22 +98,27 @@ export const createStripeClient = (secretKey: string, baseUrl = STRIPE_API_URL) 
     request<{ deleted: boolean }>('DELETE', `/customers/${customerId}`)
 
   /**
-   * Expires the still-open top-up sessions of one organization created since
-   * `sinceUnix`, and deletes their customers. Matching is on the
-   * `wallet_topup_org` metadata, compared case-insensitively. Objects already
-   * gone (404) are skipped.
-   *
-   * Completed payments cannot be deleted in Stripe, so a paid session stays in
-   * the test account; only its customer record is removed.
+   * Expires this organization's open top-up sessions created since `sinceUnix` and
+   * deletes their customers. Every session is attempted; failures are collected into
+   * one AggregateError. Completed payments cannot be deleted in Stripe, so only their
+   * customer goes.
    */
   const cleanupCheckoutSessions = async (orgAddress: string, sinceUnix: number): Promise<void> => {
     const wanted = orgAddress.toLowerCase()
     const sessions = (await listCheckoutSessions(sinceUnix)).filter(
       (session) => session.metadata?.wallet_topup_org?.toLowerCase() === wanted
     )
+    const errors: unknown[] = []
     for (const session of sessions) {
-      if (session.status === 'open') await expireCheckoutSession(session.id).catch(ignoreNotFound)
-      if (session.customer) await deleteCustomer(session.customer).catch(ignoreNotFound)
+      try {
+        if (session.status === 'open') await expireCheckoutSession(session.id).catch(ignoreNotFound)
+        if (session.customer) await deleteCustomer(session.customer).catch(ignoreNotFound)
+      } catch (error) {
+        errors.push(error)
+      }
+    }
+    if (errors.length > 0) {
+      throw new AggregateError(errors, `Stripe cleanup failed for ${errors.length} of ${sessions.length} sessions`)
     }
   }
 
@@ -175,15 +187,18 @@ export const createSaasClient = (baseUrl: string) => {
 export type SaasClient = ReturnType<typeof createSaasClient>
 
 /**
- * Clients for the local integration stack, read from its env. Throws when
- * INTEGRATION_STRIPE_SECRET_KEY is missing or live, so call it only after the
- * spec's skip check.
+ * Clients for the local integration stack, read from its env. Throws when either
+ * Stripe key is missing or live, so call it only after the spec's skip check.
  */
 export const localStack = (): { stripe: StripeClient; saas: SaasClient } => {
   const key = process.env.INTEGRATION_STRIPE_SECRET_KEY
   if (!key) {
     throw new Error('INTEGRATION_STRIPE_SECRET_KEY is not set: this spec needs Stripe mode')
   }
+  if (!process.env.INTEGRATION_STRIPE_PUBLIC_KEY) {
+    throw new Error('INTEGRATION_STRIPE_PUBLIC_KEY is not set: the app needs the test publishable key (pk_test_...)')
+  }
+  assertTestKey(process.env.INTEGRATION_STRIPE_PUBLIC_KEY, 'INTEGRATION_STRIPE_PUBLIC_KEY')
   const saasUrl = (process.env.SAAS_URL || `http://localhost:${process.env.INTEGRATION_HOST_PORT || 8080}`).replace(
     /\/$/,
     ''
