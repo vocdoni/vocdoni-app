@@ -92,14 +92,9 @@ const TOKEN_PROP_KEYWORDS = new Set([
   'revert',
 ])
 
-// Badge size recipes use lineHeight xs-lg, which are not lineHeights tokens. Tolerated until #1914 fixes them; the
-// test below fails once an entry stops being invalid, so it must then be deleted.
-const KNOWN_INVALID = new Set<string>([
-  'badge.variants.size.xs.lineHeight',
-  'badge.variants.size.sm.lineHeight',
-  'badge.variants.size.md.lineHeight',
-  'badge.variants.size.lg.lineHeight',
-])
+// Recipe paths tolerated while they reference a missing token. The test below fails once an entry stops being
+// invalid, so it must then be deleted.
+const KNOWN_INVALID = new Set<string>()
 
 const confirmedInvalid = new Set<string>()
 
