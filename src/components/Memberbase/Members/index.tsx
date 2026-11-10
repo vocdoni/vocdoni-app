@@ -800,7 +800,7 @@ const placeholderRowsStyle = (isUpdatingRows: boolean, isPlaceholderData: boolea
 
 const MembersLoading = () => (
   <Flex justify='center' align='center' height='150px'>
-    <Spinner size='sm' color='texts.subtle' />
+    <Spinner size='sm' color='fg.muted' />
   </Flex>
 )
 
@@ -943,7 +943,7 @@ const SortIndicator = ({ sort, label, onClear }: SortIndicatorProps) => {
       : t('members.table.sorted_by_desc', { defaultValue: 'Sorted by {{column}}, descending', column: label })
 
   return (
-    <Flex align='center' gap={2} flexWrap='wrap' fontSize='sm' color='texts.subtle'>
+    <Flex align='center' gap={2} flexWrap='wrap' fontSize='sm' color='fg.muted'>
       <Text>{text}</Text>
       <Button size='xs' variant='outline' onClick={onClear}>
         {t('members.table.clear_sort', { defaultValue: 'Clear sort' })}

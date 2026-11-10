@@ -59,7 +59,7 @@ export const CreateSidebar = ({ draftId }: { draftId?: string | null }) => {
 
         <CensusCreation />
 
-        <SidebarSubtitle borderTop='1px solid' borderColor='table.border' mt={4}>
+        <SidebarSubtitle borderTop='1px solid' borderColor='border' mt={4}>
           <Trans i18nKey='process_create.price'>Price</Trans>
         </SidebarSubtitle>
         <ProcessPriceBreakdown processId={draftId} />
