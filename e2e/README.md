@@ -105,6 +105,38 @@ pulls fresh every run.
 Everything runs through the UI. Nothing is provisioned behind the app's back, so
 a break anywhere along that chain fails here.
 
+## Pay-per-process checkout (opt-in)
+
+`payg-checkout.e2e.ts` tops up an organization's wallet through the app's
+pay-per-process checkout, paying with Stripe Checkout Elements in Stripe's test
+sandbox. The census is larger than the free allowance, so the wizard's Publish
+is refused for lack of balance. The test pays, then asserts that the backend
+credited the wallet, debited the process and published it.
+
+It needs the stack in Stripe mode (see
+[integration/README.md](../integration/README.md#stripe-mode-opt-in)), with two
+Stripe test keys:
+
+```bash
+INTEGRATION_STRIPE_SECRET_KEY=sk_test_... \
+INTEGRATION_STRIPE_PUBLIC_KEY=pk_test_... \
+pnpm test:e2e:stack
+```
+
+- `INTEGRATION_STRIPE_SECRET_KEY` (`sk_test_`) drives the spec's Stripe API calls.
+  Without it the spec skips, so the default run is unaffected.
+- `INTEGRATION_STRIPE_PUBLIC_KEY` (`pk_test_`) is forwarded to the app, which
+  needs it to render Stripe Elements. With the secret key set but this one
+  missing, the spec fails at its start.
+
+Both reject live keys (`sk_live_`, `rk_live_`, `pk_live_`). The spec runs in the
+`chromium` project only.
+
+It creates Stripe test-mode checkout sessions (and their customers) for the
+organization it signs up. Afterwards it expires the sessions still open and
+deletes their customers. A completed payment cannot be deleted in Stripe, so it
+stays in the test account.
+
 ## Layout
 
 - `helpers/mailhog.ts` — read the inbox: `waitForEmail`, `waitForCode`,
@@ -117,6 +149,9 @@ a break anywhere along that chain fails here.
   `@playwright/test` (it suppresses the cookie banner, which otherwise blocks
   clicks), plus helpers for Chakra's checkbox / switch / pin-input / combobox.
 - `helpers/data.ts` — unique emails and the generated members CSV.
+- `helpers/stripe.ts` — Stripe and saas-backend API clients for the checkout
+  spec: refuses live keys, lists and cleans up the checkout sessions a run
+  opened, and reads the wallet and process.
 
 ## Writing specs here
 
