@@ -100,6 +100,14 @@ describe('PublishSummary', () => {
     expect(onPrimary).toHaveBeenCalledWith('wallet')
   })
 
+  it('writes whole amounts with both decimals everywhere in the dialog', () => {
+    const whole = price({ lines: [{ kind: 'base', description: 'base', amountCents: 3300 }], totalCents: 3300 })
+    setup({ price: whole, voters: 100, wallet: { balanceCents: 3000, currency: 'eur' } })
+
+    expect(screen.getByText('Cost: €33.00. €3.00 short in the balance')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Add €3.00 and publish' })).toBeInTheDocument()
+  })
+
   it('moves to the card step for what the balance lacks', async () => {
     const { user, onPrimary } = setup({ wallet: { balanceCents: 13080, currency: 'eur' } })
 

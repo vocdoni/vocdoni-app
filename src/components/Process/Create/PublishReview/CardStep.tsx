@@ -13,7 +13,7 @@ import { LuLock } from 'react-icons/lu'
 import { errorMessage, type WalletShortfall } from '~components/Pricing/ProcessCheckout'
 import { useCheckoutAppearance, type useStripePromise } from '~components/Pricing/stripe'
 import { clearPendingCheckout, storePendingCheckout } from '~queries/process-checkout'
-import { amountFigure, currency } from '~utils/numbers'
+import { amountFigure, currencyExact } from '~utils/numbers'
 import {
   PublishReviewAmountRow,
   PublishReviewAmounts,
@@ -131,7 +131,7 @@ export const CardLayout = ({
   const restStaysInWallet = !!session && shortCents !== undefined && session.amountCents > shortCents
   // The amount Stripe charges, VAT included, when it says so
   const payAmount =
-    checkout && session ? (checkout.total?.total.amount ?? currency(session.amountCents, code)) : undefined
+    checkout && session ? (checkout.total?.total.amount ?? currencyExact(session.amountCents, code)) : undefined
   const failToLoad = (message?: string) => setError(message ?? null)
 
   const handleSubmit = async (e: FormEvent) => {
@@ -167,7 +167,7 @@ export const CardLayout = ({
       : walletBalanceCents > 0
         ? t('process.publish_review.card.lead_balance', {
             defaultValue: "The organization's balance covers {{balance}}. The rest is paid now, with VAT.",
-            balance: currency(walletBalanceCents, code),
+            balance: currencyExact(walletBalanceCents, code),
           })
         : t('process.publish_review.card.lead_whole', { defaultValue: 'You pay the whole vote now, with VAT.' })
 

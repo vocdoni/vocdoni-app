@@ -209,10 +209,10 @@ describe('PublishDialog', () => {
     it('shows the wallet step, then publishes from the balance without a card', async () => {
       const { user, onPublished } = renderDialog()
 
-      await user.click(await primary('Publish and pay €10'))
+      await user.click(await primary('Publish and pay €10.00'))
 
-      expect(await screen.findByText('Pay €10 from the balance and the vote is published.')).toBeInTheDocument()
-      expect(screen.getByText('After publishing, the balance will have €40 left.')).toBeInTheDocument()
+      expect(await screen.findByText('Pay €10.00 from the balance and the vote is published.')).toBeInTheDocument()
+      expect(screen.getByText('After publishing, the balance will have €40.00 left.')).toBeInTheDocument()
       expect(
         screen.getByText("The organization's balance covers the whole cost. No card is needed.")
       ).toBeInTheDocument()
@@ -233,25 +233,25 @@ describe('PublishDialog', () => {
       api.getPrice.mockResolvedValue({ ...priced(1000), currency: 'usd' })
       const { user } = renderDialog()
 
-      await user.click(await primary('Publish and pay $10'))
+      await user.click(await primary('Publish and pay $10.00'))
 
-      expect(await screen.findByText('Pay $10 from the balance and the vote is published.')).toBeInTheDocument()
+      expect(await screen.findByText('Pay $10.00 from the balance and the vote is published.')).toBeInTheDocument()
       expect(screen.getByText('This vote').nextElementSibling).toHaveTextContent(/^\$10\.00$/)
     })
 
     it('moves focus to the sentence of the wallet step', async () => {
       const { user } = renderDialog()
 
-      await user.click(await primary('Publish and pay €10'))
+      await user.click(await primary('Publish and pay €10.00'))
 
-      const lead = await screen.findByRole('heading', { name: 'Pay €10 from the balance and the vote is published.' })
+      const lead = await screen.findByRole('heading', { name: 'Pay €10.00 from the balance and the vote is published.' })
       await waitFor(() => expect(lead).toHaveFocus())
     })
 
     it('goes back to the summary from the wallet step', async () => {
       const { user } = renderDialog()
 
-      await user.click(await primary('Publish and pay €10'))
+      await user.click(await primary('Publish and pay €10.00'))
       const backs = await screen.findAllByRole('button', { name: 'Back to the summary' })
       await user.click(backs[0])
 
@@ -268,7 +268,7 @@ describe('PublishDialog', () => {
     it('opens the card step for what is short, and goes back to the summary from it', async () => {
       const { user } = renderDialog()
 
-      await user.click(await primary('Add €6 and publish'))
+      await user.click(await primary('Add €6.00 and publish'))
 
       expect(await screen.findByRole('button', { name: 'Pay €7.26 and publish' })).toBeInTheDocument()
       expect(screen.getByText('Short').nextElementSibling).toHaveTextContent(/^€6\.00$/)
@@ -286,7 +286,7 @@ describe('PublishDialog', () => {
       api.getPrice.mockResolvedValue({ ...priced(1000), paymentStatus: 'pending' })
       const { user } = renderDialog()
 
-      await user.click(await primary('Add €6 and publish'))
+      await user.click(await primary('Add €6.00 and publish'))
 
       expect(await screen.findByRole('button', { name: 'Pay €7.26 and publish' })).toBeInTheDocument()
       expect(api.checkout).toHaveBeenCalledTimes(1)
@@ -297,7 +297,7 @@ describe('PublishDialog', () => {
       state.checkoutLoading = true
       const { user } = renderDialog()
 
-      await user.click(await primary('Add €6 and publish'))
+      await user.click(await primary('Add €6.00 and publish'))
 
       expect(await screen.findByRole('dialog', { name: 'Pay and publish' })).toBeInTheDocument()
     })
@@ -307,7 +307,7 @@ describe('PublishDialog', () => {
       try {
         const { user } = renderDialog()
 
-        await user.click(await primary('Add €6 and publish'))
+        await user.click(await primary('Add €6.00 and publish'))
         await screen.findByRole('button', { name: 'Pay €7.26 and publish' })
         await waitFor(() => expect(root).toHaveAttribute('inert'))
 
@@ -345,7 +345,7 @@ describe('PublishDialog', () => {
       render(<Harness />)
       const user = userEvent.setup()
 
-      await user.click(await primary('Add €6 and publish'))
+      await user.click(await primary('Add €6.00 and publish'))
       const lead = await screen.findByRole('heading', { name: 'Pay €7.26 and the vote is published.' })
       await waitFor(() => expect(lead).toHaveFocus())
       await user.keyboard('{Escape}')
@@ -357,7 +357,7 @@ describe('PublishDialog', () => {
     it('lets the page around the card step take focus and pointer, for Stripe 3D Secure', async () => {
       const { user } = renderDialog()
 
-      await user.click(await primary('Add €6 and publish'))
+      await user.click(await primary('Add €6.00 and publish'))
       await screen.findByRole('button', { name: 'Pay €7.26 and publish' })
 
       await waitFor(() => expect(screen.getByRole('button', { name: 'outside' })).toBeInTheDocument())

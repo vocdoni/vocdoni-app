@@ -158,6 +158,7 @@ export const PublishReview = defineSlotRecipe({
       fontSize: 'md',
       color: 'fg.muted',
       textWrap: 'pretty',
+      maxW: '65ch',
     },
     // The scrolling middle of a step, like `body` and `status`. A grid, not a flex row: its row grows
     // with the taller column, so the hairline between them runs the whole scrolled height
@@ -243,7 +244,7 @@ export const PublishReview = defineSlotRecipe({
     },
     factValue: {
       m: 0,
-      fontWeight: 'semibold',
+      fontWeight: 'medium',
       textAlign: 'end',
       '&[data-muted]': { color: 'fg.muted' },
     },
@@ -280,8 +281,11 @@ export const PublishReview = defineSlotRecipe({
       _hover: { bg: 'bg.subtle' },
       _focusVisible: { outline: '2px solid', outlineColor: 'colorPalette.focusRing', outlineOffset: '2px' },
     },
+    // Its natural width, so "Cost: €33.00" and "Review the details" share a line whenever they fit;
+    // the row wraps only when they do not
     costSummary: {
-      flex: '1 1 12rem',
+      flex: '1 1 auto',
+      minW: 0,
       fontWeight: 'semibold',
     },
     costAction: {
@@ -301,6 +305,8 @@ export const PublishReview = defineSlotRecipe({
       pt: 3.5,
       pb: 4,
       bg: 'bg.muted',
+      // In dark mode `bg.muted` is lighter than the dialog, which raises the box instead of sinking it
+      _dark: { bg: 'black' },
       borderRadius: 'l3',
     },
     costTitle: {
@@ -317,9 +323,10 @@ export const PublishReview = defineSlotRecipe({
       px: 4,
       py: 3.5,
       bg: 'bg.muted',
+      _dark: { bg: 'black' },
       borderRadius: 'l3',
       fontVariantNumeric: 'tabular-nums',
-      '.publish-review__costPanel &': { p: 0, bg: 'transparent', borderRadius: 0 },
+      '.publish-review__costPanel &': { p: 0, bg: 'transparent', _dark: { bg: 'transparent' }, borderRadius: 0 },
     },
     amountRow: {
       display: 'flex',
