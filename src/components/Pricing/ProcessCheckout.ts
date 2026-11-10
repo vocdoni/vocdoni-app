@@ -44,6 +44,8 @@ export type ProcessCheckoutStep =
   | { name: 'checkout'; session: ProcessCheckoutResponse }
   | { name: 'publishing' }
   | { name: 'waiting'; afterPayment: boolean; paid?: boolean; jobId?: string }
+  // The backend confirmed the publication: shown for a moment before handing off (see `successMs`)
+  | { name: 'published' }
   | { name: 'unconfirmed' }
   | { name: 'unpaid' }
   | { name: 'timeout'; paid: boolean }
@@ -52,6 +54,17 @@ export type ProcessCheckoutStep =
 
 // The backend may take about 15 minutes on a slow chain
 const publicationTimeoutMs = 15 * 60 * 1000
+
+// How long "Vote published" shows before the hand-off: long enough to register, short enough never
+// to be in the way. Nothing waits for someone who asks for less motion, nor when that cannot be told
+// (no matchMedia)
+const successShownMs = 700
+const defaultSuccessMs = () =>
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ? successShownMs
+    : 0
 
 export const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error))
 
@@ -97,13 +110,15 @@ type UseProcessCheckoutOptions = {
   /** Only who may top up the wallet is taken to the payment when a publish is refused for it. */
   canTopUp: boolean
   onPublished: (processId: string) => void
+  /** How long the success shows before `onPublished`; defaults to a short beat, none under reduced motion. */
+  successMs?: number
 }
 
 /**
  * Publish, top up and publish (vocdoni-app#1767), and wait for the outcome. It waits for the backend
  * to publish: a browser success proves nothing.
  */
-export const useProcessCheckout = ({ processId, start, canTopUp, onPublished }: UseProcessCheckoutOptions) => {
+export const useProcessCheckout = ({ processId, start, canTopUp, onPublished, successMs }: UseProcessCheckoutOptions) => {
   const { t, i18n } = useTranslation()
   const { client } = useApiClient()
   const checkoutApi = useProcessCheckoutApi()
@@ -137,6 +152,23 @@ export const useProcessCheckout = ({ processId, start, canTopUp, onPublished }: 
   useEffect(() => {
     if (paymentSteps.includes(step.name)) setTopUp(true)
   }, [step])
+
+  // The publication was confirmed: show it, then hand off. The dialog cannot be closed meanwhile
+  // (`isPublishing`), so the hand-off always comes
+  const handedOff = useRef<ProcessCheckoutStep | null>(null)
+  useEffect(() => {
+    if (step.name !== 'published') return
+    const delay = successMs ?? defaultSuccessMs()
+    if (delay <= 0) {
+      // StrictMode runs the effect twice: hand off once
+      if (handedOff.current === step) return
+      handedOff.current = step
+      latest.current.onPublished(processId)
+      return
+    }
+    const timer = window.setTimeout(() => latest.current.onPublished(processId), delay)
+    return () => window.clearTimeout(timer)
+  }, [step, processId, successMs])
 
   const resume = (next: ProcessCheckoutStart) => {
     if (next.kind === 'checkout') setShortfall(next.shortfall)
@@ -241,7 +273,7 @@ export const useProcessCheckout = ({ processId, start, canTopUp, onPublished }: 
       )
         .then((outcome) => {
           if (controller.signal.aborted) return
-          if (outcome === 'published') latest.current.onPublished(processId)
+          if (outcome === 'published') setStep({ name: 'published' })
           else if (outcome === 'unconfirmed') setStep({ name: 'unconfirmed' })
           else if (outcome === 'unpaid') setStep({ name: 'unpaid' })
           else if (outcome === 'timeout') setStep({ name: 'timeout', paid })
@@ -255,7 +287,7 @@ export const useProcessCheckout = ({ processId, start, canTopUp, onPublished }: 
       latest.current.client.jobs
         .waitFor(step.jobId, { timeoutMs: publicationTimeoutMs, signal: controller.signal })
         .then(() => {
-          if (!controller.signal.aborted) latest.current.onPublished(processId)
+          if (!controller.signal.aborted) setStep({ name: 'published' })
         })
         .catch((error) => {
           if (controller.signal.aborted) return
@@ -305,4 +337,5 @@ export const useProcessCheckout = ({ processId, start, canTopUp, onPublished }: 
 export type ProcessCheckoutFlow = ReturnType<typeof useProcessCheckout>
 
 /** Whether the dialog must stay open: a publish was sent and its outcome is not known yet. */
-export const isPublishing = (step: ProcessCheckoutStep) => step.name === 'publishing' || step.name === 'waiting'
+export const isPublishing = (step: ProcessCheckoutStep) =>
+  step.name === 'publishing' || step.name === 'waiting' || step.name === 'published'

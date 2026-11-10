@@ -5,9 +5,13 @@ import { isPublishing, type ProcessCheckoutFlow, type ProcessCheckoutStep } from
 
 type T = TFunction
 
-// The message of a wait, shown and announced
+// Whether the wait follows a payment known to have gone through
+export const paymentReceived = (step: ProcessCheckoutStep, paymentSeen: boolean) =>
+  step.name === 'waiting' && step.afterPayment && !!(step.paid || paymentSeen)
+
+// The message of a wait, announced, and the description of the dialog
 export const waitText = (t: T, step: ProcessCheckoutStep, paymentSeen: boolean) =>
-  step.name === 'waiting' && step.afterPayment && (step.paid || paymentSeen)
+  paymentReceived(step, paymentSeen)
     ? t('process.checkout.publishing_after_payment', {
         defaultValue: 'Payment received. Publishing your voting process…',
       })
@@ -48,7 +52,14 @@ export const outcomeText = (t: T, step: ProcessCheckoutStep) => {
  * themselves (`role='alert'`), and the pay steps move focus to their sentence.
  */
 export const stepAnnouncement = (t: T, flow: Pick<ProcessCheckoutFlow, 'step' | 'paymentSeen'>) =>
-  isPublishing(flow.step) ? waitText(t, flow.step, flow.paymentSeen) : outcomeText(t, flow.step)
+  flow.step.name === 'published'
+    ? publishedText(t)
+    : isPublishing(flow.step)
+      ? waitText(t, flow.step, flow.paymentSeen)
+      : outcomeText(t, flow.step)
+
+/** The success moment, shown and announced. */
+export const publishedText = (t: T) => t('process.publish_review.progress.published', { defaultValue: 'Vote published' })
 
 /** The lead of an error, above its message, which may be raw (a backend or network error). */
 export const failedLead = (t: T) =>

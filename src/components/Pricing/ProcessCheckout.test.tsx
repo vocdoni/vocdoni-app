@@ -112,7 +112,8 @@ const renderView = ({
   start = { kind: 'checkout' } as ProcessCheckoutStart,
   onPublished = vi.fn(),
   onClose = vi.fn(),
-}: { start?: ProcessCheckoutStart; onPublished?: () => void; onClose?: () => void } = {}) => {
+  successMs,
+}: { start?: ProcessCheckoutStart; onPublished?: () => void; onClose?: () => void; successMs?: number } = {}) => {
   render(
     <TestMemoryRouter>
       <button type='button'>outside</button>
@@ -122,6 +123,7 @@ const renderView = ({
         start={start}
         canTopUp
         onPublished={onPublished}
+        successMs={successMs}
         onClose={onClose}
       />
     </TestMemoryRouter>
@@ -312,11 +314,46 @@ describe('ProcessCheckout', () => {
     })
   })
 
+  describe('while it publishes and once it has', () => {
+    it('lists the payment as done and the publication as under way after a payment', async () => {
+      const user = userEvent.setup()
+      api.waitForPublication.mockReturnValue(new Promise(() => undefined))
+      renderView()
+
+      await user.click(await payButton())
+
+      expect(await screen.findByText('Payment received', visible)).toBeInTheDocument()
+      expect(screen.getByText('Publishing the vote…', visible)).toBeInTheDocument()
+      expect(screen.getByText('This can take a minute.', visible)).toBeInTheDocument()
+    })
+
+    it('lists only the publication when nothing was paid', async () => {
+      api.waitForPublication.mockReturnValue(new Promise(() => undefined))
+      renderView({ start: { kind: 'publishing' } })
+
+      expect(await screen.findByText('Publishing the vote…', visible)).toBeInTheDocument()
+      expect(screen.queryByText('Payment received', visible)).not.toBeInTheDocument()
+      expect(screen.getByText('This can take a minute.', visible)).toBeInTheDocument()
+    })
+
+    it('shows "Vote published", announces it, and hands off only after the beat', async () => {
+      const { onPublished } = renderView({ start: { kind: 'publishing' }, successMs: 300 })
+
+      expect(await screen.findByText('Vote published', visible)).toBeInTheDocument()
+      expect(screen.getByRole('status')).toHaveTextContent('Vote published')
+      // Still showing: the hand-off waits for the beat, and the dialog cannot be dismissed meanwhile
+      expect(onPublished).not.toHaveBeenCalled()
+      expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+
+      await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId), { timeout: 2000 })
+      expect(onPublished).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('returning from a redirect', () => {
     it('reopens in the waiting state without opening a new checkout', async () => {
       const { onPublished } = renderView({ start: { kind: 'return' } })
 
-      expect(await screen.findByText('Publishing your voting process…', visible)).toBeInTheDocument()
       await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
       expect(api.checkout).not.toHaveBeenCalled()
     })
@@ -416,7 +453,6 @@ describe('ProcessCheckout', () => {
     it('waits for the process without reading a payment or opening a checkout', async () => {
       const { onPublished } = renderView({ start: { kind: 'publishing' } })
 
-      expect(await screen.findByText('Publishing your voting process…', visible)).toBeInTheDocument()
       await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
       expect(api.waitForPublication.mock.calls[0][1].readPayment).toBeUndefined()
       expect(api.checkout).not.toHaveBeenCalled()
