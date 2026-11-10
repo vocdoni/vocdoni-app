@@ -161,7 +161,8 @@ export const PublishDialog = ({
       ids={{ title: titleId, description: descriptionId }}
       initialFocusEl={() => stepFocusTarget(contentRef.current)}
       size={{ base: 'full', md: 'xl' }}
-      placement='center'
+      // Pinned to the top from md up, so its header stays put while the steps change height; full screen on phones
+      placement={{ base: 'center', md: 'top' }}
       scrollBehavior='inside'
       lazyMount
       unmountOnExit

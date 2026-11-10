@@ -170,6 +170,22 @@ describe('PublishSummary', () => {
     expect(screen.getByText(/Nothing is charged to a card/)).toBeInTheDocument()
   })
 
+  it('brings the opened breakdown into view', async () => {
+    const scrollIntoView = vi.fn()
+    const original = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scrollIntoView
+    try {
+      const { user } = setup({ wallet: { balanceCents: 23080, currency: 'eur' } })
+
+      await user.click(screen.getByRole('button', { name: /Review the details/ }))
+
+      expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' })
+      expect(scrollIntoView.mock.contexts[0]).toHaveTextContent('What you pay for')
+    } finally {
+      Element.prototype.scrollIntoView = original
+    }
+  })
+
   it('shows what is short in the breakdown and that the card pays it', async () => {
     const { user } = setup({ wallet: { balanceCents: 13080, currency: 'eur' } })
 

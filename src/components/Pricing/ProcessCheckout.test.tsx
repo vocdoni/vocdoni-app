@@ -14,6 +14,8 @@ const state = vi.hoisted(() => ({
   checkout: {} as any,
   stripePromise: Promise.resolve({}) as Promise<any> | null,
   providerOptions: undefined as any,
+  // Whether the Stripe elements say they painted (onReady)
+  elementsReady: true,
 }))
 
 const api = vi.hoisted(() => ({
@@ -61,9 +63,19 @@ vi.mock('@stripe/react-stripe-js/checkout', async () => {
       return React.createElement(React.Fragment, null, children)
     },
     useCheckoutElements: () => state.checkout,
-    BillingAddressElement: () => React.createElement('div', null, 'billing-address'),
+    BillingAddressElement: ({ onReady }: { onReady?: () => void }) => {
+      React.useEffect(() => {
+        if (state.elementsReady) onReady?.()
+      }, [onReady])
+      return React.createElement('div', null, 'billing-address')
+    },
     TaxIdElement: () => React.createElement('div', null, 'tax-id'),
-    PaymentElement: () => React.createElement('div', null, 'payment-element'),
+    PaymentElement: ({ onReady }: { onReady?: () => void }) => {
+      React.useEffect(() => {
+        if (state.elementsReady) onReady?.()
+      }, [onReady])
+      return React.createElement('div', null, 'payment-element')
+    },
   }
 })
 
@@ -145,6 +157,7 @@ describe('ProcessCheckout', () => {
     state.wallet = { balanceCents: 0, currency: 'eur', history: [], pagination: {} }
     state.checkout = readyCheckout()
     state.stripePromise = Promise.resolve({})
+    state.elementsReady = true
     api.getPrice.mockResolvedValue({
       lines: [],
       totalCents: 1000,
@@ -220,6 +233,38 @@ describe('ProcessCheckout', () => {
       expect(pay).not.toHaveAttribute('data-loading')
       expect(screen.queryByText('payment-element')).not.toBeInTheDocument()
       expect(screen.queryByText(/and the vote is published/)).not.toBeInTheDocument()
+    })
+
+    it('keeps a skeleton over each Stripe element until it has painted', async () => {
+      state.elementsReady = false
+      renderView()
+
+      await payButton()
+      // Mounted, so they can load, but still under their skeletons
+      expect(screen.getByText('billing-address')).toBeInTheDocument()
+      expect(screen.getByText('payment-element')).toBeInTheDocument()
+      expect(document.querySelectorAll('.publish-review__skeleton[data-kind=field]')).toHaveLength(2)
+    })
+
+    it('drops the skeletons once the Stripe elements have painted', async () => {
+      renderView()
+
+      await payButton()
+      await waitFor(() =>
+        expect(document.querySelectorAll('.publish-review__skeleton[data-kind=field]')).toHaveLength(0)
+      )
+    })
+
+    it("shows the card step's frame while its session opens, not a bare spinner", async () => {
+      api.checkout.mockReturnValue(new Promise(() => undefined))
+      renderView({ start: { kind: 'checkout', shortfall: { shortfallCents: 550, balanceCents: 450 } } })
+
+      expect(await screen.findByRole('button', { name: 'Pay and publish' })).toBeDisabled()
+      expect(screen.getByText('What you pay now')).toBeInTheDocument()
+      expect(screen.getByText('Short').nextElementSibling).toHaveTextContent('€5.50')
+      expect(screen.getByText('Billing details')).toBeInTheDocument()
+      expect(screen.getByText('How you pay')).toBeInTheDocument()
+      expect(screen.queryByText('payment-element')).not.toBeInTheDocument()
     })
 
     it('pays the net top-up when Stripe gives no total', async () => {

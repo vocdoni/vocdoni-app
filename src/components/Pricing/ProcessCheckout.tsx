@@ -29,6 +29,7 @@ import {
   PublishReviewSkeleton,
   PublishReviewStatus,
   PublishReviewStep,
+  PublishReviewStripeField,
 } from '~components/Process/Create/PublishReview/anatomy'
 import { Routes } from '~routes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
@@ -440,7 +441,19 @@ export const ProcessCheckoutContent = ({
         </>
       )
     case 'opening':
-      return <StatusStep title={title} titleId={titleId} onClose={onClose} />
+      // The card step's own frame, so the dialog keeps its size and place while the session opens
+      return (
+        <CardLayout
+          title={title}
+          titleId={titleId}
+          processId={processId}
+          shortfall={flow.shortfall}
+          totalCents={totalCents}
+          balanceCents={balanceCents}
+          onBack={onBack}
+          onClose={onClose}
+        />
+      )
     case 'checkout':
       if (!stripePromise) {
         return outcome(
@@ -607,22 +620,10 @@ const CardStep = ({ stripePromise, session, ...props }: CardStepProps) => {
   )
 }
 
-const CardForm = ({
-  title,
-  titleId,
-  processId,
-  session,
-  shortfall,
-  totalCents,
-  balanceCents,
-  onPaid,
-  onBack,
-  onClose,
-}: Omit<CardStepProps, 'stripePromise'>) => {
+const CardForm = (props: Omit<CardStepProps, 'stripePromise'>) => {
   const { t } = useTranslation()
   const checkoutState = useCheckoutElements()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { title, titleId, onBack, onClose } = props
 
   if (checkoutState.type === 'error') {
     return (
@@ -639,7 +640,40 @@ const CardForm = ({
     )
   }
 
-  const checkout = checkoutState.type === 'success' ? checkoutState.checkout : undefined
+  return <CardLayout {...props} checkout={checkoutState.type === 'success' ? checkoutState.checkout : undefined} />
+}
+
+type CardLayoutProps = Omit<CardStepProps, 'stripePromise' | 'session' | 'onPaid'> & {
+  /** Undefined while the session opens: the step shows its frame, with skeletons where Stripe goes. */
+  session?: ProcessCheckoutResponse
+  /** Stripe's checkout, once loaded; the Stripe elements are only rendered with it. */
+  checkout?: StripeCheckout
+  onPaid?: () => void
+}
+
+type StripeCheckout = Extract<ReturnType<typeof useCheckoutElements>, { type: 'success' }>['checkout']
+
+// The card step, from the moment its session opens: the frame does not change once Stripe is in
+const CardLayout = ({
+  title,
+  titleId,
+  processId,
+  session,
+  checkout,
+  shortfall,
+  totalCents,
+  balanceCents,
+  onPaid,
+  onBack,
+  onClose,
+}: CardLayoutProps) => {
+  const { t } = useTranslation()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  // Each Stripe element keeps its skeleton until it has painted
+  const [billingReady, setBillingReady] = useState(false)
+  const [paymentReady, setPaymentReady] = useState(false)
+
   const loading = !checkout
   const walletBalanceCents = shortfall?.balanceCents ?? balanceCents
   // The refusal's shortfall when there was one; otherwise what the price and the balance leave
@@ -649,9 +683,10 @@ const CardForm = ({
       ? Math.max(totalCents - walletBalanceCents, 0)
       : undefined)
   // Above the shortfall when the €1 minimum top-up is more than what is short
-  const restStaysInWallet = shortCents !== undefined && session.amountCents > shortCents
+  const restStaysInWallet = !!session && shortCents !== undefined && session.amountCents > shortCents
   // The amount Stripe charges, VAT included, when it says so
-  const payAmount = checkout ? (checkout.total?.total.amount ?? currency(session.amountCents)) : undefined
+  const payAmount = checkout && session ? (checkout.total?.total.amount ?? currency(session.amountCents)) : undefined
+  const failToLoad = (message?: string) => setError(message ?? null)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -672,7 +707,7 @@ const CardForm = ({
       }
       clearPendingCheckout()
       // Stripe accepted the payment; whether the wallet was credited is the backend's to say
-      onPaid()
+      onPaid?.()
     } catch (err) {
       clearPendingCheckout()
       setError(errorMessage(err))
@@ -728,7 +763,7 @@ const CardForm = ({
                 amount: payAmount,
               })
             ) : (
-              // A span: the lead is a paragraph
+              // A span: the lead is a heading
               <PublishReviewSkeleton data-kind='lead' asChild>
                 <span />
               </PublishReviewSkeleton>
@@ -762,7 +797,7 @@ const CardForm = ({
                   ruled
                 />
               )}
-              {(session.amountCents !== shortCents || (checkout && !checkout.total)) && (
+              {session && (session.amountCents !== shortCents || (checkout && !checkout.total)) && (
                 <PublishReviewAmountRow
                   label={t('process.publish_review.card.top_up', { defaultValue: 'Top-up, VAT excluded' })}
                   value={currency(session.amountCents)}
@@ -791,21 +826,38 @@ const CardForm = ({
             <PublishReviewSectionTitle>
               {t('process.publish_review.card.billing', { defaultValue: 'Billing details' })}
             </PublishReviewSectionTitle>
-            {loading ? (
-              <PublishReviewSkeleton data-kind='field' />
-            ) : (
-              <>
-                <BillingAddressElement options={{ display: { name: 'split' } }} />
-                <TaxIdElement options={{ visibility: 'auto' }} />
-              </>
-            )}
+            <PublishReviewStripeField ready={billingReady}>
+              {checkout && (
+                <>
+                  <BillingAddressElement
+                    options={{ display: { name: 'split' } }}
+                    onReady={() => setBillingReady(true)}
+                    onLoadError={(event) => {
+                      setBillingReady(true)
+                      failToLoad(event.error.message)
+                    }}
+                  />
+                  <TaxIdElement options={{ visibility: 'auto' }} />
+                </>
+              )}
+            </PublishReviewStripeField>
           </PublishReviewColumn>
 
           <PublishReviewColumn>
             <PublishReviewSectionTitle>
               {t('process.publish_review.how_you_pay', { defaultValue: 'How you pay' })}
             </PublishReviewSectionTitle>
-            {loading ? <PublishReviewSkeleton data-kind='field' /> : <PaymentElement />}
+            <PublishReviewStripeField ready={paymentReady}>
+              {checkout && (
+                <PaymentElement
+                  onReady={() => setPaymentReady(true)}
+                  onLoadError={(event) => {
+                    setPaymentReady(true)
+                    failToLoad(event.error.message)
+                  }}
+                />
+              )}
+            </PublishReviewStripeField>
             <PublishReviewSecureNote>
               <LuLock aria-hidden />
               <span>
