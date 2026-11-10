@@ -1745,11 +1745,52 @@
       "configure": "Konfiguratu hautesleen autentifikazioa",
       "edit": "Editatu hautesleen autentifikazioa"
     },
+    "certificate": {
+      "all_valid": "Kide guztiek DNI/NIE balioduna dute.",
+      "bucket_duplicates": "DNI/NIE bera kide batean baino gehiagotan: zuzendu gordetzeko",
+      "bucket_invalid": "DNI/NIE baliogabea: ezin dute saioa hasi",
+      "bucket_missing": "DNI/NIE gabe: ezin dute saioa hasi",
+      "csv_reason": "Arrazoia",
+      "download": "Deskargatu {{file}}",
+      "duplicates_body": "Eman bakoitzari bere DNI/NIE kideen zerrendan. Konpondu ondoren gordeko ahal izango duzu.",
+      "empty": "hutsik",
+      "heading": "2. Nor has daiteke saioa?",
+      "hint_attempted_one": "Gordetzeko, eman DNI/NIE partekatzen duen kideari berea.",
+      "hint_attempted_other": "Gordetzeko, eman DNI/NIE partekatzen duten {{count}} kideei bakoitzari berea.",
+      "hint_blocked": "Kide bakoitzak bere DNI/NIE duenean gordeko ahal izango duzu.",
+      "loading_members": "Kideak kargatzen…",
+      "members_to_review": "Berrikusteko kideak",
+      "missing_body": "Zuzendu haien DNI/NIE kideen zerrendan. Orain gordetzen baduzu, ezin izango dute saioa hasi.",
+      "missing_title_one": "{{count}} kidek ez du DNI/NIE balioduna eta ezin izango du saioa hasi.",
+      "missing_title_other": "{{count}} kidek ez dute DNI/NIE balioduna eta ezin izango dute saioa hasi.",
+      "more_in_csv_one": "eta {{count}} gehiago CSV-an",
+      "more_in_csv_other": "eta {{count}} gehiago CSV-an",
+      "opens_new_tab": "(fitxa berri batean irekitzen da)",
+      "reason_letter": "Letra ez dator bat",
+      "reason_not_dni": "Ez da DNI edo NIE",
+      "review_one": "Berrikusi kide hau",
+      "review_other": "Berrikusi hauek {{count}}",
+      "save_anyway_one": "Gorde hala ere ({{count}} ezin da saioa hasi)",
+      "save_anyway_other": "Gorde hala ere ({{count}} ezin dira saioa hasi)",
+      "status_missing_one": "{{count}} kidek ezin du saioa hasi: DNI/NIE balioduna falta da.",
+      "status_missing_other": "{{count}} kidek ezin dute saioa hasi: DNI/NIE balioduna falta zaie.",
+      "tell_heading": "Jakinarazi zure kideei",
+      "tell_installed": "Botatzaileek ziurtagiri bat behar dute instalatuta.",
+      "tell_not_certificates": "idCAT Mòbil aplikazioa eta Cl@ve ez dira ziurtagiriak eta ez dute funtzionatuko."
+    },
+    "certificate_preview": {
+      "button": "Sartu zure ziurtagiri digitalarekin",
+      "consent": "Jarraitzean Baldintzak eta Pribatutasun Politika onartzen dituzu.",
+      "help_cert": "idCAT Certificat eta FNMT ziurtagiriekin bateragarria.",
+      "help_privacy": "Zure ziurtagiria soilik botatzaileen zerrendan zarela egiaztatzeko erabiltzen dugu.",
+      "identify_to_vote": "Identifikatu botoa emateko"
+    },
     "code": {
       "description": "Botoa eman aurretik, 6 digituko kode bat bidaltzen diegu botogilearen helbide elektronikora edo telefonora. Horrek frogatzen du berea dela, eta, beraz, inork ezin du beste norbaiten datuekin bozkatu.",
       "email_description": "Zure kide-zerrendako helbide elektronikora bidaltzen da.",
       "email_label": "Helbide elektronikoa",
       "heading": "2. Behin erabiltzeko kode bat ere bidali?",
+      "heading_numbered": "3. Behin erabiltzeko kode bat ere bidali?",
       "none": "Koderik ez",
       "none_description": "Botogileek beren datuekin soilik hasten dute saioa.",
       "sms_description": "Zure kide-zerrendako telefono-zenbakira bidaltzen da.",
@@ -1760,6 +1801,7 @@
     "details": {
       "description": "Hautatu gehienez {{max}} datu zure kide-zerrendatik. Botogileek idazten dutenak zehatz-mehatz bat etorri behar du horrekin.",
       "heading": "1. Zer idatziko dute botogileek?",
+      "heading_numbered": "2. Zer idatziko dute botogileek?",
       "optional": "Aukerakoa behin erabiltzeko kode bat bidaltzen baduzu: orduan botogileek kodearekin bakarrik hasi dezakete saioa.",
       "password_not_counted": "Pasahitza ez da muga horretan kontatzen."
     },
@@ -1768,6 +1810,17 @@
       "good": "Ona",
       "strong": "Sendoa",
       "unset": "Ezarri gabe"
+    },
+    "method": {
+      "certificate_description": "Botogileek beren ziurtagiri digitalarekin sartzen dira.",
+      "certificate_info_accepted": "idCAT Certificat eta FNMT onartzen ditugu, Espainiako ziurtagiri digitalak.",
+      "certificate_info_ask": "Beste mota bateko ziurtagiri digitala behar duzu? Jarri harremanetan Vocdoni taldearekin.",
+      "certificate_info_label": "Zein ziurtagiri digital funtzionatzen du?",
+      "certificate_title": "Ziurtagiri digitala (DNI/NIE)",
+      "details_description": "Botogileek zure kide-zerrendako datuak sartzen dituzte, esate baterako, kide-zenbakia.",
+      "details_title": "Kideen datuak",
+      "heading": "1. Nola egiaztatuko dute beren nortasuna botogileek?",
+      "required": "Aukeratu botogileek nortasuna egiaztatzeko modua."
     },
     "modal": {
       "group_summary_one": "{{group}} · {{count}} kide",

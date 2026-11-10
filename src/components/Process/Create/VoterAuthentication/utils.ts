@@ -79,5 +79,26 @@ export const hasAuthConfig = ({
  */
 export const censusConfigSignature = (census: Census) => {
   const { credentials, codeMethod } = fromCensus(census)
-  return JSON.stringify([[...credentials].sort(), codeMethod])
+  // Certificate censuses always have the same credentials; include the method so
+  // switching between details and certificate is correctly treated as a change.
+  return JSON.stringify([
+    [...credentials].sort(),
+    codeMethod,
+    ...(census.method === 'certificate' ? ['certificate'] : []),
+  ])
 }
+
+/** Fixed census sent for every certificate sign-in; no form values involved. */
+export const CERTIFICATE_CENSUS: Census = {
+  method: 'certificate',
+  credentials: ['nationalId'],
+  use2FA: false,
+  use2FAMethod: 'email',
+}
+
+// Outlined option cards, selected by a solid border rather than the recipe's
+// extra ring, so a selection reads without shouting.
+export const optionCardStyles = {
+  _checked: { boxShadow: 'none', borderColor: 'colorPalette.solid' },
+  _hover: { borderColor: 'border.emphasized' },
+} as const

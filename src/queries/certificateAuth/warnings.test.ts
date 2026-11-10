@@ -1,7 +1,7 @@
 import { certificateCoverage, coverageFromCheck, readNationalIdWarnings } from './warnings'
 
 describe('readNationalIdWarnings', () => {
-  it('returns null for a bare string body (pre-SP1)', () => {
+  it('returns null for a bare string body (backend without nationalIdWarnings)', () => {
     expect(readNationalIdWarnings('"ok"\n')).toBeNull()
   })
 
