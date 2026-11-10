@@ -606,10 +606,16 @@ jobs:
         if: always()
         run: scripts/integration-stack.sh down
 
-  # Separate from `e2e` on purpose: it needs the Stripe test key, and it drives Stripe-hosted
+  # Separate from `e2e` on purpose: it needs the Stripe keys, and it drives Stripe-hosted
   # checkout pages, whose iframes are flaky. So it does not gate feature PRs: it runs on pushes
   # to develop, on manual dispatch, and on pull requests promoting develop to stage or main.
-  # Fork PRs never receive the secret, and the gate below skips the job for them.
+  # Fork PRs never receive the secrets, and the gate below skips the job for them.
+  #
+  # Always tests the :main images and the lockfile packages. Pinned refs from a /integration
+  # comment are ignored here: this job has no resolve step.
+  #
+  # The secrets are set on the gate, Start stack and spec steps only, so the install and build
+  # steps (which run the PR's code) never see them. The spec step calls Stripe to clean up.
   e2e-stripe:
     name: End-to-end Stripe checkout
     if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && (github.base_ref == 'stage' || github.base_ref == 'main')) }}
@@ -622,18 +628,20 @@ jobs:
     permissions:
       contents: read
       packages: read # pull ghcr.io/vocdoni/saas-backend
-    # Job-level so every stack step can read it. Secrets are not allowed in a job-level `if:`,
-    # so the steps gate on the `gate` step's output instead.
-    env:
-      INTEGRATION_STRIPE_SECRET_KEY: ${{ secrets.INTEGRATION_STRIPE_SECRET_KEY }}
     steps:
-      - name: Check for the Stripe test key
+      - name: Check for the Stripe keys
         id: gate
+        env:
+          SECRET_KEY: ${{ secrets.INTEGRATION_STRIPE_SECRET_KEY }}
+          PUBLIC_KEY: ${{ vars.INTEGRATION_STRIPE_PUBLIC_KEY || secrets.INTEGRATION_STRIPE_PUBLIC_KEY }}
         run: |
-          if [ -n "$INTEGRATION_STRIPE_SECRET_KEY" ]; then
+          missing=""
+          [ -n "$SECRET_KEY" ] || missing="INTEGRATION_STRIPE_SECRET_KEY"
+          [ -n "$PUBLIC_KEY" ] || missing="${missing:+$missing, }INTEGRATION_STRIPE_PUBLIC_KEY"
+          if [ -z "$missing" ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
-            echo "::notice::INTEGRATION_STRIPE_SECRET_KEY is not set (or this is a fork PR), so the Stripe checkout suite is skipped."
+            echo "::notice::$missing not set (or this is a fork PR), so the Stripe checkout suite is skipped."
             echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
 
@@ -679,6 +687,9 @@ jobs:
       - name: Start stack
         id: stack
         if: steps.gate.outputs.enabled == 'true'
+        env:
+          INTEGRATION_STRIPE_SECRET_KEY: ${{ secrets.INTEGRATION_STRIPE_SECRET_KEY }}
+          INTEGRATION_STRIPE_PUBLIC_KEY: ${{ vars.INTEGRATION_STRIPE_PUBLIC_KEY || secrets.INTEGRATION_STRIPE_PUBLIC_KEY }}
         run: scripts/integration-stack.sh up
 
       - name: Build app against the stack
@@ -698,15 +709,21 @@ jobs:
           SAAS_URL: http://localhost:8080
           MAILHOG_URL: http://localhost:8025
           APP_URL: http://localhost:3000
+          # Read by playwright.config.ts, which hands the publishable key to the app's SSR server.
+          INTEGRATION_STRIPE_SECRET_KEY: ${{ secrets.INTEGRATION_STRIPE_SECRET_KEY }}
+          INTEGRATION_STRIPE_PUBLIC_KEY: ${{ vars.INTEGRATION_STRIPE_PUBLIC_KEY || secrets.INTEGRATION_STRIPE_PUBLIC_KEY }}
 
       - name: Collect container logs
         if: ${{ failure() && steps.gate.outputs.enabled == 'true' }}
         run: |
           mkdir -p /tmp/integration-logs
           # stripe-listen exists only in Stripe mode, which is the only mode this job runs in.
+          # Its log holds the webhook signing secret, so every service goes through the same redaction
+          # as scripts/integration-stack.sh before it is written to the artifact.
           for service in api vocone mongo mailhog stripe-listen; do
-            docker compose -f integration/docker-compose.ci.yml -f integration/docker-compose.stripe.yml logs --no-color "$service" \
-              > "/tmp/integration-logs/$service.log" 2>&1 || true
+            docker compose -f integration/docker-compose.ci.yml -f integration/docker-compose.stripe.yml logs --no-color "$service" 2>&1 |
+              sed -E 's/(^|[^A-Za-z0-9_])(whsec|sk|rk|pk)_[A-Za-z0-9_]+/\1\2_[redacted]/g' \
+              > "/tmp/integration-logs/$service.log" || true
           done
 
       - name: Upload container logs

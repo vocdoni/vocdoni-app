@@ -24,6 +24,8 @@
 #   INTEGRATION_KEEP_STACK   set to any value to make `run` leave the stack up
 #   INTEGRATION_STRIPE_SECRET_KEY  opt-in Stripe mode: a Stripe TEST secret key (sk_test_...).
 #                            Creates real test-mode payments in that sandbox. See integration/README.md.
+#   INTEGRATION_STRIPE_PUBLIC_KEY  the matching publishable key (pk_test_...), read by the app at boot.
+#                            Needed by the checkout spec; `up` warns when it is unset in Stripe mode.
 #   INTEGRATION_STRIPE_CLI_IMAGE  stripe-cli image for stripe-listen (default stripe/stripe-cli:v1.55.3)
 set -euo pipefail
 
@@ -56,8 +58,20 @@ if [ -n "${INTEGRATION_STRIPE_SECRET_KEY:-}" ]; then
       exit 1
       ;;
   esac
+  case "${INTEGRATION_STRIPE_PUBLIC_KEY:-}" in
+    pk_live_*)
+      echo "ERROR: INTEGRATION_STRIPE_PUBLIC_KEY is a live Stripe key. Use a test-mode key (pk_test_...)." >&2
+      exit 1
+      ;;
+  esac
   STRIPE_MODE=1
 fi
+
+# Hides the secrets stripe-cli and the api print (a `whsec_` signing secret in
+# `listen` output, a key in an error) before any of their output reaches a log.
+redact_stripe_secrets() {
+  sed -E 's/(^|[^A-Za-z0-9_])(whsec|sk|rk|pk)_[A-Za-z0-9_]+/\1\2_[redacted]/g'
+}
 
 compose() {
   if [ -n "$STRIPE_MODE" ]; then
@@ -125,16 +139,20 @@ wait_url_ready() {
 # signs with (the account-level one, `listen --print-secret`) and exports it for
 # compose. The key reaches docker by name (-e), never on the command line.
 derive_stripe_webhook_secret() {
-  local secret
+  local secret stderr_file
+  stderr_file="$(mktemp)"
   secret=$(STRIPE_API_KEY="$INTEGRATION_STRIPE_SECRET_KEY" docker run --rm -e STRIPE_API_KEY \
-    "$INTEGRATION_STRIPE_CLI_IMAGE" listen --print-secret 2>/dev/null) || secret=""
+    "$INTEGRATION_STRIPE_CLI_IMAGE" listen --print-secret 2>"$stderr_file") || secret=""
   case "$secret" in
     whsec_*) ;;
     *)
-      echo "ERROR: could not derive the Stripe webhook secret (stripe-cli --print-secret gave no whsec_ value). Check that INTEGRATION_STRIPE_SECRET_KEY is a valid test key and that docker can run $INTEGRATION_STRIPE_CLI_IMAGE." >&2
+      echo "ERROR: could not derive the Stripe webhook secret (stripe-cli --print-secret gave no whsec_ value). Check that INTEGRATION_STRIPE_SECRET_KEY is a valid test key and that docker can run $INTEGRATION_STRIPE_CLI_IMAGE. stripe-cli said:" >&2
+      redact_stripe_secrets <"$stderr_file" >&2
+      rm -f "$stderr_file"
       exit 1
       ;;
   esac
+  rm -f "$stderr_file"
   export INTEGRATION_STRIPE_WEBHOOK_SECRET="$secret"
 }
 
@@ -169,8 +187,7 @@ assert_stripe_listener_running() {
   while [ -z "$(compose ps --status running -q stripe-listen 2>/dev/null)" ]; do
     if [ "$waited" -ge 15 ]; then
       echo "ERROR: the stripe-listen container is not running, so no Stripe webhooks reach the api. Its last log lines:" >&2
-      compose logs --tail 20 stripe-listen 2>&1 |
-        sed -E 's/(^|[^A-Za-z0-9_])(whsec|sk|rk)_[A-Za-z0-9_]+/\1\2_[redacted]/g' >&2 || true
+      compose logs --tail 20 stripe-listen 2>&1 | redact_stripe_secrets >&2 || true
       echo "hint: check that INTEGRATION_STRIPE_SECRET_KEY is a valid sk_test_ key for the sandbox you mean to use." >&2
       return 1
     fi
@@ -203,6 +220,9 @@ cmd_up() {
 
   if [ -n "$STRIPE_MODE" ]; then
     derive_stripe_webhook_secret
+    if [ -z "${INTEGRATION_STRIPE_PUBLIC_KEY:-}" ]; then
+      echo "WARNING: INTEGRATION_STRIPE_PUBLIC_KEY is not set. The app will not show Stripe checkout, and the checkout spec will fail." >&2
+    fi
   fi
 
   echo "== starting stack" >&2
@@ -214,6 +234,12 @@ cmd_up() {
 
   echo "== waiting for mongo and vocone to be healthy" >&2
   wait_container_healthy mongo 60
+  if [ -n "$STRIPE_MODE" ]; then
+    # `run` keeps volumes, so a stack seeded in default mode still holds its local-dev
+    # plan. Drop it, or the default-plan check below would pass on the stale plan.
+    compose exec -T mongo mongosh --quiet 'mongodb://root:vocdoni@localhost:27017/admin' \
+      --eval "db.getSiblingDB('saasdb').plans.deleteOne({ _id: 'local-dev' })" >/dev/null
+  fi
   # Kept above vocone's own healthcheck window (~420s, see the compose file):
   # `compose up -d` already gates on that via depends_on/service_healthy, so
   # this is only a backstop for the case where the container is healthy-but-slow

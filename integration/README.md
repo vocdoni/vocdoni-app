@@ -49,15 +49,27 @@ so Stripe is never called. Set `INTEGRATION_STRIPE_SECRET_KEY` to a Stripe
 **test** key (`sk_test_...`) to run against a real Stripe sandbox instead: the
 backend syncs its plans from the sandbox's products, and a `stripe-listen`
 container forwards the sandbox's webhooks to the api
-(`integration/docker-compose.stripe.yml`).
+(`integration/docker-compose.stripe.yml`). Also set
+`INTEGRATION_STRIPE_PUBLIC_KEY` to the matching test publishable key
+(`pk_test_...`): the app gets it at boot, and the checkout spec needs it.
+`up` warns if it is missing.
 
 ```bash
-INTEGRATION_STRIPE_SECRET_KEY=sk_test_... scripts/integration-stack.sh up
+INTEGRATION_STRIPE_SECRET_KEY=sk_test_... INTEGRATION_STRIPE_PUBLIC_KEY=pk_test_... \
+  scripts/integration-stack.sh up
 ```
 
-It runs the default `:main` saas-backend, the one `develop` deploys. The sandbox
-needs:
+It runs the default `:main` saas-backend, the one `develop` deploys. Run
+`scripts/integration-stack.sh down` before switching between default and Stripe
+mode: `run` keeps volumes, so a stack seeded in one mode keeps that mode's plans.
+`up` in Stripe mode deletes the seeded `local-dev` plan, but it does not undo
+anything else. The sandbox needs:
 
+- Products that the backend's plan sync can read. Every product it does not skip
+  needs valid JSON metadata `organization`, `votingTypes` and `features`. One
+  product that fails to parse makes the whole Stripe setup fail, and the only
+  symptom from `up` is "no default plan". Use a sandbox that holds only the plan
+  product(s).
 - A product whose default price has metadata `Default=true`. The backend's
   startup plan sync keeps no default plan without it, and `POST /organizations`
   needs one.
@@ -71,18 +83,24 @@ needs:
   these organizations answers 500 and gets retried for up to three days.
 
 Stripe mode is for a sandbox you own: the run creates real test-mode payments
-there. Live keys (`sk_live_`, `rk_live_`) are refused before anything starts.
+there. Live keys (`sk_live_`, `rk_live_`) and live publishable keys (`pk_live_`)
+are refused before anything starts.
 
-- The webhook signing secret is derived from the key with the Stripe CLI and is
-  never printed, and the key is never echoed.
+- The script never prints the key or the webhook signing secret, and it redacts
+  both from the stripe-cli and container output it shows on failure. But
+  `docker compose ... logs stripe-listen` does show the `whsec_` secret, because
+  stripe-cli prints it. Do not share raw container logs from this mode.
+- The webhook signing secret is derived from the key with the Stripe CLI.
 - The plan seed is skipped. The default plan must come from the Stripe sync, and
   `up` fails with a clear error if it does not. `up` also fails if the
   `stripe-listen` container is not running after startup, and prints its last
   log lines with secrets redacted.
 - The stripe-cli image defaults to `stripe/stripe-cli:v1.55.3`. Override it with
   `INTEGRATION_STRIPE_CLI_IMAGE`.
-- CI runs this mode in the `e2e-stripe` job of `.github/workflows/integration.yml`,
-  only when the repo secret `INTEGRATION_STRIPE_SECRET_KEY` is set.
+- CI runs this mode in the `e2e-stripe` job of `.github/workflows/integration.yml`.
+  It needs the repo secret `INTEGRATION_STRIPE_SECRET_KEY` and a publishable key
+  in `INTEGRATION_STRIPE_PUBLIC_KEY` (a repo variable or secret), and it skips
+  with a notice naming whichever is missing.
 
 ## Pinning upstream commits
 
