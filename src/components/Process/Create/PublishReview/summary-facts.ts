@@ -28,9 +28,12 @@ export type PublishPrimary =
   | { kind: 'card'; totalCents: number; balanceCents: number; shortfallCents: number }
   | { kind: 'blocked'; totalCents: number; balanceCents: number; shortfallCents: number }
 
-/** Whether publishing takes money from the wallet: not when free, paid, quote-only or a top-up is open. */
+/**
+ * Whether publishing takes money from the wallet: not when free, paid or quote-only. An open top-up
+ * (`pending`) still does: what the wallet lacks is paid by card, and the checkout reuses that session.
+ */
 export const walletPays = (price: ProcessPriceResponse): boolean =>
-  !isQuoteOnly(price) && price.totalCents > 0 && price.paymentStatus !== 'paid' && price.paymentStatus !== 'pending'
+  !isQuoteOnly(price) && price.totalCents > 0 && price.paymentStatus !== 'paid'
 
 type PrimaryInput = {
   price?: ProcessPriceResponse

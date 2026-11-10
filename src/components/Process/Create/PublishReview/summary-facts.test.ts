@@ -90,6 +90,26 @@ describe('resolvePublishPrimary', () => {
     expect(resolvePublishPrimary({ price: price(), wallet: wallet(13080), canTopUp: false }).kind).toBe('blocked')
   })
 
+  // An open top-up (after "Back to the summary" from the card step) still leaves the wallet short
+  it('treats a draft with an open top-up like an unpaid one when the wallet is readable', () => {
+    const pending = price({ paymentStatus: 'pending' })
+    expect(resolvePublishPrimary({ price: pending, wallet: wallet(13080), canTopUp: true })).toEqual({
+      kind: 'card',
+      totalCents: 17276,
+      balanceCents: 13080,
+      shortfallCents: 4196,
+    })
+    expect(resolvePublishPrimary({ price: pending, wallet: wallet(13080), canTopUp: false }).kind).toBe('blocked')
+    expect(resolvePublishPrimary({ price: pending, wallet: wallet(23080), canTopUp: true })).toEqual({
+      kind: 'wallet',
+      totalCents: 17276,
+      balanceCents: 23080,
+      afterCents: 5804,
+    })
+    // Unreadable, the backend still decides
+    expect(resolvePublishPrimary({ price: pending, canTopUp: true }).kind).toBe('publish')
+  })
+
   it('maps each state to the action the button means', () => {
     expect(primaryAction({ kind: 'publish' })).toBe('publish')
     expect(primaryAction({ kind: 'wallet', totalCents: 1, balanceCents: 1, afterCents: 0 })).toBe('wallet')

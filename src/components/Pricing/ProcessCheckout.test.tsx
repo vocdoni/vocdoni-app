@@ -209,9 +209,11 @@ describe('ProcessCheckout', () => {
       state.checkout = { type: 'loading' }
       renderView()
 
-      // Its label waits for Stripe's total, so it names no amount yet. The loading button hides its
-      // text from the accessibility tree, so it is found by that text
-      expect((await screen.findByText('Pay and publish')).closest('button')).toBeDisabled()
+      // Its label waits for Stripe's total, so it names no amount yet; disabled, but no spinner, since
+      // nothing is being paid
+      const pay = await screen.findByRole('button', { name: 'Pay and publish' })
+      expect(pay).toBeDisabled()
+      expect(pay).not.toHaveAttribute('data-loading')
       expect(screen.queryByText('payment-element')).not.toBeInTheDocument()
       expect(screen.queryByText(/and the vote is published/)).not.toBeInTheDocument()
     })
@@ -304,6 +306,18 @@ describe('ProcessCheckout', () => {
       expect(api.publish).not.toHaveBeenCalled()
     })
 
+    it('says the payment is being processed while Stripe confirms it', async () => {
+      const user = userEvent.setup()
+      state.checkout = readyCheckout(vi.fn(() => new Promise(() => undefined)))
+      renderView()
+
+      await user.click(await payButton())
+
+      const pay = await screen.findByRole('button', { name: /Processing the payment…/ })
+      expect(pay).toBeDisabled()
+      expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+    })
+
     it('stores the draft right before confirming, so a redirect back can reopen it', async () => {
       const user = userEvent.setup()
       let stored: string | null = null
@@ -329,7 +343,10 @@ describe('ProcessCheckout', () => {
 
       await user.click(await payButton())
 
-      expect(await screen.findByText('Card declined')).toBeInTheDocument()
+      // Announced, and next to the pay button rather than under the form
+      const alert = await screen.findByRole('alert')
+      expect(alert).toHaveTextContent('Card declined')
+      expect(alert.closest('.publish-review__footer')).not.toBeNull()
       expect(sessionStorage.getItem('process-checkout-pending')).toBeNull()
     })
 
@@ -487,6 +504,21 @@ describe('ProcessCheckout', () => {
       expect(await screen.findByText('the chain rejected the process')).toBeInTheDocument()
       expect(onPublished).not.toHaveBeenCalled()
       expect(screen.queryByText(/still being published/)).not.toBeInTheDocument()
+    })
+
+    it('leads a raw error with a translated sentence and offers a way out', async () => {
+      api.waitForJob.mockRejectedValue(
+        new JobFailedError({ jobId: 'job-1', status: 'failed', errors: ['boom'] } as any)
+      )
+      const { onClose } = renderView({ start: { kind: 'publishing', jobId: 'job-1' } })
+
+      expect(await screen.findByText('The vote could not be published.')).toBeInTheDocument()
+      expect(screen.getByText('boom')).toBeInTheDocument()
+      // No summary on this route: the footer closes, besides the close button in the corner
+      const closes = screen.getAllByRole('button', { name: 'Close' })
+      expect(closes).toHaveLength(2)
+      await userEvent.setup().click(closes.at(-1)!)
+      expect(onClose).toHaveBeenCalledTimes(1)
     })
 
     it('polls the process when reading the job fails transiently, and hands off once it is published', async () => {
@@ -677,6 +709,15 @@ describe('ProcessCheckout', () => {
       ).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: /and publish/ })).not.toBeInTheDocument()
     })
+  })
+
+  it('offers a way out when payments are unavailable', async () => {
+    state.stripePromise = null
+    const { onClose } = renderView()
+
+    expect(await screen.findByText(/Payments are temporarily unavailable/)).toBeInTheDocument()
+    await userEvent.setup().click(screen.getAllByRole('button', { name: 'Close' }).at(-1)!)
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 
   it('closes from the close button', async () => {

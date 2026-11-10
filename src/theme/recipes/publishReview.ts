@@ -365,6 +365,8 @@ export const PublishReview = defineSlotRecipe({
       m: 0,
       color: 'fg.muted',
       _empty: { display: 'none' },
+      // A refused card, shown where Pay was clicked
+      '&:has([data-tone=error])': { color: 'fg.error' },
     },
     // Primary on top and full width on phones, beside each other on the right from md up
     actions: {

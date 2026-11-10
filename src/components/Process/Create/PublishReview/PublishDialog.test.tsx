@@ -224,6 +224,17 @@ describe('PublishDialog', () => {
       expect(await screen.findByText('Review before publishing')).toBeInTheDocument()
     })
 
+    it('offers the card again for a draft whose top-up is still open, and reuses its session', async () => {
+      api.getPrice.mockResolvedValue({ ...priced(1000), paymentStatus: 'pending' })
+      const { user } = renderDialog()
+
+      await user.click(await primary('Add €6 and publish'))
+
+      expect(await screen.findByRole('button', { name: 'Pay €7.26 and publish' })).toBeInTheDocument()
+      expect(api.checkout).toHaveBeenCalledTimes(1)
+      expect(api.publish).not.toHaveBeenCalled()
+    })
+
     it('lets the page around the card step take focus and pointer, for Stripe 3D Secure', async () => {
       const { user } = renderDialog()
 

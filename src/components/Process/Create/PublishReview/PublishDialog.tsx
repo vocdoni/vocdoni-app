@@ -79,8 +79,9 @@ export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, o
         form={form}
         voters={group?.membersCount}
         price={price}
-        // Re-read after the save that opened the dialog: the census may have changed
-        priceLoading={priceQuery.isFetching || walletQuery.isFetching}
+        priceLoading={priceQuery.isLoading || walletQuery.isLoading}
+        // Re-read after the save that opened the dialog (the census may have changed) and on focus
+        priceRefreshing={priceQuery.isFetching || walletQuery.isFetching}
         priceError={priceQuery.isError}
         priceRetrying={priceQuery.isError && priceQuery.isFetching}
         onRetryPrice={() => void priceQuery.refetch()}

@@ -369,6 +369,8 @@ export const ProcessCheckoutContent = ({
       {body}
     </OutcomeStep>
   )
+  // Every outcome without its own way forward gets a way out besides the small close button
+  const exit = <ExitButton onBack={onBack} onClose={onClose} />
 
   switch (step.name) {
     case 'summary':
@@ -401,7 +403,8 @@ export const ProcessCheckoutContent = ({
             {t('payment.stripe_unavailable', {
               defaultValue: 'Payments are temporarily unavailable. Please try again later.',
             })}
-          </Outcome>
+          </Outcome>,
+          exit
         )
       }
       return (
@@ -471,23 +474,19 @@ export const ProcessCheckoutContent = ({
       )
     case 'error':
       return outcome(
-        <Outcome status='error'>{step.message}</Outcome>,
-        (onBack || step.openWallet) && (
-          <>
-            {onBack && (
-              <Button variant='outline' onClick={onBack}>
-                {t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
-              </Button>
-            )}
-            {step.openWallet && (
-              <Button asChild variant={onBack ? 'solid' : 'outline'}>
-                <RouterLink to={Routes.dashboard.settings.billing}>
-                  {t('process.payment.error.open_wallet', { defaultValue: 'Open wallet' })}
-                </RouterLink>
-              </Button>
-            )}
-          </>
-        )
+        <Outcome status='error' lead={failedLead(t)}>
+          {step.message}
+        </Outcome>,
+        <>
+          {exit}
+          {step.openWallet && (
+            <Button asChild>
+              <RouterLink to={Routes.dashboard.settings.billing}>
+                {t('process.payment.error.open_wallet', { defaultValue: 'Open wallet' })}
+              </RouterLink>
+            </Button>
+          )}
+        </>
       )
   }
 }
@@ -513,14 +512,39 @@ const OutcomeStep = ({ title, titleId, onClose, actions, children }: StepFramePr
   </PublishReviewStep>
 )
 
-const Outcome = ({ status, children }: { status: 'info' | 'warning' | 'error'; children: ReactNode }) => (
+type OutcomeProps = {
+  status: 'info' | 'warning' | 'error'
+  /** A translated sentence above the message, for messages that may be raw (a backend or network error). */
+  lead?: ReactNode
+  children: ReactNode
+}
+
+const Outcome = ({ status, lead, children }: OutcomeProps) => (
   <Alert.Root status={status}>
     <Alert.Indicator />
     <Alert.Content>
+      {lead && <Alert.Title>{lead}</Alert.Title>}
       <Alert.Description>{children}</Alert.Description>
     </Alert.Content>
   </Alert.Root>
 )
+
+const failedLead = (t: ReturnType<typeof useTranslation>['t']) =>
+  t('process.publish_review.failed', { defaultValue: 'The vote could not be published.' })
+
+// Back to the summary when there is one (not on the return from a payment), else a plain close
+const ExitButton = ({ onBack, onClose }: { onBack?: () => void; onClose: () => void }) => {
+  const { t } = useTranslation()
+  return onBack ? (
+    <Button variant='outline' onClick={onBack}>
+      {t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
+    </Button>
+  ) : (
+    <Button variant='outline' onClick={onClose}>
+      {t('process.publish_review.close', { defaultValue: 'Close' })}
+    </Button>
+  )
+}
 
 type CardStepProps = {
   title: string
@@ -569,8 +593,15 @@ const CardForm = ({
 
   if (checkoutState.type === 'error') {
     return (
-      <OutcomeStep title={title} titleId={titleId} onClose={onClose}>
-        <Outcome status='error'>{checkoutState.error.message}</Outcome>
+      <OutcomeStep
+        title={title}
+        titleId={titleId}
+        onClose={onClose}
+        actions={<ExitButton onBack={onBack} onClose={onClose} />}
+      >
+        <Outcome status='error' lead={failedLead(t)}>
+          {checkoutState.error.message}
+        </Outcome>
       </OutcomeStep>
     )
   }
@@ -588,7 +619,6 @@ const CardForm = ({
   const restStaysInWallet = shortCents !== undefined && session.amountCents > shortCents
   // The amount Stripe charges, VAT included, when it says so
   const payAmount = checkout ? (checkout.total?.total.amount ?? currency(session.amountCents)) : undefined
-  const busy = isSubmitting || loading
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -735,17 +765,31 @@ const CardForm = ({
                 })}
               </span>
             </PublishReviewSecureNote>
-            {error && <Outcome status='error'>{error}</Outcome>}
           </PublishReviewColumn>
         </PublishReviewColumns>
 
-        <PublishReviewFooter>
+        {/* Next to the button that was clicked, so a refused card never shows out of view */}
+        <PublishReviewFooter
+          note={
+            error && (
+              <span role='alert' data-tone='error'>
+                {error}
+              </span>
+            )
+          }
+        >
           {onBack && (
             <Button variant='outline' onClick={onBack} disabled={isSubmitting}>
               {t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
             </Button>
           )}
-          <Button type='submit' loading={busy} disabled={loading}>
+          {/* Only a payment under way spins, with words: a form still loading just waits */}
+          <Button
+            type='submit'
+            loading={isSubmitting}
+            loadingText={t('process.publish_review.card.processing', { defaultValue: 'Processing the payment…' })}
+            disabled={loading}
+          >
             {payAmount
               ? t('process.checkout.pay', { defaultValue: 'Pay {{amount}} and publish', amount: payAmount })
               : t('process.publish_review.card.cta_loading', { defaultValue: 'Pay and publish' })}

@@ -122,6 +122,25 @@ describe('PublishSummary', () => {
     expect(screen.getByRole('button', { name: 'Publish' })).toBeDisabled()
   })
 
+  it('keeps the cost, an open breakdown and the label while the price is re-read, ignoring clicks', async () => {
+    const handlers = { onKeepEditing: vi.fn(), onPrimary: vi.fn() }
+    const props = { form, voters: 312, price: price(), canTopUp: true, ...handlers }
+    const wallet = { balanceCents: 13080, currency: 'eur' }
+    const { rerender } = render(<PublishSummary {...props} wallet={wallet} />)
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('button', { name: /Review the details/ }))
+
+    rerender(<PublishSummary {...props} wallet={wallet} priceRefreshing />)
+
+    expect(screen.getByText('Cost: €172.76. €41.96 short in the balance')).toBeInTheDocument()
+    expect(screen.getByText('What you pay for')).toBeInTheDocument()
+    const primary = primaryButton()
+    expect(primary).toHaveTextContent('Add €41.96 and publish')
+    expect(primary).toBeDisabled()
+    await user.click(primary)
+    expect(handlers.onPrimary).not.toHaveBeenCalled()
+  })
+
   it('offers a retry when the price fails, with the primary disabled', async () => {
     const { user, onRetryPrice } = setup({ price: undefined, priceError: true })
 
