@@ -313,9 +313,9 @@ describe('PRIMARY_COLOR-driven system', () => {
     expect(conditions(BRANDED, 'brand.fg')).toEqual({ _light: '{colors.brand.700}', _dark: '{colors.brand.300}' })
   })
 
-  // Chakra's own gray.focusRing is gray.400 (#b2b2b2): 2.12:1 on white, under the
-  // 3:1 WCAG asks of focus indicators. The stock theme (no PRIMARY_COLOR) draws
-  // every focus ring with it, so it is locked against the real page backgrounds.
+  // Chakra's own gray.focusRing is gray.400 (#b2b2b2 on this app's gray scale): 2.12:1 on
+  // white, under the 3:1 WCAG asks of focus indicators. The stock theme (no PRIMARY_COLOR)
+  // draws every focus ring with it, so it is locked against the real page backgrounds.
   it('keeps the stock focus ring at 3:1 or better on the page in both modes', () => {
     const ring = conditions(system, 'gray.focusRing')
     const resolve = (ref: string) => system.tokens.getByName(ref.replace(/^\{|\}$/g, ''))?.value as string
