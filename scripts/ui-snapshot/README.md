@@ -36,7 +36,7 @@ pnpm ui:diff -- before after
 comparison; `--limit <n>` caps the elements printed per capture (default 50; totals always count
 everything).
 
-A full run (22 routes and 8 dialog/menu states at 2 widths and 2 modes: 114 captures) takes about 6
+A full run (20 routes and 7 dialog/menu states at 2 widths and 2 modes: 102 captures) takes about 6
 minutes and writes about 18 MB.
 
 ### What the snapshot does

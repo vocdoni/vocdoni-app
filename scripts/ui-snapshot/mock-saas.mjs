@@ -345,6 +345,22 @@ on('GET', '/organizations/0x[0-9a-fA-F]+', () => ORGANIZATION)
 on('GET', '/organizations/[0-9a-fA-F]{40}', () => ORGANIZATION)
 on('PUT', '/organizations/[^/]+', () => ORGANIZATION)
 on('GET', '/organizations/[^/]+/subscription', () => ({ subscriptionDetails: SUB_DETAILS, usage: USAGE, plan: PLAN }))
+on('GET', '/organizations/[^/]+/wallet', () => ({
+  balanceCents: 12500,
+  currency: 'eur',
+  history: [
+    { id: 'w1', orgAddress: ORG, amountCents: 20000, kind: 'topup', createdAt: '2025-01-10T10:00:00Z' },
+    {
+      id: 'w2',
+      orgAddress: ORG,
+      amountCents: -7500,
+      kind: 'payment',
+      processId: P_ONGOING,
+      createdAt: '2025-01-12T09:30:00Z',
+    },
+  ],
+  pagination: pagination(2),
+}))
 on('GET', '/organizations/[^/]+/meta', () => ({
   meta: { isDashboardTutorialClosed: true, isSidebarTutorialClosed: true },
 }))
@@ -412,6 +428,16 @@ on('GET', '/processes/([0-9a-f]{24})/results', (m) => {
     questions: p.questions.map((qq) => ({ questionId: qq.id, upstreamId: qq.upstreamId, ...(qq.results || {}) })),
   }
 })
+on('GET', '/processes/([0-9a-f]{24})/price', () => ({
+  currency: 'eur',
+  lines: [
+    { kind: 'base', description: 'Base price, 10 voters', amountCents: 1500 },
+    { kind: 'emailTwoFA', description: 'Email verification', amountCents: 500 },
+  ],
+  totalCents: 2000,
+  quoteRecommended: false,
+  quoteRequired: false,
+}))
 on('GET', '/processes/([0-9a-f]{24})/validation', () => ({ valid: true, errors: [] }))
 on('GET', '/processes/([0-9a-f]{24})/participants', () => ({
   participants: MEMBERS.slice(0, 3).map((x, i) => ({
