@@ -31,6 +31,12 @@ const stripeFrame = async (page: Page, selector: string, timeoutMs = 60_000): Pr
   while (Date.now() < deadline) {
     for (const frame of page.frames()) {
       if (!frame.name().startsWith('__privateStripeFrame')) continue
+      // Stripe also mounts 2px hidden copies of an element's frame, with the same markup.
+      const box = await frame
+        .frameElement()
+        .then((element) => element.boundingBox())
+        .catch(() => null)
+      if (!box || box.height < 20) continue
       if (
         (await frame
           .locator(selector)
