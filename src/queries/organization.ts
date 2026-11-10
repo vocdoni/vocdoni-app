@@ -8,6 +8,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { getPaginationParams } from '~utils/pagination'
+import { requireOrganizationAddress } from '~utils/organization'
 import { QueryKeys } from './keys'
 
 export enum OrganizationMetaKeys {
@@ -141,7 +142,7 @@ export const useOrganizationMeta = () => {
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const response = await bearedFetch<OrganizationMetaResponse>(
-        ApiEndpoints.OrganizationMeta.replace('{address}', organization.address)
+        ApiEndpoints.OrganizationMeta.replace('{address}', requireOrganizationAddress(organization))
       )
       return response.meta
     },
@@ -154,7 +155,7 @@ export const useOrganizationMeta = () => {
         ...partialMeta,
       }
       await bearedFetch<OrganizationMetaResponse>(
-        ApiEndpoints.OrganizationMeta.replace('{address}', organization.address),
+        ApiEndpoints.OrganizationMeta.replace('{address}', requireOrganizationAddress(organization)),
         {
           method: 'PUT',
           body: { meta: newMeta },
@@ -170,16 +171,14 @@ export const useOrganizationMeta = () => {
 
   const deleteMeta = useMutation<void, Error, string[]>({
     mutationFn: async (keys: string[]) => {
-      await bearedFetch(ApiEndpoints.OrganizationMeta.replace('{address}', organization.address), {
+      await bearedFetch(ApiEndpoints.OrganizationMeta.replace('{address}', requireOrganizationAddress(organization)), {
         method: 'DELETE',
-        body: {
-          keys,
-        },
+        body: { keys },
       })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.meta(organization.address),
+        queryKey: QueryKeys.organization.meta(organization?.address),
       })
     },
   })
@@ -288,7 +287,7 @@ export const useInviteMemberMutation = () => {
 
   return useMutation({
     mutationFn: async (body: InviteData) =>
-      await bearedFetch(ApiEndpoints.OrganizationUsers.replace('{address}', organization.address), {
+      await bearedFetch(ApiEndpoints.OrganizationUsers.replace('{address}', requireOrganizationAddress(organization)), {
         method: 'POST',
         body,
       }),
@@ -308,7 +307,10 @@ export const useRemoveUserMutation = () => {
   return useMutation({
     mutationFn: async (id: number) =>
       await bearedFetch(
-        ApiEndpoints.OrganizationUser.replace('{address}', organization.address).replace('{userId}', String(id)),
+        ApiEndpoints.OrganizationUser.replace('{address}', requireOrganizationAddress(organization)).replace(
+          '{userId}',
+          String(id)
+        ),
         { method: 'DELETE' }
       ),
     onSuccess: () => {

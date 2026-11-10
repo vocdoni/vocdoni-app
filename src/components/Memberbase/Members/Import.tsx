@@ -42,6 +42,7 @@ import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { hashMemberPasswords, isValidMemberPassword } from '~utils/member-password'
+import { requireOrganizationAddress } from '~utils/organization'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { maskIfNeeded } from './maskIfNeeded'
@@ -162,11 +163,11 @@ export const ImportProgress = () => {
   useEffect(() => {
     if (isComplete) {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.members(organization.address),
+        queryKey: QueryKeys.organization.members(organization?.address),
         exact: false,
       })
     }
-  }, [queryClient, organization.address, isComplete])
+  }, [queryClient, organization?.address, isComplete])
 
   // Track the async job outcome once per job
   const trackedJobRef = useRef<string | null>(null)
@@ -527,7 +528,11 @@ export const ImportMembers = () => {
 
   const onSubmit = async ({ spreadsheet }: { spreadsheet: any }) => {
     try {
-      const { rows: finalData, skippedLines } = await buildImportRows(organization.address, spreadsheet, columnMapping)
+      const { rows: finalData, skippedLines } = await buildImportRows(
+        requireOrganizationAddress(organization),
+        spreadsheet,
+        columnMapping
+      )
       if (skippedLines.length > 0) {
         // Not an Alert in the drawer: it closes as soon as the valid rows are sent.
         toast({

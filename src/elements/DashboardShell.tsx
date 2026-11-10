@@ -7,6 +7,7 @@ import { LuPanelLeft } from 'react-icons/lu'
 import { Outlet, useLocation } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import DashboardMenu from '~components/Dashboard/Menu'
+import { OrganizationGate } from '~components/Organization/OrganizationGate'
 import { DashboardMenuConfig } from '~components/Dashboard/Menu/menus'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import SupportChat from '~components/SupportChat'
@@ -65,7 +66,9 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
                 <LuPanelLeft />
               </IconButton>
             </Flex>
-            <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
+            <OrganizationGate>
+              <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
+            </OrganizationGate>
           </Flex>
           <SupportChat />
         </Flex>

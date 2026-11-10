@@ -46,6 +46,12 @@ describe('ImportProgress', () => {
     }
   })
 
+  it('renders without throwing when organization is null', () => {
+    // The gate prevents this in practice, but the component must be safe on its own.
+    setReactProvidersMock({ useOrganization: () => mockUseOrganization() })
+    expect(() => render(<ImportProgress />)).not.toThrow()
+  })
+
   it('renders completed status', () => {
     render(<ImportProgress />)
 
