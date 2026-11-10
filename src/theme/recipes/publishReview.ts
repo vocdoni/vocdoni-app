@@ -4,7 +4,13 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 const gutter = { base: 4, md: 8 }
 
 // The part of a step between its header and footer: it takes the height left and scrolls
-const scrollArea = { flex: '1 1 auto', minH: 0, overflowY: 'auto', overscrollBehavior: 'contain' } as const
+// From md up only the middle scrolls; on a phone the whole step does, so the header scrolls away
+const scrollArea = {
+  flex: { base: 'none', md: '1 1 auto' },
+  minH: 0,
+  overflowY: { base: 'visible', md: 'auto' },
+  overscrollBehavior: 'contain',
+} as const
 
 /**
  * The pre-publish dialog: summary, wallet and card steps share this anatomy. It sits inside the
@@ -64,6 +70,7 @@ export const PublishReview = defineSlotRecipe({
       flex: 1,
       minW: 0,
       minH: 0,
+      overflowY: { base: 'auto', md: 'visible' },
       color: 'fg',
       fontFamily: 'body',
       fontSize: 'sm',
@@ -324,6 +331,9 @@ export const PublishReview = defineSlotRecipe({
       gap: { base: 3.5, md: 6 },
       mt: 'auto',
       flexShrink: 0,
+      position: { base: 'sticky', md: 'static' },
+      bottom: 0,
+      zIndex: 1,
       px: gutter,
       pt: { base: 4, md: 4.5 },
       pb: { base: 6, md: 5 },
