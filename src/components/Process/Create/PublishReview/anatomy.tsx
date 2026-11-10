@@ -5,7 +5,7 @@ import {
   type HTMLChakraProps,
   Skeleton,
 } from '@chakra-ui/react'
-import type { ReactNode } from 'react'
+import { forwardRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft, LuCheck, LuTriangleAlert } from 'react-icons/lu'
 
@@ -21,7 +21,23 @@ const Eyebrow = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'e
 const BackButton = withContext<HTMLButtonElement, HTMLChakraProps<'button'>>('button', 'back')
 const CloseSlot = withContext<HTMLButtonElement, CloseButtonProps>(CloseButton, 'close')
 
-export const PublishReviewLead = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'lead')
+const LeadBox = withContext<HTMLHeadingElement, HTMLChakraProps<'h2'>>('h2', 'lead')
+
+/**
+ * The step's sentence, its top heading. Focus lands on it when a step opens, so a screen reader
+ * reads what changed (see `stepFocusTarget`).
+ */
+export const PublishReviewLead = forwardRef<HTMLHeadingElement, HTMLChakraProps<'h2'>>(
+  function PublishReviewLead(props, ref) {
+    return <LeadBox ref={ref} tabIndex={-1} data-step-focus='lead' {...props} />
+  }
+)
+
+/** Where focus goes when a step opens: its lead, or the eyebrow of a step without one (a wait, an outcome). */
+export const stepFocusTarget = (root?: HTMLElement | null) =>
+  root?.querySelector<HTMLElement>('[data-step-focus=lead]') ??
+  root?.querySelector<HTMLElement>('[data-step-focus=eyebrow]') ??
+  null
 export const PublishReviewIntro = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'intro')
 export const PublishReviewColumns = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'columns')
 export const PublishReviewColumn = withContext<HTMLElement, HTMLChakraProps<'section'>>('section', 'column')
@@ -100,7 +116,9 @@ export const PublishReviewHeader = ({
             {backLabel ?? t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
           </BackButton>
         ) : (
-          <Eyebrow id={titleId}>{eyebrow}</Eyebrow>
+          <Eyebrow id={titleId} tabIndex={-1} data-step-focus='eyebrow'>
+            {eyebrow}
+          </Eyebrow>
         )}
         {onClose && (
           <CloseSlot

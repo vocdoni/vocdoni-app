@@ -1,9 +1,10 @@
-import { Button, Dialog, Portal, useSlotRecipe } from '@chakra-ui/react'
-import { useEffect, useId, useRef, useState } from 'react'
+import { Button, Dialog, Portal, useSlotRecipe, VisuallyHidden } from '@chakra-ui/react'
+import { type RefObject, useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   isPublishing,
   ProcessCheckoutContent,
+  stepAnnouncement,
   type ProcessCheckoutFlow,
   type PublishFlowStart,
   useProcessCheckout,
@@ -27,6 +28,7 @@ import {
   PublishReviewNote,
   PublishReviewSectionTitle,
   PublishReviewStep,
+  stepFocusTarget,
 } from './anatomy'
 import { PublishSummary } from './PublishSummary'
 import { resolvePublishPrimary } from './summary-facts'
@@ -40,11 +42,23 @@ export type PublishDialogProps = {
   onPublished: (processId: string) => void
   /** Closes the dialog; never called while a publish is under way. */
   onClose: () => void
+  /** Gets focus back when the dialog closes and focus would otherwise be lost (the wizard's Publish). */
+  returnFocusRef?: RefObject<HTMLElement | null>
 }
 
 /** Review, pay and publish a saved draft, in one dialog over the wizard. */
-export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, onClose }: PublishDialogProps) => {
+export const PublishDialog = ({
+  processId,
+  form,
+  start,
+  canTopUp,
+  onPublished,
+  onClose,
+  returnFocusRef,
+}: PublishDialogProps) => {
+  const { t } = useTranslation()
   const titleId = useId()
+  const descriptionId = useId()
   const frame = useSlotRecipe({ key: 'publishReview' })({}).frame
   const contentRef = useRef<HTMLDivElement>(null)
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymous } = useAppEnv()
@@ -58,7 +72,14 @@ export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, o
   const locked = isPublishing(step)
   const stripeMounted = step.name === 'checkout'
   const close = () => {
-    if (!locked) onClose()
+    if (locked) return
+    onClose()
+    // Without a focus trap (the card step) nothing restores focus, and the trap's own restore may land
+    // on the wizard while it is still inert: once the dialog is gone, focus whatever lost it
+    requestAnimationFrame(() => {
+      const active = document.activeElement
+      if (!active || active === document.body) returnFocusRef?.current?.focus()
+    })
   }
 
   // Zag reads `modal` only when the dialog opens, so switching it remounts the root; the remount
@@ -68,10 +89,25 @@ export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, o
   const [switched, setSwitched] = useState(false)
   if (mode !== firstMode && !switched) setSwitched(true)
   const remounted = switched || mode !== firstMode
+  // Each step opens on its sentence (or its eyebrow), so a screen reader reads what changed. The remount
+  // on a mode switch counts as a new step
   useEffect(() => {
-    // Nothing gets focus in a dialog without a focus trap: start from its content
-    if (stripeMounted) contentRef.current?.focus()
+    const frame = requestAnimationFrame(() => stepFocusTarget(contentRef.current)?.focus())
+    return () => cancelAnimationFrame(frame)
+  }, [step.name, mode])
+
+  // Without a modal, Tab would reach the app under the backdrop and leave mid-payment. The dialog
+  // (portalled to body) and Stripe's 3D Secure frame (appended to body) are outside the app root
+  useEffect(() => {
+    if (!stripeMounted) return
+    const root = document.getElementById('root')
+    if (!root || root.hasAttribute('inert')) return
+    if (contentRef.current && root.contains(contentRef.current)) return
+    root.setAttribute('inert', '')
+    return () => root.removeAttribute('inert')
   }, [stripeMounted])
+
+  const announcement = stepAnnouncement(t, flow)
 
   const content =
     step.name === 'summary' && form ? (
@@ -107,6 +143,7 @@ export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, o
         flow={flow}
         processId={processId}
         titleId={titleId}
+        descriptionId={descriptionId}
         totalCents={price?.totalCents}
         balanceCents={wallet?.balanceCents}
         onBack={form ? flow.backToSummary : undefined}
@@ -121,7 +158,8 @@ export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, o
       onOpenChange={(details) => {
         if (!details.open) close()
       }}
-      ids={{ title: titleId }}
+      ids={{ title: titleId, description: descriptionId }}
+      initialFocusEl={() => stepFocusTarget(contentRef.current)}
       size={{ base: 'full', md: 'xl' }}
       placement='center'
       scrollBehavior='inside'
@@ -139,6 +177,10 @@ export const PublishDialog = ({ processId, form, start, canTopUp, onPublished, o
         <Dialog.Positioner>
           <Dialog.Content ref={contentRef} css={frame}>
             {content}
+            {/* Always mounted, so a change of its text is read out (one inserted already filled is not) */}
+            <VisuallyHidden role='status' aria-live='polite'>
+              {announcement}
+            </VisuallyHidden>
           </Dialog.Content>
         </Dialog.Positioner>
       </Portal>

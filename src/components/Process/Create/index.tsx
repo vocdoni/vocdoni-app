@@ -646,6 +646,8 @@ const ProcessCreateView = () => {
     form: Process | null
   } | null>(() => (returnDraftId ? { processId: returnDraftId, start: { kind: 'return' }, form: null } : null))
   const isDirty = isFormDirty && !publishDialog
+  // Where focus goes back when the publish dialog closes
+  const publishButtonRef = useRef<HTMLButtonElement>(null)
   const { canTopUp } = useWalletAccess()
   const { trackEvent } = useAnalytics()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
@@ -981,6 +983,7 @@ const ProcessCreateView = () => {
                 </IconButton>
                 {/* Both writes need the owner org address; keep them disabled until it resolves. */}
                 <Button
+                  ref={publishButtonRef}
                   type='submit'
                   alignSelf='flex-end'
                   loading={methods.formState.isSubmitting}
@@ -1049,6 +1052,7 @@ const ProcessCreateView = () => {
           canTopUp={canTopUp}
           onPublished={(processId) => handlePublished(processId, publishDialog.form)}
           onClose={closePublishDialog}
+          returnFocusRef={publishButtonRef}
         />
       )}
       <LeaveConfirmationModal

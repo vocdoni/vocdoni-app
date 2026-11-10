@@ -117,6 +117,10 @@ const renderView = ({
   return { onPublished, onClose }
 }
 
+// The dialog's live region repeats the message of a wait or an outcome: queries for the message on
+// screen leave it out
+const visible = { ignore: 'script, style, [role=status]' }
+
 // The pay button carries Stripe's VAT-inclusive total when Stripe has one
 const payButton = () => screen.findByRole('button', { name: /^Pay .+ and publish$/ })
 
@@ -368,7 +372,14 @@ describe('ProcessCheckout', () => {
 
       await user.click(await payButton())
 
-      expect(await screen.findByText('Payment received. Publishing your voting process…')).toBeInTheDocument()
+      expect(await screen.findByText('Payment received. Publishing your voting process…', visible)).toBeInTheDocument()
+      // The dialog remounts as a modal: its new live region is born filled, so the message also describes it
+      expect(screen.getByRole('status')).toHaveTextContent('Payment received. Publishing your voting process…')
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toHaveAccessibleDescription(
+          'Payment received. Publishing your voting process…'
+        )
+      )
       expect(onPublished).not.toHaveBeenCalled()
       expect(typeof api.waitForPublication.mock.calls[0][1].readPayment).toBe('function')
     })
@@ -386,7 +397,8 @@ describe('ProcessCheckout', () => {
 
       expect(
         await screen.findByText(
-          'Your payment is confirmed and the voting process publishes shortly. If it does not, publish it again: it is paid from your wallet.'
+          'Your payment is confirmed and the voting process publishes shortly. If it does not, publish it again: it is paid from your wallet.',
+          visible
         )
       ).toBeInTheDocument()
     })
@@ -400,10 +412,11 @@ describe('ProcessCheckout', () => {
 
       expect(
         await screen.findByText(
-          'The voting process is still being published. If it does not appear shortly, publish it again: it is paid from your wallet.'
+          'The voting process is still being published. If it does not appear shortly, publish it again: it is paid from your wallet.',
+          visible
         )
       ).toBeInTheDocument()
-      expect(screen.queryByText(/Your payment is confirmed/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/Your payment is confirmed/, visible)).not.toBeInTheDocument()
     })
 
     it('publishes again from the timeout, and waits for the process once more', async () => {
@@ -425,7 +438,7 @@ describe('ProcessCheckout', () => {
 
       await user.click(await payButton())
 
-      expect(await screen.findByText(/Your payment is still being confirmed/)).toBeInTheDocument()
+      expect(await screen.findByText(/Your payment is still being confirmed/, visible)).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: 'Publish again' })).not.toBeInTheDocument()
     })
 
@@ -436,7 +449,7 @@ describe('ProcessCheckout', () => {
 
       await user.click(await payButton())
 
-      expect(await screen.findByText('The payment did not go through. You can try again.')).toBeInTheDocument()
+      expect(await screen.findByText('The payment did not go through. You can try again.', visible)).toBeInTheDocument()
       await user.click(screen.getByRole('button', { name: 'Try again' }))
 
       expect(api.checkout).toHaveBeenCalledTimes(2)
@@ -461,7 +474,7 @@ describe('ProcessCheckout', () => {
     it('reopens in the waiting state without opening a new checkout', async () => {
       const { onPublished } = renderView({ start: { kind: 'return' } })
 
-      expect(await screen.findByText('Publishing your voting process…')).toBeInTheDocument()
+      expect(await screen.findByText('Publishing your voting process…', visible)).toBeInTheDocument()
       await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
       expect(api.checkout).not.toHaveBeenCalled()
     })
@@ -477,12 +490,12 @@ describe('ProcessCheckout', () => {
       )
       renderView({ start: { kind: 'return' } })
 
-      expect(await screen.findByText('Publishing your voting process…')).toBeInTheDocument()
-      expect(screen.queryByText('Payment received. Publishing your voting process…')).not.toBeInTheDocument()
+      expect(await screen.findByText('Publishing your voting process…', visible)).toBeInTheDocument()
+      expect(screen.queryByText('Payment received. Publishing your voting process…', visible)).not.toBeInTheDocument()
       await act(async () => {
         await read?.()
       })
-      expect(await screen.findByText('Payment received. Publishing your voting process…')).toBeInTheDocument()
+      expect(await screen.findByText('Payment received. Publishing your voting process…', visible)).toBeInTheDocument()
     })
   })
 
@@ -503,7 +516,7 @@ describe('ProcessCheckout', () => {
 
       expect(await screen.findByText('the chain rejected the process')).toBeInTheDocument()
       expect(onPublished).not.toHaveBeenCalled()
-      expect(screen.queryByText(/still being published/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/still being published/, visible)).not.toBeInTheDocument()
     })
 
     it('leads a raw error with a translated sentence and offers a way out', async () => {
@@ -543,7 +556,7 @@ describe('ProcessCheckout', () => {
       api.waitForJob.mockImplementation(jobWaitTimesOut())
       renderView({ start: { kind: 'publishing', jobId: 'job-1' } })
 
-      expect(await screen.findByText(/The voting process is still being published/)).toBeInTheDocument()
+      expect(await screen.findByText(/The voting process is still being published/, visible)).toBeInTheDocument()
     })
 
     it('waits on the job of a publish from the timeout, not on the process', async () => {
@@ -561,7 +574,7 @@ describe('ProcessCheckout', () => {
     it('waits for the process without reading a payment or opening a checkout', async () => {
       const { onPublished } = renderView({ start: { kind: 'publishing' } })
 
-      expect(await screen.findByText('Publishing your voting process…')).toBeInTheDocument()
+      expect(await screen.findByText('Publishing your voting process…', visible)).toBeInTheDocument()
       await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
       expect(api.waitForPublication.mock.calls[0][1].readPayment).toBeUndefined()
       expect(api.checkout).not.toHaveBeenCalled()
@@ -571,7 +584,7 @@ describe('ProcessCheckout', () => {
       api.waitForPublication.mockResolvedValueOnce('timeout')
       renderView({ start: { kind: 'publishing' } })
 
-      expect(await screen.findByText(/The voting process is still being published/)).toBeInTheDocument()
+      expect(await screen.findByText(/The voting process is still being published/, visible)).toBeInTheDocument()
     })
   })
 
@@ -686,7 +699,7 @@ describe('ProcessCheckout', () => {
       })
       renderView()
 
-      expect(await screen.findByText('Payment received. Publishing your voting process…')).toBeInTheDocument()
+      expect(await screen.findByText('Payment received. Publishing your voting process…', visible)).toBeInTheDocument()
       expect(api.publish).not.toHaveBeenCalled()
     })
 
@@ -734,7 +747,7 @@ describe('ProcessCheckout', () => {
     api.waitForJob.mockReturnValue(new Promise(() => undefined))
     const { onClose } = renderView({ start: { kind: 'publishing', jobId: 'job-1' } })
 
-    expect(await screen.findByText('Publishing your voting process…')).toBeInTheDocument()
+    expect(await screen.findByText('Publishing your voting process…', visible)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
     await userEvent.setup().keyboard('{Escape}')
     expect(onClose).not.toHaveBeenCalled()

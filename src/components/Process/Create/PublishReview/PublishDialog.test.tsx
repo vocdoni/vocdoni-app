@@ -1,12 +1,17 @@
 import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
 import userEvent from '@testing-library/user-event'
+import { useRef, useState } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { defaultProcessValues, type Process } from '../common'
 import { PublishDialog, type PublishDialogProps } from './PublishDialog'
 
 const processId = '6650f0c0c0c0c0c0c0c0c0c0'
 
-const state = vi.hoisted(() => ({ wallet: undefined as unknown, walletError: undefined as unknown }))
+const state = vi.hoisted(() => ({
+  wallet: undefined as unknown,
+  walletError: undefined as unknown,
+  checkoutLoading: false,
+}))
 
 const api = vi.hoisted(() => ({
   checkout: vi.fn(),
@@ -47,16 +52,19 @@ vi.mock('@stripe/react-stripe-js/checkout', async () => {
   return {
     CheckoutElementsProvider: ({ children }: { children: React.ReactNode }) =>
       React.createElement(React.Fragment, null, children),
-    useCheckoutElements: () => ({
-      type: 'success',
-      checkout: {
-        confirm: vi.fn(),
-        total: {
-          taxExclusive: { amount: '€1.26', minorUnitsAmount: 126 },
-          total: { amount: '€7.26', minorUnitsAmount: 726 },
-        },
-      },
-    }),
+    useCheckoutElements: () =>
+      state.checkoutLoading
+        ? { type: 'loading' }
+        : {
+            type: 'success',
+            checkout: {
+              confirm: vi.fn(),
+              total: {
+                taxExclusive: { amount: '€1.26', minorUnitsAmount: 126 },
+                total: { amount: '€7.26', minorUnitsAmount: 726 },
+              },
+            },
+          },
     BillingAddressElement: () => null,
     TaxIdElement: () => null,
     PaymentElement: () => null,
@@ -107,6 +115,10 @@ const renderDialog = (props: Partial<PublishDialogProps> = {}) => {
   return { ...handlers, user: userEvent.setup() }
 }
 
+// The dialog's live region repeats the message of a wait or an outcome: queries for the message on
+// screen leave it out
+const visible = { ignore: 'script, style, [role=status]' }
+
 // A primary waits for the price before it is enabled
 const primary = async (name: string | RegExp) => {
   const button = await screen.findByRole('button', { name })
@@ -119,6 +131,7 @@ describe('PublishDialog', () => {
     vi.clearAllMocks()
     state.wallet = { balanceCents: 0, currency: 'eur', history: [], pagination: {} }
     state.walletError = undefined
+    state.checkoutLoading = false
     api.getPrice.mockResolvedValue(priced(0))
     api.checkout.mockResolvedValue({ clientSecret: 'cs', sessionId: 's', amountCents: 600, currency: 'eur' })
     api.publish.mockResolvedValue({ jobId: 'job-1' })
@@ -158,10 +171,33 @@ describe('PublishDialog', () => {
 
     await user.click(await primary('Publish'))
 
-    expect(await screen.findByText('Publishing your voting process…')).toBeInTheDocument()
+    expect(await screen.findByText('Publishing your voting process…', visible)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
     await user.keyboard('{Escape}')
     expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it('announces the publish in a live region that stays mounted', async () => {
+    api.waitForJob.mockReturnValue(new Promise(() => undefined))
+    const { user } = renderDialog()
+
+    const live = await screen.findByRole('status')
+    expect(live).toHaveTextContent('')
+    await user.click(await primary('Publish'))
+
+    await waitFor(() => expect(live).toHaveTextContent('Publishing your voting process…'))
+    expect(screen.getByRole('status')).toBe(live)
+  })
+
+  it('opens on its sentence, the top heading, rather than on the close button', async () => {
+    renderDialog()
+
+    const lead = await screen.findByRole('heading', { level: 2, name: /can vote on 1 question/ })
+    await waitFor(() => expect(lead).toHaveFocus())
+    expect(screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent)).toEqual([
+      'What is voted',
+      'Vote summary',
+    ])
   })
 
   describe('when the wallet covers the price', () => {
@@ -188,6 +224,15 @@ describe('PublishDialog', () => {
       await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
       expect(api.publish).toHaveBeenCalledTimes(1)
       expect(api.checkout).not.toHaveBeenCalled()
+    })
+
+    it('moves focus to the sentence of the wallet step', async () => {
+      const { user } = renderDialog()
+
+      await user.click(await primary('Publish and pay €10'))
+
+      const lead = await screen.findByRole('heading', { name: 'Pay €10 from the balance and the vote is published.' })
+      await waitFor(() => expect(lead).toHaveFocus())
     })
 
     it('goes back to the summary from the wallet step', async () => {
@@ -233,6 +278,67 @@ describe('PublishDialog', () => {
       expect(await screen.findByRole('button', { name: 'Pay €7.26 and publish' })).toBeInTheDocument()
       expect(api.checkout).toHaveBeenCalledTimes(1)
       expect(api.publish).not.toHaveBeenCalled()
+    })
+
+    it('names the card step after what it does while Stripe loads the amount', async () => {
+      state.checkoutLoading = true
+      const { user } = renderDialog()
+
+      await user.click(await primary('Add €6 and publish'))
+
+      expect(await screen.findByRole('dialog', { name: 'Pay and publish' })).toBeInTheDocument()
+    })
+
+    it('makes the app inert under the card step, and gives it back after', async () => {
+      const root = document.body.appendChild(Object.assign(document.createElement('div'), { id: 'root' }))
+      try {
+        const { user } = renderDialog()
+
+        await user.click(await primary('Add €6 and publish'))
+        await screen.findByRole('button', { name: 'Pay €7.26 and publish' })
+        await waitFor(() => expect(root).toHaveAttribute('inert'))
+
+        await user.click(screen.getAllByRole('button', { name: 'Back to the summary' }).at(-1)!)
+        await screen.findByText('Review before publishing')
+        await waitFor(() => expect(root).not.toHaveAttribute('inert'))
+      } finally {
+        root.remove()
+      }
+    })
+
+    it('closes the card step on Escape, and gives focus back to the wizard', async () => {
+      const Harness = () => {
+        const [open, setOpen] = useState(true)
+        const publishRef = useRef<HTMLButtonElement>(null)
+        return (
+          <TestMemoryRouter>
+            <button type='button' ref={publishRef}>
+              wizard publish
+            </button>
+            {open && (
+              <PublishDialog
+                processId={processId}
+                form={form}
+                start={{ kind: 'summary' }}
+                canTopUp
+                onPublished={vi.fn()}
+                onClose={() => setOpen(false)}
+                returnFocusRef={publishRef}
+              />
+            )}
+          </TestMemoryRouter>
+        )
+      }
+      render(<Harness />)
+      const user = userEvent.setup()
+
+      await user.click(await primary('Add €6 and publish'))
+      const lead = await screen.findByRole('heading', { name: 'Pay €7.26 and the vote is published.' })
+      await waitFor(() => expect(lead).toHaveFocus())
+      await user.keyboard('{Escape}')
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      await waitFor(() => expect(screen.getByRole('button', { name: 'wizard publish' })).toHaveFocus())
     })
 
     it('lets the page around the card step take focus and pointer, for Stripe 3D Secure', async () => {
