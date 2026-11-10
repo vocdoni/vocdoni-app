@@ -1,37 +1,18 @@
-import { Button, Dialog, Portal, useSlotRecipe, VisuallyHidden } from '@chakra-ui/react'
-import { type RefObject, useEffect, useId, useRef, useState } from 'react'
+import { Dialog, Portal, useSlotRecipe, VisuallyHidden } from '@chakra-ui/react'
+import { type RefObject, useEffect, useId, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  isPublishing,
-  ProcessCheckoutContent,
-  stepAnnouncement,
-  type ProcessCheckoutFlow,
-  type PublishFlowStart,
-  useProcessCheckout,
-} from '~components/Pricing/ProcessCheckout'
+import { isPublishing, type PublishFlowStart, useProcessCheckout } from '~components/Pricing/ProcessCheckout'
 import { useAppEnv } from '~src/app-env'
 import { useGroup } from '~queries/groups'
 import { useProcessPrice } from '~queries/process-price'
 import { useWallet } from '~queries/wallet'
-import { amountFigure, currency } from '~utils/numbers'
 import type { Process } from '../common'
-import {
-  PublishReviewAmountRow,
-  PublishReviewAmounts,
-  PublishReviewCallout,
-  PublishReviewColumn,
-  PublishReviewColumns,
-  PublishReviewFooter,
-  PublishReviewHeader,
-  PublishReviewIntro,
-  PublishReviewLead,
-  PublishReviewNote,
-  PublishReviewSectionTitle,
-  PublishReviewStep,
-  stepFocusTarget,
-} from './anatomy'
+import { stepFocusTarget } from './anatomy'
+import { ProcessCheckoutContent } from './CheckoutContent'
 import { PublishSummary } from './PublishSummary'
+import { stepAnnouncement } from './step-copy'
 import { resolvePublishPrimary } from './summary-facts'
+import { WalletStep } from './WalletStep'
 
 export type PublishDialogProps = {
   processId: string
@@ -85,10 +66,12 @@ export const PublishDialog = ({
   // Zag reads `modal` only when the dialog opens, so switching it remounts the root; the remount
   // skips the open animation, or every switch would flash the dialog in again
   const mode = stripeMounted ? 'stripe' : 'modal'
-  const [firstMode] = useState(mode)
-  const [switched, setSwitched] = useState(false)
-  if (mode !== firstMode && !switched) setSwitched(true)
-  const remounted = switched || mode !== firstMode
+  const opened = useRef(mode)
+  const everSwitched = useRef(false)
+  const remounted = opened.current !== mode || everSwitched.current
+  useEffect(() => {
+    if (mode !== opened.current) everSwitched.current = true
+  }, [mode])
   // Each step opens on its sentence (or its eyebrow), so a screen reader reads what changed. The remount
   // on a mode switch counts as a new step
   useEffect(() => {
@@ -188,82 +171,5 @@ export const PublishDialog = ({
         </Dialog.Positioner>
       </Portal>
     </Dialog.Root>
-  )
-}
-
-type WalletStepProps = { flow: ProcessCheckoutFlow; titleId: string; currencyCode?: string; onClose: () => void }
-
-// The wallet covers the whole price: nothing to pay by card
-const WalletStep = ({ flow, titleId, currencyCode, onClose }: WalletStepProps) => {
-  const { t } = useTranslation()
-  if (flow.step.name !== 'wallet') return null
-  const { totalCents, afterCents } = flow.step
-  const total = currency(totalCents, currencyCode)
-
-  return (
-    <PublishReviewStep>
-      <PublishReviewHeader onBack={flow.backToSummary} onClose={onClose}>
-        <PublishReviewLead id={titleId}>
-          {t('process.publish_review.wallet.title', {
-            defaultValue: 'Pay {{total}} from the balance and the vote is published.',
-            total,
-          })}
-        </PublishReviewLead>
-        <PublishReviewIntro>
-          {t('process.publish_review.wallet.lead', {
-            defaultValue: 'There is nothing more to pay: it is taken from the prepaid balance.',
-          })}
-        </PublishReviewIntro>
-      </PublishReviewHeader>
-
-      <PublishReviewColumns>
-        <PublishReviewColumn>
-          <PublishReviewSectionTitle>
-            {t('process.publish_review.pay_now', { defaultValue: 'What you pay now' })}
-          </PublishReviewSectionTitle>
-          <PublishReviewAmounts>
-            <PublishReviewAmountRow
-              label={t('process.publish_review.this_vote', { defaultValue: 'This vote' })}
-              value={amountFigure(totalCents, currencyCode)}
-            />
-            <PublishReviewAmountRow
-              label={t('process.publish_review.org_balance', { defaultValue: 'Organization balance' })}
-              value={amountFigure(-totalCents, currencyCode)}
-            />
-            <PublishReviewAmountRow
-              label={t('process.publish_review.total_now', { defaultValue: 'Total to pay now' })}
-              value={amountFigure(0, currencyCode)}
-              strong
-              ruled
-            />
-          </PublishReviewAmounts>
-          <PublishReviewNote>
-            {t('process.publish_review.wallet.note', {
-              defaultValue: 'After publishing, the balance will have {{after}} left.',
-              after: currency(afterCents, currencyCode),
-            })}
-          </PublishReviewNote>
-        </PublishReviewColumn>
-        <PublishReviewColumn>
-          <PublishReviewSectionTitle>
-            {t('process.publish_review.how_you_pay', { defaultValue: 'How you pay' })}
-          </PublishReviewSectionTitle>
-          <PublishReviewCallout tone='positive'>
-            {t('process.publish_review.wallet.covers', {
-              defaultValue: "The organization's balance covers the whole cost. No card is needed.",
-            })}
-          </PublishReviewCallout>
-        </PublishReviewColumn>
-      </PublishReviewColumns>
-
-      <PublishReviewFooter>
-        <Button variant='outline' onClick={flow.backToSummary}>
-          {t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
-        </Button>
-        <Button onClick={flow.publish}>
-          {t('process.publish_review.wallet.cta', { defaultValue: 'Pay from the balance and publish' })}
-        </Button>
-      </PublishReviewFooter>
-    </PublishReviewStep>
   )
 }
