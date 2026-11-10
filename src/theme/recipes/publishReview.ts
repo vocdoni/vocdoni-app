@@ -3,6 +3,9 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 // Inline padding shared by the header, both columns and the footer, so their edges line up.
 const gutter = { base: 4, md: 8 }
 
+// The part of a step between its header and footer: it takes the height left and scrolls
+const scrollArea = { flex: '1 1 auto', minH: 0, overflowY: 'auto', overscrollBehavior: 'contain' } as const
+
 /**
  * The pre-publish dialog: summary, wallet and card steps share this anatomy. It sits inside the
  * stock Dialog.Content, so it only styles what goes in it; re-theming the dialog edits this file.
@@ -47,13 +50,20 @@ export const PublishReview = defineSlotRecipe({
     'footer',
     'footerNote',
     'actions',
+    'body',
+    'status',
+    'skeleton',
+    'secureNote',
   ],
   base: {
+    // Fills Dialog.Content (a flex column capped at the viewport) and may shrink below its content,
+    // so the middle part scrolls while the header and the footer stay in view
     root: {
       display: 'flex',
       flexDirection: 'column',
       flex: 1,
       minW: 0,
+      minH: 0,
       color: 'fg',
       fontFamily: 'body',
       fontSize: 'sm',
@@ -62,6 +72,7 @@ export const PublishReview = defineSlotRecipe({
     header: {
       display: 'flex',
       flexDirection: 'column',
+      flexShrink: 0,
       gap: 3,
       px: gutter,
       pt: { base: 4, md: 7 },
@@ -113,14 +124,17 @@ export const PublishReview = defineSlotRecipe({
       color: 'fg.muted',
       textWrap: 'pretty',
     },
+    // The scrolling middle of a step, like `body` and `status`. A grid, not a flex row: its row grows
+    // with the taller column, so the hairline between them runs the whole scrolled height
     columns: {
-      display: 'flex',
-      flexDirection: { base: 'column', md: 'row' },
+      ...scrollArea,
+      display: 'grid',
+      gridTemplateColumns: { base: 'minmax(0, 1fr)', md: 'repeat(2, minmax(0, 1fr))' },
+      alignContent: 'start',
       borderTopWidth: '1px',
       borderColor: 'border',
     },
     column: {
-      flex: '1 1 0',
       minW: 0,
       display: 'flex',
       flexDirection: 'column',
@@ -138,6 +152,8 @@ export const PublishReview = defineSlotRecipe({
       m: 0,
       fontSize: 'md',
       fontWeight: 'semibold',
+      // A second section in one column (the card step's billing details)
+      '&:not(:first-child)': { mt: 2 },
     },
     questionList: {
       display: 'flex',
@@ -307,6 +323,7 @@ export const PublishReview = defineSlotRecipe({
       justifyContent: 'space-between',
       gap: { base: 3.5, md: 6 },
       mt: 'auto',
+      flexShrink: 0,
       px: gutter,
       pt: { base: 4, md: 4.5 },
       pb: { base: 6, md: 5 },
@@ -330,6 +347,45 @@ export const PublishReview = defineSlotRecipe({
       gap: { base: 2, md: 2.5 },
       ms: { base: 0, md: 'auto' },
       '& > *': { w: { base: 'full', md: 'auto' }, h: { base: 11, md: 10 } },
+    },
+    body: {
+      ...scrollArea,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 4,
+      px: gutter,
+      pb: 6,
+    },
+    status: {
+      ...scrollArea,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 4,
+      px: gutter,
+      pt: 4,
+      pb: 10,
+      textAlign: 'center',
+      fontSize: 'md',
+      '& > p': { m: 0 },
+    },
+    // Stand-ins for what Stripe renders once loaded, sized like it
+    skeleton: {
+      display: 'block',
+      w: 'full',
+      borderRadius: 'l2',
+      '&[data-kind=lead]': { h: 8, maxW: '24rem' },
+      '&[data-kind=amounts]': { h: 12 },
+      '&[data-kind=field]': { h: 40, borderRadius: 'l3' },
+    },
+    secureNote: {
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: 2,
+      m: 0,
+      fontSize: 'xs',
+      color: 'fg.muted',
+      '& > svg': { flex: '0 0 auto', boxSize: 3.5, mt: 0.5 },
     },
   },
 })

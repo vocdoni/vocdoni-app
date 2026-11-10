@@ -4,7 +4,8 @@ import userEvent from '@testing-library/user-event'
 import { StrictMode } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import type { PublicationWait } from '~queries/process-checkout'
-import { ProcessCheckout, type ProcessCheckoutStart } from './ProcessCheckout'
+import { PublishDialog } from '~components/Process/Create/PublishReview/PublishDialog'
+import type { ProcessCheckoutStart } from './ProcessCheckout'
 
 const processId = '6650f0c0c0c0c0c0c0c0c0c0'
 
@@ -94,6 +95,7 @@ const readyCheckout = (confirm = vi.fn().mockResolvedValue({ type: 'success' }))
 const apiError = (status: number, code?: number, data?: unknown) =>
   new VocdoniApiError(status, { error: 'refused', code, data }, 'refused', code, data)
 
+// The checkout lives in the publish dialog; with no form (as on a return) it has no summary to go back to
 const renderView = ({
   start = { kind: 'checkout' } as ProcessCheckoutStart,
   onPublished = vi.fn(),
@@ -101,7 +103,15 @@ const renderView = ({
 }: { start?: ProcessCheckoutStart; onPublished?: () => void; onClose?: () => void } = {}) => {
   render(
     <TestMemoryRouter>
-      <ProcessCheckout processId={processId} start={start} onPublished={onPublished} onClose={onClose} />
+      <button type='button'>outside</button>
+      <PublishDialog
+        processId={processId}
+        form={null}
+        start={start}
+        canTopUp
+        onPublished={onPublished}
+        onClose={onClose}
+      />
     </TestMemoryRouter>
   )
   return { onPublished, onClose }
@@ -147,19 +157,62 @@ describe('ProcessCheckout', () => {
   })
 
   describe('summary and payment', () => {
-    it('shows the shortfall, the wallet balance and the top-up, with the VAT and total Stripe charges', async () => {
+    it('shows the price, the balance and the shortfall, with the VAT and total Stripe charges', async () => {
       api.checkout.mockResolvedValue(session({ amountCents: 550 }))
       renderView({ start: { kind: 'checkout', shortfall: { shortfallCents: 550, balanceCents: 450 } } })
 
       expect(await payButton()).toHaveTextContent('€6.05')
-      expect(screen.getByText('Shortfall (VAT excluded)')).toBeInTheDocument()
-      expect(screen.queryByText('Draft total (VAT excluded)')).not.toBeInTheDocument()
-      expect(screen.getByText('Wallet balance')).toBeInTheDocument()
-      expect(screen.getByText('€4.50')).toBeInTheDocument()
-      expect(screen.getByText('Top-up (VAT excluded)')).toBeInTheDocument()
-      expect(screen.getAllByText('€5.50')).toHaveLength(2)
-      expect(screen.getByText('€1.00')).toBeInTheDocument()
-      expect(screen.getByText('€6.05', { selector: 'p' })).toBeInTheDocument()
+      expect(screen.getByText('Pay €6.05 and the vote is published.')).toBeInTheDocument()
+      expect(
+        screen.getByText("The organization's balance covers €4.50. The rest is paid now, with VAT.")
+      ).toBeInTheDocument()
+      const amount = (label: string) => screen.getByText(label).nextElementSibling
+      expect(amount('This vote')).toHaveTextContent('€10')
+      expect(amount('Organization balance')).toHaveTextContent('-€4.50')
+      expect(amount('Short')).toHaveTextContent('€5.50')
+      // The top-up is exactly the shortfall, so it is not repeated
+      expect(screen.queryByText('Top-up, VAT excluded')).not.toBeInTheDocument()
+      expect(amount('VAT')).toHaveTextContent('€1.00')
+      expect(amount('Total to pay now')).toHaveTextContent('€6.05')
+      expect(screen.getByText('After publishing, the balance is left at zero.')).toBeInTheDocument()
+    })
+
+    it('lists the top-up apart when it is not the shortfall', async () => {
+      api.checkout.mockResolvedValue(session({ amountCents: 100 }))
+      renderView({ start: { kind: 'checkout', shortfall: { shortfallCents: 50, balanceCents: 950 } } })
+
+      await payButton()
+      expect(screen.getByText('Top-up, VAT excluded').nextElementSibling).toHaveTextContent('€1')
+    })
+
+    it('shows the billing details and the payment form, with the secure payment note', async () => {
+      renderView()
+
+      await payButton()
+      expect(screen.getByText('Billing details')).toBeInTheDocument()
+      expect(screen.getByText('billing-address')).toBeInTheDocument()
+      expect(screen.getByText('tax-id')).toBeInTheDocument()
+      expect(screen.getByText('How you pay')).toBeInTheDocument()
+      expect(screen.getByText('payment-element')).toBeInTheDocument()
+      expect(screen.getByText(/^Secure payment processed by Stripe/)).toBeInTheDocument()
+    })
+
+    it('says the whole vote is paid now when the balance is empty', async () => {
+      renderView({ start: { kind: 'checkout', shortfall: { shortfallCents: 1000, balanceCents: 0 } } })
+
+      await payButton()
+      expect(screen.getByText('You pay the whole vote now, with VAT.')).toBeInTheDocument()
+      expect(screen.queryByText('Organization balance')).not.toBeInTheDocument()
+    })
+
+    it('holds the amounts and the pay button until Stripe has loaded', async () => {
+      state.checkout = { type: 'loading' }
+      renderView()
+
+      // Its label waits for Stripe's total, so it is found by its type
+      await waitFor(() => expect(document.querySelector('button[type="submit"]')).toBeDisabled())
+      expect(screen.queryByText('payment-element')).not.toBeInTheDocument()
+      expect(screen.queryByText(/and the vote is published/)).not.toBeInTheDocument()
     })
 
     it('pays the net top-up when Stripe gives no total', async () => {
@@ -195,12 +248,13 @@ describe('ProcessCheckout', () => {
       expect(screen.queryByText('The rest stays in your wallet.')).not.toBeInTheDocument()
     })
 
-    it('renders inline, never in a modal dialog', async () => {
+    // A modal focus trap and pointer blocking break Stripe's 3D Secure lightbox
+    it('renders in the dialog without making it modal, so the page around stays reachable', async () => {
       renderView()
 
       await payButton()
-      expect(screen.getByText('Top up and publish')).toBeInTheDocument()
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      await waitFor(() => expect(screen.getByRole('button', { name: 'outside' })).toBeInTheDocument())
     })
 
     it('opens the checkout for the process with the locale and the wizard return route', async () => {
@@ -218,9 +272,11 @@ describe('ProcessCheckout', () => {
       render(
         <StrictMode>
           <TestMemoryRouter>
-            <ProcessCheckout
+            <PublishDialog
               processId={processId}
+              form={null}
               start={{ kind: 'checkout' }}
+              canTopUp
               onPublished={vi.fn()}
               onClose={vi.fn()}
             />
@@ -622,12 +678,38 @@ describe('ProcessCheckout', () => {
     })
   })
 
-  it('goes back to the form from the back button', async () => {
+  it('closes from the close button', async () => {
     const user = userEvent.setup()
     const { onClose } = renderView()
 
-    await user.click(await screen.findByRole('button', { name: 'Back' }))
+    await payButton()
+    await user.click(screen.getByRole('button', { name: 'Close' }))
 
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('cannot be closed while the publication is awaited', async () => {
+    api.waitForJob.mockReturnValue(new Promise(() => undefined))
+    const { onClose } = renderView({ start: { kind: 'publishing', jobId: 'job-1' } })
+
+    expect(await screen.findByText('Publishing your voting process…')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+    await userEvent.setup().keyboard('{Escape}')
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it('offers the wallet page when a wallet publish is refused for the shortfall', async () => {
+    api.checkout.mockRejectedValue(apiError(400))
+    api.publish.mockRejectedValue(
+      apiError(402, ApiErrorCode.PaymentRequired, {
+        lines: [],
+        totalCents: 1000,
+        balanceCents: 0,
+        shortfallCents: 1000,
+      })
+    )
+    renderView()
+
+    expect(await screen.findByRole('link', { name: 'Open wallet' })).toHaveAttribute('href', '/admin/settings/billing')
   })
 })

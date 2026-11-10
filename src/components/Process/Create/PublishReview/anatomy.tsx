@@ -45,6 +45,14 @@ export const PublishReviewCostTitle = withContext<HTMLHeadingElement, HTMLChakra
 /** The sunken box of amounts ("What you pay now"); flat when placed inside the cost panel. */
 export const PublishReviewAmounts = withContext<HTMLDListElement, HTMLChakraProps<'dl'>>('dl', 'amounts')
 export const PublishReviewNote = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'note')
+/** Padded body of a one-message step (a checkout outcome). */
+export const PublishReviewBody = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'body')
+/** Centred spinner and message of a wait. */
+export const PublishReviewStatus = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'status')
+/** Placeholder while Stripe loads; `data-kind` is `lead`, `amounts` or `field`. */
+export const PublishReviewSkeleton = withContext<HTMLDivElement, HTMLChakraProps<'div'>>(Skeleton, 'skeleton')
+/** The lock line under the card form; the icon goes first. */
+export const PublishReviewSecureNote = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'secureNote')
 
 const FactRowBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'factRow')
 const FactLabel = withContext<HTMLElement, HTMLChakraProps<'dt'>>('dt', 'factLabel')
