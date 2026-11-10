@@ -3,13 +3,18 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 // Inline padding shared by the header, both columns and the footer, so their edges line up.
 const gutter = { base: 4, md: 8 }
 
-// The part of a step between its header and footer: it takes the height left and scrolls
-// From md up only the middle scrolls; on a phone the whole step does, so the header scrolls away
+// A short screen (a phone held sideways) gets the phone behaviour whatever its width: the fixed
+// header would leave no room for the middle and push the footer out of the dialog
+const shortScreen = '@media screen and (max-height: 40em)'
+
+// From md up only the middle of a step scrolls; on a phone the whole step does, so the header
+// scrolls away
 const scrollArea = {
   flex: { base: 'none', md: '1 1 auto' },
   minH: 0,
   overflowY: { base: 'visible', md: 'auto' },
   overscrollBehavior: 'contain',
+  [shortScreen]: { flex: 'none', overflowY: 'visible' },
 } as const
 
 /**
@@ -81,6 +86,7 @@ export const PublishReview = defineSlotRecipe({
       minW: 0,
       minH: 0,
       overflowY: { base: 'auto', md: 'visible' },
+      [shortScreen]: { overflowY: 'auto' },
       color: 'fg',
       fontFamily: 'body',
       fontSize: 'sm',
@@ -342,6 +348,7 @@ export const PublishReview = defineSlotRecipe({
       mt: 'auto',
       flexShrink: 0,
       position: { base: 'sticky', md: 'static' },
+      [shortScreen]: { position: 'sticky' },
       bottom: 0,
       zIndex: 1,
       px: gutter,
