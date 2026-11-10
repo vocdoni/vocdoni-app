@@ -18,7 +18,7 @@ describe('onCreateGlobalContext', () => {
     const { default: onCreateGlobalContext } = await import('./+onCreateGlobalContext.server')
     const globalContext = {} as GlobalContextServer
 
-    onCreateGlobalContext(globalContext)
+    await onCreateGlobalContext(globalContext)
 
     expect(globalContext.appEnv?.PRIMARY_COLOR).toBe('#1a73e8')
     // trailing slash trimmed by buildAppEnv: proves the real resolver ran
@@ -29,7 +29,7 @@ describe('onCreateGlobalContext', () => {
     const { default: onCreateGlobalContext } = await import('./+onCreateGlobalContext.server')
     const globalContext = {} as GlobalContextServer
 
-    onCreateGlobalContext(globalContext)
+    await onCreateGlobalContext(globalContext)
 
     expect(globalContext.appEnv).toBeDefined()
     expect(globalContext.appEnv?.PRIMARY_COLOR).toBeUndefined()

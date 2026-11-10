@@ -1,80 +1,71 @@
-import { Locale } from 'date-fns'
-/**
- * If you add or remove any languages, remember to also update languages.ts
- */
-import ca from './ca/common.json'
-import caReactComponents from './ca/react-components.json'
-import de from './de/common.json'
-import deReactComponents from './de/react-components.json'
-import el from './el/common.json'
-import elReactComponents from './el/react-components.json'
+import type { Locale } from 'date-fns'
 import en from './en/common.json'
 import enReactComponents from './en/react-components.json'
-import es from './es/common.json'
-import esReactComponents from './es/react-components.json'
-import eu from './eu/common.json'
-import euReactComponents from './eu/react-components.json'
-import fr from './fr/common.json'
-import frReactComponents from './fr/react-components.json'
-import it from './it/common.json'
-import itReactComponents from './it/react-components.json'
-import ptBR from './pt-br/common.json'
-import ptBRReactComponents from './pt-br/react-components.json'
-import pt from './pt/common.json'
-import ptReactComponents from './pt/react-components.json'
 
-// no need to import english here, since it's date-fns default language
-import { ca as dca } from 'date-fns/locale/ca'
-import { de as dde } from 'date-fns/locale/de'
-import { el as del } from 'date-fns/locale/el'
-import { es as des } from 'date-fns/locale/es'
-import { eu as deu } from 'date-fns/locale/eu'
-import { fr as dfr } from 'date-fns/locale/fr'
-import { it as dit } from 'date-fns/locale/it'
-import { pt as dpt } from 'date-fns/locale/pt'
-import { ptBR as dptBR } from 'date-fns/locale/pt-BR'
-
-export const translations: { [key: string]: any } = {
-  ca,
-  de,
-  el,
-  en,
-  es,
-  eu,
-  fr,
-  it,
-  pt,
-  'pt-br': ptBR,
+/** Everything one language ships: the app's two namespaces and its date-fns locale. */
+export type LocaleBundle = {
+  common: Record<string, unknown>
+  reactComponents: Record<string, unknown>
+  // Absent for English, which is date-fns' default.
+  dateLocale?: Locale
 }
 
-export const reactComponentsTranslations: { [key: string]: any } = {
-  ca: caReactComponents,
-  de: deReactComponents,
-  el: elReactComponents,
-  en: enReactComponents,
-  es: esReactComponents,
-  eu: euReactComponents,
-  fr: frReactComponents,
-  it: itReactComponents,
-  pt: ptReactComponents,
-  'pt-br': ptBRReactComponents,
+// English is the source language and the default fallback, so it stays in the main
+// chunk: a missing key always has something to fall back to without a request.
+const englishBundle: LocaleBundle = { common: en, reactComponents: enReactComponents }
+
+/**
+ * Every other language is its own chunk, fetched only when it is needed.
+ * If you add or remove any languages, remember to also update languages.ts
+ */
+const loaders: Record<string, () => Promise<{ default: LocaleBundle }>> = {
+  ca: () => import('./ca'),
+  de: () => import('./de'),
+  el: () => import('./el'),
+  es: () => import('./es'),
+  eu: () => import('./eu'),
+  fr: () => import('./fr'),
+  it: () => import('./it'),
+  pt: () => import('./pt'),
+  'pt-br': () => import('./pt-br'),
 }
 
-export const dateLocales: { [key: string]: Locale } = {
-  ca: dca,
-  de: dde,
-  el: del,
-  es: des,
-  eu: deu,
-  fr: dfr,
-  it: dit,
-  pt: dpt,
-  'pt-br': dptBR,
+const loaded: Record<string, LocaleBundle> = { en: englishBundle }
+const pending: Record<string, Promise<LocaleBundle | undefined>> = {}
+
+/** Maps a route or browser code (`pt-BR`, `es-AR`) to the bundle that serves it. */
+export const toBundleLanguage = (language: string | undefined) => {
+  const code = language?.trim().toLowerCase().replace(/_/g, '-')
+  if (!code) return undefined
+  if (loaded[code] || loaders[code]) return code
+  const base = code.split('-')[0]
+  return loaded[base] || loaders[base] ? base : undefined
 }
 
-export const datesLocale = (lang?: string) => {
-  if (!lang) return
-  if (!dateLocales.hasOwnProperty(lang)) return
+export const getLoadedLocaleBundle = (language: string) => loaded[language]
 
-  return dateLocales[lang]
+export const getLoadedLanguages = () => Object.keys(loaded)
+
+/** Resolves to undefined for a language with no bundle; a failed fetch rejects and can be retried. */
+export const loadLocaleBundle = (language: string): Promise<LocaleBundle | undefined> => {
+  if (loaded[language]) return Promise.resolve(loaded[language])
+  const loader = loaders[language]
+  if (!loader) return Promise.resolve(undefined)
+
+  pending[language] ??= loader().then(
+    ({ default: bundle }) => {
+      delete pending[language]
+      loaded[language] = bundle
+      return bundle
+    },
+    (error) => {
+      delete pending[language]
+      throw error
+    }
+  )
+
+  return pending[language]
 }
+
+/** The date-fns locale of a loaded language; undefined means date-fns' English default. */
+export const datesLocale = (lang?: string) => (lang ? loaded[lang]?.dateLocale : undefined)

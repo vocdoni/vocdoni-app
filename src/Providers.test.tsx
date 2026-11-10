@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { useContext, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LanguageRoutingContext } from '~i18n/LanguageRoutingContext'
@@ -83,8 +83,8 @@ describe('Providers', () => {
     vi.clearAllMocks()
   })
 
-  // Mounting this pulls in the whole provider graph (wagmi, chakra,
-  // every locale bundle), which on a loaded machine takes well over the default
+  // Mounting this pulls in the whole provider graph (wagmi, chakra and
+  // the rest), which on a loaded machine takes well over the default
   // timeout. Timing out here used to cascade into the test below: the abandoned
   // render kept settling and its language detection landed mid-assertion.
   it('mounts without crashing', async () => {
@@ -112,6 +112,9 @@ describe('Providers', () => {
 
   it('keeps the HTML language and native translations in sync across language switches and history', async () => {
     const { Providers } = await import('./Providers')
+    // What +onBeforeRenderClient does before Vike renders a localized page.
+    const { loadLanguages } = await import('./i18n')
+    await loadLanguages(['pt'])
     const previousLanguage = document.documentElement.lang
     const previousUrl = window.location.href
     const previousPreference = window.localStorage.getItem('i18nextLng')
@@ -130,17 +133,18 @@ describe('Providers', () => {
       // very confusion this guards against.
       expect(screen.getByLabelText('Active language')).toHaveTextContent(/^pt$/)
 
+      // The URL changes at once; the language follows once its translations are fetched.
       fireEvent.click(screen.getByRole('button', { name: 'Switch language' }))
-      expect(document.documentElement.lang).toBe('ca')
-      expect(screen.getByLabelText('Active language')).toHaveTextContent(/^ca$/)
       expect(window.location.pathname).toBe('/ca/admin/processes/create')
+      await waitFor(() => expect(screen.getByLabelText('Active language')).toHaveTextContent(/^ca$/))
+      expect(document.documentElement.lang).toBe('ca')
 
       act(() => {
         window.history.replaceState(null, '', '/pt/admin/processes/create')
         window.dispatchEvent(new PopStateEvent('popstate'))
       })
+      await waitFor(() => expect(screen.getByLabelText('Active language')).toHaveTextContent(/^pt$/))
       expect(document.documentElement.lang).toBe('pt')
-      expect(screen.getByLabelText('Active language')).toHaveTextContent(/^pt$/)
     } finally {
       unmount?.()
       routesProviderStub = null
