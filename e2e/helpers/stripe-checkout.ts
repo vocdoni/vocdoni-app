@@ -9,10 +9,7 @@ import { expect, type Frame, type Page } from '@playwright/test'
 /** The checkout form is the only form on screen while a payment view is open. */
 export const PAY_BUTTON = 'form:has(iframe[name^="__privateStripeFrame"]) button[type="submit"]'
 
-/*
- * Stripe's frame names and field selectors are unverified against a live sandbox:
- * autocomplete tokens are the standard, the name attributes are the fallback.
- */
+// Autocomplete tokens are the standard; the name attributes are Stripe's own and the fallback.
 const CARD_NUMBER = 'input[autocomplete="cc-number"], input[name="number"]'
 const CARD_EXPIRY = 'input[autocomplete="cc-exp"], input[name="expiry"]'
 const CARD_CVC = 'input[autocomplete="cc-csc"], input[name="cvc"]'
@@ -22,6 +19,8 @@ const ADDRESS_LINE1 = '[autocomplete="address-line1"], [name="addressLine1"]'
 const ADDRESS_CITY = '[autocomplete="address-level2"], [name="locality"]'
 const ADDRESS_POSTAL_CODE = '[autocomplete="postal-code"], [name="postalCode"]'
 const ADDRESS_COUNTRY = '[autocomplete="country"], [name="country"]'
+// The Payment Element lists every enabled method as an accordion; card fields mount once it is open.
+const CARD_METHOD = '[role="button"][data-value="card"]'
 
 /**
  * The Stripe frame holding `selector`. Frames appear while the Elements mount and
@@ -55,6 +54,13 @@ export const fillStripeCheckout = async (page: Page): Promise<void> => {
   await address.locator(ADDRESS_LINE1).fill('Unter den Linden 1')
   await address.locator(ADDRESS_POSTAL_CODE).fill('10117')
   await address.locator(ADDRESS_CITY).fill('Berlin')
+
+  // With a single method Stripe may skip the accordion, so either handle will do.
+  const payment = await stripeFrame(page, `${CARD_METHOD}, ${CARD_NUMBER}`)
+  const cardMethod = payment.locator(CARD_METHOD)
+  if ((await cardMethod.count()) > 0 && (await cardMethod.getAttribute('aria-expanded')) !== 'true') {
+    await cardMethod.click()
+  }
 
   // Stripe's test card that succeeds without 3D Secure.
   const card = await stripeFrame(page, CARD_NUMBER)
