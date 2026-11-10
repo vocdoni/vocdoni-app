@@ -412,7 +412,6 @@
     },
     "process_create": {
       "error_deleting_draft_title": "Erreur lors de la suppression du brouillon",
-      "error_title": "Erreur lors de la création du processus",
       "success_description": "Redirection vers la page du processus de vote…",
       "success_title": "Processus de vote créé avec succès"
     },
@@ -1026,7 +1025,6 @@
       "cancel_open": "Annuler le paiement en cours",
       "check_again": "Vérifier à nouveau",
       "conflict": "Un rechargement pour ce processus de vote est encore en cours, il ne peut donc pas encore être publié. Reprenez le paiement pour le finaliser, ou annulez-le et publiez depuis votre wallet.",
-      "draft_total": "Total du brouillon (hors TVA)",
       "pay": "Payer {{amount}} et publier",
       "publish_again": "Publier à nouveau",
       "publish_title": "Publier le processus de vote",
@@ -1036,14 +1034,11 @@
       "resume": "Reprendre le paiement",
       "return_to_processes": "Retour à vos processus de vote",
       "return_unknown": "Nous n'avons pas pu identifier le processus de vote auquel correspond ce paiement. Si le paiement a abouti, ce processus de vote sera publié automatiquement. Consultez vos processus de vote pour en voir l'état.",
-      "shortfall": "Montant restant dû (hors TVA)",
       "timeout": "Votre paiement est confirmé et le processus de vote sera publié sous peu. Si ce n'est pas le cas, publiez-le à nouveau : il est payé depuis votre wallet.",
       "timeout_unpaid": "Le processus de vote est encore en cours de publication. S'il n'apparaît pas rapidement, publiez-le à nouveau : il est payé depuis votre wallet.",
       "title": "Recharger et publier",
-      "top_up": "Rechargement (hors TVA)",
       "unconfirmed": "Votre paiement est encore en cours de confirmation. Certains moyens de paiement mettent quelques jours à se confirmer. Le processus de vote est publié automatiquement dès que le paiement est confirmé : vous pouvez quitter cette page.",
-      "unpaid": "Le paiement n'a pas abouti. Vous pouvez réessayer.",
-      "wallet_balance": "Solde du wallet"
+      "unpaid": "Le paiement n'a pas abouti. Vous pouvez réessayer."
     },
     "create": {
       "action": {
@@ -1150,6 +1145,102 @@
       "wallet_covers": "Le solde de votre wallet ({{balance}}) couvre ce total : la publication le règle depuis votre wallet.",
       "wallet_short": "Votre wallet contient {{balance}}, il vous manque {{shortfall}} pour ce total.",
       "wallet_top_up": "Recharger le wallet"
+    },
+    "publish_review": {
+      "back": "Retour au récapitulatif",
+      "blocked": "Il manque {{shortfall}} de solde. Seul un administrateur peut le recharger.",
+      "card": {
+        "billing": "Données de facturation",
+        "lead_balance": "Le solde de l'organisation couvre {{balance}}. Le reste se paie maintenant, TVA comprise.",
+        "lead_whole": "Vous payez maintenant le vote en entier, TVA comprise.",
+        "note_zero": "Après la publication, le solde sera à zéro.",
+        "secure": "Paiement sécurisé traité par Stripe. Vocdoni ne voit ni ne conserve les données de la carte.",
+        "short": "Manque",
+        "title": "Payez {{amount}} et le vote est publié.",
+        "top_up": "Rechargement, hors TVA"
+      },
+      "close": "Fermer",
+      "code": {
+        "choice": "Code par e-mail ou SMS",
+        "email": "Code par e-mail",
+        "none": "Aucun code",
+        "sms": "Code par SMS"
+      },
+      "cost": {
+        "balance_after": "Solde après la publication",
+        "balance_now": "Solde de l'organisation actuel",
+        "base_one": "{{voters}} électeur",
+        "base_many": "{{voters}} électeurs",
+        "base_other": "{{voters}} électeurs",
+        "details": "Voir le détail",
+        "note_card": "Ce qui manque se paie par carte à l'étape suivante. Le reste est prélevé sur le solde.",
+        "note_wallet": "Le montant est prélevé sur le solde prépayé de l'organisation. Rien n'est débité sur la carte : la TVA est payée lors du rechargement du solde.",
+        "short": "Manque",
+        "sms_one": "Code par SMS, {{voters}} électeur",
+        "sms_many": "Code par SMS, {{voters}} électeurs",
+        "sms_other": "Code par SMS, {{voters}} électeurs",
+        "summary": "Coût : {{total}}",
+        "summary_short": "Coût : {{total}}. Il manque {{shortfall}} de solde",
+        "title": "Ce que vous payez",
+        "total": "Total, hors TVA"
+      },
+      "eyebrow": "À vérifier avant de publier",
+      "facts": {
+        "anonymous": "Vote anonyme",
+        "code": "2FA",
+        "credentials": "Identifiants",
+        "credentials_none": "Aucun",
+        "dates": "Dates",
+        "dates_value": "{{start}} → {{end}}",
+        "equal": "Identique pour tous",
+        "now": "Maintenant",
+        "off": "Désactivé",
+        "on": "Activé",
+        "results": "Résultats",
+        "results_hidden": "Visibles à la clôture",
+        "results_live": "En direct",
+        "weight": "Poids de vote",
+        "weighted": "Pondéré"
+      },
+      "free_trial": "Si vous voulez seulement essayer, choisissez une liste électorale de {{limit}} personnes ou moins : c'est gratuit.",
+      "how_you_pay": "Comment vous payez",
+      "intro": "Voici le récapitulatif du vote et de ce qu'il coûtera. Si tout est correct, vous pouvez le payer et le publier directement d'ici.",
+      "keep_editing": "Continuer à modifier",
+      "lead_now_one": "{{voters}} pourra voter sur {{questions}}, dès la publication jusqu'au {{end}}.",
+      "lead_now_many": "{{voters}} pourront voter sur {{questions}}, dès la publication jusqu'au {{end}}.",
+      "lead_now_other": "{{voters}} pourront voter sur {{questions}}, dès la publication jusqu'au {{end}}.",
+      "lead_scheduled_one": "{{voters}} pourra voter sur {{questions}}, du {{start}} au {{end}}.",
+      "lead_scheduled_many": "{{voters}} pourront voter sur {{questions}}, du {{start}} au {{end}}.",
+      "lead_scheduled_other": "{{voters}} pourront voter sur {{questions}}, du {{start}} au {{end}}.",
+      "org_balance": "Solde de l'organisation",
+      "pay_now": "Ce que vous payez maintenant",
+      "primary": {
+        "card": "Ajouter {{shortfall}} et publier",
+        "publish": "Publier",
+        "wallet": "Publier et payer {{total}}"
+      },
+      "questions_one": "{{count}} question",
+      "questions_many": "{{count}} questions",
+      "questions_other": "{{count}} questions",
+      "this_vote": "Ce vote",
+      "total_now": "Total à payer maintenant",
+      "type": {
+        "multiple": "Choix multiple",
+        "single": "Choix unique"
+      },
+      "vote_summary": "Récapitulatif du vote",
+      "voters_one": "{{voters}} personne",
+      "voters_many": "{{voters}} personnes",
+      "voters_other": "{{voters}} personnes",
+      "voters_unknown": "Les électeurs",
+      "wallet": {
+        "covers": "Le solde de l'organisation couvre la totalité du coût. Aucune carte n'est nécessaire.",
+        "cta": "Payer avec le solde et publier",
+        "lead": "Vous n'avez rien d'autre à payer : le montant est prélevé sur le solde prépayé.",
+        "note": "Après la publication, il restera {{after}} sur le solde.",
+        "title": "Payez {{total}} avec le solde et le vote est publié."
+      },
+      "what_is_voted": "Ce qui est soumis au vote"
     },
     "question_type": {
       "label": "Type de question",

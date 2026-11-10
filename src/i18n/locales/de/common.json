@@ -408,7 +408,6 @@
     },
     "process_create": {
       "error_deleting_draft_title": "Fehler beim Löschen des Entwurfs",
-      "error_title": "Fehler beim Erstellen des Prozesses",
       "success_description": "Du wirst zur Seite des Abstimmungsprozesses weitergeleitet...",
       "success_title": "Abstimmungsprozess erfolgreich erstellt"
     },
@@ -1005,7 +1004,6 @@
       "cancel_open": "Offene Zahlung abbrechen",
       "check_again": "Erneut prüfen",
       "conflict": "Für diesen Abstimmungsprozess ist noch eine Aufladung offen, daher kann er noch nicht veröffentlicht werden. Setze die Zahlung fort, um sie abzuschließen, oder brich sie ab und veröffentliche den Prozess von deinem Wallet aus.",
-      "draft_total": "Gesamtbetrag des Entwurfs (ohne MwSt.)",
       "pay": "{{amount}} zahlen und veröffentlichen",
       "publish_again": "Erneut veröffentlichen",
       "publish_title": "Abstimmungsprozess veröffentlichen",
@@ -1015,14 +1013,11 @@
       "resume": "Zahlung fortsetzen",
       "return_to_processes": "Zurück zu deinen Abstimmungsprozessen",
       "return_unknown": "Wir konnten nicht feststellen, zu welchem Abstimmungsprozess diese Zahlung gehörte. Wenn die Zahlung abgeschlossen wurde, wird der Abstimmungsprozess automatisch veröffentlicht. Prüfe deine Abstimmungsprozesse, um den Stand zu sehen.",
-      "shortfall": "Fehlbetrag (ohne MwSt.)",
       "timeout": "Deine Zahlung ist bestätigt, und der Abstimmungsprozess wird in Kürze veröffentlicht. Falls nicht, veröffentliche ihn erneut: Er wird aus deinem Wallet bezahlt.",
       "timeout_unpaid": "Der Abstimmungsprozess wird noch veröffentlicht. Falls er nicht bald erscheint, veröffentliche ihn erneut: Er wird aus deinem Wallet bezahlt.",
       "title": "Aufladen und veröffentlichen",
-      "top_up": "Aufladung (ohne MwSt.)",
       "unconfirmed": "Deine Zahlung wird noch bestätigt. Manche Zahlungsarten brauchen einige Tage dafür. Der Abstimmungsprozess wird automatisch veröffentlicht, sobald die Zahlung bestätigt ist, du kannst diese Seite also verlassen.",
-      "unpaid": "Die Zahlung ist nicht durchgegangen. Du kannst es noch einmal versuchen.",
-      "wallet_balance": "Guthaben im Wallet"
+      "unpaid": "Die Zahlung ist nicht durchgegangen. Du kannst es noch einmal versuchen."
     },
     "create": {
       "action": {
@@ -1127,6 +1122,96 @@
       "wallet_covers": "Dein Wallet-Guthaben ({{balance}}) deckt diesen Gesamtbetrag: Beim Veröffentlichen wird er aus deinem Wallet bezahlt.",
       "wallet_short": "Dein Wallet hat {{balance}}, dir fehlen {{shortfall}} für diesen Gesamtbetrag.",
       "wallet_top_up": "Wallet aufladen"
+    },
+    "publish_review": {
+      "back": "Zurück zur Übersicht",
+      "blocked": "Es fehlen {{shortfall}} Guthaben. Nur ein Admin kann es aufladen.",
+      "card": {
+        "billing": "Rechnungsdaten",
+        "lead_balance": "Das Guthaben der Organisation deckt {{balance}}. Der Rest wird jetzt bezahlt, inklusive MwSt.",
+        "lead_whole": "Du bezahlst die ganze Abstimmung jetzt, inklusive MwSt.",
+        "note_zero": "Nach der Veröffentlichung bleibt kein Guthaben übrig.",
+        "secure": "Sichere Zahlung über Stripe. Vocdoni sieht und speichert die Kartendaten nicht.",
+        "short": "Fehlt",
+        "title": "Zahle {{amount}} und die Abstimmung wird veröffentlicht.",
+        "top_up": "Aufladung, ohne MwSt."
+      },
+      "close": "Schließen",
+      "code": {
+        "choice": "Code per E-Mail oder SMS",
+        "email": "Code per E-Mail",
+        "none": "Kein Code",
+        "sms": "Code per SMS"
+      },
+      "cost": {
+        "balance_after": "Guthaben nach der Veröffentlichung",
+        "balance_now": "Guthaben der Organisation jetzt",
+        "base_one": "{{voters}} Wähler",
+        "base_other": "{{voters}} Wähler",
+        "details": "Details ansehen",
+        "note_card": "Der fehlende Betrag wird im nächsten Schritt per Karte bezahlt. Der Rest kommt aus dem Guthaben.",
+        "note_wallet": "Der Betrag wird vom Prepaid-Guthaben der Organisation abgezogen. Der Karte wird nichts belastet: Die MwSt. wird beim Aufladen des Guthabens bezahlt.",
+        "short": "Fehlt",
+        "sms_one": "SMS-Code, {{voters}} Wähler",
+        "sms_other": "SMS-Code, {{voters}} Wähler",
+        "summary": "Kosten: {{total}}",
+        "summary_short": "Kosten: {{total}}. Es fehlen {{shortfall}} Guthaben",
+        "title": "Wofür du zahlst",
+        "total": "Gesamt, ohne MwSt."
+      },
+      "eyebrow": "Vor der Veröffentlichung prüfen",
+      "facts": {
+        "anonymous": "Anonyme Stimmabgabe",
+        "code": "2FA",
+        "credentials": "Zugangsdaten",
+        "credentials_none": "Keine",
+        "dates": "Zeitraum",
+        "dates_value": "{{start}} → {{end}}",
+        "equal": "Für alle gleich",
+        "now": "Jetzt",
+        "off": "Aus",
+        "on": "An",
+        "results": "Ergebnisse",
+        "results_hidden": "Sichtbar nach Ende",
+        "results_live": "Live",
+        "weight": "Stimmgewicht",
+        "weighted": "Gewichtet"
+      },
+      "free_trial": "Wenn du es nur ausprobieren willst, wähle eine Teilnehmerliste mit höchstens {{limit}} Personen: Das ist kostenlos.",
+      "how_you_pay": "So zahlst du",
+      "intro": "Das ist die Zusammenfassung der Abstimmung und was sie kosten wird. Wenn alles stimmt, kannst du sie gleich hier bezahlen und veröffentlichen.",
+      "keep_editing": "Weiter bearbeiten",
+      "lead_now_one": "{{voters}} kann über {{questions}} abstimmen, ab der Veröffentlichung bis {{end}}.",
+      "lead_now_other": "{{voters}} können über {{questions}} abstimmen, ab der Veröffentlichung bis {{end}}.",
+      "lead_scheduled_one": "{{voters}} kann über {{questions}} abstimmen, von {{start}} bis {{end}}.",
+      "lead_scheduled_other": "{{voters}} können über {{questions}} abstimmen, von {{start}} bis {{end}}.",
+      "org_balance": "Guthaben der Organisation",
+      "pay_now": "Was du jetzt zahlst",
+      "primary": {
+        "card": "{{shortfall}} aufladen und veröffentlichen",
+        "publish": "Veröffentlichen",
+        "wallet": "Veröffentlichen und {{total}} zahlen"
+      },
+      "questions_one": "{{count}} Frage",
+      "questions_other": "{{count}} Fragen",
+      "this_vote": "Diese Abstimmung",
+      "total_now": "Jetzt zu zahlen",
+      "type": {
+        "multiple": "Mehrfachauswahl",
+        "single": "Einzelauswahl"
+      },
+      "vote_summary": "Zusammenfassung der Abstimmung",
+      "voters_one": "{{voters}} Person",
+      "voters_other": "{{voters}} Personen",
+      "voters_unknown": "Die Wähler",
+      "wallet": {
+        "covers": "Das Guthaben der Organisation deckt die gesamten Kosten. Eine Karte ist nicht nötig.",
+        "cta": "Mit dem Guthaben zahlen und veröffentlichen",
+        "lead": "Du musst nichts weiter zahlen: Der Betrag wird vom Prepaid-Guthaben abgezogen.",
+        "note": "Nach der Veröffentlichung bleiben {{after}} Guthaben übrig.",
+        "title": "Zahle {{total}} mit dem Guthaben und die Abstimmung wird veröffentlicht."
+      },
+      "what_is_voted": "Worüber abgestimmt wird"
     },
     "question_type": {
       "label": "Fragetyp",
