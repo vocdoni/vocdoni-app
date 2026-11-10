@@ -350,6 +350,9 @@ cmd_run() {
     echo "== suite FAILED — leaving the stack up so you can inspect it:" >&2
     echo "     inbox: $INTEGRATION_MAILHOG_URL" >&2
     echo "     logs:  docker compose -f integration/docker-compose.ci.yml logs api" >&2
+    if [ -n "$STRIPE_MODE" ]; then
+      echo "            (Stripe mode: add -f integration/docker-compose.stripe.yml; its stripe-listen logs show the webhook secret)" >&2
+    fi
     echo "     stop:  scripts/integration-stack.sh down" >&2
   else
     echo "== suite passed — stopping containers (volumes kept for a fast next boot)" >&2

@@ -63,7 +63,9 @@ It runs the default `:main` saas-backend, the one `develop` deploys. Run
 `scripts/integration-stack.sh down` before switching between default and Stripe
 mode: `run` keeps volumes, so a stack seeded in one mode keeps that mode's plans.
 `up` in Stripe mode deletes the seeded `local-dev` plan, but it does not undo
-anything else. The sandbox needs:
+anything else. Concurrent Stripe-mode runs on the same sandbox receive each
+other's webhooks. This is harmless: `stripe listen` does not retry a failed
+delivery, and cleanup filters by org metadata. The sandbox needs:
 
 - Products that the backend's plan sync can read. Every product it does not skip
   needs valid JSON metadata `organization`, `votingTypes` and `features`. One
@@ -75,9 +77,12 @@ anything else. The sandbox needs:
   needs one.
 - A tax origin address (Settings > Tax). The backend's checkout sessions enable
   automatic tax.
+- Running the full suite (`pnpm test:e2e`) in this mode also needs the default
+  plan's `features` to permit email 2FA, as `integration/seed-plan.js` does
+  (`twoFaEmail`). The checkout spec alone does not.
 - An API version on the same release train as the backend's stripe-go (`endive`
-  today). The backend's webhook check rejects events from another train, so
-  plain `stripe listen` works.
+  today). The backend's webhook check rejects events from another train. No
+  `--latest` flag is needed on `stripe listen`.
 - No webhook endpoint pointing at a real deployment. Stripe sends this run's
   events to every endpoint in the sandbox, and a deployment that does not know
   these organizations answers 500 and gets retried for up to three days.

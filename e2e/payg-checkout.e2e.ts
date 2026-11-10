@@ -6,7 +6,7 @@ import { expect, test } from './helpers/fixtures'
 import { localStack, type SaasClient } from './helpers/stripe'
 
 /**
- * Flow 4 — pay-per-process top-up against Stripe's test sandbox. Publishing past
+ * Flow 5 — pay-per-process top-up against Stripe's test sandbox. Publishing past
  * the free census size is refused for lack of balance; the test pays through
  * Checkout Elements and checks the backend credited, debited and published.
  */

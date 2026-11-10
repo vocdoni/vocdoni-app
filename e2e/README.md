@@ -101,6 +101,7 @@ pulls fresh every run.
 | `weighted-question-matrix.e2e.ts` | The manual QA "creating processes matrix", folded into one journey: a **weighted** census (memberbase weight column → voting power) and one process mixing single+extended, multi+plain and multi+extended questions — each question its own on-chain election, voted in one batch. Asserts the voter sees their weight and that public tallies count it (7, not 1) per selected choice. |
 | `anonymous-voting.e2e.ts`         | The CSP + 2FA journey again, with **anonymous ballots** switched on in the wizard: the CSP blind-signs a ballot it never sees (a `blindPoint` → `blindSign` proof) instead of signing the voter's address. Asserts the public page announces the anonymity promise, the one-time receipt notice after casting, and that a never-authenticated observer sees the ballot counted on-chain. |
 | `member-password-voting.e2e.ts`   | A census authenticated by `memberNumber` + **member password**, no 2FA: the passwords come in through the CSV import, a wrong password gets the generic not-in-census error, the right one logs in and votes. Asserts no request from either browser carries a plaintext password (the app sends only the org-salted hash).                                                              |
+| `payg-checkout.e2e.ts`            | Opt-in (Stripe mode, see below): a census above the free size is refused at Publish for lack of balance → pay through Stripe Checkout Elements in the test sandbox → the backend credits the wallet, debits the process and publishes it.                                                                                                                                                |
 
 Everything runs through the UI. Nothing is provisioned behind the app's back, so
 a break anywhere along that chain fails here.
@@ -115,12 +116,18 @@ credited the wallet, debited the process and published it.
 
 It needs the stack in Stripe mode (see
 [integration/README.md](../integration/README.md#stripe-mode-opt-in)), with two
-Stripe test keys:
+Stripe test keys. Run it alone, as CI does: Stripe mode skips the mongo seed, so
+the other specs would run on the sandbox's default plan, which may lack the
+`twoFaEmail` feature they need.
 
 ```bash
 INTEGRATION_STRIPE_SECRET_KEY=sk_test_... \
 INTEGRATION_STRIPE_PUBLIC_KEY=pk_test_... \
-pnpm test:e2e:stack
+scripts/integration-stack.sh up
+pnpm build
+INTEGRATION_STRIPE_SECRET_KEY=sk_test_... \
+INTEGRATION_STRIPE_PUBLIC_KEY=pk_test_... \
+pnpm exec playwright test --project=chromium e2e/payg-checkout.e2e.ts
 ```
 
 - `INTEGRATION_STRIPE_SECRET_KEY` (`sk_test_`) drives the spec's Stripe API calls.
@@ -203,3 +210,8 @@ means "upstream moved" rather than "this repo is broken", and that must not gate
 the normal lint/unit/build job. The workflow prints the resolved image digests so
 such a run is reproducible locally, and uploads the Playwright report (with
 traces and video) plus all container logs on failure.
+
+The separate `e2e-stripe` job runs only `payg-checkout.e2e.ts`, on chromium
+only. It is gated on the Stripe secrets (it skips with a notice without them)
+and ignores `/integration` pins. See
+[integration/README.md](../integration/README.md#stripe-mode-opt-in).
