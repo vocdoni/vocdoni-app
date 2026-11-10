@@ -111,6 +111,8 @@ export const PublishReview = defineSlotRecipe({
     eyebrow: {
       fontSize: 'sm',
       color: 'fg.muted',
+      // Focused by script when a step opens, to be read out; it is not a control
+      _focus: { outline: 'none' },
     },
     back: {
       display: 'inline-flex',
@@ -140,6 +142,7 @@ export const PublishReview = defineSlotRecipe({
       letterSpacing: 'tight',
       lineHeight: 1.3,
       textWrap: 'pretty',
+      _focus: { outline: 'none' },
     },
     intro: {
       m: 0,
