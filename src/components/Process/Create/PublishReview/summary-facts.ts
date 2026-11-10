@@ -3,7 +3,7 @@ import type { TFunction } from 'i18next'
 import { getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { lineLabel, priceNote } from '~components/Pricing/ProcessPrice'
 import { isQuoteOnly } from '~queries/process-price'
-import { currency, quantity } from '~utils/numbers'
+import { amountFigure, quantity } from '~utils/numbers'
 import { parseFormDateTime, type Process, SelectorTypes } from '../common'
 import { type CodeMethod, fromCensus } from '../VoterAuthentication/utils'
 
@@ -245,7 +245,7 @@ export const costLines = (
   { voters, wallet, primary }: { voters?: number; wallet?: PublishWallet; primary: PublishPrimary }
 ): AmountLine[] => {
   const code = price.currency?.toUpperCase()
-  const money = (cents: number) => currency(cents, code)
+  const money = (cents: number) => amountFigure(cents, code)
   const label = (line: ProcessPriceResponse['lines'][number]) => {
     if (voters === undefined) return lineLabel(t, line)
     if (line.kind === 'base') {

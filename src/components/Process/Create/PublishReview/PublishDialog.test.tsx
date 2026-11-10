@@ -216,7 +216,10 @@ describe('PublishDialog', () => {
       expect(
         screen.getByText("The organization's balance covers the whole cost. No card is needed.")
       ).toBeInTheDocument()
-      expect(screen.getByText('Total to pay now').nextElementSibling).toHaveTextContent('€0')
+      // Amount columns keep both cent digits, with a real minus sign
+      expect(screen.getByText('This vote').nextElementSibling).toHaveTextContent(/^€10\.00$/)
+      expect(screen.getByText('Organization balance').nextElementSibling).toHaveTextContent(/^\u2212€10\.00$/)
+      expect(screen.getByText('Total to pay now').nextElementSibling).toHaveTextContent(/^€0\.00$/)
       expect(api.publish).not.toHaveBeenCalled()
 
       await user.click(screen.getByRole('button', { name: 'Pay from the balance and publish' }))
@@ -224,6 +227,16 @@ describe('PublishDialog', () => {
       await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
       expect(api.publish).toHaveBeenCalledTimes(1)
       expect(api.checkout).not.toHaveBeenCalled()
+    })
+
+    it("words the wallet step in the price's currency", async () => {
+      api.getPrice.mockResolvedValue({ ...priced(1000), currency: 'usd' })
+      const { user } = renderDialog()
+
+      await user.click(await primary('Publish and pay $10'))
+
+      expect(await screen.findByText('Pay $10 from the balance and the vote is published.')).toBeInTheDocument()
+      expect(screen.getByText('This vote').nextElementSibling).toHaveTextContent(/^\$10\.00$/)
     })
 
     it('moves focus to the sentence of the wallet step', async () => {
@@ -258,8 +271,8 @@ describe('PublishDialog', () => {
       await user.click(await primary('Add €6 and publish'))
 
       expect(await screen.findByRole('button', { name: 'Pay €7.26 and publish' })).toBeInTheDocument()
-      expect(screen.getByText('Short').nextElementSibling).toHaveTextContent('€6')
-      expect(screen.getByText('Organization balance').nextElementSibling).toHaveTextContent('-€4')
+      expect(screen.getByText('Short').nextElementSibling).toHaveTextContent(/^€6\.00$/)
+      expect(screen.getByText('Organization balance').nextElementSibling).toHaveTextContent(/^\u2212€4\.00$/)
       expect(api.checkout).toHaveBeenCalledTimes(1)
       expect(api.publish).not.toHaveBeenCalled()
 
@@ -365,8 +378,8 @@ describe('PublishDialog', () => {
       await user.click(await primary('Publish'))
 
       expect(await screen.findByRole('button', { name: 'Pay €7.26 and publish' })).toBeInTheDocument()
-      expect(screen.getByText('Short').nextElementSibling).toHaveTextContent('€40')
-      expect(screen.getByText('Organization balance').nextElementSibling).toHaveTextContent('-€10')
+      expect(screen.getByText('Short').nextElementSibling).toHaveTextContent(/^€40\.00$/)
+      expect(screen.getByText('Organization balance').nextElementSibling).toHaveTextContent(/^\u2212€10\.00$/)
       expect(api.publish).toHaveBeenCalledTimes(1)
     })
 

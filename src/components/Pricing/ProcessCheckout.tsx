@@ -42,7 +42,7 @@ import {
   useProcessCheckoutApi,
   waitForPublication,
 } from '~queries/process-checkout'
-import { currency } from '~utils/numbers'
+import { amountFigure, currency } from '~utils/numbers'
 import { publishNeedsWalletTopUp, publishPaymentErrorMessage } from './payment-errors'
 import { useCheckoutAppearance, useStripePromise } from './stripe'
 
@@ -389,6 +389,8 @@ type ProcessCheckoutContentProps = {
   titleId: string
   /** Id for the message of a wait or an outcome, which describes the dialog. */
   descriptionId?: string
+  /** The price's currency, until the session says its own. */
+  currencyCode?: string
   /** The draft's price, VAT excluded, and the wallet balance, when known. */
   totalCents?: number
   balanceCents?: number
@@ -403,6 +405,7 @@ export const ProcessCheckoutContent = ({
   processId,
   titleId,
   descriptionId,
+  currencyCode,
   totalCents,
   balanceCents,
   onBack,
@@ -448,6 +451,7 @@ export const ProcessCheckoutContent = ({
           titleId={titleId}
           processId={processId}
           shortfall={flow.shortfall}
+          currencyCode={currencyCode}
           totalCents={totalCents}
           balanceCents={balanceCents}
           onBack={onBack}
@@ -472,6 +476,7 @@ export const ProcessCheckoutContent = ({
           processId={processId}
           session={step.session}
           shortfall={flow.shortfall}
+          currencyCode={currencyCode}
           stripePromise={stripePromise}
           totalCents={totalCents}
           balanceCents={balanceCents}
@@ -598,6 +603,7 @@ type CardStepProps = {
   processId: string
   session: ProcessCheckoutResponse
   shortfall?: WalletShortfall
+  currencyCode?: string
   stripePromise: NonNullable<ReturnType<typeof useStripePromise>>
   totalCents?: number
   balanceCents?: number
@@ -661,6 +667,7 @@ const CardLayout = ({
   session,
   checkout,
   shortfall,
+  currencyCode,
   totalCents,
   balanceCents,
   onPaid,
@@ -675,6 +682,8 @@ const CardLayout = ({
   const [paymentReady, setPaymentReady] = useState(false)
 
   const loading = !checkout
+  // The session charges in its own currency; the price's until it is open
+  const code = session?.currency?.toUpperCase() ?? currencyCode
   const walletBalanceCents = shortfall?.balanceCents ?? balanceCents
   // The refusal's shortfall when there was one; otherwise what the price and the balance leave
   const shortCents =
@@ -685,7 +694,8 @@ const CardLayout = ({
   // Above the shortfall when the €1 minimum top-up is more than what is short
   const restStaysInWallet = !!session && shortCents !== undefined && session.amountCents > shortCents
   // The amount Stripe charges, VAT included, when it says so
-  const payAmount = checkout && session ? (checkout.total?.total.amount ?? currency(session.amountCents)) : undefined
+  const payAmount =
+    checkout && session ? (checkout.total?.total.amount ?? currency(session.amountCents, code)) : undefined
   const failToLoad = (message?: string) => setError(message ?? null)
 
   const handleSubmit = async (e: FormEvent) => {
@@ -721,7 +731,7 @@ const CardLayout = ({
       : walletBalanceCents > 0
         ? t('process.publish_review.card.lead_balance', {
             defaultValue: "The organization's balance covers {{balance}}. The rest is paid now, with VAT.",
-            balance: currency(walletBalanceCents),
+            balance: currency(walletBalanceCents, code),
           })
         : t('process.publish_review.card.lead_whole', { defaultValue: 'You pay the whole vote now, with VAT.' })
 
@@ -781,26 +791,26 @@ const CardLayout = ({
               {totalCents !== undefined && (
                 <PublishReviewAmountRow
                   label={t('process.publish_review.this_vote', { defaultValue: 'This vote' })}
-                  value={currency(totalCents)}
+                  value={amountFigure(totalCents, code)}
                 />
               )}
               {walletBalanceCents !== undefined && walletBalanceCents > 0 && (
                 <PublishReviewAmountRow
                   label={t('process.publish_review.org_balance', { defaultValue: 'Organization balance' })}
-                  value={currency(-walletBalanceCents)}
+                  value={amountFigure(-walletBalanceCents, code)}
                 />
               )}
               {shortCents !== undefined && (
                 <PublishReviewAmountRow
                   label={t('process.publish_review.card.short', { defaultValue: 'Short' })}
-                  value={currency(shortCents)}
+                  value={amountFigure(shortCents, code)}
                   ruled
                 />
               )}
               {session && (session.amountCents !== shortCents || (checkout && !checkout.total)) && (
                 <PublishReviewAmountRow
                   label={t('process.publish_review.card.top_up', { defaultValue: 'Top-up, VAT excluded' })}
-                  value={currency(session.amountCents)}
+                  value={amountFigure(session.amountCents, code)}
                 />
               )}
               {loading ? (
@@ -810,11 +820,11 @@ const CardLayout = ({
                   <>
                     <PublishReviewAmountRow
                       label={t('wallet.topup.vat', { defaultValue: 'VAT' })}
-                      value={checkout.total.taxExclusive.amount}
+                      value={amountFigure(checkout.total.taxExclusive.minorUnitsAmount, code)}
                     />
                     <PublishReviewAmountRow
                       label={t('process.publish_review.total_now', { defaultValue: 'Total to pay now' })}
-                      value={checkout.total.total.amount}
+                      value={amountFigure(checkout.total.total.minorUnitsAmount, code)}
                       strong
                       ruled
                     />
