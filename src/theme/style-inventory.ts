@@ -77,6 +77,7 @@ const EXCLUDED_FILES = new Set(
     'colors',
     'tokens',
     'semantic',
+    'illustration',
     'palette',
     'system',
     'logoTones',
