@@ -17,7 +17,7 @@ export const DashboardMenuOptions = ({ sections }: { sections: DashboardMenuSect
         return (
           <Box key={sectionIndex}>
             {!reduced && section.title && (
-              <Text mx={2} mb={2} fontWeight={'bold'} fontSize='xs'>
+              <Text mx={2} mb={2} fontWeight={'bold'} textStyle='caption'>
                 {section.title}
               </Text>
             )}

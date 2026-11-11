@@ -77,7 +77,7 @@ const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly strin
         ...credentials.filter((field) => field === PASSWORD_CREDENTIAL),
       ].map((field) => (
         <Box key={field}>
-          <Text fontSize='sm' fontWeight='medium' mb={1.5}>
+          <Text textStyle='body-sm' fontWeight='medium' mb={1.5}>
             {getAuthFieldLabel(t, field)} *
           </Text>
           <FakeInput>{getSampleValue(t, field)}</FakeInput>
@@ -85,12 +85,12 @@ const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly strin
       ))}
       {hasCode && (
         <Box>
-          <Text fontSize='sm' fontWeight='medium' mb={1.5}>
+          <Text textStyle='body-sm' fontWeight='medium' mb={1.5}>
             {getContactFieldLabel(t, getCodeTwoFaFields(codeMethod))} *
           </Text>
           <FakeInput>{getSampleContact(t, codeMethod)}</FakeInput>
-          <Text fontSize='xs' color='fg.muted' mt={1}>
-            <Text as='span' fontSize='inherit' fontWeight='bold'>
+          <Text textStyle='caption' color='fg.muted' mt={1}>
+            <Text as='span' fontWeight='bold'>
               {t('csp.important', { defaultValue: 'Important' })}:
             </Text>{' '}
             {t('csp.contact_match_help', 'Must match the one registered in the system')}
@@ -100,14 +100,14 @@ const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly strin
       <HStack align='start' gap={1.5} fontSize='xs' color='fg.muted'>
         <Box boxSize={3} flexShrink={0} mt={0.5} borderWidth='1px' borderColor='border.emphasized' borderRadius='xs' />
         {/* Same children as the real form, so the <2>/<6> slots resolve alike. */}
-        <Text fontSize='inherit'>
+        <Text>
           <Trans i18nKey='csp.terms_acceptance'>
             I have read and accept the{' '}
-            <Text as='span' fontSize='inherit' textDecoration='underline'>
+            <Text as='span' textDecoration='underline'>
               Terms and Conditions
             </Text>{' '}
             and the{' '}
-            <Text as='span' fontSize='inherit' textDecoration='underline'>
+            <Text as='span' textDecoration='underline'>
               Privacy Policy
             </Text>
             .
@@ -124,7 +124,7 @@ const CodeScreen = () => {
 
   return (
     <Stack gap={3}>
-      <Text fontSize='sm' fontWeight='medium'>
+      <Text textStyle='body-sm' fontWeight='medium'>
         {t('csp.step1.subtitle', { defaultValue: 'Enter the verification code' })}
       </Text>
       <HStack gap={1.5}>
@@ -132,11 +132,11 @@ const CodeScreen = () => {
           <Box key={index} flex='1' h={10} borderWidth='1px' borderColor='border' borderRadius='l2' />
         ))}
       </HStack>
-      <Text fontSize='xs' color='fg.muted'>
+      <Text textStyle='caption' color='fg.muted'>
         <Trans
           i18nKey='csp.step1.resend_text'
           defaults="Didn't receive the code? <resendBtn>Resend it</resendBtn>"
-          components={{ resendBtn: <Text as='span' fontSize='inherit' textDecoration='underline' /> }}
+          components={{ resendBtn: <Text as='span' textDecoration='underline' /> }}
         />
       </Text>
       <FakeButton>{t('csp.authenticate', 'Authenticate')}</FakeButton>
@@ -189,7 +189,7 @@ export const VoterSignInPreview = ({
             phones the fold button above already carries the same words. */}
         <HStack gap={1.5} color='fg.muted' display={{ base: 'none', md: 'flex' }}>
           <Icon as={ViewIcon} boxSize='icon.sm' />
-          <Text id='voter-signin-preview-title' fontSize='sm' fontWeight='medium' whiteSpace='nowrap'>
+          <Text id='voter-signin-preview-title' textStyle='body-sm' fontWeight='medium' whiteSpace='nowrap'>
             {t('voter_auth.preview.title', { defaultValue: 'What voters will see' })}
           </Text>
         </HStack>

@@ -245,7 +245,7 @@ export const createRoleDisplay = (type: 'Option' | 'SingleValue') => {
             {icon}
           </Box>
           <Text fontWeight='bold'>{data.label}</Text>
-          <Text fontSize='sm' color='fg.muted'>
+          <Text textStyle='body-sm' color='fg.muted'>
             {accessLabel}
           </Text>
         </Flex>

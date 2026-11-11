@@ -46,7 +46,7 @@ export const MessageBubble = ({ message }: { message: ChatMessage }) => {
       px={3}
       py={2}
       fontSize='sm'
-      lineHeight='1.45'
+      lineHeight='moderate'
       whiteSpace='pre-wrap'
       wordBreak='break-word'
       borderRadius='xl'

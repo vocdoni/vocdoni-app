@@ -54,7 +54,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
         {credentials.length > 0 && (
           <HStack gap={2} align='start'>
             <Icon as={IdCardIcon} color='fg.muted' mt={0.5} />
-            <Text fontSize='inherit'>
+            <Text>
               {t('voter_auth.summary.details', {
                 defaultValue: 'Voters type: {{fields}}',
                 fields: credentials.map((field) => getAuthFieldLabel(t, field)).join(', '),
@@ -64,7 +64,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
         )}
         <HStack gap={2}>
           <Icon as={codeIcons[codeMethod]} color='fg.muted' />
-          <Text fontSize='inherit'>{getCodeMethodSummary(t, codeMethod)}</Text>
+          <Text>{getCodeMethodSummary(t, codeMethod)}</Text>
         </HStack>
         {/* Neutral, and deliberately outside the protection grade: anonymity is a
             different axis from how strongly a voter is identified, not a further
@@ -72,7 +72,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
             whole. */}
         <HStack gap={2}>
           <Icon as={UnlinkIcon} color='fg.muted' />
-          <Text color='fg.muted' fontSize='inherit'>
+          <Text color='fg.muted'>
             {t('voter_auth.anonymity', {
               defaultValue: 'Ballot anonymity: {{ mode }}',
               mode: anonymity,
@@ -84,7 +84,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
         {(checkStatus === 'invalid' || checkStatus === 'rejected') && (
           <HStack gap={2} align='start' color='fg.error'>
             <Icon as={WarningIcon} mt={0.5} />
-            <Text fontSize='inherit'>
+            <Text>
               {t('voter_auth.summary.member_list_mismatch', {
                 defaultValue: "These settings don't fit your member list. Edit them to see why.",
               })}

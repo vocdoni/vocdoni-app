@@ -106,10 +106,10 @@ const SidebarTutorial = () => {
         colorPalette='gray'
         size='sm'
       />
-      <Text fontSize={'sm'} fontWeight={'bold'}>
+      <Text textStyle='body-sm' fontWeight={'bold'}>
         {t('need_help.title', { defaultValue: 'First steps' })}
       </Text>
-      <Text fontSize={'xs'} lineHeight={'16px'}>
+      <Text fontSize='xs' lineHeight='shorter'>
         {t('need_help.description', {
           defaultValue: 'Do you need some help with your first voting process? Watch this tutorial or schedule a call.',
         })}

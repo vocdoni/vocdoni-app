@@ -48,7 +48,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
       <Flex justify='space-between' align='center' mb={2}>
         <HStack gap={2}>
           <Icon as={icon} color={`${color}.icon`} />
-          <Text fontSize='sm' fontWeight='medium' color='fg'>
+          <Text textStyle='body-sm' fontWeight='medium' color='fg'>
             {label}
             {tooltip && (
               <TooltipRoot>
@@ -69,7 +69,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
             {current.toLocaleString()}
           </Text>
           {max !== undefined && (
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               / {max.toLocaleString()}
             </Text>
           )}

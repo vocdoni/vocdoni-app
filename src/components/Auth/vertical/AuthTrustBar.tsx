@@ -37,7 +37,7 @@ const AuthTrustBar = ({ vertical }: { vertical: ResolvedVertical }) => {
       {/* No max width: the sentence introduces the row below it and reads as one line with it. Capping
           the measure broke it into two, which on a line this quiet looks like a paragraph rather than
           a caption. It still wraps on mobile, where nothing fits on one line. */}
-      <Text fontSize='xs' lineHeight='1.6' color='fg.muted' textAlign={{ base: 'center', md: 'left' }}>
+      <Text fontSize='xs' lineHeight='tall' color='fg.muted' textAlign={{ base: 'center', md: 'left' }}>
         {copy.trustBar}
       </Text>
       <Flex gap={1.5} wrap='wrap' justify={{ base: 'center', md: 'flex-start' }}>

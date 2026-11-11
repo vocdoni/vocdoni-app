@@ -110,35 +110,17 @@ export const link = defineRecipe({
   },
 })
 
-// Line heights are unitless so text keeps proportional spacing even when a
-// consumer overrides fontSize without changing the size variant.
+// Unitless line heights (tokens) keep the spacing proportional when a consumer overrides fontSize.
 const sizes = {
-  xs: {
-    fontSize: 'xs',
-    lineHeight: 1.5,
-  },
-  sm: {
-    fontSize: 'sm',
-    lineHeight: 1.43,
-  },
-  md: {
-    fontSize: 'md',
-    lineHeight: 1.5,
-  },
-  lg: {
-    fontSize: 'lg',
-    lineHeight: 1.56,
-  },
-  xl: {
-    fontSize: 'xl',
-    lineHeight: 1.5,
-  },
-  '2xl': {
-    fontSize: '2xl',
-    lineHeight: 1.3,
-  },
+  xs: { fontSize: 'xs', lineHeight: 'moderate' },
+  sm: { fontSize: 'sm', lineHeight: 'moderate' },
+  md: { fontSize: 'md', lineHeight: 'moderate' },
+  lg: { fontSize: 'lg', lineHeight: 'moderate' },
+  xl: { fontSize: 'xl', lineHeight: 'moderate' },
+  '2xl': { fontSize: '2xl', lineHeight: 'short' },
 }
 
+// No default size: a Text without one inherits its container's size and line height, as plain text does.
 export const text = defineRecipe({
   variants: {
     size: sizes,
@@ -148,8 +130,5 @@ export const text = defineRecipe({
         fontWeight: 'normal',
       },
     },
-  },
-  defaultVariants: {
-    size: 'md',
   },
 })

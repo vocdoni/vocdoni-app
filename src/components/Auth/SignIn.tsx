@@ -170,7 +170,14 @@ const SignIn = ({
       </FormProvider>
       <GoogleAuth />
 
-      <Text display={'flex'} justifyContent={'center'} alignItems={'center'} fontWeight='bold' fontSize='sm' mt={6}>
+      <Text
+        display={'flex'}
+        justifyContent={'center'}
+        alignItems={'center'}
+        fontWeight='bold'
+        textStyle='body-sm'
+        mt={6}
+      >
         {t('not_registred_yet')}
         <Link asChild ml={1} emphasis='strong' size='sm'>
           <NavLink to={signUpRoute}>{t('signup_title')}</NavLink>

@@ -24,36 +24,38 @@ export const ElectionVideo = defineRecipe({
 })
 
 export const ElectionTitle = defineRecipe({
+  // Typography lives in the variants: a variant with a `textStyle` must not also get these from the base.
   base: {
-    fontWeight: 'bold',
-    fontSize: 'xl',
     textAlign: 'center',
-    lineHeight: 1.3,
     mb: 3,
   },
   variants: {
     size: {
-      md: {},
+      md: { fontSize: 'xl', fontWeight: 'bold', lineHeight: 'short' },
       // Public process page header.
       hero: {
-        fontSize: '4xl',
+        textStyle: 'display',
         textAlign: 'left',
         mb: 5,
       },
-      // Process page of the organization dashboard.
+      // Process page of the organization dashboard: the page title.
       page: {
+        textStyle: 'page-title',
         textAlign: 'start',
       },
       // Shared-census process cards.
       card: {
         fontSize: 'lg',
+        fontWeight: 'bold',
+        lineHeight: 'short',
         mb: 0,
       },
       // One-line process rows of the organization dashboard.
       row: {
         fontSize: 'md',
-        textAlign: 'left',
         fontWeight: 'bold',
+        lineHeight: 'short',
+        textAlign: 'left',
         mb: 0,
         truncate: true,
       },
@@ -70,7 +72,7 @@ export const ElectionQuestions = defineSlotRecipe({
     title: {
       display: 'block',
       textAlign: 'start',
-      lineHeight: 1.3,
+      lineHeight: 'short',
       fontSize: 'lg',
       fontWeight: 'semibold',
       mb: 6,
@@ -248,13 +250,24 @@ export const QuestionChoice = defineSlotRecipe({
       objectPosition: 'center',
     },
 
+    // Body size on both controls: the checkbox label would otherwise pass on its smaller one.
     label: {
+      textStyle: 'body',
       fontWeight: 'semibold',
       wordBreak: 'break-word',
     },
 
     description: {
+      textStyle: 'body',
       wordBreak: 'break-word',
+    },
+
+    modalLabel: {
+      textStyle: 'body',
+    },
+
+    modalDescription: {
+      textStyle: 'body',
     },
   },
   variants: {

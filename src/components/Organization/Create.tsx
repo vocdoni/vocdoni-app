@@ -179,7 +179,7 @@ export const OrganizationCreate = ({
         >
           {t('organization.create_org')}
         </Button>
-        <Text fontSize='sm' textAlign='center' mt='auto'>
+        <Text textStyle='body-sm' textAlign='center' mt='auto'>
           <Trans i18nKey='create_org.already_profile' components={{ dlink: <DashboardLink /> }}>
             If your organization already has a profile, <DashboardLink>access the dashboard</DashboardLink> and contact
             the administrator to invite you

@@ -18,6 +18,7 @@ import { GoogleIcon, LinkIcon } from '~theme/icons'
 import { api, ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
+import { PageTitle } from '~components/ui/PageTitle'
 import { useToast } from '~components/Toast'
 import { OAuthProvider, OAuthProviders } from '~constants'
 import { QueryKeys } from '~queries/keys'
@@ -167,10 +168,8 @@ const AccountForm = ({ profile }: { profile?: User }) => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Text fontSize={'2xl'} fontWeight='bold' mb={1.5}>
-          {t('account.title', { defaultValue: 'Account Information' })}
-        </Text>
-        <Text fontSize={'sm'} color='fg.muted' mb={6}>
+        <PageTitle mb={1.5}>{t('account.title', { defaultValue: 'Account Information' })}</PageTitle>
+        <Text textStyle='body-sm' color='fg.muted' mb={6}>
           {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
         </Text>
         <VStack gap={8} align='stretch'>
@@ -222,7 +221,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
           </FormControl>
 
           <VStack gap={3} align='stretch'>
-            <Text fontSize='sm' fontWeight='bold'>
+            <Text textStyle='body-sm' fontWeight='bold'>
               {t('oauth.title', { defaultValue: 'Connect accounts' })}
             </Text>
             {OAuthProviders.map((provider) => {

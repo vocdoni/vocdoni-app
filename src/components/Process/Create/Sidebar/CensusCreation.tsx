@@ -56,7 +56,7 @@ const StepMarker = ({ step, status }: { step: number; status: StepStatus }) => (
     justify='center'
     borderRadius='full'
     borderWidth='1.5px'
-    fontSize='2xs'
+    fontSize='xs'
     fontWeight='bold'
     {...stepMarkerStyles[status]}
   >

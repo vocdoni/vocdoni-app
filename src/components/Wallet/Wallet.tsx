@@ -249,10 +249,10 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
         <DashboardBox>
           <Flex justify='space-between' align='flex-start' gap={4} wrap='wrap'>
             <Stack gap={1}>
-              <Text fontSize='sm' color='fg.muted' fontWeight='medium'>
+              <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
                 {t('wallet.balance', { defaultValue: 'Balance' })}
               </Text>
-              <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
+              <Text fontSize='3xl' fontWeight='bold' lineHeight='shorter'>
                 {currency(balanceCents, currencyCode)}
               </Text>
             </Stack>
@@ -260,13 +260,13 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
               <Button onClick={() => setView('topup')}>{t('wallet.topup.open', { defaultValue: 'Top up' })}</Button>
             )}
           </Flex>
-          <Text fontSize='sm' color='fg.muted'>
+          <Text textStyle='body-sm' color='fg.muted'>
             {t('wallet.balance_note', {
               defaultValue: 'Prepaid credit, VAT excluded. Publishing a paid voting process is charged from it.',
             })}
           </Text>
           {!canTopUp && (
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('wallet.topup.admin_only', { defaultValue: 'Only admins can top up the wallet.' })}
             </Text>
           )}

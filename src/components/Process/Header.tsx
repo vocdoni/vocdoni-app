@@ -44,7 +44,7 @@ const ProcessHeader = () => {
         <ElectionTitle size='hero' />
         <Flex gap={2} flexDirection={{ base: 'column', xl: 'row' }} alignItems={{ base: 'start', xl: 'center' }} mb={4}>
           <ElectionStatusBadge whiteSpace='nowrap' />
-          <ElectionSchedule textAlign='left' display='block' fontSize='sm' lineHeight='short' />
+          <ElectionSchedule textAlign='left' display='block' fontSize='sm' lineHeight='moderate' />
         </Flex>
         <Flex flexDirection='column'>
           {!getElectionDescription(election)?.length && <Text color='fg.muted'>{t('process.no_description')}</Text>}
