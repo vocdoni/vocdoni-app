@@ -51,7 +51,7 @@ export const Card = defineSlotRecipe({
       faqs: {
         root: {
           borderRadius: 'none',
-          borderBottomWidth: '1px',
+          borderBottomWidth: 'hairline',
           borderBottomStyle: 'solid',
           borderBottomColor: 'border',
           backgroundColor: 'transparent',
@@ -61,7 +61,7 @@ export const Card = defineSlotRecipe({
             border: 'none',
           },
           '&:nth-last-of-type(2)': {
-            borderBottomWidth: { base: '1px', lg: '0' },
+            borderBottomWidth: { base: 'hairline', lg: '0' },
           },
         },
         header: {
@@ -85,7 +85,7 @@ export const Card = defineSlotRecipe({
         root: {
           w: 'full',
           bgColor: 'transparent',
-          border: '1px solid',
+          border: '{borderWidths.hairline} solid',
           borderColor: 'border',
           borderRadius: 'sm',
           p: 4,
