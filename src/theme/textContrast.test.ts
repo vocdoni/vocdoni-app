@@ -30,7 +30,7 @@ const SURFACES = ['bg', 'bg.panel', 'bg.subtle', 'surface.raised', 'surface.sunk
 
 // WCAG AA for text: 4.5:1 against every surface the text is painted on, in both colour modes.
 describe('text colour contrast (WCAG AA)', () => {
-  it.each(['fg.error', 'status.error.fg', 'destructive.fg', 'ballot.schedule', 'ballot.error', 'input.placeholder'])(
+  it.each(['fg.error', 'status.error.fg', 'danger.action', 'ballot.schedule', 'ballot.error', 'input.placeholder'])(
     '%s reads at 4.5:1 on the page surfaces',
     (token) => {
       for (const mode of ['light', 'dark'] as const) {
