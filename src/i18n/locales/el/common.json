@@ -1163,7 +1163,6 @@
         "sms_one": "Κωδικός SMS, {{voters}} ψηφοφόρος",
         "sms_other": "Κωδικός SMS, {{voters}} ψηφοφόροι",
         "summary": "Κόστος: {{total}}",
-        "summary_short": "Κόστος: {{total}}. Λείπουν {{shortfall}} από το υπόλοιπο",
         "title": "Τι πληρώνετε",
         "total": "Σύνολο, χωρίς ΦΠΑ"
       },

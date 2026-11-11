@@ -1163,7 +1163,6 @@
         "sms_one": "SMS code, {{voters}} voter",
         "sms_other": "SMS code, {{voters}} voters",
         "summary": "Cost: {{total}}",
-        "summary_short": "Cost: {{total}}. {{shortfall}} short in the balance",
         "title": "What you pay for",
         "total": "Total, VAT excluded"
       },
