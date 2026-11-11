@@ -1,4 +1,4 @@
-import { createSystem, defaultConfig, defineKeyframes, defineSemanticTokens, defineTokens } from '@chakra-ui/react'
+import { createSystem, defaultConfig, defineSemanticTokens, defineTokens } from '@chakra-ui/react'
 import { DEFAULT_PRIMARY_COLOR, PAGE_BACKGROUNDS } from './colors'
 import { withEscapeHatch } from './escapeHatch'
 import { generateAccentTokens, generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
@@ -59,13 +59,6 @@ export const createAppSystem = (primaryColor?: string) => {
       textStyles,
       recipes,
       slotRecipes,
-      keyframes: defineKeyframes({
-        // A step of the publish dialog, and its cost panel, settle in
-        'publish-review-in': {
-          from: { opacity: 0, transform: 'translateY(4px)' },
-          to: { opacity: 1, transform: 'translateY(0)' },
-        },
-      }),
     },
   })
 
