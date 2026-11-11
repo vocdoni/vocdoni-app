@@ -141,6 +141,7 @@ describe('style inventory scanner', () => {
     expect(isScannedFile('src/theme/react-components/election.tsx')).toBe(true)
     expect(isScannedFile('src/theme/editor.ts')).toBe(true)
     expect(isScannedFile('src/theme/semantic.ts')).toBe(false)
+    expect(isScannedFile('src/theme/recipeColors.ts')).toBe(false)
     expect(isScannedFile('src/theme/recipes/badge.ts')).toBe(false)
     expect(isScannedFile('src/components/Layout/Footer.test.tsx')).toBe(false)
     expect(isScannedFile('src/__mocks__/posthog-js.ts')).toBe(false)

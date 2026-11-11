@@ -73,9 +73,18 @@ export const STYLE_EXCEPTIONS: readonly StyleException[] = [
 
 // Theme definition files are guarded by system.test.ts instead.
 const EXCLUDED_FILES = new Set(
-  ['colors', 'tokens', 'semantic', 'palette', 'system', 'logoTones', 'charts', 'states', 'style-inventory'].map(
-    (name) => `src/theme/${name}.ts`
-  )
+  [
+    'colors',
+    'tokens',
+    'semantic',
+    'palette',
+    'system',
+    'logoTones',
+    'charts',
+    'states',
+    'recipeColors',
+    'style-inventory',
+  ].map((name) => `src/theme/${name}.ts`)
 )
 
 export const isScannedFile = (file: string) =>
