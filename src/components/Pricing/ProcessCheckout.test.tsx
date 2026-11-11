@@ -241,6 +241,25 @@ describe('ProcessCheckout', () => {
       expect(typeof api.waitForPublication.mock.calls[0][1].readPayment).toBe('function')
     })
 
+    it('never calls a payment Stripe accepted here unpaid because its session still reads open', async () => {
+      const user = userEvent.setup()
+      api.waitForPublication.mockReturnValue(new Promise(() => undefined))
+      renderView()
+
+      await user.click(await payButton())
+
+      await waitFor(() => expect(api.waitForPublication).toHaveBeenCalled())
+      expect(api.waitForPublication.mock.calls[0][1].openGraceMs).toBe(Infinity)
+    })
+
+    it('keeps the open-session grace for a return, where the payment is not known', async () => {
+      api.waitForPublication.mockReturnValue(new Promise(() => undefined))
+      renderView({ start: { kind: 'return' } })
+
+      await waitFor(() => expect(api.waitForPublication).toHaveBeenCalled())
+      expect(api.waitForPublication.mock.calls[0][1].openGraceMs).toBeUndefined()
+    })
+
     it('says the payment is confirmed only when the payment reads as paid, on timeout', async () => {
       const user = userEvent.setup()
       api.getCheckout.mockResolvedValue({ status: 'paid', amountCents: 1000, currency: 'eur' })
