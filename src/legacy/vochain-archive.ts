@@ -25,11 +25,18 @@ export const getVochainGatewayUrl = (environment: string = 'dev') => {
 
 /** Thrown for gateway 404s so page loaders can render a proper not-found. */
 export class VochainNotFoundError extends Error {
-  constructor(resource: string) {
+  /** Vocdoni API error code of the 404 body, when the gateway sent one (e.g. 4057 page not found). */
+  readonly code?: number
+
+  constructor(resource: string, code?: number) {
     super(`${resource} not found on the vochain gateway`)
     this.name = 'VochainNotFoundError'
+    this.code = code
   }
 }
+
+/** Gateway code for a list page past the last one; the list itself exists. */
+const PAGE_NOT_FOUND_CODE = 4057
 
 export type LegacyElectionStatus =
   | 'UPCOMING'
@@ -108,7 +115,10 @@ const strip0x = (id: string) => id.replace(/^0x/i, '').toLowerCase()
 const gatewayFetch = async <T>(gateway: string, path: string, resource: string): Promise<T> => {
   const response = await fetch(`${gateway}${path}`)
 
-  if (response.status === 404) throw new VochainNotFoundError(resource)
+  if (response.status === 404) {
+    const body = (await response.json().catch(() => undefined)) as { code?: unknown } | undefined
+    throw new VochainNotFoundError(resource, typeof body?.code === 'number' ? body.code : undefined)
+  }
   if (!response.ok) throw new Error(`vochain gateway request failed (${response.status}) for ${path}`)
 
   return (await response.json()) as T
@@ -311,11 +321,16 @@ export const fetchLegacyOrganizationElections = async (
   page: number = 0
 ): Promise<LegacyElectionsPage> => {
   const normalized = strip0x(address)
+  // A full 40-hex address makes the gateway's partial organizationId match exact.
   const raw = await gatewayFetch<RawElectionsPage>(
     gateway,
-    `/accounts/${normalized}/elections/page/${page}`,
+    `/elections?organizationId=${normalized}&page=${page}`,
     `account ${address} elections`
-  )
+  ).catch((error: unknown): RawElectionsPage => {
+    // A page past the last one is an empty page, not a missing organization (4006 still throws).
+    if (error instanceof VochainNotFoundError && error.code === PAGE_NOT_FOUND_CODE) return {}
+    throw error
+  })
 
   // List items carry no metadata; fetch each election's detail for its title.
   const elections = await Promise.all(
