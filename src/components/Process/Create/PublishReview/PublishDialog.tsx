@@ -57,7 +57,9 @@ export const PublishDialog = ({
   // An unreadable wallet (a managed organization) is no wallet; one being re-read is not known yet
   const wallet = walletQuery.isError ? undefined : walletQuery.data
   const locked = isPublishing(step)
-  const stripeMounted = step.name === 'checkout'
+  // The card step is non-modal from its skeleton on, so the remount this takes comes with the step change
+  // instead of a second time when Stripe's form arrives
+  const stripeMounted = step.name === 'opening' || step.name === 'checkout'
   const close = () => {
     if (locked) return
     onClose()
