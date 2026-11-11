@@ -7,10 +7,7 @@ const baseStyle = defineStyle({
   fontSize: 'sm',
   _currentPage: {
     fontWeight: 'bold',
-    backgroundColor: {
-      _dark: 'colorPalette.800',
-      _light: 'colorPalette.200',
-    },
+    backgroundColor: 'state.current.bg',
   },
   _selected: {
     fontWeight: 'bold',
@@ -27,7 +24,7 @@ const listmenu = defineStyle({
     fontWeight: 'bold',
   },
   _hover: {
-    bg: 'bg.muted',
+    bg: 'state.hover.bg',
   },
 })
 
@@ -40,7 +37,7 @@ const profilemenu = defineStyle({
   justifyContent: 'start',
   bg: 'transparent',
   _hover: {
-    bg: 'bg.muted',
+    bg: 'state.hover.bg',
   },
 })
 

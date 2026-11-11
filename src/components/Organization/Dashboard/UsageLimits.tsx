@@ -41,13 +41,13 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
   const isNearLimit = percentage >= 80
   const isAtLimit = percentage >= 100
 
-  const progressColor = isAtLimit ? 'red' : isNearLimit ? 'orange' : color
+  const fillColor = isAtLimit ? 'meter.critical' : isNearLimit ? 'meter.warning' : color
 
   return (
     <Box>
       <Flex justify='space-between' align='center' mb={2}>
         <HStack gap={2}>
-          <Icon as={icon} boxSize={4} color={`${color}.500`} />
+          <Icon as={icon} boxSize={4} color={`${color}.icon`} />
           <Text fontSize='sm' fontWeight='medium' color='fg'>
             {label}
             {tooltip && (
@@ -76,9 +76,9 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
         </HStack>
       </Flex>
       {max !== undefined && (
-        <Progress.Root value={displayPercentage} size='sm' colorPalette={progressColor} shape='full'>
-          <Progress.Track bg='bg.emphasized'>
-            <Progress.Range borderRadius='full' />
+        <Progress.Root value={displayPercentage} size='sm' shape='full'>
+          <Progress.Track bg='chart.track'>
+            <Progress.Range bgColor={fillColor} borderRadius='full' />
           </Progress.Track>
         </Progress.Root>
       )}
@@ -102,14 +102,14 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
       icon: LuVote,
       label: t('dashboard.usage.voting_processes', { defaultValue: 'Voting processes' }),
       current: organization.counters?.processes || 0,
-      color: 'blue',
+      color: 'chart.1',
     },
     {
       icon: LuUsers,
       label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase size' }),
       current: membersData?.pagination?.totalItems || 0,
       max: MaxMembersPerOrg,
-      color: 'purple',
+      color: 'chart.2',
       tooltip: t('dashboard.usage.memberbase_tooltip', {
         defaultValue: 'Maximum number of members allowed per voting process.',
       }),
