@@ -113,7 +113,7 @@ export const Questions = () => {
         </HStack>
       </Button>
       {!canAddQuestion && (
-        <Text fontSize='sm' color='fg.muted'>
+        <Text textStyle='body-sm' color='fg.muted'>
           {t('process.create.question.limit_reached', {
             defaultValue: 'A voting process can have at most {{ max }} questions.',
             max: MaxQuestionsPerProcess,

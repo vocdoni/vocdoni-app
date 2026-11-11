@@ -4,6 +4,7 @@ import { NetworkIcon, RocketIcon, TerminalIcon } from '~theme/icons'
 import { Link as RouterLink } from 'react-router'
 import { DashboardBox, DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { PageLoader } from '~components/ui/Loader'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { useIntegratorInfo } from '~src/queries/integrators'
 import { useWallet, useWalletAccess } from '~src/queries/wallet'
 import { Routes } from '~src/router/routes'
@@ -79,20 +80,19 @@ export const IntegratorOverview = () => {
 
   return (
     <DashboardContents>
-      <DashboardCardHeader
-        titleAs='h1'
-        title={t('integrators.overview_title', { defaultValue: 'Overview' })}
-        subtitle={t('integrators.overview_subtitle', {
+      <PageTitle>{t('integrators.overview_title', { defaultValue: 'Overview' })}</PageTitle>
+      <PageSubtitle>
+        {t('integrators.overview_subtitle', {
           defaultValue: 'Your integrator usage and wallet balance.',
         })}
-      />
+      </PageSubtitle>
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
         {canView && wallet.data && (
           <DashboardBox gap={3} justifyContent='flex-start'>
             <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
               {t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}
             </Text>
-            <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
+            <Text fontSize='3xl' fontWeight='bold' lineHeight='shorter'>
               {currency(wallet.data.balanceCents, wallet.data.currency?.toUpperCase())}
             </Text>
             <Box minH='22px'>

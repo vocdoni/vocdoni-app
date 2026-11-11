@@ -384,7 +384,9 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
                 <Trans
                   i18nKey='members.table.selected'
                   count={selectedRows.length}
-                  components={{ strong: <Text as='span' textStyle='body-sm' fontWeight='extrabold' display='inline' /> }}
+                  components={{
+                    strong: <Text as='span' textStyle='body-sm' fontWeight='extrabold' display='inline' />,
+                  }}
                   defaults='Selected: <strong>{{count}} member</strong>'
                 />
               </Text>

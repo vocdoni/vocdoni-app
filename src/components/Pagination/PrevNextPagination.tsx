@@ -27,7 +27,7 @@ export const PrevNextPagination = ({
 
   return (
     <Flex justify='space-between' align='center' gap={4} wrap='wrap'>
-      <Text fontSize='sm' color='fg.muted'>
+      <Text textStyle='body-sm' color='fg.muted'>
         {text}
       </Text>
       <ButtonGroup size='sm' variant='outline' attached>

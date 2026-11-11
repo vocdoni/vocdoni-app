@@ -593,7 +593,7 @@ const CheckoutFormFields = ({
             </>
           )}
           {restStaysInWallet && (
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('process.checkout.rest_stays', { defaultValue: 'The rest stays in your wallet.' })}
             </Text>
           )}
