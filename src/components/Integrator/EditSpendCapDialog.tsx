@@ -1,7 +1,8 @@
-import { Alert, Button, Checkbox, CloseButton, Dialog, Field, Flex, Input, Portal, Stack } from '@chakra-ui/react'
+import { Alert, Button, Checkbox, Dialog, Field, Flex, Input, Portal, Stack } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiErrorMessage } from '~components/Auth/api'
+import { CloseButton } from '~components/ui/CloseButton'
 import { ManagedOrganizationRow, useUpdateManagedOrganization } from '~src/queries/integrators'
 import { parseEuroAmountCents } from '~utils/numbers'
 

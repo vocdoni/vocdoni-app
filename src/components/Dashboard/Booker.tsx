@@ -1,5 +1,6 @@
 import Cal, { getCalApi } from '@calcom/embed-react'
-import { Button, ButtonProps, CloseButton, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { CalendarIcon } from '~theme/icons'
