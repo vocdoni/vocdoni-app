@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import type { ProcessCheckoutFlow } from '~components/Pricing/ProcessCheckout'
+import { usePrimaryShortcut } from './usePrimaryShortcut'
 import { amountFigure, currencyExact } from '~utils/numbers'
 import {
   PublishReviewAmountRow,
@@ -22,6 +23,8 @@ export type WalletStepProps = { flow: ProcessCheckoutFlow; titleId: string; curr
 // The wallet covers the whole price: nothing to pay by card
 export const WalletStep = ({ flow, titleId, currencyCode, onClose }: WalletStepProps) => {
   const { t } = useTranslation()
+  const onWallet = flow.step.name === 'wallet'
+  usePrimaryShortcut(onWallet, flow.publish)
   if (flow.step.name !== 'wallet') return null
   const { totalCents, afterCents } = flow.step
   const total = currencyExact(totalCents, currencyCode)

@@ -11,7 +11,7 @@ import { stepFocusTarget } from './anatomy'
 import { ProcessCheckoutContent } from './CheckoutContent'
 import { PublishSummary } from './PublishSummary'
 import { stepAnnouncement } from './step-copy'
-import { resolvePublishPrimary } from './summary-facts'
+import { type PublishEditTarget, resolvePublishPrimary } from './summary-facts'
 import { useAnimatedHeight } from './useAnimatedHeight'
 import { WalletStep } from './WalletStep'
 
@@ -24,6 +24,8 @@ export type PublishDialogProps = {
   onPublished: (processId: string) => void
   /** How long "Vote published" shows before `onPublished`; see `useProcessCheckout`. */
   successMs?: number
+  /** Closes the dialog and takes the user to the setting a summary row stands for. */
+  onEdit?: (target: PublishEditTarget) => void
   /** Closes the dialog; never called while a publish is under way. */
   onClose: () => void
   /** Gets focus back when the dialog closes and focus would otherwise be lost (the wizard's Publish). */
@@ -38,6 +40,7 @@ export const PublishDialog = ({
   canTopUp,
   onPublished,
   successMs,
+  onEdit,
   onClose,
   returnFocusRef,
 }: PublishDialogProps) => {
@@ -72,6 +75,13 @@ export const PublishDialog = ({
       const active = document.activeElement
       if (!active || active === document.body) returnFocusRef?.current?.focus()
     })
+  }
+
+  // "Change" on a summary row: the dialog closes for good, and focus is left to where the user was sent
+  const edit = (target: PublishEditTarget) => {
+    if (locked || !onEdit) return
+    onClose()
+    onEdit(target)
   }
 
   // Zag reads `modal` only when the dialog opens, so switching it remounts the root; the remount
@@ -122,6 +132,7 @@ export const PublishDialog = ({
         titleId={titleId}
         onKeepEditing={close}
         onClose={close}
+        onEdit={onEdit && edit}
         onPrimary={(action) => {
           const primary = resolvePublishPrimary({ price, wallet, canTopUp })
           if (action === 'wallet' && primary.kind === 'wallet') {
