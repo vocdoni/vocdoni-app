@@ -1138,6 +1138,8 @@
         "title": "Pay {{amount}} and the vote is published.",
         "top_up": "Top-up, VAT excluded"
       },
+      "change": "Change",
+      "change_what": "Change {{what}}",
       "close": "Close",
       "code": {
         "choice": "Code by email or SMS",
@@ -1169,6 +1171,10 @@
         "credentials_none": "None",
         "dates": "Dates",
         "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} day",
+        "duration_days_other": "{{count}} days",
+        "duration_hours_one": "{{count}} hour",
+        "duration_hours_other": "{{count}} hours",
         "equal": "Equal for everyone",
         "now": "Now",
         "off": "Off",

@@ -57,6 +57,10 @@ export const PublishReview = defineSlotRecipe({
     'factRow',
     'factLabel',
     'factValue',
+    'factText',
+    'factDetail',
+    'factChange',
+    'introGeneric',
     'cost',
     'costSkeleton',
     'costToggle',
@@ -165,7 +169,7 @@ export const PublishReview = defineSlotRecipe({
     lead: {
       m: 0,
       fontFamily: 'heading',
-      fontSize: { base: 'xl', md: '2xl' },
+      fontSize: { base: 'lg', md: '2xl' },
       // `bolder` is 500 in this theme: lighter than the section titles, as the design has it
       fontWeight: 'bolder',
       letterSpacing: 'tight',
@@ -179,6 +183,10 @@ export const PublishReview = defineSlotRecipe({
       color: 'fg.muted',
       textWrap: 'pretty',
       maxW: '65ch',
+    },
+    // Phones skip the generic sentence
+    introGeneric: {
+      display: { base: 'none', md: 'inline' },
     },
     // The scrolling middle of a step, like `body` and `status`. A grid, not a flex row: its row grows
     // with the taller column, so the hairline between them runs the whole scrolled height
@@ -264,9 +272,45 @@ export const PublishReview = defineSlotRecipe({
     },
     factValue: {
       m: 0,
+      display: 'flex',
+      alignItems: 'baseline',
+      justifyContent: 'flex-end',
+      columnGap: 3,
       fontWeight: 'medium',
       textAlign: 'end',
       '&[data-muted]': { color: 'fg.muted' },
+    },
+    factText: {
+      minW: 0,
+      overflowWrap: 'anywhere',
+    },
+    // How long the vote runs, after the range
+    factDetail: {
+      ms: 1.5,
+      color: 'fg.muted',
+      fontWeight: 'normal',
+      whiteSpace: 'nowrap',
+    },
+    // Link-like and quiet until pointed at; a 44px target on phones without growing the row
+    factChange: {
+      flex: '0 0 auto',
+      alignSelf: 'center',
+      display: 'inline-flex',
+      alignItems: 'center',
+      minH: { base: 11, md: 6 },
+      my: { base: -2.5, md: 0 },
+      px: 1,
+      bg: 'transparent',
+      fontSize: 'sm',
+      fontWeight: 'normal',
+      color: 'fg.muted',
+      cursor: 'pointer',
+      borderRadius: 'l1',
+      textDecoration: 'underline',
+      textDecorationColor: 'transparent',
+      textUnderlineOffset: '3px',
+      _hover: { color: 'fg', textDecorationColor: 'currentColor' },
+      _focusVisible: { outline: '2px solid', outlineColor: 'colorPalette.focusRing', outlineOffset: '2px' },
     },
     cost: {
       display: 'flex',

@@ -85,23 +85,48 @@ export const publishDates = (form: Pick<Process, 'autoStart' | 'startDate' | 'st
   end: parseFormDateTime(form.endDate, form.endTime),
 })
 
-export const formatLongDateTime = (date: Date, locale?: string) =>
+// The year only when it is not the current one: most votes close within the year
+const yearIfOther = (date: Date, now: Date) =>
+  date.getFullYear() === now.getFullYear() ? {} : { year: 'numeric' as const }
+
+export const formatLongDateTime = (date: Date, locale?: string, now: Date = new Date()) =>
   new Intl.DateTimeFormat(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
+    ...yearIfOther(date, now),
     hour: 'numeric',
     minute: '2-digit',
   }).format(date)
 
-export const formatShortDateTime = (date: Date, locale?: string) =>
+export const formatShortDateTime = (date: Date, locale?: string, now: Date = new Date()) =>
   new Intl.DateTimeFormat(locale, {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
+    ...yearIfOther(date, now),
     hour: 'numeric',
     minute: '2-digit',
   }).format(date)
+
+const hourMs = 60 * 60 * 1000
+
+/** How long the vote runs, from its start (`now` when it opens on publish): days, or hours under a day. */
+export const durationText = (t: TFunction, start: Date | null, end: Date, now: Date = new Date()) => {
+  const ms = Math.max(end.getTime() - (start ?? now).getTime(), 0)
+  if (ms < 24 * hourMs) {
+    return t('process.publish_review.facts.duration_hours', {
+      count: Math.max(Math.round(ms / hourMs), 1),
+      defaultValue_one: '{{count}} hour',
+      defaultValue_other: '{{count}} hours',
+    })
+  }
+  return t('process.publish_review.facts.duration_days', {
+    count: Math.round(ms / (24 * hourMs)),
+    defaultValue_one: '{{count}} day',
+    defaultValue_other: '{{count}} days',
+  })
+}
 
 export const votersText = (t: TFunction, voters?: number) =>
   voters === undefined
@@ -121,7 +146,13 @@ export const questionsText = (t: TFunction, questions: number) =>
   })
 
 /** The headline: who votes on what, and for how long. The verb agrees with the voters. */
-export const leadSentence = (t: TFunction, form: Process, voters: number | undefined, locale?: string) => {
+export const leadSentence = (
+  t: TFunction,
+  form: Process,
+  voters: number | undefined,
+  locale?: string,
+  now: Date = new Date()
+) => {
   const { start, end } = publishDates(form)
   // Unknown voters read as "the voters", a plural. Passed as a literal `count` below, not
   // through the spread, so `pnpm translations` extracts these keys as plurals
@@ -129,7 +160,7 @@ export const leadSentence = (t: TFunction, form: Process, voters: number | undef
   const values = {
     voters: votersText(t, voters),
     questions: questionsText(t, form.questions.length),
-    end: formatLongDateTime(end, locale),
+    end: formatLongDateTime(end, locale, now),
   }
   if (!start) {
     return t('process.publish_review.lead_now', {
@@ -142,7 +173,7 @@ export const leadSentence = (t: TFunction, form: Process, voters: number | undef
   return t('process.publish_review.lead_scheduled', {
     count,
     ...values,
-    start: formatLongDateTime(start, locale),
+    start: formatLongDateTime(start, locale, now),
     defaultValue_one: '{{voters}} can vote on {{questions}}, from {{start}} until {{end}}.',
     defaultValue_other: '{{voters}} can vote on {{questions}}, from {{start}} until {{end}}.',
   })
@@ -166,13 +197,24 @@ export const codeMethodLabel = (t: TFunction, method: CodeMethod) => {
   }
 }
 
-export type SummaryFact = { key: string; label: string; value: string; muted?: boolean }
+/** The setting a summary row's "Change" takes the user to; the wizard knows where each one lives. */
+export type PublishEditTarget = 'dates' | 'weight' | 'results' | 'anonymous' | 'auth'
+
+export type SummaryFact = {
+  key: string
+  label: string
+  value: string
+  /** Muted text after the value (how long the vote runs). */
+  detail?: string
+  muted?: boolean
+  target: PublishEditTarget
+}
 
 /** The "Vote summary" rows. Anonymity is left out where the deployment turns it off. */
 export const summaryFacts = (
   t: TFunction,
   form: Process,
-  { locale, disableAnonymous }: { locale?: string; disableAnonymous?: boolean }
+  { locale, disableAnonymous, now = new Date() }: { locale?: string; disableAnonymous?: boolean; now?: Date }
 ): SummaryFact[] => {
   const { start, end } = publishDates(form)
   const { credentials, codeMethod } = fromCensus(form.census)
@@ -184,10 +226,12 @@ export const summaryFacts = (
       value: t('process.publish_review.facts.dates_value', {
         defaultValue: '{{start}} → {{end}}',
         start: start
-          ? formatShortDateTime(start, locale)
+          ? formatShortDateTime(start, locale, now)
           : t('process.publish_review.facts.now', { defaultValue: 'Now' }),
-        end: formatShortDateTime(end, locale),
+        end: formatShortDateTime(end, locale, now),
       }),
+      detail: durationText(t, start, end, now),
+      target: 'dates',
     },
     {
       key: 'weight',
@@ -195,6 +239,7 @@ export const summaryFacts = (
       value: form.weightedVote
         ? t('process.publish_review.facts.weighted', { defaultValue: 'Weighted' })
         : t('process.publish_review.facts.equal', { defaultValue: 'Equal for everyone' }),
+      target: 'weight',
     },
     {
       key: 'results',
@@ -203,6 +248,7 @@ export const summaryFacts = (
         form.resultVisibility === 'live'
           ? t('process.publish_review.facts.results_live', { defaultValue: 'Live' })
           : t('process.publish_review.facts.results_hidden', { defaultValue: 'Shown when it closes' }),
+      target: 'results',
     },
     {
       key: 'credentials',
@@ -211,11 +257,13 @@ export const summaryFacts = (
         ? credentials.map((field) => getAuthFieldLabel(t, field)).join(' + ')
         : t('process.publish_review.facts.credentials_none', { defaultValue: 'None' }),
       muted: !credentials.length,
+      target: 'auth',
     },
     {
       key: 'code',
       label: t('process.publish_review.facts.code', { defaultValue: '2FA' }),
       value: codeMethodLabel(t, codeMethod),
+      target: 'auth',
     },
   ]
 
@@ -227,6 +275,7 @@ export const summaryFacts = (
         ? t('process.publish_review.facts.on', { defaultValue: 'On' })
         : t('process.publish_review.facts.off', { defaultValue: 'Off' }),
       muted: !form.anonymousVoting,
+      target: 'anonymous',
     })
   }
 

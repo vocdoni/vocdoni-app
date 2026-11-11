@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { LuChevronDown } from 'react-icons/lu'
 import { currencyExact } from '~utils/numbers'
 import type { Process } from '../common'
+import { usePrimaryShortcut } from './usePrimaryShortcut'
 import {
   PublishReviewAmountRow,
   PublishReviewAmounts,
@@ -22,6 +23,7 @@ import {
   PublishReviewFooter,
   PublishReviewHeader,
   PublishReviewIntro,
+  PublishReviewIntroGeneric,
   PublishReviewLead,
   PublishReviewNote,
   PublishReviewQuestionItem,
@@ -39,6 +41,7 @@ import {
   leadSentence,
   primaryAction,
   type PublishAction,
+  type PublishEditTarget,
   type PublishPrimary,
   type PublishWallet,
   questionTypeLabel,
@@ -70,6 +73,8 @@ export type PublishSummaryProps = {
   /** Closes the dialog from the header; left out, no close button shows. */
   onClose?: () => void
   onPrimary: (action: PublishAction) => void
+  /** Takes the user to the setting a row summarises (the dialog closes first); without it rows have no "Change". */
+  onEdit?: (target: PublishEditTarget) => void
 }
 
 /** The summary step of the publish dialog: what is voted, how, and what publishing it costs. */
@@ -89,6 +94,7 @@ export const PublishSummary = ({
   onKeepEditing,
   onClose,
   onPrimary,
+  onEdit,
 }: PublishSummaryProps) => {
   const { t, i18n } = useTranslation()
   const locale = i18n.resolvedLanguage ?? i18n.language
@@ -98,6 +104,10 @@ export const PublishSummary = ({
   const primary = resolvePublishPrimary({ price: shownPrice, priceError, wallet, canTopUp })
   const action = primaryAction(primary)
   const code = shownPrice?.currency?.toUpperCase()
+  const submit = () => {
+    if (action && !refreshing) onPrimary(action)
+  }
+  usePrimaryShortcut(!!action && !refreshing, submit)
 
   return (
     <PublishReviewStep>
@@ -108,10 +118,13 @@ export const PublishSummary = ({
       >
         <PublishReviewLead>{leadSentence(t, form, voters, locale)}</PublishReviewLead>
         <PublishReviewIntro>
-          {t('process.publish_review.intro', {
-            defaultValue:
-              'This is the summary of the vote and what it will cost. If everything is right, you can pay for it and publish it from here.',
-          })}
+          {/* Phones skip the generic sentence: the header would take half the screen */}
+          <PublishReviewIntroGeneric>
+            {t('process.publish_review.intro', {
+              defaultValue:
+                'This is the summary of the vote and what it will cost. If everything is right, you can pay for it and publish it from here.',
+            })}
+          </PublishReviewIntroGeneric>
           {showsFreeTrialHint(voters, shownPrice) &&
             ` ${t('process.publish_review.free_trial', {
               defaultValue: "If you only want to try it out, pick a census of {{limit}} people or fewer: it's free.",
@@ -143,8 +156,19 @@ export const PublishSummary = ({
             {t('process.publish_review.vote_summary', { defaultValue: 'Vote summary' })}
           </PublishReviewSectionTitle>
           <PublishReviewFacts>
-            {summaryFacts(t, form, { locale, disableAnonymous }).map(({ key, label, value, muted }) => (
-              <PublishReviewFactRow key={key} label={label} value={value} muted={muted} />
+            {summaryFacts(t, form, { locale, disableAnonymous }).map(({ key, label, value, detail, muted, target }) => (
+              <PublishReviewFactRow
+                key={key}
+                label={label}
+                value={value}
+                detail={detail}
+                muted={muted}
+                onChange={onEdit && (() => onEdit(target))}
+                changeLabel={t('process.publish_review.change_what', {
+                  defaultValue: 'Change {{what}}',
+                  what: label.toLocaleLowerCase(locale),
+                })}
+              />
             ))}
           </PublishReviewFacts>
           <CostBox
@@ -167,9 +191,7 @@ export const PublishSummary = ({
           disabled={!action}
           loading={refreshing && !!action}
           loadingText={primaryLabel(t, primary, code)}
-          onClick={() => {
-            if (action && !refreshing) onPrimary(action)
-          }}
+          onClick={submit}
         >
           {primaryLabel(t, primary, code)}
         </Button>

@@ -29,8 +29,7 @@ const useFooterHint = (rootRef: RefObject<HTMLElement | null>) => {
       const covered = [root, ...Array.from(root.querySelectorAll<HTMLElement>(scrollAreas))].some((area) => {
         const overflow = getComputedStyle(area).overflowY
         return (
-          (overflow === 'auto' || overflow === 'scroll') &&
-          area.scrollHeight - area.scrollTop - area.clientHeight > 1
+          (overflow === 'auto' || overflow === 'scroll') && area.scrollHeight - area.scrollTop - area.clientHeight > 1
         )
       })
       footer.toggleAttribute('data-covering', covered)
@@ -83,6 +82,8 @@ export const stepFocusTarget = (root?: HTMLElement | null) =>
   root?.querySelector<HTMLElement>('[data-step-focus=eyebrow]') ??
   null
 export const PublishReviewIntro = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'intro')
+/** The intro's generic sentence, which phones leave out. */
+export const PublishReviewIntroGeneric = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'introGeneric')
 export const PublishReviewColumns = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'columns')
 export const PublishReviewColumn = withContext<HTMLElement, HTMLChakraProps<'section'>>('section', 'column')
 export const PublishReviewSectionTitle = withContext<HTMLHeadingElement, HTMLChakraProps<'h3'>>('h3', 'sectionTitle')
@@ -126,6 +127,9 @@ const StripeMount = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', '
 const FactRowBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'factRow')
 const FactLabel = withContext<HTMLElement, HTMLChakraProps<'dt'>>('dt', 'factLabel')
 const FactValue = withContext<HTMLElement, HTMLChakraProps<'dd'>>('dd', 'factValue')
+const FactText = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'factText')
+const FactDetail = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'factDetail')
+const FactChange = withContext<HTMLButtonElement, HTMLChakraProps<'button'>>('button', 'factChange')
 const AmountRowBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'amountRow')
 const CalloutBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'callout')
 const CalloutIcon = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'calloutIcon')
@@ -187,15 +191,44 @@ export const PublishReviewHeader = ({
   )
 }
 
-export type PublishReviewFactRowProps = { label: ReactNode; value: ReactNode; muted?: boolean }
+export type PublishReviewFactRowProps = {
+  label: ReactNode
+  value: ReactNode
+  /** Muted text after the value. */
+  detail?: ReactNode
+  muted?: boolean
+  /** Shows a quiet "Change" action; `changeLabel` is its accessible name ("Change dates"). */
+  onChange?: () => void
+  changeLabel?: string
+}
 
 /** A label / value row of `PublishReviewFacts`. */
-export const PublishReviewFactRow = ({ label, value, muted }: PublishReviewFactRowProps) => (
-  <FactRowBox>
-    <FactLabel>{label}</FactLabel>
-    <FactValue data-muted={flag(muted)}>{value}</FactValue>
-  </FactRowBox>
-)
+export const PublishReviewFactRow = ({
+  label,
+  value,
+  detail,
+  muted,
+  onChange,
+  changeLabel,
+}: PublishReviewFactRowProps) => {
+  const { t } = useTranslation()
+  return (
+    <FactRowBox>
+      <FactLabel>{label}</FactLabel>
+      <FactValue data-muted={flag(muted)}>
+        <FactText>
+          {value}
+          {detail && <FactDetail>{detail}</FactDetail>}
+        </FactText>
+        {onChange && (
+          <FactChange type='button' onClick={onChange} aria-label={changeLabel}>
+            {t('process.publish_review.change', { defaultValue: 'Change' })}
+          </FactChange>
+        )}
+      </FactValue>
+    </FactRowBox>
+  )
+}
 
 export type PublishReviewAmountRowProps = {
   label: ReactNode

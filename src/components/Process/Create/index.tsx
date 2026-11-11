@@ -62,7 +62,9 @@ import { votingProcessToForm } from './draft-mapping'
 import { buildCensusSpec } from './census-spec'
 import { useCensusSetupToast } from './useCensusSetupToast'
 import { PublishDialog } from './PublishReview/PublishDialog'
-import { VoterAuthDialogProvider } from './VoterAuthentication/VoterAuthDialogContext'
+import { focusSetting } from './PublishReview/focus-setting'
+import type { PublishEditTarget } from './PublishReview/summary-facts'
+import { useOpenVoterAuthDialog, VoterAuthDialogProvider } from './VoterAuthentication/VoterAuthDialogContext'
 
 export { buildCensusSpec }
 
@@ -854,6 +856,18 @@ const ProcessCreateView = () => {
     }
   }
 
+  const openVoterAuthDialog = useOpenVoterAuthDialog()
+  // "Change" on a row of the publish dialog (which has just closed): to its setting in the sidebar, or the
+  // voter authentication dialog for the census' credentials
+  const editFromPublishDialog = (target: PublishEditTarget) => {
+    if (target === 'auth') {
+      openVoterAuthDialog()
+      return
+    }
+    openSidebar()
+    focusSetting(target)
+  }
+
   const closePublishDialog = () => {
     // Publish paused the auto-save; the draft is editable again
     skipSave(false)
@@ -1051,6 +1065,7 @@ const ProcessCreateView = () => {
           start={publishDialog.start}
           canTopUp={canTopUp}
           onPublished={(processId) => handlePublished(processId, publishDialog.form)}
+          onEdit={editFromPublishDialog}
           onClose={closePublishDialog}
           returnFocusRef={publishButtonRef}
         />

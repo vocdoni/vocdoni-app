@@ -1138,6 +1138,8 @@
         "title": "Zahle {{amount}} und die Abstimmung wird veröffentlicht.",
         "top_up": "Aufladung, ohne MwSt."
       },
+      "change": "Ändern",
+      "change_what": "{{what}} ändern",
       "close": "Schließen",
       "code": {
         "choice": "Code per E-Mail oder SMS",
@@ -1169,6 +1171,10 @@
         "credentials_none": "Keine",
         "dates": "Zeitraum",
         "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} Tag",
+        "duration_days_other": "{{count}} Tage",
+        "duration_hours_one": "{{count}} Stunde",
+        "duration_hours_other": "{{count}} Stunden",
         "equal": "Für alle gleich",
         "now": "Jetzt",
         "off": "Aus",

@@ -200,6 +200,26 @@ describe('PublishDialog', () => {
     ])
   })
 
+  it('closes the dialog and reports the target when a summary row is changed', async () => {
+    const onEdit = vi.fn()
+    const { user, onClose } = renderDialog({ onEdit })
+
+    await user.click(await screen.findByRole('button', { name: 'Change dates' }))
+
+    expect(onClose).toHaveBeenCalledTimes(1)
+    expect(onEdit).toHaveBeenCalledWith('dates')
+  })
+
+  it('hands off after the success beat, not before', async () => {
+    const { user, onPublished } = renderDialog({ successMs: 250 })
+
+    await user.click(await primary('Publish'))
+
+    expect(await screen.findByText('Vote published', visible)).toBeInTheDocument()
+    expect(onPublished).not.toHaveBeenCalled()
+    await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId), { timeout: 2000 })
+  })
+
   describe('when the wallet covers the price', () => {
     beforeEach(() => {
       api.getPrice.mockResolvedValue(priced(1000))
@@ -229,6 +249,17 @@ describe('PublishDialog', () => {
       expect(api.checkout).not.toHaveBeenCalled()
     })
 
+    it('pays from the balance on Ctrl+Enter in the wallet step, once', async () => {
+      const { user, onPublished } = renderDialog()
+
+      await user.click(await primary('Publish and pay €10.00'))
+      await screen.findByText('Pay €10.00 from the balance and the vote is published.')
+      await user.keyboard('{Control>}{Enter}{Enter}{/Control}')
+
+      await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
+      expect(api.publish).toHaveBeenCalledTimes(1)
+    })
+
     it("words the wallet step in the price's currency", async () => {
       api.getPrice.mockResolvedValue({ ...priced(1000), currency: 'usd' })
       const { user } = renderDialog()
@@ -244,7 +275,9 @@ describe('PublishDialog', () => {
 
       await user.click(await primary('Publish and pay €10.00'))
 
-      const lead = await screen.findByRole('heading', { name: 'Pay €10.00 from the balance and the vote is published.' })
+      const lead = await screen.findByRole('heading', {
+        name: 'Pay €10.00 from the balance and the vote is published.',
+      })
       await waitFor(() => expect(lead).toHaveFocus())
     })
 

@@ -205,6 +205,56 @@ describe('PublishSummary', () => {
     ).toBeInTheDocument()
   })
 
+  it('offers a "Change" on each row that names the setting and reports where it leads', async () => {
+    const onEdit = vi.fn()
+    const { user } = setup({ onEdit })
+
+    await user.click(screen.getByRole('button', { name: 'Change dates' }))
+    await user.click(screen.getByRole('button', { name: 'Change vote weight' }))
+    await user.click(screen.getByRole('button', { name: 'Change results' }))
+    await user.click(screen.getByRole('button', { name: 'Change credentials' }))
+    await user.click(screen.getByRole('button', { name: 'Change 2fa' }))
+    await user.click(screen.getByRole('button', { name: 'Change anonymous vote' }))
+
+    expect(onEdit.mock.calls.map(([target]) => target)).toEqual([
+      'dates',
+      'weight',
+      'results',
+      'auth',
+      'auth',
+      'anonymous',
+    ])
+  })
+
+  it('leaves the rows without "Change" when nothing can be edited', () => {
+    setup()
+    expect(screen.queryByRole('button', { name: /^Change / })).not.toBeInTheDocument()
+  })
+
+  it('says how long the vote runs after its dates', () => {
+    setup()
+    expect(screen.getByText(/^\d+ (days?|hours?)$/)).toBeInTheDocument()
+  })
+
+  it('runs the primary on Ctrl+Enter or Cmd+Enter, unless it is disabled', async () => {
+    const { user, onPrimary } = setup({ wallet: { balanceCents: 23080, currency: 'eur' } })
+
+    await user.keyboard('{Control>}{Enter}{/Control}')
+    expect(onPrimary).toHaveBeenCalledTimes(1)
+    expect(onPrimary).toHaveBeenLastCalledWith('wallet')
+    await user.keyboard('{Meta>}{Enter}{/Meta}')
+    expect(onPrimary).toHaveBeenCalledTimes(2)
+    // A plain Enter is not the shortcut
+    await user.keyboard('{Enter}')
+    expect(onPrimary).toHaveBeenCalledTimes(2)
+  })
+
+  it('ignores the shortcut while the primary is disabled or loading', async () => {
+    const blocked = setup({ wallet: { balanceCents: 13080, currency: 'eur' }, canTopUp: false })
+    await blocked.user.keyboard('{Control>}{Enter}{/Control}')
+    expect(blocked.onPrimary).not.toHaveBeenCalled()
+  })
+
   it('closes from "Keep editing" and from the close button', async () => {
     const { user, onKeepEditing, onClose } = setup()
 

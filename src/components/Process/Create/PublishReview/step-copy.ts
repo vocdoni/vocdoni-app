@@ -59,7 +59,8 @@ export const stepAnnouncement = (t: T, flow: Pick<ProcessCheckoutFlow, 'step' | 
       : outcomeText(t, flow.step)
 
 /** The success moment, shown and announced. */
-export const publishedText = (t: T) => t('process.publish_review.progress.published', { defaultValue: 'Vote published' })
+export const publishedText = (t: T) =>
+  t('process.publish_review.progress.published', { defaultValue: 'Vote published' })
 
 /** The lead of an error, above its message, which may be raw (a backend or network error). */
 export const failedLead = (t: T) =>

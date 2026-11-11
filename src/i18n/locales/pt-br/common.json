@@ -1161,6 +1161,8 @@
         "title": "Pague {{amount}} e a votação é publicada.",
         "top_up": "Recarga, sem IVA"
       },
+      "change": "Alterar",
+      "change_what": "Alterar {{what}}",
       "close": "Fechar",
       "code": {
         "choice": "Código por e-mail ou SMS",
@@ -1194,6 +1196,12 @@
         "credentials_none": "Nenhuma",
         "dates": "Datas",
         "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} dia",
+        "duration_days_many": "{{count}} dias",
+        "duration_days_other": "{{count}} dias",
+        "duration_hours_one": "{{count}} hora",
+        "duration_hours_many": "{{count}} horas",
+        "duration_hours_other": "{{count}} horas",
         "equal": "Igual para todos",
         "now": "Agora",
         "off": "Desativado",

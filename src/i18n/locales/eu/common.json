@@ -1138,6 +1138,8 @@
         "title": "Ordaindu {{amount}} eta botazioa argitaratuko da.",
         "top_up": "Kargapena, BEZ gabe"
       },
+      "change": "Aldatu",
+      "change_what": "{{what}} aldatu",
       "close": "Itxi",
       "code": {
         "choice": "Kodea posta elektronikoz edo SMSz",
@@ -1169,6 +1171,10 @@
         "credentials_none": "Batere ez",
         "dates": "Datak",
         "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} egun",
+        "duration_days_other": "{{count}} egun",
+        "duration_hours_one": "{{count}} ordu",
+        "duration_hours_other": "{{count}} ordu",
         "equal": "Guztientzat berdina",
         "now": "Orain",
         "off": "Desaktibatuta",

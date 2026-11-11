@@ -1161,6 +1161,8 @@
         "title": "Paga {{amount}} i la votació es publica.",
         "top_up": "Recàrrega, sense IVA"
       },
+      "change": "Canvia",
+      "change_what": "Canvia {{what}}",
       "close": "Tanca",
       "code": {
         "choice": "Codi per correu o SMS",
@@ -1194,6 +1196,12 @@
         "credentials_none": "Cap",
         "dates": "Dates",
         "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} dia",
+        "duration_days_many": "{{count}} dies",
+        "duration_days_other": "{{count}} dies",
+        "duration_hours_one": "{{count}} hora",
+        "duration_hours_many": "{{count}} hores",
+        "duration_hours_other": "{{count}} hores",
         "equal": "Igual per a tothom",
         "now": "Ara",
         "off": "Desactivat",

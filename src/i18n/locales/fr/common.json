@@ -1161,6 +1161,8 @@
         "title": "Payez {{amount}} et le vote est publié.",
         "top_up": "Rechargement, hors TVA"
       },
+      "change": "Modifier",
+      "change_what": "Modifier {{what}}",
       "close": "Fermer",
       "code": {
         "choice": "Code par e-mail ou SMS",
@@ -1194,6 +1196,12 @@
         "credentials_none": "Aucun",
         "dates": "Dates",
         "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} jour",
+        "duration_days_many": "{{count}} jours",
+        "duration_days_other": "{{count}} jours",
+        "duration_hours_one": "{{count}} heure",
+        "duration_hours_many": "{{count}} heures",
+        "duration_hours_other": "{{count}} heures",
         "equal": "Identique pour tous",
         "now": "Maintenant",
         "off": "Désactivé",

@@ -205,6 +205,44 @@ describe('summaryFacts', () => {
     expect(facts.anonymous).toMatchObject({ value: 'On', muted: false })
   })
 
+  it('says how long the vote runs: days, or hours under a day, counted from the start', () => {
+    const now = new Date(2026, 2, 4, 10, 0)
+    const dates = (overrides: Partial<Process>) => byKey(summaryFacts(t, form(overrides), { locale: 'en', now })).dates
+
+    // Opening on publish: from now
+    expect(dates({}).detail).toBe('8 days')
+    // Scheduled: from its start
+    expect(dates({ autoStart: false, startDate: '2026-03-05', startTime: '10:00' }).detail).toBe('7 days')
+    expect(dates({ endDate: '2026-03-05', endTime: '10:00' }).detail).toBe('1 day')
+    expect(dates({ endDate: '2026-03-04', endTime: '15:00' }).detail).toBe('5 hours')
+    expect(dates({ endDate: '2026-03-04', endTime: '11:00' }).detail).toBe('1 hour')
+  })
+
+  it('names the year only when it is not the current one', () => {
+    const now = new Date(2026, 2, 4, 10, 0)
+    const nextYear = new Date(2027, 0, 9, 18, 0)
+
+    expect(formatShortDateTime(end, 'en', now)).not.toMatch(/2026/)
+    expect(formatShortDateTime(nextYear, 'en', now)).toMatch(/2027/)
+    expect(formatLongDateTime(end, 'en', now)).not.toMatch(/2026/)
+    expect(formatLongDateTime(nextYear, 'en', now)).toMatch(/2027/)
+    expect(
+      byKey(summaryFacts(t, form({ endDate: '2027-01-09', endTime: '18:00' }), { locale: 'en', now })).dates.value
+    ).toMatch(/2027/)
+  })
+
+  it('points each row at the setting it summarises', () => {
+    const facts = summaryFacts(t, form(), { locale: 'en' })
+    expect(facts.map((fact) => [fact.key, fact.target])).toEqual([
+      ['dates', 'dates'],
+      ['weight', 'weight'],
+      ['results', 'results'],
+      ['credentials', 'auth'],
+      ['code', 'auth'],
+      ['anonymous', 'anonymous'],
+    ])
+  })
+
   it('says "No code" without 2FA and hides anonymity where the deployment turns it off', () => {
     const facts = byKey(
       summaryFacts(t, form({ census: { credentials: ['email'], use2FA: false, use2FAMethod: 'email' } }), {
