@@ -102,7 +102,7 @@ describe('Logo', () => {
     })
   })
 
-  it('sizes the fallback logo like the images it replaced', async () => {
+  it('sizes the fallback logo at 125px on desktop and 40px for the mark on mobile', async () => {
     const { container } = await renderLogo(<Logo />)
     const [desktop, mobile] = [...container.querySelectorAll('svg')]
 

@@ -64,7 +64,7 @@ const Logo = ({ organization }: LogoProps) => {
         />
       ) : (
         <>
-          {/* Same footprint as the PNGs they replace (125px wide, and 40px for the mark): no header shift. */}
+          {/* 125px / 40px wide keeps the header height stable. */}
           <VocdoniLogo role='img' aria-label={t('vocdoni_logo')} w='125px' display={{ base: 'none', lg: 'block' }} />
           <VocdoniLogo
             minimal
