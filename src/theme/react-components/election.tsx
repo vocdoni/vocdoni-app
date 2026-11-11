@@ -74,7 +74,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   ElectionStatusBadge: defineComponent<'ElectionStatusBadge', TagRootProps>(({ label, tone, ...props }) => {
-    const palette = tone === 'success' ? 'green' : tone === 'warning' ? 'yellow' : 'red'
+    const palette = tone === 'success' ? 'success' : tone === 'warning' ? 'warning' : 'danger'
     return (
       <Tag.Root colorPalette={palette} {...props}>
         <Tag.Label>{label}</Tag.Label>

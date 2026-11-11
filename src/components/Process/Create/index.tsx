@@ -482,12 +482,12 @@ const LeaveConfirmationModal = ({
         </Button>
         <Spacer />
         {isSamePath ? (
-          <Button colorPalette='red' onClick={() => onResetSamePath()}>
+          <Button colorPalette='danger' onClick={() => onResetSamePath()}>
             {t('process.create.leave_confirmation.reset', { defaultValue: 'Reset' })}
           </Button>
         ) : (
           <>
-            <Button colorPalette='red' onClick={onLeave}>
+            <Button colorPalette='danger' onClick={onLeave}>
               {t('process.create.leave_confirmation.leave', { defaultValue: 'Leave without saving' })}
             </Button>
             <Button onClick={onSaveAndLeave}>

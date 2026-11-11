@@ -42,7 +42,7 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
             </Text>
           </Box>
           <Flex align='center' gap={3} flexShrink={0}>
-            <Badge colorPalette={election.status === 'ONGOING' ? 'green' : 'gray'}>{election.status}</Badge>
+            <Badge colorPalette={election.status === 'ONGOING' ? 'success' : 'gray'}>{election.status}</Badge>
             <Text fontSize='sm' whiteSpace='nowrap'>
               {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: election.voteCount })}
             </Text>

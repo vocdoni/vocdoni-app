@@ -35,7 +35,7 @@ const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
         <Button variant='outline' onClick={() => onOpenChange({ open: false })}>
           {t('process.create.question.delete.cancel_button', { defaultValue: 'Cancel' })}
         </Button>
-        <Button colorPalette='red' onClick={removeQuestion}>
+        <Button colorPalette='danger' onClick={removeQuestion}>
           {t('process.create.question.delete.delete_button', { defaultValue: 'Delete' })}
         </Button>
       </Flex>

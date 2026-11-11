@@ -106,7 +106,7 @@ const NotIntegratorNotice = () => {
                     {names[organization.address] || organization.address}
                   </Text>
                   {isIntegrator && (
-                    <TagRoot colorPalette='purple' ml='auto !important'>
+                    <TagRoot ml='auto !important'>
                       {/* "API" is a universal acronym, not translated in any locale */}
                       <TagLabel>API</TagLabel>
                     </TagRoot>

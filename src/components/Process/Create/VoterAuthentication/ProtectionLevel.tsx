@@ -28,9 +28,9 @@ export const getProtectionLevel = (credentials: readonly string[], codeMethod: C
 // valid configuration is a caution, not an error.
 export const protectionLevelPalettes: Record<ProtectionLevel, string> = {
   unset: 'gray',
-  basic: 'orange',
-  good: 'green',
-  strong: 'green',
+  basic: 'warning',
+  good: 'success',
+  strong: 'success',
 }
 
 const filledSegments: Record<ProtectionLevel, number> = {

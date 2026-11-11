@@ -32,9 +32,14 @@ type GroupsQuery = ReturnType<typeof useGroups>
 
 const stepMarkerStyles: Record<StepStatus, FlexProps> = {
   idle: { borderColor: 'border.emphasized', color: 'fg.muted' },
-  current: { borderColor: 'orange.solid', color: 'orange.fg' },
-  error: { borderColor: 'red.solid', color: 'red.fg' },
-  done: { borderColor: 'green.solid', bg: 'green.solid', color: 'green.contrast' },
+  current: { colorPalette: 'warning', borderColor: 'colorPalette.solid', color: 'colorPalette.fg' },
+  error: { colorPalette: 'danger', borderColor: 'colorPalette.solid', color: 'colorPalette.fg' },
+  done: {
+    colorPalette: 'success',
+    borderColor: 'colorPalette.solid',
+    bg: 'colorPalette.solid',
+    color: 'colorPalette.contrast',
+  },
 }
 
 // Numbers the census' two parts (group, then voter authentication) so picking a
@@ -66,11 +71,11 @@ export const CensusStatusBadge = () => {
   const { stepsLeft } = useCensusSteps()
 
   if (!stepsLeft) {
-    return <Badge colorPalette='green'>{t('process_create.census.status.ready', { defaultValue: 'Ready' })}</Badge>
+    return <Badge colorPalette='success'>{t('process_create.census.status.ready', { defaultValue: 'Ready' })}</Badge>
   }
 
   return (
-    <Badge colorPalette='orange'>
+    <Badge colorPalette='warning'>
       {t('process_create.census.status.steps_left', {
         defaultValue_one: '{{ count }} step left',
         defaultValue_other: '{{ count }} steps left',

@@ -43,7 +43,7 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
       </Progress.Root>
       <Box minH='22px'>
         {atLimit && (
-          <Badge colorPalette='red' variant='subtle'>
+          <Badge colorPalette='danger' variant='subtle'>
             {t('integrators.quota.limit_reached', { defaultValue: 'Limit reached' })}
           </Badge>
         )}

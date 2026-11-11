@@ -21,10 +21,10 @@ const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
     PROCESS_UNKNOWN: t('process.status.unknown', { defaultValue: 'Unknown' }),
   }
   const palettes: Partial<Record<LegacyElectionStatus, string>> = {
-    ONGOING: 'green',
-    RESULTS: 'teal',
-    CANCELED: 'red',
-    PAUSED: 'orange',
+    ONGOING: 'success',
+    RESULTS: 'success',
+    CANCELED: 'danger',
+    PAUSED: 'warning',
   }
 
   return <Badge colorPalette={palettes[status] ?? 'gray'}>{labels[status]}</Badge>
@@ -53,9 +53,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
         <HStack mb={2} gap={2} flexWrap='wrap'>
           <StatusBadge status={election.status} />
           {election.secretUntilTheEnd && !election.resultsAvailable && (
-            <Badge colorPalette='purple'>
-              {t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })}
-            </Badge>
+            <Badge>{t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })}</Badge>
           )}
         </HStack>
         <Heading size='2xl'>{title}</Heading>
@@ -113,7 +111,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
                             : `${choice.votes} · ${choice.percentage === null ? '—' : `${choice.percentage.toFixed(1)}%`}`}
                         </Text>
                       </Flex>
-                      <Progress.Root value={choice.percentage ?? 0} size='sm' colorPalette='teal'>
+                      <Progress.Root value={choice.percentage ?? 0} size='sm'>
                         <Progress.Track>
                           <Progress.Range />
                         </Progress.Track>

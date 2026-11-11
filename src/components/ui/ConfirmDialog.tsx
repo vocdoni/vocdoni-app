@@ -55,7 +55,7 @@ export const ConfirmDialog = ({
             <Dialog.CloseTrigger asChild>
               <Button variant='outline'>{cancelText || t('actions.cancel', { defaultValue: 'Cancel' })}</Button>
             </Dialog.CloseTrigger>
-            <Button colorPalette={destructive ? 'red' : undefined} loading={loading} onClick={onConfirm}>
+            <Button colorPalette={destructive ? 'danger' : undefined} loading={loading} onClick={onConfirm}>
               {confirmText || t('actions.confirm', { defaultValue: 'Confirm' })}
             </Button>
           </Dialog.Footer>

@@ -241,7 +241,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
                   <Button
                     size='sm'
                     variant='outline'
-                    colorPalette='red'
+                    colorPalette='danger'
                     onClick={() => {
                       const confirmed = window.confirm(
                         t('oauth.unlink.confirm', {
