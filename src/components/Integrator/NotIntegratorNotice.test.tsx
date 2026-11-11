@@ -14,13 +14,13 @@ vi.mock('~src/queries/integrators', () => ({
 
 // Capture the props ConfirmDialog is rendered with so we can assert the dialog is locked while
 // provisioning (ESC + outside interaction disabled) without simulating Chakra's dismiss internals.
-let deleteModalProps: Record<string, any> = {}
+let confirmDialogProps: Record<string, any> = {}
 vi.mock('~components/ui/ConfirmDialog', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~components/ui/ConfirmDialog')>()
   return {
     ...actual,
     ConfirmDialog: (props: any) => {
-      deleteModalProps = props
+      confirmDialogProps = props
       return <actual.ConfirmDialog {...props} />
     },
   }
@@ -129,8 +129,8 @@ describe('NotIntegratorNotice', () => {
     await screen.findByText('Create a free integrator account?')
 
     // Dialog can't be dismissed via ESC or outside interaction while the request is in-flight.
-    expect(deleteModalProps.closeOnEscape).toBe(false)
-    expect(deleteModalProps.closeOnInteractOutside).toBe(false)
+    expect(confirmDialogProps.closeOnEscape).toBe(false)
+    expect(confirmDialogProps.closeOnInteractOutside).toBe(false)
 
     // Cancel and the switch-org buttons are disabled so the user can't bail mid-provision.
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
