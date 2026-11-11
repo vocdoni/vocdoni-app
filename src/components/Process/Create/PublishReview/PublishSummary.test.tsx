@@ -104,14 +104,14 @@ describe('PublishSummary', () => {
     const whole = price({ lines: [{ kind: 'base', description: 'base', amountCents: 3300 }], totalCents: 3300 })
     setup({ price: whole, voters: 100, wallet: { balanceCents: 3000, currency: 'eur' } })
 
-    expect(screen.getByText('Cost: €33.00. €3.00 short in the balance')).toBeInTheDocument()
+    expect(screen.getByText('Cost: €33.00')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Add €3.00 and publish' })).toBeInTheDocument()
   })
 
   it('moves to the card step for what the balance lacks', async () => {
     const { user, onPrimary } = setup({ wallet: { balanceCents: 13080, currency: 'eur' } })
 
-    expect(screen.getByText('Cost: €172.76. €41.96 short in the balance')).toBeInTheDocument()
+    expect(screen.getByText('Cost: €172.76')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Add €41.96 and publish' }))
     expect(onPrimary).toHaveBeenCalledWith('card')
   })
@@ -140,7 +140,7 @@ describe('PublishSummary', () => {
 
     rerender(<PublishSummary {...props} wallet={wallet} priceRefreshing />)
 
-    expect(screen.getByText('Cost: €172.76. €41.96 short in the balance')).toBeInTheDocument()
+    expect(screen.getByText('Cost: €172.76')).toBeInTheDocument()
     expect(screen.getByText('What you pay for')).toBeInTheDocument()
     const primary = primaryButton()
     expect(primary).toHaveTextContent('Add €41.96 and publish')

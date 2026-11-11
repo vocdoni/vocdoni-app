@@ -1184,7 +1184,6 @@
         "sms_many": "Codice via SMS, {{voters}} votanti",
         "sms_other": "Codice via SMS, {{voters}} votanti",
         "summary": "Costo: {{total}}",
-        "summary_short": "Costo: {{total}}. Mancano {{shortfall}} di saldo",
         "title": "Cosa si paga",
         "total": "Totale, IVA esclusa"
       },

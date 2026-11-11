@@ -268,14 +268,8 @@ const CostBox = ({ price, primary, voters, wallet, currencyCode, onRetry, retryi
   if (primary.kind === 'waiting') return <PublishReviewNote>{costNote(t, price, primary)}</PublishReviewNote>
 
   const total = currencyExact(price.totalCents, currencyCode)
-  const short = primary.kind === 'card' || primary.kind === 'blocked'
-  const summary = short
-    ? t('process.publish_review.cost.summary_short', {
-        defaultValue: 'Cost: {{total}}. {{shortfall}} short in the balance',
-        total,
-        shortfall: currencyExact(primary.shortfallCents, currencyCode),
-      })
-    : t('process.publish_review.cost.summary', { defaultValue: 'Cost: {{total}}', total })
+  // Only the price: what the balance lacks is the payment step's business, not something to work out here
+  const summary = t('process.publish_review.cost.summary', { defaultValue: 'Cost: {{total}}', total })
 
   return (
     <PublishReviewCost>

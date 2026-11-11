@@ -1184,7 +1184,6 @@
         "sms_many": "Codi per SMS, {{voters}} votants",
         "sms_other": "Codi per SMS, {{voters}} votants",
         "summary": "Cost: {{total}}",
-        "summary_short": "Cost: {{total}}. Falten {{shortfall}} de saldo",
         "title": "Què es paga",
         "total": "Total, sense IVA"
       },

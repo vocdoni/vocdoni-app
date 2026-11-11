@@ -1159,7 +1159,6 @@
         "sms_one": "SMS-Code, {{voters}} Wähler",
         "sms_other": "SMS-Code, {{voters}} Wähler",
         "summary": "Kosten: {{total}}",
-        "summary_short": "Kosten: {{total}}. Es fehlen {{shortfall}} Guthaben",
         "title": "Wofür du zahlst",
         "total": "Gesamt, ohne MwSt."
       },

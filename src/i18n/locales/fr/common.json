@@ -1184,7 +1184,6 @@
         "sms_many": "Code par SMS, {{voters}} électeurs",
         "sms_other": "Code par SMS, {{voters}} électeurs",
         "summary": "Coût : {{total}}",
-        "summary_short": "Coût : {{total}}. Il manque {{shortfall}} de solde",
         "title": "Ce que vous payez",
         "total": "Total, hors TVA"
       },

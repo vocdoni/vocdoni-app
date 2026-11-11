@@ -1159,7 +1159,6 @@
         "sms_one": "SMS kodea, {{voters}} botogile",
         "sms_other": "SMS kodea, {{voters}} botogile",
         "summary": "Kostua: {{total}}",
-        "summary_short": "Kostua: {{total}}. {{shortfall}} falta dira saldoan",
         "title": "Zer ordaintzen den",
         "total": "Guztira, BEZ gabe"
       },
