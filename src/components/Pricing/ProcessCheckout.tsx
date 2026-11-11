@@ -1,4 +1,4 @@
-import { Alert, Button, Flex, HStack, IconButton, Separator, Spinner, Text, VStack } from '@chakra-ui/react'
+import { Alert, Button, Card, Flex, HStack, IconButton, Separator, Spinner, Text, VStack } from '@chakra-ui/react'
 import {
   BillingAddressElement,
   CheckoutElementsProvider,
@@ -556,7 +556,7 @@ const CheckoutFormFields = ({
   return (
     <form onSubmit={handleSubmit}>
       <VStack align='stretch' gap={5}>
-        <VStack align='stretch' gap={3} p={5} borderWidth={1} borderRadius='md' bg='card.bg'>
+        <Card.Root variant='section' size='md' gap={3}>
           {shortfall ? (
             <SummaryRow
               label={t('process.checkout.shortfall', { defaultValue: 'Shortfall (VAT excluded)' })}
@@ -600,7 +600,7 @@ const CheckoutFormFields = ({
               {t('process.checkout.rest_stays', { defaultValue: 'The rest stays in your wallet.' })}
             </Text>
           )}
-        </VStack>
+        </Card.Root>
 
         <BillingAddressElement options={{ display: { name: 'split' } }} />
         <TaxIdElement options={{ visibility: 'auto' }} />

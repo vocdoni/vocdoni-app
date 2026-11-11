@@ -96,11 +96,7 @@
   "rawZIndex": {
     "src/components/Organization/Address.tsx": 1
   },
-  "unknownToken": {
-    "src/components/Pricing/CensusCheckout.tsx": 1,
-    "src/components/Pricing/ProcessCheckout.tsx": 1,
-    "src/components/Wallet/TopUp.tsx": 1
-  },
+  "unknownToken": {},
   "v2Prop": {
     "src/components/Editor/index.tsx": 1,
     "src/components/Home/SharedCensus.tsx": 1,
