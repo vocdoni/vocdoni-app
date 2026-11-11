@@ -101,7 +101,7 @@ export function BallotBoxAnimated({ size = 200, ...props }: BallotBoxAnimatedPro
         },
       }}
       {...props}
-      // After the spread: callers cannot recolour the box, as with the fills it replaced.
+      // After the spread: callers cannot recolour the box.
       color='illustration.fg'
     >
       <defs>
