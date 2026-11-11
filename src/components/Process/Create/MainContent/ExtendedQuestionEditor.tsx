@@ -66,9 +66,10 @@ const ExtendedQuestionEditor = ({
         _hover={{ bg: 'state.hover.bg' }}
       >
         <button type='button' onClick={() => append({ option: '', description: '' })}>
-          <VStack justify='center' align='center' height='100%'>
+          {/* Spans: a button only takes phrasing content */}
+          <VStack as='span' justify='center' align='center' height='100%'>
             <Icon as={AddIcon} boxSize='icon.lg' />
-            <Text>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
+            <Text as='span'>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
           </VStack>
         </button>
       </DashboardBox>

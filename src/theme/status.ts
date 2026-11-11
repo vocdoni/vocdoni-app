@@ -40,9 +40,8 @@ export const statusColors = defineSemanticTokens.colors({
   warning: palette('warning'),
   danger: {
     ...palette('danger'),
-    // Text of actions that delete or end something (menu items, icon buttons). Steps up to red.400
-    // in dark mode, where red.600 is too dark to read on the dark surfaces.
-    action: { value: { _light: '{colors.red.600}', _dark: '{colors.red.400}' } },
+    // Text of actions that delete or end something (menu items, icon buttons): the `fg.error` role.
+    action: { value: '{colors.fg.error}' },
   },
   info: palette('info'),
   status: {
