@@ -38,8 +38,8 @@ describe('link colour in dark mode', () => {
     system.css(system.cva(system.getRecipe('link'))({ variant }))['@layer recipes'] as Record<string, unknown>
 
   // `.dark &` outranks a single class, so in dark mode the link colour beats the palette colour of
-  // Chakra's plain/underline variants and of a Button rendering a Link (`asChild`, e.g. the dashboard's
-  // report download, which uses the button variant).
+  // Chakra's plain/underline variants and of a Button rendering a Link (`asChild`, e.g. the members CSV
+  // template download, which uses the button variant).
   it.each(['plain', 'underline', 'button', 'unstyled', 'icon', 'footer'])(
     'is set by a dark-mode rule in the %s variant',
     (variant) => {

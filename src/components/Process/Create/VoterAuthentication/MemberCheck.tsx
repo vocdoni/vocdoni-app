@@ -115,7 +115,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
           {t('voter_auth.status.unavailable', {
             defaultValue: "We couldn't check your member list. You can still save.",
           })}{' '}
-          <Button variant='plain' size='xs' h='auto' p={0} textDecoration='underline' onClick={onRetry}>
+          <Button variant='link-underline' size='xs' onClick={onRetry}>
             {t('voter_auth.status.retry', { defaultValue: 'Check again' })}
           </Button>
         </Line>

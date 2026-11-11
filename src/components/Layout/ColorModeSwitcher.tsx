@@ -58,9 +58,7 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
             aria-label={label}
             onClick={() => setTheme(mode)}
             aria-pressed={selected === mode}
-            bg={selected === mode ? 'bg.muted' : undefined}
-            variant='ghost'
-            borderRadius='sm'
+            variant='toggle'
             size='xs'
           >
             <Icon as={icon} boxSize={4} />

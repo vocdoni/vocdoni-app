@@ -189,8 +189,7 @@ export const OrganizationCreate = ({
           <Button
             asChild
             aria-label={t('do_it_later', { defaultValue: 'Do it later' })}
-            variant='outline'
-            border='none'
+            variant='ghost'
             disabled={isPending}
           >
             <ReactRouterLink to={Routes.dashboard.base}>
