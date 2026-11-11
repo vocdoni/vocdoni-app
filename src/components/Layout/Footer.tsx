@@ -1,9 +1,9 @@
-import { Box, Flex, Icon, Image, Link, Text } from '@chakra-ui/react'
+import { Box, Flex, Icon, Link, Text } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
 import { FaDiscord, FaGithub } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
 import { useAppEnv } from '~src/app-env'
-import vcdLogo from '/assets/logo-classic.svg'
+import { VocdoniLogo } from './Logo'
 
 const Footer = ({ simplified }: { simplified?: boolean }) => {
   const { t } = useTranslation()
@@ -16,7 +16,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
       <Flex pt={6} flexDirection={{ base: 'column', xl: 'row' }} alignItems='start' pb={{ base: 12, xl: 6 }} gap={6}>
         <Box flex='1 1 33%'>
           <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
-            <Image src={vcdLogo} w='125px' mb={3} _dark={{ filter: 'invert(100%)' }} alt={t('vocdoni_logo')} />
+            <VocdoniLogo role='img' aria-label={t('vocdoni_logo')} w='125px' mb={3} />
           </Link>
           <Text fontSize='md' lineHeight={1.75}>
             {t('footer.footer_subtitle')}

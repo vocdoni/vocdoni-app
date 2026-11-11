@@ -1,9 +1,8 @@
-import { chakra, type HTMLChakraProps, Flex, Image } from '@chakra-ui/react'
+import { chakra, type HTMLChakraProps, Image } from '@chakra-ui/react'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import type { HeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
-import { Logo as LogoImage, LogoMbl } from '~theme/icons'
 
 type LogoProps = {
   /**
@@ -13,7 +12,6 @@ type LogoProps = {
   organization?: HeaderOrganizationLogo
 }
 
-// This Logo should be updated to use VocdoniLogo or simply deprecated.
 const Logo = ({ organization }: LogoProps) => {
   const { t } = useTranslation()
   // The src is server-rendered, so a broken URL only shows up on the client:
@@ -66,12 +64,15 @@ const Logo = ({ organization }: LogoProps) => {
         />
       ) : (
         <>
-          <Flex alignItems='center' gap={2} display={{ base: 'none', lg: 'flex' }} _dark={{ filter: 'invert(100%)' }}>
-            <LogoImage />
-          </Flex>
-          <Flex alignItems='center' gap={2} display={{ base: 'flex', lg: 'none' }} _dark={{ filter: 'invert(100%)' }}>
-            <LogoMbl />
-          </Flex>
+          {/* Same footprint as the PNGs they replace (125px wide, and 40px for the mark): no header shift. */}
+          <VocdoniLogo role='img' aria-label={t('vocdoni_logo')} w='125px' display={{ base: 'none', lg: 'block' }} />
+          <VocdoniLogo
+            minimal
+            role='img'
+            aria-label={t('vocdoni_logo')}
+            w={10}
+            display={{ base: 'block', lg: 'none' }}
+          />
         </>
       )}
     </RouterAwareLink>

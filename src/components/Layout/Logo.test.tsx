@@ -11,6 +11,7 @@ const i18n = () =>
         common: {
           'alt.images.org_logo': '{{org}} logo',
           'alt.images.organization_logo': 'Organization logo',
+          vocdoni_logo: 'Vocdoni logo',
         },
       },
     },
@@ -20,12 +21,14 @@ const renderLogo = async (ui: ReactElement) =>
   render(<TestMemoryRouter>{ui}</TestMemoryRouter>, { i18nInstance: await i18n() })
 
 describe('Logo', () => {
-  // The Vocdoni logo ships as two <img>s (desktop + mobile) toggled by CSS, so
-  // both share the same alt text.
+  // The Vocdoni logo ships as two SVGs (desktop + mobile) toggled by CSS, so
+  // both share the same accessible name.
   it('renders the Vocdoni logo when no organization logo is given', async () => {
-    await renderLogo(<Logo />)
+    const { container } = await renderLogo(<Logo />)
 
-    expect(screen.getAllByAltText('vocdoni icon').length).toBeGreaterThan(0)
+    const logos = container.querySelectorAll('svg[role="img"]')
+    expect(logos).toHaveLength(2)
+    logos.forEach((logo) => expect(logo).toHaveAttribute('aria-label', 'Vocdoni logo'))
     expect(screen.queryByRole('img', { name: /Acme/ })).toBeNull()
   })
 
@@ -35,7 +38,7 @@ describe('Logo', () => {
     const logo = screen.getByAltText('Acme logo')
     expect(logo).toHaveAttribute('src', 'https://cdn/acme.png')
     // The Vocdoni logo must be gone, not merely hidden behind it.
-    expect(screen.queryByAltText('vocdoni icon')).toBeNull()
+    expect(screen.queryByRole('img', { name: 'Vocdoni logo', hidden: true })).toBeNull()
   })
 
   it('falls back to a generic alt text when the organization has no name', async () => {
@@ -45,11 +48,11 @@ describe('Logo', () => {
   })
 
   it('falls back to the Vocdoni logo when the organization logo fails to load', async () => {
-    await renderLogo(<Logo organization={{ src: 'https://cdn/broken.png', name: 'Acme' }} />)
+    const { container } = await renderLogo(<Logo organization={{ src: 'https://cdn/broken.png', name: 'Acme' }} />)
 
     fireEvent.error(screen.getByAltText('Acme logo'))
 
-    expect(screen.getAllByAltText('vocdoni icon').length).toBeGreaterThan(0)
+    expect(container.querySelectorAll('svg[role="img"]')).toHaveLength(2)
     expect(screen.queryByAltText('Acme logo')).toBeNull()
   })
 
@@ -80,28 +83,33 @@ describe('Logo', () => {
   })
 
   // next-themes sets the `dark` class on <html> before the server-rendered markup paints, while a
-  // JS colour value only switches after hydration. Flip the class without telling React: only a
-  // CSS-driven logo follows it.
-  it('takes its dark-mode colours from the html class, not from JS', async () => {
+  // JS colour value only switches after hydration. The logo is drawn in `currentColor` on a token, so
+  // the colour is CSS-driven and needs no per-mode branch in the component.
+  it('draws the Vocdoni logo in currentColor on the logo token, with no filter', async () => {
     const { container } = await renderLogo(
       <>
         <Logo />
         <VocdoniLogo data-testid='vocdoni-svg' />
       </>
     )
-    const wrappers = [...container.querySelectorAll('a > div')]
-    const svg = screen.getByTestId('vocdoni-svg')
+    const svgs = [...container.querySelectorAll('svg')]
 
-    try {
-      document.documentElement.classList.remove('dark')
-      wrappers.forEach((el) => expect(getComputedStyle(el).filter).not.toBe('invert(100%)'))
-      document.documentElement.classList.add('dark')
-      expect(wrappers).toHaveLength(2)
-      wrappers.forEach((el) => expect(getComputedStyle(el).filter).toBe('invert(100%)'))
-    } finally {
-      document.documentElement.classList.remove('dark')
-    }
-    svg.querySelectorAll('path').forEach((path) => expect(path).toHaveAttribute('fill', 'currentColor'))
+    expect(svgs).toHaveLength(3)
+    svgs.forEach((svg) => {
+      expect(getComputedStyle(svg).color).toBe('var(--chakra-colors-logo-fg)')
+      expect(getComputedStyle(svg).filter).not.toContain('invert')
+      svg.querySelectorAll('path').forEach((path) => expect(path).toHaveAttribute('fill', 'currentColor'))
+    })
+  })
+
+  it('sizes the fallback logo like the images it replaced', async () => {
+    const { container } = await renderLogo(<Logo />)
+    const [desktop, mobile] = [...container.querySelectorAll('svg')]
+
+    expect(desktop).toHaveAttribute('viewBox', '0 0 1000 215')
+    expect(getComputedStyle(desktop).width).toBe('125px')
+    expect(mobile).toHaveAttribute('viewBox', '0 0 251.37 215')
+    expect(getComputedStyle(mobile).width).toBe('var(--chakra-sizes-10)')
   })
 
   it('puts the organization logo on a light tile in dark mode only', async () => {
