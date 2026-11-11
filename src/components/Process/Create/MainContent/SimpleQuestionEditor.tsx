@@ -110,7 +110,7 @@ const SortableOption = ({
             color='fg.subtle'
             _hover={{ color: 'fg.muted' }}
           >
-            <Icon as={DragHandleIcon} size='sm' />
+            <Icon as={DragHandleIcon} boxSize='icon.sm' />
           </Box>
         )}
 

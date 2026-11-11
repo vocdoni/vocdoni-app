@@ -45,22 +45,22 @@ import { forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
   CalendarIcon,
-  ResumeIcon,
-  StopIcon,
   ClockIcon,
+  CloseIcon,
   CopyIcon,
+  DeleteIcon,
   ExternalLinkIcon,
-  ViewIcon,
   InfoIcon,
   PauseIcon,
   RefreshIcon,
+  ResumeIcon,
   SearchIcon,
   SettingsIcon,
-  DeleteIcon,
+  StopIcon,
   UnlinkIcon,
   UsersIcon,
+  ViewIcon,
   VoteIcon,
-  CloseIcon,
 } from '~theme/icons'
 import ReactPlayer from 'react-player'
 import { generatePath, matchPath, useLocation, useNavigate } from 'react-router'

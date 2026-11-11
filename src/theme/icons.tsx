@@ -63,6 +63,7 @@ import {
   LuSend,
   LuSettings,
   LuShield,
+  LuShieldCheck,
   LuSmartphone,
   LuSparkles,
   LuStrikethrough,
@@ -155,6 +156,7 @@ export const ResultsIcon = LuChartColumn
 export const RocketIcon = LuRocket
 export const ScanEyeIcon = LuScanEye
 export const SecurityIcon = LuShield
+export const ShieldCheckIcon = LuShieldCheck
 export const SettingsIcon = LuSettings
 export const SparklesIcon = LuSparkles
 export const SpreadsheetIcon = LuFileSpreadsheet

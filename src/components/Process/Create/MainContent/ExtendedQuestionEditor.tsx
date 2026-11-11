@@ -112,7 +112,7 @@ const SortableExtendedOption = ({
             color='fg.subtle'
             _hover={{ color: 'fg.muted', bg: 'state.hover.bg' }}
           >
-            <Icon as={DragHandleIcon} size='sm' />
+            <Icon as={DragHandleIcon} boxSize='icon.sm' />
           </Box>
         )}
 

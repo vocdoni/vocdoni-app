@@ -874,8 +874,8 @@ const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableCol
       >
         {column.label}
         <Flex direction='column' aria-hidden gap={0} lineHeight={0} ms={0.5}>
-          <Icon as={ChevronUpIcon} boxSize={3} mb='-3.5px' {...sortCaretStyle(order === 'asc')} />
-          <Icon as={ChevronDownIcon} boxSize={3} mt='-3.5px' {...sortCaretStyle(order === 'desc')} />
+          <Icon as={ChevronUpIcon} boxSize='icon.sm' mb='-5px' {...sortCaretStyle(order === 'asc')} />
+          <Icon as={ChevronDownIcon} boxSize='icon.sm' mt='-5px' {...sortCaretStyle(order === 'desc')} />
         </Flex>
       </Button>
     </Table.ColumnHeader>

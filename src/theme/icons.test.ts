@@ -6,7 +6,7 @@ import { system } from './system'
 
 const SRC = path.resolve(__dirname, '..')
 // Split so this file does not match its own check.
-const PACK_IMPORT = new RegExp(`from '${'react-'}icons`)
+const PACK_IMPORT = new RegExp(`['"]${'react-'}icons`)
 
 const sourceFiles = (dir: string): string[] =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
