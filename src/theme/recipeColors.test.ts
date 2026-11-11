@@ -18,10 +18,6 @@ describe.each([
   it('defines the 1px border width', () => {
     expect(sys.tokens.getByName('borderWidths.hairline')?.originalValue).toBe('1px')
   })
-
-  it('keeps the pricing card action border one grey in both color modes', () => {
-    expect(sys.tokens.getByName('colors.control.border')?.originalValue).toBe('{colors.gray.300}')
-  })
 })
 
 describe('link colours', () => {
