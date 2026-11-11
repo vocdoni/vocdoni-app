@@ -7,6 +7,14 @@ const exists = (sys: typeof system, path: string) => sys.tokens.getByName(`color
 const SCALE = { success: 'green', warning: 'orange', danger: 'red', info: 'blue' }
 const PALETTES = Object.keys(SCALE)
 
+// Follow `{colors.x}` references down to literal values, per colour mode.
+const resolve = (ref: string, mode: string): string => {
+  const token = system.tokens.getByName(ref.replace(/^\{|\}$/g, '').replace(/^(?!colors\.)/, 'colors.'))
+  const conditions = token?.extensions?.conditions as Record<string, string> | undefined
+  const raw = conditions ? (conditions[mode] ?? conditions.base) : (token?.value as string)
+  return typeof raw === 'string' && raw.startsWith('{') ? resolve(raw, mode) : String(raw)
+}
+
 describe('status palettes', () => {
   it.each([
     ['stock', system],
@@ -26,13 +34,6 @@ describe('status palettes', () => {
   })
 
   it.each(PALETTES)('resolves %s to the same colours as its raw scale', (p) => {
-    // Follow `{colors.x}` references down to literal values, per colour mode.
-    const resolve = (ref: string, mode: string): string => {
-      const token = system.tokens.getByName(ref.replace(/^\{|\}$/g, '').replace(/^(?!colors\.)/, 'colors.'))
-      const conditions = token?.extensions?.conditions as Record<string, string> | undefined
-      const raw = conditions ? (conditions[mode] ?? conditions.base) : (token?.value as string)
-      return typeof raw === 'string' && raw.startsWith('{') ? resolve(raw, mode) : String(raw)
-    }
     for (const slot of ['solid', 'fg', 'subtle', 'muted', 'emphasized', 'focusRing', 'contrast', 'border', '500']) {
       for (const mode of ['_light', '_dark']) {
         const got = resolve(`${p}.${slot}`, mode)
@@ -48,7 +49,23 @@ describe('status palettes', () => {
     }
   })
 
-  it('defines the danger action text', () => {
-    expect(exists(system, 'danger.action')).toBe(true)
+  it.each([
+    ['success', 'success'],
+    ['warning', 'warning'],
+    ['error', 'error'],
+    ['info', 'info'],
+  ])("status.%s resolves to chakra's %s roles", (tone, role) => {
+    for (const mode of ['_light', '_dark']) {
+      expect(resolve(`status.${tone}.fg`, mode), `fg ${mode}`).not.toBe('undefined')
+      expect(resolve(`status.${tone}.fg`, mode), `fg ${mode}`).toBe(resolve(`fg.${role}`, mode))
+      expect(resolve(`status.${tone}.bg`, mode), `bg ${mode}`).toBe(resolve(`bg.${role}`, mode))
+      expect(resolve(`status.${tone}.border`, mode), `border ${mode}`).toBe(resolve(`border.${role}`, mode))
+    }
+  })
+
+  it('keeps the danger action text at red.600 in light mode and red.400 in dark mode', () => {
+    expect(resolve('danger.action', '_light')).toBe(resolve('red.600', '_light'))
+    expect(resolve('danger.action', '_dark')).toBe(resolve('red.400', '_dark'))
+    expect(resolve('danger.action', '_dark')).not.toBe(resolve('danger.action', '_light'))
   })
 })
