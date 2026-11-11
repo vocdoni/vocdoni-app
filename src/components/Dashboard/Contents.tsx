@@ -38,9 +38,7 @@ export const DashboardContents = (props: FlexProps) => (
   <Flex flexDirection='column' w='full' mx='auto' p={6} {...props} />
 )
 
-export const DashboardSection = (props: BoxProps) => (
-  <Box _light={{ bg: 'bg.subtle' }} _dark={{ bg: 'whiteAlpha.50' }} p={4} borderRadius='sm' {...props} />
-)
+export const DashboardSection = (props: BoxProps) => <Box bg='surface.sunken' p={4} borderRadius='sm' {...props} />
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref) => (
   <CHeading size='2xl' fontWeight='bold' display='flex' gap={2} alignItems='center' ref={ref} {...props} />
@@ -104,7 +102,7 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
     <Box
       height='100%'
       width={{ base: '100vw', md: 'sidebar' }}
-      bg='chakra.body.bg'
+      bg='surface.content'
       borderLeft='1px solid'
       borderColor='table.border'
       as='aside'

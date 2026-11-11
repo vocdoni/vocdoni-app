@@ -57,7 +57,7 @@ const SupportChatWidget = () => {
           py={2.5}
           borderRadius='xl'
           borderBottomRightRadius='sm'
-          boxShadow='lg'
+          boxShadow='shadow.floating'
           border='1px solid'
           borderColor='border'
           bg='bg.panel'
@@ -119,7 +119,7 @@ const SupportChatWidget = () => {
         w='52px'
         h='52px'
         borderRadius='full'
-        boxShadow='lg'
+        boxShadow='shadow.floating'
         aria-label={
           open
             ? t('support_chat.close_label', { defaultValue: 'Close support chat' })
