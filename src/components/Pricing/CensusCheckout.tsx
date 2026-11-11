@@ -1,4 +1,4 @@
-import { Alert, Button, Flex, Separator, Spinner, Text, VStack } from '@chakra-ui/react'
+import { Alert, Button, Card, Flex, Separator, Spinner, Text, VStack } from '@chakra-ui/react'
 import {
   BillingAddressElement,
   CheckoutElementsProvider,
@@ -339,7 +339,7 @@ export const CensusCheckout = ({
   }
 
   return (
-    <DashboardBox p={6}>
+    <DashboardBox size='md'>
       <DashboardCardHeader title={t('census.checkout.title', { defaultValue: 'Add voter places' })} />
       {renderBody()}
     </DashboardBox>
@@ -489,7 +489,7 @@ const CheckoutFormFields = ({
     <form onSubmit={handleSubmit}>
       <VStack align='stretch' gap={5}>
         {checkout.total && (
-          <VStack align='stretch' gap={3} p={5} borderWidth={1} borderRadius='md' bg='card.bg'>
+          <Card.Root variant='section' size='md' gap={3}>
             <Flex justify='space-between' gap={4}>
               <Text>{t('census.checkout.amount_net', { defaultValue: 'Places (VAT excluded)' })}</Text>
               <Text>{currency(amountCents, currencyCode)}</Text>
@@ -503,7 +503,7 @@ const CheckoutFormFields = ({
               <Text fontWeight='bold'>{t('wallet.topup.total', { defaultValue: 'Total' })}</Text>
               <Text fontWeight='bold'>{checkout.total.total.amount}</Text>
             </Flex>
-          </VStack>
+          </Card.Root>
         )}
 
         <BillingAddressElement options={{ display: { name: 'split' } }} />

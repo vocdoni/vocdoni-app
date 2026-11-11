@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Card,
   Flex,
   FieldRoot as FormControl,
   FieldLabel as FormLabel,
@@ -40,7 +41,7 @@ const OrganizationSupport = () => {
   }
 
   return (
-    <DashboardBox p={6}>
+    <DashboardBox size='md'>
       <SectionHeader>
         <SectionHeading>{t('organization_settings.support.title', { defaultValue: 'Support' })}</SectionHeading>
         <SectionSubHeading>
@@ -91,7 +92,7 @@ const SupportTicketForm = () => {
 
   return (
     <FormProvider {...methods}>
-      <Box as='form' p={6} borderWidth='1px' borderRadius='lg' onSubmit={handleSubmit(onSubmit)}>
+      <Card.Root as='form' variant='section' onSubmit={handleSubmit(onSubmit)}>
         <Heading size='md' mb={2}>
           {t('form.support.open_ticket', { defaultValue: 'Open a Support Ticket' })}
         </Heading>
@@ -121,7 +122,7 @@ const SupportTicketForm = () => {
             {t('form.support.submit_ticket', { defaultValue: 'Submit Ticket' })}
           </Button>
         </VStack>
-      </Box>
+      </Card.Root>
     </FormProvider>
   )
 }

@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   type ButtonProps,
+  Card,
   Checkbox,
   type DialogRootProps,
   Drawer,
@@ -18,7 +19,6 @@ import {
   Table,
   Tag,
   Text,
-  useBreakpointValue,
   useDisclosure,
   Wrap,
   WrapItem,
@@ -70,6 +70,7 @@ import {
   useUrlPagination,
 } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 import { MemberbaseTabsContext } from '..'
 import { TableColumn, useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
@@ -629,7 +630,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
                   />
                   <Box>
                     <Text mb={1}>{t('members.table.group_members', { defaultValue: 'Selected Members' })}</Text>
-                    <Box border='1px' borderColor='border' borderRadius='md' p={4}>
+                    <Box p={4}>
                       <Text fontSize='sm' mb={2}>
                         {t('members.table.group_members_count', {
                           defaultValue: '{{count}} members selected',
@@ -1074,7 +1075,7 @@ const MembersTable = () => {
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
   const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isPlaceholderData } =
     useTable()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
   const [searchParams] = useSearchParams()
   const goToFirstPage = useGoToFirstPage()
   const urlSort = parseMemberSort(searchParams)
@@ -1119,7 +1120,7 @@ const MembersTable = () => {
   return (
     <>
       <ImportProgress />
-      <Box border='1px solid' borderRadius='sm' borderColor='border'>
+      <Card.Root variant='frame'>
         <Flex direction={{ base: 'column', lg: 'row' }} p={4} gap={2}>
           <Flex direction='column' flex={1} gap={2}>
             <MemberFilters onDelete={openDeleteAll} />
@@ -1215,7 +1216,7 @@ const MembersTable = () => {
             </Table.Root>
           </Table.ScrollArea>
         )}
-      </Box>
+      </Card.Root>
       <DeleteMemberModal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)} mode={deleteMode} />
       <AddMembersToGroupDrawer isOpen={isAddToGroupOpen} onClose={onAddToGroupClose} />
       <AddMembersToCensusDrawer isOpen={isAddToCensusOpen} onClose={onAddToCensusClose} />

@@ -1,4 +1,17 @@
-import { Alert, Box, Button, Field, Flex, HStack, IconButton, Input, Separator, Text, VStack } from '@chakra-ui/react'
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  Field,
+  Flex,
+  HStack,
+  IconButton,
+  Input,
+  Separator,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
 import {
   BillingAddressElement,
   CheckoutElementsProvider,
@@ -162,7 +175,7 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
       <VStack align='stretch' gap={5}>
         <Flex justify='flex-start'>{backButton}</Flex>
 
-        <VStack align='stretch' gap={3} p={5} borderWidth={1} borderRadius='md' bg='card.bg'>
+        <Card.Root variant='section' size='md' gap={3}>
           <Flex justify='space-between'>
             <Text>{t('wallet.topup.amount_net', { defaultValue: 'Top-up (VAT excluded)' })}</Text>
             <Text>{currency(amountCents)}</Text>
@@ -180,7 +193,7 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
               </Flex>
             </>
           )}
-        </VStack>
+        </Card.Root>
 
         <BillingAddressElement options={{ display: { name: 'split' } }} />
         <TaxIdElement options={{ visibility: 'auto' }} />

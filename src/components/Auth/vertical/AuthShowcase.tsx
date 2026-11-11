@@ -45,7 +45,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
       // Clips the bleeding watermark, and rounds its own outer corners to match the card's radius —
       // the card can't clip for it without also clipping the form column's dropdown menus.
       overflow='hidden'
-      borderRightRadius='sm'
+      borderRightRadius='inherit'
       flexDirection='column'
       justifyContent='center'
       flex={{ md: '0 0 48%', lg: '0 0 54%' }}

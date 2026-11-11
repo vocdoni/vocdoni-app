@@ -103,7 +103,6 @@ const SidebarTutorial = () => {
       p={4}
       m={2}
       bgColor='bg'
-      borderColor='border'
     >
       <CloseButton
         onClick={() => closeSidebarTutorial()}

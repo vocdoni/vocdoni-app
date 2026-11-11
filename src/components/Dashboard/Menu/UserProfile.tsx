@@ -59,7 +59,7 @@ const UserProfile = () => {
           minW={0}
         >
           <Flex alignItems='center' gap={2} w='full'>
-            <Avatar.Root size='xs' borderRadius='full'>
+            <Avatar.Root size='xs'>
               {avatarSrc ? <Avatar.Image src={avatarSrc} /> : null}
               <Avatar.Fallback name={`${profile.firstName} ${profile.lastName}`} />
             </Avatar.Root>

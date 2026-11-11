@@ -1,4 +1,4 @@
-import { Alert, Button, Center, Code, Flex, Link, Spinner, Stack, Table, Text } from '@chakra-ui/react'
+import { Alert, Button, Card, Center, Code, Flex, Link, Spinner, Stack, Table, Text } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { WalletLedgerEntry, WalletLedgerKind } from '@vocdoni/api-types'
@@ -292,44 +292,48 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
           {history.length === 0 ? (
             <Text color='fg.muted'>{t('wallet.history.empty', { defaultValue: 'No movements yet.' })}</Text>
           ) : (
-            <Table.ScrollArea borderWidth='1px' borderRadius='md'>
-              <Table.Root variant='outline' interactive>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.ColumnHeader>{t('wallet.history.date', { defaultValue: 'Date' })}</Table.ColumnHeader>
-                    <Table.ColumnHeader>{t('wallet.history.kind', { defaultValue: 'Type' })}</Table.ColumnHeader>
-                    <Table.ColumnHeader>{t('wallet.history.detail', { defaultValue: 'Detail' })}</Table.ColumnHeader>
-                    <Table.ColumnHeader textAlign='end'>
-                      {t('wallet.history.amount', { defaultValue: 'Amount' })}
-                    </Table.ColumnHeader>
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {history.map((entry) => {
-                    const sign = entry.amountCents > 0 ? '+' : entry.amountCents < 0 ? '−' : ''
-                    const color = entry.amountCents > 0 ? 'fg.success' : entry.amountCents < 0 ? 'fg.error' : undefined
-                    return (
-                      <Table.Row key={entry.id}>
-                        <Table.Cell whiteSpace='nowrap'>
-                          {new Date(entry.createdAt).toLocaleString(i18n.resolvedLanguage, {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          })}
-                        </Table.Cell>
-                        <Table.Cell>{kindLabels[entry.kind] ?? entry.kind}</Table.Cell>
-                        <Table.Cell>
-                          <EntryDetail entry={entry} processLinks={processLinks} />
-                        </Table.Cell>
-                        <Table.Cell textAlign='end' whiteSpace='nowrap' color={color} fontWeight='medium'>
-                          {sign}
-                          {currency(Math.abs(entry.amountCents), currencyCode)}
-                        </Table.Cell>
-                      </Table.Row>
-                    )
-                  })}
-                </Table.Body>
-              </Table.Root>
-            </Table.ScrollArea>
+            // Hidden overflow keeps the table header's fill inside the rounded corners.
+            <Card.Root variant='frame' overflow='hidden'>
+              <Table.ScrollArea>
+                <Table.Root variant='outline' interactive>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.ColumnHeader>{t('wallet.history.date', { defaultValue: 'Date' })}</Table.ColumnHeader>
+                      <Table.ColumnHeader>{t('wallet.history.kind', { defaultValue: 'Type' })}</Table.ColumnHeader>
+                      <Table.ColumnHeader>{t('wallet.history.detail', { defaultValue: 'Detail' })}</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign='end'>
+                        {t('wallet.history.amount', { defaultValue: 'Amount' })}
+                      </Table.ColumnHeader>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
+                    {history.map((entry) => {
+                      const sign = entry.amountCents > 0 ? '+' : entry.amountCents < 0 ? '−' : ''
+                      const color =
+                        entry.amountCents > 0 ? 'fg.success' : entry.amountCents < 0 ? 'fg.error' : undefined
+                      return (
+                        <Table.Row key={entry.id}>
+                          <Table.Cell whiteSpace='nowrap'>
+                            {new Date(entry.createdAt).toLocaleString(i18n.resolvedLanguage, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            })}
+                          </Table.Cell>
+                          <Table.Cell>{kindLabels[entry.kind] ?? entry.kind}</Table.Cell>
+                          <Table.Cell>
+                            <EntryDetail entry={entry} processLinks={processLinks} />
+                          </Table.Cell>
+                          <Table.Cell textAlign='end' whiteSpace='nowrap' color={color} fontWeight='medium'>
+                            {sign}
+                            {currency(Math.abs(entry.amountCents), currencyCode)}
+                          </Table.Cell>
+                        </Table.Row>
+                      )
+                    })}
+                  </Table.Body>
+                </Table.Root>
+              </Table.ScrollArea>
+            </Card.Root>
           )}
 
           {pagination && pagination.lastPage > 1 && (
@@ -364,7 +368,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
       )}
 
       {view === 'topup' ? (
-        <DashboardBox p={6}>
+        <DashboardBox size='md'>
           <DashboardCardHeader title={t('wallet.topup.title', { defaultValue: 'Top up your wallet' })} />
           <WalletTopUp onStart={handleTopUpStart} onDone={handleTopUpDone} onCancel={() => setView('overview')} />
         </DashboardBox>
