@@ -1,7 +1,6 @@
 import {
   AlertRoot as Alert,
   AlertDescription,
-  Badge,
   Box,
   FieldErrorText,
   FieldLabel,
@@ -21,6 +20,7 @@ import { LuCheck, LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { useToast } from '~components/Toast'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { Routes } from '~routes'
 import { Group, useGroup, useGroups } from '~src/queries/groups'
@@ -71,17 +71,21 @@ export const CensusStatusBadge = () => {
   const { stepsLeft } = useCensusSteps()
 
   if (!stepsLeft) {
-    return <Badge colorPalette='success'>{t('process_create.census.status.ready', { defaultValue: 'Ready' })}</Badge>
+    return (
+      <StatusBadge colorPalette='success'>
+        {t('process_create.census.status.ready', { defaultValue: 'Ready' })}
+      </StatusBadge>
+    )
   }
 
   return (
-    <Badge colorPalette='warning'>
+    <StatusBadge colorPalette='warning'>
       {t('process_create.census.status.steps_left', {
         defaultValue_one: '{{ count }} step left',
         defaultValue_other: '{{ count }} steps left',
         count: stepsLeft,
       })}
-    </Badge>
+    </StatusBadge>
   )
 }
 

@@ -2,13 +2,14 @@ import { Badge, Box, Card, Flex, Heading, HStack, Image, Link, Progress, Text, V
 import { useTranslation } from 'react-i18next'
 import { LuExternalLink } from 'react-icons/lu'
 import Editor from '~components/Editor'
+import { StatusBadge, type StatusBadgeColor } from '~components/ui/StatusBadge'
 import { useDateFns } from '~i18n/use-date-fns'
 import { useAppEnv } from '~src/app-env'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
 import type { LegacyElection, LegacyElectionStatus } from '~src/legacy/vochain-archive'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 
-const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
+const ElectionStatus = ({ status }: { status: LegacyElectionStatus }) => {
   const { t } = useTranslation()
 
   const labels: Record<LegacyElectionStatus, string> = {
@@ -20,14 +21,14 @@ const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
     RESULTS: t('process.status.results', { defaultValue: 'Results available' }),
     PROCESS_UNKNOWN: t('process.status.unknown', { defaultValue: 'Unknown' }),
   }
-  const palettes: Partial<Record<LegacyElectionStatus, string>> = {
+  const palettes: Partial<Record<LegacyElectionStatus, StatusBadgeColor>> = {
     ONGOING: 'success',
     RESULTS: 'success',
     CANCELED: 'danger',
     PAUSED: 'warning',
   }
 
-  return <Badge colorPalette={palettes[status] ?? 'gray'}>{labels[status]}</Badge>
+  return <StatusBadge colorPalette={palettes[status] ?? 'gray'}>{labels[status]}</StatusBadge>
 }
 
 /**
@@ -51,7 +52,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
 
       <Box>
         <HStack mb={2} gap={2} flexWrap='wrap'>
-          <StatusBadge status={election.status} />
+          <ElectionStatus status={election.status} />
           {election.secretUntilTheEnd && !election.resultsAvailable && (
             <Badge>{t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })}</Badge>
           )}

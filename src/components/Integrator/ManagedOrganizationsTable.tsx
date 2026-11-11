@@ -1,7 +1,8 @@
-import { Badge, Button, Code, Stack, Table, Text } from '@chakra-ui/react'
+import { Button, Code, Stack, Table, Text } from '@chakra-ui/react'
 import { Fragment, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { EditSpendCapDialog } from '~components/Integrator/EditSpendCapDialog'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { ManagedOrganizationRow } from '~src/queries/integrators'
 import { shortAddress } from '~utils/address'
 import { currency } from '~utils/numbers'
@@ -94,9 +95,9 @@ export const ManagedOrganizationsTable = ({ organizations, canEditCaps = false }
                             : currency(org.spendCapCents)}
                         </Text>
                         {capReached && (
-                          <Badge colorPalette='warning' variant='subtle'>
+                          <StatusBadge colorPalette='warning'>
                             {t('integrators.managed.cap_reached', { defaultValue: 'Cap reached' })}
-                          </Badge>
+                          </StatusBadge>
                         )}
                       </Stack>
                     </Table.Cell>

@@ -1,6 +1,7 @@
-import { Badge, Box, HStack, Progress, Text } from '@chakra-ui/react'
+import { Box, HStack, Progress, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { DashboardBox } from '~components/Dashboard/Contents'
+import { StatusBadge } from '~components/ui/StatusBadge'
 
 export type QuotaCardProps = {
   label: string
@@ -43,9 +44,9 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
       </Progress.Root>
       <Box minH='22px'>
         {atLimit && (
-          <Badge colorPalette='danger' variant='subtle'>
+          <StatusBadge colorPalette='danger' variant='subtle'>
             {t('integrators.quota.limit_reached', { defaultValue: 'Limit reached' })}
-          </Badge>
+          </StatusBadge>
         )}
       </Box>
     </DashboardBox>

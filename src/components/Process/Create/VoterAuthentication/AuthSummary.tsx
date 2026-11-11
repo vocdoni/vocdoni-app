@@ -1,9 +1,10 @@
-import { Badge, Box, HStack, Icon, Stack, Text } from '@chakra-ui/react'
+import { Box, HStack, Icon, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
 import type { IconType } from 'react-icons'
 import { useTranslation } from 'react-i18next'
 import { LuIdCard, LuKeyRound, LuMail, LuMessagesSquare, LuSmartphone, LuTriangleAlert, LuUnlink } from 'react-icons/lu'
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { Census } from '../common'
 import { getProtectionLevel, getProtectionLevelTitle, protectionLevelPalettes } from './ProtectionLevel'
@@ -47,7 +48,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
     <Box p={4} borderWidth='1px' borderColor='border' borderRadius='md'>
       <HStack justify='space-between' mb={3}>
         <Text fontWeight='semibold'>{t('voter_auth.summary.title', { defaultValue: 'Voter sign-in' })}</Text>
-        <Badge colorPalette={protectionLevelPalettes[level]}>{getProtectionLevelTitle(t, level)}</Badge>
+        <StatusBadge colorPalette={protectionLevelPalettes[level]}>{getProtectionLevelTitle(t, level)}</StatusBadge>
       </HStack>
       <Stack gap={2} fontSize='sm'>
         {credentials.length > 0 && (
