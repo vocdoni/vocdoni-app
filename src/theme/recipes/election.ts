@@ -53,7 +53,7 @@ export const ElectionTitle = defineRecipe({
       row: {
         fontSize: 'md',
         textAlign: 'left',
-        fontWeight: '500',
+        fontWeight: 'bold',
         mb: 0,
         truncate: true,
       },
