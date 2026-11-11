@@ -707,7 +707,9 @@ const UsersList = ({ users }: UsersListProps) => {
 
         return (
           <Flex alignItems='center' p={2} key={i}>
-            <Avatar.Root>{!isActive ? <Avatar.Icon as={MailIcon} /> : <Avatar.Fallback name={avatarName} />}</Avatar.Root>
+            <Avatar.Root>
+              {!isActive ? <Avatar.Icon as={MailIcon} /> : <Avatar.Fallback name={avatarName} />}
+            </Avatar.Root>
             <Box ml='3'>
               <HStack align='center'>
                 <Text fontWeight='bold'>{name}</Text>
