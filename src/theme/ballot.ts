@@ -39,17 +39,17 @@ export const ballotColors = defineSemanticTokens.colors({
       value: '{colors.gray.400}',
     },
     error: {
-      value: '{colors.red.500}',
+      value: '{colors.danger.500}',
     },
     balance: {
       success: {
-        value: '{colors.green.500}',
+        value: '{colors.success.500}',
       },
       warning: {
-        value: '{colors.orange.500}',
+        value: '{colors.warning.500}',
       },
       error: {
-        value: '{colors.red.500}',
+        value: '{colors.danger.500}',
       },
     },
   },
