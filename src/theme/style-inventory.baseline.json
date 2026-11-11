@@ -10,8 +10,10 @@
     "src/components/ui/EmptyState.tsx": 1,
     "src/elements/LayoutAuth.tsx": 1,
     "src/elements/LayoutIntegratorsAuth.tsx": 1,
+    "src/theme/charts.ts": 2,
     "src/theme/editor.ts": 1,
-    "src/theme/react-components/election.tsx": 2
+    "src/theme/react-components/election.tsx": 2,
+    "src/theme/states.ts": 8
   },
   "deprecatedAlias": {},
   "hex": {
