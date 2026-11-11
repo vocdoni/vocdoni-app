@@ -20,12 +20,7 @@ export const useStripePromise = (): Promise<Stripe | null> | null => {
   return stripePromise
 }
 
-// Chakra v3 semantic tokens reference raw scale steps through var() chains; resolve them
-// by following the chain up to `depth` levels until a concrete value is reached.
-// The app's Inter font is bundled by Vite with hashed filenames and has no stable URL for
-// Stripe iframes to load via cssSrc — the system font stack is used instead, with Inter
-// first so it applies when the browser already has it cached.
-// Exported for tests.
+// A theme CSS variable's value, following var() chains (semantic tokens point at scale steps); '' if unset
 export const resolveCssVar = (varName: string, depth = 3): string => {
   if (typeof document === 'undefined' || depth === 0) return ''
   const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim()
@@ -38,36 +33,36 @@ export const resolveCssVar = (varName: string, depth = 3): string => {
 }
 
 /**
- * Returns the full Stripe Checkout Elements options (appearance + other settings) derived
- * from the app's theme at the moment the checkout renders. Shared by the publish dialog's
- * card step, the wallet top-up and the census checkout, so all Stripe surfaces look the same.
- *
- * P15: `savedPaymentMethod.enableSave: 'never'` removes Stripe's "Save my information for
- * faster checkout" block, which is a supported client-side option in elementsOptions.
+ * The Stripe Elements options of every checkout (publish card step, wallet top-up, census checkout),
+ * so they all wear the app's theme. Stripe's iframes cannot read the page's CSS variables, so their
+ * values are read here. The font is named but not loaded into the iframes: Vite hashes the font
+ * files, so there is no stable URL to hand Stripe.
  */
 export const useCheckoutAppearance = (): StripeCheckoutElementsOptions => {
   const { colorMode } = useColorMode()
-  const v = resolveCssVar
+  const themed = Object.entries({
+    colorPrimary: '--chakra-colors-brand-fg',
+    colorText: '--chakra-colors-fg',
+    colorTextSecondary: '--chakra-colors-fg-muted',
+    colorDanger: '--chakra-colors-fg-error',
+    borderRadius: '--chakra-radii-l3',
+    fontFamily: '--chakra-fonts-body',
+    fontSizeBase: '--chakra-font-sizes-sm',
+  })
+    .map(([name, cssVar]) => [name, resolveCssVar(cssVar)])
+    // An unset variable is left to Stripe's theme rather than sent empty
+    .filter(([, value]) => value)
 
   const appearance: Appearance = {
     theme: colorMode === 'dark' ? ('night' as const) : ('stripe' as const),
     variables: {
-      // Stripe iframes cannot read the page's CSS vars; read them here and pass the resolved values
+      // Raw values mirror the `bg` token
       colorBackground: colorMode === 'dark' ? '#0a0a0a' : 'white',
-      colorPrimary: v('--chakra-colors-brand-fg'),
-      colorText: v('--chakra-colors-fg'),
-      colorTextSecondary: v('--chakra-colors-fg-muted'),
-      colorDanger: v('--chakra-colors-fg-error'),
-      borderRadius: v('--chakra-radii-l3'),
-      fontFamily: v('--chakra-fonts-body'),
-      fontSizeBase: v('--chakra-font-sizes-sm'),
+      ...Object.fromEntries(themed),
     },
   }
 
-  return {
-    appearance,
-    savedPaymentMethod: { enableSave: 'never' },
-  }
+  return { appearance }
 }
 
 // Base for a redirect-based payment's return URL: the current page without query or hash, with

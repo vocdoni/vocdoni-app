@@ -45,12 +45,13 @@ describe('useCheckoutAppearance', () => {
     }
   })
 
-  it('disables Stripe "Save my information for faster checkout" (P15)', () => {
-    const result = useCheckoutAppearance()
-    expect(result.savedPaymentMethod).toEqual({ enableSave: 'never' })
+  it('leaves an unset theme variable to Stripe instead of sending it empty', () => {
+    const { appearance } = useCheckoutAppearance()
+    expect(appearance?.variables).not.toHaveProperty('colorPrimary')
+    expect(appearance?.variables?.colorBackground).toBe('white')
   })
 
-  it('reads appearance variables from the theme CSS custom properties (P3)', () => {
+  it('reads appearance variables from the theme CSS custom properties', () => {
     document.documentElement.style.setProperty('--chakra-radii-l3', '8px')
     document.documentElement.style.setProperty('--chakra-fonts-body', '"Inter", sans-serif')
     document.documentElement.style.setProperty('--chakra-font-sizes-sm', '0.875rem')
