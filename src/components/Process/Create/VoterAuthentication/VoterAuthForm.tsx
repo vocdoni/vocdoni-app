@@ -341,7 +341,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                     onValueChange={({ value }) => field.onChange(value)}
                     aria-describedby='voter-auth-code-help'
                   >
-                    <RadioCard.Label fontSize='sm'>
+                    <RadioCard.Label fontSize='sm' fontWeight='semibold'>
                       {t('voter_auth.code.heading', { defaultValue: '2. Also send a one-time code?' })}
                     </RadioCard.Label>
                     <Text id='voter-auth-code-help' fontSize='sm' color='fg.muted' mt={1} mb={3}>
