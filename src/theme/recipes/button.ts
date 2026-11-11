@@ -130,7 +130,7 @@ const disclosure = defineStyle({
 // Ghost button for an action that deletes or ends something (revoke a key).
 const danger = defineStyle({
   ...stock.ghost,
-  color: 'destructive.fg',
+  color: 'danger.action',
 })
 
 // Round launcher pinned to a corner of the viewport (support chat).
