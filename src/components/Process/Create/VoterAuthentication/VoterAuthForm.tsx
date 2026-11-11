@@ -317,9 +317,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                             <CheckboxCard.HiddenInput />
                             <CheckboxCard.Control px={3} py={2} gap={2} alignItems='center'>
                               <CheckboxCard.Indicator />
-                              <CheckboxCard.Label fontSize='sm' fontWeight='normal'>
-                                {getAuthFieldLabel(t, id)}
-                              </CheckboxCard.Label>
+                              <CheckboxCard.Label fontSize='sm'>{getAuthFieldLabel(t, id)}</CheckboxCard.Label>
                             </CheckboxCard.Control>
                           </CheckboxCard.Root>
                         )

@@ -485,7 +485,7 @@ const ProcessViewSidebar = () => {
             <Box display='flex' justifyContent='space-between' w='full'>
               <Box display='flex' gap={2} alignItems='center'>
                 <Icon as={LuVote} />
-                <Text textTransform='capitalize'>
+                <Text>
                   <Trans i18nKey='total_votes'>Total votes</Trans>
                 </Text>
               </Box>
@@ -590,7 +590,7 @@ const SettingsField = ({
   tooltip?: string
 }) => {
   const label = (
-    <Text fontSize='sm' fontWeight='bold' textTransform='capitalize'>
+    <Text fontSize='sm' fontWeight='bold'>
       {text}
       {tooltip && <Icon as={LuInfo} ms={1} />}
     </Text>
