@@ -339,7 +339,7 @@ export const CensusCheckout = ({
   }
 
   return (
-    <DashboardBox p={6}>
+    <DashboardBox size='md'>
       <DashboardCardHeader title={t('census.checkout.title', { defaultValue: 'Add voter places' })} />
       {renderBody()}
     </DashboardBox>

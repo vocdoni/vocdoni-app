@@ -368,7 +368,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
       )}
 
       {view === 'topup' ? (
-        <DashboardBox p={6}>
+        <DashboardBox size='md'>
           <DashboardCardHeader title={t('wallet.topup.title', { defaultValue: 'Top up your wallet' })} />
           <WalletTopUp onStart={handleTopUpStart} onDone={handleTopUpDone} onCancel={() => setView('overview')} />
         </DashboardBox>

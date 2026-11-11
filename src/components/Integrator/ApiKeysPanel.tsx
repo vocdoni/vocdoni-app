@@ -20,7 +20,6 @@ import { useTranslation } from 'react-i18next'
 import { LuTrash2 } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { DashboardBox } from '~components/Dashboard/Contents'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
 import { StatusBadge, type StatusBadgeColor } from '~components/ui/StatusBadge'
@@ -73,7 +72,7 @@ const ApiKeyCard = ({
   const { t } = useTranslation()
 
   return (
-    <DashboardBox gap={3} justifyContent='flex-start' flexWrap='nowrap'>
+    <Card.Root variant='list-item' gap={3} justifyContent='flex-start' flexWrap='nowrap'>
       <Flex align='center' gap={2}>
         <Text fontWeight='bold' truncate>
           {k.label}
@@ -116,7 +115,7 @@ const ApiKeyCard = ({
           </Box>
         </SimpleGrid>
       </Box>
-    </DashboardBox>
+    </Card.Root>
   )
 }
 
