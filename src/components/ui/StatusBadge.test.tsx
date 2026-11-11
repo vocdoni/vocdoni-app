@@ -13,15 +13,18 @@ describe('StatusBadge', () => {
     expect(screen.getByText('Active')).toBeInTheDocument()
   })
 
-  it.each<StatusBadgeColor>(['success', 'warning', 'danger', 'info', 'gray'])('paints the %s palette', (colorPalette) => {
-    render(<StatusBadge colorPalette={colorPalette}>Label</StatusBadge>)
-    const chip = screen.getByText('Label').parentElement as HTMLElement
+  it.each<StatusBadgeColor>(['success', 'warning', 'danger', 'info', 'gray'])(
+    'paints the %s palette',
+    (colorPalette) => {
+      render(<StatusBadge colorPalette={colorPalette}>Label</StatusBadge>)
+      const chip = screen.getByText('Label').parentElement as HTMLElement
 
-    const painted = Array.from(chip.classList).some((name) =>
-      new RegExp(`\\.${name}[^{]*\\{[^}]*--chakra-colors-${colorPalette}-`).test(emotionCss())
-    )
-    expect(painted).toBe(true)
-  })
+      const painted = Array.from(chip.classList).some((name) =>
+        new RegExp(`\\.${name}[^{]*\\{[^}]*--chakra-colors-${colorPalette}-`).test(emotionCss())
+      )
+      expect(painted).toBe(true)
+    }
+  )
 
   it('keeps a trailing icon outside the clamped label', () => {
     render(
