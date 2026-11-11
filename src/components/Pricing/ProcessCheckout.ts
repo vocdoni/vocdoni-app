@@ -118,7 +118,13 @@ type UseProcessCheckoutOptions = {
  * Publish, top up and publish (vocdoni-app#1767), and wait for the outcome. It waits for the backend
  * to publish: a browser success proves nothing.
  */
-export const useProcessCheckout = ({ processId, start, canTopUp, onPublished, successMs }: UseProcessCheckoutOptions) => {
+export const useProcessCheckout = ({
+  processId,
+  start,
+  canTopUp,
+  onPublished,
+  successMs,
+}: UseProcessCheckoutOptions) => {
   const { t, i18n } = useTranslation()
   const { client } = useApiClient()
   const checkoutApi = useProcessCheckoutApi()
