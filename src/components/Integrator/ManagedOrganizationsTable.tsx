@@ -3,6 +3,7 @@ import { Fragment, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { EditSpendCapDialog } from '~components/Integrator/EditSpendCapDialog'
 import { ManagedOrganizationRow } from '~src/queries/integrators'
+import { statusPalette } from '~theme/status'
 import { shortAddress } from '~utils/address'
 import { currency } from '~utils/numbers'
 
@@ -94,7 +95,7 @@ export const ManagedOrganizationsTable = ({ organizations, canEditCaps = false }
                             : currency(org.spendCapCents)}
                         </Text>
                         {capReached && (
-                          <Badge colorPalette='orange' variant='subtle'>
+                          <Badge colorPalette={statusPalette.warning} variant='subtle'>
                             {t('integrators.managed.cap_reached', { defaultValue: 'Cap reached' })}
                           </Badge>
                         )}

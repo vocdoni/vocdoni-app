@@ -286,7 +286,7 @@ const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps)
             <LuArrowLeft />
           </IconButton>
         </Flex>
-        <Box color='red.500' textAlign='center'>
+        <Box color='status.error.fg' textAlign='center'>
           {t('payment.stripe_unavailable', {
             defaultValue: 'Payments are temporarily unavailable. Please try again later.',
           })}
