@@ -47,18 +47,6 @@ export type StyleException = {
 // Hardcoded styling that is intentional. Every entry needs a reason.
 export const STYLE_EXCEPTIONS: readonly StyleException[] = [
   {
-    glob: 'src/components/Layout/Footer.tsx',
-    categories: ['colorModeLogic'],
-    match: /^_dark=\{\{ filter: 'invert\(\d+%\)' \}\}$/,
-    reason: 'dark artwork in an image (Vocdoni logo) that colour tokens cannot recolour',
-  },
-  {
-    glob: 'src/components/Layout/Logo.tsx',
-    categories: ['colorModeLogic'],
-    match: /^_dark=\{\{ filter: 'invert\(\d+%\)' \}\}$/,
-    reason: 'dark artwork in an image (Vocdoni logo) that colour tokens cannot recolour',
-  },
-  {
     glob: 'src/components/Layout/Logo.tsx',
     categories: ['colorModeLogic'],
     match: /^_dark=\{\{ bgColor: 'auth\.logo\.tile\.bg'/,
