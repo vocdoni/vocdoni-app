@@ -71,7 +71,7 @@ const WalletCoverage = ({ totalCents }: { totalCents: number }) => {
 
   if (balanceCents >= totalCents) {
     return (
-      <Text color='texts.subtle' fontSize='xs'>
+      <Text color='fg.muted' fontSize='xs'>
         {t('process.price.wallet_covers', {
           defaultValue: 'Your wallet balance ({{balance}}) covers this total: publishing pays it from your wallet.',
           balance: currency(balanceCents, currencyCode),
@@ -81,7 +81,7 @@ const WalletCoverage = ({ totalCents }: { totalCents: number }) => {
   }
 
   return (
-    <Text color='texts.subtle' fontSize='xs'>
+    <Text color='fg.muted' fontSize='xs'>
       {t('process.price.wallet_short', {
         defaultValue: 'Your wallet has {{balance}}, {{shortfall}} short of this total.',
         balance: currency(balanceCents, currencyCode),
@@ -114,7 +114,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
   if (error && !isUnpriceableDraft(error)) {
     return (
       <Stack gap={2} align='flex-start'>
-        <Text fontSize='sm' color='texts.subtle'>
+        <Text fontSize='sm' color='fg.muted'>
           <Trans i18nKey='process.price.error'>The price could not be loaded.</Trans>
         </Text>
         <Button size='xs' variant='outline' onClick={() => refetch()} loading={isFetching}>
@@ -126,7 +126,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
 
   if (!price) {
     return (
-      <Text fontSize='sm' color='texts.subtle'>
+      <Text fontSize='sm' color='fg.muted'>
         <Trans i18nKey='process.price.unavailable'>
           The price shows up here once the draft is saved with its voters and their authentication set up.
         </Trans>
@@ -149,7 +149,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
         </Flex>
       ))}
       {!quoteOnly && (
-        <Flex justify='space-between' gap={2} borderTop='1px solid' borderColor='table.border' pt={2}>
+        <Flex justify='space-between' gap={2} borderTop='1px solid' borderColor='border' pt={2}>
           <Text fontWeight='bold'>
             <Trans i18nKey='process.price.total'>Total</Trans>
           </Text>
@@ -158,7 +158,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
           </Text>
         </Flex>
       )}
-      <Text color='texts.subtle' fontSize='xs'>
+      <Text color='fg.muted' fontSize='xs'>
         {priceNote(t, price)}
       </Text>
       {walletPays && <WalletCoverage totalCents={price.totalCents} />}

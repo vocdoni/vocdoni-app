@@ -74,7 +74,7 @@ type WalletPanelProps = {
 }
 
 const EntryDetail = ({ entry, processLinks }: { entry: WalletLedgerEntry } & WalletPanelProps) => {
-  if (!entry.processId && !entry.processOrgAddress) return <Text color='texts.subtle'>-</Text>
+  if (!entry.processId && !entry.processOrgAddress) return <Text color='fg.muted'>-</Text>
 
   return (
     <Stack gap={0.5}>
@@ -89,7 +89,7 @@ const EntryDetail = ({ entry, processLinks }: { entry: WalletLedgerEntry } & Wal
           <Code title={entry.processId}>{shortAddress(entry.processId)}</Code>
         ))}
       {entry.processOrgAddress && (
-        <Code fontSize='xs' color='texts.subtle' title={entry.processOrgAddress}>
+        <Code fontSize='xs' color='fg.muted' title={entry.processOrgAddress}>
           {shortAddress(entry.processOrgAddress)}
         </Code>
       )}
@@ -252,7 +252,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
         <DashboardBox>
           <Flex justify='space-between' align='flex-start' gap={4} wrap='wrap'>
             <Stack gap={1}>
-              <Text fontSize='sm' color='texts.subtle' fontWeight='medium'>
+              <Text fontSize='sm' color='fg.muted' fontWeight='medium'>
                 {t('wallet.balance', { defaultValue: 'Balance' })}
               </Text>
               <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
@@ -263,13 +263,13 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
               <Button onClick={() => setView('topup')}>{t('wallet.topup.open', { defaultValue: 'Top up' })}</Button>
             )}
           </Flex>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text fontSize='sm' color='fg.muted'>
             {t('wallet.balance_note', {
               defaultValue: 'Prepaid credit, VAT excluded. Publishing a paid voting process is charged from it.',
             })}
           </Text>
           {!canTopUp && (
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text fontSize='sm' color='fg.muted'>
               {t('wallet.topup.admin_only', { defaultValue: 'Only admins can top up the wallet.' })}
             </Text>
           )}
@@ -290,7 +290,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
         <Flex direction='column' gap={4}>
           <DashboardCardHeader title={t('wallet.history.title', { defaultValue: 'Movements' })} />
           {history.length === 0 ? (
-            <Text color='texts.subtle'>{t('wallet.history.empty', { defaultValue: 'No movements yet.' })}</Text>
+            <Text color='fg.muted'>{t('wallet.history.empty', { defaultValue: 'No movements yet.' })}</Text>
           ) : (
             <Table.ScrollArea borderWidth='1px' borderRadius='md'>
               <Table.Root variant='outline' interactive>

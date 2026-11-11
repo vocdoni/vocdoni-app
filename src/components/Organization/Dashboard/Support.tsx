@@ -178,7 +178,7 @@ const PhoneSupportCard = () => {
             <Text fontSize='lg' fontWeight='bold'>
               {prioritySupportPhone}
             </Text>
-            <Text fontSize='sm' color='texts.dark'>
+            <Text fontSize='sm' color='fg.muted'>
               {t('organization_settings.phone_support.priority_support_line_description', {
                 defaultValue: 'Available Monday–Friday, 9:00–18:00 CET',
               })}
@@ -207,10 +207,10 @@ const PhoneSupportCard = () => {
                 defaultValue: 'Your Organization ID',
               })}
             </Text>
-            <Text fontFamily='mono' color='texts.subtle'>
+            <Text fontFamily='mono' color='fg.muted'>
               {organization.address ?? ''}
             </Text>
-            <Text fontSize='sm' color='texts.dark'>
+            <Text fontSize='sm' color='fg.muted'>
               {t('organization_settings.phone_support.organization_id_description', {
                 defaultValue: 'Please provide this ID when contacting support',
               })}
@@ -221,7 +221,7 @@ const PhoneSupportCard = () => {
 
       <Flex align='center' mb={6}>
         <Icon as={LuInfo} boxSize={4} mr={2} />
-        <Text fontSize='sm' color='texts.dark'>
+        <Text fontSize='sm' color='fg.muted'>
           {t('organization_settings.phone_support.info', {
             defaultValue: 'Please have your organization ID ready when calling.',
           })}

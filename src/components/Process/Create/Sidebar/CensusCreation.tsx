@@ -90,7 +90,7 @@ export const formatGroupOptionLabel = (group: Group, { context }: GroupOptionLab
   return (
     <HStack gap={4} align='center' justifyContent='space-between' w='full'>
       <Text as='span'>{group.title}</Text>
-      <HStack gap={1.5} color='texts.subtle' fontSize='sm' flexShrink={0}>
+      <HStack gap={1.5} color='fg.muted' fontSize='sm' flexShrink={0}>
         <LuUsers />
         <Text as='span'>{group.membersCount || 0}</Text>
       </HStack>
@@ -244,7 +244,7 @@ const GroupCensusCreation = () => {
       )}
 
       {(!groups || groups?.length === 0) && (
-        <Alert status='warning' fontSize='xs' color='texts.subtle'>
+        <Alert status='warning' fontSize='xs' color='fg.muted'>
           <AlertDescription>
             <Trans i18nKey='process_create.census.group.no_groups'>
               To start a vote, you first need to create a group of eligible voters from your memberbase.

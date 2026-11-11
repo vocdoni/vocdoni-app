@@ -8,7 +8,7 @@ export const OrganizationName = defineRecipe({
 
 export const OrganizationDescription = defineRecipe({
   base: {
-    color: 'texts.subtle',
+    color: 'fg.muted',
   },
 })
 

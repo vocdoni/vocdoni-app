@@ -306,7 +306,7 @@ export const CensusCheckout = ({
                   })}
             </Text>
             {balanceCents !== undefined && (
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('census.checkout.balance', {
                   defaultValue: 'Your wallet has {{balance}}.',
                   balance: currency(balanceCents, currencyCode),
@@ -314,7 +314,7 @@ export const CensusCheckout = ({
               </Text>
             )}
             {shortfallCents !== undefined && (
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('census.checkout.shortfall', {
                   defaultValue: 'Your wallet is {{shortfall}} short.',
                   shortfall: currency(shortfallCents, currencyCode),
@@ -329,7 +329,7 @@ export const CensusCheckout = ({
                 </Button>
               </Flex>
             ) : (
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text fontSize='sm' color='fg.muted'>
                 {t('census.checkout.admin_only', { defaultValue: 'Only admins can add voter places.' })}
               </Text>
             )}

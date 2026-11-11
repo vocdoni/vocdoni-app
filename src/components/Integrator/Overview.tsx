@@ -87,14 +87,14 @@ export const IntegratorOverview = () => {
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
         {canView && wallet.data && (
           <DashboardBox gap={3} justifyContent='flex-start'>
-            <Text fontSize='sm' color='texts.subtle' fontWeight='medium'>
+            <Text fontSize='sm' color='fg.muted' fontWeight='medium'>
               {t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}
             </Text>
             <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
               {currency(wallet.data.balanceCents, wallet.data.currency?.toUpperCase())}
             </Text>
             <Box minH='22px'>
-              <Link asChild fontSize='sm' fontWeight='bold' color='texts.subtle'>
+              <Link asChild fontSize='sm' fontWeight='bold' color='fg.muted'>
                 <RouterLink to={Routes.integrators.configuration.billing}>
                   {t('integrators.wallet.manage', { defaultValue: 'Manage wallet' })}
                 </RouterLink>

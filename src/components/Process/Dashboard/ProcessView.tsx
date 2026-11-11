@@ -190,7 +190,7 @@ const ProcessViewContent = () => {
   // The questions and results render through the ballot type, which cannot be inferred for some
   // legacy processes: such a section degrades on its own instead of taking the page down.
   const sectionFallback = (
-    <Text color='texts.subtle'>{t('error.loading_section', { defaultValue: 'This section could not be loaded' })}</Text>
+    <Text color='fg.muted'>{t('error.loading_section', { defaultValue: 'This section could not be loaded' })}</Text>
   )
 
   return (
@@ -223,7 +223,7 @@ const ProcessViewContent = () => {
           <Box as='header'>
             <ElectionTitle textAlign={'start'} fontWeight={'bold'} />
             <ElectionVideo mb='3' maxW='4xl' />
-            <ElectionDescription color='texts.subtle' />
+            <ElectionDescription color='fg.muted' />
           </Box>
 
           {/* Schedule */}
@@ -281,7 +281,7 @@ const ProcessViewContent = () => {
                 <Icon as={LuExternalLink} />
                 <Trans i18nKey='voting_link.title'>Voting Link</Trans>
               </Heading>
-              <Text color='texts.subtle' fontSize='sm'>
+              <Text color='fg.muted' fontSize='sm'>
                 <Trans i18nKey='voting_link.description'>
                   Share this link with your voters to participate in the voting process
                 </Trans>
@@ -325,7 +325,7 @@ const ProcessViewContent = () => {
               </TabsList>
               <TabsContentGroup mt={6}>
                 <TabsContent value='questions' p={0}>
-                  <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+                  <Box p={6} border='1px solid' borderColor='border' borderRadius='md'>
                     <ErrorBoundary fallback={sectionFallback} resetKeys={[election]}>
                       <ElectionQuestions />
                     </ErrorBoundary>
@@ -333,7 +333,7 @@ const ProcessViewContent = () => {
                 </TabsContent>
                 {showResultsTab && (
                   <TabsContent value='results' p={0}>
-                    <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+                    <Box p={6} border='1px solid' borderColor='border' borderRadius='md'>
                       <ErrorBoundary fallback={sectionFallback} resetKeys={[election, results]}>
                         <ElectionResults />
                       </ErrorBoundary>
@@ -421,7 +421,7 @@ const ProcessViewSidebar = () => {
 
   return (
     <Sidebar show={showSidebar}>
-      <SidebarContents borderBottom='1px solid' borderColor='table.border'>
+      <SidebarContents borderBottom='1px solid' borderColor='border'>
         <SidebarTitle>
           <Trans i18nKey='vote_information'>Vote information</Trans>
         </SidebarTitle>
@@ -491,7 +491,7 @@ const ProcessViewSidebar = () => {
               </Box>
               <Text fontWeight='bold'>{voteCount}</Text>
             </Box>
-            <Box pb={6} borderBottom='1px solid' borderColor='table.border'>
+            <Box pb={6} borderBottom='1px solid' borderColor='border'>
               <Box display='flex' w='full' justifyContent='space-between' alignItems='center' fontSize='xs' mb={1}>
                 <Box>
                   <Trans i18nKey='turnout'>Turnout</Trans>
@@ -621,7 +621,7 @@ const SettingsField = ({
         ) : (
           label
         )}
-        <Text whiteSpace='nowrap' color='texts.subtle' fontSize='sm'>
+        <Text whiteSpace='nowrap' color='fg.muted' fontSize='sm'>
           {subtext}
         </Text>
       </Box>
