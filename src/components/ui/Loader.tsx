@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { PageLoader as pageLoaderRecipe } from '~theme/recipes/loader'
-import { statusPalette } from '~theme/status'
 
 export type PageLoaderProps = BoxProps
 
@@ -31,7 +30,7 @@ export type ListLoaderProps = Omit<ProgressRootProps, 'value' | 'size' | 'colorP
 
 /** A list, table or block of a page that is fetching: a thin grey indeterminate bar across its width. */
 export const ListLoader = (props: ListLoaderProps) => (
-  <Progress.Root value={null} size='xs' colorPalette={statusPalette.neutral} w='full' {...props}>
+  <Progress.Root value={null} size='xs' colorPalette='gray' w='full' {...props}>
     <Progress.Track>
       <Progress.Range />
     </Progress.Track>

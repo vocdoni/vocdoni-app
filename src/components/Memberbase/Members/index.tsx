@@ -812,7 +812,7 @@ const placeholderRowsStyle = (isUpdatingRows: boolean, isPlaceholderData: boolea
 
 const MembersLoading = () => (
   <Flex justify='center' align='center' height='150px'>
-    <InlineLoader size='sm' color='fg.muted' />
+    <InlineLoader color='fg.muted' />
   </Flex>
 )
 
