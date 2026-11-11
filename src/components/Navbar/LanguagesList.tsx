@@ -14,9 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaGlobeAmericas } from 'react-icons/fa'
-import { LuCheck } from 'react-icons/lu'
-import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon, LanguageIcon } from '~theme/icons'
 import { Select } from '~components/Form/Select'
 import { navigateToPublicLanguage, usePublicLanguageRouting } from '~i18n/usePublicLanguageRouting'
 import { useLanguagesEnv } from '~src/app-env'
@@ -102,8 +100,8 @@ export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguag
           gap={1}
           {...props}
         >
-          <Icon as={FaGlobeAmericas} />
-          {isOpen ? <RiArrowUpSLine /> : <RiArrowDownSLine />}
+          <Icon as={LanguageIcon} />
+          {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
         </Button>
       </MenuTrigger>
       <MenuPositioner>
@@ -131,7 +129,7 @@ const LanguageOptionLabel = ({
   <Flex alignItems='center' gap={2} w='full' px={1}>
     {context === 'menu' && (
       <Box w='1rem' display='flex' alignItems='center' justifyContent='center'>
-        {isSelected && <Icon as={LuCheck} boxSize='3' />}
+        {isSelected && <Icon as={CheckIcon} boxSize='icon.sm' />}
       </Box>
     )}
     <Text w='full'>{label}</Text>

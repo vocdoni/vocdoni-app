@@ -13,8 +13,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useTranslation } from 'react-i18next'
-import { HiOutlineEllipsisHorizontalCircle } from 'react-icons/hi2'
-import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
+import { CopyIcon, ExternalLinkIcon, MoreIcon } from '~theme/icons'
 import { useToast } from '~components/Toast'
 import { addressTextOverflow } from '~constants'
 
@@ -33,7 +32,7 @@ const AddressBtn = ({ ...props }) => {
       <MenuTrigger asChild>
         <Button>
           {addressTextOverflow(address as string, 3)}
-          <HiOutlineEllipsisHorizontalCircle />
+          <MoreIcon />
         </Button>
       </MenuTrigger>
       <MenuPositioner>
@@ -53,7 +52,7 @@ const AddressBtn = ({ ...props }) => {
               borderRadius='sm'
               mb={1}
             >
-              <RiFileCopyLine />
+              <CopyIcon />
               {t('copy.address')}
             </Button>
           </MenuItem>
@@ -67,7 +66,7 @@ const AddressBtn = ({ ...props }) => {
               borderRadius='sm'
             >
               <HStack gap={2}>
-                <RiExternalLinkLine />
+                <ExternalLinkIcon />
                 <Text as='span'>{t('open_in_explorer')}</Text>
               </HStack>
             </Button>

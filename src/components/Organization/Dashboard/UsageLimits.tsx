@@ -17,8 +17,8 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuInfo, LuUsers, LuVote } from 'react-icons/lu'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
+import { InfoIcon, UsersIcon, VoteIcon } from '~theme/icons'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
 import { MaxMembersPerOrg } from '~constants'
 import { usePaginatedMembers } from '~queries/members'
@@ -47,14 +47,14 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
     <Box>
       <Flex justify='space-between' align='center' mb={2}>
         <HStack gap={2}>
-          <Icon as={icon} boxSize={4} color={`${color}.icon`} />
+          <Icon as={icon} color={`${color}.icon`} />
           <Text fontSize='sm' fontWeight='medium' color='fg'>
             {label}
             {tooltip && (
               <TooltipRoot>
                 <TooltipTrigger asChild>
                   <chakra.span verticalAlign='middle'>
-                    <Icon as={LuInfo} ml={1} />
+                    <Icon as={InfoIcon} ml={1} />
                   </chakra.span>
                 </TooltipTrigger>
                 <TooltipPositioner>
@@ -99,13 +99,13 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
   const usageMetrics: UsageMetric[] = [
     {
-      icon: LuVote,
+      icon: VoteIcon,
       label: t('dashboard.usage.voting_processes', { defaultValue: 'Voting processes' }),
       current: organization.counters?.processes || 0,
       color: 'chart.1',
     },
     {
-      icon: LuUsers,
+      icon: UsersIcon,
       label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase size' }),
       current: membersData?.pagination?.totalItems || 0,
       max: MaxMembersPerOrg,

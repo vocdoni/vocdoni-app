@@ -1,15 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import {
-  LuBuilding2,
-  LuHouse,
-  LuKeyRound,
-  LuLayoutDashboard,
-  LuLifeBuoy,
-  LuSettings,
-  LuSlidersHorizontal,
-  LuUsers,
-  LuVote,
-} from 'react-icons/lu'
+  DashboardIcon,
+  HomeIcon,
+  KeyIcon,
+  OrganizationIcon,
+  SettingsIcon,
+  SupportIcon,
+  UsersIcon,
+  VoteIcon,
+} from '~theme/icons'
 import { Routes } from '~src/router/routes'
 import { DashboardMenuItem } from './Item'
 
@@ -43,13 +42,13 @@ export const useAdminMenuConfig = (): DashboardMenuConfig => {
         items: [
           {
             label: t('organization.dashboard'),
-            icon: LuHouse,
+            icon: HomeIcon,
             route: Routes.dashboard.base,
             activeMatch: [{ path: Routes.dashboard.base, end: true }],
           },
           {
             label: t('voting_processes'),
-            icon: LuVote,
+            icon: VoteIcon,
             route: Routes.dashboard.processes.base,
             activeMatch: [
               { path: Routes.dashboard.processes.base, end: false },
@@ -58,13 +57,13 @@ export const useAdminMenuConfig = (): DashboardMenuConfig => {
           },
           {
             label: t('memberbase.title', { defaultValue: 'Memberbase' }),
-            icon: LuUsers,
+            icon: UsersIcon,
             route: Routes.dashboard.memberbase.base,
             activeMatch: [{ path: Routes.dashboard.memberbase.base, end: false }],
           },
           {
             label: t('settings'),
-            icon: LuSettings,
+            icon: SettingsIcon,
             route: Routes.dashboard.settings.base,
             activeMatch: [{ path: Routes.dashboard.settings.base, end: false }],
           },
@@ -76,7 +75,7 @@ export const useAdminMenuConfig = (): DashboardMenuConfig => {
         items: [
           {
             label: t('support'),
-            icon: LuLifeBuoy,
+            icon: SupportIcon,
             route: Routes.dashboard.settings.support,
           },
         ],
@@ -98,25 +97,25 @@ export const useIntegratorMenuConfig = (): DashboardMenuConfig => {
         items: [
           {
             label: t('integrators.overview', { defaultValue: 'Overview' }),
-            icon: LuLayoutDashboard,
+            icon: DashboardIcon,
             route: Routes.integrators.base,
             activeMatch: [{ path: Routes.integrators.base, end: true }],
           },
           {
             label: t('integrators.managed.title', { defaultValue: 'Managed organizations' }),
-            icon: LuBuilding2,
+            icon: OrganizationIcon,
             route: Routes.integrators.managedOrganizations,
             activeMatch: [{ path: Routes.integrators.managedOrganizations, end: false }],
           },
           {
             label: t('integrators.api_keys.title', { defaultValue: 'API keys' }),
-            icon: LuKeyRound,
+            icon: KeyIcon,
             route: Routes.integrators.apiKeys,
             activeMatch: [{ path: Routes.integrators.apiKeys, end: false }],
           },
           {
             label: t('integrators.configuration.title', { defaultValue: 'Configuration' }),
-            icon: LuSlidersHorizontal,
+            icon: SettingsIcon,
             route: Routes.integrators.configuration.base,
             activeMatch: [{ path: Routes.integrators.configuration.base, end: false }],
           },

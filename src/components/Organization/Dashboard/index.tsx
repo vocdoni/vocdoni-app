@@ -14,7 +14,7 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuArrowUpRight, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
+import { AddIcon, GoToIcon, UsersIcon, VoteIcon } from '~theme/icons'
 import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Contents'
@@ -85,7 +85,7 @@ const Tutorial = () => {
           <Button asChild>
             <ReactRouterLink to={generatePath(Routes.processes.create)}>
               <HStack gap={2}>
-                <Icon as={LuPlus} />
+                <Icon as={AddIcon} />
                 <Text as='span'>
                   <Trans i18nKey='new_voting'>New vote</Trans>
                 </Text>
@@ -224,25 +224,12 @@ const Processes = () => {
         </ElectionProvider>
       ))}
       <Flex justify='flex-end' mt={4}>
-        <Link
-          asChild
-          display='inline-flex'
-          alignItems='center'
-          gap={3}
-          fontSize='sm'
-          color='fg'
-          fontWeight='medium'
-          textDecoration='none'
-          _hover={{
-            textDecoration: 'underline',
-            color: 'fg',
-          }}
-        >
+        <Link asChild display='inline-flex' alignItems='center' gap={3} size='sm' tone='quiet' emphasis='medium'>
           <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
             {t('actions.create_first_vote', {
               defaultValue: 'View all processes',
             })}
-            <Icon as={LuArrowUpRight} boxSize={4} />
+            <Icon as={GoToIcon} />
           </ReactRouterLink>
         </Link>
       </Flex>
@@ -260,7 +247,7 @@ const RecentProcess = () => {
   return (
     <Flex align='center'>
       <Box flex='1' minW={0} mr={4}>
-        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='bold' display='block'>
+        <Link asChild emphasis='strong' display='block'>
           <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
             <ElectionTitle size='row' />
           </ReactRouterLink>
@@ -300,7 +287,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
         <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW={0}>
           <ReactRouterLink to={generatePath(Routes.processes.create)}>
             <HStack gap={2} minW={0}>
-              <Icon as={LuPlus} flexShrink={0} />
+              <Icon as={AddIcon} flexShrink={0} />
               <Text as='span' truncate>
                 {t('actions.create_new_vote', {
                   defaultValue: 'Create new vote',
@@ -312,7 +299,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
         <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW={0}>
           <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
             <HStack gap={2} minW={0}>
-              <Icon as={LuVote} flexShrink={0} />
+              <Icon as={VoteIcon} flexShrink={0} />
               <Text as='span' truncate>
                 {t('actions.view_active_votes', {
                   defaultValue: 'View active votes',
@@ -324,7 +311,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
         <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW={0}>
           <ReactRouterLink to={generatePath(Routes.dashboard.settings.base)}>
             <HStack gap={2} minW={0}>
-              <Icon as={LuUsers} flexShrink={0} />
+              <Icon as={UsersIcon} flexShrink={0} />
               <Text as='span' truncate>
                 {t('actions.manage_team', {
                   defaultValue: 'Manage team',

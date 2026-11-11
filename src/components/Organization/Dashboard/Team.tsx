@@ -1,6 +1,6 @@
 import { Flex, Icon } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuUserPlus } from 'react-icons/lu'
+import { AddUserIcon } from '~theme/icons'
 import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
 import { InviteToTeamModal } from '~components/Organization/Invite'
 import { OrganizationUsers } from '~components/Organization/Team'
@@ -18,7 +18,7 @@ const OrganizationTeam = () => {
             })}
           </SectionSubHeading>
         </SectionHeader>
-        <InviteToTeamModal leftIcon={<Icon mr={2} as={LuUserPlus} />} whiteSpace='normal'>
+        <InviteToTeamModal leftIcon={<Icon mr={2} as={AddUserIcon} />} whiteSpace='normal'>
           {t('organization_settings.team.add_team_member', { defaultValue: 'Add team member' })}
         </InviteToTeamModal>
       </Flex>
