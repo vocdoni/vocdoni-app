@@ -39,11 +39,32 @@ export type StyleException = {
   /** Repo-relative posix glob (`*` within a segment, `**` across segments) */
   glob: string
   categories: readonly StyleCategory[] | '*'
+  /** Narrows the exception to occurrences whose whole source text (the full JSX attribute) matches */
+  match?: RegExp
   reason: string
 }
 
 // Hardcoded styling that is intentional. Every entry needs a reason.
 export const STYLE_EXCEPTIONS: readonly StyleException[] = [
+  {
+    glob: 'src/components/Layout/Footer.tsx',
+    categories: ['colorModeLogic'],
+    match: /^_dark=\{\{ filter: 'invert\(\d+%\)' \}\}$/,
+    reason: 'dark artwork in an image (Vocdoni logo) that colour tokens cannot recolour',
+  },
+  {
+    glob: 'src/components/Layout/Logo.tsx',
+    categories: ['colorModeLogic'],
+    match: /^_dark=\{\{ filter: 'invert\(\d+%\)' \}\}$/,
+    reason: 'dark artwork in an image (Vocdoni logo) that colour tokens cannot recolour',
+  },
+  {
+    glob: 'src/components/Layout/Logo.tsx',
+    categories: ['colorModeLogic'],
+    match: /^_dark=\{\{ bgColor: 'auth\.logo\.tile\.bg'/,
+    reason:
+      'organisation logos are dark artwork on transparent backgrounds: dark mode puts them on the white logo tile',
+  },
   {
     glob: 'src/components/Process/VotingReportPdf/**',
     categories: '*',
@@ -110,9 +131,10 @@ const globToRegExp = (glob: string) =>
 
 const EXCEPTION_MATCHERS = STYLE_EXCEPTIONS.map((exception) => ({ ...exception, re: globToRegExp(exception.glob) }))
 
-const isExcepted = (file: string, category: StyleCategory) =>
+const isExcepted = (file: string, category: StyleCategory, text: string) =>
   EXCEPTION_MATCHERS.some(
-    ({ re, categories }) => re.test(file) && (categories === '*' || categories.includes(category))
+    ({ re, categories, match }) =>
+      re.test(file) && (categories === '*' || categories.includes(category)) && (!match || match.test(text))
   )
 
 // ---------------------------------------------------------------------------
@@ -331,8 +353,8 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
   // A shared `const` is one node read by several props, so dedupe per (node, prop), not per node
   const classifiedProps = new Map<ts.Node, Set<string>>()
 
-  const record = (category: StyleCategory, node: ts.Node, count = 1) => {
-    if (isExcepted(file, category)) return
+  const record = (category: StyleCategory, node: ts.Node, count = 1, context: ts.Node = node) => {
+    if (isExcepted(file, category, context.getText(source).replace(/\s+/g, ' '))) return
     const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1
     const text = node.getText(source).replace(/\s+/g, ' ').slice(0, 100)
     for (let i = 0; i < count; i++) occurrences.push({ category, file, line, text })
@@ -620,7 +642,7 @@ export const scanSource = (code: string, file: string): StyleOccurrence[] => {
     const name = ts.isIdentifier(attribute.name) ? attribute.name.text : undefined
     if (!name) return
     if (V2_PROPS.has(name)) record('v2Prop', attribute.name)
-    if (name === '_dark' || name === '_light') record('colorModeLogic', attribute.name)
+    if (name === '_dark' || name === '_light') record('colorModeLogic', attribute.name, 1, attribute)
 
     const initializer = attribute.initializer
     const expression =
