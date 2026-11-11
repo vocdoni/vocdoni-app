@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Center, Code, Flex, Link, Spinner, Stack, Table, Text } from '@chakra-ui/react'
+import { Alert, Button, Card, Code, Flex, Link, Stack, Table, Text } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { WalletLedgerEntry, WalletLedgerKind } from '@vocdoni/api-types'
@@ -8,6 +8,7 @@ import { PrevNextPagination } from '~components/Pagination/PrevNextPagination'
 import { useToast } from '~components/Toast'
 import { isManagedOrgWalletError, useWallet, useWalletAccess } from '~queries/wallet'
 import { Routes, stripCheckoutReturn } from '~src/router/routes'
+import { ListLoader } from '~components/ui/Loader'
 import { shortAddress } from '~utils/address'
 import { currency } from '~utils/numbers'
 import { WalletTopUp } from './TopUp'
@@ -211,11 +212,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
     }
 
     if (wallet.isLoading) {
-      return (
-        <Center py={16}>
-          <Spinner />
-        </Center>
-      )
+      return <ListLoader />
     }
 
     if (wallet.error && !wallet.data) {

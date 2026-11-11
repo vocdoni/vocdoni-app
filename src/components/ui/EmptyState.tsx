@@ -10,6 +10,8 @@ export interface EmptyStateProps extends Omit<EmptyStateRootProps, 'title'> {
   imageProps?: ImageProps
   title: React.ReactNode
   description?: React.ReactNode
+  /** The title's element: a line of text (`p`) unless the empty state is a section of its own, e.g. `'h3'`. */
+  titleAs?: React.ElementType
   /** Optional call-to-action (button/link) rendered below the description. */
   children?: React.ReactNode
 }
@@ -25,6 +27,7 @@ export const EmptyState = ({
   imageAlt,
   imageProps,
   title,
+  titleAs = 'p',
   description,
   children,
   ...rest
@@ -36,8 +39,7 @@ export const EmptyState = ({
       </ChakraEmptyState.Indicator>
     )}
     {image && <Image src={image} alt={imageAlt ?? ''} _dark={{ filter: 'invert(70%)' }} {...imageProps} />}
-    {/* In a table row or search result the message is a line of text, not a section heading. */}
-    <ChakraEmptyState.Title as={rest.size === 'sm' ? 'p' : undefined}>{title}</ChakraEmptyState.Title>
+    <ChakraEmptyState.Title as={titleAs}>{title}</ChakraEmptyState.Title>
     {description && <ChakraEmptyState.Description>{description}</ChakraEmptyState.Description>}
     {children}
   </ChakraEmptyState.Root>

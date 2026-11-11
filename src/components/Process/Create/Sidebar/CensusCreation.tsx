@@ -1,4 +1,16 @@
-import { Box, FieldErrorText, FieldLabel, FieldRoot, Flex, FlexProps, HStack, Link, Text } from '@chakra-ui/react'
+import {
+  AlertRoot as Alert,
+  AlertDescription,
+  Box,
+  FieldErrorText,
+  FieldLabel,
+  FieldRoot,
+  Flex,
+  FlexProps,
+  HStack,
+  Link,
+  Text,
+} from '@chakra-ui/react'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
 import { ControllerRenderProps, useController, useFormContext } from 'react-hook-form'
@@ -7,7 +19,6 @@ import { LuCheck, LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { useToast } from '~components/Toast'
-import { EmptyState } from '~components/ui/EmptyState'
 import { InlineLoader } from '~components/ui/Loader'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { CensusTypes } from '~components/Process/Census/CensusType'
@@ -242,15 +253,14 @@ const GroupCensusCreation = () => {
       )}
 
       {(!groups || groups?.length === 0) && (
-        <EmptyState
-          size='sm'
-          title={
+        <Alert status='warning' fontSize='xs' color='fg.muted'>
+          <AlertDescription>
             <Trans i18nKey='process_create.census.group.no_groups'>
               To start a vote, you first need to create a group of eligible voters from your memberbase.
               <TLink>Create one here</TLink>.
             </Trans>
-          }
-        />
+          </AlertDescription>
+        </Alert>
       )}
     </Box>
   )
