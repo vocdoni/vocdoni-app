@@ -952,7 +952,7 @@ const ProcessCreateView = () => {
 
   if (returnWithoutDraft) {
     return (
-      <VStack align='stretch' gap={4} maxW='2xl' p={{ base: 4, md: 8 }}>
+      <DashboardContents gap={4} maxW='2xl' p={{ base: 4, md: 8 }}>
         <Alert.Root status='info'>
           <Alert.Indicator />
           <Alert.Content>
@@ -969,21 +969,21 @@ const ProcessCreateView = () => {
             {t('process.checkout.return_to_processes', { defaultValue: 'Back to your voting processes' })}
           </RouterLink>
         </Link>
-      </VStack>
+      </DashboardContents>
     )
   }
 
   return (
     <FormProvider {...methods}>
       {checkout ? (
-        <Box maxW='2xl' p={{ base: 4, md: 8 }}>
+        <DashboardContents maxW='2xl' p={{ base: 4, md: 8 }}>
           <ProcessCheckout
             processId={checkout.processId}
             start={checkout.start}
             onPublished={(processId) => handlePublished(processId, checkout.form)}
             onClose={closeCheckout}
           />
-        </Box>
+        </DashboardContents>
       ) : (
         <Box position='relative' w='full' overflow='hidden' height='full'>
           <DashboardContents
@@ -997,7 +997,7 @@ const ProcessCreateView = () => {
           >
             <Box
               flex={1}
-              marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
+              marginRight={showSidebar ? { base: 0, md: 'dashboard.panel' } : 0}
               transition='margin-right {durations.slow}'
               display='flex'
               flexDirection='column'

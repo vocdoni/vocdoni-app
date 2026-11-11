@@ -1,5 +1,6 @@
 import { fireEvent } from '@testing-library/react'
 import { UNSAFE_ErrorResponseImpl as ErrorResponseImpl } from 'react-router'
+import { DashboardLayoutContext } from './DashboardLayoutContext'
 import RouteErrorComponent, { ErrorView } from './Error'
 import { VochainNotFoundError } from '~src/legacy/vochain-archive'
 import { Routes } from '~src/router/routes'
@@ -148,5 +149,28 @@ describe('ErrorView', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Back to home' }))
 
     expect(navigate).toHaveBeenCalledWith(Routes.root)
+  })
+
+  it('takes the dashboard page container only inside the dashboard shell', async () => {
+    const i18nInstance = await createI18nInstance()
+    useRouteError.mockReturnValue(new Error('Boom'))
+    // The page container is one more wrapper around the same view.
+    const depth = () => {
+      let count = 0
+      for (let node = screen.getByText('Something went wrong').parentElement; node; node = node.parentElement) count++
+      return count
+    }
+
+    const { unmount } = render(<RouteErrorComponent />, { i18nInstance })
+    const plain = depth()
+    unmount()
+
+    render(
+      <DashboardLayoutContext.Provider value={{ reduced: false }}>
+        <RouteErrorComponent />
+      </DashboardLayoutContext.Provider>,
+      { i18nInstance }
+    )
+    expect(depth()).toBe(plain + 1)
   })
 })

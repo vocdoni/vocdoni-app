@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { OrganizationIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { DashboardContents } from '~components/Dashboard/Contents'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useOrganizationNames } from '~components/Dashboard/Menu/useOrganizationNames'
 import { useSelectOrganization } from '~components/Dashboard/Menu/useSelectOrganization'
@@ -51,7 +52,7 @@ const NotIntegratorNotice = () => {
   }
 
   return (
-    <Stack gap={5} p={{ base: 4, md: 6 }} align='flex-start'>
+    <DashboardContents gap={5} alignItems='flex-start'>
       <Alert.Root status='info' w='full'>
         <Alert.Indicator />
         <Alert.Content>
@@ -124,7 +125,7 @@ const NotIntegratorNotice = () => {
           </Stack>
         )}
       </ConfirmDialog>
-    </Stack>
+    </DashboardContents>
   )
 }
 
