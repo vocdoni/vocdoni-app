@@ -22,7 +22,6 @@ import { OAuthProvider, OAuthProviders } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { useAppEnv } from '~src/app-env'
 import { User, useUpdateProfile } from '~src/queries/account'
-import { statusPalette } from '~theme/status'
 import { ChangePasswordButton } from './Password'
 
 interface ProfileFormData {
@@ -242,7 +241,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
                   <Button
                     size='sm'
                     variant='outline'
-                    colorPalette={statusPalette.destructive}
+                    colorPalette='danger'
                     onClick={() => {
                       const confirmed = window.confirm(
                         t('oauth.unlink.confirm', {

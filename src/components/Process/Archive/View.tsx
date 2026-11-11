@@ -7,7 +7,6 @@ import { useAppEnv } from '~src/app-env'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
 import type { LegacyElection, LegacyElectionStatus } from '~src/legacy/vochain-archive'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
-import { statusPalette } from '~theme/status'
 
 const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
   const { t } = useTranslation()
@@ -22,13 +21,13 @@ const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
     PROCESS_UNKNOWN: t('process.status.unknown', { defaultValue: 'Unknown' }),
   }
   const palettes: Partial<Record<LegacyElectionStatus, string>> = {
-    ONGOING: statusPalette.success,
-    RESULTS: statusPalette.success,
-    CANCELED: statusPalette.error,
-    PAUSED: statusPalette.warning,
+    ONGOING: 'success',
+    RESULTS: 'success',
+    CANCELED: 'danger',
+    PAUSED: 'warning',
   }
 
-  return <Badge colorPalette={palettes[status] ?? statusPalette.neutral}>{labels[status]}</Badge>
+  return <Badge colorPalette={palettes[status] ?? 'gray'}>{labels[status]}</Badge>
 }
 
 /**

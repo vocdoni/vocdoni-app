@@ -83,7 +83,6 @@ import { useProcessEarlyEndDate } from '~queries/process-end-date'
 import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
-import { statusPalette } from '~theme/status'
 import { useAnonymityLabels } from '../anonymityLabels'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
@@ -359,14 +358,14 @@ const ResultsStateBadge = (props: BadgeProps) => {
   if (!election) return null
 
   if (isLive(election) || hasResults(election)) {
-    let color: string = statusPalette.info
+    let color: string = 'info'
     let text = t('results_state.live_results', 'Live results')
     let tooltip = t(
       'results_state.live_results_tooltip',
       'This voting process shows live results. However, it is still in progress, so the results may change before the vote ends.'
     )
     if (isLive(election) && isSecretUntilTheEnd(election)) {
-      color = statusPalette.warning
+      color = 'warning'
       text = t('results_state.secret_until_end', 'Awaiting results')
       tooltip = t(
         'results_state.secret_until_end_tooltip',
@@ -374,7 +373,7 @@ const ResultsStateBadge = (props: BadgeProps) => {
       )
     }
     if (hasResults(election)) {
-      color = statusPalette.success
+      color = 'success'
       text = t('results_state.results_available', 'Results available')
       tooltip = null
     }
@@ -466,13 +465,13 @@ const ProcessViewSidebar = () => {
               </ActionContinue>
             )}
             <ActionEnd variant='outline' aria-label={t('process_actions.end', { defaultValue: 'End' })}>
-              <ControlIcon as={LuCircleStop} color='destructive.fg' />
+              <ControlIcon as={LuCircleStop} color='danger.action' />
               <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                 <Trans i18nKey='end_vote'>End vote</Trans>
               </Text>
             </ActionEnd>
             <ActionCancel variant='outline' aria-label={t('process_actions.cancel', { defaultValue: 'Cancel' })}>
-              <ControlIcon as={LuTrash2} color='destructive.fg' />
+              <ControlIcon as={LuTrash2} color='danger.action' />
               <Text as='span' flex={1} textAlign='left' fontSize='sm'>
                 <Trans i18nKey='cancel_vote'>Cancel vote</Trans>
               </Text>

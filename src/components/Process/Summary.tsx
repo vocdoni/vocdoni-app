@@ -22,7 +22,6 @@ import { RiBarChartBoxLine, RiLock2Line, RiSearchEyeLine, RiShieldCheckLine } fr
 import { useCensusSize } from '~queries/census'
 import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
-import { statusPalette } from '~theme/status'
 import { defaultColorPalette } from '~theme/system'
 
 // Returns the milliseconds left until the relevant deadline (start when upcoming, end otherwise).
@@ -66,7 +65,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   // Once the deadline is reached, show the process status instead of a zeroed-out countdown.
   if (left <= 0) {
     return (
-      <Badge colorPalette={statusPalette.neutral} size='md' fontWeight='bold' fontSize='lg' alignSelf='end'>
+      <Badge colorPalette='gray' size='md' fontWeight='bold' fontSize='lg' alignSelf='end'>
         {statusLabel(t, status)}
       </Badge>
     )
@@ -82,7 +81,7 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
       <Stat.Label color='fg.muted' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
         {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
       </Stat.Label>
-      <Badge colorPalette={statusPalette.success} size='md' fontWeight='bold' fontSize='lg'>
+      <Badge colorPalette='success' size='md' fontWeight='bold' fontSize='lg'>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
       </Badge>
     </Stat.Root>
@@ -257,7 +256,7 @@ const ResultsNotice = () => {
         </Card.Root>
       ) : (
         <Box
-          colorPalette={statusPalette.info}
+          colorPalette='info'
           bg='status.info.bg'
           color='colorPalette.900'
           borderRadius='lg'

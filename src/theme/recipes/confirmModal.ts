@@ -21,9 +21,9 @@ const baseStyle = {
 
 const danger = {
   confirm: {
-    bg: 'destructive.solid',
-    color: 'destructive.contrast',
-    _hover: { bg: 'destructive.solid/90' },
+    bg: 'danger.solid',
+    color: 'danger.contrast',
+    _hover: { bg: 'danger.solid/90' },
   },
 }
 

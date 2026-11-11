@@ -25,7 +25,6 @@ import { DashboardBox } from '~components/Dashboard/Contents'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
-import { statusPalette } from '~theme/status'
 import { CreateApiKeyButton } from './CreateApiKeyModal'
 
 const formatDate = (value?: string) => {
@@ -40,16 +39,16 @@ const useStatus = () => {
     if (k.revoked)
       return {
         label: t('integrators.api_keys.status_revoked', { defaultValue: 'Revoked' }),
-        palette: statusPalette.error,
+        palette: 'danger',
       }
     if (k.expiresAt && new Date(k.expiresAt).getTime() < Date.now())
       return {
         label: t('integrators.api_keys.status_expired', { defaultValue: 'Expired' }),
-        palette: statusPalette.warning,
+        palette: 'warning',
       }
     return {
       label: t('integrators.api_keys.status_active', { defaultValue: 'Active' }),
-      palette: statusPalette.success,
+      palette: 'success',
     }
   }
 }
@@ -85,7 +84,7 @@ const ApiKeyCard = ({
           aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
           variant='ghost'
           size='xs'
-          color='destructive.fg'
+          color='danger.action'
           ml='auto'
           disabled={revokeDisabled}
           onClick={onRevoke}
@@ -257,7 +256,7 @@ const ApiKeysPanel = () => {
                         aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
                         variant='ghost'
                         size='sm'
-                        color='destructive.fg'
+                        color='danger.action'
                         disabled={k.revoked || revoke.isPending || !currentAddress}
                         onClick={() => setKeyToRevoke(k)}
                       >
@@ -286,7 +285,7 @@ const ApiKeysPanel = () => {
           <Button variant='outline' onClick={() => setKeyToRevoke(null)}>
             {t('integrators.api_keys.revoke_cancel', { defaultValue: 'Cancel' })}
           </Button>
-          <Button loading={revoke.isPending} colorPalette={statusPalette.destructive} onClick={onRevoke}>
+          <Button loading={revoke.isPending} colorPalette='danger' onClick={onRevoke}>
             {t('integrators.api_keys.revoke_confirm', { defaultValue: 'Revoke' })}
           </Button>
         </Flex>
