@@ -264,6 +264,9 @@ export const useProcessCheckout = ({
     const startedAt = Date.now()
     // Whether the latest read of the payment says it was paid: only then may a timeout say so
     let paid = false
+    // Stripe accepted the payment in this browser: a session still open only means the backend has not
+    // heard of it yet, and sending the user back to pay could charge twice
+    const openGraceMs = step.paid ? Infinity : undefined
     const pollProcess = (timeoutMs: number, withPayment: boolean) => {
       const readPayment = withPayment
         ? () =>
@@ -275,7 +278,7 @@ export const useProcessCheckout = ({
         : undefined
       waitForPublication(
         () => latest.current.client.elections.get(processId).then((election) => election.published === true),
-        { readPayment, timeoutMs, signal: controller.signal }
+        { readPayment, timeoutMs, openGraceMs, signal: controller.signal }
       )
         .then((outcome) => {
           if (controller.signal.aborted) return
