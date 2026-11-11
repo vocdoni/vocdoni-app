@@ -1,4 +1,5 @@
-import { Alert, Button, Card, Flex, Separator, Spinner, Text, VStack } from '@chakra-ui/react'
+import { Alert, Button, Card, Flex, Separator, Text, VStack } from '@chakra-ui/react'
+import { InlineLoader, ListLoader } from '~components/ui/Loader'
 import {
   BillingAddressElement,
   CheckoutElementsProvider,
@@ -348,7 +349,7 @@ export const CensusCheckout = ({
 
 const Waiting = ({ children }: { children?: ReactNode }) => (
   <Flex direction='column' align='center' gap={4} py={10} textAlign='center' role='status'>
-    <Spinner size='lg' />
+    <InlineLoader />
     {children && <Text>{children}</Text>}
   </Flex>
 )
@@ -441,11 +442,7 @@ const CheckoutFormFields = ({
   const [error, setError] = useState<string | null>(null)
 
   if (checkoutState.type === 'loading') {
-    return (
-      <Flex justify='center' py={8}>
-        <Spinner />
-      </Flex>
-    )
+    return <ListLoader />
   }
 
   if (checkoutState.type === 'error') {

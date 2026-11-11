@@ -13,7 +13,6 @@ import {
   Input,
   InputGroup,
   Menu,
-  Spinner,
   Stack,
   Switch,
   Table,
@@ -27,6 +26,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getElectionTitle, useOrganization, useRoutedPagination } from '@vocdoni/react-components'
 import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
+import { EmptyState } from '~components/ui/EmptyState'
+import { InlineLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
@@ -774,9 +775,11 @@ const EmptyMembersMessage = () => {
   const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
 
   return (
-    <Flex justify='center' align='center' height='150px'>
-      <Text color='fg.muted' fontSize='sm'>
-        {debouncedSearch
+    <EmptyState
+      size='sm'
+      height='150px'
+      title={
+        debouncedSearch
           ? t('members.table.no_filter_results', {
               defaultValue: 'No members matching these attributes',
             })
@@ -784,9 +787,16 @@ const EmptyMembersMessage = () => {
             ? error.message.toString()
             : t('members.table.no_results', {
                 defaultValue: 'No members found',
-              })}
-      </Text>
-    </Flex>
+              })
+      }
+      description={
+        error
+          ? undefined
+          : debouncedSearch
+            ? t('members.list.no_search_results_description', { defaultValue: 'Try adjusting your search terms.' })
+            : t('members.list.empty_description', { defaultValue: 'Add your first member to get started.' })
+      }
+    />
   )
 }
 
@@ -802,7 +812,7 @@ const placeholderRowsStyle = (isUpdatingRows: boolean, isPlaceholderData: boolea
 
 const MembersLoading = () => (
   <Flex justify='center' align='center' height='150px'>
-    <Spinner size='sm' color='fg.muted' />
+    <InlineLoader color='fg.muted' />
   </Flex>
 )
 

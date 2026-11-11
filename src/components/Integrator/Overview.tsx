@@ -1,8 +1,9 @@
-import { Alert, Box, Link, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
+import { Alert, Box, Link, SimpleGrid, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuNetwork, LuRocket, LuTerminal } from 'react-icons/lu'
 import { Link as RouterLink } from 'react-router'
 import { DashboardBox, DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { PageLoader } from '~components/ui/Loader'
 import { useIntegratorInfo } from '~src/queries/integrators'
 import { useWallet, useWalletAccess } from '~src/queries/wallet'
 import { Routes } from '~src/router/routes'
@@ -24,7 +25,7 @@ export const IntegratorOverview = () => {
   if (isLoading) {
     return (
       <DashboardContents>
-        <Spinner />
+        <PageLoader />
       </DashboardContents>
     )
   }

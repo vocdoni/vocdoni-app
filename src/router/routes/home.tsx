@@ -5,7 +5,8 @@ import Layout from '~elements/Layout'
 import SimpleLayout from '~elements/SimpleLayout'
 import { useAppEnv, useCustomOrganizationDomains } from '~src/app-env'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { Loading, SuspenseLoader } from '../SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
+import { SuspenseLoader } from '../SuspenseLoader'
 
 const SharedCensus = lazy(() => import('~components/Home/SharedCensus'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
@@ -31,7 +32,7 @@ export const useHomeRoute = () => {
     return {
       index: true,
       element: <SuspenseLoader>{homeContent}</SuspenseLoader>,
-      HydrateFallback: Loading,
+      HydrateFallback: PageLoader,
       loader: async () => {
         if (domainForHost) {
           return client.organizations.get(domainForHost)

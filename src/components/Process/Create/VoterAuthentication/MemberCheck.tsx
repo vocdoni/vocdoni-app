@@ -1,7 +1,8 @@
-import { Box, Button, HStack, Icon, Link, Spinner, Text } from '@chakra-ui/react'
+import { Box, Button, HStack, Icon, Link, Text } from '@chakra-ui/react'
 import { forwardRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuCircleAlert, LuCircleCheck, LuExternalLink, LuTriangleAlert } from 'react-icons/lu'
+import { InlineLoader } from '~components/ui/Loader'
 import { Routes } from '~routes'
 import { CensusCheckIssues, CensusCheckOutcome, CensusCheckStatus } from './useCensusCheck'
 
@@ -30,7 +31,7 @@ type LineProps = { icon: ReactNode; busy?: boolean; color?: string; children: Re
 const Line = ({ icon, busy, color, children }: LineProps) => (
   <HStack gap={2} align='start' fontSize='sm' color={color}>
     <Box as='span' flexShrink={0} mt={0.5} display='inline-flex'>
-      {busy ? <Spinner size='xs' /> : icon}
+      {busy ? <InlineLoader /> : icon}
     </Box>
     <Box>{children}</Box>
   </HStack>
@@ -70,7 +71,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
     if (!shown) {
       if (status === 'checking') {
         content = (
-          <Line icon={<Spinner size='xs' />} color='fg.muted'>
+          <Line icon={<InlineLoader />} color='fg.muted'>
             {t('voter_auth.status.checking', { defaultValue: 'Checking your member list…' })}
           </Line>
         )

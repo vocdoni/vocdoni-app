@@ -10,7 +10,6 @@ import {
   IconButton,
   Input,
   Link,
-  Progress,
   Spacer,
   VStack,
 } from '@chakra-ui/react'
@@ -36,6 +35,7 @@ import {
 } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
+import { PageLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import {
@@ -947,13 +947,7 @@ const ProcessCreateView = () => {
   }
 
   if (!formDraftLoaded) {
-    return (
-      <Progress.Root size='xs' value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <PageLoader />
   }
 
   if (returnWithoutDraft) {

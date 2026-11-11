@@ -18,7 +18,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { Routes } from '~src/router/routes'
-import { Loading } from '~src/router/SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
 import { UnauthorizedApiError } from './api'
 
 type VerifyFormProps = {
@@ -88,7 +88,7 @@ const VerifyForm = ({
   if (autoSubmit && codeString && !isVerifyError) {
     return (
       <Box height={'100px'}>
-        <Loading minHeight={1} />
+        <PageLoader minHeight={1} />
       </Box>
     )
   }
