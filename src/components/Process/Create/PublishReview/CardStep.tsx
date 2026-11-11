@@ -49,14 +49,11 @@ type CardStepProps = {
 }
 
 export const CardStep = ({ stripePromise, session, ...props }: CardStepProps) => {
-  const appearance = useCheckoutAppearance()
+  const elementsOptions = useCheckoutAppearance()
 
   return (
     // The session is already open, so Stripe only needs its client secret
-    <CheckoutElementsProvider
-      stripe={stripePromise}
-      options={{ clientSecret: session.clientSecret, elementsOptions: { appearance } }}
-    >
+    <CheckoutElementsProvider stripe={stripePromise} options={{ clientSecret: session.clientSecret, elementsOptions }}>
       <CardForm session={session} {...props} />
     </CheckoutElementsProvider>
   )

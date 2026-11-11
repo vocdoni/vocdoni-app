@@ -231,7 +231,7 @@ const errorMessage = (error: unknown) => (error instanceof Error ? error.message
 // Opens the top-up session once for this amount, then mounts the provider with its client secret
 const TopUpCheckout = ({ stripePromise, amountCents, onBack, onStart, onDone }: TopUpCheckoutProps) => {
   const { t, i18n } = useTranslation()
-  const appearance = useCheckoutAppearance()
+  const elementsOptions = useCheckoutAppearance()
   const { mutateAsync: createTopUp } = useWalletTopUp()
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -280,7 +280,7 @@ const TopUpCheckout = ({ stripePromise, amountCents, onBack, onStart, onDone }: 
 
   const options: StripeCheckoutElementsSdkOptions = {
     clientSecret,
-    elementsOptions: { appearance },
+    elementsOptions,
   }
 
   return (
