@@ -3,7 +3,6 @@ import {
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
-  Heading,
   HStack,
   Icon,
   Input,
@@ -19,6 +18,7 @@ import { GoogleIcon, LinkIcon } from '~theme/icons'
 import { api, ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
+import { PageTitle } from '~components/ui/PageTitle'
 import { useToast } from '~components/Toast'
 import { OAuthProvider, OAuthProviders } from '~constants'
 import { QueryKeys } from '~queries/keys'
@@ -168,9 +168,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Heading as='h2' textStyle='section-title' mb={1.5}>
-          {t('account.title', { defaultValue: 'Account Information' })}
-        </Heading>
+        <PageTitle mb={1.5}>{t('account.title', { defaultValue: 'Account Information' })}</PageTitle>
         <Text textStyle='body-sm' color='fg.muted' mb={6}>
           {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
         </Text>

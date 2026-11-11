@@ -28,7 +28,7 @@ const fontWeights = defineTokens.fontWeights({
   black: weight(500),
 })
 
-// The app's four line heights (D3): captions and figures, titles, running text, long reads. Chakra's
+// The app's four line heights: captions and figures, titles, running text, long reads. Chakra's
 // other step (`taller`) stays for its own recipes.
 const lineHeights = defineTokens.lineHeights({
   shorter: { value: 1.2 },
