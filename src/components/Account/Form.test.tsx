@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event'
 import { ApiError } from '~components/Auth/api'
-import { render, screen, waitFor } from '~src/test-utils'
+import { render, screen, waitFor, within } from '~src/test-utils'
 import AccountForm from './Form'
 
 const toastSpy = vi.fn()
@@ -58,25 +58,26 @@ describe('AccountForm', () => {
   })
 
   it('does not unlink when confirmation is canceled', async () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false)
     const user = userEvent.setup()
 
     render(<AccountForm profile={baseProfile} />)
 
     await user.click(screen.getByRole('button', { name: /unlink google/i }))
+    const dialog = await screen.findByRole('dialog')
+    await user.click(within(dialog).getByRole('button', { name: /cancel/i }))
 
     expect(bearedFetchMock).not.toHaveBeenCalled()
-    confirmSpy.mockRestore()
   })
 
   it('shows api error message when unlink fails', async () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
     const user = userEvent.setup()
     bearedFetchMock.mockRejectedValueOnce(new ApiError({ error: 'Provider unlink failed' }))
 
     render(<AccountForm profile={baseProfile} />)
 
     await user.click(screen.getByRole('button', { name: /unlink google/i }))
+    const dialog = await screen.findByRole('dialog')
+    await user.click(within(dialog).getByRole('button', { name: /unlink google/i }))
 
     await waitFor(() =>
       expect(toastSpy).toHaveBeenCalledWith(
@@ -86,8 +87,6 @@ describe('AccountForm', () => {
         })
       )
     )
-
-    confirmSpy.mockRestore()
   })
 
   it('links provider without triggering session changes', async () => {

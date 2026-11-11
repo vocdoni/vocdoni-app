@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { BsGoogle, BsLink } from 'react-icons/bs'
 import { api, ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
 import { OAuthProvider, OAuthProviders } from '~constants'
 import { QueryKeys } from '~queries/keys'
@@ -39,6 +40,9 @@ const AccountForm = ({ profile }: { profile?: User }) => {
   const { bearedFetch, bearer } = useAuth()
   const [linkingProvider, setLinkingProvider] = useState<OAuthProvider | null>(null)
   const [unlinkingProvider, setUnlinkingProvider] = useState<OAuthProvider | null>(null)
+  // Kept after the dialog closes so its labels don't blank out during the exit animation.
+  const [providerToUnlink, setProviderToUnlink] = useState<OAuthProvider | null>(null)
+  const [unlinkDialogOpen, setUnlinkDialogOpen] = useState(false)
   const {
     register,
     handleSubmit,
@@ -161,116 +165,128 @@ const AccountForm = ({ profile }: { profile?: User }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Text fontSize={'2xl'} fontWeight='bold' mb={1.5}>
-        {t('account.title', { defaultValue: 'Account Information' })}
-      </Text>
-      <Text fontSize={'sm'} color='fg.muted' mb={6}>
-        {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
-      </Text>
-      <VStack gap={8} align='stretch'>
-        <HStack>
-          <FormControl invalid={!!errors.firstName}>
-            <FormLabel fontSize='sm'>{t('name', { defaultValue: 'Name' })}</FormLabel>
-            <Input
-              {...register('firstName', {
-                required: t('form.error.field_is_required'),
-              })}
-            />
-            <FormErrorMessage>{errors.firstName?.message}</FormErrorMessage>
+    <>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Text fontSize={'2xl'} fontWeight='bold' mb={1.5}>
+          {t('account.title', { defaultValue: 'Account Information' })}
+        </Text>
+        <Text fontSize={'sm'} color='fg.muted' mb={6}>
+          {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
+        </Text>
+        <VStack gap={8} align='stretch'>
+          <HStack>
+            <FormControl invalid={!!errors.firstName}>
+              <FormLabel fontSize='sm'>{t('name', { defaultValue: 'Name' })}</FormLabel>
+              <Input
+                {...register('firstName', {
+                  required: t('form.error.field_is_required'),
+                })}
+              />
+              <FormErrorMessage>{errors.firstName?.message}</FormErrorMessage>
+            </FormControl>
+            <FormControl invalid={!!errors.lastName}>
+              <FormLabel fontSize='sm'>{t('lastname', { defaultValue: 'Last name' })}</FormLabel>
+              <Input
+                {...register('lastName', {
+                  required: t('form.error.field_is_required'),
+                })}
+              />
+              <FormErrorMessage>{errors.lastName?.message}</FormErrorMessage>
+            </FormControl>
+          </HStack>
+
+          <FormControl invalid={!!errors.email}>
+            <FormLabel fontSize='sm'>{t('email', { defaultValue: 'Email' })}</FormLabel>
+            <Input {...register('email')} disabled type='email' />
+            <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
           </FormControl>
-          <FormControl invalid={!!errors.lastName}>
-            <FormLabel fontSize='sm'>{t('lastname', { defaultValue: 'Last name' })}</FormLabel>
-            <Input
-              {...register('lastName', {
-                required: t('form.error.field_is_required'),
-              })}
-            />
-            <FormErrorMessage>{errors.lastName?.message}</FormErrorMessage>
-          </FormControl>
-        </HStack>
 
-        <FormControl invalid={!!errors.email}>
-          <FormLabel fontSize='sm'>{t('email', { defaultValue: 'Email' })}</FormLabel>
-          <Input {...register('email')} disabled type='email' />
-          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
-        </FormControl>
-
-        <FormControl>
-          <FormLabel fontSize='sm'>{t('password', { defaultValue: 'Password' })}</FormLabel>
-          {hasPassword ? (
-            <HStack gap={2}>
-              <Input placeholder={'• • • • • • • •'} type='password' disabled />
-              <ChangePasswordButton />
-            </HStack>
-          ) : (
-            <Button
-              onClick={() => profile?.email && requestPasswordReset.mutate(profile.email)}
-              size='sm'
-              variant='outline'
-              loading={requestPasswordReset.isPending}
-              alignSelf='start'
-            >
-              {t('password_request.action', { defaultValue: 'Request password change' })}
-            </Button>
-          )}
-        </FormControl>
-
-        <VStack gap={3} align='stretch'>
-          <Text fontSize='sm' fontWeight='bold'>
-            {t('oauth.title', { defaultValue: 'Connect accounts' })}
-          </Text>
-          {OAuthProviders.map((provider) => {
-            const providerLabel = formatProviderLabel(provider)
-            const isLinked = linkedProviders.has(provider)
-            const isUnlinking = unlinkingProvider === provider && unlinkProvider.isPending
-            const isLinking = linkingProvider === provider && linkProvider.isPending
-            const linkLabel = t('oauth.link.action', {
-              defaultValue: 'Link {{provider}} account',
-              provider: providerLabel,
-            })
-            const unlinkLabel = t('oauth.unlink.action', {
-              defaultValue: 'Unlink {{provider}}',
-              provider: providerLabel,
-            })
-            const providerIcon = providerIcons[provider] || BsLink
-
-            return (
-              <HStack key={provider} justify='space-between' flexWrap='wrap' gap={3}>
-                {isLinked ? (
-                  <Button
-                    size='sm'
-                    variant='outline'
-                    colorPalette='danger'
-                    onClick={() => {
-                      const confirmed = window.confirm(
-                        t('oauth.unlink.confirm', {
-                          defaultValue: `Unlink {{provider}}?`,
-                          provider: providerLabel,
-                        })
-                      )
-                      if (!confirmed) return
-                      unlinkProvider.mutate(provider)
-                    }}
-                    loading={isUnlinking}
-                  >
-                    <Icon as={providerIcon} /> {unlinkLabel}
-                  </Button>
-                ) : (
-                  <Button variant='outline' loading={isLinking} onClick={() => linkProvider.mutate(provider)}>
-                    <Icon as={providerIcon} /> {linkLabel}
-                  </Button>
-                )}
+          <FormControl>
+            <FormLabel fontSize='sm'>{t('password', { defaultValue: 'Password' })}</FormLabel>
+            {hasPassword ? (
+              <HStack gap={2}>
+                <Input placeholder={'• • • • • • • •'} type='password' disabled />
+                <ChangePasswordButton />
               </HStack>
-            )
-          })}
-        </VStack>
+            ) : (
+              <Button
+                onClick={() => profile?.email && requestPasswordReset.mutate(profile.email)}
+                size='sm'
+                variant='outline'
+                loading={requestPasswordReset.isPending}
+                alignSelf='start'
+              >
+                {t('password_request.action', { defaultValue: 'Request password change' })}
+              </Button>
+            )}
+          </FormControl>
 
-        <Button type='submit' loading={isSubmitting || updateProfile.isPending} alignSelf={'flex-end'}>
-          {t('actions.save_changes', { defaultValue: 'Save changes' })}
-        </Button>
-      </VStack>
-    </form>
+          <VStack gap={3} align='stretch'>
+            <Text fontSize='sm' fontWeight='bold'>
+              {t('oauth.title', { defaultValue: 'Connect accounts' })}
+            </Text>
+            {OAuthProviders.map((provider) => {
+              const providerLabel = formatProviderLabel(provider)
+              const isLinked = linkedProviders.has(provider)
+              const isUnlinking = unlinkingProvider === provider && unlinkProvider.isPending
+              const isLinking = linkingProvider === provider && linkProvider.isPending
+              const linkLabel = t('oauth.link.action', {
+                defaultValue: 'Link {{provider}} account',
+                provider: providerLabel,
+              })
+              const unlinkLabel = t('oauth.unlink.action', {
+                defaultValue: 'Unlink {{provider}}',
+                provider: providerLabel,
+              })
+              const providerIcon = providerIcons[provider] || BsLink
+
+              return (
+                <HStack key={provider} justify='space-between' flexWrap='wrap' gap={3}>
+                  {isLinked ? (
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      colorPalette='danger'
+                      onClick={() => {
+                        setProviderToUnlink(provider)
+                        setUnlinkDialogOpen(true)
+                      }}
+                      loading={isUnlinking}
+                    >
+                      <Icon as={providerIcon} /> {unlinkLabel}
+                    </Button>
+                  ) : (
+                    <Button variant='outline' loading={isLinking} onClick={() => linkProvider.mutate(provider)}>
+                      <Icon as={providerIcon} /> {linkLabel}
+                    </Button>
+                  )}
+                </HStack>
+              )
+            })}
+          </VStack>
+
+          <Button type='submit' loading={isSubmitting || updateProfile.isPending} alignSelf={'flex-end'}>
+            {t('actions.save_changes', { defaultValue: 'Save changes' })}
+          </Button>
+        </VStack>
+      </form>
+      <ConfirmDialog
+        title={t('oauth.unlink.confirm', {
+          defaultValue: `Unlink {{provider}}?`,
+          provider: providerToUnlink ? formatProviderLabel(providerToUnlink) : '',
+        })}
+        confirmText={t('oauth.unlink.action', {
+          defaultValue: 'Unlink {{provider}}',
+          provider: providerToUnlink ? formatProviderLabel(providerToUnlink) : '',
+        })}
+        open={unlinkDialogOpen}
+        onOpenChange={({ open }) => setUnlinkDialogOpen(open)}
+        onConfirm={() => {
+          if (providerToUnlink) unlinkProvider.mutate(providerToUnlink)
+          setUnlinkDialogOpen(false)
+        }}
+      />
+    </>
   )
 }
 
