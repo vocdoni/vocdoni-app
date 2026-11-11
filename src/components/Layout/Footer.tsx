@@ -37,7 +37,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             <Flex
               flexDirection={{ base: 'column', sm: 'row' }}
               justifyContent='space-between'
-              gap={{ base: '0px', xl: 24 }}
+              gap={{ base: 0, xl: 24 }}
               w='full'
             >
               <Text fontWeight='bold' fontSize='lg' lineHeight={1.15} mb={4} display='none'>
