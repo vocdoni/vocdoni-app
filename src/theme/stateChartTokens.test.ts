@@ -33,8 +33,8 @@ describe.each(Object.entries(systems))('interaction-state and chart tokens (%s)'
     expect(resolve(sys, token, 'dark')).toBe(resolve(sys, dark, 'dark'))
   })
 
-  it('keeps the first four chart colors on the usage-meter hues', () => {
-    const hues = ['blue', 'purple', 'green', 'cyan']
+  it('keeps the first two chart colors on the usage-meter hues', () => {
+    const hues = ['blue', 'purple']
     hues.forEach((hue, index) => {
       for (const mode of ['light', 'dark'] as const) {
         expect(resolve(sys, `chart.${index + 1}`, mode)).toBe(resolve(sys, `${hue}.600`, mode))

@@ -47,7 +47,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
     <Box>
       <Flex justify='space-between' align='center' mb={2}>
         <HStack gap={2}>
-          <Icon as={icon} boxSize={4} color={`${color}.500`} />
+          <Icon as={icon} boxSize={4} color={`${color}.icon`} />
           <Text fontSize='sm' fontWeight='medium' color='fg'>
             {label}
             {tooltip && (
