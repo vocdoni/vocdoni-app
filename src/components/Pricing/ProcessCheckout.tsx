@@ -9,7 +9,7 @@ import {
 } from '@stripe/react-stripe-js/checkout'
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowLeft } from 'react-icons/lu'
+import { BackIcon } from '~theme/icons'
 import { useHref } from 'react-router'
 import { ApiErrorCode, isApiError, JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
 import type { ProcessCheckoutResponse } from '@vocdoni/api-types'
@@ -412,7 +412,7 @@ const Frame = ({ title, onBack, children }: { title: string; onBack: () => void;
     <VStack align='stretch' gap={5}>
       <Flex align='center' gap={2}>
         <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost' size='sm'>
-          <LuArrowLeft />
+          <BackIcon />
         </IconButton>
         <Text fontSize='lg' fontWeight='bold'>
           {title}

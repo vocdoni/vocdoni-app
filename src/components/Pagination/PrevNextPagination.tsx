@@ -1,7 +1,7 @@
 import { ButtonGroup, Flex, IconButton, Text } from '@chakra-ui/react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'
+import { ChevronLeftIcon, ChevronRightIcon } from '~theme/icons'
 
 type PrevNextPaginationProps = {
   // Page indicator shown on the left, e.g. "Page 2 of 5 · 42 total".
@@ -36,14 +36,14 @@ export const PrevNextPagination = ({
           disabled={disabled || !hasPrevious}
           onClick={onPrevious}
         >
-          <LuChevronLeft />
+          <ChevronLeftIcon />
         </IconButton>
         <IconButton
           aria-label={t('pagination.next', { defaultValue: 'Next page' })}
           disabled={disabled || !hasNext}
           onClick={onNext}
         >
-          <LuChevronRight />
+          <ChevronRightIcon />
         </IconButton>
       </ButtonGroup>
     </Flex>

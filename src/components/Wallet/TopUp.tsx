@@ -22,7 +22,7 @@ import {
 import type { StripeCheckoutElementsSdkOptions } from '@stripe/stripe-js'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowLeft } from 'react-icons/lu'
+import { BackIcon } from '~theme/icons'
 import { checkoutReturnBase, useCheckoutAppearance, useStripePromise } from '~components/Pricing/stripe'
 import { useWalletTopUp, WALLET_TOPUP_MAX_CENTS, WALLET_TOPUP_MIN_CENTS } from '~queries/wallet'
 import { currency, parseEuroAmountCents } from '~utils/numbers'
@@ -142,7 +142,7 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
 
   const backButton = (
     <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost'>
-      <LuArrowLeft />
+      <BackIcon />
     </IconButton>
   )
 
@@ -254,7 +254,7 @@ const TopUpCheckout = ({ stripePromise, amountCents, onBack, onStart, onDone }: 
       <VStack align='stretch' gap={4}>
         <Flex justify='flex-start'>
           <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost'>
-            <LuArrowLeft />
+            <BackIcon />
           </IconButton>
         </Flex>
         <Alert.Root status='error'>
@@ -296,7 +296,7 @@ const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps)
       <VStack align='stretch' gap={4}>
         <Flex justify='flex-start'>
           <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost'>
-            <LuArrowLeft />
+            <BackIcon />
           </IconButton>
         </Flex>
         <Box color='status.error.fg' textAlign='center'>

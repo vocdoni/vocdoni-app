@@ -39,6 +39,8 @@ import {
   AddIcon,
   AddToListIcon,
   AddUserIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   CloseIcon,
   DeleteIcon,
   MoreIcon,
@@ -46,7 +48,6 @@ import {
   SettingsIcon,
   UsersIcon,
 } from '~theme/icons'
-import { FaCaretDown, FaCaretUp } from 'react-icons/fa6'
 import { generatePath, useNavigate, useOutletContext, useSearchParams } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
@@ -517,7 +518,6 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
       </InputGroup>
       {data?.members?.length >= 1 && (
         <Button variant='outline' colorPalette='danger' onClick={onDelete}>
-        <Button variant='outline' colorPalette='danger' onClick={onDelete}>
           <Icon as={DeleteIcon} />
           {t('members.table.delete_all', {
             defaultValue: 'Delete (All)',
@@ -874,8 +874,8 @@ const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableCol
       >
         {column.label}
         <Flex direction='column' aria-hidden gap={0} lineHeight={0} ms={0.5}>
-          <Icon as={FaCaretUp} boxSize={3} mb='-3.5px' {...sortCaretStyle(order === 'asc')} />
-          <Icon as={FaCaretDown} boxSize={3} mt='-3.5px' {...sortCaretStyle(order === 'desc')} />
+          <Icon as={ChevronUpIcon} boxSize={3} mb='-3.5px' {...sortCaretStyle(order === 'asc')} />
+          <Icon as={ChevronDownIcon} boxSize={3} mt='-3.5px' {...sortCaretStyle(order === 'desc')} />
         </Flex>
       </Button>
     </Table.ColumnHeader>
