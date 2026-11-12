@@ -150,7 +150,6 @@
   "color_mode_switcher": "Changer de mode d'affichage",
   "common": {
     "back": "Retour",
-    "close_drawer": "Fermer le panneau",
     "home": "Accueil",
     "retry": "Réessayer"
   },
@@ -808,7 +807,6 @@
       "bulk_delete": "Supprimer",
       "cancel": "Annuler",
       "clear_sort": "Annuler le tri",
-      "close_drawer": "Fermer",
       "create_group": "Créer un groupe",
       "create_group_error": "Erreur lors de la création du groupe",
       "create_group_form_description": "Créez un nouveau groupe à partir des membres sélectionnés. Cela les organisera pour les futurs processus de vote.",
@@ -862,7 +860,8 @@
     "dashboard": "Dashboard",
     "expand": "Développer le menu",
     "login": "Connexion",
-    "open": "Ouvrir le menu"
+    "open": "Ouvrir le menu",
+    "title": "Menu"
   },
   "name": "Nom",
   "need_help": {
@@ -1209,6 +1208,7 @@
     },
     "voters": "Électeurs",
     "voting": "Nous traitons votre vote. Cela prendra quelques secondes. Veuillez ne pas fermer ni actualiser cette page.",
+    "voting_label": "Envoi de votre vote",
     "voting_method": {
       "approval": "Approbation",
       "budget": "Allocation budgétaire",

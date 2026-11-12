@@ -15,6 +15,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { ManagedOrganizationRow, useUpdateManagedOrganization } from '~src/queries/integrators'
 import { parseEuroAmountCents } from '~utils/numbers'
 
@@ -28,7 +29,7 @@ export const EditSpendCapDialog = ({ organization, onClose }: EditSpendCapDialog
   const { t } = useTranslation()
 
   return (
-    <Dialog.Root open={!!organization} onOpenChange={(e) => !e.open && onClose()} placement='center' size='md'>
+    <Dialog.Root open={!!organization} onOpenChange={(e) => !e.open && onClose()} size='md'>
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
@@ -36,9 +37,7 @@ export const EditSpendCapDialog = ({ organization, onClose }: EditSpendCapDialog
             <Dialog.CloseTrigger asChild>
               <CloseButton />
             </Dialog.CloseTrigger>
-            <Dialog.Header>
-              <Dialog.Title>{t('integrators.managed.edit_cap_title', { defaultValue: 'Edit spend cap' })}</Dialog.Title>
-            </Dialog.Header>
+            <DialogHeader title={t('integrators.managed.edit_cap_title', { defaultValue: 'Edit spend cap' })} />
             {/* Keyed so the form starts from the organization it was opened for */}
             {organization && <SpendCapForm key={organization.address} organization={organization} onDone={onClose} />}
           </Dialog.Content>

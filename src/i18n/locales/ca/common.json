@@ -150,7 +150,6 @@
   "color_mode_switcher": "Commutador de mode de color",
   "common": {
     "back": "Enrere",
-    "close_drawer": "Tanca el panell lateral",
     "home": "Inici",
     "retry": "Torna-ho a intentar"
   },
@@ -808,7 +807,6 @@
       "bulk_delete": "Elimina",
       "cancel": "Cancel·la",
       "clear_sort": "Esborra l'ordenació",
-      "close_drawer": "Tanca",
       "create_group": "Crea un grup",
       "create_group_error": "Error en crear el grup",
       "create_group_form_description": "Crea un nou grup a partir dels membres seleccionats. Això els organitzarà per a futurs processos de votació.",
@@ -862,7 +860,8 @@
     "dashboard": "Dashboard",
     "expand": "Expandir menú",
     "login": "Iniciar sessió",
-    "open": "Obre menú"
+    "open": "Obre menú",
+    "title": "Menú"
   },
   "name": "Nom",
   "need_help": {
@@ -1209,6 +1208,7 @@
     },
     "voters": "Votants",
     "voting": "Estem processant el teu vot. Aquest procés trigarà uns segons. Si us plau, no tanquis ni actualitzis aquesta pàgina.",
+    "voting_label": "Enviant el teu vot",
     "voting_method": {
       "approval": "Aprovació",
       "budget": "Assignació pressupostària",

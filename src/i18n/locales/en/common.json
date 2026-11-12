@@ -148,7 +148,6 @@
   "color_mode_switcher": "Color mode switcher",
   "common": {
     "back": "Back",
-    "close_drawer": "Close drawer",
     "home": "Home",
     "retry": "Try again"
   },
@@ -792,7 +791,6 @@
       "bulk_delete": "Delete",
       "cancel": "Cancel",
       "clear_sort": "Clear sort",
-      "close_drawer": "Close",
       "create_group": "Create group",
       "create_group_error": "Error creating group",
       "create_group_form_description": "Create a new group from selected members. This will organize them for future voting processes.",
@@ -841,7 +839,8 @@
     "dashboard": "Dashboard",
     "expand": "Expand menu",
     "login": "Login",
-    "open": "Open Menu"
+    "open": "Open Menu",
+    "title": "Menu"
   },
   "name": "Name",
   "need_help": {
@@ -1185,6 +1184,7 @@
     },
     "voters": "Voters",
     "voting": "We are processing your vote. This process will take a few seconds. Please do not close or refresh this page.",
+    "voting_label": "Submitting your vote",
     "voting_method": {
       "approval": "Approval",
       "budget": "Budget allocation",

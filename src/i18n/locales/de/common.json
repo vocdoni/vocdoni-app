@@ -148,7 +148,6 @@
   "color_mode_switcher": "Farbmodus-Umschalter",
   "common": {
     "back": "Zurück",
-    "close_drawer": "Seitenleiste schließen",
     "home": "Startseite",
     "retry": "Nochmal versuchen"
   },
@@ -792,7 +791,6 @@
       "bulk_delete": "Löschen",
       "cancel": "Abbrechen",
       "clear_sort": "Sortierung aufheben",
-      "close_drawer": "Schließen",
       "create_group": "Gruppe erstellen",
       "create_group_error": "Fehler beim Erstellen der Gruppe",
       "create_group_form_description": "Erstelle eine neue Gruppe aus den ausgewählten Mitgliedern. Diese wird für zukünftige Abstimmungsprozesse organisiert.",
@@ -841,7 +839,8 @@
     "dashboard": "Dashboard",
     "expand": "Menü ausklappen",
     "login": "Anmelden",
-    "open": "Menü öffnen"
+    "open": "Menü öffnen",
+    "title": "Menü"
   },
   "name": "Name",
   "need_help": {
@@ -1185,6 +1184,7 @@
     },
     "voters": "Wählende",
     "voting": "Deine Stimme wird verarbeitet. Das dauert einige Sekunden. Bitte schließe oder aktualisiere diese Seite nicht.",
+    "voting_label": "Deine Stimme wird abgegeben",
     "voting_method": {
       "approval": "Zustimmung",
       "budget": "Budgetverteilung",

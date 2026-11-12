@@ -70,6 +70,7 @@ import {
 import { SectionHeader } from '~components/ui/SectionHeader'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
+import { CloseButton } from '~components/ui/CloseButton'
 import { StatusBadge, type StatusBadgeColor, type StatusBadgeProps } from '~components/ui/StatusBadge'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
@@ -413,9 +414,8 @@ const ProcessViewSidebar = () => {
       <SidebarContents borderBottom='sm' borderColor='border'>
         <SectionHeader title={<Trans i18nKey='vote_information'>Vote information</Trans>} pt='4' />
         {isMobile && (
-          <IconButton
+          <CloseButton
             aria-label={t('drawer.close', { defaultValue: 'Close drawer' })}
-            variant='ghost'
             size='sm'
             position='absolute'
             top='2'
@@ -423,7 +423,7 @@ const ProcessViewSidebar = () => {
             onClick={closeSidebar}
           >
             <Icon as={CloseIcon} />
-          </IconButton>
+          </CloseButton>
         )}
       </SidebarContents>
       <SidebarContents flex='1' overflowY='auto'>

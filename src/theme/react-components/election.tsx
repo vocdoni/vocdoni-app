@@ -251,7 +251,7 @@ export const electionComponents: ComponentsPartialDefinition = {
               <Dialog.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)}>
                 <Dialog.Backdrop css={styles.modalOverlay} />
                 <Dialog.Positioner>
-                  <Dialog.Content css={styles.modalContent}>
+                  <Dialog.Content css={styles.modalContent} aria-label={label}>
                     <Dialog.CloseTrigger asChild>
                       <CloseButton css={styles.modalClose} />
                     </Dialog.CloseTrigger>
@@ -318,7 +318,7 @@ export const electionComponents: ComponentsPartialDefinition = {
             <Dialog.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)}>
               <Dialog.Backdrop css={styles.modalOverlay} />
               <Dialog.Positioner>
-                <Dialog.Content css={styles.modalContent}>
+                <Dialog.Content css={styles.modalContent} aria-label={label}>
                   <Dialog.CloseTrigger asChild>
                     <CloseButton css={styles.modalClose} />
                   </Dialog.CloseTrigger>

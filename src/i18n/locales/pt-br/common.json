@@ -150,7 +150,6 @@
   "color_mode_switcher": "Alternar modo de cor",
   "common": {
     "back": "Voltar",
-    "close_drawer": "Fechar painel",
     "home": "Início",
     "retry": "Tente novamente"
   },
@@ -808,7 +807,6 @@
       "bulk_delete": "Excluir",
       "cancel": "Cancelar",
       "clear_sort": "Limpar ordenação",
-      "close_drawer": "Fechar",
       "create_group": "Criar grupo",
       "create_group_error": "Erro ao criar o grupo",
       "create_group_form_description": "Crie um novo grupo a partir dos membros selecionados. Isso os organizará para futuros processos de votação.",
@@ -862,7 +860,8 @@
     "dashboard": "Painel",
     "expand": "Expandir menu",
     "login": "Entrar",
-    "open": "Abrir menu"
+    "open": "Abrir menu",
+    "title": "Menu"
   },
   "name": "Nome",
   "need_help": {
@@ -1209,6 +1208,7 @@
     },
     "voters": "Eleitores",
     "voting": "Estamos processando seu voto. Esse processo levará alguns segundos. Não feche nem atualize esta página.",
+    "voting_label": "Enviando seu voto",
     "voting_method": {
       "approval": "Aprovação",
       "budget": "Alocação orçamentária",

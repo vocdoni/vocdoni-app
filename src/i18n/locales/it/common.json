@@ -150,7 +150,6 @@
   "color_mode_switcher": "Selettore modalità colore",
   "common": {
     "back": "Indietro",
-    "close_drawer": "Chiudi cassetto",
     "home": "Home",
     "retry": "Riprova"
   },
@@ -808,7 +807,6 @@
       "bulk_delete": "Elimina",
       "cancel": "Annulla",
       "clear_sort": "Rimuovi ordinamento",
-      "close_drawer": "Chiudi",
       "create_group": "Crea gruppo",
       "create_group_error": "Errore durante la creazione del gruppo",
       "create_group_form_description": "Crea un nuovo gruppo dai membri selezionati. Questo li organizzerà per futuri processi di voto.",
@@ -862,7 +860,8 @@
     "dashboard": "Dashboard",
     "expand": "Espandi menu",
     "login": "Accedi",
-    "open": "Apri menu"
+    "open": "Apri menu",
+    "title": "Menu"
   },
   "name": "Nome",
   "need_help": {
@@ -1209,6 +1208,7 @@
     },
     "voters": "Votanti",
     "voting": "Stiamo elaborando il tuo voto. Questo processo richiederà alcuni secondi. Non chiudere o aggiornare questa pagina.",
+    "voting_label": "Invio del tuo voto",
     "voting_method": {
       "approval": "Voto per approvazione",
       "budget": "Bilancio partecipativo",
