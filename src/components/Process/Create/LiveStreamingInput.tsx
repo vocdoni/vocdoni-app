@@ -25,8 +25,8 @@ export const LiveStreamingInput = () => {
 
   return (
     <AccordionRoot collapsible>
-      <AccordionItem value='live-streaming' border='none'>
-        <AccordionItemTrigger px={0}>
+      <AccordionItem value='live-streaming' border='[none]'>
+        <AccordionItemTrigger px='[0]'>
           <Box textAlign='left'>
             <Text textStyle='body-sm' color='fg.muted'>
               {t('process_create.youtube.accordion_title', {
@@ -38,7 +38,7 @@ export const LiveStreamingInput = () => {
         </AccordionItemTrigger>
 
         <AccordionItemContent>
-          <AccordionItemBody px={0} display='flex' flexDirection='column' gap={4}>
+          <AccordionItemBody px='[0]' display='flex' flexDirection='column' gap='4'>
             <FormControl invalid={!!errors.streamUri}>
               <FormLabel>
                 <Trans i18nKey='process_create.youtube.title'>Live streaming video</Trans>

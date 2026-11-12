@@ -51,7 +51,7 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
   const hasTooManyDecimals = /^\d*\.\d{3,}$/.test(trimmed)
 
   return (
-    <VStack align='stretch' gap={5}>
+    <VStack align='stretch' gap='5'>
       <Field.Root invalid={trimmed !== '' && !isValid}>
         <Field.Label>{t('wallet.topup.amount', { defaultValue: 'Amount (EUR, VAT excluded)' })}</Field.Label>
         <Input
@@ -75,7 +75,7 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
         </Field.ErrorText>
       </Field.Root>
 
-      <HStack gap={2} wrap='wrap'>
+      <HStack gap='2' wrap='wrap'>
         {PRESET_AMOUNTS_EUR.map((preset) => (
           <Button key={preset} variant='outline' size='sm' onClick={() => onAmountChange(String(preset))}>
             {currency(preset * 100)}
@@ -83,7 +83,7 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
         ))}
       </HStack>
 
-      <Flex justify='flex-end' gap={3}>
+      <Flex justify='flex-end' gap='3'>
         <Button variant='ghost' onClick={onCancel}>
           {t('cancel', { defaultValue: 'Cancel' })}
         </Button>
@@ -148,7 +148,7 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
 
   if (checkoutState.type === 'loading') {
     return (
-      <Box textAlign='center' py={8}>
+      <Box textAlign='center' py='8'>
         {t('loading', { defaultValue: 'Loading...' })}
       </Box>
     )
@@ -156,7 +156,7 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
 
   if (checkoutState.type === 'error') {
     return (
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         <Flex justify='flex-start'>{backButton}</Flex>
         <Alert.Root status='error'>
           <Alert.Indicator />
@@ -172,10 +172,10 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
 
   return (
     <Box as='form' onSubmit={handleSubmit}>
-      <VStack align='stretch' gap={5}>
+      <VStack align='stretch' gap='5'>
         <Flex justify='flex-start'>{backButton}</Flex>
 
-        <Card.Root variant='section' size='md' gap={3}>
+        <Card.Root variant='section' size='md' gap='3'>
           <Flex justify='space-between'>
             <Text>{t('wallet.topup.amount_net', { defaultValue: 'Top-up (VAT excluded)' })}</Text>
             <Text>{currency(amountCents)}</Text>
@@ -251,7 +251,7 @@ const TopUpCheckout = ({ stripePromise, amountCents, onBack, onStart, onDone }: 
 
   if (loadError) {
     return (
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         <Flex justify='flex-start'>
           <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost'>
             <BackIcon />
@@ -269,7 +269,7 @@ const TopUpCheckout = ({ stripePromise, amountCents, onBack, onStart, onDone }: 
 
   if (!clientSecret) {
     return (
-      <Box textAlign='center' py={8}>
+      <Box textAlign='center' py='8'>
         {t('loading', { defaultValue: 'Loading...' })}
       </Box>
     )
@@ -293,7 +293,7 @@ const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps)
 
   if (!stripePromise) {
     return (
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         <Flex justify='flex-start'>
           <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost'>
             <BackIcon />

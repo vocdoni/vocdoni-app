@@ -68,7 +68,7 @@ const ExtendedQuestionEditor = ({
       >
         <button type='button' onClick={() => append({ option: '', description: '' })}>
           {/* Spans: a button only takes phrasing content */}
-          <VStack as='span' justify='center' align='center' height='100%'>
+          <VStack as='span' justify='center' align='center' height='[100%]'>
             <Icon as={AddIcon} boxSize='icon.lg' />
             <Text as='span'>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
           </VStack>

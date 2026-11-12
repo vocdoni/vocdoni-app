@@ -107,13 +107,13 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
     query: { isLoading, error, refetch, isFetching },
   } = useProcessPrice(processId)
 
-  if (isLoading) return <Skeleton height={16} />
+  if (isLoading) return <Skeleton height='16' />
 
   // Anything but a draft the backend cannot price yet (a 500, a network failure...) is not fixed by
   // setting up voters, so it is not explained as if it were
   if (error && !isUnpriceableDraft(error)) {
     return (
-      <Stack gap={2} align='flex-start'>
+      <Stack gap='2' align='flex-start'>
         <Text textStyle='body-sm' color='fg.muted'>
           <Trans i18nKey='process.price.error'>The price could not be loaded.</Trans>
         </Text>
@@ -141,15 +141,15 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
     !quoteOnly && price.totalCents > 0 && price.paymentStatus !== 'paid' && price.paymentStatus !== 'pending'
 
   return (
-    <Stack gap={2} fontSize='sm'>
+    <Stack gap='2' fontSize='sm'>
       {price.lines.map((line) => (
-        <Flex key={line.kind} justify='space-between' gap={2}>
+        <Flex key={line.kind} justify='space-between' gap='2'>
           <Text>{lineLabel(t, line)}</Text>
           <Text whiteSpace='nowrap'>{currency(line.amountCents)}</Text>
         </Flex>
       ))}
       {!quoteOnly && (
-        <Flex justify='space-between' gap={2} borderTop='1px solid' borderColor='border' pt={2}>
+        <Flex justify='space-between' gap='2' borderTop='sm' borderColor='border' pt='2'>
           <Text fontWeight='bold'>
             <Trans i18nKey='process.price.total'>Total</Trans>
           </Text>
