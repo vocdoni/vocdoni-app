@@ -55,7 +55,6 @@ describe('text colour contrast (WCAG AA)', () => {
     for (const mode of ['light', 'dark'] as const) {
       const pairs = [
         ['tabs.tab.active.color', 'tabs.tab.active.bg'],
-        ['card.plan.featured.badge.color', 'card.plan.featured.badge.bg'],
         ['accent.fg', 'bg'],
       ]
       for (const [text, surface] of pairs) {

@@ -207,7 +207,7 @@ const isNeutral = (hex: string) => {
 }
 
 /**
- * Brand accents the app's own tokens paint (active tab, featured plan badge, highlighted notice): the brand's own
+ * Brand accents the app's own tokens paint (active tab, highlighted notice): the brand's own
  * `fg`/`solid`/`contrast`, except on the dark page for a neutral brand too dark to read there (the stock black),
  * whose readable step is a mid grey; that one shows white, with black on it.
  */
