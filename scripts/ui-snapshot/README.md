@@ -118,7 +118,7 @@ read directly. `stress-report.json` holds the counts with examples. The run fail
 `stress-baseline.json`, the leaks known on the branch it was written on; after a fix, lower it with
 `--update-stress-baseline` (a `--routes` run updates only its captures). Elements that keep stock values on
 purpose are listed with a reason in `STRESS_EXCEPTIONS` (`stress.mjs`). CI runs it on pull requests that
-touch `src/` (the `stress-theme` job in `.github/workflows/test.yml`) and keeps the run as an artifact.
+touch `src/`, the snapshot scripts, dependencies, `vite.config.ts`, `index.html`, `public/` or the workflow (the `stress-theme` job in `.github/workflows/test.yml`) and keeps the run as an artifact.
 
 With your own dev server, start it with the alias and pass `--url`; the run stops if the stress theme is
 not the one rendering:

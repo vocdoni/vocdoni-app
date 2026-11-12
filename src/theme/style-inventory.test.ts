@@ -161,6 +161,8 @@ describe('style inventory scanner', () => {
     expect(categoriesOf(`<Box _dark={{ bg: 'bg.muted' }} />`, file)).toEqual(['colorModeLogic'])
     const members = 'src/components/Memberbase/Members/index.tsx'
     expect(categoriesOf(`<Select isLoading />`, members)).toEqual([])
+    expect(categoriesOf(`<Button isLoading />`, members)).toEqual(['v2Prop'])
+    expect(categoriesOf(`<Select isInvalid />`, members)).toEqual(['v2Prop'])
     expect(categoriesOf(`<Button colorScheme='red' />`, members)).toEqual(['v2Prop'])
   })
 

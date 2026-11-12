@@ -111,13 +111,12 @@ export const STYLE_EXCEPTIONS: readonly StyleException[] = [
   ...[
     'src/components/Layout/SaasSelector.tsx',
     'src/components/Memberbase/Members/index.tsx',
-    'src/components/Process/Create/MainContent/SelectionLimits.tsx',
     'src/components/Process/Create/Sidebar/CensusCreation.tsx',
   ].map((glob) => ({
     glob,
     categories: ['v2Prop'] as const,
-    match: /^is(Loading|Invalid)$/,
-    reason: 'isLoading/isInvalid on the react-select wrapper (~components/Form/Select) are react-select props',
+    match: /^(Select|SelectCustom) isLoading$/,
+    reason: 'isLoading on the react-select wrapper (~components/Form/Select) is a react-select prop',
   })),
   {
     glob: 'src/components/ui/EmptyState.tsx',
@@ -411,10 +410,14 @@ export const scanSource = (
   // A shared `const` is one node read by several props, so dedupe per (node, prop), not per node
   const classifiedProps = new Map<ts.Node, Set<string>>()
 
-  const record = (category: StyleCategory, node: ts.Node, count = 1, context: ts.Node = node) => {
+  const record = (category: StyleCategory, node: ts.Node, count = 1, context: ts.Node | string = node) => {
     const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1
     const text = node.getText(source).replace(/\s+/g, ' ').slice(0, 100)
-    const exception = findException(file, category, context.getText(source).replace(/\s+/g, ' '))
+    const exception = findException(
+      file,
+      category,
+      typeof context === 'string' ? context : context.getText(source).replace(/\s+/g, ' ')
+    )
     for (let i = 0; i < count; i++) {
       if (exception) onExcepted?.({ category, file, line, text }, exception)
       else occurrences.push({ category, file, line, text })
@@ -704,7 +707,11 @@ export const scanSource = (
   const jsxAttribute = (attribute: ts.JsxAttribute) => {
     const name = ts.isIdentifier(attribute.name) ? attribute.name.text : undefined
     if (!name) return
-    if (V2_PROPS.has(name)) record('v2Prop', attribute.name)
+    if (V2_PROPS.has(name)) {
+      const element = attribute.parent.parent
+      // `<tag> <prop>`, so an exception can name the component that really takes the prop
+      record('v2Prop', attribute.name, 1, `${element.tagName.getText(source)} ${name}`)
+    }
     if (name === '_dark' || name === '_light') record('colorModeLogic', attribute.name, 1, attribute)
 
     const initializer = attribute.initializer
