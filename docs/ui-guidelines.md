@@ -1,7 +1,7 @@
 # UI guidelines
 
-How to style the app so it stays themable. Everything here is enforced by a test, the type checker or CI unless it says
-otherwise; where a rule is enforced, the file is named so you can read the real thing.
+How to style the app so it stays themable. A rule that names its check (a test, `tsc` or a CI job)
+is enforced, and the file is named so you can read the real thing. The rest are conventions that reviewers check.
 
 ## The rule
 
@@ -14,17 +14,17 @@ touches `src/theme/` instead of hundreds of components.
 
 ## Where things live
 
-| What                                                         | Where                                                                        |
-| ------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| Raw scales (radii, sizes, z-index, weights, line heights)    | `src/theme/tokens.ts`, `src/theme/colors.ts`, `src/theme/fonts.ts`           |
-| Meaning of colours (surfaces, text, borders, light and dark) | `src/theme/semantic.ts` and one module per family (below)                    |
-| Brand colour (generated from `PRIMARY_COLOR`)                | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                   |
-| Text roles                                                   | `src/theme/textStyles.ts`                                                    |
-| How a component looks and its variants                       | `src/theme/recipes/*.ts`, registered in `recipes/index.ts`                   |
-| Voting UI from `@vocdoni/react-components`                   | `src/theme/react-components/*` and `src/theme/recipes/election.ts`           |
-| Shared building blocks                                       | `src/components/ui/`                                                         |
-| Icons, by concept                                            | `src/theme/icons.tsx`                                                        |
-| The rules that keep the theme from being bypassed            | `src/theme/style-inventory.ts` and `src/theme/style-inventory.baseline.json` |
+| What                                                         | Where                                                                                                                                                     |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Raw scales (radii, sizes, z-index, weights, line heights)    | `src/theme/tokens.ts`, `src/theme/colors.ts`, `src/theme/fonts.ts`                                                                                        |
+| Meaning of colours (surfaces, text, borders, light and dark) | `src/theme/semantic.ts` and one module per family (below)                                                                                                 |
+| Brand colour (generated from `PRIMARY_COLOR`)                | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                |
+| Text roles                                                   | `src/theme/textStyles.ts`                                                                                                                                 |
+| How a component looks and its variants                       | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports |
+| Voting UI from `@vocdoni/react-components`                   | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                        |
+| Shared building blocks                                       | `src/components/ui/`                                                                                                                                      |
+| Icons, by concept                                            | `src/theme/icons.tsx`                                                                                                                                     |
+| The rules that keep the theme from being bypassed            | `src/theme/style-inventory.ts` and `src/theme/style-inventory.baseline.json`                                                                              |
 
 Import theme modules with the `~theme/*` alias and shared components with `~components/ui/*`.
 
@@ -66,7 +66,8 @@ Rules of thumb:
   `status.<tone>.{fg,bg,border,solid,contrast,emphasis}` (the `danger` palette is `status.error`). `danger.action` is
   the text colour of an action that deletes or ends something.
 - **Dark mode**: a token has a `_light` and a `_dark` value in the theme. Components do not branch on the mode:
-  `useColorModeValue`, `colorMode ===` and `_dark={{ … }}` in a component are `colorModeLogic` and fail the inventory
+  `_dark={{ … }}` or `_light={{ … }}`, `colorMode ===` and a `useColorModeValue` call with a colour argument in a component
+  are `colorModeLogic` and fail the inventory
   (they also flash the light value on SSR pages before hydration). The only allowed `_dark` are the two listed in the
   exceptions: an image filter on empty-state artwork and the white tile behind organisation logos.
 - **Text on a coloured fill**: use the pair the token family ships (`status.error.contrast` on `status.error.solid`,
@@ -150,8 +151,10 @@ To add a variant:
 
 1. Add it to the recipe in `src/theme/recipes/`, built only from tokens (a recipe may use the `[value]` escape for CSS
    values with no token, such as `none` or `inherit`; recipes are not scanned by the inventory, but `system.test.ts`
-   fails on any token name that does not exist).
-2. Register a new recipe in `src/theme/recipes/index.ts`.
+   fails on any token name that does not exist, in every recipe in its `ALL_RECIPES`).
+2. Register a new recipe in `src/theme/recipes/index.ts`, unless only one `ui/` component uses it: then import it there
+   (as `ui/PageContainer.tsx` does with `recipes/page.ts`) and add it to `ALL_RECIPES` in `system.test.ts`, which does
+   not cover `page`, `confirmModal` and `loader` today.
 3. Use it at the call site with `variant`, `size` or `layout`, with no extra look props next to it.
 4. A custom state is a `data-*` attribute styled by the recipe (see `_dragging` in `recipes/dragHandle.ts` and
    `ui/DragHandle.tsx`), not a ternary on style props in the component.
@@ -237,8 +240,8 @@ instead), recipes, tests and `src/theme/test-themes/`. `src/theme/logoTones.ts` 
 on purpose; regenerate it with `scripts/logo-tones.mjs` and review each value on screen. Third-party brand colours (the
 WhatsApp green is the `whatsapp.*` token) stay as the brand defines them.
 
-To add an exception, add an entry with a reason. The test fails on an entry that excuses nothing, so remove it when the
-code goes.
+To add an exception, add an entry with a reason. The test fails on an entry that excuses nothing (except a `categories: '*'` entry, which it does not check), so remove
+it when the code goes.
 
 ## Adding a token
 
@@ -278,8 +281,8 @@ code goes.
    token that exists, the generated typings are stale: run typegen again.
 
 Chakra v3 drops unknown token names without an error, so a typo renders as "inherit". That is why `unknownToken` is a
-hard category in the inventory and why `system.test.ts` checks every recipe and every `{token.ref}` in the semantic
-tokens.
+hard category in the inventory and why `system.test.ts` checks every recipe in its `ALL_RECIPES` and every `{token.ref}` in the
+semantic tokens.
 
 ## strictTokens and the `[value]` escape
 
