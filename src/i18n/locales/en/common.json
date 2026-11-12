@@ -872,6 +872,10 @@
       "success": "Provider unlinked successfully"
     }
   },
+  "og": {
+    "headline": "Secure online voting for your organization",
+    "tagline": "Verifiable voting for organizations of any size, easy to use and free for up to 25 voters."
+  },
   "open_in_explorer": "Open in explorer",
   "or_continue_with": "or continue with",
   "org_type_selector": {

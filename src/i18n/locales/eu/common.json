@@ -872,6 +872,10 @@
       "success": "Hornitzailea behar bezala desloturik"
     }
   },
+  "og": {
+    "headline": "Lineako bozketa segurua zure erakundearentzat",
+    "tagline": "Bozketa egiaztagarria edozein tamainatako erakundeentzat, erabilerraza eta doakoa 25 botogilera arte."
+  },
   "open_in_explorer": "Ireki esploratzailean",
   "or_continue_with": "edo jarraitu honekin",
   "org_type_selector": {

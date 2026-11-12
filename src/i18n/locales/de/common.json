@@ -872,6 +872,10 @@
       "success": "Anbieter erfolgreich getrennt"
     }
   },
+  "og": {
+    "headline": "Sichere Online-Abstimmungen für deine Organisation",
+    "tagline": "Verifizierbare Abstimmungen für Organisationen jeder Größe, einfach bedienbar und bis 25 Wählende kostenlos."
+  },
   "open_in_explorer": "Im Explorer öffnen",
   "or_continue_with": "oder weiter mit",
   "org_type_selector": {

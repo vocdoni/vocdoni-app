@@ -37,6 +37,37 @@ const ldJsonText = (html: string) => {
   return match[1]
 }
 
+const baseMeta = {
+  title: 'T',
+  description: 'D',
+  language: 'en',
+  alternates: [],
+  openGraph: { title: 'T', description: 'D', type: 'website' as const, image: '/a.png', siteName: 'Vocdoni' },
+  twitter: {
+    card: 'summary_large_image' as const,
+    title: 'T',
+    description: 'D',
+    image: '/a.png',
+    site: '@vocdoni',
+    creator: '@vocdoni',
+  },
+}
+
+describe('PageMetaHead image dimensions', () => {
+  it('emits og:image:width/height only when present', () => {
+    const withSize = renderToStaticMarkup(
+      <PageMetaHead meta={{ ...baseMeta, openGraph: { ...baseMeta.openGraph, imageWidth: 1200, imageHeight: 630 } }} />
+    )
+    const without = renderToStaticMarkup(<PageMetaHead meta={baseMeta} />)
+
+    expect(withSize).toContain('property="og:image:width" content="1200"')
+    expect(withSize).toContain('property="og:image:height" content="630"')
+    expect(withSize).toContain('name="twitter:card" content="summary_large_image"')
+    expect(without).not.toContain('og:image:width')
+    expect(without).not.toContain('og:image:height')
+  })
+})
+
 describe('PageMetaHead', () => {
   it('renders canonical, alternate, open graph, and twitter tags without duplicating title or description tags', () => {
     const html = renderToStaticMarkup(

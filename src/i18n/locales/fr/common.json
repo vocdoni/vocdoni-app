@@ -893,6 +893,10 @@
       "success": "Fournisseur délié avec succès"
     }
   },
+  "og": {
+    "headline": "Vote en ligne sécurisé pour votre organisation",
+    "tagline": "Vote vérifiable pour les organisations de toute taille, simple à utiliser et gratuit jusqu'à 25 électeurs."
+  },
   "open_in_explorer": "Ouvrir dans l'Explorer",
   "or_continue_with": "ou continuer avec",
   "org_type_selector": {
