@@ -1,4 +1,5 @@
 import { Alert, Button, Card, Flex, HStack, IconButton, Separator, Text, VStack } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { InlineLoader, ListLoader } from '~components/ui/Loader'
 import {
   BillingAddressElement,
@@ -414,9 +415,7 @@ const Frame = ({ title, onBack, children }: { title: string; onBack: () => void;
         <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost' size='sm'>
           <BackIcon />
         </IconButton>
-        <Text fontSize='lg' fontWeight='bold'>
-          {title}
-        </Text>
+        <SectionHeader title={title} />
       </Flex>
       {children}
     </VStack>

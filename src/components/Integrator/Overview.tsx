@@ -1,4 +1,4 @@
-import { Alert, Box, Link, SimpleGrid, Text } from '@chakra-ui/react'
+import { Alert, Box, Link, SimpleGrid, Stat } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { NetworkIcon, RocketIcon, TerminalIcon } from '~theme/icons'
 import { Link as RouterLink } from 'react-router'
@@ -90,12 +90,10 @@ export const IntegratorOverview = () => {
       <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
         {canView && wallet.data && (
           <DashboardBox gap='3' justifyContent='flex-start'>
-            <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
-              {t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}
-            </Text>
-            <Text fontSize='3xl' fontWeight='bold' lineHeight='shorter'>
-              {currency(wallet.data.balanceCents, wallet.data.currency?.toUpperCase())}
-            </Text>
+            <Stat.Root>
+              <Stat.Label>{t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}</Stat.Label>
+              <Stat.ValueText>{currency(wallet.data.balanceCents, wallet.data.currency?.toUpperCase())}</Stat.ValueText>
+            </Stat.Root>
             <Box minH='[22px]'>
               <Link asChild fontSize='sm' fontWeight='bold' color='fg.muted'>
                 <RouterLink to={Routes.integrators.configuration.billing}>

@@ -1,9 +1,10 @@
-import { Alert, Button, Card, Code, Flex, Link, Stack, Table, Text } from '@chakra-ui/react'
+import { Alert, Button, Card, Code, Flex, Link, Stack, Stat, Table, Text } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { WalletLedgerEntry, WalletLedgerKind } from '@vocdoni/api-types'
 import { generatePath, Link as RouterLink, useLocation, useNavigate, useParams } from 'react-router'
-import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { PrevNextPagination } from '~components/Pagination/PrevNextPagination'
 import { useToast } from '~components/Toast'
 import { isManagedOrgWalletError, useWallet, useWalletAccess } from '~queries/wallet'
@@ -248,14 +249,10 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
       <Flex direction='column' gap='6'>
         <DashboardBox>
           <Flex justify='space-between' align='flex-start' gap='4' wrap='wrap'>
-            <Stack gap='1'>
-              <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
-                {t('wallet.balance', { defaultValue: 'Balance' })}
-              </Text>
-              <Text fontSize='3xl' fontWeight='bold' lineHeight='shorter'>
-                {currency(balanceCents, currencyCode)}
-              </Text>
-            </Stack>
+            <Stat.Root>
+              <Stat.Label>{t('wallet.balance', { defaultValue: 'Balance' })}</Stat.Label>
+              <Stat.ValueText>{currency(balanceCents, currencyCode)}</Stat.ValueText>
+            </Stat.Root>
             {canTopUp && (
               <Button onClick={() => setView('topup')}>{t('wallet.topup.open', { defaultValue: 'Top up' })}</Button>
             )}
@@ -285,7 +282,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
         </DashboardBox>
 
         <Flex direction='column' gap='4'>
-          <DashboardCardHeader title={t('wallet.history.title', { defaultValue: 'Movements' })} />
+          <SectionHeader title={t('wallet.history.title', { defaultValue: 'Movements' })} mb='4' />
           {history.length === 0 ? (
             <Text color='fg.muted'>{t('wallet.history.empty', { defaultValue: 'No movements yet.' })}</Text>
           ) : (
@@ -366,7 +363,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
 
       {view === 'topup' ? (
         <DashboardBox size='md'>
-          <DashboardCardHeader title={t('wallet.topup.title', { defaultValue: 'Top up your wallet' })} />
+          <SectionHeader title={t('wallet.topup.title', { defaultValue: 'Top up your wallet' })} mb='4' />
           <WalletTopUp onStart={handleTopUpStart} onDone={handleTopUpDone} onCancel={() => setView('overview')} />
         </DashboardBox>
       ) : (
