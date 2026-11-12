@@ -5,7 +5,7 @@ const listItem = {
   root: {
     w: 'full',
     bgColor: 'transparent',
-    border: 'sm',
+    border: '[{borderWidths.hairline} solid]',
     borderColor: 'border',
     p: '4',
     gap: '2',

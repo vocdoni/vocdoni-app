@@ -67,7 +67,7 @@ export const link = defineRecipe({
         borderRadius: 'sm',
         minW: '[30px]',
         h: '[30px]',
-        border: 'sm',
+        border: '[{borderWidths.hairline} solid]',
         cursor: 'button',
         textDecoration: 'none',
       },
