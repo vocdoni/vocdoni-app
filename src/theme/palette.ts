@@ -199,7 +199,7 @@ export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Ba
   }
 }
 
-export type AccentTokens = Record<'fg' | 'solid' | 'contrast', PaletteSemanticSlot>
+export type AccentTokens = Record<'fg', PaletteSemanticSlot>
 
 const isNeutral = (hex: string) => {
   const [, a, b] = rgbToLab(hexToRgb(hex))
@@ -207,19 +207,13 @@ const isNeutral = (hex: string) => {
 }
 
 /**
- * Brand accents the app's own tokens paint (active tab, highlighted notice): the brand's own
- * `fg`/`solid`/`contrast`, except on the dark page for a neutral brand too dark to read there (the stock black),
- * whose readable step is a mid grey; that one shows white, with black on it.
+ * Brand accent the app's own tokens paint (active tab, highlighted notice): the brand's own `fg`, except on the dark
+ * page for a neutral brand too dark to read there (the stock black), whose readable step is a mid grey; that one
+ * shows white.
  */
 export const generateAccentTokens = (scale: PaletteScale, backgrounds: Backgrounds): AccentTokens => {
   const whiteOnDark = isNeutral(scale[500]) && contrastRatio(scale[500], backgrounds.dark) < MIN_SURFACE_CONTRAST
-  const slot = (name: 'fg' | 'solid' | 'contrast', dark: string) => ({
-    _light: `{colors.brand.${name}}`,
-    _dark: whiteOnDark ? dark : `{colors.brand.${name}}`,
-  })
   return {
-    fg: slot('fg', '{colors.white}'),
-    solid: slot('solid', '{colors.white}'),
-    contrast: slot('contrast', contrastColor('#ffffff')),
+    fg: { _light: '{colors.brand.fg}', _dark: whiteOnDark ? '{colors.white}' : '{colors.brand.fg}' },
   }
 }

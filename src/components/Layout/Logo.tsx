@@ -65,7 +65,7 @@ const Logo = ({ organization }: LogoProps) => {
       ) : (
         <>
           {/* 125px / 40px wide keeps the header height stable. */}
-          <VocdoniLogo role='img' aria-label={t('vocdoni_logo')} w='[125px]' display={{ base: 'none', lg: 'block' }} />
+          <VocdoniLogo role='img' aria-label={t('vocdoni_logo')} w='wordmark' display={{ base: 'none', lg: 'block' }} />
           <VocdoniLogo
             minimal
             role='img'
