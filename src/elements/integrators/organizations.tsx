@@ -49,7 +49,7 @@ const IntegratorManagedOrganizations = () => {
           </Alert.Content>
         </Alert.Root>
       ) : organizations.length === 0 ? (
-        <Flex direction='column' gap={4}>
+        <Flex direction='column' gap='4'>
           <EmptyState
             size='lg'
             title={t('integrators.managed.empty_title', { defaultValue: 'No organizations yet' })}
@@ -59,7 +59,7 @@ const IntegratorManagedOrganizations = () => {
             })}
           />
           {/* Docs shortcut shown only until the first organization exists */}
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
             <DocsCard
               href='https://vocdoni.io/en/developers/docs/organizations#creating-an-organization'
               icon={DocsIcon}
@@ -71,7 +71,7 @@ const IntegratorManagedOrganizations = () => {
           </SimpleGrid>
         </Flex>
       ) : (
-        <Flex direction='column' gap={4}>
+        <Flex direction='column' gap='4'>
           <ManagedOrganizationsTable organizations={organizations} canEditCaps={isAdmin} />
           {pagination && pagination.lastPage > 1 && (
             <PrevNextPagination

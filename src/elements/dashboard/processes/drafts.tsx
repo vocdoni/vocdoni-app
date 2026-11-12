@@ -100,7 +100,7 @@ export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
 
   if (isMobile) {
     return (
-      <Stack gap={3} w='full'>
+      <Stack gap='3' w='full'>
         {drafts.map((draft) => (
           <DraftCard key={draft.id} draft={draft} />
         ))}
@@ -288,21 +288,21 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
                   search: createSearchParams({ draftId: draft.id }).toString(),
                 }}
               >
-                <HStack gap={2} align='center'>
+                <HStack gap='2' align='center'>
                   <Icon as={EditIcon} />
                   <span>{t('drafts.edit', { defaultValue: 'Edit Draft' })}</span>
                 </HStack>
               </RouterLink>
             </MenuItem>
             <MenuItem value='clone' onClick={cloneDraft}>
-              <HStack gap={2} align='center'>
+              <HStack gap='2' align='center'>
                 <Icon as={CopyIcon} />
                 <span>{t('drafts.clone', { defaultValue: 'Clone Draft' })}</span>
               </HStack>
             </MenuItem>
             <MenuSeparator />
             <MenuItem value='delete' color='danger.action' onClick={deleteDraft}>
-              <HStack gap={2} align='center'>
+              <HStack gap='2' align='center'>
                 <Icon as={DeleteIcon} />
                 <span>{t('drafts.delete', { defaultValue: 'Delete Draft' })}</span>
               </HStack>
