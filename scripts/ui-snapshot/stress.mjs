@@ -9,7 +9,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(HERE, '../..')
 
 export const STRESS_MODULE = 'src/theme/test-themes/stress.ts'
-export const STRESS_BASELINE = path.join(HERE, 'stress-baseline.json')
+const STRESS_BASELINE = path.join(HERE, 'stress-baseline.json')
 export const UPDATE_FLAG = '--update-stress-baseline'
 
 // The vite alias that swaps the app's system for the stress one, on the server and in the browser.
@@ -17,7 +17,7 @@ export const stressAlias = () => ({ '~theme/system': path.join(ROOT, STRESS_MODU
 
 // Elements that keep stock values on purpose. `selector` is matched with closest(), so it covers descendants.
 // Leaks still waiting for a fix are not exceptions: they live in stress-baseline.json.
-export const STRESS_EXCEPTIONS = []
+const STRESS_EXCEPTIONS = []
 
 const KINDS = ['font', 'font-size', 'radius', 'spacing', 'grey', 'palette', 'shadow']
 

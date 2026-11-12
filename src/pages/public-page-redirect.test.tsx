@@ -35,7 +35,6 @@ vi.mock('~elements/organization/PublicPage', () => ({
 // than the others and pushed it over vitest's 5s timeout under full-suite load.
 vi.mock('~components/Organization/Archive/View', () => ({
   default: () => <div>archive-organization-page</div>,
-  ArchiveOrganizationView: () => <div>archive-organization-page</div>,
 }))
 
 vi.mock('~src/pages/shared/publicPageRedirect', () => ({

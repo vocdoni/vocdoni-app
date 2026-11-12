@@ -8,13 +8,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(HERE, '../..')
 
-export const A11Y_BASELINE = path.join(HERE, 'a11y-baseline.json')
+const A11Y_BASELINE = path.join(HERE, 'a11y-baseline.json')
 export const A11Y_UPDATE_FLAG = '--update-a11y-baseline'
 export const A11Y_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
 // Deliberate cases, each with a reason: { selector, rules: ['rule-id'] | '*', reason }. `selector` is matched with
 // closest(), so it covers descendants. Violations waiting for a fix are not exceptions: they live in a11y-baseline.json.
-export const A11Y_EXCEPTIONS = []
+const A11Y_EXCEPTIONS = []
 
 // Read from node_modules because the harness blocks every non-localhost request, so no CDN.
 const AXE_SOURCE = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8')

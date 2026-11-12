@@ -4,8 +4,9 @@
     "src/pages/**/+*.{ts,tsx}", // Vike page files (the vike plugin is off, see below)
     "vite.config.ts",
     "i18next.config.ts", // read by i18next-cli (pnpm translations)
-    "scripts/**/*.mjs",
-    "server/index.mjs", // started by `pnpm serve:ssr` (NODE_ENV prefix hides it from knip)
+    "scripts/*.mjs",
+    "scripts/ui-snapshot/{snapshot,diff,mock-saas}.mjs",
+    "server/index.mjs", // the SSR server, started by `pnpm serve:ssr` and the Dockerfile
     "stress/loadgen.mjs", // spawned by stress/loadgen.test.ts and run-stress.sh
     "src/utils/use-feature-flag.ts", // documented API (docs/analytics.md), no caller yet
   ],
