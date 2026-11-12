@@ -76,35 +76,35 @@
     "aria-input-field-name": 2
   },
   "dashboard--user-menu-1440-dark": {
-    "definition-list": 4,
+    "definition-list": 1,
     "frame-title": 1,
     "label-content-name-mismatch": 1,
     "link-name": 2
   },
   "dashboard--user-menu-1440-light": {
-    "definition-list": 4,
+    "definition-list": 1,
     "frame-title": 1,
     "label-content-name-mismatch": 1,
     "link-name": 2
   },
   "dashboard-1440-dark": {
-    "definition-list": 4,
+    "definition-list": 1,
     "frame-title": 1,
     "label-content-name-mismatch": 1,
     "link-name": 2
   },
   "dashboard-1440-light": {
-    "definition-list": 4,
+    "definition-list": 1,
     "frame-title": 1,
     "label-content-name-mismatch": 1,
     "link-name": 2
   },
   "dashboard-390-dark": {
-    "definition-list": 4,
+    "definition-list": 1,
     "link-name": 1
   },
   "dashboard-390-light": {
-    "definition-list": 4,
+    "definition-list": 1,
     "link-name": 1
   },
   "memberbase-groups--group-menu-1440-dark": {
@@ -314,6 +314,23 @@
   "profile-1440-light": {
     "label-content-name-mismatch": 1,
     "link-name": 1
+  },
+  "settings-billing-1440-dark": {
+    "aria-valid-attr-value": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "settings-billing-1440-light": {
+    "aria-valid-attr-value": 1,
+    "color-contrast": 1,
+    "label-content-name-mismatch": 1,
+    "link-name": 1
+  },
+  "settings-billing-390-dark": {
+    "aria-valid-attr-value": 1
+  },
+  "settings-billing-390-light": {
+    "aria-valid-attr-value": 1
   },
   "settings-organization-1440-dark": {
     "aria-input-field-name": 1,
