@@ -11,7 +11,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as RouterLink, useHref, useNavigate } from 'react-router'
-import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import {
   censusPaymentIds,
   useCensusCheckout,
@@ -341,7 +342,7 @@ export const CensusCheckout = ({
 
   return (
     <DashboardBox size='md'>
-      <DashboardCardHeader title={t('census.checkout.title', { defaultValue: 'Add voter places' })} />
+      <SectionHeader title={t('census.checkout.title', { defaultValue: 'Add voter places' })} mb='4' />
       {renderBody()}
     </DashboardBox>
   )

@@ -10,7 +10,8 @@ export const textStyles = defineTextStyles({
   // Small uppercase labels over a figure or a group.
   eyebrow: { value: { fontSize: 'xs', lineHeight: 'moderate', letterSpacing: 'wide', textTransform: 'uppercase' } },
   'page-title': { value: { fontSize: '2xl', lineHeight: 'short', fontWeight: 'bold' } },
-  'section-title': { value: { fontSize: '2xl', lineHeight: 'short', fontWeight: 'bold' } },
+  // Card, section and settings-block titles (ui/SectionHeader), a step below the page title.
+  'section-title': { value: { fontSize: 'lg', lineHeight: 'short', fontWeight: 'bold' } },
   // Public process and organisation names.
   display: { value: { fontSize: { base: '3xl', md: '4xl' }, lineHeight: 'short', fontWeight: 'bold' } },
 })

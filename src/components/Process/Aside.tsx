@@ -1,4 +1,4 @@
-import { Card, Flex, Text } from '@chakra-ui/react'
+import { Card, Flex, Stat, Text } from '@chakra-ui/react'
 import { VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
 import { isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -39,30 +39,36 @@ const ProcessAside = () => {
             depending on the translated sentence around it. Exactly one of the
             two renders at a time, so the id stays unique. */}
         {showVoters && !showVotes && (
-          <Flex direction={'row'} justifyContent='center' alignItems='center' gap='2' data-testid='process-vote-count'>
+          <Stat.Root
+            flexDirection='row'
+            justifyContent='center'
+            alignItems='baseline'
+            gap='2'
+            data-testid='process-vote-count'
+          >
             <Trans
               i18nKey='aside.votes'
               components={{
-                span: <Text as='span' fontWeight='bold' fontSize='3xl' lineHeight='shorter' />,
-                text: <Text fontSize='xl' lineHeight='short' />,
+                span: <Stat.ValueText />,
+                text: <Stat.ValueUnit />,
               }}
               count={votes}
             />
-          </Flex>
+          </Stat.Root>
         )}
 
         {showVotes && (
           <Flex direction='column' justifyContent='center' alignItems='center' gap='2' data-testid='process-vote-count'>
-            <Flex direction={'row'} justifyContent='center' alignItems='center' gap='2'>
+            <Stat.Root flexDirection='row' justifyContent='center' alignItems='baseline' gap='2'>
               <Trans
                 i18nKey='aside.votes_weight'
                 components={{
-                  span: <Text as='span' fontWeight='bold' fontSize='3xl' lineHeight='shorter' />,
-                  text: <Text fontSize='xl' lineHeight='short' />,
+                  span: <Stat.ValueText />,
+                  text: <Stat.ValueUnit />,
                 }}
                 count={votes}
               />
-            </Flex>
+            </Stat.Root>
           </Flex>
         )}
       </Card.Root>
