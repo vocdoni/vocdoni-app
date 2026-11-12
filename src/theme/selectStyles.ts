@@ -1,6 +1,12 @@
 import type { ChakraStylesConfig } from 'chakra-react-select'
 
 export const selectStyles: ChakraStylesConfig<any, boolean> = {
+  // chakra-react-select spaces the input with raw rems (0.125rem); the same step from the spacing scale.
+  inputContainer: (base) => ({
+    ...base,
+    marginX: '0.5',
+    paddingY: '0.5',
+  }),
   placeholder: (base) => ({
     ...base,
     color: 'var(--chakra-colors-input-placeholder)',
@@ -17,7 +23,7 @@ export const languagesListSelectStyles = (longestLabelLength = 0): ChakraStylesC
     // Longest label width plus a small offset for the dropdown indicator. `ch`
     // already overestimates proportional text, so this slack also covers the
     // option check icon and gaps without leaving a large trailing gap.
-    w: longestLabelLength ? `[calc(${longestLabelLength}ch + 1.5rem)]` : 'fit',
+    w: longestLabelLength ? `[calc(${longestLabelLength}ch + {spacing.6})]` : 'fit',
   }),
   control: (base) => ({
     ...base,

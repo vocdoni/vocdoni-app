@@ -179,8 +179,9 @@ export const colors = defineSemanticTokens.colors({
           _dark: '{colors.ink.500}',
         },
       },
+      // Painted in light mode only (card `standalone`).
       border: {
-        value: '{colors.gray.200}',
+        value: '{colors.border}',
       },
     },
     // The showcase panel is dark in both color modes — it sits on a deep vertical accent
@@ -258,6 +259,21 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   ...illustrationColors,
+  // Raw values kept as semantic tokens so a retheme (and the stress theme) can move them: the horizontal
+  // rule of Layout/Separators, translucent so it works over both color modes.
+  separator: {
+    value: 'rgba(135, 140, 189, 0.3)',
+  },
+  // Accents of the per-vertical auth showcase, read as `${accent}.900` (src/components/Auth/vertical).
+  // 900 is the panel surface: a deep, desaturated tone, dark enough to carry white type at roughly 13:1.
+  verticals: {
+    generic: {
+      900: { value: '#251a42' },
+    },
+    professional: {
+      900: { value: '#0c2e3e' },
+    },
+  },
   dashboard: {
     // Borrowed by the support cards and the chat header; the sidebar reads `surface.sidebar`.
     menu: {
@@ -269,10 +285,7 @@ export const colors = defineSemanticTokens.colors({
   footer: {
     bg: {
       DEFAULT: {
-        value: {
-          _light: '{colors.white}',
-          _dark: '{colors.ink.650}',
-        },
+        value: '{colors.bg}',
       },
       muted: {
         value: {
@@ -304,19 +317,12 @@ export const colors = defineSemanticTokens.colors({
   tabs: {
     tab: {
       color: {
-        value: {
-          _light: '{colors.gray.600}',
-          _dark: '{colors.gray.400}',
-        },
+        value: '{colors.fg.muted}',
       },
       active: {
-        // `brand.fg`, not the raw 500: the active tab label sits on white, and
-        // an arbitrary PRIMARY_COLOR at 500 carries no contrast guarantee there.
+        // The accent text step, not the raw 500: an arbitrary PRIMARY_COLOR at 500 carries no contrast guarantee.
         color: {
-          value: {
-            _light: '{colors.brand.fg}',
-            _dark: '{colors.white}',
-          },
+          value: '{colors.accent.fg}',
         },
         bg: {
           value: {

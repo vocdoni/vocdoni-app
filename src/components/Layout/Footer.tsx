@@ -21,7 +21,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
       >
         <Box flex='1 1 33%'>
           <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
-            <VocdoniLogo role='img' aria-label={t('vocdoni_logo')} w='[125px]' mb='3' />
+            <VocdoniLogo role='img' aria-label={t('vocdoni_logo')} w='wordmark' mb='3' />
           </Link>
           <Text fontSize='md' lineHeight='tall'>
             {t('footer.footer_subtitle')}

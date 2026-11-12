@@ -198,3 +198,22 @@ export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Ba
     border: { _light: ref(lightSolid), _dark: ref(darkSolid) },
   }
 }
+
+export type AccentTokens = Record<'fg', PaletteSemanticSlot>
+
+const isNeutral = (hex: string) => {
+  const [, a, b] = rgbToLab(hexToRgb(hex))
+  return Math.hypot(a, b) < 0.01
+}
+
+/**
+ * Brand accent the app's own tokens paint (active tab, highlighted notice): the brand's own `fg`, except on the dark
+ * page for a neutral brand too dark to read there (the stock black), whose readable step is a mid grey; that one
+ * shows white.
+ */
+export const generateAccentTokens = (scale: PaletteScale, backgrounds: Backgrounds): AccentTokens => {
+  const whiteOnDark = isNeutral(scale[500]) && contrastRatio(scale[500], backgrounds.dark) < MIN_SURFACE_CONTRAST
+  return {
+    fg: { _light: '{colors.brand.fg}', _dark: whiteOnDark ? '{colors.white}' : '{colors.brand.fg}' },
+  }
+}

@@ -107,7 +107,7 @@ describe('Logo', () => {
     const [desktop, mobile] = [...container.querySelectorAll('svg')]
 
     expect(desktop).toHaveAttribute('viewBox', '0 0 1000 215')
-    expect(getComputedStyle(desktop).width).toBe('125px')
+    expect(getComputedStyle(desktop).width).toBe('var(--chakra-sizes-wordmark)')
     expect(mobile).toHaveAttribute('viewBox', '0 0 251.37 215')
     expect(getComputedStyle(mobile).width).toBe('var(--chakra-sizes-10)')
   })

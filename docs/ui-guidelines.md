@@ -54,6 +54,7 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                       | `illustration.ts` |
 | Links                            | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`                                                                                                                            | `recipeColors.ts` |
 | Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`                                                                     | `semantic.ts`     |
+| Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                   | `semantic.ts`     |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                        | `semantic.ts`     |
 
 Rules of thumb:
@@ -112,7 +113,7 @@ Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 - **Page widths**: `content.wide` (1600px), `content.medium` (1200px), `content.narrow` (900px), read through
   `PageContainer` (below).
 - **Other named sizes**: `card.empty`, `table.action`, `toolbar`, `dashboard.menu.expanded|collapsed`,
-  `dashboard.header`, `dashboard.panel`, `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
+  `dashboard.header`, `dashboard.panel`, `control.floating`, `control.icon-link`, `loader`, `wordmark`, `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
 - **z-index**: tokens only (`background`, `contents`, `sidebar`, `topbar`, `top`, `public-header`, `dashboard-menu`).
 - **Opacity**: `inactive` (0.6) for content that cannot be used right now, `dimmed` (0.5) for de-emphasis.
 - **Durations**: Chakra's names plus `instant` (0s).
@@ -150,7 +151,7 @@ What exists today:
 To add a variant:
 
 1. Add it to the recipe in `src/theme/recipes/`, built only from tokens (a recipe may use the `[value]` escape for CSS
-   values with no token, such as `none` or `inherit`; recipes are not scanned by the inventory, but `system.test.ts`
+   values with no token, such as `none` or `inherit`; recipes are scanned by the inventory for px and palette values only, and `system.test.ts`
    fails on any token name that does not exist, in every recipe in its `ALL_RECIPES`).
 2. Register a new recipe in `src/theme/recipes/index.ts`, unless only one `ui/` component uses it: then import it there
    (as `ui/PageContainer.tsx` does with `recipes/page.ts`) and add it to `ALL_RECIPES` in `system.test.ts`, which does
