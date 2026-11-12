@@ -43,7 +43,6 @@ export enum ApiEndpoints {
   Password = 'users/password',
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
-  Refresh = 'auth/refresh',
   Register = 'users',
   Verify = 'users/verify',
   VerifyCode = 'users/verify/code',

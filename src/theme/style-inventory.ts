@@ -808,7 +808,7 @@ export type StyleInventory = {
   files: number
 }
 
-const listScannedFiles = (root: string): string[] =>
+export const listScannedFiles = (root: string): string[] =>
   (fs.readdirSync(path.join(root, 'src'), { recursive: true }) as string[])
     .map((entry) => `src/${entry.split(path.sep).join('/')}`)
     .filter(isScannedFile)
