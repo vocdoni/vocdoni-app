@@ -98,7 +98,7 @@ Typography is a role, not three props.
 </Text>
 ```
 
-App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (12px, uppercase, wide tracking),
+App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (12px, uppercase, Chakra's `wide` letter spacing, not the `eyebrow.wide` token),
 `page-title` (24px), `section-title` (18px), `display`. Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 
 - A role holds typography only. Colour stays a separate prop. Do not pass a `textStyle` and a prop that sets the same
@@ -199,24 +199,24 @@ write a custom field wrapper.
 
 All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 
-| Component                                  | Use it for                                                                                                                                  |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PageContainer`, `PageSection`             | A page column: `size` (`wide`, `medium`, `narrow`) and `gutter`. `PageSection` is the same without gutters                                  |
-| `PageTitle`, `PageSubtitle`                | The page's one `h1` and the line under it                                                                                                   |
-| `SectionHeader`                            | The title of a card, section or settings block: `title`, `description`, `actions`, `icon`, `rule`. Actions drop below the title under `md`  |
-| `UsageMeter`                               | A usage figure with an optional bar: `label`, `value`, `max`, `unit`, `icon`, `tooltip`, `color`, `softLimit`                               |
-| `RoutedTabs`                               | Tabs that are child routes: `tabs` (`{ label, route, count? }`), optional `value`, `outletContext`; renders the `Outlet`                    |
-| `ListStateAlert`                           | A list or block that failed to load: `error`, `title`, `fallback` (for a non-`Error`), `show`. Use it instead of a hand-built error `Alert` |
-| `Tooltip`                                  | Every tooltip: `content`, `showArrow`, `contentProps`, `portalled` (off inside another portal)                                              |
-| `useIsMobile`, `useTableAsCards`           | The mobile breakpoint (below `md`) as a boolean; the second is the same hook, named for tables shown as cards                               |
-| `ConfirmDialog` (`ConfirmDialogContent`)   | Every confirmation. `layout`: `panel`, `inline`, `compact`, `shell`, `summary`; `destructive` is on by default                              |
-| `StatusBadge`                              | A status chip: `colorPalette` (`success`, `warning`, `danger`, `info`, `gray`), `variant` (`subtle`, `surface`, `solid`)                    |
-| `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                                          |
-| `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`                           |
-| `CloseButton`                              | A close control with a translated `aria-label`                                                                                              |
-| `PanelDrawer` (`ui/Drawer`)                | Every side panel: `title`, `description`, `footer` (pinned actions), `trigger`; a close button in the corner is built in                    |
-| `DialogHeader`                             | A dialog's `title` (its accessible name) and muted `description`. Dialogs are centred by default; do not set `placement`                    |
-| `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                                      |
+| Component                                  | Use it for                                                                                                                                     |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PageContainer`, `PageSection`             | A page column: `size` (`wide`, `medium`, `narrow`) and `gutter`. `PageSection` is the same without gutters                                     |
+| `PageTitle`, `PageSubtitle`                | The page's one `h1` and the line under it                                                                                                      |
+| `SectionHeader`                            | The title of a card, section or settings block: `title`, `description`, `actions`, `icon`, `rule`. Actions drop below the title under `md`     |
+| `UsageMeter`                               | A usage figure with an optional bar: `label`, `value`, `max`, `unit`, `icon`, `tooltip`, `color`, `softLimit`; `children` render under the bar |
+| `RoutedTabs`                               | Tabs that are child routes: `tabs` (`{ label, route, count? }`), optional `value`, `outletContext`; renders the `Outlet`                       |
+| `ListStateAlert`                           | A list or block that failed to load: `error`, `title`, `fallback` (for a non-`Error`), `show`. Use it instead of a hand-built error `Alert`    |
+| `Tooltip`                                  | Every tooltip: `content`, `showArrow`, `contentProps`, `portalled` (off inside another portal)                                                 |
+| `useIsMobile`, `useTableAsCards`           | The mobile breakpoint (below `md`) as a boolean; the second is the same hook, named for tables shown as cards                                  |
+| `ConfirmDialog` (`ConfirmDialogContent`)   | Every confirmation. `layout`: `panel`, `inline`, `compact`, `shell`, `summary`; `destructive` is on by default                                 |
+| `StatusBadge`                              | A status chip: `colorPalette` (`success`, `warning`, `danger`, `info`, `gray`), `variant` (`subtle`, `surface`, `solid`)                       |
+| `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                                             |
+| `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`                              |
+| `CloseButton`                              | A close control with a translated `aria-label`                                                                                                 |
+| `PanelDrawer` (`ui/Drawer`)                | Every side panel: `title`, `description`, `footer` (pinned actions), `trigger`; a close button in the corner is built in                       |
+| `DialogHeader`                             | A dialog's `title` (its accessible name) and muted `description`. Dialogs are centred by default; do not set `placement`                       |
+| `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                                         |
 
 ```tsx
 import { PageSection } from '~components/ui/PageContainer'
@@ -240,18 +240,19 @@ A section title, a usage meter and a side panel:
 ```tsx
 import { SectionHeader } from '~components/ui/SectionHeader'
 import { UsageMeter } from '~components/ui/UsageMeter'
+import { quantity } from '~utils/numbers'
 import { PanelDrawer } from '~components/ui/Drawer'
 
 <SectionHeader title={t('team')} description={t('team_hint')} actions={<Button>{t('invite')}</Button>} />
 
-<UsageMeter label={t('votes')} value={used} max={limit} unit={`/ ${limit}`} color='chart.1' />
+<UsageMeter label={t('votes')} value={used} max={limit} unit={`/ ${quantity(limit)}`} color='chart.1' />
 
 <PanelDrawer open={open} onOpenChange={(e) => setOpen(e.open)} title={t('add_group')} footer={<Button type='submit' form={formId}>{t('save')}</Button>}>
   <form id={formId}>…</form>
 </PanelDrawer>
 ```
 
-`UsageMeter` formats `value` with `quantity()` (the page's locale). With no `max` it shows the figure alone, with no
+`UsageMeter` formats `value` with `quantity()` (the page's locale); `unit` is printed as given, so format any number in it too. With no `max` it shows the figure alone, with no
 bar. With a `max` it draws a bar in the `color` series (`chart.1` to `chart.4`, so the brand cannot recolour it; the
 `meter.ok` tone when absent), which turns `meter.warning` at 80 % of the limit and `meter.critical` at 100 %. A
 `softLimit` (going over is billed, not blocked) never warns, and a `max` of `0` means no limit: the bar stays empty.
