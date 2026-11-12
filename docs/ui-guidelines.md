@@ -47,23 +47,28 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Surface layers                   | `surface.canvas`, `.sidebar`, `.content`, `.card`, `.sunken`, `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`) | `semantic.ts`     |
 | Dimming layer                    | `scrim`, `scrim.strong`, `scrim.fg`                                                                                                                                         | `semantic.ts`     |
 | Interaction states (bg/fg pairs) | `state.hover`, `state.pressed`, `state.selected`, `state.current`, `state.dragover.border`                                                                                  | `states.ts`       |
-| Status                           | `status.{success,warning,error,info,neutral}.{fg,bg,border,solid,contrast}` (`emphasis` on the four tones), `destructive.{fg,solid,contrast}`                               | `status.ts`       |
+| Status palettes                  | `colorPalette='success' \| 'warning' \| 'danger' \| 'info'`, each with the slots of a Chakra palette (`solid`, `contrast`, `fg`, `muted`, `subtle`, `border`…)              | `status.ts`       |
+| Status by meaning                | `status.{success,warning,error,info}.{fg,bg,border,solid,contrast,emphasis}`, `status.neutral.{fg,bg,border,solid,contrast}`, `danger.action`                               | `status.ts`       |
 | Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}`                                                                                 | `charts.ts`       |
 | Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                       | `ballot.ts`       |
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                       | `illustration.ts` |
 | Links                            | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`                                                                                                                            | `recipeColors.ts` |
 | Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`                                                                     | `semantic.ts`     |
+| Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                        | `semantic.ts`     |
 
 Rules of thumb:
 
 - **Accent**: leave `colorPalette` alone (it is `brand` when `PRIMARY_COLOR` is set, `gray` otherwise) and read
   `colorPalette.solid`, `colorPalette.fg` and so on. Use `colorPalette='gray'` only for things that must stay neutral.
-- **Status colour**: never a local status-to-colour map. Chips use `StatusBadge`; props that need a palette name read
-  `statusPalette[tone]` from `~theme/status`.
+- **Status colour**: status colours are Chakra semantic palettes defined in `src/theme/status.ts`. Pick one with
+  `colorPalette='danger' | 'success' | 'warning' | 'info'`, and `gray` for neutral; never a local status-to-colour map
+  or a raw `red`/`green`. `StatusBadge` takes `colorPalette`. Code that reads a colour rather than a palette uses
+  `status.<tone>.{fg,bg,border,solid,contrast,emphasis}` (the `danger` palette is `status.error`). `danger.action` is
+  the text colour of an action that deletes or ends something.
 - **Dark mode**: a token has a `_light` and a `_dark` value in the theme. Components do not branch on the mode:
   `useColorModeValue`, `colorMode ===` and `_dark={{ … }}` in a component are `colorModeLogic` and fail the inventory
-  (they also flash the light value on SSR pages before hydration). The one allowed `_dark` is an image filter, listed in
-  the exceptions.
+  (they also flash the light value on SSR pages before hydration). The only allowed `_dark` are the two listed in the
+  exceptions: an image filter on empty-state artwork and the white tile behind organisation logos.
 - **Text on a coloured fill**: use the pair the token family ships (`status.error.contrast` on `status.error.solid`,
   `surface.inverse.fg` on `surface.inverse`), not an ad hoc black or white. `textContrast.test.ts` and `palette.test.ts`
   check contrast.
@@ -84,7 +89,8 @@ Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 - A role holds typography only. Colour stays a separate prop. Do not pass a `textStyle` and a prop that sets the same
   property: they resolve in prop order.
 - The page has one `h1`: `PageTitle` from `~components/ui/PageTitle` (`PageSubtitle` is the line under it). Section
-  titles use `textStyle='section-title'` on an `h2`.
+  titles use `textStyle='section-title'` on an `h2`; in the dashboard, `SectionTitle` from
+  `~components/Dashboard/Contents` does that for you.
 - Set `textStyle` or `size` on every `Text`: the `text` recipe has no default size, so a bare `Text` takes whatever it
   inherits. For inline emphasis inside smaller text, use `chakra.span` or `Span`.
 - Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.5), `tall` (1.6). Letter spacing:
@@ -96,14 +102,16 @@ Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 
 ## Sizes, spacing and radii
 
-- **Spacing**: scale steps (`p='4'`, `gap='2'`). A pixel value is a `pxSpacing` ratchet hit.
+- **Spacing**: scale steps (`p='4'`, `gap='2'`), plus `0` and `auto` (`p='0'`, `mx='auto'`). A pixel value is a
+  `pxSpacing` ratchet hit.
+- **Sizes**: Chakra's named sizes and the tokens below, plus `0` and `auto`. A pixel value is a `pxSize` ratchet hit.
 - **Radii**: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `full`, `none`. Pixel radii fail the inventory.
-- **Icon sizes**: `icon.sm` (1rem, inline), `icon.md` (1.25rem, control), `icon.lg` (1.5rem, feature), `icon.xl` (3rem,
-  empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
+- **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
+  (1.5rem, feature), `icon.xl` (3rem, empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
 - **Page widths**: `content.wide` (1600px), `content.medium` (1200px), `content.narrow` (900px), read through
   `PageContainer` (below).
 - **Other named sizes**: `card.empty`, `table.action`, `toolbar`, `dashboard.menu.expanded|collapsed`,
-  `dashboard.header`, `dashboard.panel`, `voting.sidebar`, `user-profile`, `cookies-consent`.
+  `dashboard.header`, `dashboard.panel`, `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
 - **z-index**: tokens only (`background`, `contents`, `sidebar`, `topbar`, `top`, `public-header`, `dashboard-menu`).
 - **Opacity**: `inactive` (0.6) for content that cannot be used right now, `dimmed` (0.5) for de-emphasis.
 - **Durations**: Chakra's names plus `instant` (0s).
@@ -124,23 +132,25 @@ has no variant that already means the same thing; two looks for one meaning is a
 
 What exists today:
 
-| Recipe            | Variants and axes                                                                                                                                                                                                                                                      |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `button`          | `variant`: `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `menu-trigger`, `segment`, `toggle`, `disclosure`, `danger`, `floating`, `whatsapp`; `size`: `cta`; `multiline`. Chakra's own `solid`, `outline`, `ghost`… stay |
-| `card`            | `outline`, `section`, `frame`, `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `plan`, `featured`, `logo-tile`, `divided`, `plain`                                                                                                            |
-| `alert`           | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                    |
-| `link`            | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                         |
-| `tabs`            | `variant`: `pill`                                                                                                                                                                                                                                                      |
-| `drawer`          | `variant`: `navigation`, `panel`                                                                                                                                                                                                                                       |
-| `emptyState`      | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                               |
-| `text`, `heading` | `text`: `size`, `variant='muted'`; `heading`: `heavy`, `section`, `subsection`                                                                                                                                                                                         |
-| `badge`, `tag`    | Badge `size` (`xs` to `lg`); Tag has one look, use `StatusBadge`                                                                                                                                                                                                       |
+| Recipe              | Variants and axes                                                                                                                                                                                                                                                      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `button`            | `variant`: `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `menu-trigger`, `segment`, `toggle`, `disclosure`, `danger`, `floating`, `whatsapp`; `size`: `cta`; `multiline`. Chakra's own `solid`, `outline`, `ghost`… stay |
+| `card`              | `outline`, `section`, `frame`, `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `plain` (a filled card without a border, around a page-level empty state)                                                                                      |
+| `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                    |
+| `link`              | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                         |
+| `tabs`              | `variant`: `pill`                                                                                                                                                                                                                                                      |
+| `drawer`            | `variant`: `panel`, `sidebar` (the mobile dashboard menu)                                                                                                                                                                                                              |
+| `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe)                                                                                                                                                    |
+| `list`              | `variant`: `marker`                                                                                                                                                                                                                                                    |
+| `emptyState`        | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                               |
+| `text`, `heading`   | `text`: `size`, `variant='muted'`; `heading`: `variant` `heavy`, `section`, `subsection`                                                                                                                                                                               |
+| `badge`, `tag`      | Badge `size` (`xs` to `lg`); Tag has one look, use `StatusBadge`                                                                                                                                                                                                       |
 
 To add a variant:
 
-1. Add it to the recipe in `src/theme/recipes/`, built only from tokens (a recipe may use `[value]` for `0`, `auto` and
-   the like; recipes are not scanned by the inventory, but `system.test.ts` fails on any token name that does not
-   exist).
+1. Add it to the recipe in `src/theme/recipes/`, built only from tokens (a recipe may use the `[value]` escape for CSS
+   values with no token, such as `none` or `inherit`; recipes are not scanned by the inventory, but `system.test.ts`
+   fails on any token name that does not exist).
 2. Register a new recipe in `src/theme/recipes/index.ts`.
 3. Use it at the call site with `variant`, `size` or `layout`, with no extra look props next to it.
 4. A custom state is a `data-*` attribute styled by the recipe (see `_dragging` in `recipes/dragHandle.ts` and
@@ -157,16 +167,16 @@ write a custom field wrapper.
 
 All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 
-| Component                                  | Use it for                                                                                                         |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `PageContainer`, `PageSection`             | A page column: `size` (`wide`, `medium`, `narrow`) and `gutter`. `PageSection` is the same without gutters         |
-| `PageTitle`, `PageSubtitle`                | The page's one `h1` and the line under it                                                                          |
-| `ConfirmDialog` (`ConfirmDialogContent`)   | Every confirmation. `layout`: `panel`, `inline`, `compact`, `shell`, `summary`; `destructive` is on by default     |
-| `StatusBadge`                              | A status chip: `tone` (`success`, `warning`, `error`, `info`, `neutral`), `variant` (`subtle`, `surface`, `solid`) |
-| `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                 |
-| `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`  |
-| `CloseButton`                              | A close control with a translated `aria-label`                                                                     |
-| `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                             |
+| Component                                  | Use it for                                                                                                               |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `PageContainer`, `PageSection`             | A page column: `size` (`wide`, `medium`, `narrow`) and `gutter`. `PageSection` is the same without gutters               |
+| `PageTitle`, `PageSubtitle`                | The page's one `h1` and the line under it                                                                                |
+| `ConfirmDialog` (`ConfirmDialogContent`)   | Every confirmation. `layout`: `panel`, `inline`, `compact`, `shell`, `summary`; `destructive` is on by default           |
+| `StatusBadge`                              | A status chip: `colorPalette` (`success`, `warning`, `danger`, `info`, `gray`), `variant` (`subtle`, `surface`, `solid`) |
+| `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                       |
+| `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`        |
+| `CloseButton`                              | A close control with a translated `aria-label`                                                                           |
+| `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                   |
 
 ```tsx
 import { PageSection } from '~components/ui/PageContainer'
@@ -174,7 +184,7 @@ import { StatusBadge } from '~components/ui/StatusBadge'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 
 <PageSection size='medium'>
-  <StatusBadge tone='success'>{t('status.ongoing')}</StatusBadge>
+  <StatusBadge colorPalette='success'>{t('status.ongoing')}</StatusBadge>
 </PageSection>
 
 <ConfirmDialog layout='inline' open={open} title={title} onConfirm={revoke} loading={isPending} />
@@ -189,7 +199,6 @@ on one glyph exported under two concept names.
 
 ```tsx
 import { DeleteIcon, ErrorIcon } from '~theme/icons'
-
 ;<Icon as={DeleteIcon} boxSize='icon.sm' />
 ```
 
@@ -198,26 +207,35 @@ one place. To add one, import the Lucide glyph in `src/theme/icons.tsx` and expo
 group. Third-party brand marks (Google, GitHub, Discord, X, WhatsApp) are the only ones that keep another pack. SVGs use
 `currentColor`.
 
+### Logo
+
+`VocdoniLogo` (`~components/Layout/Logo`) is the only Vocdoni logo: an inline SVG that paints with `currentColor` on the
+`logo.fg` token, so it follows the colour mode from CSS. Do not add PNG logos or a dark-mode `invert` filter for it.
+Size it with `w`/`h`/`maxH`; `minimal` draws the mark without the wordmark.
+
 ## Allowed exceptions
 
 The exceptions are `STYLE_EXCEPTIONS` in `src/theme/style-inventory.ts`; each has a `glob`, the `categories` it excuses,
-an optional `match` on the source text, and a `reason`. Today:
+an optional `match` (a regular expression on the whole source text of the occurrence, such as the full JSX attribute,
+that narrows the exception to the occurrences it names) and a `reason`. Today:
 
 - **PDF report** (`VotingReportPdf`): react-pdf renders outside Chakra, so raw values are the only option.
-- **Stripe Elements** (`SubscriptionPayment.tsx`): its appearance API takes raw CSS colours and its own light and dark
-  themes.
-- **react-select** (`SaasSelector.tsx`, `CensusSearch.tsx`, and the `isLoading`/`isInvalid` props of its wrapper): the
-  menu portal needs a raw `zIndex` above Chakra modals.
+- **Stripe Elements** (`src/components/Pricing/stripe.ts`): its appearance API takes raw CSS colours and its own light
+  and dark themes.
+- **react-select**: the menu portal of `SaasSelector.tsx` and `CensusSearch.tsx` needs a raw `zIndex` above Chakra
+  modals, and `isLoading` on the react-select wrapper (`SaasSelector.tsx`, `Members/index.tsx`, `CensusCreation.tsx`) is
+  a react-select prop, not a Chakra v2 one.
 - **The colour-mode implementation** (`src/theme/color-mode.tsx`).
-- **White logo tiles** (`Layout/Logo.tsx`, `auth.logo.tile`): organisation logos are dark artwork on transparent
-  backgrounds. Image filters that invert dark artwork (`Footer.tsx`, `Logo.tsx`, `ui/EmptyState.tsx`) are allowed for
-  the same reason.
+- **Organisation logos on a white tile** (`Layout/Logo.tsx`): they are dark artwork on transparent backgrounds, so dark
+  mode puts them on the `auth.logo.tile` tile. The `match` pins the exception to that one `_dark` block. The empty-state
+  illustration in `ui/EmptyState.tsx` keeps a dark-mode `invert` filter for the same reason.
+- **Sort carets** (`Members/index.tsx`): `lineHeight: '[0]'` collapses the stack's line box, and no line-height token is 0.
 - **The typing indicator bounce** (`SupportChat/Messages.tsx`, `dotBounce`).
 
-Not scanned at all: the theme definition files (they are checked by `system.test.ts`), recipes, tests and
-`src/theme/test-themes/`. `src/theme/logoTones.ts` holds committed per-logo panel colours on purpose; regenerate it with
-`scripts/logo-tones.mjs` and review each value on screen. Third-party brand colours (the WhatsApp green is the
-`whatsapp.*` token) stay as the brand defines them.
+Not scanned at all: the theme definition files (`EXCLUDED_FILES` in `style-inventory.ts`, checked by `system.test.ts`
+instead), recipes, tests and `src/theme/test-themes/`. `src/theme/logoTones.ts` holds committed per-logo panel colours
+on purpose; regenerate it with `scripts/logo-tones.mjs` and review each value on screen. Third-party brand colours (the
+WhatsApp green is the `whatsapp.*` token) stay as the brand defines them.
 
 To add an exception, add an entry with a reason. The test fails on an entry that excuses nothing, so remove it when the
 code goes.
@@ -266,29 +284,35 @@ tokens.
 ## strictTokens and the `[value]` escape
 
 `createAppSystem` in `src/theme/system.ts` sets `strictTokens: true`: style props accept only theme tokens, and `tsc`
-rejects the rest. The way out for a value that is not a design decision (`0`, `auto`, `inherit`, `none`, a `calc()`) is
-to wrap it in brackets:
+rejects the rest. Use the token, including `0` and `auto`, which are spacing and sizes tokens
+(`p='0'`, `mx='auto'`, `w='auto'`, `minW='0'`). The `[value]` escape is for a real one-off, a CSS value that is not a
+design decision and has no token (`inherit`, `none`, `help`, a `calc()`):
 
 ```tsx
-<Box p='[0]' mx='[auto]' w='[calc(100% - {sizes.8})]' />
+<Box lineHeight='[0]' cursor='[help]' w='[calc(100% - {sizes.8})]' />
 ```
 
-Chakra 3.x types `[value]` but never unwraps it, so it would emit the invalid `padding: [0]`. `src/theme/escapeHatch.ts`
-(`withEscapeHatch`, applied to the system at the end of `createAppSystem`) unwraps it and still expands token references
-inside, as the third prop above shows. `system.test.ts` ("escape hatch") pins both behaviours; check that test before
+Chakra 3.x types `[value]` but never unwraps it at runtime, so on its own it would emit the invalid
+`line-height: [0]`. `src/theme/escapeHatch.ts` (`withEscapeHatch`, applied to the system at the end of
+`createAppSystem` and to the stress system) unwraps it and still expands token references inside, as the `calc()` above
+shows. The "escape hatch" tests in `system.test.ts` and `escapeHatch.test.tsx` pin both behaviours; check them before
 touching the wrapper or upgrading Chakra.
 
-`[12px]` is still a pixel size or spacing to the inventory: the escape is not a way around the ratchet.
+`[12px]` is still a pixel size or spacing to the inventory: the rules apply to what is inside the brackets, so the
+escape is not a way around the ratchet.
 
 ## The checks
 
-| Check                                              | Command                                             | In CI                                |
-| -------------------------------------------------- | --------------------------------------------------- | ------------------------------------ |
-| Types, including `strictTokens`                    | `pnpm lint`                                         | `Lint` (PRs to `develop`, `stage`)   |
-| Theme integrity (recipes and refs hit real tokens) | `pnpm test src/theme/system.test.ts`                | `Test`                               |
-| Style inventory                                    | `pnpm test src/theme/style-inventory.test.ts`       | `Test`                               |
-| Stress theme                                       | `pnpm ui:snapshot -- --label stress --theme stress` | `Stress theme` (PRs touching `src/`) |
-| Offline snapshot and diff                          | `pnpm ui:snapshot`, `pnpm ui:diff`                  | not run                              |
+| Check                                              | Command                                             | In CI                                                                    |
+| -------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------ |
+| Types, including `strictTokens`                    | `pnpm lint`                                         | `Lint` step of `Build (dev)` / `Build (stg)`                             |
+| Theme integrity (recipes and refs hit real tokens) | `pnpm test src/theme/system.test.ts`                | `Test` step of the same jobs                                             |
+| Style inventory                                    | `pnpm test src/theme/style-inventory.test.ts`       | `Test` step of the same jobs                                             |
+| Stress theme                                       | `pnpm ui:snapshot -- --label stress --theme stress` | `Stress theme` job (any PR that touches what renders, whatever its base) |
+| Offline snapshot and diff                          | `pnpm ui:snapshot`, `pnpm ui:diff`                  | not run                                                                  |
+
+The build jobs run on PRs to `develop`, `stage` and `d/**` only; on a PR to any other base (a stacked PR), run
+`pnpm lint` and `pnpm test` yourself.
 
 ### Style inventory
 
@@ -322,7 +346,8 @@ stock scale. The snapshot renders the app with it, and whatever still shows a st
 colour, a font or size that skipped the token). It needs no backend: it runs against a local fake of the SaaS API.
 
 The run fails on any leak count above `scripts/ui-snapshot/stress-baseline.json`, the leaks known today. After you fix a
-leak, lower the baseline with `--update-stress-baseline` (a `--routes` run updates only its captures). An element that
+leak, lower the baseline with `pnpm ui:snapshot -- --label stress --theme stress --update-stress-baseline` (a `--routes` run
+updates only its captures). An element that
 must keep a stock value goes in `STRESS_EXCEPTIONS` in `scripts/ui-snapshot/stress.mjs`, with a reason; leaks waiting for
 a fix belong in the baseline, not there. Do not confuse it with `stress/`, which is an HTTP load test of the production
 server.
@@ -338,7 +363,8 @@ pnpm ui:snapshot -- --label after
 pnpm ui:diff -- before after
 ```
 
-Exit code 0 means no difference in the computed styles of any visible element; a difference you did not expect means
+Each run saves a full-page screenshot per route, viewport and colour mode in `.ui-snapshot/<label>/` (git-ignored),
+which is where the before and after screenshots for a PR come from. Exit code 0 from `ui:diff` means no difference in the computed styles of any visible element; a difference you did not expect means
 the change leaked outside its scope. A change meant to look different needs before and after screenshots in the PR
 (light and dark, with and without `PRIMARY_COLOR`). `scripts/ui-snapshot/README.md` has the options, how determinism
 works, how to add a route and the known limits (mock data only: no empty states, errors or other plans).
