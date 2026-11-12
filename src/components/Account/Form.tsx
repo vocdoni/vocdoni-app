@@ -168,11 +168,11 @@ const AccountForm = ({ profile }: { profile?: User }) => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <PageTitle mb={1.5}>{t('account.title', { defaultValue: 'Account Information' })}</PageTitle>
-        <Text textStyle='body-sm' color='fg.muted' mb={6}>
+        <PageTitle mb='1.5'>{t('account.title', { defaultValue: 'Account Information' })}</PageTitle>
+        <Text textStyle='body-sm' color='fg.muted' mb='6'>
           {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
         </Text>
-        <VStack gap={8} align='stretch'>
+        <VStack gap='8' align='stretch'>
           <HStack>
             <FormControl invalid={!!errors.firstName}>
               <FormLabel fontSize='sm'>{t('name', { defaultValue: 'Name' })}</FormLabel>
@@ -203,7 +203,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
           <FormControl>
             <FormLabel fontSize='sm'>{t('password', { defaultValue: 'Password' })}</FormLabel>
             {hasPassword ? (
-              <HStack gap={2}>
+              <HStack gap='2'>
                 <Input placeholder={'• • • • • • • •'} type='password' disabled />
                 <ChangePasswordButton />
               </HStack>
@@ -220,7 +220,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
             )}
           </FormControl>
 
-          <VStack gap={3} align='stretch'>
+          <VStack gap='3' align='stretch'>
             <Text textStyle='body-sm' fontWeight='bold'>
               {t('oauth.title', { defaultValue: 'Connect accounts' })}
             </Text>
@@ -240,7 +240,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
               const providerIcon = providerIcons[provider] || LinkIcon
 
               return (
-                <HStack key={provider} justify='space-between' flexWrap='wrap' gap={3}>
+                <HStack key={provider} justify='space-between' flexWrap='wrap' gap='3'>
                   {isLinked ? (
                     <Button
                       size='sm'

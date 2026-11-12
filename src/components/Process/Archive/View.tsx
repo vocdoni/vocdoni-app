@@ -53,15 +53,15 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
       display='flex'
       flexDirection='column'
       alignItems='stretch'
-      gap={6}
-      px={4}
-      py={8}
+      gap='6'
+      px='4'
+      py='8'
       w='full'
     >
       {election.header && <Image src={election.header} alt='' borderRadius='md' maxH='60' objectFit='cover' />}
 
       <Box>
-        <HStack mb={2} gap={2} flexWrap='wrap'>
+        <HStack mb='2' gap='2' flexWrap='wrap'>
           <ElectionStatus status={election.status} />
           {election.secretUntilTheEnd && !election.resultsAvailable && (
             <Badge>{t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })}</Badge>
@@ -70,7 +70,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
         <Heading as='h1' textStyle='display'>
           {title}
         </Heading>
-        <Text color='fg.muted' textStyle='body-sm' mt={2}>
+        <Text color='fg.muted' textStyle='body-sm' mt='2'>
           {election.startDate &&
             `${t('process.date.starts', { defaultValue: 'Starts' })} ${format(election.startDate, t('organization.date_format'))}`}
           {election.startDate && election.endDate && ' · '}
@@ -90,7 +90,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
 
       {description && <Editor defaultValue={description} disabled />}
 
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         {election.questions.map((question, questionIndex) => (
           <Card.Root key={questionIndex} variant='outline'>
             <Card.Header>
@@ -109,10 +109,10 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
                   })}
                 </Text>
               ) : (
-                <VStack align='stretch' gap={3}>
+                <VStack align='stretch' gap='3'>
                   {question.choices.map((choice, choiceIndex) => (
                     <Box key={choiceIndex}>
-                      <Flex justify='space-between' fontSize='sm' mb={1} gap={4}>
+                      <Flex justify='space-between' fontSize='sm' mb='1' gap='4'>
                         <Text>{localize(choice.title)}</Text>
                         <Text color='fg.muted' whiteSpace='nowrap'>
                           {choice.votes === null
@@ -135,7 +135,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
       </VStack>
 
       <Box>
-        <Text textStyle='body-sm' color='fg.muted' mb={1}>
+        <Text textStyle='body-sm' color='fg.muted' mb='1'>
           {t('public_process.verify', { defaultValue: 'Verify on the blockchain explorer:' })}
         </Text>
         <Link
@@ -145,7 +145,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
           size='sm'
           display='inline-flex'
           alignItems='center'
-          gap={1}
+          gap='1'
         >
           <ExternalLinkIcon />
           {t('public_process.verify_process', { defaultValue: 'View process' })}

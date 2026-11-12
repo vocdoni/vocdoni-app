@@ -70,7 +70,7 @@ const SpendCapForm = ({ organization, onDone }: { organization: ManagedOrganizat
   return (
     <>
       <Dialog.Body>
-        <Stack gap={4}>
+        <Stack gap='4'>
           {error && (
             <Alert.Root status='error'>
               <Alert.Indicator />
@@ -104,7 +104,7 @@ const SpendCapForm = ({ organization, onDone }: { organization: ManagedOrganizat
         </Stack>
       </Dialog.Body>
       <Dialog.Footer>
-        <Flex justify='flex-end' gap={3} w='full'>
+        <Flex justify='flex-end' gap='3' w='full'>
           <Button variant='ghost' onClick={onDone}>
             {t('cancel', { defaultValue: 'Cancel' })}
           </Button>

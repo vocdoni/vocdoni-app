@@ -1,29 +1,29 @@
 import { cardAnatomy } from '@chakra-ui/react/anatomy'
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 
 const listItem = {
   root: {
     w: 'full',
     bgColor: 'transparent',
-    border: '{borderWidths.hairline} solid',
+    border: '[{borderWidths.hairline} solid]',
     borderColor: 'border',
-    p: 4,
-    gap: 2,
+    p: '4',
+    gap: '2',
   },
   header: {
-    p: 0,
+    p: '0',
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 2,
+    gap: '2',
   },
   body: {
-    p: 0,
-    gap: 1,
+    p: '0',
+    gap: '1',
     fontSize: 'sm',
     color: 'fg.muted',
   },
-}
+} satisfies Partial<Record<string, SystemStyleObject>>
 
 // Cards are named by what they are for. Radius comes from Chakra's base (`l3`) unless a variant sets
 // its own; `size` sets `--card-padding`, which the variants that pad their root read.
@@ -98,11 +98,11 @@ export const Card = defineSlotRecipe({
       dropzone: {
         root: {
           borderWidth: 'hairline',
-          borderStyle: 'dashed',
+          borderStyle: '[dashed]',
           borderColor: 'border',
           borderRadius: 'xl',
-          p: 10,
-          cursor: 'pointer',
+          p: '10',
+          cursor: 'button',
           _dragging: {
             borderColor: 'border.emphasized',
           },

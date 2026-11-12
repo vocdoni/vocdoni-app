@@ -8,7 +8,7 @@ export const Pagination = defineSlotRecipe({
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'end',
-      gap: 2,
+      gap: '2',
     },
     totalResults: {
       display: 'none',

@@ -17,9 +17,9 @@ export type DocsCardProps = {
 export const DocsCard = ({ href, icon, title, description }: DocsCardProps) => (
   <DashboardBox
     as={LinkBox}
-    gap={3}
+    gap='3'
     justifyContent='flex-start'
-    transition='border-color {durations.fast}'
+    transition='[border-color {durations.fast}]'
     _hover={{ borderColor: 'colorPalette.solid' }}
   >
     <HStack justify='space-between'>

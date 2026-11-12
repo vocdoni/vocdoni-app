@@ -4,12 +4,12 @@ import { defineRecipe } from '@chakra-ui/react'
 export const dragHandle = defineRecipe({
   base: {
     color: 'fg.subtle',
-    cursor: 'grab',
+    cursor: '[grab]',
     _hover: {
       color: 'fg.muted',
     },
     _dragging: {
-      cursor: 'grabbing',
+      cursor: '[grabbing]',
     },
   },
   variants: {
@@ -18,7 +18,7 @@ export const dragHandle = defineRecipe({
       start: {
         display: 'flex',
         alignItems: 'flex-start',
-        pt: 2,
+        pt: '2',
       },
       center: {
         display: 'flex',
@@ -26,10 +26,10 @@ export const dragHandle = defineRecipe({
       },
       corner: {
         position: 'absolute',
-        top: 2,
-        left: 2,
+        top: '2',
+        left: '2',
         zIndex: 'contents',
-        p: 1,
+        p: '1',
         borderRadius: 'md',
         _hover: {
           bg: 'state.hover.bg',

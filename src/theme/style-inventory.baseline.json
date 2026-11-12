@@ -44,9 +44,7 @@
     "src/components/SupportChat/Messages.tsx": 1
   },
   "rawLetterSpacing": {},
-  "rawLineHeight": {
-    "src/components/Memberbase/Members/index.tsx": 1
-  },
+  "rawLineHeight": {},
   "rawPalette": {
     "src/router/IntegratorOrgGuard.tsx": 1
   },

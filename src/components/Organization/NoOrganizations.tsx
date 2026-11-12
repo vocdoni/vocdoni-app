@@ -34,7 +34,7 @@ export const NoOrganizations = () => {
                 If your organization is already on Vocdoni, ask its administrator to invite you.
               </Trans>
             </Text>
-            <Button mt={4} w='full' asChild>
+            <Button mt='4' w='full' asChild>
               <ReactRouterLink to={Routes.dashboard.organizationCreate}>
                 <Trans i18nKey='create_org.create_button'>Create your organization</Trans>
               </ReactRouterLink>

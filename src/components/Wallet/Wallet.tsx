@@ -78,7 +78,7 @@ const EntryDetail = ({ entry, processLinks }: { entry: WalletLedgerEntry } & Wal
   if (!entry.processId && !entry.processOrgAddress) return <Text color='fg.muted'>-</Text>
 
   return (
-    <Stack gap={0.5}>
+    <Stack gap='0.5'>
       {entry.processId &&
         (processLinks ? (
           <Link asChild fontSize='sm'>
@@ -245,10 +245,10 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
     if (balanceCents === undefined) return null
 
     return (
-      <Flex direction='column' gap={6}>
+      <Flex direction='column' gap='6'>
         <DashboardBox>
-          <Flex justify='space-between' align='flex-start' gap={4} wrap='wrap'>
-            <Stack gap={1}>
+          <Flex justify='space-between' align='flex-start' gap='4' wrap='wrap'>
+            <Stack gap='1'>
               <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
                 {t('wallet.balance', { defaultValue: 'Balance' })}
               </Text>
@@ -284,7 +284,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
           )}
         </DashboardBox>
 
-        <Flex direction='column' gap={4}>
+        <Flex direction='column' gap='4'>
           <DashboardCardHeader title={t('wallet.history.title', { defaultValue: 'Movements' })} />
           {history.length === 0 ? (
             <Text color='fg.muted'>{t('wallet.history.empty', { defaultValue: 'No movements yet.' })}</Text>
@@ -356,7 +356,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
   return (
     <>
       {wait && view === 'overview' && (
-        <Alert.Root status='info' mb={6}>
+        <Alert.Root status='info' mb='6'>
           <Alert.Indicator />
           <Alert.Content>
             <Alert.Description>{waitMessage()}</Alert.Description>

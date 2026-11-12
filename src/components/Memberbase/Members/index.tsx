@@ -200,12 +200,12 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
             </IconButton>
           </Drawer.Header>
 
-          <Drawer.Body display='flex' flexDirection='column' gap={4}>
+          <Drawer.Body display='flex' flexDirection='column' gap='4'>
             <Select
               placeholder={t('members.table.select_group', { defaultValue: 'Select group' })}
               options={data}
               getOptionLabel={(option) => (
-                <Flex align='center' gap={2}>
+                <Flex align='center' gap='2'>
                   {option.title}
                   <Box fontSize='sm' color='fg.muted'>
                     <Icon as={UsersIcon} />
@@ -230,7 +230,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
 
             <Button
               onClick={handleAddToGroup}
-              mt={2}
+              mt='2'
               width='full'
               disabled={!selectedGroup || selectedRows.length === 0}
             >
@@ -343,7 +343,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
             </IconButton>
           </Drawer.Header>
 
-          <Drawer.Body display='flex' flexDirection='column' gap={4}>
+          <Drawer.Body display='flex' flexDirection='column' gap='4'>
             <Select
               placeholder={t('members.table.select_process', { defaultValue: 'Select process' })}
               options={processes}
@@ -370,7 +370,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
 
             <Button
               onClick={handleAddToCensus}
-              mt={2}
+              mt='2'
               width='full'
               loading={addCensusParticipants.isPending}
               disabled={!selectedProcess || selectedRows.length === 0}
@@ -400,7 +400,7 @@ const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: Member
           </IconButton>
         </Menu.Trigger>
         <Menu.Positioner>
-          <Menu.Content minW='120px'>
+          <Menu.Content minW='[120px]'>
             <Menu.Item value='edit' onSelect={() => onEditOpen()}>
               {t('members.table.edit', { defaultValue: 'Edit' })}
             </Menu.Item>
@@ -459,7 +459,7 @@ const ColumnManager = () => {
               {columns
                 .filter((col) => col.id !== 'password')
                 .map((col) => (
-                  <Flex key={col.id} justify='space-between' align='center' my={2}>
+                  <Flex key={col.id} justify='space-between' align='center' my='2'>
                     <Text>{col.label}</Text>
                     <Switch.Root
                       checked={col.visible}
@@ -499,9 +499,9 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
   }
 
   return (
-    <Flex gap={2} flexDir={{ base: 'column', md: 'row' }}>
+    <Flex gap='2' flexDir={{ base: 'column', md: 'row' }}>
       <InputGroup
-        maxW='300px'
+        maxW='[300px]'
         as='form'
         onSubmit={handleSubmit}
         endElement={
@@ -598,13 +598,13 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
             <IconButton
               aria-label={t('common.close_drawer', { defaultValue: 'Close drawer' })}
               position='absolute'
-              top={1.5}
-              right={1.5}
+              top='1.5'
+              right='1.5'
               onClick={onClose}
             >
               <Icon as={CloseIcon} />
             </IconButton>
-            <Drawer.Header display='flex' flexDirection='column' gap={2}>
+            <Drawer.Header display='flex' flexDirection='column' gap='2'>
               <Heading size='md'>
                 {t('members.table.create_group_form_title', { defaultValue: 'Create New Group' })}
               </Heading>
@@ -617,7 +617,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
             </Drawer.Header>
             <FormProvider {...methods}>
               <Box as='form' onSubmit={methods.handleSubmit(createGroup)}>
-                <Drawer.Body p={4} display='flex' flexDirection='column' gap={4}>
+                <Drawer.Body p='4' display='flex' flexDirection='column' gap='4'>
                   <InputBasic
                     formValue='title'
                     label={t('members.table.group_name', { defaultValue: 'Group name' })}
@@ -631,9 +631,9 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
                     })}
                   />
                   <Box>
-                    <Text mb={1}>{t('members.table.group_members', { defaultValue: 'Selected Members' })}</Text>
-                    <Box p={4}>
-                      <Text textStyle='body-sm' mb={2}>
+                    <Text mb='1'>{t('members.table.group_members', { defaultValue: 'Selected Members' })}</Text>
+                    <Box p='4'>
+                      <Text textStyle='body-sm' mb='2'>
                         {t('members.table.group_members_count', {
                           defaultValue: '{{count}} members selected',
                           count: selectedCount,
@@ -663,11 +663,11 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
                     </Box>
                   </Box>
                 </Drawer.Body>
-                <Flex justifyContent='flex-end' p={4}>
+                <Flex justifyContent='flex-end' p='4'>
                   <Button variant='outline' onClick={onClose}>
                     {t('members.table.cancel', { defaultValue: 'Cancel' })}
                   </Button>
-                  <Button disabled={!selectedCount} ml={2} type='submit'>
+                  <Button disabled={!selectedCount} ml='2' type='submit'>
                     {t('members.table.create_group', { defaultValue: 'Create group' })}
                   </Button>
                 </Flex>
@@ -686,7 +686,7 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
 
   return (
     <Flex
-      gap={4}
+      gap='4'
       align='center'
       minH='toolbar'
       flexDir={{ base: 'column', md: 'row' }}
@@ -751,7 +751,7 @@ const MembersCardList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: Me
   if (!data.length) return isFetching ? <MembersLoading /> : <EmptyMembersMessage />
 
   return (
-    <Stack gap={3} {...placeholderRowsStyle(isUpdatingRows, isPlaceholderData)}>
+    <Stack gap='3' {...placeholderRowsStyle(isUpdatingRows, isPlaceholderData)}>
       {data.map((member) => (
         <MemberCard
           key={member.id}
@@ -778,7 +778,7 @@ const EmptyMembersMessage = () => {
   return (
     <EmptyState
       size='sm'
-      height='150px'
+      height='[150px]'
       title={
         debouncedSearch
           ? t('members.table.no_filter_results', {
@@ -807,12 +807,12 @@ const EmptyMembersMessage = () => {
 const placeholderRowsStyle = (isUpdatingRows: boolean, isPlaceholderData: boolean) => ({
   'aria-busy': isUpdatingRows || undefined,
   inert: isPlaceholderData || undefined,
-  opacity: isUpdatingRows ? 0.5 : 1,
-  transition: 'opacity 0.15s ease-out',
+  opacity: isUpdatingRows ? ('dimmed' as const) : ('[1]' as const),
+  transition: '[opacity 0.15s ease-out]' as const,
 })
 
 const MembersLoading = () => (
-  <Flex justify='center' align='center' height='150px'>
+  <Flex justify='center' align='center' height='[150px]'>
     <InlineLoader color='fg.muted' />
   </Flex>
 )
@@ -842,7 +842,8 @@ const EmptyMembers = () => {
 }
 
 // The caret for the active direction is drawn at full strength, the other one stays faint.
-const sortCaretStyle = (active: boolean) => (active ? { color: 'fg' } : { color: 'fg.muted', opacity: 0.5 })
+const sortCaretStyle = (active: boolean) =>
+  active ? ({ color: 'fg' } as const) : ({ color: 'fg.muted', opacity: 'dimmed' } as const)
 
 const ARIA_SORT: Record<SortOrder, 'ascending' | 'descending'> = { asc: 'ascending', desc: 'descending' }
 
@@ -863,19 +864,19 @@ const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableCol
       <Button
         variant='plain'
         size='sm'
-        px={0}
+        px='0'
         h='auto'
-        minW={0}
-        fontWeight='inherit'
-        color='inherit'
-        gap={1}
+        minW='0'
+        fontWeight='[inherit]'
+        color='[inherit]'
+        gap='1'
         onClick={() => onToggleSort(field)}
         title={t('members.table.sort_by', { defaultValue: 'Sort by {{column}}', column: column.label })}
       >
         {column.label}
-        <Flex direction='column' aria-hidden gap={0} lineHeight={0} ms={0.5}>
-          <Icon as={ChevronUpIcon} boxSize='icon.sm' mb='-5px' {...sortCaretStyle(order === 'asc')} />
-          <Icon as={ChevronDownIcon} boxSize='icon.sm' mt='-5px' {...sortCaretStyle(order === 'desc')} />
+        <Flex direction='column' aria-hidden gap='0' lineHeight='[0]' ms='0.5'>
+          <Icon as={ChevronUpIcon} boxSize='icon.sm' mb='[-5px]' {...sortCaretStyle(order === 'asc')} />
+          <Icon as={ChevronDownIcon} boxSize='icon.sm' mt='[-5px]' {...sortCaretStyle(order === 'desc')} />
         </Flex>
       </Button>
     </Table.ColumnHeader>
@@ -956,7 +957,7 @@ const SortIndicator = ({ sort, label, onClear }: SortIndicatorProps) => {
       : t('members.table.sorted_by_desc', { defaultValue: 'Sorted by {{column}}, descending', column: label })
 
   return (
-    <Flex align='center' gap={2} flexWrap='wrap' fontSize='sm' color='fg.muted'>
+    <Flex align='center' gap='2' flexWrap='wrap' fontSize='sm' color='fg.muted'>
       <Text>{text}</Text>
       <Button size='xs' variant='outline' onClick={onClear}>
         {t('members.table.clear_sort', { defaultValue: 'Clear sort' })}
@@ -1132,8 +1133,8 @@ const MembersTable = () => {
     <>
       <ImportProgress />
       <Card.Root variant='frame'>
-        <Flex direction={{ base: 'column', lg: 'row' }} p={4} gap={2}>
-          <Flex direction='column' flex={1} gap={2}>
+        <Flex direction={{ base: 'column', lg: 'row' }} p='4' gap='2'>
+          <Flex direction='column' flex={1} gap='2'>
             <MemberFilters onDelete={openDeleteAll} />
             <MemberBulkActions
               onDelete={openDeleteSelected}
@@ -1141,7 +1142,7 @@ const MembersTable = () => {
               onAddToCensus={openAddToCensus}
             />
           </Flex>
-          <Flex gap={2}>
+          <Flex gap='2'>
             <ImportMembers />
             <MemberManager
               control={
@@ -1154,13 +1155,13 @@ const MembersTable = () => {
           </Flex>
         </Flex>
         {urlSort && unreachableSortColumn && (
-          <Box px={4} pb={4}>
+          <Box px='4' pb='4'>
             <SortIndicator sort={urlSort} label={unreachableSortColumn.label} onClear={clearSort} />
           </Box>
         )}
         {isMobile ? (
-          <Box p={4}>
-            <Flex justify='space-between' align='center' mb={3}>
+          <Box p='4'>
+            <Flex justify='space-between' align='center' mb='3'>
               <Checkbox.Root
                 checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                 onCheckedChange={({ checked }) => toggleAll(checked === true)}
@@ -1177,7 +1178,7 @@ const MembersTable = () => {
               onAddToGroup={openAddToGroup}
               onAddToCensus={openAddToCensus}
             />
-            <Box pt={4}>
+            <Box pt='4'>
               <RoutedPaginatedTableFooter summary={<MembersRangeSummary />} />
             </Box>
           </Box>
@@ -1221,7 +1222,7 @@ const MembersTable = () => {
                 onAddToGroup={openAddToGroup}
                 onAddToCensus={openAddToCensus}
               />
-              <Table.Caption p={4}>
+              <Table.Caption p='4'>
                 <RoutedPaginatedTableFooter summary={<MembersRangeSummary />} />
               </Table.Caption>
             </Table.Root>

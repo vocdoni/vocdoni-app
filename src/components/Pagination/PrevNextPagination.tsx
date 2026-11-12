@@ -26,7 +26,7 @@ export const PrevNextPagination = ({
   const { t } = useTranslation()
 
   return (
-    <Flex justify='space-between' align='center' gap={4} wrap='wrap'>
+    <Flex justify='space-between' align='center' gap='4' wrap='wrap'>
       <Text textStyle='body-sm' color='fg.muted'>
         {text}
       </Text>

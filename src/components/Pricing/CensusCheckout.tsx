@@ -261,7 +261,7 @@ export const CensusCheckout = ({
         )
       case 'timeout':
         return (
-          <VStack align='stretch' gap={4}>
+          <VStack align='stretch' gap='4'>
             {error && <Outcome status='error'>{error}</Outcome>}
             <Outcome status='warning' action={backToMembers}>
               {step.confirmed
@@ -293,7 +293,7 @@ export const CensusCheckout = ({
           )
         }
         return (
-          <VStack align='stretch' gap={5}>
+          <VStack align='stretch' gap='5'>
             <Text>
               {dueCents !== undefined
                 ? t('census.checkout.intro', {
@@ -324,7 +324,7 @@ export const CensusCheckout = ({
             )}
             {error && <Outcome status='error'>{error}</Outcome>}
             {canTopUp ? (
-              <Flex justify='flex-end' gap={3} wrap='wrap'>
+              <Flex justify='flex-end' gap='3' wrap='wrap'>
                 <Button onClick={() => buy(censusSize)}>
                   {t('census.checkout.buy', { defaultValue: 'Add voter places' })}
                 </Button>
@@ -348,7 +348,7 @@ export const CensusCheckout = ({
 }
 
 const Waiting = ({ children }: { children?: ReactNode }) => (
-  <Flex direction='column' align='center' gap={4} py={10} textAlign='center' role='status'>
+  <Flex direction='column' align='center' gap='4' py='10' textAlign='center' role='status'>
     <InlineLoader />
     {children && <Text>{children}</Text>}
   </Flex>
@@ -363,7 +363,7 @@ const Outcome = ({
   action?: ReactNode
   children: ReactNode
 }) => (
-  <VStack align='stretch' gap={4}>
+  <VStack align='stretch' gap='4'>
     <Alert.Root status={status}>
       <Alert.Indicator />
       <Alert.Content>
@@ -484,19 +484,19 @@ const CheckoutFormFields = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <VStack align='stretch' gap={5}>
+      <VStack align='stretch' gap='5'>
         {checkout.total && (
-          <Card.Root variant='section' size='md' gap={3}>
-            <Flex justify='space-between' gap={4}>
+          <Card.Root variant='section' size='md' gap='3'>
+            <Flex justify='space-between' gap='4'>
               <Text>{t('census.checkout.amount_net', { defaultValue: 'Places (VAT excluded)' })}</Text>
               <Text>{currency(amountCents, currencyCode)}</Text>
             </Flex>
-            <Flex justify='space-between' gap={4}>
+            <Flex justify='space-between' gap='4'>
               <Text>{t('wallet.topup.vat', { defaultValue: 'VAT' })}</Text>
               <Text>{checkout.total.taxExclusive.amount}</Text>
             </Flex>
             <Separator />
-            <Flex justify='space-between' gap={4}>
+            <Flex justify='space-between' gap='4'>
               <Text fontWeight='bold'>{t('wallet.topup.total', { defaultValue: 'Total' })}</Text>
               <Text fontWeight='bold'>{checkout.total.total.amount}</Text>
             </Flex>

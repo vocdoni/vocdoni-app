@@ -47,23 +47,23 @@ const SupportChatWidget = () => {
       {teaserVisible && !open && (
         <Flex
           position='fixed'
-          bottom={24}
-          right={6}
+          bottom='24'
+          right='6'
           zIndex='overlay'
           align='center'
-          gap={1}
-          pl={4}
-          pr={2}
-          py={2.5}
+          gap='1'
+          pl='4'
+          pr='2'
+          py='2.5'
           borderRadius='xl'
           borderBottomRightRadius='sm'
           boxShadow='shadow.floating'
-          border='1px solid'
+          border='sm'
           borderColor='border'
           bg='bg.panel'
-          animationName='slide-from-bottom, fade-in'
+          animationName='[slide-from-bottom, fade-in]'
           animationDuration='moderate'
-          _motionReduce={{ animation: 'none' }}
+          _motionReduce={{ animation: '[none]' }}
         >
           {/* No aria-label: the visible teaser text is the accessible name, and
               must not collide with the launcher's "Open support chat" */}
@@ -87,16 +87,16 @@ const SupportChatWidget = () => {
         present={open}
         lazyMount
         position='fixed'
-        bottom={24}
-        right={6}
+        bottom='24'
+        right='6'
         zIndex='overlay'
         transformOrigin='bottom right'
         animationName={{
-          _open: 'slide-from-bottom, fade-in',
-          _closed: 'slide-to-bottom, fade-out',
+          _open: '[slide-from-bottom, fade-in]',
+          _closed: '[slide-to-bottom, fade-out]',
         }}
         animationDuration='moderate'
-        _motionReduce={{ animation: 'none' }}
+        _motionReduce={{ animation: '[none]' }}
       >
         <ChatPanel
           open={open}
@@ -113,8 +113,8 @@ const SupportChatWidget = () => {
       <IconButton
         ref={launcherRef}
         position='fixed'
-        bottom={6}
-        right={6}
+        bottom='6'
+        right='6'
         zIndex='overlay'
         variant='floating'
         aria-label={

@@ -63,14 +63,21 @@ const radii = defineTokens.radii({
   full: { value: '9999px' },
 })
 
-// So a margin can make room for the dashboard's side panel.
+// `0` and `auto` are everyday values Chakra's scale lacks (it starts at 0.5), so they are tokens, not `[0]` /
+// `[auto]` escapes; `auto` is what lets a margin push or centre.
+// `dashboard.panel` lets a margin make room for the dashboard's side panel.
 const spacing = defineTokens.spacing({
+  '0': { value: '0' },
+  auto: { value: 'auto' },
   dashboard: {
     panel: { value: '{sizes.dashboard.panel}' },
   },
 })
 
+// `0` and `auto` are likewise missing from Chakra's sizes.
 const sizes = defineTokens.sizes({
+  '0': { value: '0' },
+  auto: { value: 'auto' },
   'cookies-consent': { value: '720px' },
   // The dashboard shell: the menu expanded and collapsed, its logo row and the right side panel.
   dashboard: {

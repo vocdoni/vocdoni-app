@@ -5,7 +5,7 @@ export const Table = defineSlotRecipe({
   slots: tableAnatomy.keys(),
   base: {
     caption: {
-      p: 4,
+      p: '4',
     },
   },
   variants: {

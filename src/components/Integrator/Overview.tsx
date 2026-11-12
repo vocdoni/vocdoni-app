@@ -86,16 +86,16 @@ export const IntegratorOverview = () => {
           defaultValue: 'Your integrator usage and wallet balance.',
         })}
       </PageSubtitle>
-      <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
         {canView && wallet.data && (
-          <DashboardBox gap={3} justifyContent='flex-start'>
+          <DashboardBox gap='3' justifyContent='flex-start'>
             <Text textStyle='body-sm' color='fg.muted' fontWeight='medium'>
               {t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}
             </Text>
             <Text fontSize='3xl' fontWeight='bold' lineHeight='shorter'>
               {currency(wallet.data.balanceCents, wallet.data.currency?.toUpperCase())}
             </Text>
-            <Box minH='22px'>
+            <Box minH='[22px]'>
               <Link asChild fontSize='sm' fontWeight='bold' color='fg.muted'>
                 <RouterLink to={Routes.integrators.configuration.billing}>
                   {t('integrators.wallet.manage', { defaultValue: 'Manage wallet' })}
@@ -141,14 +141,14 @@ export const IntegratorOverview = () => {
         )}
       </SimpleGrid>
 
-      <Box mt={8}>
+      <Box mt='8'>
         <DashboardCardHeader
           title={t('integrators.docs.title', { defaultValue: 'Documentation' })}
           subtitle={t('integrators.docs.subtitle', {
             defaultValue: 'Guides and references to start building with Vocdoni.',
           })}
         />
-        <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
           {docs.map((doc) => (
             <DocsCard key={doc.href} {...doc} />
           ))}

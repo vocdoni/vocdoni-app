@@ -144,7 +144,7 @@ export const CreateApiKeyButton = () => {
             {created ? (
               <>
                 <Dialog.Body>
-                  <Stack gap={4}>
+                  <Stack gap='4'>
                     <Alert.Root status='warning'>
                       <Alert.Indicator />
                       <Alert.Content>
@@ -159,7 +159,7 @@ export const CreateApiKeyButton = () => {
                       </Alert.Content>
                     </Alert.Root>
                     <Clipboard.Root value={created.secret}>
-                      <Card.Root variant='section' size='sm' flexDirection='row' alignItems='center' gap={3}>
+                      <Card.Root variant='section' size='sm' flexDirection='row' alignItems='center' gap='3'>
                         <Code flex='1' overflowX='auto' whiteSpace='nowrap'>
                           {created.secret}
                         </Code>
@@ -180,7 +180,7 @@ export const CreateApiKeyButton = () => {
             ) : (
               <>
                 <Dialog.Body>
-                  <Stack gap={4}>
+                  <Stack gap='4'>
                     {error && (
                       <Alert.Root status='error'>
                         <Alert.Indicator />
@@ -200,7 +200,7 @@ export const CreateApiKeyButton = () => {
                       <Fieldset.Legend>
                         {t('integrators.api_keys.scopes_legend', { defaultValue: 'Scopes' })}
                       </Fieldset.Legend>
-                      <Stack gap={2} mt={1}>
+                      <Stack gap='2' mt='1'>
                         {API_KEY_SCOPES.map((scope) => {
                           const meta = scopeMeta(scope, t)
                           return (

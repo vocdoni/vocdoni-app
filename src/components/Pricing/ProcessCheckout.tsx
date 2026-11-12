@@ -283,7 +283,7 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
                 'A top-up for this voting process is still open, so it cannot be published yet. Resume the payment to finish it, or cancel it and publish from your wallet.',
             })}
           </Outcome>
-          <HStack gap={3} wrap='wrap'>
+          <HStack gap='3' wrap='wrap'>
             <Button onClick={() => setStep({ name: 'opening' })}>
               {t('process.checkout.resume', { defaultValue: 'Resume payment' })}
             </Button>
@@ -380,7 +380,7 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
 }
 
 const Waiting = ({ children }: { children?: ReactNode }) => (
-  <Flex direction='column' align='center' gap={4} py={10} textAlign='center' role='status'>
+  <Flex direction='column' align='center' gap='4' py='10' textAlign='center' role='status'>
     <InlineLoader />
     {children && <Text>{children}</Text>}
   </Flex>
@@ -395,7 +395,7 @@ const Outcome = ({
   action?: ReactNode
   children: ReactNode
 }) => (
-  <VStack align='stretch' gap={4}>
+  <VStack align='stretch' gap='4'>
     <Alert.Root status={status}>
       <Alert.Indicator />
       <Alert.Content>
@@ -409,8 +409,8 @@ const Outcome = ({
 const Frame = ({ title, onBack, children }: { title: string; onBack: () => void; children: ReactNode }) => {
   const { t } = useTranslation()
   return (
-    <VStack align='stretch' gap={5}>
-      <Flex align='center' gap={2}>
+    <VStack align='stretch' gap='5'>
+      <Flex align='center' gap='2'>
         <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost' size='sm'>
           <BackIcon />
         </IconButton>
@@ -482,7 +482,7 @@ const CheckoutStep = ({
 }
 
 const SummaryRow = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
-  <Flex justify='space-between' gap={4}>
+  <Flex justify='space-between' gap='4'>
     <Text fontWeight={bold ? 'bold' : undefined}>{label}</Text>
     <Text fontWeight={bold ? 'bold' : undefined}>{value}</Text>
   </Flex>
@@ -552,8 +552,8 @@ const CheckoutFormFields = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <VStack align='stretch' gap={5}>
-        <Card.Root variant='section' size='md' gap={3}>
+      <VStack align='stretch' gap='5'>
+        <Card.Root variant='section' size='md' gap='3'>
           {shortfall ? (
             <SummaryRow
               label={t('process.checkout.shortfall', { defaultValue: 'Shortfall (VAT excluded)' })}

@@ -5,7 +5,7 @@ export const listSlotRecipe = defineSlotRecipe({
   slots: listAnatomy.keys(),
   base: {
     root: {
-      marginBottom: 4,
+      marginBottom: '4',
     },
   },
   variants: {

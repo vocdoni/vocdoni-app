@@ -12,6 +12,9 @@ import {
 import { defineComponent, type ComponentsPartialDefinition } from '@vocdoni/react-components'
 import { Markdown } from '~components/ui/Markdown'
 
+// A literal style prop next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
+const questionsErrorStyle: TextProps = { color: 'status.error.fg' }
+
 export const organizationComponents: ComponentsPartialDefinition = {
   OrganizationName: defineComponent<'OrganizationName', HeadingProps>(({ name, ...props }) => {
     const recipe = useRecipe({ key: 'OrganizationName' })
@@ -41,7 +44,7 @@ export const organizationComponents: ComponentsPartialDefinition = {
     return <Image css={styles} src={src} alt={alt} {...props} />
   }),
   QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    <Text color='status.error.fg' {...props}>
+    <Text {...questionsErrorStyle} {...(props as TextProps)}>
       {error}
     </Text>
   )),

@@ -15,7 +15,7 @@ export const CreateSidebar = ({ draftId }: { draftId?: string | null }) => {
 
   return (
     <Sidebar show={showSidebar}>
-      <SidebarContents borderBottom='1px solid' borderColor='border'>
+      <SidebarContents borderBottom='sm' borderColor='border'>
         <SidebarTitle>
           <Trans i18nKey='process_create.settings'>Settings</Trans>
         </SidebarTitle>
@@ -28,8 +28,8 @@ export const CreateSidebar = ({ draftId }: { draftId?: string | null }) => {
             variant='ghost'
             size='sm'
             position='absolute'
-            top={2}
-            right={2}
+            top='2'
+            right='2'
             onClick={closeSidebar}
           >
             <Icon as={CloseIcon} />
@@ -39,19 +39,19 @@ export const CreateSidebar = ({ draftId }: { draftId?: string | null }) => {
 
       {/* Bottom room for the floating support chat launcher (bottom-right, over
           this panel), so it never covers the last settings. */}
-      <SidebarContents flex='1' overflowY='auto' pb={24}>
+      <SidebarContents flex='1' overflowY='auto' pb='24'>
         <SidebarSubtitle>
           <Trans i18nKey='process_create.basic_configuration'>Basic Configuration</Trans>
         </SidebarSubtitle>
         <BasicConfig />
 
-        <SidebarSubtitle borderTop='1px solid' borderColor='border' mt={4}>
+        <SidebarSubtitle borderTop='sm' borderColor='border' mt='4'>
           <Trans i18nKey='process_create.extra_configuration'>Extra Configuration</Trans>
         </SidebarSubtitle>
         <ExtraConfig />
 
-        <Flex borderTop='1px solid' borderColor='border' mt={4} pt={4} justify='space-between' align='center'>
-          <SidebarSubtitle m={0}>
+        <Flex borderTop='sm' borderColor='border' mt='4' pt='4' justify='space-between' align='center'>
+          <SidebarSubtitle m='0'>
             <Trans i18nKey='process_create.census_creation'>Census Creation</Trans>
           </SidebarSubtitle>
           <CensusStatusBadge />
@@ -59,7 +59,7 @@ export const CreateSidebar = ({ draftId }: { draftId?: string | null }) => {
 
         <CensusCreation />
 
-        <SidebarSubtitle borderTop='1px solid' borderColor='border' mt={4}>
+        <SidebarSubtitle borderTop='sm' borderColor='border' mt='4'>
           <Trans i18nKey='process_create.price'>Price</Trans>
         </SidebarSubtitle>
         <ProcessPriceBreakdown processId={draftId} />

@@ -50,7 +50,7 @@ const OrganizationSupport = () => {
           })}
         </SectionSubHeading>
       </SectionHeader>
-      <SimpleGrid columns={columns} gap={6}>
+      <SimpleGrid columns={columns} gap='6'>
         <SupportTicketForm />
         {PRIORITY_SUPPORT_PHONE && <PhoneSupportCard />}
       </SimpleGrid>
@@ -93,15 +93,15 @@ const SupportTicketForm = () => {
   return (
     <FormProvider {...methods}>
       <Card.Root as='form' variant='section' onSubmit={handleSubmit(onSubmit)}>
-        <Heading size='md' mb={2}>
+        <Heading size='md' mb='2'>
           {t('form.support.open_ticket', { defaultValue: 'Open a Support Ticket' })}
         </Heading>
-        <Text textStyle='body-sm' color='fg.muted' mb={6}>
+        <Text textStyle='body-sm' color='fg.muted' mb='6'>
           {t('form.support.subtitle', {
             defaultValue: 'Submit a ticket and our support team will get back to you as soon as possible.',
           })}
         </Text>
-        <VStack gap={4} align='stretch'>
+        <VStack gap='4' align='stretch'>
           <InputBasic
             formValue='title'
             label={t('form.support.title', { defaultValue: 'Title' })}
@@ -118,7 +118,7 @@ const SupportTicketForm = () => {
               placeholder={t('form.support.description_placeholder', { defaultValue: 'Describe your issue in detail' })}
             />
           </FormControl>
-          <Button type='submit' mt={4}>
+          <Button type='submit' mt='4'>
             {t('form.support.submit_ticket', { defaultValue: 'Submit Ticket' })}
           </Button>
         </VStack>
@@ -137,18 +137,18 @@ const PhoneSupportCard = () => {
   }
 
   return (
-    <Box p={6}>
-      <Heading size='md' mb={1}>
+    <Box p='6'>
+      <Heading size='md' mb='1'>
         {t('organization_settings.phone_support.title', { defaultValue: 'Phone Support' })}
       </Heading>
-      <Text textStyle='body-sm' mb={6}>
+      <Text textStyle='body-sm' mb='6'>
         {t('organization_settings.phone_support.description', {
           defaultValue: 'Call our team directly for priority help.',
         })}
       </Text>
 
-      <Stack gap={4} mb={6}>
-        <Flex p={4} borderRadius='md' bg='dashboard.menu' align='flex-start'>
+      <Stack gap='4' mb='6'>
+        <Flex p='4' borderRadius='md' bg='dashboard.menu' align='flex-start'>
           <Box
             bg='bg.emphasized'
             borderRadius='full'
@@ -159,8 +159,8 @@ const PhoneSupportCard = () => {
             display='flex'
             alignItems='center'
             justifyContent='center'
-            mt={0.5}
-            mr={3}
+            mt='0.5'
+            mr='3'
           >
             ?
           </Box>
@@ -181,7 +181,7 @@ const PhoneSupportCard = () => {
           </Box>
         </Flex>
 
-        <Flex p={4} borderRadius='md' bg='dashboard.menu' align='flex-start'>
+        <Flex p='4' borderRadius='md' bg='dashboard.menu' align='flex-start'>
           <Box
             bg='bg.emphasized'
             borderRadius='full'
@@ -192,7 +192,7 @@ const PhoneSupportCard = () => {
             display='flex'
             alignItems='center'
             justifyContent='center'
-            mr={3}
+            mr='3'
           >
             {t('organization_settings.phone_support.id', { defaultValue: 'ID' })}
           </Box>
@@ -214,8 +214,8 @@ const PhoneSupportCard = () => {
         </Flex>
       </Stack>
 
-      <Flex align='center' mb={6}>
-        <Icon as={InfoIcon} mr={2} />
+      <Flex align='center' mb='6'>
+        <Icon as={InfoIcon} mr='2' />
         <Text textStyle='body-sm' color='fg.muted'>
           {t('organization_settings.phone_support.info', {
             defaultValue: 'Please have your organization ID ready when calling.',

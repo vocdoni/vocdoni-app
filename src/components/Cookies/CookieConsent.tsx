@@ -70,10 +70,10 @@ export function CookieConsent() {
       role='dialog'
       aria-label={t('cookies.aria_label', { defaultValue: 'Cookie consent banner' })}
       position='fixed'
-      bottom={{ base: 4, md: 6 }}
-      left='50%'
+      bottom={{ base: '4', md: '6' }}
+      left='[50%]'
       transform='translateX(-50%)'
-      w='calc(100% - {sizes.8})'
+      w='[calc(100% - {sizes.8})]'
       maxW='cookies-consent'
       zIndex='top'
       flexDirection={{ base: 'column', md: 'row' }}
@@ -81,7 +81,7 @@ export function CookieConsent() {
       justifyContent='space-between'
     >
       <Box>
-        <AlertTitle fontSize='md' mb={1}>
+        <AlertTitle fontSize='md' mb='1'>
           {t('cookies.title', { defaultValue: 'Cookie consent' })}
         </AlertTitle>
         <AlertDescription fontSize='sm'>
@@ -95,7 +95,7 @@ export function CookieConsent() {
         </AlertDescription>
       </Box>
 
-      <HStack justify='end' gap={2}>
+      <HStack justify='end' gap='2'>
         <Button variant='outline' size='sm' onClick={handleReject}>
           {t('cookies.reject', { defaultValue: 'Reject' })}
         </Button>

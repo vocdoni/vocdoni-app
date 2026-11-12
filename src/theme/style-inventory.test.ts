@@ -134,12 +134,12 @@ describe('style inventory scanner', () => {
     const select = `<Select styles={{ menuPortal: (base) => ({ ...base, zIndex: 1600 }) }} />`
     expect(categoriesOf(select, 'src/components/Layout/SaasSelector.tsx')).toEqual([])
     expect(categoriesOf(select, 'src/components/Layout/Other.tsx')).toEqual(['rawZIndex'])
-    const tile = `<Image _dark={{ bgColor: 'auth.logo.tile.bg', border: '1px solid', borderColor: 'auth.logo.tile.border', borderRadius: 'md', p: 1, boxSizing: 'content-box' }} />`
+    const tile = `<Image _dark={{ bgColor: 'auth.logo.tile.bg', border: 'sm', borderColor: 'auth.logo.tile.border', borderRadius: 'md', p: '1', boxSizing: 'content-box' }} />`
     expect(categoriesOf(tile, 'src/components/Layout/Logo.tsx')).toEqual([])
     expect(categoriesOf(tile, 'src/components/Layout/Other.tsx')).toEqual(['colorModeLogic'])
-    expect(categoriesOf(tile.replace('p: 1', "p: 1, filter: 'invert(1)'"), 'src/components/Layout/Logo.tsx')).toEqual([
-      'colorModeLogic',
-    ])
+    expect(
+      categoriesOf(tile.replace("p: '1'", "p: '1', filter: 'invert(1)'"), 'src/components/Layout/Logo.tsx')
+    ).toEqual(['colorModeLogic'])
     expect(categoriesOf(`<Box _dark={{ opacity: 0.5 }} />`, 'src/components/Layout/Logo.tsx')).toEqual([
       'colorModeLogic',
     ])

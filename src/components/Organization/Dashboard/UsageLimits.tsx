@@ -24,6 +24,8 @@ import { MaxMembersPerOrg } from '~constants'
 import { usePaginatedMembers } from '~queries/members'
 import { quantity } from '~utils/numbers'
 
+type UsageColor = 'chart.1' | 'chart.2' | 'chart.3' | 'chart.4'
+
 type UsageMetric = {
   icon: React.ElementType
   label: string
@@ -31,7 +33,7 @@ type UsageMetric = {
   // Absent for a metric with no cap, which then shows its count alone
   max?: number
   tooltip?: string
-  color: string
+  color: UsageColor
 }
 
 const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) => {
@@ -45,8 +47,8 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
 
   return (
     <Box>
-      <Flex justify='space-between' align='center' mb={2}>
-        <HStack gap={2}>
+      <Flex justify='space-between' align='center' mb='2'>
+        <HStack gap='2'>
           <Icon as={icon} color={`${color}.icon`} />
           <Text textStyle='body-sm' fontWeight='medium' color='fg'>
             {label}
@@ -54,7 +56,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
               <TooltipRoot>
                 <TooltipTrigger asChild>
                   <chakra.span verticalAlign='middle'>
-                    <Icon as={InfoIcon} ml={1} />
+                    <Icon as={InfoIcon} ml='1' />
                   </chakra.span>
                 </TooltipTrigger>
                 <TooltipPositioner>
@@ -64,7 +66,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, color }: UsageMetric) =>
             )}
           </Text>
         </HStack>
-        <HStack gap={2} align='baseline'>
+        <HStack gap='2' align='baseline'>
           <Text fontSize='lg' fontWeight='bold' color='fg'>
             {current.toLocaleString()}
           </Text>
@@ -122,7 +124,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
   return (
     <DashboardBox size='md' height='full' {...props}>
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         <DashboardCardHeader
           title={t('dashboard.usage.title', { defaultValue: 'Usage' })}
           subtitle={t('dashboard.usage.description', {
@@ -144,7 +146,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
         <Separator />
 
-        <VStack align='stretch' gap={4}>
+        <VStack align='stretch' gap='4'>
           {usageMetrics.map((metric, index) => (
             <UsageRow key={index} {...metric} />
           ))}

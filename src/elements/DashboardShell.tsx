@@ -51,16 +51,16 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
             menu={menu}
           />
 
-          <Flex flex='1 1 0' flexDirection='column' minW={0}>
+          <Flex flex='1 1 0' flexDirection='column' minW='0'>
             <AnnouncementBanner />
             <Flex
               alignItems='center'
               justifyContent='space-between'
-              px={4}
-              pt={3}
-              pb={2}
+              px='4'
+              pt='3'
+              pb='2'
               display={{ base: 'flex', md: 'none' }}
-              gap={2}
+              gap='2'
             >
               <IconButton aria-label={t('menu.open')} colorPalette='gray' variant='subtle' size='xs' onClick={onOpen}>
                 <SidebarIcon />

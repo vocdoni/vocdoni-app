@@ -59,7 +59,7 @@ const IntegratorConfiguration = () => {
         }}
         lazyMount
       >
-        <TabsList mb={6}>
+        <TabsList mb='6'>
           {tabs.map((tab) => (
             <TabsTrigger key={tab.route} value={tab.route}>
               {tab.label}

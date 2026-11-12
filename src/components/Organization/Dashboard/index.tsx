@@ -41,7 +41,7 @@ const OrganizationDashboard = () => {
         })}
       </PageSubtitle>
       <Tutorial />
-      <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={6} mb={6} alignItems='stretch'>
+      <Flex flexDirection={{ base: 'column', lg: 'row' }} gap='6' mb='6' alignItems='stretch'>
         <UsageLimits flex='1 1 60%' />
         {organization && <QuickActions flex='1 1 40%' />}
       </Flex>
@@ -62,30 +62,30 @@ const Tutorial = () => {
   }
 
   return (
-    <DashboardBox size='md' mb={6} display='flex' gap={10} position='relative' flexDirection='row'>
+    <DashboardBox size='md' mb='6' display='flex' gap='10' position='relative' flexDirection='row'>
       <Box flex='1 1 60%'>
-        <Heading as='h2' textStyle='section-title' mb={2}>
+        <Heading as='h2' textStyle='section-title' mb='2'>
           {t('dashboard.welcome.hello', {
             name: profile?.firstName,
             defaultValue: 'Welcome to Vocdoni, {{name}}!',
           })}
         </Heading>
-        {isLoading && <ListLoader mb={4} />}
-        <Text color='fg.muted' mb={4}>
+        {isLoading && <ListLoader mb='4' />}
+        <Text color='fg.muted' mb='4'>
           <Trans i18nKey='plan.encouragement'>
             Launching a vote is simple, and participants can join from anywhere. Strong guarantees at a lower cost have
             made Vocdoni a trusted choice for hundreds of municipalities, associations, political parties and companies.
           </Trans>
         </Text>
-        <Text color='fg.muted' mb={4}>
+        <Text color='fg.muted' mb='4'>
           {t('plan.special_needs', {
             defaultValue: 'Need help or something specific? Schedule a call.',
           })}
         </Text>
-        <Flex gap={3} flexDirection={{ base: 'column', sm: 'row' }}>
+        <Flex gap='3' flexDirection={{ base: 'column', sm: 'row' }}>
           <Button asChild>
             <ReactRouterLink to={generatePath(Routes.processes.create)}>
-              <HStack gap={2}>
+              <HStack gap='2'>
                 <Icon as={AddIcon} />
                 <Text as='span'>
                   <Trans i18nKey='new_voting'>New vote</Trans>
@@ -97,7 +97,7 @@ const Tutorial = () => {
         </Flex>
       </Box>
       <Flex display={{ base: 'none', lg: 'flex' }} flex='1 1 33%' flexDirection='column'>
-        <Text fontSize='lg' fontWeight='bold' textAlign='center' mb={2}>
+        <Text fontSize='lg' fontWeight='bold' textAlign='center' mb='2'>
           {t('dashboard.welcome.how_first_vote', {
             defaultValue: 'How to create your first vote',
           })}
@@ -114,10 +114,10 @@ const OrganizationProcesses = () => {
   const { t } = useTranslation()
 
   return (
-    <Flex flexDirection={{ base: 'column', md: 'row' }} gap={4}>
-      <DashboardBox size='md' minH='324px' flex='1 1 66%'>
-        <Box mb={4}>
-          <Heading as='h2' textStyle='section-title' mb={1.5}>
+    <Flex flexDirection={{ base: 'column', md: 'row' }} gap='4'>
+      <DashboardBox size='md' minH='[324px]' flex='1 1 66%'>
+        <Box mb='4'>
+          <Heading as='h2' textStyle='section-title' mb='1.5'>
             {t('dashboard.welcome.recent_voting_title', { defaultValue: 'Recent voting processes' })}
           </Heading>
           <Text color='fg.muted' textStyle='body-sm'>
@@ -181,7 +181,7 @@ const Processes = () => {
 
   if (isError) {
     return (
-      <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
+      <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap='4'>
         <ListStateAlert
           show
           status='error'
@@ -218,14 +218,14 @@ const Processes = () => {
   }
 
   return (
-    <Flex flexDir='column' gap={4} flex='1'>
+    <Flex flexDir='column' gap='4' flex='1'>
       {elections.processes.map((election) => (
         <ElectionProvider id={election.id} key={election.id}>
           <RecentProcess />
         </ElectionProvider>
       ))}
-      <Flex justify='flex-end' mt={4}>
-        <Link asChild display='inline-flex' alignItems='center' gap={3} size='sm' tone='quiet' emphasis='medium'>
+      <Flex justify='flex-end' mt='4'>
+        <Link asChild display='inline-flex' alignItems='center' gap='3' size='sm' tone='quiet' emphasis='medium'>
           <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
             {t('actions.create_first_vote', {
               defaultValue: 'View all processes',
@@ -247,7 +247,7 @@ const RecentProcess = () => {
 
   return (
     <Flex align='center'>
-      <Box flex='1' minW={0} mr={4}>
+      <Box flex='1' minW='0' mr='4'>
         <Link asChild emphasis='strong' display='block'>
           <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
             <ElectionTitle size='row' as='h3' />
@@ -260,7 +260,7 @@ const RecentProcess = () => {
           })}
         </Text>
       </Box>
-      <Flex align='center' gap={2} flexShrink={0}>
+      <Flex align='center' gap='2' flexShrink={0}>
         <ElectionStatusBadge />
         <Text fontWeight='bold' fontSize={{ base: 'sm', md: 'md' }} whiteSpace='nowrap'>
           {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: processVoteCount(results) })}
@@ -273,21 +273,21 @@ const RecentProcess = () => {
 const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
   const { t } = useTranslation()
   return (
-    <DashboardBox size='md' flex='1 1 33%' justifyContent='normal' gap={0} {...props}>
-      <Heading as='h2' textStyle='section-title' mb={1.5}>
+    <DashboardBox size='md' flex='1 1 33%' justifyContent='normal' gap='0' {...props}>
+      <Heading as='h2' textStyle='section-title' mb='1.5'>
         {t('dashboard.welcome.quick_actions', {
           defaultValue: 'Quick actions',
         })}
       </Heading>
-      <Text color='fg.muted' textStyle='body-sm' mb={6}>
+      <Text color='fg.muted' textStyle='body-sm' mb='6'>
         {t('dashboard.welcome.common_tasks_actions', {
           defaultValue: 'Common tasks and actions',
         })}
       </Text>
-      <Flex flexDirection='column' gap={4} minW={0}>
-        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW={0}>
+      <Flex flexDirection='column' gap='4' minW='0'>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW='0'>
           <ReactRouterLink to={generatePath(Routes.processes.create)}>
-            <HStack gap={2} minW={0}>
+            <HStack gap='2' minW='0'>
               <Icon as={AddIcon} flexShrink={0} />
               <Text as='span' truncate>
                 {t('actions.create_new_vote', {
@@ -297,9 +297,9 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
             </HStack>
           </ReactRouterLink>
         </Button>
-        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW={0}>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW='0'>
           <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
-            <HStack gap={2} minW={0}>
+            <HStack gap='2' minW='0'>
               <Icon as={VoteIcon} flexShrink={0} />
               <Text as='span' truncate>
                 {t('actions.view_active_votes', {
@@ -309,9 +309,9 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
             </HStack>
           </ReactRouterLink>
         </Button>
-        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW={0}>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' minW='0'>
           <ReactRouterLink to={generatePath(Routes.dashboard.settings.base)}>
-            <HStack gap={2} minW={0}>
+            <HStack gap='2' minW='0'>
               <Icon as={UsersIcon} flexShrink={0} />
               <Text as='span' truncate>
                 {t('actions.manage_team', {

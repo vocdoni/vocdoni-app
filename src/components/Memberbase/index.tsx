@@ -90,7 +90,7 @@ export const MemberbaseTabs = () => {
         }}
         lazyMount
       >
-        <TabsList mb={6}>
+        <TabsList mb='6'>
           {menuItems.map((item) => (
             <TabsTrigger key={item.route} value={item.route}>
               {item.label}
@@ -99,7 +99,7 @@ export const MemberbaseTabs = () => {
                   colorPalette='gray'
                   variant='subtle'
                   borderRadius='full'
-                  px={1.5}
+                  px='1.5'
                   fontVariantNumeric='tabular-nums'
                 >
                   {item.count.toLocaleString(i18n.resolvedLanguage)}

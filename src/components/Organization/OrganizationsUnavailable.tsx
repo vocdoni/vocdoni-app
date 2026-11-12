@@ -44,7 +44,7 @@ export const OrganizationsUnavailable = ({ onRetry }: OrganizationsUnavailablePr
               </Trans>
             }
           >
-            <Button mt={4} onClick={retry} loading={isRetrying}>
+            <Button mt='4' onClick={retry} loading={isRetrying}>
               <Trans i18nKey='organization.unavailable_retry'>Try again</Trans>
             </Button>
           </EmptyState>

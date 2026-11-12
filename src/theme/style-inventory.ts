@@ -50,7 +50,7 @@ export const STYLE_EXCEPTIONS: readonly StyleException[] = [
     glob: 'src/components/Layout/Logo.tsx',
     categories: ['colorModeLogic'],
     match:
-      /^_dark=\{\{ bgColor: 'auth\.logo\.tile\.bg', border: '1px solid', borderColor: 'auth\.logo\.tile\.border', borderRadius: 'md', p: 1, boxSizing: 'content-box',? \}\}$/,
+      /^_dark=\{\{ bgColor: 'auth\.logo\.tile\.bg', border: 'sm', borderColor: 'auth\.logo\.tile\.border', borderRadius: 'md', p: '1', boxSizing: 'content-box',? \}\}$/,
     reason:
       'organisation logos are dark artwork on transparent backgrounds: dark mode puts them on the white logo tile',
   },

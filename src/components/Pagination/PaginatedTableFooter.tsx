@@ -28,11 +28,11 @@ const RoutedPaginatedTableFooter = ({ summary }: RoutedPaginatedTableFooterProps
       flexDirection='row'
       flexWrap='wrap'
       alignItems='center'
-      gap={5}
+      gap='5'
       justifyContent={{ base: 'flex-start', md: 'space-between' }}
     >
       <RowsPerPageSelect />
-      <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5}>
+      <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap='5'>
         {summary}
         <Text textStyle='body-sm'>
           <Trans i18nKey='pagination.page_out_of' values={{ page: currentPage, total }}>
@@ -58,8 +58,8 @@ export const PaginatedTableFooter = () => {
   const currentPage = getCurrentPage(page, total)
 
   return (
-    <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5} justifyContent='space-between'>
-      <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5}>
+    <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap='5' justifyContent='space-between'>
+      <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap='5'>
         <Text textStyle='body-sm'>
           <Trans i18nKey='pagination.page_out_of' values={{ page: currentPage, total }}>
             Page {{ page: currentPage }} of {{ total }}
