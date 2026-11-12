@@ -14,17 +14,18 @@ touches `src/theme/` instead of hundreds of components.
 
 ## Where things live
 
-| What                                                         | Where                                                                                                                                                     |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Raw scales (radii, sizes, z-index, weights, line heights)    | `src/theme/tokens.ts`, `src/theme/colors.ts`, `src/theme/fonts.ts`                                                                                        |
-| Meaning of colours (surfaces, text, borders, light and dark) | `src/theme/semantic.ts` and one module per family (below)                                                                                                 |
-| Brand colour (generated from `PRIMARY_COLOR`)                | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                |
-| Text roles                                                   | `src/theme/textStyles.ts`                                                                                                                                 |
-| How a component looks and its variants                       | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports |
-| Voting UI from `@vocdoni/react-components`                   | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                        |
-| Shared building blocks                                       | `src/components/ui/`                                                                                                                                      |
-| Icons, by concept                                            | `src/theme/icons.tsx`                                                                                                                                     |
-| The rules that keep the theme from being bypassed            | `src/theme/style-inventory.ts` and `src/theme/style-inventory.baseline.json`                                                                              |
+| What                                                                     | Where                                                                                                                                                     |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Raw scales (radii, sizes, border widths, z-index, weights, line heights) | `src/theme/tokens.ts`, `src/theme/colors.ts`, `src/theme/fonts.ts`                                                                                        |
+| Meaning of colours (surfaces, text, borders, light and dark)             | `src/theme/semantic.ts` and one module per family (below)                                                                                                 |
+| Brand colour and `accent` (generated from `PRIMARY_COLOR`)               | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                |
+| Text roles                                                               | `src/theme/textStyles.ts`                                                                                                                                 |
+| How a component looks and its variants                                   | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports |
+| Voting UI from `@vocdoni/react-components`                               | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                        |
+| Shared building blocks                                                   | `src/components/ui/`                                                                                                                                      |
+| Shared layout pieces                                                     | `src/components/Layout/Separators.tsx` (`LabelledSeparator`)                                                                                              |
+| Icons, by concept                                                        | `src/theme/icons.tsx`                                                                                                                                     |
+| The rules that keep the theme from being bypassed                        | `src/theme/style-inventory.ts` and `src/theme/style-inventory.baseline.json`                                                                              |
 
 Import theme modules with the `~theme/*` alias and shared components with `~components/ui/*`.
 
@@ -45,22 +46,26 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.inverted`, `bg.panel`                                         | `semantic.ts`     |
 | Borders                          | `border`, `border.muted`, `border.subtle`, `border.emphasized`, `border.inverted`                                                                                           | `semantic.ts`     |
 | Surface layers                   | `surface.canvas`, `.sidebar`, `.content`, `.card`, `.sunken`, `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`) | `semantic.ts`     |
-| Dimming layer                    | `scrim`, `scrim.strong`, `scrim.fg`                                                                                                                                         | `semantic.ts`     |
+| Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.fg`                                                                                                           | `semantic.ts`     |
+| Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                          | `semantic.ts`     |
 | Interaction states (bg/fg pairs) | `state.hover`, `state.pressed`, `state.selected`, `state.current`, `state.dragover.border`                                                                                  | `states.ts`       |
 | Status palettes                  | `colorPalette='success' \| 'warning' \| 'danger' \| 'info'`, each with the slots of a Chakra palette (`solid`, `contrast`, `fg`, `muted`, `subtle`, `border`…)              | `status.ts`       |
 | Status by meaning                | `status.{success,warning,error,info}.{fg,bg,border,solid,contrast,emphasis}`, `status.neutral.{fg,bg,border,solid,contrast}`, `danger.action`                               | `status.ts`       |
-| Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}`                                                                                 | `charts.ts`       |
+| Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}` (the info, warning and error `solid`)                                           | `charts.ts`       |
 | Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                       | `ballot.ts`       |
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                       | `illustration.ts` |
 | Links                            | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`                                                                                                                            | `recipeColors.ts` |
 | Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`                                                                     | `semantic.ts`     |
-| Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                   | `semantic.ts`     |
+| Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                   | `palette.ts`      |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                        | `semantic.ts`     |
 
 Rules of thumb:
 
 - **Accent**: leave `colorPalette` alone (it is `brand` when `PRIMARY_COLOR` is set, `gray` otherwise) and read
   `colorPalette.solid`, `colorPalette.fg` and so on. Use `colorPalette='gray'` only for things that must stay neutral.
+  When a recipe or component paints brand-coloured text (active tab, highlighted notice), read `accent.fg`, not
+  `brand.fg`: it is the brand's `fg`, except on the dark page for a neutral brand too dark to read there (such as the
+  stock black), which gets white. Borders may still read `brand.fg`.
 - **Status colour**: status colours are Chakra semantic palettes defined in `src/theme/status.ts`. Pick one with
   `colorPalette='danger' | 'success' | 'warning' | 'info'`, and `gray` for neutral; never a local status-to-colour map
   or a raw `red`/`green`. `StatusBadge` takes `colorPalette`. Code that reads a colour rather than a palette uses
@@ -74,6 +79,8 @@ Rules of thumb:
 - **Text on a coloured fill**: use the pair the token family ships (`status.error.contrast` on `status.error.solid`,
   `surface.inverse.fg` on `surface.inverse`), not an ad hoc black or white. `textContrast.test.ts` and `palette.test.ts`
   check contrast.
+- **A token that repeats another role**: alias it (`state.current.bg` is `{colors.bg.emphasized}`, `meter.ok` is
+  `{colors.status.info.solid}`) instead of copying the raw steps, so the two cannot drift.
 
 ## Text
 
@@ -93,8 +100,9 @@ Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 - The page has one `h1`: `PageTitle` from `~components/ui/PageTitle` (`PageSubtitle` is the line under it). Section
   titles use `textStyle='section-title'` on an `h2`; in the dashboard, `SectionTitle` from
   `~components/Dashboard/Contents` does that for you.
-- Set `textStyle` or `size` on every `Text`: the `text` recipe has no default size, so a bare `Text` takes whatever it
-  inherits. For inline emphasis inside smaller text, use `chakra.span` or `Span`.
+- Body copy needs no `textStyle`: `body` in `globalCss` (`system.ts`) gives it the `body` role, so a bare `Text`,
+  markdown or a list item inherits that. The `text` recipe has no default size, so set `textStyle` or `size` on any
+  `Text` that should be something else. For inline emphasis inside smaller text, use `chakra.span` or `Span`.
 - Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.5), `tall` (1.6). Letter spacing:
   `heading.snug`, `quote.tight`, `eyebrow.wide`, plus Chakra's own steps.
 - Weights: only 300, 400 and 500 ship (`src/theme/fonts.ts`). `normal` and `medium` render 400; `semibold`, `bold` and
@@ -108,12 +116,18 @@ Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
   `pxSpacing` ratchet hit.
 - **Sizes**: Chakra's named sizes and the tokens below, plus `0` and `auto`. A pixel value is a `pxSize` ratchet hit.
 - **Radii**: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `full`, `none`. Pixel radii fail the inventory.
+- **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
+  focus ring, `thick`): `<Box borderWidth='thick' />`.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
   (1.5rem, feature), `icon.xl` (3rem, empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
+  `icon.sm` to `icon.lg` alias Chakra's Icon sizes (`{sizes.4}`, `5`, `6`), so `boxSize='icon.md'` and
+  `<Icon size='md'>` cannot drift apart; `icon.xl` is `{sizes.12}`.
 - **Page widths**: `content.wide` (1600px), `content.medium` (1200px), `content.narrow` (900px), read through
   `PageContainer` (below).
 - **Other named sizes**: `card.empty`, `table.action`, `toolbar`, `dashboard.menu.expanded|collapsed`,
-  `dashboard.header`, `dashboard.panel`, `control.floating`, `control.icon-link`, `loader`, `wordmark`, `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
+  `dashboard.header`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon
+  link), `loader` (min height of `PageLoader`), `wordmark` (width of the Vocdoni wordmark:
+  `<VocdoniLogo w='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
 - **z-index**: tokens only (`background`, `contents`, `sidebar`, `topbar`, `top`, `public-header`, `dashboard-menu`).
 - **Opacity**: `inactive` (0.6) for content that cannot be used right now, `dimmed` (0.5) for de-emphasis.
 - **Durations**: Chakra's names plus `instant` (0s).
@@ -151,8 +165,10 @@ What exists today:
 To add a variant:
 
 1. Add it to the recipe in `src/theme/recipes/`, built only from tokens (a recipe may use the `[value]` escape for CSS
-   values with no token, such as `none` or `inherit`; recipes are scanned by the inventory for px and palette values only, and `system.test.ts`
-   fails on any token name that does not exist, in every recipe in its `ALL_RECIPES`).
+   values with no token, such as `none` or `inherit`). `system.test.ts` fails on any token name that does not exist, in
+   every recipe in its `ALL_RECIPES`, and the inventory counts pixel sizes, pixel spacing and palette steps in recipes
+   too (see [Style inventory](#style-inventory)): a size that repeats becomes a token, as `control.floating` and
+   `control.icon-link` did.
 2. Register a new recipe in `src/theme/recipes/index.ts`, unless only one `ui/` component uses it: then import it there
    (as `ui/PageContainer.tsx` does with `recipes/page.ts`) and add it to `ALL_RECIPES` in `system.test.ts`, which does
    not cover `page`, `confirmModal` and `loader` today.
@@ -171,28 +187,40 @@ write a custom field wrapper.
 
 All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 
-| Component                                  | Use it for                                                                                                               |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `PageContainer`, `PageSection`             | A page column: `size` (`wide`, `medium`, `narrow`) and `gutter`. `PageSection` is the same without gutters               |
-| `PageTitle`, `PageSubtitle`                | The page's one `h1` and the line under it                                                                                |
-| `ConfirmDialog` (`ConfirmDialogContent`)   | Every confirmation. `layout`: `panel`, `inline`, `compact`, `shell`, `summary`; `destructive` is on by default           |
-| `StatusBadge`                              | A status chip: `colorPalette` (`success`, `warning`, `danger`, `info`, `gray`), `variant` (`subtle`, `surface`, `solid`) |
-| `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                       |
-| `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`        |
-| `CloseButton`                              | A close control with a translated `aria-label`                                                                           |
-| `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                   |
+| Component                                  | Use it for                                                                                                                                  |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PageContainer`, `PageSection`             | A page column: `size` (`wide`, `medium`, `narrow`) and `gutter`. `PageSection` is the same without gutters                                  |
+| `PageTitle`, `PageSubtitle`                | The page's one `h1` and the line under it                                                                                                   |
+| `RoutedTabs`                               | Tabs that are child routes: `tabs` (`{ label, route, count? }`), optional `value`, `outletContext`; renders the `Outlet`                    |
+| `ListStateAlert`                           | A list or block that failed to load: `error`, `title`, `fallback` (for a non-`Error`), `show`. Use it instead of a hand-built error `Alert` |
+| `Tooltip`                                  | Every tooltip: `content`, `showArrow`, `contentProps`, `portalled` (off inside another portal)                                              |
+| `useIsMobile`, `useTableAsCards`           | The mobile breakpoint (below `md`) as a boolean; the second is the same hook, named for tables shown as cards                               |
+| `ConfirmDialog` (`ConfirmDialogContent`)   | Every confirmation. `layout`: `panel`, `inline`, `compact`, `shell`, `summary`; `destructive` is on by default                              |
+| `StatusBadge`                              | A status chip: `colorPalette` (`success`, `warning`, `danger`, `info`, `gray`), `variant` (`subtle`, `surface`, `solid`)                    |
+| `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                                          |
+| `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`                           |
+| `CloseButton`                              | A close control with a translated `aria-label`                                                                                              |
+| `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                                      |
 
 ```tsx
 import { PageSection } from '~components/ui/PageContainer'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
+import { RoutedTabs } from '~components/ui/RoutedTabs'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 
 <PageSection size='medium'>
   <StatusBadge colorPalette='success'>{t('status.ongoing')}</StatusBadge>
 </PageSection>
 
+<RoutedTabs tabs={[{ label: t('members'), route: 'members', count: total }, { label: t('groups'), route: 'groups' }]} />
+<ListStateAlert error={error} title={t('could_not_load')} fallback={t('try_again')} />
+
 <ConfirmDialog layout='inline' open={open} title={title} onConfirm={revoke} loading={isPending} />
 ```
+
+Not in `ui/`: `LabelledSeparator` (`~components/Layout/Separators`), a hairline on each side of a short label, such as
+`OrSeparator`'s "or continue with". Do not build one from a `Flex` and two `Box`es.
 
 New user-facing text in any of these goes through `t(…)`, like everywhere else (see `AGENTS.md`).
 
@@ -236,8 +264,10 @@ that narrows the exception to the occurrences it names) and a `reason`. Today:
 - **Sort carets** (`Members/index.tsx`): `lineHeight: '[0]'` collapses the stack's line box, and no line-height token is 0.
 - **The typing indicator bounce** (`SupportChat/Messages.tsx`, `dotBounce`).
 
-Not scanned at all: the theme definition files (`EXCLUDED_FILES` in `style-inventory.ts`, checked by `system.test.ts`
-instead), recipes, tests and `src/theme/test-themes/`. `src/theme/logoTones.ts` holds committed per-logo panel colours
+Recipes are scanned, but only for `pxSize`, `pxSpacing`, `pxFontSize`, `pxRadius` and `rawPalette`
+(`RECIPE_CATEGORIES`): a recipe may use `_dark`, `white`/`black` and its own line heights. Not scanned at all: the theme
+definition files (`EXCLUDED_FILES` in `style-inventory.ts`, checked by `system.test.ts` instead), tests and
+`src/theme/test-themes/`. `src/theme/logoTones.ts` holds committed per-logo panel colours
 on purpose; regenerate it with `scripts/logo-tones.mjs` and review each value on screen. Third-party brand colours (the
 WhatsApp green is the `whatsapp.*` token) stay as the brand defines them.
 
@@ -275,8 +305,9 @@ it when the code goes.
    `style-inventory.ts` so the scanner skips them; add a new one there too.
 
 5. **Mind the collision.** A raw token whose dashed name equals a nested semantic path (a raw `elevation-rest` next to a
-   semantic `elevation.rest`) white-screens the app at runtime. Lint, typegen and the tests still pass, so check by
-   rendering the app. Parents with a `DEFAULT` and raw names without the dashed form of a semantic path avoid it.
+   semantic `elevation.rest`) shares a CSS variable with it and white-screens the app at runtime. The "token names" test
+   in `system.test.ts` fails on it, in the stock and a branded system. Parents with a `DEFAULT` and raw names without
+   the dashed form of a semantic path avoid it.
 6. **Regenerate the typings** with `pnpm chakra:typegen` (nothing to commit: the output lives in `node_modules`), then
    check a page in both colour modes, with and without `PRIMARY_COLOR`. If `tsc` complains about a recipe variant or
    token that exists, the generated typings are stale: run typegen again.
@@ -307,13 +338,13 @@ escape is not a way around the ratchet.
 
 ## The checks
 
-| Check                                              | Command                                             | In CI                                                                    |
-| -------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------ |
-| Types, including `strictTokens`                    | `pnpm lint`                                         | `Lint` step of `Build (dev)` / `Build (stg)`                             |
-| Theme integrity (recipes and refs hit real tokens) | `pnpm test src/theme/system.test.ts`                | `Test` step of the same jobs                                             |
-| Style inventory                                    | `pnpm test src/theme/style-inventory.test.ts`       | `Test` step of the same jobs                                             |
-| Stress theme                                       | `pnpm ui:snapshot -- --label stress --theme stress` | `Stress theme` job (any PR that touches what renders, whatever its base) |
-| Offline snapshot and diff                          | `pnpm ui:snapshot`, `pnpm ui:diff`                  | not run                                                                  |
+| Check                                                 | Command                                             | In CI                                                                    |
+| ----------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------ |
+| Types, including `strictTokens`                       | `pnpm lint`                                         | `Lint` step of `Build (dev)` / `Build (stg)`                             |
+| Theme integrity (real tokens, no shared CSS variable) | `pnpm test src/theme/system.test.ts`                | `Test` step of the same jobs                                             |
+| Style inventory                                       | `pnpm test src/theme/style-inventory.test.ts`       | `Test` step of the same jobs                                             |
+| Stress theme                                          | `pnpm ui:snapshot -- --label stress --theme stress` | `Stress theme` job (any PR that touches what renders, whatever its base) |
+| Offline snapshot and diff                             | `pnpm ui:snapshot`, `pnpm ui:diff`                  | not run                                                                  |
 
 The build jobs run on PRs to `develop`, `stage` and `d/**` only; on a PR to any other base (a stacked PR), run
 `pnpm lint` and `pnpm test` yourself.
