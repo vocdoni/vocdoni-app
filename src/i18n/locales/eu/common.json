@@ -1184,6 +1184,7 @@
     },
     "voters": "Boto-emaileak",
     "voting": "Zure botoa prozesatzen ari gara. Honek segundo batzuk iraungo ditu. Ez itxi edo eguneratu orrialde hau.",
+    "voting_label": "Zure botoa bidaltzen",
     "voting_method": {
       "approval": "Onarpena",
       "budget": "Aurrekontu-esleipena",

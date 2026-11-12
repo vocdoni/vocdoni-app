@@ -373,7 +373,7 @@ export const VotingVoteModal = () => {
           aria-label={
             showFailure
               ? t('process.vote_failed.title', { defaultValue: 'Your vote could not be cast' })
-              : t('process.voting')
+              : t('process.voting_label', { defaultValue: 'Submitting your vote' })
           }
         >
           {/* This dialog has no header, so the body has to supply the top padding it would provide. */}

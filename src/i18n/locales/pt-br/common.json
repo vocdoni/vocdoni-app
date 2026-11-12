@@ -1208,6 +1208,7 @@
     },
     "voters": "Eleitores",
     "voting": "Estamos processando seu voto. Esse processo levará alguns segundos. Não feche nem atualize esta página.",
+    "voting_label": "Enviando seu voto",
     "voting_method": {
       "approval": "Aprovação",
       "budget": "Alocação orçamentária",
