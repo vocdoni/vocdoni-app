@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { UsageMeter } from '~components/ui/UsageMeter'
+import { quantity } from '~utils/numbers'
 
 export type QuotaCardProps = {
   label: string
@@ -22,7 +23,7 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
     limit === undefined
       ? t('integrators.quota.used', { defaultValue: 'used' })
       : hasLimit
-        ? `/ ${limit}`
+        ? `/ ${quantity(limit)}`
         : t('integrators.quota.unlimited', { defaultValue: 'Unlimited' })
 
   return (

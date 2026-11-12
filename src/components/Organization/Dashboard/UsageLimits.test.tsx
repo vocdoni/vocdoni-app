@@ -36,7 +36,7 @@ describe('UsageLimits', () => {
       </TestMemoryRouter>
     )
 
-    expect(screen.getByText(`/ ${(50_000).toLocaleString('en')}`)).toBeInTheDocument()
+    expect(screen.getByText(`/ ${quantity(50_000)}`)).toBeInTheDocument()
   })
 
   it('shows the voting process count from the organization, without a cap or progress bar', () => {

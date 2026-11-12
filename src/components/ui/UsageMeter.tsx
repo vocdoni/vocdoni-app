@@ -1,7 +1,7 @@
 import { chakra, Icon, Progress, Stat } from '@chakra-ui/react'
 import { ElementType, ReactNode } from 'react'
-import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { InfoIcon } from '~theme/icons'
+import { quantity } from '~utils/numbers'
 import { Tooltip } from './Tooltip'
 
 export type UsageMeterColor = 'chart.1' | 'chart.2' | 'chart.3' | 'chart.4'
@@ -39,7 +39,6 @@ export const usageMeterFill = ({
 
 // A usage figure over its limit, with a bar that changes tone as the limit nears.
 export const UsageMeter = ({ label, value, max, unit, icon, tooltip, color, softLimit, children }: UsageMeterProps) => {
-  const language = usePublicLanguage()
   const hasLimit = max !== undefined && max > 0
   const percentage = hasLimit ? Math.min((value / max) * 100, 100) : 0
 
@@ -57,7 +56,7 @@ export const UsageMeter = ({ label, value, max, unit, icon, tooltip, color, soft
         )}
       </Stat.Label>
       <Stat.ValueText>
-        {value.toLocaleString(language)}
+        {quantity(value)}
         {unit && <Stat.ValueUnit>{unit}</Stat.ValueUnit>}
       </Stat.ValueText>
       {/* 0.5 % keeps a dot on the track, so an unused meter still reads as a meter. */}
