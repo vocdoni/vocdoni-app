@@ -28,6 +28,7 @@ import { Menu } from './menu'
 import { OrganizationDescription, OrganizationImage, OrganizationName } from './organization'
 import { Pagination, PaginationButton } from './pagination'
 import { Popover } from './popover'
+import { Progress } from './progress'
 import { Stat } from './stat'
 import { Table } from './table'
 import { Tabs } from './tabs'
@@ -68,6 +69,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   list: listSlotRecipe,
   menu: Menu,
   popover: Popover,
+  progress: Progress,
   stat: Stat,
   switch: switchRecipe,
   table: Table,

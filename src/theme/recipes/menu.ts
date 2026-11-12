@@ -14,10 +14,6 @@ const baseStyle = {
       bg: 'state.selected.bg',
       color: 'state.selected.fg',
     },
-    _focus: {
-      bg: 'state.hover.bg',
-      color: 'state.hover.fg',
-    },
   },
 
   separator: {
@@ -28,4 +24,22 @@ const baseStyle = {
 export const Menu = defineSlotRecipe({
   slots: menuAnatomy.keys(),
   base: baseStyle,
+  variants: {
+    variant: {
+      // Chakra's default variant: items are highlighted (pointer or keyboard), never focused.
+      subtle: {
+        item: {
+          _highlighted: {
+            bg: 'state.hover.bg',
+            color: 'state.hover.fg',
+          },
+          // After `_highlighted`, so a selected item keeps its fill under the pointer.
+          _selected: {
+            bg: 'state.selected.bg',
+            color: 'state.selected.fg',
+          },
+        },
+      },
+    },
+  },
 })

@@ -78,17 +78,14 @@ export const textarea = defineRecipe({
 
 export const switchRecipe = defineSlotRecipe({
   slots: switchAnatomy.keys(),
-  base: {
-    control: {
-      _focusVisible: {
-        _dark: {
-          boxShadow: '[0 0 0 {borderWidths.focusRing} {colors.gray.focusRing}]',
+  variants: {
+    variant: {
+      // Chakra's `solid` paints the thumb white in both modes.
+      solid: {
+        thumb: {
+          bg: 'switch.thumb',
+          _checked: { bg: 'switch.thumb.checked' },
         },
-      },
-    },
-    thumb: {
-      _dark: {
-        bg: 'colorPalette.600',
       },
     },
   },
