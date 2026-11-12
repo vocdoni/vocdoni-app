@@ -448,3 +448,37 @@ describe('votingProcessToForm with disabled option', () => {
     expect(form.anonymousVoting).toBe(true)
   })
 })
+
+describe('certificate census round-trip', () => {
+  it('maps a certificate census to form method:certificate', () => {
+    const form = votingProcessToForm(
+      process({ census: { authMethod: 'certificate', authFields: ['nationalId'], twoFaFields: [] } as any })
+    )
+
+    expect(form.census?.method).toBe('certificate')
+  })
+
+  it('maps a details census to a form census without a method key (develop parity)', () => {
+    const form = votingProcessToForm(
+      process({ census: { authFields: ['memberNumber'], twoFaFields: ['email'] } as any })
+    )
+
+    expect(form.census).not.toBeNull()
+    expect('method' in (form.census ?? {})).toBe(false)
+  })
+
+  it('votingProcessToCreateRequest copies authMethod when present', () => {
+    const request = votingProcessToCreateRequest(
+      process({ census: { authMethod: 'certificate', authFields: ['nationalId'] } as any }),
+      '0xorg'
+    )
+
+    expect((request.census as any)?.authMethod).toBe('certificate')
+  })
+
+  it('votingProcessToCreateRequest omits authMethod for a plain details census', () => {
+    const request = votingProcessToCreateRequest(process({ census: { authFields: ['memberNumber'] } }), '0xorg')
+
+    expect('authMethod' in (request.census ?? {})).toBe(false)
+  })
+})

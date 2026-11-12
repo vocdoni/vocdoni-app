@@ -9,6 +9,8 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - Token name: **VOC**
 - Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
+- Certificate product names and document identifiers (keep exactly as written): **idCAT Certificat**, **idCAT**, **idCAT Mòbil**, **FNMT**, **Cl@ve**, **DNI**, **NIE**, **DNI/NIE**
+- Never use an em dash (—) in UI strings; use a colon, comma or full stop instead
 
 ## Place & proper names
 - Translate geographic place names (countries, regions, cities) to their established Brazilian Portuguese form when one exists (e.g. Belarus → Bielorrússia, Catalonia → Catalunha). Keep the original spelling when there is no common Brazilian Portuguese form (e.g. small towns such as Bellpuig).
@@ -43,6 +45,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | end / finish | encerrar | |
 | resume | retomar | |
 | sign (cryptographic) | assinar | Technical term in common use — keep |
+| digital certificate | certificado digital | The term public administrations use for a PKI-based identity credential |
+| Access with your digital certificate | Acesse com seu certificado digital | V1 button: você form per this file |
+| voter list | lista de participantes | The word voters read; matches existing `process.census` and `aside.is_not_in_census` wording |
+| Reference code | Código de referência | V6 support code shown to the voter |
+| sign in (organizer copy) | entrar | Matches existing `voter_auth.*` strings |
 
 ## Spelling notes (Brazilian vs. European Portuguese)
 - Use Brazilian spelling throughout: "você" (not "vós"), "anônimo" (not "anónimo"), "econômico" (not "económico"), "registro"/"registrar" (not "registo"/"registar") — watch the circumflex/acute accent differences typical of Brazilian Portuguese.

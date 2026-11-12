@@ -9,6 +9,8 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - Token name: **VOC**
 - Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
+- Certificate product names and document identifiers (keep exactly as written): **idCAT Certificat**, **idCAT**, **idCAT Mòbil**, **FNMT**, **Cl@ve**, **DNI**, **NIE**, **DNI/NIE**
+- Never use an em dash (—) in UI strings; use a colon, comma or full stop instead
 
 ## Place & proper names
 - Translate geographic place names (countries, regions, cities) to their established Greek form when one exists (e.g. Belarus → Λευκορωσία, Catalonia → Καταλονία). Keep the original spelling when there is no common Greek form (e.g. small towns such as Bellpuig).
@@ -55,6 +57,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | end / finish | ολοκλήρωση / λήξη | Use "ολοκλήρωση" for finishing an action, "λήξη" when a process reaches its end |
 | resume | συνέχιση | |
 | sign (cryptographic) | υπογραφή | Common in digital contexts — keep |
+| digital certificate | ψηφιακό πιστοποιητικό | The term public administrations use for a PKI-based identity credential |
+| Access with your digital certificate | Πρόσβαση με το ψηφιακό σας πιστοποιητικό | V1 button: formal σας per this file |
+| voter list | μητρώο ψηφοφόρων | The word voters read; matches existing `process.census` and `aside.is_not_in_census` wording |
+| Reference code | Κωδικός αναφοράς | V6 support code shown to the voter |
+| sign in (organizer copy) | σύνδεση | Matches existing `voter_auth.*` strings |
 
 ## Grammatical notes
 

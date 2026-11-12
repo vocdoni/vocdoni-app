@@ -1,4 +1,6 @@
-import type { CensusSpec, OrgMemberAuthField } from '@vocdoni/api-types'
+import type { OrgMemberAuthField } from '@vocdoni/api-types'
+import type { AppCensusSpec } from '~src/queries/certificateAuth/census'
+import { CERTIFICATE_AUTH_FIELDS } from '~src/queries/certificateAuth/census'
 import type { Process } from './common'
 import { getTwoFaFields } from './VoterAuthentication/utils'
 
@@ -9,8 +11,8 @@ type CensusSpecSource = Pick<Process, 'groupId' | 'weightedVote' | 'anonymousVot
  * voter sign-in modal validates before saving, so the pre-flight check and the
  * publish can never disagree on what they send.
  */
-export const buildCensusSpec = (form: CensusSpecSource, disableAnonymous?: boolean): CensusSpec => {
-  const spec: CensusSpec = {
+export const buildCensusSpec = (form: CensusSpecSource, disableAnonymous?: boolean): AppCensusSpec => {
+  const spec: AppCensusSpec = {
     // The backend builds the group's voter list on every save, keyed on the
     // voters' credentials. Without them every voter collides and the save fails,
     // so a draft only commits to its group once authentication is set up.
@@ -21,6 +23,14 @@ export const buildCensusSpec = (form: CensusSpecSource, disableAnonymous?: boole
     // other optional flags are built here. Also omitted when the option is off.
     anonymous: (!disableAnonymous && form.anonymousVoting) || undefined,
   }
+
+  if (form.census?.method === 'certificate') {
+    spec.authMethod = 'certificate'
+    spec.authFields = [...CERTIFICATE_AUTH_FIELDS] as OrgMemberAuthField[]
+    // No twoFaFields for certificate auth.
+    return spec
+  }
+
   if (form.census?.credentials?.length) {
     spec.authFields = form.census.credentials as OrgMemberAuthField[]
   }

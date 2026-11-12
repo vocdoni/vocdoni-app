@@ -42,6 +42,8 @@ export type AppEnv = {
   SHOW_ORG_LOGO?: boolean
   // When true, the anonymous voting option is not offered in the process wizard.
   DISABLE_ANONYMOUS_VOTING?: boolean
+  // Digital certificate voter sign-in: 'on' talks to the backend, 'mock' fakes it (never in prod). Absent = off.
+  ENABLE_CERTIFICATE_AUTH?: 'on' | 'mock'
 }
 
 type AppEnvObject = AppEnv
@@ -173,6 +175,12 @@ const resolvePrimaryColor = (value: string | undefined): string | undefined => {
 // request time, which renders the public 404 page like any other unknown id.
 const resolveHomeProcessId = (value: string | undefined): string | undefined => value?.trim() || undefined
 
+const resolveCertificateAuth = (value: string | undefined, environment: string): AppEnv['ENABLE_CERTIFICATE_AUTH'] => {
+  if (value === 'true') return 'on'
+  if (value === 'mock' && environment.toLowerCase() !== 'prod') return 'mock'
+  return undefined
+}
+
 /**
  * Resolves the public application environment from a raw env source (e.g.
  * `process.env`). This used to run only at build time and was inlined into the
@@ -240,5 +248,6 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     PRIMARY_COLOR: resolvePrimaryColor(env.PRIMARY_COLOR),
     SHOW_ORG_LOGO: env.SHOW_ORG_LOGO === 'true',
     DISABLE_ANONYMOUS_VOTING: env.DISABLE_ANONYMOUS_VOTING === 'true',
+    ENABLE_CERTIFICATE_AUTH: resolveCertificateAuth(env.ENABLE_CERTIFICATE_AUTH, env.VOCDONI_ENVIRONMENT || 'dev'),
   }
 }

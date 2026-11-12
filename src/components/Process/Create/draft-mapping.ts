@@ -8,6 +8,7 @@ import type {
   VotingProcessResponse,
 } from '@vocdoni/api-types'
 import { format } from 'date-fns'
+import type { AppCensusSpec } from '~src/queries/certificateAuth/census'
 import { defaultProcessValues, Process, SelectorTypes } from './common'
 import { TwoFAMethod } from './VoterAuthentication/utils'
 
@@ -51,6 +52,8 @@ export const votingProcessToForm = (process: VotingProcessResponse, disableAnony
   const startDate = process.startDate ? new Date(process.startDate) : undefined
   const endDate = process.endDate ? new Date(process.endDate) : undefined
 
+  const censusSpec = process.census as AppCensusSpec | undefined
+  const isCertificate = censusSpec?.authMethod === 'certificate'
   const authFields = process.census?.authFields ?? []
   const twoFaFields = process.census?.twoFaFields ?? []
   const twoFaMethod = twoFaMethodOf(twoFaFields)
@@ -70,10 +73,11 @@ export const votingProcessToForm = (process: VotingProcessResponse, disableAnony
     // Force off when the anonymous voting option is not offered.
     anonymousVoting: !disableAnonymous && (process.census?.anonymous ?? false),
     groupId: process.census?.groupId ?? defaultProcessValues.groupId,
-    // Two-factor alone is a complete configuration (the auth dialog confirms it
-    // without credentials), so either half restores it.
-    census:
-      authFields.length || twoFaMethod
+    // A certificate census round-trips as method:'certificate'; a two-factor-only
+    // census is a complete configuration (the auth dialog confirms it without credentials).
+    census: isCertificate
+      ? { method: 'certificate', credentials: ['nationalId'], use2FA: false, use2FAMethod: 'email' }
+      : authFields.length || twoFaMethod
         ? {
             credentials: [...authFields],
             use2FA: twoFaFields.length > 0,
@@ -153,21 +157,27 @@ export const votingProcessToCreateRequest = (
   process: VotingProcessResponse,
   orgAddress: string,
   disableAnonymous?: boolean
-): CreateVotingProcessRequest => ({
-  orgAddress,
-  title: process.title,
-  description: process.description,
-  header: process.header,
-  streamUri: process.streamUri,
-  census: {
-    weighted: process.census?.weighted,
-    // Omit when the anonymous voting option is not offered.
-    anonymous: disableAnonymous ? undefined : process.census?.anonymous,
-    authFields: process.census?.authFields,
-    twoFaFields: process.census?.twoFaFields,
-    // Absent for an organization-wide census, which is exactly what we want to
-    // send back for one.
-    groupId: process.census?.groupId,
-  },
-  questions: (process.questions ?? []).map(questionToRequest),
-})
+): CreateVotingProcessRequest => {
+  const censusSpec = process.census as AppCensusSpec | undefined
+  const authMethod = censusSpec?.authMethod
+  return {
+    orgAddress,
+    title: process.title,
+    description: process.description,
+    header: process.header,
+    streamUri: process.streamUri,
+    census: {
+      weighted: process.census?.weighted,
+      // Omit when the anonymous voting option is not offered.
+      anonymous: disableAnonymous ? undefined : process.census?.anonymous,
+      authFields: process.census?.authFields,
+      twoFaFields: process.census?.twoFaFields,
+      // Absent for an organization-wide census, which is exactly what we want to
+      // send back for one.
+      groupId: process.census?.groupId,
+      // Carry the certificate authMethod through clones; omit for develop-style censuses.
+      ...(authMethod ? { authMethod } : {}),
+    },
+    questions: (process.questions ?? []).map(questionToRequest),
+  }
+}

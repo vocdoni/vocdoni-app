@@ -9,6 +9,8 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - Token name: **VOC**
 - Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
+- Certificate product names and document identifiers (keep exactly as written): **idCAT Certificat**, **idCAT**, **idCAT Mòbil**, **FNMT**, **Cl@ve**, **DNI**, **NIE**, **DNI/NIE**
+- Never use an em dash (—) in UI strings; use a colon, comma or full stop instead
 
 ## Place & proper names
 - Translate geographic place names (countries, regions, cities) to their established Italian form when one exists (e.g. Belarus → Bielorussia, Catalonia → Catalogna). Keep the original spelling when there is no common Italian form (e.g. small towns such as Bellpuig).
@@ -51,6 +53,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | end / finish | terminare | |
 | resume | riprendere | |
 | sign (cryptographic) | firmare | Common in digital contexts — keep |
+| digital certificate | certificato digitale | The term public administrations use for a PKI-based identity credential |
+| Access with your digital certificate | Accedi con il tuo certificato digitale | V1 button: informal tu per this file |
+| voter list | censimento | The word voters read; matches existing `process.census` and `aside.is_not_in_census` wording |
+| Reference code | Codice di riferimento | V6 support code shown to the voter |
+| sign in (organizer copy) | accedere | Matches existing `voter_auth.*` strings |
 
 ## Grammatical notes
 
