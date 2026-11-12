@@ -1,4 +1,4 @@
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { tabsAnatomy } from '@chakra-ui/react/anatomy'
 
 const pill = {
@@ -6,16 +6,16 @@ const pill = {
     '--tabs-height': 'auto',
   },
   list: {
-    p: 1,
+    p: '1',
     bgColor: 'tabs.bg',
     borderRadius: 'sm',
-    w: 'fit-content',
+    w: 'fit',
     maxWidth: 'full',
     overflowX: 'auto',
   },
   trigger: {
-    py: 1.5,
-    px: 3,
+    py: '1.5',
+    px: '3',
     whiteSpace: 'nowrap',
     borderRadius: 'sm',
     fontWeight: 'medium',
@@ -29,9 +29,9 @@ const pill = {
   },
   content: {
     borderRadius: 'md',
-    p: 6,
+    p: '6',
   },
-}
+} satisfies Partial<Record<string, SystemStyleObject>>
 
 export const Tabs = defineSlotRecipe({
   slots: tabsAnatomy.keys(),

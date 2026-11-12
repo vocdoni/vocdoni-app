@@ -4,7 +4,7 @@ import { defineRecipe } from '@chakra-ui/react'
 // cannot change per breakpoint.
 export const PageContainer = defineRecipe({
   base: {
-    mx: 'auto',
+    mx: '[auto]',
   },
   variants: {
     size: {
@@ -14,7 +14,7 @@ export const PageContainer = defineRecipe({
     },
     gutter: {
       // Shared by the public header, content and footer, so their edges line up.
-      page: { px: { base: 2.5, sm: 5, md: 20 } },
+      page: { px: { base: '2.5', sm: '5', md: '20' } },
       none: {},
     },
   },

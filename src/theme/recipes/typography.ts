@@ -1,12 +1,12 @@
-import { defineRecipe } from '@chakra-ui/react'
+import { defineRecipe, defineStyle, type SystemStyleObject } from '@chakra-ui/react'
 
-const sectionTitle = {
-  pt: 4,
-}
+const sectionTitle = defineStyle({
+  pt: '4',
+})
 
-const sectionSubtitle = {
-  py: 4,
-}
+const sectionSubtitle = defineStyle({
+  py: '4',
+})
 
 export const heading = defineRecipe({
   base: {
@@ -50,7 +50,7 @@ export const link = defineRecipe({
       // consistent underline.
       plain: {
         _hover: {
-          textDecorationColor: 'currentColor',
+          textDecorationColor: 'current',
           textUnderlineOffset: '0.15em',
         },
       },
@@ -65,10 +65,10 @@ export const link = defineRecipe({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 'sm',
-        minW: '30px',
-        h: '30px',
-        border: '{borderWidths.hairline} solid',
-        cursor: 'pointer',
+        minW: '[30px]',
+        h: '[30px]',
+        border: 'sm',
+        cursor: 'button',
         textDecoration: 'none',
       },
       // Grey, underlined only on hover; the hover colour still follows the base.
@@ -86,7 +86,7 @@ export const link = defineRecipe({
         justifyContent: 'center',
         alignItems: 'center',
         flexWrap: 'wrap',
-        h: '100px',
+        h: '[100px]',
         borderRadius: 'md',
         textAlign: 'center',
         fontWeight: 'bold',
@@ -143,7 +143,7 @@ const sizes = {
   lg: { fontSize: 'lg', lineHeight: 'moderate' },
   xl: { fontSize: 'xl', lineHeight: 'moderate' },
   '2xl': { fontSize: '2xl', lineHeight: 'short' },
-}
+} satisfies Record<string, SystemStyleObject>
 
 // No default size: a Text without one inherits its container's size and line height, as plain text does.
 export const text = defineRecipe({

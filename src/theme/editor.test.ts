@@ -5,7 +5,7 @@ describe('editor theme', () => {
   it('resets lexical paragraph margins for form-like fields', () => {
     expect(editor['& .lexical-paragraph']).toMatchObject({
       textStyle: 'sm',
-      margin: 0,
+      margin: '[0]',
     })
   })
 })
