@@ -1,4 +1,4 @@
-import { Box, Text } from '@chakra-ui/react'
+import { Box, type BoxProps, Text } from '@chakra-ui/react'
 import { Pagination, RoutedPagination, usePagination, useRoutedPagination } from '@vocdoni/react-components'
 import type { ReactNode } from 'react'
 import { Trans } from 'react-i18next'
@@ -8,6 +8,19 @@ import RowsPerPageSelect from './RowsPerPageSelect'
 // stale/out-of-range page (e.g. a bookmarked ?page=9 of a list that now has
 // fewer pages) while lastPage is still 0/undefined during loading.
 const getCurrentPage = (page: number, lastPage: number) => (lastPage ? Math.max(1, Math.min(page, lastPage)) : page)
+
+// Both footers lay their controls out in the same wrapping row.
+const rowStyle: BoxProps = { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '5' }
+
+const pageButtonProps = { size: 'xs', colorPalette: 'gray', variant: 'outline' } as const
+
+const PageOutOf = ({ page, total }: { page: number; total: number }) => (
+  <Text textStyle='body-sm'>
+    <Trans i18nKey='pagination.page_out_of' values={{ page, total }}>
+      Page {{ page }} of {{ total }}
+    </Trans>
+  </Text>
+)
 
 type RoutedPaginatedTableFooterProps = {
   // Optional context rendered before the page indicator, e.g. the range of rows on screen.
@@ -23,25 +36,14 @@ const RoutedPaginatedTableFooter = ({ summary }: RoutedPaginatedTableFooterProps
   const currentPage = getCurrentPage(page, total)
 
   return (
-    <Box
-      display='flex'
-      flexDirection='row'
-      flexWrap='wrap'
-      alignItems='center'
-      gap='5'
-      justifyContent={{ base: 'flex-start', md: 'space-between' }}
-    >
+    <Box {...rowStyle} justifyContent={{ base: 'flex-start', md: 'space-between' }}>
       <RowsPerPageSelect />
-      <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap='5'>
+      <Box {...rowStyle}>
         {summary}
-        <Text textStyle='body-sm'>
-          <Trans i18nKey='pagination.page_out_of' values={{ page: currentPage, total }}>
-            Page {{ page: currentPage }} of {{ total }}
-          </Trans>
-        </Text>
+        <PageOutOf page={currentPage} total={total} />
         <RoutedPagination
           pagination={pagination}
-          buttonProps={{ size: 'xs', colorPalette: 'gray', variant: 'outline', marginInlineStart: 0 }}
+          buttonProps={{ ...pageButtonProps, marginInlineStart: 0 }}
           display='flex'
         />
       </Box>
@@ -58,14 +60,10 @@ export const PaginatedTableFooter = () => {
   const currentPage = getCurrentPage(page, total)
 
   return (
-    <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap='5' justifyContent='space-between'>
-      <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap='5'>
-        <Text textStyle='body-sm'>
-          <Trans i18nKey='pagination.page_out_of' values={{ page: currentPage, total }}>
-            Page {{ page: currentPage }} of {{ total }}
-          </Trans>
-        </Text>
-        <Pagination pagination={pagination} buttonProps={{ size: 'xs', colorPalette: 'gray', variant: 'outline' }} />
+    <Box {...rowStyle} justifyContent='space-between'>
+      <Box {...rowStyle}>
+        <PageOutOf page={currentPage} total={total} />
+        <Pagination pagination={pagination} buttonProps={pageButtonProps} />
       </Box>
     </Box>
   )

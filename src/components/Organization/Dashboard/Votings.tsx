@@ -3,7 +3,7 @@ import { RoutedPaginationProvider, useOrganization } from '@vocdoni/react-compon
 import type { VotingProcessListResponse } from '@vocdoni/api-types'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { NoResultsFiltering } from '~components/Layout/NoResultsFiltering'
 import { ListLoader } from '~components/ui/Loader'
 import { usePaginatedElections } from '~queries/organization'
@@ -57,13 +57,9 @@ const VotingsList = ({ data, status, error }: VotingsListProps) => {
     <Flex flexDirection='column' flexGrow={1} gap='5' height='full'>
       <ListStateAlert
         show={hasError}
-        status='error'
         title={t('processes.load_error', { defaultValue: 'Unable to load voting processes' })}
-        description={
-          error instanceof Error
-            ? error.message
-            : t('processes.load_error_description', { defaultValue: 'Please try again.' })
-        }
+        error={error}
+        fallback={t('processes.load_error_description', { defaultValue: 'Please try again.' })}
       />
       {!!processes?.length ? (
         <ProcessesTable processes={processes} />

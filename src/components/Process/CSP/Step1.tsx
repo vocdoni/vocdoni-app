@@ -3,9 +3,9 @@ import {
   AlertDescription,
   AlertIndicator,
   Button,
-  FieldErrorText,
-  FieldHelperText,
-  FieldRoot,
+  FieldErrorText as FormErrorMessage,
+  FieldHelperText as FormHelperText,
+  FieldRoot as FormControl,
   PinInputControl,
   PinInputHiddenInput,
   PinInputInput,
@@ -103,7 +103,7 @@ export const Step1Base = () => {
       <Text fontWeight='medium'>{t('csp.step1.subtitle', { defaultValue: 'Enter the verification code' })}</Text>
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap='5' align='stretch'>
-          <FieldRoot invalid={!!errors.code}>
+          <FormControl invalid={!!errors.code}>
             <Controller
               control={control}
               name='code'
@@ -147,8 +147,8 @@ export const Step1Base = () => {
                 )
               }}
             />
-            {errors.code && <FieldErrorText textAlign='center'>{errors.code.message}</FieldErrorText>}
-            <FieldHelperText mt='3'>
+            {errors.code && <FormErrorMessage textAlign='center'>{errors.code.message}</FormErrorMessage>}
+            <FormHelperText mt='3'>
               <VStack gap='2' align='stretch'>
                 <Text>
                   <Trans i18nKey='csp.step1.helper_text'>
@@ -198,8 +198,8 @@ export const Step1Base = () => {
                   />
                 </Text>
               </VStack>
-            </FieldHelperText>
-          </FieldRoot>
+            </FormHelperText>
+          </FormControl>
           {auth.isError && (
             <Alert status='error'>
               <AlertIndicator />
