@@ -61,7 +61,7 @@ export const paginationComponents: ComponentsPartialDefinition = {
         return (
           <Input
             size='xs'
-            w='2rem'
+            w='8'
             className={className}
             css={styles.input}
             placeholder={placeholder}

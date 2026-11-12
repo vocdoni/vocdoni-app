@@ -25,8 +25,8 @@ export const TypingIndicator = () => (
     {[0, 1, 2].map((dot) => (
       <Box
         key={dot}
-        w='6px'
-        h='6px'
+        w='1.5'
+        h='1.5'
         borderRadius='full'
         bg='fg.muted'
         css={{ animation: `${dotBounce} 1.2s ease-in-out ${dot * 0.15}s infinite` }}

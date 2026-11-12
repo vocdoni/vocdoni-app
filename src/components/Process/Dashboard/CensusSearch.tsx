@@ -155,12 +155,12 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
         </SidebarSubtitle>
         <TooltipRoot positioning={{ placement: 'top' }}>
           <TooltipTrigger asChild>
-            <chakra.span display='inline-flex' alignItems='center' cursor='default' color='fg.muted' opacity={0.5}>
+            <chakra.span display='inline-flex' alignItems='center' cursor='default' color='fg.muted' opacity='dimmed'>
               <Icon as={HelpIcon} boxSize='icon.sm' />
             </chakra.span>
           </TooltipTrigger>
           <TooltipPositioner>
-            <TooltipContent maxW='16rem'>{memberbaseNote}</TooltipContent>
+            <TooltipContent maxW='64'>{memberbaseNote}</TooltipContent>
           </TooltipPositioner>
         </TooltipRoot>
       </HStack>
@@ -215,7 +215,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
               }
             />
           ) : (
-            <Box maxH='240px' overflowY='auto' display='flex' flexDirection='column' gap={3}>
+            <Box maxH='60' overflowY='auto' display='flex' flexDirection='column' gap={3}>
               {participants.map((participant) => (
                 <Box
                   key={participant.memberId}

@@ -31,6 +31,8 @@ const statusRole = (name: StatusPalette) => ({
   fg: { value: `{colors.${name}.text}` },
   bg: { value: `{colors.${name}.wash}` },
   border: { value: `{colors.${name}.border}` },
+  // Running text on the tone's own `bg`
+  emphasis: { value: { _light: `{colors.${name}.900}`, _dark: `{colors.${name}.100}` } },
   solid: { value: `{colors.${name}.solid}` },
   contrast: { value: `{colors.${name}.contrast}` },
 })

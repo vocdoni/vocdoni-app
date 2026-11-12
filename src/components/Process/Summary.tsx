@@ -259,14 +259,7 @@ const ResultsNotice = () => {
           </Card.Body>
         </Card.Root>
       ) : (
-        <Box
-          colorPalette='info'
-          bg='status.info.bg'
-          color='colorPalette.900'
-          borderRadius='lg'
-          p={4}
-          _dark={{ color: 'colorPalette.100' }}
-        >
+        <Box colorPalette='info' bg='status.info.bg' color='status.info.emphasis' borderRadius='lg' p={4}>
           <Flex gap={3} align='start'>
             <Box as={ResultsIcon} boxSize='icon.md' flexShrink={0} mt={0.5} />
             <Text textStyle='body-sm'>
@@ -312,7 +305,7 @@ const CertifiedTech = () => {
             <Heading as='h2' size='lg' mb={3}>
               {t('process.summary.tech_title')}
             </Heading>
-            <Text color='gray.400' mb={5}>
+            <Text color='surface.inverse.fg.muted' mb={5}>
               {t('process.summary.tech_description')}
             </Text>
             <List.Root variant='plain' gap={3}>
@@ -335,10 +328,10 @@ const CertifiedTech = () => {
             gap={2}
             borderTopWidth={{ base: '1px', lg: '0' }}
             borderLeftWidth={{ lg: '1px' }}
-            borderColor='whiteAlpha.300'
+            borderColor='surface.inverse.rule'
             pt={{ base: 6, lg: 0 }}
             pl={{ lg: 8 }}
-            minW={{ lg: '240px' }}
+            minW={{ lg: '60' }}
           >
             <Button mt={2} asChild>
               <a href={Routes.vocdoni} target='_blank' rel='noreferrer'>

@@ -94,6 +94,15 @@ const sizes = defineTokens.sizes({
     medium: { value: '1200px' },
     narrow: { value: '900px' },
   },
+  // Empty-state cards (no organizations, no results) and the leading column of a table that holds row actions.
+  card: {
+    empty: { value: '650px' },
+  },
+  table: {
+    action: { value: '50px' },
+  },
+  // Minimum height of a row of controls, so a row with a button and one without line up.
+  toolbar: { value: '42px' },
   'user-profile': { value: '280px' },
   voting: {
     sidebar: { value: '320px' },
@@ -113,9 +122,23 @@ const zIndex = defineTokens.zIndex({
   'dashboard-menu': { value: 100 },
 })
 
+// Chakra's durations have no zero; `visibility` needs one to flip at once while a delay holds the other end.
+const durations = defineTokens.durations({
+  instant: { value: '0s' },
+})
+
+// Two fades. `inactive` is content that cannot be used right now (a revoked key, a busy check, an unavailable
+// option); `dimmed` is only de-emphasised and matches Chakra's own `_disabled` layer style (0.5).
+const opacity = defineTokens.opacity({
+  inactive: { value: 0.6 },
+  dimmed: { value: 0.5 },
+})
+
 const tokens = defineTokens({
   borderWidths,
   colors,
+  durations,
+  opacity,
   radii,
   sizes,
   spacing,

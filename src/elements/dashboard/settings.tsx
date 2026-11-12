@@ -66,7 +66,7 @@ const Settings = () => {
           defaultValue: 'Manage your organization, team members and billing',
         })}
       </PageSubtitle>
-      <QueryDataLayout isLoading={isLoading} isError={isError} error={error}>
+      <QueryDataLayout loading={isLoading} isError={isError} error={error}>
         <TabsRoot
           value={activeTabValue}
           onValueChange={({ value }) => {

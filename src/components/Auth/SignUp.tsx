@@ -246,7 +246,7 @@ const SignUp = ({
               <FormErrorMessage>{errors?.terms?.message.toString()}</FormErrorMessage>
             </FormControl>
           </Flex>
-          <Button loading={isPending} type='submit' w='100%'>
+          <Button loading={isPending} type='submit' w='full'>
             {t('signup_create_account')}
           </Button>
           <OrSeparator />
@@ -258,7 +258,7 @@ const SignUp = ({
         display={'flex'}
         justifyContent='center'
         alignItems='start'
-        maxW='100%'
+        maxW='full'
         mt={6}
         textStyle='body-sm'
         fontWeight={'bold'}

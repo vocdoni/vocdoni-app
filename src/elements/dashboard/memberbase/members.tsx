@@ -82,7 +82,7 @@ const Members = () => {
     <TableProvider
       data={members}
       initialColumns={columns}
-      isLoading={isLoading}
+      loading={isLoading}
       isFetching={isFetching}
       isPlaceholderData={isPlaceholderData}
       error={error}

@@ -2,6 +2,11 @@ import { defineSemanticTokens } from '@chakra-ui/react'
 
 // Read by the link recipe and the rich-text editor, so both stay in step.
 const link = {
+  tile: {
+    hover: {
+      bg: { value: '{colors.gray.500}' },
+    },
+  },
   fg: {
     DEFAULT: {
       value: {

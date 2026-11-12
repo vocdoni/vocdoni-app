@@ -95,7 +95,7 @@ const VerifyForm = ({
 
   return (
     <>
-      <HStack width='100%' justifyContent='space-between'>
+      <HStack width='full' justifyContent='space-between'>
         <PinInputRoot
           value={code}
           onValueChange={({ value, valueAsString }) => {
