@@ -7,7 +7,6 @@ import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Content
 import { PrevNextPagination } from '~components/Pagination/PrevNextPagination'
 import { useToast } from '~components/Toast'
 import { isManagedOrgWalletError, useWallet, useWalletAccess } from '~queries/wallet'
-import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { Routes, stripCheckoutReturn } from '~src/router/routes'
 import { ListLoader } from '~components/ui/Loader'
 import { shortAddress } from '~utils/address'
@@ -233,11 +232,13 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
       }
 
       return (
-        <ListStateAlert
-          error={wallet.error}
-          title={t('wallet.load_error', { defaultValue: 'Unable to load the wallet' })}
-          mb='0'
-        />
+        <Alert.Root status='error'>
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>{t('wallet.load_error', { defaultValue: 'Unable to load the wallet' })}</Alert.Title>
+            <Alert.Description>{(wallet.error as Error).message}</Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
       )
     }
 
