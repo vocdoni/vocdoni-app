@@ -27,7 +27,7 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
 
   return (
     <DashboardBox gap='3' justifyContent='flex-start'>
-      <UsageMeter layout='card' label={label} value={used} max={hasLimit ? limit : 0} unit={denominator}>
+      <UsageMeter label={label} value={used} max={hasLimit ? limit : 0} unit={denominator}>
         <Box minH='[22px]'>
           {atLimit && (
             <StatusBadge colorPalette='danger' variant='subtle'>

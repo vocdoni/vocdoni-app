@@ -82,7 +82,6 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
           {usageMetrics.map(({ icon, label, current, max, tooltip, color }, index) => (
             <UsageMeter
               key={index}
-              layout='row'
               icon={icon}
               label={label}
               value={current}
