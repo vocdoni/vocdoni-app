@@ -474,6 +474,11 @@ const questionContainer = (page: Page, index: number): Locator =>
  * control is the click target there.
  */
 export const fillBallot = async (page: Page, selections: BallotSelection[]): Promise<void> => {
+  // Every ballot input stays disabled until the voter's `isAbleToVote` loads,
+  // which can land after the auth modal closes; a forced check() skips the
+  // enabled check and silently does nothing on a disabled radio.
+  const ballotInput = page.locator('form[id^="election-questions-"] input:is([type="radio"], [type="checkbox"])')
+  await expect(ballotInput.first()).toBeEnabled({ timeout: 60_000 })
   for (const selection of selections) {
     const container = questionContainer(page, selection.question)
     for (const value of selection.choices) {
