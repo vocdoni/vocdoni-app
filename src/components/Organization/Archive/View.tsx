@@ -124,11 +124,7 @@ export const ArchiveOrganizationView = ({
         </Box>
       </Flex>
 
-      {description && (
-        <Box>
-          <Editor defaultValue={description} isDisabled />
-        </Box>
-      )}
+      {description && <Editor defaultValue={description} isDisabled />}
 
       <VStack align='stretch' gap={3}>
         <Heading size='md'>{t('organization.elections_list', { defaultValue: 'Voting processes' })}</Heading>
