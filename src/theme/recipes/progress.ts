@@ -1,8 +1,9 @@
 import { defineSlotRecipe, defineStyle } from '@chakra-ui/react'
 import { progressAnatomy } from '@chakra-ui/react/anatomy'
 
-// Chakra's `outline` look, which both variants start from.
-const track = defineStyle({ shadow: 'inset', bgColor: 'bg.muted' })
+// Chakra's `outline` look, which both variants start from, on the one track grey: `bg.muted` is too close to the dark
+// page for an empty bar to show.
+const track = defineStyle({ shadow: 'inset', bgColor: 'ballot.results.track' })
 const range = defineStyle({ bgColor: 'colorPalette.solid' })
 
 const stripe = '{colors.progress.stripe}'
@@ -14,7 +15,7 @@ export const Progress = defineSlotRecipe({
   variants: {
     variant: {
       // A vote result: one bar per choice, its title and tally above it.
-      results: { track: { ...track, bgColor: 'ballot.results.track' }, range },
+      results: { track, range },
       // The share of the census that voted.
       turnout: {
         track,

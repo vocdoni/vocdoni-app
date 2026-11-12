@@ -33,6 +33,11 @@ export const Menu = defineSlotRecipe({
             bg: 'state.hover.bg',
             color: 'state.hover.fg',
           },
+          // After `_highlighted`, so a selected item keeps its fill under the pointer.
+          _selected: {
+            bg: 'state.selected.bg',
+            color: 'state.selected.fg',
+          },
         },
       },
     },
