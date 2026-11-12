@@ -156,7 +156,7 @@ describe('style inventory scanner', () => {
   })
 
   it('limits an exception with `match` to the occurrences it names', () => {
-    const file = 'src/components/Layout/Footer.tsx'
+    const file = 'src/components/ui/EmptyState.tsx'
     expect(categoriesOf(`<Image _dark={{ filter: 'invert(100%)' }} />`, file)).toEqual([])
     expect(categoriesOf(`<Box _dark={{ bg: 'bg.muted' }} />`, file)).toEqual(['colorModeLogic'])
     const members = 'src/components/Memberbase/Members/index.tsx'

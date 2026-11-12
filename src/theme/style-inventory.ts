@@ -119,14 +119,18 @@ export const STYLE_EXCEPTIONS: readonly StyleException[] = [
     match: /^is(Loading|Invalid)$/,
     reason: 'isLoading/isInvalid on the react-select wrapper (~components/Form/Select) are react-select props',
   })),
-  ...['src/components/Layout/Footer.tsx', 'src/components/Layout/Logo.tsx', 'src/components/ui/EmptyState.tsx'].map(
-    (glob) => ({
-      glob,
-      categories: ['colorModeLogic'] as const,
-      match: /^_dark=\{\{ filter: 'invert\(\d+%\)' \}\}$/,
-      reason: 'dark artwork in an image (Vocdoni logo, empty-state illustrations) that colour tokens cannot recolour',
-    })
-  ),
+  {
+    glob: 'src/components/ui/EmptyState.tsx',
+    categories: ['colorModeLogic'],
+    match: /^_dark=\{\{ filter: 'invert\(\d+%\)' \}\}$/,
+    reason: 'dark artwork in an image (empty-state illustrations) that colour tokens cannot recolour',
+  },
+  {
+    glob: 'src/components/Memberbase/Members/index.tsx',
+    categories: ['rawLineHeight'],
+    match: /^'\[0\]'$/,
+    reason: 'the sort carets stack collapses its line box so the two icons sit flush; no line-height token is 0',
+  },
   {
     glob: 'src/components/SupportChat/Messages.tsx',
     categories: ['rawDuration'],
