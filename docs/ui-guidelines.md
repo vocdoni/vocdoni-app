@@ -14,18 +14,18 @@ touches `src/theme/` instead of hundreds of components.
 
 ## Where things live
 
-| What                                                         | Where                                                                                                                                                     |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Raw scales (radii, sizes, border widths, z-index, weights)   | `src/theme/tokens.ts`, `src/theme/colors.ts`, `src/theme/fonts.ts`                                                                                        |
-| Meaning of colours (surfaces, text, borders, light and dark) | `src/theme/semantic.ts` and one module per family (below)                                                                                                 |
-| Brand colour and `accent` (generated from `PRIMARY_COLOR`)   | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                |
-| Text roles                                                   | `src/theme/textStyles.ts`                                                                                                                                 |
-| How a component looks and its variants                       | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports |
-| Voting UI from `@vocdoni/react-components`                   | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                        |
-| Shared building blocks                                       | `src/components/ui/`                                                                                                                                      |
-| Shared layout pieces                                         | `src/components/Layout/Separators.tsx` (`LabelledSeparator`)                                                                                              |
-| Icons, by concept                                            | `src/theme/icons.tsx`                                                                                                                                     |
-| The rules that keep the theme from being bypassed            | `src/theme/style-inventory.ts` and `src/theme/style-inventory.baseline.json`                                                                              |
+| What                                                                     | Where                                                                                                                                                     |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Raw scales (radii, sizes, border widths, z-index, weights, line heights) | `src/theme/tokens.ts`, `src/theme/colors.ts`, `src/theme/fonts.ts`                                                                                        |
+| Meaning of colours (surfaces, text, borders, light and dark)             | `src/theme/semantic.ts` and one module per family (below)                                                                                                 |
+| Brand colour and `accent` (generated from `PRIMARY_COLOR`)               | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                |
+| Text roles                                                               | `src/theme/textStyles.ts`                                                                                                                                 |
+| How a component looks and its variants                                   | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports |
+| Voting UI from `@vocdoni/react-components`                               | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                        |
+| Shared building blocks                                                   | `src/components/ui/`                                                                                                                                      |
+| Shared layout pieces                                                     | `src/components/Layout/Separators.tsx` (`LabelledSeparator`)                                                                                              |
+| Icons, by concept                                                        | `src/theme/icons.tsx`                                                                                                                                     |
+| The rules that keep the theme from being bypassed                        | `src/theme/style-inventory.ts` and `src/theme/style-inventory.baseline.json`                                                                              |
 
 Import theme modules with the `~theme/*` alias and shared components with `~components/ui/*`.
 
@@ -63,9 +63,9 @@ Rules of thumb:
 
 - **Accent**: leave `colorPalette` alone (it is `brand` when `PRIMARY_COLOR` is set, `gray` otherwise) and read
   `colorPalette.solid`, `colorPalette.fg` and so on. Use `colorPalette='gray'` only for things that must stay neutral.
-  When a recipe or component paints the brand itself (active tab, highlighted notice), read `accent.fg`, not `brand.fg`:
-  it is the brand's `fg`, except on the dark page for the stock black brand, which would be unreadable there and gets
-  white.
+  When a recipe or component paints brand-coloured text (active tab, highlighted notice), read `accent.fg`, not
+  `brand.fg`: it is the brand's `fg`, except on the dark page for a neutral brand too dark to read there (such as the
+  stock black), which gets white. Borders may still read `brand.fg`.
 - **Status colour**: status colours are Chakra semantic palettes defined in `src/theme/status.ts`. Pick one with
   `colorPalette='danger' | 'success' | 'warning' | 'info'`, and `gray` for neutral; never a local status-to-colour map
   or a raw `red`/`green`. `StatusBadge` takes `colorPalette`. Code that reads a colour rather than a palette uses
@@ -120,13 +120,14 @@ Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
   focus ring, `thick`): `<Box borderWidth='thick' />`.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
   (1.5rem, feature), `icon.xl` (3rem, empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
-  They alias the size scale (`{sizes.4}`, `5`, `6`, `12`), so `boxSize='icon.md'` and `<Icon size='md'>` cannot drift
-  apart.
+  `icon.sm` to `icon.lg` alias Chakra's Icon sizes (`{sizes.4}`, `5`, `6`), so `boxSize='icon.md'` and
+  `<Icon size='md'>` cannot drift apart; `icon.xl` is `{sizes.12}`.
 - **Page widths**: `content.wide` (1600px), `content.medium` (1200px), `content.narrow` (900px), read through
   `PageContainer` (below).
 - **Other named sizes**: `card.empty`, `table.action`, `toolbar`, `dashboard.menu.expanded|collapsed`,
-  `dashboard.header`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon link), `loader` (min height of
-  `PageLoader`), `wordmark` (width of the Vocdoni wordmark: `<Image maxWidth='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
+  `dashboard.header`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon
+  link), `loader` (min height of `PageLoader`), `wordmark` (width of the Vocdoni wordmark:
+  `<VocdoniLogo w='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
 - **z-index**: tokens only (`background`, `contents`, `sidebar`, `topbar`, `top`, `public-header`, `dashboard-menu`).
 - **Opacity**: `inactive` (0.6) for content that cannot be used right now, `dimmed` (0.5) for de-emphasis.
 - **Durations**: Chakra's names plus `instant` (0s).
@@ -154,7 +155,7 @@ What exists today:
 | `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                    |
 | `link`              | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                         |
 | `tabs`              | `variant`: `pill`                                                                                                                                                                                                                                                      |
-| `drawer`            | `variant`: `panel`, `sidebar` (the mobile dashboard menu; dialog and drawer backdrops both paint `scrim.strong`)                                                                                                                                                       |
+| `drawer`            | `variant`: `panel`, `sidebar` (the mobile dashboard menu)                                                                                                                                                                                                              |
 | `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe)                                                                                                                                                    |
 | `list`              | `variant`: `marker`                                                                                                                                                                                                                                                    |
 | `emptyState`        | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                               |
@@ -167,7 +168,7 @@ To add a variant:
    values with no token, such as `none` or `inherit`). `system.test.ts` fails on any token name that does not exist, in
    every recipe in its `ALL_RECIPES`, and the inventory counts pixel sizes, pixel spacing and palette steps in recipes
    too (see [Style inventory](#style-inventory)): a size that repeats becomes a token, as `control.floating` and
-   `wordmark` did.
+   `control.icon-link` did.
 2. Register a new recipe in `src/theme/recipes/index.ts`, unless only one `ui/` component uses it: then import it there
    (as `ui/PageContainer.tsx` does with `recipes/page.ts`) and add it to `ALL_RECIPES` in `system.test.ts`, which does
    not cover `page`, `confirmModal` and `loader` today.
@@ -305,7 +306,8 @@ it when the code goes.
 
 5. **Mind the collision.** A raw token whose dashed name equals a nested semantic path (a raw `elevation-rest` next to a
    semantic `elevation.rest`) shares a CSS variable with it and white-screens the app at runtime. The "token names" test
-   in `system.test.ts` fails on it, in the stock and a branded system. Parents with a `DEFAULT` and raw names without the dashed form of a semantic path avoid it.
+   in `system.test.ts` fails on it, in the stock and a branded system. Parents with a `DEFAULT` and raw names without
+   the dashed form of a semantic path avoid it.
 6. **Regenerate the typings** with `pnpm chakra:typegen` (nothing to commit: the output lives in `node_modules`), then
    check a page in both colour modes, with and without `PRIMARY_COLOR`. If `tsc` complains about a recipe variant or
    token that exists, the generated typings are stale: run typegen again.
