@@ -29,7 +29,7 @@ describe('stress theme', () => {
   })
 
   it('unwraps [value] escapes like the app system, so the captures render what users get', () => {
-    expect(stressSystem.css({ p: '[0]', mx: '[auto]' })).toEqual({ padding: '0', marginInline: 'auto' })
+    expect(stressSystem.css({ p: '[3px]', mx: '[-5px]' })).toEqual({ padding: '3px', marginInline: '-5px' })
   })
 
   it('gives every semantic colour its own non-grey value in both modes, never a palette step', () => {
