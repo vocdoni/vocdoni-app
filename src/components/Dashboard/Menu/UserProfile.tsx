@@ -10,7 +10,6 @@ import {
   Link,
   Popover,
   Text,
-  useBreakpointValue,
 } from '@chakra-ui/react'
 import { useContext, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -27,6 +26,7 @@ import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { ThemeToggleGroup } from '~components/Layout/ColorModeSwitcher'
 import { LanguageListDashboard } from '~components/Navbar/LanguagesList'
+import { useIsMobile } from '~components/ui/useIsMobile'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
@@ -39,17 +39,14 @@ const UserProfile = () => {
   const { data: profile } = useProfile()
   const { organization } = useSaasAccount()
   const { reduced } = useContext(DashboardLayoutContext)
-  const variant = useBreakpointValue({
-    base: false,
-    md: true,
-  })
+  const isMobile = useIsMobile()
   const [switchOrg, setSwitchOrg] = useState(false)
 
   const appEnv = useAppEnv()
   const privacyPolicyUrl = appEnv.PRIVACY_POLICY_URL
   const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
 
-  const placement = variant ? 'right-end' : 'bottom'
+  const placement = isMobile ? 'bottom' : 'right-end'
   const avatarSrc = organization?.account?.avatar || ''
 
   if (!profile) return

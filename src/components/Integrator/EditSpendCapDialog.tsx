@@ -1,4 +1,16 @@
-import { Alert, Button, Checkbox, Dialog, Field, Flex, Input, Portal, Stack } from '@chakra-ui/react'
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Dialog,
+  FieldHelperText as FormHelperText,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
+  Flex,
+  Input,
+  Portal,
+  Stack,
+} from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiErrorMessage } from '~components/Auth/api'
@@ -77,10 +89,8 @@ const SpendCapForm = ({ organization, onDone }: { organization: ManagedOrganizat
               <Alert.Title>{error}</Alert.Title>
             </Alert.Root>
           )}
-          <Field.Root disabled={noCap}>
-            <Field.Label>
-              {t('integrators.managed.cap_amount', { defaultValue: 'Cap (EUR, VAT excluded)' })}
-            </Field.Label>
+          <FormControl disabled={noCap}>
+            <FormLabel>{t('integrators.managed.cap_amount', { defaultValue: 'Cap (EUR, VAT excluded)' })}</FormLabel>
             <Input
               type='number'
               inputMode='decimal'
@@ -89,13 +99,13 @@ const SpendCapForm = ({ organization, onDone }: { organization: ManagedOrganizat
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
-            <Field.HelperText>
+            <FormHelperText>
               {t('integrators.managed.cap_hint', {
                 defaultValue:
                   "What this organization's voting processes may hold charged from your wallet, VAT excluded. Lowering it below what is already spent only blocks new charges.",
               })}
-            </Field.HelperText>
-          </Field.Root>
+            </FormHelperText>
+          </FormControl>
           <Checkbox.Root checked={noCap} onCheckedChange={(e) => setNoCap(e.checked === true)}>
             <Checkbox.HiddenInput />
             <Checkbox.Control />

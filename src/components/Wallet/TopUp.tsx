@@ -3,7 +3,10 @@ import {
   Box,
   Button,
   Card,
-  Field,
+  FieldErrorText as FormErrorMessage,
+  FieldHelperText as FormHelperText,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
   Flex,
   HStack,
   IconButton,
@@ -52,8 +55,8 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
 
   return (
     <VStack align='stretch' gap='5'>
-      <Field.Root invalid={trimmed !== '' && !isValid}>
-        <Field.Label>{t('wallet.topup.amount', { defaultValue: 'Amount (EUR, VAT excluded)' })}</Field.Label>
+      <FormControl invalid={trimmed !== '' && !isValid}>
+        <FormLabel>{t('wallet.topup.amount', { defaultValue: 'Amount (EUR, VAT excluded)' })}</FormLabel>
         <Input
           type='number'
           inputMode='decimal'
@@ -61,10 +64,10 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
           value={amount}
           onChange={(e) => onAmountChange(e.target.value)}
         />
-        <Field.HelperText>
+        <FormHelperText>
           {t('wallet.topup.hint', { defaultValue: 'VAT is added at checkout from your billing details.' })}
-        </Field.HelperText>
-        <Field.ErrorText>
+        </FormHelperText>
+        <FormErrorMessage>
           {hasTooManyDecimals
             ? t('wallet.topup.amount_decimals', { defaultValue: 'Use at most 2 decimals.' })
             : t('wallet.topup.amount_range', {
@@ -72,8 +75,8 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
                 min: currency(WALLET_TOPUP_MIN_CENTS),
                 max: currency(WALLET_TOPUP_MAX_CENTS),
               })}
-        </Field.ErrorText>
-      </Field.Root>
+        </FormErrorMessage>
+      </FormControl>
 
       <HStack gap='2' wrap='wrap'>
         {PRESET_AMOUNTS_EUR.map((preset) => (
