@@ -88,11 +88,7 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
         </Text>
       </Box>
 
-      {description && (
-        <Box className='md-sizes'>
-          <Editor defaultValue={description} isDisabled />
-        </Box>
-      )}
+      {description && <Editor defaultValue={description} isDisabled />}
 
       <VStack align='stretch' gap={4}>
         {election.questions.map((question, questionIndex) => (

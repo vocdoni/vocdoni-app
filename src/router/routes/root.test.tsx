@@ -32,6 +32,6 @@ describe('the ballot route', () => {
     expect(route.element).toBeUndefined()
     expect(route.errorElement).toBeUndefined()
     expect(route.HydrateFallback).toBeUndefined()
-    expect(route.handle).toBeUndefined()
+    expect(route).not.toHaveProperty('handle')
   })
 })

@@ -48,11 +48,9 @@ const ProcessHeader = () => {
         </Flex>
         <Flex flexDirection='column'>
           {!getElectionDescription(election)?.length && <Text color='fg.muted'>{t('process.no_description')}</Text>}
-          <Box className='md-sizes'>
-            <ReadMoreMarkdownWrapper>
-              <ElectionDescription mb={0} fontSize='lg' lineHeight='moderate' color='fg.muted' />
-            </ReadMoreMarkdownWrapper>
-          </Box>
+          <ReadMoreMarkdownWrapper>
+            <ElectionDescription mb={0} fontSize='lg' lineHeight='moderate' color='fg.muted' />
+          </ReadMoreMarkdownWrapper>
           <ReadMoreMarkdownButton alignSelf='center' />
         </Flex>
       </Flex>

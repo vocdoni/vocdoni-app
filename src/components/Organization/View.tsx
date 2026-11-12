@@ -121,7 +121,7 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
           </GridItem>
         ))}
         {/* we need to render only when loaded, to avoid loading pages when there's no content */}
-        {loaded && <div className='ref-observer-buddy' ref={setRefObserver}></div>}
+        {loaded && <div ref={setRefObserver}></div>}
       </Grid>
 
       <Flex justifyContent='center' my={4}>

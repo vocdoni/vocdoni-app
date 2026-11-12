@@ -39,8 +39,8 @@ describe('link colour in dark mode', () => {
 
   // `.dark &` outranks a single class, so in dark mode the link colour beats the palette colour of
   // Chakra's plain/underline variants and of a Button rendering a Link (`asChild`, e.g. the members CSV
-  // template download, which uses the button variant).
-  it.each(['plain', 'underline', 'button', 'unstyled', 'icon', 'footer'])(
+  // template download, which uses the unstyled variant).
+  it.each(['plain', 'underline', 'unstyled', 'icon-button', 'subtle'])(
     'is set by a dark-mode rule in the %s variant',
     (variant) => {
       expect(linkCss(variant)[darkSelector]).toEqual({

@@ -1065,7 +1065,7 @@ const ProcessCreateView = () => {
               <VStack as='header' align='stretch' gap={4}>
                 <FormControl invalid={!!methods.formState.errors.title}>
                   <Input
-                    variant='borderless'
+                    variant='inline'
                     placeholder={t('process.create.description.title', {
                       defaultValue: 'Voting Process Title',
                     })}
@@ -1087,7 +1087,7 @@ const ProcessCreateView = () => {
                     <Editor
                       key={nextId}
                       onChange={field.onChange}
-                      variant='borderless'
+                      variant='inline'
                       placeholder={t('process.create.description.placeholder', 'Add a description...')}
                       defaultValue={field.value}
                     />
