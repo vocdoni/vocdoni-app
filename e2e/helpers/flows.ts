@@ -461,8 +461,9 @@ export type BallotSelection = {
  * renders one questions form — and its direct children are the question cards
  * in process order (the "voted" notice only mounts after voting).
  */
-const questionContainer = (page: Page, index: number): Locator =>
-  page.locator('form[id^="election-questions-"] > div').nth(index)
+const questionsForm = (page: Page): Locator => page.locator('form[id^="election-questions-"]')
+
+const questionContainer = (page: Page, index: number): Locator => questionsForm(page).locator(':scope > div').nth(index)
 
 /**
  * Fills ballot selections across the questions form.
@@ -474,6 +475,11 @@ const questionContainer = (page: Page, index: number): Locator =>
  * control is the click target there.
  */
 export const fillBallot = async (page: Page, selections: BallotSelection[]): Promise<void> => {
+  // Ballot inputs stay disabled until the process is ONGOING and the voter's
+  // `isAbleToVote` loads, which can land after the auth modal closes. A forced
+  // check() skips the enabled check and throws "did not change its state".
+  const ballotInput = questionsForm(page).locator('input:is([type="radio"], [type="checkbox"])')
+  await expect(ballotInput.first()).toBeEnabled({ timeout: 60_000 })
   for (const selection of selections) {
     const container = questionContainer(page, selection.question)
     for (const value of selection.choices) {
