@@ -9,7 +9,7 @@ import empty from '/assets/illustrations/9.png'
 export const NoOrganizations = () => {
   return (
     <Flex flexDirection={'column'}>
-      <Card.Root variant='plain' minH='full' maxW='card.empty' mx='auto'>
+      <Card.Root variant='plain' minH='full' maxW='card.empty' mx='[auto]'>
         <Card.Body>
           <EmptyState
             image={empty}
@@ -34,7 +34,7 @@ export const NoOrganizations = () => {
                 If your organization is already on Vocdoni, ask its administrator to invite you.
               </Trans>
             </Text>
-            <Button mt={4} w='full' asChild>
+            <Button mt='4' w='full' asChild>
               <ReactRouterLink to={Routes.dashboard.organizationCreate}>
                 <Trans i18nKey='create_org.create_button'>Create your organization</Trans>
               </ReactRouterLink>

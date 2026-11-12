@@ -76,7 +76,7 @@ export const ManagedOrganizationsTable = ({ organizations, canEditCaps = false }
                   <Table.Row key={org.address} bg={capReached ? 'orange.subtle' : undefined}>
                     <Table.Cell>
                       {name ? (
-                        <Stack gap={0.5}>
+                        <Stack gap='0.5'>
                           <Text fontWeight='medium'>{name}</Text>
                           <Code fontSize='xs' color='fg.muted' title={org.address}>
                             {shortAddress(org.address)}
@@ -92,7 +92,7 @@ export const ManagedOrganizationsTable = ({ organizations, canEditCaps = false }
                     {showSpend && <Table.Cell textAlign='end'>{currency(org.spentCents ?? 0)}</Table.Cell>}
                     {showSpend && (
                       <Table.Cell textAlign='end'>
-                        <Stack gap={1} align='flex-end'>
+                        <Stack gap='1' align='flex-end'>
                           <Text>
                             {org.spendCapCents == null
                               ? t('integrators.managed.no_cap', { defaultValue: 'No cap' })
