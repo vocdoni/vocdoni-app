@@ -9,9 +9,11 @@ import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { FAKE_TOKEN, FIXED_NOW, MOCK_PORT, ORG, TOKEN_EXPIRY, startMock } from './mock-saas.mjs'
 import { ROUTES } from './routes.mjs'
+import { checkStress, loadSpec, probe, STRESS_MODULE, stressAlias, UPDATE_FLAG } from './stress.mjs'
 
 const USAGE = `pnpm ui:snapshot -- --label <name> [--primary-color <hex>] [--url <base>] [--routes a,b]
-                    [--viewports 1440,390] [--modes light,dark] [--no-warmup]`
+                    [--viewports 1440,390] [--modes light,dark] [--no-warmup]
+                    [--theme stress] [${UPDATE_FLAG}]`
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT_ROOT = path.join(ROOT, '.ui-snapshot')
@@ -83,6 +85,8 @@ const parseCli = () => {
       viewports: { type: 'string', default: '1440,390' },
       modes: { type: 'string', default: 'light,dark' },
       'no-warmup': { type: 'boolean', default: false },
+      theme: { type: 'string', default: 'stock' },
+      'update-stress-baseline': { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
   })
@@ -98,6 +102,10 @@ const parseCli = () => {
     fail(`--primary-color must be #rgb or #rrggbb (got "${primaryColor}")`)
   }
   if (primaryColor && values.url) fail('--primary-color needs the dev server this script starts; drop --url')
+  if (!['stock', 'stress'].includes(values.theme)) fail('--theme accepts stock or stress')
+  const stress = values.theme === 'stress'
+  if (stress && primaryColor) fail('--theme stress ignores PRIMARY_COLOR; drop --primary-color')
+  if (values['update-stress-baseline'] && !stress) fail(`${UPDATE_FLAG} needs --theme stress`)
   let base = DEFAULT_BASE
   if (values.url) {
     let u
@@ -125,6 +133,8 @@ const parseCli = () => {
     modes,
     routes: only ? ROUTES.filter((r) => only.includes(r.slug)) : ROUTES,
     warmup: !values['no-warmup'],
+    stress,
+    updateStressBaseline: values['update-stress-baseline'],
   }
 }
 
@@ -191,22 +201,23 @@ const appEnv = (mockUrl, primaryColor) => ({
 const stripAnsi = (s) => s.replace(/\x1b\[[0-9;]*m/g, '')
 
 // Vite overrides for the dev server (see README.md "What the snapshot does"): bind to 127.0.0.1, since
-// the app's own `host: true` would expose the mock-backed app on the LAN, and allow a symlinked
-// node_modules. Vike rejects --host on its CLI, hence VITE_CONFIG, which `vike dev` merges in.
-const viteConfigEnv = () => {
+// the app's own `host: true` would expose the mock-backed app on the LAN, allow a symlinked
+// node_modules, and swap in the stress theme. Vike rejects --host on its CLI, hence VITE_CONFIG, which
+// `vike dev` merges in.
+const viteConfigEnv = (stress) => {
   const server = { host: '127.0.0.1', port: APP_PORT, strictPort: true }
   const link = path.join(ROOT, 'node_modules')
   try {
     const real = fs.realpathSync(link)
     if (real !== link && !real.startsWith(`${ROOT}${path.sep}`)) server.fs = { allow: [ROOT, real] }
   } catch {}
-  return { VITE_CONFIG: JSON.stringify({ server }) }
+  return { VITE_CONFIG: JSON.stringify({ server, ...(stress && { resolve: { alias: stressAlias() } }) }) }
 }
 
 // Set as soon as the dev server is spawned, so an interrupt during its start-up still stops it.
 let spawnedDev = null
 
-const startDevServer = async ({ mockUrl, primaryColor, logFile }) => {
+const startDevServer = async ({ mockUrl, primaryColor, stress, logFile }) => {
   if (await portInUse(APP_PORT)) {
     fail(
       `port ${APP_PORT} is already in use. Stop whatever listens there (lsof -nP -iTCP:${APP_PORT} -sTCP:LISTEN), ` +
@@ -217,7 +228,13 @@ const startDevServer = async ({ mockUrl, primaryColor, logFile }) => {
   let output = ''
   const child = spawn('pnpm', ['exec', 'vike', 'dev'], {
     cwd: ROOT,
-    env: { ...process.env, ...appEnv(mockUrl, primaryColor), ...viteConfigEnv(), FORCE_COLOR: '0', BROWSER: 'none' },
+    env: {
+      ...process.env,
+      ...appEnv(mockUrl, primaryColor),
+      ...viteConfigEnv(stress),
+      FORCE_COLOR: '0',
+      BROWSER: 'none',
+    },
     detached: true,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
@@ -567,12 +584,12 @@ const main = async () => {
     if (opts.external) {
       console.log(`Using the app at ${opts.base}. It must run with SAAS_URL=${mock.url} (see README.md).`)
     } else {
-      console.log(
-        `Starting the dev server on ${DEFAULT_BASE}${opts.primaryColor ? ` (PRIMARY_COLOR=${opts.primaryColor})` : ''}…`
-      )
+      const variant = opts.stress ? ' (stress theme)' : opts.primaryColor ? ` (PRIMARY_COLOR=${opts.primaryColor})` : ''
+      console.log(`Starting the dev server on ${DEFAULT_BASE}${variant}…`)
       dev = await startDevServer({
         mockUrl: mock.url,
         primaryColor: opts.primaryColor,
+        stress: opts.stress,
         logFile: path.join(outDir, 'dev-server.log'),
       })
     }
@@ -600,7 +617,9 @@ const main = async () => {
       }
     }
 
-    // Safety net for --url: the app must talk to the mock, never to a hosted API.
+    // Safety net for --url: the app must talk to the mock, never to a hosted API. In stress mode it
+    // also checks that the stress theme is the one rendering and reads the probe's inputs from it.
+    let stressSpec = null
     const checkBackend = async () => {
       const { context, page } = await visit({
         route: ROUTES.find((r) => r.slug === 'signin'),
@@ -614,7 +633,11 @@ const main = async () => {
             .join('\n')
         )
         .then((text) => text.replace(/\\/g, '')) // the serializer escapes every slash
+      if (opts.stress) stressSpec = await loadSpec(page)
       await context.close()
+      if (opts.stress && !stressSpec) {
+        fail(`the app at ${opts.base} does not render the stress theme (${STRESS_MODULE}); see README.md.`)
+      }
       if (!ctx.includes(mock.url)) {
         fail(`the app at ${opts.base} is not configured with SAAS_URL=${mock.url}; refusing to snapshot it.`)
       }
@@ -678,6 +701,7 @@ const main = async () => {
         visited = await visit({ route, width, mode })
         const name = `${route.slug}-${width}-${mode}`
         const elements = await save(visited.page, name, true)
+        const stress = stressSpec && (await probe(visited.page, stressSpec))
         captures.push({
           ...base,
           state: null,
@@ -689,6 +713,7 @@ const main = async () => {
           consoleErrors: [...visited.record.consoleErrors],
           failedRequests: [...visited.record.failedRequests],
           blockedHosts: [...visited.record.blockedHosts].sort(),
+          ...(stress && { stress }),
         })
         console.log(`${name}: ${elements} elements, ${Date.now() - t0} ms`)
       } catch (e) {
@@ -713,6 +738,7 @@ const main = async () => {
           }
           await settle(visited.page, warnings)
           const elements = await save(visited.page, name, false)
+          const stress = stressSpec && (await probe(visited.page, stressSpec))
           captures.push({
             ...base,
             state: state.slug,
@@ -724,6 +750,7 @@ const main = async () => {
             consoleErrors: visited.record.consoleErrors.slice(errorsBefore),
             failedRequests: visited.record.failedRequests.slice(failedBefore),
             blockedHosts: [...visited.record.blockedHosts].sort(),
+            ...(stress && { stress }),
           })
           console.log(`${name}: ${elements} elements, ${Date.now() - s0} ms`)
         } catch (e) {
@@ -751,6 +778,7 @@ const main = async () => {
       baseUrl: opts.base,
       devServer: opts.external ? 'external' : 'spawned',
       primaryColor: opts.primaryColor ?? null,
+      theme: opts.stress ? 'stress' : 'stock',
       fixedTime: new Date(FIXED_NOW).toISOString(),
       timezone: TIMEZONE,
       locale: LOCALE,
@@ -778,6 +806,11 @@ const main = async () => {
         `Failed: ${errored.map((c) => `${c.route}${c.state ? `--${c.state}` : ''}-${c.viewport}-${c.mode}`).join(', ')}`
       )
       process.exitCode = 1
+    }
+    if (opts.stress) {
+      const report = Object.fromEntries(captures.filter((c) => c.stress).map((c) => [c.file, c.stress]))
+      fs.writeFileSync(path.join(outDir, 'stress-report.json'), `${JSON.stringify(report, null, 2)}\n`)
+      if (checkStress(captures, { update: opts.updateStressBaseline })) process.exitCode = 1
     }
   } finally {
     await cleanup()
