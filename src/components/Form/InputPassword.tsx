@@ -74,7 +74,7 @@ const InputPassword = ({
       >
         <Input {...register(formValue, validationRules)} type={inputType} placeholder={placeholder} required={false} />
       </InputGroup>
-      <FormErrorMessage mt={2}>
+      <FormErrorMessage mt='2'>
         {errorMessage || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
       </FormErrorMessage>
     </FormControl>

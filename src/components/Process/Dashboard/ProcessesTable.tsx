@@ -61,7 +61,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
 
   if (isMobile) {
     return (
-      <Stack gap={3} w='full'>
+      <Stack gap='3' w='full'>
         {rows}
         <RoutedPaginatedTableFooter />
       </Stack>
@@ -100,7 +100,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
 // read-only projection of a legacy multiple-choice election), so such a row simply has no badge.
 const ProcessTypeBadge = () => <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
 
-const rowTitleProps: TextProps = { w: 'full', maxW: '500px', size: 'sm', truncate: true }
+const rowTitleProps: TextProps = { w: 'full', maxW: '[500px]', size: 'sm', truncate: true }
 const cardTitleProps: TextProps = { fontWeight: 'medium', lineClamp: 2 }
 
 const ProcessTitleLink = ({
@@ -173,7 +173,7 @@ const ProcessCard = () => {
         <ProcessContextMenu />
       </Card.Header>
       <Card.Body>
-        <HStack flexWrap='wrap' gap={2}>
+        <HStack flexWrap='wrap' gap='2'>
           <ProcessTypeBadge />
           <ElectionStatusBadge />
           <ProcessResultsTag />

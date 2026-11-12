@@ -35,10 +35,10 @@ export const AuthLayout = ({ signInPath, signInRoute = signInPath, aside, footer
   const body = (
     <>
       {(title || subtitle) && (
-        <Box mb={6}>
-          {title && <PageTitle mb={1}>{title}</PageTitle>}
+        <Box mb='6'>
+          {title && <PageTitle mb='1'>{title}</PageTitle>}
           {subtitle && (
-            <PageSubtitle mt={0} mb={0}>
+            <PageSubtitle mt='[0]' mb='[0]'>
               {subtitle}
             </PageSubtitle>
           )}
@@ -49,13 +49,13 @@ export const AuthLayout = ({ signInPath, signInRoute = signInPath, aside, footer
   )
 
   return (
-    <Flex justifyContent='center' minH='dvh' p={{ base: 6, md: 10 }}>
+    <Flex justifyContent='center' minH='dvh' p={{ base: '6', md: '10' }}>
       <Flex
         w='full'
         maxW={aside ? { base: 'md', md: 'content.narrow', lg: 'content.medium' } : 'md'}
         flexDir='column'
-        gap={2}
-        my='auto'
+        gap='2'
+        my='[auto]'
       >
         <AuthLayoutHeader isSignin={pathname === signInPath} signInRoute={signInRoute} />
         {aside ? (
@@ -66,16 +66,16 @@ export const AuthLayout = ({ signInPath, signInRoute = signInPath, aside, footer
             // Floor, not a fixed height: the row still grows for a long form or a long quote. It only
             // stops the panel from collapsing to the height of whichever form sits next to it — the
             // verify and recovery screens are barely three fields tall.
-            minH={{ md: '34rem', lg: '38rem' }}
+            minH={{ md: '[34rem]', lg: '[38rem]' }}
             // No `overflow='hidden'` here: it would also clip the form column's dropdown menus — the
             // create-organization screen renders chakra-react-select menus without a portal, and a
             // clipped ancestor cuts them off at the card edge. The showcase panel rounds and clips
             // its own corners instead (see `AuthShowcase`).
           >
             <Flex
-              p={{ base: 6, sm: 8, lg: 10 }}
+              p={{ base: '6', sm: '8', lg: '10' }}
               flex={{ base: '1 1 100%', md: '0 0 52%', lg: '0 0 46%' }}
-              minW={0}
+              minW='[0]'
               flexDir='column'
               justifyContent='center'
             >
@@ -85,7 +85,7 @@ export const AuthLayout = ({ signInPath, signInRoute = signInPath, aside, footer
           </Card.Root>
         ) : (
           // A block, not the card's flex column: the routed pages below lay themselves out.
-          <Card.Root variant='standalone' display='block' w='full' p={{ base: 6, sm: 8 }}>
+          <Card.Root variant='standalone' display='block' w='full' p={{ base: '6', sm: '8' }}>
             {body}
           </Card.Root>
         )}

@@ -174,9 +174,9 @@ export const Step0Base = () => {
   }
 
   return (
-    <VStack gap={6} align='stretch' w='full'>
+    <VStack gap='6' align='stretch' w='full'>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack gap={4}>
+        <Stack gap='4'>
           {/* Render auth fields, the password always last */}
           {[...authFields.filter((f) => f !== 'password'), ...authFields.filter((f) => f === 'password')].map(
             (field) => (
@@ -232,7 +232,7 @@ export const Step0Base = () => {
             type='submit'
             w='full'
             loading={authPending}
-            mt={2}
+            mt='2'
             aria-label={
               is2Factor
                 ? t('csp.receive_code', { defaultValue: 'Receive Code' })

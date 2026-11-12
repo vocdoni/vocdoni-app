@@ -6,7 +6,7 @@ export const CreatedBy = (props: FlexProps) => {
   const { organization } = useOrganization()
 
   return (
-    <Flex gap={2} alignItems='center' {...props}>
+    <Flex gap='2' alignItems='center' {...props}>
       <AvatarRoot size='xs'>
         {organization?.logo?.default ? <AvatarImage src={organization.logo.default} /> : null}
         <AvatarFallback name={organization?.name?.default} />

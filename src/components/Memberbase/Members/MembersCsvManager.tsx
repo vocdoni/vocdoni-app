@@ -149,9 +149,9 @@ export const MembersCsvManager = () => {
   }, [visibleColumns])
 
   return (
-    <Flex flexDirection='column' gap={4}>
+    <Flex flexDirection='column' gap='4'>
       <Card.Root>
-        <Card.Body display='flex' flexDirection='column' gap={2}>
+        <Card.Body display='flex' flexDirection='column' gap='2'>
           <Text>
             {t('memberbase.importer.included_columns', {
               defaultValue: 'Select columns to include:',
@@ -169,7 +169,7 @@ export const MembersCsvManager = () => {
             ))}
           </CheckboxGroup>
         </Card.Body>
-        <Card.Footer display='flex' flexDirection='column' gap={2}>
+        <Card.Footer display='flex' flexDirection='column' gap='2'>
           <Button asChild variant='outline' disabled={!visibleColumns.length} w='full'>
             <Link
               href={template.url}
@@ -184,7 +184,7 @@ export const MembersCsvManager = () => {
             </Link>
           </Button>
           {!visibleColumns.length && (
-            <Text textStyle='body-sm' color='fg.muted' mt={1}>
+            <Text textStyle='body-sm' color='fg.muted' mt='1'>
               {t('memberbase.importer.select_at_least_one_column', {
                 defaultValue: 'Select at least one column to download the template.',
               })}
@@ -200,7 +200,7 @@ export const MembersCsvManager = () => {
         invalid={!!errors?.spreadsheet}
         display={manager?.data.length ? 'none' : 'block'}
       >
-        <Stack gap={4}>
+        <Stack gap='4'>
           <Heading size='md' fontWeight='extrabold'>
             {t('memberbase.import_file.title', { defaultValue: 'Import File' })}
           </Heading>

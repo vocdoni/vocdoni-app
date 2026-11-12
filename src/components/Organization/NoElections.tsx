@@ -27,7 +27,7 @@ const NoElections = () => {
           description={isOwner ? t('organization.elections_list_empty.description') : undefined}
         >
           {isOwner && (
-            <Button mt={4} w='full' asChild>
+            <Button mt='4' w='full' asChild>
               <RouterAwareLink to={generatePath(Routes.processes.create)}>{t('menu.create')}</RouterAwareLink>
             </Button>
           )}

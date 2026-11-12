@@ -38,20 +38,20 @@ export const useReadMoreMarkdown = (containerMaxHeightPx: number, tantPerCentGra
         {...props}
         ref={containerRef}
         position='relative'
-        height={readMore ? `${containerMaxHeightPx}px` : 'auto'}
+        height={readMore ? `[${containerMaxHeightPx}px]` : '[auto]'}
         overflow='hidden'
       >
         <Box
           position='absolute'
           height={
             isTruncated
-              ? `${(containerMaxHeightPx * (tantPerCentGradient ? tantPerCentGradient : containerMaxHeightPx)) / 100}px`
-              : 0
+              ? `[${(containerMaxHeightPx * (tantPerCentGradient ? tantPerCentGradient : containerMaxHeightPx)) / 100}px]`
+              : '[0]'
           }
           w='full'
-          bottom={0}
+          bottom='[0]'
           pointerEvents='none'
-          background={isTruncated && readMore ? `linear-gradient(to bottom, ${from} 0%, ${to} 100%)` : 'none'}
+          background={isTruncated && readMore ? `[linear-gradient(to bottom, ${from} 0%, ${to} 100%)]` : '[none]'}
         ></Box>
         {children}
       </Box>

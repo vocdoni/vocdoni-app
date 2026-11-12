@@ -58,7 +58,7 @@ export const BookerModalButton = ({
   callback,
   children,
   leftIcon,
-  iconSpacing = 2,
+  iconSpacing = '2',
   trigger,
   ...props
 }: BookerModalButtonProps) => {

@@ -153,7 +153,7 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
         {/* The wrapper carries the hover: a disabled button fires no pointer events of its own. */}
         <Box w='full'>
           <Button disabled variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
-            <HStack gap={2}>
+            <HStack gap='2'>
               <Icon as={DownloadFileIcon} />
               <Text as='span'>{t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}</Text>
             </HStack>
@@ -174,7 +174,7 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
       loadingText={t('process_pdf.downloading', { defaultValue: 'Generating PDF' })}
       onClick={download}
     >
-      <HStack gap={2}>
+      <HStack gap='2'>
         <Icon as={DownloadFileIcon} />
         <Text as='span'>{t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}</Text>
       </HStack>

@@ -113,7 +113,7 @@ const TemplateUploader = () => {
   const { t } = useTranslation()
 
   return (
-    <Stack gap={4}>
+    <Stack gap='4'>
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.download_template.title', { defaultValue: 'Download Import Template' })}
       </Heading>
@@ -216,7 +216,7 @@ export const ImportProgress = () => {
               defaultValue: 'Your data was imported with some errors.',
             })}
           </Text>
-          <Button onClick={onOpenErrors} size='sm' mt={1} alignSelf='start'>
+          <Button onClick={onOpenErrors} size='sm' mt='1' alignSelf='start'>
             {t('import_progress.view_errors', {
               defaultValue: `View {{count}} errors`,
               count: data.errors.length,
@@ -275,17 +275,17 @@ export const ImportProgress = () => {
       <Alert
         status={getStatus()}
         layout='panel'
-        mb={3}
-        mt={4}
+        mb='3'
+        mt='4'
         as={Flex}
         flexDirection='row'
         justifyContent='space-between'
       >
-        <Flex flexDirection='column' gap={2} flex={1}>
+        <Flex flexDirection='column' gap='2' flex={1}>
           <AlertTitle>
             <ImportTitle />
           </AlertTitle>
-          <AlertDescription display='flex' flexDirection='column' gap={2}>
+          <AlertDescription display='flex' flexDirection='column' gap='2'>
             <ImportDescription />
           </AlertDescription>
         </Flex>
@@ -318,8 +318,8 @@ export const ImportProgress = () => {
               <List.Root
                 display='flex'
                 flexDirection='column'
-                gap={2}
-                pl={4}
+                gap='2'
+                pl='4'
                 listStyleType='disc'
                 className='ph-no-capture'
               >
@@ -380,11 +380,11 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
   }
 
   return (
-    <HStack flexDirection='column' gap={4} w='full' alignItems='flex-start'>
+    <HStack flexDirection='column' gap='4' w='full' alignItems='flex-start'>
       <Card.Root variant='section' size='sm' w='full'>
-        <Card.Root variant='section' size='sm' flexDirection='row' gap={3} mb={2}>
+        <Card.Root variant='section' size='sm' flexDirection='row' gap='3' mb='2'>
           <Icon as={WarningIcon} color='fg.muted' />
-          <HStack flexDirection='column' gap={0} alignItems='flex-start'>
+          <HStack flexDirection='column' gap='[0]' alignItems='flex-start'>
             <Heading size='sm' fontWeight='bold'>
               {t('memberbase.importer.warning.title', { defaultValue: 'Warning' })}
             </Heading>
@@ -395,10 +395,10 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
             </Text>
           </HStack>
         </Card.Root>
-        <Flex flexDirection='column' gap={4}>
+        <Flex flexDirection='column' gap='4'>
           {columns.map(({ id, label }) => (
             <FormControl key={id}>
-              <Flex gap={3} justifyContent='space-between' w='full'>
+              <Flex gap='3' justifyContent='space-between' w='full'>
                 <FormLabel htmlFor={id}>{label}</FormLabel>
                 <Box>
                   <Select
@@ -427,7 +427,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
                         const { isSelected, children } = props
                         return (
                           <chakraComponents.Option {...props}>
-                            <Flex align='center' gap={2}>
+                            <Flex align='center' gap='2'>
                               {isSelected && <Icon as={CheckIcon} boxSize='icon.sm' color='fg.muted' />}
                               {children}
                             </Flex>
@@ -485,7 +485,7 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
   }
 
   return (
-    <Flex flexDirection='column' gap={4}>
+    <Flex flexDirection='column' gap='4'>
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.importer.map_columns.title', { defaultValue: 'Map Columns' })}
       </Heading>
@@ -496,7 +496,7 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
         })}
       </Text>
       <FieldsMapper manager={spreadsheet} columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
-      <Flex justify='space-between' gap={2} mt={4}>
+      <Flex justify='space-between' gap='2' mt='4'>
         <Button type='button' variant='outline' onClick={resetImport}>
           {t('memberbase.importer.reset', { defaultValue: 'Reset Import' })}
         </Button>
@@ -606,7 +606,7 @@ export const ImportMembers = () => {
               })}
             </Text>
           </Drawer.Header>
-          <Drawer.Body display='flex' flexDirection='column' gap={4}>
+          <Drawer.Body display='flex' flexDirection='column' gap='4'>
             <FormProvider {...methods}>
               <Box as='form' id='import-members' onSubmit={methods.handleSubmit(onSubmit)}>
                 {!hasSpreadsheet ? (
@@ -616,7 +616,7 @@ export const ImportMembers = () => {
                 )}
               </Box>
             </FormProvider>
-            <Flex justify='flex-end' gap={4}>
+            <Flex justify='flex-end' gap='4'>
               <Drawer.ActionTrigger asChild>
                 <Button type='button' variant='outline'>
                   {t('memberbase.importer.cancel', { defaultValue: 'Cancel' })}

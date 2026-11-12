@@ -33,14 +33,14 @@ const AuthTrustBar = ({ vertical }: { vertical: ResolvedVertical }) => {
   if (!logos.length) return null
 
   return (
-    <Stack gap={4} mt={6} align={{ base: 'center', md: 'flex-start' }}>
+    <Stack gap='4' mt='6' align={{ base: 'center', md: 'flex-start' }}>
       {/* No max width: the sentence introduces the row below it and reads as one line with it. Capping
           the measure broke it into two, which on a line this quiet looks like a paragraph rather than
           a caption. It still wraps on mobile, where nothing fits on one line. */}
       <Text fontSize='xs' lineHeight='tall' color='fg.muted' textAlign={{ base: 'center', md: 'left' }}>
         {copy.trustBar}
       </Text>
-      <Flex gap={1.5} wrap='wrap' justify={{ base: 'center', md: 'flex-start' }}>
+      <Flex gap='1.5' wrap='wrap' justify={{ base: 'center', md: 'flex-start' }}>
         {logos.map((logo, index) => (
           <Image
             key={logo.id}
@@ -61,9 +61,9 @@ const AuthTrustBar = ({ vertical }: { vertical: ResolvedVertical }) => {
             borderRadius='lg'
             objectFit='contain'
             bgColor='auth.logo.tile.bg'
-            border='1px solid'
+            border='sm'
             borderColor='auth.logo.tile.border'
-            p={1}
+            p='1'
           />
         ))}
       </Flex>

@@ -27,12 +27,12 @@ export const NotFoundView = ({ onReturnHome, returnHomeHref }: NotFoundViewProps
   const { t } = useTranslation()
 
   return (
-    <Flex direction='column' align='center' justify='center' textAlign='center' gap={3} minH='30vh'>
+    <Flex direction='column' align='center' justify='center' textAlign='center' gap='3' minH='[30vh]'>
       <Text as='div' fontSize='6xl' fontWeight='extrabold' lineHeight='shorter'>
         404
       </Text>
       <PageTitle>{t('error.not_found')}</PageTitle>
-      <PageSubtitle m={0} maxW='45ch'>
+      <PageSubtitle m='[0]' maxW='[45ch]'>
         {t('error.not_found_description', {
           defaultValue: "The page you're looking for does not exist or has been moved.",
         })}

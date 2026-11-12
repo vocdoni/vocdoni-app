@@ -62,10 +62,10 @@ const UserProfile = () => {
           w='full'
           colorPalette='gray'
           variant='menu-trigger'
-          mt={2}
-          minW={0}
+          mt='2'
+          minW='[0]'
         >
-          <Flex alignItems='center' gap={2} w='full'>
+          <Flex alignItems='center' gap='2' w='full'>
             <Avatar.Root size='xs'>
               {avatarSrc ? <Avatar.Image src={avatarSrc} /> : null}
               <Avatar.Fallback name={`${profile.firstName} ${profile.lastName}`} />
@@ -76,8 +76,8 @@ const UserProfile = () => {
                 flexDirection='column'
                 justifyContent='start'
                 alignItems='start'
-                gap={0.5}
-                ml={0}
+                gap='0.5'
+                ml='[0]'
               >
                 <Text fontWeight='light' fontSize='sm' lineHeight='shorter' maxW='var(--size)' truncate>
                   {profile.firstName}
@@ -94,14 +94,14 @@ const UserProfile = () => {
                 </Text>
               </Flex>
             )}
-            {!reduced && <Icon as={ChevronsUpDownIcon} color='fg.muted' ml='auto' />}
+            {!reduced && <Icon as={ChevronsUpDownIcon} color='fg.muted' ml='[auto]' />}
           </Flex>
         </Button>
       </Popover.Trigger>
       <Popover.Positioner>
         <Popover.Content w='user-profile'>
           <Popover.Header>
-            <Box display={'flex'} gap={2} alignItems={'center'} justifyContent={'start'} px={1} py={1.5} mb={1}>
+            <Box display={'flex'} gap='2' alignItems={'center'} justifyContent={'start'} px='1' py='1.5' mb='1'>
               <Avatar.Root size='sm' borderRadius='md'>
                 {avatarSrc ? <Avatar.Image src={avatarSrc} /> : null}
                 <Avatar.Fallback name={`${profile.firstName} ${profile.lastName}`} />
@@ -110,7 +110,7 @@ const UserProfile = () => {
                 css={{ '--size': 'calc(var(--chakra-sizes-user-profile) - 4rem)' }}
                 flexDirection='column'
                 justifyContent='start'
-                gap={0.5}
+                gap='0.5'
               >
                 <Text
                   fontSize='sm'
@@ -126,9 +126,9 @@ const UserProfile = () => {
                   <Button
                     onClick={() => setSwitchOrg(false)}
                     fontSize='xs'
-                    h='unset'
+                    h='[unset]'
                     variant='plain'
-                    p={0}
+                    p='[0]'
                     display='inline'
                     asChild
                   >
@@ -150,35 +150,35 @@ const UserProfile = () => {
           ) : (
             <>
               <Popover.Body>
-                <Box borderBottom='1px solid' borderBottomColor='border' py={1}>
+                <Box borderBottom='sm' borderBottomColor='border' py='1'>
                   <Button colorPalette='gray' variant='menu-item' onClick={() => setSwitchOrg(true)}>
-                    <Flex alignItems='center' gap={2} w='full'>
+                    <Flex alignItems='center' gap='2' w='full'>
                       <Icon as={OrganizationIcon} />
                       <Trans i18nKey={'switch_organization'} />
-                      <Icon as={ChevronRightIcon} marginLeft='auto' />
+                      <Icon as={ChevronRightIcon} marginLeft='[auto]' />
                     </Flex>
                   </Button>
                   <Button colorPalette='gray' variant='menu-item' asChild>
                     <ReactRouterLink to={Routes.dashboard.profile}>
-                      <HStack gap={2}>
+                      <HStack gap='2'>
                         <Icon as={ProfileIcon} />
                         <Trans i18nKey={'user_settings'} />
                       </HStack>
                     </ReactRouterLink>
                   </Button>
                 </Box>
-                <Box borderBottom='1px solid' borderBottomColor='border' py={1}>
-                  <Text fontWeight='extrabold' textStyle='body-sm' px={2} py={1.5}>
+                <Box borderBottom='sm' borderBottomColor='border' py='1'>
+                  <Text fontWeight='extrabold' textStyle='body-sm' px='2' py='1.5'>
                     {t('preferences', { defaultValue: 'Preferences' })}
                   </Text>
                   <Field.Root
                     display='flex'
                     justifyContent='space-between'
-                    p={2}
+                    p='2'
                     alignItems='center'
                     flexDirection='row'
                   >
-                    <Field.Label m={0} htmlFor='theme-toggle'>
+                    <Field.Label m='[0]' htmlFor='theme-toggle'>
                       <Trans i18nKey='theme'>Theme</Trans>
                     </Field.Label>
                     <ThemeToggleGroup />
@@ -186,14 +186,14 @@ const UserProfile = () => {
                   <LanguageListDashboard px={2} py={1.5} />
                 </Box>
                 <Button colorPalette='gray' variant='menu-item-strong' onClick={logout}>
-                  <HStack gap={2}>
+                  <HStack gap='2'>
                     <Icon as={LogoutIcon} />
                     <Trans i18nKey={'logout'} />
                   </HStack>
                 </Button>
               </Popover.Body>
-              <Popover.Footer pt={1}>
-                <Flex gap={2} alignItems='center' justifyContent='center' w='full'>
+              <Popover.Footer pt='1'>
+                <Flex gap='2' alignItems='center' justifyContent='center' w='full'>
                   <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' size='xs'>
                     <Trans i18nKey='privacy_policy'>Privacy policy</Trans>
                   </Link>

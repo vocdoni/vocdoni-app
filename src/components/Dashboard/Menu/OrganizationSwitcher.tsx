@@ -90,29 +90,29 @@ export const OrganizationSwitcher = () => {
 
   return (
     <>
-      <PopoverBody minH={'unset'}>
-        <Text textStyle='caption' fontWeight='bold' px={1.5} py={2}>
+      <PopoverBody minH='[unset]'>
+        <Text textStyle='caption' fontWeight='bold' px='1.5' py='2'>
           <Trans i18nKey='organizations' values={{ numOrgs }}>
             Organizations ({{ numOrgs }})
           </Trans>
         </Text>
-        <Flex flexDirection={'column'} maxH={'130px'} overflowY={'scroll'}>
+        <Flex flexDirection={'column'} maxH='[130px]' overflowY={'scroll'}>
           {organizations.map((org, idx) => (
             <Button key={idx} onClick={() => handleOrgChange(org)} variant='menu-item-strong'>
               <Stack direction='row' w='full' align='center'>
                 <Icon
                   as={OrganizationIcon}
-                  border='1px solid'
+                  border='sm'
                   borderColor='border'
                   borderRadius='xs'
-                  p={1}
+                  p='1'
                   boxSize='icon.lg'
                   flexShrink={0}
                 />
-                <Text as='span' textStyle='body-sm' flex='1' minW={0} textAlign='start' truncate>
+                <Text as='span' textStyle='body-sm' flex='1' minW='[0]' textAlign='start' truncate>
                   {org.label}
                 </Text>
-                <HStack gap={1} flexShrink={0}>
+                <HStack gap='1' flexShrink={0}>
                   {org.isIntegrator && (
                     <TagRoot>
                       {/* "API" is a universal acronym, not translated in any locale */}
@@ -131,21 +131,21 @@ export const OrganizationSwitcher = () => {
         </Flex>
       </PopoverBody>
       {!selectedIsIntegrator && (
-        <PopoverFooter minH={'unset'}>
-          <Button asChild aria-label={t('create_org.title')} variant='menu-item' mt={1}>
+        <PopoverFooter minH='[unset]'>
+          <Button asChild aria-label={t('create_org.title')} variant='menu-item' mt='1'>
             <ReactRouterLink to={Routes.dashboard.organizationCreate}>
               <Flex
                 justifyContent={'center'}
                 alignItems={'center'}
-                border='1px solid'
+                border='sm'
                 borderColor='border'
-                w='22px'
-                h='22px'
+                w='[22px]'
+                h='[22px]'
                 borderRadius='xs'
               >
-                <Icon as={AddIcon} boxSize='icon.sm' ml={2} mr={2} />
+                <Icon as={AddIcon} boxSize='icon.sm' ml='2' mr='2' />
               </Flex>
-              <Text as={'span'} h='unset' fontWeight={'bold'} textStyle='body-sm'>
+              <Text as={'span'} h='[unset]' fontWeight={'bold'} textStyle='body-sm'>
                 {t('add_new_org', { defaultValue: 'Add a new organization' })}
               </Text>
             </ReactRouterLink>

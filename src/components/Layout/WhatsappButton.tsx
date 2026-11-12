@@ -15,18 +15,18 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
   return (
     <Button asChild role='group' variant='whatsapp' overflow='hidden'>
       <a href={whatsappUrl} target='_blank' rel='noopener noreferrer'>
-        <HStack gap={0}>
+        <HStack gap='[0]'>
           <Icon as={WhatsappIcon} boxSize='icon.lg' flexShrink={0} />
           {!noExpand && (
             <Text
               as='span'
-              ml={0}
-              maxW={0}
-              opacity={0}
+              ml='[0]'
+              maxW='[0]'
+              opacity='[0]'
               whiteSpace='nowrap'
               overflow='hidden'
-              transition='max-width {durations.slow} ease, margin-left {durations.slow} ease, opacity {durations.moderate}'
-              _groupHover={{ maxW: '48', ml: 2, opacity: 1 }}
+              transition='[max-width {durations.slow} ease, margin-left {durations.slow} ease, opacity {durations.moderate}]'
+              _groupHover={{ maxW: '48', ml: '2', opacity: '[1]' }}
             >
               {t('whatsapp_contact', 'Talk with us!')}
             </Text>

@@ -19,9 +19,9 @@ const Layout = () => {
     <PublicLayout
       pathname={pathname}
       header={
-        <Flex w='full' py={3} alignItems='center' justifyContent='space-between' gap={2}>
-          {logo ?? <VocdoniLogo height={6} />}
-          <Box display='flex' alignItems='center' gap={4}>
+        <Flex w='full' py='3' alignItems='center' justifyContent='space-between' gap='2'>
+          {logo ?? <VocdoniLogo height='6' />}
+          <Box display='flex' alignItems='center' gap='4'>
             <LanguagesMenu />
             <ColorModeSwitcher />
           </Box>

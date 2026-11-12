@@ -50,7 +50,7 @@ const PublicLayout = ({
 
   return (
     <Flex position='relative' flexDirection='column' minH='dvh'>
-      <Box as='header' position='sticky' top={0} w='full' backdropFilter='blur(40px)' zIndex='public-header'>
+      <Box as='header' position='sticky' top='[0]' w='full' backdropFilter='blur(40px)' zIndex='public-header'>
         <PageContainer w='full'>
           {header ?? (
             <Navbar
@@ -68,8 +68,8 @@ const PublicLayout = ({
           flexDirection='column'
           as='main'
           flexGrow={1}
-          mt={flushContent ? undefined : { base: 4, lg: 6, xl: 10 }}
-          mb={{ base: 20, lg: 32 }}
+          mt={flushContent ? undefined : { base: '4', lg: '6', xl: '10' }}
+          mb={{ base: '20', lg: '32' }}
           w='full'
         >
           {children}

@@ -142,15 +142,15 @@ const SignIn = ({
   return (
     <>
       <FormProvider {...methods}>
-        <Box as='form' onSubmit={handleSubmit(onSubmit)} mb={6}>
-          <Flex flexDirection='column' gap={4} mb={4}>
+        <Box as='form' onSubmit={handleSubmit(onSubmit)} mb='6'>
+          <Flex flexDirection='column' gap='4' mb='4'>
             <InputBasic
               formValue='email'
               label={t('email')}
               placeholder={t('email_placeholder', { defaultValue: 'your@email.com' })}
               type='email'
             />
-            <Flex flexDir='column' gap={0}>
+            <Flex flexDir='column' gap='[0]'>
               <InputPassword
                 formValue='password'
                 label={t('password')}
@@ -165,7 +165,7 @@ const SignIn = ({
           <Button type='submit' w='full' loading={isSubmitting}>
             {t('signin')}
           </Button>
-          <OrSeparator my={6} />
+          <OrSeparator my='6' />
         </Box>
       </FormProvider>
       <GoogleAuth />
@@ -176,10 +176,10 @@ const SignIn = ({
         alignItems={'center'}
         fontWeight='bold'
         textStyle='body-sm'
-        mt={6}
+        mt='6'
       >
         {t('not_registred_yet')}
-        <Link asChild ml={1} emphasis='strong' size='sm'>
+        <Link asChild ml='1' emphasis='strong' size='sm'>
           <NavLink to={signUpRoute}>{t('signup_title')}</NavLink>
         </Link>
       </Text>

@@ -91,7 +91,7 @@ const DismissibleAnnouncementBanner = ({ limited }: { limited?: boolean }) => {
 
   // Limited: the strip stays edge to edge, its content keeps to the page column of the header and footer.
   return (
-    <Alert status={announcement.status} layout='banner' px={limited ? 0 : undefined}>
+    <Alert status={announcement.status} layout='banner' px={limited ? '[0]' : undefined}>
       {limited ? <PageContainer asChild>{row}</PageContainer> : row}
     </Alert>
   )
