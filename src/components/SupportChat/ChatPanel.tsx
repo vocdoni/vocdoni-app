@@ -139,7 +139,7 @@ export const ChatPanel = ({
         >
           <Icon as={SupportIcon} boxSize='icon.md' />
         </Flex>
-        <Box flex='1' minW='[0]'>
+        <Box flex='1' minW='0'>
           <Text fontWeight='bold' textStyle='body-sm' truncate>
             {t('support_chat.header_title', { defaultValue: 'Vocdoni Support' })}
           </Text>
@@ -202,7 +202,7 @@ export const ChatPanel = ({
         <Flex align='center' justify='space-between' gap='3' px='4' py='3' borderTopWidth='[1px]' borderColor='border'>
           {/* role='status' sits on the non-interactive text only — a live region
               must not contain the button next to it */}
-          <Flex role='status' align='center' gap='1.5' fontSize='xs' color='fg.muted' minW='[0]'>
+          <Flex role='status' align='center' gap='1.5' fontSize='xs' color='fg.muted' minW='0'>
             <Icon as={CheckIcon} boxSize='icon.sm' flexShrink={0} />
             <Text textStyle='caption'>
               {t('support_chat.sent_status', { defaultValue: "Request sent — we'll reply by email" })}

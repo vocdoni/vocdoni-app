@@ -199,8 +199,8 @@ const ProcessViewContent = () => {
         {/* Main content area */}
         <Box
           flex={1}
-          minW='[0]'
-          marginRight={showSidebar ? { base: '[0]', md: 'dashboard.panel' } : '[0]'}
+          minW='0'
+          marginRight={showSidebar ? { base: '0', md: 'dashboard.panel' } : '0'}
           transition='[margin-right {durations.slow}]'
           display='flex'
           flexDirection='column'
@@ -289,7 +289,7 @@ const ProcessViewContent = () => {
             </Box>
 
             <Flex justifyContent='space-between' gap='2' wrap='wrap'>
-              <Input readOnly value={votingLink} flex='1 1 18rem' minW='[0]' />
+              <Input readOnly value={votingLink} flex='1 1 18rem' minW='0' />
               <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
                 <Icon as={CopyIcon} />
               </IconButton>
@@ -324,7 +324,7 @@ const ProcessViewContent = () => {
                 {showResultsTab && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
               </TabsList>
               <TabsContentGroup mt='6'>
-                <TabsContent value='questions' p='[0]'>
+                <TabsContent value='questions' p='0'>
                   <Card.Root variant='section'>
                     <ErrorBoundary fallback={sectionFallback} resetKeys={[election]}>
                       <ElectionQuestions />
@@ -332,7 +332,7 @@ const ProcessViewContent = () => {
                   </Card.Root>
                 </TabsContent>
                 {showResultsTab && (
-                  <TabsContent value='results' p='[0]'>
+                  <TabsContent value='results' p='0'>
                     <Card.Root variant='section'>
                       <ErrorBoundary fallback={sectionFallback} resetKeys={[election, results]}>
                         <ElectionResults />
@@ -596,7 +596,7 @@ const SettingsField = ({
   )
 
   return (
-    <Box display='flex' gap='2' flex='1 1 0' minW='[0]' alignItems='center'>
+    <Box display='flex' gap='2' flex='1 1 0' minW='0' alignItems='center'>
       <Box
         color='fg.muted'
         bg='bg.muted'
@@ -609,7 +609,7 @@ const SettingsField = ({
       >
         <Icon as={icon} boxSize='icon.md' />
       </Box>
-      <Box flex='1 1 0' minW='[0]' display='flex' flexDirection='column'>
+      <Box flex='1 1 0' minW='0' display='flex' flexDirection='column'>
         {tooltip ? (
           <TooltipRoot positioning={{ placement: 'top' }}>
             <TooltipTrigger asChild>{label}</TooltipTrigger>

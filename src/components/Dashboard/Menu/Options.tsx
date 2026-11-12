@@ -21,7 +21,7 @@ export const DashboardMenuOptions = ({ sections }: { sections: DashboardMenuSect
                 {section.title}
               </Text>
             )}
-            <List.Root display='flex' flexDirection='column' listStyleType='none' ml='[0]'>
+            <List.Root display='flex' flexDirection='column' listStyleType='none' ml='0'>
               {section.items.map((item, index) => {
                 const activeMatch = item.activeMatch ?? (item.route ? [{ path: item.route, end: true }] : [])
                 const isActive = activeMatch.some((match) =>

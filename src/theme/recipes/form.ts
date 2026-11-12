@@ -47,7 +47,7 @@ export const input = defineRecipe({
     variant: {
       inline: {
         border: '[none]',
-        px: '[0]',
+        px: '0',
         bg: 'transparent',
       },
     },
@@ -70,7 +70,7 @@ export const textarea = defineRecipe({
     variant: {
       inline: {
         border: '[none]',
-        px: '[0]',
+        px: '0',
       },
     },
   },

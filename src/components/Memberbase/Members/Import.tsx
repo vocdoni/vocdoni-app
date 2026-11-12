@@ -384,7 +384,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
       <Card.Root variant='section' size='sm' w='full'>
         <Card.Root variant='section' size='sm' flexDirection='row' gap='3' mb='2'>
           <Icon as={WarningIcon} color='fg.muted' />
-          <HStack flexDirection='column' gap='[0]' alignItems='flex-start'>
+          <HStack flexDirection='column' gap='0' alignItems='flex-start'>
             <Heading size='sm' fontWeight='bold'>
               {t('memberbase.importer.warning.title', { defaultValue: 'Warning' })}
             </Heading>

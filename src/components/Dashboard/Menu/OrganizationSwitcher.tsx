@@ -109,7 +109,7 @@ export const OrganizationSwitcher = () => {
                   boxSize='icon.lg'
                   flexShrink={0}
                 />
-                <Text as='span' textStyle='body-sm' flex='1' minW='[0]' textAlign='start' truncate>
+                <Text as='span' textStyle='body-sm' flex='1' minW='0' textAlign='start' truncate>
                   {org.label}
                 </Text>
                 <HStack gap='1' flexShrink={0}>

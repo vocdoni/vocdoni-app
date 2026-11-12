@@ -38,7 +38,7 @@ const DashboardMenu = ({
         display={{ base: 'none', md: 'flex' }}
         flexDirection='column'
         position='sticky'
-        top='[0]'
+        top='0'
         w={reduced ? 'dashboard.menu.collapsed' : 'dashboard.menu.expanded'}
         h='dvh'
         zIndex='dashboard-menu'
@@ -173,9 +173,9 @@ const DashboardMenuContent = ({
           </IconButton>
         </Flex>
         {menu.newVote && (
-          <Button asChild w='full' minW='[0]' mt='2' mb='8' size={'xs'}>
+          <Button asChild w='full' minW='0' mt='2' mb='8' size={'xs'}>
             <RouterLink to={generatePath(Routes.processes.create)}>
-              <HStack gap={reduced ? '[0]' : '2'}>
+              <HStack gap={reduced ? '0' : '2'}>
                 <Icon as={AddIcon} boxSize='icon.sm' />
                 {!reduced && (
                   <Text as='span'>
@@ -189,7 +189,7 @@ const DashboardMenuContent = ({
 
         <DashboardMenuOptions sections={menu.sections} />
       </Box>
-      <Box mt='[auto]'>
+      <Box mt='auto'>
         {menu.tutorial && <SidebarTutorial />}
         <UserProfile />
       </Box>

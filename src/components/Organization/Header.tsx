@@ -46,7 +46,7 @@ const OrganizationHeader = () => {
         alignItems={{ base: 'center', lg: 'start' }}
         flexDirection={{ base: 'column', lg: 'row' }}
         gap={{ base: '2' }}
-        minW='[0]'
+        minW='0'
         maxW='full'
       >
         <Flex

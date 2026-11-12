@@ -9,7 +9,7 @@ import empty from '/assets/illustrations/9.png'
 export const NoOrganizations = () => {
   return (
     <Flex flexDirection={'column'}>
-      <Card.Root variant='plain' minH='full' maxW='card.empty' mx='[auto]'>
+      <Card.Root variant='plain' minH='full' maxW='card.empty' mx='auto'>
         <Card.Body>
           <EmptyState
             image={empty}

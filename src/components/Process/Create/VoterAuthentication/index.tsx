@@ -101,7 +101,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
         ref={setTriggerRef}
         disabled={!groupId}
         colorPalette='gray'
-        w={census ? '[auto]' : 'full'}
+        w={census ? 'auto' : 'full'}
         variant={census ? 'outline' : 'solid'}
         size={census ? 'sm' : 'md'}
         alignSelf={census ? 'start' : undefined}
@@ -162,7 +162,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
               the desktop dialog stretches to the whole viewport height. */}
           <Dialog.Content
             maxW={{ md: '[52rem]' }}
-            minH={{ md: '[auto]' }}
+            minH={{ md: 'auto' }}
             borderRadius={{ md: 'l3' }}
             mx={{ md: '4' }}
             overflow='hidden'

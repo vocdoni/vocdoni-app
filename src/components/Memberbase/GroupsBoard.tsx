@@ -656,7 +656,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
   return (
     <>
       <Card.Root variant='outline' p='4'>
-        <Card.Header p='[0]'>
+        <Card.Header p='0'>
           <Flex justify='space-between' align='center'>
             <Heading size='md'>{displayTitle}</Heading>
             <GroupActions
@@ -667,7 +667,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
             />
           </Flex>
         </Card.Header>
-        <Card.Body p='[0]'>
+        <Card.Body p='0'>
           <Flex direction='column' gap='2'>
             <Flex align='center' gap='2'>
               <Icon as={CalendarIcon} boxSize='icon.sm' />
@@ -697,7 +697,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
             </Text>
           </Flex>
         </Card.Body>
-        <Card.Footer px='[0]' pb='[0]' mt='3'>
+        <Card.Footer px='0' pb='0' mt='3'>
           <Button w='full' size='xs' onClick={() => navigateToVote(group.id)}>
             <Icon boxSize='icon.sm' as={VoteIcon} />
             {t('group.create_vote', { defaultValue: 'Create a Vote' })}

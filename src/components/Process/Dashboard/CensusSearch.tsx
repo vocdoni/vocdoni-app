@@ -150,7 +150,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
     // the subtitle's own py is zeroed so the title→description gap matches the uniform gap between the other items.
     <Box display='flex' flexDirection='column' gap='3' pt='4'>
       <HStack gap='1' alignItems='center'>
-        <SidebarSubtitle py='[0]'>
+        <SidebarSubtitle py='0'>
           <Trans i18nKey='census.search.title'>Check participants</Trans>
         </SidebarSubtitle>
         <TooltipRoot positioning={{ placement: 'top' }}>
@@ -224,7 +224,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
                   alignItems='center'
                   gap='2'
                 >
-                  <Box minW='[0]'>
+                  <Box minW='0'>
                     <Text textStyle='body-sm' fontWeight='bold' truncate>
                       {[participant.name, participant.surname].filter(Boolean).join(' ')}
                     </Text>

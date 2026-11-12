@@ -997,7 +997,7 @@ const ProcessCreateView = () => {
           >
             <Box
               flex={1}
-              marginRight={showSidebar ? { base: '[0]', md: 'dashboard.panel' } : '[0]'}
+              marginRight={showSidebar ? { base: '0', md: 'dashboard.panel' } : '0'}
               transition='[margin-right {durations.slow}]'
               display='flex'
               flexDirection='column'

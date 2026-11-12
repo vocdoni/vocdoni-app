@@ -9,13 +9,13 @@ const baseStyle = {
     borderColor: 'border',
   },
   header: {
-    p: '[0]',
+    p: '0',
   },
   body: {
-    p: '[0]',
+    p: '0',
   },
   footer: {
-    p: '[0]',
+    p: '0',
   },
 } satisfies Partial<Record<string, SystemStyleObject>>
 

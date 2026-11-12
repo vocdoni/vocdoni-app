@@ -15,13 +15,13 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
   return (
     <Button asChild role='group' variant='whatsapp' overflow='hidden'>
       <a href={whatsappUrl} target='_blank' rel='noopener noreferrer'>
-        <HStack gap='[0]'>
+        <HStack gap='0'>
           <Icon as={WhatsappIcon} boxSize='icon.lg' flexShrink={0} />
           {!noExpand && (
             <Text
               as='span'
-              ml='[0]'
-              maxW='[0]'
+              ml='0'
+              maxW='0'
               opacity='[0]'
               whiteSpace='nowrap'
               overflow='hidden'

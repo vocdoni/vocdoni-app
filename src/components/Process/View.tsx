@@ -216,7 +216,7 @@ export const ProcessView = () => {
                 {election && status !== 'CANCELED' && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
               </TabsList>
               <TabsContentGroup mt='6'>
-                <TabsContent value='questions' p='[0]'>
+                <TabsContent value='questions' p='0'>
                   <Card.Root
                     ref={electionRef}
                     variant='section'
@@ -232,12 +232,12 @@ export const ProcessView = () => {
                       }}
                     />
                   </Card.Root>
-                  <Box position='sticky' bottom='[0]' left='[0]' pb='1' pt='1'>
+                  <Box position='sticky' bottom='0' left='0' pb='1' pt='1'>
                     <VoteButton setQuestionsTab={setQuestionsTab} />
                   </Box>
                 </TabsContent>
                 {election && status !== 'CANCELED' && (
-                  <TabsContent value='results' p='[0]'>
+                  <TabsContent value='results' p='0'>
                     <Card.Root variant='section'>
                       <ElectionResults />
                     </Card.Root>

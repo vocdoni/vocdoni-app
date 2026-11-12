@@ -51,7 +51,7 @@ export const CreateSidebar = ({ draftId }: { draftId?: string | null }) => {
         <ExtraConfig />
 
         <Flex borderTop='sm' borderColor='border' mt='4' pt='4' justify='space-between' align='center'>
-          <SidebarSubtitle m='[0]'>
+          <SidebarSubtitle m='0'>
             <Trans i18nKey='process_create.census_creation'>Census Creation</Trans>
           </SidebarSubtitle>
           <CensusStatusBadge />

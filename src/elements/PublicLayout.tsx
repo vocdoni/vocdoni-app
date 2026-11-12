@@ -50,7 +50,7 @@ const PublicLayout = ({
 
   return (
     <Flex position='relative' flexDirection='column' minH='dvh'>
-      <Box as='header' position='sticky' top='[0]' w='full' backdropFilter='blur(40px)' zIndex='public-header'>
+      <Box as='header' position='sticky' top='0' w='full' backdropFilter='blur(40px)' zIndex='public-header'>
         <PageContainer w='full'>
           {header ?? (
             <Navbar

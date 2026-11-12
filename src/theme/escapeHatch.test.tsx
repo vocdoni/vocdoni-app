@@ -9,7 +9,7 @@ const renderedRules = (element: HTMLElement) => {
 }
 
 // `system.css` is covered in system.test.ts; this checks the class a rendered component gets, so a Chakra
-// release that gives the styled factory its own pipeline fails here instead of shipping `padding: [0]`.
+// release that gives the styled factory its own pipeline fails here instead of shipping `line-height: [0]`.
 describe('escape hatch in rendered components', () => {
   it.each([
     ['stock', system],
@@ -17,14 +17,14 @@ describe('escape hatch in rendered components', () => {
   ])('emits the unwrapped value in the %s system', (_name, value) => {
     render(
       <ChakraProvider value={value}>
-        <Box data-testid='escaped' p='[0]' mx='[auto]' w='[calc(100% - {sizes.8})]' />
+        <Box data-testid='escaped' lineHeight='[0]' cursor='[help]' w='[calc(100% - {sizes.8})]' />
       </ChakraProvider>
     )
 
     const css = renderedRules(screen.getByTestId('escaped'))
-    // jsdom drops the invalid `padding: [0]` and normalises the valid `0` to `0px`
-    expect(css).toContain('padding: 0px;')
-    expect(css).toContain('margin-inline: auto;')
+    // jsdom drops the invalid `line-height: [0]`
+    expect(css).toContain('line-height: 0;')
+    expect(css).toContain('cursor: help;')
     expect(css).toContain('width: calc(100% - var(--chakra-sizes-8));')
   })
 })

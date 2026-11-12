@@ -34,7 +34,7 @@ const Verify = () => {
   if (!email) {
     return (
       <Flex direction='column'>
-        <Box me='[auto]'>
+        <Box me='auto'>
           <Heading fontSize='4xl' mb='2.5'>
             {t('verify.invalid_verification', { defaultValue: 'Invalid verification request' })}
           </Heading>

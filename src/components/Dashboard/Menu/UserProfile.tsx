@@ -63,7 +63,7 @@ const UserProfile = () => {
           colorPalette='gray'
           variant='menu-trigger'
           mt='2'
-          minW='[0]'
+          minW='0'
         >
           <Flex alignItems='center' gap='2' w='full'>
             <Avatar.Root size='xs'>
@@ -77,7 +77,7 @@ const UserProfile = () => {
                 justifyContent='start'
                 alignItems='start'
                 gap='0.5'
-                ml='[0]'
+                ml='0'
               >
                 <Text fontWeight='light' fontSize='sm' lineHeight='shorter' maxW='var(--size)' truncate>
                   {profile.firstName}
@@ -94,7 +94,7 @@ const UserProfile = () => {
                 </Text>
               </Flex>
             )}
-            {!reduced && <Icon as={ChevronsUpDownIcon} color='fg.muted' ml='[auto]' />}
+            {!reduced && <Icon as={ChevronsUpDownIcon} color='fg.muted' ml='auto' />}
           </Flex>
         </Button>
       </Popover.Trigger>
@@ -128,7 +128,7 @@ const UserProfile = () => {
                     fontSize='xs'
                     h='[unset]'
                     variant='plain'
-                    p='[0]'
+                    p='0'
                     display='inline'
                     asChild
                   >
@@ -155,7 +155,7 @@ const UserProfile = () => {
                     <Flex alignItems='center' gap='2' w='full'>
                       <Icon as={OrganizationIcon} />
                       <Trans i18nKey={'switch_organization'} />
-                      <Icon as={ChevronRightIcon} marginLeft='[auto]' />
+                      <Icon as={ChevronRightIcon} marginLeft='auto' />
                     </Flex>
                   </Button>
                   <Button colorPalette='gray' variant='menu-item' asChild>
@@ -178,7 +178,7 @@ const UserProfile = () => {
                     alignItems='center'
                     flexDirection='row'
                   >
-                    <Field.Label m='[0]' htmlFor='theme-toggle'>
+                    <Field.Label m='0' htmlFor='theme-toggle'>
                       <Trans i18nKey='theme'>Theme</Trans>
                     </Field.Label>
                     <ThemeToggleGroup />

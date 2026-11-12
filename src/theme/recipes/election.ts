@@ -48,7 +48,7 @@ export const ElectionTitle = defineRecipe({
         fontSize: 'lg',
         fontWeight: 'bold',
         lineHeight: 'short',
-        mb: '[0]',
+        mb: '0',
       },
       // One-line process rows of the organization dashboard.
       row: {
@@ -56,7 +56,7 @@ export const ElectionTitle = defineRecipe({
         fontWeight: 'bold',
         lineHeight: 'short',
         textAlign: 'left',
-        mb: '[0]',
+        mb: '0',
         truncate: true,
       },
     },
@@ -95,7 +95,7 @@ export const ElectionQuestions = defineSlotRecipe({
           },
         },
         title: {
-          mb: '[0]',
+          mb: '0',
         },
         stack: {
           display: 'flex',
@@ -110,7 +110,7 @@ export const ElectionQuestions = defineSlotRecipe({
           },
         },
         title: {
-          mb: '[0]',
+          mb: '0',
         },
         stack: {
           display: 'grid',
@@ -163,7 +163,7 @@ export const ElectionResults = defineSlotRecipe({
       color: 'fg',
       pl: '2',
       fontSize: 'sm',
-      minW: '[0]',
+      minW: '0',
       overflowWrap: 'break-word',
     },
     choiceVotes: {
@@ -177,11 +177,11 @@ export const ElectionResults = defineSlotRecipe({
     },
     question: {
       width: 'full',
-      minW: '[0]',
+      minW: '0',
     },
     progress: {
       position: 'absolute',
-      inset: '[0]',
+      inset: '0',
       gridColumn: '1 / -1',
       gridRow: '1',
       alignSelf: 'stretch',
@@ -299,7 +299,7 @@ export const QuestionChoice = defineSlotRecipe({
       plain: {
         wrapper: {
           border: '[none]',
-          p: '[0]',
+          p: '0',
           bg: 'transparent',
         },
       },
@@ -315,7 +315,7 @@ export const QuestionChoice = defineSlotRecipe({
             flexDirection: 'column',
             gap: '1',
             flex: 1,
-            minW: '[0]',
+            minW: '0',
           },
         },
       },
@@ -327,7 +327,7 @@ export const QuestionChoice = defineSlotRecipe({
           position: 'relative',
           alignItems: 'start',
           w: 'full',
-          p: '[0]',
+          p: '0',
           '& [data-choice-control]': {
             position: 'absolute',
             top: '2',
@@ -343,7 +343,7 @@ export const QuestionChoice = defineSlotRecipe({
             bg: 'transparent',
             border: '[none]',
             boxShadow: '[none]',
-            p: '[0]',
+            p: '0',
             borderRadius: 'full',
           },
           '& [data-choice-media]': {
@@ -357,10 +357,10 @@ export const QuestionChoice = defineSlotRecipe({
             flexDirection: 'column',
             gap: '1',
             flex: 1,
-            minW: '[0]',
+            minW: '0',
           },
           '& [data-choice-body][data-compact]': {
-            p: '[0]',
+            p: '0',
           },
         },
       },

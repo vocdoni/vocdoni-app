@@ -84,7 +84,7 @@ const ApiKeyCard = ({
           aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
           variant='danger'
           size='xs'
-          ml='[auto]'
+          ml='auto'
           disabled={revokeDisabled}
           onClick={onRevoke}
         >

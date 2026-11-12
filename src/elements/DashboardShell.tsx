@@ -51,7 +51,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
             menu={menu}
           />
 
-          <Flex flex='1 1 0' flexDirection='column' minW='[0]'>
+          <Flex flex='1 1 0' flexDirection='column' minW='0'>
             <AnnouncementBanner />
             <Flex
               alignItems='center'

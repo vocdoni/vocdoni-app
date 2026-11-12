@@ -274,7 +274,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
           </Dialog.Description>
         )}
       </Dialog.Header>
-      <Dialog.Body p='[0]'>
+      <Dialog.Body p='0'>
         <Grid templateColumns={{ base: '1fr', md: 'minmax(0, 1fr) 20rem', lg: 'minmax(0, 1fr) 22rem' }}>
           <Stack px='6' py='5' gap='6'>
             <Box role='group' aria-labelledby='voter-auth-details-title' aria-describedby='voter-auth-details-help'>
@@ -408,7 +408,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             </Button>
             <Box
               display={{ base: previewOpen ? 'block' : 'none', md: 'block' }}
-              pt={{ base: '3', md: '[0]' }}
+              pt={{ base: '3', md: '0' }}
               position={{ md: 'sticky' }}
               top='5'
             >
@@ -425,7 +425,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
         alignItems={{ base: 'stretch', md: 'center' }}
         gap='3'
       >
-        <Box id='voter-auth-status' flex='1' minW='[0]'>
+        <Box id='voter-auth-status' flex='1' minW='0'>
           <MemberCheck
             ref={statusRef}
             status={censusCheck.status}

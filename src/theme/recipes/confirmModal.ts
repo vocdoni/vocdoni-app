@@ -9,23 +9,23 @@ export const ConfirmModal = defineSlotRecipe({
   variants: {
     layout: {
       panel: {
-        header: { pb: '[0]' },
+        header: { pb: '0' },
         description: mutedDescription,
         footer: { gap: '2' },
       },
       // The footer sits in the body's bottom padding instead of Chakra's footer spacing.
       inline: {
-        header: { pb: '[0]' },
-        body: { pb: '[0]' },
+        header: { pb: '0' },
+        body: { pb: '0' },
         description: mutedDescription,
         footer: { pt: '4', pb: '6', gap: '2' },
       },
       // Footer right under the description, as the account deletion notice has it.
       compact: {
-        header: { pb: '[0]' },
-        body: { pb: '[0]' },
+        header: { pb: '0' },
+        body: { pb: '0' },
         description: mutedDescription,
-        footer: { pt: '[0]', pb: '6', gap: '3' },
+        footer: { pt: '0', pb: '6', gap: '3' },
       },
       // Rendered by useConfirm inside react-components' ConfirmShell. The title keeps the line height the
       // header inherits from the dialog content.

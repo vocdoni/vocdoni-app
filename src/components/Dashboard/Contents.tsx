@@ -77,9 +77,9 @@ const sidebarPanelStyle: BoxProps = {
 export const Sidebar = ({ show, ...props }: SidebarProps) => (
   <Box
     position='absolute'
-    right='[0]'
-    top='[0]'
-    bottom='[0]'
+    right='0'
+    top='0'
+    bottom='0'
     zIndex='docked'
     // `visibility` flips at once on open and waits out the slide on close: an
     // opening panel must take focus straight away (a blocked publish moves it to

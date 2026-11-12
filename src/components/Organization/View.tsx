@@ -107,7 +107,7 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
   }, [page, error, finished, organization?.address])
 
   return (
-    <Box mb='44' mx='[auto]'>
+    <Box mb='44' mx='auto'>
       <Header />
 
       <Text as='h2' fontWeight='bold' mb='4' textAlign={{ base: 'center', md: 'start' }}>

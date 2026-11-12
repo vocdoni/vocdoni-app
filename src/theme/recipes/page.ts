@@ -4,7 +4,7 @@ import { defineRecipe } from '@chakra-ui/react'
 // cannot change per breakpoint.
 export const PageContainer = defineRecipe({
   base: {
-    mx: '[auto]',
+    mx: 'auto',
   },
   variants: {
     size: {

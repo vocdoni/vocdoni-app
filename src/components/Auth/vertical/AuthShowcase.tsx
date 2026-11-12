@@ -49,7 +49,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
       flexDirection='column'
       justifyContent='center'
       flex={{ md: '0 0 48%', lg: '0 0 54%' }}
-      minW='[0]'
+      minW='0'
       p={{ md: '8', lg: '12' }}
       bgColor={surface}
     >
@@ -87,7 +87,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
           {t('auth.showcase.fallback_headline', { defaultValue: 'Decisions your members can verify' })}
         </Heading>
       ) : (
-        <Stack as='figure' position='relative' m='[0]' gap={{ md: '5', lg: '7' }} minW='[0]'>
+        <Stack as='figure' position='relative' m='0' gap={{ md: '5', lg: '7' }} minW='0'>
           <Text
             textStyle='caption'
             fontWeight='bolder'
@@ -101,7 +101,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
               flex column in a stretch row, so a long one grows the card instead of overflowing. */}
           <Box
             as='blockquote'
-            m='[0]'
+            m='0'
             fontWeight='bold'
             lineHeight='moderate'
             letterSpacing='quote.tight'
@@ -115,7 +115,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
             as='figcaption'
             align='center'
             gap='3'
-            minW='[0]'
+            minW='0'
             pt={{ md: '5', lg: '6' }}
             borderTop='sm'
             borderColor='auth.showcase.rule'
@@ -134,7 +134,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
                 p='[5px]'
               />
             )}
-            <Box minW='[0]'>
+            <Box minW='0'>
               <Text textStyle='body-sm' fontWeight='bolder' color='auth.showcase.fg'>
                 {testimonial.author}
               </Text>

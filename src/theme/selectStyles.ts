@@ -23,7 +23,7 @@ export const languagesListSelectStyles = (longestLabelLength = 0): ChakraStylesC
     ...base,
     fontWeight: 'normal',
     px: '1',
-    py: '[0]',
+    py: '0',
   }),
   valueContainer: (base) => ({
     ...base,

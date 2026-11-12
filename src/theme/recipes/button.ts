@@ -8,7 +8,7 @@ const stockSizes = (stockVariants?.size ?? {}) as StyleMap
 
 // No `fontSize` here: every size sets a `textStyle`, which would override it anyway.
 const baseStyle = defineStyle({
-  minW: '[0]',
+  minW: '0',
   fontWeight: 'bold',
   borderRadius: 'sm',
   _currentPage: {
@@ -23,9 +23,9 @@ const baseStyle = defineStyle({
 // Text-only action inside a sentence.
 const link = defineStyle({
   textAlign: 'left',
-  w: '[auto]',
-  h: '[auto]',
-  p: '[0]',
+  w: 'auto',
+  h: 'auto',
+  p: '0',
   verticalAlign: 'unset',
   _hover: {
     textDecoration: 'underline',
@@ -35,16 +35,16 @@ const link = defineStyle({
 // Same, always underlined and in the palette colour (e.g. "Check again" after a failed check).
 const linkUnderline = defineStyle({
   ...stock.plain,
-  h: '[auto]',
-  p: '[0]',
+  h: 'auto',
+  p: '0',
   textDecoration: 'underline',
 })
 
 // Reads as the text around it: no box, the parent's line height (support chat teaser).
 const text = defineStyle({
-  h: '[auto]',
-  minW: '[0]',
-  p: '[0]',
+  h: 'auto',
+  minW: '0',
+  p: '0',
   borderWidth: '[0]',
   // One level down: the size's `textStyle` is applied after a plain `lineHeight` and would win.
   '&': { lineHeight: '[inherit]' },
@@ -124,7 +124,7 @@ const toggle = defineStyle({
 // Show/hide toggle for a section, flush with the content it folds.
 const disclosure = defineStyle({
   color: 'fg.muted',
-  px: '[0]',
+  px: '0',
 })
 
 // Ghost button for an action that deletes or ends something (revoke a key).
@@ -188,7 +188,7 @@ export const Button = defineRecipe({
     // Long labels wrap onto more lines instead of overflowing the button.
     multiline: {
       true: {
-        h: '[auto]',
+        h: 'auto',
         py: '1.5',
         whiteSpace: 'normal',
       },

@@ -362,7 +362,7 @@ export const electionComponents: ComponentsPartialDefinition = {
       const select = (
         <NativeSelect.Root
           size='sm'
-          width='[auto]'
+          width='auto'
           disabled={disabled}
           alignSelf={layout === 'grid' ? 'start' : undefined}
           mt={layout === 'grid' ? '2' : undefined}

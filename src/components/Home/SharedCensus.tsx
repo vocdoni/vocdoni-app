@@ -213,7 +213,7 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
             <ElectionTitle size='card' as='h2' />
             <ElectionStatusBadge position='absolute' top={1} right={1} />
             {hasVoted && (
-              <Text textStyle='body-sm' color='status.success.fg' position='absolute' bottom='[0]' right='1'>
+              <Text textStyle='body-sm' color='status.success.fg' position='absolute' bottom='0' right='1'>
                 {t('shared_census.voted', { defaultValue: 'You already voted' })}
               </Text>
             )}

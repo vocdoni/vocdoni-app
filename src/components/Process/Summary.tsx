@@ -126,7 +126,7 @@ const ParticipationCard = () => {
     <Card.Root>
       <Card.Body gap='6'>
         <Flex justify='space-between' align='start' gap='4' wrap='wrap'>
-          <Box flex='1' minW='[0]'>
+          <Box flex='1' minW='0'>
             <Heading as='h1' textStyle='display'>
               {getElectionTitle(election)}
             </Heading>
@@ -329,7 +329,7 @@ const CertifiedTech = () => {
             borderTopWidth={{ base: '[1px]', lg: '[0]' }}
             borderLeftWidth={{ lg: '[1px]' }}
             borderColor='surface.inverse.rule'
-            pt={{ base: '6', lg: '[0]' }}
+            pt={{ base: '6', lg: '0' }}
             pl={{ lg: '8' }}
             minW={{ lg: '60' }}
           >

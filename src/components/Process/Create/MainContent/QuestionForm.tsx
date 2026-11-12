@@ -84,7 +84,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
             </DragHandle>
           )}
 
-          <VStack flex='1' minW='[0]' align='stretch' gap='2'>
+          <VStack flex='1' minW='0' align='stretch' gap='2'>
             {/* Settings share the row with the question number, so the title and
                 description below keep the full width */}
             <Flex align='center' gap='2' flexWrap='wrap'>
@@ -95,7 +95,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                   total: questions.length,
                 })}
               </Text>
-              <HStack gap='2' ms='[auto]' flexWrap='wrap' justify='flex-end'>
+              <HStack gap='2' ms='auto' flexWrap='wrap' justify='flex-end'>
                 <QuestionSettings index={index} />
                 {questions.length > 1 && (
                   <IconButton

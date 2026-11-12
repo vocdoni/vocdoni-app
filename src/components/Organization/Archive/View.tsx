@@ -31,7 +31,7 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
     <Card.Root variant='outline' size='sm'>
       <Card.Body>
         <Flex justify='space-between' align='center' gap='4' flexWrap='wrap'>
-          <Box flex='1' minW='[0]'>
+          <Box flex='1' minW='0'>
             <Link asChild emphasis='medium'>
               <RouterAwareLink to={getPublicProcessPath({ id: election.id, language: publicLanguage })}>
                 <Text truncate>{title}</Text>

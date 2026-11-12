@@ -864,9 +864,9 @@ const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableCol
       <Button
         variant='plain'
         size='sm'
-        px='[0]'
-        h='[auto]'
-        minW='[0]'
+        px='0'
+        h='auto'
+        minW='0'
         fontWeight='[inherit]'
         color='[inherit]'
         gap='1'
@@ -874,7 +874,7 @@ const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableCol
         title={t('members.table.sort_by', { defaultValue: 'Sort by {{column}}', column: column.label })}
       >
         {column.label}
-        <Flex direction='column' aria-hidden gap='[0]' lineHeight='[0]' ms='0.5'>
+        <Flex direction='column' aria-hidden gap='0' lineHeight='[0]' ms='0.5'>
           <Icon as={ChevronUpIcon} boxSize='icon.sm' mb='[-5px]' {...sortCaretStyle(order === 'asc')} />
           <Icon as={ChevronDownIcon} boxSize='icon.sm' mt='[-5px]' {...sortCaretStyle(order === 'desc')} />
         </Flex>

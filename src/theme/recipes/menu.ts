@@ -21,7 +21,7 @@ const baseStyle = {
   },
 
   separator: {
-    m: '[0]',
+    m: '0',
   },
 } satisfies Partial<Record<string, SystemStyleObject>>
 

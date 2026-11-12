@@ -52,7 +52,7 @@ const editor: SystemStyleObject = {
   ),
   '& .lexical-paragraph': {
     textStyle: 'sm',
-    margin: '[0]',
+    margin: '0',
   },
 }
 

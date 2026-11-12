@@ -141,7 +141,7 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
       alignItems='center'
       background='transparent'
       py='3'
-      px={{ base: '3', lg: '[0]' }}
+      px={{ base: '3', lg: '0' }}
       gap='3'
       {...props}
     >

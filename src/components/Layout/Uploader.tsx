@@ -172,8 +172,8 @@ export const AvatarUploader = (props: FormControlProps) => {
             </AvatarRoot>
             <Flex
               position='absolute'
-              top='[0]'
-              left='[0]'
+              top='0'
+              left='0'
               w='full'
               h='full'
               align='center'
@@ -267,7 +267,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '[150px]'
             />
             {/* A new image dropped over the current one is uploading */}
             {isPending && (
-              <Flex position='absolute' inset='[0]' align='center' justify='center' bg='scrim.strong'>
+              <Flex position='absolute' inset='0' align='center' justify='center' bg='scrim.strong'>
                 <InlineLoader color='scrim.fg' />
               </Flex>
             )}

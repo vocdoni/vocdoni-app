@@ -624,7 +624,7 @@ const UserActions = ({ user }: UserActionsProps) => {
         <Menu.Trigger asChild>
           <IconButton
             loading={isLoading}
-            ml='[auto]'
+            ml='auto'
             variant='ghost'
             aria-label={t('team.actions.options', { defaultValue: 'Options' })}
             onClick={openMenu}

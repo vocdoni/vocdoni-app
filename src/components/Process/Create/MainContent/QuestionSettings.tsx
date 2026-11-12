@@ -22,7 +22,7 @@ export const QuestionSettings = ({ index }: { index: number }) => {
 
   return (
     <HStack gap='4' flexWrap='wrap' justifyContent='flex-end'>
-      <FormControl width='[auto]' display='flex' flexDir='row'>
+      <FormControl width='auto' display='flex' flexDir='row'>
         <Controller
           name={`questions.${index}.extendedInfo`}
           control={control}

@@ -32,7 +32,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             flex='1 1 67%'
             flexDirection={{ base: 'column', sm: 'row' }}
             justifyContent={{ sm: 'space-between', lg: 'space-between' }}
-            gap={{ base: '8', sm: '[0]' }}
+            gap={{ base: '8', sm: '0' }}
             mt='1'
             ml={{ xl: '10' }}
             w='full'
@@ -40,7 +40,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
             <Flex
               flexDirection={{ base: 'column', sm: 'row' }}
               justifyContent='space-between'
-              gap={{ base: '[0]', xl: '24' }}
+              gap={{ base: '0', xl: '24' }}
               w='full'
             >
               <Text fontWeight='bold' fontSize='lg' lineHeight='short' mb='4' display='none'>

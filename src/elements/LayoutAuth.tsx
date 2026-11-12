@@ -38,7 +38,7 @@ export const AuthLayout = ({ signInPath, signInRoute = signInPath, aside, footer
         <Box mb='6'>
           {title && <PageTitle mb='1'>{title}</PageTitle>}
           {subtitle && (
-            <PageSubtitle mt='[0]' mb='[0]'>
+            <PageSubtitle mt='0' mb='0'>
               {subtitle}
             </PageSubtitle>
           )}
@@ -55,7 +55,7 @@ export const AuthLayout = ({ signInPath, signInRoute = signInPath, aside, footer
         maxW={aside ? { base: 'md', md: 'content.narrow', lg: 'content.medium' } : 'md'}
         flexDir='column'
         gap='2'
-        my='[auto]'
+        my='auto'
       >
         <AuthLayoutHeader isSignin={pathname === signInPath} signInRoute={signInRoute} />
         {aside ? (
@@ -75,7 +75,7 @@ export const AuthLayout = ({ signInPath, signInRoute = signInPath, aside, footer
             <Flex
               p={{ base: '6', sm: '8', lg: '10' }}
               flex={{ base: '1 1 100%', md: '0 0 52%', lg: '0 0 46%' }}
-              minW='[0]'
+              minW='0'
               flexDir='column'
               justifyContent='center'
             >

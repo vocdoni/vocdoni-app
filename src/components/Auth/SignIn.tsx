@@ -150,7 +150,7 @@ const SignIn = ({
               placeholder={t('email_placeholder', { defaultValue: 'your@email.com' })}
               type='email'
             />
-            <Flex flexDir='column' gap='[0]'>
+            <Flex flexDir='column' gap='0'>
               <InputPassword
                 formValue='password'
                 label={t('password')}
