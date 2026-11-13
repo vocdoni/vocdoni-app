@@ -64,6 +64,8 @@ type PublicProcessPageData =
       id: string
       election: VotingProcessResponse
       organization: OrganizationData
+      /** When the server fetched the data (ms epoch), so the client can date it when the HTML comes from the SSR cache. */
+      fetchedAt: number
       meta: PublicMeta
     }
   | {
@@ -85,6 +87,8 @@ type PublicOrganizationPageData =
       address: string
       organization: OrganizationData
       electionsPage: ElectionsPageData
+      /** When the server fetched the data (ms epoch), so the client can date it when the HTML comes from the SSR cache. */
+      fetchedAt: number
       meta: PublicMeta
     }
   | {
@@ -380,6 +384,7 @@ export const loadOrganizationPageData = async ({
   alternates: PublicLanguageAlternate[]
 }): Promise<PublicOrganizationPageData> => {
   try {
+    const fetchedAt = Date.now()
     const organization = await client.organizations.get(address)
     // SAAS list pages are 1-based.
     const { processes, pagination } = await client.elections.list({ orgAddress: organization.address, page: 1 })
@@ -389,6 +394,7 @@ export const loadOrganizationPageData = async ({
       address,
       organization,
       electionsPage: { elections: processes, pagination } satisfies ElectionsPageData,
+      fetchedAt,
       meta: buildOrganizationMeta({ organization, canonicalUrl, language, alternates }),
     }
   } catch (error) {
@@ -451,6 +457,7 @@ export const loadProcessPageData = async ({
     }
   }
 
+  const fetchedAt = Date.now()
   const election = await client.elections.get(id)
   // Process reads return orgAddress unprefixed; the organization endpoint wants 0x.
   const organization = await client.organizations.get(ensureAddressPrefix(election.orgAddress))
@@ -460,6 +467,7 @@ export const loadProcessPageData = async ({
     id,
     election,
     organization,
+    fetchedAt,
     meta: buildProcessMeta({ election, organization, canonicalUrl, language, alternates }),
   }
 }

@@ -91,6 +91,7 @@ describe('loadOrganizationPageData', () => {
     if (pageData.era !== 'saas') throw new Error('expected saas era')
     expect(pageData.organization).toBe(organization)
     expect(pageData.electionsPage).toEqual({ elections: list.processes, pagination: list.pagination })
+    expect(pageData.fetchedAt).toEqual(expect.any(Number))
     expect(pageData.meta.canonicalUrl).toBe('https://app.example.org/organization/0xabc')
   })
 
@@ -172,6 +173,7 @@ describe('loadProcessPageData', () => {
     if (pageData.era !== 'saas') throw new Error('expected saas era')
     expect(pageData.election).toBe(election)
     expect(pageData.organization).toBe(organization)
+    expect(pageData.fetchedAt).toEqual(expect.any(Number))
     expect(pageData.meta.title).toContain('Board election 2026')
   })
 

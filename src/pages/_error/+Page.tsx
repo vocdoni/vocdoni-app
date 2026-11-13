@@ -1,7 +1,7 @@
 import { usePageContext } from 'vike-react/usePageContext'
 import { ErrorView } from '~elements/Error'
 import PublicLayout from '~elements/PublicLayout'
-import { AppProviders } from '~src/Providers'
+import { AppProviders } from '~src/AppProviders'
 
 const ErrorPage = () => {
   const pageContext = usePageContext()
