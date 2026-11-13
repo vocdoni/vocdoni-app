@@ -14,7 +14,7 @@ import { Routes } from './routes'
 
 /**
  * Gates the integrators app based on the *currently selected* organization (the one pointed at by
- * signerAddress), mirroring OrganizationTypeGuard on /admin. A user can own both integrator and
+ * signerAddress), mirroring PrivateAppGuard on /admin. A user can own both integrator and
  * regular organizations, so "owns any integrator org" is not enough — routing must follow the
  * active selection, otherwise a non-integrator org selected while the user happens to also own an
  * integrator one would still be trapped in /integrators.

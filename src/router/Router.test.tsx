@@ -63,3 +63,34 @@ describe('RoutesProvider', () => {
     expect(dispose).toHaveBeenCalledTimes(1)
   })
 })
+
+describe('RoutesProvider route chunks', () => {
+  beforeEach(() => {
+    createBrowserRouter.mockClear()
+  })
+
+  it('starts loading the matched routes code when the router is created, before any guard renders', async () => {
+    const preloadLayout = vi.fn(() => Promise.resolve())
+    const preloadPage = vi.fn(() => Promise.resolve())
+    createBrowserRouter.mockImplementationOnce(
+      () =>
+        ({
+          id: 'router-preload',
+          dispose,
+          state: {
+            matches: [
+              { route: { handle: { preload: preloadLayout } } },
+              { route: {} },
+              { route: { handle: { preload: preloadPage } } },
+            ],
+          },
+        }) as never
+    )
+    const { RoutesProvider } = await import('./Router')
+
+    render(<RoutesProvider basename='/en' />)
+
+    expect(preloadLayout).toHaveBeenCalledTimes(1)
+    expect(preloadPage).toHaveBeenCalledTimes(1)
+  })
+})
