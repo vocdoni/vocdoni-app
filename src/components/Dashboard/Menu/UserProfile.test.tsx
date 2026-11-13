@@ -18,10 +18,6 @@ vi.mock('./OrganizationSwitcher', () => ({
   OrganizationSwitcher: () => <div>Org Switcher</div>,
 }))
 
-vi.mock('~components/Layout/ColorModeSwitcher', () => ({
-  ThemeToggleGroup: () => <div>Theme</div>,
-}))
-
 vi.mock('~components/Navbar/LanguagesList', () => ({
   LanguageListDashboard: () => <div>Languages</div>,
 }))

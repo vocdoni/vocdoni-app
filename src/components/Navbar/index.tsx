@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
-import { ColorModeSwitcher } from '~components/Layout/ColorModeSwitcher'
 import Logo from '~components/Layout/Logo'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import type { HeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
@@ -25,7 +24,6 @@ const Navbar = ({
     <Flex alignItems='center' gap='2' justifySelf='end'>
       {showDashboardButton && <DashboardButton />}
       <LanguagesMenu publicLanguageLinks={publicLanguageLinks} />
-      <ColorModeSwitcher />
     </Flex>
   </Flex>
 )
