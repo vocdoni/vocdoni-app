@@ -44,7 +44,10 @@ export const RoutedTabs = ({ tabs, value, outletContext }: RoutedTabsProps) => {
           </Tabs.Trigger>
         ))}
       </Tabs.List>
-      <Outlet context={outletContext} />
+      {/* The panel the selected trigger controls (aria-controls); the recipe's padding is cancelled. */}
+      <Tabs.Content value={activeValue ?? ''} p='0'>
+        <Outlet context={outletContext} />
+      </Tabs.Content>
     </Tabs.Root>
   )
 }

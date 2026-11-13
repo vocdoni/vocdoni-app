@@ -312,6 +312,9 @@
       "mixed": "Mixed"
     }
   },
+  "drag_handle": {
+    "label": "Drag to reorder"
+  },
   "drawer": {
     "close": "Close drawer"
   },
@@ -827,6 +830,7 @@
       "sort_by": "Sort by {{column}}",
       "sorted_by_asc": "Sorted by {{column}}, ascending",
       "sorted_by_desc": "Sorted by {{column}}, descending",
+      "this_member": "this member",
       "toggle_column": "Toggle column {{column}}"
     }
   },
@@ -1195,11 +1199,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Cancel process",
-    "continue": "Continue",
-    "end": "End voting",
-    "manage": "Manage in dashboard",
-    "pause": "Pause"
+    "manage": "Manage in dashboard"
   },
   "process_context": {
     "clone_as_draft": "Clone as draft",
@@ -1513,6 +1513,7 @@
       "vote": "Select the election to open a new window with the voting instructions. Once your vote is submitted, close the window to return here."
     },
     "section_title": "Elections",
+    "stream_title": "Live stream",
     "voted": "You already voted"
   },
   "signin": "Log In",
@@ -1725,6 +1726,9 @@
     "success": "Email verified successfully",
     "verifying_subtitle": "Await until we verify your email address. You will be redirect on success.",
     "verifying_title": "Verifying {{ email }}"
+  },
+  "video": {
+    "title": "Video"
   },
   "view_in_explorer": "View in explorer",
   "vocdoni_logo": "Vocdoni logo",

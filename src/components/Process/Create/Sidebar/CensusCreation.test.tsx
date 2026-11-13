@@ -117,6 +117,12 @@ describe('GroupSelect', () => {
     )
   })
 
+  it('names the group combobox through its visible label', () => {
+    render(<GroupSelectHarness />)
+
+    expect(screen.getByRole('combobox', { name: /Select a group of members to create the census/ })).toBeInTheDocument()
+  })
+
   it('keeps voter authentication when the same group is picked again', async () => {
     render(<GroupSelectHarness />)
 

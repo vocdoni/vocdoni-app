@@ -48,4 +48,13 @@ describe('Editor', () => {
 
     await waitFor(() => expect(textbox).toHaveTextContent('Updated content'))
   })
+
+  it('names the textbox after its label, falling back to the placeholder', () => {
+    const { unmount } = render(<Editor ariaLabel='Description' placeholder='Add a description...' />)
+    expect(screen.getByRole('textbox', { name: 'Description' })).toBeInTheDocument()
+    unmount()
+
+    render(<Editor placeholder='Add a description...' />)
+    expect(screen.getByRole('textbox', { name: 'Add a description...' })).toBeInTheDocument()
+  })
 })

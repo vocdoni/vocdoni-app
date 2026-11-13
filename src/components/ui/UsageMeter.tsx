@@ -43,8 +43,9 @@ export const UsageMeter = ({ label, value, max, unit, icon, tooltip, color, soft
   const percentage = hasLimit ? Math.min((value / max) * 100, 100) : 0
 
   return (
-    <Stat.Root gap='2'>
-      <Stat.Label>
+    // Plain elements: a <dl> may only hold dt/dd, and the bar and children are neither.
+    <Stat.Root as='div' gap='2'>
+      <Stat.Label as='div'>
         {icon && <Icon as={icon} color={color ? `${color}.icon` : undefined} />}
         {label}
         {tooltip && (
@@ -55,7 +56,7 @@ export const UsageMeter = ({ label, value, max, unit, icon, tooltip, color, soft
           </Tooltip>
         )}
       </Stat.Label>
-      <Stat.ValueText>
+      <Stat.ValueText as='div'>
         {quantity(value)}
         {unit && <Stat.ValueUnit>{unit}</Stat.ValueUnit>}
       </Stat.ValueText>

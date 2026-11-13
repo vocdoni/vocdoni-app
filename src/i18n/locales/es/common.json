@@ -316,6 +316,9 @@
       "mixed": "Mixto"
     }
   },
+  "drag_handle": {
+    "label": "Arrastra para reordenar"
+  },
   "drawer": {
     "close": "Cerrar panel"
   },
@@ -848,6 +851,7 @@
       "sort_by": "Ordenar por {{column}}",
       "sorted_by_asc": "Ordenado por {{column}}, ascendente",
       "sorted_by_desc": "Ordenado por {{column}}, descendente",
+      "this_member": "este miembro",
       "toggle_column": "Alternar columna {{column}}"
     }
   },
@@ -1219,11 +1223,7 @@
     }
   },
   "process_actions": {
-    "cancel": "Cancelar proceso",
-    "continue": "Continuar",
-    "end": "Finalizar votación",
-    "manage": "Gestionar en el panel",
-    "pause": "Pausar"
+    "manage": "Gestionar en el panel"
   },
   "process_context": {
     "clone_as_draft": "Clonar como borrador",
@@ -1539,6 +1539,7 @@
       "vote": "Selecciona la votación para abrir una nueva ventana con las instrucciones de votación. Una vez que hayas enviado tu voto, cierra la ventana para volver aquí."
     },
     "section_title": "Elecciones",
+    "stream_title": "Transmisión en directo",
     "voted": "Ya has votado"
   },
   "signin": "Iniciar sesión",
@@ -1752,6 +1753,9 @@
     "success": "Correo electrónico verificado con éxito",
     "verifying_subtitle": "Espera mientras verificamos tu dirección de correo electrónico. Serás redirigido si la verificación tiene éxito.",
     "verifying_title": "Verificando {{ email }}"
+  },
+  "video": {
+    "title": "Vídeo"
   },
   "view_in_explorer": "Ver en el explorador",
   "vocdoni_logo": "Logotipo de Vocdoni",

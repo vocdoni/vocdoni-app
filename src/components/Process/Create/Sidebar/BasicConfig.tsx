@@ -157,6 +157,7 @@ export const BasicConfig = () => {
               <Box flex='1'>
                 <Input
                   type='time'
+                  aria-label={t('start_time', 'Start time')}
                   {...register('startTime', {
                     required,
                     deps: ['endDate', 'endTime'],
@@ -193,6 +194,7 @@ export const BasicConfig = () => {
           <Box flex='1'>
             <Input
               type='time'
+              aria-label={t('end_time', 'End time')}
               {...register('endTime', {
                 required,
                 deps: ['endDate'],

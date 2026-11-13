@@ -5,6 +5,7 @@ import SimpleLayout from '~elements/SimpleLayout'
 import type { AppEnv } from '~src/app-env-build'
 import { act, render, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
+import { VideoPlayer } from '~components/ui/VideoPlayer'
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => getAuthMock(),
@@ -69,6 +70,8 @@ vi.mock('react-i18next', async (importOriginal) => {
     }),
   }
 })
+
+vi.mock('~components/ui/VideoPlayer', () => ({ VideoPlayer: vi.fn(() => null) }))
 
 vi.mock('~components/Process/ManageProcessLink', () => ({
   ManageProcessLink: () => <div>ManageProcessLink</div>,
@@ -199,6 +202,19 @@ describe('SharedCensus', () => {
     expect(editorValues[0]).toEqual({ value: 'Siempre ES\n\nSolo ES', type: 'string' })
     expect(getByTestId('shared-census-pretext')).toBeInTheDocument()
     expect(getByText('Connect')).toBeInTheDocument()
+  })
+
+  it('titles the stream generically, not after the election it is shown with', async () => {
+    const { default: SharedCensus } = await import('./SharedCensus')
+    appEnvOverride = { ...appEnvOverride, STREAM_URL: 'https://example.test/live' }
+    states.election = { ...getDefaultElectionState(), connected: true }
+
+    await renderSharedCensus(<SharedCensus />)
+    expect(vi.mocked(VideoPlayer).mock.lastCall?.[0]).toMatchObject({ title: 'Live stream' })
+
+    states.election.election = { ...states.election.election, title: { default: 'Board election' } } as any
+    await renderSharedCensus(<SharedCensus />)
+    expect(vi.mocked(VideoPlayer).mock.lastCall?.[0]).toMatchObject({ title: 'Live stream' })
   })
 
   it('renders always-visible and connected text when connected/admin', async () => {

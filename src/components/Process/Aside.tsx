@@ -40,6 +40,7 @@ const ProcessAside = () => {
             two renders at a time, so the id stays unique. */}
         {showVoters && !showVotes && (
           <Stat.Root
+            as='div'
             flexDirection='row'
             justifyContent='center'
             alignItems='baseline'
@@ -49,7 +50,7 @@ const ProcessAside = () => {
             <Trans
               i18nKey='aside.votes'
               components={{
-                span: <Stat.ValueText />,
+                span: <Stat.ValueText as='span' />,
                 text: <Stat.ValueUnit />,
               }}
               count={votes}
@@ -59,11 +60,11 @@ const ProcessAside = () => {
 
         {showVotes && (
           <Flex direction='column' justifyContent='center' alignItems='center' gap='2' data-testid='process-vote-count'>
-            <Stat.Root flexDirection='row' justifyContent='center' alignItems='baseline' gap='2'>
+            <Stat.Root as='div' flexDirection='row' justifyContent='center' alignItems='baseline' gap='2'>
               <Trans
                 i18nKey='aside.votes_weight'
                 components={{
-                  span: <Stat.ValueText />,
+                  span: <Stat.ValueText as='span' />,
                   text: <Stat.ValueUnit />,
                 }}
                 count={votes}

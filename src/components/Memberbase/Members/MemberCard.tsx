@@ -4,15 +4,13 @@ import { useTranslation } from 'react-i18next'
 import { Member } from '~src/queries/members'
 import { useTable } from '../TableProvider'
 import { maskIfNeeded } from './maskIfNeeded'
+import { memberAlias } from './memberAlias'
 
 type MemberCardProps = {
   member: Member
   actions?: ReactNode
   selectable?: boolean
 }
-
-const memberAlias = (member: Member) =>
-  [member.name, member.surname].filter(Boolean).join(' ') || member.email || member.memberNumber
 
 const MemberCard = ({ member, actions, selectable = true }: MemberCardProps) => {
   const { t } = useTranslation()

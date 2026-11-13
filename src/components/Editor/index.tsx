@@ -30,6 +30,8 @@ type EditorProps = {
   maxLength?: number
   onChange?: (value: string) => void
   placeholder?: string
+  /** Accessible name of the textbox; falls back to the placeholder. */
+  ariaLabel?: string
   defaultValue?: string
   value?: string
   variant?: TextareaProps['variant']
@@ -80,6 +82,7 @@ const MarkdownEditor = (props: EditorProps) => {
             <Box ref={setFloatingAnchorElem} w='full' gridArea='1 / 1'>
               <ChakraContentEditable
                 aria-multiline='true'
+                aria-label={props.ariaLabel ?? props.placeholder}
                 overflow='auto'
                 role='textbox'
                 minH='[30px]'
