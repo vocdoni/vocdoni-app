@@ -85,6 +85,29 @@ describe('buildAppEnv', () => {
     vi.restoreAllMocks()
   })
 
+  // The first language is the default and fallback one: English unless LANGUAGES says otherwise.
+  it('offers every language with English first when LANGUAGES is unset or has no valid code', () => {
+    expect(Object.keys(buildAppEnv({}).LANGUAGES)).toEqual([
+      'en',
+      'ca',
+      'de',
+      'el',
+      'es',
+      'eu',
+      'fr',
+      'it',
+      'pt',
+      'pt-br',
+    ])
+    expect(buildAppEnv({ SHARED_CENSUS_POST_TEXT: '{"en":"hello"}' }).SHARED_CENSUS_POST_TEXT).toEqual({ en: 'hello' })
+
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    expect(Object.keys(buildAppEnv({ LANGUAGES: 'xx' }).LANGUAGES)[0]).toBe('en')
+    vi.restoreAllMocks()
+
+    expect(Object.keys(buildAppEnv({ LANGUAGES: 'es,ca' }).LANGUAGES)).toEqual(['es', 'ca'])
+  })
+
   it('normalizes PRIMARY_COLOR and drops anything that is not a hex color', () => {
     expect(buildAppEnv({}).PRIMARY_COLOR).toBeUndefined()
     expect(buildAppEnv({ PRIMARY_COLOR: '' }).PRIMARY_COLOR).toBeUndefined()

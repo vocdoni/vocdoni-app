@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ComponentsProvider, ConfirmProvider } from '@vocdoni/react-components'
 import { AuthProvider as SdkAuthProvider } from '@vocdoni/react-providers'
 import { setDefaultOptions } from 'date-fns'
-import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 import { usePageContext } from 'vike-react/usePageContext'
 import { WagmiProvider } from 'wagmi'
@@ -27,7 +27,7 @@ import { uiScaffoldComponents } from '~theme/react-components'
 import { AppEnvProvider, normalizeLanguages, resolveAppEnv, useAppEnv } from './app-env'
 import { configureApiBaseUrl } from './components/Auth/api'
 import { wagmiConfig } from './constants/wagmi'
-import { createPageI18nInstance, getBaseI18n } from './i18n'
+import { createPageI18nInstance, getBaseI18n, loadLanguages } from './i18n'
 import { datesLocale } from './i18n/locales'
 import { RoutesProvider } from './router/Router'
 import { Theme } from './theme/Theme'
@@ -64,6 +64,16 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
 
   const [language, setLanguageState] = useState(initialLanguage)
 
+  // Fetch a language before switching to it, so the copy, router basename and document
+  // title change together. Only the latest request wins when switches overlap.
+  const requestedLanguage = useRef(initialLanguage)
+  const switchLanguage = useCallback((next: string) => {
+    requestedLanguage.current = next
+    void loadLanguages([next]).then(() => {
+      if (requestedLanguage.current === next) setLanguageState(next)
+    })
+  }, [])
+
   // In-place language switches (pushState, no Vike navigation) never re-run the
   // +title/+lang hooks, so keep the document metadata in the active language ourselves.
   useEffect(() => {
@@ -79,11 +89,11 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
         window.location.pathname.split('/')[1] ?? '',
         supportedLanguages
       )
-      if (urlLanguage) setLanguageState(urlLanguage)
+      if (urlLanguage) switchLanguage(urlLanguage)
     }
     window.addEventListener('popstate', sync)
     return () => window.removeEventListener('popstate', sync)
-  }, [supportedLanguages])
+  }, [supportedLanguages, switchLanguage])
 
   const setLanguage = useCallback(
     (next: string) => {
@@ -117,9 +127,9 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
       })
       window.history.pushState(null, '', `${target}${window.location.search}${window.location.hash}`)
 
-      setLanguageState(normalized)
+      switchLanguage(normalized)
     },
-    [supportedLanguages]
+    [supportedLanguages, switchLanguage]
   )
 
   const routingValue = useMemo(() => ({ language, setLanguage }), [language, setLanguage])

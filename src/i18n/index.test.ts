@@ -24,7 +24,8 @@ describe('createPageI18nInstance', () => {
   })
 
   it('translates the SaaS READY status in every locale', async () => {
-    const { createPageI18nInstance } = await import('./index')
+    const { createPageI18nInstance, loadLanguages } = await import('./index')
+    await loadLanguages(['es', 'ca'])
 
     // `ready` is the SaaS wire name for a running process; the badge renders
     // `statuses.ready` when the backend emits it, so it must resolve everywhere.
@@ -49,5 +50,78 @@ describe('createPageI18nInstance', () => {
     expect(t('question_types.multichoice_desc', { ns: 'react-components', selected: 2, maxcount: 3 })).toBe(
       'You selected 2 options from a maximum of 3'
     )
+  })
+})
+
+describe('on-demand languages', () => {
+  // Each test gets a fresh module, so the loaded-language cache starts with English only.
+  beforeEach(() => {
+    vi.resetModules()
+  })
+
+  it('ships only English until another language is asked for', async () => {
+    const { createPageI18nInstance, loadLanguages } = await import('./index')
+    const { getLoadedLanguages, datesLocale } = await import('./locales')
+
+    createPageI18nInstance('en')
+    expect(getLoadedLanguages()).toEqual(['en'])
+    expect(datesLocale('eu')).toBeUndefined()
+
+    await loadLanguages(['eu'])
+    expect(getLoadedLanguages()).toEqual(['en', 'eu'])
+    expect(datesLocale('eu')?.code).toBe('eu')
+  })
+
+  it('renders a loaded language synchronously, for pages and imperative callers', async () => {
+    const { createPageI18nInstance, getBaseI18n, loadLanguages } = await import('./index')
+    await loadLanguages(['ca'])
+
+    expect(createPageI18nInstance('ca').t('menu.login')).toBe('Iniciar sessió')
+    expect(getBaseI18n().t('menu.login', { lng: 'ca' })).toBe('Iniciar sessió')
+  })
+
+  it('fetches a language on switch and only switches once it is there', async () => {
+    const { createPageI18nInstance, loadLanguages } = await import('./index')
+    await loadLanguages(['ca'])
+    const instance = createPageI18nInstance('ca')
+
+    const switching = instance.changeLanguage('es')
+    expect(instance.language).toBe('ca')
+    await switching
+
+    expect(instance.language).toBe('es')
+    expect(instance.t('menu.login')).toBe('Iniciar sesión')
+  })
+
+  it('falls back to English for a key a lazily loaded language lacks', async () => {
+    const { createPageI18nInstance } = await import('./index')
+    const instance = createPageI18nInstance('en')
+    // Built at runtime, so `pnpm translations` does not extract it into the locale files.
+    const englishOnlyKey = ['test', 'english_only'].join('.')
+    instance.addResource('en', 'common', englishOnlyKey, 'Only in English')
+
+    await instance.changeLanguage('eu')
+
+    expect(instance.t('menu.login')).toBe('Hasi saioa')
+    expect(instance.t(englishOnlyKey)).toBe('Only in English')
+  })
+
+  it('maps regional codes to their bundle and ignores unknown ones', async () => {
+    const { loadLanguages } = await import('./index')
+    const { getLoadedLanguages } = await import('./locales')
+
+    await loadLanguages(['pt-BR', 'es-AR', 'xx', undefined])
+
+    expect(getLoadedLanguages().sort()).toEqual(['en', 'es', 'pt', 'pt-br'])
+  })
+
+  // i18next resolves pt-br through pt before the fallback and waits for the whole chain.
+  it('loads the base language of a regional one, so it renders without waiting', async () => {
+    const { createPageI18nInstance, loadLanguages } = await import('./index')
+    await loadLanguages(['pt-br'])
+
+    const instance = createPageI18nInstance('pt-br')
+    expect(instance.isInitialized).toBe(true)
+    expect(instance.hasLoadedNamespace('common')).toBe(true)
   })
 })

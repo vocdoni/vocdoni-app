@@ -1,6 +1,16 @@
 import { reactComponentsNamespace, reactComponentsResources } from '@vocdoni/react-components'
 import { baseLanguages } from '../languages'
-import { reactComponentsTranslations, translations } from './index'
+
+// Read the files directly: the app loads them per language, on demand.
+const files = import.meta.glob<Record<string, unknown>>('./*/*.json', { eager: true, import: 'default' })
+const byNamespace = (ns: string) =>
+  Object.fromEntries(
+    Object.entries(files)
+      .filter(([path]) => path.endsWith(`/${ns}.json`))
+      .map(([path, resources]) => [path.split('/')[1], resources])
+  )
+const translations = byNamespace('common')
+const reactComponentsTranslations = byNamespace('react-components')
 
 // i18next runs with `returnEmptyString: false` (and the default `returnNull: false`), so an empty
 // or null value counts as missing and the fallback language is rendered instead. A key that is
@@ -32,8 +42,7 @@ const englishKeys: Record<string, string[]> = {
     ),
   ],
 }
-// Every supported language, not just the ones wired into `./index`: one missing there is served
-// as `{}` at runtime, so every key falls back to English.
+// Every supported language, so one without files here fails instead of being skipped.
 const locales = Object.keys(baseLanguages)
 const cases = Object.keys(namespaces).flatMap((ns) => locales.map((lang): [string, string] => [lang, ns]))
 

@@ -1,15 +1,22 @@
 import { reactComponentsNamespace, reactComponentsResources } from '@vocdoni/react-components'
-import { format, formatDistance, Locale } from 'date-fns'
-import i18next, { i18n as I18nInstance } from 'i18next'
+import { format, formatDistance } from 'date-fns'
+import i18next, { BackendModule, i18n as I18nInstance, Resource } from 'i18next'
 import BrowserLanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 import { ucfirst } from '~utils/strings'
 import { baseLanguages } from './languages'
-import { dateLocales, reactComponentsTranslations, translations } from './locales'
+import {
+  datesLocale,
+  getLoadedLanguages,
+  getLoadedLocaleBundle,
+  LocaleBundle,
+  loadLocaleBundle,
+  toBundleLanguage,
+} from './locales'
 
-// Translation resources are bundled for every supported language regardless of
-// the runtime LANGUAGES config; the runtime config only restricts which
-// languages are offered and which is the fallback (see LanguageOptions below).
+// Each language is fetched on demand (English is always bundled as the fallback).
+// The runtime LANGUAGES config decides which languages are offered and which is the
+// fallback (see LanguageOptions below); the loader serves any of them.
 const allLanguages = Object.keys(baseLanguages)
 const DEFAULT_FALLBACK_LANGUAGE = 'en'
 const defaultNamespaces = ['common', reactComponentsNamespace]
@@ -53,30 +60,48 @@ const deepMergeResources = (base: Record<string, any>, override: Record<string, 
   return merged
 }
 
-const resources = Object.fromEntries(
-  allLanguages.map((lang) => {
-    const componentResources = reactComponentsResources[lang as keyof typeof reactComponentsResources]
+const resourcesCache: Record<string, Record<string, Record<string, any>>> = {}
 
-    return [
-      lang,
-      {
-        common: translations[lang] ?? {},
-        [reactComponentsNamespace]: deepMergeResources(
-          componentResources?.[reactComponentsNamespace] ?? {},
-          reactComponentsTranslations[lang] ?? {}
-        ),
-      },
-    ]
-  })
-)
+const toResources = (lang: string, bundle: LocaleBundle) => {
+  if (!resourcesCache[lang]) {
+    const componentResources = reactComponentsResources[lang as keyof typeof reactComponentsResources]
+    resourcesCache[lang] = {
+      common: bundle.common,
+      [reactComponentsNamespace]: deepMergeResources(
+        componentResources?.[reactComponentsNamespace] ?? {},
+        bundle.reactComponents
+      ),
+    }
+  }
+  return resourcesCache[lang]
+}
+
+// Seeds a new instance with every language loaded so far, so a page created after
+// loadLanguages() renders (and hydrates) synchronously. Fresh outer objects, because
+// i18next writes into the resources object it is given.
+const loadedResources = (): Resource =>
+  Object.fromEntries(getLoadedLanguages().map((lang) => [lang, { ...toResources(lang, getLoadedLocaleBundle(lang)) }]))
+
+// Lets i18next fetch a language it does not have yet, e.g. on an in-place switch:
+// changeLanguage waits for it before switching, so no key is ever shown.
+const localeBackend: BackendModule = {
+  type: 'backend',
+  init: () => {},
+  read: (language, namespace, callback) => {
+    const lang = toBundleLanguage(language)
+    if (!lang) return callback(null, {})
+
+    loadLocaleBundle(lang).then(
+      (bundle) => callback(null, bundle ? (toResources(lang, bundle)[namespace] ?? {}) : {}),
+      (error) => callback(error, false)
+    )
+  },
+}
 
 const registerFormatters = (instance: I18nInstance) => {
   instance.services.formatter?.add('relative', (value: any, lng: string | undefined, options: any) => {
-    const opts: { locale?: Locale } = {}
+    const opts = { locale: datesLocale(lng) }
     const now = new Date()
-    if (lng && lng !== 'en') {
-      opts.locale = dateLocales[lng]
-    }
 
     const relative = formatDistance(now, value, opts)
 
@@ -90,19 +115,13 @@ const registerFormatters = (instance: I18nInstance) => {
   })
 
   instance.services.formatter?.add('duration', (value: any, lng: string | undefined) => {
-    const opts: { locale?: Locale } = {}
-    if (lng && lng !== 'en') {
-      opts.locale = dateLocales[lng]
-    }
+    const opts = { locale: datesLocale(lng) }
 
     return formatDistance(value.begin, value.end, opts)
   })
 
   instance.services.formatter?.add('format', (value: any, lng: string | undefined, options: any) => {
-    const opts: { locale?: Locale } = {}
-    if (lng && lng !== 'en') {
-      opts.locale = dateLocales[lng]
-    }
+    const opts = { locale: datesLocale(lng) }
 
     return format(value, options.format, opts)
   })
@@ -129,7 +148,9 @@ const getI18nOptions = ({
   debug: shouldEnableI18nDebug({ isDev: import.meta.env.DEV, isTestEnv, isBrowser }),
   ns: defaultNamespaces,
   defaultNS: 'common',
-  resources,
+  resources: loadedResources(),
+  // Keeps the backend for the languages missing from `resources`.
+  partialBundledLanguages: true,
   showSupportNotice: false,
   interpolation: {
     escapeValue: false,
@@ -153,7 +174,7 @@ const initializeInstance = ({
     instance.use(BrowserLanguageDetector)
   }
 
-  instance.use(initReactI18next)
+  instance.use(localeBackend).use(initReactI18next)
   instance.init(
     getI18nOptions({
       language,
@@ -232,6 +253,43 @@ export const createPageI18nInstance = (language: string, languageOptions?: Langu
   })
 
   return instance
+}
+
+/**
+ * Fetches these languages and adds them to the base instance, which imperative
+ * callers (document titles, error messages) translate through. Pages created
+ * afterwards start with them. A failed fetch is logged and the language falls back.
+ */
+export const loadLanguages = async (languages: (string | undefined)[]) => {
+  const base = getBaseI18n()
+  const languageUtils = base.services?.languageUtils
+  // i18next waits for the whole chain (pt-br, then pt, then the fallback) before it
+  // renders, so load the chain it resolves rather than the requested code alone.
+  const chain = (lang: string) => (languageUtils ? languageUtils.toResolveHierarchy(lang) : [lang])
+  const codes = [
+    ...new Set(
+      languages
+        .map(toBundleLanguage)
+        .filter((lang): lang is string => Boolean(lang))
+        .flatMap(chain)
+        .map(toBundleLanguage)
+        .filter((lang): lang is string => Boolean(lang))
+    ),
+  ]
+
+  await Promise.all(
+    codes.map(async (lang) => {
+      try {
+        const bundle = await loadLocaleBundle(lang)
+        if (!bundle) return
+        for (const [namespace, resources] of Object.entries(toResources(lang, bundle))) {
+          if (!base.hasResourceBundle(lang, namespace)) base.addResourceBundle(lang, namespace, resources)
+        }
+      } catch (error) {
+        console.error(`i18n: could not load the "${lang}" translations`, error)
+      }
+    })
+  )
 }
 
 export default getBaseI18n()
