@@ -37,7 +37,13 @@ describe('vike page config', () => {
     expect(config).toMatchObject({
       htmlAttributes: { translate: 'no', class: 'notranslate' },
       // Chrome's whole-page translation offer keys off the meta tag, not the attributes.
-      headHtmlBegin: '<meta name="google" content="notranslate" />',
+      headHtmlBegin: expect.stringContaining('<meta name="google" content="notranslate" />'),
     })
+  })
+
+  it('stamps every page with the build commit meta tag', async () => {
+    const { default: config } = await import('./+config')
+
+    expect(config.headHtmlBegin).toMatch(/^<meta name="build-commit" content="[0-9a-zA-Z._-]+" \/>/)
   })
 })

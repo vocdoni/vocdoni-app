@@ -8,6 +8,8 @@ RUN corepack enable && corepack prepare pnpm@10.16.1 --activate
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
 COPY . .
+# The deploy passes COMMIT_SHA as a build arg, since .git is dockerignored and git cannot resolve the sha here.
+ARG COMMIT_SHA
 RUN pnpm prepare && pnpm build && pnpm prune --prod --ignore-scripts
 
 FROM node:22-slim AS runner
