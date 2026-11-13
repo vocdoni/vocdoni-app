@@ -4,7 +4,13 @@ import { createAppSystem, system } from './system'
 
 const BRANDED = createAppSystem('#1a73e8')
 const exists = (sys: typeof system, path: string) => sys.tokens.getByName(`colors.${path}`) !== undefined
-const SCALE = { success: 'green', warning: 'orange', danger: 'red', info: 'blue' }
+const SCALE = { success: 'green', warning: 'orange', danger: 'red', info: 'gray' }
+// Fil's light-mode values for the slots it names; every other slot, and all of dark, is the raw scale's.
+const FIL_LIGHT: Record<string, Record<string, string>> = {
+  success: { solid: '#30ad51', fg: '#0b7636', subtle: '#f0faf3' },
+  warning: { solid: '#875500', contrast: '#ffffff', fg: '#875500', subtle: '#fff8eb' },
+  danger: { solid: '#ca2a30', contrast: '#ffffff', fg: '#ca2a30', subtle: '#fff0f0' },
+}
 const PALETTES = Object.keys(SCALE)
 
 // Follow `{colors.x}` references down to literal values, per colour mode.
@@ -33,12 +39,13 @@ describe('status palettes', () => {
     }
   })
 
-  it.each(PALETTES)('resolves %s to the same colours as its raw scale', (p) => {
+  it.each(PALETTES)('resolves %s to its raw scale, except the slots Fil sets in light mode', (p) => {
     for (const slot of ['solid', 'fg', 'subtle', 'muted', 'emphasized', 'focusRing', 'contrast', 'border', '500']) {
       for (const mode of ['_light', '_dark']) {
         const got = resolve(`${p}.${slot}`, mode)
         expect(got, `${p}.${slot} ${mode}`).not.toBe('undefined')
-        expect(got, `${p}.${slot} ${mode}`).toBe(resolve(`${SCALE[p]}.${slot}`, mode))
+        const fil = mode === '_light' ? FIL_LIGHT[p]?.[slot] : undefined
+        expect(got, `${p}.${slot} ${mode}`).toBe(fil ?? resolve(`${SCALE[p]}.${slot}`, mode))
       }
     }
   })
@@ -59,12 +66,15 @@ describe('status palettes', () => {
       expect(resolve(`status.${tone}.fg`, mode), `fg ${mode}`).not.toBe('undefined')
       expect(resolve(`status.${tone}.fg`, mode), `fg ${mode}`).toBe(resolve(`fg.${role}`, mode))
       expect(resolve(`status.${tone}.bg`, mode), `bg ${mode}`).toBe(resolve(`bg.${role}`, mode))
-      expect(resolve(`status.${tone}.border`, mode), `border ${mode}`).toBe(resolve(`border.${role}`, mode))
+      // `info` is neutral now, so its border is the gray palette's, not Chakra's blue info border.
+      if (tone !== 'info') {
+        expect(resolve(`status.${tone}.border`, mode), `border ${mode}`).toBe(resolve(`border.${role}`, mode))
+      }
     }
   })
 
-  it('keeps the danger action text at red.600 in light mode and red.400 in dark mode', () => {
-    expect(resolve('danger.action', '_light')).toBe(resolve('red.600', '_light'))
+  it('keeps the danger action text at Fil red in light mode and red.400 in dark mode', () => {
+    expect(resolve('danger.action', '_light')).toBe('#ca2a30')
     expect(resolve('danger.action', '_dark')).toBe(resolve('red.400', '_dark'))
     expect(resolve('danger.action', '_dark')).not.toBe(resolve('danger.action', '_light'))
   })

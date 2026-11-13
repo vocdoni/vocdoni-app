@@ -37,8 +37,16 @@ const stockPixels = (category: string) =>
 
 // One pixel more keeps the layout and lands off the stock scale (stress.test.ts checks every nudged value), so a
 // stock value left on screen did not come from it.
-const nudged = (category: string) =>
-  Object.fromEntries(stockPixels(category).map(([name, px]) => [name, { value: `${px + 1}px` }]))
+// When that lands on another stock step (Fil's 12, 13, 14 font sizes), it keeps stepping by half a pixel.
+const nudged = (category: string) => {
+  const stockValues = new Set(stockPixels(category).map(([, px]) => px))
+  const off = (px: number) => {
+    let next = px + 1
+    while (stockValues.has(next)) next += 0.5
+    return next
+  }
+  return Object.fromEntries(stockPixels(category).map(([name, px]) => [name, { value: `${off(px)}px` }]))
+}
 
 // ---------------------------------------------------------------------------
 // Colours: each semantic colour token gets its own saturated hue, at a lightness that fits its role, so no surface,

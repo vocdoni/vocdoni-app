@@ -7,18 +7,21 @@ import semanticTokens from './semantic'
 import { textStyles } from './textStyles'
 import tokens from './tokens'
 
-// The palette `colorPalette`-aware components fall back to when none is set.
-export const defaultColorPalette = (primaryColor?: string) => (normalizeHexColor(primaryColor) ? 'brand' : 'gray')
+// The palette `colorPalette`-aware components fall back to when none is set: always `brand`, which is Fil's blue
+// until PRIMARY_COLOR replaces it. The argument is kept so callers need not change.
+export const defaultColorPalette = (_primaryColor?: string) => 'brand'
+
+// Fil's exact accent values, pinned (light side) instead of the generated steps when no PRIMARY_COLOR is set.
+const FIL_ACCENT = { solidHover: '#1554cf', subtle: '#f0f5ff' } as const
 
 /**
  * Builds the chakra system for a given primary/accent color.
  *
- * Without a color the theme is the stock one: the neutral `gray` palette drives
- * every `colorPalette`-aware component and `brand.500` is black. With one, the
- * `brand` scale and its semantic slots are generated from it and `brand`
- * becomes the global palette, so buttons, checkboxes, tabs, focus rings and
- * every accent token follow the configured color. Dark-mode surfaces live on
- * the separate `ink` scale and are unaffected either way.
+ * Without a color `brand` is Fil's blue, with its light values pinned. With one,
+ * the `brand` scale and its semantic slots are generated from it. Either way
+ * `brand` is the global palette, so buttons, checkboxes, tabs, focus rings and
+ * every accent token follow it. Dark-mode surfaces live on the separate `ink`
+ * scale and are unaffected.
  */
 export const createAppSystem = (primaryColor?: string) => {
   const brand = normalizeHexColor(primaryColor)
@@ -26,7 +29,19 @@ export const createAppSystem = (primaryColor?: string) => {
   const brandTokens = Object.fromEntries(Object.entries(scale).map(([step, value]) => [step, { value }]))
   const asTokens = (slots: object) =>
     Object.fromEntries(Object.entries(slots).map(([slot, value]) => [slot, { value }]))
-  const brandSemantic = asTokens(generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS))
+  const generated = generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS)
+  const brandSemantic = asTokens(
+    brand
+      ? generated
+      : {
+          ...generated,
+          solid: { ...generated.solid, _light: '{colors.brand.500}' },
+          contrast: { ...generated.contrast, _light: '#ffffff' },
+          fg: { ...generated.fg, _light: '{colors.brand.500}' },
+          subtle: { ...generated.subtle, _light: FIL_ACCENT.subtle },
+          focusRing: { ...generated.focusRing, _light: '{colors.brand.500}' },
+        }
+  )
   const palette = defaultColorPalette(brand)
   // The accent steps alias the palette `colorPalette` falls back to, so a recipe that reads `accent.solid` instead
   // of `colorPalette.solid` paints the same. `solid.hover` is Chakra's solid button hover.
@@ -34,7 +49,11 @@ export const createAppSystem = (primaryColor?: string) => {
     ...asTokens(generateAccentTokens(scale, PAGE_BACKGROUNDS)),
     solid: {
       DEFAULT: { value: `{colors.${palette}.solid}` },
-      hover: { value: `{colors.${palette}.solid/90}` },
+      hover: {
+        value: brand
+          ? `{colors.${palette}.solid/90}`
+          : { _light: FIL_ACCENT.solidHover, _dark: `{colors.${palette}.solid/90}` },
+      },
     },
     contrast: { value: `{colors.${palette}.contrast}` },
     subtle: { value: `{colors.${palette}.subtle}` },
@@ -51,11 +70,14 @@ export const createAppSystem = (primaryColor?: string) => {
       // scale reaches it too.
       body: {
         textStyle: 'body',
+        letterSpacing: 'body',
+        // Tabular numerals so figures line up; smoothing keeps small type crisp on macOS.
+        fontVariantNumeric: 'tabular-nums',
+        WebkitFontSmoothing: 'antialiased',
       },
-      // The CSS default (`bolder`) would ask for 700, a weight the app does not
-      // load, and the browser would fake it.
+      // The CSS default (`bolder`) would ask for 700; the interface tops out at 600.
       'b, strong': {
-        fontWeight: 'bold',
+        fontWeight: 'semibold',
       },
     },
     theme: {

@@ -93,14 +93,14 @@ describe('stress theme', () => {
       for (const token of changed) {
         const stressed = String(stressSystem.tokens.getByName(token.name)?.value)
         if (/^0(px|rem)$/.test(String(token.value))) continue
-        expect(stressed, token.name).toMatch(/^\d+px$/)
+        expect(stressed, token.name).toMatch(/^\d+(\.\d+)?px$/)
         expect(stockValues, `${token.name} = ${stressed}`).not.toContain(Number.parseFloat(stressed))
       }
     }
   })
 
   it('lists the stock palette steps it looks for, without the third-party brand marks', () => {
-    expect(stressProbeSpec.palette['#737373']).toBe('gray.500')
+    expect(stressProbeSpec.palette['#6b6b6b']).toBe('gray.500')
     expect(Object.values(stressProbeSpec.palette).some((name) => name.startsWith('whatsapp.'))).toBe(false)
   })
 })

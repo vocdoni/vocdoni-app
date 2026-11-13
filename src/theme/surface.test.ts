@@ -70,11 +70,11 @@ describe.each([
   })
 
   it('resolves the layers that do not come from a Chakra slot to their raw values', () => {
-    expect(resolve(sys, 'colors.surface.sidebar', 'light')).toBe('#fbfbfb')
+    expect(resolve(sys, 'colors.surface.sidebar', 'light')).toBe('#fafafa')
     expect(resolve(sys, 'colors.surface.sidebar', 'dark')).toBe('#18181b')
     expect(resolve(sys, 'colors.surface.overlay.drawer', 'dark')).toBe('#18181b')
     expect(resolve(sys, 'colors.surface.sunken', 'dark')).toBe(resolve(sys, 'colors.whiteAlpha.50', 'dark'))
-    expect(resolve(sys, 'colors.dashboard.menu', 'light')).toBe('#fbfbfb')
+    expect(resolve(sys, 'colors.dashboard.menu', 'light')).toBe('#fafafa')
   })
 
   it('has no two tokens sharing a CSS variable', () => {

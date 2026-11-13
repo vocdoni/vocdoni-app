@@ -1,7 +1,7 @@
-// Default accent when PRIMARY_COLOR is not configured. The `brand` scale is
+// Default accent when PRIMARY_COLOR is not configured: Fil's blue. The `brand` scale is
 // generated from the configured color at system creation (see system.ts), so it
 // is deliberately absent from this static map.
-export const DEFAULT_PRIMARY_COLOR = '#000000'
+export const DEFAULT_PRIMARY_COLOR = '#1d62e9'
 
 export const colors = {
   // Neutral near-black scale used for dark-mode surfaces (page, cards, menus)
@@ -16,24 +16,23 @@ export const colors = {
     700: { value: '#2e2e2e' },
   },
 
-  // The whole neutral scale, so a retheme replaces this one table. 50, 100, 400 and 500 are the app's own;
-  // the other steps are Chakra's zinc-tinted defaults, copied as they resolve today.
+  // The whole neutral scale, so a retheme replaces this one table. Fil's greys carry no tint.
   gray: {
-    50: { value: '#fcfcfc' },
+    50: { value: '#fafafa' },
     100: { value: '#f5f5f5' },
-    200: { value: '#e4e4e7' },
-    300: { value: '#d4d4d8' },
-    400: { value: '#b2b2b2' },
-    500: { value: '#737373' },
-    600: { value: '#52525b' },
-    700: { value: '#3f3f46' },
-    800: { value: '#27272a' },
-    900: { value: '#18181b' },
-    950: { value: '#111111' },
+    200: { value: '#ebebeb' },
+    300: { value: '#c9c9c9' },
+    400: { value: '#8f8f8f' },
+    500: { value: '#6b6b6b' },
+    600: { value: '#4d4d4d' },
+    700: { value: '#3d3d3d' },
+    800: { value: '#262626' },
+    900: { value: '#171717' },
+    950: { value: '#0a0a0a' },
   },
 
   dashboardMenu: {
-    light: { value: '#fbfbfb' },
+    light: { value: '#fafafa' },
     dark: { value: '#18181b' },
   },
 

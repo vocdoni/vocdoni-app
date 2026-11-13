@@ -14,9 +14,16 @@ const fontWeights = defineTokens.fontWeights(
   Object.fromEntries(Object.entries(FONT_WEIGHTS).map(([name, weight]) => [name, { value: String(weight) }]))
 )
 
-// The size of a control's label and value (button, field, menu item): Chakra's control recipes read `sm` today.
+// Fil's smaller steps, over Chakra's `xs` to `2xl`; `control` is the size of a control's label and value
+// (button, field, menu item). `2xs` and `3xl` upward stay Chakra's.
 const fontSizes = defineTokens.fontSizes({
-  control: { value: '{fontSizes.sm}' },
+  xs: { value: '0.75rem' },
+  sm: { value: '0.8125rem' },
+  control: { value: '0.84375rem' },
+  md: { value: '0.875rem' },
+  lg: { value: '1rem' },
+  xl: { value: '1.25rem' },
+  '2xl': { value: '1.75rem' },
 })
 
 // The app's four line heights: captions and figures, titles, running text, long reads. Chakra's
@@ -28,16 +35,18 @@ const lineHeights = defineTokens.lineHeights({
   tall: { value: 1.6 },
 })
 
-// Display-text tracking that falls between Chakra's letterSpacings steps.
+// Tracking that falls between Chakra's letterSpacings steps: the body, and the tighter steps of larger type.
 const letterSpacings = defineTokens.letterSpacings({
+  none: { value: '0em' },
+  body: { value: '-0.006em' },
   heading: {
     snug: { value: '-0.4px' },
+    item: { value: '-0.015em' },
+    section: { value: '-0.028em' },
+    page: { value: '-0.035em' },
   },
   quote: {
     tight: { value: '-0.3px' },
-  },
-  eyebrow: {
-    wide: { value: '0.14em' },
   },
 })
 
@@ -50,12 +59,12 @@ const borderWidths = defineTokens.borderWidths({
 
 const radii = defineTokens.radii({
   none: { value: '0rem' },
-  xs: { value: '4px' },
-  sm: { value: '6px' },
-  md: { value: '8px' },
-  lg: { value: '10px' },
+  xs: { value: '3px' },
+  sm: { value: '4px' },
+  md: { value: '6px' },
+  lg: { value: '6px' },
   xl: { value: '12px' },
-  '2xl': { value: '16px' },
+  '2xl': { value: '12px' },
   full: { value: '9999px' },
 })
 
