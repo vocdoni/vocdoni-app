@@ -41,7 +41,7 @@ import { useTableAsCards } from '~components/ui/useTableAsCards'
 
 type Draft = VotingProcessResponse
 
-const useDrafts = () => {
+export const useDrafts = () => {
   const { client } = useApiClient()
   const { organization } = useOrganization()
   const { page, limit } = useUrlPagination()
@@ -49,6 +49,14 @@ const useDrafts = () => {
   return useQuery({
     queryKey: [...QueryKeys.organization.drafts(organization?.address), page, limit],
     enabled: !!organization?.address,
+    // Keep the current rows on screen while another page loads, but never another organization's drafts:
+    // the key is [...prefix, page, limit], so the prefix must match.
+    placeholderData: (previousData, previousQuery) => {
+      const prefix = QueryKeys.organization.drafts(organization?.address)
+      return previousQuery && prefix.every((part, index) => previousQuery.queryKey[index] === part)
+        ? previousData
+        : undefined
+    },
     // `published: false` is the drafts-only view; it requires a Manager/Admin
     // session (401 otherwise) and must not be combined with a status filter,
     // which never matches a draft's not-yet-on-chain questions.

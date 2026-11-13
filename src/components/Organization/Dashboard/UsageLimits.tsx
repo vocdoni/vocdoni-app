@@ -6,7 +6,7 @@ import { DashboardBox } from '~components/Dashboard/Contents'
 import { SectionHeader } from '~components/ui/SectionHeader'
 import { UsageMeter, type UsageMeterColor } from '~components/ui/UsageMeter'
 import { MaxMembersPerOrg } from '~constants'
-import { usePaginatedMembers } from '~queries/members'
+import { useMembersCount } from '~queries/members'
 import { quantity } from '~utils/numbers'
 
 type UsageMetric = {
@@ -24,7 +24,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
   const { organization, isLoading } = useSaasAccount()
 
   // Fetch memberbase data to get total count
-  const { data: membersData } = usePaginatedMembers({ showAll: true })
+  const { total: membersTotal } = useMembersCount()
 
   if (isLoading || !organization) {
     return null
@@ -40,7 +40,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
     {
       icon: UsersIcon,
       label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase size' }),
-      current: membersData?.pagination?.totalItems || 0,
+      current: membersTotal || 0,
       max: MaxMembersPerOrg,
       color: 'chart.2',
       tooltip: t('dashboard.usage.memberbase_tooltip', {

@@ -18,7 +18,7 @@ vi.mock('~src/queries/members', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~src/queries/members')>()
   return {
     ...actual,
-    usePaginatedMembers: () => ({ data: { members: [], pagination: {} }, isLoading: false, isFetching: false }),
+    useMembersCount: () => ({ total: 0, isFetching: false }),
     useDeleteMembers: () => ({ mutate: vi.fn(), mutateAsync: vi.fn(), isPending: false }),
   }
 })

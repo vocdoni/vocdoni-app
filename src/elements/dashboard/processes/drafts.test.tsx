@@ -1,13 +1,15 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import React from 'react'
 import { getStoredDraftId, storeDraftId } from '~components/Process/Create/draft-storage'
 import { mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { DraftsTable, useDeleteDraft } from './drafts'
+import { DraftsTable, useDeleteDraft, useDrafts } from './drafts'
 
 const toastSpy = vi.fn()
 const deleteElectionMock = vi.fn().mockResolvedValue(undefined)
+const listElectionsMock = vi.fn()
+const pagination = { current: { page: 1, limit: 10 } }
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({ currentAddress: '0xorg' }),
@@ -16,7 +18,7 @@ vi.mock('~components/Auth/useAuth', () => ({
 // Partial mock: AllProviders (used by render) still mounts the real ApiClientProvider.
 vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
-  useApiClient: () => ({ client: { elections: { delete: deleteElectionMock } } }),
+  useApiClient: () => ({ client: { elections: { delete: deleteElectionMock, list: listElectionsMock } } }),
 }))
 
 // DraftsContextMenu (rendered by both the card and the row) pulls in the create-process
@@ -40,6 +42,57 @@ const createWrapper = (queryClient: QueryClient) => {
 // overrides never leak into other suites (the global setup also resets, belt-and-suspenders).
 afterEach(() => {
   resetReactProvidersMock()
+})
+
+vi.mock('~queries/members', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~queries/members')>()),
+  useUrlPagination: () => pagination.current,
+}))
+
+describe('useDrafts', () => {
+  beforeEach(() => {
+    listElectionsMock.mockReset()
+    pagination.current = { page: 1, limit: 10 }
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
+    })
+  })
+
+  it('keeps the previous rows while the next page loads', async () => {
+    const firstPage = { elections: [{ id: 'd1' }], pagination: {} }
+    listElectionsMock.mockResolvedValueOnce(firstPage).mockReturnValue(new Promise(() => {}))
+    const { result, rerender } = renderHook(() => useDrafts(), {
+      wrapper: createWrapper(new QueryClient()),
+    })
+    await waitFor(() => expect(result.current.data).toEqual(firstPage))
+
+    pagination.current = { page: 2, limit: 10 }
+    rerender()
+
+    await waitFor(() => expect(listElectionsMock).toHaveBeenCalledTimes(2))
+    expect(listElectionsMock).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2, published: false }))
+    expect(result.current.isPlaceholderData).toBe(true)
+    expect(result.current.data).toEqual(firstPage)
+  })
+})
+
+describe('useDrafts organization switch', () => {
+  it('does not lend its rows to another organization', async () => {
+    listElectionsMock.mockReset()
+    pagination.current = { page: 1, limit: 10 }
+    setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }) })
+    listElectionsMock.mockResolvedValueOnce({ elections: [{ id: 'd1' }], pagination: {} })
+    listElectionsMock.mockReturnValue(new Promise(() => {}))
+    const { result, rerender } = renderHook(() => useDrafts(), { wrapper: createWrapper(new QueryClient()) })
+    await waitFor(() => expect(result.current.data).toBeDefined())
+
+    setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address: '0xother' } }) })
+    rerender()
+
+    await waitFor(() => expect(listElectionsMock).toHaveBeenCalledTimes(2))
+    expect(result.current.isPlaceholderData).toBe(false)
+    expect(result.current.data).toBeUndefined()
+  })
 })
 
 describe('useDeleteDraft', () => {
