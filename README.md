@@ -167,6 +167,19 @@ The output now includes both the client bundle and the Vike SSR server bundle:
 - `dist/client` for browser assets
 - `dist/server` for the SSR entry and page server bundles
 
+#### `pnpm perf:lab`
+
+Loads URLs in headless Chrome, unthrottled and on Fast 4G with a 4x CPU slowdown, and prints the median of
+`--runs` (default 3): time to a ready selector, documents loaded, FCP, LCP, blocking time and JS/font bytes.
+Needs Google Chrome. Add `--json` for machine output and `--storage-state <file>` for logged-in pages (name it
+`perf-lab-state.json`, which is git-ignored: it holds a session token). FCP and LCP count from the start of the first
+navigation. Blocking time and bytes cover what the last document did up to one second after it was ready; without
+`--ready` the script waits for the network to go quiet, which adds about 500 ms to the ready time. For a URL that redirects in the browser (such as `/`), pass `--ready`: network idle can fire between the two documents.
+
+```sh
+pnpm perf:lab -- --url https://app.vocdoni.io/en/account/signin --ready 'input[type="email"]'
+```
+
 #### `pnpm translations`
 
 Extracts all i18n strings from the code and puts them in the `i18n/locales` json
