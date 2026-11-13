@@ -43,16 +43,9 @@ export const usePreferredPublicLanguageRedirect = ({
       cookieEnabled,
     })
 
-    if (!preferredLanguage) {
-      persistPublicLanguagePreferenceClient(routeLanguage, {
-        supportedLanguages,
-        storage: window.localStorage,
-        cookieEnabled,
-        document,
-        location: window.location,
-      })
-      return
-    }
+    // Nothing chosen: keep the link's language and store nothing. Storing the route language
+    // would turn it into a "choice" that reloads later links into it.
+    if (!preferredLanguage) return
 
     persistPublicLanguagePreferenceClient(preferredLanguage, {
       supportedLanguages,
@@ -99,13 +92,15 @@ export const useRootLanguageRedirect = ({ navigate }: { navigate?: (url: string)
       })
     const redirectTarget = `/${preferredLanguage}`
 
-    persistPublicLanguagePreferenceClient(preferredLanguage, {
-      supportedLanguages,
-      storage: window.localStorage,
-      cookieEnabled,
-      document,
-      location: window.location,
-    })
+    if (persistedLanguage) {
+      persistPublicLanguagePreferenceClient(persistedLanguage, {
+        supportedLanguages,
+        storage: window.localStorage,
+        cookieEnabled,
+        document,
+        location: window.location,
+      })
+    }
 
     if (normalizePathname(window.location.pathname) === normalizePathname(redirectTarget)) return
     ;(navigate ?? ((url: string) => window.location.replace(url)))(withLocationSuffix(redirectTarget))
@@ -125,21 +120,23 @@ export const useLegacyPublicPathRedirect = ({
 
     const supportedLanguages = Object.keys(languages)
     const cookieEnabled = hasAcceptedCookieConsent()
-    const preferredLanguage =
-      getPersistedPublicLanguageClient({
-        supportedLanguages,
-        storage: window.localStorage,
-        cookie: document.cookie,
-        cookieEnabled,
-      }) ?? getDefaultPublicLanguage(supportedLanguages)
-
-    persistPublicLanguagePreferenceClient(preferredLanguage, {
+    const persistedLanguage = getPersistedPublicLanguageClient({
       supportedLanguages,
       storage: window.localStorage,
+      cookie: document.cookie,
       cookieEnabled,
-      document,
-      location: window.location,
     })
+    const preferredLanguage = persistedLanguage ?? getDefaultPublicLanguage(supportedLanguages)
+
+    if (persistedLanguage) {
+      persistPublicLanguagePreferenceClient(persistedLanguage, {
+        supportedLanguages,
+        storage: window.localStorage,
+        cookieEnabled,
+        document,
+        location: window.location,
+      })
+    }
 
     const redirectTarget = localizePublicPath({
       pathname,

@@ -1,39 +1,31 @@
-const DEFAULT_LANGUAGES = { en: 'English' }
+// Mirrors baseLanguages and resolveLanguagesSlice in src/i18n/languages.ts, which this
+// plain Node server cannot import. The test checks both stay in step.
+const BASE_LANGUAGES = ['ca', 'de', 'el', 'en', 'es', 'eu', 'fr', 'it', 'pt', 'pt-br']
 const PUBLIC_LANGUAGE_COOKIE_KEY = 'vocdoni-public-language'
+// Vike Client Routing fetches page data from `<pathname>/index.pageContext.json`.
+const VIKE_PAGE_CONTEXT_SUFFIX = '.pageContext.json'
 
 const normalizeSupportedLanguages = (languages) => {
   if (Array.isArray(languages) && languages.length > 0) {
     return languages
   }
 
-  return Object.keys(DEFAULT_LANGUAGES)
+  return [...BASE_LANGUAGES]
 }
 
+// LANGUAGES is a comma-separated list of codes; unset or without a single valid
+// code means every base language, as in the app.
 export const getSupportedPublicLanguagesFromEnv = (env = process.env) => {
   const rawValue = env?.LANGUAGES
 
-  if (!rawValue) {
-    return Object.keys(DEFAULT_LANGUAGES)
-  }
+  if (typeof rawValue !== 'string' || !rawValue) return [...BASE_LANGUAGES]
 
-  if (typeof rawValue === 'string') {
-    try {
-      const parsed = JSON.parse(rawValue)
+  const languages = rawValue
+    .split(',')
+    .map((language) => language.trim())
+    .filter((language) => BASE_LANGUAGES.includes(language))
 
-      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        const languages = Object.keys(parsed)
-        return normalizeSupportedLanguages(languages)
-      }
-    } catch {
-      return Object.keys(DEFAULT_LANGUAGES)
-    }
-  }
-
-  if (rawValue && typeof rawValue === 'object' && !Array.isArray(rawValue)) {
-    return normalizeSupportedLanguages(Object.keys(rawValue))
-  }
-
-  return Object.keys(DEFAULT_LANGUAGES)
+  return normalizeSupportedLanguages(languages)
 }
 
 const getDefaultPublicLanguage = (supportedLanguages) =>
@@ -67,100 +59,139 @@ const readCookieValue = (cookieHeader, key) => {
   }
 }
 
+const CONSENT_COOKIE_KEY = 'vocdoni-cookie-consent'
+
+const readCookieValues = (cookieHeader, key) =>
+  (cookieHeader ?? '')
+    .split(';')
+    .map((segment) => segment.trim())
+    .filter((segment) => segment.startsWith(`${key}=`))
+    .map((segment) => {
+      try {
+        return decodeURIComponent(segment.slice(key.length + 1))
+      } catch {
+        return null
+      }
+    })
+
+// Mirrors readConsentCookie in src/components/Cookies/utils.ts: the first recognised decision wins.
+const hasAcceptedCookieConsent = (cookieHeader) =>
+  readCookieValues(cookieHeader, CONSENT_COOKIE_KEY).find((value) => value === 'accepted' || value === 'rejected') ===
+  'accepted'
+
 const getPublicLanguageFromCookie = ({ cookieHeader, supportedLanguages }) => {
+  // The client only trusts this cookie with consent (getPersistedPublicLanguageClient). Following it
+  // without would bounce forever against the language the client has stored.
+  if (!hasAcceptedCookieConsent(cookieHeader)) return null
+
   const cookieLanguage = readCookieValue(cookieHeader, PUBLIC_LANGUAGE_COOKIE_KEY)
 
   return cookieLanguage ? normalizePublicLanguageCandidate(cookieLanguage, supportedLanguages) : null
 }
 
-const matchPublicEntityRoute = ({ pathname, supportedLanguages }) => {
-  const bareOrganizationMatch = pathname.match(/^\/organization\/([^/]+)\/?$/)
-  if (bareOrganizationMatch) {
-    return {
-      routeType: 'organization',
-      addressOrId: bareOrganizationMatch[1],
-      bare: true,
-    }
-  }
+// First supported entry of an Accept-Language header, by descending q weight.
+export const getPublicLanguageFromAcceptLanguage = (header, supportedLanguages) => {
+  if (typeof header !== 'string' || !header) return null
 
-  const bareProcessMatch = pathname.match(/^\/processes\/([^/]+)\/?$/)
-  if (bareProcessMatch) {
-    return {
-      routeType: 'process',
-      addressOrId: bareProcessMatch[1],
-      bare: true,
-    }
-  }
+  const candidates = header
+    .split(',')
+    .map((part, index) => {
+      const [tag, ...params] = part.trim().split(';')
+      const qParam = params.map((param) => param.trim()).find((param) => param.startsWith('q='))
+      const q = qParam ? Number(qParam.slice(2)) : 1
 
-  const localizedOrganizationMatch = pathname.match(/^\/([^/]+)\/organization\/([^/]+)\/?$/)
-  if (localizedOrganizationMatch) {
-    const [, routeLanguage, addressOrId] = localizedOrganizationMatch
+      return { tag: tag.trim(), q: Number.isFinite(q) ? q : 0, index }
+    })
+    .filter(({ tag, q }) => tag && tag !== '*' && q > 0)
+    .sort((a, b) => b.q - a.q || a.index - b.index)
 
-    if (!supportedLanguages.includes(routeLanguage)) return null
-
-    return {
-      routeType: 'organization',
-      addressOrId,
-      routeLanguage,
-      bare: false,
-    }
-  }
-
-  const localizedProcessMatch = pathname.match(/^\/([^/]+)\/processes\/([^/]+)\/?$/)
-  if (localizedProcessMatch) {
-    const [, routeLanguage, addressOrId] = localizedProcessMatch
-
-    if (!supportedLanguages.includes(routeLanguage)) return null
-
-    return {
-      routeType: 'process',
-      addressOrId,
-      routeLanguage,
-      bare: false,
-    }
+  for (const { tag } of candidates) {
+    const language = normalizePublicLanguageCandidate(tag, supportedLanguages)
+    if (language) return language
   }
 
   return null
 }
 
-const buildLocalizedPublicPath = ({ routeType, language, addressOrId }) => {
-  if (routeType === 'organization') {
-    return `/${language}/organization/${addressOrId}`
-  }
+const matchLocalizedPublicEntityRoute = ({ pathname, supportedLanguages }) => {
+  const match =
+    pathname.match(/^\/([^/]+)\/(organization)\/([^/]+)\/?$/) ?? pathname.match(/^\/([^/]+)\/(processes)\/([^/]+)\/?$/)
 
-  return `/${language}/processes/${addressOrId}`
+  if (!match) return null
+
+  const [, routeLanguage, segment, addressOrId] = match
+
+  if (!supportedLanguages.includes(routeLanguage)) return null
+
+  return { routeLanguage, segment, addressOrId }
 }
 
+const hasLanguagePrefix = (pathname, supportedLanguages) => supportedLanguages.includes(pathname.split('/')[1])
+
+/**
+ * Where a navigation request should be redirected to carry a language prefix, or null.
+ *
+ * - Unprefixed paths get `/<lang>` in front: language cookie, then Accept-Language,
+ *   then the default. This replaces the client shell whose only job was that redirect.
+ * - With HOME_PROCESS_ID set, `/` is the process page itself; it only redirects when
+ *   the visitor prefers a language other than the default (cookie or Accept-Language).
+ * - Localized organization and process pages follow the cookie (an explicit choice),
+ *   never Accept-Language: a link in a given language keeps it.
+ */
 export const resolvePublicLanguageRedirect = ({
   urlOriginal,
   cookieHeader,
+  acceptLanguageHeader,
   supportedLanguages = getSupportedPublicLanguagesFromEnv(),
+  homeProcessId,
 }) => {
   const languages = normalizeSupportedLanguages(supportedLanguages)
   const url = new URL(urlOriginal, 'http://localhost')
-  const route = matchPublicEntityRoute({
-    pathname: url.pathname,
-    supportedLanguages: languages,
-  })
+  const { pathname, search } = url
 
-  if (!route) return null
+  if (pathname.endsWith(VIKE_PAGE_CONTEXT_SUFFIX)) return null
 
-  const cookieLanguage = getPublicLanguageFromCookie({
-    cookieHeader,
-    supportedLanguages: languages,
-  })
-  const preferredLanguage = route.bare ? (cookieLanguage ?? getDefaultPublicLanguage(languages)) : cookieLanguage
+  const cookieLanguage = getPublicLanguageFromCookie({ cookieHeader, supportedLanguages: languages })
 
-  if (!preferredLanguage) return null
-  if (!route.bare && route.routeLanguage === preferredLanguage) {
+  if (hasLanguagePrefix(pathname, languages)) {
+    const route = matchLocalizedPublicEntityRoute({ pathname, supportedLanguages: languages })
+
+    if (!route || !cookieLanguage || route.routeLanguage === cookieLanguage) return null
+
+    return `/${cookieLanguage}/${route.segment}/${route.addressOrId}${search}`
+  }
+
+  const defaultLanguage = getDefaultPublicLanguage(languages)
+  const visitorLanguage = cookieLanguage ?? getPublicLanguageFromAcceptLanguage(acceptLanguageHeader, languages)
+  const isRoot = pathname === '/'
+
+  if (isRoot && homeProcessId?.trim() && (!visitorLanguage || visitorLanguage === defaultLanguage)) {
     return null
   }
 
-  const localizedPath = buildLocalizedPublicPath({
-    routeType: route.routeType,
-    language: preferredLanguage,
-    addressOrId: route.addressOrId,
-  })
-
-  return `${localizedPath}${url.search}`
+  return `/${visitorLanguage ?? defaultLanguage}${isRoot ? '' : pathname}${search}`
 }
+
+/**
+ * Express middleware answering navigations that lack the right language prefix with a 302.
+ * The target depends on the cookie and Accept-Language, so shared caches must not keep it.
+ */
+export const publicLanguageRedirect =
+  ({ supportedLanguages, homeProcessId } = {}) =>
+  (req, res, next) => {
+    if (!['GET', 'HEAD'].includes(req.method)) return next()
+
+    const target = resolvePublicLanguageRedirect({
+      urlOriginal: req.originalUrl,
+      cookieHeader: req.headers.cookie,
+      acceptLanguageHeader: req.headers['accept-language'],
+      supportedLanguages,
+      homeProcessId,
+    })
+
+    if (!target) return next()
+
+    res.setHeader('Vary', 'Accept-Language, Cookie')
+    res.setHeader('Cache-Control', 'no-store')
+    res.redirect(302, target)
+  }

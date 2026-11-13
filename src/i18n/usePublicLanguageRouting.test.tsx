@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react'
+import { PUBLIC_LANGUAGE_STORAGE_KEY } from './public-language'
 import { usePublicLanguageRouting } from './usePublicLanguageRouting'
 
 const changeLanguage = vi.fn()
@@ -45,7 +46,7 @@ describe('usePublicLanguageRouting', () => {
 
     expect(navigate).toHaveBeenCalledWith('/ca/plans')
     expect(changeLanguage).not.toHaveBeenCalled()
-    expect(window.localStorage.getItem('i18nextLng')).toBe('ca')
+    expect(window.localStorage.getItem(PUBLIC_LANGUAGE_STORAGE_KEY)).toBe('ca')
   })
 
   it('localizes auth routes like any other app route', async () => {
@@ -59,6 +60,6 @@ describe('usePublicLanguageRouting', () => {
 
     expect(navigate).toHaveBeenCalledWith('/es/account/signin')
     expect(changeLanguage).not.toHaveBeenCalled()
-    expect(window.localStorage.getItem('i18nextLng')).toBe('es')
+    expect(window.localStorage.getItem(PUBLIC_LANGUAGE_STORAGE_KEY)).toBe('es')
   })
 })

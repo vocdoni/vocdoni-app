@@ -2,7 +2,7 @@ import express from 'express'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createDevMiddleware, renderPage } from 'vike/server'
-import { getSupportedPublicLanguagesFromEnv, resolvePublicLanguageRedirect } from './public-language-routing.mjs'
+import { getSupportedPublicLanguagesFromEnv, publicLanguageRedirect } from './public-language-routing.mjs'
 import { robotsTxtHandler } from './robots.mjs'
 import { securityHeaders } from './security-headers.mjs'
 import { createSsrCacheMiddleware } from './ssr-cache.mjs'
@@ -48,8 +48,8 @@ if (isProduction) {
   app.use(devMiddleware)
 }
 
-// Language redirect middleware — must run before SSR so redirects happen
-// before any cache lookup or render attempt.
+// Request guards and the language redirect below must run before SSR, so they
+// answer before any cache lookup or render attempt.
 app.use((req, res, next) => {
   if (!['GET', 'HEAD'].includes(req.method)) return next()
   // Block Vite-internal dev-only URL patterns that should never reach production
@@ -64,14 +64,18 @@ app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-store')
     return res.status(404).end()
   }
-  const redirectTarget = resolvePublicLanguageRedirect({
-    urlOriginal: req.originalUrl,
-    cookieHeader: req.headers.cookie,
-    supportedLanguages: supportedPublicLanguages,
-  })
-  if (redirectTarget) return res.redirect(307, redirectTarget)
   next()
 })
+
+// Unprefixed navigations get their language on the server, instead of a client
+// shell that only exists to call location.replace.
+app.use(
+  publicLanguageRedirect({
+    supportedLanguages: supportedPublicLanguages,
+    // Same source and trimming as the app env (src/app-env-build.ts).
+    homeProcessId: process.env.HOME_PROCESS_ID,
+  })
+)
 
 // SSR render middleware — caches responses in production, bypasses cache in dev.
 app.use(

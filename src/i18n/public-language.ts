@@ -1,6 +1,8 @@
 import { readCookie } from '~utils/cookies'
 
-const PUBLIC_LANGUAGE_STORAGE_KEY = 'i18nextLng'
+// Not `i18nextLng`: i18next's browser detector caches the navigator language there on
+// every boot, which made a voter's page reload into it. This key only holds a choice.
+export const PUBLIC_LANGUAGE_STORAGE_KEY = 'vocdoni-public-language'
 const PUBLIC_LANGUAGE_COOKIE_KEY = 'vocdoni-public-language'
 const PUBLIC_LANGUAGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 

@@ -10,6 +10,7 @@ import {
   normalizePublicLanguageCandidate,
   persistPublicLanguage,
   persistPublicLanguageCookie,
+  PUBLIC_LANGUAGE_STORAGE_KEY,
   resolvePreferredPublicLanguageClient,
   stripPublicLanguagePrefix,
   toCanonicalPublicPath,
@@ -17,7 +18,7 @@ import {
 
 describe('public language helpers', () => {
   it('resolves preferred language from local storage before browser languages', () => {
-    const storage = new Map([['i18nextLng', 'ca']])
+    const storage = new Map([[PUBLIC_LANGUAGE_STORAGE_KEY, 'ca']])
 
     expect(
       resolvePreferredPublicLanguageClient({
@@ -57,7 +58,7 @@ describe('public language helpers', () => {
       },
     })
 
-    expect(storage.get('i18nextLng')).toBe('ca')
+    expect(storage.get(PUBLIC_LANGUAGE_STORAGE_KEY)).toBe('ca')
   })
 
   it('reads the normalized stored public language', () => {

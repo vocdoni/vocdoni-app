@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { useContext, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LanguageRoutingContext } from '~i18n/LanguageRoutingContext'
+import { PUBLIC_LANGUAGE_STORAGE_KEY } from '~i18n/public-language'
 
 // The language-switch test needs a RoutesProvider it can drive, but `mounts without
 // crashing` below is the only place the *real* route tree gets smoke-tested (see #1746:
@@ -99,7 +100,7 @@ describe('Providers', () => {
     // paid for the import.
     const { AppProviders } = await import('./Providers')
 
-    window.localStorage.setItem('i18nextLng', 'ca')
+    window.localStorage.setItem(PUBLIC_LANGUAGE_STORAGE_KEY, 'ca')
 
     render(
       <AppProviders language='en'>
@@ -107,14 +108,14 @@ describe('Providers', () => {
       </AppProviders>
     )
 
-    expect(window.localStorage.getItem('i18nextLng')).toBe('ca')
+    expect(window.localStorage.getItem(PUBLIC_LANGUAGE_STORAGE_KEY)).toBe('ca')
   })
 
   it('keeps the HTML language and native translations in sync across language switches and history', async () => {
     const { Providers } = await import('./Providers')
     const previousLanguage = document.documentElement.lang
     const previousUrl = window.location.href
-    const previousPreference = window.localStorage.getItem('i18nextLng')
+    const previousPreference = window.localStorage.getItem(PUBLIC_LANGUAGE_STORAGE_KEY)
     // Everything that mutates shared state (the stub, the <html> lang, the URL) has to
     // happen inside the try: a throw before it would leak into every later test in the
     // file, and the abandoned render would keep settling mid-assertion (see above).
@@ -146,8 +147,8 @@ describe('Providers', () => {
       routesProviderStub = null
       document.documentElement.lang = previousLanguage
       window.history.replaceState(null, '', previousUrl)
-      if (previousPreference === null) window.localStorage.removeItem('i18nextLng')
-      else window.localStorage.setItem('i18nextLng', previousPreference)
+      if (previousPreference === null) window.localStorage.removeItem(PUBLIC_LANGUAGE_STORAGE_KEY)
+      else window.localStorage.setItem(PUBLIC_LANGUAGE_STORAGE_KEY, previousPreference)
     }
   })
 })
