@@ -52,11 +52,14 @@ const progress = {
   },
 }
 
-// Solid toast fills. Chakra's green.600 and orange.600 leave white text at 3.30 and 3.56; these reach 6.8 and 7.9.
-// Dark mode keeps orange.500 under black text (7.49).
+// Solid toast fills and their text. Chakra's green.600 and orange.600 leave white text at 3.30 and 3.56; these reach
+// 6.8 and 7.9. Dark mode keeps orange.500 under black text (7.49). The text is the status contrast colour, as in stock.
 const toast = {
-  success: { bg: { value: '{colors.success.700}' } },
-  warning: { bg: { value: { _light: '{colors.warning.700}', _dark: '{colors.warning.500}' } } },
+  success: { bg: { value: '{colors.success.700}' }, fg: { value: '{colors.success.contrast}' } },
+  warning: {
+    bg: { value: { _light: '{colors.warning.700}', _dark: '{colors.warning.500}' } },
+    fg: { value: '{colors.warning.contrast}' },
+  },
 }
 
 export const recipeColors = defineSemanticTokens.colors({ link, switch: switchColors, progress, toast })
