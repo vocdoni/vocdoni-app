@@ -7,14 +7,20 @@ type AccountProtectedRouteProps = {
   // Where to send unauthenticated users. Overridable so the integrators app keeps users within
   // its own auth flow (/integrators/signin); defaults to the regular /account sign in.
   signInRoute?: string
+  // Wait here until the stored token is confirmed. Off when a guard further down (PrivateAppGuard)
+  // owns the waiting state, so the app frame can render around it as soon as a token exists.
+  waitForSession?: boolean
 }
 
-const AccountProtectedRoute = ({ signInRoute = Routes.auth.signIn }: AccountProtectedRouteProps) => {
+const AccountProtectedRoute = ({
+  signInRoute = Routes.auth.signIn,
+  waitForSession = true,
+}: AccountProtectedRouteProps) => {
   const context = useOutletContext()
   const { isAuthenticated, isAuthLoading } = useAuth()
   const { pathname } = useLocation()
 
-  if (isAuthLoading) {
+  if (waitForSession && isAuthLoading) {
     return <PageLoader />
   }
 

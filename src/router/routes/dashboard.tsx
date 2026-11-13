@@ -1,6 +1,6 @@
 // These aren't lazy loaded since they are main layouts and related components
 import { useQueryClient } from '@tanstack/react-query'
-import { Fragment, lazy } from 'react'
+import { Fragment } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { generatePath, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router'
 import Error from '~elements/Error'
@@ -10,31 +10,32 @@ import OrganizationProtectedRoute from '~src/router/OrganizationProtectedRoute'
 import ProtectedRoutes from '~src/router/ProtectedRoutes'
 import { redirectLegacyPath, Routes } from '.'
 import AccountProtectedRoute from '../AccountProtectedRoute'
-import OrganizationTypeGuard from '../OrganizationTypeGuard'
 import { PageLoader } from '~components/ui/Loader'
+import { lazyWithPreload } from '../lazy-with-preload'
+import PrivateAppGuard from '../PrivateAppGuard'
 import { SuspenseLoader } from '../SuspenseLoader'
 
 // elements/pages
-const DashboardCreateOrg = lazy(() => import('~elements/dashboard/organization/create'))
-const DashboardProcesses = lazy(() => import('~elements/dashboard/processes'))
-const AllProcesses = lazy(() => import('~elements/dashboard/processes/all'))
-const EndedProcesses = lazy(() => import('~elements/dashboard/processes/ended'))
-const Drafts = lazy(() => import('~elements/dashboard/processes/drafts'))
-const DashboardProcessView = lazy(() => import('~elements/dashboard/processes/view'))
-const ProcessCreate = lazy(() => import('~elements/dashboard/processes/create'))
-const OrganizationEdit = lazy(() => import('~components/Organization/Dashboard/Organization'))
-const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
-const OrganizationSupport = lazy(() => import('~components/Organization/Dashboard/Support'))
-const OrganizationTeam = lazy(() => import('~components/Organization/Dashboard/Team'))
-const Profile = lazy(() => import('~elements/dashboard/profile'))
-const Settings = lazy(() => import('~elements/dashboard/settings'))
-const Memberbase = lazy(() => import('~elements/dashboard/memberbase'))
-const Members = lazy(() => import('~elements/dashboard/memberbase/members'))
-const Groups = lazy(() => import('~elements/dashboard/memberbase/groups'))
-const CensusCheckout = lazy(() => import('~elements/dashboard/processes/census-checkout'))
+const DashboardCreateOrg = lazyWithPreload(() => import('~elements/dashboard/organization/create'))
+const DashboardProcesses = lazyWithPreload(() => import('~elements/dashboard/processes'))
+const AllProcesses = lazyWithPreload(() => import('~elements/dashboard/processes/all'))
+const EndedProcesses = lazyWithPreload(() => import('~elements/dashboard/processes/ended'))
+const Drafts = lazyWithPreload(() => import('~elements/dashboard/processes/drafts'))
+const DashboardProcessView = lazyWithPreload(() => import('~elements/dashboard/processes/view'))
+const ProcessCreate = lazyWithPreload(() => import('~elements/dashboard/processes/create'))
+const OrganizationEdit = lazyWithPreload(() => import('~components/Organization/Dashboard/Organization'))
+const WalletPanel = lazyWithPreload(() => import('~components/Wallet/Wallet'))
+const OrganizationSupport = lazyWithPreload(() => import('~components/Organization/Dashboard/Support'))
+const OrganizationTeam = lazyWithPreload(() => import('~components/Organization/Dashboard/Team'))
+const Profile = lazyWithPreload(() => import('~elements/dashboard/profile'))
+const Settings = lazyWithPreload(() => import('~elements/dashboard/settings'))
+const Memberbase = lazyWithPreload(() => import('~elements/dashboard/memberbase'))
+const Members = lazyWithPreload(() => import('~elements/dashboard/memberbase/members'))
+const Groups = lazyWithPreload(() => import('~elements/dashboard/memberbase/groups'))
+const CensusCheckout = lazyWithPreload(() => import('~elements/dashboard/processes/census-checkout'))
 
 // others
-const Dashboard = lazy(() => import('~elements/dashboard'))
+const Dashboard = lazyWithPreload(() => import('~elements/dashboard'))
 
 export const shouldRevalidateDashboardProcess = ({
   currentParams,
@@ -46,9 +47,11 @@ export const useDashboardRoutes = () => {
   const { client } = useApiClient()
 
   return {
+    // Only checks that a token exists, so the frame below renders right away. The waiting state
+    // (session probe, profile, integrator redirect) is PrivateAppGuard's, inside the frame.
     element: (
       <SuspenseLoader>
-        <AccountProtectedRoute />
+        <AccountProtectedRoute waitForSession={false} />
       </SuspenseLoader>
     ),
     // Safety net for crashes in the guards or the layout. Pages below have their own, so their
@@ -56,19 +59,17 @@ export const useDashboardRoutes = () => {
     errorElement: <Error />,
     children: [
       {
-        // Guard that redirects integrators to /integrators
+        // The frame shows no private data until the session is confirmed: it reads the
+        // organization through the confirmed address and the profile from its own response.
         element: (
           <SuspenseLoader>
-            <OrganizationTypeGuard redirectPath={Routes.dashboard.base} />
+            <LayoutDashboard />
           </SuspenseLoader>
         ),
         children: [
           {
-            element: (
-              <SuspenseLoader>
-                <LayoutDashboard />
-              </SuspenseLoader>
-            ),
+            // Redirects integrators to /integrators
+            element: <PrivateAppGuard redirectPath={Routes.dashboard.base} />,
             children: [
               {
                 path: Routes.dashboard.organizationCreate,
@@ -77,6 +78,7 @@ export const useDashboardRoutes = () => {
                     <DashboardCreateOrg />
                   </SuspenseLoader>
                 ),
+                handle: { preload: DashboardCreateOrg.preload },
                 errorElement: <Error />,
               },
               {
@@ -86,6 +88,7 @@ export const useDashboardRoutes = () => {
                     <Dashboard />
                   </SuspenseLoader>
                 ),
+                handle: { preload: Dashboard.preload },
                 errorElement: <Error />,
               },
               {
@@ -95,6 +98,7 @@ export const useDashboardRoutes = () => {
                     <Profile />
                   </SuspenseLoader>
                 ),
+                handle: { preload: Profile.preload },
                 errorElement: <Error />,
               },
               // Protected routes if no account created without organization
@@ -112,6 +116,7 @@ export const useDashboardRoutes = () => {
                         <DashboardProcessView />
                       </SuspenseLoader>
                     ),
+                    handle: { preload: DashboardProcessView.preload },
                     HydrateFallback: PageLoader,
                     loader: async ({ params }: { params: Params<string> }) => {
                       const rawElection = await client.elections.get(params.id!)
@@ -133,6 +138,7 @@ export const useDashboardRoutes = () => {
                         <CensusCheckout />
                       </SuspenseLoader>
                     ),
+                    handle: { preload: CensusCheckout.preload },
                     errorElement: <Error />,
                   },
                   {
@@ -142,6 +148,7 @@ export const useDashboardRoutes = () => {
                         <CensusCheckout />
                       </SuspenseLoader>
                     ),
+                    handle: { preload: CensusCheckout.preload },
                     errorElement: <Error />,
                   },
                   {
@@ -151,6 +158,7 @@ export const useDashboardRoutes = () => {
                         <DashboardProcesses />
                       </SuspenseLoader>
                     ),
+                    handle: { preload: DashboardProcesses.preload },
                     children: [
                       {
                         index: true,
@@ -163,6 +171,7 @@ export const useDashboardRoutes = () => {
                             <AllProcesses />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: AllProcesses.preload },
                       },
                       {
                         path: Routes.dashboard.processes.ended,
@@ -171,6 +180,7 @@ export const useDashboardRoutes = () => {
                             <EndedProcesses />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: EndedProcesses.preload },
                       },
                       {
                         path: Routes.dashboard.processes.drafts,
@@ -179,6 +189,7 @@ export const useDashboardRoutes = () => {
                             <Drafts />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: Drafts.preload },
                       },
                     ],
 
@@ -191,6 +202,7 @@ export const useDashboardRoutes = () => {
                         <Memberbase />
                       </SuspenseLoader>
                     ),
+                    handle: { preload: Memberbase.preload },
                     errorElement: <Error />,
                     children: [
                       {
@@ -206,6 +218,7 @@ export const useDashboardRoutes = () => {
                             <Members />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: Members.preload },
                       },
                       {
                         path: Routes.dashboard.memberbase.groups,
@@ -214,6 +227,7 @@ export const useDashboardRoutes = () => {
                             <Groups />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: Groups.preload },
                       },
                     ],
                   },
@@ -224,6 +238,7 @@ export const useDashboardRoutes = () => {
                         <Settings />
                       </SuspenseLoader>
                     ),
+                    handle: { preload: Settings.preload },
                     errorElement: <Error />,
                     children: [
                       {
@@ -237,6 +252,7 @@ export const useDashboardRoutes = () => {
                             <OrganizationEdit />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: OrganizationEdit.preload },
                       },
                       {
                         path: Routes.dashboard.settings.team,
@@ -245,6 +261,7 @@ export const useDashboardRoutes = () => {
                             <OrganizationTeam />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: OrganizationTeam.preload },
                       },
                       {
                         path: Routes.dashboard.settings.billing,
@@ -253,6 +270,7 @@ export const useDashboardRoutes = () => {
                             <WalletPanel processLinks />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: WalletPanel.preload },
                       },
                       {
                         path: Routes.dashboard.settings.billingReturn,
@@ -261,6 +279,7 @@ export const useDashboardRoutes = () => {
                             <WalletPanel processLinks />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: WalletPanel.preload },
                       },
                       {
                         path: Routes.dashboard.settings.legacySubscription,
@@ -281,6 +300,7 @@ export const useDashboardRoutes = () => {
                             <OrganizationSupport />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: OrganizationSupport.preload },
                       },
                     ],
                   },
@@ -293,6 +313,7 @@ export const useDashboardRoutes = () => {
                             <ProcessCreate />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: ProcessCreate.preload },
                         errorElement: <Error />,
                       },
                       {
@@ -302,6 +323,7 @@ export const useDashboardRoutes = () => {
                             <ProcessCreate />
                           </SuspenseLoader>
                         ),
+                        handle: { preload: ProcessCreate.preload },
                         errorElement: <Error />,
                       },
                     ]),
