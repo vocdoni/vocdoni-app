@@ -1,6 +1,6 @@
 import { lazy, useMemo } from 'react'
 import { Navigate } from 'react-router'
-import { parseProcessIds } from '~components/Home/SharedCensus'
+import { parseProcessIds } from '~components/Home/processIds'
 import Layout from '~elements/Layout'
 import SimpleLayout from '~elements/SimpleLayout'
 import { useAppEnv, useCustomOrganizationDomains } from '~src/app-env'

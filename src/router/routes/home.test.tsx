@@ -22,6 +22,8 @@ const { mockParseProcessIds } = vi.hoisted(() => ({
 
 vi.mock('~components/Home/SharedCensus', () => ({
   default: () => <div>SharedCensus</div>,
+}))
+vi.mock('~components/Home/processIds', () => ({
   parseProcessIds: mockParseProcessIds,
 }))
 vi.mock('~elements/organization/view', () => ({ default: () => <div>OrganizationView</div> }))

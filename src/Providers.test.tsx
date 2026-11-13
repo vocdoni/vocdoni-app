@@ -55,17 +55,6 @@ vi.mock('vike-react/usePageContext', async () => {
   return { usePageContext: () => pageContext }
 })
 
-vi.mock('wagmi', () => ({
-  WagmiProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useAccount: () => ({ address: undefined }),
-  useWalletClient: () => ({ data: null }),
-  useDisconnect: () => ({ disconnect: vi.fn() }),
-}))
-
-vi.mock('./constants/wagmi', () => ({
-  wagmiConfig: {},
-}))
-
 vi.mock('~components/Layout/ConnectionToast', () => ({
   ConnectionToastProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
 }))
@@ -98,7 +87,7 @@ describe('Providers', () => {
     vi.clearAllMocks()
   })
 
-  // Mounting this pulls in the whole provider graph (wagmi, chakra and
+  // Mounting this pulls in the whole provider graph (chakra and
   // the rest), which on a loaded machine takes well over the default
   // timeout. Timing out here used to cascade into the test below: the abandoned
   // render kept settling and its language detection landed mid-assertion.
