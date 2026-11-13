@@ -41,10 +41,10 @@ describe('toast contrast', () => {
   })
 
   it('defines the tokens as dark enough fills', () => {
-    expect(system.tokens.getByName('colors.toast.success.bg')?.originalValue).toBe('{colors.green.700}')
+    expect(system.tokens.getByName('colors.toast.success.bg')?.originalValue).toBe('{colors.success.700}')
     expect(conditions('colors.toast.warning.bg')).toEqual({
-      _light: '{colors.orange.700}',
-      _dark: '{colors.orange.500}',
+      _light: '{colors.warning.700}',
+      _dark: '{colors.warning.500}',
     })
   })
 
