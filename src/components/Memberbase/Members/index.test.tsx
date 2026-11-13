@@ -178,6 +178,8 @@ describe('MembersTable session replay exclusion', () => {
     for (const value of ['Ada', 'Lovelace', 'ada@example.test', 'Alan', 'Turing', 'alan@example.test']) {
       expect(screen.getByRole('cell', { name: value }).closest('.ph-no-capture')).not.toBeNull()
     }
+    // The row checkbox is named after the member, so its cell is excluded as well.
+    expect(screen.getByRole('checkbox', { name: 'Select Ada Lovelace' }).closest('.ph-no-capture')).not.toBeNull()
     // Column headers are field names, not member data — they stay visible.
     expect(screen.getByRole('columnheader', { name: 'Email' }).closest('.ph-no-capture')).toBeNull()
   })

@@ -829,7 +829,8 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCens
 
   return (
     <Table.Row>
-      <Table.Cell>
+      {/* ph-no-capture: the checkbox's aria-label carries the member's name, which autocapture would keep. */}
+      <Table.Cell className='ph-no-capture'>
         <Checkbox.Root
           checked={isSelected(member.id)}
           onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
