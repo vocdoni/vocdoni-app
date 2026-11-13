@@ -16,13 +16,20 @@ export const colors = {
     700: { value: '#2e2e2e' },
   },
 
-  // Partial override of chakra's default gray scale — only the shades that
-  // differ from the defaults; the rest (200, 300, 600-950) merge through.
+  // The whole neutral scale, so a retheme replaces this one table. 50, 100, 400 and 500 are the app's own;
+  // the other steps are Chakra's zinc-tinted defaults, copied as they resolve today.
   gray: {
     50: { value: '#fcfcfc' },
     100: { value: '#f5f5f5' },
+    200: { value: '#e4e4e7' },
+    300: { value: '#d4d4d8' },
     400: { value: '#b2b2b2' },
     500: { value: '#737373' },
+    600: { value: '#52525b' },
+    700: { value: '#3f3f46' },
+    800: { value: '#27272a' },
+    900: { value: '#18181b' },
+    950: { value: '#111111' },
   },
 
   dashboardMenu: {
