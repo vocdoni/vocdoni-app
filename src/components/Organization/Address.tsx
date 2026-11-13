@@ -30,7 +30,7 @@ const AddressBtn = ({ ...props }) => {
   return (
     <MenuRoot {...props}>
       <MenuTrigger asChild>
-        <Button>
+        <Button variant='outline'>
           {addressTextOverflow(address as string, 3)}
           <MoreIcon />
         </Button>
@@ -39,6 +39,7 @@ const AddressBtn = ({ ...props }) => {
         <MenuContent top='-32' left={{ md: '-9' }} zIndex='dropdown'>
           <MenuItem value='copy-address' asChild>
             <Button
+              variant='menu-item'
               onClick={() => {
                 toast({
                   title: t('copy.copied_title'),
@@ -59,6 +60,7 @@ const AddressBtn = ({ ...props }) => {
 
           <MenuItem value='open-explorer' asChild>
             <Button
+              variant='menu-item'
               onClick={() => window.open(`${explorerUrl}/organization/${address}`, '_blank')}
               display='flex'
               justifyContent='start'

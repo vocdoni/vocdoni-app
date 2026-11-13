@@ -32,6 +32,7 @@ export const PrevNextPagination = ({
       </Text>
       <ButtonGroup size='sm' variant='outline' attached>
         <IconButton
+          variant='outline'
           aria-label={t('pagination.previous', { defaultValue: 'Previous page' })}
           disabled={disabled || !hasPrevious}
           onClick={onPrevious}
@@ -39,6 +40,7 @@ export const PrevNextPagination = ({
           <ChevronLeftIcon />
         </IconButton>
         <IconButton
+          variant='outline'
           aria-label={t('pagination.next', { defaultValue: 'Next page' })}
           disabled={disabled || !hasNext}
           onClick={onNext}

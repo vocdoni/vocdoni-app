@@ -38,6 +38,7 @@ export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ chil
         return resume()
       }}
       disabled={disabled || status !== 'PAUSED'}
+      variant='outline'
       {...props}
     >
       {children ?? t('actions.continue')}
@@ -69,6 +70,7 @@ export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ childre
         return pause()
       }}
       disabled={disabled || status !== 'ONGOING'}
+      variant='outline'
       {...props}
     >
       {children ?? t('actions.pause')}
@@ -114,6 +116,7 @@ export const ActionEnd = forwardRef<HTMLButtonElement, ButtonProps>(({ children,
       loading={loading}
       onClick={handle}
       disabled={disabled || hasResults(election) || status === 'ENDED' || status === 'CANCELED' || isUpcoming(election)}
+      variant='outline'
       {...props}
     >
       {children ?? t('actions.end')}
@@ -159,6 +162,7 @@ export const ActionCancel = forwardRef<HTMLButtonElement, ButtonProps>(({ childr
       loading={loading}
       onClick={handle}
       disabled={disabled || status === 'CANCELED' || status === 'ENDED' || hasResults(election)}
+      variant='outline'
       {...props}
     >
       {children ?? t('actions.cancel')}
