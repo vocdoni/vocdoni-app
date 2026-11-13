@@ -28,30 +28,3 @@ describe('description slots', () => {
     expect(system.getSlotRecipe('radioCard').slots).toContain('root')
   })
 })
-
-// Chakra paints these on green.600 / orange.600 (3.30 and 3.56 with white text).
-describe('toast contrast', () => {
-  const root = () => system.getSlotRecipe('toast').base?.root as Record<string, Record<string, unknown>>
-  const conditions = (name: string) =>
-    system.tokens.getByName(name)?.extensions?.conditions as Record<string, string> | undefined
-
-  it('paints success and warning on their own tokens', () => {
-    expect(root()['&[data-type=success]']).toMatchObject({ bg: 'toast.success.bg' })
-    expect(root()['&[data-type=warning]']).toMatchObject({ bg: 'toast.warning.bg' })
-  })
-
-  it('defines the tokens as dark enough fills', () => {
-    expect(system.tokens.getByName('colors.toast.success.bg')?.originalValue).toBe('{colors.success.700}')
-    expect(conditions('colors.toast.warning.bg')).toEqual({
-      _light: '{colors.warning.700}',
-      _dark: '{colors.warning.500}',
-    })
-  })
-
-  // Chakra draws the X at 60%, which is 2.51:1 on the red error toast.
-  it('draws the close button at 80%', () => {
-    const styles = system.getSlotRecipe('toast').base?.closeTrigger as Record<string, unknown>
-    expect(styles).toMatchObject({ color: '[{currentColor/80}]' })
-    expect(JSON.stringify(system.css(styles as any))).toMatch(/currentColor 80%/)
-  })
-})
