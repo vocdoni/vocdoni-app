@@ -16,7 +16,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 import { HeadingNode, QuoteNode } from '@lexical/rich-text'
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table'
 import { $getRoot } from 'lexical'
-import { useState } from 'react'
+import { FocusEvent, useState } from 'react'
 
 import editor from '~theme/editor'
 import { FloatingLinkEditorPlugin, FloatingTextFormatToolbarPlugin } from './plugins'
@@ -69,6 +69,14 @@ const theme = {
 const MarkdownEditor = (props: EditorProps) => {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null)
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
+  // The floating toolbars watch every selection change in the document, so they only run in the editor in use.
+  // Moving into their popups (rendered inside this box) keeps them; so does a blur to nowhere (a click on a
+  // popup's background, or on a link where Safari focuses nothing).
+  const [hasFocus, setHasFocus] = useState(false)
+  const onBlur = (event: FocusEvent<HTMLDivElement>) => {
+    const next = event.relatedTarget
+    if (next && !event.currentTarget.contains(next)) setHasFocus(false)
+  }
   const isUnstyled = props.variant === ('unstyled' as EditorProps['variant'])
   const recipe = useRecipe({ key: 'textarea' })
   const textareaStyles = isUnstyled ? undefined : recipe(props)
@@ -76,7 +84,7 @@ const MarkdownEditor = (props: EditorProps) => {
 
   return (
     <>
-      <Box position='relative' w='full' display='grid'>
+      <Box position='relative' w='full' display='grid' onFocus={() => setHasFocus(true)} onBlur={onBlur}>
         <RichTextPlugin
           contentEditable={
             <Box ref={setFloatingAnchorElem} w='full' gridArea='1 / 1'>
@@ -97,6 +105,17 @@ const MarkdownEditor = (props: EditorProps) => {
           ErrorBoundary={LexicalErrorBoundary}
         />
         <PlaceholderPlugin placeholder={props.placeholder} textareaStyles={textareaStyles} />
+        {/* Inside the box so focus events from their portaled popups reach its handlers */}
+        {floatingAnchorElem && hasFocus && !props.disabled && (
+          <>
+            <FloatingLinkEditorPlugin
+              anchorElem={floatingAnchorElem}
+              isLinkEditMode={isLinkEditMode}
+              setIsLinkEditMode={setIsLinkEditMode}
+            />
+            <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} setIsLinkEditMode={setIsLinkEditMode} />
+          </>
+        )}
       </Box>
 
       <HistoryPlugin />
@@ -106,16 +125,6 @@ const MarkdownEditor = (props: EditorProps) => {
       <MarkdownValuePlugin value={props.value} transformers={TRANSFORMERS} />
       <OnChangeMarkdown onChange={onChange} transformers={TRANSFORMERS} />
       {props.maxLength && props.maxLength > 0 && <CharacterLimitPlugin maxLength={props.maxLength} charset='UTF-8' />}
-      {floatingAnchorElem && !props.disabled && (
-        <>
-          <FloatingLinkEditorPlugin
-            anchorElem={floatingAnchorElem}
-            isLinkEditMode={isLinkEditMode}
-            setIsLinkEditMode={setIsLinkEditMode}
-          />
-          <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} setIsLinkEditMode={setIsLinkEditMode} />
-        </>
-      )}
       <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
     </>
   )

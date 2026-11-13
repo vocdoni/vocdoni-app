@@ -1,20 +1,27 @@
 import { Box, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Control, Controller, UseFormSetValue, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { DashboardSection } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
-import { SelectorTypes } from '../common'
+import { Process, SelectorTypes } from '../common'
 
-const SelectionLimits = ({ index }) => {
-  const { control, setValue, watch } = useFormContext()
+const SelectionLimits = ({
+  index,
+  control,
+  setValue,
+}: {
+  index: number
+  control: Control<Process>
+  setValue: UseFormSetValue<Process>
+}) => {
   const { t } = useTranslation()
-  const questionType = watch(`questions.${index}.type`)
-  const fields = watch(`questions.${index}.options`)
   const minName = `questions.${index}.minNumberOfChoices` as const
   const maxName = `questions.${index}.maxNumberOfChoices` as const
-  const min = watch(minName)
-  const max = watch(maxName)
+  const [questionType, fields, min, max] = useWatch({
+    control,
+    name: [`questions.${index}.type`, `questions.${index}.options`, minName, maxName],
+  })
   const total = fields.length
   const options = fields.map((_, i) => ({ value: i + 1, label: `${i + 1}` }))
 

@@ -13,7 +13,7 @@ import {
   Spacer,
   VStack,
 } from '@chakra-ui/react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { MutationObserver, useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { CensusSpec, Choice, CreateVotingProcessRequest, VotingProcessQuestionRequest } from '@vocdoni/api-types'
@@ -110,6 +110,14 @@ export const paymentCheckoutStart = (error: unknown, canTopUp: boolean): Process
   canTopUp ? checkoutStartForRefusal(error) : undefined
 
 const saveTimeoutMs = 30000
+
+/** Every draft write (auto-save, manual save, publish) runs under this key, for whoever shows the saving state. */
+const draftSaveMutationKey = ['draft', 'save'] as const
+
+const draftQueryKey = (draftId?: string | null) => ['draft', draftId] as const
+
+/** Whether a draft write is running. Read it in the component that shows it, not in the form root. */
+const useIsSavingDraft = () => useIsMutating({ mutationKey: draftSaveMutationKey }) > 0
 
 export const useConfirmOnNavigate = ({
   isDirty,
@@ -272,12 +280,14 @@ export const useFormDraftSaver = (
   saveCooldown?: (ms: number) => void
 ) => {
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
-  const createProcess = useCreateProcess()
-  const updateProcess = useUpdateProcess()
+  const { client } = useApiClient()
+  const queryClient = useQueryClient()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const { organization } = useOrganization()
   const skipNextSaveRef = useRef(false)
   const [draftLimitReached, setDraftLimitReached] = useState(false)
+  // The draft this form created itself: it already holds its values, so they are never read back into it
+  const [createdDraftId, setCreatedDraftId] = useState<string | null>(null)
   const { t } = useTranslation()
   const toast = useToast()
   // Read through a ref: useToast returns a new function every render, which would recreate
@@ -301,9 +311,44 @@ export const useFormDraftSaver = (
     draftIdRef.current = draftId
   }, [draftId])
 
-  const isCreating = createProcess.isPending
-  const isUpdating = updateProcess.isPending
-  const isSaving = isCreating || isUpdating
+  // Once the form moves off the draft it created (reset, discarded), coming back to it reads it like any other
+  useEffect(() => {
+    if (createdDraftId && draftId !== createdDraftId) setCreatedDraftId(null)
+  }, [draftId, createdDraftId])
+
+  // Writes run without a useMutation hook, whose state changes would re-render the whole form on every save;
+  // the Save button reads the saving state itself (useIsSavingDraft).
+  const runDraftWrite = useCallback(
+    <TData, TVariables>(mutationFn: (variables: TVariables) => Promise<TData>, variables: TVariables) => {
+      const observer = new MutationObserver<TData, Error, TVariables>(queryClient, {
+        mutationKey: draftSaveMutationKey,
+        mutationFn,
+      })
+      // Detach once settled, or the mutation and the body it holds are never collected
+      return observer.mutate(variables).finally(() => observer.reset())
+    },
+    [queryClient]
+  )
+
+  const createDraft = useCallback(
+    (body: CreateVotingProcessRequest) => runDraftWrite((request) => client.elections.create(request), body),
+    [client, runDraftWrite]
+  )
+
+  const updateDraft = useCallback(
+    (variables: UpdateProcessRequest) =>
+      runDraftWrite(async ({ processId, body }: UpdateProcessRequest) => {
+        // The PUT replaces the draft's add-ons, and an integrator can set them through the API while
+        // the wizard is open: read the draft's current ones, rather than a copy from when it loaded.
+        const { addOns } = await client.elections.get(processId)
+        await client.elections.update(processId, { ...body, addOns })
+        // Every save re-prices the draft, even one that only touched its texts: the backend rebuilds
+        // its census from the group each time, and the group may have changed since the last save.
+        // Not awaited: it would hold the save, and every write queued behind it, until the price is read again.
+        void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
+      }, variables),
+    [client, queryClient, runDraftWrite]
+  )
 
   const skipSave = (skip) => {
     skipNextSaveRef.current = skip
@@ -334,17 +379,21 @@ export const useFormDraftSaver = (
       enqueueWrite(async () => {
         const body = getBody()
         if (draftIdRef.current) {
-          await updateProcess.mutateAsync({ processId: draftIdRef.current, body })
+          await updateDraft({ processId: draftIdRef.current, body })
           return draftIdRef.current
         }
-        const draftProcessId = await createProcess.mutateAsync(body)
+        const draftProcessId = await createDraft(body)
         // Record the new id before returning: a publish that fails after this
         // point must keep updating this draft instead of leaking another one.
         draftIdRef.current = draftProcessId
+        // The form already holds this draft: seed its query instead of reading it back, which wrote the
+        // values of this save over whatever was typed while it ran (#1890). A copy, as RHF mutates its values.
+        queryClient.setQueryData(draftQueryKey(draftProcessId), structuredClone(getValues()))
+        setCreatedDraftId(draftProcessId)
         storeDraftId(draftProcessId)
         return draftProcessId
       }),
-    [enqueueWrite, updateProcess, createProcess, storeDraftId]
+    [enqueueWrite, updateDraft, createDraft, queryClient, getValues, storeDraftId]
   )
 
   const saveDraft = useCallback(
@@ -447,7 +496,18 @@ export const useFormDraftSaver = (
     [organization?.address, storeDraftId]
   )
 
-  return { saveDraft, isSaving, skipSave, draftLimitReached, writeDraft, clearPublishedDraftId }
+  return { saveDraft, skipSave, draftLimitReached, writeDraft, clearPublishedDraftId, createdDraftId }
+}
+
+// Its own component, so the saving state re-renders this button rather than the whole form
+const SaveDraftButton = ({ onClick, disabled }: { onClick: () => void; disabled: boolean }) => {
+  const isSaving = useIsSavingDraft()
+
+  return (
+    <Button type='button' variant='outline' onClick={onClick} loading={isSaving} disabled={disabled}>
+      <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
+    </Button>
+  )
 }
 
 const LeaveConfirmationModal = ({
@@ -499,27 +559,6 @@ export const useCreateProcess = () => {
 
   return useMutation<string, Error, CreateVotingProcessRequest>({
     mutationFn: (request) => client.elections.create(request),
-  })
-}
-
-const useUpdateProcess = () => {
-  const { client } = useApiClient()
-  const queryClient = useQueryClient()
-
-  return useMutation<void, Error, UpdateProcessRequest>({
-    mutationFn: async ({ processId, body }) => {
-      // The PUT replaces the draft's add-ons, and an integrator can set them through the API while
-      // the wizard is open: read the draft's current ones, rather than a copy from when it loaded.
-      const { addOns } = await client.elections.get(processId)
-      return client.elections.update(processId, { ...body, addOns })
-    },
-    // Every save re-prices the draft, even one that only touched its texts: the backend rebuilds
-    // its census from the group each time, and the group may have changed since the last save.
-    // Not awaited: a returned promise would hold the save, and every write queued behind it,
-    // until the price is read again.
-    onSuccess: (_, { processId }) => {
-      void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
-    },
   })
 }
 
@@ -602,13 +641,13 @@ export const useFormToVotingProcessRequest = () => {
   }
 }
 
-const useDraft = (draftId?: string | null) => {
+const useDraft = (draftId?: string | null, { enabled = true }: { enabled?: boolean } = {}) => {
   const { client } = useApiClient()
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
 
   return useQuery<Process | null, Error>({
-    queryKey: ['draft', draftId],
-    enabled: !!draftId,
+    queryKey: draftQueryKey(draftId),
+    enabled: enabled && !!draftId,
     queryFn: async () => {
       try {
         const election = await client.elections.get(draftId!)
@@ -681,14 +720,16 @@ const ProcessCreateView = () => {
     onOpen: openConfirmationModal,
     onClose: () => setLeaveConfirmationOpen(false),
   })
-  const { saveDraft, isSaving, skipSave, writeDraft, clearPublishedDraftId } = useFormDraftSaver(
+  const { saveDraft, skipSave, writeDraft, clearPublishedDraftId, createdDraftId } = useFormDraftSaver(
     isDirty,
     methods.getValues,
     effectiveDraftId,
     storeDraftId,
     saveCooldown
   )
-  const { data: formDraft } = useDraft(effectiveDraftId)
+  // Only a draft opened here is read into the form; the one it created itself is already in it
+  const isOwnDraft = !!effectiveDraftId && effectiveDraftId === createdDraftId
+  const { data: formDraft } = useDraft(effectiveDraftId, { enabled: !isOwnDraft })
   // Above the self-service limit the backend refuses any payment: only a custom quote publishes
   // it, which ProcessQuoteAlert points to, so publishing is not offered.
   const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).price)
@@ -721,23 +762,28 @@ const ProcessCreateView = () => {
     }
   }, [formDraft, effectiveDraftId, draftId, clearPublishedDraftId, setSearchParams])
 
-  // Apply form draft if it exists
   useEffect(() => {
     setFormDraftLoaded(true)
+  }, [])
+
+  // Apply an opened draft. Only then are the editors remounted (`nextId`), to show its texts.
+  useEffect(() => {
+    if (!formDraft || isOwnDraft) return
     setNextId(Date.now().toString())
-    if (!formDraft) return
 
     Object.entries(formDraft).forEach(([key, value]) => {
       // A draft only stores its group once voter authentication is set up (see
       // buildCensusSpec), so a missing one means "not saved yet", not "none":
-      // the draft read that follows the first save must not clear a picked group.
+      // opening it must not clear a picked group.
       if (key === 'groupId' && (groupId || !value)) return
       methods.setValue(key as keyof Process, value as Process[keyof Process], { shouldDirty: true })
     })
-  }, [formDraft, groupId, methods])
+  }, [formDraft, isOwnDraft, groupId, methods])
 
   const resetForm = () => {
     reset()
+    // The description editor only reads its value when it mounts: remount it to show the cleared form
+    setNextId(Date.now().toString())
     skipSave(true)
     queueMicrotask(() => {
       navigate(location.pathname, { replace: true })
@@ -797,6 +843,8 @@ const ProcessCreateView = () => {
       // released; a no-op `proceed()` leaves the user here with their work intact.
       if (!proceed()) return
       reset()
+      // The description editor reads its value only on mount; remount it so it shows the reset value
+      setNextId(Date.now().toString())
       storeDraftId(null)
     } catch (error) {
       toast({
@@ -1047,15 +1095,7 @@ const ProcessCreateView = () => {
                   >
                     <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                   </Button>
-                  <Button
-                    type='button'
-                    variant='outline'
-                    onClick={handleManualSave}
-                    loading={isSaving}
-                    disabled={!organization?.address}
-                  >
-                    <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
-                  </Button>
+                  <SaveDraftButton onClick={handleManualSave} disabled={!organization?.address} />
                 </ButtonGroup>
               </HStack>
 

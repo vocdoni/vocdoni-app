@@ -1,7 +1,7 @@
 import { Alert, Button, Dialog, Flex, Portal, Text } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
 import { RefCallback, useCallback, useRef } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { KeyIcon } from '~theme/icons'
 import { useToast } from '~components/Toast'
@@ -30,16 +30,14 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
   const { t } = useTranslation()
   const toast = useToast()
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
-  const { watch, setValue } = useFormContext<Process>()
+  const { control, setValue } = useFormContext<Process>()
   const { open: isOpen, onOpen, onClose } = useVoterAuthDialog()
   const { isAuthPending: isPending, hasAuthError: censusError } = useCensusSteps()
 
-  const [groupId, census, anonymousVoting, weightedVote] = watch([
-    'groupId',
-    'census',
-    'anonymousVoting',
-    'weightedVote',
-  ])
+  const [groupId, census, anonymousVoting, weightedVote] = useWatch({
+    control,
+    name: ['groupId', 'census', 'anonymousVoting', 'weightedVote'],
+  })
 
   // A group change resets the census, but the dialog keeps the previous
   // choices ticked so confirming them for the new group is quick.

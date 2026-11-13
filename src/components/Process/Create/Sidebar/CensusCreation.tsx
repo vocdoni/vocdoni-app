@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
-import { ControllerRenderProps, useController, useFormContext } from 'react-hook-form'
+import { ControllerRenderProps, useController, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { CheckIcon, UsersIcon } from '~theme/icons'
 import { Link as ReactRouterLink } from 'react-router'
@@ -267,8 +267,8 @@ const GroupCensusCreation = () => {
 }
 
 const CensusCreation = () => {
-  const { setValue, watch } = useFormContext()
-  const censusType = watch('censusType')
+  const { setValue, control } = useFormContext()
+  const censusType = useWatch({ control, name: 'censusType' })
 
   // Set default census type to Memberbase (Group) if not set
   useEffect(() => {

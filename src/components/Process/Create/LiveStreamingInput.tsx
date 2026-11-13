@@ -12,7 +12,7 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import type { Process } from './common'
 import { VideoPlayer } from '~components/ui/VideoPlayer'
@@ -21,7 +21,7 @@ export const LiveStreamingInput = () => {
   const { t } = useTranslation()
   const methods = useFormContext<Process>()
   const { errors } = methods.formState
-  const streamUri = methods.watch('streamUri')
+  const streamUri = useWatch({ control: methods.control, name: 'streamUri' })
 
   return (
     <AccordionRoot collapsible>
