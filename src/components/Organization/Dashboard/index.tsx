@@ -14,6 +14,7 @@ import { ListLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { useDateFns } from '~i18n/use-date-fns'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { AddIcon, GoToIcon, UsersIcon, VoteIcon } from '~theme/icons'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
@@ -105,14 +106,38 @@ const Tutorial = () => {
           })}
         </Text>
         <AspectRatio ratio={16 / 9}>
-          <VideoPlayer
-            title={t('dashboard.welcome.how_first_vote', { defaultValue: 'How to create your first vote' })}
-            src={videoTutorialSrc}
-            style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
-          />
+          <TutorialVideo src={videoTutorialSrc} />
         </AspectRatio>
       </Flex>
     </DashboardBox>
+  )
+}
+
+// YouTube serves every video's thumbnail at a fixed URL, so the preview needs no oEmbed lookup.
+const YOUTUBE_ID =
+  /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|shorts\/|live\/|watch\?(?:.*&)?v=))([\w-]{11})/
+const videoThumbnail = (src: string): string | true => {
+  const id = src.match(YOUTUBE_ID)?.[1]
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : true
+}
+
+// A thumbnail until clicked: the player and its scripts load only for someone who wants to watch.
+const TutorialVideo = ({ src }: { src: string }) => {
+  const { t } = useTranslation()
+  const [playing, setPlaying] = useState(false)
+  return (
+    <VideoPlayer
+      title={t('dashboard.welcome.how_first_vote', { defaultValue: 'How to create your first vote' })}
+      src={src}
+      light={videoThumbnail(src)}
+      playing={playing}
+      onClickPreview={() => setPlaying(true)}
+      // Follow the player, so a re-render never resumes a video the viewer paused
+      onPlay={() => setPlaying(true)}
+      onPause={() => setPlaying(false)}
+      previewAriaLabel={t('dashboard.welcome.how_first_vote', { defaultValue: 'How to create your first vote' })}
+      style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
+    />
   )
 }
 

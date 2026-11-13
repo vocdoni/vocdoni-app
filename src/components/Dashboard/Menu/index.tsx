@@ -9,6 +9,7 @@ import { VocdoniLogo } from '~components/Layout/Logo'
 import { ListLoader } from '~components/ui/Loader'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useTutorials } from '~src/queries/organization'
+import { usePrefetchRoute } from '~src/router/route-prefetch'
 import { Routes } from '~src/router/routes'
 import { BookerModalButton } from '../Booker'
 import { DashboardMenuConfig } from './menus'
@@ -122,6 +123,7 @@ const DashboardMenuContent = ({
   const { reduced } = useContext(DashboardLayoutContext)
   const { t } = useTranslation()
   const [isTouchLike] = useMediaQuery(['(hover: none), (pointer: coarse)'])
+  const prefetch = usePrefetchRoute()
 
   return (
     <>
@@ -177,7 +179,11 @@ const DashboardMenuContent = ({
         </Flex>
         {menu.newVote && (
           <Button asChild w='full' minW='0' mt='2' mb='8' size={'xs'}>
-            <RouterLink to={generatePath(Routes.processes.create)}>
+            <RouterLink
+              to={generatePath(Routes.processes.create)}
+              onMouseEnter={() => prefetch(generatePath(Routes.processes.create))}
+              onFocus={() => prefetch(generatePath(Routes.processes.create))}
+            >
               <HStack gap={reduced ? '0' : '2'}>
                 <Icon as={AddIcon} boxSize='icon.sm' />
                 {!reduced && (

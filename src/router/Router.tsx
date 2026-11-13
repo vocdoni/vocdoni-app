@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { flushSync } from 'react-dom'
-import { createBrowserRouter, RouterProvider, type RouterProviderProps } from 'react-router'
-import { preloadMatchedRoutes } from './lazy-with-preload'
+import { createBrowserRouter, type RouteObject, RouterProvider, type RouterProviderProps } from 'react-router'
+import { RoutePrefetchProvider } from './route-prefetch'
 import { useAuthRoutes, useCreateOrganizationRoutes } from './routes/auth'
 import { useDashboardRoutes } from './routes/dashboard'
 import { useIntegratorsAuthRoutes, useIntegratorsRoutes } from './routes/integrators'
@@ -40,17 +40,12 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
   // else a loader reads comes from the URL. Data keyed by session state (the elections
   // list, which used to close over `currentAddress`) is fetched with useQuery instead.
   const router = useMemo(
-    () => {
-      const created = createBrowserRouter(
-        [home, root, auth, dashboard, integrators, integratorsAuth, createOrganizationRoute],
-        { basename: resolvedBasename }
-      )
-      // Start the matched page's code download now, alongside the session requests, instead of
-      // when the auth guards above it finally render it. Idempotent, so StrictMode's double
-      // render is harmless.
-      preloadMatchedRoutes(created.state?.matches)
-      return created
-    },
+    // Creating it also starts the matched routes' `lazy` page code, alongside the session
+    // requests, instead of when the auth guards above the page finally render it.
+    () =>
+      createBrowserRouter([home, root, auth, dashboard, integrators, integratorsAuth, createOrganizationRoute], {
+        basename: resolvedBasename,
+      }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [resolvedBasename]
   )
@@ -74,5 +69,9 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
   // Key by basename so a language switch — the only time the basename changes — remounts
   // the router to adopt the new prefix, since RouterProvider keeps the first router's
   // state and won't re-init from a changed `router` prop.
-  return <RouterProvider key={resolvedBasename} router={router} flushSync={reactDomFlushSync} />
+  return (
+    <RoutePrefetchProvider routes={router.routes as RouteObject[]}>
+      <RouterProvider key={resolvedBasename} router={router} flushSync={reactDomFlushSync} />
+    </RoutePrefetchProvider>
+  )
 }
