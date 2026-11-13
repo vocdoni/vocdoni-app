@@ -31,11 +31,12 @@ export const runA11y = async ({ tags, exceptions }) => {
     { runOnly: { type: 'tag', values: tags }, resultTypes: ['violations'] }
   )
   const excused = (rule, node) => {
-    const [first] = node.target
-    if (typeof first !== 'string') return false
+    // Only a plain selector in the top document is matched: frame and shadow-root selectors do not resolve here,
+    // and matching the host or the frame would excuse everything inside it.
+    if (node.target.length !== 1 || typeof node.target[0] !== 'string') return false
     let el = null
     try {
-      el = document.querySelector(first)
+      el = document.querySelector(node.target[0])
     } catch {
       return false
     }
@@ -91,6 +92,8 @@ export const compareA11y = (ran, baseline) => {
           `  ${capture.file}  ${rule} (${impact}): ${count} (baseline ${before[rule] ?? 0})\n      ${examples}\n      ${help}`
         )
     }
+    // An axe failure has no real counts, so its missing rules are not fixed violations.
+    if (capture.a11y['axe-error']) continue
     for (const [rule, count] of Object.entries(before)) if ((capture.a11y[rule]?.count ?? 0) < count) fixed += 1
   }
   return { added, fixed }
@@ -121,6 +124,10 @@ const summaryTable = (ran) => {
     '',
   ].join('\n')
 }
+
+// The nodes of a capture's real violations; the axe-error pseudo-rule counts none.
+const violatingNodes = (a11y) =>
+  Object.entries(a11y).reduce((n, [rule, { count }]) => (rule === 'axe-error' ? n : n + count), 0)
 
 // Compares the captures with the baseline, or with `update` writes them into it. Captures that did not run or whose axe
 // failed keep their entry. `expected` (the names of a full run) drops the entries of any other file. Returns whether the
@@ -169,7 +176,7 @@ export const checkA11y = (captures, { update, baselinePath = A11Y_BASELINE, expe
     if (pruned.length) console.log(`Pruned baseline entries of captures no longer in routes.mjs: ${pruned.join(', ')}`)
     return false
   }
-  const total = ran.reduce((sum, c) => sum + Object.values(c.a11y).reduce((n, { count }) => n + count, 0), 0)
+  const total = ran.reduce((sum, c) => sum + violatingNodes(c.a11y), 0)
   console.log(`Accessibility: ${total} violating nodes in ${ran.length} captures (report: a11y-report.json)`)
   if (process.env.GITHUB_STEP_SUMMARY && ran.length) {
     fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summaryTable(ran))

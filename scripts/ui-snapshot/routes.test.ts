@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { captureNames } from './routes.mjs'
+import { captureNames, ROUTES } from './routes.mjs'
 
 describe('captureNames', () => {
   it('names each route and state per viewport and mode, as snapshot.mjs writes them', () => {
@@ -26,6 +26,14 @@ describe('captureNames', () => {
     expect(names).toContain('dashboard--user-menu-1440-dark')
     expect(names).not.toContain('dashboard--user-menu-390-dark')
     expect(names).toContain('signin-390-light')
-    expect(names).not.toContain('plans-loggedin-1440-dark')
+  })
+
+  it('counts each real route once per viewport and mode, and each state only where it runs', () => {
+    const names = captureNames({ viewports: [1440, 390], modes: ['light', 'dark'] })
+    // Every state runs at 1440; only the ones without a viewports filter also run at 390.
+    const states = ROUTES.flatMap((route) => route.states || [])
+    const atPhone = states.filter((state) => !state.viewports)
+    expect(names).toHaveLength(2 * (2 * ROUTES.length + states.length + atPhone.length))
+    expect(new Set(names).size).toBe(names.length)
   })
 })

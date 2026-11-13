@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { A11Y_UPDATE_FLAG, checkA11y, safeAudit } from './a11y.mjs'
 import { FAKE_TOKEN, FIXED_NOW, MOCK_PORT, ORG, TOKEN_EXPIRY, startMock } from './mock-saas.mjs'
-import { captureNames, DEFAULT_MODES, DEFAULT_VIEWPORTS, ROUTES } from './routes.mjs'
+import { captureName, captureNames, DEFAULT_MODES, DEFAULT_VIEWPORTS, ROUTES, statesAt } from './routes.mjs'
 import { checkStress, loadSpec, probe, STRESS_MODULE, stressAlias, UPDATE_FLAG } from './stress.mjs'
 
 const USAGE = `pnpm ui:snapshot -- --label <name> [--primary-color <hex>] [--url <base>] [--routes a,b]
@@ -664,8 +664,7 @@ const main = async () => {
     for (const route of opts.routes) {
       for (const width of opts.viewports) {
         for (const mode of opts.modes) {
-          const states = (route.states || []).filter((s) => !s.viewports || s.viewports.includes(width))
-          jobs.push({ route, width, mode, states })
+          jobs.push({ route, width, mode, states: statesAt(route, width) })
         }
       }
     }
@@ -711,7 +710,7 @@ const main = async () => {
       let visited
       try {
         visited = await visit({ route, width, mode })
-        const name = `${route.slug}-${width}-${mode}`
+        const name = captureName(route, width, mode)
         const elements = await save(visited.page, name, true)
         const stress = stressSpec && (await probe(visited.page, stressSpec))
         const a11y = opts.a11y && (await safeAudit(visited.page))
@@ -732,13 +731,13 @@ const main = async () => {
         console.log(`${name}: ${elements} elements, ${Date.now() - t0} ms`)
       } catch (e) {
         captures.push({ ...base, state: null, error: String(e.message || e).slice(0, 500) })
-        console.log(`${route.slug}-${width}-${mode}: ERROR ${e.message}`)
+        console.log(`${captureName(route, width, mode)}: ERROR ${e.message}`)
         await visited?.context.close()
         continue
       }
       for (const [i, state] of states.entries()) {
         const s0 = Date.now()
-        const name = `${route.slug}--${state.slug}-${width}-${mode}`
+        const name = captureName(route, width, mode, state)
         try {
           if (i > 0) {
             await visited.context.close()

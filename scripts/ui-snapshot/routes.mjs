@@ -65,15 +65,21 @@ export const ROUTES = [
 export const DEFAULT_VIEWPORTS = [1440, 390]
 export const DEFAULT_MODES = ['light', 'dark']
 
+// The states a route captures at one viewport: a state with `viewports` runs only at the widths it lists.
+export const statesAt = (route, width) =>
+  (route.states || []).filter((state) => !state.viewports || state.viewports.includes(width))
+
+// The file name of a capture, shared by snapshot.mjs and captureNames: the route, or one of its states.
+export const captureName = (route, width, mode, state) =>
+  state ? `${route.slug}--${state.slug}-${width}-${mode}` : `${route.slug}-${width}-${mode}`
+
 // The file names of a run over these routes, as snapshot.mjs writes them: each state only at the viewports it lists.
 export const captureNames = ({ routes = ROUTES, viewports, modes }) =>
   routes.flatMap((route) =>
     viewports.flatMap((width) =>
       modes.flatMap((mode) => [
-        `${route.slug}-${width}-${mode}`,
-        ...(route.states || [])
-          .filter((state) => !state.viewports || state.viewports.includes(width))
-          .map((state) => `${route.slug}--${state.slug}-${width}-${mode}`),
+        captureName(route, width, mode),
+        ...statesAt(route, width).map((state) => captureName(route, width, mode, state)),
       ])
     )
   )

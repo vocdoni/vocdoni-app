@@ -49,6 +49,46 @@ describe('runA11y', () => {
   })
 })
 
+describe('runA11y exceptions on nested targets', () => {
+  // A stub axe that reports one button-name node with the given target, so the matcher sees that exact shape.
+  const withTarget = async (
+    target: unknown[],
+    html: string,
+    exceptions: { selector: string; rules: string[] | '*'; reason: string }[]
+  ) => {
+    const real = (globalThis as { axe?: unknown }).axe
+    ;(globalThis as { axe?: unknown }).axe = {
+      run: async () => ({
+        violations: [{ id: 'button-name', impact: 'serious', helpUrl: 'https://x/button-name', nodes: [{ target }] }],
+      }),
+    }
+    try {
+      document.body.innerHTML = html
+      return await runA11y({ tags: A11Y_TAGS, exceptions })
+    } finally {
+      ;(globalThis as { axe?: unknown }).axe = real
+    }
+  }
+  const html = '<div class="widget"><span class="inner"></span></div><div id="host"></div><iframe></iframe>'
+  const exceptFor = (selector: string) => [{ selector, rules: '*' as const, reason: 'x' }]
+
+  it('excuses a plain selector in the top document', async () => {
+    expect(await withTarget(['.inner'], html, exceptFor('.widget'))).toEqual([])
+  })
+
+  it('does not excuse a shadow-DOM target, even when an exception matches its host or inner selector', async () => {
+    for (const selector of ['#host', '.inner', '.widget']) {
+      expect(await withTarget([['#host', '.inner']], html, exceptFor(selector))).toHaveLength(1)
+    }
+  })
+
+  it('does not excuse an iframe target, even when an exception matches the frame or inner selector', async () => {
+    for (const selector of ['iframe', '.inner', '.widget']) {
+      expect(await withTarget(['iframe', '.inner'], html, exceptFor(selector))).toHaveLength(1)
+    }
+  })
+})
+
 describe('summarizeAxe', () => {
   it('counts nodes per rule and keeps the first three targets', () => {
     const summary = summarizeAxe([
@@ -63,6 +103,7 @@ describe('summarizeAxe', () => {
 })
 
 const entry = (count: number, impact = 'serious') => ({ impact, count, examples: 'button', help: 'https://x/rule' })
+const axeFailure = () => ({ 'axe-error': { impact: 'n/a', count: 1, examples: 'boom', help: '' } })
 
 describe('compareA11y', () => {
   it('flags a count above the baseline and a rule the baseline lacks', () => {
@@ -88,6 +129,13 @@ describe('compareA11y', () => {
 
   it('ignores captures that did not run', () => {
     expect(compareA11y([], { gone: { label: 4 } })).toEqual({ added: [], fixed: 0 })
+  })
+
+  it('reports an axe failure as added, without counting the rules it missed as fixed', () => {
+    const { added, fixed } = compareA11y([{ file: 'a', a11y: axeFailure() }], { a: { label: 2 } })
+    expect(fixed).toBe(0)
+    expect(added).toHaveLength(1)
+    expect(added[0]).toContain('a  axe-error (n/a): 1 (baseline 0)')
   })
 })
 
@@ -131,6 +179,15 @@ describe('checkA11y', () => {
     fs.writeFileSync(baselinePath, JSON.stringify({ a: { label: 3 } }))
     expect(checkA11y([{ file: 'a', a11y: { label: entry(1) } }], { update: false, baselinePath })).toBe(false)
     expect(printed()).toContain('1 violation counts went down')
+  })
+
+  it('leaves axe failures out of the violation total and of the update advice', () => {
+    fs.writeFileSync(baselinePath, JSON.stringify({ a: { label: 3 } }))
+    const captures = [{ file: 'a', a11y: { label: entry(2), ...axeFailure() } }]
+    expect(checkA11y(captures, { update: false, baselinePath })).toBe(true)
+    expect(printed()).toContain('Accessibility: 2 violating nodes in 1 captures')
+    expect(printed()).toContain('a  axe-error (n/a): 1 (baseline 0)')
+    expect(printed()).not.toContain('went down')
   })
 
   it('writes the baseline: ran captures replaced, others kept, clean ones removed, keys sorted', () => {
