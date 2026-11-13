@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { resolveCommitSha } from './commit-sha'
 
 describe('resolveCommitSha', () => {
-  it('prefers COMMIT_SHA over git, so the Docker build without .git still gets the sha', () => {
+  it('prefers COMMIT_SHA over git, so a container without git still gets the sha', () => {
     const gitShortSha = vi.fn(() => 'fromgit\n')
 
     expect(resolveCommitSha({ env: { COMMIT_SHA: ' deadbee\n' }, gitShortSha })).toBe('deadbee')
@@ -22,6 +22,16 @@ describe('resolveCommitSha', () => {
 
     expect(resolveCommitSha({ env: {}, gitShortSha, warn })).toBe('unknown')
     expect(warn).toHaveBeenCalledTimes(1)
+  })
+
+  it('shortens the full 40-char hash DigitalOcean passes to the short form git prints', () => {
+    expect(
+      resolveCommitSha({ env: { COMMIT_SHA: '0123456789abcdef0123456789abcdef01234567' }, gitShortSha: () => 'x' })
+    ).toBe('0123456')
+  })
+
+  it("keeps git's short sha as is, even when git lengthens it to stay unique", () => {
+    expect(resolveCommitSha({ env: {}, gitShortSha: () => '71f133db\n' })).toBe('71f133db')
   })
 
   it('does not warn when COMMIT_SHA is set', () => {
