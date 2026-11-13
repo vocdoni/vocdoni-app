@@ -86,6 +86,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:stack": "scripts/integration-stack.sh run",
+    "perf:lab": "node scripts/perf-lab.mjs",
     "ui:snapshot": "node scripts/ui-snapshot/snapshot.mjs",
     "ui:diff": "node scripts/ui-snapshot/diff.mjs",
     "posthog:insights": "node scripts/posthog-insights.mjs",

@@ -50,3 +50,7 @@ yarn.lock
 
 # Local Netlify folder
 .netlify
+
+# perf:lab logged-in sessions
+perf-lab-state*.json
+*.storage-state.json
