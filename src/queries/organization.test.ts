@@ -1,5 +1,5 @@
 import type { VocdoniApiClient } from '@vocdoni/api-client'
-import { hashKey } from '@tanstack/react-query'
+import { hashKey, QueryClient } from '@tanstack/react-query'
 import { QueryKeys } from '~src/queries/keys'
 import { paginatedElectionsQuery } from './organization'
 
@@ -46,5 +46,36 @@ describe('paginatedElectionsQuery', () => {
 
     expect(hashKey(withoutAddress)).not.toBe(hashKey(withAddress))
     expect(withoutAddress).toHaveLength(withAddress.length)
+  })
+})
+
+describe('paginatedElectionsQuery cache key', () => {
+  const keyOf = (params: Record<string, unknown>) =>
+    hashKey(paginatedElectionsQuery('0xorg', client, params as never).queryKey)
+
+  it('gives Home (no params) and the list route (page "1") the same entry', () => {
+    // The list route hands over string route params; Home asks for the bare first page.
+    expect(keyOf({ page: '1' })).toBe(keyOf({}))
+    expect(keyOf({ page: 1 })).toBe(keyOf({}))
+  })
+
+  it('shares one entry between spellings of the same status', () => {
+    expect(keyOf({ status: 'RESULTS' })).toBe(keyOf({ status: 'ended' }))
+  })
+
+  it('keeps different pages, limits and statuses apart', () => {
+    const keys = [{}, { page: '2' }, { limit: 100 }, { status: 'paused' }].map(keyOf)
+
+    expect(new Set(keys).size).toBe(keys.length)
+  })
+
+  it('is evicted by the per-organization prefix the wizard uses after publishing', () => {
+    const queryClient = new QueryClient()
+    const { queryKey } = paginatedElectionsQuery('0xorg', client, { page: '2' } as never)
+    queryClient.setQueryData(queryKey, { processes: [] })
+
+    queryClient.removeQueries({ queryKey: [...QueryKeys.organization.electionLists, '0xorg'] })
+
+    expect(queryClient.getQueryData(queryKey)).toBeUndefined()
   })
 })

@@ -55,6 +55,8 @@ export const useGroups = (limit: number = 6) => {
   return useInfiniteQuery<GroupsResponse, Error, Group[]>({
     queryKey: QueryKeys.organization.groups(organization?.address),
     enabled: !!organization?.address,
+    // Adding, deleting or importing members changes group sizes without invalidating this query
+    staleTime: 0,
     refetchOnWindowFocus: false,
     initialPageParam: 1,
     queryFn: ({ pageParam = 1 }) =>
@@ -83,6 +85,8 @@ export const useGroup = (groupId: string, enabled: boolean = true) => {
   return useQuery<GroupDetails, Error, Group>({
     queryKey: [...QueryKeys.organization.groups(organization?.address), groupId],
     enabled: enabled && !!organization?.address && !!groupId,
+    // Adding, deleting or importing members changes group sizes without invalidating this query
+    staleTime: 0,
     refetchOnWindowFocus: false,
     queryFn: () =>
       bearedFetch<GroupDetails>(
@@ -158,6 +162,8 @@ export const useGroupMembers = (groupId: string, page, isOpen: boolean = false) 
     enabled: !!organization?.address && !!groupId && isOpen,
     queryKey: [...QueryKeys.organization.groups(organization?.address), groupId, page],
     queryFn: () => bearedFetch<GroupMembers>(fetchUrl),
+    // Adding, deleting or importing members changes group sizes without invalidating this query
+    staleTime: 0,
     refetchOnWindowFocus: false,
   })
 }

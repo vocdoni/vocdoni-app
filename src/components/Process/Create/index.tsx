@@ -14,7 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-components'
+import { organizationQueryKeys, useOrganization } from '@vocdoni/react-components'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { CensusSpec, Choice, CreateVotingProcessRequest, VotingProcessQuestionRequest } from '@vocdoni/api-types'
 import { addDays } from 'date-fns'
@@ -582,7 +582,7 @@ export const useFormToVotingProcessRequest = () => {
   }
 }
 
-const useDraft = (draftId?: string | null) => {
+export const useDraft = (draftId?: string | null) => {
   const { client } = useApiClient()
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
 
@@ -603,6 +603,8 @@ const useDraft = (draftId?: string | null) => {
       }
     },
     refetchOnWindowFocus: false,
+    // The wizard resumes a draft that a payment may have published meanwhile (see above): always read it on mount
+    staleTime: 0,
   })
 }
 
@@ -790,15 +792,13 @@ const ProcessCreateView = () => {
 
   // A published draft is a process: the wizard leaves for its page, once the publish dialog saw it published.
   const handlePublished = (processId: string, form: Process | null) => {
-    // Drop the cached elections pages so the processes index reflects the new
-    // vote without a full page refresh. The index loads through a route loader
-    // backed by ensureQueryData, which returns cached data without refetching
-    // when it is merely marked stale — so invalidateQueries isn't enough here.
-    // Removing the entries forces the loader to fetch fresh data on its next
-    // navigation. The key omits the pagination params so every paginated/status
-    // variant is evicted.
-    queryClient.removeQueries({
-      queryKey: QueryKeys.organization.elections(organization?.address),
+    // Drop every cached elections page, so the processes index and Home fetch the new vote
+    // instead of serving a list cached before it existed. All organizations, not just this
+    // one: the lists are keyed by the session's address, which may be spelled differently.
+    queryClient.removeQueries({ queryKey: QueryKeys.organization.electionLists })
+    // The organization's process counter (Home usage box) changed too
+    void queryClient.invalidateQueries({
+      queryKey: organizationQueryKeys.organization(organization?.address),
     })
 
     // Not sent when the draft values are missing (a return from a payment, for one): blank props would skew it

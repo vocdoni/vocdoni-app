@@ -8,7 +8,6 @@ import { usePageContext } from 'vike-react/usePageContext'
 import { WagmiProvider } from 'wagmi'
 import { SaasAccountProvider } from '~components/Account/SaasAccountProvider'
 import { AnalyticsProvider } from '~components/AnalyticsProvider'
-import { UnauthorizedApiError } from '~components/Auth/api'
 import { AuthProvider } from '~components/Auth/AuthContext'
 import { CookieConsent } from '~components/Cookies/CookieConsent'
 import { hasAcceptedCookieConsent } from '~components/Cookies/utils'
@@ -27,23 +26,11 @@ import { uiScaffoldComponents } from '~theme/react-components'
 import { AppEnvProvider, normalizeLanguages, resolveAppEnv, useAppEnv } from './app-env'
 import { configureApiBaseUrl } from './components/Auth/api'
 import { wagmiConfig } from './constants/wagmi'
+import { createAppQueryClient } from './query-client'
 import { createPageI18nInstance, getBaseI18n } from './i18n'
 import { datesLocale } from './i18n/locales'
 import { RoutesProvider } from './router/Router'
 import { Theme } from './theme/Theme'
-
-const createAppQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: (failureCount, error) => {
-          if (error instanceof UnauthorizedApiError) return false
-          return failureCount < 3
-        },
-        refetchOnWindowFocus: false,
-      },
-    },
-  })
 
 export const Providers = ({ basename, language }: { basename?: string; language?: string } = {}) =>
   language ? (

@@ -69,6 +69,8 @@ export const ActionsProvider = ({ children }: { children: ReactNode }) => {
         const refreshed = await client.elections.get(id)
         queryClient.setQueryData(QueryKeys.election.process(id), refreshed)
         queryClient.invalidateQueries({ queryKey: QueryKeys.election.results(id) })
+        // The lists are cached for a while: a status filter must not keep showing the old status
+        queryClient.invalidateQueries({ queryKey: QueryKeys.organization.electionLists })
         setInfo(null)
       } catch (e) {
         setInfo(null)

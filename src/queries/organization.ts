@@ -61,6 +61,27 @@ const LIST_STATUS_MAP: Record<string, ElectionStatus> = {
   upcoming: 'UPCOMING',
 }
 
+// One reading of the page for the key and for the request, so they cannot disagree
+const listPage = (params: PaginatedElectionsParams) => {
+  const page = Number(params.page)
+  return page > 1 ? page : 1
+}
+
+// The cache identity of a list request: what the API is actually asked, not how the caller spelled it.
+// Home asks for `{}` while the list route hands over `{ page: '1' }` (a route param is a string), and
+// `results` / `ended` are one status; without this they would be separate entries for the same page.
+const listCacheParams = (params: PaginatedElectionsParams) => {
+  const page = listPage(params)
+  const limit = Number(params.limit)
+  const status = params.status ? LIST_STATUS_MAP[params.status.toLowerCase()] : undefined
+
+  return {
+    ...(page > 1 ? { page } : {}),
+    ...(limit ? { limit } : {}),
+    ...(status ? { status } : {}),
+  }
+}
+
 export const paginatedElectionsQuery = (
   address: string | undefined,
   client: VocdoniApiClient,
@@ -68,7 +89,7 @@ export const paginatedElectionsQuery = (
   queryClient?: QueryClient
 ) => ({
   enabled: !!address,
-  queryKey: QueryKeys.organization.elections(address, params),
+  queryKey: QueryKeys.organization.elections(address, listCacheParams(params)),
   queryFn: async () => {
     // `enabled` above only guards the query while it is mounted; a manual `refetch()`
     // ignores it. Keep the guard here too: without an address the SaaS rejects the call
@@ -79,7 +100,7 @@ export const paginatedElectionsQuery = (
     }
     const result = await client.elections.list({
       orgAddress: address,
-      page: params.page ? Number(params.page) : 1,
+      page: listPage(params),
       limit: params.limit,
       status: params.status ? LIST_STATUS_MAP[params.status.toLowerCase()] : undefined,
       // These lists are about published elections — drafts have their own tab and
