@@ -175,7 +175,7 @@ export const PublishDialog = ({
       closeOnEscape={!locked && !stripeMounted}
     >
       <Portal>
-        <Dialog.Backdrop _open={remounted ? { animationName: 'none' } : undefined} />
+        <Dialog.Backdrop _open={remounted ? { animationName: '[none]' } : undefined} />
         <Dialog.Positioner>
           <Dialog.Content ref={contentRef} css={frame}>
             {content}
