@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { render, screen } from '~src/test-utils'
+import { Process } from '../common'
 import ExtendedQuestionEditor from './ExtendedQuestionEditor'
 
 vi.mock('@dnd-kit/sortable', () => ({
@@ -33,23 +34,34 @@ vi.mock('~components/Layout/Uploader', () => ({
   ImageUploader: () => <div data-testid='image-uploader' />,
 }))
 
-const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  const form = useForm({
+const Harness = ({
+  questionOptions,
+  append = vi.fn(),
+}: {
+  questionOptions: { id: string }[]
+  append?: (value: { option: string; description: string }) => void
+}) => {
+  const form = useForm<Process>({
     defaultValues: {
       questions: [{ options: [{ option: 'A', description: 'Desc' }] }],
     },
   })
-  return <FormProvider {...form}>{children}</FormProvider>
+  return (
+    <ExtendedQuestionEditor
+      index={0}
+      control={form.control}
+      questionOptions={questionOptions}
+      append={append}
+      remove={vi.fn()}
+    />
+  )
 }
 
 describe('ExtendedQuestionEditor', () => {
   it('renders options using choice card wrappers', () => {
     const questionOptions = [{ id: 'opt-1' }]
 
-    const { container } = render(
-      <ExtendedQuestionEditor index={0} questionOptions={questionOptions} append={vi.fn()} remove={vi.fn()} />,
-      { wrapper: Wrapper }
-    )
+    const { container } = render(<Harness questionOptions={questionOptions} />)
 
     expect(screen.getByTestId('image-uploader')).toBeTruthy()
     expect(container.querySelectorAll('[data-choice-card]')).toHaveLength(1)
@@ -59,9 +71,7 @@ describe('ExtendedQuestionEditor', () => {
     const user = userEvent.setup()
     const append = vi.fn()
 
-    render(<ExtendedQuestionEditor index={0} questionOptions={[{ id: 'opt-1' }]} append={append} remove={vi.fn()} />, {
-      wrapper: Wrapper,
-    })
+    render(<Harness questionOptions={[{ id: 'opt-1' }]} append={append} />)
 
     const add = screen.getByRole('button', { name: 'Add option' })
     add.focus()

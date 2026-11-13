@@ -20,7 +20,8 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import { memo } from 'react'
+import { Control, Controller, useFieldArray, useFormState, UseFormSetValue, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CloseIcon, DragHandleIcon } from '~theme/icons'
 import { DashboardBox } from '~components/Dashboard/Contents'
@@ -34,29 +35,34 @@ import SimpleQuestionEditor from './SimpleQuestionEditor'
 
 interface QuestionFormProps {
   index: number
+  /** How many questions the process has */
+  total: number
   onRemove: (index: number) => void
   questionId: string
+  control: Control<Process>
+  setValue: UseFormSetValue<Process>
 }
 
-export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps) => {
+/**
+ * One question card. Memoized with stable props, and it reads form state through name-scoped hooks
+ * (useWatch, useFormState), never watch(): typing in a question re-renders no other card.
+ */
+export const QuestionForm = memo(({ index, total, onRemove, questionId, control, setValue }: QuestionFormProps) => {
   const { t } = useTranslation()
-  const {
-    register,
-    formState: { errors },
-    watch,
-    control,
-  } = useFormContext<Process>()
+  const { errors } = useFormState({ control, name: `questions.${index}.title`, exact: true })
   const {
     fields: questionOptions,
     append,
     remove,
     move,
   } = useFieldArray({
+    control,
     name: `questions.${index}.options`,
   })
-  const questions = watch('questions')
-  const extendedInfo = watch(`questions.${index}.extendedInfo`)
-  const questionType = watch(`questions.${index}.type`)
+  const [extendedInfo, questionType] = useWatch({
+    control,
+    name: [`questions.${index}.extendedInfo`, `questions.${index}.type`],
+  })
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -78,7 +84,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
       <DashboardBox>
         <HStack align='stretch' gap='4'>
           {/* Drag handle */}
-          {questions.length > 1 && (
+          {total > 1 && (
             <DragHandle {...attributes} {...listeners} placement='start' dragging={isDragging}>
               <Icon as={DragHandleIcon} />
             </DragHandle>
@@ -92,12 +98,12 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                 {t('process.create.question.question_number', {
                   defaultValue: 'Question {{index}} of {{total}}',
                   index: index + 1,
-                  total: questions.length,
+                  total,
                 })}
               </Text>
               <HStack gap='2' ms='auto' flexWrap='wrap' justify='flex-end'>
-                <QuestionSettings index={index} />
-                {questions.length > 1 && (
+                <QuestionSettings index={index} control={control} setValue={setValue} />
+                {total > 1 && (
                   <IconButton
                     aria-label={t('process_create.question.remove', 'Remove question')}
                     size='sm'
@@ -115,7 +121,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                 variant='inline'
                 fontSize='lg'
                 fontWeight='bold'
-                {...register(`questions.${index}.title`, {
+                {...control.register(`questions.${index}.title`, {
                   required: t('form.error.required', 'This field is required'),
                 })}
               />
@@ -140,7 +146,9 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
         </HStack>
 
         {/* Selection limits */}
-        {questionType === SelectorTypes.Multiple && <SelectionLimits index={index} />}
+        {questionType === SelectorTypes.Multiple && (
+          <SelectionLimits index={index} control={control} setValue={setValue} />
+        )}
 
         {/* Options */}
         <DndContext
@@ -166,13 +174,27 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
             strategy={extendedInfo ? rectSortingStrategy : verticalListSortingStrategy}
           >
             {extendedInfo ? (
-              <ExtendedQuestionEditor index={index} questionOptions={questionOptions} append={append} remove={remove} />
+              <ExtendedQuestionEditor
+                index={index}
+                control={control}
+                questionOptions={questionOptions}
+                append={append}
+                remove={remove}
+              />
             ) : (
-              <SimpleQuestionEditor index={index} questionOptions={questionOptions} append={append} remove={remove} />
+              <SimpleQuestionEditor
+                index={index}
+                control={control}
+                questionOptions={questionOptions}
+                append={append}
+                remove={remove}
+              />
             )}
           </SortableContext>
         </DndContext>
       </DashboardBox>
     </div>
   )
-}
+})
+
+QuestionForm.displayName = 'QuestionForm'
