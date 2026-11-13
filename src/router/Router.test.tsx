@@ -9,6 +9,14 @@ vi.mock('react-router', () => ({
   RouterProvider: ({ router }: { router: { id: string } }) => <div data-testid='router-provider'>{router.id}</div>,
 }))
 
+const prefetchProviderRoutes = vi.fn()
+vi.mock('./route-prefetch', () => ({
+  RoutePrefetchProvider: ({ routes, children }: { routes?: unknown; children: React.ReactNode }) => {
+    prefetchProviderRoutes(routes)
+    return children
+  },
+}))
+
 vi.mock('./routes/auth', () => ({
   useAuthRoutes: () => ({ path: '/account' }),
   useCreateOrganizationRoutes: () => ({ path: '/account/create-organization' }),
@@ -46,6 +54,16 @@ describe('RoutesProvider', () => {
     expect(createBrowserRouter).toHaveBeenCalledWith(expect.any(Array), expect.objectContaining({ basename: '/en' }))
   })
 
+  it('hands the router routes to the prefetch provider', async () => {
+    const routes = [{ path: '/admin' }]
+    createBrowserRouter.mockImplementationOnce(() => ({ id: 'router-routes', dispose, routes }) as never)
+    const { RoutesProvider } = await import('./Router')
+
+    render(<RoutesProvider basename='/en' />)
+
+    expect(prefetchProviderRoutes).toHaveBeenLastCalledWith(routes)
+  })
+
   it('recreates and disposes the router when the basename changes', async () => {
     const { RoutesProvider } = await import('./Router')
 
@@ -61,36 +79,5 @@ describe('RoutesProvider', () => {
     )
     // The superseded router owns popstate/pagehide listeners only dispose() releases.
     expect(dispose).toHaveBeenCalledTimes(1)
-  })
-})
-
-describe('RoutesProvider route chunks', () => {
-  beforeEach(() => {
-    createBrowserRouter.mockClear()
-  })
-
-  it('starts loading the matched routes code when the router is created, before any guard renders', async () => {
-    const preloadLayout = vi.fn(() => Promise.resolve())
-    const preloadPage = vi.fn(() => Promise.resolve())
-    createBrowserRouter.mockImplementationOnce(
-      () =>
-        ({
-          id: 'router-preload',
-          dispose,
-          state: {
-            matches: [
-              { route: { handle: { preload: preloadLayout } } },
-              { route: {} },
-              { route: { handle: { preload: preloadPage } } },
-            ],
-          },
-        }) as never
-    )
-    const { RoutesProvider } = await import('./Router')
-
-    render(<RoutesProvider basename='/en' />)
-
-    expect(preloadLayout).toHaveBeenCalledTimes(1)
-    expect(preloadPage).toHaveBeenCalledTimes(1)
   })
 })

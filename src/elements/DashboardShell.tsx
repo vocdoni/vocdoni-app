@@ -4,7 +4,7 @@ import { OrganizationProvider } from '@vocdoni/react-components'
 import React, { PropsWithChildren, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SidebarIcon } from '~theme/icons'
-import { Outlet, useLocation } from 'react-router'
+import { useLocation } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import DashboardMenu from '~components/Dashboard/Menu'
 import { OrganizationGate } from '~components/Organization/OrganizationGate'
@@ -14,6 +14,7 @@ import SupportChat from '~components/SupportChat'
 import { LocalStorageKeys } from '~constants'
 import { DashboardLayoutContext, DashboardOutletContext } from '~elements/DashboardLayoutContext'
 import { useIsMobile } from '~components/ui/useIsMobile'
+import { DashboardOutlet } from '~elements/DashboardOutlet'
 
 /**
  * Shared dashboard layout (sidebar + user menu + content) used by both the admin and integrator
@@ -68,7 +69,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
               </IconButton>
             </Flex>
             <OrganizationGate>
-              <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
+              <DashboardOutlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
             </OrganizationGate>
           </Flex>
           <SupportChat />

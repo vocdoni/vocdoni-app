@@ -1,6 +1,8 @@
 import { ChakraProvider } from '@chakra-ui/react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { DashboardIcon } from '~theme/icons'
+import { MemoryRouter } from 'react-router'
+import { RoutePrefetchProvider } from '~src/router/route-prefetch'
 import { system } from '~theme/system'
 import { DashboardMenuItemButton } from './Item'
 
@@ -29,5 +31,27 @@ describe('DashboardMenuItemButton', () => {
     renderItem(true)
 
     expect(screen.getByRole('button')).not.toHaveTextContent('Dashboard')
+  })
+
+  it.each([false, true])('starts loading the section code on hover and on focus (reduced: %s)', (reduced) => {
+    const sectionCode = vi.fn(async () => ({ Component: () => null }))
+    render(
+      <ChakraProvider value={system}>
+        <MemoryRouter>
+          <RoutePrefetchProvider routes={[{ path: '/admin/processes', lazy: sectionCode }]}>
+            <DashboardMenuItemButton
+              reduced={reduced}
+              item={{ label: 'Votes', icon: DashboardIcon, route: '/admin/processes' }}
+            />
+          </RoutePrefetchProvider>
+        </MemoryRouter>
+      </ChakraProvider>
+    )
+
+    fireEvent.mouseEnter(screen.getByRole('link'))
+    expect(sectionCode).toHaveBeenCalledTimes(1)
+
+    fireEvent.focus(screen.getByRole('link'))
+    expect(sectionCode).toHaveBeenCalledTimes(2)
   })
 })
