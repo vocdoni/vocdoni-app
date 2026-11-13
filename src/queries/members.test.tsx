@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import { useNavigate } from 'react-router'
 import { AllProviders, createTestQueryClient, TestMemoryRouter } from '~src/test-utils'
 import { getAuthMock, setAuthMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { nextMemberSort, parseMemberSort, usePaginatedMembers } from './members'
+import { nextMemberSort, parseMemberSort, useMembersCount, usePaginatedMembers } from './members'
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => getAuthMock(),
@@ -117,15 +117,60 @@ describe('usePaginatedMembers sorting', () => {
     expect(bearedFetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=10&search=')
   })
 
-  it('ignores the sort for showAll queries', async () => {
-    const { bearedFetch } = renderMembersHook('/?sortBy=name&sortOrder=asc', { showAll: true })
+  it('asks for a single row and ignores the sort for count-only queries', async () => {
+    const { bearedFetch } = renderMembersHook('/?page=3&limit=50&sortBy=name&sortOrder=asc', { countOnly: true })
 
     await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
-    expect(bearedFetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=0&search=')
+    expect(bearedFetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=1&search=')
+  })
+})
+
+describe('useMembersCount', () => {
+  it('reads the total from pagination.totalItems of a 1-item request', async () => {
+    const bearedFetch = vi.fn().mockResolvedValue({ members: [{ id: '1' }], pagination: { totalItems: 4321 } })
+    setAuthMock({ bearedFetch })
+    setReactProvidersMock({ useOrganization: () => ({ organization: { address: '0xorg' } }) })
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <AllProviders queryClient={createTestQueryClient()}>
+        <TestMemoryRouter initialEntries={['/']}>{children}</TestMemoryRouter>
+      </AllProviders>
+    )
+    const { result } = renderHook(() => useMembersCount(), { wrapper })
+
+    await waitFor(() => expect(result.current.total).toBe(4321))
+    expect(bearedFetch).toHaveBeenCalledTimes(1)
+    expect(bearedFetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=1&search=')
   })
 })
 
 describe('usePaginatedMembers placeholder data', () => {
+  it('keeps the current rows while the next page loads', async () => {
+    const firstPage = { members: [{ id: '1', name: 'Ada' }], pagination: {} }
+    const bearedFetch = vi
+      .fn()
+      .mockResolvedValueOnce(firstPage)
+      .mockReturnValue(new Promise(() => {}))
+    setAuthMock({ bearedFetch })
+    setReactProvidersMock({ useOrganization: () => ({ organization: { address: '0xorg' } }) })
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <AllProviders queryClient={createTestQueryClient()}>
+        <TestMemoryRouter initialEntries={['/members/1']}>{children}</TestMemoryRouter>
+      </AllProviders>
+    )
+    const { result } = renderHook(() => ({ query: usePaginatedMembers({}), navigate: useNavigate() }), { wrapper })
+
+    await waitFor(() => expect(result.current.query.data?.members).toEqual(firstPage.members))
+    // The page is a route param in the app; useParams is empty here, so the limit stands in for "another page".
+    act(() => {
+      result.current.navigate('/members/1?limit=20')
+    })
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(2))
+    expect(bearedFetch).toHaveBeenLastCalledWith('organizations/0xorg/members?page=1&limit=20&search=')
+    expect(result.current.query.isPlaceholderData).toBe(true)
+    expect(result.current.query.data?.members).toEqual(firstPage.members)
+  })
+
   it('keeps the current rows while a new sort loads', async () => {
     const firstPage = { members: [{ id: '1', name: 'Ada' }], pagination: {} }
     // The second request never resolves, so the hook stays in the "loading the new sort" state.

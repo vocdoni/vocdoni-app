@@ -144,6 +144,10 @@ export const useDeleteGroup = () => {
   })
 }
 
+// True when two keys differ at most in their last part (the page).
+const sameKeyBeforePage = (a: readonly unknown[], b: readonly unknown[]) =>
+  a.length === b.length && a.slice(0, -1).every((part, index) => part === b[index])
+
 export const useGroupMembers = (groupId: string, page, isOpen: boolean = false) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
@@ -153,12 +157,17 @@ export const useGroupMembers = (groupId: string, page, isOpen: boolean = false) 
     groupId
   )
   const fetchUrl = `${baseUrl}?page=${page}`
+  const queryKey = [...QueryKeys.organization.groups(organization?.address), groupId, page]
 
   return useQuery<GroupMembers, Error, GroupMembersQueryData>({
     enabled: !!organization?.address && !!groupId && isOpen,
-    queryKey: [...QueryKeys.organization.groups(organization?.address), groupId, page],
+    queryKey,
     queryFn: () => bearedFetch<GroupMembers>(fetchUrl),
     refetchOnWindowFocus: false,
+    // Keep the current rows on screen while another page loads, but never lend them to another group or
+    // organization: the key is [...prefix, groupId, page], so everything before the page must match.
+    placeholderData: (previousData, previousQuery) =>
+      previousQuery && sameKeyBeforePage(previousQuery.queryKey, queryKey) ? previousData : undefined,
   })
 }
 

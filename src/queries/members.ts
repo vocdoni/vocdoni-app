@@ -35,7 +35,8 @@ type AddMembersResponse = {
 
 type PaginatedMembersProps = {
   search?: string
-  showAll?: boolean
+  // Only the total is needed: asks for a single row and the caller reads `pagination.totalItems`.
+  countOnly?: boolean
 }
 
 export type ImportJobStatus = 'pending' | 'completed' | 'failed'
@@ -115,17 +116,18 @@ const isSameOrganizationQuery = (queryKey: readonly unknown[], address?: string)
   return prefix.every((part, index) => queryKey[index] === part)
 }
 
-export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedMembersProps) => {
+export const usePaginatedMembers = ({ search = '', countOnly = false }: PaginatedMembersProps) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
   const { page, limit } = useUrlPagination()
   const [searchParams] = useSearchParams()
   const address = organization?.address
 
-  const effectivePage = showAll ? 1 : page
-  const effectiveLimit = showAll ? 0 : limit
-  // showAll callers only need totals or the full set, so skip the sort to share one cached query.
-  const sort = showAll ? null : parseMemberSort(searchParams)
+  const effectivePage = countOnly ? 1 : page
+  // `pagination.totalItems` is the size of the whole list whatever the page size, so one row is enough.
+  const effectiveLimit = countOnly ? 1 : limit
+  // Count readers ignore the sort, so they all share one cached query.
+  const sort = countOnly ? null : parseMemberSort(searchParams)
 
   // Built with URLSearchParams so a search containing `?` or `&` can't break the query string.
   const query = new URLSearchParams({ page: String(effectivePage), limit: String(effectiveLimit), search })
@@ -157,6 +159,12 @@ export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedM
     // collapse and jump. Only within the same organization, never another org's members.
     placeholderData: keepSameOrganizationRows,
   })
+}
+
+// Unfiltered member total, fetched as a 1-item page instead of the whole list.
+export const useMembersCount = () => {
+  const query = usePaginatedMembers({ countOnly: true })
+  return { ...query, total: query.data?.pagination?.totalItems }
 }
 
 export const useAddMembers = (isAsync: boolean = false) => {
