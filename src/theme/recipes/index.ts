@@ -22,6 +22,7 @@ import {
   VoteWeight,
 } from './election'
 import { EmptyState } from './emptyState'
+import { Field } from './field'
 import { input, switchRecipe, textarea } from './form'
 import { listSlotRecipe } from './list'
 import { Menu } from './menu'
@@ -30,6 +31,8 @@ import { Pagination, PaginationButton } from './pagination'
 import { Popover } from './popover'
 import { Progress } from './progress'
 import { RadioCard } from './radioCard'
+import { RadioGroup } from './radioGroup'
+import { SegmentGroup } from './segmentGroup'
 import { Stat } from './stat'
 import { Table } from './table'
 import { Tabs } from './tabs'
@@ -68,11 +71,14 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   dialog: Dialog,
   drawer: Drawer,
   emptyState: EmptyState,
+  field: Field,
   list: listSlotRecipe,
   menu: Menu,
   popover: Popover,
   progress: Progress,
   radioCard: RadioCard,
+  radioGroup: RadioGroup,
+  segmentGroup: SegmentGroup,
   stat: Stat,
   switch: switchRecipe,
   table: Table,
