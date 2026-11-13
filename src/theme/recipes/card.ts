@@ -27,15 +27,27 @@ const listItem = {
 
 // Cards are named by what they are for. Radius comes from Chakra's base (`l3`) unless a variant sets
 // its own; `size` sets `--card-padding`, which the variants that pad their root read.
+// The 1px border is the card's ring, so none of the variants adds a shadow.
 export const Card = defineSlotRecipe({
   slots: cardAnatomy.keys(),
+  base: {
+    header: { px: '5', pt: '4', pb: '3' },
+    // Rows after the header are told apart by a hairline.
+    body: { px: '5', py: '3.5', _notFirst: { borderTopWidth: 'hairline', borderColor: 'border' } },
+    footer: { px: '5', pb: '4' },
+  },
   variants: {
+    // Chakra's sizes only set the title style and `--card-padding`; every title is a control label.
+    size: {
+      sm: { title: { textStyle: 'control' } },
+      md: { title: { textStyle: 'control' } },
+      lg: { title: { textStyle: 'control' } },
+    },
     variant: {
       // Chakra's filled card; fill and elevation come from the surface roles.
       outline: {
         root: {
           bg: 'surface.card',
-          boxShadow: 'shadow.card',
         },
       },
       // A bordered region of a page. Unfilled, so it shows whatever holds it; padded on the root, so its
@@ -44,7 +56,6 @@ export const Card = defineSlotRecipe({
         root: {
           borderWidth: 'hairline',
           borderColor: 'border',
-          boxShadow: 'shadow.card',
           p: 'var(--card-padding)',
         },
       },
@@ -55,10 +66,12 @@ export const Card = defineSlotRecipe({
           borderColor: 'border',
         },
       },
-      // A recessed panel inside a form or card, told apart by its fill instead of a border.
+      // A tinted block inside a form or card: a faint fill with the hairline.
       sunken: {
         root: {
-          bg: 'surface.sunken',
+          bg: 'bg.subtle',
+          borderWidth: 'hairline',
+          borderColor: 'border',
           p: 'var(--card-padding)',
         },
       },
@@ -69,12 +82,13 @@ export const Card = defineSlotRecipe({
           color: 'surface.inverse.fg',
         },
       },
-      // A notice outlined in the brand colour, such as a paused process.
+      // A notice on the accent tint, outlined in the accent, such as a paused process.
       highlight: {
         root: {
+          bg: 'accent.subtle',
           color: 'accent.fg',
           borderWidth: 'hairline',
-          borderColor: 'brand.fg',
+          borderColor: 'accent.solid',
           p: 'var(--card-padding)',
         },
       },
@@ -96,12 +110,12 @@ export const Card = defineSlotRecipe({
         root: {
           borderWidth: 'hairline',
           borderStyle: '[dashed]',
-          borderColor: 'border',
+          borderColor: 'border.emphasized',
           borderRadius: 'xl',
           p: '10',
           cursor: 'button',
           _dragging: {
-            borderColor: 'border.emphasized',
+            borderColor: 'accent.solid',
           },
         },
       },
