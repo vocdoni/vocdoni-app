@@ -1,9 +1,9 @@
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { radioGroupAnatomy } from '@chakra-ui/react/anatomy'
 
 // 16px circle with a 1.5px `border.strong` outline; checked, a 5px ring of the palette around a white centre.
 // Chakra's `md` and `lg` draw the same 16px, so call sites keep their size prop.
-const box = { itemControl: { boxSize: '4' }, item: { textStyle: 'control' } }
+const box: Record<string, SystemStyleObject> = { itemControl: { boxSize: '4' }, item: { textStyle: 'control' } }
 
 export const RadioGroup = defineSlotRecipe({
   slots: radioGroupAnatomy.keys(),

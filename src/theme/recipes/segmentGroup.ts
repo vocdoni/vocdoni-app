@@ -1,8 +1,8 @@
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { segmentGroupAnatomy } from '@chakra-ui/react/anatomy'
 
 // A sunken track holding 28px segments; the chosen one is a panel with a 1px ring. One size, whatever the prop.
-const size = { item: { height: '7', px: '3', gap: '2', textStyle: 'control' } }
+const size: Record<string, SystemStyleObject> = { item: { height: '7', px: '3', gap: '2', textStyle: 'control' } }
 
 export const SegmentGroup = defineSlotRecipe({
   slots: segmentGroupAnatomy.keys(),

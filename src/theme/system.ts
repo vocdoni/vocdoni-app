@@ -1,4 +1,10 @@
-import { createSystem, defaultConfig, defineSemanticTokens, defineTokens } from '@chakra-ui/react'
+import {
+  createSystem,
+  defaultConfig,
+  defineSemanticTokens,
+  defineTokens,
+  type SystemStyleObject,
+} from '@chakra-ui/react'
 import { DEFAULT_PRIMARY_COLOR, PAGE_BACKGROUNDS } from './colors'
 import { withEscapeHatch } from './escapeHatch'
 import { generateAccentTokens, generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
@@ -9,7 +15,7 @@ import tokens from './tokens'
 
 // The palette `colorPalette`-aware components fall back to when none is set: always `brand`, which is Fil's blue
 // until PRIMARY_COLOR replaces it. The argument is kept so callers need not change.
-export const defaultColorPalette = (_primaryColor?: string) => 'brand'
+export const defaultColorPalette = (_primaryColor?: string) => 'brand' as const
 
 // Fil's exact accent values, pinned (light side) instead of the generated steps when no PRIMARY_COLOR is set.
 const FIL_ACCENT = { solidHover: '#1554cf', subtle: '#f0f5ff' } as const
@@ -73,7 +79,8 @@ export const createAppSystem = (primaryColor?: string) => {
         letterSpacing: 'body',
         // Tabular numerals so figures line up; smoothing keeps small type crisp on macOS.
         fontVariantNumeric: 'tabular-nums',
-        WebkitFontSmoothing: 'antialiased',
+        // Chakra's style types omit the vendor-prefixed property, so it is cast in.
+        ...({ WebkitFontSmoothing: 'antialiased' } as SystemStyleObject),
       },
       // The CSS default (`bolder`) would ask for 700; the interface tops out at 600.
       'b, strong': {

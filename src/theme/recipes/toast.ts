@@ -1,10 +1,10 @@
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { toastAnatomy } from '@chakra-ui/react/anatomy'
 
 // A toast is a raised neutral card; only its leading icon carries the status colour. Chakra paints success, warning
 // and error as solid fills, so each type is restated here. The full slot list stays: arrays are replaced on merge,
 // and a shorter one drops the other slots' styles.
-const plain = (indicator: string) => ({
+const plain = (indicator: string): SystemStyleObject => ({
   bg: 'surface.raised',
   color: 'fg',
   '--toast-trigger-bg': 'colors.bg.muted',

@@ -616,7 +616,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   VoteButton: defineComponent<'VoteButton', ButtonProps>(({ label, loading, ...props }) => {
-    const merged: ButtonProps = Object.assign({}, ballotAction, props)
+    const merged = Object.assign<ButtonProps, ButtonProps, ButtonProps>({}, ballotAction, props)
     return (
       <Button loading={loading} {...merged}>
         {label}

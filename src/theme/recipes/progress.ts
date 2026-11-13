@@ -36,7 +36,7 @@ export const Progress = defineSlotRecipe({
     { variant: 'results', css: { track: { h: '1.5', borderRadius: 'none' } } },
     ...(['turnout', 'meter', 'job'] as const).map((variant) => ({
       variant,
-      css: { root: { borderRadius: 'none' }, track: { h: '[3px]', borderRadius: 'none' } },
+      css: { root: { borderRadius: 'none' as const }, track: { h: '[3px]' as const, borderRadius: 'none' as const } },
     })),
   ],
 })

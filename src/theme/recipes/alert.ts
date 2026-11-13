@@ -7,6 +7,8 @@ import { alertAnatomy } from '@chakra-ui/react/anatomy'
 export const Alert = defineSlotRecipe({
   slots: alertAnatomy.keys(),
   variants: {
+    // Chakra's own status looks stay; the axis is declared so the compound variants below type-check.
+    status: { info: {}, warning: {}, success: {}, error: {}, neutral: {} },
     size: {
       md: { root: { textStyle: 'control' } },
     },
