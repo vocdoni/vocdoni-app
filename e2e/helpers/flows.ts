@@ -24,7 +24,7 @@ export type RegisteredUser = {
  * Signs a new user up and verifies them with the code emailed to MailHog.
  * Leaves the browser on the organization-creation step, authenticated.
  */
-export const registerAndVerify = async (page: Page, prefix = 'organizer'): Promise<RegisteredUser> => {
+const registerAndVerify = async (page: Page, prefix = 'organizer'): Promise<RegisteredUser> => {
   const email = uniqueEmail(prefix)
 
   await page.goto('/account/signup')

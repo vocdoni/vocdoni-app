@@ -124,6 +124,13 @@ const renderMembers = (
   )
 
 describe('MembersTable layout', () => {
+  it('names the row checkbox of a member with no name, email or number', () => {
+    setDesktop(true)
+    renderMembers(undefined, {}, [{ id: '3', name: '', surname: '', email: '', memberNumber: '' }])
+
+    expect(screen.getByRole('checkbox', { name: 'Select this member' })).toBeInTheDocument()
+  })
+
   // The global matchMedia stub matches nothing, so useBreakpointValue resolves the `base`
   // value and the list renders stacked member cards instead of the desktop table.
   it('renders stacked member cards without a table on mobile', () => {
@@ -146,6 +153,10 @@ describe('MembersTable layout', () => {
     expect(screen.getByRole('columnheader', { name: 'Email' })).toBeInTheDocument()
     // The labelled "Select all" checkbox is specific to the mobile header.
     expect(screen.queryByText('Select all')).not.toBeInTheDocument()
+    // The checkboxes carry no visible text, so they are named by aria-label.
+    expect(screen.getByRole('checkbox', { name: 'Select all' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'Select Ada Lovelace' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'Select Alan Turing' })).toBeInTheDocument()
   })
 })
 
@@ -167,6 +178,8 @@ describe('MembersTable session replay exclusion', () => {
     for (const value of ['Ada', 'Lovelace', 'ada@example.test', 'Alan', 'Turing', 'alan@example.test']) {
       expect(screen.getByRole('cell', { name: value }).closest('.ph-no-capture')).not.toBeNull()
     }
+    // The row checkbox is named after the member, so its cell is excluded as well.
+    expect(screen.getByRole('checkbox', { name: 'Select Ada Lovelace' }).closest('.ph-no-capture')).not.toBeNull()
     // Column headers are field names, not member data — they stay visible.
     expect(screen.getByRole('columnheader', { name: 'Email' }).closest('.ph-no-capture')).toBeNull()
   })

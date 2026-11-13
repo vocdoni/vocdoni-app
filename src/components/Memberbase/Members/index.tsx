@@ -76,6 +76,7 @@ import { TableColumn, useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
 import { MemberManager } from './Manager'
 import { maskIfNeeded } from './maskIfNeeded'
+import { memberAlias } from './memberAlias'
 import MemberCard from './MemberCard'
 
 enum DeleteModes {
@@ -528,11 +529,6 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
     })
   }
 
-  const memberAlias = (member: Member) => {
-    if (!member.name && !member.surname) return member.email || member.memberNumber
-    return `${member.name} ${member.surname}`
-  }
-
   return (
     <>
       <Button size='sm' variant='outline' onClick={onOpen} {...rest}>
@@ -819,16 +815,21 @@ const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableCol
 }
 
 const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCensus }: MemberTableItemProps) => {
+  const { t } = useTranslation()
   const { isSelected, toggleOne, columns } = useTable()
+  const alias = memberAlias(member) || t('members.table.this_member', { defaultValue: 'this member' })
 
   return (
     <Table.Row>
-      <Table.Cell>
+      {/* ph-no-capture: the checkbox's aria-label carries the member's name, which autocapture would keep. */}
+      <Table.Cell className='ph-no-capture'>
         <Checkbox.Root
           checked={isSelected(member.id)}
           onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
         >
-          <Checkbox.HiddenInput />
+          <Checkbox.HiddenInput
+            aria-label={t('members.table.select_member', { defaultValue: 'Select {{name}}', name: alias })}
+          />
           <Checkbox.Control />
         </Checkbox.Root>
       </Table.Cell>
@@ -1128,7 +1129,9 @@ const MembersTable = () => {
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
                       disabled={isPlaceholderData}
                     >
-                      <Checkbox.HiddenInput />
+                      <Checkbox.HiddenInput
+                        aria-label={t('members.table.select_all', { defaultValue: 'Select all' })}
+                      />
                       <Checkbox.Control />
                     </Checkbox.Root>
                   </Table.ColumnHeader>

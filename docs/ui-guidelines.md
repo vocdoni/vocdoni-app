@@ -55,6 +55,7 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                       | `ballot.ts`       |
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                       | `illustration.ts` |
 | Links, switch, turnout stripes   | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `progress.stripe`                                                        | `recipeColors.ts` |
+| Toasts                           | `toast.{success,warning}.bg` (solid fills) and `toast.{success,warning}.fg` (the text on them, each status's `contrast`)                                                    | `recipeColors.ts` |
 | Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`                                                                     | `semantic.ts`     |
 | Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                   | `palette.ts`      |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                        | `semantic.ts`     |
@@ -394,6 +395,7 @@ escape is not a way around the ratchet.
 | Theme integrity (real tokens, no shared CSS variable) | `pnpm test src/theme/system.test.ts`                | `Test` step of the same jobs                                             |
 | Style inventory                                       | `pnpm test src/theme/style-inventory.test.ts`       | `Test` step of the same jobs                                             |
 | Stress theme                                          | `pnpm ui:snapshot -- --label stress --theme stress` | `Stress theme` job (any PR that touches what renders, whatever its base) |
+| Accessibility (axe)                                   | `pnpm ui:snapshot -- --label a11y --a11y`           | `Accessibility (axe)` job (same trigger as `Stress theme`)               |
 | Offline snapshot and diff                             | `pnpm ui:snapshot`, `pnpm ui:diff`                  | not run                                                                  |
 
 The build jobs run on PRs to `develop`, `stage` and `d/**` only; on a PR to any other base (a stacked PR), run

@@ -124,7 +124,7 @@ For Vike SSR pages, the same shared providers are reused, but the page entry com
 ### Commands
 - `pnpm dev` or `pnpm start` - Vike + Vite development server (http://localhost:5173)
 - `pnpm build` - Production build
-- `pnpm lint` - TypeScript compiler and Prettier checks
+- `pnpm lint` - TypeScript compiler, Prettier and knip checks
 - `pnpm lint:fix` - Fix formatting with Prettier
 - `pnpm translations` - Extract i18n strings
 

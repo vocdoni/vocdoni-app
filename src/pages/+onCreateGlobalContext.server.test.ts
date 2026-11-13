@@ -46,4 +46,25 @@ describe('onCreateGlobalContext', () => {
 
     expect(loadLanguages).toHaveBeenCalledWith(['ca', 'de', 'el', 'en', 'es', 'eu', 'fr', 'it', 'pt', 'pt-br'])
   })
+
+  it('resolves the build commit from COMMIT_SHA onto the global context, shortened', async () => {
+    vi.stubEnv('COMMIT_SHA', '0123456789abcdef0123456789abcdef01234567')
+
+    const { default: onCreateGlobalContext } = await import('./+onCreateGlobalContext.server')
+    const globalContext = {} as GlobalContextServer
+
+    await onCreateGlobalContext(globalContext)
+
+    expect(globalContext.commitSha).toBe('0123456')
+  })
+
+  it('always sets a commit sha, even without COMMIT_SHA', async () => {
+    vi.stubEnv('COMMIT_SHA', '')
+    const { default: onCreateGlobalContext } = await import('./+onCreateGlobalContext.server')
+    const globalContext = {} as GlobalContextServer
+
+    await onCreateGlobalContext(globalContext)
+
+    expect(globalContext.commitSha).toEqual(expect.any(String))
+  })
 })

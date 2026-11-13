@@ -12,7 +12,7 @@ import { selfServiceVoterLimit } from './payment-errors'
 
 // Above this many voters the backend recommends a custom quote (quoteRecommended); it still sells
 // the process. Only used to word the recommendation: the backend's flag decides when it shows.
-export const quoteRecommendedVoterLimit = 15_000
+const quoteRecommendedVoterLimit = 15_000
 
 // The backend describes each line in English; known kinds are translated here instead.
 const lineLabel = (t: TFunction, { kind, description }: QuoteLine) => {

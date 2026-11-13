@@ -11,7 +11,7 @@ type BookerProps = {
   callback?: () => void
 }
 
-export const Booker = ({ callback }: BookerProps) => {
+const Booker = ({ callback }: BookerProps) => {
   const { colorMode } = useColorMode()
   const { t } = useTranslation()
   const appEnv = useAppEnv()

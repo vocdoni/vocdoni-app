@@ -109,7 +109,7 @@ const isDraftLimitError = (error: unknown) => apiErrorDetails(error)?.code === E
 export const paymentCheckoutStart = (error: unknown, canTopUp: boolean): ProcessCheckoutStart | undefined =>
   canTopUp ? checkoutStartForRefusal(error) : undefined
 
-export const saveTimeoutMs = 30000
+const saveTimeoutMs = 30000
 
 export const useConfirmOnNavigate = ({
   isDirty,
@@ -242,7 +242,7 @@ export const useConfirmOnNavigate = ({
   return { isSamePath, cancel, proceed, resetSamePath, saveCooldown }
 }
 
-export const useSafeReset = (externalReset?) => {
+const useSafeReset = (externalReset?) => {
   const { groupId } = useParams()
   let contextReset
 
@@ -602,7 +602,7 @@ export const useFormToVotingProcessRequest = () => {
   }
 }
 
-export const useDraft = (draftId?: string | null) => {
+const useDraft = (draftId?: string | null) => {
   const { client } = useApiClient()
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
 
@@ -1113,7 +1113,7 @@ const ProcessCreateView = () => {
   )
 }
 
-export const ProcessCreate = () => (
+const ProcessCreate = () => (
   <SidebarVisibilityProvider>
     <VoterAuthDialogProvider>
       <ProcessCreateView />

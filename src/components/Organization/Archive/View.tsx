@@ -64,7 +64,7 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
  * account metadata plus its archived elections with load-more pagination.
  * Organizations known to the SaaS API render the regular v2 page instead.
  */
-export const ArchiveOrganizationView = ({
+const ArchiveOrganizationView = ({
   organization,
   initialElectionsPage,
 }: {

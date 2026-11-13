@@ -55,7 +55,7 @@ const UserProfile = () => {
     <Popover.Root positioning={{ placement }}>
       <Popover.Trigger asChild>
         <Button
-          aria-label={t('user_menu', 'User menu')}
+          aria-label={reduced ? t('user_menu', 'User menu') : undefined}
           size='xl'
           w='full'
           colorPalette='gray'

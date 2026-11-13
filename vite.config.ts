@@ -1,8 +1,6 @@
 import react from '@vitejs/plugin-react'
-import { execSync } from 'node:child_process'
 import { ssr } from 'vike/plugin'
 import { defineConfig, loadEnv, type Plugin } from 'vite'
-import { createHtmlPlugin } from 'vite-plugin-html'
 import svgr from 'vite-plugin-svgr'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
@@ -31,13 +29,6 @@ const viteconfig = ({ mode }: { mode: string }) => {
   const outDir = process.env.BUILD_PATH
   const base = process.env.BASE_URL || '/'
 
-  let commit = 'unknown'
-  try {
-    commit = execSync('git rev-parse --short HEAD').toString()
-  } catch {
-    console.warn('Unable to resolve git commit hash for HTML template injection.')
-  }
-
   return defineConfig({
     base,
     resolve: {
@@ -60,25 +51,7 @@ const viteconfig = ({ mode }: { mode: string }) => {
     build: {
       outDir,
     },
-    plugins: [
-      noTestThemes(),
-      ssr(),
-      tsconfigPaths(),
-      react(),
-      svgr(),
-      createHtmlPlugin({
-        template: `index.html`,
-        minify: {
-          removeComments: false,
-          collapseWhitespace: true,
-        },
-        inject: {
-          data: {
-            commit: commit.trim(),
-          },
-        },
-      }),
-    ],
+    plugins: [noTestThemes(), ssr(), tsconfigPaths(), react(), svgr()],
   })
 }
 

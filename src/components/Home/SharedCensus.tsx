@@ -9,7 +9,6 @@ import {
 } from '@vocdoni/react-components'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import ReactPlayer from 'react-player'
 import { Link as ReactRouterLink } from 'react-router'
 import Editor from '~components/Editor'
 import { useAuth } from '~components/Auth/useAuth'
@@ -18,6 +17,7 @@ import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
 import { PageLoader } from '~components/ui/Loader'
 import { PageTitle } from '~components/ui/PageTitle'
+import { VideoPlayer } from '~components/ui/VideoPlayer'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { ensureAddressPrefix, sameAddress } from '~utils/address'
 import { PageSection } from '~components/ui/PageContainer'
@@ -136,7 +136,14 @@ const SharedCensusHomeContent = () => {
           {showStream && (
             <Box data-testid='shared-census-stream' maxW='[600px]' alignSelf='center' w='full'>
               <AspectRatio ratio={16 / 9}>
-                <ReactPlayer src={streamUrl} width='100%' height='100%' controls={true} />
+                {/* The stream is deployment-wide, so it is not named after the first election. */}
+                <VideoPlayer
+                  title={t('shared_census.stream_title', { defaultValue: 'Live stream' })}
+                  src={streamUrl}
+                  width='100%'
+                  height='100%'
+                  controls={true}
+                />
               </AspectRatio>
             </Box>
           )}

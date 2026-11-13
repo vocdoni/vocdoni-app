@@ -151,7 +151,7 @@ stays in the test account. A run cancelled before that cleanup is swept by
 - `helpers/mailhog.ts` — read the inbox: `waitForEmail`, `waitForCode`,
   `inboxFor`, `extractCode`, `extractLink`, and the `MailSubjects` the backend
   sends.
-- `helpers/flows.ts` — reusable journeys (`registerAndVerify`,
+- `helpers/flows.ts` — reusable journeys (`signUpWithOrganization`,
   `createOrganization`, `importMembers`, `createAndPublishTwoFactorProcess`,
   `authenticateVoterWithOtp`, `fillBallot`/`submitBallot`, `castVote`).
 - `helpers/fixtures.ts` — the `test` export to use instead of

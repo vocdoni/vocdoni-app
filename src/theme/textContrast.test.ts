@@ -4,6 +4,9 @@ import { createAppSystem, system } from './system'
 
 type Mode = 'light' | 'dark'
 
+// Chakra's `contrast` slots are the CSS keywords, not references, so they are mapped to hex here.
+const KEYWORDS: Record<string, string> = { white: '#ffffff', black: '#000000' }
+
 // Resolves a semantic colour token to a hex value for one colour mode, following `{colors.*}` references.
 const resolve = (name: string, mode: Mode, sys = system, depth = 0): string => {
   const token = sys.tokens.getByName(`colors.${name}`)
@@ -11,7 +14,7 @@ const resolve = (name: string, mode: Mode, sys = system, depth = 0): string => {
   const conditions = token.extensions?.conditions as Record<string, string> | undefined
   const value = conditions ? (conditions[mode === 'dark' ? '_dark' : '_light'] ?? conditions.base) : token.value
   const ref = /^\{colors\.([\w.-]+)\}$/.exec(String(value))
-  return ref ? resolve(ref[1], mode, sys, depth + 1) : String(value)
+  return ref ? resolve(ref[1], mode, sys, depth + 1) : (KEYWORDS[String(value)] ?? String(value))
 }
 
 // Composites a translucent surface (e.g. `surface.sunken` in dark mode) over the page it sits on.
@@ -41,6 +44,14 @@ describe('text colour contrast (WCAG AA)', () => {
       }
     }
   )
+
+  // A toast's text and fill are separate tokens, so they are checked as a pair.
+  it.each(['success', 'warning'])('reads the %s toast text on its fill at 4.5:1', (status) => {
+    for (const mode of ['light', 'dark'] as const) {
+      const ratio = contrastRatio(resolve(`toast.${status}.fg`, mode), resolve(`toast.${status}.bg`, mode))
+      expect(ratio, `${status} toast (${mode})`).toBeGreaterThanOrEqual(4.5)
+    }
+  })
 
   it('keeps the inactive tab label readable on the tab list', () => {
     for (const mode of ['light', 'dark'] as const) {

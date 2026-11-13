@@ -45,7 +45,7 @@
 ## Build, Test, and Development Commands
 - `pnpm start` or `pnpm dev`: run the local Vike + Vite development server.
 - `pnpm build`: create the production client and SSR bundles in `dist/client` and `dist/server`.
-- `pnpm lint`: run TypeScript checks and Prettier validation on `src/`.
+- `pnpm lint`: run TypeScript checks, Prettier validation on `src/` and `knip` (unused files, exports and dependencies).
 - `pnpm lint:fix`: apply Prettier formatting fixes.
 - `pnpm test`: run all Vitest tests once.
 - `pnpm test:watch`: run tests in watch mode.

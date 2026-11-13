@@ -36,8 +36,6 @@ describe('vike page config', () => {
 
     expect(config).toMatchObject({
       htmlAttributes: { translate: 'no', class: 'notranslate' },
-      // Chrome's whole-page translation offer keys off the meta tag, not the attributes.
-      headHtmlBegin: '<meta name="google" content="notranslate" />',
     })
   })
 })

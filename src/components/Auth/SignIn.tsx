@@ -157,7 +157,16 @@ const SignIn = ({
                 placeholder={t('password_placeholder', { defaultValue: 'Enter your password' })}
                 required
               />
-              <Link asChild size='xs' emphasis='strong' alignSelf='end'>
+              {/* minH keeps the lone link a 24px target (WCAG 2.5.8) without growing its text. */}
+              <Link
+                asChild
+                size='xs'
+                emphasis='strong'
+                alignSelf='end'
+                display='inline-flex'
+                alignItems='center'
+                minH='6'
+              >
                 <NavLink to={recoveryRoute}>{t('forgot_password_title')}</NavLink>
               </Link>
             </Flex>

@@ -17,7 +17,7 @@ export const baseLanguages = {
  * Maps internal language codes to BCP 47-style Open Graph locale strings.
  * Used for og:locale and og:locale:alternate meta tags.
  */
-export const openGraphLocaleMap: Record<string, string> = {
+const openGraphLocaleMap: Record<string, string> = {
   ca: 'ca_ES',
   de: 'de_DE',
   el: 'el_GR',

@@ -8,6 +8,7 @@ describe('menu configs', () => {
     const { result } = renderHook(() => useAdminMenuConfig(), { wrapper: AllProviders })
 
     expect(result.current.homeRoute).toBe(Routes.dashboard.base)
+    expect(result.current.homeLabel).toBe('Dashboard')
     expect(result.current.newVote).toBe(true)
     expect(result.current.tutorial).toBe(true)
     // Platform section + Help section
@@ -21,6 +22,7 @@ describe('menu configs', () => {
     const { result } = renderHook(() => useIntegratorMenuConfig(), { wrapper: AllProviders })
 
     expect(result.current.homeRoute).toBe(Routes.integrators.base)
+    expect(result.current.homeLabel).toBe('Overview')
     expect(result.current.newVote).toBe(false)
     expect(result.current.tutorial).toBe(false)
     const routes = result.current.sections.flatMap((s) => s.items.map((i) => i.route))

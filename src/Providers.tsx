@@ -32,7 +32,7 @@ import { datesLocale } from './i18n/locales'
 import { RoutesProvider } from './router/Router'
 import { Theme } from './theme/Theme'
 
-export const createAppQueryClient = () =>
+const createAppQueryClient = () =>
   new QueryClient({
     defaultOptions: {
       queries: {

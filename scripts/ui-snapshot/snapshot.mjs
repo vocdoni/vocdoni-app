@@ -7,13 +7,14 @@ import net from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
+import { A11Y_UPDATE_FLAG, checkA11y, safeAudit } from './a11y.mjs'
 import { FAKE_TOKEN, FIXED_NOW, MOCK_PORT, ORG, TOKEN_EXPIRY, startMock } from './mock-saas.mjs'
-import { ROUTES } from './routes.mjs'
+import { captureName, captureNames, DEFAULT_MODES, DEFAULT_VIEWPORTS, ROUTES, statesAt } from './routes.mjs'
 import { checkStress, loadSpec, probe, STRESS_MODULE, stressAlias, UPDATE_FLAG } from './stress.mjs'
 
 const USAGE = `pnpm ui:snapshot -- --label <name> [--primary-color <hex>] [--url <base>] [--routes a,b]
                     [--viewports 1440,390] [--modes light,dark] [--no-warmup]
-                    [--theme stress] [${UPDATE_FLAG}]`
+                    [--theme stress] [${UPDATE_FLAG}] [--a11y] [${A11Y_UPDATE_FLAG}]`
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT_ROOT = path.join(ROOT, '.ui-snapshot')
@@ -24,6 +25,7 @@ const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1'])
 const TIMEZONE = 'Europe/Madrid'
 const LOCALE = 'en-US'
 const LANG = 'en'
+const sameItems = (a, b) => a.length === b.length && b.every((item) => a.includes(item))
 
 // Computed properties saved for every visible element. Shorthands cover the four sides.
 export const STYLE_PROPS = [
@@ -82,11 +84,13 @@ const parseCli = () => {
       'primary-color': { type: 'string' },
       url: { type: 'string' },
       routes: { type: 'string' },
-      viewports: { type: 'string', default: '1440,390' },
-      modes: { type: 'string', default: 'light,dark' },
+      viewports: { type: 'string', default: DEFAULT_VIEWPORTS.join(',') },
+      modes: { type: 'string', default: DEFAULT_MODES.join(',') },
       'no-warmup': { type: 'boolean', default: false },
       theme: { type: 'string', default: 'stock' },
       'update-stress-baseline': { type: 'boolean', default: false },
+      a11y: { type: 'boolean', default: false },
+      'update-a11y-baseline': { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
   })
@@ -106,6 +110,10 @@ const parseCli = () => {
   const stress = values.theme === 'stress'
   if (stress && primaryColor) fail('--theme stress ignores PRIMARY_COLOR; drop --primary-color')
   if (values['update-stress-baseline'] && !stress) fail(`${UPDATE_FLAG} needs --theme stress`)
+  if (values.a11y && stress) fail('--a11y needs the stock theme: the stress palette makes colour-contrast meaningless')
+  if (values.a11y && primaryColor)
+    fail('--a11y needs the stock palette: --primary-color makes colour-contrast incomparable')
+  if (values['update-a11y-baseline'] && !values.a11y) fail(`${A11Y_UPDATE_FLAG} needs --a11y`)
   let base = DEFAULT_BASE
   if (values.url) {
     let u
@@ -132,9 +140,13 @@ const parseCli = () => {
     viewports,
     modes,
     routes: only ? ROUTES.filter((r) => only.includes(r.slug)) : ROUTES,
+    // Only a run over every capture may prune the a11y baseline (see checkA11y).
+    fullRun: !only && sameItems(viewports, DEFAULT_VIEWPORTS) && sameItems(modes, DEFAULT_MODES),
     warmup: !values['no-warmup'],
     stress,
     updateStressBaseline: values['update-stress-baseline'],
+    a11y: values.a11y,
+    updateA11yBaseline: values['update-a11y-baseline'],
   }
 }
 
@@ -652,8 +664,7 @@ const main = async () => {
     for (const route of opts.routes) {
       for (const width of opts.viewports) {
         for (const mode of opts.modes) {
-          const states = (route.states || []).filter((s) => !s.viewports || s.viewports.includes(width))
-          jobs.push({ route, width, mode, states })
+          jobs.push({ route, width, mode, states: statesAt(route, width) })
         }
       }
     }
@@ -699,9 +710,10 @@ const main = async () => {
       let visited
       try {
         visited = await visit({ route, width, mode })
-        const name = `${route.slug}-${width}-${mode}`
+        const name = captureName(route, width, mode)
         const elements = await save(visited.page, name, true)
         const stress = stressSpec && (await probe(visited.page, stressSpec))
+        const a11y = opts.a11y && (await safeAudit(visited.page))
         captures.push({
           ...base,
           state: null,
@@ -714,17 +726,18 @@ const main = async () => {
           failedRequests: [...visited.record.failedRequests],
           blockedHosts: [...visited.record.blockedHosts].sort(),
           ...(stress && { stress }),
+          ...(a11y && { a11y }),
         })
         console.log(`${name}: ${elements} elements, ${Date.now() - t0} ms`)
       } catch (e) {
         captures.push({ ...base, state: null, error: String(e.message || e).slice(0, 500) })
-        console.log(`${route.slug}-${width}-${mode}: ERROR ${e.message}`)
+        console.log(`${captureName(route, width, mode)}: ERROR ${e.message}`)
         await visited?.context.close()
         continue
       }
       for (const [i, state] of states.entries()) {
         const s0 = Date.now()
-        const name = `${route.slug}--${state.slug}-${width}-${mode}`
+        const name = captureName(route, width, mode, state)
         try {
           if (i > 0) {
             await visited.context.close()
@@ -739,6 +752,7 @@ const main = async () => {
           await settle(visited.page, warnings)
           const elements = await save(visited.page, name, false)
           const stress = stressSpec && (await probe(visited.page, stressSpec))
+          const a11y = opts.a11y && (await safeAudit(visited.page))
           captures.push({
             ...base,
             state: state.slug,
@@ -751,6 +765,7 @@ const main = async () => {
             failedRequests: visited.record.failedRequests.slice(failedBefore),
             blockedHosts: [...visited.record.blockedHosts].sort(),
             ...(stress && { stress }),
+            ...(a11y && { a11y }),
           })
           console.log(`${name}: ${elements} elements, ${Date.now() - s0} ms`)
         } catch (e) {
@@ -779,6 +794,7 @@ const main = async () => {
       devServer: opts.external ? 'external' : 'spawned',
       primaryColor: opts.primaryColor ?? null,
       theme: opts.stress ? 'stress' : 'stock',
+      a11y: opts.a11y,
       fixedTime: new Date(FIXED_NOW).toISOString(),
       timezone: TIMEZONE,
       locale: LOCALE,
@@ -811,6 +827,17 @@ const main = async () => {
       const report = Object.fromEntries(captures.filter((c) => c.stress).map((c) => [c.file, c.stress]))
       fs.writeFileSync(path.join(outDir, 'stress-report.json'), `${JSON.stringify(report, null, 2)}\n`)
       if (checkStress(captures, { update: opts.updateStressBaseline })) process.exitCode = 1
+    }
+    if (opts.a11y) {
+      const report = Object.fromEntries(captures.filter((c) => c.a11y).map((c) => [c.file, c.a11y]))
+      fs.writeFileSync(path.join(outDir, 'a11y-report.json'), `${JSON.stringify(report, null, 2)}\n`)
+      // Expected names already keep a failed capture's entry; skipping the prune when one failed is extra caution.
+      const failed = captures.filter((c) => c.error).length
+      const prune = opts.fullRun && opts.updateA11yBaseline
+      if (prune && failed) console.warn(`Not pruning the a11y baseline: ${failed} capture(s) failed.`)
+      const expected =
+        prune && !failed ? captureNames({ viewports: DEFAULT_VIEWPORTS, modes: DEFAULT_MODES }) : undefined
+      if (checkA11y(captures, { update: opts.updateA11yBaseline, expected })) process.exitCode = 1
     }
   } finally {
     await cleanup()
