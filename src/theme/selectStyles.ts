@@ -1,6 +1,39 @@
 import type { ChakraStylesConfig } from 'chakra-react-select'
 
+// Reads like the secondary button: the field recipe's 34px panel with a ring, a quiet chevron, a ringed menu and
+// 28px options. The control's own look comes from the input recipe, so only what it lacks is set here.
 export const selectStyles: ChakraStylesConfig<any, boolean> = {
+  control: (base) => ({
+    ...base,
+    minH: '[34px]',
+    textStyle: 'control',
+  }),
+  dropdownIndicator: (base) => ({
+    ...base,
+    color: 'fg.subtle',
+  }),
+  menu: (base) => ({
+    ...base,
+    boxShadow: 'shadow.raised',
+    borderWidth: '[0]',
+    borderRadius: 'l2',
+    overflow: 'hidden',
+  }),
+  menuList: (base) => ({
+    ...base,
+    borderWidth: '[0]',
+    p: '1',
+  }),
+  option: (base, state) => ({
+    ...base,
+    minH: '7',
+    py: '0',
+    px: '2',
+    textStyle: 'control',
+    borderRadius: 'l1',
+    bg: state.isSelected ? 'state.selected.bg' : state.isFocused ? 'state.hover.bg' : 'transparent',
+    color: 'fg',
+  }),
   // chakra-react-select spaces the input with raw rems (0.125rem); the same step from the spacing scale.
   inputContainer: (base) => ({
     ...base,
