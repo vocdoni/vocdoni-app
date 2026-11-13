@@ -15,7 +15,7 @@ import { selfServiceVoterLimit } from './payment-errors'
 const quoteRecommendedVoterLimit = 15_000
 
 // The backend describes each line in English; known kinds are translated here instead.
-const lineLabel = (t: TFunction, { kind, description }: QuoteLine) => {
+export const lineLabel = (t: TFunction, { kind, description }: QuoteLine) => {
   switch (kind) {
     case 'base':
       return t('process.price.line.base', { defaultValue: 'Voting process' })
@@ -39,7 +39,7 @@ const lineLabel = (t: TFunction, { kind, description }: QuoteLine) => {
 const quoteLink = <SupportLink fontWeight='semibold' textDecoration='underline' />
 
 // The note under the total: why the price is what it is, and what paying it means
-const priceNote = (t: TFunction, price: ProcessPriceResponse) => {
+export const priceNote = (t: TFunction, price: ProcessPriceResponse) => {
   if (isQuoteOnly(price)) {
     return t('process.price.quote_only', { defaultValue: 'The price of this voting process is set by a custom quote.' })
   }

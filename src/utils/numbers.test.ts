@@ -1,6 +1,6 @@
 import type { i18n as I18nInstance } from 'i18next'
 import { setActiveI18n } from '~i18n/active-language'
-import { currency, parseEuroAmountCents, quantity } from './numbers'
+import { amountFigure, currency, parseEuroAmountCents, quantity } from './numbers'
 
 describe('currency', () => {
   afterEach(() => setActiveI18n(undefined))
@@ -19,6 +19,26 @@ describe('currency', () => {
     expect(currency(29710)).toBe('297,10 €')
     setActiveI18n({ resolvedLanguage: 'en' } as I18nInstance)
     expect(currency(29710)).toBe('€297.10')
+  })
+})
+
+describe('amountFigure', () => {
+  afterEach(() => setActiveI18n(undefined))
+
+  it('keeps both cent digits and sets a real minus sign, so a column of amounts lines up', () => {
+    setActiveI18n({ resolvedLanguage: 'en' } as I18nInstance)
+    expect(amountFigure(3300)).toBe('€33.00')
+    expect(amountFigure(693)).toBe('€6.93')
+    expect(amountFigure(-3300)).toBe('\u2212€33.00')
+    expect(amountFigure(0)).toBe('€0.00')
+    expect(amountFigure(3300, 'USD')).toBe('$33.00')
+    setActiveI18n({ resolvedLanguage: 'es' } as I18nInstance)
+    expect(amountFigure(-3300)).toMatch(/^\u221233,00\s€$/)
+  })
+
+  it('leaves the short form alone', () => {
+    setActiveI18n({ resolvedLanguage: 'en' } as I18nInstance)
+    expect(currency(-3300)).toBe('-€33')
   })
 })
 

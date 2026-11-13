@@ -412,7 +412,6 @@
     },
     "process_create": {
       "error_deleting_draft_title": "Error eliminant l'esborrany",
-      "error_title": "Error creant el procés",
       "success_description": "Redirigint-te a la pàgina del procés de votació...",
       "success_title": "Procés de votació creat amb èxit"
     },
@@ -1026,7 +1025,6 @@
       "cancel_open": "Cancel·la el pagament obert",
       "check_again": "Torna a comprovar",
       "conflict": "Hi ha una recàrrega oberta per a aquest procés de votació, així que encara no es pot publicar. Reprèn el pagament per completar-la, o cancel·la-la i publica des del teu wallet.",
-      "draft_total": "Total de l'esborrany (sense IVA)",
       "pay": "Paga {{amount}} i publica",
       "publish_again": "Publica de nou",
       "publish_title": "Publica el procés de votació",
@@ -1036,14 +1034,11 @@
       "resume": "Reprèn el pagament",
       "return_to_processes": "Torna als teus processos de votació",
       "return_unknown": "No hem pogut saber a quin procés de votació corresponia aquest pagament. Si el pagament s'ha completat, el procés de votació es publicarà automàticament. Consulta els teus processos de votació per veure'n l'estat.",
-      "shortfall": "Diferència a cobrir (sense IVA)",
       "timeout": "El teu pagament està confirmat i el procés de votació es publicarà aviat. Si no passa, publica'l de nou: es paga des del teu wallet.",
       "timeout_unpaid": "El procés de votació encara s'està publicant. Si no apareix aviat, publica'l de nou: es paga des del teu wallet.",
       "title": "Recarrega i publica",
-      "top_up": "Recàrrega (sense IVA)",
       "unconfirmed": "El teu pagament encara s'està confirmant. Alguns mètodes de pagament triguen uns quants dies a confirmar-se. El procés de votació es publica automàticament quan el pagament es confirmi, així que pots sortir d'aquesta pàgina.",
-      "unpaid": "El pagament no s'ha completat. Pots tornar-ho a intentar.",
-      "wallet_balance": "Saldo del wallet"
+      "unpaid": "El pagament no s'ha completat. Pots tornar-ho a intentar."
     },
     "create": {
       "action": {
@@ -1150,6 +1145,118 @@
       "wallet_covers": "El saldo del teu wallet ({{balance}}) cobreix aquest total: en publicar-lo es paga del teu wallet.",
       "wallet_short": "El teu wallet té {{balance}}, i et falten {{shortfall}} per a aquest total.",
       "wallet_top_up": "Recarrega el wallet"
+    },
+    "publish_review": {
+      "back": "Torna al resum",
+      "blocked": "Falten {{shortfall}} de saldo. Només un administrador el pot recarregar.",
+      "card": {
+        "billing": "Dades de facturació",
+        "cta_loading": "Paga i publica",
+        "lead_balance": "El saldo de l'entitat cobreix {{balance}}. La resta es paga ara, amb l'IVA.",
+        "lead_whole": "Pagues la votació sencera ara, amb l'IVA.",
+        "note_zero": "Després de publicar, el saldo queda a zero.",
+        "processing": "Processant el pagament…",
+        "secure": "Pagament segur processat per Stripe. Vocdoni no veu ni desa les dades de la targeta.",
+        "short": "Falta",
+        "title": "Paga {{amount}} i la votació es publica.",
+        "top_up": "Recàrrega, sense IVA"
+      },
+      "change": "Canvia",
+      "change_what": "Canvia {{what}}",
+      "close": "Tanca",
+      "code": {
+        "choice": "Codi per correu o SMS",
+        "email": "Codi per correu",
+        "none": "Sense codi",
+        "sms": "Codi per SMS"
+      },
+      "cost": {
+        "balance_after": "Saldo després de publicar",
+        "balance_now": "Saldo de l'entitat ara",
+        "base_one": "{{voters}} votant",
+        "base_many": "{{voters}} votants",
+        "base_other": "{{voters}} votants",
+        "details": "Revisa el detall",
+        "note_card": "El que falta es paga amb targeta al pas següent. La resta surt del saldo.",
+        "note_wallet": "Es descompta del saldo de prepagament de l'entitat. No es cobra res a la targeta: l'IVA es paga quan es carrega saldo.",
+        "short": "Falta",
+        "sms_one": "Codi per SMS, {{voters}} votant",
+        "sms_many": "Codi per SMS, {{voters}} votants",
+        "sms_other": "Codi per SMS, {{voters}} votants",
+        "summary": "Cost: {{total}}",
+        "title": "Què es paga",
+        "total": "Total, sense IVA"
+      },
+      "eyebrow": "Revisa abans de publicar",
+      "facts": {
+        "anonymous": "Vot anònim",
+        "code": "2FA",
+        "credentials": "Credencials",
+        "credentials_none": "Cap",
+        "dates": "Dates",
+        "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} dia",
+        "duration_days_many": "{{count}} dies",
+        "duration_days_other": "{{count}} dies",
+        "duration_hours_one": "{{count}} hora",
+        "duration_hours_many": "{{count}} hores",
+        "duration_hours_other": "{{count}} hores",
+        "equal": "Igual per a tothom",
+        "now": "Ara",
+        "off": "Desactivat",
+        "on": "Activat",
+        "results": "Resultats",
+        "results_hidden": "Es veuen en tancar",
+        "results_live": "En directe",
+        "weight": "Pes del vot",
+        "weighted": "Ponderat"
+      },
+      "failed": "No s'ha pogut publicar la votació.",
+      "free_trial": "Si només vols fer una prova, tria un cens de {{limit}} persones o menys: és gratis.",
+      "how_you_pay": "Com pagues",
+      "intro": "Això és el resum de la votació i el que costarà. Si tot és correcte, la pots pagar i publicar des d'aquí mateix.",
+      "keep_editing": "Continua editant",
+      "lead_now_one": "{{voters}} podrà votar {{questions}}, des que publiquis fins {{end}}.",
+      "lead_now_many": "{{voters}} podran votar {{questions}}, des que publiquis fins {{end}}.",
+      "lead_now_other": "{{voters}} podran votar {{questions}}, des que publiquis fins {{end}}.",
+      "lead_scheduled_one": "{{voters}} podrà votar {{questions}}, des de {{start}} fins {{end}}.",
+      "lead_scheduled_many": "{{voters}} podran votar {{questions}}, des de {{start}} fins {{end}}.",
+      "lead_scheduled_other": "{{voters}} podran votar {{questions}}, des de {{start}} fins {{end}}.",
+      "org_balance": "Saldo de l'entitat",
+      "pay_now": "Què pagues ara",
+      "primary": {
+        "card": "Afegeix {{shortfall}} i publica",
+        "publish": "Publica",
+        "wallet": "Publica i paga {{total}}"
+      },
+      "progress": {
+        "hint": "Pot trigar un minut.",
+        "payment": "Pagament rebut",
+        "published": "Votació publicada",
+        "publishing": "Publicant la votació…"
+      },
+      "questions_one": "{{count}} pregunta",
+      "questions_many": "{{count}} preguntes",
+      "questions_other": "{{count}} preguntes",
+      "this_vote": "Aquesta votació",
+      "total_now": "Total a pagar ara",
+      "type": {
+        "multiple": "Elecció múltiple",
+        "single": "Elecció simple"
+      },
+      "vote_summary": "Resum de la votació",
+      "voters_one": "{{voters}} persona",
+      "voters_many": "{{voters}} persones",
+      "voters_other": "{{voters}} persones",
+      "voters_unknown": "Els votants",
+      "wallet": {
+        "covers": "El saldo de l'entitat cobreix tot el cost. No cal cap targeta.",
+        "cta": "Paga amb el saldo i publica",
+        "lead": "No has de pagar res més: es descompta del saldo de prepagament.",
+        "note": "Després de publicar, al saldo hi quedaran {{after}}.",
+        "title": "Paga {{total}} amb el saldo i la votació es publica."
+      },
+      "what_is_voted": "Què es vota"
     },
     "question_type": {
       "label": "Tipus de pregunta",

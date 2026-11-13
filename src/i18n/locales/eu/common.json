@@ -408,7 +408,6 @@
     },
     "process_create": {
       "error_deleting_draft_title": "Errorea zirriborroa ezabatzean",
-      "error_title": "Errorea prozesua sortzean",
       "success_description": "Bozketa-prozesuaren orrialdera birbideratzen...",
       "success_title": "Bozketa-prozesua behar bezala sortu da"
     },
@@ -1005,7 +1004,6 @@
       "cancel_open": "Ordainketa irekia bertan behera utzi",
       "check_again": "Berriro egiaztatu",
       "conflict": "Boto-ematearen prozesu honen kargapen bat oraindik irekita dago, beraz ezin da oraindik argitaratu. Berrekin ordainketari hura osatzeko, edo utzi bertan behera eta argitaratu zure walletetik.",
-      "draft_total": "Zirriborroaren guztira (BEZ gabe)",
       "pay": "Ordaindu {{amount}} eta argitaratu",
       "publish_again": "Berriro argitaratu",
       "publish_title": "Argitaratu boto-ematearen prozesua",
@@ -1015,14 +1013,11 @@
       "resume": "Berrekin ordainketari",
       "return_to_processes": "Itzuli zure boto-ematearen prozesuetara",
       "return_unknown": "Ezin izan dugu zehaztu ordainketa hau zein boto-ematearen prozesurakoa zen. Ordainketa ondo joan bada, prozesua automatikoki argitaratuko da. Begiratu zure boto-ematearen prozesuei egoera ikusteko.",
-      "shortfall": "Falta den zatia (BEZ gabe)",
       "timeout": "Zure ordainketa berretsi da, eta boto-ematearen prozesua laster argitaratuko da. Ez bada argitaratzen, argitaratu berriro: zure walletetik ordainduko da.",
       "timeout_unpaid": "Boto-ematearen prozesua oraindik argitaratzen ari da. Laster agertzen ez bada, argitaratu berriro: zure walletetik ordainduko da.",
       "title": "Kargatu eta argitaratu",
-      "top_up": "Kargapena (BEZ gabe)",
       "unconfirmed": "Zure ordainketa oraindik berresten ari da. Ordainketa-modu batzuek egun batzuk behar dituzte. Boto-ematearen prozesua automatikoki argitaratuko da ordainketa berretsi bezain pronto, beraz orri hau utz dezakezu.",
-      "unpaid": "Ordainketa ez da burutu. Berriro saia zaitezke.",
-      "wallet_balance": "Walleteko saldoa"
+      "unpaid": "Ordainketa ez da burutu. Berriro saia zaitezke."
     },
     "create": {
       "action": {
@@ -1127,6 +1122,110 @@
       "wallet_covers": "Zure wallet-aren saldoak ({{balance}}) totala estaltzen du: argitaratzean zure wallet-etik ordaintzen da.",
       "wallet_short": "Zure wallet-ak {{balance}} du: {{shortfall}} falta zaizkio totala lortzeko.",
       "wallet_top_up": "Kargatu wallet-a"
+    },
+    "publish_review": {
+      "back": "Itzuli laburpenera",
+      "blocked": "{{shortfall}} falta dira saldoan. Administratzaile batek soilik kargatu dezake.",
+      "card": {
+        "billing": "Fakturazio-datuak",
+        "cta_loading": "Ordaindu eta argitaratu",
+        "lead_balance": "Erakundearen saldoak {{balance}} estaltzen ditu. Gainerakoa orain ordaintzen da, BEZarekin.",
+        "lead_whole": "Botazio osoa orain ordaintzen duzu, BEZarekin.",
+        "note_zero": "Argitaratu ondoren, saldoa zero izango da.",
+        "processing": "Ordainketa prozesatzen…",
+        "secure": "Stripek prozesatutako ordainketa segurua. Vocdonik ez ditu txartelaren datuak ikusten ez gordetzen.",
+        "short": "Falta da",
+        "title": "Ordaindu {{amount}} eta botazioa argitaratuko da.",
+        "top_up": "Kargapena, BEZ gabe"
+      },
+      "change": "Aldatu",
+      "change_what": "{{what}} aldatu",
+      "close": "Itxi",
+      "code": {
+        "choice": "Kodea posta elektronikoz edo SMSz",
+        "email": "Kodea posta elektronikoz",
+        "none": "Koderik ez",
+        "sms": "Kodea SMSz"
+      },
+      "cost": {
+        "balance_after": "Saldoa argitaratu ondoren",
+        "balance_now": "Erakundearen saldoa orain",
+        "base_one": "{{voters}} botogile",
+        "base_other": "{{voters}} botogile",
+        "details": "Berrikusi xehetasunak",
+        "note_card": "Falta dena hurrengo urratsean ordaintzen da txartelaz. Gainerakoa saldotik ateratzen da.",
+        "note_wallet": "Erakundearen aurrez ordaindutako saldotik kentzen da. Ez da ezer kobratzen txartelean: BEZa saldoa kargatzean ordaintzen da.",
+        "short": "Falta da",
+        "sms_one": "SMS kodea, {{voters}} botogile",
+        "sms_other": "SMS kodea, {{voters}} botogile",
+        "summary": "Kostua: {{total}}",
+        "title": "Zer ordaintzen den",
+        "total": "Guztira, BEZ gabe"
+      },
+      "eyebrow": "Berrikusi argitaratu aurretik",
+      "facts": {
+        "anonymous": "Boto anonimoa",
+        "code": "2FA",
+        "credentials": "Kredentzialak",
+        "credentials_none": "Batere ez",
+        "dates": "Datak",
+        "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} egun",
+        "duration_days_other": "{{count}} egun",
+        "duration_hours_one": "{{count}} ordu",
+        "duration_hours_other": "{{count}} ordu",
+        "equal": "Guztientzat berdina",
+        "now": "Orain",
+        "off": "Desaktibatuta",
+        "on": "Aktibatuta",
+        "results": "Emaitzak",
+        "results_hidden": "Itxitakoan ikusten dira",
+        "results_live": "Zuzenean",
+        "weight": "Boto-pisua",
+        "weighted": "Ponderatua"
+      },
+      "failed": "Ezin izan da botazioa argitaratu.",
+      "free_trial": "Proba bat egin nahi baduzu soilik, aukeratu {{limit}} lagunekoa edo txikiagoa den erroldea: doakoa da.",
+      "how_you_pay": "Nola ordaintzen duzun",
+      "intro": "Hau botazioaren laburpena da, eta zenbat kostatuko den. Dena zuzena bada, hemendik bertatik ordaindu eta argitaratu dezakezu.",
+      "keep_editing": "Jarraitu editatzen",
+      "lead_now_one": "{{voters}}arentzat {{questions}} bozkatzeko aukera dago, argitaratzen duzunetik {{end}} arte.",
+      "lead_now_other": "{{voters}}entzat {{questions}} bozkatzeko aukera dago, argitaratzen duzunetik {{end}} arte.",
+      "lead_scheduled_one": "{{voters}}arentzat {{questions}} bozkatzeko aukera dago, {{start}} eta {{end}} bitartean.",
+      "lead_scheduled_other": "{{voters}}entzat {{questions}} bozkatzeko aukera dago, {{start}} eta {{end}} bitartean.",
+      "org_balance": "Erakundearen saldoa",
+      "pay_now": "Zer ordaintzen duzun orain",
+      "primary": {
+        "card": "Gehitu {{shortfall}} eta argitaratu",
+        "publish": "Argitaratu",
+        "wallet": "Argitaratu eta ordaindu {{total}}"
+      },
+      "progress": {
+        "hint": "Minutu bat behar izan dezake.",
+        "payment": "Ordainketa jasota",
+        "published": "Boto-ematea argitaratuta",
+        "publishing": "Boto-ematea argitaratzen…"
+      },
+      "questions_one": "{{count}} galdera",
+      "questions_other": "{{count}} galdera",
+      "this_vote": "Botazio hau",
+      "total_now": "Orain ordaintzeko guztira",
+      "type": {
+        "multiple": "Aukera anitzekoa",
+        "single": "Aukera bakarrekoa"
+      },
+      "vote_summary": "Botazioaren laburpena",
+      "voters_one": "{{voters}} lagun",
+      "voters_other": "{{voters}} lagun",
+      "voters_unknown": "Botogile",
+      "wallet": {
+        "covers": "Erakundearen saldoak kostu osoa estaltzen du. Ez da txartelik behar.",
+        "cta": "Ordaindu saldoarekin eta argitaratu",
+        "lead": "Ez duzu beste ezer ordaindu behar: aurrez ordaindutako saldotik kentzen da.",
+        "note": "Argitaratu ondoren, {{after}} geratuko dira saldoan.",
+        "title": "Ordaindu {{total}} saldoarekin eta botazioa argitaratuko da."
+      },
+      "what_is_voted": "Zer bozkatzen den"
     },
     "question_type": {
       "label": "Galdera mota",

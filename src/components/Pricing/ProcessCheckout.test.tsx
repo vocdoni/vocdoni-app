@@ -4,7 +4,8 @@ import userEvent from '@testing-library/user-event'
 import { StrictMode } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import type { PublicationWait } from '~queries/process-checkout'
-import { ProcessCheckout, type ProcessCheckoutStart } from './ProcessCheckout'
+import { PublishDialog } from '~components/Process/Create/PublishReview/PublishDialog'
+import type { ProcessCheckoutStart } from './ProcessCheckout'
 
 const processId = '6650f0c0c0c0c0c0c0c0c0c0'
 
@@ -13,6 +14,8 @@ const state = vi.hoisted(() => ({
   checkout: {} as any,
   stripePromise: Promise.resolve({}) as Promise<any> | null,
   providerOptions: undefined as any,
+  // Whether the Stripe elements say they painted (onReady)
+  elementsReady: true,
 }))
 
 const api = vi.hoisted(() => ({
@@ -60,9 +63,19 @@ vi.mock('@stripe/react-stripe-js/checkout', async () => {
       return React.createElement(React.Fragment, null, children)
     },
     useCheckoutElements: () => state.checkout,
-    BillingAddressElement: () => React.createElement('div', null, 'billing-address'),
+    BillingAddressElement: ({ onReady }: { onReady?: () => void }) => {
+      React.useEffect(() => {
+        if (state.elementsReady) onReady?.()
+      }, [onReady])
+      return React.createElement('div', null, 'billing-address')
+    },
     TaxIdElement: () => React.createElement('div', null, 'tax-id'),
-    PaymentElement: () => React.createElement('div', null, 'payment-element'),
+    PaymentElement: ({ onReady }: { onReady?: () => void }) => {
+      React.useEffect(() => {
+        if (state.elementsReady) onReady?.()
+      }, [onReady])
+      return React.createElement('div', null, 'payment-element')
+    },
   }
 })
 
@@ -94,18 +107,33 @@ const readyCheckout = (confirm = vi.fn().mockResolvedValue({ type: 'success' }))
 const apiError = (status: number, code?: number, data?: unknown) =>
   new VocdoniApiError(status, { error: 'refused', code, data }, 'refused', code, data)
 
+// The checkout lives in the publish dialog; with no form (as on a return) it has no summary to go back to
 const renderView = ({
   start = { kind: 'checkout' } as ProcessCheckoutStart,
   onPublished = vi.fn(),
   onClose = vi.fn(),
-}: { start?: ProcessCheckoutStart; onPublished?: () => void; onClose?: () => void } = {}) => {
+  successMs,
+}: { start?: ProcessCheckoutStart; onPublished?: () => void; onClose?: () => void; successMs?: number } = {}) => {
   render(
     <TestMemoryRouter>
-      <ProcessCheckout processId={processId} start={start} onPublished={onPublished} onClose={onClose} />
+      <button type='button'>outside</button>
+      <PublishDialog
+        processId={processId}
+        form={null}
+        start={start}
+        canTopUp
+        onPublished={onPublished}
+        successMs={successMs}
+        onClose={onClose}
+      />
     </TestMemoryRouter>
   )
   return { onPublished, onClose }
 }
+
+// The dialog's live region repeats the message of a wait or an outcome: queries for the message on
+// screen leave it out
+const visible = { ignore: 'script, style, [role=status]' }
 
 // The pay button carries Stripe's VAT-inclusive total when Stripe has one
 const payButton = () => screen.findByRole('button', { name: /^Pay .+ and publish$/ })
@@ -131,6 +159,7 @@ describe('ProcessCheckout', () => {
     state.wallet = { balanceCents: 0, currency: 'eur', history: [], pagination: {} }
     state.checkout = readyCheckout()
     state.stripePromise = Promise.resolve({})
+    state.elementsReady = true
     api.getPrice.mockResolvedValue({
       lines: [],
       totalCents: 1000,
@@ -146,63 +175,7 @@ describe('ProcessCheckout', () => {
     api.waitForJob.mockResolvedValue({ jobId: 'job-1', status: 'completed' })
   })
 
-  describe('summary and payment', () => {
-    it('shows the shortfall, the wallet balance and the top-up, with the VAT and total Stripe charges', async () => {
-      api.checkout.mockResolvedValue(session({ amountCents: 550 }))
-      renderView({ start: { kind: 'checkout', shortfall: { shortfallCents: 550, balanceCents: 450 } } })
-
-      expect(await payButton()).toHaveTextContent('€6.05')
-      expect(screen.getByText('Shortfall (VAT excluded)')).toBeInTheDocument()
-      expect(screen.queryByText('Draft total (VAT excluded)')).not.toBeInTheDocument()
-      expect(screen.getByText('Wallet balance')).toBeInTheDocument()
-      expect(screen.getByText('€4.50')).toBeInTheDocument()
-      expect(screen.getByText('Top-up (VAT excluded)')).toBeInTheDocument()
-      expect(screen.getAllByText('€5.50')).toHaveLength(2)
-      expect(screen.getByText('€1.00')).toBeInTheDocument()
-      expect(screen.getByText('€6.05', { selector: 'p' })).toBeInTheDocument()
-    })
-
-    it('pays the net top-up when Stripe gives no total', async () => {
-      state.checkout = { type: 'success', checkout: { confirm: vi.fn() } }
-      renderView()
-
-      expect(await screen.findByRole('button', { name: 'Pay €10 and publish' })).toBeInTheDocument()
-    })
-
-    it('explains that the rest stays in the wallet when the €1 minimum is above the shortfall', async () => {
-      api.checkout.mockResolvedValue(session({ amountCents: 100 }))
-      renderView({ start: { kind: 'checkout', shortfall: { shortfallCents: 50, balanceCents: 950 } } })
-
-      expect(await payButton()).toBeInTheDocument()
-      expect(screen.getByText('The rest stays in your wallet.')).toBeInTheDocument()
-    })
-
-    it('does not explain the rest when the top-up is exactly the shortfall', async () => {
-      api.checkout.mockResolvedValue(session({ amountCents: 1000 }))
-      renderView({ start: { kind: 'checkout', shortfall: { shortfallCents: 1000, balanceCents: 0 } } })
-
-      expect(await payButton()).toBeInTheDocument()
-      expect(screen.queryByText('The rest stays in your wallet.')).not.toBeInTheDocument()
-    })
-
-    it('does not explain the rest on the conflict path, where there is no shortfall', async () => {
-      api.checkout.mockResolvedValue(session({ amountCents: 100 }))
-      renderView({ start: { kind: 'conflict' } })
-
-      await userEvent.setup().click(await screen.findByRole('button', { name: 'Resume payment' }))
-
-      expect(await payButton()).toBeInTheDocument()
-      expect(screen.queryByText('The rest stays in your wallet.')).not.toBeInTheDocument()
-    })
-
-    it('renders inline, never in a modal dialog', async () => {
-      renderView()
-
-      await payButton()
-      expect(screen.getByText('Top up and publish')).toBeInTheDocument()
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    })
-
+  describe('opening the checkout', () => {
     it('opens the checkout for the process with the locale and the wizard return route', async () => {
       renderView()
 
@@ -218,9 +191,11 @@ describe('ProcessCheckout', () => {
       render(
         <StrictMode>
           <TestMemoryRouter>
-            <ProcessCheckout
+            <PublishDialog
               processId={processId}
+              form={null}
               start={{ kind: 'checkout' }}
+              canTopUp
               onPublished={vi.fn()}
               onClose={vi.fn()}
             />
@@ -247,46 +222,6 @@ describe('ProcessCheckout', () => {
       expect(api.publish).not.toHaveBeenCalled()
     })
 
-    it('stores the draft right before confirming, so a redirect back can reopen it', async () => {
-      const user = userEvent.setup()
-      let stored: string | null = null
-      const confirm = vi.fn(async () => {
-        stored = sessionStorage.getItem('process-checkout-pending')
-        return { type: 'success' }
-      })
-      state.checkout = readyCheckout(confirm)
-      renderView()
-
-      await user.click(await payButton())
-
-      await waitFor(() => expect(confirm).toHaveBeenCalledTimes(1))
-      // The return URL comes from the session: confirm() is not given one
-      expect(confirm).toHaveBeenCalledWith({ redirect: 'if_required' })
-      expect(JSON.parse(stored ?? 'null')).toEqual({ draftId: processId })
-    })
-
-    it('forgets the stored draft when Stripe refuses the payment, since no redirect is coming', async () => {
-      const user = userEvent.setup()
-      state.checkout = readyCheckout(vi.fn().mockResolvedValue({ type: 'error', error: { message: 'Card declined' } }))
-      renderView()
-
-      await user.click(await payButton())
-
-      expect(await screen.findByText('Card declined')).toBeInTheDocument()
-      expect(sessionStorage.getItem('process-checkout-pending')).toBeNull()
-    })
-
-    it('forgets the stored draft when confirming throws, since no redirect is coming', async () => {
-      const user = userEvent.setup()
-      state.checkout = readyCheckout(vi.fn().mockRejectedValue(new Error('network down')))
-      renderView()
-
-      await user.click(await payButton())
-
-      expect(await screen.findByText('network down')).toBeInTheDocument()
-      expect(sessionStorage.getItem('process-checkout-pending')).toBeNull()
-    })
-
     it('shows the waiting state while the publication is awaited, and reads the payment as it waits', async () => {
       const user = userEvent.setup()
       api.waitForPublication.mockReturnValue(new Promise(() => undefined))
@@ -294,9 +229,35 @@ describe('ProcessCheckout', () => {
 
       await user.click(await payButton())
 
-      expect(await screen.findByText('Payment received. Publishing your voting process…')).toBeInTheDocument()
+      expect(await screen.findByText('Payment received. Publishing your voting process…', visible)).toBeInTheDocument()
+      // The dialog remounts as a modal: its new live region is born filled, so the message also describes it
+      expect(screen.getByRole('status')).toHaveTextContent('Payment received. Publishing your voting process…')
+      await waitFor(() =>
+        expect(screen.getByRole('dialog')).toHaveAccessibleDescription(
+          'Payment received. Publishing your voting process…'
+        )
+      )
       expect(onPublished).not.toHaveBeenCalled()
       expect(typeof api.waitForPublication.mock.calls[0][1].readPayment).toBe('function')
+    })
+
+    it('never calls a payment Stripe accepted here unpaid because its session still reads open', async () => {
+      const user = userEvent.setup()
+      api.waitForPublication.mockReturnValue(new Promise(() => undefined))
+      renderView()
+
+      await user.click(await payButton())
+
+      await waitFor(() => expect(api.waitForPublication).toHaveBeenCalled())
+      expect(api.waitForPublication.mock.calls[0][1].openGraceMs).toBe(Infinity)
+    })
+
+    it('keeps the open-session grace for a return, where the payment is not known', async () => {
+      api.waitForPublication.mockReturnValue(new Promise(() => undefined))
+      renderView({ start: { kind: 'return' } })
+
+      await waitFor(() => expect(api.waitForPublication).toHaveBeenCalled())
+      expect(api.waitForPublication.mock.calls[0][1].openGraceMs).toBeUndefined()
     })
 
     it('says the payment is confirmed only when the payment reads as paid, on timeout', async () => {
@@ -312,7 +273,8 @@ describe('ProcessCheckout', () => {
 
       expect(
         await screen.findByText(
-          'Your payment is confirmed and the voting process publishes shortly. If it does not, publish it again: it is paid from your wallet.'
+          'Your payment is confirmed and the voting process publishes shortly. If it does not, publish it again: it is paid from your wallet.',
+          visible
         )
       ).toBeInTheDocument()
     })
@@ -326,10 +288,11 @@ describe('ProcessCheckout', () => {
 
       expect(
         await screen.findByText(
-          'The voting process is still being published. If it does not appear shortly, publish it again: it is paid from your wallet.'
+          'The voting process is still being published. If it does not appear shortly, publish it again: it is paid from your wallet.',
+          visible
         )
       ).toBeInTheDocument()
-      expect(screen.queryByText(/Your payment is confirmed/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/Your payment is confirmed/, visible)).not.toBeInTheDocument()
     })
 
     it('publishes again from the timeout, and waits for the process once more', async () => {
@@ -351,7 +314,7 @@ describe('ProcessCheckout', () => {
 
       await user.click(await payButton())
 
-      expect(await screen.findByText(/Your payment is still being confirmed/)).toBeInTheDocument()
+      expect(await screen.findByText(/Your payment is still being confirmed/, visible)).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: 'Publish again' })).not.toBeInTheDocument()
     })
 
@@ -362,24 +325,47 @@ describe('ProcessCheckout', () => {
 
       await user.click(await payButton())
 
-      expect(await screen.findByText('The payment did not go through. You can try again.')).toBeInTheDocument()
+      expect(await screen.findByText('The payment did not go through. You can try again.', visible)).toBeInTheDocument()
       await user.click(screen.getByRole('button', { name: 'Try again' }))
 
       expect(api.checkout).toHaveBeenCalledTimes(2)
       expect(await payButton()).toBeInTheDocument()
     })
+  })
 
-    it('keeps the form and shows the message when Stripe refuses the payment', async () => {
+  describe('while it publishes and once it has', () => {
+    it('lists the payment as done and the publication as under way after a payment', async () => {
       const user = userEvent.setup()
-      state.checkout = readyCheckout(vi.fn().mockResolvedValue({ type: 'error', error: { message: 'Card declined' } }))
-      const { onPublished } = renderView()
+      api.waitForPublication.mockReturnValue(new Promise(() => undefined))
+      renderView()
 
       await user.click(await payButton())
 
-      expect(await screen.findByText('Card declined')).toBeInTheDocument()
-      expect(await payButton()).toBeEnabled()
-      expect(api.waitForPublication).not.toHaveBeenCalled()
+      expect(await screen.findByText('Payment received', visible)).toBeInTheDocument()
+      expect(screen.getByText('Publishing the vote…', visible)).toBeInTheDocument()
+      expect(screen.getByText('This can take a minute.', visible)).toBeInTheDocument()
+    })
+
+    it('lists only the publication when nothing was paid', async () => {
+      api.waitForPublication.mockReturnValue(new Promise(() => undefined))
+      renderView({ start: { kind: 'publishing' } })
+
+      expect(await screen.findByText('Publishing the vote…', visible)).toBeInTheDocument()
+      expect(screen.queryByText('Payment received', visible)).not.toBeInTheDocument()
+      expect(screen.getByText('This can take a minute.', visible)).toBeInTheDocument()
+    })
+
+    it('shows "Vote published", announces it, and hands off only after the beat', async () => {
+      const { onPublished } = renderView({ start: { kind: 'publishing' }, successMs: 300 })
+
+      expect(await screen.findByText('Vote published', visible)).toBeInTheDocument()
+      expect(screen.getByRole('status')).toHaveTextContent('Vote published')
+      // Still showing: the hand-off waits for the beat, and the dialog cannot be dismissed meanwhile
       expect(onPublished).not.toHaveBeenCalled()
+      expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+
+      await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId), { timeout: 2000 })
+      expect(onPublished).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -387,7 +373,6 @@ describe('ProcessCheckout', () => {
     it('reopens in the waiting state without opening a new checkout', async () => {
       const { onPublished } = renderView({ start: { kind: 'return' } })
 
-      expect(await screen.findByText('Publishing your voting process…')).toBeInTheDocument()
       await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
       expect(api.checkout).not.toHaveBeenCalled()
     })
@@ -403,12 +388,12 @@ describe('ProcessCheckout', () => {
       )
       renderView({ start: { kind: 'return' } })
 
-      expect(await screen.findByText('Publishing your voting process…')).toBeInTheDocument()
-      expect(screen.queryByText('Payment received. Publishing your voting process…')).not.toBeInTheDocument()
+      expect(await screen.findByText('Publishing your voting process…', visible)).toBeInTheDocument()
+      expect(screen.queryByText('Payment received. Publishing your voting process…', visible)).not.toBeInTheDocument()
       await act(async () => {
         await read?.()
       })
-      expect(await screen.findByText('Payment received. Publishing your voting process…')).toBeInTheDocument()
+      expect(await screen.findByText('Payment received. Publishing your voting process…', visible)).toBeInTheDocument()
     })
   })
 
@@ -429,7 +414,22 @@ describe('ProcessCheckout', () => {
 
       expect(await screen.findByText('the chain rejected the process')).toBeInTheDocument()
       expect(onPublished).not.toHaveBeenCalled()
-      expect(screen.queryByText(/still being published/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/still being published/, visible)).not.toBeInTheDocument()
+    })
+
+    it('leads a raw error with a translated sentence and offers a way out', async () => {
+      api.waitForJob.mockRejectedValue(
+        new JobFailedError({ jobId: 'job-1', status: 'failed', errors: ['boom'] } as any)
+      )
+      const { onClose } = renderView({ start: { kind: 'publishing', jobId: 'job-1' } })
+
+      expect(await screen.findByText('The vote could not be published.')).toBeInTheDocument()
+      expect(screen.getByText('boom')).toBeInTheDocument()
+      // No summary on this route: the footer closes, besides the close button in the corner
+      const closes = screen.getAllByRole('button', { name: 'Close' })
+      expect(closes).toHaveLength(2)
+      await userEvent.setup().click(closes.at(-1)!)
+      expect(onClose).toHaveBeenCalledTimes(1)
     })
 
     it('polls the process when reading the job fails transiently, and hands off once it is published', async () => {
@@ -454,7 +454,7 @@ describe('ProcessCheckout', () => {
       api.waitForJob.mockImplementation(jobWaitTimesOut())
       renderView({ start: { kind: 'publishing', jobId: 'job-1' } })
 
-      expect(await screen.findByText(/The voting process is still being published/)).toBeInTheDocument()
+      expect(await screen.findByText(/The voting process is still being published/, visible)).toBeInTheDocument()
     })
 
     it('waits on the job of a publish from the timeout, not on the process', async () => {
@@ -472,7 +472,6 @@ describe('ProcessCheckout', () => {
     it('waits for the process without reading a payment or opening a checkout', async () => {
       const { onPublished } = renderView({ start: { kind: 'publishing' } })
 
-      expect(await screen.findByText('Publishing your voting process…')).toBeInTheDocument()
       await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
       expect(api.waitForPublication.mock.calls[0][1].readPayment).toBeUndefined()
       expect(api.checkout).not.toHaveBeenCalled()
@@ -482,7 +481,7 @@ describe('ProcessCheckout', () => {
       api.waitForPublication.mockResolvedValueOnce('timeout')
       renderView({ start: { kind: 'publishing' } })
 
-      expect(await screen.findByText(/The voting process is still being published/)).toBeInTheDocument()
+      expect(await screen.findByText(/The voting process is still being published/, visible)).toBeInTheDocument()
     })
   })
 
@@ -597,7 +596,7 @@ describe('ProcessCheckout', () => {
       })
       renderView()
 
-      expect(await screen.findByText('Payment received. Publishing your voting process…')).toBeInTheDocument()
+      expect(await screen.findByText('Payment received. Publishing your voting process…', visible)).toBeInTheDocument()
       expect(api.publish).not.toHaveBeenCalled()
     })
 
@@ -622,12 +621,28 @@ describe('ProcessCheckout', () => {
     })
   })
 
-  it('goes back to the form from the back button', async () => {
-    const user = userEvent.setup()
-    const { onClose } = renderView()
+  it('cannot be closed while the publication is awaited', async () => {
+    api.waitForJob.mockReturnValue(new Promise(() => undefined))
+    const { onClose } = renderView({ start: { kind: 'publishing', jobId: 'job-1' } })
 
-    await user.click(await screen.findByRole('button', { name: 'Back' }))
+    expect(await screen.findByText('Publishing your voting process…', visible)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+    await userEvent.setup().keyboard('{Escape}')
+    expect(onClose).not.toHaveBeenCalled()
+  })
 
-    expect(onClose).toHaveBeenCalledTimes(1)
+  it('offers the wallet page when a wallet publish is refused for the shortfall', async () => {
+    api.checkout.mockRejectedValue(apiError(400))
+    api.publish.mockRejectedValue(
+      apiError(402, ApiErrorCode.PaymentRequired, {
+        lines: [],
+        totalCents: 1000,
+        balanceCents: 0,
+        shortfallCents: 1000,
+      })
+    )
+    renderView()
+
+    expect(await screen.findByRole('link', { name: 'Open wallet' })).toHaveAttribute('href', '/admin/settings/billing')
   })
 })
