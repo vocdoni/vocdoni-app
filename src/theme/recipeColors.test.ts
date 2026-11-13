@@ -19,10 +19,12 @@ describe.each([
     expect(sys.tokens.getByName('borderWidths.hairline')?.originalValue).toBe('1px')
   })
 
-  it('paints the success and warning toasts on their own fill and text tokens', () => {
+  // Fil toasts are a raised neutral card with a status icon; the toast.* fills are no longer read by the recipe.
+  it('paints every toast type on the raised surface, not on a status fill', () => {
     const root = sys.getSlotRecipe('toast').base?.root as Record<string, Record<string, unknown>>
-    expect(root['&[data-type=success]']).toMatchObject({ bg: 'toast.success.bg', color: 'toast.success.fg' })
-    expect(root['&[data-type=warning]']).toMatchObject({ bg: 'toast.warning.bg', color: 'toast.warning.fg' })
+    for (const type of ['success', 'warning', 'error', 'info']) {
+      expect(root[`&[data-type=${type}]`]).toMatchObject({ bg: 'surface.raised', color: 'fg' })
+    }
   })
 
   it('defines the toast fills and text from the status palettes', () => {
@@ -43,13 +45,17 @@ describe.each([
 })
 
 describe('link colours', () => {
-  it('are shared by the link recipe and the editor', () => {
-    const lexical = editor['& .lexical-link'] as { color: string; _hover: { color: string } }
+  // Fil links are accent text (the link recipe); the editor keeps `link.fg` until its own slice moves it.
+  it('are accent text in the link recipe', () => {
     const base = link.base as { color: string; _hover: { color: string } }
+    expect(base.color).toBe('accent.fg')
+    expect(base._hover.color).toBe('accent.solid.hover')
+  })
+
+  it('keep the editor on the link tokens', () => {
+    const lexical = editor['& .lexical-link'] as { color: string; _hover: { color: string } }
     expect(lexical.color).toBe('link.fg')
-    expect(lexical.color).toBe(base.color)
     expect(lexical._hover.color).toBe('link.fg.hover')
-    expect(lexical._hover.color).toBe(base._hover.color)
   })
 })
 
