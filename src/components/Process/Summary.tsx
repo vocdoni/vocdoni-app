@@ -13,6 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { SectionHeader } from '~components/ui/SectionHeader'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { ElectionResults, getElectionTitle, useElection } from '@vocdoni/react-components'
 import { hasResults, isSecretUntilTheEnd, isUpcoming, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -70,9 +71,9 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   // Once the deadline is reached, show the process status instead of a zeroed-out countdown.
   if (left <= 0) {
     return (
-      <Badge {...headline} colorPalette='gray' alignSelf='end'>
+      <StatusBadge colorPalette='gray' alignSelf='end'>
         {statusLabel(t, status)}
-      </Badge>
+      </StatusBadge>
     )
   }
 

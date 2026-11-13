@@ -36,6 +36,7 @@ import {
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { PageLoader } from '~components/ui/Loader'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import {
@@ -1008,9 +1009,9 @@ const ProcessCreateView = () => {
               {/* Top bar with draft status and sidebar toggle */}
               <HStack position='sticky' top='[0px]' p='2' bg='bg' zIndex='contents'>
                 {effectiveDraftId && (
-                  <Box px='3' py='1' borderRadius='full' bg='bg.muted' fontSize='sm'>
+                  <StatusBadge colorPalette='gray'>
                     <Trans i18nKey='process.create.status.draft'>Draft</Trans>
-                  </Box>
+                  </StatusBadge>
                 )}
                 <Spacer />
                 <ButtonGroup size='sm'>
