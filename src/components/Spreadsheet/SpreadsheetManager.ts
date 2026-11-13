@@ -1,4 +1,4 @@
-import { read, utils, WorkBook } from 'xlsx'
+import type { ParsedSpreadsheet } from './parse-spreadsheet'
 import ErrorMissingData from './errors/ErrorMissingData'
 import ErrorMissingHeader from './errors/ErrorMissingHeader'
 
@@ -9,7 +9,6 @@ export class SpreadsheetManager {
   // 1-based line of each `filedata` row in the original file, kept because blank rows are dropped
   protected linenumbers: number[] = []
 
-  public workBook: WorkBook | undefined
   public errors: number[] = []
 
   constructor(
@@ -62,42 +61,62 @@ export class SpreadsheetManager {
   }
 
   private load(): Promise<SpreadsheetManager> {
-    return new Promise((resolve, reject): void => {
-      this.reader.onload = (event) => {
-        try {
-          this.workBook = read(this.reader.result, {
-            type: 'binary',
-            codepage: 65001,
-          })
-          this.filedata = this.getSheetsData(this.workBook)
-          if (this.headed) {
-            this.heading = this.filedata.splice(0, 1)[0]
-            this.linenumbers.splice(0, 1)
-          }
-          resolve(this)
-        } catch (error) {
-          reject(error)
+    return this.readContent()
+      .then((content) => parseOffThread(content))
+      .then(({ rows, lines }) => {
+        this.filedata = rows
+        this.linenumbers = lines
+        if (this.headed) {
+          this.heading = this.filedata.splice(0, 1)[0]
+          this.linenumbers.splice(0, 1)
         }
-      }
+        return this
+      })
+  }
+
+  private readContent(): Promise<string> {
+    return new Promise((resolve, reject): void => {
+      this.reader.onload = () => resolve(this.reader.result as string)
       this.reader.onerror = () => reject(this.reader.error)
       this.reader.readAsBinaryString(this.file)
     })
   }
+}
 
-  private getSheetsData(xlsFile: WorkBook) {
-    const firstSheetName = xlsFile.SheetNames[0]
-    const worksheet = xlsFile.Sheets[firstSheetName]
-    const data: string[][] = utils.sheet_to_json(worksheet, { header: 1, raw: false })
-    // sheet_to_json starts at the first used row, so blank rows before it are not in `data`
-    const firstRow = worksheet?.['!ref'] ? utils.decode_range(worksheet['!ref']).s.r : 0
-    const lines: number[] = []
-    const filtered = data.filter((row, index) => {
-      if (row.length === 0) return false
-      lines.push(firstRow + index + 1)
-      return true
-    })
-    this.linenumbers = lines
+type WorkerReply = ({ ok: true } & ParsedSpreadsheet) | { ok: false; message: string }
 
-    return filtered.map((row) => row.map((cell) => cell.trim()))
+/**
+ * Parses in a module worker so the `xlsx` chunk loads only when a file is dropped and a large file does not freeze
+ * the page. Without `Worker` (jsdom, very old browsers) it parses in-thread through a dynamic import.
+ */
+const parseInThread = (content: string): Promise<ParsedSpreadsheet> =>
+  import('./parse-spreadsheet').then(({ parseSpreadsheet }) => parseSpreadsheet(content))
+
+const parseOffThread = (content: string): Promise<ParsedSpreadsheet> => {
+  if (typeof Worker === 'undefined') return parseInThread(content)
+
+  let worker: Worker
+  try {
+    worker = new Worker(new URL('./spreadsheet.worker.ts', import.meta.url), { type: 'module' })
+  } catch {
+    // The constructor throws synchronously under some CSPs or without module worker support.
+    return parseInThread(content)
   }
+
+  return new Promise((resolve, reject) => {
+    worker.onmessage = (event: MessageEvent<WorkerReply>) => {
+      worker.terminate()
+      const reply = event.data
+      if (reply.ok === false) reject(new Error(reply.message))
+      else resolve({ rows: reply.rows, lines: reply.lines })
+    }
+    // Parse errors come back as `{ ok: false }`; `onerror` means the worker could not load or crashed (no module
+    // worker support, blocked script), an environment problem, so parse in-thread instead of failing the import.
+    worker.onerror = (event) => {
+      event.preventDefault()
+      worker.terminate()
+      parseInThread(content).then(resolve, reject)
+    }
+    worker.postMessage({ content })
+  })
 }
