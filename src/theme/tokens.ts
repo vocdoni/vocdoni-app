@@ -1,30 +1,18 @@
 import { defineTokens } from '@chakra-ui/react'
 import { colors } from './colors'
-import { FONT_STACKS, type LoadedFontWeight } from './fonts'
+import { FONT_STACKS, FONT_WEIGHTS } from './fonts'
 
 const fonts = defineTokens.fonts({
   body: { value: FONT_STACKS.body },
   heading: { value: FONT_STACKS.heading },
+  figure: { value: FONT_STACKS.figure },
   mono: { value: FONT_STACKS.mono },
 })
 
-// Only loaded weights (see fonts.ts): a name with no file behind it makes the browser fake it.
-// Headings, `bold` and <b>/<strong> are 500, running text and default labels 400; chakra's stock names
-// for weights that do not ship are pinned to the nearest loaded one.
-const weight = (value: LoadedFontWeight) => ({ value: String(value) })
-
-const fontWeights = defineTokens.fontWeights({
-  thin: weight(300),
-  extralight: weight(300),
-  light: weight(300),
-  normal: weight(400),
-  medium: weight(400),
-  semibold: weight(500),
-  bold: weight(500),
-  bolder: weight(500),
-  extrabold: weight(500),
-  black: weight(500),
-})
+// One token per step of the ladder in fonts.ts, which sits next to the family so the two change together.
+const fontWeights = defineTokens.fontWeights(
+  Object.fromEntries(Object.entries(FONT_WEIGHTS).map(([name, weight]) => [name, { value: String(weight) }]))
+)
 
 // The app's four line heights: captions and figures, titles, running text, long reads. Chakra's
 // other step (`taller`) stays for its own recipes.

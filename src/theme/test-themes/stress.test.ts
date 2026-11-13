@@ -65,7 +65,7 @@ describe('stress theme', () => {
   })
 
   it('moves fonts, radii, font sizes and spacing off every stock value', () => {
-    for (const name of ['fonts.body', 'fonts.heading', 'fonts.mono']) {
+    for (const name of ['fonts.body', 'fonts.heading', 'fonts.figure', 'fonts.mono']) {
       expect(stressSystem.tokens.getByName(name)?.value).toContain(`"${STRESS_FONT_MARKER} `)
     }
     for (const [category, stockValues] of [

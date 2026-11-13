@@ -114,9 +114,13 @@ App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (
   `Text` that should be something else. For inline emphasis inside smaller text, use `chakra.span` or `Span`.
 - Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.5), `tall` (1.6). Letter spacing:
   `heading.snug`, `quote.tight`, `eyebrow.wide`, plus Chakra's own steps.
-- Weights: only 300, 400 and 500 ship (`src/theme/fonts.ts`). `normal` and `medium` render 400; `semibold`, `bold` and
-  `extrabold` render 500. Numeric weights fail the inventory (`numericFontWeight`). A weight with no file behind it makes
-  the browser fake it, and `fonts.test.ts` keeps the CSS imports and the list in step.
+- Families and weights live together in `src/theme/fonts.ts`: each family with the files it ships (`SANS`, a static
+  family or a variable range), the stacks (`body`, `heading`, `figure`, `mono`) and the ladder of which weight each
+  name renders (`FONT_WEIGHTS`). Inter ships 300, 400 and 500: `normal`, `normal-plus` and `medium` render 400;
+  `medium-plus`, `semibold`, `bold` and `extrabold` render 500. `normal-plus` and `medium-plus` are the half steps
+  (450, 550) a variable family can draw. Numeric weights fail the inventory (`numericFontWeight`). A weight with no face
+  behind it makes the browser fake it, and `fonts.test.ts` keeps the CSS imports in `Theme.tsx`, the families and the
+  ladder in step.
 - Markdown headings written by users use `proseHeadingSizes`, shared by the editor and the renderer.
 
 ## Sizes, spacing and radii

@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { FONT_FAMILY, FONT_PACKAGE, FONT_STACKS, LOADED_FONT_WEIGHTS } from './fonts'
+import { describe, expect, it } from 'vitest'
+import { FONT_STACKS, FONT_WEIGHTS, fontCssFiles, SANS, shipsWeight, WEB_FONTS, type WebFont } from './fonts'
 import { system } from './system'
 
 const srcRoot = resolve(__dirname, '..')
@@ -16,42 +17,80 @@ const sourceFiles = (dir: string): string[] =>
 
 const importedFontCss = () =>
   sourceFiles(srcRoot).flatMap((file) =>
-    Array.from(readFileSync(file, 'utf-8').matchAll(/['"](@fontsource\/[^'"]+\.css)['"]/g), (match) => match[1])
+    Array.from(
+      readFileSync(file, 'utf-8').matchAll(/['"](@fontsource(?:-variable)?\/[^'"]+\.css)['"]/g),
+      (match) => match[1]
+    )
   )
 
 describe('font config', () => {
-  it('the app loads exactly the configured weights, one static import each', () => {
-    expect(importedFontCss()).toEqual(LOADED_FONT_WEIGHTS.map((weight) => `${FONT_PACKAGE}/${weight}.css`))
+  it('the app loads exactly the files of the configured families, one static import each', () => {
+    expect(importedFontCss()).toEqual(WEB_FONTS.flatMap(fontCssFiles))
   })
 
-  it('body and heading stacks lead with the loaded family', () => {
-    expect(system.token('fonts.body')).toBe(FONT_STACKS.body)
-    expect(system.token('fonts.heading')).toBe(FONT_STACKS.heading)
-    expect(FONT_STACKS.body.startsWith(`"${FONT_FAMILY}",`)).toBe(true)
+  it('text, heading and figure stacks lead with a family the app loads', () => {
+    for (const name of ['body', 'heading', 'figure'] as const) {
+      expect(system.token(`fonts.${name}`)).toBe(FONT_STACKS[name])
+      expect(
+        WEB_FONTS.some((font) => FONT_STACKS[name].startsWith(`"${font.family}",`)),
+        name
+      ).toBe(true)
+    }
   })
 
-  // No faux bold: a weight token without a loaded file behind it makes the
+  // No faux bold: a weight token without a real face behind it makes the
   // browser synthesize one. Checked on the built system, so Chakra's stock
   // names (semibold, extrabold, black...) are held to the same bar.
-  it('every font weight token is a loaded weight', () => {
+  it('every font weight token is a weight the text family ships', () => {
     const weights = system.tokens.categoryMap.get('fontWeights')
     expect(weights?.size).toBeGreaterThan(0)
-    const loaded: readonly number[] = LOADED_FONT_WEIGHTS
     const offenders = Array.from(weights ?? [], ([name, token]) => [name, Number(token.value)] as const).filter(
-      ([, value]) => !loaded.includes(value)
+      ([, value]) => !shipsWeight(SANS, value)
     )
     expect(offenders).toEqual([])
+  })
+
+  it('builds one weight token per step of the ladder', () => {
+    for (const [name, weight] of Object.entries(FONT_WEIGHTS)) {
+      expect(system.token(`fontWeights.${name}`), name).toBe(String(weight))
+    }
   })
 
   it('renders headings, bold and <b>/<strong> at 500, default labels and running text at 400', () => {
     expect(system.token('fontWeights.bold')).toBe('500')
     expect(system.token('fontWeights.semibold')).toBe('500')
+    expect(system.token('fontWeights.medium-plus')).toBe('500')
     expect(system.token('fontWeights.medium')).toBe('400')
+    expect(system.token('fontWeights.normal-plus')).toBe('400')
     expect(system.token('fontWeights.normal')).toBe('400')
     expect(system.token('fontWeights.light')).toBe('300')
     // Lands in the base layer, which wins over the reset layer's `bolder`.
     expect(system.getGlobalCss()).toMatchObject({
       '@layer base': { '&b, &strong': { fontWeight: 'var(--chakra-font-weights-bold)' } },
     })
+  })
+
+  // No family uses the variable branch yet; this pins what Theme.tsx and the weight check will expect of one.
+  it('models a static family as one file per weight and a variable one as one file for its range', () => {
+    expect(fontCssFiles(SANS)).toEqual([
+      '@fontsource/inter/300.css',
+      '@fontsource/inter/400.css',
+      '@fontsource/inter/500.css',
+    ])
+    const variable: WebFont = {
+      family: 'Variable Sans',
+      package: '@fontsource-variable/variable-sans',
+      files: { kind: 'variable', range: [400, 700], css: 'wght.css' },
+    }
+    expect(fontCssFiles(variable)).toEqual(['@fontsource-variable/variable-sans/wght.css'])
+    expect([300, 400, 450, 550, 700, 800].map((weight) => shipsWeight(variable, weight))).toEqual([
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+    ])
+    expect(shipsWeight(SANS, 450)).toBe(false)
   })
 })
