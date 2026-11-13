@@ -1,6 +1,6 @@
-import { FormProvider, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { render, screen } from '~src/test-utils'
-import { SelectorTypes } from '../common'
+import { Process, SelectorTypes } from '../common'
 import SimpleQuestionEditor from './SimpleQuestionEditor'
 
 vi.mock('@dnd-kit/sortable', () => ({
@@ -25,23 +25,28 @@ vi.mock('react-i18next', async () => {
   }
 })
 
-const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  const form = useForm({
+const Harness = ({ questionOptions }: { questionOptions: { id: string }[] }) => {
+  const form = useForm<Process>({
     defaultValues: {
       questions: [{ type: SelectorTypes.Single, options: [{ option: 'A' }, { option: 'B' }] }],
     },
   })
-  return <FormProvider {...form}>{children}</FormProvider>
+  return (
+    <SimpleQuestionEditor
+      index={0}
+      control={form.control}
+      questionOptions={questionOptions}
+      append={vi.fn()}
+      remove={vi.fn()}
+    />
+  )
 }
 
 describe('SimpleQuestionEditor', () => {
   it('renders options using choice card wrappers', () => {
     const questionOptions = [{ id: 'opt-1' }, { id: 'opt-2' }]
 
-    const { container } = render(
-      <SimpleQuestionEditor index={0} questionOptions={questionOptions} append={vi.fn()} remove={vi.fn()} />,
-      { wrapper: Wrapper }
-    )
+    const { container } = render(<Harness questionOptions={questionOptions} />)
 
     expect(screen.getAllByRole('textbox')).toHaveLength(2)
     expect(container.querySelectorAll('[data-choice-card]')).toHaveLength(2)

@@ -1,5 +1,5 @@
 import { Box, FieldRoot as FormControl, HStack, Switch } from '@chakra-ui/react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Control, Controller, UseFormSetValue } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Select } from '~components/Form/Select'
 import { Process, SelectorTypes } from '../common'
@@ -16,9 +16,16 @@ interface SelectOption {
  * own election, so a process can mix single- and multiple-choice questions, each
  * with its own plain or extended choice cards.
  */
-export const QuestionSettings = ({ index }: { index: number }) => {
+export const QuestionSettings = ({
+  index,
+  control,
+  setValue,
+}: {
+  index: number
+  control: Control<Process>
+  setValue: UseFormSetValue<Process>
+}) => {
   const { t } = useTranslation()
-  const { control, setValue } = useFormContext<Process>()
 
   return (
     <HStack gap='4' flexWrap='wrap' justifyContent='flex-end'>

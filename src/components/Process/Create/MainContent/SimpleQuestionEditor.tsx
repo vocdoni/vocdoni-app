@@ -14,30 +14,28 @@ import {
 } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useFormContext } from 'react-hook-form'
+import { Control, useFormState, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { DragHandle } from '~components/ui/DragHandle'
 import { AddIcon, CloseIcon, DragHandleIcon } from '~theme/icons'
-import { SelectorTypes } from '../common'
+import { Process, SelectorTypes } from '../common'
 
 const SimpleQuestionEditor = ({
   index,
+  control,
   questionOptions,
   append,
   remove,
 }: {
   index: number
+  control: Control<Process>
   questionOptions: any[]
   append: any
   remove: any
 }) => {
   const { t } = useTranslation()
-  const {
-    register,
-    formState: { errors },
-    watch,
-  } = useFormContext()
-  const questionType = watch(`questions.${index}.type`)
+  const { errors } = useFormState({ control, name: `questions.${index}.options` })
+  const questionType = useWatch({ control, name: `questions.${index}.type` })
   const choiceRecipe = useSlotRecipe({ key: 'QuestionChoice' })
   const cardStyles = choiceRecipe({ context: 'plain', layout: 'list' })
 
@@ -53,7 +51,7 @@ const SimpleQuestionEditor = ({
           questionType={questionType}
           fieldsLength={questionOptions.length}
           onRemove={() => remove(optionIndex)}
-          register={register}
+          register={control.register}
           errors={errors}
           t={t}
         />

@@ -12,7 +12,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { MutableRefObject, useRef } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { MaxProcessDurationDays } from '~constants'
 import { useDateFns } from '~i18n/use-date-fns'
@@ -32,7 +32,7 @@ export const BasicConfig = () => {
   const {
     register,
     formState: { errors, isSubmitted },
-    watch,
+    control,
     setValue,
     clearErrors,
     trigger,
@@ -40,11 +40,11 @@ export const BasicConfig = () => {
   const startDateRef = useRef<HTMLInputElement | null>(null)
   const endDateRef = useRef<HTMLInputElement | null>(null)
 
-  const autoStart = watch('autoStart')
-  const startDate = watch('startDate')
-  const startTime = watch('startTime')
-  const endDate = watch('endDate')
-  const endTime = watch('endTime')
+  // useWatch re-renders this component alone; watch() would re-render the whole form on every change
+  const [autoStart, startDate, startTime, endDate, endTime] = useWatch({
+    control,
+    name: ['autoStart', 'startDate', 'startTime', 'endDate', 'endTime'],
+  })
   const today = format(new Date(), DateFormatHtml)
   // Derived from the form values, so it also holds for a start date loaded from a draft or cleared.
   const endDateMin = !autoStart && startDate ? startDate : today
