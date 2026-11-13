@@ -14,6 +14,11 @@ const fontWeights = defineTokens.fontWeights(
   Object.fromEntries(Object.entries(FONT_WEIGHTS).map(([name, weight]) => [name, { value: String(weight) }]))
 )
 
+// The size of a control's label and value (button, field, menu item): Chakra's control recipes read `sm` today.
+const fontSizes = defineTokens.fontSizes({
+  control: { value: '{fontSizes.sm}' },
+})
+
 // The app's four line heights: captions and figures, titles, running text, long reads. Chakra's
 // other step (`taller`) stays for its own recipes.
 const lineHeights = defineTokens.lineHeights({
@@ -152,6 +157,7 @@ const tokens = defineTokens({
   spacing,
   zIndex,
   fonts,
+  fontSizes,
   fontWeights,
   lineHeights,
   letterSpacings,

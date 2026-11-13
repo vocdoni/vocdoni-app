@@ -35,6 +35,17 @@ describe('stress theme', () => {
   it('gives every semantic colour its own non-grey value in both modes, never a palette step', () => {
     const tokens = semantic('colors')
     expect(tokens.length).toBeGreaterThan(200)
+    // The roles that start as aliases of another token still get a value of their own here.
+    expect(tokens.map((token) => token.name)).toEqual(
+      expect.arrayContaining([
+        'colors.fg.faint',
+        'colors.border.strong',
+        'colors.accent.solid',
+        'colors.accent.solid.hover',
+        'colors.accent.contrast',
+        'colors.accent.subtle',
+      ])
+    )
     for (const [mode, index] of [
       ['light', 0],
       ['dark', 1],
@@ -55,7 +66,9 @@ describe('stress theme', () => {
 
   it('gives every shadow role its own coloured shadow', () => {
     const tokens = semantic('shadows')
-    expect(tokens.map((token) => token.name)).toEqual(expect.arrayContaining(['shadows.shadow.card', 'shadows.md']))
+    expect(tokens.map((token) => token.name)).toEqual(
+      expect.arrayContaining(['shadows.shadow.card', 'shadows.shadow.control', 'shadows.md'])
+    )
     const light = tokens.map((token) => modeValues(token.name)[0])
     expect(new Set(light).size).toBe(light.length)
     for (const value of light) {

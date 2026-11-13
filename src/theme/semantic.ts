@@ -73,6 +73,10 @@ const colors = defineSemanticTokens.colors({
         _dark: '{colors.gray.500}',
       },
     },
+    // The faintest text step, below `subtle`. The same grey for now, so a retheme can split the two.
+    faint: {
+      value: '{colors.fg.subtle}',
+    },
     inverted: {
       value: {
         _light: '{colors.gray.50}',
@@ -243,6 +247,11 @@ const colors = defineSemanticTokens.colors({
         _dark: '{colors.gray.700}',
       },
     },
+    // The outline of a control drawn as a line (checkbox, radio, a dashed drop zone). `emphasized` until a retheme
+    // splits them.
+    strong: {
+      value: '{colors.border.emphasized}',
+    },
     inverted: {
       value: {
         _light: '{colors.gray.800}',
@@ -376,12 +385,25 @@ const shadows = defineSemanticTokens.shadows({
     overlay: {
       value: '{shadows.lg}',
     },
+    // A ring around a control (button, field) in place of its border. Controls draw a border today, so none.
+    control: {
+      value: 'none',
+    },
   },
+})
+
+// Chakra's semantic radii, which its control recipes read (`l2` for buttons and fields), written out with Chakra's
+// mapping so a retheme moves them here.
+const radii = defineSemanticTokens.radii({
+  l1: { value: '{radii.xs}' },
+  l2: { value: '{radii.sm}' },
+  l3: { value: '{radii.md}' },
 })
 
 const semanticTokens = {
   colors,
   shadows,
+  radii,
 }
 
 export default semanticTokens

@@ -14,6 +14,10 @@ export const textStyles = defineTextStyles({
   'section-title': { value: { fontSize: 'lg', lineHeight: 'short', fontWeight: 'bold' } },
   // Public process and organisation names.
   display: { value: { fontSize: { base: '3xl', md: '4xl' }, lineHeight: 'short', fontWeight: 'bold' } },
+  // A control's label and value. The line height is that of Chakra's `sm` style, which its control recipes read.
+  control: { value: { fontSize: 'control', lineHeight: '[1.25rem]' } },
+  // Numerals, dates, counts and codes. Family only, so a figure keeps the size of the text around it.
+  figure: { value: { fontFamily: 'figure' } },
 })
 
 // Heading sizes of user-written content by Markdown level, shared by the editor and the rendered Markdown.

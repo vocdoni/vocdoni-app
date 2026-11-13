@@ -263,7 +263,8 @@ describe('theme system integrity', () => {
     const violations: Violation[] = []
     const visit = (node: unknown, path: string) => {
       if (typeof node === 'string') {
-        for (const match of node.matchAll(/\{([\w.-]+)\}/g)) {
+        // `{colors.white/30}` names `colors.white` at 30 % opacity.
+        for (const match of node.matchAll(/\{([\w.-]+)(?:\/\d+)?\}/g)) {
           if (sys.tokens.getByName(match[1]) === undefined) {
             violations.push({ path, value: match[1], reason: 'referenced token not found' })
           }
@@ -278,6 +279,9 @@ describe('theme system integrity', () => {
     // The generated brand slots are not part of the static semantic map; check them here.
     for (const slot of PALETTE_SLOTS) {
       visit(sys.tokens.getByName(`colors.brand.${slot}`)?.extensions?.conditions, `brand.${slot}`)
+    }
+    for (const slot of ['fg', 'solid', 'solid.hover', 'contrast', 'subtle']) {
+      visit(sys.tokens.getByName(`colors.accent.${slot}`)?.extensions?.conditions, `accent.${slot}`)
     }
     expect(violations, `\n${formatViolations(violations)}`).toEqual([])
   })
@@ -333,6 +337,20 @@ describe('PRIMARY_COLOR-driven system', () => {
     }
   })
 
+  // A recipe that moves from `colorPalette.solid` to `accent.solid` must paint the same, with and without a brand.
+  it.each([
+    ['stock', system, 'gray'],
+    ['branded', BRANDED, 'brand'],
+  ] as const)(
+    'aliases the accent steps to the palette colorPalette falls back to (%s system)',
+    (_name, sys, palette) => {
+      expect(conditions(sys, 'accent.solid')).toEqual({ base: `{colors.${palette}.solid}` })
+      expect(conditions(sys, 'accent.solid.hover')).toEqual({ base: `{colors.${palette}.solid/90}` })
+      expect(conditions(sys, 'accent.contrast')).toEqual({ base: `{colors.${palette}.contrast}` })
+      expect(conditions(sys, 'accent.subtle')).toEqual({ base: `{colors.${palette}.subtle}` })
+    }
+  )
+
   it('leaves dark-mode surfaces on the neutral ink scale rather than tinting them', () => {
     expect(conditions(BRANDED, 'bg')).toEqual({ _light: '{colors.white}', _dark: '{colors.ink.900}' })
     expect(BRANDED.tokens.getByName('colors.ink.900')?.value).toBe('#0a0a0a')
@@ -349,6 +367,23 @@ describe('PRIMARY_COLOR-driven system', () => {
     expect(getAppSystem(undefined)).toBe(system)
     expect(getAppSystem('#1A73E8')).toBe(getAppSystem('1a73e8'))
     expect(getAppSystem('#1a73e8')).not.toBe(system)
+  })
+})
+
+// Roles a retheme gives their own value. Each starts as an alias of what renders today, so adding it changes nothing.
+describe('roles waiting for a retheme', () => {
+  const base = (name: string) => system.tokens.getByName(name)?.extensions?.conditions
+
+  it('alias the token that paints today', () => {
+    expect(base('colors.fg.faint')).toEqual({ base: '{colors.fg.subtle}' })
+    expect(base('colors.border.strong')).toEqual({ base: '{colors.border.emphasized}' })
+    expect(base('shadows.shadow.control')).toEqual({ base: 'none' })
+  })
+
+  it("write out Chakra's semantic radii with its own mapping", () => {
+    expect(base('radii.l1')).toEqual({ base: '{radii.xs}' })
+    expect(base('radii.l2')).toEqual({ base: '{radii.sm}' })
+    expect(base('radii.l3')).toEqual({ base: '{radii.md}' })
   })
 })
 

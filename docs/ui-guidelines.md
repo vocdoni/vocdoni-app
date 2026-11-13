@@ -43,8 +43,8 @@ Token families, each in its own module under `src/theme/` and spread into `color
 
 | Family                           | Tokens                                                                                                                                                                      | Module            |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.inverted`, `bg.panel`                                         | `semantic.ts`     |
-| Borders                          | `border`, `border.muted`, `border.subtle`, `border.emphasized`, `border.inverted`                                                                                           | `semantic.ts`     |
+| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint` (`fg.subtle` today), `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.inverted`, `bg.panel`         | `semantic.ts`     |
+| Borders                          | `border`, `border.muted`, `border.subtle`, `border.emphasized`, `border.strong` (control outlines, `border.emphasized` today), `border.inverted`                            | `semantic.ts`     |
 | Surface layers                   | `surface.canvas`, `.sidebar`, `.content`, `.card`, `.sunken`, `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`) | `semantic.ts`     |
 | Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.fg`                                                                                                           | `semantic.ts`     |
 | Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                          | `semantic.ts`     |
@@ -56,8 +56,9 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                       | `illustration.ts` |
 | Links, switch, turnout stripes   | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `progress.stripe`                                                        | `recipeColors.ts` |
 | Toasts                           | `toast.{success,warning}.bg` (solid fills) and `toast.{success,warning}.fg` (the text on them, each status's `contrast`)                                                    | `recipeColors.ts` |
-| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`                                                                     | `semantic.ts`     |
+| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a control, `none` today)           | `semantic.ts`     |
 | Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                   | `palette.ts`      |
+| Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (`brand` or `gray`)                                                 | `system.ts`       |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                        | `semantic.ts`     |
 
 Rules of thumb:
@@ -100,7 +101,9 @@ Typography is a role, not three props.
 ```
 
 App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (12px, uppercase, Chakra's `wide` letter spacing, not the `eyebrow.wide` token),
-`page-title` (24px), `section-title` (18px), `display`. Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
+`page-title` (24px), `section-title` (18px), `display`, `control` (a control's label and value, on the `control` font
+size) and `figure` (numerals, dates, counts and codes: the `figure` family only, so it keeps the size around it; the
+text family today). Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 
 - A role holds typography only. Colour stays a separate prop. Do not pass a `textStyle` and a prop that sets the same
   property: they resolve in prop order.
@@ -128,7 +131,9 @@ App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (
 - **Spacing**: scale steps (`p='4'`, `gap='2'`), plus `0` and `auto` (`p='0'`, `mx='auto'`). A pixel value is a
   `pxSpacing` ratchet hit.
 - **Sizes**: Chakra's named sizes and the tokens below, plus `0` and `auto`. A pixel value is a `pxSize` ratchet hit.
-- **Radii**: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `full`, `none`. Pixel radii fail the inventory.
+- **Radii**: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `full`, `none`. Pixel radii fail the inventory. Chakra's own recipes
+  read the semantic `l1`, `l2` and `l3` (`xs`, `sm`, `md`), written out in `semantic.ts`.
+- **Font sizes**: Chakra's steps, plus `control` (a control's label and value, `sm` today).
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
   focus ring, `thick`): `<Box borderWidth='thick' />`.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
