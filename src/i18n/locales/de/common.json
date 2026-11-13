@@ -1513,6 +1513,7 @@
       "vote": "Wähle die Abstimmung aus, um ein neues Fenster mit den Abstimmungsanweisungen zu öffnen. Nachdem du deine Stimme abgegeben hast, schließe das Fenster, um hierher zurückzukehren."
     },
     "section_title": "Abstimmungen",
+    "stream_title": "Livestream",
     "voted": "Du hast bereits abgestimmt"
   },
   "signin": "Anmelden",

@@ -1513,6 +1513,7 @@
       "vote": "Select the election to open a new window with the voting instructions. Once your vote is submitted, close the window to return here."
     },
     "section_title": "Elections",
+    "stream_title": "Live stream",
     "voted": "You already voted"
   },
   "signin": "Log In",

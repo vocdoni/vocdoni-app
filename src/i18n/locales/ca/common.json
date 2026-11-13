@@ -1539,6 +1539,7 @@
       "vote": "Selecciona la votació per obrir una nova finestra amb les instruccions de votació. Un cop hagis enviat el teu vot, tanca la finestra per tornar aquí."
     },
     "section_title": "Eleccions",
+    "stream_title": "Emissió en directe",
     "voted": "Ja has votat"
   },
   "signin": "Inicia sessió",

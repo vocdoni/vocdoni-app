@@ -1539,6 +1539,7 @@
       "vote": "Seleziona l'elezione per aprire una nuova finestra con le istruzioni di voto. Una volta inviato il voto, chiudi la finestra per tornare qui."
     },
     "section_title": "Elezioni",
+    "stream_title": "Live streaming",
     "voted": "Hai già votato"
   },
   "signin": "Accedi",

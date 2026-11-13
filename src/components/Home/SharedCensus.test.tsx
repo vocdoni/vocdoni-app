@@ -204,15 +204,15 @@ describe('SharedCensus', () => {
     expect(getByText('Connect')).toBeInTheDocument()
   })
 
-  it('titles the video player after the election, or generically when it has no title', async () => {
+  it('titles the stream generically, not after the election it is shown with', async () => {
     const { default: SharedCensus } = await import('./SharedCensus')
 
     await renderSharedCensus(<SharedCensus />)
-    expect(useIframeTitle).toHaveBeenLastCalledWith('Video')
+    expect(useIframeTitle).toHaveBeenLastCalledWith('Live stream')
 
     states.election.election = { ...states.election.election, title: { default: 'Board election' } } as any
     await renderSharedCensus(<SharedCensus />)
-    expect(useIframeTitle).toHaveBeenLastCalledWith('Board election')
+    expect(useIframeTitle).toHaveBeenLastCalledWith('Live stream')
   })
 
   it('renders always-visible and connected text when connected/admin', async () => {

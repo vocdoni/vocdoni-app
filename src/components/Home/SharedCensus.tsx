@@ -64,7 +64,8 @@ const SharedCensusOrganizationBoundary = ({ children }: { children: ReactNode })
 const SharedCensusHomeContent = () => {
   const { t, i18n } = useTranslation()
   const { loading, election, connected } = useElection()
-  const videoRef = useIframeTitle(election?.title?.default || t('video.title', { defaultValue: 'Video' }))
+  // The stream is deployment-wide, so it is not named after the first election.
+  const videoRef = useIframeTitle(t('shared_census.stream_title', { defaultValue: 'Live stream' }))
   const { currentAddress, isAuthenticated } = useAuth()
 
   const isAdmin = isAuthenticated && sameAddress(currentAddress, election?.orgAddress)
