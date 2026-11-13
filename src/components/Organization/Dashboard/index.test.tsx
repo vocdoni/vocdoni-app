@@ -1,4 +1,4 @@
-import { mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { act, fireEvent, mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 import OrganizationDashboard from './index'
 
@@ -32,8 +32,12 @@ vi.mock('~src/queries/organization', () => ({
   }),
 }))
 
+const playerProps = vi.fn()
 vi.mock('react-player', () => ({
-  default: () => <div>Player</div>,
+  default: (props: { onClickPreview?: () => void; onPause?: () => void }) => {
+    playerProps(props)
+    return <div onClick={props.onClickPreview}>Player</div>
+  },
 }))
 
 vi.mock('~components/Layout/WhatsappButton', () => ({
@@ -115,5 +119,42 @@ describe('OrganizationDashboard', () => {
       </TestMemoryRouter>
     )
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
+  })
+
+  describe('tutorial video', () => {
+    const renderWithVideo = (src: string) =>
+      render(
+        <TestMemoryRouter>
+          <OrganizationDashboard />
+        </TestMemoryRouter>,
+        { appEnv: { VIDEO_TUTORIAL: { en: src } } }
+      )
+
+    beforeEach(() => playerProps.mockClear())
+
+    it('shows the YouTube thumbnail and loads the player only when it is clicked, then plays', () => {
+      renderWithVideo('https://www.youtube.com/watch?v=OQRF_4-zGSk')
+
+      const preview = screen.getByLabelText('How to create your first vote', { selector: 'button' })
+      expect(preview).toHaveStyle({ backgroundImage: 'url(https://i.ytimg.com/vi/OQRF_4-zGSk/hqdefault.jpg)' })
+      expect(playerProps).not.toHaveBeenCalled()
+
+      fireEvent.click(preview)
+
+      expect(playerProps).toHaveBeenLastCalledWith(expect.objectContaining({ playing: true }))
+      expect(playerProps.mock.lastCall![0]).not.toHaveProperty('light')
+
+      // Pausing in the player sticks: later renders do not tell it to play again
+      act(() => playerProps.mock.lastCall![0].onPause())
+
+      expect(playerProps).toHaveBeenLastCalledWith(expect.objectContaining({ playing: false }))
+    })
+
+    it('keeps a click-to-load preview for a video that is not on YouTube', () => {
+      renderWithVideo('https://example.com/tutorial.mp4')
+
+      expect(screen.getByLabelText('How to create your first vote', { selector: 'button' })).toBeInTheDocument()
+      expect(playerProps).not.toHaveBeenCalled()
+    })
   })
 })

@@ -2,7 +2,7 @@ import { Navigate, Outlet, useOutletContext } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { useProfile } from '~src/queries/account'
 import { usePrefetchOrganization } from '~src/queries/organization'
-import { PageLoader } from '~components/ui/Loader'
+import { PageSkeleton } from '~components/ui/PageSkeleton'
 import { getPrivateAppRoot } from './privateAppRouting'
 
 type PrivateAppGuardProps = {
@@ -25,8 +25,9 @@ const PrivateAppGuard = ({ redirectPath }: PrivateAppGuardProps) => {
   // through the confirmed `currentAddress`, and a rejected address's data is dropped.
   usePrefetchOrganization(unconfirmedAddress)
 
+  // The same skeleton the router shows while the page's code arrives, so a cold load shows one.
   if (!isAuthenticated || isAuthLoading || isProfileLoading) {
-    return <PageLoader />
+    return <PageSkeleton />
   }
 
   const actualRoot = getPrivateAppRoot(profile ?? null, currentAddress ?? '')

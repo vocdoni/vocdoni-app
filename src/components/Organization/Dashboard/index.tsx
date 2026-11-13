@@ -1,4 +1,4 @@
-import { AspectRatio, Box, Button, Flex, HStack, Icon, Link, Text } from '@chakra-ui/react'
+import { AspectRatio, Box, Button, chakra, Flex, HStack, Icon, Link, Text } from '@chakra-ui/react'
 import { SectionHeader } from '~components/ui/SectionHeader'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -14,8 +14,9 @@ import { ListLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { useDateFns } from '~i18n/use-date-fns'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { AddIcon, GoToIcon, UsersIcon, VoteIcon } from '~theme/icons'
+import { AddIcon, GoToIcon, ResumeIcon, UsersIcon, VoteIcon } from '~theme/icons'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
@@ -105,14 +106,71 @@ const Tutorial = () => {
           })}
         </Text>
         <AspectRatio ratio={16 / 9}>
-          <VideoPlayer
-            title={t('dashboard.welcome.how_first_vote', { defaultValue: 'How to create your first vote' })}
-            src={videoTutorialSrc}
-            style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
-          />
+          <TutorialVideo src={videoTutorialSrc} />
         </AspectRatio>
       </Flex>
     </DashboardBox>
+  )
+}
+
+// YouTube serves every video's thumbnail at a fixed URL, so the preview needs no oEmbed lookup.
+const YOUTUBE_ID =
+  /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|shorts\/|live\/|watch\?(?:.*&)?v=))([\w-]{11})/
+const videoThumbnail = (src: string): string | true => {
+  const id = src.match(YOUTUBE_ID)?.[1]
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : true
+}
+
+// A thumbnail until clicked: the player and its scripts load only for someone who wants to watch.
+// Our own button instead of react-player's `light` preview, which is an unstyled div with an aria-label.
+const TutorialVideo = ({ src }: { src: string }) => {
+  const { t } = useTranslation()
+  const [started, setStarted] = useState(false)
+  const [playing, setPlaying] = useState(false)
+  const title = t('dashboard.welcome.how_first_vote', { defaultValue: 'How to create your first vote' })
+  const thumbnail = videoThumbnail(src)
+
+  if (!started) {
+    return (
+      <chakra.button
+        type='button'
+        aria-label={title}
+        onClick={() => {
+          setStarted(true)
+          setPlaying(true)
+        }}
+        display='flex'
+        alignItems='center'
+        justifyContent='center'
+        w='full'
+        h='full'
+        cursor='button'
+        borderRadius='md'
+        bg='bg.muted'
+        // A per-video URL, so it goes inline rather than through a token
+        style={
+          typeof thumbnail === 'string'
+            ? { backgroundImage: `url(${thumbnail})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+            : undefined
+        }
+        color='fg.inverted'
+        focusVisibleRing='outside'
+      >
+        <Icon as={ResumeIcon} boxSize='16' bg='bg.inverted' borderRadius='full' />
+      </chakra.button>
+    )
+  }
+
+  return (
+    <VideoPlayer
+      title={title}
+      src={src}
+      playing={playing}
+      // Follow the player, so a re-render never resumes a video the viewer paused
+      onPlay={() => setPlaying(true)}
+      onPause={() => setPlaying(false)}
+      style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
+    />
   )
 }
 
