@@ -39,12 +39,10 @@ export enum ApiEndpoints {
   OrganizationGroups = 'organizations/{address}/groups',
   OrganizationGroup = 'organizations/{address}/groups/{groupId}',
   OrganizationGroupMembers = 'organizations/{address}/groups/{groupId}/members',
-  OAuthLink = 'auth/oauth',
   OAuthUnlink = 'auth/oauth/{provider}',
   Password = 'users/password',
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
-  Refresh = 'auth/refresh',
   Register = 'users',
   Verify = 'users/verify',
   VerifyCode = 'users/verify/code',
@@ -82,11 +80,11 @@ export class ApiError extends Error {
 
 export class UnauthorizedApiError extends ApiError {}
 
-export class BadRequestApiError extends ApiError {}
+class BadRequestApiError extends ApiError {}
 
 export class UnverifiedApiError extends ApiError {}
 
-export class UserAlreadyVerifiedApiError extends ApiError {}
+class UserAlreadyVerifiedApiError extends ApiError {}
 
 export type ApiErrorDetails = {
   code?: number

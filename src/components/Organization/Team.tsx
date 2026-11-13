@@ -127,7 +127,7 @@ type UsersListProps = {
 }
 
 // Fetch hook for organization users
-export const useUsers = ({
+const useUsers = ({
   options,
 }: {
   options?: Omit<UseQueryOptions<UsersResponse>, 'queryKey' | 'queryFn'>
@@ -142,7 +142,7 @@ export const useUsers = ({
 }
 
 // Fetch hook for pending users
-export const usePendingUsers = ({
+const usePendingUsers = ({
   options,
 }: {
   options?: Omit<UseQueryOptions<PendingUsersResponse>, 'queryKey' | 'queryFn'>

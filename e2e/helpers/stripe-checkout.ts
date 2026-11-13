@@ -7,7 +7,7 @@ import { expect, type Frame, type Locator, type Page } from '@playwright/test'
  */
 
 /** The checkout form is the only form on screen while a payment view is open. */
-export const PAY_BUTTON = 'form:has(iframe[name^="__privateStripeFrame"]) button[type="submit"]'
+const PAY_BUTTON = 'form:has(iframe[name^="__privateStripeFrame"]) button[type="submit"]'
 
 // Autocomplete tokens are the standard; the name attributes are Stripe's own and the fallback.
 const CARD_NUMBER = 'input[autocomplete="cc-number"], input[name="number"]'

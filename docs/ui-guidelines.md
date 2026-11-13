@@ -394,6 +394,7 @@ escape is not a way around the ratchet.
 | Theme integrity (real tokens, no shared CSS variable) | `pnpm test src/theme/system.test.ts`                | `Test` step of the same jobs                                             |
 | Style inventory                                       | `pnpm test src/theme/style-inventory.test.ts`       | `Test` step of the same jobs                                             |
 | Stress theme                                          | `pnpm ui:snapshot -- --label stress --theme stress` | `Stress theme` job (any PR that touches what renders, whatever its base) |
+| Accessibility (axe)                                   | `pnpm ui:snapshot -- --label a11y --a11y`           | `Accessibility (axe)` job (same trigger as `Stress theme`)               |
 | Offline snapshot and diff                             | `pnpm ui:snapshot`, `pnpm ui:diff`                  | not run                                                                  |
 
 The build jobs run on PRs to `develop`, `stage` and `d/**` only; on a PR to any other base (a stacked PR), run

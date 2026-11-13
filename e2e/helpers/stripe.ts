@@ -11,14 +11,14 @@ const STRIPE_API_URL = 'https://api.stripe.com/v1'
 const RETRY_DELAYS_MS = [1000, 2000, 4000]
 
 /** Refuses live keys (secret, restricted or publishable): the e2e suite must never touch production. */
-export const assertTestKey = (key: string, variable: string): string => {
+const assertTestKey = (key: string, variable: string): string => {
   if (/^(sk|rk|pk)_live_/.test(key)) {
     throw new Error(`${variable} is a live key: refusing to create objects in a production account`)
   }
   return key
 }
 
-export class StripeError extends Error {
+class StripeError extends Error {
   constructor(
     readonly status: number,
     message: string

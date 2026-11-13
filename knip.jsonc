@@ -1,0 +1,33 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/pages/**/+*.{ts,tsx}", // Vike page files (the vike plugin is off, see below)
+    "vite.config.ts",
+    "i18next.config.ts", // read by i18next-cli (pnpm translations)
+    "scripts/*.mjs",
+    "scripts/ui-snapshot/{snapshot,diff,mock-saas}.mjs",
+    "server/index.mjs", // the SSR server, started by `pnpm serve:ssr` and the Dockerfile
+    "stress/loadgen.mjs", // spawned by stress/loadgen.test.ts and run-stress.sh
+    "src/utils/use-feature-flag.ts", // documented API (docs/analytics.md), no caller yet
+  ],
+  "project": [
+    "src/**/*.{ts,tsx,mjs}",
+    "server/**/*.mjs",
+    "scripts/**/*.mjs",
+    "stress/**/*.{ts,mjs}",
+    "e2e/**/*.ts",
+    "*.config.ts",
+  ],
+  // Loading vite.config.ts runs vike/plugin, whose esbuild builds outlive knip and crash with a Go stack trace.
+  // Read it statically instead: no vite or vike plugin, and vitest only from its own configs.
+  "vike": false,
+  "vite": false,
+  "vitest": { "config": ["vitest.config.ts", "stress/vitest.config.ts"] },
+  // buffer: knip resolves the bare import to Node's built-in; plausible: loaded with `??= import()`, which knip misses
+  "ignoreDependencies": ["buffer", "@plausible-analytics/tracker"],
+  "ignoreBinaries": ["gh", "scripts/integration-stack.sh"],
+  // A component's props type stays exported next to it even when only that file uses it
+  "ignoreExportsUsedInFile": { "interface": true, "type": true, "enum": true },
+  // The snapshot harness aliases the stress theme over ~theme/system, so it mirrors that module's exports
+  "ignoreIssues": { "src/theme/test-themes/**": ["exports", "duplicates"] },
+}

@@ -1,4 +1,4 @@
-import { DashboardLayoutContext } from '~elements/LayoutDashboard'
+import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import UserProfile from './UserProfile'
 

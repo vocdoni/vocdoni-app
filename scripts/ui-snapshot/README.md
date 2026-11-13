@@ -32,6 +32,7 @@ pnpm ui:diff -- before after
 | `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                  |
 | `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")           |
 | `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")        |
+| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                |
 
 `pnpm ui:diff -- <labelA> <labelB>` options: `--ignore width,height` drops properties from the
 comparison; `--limit <n>` caps the elements printed per capture (default 50; totals always count
@@ -118,7 +119,7 @@ read directly. `stress-report.json` holds the counts with examples. The run fail
 `stress-baseline.json`, the leaks known on the branch it was written on; after a fix, lower it with
 `--update-stress-baseline` (a `--routes` run updates only its captures). Elements that keep stock values on
 purpose are listed with a reason in `STRESS_EXCEPTIONS` (`stress.mjs`). CI runs it on pull requests that
-touch `src/`, the snapshot scripts, dependencies, `vite.config.ts`, `index.html`, `public/` or the workflow (the `stress-theme` job in `.github/workflows/test.yml`) and keeps the run as an artifact.
+touch `src/`, the snapshot scripts, dependencies, `vite.config.ts`, `public/` or the workflow (the `Stress theme` leg of the `ui-snapshot` job in `.github/workflows/test.yml`) and keeps the run as the `stress` artifact.
 
 With your own dev server, start it with the alias and pass `--url`; the run stops if the stress theme is
 not the one rendering:
@@ -127,6 +128,30 @@ not the one rendering:
 SAAS_URL=http://127.0.0.1:3999 \
   VITE_CONFIG="{\"resolve\":{\"alias\":{\"~theme/system\":\"$PWD/src/theme/test-themes/stress.ts\"}}}" pnpm dev
 ```
+
+## Accessibility (axe)
+
+```bash
+pnpm ui:snapshot -- --label a11y --a11y
+```
+
+After each capture (stock theme and palette only: `--a11y` with `--theme stress` or `--primary-color` stops) the script
+runs axe-core on the page and lists the violations of the WCAG 2.2 A and AA rules, by rule with a node count and a few
+examples. Only violations are listed, not "needs review" items or best-practice rules. `a11y-report.json` holds the
+result per capture. axe is read from `node_modules`, so nothing is fetched. Colour contrast is only checked reliably in
+a real browser, which is why this runs inside the snapshot.
+
+The run fails on any count above `a11y-baseline.json`. To write or refresh it from CI, download the `a11y` artifact of a
+PR run and run `node scripts/ui-snapshot/a11y.mjs --baseline-from <artifact>/a11y-report.json`. Prefer that over the
+local update: fonts and layout change the colour-contrast results, and `--update-a11y-baseline` writes this machine's
+counts. It locks in any increase too, so after a local run check the logged increases (`file  rule: old -> new`) before
+committing. A `--routes`, `--viewports` or `--modes` run updates only its captures. A full run also drops the entries of
+files it does not expect (the current routes at the default viewports and modes), and skips that when a capture failed.
+`--baseline-from` prunes the same way. A deliberate case goes with a reason in
+`A11Y_EXCEPTIONS` (`a11y.mjs`); violations still waiting for a fix belong in the baseline.
+CI runs it as the `Accessibility (axe)` leg of the same job and fails like the stress leg; the run is the `a11y`
+artifact and the rule table lands in the job summary. If axe itself fails on a page, the capture is kept and
+the report lists an `axe-error` entry for it.
 
 ## Use your own dev server
 

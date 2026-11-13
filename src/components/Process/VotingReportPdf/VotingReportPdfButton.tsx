@@ -30,7 +30,7 @@ import {
 } from './certificate-data'
 import { VotingCertificateDocument } from './pdf-document'
 
-export { canDownloadVotingReport, type ElectionLike } from './certificate-data'
+export type { ElectionLike } from './certificate-data'
 
 const { pdf } = ReactPDF
 

@@ -60,7 +60,7 @@ export function getSelectedNode(selection: RangeSelection): TextNode | ElementNo
   }
 }
 
-export function getDOMRangeRect(nativeSelection: Selection, rootElement: HTMLElement): DOMRect {
+function getDOMRangeRect(nativeSelection: Selection, rootElement: HTMLElement): DOMRect {
   const domRange = nativeSelection.getRangeAt(0)
 
   let rect
@@ -81,7 +81,7 @@ export function getDOMRangeRect(nativeSelection: Selection, rootElement: HTMLEle
 const VERTICAL_GAP = 10
 const HORIZONTAL_OFFSET = 5
 
-export function setFloatingElemPosition(
+function setFloatingElemPosition(
   targetRect: DOMRect | null,
   floatingElem: HTMLElement,
   anchorElem: HTMLElement,
@@ -120,7 +120,7 @@ export function setFloatingElemPosition(
   floatingElem.style.transform = `translate(-2px, ${top}px)`
 }
 
-export function TextFormatFloatingToolbar({
+function TextFormatFloatingToolbar({
   editor,
   anchorElem,
   isLink,

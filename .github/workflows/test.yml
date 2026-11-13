@@ -91,13 +91,20 @@ jobs:
           CALCOM_EVENT_SLUG: ${{ secrets.CALCOM_EVENT_SLUG }}
           SAAS_URL: https://saas-api-stg.vocdoni.net
 
-  # Renders the app with the stress theme against the snapshot's mock SaaS (no docker, no backend) and fails on
-  # elements that kept a stock value. See scripts/ui-snapshot/README.md, "Stress theme".
-  stress-theme:
-    name: Stress theme
+  # Renders the app against the snapshot's mock SaaS (no docker, no backend) in two legs. Both fail on counts above
+  # their baseline: stress-baseline.json (leaks of stock values) and a11y-baseline.json (axe violations).
+  # See scripts/ui-snapshot/README.md.
+  ui-snapshot:
+    name: ${{ matrix.name }}
     runs-on: ubuntu-22.04
     if: github.event_name == 'pull_request'
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: Stress theme, label: stress, args: --theme stress }
+          - { name: Accessibility (axe), label: a11y, args: --a11y }
 
     steps:
       - name: Checkout
@@ -110,8 +117,8 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          if git diff --quiet "$BASE_SHA" HEAD -- src scripts/ui-snapshot package.json pnpm-lock.yaml vite.config.ts index.html public .github/workflows/test.yml; then
-            echo "Nothing that changes what renders was touched: no stress run."
+          if git diff --quiet "$BASE_SHA" HEAD -- src scripts/ui-snapshot package.json pnpm-lock.yaml vite.config.ts public .github/workflows/test.yml; then
+            echo "Nothing that changes what renders was touched: no snapshot run."
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi
@@ -134,14 +141,14 @@ jobs:
         if: steps.changes.outputs.run == 'true'
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Render with the stress theme
+      - name: Render and check
         if: steps.changes.outputs.run == 'true'
-        run: pnpm ui:snapshot -- --label stress --theme stress
+        run: pnpm ui:snapshot -- --label ${{ matrix.label }} ${{ matrix.args }}
 
-      - name: Upload the stress run
+      - name: Upload the run
         if: always() && steps.changes.outputs.run == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: stress-theme
-          path: .ui-snapshot/stress
+          name: ${{ matrix.label }}
+          path: .ui-snapshot/${{ matrix.label }}
           retention-days: 7

@@ -91,6 +91,7 @@ there, here's a list of variables you can use:
   `dev` or `prod` (defaults to `dev`).
 - `BASE_URL` is used to specify the public base page during build.
 - `BUILD_PATH` Specifies the destination of built files.
+- `COMMIT_SHA` Commit stamped in the `build-commit` meta tag of every page, read by the server at runtime (shortened to 7 characters). On DigitalOcean App Platform set it as a run-time variable to `${_self.COMMIT_HASH}`. Defaults to `git rev-parse --short HEAD`, or `unknown` without git.
 - `CUSTOM_ORGANIZATION_DOMAINS` A JSON.stringified object of custom domains mapped to organization ids, to
   replace the homepage with their profile page.
 - `HOME_PROCESS_ID` a single process id that turns the app root into that process' voting page — the same

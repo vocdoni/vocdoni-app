@@ -16,7 +16,7 @@ export const CreatedBy = (props: FlexProps) => {
   )
 }
 
-export const LongOrganizationName = (props: TextProps) => {
+const LongOrganizationName = (props: TextProps) => {
   const { organization } = useOrganization()
 
   if (!organization) return null
