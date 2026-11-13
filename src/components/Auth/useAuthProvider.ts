@@ -1,12 +1,11 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
-import { AuthStorageKeys, clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { useAuth as useSdkAuth } from '@vocdoni/react-providers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useDisconnect } from 'wagmi'
 import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
 import { useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
+import { clearOAuthStorage, OAuthStorageKeys } from '~components/Auth/oauthStorage'
 import { useToast } from '~components/Toast'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { sameAddress } from '~utils/address'
@@ -36,7 +35,6 @@ export const useAuthProvider = () => {
   const { token: bearer, expiry, isAuthenticated, setSession, logout: sdkLogout } = useSdkAuth()
   const { client: apiClient } = useApiClient()
   const toast = useToast()
-  const { disconnect } = useDisconnect()
   const { t } = useTranslation()
   const queryClient = useQueryClient()
 
@@ -144,17 +142,17 @@ export const useAuthProvider = () => {
   }, [refetchAddresses, applySelection])
 
   const logout = useCallback(() => {
-    clearAuthStorageKeys()
+    // Includes the Google OAuth wallet seed: removing it is what disconnecting the wagmi connector did.
+    clearOAuthStorage()
     sdkLogout()
     setCurrentAddress(undefined)
-    disconnect()
     // Wipe the query cache so a different account logging in afterwards doesn't inherit the
     // previous user's profile (the profile key is static). Without this, e.g. an integrator's
     // cached org survives logout and the next non-integrator login is misrouted to /integrators.
     // We intentionally keep signerAddress: the same user resumes their last-selected org, and
     // refreshAddresses overwrites it when a different user doesn't own that address.
     queryClient.clear()
-  }, [disconnect, queryClient, sdkLogout])
+  }, [queryClient, sdkLogout])
 
   // The stored token is trusted blindly on load (`isAuthenticated` is just "a token exists"),
   // so the address list doubles as the session probe. The backend only answers it with a 401
@@ -199,7 +197,7 @@ export const useAuthProvider = () => {
  * under the rainbowkit AuthStorageKeys) into the react-providers session.
  */
 export const readOAuthSession = () => {
-  const token = getStorageItem(AuthStorageKeys.Token)
+  const token = getStorageItem(OAuthStorageKeys.Token)
   if (!token) return null
-  return { token, expirity: getStorageItem(AuthStorageKeys.Expiry) ?? '' }
+  return { token, expirity: getStorageItem(OAuthStorageKeys.Expiry) ?? '' }
 }

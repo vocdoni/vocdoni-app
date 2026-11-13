@@ -1,19 +1,20 @@
 import { Button, Icon } from '@chakra-ui/react'
 import { AuthStorageKeys, saasOAuthWallet } from '@vocdoni/rainbowkit-wallets'
 import { readOAuthSession } from '~components/Auth/useAuthProvider'
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GoogleIcon } from '~theme/icons'
 import { useNavigate } from 'react-router'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, WagmiProvider } from 'wagmi'
 import { useToast } from '~components/Toast'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useAppEnv } from '~src/app-env'
+import { wagmiConfig } from '~constants/wagmi'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents, rememberSignupMethod } from '~utils/analytics'
 import { useAuth } from './useAuth'
 
-const GoogleAuth = () => {
+const GoogleAuthButton = () => {
   const { setSession, refreshAddresses } = useAuth()
   const appEnv = useAppEnv()
   const navigate = useNavigate()
@@ -97,5 +98,14 @@ const GoogleAuth = () => {
     </Button>
   )
 }
+
+// Only this button runs wagmi, so its provider lives here rather than in the app providers, keeping
+// wagmi and viem off the bundle every page loads. memo: WagmiProvider reconnects on every render,
+// which would drop a connection made moments before.
+const GoogleAuth = memo(() => (
+  <WagmiProvider config={wagmiConfig}>
+    <GoogleAuthButton />
+  </WagmiProvider>
+))
 
 export default GoogleAuth

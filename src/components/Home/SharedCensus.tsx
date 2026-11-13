@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router'
 import Editor from '~components/Editor'
 import { useAuth } from '~components/Auth/useAuth'
+import { parseProcessIds } from '~components/Home/processIds'
 import { ManageProcessLink } from '~components/Process/ManageProcessLink'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
@@ -21,12 +22,6 @@ import { VideoPlayer } from '~components/ui/VideoPlayer'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { ensureAddressPrefix, sameAddress } from '~utils/address'
 import { PageSection } from '~components/ui/PageContainer'
-
-export const parseProcessIds = (value: string | undefined) =>
-  (value || '')
-    .split(',')
-    .map((id) => id.trim())
-    .filter(Boolean)
 
 const SharedCensus = () => {
   const { PROCESS_IDS } = useAppEnv()
