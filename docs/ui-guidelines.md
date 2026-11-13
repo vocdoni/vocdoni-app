@@ -82,8 +82,8 @@ Rules of thumb:
   darker: `ink.950` (#000000), `ink.900` (#0a0a0a, the dark page), `ink.850` (#1f1f22), `ink.800` (#262626), `ink.700`
   (#2e2e2e). Components never read it; the semantic tokens do. The dark `bg.muted` is `ink.850`, so the dark steps run
   `bg.subtle` < `bg.muted` (hover) < `bg.emphasized` (pressed, current), the same order as light. The track of a bar
-  cannot read `bg.muted` there (it is too close to the page), which is why both progress variants read
-  `ballot.results.track`.
+  cannot read `bg.muted` there (it is too close to the page), which is why the `results` and `turnout` progress
+  variants read `ballot.results.track`.
 - **Text on a coloured fill**: use the pair the token family ships (`status.error.contrast` on `status.error.solid`,
   `surface.inverse.fg` on `surface.inverse`), not an ad hoc black or white. `textContrast.test.ts` and `palette.test.ts`
   check contrast.
@@ -102,8 +102,10 @@ Typography is a role, not three props.
 
 App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (12px, uppercase, Chakra's `wide` letter spacing, not the `eyebrow.wide` token),
 `page-title` (24px), `section-title` (18px), `display`, `control` (a control's label and value, on the `control` font
-size) and `figure` (numerals, dates, counts and codes: the `figure` family only, so it keeps the size around it; the
-text family today). Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
+size), `figure` (numerals, dates, counts and codes: the `figure` family only, so it keeps the size around it; the
+text family today), `quote-label` (the sector over a featured quote), `separator-label` (the label of a
+`LabelledSeparator`), `status-title` (a process status as a headline) and `role-name` (a role shown from its raw
+value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 
 - A role holds typography only. Colour stays a separate prop. Do not pass a `textStyle` and a prop that sets the same
   property: they resolve in prop order.
@@ -176,7 +178,7 @@ What exists today:
 | `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the mobile dashboard menu); dialog and drawer backdrops both paint `scrim.strong`                                                                                                         |
 | `dialog`            | `placement` defaults to `center`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                |
 | `menu`              | Items highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                       |
-| `progress`          | `variant`: `results` (thin 8px bar, one per choice), `turnout` (large striped bar for the share that voted); both tracks read `ballot.results.track`                                                                                                                   |
+| `progress`          | `variant`: `results` (thin 8px bar, one per choice), `turnout` (large striped bar for the share that voted), `meter` (`UsageMeter`), `job` (a background job); `results` and `turnout` tracks read `ballot.results.track`                                              |
 | `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                          |
 | `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe)                                                                                                                                                    |
 | `list`              | `variant`: `marker`                                                                                                                                                                                                                                                    |

@@ -48,7 +48,8 @@ describe('ProcessAside', () => {
   it('renders status and the CSP identify flow', () => {
     render(<ProcessAside />)
 
-    expect(screen.getByText('PROCESS.STATUS.ACTIVE')).toBeInTheDocument()
+    // Uppercase comes from the `status-title` text style, which jsdom does not apply to the text.
+    expect(screen.getByText('process.status.active')).toBeInTheDocument()
     expect(screen.getByText('CSP')).toBeInTheDocument()
   })
 

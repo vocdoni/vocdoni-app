@@ -5,7 +5,7 @@ import { Trans } from 'react-i18next'
 export const LabelledSeparator = ({ children, ...props }: FlexProps) => (
   <Flex align='center' {...props}>
     <Separator w='full' borderColor='separator' />
-    <Text color='fg.muted' fontWeight='bold' mx='3.5' whiteSpace='nowrap' textStyle='caption' textTransform='uppercase'>
+    <Text color='fg.muted' mx='3.5' whiteSpace='nowrap' textStyle='separator-label'>
       {children}
     </Text>
     <Separator w='full' borderColor='separator' />

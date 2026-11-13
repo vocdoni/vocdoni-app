@@ -18,6 +18,24 @@ export const textStyles = defineTextStyles({
   control: { value: { fontSize: 'control', lineHeight: '[1.25rem]' } },
   // Numerals, dates, counts and codes. Family only, so a figure keeps the size of the text around it.
   figure: { value: { fontFamily: 'figure' } },
+  // The sector over a featured quote (auth showcase): a louder eyebrow, wider and heavier.
+  'quote-label': {
+    value: {
+      fontSize: 'xs',
+      lineHeight: 'moderate',
+      fontWeight: 'bolder',
+      letterSpacing: 'eyebrow.wide',
+      textTransform: 'uppercase',
+    },
+  },
+  // The short label between the two rules of a LabelledSeparator ("or continue with").
+  'separator-label': {
+    value: { fontSize: 'xs', lineHeight: 'moderate', fontWeight: 'bold', textTransform: 'uppercase' },
+  },
+  // A process status shown as a headline (the voting aside).
+  'status-title': { value: { fontSize: 'xl', textTransform: 'uppercase' } },
+  // A member's role shown from its raw value (`admin`), capitalised like the badge `label` variant.
+  'role-name': { value: { fontWeight: 'semibold', textTransform: 'capitalize' } },
 })
 
 // Heading sizes of user-written content by Markdown level, shared by the editor and the rendered Markdown.

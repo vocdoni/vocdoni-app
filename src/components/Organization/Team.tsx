@@ -380,9 +380,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
         <Card.Root variant='section' size='sm'>
           <Flex gap='2' align='center'>
             <Text>{roleIcons[currentRole]}</Text>
-            <Text fontWeight='semibold' textTransform='capitalize'>
-              {currentRole}
-            </Text>
+            <Text textStyle='role-name'>{currentRole}</Text>
           </Flex>
         </Card.Root>
         <RoleRadioGroup currentRole={currentRole} />

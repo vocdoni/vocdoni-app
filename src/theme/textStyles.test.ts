@@ -24,4 +24,17 @@ describe('text styles', () => {
     expect(system.token('fontSizes.control')).toBe('var(--chakra-font-sizes-sm)')
     expect(system.token('fonts.figure')).toBe(system.token('fonts.body'))
   })
+
+  // Each role replaces the props one component set by hand, so it must emit exactly those declarations.
+  it.each([
+    [
+      'quote-label',
+      { textStyle: 'caption', fontWeight: 'bolder', textTransform: 'uppercase', letterSpacing: 'eyebrow.wide' },
+    ],
+    ['separator-label', { textStyle: 'caption', fontWeight: 'bold', textTransform: 'uppercase' }],
+    ['status-title', { fontSize: 'xl', textTransform: 'uppercase' }],
+    ['role-name', { fontWeight: 'semibold', textTransform: 'capitalize' }],
+  ] as const)('%s renders what its component set by hand', (name, byHand) => {
+    expect(system.css({ textStyle: name })).toEqual(system.css(byHand))
+  })
 })
