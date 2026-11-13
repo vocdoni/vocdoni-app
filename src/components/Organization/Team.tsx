@@ -4,38 +4,38 @@ import {
   Badge,
   Box,
   Button,
-  CloseButton,
+  Card,
   Dialog,
   type DialogRootProps,
-  Field,
+  FieldRoot as FormControl,
+  FieldLabel as FormLabel,
   Flex,
-  Heading,
   HStack,
   Icon,
   IconButton,
   Menu,
-  Progress,
   RadioGroup,
-  Spinner,
   Stack,
   Text,
   useDisclosure,
-  useRadioGroupContext,
 } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ComponentProps, ReactNode, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuEllipsis, LuMail, LuPlus, LuRefreshCw, LuUserCog, LuUserPlus } from 'react-icons/lu'
+import { AddIcon, AddUserIcon, MailIcon, MoreIcon, RefreshIcon, UserCogIcon } from '~theme/icons'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { roleIcons } from '~components/Layout/SaasSelector'
 import { teamWriterLimitErrorMessage } from '~components/Pricing/payment-errors'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { EmptyState } from '~components/ui/EmptyState'
 import { useToast } from '~components/Toast'
+import { InlineLoader, ListLoader } from '~components/ui/Loader'
 import { useProfile } from '~src/queries/account'
 import { QueryKeys } from '~src/queries/keys'
 import { Role, useRemoveUserMutation, useRoles } from '~src/queries/organization'
@@ -229,33 +229,30 @@ const useResendInvitationMutation = () => {
 }
 
 const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }: RoleRadioProps) => {
-  const group = useRadioGroupContext()
-  const isSelected = group?.value === value
-
   return (
     <RadioGroup.Item
       value={value}
       disabled={disabled}
-      border='1px solid'
+      border='sm'
       borderRadius='md'
-      borderColor={isSelected ? 'border.emphasized' : undefined}
-      p={2}
-      cursor={disabled ? 'not-allowed' : 'pointer'}
-      opacity={disabled ? 0.6 : 1}
-      _hover={!disabled ? { borderColor: 'border.emphasized' } : undefined}
+      p='2'
+      cursor='button'
+      _checked={{ borderColor: 'border.emphasized' }}
+      _hover={{ borderColor: 'border.emphasized' }}
+      _disabled={{ opacity: 'inactive', cursor: 'disabled' }}
       {...props}
     >
       <RadioGroup.ItemHiddenInput />
-      <Flex align='start' gap={4}>
-        <RadioGroup.ItemIndicator mt={1} />
+      <Flex align='start' gap='4'>
+        <RadioGroup.ItemIndicator mt='1' />
         <Box flex='1'>
-          <Flex gap={2} align='center' mb={1}>
+          <Flex gap='2' align='center' mb='1'>
             <Text>{roleIcons[value]}</Text>
             <RadioGroup.ItemText as='span' fontWeight='semibold'>
               {title}
             </RadioGroup.ItemText>
           </Flex>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text textStyle='body-sm' color='fg.muted'>
             {description}
           </Text>
         </Box>
@@ -292,21 +289,15 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
   if (rolesError) return <Alert.Root status='error'>{rolesFetchError?.message || t('error.loading_roles')}</Alert.Root>
 
   return (
-    <Field.Root>
-      <Field.Label fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</Field.Label>
-      {rolesLoading && (
-        <Progress.Root value={null}>
-          <Progress.Track>
-            <Progress.Range />
-          </Progress.Track>
-        </Progress.Root>
-      )}
+    <FormControl>
+      <FormLabel fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</FormLabel>
+      {rolesLoading && <ListLoader />}
       <Controller
         name='role'
         control={control}
         render={({ field }) => (
           <RadioGroup.Root value={field.value} onValueChange={({ value }) => field.onChange(value)} colorPalette='gray'>
-            <Stack direction='column' gap={2}>
+            <Stack direction='column' gap='2'>
               {roles?.map((role: Role) => (
                 <RoleRadio
                   key={role.role}
@@ -320,7 +311,7 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
           </RadioGroup.Root>
         )}
       />
-    </Field.Root>
+    </FormControl>
   )
 }
 
@@ -365,8 +356,8 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
 
   return (
     <FormProvider {...methods}>
-      <Flex as='form' direction='column' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
-        <Flex border='1px solid' borderColor='table.border' p={4} borderRadius='md' alignItems='center'>
+      <Flex as='form' direction='column' gap='4' onSubmit={methods.handleSubmit(onSubmit)}>
+        <Card.Root variant='section' size='sm' flexDirection='row' alignItems='center'>
           <Avatar.Root>
             <Avatar.Fallback name={fullName} />
           </Avatar.Root>
@@ -375,27 +366,27 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
               <Text fontWeight='bold'>{fullName}</Text>
             </HStack>
             <Flex direction='column'>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {user?.info.email}
               </Text>
             </Flex>
           </Box>
-        </Flex>
-        <Text fontSize='sm' fontWeight='bold'>
+        </Card.Root>
+        <Text textStyle='body-sm' fontWeight='bold'>
           {t('role.update.current_role', {
             defaultValue: 'Current Role',
           })}
         </Text>
-        <Box p={2} border='1px solid' borderColor='table.border' borderRadius='md'>
-          <Flex gap={2} align='center'>
+        <Card.Root variant='section' size='sm'>
+          <Flex gap='2' align='center'>
             <Text>{roleIcons[currentRole]}</Text>
             <Text fontWeight='semibold' textTransform='capitalize'>
               {currentRole}
             </Text>
           </Flex>
-        </Box>
+        </Card.Root>
         <RoleRadioGroup currentRole={currentRole} />
-        <Flex gap={2} justifyContent='flex-end' mt={4}>
+        <Flex gap='2' justifyContent='flex-end' mt='4'>
           <Button variant='outline' onClick={onClose}>
             {t('role.update.cancel', { defaultValue: 'Cancel' })}
           </Button>
@@ -417,21 +408,19 @@ const ChangeRoleModal = ({ open, onOpenChange, user }: ChangeRoleDialogProps) =>
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange} closeOnInteractOutside={false}>
       <Dialog.Backdrop />
-      <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
-        <Dialog.Content maxW='xl' py={4}>
-          <Dialog.CloseTrigger>
+      <Dialog.Positioner>
+        <Dialog.Content maxW='xl' py='4'>
+          <Dialog.CloseTrigger asChild>
             <CloseButton />
           </Dialog.CloseTrigger>
-          <Dialog.Header>
-            <Dialog.Title>
-              <Heading variant='header'>{t('role.update.title', { defaultValue: 'Change team member role' })}</Heading>
-            </Dialog.Title>
-            <Text variant='subheader'>
+          <DialogHeader
+            title={t('role.update.title', { defaultValue: 'Change team member role' })}
+            description={
               <Trans i18nKey='role.update.subtitle'>
                 Update the permissions for this team member by changing their role.
               </Trans>
-            </Text>
-          </Dialog.Header>
+            }
+          />
           <Dialog.Body>
             <ChangeRoleForm user={user} onClose={onClose} />
           </Dialog.Body>
@@ -572,10 +561,10 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
   return (
     <>
       <Menu.Item value='resend-invitation' disabled={isLoading} onClick={resendInvitationHandler}>
-        {isLoading ? <Spinner size='xs' /> : <Icon as={LuRefreshCw} />}
+        {isLoading ? <InlineLoader /> : <Icon as={RefreshIcon} />}
         <Box>{t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}</Box>
       </Menu.Item>
-      <Menu.Item value='cancel-invitation' color='red.400' disabled={isLoading} onClick={openCancelInvitation}>
+      <Menu.Item value='cancel-invitation' color='danger.action' disabled={isLoading} onClick={openCancelInvitation}>
         {t('team.actions.cancel_invitation', { defaultValue: 'Cancel Invitation' })}
       </Menu.Item>
     </>
@@ -588,11 +577,11 @@ const ActiveUserActions = ({ openChangeRole, openRemoveUser }: ActiveUserActions
   return (
     <>
       <Menu.Item value='change-role' onClick={openChangeRole} fontSize='sm'>
-        <Icon boxSize={4} as={LuUserCog} />
+        <Icon as={UserCogIcon} />
         <Box>{t('team.actions.change_role', { defaultValue: 'Change role' })}</Box>
       </Menu.Item>
       <Menu.Separator />
-      <Menu.Item value='remove-user' color='red.400' fontSize='sm' onClick={openRemoveUser}>
+      <Menu.Item value='remove-user' color='danger.action' fontSize='sm' onClick={openRemoveUser}>
         {t('team.actions.remove_user', { defaultValue: 'Remove user' })}
       </Menu.Item>
     </>
@@ -639,11 +628,11 @@ const UserActions = ({ user }: UserActionsProps) => {
             aria-label={t('team.actions.options', { defaultValue: 'Options' })}
             onClick={openMenu}
           >
-            <Icon as={LuEllipsis} />
+            <Icon as={MoreIcon} />
           </IconButton>
         </Menu.Trigger>
         <Menu.Positioner>
-          <Menu.Content minW='unset'>
+          <Menu.Content minW='[unset]'>
             <Menu.ItemGroup>
               {isActiveUser(user) ? (
                 <ActiveUserActions openChangeRole={openChangeRole} openRemoveUser={openRemoveUser} />
@@ -683,15 +672,15 @@ const UsersEmpty = () => {
 
   return (
     <EmptyState
-      icon={LuUserPlus}
+      icon={AddUserIcon}
       title={t('team.only_one_member.title', { defaultValue: "You're the only team member of this organization" })}
       description={t('team.only_one_member.subtitle', {
         defaultValue: 'Add team members to collaborate on your organization',
       })}
-      p={10}
-      gap={6}
+      p='10'
+      gap='6'
     >
-      <InviteToTeamModal leftIcon={<Icon mr={2} as={LuPlus} />} whiteSpace='normal'>
+      <InviteToTeamModal leftIcon={<Icon mr='2' as={AddIcon} />} whiteSpace='normal'>
         {t('team.only_one_member.add_team_member', { defaultValue: 'Add team member' })}
       </InviteToTeamModal>
     </EmptyState>
@@ -712,21 +701,21 @@ const UsersList = ({ users }: UsersListProps) => {
         const avatarName = isActive && `${user.info.firstName} ${user.info.lastName}`
 
         return (
-          <Flex alignItems='center' p={2} key={i}>
-            <Avatar.Root>{!isActive ? <Avatar.Icon as={LuMail} /> : <Avatar.Fallback name={avatarName} />}</Avatar.Root>
+          <Flex alignItems='center' p='2' key={i}>
+            <Avatar.Root>
+              {!isActive ? <Avatar.Icon as={MailIcon} /> : <Avatar.Fallback name={avatarName} />}
+            </Avatar.Root>
             <Box ml='3'>
               <HStack align='center'>
                 <Text fontWeight='bold'>{name}</Text>
-                <Badge variant='surface' textTransform='capitalize'>
-                  {user.role}
-                </Badge>
+                <Badge variant='label'>{user.role}</Badge>
               </HStack>
               <Flex direction='column'>
-                <Text fontSize='sm' color='texts.subtle'>
+                <Text textStyle='body-sm' color='fg.muted'>
                   {email}
                 </Text>
                 {user.expiration && (
-                  <Text fontSize='xs' color='texts.subtle'>
+                  <Text textStyle='caption' color='fg.muted'>
                     {t('team.expires_in', {
                       defaultValue: 'Expires in {{time}}',
                       time: formatDistanceToNow(new Date(user.expiration)),
@@ -748,30 +737,25 @@ export const OrganizationUsers = () => {
   const { users, isLoading, isError, error } = useAllUsers()
   const hasError = isError && !isLoading
   const isEmpty = users.length === 0 && !isLoading && !hasError
-  const showAlert = hasError || isEmpty
-  const alertTitle = hasError
-    ? t('team.load_error', { defaultValue: 'Unable to load team members' })
-    : t('team.empty', { defaultValue: 'No team members found' })
-  const alertDescription = hasError
-    ? error instanceof Error
-      ? error.message
-      : t('team.load_error_description', { defaultValue: 'Please try again.' })
-    : t('team.empty_description', { defaultValue: 'Invite teammates to get started.' })
 
   if (isLoading) {
-    return (
-      <Progress.Root value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   return (
     <>
-      {showAlert && (
-        <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
+      <ListStateAlert
+        show={hasError}
+        title={t('team.load_error', { defaultValue: 'Unable to load team members' })}
+        error={error}
+        fallback={t('team.load_error_description', { defaultValue: 'Please try again.' })}
+      />
+      {isEmpty && (
+        <EmptyState
+          size='lg'
+          title={t('team.empty', { defaultValue: 'No team members found' })}
+          description={t('team.empty_description', { defaultValue: 'Invite teammates to get started.' })}
+        />
       )}
       {!hasError && (users.length === 1 ? <UsersEmpty /> : users.length > 1 ? <UsersList users={users} /> : null)}
     </>

@@ -36,8 +36,8 @@ const PlaceholderPlugin = ({
       pointerEvents='none'
       css={textareaStyles}
       bg='transparent'
-      border='none'
-      boxShadow='none'
+      border='[none]'
+      boxShadow='[none]'
       aria-hidden='true'
       data-placeholder
     >

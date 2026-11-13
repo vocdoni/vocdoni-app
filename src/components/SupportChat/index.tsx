@@ -1,7 +1,8 @@
-import { chakra, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
+import { Button, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuMessageCircle, LuX } from 'react-icons/lu'
+import { ChatIcon, CloseIcon } from '~theme/icons'
 import { useAuth } from '~components/Auth/useAuth'
 import { ChatPanel } from './ChatPanel'
 import { useSupportChat } from './useSupportChat'
@@ -47,29 +48,29 @@ const SupportChatWidget = () => {
       {teaserVisible && !open && (
         <Flex
           position='fixed'
-          bottom={24}
-          right={6}
+          bottom='24'
+          right='6'
           zIndex='overlay'
           align='center'
-          gap={1}
-          pl={4}
-          pr={2}
-          py={2.5}
+          gap='1'
+          pl='4'
+          pr='2'
+          py='2.5'
           borderRadius='xl'
           borderBottomRightRadius='sm'
-          boxShadow='lg'
-          border='1px solid'
+          boxShadow='shadow.floating'
+          border='sm'
           borderColor='border'
           bg='bg.panel'
-          animationName='slide-from-bottom, fade-in'
+          animationName='[slide-from-bottom, fade-in]'
           animationDuration='moderate'
-          _motionReduce={{ animation: 'none' }}
+          _motionReduce={{ animation: '[none]' }}
         >
           {/* No aria-label: the visible teaser text is the accessible name, and
               must not collide with the launcher's "Open support chat" */}
-          <chakra.button type='button' fontSize='sm' fontWeight='medium' cursor='pointer' onClick={openChat}>
+          <Button variant='text' onClick={openChat}>
             {t('support_chat.teaser', { defaultValue: 'Do you need help?' })}
-          </chakra.button>
+          </Button>
           {/* Dismissing unmounts the teaser, so hand focus back to the launcher
               instead of dropping it on <body> */}
           <CloseButton
@@ -87,16 +88,16 @@ const SupportChatWidget = () => {
         present={open}
         lazyMount
         position='fixed'
-        bottom={24}
-        right={6}
+        bottom='24'
+        right='6'
         zIndex='overlay'
         transformOrigin='bottom right'
         animationName={{
-          _open: 'slide-from-bottom, fade-in',
-          _closed: 'slide-to-bottom, fade-out',
+          _open: '[slide-from-bottom, fade-in]',
+          _closed: '[slide-to-bottom, fade-out]',
         }}
         animationDuration='moderate'
-        _motionReduce={{ animation: 'none' }}
+        _motionReduce={{ animation: '[none]' }}
       >
         <ChatPanel
           open={open}
@@ -113,13 +114,10 @@ const SupportChatWidget = () => {
       <IconButton
         ref={launcherRef}
         position='fixed'
-        bottom={6}
-        right={6}
+        bottom='6'
+        right='6'
         zIndex='overlay'
-        w='52px'
-        h='52px'
-        borderRadius='full'
-        boxShadow='lg'
+        variant='floating'
         aria-label={
           open
             ? t('support_chat.close_label', { defaultValue: 'Close support chat' })
@@ -129,12 +127,8 @@ const SupportChatWidget = () => {
         // The panel is lazily mounted, so only reference it once it exists
         aria-controls={open ? 'support-chat-panel' : undefined}
         onClick={open ? close : openChat}
-        transition='transform 0.15s'
-        _hover={{ transform: 'scale(1.06)' }}
-        _active={{ transform: 'scale(0.96)' }}
-        _motionReduce={{ transition: 'none', _hover: { transform: 'none' }, _active: { transform: 'none' } }}
       >
-        <Icon as={open ? LuX : LuMessageCircle} boxSize={6} />
+        <Icon as={open ? CloseIcon : ChatIcon} boxSize='icon.lg' />
       </IconButton>
     </>
   )

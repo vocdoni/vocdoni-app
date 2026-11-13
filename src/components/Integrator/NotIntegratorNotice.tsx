@@ -1,14 +1,15 @@
-import { Alert, Button, Flex, Icon, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
+import { Alert, Button, Icon, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuSquareStack } from 'react-icons/lu'
+import { OrganizationIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { DashboardContents } from '~components/Dashboard/Contents'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useOrganizationNames } from '~components/Dashboard/Menu/useOrganizationNames'
 import { useSelectOrganization } from '~components/Dashboard/Menu/useSelectOrganization'
-import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useProfile } from '~src/queries/account'
 import { useProvisionIntegratorOrganization } from '~src/queries/integrators'
 
@@ -51,7 +52,7 @@ const NotIntegratorNotice = () => {
   }
 
   return (
-    <Stack gap={5} p={{ base: 4, md: 6 }} align='flex-start'>
+    <DashboardContents gap='5' alignItems='flex-start'>
       <Alert.Root status='info' w='full'>
         <Alert.Indicator />
         <Alert.Content>
@@ -71,9 +72,11 @@ const NotIntegratorNotice = () => {
         {t('integrators.not_integrator.cta', { defaultValue: 'Create a free integrator account' })}
       </Button>
 
-      <DeleteModal
+      <ConfirmDialog
+        layout='inline'
+        destructive={false}
         title={t('integrators.create_account.title', { defaultValue: 'Create a free integrator account?' })}
-        subtitle={t('integrators.create_account.description', {
+        description={t('integrators.create_account.description', {
           defaultValue:
             'A new integrator account will be created and set as your active organization, which unlocks the integrator dashboard.',
         })}
@@ -83,30 +86,35 @@ const NotIntegratorNotice = () => {
         closeOnEscape={!provision.isPending}
         closeOnInteractOutside={!provision.isPending}
         onOpenChange={({ open }) => setOpen(open)}
+        cancelText={t('integrators.create_account.cancel', { defaultValue: 'Cancel' })}
+        cancelDisabled={provision.isPending}
+        confirmText={t('integrators.create_account.confirm', { defaultValue: 'Create account' })}
+        loading={provision.isPending}
+        onConfirm={onCreate}
       >
         {hasMultipleOrgs && (
-          <Stack gap={2} mt={4}>
-            <Text fontSize='sm' fontWeight={600}>
+          <Stack gap='2' mt='4'>
+            <Text textStyle='body-sm' fontWeight='bold'>
               {t('integrators.create_account.switch_instead', {
                 defaultValue: 'Or switch to an existing organization',
               })}
             </Text>
-            <Stack gap={1} maxH='160px' overflowY='auto'>
+            <Stack gap='1' maxH='40' overflowY='auto'>
               {organizations.map(({ organization, isIntegrator }) => (
                 <Button
                   key={organization.address}
                   variant='outline'
                   justifyContent='flex-start'
-                  gap={2}
+                  gap='2'
                   disabled={provision.isPending}
                   onClick={() => selectOrganization(organization, isIntegrator)}
                 >
-                  <Icon as={LuSquareStack} />
-                  <Text as='span' fontSize='sm' truncate>
+                  <Icon as={OrganizationIcon} />
+                  <Text as='span' textStyle='body-sm' truncate>
                     {names[organization.address] || organization.address}
                   </Text>
                   {isIntegrator && (
-                    <TagRoot colorPalette='purple' ml='auto !important'>
+                    <TagRoot ml='[auto !important]'>
                       {/* "API" is a universal acronym, not translated in any locale */}
                       <TagLabel>API</TagLabel>
                     </TagRoot>
@@ -116,17 +124,8 @@ const NotIntegratorNotice = () => {
             </Stack>
           </Stack>
         )}
-
-        <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' disabled={provision.isPending} onClick={() => setOpen(false)}>
-            {t('integrators.create_account.cancel', { defaultValue: 'Cancel' })}
-          </Button>
-          <Button loading={provision.isPending} onClick={onCreate}>
-            {t('integrators.create_account.confirm', { defaultValue: 'Create account' })}
-          </Button>
-        </Flex>
-      </DeleteModal>
-    </Stack>
+      </ConfirmDialog>
+    </DashboardContents>
   )
 }
 

@@ -73,7 +73,7 @@ const ProcessDetailedCardTitle = () => {
 
   if (!election) {
     return (
-      <Text fontStyle='italic' color='error'>
+      <Text fontStyle='italic' color='status.error.fg'>
         {t('process.is_invalid')}
       </Text>
     )

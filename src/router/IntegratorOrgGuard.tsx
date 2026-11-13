@@ -3,11 +3,12 @@ import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Navigate, Outlet } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
+import { DashboardContents } from '~components/Dashboard/Contents'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useProfile } from '~src/queries/account'
 import NotIntegratorNotice from '~components/Integrator/NotIntegratorNotice'
 import { useProvisionIntegratorOrganization } from '~src/queries/integrators'
-import { Loading } from '~src/router/SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
 import { isSelectedOrganizationIntegrator } from './privateAppRouting'
 import { Routes } from './routes'
 
@@ -48,7 +49,7 @@ const IntegratorOrgGuard = () => {
   }, [provision.isSuccess, provision.data, refreshAddresses])
 
   if (isAuthLoading || isProfileLoading) {
-    return <Loading />
+    return <PageLoader />
   }
 
   if (!isAuthenticated) {
@@ -68,16 +69,18 @@ const IntegratorOrgGuard = () => {
 
   if (provision.isError) {
     return (
-      <Center py={16}>
-        <Stack align='center' gap={3}>
-          <Text fontSize='sm' color='gray.500'>
-            <Trans i18nKey='integrators.provision_failed'>We couldn't set up your integrator account.</Trans>
-          </Text>
-          <Button onClick={() => provision.reset()}>
-            <Trans i18nKey='common.retry'>Try again</Trans>
-          </Button>
-        </Stack>
-      </Center>
+      <DashboardContents>
+        <Center py='16'>
+          <Stack align='center' gap='3'>
+            <Text textStyle='body-sm' color='gray.500'>
+              <Trans i18nKey='integrators.provision_failed'>We couldn't set up your integrator account.</Trans>
+            </Text>
+            <Button onClick={() => provision.reset()}>
+              <Trans i18nKey='common.retry'>Try again</Trans>
+            </Button>
+          </Stack>
+        </Center>
+      </DashboardContents>
     )
   }
 
@@ -88,14 +91,9 @@ const IntegratorOrgGuard = () => {
 const ProvisioningState = () => {
   const { t } = useTranslation()
   return (
-    <Center py={16}>
-      <Stack align='center' gap={3}>
-        <Loading minHeight={1} />
-        <Text fontSize='sm' color='gray.500'>
-          {t('integrators.setting_up_account', { defaultValue: 'Setting up your integrator account…' })}
-        </Text>
-      </Stack>
-    </Center>
+    <PageLoader>
+      {t('integrators.setting_up_account', { defaultValue: 'Setting up your integrator account…' })}
+    </PageLoader>
   )
 }
 

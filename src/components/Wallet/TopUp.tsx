@@ -1,4 +1,20 @@
-import { Alert, Box, Button, Field, Flex, HStack, IconButton, Input, Separator, Text, VStack } from '@chakra-ui/react'
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  FieldErrorText as FormErrorMessage,
+  FieldHelperText as FormHelperText,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
+  Flex,
+  HStack,
+  IconButton,
+  Input,
+  Separator,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
 import {
   BillingAddressElement,
   CheckoutElementsProvider,
@@ -9,7 +25,7 @@ import {
 import type { StripeCheckoutElementsSdkOptions } from '@stripe/stripe-js'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowLeft } from 'react-icons/lu'
+import { BackIcon } from '~theme/icons'
 import { checkoutReturnBase, useCheckoutAppearance, useStripePromise } from '~components/Pricing/stripe'
 import { useWalletTopUp, WALLET_TOPUP_MAX_CENTS, WALLET_TOPUP_MIN_CENTS } from '~queries/wallet'
 import { currency, parseEuroAmountCents } from '~utils/numbers'
@@ -38,9 +54,9 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
   const hasTooManyDecimals = /^\d*\.\d{3,}$/.test(trimmed)
 
   return (
-    <VStack align='stretch' gap={5}>
-      <Field.Root invalid={trimmed !== '' && !isValid}>
-        <Field.Label>{t('wallet.topup.amount', { defaultValue: 'Amount (EUR, VAT excluded)' })}</Field.Label>
+    <VStack align='stretch' gap='5'>
+      <FormControl invalid={trimmed !== '' && !isValid}>
+        <FormLabel>{t('wallet.topup.amount', { defaultValue: 'Amount (EUR, VAT excluded)' })}</FormLabel>
         <Input
           type='number'
           inputMode='decimal'
@@ -48,10 +64,10 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
           value={amount}
           onChange={(e) => onAmountChange(e.target.value)}
         />
-        <Field.HelperText>
+        <FormHelperText>
           {t('wallet.topup.hint', { defaultValue: 'VAT is added at checkout from your billing details.' })}
-        </Field.HelperText>
-        <Field.ErrorText>
+        </FormHelperText>
+        <FormErrorMessage>
           {hasTooManyDecimals
             ? t('wallet.topup.amount_decimals', { defaultValue: 'Use at most 2 decimals.' })
             : t('wallet.topup.amount_range', {
@@ -59,10 +75,10 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
                 min: currency(WALLET_TOPUP_MIN_CENTS),
                 max: currency(WALLET_TOPUP_MAX_CENTS),
               })}
-        </Field.ErrorText>
-      </Field.Root>
+        </FormErrorMessage>
+      </FormControl>
 
-      <HStack gap={2} wrap='wrap'>
+      <HStack gap='2' wrap='wrap'>
         {PRESET_AMOUNTS_EUR.map((preset) => (
           <Button key={preset} variant='outline' size='sm' onClick={() => onAmountChange(String(preset))}>
             {currency(preset * 100)}
@@ -70,7 +86,7 @@ const AmountStep = ({ amount, onAmountChange, onContinue, onCancel }: AmountStep
         ))}
       </HStack>
 
-      <Flex justify='flex-end' gap={3}>
+      <Flex justify='flex-end' gap='3'>
         <Button variant='ghost' onClick={onCancel}>
           {t('cancel', { defaultValue: 'Cancel' })}
         </Button>
@@ -129,13 +145,13 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
 
   const backButton = (
     <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost'>
-      <LuArrowLeft />
+      <BackIcon />
     </IconButton>
   )
 
   if (checkoutState.type === 'loading') {
     return (
-      <Box textAlign='center' py={8}>
+      <Box textAlign='center' py='8'>
         {t('loading', { defaultValue: 'Loading...' })}
       </Box>
     )
@@ -143,7 +159,7 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
 
   if (checkoutState.type === 'error') {
     return (
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         <Flex justify='flex-start'>{backButton}</Flex>
         <Alert.Root status='error'>
           <Alert.Indicator />
@@ -159,10 +175,10 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
 
   return (
     <Box as='form' onSubmit={handleSubmit}>
-      <VStack align='stretch' gap={5}>
+      <VStack align='stretch' gap='5'>
         <Flex justify='flex-start'>{backButton}</Flex>
 
-        <VStack align='stretch' gap={3} p={5} borderWidth={1} borderRadius='md' bg='card.bg'>
+        <Card.Root variant='section' size='md' gap='3'>
           <Flex justify='space-between'>
             <Text>{t('wallet.topup.amount_net', { defaultValue: 'Top-up (VAT excluded)' })}</Text>
             <Text>{currency(amountCents)}</Text>
@@ -180,7 +196,7 @@ const CheckoutForm = ({ amountCents, onBack, onStart, onDone }: CheckoutFormProp
               </Flex>
             </>
           )}
-        </VStack>
+        </Card.Root>
 
         <BillingAddressElement options={{ display: { name: 'split' } }} />
         <TaxIdElement options={{ visibility: 'auto' }} />
@@ -238,10 +254,10 @@ const TopUpCheckout = ({ stripePromise, amountCents, onBack, onStart, onDone }: 
 
   if (loadError) {
     return (
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         <Flex justify='flex-start'>
           <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost'>
-            <LuArrowLeft />
+            <BackIcon />
           </IconButton>
         </Flex>
         <Alert.Root status='error'>
@@ -256,7 +272,7 @@ const TopUpCheckout = ({ stripePromise, amountCents, onBack, onStart, onDone }: 
 
   if (!clientSecret) {
     return (
-      <Box textAlign='center' py={8}>
+      <Box textAlign='center' py='8'>
         {t('loading', { defaultValue: 'Loading...' })}
       </Box>
     )
@@ -280,13 +296,13 @@ const PaymentStep = ({ amountCents, onBack, onStart, onDone }: PaymentStepProps)
 
   if (!stripePromise) {
     return (
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         <Flex justify='flex-start'>
           <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost'>
-            <LuArrowLeft />
+            <BackIcon />
           </IconButton>
         </Flex>
-        <Box color='red.500' textAlign='center'>
+        <Box color='status.error.fg' textAlign='center'>
           {t('payment.stripe_unavailable', {
             defaultValue: 'Payments are temporarily unavailable. Please try again later.',
           })}

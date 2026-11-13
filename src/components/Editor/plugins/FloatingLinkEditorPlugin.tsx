@@ -20,7 +20,7 @@ import * as React from 'react'
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
-import { LuCheck, LuPencil, LuTrash2, LuX } from 'react-icons/lu'
+import { CheckIcon, CloseIcon, DeleteIcon, EditIcon } from '~theme/icons'
 import { getSelectedNode } from './FloatingTextFormatToolbarPlugin'
 
 const VERTICAL_GAP = 10
@@ -242,9 +242,9 @@ function FloatingLinkEditor({
   }
 
   return (
-    <Card.Root ref={editorRef} position='absolute' top={0} left={0} p={1} zIndex='contents'>
+    <Card.Root ref={editorRef} position='absolute' top='0' left='0' p='1' zIndex='contents'>
       {isLinkEditMode ? (
-        <HStack gap={2}>
+        <HStack gap='2'>
           <Input
             ref={inputRef}
             flex={1}
@@ -260,7 +260,7 @@ function FloatingLinkEditor({
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsLinkEditMode(false)}
           >
-            <Icon as={LuX} />
+            <Icon as={CloseIcon} />
           </IconButton>
           <IconButton
             aria-label={t('editor.link.confirm', { defaultValue: 'Confirm' })}
@@ -268,12 +268,12 @@ function FloatingLinkEditor({
             onMouseDown={(e) => e.preventDefault()}
             onClick={handleLinkSubmission}
           >
-            <Icon as={LuCheck} />
+            <Icon as={CheckIcon} />
           </IconButton>
         </HStack>
       ) : (
-        <HStack gap={2}>
-          <Link flex={1} href={linkUrl} target='_blank' rel='noopener noreferrer' fontSize='sm'>
+        <HStack gap='2'>
+          <Link flex={1} href={linkUrl} target='_blank' rel='noopener noreferrer' size='sm'>
             {linkUrl}
           </Link>
           <IconButton
@@ -285,16 +285,16 @@ function FloatingLinkEditor({
               setIsLinkEditMode(true)
             }}
           >
-            <Icon as={LuPencil} />
+            <Icon as={EditIcon} />
           </IconButton>
           <IconButton
             aria-label={t('editor.link.remove', { defaultValue: 'Remove link' })}
             size='xs'
-            colorPalette='red'
+            colorPalette='danger'
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)}
           >
-            <Icon as={LuTrash2} />
+            <Icon as={DeleteIcon} />
           </IconButton>
         </HStack>
       )}

@@ -21,7 +21,7 @@ export const QuestionSettings = ({ index }: { index: number }) => {
   const { control, setValue } = useFormContext<Process>()
 
   return (
-    <HStack gap={4} flexWrap='wrap' justifyContent='flex-end'>
+    <HStack gap='4' flexWrap='wrap' justifyContent='flex-end'>
       <FormControl width='auto' display='flex' flexDir='row'>
         <Controller
           name={`questions.${index}.extendedInfo`}

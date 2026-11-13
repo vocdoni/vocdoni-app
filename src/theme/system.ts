@@ -1,9 +1,14 @@
 import { createSystem, defaultConfig, defineSemanticTokens, defineTokens } from '@chakra-ui/react'
 import { DEFAULT_PRIMARY_COLOR, PAGE_BACKGROUNDS } from './colors'
-import { generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
+import { withEscapeHatch } from './escapeHatch'
+import { generateAccentTokens, generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
+import { textStyles } from './textStyles'
 import tokens from './tokens'
+
+// The palette `colorPalette`-aware components fall back to when none is set.
+export const defaultColorPalette = (primaryColor?: string) => (normalizeHexColor(primaryColor) ? 'brand' : 'gray')
 
 /**
  * Builds the chakra system for a given primary/accent color.
@@ -19,14 +24,27 @@ export const createAppSystem = (primaryColor?: string) => {
   const brand = normalizeHexColor(primaryColor)
   const scale = generatePaletteScale(brand ?? DEFAULT_PRIMARY_COLOR)
   const brandTokens = Object.fromEntries(Object.entries(scale).map(([step, value]) => [step, { value }]))
-  const brandSemantic = Object.fromEntries(
-    Object.entries(generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS)).map(([slot, value]) => [slot, { value }])
-  )
+  const asTokens = (slots: object) =>
+    Object.fromEntries(Object.entries(slots).map(([slot, value]) => [slot, { value }]))
+  const brandSemantic = asTokens(generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS))
+  const accent = asTokens(generateAccentTokens(scale, PAGE_BACKGROUNDS))
 
-  return createSystem(defaultConfig, {
+  const appSystem = createSystem(defaultConfig, {
+    // Style props only take theme tokens; `[value]` is the escape for non-design values (0, auto, 100%).
+    strictTokens: true,
     globalCss: {
       html: {
-        colorPalette: brand ? 'brand' : 'gray',
+        colorPalette: defaultColorPalette(brand),
+      },
+      // Text that sets no size (a bare Text, markdown, list items) inherits the body role, so a new type
+      // scale reaches it too.
+      body: {
+        textStyle: 'body',
+      },
+      // The CSS default (`bolder`) would ask for 700, a weight the app does not
+      // load, and the browser would fake it.
+      'b, strong': {
+        fontWeight: 'bold',
       },
     },
     theme: {
@@ -36,12 +54,15 @@ export const createAppSystem = (primaryColor?: string) => {
       }),
       semanticTokens: defineSemanticTokens({
         ...semanticTokens,
-        colors: { ...semanticTokens.colors, brand: brandSemantic },
+        colors: { ...semanticTokens.colors, brand: brandSemantic, accent },
       }),
+      textStyles,
       recipes,
       slotRecipes,
     },
   })
+
+  return withEscapeHatch(appSystem)
 }
 
 export type AppSystem = ReturnType<typeof createAppSystem>

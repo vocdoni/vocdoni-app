@@ -5,8 +5,9 @@ import {
   type BoxProps,
   Button,
   type ButtonProps,
+  Card,
+  chakra,
   Checkbox,
-  CloseButton,
   Dialog,
   Field,
   Flex,
@@ -17,15 +18,16 @@ import {
   Image,
   type ImageProps,
   Link,
+  NativeSelect,
   Progress,
   Skeleton,
-  Tag,
-  type TagRootProps,
   Text,
+  type RecipeVariantProps,
   type TextProps,
   useRecipe,
   useSlotRecipe,
 } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import {
   type ComponentsPartialDefinition,
   defineComponent,
@@ -36,25 +38,35 @@ import {
 } from '@vocdoni/react-components'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaCircleCheck } from 'react-icons/fa6'
+import { SuccessIcon } from '~theme/icons'
+import { ConfirmDialogContent } from '~components/ui/ConfirmDialog'
 import { Markdown } from '~components/ui/Markdown'
+import { StatusBadge, type StatusBadgeProps } from '~components/ui/StatusBadge'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
-import { resultsProgressRecipe } from '~theme/recipes/election'
+import { ElectionTitle as electionTitleRecipe } from '~theme/recipes/election'
+
+type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
+
+// A literal style prop next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
+const hrStyle: BoxProps = { as: 'hr', borderColor: 'border' }
+const questionsErrorStyle: TextProps = { color: 'ballot.error' }
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
 
 export const electionComponents: ComponentsPartialDefinition = {
-  HR: defineComponent<'HR', BoxProps>((props) => <Box as='hr' borderColor='table.border' {...props} />),
-  ElectionTitle: defineComponent<'ElectionTitle', HeadingProps>(({ title, ...props }) => {
-    const recipe = useRecipe({ key: 'ElectionTitle' })
-    const styles = recipe()
-    return (
-      <Heading as='h1' css={styles} {...props}>
-        {title}
-      </Heading>
-    )
-  }),
+  HR: defineComponent<'HR', BoxProps>((props) => <Box {...hrStyle} {...(props as BoxProps)} />),
+  ElectionTitle: defineComponent<'ElectionTitle', Omit<HeadingProps, 'size'> & ElectionTitleVariantProps>(
+    ({ title, size, ...props }) => {
+      const recipe = useRecipe({ recipe: electionTitleRecipe })
+      const styles = recipe({ size })
+      return (
+        <Heading as='h1' css={styles} {...props}>
+          {title}
+        </Heading>
+      )
+    }
+  ),
   ElectionDescription: defineComponent<'ElectionDescription', BoxProps>(({ description, ...props }) => {
     const recipe = useRecipe({ key: 'ElectionDescription' })
     const styles = recipe()
@@ -73,14 +85,17 @@ export const electionComponents: ComponentsPartialDefinition = {
       </Text>
     )
   }),
-  ElectionStatusBadge: defineComponent<'ElectionStatusBadge', TagRootProps>(({ label, tone, ...props }) => {
-    const palette = tone === 'success' ? 'green' : tone === 'warning' ? 'yellow' : 'red'
-    return (
-      <Tag.Root colorPalette={palette} {...props}>
-        <Tag.Label>{label}</Tag.Label>
-      </Tag.Root>
+  ElectionStatusBadge: defineComponent<'ElectionStatusBadge', Omit<StatusBadgeProps, 'colorPalette' | 'children'>>(
+    ({ label, tone, ...props }) => (
+      <StatusBadge
+        colorPalette={tone === 'success' || tone === 'warning' ? tone : 'danger'}
+        variant='surface'
+        {...props}
+      >
+        {label}
+      </StatusBadge>
     )
-  }),
+  ),
   ElectionHeader: defineComponent<'ElectionHeader', ImageProps>(({ src, alt, ...props }) =>
     src ? <Image src={src} alt={alt} {...props} /> : null
   ),
@@ -155,23 +170,41 @@ export const electionComponents: ComponentsPartialDefinition = {
         setLoaded(imageRef.current?.complete ?? false)
       }, [imageThumbnail])
 
+      const thumbnail = (
+        <Image
+          ref={imageRef}
+          css={styles.image}
+          src={imageThumbnail}
+          alt={label}
+          onLoad={() => setLoaded(true)}
+          // Don't let a failed request hang as an eternal skeleton either.
+          onError={() => setLoaded(true)}
+        />
+      )
+
       const media = hasImage ? (
         <Box data-choice-media={dataAttrs?.['data-choice-media']}>
           <Skeleton loading={!loaded} css={styles.skeleton}>
-            <Image
-              ref={imageRef}
-              css={styles.image}
-              src={imageThumbnail}
-              alt={label}
-              onLoad={() => setLoaded(true)}
-              // Don't let a failed request hang as an eternal skeleton either.
-              onError={() => setLoaded(true)}
-              onClick={(event) => {
-                if (!canOpenImageModal) return
-                event.preventDefault()
-                setIsOpen(true)
-              }}
-            />
+            {canOpenImageModal && imageDefault ? (
+              // Named by the image's alt: a name of its own would also end up in the choice's accessible name.
+              <chakra.button
+                type='button'
+                aria-haspopup='dialog'
+                display='block'
+                w='full'
+                h='full'
+                borderTopRadius='lg'
+                focusVisibleRing='inside'
+                onClick={(event) => {
+                  event.preventDefault()
+                  setIsOpen(true)
+                }}
+              >
+                {thumbnail}
+              </chakra.button>
+            ) : (
+              thumbnail
+            )}
           </Skeleton>
         </Box>
       ) : null
@@ -218,7 +251,7 @@ export const electionComponents: ComponentsPartialDefinition = {
               <Dialog.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)}>
                 <Dialog.Backdrop css={styles.modalOverlay} />
                 <Dialog.Positioner>
-                  <Dialog.Content css={styles.modalContent}>
+                  <Dialog.Content css={styles.modalContent} aria-label={label}>
                     <Dialog.CloseTrigger asChild>
                       <CloseButton css={styles.modalClose} />
                     </Dialog.CloseTrigger>
@@ -253,21 +286,28 @@ export const electionComponents: ComponentsPartialDefinition = {
                 checked={selected}
                 disabled={disabled}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => onSelect(event.target.checked)}
+                className='peer'
                 style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
               />
               <Box
-                w='18px'
-                h='18px'
-                borderWidth='2px'
-                borderColor={selected ? 'gray.700' : 'table.border'}
+                w='4.5'
+                h='4.5'
+                borderWidth='thick'
+                borderColor={selected ? 'colorPalette.solid' : 'ballot.choice.ring'}
                 borderRadius='full'
-                bg='white'
-                _dark={{ bg: 'gray.800', borderColor: selected ? 'gray.100' : 'gray.500' }}
+                bg='ballot.choice.bg'
+                // The input is invisible, so its keyboard focus is drawn here, as Chakra's radiomark draws it.
+                _peerFocusVisible={{
+                  outlineWidth: '{borderWidths.focusRing}',
+                  outlineStyle: 'solid',
+                  outlineColor: 'colorPalette.focusRing',
+                  outlineOffset: '{spacing.0.5}',
+                }}
                 display='flex'
                 alignItems='center'
                 justifyContent='center'
               >
-                {selected ? <Box w='8px' h='8px' borderRadius='full' bg='gray.900' _dark={{ bg: 'gray.100' }} /> : null}
+                {selected ? <Box w='2' h='2' borderRadius='full' bg='colorPalette.solid' /> : null}
               </Box>
             </Box>
             {media}
@@ -278,7 +318,7 @@ export const electionComponents: ComponentsPartialDefinition = {
             <Dialog.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)}>
               <Dialog.Backdrop css={styles.modalOverlay} />
               <Dialog.Positioner>
-                <Dialog.Content css={styles.modalContent}>
+                <Dialog.Content css={styles.modalContent} aria-label={label}>
                   <Dialog.CloseTrigger asChild>
                     <CloseButton css={styles.modalClose} />
                   </Dialog.CloseTrigger>
@@ -313,36 +353,26 @@ export const electionComponents: ComponentsPartialDefinition = {
       onRank,
       ...props
     }) => {
-      // The SDK default renders `description` as raw HTML; keep it on the markdown path.
+      const recipe = useSlotRecipe({ key: 'QuestionChoice' })
+      const layout = dataAttrs?.['data-layout'] === 'grid' ? 'grid' : 'list'
+      const styles = recipe({ layout, context: 'card' })
       const imageSrc = image?.thumbnail ?? image?.default
 
-      return (
-        <Box
-          as='label'
-          {...props}
-          data-presentation={presentation}
-          data-selection-mode='ranked'
-          data-choice-value={value}
-          data-choice-card={dataAttrs?.['data-choice-card']}
-          data-layout={dataAttrs?.['data-layout']}
+      // In the grid the select stays in the card body: the recipe pins `[data-choice-control]` over the image,
+      // where a select would cover the title of a card without one.
+      const select = (
+        <NativeSelect.Root
+          size='sm'
+          width='auto'
+          disabled={disabled}
+          alignSelf={layout === 'grid' ? 'start' : undefined}
+          mt={layout === 'grid' ? '2' : undefined}
+          data-choice-control={layout === 'list' ? dataAttrs?.['data-choice-control'] : undefined}
         >
-          {imageSrc ? (
-            <Image
-              src={linkifyIpfs(imageSrc)}
-              alt={label}
-              data-choice-media={dataAttrs?.['data-choice-media']}
-              data-can-open-modal={canOpenImageModal ? 'true' : undefined}
-            />
-          ) : null}
-          <Box as='span' data-choice-body={dataAttrs?.['data-choice-body']} data-compact={compact ? '' : undefined}>
-            {label}
-          </Box>
-          {markdown(description)}
-          <select
+          <NativeSelect.Field
             id={`rank-${choice.value}`}
-            value={position ?? ''}
-            disabled={disabled}
-            data-choice-control={dataAttrs?.['data-choice-control']}
+            value={position === null || position === undefined ? '' : String(position)}
+            bg='bg'
             onChange={(event) => onRank(event.target.value === '' ? null : Number(event.target.value))}
           >
             <option value=''>—</option>
@@ -351,7 +381,43 @@ export const electionComponents: ComponentsPartialDefinition = {
                 {option.label}
               </option>
             ))}
-          </select>
+          </NativeSelect.Field>
+          <NativeSelect.Indicator />
+        </NativeSelect.Root>
+      )
+
+      return (
+        <Box
+          as='label'
+          css={styles.wrapper}
+          w='full'
+          {...props}
+          data-presentation={presentation}
+          data-selection-mode='ranked'
+          data-choice-value={value}
+          data-choice-card={dataAttrs?.['data-choice-card']}
+          data-disabled={disabled ? 'true' : undefined}
+          data-layout={layout}
+        >
+          {imageSrc ? (
+            <Box data-choice-media={dataAttrs?.['data-choice-media']}>
+              <Box css={styles.skeleton}>
+                <Image
+                  css={styles.image}
+                  src={linkifyIpfs(imageSrc)}
+                  alt={label}
+                  data-can-open-modal={canOpenImageModal ? 'true' : undefined}
+                />
+              </Box>
+            </Box>
+          ) : null}
+          <Box data-choice-body={dataAttrs?.['data-choice-body']} data-compact={compact ? '' : undefined}>
+            <Text css={styles.label}>{label}</Text>
+            {/* The SDK default renders `description` as raw HTML; keep it on the markdown path. */}
+            {description ? <Box css={styles.description}>{markdown(description)}</Box> : null}
+            {layout === 'grid' ? select : null}
+          </Box>
+          {layout === 'list' ? select : null}
         </Box>
       )
     }
@@ -384,84 +450,64 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    <Text color='red.500' {...props}>
+    <Text {...questionsErrorStyle} {...(props as TextProps)}>
       {error}
     </Text>
   )),
-  ConfirmShell: defineComponent<'ConfirmShell', BoxProps>(({ isOpen, onClose, content, ...props }) => {
-    const recipe = useSlotRecipe({ key: 'ConfirmModal' })
-    const styles = recipe()
-
-    return (
-      <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()}>
-        <Dialog.Backdrop css={styles.overlay} />
-        <Dialog.Positioner>
-          <Dialog.Content css={styles.content} {...props}>
-            {content}
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Dialog.Root>
-    )
-  }),
+  ConfirmShell: defineComponent<'ConfirmShell', BoxProps>(({ isOpen, onClose, content, ...props }) => (
+    <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content {...props}>{content}</Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
+  )),
   QuestionsConfirmation: defineComponent<'QuestionsConfirmation', BoxProps>(
     ({ election, answersView, onConfirm, onCancel }) => {
-      const recipe = useSlotRecipe({ key: 'ConfirmModal' })
-      const styles = recipe({ variant: 'neutral' })
       const { t } = useTranslation()
 
       return (
-        <>
-          <Dialog.Header css={styles.header} flexDirection='column'>
-            <Heading variant='header'>{getElectionTitle(election)}</Heading>
-            <Text variant='subheader'>
-              {t('process.spreadsheet.confirm.election_title', {
-                defaultValue: 'Your vote has been recorded for:',
-              })}
-            </Text>
-          </Dialog.Header>
-          <Dialog.CloseTrigger asChild>
-            <CloseButton css={styles.close} />
-          </Dialog.CloseTrigger>
-          <Dialog.Body css={styles.body}>
-            <Flex direction='column' gap={3}>
-              {answersView.map((item, index) => (
-                <Flex
-                  key={`${item.question}-${index}`}
-                  border='1px solid'
-                  borderColor='border.dashboard'
-                  borderRadius='lg'
-                  p={4}
-                  gap={3}
-                  align='flex-start'
-                >
-                  <Icon as={FaCircleCheck} mt={1} />
-                  <Flex direction='column' gap={1} flex='1'>
-                    <Text fontWeight='extrabold'>{item.question}</Text>
-                    {item.answers.length <= 1 ? (
-                      <Text color='texts.subtle'>{item.answers[0] || '-'}</Text>
-                    ) : (
-                      <Flex direction='column' gap={1}>
-                        {item.answers.map((answer, answerIndex) => (
-                          <Text key={`${item.question}-${index}-${answerIndex}`} color='texts.subtle'>
-                            {answer}
-                          </Text>
-                        ))}
-                      </Flex>
-                    )}
-                  </Flex>
+        <ConfirmDialogContent
+          layout='summary'
+          destructive={false}
+          title={getElectionTitle(election)}
+          description={t('process.spreadsheet.confirm.election_title', {
+            defaultValue: 'Your vote has been recorded for:',
+          })}
+          cancelText={t('confirm.cancel')}
+          confirmText={t('confirm.confirm')}
+          onCancel={onCancel}
+          onConfirm={onConfirm}
+        >
+          <Flex direction='column' gap='3'>
+            {answersView.map((item, index) => (
+              <Card.Root
+                key={`${item.question}-${index}`}
+                variant='section'
+                size='sm'
+                flexDirection='row'
+                gap='3'
+                alignItems='flex-start'
+              >
+                <Icon as={SuccessIcon} mt='1' />
+                <Flex direction='column' gap='1' flex='1'>
+                  <Text fontWeight='extrabold'>{item.question}</Text>
+                  {item.answers.length <= 1 ? (
+                    <Text color='fg.muted'>{item.answers[0] || '-'}</Text>
+                  ) : (
+                    <Flex direction='column' gap='1'>
+                      {item.answers.map((answer, answerIndex) => (
+                        <Text key={`${item.question}-${index}-${answerIndex}`} color='fg.muted'>
+                          {answer}
+                        </Text>
+                      ))}
+                    </Flex>
+                  )}
                 </Flex>
-              ))}
-            </Flex>
-          </Dialog.Body>
-          <Dialog.Footer css={styles.footer}>
-            <Button variant='ghost' css={styles.cancel} onClick={onCancel}>
-              {t('confirm.cancel')}
-            </Button>
-            <Button css={styles.confirm} onClick={onConfirm}>
-              {t('confirm.confirm')}
-            </Button>
-          </Dialog.Footer>
-        </>
+              </Card.Root>
+            ))}
+          </Flex>
+        </ConfirmDialogContent>
       )
     }
   ),
@@ -496,7 +542,6 @@ export const electionComponents: ComponentsPartialDefinition = {
                 target='_blank'
                 rel='noreferrer'
                 wordBreak='break-all'
-                css={{ textDecoration: 'underline' }}
               >
                 {id}
               </Link>,
@@ -507,7 +552,6 @@ export const electionComponents: ComponentsPartialDefinition = {
 
     return (
       <Alert.Root
-        variant='subtle'
         alignItems='center'
         justifyContent='center'
         textAlign='center'
@@ -518,7 +562,7 @@ export const electionComponents: ComponentsPartialDefinition = {
       >
         <Alert.Indicator css={styles.icon} />
         <Alert.Title css={styles.title}>{t('vote.voted_title')}</Alert.Title>
-        <Alert.Description css={styles.description} display='flex' flexDirection='column' gap={1}>
+        <Alert.Description css={styles.description} display='flex' flexDirection='column' gap='1'>
           {votes.map((vote, index) => {
             const line =
               votes.length === 1 || !vote.questionTitle
@@ -532,7 +576,7 @@ export const electionComponents: ComponentsPartialDefinition = {
             return <Text key={vote.questionId || index}>{linkifyToExplorer(line, vote.voteId)}</Text>
           })}
           {anonymous && (
-            <Text fontSize='sm' fontWeight='bold'>
+            <Text textStyle='body-sm' fontWeight='bold'>
               {t('vote.anonymous_receipt', {
                 defaultValue: 'Anonymous vote: save this receipt now, the platform cannot show it to you again.',
               })}
@@ -560,8 +604,6 @@ export const electionComponents: ComponentsPartialDefinition = {
   ElectionResults: defineComponent<'ElectionResults', BoxProps>(({ secretText, questions, ...props }) => {
     const recipe = useSlotRecipe({ key: 'ElectionResults' })
     const styles = recipe()
-    const progressRecipe = useSlotRecipe({ recipe: resultsProgressRecipe })
-    const progressStyles = progressRecipe()
     const { t } = useTranslation('react-components')
     const hasMultipleQuestions = (questions?.length ?? 0) > 1
     return (
@@ -576,26 +618,28 @@ export const electionComponents: ComponentsPartialDefinition = {
               {question.choices.map((choice) => {
                 const percent = Number(choice.percent.replace('%', '')) || 0
                 return (
-                  <Box key={choice.title} position='relative'>
-                    <Text css={styles.choiceTitle}>{choice.title}</Text>
+                  <Box key={choice.title}>
                     {/* `votes` is empty for a question whose ballot type can't be inferred (e.g. a legacy
                         process with no type nor ballotProtocol): there is no tally to show, not a zero one. */}
-                    {choice.votes ? (
-                      <>
+                    <Flex css={styles.choiceHeader}>
+                      <Text css={styles.choiceTitle}>{choice.title}</Text>
+                      {choice.votes ? (
                         <Text css={styles.choiceVotes}>
                           {t('results.votes', {
                             votes: choice.votes,
                             percent: choice.percent,
                           })}
                         </Text>
-                        <Progress.Root css={[styles.progress, progressStyles.root]} value={percent} max={100}>
-                          <Progress.Track css={progressStyles.track}>
-                            <Progress.Range css={progressStyles.range} />
-                          </Progress.Track>
-                        </Progress.Root>
-                      </>
+                      ) : null}
+                    </Flex>
+                    {choice.votes ? (
+                      <Progress.Root variant='results' value={percent} max={100}>
+                        <Progress.Track>
+                          <Progress.Range />
+                        </Progress.Track>
+                      </Progress.Root>
                     ) : null}
-                    {choice.description ? <Box mt={2}>{markdown(choice.description)}</Box> : null}
+                    {choice.description ? <Box mt='2'>{markdown(choice.description)}</Box> : null}
                   </Box>
                 )
               })}
@@ -606,7 +650,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   ElectionActions: defineComponent<'ElectionActions', FlexProps>(({ actions, ...props }) => (
-    <Flex gap={2} {...props}>
+    <Flex gap='2' {...props}>
       {actions}
     </Flex>
   )),
@@ -631,25 +675,18 @@ export const electionComponents: ComponentsPartialDefinition = {
     </Button>
   )),
   ConfirmActionModal: defineComponent<'ConfirmActionModal', BoxProps>(
-    ({ title, description, confirm, cancel, onConfirm, onCancel, ...props }) => {
-      const recipe = useSlotRecipe({ key: 'ConfirmModal' })
-      const styles = recipe()
-      return (
-        <Box {...props}>
-          <Dialog.Header css={styles.header}>{title}</Dialog.Header>
-          <Dialog.Body css={styles.body}>
-            <Text>{description}</Text>
-          </Dialog.Body>
-          <Dialog.Footer css={styles.footer}>
-            <Button variant='ghost' css={styles.cancel} onClick={onCancel}>
-              {cancel}
-            </Button>
-            <Button css={styles.confirm} onClick={onConfirm}>
-              {confirm}
-            </Button>
-          </Dialog.Footer>
-        </Box>
-      )
-    }
+    ({ title, description, confirm, cancel, onConfirm, onCancel, ...props }) => (
+      <Box {...props}>
+        <ConfirmDialogContent
+          layout='shell'
+          title={title}
+          description={description}
+          confirmText={confirm}
+          cancelText={cancel}
+          onCancel={onCancel}
+          onConfirm={onConfirm}
+        />
+      </Box>
+    )
   ),
 }

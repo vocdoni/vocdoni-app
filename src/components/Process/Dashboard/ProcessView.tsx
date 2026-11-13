@@ -1,9 +1,8 @@
 import {
   AspectRatio,
-  Badge,
-  BadgeProps,
   Box,
   Button,
+  Card,
   Flex,
   HStack,
   Icon,
@@ -19,11 +18,6 @@ import {
   TabsRoot,
   TabsTrigger,
   Text,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
-  useBreakpointValue,
   useClipboard,
   useRecipe,
   VStack,
@@ -45,38 +39,39 @@ import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
-  LuCalendar,
-  LuCirclePlay,
-  LuCircleStop,
-  LuClock,
-  LuCopy,
-  LuExternalLink,
-  LuEye,
-  LuInfo,
-  LuPause,
-  LuRotateCw,
-  LuSearch,
-  LuSettings,
-  LuTrash2,
-  LuUnlink,
-  LuUsers,
-  LuVote,
-  LuX,
-} from 'react-icons/lu'
+  CalendarIcon,
+  ClockIcon,
+  CloseIcon,
+  CopyIcon,
+  DeleteIcon,
+  ExternalLinkIcon,
+  InfoIcon,
+  PauseIcon,
+  RefreshIcon,
+  ResumeIcon,
+  SearchIcon,
+  SettingsIcon,
+  StopIcon,
+  UnlinkIcon,
+  UsersIcon,
+  ViewIcon,
+  VoteIcon,
+} from '~theme/icons'
 import ReactPlayer from 'react-player'
 import { generatePath, matchPath, useLocation, useNavigate } from 'react-router'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
 import {
   DashboardBox,
   DashboardContents,
-  Heading,
   Sidebar,
   SidebarContents,
   SidebarSubtitle,
-  SidebarTitle,
 } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
+import { CloseButton } from '~components/ui/CloseButton'
+import { StatusBadge, type StatusBadgeColor, type StatusBadgeProps } from '~components/ui/StatusBadge'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { useProcessEarlyEndDate } from '~queries/process-end-date'
@@ -87,6 +82,8 @@ import { useAnonymityLabels } from '../anonymityLabels'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
+import { useIsMobile } from '~components/ui/useIsMobile'
+import { Tooltip } from '~components/ui/Tooltip'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -112,7 +109,7 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
 
   return (
     <Box ref={ref} css={styles} {...rest}>
-      <AspectRatio ratio={16 / 9} width='100%' height='100%'>
+      <AspectRatio ratio={16 / 9} width='full' height='full'>
         <ReactPlayer src={streamUri} width='100%' controls height='100%' />
       </AspectRatio>
     </Box>
@@ -190,23 +187,23 @@ const ProcessViewContent = () => {
   // The questions and results render through the ballot type, which cannot be inferred for some
   // legacy processes: such a section degrades on its own instead of taking the page down.
   const sectionFallback = (
-    <Text color='texts.subtle'>{t('error.loading_section', { defaultValue: 'This section could not be loaded' })}</Text>
+    <Text color='fg.muted'>{t('error.loading_section', { defaultValue: 'This section could not be loaded' })}</Text>
   )
 
   return (
-    <Box position='relative' w='full' minH='100dvh' overflow='hidden'>
+    <Box position='relative' w='full' minH='dvh' overflow='hidden'>
       <DashboardContents display='flex' flexDirection='row' position='relative'>
         {/* Main content area */}
         <Box
           flex={1}
-          minW={0}
-          marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
-          transition='margin-right 0.3s'
+          minW='0'
+          marginRight={showSidebar ? { base: '0', md: 'dashboard.panel' } : '0'}
+          transition='[margin-right {durations.slow}]'
           display='flex'
           flexDirection='column'
-          gap={8}
-          paddingRight={4}
-          paddingBottom={4}
+          gap='8'
+          paddingRight='4'
+          paddingBottom='4'
         >
           {/* Title, schedule, and description */}
           <HStack justifyContent={'space-between'}>
@@ -216,14 +213,14 @@ const ProcessViewContent = () => {
               variant='outline'
               onClick={toggleSidebar}
             >
-              <Icon as={LuSettings} />
+              <Icon as={SettingsIcon} />
             </IconButton>
           </HStack>
 
           <Box as='header'>
-            <ElectionTitle textAlign={'start'} fontWeight={'bold'} />
+            <ElectionTitle size='page' />
             <ElectionVideo mb='3' maxW='4xl' />
-            <ElectionDescription color='texts.subtle' />
+            <ElectionDescription color='fg.muted' />
           </Box>
 
           {/* Schedule */}
@@ -232,22 +229,19 @@ const ProcessViewContent = () => {
             flexDirection='column'
             flexWrap={'wrap'}
             justifyContent={'space-between'}
-            gap={4}
+            gap='4'
           >
-            <Heading>
-              <Icon as={LuCalendar} />
-              <Trans i18nKey='calendar.title'>Schedule</Trans>
-            </Heading>
-            <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
+            <SectionHeader icon={CalendarIcon} title={<Trans i18nKey='calendar.title'>Schedule</Trans>} />
+            <SimpleGrid columns={{ base: 1, sm: 2 }} gap='4'>
               <SettingsField
-                icon={LuCalendar}
+                icon={CalendarIcon}
                 text={t('start_date', 'Start date')}
                 subtext={
                   election && formatDate(election.startDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
                 }
               />
               <SettingsField
-                icon={LuClock}
+                icon={ClockIcon}
                 text={t('start_time', 'Start time')}
                 subtext={election && formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))}
               />
@@ -256,7 +250,7 @@ const ProcessViewContent = () => {
                   is null whenever the process ran its course, which falls back to the configured one.
                   The PDF certifies both dates instead — there the schedule is part of the record. */}
               <SettingsField
-                icon={LuCalendar}
+                icon={CalendarIcon}
                 text={t('end_date', 'End date')}
                 subtext={
                   election &&
@@ -264,7 +258,7 @@ const ProcessViewContent = () => {
                 }
               />
               <SettingsField
-                icon={LuClock}
+                icon={ClockIcon}
                 text={t('end_time', 'End time')}
                 subtext={
                   election && formatDate(earlyEndDate ?? election.endDate, t('dashboard.process_view.time_format', 'p'))
@@ -276,26 +270,24 @@ const ProcessViewContent = () => {
           {/* Voting link */}
 
           <DashboardBox>
-            <Box>
-              <Heading>
-                <Icon as={LuExternalLink} />
-                <Trans i18nKey='voting_link.title'>Voting Link</Trans>
-              </Heading>
-              <Text color='texts.subtle' fontSize='sm'>
+            <SectionHeader
+              icon={ExternalLinkIcon}
+              title={<Trans i18nKey='voting_link.title'>Voting Link</Trans>}
+              description={
                 <Trans i18nKey='voting_link.description'>
                   Share this link with your voters to participate in the voting process
                 </Trans>
-              </Text>
-            </Box>
+              }
+            />
 
-            <Flex justifyContent='space-between' gap={2} wrap='wrap'>
-              <Input readOnly value={votingLink} flex='1 1 18rem' minW={0} />
+            <Flex justifyContent='space-between' gap='2' wrap='wrap'>
+              <Input readOnly value={votingLink} flex='1 1 18rem' minW='0' />
               <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
-                <Icon as={LuCopy} />
+                <Icon as={CopyIcon} />
               </IconButton>
               <IconButton asChild variant='outline' title={t('preview', 'Preview')} aria-label={t('preview')}>
                 <Link href={votingLink} target='_blank' rel='noopener noreferrer'>
-                  <Icon as={LuEye} />
+                  <Icon as={ViewIcon} />
                 </Link>
               </IconButton>
             </Flex>
@@ -303,10 +295,12 @@ const ProcessViewContent = () => {
 
           {/* Questions & Results */}
           <DashboardBox>
-            <Heading as='h4' alignContent='center' justifyContent='space-between'>
-              <Trans i18nKey='questions_and_results'>Questions and results</Trans>
-              <ResultsStateBadge />
-            </Heading>
+            <SectionHeader
+              title={<Trans i18nKey='questions_and_results'>Questions and results</Trans>}
+              actions={<ResultsStateBadge />}
+              direction='row'
+              align='center'
+            />
             <TabsRoot
               fitted
               value={tabValue}
@@ -323,21 +317,21 @@ const ProcessViewContent = () => {
                 <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
                 {showResultsTab && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
               </TabsList>
-              <TabsContentGroup mt={6}>
-                <TabsContent value='questions' p={0}>
-                  <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+              <TabsContentGroup mt='6'>
+                <TabsContent value='questions' p='0'>
+                  <Card.Root variant='section'>
                     <ErrorBoundary fallback={sectionFallback} resetKeys={[election]}>
                       <ElectionQuestions />
                     </ErrorBoundary>
-                  </Box>
+                  </Card.Root>
                 </TabsContent>
                 {showResultsTab && (
-                  <TabsContent value='results' p={0}>
-                    <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+                  <TabsContent value='results' p='0'>
+                    <Card.Root variant='section'>
                       <ErrorBoundary fallback={sectionFallback} resetKeys={[election, results]}>
                         <ElectionResults />
                       </ErrorBoundary>
-                    </Box>
+                    </Card.Root>
                   </TabsContent>
                 )}
               </TabsContentGroup>
@@ -351,21 +345,21 @@ const ProcessViewContent = () => {
   )
 }
 
-const ResultsStateBadge = (props: BadgeProps) => {
+const ResultsStateBadge = (props: Omit<StatusBadgeProps, 'colorPalette'>) => {
   const { election } = useElection()
   const { t } = useTranslation()
 
   if (!election) return null
 
   if (isLive(election) || hasResults(election)) {
-    let color = 'blue'
+    let color: StatusBadgeColor = 'info'
     let text = t('results_state.live_results', 'Live results')
     let tooltip = t(
       'results_state.live_results_tooltip',
       'This voting process shows live results. However, it is still in progress, so the results may change before the vote ends.'
     )
     if (isLive(election) && isSecretUntilTheEnd(election)) {
-      color = 'orange'
+      color = 'warning'
       text = t('results_state.secret_until_end', 'Awaiting results')
       tooltip = t(
         'results_state.secret_until_end_tooltip',
@@ -373,26 +367,22 @@ const ResultsStateBadge = (props: BadgeProps) => {
       )
     }
     if (hasResults(election)) {
-      color = 'green'
+      color = 'success'
       text = t('results_state.results_available', 'Results available')
       tooltip = null
     }
     const badge = (
-      <Badge colorPalette={color} {...props}>
+      <StatusBadge colorPalette={color} endElement={tooltip ? <Icon as={InfoIcon} /> : undefined} {...props}>
         {text}
-        {tooltip && <Icon as={LuInfo} />}
-      </Badge>
+      </StatusBadge>
     )
 
     if (!tooltip) return badge
 
     return (
-      <TooltipRoot positioning={{ placement: 'top' }}>
-        <TooltipTrigger asChild>{badge}</TooltipTrigger>
-        <TooltipPositioner>
-          <TooltipContent>{tooltip}</TooltipContent>
-        </TooltipPositioner>
-      </TooltipRoot>
+      <Tooltip portalled={false} positioning={{ placement: 'top' }} content={tooltip}>
+        {badge}
+      </Tooltip>
     )
   }
 
@@ -409,7 +399,7 @@ const ProcessViewSidebar = () => {
   const { size: censusSize } = useCensusSize()
   const voteCount = processVoteCount(results)
   const participation = censusSize > 0 ? Math.round((voteCount / censusSize) * 1e4) / 100 : 0
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
   const { showSidebar, closeSidebar } = useSidebarVisibility()
   const firstQuestion = election?.questions[0]
   const resultTypeLabel = useResultTypeLabel(firstQuestion ? tryInferQuestionBallotType(firstQuestion) : undefined, '')
@@ -421,22 +411,19 @@ const ProcessViewSidebar = () => {
 
   return (
     <Sidebar show={showSidebar}>
-      <SidebarContents borderBottom='1px solid' borderColor='table.border'>
-        <SidebarTitle>
-          <Trans i18nKey='vote_information'>Vote information</Trans>
-        </SidebarTitle>
+      <SidebarContents borderBottom='sm' borderColor='border'>
+        <SectionHeader title={<Trans i18nKey='vote_information'>Vote information</Trans>} pt='4' />
         {isMobile && (
-          <IconButton
+          <CloseButton
             aria-label={t('drawer.close', { defaultValue: 'Close drawer' })}
-            variant='ghost'
             size='sm'
             position='absolute'
-            top={2}
-            right={2}
+            top='2'
+            right='2'
             onClick={closeSidebar}
           >
-            <Icon as={LuX} />
-          </IconButton>
+            <Icon as={CloseIcon} />
+          </CloseButton>
         )}
       </SidebarContents>
       <SidebarContents flex='1' overflowY='auto'>
@@ -447,8 +434,8 @@ const ProcessViewSidebar = () => {
           <ActionsProvider>
             {election && isLive(election) && (
               <ActionPause variant='outline' aria-label={t('process_actions.pause', { defaultValue: 'Pause' })}>
-                <ControlIcon as={LuPause} color='orange.400' />
-                <Text as='span' flex={1} textAlign='left' fontSize='sm'>
+                <ControlIcon as={PauseIcon} color='status.warning.fg' />
+                <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                   <Trans i18nKey='pause_vote'>Pause vote</Trans>
                 </Text>
               </ActionPause>
@@ -458,21 +445,21 @@ const ProcessViewSidebar = () => {
                 variant='outline'
                 aria-label={t('process_actions.continue', { defaultValue: 'Continue' })}
               >
-                <ControlIcon as={LuCirclePlay} color='green.400' />
-                <Text as='span' flex={1} textAlign='left' fontSize='sm'>
+                <ControlIcon as={ResumeIcon} color='status.success.fg' />
+                <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                   <Trans i18nKey='resume_vote'>Resume</Trans>
                 </Text>
               </ActionContinue>
             )}
             <ActionEnd variant='outline' aria-label={t('process_actions.end', { defaultValue: 'End' })}>
-              <ControlIcon as={LuCircleStop} color='red.500' />
-              <Text as='span' flex={1} textAlign='left' fontSize='sm'>
+              <ControlIcon as={StopIcon} color='danger.action' />
+              <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                 <Trans i18nKey='end_vote'>End vote</Trans>
               </Text>
             </ActionEnd>
             <ActionCancel variant='outline' aria-label={t('process_actions.cancel', { defaultValue: 'Cancel' })}>
-              <ControlIcon as={LuTrash2} color='red.400' />
-              <Text as='span' flex={1} textAlign='left' fontSize='sm'>
+              <ControlIcon as={DeleteIcon} color='danger.action' />
+              <Text as='span' flex={1} textAlign='left' textStyle='body-sm'>
                 <Trans i18nKey='cancel_vote'>Cancel vote</Trans>
               </Text>
             </ActionCancel>
@@ -481,35 +468,35 @@ const ProcessViewSidebar = () => {
             <Trans i18nKey='voting_status'>Voting status</Trans>
           </SidebarSubtitle>
           {/* Total Votes Submitted */}
-          <DashboardBox display='flex' flexDir='column' gap={3} alignContent='start'>
+          <DashboardBox display='flex' flexDir='column' gap='3' alignContent='start'>
             <Box display='flex' justifyContent='space-between' w='full'>
-              <Box display='flex' gap={2} alignItems='center'>
-                <Icon as={LuVote} />
-                <Text textTransform='capitalize'>
+              <Box display='flex' gap='2' alignItems='center'>
+                <Icon as={VoteIcon} />
+                <Text>
                   <Trans i18nKey='total_votes'>Total votes</Trans>
                 </Text>
               </Box>
               <Text fontWeight='bold'>{voteCount}</Text>
             </Box>
-            <Box pb={6} borderBottom='1px solid' borderColor='table.border'>
-              <Box display='flex' w='full' justifyContent='space-between' alignItems='center' fontSize='xs' mb={1}>
+            <Box pb='6' borderBottom='sm' borderColor='border'>
+              <Box display='flex' w='full' justifyContent='space-between' alignItems='center' fontSize='xs' mb='1'>
                 <Box>
                   <Trans i18nKey='turnout'>Turnout</Trans>
                 </Box>
                 <Box>{participation}%</Box>
               </Box>
-              <Progress.Root colorPalette='gray' w='full' value={participation}>
+              <Progress.Root variant='turnout' w='full' value={participation}>
                 <Progress.Track>
                   <Progress.Range />
                 </Progress.Track>
               </Progress.Root>
             </Box>
             <Box display='flex' justifyContent='space-between' fontSize='sm'>
-              <Text display='flex' gap={2} alignItems='center' fontSize='inherit'>
-                <Icon as={LuUsers} />
+              <Text display='flex' gap='2' alignItems='center'>
+                <Icon as={UsersIcon} />
                 <Trans i18nKey='census_size'>Census size</Trans>
               </Text>
-              <Text fontSize='inherit'>{censusSize || ''}</Text>
+              <Text>{censusSize || ''}</Text>
             </Box>
           </DashboardBox>
 
@@ -521,12 +508,12 @@ const ProcessViewSidebar = () => {
             <Trans i18nKey='voting_settings'>Voting settings</Trans>
           </SidebarSubtitle>
           <SettingsField
-            icon={LuVote}
+            icon={VoteIcon}
             text={t('results_type.title', 'Results type')}
             subtext={resultTypeLabel || undefined}
           />
           <SettingsField
-            icon={LuEye}
+            icon={ViewIcon}
             text={t('result_visibility', 'Results visibility')}
             subtext={
               election
@@ -537,13 +524,13 @@ const ProcessViewSidebar = () => {
             }
           />
           <SettingsField
-            icon={LuUnlink}
+            icon={UnlinkIcon}
             text={t('voter_anonymity', 'Voter anonymity')}
             subtext={election ? anonymityLabel : undefined}
             tooltip={election ? anonymityMechanism : undefined}
           />
           <SettingsField
-            icon={LuRotateCw}
+            icon={RefreshIcon}
             text={t('vote_overwrite', 'Vote overwrite')}
             subtext={
               election
@@ -561,8 +548,8 @@ const ProcessViewSidebar = () => {
           {explorerProcessId && (
             <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
               <Link href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
-                <HStack gap={2}>
-                  <Icon as={LuSearch} />
+                <HStack gap='2'>
+                  <Icon as={SearchIcon} />
                   <Text as='span'>
                     <Trans i18nKey='view_in_explorer'>View in explorer</Trans>
                   </Text>
@@ -584,20 +571,20 @@ const SettingsField = ({
   tooltip,
 }: {
   subtext?: string
-  icon: typeof LuCalendar
+  icon: typeof CalendarIcon
   text: ReactNode
   /** Explains the value in more words than `subtext` has room for — it is `nowrap`. */
   tooltip?: string
 }) => {
   const label = (
-    <Text fontSize='sm' fontWeight='bold' textTransform='capitalize'>
+    <Text textStyle='body-sm' fontWeight='bold'>
       {text}
-      {tooltip && <Icon as={LuInfo} ms={1} />}
+      {tooltip && <Icon as={InfoIcon} ms='1' />}
     </Text>
   )
 
   return (
-    <Box display='flex' gap={2} flex='1 1 0' minW={0} alignItems='center'>
+    <Box display='flex' gap='2' flex='1 1 0' minW='0' alignItems='center'>
       <Box
         color='fg.muted'
         bg='bg.muted'
@@ -605,23 +592,20 @@ const SettingsField = ({
         alignItems='center'
         justifyContent='center'
         h='full'
-        p={2}
+        p='2'
         borderRadius='md'
       >
-        <Icon as={icon} boxSize={5} />
+        <Icon as={icon} boxSize='icon.md' />
       </Box>
-      <Box flex='1 1 0' minW={0} display='flex' flexDirection='column'>
+      <Box flex='1 1 0' minW='0' display='flex' flexDirection='column'>
         {tooltip ? (
-          <TooltipRoot positioning={{ placement: 'top' }}>
-            <TooltipTrigger asChild>{label}</TooltipTrigger>
-            <TooltipPositioner>
-              <TooltipContent>{tooltip}</TooltipContent>
-            </TooltipPositioner>
-          </TooltipRoot>
+          <Tooltip portalled={false} positioning={{ placement: 'top' }} content={tooltip}>
+            {label}
+          </Tooltip>
         ) : (
           label
         )}
-        <Text whiteSpace='nowrap' color='texts.subtle' fontSize='sm'>
+        <Text whiteSpace='nowrap' color='fg.muted' textStyle='body-sm'>
           {subtext}
         </Text>
       </Box>
@@ -630,5 +614,5 @@ const SettingsField = ({
 }
 
 const ControlIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-  <Icon mr={3} boxSize={4} ref={ref} {...props} />
+  <Icon mr='3' boxSize='icon.sm' ref={ref} {...props} />
 ))

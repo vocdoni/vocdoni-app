@@ -1,8 +1,9 @@
-import { Alert, Button, CloseButton, Dialog, Flex, Portal, Text } from '@chakra-ui/react'
+import { Alert, Button, Dialog, Flex, Portal, Text } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { RefCallback, useCallback, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuKeyRound } from 'react-icons/lu'
+import { KeyIcon } from '~theme/icons'
 import { useToast } from '~components/Toast'
 import type { Group } from '~src/queries/groups'
 import { useAppEnv } from '~src/app-env'
@@ -104,10 +105,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
         variant={census ? 'outline' : 'solid'}
         size={census ? 'sm' : 'md'}
         alignSelf={census ? 'start' : undefined}
-        h='auto'
-        minH={census ? 8 : 10}
-        py={2}
-        whiteSpace='normal'
+        multiline
       >
         {census ? (
           <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
@@ -124,7 +122,6 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
       finalFocusEl={() => triggerEl.current}
       onOpenChange={(details) => (details.open ? onOpen() : onClose())}
       size={{ base: 'full', md: 'xl' }}
-      placement='center'
       scrollBehavior='inside'
       // Mounted only while open: closing the dialog discards unsaved edits,
       // and the next opening starts again from the saved settings.
@@ -138,7 +135,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
       {isPending && (
         <Alert.Root status={censusError ? 'error' : 'warning'} role={censusError ? 'alert' : 'status'}>
           <Alert.Indicator>
-            <LuKeyRound />
+            <KeyIcon />
           </Alert.Indicator>
           <Alert.Content>
             <Alert.Title>
@@ -151,7 +148,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
                 defaultValue: 'Pick the member details voters must enter to vote, like their ID or member number.',
               })}
             </Alert.Description>
-            <Flex mt={3}>{trigger}</Flex>
+            <Flex mt='3'>{trigger}</Flex>
           </Alert.Content>
         </Alert.Root>
       )}
@@ -163,10 +160,10 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
           {/* The phone-sized 'full' variant sets these; undo them from md up or
               the desktop dialog stretches to the whole viewport height. */}
           <Dialog.Content
-            maxW={{ md: '52rem' }}
+            maxW={{ md: '[52rem]' }}
             minH={{ md: 'auto' }}
             borderRadius={{ md: 'l3' }}
-            mx={{ md: 4 }}
+            mx={{ md: '4' }}
             overflow='hidden'
           >
             <Dialog.CloseTrigger asChild>
@@ -177,7 +174,7 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
         </Dialog.Positioner>
       </Portal>
       {!groupId && (
-        <Text color='fg.muted' fontSize='xs'>
+        <Text color='fg.muted' textStyle='caption'>
           {t('voter_auth.no_group_description', {
             defaultValue: 'Please select a group first to configure authentication.',
           })}

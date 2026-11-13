@@ -1,55 +1,133 @@
 import { defineTokens } from '@chakra-ui/react'
 import { colors } from './colors'
-
-const sidebarWidth = '350px'
+import { FONT_STACKS, type LoadedFontWeight } from './fonts'
 
 const fonts = defineTokens.fonts({
-  body: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
-  heading: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
-  mono: { value: `'Menlo', monospace` },
+  body: { value: FONT_STACKS.body },
+  heading: { value: FONT_STACKS.heading },
+  mono: { value: FONT_STACKS.mono },
 })
 
+// Only loaded weights (see fonts.ts): a name with no file behind it makes the browser fake it.
+// Headings, `bold` and <b>/<strong> are 500, running text and default labels 400; chakra's stock names
+// for weights that do not ship are pinned to the nearest loaded one.
+const weight = (value: LoadedFontWeight) => ({ value: String(value) })
+
 const fontWeights = defineTokens.fontWeights({
-  normal: { value: '300' },
-  medium: { value: '300' },
-  bold: { value: '400' },
-  bolder: { value: '500' },
+  thin: weight(300),
+  extralight: weight(300),
+  light: weight(300),
+  normal: weight(400),
+  medium: weight(400),
+  semibold: weight(500),
+  bold: weight(500),
+  bolder: weight(500),
+  extrabold: weight(500),
+  black: weight(500),
+})
+
+// The app's four line heights: captions and figures, titles, running text, long reads. Chakra's
+// other step (`taller`) stays for its own recipes.
+const lineHeights = defineTokens.lineHeights({
+  shorter: { value: 1.2 },
+  short: { value: 1.3 },
+  moderate: { value: 1.5 },
+  tall: { value: 1.6 },
+})
+
+// Display-text tracking that falls between Chakra's letterSpacings steps.
+const letterSpacings = defineTokens.letterSpacings({
+  heading: {
+    snug: { value: '-0.4px' },
+  },
+  quote: {
+    tight: { value: '-0.3px' },
+  },
+  eyebrow: {
+    wide: { value: '0.14em' },
+  },
+})
+
+const borderWidths = defineTokens.borderWidths({
+  hairline: { value: '1px' },
+  thick: { value: '2px' },
+  // Hand-drawn focus rings (outline or box-shadow), as wide as Chakra's own.
+  focusRing: { value: '{borderWidths.thick}' },
 })
 
 const radii = defineTokens.radii({
   none: { value: '0rem' },
-  xxs: { value: '2px' },
   xs: { value: '4px' },
   sm: { value: '6px' },
   md: { value: '8px' },
   lg: { value: '10px' },
   xl: { value: '12px' },
   '2xl': { value: '16px' },
-  '3xl': { value: '20px' },
-  '4xl': { value: '24px' },
   full: { value: '9999px' },
 })
 
+// `0` and `auto` are everyday values Chakra's scale lacks (it starts at 0.5), so they are tokens, not `[0]` /
+// `[auto]` escapes; `auto` is what lets a margin push or centre.
+// `dashboard.panel` lets a margin make room for the dashboard's side panel.
 const spacing = defineTokens.spacing({
-  sidebar: { value: sidebarWidth },
+  '0': { value: '0' },
+  auto: { value: 'auto' },
+  dashboard: {
+    panel: { value: '{sizes.dashboard.panel}' },
+  },
 })
 
+// `0` and `auto` are likewise missing from Chakra's sizes.
 const sizes = defineTokens.sizes({
+  '0': { value: '0' },
+  auto: { value: 'auto' },
   'cookies-consent': { value: '720px' },
-  'dashboard-menu': {
-    default: { value: '255px' },
-    reduced: { value: '48px' },
+  // The dashboard shell: the menu expanded and collapsed, its logo row and the right side panel.
+  dashboard: {
+    menu: {
+      expanded: { value: '255px' },
+      collapsed: { value: '48px' },
+    },
+    header: { value: '47px' },
+    panel: { value: '350px' },
   },
-  'max-window-width': { value: '2560px' },
-  'max-content-width': { value: '1200px' },
-  navbar: { value: '1920px' },
-  sidebar: { value: sidebarWidth },
+  // The four icon sizes (inline, control, feature, empty state). sm–lg are Chakra's Icon sizes, so
+  // `boxSize='icon.md'` and `<Icon size='md'>` cannot drift apart.
+  icon: {
+    sm: { value: '{sizes.4}' },
+    md: { value: '{sizes.5}' },
+    lg: { value: '{sizes.6}' },
+    xl: { value: '{sizes.12}' },
+  },
+  // The three page widths, read through ui/PageContainer: the public shell, then two narrower columns.
+  content: {
+    wide: { value: '1600px' },
+    medium: { value: '1200px' },
+    narrow: { value: '900px' },
+  },
+  // Empty-state cards (no organizations, no results) and the leading column of a table that holds row actions.
+  card: {
+    empty: { value: '650px' },
+  },
+  table: {
+    action: { value: '50px' },
+  },
+  // Minimum height of a row of controls, so a row with a button and one without line up.
+  toolbar: { value: '42px' },
+  // Square controls drawn by recipes: the support chat launcher (button `floating`) and link `icon-button`.
+  control: {
+    floating: { value: '52px' },
+    'icon-link': { value: '30px' },
+  },
+  // Minimum height of ui/Loader's PageLoader, so a page with nothing yet does not collapse.
+  loader: { value: '300px' },
+  // Width of the Vocdoni wordmark image.
+  wordmark: { value: '125px' },
   'user-profile': { value: '280px' },
   voting: {
     sidebar: { value: '320px' },
     contents: {
       min: { value: 'calc(640px + var(--chakra-sizes-voting-sidebar))' },
-      max: { value: '1560px' },
     },
   },
 })
@@ -59,19 +137,36 @@ const zIndex = defineTokens.zIndex({
   contents: { value: 1 },
   sidebar: { value: 2 },
   topbar: { value: 3 },
-  modal: { value: 1400 },
-  hovering: { value: 1500 },
   top: { value: 9999 },
+  'public-header': { value: 30 },
+  'dashboard-menu': { value: 100 },
+})
+
+// Chakra's durations have no zero; `visibility` needs one to flip at once while a delay holds the other end.
+const durations = defineTokens.durations({
+  instant: { value: '0s' },
+})
+
+// Two fades. `inactive` is content that cannot be used right now (a revoked key, a busy check, an unavailable
+// option); `dimmed` is only de-emphasised and matches Chakra's own `_disabled` layer style (0.5).
+const opacity = defineTokens.opacity({
+  inactive: { value: 0.6 },
+  dimmed: { value: 0.5 },
 })
 
 const tokens = defineTokens({
+  borderWidths,
   colors,
+  durations,
+  opacity,
   radii,
   sizes,
   spacing,
   zIndex,
   fonts,
   fontWeights,
+  lineHeights,
+  letterSpacings,
 })
 
 export default tokens

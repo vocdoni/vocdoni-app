@@ -3,15 +3,13 @@ import {
   Box,
   Button,
   ButtonGroup,
-  Flex,
-  Link,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   HStack,
   Icon,
   IconButton,
   Input,
-  Progress,
+  Link,
   Spacer,
   VStack,
 } from '@chakra-ui/react'
@@ -23,7 +21,7 @@ import { addDays } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuRotateCcw, LuSettings } from 'react-icons/lu'
+import { ResetIcon, SettingsIcon } from '~theme/icons'
 import {
   createPath,
   generatePath,
@@ -37,6 +35,7 @@ import {
 } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
+import { PageLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import {
@@ -53,7 +52,7 @@ import {
 import { ProcessQuoteAlert } from '~components/Pricing/ProcessPrice'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
-import DeleteModal from '~components/Modal/DeleteModal'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
 import { MaxDraftsPerOrg } from '~constants'
@@ -462,9 +461,11 @@ const LeaveConfirmationModal = ({
   const { t } = useTranslation()
 
   return (
-    <DeleteModal
+    <ConfirmDialog
+      layout='inline'
+      separateCancel
       title={t('process.create.leave_confirmation.title', { defaultValue: 'Unsaved Changes' })}
-      subtitle={
+      description={
         isSamePath
           ? t('process.create.leave_confirmation.reset_message', {
               defaultValue: 'This will reset the form. Do you want to continue?',
@@ -475,28 +476,21 @@ const LeaveConfirmationModal = ({
       }
       open={isOpen}
       onOpenChange={({ open }) => (!open ? onCancel() : undefined)}
-    >
-      <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={onCancel}>
-          {t('process.create.leave_confirmation.cancel', { defaultValue: 'Cancel' })}
-        </Button>
-        <Spacer />
-        {isSamePath ? (
-          <Button colorPalette='red' onClick={() => onResetSamePath()}>
-            {t('process.create.leave_confirmation.reset', { defaultValue: 'Reset' })}
+      cancelText={t('process.create.leave_confirmation.cancel', { defaultValue: 'Cancel' })}
+      confirmText={
+        isSamePath
+          ? t('process.create.leave_confirmation.reset', { defaultValue: 'Reset' })
+          : t('process.create.leave_confirmation.leave', { defaultValue: 'Leave without saving' })
+      }
+      onConfirm={isSamePath ? () => onResetSamePath() : onLeave}
+      extraActions={
+        !isSamePath && (
+          <Button onClick={onSaveAndLeave}>
+            {t('process.create.leave_confirmation.save_and_leave', { defaultValue: 'Save and leave' })}
           </Button>
-        ) : (
-          <>
-            <Button colorPalette='red' onClick={onLeave}>
-              {t('process.create.leave_confirmation.leave', { defaultValue: 'Leave without saving' })}
-            </Button>
-            <Button onClick={onSaveAndLeave}>
-              {t('process.create.leave_confirmation.save_and_leave', { defaultValue: 'Save and leave' })}
-            </Button>
-          </>
-        )}
-      </Flex>
-    </DeleteModal>
+        )
+      }
+    />
   )
 }
 
@@ -953,18 +947,12 @@ const ProcessCreateView = () => {
   }
 
   if (!formDraftLoaded) {
-    return (
-      <Progress.Root size='xs' value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <PageLoader />
   }
 
   if (returnWithoutDraft) {
     return (
-      <VStack align='stretch' gap={4} maxW='2xl' p={{ base: 4, md: 8 }}>
+      <DashboardContents gap='4' maxW='2xl' p={{ base: '4', md: '8' }}>
         <Alert.Root status='info'>
           <Alert.Indicator />
           <Alert.Content>
@@ -981,21 +969,21 @@ const ProcessCreateView = () => {
             {t('process.checkout.return_to_processes', { defaultValue: 'Back to your voting processes' })}
           </RouterLink>
         </Link>
-      </VStack>
+      </DashboardContents>
     )
   }
 
   return (
     <FormProvider {...methods}>
       {checkout ? (
-        <Box maxW='2xl' p={{ base: 4, md: 8 }}>
+        <DashboardContents maxW='2xl' p={{ base: '4', md: '8' }}>
           <ProcessCheckout
             processId={checkout.processId}
             start={checkout.start}
             onPublished={(processId) => handlePublished(processId, checkout.form)}
             onClose={closeCheckout}
           />
-        </Box>
+        </DashboardContents>
       ) : (
         <Box position='relative' w='full' overflow='hidden' height='full'>
           <DashboardContents
@@ -1009,18 +997,18 @@ const ProcessCreateView = () => {
           >
             <Box
               flex={1}
-              marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
-              transition='margin-right 0.3s'
+              marginRight={showSidebar ? { base: '0', md: 'dashboard.panel' } : '0'}
+              transition='[margin-right {durations.slow}]'
               display='flex'
               flexDirection='column'
-              gap={8}
-              paddingRight={4}
-              paddingBottom={4}
+              gap='8'
+              paddingRight='4'
+              paddingBottom='4'
             >
               {/* Top bar with draft status and sidebar toggle */}
-              <HStack position='sticky' top='0px' p={2} bg='chakra.body.bg' zIndex='contents'>
+              <HStack position='sticky' top='[0px]' p='2' bg='bg' zIndex='contents'>
                 {effectiveDraftId && (
-                  <Box px={3} py={1} borderRadius='full' bg='bg.muted' fontSize='sm'>
+                  <Box px='3' py='1' borderRadius='full' bg='bg.muted' fontSize='sm'>
                     <Trans i18nKey='process.create.status.draft'>Draft</Trans>
                   </Box>
                 )}
@@ -1034,7 +1022,7 @@ const ProcessCreateView = () => {
                         defaultValue: 'Reset form',
                       })}
                     >
-                      <Icon as={LuRotateCcw} />
+                      <Icon as={ResetIcon} />
                     </IconButton>
                   )}
                   {/* data-testid: icon-only, so its only other handle is a
@@ -1048,7 +1036,7 @@ const ProcessCreateView = () => {
                     variant='outline'
                     onClick={toggleSidebar}
                   >
-                    <Icon as={LuSettings} />
+                    <Icon as={SettingsIcon} />
                   </IconButton>
                   {/* Both writes need the owner org address; keep them disabled until it resolves. */}
                   <Button
@@ -1074,10 +1062,10 @@ const ProcessCreateView = () => {
               <ProcessQuoteAlert processId={effectiveDraftId} />
 
               {/* Title, Video, and Description */}
-              <VStack as='header' align='stretch' gap={4}>
+              <VStack as='header' align='stretch' gap='4'>
                 <FormControl invalid={!!methods.formState.errors.title}>
                   <Input
-                    variant='borderless'
+                    variant='inline'
                     placeholder={t('process.create.description.title', {
                       defaultValue: 'Voting Process Title',
                     })}
@@ -1099,7 +1087,7 @@ const ProcessCreateView = () => {
                     <Editor
                       key={nextId}
                       onChange={field.onChange}
-                      variant='borderless'
+                      variant='inline'
                       placeholder={t('process.create.description.placeholder', 'Add a description...')}
                       defaultValue={field.value}
                     />

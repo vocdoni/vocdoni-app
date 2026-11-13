@@ -12,7 +12,8 @@ import {
 } from '~src/legacy/vochain-archive'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { Routes } from '.'
-import { Loading, SuspenseLoader } from '../SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
+import { SuspenseLoader } from '../SuspenseLoader'
 
 // elements / pages
 const NotFound = lazy(() => import('~elements/NotFound'))
@@ -42,7 +43,7 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
         <OrganizationView />
       </SuspenseLoader>
     ),
-    HydrateFallback: Loading,
+    HydrateFallback: PageLoader,
     // Addresses look the same in both eras: the SaaS API is authoritative and
     // the archive serves the addresses it doesn't know (legacy-only orgs).
     loader: async ({ params }: { params: Params<string> }) => {
@@ -63,7 +64,6 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
   },
   {
     path: '*',
-    handle: { hideNavbar: true },
     element: (
       <SuspenseLoader>
         <NotFound />

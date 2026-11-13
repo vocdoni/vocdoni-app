@@ -1,17 +1,19 @@
-import { Flex, IconButton, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
+import { Flex, IconButton, useDisclosure } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { OrganizationProvider } from '@vocdoni/react-components'
 import React, { PropsWithChildren, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuPanelLeft } from 'react-icons/lu'
+import { SidebarIcon } from '~theme/icons'
 import { Outlet, useLocation } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import DashboardMenu from '~components/Dashboard/Menu'
+import { OrganizationGate } from '~components/Organization/OrganizationGate'
 import { DashboardMenuConfig } from '~components/Dashboard/Menu/menus'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import SupportChat from '~components/SupportChat'
 import { LocalStorageKeys } from '~constants'
 import { DashboardLayoutContext, DashboardOutletContext } from '~elements/DashboardLayoutContext'
+import { useIsMobile } from '~components/ui/useIsMobile'
 
 /**
  * Shared dashboard layout (sidebar + user menu + content) used by both the admin and integrator
@@ -19,7 +21,7 @@ import { DashboardLayoutContext, DashboardOutletContext } from '~elements/Dashbo
  */
 const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
   const { open: isOpen, onOpen, onClose } = useDisclosure()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
   const [reduced, setReduced] = useLocalStorage(LocalStorageKeys.DashboardMenuReduced, false)
   const { t } = useTranslation()
   const { pathname } = useLocation()
@@ -41,7 +43,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
   return (
     <DashboardLayoutContext.Provider value={{ reduced: reducedValue }}>
       <DashboardLayoutProviders>
-        <Flex minH='100svh' w='full' bg='bg' maxW='max-window-width' margin='0 auto'>
+        <Flex minH='dvh' w='full' bg='surface.canvas'>
           {/* Sidebar for large screens */}
           <DashboardMenu
             isOpen={isOpen}
@@ -50,22 +52,24 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
             menu={menu}
           />
 
-          <Flex flex='1 1 0' flexDirection='column' minW={0}>
+          <Flex flex='1 1 0' flexDirection='column' minW='0'>
             <AnnouncementBanner />
             <Flex
               alignItems='center'
               justifyContent='space-between'
-              px={4}
-              pt={3}
-              pb={2}
+              px='4'
+              pt='3'
+              pb='2'
               display={{ base: 'flex', md: 'none' }}
-              gap={2}
+              gap='2'
             >
               <IconButton aria-label={t('menu.open')} colorPalette='gray' variant='subtle' size='xs' onClick={onOpen}>
-                <LuPanelLeft />
+                <SidebarIcon />
               </IconButton>
             </Flex>
-            <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
+            <OrganizationGate>
+              <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
+            </OrganizationGate>
           </Flex>
           <SupportChat />
         </Flex>

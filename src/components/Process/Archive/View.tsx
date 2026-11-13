@@ -1,14 +1,17 @@
 import { Badge, Box, Card, Flex, Heading, HStack, Image, Link, Progress, Text, VStack } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useTranslation } from 'react-i18next'
-import { LuExternalLink } from 'react-icons/lu'
+import { ExternalLinkIcon } from '~theme/icons'
 import Editor from '~components/Editor'
+import { StatusBadge, type StatusBadgeColor } from '~components/ui/StatusBadge'
 import { useDateFns } from '~i18n/use-date-fns'
 import { useAppEnv } from '~src/app-env'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
 import type { LegacyElection, LegacyElectionStatus } from '~src/legacy/vochain-archive'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
+import { PageSection } from '~components/ui/PageContainer'
 
-const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
+const ElectionStatus = ({ status }: { status: LegacyElectionStatus }) => {
   const { t } = useTranslation()
 
   const labels: Record<LegacyElectionStatus, string> = {
@@ -20,14 +23,14 @@ const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
     RESULTS: t('process.status.results', { defaultValue: 'Results available' }),
     PROCESS_UNKNOWN: t('process.status.unknown', { defaultValue: 'Unknown' }),
   }
-  const palettes: Partial<Record<LegacyElectionStatus, string>> = {
-    ONGOING: 'green',
-    RESULTS: 'teal',
-    CANCELED: 'red',
-    PAUSED: 'orange',
+  const palettes: Partial<Record<LegacyElectionStatus, StatusBadgeColor>> = {
+    ONGOING: 'success',
+    RESULTS: 'success',
+    CANCELED: 'danger',
+    PAUSED: 'warning',
   }
 
-  return <Badge colorPalette={palettes[status] ?? 'gray'}>{labels[status]}</Badge>
+  return <StatusBadge colorPalette={palettes[status] ?? 'gray'}>{labels[status]}</StatusBadge>
 }
 
 /**
@@ -46,27 +49,36 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
   const description = localize(election.description)
 
   return (
-    <VStack align='stretch' gap={6} maxW='4xl' mx='auto' px={4} py={8} w='full'>
-      {election.header && <Image src={election.header} alt='' borderRadius='md' maxH='240px' objectFit='cover' />}
+    <PageSection
+      size='narrow'
+      display='flex'
+      flexDirection='column'
+      alignItems='stretch'
+      gap='6'
+      px='4'
+      py='8'
+      w='full'
+    >
+      {election.header && <Image src={election.header} alt='' borderRadius='md' maxH='60' objectFit='cover' />}
 
       <Box>
-        <HStack mb={2} gap={2} flexWrap='wrap'>
-          <StatusBadge status={election.status} />
+        <HStack mb='2' gap='2' flexWrap='wrap'>
+          <ElectionStatus status={election.status} />
           {election.secretUntilTheEnd && !election.resultsAvailable && (
-            <Badge colorPalette='purple'>
-              {t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })}
-            </Badge>
+            <Badge>{t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })}</Badge>
           )}
         </HStack>
-        <Heading size='2xl'>{title}</Heading>
-        <Text color='texts.subtle' fontSize='sm' mt={2}>
+        <Heading as='h1' textStyle='display'>
+          {title}
+        </Heading>
+        <Text color='fg.muted' textStyle='body-sm' mt='2'>
           {election.startDate &&
             `${t('process.date.starts', { defaultValue: 'Starts' })} ${format(election.startDate, t('organization.date_format'))}`}
           {election.startDate && election.endDate && ' · '}
           {election.endDate &&
             `${t('process.date.ends', { defaultValue: 'Ends' })} ${format(election.endDate, t('organization.date_format'))}`}
         </Text>
-        <Text color='texts.subtle' fontSize='sm'>
+        <Text color='fg.muted' textStyle='body-sm'>
           {t('process.summary.votes_cast', {
             defaultValue: '{{votes}} votes cast',
             votes: election.voteCount,
@@ -77,43 +89,34 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
         </Text>
       </Box>
 
-      {description && (
-        <Box className='md-sizes'>
-          <Editor defaultValue={description} isDisabled />
-        </Box>
-      )}
+      {description && <Editor defaultValue={description} disabled />}
 
-      <VStack align='stretch' gap={4}>
+      <VStack align='stretch' gap='4'>
         {election.questions.map((question, questionIndex) => (
           <Card.Root key={questionIndex} variant='outline'>
             <Card.Header>
-              <Heading size='md'>{localize(question.title)}</Heading>
-              {localize(question.description) && (
-                <Text color='texts.subtle' fontSize='sm'>
-                  {localize(question.description)}
-                </Text>
-              )}
+              <SectionHeader title={localize(question.title)} description={localize(question.description)} />
             </Card.Header>
             <Card.Body>
               {!election.resultsAvailable ? (
-                <Text color='texts.subtle' fontSize='sm'>
+                <Text color='fg.muted' textStyle='body-sm'>
                   {t('process_pdf.voting_process.results_hidden', {
                     defaultValue: 'Results are hidden until the process reaches the final results stage.',
                   })}
                 </Text>
               ) : (
-                <VStack align='stretch' gap={3}>
+                <VStack align='stretch' gap='3'>
                   {question.choices.map((choice, choiceIndex) => (
                     <Box key={choiceIndex}>
-                      <Flex justify='space-between' fontSize='sm' mb={1} gap={4}>
+                      <Flex justify='space-between' fontSize='sm' mb='1' gap='4'>
                         <Text>{localize(choice.title)}</Text>
-                        <Text color='texts.subtle' whiteSpace='nowrap'>
+                        <Text color='fg.muted' whiteSpace='nowrap'>
                           {choice.votes === null
                             ? t('public_process.no_tally', { defaultValue: 'No tally' })
                             : `${choice.votes} · ${choice.percentage === null ? '—' : `${choice.percentage.toFixed(1)}%`}`}
                         </Text>
                       </Flex>
-                      <Progress.Root value={choice.percentage ?? 0} size='sm' colorPalette='teal'>
+                      <Progress.Root value={choice.percentage ?? 0} variant='results'>
                         <Progress.Track>
                           <Progress.Range />
                         </Progress.Track>
@@ -128,23 +131,23 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
       </VStack>
 
       <Box>
-        <Text fontSize='sm' color='texts.subtle' mb={1}>
+        <Text textStyle='body-sm' color='fg.muted' mb='1'>
           {t('public_process.verify', { defaultValue: 'Verify on the blockchain explorer:' })}
         </Text>
         <Link
           href={`${explorerUrl}/process/${election.id}`}
           target='_blank'
           rel='noopener noreferrer'
-          fontSize='sm'
+          size='sm'
           display='inline-flex'
           alignItems='center'
-          gap={1}
+          gap='1'
         >
-          <LuExternalLink />
+          <ExternalLinkIcon />
           {t('public_process.verify_process', { defaultValue: 'View process' })}
         </Link>
       </Box>
-    </VStack>
+    </PageSection>
   )
 }
 

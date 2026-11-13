@@ -38,11 +38,11 @@ vi.mock('./Options', () => ({
   DashboardMenuOptions: () => <div>MenuOptions</div>,
 }))
 
-const renderMenu = (reduced: boolean, onToggleReduced = vi.fn()) =>
+const renderMenu = (reduced: boolean, onToggleReduced = vi.fn(), isOpen = false) =>
   render(
     <DashboardLayoutContext.Provider value={{ reduced } as any}>
       <TestMemoryRouter>
-        <DashboardMenu isOpen={false} onClose={vi.fn()} onToggleReduced={onToggleReduced} menu={adminMenu} />
+        <DashboardMenu isOpen={isOpen} onClose={vi.fn()} onToggleReduced={onToggleReduced} menu={adminMenu} />
       </TestMemoryRouter>
     </DashboardLayoutContext.Provider>
   )
@@ -67,5 +67,10 @@ describe('DashboardMenu', () => {
     expect(logoLink).toBeTruthy()
     fireEvent.click(logoLink as Element)
     expect(onToggleReduced).toHaveBeenCalledTimes(1)
+  })
+
+  it('names the mobile menu drawer for screen readers', () => {
+    renderMenu(false, vi.fn(), true)
+    expect(screen.getByRole('dialog', { name: 'Menu' })).toBeInTheDocument()
   })
 })

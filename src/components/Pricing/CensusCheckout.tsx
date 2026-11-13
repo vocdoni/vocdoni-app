@@ -1,4 +1,5 @@
-import { Alert, Button, Flex, Separator, Spinner, Text, VStack } from '@chakra-ui/react'
+import { Alert, Button, Card, Flex, Separator, Text, VStack } from '@chakra-ui/react'
+import { InlineLoader, ListLoader } from '~components/ui/Loader'
 import {
   BillingAddressElement,
   CheckoutElementsProvider,
@@ -10,7 +11,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as RouterLink, useHref, useNavigate } from 'react-router'
-import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import {
   censusPaymentIds,
   useCensusCheckout,
@@ -260,7 +262,7 @@ export const CensusCheckout = ({
         )
       case 'timeout':
         return (
-          <VStack align='stretch' gap={4}>
+          <VStack align='stretch' gap='4'>
             {error && <Outcome status='error'>{error}</Outcome>}
             <Outcome status='warning' action={backToMembers}>
               {step.confirmed
@@ -292,7 +294,7 @@ export const CensusCheckout = ({
           )
         }
         return (
-          <VStack align='stretch' gap={5}>
+          <VStack align='stretch' gap='5'>
             <Text>
               {dueCents !== undefined
                 ? t('census.checkout.intro', {
@@ -306,7 +308,7 @@ export const CensusCheckout = ({
                   })}
             </Text>
             {balanceCents !== undefined && (
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('census.checkout.balance', {
                   defaultValue: 'Your wallet has {{balance}}.',
                   balance: currency(balanceCents, currencyCode),
@@ -314,7 +316,7 @@ export const CensusCheckout = ({
               </Text>
             )}
             {shortfallCents !== undefined && (
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('census.checkout.shortfall', {
                   defaultValue: 'Your wallet is {{shortfall}} short.',
                   shortfall: currency(shortfallCents, currencyCode),
@@ -323,13 +325,13 @@ export const CensusCheckout = ({
             )}
             {error && <Outcome status='error'>{error}</Outcome>}
             {canTopUp ? (
-              <Flex justify='flex-end' gap={3} wrap='wrap'>
+              <Flex justify='flex-end' gap='3' wrap='wrap'>
                 <Button onClick={() => buy(censusSize)}>
                   {t('census.checkout.buy', { defaultValue: 'Add voter places' })}
                 </Button>
               </Flex>
             ) : (
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('census.checkout.admin_only', { defaultValue: 'Only admins can add voter places.' })}
               </Text>
             )}
@@ -339,16 +341,16 @@ export const CensusCheckout = ({
   }
 
   return (
-    <DashboardBox p={6}>
-      <DashboardCardHeader title={t('census.checkout.title', { defaultValue: 'Add voter places' })} />
+    <DashboardBox size='md'>
+      <SectionHeader title={t('census.checkout.title', { defaultValue: 'Add voter places' })} mb='4' />
       {renderBody()}
     </DashboardBox>
   )
 }
 
 const Waiting = ({ children }: { children?: ReactNode }) => (
-  <Flex direction='column' align='center' gap={4} py={10} textAlign='center' role='status'>
-    <Spinner size='lg' />
+  <Flex direction='column' align='center' gap='4' py='10' textAlign='center' role='status'>
+    <InlineLoader />
     {children && <Text>{children}</Text>}
   </Flex>
 )
@@ -362,7 +364,7 @@ const Outcome = ({
   action?: ReactNode
   children: ReactNode
 }) => (
-  <VStack align='stretch' gap={4}>
+  <VStack align='stretch' gap='4'>
     <Alert.Root status={status}>
       <Alert.Indicator />
       <Alert.Content>
@@ -441,11 +443,7 @@ const CheckoutFormFields = ({
   const [error, setError] = useState<string | null>(null)
 
   if (checkoutState.type === 'loading') {
-    return (
-      <Flex justify='center' py={8}>
-        <Spinner />
-      </Flex>
-    )
+    return <ListLoader />
   }
 
   if (checkoutState.type === 'error') {
@@ -487,23 +485,23 @@ const CheckoutFormFields = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <VStack align='stretch' gap={5}>
+      <VStack align='stretch' gap='5'>
         {checkout.total && (
-          <VStack align='stretch' gap={3} p={5} borderWidth={1} borderRadius='md' bg='card.bg'>
-            <Flex justify='space-between' gap={4}>
+          <Card.Root variant='section' size='md' gap='3'>
+            <Flex justify='space-between' gap='4'>
               <Text>{t('census.checkout.amount_net', { defaultValue: 'Places (VAT excluded)' })}</Text>
               <Text>{currency(amountCents, currencyCode)}</Text>
             </Flex>
-            <Flex justify='space-between' gap={4}>
+            <Flex justify='space-between' gap='4'>
               <Text>{t('wallet.topup.vat', { defaultValue: 'VAT' })}</Text>
               <Text>{checkout.total.taxExclusive.amount}</Text>
             </Flex>
             <Separator />
-            <Flex justify='space-between' gap={4}>
+            <Flex justify='space-between' gap='4'>
               <Text fontWeight='bold'>{t('wallet.topup.total', { defaultValue: 'Total' })}</Text>
               <Text fontWeight='bold'>{checkout.total.total.amount}</Text>
             </Flex>
-          </VStack>
+          </Card.Root>
         )}
 
         <BillingAddressElement options={{ display: { name: 'split' } }} />

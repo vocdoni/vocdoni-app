@@ -1,23 +1,12 @@
-import {
-  Box,
-  Button,
-  CloseButton,
-  Drawer,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Progress,
-  Text,
-  useMediaQuery,
-  useToken,
-} from '@chakra-ui/react'
+import { Box, Button, Drawer, Flex, HStack, Icon, IconButton, Text, useMediaQuery } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuPanelLeft, LuPlus } from 'react-icons/lu'
+import { AddIcon, SidebarIcon } from '~theme/icons'
 import { generatePath, Link as ReactRouterLink, Link as RouterLink } from 'react-router'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { VocdoniLogo } from '~components/Layout/Logo'
+import { ListLoader } from '~components/ui/Loader'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useTutorials } from '~src/queries/organization'
 import { Routes } from '~src/router/routes'
@@ -38,32 +27,38 @@ const DashboardMenu = ({
   menu: DashboardMenuConfig
 }) => {
   const { reduced } = useContext(DashboardLayoutContext)
-  const [width, rWidth] = useToken('sizes', ['dashboard-menu.default', 'dashboard-menu.reduced'])
+  const { t } = useTranslation()
 
   return (
     <>
       {/* Sidebar for large screens */}
       <Box
-        borderRight='1px solid'
-        borderRightColor='table.border'
-        bgColor='dashboard.menu'
+        borderRight='sm'
+        borderRightColor='border'
+        bgColor='surface.sidebar'
         display={{ base: 'none', md: 'flex' }}
         flexDirection='column'
         position='sticky'
-        top={0}
-        w={reduced ? rWidth : width}
-        h='100dvh'
-        zIndex={100}
-        transition='width .3s ease'
+        top='0'
+        w={reduced ? 'dashboard.menu.collapsed' : 'dashboard.menu.expanded'}
+        h='dvh'
+        zIndex='dashboard-menu'
+        transition='[width {durations.slow} ease]'
       >
         <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} />
       </Box>
 
-      {/* Sidebar for small screens */}
-      <Drawer.Root open={isOpen} placement='start' onOpenChange={({ open }) => (!open ? onClose() : undefined)}>
+      {/* Sidebar for small screens. It has no visible title, so the label is its accessible name. */}
+      <Drawer.Root
+        aria-label={t('menu.title', { defaultValue: 'Menu' })}
+        variant='sidebar'
+        open={isOpen}
+        placement='start'
+        onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      >
         <Drawer.Backdrop />
         <Drawer.Positioner>
-          <Drawer.Content p={4}>
+          <Drawer.Content p='4'>
             <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} alignLogoCenter />
           </Drawer.Content>
         </Drawer.Positioner>
@@ -78,13 +73,7 @@ const SidebarTutorial = () => {
   const { isSidebarTutorialClosed, isLoading, closeSidebarTutorial } = useTutorials()
 
   if (isLoading) {
-    return (
-      <Progress.Root value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   if (isSidebarTutorialClosed) return null
@@ -94,24 +83,23 @@ const SidebarTutorial = () => {
       position={'relative'}
       flexDirection={'column'}
       display={reduced ? 'none' : 'flex'}
-      gap={2}
-      p={4}
-      m={2}
-      bgColor='chakra.body.bg'
-      borderColor='table.border'
+      gap='2'
+      p='4'
+      m='2'
+      bgColor='bg'
     >
       <CloseButton
         onClick={() => closeSidebarTutorial()}
         position={'absolute'}
-        top={1}
-        right={1}
+        top='1'
+        right='1'
         colorPalette='gray'
         size='sm'
       />
-      <Text fontSize={'sm'} fontWeight={'bold'}>
+      <Text textStyle='body-sm' fontWeight={'bold'}>
         {t('need_help.title', { defaultValue: 'First steps' })}
       </Text>
-      <Text fontSize={'xs'} lineHeight={'16px'} color='dashboard.schedule_call.description'>
+      <Text fontSize='xs' lineHeight='shorter'>
         {t('need_help.description', {
           defaultValue: 'Do you need some help with your first voting process? Watch this tutorial or schedule a call.',
         })}
@@ -137,12 +125,12 @@ const DashboardMenuContent = ({
 
   return (
     <>
-      <Box p={2}>
+      <Box p='2'>
         <Flex
           alignItems='center'
           justifyContent={alignLogoCenter ? 'center' : 'flex-start'}
-          h='47px'
-          mb={2}
+          h='dashboard.header'
+          mb='2'
           role='group'
           position='relative'
           w='full'
@@ -160,7 +148,7 @@ const DashboardMenuContent = ({
               if (reduced && isTouchLike) onToggleReduced()
             }}
           >
-            <VocdoniLogo width={reduced ? 'full' : '150px'} minimal={reduced} maxH='2rem' />
+            <VocdoniLogo width={reduced ? 'full' : '[150px]'} minimal={reduced} maxH='8' />
           </ReactRouterLink>
           <IconButton
             className='dashboard-collapse-toggle'
@@ -175,22 +163,22 @@ const DashboardMenuContent = ({
             onClick={onToggleReduced}
             display={{ base: 'none', md: 'inline-flex' }}
             position='absolute'
-            right={1}
-            top='50%'
-            left={reduced ? '50%' : undefined}
+            right='1'
+            top='[50%]'
+            left={reduced ? '[50%]' : undefined}
             transform={reduced ? 'translate(-50%, -50%)' : 'translateY(-50%)'}
-            opacity={reduced ? 0 : 1}
+            opacity={reduced ? '[0]' : '[1]'}
             pointerEvents={reduced ? 'none' : 'auto'}
-            zIndex={1}
+            zIndex='contents'
           >
-            <Icon as={LuPanelLeft} />
+            <Icon as={SidebarIcon} />
           </IconButton>
         </Flex>
         {menu.newVote && (
-          <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
+          <Button asChild w='full' minW='0' mt='2' mb='8' size={'xs'}>
             <RouterLink to={generatePath(Routes.processes.create)}>
-              <HStack gap={reduced ? 0 : 2}>
-                <Icon as={LuPlus} boxSize={4} />
+              <HStack gap={reduced ? '0' : '2'}>
+                <Icon as={AddIcon} boxSize='icon.sm' />
                 {!reduced && (
                   <Text as='span'>
                     <Trans i18nKey='new_vote'>New vote</Trans>

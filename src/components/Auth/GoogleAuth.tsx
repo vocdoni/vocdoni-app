@@ -3,7 +3,7 @@ import { AuthStorageKeys, saasOAuthWallet } from '@vocdoni/rainbowkit-wallets'
 import { readOAuthSession } from '~components/Auth/useAuthProvider'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BsGoogle } from 'react-icons/bs'
+import { GoogleIcon } from '~theme/icons'
 import { useNavigate } from 'react-router'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { useToast } from '~components/Toast'
@@ -91,9 +91,8 @@ const GoogleAuth = () => {
         connect({ connector: wallet.createConnector({} as any) })
       }}
       w='full'
-      fontWeight={'bold'}
     >
-      <Icon as={BsGoogle} />
+      <Icon as={GoogleIcon} />
       {t('signin_google')}
     </Button>
   )

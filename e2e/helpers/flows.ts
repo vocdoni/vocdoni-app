@@ -237,13 +237,11 @@ const fillQuestion = async (page: Page, index: number, question: QuestionSpec): 
 }
 
 /**
- * Creates and publishes a process whose census authenticates voters by
- * `memberNumber` and challenges them with an emailed OTP — the configuration
- * the CSP 2FA voting flow exists to exercise.
- *
- * Returns the published process id, read off the URL the wizard redirects to.
+ * Fills the create wizard up to its Settings panel, stopping before Publish, so
+ * the caller can publish or assert on what Publish does. `twoFactor` (on by
+ * default) adds the emailed OTP to the memberNumber census.
  */
-export const createAndPublishTwoFactorProcess = async (page: Page, spec: ProcessSpec): Promise<string> => {
+export const fillProcessWizard = async (page: Page, spec: ProcessSpec): Promise<void> => {
   await page.goto('/admin/processes/create')
   await expect(page.locator('input[name="title"]')).toBeVisible()
 
@@ -341,6 +339,17 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   await expect(dialog).toBeHidden({ timeout: 60_000 })
 
   await closeWizardSettings(page)
+}
+
+/**
+ * Creates and publishes a process whose census authenticates voters by
+ * `memberNumber` and challenges them with an emailed OTP — the configuration
+ * the CSP 2FA voting flow exists to exercise.
+ *
+ * Returns the published process id, read off the URL the wizard redirects to.
+ */
+export const createAndPublishTwoFactorProcess = async (page: Page, spec: ProcessSpec): Promise<string> => {
+  await fillProcessWizard(page, spec)
 
   await page.getByRole('button', { name: /^Publish$/ }).click()
 
@@ -452,8 +461,9 @@ export type BallotSelection = {
  * renders one questions form — and its direct children are the question cards
  * in process order (the "voted" notice only mounts after voting).
  */
-const questionContainer = (page: Page, index: number): Locator =>
-  page.locator('form[id^="election-questions-"] > div').nth(index)
+const questionsForm = (page: Page): Locator => page.locator('form[id^="election-questions-"]')
+
+const questionContainer = (page: Page, index: number): Locator => questionsForm(page).locator(':scope > div').nth(index)
 
 /**
  * Fills ballot selections across the questions form.
@@ -465,6 +475,11 @@ const questionContainer = (page: Page, index: number): Locator =>
  * control is the click target there.
  */
 export const fillBallot = async (page: Page, selections: BallotSelection[]): Promise<void> => {
+  // Ballot inputs stay disabled until the process is ONGOING and the voter's
+  // `isAbleToVote` loads, which can land after the auth modal closes. A forced
+  // check() skips the enabled check and throws "did not change its state".
+  const ballotInput = questionsForm(page).locator('input:is([type="radio"], [type="checkbox"])')
+  await expect(ballotInput.first()).toBeEnabled({ timeout: 60_000 })
   for (const selection of selections) {
     const container = questionContainer(page, selection.question)
     for (const value of selection.choices) {

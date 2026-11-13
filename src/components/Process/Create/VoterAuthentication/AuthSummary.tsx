@@ -1,9 +1,10 @@
-import { Badge, Box, HStack, Icon, Stack, Text } from '@chakra-ui/react'
+import { Card, HStack, Icon, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
-import type { IconType } from 'react-icons'
+import { IdCardIcon, KeyIcon, MailIcon, MessagesIcon, SmsIcon, UnlinkIcon, WarningIcon } from '~theme/icons'
+import type { IconType } from '~theme/icons'
 import { useTranslation } from 'react-i18next'
-import { LuIdCard, LuKeyRound, LuMail, LuMessagesSquare, LuSmartphone, LuTriangleAlert, LuUnlink } from 'react-icons/lu'
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { Census } from '../common'
 import { getProtectionLevel, getProtectionLevelTitle, protectionLevelPalettes } from './ProtectionLevel'
@@ -11,10 +12,10 @@ import { CensusCheckStatus } from './useCensusCheck'
 import { CodeMethod, fromCensus } from './utils'
 
 const codeIcons: Record<CodeMethod, IconType> = {
-  none: LuKeyRound,
-  email: LuMail,
-  sms: LuSmartphone,
-  voter_choice: LuMessagesSquare,
+  none: KeyIcon,
+  email: MailIcon,
+  sms: SmsIcon,
+  voter_choice: MessagesIcon,
 }
 
 export const getCodeMethodSummary = (t: TFunction, method: CodeMethod) => {
@@ -44,16 +45,16 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
   const level = getProtectionLevel(credentials, codeMethod)
 
   return (
-    <Box p={4} borderWidth='1px' borderColor='border' borderRadius='md'>
-      <HStack justify='space-between' mb={3}>
+    <Card.Root variant='section' size='sm'>
+      <HStack justify='space-between' mb='3'>
         <Text fontWeight='semibold'>{t('voter_auth.summary.title', { defaultValue: 'Voter sign-in' })}</Text>
-        <Badge colorPalette={protectionLevelPalettes[level]}>{getProtectionLevelTitle(t, level)}</Badge>
+        <StatusBadge colorPalette={protectionLevelPalettes[level]}>{getProtectionLevelTitle(t, level)}</StatusBadge>
       </HStack>
-      <Stack gap={2} fontSize='sm'>
+      <Stack gap='2' fontSize='sm'>
         {credentials.length > 0 && (
-          <HStack gap={2} align='start'>
-            <Icon as={LuIdCard} color='fg.muted' mt={0.5} />
-            <Text fontSize='inherit'>
+          <HStack gap='2' align='start'>
+            <Icon as={IdCardIcon} color='fg.muted' mt='0.5' />
+            <Text>
               {t('voter_auth.summary.details', {
                 defaultValue: 'Voters type: {{fields}}',
                 fields: credentials.map((field) => getAuthFieldLabel(t, field)).join(', '),
@@ -61,17 +62,17 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
             </Text>
           </HStack>
         )}
-        <HStack gap={2}>
+        <HStack gap='2'>
           <Icon as={codeIcons[codeMethod]} color='fg.muted' />
-          <Text fontSize='inherit'>{getCodeMethodSummary(t, codeMethod)}</Text>
+          <Text>{getCodeMethodSummary(t, codeMethod)}</Text>
         </HStack>
         {/* Neutral, and deliberately outside the protection grade: anonymity is a
             different axis from how strongly a voter is identified, not a further
             rung of it. Set in the settings panel, echoed here so the census reads
             whole. */}
-        <HStack gap={2}>
-          <Icon as={LuUnlink} color='fg.muted' />
-          <Text color='fg.muted' fontSize='inherit'>
+        <HStack gap='2'>
+          <Icon as={UnlinkIcon} color='fg.muted' />
+          <Text color='fg.muted'>
             {t('voter_auth.anonymity', {
               defaultValue: 'Ballot anonymity: {{ mode }}',
               mode: anonymity,
@@ -81,9 +82,9 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
         {/* Re-checked whenever the group or the chosen details change after
             saving: the settings were only ever validated against the old ones. */}
         {(checkStatus === 'invalid' || checkStatus === 'rejected') && (
-          <HStack gap={2} align='start' color='fg.error'>
-            <Icon as={LuTriangleAlert} mt={0.5} />
-            <Text fontSize='inherit'>
+          <HStack gap='2' align='start' color='fg.error'>
+            <Icon as={WarningIcon} mt='0.5' />
+            <Text>
               {t('voter_auth.summary.member_list_mismatch', {
                 defaultValue: "These settings don't fit your member list. Edit them to see why.",
               })}
@@ -91,6 +92,6 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
           </HStack>
         )}
       </Stack>
-    </Box>
+    </Card.Root>
   )
 }

@@ -1,26 +1,31 @@
 import { Button, Card, Flex } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Trans } from 'react-i18next'
-import { LuRefreshCw } from 'react-icons/lu'
+import { RefreshIcon } from '~theme/icons'
 import { useAuth } from '~components/Auth/useAuth'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { EmptyState } from '~components/ui/EmptyState'
 
+type OrganizationsUnavailableProps = {
+  onRetry?: () => Promise<unknown>
+}
+
 /**
- * Shown when the organization address list could not be read. Deliberately
- * distinct from `NoOrganizations`: telling an org owner they have no
- * organizations because a request failed is worse than reporting the failure,
- * and there is nothing here to recover it on its own — the query sits at the
- * app root and never remounts.
+ * Shown when the organization address list could not be read, or when the active
+ * organization itself could not be loaded (used by `OrganizationGate` with an `onRetry`).
+ * Deliberately distinct from `NoOrganizations`: a request failure is not the same as
+ * having no organizations, and the query never remounts on its own.
  */
-export const OrganizationsUnavailable = () => {
+export const OrganizationsUnavailable = ({ onRetry }: OrganizationsUnavailableProps = {}) => {
   const { refreshAddresses } = useAuth()
   const [isRetrying, setRetrying] = useState(false)
 
   const retry = async () => {
     setRetrying(true)
     try {
-      await refreshAddresses()
+      await (onRetry ?? refreshAddresses)()
+    } catch {
+      // rejection stays on screen; the caller already shows the error state
     } finally {
       setRetrying(false)
     }
@@ -28,10 +33,10 @@ export const OrganizationsUnavailable = () => {
 
   return (
     <Flex flexDirection='column'>
-      <Card.Root variant='no-elections' minH='100%' maxW='650' mx='auto'>
+      <Card.Root variant='plain' minH='full' maxW='card.empty' mx='auto'>
         <Card.Body>
           <EmptyState
-            icon={LuRefreshCw}
+            icon={RefreshIcon}
             title={<Trans i18nKey='organization.unavailable_title'>We couldn't load your organizations</Trans>}
             description={
               <Trans i18nKey='organization.unavailable_description'>
@@ -39,7 +44,7 @@ export const OrganizationsUnavailable = () => {
               </Trans>
             }
           >
-            <Button mt={4} onClick={retry} loading={isRetrying}>
+            <Button mt='4' onClick={retry} loading={isRetrying}>
               <Trans i18nKey='organization.unavailable_retry'>Try again</Trans>
             </Button>
           </EmptyState>
@@ -49,8 +54,8 @@ export const OrganizationsUnavailable = () => {
   )
 }
 
-export const OrganizationsUnavailablePage = () => (
+export const OrganizationsUnavailablePage = ({ onRetry }: OrganizationsUnavailableProps = {}) => (
   <DashboardContents>
-    <OrganizationsUnavailable />
+    <OrganizationsUnavailable onRetry={onRetry} />
   </DashboardContents>
 )

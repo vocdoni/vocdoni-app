@@ -1,5 +1,11 @@
 import type { MultilingualText, Organization } from '@vocdoni/api-types'
 
+/** The active organization's address, for request code that cannot run without one. */
+export const requireOrganizationAddress = (organization?: { address?: string } | null): string => {
+  if (!organization?.address) throw new Error('No organization loaded')
+  return organization.address
+}
+
 /**
  * The organization display name, as a locale map ready for localization.
  *

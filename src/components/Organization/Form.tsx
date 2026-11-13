@@ -15,7 +15,7 @@ export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
   const { control } = useFormContext()
 
   return (
-    <VStack gap={4} flex={1}>
+    <VStack gap='4' flex={1}>
       <InputBasic
         formValue='name'
         label={t('form.account_create.title', { defaultValue: 'Organization name' })}
@@ -38,7 +38,7 @@ export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
                   onChange={field.onChange}
                   value={field.value}
                   variant='outline'
-                  padding={4}
+                  padding='4'
                   placeholder={t('form.account_create.description_placeholder')}
                 />
               )}
@@ -71,10 +71,10 @@ export const PrivateOrgForm = ({ minified }: { minified?: boolean }) => {
     <>
       {!minified && (
         <Box>
-          <Text fontWeight='bold' mb={2.5}>
+          <Text fontWeight='bold' mb='2.5'>
             {t('create_org.private_org', { defaultValue: 'Other details' })}
           </Text>
-          <Text fontSize='sm'>
+          <Text textStyle='body-sm'>
             {t('create_org.private_org_description', {
               defaultValue: 'This information is private and used for internal configuration.',
             })}

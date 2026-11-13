@@ -22,9 +22,9 @@ const MemberCard = ({ member, actions, selectable = true }: MemberCardProps) => 
   return (
     // ph-no-capture: the whole card is excluded from session replays — member
     // data reaches both the body and the checkbox's aria-label.
-    <Card.Root variant='data-list-item' className='ph-no-capture'>
+    <Card.Root variant='list-item' className='ph-no-capture'>
       <Card.Header>
-        <Flex gap={3} alignItems='center' minW={0}>
+        <Flex gap='3' alignItems='center' minW='0'>
           {selectable && member.id && (
             <Checkbox.Root
               checked={isSelected(member.id)}

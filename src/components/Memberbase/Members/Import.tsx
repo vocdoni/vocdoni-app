@@ -4,7 +4,7 @@ import {
   AlertTitle,
   Box,
   Button,
-  CloseButton,
+  Card,
   Dialog,
   Drawer,
   Flex,
@@ -25,13 +25,17 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
+import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
+import { PanelDrawer } from '~components/ui/Drawer'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
+import { CheckIcon, UploadIcon, WarningIcon } from '~theme/icons'
 import { useOutletContext } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
@@ -42,6 +46,7 @@ import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { hashMemberPasswords, isValidMemberPassword } from '~utils/member-password'
+import { requireOrganizationAddress } from '~utils/organization'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { maskIfNeeded } from './maskIfNeeded'
@@ -111,16 +116,14 @@ const TemplateUploader = () => {
   const { t } = useTranslation()
 
   return (
-    <Stack gap={4}>
-      <Heading size='md' fontWeight='extrabold'>
-        {t('memberbase.download_template.title', { defaultValue: 'Download Import Template' })}
-      </Heading>
-      <Text color='texts.subtle' fontSize='sm'>
-        {t('memberbase.download_template.subtitle', {
+    <Stack gap='4'>
+      <SectionHeader
+        title={t('memberbase.download_template.title', { defaultValue: 'Download Import Template' })}
+        description={t('memberbase.download_template.subtitle', {
           defaultValue:
             'Download the template with your chosen columns, add your member data, and upload the file to set up your memberbase. Once it’s ready, you can start creating votes.',
         })}
-      </Text>
+      />
       <MembersCsvManager />
     </Stack>
   )
@@ -162,11 +165,11 @@ export const ImportProgress = () => {
   useEffect(() => {
     if (isComplete) {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.members(organization.address),
+        queryKey: QueryKeys.organization.members(organization?.address),
         exact: false,
       })
     }
-  }, [queryClient, organization.address, isComplete])
+  }, [queryClient, organization?.address, isComplete])
 
   // Track the async job outcome once per job
   const trackedJobRef = useRef<string | null>(null)
@@ -214,7 +217,7 @@ export const ImportProgress = () => {
               defaultValue: 'Your data was imported with some errors.',
             })}
           </Text>
-          <Button onClick={onOpenErrors} size='sm' mt={1} alignSelf='start'>
+          <Button onClick={onOpenErrors} size='sm' mt='1' alignSelf='start'>
             {t('import_progress.view_errors', {
               defaultValue: `View {{count}} errors`,
               count: data.errors.length,
@@ -257,7 +260,7 @@ export const ImportProgress = () => {
               'Your member data has been imported, but some errors occurred, and because of that some users have missing fields.',
           })}
         </Text>
-        <Text fontSize='sm'>
+        <Text textStyle='body-sm'>
           {t('import_progress.note', {
             defaultValue: 'You can safely close this page. An email will be sent to you upon completion.',
           })}
@@ -272,19 +275,18 @@ export const ImportProgress = () => {
     <>
       <Alert
         status={getStatus()}
-        borderRadius='md'
-        mb={3}
-        mt={4}
-        p={6}
+        layout='panel'
+        mb='3'
+        mt='4'
         as={Flex}
         flexDirection='row'
         justifyContent='space-between'
       >
-        <Flex flexDirection='column' gap={2} flex={1}>
+        <Flex flexDirection='column' gap='2' flex={1}>
           <AlertTitle>
             <ImportTitle />
           </AlertTitle>
-          <AlertDescription display='flex' flexDirection='column' gap={2}>
+          <AlertDescription display='flex' flexDirection='column' gap='2'>
             <ImportDescription />
           </AlertDescription>
         </Flex>
@@ -295,7 +297,6 @@ export const ImportProgress = () => {
       {/* Error modal */}
       <Dialog.Root
         size='xl'
-        placement='center'
         open={isErrorModalOpen}
         onOpenChange={({ open }) => (open ? onOpenErrors() : onCloseErrors())}
       >
@@ -305,20 +306,18 @@ export const ImportProgress = () => {
             <Dialog.CloseTrigger asChild>
               <CloseButton />
             </Dialog.CloseTrigger>
-            <Dialog.Header>
-              <Dialog.Title>
-                {t('import_progress.error_modal_title', {
-                  defaultValue: 'Import Errors',
-                })}
-              </Dialog.Title>
-            </Dialog.Header>
+            <DialogHeader
+              title={t('import_progress.error_modal_title', {
+                defaultValue: 'Import Errors',
+              })}
+            />
             <Dialog.Body>
               {/* ph-no-capture: import errors quote the offending CSV rows */}
               <List.Root
                 display='flex'
                 flexDirection='column'
-                gap={2}
-                pl={4}
+                gap='2'
+                pl='4'
                 listStyleType='disc'
                 className='ph-no-capture'
               >
@@ -379,25 +378,25 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
   }
 
   return (
-    <HStack flexDirection='column' gap={4} w='full' alignItems='flex-start'>
-      <Box borderRadius='lg' borderColor='table.border' borderWidth='1px' p={4} w='full'>
-        <Flex borderRadius='lg' borderColor='table.border' borderWidth='1px' p={4} gap={3} mb={2}>
-          <Icon as={LuTriangleAlert} boxSize={4} color='texts.subtle' />
-          <HStack flexDirection='column' gap={0} alignItems='flex-start'>
+    <HStack flexDirection='column' gap='4' w='full' alignItems='flex-start'>
+      <Card.Root variant='section' size='sm' w='full'>
+        <Card.Root variant='section' size='sm' flexDirection='row' gap='3' mb='2'>
+          <Icon as={WarningIcon} color='fg.muted' />
+          <HStack flexDirection='column' gap='0' alignItems='flex-start'>
             <Heading size='sm' fontWeight='bold'>
               {t('memberbase.importer.warning.title', { defaultValue: 'Warning' })}
             </Heading>
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('memberbase.importer.warning.subtitle', {
                 defaultValue: 'The information of columns that are not mapped will not be imported.',
               })}
             </Text>
           </HStack>
-        </Flex>
-        <Flex flexDirection='column' gap={4}>
+        </Card.Root>
+        <Flex flexDirection='column' gap='4'>
           {columns.map(({ id, label }) => (
             <FormControl key={id}>
-              <Flex gap={3} justifyContent='space-between' w='full'>
+              <Flex gap='3' justifyContent='space-between' w='full'>
                 <FormLabel htmlFor={id}>{label}</FormLabel>
                 <Box>
                   <Select
@@ -426,8 +425,8 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
                         const { isSelected, children } = props
                         return (
                           <chakraComponents.Option {...props}>
-                            <Flex align='center' gap={2}>
-                              {isSelected && <Icon as={LuCheck} boxSize={4} color='texts.subtle' />}
+                            <Flex align='center' gap='2'>
+                              {isSelected && <Icon as={CheckIcon} boxSize='icon.sm' color='fg.muted' />}
                               {children}
                             </Flex>
                           </chakraComponents.Option>
@@ -440,11 +439,9 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
             </FormControl>
           ))}
         </Flex>
-      </Box>
-      <Heading size='md' fontWeight='extrabold'>
-        {t('memberbase.importer.data_preview', { defaultValue: 'Data Preview' })}
-      </Heading>
-      <Box borderColor='table.border' borderWidth='1px' borderRadius='lg' overflowX='auto' w='full'>
+      </Card.Root>
+      <SectionHeader title={t('memberbase.importer.data_preview', { defaultValue: 'Data Preview' })} />
+      <Card.Root variant='frame' overflowX='auto' w='full'>
         <TableRoot>
           <TableHeader>
             <TableRow>
@@ -465,7 +462,7 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
             ))}
           </TableBody>
         </TableRoot>
-      </Box>
+      </Card.Root>
     </HStack>
   )
 }
@@ -484,18 +481,16 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
   }
 
   return (
-    <Flex flexDirection='column' gap={4}>
-      <Heading size='md' fontWeight='extrabold'>
-        {t('memberbase.importer.map_columns.title', { defaultValue: 'Map Columns' })}
-      </Heading>
-      <Text color='texts.subtle' fontSize='sm'>
-        {t('memberbase.importer.map_columns.subtitle', {
+    <Flex flexDirection='column' gap='4'>
+      <SectionHeader
+        title={t('memberbase.importer.map_columns.title', { defaultValue: 'Map Columns' })}
+        description={t('memberbase.importer.map_columns.subtitle', {
           defaultValue:
             'Map columns from your file to the corresponding fields in our system. Required fields are marked with an asterisk (*).',
         })}
-      </Text>
+      />
       <FieldsMapper manager={spreadsheet} columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
-      <Flex justify='space-between' gap={2} mt={4}>
+      <Flex justify='space-between' gap='2' mt='4'>
         <Button type='button' variant='outline' onClick={resetImport}>
           {t('memberbase.importer.reset', { defaultValue: 'Reset Import' })}
         </Button>
@@ -527,7 +522,11 @@ export const ImportMembers = () => {
 
   const onSubmit = async ({ spreadsheet }: { spreadsheet: any }) => {
     try {
-      const { rows: finalData, skippedLines } = await buildImportRows(organization.address, spreadsheet, columnMapping)
+      const { rows: finalData, skippedLines } = await buildImportRows(
+        requireOrganizationAddress(organization),
+        spreadsheet,
+        columnMapping
+      )
       if (skippedLines.length > 0) {
         // Not an Alert in the drawer: it closes as soon as the valid rows are sent.
         toast({
@@ -568,7 +567,7 @@ export const ImportMembers = () => {
   }
 
   return (
-    <Drawer.Root
+    <PanelDrawer
       open={isOpen}
       placement='end'
       onOpenChange={({ open }) => (open ? onOpen() : onClose())}
@@ -577,50 +576,39 @@ export const ImportMembers = () => {
       // The native file picker blurs the window and Zag's dismissable layer reads
       // the focus return as an outside interaction, closing the drawer mid-import.
       closeOnInteractOutside={false}
+      trigger={
+        <Drawer.Trigger asChild>
+          {/* data-testid: the accessible name ("Import") is a prefix of the
+              drawer's own submit ("Import Data"), so the e2e suite has no
+              unambiguous copy-free handle for this trigger. */}
+          <Button ref={btnRef} variant='outline' data-testid='members-import-open'>
+            <Icon as={UploadIcon} />
+            {t('memberbase.importer.button', { defaultValue: 'Import' })}
+          </Button>
+        </Drawer.Trigger>
+      }
+      title={t('memberbase.importer.title', { defaultValue: 'Import Members' })}
+      description={t('memberbase.importer.subtitle', {
+        defaultValue: 'Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.',
+      })}
+      bodyProps={{ display: 'flex', flexDirection: 'column', gap: '4' }}
     >
-      <Drawer.Backdrop />
-      <Drawer.Trigger asChild>
-        {/* data-testid: the accessible name ("Import") is a prefix of the
-            drawer's own submit ("Import Data"), so the e2e suite has no
-            unambiguous copy-free handle for this trigger. */}
-        <Button ref={btnRef} variant='outline' data-testid='members-import-open'>
-          <Icon as={LuUpload} />
-          {t('memberbase.importer.button', { defaultValue: 'Import' })}
-        </Button>
-      </Drawer.Trigger>
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.CloseTrigger asChild>
-            <CloseButton />
-          </Drawer.CloseTrigger>
-          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-            <Drawer.Title>{t('memberbase.importer.title', { defaultValue: 'Import Members' })}</Drawer.Title>
-            <Text color='texts.subtle' fontSize='sm'>
-              {t('memberbase.importer.subtitle', {
-                defaultValue: 'Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.',
-              })}
-            </Text>
-          </Drawer.Header>
-          <Drawer.Body display='flex' flexDirection='column' gap={4}>
-            <FormProvider {...methods}>
-              <Box as='form' id='import-members' onSubmit={methods.handleSubmit(onSubmit)}>
-                {!hasSpreadsheet ? (
-                  <TemplateUploader />
-                ) : (
-                  <ImportDataPreview columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
-                )}
-              </Box>
-            </FormProvider>
-            <Flex justify='flex-end' gap={4}>
-              <Drawer.ActionTrigger asChild>
-                <Button type='button' variant='outline'>
-                  {t('memberbase.importer.cancel', { defaultValue: 'Cancel' })}
-                </Button>
-              </Drawer.ActionTrigger>
-            </Flex>
-          </Drawer.Body>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+      <FormProvider {...methods}>
+        <Box as='form' id='import-members' onSubmit={methods.handleSubmit(onSubmit)}>
+          {!hasSpreadsheet ? (
+            <TemplateUploader />
+          ) : (
+            <ImportDataPreview columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
+          )}
+        </Box>
+      </FormProvider>
+      <Flex justify='flex-end' gap='4'>
+        <Drawer.ActionTrigger asChild>
+          <Button type='button' variant='outline'>
+            {t('memberbase.importer.cancel', { defaultValue: 'Cancel' })}
+          </Button>
+        </Drawer.ActionTrigger>
+      </Flex>
+    </PanelDrawer>
   )
 }

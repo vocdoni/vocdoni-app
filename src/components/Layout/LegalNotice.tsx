@@ -1,6 +1,7 @@
 import { Box, Link, Text } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
 import { Trans } from 'react-i18next'
+import { PageSection } from '~components/ui/PageContainer'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
 import { getOrganizationName } from '~utils/organization'
 
@@ -12,14 +13,13 @@ export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
   if (!orgName) return null
 
   return (
-    <Box
+    <PageSection
+      size='medium'
       data-testid='layout-legal-notice'
-      mt={{ base: 10, xl: 12 }}
-      maxW='6xl'
-      mx='auto'
-      color='texts.subtle'
+      mt={{ base: '10', xl: '12' }}
+      color='fg.muted'
       fontSize='sm'
-      lineHeight={2}
+      lineHeight='tall'
       textAlign='center'
     >
       <Text as='p'>
@@ -31,12 +31,12 @@ export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
             strong: <Box as='strong' color='fg' fontWeight='semibold' />,
           }}
         />{' '}
-        <Link href='https://vocdoni.io/' target='_blank' rel='noopener noreferrer' textDecor='underline'>
+        <Link href='https://vocdoni.io/' target='_blank' rel='noopener noreferrer'>
           vocdoni.io
         </Link>
         .
       </Text>
-    </Box>
+    </PageSection>
   )
 }
 

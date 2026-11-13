@@ -62,6 +62,15 @@
 - Prefer configured path aliases over long relative imports. Common aliases include `~components/*`, `~queries/*`, `~theme/*`, `~i18n/*`, and `~utils/*`.
 - Naming patterns: components/files in PascalCase, hooks in `useX` format, tests as `*.test.ts` or `*.test.tsx` near related code.
 
+## UI & Theme
+- Read `docs/ui-guidelines.md` before touching styles, the theme or a shared component. It lists the token roles, recipe
+  variants, `src/components/ui/` components, the allowed exceptions and how to add a token.
+- Components pick roles from the theme and never carry raw values: no hex, named colour, px font size or radius, and no
+  colour-mode logic; palette steps and px sizes and spacing only ratchet down. `src/theme/style-inventory.test.ts` fails
+  on them (part of `pnpm test`).
+- When a cleanup lowers a ratchet count, lock it in with `UPDATE_STYLE_BASELINE=1 npx vitest run src/theme/style-inventory.test.ts`.
+  For UI changes also run `pnpm ui:snapshot` and `pnpm ui:diff` (see `scripts/ui-snapshot/README.md`).
+
 ## Internationalization Workflow
 - Any new user-facing text must go through i18next (`t(...)`/translation keys), not hardcoded strings.
 - After adding or changing translation keys, always run `pnpm translations`.
@@ -76,6 +85,8 @@
 - Prefer behavior-focused tests over implementation-detail assertions.
 - Keep tests close to the module being validated.
 - Run targeted tests while iterating (example: `pnpm test src/queries/groups.test.ts`).
+- Visual no-regression checks (theme, recipe or styling refactors that should change nothing on screen): take
+  `pnpm ui:snapshot` before and after and compare with `pnpm ui:diff`; see `scripts/ui-snapshot/README.md`.
 
 ### End-to-end tests
 - `e2e/` holds a Playwright suite (`*.e2e.ts`) that drives a real browser against a disposable
@@ -84,8 +95,11 @@
 - It is deliberately **not** part of `pnpm test`, which stays fast and unit-only. Run it with
   `pnpm test:e2e:stack` (needs docker); it takes a few minutes.
 - It covers what only this app owns: the OTP signup journey and the CSP + email-2FA voter
-  journey. The generic voting lifecycle is covered upstream in integrator-sdk — don't duplicate
-  it here.
+  journey, plus the pay-per-process Stripe checkout. The suite runs in Stripe mode (the whole
+  suite on the Stripe sandbox) when `INTEGRATION_STRIPE_SECRET_KEY` and
+  `INTEGRATION_STRIPE_PUBLIC_KEY` are set; without them the checkout spec skips. See
+  `integration/README.md`. The generic voting lifecycle is covered upstream in integrator-sdk —
+  don't duplicate it here.
 - While the stack is up, every email the backend sends is browsable at `localhost:8025`. This is
   the practical way to debug 2FA/verification flows by hand.
 - Prefer structural selectors (`name`, `data-value`, `button[type="submit"]`) over translated

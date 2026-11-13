@@ -1,32 +1,22 @@
-import {
-  Badge,
-  Box,
-  chakra,
-  HStack,
-  Icon,
-  Input,
-  InputGroup,
-  Spinner,
-  Text,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
-} from '@chakra-ui/react'
+import { Box, chakra, HStack, Icon, Input, InputGroup, Text } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
 import { TFunction } from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCircleHelp, LuSearch } from 'react-icons/lu'
+import { HelpIcon, SearchIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { SidebarSubtitle } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
+import { EmptyState } from '~components/ui/EmptyState'
+import { InlineLoader } from '~components/ui/Loader'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import {
   isParticipantLookupField,
   ProcessParticipantEntry,
   ProcessParticipantLookupField,
   useProcessParticipants,
 } from '~queries/participants'
+import { Tooltip } from '~components/ui/Tooltip'
 
 // Maps a census credential field to a human label. Unknown fields fall back to their raw key.
 const fieldLabel = (t: TFunction, field: string) => {
@@ -92,19 +82,19 @@ const VotedBadge = ({ participant }: { participant: ProcessParticipantEntry }) =
 
   if (voted > 0 && voted < total) {
     return (
-      <Badge colorPalette='orange' flexShrink={0}>
+      <StatusBadge colorPalette='warning' flexShrink={0}>
         {t('census.search.voted_partial', { defaultValue: 'Voted {{voted}}/{{total}}', voted, total })}
-      </Badge>
+      </StatusBadge>
     )
   }
 
   const hasVoted = total > 0 && voted === total
   return (
-    <Badge colorPalette={hasVoted ? 'green' : 'gray'} flexShrink={0}>
+    <StatusBadge colorPalette={hasVoted ? 'success' : 'gray'} flexShrink={0}>
       {hasVoted
         ? t('census.search.voted', { defaultValue: 'Voted' })
         : t('census.search.not_voted', { defaultValue: 'Not voted' })}
-    </Badge>
+    </StatusBadge>
   )
 }
 
@@ -145,25 +135,25 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
   })
 
   return (
-    // pt mirrors the sidebar-subtitle's top padding for separation from the section above; the subtitle's
-    // own py is zeroed so the title→description gap matches the uniform gap between the other items.
-    <Box display='flex' flexDirection='column' gap={3} pt={4}>
-      <HStack gap={1} alignItems='center'>
-        <SidebarSubtitle py={0}>
+    // pt mirrors SidebarSubtitle's top padding (heading `subsection`) for separation from the section above;
+    // the subtitle's own py is zeroed so the title→description gap matches the uniform gap between the other items.
+    <Box display='flex' flexDirection='column' gap='3' pt='4'>
+      <HStack gap='1' alignItems='center'>
+        <SidebarSubtitle py='0'>
           <Trans i18nKey='census.search.title'>Check participants</Trans>
         </SidebarSubtitle>
-        <TooltipRoot positioning={{ placement: 'top' }}>
-          <TooltipTrigger asChild>
-            <chakra.span display='inline-flex' alignItems='center' cursor='default' color='fg.muted' opacity={0.5}>
-              <Icon as={LuCircleHelp} boxSize={3} />
-            </chakra.span>
-          </TooltipTrigger>
-          <TooltipPositioner>
-            <TooltipContent maxW='16rem'>{memberbaseNote}</TooltipContent>
-          </TooltipPositioner>
-        </TooltipRoot>
+        <Tooltip
+          portalled={false}
+          positioning={{ placement: 'top' }}
+          content={memberbaseNote}
+          contentProps={{ maxW: '64' }}
+        >
+          <chakra.span display='inline-flex' alignItems='center' cursor='[default]' color='fg.muted' opacity='dimmed'>
+            <Icon as={HelpIcon} boxSize='icon.sm' />
+          </chakra.span>
+        </Tooltip>
       </HStack>
-      <Text fontSize='sm' color='texts.subtle'>
+      <Text textStyle='body-sm' color='fg.muted'>
         <Trans i18nKey='census.search.description'>
           Look up a voter by their credentials to check whether they are in the census and if they have already voted.
         </Trans>
@@ -182,7 +172,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
         onChange={(option: { value: ProcessParticipantLookupField } | null) => option && setFieldName(option.value)}
         aria-label={t('census.search.field_selector', { defaultValue: 'Search field' })}
       />
-      <InputGroup endElement={<Icon as={LuSearch} color='fg.muted' />}>
+      <InputGroup endElement={<Icon as={SearchIcon} color='fg.muted' />}>
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -194,37 +184,40 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
       {hasSearch && (
         <Box>
           {isError ? (
-            <Text fontSize='sm' color='red.500'>
+            <Text textStyle='body-sm' color='status.error.fg'>
               {getApiErrorMessage(error) ?? t('census.search.error', { defaultValue: 'Could not search the census.' })}
             </Text>
           ) : isLoading && !data ? (
-            <HStack gap={2}>
-              <Spinner size='sm' />
-              <Text fontSize='sm' color='texts.subtle'>
+            <HStack gap='2'>
+              <InlineLoader />
+              <Text textStyle='body-sm' color='fg.muted'>
                 <Trans i18nKey='census.search.loading'>Searching census…</Trans>
               </Text>
             </HStack>
           ) : participants.length === 0 ? (
-            <Text fontSize='sm' color='texts.subtle'>
-              <Trans i18nKey='census.search.no_results'>
-                There is no one in the census matching those credentials.
-              </Trans>
-            </Text>
+            <EmptyState
+              size='sm'
+              title={
+                <Trans i18nKey='census.search.no_results'>
+                  There is no one in the census matching those credentials.
+                </Trans>
+              }
+            />
           ) : (
-            <Box maxH='240px' overflowY='auto' display='flex' flexDirection='column' gap={3}>
+            <Box maxH='60' overflowY='auto' display='flex' flexDirection='column' gap='3'>
               {participants.map((participant) => (
                 <Box
                   key={participant.memberId}
                   display='flex'
                   justifyContent='space-between'
                   alignItems='center'
-                  gap={2}
+                  gap='2'
                 >
-                  <Box minW={0}>
-                    <Text fontSize='sm' fontWeight='bold' truncate>
+                  <Box minW='0'>
+                    <Text textStyle='body-sm' fontWeight='bold' truncate>
                       {[participant.name, participant.surname].filter(Boolean).join(' ')}
                     </Text>
-                    <Text fontSize='sm' color='texts.subtle' truncate>
+                    <Text textStyle='body-sm' color='fg.muted' truncate>
                       {valueForField(participant, selectedField, debouncedSearch.trim())}
                     </Text>
                   </Box>

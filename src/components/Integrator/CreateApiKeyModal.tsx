@@ -1,13 +1,14 @@
 import {
   Alert,
-  Box,
   Button,
+  Card,
   Checkbox,
   Clipboard,
-  CloseButton,
   Code,
   Dialog,
-  Field,
+  FieldRoot as FormControl,
+  FieldHelperText as FormHelperText,
+  FieldLabel as FormLabel,
   Fieldset,
   Icon,
   Input,
@@ -15,10 +16,12 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { useState } from 'react'
 import { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
-import { LuKey } from 'react-icons/lu'
+import { KeyIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { API_KEY_SCOPES, CreatedApiKey, useCreateApiKey } from '~src/queries/integrators'
@@ -118,11 +121,11 @@ export const CreateApiKeyButton = () => {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={(e) => (e.open ? setOpen(true) : close())} placement='center' size='lg'>
+    <Dialog.Root open={open} onOpenChange={(e) => (e.open ? setOpen(true) : close())} size='lg'>
       <Dialog.Trigger asChild>
         {/* Creating scopes the request to the active org, so keep it shut until one is selected. */}
         <Button size='sm' disabled={!currentAddress}>
-          <Icon as={LuKey} />
+          <Icon as={KeyIcon} />
           {t('integrators.api_keys.create', { defaultValue: 'Create API key' })}
         </Button>
       </Dialog.Trigger>
@@ -133,18 +136,18 @@ export const CreateApiKeyButton = () => {
             <Dialog.CloseTrigger asChild>
               <CloseButton />
             </Dialog.CloseTrigger>
-            <Dialog.Header>
-              <Dialog.Title>
-                {created
+            <DialogHeader
+              title={
+                created
                   ? t('integrators.api_keys.created_title', { defaultValue: 'API key created' })
-                  : t('integrators.api_keys.create', { defaultValue: 'Create API key' })}
-              </Dialog.Title>
-            </Dialog.Header>
+                  : t('integrators.api_keys.create', { defaultValue: 'Create API key' })
+              }
+            />
 
             {created ? (
               <>
                 <Dialog.Body>
-                  <Stack gap={4}>
+                  <Stack gap='4'>
                     <Alert.Root status='warning'>
                       <Alert.Indicator />
                       <Alert.Content>
@@ -159,7 +162,7 @@ export const CreateApiKeyButton = () => {
                       </Alert.Content>
                     </Alert.Root>
                     <Clipboard.Root value={created.secret}>
-                      <Box borderWidth='1px' borderRadius='md' p={3} display='flex' alignItems='center' gap={3}>
+                      <Card.Root variant='section' size='sm' flexDirection='row' alignItems='center' gap='3'>
                         <Code flex='1' overflowX='auto' whiteSpace='nowrap'>
                           {created.secret}
                         </Code>
@@ -169,7 +172,7 @@ export const CreateApiKeyButton = () => {
                             {t('integrators.api_keys.copy', { defaultValue: 'Copy' })}
                           </Button>
                         </Clipboard.Trigger>
-                      </Box>
+                      </Card.Root>
                     </Clipboard.Root>
                   </Stack>
                 </Dialog.Body>
@@ -180,27 +183,27 @@ export const CreateApiKeyButton = () => {
             ) : (
               <>
                 <Dialog.Body>
-                  <Stack gap={4}>
+                  <Stack gap='4'>
                     {error && (
                       <Alert.Root status='error'>
                         <Alert.Indicator />
                         <Alert.Title>{error}</Alert.Title>
                       </Alert.Root>
                     )}
-                    <Field.Root required>
-                      <Field.Label>{t('integrators.api_keys.label', { defaultValue: 'Label' })}</Field.Label>
+                    <FormControl required>
+                      <FormLabel>{t('integrators.api_keys.label', { defaultValue: 'Label' })}</FormLabel>
                       <Input
                         placeholder={t('integrators.api_keys.label_placeholder', { defaultValue: 'e.g. CI pipeline' })}
                         value={label}
                         onChange={(e) => setLabel(e.target.value)}
                       />
-                    </Field.Root>
+                    </FormControl>
 
                     <Fieldset.Root>
                       <Fieldset.Legend>
                         {t('integrators.api_keys.scopes_legend', { defaultValue: 'Scopes' })}
                       </Fieldset.Legend>
-                      <Stack gap={2} mt={1}>
+                      <Stack gap='2' mt='1'>
                         {API_KEY_SCOPES.map((scope) => {
                           const meta = scopeMeta(scope, t)
                           return (
@@ -215,7 +218,7 @@ export const CreateApiKeyButton = () => {
                                 <Text as='span' fontWeight='medium'>
                                   {meta.label}
                                 </Text>
-                                <Text as='span' color='texts.subtle' fontSize='sm'>
+                                <Text as='span' color='fg.muted' textStyle='body-sm'>
                                   {' '}
                                   — {meta.description}
                                 </Text>
@@ -226,21 +229,19 @@ export const CreateApiKeyButton = () => {
                       </Stack>
                     </Fieldset.Root>
 
-                    <Field.Root>
-                      <Field.Label>
-                        {t('integrators.api_keys.expiry', { defaultValue: 'Expiry (optional)' })}
-                      </Field.Label>
+                    <FormControl>
+                      <FormLabel>{t('integrators.api_keys.expiry', { defaultValue: 'Expiry (optional)' })}</FormLabel>
                       <Input type='date' value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
-                      <Field.HelperText>
+                      <FormHelperText>
                         {t('integrators.api_keys.expiry_help', {
                           defaultValue: 'Leave empty for a key that never expires.',
                         })}
-                      </Field.HelperText>
-                    </Field.Root>
+                      </FormHelperText>
+                    </FormControl>
                   </Stack>
                 </Dialog.Body>
                 <Dialog.Footer>
-                  <Button variant='ghost' onClick={close}>
+                  <Button variant='outline' onClick={close}>
                     {t('cancel', { defaultValue: 'Cancel' })}
                   </Button>
                   <Button onClick={onSubmit} loading={create.isPending}>

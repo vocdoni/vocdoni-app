@@ -6,7 +6,7 @@ const OrganizationEdit = () => {
   const { isLoading, isError, error } = useSaasAccount()
 
   return (
-    <QueryDataLayout isLoading={isLoading} isError={isError} error={error}>
+    <QueryDataLayout loading={isLoading} isError={isError} error={error}>
       <EditOrganization />
     </QueryDataLayout>
   )

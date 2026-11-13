@@ -16,7 +16,8 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuGripVertical, LuPlus, LuX } from 'react-icons/lu'
+import { DragHandle } from '~components/ui/DragHandle'
+import { AddIcon, CloseIcon, DragHandleIcon } from '~theme/icons'
 import { SelectorTypes } from '../common'
 
 const SimpleQuestionEditor = ({
@@ -41,7 +42,7 @@ const SimpleQuestionEditor = ({
   const cardStyles = choiceRecipe({ context: 'plain', layout: 'list' })
 
   return (
-    <VStack align='stretch' gap={2}>
+    <VStack align='stretch' gap='2'>
       {questionOptions.map((field, optionIndex) => (
         <SortableOption
           key={field.id}
@@ -64,8 +65,8 @@ const SimpleQuestionEditor = ({
         onClick={() => append({ option: '' })}
         alignSelf='flex-start'
       >
-        <HStack gap={2}>
-          <Icon as={LuPlus} />
+        <HStack gap='2'>
+          <Icon as={AddIcon} />
           <Text as='span'>
             <Trans i18nKey='process_create.new_option'>Add option</Trans>
           </Text>
@@ -101,21 +102,13 @@ const SortableOption = ({
       <Box css={cardStyles.wrapper} data-choice-card data-layout='list'>
         {/* Drag handle for options */}
         {fieldsLength > 1 && (
-          <Box
-            {...attributes}
-            {...listeners}
-            cursor={isDragging ? 'grabbing' : 'grab'}
-            display='flex'
-            alignItems='center'
-            color='fg.subtle'
-            _hover={{ color: 'fg.muted' }}
-          >
-            <Icon as={LuGripVertical} size='sm' />
-          </Box>
+          <DragHandle {...attributes} {...listeners} placement='center' dragging={isDragging}>
+            <Icon as={DragHandleIcon} boxSize='icon.sm' />
+          </DragHandle>
         )}
 
         {questionType === SelectorTypes.Single ? (
-          <Box data-choice-control boxSize={4} border='1px solid' borderColor='border.emphasized' borderRadius='full' />
+          <Box data-choice-control boxSize={4} border='sm' borderColor='border.emphasized' borderRadius='full' />
         ) : (
           <Checkbox.Root checked={false} readOnly tabIndex={-1}>
             <Checkbox.HiddenInput />
@@ -146,7 +139,7 @@ const SortableOption = ({
             size='sm'
             variant='ghost'
           >
-            <Icon as={LuX} />
+            <Icon as={CloseIcon} />
           </IconButton>
         )}
       </Box>

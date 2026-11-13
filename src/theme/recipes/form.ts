@@ -1,47 +1,40 @@
-import { defineRecipe, defineSlotRecipe } from '@chakra-ui/react'
+import { defineRecipe, defineSlotRecipe, defineStyle } from '@chakra-ui/react'
 import { switchAnatomy } from '@chakra-ui/react/anatomy'
 
-export const formLabel = defineRecipe({
-  base: {
-    fontSize: 'sm',
-    fontWeight: 'normal',
-  },
-})
-
-const baseStyle = {
+const baseStyle = defineStyle({
   textStyle: 'md',
   _placeholder: {
     color: 'input.placeholder',
     textStyle: 'md',
   },
-}
+})
 
-const xxl = {
+const xxl = defineStyle({
   textStyle: '2xl',
   _placeholder: {
     textStyle: '2xl',
   },
-}
+})
 
 // iOS Safari auto-zooms focused inputs with a font-size below 16px; keep base at
 // `md` (16px) on mobile and restore the compact `sm` (14px) look from `md` up.
 // Set at variant level so it overrides Chakra's default size variants (textStyle `sm`).
-const mobileSafeFontSize = {
+const mobileSafeFontSize = defineStyle({
   fontSize: { base: 'md', md: 'sm' },
   _placeholder: {
     fontSize: { base: 'md', md: 'sm' },
   },
-}
+})
 
-const sm = {
+const sm = defineStyle({
   borderRadius: 'sm',
   ...mobileSafeFontSize,
-}
+})
 
-const md = {
+const md = defineStyle({
   borderRadius: 'sm',
   ...mobileSafeFontSize,
-}
+})
 
 export const input = defineRecipe({
   base: baseStyle,
@@ -52,9 +45,9 @@ export const input = defineRecipe({
       '2xl': xxl,
     },
     variant: {
-      borderless: {
-        border: 'none',
-        px: 0,
+      inline: {
+        border: '[none]',
+        px: '0',
         bg: 'transparent',
       },
     },
@@ -75,9 +68,9 @@ export const textarea = defineRecipe({
       md: mobileSafeFontSize,
     },
     variant: {
-      borderless: {
-        border: 'none',
-        px: 0,
+      inline: {
+        border: '[none]',
+        px: '0',
       },
     },
   },
@@ -85,17 +78,14 @@ export const textarea = defineRecipe({
 
 export const switchRecipe = defineSlotRecipe({
   slots: switchAnatomy.keys(),
-  base: {
-    control: {
-      _focusVisible: {
-        _dark: {
-          boxShadow: '0 0 0 2px {colors.gray.400}',
+  variants: {
+    variant: {
+      // Chakra's `solid` paints the thumb white in both modes.
+      solid: {
+        thumb: {
+          bg: 'switch.thumb',
+          _checked: { bg: 'switch.thumb.checked' },
         },
-      },
-    },
-    thumb: {
-      _dark: {
-        bg: 'colorPalette.600',
       },
     },
   },

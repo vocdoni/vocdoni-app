@@ -1,4 +1,6 @@
-import { Button, ButtonProps, CloseButton, Dialog, Flex, HStack, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Dialog, Flex, HStack, Text } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -52,7 +54,7 @@ const InviteForm = ({ writersFull }: { writersFull: boolean }) => {
 
   return (
     <FormProvider {...methods}>
-      <Flex as='form' onSubmit={methods.handleSubmit(onSubmit)} flexDirection='column' gap={6}>
+      <Flex as='form' onSubmit={methods.handleSubmit(onSubmit)} flexDirection='column' gap='6'>
         <InputBasic
           formValue='email'
           label={t('email')}
@@ -66,7 +68,7 @@ const InviteForm = ({ writersFull }: { writersFull: boolean }) => {
           helper={writersFull ? teamWriterLimitMessage(t) : undefined}
           isOptionDisabled={(option: SelectOptionType) => writersFull && isWriterRole(option.value)}
         />
-        <Flex justifyContent='flex-end' gap={2}>
+        <Flex justifyContent='flex-end' gap='2'>
           <Dialog.ActionTrigger asChild>
             <Button colorPalette='gray' variant='outline'>
               <Trans i18nKey='cancel'>Cancel</Trans>
@@ -101,7 +103,7 @@ export const InviteToTeamModal = ({
       <Dialog.Trigger asChild>
         <Button {...props} loading={isLoading} loadingText={t('loading')}>
           {leftIcon ? (
-            <HStack gap={2}>
+            <HStack gap='2'>
               {leftIcon}
               <Text as='span'>{children}</Text>
             </HStack>
@@ -111,21 +113,19 @@ export const InviteToTeamModal = ({
         </Button>
       </Dialog.Trigger>
       <Dialog.Backdrop />
-      <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
+      <Dialog.Positioner>
         <Dialog.Content maxW='xl'>
           <Dialog.CloseTrigger asChild>
             <CloseButton size='sm' />
           </Dialog.CloseTrigger>
-          <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap={1}>
-            <Dialog.Title>
-              <Trans i18nKey='invite.title'>Add team member</Trans>
-            </Dialog.Title>
-            <Text variant='subheader'>
+          <DialogHeader
+            title={<Trans i18nKey='invite.title'>Add team member</Trans>}
+            description={
               <Trans i18nKey='invite.subtitle'>
                 Send an invitation to join your organization. They'll receive an email with instructions.
               </Trans>
-            </Text>
-          </Dialog.Header>
+            }
+          />
           <Dialog.Body>
             <InviteForm writersFull={writersFull} />
           </Dialog.Body>

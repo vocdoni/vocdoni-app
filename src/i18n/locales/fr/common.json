@@ -150,7 +150,6 @@
   "color_mode_switcher": "Changer de mode d'affichage",
   "common": {
     "back": "Retour",
-    "close_drawer": "Fermer le panneau",
     "home": "Accueil",
     "retry": "Réessayer"
   },
@@ -399,6 +398,7 @@
       "password_min_length": "8 caractères minimum",
       "required": "Ce champ est obligatoire"
     },
+    "hide_password": "Masquer le mot de passe",
     "member": {
       "error": {
         "invalid_birth_date": "La date de naissance ne peut pas être dans le futur",
@@ -414,6 +414,7 @@
       "success_title": "Processus de vote créé avec succès"
     },
     "select_language": "Langue",
+    "show_password": "Afficher le mot de passe",
     "support": {
       "billing_issue": "Problème de facturation",
       "custom_request": "Demande personnalisée",
@@ -774,10 +775,8 @@
       "weight": "Poids du vote"
     },
     "list": {
-      "empty": "Aucun membre trouvé",
       "empty_description": "Ajoutez votre premier membre pour commencer.",
       "error": "Impossible de charger les membres",
-      "no_search_results": "Aucun membre ne correspond à votre recherche",
       "no_search_results_description": "Essayez d'ajuster vos termes de recherche."
     },
     "table": {
@@ -808,7 +807,6 @@
       "bulk_delete": "Supprimer",
       "cancel": "Annuler",
       "clear_sort": "Annuler le tri",
-      "close_drawer": "Fermer",
       "create_group": "Créer un groupe",
       "create_group_error": "Erreur lors de la création du groupe",
       "create_group_form_description": "Créez un nouveau groupe à partir des membres sélectionnés. Cela les organisera pour les futurs processus de vote.",
@@ -862,7 +860,8 @@
     "dashboard": "Dashboard",
     "expand": "Développer le menu",
     "login": "Connexion",
-    "open": "Ouvrir le menu"
+    "open": "Ouvrir le menu",
+    "title": "Menu"
   },
   "name": "Nom",
   "need_help": {
@@ -1209,6 +1208,7 @@
     },
     "voters": "Électeurs",
     "voting": "Nous traitons votre vote. Cela prendra quelques secondes. Veuillez ne pas fermer ni actualiser cette page.",
+    "voting_label": "Envoi de votre vote",
     "voting_method": {
       "approval": "Approbation",
       "budget": "Allocation budgétaire",
@@ -1467,12 +1467,8 @@
     }
   },
   "processes": {
-    "empty": "Aucun processus de vote trouvé",
-    "empty_description": "Créez un processus de vote pour commencer.",
     "load_error": "Impossible de charger les processus de vote",
-    "load_error_description": "Réessayez.",
-    "no_results": "Aucun résultat pour ce filtre",
-    "no_results_description": "Essayez d'ajuster vos filtres."
+    "load_error_description": "Réessayez."
   },
   "profile": {
     "error": "Échec de la mise à jour du profil",

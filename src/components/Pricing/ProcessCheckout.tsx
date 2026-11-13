@@ -1,4 +1,6 @@
-import { Alert, Button, Flex, HStack, IconButton, Separator, Spinner, Text, VStack } from '@chakra-ui/react'
+import { Alert, Button, Card, Flex, HStack, IconButton, Separator, Text, VStack } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
+import { InlineLoader, ListLoader } from '~components/ui/Loader'
 import {
   BillingAddressElement,
   CheckoutElementsProvider,
@@ -8,7 +10,7 @@ import {
 } from '@stripe/react-stripe-js/checkout'
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowLeft } from 'react-icons/lu'
+import { BackIcon } from '~theme/icons'
 import { useHref } from 'react-router'
 import { ApiErrorCode, isApiError, JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
 import type { ProcessCheckoutResponse } from '@vocdoni/api-types'
@@ -282,7 +284,7 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
                 'A top-up for this voting process is still open, so it cannot be published yet. Resume the payment to finish it, or cancel it and publish from your wallet.',
             })}
           </Outcome>
-          <HStack gap={3} wrap='wrap'>
+          <HStack gap='3' wrap='wrap'>
             <Button onClick={() => setStep({ name: 'opening' })}>
               {t('process.checkout.resume', { defaultValue: 'Resume payment' })}
             </Button>
@@ -379,8 +381,8 @@ export const ProcessCheckout = ({ processId, start, onPublished, onClose }: Proc
 }
 
 const Waiting = ({ children }: { children?: ReactNode }) => (
-  <Flex direction='column' align='center' gap={4} py={10} textAlign='center' role='status'>
-    <Spinner size='lg' />
+  <Flex direction='column' align='center' gap='4' py='10' textAlign='center' role='status'>
+    <InlineLoader />
     {children && <Text>{children}</Text>}
   </Flex>
 )
@@ -394,7 +396,7 @@ const Outcome = ({
   action?: ReactNode
   children: ReactNode
 }) => (
-  <VStack align='stretch' gap={4}>
+  <VStack align='stretch' gap='4'>
     <Alert.Root status={status}>
       <Alert.Indicator />
       <Alert.Content>
@@ -408,14 +410,12 @@ const Outcome = ({
 const Frame = ({ title, onBack, children }: { title: string; onBack: () => void; children: ReactNode }) => {
   const { t } = useTranslation()
   return (
-    <VStack align='stretch' gap={5}>
-      <Flex align='center' gap={2}>
+    <VStack align='stretch' gap='5'>
+      <Flex align='center' gap='2'>
         <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={onBack} variant='ghost' size='sm'>
-          <LuArrowLeft />
+          <BackIcon />
         </IconButton>
-        <Text fontSize='lg' fontWeight='bold'>
-          {title}
-        </Text>
+        <SectionHeader title={title} />
       </Flex>
       {children}
     </VStack>
@@ -481,7 +481,7 @@ const CheckoutStep = ({
 }
 
 const SummaryRow = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
-  <Flex justify='space-between' gap={4}>
+  <Flex justify='space-between' gap='4'>
     <Text fontWeight={bold ? 'bold' : undefined}>{label}</Text>
     <Text fontWeight={bold ? 'bold' : undefined}>{value}</Text>
   </Flex>
@@ -508,11 +508,7 @@ const CheckoutFormFields = ({
   const [error, setError] = useState<string | null>(null)
 
   if (checkoutState.type === 'loading') {
-    return (
-      <Flex justify='center' py={8}>
-        <Spinner />
-      </Flex>
-    )
+    return <ListLoader />
   }
 
   if (checkoutState.type === 'error') {
@@ -555,8 +551,8 @@ const CheckoutFormFields = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <VStack align='stretch' gap={5}>
-        <VStack align='stretch' gap={3} p={5} borderWidth={1} borderRadius='md' bg='card.bg'>
+      <VStack align='stretch' gap='5'>
+        <Card.Root variant='section' size='md' gap='3'>
           {shortfall ? (
             <SummaryRow
               label={t('process.checkout.shortfall', { defaultValue: 'Shortfall (VAT excluded)' })}
@@ -596,11 +592,11 @@ const CheckoutFormFields = ({
             </>
           )}
           {restStaysInWallet && (
-            <Text fontSize='sm' color='fg.muted'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('process.checkout.rest_stays', { defaultValue: 'The rest stays in your wallet.' })}
             </Text>
           )}
-        </VStack>
+        </Card.Root>
 
         <BillingAddressElement options={{ display: { name: 'split' } }} />
         <TaxIdElement options={{ visibility: 'auto' }} />

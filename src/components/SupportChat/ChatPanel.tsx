@@ -1,8 +1,8 @@
-import { Box, Button, CloseButton, Flex, Icon, IconButton, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Flex, Icon, IconButton, Text, Textarea } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { Fragment, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuCalendar, LuCheck, LuHeadset, LuSend } from 'react-icons/lu'
-import { MdOutlineWhatsapp } from 'react-icons/md'
+import { CalendarIcon, CheckIcon, SendIcon, SupportIcon, WhatsappIcon } from '~theme/icons'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { useAppEnv } from '~src/app-env'
 import { MessageBubble, TypingIndicator } from './Messages'
@@ -19,18 +19,18 @@ const ContactActionsRow = () => {
   return (
     <Flex
       alignSelf='flex-start'
-      gap={2}
+      gap='2'
       flexWrap='wrap'
-      animationName='slide-from-bottom, fade-in'
+      animationName='[slide-from-bottom, fade-in]'
       animationDuration='fast'
-      _motionReduce={{ animation: 'none' }}
+      _motionReduce={{ animation: '[none]' }}
     >
       {CALCOM_EVENT_SLUG && (
         <BookerModalButton
           size='xs'
           variant='outline'
           colorPalette='gray'
-          leftIcon={<Icon as={LuCalendar} boxSize={3.5} />}
+          leftIcon={<Icon as={CalendarIcon} boxSize='icon.sm' />}
         >
           {t('support_chat.book_call', { defaultValue: 'Book a call' })}
         </BookerModalButton>
@@ -38,7 +38,7 @@ const ContactActionsRow = () => {
       {phoneNumber && (
         <Button asChild size='xs' variant='outline' colorPalette='gray'>
           <a href={`https://wa.me/${phoneNumber}`} target='_blank' rel='noopener noreferrer'>
-            <Icon as={MdOutlineWhatsapp} boxSize={3.5} />
+            <Icon as={WhatsappIcon} boxSize='icon.sm' />
             {t('support_chat.whatsapp', { defaultValue: 'Chat on WhatsApp' })}
           </a>
         </Button>
@@ -114,11 +114,11 @@ export const ChatPanel = ({
       aria-label={t('support_chat.header_title', { defaultValue: 'Vocdoni Support' })}
       direction='column'
       w='sm'
-      maxW='calc(100vw - 2rem)'
-      maxH='min(560px, calc(100dvh - 8rem))'
+      maxW='[calc(100vw - {sizes.8})]'
+      maxH='[min(560px, calc(100dvh - 8rem))]'
       borderRadius='2xl'
-      boxShadow='xl'
-      border='1px solid'
+      boxShadow='shadow.floating.panel'
+      border='sm'
       borderColor='border'
       bg='bg.panel'
       overflow='hidden'
@@ -128,15 +128,23 @@ export const ChatPanel = ({
         }
       }}
     >
-      <Flex align='center' gap={3} px={4} py={3} borderBottomWidth='1px' borderColor='border' bg='dashboard.menu'>
-        <Flex align='center' justify='center' w='38px' h='38px' borderRadius='full' bg='bg.emphasized' flexShrink={0}>
-          <Icon as={LuHeadset} boxSize={5} />
+      <Flex align='center' gap='3' px='4' py='3' borderBottomWidth='[1px]' borderColor='border' bg='dashboard.menu'>
+        <Flex
+          align='center'
+          justify='center'
+          w='[38px]'
+          h='[38px]'
+          borderRadius='full'
+          bg='bg.emphasized'
+          flexShrink={0}
+        >
+          <Icon as={SupportIcon} boxSize='icon.md' />
         </Flex>
-        <Box flex='1' minW={0}>
-          <Text fontWeight='bold' fontSize='sm' truncate>
+        <Box flex='1' minW='0'>
+          <Text fontWeight='bold' textStyle='body-sm' truncate>
             {t('support_chat.header_title', { defaultValue: 'Vocdoni Support' })}
           </Text>
-          <Text fontSize='xs' color='fg.muted' truncate>
+          <Text textStyle='caption' color='fg.muted' truncate>
             {t('support_chat.header_subtitle', { defaultValue: "We'll get back to you by email" })}
           </Text>
         </Box>
@@ -149,11 +157,11 @@ export const ChatPanel = ({
 
       <Flex
         direction='column'
-        gap={2}
-        px={4}
-        py={4}
+        gap='2'
+        px='4'
+        py='4'
         flex='1'
-        minH='240px'
+        minH='60'
         overflowY='auto'
         aria-live='polite'
         aria-label={t('support_chat.messages_label', { defaultValue: 'Support conversation' })}
@@ -176,13 +184,13 @@ export const ChatPanel = ({
       {showSendHint && !isSent && (
         <Text
           role='status'
-          px={4}
-          pb={1}
+          px='4'
+          pb='1'
           fontSize='xs'
           color='fg.muted'
           animationName='fade-in'
           animationDuration='fast'
-          _motionReduce={{ animation: 'none' }}
+          _motionReduce={{ animation: '[none]' }}
         >
           {t('support_chat.send_hint', {
             defaultValue: "When you're done, send with the send button or {{shortcut}}.",
@@ -192,12 +200,12 @@ export const ChatPanel = ({
       )}
 
       {isSent ? (
-        <Flex align='center' justify='space-between' gap={3} px={4} py={3} borderTopWidth='1px' borderColor='border'>
+        <Flex align='center' justify='space-between' gap='3' px='4' py='3' borderTopWidth='[1px]' borderColor='border'>
           {/* role='status' sits on the non-interactive text only — a live region
               must not contain the button next to it */}
-          <Flex role='status' align='center' gap={1.5} fontSize='xs' color='fg.muted' minW={0}>
-            <Icon as={LuCheck} boxSize={3.5} flexShrink={0} />
-            <Text fontSize='xs'>
+          <Flex role='status' align='center' gap='1.5' fontSize='xs' color='fg.muted' minW='0'>
+            <Icon as={CheckIcon} boxSize='icon.sm' flexShrink={0} />
+            <Text textStyle='caption'>
               {t('support_chat.sent_status', { defaultValue: "Request sent — we'll reply by email" })}
             </Text>
           </Flex>
@@ -206,7 +214,7 @@ export const ChatPanel = ({
           </Button>
         </Flex>
       ) : (
-        <Flex align='flex-end' gap={2} px={3} py={3} borderTopWidth='1px' borderColor='border'>
+        <Flex align='flex-end' gap='2' px='3' py='3' borderTopWidth='[1px]' borderColor='border'>
           <Textarea
             ref={inputRef}
             value={draft}
@@ -221,7 +229,7 @@ export const ChatPanel = ({
             aria-label={t('support_chat.input_placeholder', { defaultValue: 'Describe your request…' })}
             autoresize
             rows={1}
-            maxH='120px'
+            maxH='[120px]'
             fontSize='sm'
             borderRadius='xl'
           />
@@ -229,10 +237,9 @@ export const ChatPanel = ({
             aria-label={t('support_chat.send_label', { defaultValue: 'Send message' })}
             onClick={submit}
             disabled={!canSend}
-            borderRadius='full'
             size='sm'
           >
-            <LuSend />
+            <SendIcon />
           </IconButton>
         </Flex>
       )}

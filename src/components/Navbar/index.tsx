@@ -20,9 +20,9 @@ const Navbar = ({
   /** Replaces the Vocdoni logo in the header only — the footer always stays Vocdoni. */
   organizationLogo?: HeaderOrganizationLogo
 }) => (
-  <Flex width='full' py={3} position='relative' justifyContent='space-between' zIndex='topbar' alignItems='center'>
+  <Flex width='full' py='3' position='relative' justifyContent='space-between' zIndex='topbar' alignItems='center'>
     <Logo organization={organizationLogo} />
-    <Flex alignItems='center' gap={2} justifySelf='end'>
+    <Flex alignItems='center' gap='2' justifySelf='end'>
       {showDashboardButton && <DashboardButton />}
       <LanguagesMenu publicLanguageLinks={publicLanguageLinks} />
       <ColorModeSwitcher />
@@ -42,7 +42,7 @@ const DashboardButton = (props?: ButtonProps) => {
   const showAuthenticatedState = mounted && isAuthenticated
 
   return (
-    <Button asChild px={6} {...props}>
+    <Button asChild size='cta' {...props}>
       <RouterAwareLink to={showAuthenticatedState ? generatePath(Routes.dashboard.base) : Routes.auth.signIn}>
         {showAuthenticatedState ? t('menu.dashboard', { defaultValue: 'Dashboard' }) : t('menu.login')}
       </RouterAwareLink>

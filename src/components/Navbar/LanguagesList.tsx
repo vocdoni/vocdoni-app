@@ -14,9 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaGlobeAmericas } from 'react-icons/fa'
-import { LuCheck } from 'react-icons/lu'
-import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon, LanguageIcon } from '~theme/icons'
 import { Select } from '~components/Form/Select'
 import { navigateToPublicLanguage, usePublicLanguageRouting } from '~i18n/usePublicLanguageRouting'
 import { useLanguagesEnv } from '~src/app-env'
@@ -69,7 +67,7 @@ export const LanguagesList = ({
             w='full'
             display='flex'
             justifyContent='start'
-            fontWeight={isSelected ? 'bold' : ''}
+            fontWeight={isSelected ? 'bold' : undefined}
             bg={isSelected ? 'bg.emphasized' : undefined}
             borderRadius='none'
           >
@@ -98,16 +96,16 @@ export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguag
           aria-label={t('form.select_language', { defaultValue: 'Language' })}
           variant='subtle'
           colorPalette='gray'
-          minW='none'
-          gap={1}
+          minW='[none]'
+          gap='1'
           {...props}
         >
-          <Icon as={FaGlobeAmericas} />
-          {isOpen ? <RiArrowUpSLine /> : <RiArrowDownSLine />}
+          <Icon as={LanguageIcon} />
+          {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
         </Button>
       </MenuTrigger>
       <MenuPositioner>
-        <MenuContent minW={16} mt={2} maxH='15rem' overflowY='auto'>
+        <MenuContent minW='16' mt='2' maxH='60' overflowY='auto'>
           <LanguagesList closeOnSelect={true} publicLanguageLinks={publicLanguageLinks} />
         </MenuContent>
       </MenuPositioner>
@@ -128,10 +126,10 @@ const LanguageOptionLabel = ({
   isSelected: boolean
   context?: string
 }) => (
-  <Flex alignItems='center' gap={2} w='full' px={1}>
+  <Flex alignItems='center' gap='2' w='full' px='1'>
     {context === 'menu' && (
-      <Box w='1rem' display='flex' alignItems='center' justifyContent='center'>
-        {isSelected && <Icon as={LuCheck} boxSize='3' />}
+      <Box w='4' display='flex' alignItems='center' justifyContent='center'>
+        {isSelected && <Icon as={CheckIcon} boxSize='icon.sm' />}
       </Box>
     )}
     <Text w='full'>{label}</Text>
@@ -157,7 +155,7 @@ export const LanguageListDashboard = ({ ...props }) => {
 
   return (
     <FormControl w='full' display='flex' justifyContent='space-between' alignItems='center' flexDir='row' {...props}>
-      <FormLabel fontSize={'14px'} m='0'>
+      <FormLabel fontSize='sm' m='0'>
         {t('form.select_language', { defaultValue: 'Language' })}
       </FormLabel>
 

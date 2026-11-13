@@ -1,6 +1,7 @@
 import { Box, HStack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
+import type { StatusBadgeColor } from '~components/ui/StatusBadge'
 import { CodeMethod, PRIVATE_AUTH_FIELDS } from './utils'
 
 export type ProtectionLevel = 'unset' | 'basic' | 'good' | 'strong'
@@ -26,11 +27,11 @@ export const getProtectionLevel = (credentials: readonly string[], codeMethod: C
 
 // Red is kept for what blocks saving (members who can't sign in); a basic but
 // valid configuration is a caution, not an error.
-export const protectionLevelPalettes: Record<ProtectionLevel, string> = {
+export const protectionLevelPalettes: Record<ProtectionLevel, StatusBadgeColor> = {
   unset: 'gray',
-  basic: 'orange',
-  good: 'green',
-  strong: 'green',
+  basic: 'warning',
+  good: 'success',
+  strong: 'success',
 }
 
 const filledSegments: Record<ProtectionLevel, number> = {
@@ -93,26 +94,24 @@ export const ProtectionMeter = ({
 
   return (
     <Box data-level={level}>
-      <HStack gap={2} fontSize='sm' w='full'>
-        <Text fontSize='inherit' color='fg.muted'>
-          {t('voter_auth.protection.label', { defaultValue: 'Protection' })}
-        </Text>
-        <HStack gap={0.5} flex='1' aria-hidden>
+      <HStack gap='2' fontSize='sm' w='full'>
+        <Text color='fg.muted'>{t('voter_auth.protection.label', { defaultValue: 'Protection' })}</Text>
+        <HStack gap='0.5' flex='1' aria-hidden>
           {[0, 1, 2].map((segment) => (
             <Box
               key={segment}
               flex='1'
-              h={1}
+              h='1'
               borderRadius='full'
               bg={segment < filledSegments[level] ? `${palette}.solid` : 'bg.emphasized'}
             />
           ))}
         </HStack>
-        <Text fontSize='inherit' fontWeight='semibold' color={`${palette}.fg`}>
+        <Text fontWeight='semibold' color={`${palette}.fg`}>
           {getProtectionLevelTitle(t, level)}
         </Text>
       </HStack>
-      <Text fontSize='sm' color='fg.muted' mt={1}>
+      <Text textStyle='body-sm' color='fg.muted' mt='1'>
         {getProtectionLevelDescription(t, level, codeMethod)}
       </Text>
     </Box>

@@ -2,7 +2,7 @@ import { Box, Button, HStack, Icon, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuEye } from 'react-icons/lu'
+import { ViewIcon } from '~theme/icons'
 import { getAuthFieldLabel, getContactFieldLabel } from '~components/Process/CSP/fields'
 import { CodeMethod, getCodeTwoFaFields, hasAuthConfig, PASSWORD_CREDENTIAL } from './utils'
 
@@ -35,11 +35,11 @@ const getSampleContact = (t: TFunction, method: CodeMethod) =>
 // locating them by value.
 const FakeInput = ({ children }: { children: string }) => (
   <Box
-    h={9}
-    px={3}
+    h='9'
+    px='3'
     display='flex'
     alignItems='center'
-    borderWidth='1px'
+    borderWidth='hairline'
     borderColor='border'
     borderRadius='l2'
     fontSize='sm'
@@ -51,7 +51,7 @@ const FakeInput = ({ children }: { children: string }) => (
 
 const FakeButton = ({ children }: { children: string }) => (
   <Box
-    h={9}
+    h='9'
     display='flex'
     alignItems='center'
     justifyContent='center'
@@ -70,14 +70,14 @@ const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly strin
   const hasCode = codeMethod !== 'none'
 
   return (
-    <Stack gap={3}>
+    <Stack gap='3'>
       {/* The password comes last, as the real sign-in form asks for it. */}
       {[
         ...credentials.filter((field) => field !== PASSWORD_CREDENTIAL),
         ...credentials.filter((field) => field === PASSWORD_CREDENTIAL),
       ].map((field) => (
         <Box key={field}>
-          <Text fontSize='sm' fontWeight='medium' mb={1.5}>
+          <Text textStyle='body-sm' fontWeight='medium' mb='1.5'>
             {getAuthFieldLabel(t, field)} *
           </Text>
           <FakeInput>{getSampleValue(t, field)}</FakeInput>
@@ -85,29 +85,36 @@ const SignInScreen = ({ credentials, codeMethod }: { credentials: readonly strin
       ))}
       {hasCode && (
         <Box>
-          <Text fontSize='sm' fontWeight='medium' mb={1.5}>
+          <Text textStyle='body-sm' fontWeight='medium' mb='1.5'>
             {getContactFieldLabel(t, getCodeTwoFaFields(codeMethod))} *
           </Text>
           <FakeInput>{getSampleContact(t, codeMethod)}</FakeInput>
-          <Text fontSize='xs' color='fg.muted' mt={1}>
-            <Text as='span' fontSize='inherit' fontWeight='bold'>
+          <Text textStyle='caption' color='fg.muted' mt='1'>
+            <Text as='span' fontWeight='bold'>
               {t('csp.important', { defaultValue: 'Important' })}:
             </Text>{' '}
             {t('csp.contact_match_help', 'Must match the one registered in the system')}
           </Text>
         </Box>
       )}
-      <HStack align='start' gap={1.5} fontSize='xs' color='fg.muted'>
-        <Box boxSize={3} flexShrink={0} mt={0.5} borderWidth='1px' borderColor='border.emphasized' borderRadius='xs' />
+      <HStack align='start' gap='1.5' fontSize='xs' color='fg.muted'>
+        <Box
+          boxSize={3}
+          flexShrink={0}
+          mt='0.5'
+          borderWidth='hairline'
+          borderColor='border.emphasized'
+          borderRadius='xs'
+        />
         {/* Same children as the real form, so the <2>/<6> slots resolve alike. */}
-        <Text fontSize='inherit'>
+        <Text>
           <Trans i18nKey='csp.terms_acceptance'>
             I have read and accept the{' '}
-            <Text as='span' fontSize='inherit' textDecoration='underline'>
+            <Text as='span' textDecoration='underline'>
               Terms and Conditions
             </Text>{' '}
             and the{' '}
-            <Text as='span' fontSize='inherit' textDecoration='underline'>
+            <Text as='span' textDecoration='underline'>
               Privacy Policy
             </Text>
             .
@@ -123,20 +130,20 @@ const CodeScreen = () => {
   const { t } = useTranslation()
 
   return (
-    <Stack gap={3}>
-      <Text fontSize='sm' fontWeight='medium'>
+    <Stack gap='3'>
+      <Text textStyle='body-sm' fontWeight='medium'>
         {t('csp.step1.subtitle', { defaultValue: 'Enter the verification code' })}
       </Text>
-      <HStack gap={1.5}>
+      <HStack gap='1.5'>
         {Array.from({ length: 6 }).map((_, index) => (
-          <Box key={index} flex='1' h={10} borderWidth='1px' borderColor='border' borderRadius='l2' />
+          <Box key={index} flex='1' h='10' borderWidth='hairline' borderColor='border' borderRadius='l2' />
         ))}
       </HStack>
-      <Text fontSize='xs' color='fg.muted'>
+      <Text textStyle='caption' color='fg.muted'>
         <Trans
           i18nKey='csp.step1.resend_text'
           defaults="Didn't receive the code? <resendBtn>Resend it</resendBtn>"
-          components={{ resendBtn: <Text as='span' fontSize='inherit' textDecoration='underline' /> }}
+          components={{ resendBtn: <Text as='span' textDecoration='underline' /> }}
         />
       </Text>
       <FakeButton>{t('csp.authenticate', 'Authenticate')}</FakeButton>
@@ -149,12 +156,12 @@ type Screen = 'signIn' | 'code'
 // Stands in for the form while nothing is chosen: a sign-in screen's shape,
 // without repeating the "choose something" prompt the modal already shows.
 const EmptyScreen = () => (
-  <Stack gap={3} aria-hidden>
-    <Box h={2} w='40%' borderRadius='full' bg='bg.emphasized' />
-    <Box h={9} borderRadius='l2' bg='bg.muted' />
-    <Box h={2} w='55%' borderRadius='full' bg='bg.emphasized' />
-    <Box h={9} borderRadius='l2' bg='bg.muted' />
-    <Box h={9} borderRadius='l2' bg='bg.emphasized' />
+  <Stack gap='3' aria-hidden>
+    <Box h='2' w='2/5' borderRadius='full' bg='bg.emphasized' />
+    <Box h='9' borderRadius='l2' bg='bg.muted' />
+    <Box h='2' w='[55%]' borderRadius='full' bg='bg.emphasized' />
+    <Box h='9' borderRadius='l2' bg='bg.muted' />
+    <Box h='9' borderRadius='l2' bg='bg.emphasized' />
   </Stack>
 )
 
@@ -181,28 +188,26 @@ export const VoterSignInPreview = ({
   useEffect(() => setScreen('signIn'), [configKey])
 
   return (
-    <Stack gap={3} as='section' aria-labelledby='voter-signin-preview-title'>
+    <Stack gap='3' as='section' aria-labelledby='voter-signin-preview-title'>
       {/* Heading and toggle on separate rows: side by side, the heading wrapped
           as soon as the toggle appeared (and sooner in longer languages). */}
-      <Stack gap={2}>
+      <Stack gap='2'>
         {/* Muted, with an icon: a label for this zone, not a third step. On
             phones the fold button above already carries the same words. */}
-        <HStack gap={1.5} color='fg.muted' display={{ base: 'none', md: 'flex' }}>
-          <Icon as={LuEye} boxSize={3.5} />
-          <Text id='voter-signin-preview-title' fontSize='sm' fontWeight='medium' whiteSpace='nowrap'>
+        <HStack gap='1.5' color='fg.muted' display={{ base: 'none', md: 'flex' }}>
+          <Icon as={ViewIcon} boxSize='icon.sm' />
+          <Text id='voter-signin-preview-title' textStyle='body-sm' fontWeight='medium' whiteSpace='nowrap'>
             {t('voter_auth.preview.title', { defaultValue: 'What voters will see' })}
           </Text>
         </HStack>
         {codeMethod !== 'none' && (
-          <HStack gap={0.5} p={0.5} bg='bg.panel' borderWidth='1px' borderColor='border' borderRadius='l2'>
+          <HStack gap='0.5' p='0.5' bg='bg.panel' borderWidth='hairline' borderColor='border' borderRadius='l2'>
             {(['signIn', 'code'] as const).map((value) => (
               <Button
                 key={value}
                 size='xs'
                 flex='1'
-                variant='ghost'
-                bg={visibleScreen === value ? 'bg.emphasized' : undefined}
-                fontWeight={visibleScreen === value ? 'semibold' : 'normal'}
+                variant='segment'
                 aria-pressed={visibleScreen === value}
                 onClick={() => setScreen(value)}
               >
@@ -215,8 +220,8 @@ export const VoterSignInPreview = ({
         )}
       </Stack>
       {/* Raised on the rail's backdrop, like the real dialog over the page. */}
-      <Box borderWidth='1px' borderColor='border' borderRadius='l3' bg='bg.panel' shadow='md' p={5}>
-        <Text fontSize='lg' fontWeight='semibold' mb={4}>
+      <Box borderWidth='hairline' borderColor='border' borderRadius='l3' bg='bg.panel' shadow='md' p='5'>
+        <Text fontSize='lg' fontWeight='semibold' mb='4'>
           {t('csp.step1.title', { defaultValue: 'Authentication' })}
         </Text>
         {!hasConfig ? (

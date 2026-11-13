@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCircleHelp } from 'react-icons/lu'
+import { HelpIcon } from '~theme/icons'
 import { Select } from '~components/Form/Select'
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
 import { Tooltip } from '~components/ui/Tooltip'
@@ -28,16 +28,16 @@ const LabelTooltip = ({ children }: { children: React.ReactNode }) => (
     <Box
       as='span'
       display='inline-flex'
-      ml={1}
-      cursor='help'
-      color='texts.subtle'
+      ml='1'
+      cursor='[help]'
+      color='fg.muted'
       tabIndex={0}
       // This sits inside a <label>: without cancelling the click, tapping the
       // icon to read the tooltip would activate the label's control (and flip
       // the switch below). The tooltip trigger ignores a prevented click.
       onClick={(event) => event.preventDefault()}
     >
-      <Icon as={LuCircleHelp} />
+      <Icon as={HelpIcon} />
     </Box>
   </Tooltip>
 )
@@ -81,7 +81,7 @@ const VoterAnonymity = () => {
               </Switch.Label>
             </Switch.Root>
             {field.value && (
-              <Text fontSize='xs' color='texts.subtle' mt={1}>
+              <Text textStyle='caption' color='fg.muted' mt='1'>
                 {description}
               </Text>
             )}
@@ -112,7 +112,7 @@ export const ExtraConfig = () => {
   ]
 
   return (
-    <VStack align='stretch' gap={4}>
+    <VStack align='stretch' gap='4'>
       {/* Result visibility */}
       <Box>
         <FormControl invalid={!!errors.resultVisibility}>

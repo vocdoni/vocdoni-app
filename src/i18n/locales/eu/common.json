@@ -148,7 +148,6 @@
   "color_mode_switcher": "Aldatu kolore-modua",
   "common": {
     "back": "Atzera",
-    "close_drawer": "Itxi panela",
     "home": "Hasiera",
     "retry": "Berriro saiatu"
   },
@@ -395,6 +394,7 @@
       "password_min_length": "Gut. 8 karaktere",
       "required": "Eremu hau bete beharrekoa da"
     },
+    "hide_password": "Ezkutatu pasahitza",
     "member": {
       "error": {
         "invalid_birth_date": "Jaioteguna ezin da etorkizunean egon",
@@ -410,6 +410,7 @@
       "success_title": "Bozketa-prozesua behar bezala sortu da"
     },
     "select_language": "Hizkuntza",
+    "show_password": "Erakutsi pasahitza",
     "support": {
       "billing_issue": "Fakturazio-arazoa",
       "custom_request": "Eskaera pertsonalizatua",
@@ -763,10 +764,8 @@
       "weight": "Boto-pisua (Pisua)"
     },
     "list": {
-      "empty": "Ez da kiderik aurkitu",
       "empty_description": "Gehitu zure lehen kidea hasiera emateko.",
       "error": "Ezin izan dira kideak kargatu",
-      "no_search_results": "Ez dago zure bilaketarekin bat datorren kiderik",
       "no_search_results_description": "Saiatu bilaketa-terminoak aldatzen."
     },
     "table": {
@@ -792,7 +791,6 @@
       "bulk_delete": "Ezabatu",
       "cancel": "Utzi",
       "clear_sort": "Kendu ordenazioa",
-      "close_drawer": "Itxi",
       "create_group": "Sortu taldea",
       "create_group_error": "Errorea taldea sortzean",
       "create_group_form_description": "Sortu talde berri bat hautatutako kideetatik. Honek antolatuko ditu etorkizuneko boto-emate-prozesuetarako.",
@@ -841,7 +839,8 @@
     "dashboard": "Panela",
     "expand": "Zabaldu menua",
     "login": "Hasi saioa",
-    "open": "Ireki menua"
+    "open": "Ireki menua",
+    "title": "Menua"
   },
   "name": "Izena",
   "need_help": {
@@ -1185,6 +1184,7 @@
     },
     "voters": "Boto-emaileak",
     "voting": "Zure botoa prozesatzen ari gara. Honek segundo batzuk iraungo ditu. Ez itxi edo eguneratu orrialde hau.",
+    "voting_label": "Zure botoa bidaltzen",
     "voting_method": {
       "approval": "Onarpena",
       "budget": "Aurrekontu-esleipena",
@@ -1441,12 +1441,8 @@
     }
   },
   "processes": {
-    "empty": "Ez da bozketa-prozesurik aurkitu",
-    "empty_description": "Sortu bozketa-prozesu bat hasteko.",
     "load_error": "Ezin izan dira bozketa-prozesuak kargatu",
-    "load_error_description": "Saiatu berriro.",
-    "no_results": "Ez dago iragazki honentzat emaitzarik",
-    "no_results_description": "Saiatu iragazkiak doitzen."
+    "load_error_description": "Saiatu berriro."
   },
   "profile": {
     "error": "Errorea profila eguneratzean",

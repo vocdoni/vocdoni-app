@@ -1,8 +1,11 @@
-import { Alert, Box, Link, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
+import { Alert, Box, Link, SimpleGrid, Stat } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuNetwork, LuRocket, LuTerminal } from 'react-icons/lu'
+import { NetworkIcon, RocketIcon, TerminalIcon } from '~theme/icons'
 import { Link as RouterLink } from 'react-router'
-import { DashboardBox, DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardBox, DashboardContents } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
+import { PageLoader } from '~components/ui/Loader'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { useIntegratorInfo } from '~src/queries/integrators'
 import { useWallet, useWalletAccess } from '~src/queries/wallet'
 import { Routes } from '~src/router/routes'
@@ -24,7 +27,7 @@ export const IntegratorOverview = () => {
   if (isLoading) {
     return (
       <DashboardContents>
-        <Spinner />
+        <PageLoader />
       </DashboardContents>
     )
   }
@@ -49,7 +52,7 @@ export const IntegratorOverview = () => {
   const docs = [
     {
       href: 'https://vocdoni.io/developers/docs/quickstart',
-      icon: LuRocket,
+      icon: RocketIcon,
       title: t('integrators.docs.quickstart_title', { defaultValue: 'Quickstart' }),
       description: t('integrators.docs.quickstart_description', {
         defaultValue:
@@ -58,7 +61,7 @@ export const IntegratorOverview = () => {
     },
     {
       href: 'https://vocdoni.io/developers/docs',
-      icon: LuNetwork,
+      icon: NetworkIcon,
       title: t('integrators.docs.api_title', { defaultValue: 'API reference' }),
       description: t('integrators.docs.api_description', {
         defaultValue:
@@ -67,7 +70,7 @@ export const IntegratorOverview = () => {
     },
     {
       href: 'https://vocdoni.io/developers/docs/sdk-quickstart',
-      icon: LuTerminal,
+      icon: TerminalIcon,
       title: t('integrators.docs.sdk_title', { defaultValue: 'SDK' }),
       description: t('integrators.docs.sdk_description', {
         defaultValue:
@@ -78,23 +81,21 @@ export const IntegratorOverview = () => {
 
   return (
     <DashboardContents>
-      <DashboardCardHeader
-        title={t('integrators.overview_title', { defaultValue: 'Overview' })}
-        subtitle={t('integrators.overview_subtitle', {
+      <PageTitle>{t('integrators.overview_title', { defaultValue: 'Overview' })}</PageTitle>
+      <PageSubtitle>
+        {t('integrators.overview_subtitle', {
           defaultValue: 'Your integrator usage and wallet balance.',
         })}
-      />
-      <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+      </PageSubtitle>
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
         {canView && wallet.data && (
-          <DashboardBox gap={3} justifyContent='flex-start'>
-            <Text fontSize='sm' color='texts.subtle' fontWeight='medium'>
-              {t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}
-            </Text>
-            <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
-              {currency(wallet.data.balanceCents, wallet.data.currency?.toUpperCase())}
-            </Text>
-            <Box minH='22px'>
-              <Link asChild fontSize='sm' fontWeight='bold' color='texts.subtle'>
+          <DashboardBox gap='3' justifyContent='flex-start'>
+            <Stat.Root>
+              <Stat.Label>{t('integrators.wallet.balance', { defaultValue: 'Wallet balance' })}</Stat.Label>
+              <Stat.ValueText>{currency(wallet.data.balanceCents, wallet.data.currency?.toUpperCase())}</Stat.ValueText>
+            </Stat.Root>
+            <Box minH='[22px]'>
+              <Link asChild fontSize='sm' fontWeight='bold' color='fg.muted'>
                 <RouterLink to={Routes.integrators.configuration.billing}>
                   {t('integrators.wallet.manage', { defaultValue: 'Manage wallet' })}
                 </RouterLink>
@@ -139,14 +140,15 @@ export const IntegratorOverview = () => {
         )}
       </SimpleGrid>
 
-      <Box mt={8}>
-        <DashboardCardHeader
+      <Box mt='8'>
+        <SectionHeader
           title={t('integrators.docs.title', { defaultValue: 'Documentation' })}
-          subtitle={t('integrators.docs.subtitle', {
+          description={t('integrators.docs.subtitle', {
             defaultValue: 'Guides and references to start building with Vocdoni.',
           })}
+          mb='4'
         />
-        <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap='4'>
           {docs.map((doc) => (
             <DocsCard key={doc.href} {...doc} />
           ))}

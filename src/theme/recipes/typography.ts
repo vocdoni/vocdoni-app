@@ -1,13 +1,8 @@
-import { defineRecipe } from '@chakra-ui/react'
+import { defineRecipe, defineStyle, type SystemStyleObject } from '@chakra-ui/react'
 
-const sidebarTitle = {
-  pt: 4,
-}
-
-const sidebarSubtitle = {
-  py: 4,
-  textTransform: 'capitalize',
-}
+const sectionSubtitle = defineStyle({
+  py: '4',
+})
 
 export const heading = defineRecipe({
   base: {
@@ -15,29 +10,31 @@ export const heading = defineRecipe({
   },
   variants: {
     variant: {
-      header: {
+      heavy: {
         fontWeight: 'extrabold',
       },
-      ['sidebar-title']: sidebarTitle,
-      ['sidebar-subtitle']: sidebarSubtitle,
+      subsection: sectionSubtitle,
     },
   },
 })
 
 export const link = defineRecipe({
   base: {
-    color: 'gray.800',
+    color: 'link.fg',
     textDecoration: 'underline',
     textDecorationThickness: 'from-font',
     textUnderlineOffset: '0.15em',
+    // Repeats the token on purpose: `.dark &` is more specific than a single class, so in dark mode
+    // it beats the palette colour of Chakra's plain/underline variants and of a Button rendering a
+    // Link (`asChild`), as the members CSV template download does.
     _dark: {
-      color: 'gray.400',
+      color: 'link.fg',
       _hover: {
-        color: 'gray.200',
+        color: 'link.fg.hover',
       },
     },
     _hover: {
-      color: 'gray.500',
+      color: 'link.fg.hover',
     },
   },
   variants: {
@@ -48,7 +45,7 @@ export const link = defineRecipe({
       // consistent underline.
       plain: {
         _hover: {
-          textDecorationColor: 'currentColor',
+          textDecorationColor: 'current',
           textUnderlineOffset: '0.15em',
         },
       },
@@ -58,71 +55,100 @@ export const link = defineRecipe({
           textDecoration: 'none',
         },
       },
-      icon: {
+      'icon-button': {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 'sm',
-        minW: '30px',
-        h: '30px',
-        border: '1px solid',
-        cursor: 'pointer',
+        minW: 'control.icon-link',
+        h: 'control.icon-link',
+        border: '[{borderWidths.hairline} solid]',
+        cursor: 'button',
         textDecoration: 'none',
       },
-      footer: {
+      // Grey, underlined only on hover; the hover colour still follows the base.
+      subtle: {
         textDecoration: 'none',
         color: 'fg.muted',
         _hover: {
           textDecoration: 'underline',
         },
       },
-      button: {
+      // A whole row-sized link used as a tile: a centred label with badges laid over its corners.
+      tile: {
+        flexGrow: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        h: '[100px]',
+        borderRadius: 'md',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        boxShadow: 'lg',
+        position: 'relative',
+        // The label keeps the text colour and no underline in every state: the base repeats its colour
+        // under `.dark &` and on hover.
+        color: 'fg',
         textDecoration: 'none',
+        _hover: {
+          color: 'fg',
+          textDecoration: 'none',
+          bgColor: 'link.tile.hover.bg',
+        },
+        _dark: { color: 'fg', _hover: { color: 'fg' } },
+        _active: {
+          transform: 'scale(0.9)',
+        },
+      },
+    },
+    size: {
+      xs: { fontSize: 'xs' },
+      sm: { fontSize: 'sm' },
+    },
+    emphasis: {
+      medium: { fontWeight: 'medium' },
+      strong: { fontWeight: 'bold' },
+    },
+    // The base repeats its colour under `.dark &` and on hover, which beats a plain `color`
+    // in a variant, so a tone sets every state it changes.
+    tone: {
+      // Secondary links (legal notices): grey in every state and mode.
+      muted: {
+        color: 'fg.muted',
+        _hover: { color: 'fg.muted' },
+        _dark: { color: 'fg.muted', _hover: { color: 'fg.muted' } },
+      },
+      // Navigation-style links: text colour, underlined only on hover.
+      quiet: {
+        color: 'fg',
+        textDecoration: 'none',
+        _hover: { color: 'fg', textDecoration: 'underline' },
+        _dark: { color: 'fg', _hover: { color: 'fg' } },
       },
     },
   },
 })
 
-// Line heights are unitless so text keeps proportional spacing even when a
-// consumer overrides fontSize without changing the size variant.
+// Unitless line heights (tokens) keep the spacing proportional when a consumer overrides fontSize.
 const sizes = {
-  xs: {
-    fontSize: '12px',
-    lineHeight: 1.5,
-  },
-  sm: {
-    fontSize: '14px',
-    lineHeight: 1.43,
-  },
-  md: {
-    fontSize: '16px',
-    lineHeight: 1.5,
-  },
-  lg: {
-    fontSize: '18px',
-    lineHeight: 1.56,
-  },
-  xl: {
-    fontSize: '20px',
-    lineHeight: 1.5,
-  },
-  '2xl': {
-    fontSize: '24px',
-    lineHeight: 1.3,
-  },
-}
+  xs: { fontSize: 'xs', lineHeight: 'moderate' },
+  sm: { fontSize: 'sm', lineHeight: 'moderate' },
+  md: { fontSize: 'md', lineHeight: 'moderate' },
+  lg: { fontSize: 'lg', lineHeight: 'moderate' },
+  xl: { fontSize: 'xl', lineHeight: 'moderate' },
+  '2xl': { fontSize: '2xl', lineHeight: 'short' },
+} satisfies Record<string, SystemStyleObject>
 
+// No default size: a Text without one inherits its container's size and line height, as plain text does.
 export const text = defineRecipe({
   variants: {
     size: sizes,
     variant: {
-      subheader: {
-        color: 'texts.subtle',
+      muted: {
+        color: 'fg.muted',
         fontWeight: 'normal',
       },
     },
-  },
-  defaultVariants: {
-    size: 'md',
   },
 })

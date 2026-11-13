@@ -6,16 +6,16 @@ import {
   Flex,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
-  Heading,
   Link,
   Stack,
   Text,
 } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useCallback, useMemo, useState } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuFileSpreadsheet } from 'react-icons/lu'
+import { SpreadsheetIcon } from '~theme/icons'
 import { dropRejectionMessage, useLatestDrop } from '~components/Layout/dropzone'
 import Uploader from '~components/Layout/Uploader'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
@@ -149,9 +149,9 @@ export const MembersCsvManager = () => {
   }, [visibleColumns])
 
   return (
-    <Flex flexDirection='column' gap={4}>
+    <Flex flexDirection='column' gap='4'>
       <Card.Root>
-        <Card.Body display='flex' flexDirection='column' gap={2}>
+        <Card.Body display='flex' flexDirection='column' gap='2'>
           <Text>
             {t('memberbase.importer.included_columns', {
               defaultValue: 'Select columns to include:',
@@ -169,22 +169,22 @@ export const MembersCsvManager = () => {
             ))}
           </CheckboxGroup>
         </Card.Body>
-        <Card.Footer display='flex' flexDirection='column' gap={2}>
-          <Button asChild variant='outline' disabled={!visibleColumns.length} w='100%'>
+        <Card.Footer display='flex' flexDirection='column' gap='2'>
+          <Button asChild variant='outline' disabled={!visibleColumns.length} w='full'>
             <Link
               href={template.url}
               aria-disabled={!visibleColumns.length}
               pointerEvents={visibleColumns.length ? 'auto' : 'none'}
-              variant='button'
+              variant='unstyled'
             >
-              <LuFileSpreadsheet />
+              <SpreadsheetIcon />
               {t('memberbase.importer.download_template_btn', {
                 defaultValue: 'Download Template',
               })}
             </Link>
           </Button>
           {!visibleColumns.length && (
-            <Text fontSize='sm' color='fg.muted' mt={1}>
+            <Text textStyle='body-sm' color='fg.muted' mt='1'>
               {t('memberbase.importer.select_at_least_one_column', {
                 defaultValue: 'Select at least one column to download the template.',
               })}
@@ -200,21 +200,19 @@ export const MembersCsvManager = () => {
         invalid={!!errors?.spreadsheet}
         display={manager?.data.length ? 'none' : 'block'}
       >
-        <Stack gap={4}>
-          <Heading size='md' fontWeight='extrabold'>
-            {t('memberbase.import_file.title', { defaultValue: 'Import File' })}
-          </Heading>
-          <Text color='texts.subtle' fontSize='sm'>
-            {t('memberbase.import_file.subtitle', {
+        <Stack gap='4'>
+          <SectionHeader
+            title={t('memberbase.import_file.title', { defaultValue: 'Import File' })}
+            description={t('memberbase.import_file.subtitle', {
               defaultValue:
                 'Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.',
             })}
-          </Text>
+          />
           <Uploader
             getInputProps={getInputProps}
             getRootProps={getRootProps}
             isDragActive={isDragActive}
-            isLoading={reading}
+            loading={reading}
           />
           <FormErrorMessage display='flex' justifyContent='center'>
             {errors?.spreadsheet?.message?.toString()}

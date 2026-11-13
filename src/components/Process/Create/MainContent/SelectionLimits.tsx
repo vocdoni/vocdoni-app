@@ -35,11 +35,11 @@ const SelectionLimits = ({ index }) => {
   if (questionType === SelectorTypes.Single) return null
 
   return (
-    <DashboardSection p={4} mb={4}>
-      <Text fontWeight='medium' mb={1}>
+    <DashboardSection p='4' mb='4'>
+      <Text fontWeight='medium' mb='1'>
         <Trans i18nKey='process.create.selectionLimits.title'>Selection limits:</Trans>
       </Text>
-      <Text as='span' fontSize='sm'>
+      <Text as='span' textStyle='body-sm'>
         <Trans
           i18nKey='process.create.selectionLimits.full'
           defaults='Voters must select at least  <min />  and at most  <max />  options.'
@@ -57,7 +57,7 @@ const SelectionLimits = ({ index }) => {
                         {...field}
                         value={selectedOption}
                         options={options}
-                        isInvalid={!!fieldState.invalid}
+                        invalid={!!fieldState.invalid}
                         isClearable
                         onChange={(option) => field.onChange(option?.value)}
                         menuPortalTarget={document.body}
@@ -92,7 +92,7 @@ const SelectionLimits = ({ index }) => {
                         {...field}
                         value={selectedOption}
                         options={maxOptions}
-                        isInvalid={!!fieldState.invalid}
+                        invalid={!!fieldState.invalid}
                         isClearable
                         onChange={(option) => field.onChange(option ? option?.value : null)}
                         menuPortalTarget={document.body}

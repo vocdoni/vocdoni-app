@@ -150,7 +150,6 @@
   "color_mode_switcher": "Selettore modalità colore",
   "common": {
     "back": "Indietro",
-    "close_drawer": "Chiudi cassetto",
     "home": "Home",
     "retry": "Riprova"
   },
@@ -399,6 +398,7 @@
       "password_min_length": "Min. 8 caratteri",
       "required": "Questo campo è obbligatorio"
     },
+    "hide_password": "Nascondi password",
     "member": {
       "error": {
         "invalid_birth_date": "La data di nascita non può essere futura",
@@ -414,6 +414,7 @@
       "success_title": "Processo di voto creato con successo"
     },
     "select_language": "Lingua",
+    "show_password": "Mostra password",
     "support": {
       "billing_issue": "Problema di fatturazione",
       "custom_request": "Richiesta personalizzata",
@@ -774,10 +775,8 @@
       "weight": "Peso del voto"
     },
     "list": {
-      "empty": "Nessun membro trovato",
       "empty_description": "Aggiungi il tuo primo membro per iniziare.",
       "error": "Impossibile caricare i membri",
-      "no_search_results": "Nessun membro corrisponde alla tua ricerca",
       "no_search_results_description": "Prova a modificare i termini di ricerca."
     },
     "table": {
@@ -808,7 +807,6 @@
       "bulk_delete": "Elimina",
       "cancel": "Annulla",
       "clear_sort": "Rimuovi ordinamento",
-      "close_drawer": "Chiudi",
       "create_group": "Crea gruppo",
       "create_group_error": "Errore durante la creazione del gruppo",
       "create_group_form_description": "Crea un nuovo gruppo dai membri selezionati. Questo li organizzerà per futuri processi di voto.",
@@ -862,7 +860,8 @@
     "dashboard": "Dashboard",
     "expand": "Espandi menu",
     "login": "Accedi",
-    "open": "Apri menu"
+    "open": "Apri menu",
+    "title": "Menu"
   },
   "name": "Nome",
   "need_help": {
@@ -1209,6 +1208,7 @@
     },
     "voters": "Votanti",
     "voting": "Stiamo elaborando il tuo voto. Questo processo richiederà alcuni secondi. Non chiudere o aggiornare questa pagina.",
+    "voting_label": "Invio del tuo voto",
     "voting_method": {
       "approval": "Voto per approvazione",
       "budget": "Bilancio partecipativo",
@@ -1467,12 +1467,8 @@
     }
   },
   "processes": {
-    "empty": "Nessun processo di voto trovato",
-    "empty_description": "Crea un processo di voto per iniziare.",
     "load_error": "Impossibile caricare i processi di voto",
-    "load_error_description": "Riprova.",
-    "no_results": "Nessun risultato per questo filtro",
-    "no_results_description": "Prova a modificare i filtri."
+    "load_error_description": "Riprova."
   },
   "profile": {
     "error": "Errore durante l'aggiornamento del profilo",

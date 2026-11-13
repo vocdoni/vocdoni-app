@@ -2,22 +2,20 @@ import {
   Box,
   Button,
   type ButtonProps,
+  Card,
   Checkbox,
-  Drawer,
+  type DialogRootProps,
   Flex,
-  Heading,
   Icon,
   IconButton,
   Input,
   InputGroup,
   Menu,
-  Spinner,
   Stack,
   Switch,
   Table,
   Tag,
   Text,
-  useBreakpointValue,
   useDisclosure,
   Wrap,
   WrapItem,
@@ -26,29 +24,32 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getElectionTitle, useOrganization, useRoutedPagination } from '@vocdoni/react-components'
 import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
+import { EmptyState } from '~components/ui/EmptyState'
+import { InlineLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
 import { useBuyRoomAction } from '~components/Pricing/useBuyRoomAction'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import {
-  LuEllipsis,
-  LuListPlus,
-  LuPlus,
-  LuSearch,
-  LuSettings,
-  LuTrash2,
-  LuUserPlus,
-  LuUsers,
-  LuX,
-} from 'react-icons/lu'
-import { FaCaretDown, FaCaretUp } from 'react-icons/fa6'
+  AddIcon,
+  AddToListIcon,
+  AddUserIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  DeleteIcon,
+  MoreIcon,
+  SearchIcon,
+  SettingsIcon,
+  UsersIcon,
+} from '~theme/icons'
 import { generatePath, useNavigate, useOutletContext, useSearchParams } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
-import DeleteModal, { DeleteModalProps } from '~components/Modal/DeleteModal'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
+import { PanelDrawer } from '~components/ui/Drawer'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
@@ -69,6 +70,7 @@ import {
   useUrlPagination,
 } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 import { MemberbaseTabsContext } from '..'
 import { TableColumn, useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
@@ -98,7 +100,7 @@ type DeleteMemberModalProps = {
   isOpen: boolean
   onClose: () => void
   mode: DeleteModes
-} & Omit<DeleteModalProps, 'children' | 'title' | 'subtitle'>
+} & Omit<DialogRootProps, 'children'>
 
 type CreateGroupButtonProps = {
   members?: Member[]
@@ -173,72 +175,51 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
   }
 
   return (
-    <Drawer.Root open={isOpen} placement='end' onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
-      <Drawer.Backdrop />
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.Header display='flex' justifyContent='space-between' alignItems='center'>
-            <Box>
-              <Heading size='md'>{t('members.table.add_to_group', { defaultValue: 'Add to Group' })}</Heading>
-              <Text fontSize='sm' color='texts.subtle'>
-                {t('members.table.add_to_group_description', {
-                  defaultValue: 'Select a group to add the members to.',
-                })}
-              </Text>
+    <PanelDrawer
+      open={isOpen}
+      placement='end'
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      size='sm'
+      title={t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
+      description={t('members.table.add_to_group_description', {
+        defaultValue: 'Select a group to add the members to.',
+      })}
+      bodyProps={{ display: 'flex', flexDirection: 'column', gap: '4' }}
+    >
+      <Select
+        placeholder={t('members.table.select_group', { defaultValue: 'Select group' })}
+        options={data}
+        getOptionLabel={(option) => (
+          <Flex align='center' gap='2'>
+            {option.title}
+            <Box fontSize='sm' color='fg.muted'>
+              <Icon as={UsersIcon} />
+              {option.membersCount}
             </Box>
-            <IconButton
-              aria-label={t('members.table.close_drawer', { defaultValue: 'Close' })}
-              variant='ghost'
-              size='sm'
-              onClick={onClose}
-            >
-              <LuX />
-            </IconButton>
-          </Drawer.Header>
+          </Flex>
+        )}
+        getOptionValue={(option) => option.id}
+        value={selectedGroup}
+        onChange={(option) => setSelectedGroup(option)}
+      />
 
-          <Drawer.Body display='flex' flexDirection='column' gap={4}>
-            <Select
-              placeholder={t('members.table.select_group', { defaultValue: 'Select group' })}
-              options={data}
-              getOptionLabel={(option) => (
-                <Flex align='center' gap={2}>
-                  {option.title}
-                  <Box fontSize='sm' color='texts.subtle'>
-                    <Icon as={LuUsers} />
-                    {option.membersCount}
-                  </Box>
-                </Flex>
-              )}
-              getOptionValue={(option) => option.id}
-              value={selectedGroup}
-              onChange={(option) => setSelectedGroup(option)}
-            />
+      {selectedGroup && (
+        <Text textStyle='body-sm' color='fg.muted'>
+          {t('members.table.add_to_group_confirmation', {
+            defaultValue: 'You will add {{count}} members to the "{{group}}" group.',
+            count: selectedRows.length,
+            group: selectedGroup.title,
+          })}
+        </Text>
+      )}
 
-            {selectedGroup && (
-              <Text fontSize='sm' color='texts.subtle'>
-                {t('members.table.add_to_group_confirmation', {
-                  defaultValue: 'You will add {{count}} members to the "{{group}}" group.',
-                  count: selectedRows.length,
-                  group: selectedGroup.title,
-                })}
-              </Text>
-            )}
-
-            <Button
-              onClick={handleAddToGroup}
-              mt={2}
-              width='100%'
-              disabled={!selectedGroup || selectedRows.length === 0}
-            >
-              {t('members.table.add_to_group_button', {
-                defaultValue: 'Add {{count}} member',
-                count: selectedRows.length,
-              })}
-            </Button>
-          </Drawer.Body>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+      <Button onClick={handleAddToGroup} mt='2' width='full' disabled={!selectedGroup || selectedRows.length === 0}>
+        {t('members.table.add_to_group_button', {
+          defaultValue: 'Add {{count}} member',
+          count: selectedRows.length,
+        })}
+      </Button>
+    </PanelDrawer>
   )
 }
 
@@ -311,75 +292,52 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
   }
 
   return (
-    <Drawer.Root
+    <PanelDrawer
       open={isOpen}
       placement='end'
       onOpenChange={({ open }) => (!open ? handleClose() : undefined)}
       size='sm'
+      title={t('members.table.add_to_census', { defaultValue: 'Add to census' })}
+      description={t('members.table.add_to_census_description', {
+        defaultValue: 'Select an active voting process to add the members to its census.',
+      })}
+      bodyProps={{ display: 'flex', flexDirection: 'column', gap: '4' }}
     >
-      <Drawer.Backdrop />
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.Header display='flex' justifyContent='space-between' alignItems='center'>
-            <Box>
-              <Heading size='md'>{t('members.table.add_to_census', { defaultValue: 'Add to census' })}</Heading>
-              <Text fontSize='sm' color='texts.subtle'>
-                {t('members.table.add_to_census_description', {
-                  defaultValue: 'Select an active voting process to add the members to its census.',
-                })}
-              </Text>
-            </Box>
-            <IconButton
-              aria-label={t('members.table.close_drawer', { defaultValue: 'Close' })}
-              variant='ghost'
-              size='sm'
-              onClick={handleClose}
-            >
-              <LuX />
-            </IconButton>
-          </Drawer.Header>
+      <Select
+        placeholder={t('members.table.select_process', { defaultValue: 'Select process' })}
+        options={processes}
+        isLoading={isLoadingElections}
+        noOptionsMessage={() => t('members.table.no_active_processes', { defaultValue: 'No active processes found' })}
+        getOptionLabel={(option) => option.title}
+        getOptionValue={(option) => option.id}
+        value={selectedProcess}
+        onChange={(option) => setSelectedProcess(option)}
+      />
 
-          <Drawer.Body display='flex' flexDirection='column' gap={4}>
-            <Select
-              placeholder={t('members.table.select_process', { defaultValue: 'Select process' })}
-              options={processes}
-              isLoading={isLoadingElections}
-              noOptionsMessage={() =>
-                t('members.table.no_active_processes', { defaultValue: 'No active processes found' })
-              }
-              getOptionLabel={(option) => option.title}
-              getOptionValue={(option) => option.id}
-              value={selectedProcess}
-              onChange={(option) => setSelectedProcess(option)}
-            />
+      {selectedProcess && (
+        <Text textStyle='body-sm' color='fg.muted'>
+          {t('members.table.add_to_census_confirmation', {
+            defaultValue: 'You will add {{count}} member to the "{{process}}" process census.',
+            defaultValue_other: 'You will add {{count}} members to the "{{process}}" process census.',
+            count: selectedRows.length,
+            process: selectedProcess.title,
+          })}
+        </Text>
+      )}
 
-            {selectedProcess && (
-              <Text fontSize='sm' color='texts.subtle'>
-                {t('members.table.add_to_census_confirmation', {
-                  defaultValue: 'You will add {{count}} member to the "{{process}}" process census.',
-                  defaultValue_other: 'You will add {{count}} members to the "{{process}}" process census.',
-                  count: selectedRows.length,
-                  process: selectedProcess.title,
-                })}
-              </Text>
-            )}
-
-            <Button
-              onClick={handleAddToCensus}
-              mt={2}
-              width='100%'
-              loading={addCensusParticipants.isPending}
-              disabled={!selectedProcess || selectedRows.length === 0}
-            >
-              {t('members.table.add_to_census_button', {
-                defaultValue: 'Add {{count}} member',
-                count: selectedRows.length,
-              })}
-            </Button>
-          </Drawer.Body>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+      <Button
+        onClick={handleAddToCensus}
+        mt='2'
+        width='full'
+        loading={addCensusParticipants.isPending}
+        disabled={!selectedProcess || selectedRows.length === 0}
+      >
+        {t('members.table.add_to_census_button', {
+          defaultValue: 'Add {{count}} member',
+          count: selectedRows.length,
+        })}
+      </Button>
+    </PanelDrawer>
   )
 }
 
@@ -392,11 +350,11 @@ const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: Member
       <Menu.Root>
         <Menu.Trigger asChild>
           <IconButton variant='ghost' size='sm' aria-label={t('members.table.actions', { defaultValue: 'Actions' })}>
-            <LuEllipsis />
+            <MoreIcon />
           </IconButton>
         </Menu.Trigger>
         <Menu.Positioner>
-          <Menu.Content minW='120px'>
+          <Menu.Content minW='[120px]'>
             <Menu.Item value='edit' onSelect={() => onEditOpen()}>
               {t('members.table.edit', { defaultValue: 'Edit' })}
             </Menu.Item>
@@ -407,7 +365,7 @@ const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: Member
               {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
             </Menu.Item>
             <Menu.Separator />
-            <Menu.Item value='delete' color='red.400' onSelect={onDelete}>
+            <Menu.Item value='delete' color='danger.action' onSelect={onDelete}>
               {t('members.table.delete', { defaultValue: 'Delete' })}
             </Menu.Item>
           </Menu.Content>
@@ -436,46 +394,39 @@ const ColumnManager = () => {
         size='sm'
         onClick={onOpen}
       >
-        <LuSettings />
+        <SettingsIcon />
       </IconButton>
-      <Drawer.Root open={isOpen} placement='end' onOpenChange={({ open }) => (!open ? onClose() : undefined)}>
-        <Drawer.Backdrop />
-        <Drawer.Positioner>
-          <Drawer.Content>
-            <Drawer.Header>
-              <Heading size='md'>{t('members.table.manage_columns', { defaultValue: 'Manage Columns' })}</Heading>
-              <Text fontSize='sm' color='texts.subtle'>
-                {t('members.table.manage_columns_description', {
-                  defaultValue: 'Customize which columns are displayed in the members table.',
+      <PanelDrawer
+        open={isOpen}
+        placement='end'
+        onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+        title={t('members.table.manage_columns', { defaultValue: 'Manage Columns' })}
+        description={t('members.table.manage_columns_description', {
+          defaultValue: 'Customize which columns are displayed in the members table.',
+        })}
+      >
+        {/* The API never returns the password, so it has nothing to show; it stays in the column list because the member form, CSV mapper and template read their fields from it. */}
+        {columns
+          .filter((col) => col.id !== 'password')
+          .map((col) => (
+            <Flex key={col.id} justify='space-between' align='center' my='2'>
+              <Text>{col.label}</Text>
+              <Switch.Root
+                checked={col.visible}
+                onCheckedChange={({ checked }) => toggleColumn(col.id, checked === true)}
+                aria-label={t('members.table.toggle_column', {
+                  defaultValue: `Toggle column {{column}}`,
+                  column: col.label,
                 })}
-              </Text>
-            </Drawer.Header>
-            <Drawer.Body>
-              {/* The API never returns the password, so it has nothing to show; it stays in the column list because the member form, CSV mapper and template read their fields from it. */}
-              {columns
-                .filter((col) => col.id !== 'password')
-                .map((col) => (
-                  <Flex key={col.id} justify='space-between' align='center' my={2}>
-                    <Text>{col.label}</Text>
-                    <Switch.Root
-                      checked={col.visible}
-                      onCheckedChange={({ checked }) => toggleColumn(col.id, checked === true)}
-                      aria-label={t('members.table.toggle_column', {
-                        defaultValue: `Toggle column {{column}}`,
-                        column: col.label,
-                      })}
-                    >
-                      <Switch.HiddenInput />
-                      <Switch.Control>
-                        <Switch.Thumb />
-                      </Switch.Control>
-                    </Switch.Root>
-                  </Flex>
-                ))}
-            </Drawer.Body>
-          </Drawer.Content>
-        </Drawer.Positioner>
-      </Drawer.Root>
+              >
+                <Switch.HiddenInput />
+                <Switch.Control>
+                  <Switch.Thumb />
+                </Switch.Control>
+              </Switch.Root>
+            </Flex>
+          ))}
+      </PanelDrawer>
     </>
   )
 }
@@ -495,14 +446,14 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
   }
 
   return (
-    <Flex gap={2} flexDir={{ base: 'column', md: 'row' }}>
+    <Flex gap='2' flexDir={{ base: 'column', md: 'row' }}>
       <InputGroup
-        maxW='300px'
+        maxW='[300px]'
         as='form'
         onSubmit={handleSubmit}
         endElement={
           <IconButton size='xs' variant='plain' aria-label='search' type='submit'>
-            <Icon as={LuSearch} />
+            <Icon as={SearchIcon} />
           </IconButton>
         }
       >
@@ -513,8 +464,8 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
         />
       </InputGroup>
       {data?.members?.length >= 1 && (
-        <Button variant='outline' colorPalette='red' onClick={onDelete}>
-          <Icon as={LuTrash2} />
+        <Button variant='outline' colorPalette='danger' onClick={onDelete}>
+          <Icon as={DeleteIcon} />
           {t('members.table.delete_all', {
             defaultValue: 'Delete (All)',
           })}
@@ -531,6 +482,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
   const { selectedRows } = useTable()
   const navigate = useNavigate()
   const createGroupMutation = useCreateGroup()
+  const formId = useId()
   const methods = useForm({
     defaultValues: {
       title: '',
@@ -584,94 +536,81 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
   return (
     <>
       <Button size='sm' variant='outline' onClick={onOpen} {...rest}>
-        <Icon as={LuUsers} />
+        <Icon as={UsersIcon} />
         {children}
       </Button>
-      <Drawer.Root open={isOpen} placement='end' onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
-        <Drawer.Backdrop />
-        <Drawer.Positioner>
-          <Drawer.Content>
-            <IconButton
-              aria-label={t('common.close_drawer', { defaultValue: 'Close drawer' })}
-              position='absolute'
-              top='6px'
-              right='6px'
-              onClick={onClose}
-            >
-              <Icon as={LuX} />
-            </IconButton>
-            <Drawer.Header display='flex' flexDirection='column' gap={2}>
-              <Heading size='md'>
-                {t('members.table.create_group_form_title', { defaultValue: 'Create New Group' })}
-              </Heading>
-              <Text fontSize='sm' color='texts.subtle'>
-                {t('members.table.create_group_form_description', {
-                  defaultValue:
-                    'Create a new group from selected members. This will organize them for future voting processes.',
+      <PanelDrawer
+        open={isOpen}
+        placement='end'
+        onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+        size='sm'
+        title={t('members.table.create_group_form_title', { defaultValue: 'Create New Group' })}
+        description={t('members.table.create_group_form_description', {
+          defaultValue:
+            'Create a new group from selected members. This will organize them for future voting processes.',
+        })}
+        footer={
+          <>
+            <Button variant='outline' onClick={onClose}>
+              {t('members.table.cancel', { defaultValue: 'Cancel' })}
+            </Button>
+            <Button disabled={!selectedCount} type='submit' form={formId}>
+              {t('members.table.create_group', { defaultValue: 'Create group' })}
+            </Button>
+          </>
+        }
+      >
+        <FormProvider {...methods}>
+          <Box as='form' id={formId} onSubmit={methods.handleSubmit(createGroup)}>
+            <Stack gap='4'>
+              <InputBasic
+                formValue='title'
+                label={t('members.table.group_name', { defaultValue: 'Group name' })}
+                required
+              />
+              <InputBasic
+                formValue='description'
+                label={t('members.table.group_description', { defaultValue: 'Description (Optional)' })}
+                placeholder={t('members.table.group_description_placeholder', {
+                  defaultValue: 'Enter a brief description of the group',
                 })}
-              </Text>
-            </Drawer.Header>
-            <FormProvider {...methods}>
-              <Box as='form' onSubmit={methods.handleSubmit(createGroup)}>
-                <Drawer.Body p={4} display='flex' flexDirection='column' gap={4}>
-                  <InputBasic
-                    formValue='title'
-                    label={t('members.table.group_name', { defaultValue: 'Group name' })}
-                    required
-                  />
-                  <InputBasic
-                    formValue='description'
-                    label={t('members.table.group_description', { defaultValue: 'Description (Optional)' })}
-                    placeholder={t('members.table.group_description_placeholder', {
-                      defaultValue: 'Enter a brief description of the group',
+              />
+              <Box>
+                <Text mb='1'>{t('members.table.group_members', { defaultValue: 'Selected Members' })}</Text>
+                <Box p='4'>
+                  <Text textStyle='body-sm' mb='2'>
+                    {t('members.table.group_members_count', {
+                      defaultValue: '{{count}} members selected',
+                      count: selectedCount,
                     })}
-                  />
-                  <Box>
-                    <Text mb={1}>{t('members.table.group_members', { defaultValue: 'Selected Members' })}</Text>
-                    <Box border='1px' borderColor='table.border' borderRadius='md' p={4}>
-                      <Text fontSize='sm' mb={2}>
-                        {t('members.table.group_members_count', {
-                          defaultValue: '{{count}} members selected',
-                          count: selectedCount,
-                        })}
-                      </Text>
-                      <Wrap>
-                        {visible.map((member) => (
-                          <WrapItem key={member.id}>
-                            <Tag.Root borderRadius='sm' size='sm' variant='subtle' colorPalette='gray'>
-                              <Tag.Label>{memberAlias(member)}</Tag.Label>
-                            </Tag.Root>
-                          </WrapItem>
-                        ))}
-                        {remainingCount > 0 && (
-                          <WrapItem>
-                            <Tag.Root borderRadius='sm' size='sm' variant='outline' colorPalette='brand'>
-                              <Tag.Label>
-                                {t('members.table.remaining_members', {
-                                  defaultValue: '+{{count}} more',
-                                  count: remainingCount,
-                                })}
-                              </Tag.Label>
-                            </Tag.Root>
-                          </WrapItem>
-                        )}
-                      </Wrap>
-                    </Box>
-                  </Box>
-                </Drawer.Body>
-                <Flex justifyContent='flex-end' p={4}>
-                  <Button variant='outline' onClick={onClose}>
-                    {t('members.table.cancel', { defaultValue: 'Cancel' })}
-                  </Button>
-                  <Button disabled={!selectedCount} ml={2} type='submit'>
-                    {t('members.table.create_group', { defaultValue: 'Create group' })}
-                  </Button>
-                </Flex>
+                  </Text>
+                  <Wrap>
+                    {visible.map((member) => (
+                      <WrapItem key={member.id}>
+                        <Tag.Root size='sm' variant='subtle' colorPalette='gray'>
+                          <Tag.Label>{memberAlias(member)}</Tag.Label>
+                        </Tag.Root>
+                      </WrapItem>
+                    ))}
+                    {remainingCount > 0 && (
+                      <WrapItem>
+                        <Tag.Root size='sm' variant='outline' colorPalette='brand'>
+                          <Tag.Label>
+                            {t('members.table.remaining_members', {
+                              defaultValue: '+{{count}} more',
+                              count: remainingCount,
+                            })}
+                          </Tag.Label>
+                        </Tag.Root>
+                      </WrapItem>
+                    )}
+                  </Wrap>
+                </Box>
               </Box>
-            </FormProvider>
-          </Drawer.Content>
-        </Drawer.Positioner>
-      </Drawer.Root>
+            </Stack>
+          </Box>
+        </FormProvider>
+      </PanelDrawer>
     </>
   )
 }
@@ -682,38 +621,38 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
 
   return (
     <Flex
-      gap={4}
+      gap='4'
       align='center'
-      minH='42px'
+      minH='toolbar'
       flexDir={{ base: 'column', md: 'row' }}
       alignItems={{ base: 'stretch', md: 'center' }}
     >
       {selectedRows.length > 0 ? (
         <>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text textStyle='body-sm' color='fg.muted'>
             <Trans
               i18nKey='members.table.selected'
               count={selectedRows.length}
-              components={{ strong: <Text as='span' fontSize='sm' fontWeight='extrabold' display='inline' /> }}
+              components={{ strong: <Text as='span' textStyle='body-sm' fontWeight='extrabold' display='inline' /> }}
               defaults='Selected: <strong>{{count}} member</strong>'
             />
           </Text>
           <CreateGroupButton>{t('members.table.create_group', { defaultValue: 'Create group' })}</CreateGroupButton>
           <Button size='sm' variant='outline' onClick={() => onAddToGroup()}>
-            <Icon as={LuUserPlus} />
+            <Icon as={AddUserIcon} />
             {t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
           </Button>
           <Button size='sm' variant='outline' onClick={() => onAddToCensus()}>
-            <Icon as={LuListPlus} />
+            <Icon as={AddToListIcon} />
             {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
           </Button>
-          <Button size='sm' colorPalette='red' variant='outline' onClick={() => onDelete()}>
-            <Icon as={LuTrash2} />
+          <Button size='sm' colorPalette='danger' variant='outline' onClick={() => onDelete()}>
+            <Icon as={DeleteIcon} />
             {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
           </Button>
         </>
       ) : (
-        <Text fontSize='sm' color='texts.subtle'>
+        <Text textStyle='body-sm' color='fg.muted'>
           <Trans i18nKey='members.table.select_hint' defaults='Select members to perform bulk actions' />
         </Text>
       )}
@@ -747,7 +686,7 @@ const MembersCardList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: Me
   if (!data.length) return isFetching ? <MembersLoading /> : <EmptyMembersMessage />
 
   return (
-    <Stack gap={3} {...placeholderRowsStyle(isUpdatingRows, isPlaceholderData)}>
+    <Stack gap='3' {...placeholderRowsStyle(isUpdatingRows, isPlaceholderData)}>
       {data.map((member) => (
         <MemberCard
           key={member.id}
@@ -772,9 +711,11 @@ const EmptyMembersMessage = () => {
   const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
 
   return (
-    <Flex justify='center' align='center' height='150px'>
-      <Text color='texts.subtle' fontSize='sm'>
-        {debouncedSearch
+    <EmptyState
+      size='sm'
+      height='[150px]'
+      title={
+        debouncedSearch
           ? t('members.table.no_filter_results', {
               defaultValue: 'No members matching these attributes',
             })
@@ -782,9 +723,16 @@ const EmptyMembersMessage = () => {
             ? error.message.toString()
             : t('members.table.no_results', {
                 defaultValue: 'No members found',
-              })}
-      </Text>
-    </Flex>
+              })
+      }
+      description={
+        error
+          ? undefined
+          : debouncedSearch
+            ? t('members.list.no_search_results_description', { defaultValue: 'Try adjusting your search terms.' })
+            : t('members.list.empty_description', { defaultValue: 'Add your first member to get started.' })
+      }
+    />
   )
 }
 
@@ -794,13 +742,13 @@ const EmptyMembersMessage = () => {
 const placeholderRowsStyle = (isUpdatingRows: boolean, isPlaceholderData: boolean) => ({
   'aria-busy': isUpdatingRows || undefined,
   inert: isPlaceholderData || undefined,
-  opacity: isUpdatingRows ? 0.5 : 1,
-  transition: 'opacity 0.15s ease-out',
+  opacity: isUpdatingRows ? ('dimmed' as const) : ('[1]' as const),
+  transition: '[opacity 0.15s ease-out]' as const,
 })
 
 const MembersLoading = () => (
-  <Flex justify='center' align='center' height='150px'>
-    <Spinner size='sm' color='texts.subtle' />
+  <Flex justify='center' align='center' height='[150px]'>
+    <InlineLoader color='fg.muted' />
   </Flex>
 )
 
@@ -830,7 +778,7 @@ const EmptyMembers = () => {
 
 // The caret for the active direction is drawn at full strength, the other one stays faint.
 const sortCaretStyle = (active: boolean) =>
-  active ? { color: 'texts.primary' } : { color: 'texts.subtle', opacity: 0.5 }
+  active ? ({ color: 'fg' } as const) : ({ color: 'fg.muted', opacity: 'dimmed' } as const)
 
 const ARIA_SORT: Record<SortOrder, 'ascending' | 'descending'> = { asc: 'ascending', desc: 'descending' }
 
@@ -851,19 +799,19 @@ const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableCol
       <Button
         variant='plain'
         size='sm'
-        px={0}
+        px='0'
         h='auto'
-        minW={0}
-        fontWeight='inherit'
-        color='inherit'
-        gap={1}
+        minW='0'
+        fontWeight='[inherit]'
+        color='[inherit]'
+        gap='1'
         onClick={() => onToggleSort(field)}
         title={t('members.table.sort_by', { defaultValue: 'Sort by {{column}}', column: column.label })}
       >
         {column.label}
-        <Flex direction='column' aria-hidden gap={0} lineHeight={0} ms={0.5}>
-          <Icon as={FaCaretUp} boxSize={3} mb='-3.5px' {...sortCaretStyle(order === 'asc')} />
-          <Icon as={FaCaretDown} boxSize={3} mt='-3.5px' {...sortCaretStyle(order === 'desc')} />
+        <Flex direction='column' aria-hidden gap='0' lineHeight='[0]' ms='0.5'>
+          <Icon as={ChevronUpIcon} boxSize='icon.sm' mb='[-5px]' {...sortCaretStyle(order === 'asc')} />
+          <Icon as={ChevronDownIcon} boxSize='icon.sm' mt='[-5px]' {...sortCaretStyle(order === 'desc')} />
         </Flex>
       </Button>
     </Table.ColumnHeader>
@@ -944,7 +892,7 @@ const SortIndicator = ({ sort, label, onClear }: SortIndicatorProps) => {
       : t('members.table.sorted_by_desc', { defaultValue: 'Sorted by {{column}}, descending', column: label })
 
   return (
-    <Flex align='center' gap={2} flexWrap='wrap' fontSize='sm' color='texts.subtle'>
+    <Flex align='center' gap='2' flexWrap='wrap' fontSize='sm' color='fg.muted'>
       <Text>{text}</Text>
       <Button size='xs' variant='outline' onClick={onClear}>
         {t('members.table.clear_sort', { defaultValue: 'Clear sort' })}
@@ -1003,9 +951,10 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
   }
 
   return (
-    <DeleteModal
+    <ConfirmDialog
+      layout='inline'
       title={t('memberbase.delete_member.title', { defaultValue: 'Delete Members' })}
-      subtitle={
+      description={
         isFetchingAll
           ? t('memberbase.delete_member.loading', {
               defaultValue: 'Loading members to delete...',
@@ -1018,22 +967,13 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
       }
       open={isOpen}
       onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      cancelText={t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
+      confirmText={t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
+      loading={deleteMutation.isPending || isFetchingAll}
+      onConfirm={handleDelete}
+      confirmProps={{ disabled: isFetchingAll || selectedMembers.length === 0 }}
       {...props}
-    >
-      <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={onClose}>
-          {t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
-        </Button>
-        <Button
-          loading={deleteMutation.isPending || isFetchingAll}
-          colorPalette='red'
-          onClick={handleDelete}
-          disabled={isFetchingAll || selectedMembers.length === 0}
-        >
-          {t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
-        </Button>
-      </Flex>
-    </DeleteModal>
+    />
   )
 }
 
@@ -1054,7 +994,7 @@ const MembersRangeSummary = () => {
   const to = from + data.length - 1
 
   return (
-    <Text fontSize='sm'>
+    <Text textStyle='body-sm'>
       {debouncedSearch
         ? t('members.table.showing_results', {
             defaultValue: 'Showing {{from, number}}–{{to, number}} of {{count, number}} result',
@@ -1082,7 +1022,7 @@ const MembersTable = () => {
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
   const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isPlaceholderData } =
     useTable()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
   const [searchParams] = useSearchParams()
   const goToFirstPage = useGoToFirstPage()
   const urlSort = parseMemberSort(searchParams)
@@ -1127,9 +1067,9 @@ const MembersTable = () => {
   return (
     <>
       <ImportProgress />
-      <Box border='1px solid' borderRadius='sm' borderColor='table.border'>
-        <Flex direction={{ base: 'column', lg: 'row' }} p={4} gap={2}>
-          <Flex direction='column' flex={1} gap={2}>
+      <Card.Root variant='frame'>
+        <Flex direction={{ base: 'column', lg: 'row' }} p='4' gap='2'>
+          <Flex direction='column' flex={1} gap='2'>
             <MemberFilters onDelete={openDeleteAll} />
             <MemberBulkActions
               onDelete={openDeleteSelected}
@@ -1137,12 +1077,12 @@ const MembersTable = () => {
               onAddToCensus={openAddToCensus}
             />
           </Flex>
-          <Flex gap={2}>
+          <Flex gap='2'>
             <ImportMembers />
             <MemberManager
               control={
                 <Button>
-                  <Icon as={LuPlus} />
+                  <Icon as={AddIcon} />
                   {t('memberbase.add_member.button', { defaultValue: 'Add Member' })}
                 </Button>
               }
@@ -1150,13 +1090,13 @@ const MembersTable = () => {
           </Flex>
         </Flex>
         {urlSort && unreachableSortColumn && (
-          <Box px={4} pb={4}>
+          <Box px='4' pb='4'>
             <SortIndicator sort={urlSort} label={unreachableSortColumn.label} onClear={clearSort} />
           </Box>
         )}
         {isMobile ? (
-          <Box p={4}>
-            <Flex justify='space-between' align='center' mb={3}>
+          <Box p='4'>
+            <Flex justify='space-between' align='center' mb='3'>
               <Checkbox.Root
                 checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                 onCheckedChange={({ checked }) => toggleAll(checked === true)}
@@ -1164,9 +1104,7 @@ const MembersTable = () => {
               >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control />
-                <Checkbox.Label fontWeight='normal'>
-                  {t('members.table.select_all', { defaultValue: 'Select all' })}
-                </Checkbox.Label>
+                <Checkbox.Label>{t('members.table.select_all', { defaultValue: 'Select all' })}</Checkbox.Label>
               </Checkbox.Root>
               <ColumnManager />
             </Flex>
@@ -1175,7 +1113,7 @@ const MembersTable = () => {
               onAddToGroup={openAddToGroup}
               onAddToCensus={openAddToCensus}
             />
-            <Box pt={4}>
+            <Box pt='4'>
               <RoutedPaginatedTableFooter summary={<MembersRangeSummary />} />
             </Box>
           </Box>
@@ -1184,7 +1122,7 @@ const MembersTable = () => {
             <Table.Root variant='outline'>
               <Table.Header>
                 <Table.Row>
-                  <Table.ColumnHeader width='50px'>
+                  <Table.ColumnHeader width='table.action'>
                     <Checkbox.Root
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
@@ -1209,7 +1147,7 @@ const MembersTable = () => {
                         <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
                       )
                     )}
-                  <Table.ColumnHeader width='50px'>
+                  <Table.ColumnHeader width='table.action'>
                     <ColumnManager />
                   </Table.ColumnHeader>
                 </Table.Row>
@@ -1219,13 +1157,13 @@ const MembersTable = () => {
                 onAddToGroup={openAddToGroup}
                 onAddToCensus={openAddToCensus}
               />
-              <Table.Caption p={4}>
+              <Table.Caption p='4'>
                 <RoutedPaginatedTableFooter summary={<MembersRangeSummary />} />
               </Table.Caption>
             </Table.Root>
           </Table.ScrollArea>
         )}
-      </Box>
+      </Card.Root>
       <DeleteMemberModal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)} mode={deleteMode} />
       <AddMembersToGroupDrawer isOpen={isAddToGroupOpen} onClose={onAddToGroupClose} />
       <AddMembersToCensusDrawer isOpen={isAddToCensusOpen} onClose={onAddToCensusClose} />

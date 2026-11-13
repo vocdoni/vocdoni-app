@@ -1,4 +1,6 @@
-import { Button, CloseButton, Dialog, Heading, Text } from '@chakra-ui/react'
+import { Button, Dialog } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
+import { DialogHeader } from '~components/ui/DialogHeader'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -46,22 +48,19 @@ export const ModalForm = ({ isOpen, onClose, title, subtitle, children, submitTe
 
   return (
     <ModalFormContext.Provider value={contextValue}>
-      <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()} placement='center'>
+      <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()}>
         <Dialog.Backdrop />
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.CloseTrigger asChild>
               <CloseButton />
             </Dialog.CloseTrigger>
-            <Dialog.Header>
-              <Heading variant='header'>{title}</Heading>
-              {subtitle && <Text variant='subheader'>{subtitle}</Text>}
-            </Dialog.Header>
+            <DialogHeader title={title} description={subtitle} />
 
             <Dialog.Body>{children}</Dialog.Body>
 
             <Dialog.Footer>
-              <Button variant='ghost' onClick={onClose}>
+              <Button variant='outline' onClick={onClose}>
                 {cancelText || t('actions.cancel', { defaultValue: 'Cancel' })}
               </Button>
               <Button

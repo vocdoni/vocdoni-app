@@ -1,15 +1,15 @@
 import { tooltipAnatomy } from '@chakra-ui/react/anatomy'
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, defineStyle } from '@chakra-ui/react'
 
-const baseStyle = {
-  boxShadow: 'xs',
-  border: '1px solid',
+const baseStyle = defineStyle({
+  boxShadow: 'shadow.raised.tooltip',
+  border: 'sm',
   borderColor: 'border',
-  px: 2,
-  py: 1,
-  bgColor: 'bg.panel',
+  px: '2',
+  py: '1',
+  bgColor: 'surface.raised.tooltip',
   color: 'fg',
-}
+})
 
 export const Tooltip = defineSlotRecipe({
   slots: tooltipAnatomy.keys(),

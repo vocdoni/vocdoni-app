@@ -18,7 +18,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { Routes } from '~src/router/routes'
-import { Loading } from '~src/router/SuspenseLoader'
+import { PageLoader } from '~components/ui/Loader'
 import { UnauthorizedApiError } from './api'
 
 type VerifyFormProps = {
@@ -87,15 +87,15 @@ const VerifyForm = ({
 
   if (autoSubmit && codeString && !isVerifyError) {
     return (
-      <Box height={'100px'}>
-        <Loading minHeight={1} />
+      <Box height='[100px]'>
+        <PageLoader minHeight='1' />
       </Box>
     )
   }
 
   return (
     <>
-      <HStack width='100%' justifyContent='space-between'>
+      <HStack width='full' justifyContent='space-between'>
         <PinInputRoot
           value={code}
           onValueChange={({ value, valueAsString }) => {
@@ -183,21 +183,21 @@ export const VerificationPending = ({
 
   return (
     <>
-      <Flex flexDirection='column' gap={4}>
-        <Text fontWeight='bold' fontSize='md' color='auth.secondary_text'>
+      <Flex flexDirection='column' gap='4'>
+        <Text fontWeight='bold' textStyle='body'>
           <Trans i18nKey='verify.sent_to_email' values={{ email }}>
             Email sent to {{ email }}
           </Trans>
         </Text>
         <Alert status='info'>
           <AlertIndicator />
-          <Text fontSize='sm' fontStyle='italic'>
+          <Text textStyle='body-sm' fontStyle='italic'>
             {t('verify.check_spam_folder', {
               defaultValue: "Please check your spam folder if you don't see the email in your inbox.",
             })}
           </Text>
         </Alert>
-        <Text fontWeight='bold' fontSize='sm'>
+        <Text fontWeight='bold' textStyle='body-sm'>
           {t('verify.enter_code', {
             defaultValue: 'Enter the code below to activate your account',
           })}
@@ -206,7 +206,7 @@ export const VerificationPending = ({
       </Flex>
 
       {!code && (
-        <Button variant={'outline'} loading={isResendPending} onClick={resendMail} mt={6} w='full'>
+        <Button variant={'outline'} loading={isResendPending} onClick={resendMail} mt='6' w='full'>
           <Trans i18nKey={'verify.resend_confirmation_mail'}>Resend Email</Trans>
         </Button>
       )}

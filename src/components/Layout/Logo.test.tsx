@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { renderToString } from 'react-dom/server'
 import { AllProviders, createTestI18n, fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
-import Logo from './Logo'
+import Logo, { VocdoniLogo } from './Logo'
 
 const i18n = () =>
   createTestI18n({
@@ -11,6 +11,7 @@ const i18n = () =>
         common: {
           'alt.images.org_logo': '{{org}} logo',
           'alt.images.organization_logo': 'Organization logo',
+          vocdoni_logo: 'Vocdoni logo',
         },
       },
     },
@@ -20,12 +21,14 @@ const renderLogo = async (ui: ReactElement) =>
   render(<TestMemoryRouter>{ui}</TestMemoryRouter>, { i18nInstance: await i18n() })
 
 describe('Logo', () => {
-  // The Vocdoni logo ships as two <img>s (desktop + mobile) toggled by CSS, so
-  // both share the same alt text.
+  // The Vocdoni logo ships as two SVGs (desktop + mobile) toggled by CSS, so
+  // both share the same accessible name.
   it('renders the Vocdoni logo when no organization logo is given', async () => {
-    await renderLogo(<Logo />)
+    const { container } = await renderLogo(<Logo />)
 
-    expect(screen.getAllByAltText('vocdoni icon').length).toBeGreaterThan(0)
+    const logos = container.querySelectorAll('svg[role="img"]')
+    expect(logos).toHaveLength(2)
+    logos.forEach((logo) => expect(logo).toHaveAttribute('aria-label', 'Vocdoni logo'))
     expect(screen.queryByRole('img', { name: /Acme/ })).toBeNull()
   })
 
@@ -35,7 +38,7 @@ describe('Logo', () => {
     const logo = screen.getByAltText('Acme logo')
     expect(logo).toHaveAttribute('src', 'https://cdn/acme.png')
     // The Vocdoni logo must be gone, not merely hidden behind it.
-    expect(screen.queryByAltText('vocdoni icon')).toBeNull()
+    expect(screen.queryByRole('img', { name: 'Vocdoni logo', hidden: true })).toBeNull()
   })
 
   it('falls back to a generic alt text when the organization has no name', async () => {
@@ -45,11 +48,11 @@ describe('Logo', () => {
   })
 
   it('falls back to the Vocdoni logo when the organization logo fails to load', async () => {
-    await renderLogo(<Logo organization={{ src: 'https://cdn/broken.png', name: 'Acme' }} />)
+    const { container } = await renderLogo(<Logo organization={{ src: 'https://cdn/broken.png', name: 'Acme' }} />)
 
     fireEvent.error(screen.getByAltText('Acme logo'))
 
-    expect(screen.getAllByAltText('vocdoni icon').length).toBeGreaterThan(0)
+    expect(container.querySelectorAll('svg[role="img"]')).toHaveLength(2)
     expect(screen.queryByAltText('Acme logo')).toBeNull()
   })
 
@@ -76,6 +79,50 @@ describe('Logo', () => {
       expect(srcWrites()).toBe(baseline + 1)
     } finally {
       vi.restoreAllMocks()
+    }
+  })
+
+  // next-themes sets the `dark` class on <html> before the server-rendered markup paints, while a
+  // JS colour value only switches after hydration. The logo is drawn in `currentColor` on a token, so
+  // the colour is CSS-driven and needs no per-mode branch in the component.
+  it('draws the Vocdoni logo in currentColor on the logo token, with no filter', async () => {
+    const { container } = await renderLogo(
+      <>
+        <Logo />
+        <VocdoniLogo data-testid='vocdoni-svg' />
+      </>
+    )
+    const svgs = [...container.querySelectorAll('svg')]
+
+    expect(svgs).toHaveLength(3)
+    svgs.forEach((svg) => {
+      expect(getComputedStyle(svg).color).toBe('var(--chakra-colors-logo-fg)')
+      expect(getComputedStyle(svg).filter).not.toContain('invert')
+      svg.querySelectorAll('path').forEach((path) => expect(path).toHaveAttribute('fill', 'currentColor'))
+    })
+  })
+
+  it('sizes the fallback logo at 125px on desktop and 40px for the mark on mobile', async () => {
+    const { container } = await renderLogo(<Logo />)
+    const [desktop, mobile] = [...container.querySelectorAll('svg')]
+
+    expect(desktop).toHaveAttribute('viewBox', '0 0 1000 215')
+    expect(getComputedStyle(desktop).width).toBe('var(--chakra-sizes-wordmark)')
+    expect(mobile).toHaveAttribute('viewBox', '0 0 251.37 215')
+    expect(getComputedStyle(mobile).width).toBe('var(--chakra-sizes-10)')
+  })
+
+  it('puts the organization logo on a light tile in dark mode only', async () => {
+    await renderLogo(<Logo organization={{ src: 'https://cdn/acme.png', name: 'Acme' }} />)
+    const logo = screen.getByAltText('Acme logo')
+
+    try {
+      document.documentElement.classList.remove('dark')
+      expect(getComputedStyle(logo).backgroundColor).not.toContain('auth-logo-tile-bg')
+      document.documentElement.classList.add('dark')
+      expect(getComputedStyle(logo).backgroundColor).toBe('var(--chakra-colors-auth-logo-tile-bg)')
+    } finally {
+      document.documentElement.classList.remove('dark')
     }
   })
 

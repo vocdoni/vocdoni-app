@@ -1,13 +1,15 @@
-import { Alert, Button, Center, Code, Flex, Link, Spinner, Stack, Table, Text } from '@chakra-ui/react'
+import { Alert, Button, Card, Code, Flex, Link, Stack, Stat, Table, Text } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { WalletLedgerEntry, WalletLedgerKind } from '@vocdoni/api-types'
 import { generatePath, Link as RouterLink, useLocation, useNavigate, useParams } from 'react-router'
-import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { PrevNextPagination } from '~components/Pagination/PrevNextPagination'
 import { useToast } from '~components/Toast'
 import { isManagedOrgWalletError, useWallet, useWalletAccess } from '~queries/wallet'
 import { Routes, stripCheckoutReturn } from '~src/router/routes'
+import { ListLoader } from '~components/ui/Loader'
 import { shortAddress } from '~utils/address'
 import { currency } from '~utils/numbers'
 import { WalletTopUp } from './TopUp'
@@ -74,10 +76,10 @@ type WalletPanelProps = {
 }
 
 const EntryDetail = ({ entry, processLinks }: { entry: WalletLedgerEntry } & WalletPanelProps) => {
-  if (!entry.processId && !entry.processOrgAddress) return <Text color='texts.subtle'>-</Text>
+  if (!entry.processId && !entry.processOrgAddress) return <Text color='fg.muted'>-</Text>
 
   return (
-    <Stack gap={0.5}>
+    <Stack gap='0.5'>
       {entry.processId &&
         (processLinks ? (
           <Link asChild fontSize='sm'>
@@ -89,7 +91,7 @@ const EntryDetail = ({ entry, processLinks }: { entry: WalletLedgerEntry } & Wal
           <Code title={entry.processId}>{shortAddress(entry.processId)}</Code>
         ))}
       {entry.processOrgAddress && (
-        <Code fontSize='xs' color='texts.subtle' title={entry.processOrgAddress}>
+        <Code fontSize='xs' color='fg.muted' title={entry.processOrgAddress}>
           {shortAddress(entry.processOrgAddress)}
         </Code>
       )}
@@ -211,11 +213,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
     }
 
     if (wallet.isLoading) {
-      return (
-        <Center py={16}>
-          <Spinner />
-        </Center>
-      )
+      return <ListLoader />
     }
 
     if (wallet.error && !wallet.data) {
@@ -248,28 +246,24 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
     if (balanceCents === undefined) return null
 
     return (
-      <Flex direction='column' gap={6}>
+      <Flex direction='column' gap='6'>
         <DashboardBox>
-          <Flex justify='space-between' align='flex-start' gap={4} wrap='wrap'>
-            <Stack gap={1}>
-              <Text fontSize='sm' color='texts.subtle' fontWeight='medium'>
-                {t('wallet.balance', { defaultValue: 'Balance' })}
-              </Text>
-              <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
-                {currency(balanceCents, currencyCode)}
-              </Text>
-            </Stack>
+          <Flex justify='space-between' align='flex-start' gap='4' wrap='wrap'>
+            <Stat.Root>
+              <Stat.Label>{t('wallet.balance', { defaultValue: 'Balance' })}</Stat.Label>
+              <Stat.ValueText>{currency(balanceCents, currencyCode)}</Stat.ValueText>
+            </Stat.Root>
             {canTopUp && (
               <Button onClick={() => setView('topup')}>{t('wallet.topup.open', { defaultValue: 'Top up' })}</Button>
             )}
           </Flex>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text textStyle='body-sm' color='fg.muted'>
             {t('wallet.balance_note', {
               defaultValue: 'Prepaid credit, VAT excluded. Publishing a paid voting process is charged from it.',
             })}
           </Text>
           {!canTopUp && (
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('wallet.topup.admin_only', { defaultValue: 'Only admins can top up the wallet.' })}
             </Text>
           )}
@@ -287,49 +281,53 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
           )}
         </DashboardBox>
 
-        <Flex direction='column' gap={4}>
-          <DashboardCardHeader title={t('wallet.history.title', { defaultValue: 'Movements' })} />
+        <Flex direction='column' gap='4'>
+          <SectionHeader title={t('wallet.history.title', { defaultValue: 'Movements' })} mb='4' />
           {history.length === 0 ? (
-            <Text color='texts.subtle'>{t('wallet.history.empty', { defaultValue: 'No movements yet.' })}</Text>
+            <Text color='fg.muted'>{t('wallet.history.empty', { defaultValue: 'No movements yet.' })}</Text>
           ) : (
-            <Table.ScrollArea borderWidth='1px' borderRadius='md'>
-              <Table.Root variant='outline' interactive>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.ColumnHeader>{t('wallet.history.date', { defaultValue: 'Date' })}</Table.ColumnHeader>
-                    <Table.ColumnHeader>{t('wallet.history.kind', { defaultValue: 'Type' })}</Table.ColumnHeader>
-                    <Table.ColumnHeader>{t('wallet.history.detail', { defaultValue: 'Detail' })}</Table.ColumnHeader>
-                    <Table.ColumnHeader textAlign='end'>
-                      {t('wallet.history.amount', { defaultValue: 'Amount' })}
-                    </Table.ColumnHeader>
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {history.map((entry) => {
-                    const sign = entry.amountCents > 0 ? '+' : entry.amountCents < 0 ? '−' : ''
-                    const color = entry.amountCents > 0 ? 'fg.success' : entry.amountCents < 0 ? 'fg.error' : undefined
-                    return (
-                      <Table.Row key={entry.id}>
-                        <Table.Cell whiteSpace='nowrap'>
-                          {new Date(entry.createdAt).toLocaleString(i18n.resolvedLanguage, {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          })}
-                        </Table.Cell>
-                        <Table.Cell>{kindLabels[entry.kind] ?? entry.kind}</Table.Cell>
-                        <Table.Cell>
-                          <EntryDetail entry={entry} processLinks={processLinks} />
-                        </Table.Cell>
-                        <Table.Cell textAlign='end' whiteSpace='nowrap' color={color} fontWeight='medium'>
-                          {sign}
-                          {currency(Math.abs(entry.amountCents), currencyCode)}
-                        </Table.Cell>
-                      </Table.Row>
-                    )
-                  })}
-                </Table.Body>
-              </Table.Root>
-            </Table.ScrollArea>
+            // Hidden overflow keeps the table header's fill inside the rounded corners.
+            <Card.Root variant='frame' overflow='hidden'>
+              <Table.ScrollArea>
+                <Table.Root variant='outline' interactive>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.ColumnHeader>{t('wallet.history.date', { defaultValue: 'Date' })}</Table.ColumnHeader>
+                      <Table.ColumnHeader>{t('wallet.history.kind', { defaultValue: 'Type' })}</Table.ColumnHeader>
+                      <Table.ColumnHeader>{t('wallet.history.detail', { defaultValue: 'Detail' })}</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign='end'>
+                        {t('wallet.history.amount', { defaultValue: 'Amount' })}
+                      </Table.ColumnHeader>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
+                    {history.map((entry) => {
+                      const sign = entry.amountCents > 0 ? '+' : entry.amountCents < 0 ? '−' : ''
+                      const color =
+                        entry.amountCents > 0 ? 'fg.success' : entry.amountCents < 0 ? 'fg.error' : undefined
+                      return (
+                        <Table.Row key={entry.id}>
+                          <Table.Cell whiteSpace='nowrap'>
+                            {new Date(entry.createdAt).toLocaleString(i18n.resolvedLanguage, {
+                              dateStyle: 'medium',
+                              timeStyle: 'short',
+                            })}
+                          </Table.Cell>
+                          <Table.Cell>{kindLabels[entry.kind] ?? entry.kind}</Table.Cell>
+                          <Table.Cell>
+                            <EntryDetail entry={entry} processLinks={processLinks} />
+                          </Table.Cell>
+                          <Table.Cell textAlign='end' whiteSpace='nowrap' color={color} fontWeight='medium'>
+                            {sign}
+                            {currency(Math.abs(entry.amountCents), currencyCode)}
+                          </Table.Cell>
+                        </Table.Row>
+                      )
+                    })}
+                  </Table.Body>
+                </Table.Root>
+              </Table.ScrollArea>
+            </Card.Root>
           )}
 
           {pagination && pagination.lastPage > 1 && (
@@ -355,7 +353,7 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
   return (
     <>
       {wait && view === 'overview' && (
-        <Alert.Root status='info' mb={6}>
+        <Alert.Root status='info' mb='6'>
           <Alert.Indicator />
           <Alert.Content>
             <Alert.Description>{waitMessage()}</Alert.Description>
@@ -364,8 +362,8 @@ const WalletPanel = ({ processLinks = false }: WalletPanelProps) => {
       )}
 
       {view === 'topup' ? (
-        <DashboardBox p={6}>
-          <DashboardCardHeader title={t('wallet.topup.title', { defaultValue: 'Top up your wallet' })} />
+        <DashboardBox size='md'>
+          <SectionHeader title={t('wallet.topup.title', { defaultValue: 'Top up your wallet' })} mb='4' />
           <WalletTopUp onStart={handleTopUpStart} onDone={handleTopUpDone} onCancel={() => setView('overview')} />
         </DashboardBox>
       ) : (

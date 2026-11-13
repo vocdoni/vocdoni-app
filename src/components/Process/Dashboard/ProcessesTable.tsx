@@ -1,5 +1,4 @@
 import {
-  Box,
   Card,
   HStack,
   Icon,
@@ -10,10 +9,8 @@ import {
   Portal,
   Stack,
   Table,
-  Tag,
   Text,
   type TextProps,
-  useBreakpointValue,
 } from '@chakra-ui/react'
 import {
   ElectionProvider,
@@ -25,16 +22,18 @@ import {
 import { hasResults, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
+import { CopyIcon, ExternalLinkIcon, InfoIcon, MoreIcon, SearchIcon } from '~theme/icons'
 import { generatePath, Link as RouterLink } from 'react-router'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
@@ -44,7 +43,7 @@ type ProcessesListProps = {
 
 const ProcessesTable = ({ processes }: ProcessesListProps) => {
   const { t } = useTranslation()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
 
   const rows =
     processes &&
@@ -62,7 +61,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
 
   if (isMobile) {
     return (
-      <Stack gap={3} w='full'>
+      <Stack gap='3' w='full'>
         {rows}
         <RoutedPaginatedTableFooter />
       </Stack>
@@ -70,7 +69,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
   }
 
   return (
-    <Box border='1px solid' borderColor='table.border' borderRadius='sm' w='full'>
+    <Card.Root variant='frame' w='full' overflow='hidden'>
       <Table.ScrollArea>
         <Table.Root variant='outline'>
           <Table.Header>
@@ -93,7 +92,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
           </Table.Caption>
         </Table.Root>
       </Table.ScrollArea>
-    </Box>
+    </Card.Root>
   )
 }
 
@@ -101,7 +100,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
 // read-only projection of a legacy multiple-choice election), so such a row simply has no badge.
 const ProcessTypeBadge = () => <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
 
-const rowTitleProps: TextProps = { w: 'full', maxW: '500px', size: 'sm', truncate: true }
+const rowTitleProps: TextProps = { w: 'full', maxW: '[500px]', size: 'sm', truncate: true }
 const cardTitleProps: TextProps = { fontWeight: 'medium', lineClamp: 2 }
 
 const ProcessTitleLink = ({
@@ -132,7 +131,7 @@ const ProcessRowFallback = ({ process }: { process: VotingProcessResponse }) => 
 )
 
 const ProcessCardFallback = ({ process }: { process: VotingProcessResponse }) => (
-  <Card.Root variant='data-list-item'>
+  <Card.Root variant='list-item'>
     <Card.Header>
       <ProcessTitleLink process={process} textProps={cardTitleProps} />
     </Card.Header>
@@ -150,17 +149,13 @@ const ProcessResultsTag = () => {
     hasResults(election) || ((status === 'ENDED' || status === 'ONGOING') && !isSecretUntilTheEnd(election))
 
   return resultsVisible ? (
-    <Tag.Root colorPalette='gray' variant='solid' size='sm'>
-      <Tag.Label>
-        <Trans i18nKey='process_list.results_live'>Live</Trans>
-      </Tag.Label>
-    </Tag.Root>
+    <StatusBadge colorPalette='gray' variant='solid'>
+      <Trans i18nKey='process_list.results_live'>Live</Trans>
+    </StatusBadge>
   ) : (
-    <Tag.Root colorPalette='gray' variant='surface' size='sm'>
-      <Tag.Label>
-        <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
-      </Tag.Label>
-    </Tag.Root>
+    <StatusBadge colorPalette='gray' variant='surface'>
+      <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
+    </StatusBadge>
   )
 }
 
@@ -172,15 +167,15 @@ const ProcessCard = () => {
   if (!election) return null
 
   return (
-    <Card.Root variant='data-list-item'>
+    <Card.Root variant='list-item'>
       <Card.Header>
         <ProcessTitleLink process={election} textProps={cardTitleProps} />
         <ProcessContextMenu />
       </Card.Header>
       <Card.Body>
-        <HStack flexWrap='wrap' gap={2}>
+        <HStack flexWrap='wrap' gap='2'>
           <ProcessTypeBadge />
-          <ElectionStatusBadge size='sm' />
+          <ElectionStatusBadge />
           <ProcessResultsTag />
         </HStack>
         <Text>
@@ -217,7 +212,7 @@ const ProcessRow = () => {
         <ProcessTypeBadge />
       </Table.Cell>
       <Table.Cell>
-        <ElectionStatusBadge size='sm' />
+        <ElectionStatusBadge />
       </Table.Cell>
       <Table.Cell textAlign='end'>{processVoteCount(results)}</Table.Cell>
       <Table.Cell>
@@ -252,7 +247,7 @@ const ProcessContextMenu = () => {
     <Menu.Root>
       <Menu.Trigger asChild>
         <IconButton variant='ghost' size='sm' aria-label='Open actions'>
-          <LuEllipsisVertical />
+          <MoreIcon />
         </IconButton>
       </Menu.Trigger>
       <Portal>
@@ -260,27 +255,27 @@ const ProcessContextMenu = () => {
           <Menu.Content>
             <Menu.Item value='more-info' asChild>
               <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-                <Icon as={LuInfo} boxSize={4} />
+                <Icon as={InfoIcon} />
                 <Trans i18nKey='process_context.more_info'>More info</Trans>
               </RouterLink>
             </Menu.Item>
             <Menu.Item value='public-voting-page' asChild>
               <a href={publicProcessPath} target='_blank' rel='noopener noreferrer'>
-                <Icon as={LuExternalLink} boxSize={4} />
+                <Icon as={ExternalLinkIcon} />
                 <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
               </a>
             </Menu.Item>
             {explorerProcessId && (
               <Menu.Item value='explorer' asChild>
                 <a href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
-                  <Icon as={LuSearch} boxSize={4} />
+                  <Icon as={SearchIcon} />
                   <Trans i18nKey='process_context.explorer'>Explorer</Trans>
                 </a>
               </Menu.Item>
             )}
             <VotingReportPdfMenuItem election={election} />
             <Menu.Item value='clone-draft' onClick={cloneAsDraft}>
-              <Icon as={LuCopy} boxSize={4} />
+              <Icon as={CopyIcon} />
               <Trans i18nKey='process_context.clone_as_draft'>Clone as draft</Trans>
             </Menu.Item>
           </Menu.Content>

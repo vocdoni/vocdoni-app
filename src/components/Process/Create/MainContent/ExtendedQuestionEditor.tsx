@@ -14,10 +14,11 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuGripVertical, LuPlus, LuTrash2 } from 'react-icons/lu'
+import { AddIcon, DeleteIcon, DragHandleIcon } from '~theme/icons'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
 import { ImageUploader } from '~components/Layout/Uploader'
+import { DragHandle } from '~components/ui/DragHandle'
 
 const ExtendedQuestionEditor = ({
   index,
@@ -40,7 +41,7 @@ const ExtendedQuestionEditor = ({
   const cardStyles = choiceRecipe({ context: 'card', layout: 'grid' })
 
   return (
-    <SimpleGrid columns={{ base: 1, lg: 2, xl: 3, '2xl': 4 }} gap={4}>
+    <SimpleGrid columns={{ base: 1, lg: 2, xl: 3, '2xl': 4 }} gap='4'>
       {questionOptions.map((field, optionIndex) => (
         <SortableExtendedOption
           key={field.id}
@@ -59,15 +60,19 @@ const ExtendedQuestionEditor = ({
 
       {/* Add new option card */}
       <DashboardBox
-        onClick={() => append({ option: '', description: '' })}
-        borderStyle='dashed'
-        cursor='pointer'
-        _hover={{ bg: 'bg.muted' }}
+        asChild
+        borderStyle='[dashed]'
+        cursor='button'
+        focusVisibleRing='outside'
+        _hover={{ bg: 'state.hover.bg' }}
       >
-        <VStack justify='center' align='center' height='100%'>
-          <Icon as={LuPlus} boxSize={6} />
-          <Text>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
-        </VStack>
+        <button type='button' onClick={() => append({ option: '', description: '' })}>
+          {/* Spans: a button only takes phrasing content */}
+          <VStack as='span' justify='center' align='center' height='[100%]'>
+            <Icon as={AddIcon} boxSize='icon.lg' />
+            <Text as='span'>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
+          </VStack>
+        </button>
       </DashboardBox>
     </SimpleGrid>
   )
@@ -99,21 +104,9 @@ const SortableExtendedOption = ({
       <Box css={cardStyles.wrapper} data-choice-card data-layout='grid' position='relative'>
         {/* Drag handle */}
         {fieldsLength > 1 && (
-          <Box
-            {...attributes}
-            {...listeners}
-            cursor={isDragging ? 'grabbing' : 'grab'}
-            position='absolute'
-            top={2}
-            left={2}
-            zIndex='contents'
-            p={1}
-            borderRadius='md'
-            color='fg.subtle'
-            _hover={{ color: 'fg.muted', bg: 'bg.muted' }}
-          >
-            <Icon as={LuGripVertical} size='sm' />
-          </Box>
+          <DragHandle {...attributes} {...listeners} placement='corner' dragging={isDragging}>
+            <Icon as={DragHandleIcon} boxSize='icon.sm' />
+          </DragHandle>
         )}
 
         {/* Trash button */}
@@ -121,14 +114,14 @@ const SortableExtendedOption = ({
           <IconButton
             aria-label={t('process_create.remove_option', { defaultValue: 'Remove option' })}
             size='sm'
-            colorPalette='red'
+            colorPalette='danger'
             onClick={onRemove}
             position='absolute'
-            top={2}
-            right={2}
+            top='2'
+            right='2'
             zIndex='contents'
           >
-            <Icon as={LuTrash2} />
+            <Icon as={DeleteIcon} />
           </IconButton>
         )}
 
@@ -140,7 +133,7 @@ const SortableExtendedOption = ({
           {/* Title */}
           <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
             <Input
-              variant='borderless'
+              variant='inline'
               placeholder={t('process_create.option.placeholder', 'Option {{number}}', {
                 number: optionIndex + 1,
               })}
@@ -162,7 +155,7 @@ const SortableExtendedOption = ({
             render={({ field }) => (
               <Editor
                 onChange={field.onChange}
-                variant='borderless'
+                variant='inline'
                 placeholder={t('process_create.option.description_placeholder', 'Project description')}
                 defaultValue={field.value}
               />

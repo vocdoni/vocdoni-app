@@ -1,26 +1,26 @@
 import {
   AlertRoot as Alert,
   AlertDescription,
-  Badge,
   Box,
-  FieldErrorText,
-  FieldLabel,
-  FieldRoot,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
   Flex,
   FlexProps,
   HStack,
   Link,
-  Spinner,
   Text,
 } from '@chakra-ui/react'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
 import { ControllerRenderProps, useController, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCheck, LuUsers } from 'react-icons/lu'
+import { CheckIcon, UsersIcon } from '~theme/icons'
 import { Link as ReactRouterLink } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { useToast } from '~components/Toast'
+import { InlineLoader } from '~components/ui/Loader'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { Routes } from '~routes'
 import { Group, useGroup, useGroups } from '~src/queries/groups'
@@ -32,9 +32,14 @@ type GroupsQuery = ReturnType<typeof useGroups>
 
 const stepMarkerStyles: Record<StepStatus, FlexProps> = {
   idle: { borderColor: 'border.emphasized', color: 'fg.muted' },
-  current: { borderColor: 'orange.solid', color: 'orange.fg' },
-  error: { borderColor: 'red.solid', color: 'red.fg' },
-  done: { borderColor: 'green.solid', bg: 'green.solid', color: 'green.contrast' },
+  current: { colorPalette: 'warning', borderColor: 'colorPalette.solid', color: 'colorPalette.fg' },
+  error: { colorPalette: 'danger', borderColor: 'colorPalette.solid', color: 'colorPalette.fg' },
+  done: {
+    colorPalette: 'success',
+    borderColor: 'colorPalette.solid',
+    bg: 'colorPalette.solid',
+    color: 'colorPalette.contrast',
+  },
 }
 
 // Numbers the census' two parts (group, then voter authentication) so picking a
@@ -45,17 +50,17 @@ const StepMarker = ({ step, status }: { step: number; status: StepStatus }) => (
     as='span'
     aria-hidden
     boxSize={4.5}
-    mt='1px'
+    mt='[1px]'
     flexShrink={0}
     align='center'
     justify='center'
     borderRadius='full'
-    borderWidth='1.5px'
-    fontSize='2xs'
+    borderWidth='[1.5px]'
+    fontSize='xs'
     fontWeight='bold'
     {...stepMarkerStyles[status]}
   >
-    {status === 'done' ? <LuCheck /> : step}
+    {status === 'done' ? <CheckIcon /> : step}
   </Flex>
 )
 
@@ -66,17 +71,21 @@ export const CensusStatusBadge = () => {
   const { stepsLeft } = useCensusSteps()
 
   if (!stepsLeft) {
-    return <Badge colorPalette='green'>{t('process_create.census.status.ready', { defaultValue: 'Ready' })}</Badge>
+    return (
+      <StatusBadge colorPalette='success'>
+        {t('process_create.census.status.ready', { defaultValue: 'Ready' })}
+      </StatusBadge>
+    )
   }
 
   return (
-    <Badge colorPalette='orange'>
+    <StatusBadge colorPalette='warning'>
       {t('process_create.census.status.steps_left', {
         defaultValue_one: '{{ count }} step left',
         defaultValue_other: '{{ count }} steps left',
         count: stepsLeft,
       })}
-    </Badge>
+    </StatusBadge>
   )
 }
 
@@ -88,10 +97,10 @@ export const formatGroupOptionLabel = (group: Group, { context }: GroupOptionLab
   if (context === 'value') return group.title
 
   return (
-    <HStack gap={4} align='center' justifyContent='space-between' w='full'>
+    <HStack gap='4' align='center' justifyContent='space-between' w='full'>
       <Text as='span'>{group.title}</Text>
-      <HStack gap={1.5} color='texts.subtle' fontSize='sm' flexShrink={0}>
-        <LuUsers />
+      <HStack gap='1.5' color='fg.muted' fontSize='sm' flexShrink={0}>
+        <UsersIcon />
         <Text as='span'>{group.membersCount || 0}</Text>
       </HStack>
     </HStack>
@@ -141,8 +150,8 @@ export const GroupSelect = ({ groups, field, fetchNextPage, hasNextPage, isFetch
       <chakraComponents.MenuList {...props}>
         {props.children}
         {hasNextPage && (
-          <Box py={2} textAlign='center'>
-            {isFetching ? <Spinner size='sm' /> : t('process_create.groups.scroll_to_load', 'Scroll to load more...')}
+          <Box py='2' textAlign='center'>
+            {isFetching ? <InlineLoader /> : t('process_create.groups.scroll_to_load', 'Scroll to load more...')}
           </Box>
         )}
       </chakraComponents.MenuList>
@@ -155,16 +164,16 @@ export const GroupSelect = ({ groups, field, fetchNextPage, hasNextPage, isFetch
   }, [isFetching])
 
   return (
-    <FieldRoot invalid={!!errors.groupId}>
-      <FieldLabel gap={2} alignItems='flex-start'>
+    <FormControl invalid={!!errors.groupId}>
+      <FormLabel gap='2' alignItems='flex-start'>
         <StepMarker step={1} status={groupStatus} />
         <Trans i18nKey='process_create.census.memberbase.label'>Select a group of members to create the census</Trans>
-      </FieldLabel>
+      </FormLabel>
       <Select
         // Lets a blocked publish focus the combobox when no group is picked.
         ref={field.ref}
         // Stable handle for the group combobox (labelled by the
-        // FieldLabel above, which Chakra wires up by id).
+        // FormLabel above, which Chakra wires up by id).
         inputId='groupId'
         options={groups ?? []}
         value={selected}
@@ -187,8 +196,8 @@ export const GroupSelect = ({ groups, field, fetchNextPage, hasNextPage, isFetch
         maxMenuHeight={200}
         components={{ MenuList: CustomMenuList }}
       />
-      <FieldErrorText>{errors.groupId?.message?.toString()}</FieldErrorText>
-    </FieldRoot>
+      <FormErrorMessage>{errors.groupId?.message?.toString()}</FormErrorMessage>
+    </FormControl>
   )
 }
 
@@ -216,13 +225,13 @@ const GroupCensusCreation = () => {
   } = useController({ control, name: 'census', rules: { required } })
 
   const TLink = ({ children }) => (
-    <Link asChild textDecoration='underline'>
+    <Link asChild>
       <ReactRouterLink to={Routes.dashboard.memberbase.base}>{children}</ReactRouterLink>
     </Link>
   )
 
   return (
-    <Box display='flex' flexDirection='column' gap={4}>
+    <Box display='flex' flexDirection='column' gap='4'>
       {groups?.length > 0 && (
         <>
           <GroupSelect
@@ -232,9 +241,9 @@ const GroupCensusCreation = () => {
             hasNextPage={hasNextPage}
             isFetching={isFetching}
           />
-          <Flex direction='column' gap={1.5}>
+          <Flex direction='column' gap='1.5'>
             {/* Styled after the group field's label above, so both steps read alike. */}
-            <HStack gap={2} align='flex-start' textStyle='sm' fontWeight='medium'>
+            <HStack gap='2' align='flex-start' textStyle='sm' fontWeight='medium'>
               <StepMarker step={2} status={authStatus} />
               {t('process_create.census.voter_auth.label', { defaultValue: 'Set how voters prove who they are' })}
             </HStack>
@@ -244,7 +253,7 @@ const GroupCensusCreation = () => {
       )}
 
       {(!groups || groups?.length === 0) && (
-        <Alert status='warning' fontSize='xs' color='texts.subtle'>
+        <Alert status='warning' fontSize='xs' color='fg.muted'>
           <AlertDescription>
             <Trans i18nKey='process_create.census.group.no_groups'>
               To start a vote, you first need to create a group of eligible voters from your memberbase.

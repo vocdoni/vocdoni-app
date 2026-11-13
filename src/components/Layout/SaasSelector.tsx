@@ -13,7 +13,7 @@ import {
 import { Props as SelectProps, chakraComponents } from 'chakra-react-select'
 import { Controller, type ControllerProps, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuEye, LuKey, LuUserRoundCog, LuUsers } from 'react-icons/lu'
+import { KeyIcon, UserCogIcon, UsersIcon, ViewIcon } from '~theme/icons'
 import { baseLanguages } from '~i18n/languages'
 import { Role, useOrganizationLanguages, useOrganizationTypes, useRoles } from '~src/queries/organization'
 import { Select } from '../Form/Select'
@@ -65,7 +65,7 @@ export const SelectCustom = ({
   return (
     <FormControl invalid={!!errors[name]} required={required}>
       {label && (
-        <FormLabel htmlFor={name} display='flex' ms={1} fontSize='sm' fontWeight='500' mb={2}>
+        <FormLabel htmlFor={name} display='flex' ms='1' fontSize='sm' mb='2'>
           {label}
         </FormLabel>
       )}
@@ -108,7 +108,7 @@ export const SelectCustom = ({
         )}
       />
       {helper && <FormHelperText>{helper}</FormHelperText>}
-      <FormErrorMessage mt={2}>
+      <FormErrorMessage mt='2'>
         {getErrorMessage(errors[name]) || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
       </FormErrorMessage>
     </FormControl>
@@ -210,10 +210,10 @@ export const IssueTypeSelector = ({ defaultValue, ...props }: Omit<SelectCustomP
 }
 
 export const roleIcons: Record<string, JSX.Element> = {
-  admin: <Icon as={LuKey} />,
-  manager: <Icon as={LuUserRoundCog} />,
-  viewer: <Icon as={LuEye} />,
-  any: <Icon as={LuUsers} />,
+  admin: <Icon as={KeyIcon} />,
+  manager: <Icon as={UserCogIcon} />,
+  viewer: <Icon as={ViewIcon} />,
+  any: <Icon as={UsersIcon} />,
 }
 
 const getRoleBadge = (role: Role) => {
@@ -240,12 +240,12 @@ export const createRoleDisplay = (type: 'Option' | 'SingleValue') => {
 
     return (
       <BaseComponent {...props}>
-        <Flex align='center' gap={2} alignItems='center'>
+        <Flex align='center' gap='2' alignItems='center'>
           <Box as='span' role='img'>
             {icon}
           </Box>
           <Text fontWeight='bold'>{data.label}</Text>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text textStyle='body-sm' color='fg.muted'>
             {accessLabel}
           </Text>
         </Flex>

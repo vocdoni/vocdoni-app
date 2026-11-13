@@ -3,9 +3,9 @@ import {
   AlertDescription,
   AlertIndicator,
   Button,
-  FieldErrorText,
-  FieldHelperText,
-  FieldRoot,
+  FieldErrorText as FormErrorMessage,
+  FieldHelperText as FormHelperText,
+  FieldRoot as FormControl,
   PinInputControl,
   PinInputHiddenInput,
   PinInputInput,
@@ -99,11 +99,11 @@ export const Step1Base = () => {
   }
 
   return (
-    <VStack gap={6} align='stretch' w='full'>
+    <VStack gap='6' align='stretch' w='full'>
       <Text fontWeight='medium'>{t('csp.step1.subtitle', { defaultValue: 'Enter the verification code' })}</Text>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <VStack gap={5} align='stretch'>
-          <FieldRoot invalid={!!errors.code}>
+        <VStack gap='5' align='stretch'>
+          <FormControl invalid={!!errors.code}>
             <Controller
               control={control}
               name='code'
@@ -138,7 +138,7 @@ export const Step1Base = () => {
                     count={6}
                   >
                     <PinInputHiddenInput />
-                    <PinInputControl w='full' gap={3}>
+                    <PinInputControl w='full' gap='3'>
                       {Array.from({ length: 6 }).map((_, index) => (
                         <PinInputInput key={index} index={index} />
                       ))}
@@ -147,9 +147,9 @@ export const Step1Base = () => {
                 )
               }}
             />
-            {errors.code && <FieldErrorText textAlign='center'>{errors.code.message}</FieldErrorText>}
-            <FieldHelperText mt={3}>
-              <VStack gap={2} align='stretch'>
+            {errors.code && <FormErrorMessage textAlign='center'>{errors.code.message}</FormErrorMessage>}
+            <FormHelperText mt='3'>
+              <VStack gap='2' align='stretch'>
                 <Text>
                   <Trans i18nKey='csp.step1.helper_text'>
                     We've sent a code to your phone number or email address. If you chose to receive it by email, please
@@ -198,8 +198,8 @@ export const Step1Base = () => {
                   />
                 </Text>
               </VStack>
-            </FieldHelperText>
-          </FieldRoot>
+            </FormHelperText>
+          </FormControl>
           {auth.isError && (
             <Alert status='error'>
               <AlertIndicator />
@@ -210,7 +210,7 @@ export const Step1Base = () => {
           <Button type='submit' w='full' loading={authPending}>
             {t('csp.authenticate', { defaultValue: 'Authenticate' })}
           </Button>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Text textStyle='body-sm' color='fg.muted'>
             {t('csp.step1.footer_text', {
               defaultValue: 'If you experience any issues, contact your organization.',
             })}

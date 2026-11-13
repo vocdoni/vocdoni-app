@@ -1,7 +1,8 @@
-import { Box, Button, HStack, Icon, Link, Spinner, Text } from '@chakra-ui/react'
+import { Box, Button, HStack, Icon, Link, type StackProps, Text } from '@chakra-ui/react'
 import { forwardRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuCircleAlert, LuCircleCheck, LuExternalLink, LuTriangleAlert } from 'react-icons/lu'
+import { ErrorIcon, ExternalLinkIcon, SuccessIcon, WarningIcon } from '~theme/icons'
+import { InlineLoader } from '~components/ui/Loader'
 import { Routes } from '~routes'
 import { CensusCheckIssues, CensusCheckOutcome, CensusCheckStatus } from './useCensusCheck'
 
@@ -24,13 +25,13 @@ type MemberCheckProps = {
   onRetry: () => void
 }
 
-type LineProps = { icon: ReactNode; busy?: boolean; color?: string; children: ReactNode }
+type LineProps = { icon: ReactNode; busy?: boolean; color?: StackProps['color']; children: ReactNode }
 
 // While a re-check runs, the spinner takes the icon's place.
 const Line = ({ icon, busy, color, children }: LineProps) => (
-  <HStack gap={2} align='start' fontSize='sm' color={color}>
-    <Box as='span' flexShrink={0} mt={0.5} display='inline-flex'>
-      {busy ? <Spinner size='xs' /> : icon}
+  <HStack gap='2' align='start' fontSize='sm' color={color}>
+    <Box as='span' flexShrink={0} mt='0.5' display='inline-flex'>
+      {busy ? <InlineLoader /> : icon}
     </Box>
     <Box>{children}</Box>
   </HStack>
@@ -70,14 +71,14 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
     if (!shown) {
       if (status === 'checking') {
         content = (
-          <Line icon={<Spinner size='xs' />} color='fg.muted'>
+          <Line icon={<InlineLoader />} color='fg.muted'>
             {t('voter_auth.status.checking', { defaultValue: 'Checking your member list…' })}
           </Line>
         )
       } else if (passwordOnly) {
         // Save is disabled in this state, so the line says what to change rather than just refusing.
         content = (
-          <Line icon={<Icon as={LuCircleAlert} boxSize={4} />} color='fg.error'>
+          <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' />} color='fg.error'>
             {t('voter_auth.password_needs_another_credential', {
               defaultValue:
                 'A password alone cannot identify voters. Pick another detail too, or send a one-time code.',
@@ -86,14 +87,14 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
         )
       } else if (emptyAttempt) {
         content = (
-          <Line icon={<Icon as={LuCircleAlert} boxSize={4} />} color='fg.error'>
+          <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' />} color='fg.error'>
             {t('voter_auth.status.empty', { defaultValue: 'Choose at least one detail or a code.' })}
           </Line>
         )
       }
     } else if (shown.status === 'valid') {
       content = (
-        <Line icon={<Icon as={LuCircleCheck} boxSize={4} color='fg.success' />} busy={rechecking}>
+        <Line icon={<Icon as={SuccessIcon} boxSize='icon.sm' color='fg.success' />} busy={rechecking}>
           {membersCount
             ? t('voter_auth.status.valid_count', {
                 defaultValue: 'All {{count}} members can sign in.',
@@ -105,17 +106,17 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
     } else if (shown.status === 'rejected') {
       // Saving is refused in this state too, so the line must not promise otherwise.
       content = (
-        <Line icon={<Icon as={LuCircleAlert} boxSize={4} color='fg.error' />} busy={rechecking}>
+        <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' color='fg.error' />} busy={rechecking}>
           {t('voter_auth.status.rejected', { defaultValue: "This sign-in can't be used with your member list." })}
         </Line>
       )
     } else if (shown.status === 'unavailable') {
       content = (
-        <Line icon={<Icon as={LuTriangleAlert} boxSize={4} color='fg.warning' />} busy={rechecking}>
+        <Line icon={<Icon as={WarningIcon} boxSize='icon.sm' color='fg.warning' />} busy={rechecking}>
           {t('voter_auth.status.unavailable', {
             defaultValue: "We couldn't check your member list. You can still save.",
           })}{' '}
-          <Button variant='plain' size='xs' h='auto' p={0} textDecoration='underline' onClick={onRetry}>
+          <Button variant='link-underline' size='xs' onClick={onRetry}>
             {t('voter_auth.status.retry', { defaultValue: 'Check again' })}
           </Button>
         </Line>
@@ -131,9 +132,9 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
       // blocked either way (a duplicate makes the backend refuse the whole
       // census), so no guessed consequence and no advice on what to pick.
       content = (
-        <Line icon={<Icon as={LuCircleAlert} boxSize={4} color='fg.error' />} busy={rechecking}>
+        <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' color='fg.error' />} busy={rechecking}>
           {duplicates > 0 && (
-            <Text as='span' fontSize='inherit' fontWeight='medium' color='fg.error'>
+            <Text as='span' fontWeight='medium' color='fg.error'>
               {t('voter_auth.status.duplicated_members', {
                 defaultValue: "{{count}} members share the same {{fields}}, so they can't be told apart.",
                 count: duplicates,
@@ -144,7 +145,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
           {missing > 0 &&
             (missingByField?.length ? missingByField : [{ label: missingFields, count: missing }]).map(
               ({ label, count }) => (
-                <Text key={label} as='span' fontSize='inherit' fontWeight='medium' color='fg.error'>
+                <Text key={label} as='span' fontWeight='medium' color='fg.error'>
                   {t('voter_auth.status.missing_members', {
                     defaultValue: '{{count}} members are missing {{fields}}.',
                     count,
@@ -153,9 +154,9 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
                 </Text>
               )
             )}
-          <Link href={Routes.dashboard.memberbase.base} target='_blank' rel='noopener noreferrer' fontWeight='medium'>
+          <Link href={Routes.dashboard.memberbase.base} target='_blank' rel='noopener noreferrer' emphasis='medium'>
             {t('voter_auth.status.fix', { defaultValue: 'Fix your member list' })}
-            <Icon as={LuExternalLink} boxSize={3} />
+            <Icon as={ExternalLinkIcon} boxSize='icon.sm' />
           </Link>
         </Line>
       )
@@ -169,8 +170,8 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
         aria-live='polite'
         aria-busy={status === 'checking'}
         outline='none'
-        opacity={rechecking ? 0.6 : 1}
-        transition='opacity 0.15s'
+        opacity={rechecking ? 'inactive' : '[1]'}
+        transition='[opacity {durations.fast}]'
         data-status={status}
       >
         {content}

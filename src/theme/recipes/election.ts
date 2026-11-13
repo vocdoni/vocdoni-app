@@ -13,7 +13,7 @@ import {
 
 export const ElectionDescription = defineRecipe({
   base: {
-    color: 'texts.subtle',
+    color: 'fg.muted',
   },
 })
 
@@ -24,12 +24,45 @@ export const ElectionVideo = defineRecipe({
 })
 
 export const ElectionTitle = defineRecipe({
+  // Typography lives in the variants: a variant with a `textStyle` must not also get these from the base.
   base: {
-    fontWeight: 'bold',
-    fontSize: 'xl',
     textAlign: 'center',
-    lineHeight: 1.3,
-    mb: 3,
+    mb: '3',
+  },
+  variants: {
+    size: {
+      md: { fontSize: 'xl', fontWeight: 'bold', lineHeight: 'short' },
+      // Public process page header.
+      hero: {
+        textStyle: 'display',
+        textAlign: 'left',
+        mb: '5',
+      },
+      // Process page of the organization dashboard: the page title.
+      page: {
+        textStyle: 'page-title',
+        textAlign: 'start',
+      },
+      // Shared-census process cards.
+      card: {
+        fontSize: 'lg',
+        fontWeight: 'bold',
+        lineHeight: 'short',
+        mb: '0',
+      },
+      // One-line process rows of the organization dashboard.
+      row: {
+        fontSize: 'md',
+        fontWeight: 'bold',
+        lineHeight: 'short',
+        textAlign: 'left',
+        mb: '0',
+        truncate: true,
+      },
+    },
+  },
+  defaultVariants: {
+    size: 'md',
   },
 })
 
@@ -39,10 +72,10 @@ export const ElectionQuestions = defineSlotRecipe({
     title: {
       display: 'block',
       textAlign: 'start',
-      lineHeight: 1.3,
+      lineHeight: 'short',
       fontSize: 'lg',
       fontWeight: 'semibold',
-      mb: 6,
+      mb: '6',
     },
     body: {
       width: 'full',
@@ -58,26 +91,26 @@ export const ElectionQuestions = defineSlotRecipe({
       list: {
         container: {
           '& + &': {
-            mt: 10,
+            mt: '10',
           },
         },
         title: {
-          mb: 0,
+          mb: '0',
         },
         stack: {
           display: 'flex',
           flexDirection: 'column',
-          gap: 3,
+          gap: '3',
         },
       },
       grid: {
         container: {
           '& + &': {
-            mt: 10,
+            mt: '10',
           },
         },
         title: {
-          mb: 0,
+          mb: '0',
         },
         stack: {
           display: 'grid',
@@ -86,7 +119,7 @@ export const ElectionQuestions = defineSlotRecipe({
             md: 'repeat(2, minmax(0, 1fr))',
             lg: 'repeat(3, minmax(0, 1fr))',
           },
-          gap: 4,
+          gap: '4',
         },
       },
     },
@@ -103,82 +136,37 @@ export const ElectionResults = defineSlotRecipe({
       display: 'grid',
       gridTemplateColumns: '1fr',
       alignItems: 'start',
-      gap: 6,
+      gap: '6',
     },
     body: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 3,
-      fontWeight: 'bold',
-      '& > div': {
-        h: '100%',
-        minH: 8,
-        justifyContent: 'center',
-        position: 'relative',
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0,1fr) auto',
-        columnGap: 2,
-        alignItems: 'center',
-      },
+      gap: '3',
     },
     header: {
-      mb: 4,
+      mb: '4',
+    },
+    // The choice's title and tally, on one line above its `results` bar.
+    choiceHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      gap: '4',
+      mb: '1',
     },
     choiceTitle: {
-      gridColumn: '1',
-      zIndex: 'sidebar',
       color: 'fg',
-      pl: 2,
       fontSize: 'sm',
-      minW: 0,
+      minW: '0',
       overflowWrap: 'break-word',
     },
     choiceVotes: {
-      gridColumn: '2',
-      zIndex: 'sidebar',
-      display: 'flex',
-      alignItems: 'center',
-      pr: 2,
+      color: 'fg.muted',
       fontSize: 'sm',
-      color: 'fg',
+      whiteSpace: 'nowrap',
     },
     question: {
       width: 'full',
-      minW: 0,
-    },
-    progress: {
-      position: 'absolute',
-      inset: 0,
-      gridColumn: '1 / -1',
-      gridRow: '1',
-      alignSelf: 'stretch',
-      h: '100%',
-      minH: 8,
-      zIndex: 'background',
-    },
-  },
-})
-
-const resultsProgressBarAnatomy = ['root', 'track', 'range'] as const
-
-export const resultsProgressRecipe = defineSlotRecipe({
-  slots: resultsProgressBarAnatomy,
-  base: {
-    root: {
-      h: '100%',
-      minH: 8,
-      borderRadius: 'sm',
-      overflow: 'hidden',
-    },
-    track: {
-      h: '100%',
-      bg: { base: 'gray.100', _dark: 'gray.800' },
-      borderRadius: 'inherit',
-    },
-    range: {
-      h: '100%',
-      bg: { base: 'gray.400', _dark: 'gray.500' },
-      borderRadius: 'inherit',
+      minW: '0',
     },
   },
 })
@@ -189,7 +177,7 @@ export const ElectionSchedule = defineRecipe({
     fontSize: 'sm',
     textAlign: 'center',
     fontStyle: 'italic',
-    color: 'gray.400',
+    color: 'ballot.schedule',
   },
 })
 
@@ -203,58 +191,68 @@ export const QuestionChoice = defineSlotRecipe({
     },
 
     skeleton: {
-      w: '100%',
-      aspectRatio: '4 / 3',
+      w: 'full',
+      aspectRatio: 'landscape',
     },
 
     image: {
-      w: '100%',
-      h: '100%',
+      w: 'full',
+      h: 'full',
       borderTopRadius: 'lg',
       objectFit: 'cover',
       objectPosition: 'center',
     },
 
+    // Body size on both controls: the checkbox label would otherwise pass on its smaller one.
     label: {
+      textStyle: 'body',
       fontWeight: 'semibold',
       wordBreak: 'break-word',
     },
 
     description: {
+      textStyle: 'body',
       wordBreak: 'break-word',
+    },
+
+    modalLabel: {
+      textStyle: 'body',
+    },
+
+    modalDescription: {
+      textStyle: 'body',
     },
   },
   variants: {
     context: {
       content: {
         wrapper: {
-          gap: 2,
-          height: '100%',
+          gap: '2',
+          height: 'full',
         },
       },
       card: {
         wrapper: {
           borderRadius: 'md',
-          borderWidth: '1px',
-          borderColor: 'gray.200',
-          _dark: { borderColor: 'ink.700' },
-          transition: 'border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease',
+          borderWidth: 'hairline',
+          borderColor: 'ballot.choice.border',
+          transition:
+            '[border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease]',
           bg: 'transparent',
-          p: 3,
+          p: '3',
           '&[data-state="checked"]': {
-            borderColor: 'black',
-            _dark: { borderColor: 'white' },
+            borderColor: 'colorPalette.solid',
           },
           '&[data-disabled="true"]': {
-            opacity: 0.6,
-            cursor: 'not-allowed',
+            opacity: 'inactive',
+            cursor: 'disabled',
           },
         },
       },
       plain: {
         wrapper: {
-          border: 'none',
-          p: 0,
+          border: '[none]',
+          p: '0',
           bg: 'transparent',
         },
       },
@@ -264,13 +262,13 @@ export const QuestionChoice = defineSlotRecipe({
         wrapper: {
           display: 'flex',
           alignItems: 'center',
-          gap: 3,
+          gap: '3',
           '& [data-choice-body]': {
             display: 'flex',
             flexDirection: 'column',
-            gap: 1,
+            gap: '1',
             flex: 1,
-            minW: 0,
+            minW: '0',
           },
         },
       },
@@ -278,44 +276,44 @@ export const QuestionChoice = defineSlotRecipe({
         wrapper: {
           display: 'flex',
           flexDirection: 'column',
-          height: '100%',
+          height: 'full',
           position: 'relative',
           alignItems: 'start',
           w: 'full',
-          p: 0,
+          p: '0',
           '& [data-choice-control]': {
             position: 'absolute',
-            top: 2,
-            right: 2,
+            top: '2',
+            right: '2',
             zIndex: 'docked',
           },
           '& [data-choice-control][data-control-type="checkbox"]': {
-            borderWidth: '1px',
-            borderColor: 'table.border',
+            borderWidth: 'hairline',
+            borderColor: 'border',
             boxShadow: 'sm',
           },
           '& [data-choice-control][data-control-type="radio"]': {
             bg: 'transparent',
-            border: 'none',
-            boxShadow: 'none',
-            p: 0,
+            border: '[none]',
+            boxShadow: '[none]',
+            p: '0',
             borderRadius: 'full',
           },
           '& [data-choice-media]': {
-            width: '100%',
+            width: 'full',
             display: 'block',
             overflow: 'hidden',
           },
           '& [data-choice-body]': {
-            p: 4,
+            p: '4',
             display: 'flex',
             flexDirection: 'column',
-            gap: 1,
+            gap: '1',
             flex: 1,
-            minW: 0,
+            minW: '0',
           },
           '& [data-choice-body][data-compact]': {
-            p: 0,
+            p: '0',
           },
         },
       },
@@ -331,14 +329,14 @@ export const QuestionsConfirmation = defineSlotRecipe({
   base: {
     question: {
       '& + &': {
-        mt: 4,
+        mt: '4',
       },
     },
     description: {
-      color: 'texts.subtle',
+      color: 'fg.muted',
       fontSize: 'sm',
       whiteSpace: 'pre-line',
-      mb: 4,
+      mb: '4',
     },
     title: {
       fontWeight: 'bold',
@@ -353,15 +351,15 @@ export const QuestionsEmpty = defineSlotRecipe({
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      gap: 3,
-      py: 6,
+      gap: '3',
+      py: '6',
     },
     icon: {
       boxSize: 6,
     },
     description: {
       fontSize: 'sm',
-      color: 'texts.subtle',
+      color: 'fg.muted',
       textAlign: 'center',
     },
   },
@@ -371,7 +369,7 @@ export const QuestionsTip = defineSlotRecipe({
   slots: questionTipAnatomy,
   base: {
     wrapper: {
-      mt: 4,
+      mt: '4',
       w: 'full',
       display: 'flex',
       justifyContent: 'end',
@@ -390,7 +388,7 @@ export const QuestionsTypeBadge = defineSlotRecipe({
     box: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 2,
+      gap: '2',
     },
     title: {
       fontWeight: 'bold',
@@ -415,7 +413,7 @@ export const VoteWeight = defineSlotRecipe({
   base: {
     wrapper: {
       display: 'flex',
-      gap: 2,
+      gap: '2',
     },
     weight: {
       fontWeight: 'bold',

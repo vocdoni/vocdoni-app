@@ -164,8 +164,8 @@ const SignUp = ({
   return (
     <>
       <FormProvider {...methods}>
-        <Flex as='form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap={6}>
-          <Flex flexDirection={'column'} gap={4} mb={4}>
+        <Flex as='form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap='6'>
+          <Flex flexDirection={'column'} gap='4' mb='4'>
             <InputBasic formValue='firstName' label={t('signup_firstname')} placeholder='John' required />
             <InputBasic formValue='lastName' label={t('signup_lastname')} placeholder='Doe' required />
 
@@ -204,7 +204,7 @@ const SignUp = ({
                     <CheckboxHiddenInput name={field.name} />
                     <CheckboxControl />
                     <CheckboxLabel>
-                      <Text fontSize={'14px'}>
+                      <Text textStyle='body-sm'>
                         <Trans
                           i18nKey='signup_agree_promotions'
                           defaultValue='I agree to receive promotions and offers for digital voting services offered by Vocdoni.'
@@ -226,25 +226,15 @@ const SignUp = ({
                     <CheckboxHiddenInput name={field.name} />
                     <CheckboxControl />
                     <CheckboxLabel>
-                      <Text fontSize={'14px'}>
+                      <Text textStyle='body-sm'>
                         <Trans
                           i18nKey='signup_agree_terms'
                           components={{
                             termsLink: (
-                              <Link
-                                href={termsOfServiceUrl}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                fontSize={'14px'}
-                              />
+                              <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' size='sm' />
                             ),
                             privacyLink: (
-                              <Link
-                                href={privacyPolicyUrl}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                fontSize={'14px'}
-                              />
+                              <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' size='sm' />
                             ),
                           }}
                         />
@@ -256,7 +246,7 @@ const SignUp = ({
               <FormErrorMessage>{errors?.terms?.message.toString()}</FormErrorMessage>
             </FormControl>
           </Flex>
-          <Button loading={isPending} type='submit' w='100%'>
+          <Button loading={isPending} type='submit' w='full'>
             {t('signup_create_account')}
           </Button>
           <OrSeparator />
@@ -265,17 +255,16 @@ const SignUp = ({
       <GoogleAuth />
 
       <Text
-        color='account.description'
         display={'flex'}
         justifyContent='center'
         alignItems='start'
-        maxW='100%'
-        mt={6}
-        fontSize='sm'
+        maxW='full'
+        mt='6'
+        textStyle='body-sm'
         fontWeight={'bold'}
       >
         {t('already_member')}
-        <Link asChild ml={1} fontWeight={'bold'} fontSize='sm'>
+        <Link asChild ml='1' emphasis='strong' size='sm'>
           <NavLink to={signInRoute}>{t('signin')}</NavLink>
         </Link>
       </Text>

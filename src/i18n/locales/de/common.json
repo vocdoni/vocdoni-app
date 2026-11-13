@@ -148,7 +148,6 @@
   "color_mode_switcher": "Farbmodus-Umschalter",
   "common": {
     "back": "Zurück",
-    "close_drawer": "Seitenleiste schließen",
     "home": "Startseite",
     "retry": "Nochmal versuchen"
   },
@@ -395,6 +394,7 @@
       "password_min_length": "Min. 8 Zeichen",
       "required": "Dieses Feld ist erforderlich"
     },
+    "hide_password": "Passwort ausblenden",
     "member": {
       "error": {
         "invalid_birth_date": "Geburtsdatum darf nicht in der Zukunft liegen",
@@ -410,6 +410,7 @@
       "success_title": "Abstimmungsprozess erfolgreich erstellt"
     },
     "select_language": "Sprache",
+    "show_password": "Passwort anzeigen",
     "support": {
       "billing_issue": "Abrechnungsproblem",
       "custom_request": "Sonderwunsch",
@@ -763,10 +764,8 @@
       "weight": "Stimmgewicht"
     },
     "list": {
-      "empty": "Keine Mitglieder gefunden",
       "empty_description": "Füge dein erstes Mitglied hinzu, um zu beginnen.",
       "error": "Mitglieder konnten nicht geladen werden",
-      "no_search_results": "Keine Mitglieder entsprechen deiner Suche",
       "no_search_results_description": "Versuche, deine Suchbegriffe anzupassen."
     },
     "table": {
@@ -792,7 +791,6 @@
       "bulk_delete": "Löschen",
       "cancel": "Abbrechen",
       "clear_sort": "Sortierung aufheben",
-      "close_drawer": "Schließen",
       "create_group": "Gruppe erstellen",
       "create_group_error": "Fehler beim Erstellen der Gruppe",
       "create_group_form_description": "Erstelle eine neue Gruppe aus den ausgewählten Mitgliedern. Diese wird für zukünftige Abstimmungsprozesse organisiert.",
@@ -841,7 +839,8 @@
     "dashboard": "Dashboard",
     "expand": "Menü ausklappen",
     "login": "Anmelden",
-    "open": "Menü öffnen"
+    "open": "Menü öffnen",
+    "title": "Menü"
   },
   "name": "Name",
   "need_help": {
@@ -1185,6 +1184,7 @@
     },
     "voters": "Wählende",
     "voting": "Deine Stimme wird verarbeitet. Das dauert einige Sekunden. Bitte schließe oder aktualisiere diese Seite nicht.",
+    "voting_label": "Deine Stimme wird abgegeben",
     "voting_method": {
       "approval": "Zustimmung",
       "budget": "Budgetverteilung",
@@ -1441,12 +1441,8 @@
     }
   },
   "processes": {
-    "empty": "Keine Abstimmungsprozesse gefunden",
-    "empty_description": "Erstelle einen Abstimmungsprozess, um zu beginnen.",
     "load_error": "Abstimmungsprozesse konnten nicht geladen werden",
-    "load_error_description": "Bitte versuche es erneut.",
-    "no_results": "Keine Ergebnisse für diesen Filter",
-    "no_results_description": "Passe deine Filter an."
+    "load_error_description": "Bitte versuche es erneut."
   },
   "profile": {
     "error": "Profil konnte nicht aktualisiert werden",

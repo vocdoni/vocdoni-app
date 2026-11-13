@@ -1,5 +1,3 @@
-export const confirmAnatomy = ['overlay', 'content', 'header', 'body', 'footer', 'confirm', 'cancel', 'close'] as const
-
 export const questionChoiceAnatomy = [
   'label',
   'description',
@@ -44,29 +42,10 @@ export const resultsAnatomy = [
   'header',
   'title',
   'body',
-  'progress',
   'secret',
+  'choiceHeader',
   'choiceTitle',
   'choiceVotes',
-] as const
-
-export const spreadsheetAccessAnatomy = [
-  'button',
-  'disconnect',
-  'overlay',
-  'content',
-  'header',
-  'body',
-  'footer',
-  'top_close',
-  'close',
-  'control',
-  'label',
-  'input',
-  'error',
-  'submit',
-  'helper',
-  'sik_control',
 ] as const
 
 export const voteWeightAnatomy = ['wrapper', 'weight'] as const

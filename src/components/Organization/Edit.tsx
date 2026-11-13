@@ -1,4 +1,5 @@
-import { Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
+import { Button, Flex, SimpleGrid } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { organizationQueryKeys } from '@vocdoni/react-components'
 import { useState } from 'react'
@@ -8,7 +9,7 @@ import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox } from '~components/Dashboard/Contents'
-import { HSeparator } from '~components/Layout/Separators'
+import { LabelledSeparator } from '~components/Layout/Separators'
 import { AvatarUploader } from '~components/Layout/Uploader'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { useToast } from '~components/Toast'
@@ -106,38 +107,21 @@ const EditOrganization = () => {
   }
 
   return (
-    <DashboardBox p={6}>
+    <DashboardBox size='md'>
       <FormProvider {...methods}>
-        <Flex as='form' id='process-create-form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap={6}>
-          <Flex flexDir='column'>
-            <Heading size='md'>
-              {t('create_org.organization_details', { defaultValue: 'Organization details' })}
-            </Heading>
-            <Text color='texts.subtle' fontSize='sm'>
-              {t('create_org.organization_details_description', {
-                defaultValue: "Manage your organization's profile and configuration settings.",
-              })}
-            </Text>
-          </Flex>
-          <Flex gap={6} flexDirection={{ base: 'column', sm: 'row' }}>
-            <AvatarUploader w='fit-content' />
+        <Flex as='form' id='process-create-form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap='6'>
+          <SectionHeader
+            title={t('create_org.organization_details', { defaultValue: 'Organization details' })}
+            description={t('create_org.organization_details_description', {
+              defaultValue: "Manage your organization's profile and configuration settings.",
+            })}
+          />
+          <Flex gap='6' flexDirection={{ base: 'column', sm: 'row' }}>
+            <AvatarUploader w='fit' />
             <PublicOrgForm />
           </Flex>
-          <Flex align='center'>
-            <HSeparator />
-            <Text
-              color='texts.subtle'
-              fontWeight='bold'
-              mx={3.5}
-              whiteSpace='nowrap'
-              fontSize='xs'
-              textTransform='uppercase'
-            >
-              {t('other_details', { defaultValue: 'Other details' })}
-            </Text>
-            <HSeparator />
-          </Flex>
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+          <LabelledSeparator>{t('other_details', { defaultValue: 'Other details' })}</LabelledSeparator>
+          <SimpleGrid columns={{ base: 1, md: 2 }} gap='6'>
             <PrivateOrgForm />
           </SimpleGrid>
 

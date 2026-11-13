@@ -21,7 +21,9 @@ name: Integration
 #
 # `pnpm test:e2e` runs every project in playwright.config.ts, so this covers both
 # the desktop (`chromium`) and the emulated-phone (`mobile-chrome`) passes. Adding
-# a project needs no change here.
+# a project needs no change here. With the Stripe sandbox keys set, the whole suite
+# runs in Stripe mode, real checkout included; without them the stack runs on dummy
+# Stripe keys and the payg checkout spec skips (integration/README.md, "Stripe mode").
 #
 # Deliberately separate from .github/workflows/test.yml: this job consumes two
 # moving upstream images and a live chain, so a red run often means "upstream
@@ -80,6 +82,7 @@ jobs:
       vocdoni_node_ref: ${{ steps.refs.outputs.vocdoni_node_ref }}
       saas_backend_ref: ${{ steps.refs.outputs.saas_backend_ref }}
       integrator_sdk_ref: ${{ steps.refs.outputs.integrator_sdk_ref }}
+      fork: ${{ steps.refs.outputs.fork }}
       error: ${{ steps.refs.outputs.error }}
     steps:
       # Default ref: on issue_comment that is the default branch, so the parser
@@ -167,9 +170,12 @@ jobs:
               fail "PR #$PR does not merge cleanly into its base (mergeable=$mergeable)"
             fi
             head_sha="$(jq -r '.head.sha' "$pr_json")"
+            # A null head repo (deleted fork) counts as a fork: its merge commit is untrusted code.
+            fork="$(jq -r 'if (.head.repo.full_name // "") == .base.repo.full_name then "false" else "true" end' "$pr_json")"
             {
               echo "checkout_ref=$merge_sha"
               echo "head_sha=$head_sha"
+              echo "fork=$fork"
             } >> "$GITHUB_OUTPUT"
           else
             # Whitespace would let one input smuggle a second key into the line below.
@@ -336,8 +342,9 @@ jobs:
     # and note every journey now runs twice, desktop and mobile.
     #
     # An SDK build adds a lot of time, and so does loading pinned upstream images
-    # (built in the images job), hence 90 over the default 45.
-    timeout-minutes: ${{ (needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') && 90 || 45 }}
+    # (built in the images job), hence 90 over the default 60. The default is 60, not 45,
+    # because the Stripe checkout spec adds up to 15 minutes when the sandbox keys are set.
+    timeout-minutes: ${{ (needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') && 90 || 60 }}
     # Every comment and dispatch run gets its own group, so a pinned run is never
     # cancelled by a push or another comment. Queue order between groups is not
     # guaranteed, so "newest wins" could not be relied on.
@@ -475,6 +482,7 @@ jobs:
           SAAS_SHA: ${{ needs.images.outputs.saas_backend_sha }}
           SDK_REF: ${{ needs.resolve.outputs.integrator_sdk_ref }}
           SDK_SHA: ${{ steps.sdk.outputs.integrator_sdk_sha }}
+          HAS_STRIPE: ${{ needs.resolve.outputs.fork != 'true' && secrets.INTEGRATION_STRIPE_SECRET_KEY != '' }}
         run: |
           {
             echo "### Tested refs"
@@ -494,12 +502,30 @@ jobs:
             else
               echo "- integrator-sdk: npm (lockfile)"
             fi
+            if [ "$HAS_STRIPE" = true ]; then
+              echo "- billing: Stripe sandbox"
+            else
+              echo "- billing: dummy Stripe keys (no Stripe secrets)"
+            fi
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Start stack
         id: stack
+        env:
+          INTEGRATION_STRIPE_SECRET_KEY: ${{ needs.resolve.outputs.fork != 'true' && secrets.INTEGRATION_STRIPE_SECRET_KEY || '' }}
+          INTEGRATION_STRIPE_PUBLIC_KEY: ${{ needs.resolve.outputs.fork != 'true' && (vars.INTEGRATION_STRIPE_PUBLIC_KEY || secrets.INTEGRATION_STRIPE_PUBLIC_KEY) || '' }}
+          FORK_COMMENT_RUN: ${{ needs.resolve.outputs.fork == 'true' }}
         run: |
           mkdir -p "$RUNNER_TEMP/steps"; exec > >(tee -a "$RUNNER_TEMP/steps/stack.log") 2>&1
+          if [ -z "$INTEGRATION_STRIPE_SECRET_KEY" ]; then
+            reason="no Stripe secret key here (a fork PR, or no sandbox configured)"
+            if [ "$FORK_COMMENT_RUN" = true ]; then
+              reason="an /integration run of a fork PR, whose code never gets the secrets"
+            fi
+            echo "::warning::Billing was not exercised: $reason. The stack runs on dummy Stripe keys, and the payg checkout spec is skipped."
+          fi
+          # The sweep step takes only the checkout sessions created after the stack started.
+          echo "INTEGRATION_STRIPE_SINCE=$(date +%s)" >> "$GITHUB_ENV"
           scripts/integration-stack.sh up
 
       - name: Build app against the stack
@@ -523,6 +549,9 @@ jobs:
           SAAS_URL: http://localhost:8080
           MAILHOG_URL: http://localhost:8025
           APP_URL: http://localhost:3000
+          # Read by playwright.config.ts: with the secret set, the payg checkout spec runs and the app gets the publishable key.
+          INTEGRATION_STRIPE_SECRET_KEY: ${{ needs.resolve.outputs.fork != 'true' && secrets.INTEGRATION_STRIPE_SECRET_KEY || '' }}
+          INTEGRATION_STRIPE_PUBLIC_KEY: ${{ needs.resolve.outputs.fork != 'true' && (vars.INTEGRATION_STRIPE_PUBLIC_KEY || secrets.INTEGRATION_STRIPE_PUBLIC_KEY) || '' }}
 
       # Each step above keeps its own log under $RUNNER_TEMP/steps (the tee line at the top of
       # its run). The first failed step, in workflow order, gets its excerpt into the report.
@@ -575,12 +604,10 @@ jobs:
 
       - name: Collect container logs
         if: failure()
-        run: |
-          mkdir -p /tmp/integration-logs
-          for service in api vocone mongo mailhog; do
-            docker compose -f integration/docker-compose.ci.yml logs --no-color "$service" \
-              > "/tmp/integration-logs/$service.log" 2>&1 || true
-          done
+        env:
+          # Selects the mode, so the Stripe service's log is collected too. The script redacts it.
+          INTEGRATION_STRIPE_SECRET_KEY: ${{ needs.resolve.outputs.fork != 'true' && secrets.INTEGRATION_STRIPE_SECRET_KEY || '' }}
+        run: scripts/integration-stack.sh logs /tmp/integration-logs
 
       - name: Upload container logs
         if: failure()
@@ -601,6 +628,18 @@ jobs:
             playwright-report
             test-results
           retention-days: 7
+
+      # Backstop for the checkout spec's own cleanup, which a cancelled or timed-out job never reaches.
+      # It runs before the teardown: it asks the running stack which organizations are its own.
+      - name: Sweep Stripe test objects
+        if: always()
+        env:
+          INTEGRATION_STRIPE_SECRET_KEY: ${{ needs.resolve.outputs.fork != 'true' && secrets.INTEGRATION_STRIPE_SECRET_KEY || '' }}
+          SAAS_URL: http://localhost:8080
+        run: |
+          args=()
+          if [ -n "${INTEGRATION_STRIPE_SINCE:-}" ]; then args=(--since "$INTEGRATION_STRIPE_SINCE"); fi
+          node scripts/integration-stripe-sweep.mjs "${args[@]}"
 
       - name: Tear down stack
         if: always()

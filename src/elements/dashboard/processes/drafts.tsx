@@ -11,32 +11,33 @@ import {
   MenuSeparator,
   MenuTrigger,
   Portal,
-  Progress,
   Stack,
   Table,
   Text,
-  useBreakpointValue,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
 import { RoutedPaginationProvider } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
-import { LuCopy, LuEllipsisVertical, LuPencil, LuTrash } from 'react-icons/lu'
+import { CopyIcon, DeleteIcon, EditIcon, MoreIcon } from '~theme/icons'
 import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { useAppEnv } from '~src/app-env'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useCreateProcess } from '~components/Process/Create'
 import { Process, SelectorTypes } from '~components/Process/Create/common'
 import { votingProcessToCreateRequest, votingProcessToForm } from '~components/Process/Create/draft-mapping'
 import { clearStoredDraftId } from '~components/Process/Create/draft-storage'
+import { EmptyState } from '~components/ui/EmptyState'
+import { ListLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
 import { useUrlPagination } from '~queries/members'
 import { Routes } from '~routes'
+import { useTableAsCards } from '~components/ui/useTableAsCards'
 
 type Draft = VotingProcessResponse
 
@@ -95,11 +96,11 @@ export const useDeleteDraft = () => {
 
 export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   const { t } = useTranslation()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useTableAsCards()
 
   if (isMobile) {
     return (
-      <Stack gap={3} w='full'>
+      <Stack gap='3' w='full'>
         {drafts.map((draft) => (
           <DraftCard key={draft.id} draft={draft} />
         ))}
@@ -109,26 +110,29 @@ export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   }
 
   return (
-    <Table.ScrollArea border='1px solid' borderColor='table.border' borderRadius='sm'>
-      <Table.Root variant='outline'>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader>{t('process_list.title', { defaultValue: 'Title' })}</Table.ColumnHeader>
-            <Table.ColumnHeader>{t('process_list.start_date', { defaultValue: 'Start date' })}</Table.ColumnHeader>
-            <Table.ColumnHeader>{t('process_list.end_date', { defaultValue: 'End date' })}</Table.ColumnHeader>
-            <Table.ColumnHeader colSpan={2}>{t('process_list.type', { defaultValue: 'Type' })}</Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {drafts.map((draft) => (
-            <DraftsRow key={draft.id} draft={draft} />
-          ))}
-        </Table.Body>
-        <Table.Caption>
-          <RoutedPaginatedTableFooter />
-        </Table.Caption>
-      </Table.Root>
-    </Table.ScrollArea>
+    // Hidden overflow keeps the table header's fill inside the rounded corners.
+    <Card.Root variant='frame' overflow='hidden'>
+      <Table.ScrollArea>
+        <Table.Root variant='outline'>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>{t('process_list.title', { defaultValue: 'Title' })}</Table.ColumnHeader>
+              <Table.ColumnHeader>{t('process_list.start_date', { defaultValue: 'Start date' })}</Table.ColumnHeader>
+              <Table.ColumnHeader>{t('process_list.end_date', { defaultValue: 'End date' })}</Table.ColumnHeader>
+              <Table.ColumnHeader colSpan={2}>{t('process_list.type', { defaultValue: 'Type' })}</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {drafts.map((draft) => (
+              <DraftsRow key={draft.id} draft={draft} />
+            ))}
+          </Table.Body>
+          <Table.Caption>
+            <RoutedPaginatedTableFooter />
+          </Table.Caption>
+        </Table.Root>
+      </Table.ScrollArea>
+    </Card.Root>
   )
 }
 
@@ -155,7 +159,7 @@ const DraftsRow = ({ draft }: { draft: Draft }) => {
   return (
     <Table.Row key={draft.id} position='relative'>
       <Table.Cell>
-        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
+        <Link asChild emphasis='medium'>
           <RouterLink
             to={{
               pathname: generatePath(Routes.processes.create),
@@ -183,9 +187,9 @@ const DraftCard = ({ draft }: { draft: Draft }) => {
   const metadata = votingProcessToForm(draft)
 
   return (
-    <Card.Root variant='data-list-item'>
+    <Card.Root variant='list-item'>
       <Card.Header>
-        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
+        <Link asChild emphasis='medium'>
           <RouterLink
             to={{
               pathname: generatePath(Routes.processes.create),
@@ -271,7 +275,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
           variant='ghost'
           size='sm'
         >
-          <Icon as={LuEllipsisVertical} />
+          <Icon as={MoreIcon} />
         </IconButton>
       </MenuTrigger>
       <Portal>
@@ -284,22 +288,22 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
                   search: createSearchParams({ draftId: draft.id }).toString(),
                 }}
               >
-                <HStack gap={2} align='center'>
-                  <Icon as={LuPencil} boxSize={4} />
+                <HStack gap='2' align='center'>
+                  <Icon as={EditIcon} />
                   <span>{t('drafts.edit', { defaultValue: 'Edit Draft' })}</span>
                 </HStack>
               </RouterLink>
             </MenuItem>
             <MenuItem value='clone' onClick={cloneDraft}>
-              <HStack gap={2} align='center'>
-                <Icon as={LuCopy} boxSize={4} />
+              <HStack gap='2' align='center'>
+                <Icon as={CopyIcon} />
                 <span>{t('drafts.clone', { defaultValue: 'Clone Draft' })}</span>
               </HStack>
             </MenuItem>
             <MenuSeparator />
-            <MenuItem value='delete' color='fg.error' onClick={deleteDraft}>
-              <HStack gap={2} align='center'>
-                <Icon as={LuTrash} boxSize={4} />
+            <MenuItem value='delete' color='danger.action' onClick={deleteDraft}>
+              <HStack gap='2' align='center'>
+                <Icon as={DeleteIcon} />
                 <span>{t('drafts.delete', { defaultValue: 'Delete Draft' })}</span>
               </HStack>
             </MenuItem>
@@ -315,15 +319,6 @@ const Drafts = () => {
   const { data, isLoading, error } = useDrafts()
   const hasError = !!error && !isLoading
   const isEmpty = (data?.processes?.length ?? 0) === 0 && !isLoading && !hasError
-  const showAlert = hasError || isEmpty
-  const alertTitle = hasError
-    ? t('drafts.load_error', { defaultValue: 'Unable to load drafts' })
-    : t('drafts.empty', { defaultValue: 'No drafts found' })
-  const alertDescription = hasError
-    ? error instanceof Error
-      ? error.message
-      : t('drafts.load_error_description', { defaultValue: 'Please try again.' })
-    : t('drafts.empty_description', { defaultValue: 'Create a draft to get started.' })
 
   const pagination = data?.pagination || {
     totalItems: 0,
@@ -334,21 +329,26 @@ const Drafts = () => {
   }
 
   if (isLoading) {
-    return (
-      <Progress.Root size='xs' value={null} colorPalette='gray'>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   return (
     <RoutedPaginationProvider path={Routes.dashboard.processes.drafts} pagination={pagination}>
-      {showAlert && (
-        <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
+      <ListStateAlert
+        show={hasError}
+        title={t('drafts.load_error', { defaultValue: 'Unable to load drafts' })}
+        error={error}
+        fallback={t('drafts.load_error_description', { defaultValue: 'Please try again.' })}
+      />
+      {isEmpty ? (
+        <EmptyState
+          size='lg'
+          title={t('drafts.empty', { defaultValue: 'No drafts found' })}
+          description={t('drafts.empty_description', { defaultValue: 'Create a draft to get started.' })}
+        />
+      ) : (
+        <DraftsTable drafts={data?.processes ?? []} />
       )}
-      <DraftsTable drafts={data?.processes ?? []} />
     </RoutedPaginationProvider>
   )
 }

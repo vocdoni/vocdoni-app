@@ -1,8 +1,9 @@
 import Cal, { getCalApi } from '@calcom/embed-react'
-import { Button, ButtonProps, CloseButton, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCalendar } from 'react-icons/lu'
+import { CalendarIcon } from '~theme/icons'
 import { useAppEnv } from '~src/app-env'
 import { useColorMode } from '~theme/color-mode'
 
@@ -57,12 +58,13 @@ export const BookerModalButton = ({
   callback,
   children,
   leftIcon,
-  iconSpacing = 2,
+  iconSpacing = '2',
   trigger,
   ...props
 }: BookerModalButtonProps) => {
+  const { t } = useTranslation()
   const content = children ?? <Trans i18nKey='home.support.btn_watch' />
-  const icon = leftIcon ?? <Icon as={LuCalendar} boxSize={4} />
+  const icon = leftIcon ?? <Icon as={CalendarIcon} boxSize='icon.sm' />
 
   const triggerNode = trigger ?? (
     <Button colorPalette='gray' variant='ghost' size='md' {...props}>
@@ -79,7 +81,8 @@ export const BookerModalButton = ({
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          {/* No title on screen, so the label names the dialog. */}
+          <Dialog.Content aria-label={t('home.support.btn_watch', { defaultValue: 'Schedule a call' })}>
             <Dialog.Body>
               <Booker callback={callback} />
             </Dialog.Body>

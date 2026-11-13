@@ -1,6 +1,6 @@
 import { HStack, Icon, LinkBox, LinkOverlay, Text } from '@chakra-ui/react'
-import { IconType } from 'react-icons'
-import { LuArrowUpRight } from 'react-icons/lu'
+import { ExternalLinkIcon } from '~theme/icons'
+import type { IconType } from '~theme/icons'
 import { DashboardBox } from '~components/Dashboard/Contents'
 
 export type DocsCardProps = {
@@ -17,19 +17,19 @@ export type DocsCardProps = {
 export const DocsCard = ({ href, icon, title, description }: DocsCardProps) => (
   <DashboardBox
     as={LinkBox}
-    gap={3}
+    gap='3'
     justifyContent='flex-start'
-    transition='border-color 0.15s'
-    _hover={{ _light: { borderColor: 'blue.400' }, _dark: { borderColor: 'blue.400' } }}
+    transition='[border-color {durations.fast}]'
+    _hover={{ borderColor: 'colorPalette.solid' }}
   >
     <HStack justify='space-between'>
-      <Icon as={icon} boxSize={6} color='blue.500' />
-      <Icon as={LuArrowUpRight} boxSize={4} color='texts.subtle' />
+      <Icon as={icon} boxSize='icon.lg' color='colorPalette.fg' />
+      <Icon as={ExternalLinkIcon} color='fg.muted' />
     </HStack>
     <LinkOverlay href={href} target='_blank' rel='noopener noreferrer' fontWeight='bold' fontSize='md'>
       {title}
     </LinkOverlay>
-    <Text fontSize='sm' color='texts.subtle'>
+    <Text textStyle='body-sm' color='fg.muted'>
       {description}
     </Text>
   </DashboardBox>

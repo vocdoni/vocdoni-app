@@ -3,14 +3,14 @@ import {
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
   Icon,
+  IconButton,
   Input,
   InputGroup,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { MdOutlineRemoveRedEye } from 'react-icons/md'
-import { RiEyeCloseLine } from 'react-icons/ri'
+import { HideIcon, ViewIcon } from '~theme/icons'
 
 export interface InputPasswordProps {
   formValue: string
@@ -53,24 +53,28 @@ const InputPassword = ({
 
   return (
     <FormControl invalid={!!errors[formValue]} required={required}>
-      {label && (
-        <FormLabel fontSize='sm' fontWeight='medium'>
-          {label}
-        </FormLabel>
-      )}
+      {label && <FormLabel fontSize='sm'>{label}</FormLabel>}
       <InputGroup
         endElement={
-          <Icon
-            _hover={{ cursor: 'pointer' }}
-            as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+          <IconButton
+            variant='plain'
+            size='xs'
+            color='fg'
+            aria-label={
+              show
+                ? t('form.hide_password', { defaultValue: 'Hide password' })
+                : t('form.show_password', { defaultValue: 'Show password' })
+            }
             onClick={handleClick}
-          />
+          >
+            <Icon as={show ? HideIcon : ViewIcon} />
+          </IconButton>
         }
         endElementProps={{ display: 'flex', alignItems: 'center' }}
       >
         <Input {...register(formValue, validationRules)} type={inputType} placeholder={placeholder} required={false} />
       </InputGroup>
-      <FormErrorMessage mt={2}>
+      <FormErrorMessage mt='2'>
         {errorMessage || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
       </FormErrorMessage>
     </FormControl>

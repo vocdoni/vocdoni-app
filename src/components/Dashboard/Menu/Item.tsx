@@ -1,14 +1,7 @@
-import {
-  Button,
-  ButtonProps,
-  Icon,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
-} from '@chakra-ui/react'
+import { Button, ButtonProps, Icon } from '@chakra-ui/react'
 import { ForwardedRef, forwardRef } from 'react'
 import { Link as ReactRouterLink, generatePath } from 'react-router'
+import { Tooltip } from '~components/ui/Tooltip'
 
 export type DashboardMenuItem = {
   label: string
@@ -42,12 +35,9 @@ export const DashboardMenuItemButton = forwardRef(
         onClick={(e) => {
           if (isDisabled) e.preventDefault()
         }}
-        variant='listmenu'
+        variant='nav-item'
         size='xs'
         colorPalette='gray'
-        justifyContent='start'
-        gap={4}
-        p={2}
         disabled={isDisabled}
         data-active={isActive ? '' : undefined}
         aria-current={isActive ? 'page' : undefined}
@@ -59,13 +49,9 @@ export const DashboardMenuItemButton = forwardRef(
       <Button
         ref={ref}
         asChild
-        variant='listmenu'
+        variant='nav-item'
         size='xs'
-        fontSize='sm'
         colorPalette='gray'
-        justifyContent='start'
-        gap={4}
-        p={2}
         data-active={isActive ? '' : undefined}
         aria-current={isActive ? 'page' : undefined}
         {...buttonProps}
@@ -75,12 +61,9 @@ export const DashboardMenuItemButton = forwardRef(
     )
 
     return reduced ? (
-      <TooltipRoot positioning={{ placement: 'right-end' }}>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipPositioner>
-          <TooltipContent>{item.label}</TooltipContent>
-        </TooltipPositioner>
-      </TooltipRoot>
+      <Tooltip portalled={false} positioning={{ placement: 'right-end' }} content={item.label}>
+        {button}
+      </Tooltip>
     ) : (
       button
     )

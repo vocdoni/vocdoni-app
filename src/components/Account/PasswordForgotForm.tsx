@@ -69,7 +69,7 @@ const PasswordForgotForm: React.FC<PasswordForgotFormProps> = ({ resetRoute = Ro
   return (
     <>
       <FormProvider {...methods}>
-        <Flex as='form' onSubmit={methods.handleSubmit(onSubmit)} flexDirection='column' gap={6}>
+        <Flex as='form' onSubmit={methods.handleSubmit(onSubmit)} flexDirection='column' gap='6'>
           <InputBasic
             formValue='email'
             label={t('email')}
@@ -77,7 +77,7 @@ const PasswordForgotForm: React.FC<PasswordForgotFormProps> = ({ resetRoute = Ro
             type='email'
             required
           />
-          <Button type='submit' fontSize='sm' fontWeight='500' w='100%' h={50}>
+          <Button type='submit' w='full'>
             {t('forgot_password_reset_link')}
           </Button>
         </Flex>

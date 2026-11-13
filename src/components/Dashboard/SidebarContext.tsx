@@ -1,5 +1,5 @@
-import { useBreakpointValue } from '@chakra-ui/react'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useIsMobile } from '~components/ui/useIsMobile'
 
 type SidebarVisibilityContextValue = {
   showSidebar: boolean
@@ -11,13 +11,11 @@ type SidebarVisibilityContextValue = {
 const SidebarVisibilityContext = createContext<SidebarVisibilityContextValue | undefined>(undefined)
 
 export const SidebarVisibilityProvider = ({ children }: { children: ReactNode }) => {
-  const isDesktop = useBreakpointValue({ base: false, md: true })
-  const [showSidebar, setShowSidebar] = useState<boolean>(() => Boolean(isDesktop))
+  const isDesktop = !useIsMobile()
+  const [showSidebar, setShowSidebar] = useState<boolean>(() => isDesktop)
 
   useEffect(() => {
-    if (typeof isDesktop === 'boolean') {
-      setShowSidebar(isDesktop)
-    }
+    setShowSidebar(isDesktop)
   }, [isDesktop])
 
   const openSidebar = useCallback(() => setShowSidebar(true), [])

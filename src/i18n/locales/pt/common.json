@@ -150,7 +150,6 @@
   "color_mode_switcher": "Alternar modo de cor",
   "common": {
     "back": "Voltar",
-    "close_drawer": "Fechar painel",
     "home": "Início",
     "retry": "Tenta de novo"
   },
@@ -399,6 +398,7 @@
       "password_min_length": "Mín. 8 caracteres",
       "required": "Este campo é obrigatório"
     },
+    "hide_password": "Ocultar palavra-passe",
     "member": {
       "error": {
         "invalid_birth_date": "A data de nascimento não pode estar no futuro",
@@ -414,6 +414,7 @@
       "success_title": "Processo de votação criado com sucesso"
     },
     "select_language": "Idioma",
+    "show_password": "Mostrar palavra-passe",
     "support": {
       "billing_issue": "Problema de faturação",
       "custom_request": "Pedido personalizado",
@@ -774,10 +775,8 @@
       "weight": "Poder de voto (peso)"
     },
     "list": {
-      "empty": "Não foram encontrados membros",
       "empty_description": "Adiciona o teu primeiro membro para começar.",
       "error": "Não foi possível carregar os membros",
-      "no_search_results": "Nenhum membro corresponde à tua pesquisa",
       "no_search_results_description": "Tenta ajustar os termos da pesquisa."
     },
     "table": {
@@ -808,7 +807,6 @@
       "bulk_delete": "Eliminar",
       "cancel": "Cancelar",
       "clear_sort": "Limpar ordenação",
-      "close_drawer": "Fechar",
       "create_group": "Criar grupo",
       "create_group_error": "Erro ao criar o grupo",
       "create_group_form_description": "Cria um novo grupo a partir dos membros selecionados. Isto vai organizá-los para futuros processos de votação.",
@@ -862,7 +860,8 @@
     "dashboard": "Dashboard",
     "expand": "Expandir menu",
     "login": "Iniciar sessão",
-    "open": "Abrir menu"
+    "open": "Abrir menu",
+    "title": "Menu"
   },
   "name": "Nome",
   "need_help": {
@@ -1209,6 +1208,7 @@
     },
     "voters": "Votantes",
     "voting": "Estamos a processar o teu voto. Este processo demorará alguns segundos. Não feches nem atualizes esta página.",
+    "voting_label": "A enviar o teu voto",
     "voting_method": {
       "approval": "Aprovação",
       "budget": "Afetação de orçamento",
@@ -1467,12 +1467,8 @@
     }
   },
   "processes": {
-    "empty": "Não foram encontrados processos de votação",
-    "empty_description": "Cria um processo de votação para começar.",
     "load_error": "Não foi possível carregar os processos de votação",
-    "load_error_description": "Tenta novamente.",
-    "no_results": "Sem resultados para este filtro",
-    "no_results_description": "Tenta ajustar os filtros."
+    "load_error_description": "Tenta novamente."
   },
   "profile": {
     "error": "Falha ao atualizar o perfil",

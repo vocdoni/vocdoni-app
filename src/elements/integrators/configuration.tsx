@@ -1,15 +1,9 @@
-import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet, useLocation, useNavigate } from 'react-router'
-import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
+import { RoutedTabs, type RoutedTab } from '~components/ui/RoutedTabs'
 import { useWalletAccess } from '~queries/wallet'
-import { Routes, stripCheckoutReturn } from '~src/router/routes'
-
-type ConfigTab = {
-  label: string
-  route: string
-}
+import { Routes } from '~src/router/routes'
 
 /**
  * Integrator Configuration: a tabbed container (Billing + Support) mirroring the admin settings
@@ -17,11 +11,9 @@ type ConfigTab = {
  */
 const IntegratorConfiguration = () => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
-  const location = useLocation()
   const { canView: canViewWallet } = useWalletAccess()
 
-  const tabs: ConfigTab[] = [
+  const tabs: RoutedTab[] = [
     ...(canViewWallet
       ? [
           {
@@ -36,38 +28,15 @@ const IntegratorConfiguration = () => {
     },
   ]
 
-  const currentTabIndex = useMemo(
-    () => tabs.findIndex((tab) => stripCheckoutReturn(location.pathname).endsWith(tab.route)),
-    [location.pathname, tabs]
-  )
-  const activeTabValue = currentTabIndex === -1 ? tabs[0]?.route : tabs[currentTabIndex]?.route
-
   return (
     <DashboardContents>
-      <Heading>{t('integrators.configuration.title', { defaultValue: 'Configuration' })}</Heading>
-      <SubHeading>
+      <PageTitle>{t('integrators.configuration.title', { defaultValue: 'Configuration' })}</PageTitle>
+      <PageSubtitle>
         {t('integrators.configuration.subtitle', {
           defaultValue: 'Manage your billing and support.',
         })}
-      </SubHeading>
-      <TabsRoot
-        variant='settings'
-        value={activeTabValue}
-        onValueChange={({ value }) => {
-          const tab = tabs.find((entry) => entry.route === value)
-          if (tab) navigate(tab.route)
-        }}
-        lazyMount
-      >
-        <TabsList mb={6}>
-          {tabs.map((tab) => (
-            <TabsTrigger key={tab.route} value={tab.route}>
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <Outlet />
-      </TabsRoot>
+      </PageSubtitle>
+      <RoutedTabs tabs={tabs} />
     </DashboardContents>
   )
 }

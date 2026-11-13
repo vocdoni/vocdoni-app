@@ -1,8 +1,11 @@
-import { Avatar, Badge, Box, Button, Card, Flex, Heading, Link, Text, VStack } from '@chakra-ui/react'
+import { Avatar, Box, Button, Card, Flex, Heading, Link, Text, VStack } from '@chakra-ui/react'
+import { SectionHeader } from '~components/ui/SectionHeader'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Editor from '~components/Editor'
 import { RouterAwareLink } from '~components/RouterAwareLink'
+import { EmptyState } from '~components/ui/EmptyState'
+import { StatusBadge } from '~components/ui/StatusBadge'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useAppEnv } from '~src/app-env'
@@ -15,6 +18,7 @@ import {
   type LegacyOrganization,
 } from '~src/legacy/vochain-archive'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { PageSection } from '~components/ui/PageContainer'
 
 const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
   const { t } = useTranslation()
@@ -27,23 +31,25 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
   return (
     <Card.Root variant='outline' size='sm'>
       <Card.Body>
-        <Flex justify='space-between' align='center' gap={4} flexWrap='wrap'>
-          <Box flex='1' minW={0}>
-            <Link asChild fontWeight='medium'>
+        <Flex justify='space-between' align='center' gap='4' flexWrap='wrap'>
+          <Box flex='1' minW='0'>
+            <Link asChild emphasis='medium'>
               <RouterAwareLink to={getPublicProcessPath({ id: election.id, language: publicLanguage })}>
                 <Text truncate>{title}</Text>
               </RouterAwareLink>
             </Link>
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {t('election.ends_on', {
                 defaultValue: 'Ends on {{date}}',
                 date: format(election.endDate, t('organization.date_format')),
               })}
             </Text>
           </Box>
-          <Flex align='center' gap={3} flexShrink={0}>
-            <Badge colorPalette={election.status === 'ONGOING' ? 'green' : 'gray'}>{election.status}</Badge>
-            <Text fontSize='sm' whiteSpace='nowrap'>
+          <Flex align='center' gap='3' flexShrink={0}>
+            <StatusBadge colorPalette={election.status === 'ONGOING' ? 'success' : 'gray'}>
+              {election.status}
+            </StatusBadge>
+            <Text textStyle='body-sm' whiteSpace='nowrap'>
               {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: election.voteCount })}
             </Text>
           </Flex>
@@ -94,34 +100,42 @@ export const ArchiveOrganizationView = ({
   }
 
   return (
-    <VStack align='stretch' gap={6} maxW='4xl' mx='auto' px={4} py={8} w='full'>
-      <Flex align='center' gap={4}>
+    <PageSection
+      size='narrow'
+      display='flex'
+      flexDirection='column'
+      alignItems='stretch'
+      gap='6'
+      px='4'
+      py='8'
+      w='full'
+    >
+      <Flex align='center' gap='4'>
         <Avatar.Root size='xl'>
           {organization.account?.avatar && <Avatar.Image src={organization.account.avatar} alt={name} />}
           <Avatar.Fallback name={name} />
         </Avatar.Root>
         <Box>
-          <Heading size='xl'>{name}</Heading>
-          <Text fontSize='sm' color='texts.subtle'>
+          <Heading as='h1' textStyle='display'>
+            {name}
+          </Heading>
+          <Text textStyle='body-sm' color='fg.muted'>
             {organization.address}
           </Text>
         </Box>
       </Flex>
 
-      {description && (
-        <Box className='md-sizes'>
-          <Editor defaultValue={description} isDisabled />
-        </Box>
-      )}
+      {description && <Editor defaultValue={description} disabled />}
 
-      <VStack align='stretch' gap={3}>
-        <Heading size='md'>{t('organization.elections_list', { defaultValue: 'Voting processes' })}</Heading>
+      <VStack align='stretch' gap='3'>
+        <SectionHeader title={t('organization.elections_list', { defaultValue: 'Voting processes' })} />
         {elections.length === 0 && (
-          <Text color='texts.subtle'>
-            {t('organization.elections_list_empty.not_owner', {
+          <EmptyState
+            size='sm'
+            title={t('organization.elections_list_empty.not_owner', {
               defaultValue: 'This organization has no voting processes yet.',
             })}
-          </Text>
+          />
         )}
         {elections.map((election) => (
           <ElectionRow key={election.id} election={election} />
@@ -132,7 +146,7 @@ export const ArchiveOrganizationView = ({
           </Button>
         )}
       </VStack>
-    </VStack>
+    </PageSection>
   )
 }
 

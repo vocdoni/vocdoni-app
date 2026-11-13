@@ -1,4 +1,5 @@
 import { SystemStyleObject } from '@chakra-ui/react'
+import { proseHeadingSizes } from './textStyles'
 
 const editor: SystemStyleObject = {
   '& .lexical-bold': {
@@ -17,8 +18,8 @@ const editor: SystemStyleObject = {
     textDecoration: 'underline line-through',
   },
   '& .lexical-ul, & .lexical-ol': {
-    paddingInlineStart: '1rem',
-    marginBlock: '1rem',
+    paddingInlineStart: '4',
+    marginBlock: '4',
   },
   '& .lexical-ul': {
     listStyleType: 'disc',
@@ -27,49 +28,31 @@ const editor: SystemStyleObject = {
     listStyleType: 'decimal',
   },
   '& .lexical-li': {
-    marginBlock: '0.125rem',
+    marginBlock: '0.5',
   },
   '& .lexical-link': {
-    color: 'gray.800',
-    _dark: {
-      color: 'gray.400',
-      _hover: {
-        color: 'gray.200',
-      },
-    },
+    color: 'link.fg',
     _hover: {
       textDecoration: 'underline',
-      color: 'gray.500',
+      color: 'link.fg.hover',
     },
   },
   '& .lexical-quote': {
-    paddingLeft: '1rem',
-    marginY: '1.25rem',
-    borderLeft: '4px solid',
+    paddingLeft: '4',
+    marginY: '5',
+    borderLeft: 'lg',
   },
   '& [class*="lexical-h"]': {
     fontWeight: 'bold',
-    marginY: '1.25rem',
-    lineHeight: '1.25',
+    marginY: '5',
+    lineHeight: 'short',
   },
-  '& .lexical-h1': {
-    fontSize: '3xl',
-  },
-  '& .lexical-h2': {
-    fontSize: '2xl',
-  },
-  '& .lexical-h3': {
-    fontSize: 'xl',
-  },
-  '& .lexical-h4': {
-    fontSize: 'lg',
-  },
-  '& .lexical-h5': {
-    fontSize: 'md',
-  },
+  ...Object.fromEntries(
+    Object.entries(proseHeadingSizes).map(([level, fontSize]) => [`& .lexical-${level}`, { fontSize }])
+  ),
   '& .lexical-paragraph': {
     textStyle: 'sm',
-    margin: 0,
+    margin: '0',
   },
 }
 

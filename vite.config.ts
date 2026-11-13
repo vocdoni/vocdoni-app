@@ -1,10 +1,20 @@
 import react from '@vitejs/plugin-react'
 import { execSync } from 'node:child_process'
 import { ssr } from 'vike/plugin'
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import svgr from 'vite-plugin-svgr'
 import tsconfigPaths from 'vite-tsconfig-paths'
+
+// The stress theme is aliased over `~theme/system` for the dev server only (scripts/ui-snapshot); a build that
+// resolved it would ship the stress palette, so `vite build` refuses it whatever VITE_CONFIG says.
+const noTestThemes = (): Plugin => ({
+  name: 'no-test-themes-in-build',
+  apply: 'build',
+  load(id) {
+    if (id.includes('/src/theme/test-themes/')) this.error(`test theme in a production build: ${id}`)
+  },
+})
 
 // https://vitejs.dev/config/
 //
@@ -51,6 +61,7 @@ const viteconfig = ({ mode }: { mode: string }) => {
       outDir,
     },
     plugins: [
+      noTestThemes(),
       ssr(),
       tsconfigPaths(),
       react(),

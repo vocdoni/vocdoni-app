@@ -1,39 +1,45 @@
 import { menuAnatomy } from '@chakra-ui/react/anatomy'
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 
 const baseStyle = {
   content: {
-    p: 1,
+    p: '1',
     borderRadius: 'sm',
-    boxShadow: 'md',
-    bg: 'chakra.body.bg',
+    boxShadow: 'shadow.raised',
+    bg: 'surface.raised',
   },
   item: {
-    bg: 'chakra.body.bg',
+    bg: 'surface.raised',
     _selected: {
-      bg: 'gray.100',
-      color: 'black',
-      _dark: {
-        bg: 'ink.700',
-        color: 'white',
-      },
-    },
-    _focus: {
-      bg: 'gray.100',
-      color: 'black',
-      _dark: {
-        bg: 'ink.800',
-        color: 'white',
-      },
+      bg: 'state.selected.bg',
+      color: 'state.selected.fg',
     },
   },
 
   separator: {
-    m: 0,
+    m: '0',
   },
-}
+} satisfies Partial<Record<string, SystemStyleObject>>
 
 export const Menu = defineSlotRecipe({
   slots: menuAnatomy.keys(),
   base: baseStyle,
+  variants: {
+    variant: {
+      // Chakra's default variant: items are highlighted (pointer or keyboard), never focused.
+      subtle: {
+        item: {
+          _highlighted: {
+            bg: 'state.hover.bg',
+            color: 'state.hover.fg',
+          },
+          // After `_highlighted`, so a selected item keeps its fill under the pointer.
+          _selected: {
+            bg: 'state.selected.bg',
+            color: 'state.selected.fg',
+          },
+        },
+      },
+    },
+  },
 })

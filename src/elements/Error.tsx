@@ -1,11 +1,12 @@
 import { Button, Flex, Icon } from '@chakra-ui/react'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isRouteErrorResponse, useLocation, useNavigate, useRouteError } from 'react-router'
-import { LuHouse, LuLayoutDashboard, LuRotateCw } from 'react-icons/lu'
-import { RiErrorWarningLine } from 'react-icons/ri'
+import { DashboardIcon, ErrorIcon, HomeIcon, RefreshIcon } from '~theme/icons'
 import { useAuth } from '~components/Auth/useAuth'
-import { Heading, SubHeading } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { Routes } from '~src/router/routes'
 import { isPublicPageNotFoundError } from '~src/ssr/public-pages'
 import { capturePosthogException } from '~utils/analytics'
@@ -33,29 +34,29 @@ export const ErrorView = ({ isNotFound = false, onReturnHome, returnHomeHref, re
   const returnContent =
     returnTo === 'dashboard' ? (
       <>
-        <Icon as={LuLayoutDashboard} />
+        <Icon as={DashboardIcon} />
         {t('error.go_to_dashboard', { defaultValue: 'Go to dashboard' })}
       </>
     ) : (
       <>
-        <Icon as={LuHouse} />
+        <Icon as={HomeIcon} />
         {t('error.return_to_home')}
       </>
     )
 
   return (
-    <Flex direction='column' align='center' justify='center' textAlign='center' gap={3} minH='30vh' px={4}>
-      <Icon as={RiErrorWarningLine} boxSize={12} color='texts.subtle' />
-      <Heading size='lg'>{t('error.crash_title', { defaultValue: 'Something went wrong' })}</Heading>
-      <SubHeading m={0} maxW='45ch'>
+    <Flex direction='column' align='center' justify='center' textAlign='center' gap='3' minH='[30vh]' px='4'>
+      <Icon as={ErrorIcon} boxSize='icon.xl' color='fg.muted' />
+      <PageTitle>{t('error.crash_title', { defaultValue: 'Something went wrong' })}</PageTitle>
+      <PageSubtitle m='0' maxW='[45ch]'>
         {t('error.crash_description', {
           defaultValue: 'Reload the page or go back to the dashboard.',
         })}
-      </SubHeading>
+      </PageSubtitle>
 
-      <Flex gap={3} wrap='wrap' justify='center'>
+      <Flex gap='3' wrap='wrap' justify='center'>
         <Button variant='outline' onClick={() => window.location.reload()}>
-          <Icon as={LuRotateCw} />
+          <Icon as={RefreshIcon} />
           {t('error.reload', { defaultValue: 'Reload' })}
         </Button>
         {returnHomeHref ? (
@@ -89,6 +90,7 @@ const Error = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
   const { pathname } = useLocation()
+  const inDashboard = useContext(DashboardLayoutContext) !== undefined
 
   useEffect(() => {
     reportRouteError(error, pathname)
@@ -98,13 +100,16 @@ const Error = () => {
 
   const returnPath = getNotFoundReturnPath({ isAuthenticated, pathname })
 
-  return (
+  const view = (
     <ErrorView
       isNotFound={isNotFoundError(error)}
       returnTo={returnPath === Routes.dashboard.base ? 'dashboard' : 'home'}
       onReturnHome={() => navigate(returnPath)}
     />
   )
+
+  // A dashboard page's error renders inside the shell, so it takes the shell's page container.
+  return inDashboard ? <DashboardContents>{view}</DashboardContents> : view
 }
 
 export default Error

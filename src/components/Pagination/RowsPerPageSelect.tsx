@@ -27,8 +27,8 @@ const RowsPerPageSelect = (props: SelectProps) => {
     rowsPerPageOptions.find((opt) => opt.value === Number(searchParams.get('limit'))) || rowsPerPageOptions[0]
 
   return (
-    <Box display='flex' alignItems='center' gap={2}>
-      <Text fontSize='sm'>{t('pagination.rows_per_page', 'Rows per page')}</Text>
+    <Box display='flex' alignItems='center' gap='2'>
+      <Text textStyle='body-sm'>{t('pagination.rows_per_page', 'Rows per page')}</Text>
       <Select
         value={value}
         onChange={(newValue) => {

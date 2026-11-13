@@ -1,6 +1,9 @@
-import { Badge, Box, HStack, Progress, Text } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { DashboardBox } from '~components/Dashboard/Contents'
+import { StatusBadge } from '~components/ui/StatusBadge'
+import { UsageMeter } from '~components/ui/UsageMeter'
+import { quantity } from '~utils/numbers'
 
 export type QuotaCardProps = {
   label: string
@@ -20,39 +23,20 @@ export const QuotaCard = ({ label, usage, limit }: QuotaCardProps) => {
     limit === undefined
       ? t('integrators.quota.used', { defaultValue: 'used' })
       : hasLimit
-        ? `/ ${limit}`
+        ? `/ ${quantity(limit)}`
         : t('integrators.quota.unlimited', { defaultValue: 'Unlimited' })
 
   return (
-    <DashboardBox gap={3} justifyContent='flex-start'>
-      <Text fontSize='sm' color='texts.subtle' fontWeight='medium'>
-        {label}
-      </Text>
-      <HStack align='baseline' gap={1}>
-        <Text fontSize='3xl' fontWeight='bold' lineHeight='1'>
-          {used}
-        </Text>
-        <Text fontSize='md' color='texts.subtle'>
-          {denominator}
-        </Text>
-      </HStack>
-      <Progress.Root
-        value={hasLimit ? Math.min(used, limit) : 0}
-        max={hasLimit ? limit : 1}
-        size='sm'
-        colorPalette={atLimit ? 'red' : 'blue'}
-      >
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-      <Box minH='22px'>
-        {atLimit && (
-          <Badge colorPalette='red' variant='subtle'>
-            {t('integrators.quota.limit_reached', { defaultValue: 'Limit reached' })}
-          </Badge>
-        )}
-      </Box>
+    <DashboardBox gap='3' justifyContent='flex-start'>
+      <UsageMeter label={label} value={used} max={hasLimit ? limit : 0} unit={denominator}>
+        <Box minH='[22px]'>
+          {atLimit && (
+            <StatusBadge colorPalette='danger' variant='subtle'>
+              {t('integrators.quota.limit_reached', { defaultValue: 'Limit reached' })}
+            </StatusBadge>
+          )}
+        </Box>
+      </UsageMeter>
     </DashboardBox>
   )
 }

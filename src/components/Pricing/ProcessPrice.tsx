@@ -71,7 +71,7 @@ const WalletCoverage = ({ totalCents }: { totalCents: number }) => {
 
   if (balanceCents >= totalCents) {
     return (
-      <Text color='texts.subtle' fontSize='xs'>
+      <Text color='fg.muted' textStyle='caption'>
         {t('process.price.wallet_covers', {
           defaultValue: 'Your wallet balance ({{balance}}) covers this total: publishing pays it from your wallet.',
           balance: currency(balanceCents, currencyCode),
@@ -81,7 +81,7 @@ const WalletCoverage = ({ totalCents }: { totalCents: number }) => {
   }
 
   return (
-    <Text color='texts.subtle' fontSize='xs'>
+    <Text color='fg.muted' textStyle='caption'>
       {t('process.price.wallet_short', {
         defaultValue: 'Your wallet has {{balance}}, {{shortfall}} short of this total.',
         balance: currency(balanceCents, currencyCode),
@@ -107,14 +107,14 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
     query: { isLoading, error, refetch, isFetching },
   } = useProcessPrice(processId)
 
-  if (isLoading) return <Skeleton height={16} />
+  if (isLoading) return <Skeleton height='16' />
 
   // Anything but a draft the backend cannot price yet (a 500, a network failure...) is not fixed by
   // setting up voters, so it is not explained as if it were
   if (error && !isUnpriceableDraft(error)) {
     return (
-      <Stack gap={2} align='flex-start'>
-        <Text fontSize='sm' color='texts.subtle'>
+      <Stack gap='2' align='flex-start'>
+        <Text textStyle='body-sm' color='fg.muted'>
           <Trans i18nKey='process.price.error'>The price could not be loaded.</Trans>
         </Text>
         <Button size='xs' variant='outline' onClick={() => refetch()} loading={isFetching}>
@@ -126,7 +126,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
 
   if (!price) {
     return (
-      <Text fontSize='sm' color='texts.subtle'>
+      <Text textStyle='body-sm' color='fg.muted'>
         <Trans i18nKey='process.price.unavailable'>
           The price shows up here once the draft is saved with its voters and their authentication set up.
         </Trans>
@@ -141,15 +141,15 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
     !quoteOnly && price.totalCents > 0 && price.paymentStatus !== 'paid' && price.paymentStatus !== 'pending'
 
   return (
-    <Stack gap={2} fontSize='sm'>
+    <Stack gap='2' fontSize='sm'>
       {price.lines.map((line) => (
-        <Flex key={line.kind} justify='space-between' gap={2}>
+        <Flex key={line.kind} justify='space-between' gap='2'>
           <Text>{lineLabel(t, line)}</Text>
           <Text whiteSpace='nowrap'>{currency(line.amountCents)}</Text>
         </Flex>
       ))}
       {!quoteOnly && (
-        <Flex justify='space-between' gap={2} borderTop='1px solid' borderColor='table.border' pt={2}>
+        <Flex justify='space-between' gap='2' borderTop='sm' borderColor='border' pt='2'>
           <Text fontWeight='bold'>
             <Trans i18nKey='process.price.total'>Total</Trans>
           </Text>
@@ -158,7 +158,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
           </Text>
         </Flex>
       )}
-      <Text color='texts.subtle' fontSize='xs'>
+      <Text color='fg.muted' textStyle='caption'>
         {priceNote(t, price)}
       </Text>
       {walletPays && <WalletCoverage totalCents={price.totalCents} />}

@@ -7,7 +7,7 @@ import {
 } from '@vocdoni/react-components'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { HideIcon, ViewIcon } from '~theme/icons'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import AddressBtn from './Address'
 import fallback from '/assets/default-avatar.png'
@@ -24,12 +24,12 @@ const OrganizationHeader = () => {
     <Flex
       flexDirection={{ base: 'column', lg: 'row' }}
       alignItems={{ base: 'center', lg: 'start' }}
-      gap={{ base: 2, lg: 8 }}
-      mb={10}
-      pt={10}
+      gap={{ base: '2', lg: '8' }}
+      mb='10'
+      pt='10'
     >
-      <Box flex='1 1 10%' minW={40}>
-        <AspectRatio ratio={1.25 / 1} maxW={56}>
+      <Box flex='1 1 10%' minW='40'>
+        <AspectRatio ratio={1.25 / 1} maxW='56'>
           <Avatar
             mx='auto'
             fallbackSrc={fallback}
@@ -45,38 +45,33 @@ const OrganizationHeader = () => {
         justifyContent='space-between'
         alignItems={{ base: 'center', lg: 'start' }}
         flexDirection={{ base: 'column', lg: 'row' }}
-        gap={{ base: 2 }}
-        minW={0}
-        maxW='100%'
+        gap={{ base: '2' }}
+        minW='0'
+        maxW='full'
       >
         <Flex
           flex='1 1 100%'
           direction='column'
           justifyContent={{ lg: 'space-between' }}
           alignItems={{ base: 'center', lg: 'start' }}
-          gap={2}
+          gap='2'
           order={{ base: 2, lg: 0 }}
         >
           <Flex
-            w='100%'
+            w='full'
             ref={containerRef}
             flexDirection='row'
             justifyContent='space-between'
             alignItems='center'
             css={{
-              h1: {
-                noOfLines: readMore ? 1 : 'none',
-                overflow: 'hidden',
-                display: '-webkit-box',
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 'var(--chakra-line-clamp)',
+              '& h1': {
+                lineClamp: readMore ? 1 : 'none',
               },
             }}
           >
             <OrganizationName
               as='h1'
-              fontSize={32}
-              lineHeight={1.5}
+              textStyle='display'
               title={organization?.name?.default || organization?.address}
               maxW={{ base: '250px', sm: '300px', md: '450px', lg: '500px', xl: '650px' }}
             />
@@ -88,13 +83,13 @@ const OrganizationHeader = () => {
                   aria-label={t('organization.title.read_more')}
                   onClick={handleReadMore}
                 >
-                  {readMore ? <FaEye /> : <FaEyeSlash />}
+                  {readMore ? <ViewIcon /> : <HideIcon />}
                 </IconButton>
               )}
             </Box>
           </Flex>
           <ReadMoreMarkdownWrapper>
-            <OrganizationDescription fontSize='lg' lineHeight={1.7} />
+            <OrganizationDescription fontSize='lg' lineHeight='tall' />
           </ReadMoreMarkdownWrapper>
           <ReadMoreMarkdownButton alignSelf='center' />
         </Flex>

@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { render, screen } from '@testing-library/react'
-import { LuLayoutDashboard } from 'react-icons/lu'
+import { DashboardIcon } from '~theme/icons'
 import { system } from '~theme/system'
 import { DashboardMenuItemButton } from './Item'
 
@@ -11,7 +11,7 @@ const renderItem = (reduced: boolean) =>
         reduced={reduced}
         item={{
           label: 'Dashboard',
-          icon: LuLayoutDashboard,
+          icon: DashboardIcon,
         }}
       />
     </ChakraProvider>

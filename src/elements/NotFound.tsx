@@ -1,9 +1,9 @@
 import { Button, Flex, Icon, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuHouse } from 'react-icons/lu'
+import { HomeIcon } from '~theme/icons'
 import { matchPath, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
-import { Heading, SubHeading } from '~components/Dashboard/Contents'
+import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
 import { Routes } from '~src/router/routes'
 
 export const getNotFoundReturnPath = ({
@@ -27,27 +27,27 @@ export const NotFoundView = ({ onReturnHome, returnHomeHref }: NotFoundViewProps
   const { t } = useTranslation()
 
   return (
-    <Flex direction='column' align='center' justify='center' textAlign='center' gap={3} minH='30vh'>
-      <Text as='div' fontSize='6xl' fontWeight='extrabold' lineHeight='1'>
+    <Flex direction='column' align='center' justify='center' textAlign='center' gap='3' minH='[30vh]'>
+      <Text as='div' fontSize='6xl' fontWeight='extrabold' lineHeight='shorter'>
         404
       </Text>
-      <Heading size='lg'>{t('error.not_found')}</Heading>
-      <SubHeading m={0} maxW='45ch'>
+      <PageTitle>{t('error.not_found')}</PageTitle>
+      <PageSubtitle m='0' maxW='[45ch]'>
         {t('error.not_found_description', {
           defaultValue: "The page you're looking for does not exist or has been moved.",
         })}
-      </SubHeading>
+      </PageSubtitle>
 
       {returnHomeHref ? (
         <Button asChild>
           <a href={returnHomeHref}>
-            <Icon as={LuHouse} />
+            <Icon as={HomeIcon} />
             {t('error.return_to_home')}
           </a>
         </Button>
       ) : (
         <Button onClick={onReturnHome}>
-          <Icon as={LuHouse} />
+          <Icon as={HomeIcon} />
           {t('error.return_to_home')}
         </Button>
       )}

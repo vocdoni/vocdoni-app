@@ -8,8 +8,7 @@ import {
   CheckboxControl,
   CheckboxHiddenInput,
   CheckboxRoot,
-  CloseButton,
-  Drawer,
+  Stack,
   Flex,
   Heading,
   HStack,
@@ -21,7 +20,6 @@ import {
   MenuRoot,
   MenuSeparator,
   MenuTrigger,
-  Progress,
   Separator,
   SimpleGrid,
   Table,
@@ -29,18 +27,22 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import { CloseButton } from '~components/ui/CloseButton'
 import { PaginationProvider, usePagination } from '@vocdoni/react-components'
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCalendar, LuClock, LuEllipsis, LuEye, LuPencil, LuTrash, LuUsers, LuVote } from 'react-icons/lu'
+import { CalendarIcon, ClockIcon, DeleteIcon, EditIcon, MoreIcon, UsersIcon, ViewIcon, VoteIcon } from '~theme/icons'
 import { generatePath, useNavigate } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { DashboardBox } from '~components/Dashboard/Contents'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
-import DeleteModal from '~components/Modal/DeleteModal'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
+import { PanelDrawer } from '~components/ui/Drawer'
 import { PaginatedTableFooter } from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
+import { EmptyState } from '~components/ui/EmptyState'
+import { ListLoader } from '~components/ui/Loader'
 import { Routes } from '~routes'
 import { Group, useDeleteGroup, useGroupMembers, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { TableProvider, useTable } from './TableProvider'
@@ -115,21 +117,21 @@ const GroupsInfo = () => {
   if (!isOpen) return null
 
   return (
-    <DashboardBox position='relative' flexDirection='column' display='flex' gap={2} p={6} borderColor='table.border'>
-      <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorPalette='gray' size='sm' />
-      <Flex flexDirection='row' gap={4}>
-        <Icon as={LuUsers} boxSize={8} />
-        <Flex flexDirection='column' gap={4}>
-          <Text fontSize='md' fontWeight='bold'>
+    <DashboardBox size='md' position='relative' flexDirection='column' display='flex' gap='2'>
+      <CloseButton onClick={onClose} position='absolute' top='2' right='2' colorPalette='gray' size='sm' />
+      <Flex flexDirection='row' gap='4'>
+        <Icon as={UsersIcon} boxSize='icon.lg' />
+        <Flex flexDirection='column' gap='4'>
+          <Text textStyle='body' fontWeight='bold'>
             {t('groups_board.info.title', { defaultValue: 'About Groups' })}
           </Text>
-          <Text fontSize='sm' lineHeight='16px'>
+          <Text fontSize='sm' lineHeight='shorter'>
             {t('groups_board.info.description', {
               defaultValue:
                 'Groups are collections of members within your memberbase that can be used to create censuses for voting processes.',
             })}
           </Text>
-          <Text fontSize='sm' lineHeight='16px'>
+          <Text fontSize='sm' lineHeight='shorter'>
             {t('groups_board.info.extra', {
               defaultValue:
                 'When you initiate a vote, a census is created as a time-specific snapshot of the group. Any subsequent changes to the group will not affect existing censuses, but will be reflected in future voting processes.',
@@ -146,33 +148,20 @@ const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
   const { displayTitle } = useGroupDisplay(group)
 
   return (
-    <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
-      <Drawer.Backdrop />
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.CloseTrigger asChild>
-            <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
-          </Drawer.CloseTrigger>
-          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-            <Drawer.Title>
-              {t('groups_board.history.title', { defaultValue: '{{ title }} History', title: displayTitle })}
-            </Drawer.Title>
-            <Text color='texts.subtle' fontSize='sm'>
-              {t('groups_board.history.description', {
-                defaultValue: 'View the history of this group and its associated censuses',
-              })}
-            </Text>
-          </Drawer.Header>
-          <Drawer.Body>
-            <Flex justify='flex-end'>
-              <Button variant='outline' onClick={onClose}>
-                {t('groups_board.history.close', { defaultValue: 'Close' })}
-              </Button>
-            </Flex>
-          </Drawer.Body>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+    <PanelDrawer
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      size='sm'
+      title={t('groups_board.history.title', { defaultValue: '{{ title }} History', title: displayTitle })}
+      description={t('groups_board.history.description', {
+        defaultValue: 'View the history of this group and its associated censuses',
+      })}
+      footer={
+        <Button variant='outline' onClick={onClose}>
+          {t('groups_board.history.close', { defaultValue: 'Close' })}
+        </Button>
+      }
+    />
   )
 }
 
@@ -185,6 +174,7 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const updateGroup = useUpdateGroup()
+  const formId = useId()
   const methods = useForm<EditGroupFormData>({
     defaultValues: {
       title: group.title,
@@ -236,58 +226,50 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
   })
 
   return (
-    <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
-      <Drawer.Backdrop />
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.CloseTrigger asChild>
-            <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
-          </Drawer.CloseTrigger>
-          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-            <Drawer.Title>{t('actions.edit', { defaultValue: 'Edit' })}</Drawer.Title>
-            <Text color='texts.subtle' fontSize='sm'>
-              {t('group.actions.edit_description', {
-                defaultValue: 'Update the name and description of this group.',
-              })}
-            </Text>
-          </Drawer.Header>
-          <FormProvider {...methods}>
-            <Box as='form' onSubmit={onSubmit}>
-              <Drawer.Body display='flex' flexDirection='column' gap={4}>
-                <InputBasic
-                  formValue='title'
-                  label={t('members.table.group_name', { defaultValue: 'Group name' })}
-                  required
-                  validation={{
-                    setValueAs: (value) => (typeof value === 'string' ? value.trim() : value),
-                  }}
-                />
-                <FormControl invalid={!!formState.errors.description}>
-                  <FormLabel>
-                    {t('members.table.group_description', { defaultValue: 'Description (Optional)' })}
-                  </FormLabel>
-                  <Textarea
-                    {...register('description')}
-                    placeholder={t('members.table.group_description_placeholder', {
-                      defaultValue: 'Enter a brief description of the group',
-                    })}
-                  />
-                  <FormErrorMessage>{formState.errors.description?.message?.toString()}</FormErrorMessage>
-                </FormControl>
-              </Drawer.Body>
-              <Flex justifyContent='flex-end' gap={2} p={4}>
-                <Button variant='outline' onClick={onClose}>
-                  {t('actions.cancel', { defaultValue: 'Cancel' })}
-                </Button>
-                <Button type='submit' loading={updateGroup.isPending}>
-                  {t('actions.save', { defaultValue: 'Save changes' })}
-                </Button>
-              </Flex>
-            </Box>
-          </FormProvider>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+    <PanelDrawer
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      size='sm'
+      title={t('actions.edit', { defaultValue: 'Edit' })}
+      description={t('group.actions.edit_description', {
+        defaultValue: 'Update the name and description of this group.',
+      })}
+      footer={
+        <>
+          <Button variant='outline' onClick={onClose}>
+            {t('actions.cancel', { defaultValue: 'Cancel' })}
+          </Button>
+          <Button type='submit' loading={updateGroup.isPending} form={formId}>
+            {t('actions.save', { defaultValue: 'Save changes' })}
+          </Button>
+        </>
+      }
+    >
+      <FormProvider {...methods}>
+        <Box as='form' id={formId} onSubmit={onSubmit}>
+          <Stack gap='4'>
+            <InputBasic
+              formValue='title'
+              label={t('members.table.group_name', { defaultValue: 'Group name' })}
+              required
+              validation={{
+                setValueAs: (value) => (typeof value === 'string' ? value.trim() : value),
+              }}
+            />
+            <FormControl invalid={!!formState.errors.description}>
+              <FormLabel>{t('members.table.group_description', { defaultValue: 'Description (Optional)' })}</FormLabel>
+              <Textarea
+                {...register('description')}
+                placeholder={t('members.table.group_description_placeholder', {
+                  defaultValue: 'Enter a brief description of the group',
+                })}
+              />
+              <FormErrorMessage>{formState.errors.description?.message?.toString()}</FormErrorMessage>
+            </FormControl>
+          </Stack>
+        </Box>
+      </FormProvider>
+    </PanelDrawer>
   )
 }
 
@@ -301,43 +283,43 @@ const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteMo
       <MenuRoot>
         <MenuTrigger asChild>
           <IconButton aria-label={t('actions.more', { defaultValue: 'More options' })} variant='ghost' size='sm'>
-            <Icon as={LuEllipsis} />
+            <Icon as={MoreIcon} />
           </IconButton>
         </MenuTrigger>
         <MenuPositioner>
-          <MenuContent minW='100px' fontSize='sm'>
+          <MenuContent minW='[100px]' fontSize='sm'>
             {!group.isAutoGroup && (
               <MenuItem value='edit' onClick={onEditDrawerOpen}>
-                <HStack gap={2}>
-                  <Icon boxSize={4} as={LuPencil} />
+                <HStack gap='2'>
+                  <Icon as={EditIcon} />
                   <Text as='span'>{t('actions.edit', { defaultValue: 'Edit' })}</Text>
                 </HStack>
               </MenuItem>
             )}
             <MenuItem value='members' onClick={onMembersDrawerOpen}>
-              <HStack gap={2}>
-                <Icon boxSize={4} as={LuEye} />
+              <HStack gap='2'>
+                <Icon as={ViewIcon} />
                 <Text as='span'>{t('group.actions.view_members', { defaultValue: 'View Members' })}</Text>
               </HStack>
             </MenuItem>
             <MenuItem value='vote' onClick={() => navigateToVote(group.id)}>
-              <HStack gap={2}>
-                <Icon boxSize={4} as={LuVote} />
+              <HStack gap='2'>
+                <Icon as={VoteIcon} />
                 <Text as='span'>{t('group.actions.create_vote', { defaultValue: 'Create a Vote' })}</Text>
               </HStack>
             </MenuItem>
             <MenuItem value='history' disabled onClick={onHistoryOpen}>
-              <HStack gap={2}>
-                <Icon boxSize={4} as={LuClock} />
+              <HStack gap='2'>
+                <Icon as={ClockIcon} />
                 <Text as='span'>{t('group.actions.history', { defaultValue: 'History' })}</Text>
               </HStack>
             </MenuItem>
             {!group.isAutoGroup && (
               <>
                 <MenuSeparator />
-                <MenuItem value='delete' color='red.500' onClick={onDeleteModalOpen}>
-                  <HStack gap={2}>
-                    <Icon boxSize={4} as={LuTrash} />
+                <MenuItem value='delete' color='danger.action' onClick={onDeleteModalOpen}>
+                  <HStack gap='2'>
+                    <Icon as={DeleteIcon} />
                     <Text as='span'>{t('group.actions.delete_group', { defaultValue: 'Delete Group' })}</Text>
                   </HStack>
                 </MenuItem>
@@ -376,57 +358,46 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
   return (
     <>
       {!group.isAutoGroup && (
-        <Flex gap={4} align='center' minH='42px' mb={2}>
+        <Flex gap='4' align='center' minH='toolbar' mb='2'>
           {selectedRows.length > 0 ? (
             <>
-              <Text fontSize='sm' color='texts.subtle'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 <Trans
                   i18nKey='members.table.selected'
                   count={selectedRows.length}
-                  components={{ strong: <Text as='span' fontSize='sm' fontWeight='extrabold' display='inline' /> }}
+                  components={{
+                    strong: <Text as='span' textStyle='body-sm' fontWeight='extrabold' display='inline' />,
+                  }}
                   defaults='Selected: <strong>{{count}} member</strong>'
                 />
               </Text>
-              <Button onClick={() => setDeleteMembersModalOpen(true)} size='sm' colorPalette='red' variant='outline'>
-                <Icon as={LuTrash} />
+              <Button onClick={() => setDeleteMembersModalOpen(true)} size='sm' colorPalette='danger' variant='outline'>
+                <Icon as={DeleteIcon} />
                 {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
               </Button>
             </>
           ) : (
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text textStyle='body-sm' color='fg.muted'>
               <Trans i18nKey='members.table.select_hint' defaults='Select members to perform bulk actions' />
             </Text>
           )}
         </Flex>
       )}
-      <Table.ScrollArea
-        border='1px'
-        borderRadius='sm'
-        borderColor='table.border'
-        overflowX='visible'
-        overflowY='visible'
-      >
+      <Table.ScrollArea overflowX='visible' overflowY='visible'>
         {isEmpty ? (
-          <Flex justify='center' align='center' height='200px'>
-            <Text color='texts.subtle' fontSize='sm'>
-              {t('members.table.no_results', {
-                defaultValue: 'No members found',
-              })}
-            </Text>
-          </Flex>
+          <EmptyState
+            size='sm'
+            height='[200px]'
+            title={t('group.members.empty', { defaultValue: 'No members found' })}
+            description={t('group.members.empty_description', { defaultValue: 'Add members to see them listed here.' })}
+          />
         ) : (
           <>
-            {isLoading && (
-              <Progress.Root value={null}>
-                <Progress.Track>
-                  <Progress.Range />
-                </Progress.Track>
-              </Progress.Root>
-            )}
+            {isLoading && <ListLoader />}
             <Table.Root variant='outline'>
               <Table.Header>
                 <Table.Row>
-                  <Table.ColumnHeader width='50px'>
+                  <Table.ColumnHeader width='table.action'>
                     <CheckboxRoot
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
@@ -468,32 +439,24 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
           </>
         )}
       </Table.ScrollArea>
-      <DeleteModal
+      <ConfirmDialog
+        layout='inline'
         title={t('group.delete_member.title', { defaultValue: 'Delete Members' })}
-        subtitle={t('group.delete_member.subtitle', {
+        description={t('group.delete_member.subtitle', {
           defaultValue: 'Are you sure you want to delete {{count}} members?',
           count: selectedRows.length,
         })}
         open={isDeleteMembersModalOpen}
         onOpenChange={({ open }) => setDeleteMembersModalOpen(open)}
-      >
-        <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' onClick={() => setDeleteMembersModalOpen(false)}>
-            {t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
-          </Button>
-          <Button
-            loading={deleteGroupMembers.isPending}
-            colorPalette='red'
-            onClick={() => {
-              onDeleteMember(selectedRows.map((row) => row.id))
-              setDeleteMembersModalOpen(false)
-              resetSelectedRows()
-            }}
-          >
-            {t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
-          </Button>
-        </Flex>
-      </DeleteModal>
+        cancelText={t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
+        confirmText={t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
+        loading={deleteGroupMembers.isPending}
+        onConfirm={() => {
+          onDeleteMember(selectedRows.map((row) => row.id))
+          setDeleteMembersModalOpen(false)
+          resetSelectedRows()
+        }}
+      />
     </>
   )
 }
@@ -504,66 +467,56 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
   const { displayTitle } = useGroupDisplay(group)
 
   return (
-    <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='lg'>
-      <Drawer.Backdrop />
-      <Drawer.Positioner>
-        <Drawer.Content>
-          <Drawer.CloseTrigger asChild>
-            <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
-          </Drawer.CloseTrigger>
-          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-            <Drawer.Title>{displayTitle}</Drawer.Title>
-            <Text color='texts.subtle' fontSize='sm'>
-              {`${t('group.created_on', {
-                defaultValue: 'Created {{date}}',
-                date: new Date(group.createdAt).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                }),
-              })} • ${t('group.members', {
-                defaultValue: '{{count}} member',
-                defaultValue_other: '{{count}} members',
-                count: group.membersCount || 0,
-              })}`}
-            </Text>
-          </Drawer.Header>
-          <Drawer.Body>
-            <GroupMembersDisplay group={group} isOpen={isOpen} />
-            <Separator my={4} />
-            <Flex direction='column' gap={4}>
-              <Text fontWeight='extrabold' fontSize='sm'>
-                {t('group.actions_title', { defaultValue: 'Actions' })}
-              </Text>
-              <Text fontSize='xs' color='texts.subtle'>
-                {t('group.actions_description', {
-                  defaultValue:
-                    "When a new vote is created, the system takes a snapshot of the group's members at that moment. Any changes to the member list afterward will not affect the created census.",
-                })}
-              </Text>
-            </Flex>
-            <Flex justify='space-between' mt={4} gap={2}>
-              <Button size='xs' onClick={() => navigateToVote(group.id)}>
-                <Icon as={LuVote} boxSize={4} />
-                {t('group.create_vote', { defaultValue: 'Create a Vote' })}
-              </Button>
-              {!group.isAutoGroup && (
-                <>
-                  <Button variant='outline' onClick={onEditDrawerOpen} size='xs'>
-                    <Icon as={LuPencil} boxSize={4} />
-                    {t('actions.edit', { defaultValue: 'Edit' })}
-                  </Button>
-                  <Button onClick={openDeleteModal} colorPalette='red' size='xs'>
-                    <Icon as={LuTrash} boxSize={4} />
-                    {t('group.delete_group', { defaultValue: 'Delete group' })}
-                  </Button>
-                </>
-              )}
-            </Flex>
-          </Drawer.Body>
-        </Drawer.Content>
-      </Drawer.Positioner>
-    </Drawer.Root>
+    <PanelDrawer
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+      size='lg'
+      title={displayTitle}
+      description={`${t('group.created_on', {
+        defaultValue: 'Created {{date}}',
+        date: new Date(group.createdAt).toLocaleDateString(undefined, {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        }),
+      })} • ${t('group.members', {
+        defaultValue: '{{count}} member',
+        defaultValue_other: '{{count}} members',
+        count: group.membersCount || 0,
+      })}`}
+    >
+      <GroupMembersDisplay group={group} isOpen={isOpen} />
+      <Separator my='4' />
+      <Flex direction='column' gap='4'>
+        <Text fontWeight='extrabold' textStyle='body-sm'>
+          {t('group.actions_title', { defaultValue: 'Actions' })}
+        </Text>
+        <Text textStyle='caption' color='fg.muted'>
+          {t('group.actions_description', {
+            defaultValue:
+              "When a new vote is created, the system takes a snapshot of the group's members at that moment. Any changes to the member list afterward will not affect the created census.",
+          })}
+        </Text>
+      </Flex>
+      <Flex justify='space-between' mt='4' gap='2'>
+        <Button size='xs' onClick={() => navigateToVote(group.id)}>
+          <Icon as={VoteIcon} boxSize='icon.sm' />
+          {t('group.create_vote', { defaultValue: 'Create a Vote' })}
+        </Button>
+        {!group.isAutoGroup && (
+          <>
+            <Button variant='outline' onClick={onEditDrawerOpen} size='xs'>
+              <Icon as={EditIcon} boxSize='icon.sm' />
+              {t('actions.edit', { defaultValue: 'Edit' })}
+            </Button>
+            <Button onClick={openDeleteModal} colorPalette='danger' size='xs'>
+              <Icon as={DeleteIcon} boxSize='icon.sm' />
+              {t('group.delete_group', { defaultValue: 'Delete group' })}
+            </Button>
+          </>
+        )}
+      </Flex>
+    </PanelDrawer>
   )
 }
 
@@ -572,13 +525,7 @@ const GroupMembersDisplay = ({ group, isOpen }: GroupMembersProps) => {
   const { data, isLoading } = useGroupMembers(group.id, initialPage, isOpen)
 
   if (isLoading) {
-    return (
-      <Progress.Root value={null}>
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
-    )
+    return <ListLoader />
   }
 
   const pagination = data.pagination
@@ -596,22 +543,18 @@ const GroupMembersWithPagination = ({ group, isOpen }: GroupMembersProps) => {
   const { data, isLoading, error } = useGroupMembers(group.id, page, isOpen)
   const members = data?.members ?? []
   const hasError = !!error && !isLoading
-  const isEmpty = members.length === 0 && !isLoading && !hasError
-  const showAlert = hasError || isEmpty
-  const alertStatus = hasError ? 'error' : 'info'
-  const alertTitle = hasError
-    ? t('group.members.error', { defaultValue: 'Unable to load group members' })
-    : t('group.members.empty', { defaultValue: 'No members found' })
-  const alertDescription = hasError
-    ? error?.message?.toString()
-    : t('group.members.empty_description', { defaultValue: 'Add members to see them listed here.' })
 
+  // An empty group is the table's own empty state; only a failure gets an alert.
   return (
     <>
-      {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
+      <ListStateAlert
+        show={hasError}
+        title={t('group.members.error', { defaultValue: 'Unable to load group members' })}
+        error={error}
+      />
       <TableProvider
         data={members}
-        isLoading={isLoading}
+        loading={isLoading}
         initialColumns={[
           { id: 'name', label: t('group.name', { defaultValue: 'Name' }) },
           { id: 'email', label: t('group.email', { defaultValue: 'Email' }) },
@@ -652,28 +595,23 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
   }
 
   return (
-    <DeleteModal
+    <ConfirmDialog
+      layout='inline'
       title={t('group.actions.delete_confirm_title', { defaultValue: 'Delete Group' })}
-      subtitle={
+      description={
         <Trans
           i18nKey='group.actions.delete_confirm_description'
           values={{ title: group.title }}
-          components={{ bold: <Text as='span' fontSize='sm' fontWeight='extrabold' /> }}
+          components={{ bold: <Text as='span' textStyle='body-sm' fontWeight='extrabold' /> }}
           defaults='Are you sure you want to delete <bold>{{title}}</bold>? This action cannot be undone and will permanently remove the group from your organization.'
         />
       }
       open={isOpen}
       onOpenChange={({ open }) => (!open ? onClose() : undefined)}
-    >
-      <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={onClose}>
-          {t('group.actions.cancel', { defaultValue: 'Cancel' })}
-        </Button>
-        <Button colorPalette='red' onClick={handleDelete}>
-          {t('group.actions.delete', { defaultValue: 'Delete' })}
-        </Button>
-      </Flex>
-    </DeleteModal>
+      cancelText={t('group.actions.cancel', { defaultValue: 'Cancel' })}
+      confirmText={t('group.actions.delete', { defaultValue: 'Delete' })}
+      onConfirm={handleDelete}
+    />
   )
 }
 
@@ -687,8 +625,8 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
   return (
     <>
-      <Card.Root variant='outline' borderColor='table.border' p={4} pt={2}>
-        <Card.Header p={0}>
+      <Card.Root variant='outline' p='4'>
+        <Card.Header p='0'>
           <Flex justify='space-between' align='center'>
             <Heading size='md'>{displayTitle}</Heading>
             <GroupActions
@@ -699,11 +637,11 @@ const GroupCard = ({ group }: GroupCardProps) => {
             />
           </Flex>
         </Card.Header>
-        <Card.Body p={0}>
-          <Flex direction='column' gap={2}>
-            <Flex align='center' gap={2}>
-              <Icon as={LuCalendar} boxSize={3.5} />
-              <Text color='texts.subtle' fontSize='sm'>
+        <Card.Body p='0'>
+          <Flex direction='column' gap='2'>
+            <Flex align='center' gap='2'>
+              <Icon as={CalendarIcon} boxSize='icon.sm' />
+              <Text color='fg.muted' textStyle='body-sm'>
                 {t('group.created_on', {
                   defaultValue: 'Created {{date}}',
                   date: new Date(group.createdAt).toLocaleDateString(undefined, {
@@ -714,30 +652,24 @@ const GroupCard = ({ group }: GroupCardProps) => {
                 })}
               </Text>
             </Flex>
-            <Flex align='center' gap={2}>
-              <Icon as={LuUsers} boxSize={3.5} />
-              <Text
-                onClick={onMembersDrawerOpen}
-                fontWeight='bold'
-                fontSize='sm'
-                cursor='pointer'
-                _hover={{ textDecoration: 'underline' }}
-              >
+            <Flex align='center' gap='2'>
+              <Icon as={UsersIcon} boxSize='icon.sm' />
+              <Button variant='text-link' onClick={onMembersDrawerOpen}>
                 {t('group.members', {
                   defaultValue: '{{count}} member',
                   defaultValue_other: '{{count}} members',
                   count: group.membersCount || 0,
                 })}
-              </Text>
+              </Button>
             </Flex>
-            <Text fontSize='sm' color='texts.subtle'>
+            <Text textStyle='body-sm' color='fg.muted'>
               {displayDescription}
             </Text>
           </Flex>
         </Card.Body>
-        <Card.Footer px={0} pb={0} mt={3}>
+        <Card.Footer px='0' pb='0' mt='3'>
           <Button w='full' size='xs' onClick={() => navigateToVote(group.id)}>
-            <Icon boxSize={4} as={LuVote} />
+            <Icon boxSize='icon.sm' as={VoteIcon} />
             {t('group.create_vote', { defaultValue: 'Create a Vote' })}
           </Button>
         </Card.Footer>
@@ -760,27 +692,24 @@ const GroupsBoard = () => {
   const { data: groups, isLoading, error, isFetched, fetchNextPage, hasNextPage, isFetchingNextPage } = useGroups()
   const hasError = !!error && !isLoading
   const noGroups = isFetched && (!groups || groups.length === 0) && !isLoading && !hasError
-  const showAlert = hasError || noGroups
-  const alertStatus = hasError ? 'error' : 'info'
-  const alertTitle = hasError
-    ? t('groups_board.load_error', { defaultValue: 'Unable to load groups' })
-    : t('groups_board.no_groups', { defaultValue: 'No groups found' })
-  const alertDescription = hasError
-    ? error?.message?.toString()
-    : t('groups_board.create_group', { defaultValue: 'Create a new group to get started.' })
 
   return (
     <>
-      {isLoading && (
-        <Progress.Root value={null}>
-          <Progress.Track>
-            <Progress.Range />
-          </Progress.Track>
-        </Progress.Root>
+      {isLoading && <ListLoader />}
+      <ListStateAlert
+        show={hasError}
+        title={t('groups_board.load_error', { defaultValue: 'Unable to load groups' })}
+        error={error}
+      />
+      {noGroups && (
+        <EmptyState
+          size='lg'
+          title={t('groups_board.no_groups', { defaultValue: 'No groups found' })}
+          description={t('groups_board.create_group', { defaultValue: 'Create a new group to get started.' })}
+        />
       )}
-      {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
       {!hasError && !isLoading && groups && groups.length > 0 && (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap='4'>
           {groups.map((group) => (
             <GroupCard key={group.id} group={group} />
           ))}
@@ -788,7 +717,7 @@ const GroupsBoard = () => {
       )}
       {hasNextPage && !hasError && !isLoading && groups && groups.length > 0 && (
         <Button
-          mt={4}
+          mt='4'
           alignSelf='center'
           onClick={() => fetchNextPage()}
           loading={isFetchingNextPage}
@@ -803,7 +732,7 @@ const GroupsBoard = () => {
 
 const Groups = () => {
   return (
-    <Flex direction='column' gap={4}>
+    <Flex direction='column' gap='4'>
       <GroupsInfo />
       <GroupsBoard />
     </Flex>

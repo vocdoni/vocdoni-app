@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Card, Flex, Stat, Text } from '@chakra-ui/react'
 import { VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
 import { isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -28,16 +28,8 @@ const ProcessAside = () => {
   const votes = processVoteCount(results)
 
   return (
-    <Flex direction='column' border='1px solid' borderRadius='lg' borderColor='table.border' p={4} gap={2}>
-      <Flex
-        flexDirection='column'
-        gap={5}
-        flexWrap='wrap'
-        border='1px solid'
-        borderRadius='lg'
-        borderColor='table.border'
-        p={4}
-      >
+    <Card.Root variant='section' size='sm' gap='2'>
+      <Card.Root variant='section' size='sm' gap='5' flexWrap='wrap'>
         <Text textAlign='center' fontSize='xl' textTransform='uppercase'>
           {getStatusText(t, status).toUpperCase()}
         </Text>
@@ -47,39 +39,45 @@ const ProcessAside = () => {
             depending on the translated sentence around it. Exactly one of the
             two renders at a time, so the id stays unique. */}
         {showVoters && !showVotes && (
-          <Flex direction={'row'} justifyContent='center' alignItems='center' gap={2} data-testid='process-vote-count'>
+          <Stat.Root
+            flexDirection='row'
+            justifyContent='center'
+            alignItems='baseline'
+            gap='2'
+            data-testid='process-vote-count'
+          >
             <Trans
               i18nKey='aside.votes'
               components={{
-                span: <Text as='span' fontWeight='bold' fontSize='3xl' lineHeight={1} />,
-                text: <Text fontSize='xl' lineHeight={1.3} />,
+                span: <Stat.ValueText />,
+                text: <Stat.ValueUnit />,
               }}
               count={votes}
             />
-          </Flex>
+          </Stat.Root>
         )}
 
         {showVotes && (
-          <Flex direction='column' justifyContent='center' alignItems='center' gap={2} data-testid='process-vote-count'>
-            <Flex direction={'row'} justifyContent='center' alignItems='center' gap={2}>
+          <Flex direction='column' justifyContent='center' alignItems='center' gap='2' data-testid='process-vote-count'>
+            <Stat.Root flexDirection='row' justifyContent='center' alignItems='baseline' gap='2'>
               <Trans
                 i18nKey='aside.votes_weight'
                 components={{
-                  span: <Text as='span' fontWeight='bold' fontSize='3xl' lineHeight={1} />,
-                  text: <Text fontSize='xl' lineHeight={1.3} />,
+                  span: <Stat.ValueText />,
+                  text: <Stat.ValueUnit />,
                 }}
                 count={votes}
               />
-            </Flex>
+            </Stat.Root>
           </Flex>
         )}
-      </Flex>
+      </Card.Root>
       {connected ? <LogoutButton /> : <CensusConnectButton />}
       {/* The v2 context doesn't expose a separate "membership check in flight" loading
           flag (unlike the old loading.census/loaded.census pair), so this may flash
           briefly right after connecting, before isInCensus resolves. */}
       {connected && !isInCensus && (
-        <Text textAlign='center' fontSize='sm'>
+        <Text textAlign='center' textStyle='body-sm'>
           {t('aside.is_not_in_census')}
         </Text>
       )}
@@ -87,16 +85,8 @@ const ProcessAside = () => {
       {/* The explorer verify links live on the Voted notice (one per question,
           each with its own vote id) — the aside only confirms the vote landed. */}
       {renderVoteMenu && (
-        <Flex flexDirection='column' alignItems='center' gap={3} w='full'>
-          <Text
-            fontWeight='extrabold'
-            fontSize='sm'
-            css={{
-              color: 'green.500',
-              _dark: { color: 'green.300' },
-            }}
-            textAlign='center'
-          >
+        <Flex flexDirection='column' alignItems='center' gap='3' w='full'>
+          <Text fontWeight='extrabold' textStyle='body-sm' color='status.success.fg' textAlign='center'>
             {t('aside.has_already_voted').toString()}
           </Text>
           {/* The vote id was only ever shown at cast time: an anonymous census
@@ -106,7 +96,7 @@ const ProcessAside = () => {
               the id is actually gone: right after casting it is still on
               screen, in the Voted notice. */}
           {election.census?.anonymous && !voteId && (
-            <Text fontSize='xs' color='texts.subtle' textAlign='center'>
+            <Text textStyle='caption' color='fg.muted' textAlign='center'>
               {t('aside.anonymous_receipt_gone', {
                 defaultValue: 'Your receipt was shown when you voted and cannot be retrieved.',
               })}
@@ -114,7 +104,7 @@ const ProcessAside = () => {
           )}
         </Flex>
       )}
-    </Flex>
+    </Card.Root>
   )
 }
 
@@ -156,16 +146,16 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
       justifyContent='center'
       alignItems='center'
       background='transparent'
-      py={3}
-      px={{ base: 3, lg: 0 }}
-      gap={3}
+      py='3'
+      px={{ base: '3', lg: '0' }}
+      gap='3'
       {...props}
     >
       {!connected ? (
         <CensusConnectButton />
       ) : (
         <>
-          <CVoteButton w='100%' fontSize='lg' height='50px' onClick={setQuestionsTab} />
+          <CVoteButton w='full' fontSize='lg' height='50px' onClick={setQuestionsTab} />
           {isWeighted && <VoteWeight />}
         </>
       )}

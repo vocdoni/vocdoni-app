@@ -22,9 +22,10 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuGripVertical, LuX } from 'react-icons/lu'
+import { CloseIcon, DragHandleIcon } from '~theme/icons'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
+import { DragHandle } from '~components/ui/DragHandle'
 import { Process, SelectorTypes } from '../common'
 import ExtendedQuestionEditor from './ExtendedQuestionEditor'
 import { QuestionSettings } from './QuestionSettings'
@@ -75,35 +76,26 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
   return (
     <div ref={setNodeRef} style={style}>
       <DashboardBox>
-        <HStack align='stretch' gap={4}>
+        <HStack align='stretch' gap='4'>
           {/* Drag handle */}
           {questions.length > 1 && (
-            <Box
-              {...attributes}
-              {...listeners}
-              cursor={isDragging ? 'grabbing' : 'grab'}
-              display='flex'
-              alignItems='flex-start'
-              pt={2}
-              color='fg.subtle'
-              _hover={{ color: 'fg.muted' }}
-            >
-              <Icon as={LuGripVertical} />
-            </Box>
+            <DragHandle {...attributes} {...listeners} placement='start' dragging={isDragging}>
+              <Icon as={DragHandleIcon} />
+            </DragHandle>
           )}
 
-          <VStack flex='1' minW={0} align='stretch' gap={2}>
+          <VStack flex='1' minW='0' align='stretch' gap='2'>
             {/* Settings share the row with the question number, so the title and
                 description below keep the full width */}
-            <Flex align='center' gap={2} flexWrap='wrap'>
-              <Text fontSize='sm' color='texts.subtle'>
+            <Flex align='center' gap='2' flexWrap='wrap'>
+              <Text textStyle='body-sm' color='fg.muted'>
                 {t('process.create.question.question_number', {
                   defaultValue: 'Question {{index}} of {{total}}',
                   index: index + 1,
                   total: questions.length,
                 })}
               </Text>
-              <HStack gap={2} ms='auto' flexWrap='wrap' justify='flex-end'>
+              <HStack gap='2' ms='auto' flexWrap='wrap' justify='flex-end'>
                 <QuestionSettings index={index} />
                 {questions.length > 1 && (
                   <IconButton
@@ -112,7 +104,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                     variant='ghost'
                     onClick={() => onRemove(index)}
                   >
-                    <Icon as={LuX} />
+                    <Icon as={CloseIcon} />
                   </IconButton>
                 )}
               </HStack>
@@ -120,7 +112,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
             <FormControl invalid={!!errors.questions?.[index]?.title}>
               <Input
                 placeholder={t('process_create.question.title.placeholder', 'Add a title to the question')}
-                variant='borderless'
+                variant='inline'
                 fontSize='lg'
                 fontWeight='bold'
                 {...register(`questions.${index}.title`, {
@@ -135,7 +127,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
               render={({ field }) => (
                 <Editor
                   onChange={field.onChange}
-                  variant='borderless'
+                  variant='inline'
                   placeholder={t(
                     'process_create.question.description.placeholder',
                     'Add the description of the question here (optional)...'

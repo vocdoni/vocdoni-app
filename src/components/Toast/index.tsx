@@ -1,18 +1,20 @@
 import { Box, Toast, Toaster, createToaster } from '@chakra-ui/react'
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type ToastContextValue = ReturnType<typeof createToaster>
 
 const ToastContext = createContext<ToastContextValue | null>(null)
 
 export const ToastProvider = ({ children }: PropsWithChildren) => {
+  const { t } = useTranslation()
   const toaster = useMemo(() => createToaster({ placement: 'bottom' }), [])
   return (
     <ToastContext.Provider value={toaster}>
       {children}
       <Toaster toaster={toaster}>
         {(toast) => (
-          <Toast.Root w='fit-content' maxW='sm' mx='auto'>
+          <Toast.Root w='fit' maxW='sm' mx='auto'>
             <Toast.Indicator />
             <Box flex='1'>
               {toast.title ? <Toast.Title>{toast.title}</Toast.Title> : null}
@@ -22,7 +24,7 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
               // Zag already runs `action.onClick` and dismisses the toast: passing it again ran it twice
               <Toast.ActionTrigger>{toast.action.label}</Toast.ActionTrigger>
             ) : null}
-            {toast.closable ? <Toast.CloseTrigger /> : null}
+            {toast.closable ? <Toast.CloseTrigger aria-label={t('close', { defaultValue: 'Close' })} /> : null}
           </Toast.Root>
         )}
       </Toaster>

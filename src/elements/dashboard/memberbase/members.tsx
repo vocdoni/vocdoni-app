@@ -2,7 +2,7 @@ import { RoutedPaginationProvider } from '@vocdoni/react-components'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOutletContext } from 'react-router'
-import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { MemberbaseTabsContext } from '~components/Memberbase'
 import MembersTable from '~components/Memberbase/Members'
 import { TableProvider } from '~components/Memberbase/TableProvider'
@@ -75,38 +75,24 @@ const Members = () => {
     previousPage: null,
     nextPage: null,
   }
-  const isLoadingOrFetching = isLoading || isFetching
-  const hasError = !!error && !isLoadingOrFetching
-  const isEmpty = members.length === 0 && !isLoadingOrFetching && !hasError
-  const hasSearch = Boolean(debouncedSearch)
-  const showAlert = hasError || isEmpty
-  const alertStatus = hasError ? 'error' : 'info'
-  const alertTitle = hasError
-    ? t('members.list.error', { defaultValue: 'Unable to load members' })
-    : hasSearch
-      ? t('members.list.no_search_results', { defaultValue: 'No members match your search' })
-      : t('members.list.empty', { defaultValue: 'No members found' })
-  const alertDescription = hasError
-    ? error?.message?.toString()
-    : hasSearch
-      ? t('members.list.no_search_results_description', {
-          defaultValue: 'Try adjusting your search terms.',
-        })
-      : t('members.list.empty_description', {
-          defaultValue: 'Add your first member to get started.',
-        })
+  // An empty list is the table's own empty state; only a failure gets an alert.
+  const hasError = !!error && !(isLoading || isFetching)
 
   return (
     <TableProvider
       data={members}
       initialColumns={columns}
-      isLoading={isLoading}
+      loading={isLoading}
       isFetching={isFetching}
       isPlaceholderData={isPlaceholderData}
       error={error}
     >
       <RoutedPaginationProvider path={Routes.dashboard.memberbase.members} pagination={pagination}>
-        {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
+        <ListStateAlert
+          show={hasError}
+          title={t('members.list.error', { defaultValue: 'Unable to load members' })}
+          error={error}
+        />
         <MembersTable />
       </RoutedPaginationProvider>
     </TableProvider>

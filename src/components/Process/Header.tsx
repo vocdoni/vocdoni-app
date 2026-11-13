@@ -20,8 +20,8 @@ const ProcessHeader = () => {
   return (
     <>
       {election?.header && (
-        <Box w='100%' mx='auto' my='30px' overflow='hidden'>
-          <AspectRatio ratio={3 / 1} maxH='300px'>
+        <Box w='full' mx='auto' my='8' overflow='hidden'>
+          <AspectRatio ratio={3 / 1} maxH='[300px]'>
             <Image
               src={election?.header}
               alt={
@@ -31,8 +31,8 @@ const ProcessHeader = () => {
                     : (election.title.default ?? '')
                   : ''
               }
-              w='100%'
-              h='100%'
+              w='full'
+              h='full'
               objectFit='cover'
               loading='eager'
               fetchPriority='high'
@@ -41,25 +41,16 @@ const ProcessHeader = () => {
         </Box>
       )}
       <Flex flexDir='column'>
-        <ElectionTitle fontSize='4xl' textAlign='left' mb={5} />
-        <Flex gap={2} flexDirection={{ base: 'column', xl: 'row' }} alignItems={{ base: 'start', xl: 'center' }} mb={4}>
+        <ElectionTitle size='hero' />
+        <Flex gap='2' flexDirection={{ base: 'column', xl: 'row' }} alignItems={{ base: 'start', xl: 'center' }} mb='4'>
           <ElectionStatusBadge whiteSpace='nowrap' />
-          <ElectionSchedule
-            textAlign='left'
-            color='process.info_title.light'
-            _dark={{ color: 'process.info_title.dark' }}
-            display='block'
-            fontSize='sm'
-            lineHeight='short'
-          />
+          <ElectionSchedule textAlign='left' display='block' fontSize='sm' lineHeight='moderate' />
         </Flex>
         <Flex flexDirection='column'>
           {!getElectionDescription(election)?.length && <Text color='fg.muted'>{t('process.no_description')}</Text>}
-          <Box className='md-sizes'>
-            <ReadMoreMarkdownWrapper>
-              <ElectionDescription mb={0} fontSize='lg' lineHeight={1.5} color='fg.muted' />
-            </ReadMoreMarkdownWrapper>
-          </Box>
+          <ReadMoreMarkdownWrapper>
+            <ElectionDescription mb={0} fontSize='lg' lineHeight='moderate' color='fg.muted' />
+          </ReadMoreMarkdownWrapper>
           <ReadMoreMarkdownButton alignSelf='center' />
         </Flex>
       </Flex>
