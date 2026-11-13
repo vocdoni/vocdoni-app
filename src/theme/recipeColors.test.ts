@@ -18,6 +18,28 @@ describe.each([
   it('defines the 1px border width', () => {
     expect(sys.tokens.getByName('borderWidths.hairline')?.originalValue).toBe('1px')
   })
+
+  it('paints the success and warning toasts on their own fill and text tokens', () => {
+    const root = sys.getSlotRecipe('toast').base?.root as Record<string, Record<string, unknown>>
+    expect(root['&[data-type=success]']).toMatchObject({ bg: 'toast.success.bg', color: 'toast.success.fg' })
+    expect(root['&[data-type=warning]']).toMatchObject({ bg: 'toast.warning.bg', color: 'toast.warning.fg' })
+  })
+
+  it('defines the toast fills and text from the status palettes', () => {
+    expect(sys.tokens.getByName('colors.toast.success.bg')?.originalValue).toBe('{colors.success.700}')
+    expect(conditions('colors.toast.warning.bg', sys)).toEqual({
+      _light: '{colors.warning.700}',
+      _dark: '{colors.warning.500}',
+    })
+    expect(sys.tokens.getByName('colors.toast.success.fg')?.originalValue).toBe('{colors.success.contrast}')
+    expect(sys.tokens.getByName('colors.toast.warning.fg')?.originalValue).toBe('{colors.warning.contrast}')
+  })
+
+  // Chakra draws the X at 60%, which is 2.51:1 on the red error toast.
+  it('draws the toast close button at 80% of its text colour', () => {
+    const styles = sys.getSlotRecipe('toast').base?.closeTrigger as Record<string, unknown>
+    expect(JSON.stringify(sys.css(styles as any))).toMatch(/currentColor 80%/)
+  })
 })
 
 describe('link colours', () => {
