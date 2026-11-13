@@ -1,5 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { render, screen } from '@testing-library/react'
+import { PUBLIC_LANGUAGE_STORAGE_KEY } from '~i18n/public-language'
 import { system } from '~theme/system'
 
 const languagesEnv = { en: 'English', es: 'Spanish' } as unknown as Record<string, string>
@@ -86,6 +87,6 @@ describe('LanguagesList', () => {
     navigateToLanguage('es', { language: 'en', changeLanguage } as any, supportedLanguages, undefined, locationAssign)
 
     expect(document.cookie).toContain('vocdoni-public-language=es')
-    expect(window.localStorage.getItem('i18nextLng')).toBe('es')
+    expect(window.localStorage.getItem(PUBLIC_LANGUAGE_STORAGE_KEY)).toBe('es')
   })
 })
