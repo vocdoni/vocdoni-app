@@ -1,16 +1,4 @@
 {
-  "create-draft--voter-auth-dialog-1440-dark": {
-    "color-contrast": 4
-  },
-  "create-draft--voter-auth-dialog-1440-light": {
-    "color-contrast": 4
-  },
-  "create-empty--publish-errors-1440-dark": {
-    "color-contrast": 1
-  },
-  "create-empty--publish-errors-1440-light": {
-    "color-contrast": 1
-  },
   "settings-billing-1440-light": {
     "color-contrast": 1
   }
