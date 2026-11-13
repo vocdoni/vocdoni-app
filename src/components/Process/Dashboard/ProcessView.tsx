@@ -1,5 +1,4 @@
 import {
-  AspectRatio,
   Box,
   Button,
   Card,
@@ -19,9 +18,7 @@ import {
   TabsTrigger,
   Text,
   useClipboard,
-  useRecipe,
   VStack,
-  type HTMLChakraProps,
 } from '@chakra-ui/react'
 import {
   ElectionDescription,
@@ -77,13 +74,13 @@ import { useProcessEarlyEndDate } from '~queries/process-end-date'
 import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { ElectionVideo } from '../ElectionVideo'
 import { useAnonymityLabels } from '../anonymityLabels'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { Tooltip } from '~components/ui/Tooltip'
-import { VideoPlayer } from '~components/ui/VideoPlayer'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -92,36 +89,6 @@ export const getProcessViewTabFromPath = (pathname: string): ProcessViewTab =>
 
 export const getProcessViewPathForTab = (id: string, tab: ProcessViewTab): string =>
   generatePath(tab === 'results' ? Routes.dashboard.processResults : Routes.dashboard.process, { id })
-
-type ElectionVideoProps = HTMLChakraProps<'div'>
-
-export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((props, ref) => {
-  const { t } = useTranslation()
-  const { election } = useElection()
-  const { ...rest } = props
-  const recipe = useRecipe({ key: 'ElectionVideo' })
-  const styles = recipe()
-
-  if (!election) return null
-
-  const { streamUri } = election
-
-  if (!streamUri) return null
-
-  return (
-    <Box ref={ref} css={styles} {...rest}>
-      <AspectRatio ratio={16 / 9} width='full' height='full'>
-        <VideoPlayer
-          title={election?.title?.default || t('video.title', { defaultValue: 'Video' })}
-          src={streamUri}
-          width='100%'
-          controls
-          height='100%'
-        />
-      </AspectRatio>
-    </Box>
-  )
-})
 
 export const ProcessView = () => (
   <SidebarVisibilityProvider>

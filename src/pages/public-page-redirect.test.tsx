@@ -13,7 +13,7 @@ vi.mock('vike-react/usePageContext', () => ({
   usePageContext: () => currentPageContext,
 }))
 
-vi.mock('~src/Providers', () => ({
+vi.mock('~src/AppProviders', () => ({
   AppProviders: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }))
 

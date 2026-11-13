@@ -2,7 +2,7 @@ import { useData } from 'vike-react/useData'
 import { usePageContext } from 'vike-react/usePageContext'
 import PublicLayout from '~elements/PublicLayout'
 import PublicProcessView from '~elements/processes/PublicPage'
-import { AppProviders } from '~src/Providers'
+import { AppProviders } from '~src/AppProviders'
 import { getHeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
 import { getPublicLanguageLinksFromMeta } from '~src/pages/shared/publicPageData'
 import { usePreferredPublicLanguageRedirect } from '~src/pages/shared/publicPageRedirect'
@@ -33,7 +33,12 @@ export default function PublicProcessPage() {
             legacyOrganization={data.legacyOrganization}
           />
         ) : (
-          <PublicProcessView id={data.id} election={data.election} organizationAddress={data.organization?.address} />
+          <PublicProcessView
+            id={data.id}
+            election={data.election}
+            organization={data.organization}
+            fetchedAt={data.fetchedAt}
+          />
         )}
       </PublicLayout>
     </AppProviders>

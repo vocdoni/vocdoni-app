@@ -2,8 +2,7 @@ import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { VideoPlayer } from '~components/ui/VideoPlayer'
-import { ElectionVideo, getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from './ProcessView'
+import { getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from './ProcessView'
 
 const navigateSpy = vi.fn()
 let currentPathname = '/admin/process/0xabc'
@@ -418,24 +417,5 @@ describe('ProcessView voting settings', () => {
     const label = await screen.findByText('Voter anonymity')
 
     expect(label.closest('[data-part="trigger"]')).toBeNull()
-  })
-})
-
-describe('ElectionVideo', () => {
-  const renderVideo = (election: Record<string, unknown>) => {
-    setReactProvidersMock({ useElection: () => ({ election }) })
-    render(<ElectionVideo />)
-  }
-
-  it('titles the player after the election', () => {
-    renderVideo({ streamUri: 'https://example.test/live', title: { default: 'Board election' } })
-
-    expect(vi.mocked(VideoPlayer).mock.lastCall?.[0]).toMatchObject({ title: 'Board election' })
-  })
-
-  it('falls back to a generic title when the election has none', () => {
-    renderVideo({ streamUri: 'https://example.test/live' })
-
-    expect(vi.mocked(VideoPlayer).mock.lastCall?.[0]).toMatchObject({ title: 'Video' })
   })
 })
