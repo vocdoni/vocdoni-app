@@ -9,10 +9,10 @@ import {
 import type { ProcessCheckoutResponse } from '@vocdoni/api-types'
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuLock } from 'react-icons/lu'
 import { errorMessage, type WalletShortfall } from '~components/Pricing/ProcessCheckout'
 import { useCheckoutAppearance, type useStripePromise } from '~components/Pricing/stripe'
 import { clearPendingCheckout, storePendingCheckout } from '~queries/process-checkout'
+import { LockIcon } from '~theme/icons'
 import { amountFigure, currencyExact } from '~utils/numbers'
 import {
   PublishReviewAmountRow,
@@ -302,7 +302,7 @@ export const CardLayout = ({
               )}
             </PublishReviewStripeField>
             <PublishReviewSecureNote>
-              <LuLock aria-hidden />
+              <LockIcon aria-hidden />
               <span>
                 {t('process.publish_review.card.secure', {
                   defaultValue: 'Secure payment processed by Stripe. Vocdoni neither sees nor stores the card details.',

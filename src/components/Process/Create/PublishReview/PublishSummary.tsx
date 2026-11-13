@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react'
 import type { ProcessPriceResponse } from '@vocdoni/api-types'
 import { useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuChevronDown } from 'react-icons/lu'
+import { ChevronDownIcon } from '~theme/icons'
 import { currencyExact } from '~utils/numbers'
 import type { Process } from '../common'
 import { usePrimaryShortcut } from './usePrimaryShortcut'
@@ -282,7 +282,7 @@ const CostBox = ({ price, primary, voters, wallet, currencyCode, onRetry, retryi
         <PublishReviewCostSummary>{summary}</PublishReviewCostSummary>
         <PublishReviewCostAction>
           {t('process.publish_review.cost.details', { defaultValue: 'Review the details' })}
-          <LuChevronDown aria-hidden />
+          <ChevronDownIcon aria-hidden />
         </PublishReviewCostAction>
       </PublishReviewCostToggle>
       {open && (

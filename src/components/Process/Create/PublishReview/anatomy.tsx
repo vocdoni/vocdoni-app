@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react'
 import { forwardRef, type ReactNode, type RefObject, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowLeft, LuCheck, LuTriangleAlert } from 'react-icons/lu'
+import { BackIcon, CheckIcon, WarningIcon } from '~theme/icons'
 
 // Every piece reads its look from the `publishReview` slot recipe, so a re-theme edits only that file
 const { withProvider, withContext } = createSlotRecipeContext({ key: 'publishReview' })
@@ -169,7 +169,7 @@ export const PublishReviewHeader = ({
       <TopBar>
         {onBack ? (
           <BackButton type='button' onClick={onBack}>
-            <LuArrowLeft aria-hidden />
+            <BackIcon aria-hidden />
             {backLabel ?? t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
           </BackButton>
         ) : (
@@ -253,7 +253,7 @@ export type PublishReviewCalloutProps = { tone: 'positive' | 'warning'; children
 export const PublishReviewCallout = ({ tone, children }: PublishReviewCalloutProps) => (
   <CalloutBox data-tone={tone} role={tone === 'warning' ? 'alert' : undefined}>
     <CalloutIcon aria-hidden asChild>
-      {tone === 'positive' ? <LuCheck /> : <LuTriangleAlert />}
+      {tone === 'positive' ? <CheckIcon /> : <WarningIcon />}
     </CalloutIcon>
     <span>{children}</span>
   </CalloutBox>

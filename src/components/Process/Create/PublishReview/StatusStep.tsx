@@ -1,6 +1,7 @@
-import { Spinner, VisuallyHidden } from '@chakra-ui/react'
+import { VisuallyHidden } from '@chakra-ui/react'
 import type { ReactNode } from 'react'
-import { LuCheck } from 'react-icons/lu'
+import { InlineLoader } from '~components/ui/Loader'
+import { CheckIcon } from '~theme/icons'
 import {
   PublishReviewHeader,
   PublishReviewProgress,
@@ -38,13 +39,13 @@ export const StatusStep = ({ title, titleId, descriptionId, onClose, progress, h
         <PublishReviewProgress>
           {progress.map(({ key, label, state }) => (
             <PublishReviewProgressItem key={key} data-state={state}>
-              {state === 'done' ? <LuCheck aria-hidden /> : <Spinner size='sm' />}
+              {state === 'done' ? <CheckIcon aria-hidden /> : <InlineLoader />}
               {label}
             </PublishReviewProgressItem>
           ))}
         </PublishReviewProgress>
       ) : (
-        <Spinner size='lg' />
+        <InlineLoader />
       )}
       {hint && <PublishReviewStatusHint>{hint}</PublishReviewStatusHint>}
       {children && (
@@ -62,7 +63,7 @@ export const PublishedStep = ({ title, titleId, label }: { title: string; titleI
     <PublishReviewHeader eyebrow={title} titleId={titleId} />
     <PublishReviewStatus>
       <PublishReviewPublishedMark aria-hidden>
-        <LuCheck />
+        <CheckIcon />
       </PublishReviewPublishedMark>
       <p>{label}</p>
     </PublishReviewStatus>

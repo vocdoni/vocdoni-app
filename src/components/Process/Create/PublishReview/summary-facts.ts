@@ -32,7 +32,7 @@ export type PublishPrimary =
  * Whether publishing takes money from the wallet: not when free, paid or quote-only. An open top-up
  * (`pending`) still does: what the wallet lacks is paid by card, and the checkout reuses that session.
  */
-export const walletPays = (price: ProcessPriceResponse): boolean =>
+const walletPays = (price: ProcessPriceResponse): boolean =>
   !isQuoteOnly(price) && price.totalCents > 0 && price.paymentStatus !== 'paid'
 
 type PrimaryInput = {
@@ -112,7 +112,7 @@ export const formatShortDateTime = (date: Date, locale?: string, now: Date = new
 const hourMs = 60 * 60 * 1000
 
 /** How long the vote runs, from its start (`now` when it opens on publish): days, or hours under a day. */
-export const durationText = (t: TFunction, start: Date | null, end: Date, now: Date = new Date()) => {
+const durationText = (t: TFunction, start: Date | null, end: Date, now: Date = new Date()) => {
   const ms = Math.max(end.getTime() - (start ?? now).getTime(), 0)
   if (ms < 24 * hourMs) {
     return t('process.publish_review.facts.duration_hours', {
@@ -128,7 +128,7 @@ export const durationText = (t: TFunction, start: Date | null, end: Date, now: D
   })
 }
 
-export const votersText = (t: TFunction, voters?: number) =>
+const votersText = (t: TFunction, voters?: number) =>
   voters === undefined
     ? t('process.publish_review.voters_unknown', { defaultValue: 'The voters' })
     : t('process.publish_review.voters', {
@@ -138,7 +138,7 @@ export const votersText = (t: TFunction, voters?: number) =>
         defaultValue_other: '{{voters}} people',
       })
 
-export const questionsText = (t: TFunction, questions: number) =>
+const questionsText = (t: TFunction, questions: number) =>
   t('process.publish_review.questions', {
     count: questions,
     defaultValue_one: '{{count}} question',
@@ -184,7 +184,7 @@ export const questionTypeLabel = (t: TFunction, type: SelectorTypes) =>
     ? t('process.publish_review.type.multiple', { defaultValue: 'Multiple choice' })
     : t('process.publish_review.type.single', { defaultValue: 'Single choice' })
 
-export const codeMethodLabel = (t: TFunction, method: CodeMethod) => {
+const codeMethodLabel = (t: TFunction, method: CodeMethod) => {
   switch (method) {
     case 'email':
       return t('process.publish_review.code.email', { defaultValue: 'Code by email' })

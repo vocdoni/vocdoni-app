@@ -72,7 +72,7 @@ export const errorMessage = (error: unknown) => (error instanceof Error ? error.
  * The view a refused publish opens, or undefined when a top-up cannot settle the refusal. The
  * caller decides who may pay.
  */
-export const checkoutStartForRefusal = (error: unknown): ProcessCheckoutStart | undefined => {
+const checkoutStartForRefusal = (error: unknown): ProcessCheckoutStart | undefined => {
   if (publishNeedsWalletTopUp(error)) {
     const data = (apiErrorDetails(error)?.data ?? {}) as { shortfallCents?: unknown; balanceCents?: unknown }
     const hasShortfall = typeof data.shortfallCents === 'number' && typeof data.balanceCents === 'number'
