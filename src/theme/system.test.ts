@@ -46,6 +46,8 @@ const COLOR_PROPS = new Set([
 const RAW_LITERAL_ALLOWLIST = new Set<string>([
   // Chakra's card `size` variants set it; card variants that pad their root read it.
   'var(--card-padding)',
+  // The toast recipe sets it per type; the indicator icon reads it.
+  'var(--toast-indicator, currentColor)',
 ])
 
 // Non-color style props whose token-looking string values must resolve in their token category

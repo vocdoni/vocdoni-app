@@ -6,12 +6,22 @@ const sectionSubtitle = defineStyle({
 
 export const heading = defineRecipe({
   base: {
-    fontWeight: 'bold',
+    fontWeight: 'semibold',
   },
   variants: {
+    // Large sizes are set tight; Chakra's size axis only picks the text style.
+    size: {
+      xl: { letterSpacing: 'tight' },
+      '2xl': { letterSpacing: 'tight' },
+      '3xl': { letterSpacing: 'tighter' },
+      '4xl': { letterSpacing: 'tighter' },
+      '5xl': { letterSpacing: 'tighter' },
+      '6xl': { letterSpacing: 'tighter' },
+      '7xl': { letterSpacing: 'tighter' },
+    },
     variant: {
       heavy: {
-        fontWeight: 'extrabold',
+        fontWeight: 'semibold',
       },
       subsection: sectionSubtitle,
     },
@@ -20,10 +30,9 @@ export const heading = defineRecipe({
 
 export const link = defineRecipe({
   base: {
-    color: 'link.fg',
-    textDecoration: 'underline',
-    textDecorationThickness: 'from-font',
-    textUnderlineOffset: '0.15em',
+    color: 'accent.fg',
+    fontWeight: 'medium-plus',
+    textDecoration: 'none',
     // Repeats the token on purpose: `.dark &` is more specific than a single class, so in dark mode
     // it beats the palette colour of Chakra's plain/underline variants and of a Button rendering a
     // Link (`asChild`), as the members CSV template download does.
@@ -34,19 +43,18 @@ export const link = defineRecipe({
       },
     },
     _hover: {
-      color: 'link.fg.hover',
+      color: 'accent.solid.hover',
     },
   },
   variants: {
     variant: {
-      // Chakra's default `plain` variant (applied via defaultVariants) fades the
-      // underline to currentColor/20 and shifts its offset to 3px on hover,
-      // fighting the base styles above — pin both so hover keeps a solid,
-      // consistent underline.
+      // Chakra's default `plain` variant (applied via defaultVariants) sets its own colour and an underline on
+      // hover, and variants beat the base: restate the accent colour and keep links bare in every state.
       plain: {
+        color: 'accent.fg',
         _hover: {
-          textDecorationColor: 'current',
-          textUnderlineOffset: '0.15em',
+          color: 'accent.solid.hover',
+          textDecoration: 'none',
         },
       },
       unstyled: {
