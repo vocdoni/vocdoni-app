@@ -3,7 +3,9 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
-import { fileURLToPath, pathToFileURL } from 'node:url'
+import { fileURLToPath } from 'node:url'
+import { readBaseline, sortKeys, writeBaseline } from './baseline.mjs'
+import { captureNames, DEFAULT_MODES, DEFAULT_VIEWPORTS } from './routes.mjs'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(HERE, '../..')
@@ -16,8 +18,11 @@ export const A11Y_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'
 // closest(), so it covers descendants. Violations waiting for a fix are not exceptions: they live in a11y-baseline.json.
 const A11Y_EXCEPTIONS = []
 
-// Read from node_modules because the harness blocks every non-localhost request, so no CDN.
-const AXE_SOURCE = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8')
+// Read from node_modules because the harness blocks every non-localhost request, so no CDN. Read on the first audit,
+// so runs without --a11y never touch it.
+let axeSource
+const readAxe = () =>
+  (axeSource ??= fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8'))
 
 // Runs in the page, with `axe` injected. Returns one entry per violated rule: { id, impact, helpUrl, targets }.
 export const runA11y = async ({ tags, exceptions }) => {
@@ -60,7 +65,7 @@ export const summarizeAxe = (violations) =>
 
 // Injects axe once per page. page.evaluate, not addScriptTag, so the page's CSP cannot block it.
 export const audit = async (page) => {
-  if (!(await page.evaluate(() => typeof window.axe !== 'undefined'))) await page.evaluate(AXE_SOURCE)
+  if (!(await page.evaluate(() => typeof window.axe !== 'undefined'))) await page.evaluate(readAxe())
   return page.evaluate(runA11y, { tags: A11Y_TAGS, exceptions: A11Y_EXCEPTIONS }).then(summarizeAxe)
 }
 
@@ -73,8 +78,6 @@ export const safeAudit = async (page) => {
     return { 'axe-error': { impact: 'n/a', count: 1, examples: String(e?.message ?? e).slice(0, 200), help: '' } }
   }
 }
-
-const sortKeys = (object) => Object.fromEntries(Object.entries(object).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
 
 // Pure. `ran` holds the captures that were audited; those that did not run are ignored.
 export const compareA11y = (ran, baseline) => {
@@ -119,21 +122,51 @@ const summaryTable = (ran) => {
   ].join('\n')
 }
 
-// Compares the captures' violations with the baseline; with `update`, writes them into it instead. Captures that did
-// not run keep their baseline entry. Returns whether the run has violations the baseline does not hold; with no
-// baseline file it only reports.
-export const checkA11y = (captures, { update, baselinePath = A11Y_BASELINE }) => {
+// Compares the captures with the baseline, or with `update` writes them into it. Captures that did not run or whose axe
+// failed keep their entry. `expected` (the names of a full run) drops the entries of any other file. Returns whether the
+// run has violations the baseline does not hold; with no baseline file it only reports.
+export const checkA11y = (captures, { update, baselinePath = A11Y_BASELINE, expected }) => {
   const exists = fs.existsSync(baselinePath)
-  const baseline = exists ? JSON.parse(fs.readFileSync(baselinePath, 'utf8')) : {}
+  const baseline = readBaseline(baselinePath)
   const ran = captures.filter((c) => c.a11y)
   if (update) {
+    const raised = []
+    const axeFailed = []
     for (const capture of ran) {
+      if (capture.a11y['axe-error']) {
+        axeFailed.push(capture.file)
+        continue
+      }
+      for (const [rule, { count }] of Object.entries(capture.a11y)) {
+        const before = baseline[capture.file]?.[rule] ?? 0
+        if (count > before) raised.push(`  ${capture.file}  ${rule}: ${before} -> ${count}`)
+      }
       const counts = Object.fromEntries(Object.entries(capture.a11y).map(([rule, { count }]) => [rule, count]))
       if (Object.keys(counts).length) baseline[capture.file] = sortKeys(counts)
       else delete baseline[capture.file]
     }
-    fs.writeFileSync(baselinePath, `${JSON.stringify(sortKeys(baseline), null, 2)}\n`)
+    const pruned = []
+    if (expected) {
+      const keep = new Set([...expected, ...captures.map((c) => c.file)])
+      for (const file of Object.keys(baseline)) {
+        if (keep.has(file)) continue
+        pruned.push(file)
+        delete baseline[file]
+      }
+    }
+    writeBaseline(baselinePath, baseline)
     console.log(`Accessibility baseline written: ${path.relative(ROOT, baselinePath)}`)
+    if (axeFailed.length)
+      console.warn(`axe failed on ${axeFailed.join(', ')}: their baseline entries were kept, not updated.`)
+    if (raised.length)
+      console.warn(
+        [
+          'Counts this update raised (old -> new), now locked in:',
+          ...raised,
+          'Prefer --baseline-from the CI report.',
+        ].join('\n')
+      )
+    if (pruned.length) console.log(`Pruned baseline entries of captures no longer in routes.mjs: ${pruned.join(', ')}`)
     return false
   }
   const total = ran.reduce((sum, c) => sum + Object.values(c.a11y).reduce((n, { count }) => n + count, 0), 0)
@@ -160,8 +193,16 @@ export const checkA11y = (captures, { update, baselinePath = A11Y_BASELINE }) =>
 }
 
 // `node a11y.mjs --baseline-from <a11y-report.json>` writes the baseline from a report (the CI artifact), through
-// the same checkA11y path as --update-a11y-baseline. Importing this module never runs it.
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// the same checkA11y path as --update-a11y-baseline. Importing this module never runs it. The paths are compared
+// after realpath, so a symlinked invocation runs it too.
+const isMain = () => {
+  try {
+    return fileURLToPath(import.meta.url) === fs.realpathSync(process.argv[1])
+  } catch {
+    return false
+  }
+}
+if (isMain()) {
   const flag = process.argv.indexOf('--baseline-from')
   const source = flag === -1 ? undefined : process.argv[flag + 1]
   let report
@@ -171,5 +212,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     console.error('Usage: node scripts/ui-snapshot/a11y.mjs --baseline-from <path/to/a11y-report.json>')
     process.exit(2)
   }
-  checkA11y(capturesFromReport(report), { update: true })
+  const expected = captureNames({ viewports: DEFAULT_VIEWPORTS, modes: DEFAULT_MODES })
+  checkA11y(capturesFromReport(report), { update: true, expected })
 }

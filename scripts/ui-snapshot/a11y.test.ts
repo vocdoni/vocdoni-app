@@ -13,6 +13,10 @@ import {
   summarizeAxe,
 } from './a11y.mjs'
 
+// The job summary is only written under CI: every test runs without it, and a test that wants it stubs its own path.
+beforeEach(() => vi.stubEnv('GITHUB_STEP_SUMMARY', ''))
+afterEach(() => vi.unstubAllEnvs())
+
 const run = (html: string, exceptions: { selector: string; rules: string[] | '*'; reason: string }[] = []) => {
   // The page-level rules (title, lang) would fire on jsdom's bare document.
   document.title = 'Page'
@@ -91,16 +95,19 @@ describe('checkA11y', () => {
   let dir: string
   let baselinePath: string
   let log: ReturnType<typeof vi.spyOn>
+  let warn: ReturnType<typeof vi.spyOn>
   const printed = () => log.mock.calls.map((c) => c.join(' ')).join('\n')
+  const warnings = () => warn.mock.calls.map((c) => c.join(' ')).join('\n')
+  const saved = () => JSON.parse(fs.readFileSync(baselinePath, 'utf8'))
 
   beforeEach(() => {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), 'a11y-'))
     baselinePath = path.join(dir, 'a11y-baseline.json')
     log = vi.spyOn(console, 'log').mockImplementation(() => {})
+    warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   })
   afterEach(() => {
     vi.restoreAllMocks()
-    vi.unstubAllEnvs()
     fs.rmSync(dir, { recursive: true, force: true })
   })
 
@@ -140,6 +147,45 @@ describe('checkA11y', () => {
     expect(Object.keys(JSON.parse(text).z)).toEqual(['aria-roles', 'button-name'])
   })
 
+  it('prunes only the files outside the expected names, and keeps the entry of a failed page', () => {
+    fs.writeFileSync(
+      baselinePath,
+      JSON.stringify({ a: { label: 1 }, gone: { label: 2 }, 'errored-1440-light': { label: 4 } })
+    )
+    // A failed capture has no file name: the snapshot records only its route, viewport, mode, state and error.
+    const failed = { route: 'errored', viewport: 1440, mode: 'light', state: null, error: 'boom' }
+    const captures = [{ file: 'a', a11y: { label: entry(1) } }, failed]
+
+    checkA11y(captures, { update: true, baselinePath })
+    expect(saved()).toEqual({ a: { label: 1 }, gone: { label: 2 }, 'errored-1440-light': { label: 4 } })
+
+    checkA11y(captures, { update: true, baselinePath, expected: ['a', 'errored-1440-light'] })
+    expect(saved()).toEqual({ a: { label: 1 }, 'errored-1440-light': { label: 4 } })
+    expect(printed()).toContain('Pruned baseline entries of captures no longer in routes.mjs: gone')
+  })
+
+  it('keeps the entry of a capture whose axe run failed, and warns with its name', () => {
+    fs.writeFileSync(baselinePath, JSON.stringify({ a: { label: 3 } }))
+    const axeError = { 'axe-error': { impact: 'n/a', count: 1, examples: 'boom', help: '' } }
+    const captures = [
+      { file: 'a', a11y: axeError },
+      { file: 'b', a11y: { label: entry(1) } },
+    ]
+    checkA11y(captures, { update: true, baselinePath, expected: ['a', 'b'] })
+    expect(saved()).toEqual({ a: { label: 3 }, b: { label: 1 } })
+    expect(warnings()).toContain('axe failed on a: their baseline entries were kept')
+  })
+
+  it('logs every count the update raises as old -> new, and still overwrites', () => {
+    fs.writeFileSync(baselinePath, JSON.stringify({ a: { label: 2, 'button-name': 1 } }))
+    const captures = [{ file: 'a', a11y: { label: entry(1), 'button-name': entry(3), 'aria-roles': entry(1) } }]
+    checkA11y(captures, { update: true, baselinePath })
+    expect(warnings()).toContain('  a  button-name: 1 -> 3')
+    expect(warnings()).toContain('  a  aria-roles: 0 -> 1')
+    expect(warnings()).not.toContain('  a  label:')
+    expect(saved()).toEqual({ a: { 'aria-roles': 1, 'button-name': 3, label: 1 } })
+  })
+
   it('appends a table of rules to the GitHub step summary', () => {
     const summaryPath = path.join(dir, 'summary.md')
     vi.stubEnv('GITHUB_STEP_SUMMARY', summaryPath)
@@ -172,6 +218,7 @@ describe('capturesFromReport', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'a11y-'))
     const baselinePath = path.join(dir, 'a11y-baseline.json')
     vi.spyOn(console, 'log').mockImplementation(() => {})
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
     try {
       checkA11y(capturesFromReport(report), { update: true, baselinePath })
       const text = fs.readFileSync(baselinePath, 'utf8')

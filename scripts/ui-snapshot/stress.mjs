@@ -1,9 +1,9 @@
 // Stress mode of the UI snapshot (`--theme stress`, see README.md): the app runs with
 // src/theme/test-themes/stress.ts, which moves every themed value off its stock value, and each capture
 // lists the elements that still show a stock one. New leaks against stress-baseline.json fail the run.
-import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { readBaseline, sortKeys, writeBaseline } from './baseline.mjs'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(HERE, '../..')
@@ -137,14 +137,10 @@ export const loadSpec = (page) =>
 export const probe = (page, spec) =>
   page.evaluate(probeStress, { spec, exceptions: STRESS_EXCEPTIONS, kinds: KINDS }).then(summarize)
 
-const readBaseline = () => (fs.existsSync(STRESS_BASELINE) ? JSON.parse(fs.readFileSync(STRESS_BASELINE, 'utf8')) : {})
-
-const sortKeys = (object) => Object.fromEntries(Object.entries(object).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
-
 // Compares the captures' leaks with the baseline; with `update`, writes them into it instead. Captures that did
 // not run keep their baseline entry. Returns whether the run has leaks the baseline does not hold.
 export const checkStress = (captures, { update }) => {
-  const baseline = readBaseline()
+  const baseline = readBaseline(STRESS_BASELINE)
   const ran = captures.filter((c) => c.stress)
   if (update) {
     for (const capture of ran) {
@@ -152,7 +148,7 @@ export const checkStress = (captures, { update }) => {
       if (Object.keys(counts).length) baseline[capture.file] = sortKeys(counts)
       else delete baseline[capture.file]
     }
-    fs.writeFileSync(STRESS_BASELINE, `${JSON.stringify(sortKeys(baseline), null, 2)}\n`)
+    writeBaseline(STRESS_BASELINE, baseline)
     console.log(`Stress baseline written: ${path.relative(ROOT, STRESS_BASELINE)}`)
     return false
   }

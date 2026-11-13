@@ -135,16 +135,19 @@ SAAS_URL=http://127.0.0.1:3999 \
 pnpm ui:snapshot -- --label a11y --a11y
 ```
 
-After each capture (stock theme only; `--a11y` with `--theme stress` stops) the script runs axe-core on the page and
-lists the violations of the WCAG 2.2 A and AA rules, by rule with a node count and a few examples. Only violations are
-listed, not "needs review" items or best-practice rules. `a11y-report.json` holds the result per capture. axe is read
-from `node_modules`, so nothing is fetched. Colour contrast is only checked reliably in a real browser, which is why
-this runs inside the snapshot.
+After each capture (stock theme and palette only: `--a11y` with `--theme stress` or `--primary-color` stops) the script
+runs axe-core on the page and lists the violations of the WCAG 2.2 A and AA rules, by rule with a node count and a few
+examples. Only violations are listed, not "needs review" items or best-practice rules. `a11y-report.json` holds the
+result per capture. axe is read from `node_modules`, so nothing is fetched. Colour contrast is only checked reliably in
+a real browser, which is why this runs inside the snapshot.
 
 The run fails on any count above `a11y-baseline.json`. To write or refresh it from CI, download the `a11y` artifact of a
-PR run and run `node scripts/ui-snapshot/a11y.mjs --baseline-from <artifact>/a11y-report.json`. Write it from CI, not
-from your machine: fonts and layout change the colour-contrast results. After a fix, lower it locally with
-`--update-a11y-baseline` (a `--routes` run updates only its captures). A deliberate case goes with a reason in
+PR run and run `node scripts/ui-snapshot/a11y.mjs --baseline-from <artifact>/a11y-report.json`. Prefer that over the
+local update: fonts and layout change the colour-contrast results, and `--update-a11y-baseline` writes this machine's
+counts. It locks in any increase too, so after a local run check the logged increases (`file  rule: old -> new`) before
+committing. A `--routes`, `--viewports` or `--modes` run updates only its captures. A full run also drops the entries of
+files it does not expect (the current routes at the default viewports and modes), and skips that when a capture failed.
+`--baseline-from` prunes the same way. A deliberate case goes with a reason in
 `A11Y_EXCEPTIONS` (`a11y.mjs`); violations still waiting for a fix belong in the baseline.
 CI runs it as the `Accessibility (axe)` leg of the same job and fails like the stress leg; the run is the `a11y`
 artifact and the rule table lands in the job summary. If axe itself fails on a page, the capture is kept and

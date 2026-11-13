@@ -175,46 +175,6 @@
   "organization-create-390-light": {
     "aria-input-field-name": 1
   },
-  "plans-loggedin-1440-dark": {
-    "aria-valid-attr-value": 1,
-    "label-content-name-mismatch": 1
-  },
-  "plans-loggedin-1440-light": {
-    "aria-valid-attr-value": 1,
-    "color-contrast": 2,
-    "label-content-name-mismatch": 1
-  },
-  "plans-loggedin-390-dark": {
-    "aria-valid-attr-value": 1,
-    "label-content-name-mismatch": 1,
-    "scrollable-region-focusable": 1
-  },
-  "plans-loggedin-390-light": {
-    "aria-valid-attr-value": 1,
-    "color-contrast": 2,
-    "label-content-name-mismatch": 1,
-    "scrollable-region-focusable": 1
-  },
-  "plans-public-1440-dark": {
-    "aria-valid-attr-value": 1,
-    "label-content-name-mismatch": 1
-  },
-  "plans-public-1440-light": {
-    "aria-valid-attr-value": 1,
-    "color-contrast": 2,
-    "label-content-name-mismatch": 1
-  },
-  "plans-public-390-dark": {
-    "aria-valid-attr-value": 1,
-    "label-content-name-mismatch": 1,
-    "scrollable-region-focusable": 1
-  },
-  "plans-public-390-light": {
-    "aria-valid-attr-value": 1,
-    "color-contrast": 2,
-    "label-content-name-mismatch": 1,
-    "scrollable-region-focusable": 1
-  },
   "process-ongoing-1440-dark": {
     "label": 1,
     "label-content-name-mismatch": 4,
@@ -355,32 +315,6 @@
     "aria-input-field-name": 1,
     "aria-valid-attr-value": 1,
     "label": 1
-  },
-  "settings-subscription--contact-dialog-1440-light": {
-    "color-contrast": 2
-  },
-  "settings-subscription--contact-dialog-390-light": {
-    "color-contrast": 2
-  },
-  "settings-subscription-1440-dark": {
-    "aria-valid-attr-value": 2,
-    "label-content-name-mismatch": 4,
-    "link-name": 1
-  },
-  "settings-subscription-1440-light": {
-    "aria-valid-attr-value": 2,
-    "color-contrast": 2,
-    "label-content-name-mismatch": 4,
-    "link-name": 1
-  },
-  "settings-subscription-390-dark": {
-    "aria-valid-attr-value": 2,
-    "label-content-name-mismatch": 3
-  },
-  "settings-subscription-390-light": {
-    "aria-valid-attr-value": 2,
-    "color-contrast": 2,
-    "label-content-name-mismatch": 3
   },
   "settings-support-1440-dark": {
     "aria-valid-attr-value": 1,
