@@ -1,7 +1,8 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-components'
+import { organizationQueryKeys, useOrganization } from '@vocdoni/react-components'
 import type { ElectionStatus } from '@vocdoni/api-types'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
+import { useEffect } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ApiEndpoints, ApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
@@ -129,23 +130,54 @@ export const usePaginatedElections = () => {
   })
 }
 
-const useOrganizationMeta = () => {
-  const { bearedFetch } = useAuth()
-  const { organization } = useOrganization()
+type BearedFetch = ReturnType<typeof useAuth>['bearedFetch']
+
+// The organization meta read, shared by useOrganizationMeta and the boot prefetch so both use
+// one cache entry.
+const organizationMetaQuery = (address: string | undefined, bearedFetch: BearedFetch) => ({
+  queryKey: QueryKeys.organization.meta(address),
+  queryFn: async () => {
+    if (!address) {
+      throw new Error('Cannot read organization meta with no organization address selected')
+    }
+    const response = await bearedFetch<OrganizationMetaResponse>(
+      ApiEndpoints.OrganizationMeta.replace('{address}', address)
+    )
+    return response.meta
+  },
+})
+
+/**
+ * Starts the reads the dashboard frame needs for `address` (the organization and its meta)
+ * without subscribing to them, so they run alongside the session probe instead of after it.
+ */
+export const usePrefetchOrganization = (address?: string) => {
   const queryClient = useQueryClient()
-  const address = organization?.address
+  const { client } = useApiClient()
+  const { bearedFetch } = useAuth()
+
+  useEffect(() => {
+    if (!address) return
+    // Same key and request as the react-providers OrganizationProvider and useSaasOrganization.
+    void queryClient.prefetchQuery({
+      queryKey: organizationQueryKeys.organization(address),
+      queryFn: () => client.organizations.get(address),
+    })
+    void queryClient.prefetchQuery(organizationMetaQuery(address, bearedFetch))
+  }, [address, bearedFetch, client, queryClient])
+}
+
+export const useOrganizationMeta = () => {
+  const { bearedFetch, currentAddress: address } = useAuth()
+  const queryClient = useQueryClient()
+  // Keyed on the session address, not the loaded organization object: the address is all the
+  // request needs, so the read starts as soon as the session is confirmed.
   const hasOrganization = Boolean(address)
 
   const query = useQuery<OrganizationMeta>({
-    queryKey: QueryKeys.organization.meta(organization?.address),
+    ...organizationMetaQuery(address, bearedFetch),
     enabled: hasOrganization,
     refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const response = await bearedFetch<OrganizationMetaResponse>(
-        ApiEndpoints.OrganizationMeta.replace('{address}', requireOrganizationAddress(organization))
-      )
-      return response.meta
-    },
   })
 
   const updateMeta = useMutation<void, Error, Partial<OrganizationMeta>>({
@@ -155,7 +187,7 @@ const useOrganizationMeta = () => {
         ...partialMeta,
       }
       await bearedFetch<OrganizationMetaResponse>(
-        ApiEndpoints.OrganizationMeta.replace('{address}', requireOrganizationAddress(organization)),
+        ApiEndpoints.OrganizationMeta.replace('{address}', requireOrganizationAddress({ address })),
         {
           method: 'PUT',
           body: { meta: newMeta },
@@ -164,21 +196,21 @@ const useOrganizationMeta = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.meta(organization?.address),
+        queryKey: QueryKeys.organization.meta(address),
       })
     },
   })
 
   const deleteMeta = useMutation<void, Error, string[]>({
     mutationFn: async (keys: string[]) => {
-      await bearedFetch(ApiEndpoints.OrganizationMeta.replace('{address}', requireOrganizationAddress(organization)), {
+      await bearedFetch(ApiEndpoints.OrganizationMeta.replace('{address}', requireOrganizationAddress({ address })), {
         method: 'DELETE',
         body: { keys },
       })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.meta(organization?.address),
+        queryKey: QueryKeys.organization.meta(address),
       })
     },
   })

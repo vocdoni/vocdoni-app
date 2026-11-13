@@ -140,22 +140,17 @@ const OrganizationProcesses = () => {
 const Processes = () => {
   const { t } = useTranslation()
   const { client } = useApiClient()
-  const { organization } = useOrganization()
   const { currentAddress } = useAuth()
   const queryClient = useQueryClient()
 
-  const { queryKey, queryFn } = paginatedElectionsQuery(currentAddress, client, {}, queryClient)
-
+  // Gated on the session address (the builder's `enabled`), not the loaded organization object:
+  // the list only needs the address, so it starts as soon as the session is confirmed.
   const {
     data: elections,
     isLoading,
     isError,
     error,
-  } = useQuery({
-    queryKey,
-    queryFn,
-    enabled: !!organization,
-  })
+  } = useQuery(paginatedElectionsQuery(currentAddress, client, {}, queryClient))
 
   if (isLoading) {
     return <ListLoader />
@@ -164,7 +159,7 @@ const Processes = () => {
   // Checked before the error state on purpose: with no organization this query never ran, and
   // any error on its cache entry belongs to something else. Reporting it would replace the only
   // way forward — the button that creates the missing organization.
-  if (!organization) {
+  if (!currentAddress) {
     return (
       <EmptyState
         size='lg'

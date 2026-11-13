@@ -3,7 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { ReactNode } from 'react'
-import { AllProviders } from '~src/test-utils'
+import { AllProviders, createTestQueryClient } from '~src/test-utils'
 import { useAuthProvider } from './useAuthProvider'
 
 const disconnectMock = vi.fn()
@@ -117,6 +117,131 @@ describe('useAuthProvider currentAddress', () => {
 
     await waitFor(() => expect(result.current.currentAddress).toBe('0xreal2'))
 
+    expect(localStorage.getItem('signerAddress')).toBe('0xreal2')
+  })
+
+  it('exposes the address in the same render the address list resolves, never a loaded session without it', async () => {
+    // The private app guard lets the page through as soon as isAuthLoading drops. A render where
+    // the list is known but the address is not yet applied shows "no organization" screens.
+    localStorage.setItem('auth.token', 'token')
+    localStorage.setItem('signerAddress', '0xreal2')
+    addressesMock.mockResolvedValue({ addresses: ['0xreal1', '0xreal2'] })
+    const renders: Array<{ isAuthLoading: boolean; currentAddress?: string }> = []
+
+    renderHook(
+      () => {
+        const auth = useAuthProvider()
+        renders.push({ isAuthLoading: auth.isAuthLoading, currentAddress: auth.currentAddress })
+        return auth
+      },
+      { wrapper: AllProviders }
+    )
+
+    await waitFor(() => expect(renders.at(-1)?.isAuthLoading).toBe(false))
+
+    expect(renders.filter((r) => !r.isAuthLoading).every((r) => r.currentAddress === '0xreal2')).toBe(true)
+  })
+
+  it('offers the stored address as unconfirmed only while the address list is pending', async () => {
+    localStorage.setItem('auth.token', 'token')
+    localStorage.setItem('signerAddress', '0xstale')
+    let resolveAddresses: (value: { addresses: string[] }) => void = () => undefined
+    addressesMock.mockReturnValue(new Promise((resolve) => (resolveAddresses = resolve)))
+
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+
+    expect(result.current.unconfirmedAddress).toBe('0xstale')
+    expect(result.current.currentAddress).toBeUndefined()
+
+    await act(async () => resolveAddresses({ addresses: ['0xreal'] }))
+
+    await waitFor(() => expect(result.current.currentAddress).toBe('0xreal'))
+    expect(result.current.unconfirmedAddress).toBeUndefined()
+  })
+
+  it('offers no unconfirmed address without a session', () => {
+    localStorage.setItem('signerAddress', '0xstored')
+
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+
+    expect(result.current.isAuthenticated).toBe(false)
+    expect(result.current.unconfirmedAddress).toBeUndefined()
+  })
+
+  it('drops data fetched for a stored address the account does not own, even if it lands late', async () => {
+    localStorage.setItem('auth.token', 'token')
+    localStorage.setItem('signerAddress', '0xstale')
+    addressesMock.mockResolvedValue({ addresses: ['0xreal'] })
+    const queryClient = createTestQueryClient()
+    let resolveLate: (value: string) => void = () => undefined
+    queryClient.setQueryData(['organization', '0xstale'], { name: 'someone else' })
+    queryClient.setQueryData(['organizations', 'meta', '0xstale'], { tutorial: true })
+    void queryClient.prefetchQuery({
+      queryKey: ['organizations', 'elections', '0xstale', null],
+      queryFn: () => new Promise<string>((resolve) => (resolveLate = resolve)),
+    })
+    queryClient.setQueryData(['organization', '0xreal'], { name: 'mine' })
+
+    const { result } = renderHook(() => useAuthProvider(), {
+      wrapper: ({ children }) => <AllProviders queryClient={queryClient}>{children}</AllProviders>,
+    })
+
+    await waitFor(() => expect(result.current.currentAddress).toBe('0xreal'))
+    await act(async () => resolveLate('late elections'))
+
+    const staleKeys = queryClient
+      .getQueryCache()
+      .getAll()
+      .filter((query) => query.queryKey.includes('0xstale'))
+    expect(staleKeys).toHaveLength(0)
+    expect(queryClient.getQueryData(['organization', '0xreal'])).toEqual({ name: 'mine' })
+  })
+
+  it('drops data fetched for the stored address when the account owns no organization', async () => {
+    localStorage.setItem('auth.token', 'token')
+    localStorage.setItem('signerAddress', '0xstale')
+    addressesMock.mockRejectedValue(new VocdoniApiError(404, {}, 'user has no organizations', 40012))
+    const queryClient = createTestQueryClient()
+    queryClient.setQueryData(['organization', '0xstale'], { name: 'someone else' })
+
+    const { result } = renderHook(() => useAuthProvider(), {
+      wrapper: ({ children }) => <AllProviders queryClient={queryClient}>{children}</AllProviders>,
+    })
+
+    await waitFor(() => expect(queryClient.getQueryData(['organization', '0xstale'])).toBeUndefined())
+    expect(result.current.currentAddress).toBeUndefined()
+  })
+
+  it('keeps data fetched for the stored address once the account is confirmed to own it', async () => {
+    localStorage.setItem('auth.token', 'token')
+    localStorage.setItem('signerAddress', '0xreal')
+    addressesMock.mockResolvedValue({ addresses: ['0xreal'] })
+    const queryClient = createTestQueryClient()
+    queryClient.setQueryData(['organization', '0xreal'], { name: 'mine' })
+
+    const { result } = renderHook(() => useAuthProvider(), {
+      wrapper: ({ children }) => <AllProviders queryClient={queryClient}>{children}</AllProviders>,
+    })
+
+    await waitFor(() => expect(result.current.currentAddress).toBe('0xreal'))
+
+    expect(queryClient.getQueryData(['organization', '0xreal'])).toEqual({ name: 'mine' })
+  })
+
+  it('switches to the address a caller stored before refreshing, even when the list did not change', async () => {
+    localStorage.setItem('auth.token', 'token')
+    localStorage.setItem('signerAddress', '0xreal1')
+    addressesMock.mockResolvedValue({ addresses: ['0xreal1', '0xreal2'] })
+
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+    await waitFor(() => expect(result.current.currentAddress).toBe('0xreal1'))
+
+    localStorage.setItem('signerAddress', '0xreal2')
+    await act(async () => {
+      await result.current.refreshAddresses()
+    })
+
+    expect(result.current.currentAddress).toBe('0xreal2')
     expect(localStorage.getItem('signerAddress')).toBe('0xreal2')
   })
 

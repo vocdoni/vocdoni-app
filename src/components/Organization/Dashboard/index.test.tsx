@@ -7,12 +7,16 @@ vi.mock('~components/Auth/useAuth', () => ({
 }))
 
 let electionsQueryState: any = { data: null, isLoading: false, isError: false, error: null }
+const useQueryOptions = vi.fn()
 
 vi.mock('@tanstack/react-query', async () => {
   const actual = await vi.importActual<any>('@tanstack/react-query')
   return {
     ...actual,
-    useQuery: () => electionsQueryState,
+    useQuery: (options: unknown) => {
+      useQueryOptions(options)
+      return electionsQueryState
+    },
   }
 })
 
@@ -21,7 +25,11 @@ vi.mock('~src/queries/account', () => ({
 }))
 
 vi.mock('~src/queries/organization', () => ({
-  paginatedElectionsQuery: () => ({ queryKey: ['elections'], queryFn: vi.fn() }),
+  paginatedElectionsQuery: (address?: string) => ({
+    queryKey: ['elections', address],
+    queryFn: vi.fn(),
+    enabled: !!address,
+  }),
 }))
 
 vi.mock('react-player', () => ({
@@ -77,6 +85,21 @@ describe('OrganizationDashboard', () => {
 
     expect(screen.getByText('Create your first organization')).toBeInTheDocument()
     expect(screen.queryByText('Error loading voting processes')).not.toBeInTheDocument()
+  })
+
+  it('lists the voting processes from the session address, without waiting for the organization to load', () => {
+    // useOrganization still has no organization object; the address alone is enough to start.
+    render(
+      <TestMemoryRouter>
+        <OrganizationDashboard />
+      </TestMemoryRouter>
+    )
+
+    expect(useQueryOptions).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['elections', '0xabc'] }))
+    for (const [options] of useQueryOptions.mock.calls) {
+      expect(options.enabled).not.toBe(false)
+    }
+    expect(screen.queryByText('Create your first organization')).not.toBeInTheDocument()
   })
 
   it('renders dashboard header', () => {

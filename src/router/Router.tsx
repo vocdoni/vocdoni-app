@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { createBrowserRouter, RouterProvider, type RouterProviderProps } from 'react-router'
+import { preloadMatchedRoutes } from './lazy-with-preload'
 import { useAuthRoutes, useCreateOrganizationRoutes } from './routes/auth'
 import { useDashboardRoutes } from './routes/dashboard'
 import { useIntegratorsAuthRoutes, useIntegratorsRoutes } from './routes/integrators'
@@ -39,10 +40,17 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
   // else a loader reads comes from the URL. Data keyed by session state (the elections
   // list, which used to close over `currentAddress`) is fetched with useQuery instead.
   const router = useMemo(
-    () =>
-      createBrowserRouter([home, root, auth, dashboard, integrators, integratorsAuth, createOrganizationRoute], {
-        basename: resolvedBasename,
-      }),
+    () => {
+      const created = createBrowserRouter(
+        [home, root, auth, dashboard, integrators, integratorsAuth, createOrganizationRoute],
+        { basename: resolvedBasename }
+      )
+      // Start the matched page's code download now, alongside the session requests, instead of
+      // when the auth guards above it finally render it. Idempotent, so StrictMode's double
+      // render is harmless.
+      preloadMatchedRoutes(created.state?.matches)
+      return created
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [resolvedBasename]
   )
