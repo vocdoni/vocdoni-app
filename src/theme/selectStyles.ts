@@ -5,7 +5,7 @@ import type { ChakraStylesConfig } from 'chakra-react-select'
 export const selectStyles: ChakraStylesConfig<any, boolean> = {
   control: (base) => ({
     ...base,
-    minH: '[34px]',
+    minH: 'control.md',
     textStyle: 'control',
   }),
   dropdownIndicator: (base) => ({

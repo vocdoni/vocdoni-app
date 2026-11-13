@@ -10,7 +10,7 @@ export const SegmentGroup = defineSlotRecipe({
     root: {
       '--segment-radius': 'radii.l1',
       borderRadius: 'l2',
-      p: '[3px]',
+      p: 'track',
       boxShadow: '[none]',
       bg: 'bg.muted',
     },

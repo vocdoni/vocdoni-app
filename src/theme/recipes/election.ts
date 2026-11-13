@@ -261,7 +261,7 @@ export const QuestionChoice = defineSlotRecipe({
           '& [data-choice-control][data-control-type="checkbox"]': {
             boxSize: 'icon.lg',
             borderRadius: 'xs',
-            borderWidth: '[1.5px]',
+            borderWidth: 'mark',
             borderColor: 'ballot.choice.ring',
             bg: 'transparent',
             '&[data-state="checked"]': {

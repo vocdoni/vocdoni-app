@@ -12,11 +12,11 @@ export const RadioGroup = defineSlotRecipe({
     variant: {
       solid: {
         itemControl: {
-          borderWidth: '[1.5px]',
+          borderWidth: 'mark',
           borderColor: 'border.strong',
           bg: 'bg.panel',
           _checked: {
-            borderWidth: '[5px]',
+            borderWidth: 'radio',
             borderColor: 'colorPalette.solid',
             bg: 'bg.panel',
             color: 'colorPalette.solid',

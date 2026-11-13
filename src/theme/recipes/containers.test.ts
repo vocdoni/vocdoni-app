@@ -11,8 +11,8 @@ describe('Fil container recipes', () => {
     const live = status({ size: 'sm', tone: 'success' })
     expect(layer(live.root)).toMatchObject({ color: 'var(--chakra-colors-status-success-fg)', lineHeight: '1.25rem' })
     expect(layer(live.indicator)).toMatchObject({
-      width: 'calc(var(--chakra-sizes-1) * 1.75)',
-      height: 'calc(var(--chakra-sizes-1) * 1.75)',
+      width: 'var(--chakra-sizes-dot)',
+      height: 'var(--chakra-sizes-dot)',
     })
     expect(text(live.root)).not.toContain('background')
   })

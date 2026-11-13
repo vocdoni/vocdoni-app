@@ -55,6 +55,9 @@ const borderWidths = defineTokens.borderWidths({
   thick: { value: '2px' },
   // Hand-drawn focus rings (outline or box-shadow), as wide as Chakra's own.
   focusRing: { value: '{borderWidths.thick}' },
+  // The ring of a checkbox or radio, and the filled ring that is a checked radio's mark.
+  mark: { value: '1.5px' },
+  radio: { value: '5px' },
 })
 
 const radii = defineTokens.radii({
@@ -74,6 +77,8 @@ const radii = defineTokens.radii({
 const spacing = defineTokens.spacing({
   '0': { value: '0' },
   auto: { value: 'auto' },
+  // Gutter between a segmented control's track and its items.
+  track: { value: '3px' },
   dashboard: {
     panel: { value: '{sizes.dashboard.panel}' },
   },
@@ -93,6 +98,8 @@ const sizes = defineTokens.sizes({
     header: { value: '47px' },
     panel: { value: '350px' },
   },
+  // The status dot (7px).
+  dot: { value: '7px' },
   // The four icon sizes (inline, control, feature, empty state). sm–lg are Chakra's Icon sizes, so
   // `boxSize='icon.md'` and `<Icon size='md'>` cannot drift apart.
   icon: {
@@ -120,6 +127,10 @@ const sizes = defineTokens.sizes({
   control: {
     floating: { value: '52px' },
     'icon-link': { value: '30px' },
+    // Fil's default control height, shared by buttons, inputs and selects.
+    md: { value: '34px' },
+    // Minimum height of a textarea.
+    area: { value: '76px' },
   },
   // Minimum height of ui/Loader's PageLoader, so a page with nothing yet does not collapse.
   loader: { value: '300px' },

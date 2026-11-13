@@ -5,10 +5,10 @@ type StyleMap = Record<string, SystemStyleObject>
 const stockVariants = defaultConfig.theme?.recipes?.button?.variants
 const stock = (stockVariants?.variant ?? {}) as StyleMap
 
-// Fil has two control heights. Chakra's scale has no 34px step, so it is an escape until a size token exists.
+// Fil has two control heights; `control.md` is the 34px default.
 const controlSize = defineStyle({
-  h: '[34px]',
-  minW: '[34px]',
+  h: 'control.md',
+  minW: 'control.md',
   px: '3',
   textStyle: 'control',
   gap: '2',
@@ -216,13 +216,16 @@ const danger = defineStyle({
 // Round launcher pinned to a corner of the viewport (support chat).
 const floating = defineStyle({
   ...solid,
+  // Ink, not accent: Fil keeps blue for the one primary action of a screen.
+  bg: 'bg.inverted',
+  color: 'fg.inverted',
   w: 'control.floating',
   h: 'control.floating',
   borderRadius: 'full',
   boxShadow: 'shadow.floating',
   transition: '[transform {durations.fast}]',
   _hover: {
-    ...solid._hover,
+    bg: 'bg.inverted/90',
     transform: 'scale(1.06)',
   },
   _active: { transform: 'scale(0.96)' },
@@ -284,7 +287,7 @@ export const Button = defineRecipe({
     ...(['md', 'lg', 'xl', '2xl', 'cta'] as const).map((size) => ({
       multiline: true,
       size,
-      css: { minH: '[34px]' as const },
+      css: { minH: 'control.md' as const },
     })),
     // The sidebar entry and the segment keep their own height next to any size.
     { variant: 'nav-item', css: { h: '8', minW: '0' } },

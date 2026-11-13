@@ -83,8 +83,8 @@ export const textarea = defineRecipe({
   },
   variants: {
     size: {
-      sm: { ...mobileSafeFontSize, borderRadius: 'l2', px: '3', py: '2', minH: '[76px]' },
-      md: { ...mobileSafeFontSize, borderRadius: 'l2', px: '3', py: '2', minH: '[76px]' },
+      sm: { ...mobileSafeFontSize, borderRadius: 'l2', px: '3', py: '2', minH: 'control.area' },
+      md: { ...mobileSafeFontSize, borderRadius: 'l2', px: '3', py: '2', minH: 'control.area' },
     },
     variant: {
       outline: field,
@@ -116,9 +116,10 @@ export const switchRecipe = defineSlotRecipe({
           borderRadius: 'l1',
           boxShadow: '[none]',
           scale: '1',
-          // Inside the 2px gutter; the travel (width minus height) stays the same.
-          width: '[calc(var(--switch-height) - {spacing.1})]',
-          height: '[calc(var(--switch-height) - {spacing.1})]',
+          // Inside the 2px gutter; the 16px travel is the track width minus the root's own height var,
+          // which equals 36 - 4 - 16, so it still reaches the end.
+          width: '4',
+          height: '4',
           _checked: { bg: 'switch.thumb.checked' },
         },
       },

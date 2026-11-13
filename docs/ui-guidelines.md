@@ -151,8 +151,11 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
   `PageContainer` (below).
 - **Other named sizes**: `card.empty`, `table.action`, `toolbar`, `dashboard.menu.expanded|collapsed`,
   `dashboard.header`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon
-  link), `loader` (min height of `PageLoader`), `wordmark` (width of the Vocdoni wordmark:
+  link), `control.md` (34px, the default height of buttons, inputs and selects), `control.area` (76px, textarea
+  minimum height), `dot` (7px status dot), `loader` (min height of `PageLoader`), `wordmark` (width of the Vocdoni wordmark:
   `<VocdoniLogo w='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
+- **Fil marks**: `borderWidths.mark` (1.5px ring of a checkbox or radio), `borderWidths.radio` (5px, a checked radio's
+  filled ring) and `spacing.track` (3px gutter of a segmented control).
 - **z-index**: tokens only (`background`, `contents`, `sidebar`, `topbar`, `top`, `public-header`, `dashboard-menu`).
 - **Opacity**: `inactive` (0.6) for content that cannot be used right now, `dimmed` (0.5) for de-emphasis.
 - **Durations**: Chakra's names plus `instant` (0s).

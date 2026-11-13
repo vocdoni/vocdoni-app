@@ -11,7 +11,7 @@ const height = (styles: unknown) => layer(styles).height ?? layer(styles).h
 
 describe('button', () => {
   it.each(['md', 'lg', 'xl', '2xl', 'cta'] as const)('size %s is the 34px control', (size) => {
-    expect(height(button({ size }))).toBe('34px')
+    expect(height(button({ size }))).toBe('var(--chakra-sizes-control-md)')
   })
 
   it.each(['2xs', 'xs', 'sm'] as const)('size %s is the 28px compact control', (size) => {
@@ -51,7 +51,7 @@ describe('input and textarea', () => {
   })
 
   it('has a 76px minimum height', () => {
-    expect(layer(textarea({})).minHeight).toBe('76px')
+    expect(layer(textarea({})).minHeight).toBe('var(--chakra-sizes-control-area)')
   })
 })
 

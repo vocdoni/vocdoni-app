@@ -13,9 +13,8 @@ export const Status = defineSlotRecipe({
       whiteSpace: 'nowrap',
     },
     indicator: {
-      // 7px; no size token is that small.
-      width: '[calc({sizes.1} * 1.75)]',
-      height: '[calc({sizes.1} * 1.75)]',
+      width: 'dot',
+      height: 'dot',
     },
   },
   variants: {

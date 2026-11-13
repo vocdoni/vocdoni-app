@@ -306,7 +306,7 @@ export const electionComponents: ComponentsPartialDefinition = {
               />
               <Box
                 boxSize='icon.lg'
-                borderWidth={selected ? '[0]' : '[1.5px]'}
+                borderWidth={selected ? '[0]' : 'mark'}
                 borderColor='ballot.choice.ring'
                 borderRadius='full'
                 bg={selected ? 'colorPalette.solid' : 'transparent'}

@@ -17,7 +17,7 @@ export const checkbox = defineSlotRecipe({
     variant: {
       solid: {
         control: {
-          borderWidth: '[1.5px]',
+          borderWidth: 'mark',
           borderColor: 'border.strong',
           bg: 'bg.panel',
           '&:is([data-state=checked], [data-state=indeterminate])': {
