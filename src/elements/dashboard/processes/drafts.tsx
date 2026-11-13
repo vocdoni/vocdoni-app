@@ -41,7 +41,7 @@ import { useTableAsCards } from '~components/ui/useTableAsCards'
 
 type Draft = VotingProcessResponse
 
-const useDrafts = () => {
+export const useDrafts = () => {
   const { client } = useApiClient()
   const { organization } = useOrganization()
   const { page, limit } = useUrlPagination()
@@ -49,6 +49,8 @@ const useDrafts = () => {
   return useQuery({
     queryKey: [...QueryKeys.organization.drafts(organization?.address), page, limit],
     enabled: !!organization?.address,
+    // The wizard creates and publishes drafts without touching this list's cache
+    staleTime: 0,
     // `published: false` is the drafts-only view; it requires a Manager/Admin
     // session (401 otherwise) and must not be combined with a status filter,
     // which never matches a draft's not-yet-on-chain questions.

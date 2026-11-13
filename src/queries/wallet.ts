@@ -39,6 +39,8 @@ export const useWallet = ({ page = 1, limit = 10, refetchInterval, enabled = tru
     queryKey: QueryKeys.organization.wallet(address, page, limit),
     enabled: !!address && enabled,
     refetchInterval,
+    // A top-up lands through a webhook, possibly while the user is away on Stripe: always read it on mount
+    staleTime: 0,
     // Keeps the last page on screen while another one loads, instead of flashing the spinner
     placeholderData: keepPreviousData,
     // A 4xx (a managed org's 403, a backend without wallets' 404) answers the same every time.
