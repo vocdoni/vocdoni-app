@@ -1,5 +1,6 @@
 import { defineRecipe, RecipeDefinition, SlotRecipeDefinition } from '@chakra-ui/react'
 import { Alert } from './alert'
+import { Avatar } from './avatar'
 import { Badge } from './badge'
 import { Button } from './button'
 import { Card } from './card'
@@ -34,6 +35,7 @@ import { RadioCard } from './radioCard'
 import { RadioGroup } from './radioGroup'
 import { SegmentGroup } from './segmentGroup'
 import { Stat } from './stat'
+import { Status } from './status'
 import { Table } from './table'
 import { Tabs } from './tabs'
 import { Tag } from './tag'
@@ -66,6 +68,7 @@ export const recipes: Record<string, RecipeDefinition> = {
 
 export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   alert: Alert,
+  avatar: Avatar,
   card: Card,
   checkbox,
   dialog: Dialog,
@@ -80,6 +83,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   radioGroup: RadioGroup,
   segmentGroup: SegmentGroup,
   stat: Stat,
+  status: Status,
   switch: switchRecipe,
   table: Table,
   tabs: Tabs,

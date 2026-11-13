@@ -4,7 +4,7 @@ import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 const baseStyle = {
   content: {
     p: '1',
-    borderRadius: 'sm',
+    borderRadius: 'l2',
     boxShadow: 'shadow.raised',
     bg: 'surface.raised',
   },
@@ -21,10 +21,17 @@ const baseStyle = {
   },
 } satisfies Partial<Record<string, SystemStyleObject>>
 
+// Items are 28px rows with a control label; Chakra's sizes set their padding and text after the base.
+const item = { textStyle: 'control', py: '1' } as const
+
 export const Menu = defineSlotRecipe({
   slots: menuAnatomy.keys(),
   base: baseStyle,
   variants: {
+    size: {
+      sm: { item },
+      md: { item },
+    },
     variant: {
       // Chakra's default variant: items are highlighted (pointer or keyboard), never focused.
       subtle: {

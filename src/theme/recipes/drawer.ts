@@ -10,6 +10,11 @@ export const Drawer = defineSlotRecipe({
     content: {
       boxShadow: 'shadow.overlay',
     },
+    title: {
+      textStyle: 'xl',
+      fontWeight: 'semibold',
+      letterSpacing: 'tight',
+    },
   },
   // `sidebar` is the mobile dashboard menu; `panel` paints like a dialog and is ui/Drawer's shell.
   variants: {

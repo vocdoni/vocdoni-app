@@ -2,9 +2,9 @@ import { Drawer } from './drawer'
 import { Tabs } from './tabs'
 
 describe('intent-named variants', () => {
-  it('keeps pill tabs as the only and default tab look', () => {
-    expect(Object.keys(Tabs.variants?.variant ?? {})).toEqual(['pill'])
-    expect(Tabs.defaultVariants).toEqual({ variant: 'pill' })
+  it('keeps the line as the default tab look and pill as the segmented control', () => {
+    expect(Object.keys(Tabs.variants?.variant ?? {})).toEqual(['line', 'pill'])
+    expect(Tabs.defaultVariants).toEqual({ variant: 'line' })
   })
 
   it('paints drawers from an explicit surface role', () => {

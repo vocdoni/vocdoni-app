@@ -63,7 +63,7 @@ describe('table row states', () => {
     const row = (Table.variants as unknown as { rowStates: { true: { row: Record<string, Record<string, string>> } } })
       .rowStates.true.row
     expect(row._hover.bg).toBe('state.hover.bg')
-    expect(row._selected.bg).toBe('state.selected.bg')
-    expect(row._selected.color).toBe('state.selected.fg')
+    // A selected row is a choice, so it takes the accent tint rather than the "where you are" tone.
+    expect(row._selected.bg).toBe('accent.subtle')
   })
 })

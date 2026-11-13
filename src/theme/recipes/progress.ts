@@ -1,12 +1,18 @@
 import { defineSlotRecipe, defineStyle } from '@chakra-ui/react'
 import { progressAnatomy } from '@chakra-ui/react/anatomy'
 
-// Chakra's `outline` look, which both variants start from, on the one track grey: `bg.muted` is too close to the dark
-// page for an empty bar to show.
-const track = defineStyle({ shadow: 'inset', bgColor: 'ballot.results.track' })
-const range = defineStyle({ bgColor: 'colorPalette.solid' })
+// Progress of something under way: a 3px track with square ends and a fill that leaves a 2px gap after it (the
+// fill's own panel-coloured shadow). No inset shadow, no stripes.
+const track = defineStyle({ shadow: '[none]', bgColor: 'fg.faint', borderRadius: 'none' })
+const range = defineStyle({
+  bgColor: 'colorPalette.solid',
+  borderRadius: 'none',
+  boxShadow: '[2px 0 0 {colors.bg.panel}]',
+})
 
-const stripe = '{colors.progress.stripe}'
+// A vote result is data, not progress: a thicker track and an ink fill.
+const resultsTrack = defineStyle({ shadow: '[none]', bgColor: 'bg.muted', borderRadius: 'none' })
+const resultsRange = defineStyle({ bgColor: 'fg', borderRadius: 'none' })
 
 // Each look owns its height and shape. Chakra applies the `size` and `shape` axes after `variant`, so they live in
 // compound variants, which come last.
@@ -15,32 +21,22 @@ export const Progress = defineSlotRecipe({
   variants: {
     variant: {
       // A vote result: one bar per choice, its title and tally above it.
-      results: { track, range },
+      results: { track: resultsTrack, range: resultsRange },
       // The share of the census that voted.
-      turnout: {
-        track,
-        range: {
-          ...range,
-          backgroundImage: `[linear-gradient(45deg, ${stripe} 25%, transparent 25%, transparent 50%, ${stripe} 50%, ${stripe} 75%, transparent 75%, transparent)]`,
-          backgroundSize: '[{sizes.4} {sizes.4}]',
-        },
-      },
-      // A usage figure's bar (ui/UsageMeter) on the chart track. The fill colour is the meter's tone, set per use.
-      meter: {
-        track: { shadow: 'inset', bgColor: 'chart.track' },
-        range: { ...range, borderRadius: 'full' },
-      },
-      // A background job, such as the members import: Chakra's `outline` look with softer corners.
-      job: {
-        track: { shadow: 'inset', bgColor: 'bg.muted' },
-        range,
-      },
+      turnout: { track, range },
+      // A usage figure's bar (ui/UsageMeter). The fill colour is the meter's tone, set per use.
+      meter: { track, range },
+      // A background job, such as the members import.
+      job: { track, range },
     },
+    // Chakra's stripes are switched off for good; the `striped` prop stays accepted so callers compile.
+    striped: { true: { range: { backgroundImage: '[none]' } } },
   },
   compoundVariants: [
-    { variant: 'results', css: { track: { h: '2' } } },
-    { variant: 'turnout', css: { track: { h: '3', borderRadius: 'full' } } },
-    { variant: 'meter', css: { track: { h: '2', borderRadius: 'full' } } },
-    { variant: 'job', css: { root: { borderRadius: 'md' }, track: { borderRadius: 'md' } } },
+    { variant: 'results', css: { track: { h: '1.5', borderRadius: 'none' } } },
+    ...(['turnout', 'meter', 'job'] as const).map((variant) => ({
+      variant,
+      css: { root: { borderRadius: 'none' }, track: { h: '[3px]', borderRadius: 'none' } },
+    })),
   ],
 })
