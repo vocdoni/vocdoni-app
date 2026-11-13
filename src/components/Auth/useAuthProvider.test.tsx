@@ -1,17 +1,12 @@
 import { QueryClient } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { VocdoniApiError } from '@vocdoni/api-client'
-import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { ReactNode } from 'react'
 import { AllProviders } from '~src/test-utils'
+import { OAuthStorageKeys, OAuthWalletStorageKeys } from './oauthStorage'
 import { useAuthProvider } from './useAuthProvider'
 
-const disconnectMock = vi.fn()
 const addressesMock = vi.fn()
-
-vi.mock('wagmi', () => ({
-  useDisconnect: () => ({ disconnect: disconnectMock }),
-}))
 
 vi.mock('~components/Auth/authQueries', () => ({
   useLogin: () => ({ mutateAsync: vi.fn(), isPending: false }),
@@ -47,10 +42,11 @@ describe('useAuthProvider logout', () => {
   it('clears auth storage keys on logout', () => {
     // Token/expiry are persisted by the react-providers AuthProvider under the
     // `${AUTH_STORAGE_KEY}` keys; the rainbowkit keys (authToken/authExpiry/authRegistered)
-    // are cleared by clearAuthStorageKeys().
+    // are cleared by clearOAuthStorage().
     localStorage.setItem('auth.token', 'token')
     localStorage.setItem('auth.expiry', 'expiry')
-    localStorage.setItem(AuthStorageKeys.Registered, 'true')
+    localStorage.setItem(OAuthStorageKeys.Registered, 'true')
+    localStorage.setItem(OAuthWalletStorageKeys.Seed, 'seed')
 
     const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
 
@@ -60,8 +56,9 @@ describe('useAuthProvider logout', () => {
 
     expect(localStorage.getItem('auth.token')).toBeFalsy()
     expect(localStorage.getItem('auth.expiry')).toBeFalsy()
-    expect(localStorage.getItem(AuthStorageKeys.Registered)).toBeFalsy()
-    expect(disconnectMock).toHaveBeenCalled()
+    expect(localStorage.getItem(OAuthStorageKeys.Registered)).toBeFalsy()
+    // The Google OAuth wallet seed goes too, or the next Google sign-in would reuse it.
+    expect(localStorage.getItem(OAuthWalletStorageKeys.Seed)).toBeNull()
   })
 
   it('clears the query cache on logout so the next account does not inherit a stale profile', () => {

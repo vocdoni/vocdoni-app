@@ -5,7 +5,6 @@ import { setDefaultOptions } from 'date-fns'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 import { usePageContext } from 'vike-react/usePageContext'
-import { WagmiProvider } from 'wagmi'
 import { SaasAccountProvider } from '~components/Account/SaasAccountProvider'
 import { AnalyticsProvider } from '~components/AnalyticsProvider'
 import { UnauthorizedApiError } from '~components/Auth/api'
@@ -26,7 +25,6 @@ import { getDefaultTitleForLanguage } from '~src/pages/shared/defaultHeadMeta'
 import { uiScaffoldComponents } from '~theme/react-components'
 import { AppEnvProvider, normalizeLanguages, resolveAppEnv, useAppEnv } from './app-env'
 import { configureApiBaseUrl } from './components/Auth/api'
-import { wagmiConfig } from './constants/wagmi'
 import { createPageI18nInstance, getBaseI18n } from './i18n'
 import { datesLocale } from './i18n/locales'
 import { RoutesProvider } from './router/Router'
@@ -180,11 +178,9 @@ export const AppProviders = ({
     <AppEnvProvider value={appEnv}>
       <I18nextProvider i18n={i18nInstance}>
         <Theme>
-          <WagmiProvider config={wagmiConfig}>
-            <QueryClientProvider client={client}>
-              <AppRuntimeProviders>{children}</AppRuntimeProviders>
-            </QueryClientProvider>
-          </WagmiProvider>
+          <QueryClientProvider client={client}>
+            <AppRuntimeProviders>{children}</AppRuntimeProviders>
+          </QueryClientProvider>
         </Theme>
       </I18nextProvider>
     </AppEnvProvider>

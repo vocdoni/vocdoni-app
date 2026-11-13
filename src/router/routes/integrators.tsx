@@ -1,7 +1,6 @@
 // Integrators private app - separate dashboard for integrator organizations
 import { lazy } from 'react'
 import { Navigate } from 'react-router'
-import OrganizationSupport from '~components/Organization/Dashboard/Support'
 import Error from '~elements/Error'
 import LayoutIntegrators from '~elements/LayoutIntegrators'
 import LayoutIntegratorsAuth from '~elements/LayoutIntegratorsAuth'
@@ -28,6 +27,7 @@ const IntegratorsConfiguration = lazy(() => import('~elements/integrators/config
 const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
 const IntegratorsManagedOrganizations = lazy(() => import('~elements/integrators/organizations'))
 const IntegratorsApiKeys = lazy(() => import('~elements/integrators/api-keys'))
+const OrganizationSupport = lazy(() => import('~components/Organization/Dashboard/Support'))
 
 // Independent single-column sign in / sign up for the integrators app.
 export const useIntegratorsAuthRoutes = () => {
