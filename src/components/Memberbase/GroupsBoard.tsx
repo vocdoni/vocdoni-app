@@ -509,7 +509,7 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDelet
               <Icon as={EditIcon} boxSize='icon.sm' />
               {t('actions.edit', { defaultValue: 'Edit' })}
             </Button>
-            <Button onClick={openDeleteModal} colorPalette='danger' size='xs'>
+            <Button onClick={openDeleteModal} variant='danger' size='xs'>
               <Icon as={DeleteIcon} boxSize='icon.sm' />
               {t('group.delete_group', { defaultValue: 'Delete group' })}
             </Button>

@@ -114,7 +114,7 @@ const SortableExtendedOption = ({
           <IconButton
             aria-label={t('process_create.remove_option', { defaultValue: 'Remove option' })}
             size='sm'
-            colorPalette='danger'
+            variant='danger'
             onClick={onRemove}
             position='absolute'
             top='2'
