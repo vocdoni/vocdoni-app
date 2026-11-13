@@ -16,7 +16,6 @@ import { useAuth } from '~components/Auth/useAuth'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Trans, useTranslation } from 'react-i18next'
 import { AddIcon, GoToIcon, UsersIcon, VoteIcon } from '~theme/icons'
-import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { PageSubtitle, PageTitle } from '~components/ui/PageTitle'
@@ -28,7 +27,7 @@ import { useAppEnv } from '~src/app-env'
 import { useProfile } from '~src/queries/account'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { UsageLimits } from './UsageLimits'
-import { useIframeTitle } from '~utils/use-iframe-title'
+import { VideoPlayer } from '~components/ui/VideoPlayer'
 
 const OrganizationDashboard = () => {
   const { t } = useTranslation()
@@ -54,9 +53,6 @@ const OrganizationDashboard = () => {
 
 const Tutorial = () => {
   const { t } = useTranslation()
-  const videoRef = useIframeTitle(
-    t('dashboard.welcome.how_first_vote', { defaultValue: 'How to create your first vote' })
-  )
   const { data: profile, isLoading } = useProfile()
   const videoTutorials = useAppEnv().VIDEO_TUTORIAL ?? { en: '' }
   const language = usePublicLanguage()
@@ -109,8 +105,8 @@ const Tutorial = () => {
           })}
         </Text>
         <AspectRatio ratio={16 / 9}>
-          <ReactPlayer
-            ref={videoRef}
+          <VideoPlayer
+            title={t('dashboard.welcome.how_first_vote', { defaultValue: 'How to create your first vote' })}
             src={videoTutorialSrc}
             style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
           />

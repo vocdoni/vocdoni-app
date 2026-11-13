@@ -1,14 +1,18 @@
-import { useEffect, useState } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
+import ReactPlayer from 'react-player'
 
 const ATTACH_RETRY_MS = 100
 const ATTACH_MAX_TRIES = 50
 
-/**
- * Gives a title to the iframes that a player custom element (e.g. react-player's `<youtube-video>`) draws inside its
- * open shadow root, which neither react-player nor the element lets us set. Returns a ref callback for the player.
- * The element attaches its shadow root lazily and rebuilds the iframe on every load, so it keeps watching.
- */
-export const useIframeTitle = (title: string) => {
+type VideoPlayerProps = Omit<ComponentProps<typeof ReactPlayer>, 'ref'> & {
+  // react-player has no prop for the iframe's title, so it is set on the iframe itself.
+  title: string
+}
+
+// The player (e.g. <youtube-video>) draws its iframe in an open shadow root that it attaches lazily and rebuilds on
+// every load, so the title is re-applied on each mutation and the root is polled for while it is missing.
+// react-player drops any cleanup a ref callback returns, so the host goes to state and the effect owns the cleanup.
+export const VideoPlayer = ({ title, ...props }: VideoPlayerProps) => {
   const [host, setHost] = useState<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -40,5 +44,5 @@ export const useIframeTitle = (title: string) => {
     }
   }, [host, title])
 
-  return setHost
+  return <ReactPlayer ref={setHost} {...props} />
 }

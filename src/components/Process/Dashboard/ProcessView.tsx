@@ -57,7 +57,6 @@ import {
   ViewIcon,
   VoteIcon,
 } from '~theme/icons'
-import ReactPlayer from 'react-player'
 import { generatePath, matchPath, useLocation, useNavigate } from 'react-router'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
 import {
@@ -84,7 +83,7 @@ import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { Tooltip } from '~components/ui/Tooltip'
-import { useIframeTitle } from '~utils/use-iframe-title'
+import { VideoPlayer } from '~components/ui/VideoPlayer'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -100,7 +99,6 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
   const { t } = useTranslation()
   const { election } = useElection()
   const { ...rest } = props
-  const videoRef = useIframeTitle(election?.title?.default || t('video.title', { defaultValue: 'Video' }))
   const recipe = useRecipe({ key: 'ElectionVideo' })
   const styles = recipe()
 
@@ -113,7 +111,13 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
   return (
     <Box ref={ref} css={styles} {...rest}>
       <AspectRatio ratio={16 / 9} width='full' height='full'>
-        <ReactPlayer ref={videoRef} src={streamUri} width='100%' controls height='100%' />
+        <VideoPlayer
+          title={election?.title?.default || t('video.title', { defaultValue: 'Video' })}
+          src={streamUri}
+          width='100%'
+          controls
+          height='100%'
+        />
       </AspectRatio>
     </Box>
   )

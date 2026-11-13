@@ -1,16 +1,16 @@
 import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm } from 'react-hook-form'
 import { render, screen } from '~src/test-utils'
-import { useIframeTitle } from '~utils/use-iframe-title'
+import { VideoPlayer } from '~components/ui/VideoPlayer'
 import type { Process } from './common'
 import { LiveStreamingInput } from './LiveStreamingInput'
 
-vi.mock('~utils/use-iframe-title', () => ({ useIframeTitle: vi.fn(() => vi.fn()) }))
+vi.mock('~components/ui/VideoPlayer', () => ({ VideoPlayer: vi.fn(() => null) }))
 
-const Wrapper = () => {
+const Wrapper = ({ streamUri = '' }: { streamUri?: string }) => {
   const methods = useForm<Process>({
     defaultValues: {
-      streamUri: '',
+      streamUri,
     } as Process,
   })
 
@@ -22,10 +22,10 @@ const Wrapper = () => {
 }
 
 describe('LiveStreamingInput', () => {
-  it('titles the preview iframe as a video, not as the form section', () => {
-    render(<Wrapper />)
+  it('titles the preview player as a video, not as the form section', () => {
+    render(<Wrapper streamUri='https://www.youtube.com/watch?v=dQw4w9WgXcQ' />)
 
-    expect(useIframeTitle).toHaveBeenCalledWith('Video')
+    expect(vi.mocked(VideoPlayer).mock.lastCall?.[0]).toMatchObject({ title: 'Video' })
   })
 
   it('renders the live streaming accordion and input when expanded', async () => {

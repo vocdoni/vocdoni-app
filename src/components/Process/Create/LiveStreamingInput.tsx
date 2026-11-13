@@ -14,13 +14,11 @@ import {
 } from '@chakra-ui/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import ReactPlayer from 'react-player'
 import type { Process } from './common'
-import { useIframeTitle } from '~utils/use-iframe-title'
+import { VideoPlayer } from '~components/ui/VideoPlayer'
 
 export const LiveStreamingInput = () => {
   const { t } = useTranslation()
-  const videoRef = useIframeTitle(t('video.title', { defaultValue: 'Video' }))
   const methods = useFormContext<Process>()
   const { errors } = methods.formState
   const streamUri = methods.watch('streamUri')
@@ -60,7 +58,7 @@ export const LiveStreamingInput = () => {
               />
               <FormErrorMessage>{errors.streamUri?.message?.toString()}</FormErrorMessage>
             </FormControl>
-            {streamUri && <ReactPlayer ref={videoRef} src={streamUri} controls />}
+            {streamUri && <VideoPlayer title={t('video.title', { defaultValue: 'Video' })} src={streamUri} controls />}
           </AccordionItemBody>
         </AccordionItemContent>
       </AccordionItem>

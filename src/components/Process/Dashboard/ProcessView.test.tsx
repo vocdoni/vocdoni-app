@@ -2,7 +2,7 @@ import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { useIframeTitle } from '~utils/use-iframe-title'
+import { VideoPlayer } from '~components/ui/VideoPlayer'
 import { ElectionVideo, getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from './ProcessView'
 
 const navigateSpy = vi.fn()
@@ -49,11 +49,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   }
 })
 
-vi.mock('~utils/use-iframe-title', () => ({ useIframeTitle: vi.fn(() => vi.fn()) }))
-
-vi.mock('react-player', () => ({
-  default: () => null,
-}))
+vi.mock('~components/ui/VideoPlayer', () => ({ VideoPlayer: vi.fn(() => null) }))
 
 let earlyEndDate: Date | null = null
 
@@ -434,12 +430,12 @@ describe('ElectionVideo', () => {
   it('titles the player after the election', () => {
     renderVideo({ streamUri: 'https://example.test/live', title: { default: 'Board election' } })
 
-    expect(useIframeTitle).toHaveBeenLastCalledWith('Board election')
+    expect(vi.mocked(VideoPlayer).mock.lastCall?.[0]).toMatchObject({ title: 'Board election' })
   })
 
   it('falls back to a generic title when the election has none', () => {
     renderVideo({ streamUri: 'https://example.test/live' })
 
-    expect(useIframeTitle).toHaveBeenLastCalledWith('Video')
+    expect(vi.mocked(VideoPlayer).mock.lastCall?.[0]).toMatchObject({ title: 'Video' })
   })
 })
