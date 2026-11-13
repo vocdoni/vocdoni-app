@@ -97,7 +97,7 @@ describe('Providers', () => {
     // singleton at import time, and that detection caches a language. Seeding
     // afterwards keeps this test independent of whether an earlier test already
     // paid for the import.
-    const { AppProviders } = await import('./Providers')
+    const { AppProviders } = await import('./AppProviders')
 
     window.localStorage.setItem('i18nextLng', 'ca')
 
