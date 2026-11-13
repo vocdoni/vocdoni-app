@@ -76,6 +76,7 @@ import { TableColumn, useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
 import { MemberManager } from './Manager'
 import { maskIfNeeded } from './maskIfNeeded'
+import { memberAlias } from './memberAlias'
 import MemberCard from './MemberCard'
 
 enum DeleteModes {
@@ -528,11 +529,6 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
     })
   }
 
-  const memberAlias = (member: Member) => {
-    if (!member.name && !member.surname) return member.email || member.memberNumber
-    return `${member.name} ${member.surname}`
-  }
-
   return (
     <>
       <Button size='sm' variant='outline' onClick={onOpen} {...rest}>
@@ -821,11 +817,7 @@ const SortableColumnHeader = ({ column, field, sort, onToggleSort }: SortableCol
 const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCensus }: MemberTableItemProps) => {
   const { t } = useTranslation()
   const { isSelected, toggleOne, columns } = useTable()
-  const alias =
-    [member.name, member.surname].filter(Boolean).join(' ') ||
-    member.email ||
-    member.memberNumber ||
-    t('members.table.this_member', { defaultValue: 'this member' })
+  const alias = memberAlias(member) || t('members.table.this_member', { defaultValue: 'this member' })
 
   return (
     <Table.Row>
