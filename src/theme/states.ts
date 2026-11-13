@@ -8,24 +8,24 @@ import { defineSemanticTokens } from '@chakra-ui/react'
 export const stateColors = defineSemanticTokens.colors({
   state: {
     hover: {
-      bg: { value: '{colors.bg.muted}' },
-      fg: { value: { _light: '{colors.black}', _dark: '{colors.white}' } },
+      bg: { value: { _light: '{colors.gray.50}', _dark: '{colors.bg.muted}' } },
+      fg: { value: { _light: '{colors.gray.900}', _dark: '{colors.white}' } },
     },
     pressed: {
       bg: { value: '{colors.bg.emphasized}' },
       fg: { value: '{colors.fg}' },
     },
     selected: {
-      bg: { value: { _light: '{colors.gray.100}', _dark: '{colors.ink.700}' } },
-      fg: { value: { _light: '{colors.black}', _dark: '{colors.white}' } },
+      bg: { value: { _light: 'rgb(0 0 0 / 0.06)', _dark: '{colors.ink.700}' } },
+      fg: { value: { _light: '{colors.gray.900}', _dark: '{colors.white}' } },
     },
     current: {
-      bg: { value: '{colors.bg.emphasized}' },
+      bg: { value: { _light: 'rgb(0 0 0 / 0.06)', _dark: '{colors.bg.emphasized}' } },
       fg: { value: '{colors.fg}' },
     },
     // A file dragged over a drop target
     dragover: {
-      border: { value: '{colors.green.400}' },
+      border: { value: '{colors.accent.solid}' },
     },
   },
 })

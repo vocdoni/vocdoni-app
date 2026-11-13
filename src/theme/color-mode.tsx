@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from 'react'
 
 export type ColorMode = 'light' | 'dark'
 
+// Fil has no dark values yet, so the app is always light. Remove `forcedTheme` (and restore the three
+// ColorModeSwitcher call sites) to bring dark mode back.
 export const ColorModeProvider = ({ children, ...props }: ThemeProviderProps) => (
   <NextThemeProvider
     attribute='class'
@@ -10,6 +12,7 @@ export const ColorModeProvider = ({ children, ...props }: ThemeProviderProps) =>
     storageKey='theme-preference'
     defaultTheme='system'
     enableSystem
+    forcedTheme='light'
     {...props}
   >
     {children}

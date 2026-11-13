@@ -19,18 +19,21 @@ const systems = { stock: system, branded: createAppSystem('#1a73e8') }
 
 describe.each(Object.entries(systems))('interaction-state and chart tokens (%s)', (_label, sys) => {
   it.each<[string, string, string]>([
-    ['state.hover.bg', 'bg.muted', 'bg.muted'],
-    ['state.selected.bg', 'gray.100', 'ink.700'],
-    ['state.selected.fg', 'black', 'white'],
-    ['state.hover.fg', 'black', 'white'],
-    ['state.current.bg', 'gray.200', 'gray.800'],
+    ['state.hover.bg', 'gray.50', 'bg.muted'],
+    ['state.selected.bg', 'rgb(0 0 0 / 0.06)', 'ink.700'],
+    ['state.selected.fg', 'gray.900', 'white'],
+    ['state.hover.fg', 'gray.900', 'white'],
+    ['state.current.bg', 'rgb(0 0 0 / 0.06)', 'gray.800'],
     ['chart.track', 'bg.emphasized', 'bg.emphasized'],
-    ['meter.warning', 'orange.600', 'orange.500'],
-    ['meter.critical', 'red.600', 'red.600'],
-    ['meter.ok', 'blue.600', 'blue.600'],
+    ['meter.warning', '#875500', 'orange.500'],
+    ['meter.critical', '#ca2a30', 'red.600'],
+    ['meter.ok', 'gray.solid', 'gray.solid'],
   ])('%s resolves to the value the consumer had before', (token, light, dark) => {
-    expect(resolve(sys, token, 'light')).toBe(resolve(sys, light, 'light'))
-    expect(resolve(sys, token, 'dark')).toBe(resolve(sys, dark, 'dark'))
+    // A literal (Fil's translucent selection) is compared as written; anything else is a token name.
+    const expected = (value: string, mode: Mode) =>
+      value.startsWith('rgb') || value.startsWith('#') ? value : resolve(sys, value, mode)
+    expect(resolve(sys, token, 'light')).toBe(expected(light, 'light'))
+    expect(resolve(sys, token, 'dark')).toBe(expected(dark, 'dark'))
   })
 
   it('keeps the first two chart colors on the usage-meter hues', () => {

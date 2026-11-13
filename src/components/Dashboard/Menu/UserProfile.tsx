@@ -1,16 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  FieldRoot as FormControl,
-  FieldLabel as FormLabel,
-  Flex,
-  HStack,
-  Icon,
-  Link,
-  Popover,
-  Text,
-} from '@chakra-ui/react'
+import { Avatar, Box, Button, Flex, HStack, Icon, Link, Popover, Text } from '@chakra-ui/react'
 import { useContext, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
@@ -24,7 +12,6 @@ import {
 import { Link as ReactRouterLink } from 'react-router'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { useAuth } from '~components/Auth/useAuth'
-import { ThemeToggleGroup } from '~components/Layout/ColorModeSwitcher'
 import { LanguageListDashboard } from '~components/Navbar/LanguagesList'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
@@ -169,18 +156,6 @@ const UserProfile = () => {
                   <Text fontWeight='extrabold' textStyle='body-sm' px='2' py='1.5'>
                     {t('preferences', { defaultValue: 'Preferences' })}
                   </Text>
-                  <FormControl
-                    display='flex'
-                    justifyContent='space-between'
-                    p='2'
-                    alignItems='center'
-                    flexDirection='row'
-                  >
-                    <FormLabel m='0' htmlFor='theme-toggle'>
-                      <Trans i18nKey='theme'>Theme</Trans>
-                    </FormLabel>
-                    <ThemeToggleGroup />
-                  </FormControl>
                   <LanguageListDashboard px={2} py={1.5} />
                 </Box>
                 <Button colorPalette='gray' variant='menu-item-strong' onClick={logout}>

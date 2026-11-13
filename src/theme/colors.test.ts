@@ -2,27 +2,26 @@ import { describe, expect, it } from 'vitest'
 import { colors } from './colors'
 import { createAppSystem, system } from './system'
 
-// The neutral scale as it resolved when colors.ts took over all of it, Chakra's steps included. A retheme that moves
-// the greys updates this table in the same change.
+// Fil's untinted neutral scale. A retheme that moves the greys updates this table in the same change.
 const GRAY = {
-  50: '#fcfcfc',
+  50: '#fafafa',
   100: '#f5f5f5',
-  200: '#e4e4e7',
-  300: '#d4d4d8',
-  400: '#b2b2b2',
-  500: '#737373',
-  600: '#52525b',
-  700: '#3f3f46',
-  800: '#27272a',
-  900: '#18181b',
-  950: '#111111',
+  200: '#ebebeb',
+  300: '#c9c9c9',
+  400: '#8f8f8f',
+  500: '#6b6b6b',
+  600: '#4d4d4d',
+  700: '#3d3d3d',
+  800: '#262626',
+  900: '#171717',
+  950: '#0a0a0a',
 }
 
 describe('gray scale', () => {
   it.each([
     ['stock', system],
     ['branded', createAppSystem('#1a73e8')],
-  ])('resolves every step to the value it had before (%s system)', (_name, sys) => {
+  ])('resolves every step to its Fil value (%s system)', (_name, sys) => {
     const resolved = Object.fromEntries(
       Object.keys(GRAY).map((step) => [step, sys.tokens.getByName(`colors.gray.${step}`)?.value])
     )

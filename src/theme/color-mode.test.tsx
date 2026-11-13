@@ -42,6 +42,7 @@ describe('ColorModeProvider', () => {
         storageKey: 'theme-preference',
         defaultTheme: 'system',
         enableSystem: true,
+        forcedTheme: 'light',
       })
     )
   })
