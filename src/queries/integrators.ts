@@ -20,6 +20,8 @@ export const useIntegratorInfo = () => {
   return useQuery<IntegratorInfo>({
     queryKey: QueryKeys.integrator.info(selectedAddress),
     queryFn: () => bearedFetch<IntegratorInfo>(ApiEndpoints.Integrator),
+    // Quota and usage move with the managed organizations' activity, not with anything this app does
+    staleTime: 0,
   })
 }
 
@@ -53,6 +55,8 @@ export const useManagedOrganizations = (page: number, limit: number) => {
     queryKey: QueryKeys.integrator.managed(selectedAddress, page, limit),
     // Keeps the previous page on screen while the next one loads, so pagination can be disabled meanwhile
     placeholderData: keepPreviousData,
+    // Spend against each cap changes with the managed organizations' activity, not with anything this app does
+    staleTime: 0,
     queryFn: () =>
       bearedFetch<ManagedOrganizationsResponse>(`${ApiEndpoints.ManagedOrganizations}?page=${page}&limit=${limit}`),
   })

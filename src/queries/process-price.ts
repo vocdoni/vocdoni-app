@@ -31,6 +31,8 @@ export const useProcessPrice = (processId?: string | null) => {
     // only delays the hint
     retry: false,
     refetchOnWindowFocus: true,
+    // The price follows the census and the payment state, both of which change away from this screen
+    staleTime: 0,
   })
 
   return { price: query.isError ? undefined : query.data, query }

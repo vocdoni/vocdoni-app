@@ -10,9 +10,8 @@ type PublicOrganizationPageProps = {
 
 const PublicOrganizationPage = ({ organization, initialElectionsPage }: PublicOrganizationPageProps) => {
   return (
-    // The loader/SSR-provided organization seeds the provider's query as
-    // initialData (id derived from organization.address), so the page renders
-    // instantly and the provider still refetches.
+    // The loader/SSR-provided organization seeds the provider's query as initialData (id derived
+    // from organization.address), so the page renders at once; it is refetched once it is stale.
     <OrganizationProvider organization={organization}>
       <OrganizationViewComponent initialElectionsPage={initialElectionsPage} />
     </OrganizationProvider>
