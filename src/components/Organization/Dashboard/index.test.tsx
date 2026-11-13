@@ -34,9 +34,9 @@ vi.mock('~src/queries/organization', () => ({
 
 const playerProps = vi.fn()
 vi.mock('react-player', () => ({
-  default: (props: { onClickPreview?: () => void; onPause?: () => void }) => {
+  default: (props: { onPause?: () => void }) => {
     playerProps(props)
-    return <div onClick={props.onClickPreview}>Player</div>
+    return <div>Player</div>
   },
 }))
 
@@ -135,13 +135,14 @@ describe('OrganizationDashboard', () => {
     it('shows the YouTube thumbnail and loads the player only when it is clicked, then plays', () => {
       renderWithVideo('https://www.youtube.com/watch?v=OQRF_4-zGSk')
 
-      expect(playerProps).toHaveBeenLastCalledWith(
-        expect.objectContaining({ light: 'https://i.ytimg.com/vi/OQRF_4-zGSk/hqdefault.jpg', playing: false })
-      )
+      const preview = screen.getByLabelText('How to create your first vote', { selector: 'button' })
+      expect(preview.querySelector('img')).toHaveAttribute('src', 'https://i.ytimg.com/vi/OQRF_4-zGSk/hqdefault.jpg')
+      expect(playerProps).not.toHaveBeenCalled()
 
-      fireEvent.click(screen.getByText('Player'))
+      fireEvent.click(preview)
 
       expect(playerProps).toHaveBeenLastCalledWith(expect.objectContaining({ playing: true }))
+      expect(playerProps.mock.lastCall![0]).not.toHaveProperty('light')
 
       // Pausing in the player sticks: later renders do not tell it to play again
       act(() => playerProps.mock.lastCall![0].onPause())
@@ -152,7 +153,8 @@ describe('OrganizationDashboard', () => {
     it('keeps a click-to-load preview for a video that is not on YouTube', () => {
       renderWithVideo('https://example.com/tutorial.mp4')
 
-      expect(playerProps).toHaveBeenLastCalledWith(expect.objectContaining({ light: true }))
+      expect(screen.getByLabelText('How to create your first vote', { selector: 'button' })).toBeInTheDocument()
+      expect(playerProps).not.toHaveBeenCalled()
     })
   })
 })

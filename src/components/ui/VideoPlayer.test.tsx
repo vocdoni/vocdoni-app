@@ -1,4 +1,4 @@
-import { render } from '~src/test-utils'
+import { fireEvent, render, screen } from '~src/test-utils'
 import { VideoPlayer } from './VideoPlayer'
 
 // Stand-in for react-player's wrapper (Player.js): it hands the node to the forwarded ref and drops whatever that
@@ -99,5 +99,38 @@ describe('VideoPlayer', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 250))
     expect(iframe).not.toHaveAttribute('title')
+  })
+
+  describe('preview', () => {
+    it('shows a button named by the title, without the player, until it is clicked', () => {
+      const { container } = render(
+        <VideoPlayer src='https://example.test/live' title='How to vote' preview='https://example.test/thumb.jpg' />
+      )
+
+      expect(screen.getByRole('button', { name: 'How to vote' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'How to vote' })).toContainElement(
+        container.querySelector('img') as HTMLElement
+      )
+      expect(playerHost(container)).toBeNull()
+    })
+
+    it('mounts the player on click and moves focus into it, not to the body', () => {
+      const { container } = render(
+        <VideoPlayer src='https://example.test/live' title='How to vote' preview='https://example.test/thumb.jpg' />
+      )
+
+      fireEvent.click(screen.getByRole('button', { name: 'How to vote' }))
+
+      expect(playerHost(container)).not.toBeNull()
+      expect(document.activeElement).toBe(playerHost(container))
+      expect(screen.queryByRole('button', { name: 'How to vote' })).not.toBeInTheDocument()
+    })
+
+    it('shows a plain button when there is no thumbnail', () => {
+      const { container } = render(<VideoPlayer src='https://example.test/tutorial.mp4' title='How to vote' preview />)
+
+      expect(screen.getByRole('button', { name: 'How to vote' })).toBeInTheDocument()
+      expect(container.querySelector('img')).toBeNull()
+    })
   })
 })
