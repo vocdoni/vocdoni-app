@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { AppEnvProvider } from '~src/app-env'
 import { buildAppEnv } from '~src/app-env-build'
@@ -48,5 +48,23 @@ describe('Theme', () => {
     const css = injectedCss()
     expect(css).toMatch(/--chakra-colors-brand-500:\s*#000000/)
     expect(css).toMatch(/--chakra-colors-color-palette-solid:\s*var\(--chakra-colors-gray-solid\)/)
+  })
+})
+
+describe('Theme font subsets', () => {
+  beforeEach(() => {
+    document.head.querySelectorAll('style[data-inter-subsets]').forEach((el) => el.remove())
+  })
+
+  it('declares the non-Latin subsets after mount whatever the UI language', async () => {
+    render(
+      <AppEnvProvider value={buildAppEnv({})}>
+        <Theme>
+          <div>child</div>
+        </Theme>
+      </AppEnvProvider>
+    )
+
+    await waitFor(() => expect(document.head.querySelectorAll('style[data-inter-subsets]')).toHaveLength(1))
   })
 })
