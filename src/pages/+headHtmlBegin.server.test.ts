@@ -1,19 +1,26 @@
+import type { PageContextServer } from 'vike/types'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import headHtmlBegin from './+headHtmlBegin.server'
 
-// The build-commit tag goes first so it sits as high in <head> as Vike allows, and it is resolved at runtime from
-// the container env, not baked in at build time.
+// The build-commit tag goes first so it sits as high in <head> as Vike allows. The sha comes from the globalContext
+// resolved at server boot, so the render never reads the env or git.
 describe('headHtmlBegin', () => {
   afterEach(() => {
     vi.unstubAllEnvs()
-    vi.resetModules()
   })
 
-  it('emits the build-commit meta tag first, then the notranslate meta tag', async () => {
-    vi.stubEnv('COMMIT_SHA', '0123456789abcdef0123456789abcdef01234567')
-    const { default: headHtmlBegin } = await import('./+headHtmlBegin.server')
+  it('emits the build-commit meta tag first, then the notranslate meta tag', () => {
+    const pageContext = { globalContext: { commitSha: '0123456' } } as PageContextServer
 
-    expect(headHtmlBegin()).toBe(
+    expect(headHtmlBegin(pageContext)).toBe(
       '<meta name="build-commit" content="0123456" /><meta name="google" content="notranslate" />'
     )
+  })
+
+  it('takes the sha from the globalContext, not from the env at render time', () => {
+    vi.stubEnv('COMMIT_SHA', 'ffffff1')
+    const pageContext = { globalContext: { commitSha: '0123456' } } as PageContextServer
+
+    expect(headHtmlBegin(pageContext)).toContain('content="0123456"')
   })
 })
