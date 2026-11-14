@@ -58,8 +58,8 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}` (the info, warning and error `solid`)                                                        | `charts.ts`       |
 | Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                                    | `ballot.ts`       |
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                                    | `illustration.ts` |
-| Links, switch, turnout stripes   | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `progress.stripe`                                                                     | `recipeColors.ts` |
-| Toasts                           | `toast.{success,warning}.bg` (solid fills) and `toast.{success,warning}.fg` (the text on them, each status's `contrast`)                                                                 | `recipeColors.ts` |
+| Links, switch                    | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`                                                                                        | `recipeColors.ts` |
+| Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                              | `recipeColors.ts` |
 | Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a control; every shadow is a 1px ring, no blur) | `semantic.ts`     |
 | Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                                | `palette.ts`      |
 | Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                     | `system.ts`       |
@@ -85,9 +85,8 @@ Rules of thumb:
 - **Dark greys**: the raw `ink` scale in `colors.ts` is numbered by lightness, like Chakra's scales, so a higher step is
   darker: `ink.950` (#000000), `ink.900` (#0a0a0a, the dark page), `ink.850` (#1f1f22), `ink.800` (#262626), `ink.700`
   (#2e2e2e). Components never read it; the semantic tokens do. The dark `bg.muted` is `ink.850`, so the dark steps run
-  `bg.subtle` < `bg.muted` (hover) < `bg.emphasized` (pressed, current), the same order as light. The track of a bar
-  cannot read `bg.muted` there (it is too close to the page), which is why the `results` and `turnout` progress
-  variants read `ballot.results.track`.
+  `bg.subtle` < `bg.muted` (hover) < `bg.emphasized` (pressed, current), the same order as light. `state.hover.bg` is a 4% black
+  wash in light mode so it shows on white and on the sidebar tint alike.
 - **Text on a coloured fill**: use the pair the token family ships (`status.error.contrast` on `status.error.solid`,
   `surface.inverse.fg` on `surface.inverse`), not an ad hoc black or white. `textContrast.test.ts` and `palette.test.ts`
   check contrast.
@@ -105,8 +104,8 @@ Typography is a role, not three props.
 ```
 
 App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (12px, medium; Fil has no uppercase),
-`page-title` (28px, semibold, tight tracking), `section-title` (the `control` size, semibold), `display`, `control` (a control's label and value, on the `control` font
-size), `figure` (numerals, dates, counts and codes: JetBrains Mono at 12px), `quote-label` (the sector over a featured quote), `separator-label` (the label of a
+`page-title` (28px, semibold, tight tracking), `section-title` (the `control` size, semibold), `display`, `control` (a control's text, on the `control` font
+size, with no weight: buttons, field labels and card titles add 550 in their recipes), `figure` (numerals, dates, counts and codes: JetBrains Mono at 12px), `quote-label` (the sector over a featured quote), `separator-label` (the label of a
 `LabelledSeparator`), `status-title` (a process status as a headline) and `role-name` (a role shown from its raw
 value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 
@@ -127,7 +126,7 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
   family or a variable range), the stacks (`body`, `heading`, `figure`, `mono`) and the ladder of which weight each
   name renders (`FONT_WEIGHTS`). Commissioner (interface) and JetBrains Mono (figures) are variable, 400 to 700:
   `light` and `normal` render 400, `normal-plus` 450, `medium` 500, `medium-plus` 550, `semibold` and `bold` 600, and
-  `bolder` and up 700. `normal-plus` and `medium-plus` are the half steps a variable family can draw. Numeric weights fail the inventory (`numericFontWeight`). A weight with no face
+  `bolder` and up stop at 600 too, so the interface tops out at 600. `normal-plus` and `medium-plus` are the half steps a variable family can draw. Numeric weights fail the inventory (`numericFontWeight`). A weight with no face
   behind it makes the browser fake it, and `fonts.test.ts` keeps the CSS imports in `Theme.tsx`, the families and the
   ladder in step.
 - Markdown headings written by users use `proseHeadingSizes`, shared by the editor and the renderer.
@@ -182,17 +181,18 @@ What exists today:
 | `card`              | `outline`, `section`, `frame`, `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `plain` (a filled card without a border, around a page-level empty state)                                                                                      |
 | `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                    |
 | `link`              | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                         |
-| `tabs`              | `variant`: `pill`                                                                                                                                                                                                                                                      |
+| `tabs`              | `variant`: `line` (default: hairline and a 2px ink line under the current tab), `pill` (segmented)                                                                                                                                                                     |
 | `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the mobile dashboard menu); dialog and drawer backdrops both paint `scrim.strong`                                                                                                         |
 | `dialog`            | `placement` defaults to `center`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                |
 | `menu`              | Items highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                       |
-| `progress`          | `variant`: `results` (thin 8px bar, one per choice), `turnout` (large striped bar for the share that voted), `meter` (`UsageMeter`), `job` (a background job); `results` and `turnout` tracks read `ballot.results.track`                                              |
+| `progress`          | `variant`: `results` (thin bar in ink, one per choice, never dimmed: the slot cannot tell a final tally from a live one), `turnout` (the share that voted, a thin bar with a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                     |
 | `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                          |
 | `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe)                                                                                                                                                    |
 | `list`              | `variant`: `marker`                                                                                                                                                                                                                                                    |
 | `emptyState`        | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                               |
 | `text`, `heading`   | `text`: `size`, `variant='muted'`; `heading`: `variant` `heavy`, `subsection`                                                                                                                                                                                          |
 | `badge`, `tag`      | Badge `size` (`xs` to `lg`), `variant`: `count` (tab counter), `label` (neutral role chip, capitalised); Tag has one look (radius `sm` by default), use `StatusBadge`                                                                                                  |
+| `nativeSelect`      | The input's field look (panel, ring, outside focus ring) at the shared control height, whatever the size; `code` is a neutral chip like `badge` (both default to the `gray` palette, not the accent)                                                                   |
 
 To add a variant:
 
@@ -278,8 +278,8 @@ bar. With a `max` it draws a bar in the `color` series (`chart.1` to `chart.4`, 
 `softLimit` (going over is billed, not blocked) never warns, and a `max` of `0` means no limit: the bar stays empty.
 
 The two bars on the `progress` recipe are not interchangeable. `variant='results'` is for one choice of a vote: the
-title and tally sit above a thin 8px bar, in the archive and in the public ballot alike. `variant='turnout'` is the
-large striped bar for the share of the census that voted, in the process summary and the dashboard process view:
+title and tally sit above a thin bar, in the archive and in the public ballot alike. `variant='turnout'` is the
+thin bar with a gap after the fill for the share of the census that voted, in the process summary and the dashboard process view:
 
 ```tsx
 <Progress.Root variant='turnout' value={participation}>
@@ -322,8 +322,8 @@ an optional `match` (a regular expression on the whole source text of the occurr
 that narrows the exception to the occurrences it names) and a `reason`. Today:
 
 - **PDF report** (`VotingReportPdf`): react-pdf renders outside Chakra, so raw values are the only option.
-- **Stripe Elements** (`src/components/Pricing/stripe.ts`): its appearance API takes raw CSS colours and its own light
-  and dark themes.
+- **Stripe Elements** (`src/components/Pricing/stripe.ts`): its appearance API takes raw CSS colours. The app is light only,
+  so it always gets the light theme (`useColorMode` honours the forced theme).
 - **react-select**: the menu portal of `SaasSelector.tsx` and `CensusSearch.tsx` needs a raw `zIndex` above Chakra
   modals, and `isLoading` on the react-select wrapper (`SaasSelector.tsx`, `Members/index.tsx`, `CensusCreation.tsx`) is
   a react-select prop, not a Chakra v2 one.
