@@ -1,11 +1,12 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { hydrateRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
-import { ColorModeProvider, useColorModeValue } from './color-mode'
+import { ColorModeProvider, useColorMode, useColorModeValue } from './color-mode'
 
 const themeProviderSpy = vi.fn()
 const themeState = {
   resolvedTheme: 'dark' as string | undefined,
+  forcedTheme: undefined as string | undefined,
   setTheme: vi.fn(),
 }
 
@@ -17,6 +18,8 @@ vi.mock('next-themes', () => ({
   useTheme: () => themeState,
 }))
 
+const ColorModeProbe = () => <div data-testid='color-mode'>{useColorMode().colorMode}</div>
+
 const ColorModeValueProbe = () => {
   const value = useColorModeValue('light', 'dark')
   return <div data-testid='color-mode-value'>{value}</div>
@@ -25,6 +28,7 @@ const ColorModeValueProbe = () => {
 describe('ColorModeProvider', () => {
   beforeEach(() => {
     themeState.resolvedTheme = 'dark'
+    themeState.forcedTheme = undefined
     themeState.setTheme.mockReset()
   })
 
@@ -80,5 +84,14 @@ describe('ColorModeProvider', () => {
 
     consoleErrorSpy.mockRestore()
     container.remove()
+  })
+
+  it('answers light while the theme is forced light, whatever the OS prefers', () => {
+    themeState.resolvedTheme = 'dark'
+    themeState.forcedTheme = 'light'
+
+    render(<ColorModeProbe />)
+
+    expect(screen.getByTestId('color-mode')).toHaveTextContent('light')
   })
 })

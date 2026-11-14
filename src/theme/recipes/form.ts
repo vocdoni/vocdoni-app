@@ -12,7 +12,7 @@ const baseStyle = defineStyle({
 })
 
 // Fil's field: a panel with a 1px ring, a 2px accent outline on focus and the error colour for a ring when invalid.
-const field = defineStyle({
+export const field = defineStyle({
   bg: 'bg.panel',
   color: 'fg',
   borderWidth: '[0]',
@@ -34,20 +34,20 @@ const xxl = defineStyle({
 })
 
 // iOS Safari auto-zooms focused inputs with a font-size below 16px; keep base at
-// `md` (16px) on mobile and restore the control size from `md` up.
+// `lg` (the 1rem step) on mobile and restore the control size from `md` up.
 // Set at variant level so it overrides Chakra's default size variants (textStyle `sm`).
-const mobileSafeFontSize = defineStyle({
-  fontSize: { base: 'md', md: 'control' },
+export const mobileSafeFontSize = defineStyle({
+  fontSize: { base: 'lg', md: 'control' },
   _placeholder: {
-    fontSize: { base: 'md', md: 'control' },
+    fontSize: { base: 'lg', md: 'control' },
   },
 })
 
-// One field height; the 34px has no step in Chakra's scale yet.
+// One field height, the shared control size.
 const sm = defineStyle({
   borderRadius: 'l2',
   px: '3',
-  '--input-height': '34px',
+  '--input-height': 'sizes.control.md',
   ...mobileSafeFontSize,
 })
 

@@ -41,9 +41,17 @@ describe('button', () => {
 describe('input and textarea', () => {
   it('are 34px panels with a ring and no border', () => {
     const styles = layer(input({}))
-    expect(styles['--input-height']).toBe('34px')
+    expect(styles['--input-height']).toBe('var(--chakra-sizes-control-md)')
     expect(styles.boxShadow).toBe('var(--chakra-shadows-shadow-control)')
     expect(styles.borderWidth).toBe('0')
+  })
+
+  it('keeps phone inputs at 16px so iOS Safari does not zoom on focus', () => {
+    for (const size of ['sm', 'md'] as const) {
+      const fontSize = layer(input({ size })).fontSize as unknown
+      expect(JSON.stringify(fontSize)).toContain('font-sizes-lg')
+      expect(system.token('fontSizes.lg')).toBe('1rem')
+    }
   })
 
   it('keeps the inline variant flat', () => {

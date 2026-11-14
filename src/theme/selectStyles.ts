@@ -7,6 +7,8 @@ export const selectStyles: ChakraStylesConfig<any, boolean> = {
     ...base,
     minH: 'control.md',
     textStyle: 'control',
+    // 16px on phones, like the input recipe: a smaller font makes iOS Safari zoom the page on focus.
+    fontSize: { base: 'lg', md: 'control' },
   }),
   dropdownIndicator: (base) => ({
     ...base,

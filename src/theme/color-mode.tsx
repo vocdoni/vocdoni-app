@@ -24,8 +24,9 @@ export const useColorMode = (): {
   toggleColorMode: () => void
   setColorMode: (value: ColorMode) => void
 } => {
-  const { resolvedTheme, setTheme } = useTheme()
-  const colorMode: ColorMode = resolvedTheme === 'dark' ? 'dark' : 'light'
+  // next-themes reports the OS theme as `resolvedTheme` even when `forcedTheme` is set, so the forced one wins.
+  const { resolvedTheme, forcedTheme, setTheme } = useTheme()
+  const colorMode: ColorMode = (forcedTheme ?? resolvedTheme) === 'dark' ? 'dark' : 'light'
 
   const toggleColorMode = useCallback(() => {
     setTheme(colorMode === 'dark' ? 'light' : 'dark')
