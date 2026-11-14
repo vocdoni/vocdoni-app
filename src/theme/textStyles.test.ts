@@ -14,11 +14,10 @@ describe('text styles', () => {
     }
   })
 
-  it('sets the control role in the control size at weight 550, and figures in mono at the small size', () => {
+  it('sets the control role in the control size with no weight, and figures in mono at the small size', () => {
     expect(system.css({ textStyle: 'control' })).toEqual({
       fontSize: 'var(--chakra-font-sizes-control)',
       lineHeight: '1.25rem',
-      fontWeight: 'var(--chakra-font-weights-medium-plus)',
     })
     expect(system.css({ textStyle: 'figure' })).toEqual({
       fontFamily: 'var(--chakra-fonts-figure)',

@@ -32,6 +32,8 @@ const lg = defineStyle({
 })
 
 export const Badge = defineRecipe({
+  // The stock variants read the page palette, which is the accent: a chip stays neutral unless asked otherwise.
+  base: { colorPalette: 'gray' },
   variants: {
     variant: {
       // A count next to a label, such as a tab's: a bare figure, no fill.
@@ -53,4 +55,9 @@ export const Badge = defineRecipe({
   // Padding is a `size` value, and sizes apply after the variant.
   compoundVariants: [{ variant: 'count', css: { px: '0' } }],
   defaultVariants: { size: 'xs' },
+})
+
+// `Code` shares Chakra's badge variants, so it needs the same neutral default.
+export const Code = defineRecipe({
+  base: { colorPalette: 'gray' },
 })

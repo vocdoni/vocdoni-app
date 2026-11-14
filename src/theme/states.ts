@@ -8,7 +8,8 @@ import { defineSemanticTokens } from '@chakra-ui/react'
 export const stateColors = defineSemanticTokens.colors({
   state: {
     hover: {
-      bg: { value: { _light: '{colors.gray.50}', _dark: '{colors.bg.muted}' } },
+      // Translucent so it shows on white and on the sidebar tint alike (it is the only keyboard highlight in menus).
+      bg: { value: { _light: 'rgb(0 0 0 / 0.04)', _dark: '{colors.bg.muted}' } },
       fg: { value: { _light: '{colors.gray.900}', _dark: '{colors.white}' } },
     },
     pressed: {

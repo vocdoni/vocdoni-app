@@ -52,8 +52,8 @@ export const shipsWeight = ({ files }: WebFont, weight: number) =>
 type ShippedWeight<F extends WebFont> = F['files'] extends { weights: readonly (infer W)[] } ? W : number
 
 /**
- * Which weight each name renders on the text family: 400 to 600 for the interface, with 700 only for the names
- * above `bold`. `normal-plus` and `medium-plus` are the half steps (450, 550) of a variable family; components may
+ * Which weight each name renders on the text family: 400 to 600, the most the interface uses; the names above
+ * `bold` stop at 600 too. `normal-plus` and `medium-plus` are the half steps (450, 550) of a variable family; components may
  * not use numbers, so they need names.
  */
 export const FONT_WEIGHTS = {
@@ -66,7 +66,7 @@ export const FONT_WEIGHTS = {
   'medium-plus': 550,
   semibold: 600,
   bold: 600,
-  bolder: 700,
-  extrabold: 700,
-  black: 700,
+  bolder: 600,
+  extrabold: 600,
+  black: 600,
 } as const satisfies Record<string, ShippedWeight<typeof SANS>>

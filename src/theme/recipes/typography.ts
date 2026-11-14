@@ -43,19 +43,21 @@ export const link = defineRecipe({
       },
     },
     _hover: {
-      color: 'accent.solid.hover',
+      color: 'accent.fg.hover',
     },
   },
   variants: {
     variant: {
-      // Chakra's default `plain` variant (applied via defaultVariants) sets its own colour and an underline on
-      // hover, and variants beat the base: restate the accent colour and keep links bare in every state.
+      // Chakra's default `plain` variant (applied via defaultVariants) sets its own colour, and variants beat the
+      // base: restate the accent colour. Underlined on hover and focus: for a dark brand colour the accent barely
+      // differs from the text, so colour alone cannot be the only cue.
       plain: {
         color: 'accent.fg',
         _hover: {
-          color: 'accent.solid.hover',
-          textDecoration: 'none',
+          color: 'accent.fg.hover',
+          textDecoration: 'underline',
         },
+        _focusVisible: { textDecoration: 'underline' },
       },
       unstyled: {
         textDecoration: 'none',

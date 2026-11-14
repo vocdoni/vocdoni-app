@@ -16,7 +16,7 @@ const link = {
     },
     hover: {
       value: {
-        _light: '{colors.accent.solid.hover}',
+        _light: '{colors.accent.fg.hover}',
         _dark: '{colors.gray.200}',
       },
     },

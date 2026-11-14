@@ -282,7 +282,7 @@ describe('theme system integrity', () => {
     for (const slot of PALETTE_SLOTS) {
       visit(sys.tokens.getByName(`colors.brand.${slot}`)?.extensions?.conditions, `brand.${slot}`)
     }
-    for (const slot of ['fg', 'solid', 'solid.hover', 'contrast', 'subtle']) {
+    for (const slot of ['fg', 'fg.hover', 'solid', 'solid.hover', 'contrast', 'subtle']) {
       visit(sys.tokens.getByName(`colors.accent.${slot}`)?.extensions?.conditions, `accent.${slot}`)
     }
     expect(violations, `\n${formatViolations(violations)}`).toEqual([])
@@ -314,7 +314,8 @@ describe('PRIMARY_COLOR-driven system', () => {
     expect(conditions(system, 'brand.fg')?._light).toBe('{colors.brand.500}')
     expect(conditions(system, 'brand.subtle')?._light).toBe('#f0f5ff')
     expect(conditions(system, 'brand.focusRing')?._light).toBe('{colors.brand.500}')
-    expect(conditions(system, 'accent.solid.hover')?._light).toBe('#1554cf')
+    expect(conditions(system, 'brand.solid.hover')?._light).toBe('#1554cf')
+    expect(conditions(system, 'accent.fg.hover')?._light).toBe('#1554cf')
   })
 
   it('generates the brand scale and slots from the configured color and makes brand the global palette', () => {
@@ -353,11 +354,10 @@ describe('PRIMARY_COLOR-driven system', () => {
     'aliases the accent steps to the palette colorPalette falls back to (%s system)',
     (_name, sys, palette) => {
       expect(conditions(sys, 'accent.solid')).toEqual({ base: `{colors.${palette}.solid}` })
-      // Without a PRIMARY_COLOR the light hover is Fil's pinned value; dark keeps the 90% step.
-      expect(conditions(sys, 'accent.solid.hover')).toEqual(
-        sys === system
-          ? { _light: '#1554cf', _dark: `{colors.${palette}.solid/90}` }
-          : { base: `{colors.${palette}.solid/90}` }
+      expect(conditions(sys, 'accent.solid.hover')).toEqual({ base: `{colors.${palette}.solid.hover}` })
+      // Without a PRIMARY_COLOR the light hover is Fil's pinned value; a brand colour is mixed towards black.
+      expect(conditions(sys, 'brand.solid.hover')?._light).toBe(
+        sys === system ? '#1554cf' : 'color-mix(in oklab, {colors.brand.solid} 88%, black)'
       )
       expect(conditions(sys, 'accent.contrast')).toEqual({ base: `{colors.${palette}.contrast}` })
       expect(conditions(sys, 'accent.subtle')).toEqual({ base: `{colors.${palette}.subtle}` })

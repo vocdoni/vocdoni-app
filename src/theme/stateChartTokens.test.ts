@@ -19,7 +19,7 @@ const systems = { stock: system, branded: createAppSystem('#1a73e8') }
 
 describe.each(Object.entries(systems))('interaction-state and chart tokens (%s)', (_label, sys) => {
   it.each<[string, string, string]>([
-    ['state.hover.bg', 'gray.50', 'bg.muted'],
+    ['state.hover.bg', 'rgb(0 0 0 / 0.04)', 'bg.muted'],
     ['state.selected.bg', 'rgb(0 0 0 / 0.06)', 'ink.700'],
     ['state.selected.fg', 'gray.900', 'white'],
     ['state.hover.fg', 'gray.900', 'white'],

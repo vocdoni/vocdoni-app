@@ -64,7 +64,8 @@ describe('font config', () => {
     expect(system.token('fontWeights.normal-plus')).toBe('450')
     expect(system.token('fontWeights.normal')).toBe('400')
     expect(system.token('fontWeights.light')).toBe('400')
-    expect(system.token('fontWeights.bolder')).toBe('700')
+    expect(system.token('fontWeights.bolder')).toBe('600')
+    expect(system.token('fontWeights.black')).toBe('600')
     // Lands in the base layer, which wins over the reset layer's `bolder`.
     expect(system.getGlobalCss()).toMatchObject({
       '@layer base': { '&b, &strong': { fontWeight: 'var(--chakra-font-weights-semibold)' } },

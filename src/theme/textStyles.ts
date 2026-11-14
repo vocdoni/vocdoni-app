@@ -23,8 +23,9 @@ export const textStyles = defineTextStyles({
       letterSpacing: 'heading.page',
     },
   },
-  // A control's label and value. The line height is that of Chakra's `sm` style, which its control recipes read.
-  control: { value: { fontSize: 'control', lineHeight: '[1.25rem]', fontWeight: 'medium-plus' } },
+  // A control's text. The line height is that of Chakra's `sm` style, which its control recipes read. No weight:
+  // typed values and option labels are regular; buttons and field labels set 550 in their recipes.
+  control: { value: { fontSize: 'control', lineHeight: '[1.25rem]' } },
   // Numerals, dates, counts and codes, in the mono family at the small size.
   figure: { value: { fontFamily: 'figure', fontSize: 'xs', letterSpacing: 'none' } },
   // The sector over a featured quote (auth showcase).

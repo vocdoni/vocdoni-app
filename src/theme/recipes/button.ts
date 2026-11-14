@@ -35,13 +35,16 @@ const focusRing = defineStyle({
   outlineOffset: '[1px]',
 })
 
-// The app's primary: palette fill, no edge. `/90` darkens it on hover for any palette.
+// The app's primary: palette fill, no edge. On hover it darkens: the brand palette pins Fil's hover (slot
+// `solid.hover`), any other palette mixes its fill 12% towards black.
+const solidHover =
+  '[var(--chakra-colors-color-palette-solid-hover, color-mix(in oklab, {colors.colorPalette.solid} 88%, black))]'
 const solid = defineStyle({
   bg: 'colorPalette.solid',
   color: 'colorPalette.contrast',
   borderColor: 'transparent',
-  _hover: { bg: 'colorPalette.solid/90' },
-  _expanded: { bg: 'colorPalette.solid/90' },
+  _hover: { bg: solidHover },
+  _expanded: { bg: solidHover },
   _disabled: { bg: 'bg.emphasized', color: 'fg.subtle', opacity: '[1]' },
 })
 
@@ -97,7 +100,7 @@ const link = defineStyle({
   color: 'accent.fg',
   fontWeight: 'medium-plus',
   _hover: {
-    color: 'accent.solid.hover',
+    color: 'accent.fg.hover',
   },
 })
 
@@ -127,7 +130,7 @@ const textLink = defineStyle({
   color: 'accent.fg',
   fontWeight: 'medium-plus',
   _hover: {
-    color: 'accent.solid.hover',
+    color: 'accent.fg.hover',
   },
 })
 

@@ -25,6 +25,8 @@ const listItem = {
   },
 } satisfies Partial<Record<string, SystemStyleObject>>
 
+const title = { textStyle: 'control', fontWeight: 'medium-plus' } as const
+
 // Cards are named by what they are for. Radius comes from Chakra's base (`l3`) unless a variant sets
 // its own; `size` sets `--card-padding`, which the variants that pad their root read.
 // The 1px border is the card's ring, so none of the variants adds a shadow.
@@ -39,9 +41,9 @@ export const Card = defineSlotRecipe({
   variants: {
     // Chakra's sizes only set the title style and `--card-padding`; every title is a control label.
     size: {
-      sm: { title: { textStyle: 'control' } },
-      md: { title: { textStyle: 'control' } },
-      lg: { title: { textStyle: 'control' } },
+      sm: { title: title },
+      md: { title: title },
+      lg: { title: title },
     },
     variant: {
       // Chakra's filled card; fill and elevation come from the surface roles.
@@ -93,7 +95,8 @@ export const Card = defineSlotRecipe({
         },
       },
       // One entry of a list shown as cards, the small-screen form of a table.
-      'list-item': listItem,
+      // `size` only pads the root-padded variants; this one pads itself, so the body takes no top rule.
+      'list-item': { ...listItem, body: { ...listItem.body, borderTopWidth: '[0]' } },
       // A page whose whole content is one card, such as the sign-in forms.
       standalone: {
         root: {

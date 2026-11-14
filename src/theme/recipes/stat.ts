@@ -18,7 +18,7 @@ export const Stat = defineSlotRecipe({
     },
     valueUnit: {
       textStyle: 'body-sm',
-      color: 'fg.faint',
+      color: 'fg.subtle',
     },
   },
   variants: {

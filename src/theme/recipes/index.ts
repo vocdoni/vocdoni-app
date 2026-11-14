@@ -1,7 +1,7 @@
 import { defineRecipe, RecipeDefinition, SlotRecipeDefinition } from '@chakra-ui/react'
 import { Alert } from './alert'
 import { Avatar } from './avatar'
-import { Badge } from './badge'
+import { Badge, Code } from './badge'
 import { Button } from './button'
 import { Card } from './card'
 import { checkbox } from './checkbox'
@@ -27,6 +27,7 @@ import { Field } from './field'
 import { input, switchRecipe, textarea } from './form'
 import { listSlotRecipe } from './list'
 import { Menu } from './menu'
+import { NativeSelect } from './nativeSelect'
 import { OrganizationDescription, OrganizationImage, OrganizationName } from './organization'
 import { Pagination, PaginationButton } from './pagination'
 import { Popover } from './popover'
@@ -46,6 +47,7 @@ import { heading, link, text } from './typography'
 export const recipes: Record<string, RecipeDefinition> = {
   badge: Badge,
   button: Button,
+  code: Code,
   heading,
   input,
   link,
@@ -77,6 +79,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   field: Field,
   list: listSlotRecipe,
   menu: Menu,
+  nativeSelect: NativeSelect,
   popover: Popover,
   progress: Progress,
   radioCard: RadioCard,

@@ -13,7 +13,7 @@ describe.each([
   it('defines the link colours with the values links render with', () => {
     expect(conditions('colors.link.fg', sys)).toEqual({ _light: '{colors.accent.fg}', _dark: '{colors.gray.400}' })
     expect(conditions('colors.link.fg.hover', sys)).toEqual({
-      _light: '{colors.accent.solid.hover}',
+      _light: '{colors.accent.fg.hover}',
       _dark: '{colors.gray.200}',
     })
   })
@@ -52,7 +52,7 @@ describe('link colours', () => {
   it('are accent text in the link recipe', () => {
     const base = link.base as { color: string; _hover: { color: string } }
     expect(base.color).toBe('accent.fg')
-    expect(base._hover.color).toBe('accent.solid.hover')
+    expect(base._hover.color).toBe('accent.fg.hover')
   })
 
   it('keep the editor on the link tokens', () => {

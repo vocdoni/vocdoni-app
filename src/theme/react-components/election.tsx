@@ -50,9 +50,6 @@ type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
 
 // A literal style prop next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
 const hrStyle: BoxProps = { as: 'hr', borderColor: 'border' }
-// Result bars: ink for the leading choice, dimmed for the rest. Typed once (see `hrStyle`).
-const leadingBar: BoxProps = { bgColor: 'fg' }
-const otherBar: BoxProps = { bgColor: 'fg', opacity: 'dimmed' }
 const questionsErrorStyle: TextProps = { color: 'ballot.error' }
 // The ballot's one filled action is taller than the dashboard buttons (`xl` is 48px, Fil's voter button 52px); the
 // button recipe is not touched, so the extra look is set here. `control.floating` is the 52px size token.
@@ -642,10 +639,6 @@ export const electionComponents: ComponentsPartialDefinition = {
       <Box css={[styles.wrapper, !hasMultipleQuestions ? { gridTemplateColumns: '1fr' } : undefined]} {...props}>
         {secretText ? <Text css={styles.secret}>{secretText}</Text> : null}
         {questions?.map((question) => {
-          const topPercent = Math.max(
-            0,
-            ...question.choices.map((choice) => Number(choice.percent.replace('%', '')) || 0)
-          )
           return (
             <Box key={question.title} css={styles.question}>
               <Box css={styles.header}>
@@ -654,8 +647,6 @@ export const electionComponents: ComponentsPartialDefinition = {
               <Flex direction='column' css={styles.body}>
                 {question.choices.map((choice) => {
                   const percent = Number(choice.percent.replace('%', '')) || 0
-                  // Derived from the shown percentages only: the leading choice is ink, the rest dimmed.
-                  const leading = percent > 0 && percent === topPercent
                   return (
                     <Box key={choice.title}>
                       {/* `votes` is empty for a question whose ballot type can't be inferred (e.g. a legacy
@@ -674,7 +665,7 @@ export const electionComponents: ComponentsPartialDefinition = {
                       {choice.votes ? (
                         <Progress.Root variant='results' value={percent} max={100}>
                           <Progress.Track>
-                            <Progress.Range {...(leading ? leadingBar : otherBar)} />
+                            <Progress.Range />
                           </Progress.Track>
                         </Progress.Root>
                       ) : null}

@@ -36,30 +36,48 @@ export const createAppSystem = (primaryColor?: string) => {
   const asTokens = (slots: object) =>
     Object.fromEntries(Object.entries(slots).map(([slot, value]) => [slot, { value }]))
   const generated = generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS)
-  const brandSemantic = asTokens(
-    brand
-      ? generated
-      : {
-          ...generated,
-          solid: { ...generated.solid, _light: '{colors.brand.500}' },
-          contrast: { ...generated.contrast, _light: '#ffffff' },
-          fg: { ...generated.fg, _light: '{colors.brand.500}' },
-          subtle: { ...generated.subtle, _light: FIL_ACCENT.subtle },
-          focusRing: { ...generated.focusRing, _light: '{colors.brand.500}' },
-        }
-  )
+  const slots = brand
+    ? generated
+    : {
+        ...generated,
+        solid: { ...generated.solid, _light: '{colors.brand.500}' },
+        contrast: { ...generated.contrast, _light: '#ffffff' },
+        fg: { ...generated.fg, _light: '{colors.brand.500}' },
+        subtle: { ...generated.subtle, _light: FIL_ACCENT.subtle },
+        focusRing: { ...generated.focusRing, _light: '{colors.brand.500}' },
+      }
+  const brandSemantic = {
+    ...asTokens(slots),
+    // A filled button's hover. Fil pins it; a brand colour gets its own fill mixed 12% towards black, so a hover
+    // never lightens. Other palettes have no such slot, so the button recipe falls back to the same mix.
+    solid: {
+      DEFAULT: { value: slots.solid },
+      hover: {
+        value: {
+          _light: brand ? 'color-mix(in oklab, {colors.brand.solid} 88%, black)' : FIL_ACCENT.solidHover,
+          _dark: '{colors.brand.solid/90}',
+        },
+      },
+    },
+  }
   const palette = defaultColorPalette(brand)
   // The accent steps alias the palette `colorPalette` falls back to, so a recipe that reads `accent.solid` instead
-  // of `colorPalette.solid` paints the same. `solid.hover` is Chakra's solid button hover.
+  // of `colorPalette.solid` paints the same. `fg.hover` is the text colour of a link under the pointer: never
+  // lighter than at rest, so it stays readable for any brand colour.
+  const accentSlots = generateAccentTokens(scale, PAGE_BACKGROUNDS)
   const accent = {
-    ...asTokens(generateAccentTokens(scale, PAGE_BACKGROUNDS)),
+    fg: {
+      DEFAULT: { value: accentSlots.fg },
+      hover: {
+        value: {
+          _light: brand ? '{colors.brand.950}' : FIL_ACCENT.solidHover,
+          _dark: '{colors.brand.fg}',
+        },
+      },
+    },
     solid: {
       DEFAULT: { value: `{colors.${palette}.solid}` },
-      hover: {
-        value: brand
-          ? `{colors.${palette}.solid/90}`
-          : { _light: FIL_ACCENT.solidHover, _dark: `{colors.${palette}.solid/90}` },
-      },
+      hover: { value: `{colors.${palette}.solid.hover}` },
     },
     contrast: { value: `{colors.${palette}.contrast}` },
     subtle: { value: `{colors.${palette}.subtle}` },
