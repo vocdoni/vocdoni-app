@@ -486,7 +486,7 @@ const LeaveConfirmationModal = ({
       onConfirm={isSamePath ? () => onResetSamePath() : onLeave}
       extraActions={
         !isSamePath && (
-          <Button onClick={onSaveAndLeave}>
+          <Button variant='outline' onClick={onSaveAndLeave}>
             {t('process.create.leave_confirmation.save_and_leave', { defaultValue: 'Save and leave' })}
           </Button>
         )

@@ -1,17 +1,4 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  List,
-  Progress,
-  Separator,
-  SimpleGrid,
-  Stat,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Button, Card, Flex, Heading, List, Progress, Separator, SimpleGrid, Stat, Text } from '@chakra-ui/react'
 import { SectionHeader } from '~components/ui/SectionHeader'
 import { StatusBadge } from '~components/ui/StatusBadge'
 import { ElectionResults, getElectionTitle, useElection } from '@vocdoni/react-components'
@@ -59,9 +46,6 @@ const statusLabel = (t: TFunction, status: QuestionStatus | null) => {
   }
 }
 
-// The countdown is the summary's headline figure, not a status chip, so it keeps its large look.
-const headline = { size: 'md', fontWeight: 'bold', fontSize: 'lg' } as const
-
 type CountdownStatProps = { target?: Date; upcoming: boolean; status: QuestionStatus | null }
 
 const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
@@ -85,9 +69,9 @@ const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   return (
     <Stat.Root flex='0 0 auto' alignItems='end'>
       <Stat.Label>{upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}</Stat.Label>
-      <Badge {...headline} colorPalette='success'>
+      <Stat.ValueText>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
-      </Badge>
+      </Stat.ValueText>
     </Stat.Root>
   )
 }

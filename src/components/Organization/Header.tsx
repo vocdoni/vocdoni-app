@@ -78,6 +78,7 @@ const OrganizationHeader = () => {
             <Box>
               {isTruncated && (
                 <IconButton
+                  variant='outline'
                   alignSelf='start'
                   title={t('organization.title.read_more')}
                   aria-label={t('organization.title.read_more')}

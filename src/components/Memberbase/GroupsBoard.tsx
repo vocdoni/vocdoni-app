@@ -371,7 +371,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
                   defaults='Selected: <strong>{{count}} member</strong>'
                 />
               </Text>
-              <Button onClick={() => setDeleteMembersModalOpen(true)} size='sm' colorPalette='danger' variant='outline'>
+              <Button onClick={() => setDeleteMembersModalOpen(true)} size='sm' variant='danger'>
                 <Icon as={DeleteIcon} />
                 {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
               </Button>
@@ -668,7 +668,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
           </Flex>
         </Card.Body>
         <Card.Footer px='0' pb='0' mt='3'>
-          <Button w='full' size='xs' onClick={() => navigateToVote(group.id)}>
+          <Button w='full' size='xs' variant='outline' onClick={() => navigateToVote(group.id)}>
             <Icon boxSize='icon.sm' as={VoteIcon} />
             {t('group.create_vote', { defaultValue: 'Create a Vote' })}
           </Button>
