@@ -33,7 +33,13 @@ export const Stat = defineSlotRecipe({
       hero: {
         label: { textStyle: 'section-title', color: 'fg' },
         valueText: { textStyle: 'figure-hero', letterSpacing: 'figure.hero', fontWeight: 'semibold' },
-        valueUnit: { textStyle: 'figure-hero-unit', color: 'fg.subtle', ms: '1.5' },
+        valueUnit: {
+          textStyle: 'figure-hero-unit',
+          letterSpacing: 'figure.unit',
+          fontWeight: 'medium',
+          color: 'fg.subtle',
+          ms: '1.5',
+        },
       },
     },
   },

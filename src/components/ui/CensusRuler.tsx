@@ -32,7 +32,7 @@ export const CensusRuler = ({ value, max, label, marker = false, ...props }: Cen
             </Box>
           )}
           {marker && (
-            <Box as='span' css={styles.marker}>
+            <Box as='span' css={styles.marker} insetStart={`[${percent}%]`} transform={`[translateX(-${percent}%)]`}>
               {quantity(value)}
             </Box>
           )}

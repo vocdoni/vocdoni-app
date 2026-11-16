@@ -21,7 +21,7 @@ describe('votes theme additions', () => {
     const stat = system.sva(system.getSlotRecipe('stat'))
     const hero = stat({ size: 'hero' })
     expect(text(hero.valueText)).toContain('figure-hero')
-    expect(text(hero.valueUnit)).toContain('figure-hero-unit')
+    expect(text(hero.valueUnit)).toContain('--chakra-letter-spacings-figure-unit')
   })
 
   it('resolves the figure-hero text style from its tokens', () => {
@@ -54,8 +54,8 @@ describe('votes theme additions', () => {
     expect(text(dataList({ variant: 'facts' }).item)).toContain('--chakra-colors-border-muted')
   })
 
-  it('places the ruler marker from the bar share', () => {
+  it('keeps the ruler marker on the scale in the accent colour', () => {
     const ruler = system.sva(system.getSlotRecipe('censusRuler'))
-    expect(text(ruler().marker)).toContain('var(--percent)')
+    expect(text(ruler().marker)).toContain('--chakra-colors-accent-fg')
   })
 })
