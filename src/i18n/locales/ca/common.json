@@ -1276,7 +1276,7 @@
       "all": "Tot alhora",
       "by_question": "Pregunta per pregunta",
       "by_question_hint": "Les preguntes comencen tancades. Les obres una a una des de la pàgina de la votació, i el resultat de cada pregunta es mostra quan la tanques.",
-      "label": "Com voten les persones"
+      "label": "Com es vota"
     },
     "weight": {
       "equal": "Una persona, un vot",
@@ -1840,12 +1840,12 @@
       "body": "Crea la primera quan vulguis. Tries què es vota, qui vota i fins quan, i la publiques quan estigui a punt.",
       "create": "Crea una votació",
       "legend": {
-        "closed": "Tens el resultat, i la pots duplicar per a la següent.",
-        "draft": "La prepares al teu ritme. Ningú la veu i no costa res.",
-        "live": "La gent vota i tu segueixes la participació.",
-        "ready": "Ja està publicada i espera el dia que has triat."
+        "closed": "Tens el resultat i la pots duplicar per a la pròxima.",
+        "draft": "La prepares sense pressa. No costa res ni la veu ningú.",
+        "live": "La gent vota i tu en segueixes la participació.",
+        "ready": "Està publicada i espera el dia que has triat per obrir-se."
       },
-      "legend_hint": "Cada votació apareix aquí amb el seu estat.",
+      "legend_hint": "Cada votació surt aquí amb el seu estat.",
       "legend_title": "Què hi veuràs",
       "title": "Encara no hi ha cap votació"
     },
@@ -1855,13 +1855,13 @@
         "follow": "Seguiment",
         "manage": "Gestiona la votació",
         "result": "Resultat",
-        "view": "Mostra"
+        "view": "Obre"
       },
       "by_question": "Pregunta per pregunta.",
       "closed_on": "el {{date}}",
       "closes": "Tanca el {{date}}.",
       "delete_body": "No es pot desfer.",
-      "delete_title": "Eliminar aquest esborrany?",
+      "delete_title": "Vols eliminar aquest esborrany?",
       "duplicate_short": "Duplica",
       "filter": {
         "all": "Totes",
@@ -1893,7 +1893,7 @@
       "voted_of": "{{voted}} de {{total}} han votat",
       "warning": {
         "end_passed": "La data de tancament ja ha passat.",
-        "missing_end": "Encara no té data de tancament."
+        "missing_end": "Li falta la data de tancament."
       }
     },
     "manage": {
