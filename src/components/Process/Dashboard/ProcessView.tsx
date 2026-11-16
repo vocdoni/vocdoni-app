@@ -38,7 +38,12 @@ export const ProcessView = () => {
     },
     ...(canceled
       ? []
-      : [{ label: t('process.results'), route: generatePath(Routes.dashboard.processResults, { id }) }]),
+      : [
+          {
+            label: t('votes.page.tab.results', { defaultValue: 'Results' }),
+            route: generatePath(Routes.dashboard.processResults, { id }),
+          },
+        ]),
   ]
   // RoutedTabs matches the end of the path, which cannot tell the index from the others: match exactly.
   const value = (tabs.find((tab) => matchPath({ path: tab.route, end: true }, pathname)) ?? tabs[0]).route

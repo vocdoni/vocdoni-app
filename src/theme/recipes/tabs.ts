@@ -12,7 +12,7 @@ const line = {
     gap: '6',
     flexWrap: 'nowrap',
     overflowX: 'auto',
-    scrollbarWidth: 'none',
+    scrollbarWidth: '[none]',
     '&::-webkit-scrollbar': { display: 'none' },
   },
   // 44px tall with 15px text up to `lg`, where it is the text and a 10px gap above the line.

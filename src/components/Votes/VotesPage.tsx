@@ -149,10 +149,7 @@ export const VotesPage = () => {
               path={Routes.dashboard.processes[filter]}
               pagination={{
                 totalItems: rest.length,
-                currentPage,
                 lastPage,
-                previousPage: currentPage > 1 ? currentPage - 1 : null,
-                nextPage: currentPage * limit < rest.length ? currentPage + 1 : null,
               }}
             >
               <RoutedPaginatedTableFooter />
@@ -183,14 +180,24 @@ export const VotesPage = () => {
 
       {showToolbar && (
         <Flex direction={{ base: 'column', md: 'row' }} justify='space-between' gap='3'>
-          {/* One line that scrolls sideways and bleeds to the screen edge on phones (the page gutter is 6). */}
-          <Box order={{ base: 2, md: 1 }} overflowX='auto' mx={{ base: '-6', md: '0' }} px={{ base: '6', md: '0' }}>
+          {/* On phones: one line that scrolls sideways and bleeds to the screen edge (the page gutter is 6). A scroll
+              box clips what is drawn outside its children, so it keeps room for the chips' 1px ring on every side.
+              From md the chips fit, nothing scrolls and nothing is clipped. */}
+          <Box
+            order={{ base: 2, md: 1 }}
+            overflowX={{ base: 'auto', md: 'visible' }}
+            scrollbar='hidden'
+            mx={{ base: '-6', md: '0' }}
+            my={{ base: '-0.5', md: '0' }}
+            px={{ base: '6', md: '0' }}
+            py={{ base: '0.5', md: '0' }}
+          >
             <HStack
               role='group'
               aria-label={t('votes.list.filter_label', { defaultValue: 'Filter by state' })}
               gap='2'
               flexWrap='nowrap'
-              w='max-content'
+              w='[max-content]'
             >
               {VOTE_FILTERS.map((item) => (
                 <Button
@@ -200,8 +207,8 @@ export const VotesPage = () => {
                   aria-pressed={item === filter}
                   onClick={() => go(item, query)}
                 >
-                  {filterLabel[item]}{' '}
-                  <Text as='span' textStyle='figure' color='fg.subtle'>
+                  {filterLabel[item]}
+                  <Text as='span' textStyle='figure' fontWeight='normal' color='fg.subtle'>
                     {quantity(counts[item])}
                   </Text>
                 </Button>

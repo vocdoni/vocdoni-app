@@ -42,7 +42,7 @@ const renderSummary = (election: VotingProcessResponse, voteCount?: number) => {
   setReactProvidersMock({
     useElection: () => ({
       election,
-      results: voteCount === undefined ? null : { voteCount },
+      results: voteCount === undefined ? null : { questions: [{ questionId: 'q1', voteCount }] },
     }),
   })
   return render(

@@ -47,6 +47,16 @@ const question = (status: string, over: Record<string, unknown> = {}) => ({
     { title: { default: 'No' }, value: 1 },
   ],
   type: 'singlechoice',
+  ballotProtocol: {
+    maxCount: 1,
+    maxValue: 1,
+    maxVoteOverwrites: 0,
+    costExponent: 1,
+    uniqueValues: false,
+    maxTotalCost: 0,
+    costFromWeight: false,
+  },
+  secretUntilTheEnd: false,
   status,
   ...over,
 })
@@ -118,7 +128,7 @@ describe('VoteListRow content', () => {
   it('shows the outcome and the turnout of a closed single-question vote', () => {
     const results = {
       id: 'p1',
-      questions: [{ questionId: 'q1', finalResults: true, voteCount: 205, results: [[198], [7]] }],
+      questions: [{ questionId: 'q1', finalResults: true, voteCount: 205, results: [['198', '7']] }],
     } as unknown as VotingProcessResultsResponse
     renderRow(make({ census: { size: 312 }, questions: [question('ENDED')] }), { results })
     expect(screen.getByText(/Yes, 198 to 7/)).toBeInTheDocument()
@@ -128,7 +138,7 @@ describe('VoteListRow content', () => {
   it('shows the turnout of the promoted vote as a progress bar', () => {
     const results = {
       id: 'p1',
-      questions: [{ questionId: 'q1', finalResults: false, voteCount: 184, results: [[100], [84]] }],
+      questions: [{ questionId: 'q1', finalResults: false, voteCount: 184, results: [['100', '84']] }],
     } as unknown as VotingProcessResultsResponse
     renderRow(make(), { promoted: true, results })
     expect(screen.getByRole('progressbar', { name: '184 of 312 people voted, 59%' })).toBeInTheDocument()
