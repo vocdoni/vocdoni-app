@@ -48,6 +48,16 @@ const nudged = (category: string) => {
   return Object.fromEntries(stockPixels(category).map(([name, px]) => [name, { value: `${off(px)}px` }]))
 }
 
+// Control heights are sizes, which the probe does not look for, but Chakra's InputGroup pads an input by its height to
+// clear an icon: a 44px touch field would read as stock spacing (11). One pixel more moves that padding too.
+const nudgedControls = {
+  control: Object.fromEntries(
+    stockPixels('sizes')
+      .filter(([name]) => name.startsWith('control.'))
+      .map(([name, px]) => [name.slice('control.'.length), { value: `${px + 1}px` }])
+  ),
+}
+
 // ---------------------------------------------------------------------------
 // Colours: each semantic colour token gets its own saturated hue, at a lightness that fits its role, so no surface,
 // state, status or chart colour shares a value with another and none of them is grey.
@@ -148,6 +158,7 @@ export const stressSystem = withEscapeHatch(
         radii: nudged('radii'),
         fontSizes: nudged('fontSizes'),
         spacing: nudged('spacing'),
+        sizes: nudgedControls,
       },
       semanticTokens: { colors, shadows } as NonNullable<SystemConfig['theme']>['semanticTokens'],
     },

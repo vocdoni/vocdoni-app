@@ -24,6 +24,12 @@ const STRESS_EXCEPTIONS = [
     selector: 'input[required][aria-hidden="true"][tabindex="-1"]',
     kinds: ['grey'],
   },
+  {
+    // WhatsApp's contact button keeps the brand's own look, black on its green, like the palette spec leaves out its
+    // steps: no theme token is meant to reach it.
+    selector: 'a[href^="https://wa.me/"]',
+    kinds: ['grey'],
+  },
 ]
 
 const KINDS = ['font', 'font-size', 'radius', 'spacing', 'grey', 'palette', 'shadow']
