@@ -1,6 +1,7 @@
 import { useElectionAuth } from '@vocdoni/react-components'
 import { createContext, useContext, useEffect, useState, type Dispatch, type SetStateAction } from 'react'
 import { AuthFieldType, CensusData, TwoFaFieldType } from './basics'
+import { readCertReturn, type CertReturn } from './cert-auth'
 
 // Contact info captured at step 0 so step 1 can resend the challenge. The auth
 // tokens themselves live in the ProcessProvider session, not here.
@@ -21,6 +22,11 @@ type CspAuthContextState = {
   processId?: string
   // Back to step 0 with no stored contact.
   resetFlow: () => void
+  // A census whose voters sign in with a digital certificate.
+  certAuth: boolean
+  // The certificate gateway's answer found in the URL fragment on load, until it is handled.
+  certReturn: CertReturn | null
+  setCertReturn: (certReturn: CertReturn | null) => void
 }
 
 const CspAuthContext = createContext<CspAuthContextState | undefined>(undefined)
@@ -37,7 +43,9 @@ export const CspAuthProvider = ({
 }) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [authData, setAuthData] = useState<CspAuthData>({})
+  const [certReturn, setCertReturn] = useState<CertReturn | null>(null)
   const { connected } = useElectionAuth()
+  const certAuth = !!censusData?.certAuth
 
   // Bails out when the flow is already at its start, so the mount-time run
   // doesn't re-render every consumer for nothing.
@@ -58,6 +66,18 @@ export const CspAuthProvider = ({
   // a pending step 1 must not carry over to another process.
   useEffect(resetFlow, [processId])
 
+  // The certificate gateway sends the voter back with its answer in the fragment: read it once the
+  // process (and so whether its census uses certificates) is known.
+  useEffect(() => {
+    if (!processId || !certAuth) return
+    const found = readCertReturn(processId)
+    if (found) setCertReturn(found)
+  }, [processId, certAuth])
+
+  useEffect(() => {
+    if (connected) setCertReturn(null)
+  }, [connected])
+
   const value: CspAuthContextState = {
     currentStep,
     setCurrentStep,
@@ -69,6 +89,9 @@ export const CspAuthProvider = ({
     twoFaFields: censusData?.twoFaFields || [],
     processId,
     resetFlow,
+    certAuth,
+    certReturn,
+    setCertReturn,
   }
 
   return <CspAuthContext.Provider value={value}>{children}</CspAuthContext.Provider>

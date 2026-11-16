@@ -24,10 +24,17 @@ import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
 import { hashMemberPassword } from '~utils/member-password'
 import { CSPStep0FormData, CSPStep0RequestData, useCspAuth0, useCspAuthPending, useIsCspAuthBusy } from './basics'
+import { CertAuthStart } from './CertAuth'
 import { useCspAuthContext } from './CSPStepsProvider'
 import { getAuthFieldInputType, getAuthFieldLabel, getContactFieldLabel } from './fields'
 
 export const Step0Base = () => {
+  const { certAuth } = useCspAuthContext()
+  // a certificate census never takes typed login fields
+  return certAuth ? <CertAuthStart /> : <TypedStep0 />
+}
+
+const TypedStep0 = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const { setCurrentStep, setAuthData, authFields, twoFaFields } = useCspAuthContext()

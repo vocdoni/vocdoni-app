@@ -4,6 +4,7 @@ import { DialogHeader } from '~components/ui/DialogHeader'
 import { useElection } from '@vocdoni/react-components'
 import type { ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
+import { CertAuthReturnDialog } from './CertAuth'
 import { CspAuthProvider, useCspAuthContext, useOptionalCspAuthContext } from './CSPStepsProvider'
 import { Step0Base } from './Step0'
 import { Step1Base } from './Step1'
@@ -45,7 +46,9 @@ export const CspAuthSession = ({ children }: { children: ReactNode }) => {
   // The v2 process read carries the census auth configuration inline
   // (CensusSpec.authFields/twoFaFields) — no separate census bundle fetch.
   const census = election?.census
-  const censusData = census ? { authFields: census.authFields ?? [], twoFaFields: census.twoFaFields ?? [] } : null
+  const censusData = census
+    ? { authFields: census.authFields ?? [], twoFaFields: census.twoFaFields ?? [], certAuth: !!census.certAuth }
+    : null
 
   // Always mount the provider, even before the process loads: swapping it in
   // conditionally would change the element type around `children` and remount
@@ -53,6 +56,8 @@ export const CspAuthSession = ({ children }: { children: ReactNode }) => {
   return (
     <CspAuthProvider censusData={censusData} processId={election?.id}>
       {children}
+      {/* once per session: handles the certificate gateway's answer after the redirect back */}
+      <CertAuthReturnDialog />
     </CspAuthProvider>
   )
 }

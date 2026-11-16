@@ -8,6 +8,8 @@ import { useOptionalCspAuthContext } from './CSPStepsProvider'
 export type CensusData = {
   authFields: OrgMemberAuthField[]
   twoFaFields: OrgMemberTwoFaField[]
+  // voters prove their national ID with a digital certificate (cert-auth.ts)
+  certAuth?: boolean
 }
 
 export type AuthFieldType = OrgMemberAuthField
