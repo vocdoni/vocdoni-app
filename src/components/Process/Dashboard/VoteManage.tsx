@@ -1,4 +1,4 @@
-import { Button, Card, Flex, Grid, HStack, Icon, IconButton, Link, Stack, Text } from '@chakra-ui/react'
+import { Button, Card, Flex, Grid, HStack, Icon, IconButton, Link, Progress, Stack, Text } from '@chakra-ui/react'
 import { isBeforeStart, processVoteCount, resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { useElection } from '@vocdoni/react-components'
@@ -6,10 +6,10 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as RouterLink, Navigate } from 'react-router'
 import { useActions } from '~components/Actions/ActionsContext'
-import { CensusRuler } from '~components/ui/CensusRuler'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { SectionHeader } from '~components/ui/SectionHeader'
+import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
 import { useCanManageVotes } from '~queries/votes'
 import { useQuestionStatusAction } from '~queries/question-status'
@@ -113,7 +113,7 @@ export const VoteManage = () => {
           ? t('votes.manage.next.open', { defaultValue: 'Next: open question {{numbers}}', numbers })
           : t('votes.manage.next.resume', { defaultValue: 'Next: resume question {{numbers}}', numbers })
   }
-  const description = [...countParts, next].filter(Boolean).join(' · ')
+  const description = countParts.join(' · ')
 
   const confirmClose = async () => {
     if (!closing) return
@@ -140,31 +140,21 @@ export const VoteManage = () => {
     )
     if (state === 'toOpen') {
       return (
-        <HStack gap='2' w={{ base: 'full', md: 'auto' }} justify='flex-end' wrap='wrap'>
-          {!started && (
-            <Text textStyle='caption' color='fg.subtle'>
-              {t('votes.manage.starts', {
-                defaultValue: 'The vote starts {{date}}.',
-                date: longDate(election.startDate),
-              })}
-            </Text>
-          )}
-          <Button
-            variant='outline'
-            size='sm'
-            w={{ base: 'full', md: 'auto' }}
-            loading={isLoading(question, 'ready')}
-            disabled={busy || !started}
-            onClick={run('ready')}
-          >
-            {t('votes.manage.open', { defaultValue: 'Open' })}
-          </Button>
-        </HStack>
+        <Button
+          variant='outline'
+          size='sm'
+          flexShrink={0}
+          loading={isLoading(question, 'ready')}
+          disabled={busy || !started}
+          onClick={run('ready')}
+        >
+          {t('votes.manage.open', { defaultValue: 'Open' })}
+        </Button>
       )
     }
     const isOpen = state === 'open'
     return (
-      <HStack gap='2' w={{ base: 'full', md: 'auto' }} justify='flex-end'>
+      <HStack gap='2' w={{ base: 'full', md: 'auto' }} flexShrink={0}>
         <Button
           variant='outline'
           size='sm'
@@ -182,140 +172,209 @@ export const VoteManage = () => {
     )
   }
 
-  const renderDetails = (question: VotingProcessQuestion, number: number, state: QuestionState) => {
+  const renderClosed = (question: VotingProcessQuestion, number: number, state: QuestionState) => {
     const questionResults = question.results
-    const electorate = questionElectorate(question, election)
     const count = questionResults?.voteCount ?? 0
+    const turnout = percentOf(count, questionElectorate(question, election))
     const toggleId = `vote-manage-result-${question.id}`
-    if (state === 'closed') {
-      const summary = outcome(questionOutcome(question, questionResults, { weighted }))
-      const turnout = percentOf(count, electorate)
-      const open = !!shown[question.id]
-      return (
-        <>
-          <HStack gap='2'>
-            <Text textStyle='body-sm' color='fg.subtle'>
-              {[
-                summary,
-                turnout !== undefined
-                  ? t('votes.manage.turnout', { defaultValue: '{{percent}}% turnout', percent: turnout })
-                  : null,
-              ]
-                .filter(Boolean)
-                .join(' · ')}
-            </Text>
-            <IconButton
-              variant='disclosure'
-              size='sm'
-              aria-expanded={open}
-              aria-controls={toggleId}
-              aria-label={t('votes.manage.toggle_result', {
-                defaultValue: 'Show the result of question {{number}}',
-                number,
-              })}
-              onClick={() => setShown((current) => ({ ...current, [question.id]: !open }))}
-            >
-              <Icon as={ChevronDownIcon} />
-            </IconButton>
-          </HStack>
-          <div id={toggleId} hidden={!open}>
-            {open && <QuestionResultBars question={question} results={questionResults} />}
-          </div>
-        </>
-      )
-    }
-    if (state !== 'open') return null
+    const open = !!shown[question.id]
+    const summary = [
+      outcome(questionOutcome(question, questionResults, { weighted })),
+      turnout !== undefined
+        ? t('votes.manage.turnout', { defaultValue: '{{percent}}% turnout', percent: turnout })
+        : null,
+    ]
+      .filter(Boolean)
+      .join(' · ')
     return (
-      <Stack gap='3'>
-        {question.description && (
-          <Text textStyle='body-sm' color='fg.muted' lineClamp={3}>
-            {text(question.description)}
-          </Text>
-        )}
-        <Stack gap='1' maxW={{ md: 'turnout.max' }}>
-          <Text textStyle='caption' color='fg.subtle'>
-            {t('votes.manage.question_voted', {
-              defaultValue: '{{voted}} of {{total}} voted',
-              voted: quantity(count),
-              total: electorate ? quantity(electorate) : '?',
-            })}
-          </Text>
-          <CensusRuler
-            value={count}
-            max={electorate}
-            label={t('votes.manage.question_ruler', {
-              defaultValue: 'Question {{number}}: {{voted}} of {{total}} voted',
-              number,
-              voted: quantity(count),
-              total: electorate ? quantity(electorate) : '?',
-            })}
-          />
-        </Stack>
-        {question.secretUntilTheEnd && (
-          <HStack gap='2' color='fg.subtle'>
-            <Icon as={LockIcon} />
-            <Text textStyle='body-sm'>
-              {t('votes.manage.locked', { defaultValue: 'Results show when the question closes.' })}
+      <Stack gap='3' minW='0'>
+        {/* One line from lg: title, result, state and the disclosure; below lg the result drops under the title. */}
+        <Flex align='center' gap='3'>
+          <Stack gap='0.5' flex='1' minW='0'>
+            <Text textStyle='item-title' lineClamp={{ base: 2, lg: 1 }}>
+              {text(question.title)}
             </Text>
-          </HStack>
+            <Text textStyle='meta' color='fg.subtle' display={{ lg: 'none' }}>
+              {summary}
+            </Text>
+          </Stack>
+          <Text textStyle='meta' color='fg.subtle' display={{ base: 'none', lg: 'block' }} whiteSpace='nowrap'>
+            {summary}
+          </Text>
+          <ProcessStatus kind='question' state={state} display={{ base: 'none', md: 'inline-flex' }} />
+          <IconButton
+            variant='disclosure'
+            size='sm'
+            aria-expanded={open}
+            aria-controls={toggleId}
+            aria-label={t('votes.manage.toggle_result', {
+              defaultValue: 'Show the result of question {{number}}',
+              number,
+            })}
+            onClick={() => setShown((current) => ({ ...current, [question.id]: !open }))}
+          >
+            <Icon as={ChevronDownIcon} />
+          </IconButton>
+        </Flex>
+        <div id={toggleId} hidden={!open}>
+          {open && <QuestionResultBars question={question} results={questionResults} />}
+        </div>
+      </Stack>
+    )
+  }
+
+  const renderWaiting = (question: VotingProcessQuestion, number: number, state: QuestionState) => (
+    <Stack gap='2' minW='0'>
+      <Flex align='center' gap='3'>
+        <Text textStyle='item-title' color='fg.muted' flex='1' minW='0' lineClamp={{ base: 2, lg: 1 }}>
+          {text(question.title)}
+        </Text>
+        <ProcessStatus kind='question' state={state} />
+        {renderButtons(question, number, state)}
+      </Flex>
+      {state === 'toOpen' && !started && canManage && !ended && (
+        <Text textStyle='meta' color='fg.subtle'>
+          {t('votes.manage.starts', { defaultValue: 'The vote starts {{date}}.', date: longDate(election.startDate) })}
+        </Text>
+      )}
+    </Stack>
+  )
+
+  const renderActive = (question: VotingProcessQuestion, number: number, state: QuestionState) => {
+    const electorate = questionElectorate(question, election)
+    const count = question.results?.voteCount ?? 0
+    const share = percentOf(count, electorate)
+    const buttons = renderButtons(question, number, state)
+    return (
+      <Stack gap='3' minW='0'>
+        <Stack gap='0.5'>
+          <Flex align='baseline' justify='space-between' gap='3'>
+            <Text as='h3' textStyle='item-title'>
+              {text(question.title)}
+            </Text>
+            <ProcessStatus kind='question' state={state} />
+          </Flex>
+          {question.description && (
+            <Text textStyle='meta' color='fg.subtle' lineClamp={3}>
+              {text(question.description)}
+            </Text>
+          )}
+        </Stack>
+        <TurnoutBar
+          caption={t('votes.manage.question_voted', {
+            defaultValue: '{{voted}} of {{total}} voted',
+            voted: quantity(count),
+            total: electorate ? quantity(electorate) : '?',
+          })}
+          share={
+            share !== undefined ? t('votes.list.percent', { defaultValue: '{{percent}}%', percent: share }) : undefined
+          }
+          value={count}
+          max={electorate}
+          label={t('votes.manage.question_ruler', {
+            defaultValue: 'Question {{number}}: {{voted}} of {{total}} voted',
+            number,
+            voted: quantity(count),
+            total: electorate ? quantity(electorate) : '?',
+          })}
+        />
+        {(question.secretUntilTheEnd || buttons) && (
+          // The note on the left and the buttons on the right; on a phone the buttons take the row, in equal parts.
+          <Flex direction={{ base: 'column', md: 'row' }} align={{ base: 'stretch', md: 'center' }} gap='3'>
+            <HStack gap='2' color='fg.subtle' flex='1' minW='0'>
+              {question.secretUntilTheEnd && (
+                <>
+                  <Icon as={LockIcon} />
+                  <Text textStyle='meta'>
+                    {t('votes.manage.locked', { defaultValue: 'Results show when the question closes.' })}
+                  </Text>
+                </>
+              )}
+            </HStack>
+            {buttons}
+          </Flex>
         )}
       </Stack>
     )
   }
 
   return (
-    <Stack gap='6'>
-      <Card.Root variant='frame'>
-        <Card.Body>
-          <Flex wrap='wrap' align='center' gap='4'>
-            <ProcessStatus state={deriveVoteState(election, now)} />
-            <Text textStyle='control'>
-              {t('votes.manage.voted_any', {
-                defaultValue: 'At least {{voted}} of {{total}} voted on a question',
-                voted: quantity(voted),
-                total: total ? quantity(total) : '?',
-              })}
-            </Text>
-            <CensusRuler
-              flex='1'
-              minW='48'
-              value={voted}
-              max={total}
-              label={t('votes.manage.ruler_label', {
-                defaultValue: '{{voted}} of {{total}} voted on at least one question',
-                voted: quantity(voted),
-                total: total ? quantity(total) : '?',
-              })}
-            />
-            {percent !== undefined && (
-              <Text textStyle='figure' color='fg.subtle'>
-                {percent}%
+    <Stack gap={{ base: '4', md: '6' }}>
+      <Stack gap='2'>
+        <Card.Root variant='frame'>
+          <Card.Body>
+            <Flex wrap='wrap' align='center' columnGap={{ base: '3', lg: '5' }} rowGap='2'>
+              <ProcessStatus state={deriveVoteState(election, now)} />
+              <Text textStyle='control' fontWeight='medium-plus'>
+                {t('votes.manage.voted_any', {
+                  defaultValue: 'At least {{voted}} of {{total}} voted on a question',
+                  voted: quantity(voted),
+                  total: total ? quantity(total) : '?',
+                })}
               </Text>
-            )}
-            <Link asChild>
-              <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-                {t('votes.manage.summary_link', { defaultValue: 'Summary' })}
-              </RouterLink>
-            </Link>
-          </Flex>
-          {end && (
-            <Text textStyle='body-sm' color='fg.subtle' mt='2'>
-              {ended
-                ? t('votes.manage.closed', { defaultValue: 'The vote closed on {{date}}.', date: longDate(end) })
-                : t('votes.manage.closes', {
-                    defaultValue: 'The vote closes {{date}}. Questions you have not closed will close then.',
-                    date: longDate(end),
-                  })}
-            </Text>
-          )}
-        </Card.Body>
-      </Card.Root>
+              {/* A plain bar: the strip only says how far the vote has got; the Summary tab has the scale. */}
+              <Progress.Root
+                variant='turnout'
+                value={total ? Math.min(percent ?? 0, 100) : 0}
+                flex='1'
+                minW='20'
+                translations={{
+                  value: () =>
+                    t('votes.manage.ruler_label', {
+                      defaultValue: '{{voted}} of {{total}} voted on at least one question',
+                      voted: quantity(voted),
+                      total: total ? quantity(total) : '?',
+                    }),
+                }}
+              >
+                <Progress.Track>
+                  <Progress.Range />
+                </Progress.Track>
+              </Progress.Root>
+              {percent !== undefined && (
+                <Text textStyle='figure' color='fg.subtle'>
+                  {t('votes.list.percent', { defaultValue: '{{percent}}%', percent })}
+                </Text>
+              )}
+              <Link asChild>
+                <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
+                  {t('votes.manage.summary_link', { defaultValue: 'Summary' })}
+                </RouterLink>
+              </Link>
+            </Flex>
+          </Card.Body>
+        </Card.Root>
+        {end && (
+          <Text textStyle='meta' color='fg.subtle'>
+            {ended
+              ? t('votes.manage.closed', { defaultValue: 'The vote closed on {{date}}.', date: longDate(end) })
+              : t('votes.manage.closes', {
+                  defaultValue: 'The vote closes {{date}}. Questions you have not closed will close then.',
+                  date: longDate(end),
+                })}
+          </Text>
+        )}
+      </Stack>
 
       <Card.Root variant='frame' as='section' aria-labelledby={HEADING_ID}>
         <Card.Header>
           <SectionHeader
-            title={<span id={HEADING_ID}>{t('process.questions', { defaultValue: 'Questions' })}</span>}
+            title={
+              <>
+                <span id={HEADING_ID}>{t('process.questions', { defaultValue: 'Questions' })}</span>{' '}
+                <Text as='span' textStyle='figure' fontWeight='normal' color='fg.subtle'>
+                  {quantity(election.questions.length)}
+                </Text>
+              </>
+            }
             description={description || undefined}
+            actions={
+              next ? (
+                <Text textStyle='meta' color='fg.subtle'>
+                  {next}
+                </Text>
+              ) : undefined
+            }
           />
         </Card.Header>
         {election.questions.map((question, index) => {
@@ -324,27 +383,15 @@ export const VoteManage = () => {
           const active = state === 'open' || state === 'paused'
           return (
             <Card.Body key={question.id} data-current={active ? '' : undefined}>
-              <Grid
-                templateColumns={{
-                  base: '[{sizes.6} minmax(0, 1fr)]',
-                  md: '[{sizes.6} minmax(0, 1fr) auto]',
-                }}
-                columnGap='3'
-                rowGap='2'
-              >
-                <Text textStyle='figure' color={active ? 'accent.fg' : 'fg.subtle'}>
+              <Grid templateColumns='[{sizes.6} minmax(0, 1fr)]' columnGap='2'>
+                <Text textStyle='figure' color={active ? 'accent.fg' : 'fg.subtle'} mt='0.5'>
                   {number}
                 </Text>
-                <Stack gap='2' minW='0'>
-                  <Text textStyle='control' fontWeight={active ? 'medium-plus' : undefined}>
-                    {text(question.title)}
-                  </Text>
-                  {renderDetails(question, number, state)}
-                </Stack>
-                <Stack gap='2' gridColumn={{ base: '2', md: 'auto' }} align={{ base: 'stretch', md: 'flex-end' }}>
-                  <ProcessStatus kind='question' state={state} />
-                  {renderButtons(question, number, state)}
-                </Stack>
+                {state === 'closed' || state === 'canceled'
+                  ? renderClosed(question, number, state)
+                  : active
+                    ? renderActive(question, number, state)
+                    : renderWaiting(question, number, state)}
               </Grid>
             </Card.Body>
           )

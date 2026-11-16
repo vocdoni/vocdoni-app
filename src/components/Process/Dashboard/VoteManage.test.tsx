@@ -84,7 +84,8 @@ describe('VoteManage', () => {
 
   it('counts the questions, hints the next step and toggles a closed result', async () => {
     show(build())
-    expect(screen.getByText(/1 closed · 1 open · 1 to open · Next: close question 2/)).toBeInTheDocument()
+    expect(screen.getByText('1 closed · 1 open · 1 to open')).toBeInTheDocument()
+    expect(screen.getByText('Next: close question 2')).toBeInTheDocument()
     const toggle = screen.getByRole('button', { name: 'Show the result of question 1' })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
     await userEvent.click(toggle)
