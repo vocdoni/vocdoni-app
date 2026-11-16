@@ -207,7 +207,8 @@ export const VotesPage = () => {
                   aria-pressed={item === filter}
                   onClick={() => go(item, query)}
                 >
-                  {filterLabel[item]}
+                  {/* The space keeps the accessible name "All 4"; a flex gap draws the visual one. */}
+                  {filterLabel[item]}{' '}
                   <Text as='span' textStyle='figure' fontWeight='normal' color='fg.subtle'>
                     {quantity(counts[item])}
                   </Text>

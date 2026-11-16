@@ -188,8 +188,11 @@ describe('useFormDraftSaver', () => {
     await act(() => result.current.saveDraft(false))
 
     expect(update).toHaveBeenCalledTimes(2)
-    expect(invalidate).toHaveBeenCalledTimes(2)
-    expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-2') })
+    const priceKey = JSON.stringify(QueryKeys.process.price('draft-2'))
+    const repriced = invalidate.mock.calls.filter(([filters]) => JSON.stringify(filters?.queryKey) === priceKey)
+    expect(repriced).toHaveLength(2)
+    // Every save also refreshes the votes list, so a renamed draft shows its new title there.
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.organization.votesAll })
   })
 
   it('explains a draft locked by its payment once, not on every auto-save', async () => {

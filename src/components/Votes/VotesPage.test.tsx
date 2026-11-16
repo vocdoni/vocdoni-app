@@ -125,16 +125,16 @@ describe('VotesPage', () => {
     renderPage()
     const expected = { All: '9', Live: '3', Ready: '2', Drafts: '1', Closed: '3' }
     for (const [label, count] of Object.entries(expected)) {
-      expect(screen.getByRole('button', { name: new RegExp(`^${label}\\s*${count}$`) })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: new RegExp(`^${label} ${count}$`) })).toBeInTheDocument()
     }
-    expect(screen.getByRole('button', { name: /^All\s*9$/ })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByRole('button', { name: /^Live\s*3$/ })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: /^All 9$/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /^Live 3$/ })).toHaveAttribute('aria-pressed', 'false')
   })
 
   it('lists only live and paused votes on the live filter', () => {
     renderPage('/admin/processes/live/1')
     expect(articles()).toHaveLength(3)
-    expect(screen.getByRole('button', { name: /^Live\s*3$/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /^Live 3$/ })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.queryByText('Eleccions')).not.toBeInTheDocument()
   })
 
