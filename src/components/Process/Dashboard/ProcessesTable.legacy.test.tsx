@@ -2,7 +2,7 @@ import type { VotingProcessResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import legacyProcesses from './__fixtures__/legacy-processes.json'
+import legacyProcesses from '~components/Votes/__fixtures__/legacy-processes.json'
 import ProcessesTable from './ProcessesTable'
 
 vi.mock('~i18n/use-date-fns', () => ({
