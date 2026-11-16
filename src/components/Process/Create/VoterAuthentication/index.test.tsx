@@ -269,6 +269,52 @@ describe('VoterAuthentication', () => {
     })
   })
 
+  it('offers the digital certificate only when a gateway is configured', async () => {
+    const user = userEvent.setup()
+    render(<TestForm />)
+    const dialog = await openDialog(user)
+    expect(dialog.queryByRole('checkbox', { name: /digital certificate/i })).not.toBeInTheDocument()
+  })
+
+  it('builds a certificate census on the national ID, keeping the code choices', async () => {
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />, { appEnv: { CERT_GATEWAY_URL: 'https://cert.test:15140' } })
+    const dialog = await openDialog(user)
+
+    await user.click(dialog.getByRole('checkbox', { name: /digital certificate/i }))
+    expect(dialog.getByRole('checkbox', { name: /national id/i })).toBeChecked()
+    expect(dialog.getByRole('checkbox', { name: /member number/i })).toBeDisabled()
+    await chooseCode(user, 'email')
+
+    await waitFor(() =>
+      expect(mockValidateCensus).toHaveBeenLastCalledWith({
+        orgAddress: '0x1',
+        census: { groupId: 'group-1', authFields: ['nationalId'], twoFaFields: ['email'], certAuth: true },
+      })
+    )
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
+    await user.click(dialog.getByTestId('voter-auth-save'))
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    expect(storedCensus()).toEqual({ credentials: ['nationalId'], use2FA: true, use2FAMethod: 'email', certAuth: true })
+  })
+
+  it('reports members of a certificate census with a missing or invalid DNI/NIE', async () => {
+    mockValidateCensus.mockRejectedValue(membersError({ memberIds: ['m1'], duplicates: [], missingData: ['m2', 'm3'] }))
+    const user = userEvent.setup()
+    render(
+      <TestForm
+        initialCensus={{ credentials: ['nationalId'], use2FA: false, use2FAMethod: 'email', certAuth: true }}
+      />,
+      { appEnv: { CERT_GATEWAY_URL: 'https://cert.test:15140' } }
+    )
+    const dialog = await openDialog(user)
+
+    expect(dialog.getByRole('checkbox', { name: /digital certificate/i })).toBeChecked()
+    const status = dialog.getByRole('status')
+    await waitFor(() => expect(status).toHaveTextContent('2 members are missing a valid DNI/NIE (missing or invalid).'))
+  })
+
   it('checks the census as it will be published, weighting and anonymity included', async () => {
     const user = userEvent.setup()
     render(<TestForm anonymousVoting weightedVote />)

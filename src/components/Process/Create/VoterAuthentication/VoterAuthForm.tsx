@@ -31,6 +31,7 @@ import { MemberCheck } from './MemberCheck'
 import { ProtectionMeter } from './ProtectionLevel'
 import { useCensusCheck } from './useCensusCheck'
 import {
+  CERT_AUTH_CREDENTIALS,
   CodeMethod,
   countedCredentials,
   fromCensus,
@@ -97,8 +98,13 @@ const formatList = (language: string, items: string[], type: 'conjunction' | 'di
  * - duplicates: the details plus one contact match another member's (either
  *   contact for voter's choice), so "Member Number and Email or Phone".
  */
-const describeFields = (t: TFunction, language: string, { credentials, codeMethod }: VoterAuthFormData) => {
-  const details = credentials.map((field) => getAuthFieldLabel(t, field))
+const describeFields = (t: TFunction, language: string, { credentials, codeMethod, certAuth }: VoterAuthFormData) => {
+  // A certificate census also leaves out members whose DNI/NIE is not a valid one.
+  const label = (field: string) =>
+    certAuth && field === 'nationalId'
+      ? t('voter_auth.cert.missing_label', { defaultValue: 'a valid DNI/NIE (missing or invalid)' })
+      : getAuthFieldLabel(t, field)
+  const details = credentials.map(label)
   // The backend leaves the password out of duplicate detection, so it never shares a clash.
   const duplicateDetails = credentials
     .filter((field) => field !== PASSWORD_CREDENTIAL)
@@ -124,7 +130,7 @@ const describeFields = (t: TFunction, language: string, { credentials, codeMetho
       'conjunction'
     ),
     /** The name of one part of the per-field breakdown: an auth field id, or 'contact'. */
-    of: (field: string) => (field === 'contact' ? (missingContact ?? field) : getAuthFieldLabel(t, field)),
+    of: (field: string) => (field === 'contact' ? (missingContact ?? field) : label(field)),
   }
 }
 
@@ -151,14 +157,15 @@ type VoterAuthFormProps = {
 export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthFormProps) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
-  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
+  const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting, CERT_GATEWAY_URL: certGatewayUrl } = useAppEnv()
   const { watch: watchProcess } = useFormContext<Process>()
   const [groupId, anonymousVoting, weightedVote] = watchProcess(['groupId', 'anonymousVoting', 'weightedVote'])
 
-  const { control, watch } = useForm<VoterAuthFormData>({ defaultValues: fromCensus(census) })
+  const { control, watch, setValue } = useForm<VoterAuthFormData>({ defaultValues: fromCensus(census) })
   const credentials = watch('credentials') ?? []
   const codeMethod = watch('codeMethod') ?? 'none'
-  const values: VoterAuthFormData = { credentials, codeMethod }
+  const certAuth = watch('certAuth') ?? false
+  const values: VoterAuthFormData = { credentials, codeMethod, certAuth }
   const configured = hasAuthConfig(values)
   // A password alone is refused before saving, so the backend never gets a census it would reject.
   const passwordAlone = passwordNeedsAnotherCredential(credentials, codeMethod)
@@ -292,6 +299,43 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                   defaultValue: 'Optional if you send a one-time code: voters can then sign in with the code alone.',
                 })}
               </Text>
+              {/* Offered only where a certificate gateway is configured, or to keep showing a saved choice. */}
+              {(certGatewayUrl || certAuth) && (
+                <Controller
+                  name='certAuth'
+                  control={control}
+                  render={({ field }) => (
+                    <CheckboxCard.Root
+                      size='sm'
+                      mb='3'
+                      checked={field.value}
+                      disabled={saving}
+                      onCheckedChange={({ checked }) => {
+                        field.onChange(checked === true)
+                        // the certificate proves the national ID: it is the only credential
+                        if (checked === true) setValue('credentials', [...CERT_AUTH_CREDENTIALS])
+                      }}
+                      {...optionCardStyles}
+                    >
+                      <CheckboxCard.HiddenInput />
+                      <CheckboxCard.Control px='3' py='2.5' gap='2.5'>
+                        <CheckboxCard.Indicator mt='0.5' />
+                        <CheckboxCard.Content gap='0.5'>
+                          <CheckboxCard.Label fontSize='sm' fontWeight='medium'>
+                            {t('voter_auth.cert.label', { defaultValue: 'Digital certificate' })}
+                          </CheckboxCard.Label>
+                          <CheckboxCard.Description fontSize='xs' color='fg.muted'>
+                            {t('voter_auth.cert.description', {
+                              defaultValue:
+                                'Voters sign in with their Spanish personal certificate (FNMT, idCAT…), which proves their DNI/NIE.',
+                            })}
+                          </CheckboxCard.Description>
+                        </CheckboxCard.Content>
+                      </CheckboxCard.Control>
+                    </CheckboxCard.Root>
+                  )}
+                />
+              )}
               <Controller
                 name='credentials'
                 control={control}
@@ -308,7 +352,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                             value={id}
                             size='sm'
                             flex='0 0 auto'
-                            disabled={saving || (!checked && atLimit)}
+                            disabled={saving || certAuth || (!checked && atLimit)}
                             {...optionCardStyles}
                           >
                             <CheckboxCard.HiddenInput />

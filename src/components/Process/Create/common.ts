@@ -39,6 +39,8 @@ export type Census = {
   credentials: string[]
   use2FA: boolean
   use2FAMethod: TwoFAMethod
+  // Voters prove their national ID with a digital certificate (credentials are then ['nationalId']).
+  certAuth?: boolean
 }
 
 export type Process = {

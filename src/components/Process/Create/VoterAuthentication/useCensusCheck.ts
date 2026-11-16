@@ -100,7 +100,13 @@ const fieldParts = (spec: CensusSpec) => [
       spec: { ...spec, authFields: [field], twoFaFields: undefined },
     })),
   ...(spec.twoFaFields?.length
-    ? [{ field: 'contact', spec: { ...spec, authFields: undefined, twoFaFields: spec.twoFaFields } }]
+    ? [
+        {
+          field: 'contact',
+          // certAuth needs authFields ['nationalId'], so the contact part is checked without it
+          spec: { ...spec, authFields: undefined, twoFaFields: spec.twoFaFields, certAuth: undefined },
+        },
+      ]
     : []),
 ]
 
