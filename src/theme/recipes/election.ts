@@ -72,14 +72,15 @@ export const ElectionQuestions = defineSlotRecipe({
     title: {
       display: 'block',
       textAlign: 'start',
-      lineHeight: 'shorter',
-      fontSize: '3xl',
+      lineHeight: 'question',
+      fontSize: 'ballot.question',
       fontWeight: 'semibold',
-      letterSpacing: 'heading.snug',
+      letterSpacing: 'heading.question',
       mb: '6',
     },
     description: {
-      fontSize: 'md',
+      fontSize: 'lg',
+      letterSpacing: 'voter',
       color: 'fg.muted',
       mb: '4',
     },
@@ -177,6 +178,25 @@ export const ElectionResults = defineSlotRecipe({
       width: 'full',
       minW: '0',
     },
+    // One choice of a result. In a final result with a clear winner the winner carries `data-winner` (a tick and
+    // a medium figure) and the other rows `data-dimmed` (their bar at 0.4). Live, provisional or tied results
+    // set neither: every bar stays in full ink.
+    choice: {
+      '&[data-dimmed] [data-scope="progress"][data-part="root"]': {
+        opacity: '[0.4]',
+      },
+      '&[data-winner] [data-result-figure]': {
+        fontWeight: 'medium',
+      },
+    },
+    // The winner's tick, so the result never rests on colour or weight alone.
+    winnerMark: {
+      display: 'inline-block',
+      boxSize: 'icon.sm',
+      mr: '1.5',
+      verticalAlign: '[-0.125em]',
+      flexShrink: 0,
+    },
   },
 })
 
@@ -214,7 +234,7 @@ export const QuestionChoice = defineSlotRecipe({
     // The option label is larger than body text and medium; the chosen one turns semibold (see `context`).
     // Set on both controls: the checkbox label would otherwise pass on its smaller one.
     label: {
-      fontSize: 'lg',
+      fontSize: 'ballot.option',
       lineHeight: 'short',
       fontWeight: 'medium',
       wordBreak: 'break-word',
@@ -409,8 +429,8 @@ export const QuestionsTip = defineSlotRecipe({
       alignItems: 'end',
     },
     text: {
-      fontSize: 'xs',
-      fontWeight: 'medium',
+      fontSize: 'lg',
+      letterSpacing: 'voter',
       color: 'fg.subtle',
     },
   },

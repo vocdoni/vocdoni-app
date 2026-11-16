@@ -9,7 +9,7 @@ export const ballotColors = defineSemanticTokens.colors({
       // follows the brand.
       border: {
         value: {
-          _light: '{colors.gray.300}',
+          _light: '{colors.border.field}',
           _dark: '{colors.ink.700}',
         },
       },

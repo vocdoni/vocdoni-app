@@ -58,8 +58,19 @@ const ballotAction: ButtonProps = {
   h: 'control.floating',
   minH: 'control.floating',
   borderRadius: 'xl',
-  textStyle: 'lg',
+  fontSize: 'ballot.option',
   fontWeight: 'semibold',
+}
+
+// A result's tally as a number (the SDK hands it over as a string, possibly with separators). NaN when there is none.
+const tally = (votes?: string) => Number((votes ?? '').replace(/[^\d.]/g, ''))
+
+// The index of the one choice with the most votes, or -1 on a tie at the top, no votes or no tally.
+const clearWinner = (choices: { votes?: string }[]) => {
+  const counts = choices.map((choice) => tally(choice.votes))
+  const top = Math.max(...counts)
+  if (!(top > 0)) return -1
+  return counts.filter((count) => count === top).length === 1 ? counts.indexOf(top) : -1
 }
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
@@ -635,26 +646,39 @@ export const electionComponents: ComponentsPartialDefinition = {
     const styles = recipe()
     const { t } = useTranslation('react-components')
     const hasMultipleQuestions = (questions?.length ?? 0) > 1
+    // Only a process that has ended has a final result; live and provisional ones keep every bar in full ink.
+    const { status } = useElection()
+    const isFinal = status === 'ENDED' || status === 'RESULTS'
     return (
       <Box css={[styles.wrapper, !hasMultipleQuestions ? { gridTemplateColumns: '1fr' } : undefined]} {...props}>
         {secretText ? <Text css={styles.secret}>{secretText}</Text> : null}
         {questions?.map((question) => {
+          const winner = isFinal ? clearWinner(question.choices) : -1
           return (
             <Box key={question.title} css={styles.question}>
               <Box css={styles.header}>
                 <Text css={styles.title}>{question.title}</Text>
               </Box>
               <Flex direction='column' css={styles.body}>
-                {question.choices.map((choice) => {
+                {question.choices.map((choice, index) => {
                   const percent = Number(choice.percent.replace('%', '')) || 0
+                  const isWinner = index === winner
                   return (
-                    <Box key={choice.title}>
+                    <Box
+                      key={choice.title}
+                      css={styles.choice}
+                      data-winner={isWinner ? '' : undefined}
+                      data-dimmed={winner >= 0 && !isWinner ? '' : undefined}
+                    >
                       {/* `votes` is empty for a question whose ballot type can't be inferred (e.g. a legacy
                         process with no type nor ballotProtocol): there is no tally to show, not a zero one. */}
                       <Flex css={styles.choiceHeader}>
-                        <Text css={styles.choiceTitle}>{choice.title}</Text>
+                        <Text css={styles.choiceTitle}>
+                          {isWinner ? <Icon as={CheckIcon} css={styles.winnerMark} aria-hidden /> : null}
+                          {choice.title}
+                        </Text>
                         {choice.votes ? (
-                          <Text css={styles.choiceVotes}>
+                          <Text css={styles.choiceVotes} data-result-figure=''>
                             {t('results.votes', {
                               votes: choice.votes,
                               percent: choice.percent,
