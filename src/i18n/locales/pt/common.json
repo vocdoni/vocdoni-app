@@ -6,6 +6,7 @@
   "actions": {
     "cancel": "Cancelar",
     "cancel_description": "A cancelar «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e anulará todos os votos já emitidos.",
+    "close": "Fechar",
     "confirm": "Confirmar",
     "continue": "Retomar imediatamente o processo, caso tenha sido pausado",
     "continue_description": "A retomar o processo de votação «{{ election.title.default }}»…",
@@ -25,8 +26,6 @@
     "waiting_title": "A aguardar a confirmação da transação…"
   },
   "add_new_org": "Adicionar uma nova organização",
-  "additional_actions": "Ações adicionais",
-  "all_processes": "Todos",
   "already_member": "Já tens uma conta?",
   "alt": {
     "images": {
@@ -95,8 +94,7 @@
     "unavailable": "A marcação está indisponível de momento. Tente novamente mais tarde."
   },
   "calendar": {
-    "max_duration_exceeded": "A duração excede o limite de {{ maxDuration }} dias. Reduz a duração da votação.",
-    "title": "Calendário"
+    "max_duration_exceeded": "A duração excede o limite de {{ maxDuration }} dias. Reduz a duração da votação."
   },
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar voto",
@@ -141,7 +139,6 @@
       "voted_partial": "Votou {{voted}}/{{total}}"
     }
   },
-  "census_size": "Número de participantes",
   "change_password": {
     "subtitle": "Introduz a palavra-passe atual e uma nova para atualizar as tuas credenciais.",
     "title": "Alterar palavra-passe"
@@ -171,7 +168,6 @@
     "restored_title": "Ligação restabelecida"
   },
   "contact_us": "Contacta-nos",
-  "control_panel": "Painel de controlo",
   "cookies": {
     "accept": "Aceitar",
     "aria_label": "Aviso de consentimento de cookies",
@@ -255,10 +251,6 @@
       "reset_form": "Repor formulário",
       "toggle_sidebar": "Alternar barra lateral"
     },
-    "process_view": {
-      "date_format": "d 'de' MMMM 'de' y",
-      "time_format": "p"
-    },
     "usage": {
       "description": "Acompanha a utilização da tua organização em relação aos seus limites.",
       "limit_exceeded_message": "A tua base de membros atingiu o limite de {{max}} membros.",
@@ -298,23 +290,13 @@
   "delete_my_account": "Eliminar a minha conta",
   "description": "Descrição",
   "do_it_later": "Fazer mais tarde",
-  "draft_processes": "Rascunhos",
   "drafts": {
     "actions": "Ações do rascunho",
-    "clone": "Clonar rascunho",
     "cloned_draft": "Rascunho clonado com sucesso",
     "cloned_draft_error": "Erro ao clonar o rascunho",
     "delete": "Eliminar rascunho",
     "deleted_draft": "Rascunho eliminado com sucesso",
-    "edit": "Editar rascunho",
-    "empty": "Não foram encontrados rascunhos",
-    "empty_description": "Cria um rascunho para começar.",
-    "load_error": "Não foi possível carregar os rascunhos",
-    "load_error_description": "Tenta novamente.",
-    "not_defined": "Ainda não definido",
-    "question_type": {
-      "mixed": "Misto"
-    }
+    "not_defined": "Ainda não definido"
   },
   "drag_handle": {
     "label": "Arrasta para reordenar"
@@ -347,10 +329,7 @@
   },
   "email": "Email",
   "email_placeholder": "nome@email.com",
-  "end_date": "Data de fim",
   "end_time": "Hora de fim",
-  "end_vote": "Terminar votação",
-  "ended_processes": "Terminados",
   "error": {
     "crash_description": "Recarrega a página ou volta ao Dashboard.",
     "crash_title": "Algo correu mal",
@@ -880,7 +859,6 @@
   "new_password_placeholder": "Introduz a tua nova palavra-passe",
   "new_vote": "Nova votação",
   "new_voting": "Nova votação",
-  "no_results_filtering": "O teu filtro de pesquisa atual não devolve resultados",
   "not_registred_yet": "Ainda não tens conta?",
   "oauth": {
     "link": {
@@ -990,7 +968,6 @@
     "success": "Palavra-passe atualizada com sucesso"
   },
   "passwords_do_not_match": "As palavras-passe não coincidem",
-  "pause_vote": "Pausar votação",
   "payment": {
     "stripe_unavailable": "Os pagamentos estão temporariamente indisponíveis. Tente novamente mais tarde."
   },
@@ -1225,12 +1202,6 @@
   "process_actions": {
     "manage": "Gerir no painel"
   },
-  "process_context": {
-    "clone_as_draft": "Clonar como rascunho",
-    "explorer": "Explorer",
-    "more_info": "Mais informações",
-    "public_voting_page": "Página pública de votação"
-  },
   "process_create": {
     "anonymity": {
       "title": "Votação anónima",
@@ -1301,6 +1272,12 @@
     },
     "settings": "Definições",
     "start_datetime": "Data e hora de início",
+    "voting_mode": {
+      "all": "Tudo de uma vez",
+      "by_question": "Pergunta a pergunta",
+      "by_question_hint": "As perguntas começam fechadas. Abres uma a uma a partir da página da votação, e o resultado de cada pergunta aparece quando a fechas.",
+      "label": "Como votam as pessoas"
+    },
     "weight": {
       "equal": "Uma pessoa, um voto",
       "title": "Peso de voto",
@@ -1311,17 +1288,6 @@
       "accordion_title": "Anexar vídeo (opcional)",
       "title": "Vídeo em direto"
     }
-  },
-  "process_list": {
-    "end_date": "Data de fim",
-    "not_yet": "Ainda não",
-    "recount": "Recontagem",
-    "results": "Resultados",
-    "results_live": "Em direto",
-    "start_date": "Data de início",
-    "status": "Estado",
-    "title": "Título",
-    "type": "Tipo"
   },
   "process_pdf": {
     "authentication": {
@@ -1479,12 +1445,10 @@
     "verify": "Verifique no explorador da blockchain:",
     "verify_process": "Ver processo"
   },
-  "questions_and_results": "Perguntas e resultados",
   "registration_failed": "Falha no registo",
   "registration_successful": "Registo concluído com sucesso",
   "remove_avatar": "Remover avatar",
   "reset_password_button": "Repor palavra-passe",
-  "result_visibility": "Visibilidade dos resultados",
   "results_state": {
     "enabled": "Ativado",
     "hidden_until_end": "Ocultos até ao fim",
@@ -1498,7 +1462,6 @@
   "results_type": {
     "title": "Tipo de votação"
   },
-  "resume_vote": "Retomar",
   "role": {
     "full_access": {
       "badge": "(Acesso total)",
@@ -1556,7 +1519,6 @@
   "spreadsheet": {
     "access_button": "Identificar-se"
   },
-  "start_date": "Data de início",
   "start_time": "Hora de início",
   "support": "Apoio",
   "support_chat": {
@@ -1700,8 +1662,6 @@
       "text": "Com o Vocdoni encontrámos uma solução muito boa, por ser uma infraestrutura neutra e verificável que garantia tanto a integridade da contagem como a privacidade dos votantes. Isto permitia que cada docente votasse uma única vez de forma segura e anónima."
     }
   },
-  "total_votes": "Total de votos",
-  "turnout": "Participação",
   "uploaded_image_preview": "Pré-visualização da imagem carregada",
   "uploader": {
     "avatar_upload_failed": "Falha no carregamento do avatar",
@@ -1762,7 +1722,6 @@
     "anonymous_receipt": "Voto anónimo: guarda este comprovativo agora, a plataforma não o pode voltar a mostrar.",
     "voted_title": "O teu voto foi registado com sucesso!"
   },
-  "vote_information": "Informações sobre o voto",
   "vote_overwrite": "Alteração do voto",
   "voter_anonymity": "Anonimato dos votantes",
   "voter_auth": {
@@ -1865,14 +1824,230 @@
       "title": "Início de sessão dos votantes"
     }
   },
+  "votes": {
+    "actions": {
+      "end_questions_one": "{{count}} pergunta vai fechar e o seu resultado fica final.",
+      "end_questions_many": "{{count}} perguntas vão fechar e os seus resultados ficam finais.",
+      "end_questions_other": "{{count}} perguntas vão fechar e os seus resultados ficam finais.",
+      "end_questions_unopened_one": "{{count}} delas nunca foi aberta e fica sem votos.",
+      "end_questions_unopened_many": "{{count}} delas nunca foram abertas e ficam sem votos.",
+      "end_questions_unopened_other": "{{count}} delas nunca foram abertas e ficam sem votos."
+    },
+    "clone": {
+      "all_at_once": "A cópia vota todas as perguntas de uma vez."
+    },
+    "empty": {
+      "body": "Cria a primeira quando quiseres. Escolhes o que se vota, quem vota e até quando, e publicas quando estiver pronta.",
+      "create": "Criar uma votação",
+      "legend": {
+        "closed": "Tens o resultado e podes duplicá-la para a próxima.",
+        "draft": "Preparas ao teu ritmo. Ninguém a vê e não custa nada.",
+        "live": "As pessoas votam e tu acompanhas a participação.",
+        "ready": "Está publicada e espera pelo dia que escolheste."
+      },
+      "legend_hint": "Cada votação aparece aqui com o seu estado.",
+      "legend_title": "O que vais ver aqui",
+      "title": "Ainda não há votações"
+    },
+    "list": {
+      "action": {
+        "continue": "Continuar",
+        "follow": "Acompanhar",
+        "manage": "Gerir votação",
+        "result": "Resultado",
+        "view": "Ver"
+      },
+      "by_question": "Pergunta a pergunta.",
+      "closed_on": "em {{date}}",
+      "closes": "Fecha em {{date}}.",
+      "delete_body": "Não pode ser desfeito.",
+      "delete_title": "Eliminar este rascunho?",
+      "duplicate_short": "Duplicar",
+      "filter": {
+        "all": "Todas",
+        "closed": "Fechadas",
+        "drafts": "Rascunhos",
+        "live": "A decorrer",
+        "ready": "Prontas"
+      },
+      "filter_label": "Filtrar por estado",
+      "meta": "{{questions}}, {{voters}}.",
+      "meta_no_voters": "{{questions}}.",
+      "meta_questions_one": "{{count}} pergunta",
+      "meta_questions_many": "{{count}} perguntas",
+      "meta_questions_other": "{{count}} perguntas",
+      "meta_voters_one": "{{count}} votante",
+      "meta_voters_many": "{{count}} votantes",
+      "meta_voters_other": "{{count}} votantes",
+      "more": "Mais ações",
+      "new": "Nova votação",
+      "no_match": "Nenhuma votação corresponde",
+      "no_match_hint": "Experimenta outro filtro ou outra pesquisa.",
+      "percent": "{{percent}}%",
+      "row_error": "Não foi possível mostrar esta votação.",
+      "ruler_label": "{{voted}} de {{total}} pessoas votaram, {{percent}}%",
+      "search": "Pesquisar uma votação",
+      "starts": "Começa em {{date}}.",
+      "title": "Votações",
+      "turnout": "{{percent}}% de participação.",
+      "voted_of": "{{voted}} de {{total}} votaram",
+      "warning": {
+        "end_passed": "A data de fecho já passou.",
+        "missing_end": "Ainda sem data de fecho."
+      }
+    },
+    "manage": {
+      "close": "Fechar",
+      "close_body_one": "«{{title}}» vai fechar com o {{count}} voto que tem agora e o seu resultado fica final. Uma pergunta fechada não pode ser reaberta.",
+      "close_body_many": "«{{title}}» vai fechar com os {{count}} votos que tem agora e o seu resultado fica final. Uma pergunta fechada não pode ser reaberta.",
+      "close_body_other": "«{{title}}» vai fechar com os {{count}} votos que tem agora e o seu resultado fica final. Uma pergunta fechada não pode ser reaberta.",
+      "close_cancel": "Manter aberta",
+      "close_confirm": "Fechar a pergunta {{number}}",
+      "close_title": "Fechar a pergunta {{number}}?",
+      "closed": "A votação fechou em {{date}}.",
+      "closes": "A votação fecha em {{date}}. As perguntas que não tiveres fechado fecham nessa altura.",
+      "count": {
+        "closed_one": "{{count}} fechada",
+        "closed_many": "{{count}} fechadas",
+        "closed_other": "{{count}} fechadas",
+        "open_one": "{{count}} aberta",
+        "open_many": "{{count}} abertas",
+        "open_other": "{{count}} abertas",
+        "paused_one": "{{count}} em pausa",
+        "paused_many": "{{count}} em pausa",
+        "paused_other": "{{count}} em pausa",
+        "to_open_one": "{{count}} por abrir",
+        "to_open_many": "{{count}} por abrir",
+        "to_open_other": "{{count}} por abrir"
+      },
+      "error": {
+        "busy": "Está em curso outra alteração. Tenta novamente dentro de alguns segundos.",
+        "stale": "A pergunta já tinha mudado de estado.",
+        "timeout": "Está a demorar mais do que o esperado. O estado vai atualizar sozinho.",
+        "title": "Não foi possível alterar a pergunta"
+      },
+      "locked": "Os resultados aparecem quando a pergunta fechar.",
+      "next": {
+        "close_one": "Seguinte: fechar a pergunta {{numbers}}",
+        "close_many": "Seguinte: fechar as perguntas {{numbers}}",
+        "close_other": "Seguinte: fechar as perguntas {{numbers}}",
+        "open": "Seguinte: abrir a pergunta {{numbers}}",
+        "resume": "Seguinte: retomar a pergunta {{numbers}}"
+      },
+      "open": "Abrir",
+      "pause": "Pausar",
+      "question_ruler": "Pergunta {{number}}: {{voted}} de {{total}} votaram",
+      "question_voted": "{{voted}} de {{total}} votaram",
+      "result_figure": "{{votes}} · {{percent}}%",
+      "resume": "Retomar",
+      "ruler_label": "{{voted}} de {{total}} votaram em pelo menos uma pergunta",
+      "starts": "A votação começa em {{date}}.",
+      "summary_link": "Resumo",
+      "toggle_result": "Mostrar o resultado da pergunta {{number}}",
+      "turnout": "{{percent}}% de participação",
+      "voted_any": "Pelo menos {{voted}} de {{total}} votaram numa pergunta"
+    },
+    "outcome": {
+      "pair": "{{winner}}, {{winnerVotes}} a {{otherVotes}}",
+      "tie": "Empate",
+      "top": "Mais votado: {{choice}}",
+      "winner_one": "{{winner}} ganha com {{votes}} voto",
+      "winner_many": "{{winner}} ganha com {{votes}} votos",
+      "winner_other": "{{winner}} ganha com {{votes}} votos",
+      "winner_weighted": "{{winner}} ganha com um peso de {{votes}}"
+    },
+    "page": {
+      "back": "Votações",
+      "duplicate": "Duplicar",
+      "end_now": "Terminar agora",
+      "end_vote": "Terminar votação",
+      "line": {
+        "by_question_closes": "Pergunta a pergunta. Fecha em {{date}}.",
+        "by_question_none_open": "Pergunta a pergunta. Ainda sem perguntas abertas.",
+        "canceled": "Os votos foram descartados.",
+        "closed": "Fechada em {{date}}.",
+        "closes": "Fecha em {{date}}. {{left}}",
+        "closes_paused": "Fecha em {{date}}.",
+        "none_open": "Sem perguntas abertas.",
+        "starts": "Começa em {{date}}.",
+        "starts_by_question": "Começa em {{date}}. Pergunta a pergunta."
+      },
+      "more": "Mais",
+      "pause": "Pausar",
+      "resume": "Retomar",
+      "show_as_voter": "Ver como votante",
+      "tab": {
+        "ballot": "Boletim",
+        "manage": "Gerir",
+        "results": "Resultados",
+        "summary": "Resumo"
+      }
+    },
+    "question_state": {
+      "canceled": "Anulada",
+      "closed": "Fechada",
+      "open": "Aberta",
+      "paused": "Em pausa",
+      "to_open": "Por abrir"
+    },
+    "state": {
+      "canceled": "Cancelada",
+      "closed": "Fechada",
+      "draft": "Rascunho",
+      "live": "A decorrer",
+      "paused": "Em pausa",
+      "ready": "Pronta"
+    },
+    "summary": {
+      "fact": {
+        "census_one": "{{count}} pessoa",
+        "census_many": "{{count}} pessoas",
+        "census_other": "{{count}} pessoas",
+        "closes": "{{date}}",
+        "questions_all_one": "{{count}}, tudo de uma vez",
+        "questions_all_many": "{{count}}, tudo de uma vez",
+        "questions_all_other": "{{count}}, tudo de uma vez",
+        "questions_by_question_one": "{{count}}, pergunta a pergunta",
+        "questions_by_question_many": "{{count}}, pergunta a pergunta",
+        "questions_by_question_other": "{{count}}, pergunta a pergunta",
+        "results_hidden": "Ocultos até a votação fechar",
+        "results_hidden_by_question": "Ocultos até cada pergunta fechar",
+        "results_live": "Em direto",
+        "starts": "{{date}}"
+      },
+      "label": {
+        "census": "Lista de participantes",
+        "closed": "Fechada",
+        "closes": "Fecha",
+        "questions": "Perguntas",
+        "results": "Resultados",
+        "starts": "Começa"
+      },
+      "manage_link": "Gerir perguntas",
+      "question_turnout_one": "{{count}} · {{percent}}%",
+      "question_turnout_many": "{{count}} · {{percent}}%",
+      "question_turnout_other": "{{count}} · {{percent}}%",
+      "results_link": "Ver resultados",
+      "ruler_label_one": "{{count}} de {{total}} pessoas votaram, {{percent}}%",
+      "ruler_label_many": "{{count}} de {{total}} pessoas votaram, {{percent}}%",
+      "ruler_label_other": "{{count}} de {{total}} pessoas votaram, {{percent}}%",
+      "share_hint": "Ligação pública para os teus votantes.",
+      "share_title": "Partilhar",
+      "turnout": "Participação",
+      "voted_any_one": "Pelo menos {{count}} de {{total}} votaram numa pergunta",
+      "voted_any_many": "Pelo menos {{count}} de {{total}} votaram numa pergunta",
+      "voted_any_other": "Pelo menos {{count}} de {{total}} votaram numa pergunta",
+      "voted_of_one": "{{count}} de {{total}} votaram",
+      "voted_of_many": "{{count}} de {{total}} votaram",
+      "voted_of_other": "{{count}} de {{total}} votaram"
+    },
+    "time_left": "Faltam {{duration}}",
+    "time_left_delimiter": " e "
+  },
   "voting_link": {
-    "description": "Partilha esta ligação com os teus votantes para que participem no processo de votação",
     "title": "Ligação de votação"
   },
   "voting_processes": "Processos de votação",
-  "voting_processes_description": "Faz a gestão e o acompanhamento dos teus processos de votação",
-  "voting_settings": "Definições de votação",
-  "voting_status": "Estado da votação",
   "wallet": {
     "balance": "Saldo",
     "balance_note": "Crédito pré-pago, sem IVA. A publicação de um processo de votação pago é debitada deste saldo.",
