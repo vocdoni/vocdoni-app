@@ -201,6 +201,28 @@
   "csp": {
     "auth_failed": "Autenticación fallida",
     "authenticate": "Identificarse",
+    "cert": {
+      "errors": {
+        "backend_unavailable": "El servicio de votación no ha respondido. Vuelve a intentarlo en unos minutos.",
+        "check_unavailable": "Ahora mismo no podemos comprobar tu certificado. Vuelve a intentarlo en unos minutos.",
+        "expired": "Este certificado no es válido hoy.",
+        "generic": "No hemos podido identificarte con tu certificado.",
+        "no_certificate": "No se ha seleccionado ningún certificado.",
+        "not_in_census": "El DNI/NIE de este certificado no está en el censo de este proceso de votación.",
+        "process_unavailable": "Ahora mismo no se puede acceder a este proceso de votación con certificado.",
+        "rate_limited": "Demasiados intentos. Vuelve a intentarlo más tarde.",
+        "revoked": "Este certificado ha sido revocado.",
+        "unsupported_certificate": "Este certificado no se acepta. Usa un certificado personal de FNMT, idCAT, ACCV, DIGITEL, Bewor o Sectigo.",
+        "zero_weight": "No tienes suficiente poder de voto para acceder a la votación."
+      },
+      "network_note": "Si la página del certificado no carga, puede que tu red la bloquee: inténtalo desde otra red, como los datos móviles.",
+      "restart_browser": "Tu navegador recuerda el certificado que elegiste. Para usar otro, cierra todas las ventanas del navegador y vuelve a abrir el enlace de la votación.",
+      "retry": "Volver a intentarlo",
+      "signing_in": "Identificándote…",
+      "start": "Acceder con certificado digital",
+      "title": "Certificado digital",
+      "unavailable": "Aquí no está disponible el acceso con certificado digital."
+    },
     "code_info": "Recibirás un código único en el medio seleccionado para verificar tu identidad y completar la autenticación.",
     "code_sent": "Código de verificación enviado",
     "contact_match_help": "Debe coincidir con el registrado en el sistema",
@@ -1771,6 +1793,11 @@
     "button": {
       "configure": "Configurar autenticación de votantes",
       "edit": "Editar autenticación de votantes"
+    },
+    "cert": {
+      "description": "Los votantes se identifican con su certificado personal (FNMT, idCAT…), que acredita su DNI/NIE.",
+      "label": "Certificado digital",
+      "missing_label": "un DNI/NIE válido (falta o no es válido)"
     },
     "code": {
       "description": "Antes de votar, enviamos un código de 6 dígitos al correo electrónico o al teléfono del votante. Así demuestra que es suyo y nadie puede votar con los datos de otra persona.",

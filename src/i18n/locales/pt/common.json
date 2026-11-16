@@ -201,6 +201,28 @@
   "csp": {
     "auth_failed": "Falha na autenticação",
     "authenticate": "Identificar-se",
+    "cert": {
+      "errors": {
+        "backend_unavailable": "The voting service didn't answer. Try again in a few minutes.",
+        "check_unavailable": "We couldn't check your certificate right now. Try again in a few minutes.",
+        "expired": "This certificate isn't valid today.",
+        "generic": "We couldn't sign you in with your certificate.",
+        "no_certificate": "No certificate was selected.",
+        "not_in_census": "The DNI/NIE of this certificate isn't in the census of this vote.",
+        "process_unavailable": "This vote can't be accessed with a certificate right now.",
+        "rate_limited": "Too many attempts. Try again later.",
+        "revoked": "This certificate has been revoked.",
+        "unsupported_certificate": "This certificate isn't accepted. Use a personal certificate from FNMT, idCAT, ACCV, DIGITEL, Bewor or Sectigo.",
+        "zero_weight": "You don't have enough voting power to access the vote."
+      },
+      "network_note": "If the certificate page doesn't load, your network may block it: try again from another network, such as mobile data.",
+      "restart_browser": "Your browser remembers the certificate you chose. To use a different one, close every window of the browser and open the voting link again.",
+      "retry": "Try again",
+      "signing_in": "Signing you in…",
+      "start": "Sign in with a digital certificate",
+      "title": "Digital certificate",
+      "unavailable": "Signing in with a digital certificate is not available here."
+    },
     "code_info": "Receberás um código único no meio selecionado para verificar a tua identidade e concluir a autenticação",
     "code_sent": "Código de verificação enviado",
     "contact_match_help": "Tens de corresponder ao registado no sistema",
@@ -1771,6 +1793,11 @@
     "button": {
       "configure": "Configurar autenticação dos votantes",
       "edit": "Editar autenticação dos votantes"
+    },
+    "cert": {
+      "description": "Voters sign in with their Spanish personal certificate (FNMT, idCAT…), which proves their DNI/NIE.",
+      "label": "Digital certificate",
+      "missing_label": "a valid DNI/NIE (missing or invalid)"
     },
     "code": {
       "description": "Antes de votar, enviamos um código de 6 dígitos para o email ou telemóvel do votante. Isto prova que lhe pertence, para que ninguém vote com os dados de outra pessoa.",

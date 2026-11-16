@@ -201,6 +201,28 @@
   "csp": {
     "auth_failed": "Autenticació fallida",
     "authenticate": "Identifica't",
+    "cert": {
+      "errors": {
+        "backend_unavailable": "El servei de votació no ha respost. Torna-ho a provar d’aquí a uns minuts.",
+        "check_unavailable": "Ara mateix no podem comprovar el teu certificat. Torna-ho a provar d’aquí a uns minuts.",
+        "expired": "Aquest certificat no és vàlid avui.",
+        "generic": "No t’hem pogut identificar amb el teu certificat.",
+        "no_certificate": "No s’ha seleccionat cap certificat.",
+        "not_in_census": "El DNI/NIE d’aquest certificat no és al cens d’aquest procés de votació.",
+        "process_unavailable": "Ara mateix no es pot accedir a aquest procés de votació amb certificat.",
+        "rate_limited": "Massa intents. Torna-ho a provar més tard.",
+        "revoked": "Aquest certificat ha estat revocat.",
+        "unsupported_certificate": "Aquest certificat no s’accepta. Fes servir un certificat personal de FNMT, idCAT, ACCV, DIGITEL, Bewor o Sectigo.",
+        "zero_weight": "No tens prou poder de vot per accedir a la votació."
+      },
+      "network_note": "Si la pàgina del certificat no es carrega, potser la teva xarxa la bloqueja: prova-ho des d’una altra xarxa, com les dades mòbils.",
+      "restart_browser": "El navegador recorda el certificat que vas triar. Per fer-ne servir un altre, tanca totes les finestres del navegador i torna a obrir l’enllaç de la votació.",
+      "retry": "Torna-ho a provar",
+      "signing_in": "T’estem identificant…",
+      "start": "Accedeix amb certificat digital",
+      "title": "Certificat digital",
+      "unavailable": "Aquí no està disponible l’accés amb certificat digital."
+    },
     "code_info": "Rebràs un codi únic al mitjà seleccionat per verificar la teva identitat i completar l'autenticació",
     "code_sent": "Codi de verificació enviat",
     "contact_match_help": "Ha de coincidir amb el registrat al sistema",
@@ -1771,6 +1793,11 @@
     "button": {
       "configure": "Configura l'autenticació dels votants",
       "edit": "Edita l'autenticació dels votants"
+    },
+    "cert": {
+      "description": "Els votants s’identifiquen amb el seu certificat personal (FNMT, idCAT…), que acredita el seu DNI/NIE.",
+      "label": "Certificat digital",
+      "missing_label": "un DNI/NIE vàlid (falta o no és vàlid)"
     },
     "code": {
       "description": "Abans de votar, enviem un codi de 6 xifres al correu electrònic o al telèfon del votant. Així demostra que és seu i ningú no pot votar amb les dades d'una altra persona.",
