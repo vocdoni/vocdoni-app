@@ -33,6 +33,10 @@ export const QueryKeys = {
     membersImportProgress: (address?: string, jobID?: string) =>
       ['organizations', 'members', address, 'importJobProgress', jobID].filter(Boolean),
     drafts: (address?: string) => ['organizations', 'drafts', address].filter(Boolean),
+    // Every process of the organization, drafts included (the votes list loads them all, audit F2).
+    votes: (address?: string) => ['organizations', 'votes', address ?? null],
+    // Prefix of every votes list key: what a publish, a draft save or a status change invalidates.
+    votesAll: ['organizations', 'votes'],
     groups: (address?: string) => ['organizations', 'groups', address].filter(Boolean),
     // Pre-flight census validation. `spec` is the normalized census signature, so
     // two orderings of the same credentials share one cache entry.
@@ -56,6 +60,8 @@ export const QueryKeys = {
       ['process', 'participants', processId, field, value].filter(Boolean),
     endDate: (processId?: string) => ['process', 'end-date', processId].filter(Boolean),
     price: (processId?: string) => ['process', 'price', processId].filter(Boolean),
+    // Mutation key of the per-question status changes, so any status button can tell one is running.
+    questionStatus: (processId?: string) => ['process', 'question-status', processId ?? null],
   },
   integrator: {
     info: (address?: string) => ['integrator', 'info', address].filter(Boolean),

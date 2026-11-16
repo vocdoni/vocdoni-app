@@ -40,12 +40,19 @@ export const Routes = {
     organization: '/admin/organization',
     organizationCreate: '/admin/organization/create', // Organization create with dashboard layout
     process: '/admin/process/:id',
+    processManage: '/admin/process/:id/manage',
+    processBallot: '/admin/process/:id/ballot',
     processResults: '/admin/process/:id/results',
     processes: {
       base: '/admin/processes',
-      all: '/admin/processes/all/:page?/:status?',
-      ended: '/admin/processes/ended/:page?/:status?',
+      // One static path per filter of the votes list (spec A, audit F13), so none can shadow `create`.
+      all: '/admin/processes/all/:page?',
+      live: '/admin/processes/live/:page?',
+      ready: '/admin/processes/ready/:page?',
       drafts: '/admin/processes/drafts/:page?',
+      closed: '/admin/processes/closed/:page?',
+      // The retired "Ended" tab: it only redirects to `closed` now (old links carry a status segment).
+      ended: '/admin/processes/ended/:page?/:status?',
     },
     profile: '/admin/profile',
     memberbase: {
