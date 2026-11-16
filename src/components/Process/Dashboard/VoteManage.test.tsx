@@ -108,9 +108,13 @@ describe('VoteManage', () => {
   it('locks every status button while busy and shows progress on the pending one only', () => {
     questionStatus = { isBusy: true, pending: { questionId: 'q2', status: 'paused' } }
     show(build())
-    const pause = screen.getByRole('button', { name: /Pause/ })
-    expect(pause).toBeDisabled()
-    expect(pause).toHaveAttribute('data-loading')
+    // A loading Chakra button swaps its label for a spinner, so find the pending one by its state.
+    const loading = document.querySelectorAll('[data-loading]')
+    expect(loading).toHaveLength(1)
+    expect(loading[0]).toBeDisabled()
+    expect(loading[0]).toHaveTextContent('Pause')
+    expect(screen.getByRole('button', { name: 'Close' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Close' })).not.toHaveAttribute('data-loading')
     expect(screen.getByRole('button', { name: 'Open' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Open' })).not.toHaveAttribute('data-loading')
   })
@@ -125,7 +129,8 @@ describe('VoteManage', () => {
     show(build())
     expect(screen.queryByRole('button', { name: 'Open' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Pause' })).not.toBeInTheDocument()
-    expect(screen.getAllByText('Closed').length).toBe(3)
+    // The vote's own state reads Closed too, so count inside the questions list.
+    expect(within(screen.getByRole('region', { name: 'Questions' })).getAllByText('Closed')).toHaveLength(3)
   })
 
   it('shows no buttons to a viewer', () => {
