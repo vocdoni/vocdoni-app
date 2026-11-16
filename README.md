@@ -115,6 +115,8 @@ there, here's a list of variables you can use:
   read at runtime, so a single build/image can be branded with `docker run -e SHOW_ORG_LOGO=true`.
 - `DISABLE_ANONYMOUS_VOTING` set it to `true` to hide the anonymous voting option from the process
   creation wizard. Unset or any other value leaves the option available. Read at runtime.
+- `QUESTION_BY_QUESTION` set it to `true` to offer question-by-question
+  voting in the process wizard. It only hides the option: existing question-by-question votes are managed either way.
 
 You can also start the app by prefixing these vars instead of defining your
 custom `.env` file:
