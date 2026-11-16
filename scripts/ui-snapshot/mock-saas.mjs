@@ -13,6 +13,7 @@ export const ORG = '0x7e57c0de00000000000000000000000000a11ce5'
 export const P_DRAFT = '650000000000000000000d01'
 export const P_ONGOING = '650000000000000000000a01'
 export const P_ENDED = '650000000000000000000e01'
+export const P_QBQ = '650000000000000000000b01'
 export const FAKE_TOKEN = 'fake-local-token'
 export const TOKEN_EXPIRY = '2031-01-01T00:00:00.000Z'
 
@@ -272,6 +273,44 @@ const PROCESSES = [
     ],
   },
   {
+    // Question by question (initialStatus PAUSED): one question closed with a result, one open, one still to open.
+    id: P_QBQ,
+    orgAddress: ORG_NOPFX,
+    chainId: 'vocdoni/DEV/fake',
+    title: ml('Autumn general assembly'),
+    description: ml('An assembly voted question by question. Everything here is fake.'),
+    header: '',
+    census,
+    published: true,
+    initialStatus: 'PAUSED',
+    startDate: '2026-06-01T08:00:00.000Z',
+    endDate: '2030-12-31T20:00:00.000Z',
+    createdAt: '2026-05-29T08:00:00.000Z',
+    questions: [
+      {
+        ...question(P_QBQ, 1, 'Approve the minutes of the last assembly?', ['Yes', 'No'], 'RESULTS', {
+          voteCount: 8,
+          maxVoters: 10,
+          finalResults: true,
+          results: [['7', '1']],
+        }),
+        endedAt: '2026-06-01T08:20:00.000Z',
+      },
+      question(P_QBQ, 2, 'Raise the yearly fee to 48 EUR?', ['Yes', 'No', 'Abstain'], 'ONGOING', {
+        voteCount: 6,
+        maxVoters: 10,
+        finalResults: false,
+        results: [['4', '1', '1']],
+      }),
+      question(P_QBQ, 3, 'Elect two board members', ['Marta Fake', 'Jordi Sample', 'Lucía Mockson'], 'PAUSED', {
+        voteCount: 0,
+        maxVoters: 10,
+        finalResults: false,
+        results: [['0', '0', '0']],
+      }),
+    ],
+  },
+  {
     id: P_DRAFT,
     orgAddress: ORG_NOPFX,
     title: ml('New statutes (draft)'),
@@ -420,6 +459,36 @@ on(
   (m) => PROCESSES.find((p) => p.id === m[1]) || [404, { error: 'process not found', code: 404 }]
 )
 on('PUT', '/processes/([0-9a-f]{24})', () => undefined)
+// Question status changes (question by question): applied at once so a local demo can click through; the job is
+// always completed.
+const WIRE_STATUS = { ready: 'ONGOING', paused: 'PAUSED', ended: 'ENDED', canceled: 'CANCELED' }
+const setStatus = (p, ids, body) => {
+  let status
+  try {
+    status = WIRE_STATUS[String(JSON.parse(body || '{}').status || '').toLowerCase()]
+  } catch {}
+  if (!p || !status) return [400, { error: 'bad status', code: 40001 }]
+  for (const qq of p.questions) if (!ids || ids.includes(qq.id)) qq.status = status
+  return { jobId: 'job-status-0001' }
+}
+on('PUT', '/processes/([0-9a-f]{24})/questions/status', (m, q, body) => {
+  let ids
+  try {
+    ids = (JSON.parse(body || '{}').questions || []).map((x) => x.id)
+  } catch {}
+  return setStatus(
+    PROCESSES.find((x) => x.id === m[1]),
+    ids?.length ? ids : undefined,
+    body
+  )
+})
+on('PUT', '/processes/([0-9a-f]{24})/questions/([^/]+)/status', (m, q, body) =>
+  setStatus(
+    PROCESSES.find((x) => x.id === m[1]),
+    [m[2]],
+    body
+  )
+)
 on('GET', '/processes/([0-9a-f]{24})/results', (m) => {
   const p = PROCESSES.find((x) => x.id === m[1])
   if (!p) return [404, { error: 'not found' }]
