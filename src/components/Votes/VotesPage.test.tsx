@@ -145,9 +145,9 @@ describe('VotesPage', () => {
     expect(articles()).toHaveLength(9)
   })
 
-  it('asks for results of the promoted vote and the closed votes of the page only', () => {
+  it('asks for results of the closed votes of the page only', () => {
     renderPage()
-    expect(votes.results).toHaveBeenLastCalledWith(['live1', 'closed1', 'closed2'])
+    expect(votes.results).toHaveBeenLastCalledWith(['closed1', 'closed2'])
   })
 
   it('searches without accents and keeps the text in the URL', async () => {

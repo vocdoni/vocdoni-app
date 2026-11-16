@@ -1,4 +1,4 @@
-import { Button, Card, Grid, GridItem, Icon, IconButton, Link, Text } from '@chakra-ui/react'
+import { Card, Grid, GridItem, Icon, IconButton, Link, Text } from '@chakra-ui/react'
 import { processVoteCount, resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessResponse, VotingProcessResultsResponse } from '@vocdoni/api-types'
 import { memo, useMemo, useState } from 'react'
@@ -7,13 +7,11 @@ import { createSearchParams, generatePath, Link as RouterLink } from 'react-rout
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { ResponsiveMenu, type ResponsiveMenuItem } from '~components/ui/ResponsiveMenu'
-import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
 import { useDeleteDraft } from '~queries/votes'
 import { Routes } from '~routes'
 import { isLegacyProcess, isQuestionByQuestion } from '~src/types/voting-process'
-import { ChevronRightIcon, CopyIcon, DeleteIcon, ForwardIcon, MoreIcon } from '~theme/icons'
-import { quantity } from '~utils/numbers'
+import { ChevronRightIcon, CopyIcon, DeleteIcon, MoreIcon } from '~theme/icons'
 import { questionOutcome } from '~utils/vote-outcome'
 import { draftWarning, percentOf, type VoteRow } from '~utils/vote-state'
 import { useCloneAsDraft } from '~components/Process/Dashboard/use-clone-as-draft'
@@ -21,8 +19,6 @@ import { useCloneAsDraft } from '~components/Process/Dashboard/use-clone-as-draf
 export type VoteListRowProps = {
   row: VoteRow
   results?: VotingProcessResultsResponse | null
-  /** The one live vote shown larger at the top of the list, with its turnout. */
-  promoted?: boolean
   canManage: boolean
   now: Date
 }
@@ -153,11 +149,11 @@ const titleOf = (process: VotingProcessResponse, text: ReturnType<typeof useVote
 // A phone stacks the row under its state line, with "More" beside the state; from md the desktop grid returns:
 // state, content, action, More.
 const GRID_AREAS = {
-  base: '"status more" "title title" "meta meta" "bar bar" "action action"',
-  md: '"status title action more" "status meta action more" "status bar action more"',
+  base: '"status more" "title title" "meta meta" "action action"',
+  md: '"status title action more" "status meta action more"',
 }
 
-const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: VoteListRowProps) => {
+const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => {
   const { t } = useTranslation()
   const { text, shortDate } = useVoteText()
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
@@ -177,10 +173,6 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
     isDraft ? t('drafts.not_defined', { defaultValue: 'Not defined yet' }) : process.id
   )
   const closedOn = state === 'closed' || state === 'canceled' ? shortDate(resolveEndDate(process)) : ''
-
-  const total = process.census?.size
-  const voted = results ? processVoteCount(results) : 0
-  const percent = percentOf(voted, total)
 
   // Every row keeps its secondary actions in one menu: duplicate, and delete for a draft.
   const items: ResponsiveMenuItem[] = [
@@ -216,8 +208,8 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
     <Card.Body
       as='article'
       // The 44px "More" button sets the phone row's top edge, so the row pads less there and at the end.
-      pt={{ base: '1.5', md: promoted ? '5' : '3.5' }}
-      pb={{ base: '3.5', md: promoted ? '4.5' : '3.5' }}
+      pt={{ base: '1.5', md: '3.5' }}
+      pb='3.5'
       ps={{ base: '4', md: '5', lg: 'card' }}
       pe={{ base: '1.5', md: '2.5', lg: '4' }}
     >
@@ -227,8 +219,7 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
         columnGap={{ base: '0', md: '3', lg: '4' }}
         alignItems={{ base: 'center', md: 'start' }}
       >
-        {/* From md the state lines up with the first line of the title, which is taller on the promoted row. */}
-        <GridItem area='status' minW='0' mt={{ base: '0', md: promoted ? '0.5' : '0' }}>
+        <GridItem area='status' minW='0'>
           <ProcessStatus
             state={state}
             detail={closedOn ? t('votes.list.closed_on', { defaultValue: 'on {{date}}', date: closedOn }) : undefined}
@@ -236,7 +227,7 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
         </GridItem>
 
         <GridItem area='title' minW='0' pe={textEnd}>
-          <Text as='h2' textStyle={promoted ? 'feature-title' : 'item-title'} lineClamp={2}>
+          <Text as='h2' textStyle='item-title' lineClamp={2}>
             {title}
           </Text>
         </GridItem>
@@ -260,54 +251,17 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
           </Text>
         </GridItem>
 
-        {promoted && (
-          <GridItem area='bar' minW='0' mt={{ base: '3.5', md: '4.5' }} pe={textEnd} maxW={{ md: 'turnout.max' }}>
-            <TurnoutBar
-              caption={t('votes.list.voted_of', {
-                defaultValue: '{{voted}} of {{total}} voted',
-                voted: quantity(voted),
-                total: total === undefined ? '?' : quantity(total),
-              })}
-              share={
-                percent !== undefined ? t('votes.list.percent', { defaultValue: '{{percent}}%', percent }) : undefined
-              }
-              value={voted}
-              max={total}
-              label={t('votes.list.ruler_label', {
-                defaultValue: '{{voted}} of {{total}} people voted, {{percent}}%',
-                voted: quantity(voted),
-                total: total === undefined ? '?' : quantity(total),
-                percent: percent ?? 0,
-              })}
-            />
-          </GridItem>
-        )}
-
-        <GridItem
-          area='action'
-          mt={{ base: promoted ? '4' : '1', md: '0' }}
-          pe={textEnd}
-          alignSelf={{ base: 'auto', md: promoted ? 'end' : 'center' }}
-        >
-          {promoted ? (
-            <Button asChild w={{ base: 'full', md: 'auto' }}>
-              <RouterLink to={action.to}>
-                {actionText}
-                <Icon as={ForwardIcon} />
-              </RouterLink>
-            </Button>
-          ) : (
-            // The phone's 44px hit area overhangs the row's bottom padding instead of growing the row.
-            <Link asChild variant='row-action' mb={{ base: '-3', md: '0' }}>
-              <RouterLink to={action.to}>
-                {actionText}
-                <Icon as={ChevronRightIcon} />
-              </RouterLink>
-            </Link>
-          )}
+        <GridItem area='action' mt={{ base: '1', md: '0' }} pe={textEnd} alignSelf={{ base: 'auto', md: 'center' }}>
+          {/* The phone's 44px hit area overhangs the row's bottom padding instead of growing the row. */}
+          <Link asChild variant='row-action' mb={{ base: '-3', md: '0' }}>
+            <RouterLink to={action.to}>
+              {actionText}
+              <Icon as={ChevronRightIcon} />
+            </RouterLink>
+          </Link>
         </GridItem>
 
-        <GridItem area='more' justifySelf='end' alignSelf={{ base: 'center', lg: promoted ? 'end' : 'center' }}>
+        <GridItem area='more' justifySelf='end' alignSelf='center'>
           {items.length > 0 && (
             <ResponsiveMenu
               label={t('votes.list.more', { defaultValue: 'More actions' })}

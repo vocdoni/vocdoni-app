@@ -74,23 +74,17 @@ export const VotesPage = () => {
     return rows.filter((row) => matchesFilter(row.state, filter) && matchesSearch(row.process, normalized))
   }, [rows, filter, query])
 
-  const promoted = useMemo(
-    () =>
-      page === 1 && (filter === 'all' || filter === 'live') ? visible.find((row) => row.state === 'live') : undefined,
-    [visible, page, filter]
-  )
-  const rest = useMemo(() => (promoted ? visible.filter((row) => row !== promoted) : visible), [visible, promoted])
-  const lastPage = Math.max(1, Math.ceil(rest.length / limit))
+  const lastPage = Math.max(1, Math.ceil(visible.length / limit))
   const currentPage = Math.min(Math.max(1, page), lastPage)
-  const pageRows = useMemo(() => rest.slice((currentPage - 1) * limit, currentPage * limit), [rest, currentPage, limit])
+  const pageRows = useMemo(
+    () => visible.slice((currentPage - 1) * limit, currentPage * limit),
+    [visible, currentPage, limit]
+  )
 
-  // Results only for the rows on screen that show a figure: the promoted vote and the closed ones of this page.
+  // Results only for the rows on screen that show a figure: the closed votes of this page.
   const resultIds = useMemo(
-    () => [
-      ...(promoted ? [promoted.process.id] : []),
-      ...pageRows.filter((row) => row.state === 'closed').map((row) => row.process.id),
-    ],
-    [promoted, pageRows]
+    () => pageRows.filter((row) => row.state === 'closed').map((row) => row.process.id),
+    [pageRows]
   )
   const results = useVotesResults(resultIds)
 
@@ -117,9 +111,9 @@ export const VotesPage = () => {
     closed: t('votes.list.filter.closed', { defaultValue: 'Closed' }),
   }
 
-  const renderRow = (row: (typeof rows)[number], isPromoted = false) => (
+  const renderRow = (row: (typeof rows)[number]) => (
     <ErrorBoundary key={row.process.id} resetKeys={[row.process]} fallback={<RowFallback />}>
-      <VoteListRow row={row} results={results[row.process.id]} promoted={isPromoted} canManage={canManage} now={now} />
+      <VoteListRow row={row} results={results[row.process.id]} canManage={canManage} now={now} />
     </ErrorBoundary>
   )
 
@@ -141,16 +135,13 @@ export const VotesPage = () => {
         <>
           <Card.Root variant='frame' as='section' aria-label={filterLabel[filter]}>
             {/* Card.Body draws the rule between rows. */}
-            <Stack gap='0'>
-              {promoted && renderRow(promoted, true)}
-              {pageRows.map((row) => renderRow(row))}
-            </Stack>
+            <Stack gap='0'>{pageRows.map(renderRow)}</Stack>
           </Card.Root>
-          {rest.length > limit && (
+          {visible.length > limit && (
             <RoutedPaginationProvider
               path={Routes.dashboard.processes[filter]}
               pagination={{
-                totalItems: rest.length,
+                totalItems: visible.length,
                 lastPage,
               }}
             >

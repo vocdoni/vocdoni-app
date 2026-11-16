@@ -135,14 +135,11 @@ describe('VoteListRow content', () => {
     expect(screen.getByText(/66% turnout\./)).toBeInTheDocument()
   })
 
-  it('shows the turnout of the promoted vote as a progress bar', () => {
-    const results = {
-      id: 'p1',
-      questions: [{ questionId: 'q1', finalResults: false, voteCount: 184, results: [['100', '84']] }],
-    } as unknown as VotingProcessResultsResponse
-    renderRow(make(), { promoted: true, results })
-    expect(screen.getByRole('progressbar', { name: '184 of 312 people voted, 59%' })).toBeInTheDocument()
+  it('shows a live vote like every other row: a text link and no turnout bar', () => {
+    renderRow(make())
     expect(screen.getByRole('link', { name: 'Follow' })).toBeInTheDocument()
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Follow' })).not.toBeInTheDocument()
   })
 })
 
