@@ -41,6 +41,13 @@ const colors = defineSemanticTokens.colors({
         _dark: '{colors.gray.800}',
       },
     },
+    // The empty track of a progress bar.
+    track: {
+      value: {
+        _light: '#c4c4c4',
+        _dark: '{colors.gray.700}',
+      },
+    },
     inverted: {
       value: {
         _light: '{colors.gray.900}',
@@ -293,6 +300,13 @@ const colors = defineSemanticTokens.colors({
         _dark: '{colors.gray.700}',
       },
     },
+    // The ring of a field, select, textarea and voter option.
+    field: {
+      value: {
+        _light: '{colors.gray.400}',
+        _dark: '{colors.gray.700}',
+      },
+    },
     // The outline of a control drawn as a line (checkbox, radio, a dashed drop zone): a solid grey, not a hairline.
     strong: {
       value: {
@@ -450,6 +464,14 @@ const shadows = defineSemanticTokens.shadows({
     // A ring around a control (button, field) in place of its border.
     control: {
       value: RING,
+    },
+    // The ring of a field, select, textarea and voter option: the darker `border.field`.
+    field: {
+      value: '0 0 0 1px {colors.border.field}',
+    },
+    // A plain hairline ring in the default border colour.
+    ring: {
+      value: '0 0 0 1px {colors.border}',
     },
   },
 })

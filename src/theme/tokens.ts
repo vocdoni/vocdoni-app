@@ -24,6 +24,11 @@ const fontSizes = defineTokens.fontSizes({
   lg: { value: '1rem' },
   xl: { value: '1.25rem' },
   '2xl': { value: '1.75rem' },
+  // The voter's ballot: an option's label and a question's title.
+  ballot: {
+    option: { value: '1.0625rem' },
+    question: { value: '2rem' },
+  },
 })
 
 // The app's four line heights: captions and figures, titles, running text, long reads. Chakra's
@@ -32,6 +37,7 @@ const lineHeights = defineTokens.lineHeights({
   shorter: { value: 1.2 },
   short: { value: 1.3 },
   moderate: { value: 1.5 },
+  question: { value: 1.08 },
   tall: { value: 1.6 },
 })
 
@@ -44,7 +50,9 @@ const letterSpacings = defineTokens.letterSpacings({
     item: { value: '-0.015em' },
     section: { value: '-0.028em' },
     page: { value: '-0.035em' },
+    question: { value: '-0.038em' },
   },
+  voter: { value: '-0.008em' },
   quote: {
     tight: { value: '-0.3px' },
   },
