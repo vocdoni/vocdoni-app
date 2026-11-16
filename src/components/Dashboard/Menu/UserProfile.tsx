@@ -1,4 +1,16 @@
-import { Avatar, Box, Button, Flex, HStack, Icon, IconButton, Link, Popover, Text } from '@chakra-ui/react'
+import {
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Link,
+  Popover,
+  Text,
+  VisuallyHidden,
+} from '@chakra-ui/react'
 import { useContext, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
@@ -47,7 +59,9 @@ const UserProfile = ({ compact = false }: UserProfileProps) => {
     <Popover.Root positioning={{ placement }}>
       <Popover.Trigger asChild>
         {compact ? (
-          <IconButton aria-label={t('user_menu', 'User menu')} colorPalette='gray' variant='ghost' size='xs'>
+          // Named by its content, so the initials on screen are part of the name (WCAG 2.5.3, label in name).
+          <IconButton colorPalette='gray' variant='ghost' size='xs'>
+            <VisuallyHidden>{t('user_menu', 'User menu')}</VisuallyHidden>
             <Avatar.Root size='xs'>
               <Avatar.Fallback name={`${profile.firstName} ${profile.lastName}`} />
             </Avatar.Root>

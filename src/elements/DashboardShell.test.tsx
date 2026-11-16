@@ -80,7 +80,7 @@ describe('DashboardShell', () => {
     expect(within(topBar).getByRole('button', { name: 'Open menu' })).toHaveAttribute('aria-expanded', 'false')
     expect(within(topBar).getByRole('button', { name: 'Open menu' })).toHaveAttribute('aria-haspopup', 'dialog')
     expect(within(topBar).getByText('Ateneu de Vallnova')).toBeInTheDocument()
-    expect(within(topBar).getByRole('button', { name: 'User menu' })).toBeInTheDocument()
+    expect(within(topBar).getByRole('button', { name: /^User menu/ })).toBeInTheDocument()
   })
 
   it('keeps the sidebar out of view below lg', () => {
