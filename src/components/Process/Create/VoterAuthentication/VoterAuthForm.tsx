@@ -453,7 +453,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
               position={{ md: 'sticky' }}
               top='5'
             >
-              <VoterSignInPreview credentials={credentials} codeMethod={codeMethod} />
+              <VoterSignInPreview credentials={credentials} codeMethod={codeMethod} certAuth={certAuth} />
             </Box>
           </Box>
         </Grid>

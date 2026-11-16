@@ -269,6 +269,15 @@ describe('VoterAuthentication', () => {
     })
   })
 
+  it('summarizes a certificate census as the certificate, not a typed national ID', () => {
+    render(
+      <TestForm initialCensus={{ credentials: ['nationalId'], use2FA: false, use2FAMethod: 'email', certAuth: true }} />
+    )
+
+    expect(screen.getByText('Digital certificate')).toBeInTheDocument()
+    expect(screen.queryByText(/Voters type/)).not.toBeInTheDocument()
+  })
+
   it('offers the digital certificate only when a gateway is configured', async () => {
     const user = userEvent.setup()
     render(<TestForm />)
