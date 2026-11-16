@@ -210,8 +210,9 @@ const colors = defineSemanticTokens.colors({
         DEFAULT: {
           value: '{colors.white}',
         },
+        // gray.300, not 400: on the dark panel the fainter grey drops under AA for small text.
         muted: {
-          value: '{colors.gray.400}',
+          value: '{colors.gray.300}',
         },
       },
     },

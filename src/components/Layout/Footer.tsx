@@ -49,6 +49,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               <Link
                 emphasis='strong'
                 variant='subtle'
+                py='1'
                 href='https://www.vocdoni.io'
                 target='_blank'
                 rel='noopener noreferrer'
@@ -58,6 +59,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               <Link
                 emphasis='strong'
                 variant='subtle'
+                py='1'
                 href='https://www.vocdoni.io/contact'
                 target='_blank'
                 rel='noopener noreferrer'
@@ -67,6 +69,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               <Link
                 emphasis='strong'
                 variant='subtle'
+                py='1'
                 href='https://blog.vocdoni.io'
                 target='_blank'
                 rel='noopener noreferrer'
