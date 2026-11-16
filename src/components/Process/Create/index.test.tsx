@@ -94,10 +94,6 @@ vi.mock('~components/Pricing/ProcessCheckout', async (importOriginal) => {
   }
 })
 
-vi.mock('~elements/dashboard/processes/drafts', () => ({
-  useDeleteDraft: () => ({}),
-}))
-
 vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
   useApiClient: () => ({ client: mockApiClient }),

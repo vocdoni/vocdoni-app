@@ -1,2 +1,2 @@
 export { ActionsProvider } from './ActionsProvider'
-export { ActionContinue, ActionPause, ActionEnd, ActionCancel } from './ActionButtons'
+export { ActionContinue, ActionPause, ActionEnd } from './ActionButtons'

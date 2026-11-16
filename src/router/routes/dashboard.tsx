@@ -17,10 +17,19 @@ import { SuspenseLoader } from '../SuspenseLoader'
 // elements/pages
 const DashboardCreateOrg = lazy(() => import('~elements/dashboard/organization/create'))
 const DashboardProcesses = lazy(() => import('~elements/dashboard/processes'))
-const AllProcesses = lazy(() => import('~elements/dashboard/processes/all'))
-const EndedProcesses = lazy(() => import('~elements/dashboard/processes/ended'))
-const Drafts = lazy(() => import('~elements/dashboard/processes/drafts'))
 const DashboardProcessView = lazy(() => import('~elements/dashboard/processes/view'))
+const VoteSummary = lazy(() =>
+  import('~components/Process/Dashboard/VoteSummary').then((m) => ({ default: m.VoteSummary }))
+)
+const VoteManage = lazy(() =>
+  import('~components/Process/Dashboard/VoteManage').then((m) => ({ default: m.VoteManage }))
+)
+const VoteBallot = lazy(() =>
+  import('~components/Process/Dashboard/VoteBallot').then((m) => ({ default: m.VoteBallot }))
+)
+const VoteResults = lazy(() =>
+  import('~components/Process/Dashboard/VoteResults').then((m) => ({ default: m.VoteResults }))
+)
 const ProcessCreate = lazy(() => import('~elements/dashboard/processes/create'))
 const OrganizationEdit = lazy(() => import('~components/Organization/Dashboard/Organization'))
 const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
@@ -122,8 +131,38 @@ export const useDashboardRoutes = () => {
                     shouldRevalidate: shouldRevalidateDashboardProcess,
                     errorElement: <Error />,
                     children: [
-                      { index: true, element: <Fragment /> },
-                      { path: Routes.dashboard.processResults, element: <Fragment /> },
+                      {
+                        index: true,
+                        element: (
+                          <SuspenseLoader>
+                            <VoteSummary />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.processManage,
+                        element: (
+                          <SuspenseLoader>
+                            <VoteManage />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.processBallot,
+                        element: (
+                          <SuspenseLoader>
+                            <VoteBallot />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.processResults,
+                        element: (
+                          <SuspenseLoader>
+                            <VoteResults />
+                          </SuspenseLoader>
+                        ),
+                      },
                     ],
                   },
                   {
@@ -156,29 +195,14 @@ export const useDashboardRoutes = () => {
                         index: true,
                         element: <Navigate to={generatePath(Routes.dashboard.processes.all)} replace />,
                       },
-                      {
-                        path: Routes.dashboard.processes.all,
-                        element: (
-                          <SuspenseLoader>
-                            <AllProcesses />
-                          </SuspenseLoader>
-                        ),
-                      },
+                      // The list is one page (the Outlet's parent); each filter path only selects the filter.
+                      ...(['all', 'live', 'ready', 'drafts', 'closed'] as const).map((filter) => ({
+                        path: Routes.dashboard.processes[filter],
+                        element: <Fragment />,
+                      })),
                       {
                         path: Routes.dashboard.processes.ended,
-                        element: (
-                          <SuspenseLoader>
-                            <EndedProcesses />
-                          </SuspenseLoader>
-                        ),
-                      },
-                      {
-                        path: Routes.dashboard.processes.drafts,
-                        element: (
-                          <SuspenseLoader>
-                            <Drafts />
-                          </SuspenseLoader>
-                        ),
+                        ...redirectLegacyPath(Routes.dashboard.processes.closed),
                       },
                     ],
 

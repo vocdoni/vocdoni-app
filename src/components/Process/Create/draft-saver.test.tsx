@@ -30,10 +30,6 @@ vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({ bearedFetch: vi.fn() }),
 }))
 
-vi.mock('~elements/dashboard/processes/drafts', () => ({
-  useDeleteDraft: () => ({}),
-}))
-
 vi.mock('~src/providers/ApiClientProvider', () => ({
   useApiClient: () => ({ client: { elections: { create, update, get } } }),
 }))

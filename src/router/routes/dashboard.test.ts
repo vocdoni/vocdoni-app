@@ -61,17 +61,58 @@ describe('dashboard process routes', () => {
 
     const processRoute = findRoute([result.current], Routes.dashboard.process)
 
-    // The view sits on the parent; the tab routes render nothing of their own, so
-    // switching between them keeps the parent element (and its state) mounted.
+    // The view sits on the parent and the tabs are its children, so switching between them keeps the
+    // parent element (and its state) mounted.
     expect(processRoute?.element).toBeTruthy()
     expect(processRoute?.shouldRevalidate).toBe(shouldRevalidateDashboardProcess)
     expect(processRoute?.children?.map((child) => (child.index ? 'index' : child.path))).toEqual([
       'index',
+      Routes.dashboard.processManage,
+      Routes.dashboard.processBallot,
       Routes.dashboard.processResults,
     ])
-    for (const child of processRoute?.children ?? []) {
-      expect((child.element as ReactElement).type).toBe(Fragment)
+  })
+})
+
+describe('dashboard votes list routes', () => {
+  beforeEach(() => {
+    setReactProvidersMock({ useClient: () => mockUseClient({ client: {} }) })
+  })
+
+  const listRoutes = async () => {
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { result } = renderHook(() => useDashboardRoutes())
+    return findRoute([result.current], Routes.dashboard.processes.base)?.children ?? []
+  }
+
+  it('has an index plus one child per filter, none with a page of its own', async () => {
+    const children = await listRoutes()
+    const { all, live, ready, drafts, closed, ended } = Routes.dashboard.processes
+
+    expect(children.map((child) => (child.index ? 'index' : child.path))).toEqual([
+      'index',
+      all,
+      live,
+      ready,
+      drafts,
+      closed,
+      ended,
+    ])
+    for (const path of [all, live, ready, drafts, closed]) {
+      expect((findRoute(children, path)?.element as ReactElement).type).toBe(Fragment)
     }
+  })
+
+  it('redirects the retired ended tab to closed, keeping the page', async () => {
+    const route = findRoute(await listRoutes(), Routes.dashboard.processes.ended)!
+    const request = new Request('https://app.test/admin/processes/ended/2/RESULTS')
+    const response = (await (route.loader as LoaderFunction)({
+      request,
+      params: { page: '2', status: 'RESULTS' },
+    } as unknown as LoaderFunctionArgs)) as Response
+
+    expect(response.status).toBe(302)
+    expect(response.headers.get('Location')).toBe('/admin/processes/closed/2')
   })
 })
 
