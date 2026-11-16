@@ -1,6 +1,6 @@
 // Screens the UI snapshot renders; README.md ("Add a route") explains the fields. States are
 // captured viewport-only on the route's own page, and a second state on one route reloads it first.
-import { P_DRAFT, P_ENDED, P_ONGOING } from './mock-saas.mjs'
+import { P_DRAFT, P_ENDED, P_ONGOING, P_QBQ } from './mock-saas.mjs'
 
 // At phone width these triggers sit behind a drawer or menu, so their states are desktop only.
 const DESKTOP = [1440]
@@ -9,16 +9,21 @@ export const ROUTES = [
   {
     slug: 'dashboard',
     path: '/admin',
-    states: [{ slug: 'user-menu', open: [[['css', '[data-scope="popover"][data-part="trigger"]']]], viewports: DESKTOP }],
+    states: [
+      { slug: 'user-menu', open: [[['css', '[data-scope="popover"][data-part="trigger"]']]], viewports: DESKTOP },
+    ],
   },
   { slug: 'processes-all', path: '/admin/processes/all' },
+  { slug: 'processes-live', path: '/admin/processes/live' },
   { slug: 'processes-ended', path: '/admin/processes/ended' },
   { slug: 'processes-drafts', path: '/admin/processes/drafts' },
   {
     slug: 'process-ongoing',
     path: `/admin/process/${P_ONGOING}`,
-    states: [{ slug: 'end-vote-confirm', open: [[['button', /^End vote$/i]]], viewports: DESKTOP }],
+    states: [{ slug: 'end-vote-confirm', open: [[['button', /^End now$/i]]], viewports: DESKTOP }],
   },
+  { slug: 'process-manage', path: `/admin/process/${P_QBQ}/manage` },
+  { slug: 'process-ballot', path: `/admin/process/${P_ONGOING}/ballot` },
   { slug: 'process-results', path: `/admin/process/${P_ENDED}/results` },
   {
     slug: 'create-empty',
