@@ -16,7 +16,7 @@ const TONES = {
 } as const
 
 /** The translated word for a state. Static keys, so `pnpm translations` extracts each one. */
-export const useProcessStateLabel = () => {
+const useProcessStateLabel = () => {
   const { t } = useTranslation()
   return (state: ProcessStatusState, kind: 'vote' | 'question' = 'vote'): string => {
     if (kind === 'question') {

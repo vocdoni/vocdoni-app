@@ -252,7 +252,7 @@ All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 | `useIsMobile`, `useTableAsCards`           | The mobile breakpoint (below `md`) as a boolean; the second is the same hook, named for tables shown as cards                                  |
 | `ConfirmDialog` (`ConfirmDialogContent`)   | Every confirmation. `layout`: `panel`, `inline`, `compact`, `shell`, `summary`; `destructive` is on by default                                 |
 | `StatusBadge`                              | A status chip: `colorPalette` (`success`, `warning`, `danger`, `info`, `gray`), `variant` (`subtle`, `surface`, `solid`)                       |
-| `ProcessStatus`                            | A vote's or question's state as a dot and a word: `state`, `kind` (`vote`, `question`); `useProcessStateLabel` gives the word                  |
+| `ProcessStatus`                            | A vote's or question's state as a dot and a word: `state`, `kind` (`vote`, `question`)                                                         |
 | `CensusRuler`                              | A turnout bar with its scale: `value`, `max`, `label` (accessible name), `marker` (the count under the fill)                                   |
 | `FactList`                                 | Label and value rows as a `dl`: `facts` (`{ id, label, value, tooltip? }`)                                                                     |
 | `KeyHint`                                  | A decorative shortcut key printed next to its control                                                                                          |
