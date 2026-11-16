@@ -18,6 +18,10 @@ export type ResponsiveMenuItem = {
 export type ResponsiveMenuProps = {
   /** The accessible name of the trigger and the title of the sheet. */
   label: string
+  /** The sheet's title on a phone: the name of what the actions act on (a vote). Defaults to `label`. */
+  title?: string
+  /** A line under the sheet's title, such as the state of that vote. */
+  description?: string
   /** Defaults to an icon button with the "more" icon, named by `label`. */
   trigger?: ReactElement
   items: ResponsiveMenuItem[]
@@ -30,7 +34,7 @@ const ordered = (items: ResponsiveMenuItem[]) => [...items.filter((i) => !i.dang
  * A list of actions: a dropdown from `md`, a bottom sheet of 52px rows below it (a menu is hard to hit with a thumb).
  * Destructive items come last, in the error colour; with `href` an item is a link.
  */
-export const ResponsiveMenu = ({ label, trigger, items }: ResponsiveMenuProps) => {
+export const ResponsiveMenu = ({ label, title, description, trigger, items }: ResponsiveMenuProps) => {
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   const [open, setOpen] = useState(false)
@@ -65,7 +69,8 @@ export const ResponsiveMenu = ({ label, trigger, items }: ResponsiveMenuProps) =
             <Drawer.Positioner>
               <Drawer.Content>
                 <Drawer.Header>
-                  <Drawer.Title>{label}</Drawer.Title>
+                  <Drawer.Title>{title ?? label}</Drawer.Title>
+                  {description && <Drawer.Description>{description}</Drawer.Description>}
                 </Drawer.Header>
                 <Drawer.Body display='flex' flexDirection='column' gap='1' pb='4'>
                   {sorted.map((item) => {

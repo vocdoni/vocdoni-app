@@ -7,9 +7,14 @@ export type Fact = { id: string; label: ReactNode; value: ReactNode; tooltip?: s
 /** Label and value rows (a vote's census, schedule, settings), as a real `dl`. */
 export const FactList = ({
   facts,
+  layout = 'rows',
   ...props
-}: { facts: Fact[] } & Omit<DataListRootProps, 'variant' | 'orientation'>) => (
-  <DataList.Root orientation='horizontal' variant='facts' {...props}>
+}: {
+  facts: Fact[]
+  /** `rows` (label left, value right) everywhere, or `summary`: label over value in a grid below `lg`. */
+  layout?: 'rows' | 'summary'
+} & Omit<DataListRootProps, 'variant' | 'orientation'>) => (
+  <DataList.Root orientation='horizontal' variant={layout === 'summary' ? 'summary' : 'facts'} {...props}>
     {facts.map((fact) => (
       <DataList.Item key={fact.id}>
         <DataList.ItemLabel>{fact.label}</DataList.ItemLabel>

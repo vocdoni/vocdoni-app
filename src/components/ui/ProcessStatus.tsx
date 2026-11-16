@@ -1,4 +1,5 @@
 import { Box, Status, type StatusRootProps } from '@chakra-ui/react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 /** A vote's state (`kind='vote'`) or a question's (`kind='question'`); the literals match `~utils/vote-state`. */
@@ -56,17 +57,37 @@ const useProcessStateLabel = () => {
 export type ProcessStatusProps = Omit<StatusRootProps, 'tone' | 'size' | 'children'> & {
   state: ProcessStatusState
   kind?: 'vote' | 'question'
+  /** A quiet note after the word, such as the day a vote closed: on the same line on a phone, under it from `md`. */
+  detail?: ReactNode
 }
 
 /** A dot and a word. Only live and open are green (the guide's "only one green"). */
-export const ProcessStatus = ({ state, kind = 'vote', ...props }: ProcessStatusProps) => {
+export const ProcessStatus = ({ state, kind = 'vote', detail, ...props }: ProcessStatusProps) => {
   const label = useProcessStateLabel()
   return (
-    <Status.Root size='sm' tone={TONES[state]} {...props}>
+    <Status.Root
+      size='sm'
+      tone={TONES[state]}
+      flexWrap={detail ? 'wrap' : undefined}
+      rowGap={detail ? '0' : undefined}
+      {...props}
+    >
       <Status.Indicator />
       <Box as='span' truncate>
         {label(state, kind)}
       </Box>
+      {detail && (
+        // Under the word from md, lined up with it past the dot.
+        <Box
+          as='span'
+          fontWeight='normal'
+          color='fg.subtle'
+          flexBasis={{ base: 'auto', md: 'full' }}
+          ps={{ base: '0', md: '3.5' }}
+        >
+          {detail}
+        </Box>
+      )}
     </Status.Root>
   )
 }
