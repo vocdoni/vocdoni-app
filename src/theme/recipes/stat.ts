@@ -31,14 +31,20 @@ export const Stat = defineSlotRecipe({
       // The one headline figure of a screen (a vote's turnout): its label as a section title, the unit faint.
       // letterSpacing and weight restate the text style's so the base valueText cannot win by prop order.
       hero: {
-        label: { textStyle: 'section-title', color: 'fg' },
-        valueText: { textStyle: 'figure-hero', letterSpacing: 'figure.hero', fontWeight: 'semibold' },
+        // A quiet 13px label up to `lg`, the section title from `lg`.
+        label: {
+          textStyle: { base: 'sm', lg: 'section-title' },
+          fontWeight: { base: 'medium', lg: 'semibold' },
+          color: { base: 'fg.subtle', lg: 'fg' },
+        },
+        // The unit sits against the figure, a step further from it as the figure grows.
+        valueText: { textStyle: 'figure-hero', letterSpacing: 'figure.hero', fontWeight: 'semibold', gap: '0' },
         valueUnit: {
           textStyle: 'figure-hero-unit',
           letterSpacing: 'figure.unit',
           fontWeight: 'medium',
           color: 'fg.subtle',
-          ms: '1.5',
+          ms: { base: '0.5', lg: '1.5' },
         },
       },
     },

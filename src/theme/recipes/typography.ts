@@ -82,6 +82,28 @@ export const link = defineRecipe({
           color: 'fg',
         },
       },
+      // The way back to the parent page over a page title: a chevron and 14px medium up to `lg` (the chevron is
+      // the component's, hidden from `lg`), a quiet 12px label from `lg`.
+      back: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.5',
+        textStyle: { base: 'md', lg: 'xs' },
+        fontWeight: { base: 'medium', lg: 'normal' },
+        minH: { base: 'control.touch', md: 'control.tablet', lg: 'auto' },
+        color: 'fg.subtle',
+        _hover: { color: 'fg' },
+      },
+      // The one action of a list row ("Continue", "Result"): touch-sized text and hit area up to `lg`, text alone
+      // from `lg`.
+      'row-action': {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '1',
+        textStyle: 'control-touch',
+        whiteSpace: 'nowrap',
+        minH: { base: 'control.touch', md: 'control.tablet', lg: 'auto' },
+      },
       // A whole row-sized link used as a tile: a centred label with badges laid over its corners.
       tile: {
         flexGrow: 1,

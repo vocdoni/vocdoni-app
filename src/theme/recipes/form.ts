@@ -69,6 +69,18 @@ export const input = defineRecipe({
         bg: 'transparent',
         boxShadow: '[none]',
       },
+      // A read-only value to copy (a voting link): a sunken fill, no ring, in the figure face.
+      code: {
+        border: '[none]',
+        boxShadow: '[none]',
+        bg: 'bg.muted',
+        color: 'fg.muted',
+        // Restated over the size's field text: 13px up to `lg`, 12px from `lg`. Read-only, so iOS never zooms.
+        fontFamily: 'figure',
+        fontSize: { base: 'sm', lg: 'xs' },
+        letterSpacing: 'none',
+        textOverflow: 'ellipsis',
+      },
     },
   },
 })

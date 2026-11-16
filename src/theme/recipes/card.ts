@@ -33,16 +33,17 @@ const title = { textStyle: 'control', fontWeight: 'medium-plus' } as const
 export const Card = defineSlotRecipe({
   slots: cardAnatomy.keys(),
   base: {
-    header: { px: '5', pt: '4', pb: '3' },
+    // The card's inner edge is the guide's: 16px on a phone, 22px from a tablet.
+    header: { px: { base: '4', md: 'card' }, pt: '4', pb: '3' },
     // Rows after the header are told apart by a hairline.
     body: {
-      px: '5',
+      px: { base: '4', md: 'card' },
       py: '3.5',
       _notFirst: { borderTopWidth: 'hairline', borderColor: 'border' },
       // The row being worked on (an open question): an accent rule on its leading edge.
       '&[data-current]': { boxShadow: '[inset {borderWidths.thick} 0 0 {colors.accent.solid}]' },
     },
-    footer: { px: '5', pb: '4' },
+    footer: { px: { base: '4', md: 'card' }, pb: '4' },
   },
   variants: {
     // Chakra's sizes only set the title style and `--card-padding`; every title is a control label.

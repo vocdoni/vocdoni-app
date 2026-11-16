@@ -3,6 +3,7 @@ import { FaDiscord, FaGithub } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
 import {
   LuArrowLeft,
+  LuArrowRight,
   LuArrowUpRight,
   LuBold,
   LuBookOpen,
@@ -18,6 +19,7 @@ import {
   LuCircleAlert,
   LuCircleCheckBig,
   LuCircleHelp,
+  LuCircleX,
   LuCirclePlay,
   LuCircleStop,
   LuClock,
@@ -94,6 +96,7 @@ export type { IconType } from 'react-icons'
 export const AddIcon = LuPlus
 export const AddToListIcon = LuListPlus
 export const AddUserIcon = LuUserPlus
+export const CancelIcon = LuCircleX
 export const CloseIcon = LuX
 export const CopyIcon = LuCopy
 export const DeleteIcon = LuTrash2
@@ -116,6 +119,7 @@ export const ViewIcon = LuEye
 
 // Navigation
 export const BackIcon = LuArrowLeft
+export const ForwardIcon = LuArrowRight
 export const ChevronDownIcon = LuChevronDown
 export const ChevronLeftIcon = LuChevronLeft
 export const ChevronRightIcon = LuChevronRight

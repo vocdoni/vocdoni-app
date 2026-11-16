@@ -20,6 +20,37 @@ export const DataList = defineSlotRecipe({
         itemLabel: { color: 'fg.subtle', minW: '0' },
         itemValue: { flex: '0 1 auto', justifyContent: 'flex-end', textAlign: 'end', fontWeight: 'medium' },
       },
+      // A vote's facts: a grid of label over value (two columns on a phone, four on a tablet) under a rule, and the
+      // `facts` rows from `lg`, where they sit beside the headline figure.
+      summary: {
+        root: {
+          display: { base: 'grid', lg: 'flex' },
+          flexDirection: 'column',
+          gridTemplateColumns: { base: 'repeat(2, minmax(0, 1fr))', md: 'repeat(4, minmax(0, 1fr))' },
+          columnGap: '4',
+          rowGap: { base: '3.5', lg: '0' },
+          pt: { base: '4', lg: '0' },
+          borderTopWidth: { base: 'hairline', lg: '[0]' },
+          borderColor: 'border',
+        },
+        item: {
+          display: 'flex',
+          flexDirection: { base: 'column', lg: 'row' },
+          justifyContent: { base: 'flex-start', lg: 'space-between' },
+          alignItems: { base: 'flex-start', lg: 'baseline' },
+          gap: { base: '0', lg: '4' },
+          py: { base: '0', lg: '1.5' },
+          _notFirst: { borderTopWidth: { base: '[0]', lg: 'hairline' }, borderColor: 'border.muted' },
+        },
+        itemLabel: { color: 'fg.subtle', minW: '0', textStyle: { base: 'sm', lg: 'control' } },
+        itemValue: {
+          flex: '0 1 auto',
+          textAlign: { base: 'start', lg: 'end' },
+          justifyContent: { base: 'flex-start', lg: 'flex-end' },
+          fontWeight: 'medium',
+          textStyle: { base: 'md', lg: 'control' },
+        },
+      },
     },
   },
 })

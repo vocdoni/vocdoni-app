@@ -108,6 +108,8 @@ const spacing = defineTokens.spacing({
   auto: { value: 'auto' },
   // Gutter between a segmented control's track and its items.
   track: { value: '3px' },
+  // The inner edge of a card from a tablet up (16px, spacing 4, on a phone): see the card recipe.
+  card: { value: '22px' },
   dashboard: {
     panel: { value: '{sizes.dashboard.panel}' },
   },

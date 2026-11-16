@@ -18,9 +18,10 @@ export const Status = defineSlotRecipe({
     },
   },
   variants: {
-    // Chakra's sizes set the text style; the 20px line height is restated after it.
+    // Chakra's sizes set the text style; the 20px line height is restated after it. `sm` (ProcessStatus) is 13px
+    // up to `lg` and 12px from `lg`, as the guide's state labels.
     size: {
-      sm: { root: { lineHeight: '[1.25rem]' } },
+      sm: { root: { fontSize: { base: 'sm', lg: 'xs' }, lineHeight: '[1.25rem]' } },
       md: { root: { lineHeight: '[1.25rem]' } },
       lg: { root: { lineHeight: '[1.25rem]' } },
     },

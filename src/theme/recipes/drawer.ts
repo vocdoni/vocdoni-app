@@ -28,7 +28,10 @@ export const Drawer = defineSlotRecipe({
           borderTopRadius: 'xl',
           pb: '[env(safe-area-inset-bottom)]',
         },
-        header: { flexDirection: 'column', alignItems: 'flex-start' },
+        header: { flexDirection: 'column', alignItems: 'flex-start', gap: '0' },
+        // The name of what the actions act on, over its state.
+        title: { textStyle: 'lg', fontWeight: 'semibold', letterSpacing: 'heading.item' },
+        description: { textStyle: 'md', color: 'fg.subtle' },
       },
       // The header stacks the title over its description; the end padding keeps both clear of the close button.
       panel: {
