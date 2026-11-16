@@ -120,13 +120,16 @@ const sizes = defineTokens.sizes({
   '0': { value: '0' },
   auto: { value: 'auto' },
   'cookies-consent': { value: '720px' },
-  // The dashboard shell: the menu expanded and collapsed, its logo row and the right side panel.
+  // The dashboard shell: the sidebar expanded and collapsed (from `lg`), its logo row, the top bar and the navigation
+  // drawer that replace it below `lg`, and the right side panel.
   dashboard: {
     menu: {
-      expanded: { value: '255px' },
+      expanded: { value: '240px' },
       collapsed: { value: '48px' },
     },
     header: { value: '47px' },
+    topbar: { value: '52px' },
+    drawer: { value: '296px' },
     panel: { value: '350px' },
   },
   // The status dot (7px).

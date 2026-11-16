@@ -47,6 +47,7 @@ import {
   LuLock,
   LuLogOut,
   LuMail,
+  LuMenu,
   LuMessageCircle,
   LuMessagesSquare,
   LuMonitor,
@@ -126,6 +127,7 @@ export const ChevronRightIcon = LuChevronRight
 export const ChevronUpIcon = LuChevronUp
 export const ChevronsUpDownIcon = LuChevronsUpDown
 export const DragHandleIcon = LuGripVertical
+export const MenuIcon = LuMenu
 export const SidebarIcon = LuPanelLeft
 
 // Status and feedback

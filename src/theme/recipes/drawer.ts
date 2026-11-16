@@ -16,10 +16,12 @@ export const Drawer = defineSlotRecipe({
       letterSpacing: 'tight',
     },
   },
-  // `sidebar` is the mobile dashboard menu; `panel` paints like a dialog and is ui/Drawer's shell; `sheet` is a bottom sheet.
+  // `sidebar` is the dashboard's navigation below `lg`; `panel` paints like a dialog and is ui/Drawer's shell; `sheet` is a
+  // bottom sheet.
   variants: {
     variant: {
-      sidebar: { content: { bg: 'surface.overlay.drawer' } },
+      // Use with `placement='start'`; its width is the guide's drawer, whatever the size.
+      sidebar: { content: { bg: 'surface.overlay.drawer', maxW: 'dashboard.drawer' } },
       // A bottom sheet (ui/ResponsiveMenu on a phone): rounded on top, clear of the home indicator. Use with
       // `placement='bottom'`.
       sheet: {
