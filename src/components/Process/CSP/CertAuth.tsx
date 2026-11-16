@@ -68,6 +68,13 @@ export const CertAuthStart = ({ navigate }: { navigate?: (url: string) => void }
   const [accepted, setAccepted] = useState(false)
   const [starting, setStarting] = useState(false)
 
+  // the page can come back from the back/forward cache after a failed navigation to the gateway
+  useEffect(() => {
+    const reset = () => setStarting(false)
+    window.addEventListener('pageshow', reset)
+    return () => window.removeEventListener('pageshow', reset)
+  }, [])
+
   if (!start) {
     return (
       <Alert status='error'>
@@ -106,7 +113,11 @@ export const CertAuthStart = ({ navigate }: { navigate?: (url: string) => void }
         loading={starting}
         onClick={async () => {
           setStarting(true)
-          await start()
+          try {
+            await start()
+          } catch {
+            setStarting(false)
+          }
         }}
       >
         {t('csp.cert.start', { defaultValue: 'Sign in with a digital certificate' })}
@@ -198,6 +209,18 @@ export const CertAuthError = ({ code, navigate }: { code: string; navigate?: (ur
   )
 }
 
+/** After a failed step 0 the code may be spent: the way on is a new certificate login. */
+const CertAuthAgain = () => {
+  const { t } = useTranslation()
+  const start = useStartCertAuth()
+  if (!start) return null
+  return (
+    <Button w='full' onClick={() => start()}>
+      {t('csp.cert.start', { defaultValue: 'Sign in with a digital certificate' })}
+    </Button>
+  )
+}
+
 /** The email or phone of a step-0 request, from the contact the voter typed. */
 const contactOf = (contact: string, twoFaFields: OrgMemberTwoFaField[]) => {
   const email = twoFaFields.includes('email') && (!twoFaFields.includes('phone') || contact.includes('@'))
@@ -220,10 +243,13 @@ const CertAutoLogin = ({ certCode, codeVerifier }: { certCode: string; codeVerif
 
   if (auth.isError) {
     return (
-      <Alert status='error'>
-        <AlertIndicator />
-        <AlertDescription>{auth.error.message}</AlertDescription>
-      </Alert>
+      <Stack gap='4'>
+        <Alert status='error'>
+          <AlertIndicator />
+          <AlertDescription>{auth.error.message}</AlertDescription>
+        </Alert>
+        <CertAuthAgain />
+      </Stack>
     )
   }
   return (
@@ -238,7 +264,7 @@ const CertAutoLogin = ({ certCode, codeVerifier }: { certCode: string; codeVerif
 const CertContactForm = ({ certCode, codeVerifier }: { certCode: string; codeVerifier: string }) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { twoFaFields, setAuthData, setCurrentStep } = useCspAuthContext()
+  const { twoFaFields, setAuthData, setCurrentStep, setCertReturn } = useCspAuthContext()
   const auth = useCspAuth0()
   const {
     register,
@@ -254,6 +280,7 @@ const CertContactForm = ({ certCode, codeVerifier }: { certCode: string; codeVer
       return // shown below; the code is spent, the voter goes through the certificate again
     }
     setAuthData(destination)
+    setCertReturn({ kind: 'redeemed' })
     toast({ title: t('csp.code_sent', { defaultValue: 'Verification code sent' }), type: 'success', duration: 3000 })
     setCurrentStep(1)
   }
@@ -272,9 +299,13 @@ const CertContactForm = ({ certCode, codeVerifier }: { certCode: string; codeVer
             <AlertDescription>{auth.error.message}</AlertDescription>
           </Alert>
         )}
-        <Button type='submit' w='full' loading={auth.isPending} disabled={auth.isError}>
-          {t('csp.receive_code', 'Receive Code')}
-        </Button>
+        {auth.isError ? (
+          <CertAuthAgain />
+        ) : (
+          <Button type='submit' w='full' loading={auth.isPending}>
+            {t('csp.receive_code', 'Receive Code')}
+          </Button>
+        )}
       </Stack>
     </form>
   )
@@ -288,18 +319,23 @@ export const CertAuthReturnDialog = () => {
   if (!certReturn) return null
 
   let body
-  if (certReturn.kind !== 'code') {
+  if (certReturn.kind === 'redeemed') {
+    body = currentStep === 1 ? <Step1Base /> : <CertAuthStart />
+  } else if (certReturn.kind !== 'code') {
     body = <CertAuthError code={certReturn.kind === 'error' ? certReturn.code : 'mismatch'} />
   } else if (twoFaFields.length === 0) {
     body = <CertAutoLogin certCode={certReturn.certCode} codeVerifier={certReturn.codeVerifier} />
-  } else if (currentStep === 0) {
-    body = <CertContactForm certCode={certReturn.certCode} codeVerifier={certReturn.codeVerifier} />
   } else {
-    body = <Step1Base />
+    body = <CertContactForm certCode={certReturn.certCode} codeVerifier={certReturn.codeVerifier} />
   }
 
   return (
-    <Dialog.Root open size='sm' onOpenChange={({ open }) => !open && setCertReturn(null)}>
+    <Dialog.Root
+      open
+      size='sm'
+      closeOnInteractOutside={false}
+      onOpenChange={({ open }) => !open && setCertReturn(null)}
+    >
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner p={{ base: '4', md: '6' }}>

@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event'
-import { render, screen, waitFor } from '~src/test-utils'
+import { act, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { certAuthStorageKey, RETRYABLE_CERT_ERRORS, STICKY_CERT_ERRORS } from './cert-auth'
 import { CertAuthError } from './CertAuth'
@@ -11,7 +11,20 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   return { ...actual, ...getReactProvidersMock() }
 })
 
-vi.mock('./Step1', () => ({ Step1Base: () => <div>Step 1</div> }))
+vi.mock('./Step1', async () => {
+  const { useCspAuthContext } = await import('./CSPStepsProvider')
+  return {
+    Step1Base: () => {
+      const { resetFlow } = useCspAuthContext()
+      return (
+        <>
+          <div>Step 1</div>
+          <button onClick={resetFlow}>Start over</button>
+        </>
+      )
+    },
+  }
+})
 
 const PID = '0123456789abcdef01234567'
 const STATE = 's'.repeat(22)
@@ -76,6 +89,43 @@ describe('certificate voter flow', () => {
     ])
   })
 
+  it('the certificate button recovers when the start fails', async () => {
+    useCensus([])
+    const navigate = vi.fn(() => {
+      throw new Error('blocked')
+    })
+    const user = userEvent.setup()
+    const { CertAuthStart } = await import('./CertAuth')
+    render(<CertAuthStart navigate={navigate} />, { appEnv })
+
+    await user.click(screen.getByRole('checkbox'))
+    const start = screen.getByRole('button', { name: 'Sign in with a digital certificate' })
+    await user.click(start)
+
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(start).not.toHaveAttribute('data-loading'))
+    expect(start).toBeEnabled()
+  })
+
+  it('the certificate button recovers when the page comes back from the back/forward cache', async () => {
+    useCensus([])
+    const navigate = vi.fn()
+    const user = userEvent.setup()
+    const { CertAuthStart } = await import('./CertAuth')
+    render(<CertAuthStart navigate={navigate} />, { appEnv })
+
+    await user.click(screen.getByRole('checkbox'))
+    const start = screen.getByRole('button', { name: 'Sign in with a digital certificate' })
+    await user.click(start)
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1))
+    expect(start).toHaveAttribute('data-loading')
+
+    act(() => {
+      window.dispatchEvent(new Event('pageshow'))
+    })
+    await waitFor(() => expect(start).not.toHaveAttribute('data-loading'))
+  })
+
   it('shows the certificate button instead of the login fields', async () => {
     useCensus([])
     const user = userEvent.setup()
@@ -114,6 +164,55 @@ describe('certificate voter flow', () => {
     )
     expect(await screen.findByText('Step 1')).toBeInTheDocument()
     expect(crispPush).not.toHaveBeenCalled()
+  })
+
+  it('with 2FA: "Start over" after the code is spent offers the certificate again, never resending it', async () => {
+    useCensus(['email'])
+    const user = userEvent.setup()
+    landWith(`certCode=${CODE}&state=${STATE}`)
+
+    await user.type(await screen.findByRole('textbox'), 'voter@example.com')
+    await user.click(screen.getByRole('button', { name: 'Receive Code' }))
+    await user.click(await screen.findByRole('button', { name: 'Start over' }))
+
+    expect(await screen.findByRole('button', { name: 'Sign in with a digital certificate' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Receive Code' })).not.toBeInTheDocument()
+    expect(auth0).toHaveBeenCalledTimes(1)
+  })
+
+  it('with 2FA: a click outside the dialog keeps the unspent code', async () => {
+    useCensus(['email'])
+    // the open dialog makes the page inert to pointers; jsdom applies no stylesheet to tell the backdrop apart
+    const user = userEvent.setup({ pointerEventsCheck: 0 })
+    landWith(`certCode=${CODE}&state=${STATE}`)
+
+    await screen.findByRole('textbox')
+    // the dialog listens for outside interactions only once it has settled, and closes asynchronously
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    await user.click(document.querySelector('[data-part="positioner"]')!)
+    await new Promise((resolve) => setTimeout(resolve, 50))
+
+    expect(screen.queryByRole('textbox')).toBeInTheDocument()
+  })
+
+  it.each([
+    ['auth-only', []],
+    ['with 2FA', ['email']],
+  ])('%s: a failed step 0 offers the certificate again', async (_, twoFaFields) => {
+    useCensus(twoFaFields)
+    auth0.mockRejectedValue(new Error('step 0 failed'))
+    const user = userEvent.setup()
+    landWith(`certCode=${CODE}&state=${STATE}`)
+    if (twoFaFields.length) {
+      await user.type(await screen.findByRole('textbox'), 'voter@example.com')
+      await user.click(screen.getByRole('button', { name: 'Receive Code' }))
+    }
+
+    expect(await screen.findByText('step 0 failed')).toBeInTheDocument()
+    expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Sign in with a digital certificate' }))
+    // a new flow is stored right before the navigation to the gateway
+    await waitFor(() => expect(JSON.parse(sessionStorage.getItem(certAuthStorageKey(PID))!).state).not.toBe(STATE))
   })
 
   it.each([

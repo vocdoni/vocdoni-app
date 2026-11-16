@@ -1,4 +1,11 @@
-import { certAuthStorageKey, codeChallengeOf, readCertReturn, startCertAuth } from './cert-auth'
+import {
+  certAuthStorageKey,
+  codeChallengeOf,
+  readCertReturn,
+  RETRYABLE_CERT_ERRORS,
+  startCertAuth,
+  STICKY_CERT_ERRORS,
+} from './cert-auth'
 
 const PID = '0123456789abcdef01234567'
 
@@ -10,6 +17,36 @@ const fakeWindow = (hash: string) => {
 
 describe('cert-auth', () => {
   beforeEach(() => sessionStorage.clear())
+
+  it('classifies every gateway and backend code as the spec does', () => {
+    expect([...STICKY_CERT_ERRORS].sort()).toEqual([
+      'anonymous_unavailable',
+      'expired',
+      'identity_invalid',
+      'identity_unsupported_document',
+      'invalid_chain',
+      'no_certificate',
+      'not_cert_census',
+      'not_in_census',
+      'not_yet_valid',
+      'process_not_open',
+      'provider_mismatch',
+      'revocation_unknown',
+      'revoked',
+      'test_certificate',
+      'unsupported_profile',
+      'unsupported_purpose',
+      'untrusted_issuer',
+      'weak_algorithm',
+      'zero_weight',
+    ])
+    expect([...RETRYABLE_CERT_ERRORS].sort()).toEqual([
+      'backend_unavailable',
+      'internal',
+      'rate_limited',
+      'revocation_unavailable',
+    ])
+  })
 
   it('computes the RFC 7636 S256 challenge', async () => {
     expect(await codeChallengeOf('dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk')).toBe(
