@@ -25,15 +25,17 @@ describe('captureNames', () => {
     const names = captureNames({ viewports: [1440, 390], modes: ['light', 'dark'] })
     expect(names).toContain('dashboard--user-menu-1440-dark')
     expect(names).not.toContain('dashboard--user-menu-390-dark')
+    expect(names).toContain('dashboard--nav-drawer-390-light')
+    expect(names).not.toContain('dashboard--nav-drawer-1440-light')
     expect(names).toContain('signin-390-light')
   })
 
   it('counts each real route once per viewport and mode, and each state only where it runs', () => {
     const names = captureNames({ viewports: [1440, 390], modes: ['light', 'dark'] })
-    // Every state runs at 1440; only the ones without a viewports filter also run at 390.
+    // A state runs at each viewport its filter lists, or at every one without a filter.
     const states = ROUTES.flatMap((route) => route.states || [])
-    const atPhone = states.filter((state) => !state.viewports)
-    expect(names).toHaveLength(2 * (2 * ROUTES.length + states.length + atPhone.length))
+    const runsAt = (width: number) => states.filter((state) => !state.viewports || state.viewports.includes(width))
+    expect(names).toHaveLength(2 * (2 * ROUTES.length + runsAt(1440).length + runsAt(390).length))
     expect(new Set(names).size).toBe(names.length)
   })
 })

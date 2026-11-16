@@ -4,6 +4,8 @@ import { P_DRAFT, P_ENDED, P_ONGOING, P_QBQ } from './mock-saas.mjs'
 
 // At phone width these triggers sit behind a drawer or menu, so their states are desktop only.
 const DESKTOP = [1440]
+// Below `lg` the dashboard's navigation is a drawer opened from the top bar; from `lg` it is the sidebar.
+const BELOW_LG = [768, 390]
 
 export const ROUTES = [
   {
@@ -11,6 +13,7 @@ export const ROUTES = [
     path: '/admin',
     states: [
       { slug: 'user-menu', open: [[['css', '[data-scope="popover"][data-part="trigger"]']]], viewports: DESKTOP },
+      { slug: 'nav-drawer', open: [[['button', /^Open menu$/i]]], viewports: BELOW_LG },
     ],
   },
   { slug: 'processes-all', path: '/admin/processes/all' },
