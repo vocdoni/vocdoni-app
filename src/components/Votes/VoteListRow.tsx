@@ -1,18 +1,18 @@
-import { Button, Card, Flex, Grid, GridItem, HStack, Icon, IconButton, Link, Stack, Text } from '@chakra-ui/react'
+import { Button, Card, Grid, GridItem, Icon, IconButton, Link, Text } from '@chakra-ui/react'
 import { processVoteCount, resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessResponse, VotingProcessResultsResponse } from '@vocdoni/api-types'
 import { memo, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, Link as RouterLink } from 'react-router'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
-import { CensusRuler } from '~components/ui/CensusRuler'
 import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { ResponsiveMenu, type ResponsiveMenuItem } from '~components/ui/ResponsiveMenu'
+import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
 import { useDeleteDraft } from '~queries/votes'
 import { Routes } from '~routes'
 import { isLegacyProcess, isQuestionByQuestion } from '~src/types/voting-process'
-import { ChevronRightIcon, CopyIcon, DeleteIcon, MoreIcon } from '~theme/icons'
+import { ChevronRightIcon, CopyIcon, DeleteIcon, ForwardIcon, MoreIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { questionOutcome } from '~utils/vote-outcome'
 import { draftWarning, percentOf, type VoteRow } from '~utils/vote-state'
@@ -150,6 +150,8 @@ const useMeta = (row: VoteRow, results: VotingProcessResultsResponse | null | un
 const titleOf = (process: VotingProcessResponse, text: ReturnType<typeof useVoteText>['text'], fallback: string) =>
   text(process.title) || fallback
 
+// A phone stacks the row under its state line, with "More" beside the state; from md the desktop grid returns:
+// state, content, action, More.
 const GRID_AREAS = {
   base: '"status more" "title title" "meta meta" "bar bar" "action action"',
   md: '"status title action more" "status meta action more" "status bar action more"',
@@ -207,34 +209,40 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
   ]
 
   const actionText = actionLabel(action.key)
+  // The text columns keep clear of the phone row's tight end padding, which only the 44px "More" button uses.
+  const textEnd = { base: '2.5', md: '0' } as const
 
   return (
-    <Card.Body as='article' py={promoted ? '5' : undefined}>
+    <Card.Body
+      as='article'
+      // The 44px "More" button sets the phone row's top edge, so the row pads less there and at the end.
+      pt={{ base: '1.5', md: promoted ? '5' : '3.5' }}
+      pb={{ base: '3.5', md: promoted ? '4.5' : '3.5' }}
+      ps={{ base: '4', md: '5', lg: 'card' }}
+      pe={{ base: '1.5', md: '2.5', lg: '4' }}
+    >
       <Grid
-        templateColumns={{ base: '1fr auto', md: '[{sizes.list.label} minmax(0, 1fr) auto {sizes.10}]' }}
+        templateColumns={{ base: '1fr auto', md: '[{sizes.list.label} minmax(0, 1fr) auto auto]' }}
         templateAreas={GRID_AREAS}
-        columnGap='4'
-        alignItems='start'
+        columnGap={{ base: '0', md: '3', lg: '4' }}
+        alignItems={{ base: 'center', md: 'start' }}
       >
-        <GridItem area='status' minW='0'>
-          <Stack gap='0.5'>
-            <ProcessStatus state={state} />
-            {closedOn && (
-              <Text textStyle='caption' color='fg.subtle' ps='3.5'>
-                {t('votes.list.closed_on', { defaultValue: 'on {{date}}', date: closedOn })}
-              </Text>
-            )}
-          </Stack>
+        {/* From md the state lines up with the first line of the title, which is taller on the promoted row. */}
+        <GridItem area='status' minW='0' mt={{ base: '0', md: promoted ? '0.5' : '0' }}>
+          <ProcessStatus
+            state={state}
+            detail={closedOn ? t('votes.list.closed_on', { defaultValue: 'on {{date}}', date: closedOn }) : undefined}
+          />
         </GridItem>
 
-        <GridItem area='title' minW='0' mt={{ base: '2', md: '0' }}>
+        <GridItem area='title' minW='0' pe={textEnd}>
           <Text as='h2' textStyle={promoted ? 'feature-title' : 'item-title'} lineClamp={2}>
             {title}
           </Text>
         </GridItem>
 
-        <GridItem area='meta' minW='0' mt='0.5'>
-          <Text textStyle='body-sm' color='fg.subtle'>
+        <GridItem area='meta' minW='0' mt='0.5' pe={textEnd}>
+          <Text textStyle='meta' color='fg.subtle'>
             {meta.text}
             {meta.result && (
               <Text as='span' fontWeight='medium-plus' color='fg'>
@@ -253,57 +261,57 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
         </GridItem>
 
         {promoted && (
-          <GridItem area='bar' minW='0' mt='4' maxW={{ md: 'md' }}>
-            <Stack gap='2'>
-              <Flex justify='space-between' gap='4'>
-                <Text textStyle='control' fontWeight='medium-plus'>
-                  {t('votes.list.voted_of', {
-                    defaultValue: '{{voted}} of {{total}} voted',
-                    voted: quantity(voted),
-                    total: total === undefined ? '?' : quantity(total),
-                  })}
-                </Text>
-                {percent !== undefined && (
-                  <Text textStyle='figure' color='fg.subtle'>
-                    {t('votes.list.percent', { defaultValue: '{{percent}}%', percent })}
-                  </Text>
-                )}
-              </Flex>
-              <CensusRuler
-                value={voted}
-                max={total}
-                label={t('votes.list.ruler_label', {
-                  defaultValue: '{{voted}} of {{total}} people voted, {{percent}}%',
-                  voted: quantity(voted),
-                  total: total === undefined ? '?' : quantity(total),
-                  percent: percent ?? 0,
-                })}
-              />
-            </Stack>
+          <GridItem area='bar' minW='0' mt={{ base: '3.5', md: '4.5' }} pe={textEnd} maxW={{ md: 'turnout.max' }}>
+            <TurnoutBar
+              caption={t('votes.list.voted_of', {
+                defaultValue: '{{voted}} of {{total}} voted',
+                voted: quantity(voted),
+                total: total === undefined ? '?' : quantity(total),
+              })}
+              share={
+                percent !== undefined ? t('votes.list.percent', { defaultValue: '{{percent}}%', percent }) : undefined
+              }
+              value={voted}
+              max={total}
+              label={t('votes.list.ruler_label', {
+                defaultValue: '{{voted}} of {{total}} people voted, {{percent}}%',
+                voted: quantity(voted),
+                total: total === undefined ? '?' : quantity(total),
+                percent: percent ?? 0,
+              })}
+            />
           </GridItem>
         )}
 
-        <GridItem area='action' mt={{ base: '3', md: '0' }} justifySelf={{ base: 'stretch', md: 'end' }}>
-          <HStack gap='3.5' justify={{ base: 'flex-start', md: 'flex-end' }}>
-            {promoted ? (
-              <Button asChild w={{ base: 'full', md: 'auto' }}>
-                <RouterLink to={action.to}>{actionText}</RouterLink>
-              </Button>
-            ) : (
-              <Link asChild textStyle='control' fontWeight='medium-plus'>
-                <RouterLink to={action.to}>
-                  {actionText}
-                  <Icon as={ChevronRightIcon} />
-                </RouterLink>
-              </Link>
-            )}
-          </HStack>
+        <GridItem
+          area='action'
+          mt={{ base: promoted ? '4' : '1', md: '0' }}
+          pe={textEnd}
+          alignSelf={{ base: 'auto', md: promoted ? 'end' : 'center' }}
+        >
+          {promoted ? (
+            <Button asChild w={{ base: 'full', md: 'auto' }}>
+              <RouterLink to={action.to}>
+                {actionText}
+                <Icon as={ForwardIcon} />
+              </RouterLink>
+            </Button>
+          ) : (
+            // The phone's 44px hit area overhangs the row's bottom padding instead of growing the row.
+            <Link asChild variant='row-action' mb={{ base: '-3', md: '0' }}>
+              <RouterLink to={action.to}>
+                {actionText}
+                <Icon as={ChevronRightIcon} />
+              </RouterLink>
+            </Link>
+          )}
         </GridItem>
 
-        <GridItem area='more' justifySelf='end'>
+        <GridItem area='more' justifySelf='end' alignSelf={{ base: 'center', lg: promoted ? 'end' : 'center' }}>
           {items.length > 0 && (
             <ResponsiveMenu
               label={t('votes.list.more', { defaultValue: 'More actions' })}
+              title={title}
               trigger={
                 <IconButton
                   variant='ghost'

@@ -1,8 +1,4 @@
-import { useBreakpointValue } from '@chakra-ui/react'
 import { useEffect, type RefObject } from 'react'
-
-/** From `lg`: the keyboard shortcuts and their hints exist only where a hardware keyboard is the norm. */
-export const useIsDesktop = () => !!useBreakpointValue({ base: false, lg: true })
 
 // Ark keeps a closed menu's and dialog's content in the DOM (`hidden`, `data-state="closed"`), so only open ones count.
 const OPEN_OVERLAY =

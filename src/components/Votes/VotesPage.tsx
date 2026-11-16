@@ -1,4 +1,4 @@
-import { Box, Button, Card, Flex, HStack, Icon, Input, InputGroup, Stack, StackSeparator, Text } from '@chakra-ui/react'
+import { Box, Button, Card, Flex, HStack, Icon, Input, InputGroup, Stack, Text } from '@chakra-ui/react'
 import { RoutedPaginationProvider, useOrganization } from '@vocdoni/react-components'
 import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,6 +10,7 @@ import { KeyHint } from '~components/ui/KeyHint'
 import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { ListLoader } from '~components/ui/Loader'
 import { PageTitle } from '~components/ui/PageTitle'
+import { useIsDesktop } from '~components/ui/useIsMobile'
 import { useUrlPagination } from '~queries/members'
 import { useCanManageVotes, useOrganizationVotes, useVotesResults } from '~queries/votes'
 import { Routes } from '~routes'
@@ -27,7 +28,7 @@ import {
 } from '~utils/vote-state'
 import { VoteListRow } from './VoteListRow'
 import { VotesEmpty } from './VotesEmpty'
-import { useIsDesktop, useListShortcuts } from './useListShortcuts'
+import { useListShortcuts } from './useListShortcuts'
 
 const useFilter = (): VoteFilter => {
   const { pathname } = useLocation()
@@ -139,7 +140,8 @@ export const VotesPage = () => {
       content = (
         <>
           <Card.Root variant='frame' as='section' aria-label={filterLabel[filter]}>
-            <Stack gap='0' separator={<StackSeparator />}>
+            {/* Card.Body draws the rule between rows. */}
+            <Stack gap='0'>
               {promoted && renderRow(promoted, true)}
               {pageRows.map((row) => renderRow(row))}
             </Stack>
@@ -164,8 +166,9 @@ export const VotesPage = () => {
   const showToolbar = loading || !!error || rows.length > 0
 
   return (
-    <Stack gap='8' maxW='content.narrow'>
-      <Flex justify='space-between' align='flex-end' gap='4'>
+    // The header stands apart from the list; the toolbar and the list keep together.
+    <Stack gap={{ base: '5', md: '6', lg: '8' }} maxW='content.narrow'>
+      <Flex justify='space-between' align={{ base: 'center', md: 'flex-end' }} gap='4'>
         <PageTitle>{t('votes.list.title', { defaultValue: 'Votes' })}</PageTitle>
         {rows.length > 0 && (
           <Button variant='outline' asChild aria-keyshortcuts='n'>
@@ -178,70 +181,75 @@ export const VotesPage = () => {
         )}
       </Flex>
 
-      {showToolbar && (
-        <Flex direction={{ base: 'column', md: 'row' }} justify='space-between' gap='3'>
-          {/* On phones: one line that scrolls sideways and bleeds to the screen edge (the page gutter is 6). A scroll
+      <Stack gap={{ base: '5', md: '6', lg: '4' }}>
+        {showToolbar && (
+          // The search sits over the chips up to `lg` (at most `80` wide from md), beside them from `lg`.
+          <Flex direction={{ base: 'column', lg: 'row' }} justify='space-between' gap={{ base: '3', lg: '4' }}>
+            {/* On phones: one line that scrolls sideways and bleeds to the screen edge (the page gutter is 6). A scroll
               box clips what is drawn outside its children, so it keeps room for the chips' 1px ring on every side.
               From md the chips fit, nothing scrolls and nothing is clipped. */}
-          <Box
-            order={{ base: 2, md: 1 }}
-            overflowX={{ base: 'auto', md: 'visible' }}
-            scrollbar='hidden'
-            mx={{ base: '-6', md: '0' }}
-            my={{ base: '-0.5', md: '0' }}
-            px={{ base: '6', md: '0' }}
-            py={{ base: '0.5', md: '0' }}
-          >
-            <HStack
-              role='group'
-              aria-label={t('votes.list.filter_label', { defaultValue: 'Filter by state' })}
-              gap='2'
-              flexWrap='nowrap'
-              w='[max-content]'
+            <Box
+              order={{ base: 2, lg: 1 }}
+              overflowX={{ base: 'auto', md: 'visible' }}
+              scrollbar='hidden'
+              mx={{ base: '-6', md: '0' }}
+              my={{ base: '-0.5', md: '0' }}
+              px={{ base: '6', md: '0' }}
+              py={{ base: '0.5', md: '0' }}
             >
-              {VOTE_FILTERS.map((item) => (
-                <Button
-                  key={item}
-                  variant='chip'
-                  size='sm'
-                  aria-pressed={item === filter}
-                  onClick={() => go(item, query)}
-                >
-                  {/* The space keeps the accessible name "All 4"; a flex gap draws the visual one. */}
-                  {filterLabel[item]}{' '}
-                  <Text as='span' textStyle='figure' fontWeight='normal' color='fg.subtle'>
-                    {quantity(counts[item])}
-                  </Text>
-                </Button>
-              ))}
-            </HStack>
-          </Box>
-          <InputGroup
-            order={{ base: 1, md: 2 }}
-            w={{ base: 'full', md: '80' }}
-            startElement={<Icon as={SearchIcon} />}
-            endElement={<KeyHint display={{ base: 'none', lg: 'inline-flex' }}>/</KeyHint>}
-          >
-            <Input
-              ref={searchRef}
-              type='search'
-              size='sm'
-              value={query}
-              onChange={(event) => go(filter, event.target.value, true)}
-              aria-label={t('votes.list.search', { defaultValue: 'Search a vote' })}
-              placeholder={t('votes.list.search', { defaultValue: 'Search a vote' })}
-            />
-          </InputGroup>
-        </Flex>
-      )}
+              <HStack
+                role='group'
+                aria-label={t('votes.list.filter_label', { defaultValue: 'Filter by state' })}
+                gap='2'
+                flexWrap={{ base: 'nowrap', md: 'wrap' }}
+                w={{ base: '[max-content]', md: 'auto' }}
+              >
+                {VOTE_FILTERS.map((item) => (
+                  <Button
+                    key={item}
+                    variant='chip'
+                    size='sm'
+                    aria-pressed={item === filter}
+                    onClick={() => go(item, query)}
+                  >
+                    {/* The space keeps the accessible name "All 4"; a flex gap draws the visual one. */}
+                    {filterLabel[item]}{' '}
+                    <Text as='span' textStyle='figure' fontWeight='normal' color='fg.subtle'>
+                      {quantity(counts[item])}
+                    </Text>
+                  </Button>
+                ))}
+              </HStack>
+            </Box>
+            <InputGroup
+              order={{ base: 1, lg: 2 }}
+              w={{ base: 'full', lg: '60' }}
+              maxW={{ md: '80' }}
+              flexShrink={0}
+              startElement={<Icon as={SearchIcon} />}
+              endElement={<KeyHint display={{ base: 'none', lg: 'inline-flex' }}>/</KeyHint>}
+            >
+              <Input
+                ref={searchRef}
+                type='search'
+                size='sm'
+                value={query}
+                onChange={(event) => go(filter, event.target.value, true)}
+                aria-label={t('votes.list.search', { defaultValue: 'Search a vote' })}
+                placeholder={t('votes.list.search', { defaultValue: 'Search a vote' })}
+              />
+            </InputGroup>
+          </Flex>
+        )}
 
-      <ListStateAlert
-        error={error}
-        title={t('processes.load_error', { defaultValue: 'Unable to load voting processes' })}
-        fallback={t('processes.load_error_description', { defaultValue: 'Please try again.' })}
-      />
-      {loading && <ListLoader />}
-      {content}
+        <ListStateAlert
+          error={error}
+          title={t('processes.load_error', { defaultValue: 'Unable to load voting processes' })}
+          fallback={t('processes.load_error_description', { defaultValue: 'Please try again.' })}
+        />
+        {loading && <ListLoader />}
+        {content}
+      </Stack>
     </Stack>
   )
 }
