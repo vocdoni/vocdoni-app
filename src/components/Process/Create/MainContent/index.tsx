@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Icon, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Flex, HStack, Icon, SegmentGroup, Text, VStack } from '@chakra-ui/react'
 import {
   closestCenter,
   DndContext,
@@ -11,11 +11,12 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { AddIcon } from '~theme/icons'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { MaxQuestionsPerProcess } from '~constants'
+import { useAppEnv } from '~src/app-env'
 import { defaultQuestion } from '../common'
 import { QuestionForm } from './QuestionForm'
 
@@ -35,6 +36,70 @@ const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
       confirmText={t('process.create.question.delete.delete_button', { defaultValue: 'Delete' })}
       onConfirm={removeQuestion}
     />
+  )
+}
+
+const VotingModeSwitch = () => {
+  const { t } = useTranslation()
+  const { control } = useFormContext()
+  const { QUESTION_BY_QUESTION: questionByQuestionEnabled } = useAppEnv()
+  const votingMode = useWatch({ control, name: 'votingMode' })
+  const byQuestion = votingMode === 'byQuestion'
+  const byQuestionLabel = t('process_create.voting_mode.by_question', { defaultValue: 'Question by question' })
+
+  // With the flag off the switch is hidden, but a draft already in this mode keeps it and shows it.
+  if (!questionByQuestionEnabled && !byQuestion) return null
+
+  return (
+    <VStack align='stretch' gap='2'>
+      <Flex
+        direction={{ base: 'column', md: 'row' }}
+        justify='space-between'
+        align={{ base: 'stretch', md: 'center' }}
+        gap='3'
+      >
+        {questionByQuestionEnabled ? (
+          <Controller
+            control={control}
+            name='votingMode'
+            render={({ field }) => (
+              <SegmentGroup.Root
+                size='sm'
+                value={field.value}
+                onValueChange={({ value }) => field.onChange(value)}
+                aria-label={t('process_create.voting_mode.label', { defaultValue: 'How people vote' })}
+                w={{ base: 'full', md: 'auto' }}
+                ms={{ md: 'auto' }}
+              >
+                <SegmentGroup.Indicator />
+                <SegmentGroup.Item value='all' flex={{ base: '1', md: 'initial' }} justifyContent='center'>
+                  <SegmentGroup.ItemText>
+                    {t('process_create.voting_mode.all', { defaultValue: 'All at once' })}
+                  </SegmentGroup.ItemText>
+                  <SegmentGroup.ItemHiddenInput />
+                </SegmentGroup.Item>
+                <SegmentGroup.Item value='byQuestion' flex={{ base: '1', md: 'initial' }} justifyContent='center'>
+                  <SegmentGroup.ItemText>{byQuestionLabel}</SegmentGroup.ItemText>
+                  <SegmentGroup.ItemHiddenInput />
+                </SegmentGroup.Item>
+              </SegmentGroup.Root>
+            )}
+          />
+        ) : (
+          <Text textStyle='body-sm' color='fg.muted'>
+            {byQuestionLabel}
+          </Text>
+        )}
+      </Flex>
+      {byQuestion && (
+        <Text textStyle='control' color='fg.muted'>
+          {t('process_create.voting_mode.by_question_hint', {
+            defaultValue:
+              "Questions start closed. You open them one by one from the vote's page, and each question's result shows when you close it.",
+          })}
+        </Text>
+      )}
+    </VStack>
   )
 }
 
@@ -84,6 +149,7 @@ export const Questions = () => {
 
   return (
     <VStack align='stretch' gap='4'>
+      <VotingModeSwitch />
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

@@ -8,6 +8,7 @@ import type {
   VotingProcessResponse,
 } from '@vocdoni/api-types'
 import { format } from 'date-fns'
+import { isQuestionByQuestion } from '~src/types/voting-process'
 import { defaultProcessValues, Process, SelectorTypes } from './common'
 import { TwoFAMethod } from './VoterAuthentication/utils'
 
@@ -65,6 +66,7 @@ export const votingProcessToForm = (process: VotingProcessResponse, disableAnony
     endDate: endDate ? format(endDate, 'yyyy-MM-dd') : '',
     endTime: endDate ? format(endDate, 'HH:mm') : '',
     streamUri: process.streamUri ?? '',
+    votingMode: isQuestionByQuestion(process) ? 'byQuestion' : 'all',
     resultVisibility: isSecretUntilTheEnd(process) ? 'hidden' : 'live',
     weightedVote: process.census?.weighted ?? false,
     // Force off when the anonymous voting option is not offered.

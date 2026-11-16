@@ -56,6 +56,7 @@ import Editor from '~components/Editor'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
+import type { CreateVotingProcessRequestWithMode } from '~src/types/voting-process'
 import { MaxDraftsPerOrg } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { clearPendingCheckout, enqueuedJobId, readPendingCheckout } from '~queries/process-checkout'
@@ -533,7 +534,7 @@ export const useFormToVotingProcessRequest = () => {
     return parseFormDateTime(dateStr, timeStr).toISOString()
   }
 
-  return (form: Process, censusSpec: CensusSpec): CreateVotingProcessRequest => {
+  return (form: Process, censusSpec: CensusSpec): CreateVotingProcessRequestWithMode => {
     // The SAAS API rejects processes without an owner org. Draft saves are skipped and
     // the publish/save buttons are disabled until the address resolves, so reaching this
     // guard means a caller bypassed those checks.
@@ -599,6 +600,9 @@ export const useFormToVotingProcessRequest = () => {
       // so never let the flag through when the anonymous voting option is not offered.
       census: disableAnonymousVoting ? { ...censusSpec, anonymous: undefined } : censusSpec,
       questions,
+      // Sent on create and on every update: the draft PUT replaces everything and an absent `initialStatus`
+      // resets the mode (audit F9). The flag only hides the switch.
+      ...(form.votingMode === 'byQuestion' ? { initialStatus: 'PAUSED' as const } : {}),
     }
   }
 }
