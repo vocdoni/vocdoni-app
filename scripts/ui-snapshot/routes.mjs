@@ -22,6 +22,7 @@ export const ROUTES = [
     path: `/admin/process/${P_ONGOING}`,
     states: [{ slug: 'end-vote-confirm', open: [[['button', /^End now$/i]]], viewports: DESKTOP }],
   },
+  { slug: 'process-qbq', path: `/admin/process/${P_QBQ}` },
   { slug: 'process-manage', path: `/admin/process/${P_QBQ}/manage` },
   { slug: 'process-ballot', path: `/admin/process/${P_ONGOING}/ballot` },
   { slug: 'process-results', path: `/admin/process/${P_ENDED}/results` },
