@@ -274,7 +274,7 @@ const ProcessContextMenu = () => {
               </Menu.Item>
             )}
             <VotingReportPdfMenuItem election={election} />
-            <Menu.Item value='clone-draft' onClick={cloneAsDraft}>
+            <Menu.Item value='clone-draft' onClick={() => cloneAsDraft(election)}>
               <Icon as={CopyIcon} />
               <Trans i18nKey='process_context.clone_as_draft'>Clone as draft</Trans>
             </Menu.Item>
