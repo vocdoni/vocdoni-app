@@ -100,6 +100,10 @@ export const createAppSystem = (primaryColor?: string) => {
         // Chakra's style types omit the vendor-prefixed property, so it is cast in.
         ...({ WebkitFontSmoothing: 'antialiased' } as SystemStyleObject),
       },
+      // Chakra's Group (InputGroup, button groups) spaces its items with a raw 0.5rem unless this is set.
+      '.chakra-group': {
+        '--group-gap': '{spacing.2}',
+      },
       // The CSS default (`bolder`) would ask for 700; the interface tops out at 600.
       'b, strong': {
         fontWeight: 'semibold',
