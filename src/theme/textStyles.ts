@@ -36,6 +36,31 @@ export const textStyles = defineTextStyles({
   'status-title': { value: { fontSize: 'xl', fontWeight: 'semibold' } },
   // A member's role shown from its raw value (`admin`), capitalised like the badge `label` variant.
   'role-name': { value: { fontWeight: 'semibold', textTransform: 'capitalize' } },
+  // A row's title in a list (a vote), and the larger title of the row a list promotes (the live vote).
+  'item-title': {
+    value: { fontSize: 'lg', lineHeight: 'short', fontWeight: 'semibold', letterSpacing: 'heading.item' },
+  },
+  'feature-title': {
+    value: { fontSize: 'xl', lineHeight: 'short', fontWeight: 'semibold', letterSpacing: 'heading.section' },
+  },
+  // The one headline figure of a screen and its unit (Stat size `hero`). Sans, not mono: mono is for small data.
+  'figure-hero': {
+    value: {
+      fontSize: { base: '6xl', md: 'figure.hero' },
+      lineHeight: 'hero',
+      fontWeight: 'semibold',
+      letterSpacing: 'figure.hero',
+      fontVariantNumeric: 'tabular-nums',
+    },
+  },
+  'figure-hero-unit': {
+    value: {
+      fontSize: { base: '3xl', md: '5xl' },
+      lineHeight: 'hero',
+      fontWeight: 'medium',
+      letterSpacing: 'figure.unit',
+    },
+  },
 })
 
 // Heading sizes of user-written content by Markdown level, shared by the editor and the rendered Markdown.

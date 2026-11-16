@@ -28,6 +28,13 @@ export const Stat = defineSlotRecipe({
       md: { valueText: { textStyle: 'body' } },
       // A headline figure.
       lg: { valueText: { textStyle: '2xl' } },
+      // The one headline figure of a screen (a vote's turnout): its label as a section title, the unit faint.
+      // letterSpacing and weight restate the text style's so the base valueText cannot win by prop order.
+      hero: {
+        label: { textStyle: 'section-title', color: 'fg' },
+        valueText: { textStyle: 'figure-hero', letterSpacing: 'figure.hero', fontWeight: 'semibold' },
+        valueUnit: { textStyle: 'figure-hero-unit', color: 'fg.subtle', ms: '1.5' },
+      },
     },
   },
   defaultVariants: {

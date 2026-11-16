@@ -208,6 +208,22 @@ const toggle = defineStyle({
   },
 })
 
+// A filter chip in a group (votes by state); the chosen one carries `aria-pressed`. Use at `size='sm'`.
+const chip = defineStyle({
+  ...ghost,
+  color: 'fg.muted',
+  bg: 'bg.panel',
+  fontWeight: 'medium-plus',
+  boxShadow: 'shadow.control',
+  _hover: { bg: 'state.hover.bg' },
+  _pressed: {
+    bg: 'state.selected.bg',
+    color: 'fg',
+    boxShadow: '[none]',
+    _hover: { bg: 'state.selected.bg' },
+  },
+})
+
 // Show/hide toggle for a section, flush with the content it folds.
 const disclosure = defineStyle({
   color: 'fg.muted',
@@ -274,6 +290,7 @@ export const Button = defineRecipe({
       'menu-trigger': menuTrigger,
       segment,
       toggle,
+      chip,
       disclosure,
       danger,
       floating,

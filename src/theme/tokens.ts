@@ -29,6 +29,10 @@ const fontSizes = defineTokens.fontSizes({
     option: { value: '1.0625rem' },
     question: { value: '2rem' },
   },
+  // The one headline figure of a screen (a vote's turnout), read through the `figure-hero` text style.
+  figure: {
+    hero: { value: '8.25rem' },
+  },
 })
 
 // The app's four line heights: captions and figures, titles, running text, long reads. Chakra's
@@ -39,6 +43,8 @@ const lineHeights = defineTokens.lineHeights({
   moderate: { value: 1.5 },
   question: { value: 1.08 },
   tall: { value: 1.6 },
+  // A headline figure sits on its baseline: the line box hugs the digits.
+  hero: { value: 0.74 },
 })
 
 // Tracking that falls between Chakra's letterSpacings steps: the body, and the tighter steps of larger type.
@@ -55,6 +61,11 @@ const letterSpacings = defineTokens.letterSpacings({
   voter: { value: '-0.008em' },
   quote: {
     tight: { value: '-0.3px' },
+  },
+  // The headline figure and its unit, tighter as the type grows.
+  figure: {
+    hero: { value: '-0.05em' },
+    unit: { value: '-0.02em' },
   },
 })
 
@@ -128,6 +139,10 @@ const sizes = defineTokens.sizes({
   },
   table: {
     action: { value: '50px' },
+  },
+  // The leading column of a list row: a vote's state and its date.
+  list: {
+    label: { value: '112px' },
   },
   // Minimum height of a row of controls, so a row with a button and one without line up.
   toolbar: { value: '42px' },

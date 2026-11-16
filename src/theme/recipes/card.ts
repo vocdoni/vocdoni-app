@@ -35,7 +35,13 @@ export const Card = defineSlotRecipe({
   base: {
     header: { px: '5', pt: '4', pb: '3' },
     // Rows after the header are told apart by a hairline.
-    body: { px: '5', py: '3.5', _notFirst: { borderTopWidth: 'hairline', borderColor: 'border' } },
+    body: {
+      px: '5',
+      py: '3.5',
+      _notFirst: { borderTopWidth: 'hairline', borderColor: 'border' },
+      // The row being worked on (an open question): an accent rule on its leading edge.
+      '&[data-current]': { boxShadow: '[inset {borderWidths.thick} 0 0 {colors.accent.solid}]' },
+    },
     footer: { px: '5', pb: '4' },
   },
   variants: {
@@ -120,6 +126,15 @@ export const Card = defineSlotRecipe({
           _dragging: {
             borderColor: 'accent.solid',
           },
+        },
+      },
+      // An explanation rather than data (what each vote state means): a dashed edge, no fill.
+      note: {
+        root: {
+          borderWidth: 'hairline',
+          borderStyle: '[dashed]',
+          borderColor: 'border.emphasized',
+          p: 'var(--card-padding)',
         },
       },
       // A filled card without a border, around a page-level empty state.

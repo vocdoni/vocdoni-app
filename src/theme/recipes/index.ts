@@ -5,7 +5,9 @@ import { Badge, Code } from './badge'
 import { Button } from './button'
 import { Card } from './card'
 import { checkbox } from './checkbox'
+import { CensusRuler } from './censusRuler'
 import { Dialog } from './dialog'
+import { DataList } from './dataList'
 import { Drawer } from './drawer'
 import {
   ElectionDescription,
@@ -25,6 +27,7 @@ import {
 import { EmptyState } from './emptyState'
 import { Field } from './field'
 import { input, switchRecipe, textarea } from './form'
+import { Kbd } from './kbd'
 import { listSlotRecipe } from './list'
 import { Menu } from './menu'
 import { NativeSelect } from './nativeSelect'
@@ -50,6 +53,7 @@ export const recipes: Record<string, RecipeDefinition> = {
   code: Code,
   heading,
   input,
+  kbd: Kbd,
   link,
   text,
   icon: defineRecipe({
@@ -72,7 +76,9 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   alert: Alert,
   avatar: Avatar,
   card: Card,
+  censusRuler: CensusRuler,
   checkbox,
+  dataList: DataList,
   dialog: Dialog,
   drawer: Drawer,
   emptyState: EmptyState,

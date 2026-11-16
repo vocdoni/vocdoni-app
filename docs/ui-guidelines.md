@@ -122,7 +122,8 @@ App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (
 `page-title` (28px, semibold, tight tracking), `section-title` (the `control` size, semibold), `display`, `control` (a control's text, on the `control` font
 size, with no weight: buttons, field labels and card titles add 550 in their recipes), `figure` (numerals, dates, counts and codes: JetBrains Mono at 12px), `quote-label` (the sector over a featured quote), `separator-label` (the label of a
 `LabelledSeparator`), `status-title` (a process status as a headline) and `role-name` (a role shown from its raw
-value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
+value, capitalised), `item-title` (a row's title in a list, 16px), `feature-title` (the larger title of the row a
+list promotes, 20px), `figure-hero` (the one headline figure of a screen, in sans) and `figure-hero-unit` (its unit). Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 
 - A role holds typography only. Colour stays a separate prop. Do not pass a `textStyle` and a prop that sets the same
   property: they resolve in prop order.
@@ -130,13 +131,14 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
   card, section or settings-block title is a `SectionHeader` (below): an `h2` in the `section-title` role over a muted
   `body-sm` description. Do not write that pair by hand.
 - A labelled figure (a usage count, a date on a card) is the `stat` recipe, not a `Text` with a bigger size: a 12px
-  eyebrow label over a figure, with an optional muted unit. See `UsageMeter` below.
+  eyebrow label over a figure, with an optional muted unit. See `UsageMeter` below. A vote's turnout is the `Stat` size
+  `hero`.
 - Body copy needs no `textStyle`: `body` in `globalCss` (`system.ts`) gives it the `body` role, so a bare `Text`,
   markdown or a list item inherits that. The `text` recipe has no default size, so set `textStyle` or `size` on any
   `Text` that should be something else. For inline emphasis inside smaller text, use `chakra.span` or `Span`.
-- Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.5), `tall` (1.6), plus `question` (1.08, the voter's question title). Letter spacing:
+- Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.5), `tall` (1.6), plus `question` (1.08, the voter's question title) and `hero` (0.74, the headline figure). Letter spacing:
   `body` (the page's -0.006em), `heading.item`, `heading.section` and `heading.page` (tighter as the type grows),
-  `heading.snug`, `heading.question`, `quote.tight`, `voter`, plus Chakra's own steps.
+  `heading.snug`, `heading.question`, `quote.tight`, `figure.hero` and `figure.unit` (the headline figure and its unit), `voter`, plus Chakra's own steps.
 - Families and weights live together in `src/theme/fonts.ts`: each family with the files it ships (`SANS` and `MONO`, a static
   family or a variable range), the stacks (`body`, `heading`, `figure`, `mono`) and the ladder of which weight each
   name renders (`FONT_WEIGHTS`). Commissioner (interface) and JetBrains Mono (figures) are variable, 400 to 700:
@@ -154,7 +156,7 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
 - **Radii**: `xs` (3px), `sm` (4px), `md` and `lg` (6px), `xl` and `2xl` (12px), `full`, `none`. Pixel radii fail the
   inventory. Chakra's own recipes read the semantic `l1`, `l2` and `l3` (`sm`, `md`, `md`), written out in `semantic.ts`.
 - **Font sizes**: `xs` 12px, `sm` 13px, `control` 13.5px (a control's label and value), `md` 14px, `lg` 16px,
-  `xl` 20px, `2xl` 28px; `2xs` and `3xl` upward are Chakra's.
+  `xl` 20px, `2xl` 28px, `figure.hero` (8.25rem, the headline figure); `2xs` and `3xl` upward are Chakra's.
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
   focus ring, `thick`): `<Box borderWidth='thick' />`.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
@@ -163,7 +165,7 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
   `<Icon size='md'>` cannot drift apart; `icon.xl` is `{sizes.12}`.
 - **Page widths**: `content.wide` (1600px), `content.medium` (1200px), `content.narrow` (900px), read through
   `PageContainer` (below).
-- **Other named sizes**: `card.empty`, `table.action`, `toolbar`, `dashboard.menu.expanded|collapsed`,
+- **Other named sizes**: `card.empty`, `table.action`, `list.label` (the leading column of a list row: a vote's state and date), `toolbar`, `dashboard.menu.expanded|collapsed`,
   `dashboard.header`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon
   link), `control.md` (34px, the default height of buttons, inputs and selects), `control.area` (76px, textarea
   minimum height), `dot` (7px status dot), `loader` (min height of `PageLoader`), `wordmark` (width of the Vocdoni wordmark:
@@ -190,24 +192,28 @@ has no variant that already means the same thing; two looks for one meaning is a
 
 What exists today:
 
-| Recipe              | Variants and axes                                                                                                                                                                                                                                                      |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `button`            | `variant`: `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `menu-trigger`, `segment`, `toggle`, `disclosure`, `danger`, `floating`, `whatsapp`; `size`: `cta`; `multiline`. Chakra's own `solid`, `outline`, `ghost`… stay |
-| `card`              | `outline`, `section`, `frame`, `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `plain` (a filled card without a border, around a page-level empty state)                                                                                      |
-| `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                    |
-| `link`              | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                         |
-| `tabs`              | `variant`: `line` (default: hairline and a 2px ink line under the current tab), `pill` (segmented)                                                                                                                                                                     |
-| `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the mobile dashboard menu); dialog and drawer backdrops both paint `scrim.strong`                                                                                                         |
-| `dialog`            | `placement` defaults to `center`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                |
-| `menu`              | Items highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                       |
-| `progress`          | `variant`: `results` (thin bar in ink, one per choice, never dimmed: the slot cannot tell a final tally from a live one), `turnout` (the share that voted, a thin bar with a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                     |
-| `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                          |
-| `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe)                                                                                                                                                    |
-| `list`              | `variant`: `marker`                                                                                                                                                                                                                                                    |
-| `emptyState`        | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                               |
-| `text`, `heading`   | `text`: `size`, `variant='muted'`; `heading`: `variant` `heavy`, `subsection`                                                                                                                                                                                          |
-| `badge`, `tag`      | Badge `size` (`xs` to `lg`), `variant`: `count` (tab counter), `label` (neutral role chip, capitalised); Tag has one look (radius `sm` by default), use `StatusBadge`                                                                                                  |
-| `nativeSelect`      | The input's field look (panel, ring, outside focus ring) at the shared control height, whatever the size; `code` is a neutral chip like `badge` (both default to the `gray` palette, not the accent)                                                                   |
+| Recipe              | Variants and axes                                                                                                                                                                                                                                                                                              |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `button`            | `variant`: `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `menu-trigger`, `segment`, `toggle`, `chip` (a filter chip, at `size='sm'`), `disclosure`, `danger`, `floating`, `whatsapp`; `size`: `cta`; `multiline`. Chakra's own `solid`, `outline`, `ghost`… stay |
+| `card`              | `outline`, `section`, `frame`, `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `note` (a dashed explanation, no fill), `plain` (a filled card without a border, around a page-level empty state); `Card.Body data-current` marks the row being worked on with an accent rule          |
+| `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                                                            |
+| `link`              | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                                                                 |
+| `tabs`              | `variant`: `line` (default: hairline and a 2px ink line under the current tab), `pill` (segmented)                                                                                                                                                                                                             |
+| `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the mobile dashboard menu); dialog and drawer backdrops both paint `scrim.strong`                                                                                                                                                 |
+| `dialog`            | `placement` defaults to `center`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                                                        |
+| `menu`              | Items highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                                                               |
+| `progress`          | `variant`: `results` (thin bar in ink, one per choice, never dimmed: the slot cannot tell a final tally from a live one), `turnout` (the share that voted, a thin bar with a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                                                             |
+| `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure), `hero` (a vote's turnout); parts `label`, `valueText`, `valueUnit`                                                                                                                                                                       |
+| `status`            | `tone`: `success`, `warning`, `danger`, `gray`, `ink`, `hollow` (a dot and a word; `ProcessStatus` picks the tone)                                                                                                                                                                                             |
+| `kbd`               | `variant`: `hint` (default; a shortcut next to its control, see `KeyHint`)                                                                                                                                                                                                                                     |
+| `dataList`          | `variant`: `facts` (label left, value right, rows split by `border.muted`; see `FactList`)                                                                                                                                                                                                                     |
+| `censusRuler`       | Slots `scale`, `start`, `end`, `marker`: the scale under a turnout bar (`CensusRuler`)                                                                                                                                                                                                                         |
+| `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe)                                                                                                                                                                                            |
+| `list`              | `variant`: `marker`                                                                                                                                                                                                                                                                                            |
+| `emptyState`        | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                                                                       |
+| `text`, `heading`   | `text`: `size`, `variant='muted'`; `heading`: `variant` `heavy`, `subsection`                                                                                                                                                                                                                                  |
+| `badge`, `tag`      | Badge `size` (`xs` to `lg`), `variant`: `count` (tab counter), `label` (neutral role chip, capitalised); Tag has one look (radius `sm` by default), use `StatusBadge`                                                                                                                                          |
+| `nativeSelect`      | The input's field look (panel, ring, outside focus ring) at the shared control height, whatever the size; `code` is a neutral chip like `badge` (both default to the `gray` palette, not the accent)                                                                                                           |
 
 To add a variant:
 
@@ -246,6 +252,10 @@ All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 | `useIsMobile`, `useTableAsCards`           | The mobile breakpoint (below `md`) as a boolean; the second is the same hook, named for tables shown as cards                                  |
 | `ConfirmDialog` (`ConfirmDialogContent`)   | Every confirmation. `layout`: `panel`, `inline`, `compact`, `shell`, `summary`; `destructive` is on by default                                 |
 | `StatusBadge`                              | A status chip: `colorPalette` (`success`, `warning`, `danger`, `info`, `gray`), `variant` (`subtle`, `surface`, `solid`)                       |
+| `ProcessStatus`                            | A vote's or question's state as a dot and a word: `state`, `kind` (`vote`, `question`); `useProcessStateLabel` gives the word                  |
+| `CensusRuler`                              | A turnout bar with its scale: `value`, `max`, `label` (accessible name), `marker` (the count under the fill)                                   |
+| `FactList`                                 | Label and value rows as a `dl`: `facts` (`{ id, label, value, tooltip? }`)                                                                     |
+| `KeyHint`                                  | A decorative shortcut key printed next to its control                                                                                          |
 | `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                                             |
 | `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`                              |
 | `CloseButton`                              | A close control with a translated `aria-label`                                                                                                 |

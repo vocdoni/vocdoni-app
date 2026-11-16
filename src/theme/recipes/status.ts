@@ -29,6 +29,13 @@ export const Status = defineSlotRecipe({
       warning: { root: { color: 'status.warning.fg' }, indicator: { bg: 'status.warning.fg' } },
       danger: { root: { color: 'status.error.fg' }, indicator: { bg: 'status.error.fg' } },
       gray: { root: { color: 'fg.muted' }, indicator: { bg: 'fg.subtle' } },
+      // Ready: ink dot and word, set to go but not started.
+      ink: { root: { color: 'fg' }, indicator: { bg: 'fg' } },
+      // Nothing happening yet (a draft, a question to open, a voided one): a hollow ring.
+      hollow: {
+        root: { color: 'fg.muted' },
+        indicator: { bg: 'transparent', boxShadow: '[inset 0 0 0 {borderWidths.mark} {colors.fg.subtle}]' },
+      },
     },
   },
   defaultVariants: { tone: 'gray' },
