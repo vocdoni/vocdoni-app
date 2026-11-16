@@ -232,7 +232,7 @@ export const VoteManage = () => {
             {text(question.description)}
           </Text>
         )}
-        <Stack gap='1' maxW={{ md: '[420px]' }}>
+        <Stack gap='1' maxW={{ md: 'turnout.max' }}>
           <Text textStyle='caption' color='fg.subtle'>
             {t('votes.manage.question_voted', {
               defaultValue: '{{count}} of {{total}} voted',

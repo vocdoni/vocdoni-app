@@ -18,7 +18,7 @@ const steps = (styles: unknown, ...props: string[]) => {
     const key = Object.keys(rules).find((name) => name.startsWith('@media') && name.includes(`min-width: ${min}`))
     return key ? at(rules[key] as Record<string, unknown>) : undefined
   }
-  return { base: at(rules), md: media('48em'), lg: media('64em') }
+  return { base: at(rules), md: media('48rem'), lg: media('64rem') }
 }
 const var_ = (token: string) => `var(--chakra-sizes-${token})`
 const touch = var_('control-touch')
