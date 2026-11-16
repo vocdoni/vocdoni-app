@@ -51,7 +51,7 @@ const build = (overrides: Partial<VotingProcessResponse> = {}) =>
     }),
     initialStatus: 'PAUSED',
     ...overrides,
-  }) as VotingProcessResponse
+  }) as unknown as VotingProcessResponse
 
 const show = (election: VotingProcessResponse) => {
   setReactProvidersMock({

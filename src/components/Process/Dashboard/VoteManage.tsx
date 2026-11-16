@@ -235,8 +235,8 @@ export const VoteManage = () => {
         <Stack gap='1' maxW={{ md: 'turnout.max' }}>
           <Text textStyle='caption' color='fg.subtle'>
             {t('votes.manage.question_voted', {
-              defaultValue: '{{count}} of {{total}} voted',
-              count: quantity(count),
+              defaultValue: '{{voted}} of {{total}} voted',
+              voted: quantity(count),
               total: electorate ? quantity(electorate) : '?',
             })}
           </Text>
@@ -244,9 +244,9 @@ export const VoteManage = () => {
             value={count}
             max={electorate}
             label={t('votes.manage.question_ruler', {
-              defaultValue: 'Question {{number}}: {{count}} of {{total}} voted',
+              defaultValue: 'Question {{number}}: {{voted}} of {{total}} voted',
               number,
-              count: quantity(count),
+              voted: quantity(count),
               total: electorate ? quantity(electorate) : '?',
             })}
           />
@@ -271,8 +271,8 @@ export const VoteManage = () => {
             <ProcessStatus state={deriveVoteState(election, now)} />
             <Text textStyle='control'>
               {t('votes.manage.voted_any', {
-                defaultValue: 'At least {{count}} of {{total}} voted on a question',
-                count: quantity(voted),
+                defaultValue: 'At least {{voted}} of {{total}} voted on a question',
+                voted: quantity(voted),
                 total: total ? quantity(total) : '?',
               })}
             </Text>
@@ -282,8 +282,8 @@ export const VoteManage = () => {
               value={voted}
               max={total}
               label={t('votes.manage.ruler_label', {
-                defaultValue: '{{count}} of {{total}} voted on at least one question',
-                count: quantity(voted),
+                defaultValue: '{{voted}} of {{total}} voted on at least one question',
+                voted: quantity(voted),
                 total: total ? quantity(total) : '?',
               })}
             />

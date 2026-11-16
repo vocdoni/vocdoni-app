@@ -12,12 +12,11 @@ import { useVoteText } from '~i18n/use-vote-text'
 import { useDeleteDraft } from '~queries/votes'
 import { Routes } from '~routes'
 import { isLegacyProcess, isQuestionByQuestion } from '~src/types/voting-process'
-import { ChevronRightIcon, CopyIcon, MoreIcon } from '~theme/icons'
+import { ChevronRightIcon, CopyIcon, DeleteIcon, MoreIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { questionOutcome } from '~utils/vote-outcome'
 import { draftWarning, percentOf, type VoteRow } from '~utils/vote-state'
 import { useCloneAsDraft } from '~components/Process/Dashboard/use-clone-as-draft'
-import { useIsDesktop } from './useListShortcuts'
 
 export type VoteListRowProps = {
   row: VoteRow
@@ -159,7 +158,6 @@ const GRID_AREAS = {
 const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: VoteListRowProps) => {
   const { t } = useTranslation()
   const { text, shortDate } = useVoteText()
-  const isDesktop = useIsDesktop()
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const actionLabel = useActionLabel()
@@ -182,13 +180,14 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
   const voted = results ? processVoteCount(results) : 0
   const percent = percentOf(voted, total)
 
-  // Duplicate is an icon button from `lg` and an item of the menu below it.
+  // Every row keeps its secondary actions in one menu: duplicate, and delete for a draft.
   const items: ResponsiveMenuItem[] = [
-    ...(canDuplicate && !isDesktop
+    ...(canDuplicate
       ? [
           {
             value: 'duplicate',
-            label: t('votes.list.duplicate', { defaultValue: 'Duplicate this vote' }),
+            label: t('votes.list.duplicate_short', { defaultValue: 'Duplicate' }),
+            icon: CopyIcon,
             disabled: isCloning,
             onSelect: () => void cloneAsDraft(process),
           },
@@ -199,6 +198,7 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
           {
             value: 'delete',
             label: t('drafts.delete', { defaultValue: 'Delete draft' }),
+            icon: DeleteIcon,
             danger: true,
             onSelect: () => setConfirmingDelete(true),
           },
@@ -296,18 +296,6 @@ const VoteListRowBase = ({ row, results, promoted = false, canManage, now }: Vot
                   <Icon as={ChevronRightIcon} />
                 </RouterLink>
               </Link>
-            )}
-            {canDuplicate && isDesktop && (
-              <IconButton
-                variant='ghost'
-                size='sm'
-                aria-label={t('votes.list.duplicate', { defaultValue: 'Duplicate this vote' })}
-                title={t('votes.list.duplicate_short', { defaultValue: 'Duplicate' })}
-                loading={isCloning}
-                onClick={() => void cloneAsDraft(process)}
-              >
-                <CopyIcon />
-              </IconButton>
             )}
           </HStack>
         </GridItem>

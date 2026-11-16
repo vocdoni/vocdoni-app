@@ -1,3 +1,4 @@
+import { Card } from '@chakra-ui/react'
 import userEvent from '@testing-library/user-event'
 import type { VotingProcessResponse, VotingProcessResultsResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
@@ -66,7 +67,9 @@ const make = (over: Record<string, unknown> = {}) =>
 const renderRow = (process: VotingProcessResponse, props: Partial<VoteListRowProps> = {}) =>
   render(
     <TestMemoryRouter>
-      <VoteListRow row={{ process, state: deriveVoteState(process, now) }} canManage now={now} {...props} />
+      <Card.Root variant='frame'>
+        <VoteListRow row={{ process, state: deriveVoteState(process, now) }} canManage now={now} {...props} />
+      </Card.Root>
     </TestMemoryRouter>
   )
 
@@ -137,7 +140,7 @@ describe('VoteListRow permissions', () => {
   it('duplicates a vote', async () => {
     const process = make()
     renderRow(process)
-    await userEvent.click(screen.getByRole('button', { name: 'Duplicate this vote' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Duplicate' }))
     expect(cloneAsDraft).toHaveBeenCalledWith(process)
   })
 

@@ -1,5 +1,5 @@
-import { Button, Drawer, IconButton, Menu, Portal } from '@chakra-ui/react'
-import { cloneElement, useState, type ReactElement } from 'react'
+import { Button, Drawer, Icon, IconButton, Menu, Portal } from '@chakra-ui/react'
+import { cloneElement, useState, type ElementType, type ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { MoreIcon } from '~theme/icons'
@@ -11,6 +11,8 @@ export type ResponsiveMenuItem = {
   href?: string
   danger?: boolean
   disabled?: boolean
+  /** A concept icon from ~theme/icons, drawn before the label. */
+  icon?: ElementType
 }
 
 export type ResponsiveMenuProps = {
@@ -77,13 +79,19 @@ export const ResponsiveMenu = ({ label, trigger, items }: ResponsiveMenuProps) =
                       'data-danger': item.danger ? 'true' : undefined,
                       onClick: select,
                     } as const
+                    const content = (
+                      <>
+                        {item.icon && <Icon as={item.icon} boxSize='icon.sm' aria-hidden />}
+                        {item.label}
+                      </>
+                    )
                     return item.href ? (
                       <Button key={item.value} asChild {...rowProps}>
-                        <a href={item.href}>{item.label}</a>
+                        <a href={item.href}>{content}</a>
                       </Button>
                     ) : (
                       <Button key={item.value} {...rowProps}>
-                        {item.label}
+                        {content}
                       </Button>
                     )
                   })}
@@ -106,7 +114,7 @@ export const ResponsiveMenu = ({ label, trigger, items }: ResponsiveMenuProps) =
       </Menu.Trigger>
       <Portal>
         <Menu.Positioner>
-          <Menu.Content w='menu' aria-label={label}>
+          <Menu.Content w='auto' aria-label={label}>
             {sorted.map((item) => (
               <Menu.Item
                 key={item.value}
@@ -117,7 +125,17 @@ export const ResponsiveMenu = ({ label, trigger, items }: ResponsiveMenuProps) =
                 onSelect={item.onSelect}
                 asChild={!!item.href}
               >
-                {item.href ? <a href={item.href}>{item.label}</a> : item.label}
+                {item.href ? (
+                  <a href={item.href}>
+                    {item.icon && <Icon as={item.icon} boxSize='icon.sm' aria-hidden />}
+                    {item.label}
+                  </a>
+                ) : (
+                  <>
+                    {item.icon && <Icon as={item.icon} boxSize='icon.sm' aria-hidden />}
+                    {item.label}
+                  </>
+                )}
               </Menu.Item>
             ))}
           </Menu.Content>
