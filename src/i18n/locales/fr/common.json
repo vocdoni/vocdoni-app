@@ -838,6 +838,7 @@
     "selector_label": "Taille de l'adhésion"
   },
   "menu": {
+    "close": "Fermer le menu",
     "collapse": "Réduire le menu",
     "create": "Créer un processus",
     "dashboard": "Dashboard",

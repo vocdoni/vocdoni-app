@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Flex, HStack, Icon, Link, Popover, Text } from '@chakra-ui/react'
+import { Avatar, Box, Button, Flex, HStack, Icon, IconButton, Link, Popover, Text } from '@chakra-ui/react'
 import { useContext, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
@@ -20,7 +20,12 @@ import { useAppEnv } from '~src/app-env'
 import { useProfile } from '~src/queries/account'
 import { OrganizationSwitcher } from './OrganizationSwitcher'
 
-const UserProfile = () => {
+type UserProfileProps = {
+  // The top bar's account button below `lg`: only the person's initials, the menu opening under it.
+  compact?: boolean
+}
+
+const UserProfile = ({ compact = false }: UserProfileProps) => {
   const { t } = useTranslation()
   const { logout } = useAuth()
   const { data: profile } = useProfile()
@@ -33,7 +38,7 @@ const UserProfile = () => {
   const privacyPolicyUrl = appEnv.PRIVACY_POLICY_URL
   const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
 
-  const placement = isMobile ? 'bottom' : 'right-end'
+  const placement = compact ? 'bottom-end' : isMobile ? 'bottom' : 'right-end'
   const avatarSrc = organization?.account?.avatar || ''
 
   if (!profile) return
@@ -41,47 +46,55 @@ const UserProfile = () => {
   return (
     <Popover.Root positioning={{ placement }}>
       <Popover.Trigger asChild>
-        <Button
-          aria-label={reduced ? t('user_menu', 'User menu') : undefined}
-          size='xl'
-          w='full'
-          colorPalette='gray'
-          variant='menu-trigger'
-          mt='2'
-          minW='0'
-        >
-          <Flex alignItems='center' gap='2' w='full'>
+        {compact ? (
+          <IconButton aria-label={t('user_menu', 'User menu')} colorPalette='gray' variant='ghost' size='xs'>
             <Avatar.Root size='xs'>
-              {avatarSrc ? <Avatar.Image src={avatarSrc} /> : null}
               <Avatar.Fallback name={`${profile.firstName} ${profile.lastName}`} />
             </Avatar.Root>
-            {!reduced && (
-              <Flex
-                css={{ '--size': 'calc(var(--chakra-sizes-dashboard-menu-expanded) - 7rem)' }}
-                flexDirection='column'
-                justifyContent='start'
-                alignItems='start'
-                gap='0.5'
-                ml='0'
-              >
-                <Text fontWeight='light' fontSize='sm' lineHeight='shorter' maxW='var(--size)' truncate>
-                  {profile.firstName}
-                </Text>
-                <Text
-                  fontWeight='light'
-                  fontSize='xs'
-                  lineHeight='shorter'
-                  color='fg.muted'
-                  maxW='var(--size)'
-                  truncate
+          </IconButton>
+        ) : (
+          <Button
+            aria-label={reduced ? t('user_menu', 'User menu') : undefined}
+            size='xl'
+            w='full'
+            colorPalette='gray'
+            variant='menu-trigger'
+            mt='2'
+            minW='0'
+          >
+            <Flex alignItems='center' gap='2' w='full'>
+              <Avatar.Root size='xs'>
+                {avatarSrc ? <Avatar.Image src={avatarSrc} /> : null}
+                <Avatar.Fallback name={`${profile.firstName} ${profile.lastName}`} />
+              </Avatar.Root>
+              {!reduced && (
+                <Flex
+                  css={{ '--size': 'calc(var(--chakra-sizes-dashboard-menu-expanded) - 7rem)' }}
+                  flexDirection='column'
+                  justifyContent='start'
+                  alignItems='start'
+                  gap='0.5'
+                  ml='0'
                 >
-                  {organization?.account?.name?.default}
-                </Text>
-              </Flex>
-            )}
-            {!reduced && <Icon as={ChevronsUpDownIcon} color='fg.muted' ml='auto' />}
-          </Flex>
-        </Button>
+                  <Text fontWeight='light' fontSize='sm' lineHeight='shorter' maxW='var(--size)' truncate>
+                    {profile.firstName}
+                  </Text>
+                  <Text
+                    fontWeight='light'
+                    fontSize='xs'
+                    lineHeight='shorter'
+                    color='fg.muted'
+                    maxW='var(--size)'
+                    truncate
+                  >
+                    {organization?.account?.name?.default}
+                  </Text>
+                </Flex>
+              )}
+              {!reduced && <Icon as={ChevronsUpDownIcon} color='fg.muted' ml='auto' />}
+            </Flex>
+          </Button>
+        )}
       </Popover.Trigger>
       <Popover.Positioner>
         <Popover.Content w='user-profile'>

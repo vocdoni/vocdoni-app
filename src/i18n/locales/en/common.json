@@ -817,12 +817,13 @@
     "selector_label": "Membership Size"
   },
   "menu": {
+    "close": "Close menu",
     "collapse": "Collapse menu",
     "create": "Create Process",
     "dashboard": "Dashboard",
     "expand": "Expand menu",
     "login": "Login",
-    "open": "Open Menu",
+    "open": "Open menu",
     "title": "Menu"
   },
   "name": "Name",

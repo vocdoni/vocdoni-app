@@ -838,6 +838,7 @@
     "selector_label": "Dimensione associazione"
   },
   "menu": {
+    "close": "Chiudi menu",
     "collapse": "Comprimi menu",
     "create": "Crea processo",
     "dashboard": "Dashboard",

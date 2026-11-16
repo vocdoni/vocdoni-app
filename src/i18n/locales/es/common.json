@@ -838,6 +838,7 @@
     "selector_label": "Nº de Miembros"
   },
   "menu": {
+    "close": "Cerrar menú",
     "collapse": "Contraer menú",
     "create": "Crear proceso",
     "dashboard": "Panel",

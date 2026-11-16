@@ -838,6 +838,7 @@
     "selector_label": "Dimensão da adesão"
   },
   "menu": {
+    "close": "Fechar menu",
     "collapse": "Recolher menu",
     "create": "Criar processo",
     "dashboard": "Dashboard",

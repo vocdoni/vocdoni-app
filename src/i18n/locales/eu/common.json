@@ -817,6 +817,7 @@
     "selector_label": "Kide-kopurua"
   },
   "menu": {
+    "close": "Itxi menua",
     "collapse": "Tolestu menua",
     "create": "Sortu prozesua",
     "dashboard": "Panela",

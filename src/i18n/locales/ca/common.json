@@ -838,6 +838,7 @@
     "selector_label": "Nombre de membres"
   },
   "menu": {
+    "close": "Tanca el menú",
     "collapse": "Contraure menú",
     "create": "Crear Procés",
     "dashboard": "Dashboard",

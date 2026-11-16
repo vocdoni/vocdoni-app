@@ -817,6 +817,7 @@
     "selector_label": "Mitgliederzahl"
   },
   "menu": {
+    "close": "Menü schließen",
     "collapse": "Menü einklappen",
     "create": "Abstimmung erstellen",
     "dashboard": "Dashboard",

@@ -24,7 +24,7 @@ designed yet (the `_dark` side of each token is kept as it was).
 | Meaning of colours (surfaces, text, borders, light and dark)             | `src/theme/semantic.ts` and one module per family (below)                                                                                                 |
 | Brand colour and `accent` (generated from `PRIMARY_COLOR`)               | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                |
 | Text roles                                                               | `src/theme/textStyles.ts`                                                                                                                                 |
-| How a component looks and its variants                                   | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports |
+| How a component looks and its variants                                   | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports, and `dashboard` (`DashboardContents`) |
 | Voting UI from `@vocdoni/react-components`                               | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                        |
 | Shared building blocks                                                   | `src/components/ui/`                                                                                                                                      |
 | Shared layout pieces                                                     | `src/components/Layout/Separators.tsx` (`LabelledSeparator`)                                                                                              |
@@ -182,6 +182,19 @@ and `control-tab` (15px, 13.5px from `lg`) are what button, field, menu, chip an
   `sheet-row` and `sheet-close` variants for its rows. Use `ResponsiveMenu` (below) for a list of actions rather than
   a hand-built `Menu` plus `Drawer`.
 
+  The dashboard shell (`elements/DashboardShell.tsx`) follows the same split:
+
+  | What                 | Phone (`base`)                         | Tablet (`md`)                          | Desktop (`lg`)                                   |
+  | -------------------- | -------------------------------------- | -------------------------------------- | ------------------------------------------------ |
+  | Navigation           | 52px top bar, 296px drawer (`sidebar`) | 52px top bar, 296px drawer (`sidebar`) | fixed 240px sidebar (48px collapsed)             |
+  | Page side gutter     | 16px                                   | 24px                                   | 28px                                             |
+
+  The sizes are `sizes.dashboard.topbar`, `dashboard.drawer` (read by the drawer `sidebar` variant) and
+  `dashboard.menu.expanded|collapsed`. The top bar (`Dashboard/TopBar.tsx`) holds the menu button, the organization and
+  the account menu, and is hidden from `lg` by CSS; the drawer shows the sidebar's items in the same order and closes on
+  navigation, on Escape and from its close button. Only the sidebar collapses. The gutter is the
+  `recipes/dashboard.ts` recipe read by `DashboardContents`, so a page never sets its own.
+
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
   focus ring, `thick`): `<Box borderWidth='thick' />`.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
@@ -191,7 +204,7 @@ and `control-tab` (15px, 13.5px from `lg`) are what button, field, menu, chip an
 - **Page widths**: `content.wide` (1600px), `content.medium` (1200px), `content.narrow` (900px), read through
   `PageContainer` (below).
 - **Other named sizes**: `card.empty`, `table.action`, `list.label` (the leading column of a list row: a vote's state and date), `toolbar`, `dashboard.menu.expanded|collapsed`,
-  `dashboard.header`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon
+  `dashboard.header`, `dashboard.topbar`, `dashboard.drawer`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon
   link), `control.md` (34px, the default height of buttons, inputs and selects), `control.area` (76px, textarea
   minimum height), `dot` (7px status dot), `loader` (min height of `PageLoader`), `wordmark` (width of the Vocdoni wordmark:
   `<VocdoniLogo w='wordmark' />`), `turnout.max` (420px, the longest a turnout bar grows from `md`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
@@ -226,7 +239,7 @@ What exists today:
 | `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                                                                                                                 |
 | `link`              | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`, `back` (the way back over a page title: 14px medium with a chevron up to `lg`, a quiet 12px label from `lg`), `row-action` (a list row's one action, touch text and a 44/40px hit area up to `lg`); `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                                                                                                                      |
 | `tabs`              | `variant`: `line` (default: hairline and a 2px ink line under the current tab), `pill` (segmented)                                                                                                                                                                                                                                                                  |
-| `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the mobile dashboard menu), `sheet` (a bottom sheet, titled with the item's name over a muted line); dialog and drawer backdrops both paint `scrim.strong`                                                                                                                                                                            |
+| `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the dashboard's navigation below `lg`, `dashboard.drawer` wide), `sheet` (a bottom sheet, titled with the item's name over a muted line); dialog and drawer backdrops both paint `scrim.strong`                                                                                                                                                                            |
 | `dialog`            | `placement` defaults to `center`, which is a bottom sheet below `md`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                                                                         |
 | `menu`              | Items are 52px, 40px, 32px rows by breakpoint, highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                                                                           |
 | `progress`          | `variant`: `results` (thin bar in ink, one per choice, never dimmed: the slot cannot tell a final tally from a live one), `turnout` (the share that voted, a thin bar with a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                                                                                                                  |
