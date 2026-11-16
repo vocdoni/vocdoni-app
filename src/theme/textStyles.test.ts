@@ -8,9 +8,14 @@ describe('text styles', () => {
   it.each(Object.keys(textStyles))('%s resolves every token it names', (name) => {
     const css = system.css({ textStyle: name as SystemStyleObject['textStyle'] }) as Record<string, unknown>
     const tokenProps = ['fontSize', 'fontFamily', 'fontWeight', 'letterSpacing'] as const
-    expect(tokenProps.some((prop) => prop in css)).toBe(true)
+    // A responsive value sits under its media query, so look through nested objects.
+    const values = (node: unknown, prop: string): unknown[] =>
+      typeof node !== 'object' || node === null
+        ? []
+        : Object.entries(node).flatMap(([key, value]) => (key === prop ? [value] : values(value, prop)))
+    expect(tokenProps.some((prop) => values(css, prop).length > 0)).toBe(true)
     for (const prop of tokenProps) {
-      if (prop in css) expect(css[prop], prop).toMatch(/^var\(--chakra-/)
+      for (const value of values(css, prop)) expect(value, prop).toMatch(/^var\(--chakra-/)
     }
   })
 

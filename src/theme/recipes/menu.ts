@@ -21,8 +21,13 @@ const baseStyle = {
   },
 } satisfies Partial<Record<string, SystemStyleObject>>
 
-// Items are 28px rows with a control label; Chakra's sizes set their padding and text after the base.
-const item = { textStyle: 'control', py: '1' } as const
+// Items are rows with a control label, 52px on a phone, 40px on a tablet and 32px from `lg`, with 16px, 14px and
+// 13.5px text (`control-input`); Chakra's sizes set their padding and text after the base.
+const item = {
+  textStyle: 'control-input',
+  py: '1',
+  minH: { base: 'control.row', md: 'control.tablet', lg: '8' },
+} as const
 
 export const Menu = defineSlotRecipe({
   slots: menuAnatomy.keys(),

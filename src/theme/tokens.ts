@@ -24,14 +24,24 @@ const fontSizes = defineTokens.fontSizes({
   lg: { value: '1rem' },
   xl: { value: '1.25rem' },
   '2xl': { value: '1.75rem' },
+  // The phone and tablet steps of the type that grows with the screen (see textStyles.ts): `page` the page title
+  // on a phone, `item` a row title from `md`, `feature` the larger row title on a phone, `vote` a vote's title on a
+  // phone, and the control text of a touch screen (`item` 15px, `lg` 16px for fields so iOS does not zoom).
+  page: { value: '1.5rem' },
+  item: { value: '0.9375rem' },
+  feature: { value: '1.1875rem' },
+  vote: { value: '1.375rem' },
   // The voter's ballot: an option's label and a question's title.
   ballot: {
     option: { value: '1.0625rem' },
     question: { value: '2rem' },
   },
   // The one headline figure of a screen (a vote's turnout), read through the `figure-hero` text style.
+  // `hero` is the desktop size; `large` (96px) is the tablet and `small` (56px) the phone.
   figure: {
     hero: { value: '8.25rem' },
+    large: { value: '6rem' },
+    small: { value: '3.5rem' },
   },
 })
 
@@ -152,9 +162,16 @@ const sizes = defineTokens.sizes({
     'icon-link': { value: '30px' },
     // Fil's default control height, shared by buttons, inputs and selects.
     md: { value: '34px' },
+    // The same control on a tablet (`md` up to `lg`) and on a phone, where it is a touch target.
+    tablet: { value: '40px' },
+    touch: { value: '44px' },
+    // A row of a menu or a bottom sheet on a phone.
+    row: { value: '52px' },
     // Minimum height of a textarea.
     area: { value: '76px' },
   },
+  // Width of a dropdown menu (ui/ResponsiveMenu).
+  menu: { value: '200px' },
   // Minimum height of ui/Loader's PageLoader, so a page with nothing yet does not collapse.
   loader: { value: '300px' },
   // Width of the Vocdoni wordmark image.

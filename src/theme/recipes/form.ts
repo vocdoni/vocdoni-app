@@ -33,21 +33,21 @@ const xxl = defineStyle({
   },
 })
 
-// iOS Safari auto-zooms focused inputs with a font-size below 16px; keep base at
-// `lg` (the 1rem step) on mobile and restore the control size from `md` up.
+// iOS Safari auto-zooms focused inputs with a font-size below 16px: 16px on a phone, 14px on a tablet and the
+// control size from `lg`.
 // Set at variant level so it overrides Chakra's default size variants (textStyle `sm`).
 export const mobileSafeFontSize = defineStyle({
-  fontSize: { base: 'lg', md: 'control' },
+  fontSize: { base: 'lg', md: 'md', lg: 'control' },
   _placeholder: {
-    fontSize: { base: 'lg', md: 'control' },
+    fontSize: { base: 'lg', md: 'md', lg: 'control' },
   },
 })
 
-// One field height, the shared control size.
+// One field height, the shared control size: 44px on a phone, 40px on a tablet, 34px from `lg`.
 const sm = defineStyle({
   borderRadius: 'l2',
   px: '3',
-  '--input-height': 'sizes.control.md',
+  '--input-height': { base: 'sizes.control.touch', md: 'sizes.control.tablet', lg: 'sizes.control.md' },
   ...mobileSafeFontSize,
 })
 

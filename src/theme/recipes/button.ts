@@ -5,16 +5,21 @@ type StyleMap = Record<string, SystemStyleObject>
 const stockVariants = defaultConfig.theme?.recipes?.button?.variants
 const stock = (stockVariants?.variant ?? {}) as StyleMap
 
-// Fil has two control heights; `control.md` is the 34px default.
+// Fil has two control heights; `control.md` is the 34px default. Below `lg` a control grows to a touch target: 40px on
+// a tablet, 44px on a phone, and its text from 13.5px to 14px and 15px (`control-touch`).
+const touchHeight = { base: 'control.touch', md: 'control.tablet', lg: 'control.md' } as const
 const controlSize = defineStyle({
-  h: 'control.md',
-  minW: 'control.md',
+  h: touchHeight,
+  minW: touchHeight,
   px: '3',
-  textStyle: 'control',
+  textStyle: 'control-touch',
   gap: '2',
   _icon: { width: 'icon.sm', height: 'icon.sm' },
 })
-const compactSize = defineStyle({ ...controlSize, h: '7', minW: '7' })
+// The compact size is the 28px one on a desktop. An icon button is drawn at it, so its hit area is 44px, 40px, 28px
+// (the icon keeps its size).
+const compactHeight = { base: 'control.touch', md: 'control.tablet', lg: '7' } as const
+const compactSize = defineStyle({ ...controlSize, h: compactHeight, minW: compactHeight })
 
 // Chakra's sizes keep their names so call sites work: the four large ones draw the control, the small ones the compact.
 const sizes: StyleMap = {
@@ -176,6 +181,17 @@ const menuItem = defineStyle({
   },
 })
 
+// A row of a bottom sheet (ui/ResponsiveMenu on a phone); a destructive one carries `data-danger`. The height and
+// text are set by the compound variants below.
+const sheetRow = defineStyle({
+  ...menuItem,
+  px: '3',
+  '&[data-danger]': { color: 'status.error.fg' },
+})
+
+// The sheet's closing row: a centred secondary.
+const sheetClose = defineStyle({ ...outline, w: 'full', justifyContent: 'center', mt: '2' })
+
 // Button that opens a menu about the current user: avatar, names and a chevron, left-aligned.
 const menuTrigger = defineStyle({
   ...subtle,
@@ -208,7 +224,8 @@ const toggle = defineStyle({
   },
 })
 
-// A filter chip in a group (votes by state); the chosen one carries `aria-pressed`. Use at `size='sm'`.
+// A filter chip in a group (votes by state); the chosen one carries `aria-pressed`. Use at `size='sm'`. Its height
+// and text are set by the compound variant below: 36px, 32px, 28px.
 const chip = defineStyle({
   ...ghost,
   color: 'fg.muted',
@@ -272,6 +289,8 @@ const cta = defineStyle({
   px: '6',
 })
 
+const chipHeight = { base: '9', md: '8', lg: '7' } as const
+
 export const Button = defineRecipe({
   base: baseStyle,
   variants: {
@@ -287,6 +306,8 @@ export const Button = defineRecipe({
       'nav-item': navItem,
       'menu-item': menuItem,
       'menu-item-strong': { ...menuItem, fontWeight: 'bold' },
+      'sheet-row': sheetRow,
+      'sheet-close': sheetClose,
       'menu-trigger': menuTrigger,
       segment,
       toggle,
@@ -309,14 +330,21 @@ export const Button = defineRecipe({
   },
   // A one-line label keeps the size's height.
   compoundVariants: [
-    ...(['2xs', 'xs', 'sm'] as const).map((size) => ({ multiline: true, size, css: { minH: '7' as const } })),
+    ...(['2xs', 'xs', 'sm'] as const).map((size) => ({ multiline: true, size, css: { minH: compactHeight } })),
     ...(['md', 'lg', 'xl', '2xl', 'cta'] as const).map((size) => ({
       multiline: true,
       size,
-      css: { minH: 'control.md' as const },
+      css: { minH: touchHeight },
     })),
     // The sidebar entry and the segment keep their own height next to any size.
     { variant: 'nav-item', css: { h: '8', minW: '0' } },
     { variant: 'segment', css: { h: '7', minW: '0' } },
+    // A sheet row is 52px with 16px text whatever the size.
+    ...(['sheet-row', 'sheet-close'] as const).map((variant) => ({
+      variant,
+      css: { h: 'control.row' as const, minW: '0' as const, textStyle: 'control-input' as const },
+    })),
+    // The chip is a smaller control than a button at every width: 36px on a phone, 32px on a tablet, 28px from `lg`.
+    { variant: 'chip', css: { h: chipHeight, minW: '0', textStyle: 'control-chip' } },
   ],
 })

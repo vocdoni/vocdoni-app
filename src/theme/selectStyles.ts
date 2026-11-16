@@ -5,10 +5,10 @@ import type { ChakraStylesConfig } from 'chakra-react-select'
 export const selectStyles: ChakraStylesConfig<any, boolean> = {
   control: (base) => ({
     ...base,
-    minH: 'control.md',
+    minH: { base: 'control.touch', md: 'control.tablet', lg: 'control.md' },
     textStyle: 'control',
-    // 16px on phones, like the input recipe: a smaller font makes iOS Safari zoom the page on focus.
-    fontSize: { base: 'lg', md: 'control' },
+    // The input recipe's steps: 16px on phones (a smaller font makes iOS Safari zoom the page on focus), 14px, 13.5px.
+    fontSize: { base: 'lg', md: 'md', lg: 'control' },
   }),
   dropdownIndicator: (base) => ({
     ...base,

@@ -7,14 +7,23 @@ const line = {
   root: {
     '--tabs-height': 'auto',
   },
+  // One line, edge to edge: a long tab bar scrolls sideways instead of wrapping.
   list: {
     gap: '6',
+    flexWrap: 'nowrap',
+    overflowX: 'auto',
+    scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': { display: 'none' },
   },
+  // 44px tall with 15px text up to `lg`, where it is the text and a 10px gap above the line.
   trigger: {
     px: '0',
     pt: '0',
-    pb: '2.5',
-    textStyle: 'control',
+    pb: { base: '0', lg: '2.5' },
+    h: { base: 'control.touch', lg: 'auto' },
+    flexShrink: '0',
+    whiteSpace: 'nowrap',
+    textStyle: 'control-tab',
     fontWeight: 'medium',
     color: 'fg.subtle',
     _selected: {
