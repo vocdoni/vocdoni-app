@@ -174,6 +174,10 @@ const sizes = defineTokens.sizes({
   menu: { value: '200px' },
   // Minimum height of ui/Loader's PageLoader, so a page with nothing yet does not collapse.
   loader: { value: '300px' },
+  // The longest a turnout bar grows from `md`; on a phone it fills its column.
+  turnout: {
+    max: { value: '420px' },
+  },
   // Width of the Vocdoni wordmark image.
   wordmark: { value: '125px' },
   'user-profile': { value: '280px' },

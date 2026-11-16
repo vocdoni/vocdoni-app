@@ -112,7 +112,7 @@ export const ResponsiveMenu = ({ label, trigger, items }: ResponsiveMenuProps) =
                 key={item.value}
                 value={item.value}
                 disabled={item.disabled}
-                color={item.danger ? 'status.error.fg' : undefined}
+                color={item.danger ? 'danger.action' : undefined}
                 data-danger={item.danger ? 'true' : undefined}
                 onSelect={item.onSelect}
                 asChild={!!item.href}

@@ -186,7 +186,7 @@ const menuItem = defineStyle({
 const sheetRow = defineStyle({
   ...menuItem,
   px: '3',
-  '&[data-danger]': { color: 'status.error.fg' },
+  '&[data-danger]': { color: 'danger.action' },
 })
 
 // The sheet's closing row: a centred secondary.
