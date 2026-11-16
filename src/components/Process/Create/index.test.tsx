@@ -143,6 +143,7 @@ describe('useFormToVotingProcessRequest', () => {
       title: 'Test Election',
       description: 'Test Description',
       autoStart: true,
+      votingMode: 'all',
       startDate: '',
       startTime: '',
       endDate: '2025-12-31',

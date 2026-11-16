@@ -16,5 +16,5 @@ export const Kbd = defineRecipe({
       },
     },
   },
-  defaultVariants: { variant: 'hint', size: 'sm' },
+  defaultVariants: { variant: 'hint' },
 })

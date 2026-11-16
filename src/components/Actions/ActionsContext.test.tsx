@@ -1,3 +1,4 @@
+import type { VotingProcessWithMode } from '~src/types/voting-process'
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import { QueryKeys } from '~queries/keys'
 import { fireEvent, renderWithProviders, screen, waitFor } from '~src/test-utils'
@@ -26,7 +27,7 @@ vi.mock('~queries/votes', () => ({ useCanManageVotes: () => canManage }))
 const question = (id: string, status: VotingProcessQuestion['status'], voteCount?: number) =>
   ({ id, status, results: voteCount === undefined ? undefined : { voteCount } }) as VotingProcessQuestion
 
-const election = (overrides: Partial<VotingProcessResponse> = {}) =>
+const election = (overrides: Partial<VotingProcessWithMode> = {}) =>
   ({
     id: 'p1',
     orgAddress: '0xorg',

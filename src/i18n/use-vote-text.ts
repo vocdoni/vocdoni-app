@@ -1,4 +1,4 @@
-import type { Choice } from '@vocdoni/api-types'
+import type { LocalizedInput, Choice } from '@vocdoni/api-types'
 import { formatDuration } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { getLocalizedRawText } from '~utils/localized-text'
@@ -20,7 +20,8 @@ const SHORT_DATE: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' }
 /** Dates, time left and result wording of the votes screens, in the page language. */
 export const useVoteText = () => {
   const { t, i18n } = useTranslation()
-  const text = (value: Record<string, string> | undefined) => getLocalizedRawText(value, i18n.language)
+  const text = (value: LocalizedInput | undefined) =>
+    typeof value === 'string' ? value : getLocalizedRawText(value, i18n.language)
 
   // Intl, because Catalan needs "9 d'abril", which no date-fns pattern gives (audit F6).
   const formatDate = (date: Date | string | undefined, options: Intl.DateTimeFormatOptions) => {
