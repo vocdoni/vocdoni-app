@@ -977,7 +977,6 @@
   },
   "please_check_email_to_verify": "Controlla la tua email per verificare il tuo account",
   "preferences": "Preferenze",
-  "preview": "Anteprima",
   "privacy_policy": "Privacy policy",
   "process": {
     "anonymity": {
@@ -2024,10 +2023,9 @@
         "starts": "Inizio"
       },
       "manage_link": "Gestisci le domande",
-      "question_turnout_one": "{{count}} · {{percent}}%",
-      "question_turnout_many": "{{count}} · {{percent}}%",
-      "question_turnout_other": "{{count}} · {{percent}}%",
-      "results_link": "Vedi i risultati",
+      "question_votes_one": "{{count}} voto",
+      "question_votes_many": "{{count}} voti",
+      "question_votes_other": "{{count}} voti",
       "ruler_label_one": "{{count}} persona su {{total}} ha votato, {{percent}}%",
       "ruler_label_many": "{{count}} persone su {{total}} hanno votato, {{percent}}%",
       "ruler_label_other": "{{count}} persone su {{total}} hanno votato, {{percent}}%",

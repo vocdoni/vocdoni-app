@@ -1,4 +1,4 @@
-import { Button, Flex, Icon, Link, Text } from '@chakra-ui/react'
+import { Button, Flex, Grid, Icon, IconButton, Link, Text } from '@chakra-ui/react'
 import { isBeforeStart, resolveEndDate } from '@vocdoni/api-client'
 import { useConfirm, useElection } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
@@ -17,7 +17,17 @@ import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { ChevronDownIcon } from '~theme/icons'
+import { useIsDesktop } from '~components/ui/useIsMobile'
+import {
+  CancelIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  CopyIcon,
+  DownloadFileIcon,
+  ExternalLinkIcon,
+  MoreIcon,
+  ViewIcon,
+} from '~theme/icons'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useNow } from '~utils/use-now'
 import { deriveVoteState, isTerminalQuestion } from '~utils/vote-state'
@@ -37,6 +47,7 @@ export const VoteHeader = () => {
   const publicLanguage = usePublicLanguage()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
   const pdf = useVotingReportPdfDownload(election ?? undefined)
+  const isDesktop = useIsDesktop()
 
   if (!election) return null
 
@@ -72,6 +83,7 @@ export const VoteHeader = () => {
     {
       value: 'show-as-voter',
       label: t('votes.page.show_as_voter', { defaultValue: 'Show as voter' }),
+      icon: ViewIcon,
       href: publicPath,
     },
     ...(canManage
@@ -79,6 +91,7 @@ export const VoteHeader = () => {
           {
             value: 'duplicate',
             label: t('votes.page.duplicate', { defaultValue: 'Duplicate' }),
+            icon: CopyIcon,
             onSelect: () => void cloneAsDraft(election),
           },
         ]
@@ -88,6 +101,7 @@ export const VoteHeader = () => {
           {
             value: 'download-pdf',
             label: pdfLabel,
+            icon: DownloadFileIcon,
             onSelect: () => void pdf.download(),
             disabled: !pdf.report || pdf.isGenerating,
           },
@@ -98,6 +112,7 @@ export const VoteHeader = () => {
           {
             value: 'explorer',
             label: t('view_in_explorer', { defaultValue: 'View in explorer' }),
+            icon: ExternalLinkIcon,
             href: `${explorerUrl}/process/${explorerProcessId}`,
           },
         ]
@@ -107,6 +122,7 @@ export const VoteHeader = () => {
           {
             value: 'cancel',
             label: t('cancel_vote', { defaultValue: 'Cancel vote' }),
+            icon: CancelIcon,
             onSelect: () => void cancelWithConfirm(),
             danger: true,
           },
@@ -163,29 +179,37 @@ export const VoteHeader = () => {
 
   // Equal parts on phones (the row spans the page); natural width from md.
   const fill = { base: '1', md: 'none' } as const
+  const moreLabel = t('votes.page.more', { defaultValue: 'More' })
 
   return (
-    <Flex
-      direction={{ base: 'column', md: 'row' }}
-      justify='space-between'
-      align={{ base: 'stretch', md: 'flex-start' }}
-      gap='4'
+    // Phone: everything stacked, the actions on a row of their own. Tablet: the actions beside the title and its
+    // state line. Desktop: the actions beside the title, the state line under both.
+    <Grid
+      templateColumns={{ base: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) auto' }}
+      templateAreas={{
+        base: '"back" "title" "line" "actions"',
+        md: '"back back" "title actions" "line actions"',
+        lg: '"back back" "title actions" "line line"',
+      }}
+      columnGap='4'
+      alignItems='end'
     >
-      <Flex direction='column' gap='2' minW='0'>
-        <Link asChild textStyle='caption' color='fg.subtle' alignSelf='flex-start'>
-          <RouterLink to={Routes.dashboard.processes.base}>
-            {t('votes.page.back', { defaultValue: 'Votes' })}
-          </RouterLink>
-        </Link>
-        <PageTitle>{text(election.title)}</PageTitle>
-        <Flex wrap='wrap' align='center' gap='2.5'>
-          <ProcessStatus state={state} />
-          <Text textStyle='control' color='fg.muted'>
-            {line}
-          </Text>
-        </Flex>
+      <Link asChild variant='back' gridArea='back' justifySelf='start' mb={{ base: '0', lg: '1.5' }}>
+        <RouterLink to={Routes.dashboard.processes.base}>
+          <Icon as={ChevronLeftIcon} display={{ lg: 'none' }} />
+          {t('votes.page.back', { defaultValue: 'Votes' })}
+        </RouterLink>
+      </Link>
+      <PageTitle textStyle='vote-title' gridArea='title' minW='0'>
+        {text(election.title)}
+      </PageTitle>
+      <Flex gridArea='line' wrap='wrap' align='center' columnGap='2.5' rowGap='0.5' mt={{ base: '2', lg: '2.5' }}>
+        <ProcessStatus state={state} />
+        <Text textStyle='control' color='fg.muted'>
+          {line}
+        </Text>
       </Flex>
-      <Flex gap='2' flexShrink={0} alignItems='flex-start'>
+      <Flex gridArea='actions' gap='2' mt={{ base: '4', md: '0' }} alignItems='center'>
         {!byQuestion && state === 'live' && (
           <ActionPause variant='outline' flex={fill}>
             {t('votes.page.pause', { defaultValue: 'Pause' })}
@@ -206,17 +230,25 @@ export const VoteHeader = () => {
             {t('votes.page.end_vote', { defaultValue: 'End vote' })}
           </ActionEnd>
         )}
+        {/* "More" is a labelled button on the desktop and the "…" icon on touch screens. */}
         <ResponsiveMenu
-          label={t('votes.page.more', { defaultValue: 'More' })}
+          label={moreLabel}
+          title={text(election.title)}
           trigger={
-            <Button variant='outline' flex={fill}>
-              {t('votes.page.more', { defaultValue: 'More' })}
-              <Icon as={ChevronDownIcon} />
-            </Button>
+            isDesktop ? (
+              <Button variant='outline'>
+                {moreLabel}
+                <Icon as={ChevronDownIcon} />
+              </Button>
+            ) : (
+              <IconButton variant='ghost' aria-label={moreLabel}>
+                <MoreIcon />
+              </IconButton>
+            )
           }
           items={items}
         />
       </Flex>
-    </Flex>
+    </Grid>
   )
 }

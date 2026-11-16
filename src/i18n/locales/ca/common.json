@@ -977,7 +977,6 @@
   },
   "please_check_email_to_verify": "Si us plau, comprova el teu correu electrònic per verificar el teu compte.",
   "preferences": "Preferències",
-  "preview": "Vista prèvia",
   "privacy_policy": "Política de Privacitat",
   "process": {
     "anonymity": {
@@ -2024,10 +2023,9 @@
         "starts": "Comença"
       },
       "manage_link": "Gestiona les preguntes",
-      "question_turnout_one": "{{count}} · {{percent}}%",
-      "question_turnout_many": "{{count}} · {{percent}}%",
-      "question_turnout_other": "{{count}} · {{percent}}%",
-      "results_link": "Mostra els resultats",
+      "question_votes_one": "{{count}} vot",
+      "question_votes_many": "{{count}} vots",
+      "question_votes_other": "{{count}} vots",
       "ruler_label_one": "{{count}} de {{total}} persones han votat, {{percent}}%",
       "ruler_label_many": "{{count}} de {{total}} persones han votat, {{percent}}%",
       "ruler_label_other": "{{count}} de {{total}} persones han votat, {{percent}}%",

@@ -956,7 +956,6 @@
   },
   "please_check_email_to_verify": "Bitte überprüfe deine E-Mail, um dein Konto zu bestätigen",
   "preferences": "Einstellungen",
-  "preview": "Vorschau",
   "privacy_policy": "Datenschutzerklärung",
   "process": {
     "anonymity": {
@@ -1979,9 +1978,8 @@
         "starts": "Beginn"
       },
       "manage_link": "Fragen verwalten",
-      "question_turnout_one": "{{count}} · {{percent}} %",
-      "question_turnout_other": "{{count}} · {{percent}} %",
-      "results_link": "Ergebnisse ansehen",
+      "question_votes_one": "{{count}} Stimme",
+      "question_votes_other": "{{count}} Stimmen",
       "ruler_label_one": "{{count}} von {{total}} Personen hat abgestimmt, {{percent}} %",
       "ruler_label_other": "{{count}} von {{total}} Personen haben abgestimmt, {{percent}} %",
       "share_hint": "Öffentlicher Link für deine Wählenden.",

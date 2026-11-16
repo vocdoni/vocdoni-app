@@ -956,7 +956,6 @@
   },
   "please_check_email_to_verify": "Mesedez, begiratu zure posta elektronikoa kontua egiaztatzeko",
   "preferences": "Hobespenak",
-  "preview": "Aurrebista",
   "privacy_policy": "Pribatutasun-politika",
   "process": {
     "anonymity": {
@@ -1979,9 +1978,8 @@
         "starts": "Hasten da"
       },
       "manage_link": "Kudeatu galderak",
-      "question_turnout_one": "{{count}} · {{percent}}%",
-      "question_turnout_other": "{{count}} · {{percent}}%",
-      "results_link": "Ikusi emaitzak",
+      "question_votes_one": "{{count}} boto",
+      "question_votes_other": "{{count}} boto",
       "ruler_label_one": "{{total}} pertsonatik {{count}}k bozkatu dute, {{percent}}%",
       "ruler_label_other": "{{total}} pertsonatik {{count}}k bozkatu dute, {{percent}}%",
       "share_hint": "Zure botogileentzako esteka publikoa.",

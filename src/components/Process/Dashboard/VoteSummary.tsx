@@ -2,7 +2,6 @@ import {
   Card,
   Flex,
   Grid,
-  HStack,
   Icon,
   IconButton,
   Input,
@@ -29,11 +28,11 @@ import { useProcessEarlyEndDate } from '~queries/process-end-date'
 import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { CopyIcon, ViewIcon } from '~theme/icons'
+import { CopyIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { useNow } from '~utils/use-now'
 import { questionOutcome } from '~utils/vote-outcome'
-import { deriveQuestionState, deriveVoteState, percentOf, questionElectorate } from '~utils/vote-state'
+import { deriveQuestionState, deriveVoteState, percentOf } from '~utils/vote-state'
 import { useAnonymityLabels } from '../anonymityLabels'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { CensusSearch } from './CensusSearch'
@@ -63,7 +62,6 @@ export const VoteSummary = () => {
   const percent = percentOf(count, total)
   const secret = isSecretUntilTheEnd(election)
   const manageRoute = generatePath(Routes.dashboard.processManage, { id: election.id })
-  const resultsRoute = generatePath(Routes.dashboard.processResults, { id: election.id })
   const censusFields = [...(election.census?.authFields ?? []), ...(election.census?.twoFaFields ?? [])]
 
   const facts: Fact[] = [
@@ -136,72 +134,87 @@ export const VoteSummary = () => {
   return (
     <Stack gap='6'>
       <Card.Root variant='frame' as='section' aria-labelledby={labelId}>
-        <Card.Body>
-          <Flex direction={{ base: 'column', lg: 'row' }} justify='space-between' gap='8'>
-            <Stack justify='space-between' gap='4'>
-              <Stat.Root size='hero' as='div'>
-                <Stat.Label as='div' id={labelId}>
-                  {t('votes.summary.turnout', { defaultValue: 'Turnout' })}
-                </Stat.Label>
-                <HStack align='flex-end' gap='5' wrap='wrap'>
-                  {percent !== undefined && (
-                    <>
-                      <Stat.ValueText as='div'>{percent}</Stat.ValueText>
-                      <Stat.ValueUnit>%</Stat.ValueUnit>
-                    </>
-                  )}
-                  {total !== undefined && (
-                    <Text textStyle='body' fontWeight='medium-plus'>
-                      {byQuestion
-                        ? t('votes.summary.voted_any', {
-                            defaultValue: 'At least {{count}} of {{total}} voted on a question',
-                            count,
-                            total: quantity(total),
-                          })
-                        : t('votes.summary.voted_of', {
-                            defaultValue: '{{count}} of {{total}} voted',
-                            count,
-                            total: quantity(total),
-                          })}
-                    </Text>
-                  )}
-                </HStack>
-              </Stat.Root>
-            </Stack>
-            <FactList facts={facts} w={{ base: 'full', lg: 'sm' }} alignSelf='flex-end' />
-          </Flex>
-          <CensusRuler
-            mt='8'
-            maxW={{ base: 'full', md: 'md' }}
-            value={count}
-            max={total}
-            marker
-            label={t('votes.summary.ruler_label', {
-              defaultValue: '{{count}} of {{total}} people voted, {{percent}}%',
-              count,
-              total: total ?? 0,
-              percent: percent ?? 0,
-            })}
-          />
+        {/* A phone stacks the figure, the bar and the facts; from lg the facts sit beside the figure and the bar
+            runs the card's width under both. */}
+        <Card.Body py={{ base: '4.5', md: 'card' }}>
+          <Grid
+            templateColumns={{ base: 'minmax(0, 1fr)', lg: '[minmax(0, 1fr) {sizes.sm}]' }}
+            templateAreas={{ base: '"figure" "bar" "facts"', lg: '"figure facts" "bar bar"' }}
+            columnGap='8'
+            rowGap={{ base: '4.5', md: 'card', lg: '8' }}
+          >
+            <Stat.Root
+              size='hero'
+              as='div'
+              gridArea='figure'
+              justifyContent='space-between'
+              gap={{ base: '4', lg: '6' }}
+            >
+              <Stat.Label as='div' id={labelId}>
+                {t('votes.summary.turnout', { defaultValue: 'Turnout' })}
+              </Stat.Label>
+              <Flex
+                direction={{ base: 'column', md: 'row' }}
+                align={{ base: 'flex-start', md: 'flex-end' }}
+                gap={{ base: '2.5', md: '4.5', lg: '5' }}
+              >
+                {percent !== undefined && (
+                  <Stat.ValueText as='div'>
+                    {percent}
+                    <Stat.ValueUnit>%</Stat.ValueUnit>
+                  </Stat.ValueText>
+                )}
+                {total !== undefined && (
+                  <Text textStyle='body' fontWeight='medium-plus'>
+                    {byQuestion
+                      ? t('votes.summary.voted_any', {
+                          defaultValue: 'At least {{count}} of {{total}} voted on a question',
+                          count,
+                          total: quantity(total),
+                        })
+                      : t('votes.summary.voted_of', {
+                          defaultValue: '{{count}} of {{total}} voted',
+                          count,
+                          total: quantity(total),
+                        })}
+                  </Text>
+                )}
+              </Flex>
+            </Stat.Root>
+            <FactList facts={facts} layout='summary' gridArea='facts' alignSelf='end' />
+            <CensusRuler
+              gridArea='bar'
+              value={count}
+              max={total}
+              marker
+              label={t('votes.summary.ruler_label', {
+                defaultValue: '{{count}} of {{total}} people voted, {{percent}}%',
+                count,
+                total: total ?? 0,
+                percent: percent ?? 0,
+              })}
+            />
+          </Grid>
         </Card.Body>
       </Card.Root>
 
-      <SimpleGrid columns={{ base: 1, lg: 2 }} gap='6'>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} gap={{ base: '4', md: '6' }} alignItems='start'>
         <Card.Root variant='frame'>
           <Card.Header>
             <SectionHeader
-              title={t('process.questions')}
+              title={
+                <>
+                  {t('process.questions')}{' '}
+                  <Text as='span' textStyle='figure' fontWeight='normal' color='fg.subtle'>
+                    {quantity(election.questions.length)}
+                  </Text>
+                </>
+              }
               actions={
                 byQuestion ? (
                   <Link asChild textStyle='control'>
                     <RouterLink to={manageRoute}>
                       {t('votes.summary.manage_link', { defaultValue: 'Manage questions' })}
-                    </RouterLink>
-                  </Link>
-                ) : state !== 'canceled' ? (
-                  <Link asChild textStyle='control'>
-                    <RouterLink to={resultsRoute}>
-                      {t('votes.summary.results_link', { defaultValue: 'See results' })}
                     </RouterLink>
                   </Link>
                 ) : undefined
@@ -211,7 +224,6 @@ export const VoteSummary = () => {
           {election.questions.map((question, index) => {
             const questionState = deriveQuestionState(question, election, now)
             const voteCount = question.results?.voteCount ?? 0
-            const questionPercent = percentOf(voteCount, questionElectorate(question, election))
             const parts: string[] = []
             const result =
               byQuestion && questionState === 'closed'
@@ -220,10 +232,10 @@ export const VoteSummary = () => {
             if (result) parts.push(result)
             if (voteCount > 0) {
               parts.push(
-                t('votes.summary.question_turnout', {
-                  defaultValue: '{{count}} · {{percent}}%',
+                t('votes.summary.question_votes', {
+                  defaultValue_one: '{{count}} vote',
+                  defaultValue_other: '{{count}} votes',
                   count: voteCount,
-                  percent: questionPercent ?? 0,
                 })
               )
             }
@@ -233,11 +245,13 @@ export const VoteSummary = () => {
                   <Text textStyle='figure' color='fg.subtle'>
                     {index + 1}
                   </Text>
-                  <Stack gap='1' minW='0'>
-                    <Text lineClamp={2}>{text(question.title)}</Text>
+                  <Stack gap='0.5' minW='0'>
+                    <Text textStyle='item-title' fontWeight='medium-plus' lineClamp={2}>
+                      {text(question.title)}
+                    </Text>
                     {parts.length > 0 && (
-                      <Text textStyle='body-sm' color='fg.subtle'>
-                        {parts.join(' · ')}
+                      <Text textStyle='meta' color='fg.subtle'>
+                        {parts.join(', ')}
                       </Text>
                     )}
                   </Stack>
@@ -257,21 +271,17 @@ export const VoteSummary = () => {
               />
             </Card.Header>
             <Card.Body>
-              <Flex justifyContent='space-between' gap='2' wrap='wrap'>
+              <Flex gap='2'>
                 <Input
                   readOnly
+                  variant='code'
                   aria-label={t('voting_link.title', 'Voting Link')}
                   value={votingLink}
-                  flex='1 1 18rem'
+                  flex='1'
                   minW='0'
                 />
                 <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
                   <Icon as={CopyIcon} />
-                </IconButton>
-                <IconButton asChild variant='outline' title={t('preview', 'Preview')} aria-label={t('preview')}>
-                  <Link href={votingLink} target='_blank' rel='noopener noreferrer'>
-                    <Icon as={ViewIcon} />
-                  </Link>
                 </IconButton>
               </Flex>
             </Card.Body>

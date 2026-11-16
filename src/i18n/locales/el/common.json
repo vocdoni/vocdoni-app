@@ -956,7 +956,6 @@
   },
   "please_check_email_to_verify": "Ελέγξτε το email σας για να επαληθεύσετε τον λογαριασμό σας",
   "preferences": "Προτιμήσεις",
-  "preview": "Προεπισκόπηση",
   "privacy_policy": "Πολιτική απορρήτου",
   "process": {
     "anonymity": {
@@ -1979,9 +1978,8 @@
         "starts": "Ξεκινά"
       },
       "manage_link": "Διαχείριση ερωτήσεων",
-      "question_turnout_one": "{{count}} · {{percent}}%",
-      "question_turnout_other": "{{count}} · {{percent}}%",
-      "results_link": "Δείτε τα αποτελέσματα",
+      "question_votes_one": "{{count}} ψήφος",
+      "question_votes_other": "{{count}} ψήφοι",
       "ruler_label_one": "{{count}} από {{total}} άτομα ψήφισαν, {{percent}}%",
       "ruler_label_other": "{{count}} από {{total}} άτομα ψήφισαν, {{percent}}%",
       "share_hint": "Δημόσιος σύνδεσμος για τους ψηφοφόρους σας.",
