@@ -7,7 +7,7 @@ const exists = (sys: typeof system, path: string) => sys.tokens.getByName(`color
 const SCALE = { success: 'green', warning: 'orange', danger: 'red', info: 'gray' }
 // Fil's light-mode values for the slots it names; every other slot, and all of dark, is the raw scale's.
 const FIL_LIGHT: Record<string, Record<string, string>> = {
-  success: { solid: '#30ad51', fg: '#0b7636', subtle: '#f0faf3' },
+  success: { solid: '#2caa4f', fg: '#0b7636', subtle: '#f0faf3' },
   warning: { solid: '#875500', contrast: '#ffffff', fg: '#875500', subtle: '#fff8eb' },
   danger: { solid: '#ca2a30', contrast: '#ffffff', fg: '#ca2a30', subtle: '#fff0f0' },
 }

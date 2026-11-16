@@ -16,7 +16,7 @@ export const field = defineStyle({
   bg: 'bg.panel',
   color: 'fg',
   borderWidth: '[0]',
-  boxShadow: 'shadow.control',
+  boxShadow: 'shadow.field',
   focusVisibleRing: 'outside',
   focusRingColor: 'colorPalette.solid',
   _readOnly: { bg: 'bg.muted' },

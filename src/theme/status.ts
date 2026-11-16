@@ -16,7 +16,7 @@ const SLOTS = ['solid', 'contrast', 'fg', 'muted', 'subtle', 'emphasized', 'focu
 
 // Fil's light-mode values for the slots it names, set over the stock scale; dark keeps the scale's own.
 const LIGHT: Partial<Record<StatusPalette, Partial<Record<(typeof SLOTS)[number], string>>>> = {
-  success: { solid: '#30ad51', fg: '#0b7636', subtle: '#f0faf3' },
+  success: { solid: '#2caa4f', fg: '#0b7636', subtle: '#f0faf3' },
   warning: { solid: '#875500', contrast: '#ffffff', fg: '#875500', subtle: '#fff8eb' },
   danger: { solid: '#ca2a30', contrast: '#ffffff', fg: '#ca2a30', subtle: '#fff0f0' },
 }

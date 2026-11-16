@@ -3,7 +3,7 @@ import { progressAnatomy } from '@chakra-ui/react/anatomy'
 
 // Progress of something under way: a 3px track with square ends and a fill that leaves a 2px gap after it (the
 // fill's own panel-coloured shadow). No inset shadow, no stripes.
-const track = defineStyle({ shadow: '[none]', bgColor: 'fg.faint', borderRadius: 'none' })
+const track = defineStyle({ shadow: '[none]', bgColor: 'bg.track', borderRadius: 'none' })
 const range = defineStyle({
   bgColor: 'colorPalette.solid',
   borderRadius: 'none',

@@ -45,7 +45,11 @@ const solid = defineStyle({
   borderColor: 'transparent',
   _hover: { bg: solidHover },
   _expanded: { bg: solidHover },
-  _disabled: { bg: 'bg.emphasized', color: 'fg.subtle', opacity: '[1]' },
+  // Grey only for a truly disabled button: Chakra sets `disabled` on a loading one too, which keeps its fill.
+  _disabled: {
+    '&:not([data-loading])': { bg: 'bg.emphasized', color: 'fg.subtle', opacity: '[1]' },
+    '&[data-loading]': { opacity: '[1]', cursor: '[progress]' },
+  },
 })
 
 // The secondary: a panel with a 1px ring instead of a border.
@@ -55,16 +59,18 @@ const outline = defineStyle({
   bg: 'bg.panel',
   color: 'fg',
   boxShadow: 'shadow.control',
-  _hover: { bg: 'bg.subtle' },
-  _expanded: { bg: 'bg.subtle' },
+  _hover: { bg: 'state.hover.bg' },
+  _expanded: { bg: 'state.hover.bg' },
+  // A loading secondary keeps its ring and ink; only a truly disabled one fades.
+  _disabled: { '&[data-loading]': { opacity: '[1]', cursor: '[progress]' } },
 })
 
 // Discreet: no fill until hovered.
 const ghost = defineStyle({
   bg: 'transparent',
   color: 'fg.muted',
-  _hover: { bg: 'state.selected.bg', color: 'fg' },
-  _expanded: { bg: 'state.selected.bg', color: 'fg' },
+  _hover: { bg: 'state.hover.bg', color: 'fg' },
+  _expanded: { bg: 'state.hover.bg', color: 'fg' },
 })
 
 const subtle = defineStyle({

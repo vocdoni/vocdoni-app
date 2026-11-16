@@ -36,13 +36,36 @@ describe('button', () => {
     expect(layer(solid).background).toBe('var(--chakra-colors-color-palette-solid)')
     expect(JSON.stringify(solid)).toContain('var(--chakra-colors-bg-emphasized)')
   })
+
+  it('keeps the loading primary filled and greys only a truly disabled one', () => {
+    const solid = layer(button({ variant: 'solid' })) as Record<string, any>
+    const disabled = solid['&:is(:disabled, [disabled], [data-disabled], [aria-disabled=true])']
+    expect(disabled['&:not([data-loading])'].background).toBe('var(--chakra-colors-bg-emphasized)')
+    expect(disabled['&[data-loading]']).toEqual({ opacity: '1', cursor: 'progress' })
+    expect(solid.background).toBe('var(--chakra-colors-color-palette-solid)')
+  })
+
+  it('keeps the loading secondary ringed and inked', () => {
+    const outline = layer(button({ variant: 'outline' })) as Record<string, any>
+    const disabled = outline['&:is(:disabled, [disabled], [data-disabled], [aria-disabled=true])']
+    expect(disabled['&[data-loading]']).toEqual({ opacity: '1', cursor: 'progress' })
+    expect(outline.boxShadow).toBe('var(--chakra-shadows-shadow-control)')
+  })
+
+  it('hovers the secondary and the discreet look one step below the selected fill', () => {
+    for (const variant of ['outline', 'ghost'] as const) {
+      const styles = JSON.stringify(layer(button({ variant })))
+      expect(styles).toContain('var(--chakra-colors-state-hover-bg)')
+      expect(styles).not.toContain('state-selected-bg')
+    }
+  })
 })
 
 describe('input and textarea', () => {
   it('are 34px panels with a ring and no border', () => {
     const styles = layer(input({}))
     expect(styles['--input-height']).toBe('var(--chakra-sizes-control-md)')
-    expect(styles.boxShadow).toBe('var(--chakra-shadows-shadow-control)')
+    expect(styles.boxShadow).toBe('var(--chakra-shadows-shadow-field)')
     expect(styles.borderWidth).toBe('0')
   })
 

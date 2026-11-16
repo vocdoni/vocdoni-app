@@ -45,25 +45,25 @@ component. The inventory test rejects hex and named colours outright; raw palett
 
 Token families, each in its own module under `src/theme/` and spread into `colors` in `semantic.ts`:
 
-| Family                           | Tokens                                                                                                                                                                                   | Module            |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint` (`fg.subtle` today), `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.inverted`, `bg.panel`                      | `semantic.ts`     |
-| Borders                          | `border`, `border.muted`, `border.subtle`, `border.emphasized`, `border.strong` (control outlines, `border.emphasized` today), `border.inverted`                                         | `semantic.ts`     |
-| Surface layers                   | `surface.canvas`, `.sidebar`, `.content`, `.card`, `.sunken`, `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`)              | `semantic.ts`     |
-| Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.fg`                                                                                                                        | `semantic.ts`     |
-| Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                                       | `semantic.ts`     |
-| Interaction states (bg/fg pairs) | `state.hover`, `state.pressed`, `state.selected`, `state.current`, `state.dragover.border`                                                                                               | `states.ts`       |
-| Status palettes                  | `colorPalette='success' \| 'warning' \| 'danger' \| 'info'`, each with the slots of a Chakra palette (`solid`, `contrast`, `fg`, `muted`, `subtle`, `border`…)                           | `status.ts`       |
-| Status by meaning                | `status.{success,warning,error,info}.{fg,bg,border,solid,contrast,emphasis}`, `status.neutral.{fg,bg,border,solid,contrast}`, `danger.action`                                            | `status.ts`       |
-| Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}` (the info, warning and error `solid`)                                                        | `charts.ts`       |
-| Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                                    | `ballot.ts`       |
-| Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                                    | `illustration.ts` |
-| Links, switch                    | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`                                                                                        | `recipeColors.ts` |
-| Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                              | `recipeColors.ts` |
-| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a control; every shadow is a 1px ring, no blur) | `semantic.ts`     |
-| Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                                | `palette.ts`      |
-| Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                     | `system.ts`       |
-| Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                                     | `semantic.ts`     |
+| Family                           | Tokens                                                                                                                                                                                                                                                                                       | Module            |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint` (`fg.subtle` today), `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.track` (the empty track of a progress bar), `bg.inverted`, `bg.panel`                                                                          | `semantic.ts`     |
+| Borders                          | `border`, `border.muted`, `border.subtle`, `border.emphasized`, `border.strong` (control outlines, `border.emphasized` today), `border.field` (the ring of fields, selects, textareas and voter options, `#8f8f8f`), `border.inverted`                                                       | `semantic.ts`     |
+| Surface layers                   | `surface.canvas`, `.sidebar`, `.content`, `.card`, `.sunken`, `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`)                                                                                                                  | `semantic.ts`     |
+| Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.fg`                                                                                                                                                                                                                            | `semantic.ts`     |
+| Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                                                                                                                                           | `semantic.ts`     |
+| Interaction states (bg/fg pairs) | `state.hover`, `state.pressed`, `state.selected`, `state.current`, `state.dragover.border`                                                                                                                                                                                                   | `states.ts`       |
+| Status palettes                  | `colorPalette='success' \| 'warning' \| 'danger' \| 'info'`, each with the slots of a Chakra palette (`solid`, `contrast`, `fg`, `muted`, `subtle`, `border`…)                                                                                                                               | `status.ts`       |
+| Status by meaning                | `status.{success,warning,error,info}.{fg,bg,border,solid,contrast,emphasis}`, `status.neutral.{fg,bg,border,solid,contrast}`, `danger.action`                                                                                                                                                | `status.ts`       |
+| Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}` (the info, warning and error `solid`)                                                                                                                                                            | `charts.ts`       |
+| Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                                                                                                                                        | `ballot.ts`       |
+| Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                                                                                                                                        | `illustration.ts` |
+| Links, switch                    | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`                                                                                                                                                                                            | `recipeColors.ts` |
+| Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                                                                                                                                  | `recipeColors.ts` |
+| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`); every shadow is a 1px ring, no blur | `semantic.ts`     |
+| Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                                                                                                                                    | `palette.ts`      |
+| Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                         | `system.ts`       |
+| Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                                                                                                                                         | `semantic.ts`     |
 
 Rules of thumb:
 
@@ -93,6 +93,21 @@ Rules of thumb:
 - **A token that repeats another role**: alias it (`state.current.bg` is `{colors.bg.emphasized}`, `meter.ok` is
   `{colors.status.info.solid}`) instead of copying the raw steps, so the two cannot drift.
 
+Fil rules the theme enforces:
+
+- Two rings. A button and an avatar draw `shadow.control`; an input, textarea, native or searchable select and a voter
+  option draw `shadow.field` (the darker `border.field`). Focus, invalid and read-only states stay as they are.
+- `#8f8f8f` (`fg.faint`, `border.field`) is never a text colour. It is for marks and rules only.
+- A progress bar's empty track is `bg.track`; the `results` variant keeps `bg.muted`.
+- A `Button` with `loading` keeps its filled look (primary) or its ring and ink (secondary) with the spinner, and is not
+  pressable. Grey is only for a truly disabled button: the recipes tell the two apart by `data-loading`.
+- Hover of the secondary (`outline`) and the discreet (`ghost`) button is `state.hover.bg`, one step below
+  `state.selected.bg`.
+- Links are never underlined in any state, apart from the explicit `link-underline` button and links inside
+  user-written text (`Markdown`). Hover only darkens to `accent.fg.hover`; keyboard focus keeps the outline.
+- The voter ballot scale: `fontSizes.ballot.option` (17px) and `ballot.question` (32px), `lineHeights.question`,
+  `letterSpacings.heading.question` and `letterSpacings.voter`.
+
 ## Text
 
 Typography is a role, not three props.
@@ -119,9 +134,9 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
 - Body copy needs no `textStyle`: `body` in `globalCss` (`system.ts`) gives it the `body` role, so a bare `Text`,
   markdown or a list item inherits that. The `text` recipe has no default size, so set `textStyle` or `size` on any
   `Text` that should be something else. For inline emphasis inside smaller text, use `chakra.span` or `Span`.
-- Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.5), `tall` (1.6). Letter spacing:
+- Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.5), `tall` (1.6), plus `question` (1.08, the voter's question title). Letter spacing:
   `body` (the page's -0.006em), `heading.item`, `heading.section` and `heading.page` (tighter as the type grows),
-  `heading.snug`, `quote.tight`, plus Chakra's own steps.
+  `heading.snug`, `heading.question`, `quote.tight`, `voter`, plus Chakra's own steps.
 - Families and weights live together in `src/theme/fonts.ts`: each family with the files it ships (`SANS` and `MONO`, a static
   family or a variable range), the stacks (`body`, `heading`, `figure`, `mono`) and the ladder of which weight each
   name renders (`FONT_WEIGHTS`). Commissioner (interface) and JetBrains Mono (figures) are variable, 400 to 700:
