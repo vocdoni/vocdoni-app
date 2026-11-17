@@ -178,24 +178,16 @@ export const ElectionResults = defineSlotRecipe({
       width: 'full',
       minW: '0',
     },
-    // One choice of a result. In a final result with a clear winner the winner carries `data-winner` (a tick and
-    // a medium figure) and the other rows `data-dimmed` (their bar at 0.4). Live, provisional or tied results
-    // set neither: every bar stays in full ink.
+    // One choice of a result. In a final result with a clear leader that row carries `data-leading` (a medium
+    // figure) and the others `data-dimmed` (their bar at 0.4). It is highlighted, never called the winner: the
+    // organisation decides how many options win. Live, provisional or tied results set neither.
     choice: {
       '&[data-dimmed] [data-scope="progress"][data-part="root"]': {
         opacity: '[0.4]',
       },
-      '&[data-winner] [data-result-figure]': {
+      '&[data-leading] [data-result-figure]': {
         fontWeight: 'medium',
       },
-    },
-    // The winner's tick, so the result never rests on colour or weight alone.
-    winnerMark: {
-      display: 'inline-block',
-      boxSize: 'icon.sm',
-      mr: '1.5',
-      verticalAlign: '[-0.125em]',
-      flexShrink: 0,
     },
   },
 })

@@ -17,7 +17,7 @@ const question = (votes: [string, string][]) => ({
   choices: votes.map(([count, percent], index) => ({ title: `Choice ${index + 1}`, votes: count, percent })),
 })
 
-const rows = () => document.querySelectorAll('[data-winner], [data-dimmed]')
+const rows = () => document.querySelectorAll('[data-leading], [data-dimmed]')
 
 describe('electionComponents.ElectionResults', () => {
   beforeEach(() => resetReactProvidersMock())
@@ -82,7 +82,7 @@ describe('electionComponents.ElectionResults', () => {
       expect(rows()).toHaveLength(0)
     })
 
-    it('marks the winner and dims the other rows once the vote has ended', () => {
+    it('highlights the leading choice, without a tick, and dims the others once the vote has ended', () => {
       withStatus('ENDED')
       render(
         <ElectionResults
@@ -96,13 +96,11 @@ describe('electionComponents.ElectionResults', () => {
         />
       )
 
-      const winner = document.querySelectorAll('[data-winner]')
-      expect(winner).toHaveLength(1)
-      expect(winner[0]).toHaveTextContent('Choice 1')
-      expect(winner[0].querySelector('svg')).not.toBeNull()
-      const dimmed = document.querySelectorAll('[data-dimmed]')
-      expect(dimmed).toHaveLength(2)
-      expect(Array.from(dimmed).some((row) => row.querySelector('svg'))).toBe(false)
+      const leading = document.querySelectorAll('[data-leading]')
+      expect(leading).toHaveLength(1)
+      expect(leading[0]).toHaveTextContent('Choice 1')
+      expect(document.querySelectorAll('svg')).toHaveLength(0)
+      expect(document.querySelectorAll('[data-dimmed]')).toHaveLength(2)
     })
 
     it('marks and dims nothing on a tie at the top', () => {
