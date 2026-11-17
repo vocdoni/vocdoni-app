@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { hydrateRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
-import { ColorModeProvider, useColorMode, useColorModeValue } from './color-mode'
+import { ColorModeProvider, useColorMode, useColorModeValue, useFollowSystemColorMode } from './color-mode'
 
 const themeProviderSpy = vi.fn()
 const themeState = {
@@ -19,6 +19,11 @@ vi.mock('next-themes', () => ({
 }))
 
 const ColorModeProbe = () => <div data-testid='color-mode'>{useColorMode().colorMode}</div>
+
+const VoterShell = () => {
+  useFollowSystemColorMode()
+  return null
+}
 
 const ColorModeValueProbe = () => {
   const value = useColorModeValue('light', 'dark')
@@ -46,7 +51,6 @@ describe('ColorModeProvider', () => {
         storageKey: 'theme-preference',
         defaultTheme: 'system',
         enableSystem: true,
-        forcedTheme: 'light',
       })
     )
   })
@@ -86,11 +90,59 @@ describe('ColorModeProvider', () => {
     container.remove()
   })
 
-  it('answers light while the theme is forced light, whatever the OS prefers', () => {
-    themeState.resolvedTheme = 'dark'
-    themeState.forcedTheme = 'light'
+  it('does not force a theme, so the OS preference reaches the app', () => {
+    render(
+      <ColorModeProvider>
+        <ColorModeProbe />
+      </ColorModeProvider>
+    )
 
-    render(<ColorModeProbe />)
+    expect(screen.getByTestId('color-mode')).toHaveTextContent('dark')
+    expect(themeProviderSpy.mock.calls.at(-1)?.[0]).not.toHaveProperty('forcedTheme')
+  })
+
+  it('makes a server-rendered voter page read a key nothing writes, so a stored choice never reaches it', () => {
+    localStorage.setItem('theme-preference', 'dark')
+    render(
+      <ColorModeProvider followSystem>
+        <VoterShell />
+      </ColorModeProvider>
+    )
+
+    const props = themeProviderSpy.mock.calls.at(-1)?.[0]
+    expect(props).toMatchObject({ storageKey: 'theme-preference-voter', defaultTheme: 'system' })
+    expect(props).not.toHaveProperty('forcedTheme')
+    localStorage.removeItem('theme-preference')
+  })
+
+  it('forces the system mode while a voter shell is mounted in the client-rendered app', () => {
+    const { rerender } = render(
+      <ColorModeProvider>
+        <VoterShell />
+      </ColorModeProvider>
+    )
+
+    // The test matchMedia reports a light system.
+    expect(themeProviderSpy.mock.calls.at(-1)?.[0]).toMatchObject({
+      storageKey: 'theme-preference',
+      forcedTheme: 'light',
+    })
+
+    rerender(
+      <ColorModeProvider>
+        <div />
+      </ColorModeProvider>
+    )
+    expect(themeProviderSpy.mock.calls.at(-1)?.[0]).not.toHaveProperty('forcedTheme')
+  })
+
+  it('reports the forced mode over the stored one', () => {
+    themeState.forcedTheme = 'light'
+    render(
+      <ColorModeProvider>
+        <ColorModeProbe />
+      </ColorModeProvider>
+    )
 
     expect(screen.getByTestId('color-mode')).toHaveTextContent('light')
   })

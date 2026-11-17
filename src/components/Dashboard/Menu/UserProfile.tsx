@@ -24,6 +24,7 @@ import {
 import { Link as ReactRouterLink } from 'react-router'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { useAuth } from '~components/Auth/useAuth'
+import { AppearanceSegment } from '~components/Layout/ColorModeSwitcher'
 import { LanguageListDashboard } from '~components/Navbar/LanguagesList'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
@@ -183,6 +184,10 @@ const UserProfile = ({ compact = false }: UserProfileProps) => {
                   <Text fontWeight='extrabold' textStyle='body-sm' px='2' py='1.5'>
                     {t('preferences', { defaultValue: 'Preferences' })}
                   </Text>
+                  <Flex justifyContent='space-between' alignItems='center' px='2' py='1.5' gap='2'>
+                    <Text textStyle='body-sm'>{t('appearance', { defaultValue: 'Appearance' })}</Text>
+                    <AppearanceSegment />
+                  </Flex>
                   <LanguageListDashboard px={2} py={1.5} />
                 </Box>
                 <Button colorPalette='gray' variant='menu-item-strong' onClick={logout}>

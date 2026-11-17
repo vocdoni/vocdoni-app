@@ -26,6 +26,7 @@
       "organization_logo": "Logotip de l'organització"
     }
   },
+  "appearance": "Aparença",
   "aside": {
     "anonymous_receipt_gone": "El teu comprovant es va mostrar en votar i no es pot recuperar.",
     "has_already_voted": "El teu vot s'ha registrat correctament",
@@ -139,7 +140,6 @@
     "title": "Canvia la contrasenya"
   },
   "close": "Tanca",
-  "color_mode_switcher": "Commutador de mode de color",
   "common": {
     "back": "Enrere",
     "home": "Inici",
@@ -1522,7 +1522,6 @@
     "teaser_dismiss": "Descarta",
     "whatsapp": "Parla per WhatsApp"
   },
-  "switch_mode": "Canvia al mode {{ mode }}",
   "switch_organization": "Canvia d'organització",
   "system": "Sistema",
   "team": {

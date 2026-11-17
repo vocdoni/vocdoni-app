@@ -4,16 +4,22 @@
 export const DEFAULT_PRIMARY_COLOR = '#1d62e9'
 
 export const colors = {
-  // Neutral near-black scale used for dark-mode surfaces (page, cards, menus)
-  // and the default black accent. Kept separate from `brand` on purpose: a
-  // configured PRIMARY_COLOR must recolor the accent, never tint the surfaces.
-  // Steps are numbered by lightness, like Chakra's scales: a higher step is darker.
+  // Pure black, for the few marks that must not be the gray scale's near-black (the logo, the progress stripe).
   ink: {
     950: { value: '#000000' },
-    900: { value: '#0a0a0a' },
-    850: { value: '#1f1f22' },
-    800: { value: '#262626' }, // dark surface for muted bands (organisation footer)
-    700: { value: '#2e2e2e' },
+  },
+
+  // The dark ("Carbó") steps that fall between the `gray` steps, untinted like them: the sidebar, dialog and menu
+  // greys, the track, and the text and line greys. A higher step is darker, as in `gray`.
+  carbon: {
+    925: { value: '#111111' },
+    875: { value: '#1c1c1c' },
+    850: { value: '#222222' },
+    750: { value: '#333333' },
+    500: { value: '#707070' },
+    400: { value: '#999999' },
+    300: { value: '#b4b4b4' },
+    100: { value: '#ededed' },
   },
 
   // The whole neutral scale, so a retheme replaces this one table. Fil's greys carry no tint.
@@ -31,10 +37,6 @@ export const colors = {
     950: { value: '#0a0a0a' },
   },
 
-  dashboardMenu: {
-    dark: { value: '#18181b' },
-  },
-
   whatsapp: {
     500: { value: '#25D366' },
     600: { value: '#20BA5A' },
@@ -43,6 +45,6 @@ export const colors = {
 
 // The page backgrounds a generated brand palette must stay readable against —
 // the two sides of the `bg` semantic token (see semantic.ts). Defined here, next
-// to the `ink` scale it reads from, so the palette generator, the theme and the
+// to the `gray` scale it reads from, so the palette generator, the theme and the
 // tests all measure contrast against the background the app actually paints.
-export const PAGE_BACKGROUNDS = { light: '#ffffff', dark: colors.ink[900].value }
+export const PAGE_BACKGROUNDS = { light: '#ffffff', dark: colors.gray[950].value }

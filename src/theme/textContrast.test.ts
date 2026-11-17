@@ -19,7 +19,8 @@ const resolve = (name: string, mode: Mode, sys = system, depth = 0): string => {
 
 // Composites a translucent surface (e.g. `surface.sunken` in dark mode) over the page it sits on.
 const opaque = (color: string, mode: Mode): string => {
-  const match = /^rgba\((\d+), (\d+), (\d+), ([\d.]+)\)$/.exec(color)
+  // Both spellings: `rgba(r, g, b, a)` and Fil's `rgb(r g b / a)`.
+  const match = /^rgba?\((\d+)[, ]+(\d+)[, ]+(\d+)(?:, | \/ )([\d.]+)\)$/.exec(color)
   if (!match) return color
   const page = resolve('bg', mode)
   const channels = [1, 2, 3].map((group, index) => {
@@ -30,6 +31,8 @@ const opaque = (color: string, mode: Mode): string => {
 }
 
 const SURFACES = ['bg', 'bg.panel', 'bg.subtle', 'surface.raised', 'surface.sunken']
+// The dark page, sidebar, card, dialog and menu greys, which carry the body text.
+const DARK_LAYERS = ['bg', 'surface.sidebar', 'surface.card', 'surface.overlay', 'surface.raised']
 
 // WCAG AA for text: 4.5:1 against every surface the text is painted on, in both colour modes.
 describe('text colour contrast (WCAG AA)', () => {
@@ -45,6 +48,28 @@ describe('text colour contrast (WCAG AA)', () => {
     }
   )
 
+  // `fg.faint` is left out on purpose: a graphics-only role (marks and rules), under 4.5:1 by the guide's design.
+  it.each(['fg', 'fg.muted', 'fg.subtle', 'fg.error', 'fg.success', 'fg.warning', 'accent.fg'])(
+    '%s reads at 4.5:1 on every dark layer',
+    (token) => {
+      for (const layer of DARK_LAYERS) {
+        const ratio = contrastRatio(resolve(token, 'dark'), resolve(layer, 'dark'))
+        expect(ratio, `${token} on ${layer}`).toBeGreaterThanOrEqual(4.5)
+      }
+    }
+  )
+
+  // WCAG 1.4.11: a control's outline needs 3:1 against the surface it sits on.
+  it.each(['border.field', 'border.strong'])(
+    '%s draws a control outline at 3:1 on the dark page, card and dialog',
+    (token) => {
+      for (const layer of ['bg', 'surface.card', 'surface.overlay']) {
+        const ratio = contrastRatio(resolve(token, 'dark'), resolve(layer, 'dark'))
+        expect(ratio, `${token} on ${layer}`).toBeGreaterThanOrEqual(3)
+      }
+    }
+  )
+
   // A toast's text and fill are separate tokens, so they are checked as a pair.
   it.each(['success', 'warning'])('reads the %s toast text on its fill at 4.5:1', (status) => {
     for (const mode of ['light', 'dark'] as const) {
@@ -55,7 +80,9 @@ describe('text colour contrast (WCAG AA)', () => {
 
   it('keeps the inactive tab label readable on the tab list', () => {
     for (const mode of ['light', 'dark'] as const) {
-      expect(contrastRatio(resolve('tabs.tab.color', mode), resolve('tabs.bg', mode))).toBeGreaterThanOrEqual(4.5)
+      expect(
+        contrastRatio(resolve('tabs.tab.color', mode), opaque(resolve('tabs.bg', mode), mode))
+      ).toBeGreaterThanOrEqual(4.5)
     }
   })
 

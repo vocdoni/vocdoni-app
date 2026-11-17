@@ -20,69 +20,69 @@ const colors = defineSemanticTokens.colors({
     DEFAULT: {
       value: {
         _light: '{colors.white}',
-        _dark: '{colors.ink.900}',
+        _dark: '{colors.gray.950}',
       },
     },
     subtle: {
       value: {
         _light: '{colors.gray.50}',
-        _dark: '{colors.gray.950}',
+        _dark: '{colors.carbon.925}',
       },
     },
     muted: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.ink.850}',
+        _dark: 'rgb(255 255 255 / 0.06)',
       },
     },
     emphasized: {
       value: {
         _light: '{colors.gray.200}',
-        _dark: '{colors.gray.800}',
+        _dark: 'rgb(255 255 255 / 0.08)',
       },
     },
     // The empty track of a progress bar.
     track: {
       value: {
         _light: '#c4c4c4',
-        _dark: '{colors.gray.700}',
+        _dark: '{colors.carbon.750}',
       },
     },
     inverted: {
       value: {
         _light: '{colors.gray.900}',
-        _dark: '{colors.white}',
+        _dark: '{colors.carbon.100}',
       },
     },
     panel: {
       value: {
         _light: '{colors.white}',
-        _dark: '{colors.gray.950}',
+        _dark: '{colors.gray.900}',
       },
     },
-    // Washes of the status tones (light); dark keeps Chakra's.
+    // Washes of the status tones; dark uses the sidebar grey.
     error: {
       value: {
         _light: '#fff0f0',
-        _dark: '{colors.red.950}',
+        _dark: '{colors.bg.subtle}',
       },
     },
     warning: {
       value: {
         _light: '#fff8eb',
-        _dark: '{colors.orange.950}',
+        _dark: '{colors.bg.subtle}',
       },
     },
     success: {
       value: {
         _light: '#f0faf3',
-        _dark: '{colors.green.950}',
+        _dark: '{colors.bg.subtle}',
       },
     },
     info: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.gray.900}',
+        _dark: '{colors.bg.subtle}',
       },
     },
   },
@@ -90,57 +90,57 @@ const colors = defineSemanticTokens.colors({
     DEFAULT: {
       value: {
         _light: '{colors.gray.900}',
-        _dark: '{colors.gray.50}',
+        _dark: '{colors.carbon.100}',
       },
     },
     muted: {
       value: {
         _light: '{colors.gray.600}',
-        _dark: '{colors.gray.400}',
+        _dark: '{colors.carbon.300}',
       },
     },
     subtle: {
       value: {
         _light: '{colors.gray.500}',
-        _dark: '{colors.gray.500}',
+        _dark: '{colors.carbon.400}',
       },
     },
     // The faintest text step, below `subtle`: placeholders, disabled and decorative text.
     faint: {
       value: {
         _light: '{colors.gray.400}',
-        _dark: '{colors.gray.500}',
+        _dark: '{colors.carbon.500}',
       },
     },
     inverted: {
       value: {
         _light: '{colors.white}',
-        _dark: '{colors.black}',
+        _dark: '{colors.gray.950}',
       },
     },
-    // Fil's status text colours (light); dark keeps Chakra's. `info` is neutral: blue means action.
+    // Fil's status text colours. `info` is neutral: blue means action.
     error: {
       value: {
         _light: '#ca2a30',
-        _dark: '{colors.red.400}',
+        _dark: '#f97770',
       },
     },
     warning: {
       value: {
         _light: '#875500',
-        _dark: '{colors.orange.300}',
+        _dark: '#e4ac59',
       },
     },
     success: {
       value: {
         _light: '#0b7636',
-        _dark: '{colors.green.300}',
+        _dark: '#6fc884',
       },
     },
     info: {
       value: {
         _light: '{colors.gray.600}',
-        _dark: '{colors.gray.400}',
+        _dark: '{colors.fg.muted}',
       },
     },
   },
@@ -158,7 +158,7 @@ const colors = defineSemanticTokens.colors({
     sidebar: {
       value: {
         _light: '{colors.white}',
-        _dark: '{colors.dashboardMenu.dark}',
+        _dark: '{colors.bg.subtle}',
       },
     },
     // The dashboard's right side panel; the content column itself has no fill.
@@ -177,16 +177,25 @@ const colors = defineSemanticTokens.colors({
     // Menus, popovers and tooltips
     raised: {
       DEFAULT: {
-        value: '{colors.bg}',
+        value: {
+          _light: '{colors.bg}',
+          _dark: '{colors.carbon.850}',
+        },
       },
       tooltip: {
-        value: '{colors.bg.panel}',
+        value: {
+          _light: '{colors.bg.panel}',
+          _dark: '{colors.carbon.850}',
+        },
       },
     },
     // Dialogs and drawers; `drawer` is the sidebar colour for the mobile dashboard menu.
     overlay: {
       DEFAULT: {
-        value: '{colors.bg.panel}',
+        value: {
+          _light: '{colors.bg.panel}',
+          _dark: '{colors.carbon.875}',
+        },
       },
       drawer: {
         value: '{colors.surface.sidebar}',
@@ -198,6 +207,13 @@ const colors = defineSemanticTokens.colors({
       value: {
         _light: '{colors.bg.muted}',
         _dark: '{colors.bg}',
+      },
+    },
+    // The fill of a secondary button, an avatar and the entity selector: white in light mode, a faint wash in dark.
+    control: {
+      value: {
+        _light: '{colors.white}',
+        _dark: 'rgb(255 255 255 / 0.05)',
       },
     },
     // Cards and tiles that stay dark in both colour modes, with the greys that sit on them.
@@ -228,7 +244,10 @@ const colors = defineSemanticTokens.colors({
       value: '{colors.blackAlpha.400}',
     },
     strong: {
-      value: 'rgb(23 23 23 / 0.56)',
+      value: {
+        _light: 'rgb(23 23 23 / 0.56)',
+        _dark: 'rgb(0 0 0 / 0.64)',
+      },
     },
     // Behind a bottom sheet and a tablet's dialog: a lighter, neutral dim (the desktop keeps `strong`).
     sheet: {
@@ -243,7 +262,7 @@ const colors = defineSemanticTokens.colors({
       bg: {
         value: {
           _light: '{colors.white}',
-          _dark: '{colors.ink.950}',
+          _dark: '{colors.bg.panel}',
         },
       },
       // Painted in light mode only (card `standalone`).
@@ -289,39 +308,39 @@ const colors = defineSemanticTokens.colors({
     DEFAULT: {
       value: {
         _light: 'rgb(0 0 0 / 0.1)',
-        _dark: '{colors.gray.800}',
+        _dark: 'rgb(255 255 255 / 0.1)',
       },
     },
     muted: {
       value: {
         _light: '{colors.gray.200}',
-        _dark: '{colors.gray.900}',
+        _dark: '{colors.gray.800}',
       },
     },
     subtle: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.gray.950}',
+        _dark: '{colors.carbon.875}',
       },
     },
     emphasized: {
       value: {
         _light: 'rgb(0 0 0 / 0.18)',
-        _dark: '{colors.gray.700}',
+        _dark: 'rgb(255 255 255 / 0.18)',
       },
     },
     // The ring of a field, select, textarea and voter option.
     field: {
       value: {
         _light: '{colors.gray.400}',
-        _dark: '{colors.gray.700}',
+        _dark: '{colors.carbon.500}',
       },
     },
     // The outline of a control drawn as a line (checkbox, radio, a dashed drop zone): a solid grey, not a hairline.
     strong: {
       value: {
         _light: '{colors.gray.400}',
-        _dark: '{colors.gray.700}',
+        _dark: '{colors.carbon.500}',
       },
     },
     inverted: {
@@ -361,7 +380,7 @@ const colors = defineSemanticTokens.colors({
     menu: {
       value: {
         _light: '{colors.bg.subtle}',
-        _dark: '{colors.dashboardMenu.dark}',
+        _dark: '{colors.bg.subtle}',
       },
     },
   },
@@ -375,15 +394,40 @@ const colors = defineSemanticTokens.colors({
       muted: {
         value: {
           _light: '{colors.gray.100}',
-          _dark: '{colors.ink.800}',
+          _dark: '{colors.bg.subtle}',
         },
       },
     },
   },
   // Chakra's gray.focusRing (gray.400) misses the 3:1 WCAG floor for focus indicators on a white page,
   // so light mode steps to gray.800; dark keeps gray.400, which clears it on the dark page.
-  // Deep-merges with chakra's other gray slots.
+  // The other slots keep Chakra's light values and move dark onto the Carbó steps (Chakra's dark `black` is tinted).
+  // Deep-merges with chakra's `fg`, `emphasized` and `border` gray slots.
   gray: {
+    subtle: {
+      value: {
+        _light: '{colors.gray.100}',
+        _dark: '{colors.bg.muted}',
+      },
+    },
+    muted: {
+      value: {
+        _light: '{colors.gray.200}',
+        _dark: '{colors.bg.emphasized}',
+      },
+    },
+    solid: {
+      value: {
+        _light: '{colors.gray.900}',
+        _dark: '{colors.carbon.100}',
+      },
+    },
+    contrast: {
+      value: {
+        _light: '{colors.white}',
+        _dark: '{colors.gray.950}',
+      },
+    },
     focusRing: {
       value: {
         _light: '{colors.gray.800}',
@@ -395,7 +439,7 @@ const colors = defineSemanticTokens.colors({
     placeholder: {
       value: {
         _light: '{colors.gray.500}',
-        _dark: '{colors.gray.400}',
+        _dark: '{colors.fg.subtle}',
       },
     },
   },
@@ -415,7 +459,7 @@ const colors = defineSemanticTokens.colors({
         bg: {
           value: {
             _light: '{colors.white}',
-            _dark: '{colors.ink.950}',
+            _dark: '{colors.bg.panel}',
           },
         },
       },
@@ -423,7 +467,7 @@ const colors = defineSemanticTokens.colors({
     bg: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.ink.700}',
+        _dark: '{colors.bg.muted}',
       },
     },
   },

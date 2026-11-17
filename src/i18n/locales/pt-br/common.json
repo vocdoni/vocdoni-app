@@ -26,6 +26,7 @@
       "organization_logo": "Logotipo da organização"
     }
   },
+  "appearance": "Aparência",
   "aside": {
     "anonymous_receipt_gone": "Seu comprovante foi exibido quando você votou e não pode ser recuperado.",
     "has_already_voted": "Seu voto foi registrado corretamente",
@@ -139,7 +140,6 @@
     "title": "Alterar senha"
   },
   "close": "Fechar",
-  "color_mode_switcher": "Alternar modo de cor",
   "common": {
     "back": "Voltar",
     "home": "Início",
@@ -1522,7 +1522,6 @@
     "teaser_dismiss": "Dispensar",
     "whatsapp": "Conversar pelo WhatsApp"
   },
-  "switch_mode": "Alternar para o modo {{ mode }}",
   "switch_organization": "Trocar de organização",
   "system": "Sistema",
   "team": {

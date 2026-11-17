@@ -26,6 +26,7 @@
       "organization_logo": "Erakundearen logotipoa"
     }
   },
+  "appearance": "Itxura",
   "aside": {
     "anonymous_receipt_gone": "Zure egiaztagiria bozkatu zenuenean erakutsi zen, eta ezin da berreskuratu.",
     "has_already_voted": "Zure botoa behar bezala eman da",
@@ -137,7 +138,6 @@
     "title": "Aldatu pasahitza"
   },
   "close": "Itxi",
-  "color_mode_switcher": "Aldatu kolore-modua",
   "common": {
     "back": "Atzera",
     "home": "Hasiera",
@@ -1496,7 +1496,6 @@
     "teaser_dismiss": "Baztertu",
     "whatsapp": "Idatzi WhatsApp bidez"
   },
-  "switch_mode": "Aldatu {{ mode }} modura",
   "switch_organization": "Aldatu erakundea",
   "system": "Sistema",
   "team": {

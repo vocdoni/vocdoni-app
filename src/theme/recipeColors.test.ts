@@ -11,11 +11,9 @@ describe.each([
   ['branded', createAppSystem('#1a73e8')],
 ])('recipe tokens (%s system)', (_name, sys) => {
   it('defines the link colours with the values links render with', () => {
-    expect(conditions('colors.link.fg', sys)).toEqual({ _light: '{colors.accent.fg}', _dark: '{colors.gray.400}' })
-    expect(conditions('colors.link.fg.hover', sys)).toEqual({
-      _light: '{colors.accent.fg.hover}',
-      _dark: '{colors.gray.200}',
-    })
+    // The same in both modes: the accent text colour, which has its own dark value.
+    expect(sys.tokens.getByName('colors.link.fg')?.originalValue).toBe('{colors.accent.fg}')
+    expect(sys.tokens.getByName('colors.link.fg.hover')?.originalValue).toBe('{colors.accent.fg.hover}')
   })
 
   it('defines the 1px border width', () => {
@@ -31,7 +29,10 @@ describe.each([
   })
 
   it('defines the toast fills and text from the status palettes', () => {
-    expect(sys.tokens.getByName('colors.toast.success.bg')?.originalValue).toBe('{colors.success.700}')
+    expect(conditions('colors.toast.success.bg', sys)).toEqual({
+      _light: '{colors.success.700}',
+      _dark: '{colors.success.solid}',
+    })
     expect(conditions('colors.toast.warning.bg', sys)).toEqual({
       _light: '{colors.warning.700}',
       _dark: '{colors.warning.500}',

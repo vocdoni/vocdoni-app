@@ -26,6 +26,7 @@
       "organization_logo": "Λογότυπο οργανισμού"
     }
   },
+  "appearance": "Εμφάνιση",
   "aside": {
     "anonymous_receipt_gone": "Η απόδειξή σας εμφανίστηκε όταν ψηφίσατε και δεν μπορεί να ανακτηθεί.",
     "has_already_voted": "Η ψήφος σας έχει καταχωρηθεί σωστά",
@@ -137,7 +138,6 @@
     "title": "Αλλαγή κωδικού πρόσβασης"
   },
   "close": "Κλείσιμο",
-  "color_mode_switcher": "Εναλλαγή λειτουργίας χρώματος",
   "common": {
     "back": "Πίσω",
     "home": "Αρχική",
@@ -1496,7 +1496,6 @@
     "teaser_dismiss": "Απόρριψη",
     "whatsapp": "Συνομιλία στο WhatsApp"
   },
-  "switch_mode": "Μετάβαση σε λειτουργία {{ mode }}",
   "switch_organization": "Αλλαγή οργανισμού",
   "system": "Σύστημα",
   "team": {

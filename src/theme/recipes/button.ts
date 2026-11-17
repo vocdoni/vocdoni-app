@@ -66,7 +66,7 @@ const PANEL_HOVER = '[linear-gradient({colors.state.hover.bg}, {colors.state.hov
 const outline = defineStyle({
   // Chakra's outline variant draws a 1px border; the ring replaces it.
   borderWidth: '[0]',
-  bg: 'bg.panel',
+  bg: 'surface.control',
   color: 'fg',
   boxShadow: 'shadow.control',
   // The hover tint is laid over the panel, not in its place: alone it is translucent, and on the grey page the
@@ -255,11 +255,11 @@ const segment = defineStyle({
   borderRadius: 'l1',
   fontWeight: 'medium',
   _pressed: {
-    bg: 'bg.panel',
+    bg: 'segment.selected',
     color: 'fg',
     fontWeight: 'semibold',
     boxShadow: '[0 0 0 {borderWidths.hairline} {colors.border}]',
-    _hover: { bg: 'bg.panel' },
+    _hover: { bg: 'segment.selected' },
   },
 })
 

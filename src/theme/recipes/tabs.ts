@@ -63,7 +63,7 @@ const pill = {
     fontWeight: 'medium',
     color: 'fg.muted',
     _selected: {
-      bg: 'bg.panel',
+      bg: 'segment.selected',
       color: 'fg',
       fontWeight: 'semibold',
       boxShadow: '[0 0 0 1px {colors.border}]',

@@ -27,13 +27,14 @@ const resolve = (sys: Sys, name: string, mode: Mode): string | undefined => {
 // Each role's first hop per mode: the layer it stands in for, or a literal.
 const ROLES: Record<string, Record<Mode, string>> = {
   'colors.surface.canvas': { light: '{colors.bg.subtle}', dark: '{colors.bg}' },
-  'colors.surface.sidebar': { light: '{colors.white}', dark: '{colors.dashboardMenu.dark}' },
+  'colors.surface.sidebar': { light: '{colors.white}', dark: '{colors.bg.subtle}' },
   'colors.surface.content': { light: '{colors.bg}', dark: '{colors.bg}' },
   'colors.surface.card': { light: '{colors.bg.panel}', dark: '{colors.bg.panel}' },
   'colors.surface.sunken': { light: '{colors.bg.subtle}', dark: '{colors.whiteAlpha.50}' },
-  'colors.surface.raised': { light: '{colors.bg}', dark: '{colors.bg}' },
-  'colors.surface.raised.tooltip': { light: '{colors.bg.panel}', dark: '{colors.bg.panel}' },
-  'colors.surface.overlay': { light: '{colors.bg.panel}', dark: '{colors.bg.panel}' },
+  'colors.surface.raised': { light: '{colors.bg}', dark: '{colors.carbon.850}' },
+  'colors.surface.raised.tooltip': { light: '{colors.bg.panel}', dark: '{colors.carbon.850}' },
+  'colors.surface.overlay': { light: '{colors.bg.panel}', dark: '{colors.carbon.875}' },
+  'colors.surface.control': { light: '{colors.white}', dark: 'rgb(255 255 255 / 0.05)' },
   'colors.surface.overlay.drawer': { light: '{colors.surface.sidebar}', dark: '{colors.surface.sidebar}' },
   'colors.surface.inverse': { light: '{colors.gray.800}', dark: '{colors.gray.800}' },
   'shadows.shadow.card': { light: 'none', dark: 'none' },
@@ -71,8 +72,12 @@ describe.each([
 
   it('resolves the layers that do not come from a Chakra slot to their raw values', () => {
     expect(resolve(sys, 'colors.surface.sidebar', 'light')).toBe('#FFFFFF')
-    expect(resolve(sys, 'colors.surface.sidebar', 'dark')).toBe('#18181b')
-    expect(resolve(sys, 'colors.surface.overlay.drawer', 'dark')).toBe('#18181b')
+    expect(resolve(sys, 'colors.surface.sidebar', 'dark')).toBe('#111111')
+    expect(resolve(sys, 'colors.surface.overlay.drawer', 'dark')).toBe('#111111')
+    expect(resolve(sys, 'colors.surface.overlay', 'dark')).toBe('#1c1c1c')
+    expect(resolve(sys, 'colors.surface.raised', 'dark')).toBe('#222222')
+    expect(resolve(sys, 'colors.surface.canvas', 'dark')).toBe('#0a0a0a')
+    expect(resolve(sys, 'colors.surface.card', 'dark')).toBe('#171717')
     expect(resolve(sys, 'colors.surface.sunken', 'dark')).toBe(resolve(sys, 'colors.whiteAlpha.50', 'dark'))
     expect(resolve(sys, 'colors.dashboard.menu', 'light')).toBe('#fafafa')
   })
