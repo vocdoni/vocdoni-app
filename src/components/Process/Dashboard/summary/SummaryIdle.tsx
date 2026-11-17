@@ -2,7 +2,6 @@ import { Button, Card, Flex, Heading, Icon, Stack, Text } from '@chakra-ui/react
 import { useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useActions } from '~components/Actions/ActionsContext'
-import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { useVoteText } from '~i18n/use-vote-text'
 import { InfoIcon } from '~theme/icons'
 import { isSettledQuestion } from '~utils/vote-state'
@@ -85,8 +84,8 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
       <Stack gap='0' px={{ base: '4', md: 'card', lg: '6' }} py={{ base: '4.5', md: 'card', lg: 'idle' }}>
-        <ProcessStatus state={state} alignSelf='flex-start' gap='2' />
-        <Heading as='h2' id={titleId} mt='2.5' textStyle='state-title'>
+        {/* The header already names the vote's state: the card goes straight to what it means. */}
+        <Heading as='h2' id={titleId} textStyle='state-title'>
           {title}
         </Heading>
         {body && (
