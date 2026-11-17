@@ -373,7 +373,8 @@ export const VoteHeader = () => {
           {t('votes.page.back', { defaultValue: 'Votes' })}
         </RouterLink>
       </Link>
-      <PageTitle textStyle='vote-title' gridArea='title' minW='0'>
+      {/* A title with no spaces wraps anywhere instead of pushing the page sideways on a phone. */}
+      <PageTitle textStyle='vote-title' gridArea='title' minW='0' overflowWrap='anywhere'>
         {text(election.title)}
       </PageTitle>
       <StatusLine {...part} />
