@@ -9,7 +9,7 @@ import { Link as RouterLink } from 'react-router'
 import { ActionContinue, ActionEnd, ActionPause, CancelVoteDialog } from '~components/Actions'
 import { useActions } from '~components/Actions/ActionsContext'
 import { PageTitle } from '~components/ui/PageTitle'
-import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
+import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { ResponsiveMenu, type ResponsiveMenuItem } from '~components/ui/ResponsiveMenu'
 import { useIsDesktop } from '~components/ui/useIsMobile'
 import { useVoteText } from '~i18n/use-vote-text'
@@ -299,7 +299,6 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const publicLanguage = usePublicLanguage()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const stateLabel = useProcessStateLabel()
   const [cancelling, setCancelling] = useState(false)
 
   const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
@@ -360,7 +359,6 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
       <ResponsiveMenu
         label={moreActions}
         title={text(election.title)}
-        subtitle={stateLabel(state)}
         trigger={
           isDesktop ? (
             <Button variant='dropdown'>

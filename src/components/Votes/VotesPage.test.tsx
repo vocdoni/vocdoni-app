@@ -134,13 +134,13 @@ describe('VotesPage', () => {
     // No promoted live row: no turnout bar and no filled "Follow" button, only the row links.
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Follow' })).not.toBeInTheDocument()
-    expect(screen.getAllByRole('link', { name: 'Follow' })).toHaveLength(3)
+    expect(screen.getAllByRole('link', { name: /^Follow: / })).toHaveLength(3)
   })
 
   it('names each row by its vote and gives every row its "More" menu', () => {
     renderPage()
     expect(screen.getByRole('article', { name: 'Eleccions' })).toBeInTheDocument()
-    expect(screen.getAllByRole('button', { name: 'More actions' })).toHaveLength(9)
+    expect(screen.getAllByRole('button', { name: /^More actions: / })).toHaveLength(9)
   })
 
   it('asks for results of the closed votes of the page only', () => {

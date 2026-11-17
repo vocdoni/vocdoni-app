@@ -15,23 +15,19 @@ vi.mock('~components/Process/Dashboard/use-clone-as-draft', () => ({
 vi.mock('~queries/votes', () => ({
   useDeleteDraft: () => ({ mutate: deleteDraft, isPending: false }),
 }))
-// The real menu is a dropdown or a bottom sheet by breakpoint; here its items are plain buttons under its sheet
-// title and subtitle.
+// The real menu is a dropdown or a bottom sheet by breakpoint; here its items are plain buttons under its sheet title.
 vi.mock('~components/ui/ResponsiveMenu', () => ({
   ResponsiveMenu: ({
     items,
     trigger,
     title,
-    subtitle,
   }: {
     items: { value: string; label: string; onSelect?: () => void; danger?: boolean }[]
     trigger?: ReactNode
     title?: string
-    subtitle?: string
   }) => (
     <div role='group' aria-label={`${title} menu`}>
       {trigger}
-      <p data-testid='menu-subtitle'>{subtitle}</p>
       {items.map((item) => (
         <button key={item.value} onClick={item.onSelect} data-danger={item.danger ? 'true' : undefined}>
           {item.label}
@@ -91,7 +87,8 @@ const renderRow = (process: VotingProcessResponse, props: Partial<VoteListRowPro
   )
 }
 
-const href = (name: string) => screen.getByRole('link', { name }).getAttribute('href')
+// The row's action link is named by its word and the vote it opens.
+const href = (action: string) => screen.getByRole('link', { name: `${action}: Autumn assembly` }).getAttribute('href')
 
 beforeEach(() => vi.clearAllMocks())
 
@@ -169,20 +166,36 @@ describe('VoteListRow content', () => {
     expect(screen.getByText('Live, Saturday November 14 at 18:30.')).toBeInTheDocument()
   })
 
+  it('adds the year to a date of another year, in the meta line and on a closed row', () => {
+    const march10 = new Date(2026, 2, 10, 12)
+    renderRow(
+      make({
+        startDate: new Date(2026, 1, 1).toISOString(),
+        endDate: new Date(2027, 0, 15, 20).toISOString(),
+      }),
+      { now: march10 }
+    )
+    expect(screen.getByText(/Closes Friday January 15, 2027 at 20:00\.$/)).toBeInTheDocument()
+  })
+
   it('shows a live vote like every other row: a text link and no turnout bar', () => {
     renderRow(make())
-    expect(screen.getByRole('link', { name: 'Follow' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Follow: Autumn assembly' })).toBeInTheDocument()
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Follow' })).not.toBeInTheDocument()
   })
 })
 
 describe('VoteListRow menu', () => {
-  it('titles the phone sheet with the vote and its state', () => {
+  it('titles the phone sheet with the vote, and names its button by the vote too', () => {
     renderRow(make({ published: false, endDate: undefined }))
     const menu = screen.getByRole('group', { name: 'Autumn assembly menu' })
-    expect(within(menu).getByTestId('menu-subtitle')).toHaveTextContent('Draft')
-    expect(within(menu).getByRole('button', { name: 'More actions' })).toBeInTheDocument()
+    expect(within(menu).getByRole('button', { name: 'More actions: Autumn assembly' })).toBeInTheDocument()
+  })
+
+  it('opens the vote from its title too', () => {
+    renderRow(make())
+    expect(screen.getByRole('link', { name: 'Autumn assembly' })).toHaveAttribute('href', '/admin/process/p1')
   })
 
   it('puts delete last, as a destructive item, only on a draft', () => {
@@ -216,7 +229,7 @@ describe('VoteListRow permissions', () => {
   it('gives a viewer no duplicate and no draft menu', () => {
     renderRow(make({ published: false, endDate: undefined }), { canManage: false })
     expect(screen.queryByRole('button', { name: /duplicate/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'More actions' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^More actions/ })).not.toBeInTheDocument()
   })
 
   it('asks before deleting a draft and then deletes it', async () => {

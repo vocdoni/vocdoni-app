@@ -80,23 +80,22 @@ describe('ResponsiveMenu', () => {
   describe('below md', () => {
     beforeEach(() => vi.mocked(useIsMobile).mockReturnValue(true))
 
-    it('opens a bottom sheet named by the label, with a Close button', async () => {
+    it('opens a bottom sheet named by the label, with a Cancel button', async () => {
       render(<ResponsiveMenu label='Vote actions' items={items()} />)
       const trigger = screen.getByRole('button', { name: 'Vote actions' })
       expect(trigger).toHaveAttribute('aria-haspopup', 'dialog')
 
       await userEvent.click(trigger)
       expect(await screen.findByRole('dialog', { name: 'Vote actions' })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
       expect(screen.queryByRole('menu')).not.toBeInTheDocument()
     })
 
-    it('titles the sheet with what it acts on and its state', async () => {
-      render(<ResponsiveMenu label='Vote actions' title='Annual budget' subtitle='Live' items={items()} />)
+    it('titles the sheet with what it acts on', async () => {
+      render(<ResponsiveMenu label='Vote actions' title='Annual budget' items={items()} />)
       await userEvent.click(screen.getByRole('button', { name: 'Vote actions' }))
 
       expect(await screen.findByRole('dialog', { name: 'Annual budget' })).toBeInTheDocument()
-      expect(screen.getByText('Live')).toBeInTheDocument()
     })
 
     it('opens an external item in a new tab and never follows a disabled one', async () => {
@@ -140,11 +139,11 @@ describe('ResponsiveMenu', () => {
       await vi.waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
     })
 
-    it('closes from the Close button without selecting', async () => {
+    it('closes from the Cancel button without selecting', async () => {
       const onEdit = vi.fn()
       render(<ResponsiveMenu label='Vote actions' items={items(onEdit)} />)
       await userEvent.click(screen.getByRole('button', { name: 'Vote actions' }))
-      await userEvent.click(await screen.findByRole('button', { name: 'Close' }))
+      await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
 
       expect(onEdit).not.toHaveBeenCalled()
       await vi.waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())

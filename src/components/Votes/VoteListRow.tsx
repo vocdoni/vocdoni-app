@@ -1,19 +1,18 @@
 import { Card, Grid, GridItem, Icon, IconButton, Link, Text } from '@chakra-ui/react'
-import { resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessResultsResponse } from '@vocdoni/api-types'
-import { memo, useId, useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, Link as RouterLink } from 'react-router'
 import { useCloneAsDraft } from '~components/Process/Dashboard/use-clone-as-draft'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
-import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
+import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { ResponsiveMenu, type ResponsiveMenuItem } from '~components/ui/ResponsiveMenu'
 import { useVoteText } from '~i18n/use-vote-text'
 import { useDeleteDraft } from '~queries/votes'
 import { Routes } from '~routes'
 import { isLegacyProcess } from '~src/types/voting-process'
 import { ChevronRightIcon, CopyIcon, DeleteIcon, MoreIcon } from '~theme/icons'
-import type { VoteRow, VoteState } from '~utils/vote-state'
+import { closedAt, type VoteRow, type VoteState } from '~utils/vote-state'
 import { VoteRowMeta } from './VoteRowMeta'
 
 export type VoteListRowProps = {
@@ -93,13 +92,12 @@ const GRID_AREAS = {
   md: '"status title action more" "status meta action more"',
 }
 
-const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => {
+export const VoteListRow = ({ row, results, canManage, now }: VoteListRowProps) => {
   const { t } = useTranslation()
   const { text, shortDate } = useVoteText()
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const actionLabel = useActionLabel()
-  const stateWord = useProcessStateLabel()
   const titleId = useId()
   const { process, state } = row
   const action = useMemo(() => rowAction(row), [row])
@@ -110,7 +108,7 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
   const canDelete = canManage && isDraft
   const title =
     text(process.title) || (isDraft ? t('drafts.not_defined', { defaultValue: 'Not defined yet' }) : process.id)
-  const closedOn = state === 'closed' || state === 'canceled' ? shortDate(resolveEndDate(process)) : ''
+  const closedOn = state === 'closed' || state === 'canceled' ? shortDate(closedAt(process)) : ''
 
   // Every row keeps its secondary actions in one "More" menu at every width: duplicate, and delete
   // last for a draft.
@@ -140,6 +138,9 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
   ]
 
   const more = t('votes.list.more', { defaultValue: 'More actions' })
+  // Every row has the same action words: the accessible names add the vote they act on.
+  const named = (action: string) =>
+    t('votes.list.action_label', { defaultValue: '{{action}}: {{title}}', action, title })
   // The text columns keep clear of the phone row's tight end padding, which only the 44px "More" button uses.
   const textEnd = { base: '2.5', md: '0' } as const
 
@@ -171,8 +172,11 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
         </GridItem>
 
         <GridItem area='title' minW='0' pe={textEnd}>
+          {/* The title opens the vote too, as the row's action does. */}
           <Text as='h2' id={titleId} textStyle='item-title' lineClamp={2}>
-            {title}
+            <Link asChild variant='title'>
+              <RouterLink to={action.to}>{title}</RouterLink>
+            </Link>
           </Text>
         </GridItem>
 
@@ -183,7 +187,7 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
         <GridItem area='action' mt={{ base: '1', md: '0' }} pe={textEnd} alignSelf={{ base: 'auto', md: 'center' }}>
           {/* The phone's 44px hit area overhangs the row's bottom padding instead of growing the row. */}
           <Link asChild variant='row-action' mb={{ base: '-3', md: '0' }}>
-            <RouterLink to={action.to}>
+            <RouterLink to={action.to} aria-label={named(actionLabel(action.key))}>
               {actionLabel(action.key)}
               <Icon as={ChevronRightIcon} />
             </RouterLink>
@@ -196,9 +200,8 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
             <ResponsiveMenu
               label={more}
               title={title}
-              subtitle={stateWord(state)}
               trigger={
-                <IconButton variant='ghost' size='sm' aria-label={more}>
+                <IconButton variant='ghost' size='sm' aria-label={named(more)}>
                   <MoreIcon />
                 </IconButton>
               }
@@ -213,5 +216,3 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
     </Card.Body>
   )
 }
-
-export const VoteListRow = memo(VoteListRowBase)
