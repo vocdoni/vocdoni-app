@@ -8,7 +8,7 @@ import {
 } from '~components/Process/VotingReportPdf/VotingReportPdfButton'
 import { useVoteText } from '~i18n/use-vote-text'
 import { DownloadFileIcon } from '~theme/icons'
-import { downloadTextFile, toCsv } from '~utils/csv'
+import { csvDialect, downloadTextFile, toCsv } from '~utils/csv'
 import { csvReady, questionTallies, resultsCsvRows, resultsFileName } from './results-csv'
 import { SummaryCardHeader } from './SummaryCardHeader'
 import type { SummaryModel } from './use-summary-model'
@@ -34,7 +34,7 @@ const DownloadRow = ({ title, note, action }: RowProps) => (
  * report as a PDF. The board's "pay and download" has no backend yet, so the report downloads as it always has.
  */
 export const SummaryDownloads = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { text } = useVoteText()
   const titleId = useId()
   const { results } = useElection()
@@ -48,7 +48,8 @@ export const SummaryDownloads = ({ model, desktop }: { model: SummaryModel; desk
   const downloadCsv = () =>
     downloadTextFile(
       resultsFileName(text(election.title), election.id),
-      toCsv(resultsCsvRows(election, results, t, text, model.canManage)),
+      // Written the way a spreadsheet in the reader's language opens it: separator and decimal mark.
+      toCsv(resultsCsvRows(election, results, t, text, model.canManage), csvDialect(i18n.language)),
       'text/csv'
     )
 

@@ -88,7 +88,7 @@ export const resultsCsvRows = (
       return choice ? text(choice.title) : t('votes.manage.abstention', { defaultValue: 'Abstention' })
     }
     for (const entry of tally) {
-      // One decimal, as a plain number with a dot: every spreadsheet reads it, whatever its locale.
+      // One decimal, as a number: the file's dialect writes its decimal mark.
       const share = base > 0 ? Math.round((entry.votes / base) * 1000) / 10 : 0
       rows.push([index + 1, text(question.title), method, optionOf(entry), entry.votes, unit, share, answered, census])
     }

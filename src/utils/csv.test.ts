@@ -1,4 +1,4 @@
-import { toCsv } from './csv'
+import { csvDialect, toCsv } from './csv'
 
 describe('toCsv', () => {
   it('joins cells and rows, with a byte order mark and a final line break', () => {
@@ -18,5 +18,20 @@ describe('toCsv', () => {
 
   it('keeps a cell that looks like a formula as text', () => {
     expect(toCsv([['=SUM(A1)', '-1 seat', '@home']])).toBe("\uFEFF'=SUM(A1),'-1 seat,'@home\r\n")
+  })
+
+  it('writes semicolons and decimal commas for a language whose spreadsheets expect them', () => {
+    expect(csvDialect('ca')).toEqual({ delimiter: ';', decimal: ',' })
+    expect(csvDialect('de')).toEqual({ delimiter: ';', decimal: ',' })
+    expect(csvDialect('en')).toEqual({ delimiter: ',', decimal: '.' })
+    expect(
+      toCsv(
+        [
+          ['Opció', 'Percentatge'],
+          ['Sí; potser', 62.5],
+        ],
+        csvDialect('ca')
+      )
+    ).toBe('\uFEFFOpció;Percentatge\r\n"Sí; potser";62,5\r\n')
   })
 })
