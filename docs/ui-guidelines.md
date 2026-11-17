@@ -18,18 +18,18 @@ or, as text and line, a lighter `#6a99f1`. The values are in the dark table belo
 
 ## Where things live
 
-| What                                                                     | Where                                                                                                                                                                                            |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Raw scales (radii, sizes, border widths, z-index, weights, line heights) | `src/theme/tokens.ts`, `src/theme/colors.ts`, `src/theme/fonts.ts`                                                                                                                               |
-| Meaning of colours (surfaces, text, borders, light and dark)             | `src/theme/semantic.ts` and one module per family (below)                                                                                                                                        |
-| Brand colour and `accent` (generated from `PRIMARY_COLOR`)               | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                                                       |
-| Text roles                                                               | `src/theme/textStyles.ts`                                                                                                                                                                        |
+| What                                                                     | Where                                                                                                                                                     |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Raw scales (radii, sizes, border widths, z-index, weights, line heights) | `src/theme/tokens.ts`, `src/theme/colors.ts`, `src/theme/fonts.ts`                                                                                        |
+| Meaning of colours (surfaces, text, borders, light and dark)             | `src/theme/semantic.ts` and one module per family (below)                                                                                                 |
+| Brand colour and `accent` (generated from `PRIMARY_COLOR`)               | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                |
+| Text roles                                                               | `src/theme/textStyles.ts`                                                                                                                                 |
 | How a component looks and its variants                                   | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports, and `dashboard` (`DashboardContents`) |
-| Voting UI from `@vocdoni/react-components`                               | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                                                               |
-| Shared building blocks                                                   | `src/components/ui/`                                                                                                                                                                             |
-| Shared layout pieces                                                     | `src/components/Layout/Separators.tsx` (`LabelledSeparator`)                                                                                                                                     |
-| Icons, by concept                                                        | `src/theme/icons.tsx`                                                                                                                                                                            |
-| The rules that keep the theme from being bypassed                        | `src/theme/style-inventory.ts` and `src/theme/style-inventory.baseline.json`                                                                                                                     |
+| Voting UI from `@vocdoni/react-components`                               | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                        |
+| Shared building blocks                                                   | `src/components/ui/`                                                                                                                                      |
+| Shared layout pieces                                                     | `src/components/Layout/Separators.tsx` (`LabelledSeparator`)                                                                                              |
+| Icons, by concept                                                        | `src/theme/icons.tsx`                                                                                                                                     |
+| The rules that keep the theme from being bypassed                        | `src/theme/style-inventory.ts` and `src/theme/style-inventory.baseline.json`                                                                              |
 
 Import theme modules with the `~theme/*` alias and shared components with `~components/ui/*`.
 
@@ -158,12 +158,12 @@ server (`resolveProcessBrand` in `src/utils/process-brand.ts`) and the page data
 primaryColor` builds the chakra system from that colour instead of `PRIMARY_COLOR`, on the server and at hydration
 alike. The client derives nothing brand-related afterwards (cached HTML, brand included, can be a minute old).
 
-| Vote                           | Header logo                                                            | Colour                                                                |
-| ------------------------------ | ---------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Add-on on                      | the organisation's logo                                                | the organisation's colour if it is a valid hex, else the deployment's |
-| Add-on off, `SHOW_ORG_LOGO` on | the organisation's logo                                                | the deployment's                                                      |
-| Add-on off, flag off           | the Vocdoni mark                                                       | the deployment's                                                      |
-| Archive (legacy) vote          | the organisation's avatar under `SHOW_ORG_LOGO`, else the Vocdoni mark | the deployment's, never the organisation's                            |
+| Vote | Header logo | Colour |
+|---|---|---|
+| Add-on on | the organisation's logo | the organisation's colour if it is a valid hex, else the deployment's |
+| Add-on off, `SHOW_ORG_LOGO` on | the organisation's logo | the deployment's |
+| Add-on off, flag off | the Vocdoni mark | the deployment's |
+| Archive (legacy) vote | the organisation's avatar under `SHOW_ORG_LOGO`, else the Vocdoni mark | the deployment's, never the organisation's |
 
 - Colour reaches components only through `colorPalette` (it falls back to `brand`), `brand.*` and `accent.*`. A
   component that reads them follows the vote; nothing else may carry the organisation's colour (no inline style, no
@@ -246,16 +246,16 @@ and `control-tab` (15px, 13.5px from `lg`) are what button, field, menu, chip an
   (768 to 1023px, a tablet) and `lg` (1024px and up, a desktop, which is the size every value below keeps). Controls
   grow into touch targets through the recipes, so a component never writes the steps itself:
 
-  | What                            | Phone (`base`)   | Tablet (`md`)                         | Desktop (`lg`)                        |
-  | ------------------------------- | ---------------- | ------------------------------------- | ------------------------------------- |
-  | Button height, text, sides      | 44px, 15px, 16px | 40px, 14px, 14px                      | 34px, 13.5px, 12px                    |
-  | Icon button hit area            | 44px             | 40px                                  | 28px                                  |
-  | Chip (`variant='chip'`)         | 36px, 14px       | 32px, 14px                            | 28px, 13.5px                          |
-  | Field and select height, text   | 44px, 16px       | 40px, 14px                            | 34px, 13.5px                          |
-  | Menu item height, text          | 52px, 16px       | 40px, 14px                            | 32px, 13.5px                          |
+  | What                            | Phone (`base`) | Tablet (`md`) | Desktop (`lg`) |
+  | ------------------------------- | -------------- | ------------- | -------------- |
+  | Button height, text, sides      | 44px, 15px, 16px | 40px, 14px, 14px | 34px, 13.5px, 12px |
+  | Icon button hit area            | 44px           | 40px          | 28px           |
+  | Chip (`variant='chip'`)         | 36px, 14px     | 32px, 14px    | 28px, 13.5px   |
+  | Field and select height, text   | 44px, 16px     | 40px, 14px    | 34px, 13.5px   |
+  | Menu item height, text          | 52px, 16px     | 40px, 14px    | 32px, 13.5px   |
   | Action menu (`ResponsiveMenu`)  | sheet, 52px rows | fits its items, 40px rows, 18px icons | fits its items, 34px rows, 16px icons |
-  | Confirm dialog                  | bottom sheet     | 440px, 22px padding, 12px corners     | 460px, 6px corners, ruled footer      |
-  | Tab height, text (line variant) | 44px, 15px       | 44px, 15px                            | text, 13.5px                          |
+  | Confirm dialog                  | bottom sheet   | 440px, 22px padding, 12px corners | 460px, 6px corners, ruled footer |
+  | Tab height, text (line variant) | 44px, 15px     | 44px, 15px    | text, 13.5px   |
 
   The tokens are `sizes.control.touch` (44px), `control.tablet` (40px) and `control.row` (52px, a menu or sheet row). The field text is 16px on a phone so iOS Safari does not zoom on
   focus. The `line` tab bar stays on one line and scrolls sideways (no scrollbar), with a 24px gap. A `dialog` is a
@@ -268,10 +268,10 @@ and `control-tab` (15px, 13.5px from `lg`) are what button, field, menu, chip an
 
   The dashboard shell (`elements/DashboardShell.tsx`) follows the same split:
 
-  | What             | Phone (`base`)                         | Tablet (`md`)                          | Desktop (`lg`)                       |
-  | ---------------- | -------------------------------------- | -------------------------------------- | ------------------------------------ |
-  | Navigation       | 52px top bar, 296px drawer (`sidebar`) | 52px top bar, 296px drawer (`sidebar`) | fixed 240px sidebar (48px collapsed) |
-  | Page side gutter | 16px                                   | 24px                                   | 28px                                 |
+  | What                 | Phone (`base`)                         | Tablet (`md`)                          | Desktop (`lg`)                                   |
+  | -------------------- | -------------------------------------- | -------------------------------------- | ------------------------------------------------ |
+  | Navigation           | 52px top bar, 296px drawer (`sidebar`) | 52px top bar, 296px drawer (`sidebar`) | fixed 240px sidebar (48px collapsed)             |
+  | Page side gutter     | 16px                                   | 24px                                   | 28px                                             |
 
   The sizes are `sizes.dashboard.topbar`, `dashboard.drawer` (read by the drawer `sidebar` variant) and
   `dashboard.menu.expanded|collapsed`. The top bar (`Dashboard/TopBar.tsx`) holds the menu button, the organization and
