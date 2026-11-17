@@ -72,6 +72,8 @@ export const Card = defineSlotRecipe({
       // A ring, not a border, as the guide's cards: it takes no room, so the card is as tall as its content.
       frame: {
         root: {
+          // Filled: the dashboard page is grey, and a card stays white on it.
+          bg: 'surface.card',
           borderWidth: '[0]',
           boxShadow: 'shadow.ring',
         },
