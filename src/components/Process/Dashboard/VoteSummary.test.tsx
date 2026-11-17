@@ -5,7 +5,7 @@ import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { VoteSummary } from './VoteSummary'
 
-let desktop = true
+let phone = false
 let canManage = true
 let currentElection: VotingProcessResponse
 const cloneAsDraft = vi.fn()
@@ -21,7 +21,8 @@ vi.mock('~utils/analytics', async (importOriginal) => ({
   trackAnalyticsEvent: vi.fn(),
 }))
 vi.mock('~queries/process-end-date', () => ({ useProcessEarlyEndDate: () => ({ data: null }) }))
-vi.mock('~components/ui/useIsMobile', () => ({ useIsDesktop: () => desktop, useIsMobile: () => !desktop }))
+// Resum is one tree at every width but for the phone's bottom bar and, held for the owner, the voting data card.
+vi.mock('~components/ui/useIsMobile', () => ({ useIsMobile: () => phone, useIsDesktop: () => !phone }))
 // The provider's values, with the real state derivation (no pause memory: what another device sees).
 vi.mock('~components/Actions/ActionsContext', async () => {
   const { deriveVoteState, pausedHoldIds } = await import('~utils/vote-state')
@@ -105,7 +106,7 @@ const textContent = (text: string) => (_: string, element: Element | null) =>
   element?.textContent === text && Array.from(element.children).every((child) => child.textContent !== text)
 
 beforeEach(() => {
-  desktop = true
+  phone = false
   canManage = true
   cloneAsDraft.mockClear()
   vi.mocked(trackAnalyticsEvent).mockClear()
@@ -225,7 +226,7 @@ describe('VoteSummary', () => {
       expect(screen.getByRole('link', { name: 'Ballot' })).toHaveAttribute('href', '/admin/process/0xabc/ballot')
     })
 
-    it('lists who has not voted yet and the calendar on the desktop', () => {
+    it('lists who has not voted yet and the calendar', () => {
       renderSummary(createProcess(), 184)
 
       expect(screen.getByText(textContent('128 have not voted yet'))).toBeInTheDocument()
@@ -345,16 +346,7 @@ describe('VoteSummary', () => {
       expect(screen.queryByText(/being counted/)).not.toBeInTheDocument()
     })
 
-    it('draws the same bars under each question on a phone once results are public', () => {
-      desktop = false
-      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 181, ['150', '31'])] }), 184)
-
-      expect(screen.getByRole('progressbar', { name: 'Yes, 150 votes, 83%' })).toBeInTheDocument()
-      expect(screen.getByRole('progressbar', { name: 'No, 31 votes, 17%' })).toBeInTheDocument()
-    })
-
-    it('draws no bars on a phone while a secret tally is hidden', () => {
-      desktop = false
+    it('draws no bars while a secret tally is hidden', () => {
       renderSummary(
         createProcess({ questions: [{ ...question('q1', 'ONGOING', 181, ['150', '31']), secretUntilTheEnd: true }] }),
         184
@@ -459,21 +451,24 @@ describe('VoteSummary', () => {
       question('q3', 'PAUSED'),
     ]
 
-    it('heads the desktop hero with Turnout, not the state again, and words the count as a floor', () => {
+    it('heads the hero with Turnout, not the state again, and words the count as a floor', () => {
       renderSummary(byQuestion(questions), 200)
 
       expect(screen.getByRole('region', { name: 'Turnout' })).toBeInTheDocument()
       expect(screen.getByText('At least 200 of 312 voted on a question')).toBeInTheDocument()
-      for (const label of ['Census', 'Start', 'Results']) {
-        expect(screen.getByText(label)).toBeInTheDocument()
-      }
+      const labels = screen.getAllByRole('term').map((term) => term.textContent)
+      expect(labels).toEqual(['Census', 'Questions', 'Start', 'Closes', 'Results', 'Type', 'Vote overwrite'])
       expect(screen.getByText('live, during the vote')).toBeInTheDocument()
     })
 
-    it('says when it closes on the desktop too', () => {
-      renderSummary(byQuestion(questions), 200)
+    it('says where it stands in place of the figure once canceled', () => {
+      const voided = (id: string) => ({ ...question(id, 'CANCELED', 10), endedAt: '2026-03-01T10:20:00Z' })
+      renderSummary(byQuestion([voided('q1'), voided('q2')]), 10)
 
-      expect(screen.getByText('Closes')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Vote canceled' })).toBeInTheDocument()
+      expect(screen.getByText('The votes cast were discarded. There are no results.')).toBeInTheDocument()
+      expect(screen.queryByText('Turnout')).not.toBeInTheDocument()
+      expect(screen.getByText('no results')).toBeInTheDocument()
     })
 
     it('reads a closed vote as closed: when its last question closed, and public results', () => {
@@ -523,8 +518,8 @@ describe('VoteSummary', () => {
       expect(bars('Yes, 0, 0%')).toHaveLength(0)
     })
 
-    it('says where it stands in place of the figure on a phone before it starts, with no bottom bar', () => {
-      desktop = false
+    it('says where it stands in place of the figure before it starts, with no bottom bar on a phone', () => {
+      phone = true
       renderSummary(byQuestionReady(), 0)
 
       expect(screen.getByRole('heading', { name: 'It has not started yet' })).toBeInTheDocument()
@@ -535,7 +530,7 @@ describe('VoteSummary', () => {
     })
 
     it('docks the open question at the bottom of a phone, with the turnout hero above', () => {
-      desktop = false
+      phone = true
       renderSummary(byQuestion(questions), 200)
 
       expect(screen.getByText('Turnout')).toBeInTheDocument()

@@ -39,7 +39,7 @@ const ResultsLine = ({ model }: { model: SummaryModel }) => {
       gap='2'
       minH='11'
       py='2'
-      px='card'
+      px={{ base: '4', md: 'card' }}
       borderTopWidth='hairline'
       borderColor='border'
       textStyle='body-sm'
@@ -82,9 +82,9 @@ const useTrackResultsViewed = (model: SummaryModel, visible: boolean) => {
 
 /**
  * The vote's questions. Question by question, the card that runs them (ByQuestionCard). All at once: each question's
- * turnout and blank votes, and when the results show; a phone or tablet lists them with one quiet line each.
+ * turnout and blank votes, and when the results show, with the way to the ballot.
  */
-export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
+export const SummaryQuestions = ({ model }: { model: SummaryModel }) => {
   const { t } = useTranslation()
   const titleId = useId()
   const { results } = useElection()
@@ -158,7 +158,7 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
           />
         ))
       )}
-      {desktop && <ResultsLine model={model} />}
+      <ResultsLine model={model} />
     </Card.Root>
   )
 }
