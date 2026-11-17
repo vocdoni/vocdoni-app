@@ -255,7 +255,7 @@ describe('VoteSummary', () => {
       expect(screen.getByText('Closed. Yes, 150 to 50.')).toBeInTheDocument()
       expect(screen.getByText('Open. 120 votes.')).toBeInTheDocument()
       expect(screen.getByText('To open.')).toBeInTheDocument()
-      expect(screen.getByText('1, question by question')).toBeInTheDocument()
+      expect(screen.getByText('3, question by question')).toBeInTheDocument()
     })
 
     it('shows a vote paused as a whole, with the held questions paused', () => {

@@ -39,8 +39,9 @@ describe('questionKind', () => {
   })
 
   it('counts the options of a ranking', () => {
+    // A ranked question is created with no `type` (the backend rejects 'ranked'), only the declared name.
     const ranked = question({
-      type: 'multichoice',
+      type: undefined,
       metadata: { type: { name: 'ranked' } },
       ballotProtocol: protocol({ maxCount: 4, maxValue: 3, uniqueValues: true }),
     })

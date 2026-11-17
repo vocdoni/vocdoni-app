@@ -190,7 +190,7 @@ export const ClosedQuestionRow = ({
                   percent: share ?? 0,
                 })}
                 layout={{ base: 'scale', lg: 'compact' }}
-                maxW={{ md: 'turnout.max', lg: 'none' }}
+                maxW={{ md: 'turnout.max', lg: 'full' }}
               />
               <QuestionResultBars question={question} results={results} weighted={weighted} final />
             </Stack>

@@ -85,7 +85,7 @@ export const ActiveQuestionRow = ({
         </Stack>
         <TurnoutBar
           gridColumn={wide}
-          maxW={{ md: 'turnout.max', lg: 'none' }}
+          maxW={{ md: 'turnout.max', lg: 'full' }}
           caption={t('votes.manage.question_voted', { defaultValue: '{{voted}} of {{total}} voted', ...values })}
           share={
             share !== undefined
