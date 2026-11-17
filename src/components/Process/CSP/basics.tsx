@@ -43,9 +43,13 @@ const retryAfterSeconds = (body: unknown): number | undefined => {
   return typeof retryAfter === 'number' && retryAfter > 0 ? retryAfter : undefined
 }
 
+/** A failed match (unknown participant, wrong contact or password): every field is suspect, none is named. */
+export const isCspMismatch = (error: unknown): boolean =>
+  error instanceof VocdoniApiError && (error.code === 40029 || error.code === 40802)
+
 // Maps the SaaS CSP auth error codes to translated, voter-facing messages. Any
 // other failure keeps the API's own message.
-const useTranslateCspError = () => {
+export const useTranslateCspError = () => {
   const { t } = useTranslation()
   const hasPassword = !!useOptionalCspAuthContext()?.authFields.includes('password')
 
@@ -116,7 +120,7 @@ const useTranslateCspError = () => {
 // Both auth steps are keyed under one prefix so their in-flight state outlives
 // the dialog that started them: closing the modal unmounts the step (and its
 // mutation observer), but not the request.
-const cspAuthMutationKey = ['csp', 'auth']
+export const cspAuthMutationKey = ['csp', 'auth']
 
 // Step 0 — identify the participant against the process census. For auth-only
 // censuses (no 2FA fields) the provider already marks the voter connected.
