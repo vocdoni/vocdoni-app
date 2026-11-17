@@ -242,7 +242,7 @@
       "other_device": "Tens el certificat en un altre dispositiu? Copia l'enllaç i obre'l allà.",
       "picker_help": "El navegador et demanarà que triïs un certificat: tria el que porta el teu nom. Acceptem certificats de FNMT, idCAT, ACCV, DIGITEL, Bewor i Sectigo.",
       "reference": "Referència de suport: {{reference}}",
-      "restart_browser": "El navegador recorda el certificat que vas triar. Per fer-ne servir un altre, tanca totes les finestres del navegador i torna a obrir l'enllaç de la votació.",
+      "restart_browser": "Si el navegador no et torna a demanar que triïs un certificat, tanca totes les finestres del navegador i torna a obrir l'enllaç de la votació.",
       "retry": "Torna-ho a provar",
       "signing_in": "T'estem identificant…",
       "start": "Accedeix amb certificat digital",

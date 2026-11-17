@@ -240,7 +240,7 @@
       "other_device": "Is your certificate on another device? Copy the link and open it there.",
       "picker_help": "Your browser will ask you to choose a certificate: choose the one with your name. We accept FNMT, idCAT, ACCV, DIGITEL, Bewor and Sectigo certificates.",
       "reference": "Support reference: {{reference}}",
-      "restart_browser": "Your browser remembers the certificate you chose. To use a different one, close every window of the browser and open the voting link again.",
+      "restart_browser": "If your browser doesn't ask you to choose a certificate again, close every window of the browser and open the voting link again.",
       "retry": "Try again",
       "signing_in": "Signing you in…",
       "start": "Sign in with a digital certificate",

@@ -70,7 +70,9 @@ describe('cert-auth', () => {
     expect(stored.state).toMatch(/^[A-Za-z0-9_-]{22}$/)
     expect(stored.codeVerifier).toMatch(/^[A-Za-z0-9_-]{43}$/)
 
-    expect(target.origin + target.pathname).toBe('https://cert.vocdoni.io:15140/v1/auth')
+    expect(target.hostname).toMatch(/^[a-z2-7]{26}\.cert\.vocdoni\.io$/)
+    expect(target.port).toBe('15140')
+    expect(target.protocol + target.pathname).toBe('https:/v1/auth')
     expect(Object.fromEntries(target.searchParams)).toEqual({
       processId: PID,
       returnUrl: `https://app.vocdoni.io/es/processes/${PID}`,
@@ -78,6 +80,25 @@ describe('cert-auth', () => {
       codeChallenge: await codeChallengeOf(stored.codeVerifier),
       lang: 'es',
     })
+  })
+
+  it('sends every attempt to a fresh random subdomain of the gateway, same port and path', async () => {
+    const start = () =>
+      startCertAuth({
+        gatewayUrl: 'https://cert.vocdoni.io:15140',
+        processId: PID,
+        returnUrl: 'https://a.test',
+        language: 'en',
+      }).then((u) => new URL(u))
+    const [a, b] = [await start(), await start()]
+    expect(a.host).not.toBe(b.host)
+    for (const u of [a, b]) {
+      const [label, ...rest] = u.hostname.split('.')
+      expect(label).toMatch(/^[a-z2-7]{26}$/)
+      expect(rest.join('.')).toBe('cert.vocdoni.io')
+      expect(u.port).toBe('15140')
+      expect(u.protocol + u.pathname).toBe('https:/v1/auth')
+    }
   })
 
   it('sends no lang the gateway does not speak', async () => {

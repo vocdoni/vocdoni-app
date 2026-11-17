@@ -352,11 +352,17 @@ export const CertAuthError = ({
         <AlertDescription>{certErrorMessage(t, code)}</AlertDescription>
       </Alert>
       {platform && <OpenInBrowser platform={platform} />}
+      {/* a sticky code too: a retry reaches a new host, so the browser asks for the certificate again */}
+      {(retryable || (sticky && !platform)) && start && (
+        <Button w='full' onClick={() => start()}>
+          {t('csp.cert.retry', { defaultValue: 'Try again' })}
+        </Button>
+      )}
       {sticky && !platform && (
-        <Text textStyle='body-sm'>
+        <Text textStyle='body-sm' color='fg.muted'>
           {t('csp.cert.restart_browser', {
             defaultValue:
-              'Your browser remembers the certificate you chose. To use a different one, close every window of the browser and open the voting link again.',
+              "If your browser doesn't ask you to choose a certificate again, close every window of the browser and open the voting link again.",
           })}
         </Text>
       )}
@@ -369,11 +375,6 @@ export const CertAuthError = ({
           </Text>
           <CopyLinkButton />
         </>
-      )}
-      {retryable && start && (
-        <Button w='full' onClick={() => start()}>
-          {t('csp.cert.retry', { defaultValue: 'Try again' })}
-        </Button>
       )}
       {code === 'mismatch' && <CertAuthStart navigate={navigate} />}
       <Text textStyle='body-sm' color='fg.muted'>

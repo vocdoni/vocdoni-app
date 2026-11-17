@@ -88,7 +88,9 @@ describe('certificate voter flow', () => {
 
     await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1))
     const target = new URL(navigate.mock.calls[0][0])
-    expect(target.origin + target.pathname).toBe(`${GATEWAY}/v1/auth`)
+    expect(`${target.protocol}//${target.host.replace(/^[a-z2-7]{26}\./, '')}${target.pathname}`).toBe(
+      `${GATEWAY}/v1/auth`
+    )
     expect(target.searchParams.get('processId')).toBe(PID)
     expect(target.searchParams.get('returnUrl')).toBe(`${window.location.origin}/en/processes/${PID}`)
     expect(target.searchParams.get('lang')).toBe('en')
@@ -248,12 +250,23 @@ describe('certificate voter flow', () => {
     expect(auth0).not.toHaveBeenCalled()
   })
 
-  it.each(STICKY_CERT_ERRORS)('%s: tells the voter to restart the browser, with no retry', (code) => {
-    useCensus([])
-    render(<CertAuthError code={code} />, { appEnv })
-    expect(screen.getByText(/close every window of the browser and open the voting link again/)).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument()
-  })
+  it.each(STICKY_CERT_ERRORS)(
+    '%s: offers "Try again" on a new host, with restarting the browser only as a hint',
+    async (code) => {
+      useCensus([])
+      const navigate = vi.fn()
+      const user = userEvent.setup()
+      render(<CertAuthError code={code} navigate={navigate} />, { appEnv })
+      expect(screen.getByText(/close every window of the browser and open the voting link again/)).toBeInTheDocument()
+      const retry = screen.getByRole('button', { name: 'Try again' })
+      await user.click(retry)
+      await user.click(retry)
+      await waitFor(() => expect(navigate).toHaveBeenCalledTimes(2))
+      const [a, b] = navigate.mock.calls.map(([url]) => new URL(url))
+      expect(a.host).not.toBe(b.host)
+      for (const u of [a, b]) expect(u.host).toMatch(/^[a-z2-7]{26}\.cert\.test:15140$/)
+    }
+  )
 
   it.each(RETRYABLE_CERT_ERRORS)('%s: offers a retry', async (code) => {
     useCensus([])
@@ -262,7 +275,11 @@ describe('certificate voter flow', () => {
     render(<CertAuthError code={code} navigate={navigate} />, { appEnv })
     expect(screen.queryByText(/close every window of the browser/)).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Try again' }))
-    await waitFor(() => expect(navigate).toHaveBeenCalledWith(expect.stringContaining(`${GATEWAY}/v1/auth?`)))
+    await waitFor(() =>
+      expect(navigate).toHaveBeenCalledWith(
+        expect.stringMatching(/^https:\/\/[a-z2-7]{26}\.cert\.test:15140\/v1\/auth\?/)
+      )
+    )
   })
 
   it.each([
@@ -348,6 +365,7 @@ describe('certificate voter flow', () => {
     expect(screen.getByText(/opened this link inside an app/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /copy link/i })).toBeInTheDocument()
     expect(screen.queryByText(/close every window of the browser/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument()
   })
 
   it('no_certificate in a normal browser: also offers the link for another device', () => {

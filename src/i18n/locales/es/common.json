@@ -242,7 +242,7 @@
       "other_device": "¿Tienes el certificado en otro dispositivo? Copia el enlace y ábrelo allí.",
       "picker_help": "Tu navegador te pedirá que elijas un certificado: elige el que lleva tu nombre. Aceptamos certificados de FNMT, idCAT, ACCV, DIGITEL, Bewor y Sectigo.",
       "reference": "Referencia de soporte: {{reference}}",
-      "restart_browser": "Tu navegador recuerda el certificado que elegiste. Para usar otro, cierra todas las ventanas del navegador y vuelve a abrir el enlace de la votación.",
+      "restart_browser": "Si el navegador no te vuelve a pedir que elijas un certificado, cierra todas las ventanas del navegador y vuelve a abrir el enlace de la votación.",
       "retry": "Volver a intentarlo",
       "signing_in": "Identificándote…",
       "start": "Acceder con certificado digital",

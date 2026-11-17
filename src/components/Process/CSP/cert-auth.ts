@@ -65,13 +65,22 @@ const base64Url = (bytes: Uint8Array) =>
 
 const randomBase64Url = (size: number) => base64Url(crypto.getRandomValues(new Uint8Array(size)))
 
+/**
+ * A fresh host label for each attempt: 26 lowercase base32 characters (130 random bits). Browsers
+ * remember the certificate chosen for a host until they restart, so a new host shows the picker
+ * again. 256 is a multiple of 32, so taking the low 5 bits of each byte is unbiased.
+ */
+const randomHostLabel = () =>
+  Array.from(crypto.getRandomValues(new Uint8Array(26)), (b) => 'abcdefghijklmnopqrstuvwxyz234567'[b & 31]).join('')
+
 /** base64url(sha256(verifier)), unpadded: the PKCE S256 challenge. */
 export const codeChallengeOf = async (codeVerifier: string) =>
   base64Url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))))
 
 /**
- * The URL of the gateway's /v1/auth for a voting page: stores a fresh state and verifier for the
- * process in sessionStorage and returns where to navigate (top level).
+ * The URL of the gateway's /v1/auth for a voting page, on a random subdomain of `gatewayUrl` (same
+ * port): stores a fresh state and verifier for the process in sessionStorage and returns where to
+ * navigate (top level).
  */
 export const startCertAuth = async ({
   gatewayUrl,
@@ -89,6 +98,7 @@ export const startCertAuth = async ({
   const flow: StoredFlow = { state: randomBase64Url(16), codeVerifier: randomBase64Url(32) }
   storage.setItem(certAuthStorageKey(processId), JSON.stringify(flow))
   const url = new URL('/v1/auth', gatewayUrl)
+  url.hostname = `${randomHostLabel()}.${url.hostname}`
   url.searchParams.set('processId', processId)
   url.searchParams.set('returnUrl', returnUrl)
   url.searchParams.set('state', flow.state)
