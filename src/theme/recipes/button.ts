@@ -357,7 +357,7 @@ export const Button = defineRecipe({
       whatsapp,
     },
     // An open map, so the compound variants below can name Chakra's own sizes. `row` is the small action inside a
-    // list row (Gestió's "Open"): 40px with 14px sides below `lg`, 28px with 10px sides and 13px text from `lg`.
+    // list row (a question's "Open"): 40px with 14px sides below `lg`, 28px with 10px sides and 13px text from `lg`.
     size: { ...sizes, cta, row } as StyleMap,
     // Long labels wrap onto more lines instead of overflowing the button.
     multiline: {

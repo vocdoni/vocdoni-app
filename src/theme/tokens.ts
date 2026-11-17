@@ -53,6 +53,8 @@ const fontSizes = defineTokens.fontSizes({
 // Chakra's other step (`taller`) stays for its own recipes.
 const lineHeights = defineTokens.lineHeights({
   shorter: { value: 1.2 },
+  // The headline of the card that says where a vote stands, on a touch screen.
+  state: { value: 1.25 },
   short: { value: 1.3 },
   moderate: { value: 1.45 },
   // A page's and a vote's title: 1.1 from `md`, 1.15 on a phone.
@@ -90,6 +92,8 @@ const letterSpacings = defineTokens.letterSpacings({
     // A row's or a question's title (15px).
     row: { value: '-0.012em' },
     item: { value: '-0.015em' },
+    // The 19px headline of a touch screen's state card.
+    feature: { value: '-0.025em' },
     section: { value: '-0.028em' },
     // A page title: -0.035em from `md`, -0.03em on a phone.
     page: {
@@ -147,8 +151,11 @@ const spacing = defineTokens.spacing({
     DEFAULT: { value: '11px' },
     head: { value: '13px' },
   },
-  // Between a question's title and the note under it.
-  note: { value: '1px' },
+  // Between a question's title and the note under it; `icon` between a note and the icon before it (a lock).
+  note: {
+    DEFAULT: { value: '1px' },
+    icon: { value: '7px' },
+  },
   // Between a filter chip's label and its count.
   chip: { value: '7px' },
   // Above and below a fact in a vote's facts column (dataList `summary` from `lg`).
@@ -174,6 +181,8 @@ const spacing = defineTokens.spacing({
   dashboard: {
     panel: { value: '{sizes.dashboard.panel}' },
   },
+  // Room a phone page keeps under its content for the bottom action bar (recipe `questionDock`).
+  dock: { value: '110px' },
 })
 
 // `0` and `auto` are likewise missing from Chakra's sizes.
@@ -228,6 +237,8 @@ const sizes = defineTokens.sizes({
   // The share column of a result bar ("69%"), right-aligned.
   results: {
     share: { value: '38px' },
+    // The longest a question's turnout and result bars grow on a tablet.
+    detail: { value: '520px' },
   },
   // Empty-state cards (no organizations, no results) and the leading column of a table that holds row actions.
   card: {

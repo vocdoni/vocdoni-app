@@ -21,11 +21,19 @@ export const Alert = defineSlotRecipe({
       compact: { root: { py: '3' } },
       // A status panel with a title, several lines and its own close button.
       panel: { root: { px: '6', py: '6' } },
-      // The guide's notice (a paused vote): a tinted band in ink with a ring in the tone and a 15px icon.
+      // The guide's notice (a paused vote): a tinted band in ink with a ring in the tone and a 15px icon. The touch
+      // board's band is 14px muted text with no icon and no ring.
       notice: {
-        root: { px: '3.5', py: 'row', gap: '2.5', alignItems: 'flex-start', borderRadius: 'md', textStyle: 'control' },
-        indicator: { boxSize: 'icon.chevron', mt: '0.5' },
-        description: { textStyle: 'control' },
+        root: {
+          px: '3.5',
+          py: { base: '3', lg: 'row' },
+          gap: '2.5',
+          alignItems: 'flex-start',
+          borderRadius: 'md',
+          textStyle: { base: 'body', lg: 'control' },
+        },
+        indicator: { display: { base: 'none', lg: 'inline-flex' }, boxSize: 'icon.chevron', mt: '0.5' },
+        description: { textStyle: { base: 'body', lg: 'control' } },
       },
     },
   },
@@ -53,7 +61,12 @@ export const Alert = defineSlotRecipe({
     {
       status: 'warning',
       layout: 'notice',
-      css: { root: { color: 'fg', boxShadow: '[inset 0 0 0 {borderWidths.hairline} {colors.status.warning.ring}]' } },
+      css: {
+        root: {
+          color: { base: 'fg.muted', lg: 'fg' },
+          boxShadow: { base: '[none]', lg: '[inset 0 0 0 {borderWidths.hairline} {colors.status.warning.ring}]' },
+        },
+      },
     },
   ],
   defaultVariants: {

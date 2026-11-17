@@ -75,6 +75,15 @@ export const textStyles = defineTextStyles({
       letterSpacing: 'heading.row',
     },
   },
+  // The open question's title in its row: 16px on a 22px line up to `lg` (the touch boards keep it on a tablet too).
+  'question-head': {
+    value: {
+      fontSize: { base: 'lg', lg: 'item' },
+      lineHeight: { base: 'row.touch', lg: 'row.question' },
+      fontWeight: 'semibold',
+      letterSpacing: 'heading.row',
+    },
+  },
   'feature-title': {
     value: {
       fontSize: { base: 'feature', lg: 'xl' },
@@ -135,10 +144,17 @@ export const textStyles = defineTextStyles({
   'hero-caption': {
     value: { fontSize: 'item', lineHeight: 'moderate', fontWeight: 'medium-plus', letterSpacing: 'heading.row' },
   },
-  // The headline of the card that says where a vote stands ("Vote ended with 184 votes").
+  // The headline of the card that says where a vote stands ("Vote ended with 184 votes"): 19px below `lg`.
   'state-title': {
-    value: { fontSize: 'xl', lineHeight: 'shorter', fontWeight: 'semibold', letterSpacing: 'heading.section' },
+    value: {
+      fontSize: { base: 'feature', lg: 'xl' },
+      lineHeight: { base: 'state', lg: 'shorter' },
+      fontWeight: 'semibold',
+      letterSpacing: { base: 'heading.feature', lg: 'heading.section' },
+    },
   },
+  // What that card says under its headline: 15px on a phone, 14px on a tablet, the control size from `lg`.
+  'state-body': { value: { fontSize: { base: 'item', md: 'md', lg: 'control' }, lineHeight: 'moderate' } },
   // A fact's value under its label on a phone or tablet (dataList `summary`).
   'fact-value': { value: { fontSize: 'fact', lineHeight: 'fact' } },
   // The one headline figure of a screen and its unit (Stat size `hero`). Sans, not mono: mono is for small data.
