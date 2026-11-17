@@ -15,7 +15,16 @@ export const checkbox = defineSlotRecipe({
     },
   },
   variants: {
-    size: { sm: box, md: box, lg: box },
+    // The voter page's consent box: 22px, 4px corners, a 15px label.
+    size: {
+      sm: box,
+      md: box,
+      lg: box,
+      ballot: {
+        control: { boxSize: 'mark.ballot', p: '0', borderRadius: 'sm' },
+        label: { textStyle: 'ballot-hint' },
+      },
+    },
     variant: {
       solid: {
         control: {
