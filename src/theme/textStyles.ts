@@ -38,7 +38,8 @@ export const textStyles = defineTextStyles({
   // A control's text. The line height is that of Chakra's `sm` style, which its control recipes read. No weight:
   // typed values and option labels are regular; buttons and field labels set 550 in their recipes.
   control: { value: { fontSize: 'control', lineHeight: 'moderate' } },
-  // `control` on a touch screen: 15px on a phone, 14px on a tablet, the desktop size from `lg` (buttons, menu rows).
+  // `control` on a touch screen: 15px on a phone, 14px on a tablet, the desktop size from `lg` (buttons, menu rows,
+  // what a vote's state card says under its headline).
   'control-touch': { value: { fontSize: { base: 'item', md: 'md', lg: 'control' }, lineHeight: 'moderate' } },
   // The same for what is typed (fields, selects): 16px on a phone, so iOS Safari does not zoom on focus.
   'control-input': { value: { fontSize: { base: 'lg', md: 'md', lg: 'control' }, lineHeight: 'moderate' } },
@@ -160,8 +161,6 @@ export const textStyles = defineTextStyles({
       letterSpacing: { base: 'heading.feature', lg: 'heading.section' },
     },
   },
-  // What that card says under its headline: 15px on a phone, 14px on a tablet, the control size from `lg`.
-  'state-body': { value: { fontSize: { base: 'item', md: 'md', lg: 'control' }, lineHeight: 'moderate' } },
 })
 
 // Heading sizes of user-written content by Markdown level, shared by the editor and the rendered Markdown.

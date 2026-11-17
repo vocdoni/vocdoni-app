@@ -90,7 +90,7 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
           {title}
         </Heading>
         {body && (
-          <Text mt='1.5' maxW='lead' textStyle='state-body' color='fg.muted'>
+          <Text mt='1.5' maxW='lead' textStyle='control-touch' color='fg.muted'>
             {body}
           </Text>
         )}
