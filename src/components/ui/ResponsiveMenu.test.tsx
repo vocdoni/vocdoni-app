@@ -99,12 +99,24 @@ describe('ResponsiveMenu', () => {
       expect(screen.getByText('Live')).toBeInTheDocument()
     })
 
-    it('still takes the old description prop as the subtitle', async () => {
-      render(<ResponsiveMenu label='Vote actions' description='Draft' items={items()} />)
+    it('opens an external item in a new tab and never follows a disabled one', async () => {
+      render(
+        <ResponsiveMenu
+          label='Vote actions'
+          items={[
+            { value: 'explorer', label: 'Explorer', href: 'https://explorer.example/p', external: true },
+            { value: 'pdf', label: 'Report', href: 'https://example.com/report.pdf', disabled: true },
+          ]}
+        />
+      )
       await userEvent.click(screen.getByRole('button', { name: 'Vote actions' }))
-
       await screen.findByRole('dialog')
-      expect(screen.getByText('Draft')).toBeInTheDocument()
+
+      const explorer = screen.getByRole('link', { name: 'Explorer' })
+      expect(explorer).toHaveAttribute('target', '_blank')
+      expect(explorer).toHaveAttribute('rel', 'noopener noreferrer')
+      expect(screen.queryByRole('link', { name: 'Report' })).toBeNull()
+      expect(screen.getByRole('button', { name: 'Report' })).toBeDisabled()
     })
 
     it('lists destructive items last and marks them', async () => {

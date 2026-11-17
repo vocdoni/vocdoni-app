@@ -9,6 +9,8 @@ export type ResponsiveMenuItem = {
   label: string
   onSelect?: () => void
   href?: string
+  /** With `href`: opens in a new tab, so the page the menu sits on (a live vote) stays open. */
+  external?: boolean
   danger?: boolean
   disabled?: boolean
   /** A concept icon from ~theme/icons, drawn before the label on a phone and a tablet (the desktop menu has none). */
@@ -22,8 +24,6 @@ export type ResponsiveMenuProps = {
   title?: string
   /** The line under the sheet's title on a phone: the state of what the actions act on ("Live"). */
   subtitle?: string
-  /** @deprecated Use `subtitle`. */
-  description?: string
   /** Defaults to an icon button with the "more" icon, named by `label`. */
   trigger?: ReactElement
   items: ResponsiveMenuItem[]
@@ -31,6 +31,11 @@ export type ResponsiveMenuProps = {
 
 // Destructive items last, the rest in the order given.
 const ordered = (items: ResponsiveMenuItem[]) => [...items.filter((i) => !i.danger), ...items.filter((i) => i.danger)]
+
+// A disabled item is never a link: an anchor would still follow its href.
+const linkOf = (item: ResponsiveMenuItem) => (item.href && !item.disabled ? item.href : undefined)
+const linkProps = (item: ResponsiveMenuItem) =>
+  item.external ? { href: item.href, target: '_blank', rel: 'noopener noreferrer' } : { href: item.href }
 
 const ItemContent = ({ item }: { item: ResponsiveMenuItem }) => {
   const ItemIcon = item.icon
@@ -47,12 +52,12 @@ const ItemContent = ({ item }: { item: ResponsiveMenuItem }) => {
  * rule before the destructive items), a bottom sheet of 52px rows below it (a menu is hard to hit with a thumb).
  * Destructive items come last, in the danger colour; with `href` an item is a link.
  */
-export const ResponsiveMenu = ({ label, title, subtitle, description, trigger, items }: ResponsiveMenuProps) => {
+export const ResponsiveMenu = ({ label, title, subtitle, trigger, items }: ResponsiveMenuProps) => {
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   const [open, setOpen] = useState(false)
   const sorted = ordered(items)
-  const sub = subtitle ?? description
+  const sub = subtitle
   const firstDanger = sorted.findIndex((item) => item.danger)
 
   const defaultTrigger = (
@@ -99,9 +104,9 @@ export const ResponsiveMenu = ({ label, title, subtitle, description, trigger, i
                       'data-danger': item.danger ? 'true' : undefined,
                       onClick: select,
                     } as const
-                    return item.href ? (
+                    return linkOf(item) ? (
                       <Button key={item.value} asChild {...rowProps}>
-                        <a href={item.href}>
+                        <a {...linkProps(item)}>
                           <ItemContent item={item} />
                         </a>
                       </Button>
@@ -141,10 +146,10 @@ export const ResponsiveMenu = ({ label, title, subtitle, description, trigger, i
                   disabled={item.disabled}
                   data-danger={item.danger ? 'true' : undefined}
                   onSelect={item.onSelect}
-                  asChild={!!item.href}
+                  asChild={!!linkOf(item)}
                 >
-                  {item.href ? (
-                    <a href={item.href}>
+                  {linkOf(item) ? (
+                    <a {...linkProps(item)}>
                       <ItemContent item={item} />
                     </a>
                   ) : (

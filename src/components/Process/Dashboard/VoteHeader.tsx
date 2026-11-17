@@ -198,7 +198,7 @@ const VoteActions = ({ election, state }: HeaderPartProps) => {
   switch (state) {
     case 'live': {
       // Pausing needs an open question to hold; the phone board has no "Pause the vote". A vote whose questions are
-      // all closed is closed (R22), so ending is never the only step left here.
+      // all closed is closed, so ending is never the only step left here.
       const canPause = isDesktop && election.questions.some((question) => question.status === 'ONGOING')
       return (
         <>
@@ -246,7 +246,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
 
   const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const explorerProcessId = election.questions[0]?.upstreamId
-  // Once a question is closed with a result the backend can only end the vote, not void it (audit F1).
+  // Once a question is closed with a result the backend can only end the vote, not void it.
   const hasClosedQuestion = election.questions.some((question) => isTerminalQuestion(question))
   const canCancel = canManage && !hasClosedQuestion && state !== 'closed' && state !== 'canceled'
   const moreActions = t('votes.page.more_actions', { defaultValue: 'More actions' })
@@ -257,6 +257,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
       label: t('votes.page.show_as_voter', { defaultValue: 'Show as voter' }),
       icon: ViewIcon,
       href: getPublicProcessPath({ id: election.id, language: publicLanguage }),
+      external: true,
     },
     ...(canManage
       ? [
@@ -290,6 +291,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
             label: t('view_in_explorer', { defaultValue: 'View in explorer' }),
             icon: ExternalLinkIcon,
             href: `${explorerUrl}/process/${explorerProcessId}`,
+            external: true,
           },
         ]
       : []),
