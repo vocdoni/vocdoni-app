@@ -16,8 +16,8 @@ import { useSummaryModel } from './summary/use-summary-model'
 /**
  * Resum: the participation hero (or, for a vote that is not running, where it stands), the questions with their
  * results (and, question by question, the buttons that run them), and beside them the voting data (all at once,
- * desktop) and the calendar (all at once), the voting link and the voter lookup. The desktop follows the V4 boards, a phone or tablet the
- * M4 ones.
+ * desktop) and the calendar (all at once), the voting link and the voter lookup. The desktop follows the V4 boards,
+ * a phone or tablet the M4 ones.
  */
 export const VoteSummary = () => {
   const model = useSummaryModel()

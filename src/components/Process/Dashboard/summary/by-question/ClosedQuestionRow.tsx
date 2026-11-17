@@ -1,13 +1,12 @@
-import { Box, Stack, Text } from '@chakra-ui/react'
+import { Box, Span, Stack, Text } from '@chakra-ui/react'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { useId } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
 import { isSettledQuestion, percentOf } from '~utils/vote-state'
 import { QuestionResultBars } from '../../QuestionResultBars'
-import { Figures } from './Figures'
 import { QuestionRowFrame, RowChevron, RowHead } from './QuestionRow'
 import { useManageText } from './use-manage-text'
 
@@ -85,8 +84,12 @@ export const ClosedQuestionRow = ({
               whiteSpace='nowrap'
               display={{ base: 'none', lg: 'inline' }}
             >
-              <Figures
-                text={t('votes.manage.turnout_share', { defaultValue: '{{percent}}% turnout', percent: share })}
+              {/* The figure in the figure face (the boards' `.m`), the words as they are. */}
+              <Trans
+                i18nKey='votes.manage.turnout_figure'
+                defaults='<n>{{percent}}%</n> turnout'
+                values={{ percent: share }}
+                components={{ n: <Span fontFamily='figure' letterSpacing='none' /> }}
               />
             </Text>
           )}

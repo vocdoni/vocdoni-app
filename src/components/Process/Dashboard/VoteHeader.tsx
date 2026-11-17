@@ -30,7 +30,7 @@ import {
   ViewIcon,
 } from '~theme/icons'
 import { ucfirst } from '~utils/strings'
-import { closedAt, isTerminalQuestion, type VoteState } from '~utils/vote-state'
+import { canCancelVote, closedAt, type VoteState } from '~utils/vote-state'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 type HeaderPartProps = { election: VotingProcessResponse; state: VoteState; now: Date }
@@ -305,9 +305,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
 
   const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const explorerProcessId = election.questions[0]?.upstreamId
-  // Once a question is closed with a result the backend can only end the vote, not void it.
-  const hasClosedQuestion = election.questions.some((question) => isTerminalQuestion(question))
-  const canCancel = canManage && !hasClosedQuestion && state !== 'closed' && state !== 'canceled'
+  const canCancel = canManage && canCancelVote(election, state)
   const moreActions = t('votes.page.more_actions', { defaultValue: 'More actions' })
 
   const items: ResponsiveMenuItem[] = [

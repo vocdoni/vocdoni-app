@@ -189,6 +189,13 @@ export const questionElectorate = (
 ): number | undefined =>
   canManage ? question.eligibleMemberIds?.length || process.census?.size || undefined : undefined
 
+/**
+ * Whether a vote can still be canceled: not over, and no question closed with a result (from then the backend can only
+ * end the vote, not void it).
+ */
+export const canCancelVote = (process: VotingProcessResponse, state: VoteState): boolean =>
+  state !== 'closed' && state !== 'canceled' && !process.questions.some(isTerminalQuestion)
+
 /** Questions a header action may target: never a terminal one (the backend rejects the whole batch). */
 export const nonTerminalQuestionIds = (process: VotingProcessResponse | null | undefined): string[] =>
   (process?.questions ?? []).filter((question) => !isTerminalQuestion(question)).map(({ id }) => id)
@@ -231,8 +238,8 @@ export const compareVoteRows = (a: VoteRow, b: VoteRow): number => {
     case 'ready':
       return time(a.process.startDate) - time(b.process.startDate)
     case 'draft':
-      // Mongo ObjectIDs start with their creation time, so a string compare orders them by age.
-      return b.process.id.localeCompare(a.process.id)
+      // Mongo ObjectIDs start with their creation time, so a plain string compare orders them by age.
+      return a.process.id < b.process.id ? 1 : a.process.id > b.process.id ? -1 : 0
     case 'closed':
     case 'canceled':
       return time(resolveEndDate(b.process)) - time(resolveEndDate(a.process))

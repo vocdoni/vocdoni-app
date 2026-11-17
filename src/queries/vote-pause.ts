@@ -126,11 +126,10 @@ export const useVotePause = (process: VotingProcessResponse | null | undefined, 
   }, [processId, process, remembered])
 
   const isHeld = !!process && isQuestionByQuestion(process) && deriveVoteState(process, now, remembered) === 'paused'
-  const heldKey = isHeld && process ? pausedHoldIds(process, remembered).join() : ''
   const isPending = pending?.tag === 'pauseVote' || pending?.tag === 'resumeVote'
 
   return useMemo<VotePause>(() => {
-    const heldQuestionIds = heldKey ? heldKey.split(',') : []
+    const heldQuestionIds = isHeld && process ? pausedHoldIds(process, remembered) : []
     const pause = async () => {
       if (!processId || !process) return
       const open = process.questions.filter((question) => question.status === 'ONGOING').map(({ id }) => id)
@@ -171,5 +170,5 @@ export const useVotePause = (process: VotingProcessResponse | null | undefined, 
       })
     }
     return { isHeld, heldQuestionIds, pause, resume, isPending }
-  }, [heldKey, isHeld, isPending, process, processId, run, t])
+  }, [isHeld, isPending, process, processId, remembered, run, t])
 }

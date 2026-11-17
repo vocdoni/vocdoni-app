@@ -1,4 +1,5 @@
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useVoteText } from '~i18n/use-vote-text'
@@ -28,8 +29,12 @@ export const CloseQuestionDialog = ({
 }: CloseQuestionDialogProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
-  const number = closing?.number
-  const votes = closing?.question.results?.voteCount ?? 0
+  // While the dialog animates out `closing` is already null: it keeps saying the question it closed.
+  const lastShown = useRef<ClosingQuestion | null>(closing)
+  if (closing) lastShown.current = closing
+  const shown = closing ?? lastShown.current
+  const number = shown?.number
+  const votes = shown?.question.results?.voteCount ?? 0
   return (
     <ConfirmDialog
       open={!!closing}
@@ -37,13 +42,13 @@ export const CloseQuestionDialog = ({
       tone='primary'
       title={t('votes.manage.close_title', { defaultValue: 'Close question {{number}}?', number })}
       description={
-        closing
+        shown
           ? t('votes.manage.close_body', {
               defaultValue_one:
                 '“{{title}}” will close with the {{votes}} vote it has now, and the result will be final. A closed question cannot be reopened.',
               defaultValue_other:
                 '“{{title}}” will close with the {{votes}} votes it has now, and the result will be final. A closed question cannot be reopened.',
-              title: text(closing.question.title),
+              title: text(shown.question.title),
               count: votes,
               votes: quantity(votes),
             })
@@ -51,7 +56,7 @@ export const CloseQuestionDialog = ({
       }
       warning={
         last
-          ? t('votes.manage.close_last_warning', {
+          ? t('votes.manage.close_lastShownwarning', {
               defaultValue: 'This is the last question: closing it closes the vote too.',
             })
           : undefined

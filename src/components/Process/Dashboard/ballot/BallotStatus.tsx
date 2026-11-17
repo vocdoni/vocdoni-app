@@ -3,7 +3,7 @@ import { isBeforeStart } from '@vocdoni/api-client'
 import { useTranslation } from 'react-i18next'
 import { useActions } from '~components/Actions/ActionsContext'
 import { ChevronRightIcon, LockIcon } from '~theme/icons'
-import { isTerminalQuestion } from '~utils/vote-state'
+import { canCancelVote } from '~utils/vote-state'
 import type { SummaryModel } from '../summary/use-summary-model'
 import { useCloneAsDraft } from '../use-clone-as-draft'
 
@@ -21,9 +21,7 @@ export const BallotStatus = ({ model, desktop }: { model: SummaryModel; desktop:
   if (state === 'draft') return null
 
   const opened = !isBeforeStart(election.startDate, now)
-  // As the header's menu: once a question is closed with a result, or the vote is over, it can only be duplicated.
-  const cancelable =
-    state !== 'closed' && state !== 'canceled' && !election.questions.some((question) => isTerminalQuestion(question))
+  const cancelable = canCancelVote(election, state)
 
   let fixNote: string
   if (cancelable)
