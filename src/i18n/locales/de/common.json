@@ -2153,7 +2153,6 @@
       "share_public_short": "Öffentlicher Link",
       "share_title": "Zum Teilen",
       "turnout": "Beteiligung",
-      "verdict_figures": "{{winnerVotes}} zu {{otherVotes}}",
       "voted_any_lines": "Mindestens {{voted}} von {{total}} haben <br/>bei einer Frage abgestimmt",
       "voted_of_one": "{{count, number}} von {{total}} hat abgestimmt",
       "voted_of_other": "{{count, number}} von {{total}} haben abgestimmt"

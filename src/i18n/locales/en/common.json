@@ -2153,7 +2153,6 @@
       "share_public_short": "Public link",
       "share_title": "To share",
       "turnout": "Turnout",
-      "verdict_figures": "{{winnerVotes}} to {{otherVotes}}",
       "voted_any_lines": "At least {{voted}} of {{total}} voted <br/>on a question",
       "voted_of_one": "{{count, number}} of {{total}} voted",
       "voted_of_other": "{{count, number}} of {{total}} voted"

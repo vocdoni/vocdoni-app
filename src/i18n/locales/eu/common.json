@@ -2153,7 +2153,6 @@
       "share_public_short": "Esteka publikoa",
       "share_title": "Partekatzeko",
       "turnout": "Parte-hartzea",
-      "verdict_figures": "{{winnerVotes}} eta {{otherVotes}}",
       "voted_any_lines": "Gutxienez {{total}}tik {{voted}}k <br/>galderaren bat bozkatu dute",
       "voted_of_one": "{{total}}tik {{count, number}}k bozkatu dute",
       "voted_of_other": "{{total}}tik {{count, number}}k bozkatu dute"

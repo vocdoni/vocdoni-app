@@ -2218,7 +2218,6 @@
       "share_public_short": "Lien public",
       "share_title": "À partager",
       "turnout": "Participation",
-      "verdict_figures": "{{winnerVotes}} contre {{otherVotes}}",
       "voted_any_lines": "Au moins {{voted}} sur {{total}} ont voté <br/>à une question",
       "voted_of_one": "{{count, number}} sur {{total}} a voté",
       "voted_of_many": "{{count, number}} sur {{total}} ont voté",

@@ -2218,7 +2218,6 @@
       "share_public_short": "Enllaç públic",
       "share_title": "Per compartir",
       "turnout": "Participació",
-      "verdict_figures": "{{winnerVotes}} a {{otherVotes}}",
       "voted_any_lines": "Almenys {{voted}} de {{total}} han votat <br/>alguna pregunta",
       "voted_of_one": "{{count, number}} de {{total}} han votat",
       "voted_of_many": "{{count, number}} de {{total}} han votat",

@@ -2153,7 +2153,6 @@
       "share_public_short": "Δημόσιος σύνδεσμος",
       "share_title": "Για κοινοποίηση",
       "turnout": "Συμμετοχή",
-      "verdict_figures": "{{winnerVotes}} έναντι {{otherVotes}}",
       "voted_any_lines": "Τουλάχιστον {{voted}} από {{total}} ψήφισαν <br/>σε μια ερώτηση",
       "voted_of_one": "Ψήφισαν {{count, number}} από {{total}}",
       "voted_of_other": "Ψήφισαν {{count, number}} από {{total}}"

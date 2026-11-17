@@ -243,11 +243,12 @@ describe('VoteSummary', () => {
       expect(screen.getByText('live, during the vote')).toBeInTheDocument()
     })
 
-    it('shows each question on one line with its result, votes and state, and the counts in the header', () => {
+    it('shows each question on one line with its votes and state, and the counts in the header', () => {
       renderSummary(byQuestion(questions), 200)
 
       expect(screen.getByText('1 closed · 1 open · 1 to open')).toBeInTheDocument()
-      expect(screen.getByText('150 to 50')).toBeInTheDocument()
+      // The bars carry the result; the line says no verdict.
+      expect(screen.queryByText('150 to 50')).not.toBeInTheDocument()
       expect(screen.getByText('200 · 64%')).toBeInTheDocument()
       expect(screen.getByText('120 · 38%')).toBeInTheDocument()
       expect(screen.getByText('Closed')).toBeInTheDocument()
@@ -285,7 +286,6 @@ describe('VoteSummary', () => {
       expect(dimmed('No, 50 votes, 25%')).toBe(true)
       expect(dimmed('Yes, 150 votes, 75%')).toBe(false)
       expect(dimmed('No, 50 votes, 42%')).toBe(false)
-      expect(screen.getByText('150 to 50')).toBeInTheDocument()
     })
 
     it('says the state and its detail in one line per question on a phone', () => {

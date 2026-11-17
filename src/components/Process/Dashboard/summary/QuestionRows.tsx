@@ -10,7 +10,6 @@ import { questionOutcome } from '~utils/vote-outcome'
 import { isSettledQuestion, percentOf, questionElectorate, type QuestionState } from '~utils/vote-state'
 import { QuestionResultBars } from '../QuestionResultBars'
 import { questionKind } from './question-kind'
-import { QuestionVerdict } from './QuestionVerdict'
 import type { SummaryModel } from './use-summary-model'
 
 type RowProps = { question: VotingProcessQuestion; index: number; model: SummaryModel; state: QuestionState }
@@ -34,14 +33,13 @@ const QuestionNumber = ({ index, inline = false }: { index: number; inline?: boo
   )
 
 /**
- * A question of a question-by-question vote on the desktop: one line with its number, title, result, votes with
+ * A question of a question-by-question vote on the desktop: one line with its number, title, votes with
  * their share of the electorate, and state; under it, once it has opened and while its tally is public, a bar per
  * choice.
  */
 export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
-  const outcome = useOutcome(question, !!model.election.census?.weighted)
   const votes = question.results?.voteCount ?? 0
   const percent = percentOf(votes, questionElectorate(question, model.election))
   const title = text(question.title)
@@ -51,7 +49,7 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
 
   return (
     <Card.Body pt='row' pb='3'>
-      <Grid templateColumns='[{sizes.6} minmax(0, 1fr) auto auto {sizes.24}]' columnGap='3' alignItems='baseline'>
+      <Grid templateColumns='[{sizes.6} minmax(0, 1fr) auto {sizes.24}]' columnGap='3' alignItems='baseline'>
         <QuestionNumber index={index} inline />
         <Text
           fontWeight='medium-plus'
@@ -60,9 +58,6 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
           color={state === 'toOpen' || state === 'canceled' ? 'fg.muted' : 'fg'}
         >
           {title}
-        </Text>
-        <Text textStyle='eyebrow' whiteSpace='nowrap'>
-          {state === 'closed' && outcome && isSettledQuestion(question) && <QuestionVerdict outcome={outcome} />}
         </Text>
         <Text textStyle='figure' color='fg.subtle' textAlign='end' whiteSpace='nowrap'>
           {counts(state) &&
