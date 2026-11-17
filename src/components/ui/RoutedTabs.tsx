@@ -57,14 +57,12 @@ export const RoutedTabs = ({ tabs, value, outletContext, rhythm = 'section', not
       </Tabs.List>
       {/* The panel the selected trigger controls (aria-controls); the recipe's padding is cancelled. */}
       <Tabs.Content value={activeValue ?? ''} p='0'>
-        {notice ? (
-          <Stack gap={CONTENT_GAP[rhythm]}>
-            {notice}
-            <Outlet context={outletContext} />
-          </Stack>
-        ) : (
+        {/* Always the same wrapper: switching it when the notice comes or goes would remount the tab and lose its
+          state (expanded rows, a lookup). */}
+        <Stack gap={CONTENT_GAP[rhythm]}>
+          {notice}
           <Outlet context={outletContext} />
-        )}
+        </Stack>
       </Tabs.Content>
     </Tabs.Root>
   )
