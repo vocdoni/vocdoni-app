@@ -32,13 +32,14 @@ export const VoteSummary = () => {
   return (
     <Stack gap={{ base: '5', md: '6', lg: '8' }}>
       {idle ? <SummaryIdle model={model} /> : <SummaryHero model={model} desktop={desktop} />}
+      {/* Two columns only from `xl`, the boards' width: narrower, the question rows would lose their titles. */}
       <Grid
-        templateColumns={{ base: 'minmax(0, 1fr)', lg: SUMMARY_COLUMNS }}
+        templateColumns={{ base: 'minmax(0, 1fr)', xl: SUMMARY_COLUMNS }}
         gap={{ base: '5', md: '6' }}
         alignItems='start'
       >
         <SummaryQuestions model={model} desktop={desktop} />
-        <Stack gap={{ base: '5', md: '6', lg: '4' }} minW='0'>
+        <Stack gap={{ base: '5', md: '6', xl: '4' }} minW='0'>
           {desktop && !byQuestion && <SummaryElectoralData model={model} />}
           {desktop && !byQuestion && <SummaryCalendar model={model} />}
           <SummaryShare link={votingLink} authFields={authFields} twoFaFields={twoFaFields} desktop={desktop} />

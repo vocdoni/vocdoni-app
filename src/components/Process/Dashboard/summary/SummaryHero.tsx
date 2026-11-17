@@ -12,6 +12,8 @@ import type { SummaryModel } from './use-summary-model'
 
 /** A flexible column and the facts' one: the hero's figure and facts, and Resum's cards under it. */
 export const SUMMARY_COLUMNS = '[minmax(0, 1fr) {sizes.facts}]'
+// Between `lg` and `xl` the fixed facts column would squeeze the figure, so the two share the width.
+const NARROW_COLUMNS = '[minmax(0, 3fr) minmax(0, 2fr)]'
 
 /**
  * The participation hero: the share that voted, how many of the census, the facts and the ruler. A phone stacks the
@@ -76,7 +78,7 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
       aria-labelledby={headedByState ? undefined : labelId}
     >
       <Grid
-        templateColumns={{ base: 'minmax(0, 1fr)', lg: SUMMARY_COLUMNS }}
+        templateColumns={{ base: 'minmax(0, 1fr)', lg: NARROW_COLUMNS, xl: SUMMARY_COLUMNS }}
         templateAreas={{ base: '"figure" "bar" "facts"', lg: '"figure facts" "bar bar"' }}
         columnGap='8'
         rowGap={{ base: '4.5', md: 'card', lg: '0' }}
