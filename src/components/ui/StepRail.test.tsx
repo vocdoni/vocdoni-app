@@ -40,7 +40,7 @@ describe('StepRail', () => {
     render(<StepRail items={[{ ...items[0], onSelect }, items[1]]} />)
 
     await userEvent.click(screen.getByRole('button', { name: /Comptes anuals de 2025/ }))
-    expect(onSelect).toHaveBeenCalledOnce()
+    expect(onSelect).toHaveBeenCalledTimes(1)
     expect(screen.getAllByRole('button')).toHaveLength(1)
   })
 })
