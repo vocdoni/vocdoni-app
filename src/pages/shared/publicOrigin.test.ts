@@ -36,4 +36,15 @@ describe('resolvePublicOrigin', () => {
     expect(resolvePublicOrigin({ headers: { 'x-forwarded-host': '@evil.example' } })).toBeUndefined()
     expect(resolvePublicOrigin({ headers: {} })).toBeUndefined()
   })
+
+  it('gives up on plain hosts that the URL parser rejects', () => {
+    expect(resolvePublicOrigin({ headers: { host: 'foo.123' } })).toBeUndefined()
+    expect(resolvePublicOrigin({ headers: { 'x-forwarded-host': '999.1.1.1' } })).toBeUndefined()
+    expect(resolvePublicOrigin({ headers: { host: 'localhost:99999' } })).toBeUndefined()
+  })
+
+  it('gives up on an APP_URL that is not an http(s) origin', () => {
+    expect(resolvePublicOrigin({}, 'localhost:3000')).toBeUndefined()
+    expect(resolvePublicOrigin({}, 'ftp://example.org')).toBeUndefined()
+  })
 })
