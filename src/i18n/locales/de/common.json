@@ -2035,6 +2035,9 @@
       "paused": "Pausiert",
       "to_open": "Zu öffnen"
     },
+    "results": {
+      "counting": "Die Abstimmung ist geschlossen. Die Ergebnisse werden ausgezählt und erscheinen in Kürze hier."
+    },
     "state": {
       "canceled": "Abgebrochen",
       "closed": "Beendet",
@@ -2045,15 +2048,16 @@
     },
     "summary": {
       "all_open": "Alle gleichzeitig offen",
-      "answered": "{{answered}} von {{total}} haben sie beantwortet",
+      "answered": "Beteiligung: {{answered}} von {{total}}",
       "answered_label": "{{answered}} von {{total}} Personen haben Frage {{number}} beantwortet.",
       "ballot_link": "Stimmzettel",
       "blank_one": "{{count, number}} der {{voters}} Wählenden hat sie leer gelassen.",
       "blank_other": "{{count, number}} der {{voters}} Wählenden haben sie leer gelassen.",
       "calendar": {
         "at": "Um {{time}}.",
-        "close": "Ende und Ergebnisse für alle",
-        "ended": "Abstimmung beendet",
+        "close": "Automatisches Ende und Ergebnisse für alle",
+        "ended_auto": "Automatisch zum Fristende geschlossen",
+        "ended_manual": "Manuell beendet",
         "opened": "Abstimmung begonnen",
         "opens": "Abstimmung beginnt",
         "title": "Kalender",
@@ -2147,19 +2151,7 @@
       "ruler_label_one": "{{count, number}} von {{total}} Personen hat abgestimmt, {{percent}} %",
       "ruler_label_other": "{{count, number}} von {{total}} Personen haben abgestimmt, {{percent}} %",
       "ruler_label_any": "Mindestens {{voted}} von {{total}} Personen haben bei einer Frage abgestimmt, {{percent}} %",
-      "share_asks": "Fragt nach {{fields}}.",
-      "share_field": {
-        "birth_date": "dem Geburtsdatum",
-        "email": "der E-Mail-Adresse",
-        "email_or_phone": "der E-Mail-Adresse oder der Telefonnummer",
-        "member_number": "der Mitgliedsnummer",
-        "name": "dem Vornamen",
-        "national_id": "der Ausweisnummer",
-        "password": "dem Passwort",
-        "phone": "der Telefonnummer",
-        "surname": "dem Nachnamen"
-      },
-      "share_public": "Öffentlicher Link.",
+      "share_note": "Link zur digitalen Wahlurne. Teile ihn mit den Stimmberechtigten.",
       "share_public_short": "Öffentlicher Link",
       "share_title": "Zum Teilen",
       "turnout": "Beteiligung",

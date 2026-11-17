@@ -2086,6 +2086,9 @@
       "paused": "En pause",
       "to_open": "À ouvrir"
     },
+    "results": {
+      "counting": "Le vote est clos. Les résultats sont en cours de décompte et s'afficheront ici sous peu."
+    },
     "state": {
       "canceled": "Annulé",
       "closed": "Terminé",
@@ -2096,7 +2099,7 @@
     },
     "summary": {
       "all_open": "Toutes ouvertes à la fois",
-      "answered": "{{answered}} sur {{total}} y ont répondu",
+      "answered": "Participation : {{answered}} sur {{total}}",
       "answered_label": "{{answered}} personnes sur {{total}} ont répondu à la question {{number}}.",
       "ballot_link": "Bulletin",
       "blank_one": "{{count, number}} des {{voters}} électeurs l'a laissée blanche.",
@@ -2104,8 +2107,9 @@
       "blank_other": "{{count, number}} des {{voters}} électeurs l'ont laissée blanche.",
       "calendar": {
         "at": "À {{time}}.",
-        "close": "Clôture et résultats pour tous",
-        "ended": "Vote terminé",
+        "close": "Clôture automatique et résultats pour tous",
+        "ended_auto": "Clôturé automatiquement à l'échéance",
+        "ended_manual": "Terminé manuellement",
         "opened": "Vote ouvert",
         "opens": "Ouverture du vote",
         "title": "Calendrier",
@@ -2211,19 +2215,7 @@
       "ruler_label_many": "{{count, number}} personnes sur {{total}} ont voté, {{percent}} %",
       "ruler_label_other": "{{count, number}} personnes sur {{total}} ont voté, {{percent}} %",
       "ruler_label_any": "Au moins {{voted}} personnes sur {{total}} ont voté à une question, {{percent}} %",
-      "share_asks": "Demande {{fields}}.",
-      "share_field": {
-        "birth_date": "la date de naissance",
-        "email": "l'e-mail",
-        "email_or_phone": "l'e-mail ou le téléphone",
-        "member_number": "le numéro de membre",
-        "name": "le prénom",
-        "national_id": "le numéro d'identité",
-        "password": "le mot de passe",
-        "phone": "le téléphone",
-        "surname": "le nom"
-      },
-      "share_public": "Lien public.",
+      "share_note": "Lien vers l'urne numérique. Partagez-le avec les personnes ayant le droit de vote.",
       "share_public_short": "Lien public",
       "share_title": "À partager",
       "turnout": "Participation",

@@ -1,11 +1,10 @@
-import { Box, Card, Flex, Grid, Heading, Icon, Span, Stack, Text } from '@chakra-ui/react'
+import { Box, Card, Grid, Heading, Stack, Text } from '@chakra-ui/react'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
 import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
-import { CheckIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { questionOutcome } from '~utils/vote-outcome'
 import { isSettledQuestion, percentOf, questionElectorate, type QuestionState } from '~utils/vote-state'
@@ -107,20 +106,10 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
               </Text>
             )}
           </Box>
-          {outcome && (
-            <Flex align='center' gap='1.5' textStyle='control' fontWeight='medium-plus'>
-              {question.results?.finalResults && (
-                <Icon as={CheckIcon} boxSize='3.5' color='status.success.fg' aria-hidden />
-              )}
-              <Span>
-                <QuestionVerdict outcome={outcome} />
-              </Span>
-              {!question.results?.finalResults && (
-                <Span fontWeight='normal' color='fg.subtle'>
-                  {t('votes.summary.provisional', { defaultValue: 'Provisional result' })}
-                </Span>
-              )}
-            </Flex>
+          {outcome && !question.results?.finalResults && (
+            <Text textStyle='body-sm' color='fg.subtle'>
+              {t('votes.summary.provisional', { defaultValue: 'Provisional result' })}
+            </Text>
           )}
           {/* The tally itself, as Gestió draws it: Resum must answer "how is it going" without opening Results. */}
           {outcome && (
@@ -136,7 +125,7 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
               caption={
                 electorate
                   ? t('votes.summary.answered', {
-                      defaultValue: '{{answered}} of {{total}} answered it',
+                      defaultValue: 'Turnout: {{answered}} of {{total}}',
                       answered: quantity(votes),
                       total: quantity(electorate),
                     })

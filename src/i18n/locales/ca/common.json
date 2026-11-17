@@ -2086,6 +2086,9 @@
       "paused": "En pausa",
       "to_open": "Per obrir"
     },
+    "results": {
+      "counting": "La votació està tancada. Els resultats s'estan comptant i es veuran aquí d'aquí a poc."
+    },
     "state": {
       "canceled": "Cancel·lada",
       "closed": "Tancada",
@@ -2096,7 +2099,7 @@
     },
     "summary": {
       "all_open": "Totes obertes alhora",
-      "answered": "{{answered}} de {{total}} l'han respost",
+      "answered": "Participació: {{answered}} de {{total}}",
       "answered_label": "Han respost la pregunta {{number}} {{answered}} de {{total}} persones.",
       "ballot_link": "Papereta",
       "blank_one": "{{count, number}} dels {{voters}} votants l'ha deixat en blanc.",
@@ -2104,8 +2107,9 @@
       "blank_other": "{{count, number}} dels {{voters}} votants l'han deixat en blanc.",
       "calendar": {
         "at": "A les {{time}}.",
-        "close": "Tancament i resultats a tothom",
-        "ended": "Votació finalitzada",
+        "close": "Tancament automàtic i resultats a tothom",
+        "ended_auto": "Tancada automàticament en acabar el termini",
+        "ended_manual": "Finalitzada manualment",
         "opened": "Votació oberta",
         "opens": "S'obre la votació",
         "title": "Calendari",
@@ -2211,19 +2215,7 @@
       "ruler_label_many": "{{count, number}} de {{total}} persones han votat, {{percent}}%",
       "ruler_label_other": "{{count, number}} de {{total}} persones han votat, {{percent}}%",
       "ruler_label_any": "Almenys {{voted}} de {{total}} persones han votat alguna pregunta, el {{percent}}%",
-      "share_asks": "Demana {{fields}}.",
-      "share_field": {
-        "birth_date": "la data de naixement",
-        "email": "el correu electrònic",
-        "email_or_phone": "el correu electrònic o el telèfon",
-        "member_number": "el número de soci",
-        "name": "el nom",
-        "national_id": "el DNI",
-        "password": "la contrasenya",
-        "phone": "el telèfon",
-        "surname": "els cognoms"
-      },
-      "share_public": "Enllaç públic.",
+      "share_note": "Enllaç a l'urna digital. Comparteix-lo amb les persones amb dret a vot.",
       "share_public_short": "Enllaç públic",
       "share_title": "Per compartir",
       "turnout": "Participació",

@@ -2086,6 +2086,9 @@
       "paused": "En pausa",
       "to_open": "Por abrir"
     },
+    "results": {
+      "counting": "La votación está cerrada. Los resultados se están contando y se verán aquí en breve."
+    },
     "state": {
       "canceled": "Cancelada",
       "closed": "Cerrada",
@@ -2096,7 +2099,7 @@
     },
     "summary": {
       "all_open": "Todas abiertas a la vez",
-      "answered": "{{answered}} de {{total}} la han respondido",
+      "answered": "Participación: {{answered}} de {{total}}",
       "answered_label": "{{answered}} de {{total}} personas han respondido la pregunta {{number}}.",
       "ballot_link": "Papeleta",
       "blank_one": "{{count, number}} de los {{voters}} votantes la ha dejado en blanco.",
@@ -2104,8 +2107,9 @@
       "blank_other": "{{count, number}} de los {{voters}} votantes la han dejado en blanco.",
       "calendar": {
         "at": "A las {{time}}.",
-        "close": "Cierre y resultados para todos",
-        "ended": "Votación finalizada",
+        "close": "Cierre automático y resultados para todos",
+        "ended_auto": "Cerrada automáticamente al acabar el plazo",
+        "ended_manual": "Finalizada manualmente",
         "opened": "Votación abierta",
         "opens": "Se abre la votación",
         "title": "Calendario",
@@ -2211,19 +2215,7 @@
       "ruler_label_many": "{{count, number}} de {{total}} personas han votado, {{percent}}%",
       "ruler_label_other": "{{count, number}} de {{total}} personas han votado, {{percent}}%",
       "ruler_label_any": "Al menos {{voted}} de {{total}} personas han votado alguna pregunta, el {{percent}}%",
-      "share_asks": "Pide {{fields}}.",
-      "share_field": {
-        "birth_date": "la fecha de nacimiento",
-        "email": "el correo electrónico",
-        "email_or_phone": "el correo electrónico o el teléfono",
-        "member_number": "el número de socio",
-        "name": "el nombre",
-        "national_id": "el DNI",
-        "password": "la contraseña",
-        "phone": "el teléfono",
-        "surname": "los apellidos"
-      },
-      "share_public": "Enlace público.",
+      "share_note": "Enlace a la urna digital. Compártelo con las personas con derecho a voto.",
       "share_public_short": "Enlace público",
       "share_title": "Para compartir",
       "turnout": "Participación",

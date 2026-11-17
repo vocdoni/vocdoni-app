@@ -11,66 +11,27 @@ import {
   useBreakpointValue,
   useClipboard,
 } from '@chakra-ui/react'
-import type { TFunction } from 'i18next'
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon, CopyIcon } from '~theme/icons'
 import { SummaryCardHeader } from './SummaryCardHeader'
 
-/** What the voter is asked for, as a phrase for "Asks for …". Static keys, so `pnpm translations` extracts each. */
-const fieldPhrase = (t: TFunction, field: string): string | null => {
-  switch (field) {
-    case 'memberNumber':
-      return t('votes.summary.share_field.member_number', { defaultValue: 'the member number' })
-    case 'name':
-      return t('votes.summary.share_field.name', { defaultValue: 'the first name' })
-    case 'surname':
-      return t('votes.summary.share_field.surname', { defaultValue: 'the last name' })
-    case 'nationalId':
-      return t('votes.summary.share_field.national_id', { defaultValue: 'the national ID' })
-    case 'birthDate':
-      return t('votes.summary.share_field.birth_date', { defaultValue: 'the birth date' })
-    case 'password':
-      return t('votes.summary.share_field.password', { defaultValue: 'the password' })
-    case 'email':
-      return t('votes.summary.share_field.email', { defaultValue: 'the email' })
-    case 'phone':
-      return t('votes.summary.share_field.phone', { defaultValue: 'the phone number' })
-    default:
-      return null
-  }
-}
-
 type SummaryShareProps = {
   /** The public voting page. */
   link: string
-  authFields: readonly string[]
-  /** The one-time code goes to one of these; the voter types one contact, never both. */
-  twoFaFields: readonly string[]
   desktop: boolean
 }
 
-/** "Per compartir": the public voting link to copy, and what it asks voters for. */
-export const SummaryShare = ({ link, authFields, twoFaFields, desktop }: SummaryShareProps) => {
-  const { t, i18n } = useTranslation()
+/** "Per compartir": the link to the digital ballot box, to copy and send to the eligible voters. */
+export const SummaryShare = ({ link, desktop }: SummaryShareProps) => {
+  const { t } = useTranslation()
   const titleId = useId()
   const { copy, copied } = useClipboard({ value: link })
   const tablet = useBreakpointValue({ base: false, md: true, lg: false })
 
-  const contact =
-    twoFaFields.includes('email') && twoFaFields.includes('phone')
-      ? t('votes.summary.share_field.email_or_phone', { defaultValue: 'the email or the phone number' })
-      : (twoFaFields[0] && fieldPhrase(t, twoFaFields[0])) || null
-  const asked = [...authFields.map((field) => fieldPhrase(t, field)), contact].filter((phrase): phrase is string =>
-    Boolean(phrase)
-  )
-  const publicLink = t('votes.summary.share_public', { defaultValue: 'Public link.' })
-  const note = asked.length
-    ? `${publicLink} ${t('votes.summary.share_asks', {
-        defaultValue: 'Asks for {{fields}}.',
-        fields: new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(asked),
-      })}`
-    : publicLink
+  const note = t('votes.summary.share_note', {
+    defaultValue: 'Link to the digital ballot box. Share it with the eligible voters.',
+  })
 
   const copyLabel = t('votes.summary.copy_link', { defaultValue: 'Copy the public link' })
   const copyIcon = <Icon as={copied ? CheckIcon : CopyIcon} />

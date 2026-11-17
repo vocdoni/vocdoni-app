@@ -17,7 +17,7 @@ const TIME: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', h
 export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
   const { t, i18n } = useTranslation()
   const titleId = useId()
-  const { election, state, endDate, now } = model
+  const { election, state, endDate, endedEarly, now } = model
 
   const entries = useMemo(() => {
     const time = new Intl.DateTimeFormat(i18n.language, TIME)
@@ -53,7 +53,10 @@ export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
       list.push({
         id: 'ended',
         day: endDate,
-        what: t('votes.summary.calendar.ended', { defaultValue: 'Vote ended' }),
+        // An organiser ending it and the schedule closing it read differently.
+        what: endedEarly
+          ? t('votes.summary.calendar.ended_manual', { defaultValue: 'Ended manually' })
+          : t('votes.summary.calendar.ended_auto', { defaultValue: 'Closed automatically at the deadline' }),
         note: at(endDate),
         current: true,
       })
@@ -61,12 +64,12 @@ export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
       list.push({
         id: 'close',
         day: endDate,
-        what: t('votes.summary.calendar.close', { defaultValue: 'Closing and results for everyone' }),
+        what: t('votes.summary.calendar.close', { defaultValue: 'Automatic closing and results for everyone' }),
         note: at(endDate),
       })
     }
     return list
-  }, [t, i18n.language, election.startDate, state, endDate, now])
+  }, [t, i18n.language, election.startDate, state, endDate, endedEarly, now])
 
   if (!entries.length) return null
   const day = new Intl.DateTimeFormat(i18n.language, DAY)

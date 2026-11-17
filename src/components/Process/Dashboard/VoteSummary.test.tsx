@@ -124,7 +124,7 @@ describe('VoteSummary', () => {
     it('shows how many answered each question, how many left it blank and how it is answered', () => {
       renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 181)] }), 184)
 
-      expect(screen.getByText('181 of 312 answered it')).toBeInTheDocument()
+      expect(screen.getByText('Turnout: 181 of 312')).toBeInTheDocument()
       expect(screen.getByText('3 of the 184 voters left it blank.')).toBeInTheDocument()
       expect(screen.getByText('One choice, simple majority')).toBeInTheDocument()
       expect(screen.getByText('All open at once')).toBeInTheDocument()
@@ -133,7 +133,10 @@ describe('VoteSummary', () => {
     it('shows the result of each question once results are public', () => {
       renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 184, ['150', '34'])] }), 184)
 
-      expect(screen.getByText('150 to 34')).toBeInTheDocument()
+      // One bar per choice with its votes; no winner sentence while the vote runs.
+      expect(screen.getByText('150')).toBeInTheDocument()
+      expect(screen.getByText('34')).toBeInTheDocument()
+      expect(screen.queryByText(/wins with|150 to 34/)).not.toBeInTheDocument()
       expect(screen.getByText('Provisional result')).toBeInTheDocument()
     })
 
@@ -149,7 +152,7 @@ describe('VoteSummary', () => {
       expect(screen.getByText(textContent('128 have not voted yet'))).toBeInTheDocument()
       expect(screen.getByText('Vote opened')).toBeInTheDocument()
       expect(screen.getByText('Today')).toBeInTheDocument()
-      expect(screen.getByText('Closing and results for everyone')).toBeInTheDocument()
+      expect(screen.getByText('Automatic closing and results for everyone')).toBeInTheDocument()
     })
 
     it('shows seven facts and one quiet line per question on a phone, without the desktop cards', () => {
@@ -270,10 +273,10 @@ describe('VoteSummary', () => {
     })
   })
 
-  it('names what the voting link asks for', () => {
+  it('says what the voting link is for', () => {
     renderSummary(createProcess({ census: { size: 312, authFields: ['memberNumber'], twoFaFields: ['email'] } }))
 
-    expect(screen.getByText('Public link. Asks for the member number and the email.')).toBeInTheDocument()
+    expect(screen.getByText('Link to the digital ballot box. Share it with the eligible voters.')).toBeInTheDocument()
     expect(screen.getByLabelText('Voting Link')).toHaveAttribute('readonly')
   })
 

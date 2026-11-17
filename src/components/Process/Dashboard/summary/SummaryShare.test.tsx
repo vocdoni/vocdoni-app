@@ -3,33 +3,18 @@ import { SummaryShare } from './SummaryShare'
 
 const LINK = 'https://app.vocdoni.io/processes/0xabc'
 
-const renderShare = (authFields: string[], twoFaFields: string[] = [], desktop = true) =>
-  render(<SummaryShare link={LINK} authFields={authFields} twoFaFields={twoFaFields} desktop={desktop} />)
+const renderShare = (desktop = true) => render(<SummaryShare link={LINK} desktop={desktop} />)
 
 describe('SummaryShare', () => {
-  it('names what the link asks voters for', () => {
-    renderShare(['memberNumber', 'nationalId'])
+  it('says what the link is and who to share it with', () => {
+    renderShare()
 
     expect(screen.getByRole('heading', { name: 'To share' })).toBeInTheDocument()
-    expect(screen.getByText('Public link. Asks for the member number and the national ID.')).toBeInTheDocument()
-  })
-
-  it('asks for one contact when the code can go to either', () => {
-    renderShare(['memberNumber'], ['email', 'phone'])
-
-    expect(
-      screen.getByText('Public link. Asks for the member number and the email or the phone number.')
-    ).toBeInTheDocument()
-  })
-
-  it('says only that the link is public when it asks for nothing it can name', () => {
-    renderShare([])
-
-    expect(screen.getByText('Public link.')).toBeInTheDocument()
+    expect(screen.getByText('Link to the digital ballot box. Share it with the eligible voters.')).toBeInTheDocument()
   })
 
   it('shows the address without its scheme, read only, with a named copy button', () => {
-    renderShare(['memberNumber'])
+    renderShare()
 
     expect(screen.getByLabelText('Voting Link')).toHaveValue('app.vocdoni.io/processes/0xabc')
     expect(screen.getByLabelText('Voting Link')).toHaveAttribute('readonly')
@@ -37,9 +22,9 @@ describe('SummaryShare', () => {
   })
 
   it('puts "Public link" at the end of the title line on a phone', () => {
-    renderShare(['memberNumber'], [], false)
+    renderShare(false)
 
     expect(screen.getByText('Public link')).toBeInTheDocument()
-    expect(screen.queryByText(/Asks for/)).toBeNull()
+    expect(screen.queryByText(/digital ballot box/)).toBeNull()
   })
 })

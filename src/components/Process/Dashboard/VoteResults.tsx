@@ -20,7 +20,10 @@ export const VoteResults = () => {
   const { election, results, status } = useElection()
   const { size: censusSize } = useCensusSize()
   const id = election?.id ?? ''
-  const canceled = !!election && deriveVoteState(election) === 'canceled'
+  const state = election ? deriveVoteState(election) : undefined
+  const canceled = state === 'canceled'
+  // Closed, tally not served yet: the package would still say the results come "when the process finishes".
+  const counting = !!election && state === 'closed' && !hasResults(election)
 
   // Election-level participation BI, captured admin-side only (voters are never tracked)
   const trackedResultsElectionRef = useRef<string | null>(null)
@@ -60,7 +63,15 @@ export const VoteResults = () => {
       />
       <Card.Root variant='section'>
         <ErrorBoundary fallback={fallback} resetKeys={[election, results]}>
-          <ElectionResults />
+          {counting ? (
+            <Text color='fg.muted'>
+              {t('votes.results.counting', {
+                defaultValue: 'The vote is closed. The results are being counted and will show here shortly.',
+              })}
+            </Text>
+          ) : (
+            <ElectionResults />
+          )}
         </ErrorBoundary>
       </Card.Root>
     </>

@@ -2035,6 +2035,9 @@
       "paused": "Σε παύση",
       "to_open": "Προς άνοιγμα"
     },
+    "results": {
+      "counting": "Η ψηφοφορία έκλεισε. Τα αποτελέσματα καταμετρώνται και θα εμφανιστούν εδώ σύντομα."
+    },
     "state": {
       "canceled": "Ακυρωμένη",
       "closed": "Κλειστή",
@@ -2045,15 +2048,16 @@
     },
     "summary": {
       "all_open": "Όλες ανοιχτές μαζί",
-      "answered": "{{answered}} από {{total}} την απάντησαν",
+      "answered": "Συμμετοχή: {{answered}} από {{total}}",
       "answered_label": "{{answered}} από {{total}} άτομα απάντησαν την ερώτηση {{number}}.",
       "ballot_link": "Ψηφοδέλτιο",
       "blank_one": "{{count, number}} από τους {{voters}} ψηφοφόρους την άφησε κενή.",
       "blank_other": "{{count, number}} από τους {{voters}} ψηφοφόρους την άφησαν κενή.",
       "calendar": {
         "at": "Στις {{time}}.",
-        "close": "Λήξη και αποτελέσματα για όλους",
-        "ended": "Η ψηφοφορία έληξε",
+        "close": "Αυτόματη λήξη και αποτελέσματα για όλους",
+        "ended_auto": "Έκλεισε αυτόματα στη λήξη της προθεσμίας",
+        "ended_manual": "Τερματίστηκε χειροκίνητα",
         "opened": "Η ψηφοφορία άνοιξε",
         "opens": "Ανοίγει η ψηφοφορία",
         "title": "Ημερολόγιο",
@@ -2147,19 +2151,7 @@
       "ruler_label_one": "{{count, number}} από {{total}} άτομα ψήφισαν, {{percent}}%",
       "ruler_label_other": "{{count, number}} από {{total}} άτομα ψήφισαν, {{percent}}%",
       "ruler_label_any": "Τουλάχιστον {{voted}} από {{total}} άτομα ψήφισαν σε μια ερώτηση, {{percent}}%",
-      "share_asks": "Ζητά {{fields}}.",
-      "share_field": {
-        "birth_date": "την ημερομηνία γέννησης",
-        "email": "το email",
-        "email_or_phone": "το email ή το τηλέφωνο",
-        "member_number": "τον αριθμό μέλους",
-        "name": "το όνομα",
-        "national_id": "τον αριθμό ταυτότητας",
-        "password": "τον κωδικό πρόσβασης",
-        "phone": "το τηλέφωνο",
-        "surname": "το επώνυμο"
-      },
-      "share_public": "Δημόσιος σύνδεσμος.",
+      "share_note": "Σύνδεσμος για την ψηφιακή κάλπη. Μοιραστείτε τον με όσους έχουν δικαίωμα ψήφου.",
       "share_public_short": "Δημόσιος σύνδεσμος",
       "share_title": "Για κοινοποίηση",
       "turnout": "Συμμετοχή",

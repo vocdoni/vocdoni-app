@@ -1,16 +1,17 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
-import { render, screen } from '~src/test-utils'
+import { cleanup, render, screen } from '~src/test-utils'
 import type { VoteState } from '~utils/vote-state'
 import { SummaryCalendar } from './SummaryCalendar'
 import type { SummaryModel } from './use-summary-model'
 
 const NOW = new Date('2026-03-10T12:00:00Z')
 
-const model = (state: VoteState, startDate = '2026-03-02T09:16:00Z') =>
+const model = (state: VoteState, startDate = '2026-03-02T09:16:00Z', endedEarly = false) =>
   ({
     election: { startDate } as VotingProcessResponse,
     state,
     endDate: new Date('2026-03-12T20:00:00Z'),
+    endedEarly,
     now: NOW,
   }) as SummaryModel
 
@@ -23,7 +24,7 @@ describe('SummaryCalendar', () => {
     expect(steps()).toEqual([
       expect.stringContaining('Vote opened'),
       expect.stringContaining('Today'),
-      expect.stringContaining('Closing and results for everyone'),
+      expect.stringContaining('Automatic closing and results for everyone'),
     ])
     expect(screen.getByText('Today').closest('li')).toHaveAttribute('aria-current', 'step')
   })
@@ -38,13 +39,20 @@ describe('SummaryCalendar', () => {
   it('looks ahead for a vote that has not opened yet', () => {
     render(<SummaryCalendar model={model('ready', '2026-03-11T09:00:00Z')} />)
 
-    expect(steps()).toEqual([expect.stringContaining('Vote opens'), expect.stringContaining('Closing')])
+    expect(steps()).toEqual([expect.stringContaining('Vote opens'), expect.stringContaining('Automatic closing')])
   })
 
   it('ends an ended vote at its end, and a canceled one with no closing', () => {
     const { unmount } = render(<SummaryCalendar model={model('closed')} />)
-    expect(steps()).toEqual([expect.stringContaining('Vote opened'), expect.stringContaining('Vote ended')])
+    expect(steps()).toEqual([
+      expect.stringContaining('Vote opened'),
+      expect.stringContaining('Closed automatically at the deadline'),
+    ])
     unmount()
+
+    render(<SummaryCalendar model={model('closed', undefined, true)} />)
+    expect(steps()[1]).toContain('Ended manually')
+    cleanup()
 
     render(<SummaryCalendar model={model('canceled')} />)
     expect(steps()).toEqual([expect.stringContaining('Vote opened')])

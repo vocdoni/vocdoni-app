@@ -22,6 +22,8 @@ export type SummaryModel = {
   secret: boolean
   /** When it closes, or closed: the early end the chain recorded wins over the schedule. */
   endDate?: Date
+  /** Someone ended it before its scheduled closing. */
+  endedEarly: boolean
   /** Per question, in order; a question held by a whole-vote pause reads as paused. */
   questionStates: QuestionState[]
   now: Date
@@ -48,6 +50,7 @@ export const useSummaryModel = (): SummaryModel | null => {
       percent: percentOf(count, total),
       secret: isSecretUntilTheEnd(election),
       endDate: earlyEndDate ?? resolveEndDate(election),
+      endedEarly: !!earlyEndDate,
       questionStates: election.questions.map((question) =>
         heldIds.has(question.id) ? 'paused' : deriveQuestionState(question, election, now)
       ),
