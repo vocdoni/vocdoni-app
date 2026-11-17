@@ -100,16 +100,6 @@ describe('text styles', () => {
       'ballot-code-digit',
       { fontFamily: 'figure', fontSize: 'ballot.code', lineHeight: 'moderate', letterSpacing: 'voter' },
     ],
-    [
-      'ballot-points',
-      {
-        fontFamily: 'figure',
-        fontSize: 'ballot.lead',
-        lineHeight: 'moderate',
-        fontWeight: 'medium',
-        letterSpacing: 'voter',
-      },
-    ],
     ['ballot-rank', { fontFamily: 'figure', fontSize: 'item', lineHeight: 'moderate', letterSpacing: 'voter' }],
     ['ballot-figure', { fontFamily: 'figure', fontSize: 'xs', lineHeight: 'moderate', letterSpacing: 'voter' }],
     ['ballot-receipt', { fontFamily: 'figure', fontSize: 'sm', lineHeight: 'moderate', letterSpacing: 'voter' }],
@@ -138,7 +128,6 @@ describe('text styles', () => {
     expect(system.token('fontSizes.ballot.lead')).toBe('1.125rem')
     expect(system.token('fontSizes.ballot.code')).toBe('1.625rem')
     expect(system.token('fontSizes.ballot.status')).toBe('0.84375rem')
-    expect(system.token('lineHeights.glyph')).toBe(1)
     expect(system.token('letterSpacings.heading.open')).toBe('-0.02em')
     expect(system.token('lineHeights.row.touch')).toBe('1.375rem')
   })

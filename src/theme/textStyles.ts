@@ -203,15 +203,6 @@ export const textStyles = defineTextStyles({
   'ballot-code-digit': {
     value: { fontFamily: 'figure', fontSize: 'ballot.code', lineHeight: 'moderate', letterSpacing: 'voter' },
   },
-  'ballot-points': {
-    value: {
-      fontFamily: 'figure',
-      fontSize: 'ballot.lead',
-      lineHeight: 'moderate',
-      fontWeight: 'medium',
-      letterSpacing: 'voter',
-    },
-  },
   'ballot-rank': { value: { fontFamily: 'figure', fontSize: 'item', lineHeight: 'moderate', letterSpacing: 'voter' } },
   'ballot-figure': { value: { fontFamily: 'figure', fontSize: 'xs', lineHeight: 'moderate', letterSpacing: 'voter' } },
   'ballot-receipt': { value: { fontFamily: 'figure', fontSize: 'sm', lineHeight: 'moderate', letterSpacing: 'voter' } },

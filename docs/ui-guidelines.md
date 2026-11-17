@@ -474,7 +474,7 @@ The voter scale (tokens):
 | Step progress line | `sizes.bar.thin` | 3px |
 | Rail to column, phone clearance under the action bar, help to options below `lg` | `spacing.ballot.gutter`, `.dock`, `.options` | 72, 150, 22px |
 | Above and below an agenda step | `spacing.step` | 9px |
-| Type | `fontSizes.ballot.lead` (18px), `.code` (26px), `.status` (13.5px), next to `.option` (17px) and `.question` (32px); `lineHeights.glyph` (1); `letterSpacings.heading.open` (-0.02em) | |
+| Type | `fontSizes.ballot.lead` (18px), `.code` (26px), `.status` (13.5px), next to `.option` (17px) and `.question` (32px); `letterSpacings.heading.open` (-0.02em) | |
 | A mark still to come | `border.pending` (the track grey) and `shadow.mark` (its 1.5px inner ring) | |
 | A field that failed | `shadow.invalid` (a 2px inner ring in `status.error.fg`) | |
 
@@ -485,7 +485,7 @@ receipt rows), `ballot-label` (a field's label, 15px medium), `ballot-button` (1
 weight), `ballot-rail-title` (the vote's title, 15px, 17px from `lg`, semibold), `ballot-rail-meta` (13px, 14px from
 `lg`), `ballot-progress` (the strip's label, 13px medium), `ballot-status` (13.5px medium), `ballot-row-value` (a review
 value, 16px, 17px from `lg`, 550), `ballot-phase` (17px), `ballot-open-title` (22px semibold), `ballot-caption` (15px,
-550), `ballot-result-title` (17px semibold), and in mono `ballot-code-digit` (26px), `ballot-points` (18px medium),
+550), `ballot-result-title` (17px semibold), and in mono `ballot-code-digit` (26px),
 `ballot-rank` (15px), `ballot-figure` (12px), `ballot-receipt` (13px), `ballot-code` (13px with no tracking: agenda
 numbers, a share); the top bar's `topbar-name` (15px, 550), `topbar-link` (14px medium) and `topbar-lang` (13px medium on
 a 22px line).
@@ -534,7 +534,7 @@ visible and accessible string as a prop and hold no logic: the page translates a
   unless the reader asks for less motion.
 - `SuccessDisc`: the green disc over a vote that landed (decoration only).
 - `ReceiptCodes`: one row per question with its shortened vote id (`shortVoteId`), the full id on hover, and a copy
-  button when given `onCopy` and `copyLabel`.
+  button when given `onCopy` (name it with `copyLabel`).
 - `RankBadge`: the rank before a ranked option (`value`, `set`).
 
 Rules:

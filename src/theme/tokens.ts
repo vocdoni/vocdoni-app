@@ -69,8 +69,6 @@ const lineHeights = defineTokens.lineHeights({
   question: { value: 1.08 },
   // The open question's title in its card on a question-by-question voter page (`ballot-open-title`).
   'open-question': { value: 1.25 },
-  // A glyph alone on its line, such as a stepper's minus and plus.
-  glyph: { value: 1 },
   tall: { value: 1.6 },
   // The headline sentence of a vote's turnout card (`turnout-headline`).
   headline: { value: 1.12 },
