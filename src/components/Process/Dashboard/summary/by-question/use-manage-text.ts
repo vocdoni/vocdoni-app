@@ -8,11 +8,21 @@ import type { ManageStep } from './row-state'
 
 type CountState = keyof QuestionStateCounts
 
-// A description is markdown: its links keep their text, its emphasis and heading marks go.
+// A description is markdown: its links keep their text, and only real markup goes (heading, quote and list marks at
+// the start of a line, paired emphasis, strikethrough and code), so "Quota_2027", "#1" or "5 > 3" stay as written.
+// An underscore pair inside a word is not emphasis in markdown either ("snake_case_name").
 const plainText = (markdown: string) =>
   markdown
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/[*_~`#>]+/g, '')
+    .replace(/^[ \t]{0,3}#{1,6}[ \t]+/gm, '')
+    .replace(/^[ \t]{0,3}>[ \t]?/gm, '')
+    .replace(/^[ \t]*[-*+][ \t]+/gm, '')
+    .replace(/\*\*(?=\S)(.+?)(?<=\S)\*\*/g, '$1')
+    .replace(/(?<!\w)__(?=\S)(.+?)(?<=\S)__(?!\w)/g, '$1')
+    .replace(/\*(?=\S)(.+?)(?<=\S)\*/g, '$1')
+    .replace(/(?<!\w)_(?=\S)(.+?)(?<=\S)_(?!\w)/g, '$1')
+    .replace(/~~(?=\S)(.+?)(?<=\S)~~/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
     .replace(/\s+/g, ' ')
     .trim()
 
