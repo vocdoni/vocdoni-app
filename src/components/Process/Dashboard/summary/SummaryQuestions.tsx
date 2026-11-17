@@ -124,7 +124,9 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
         id={titleId}
         title={t('process.questions')}
         count={election.questions.length}
-        note={t('votes.summary.all_open', { defaultValue: 'All open at once' })}
+        note={
+          election.questions.length > 1 ? t('votes.summary.all_open', { defaultValue: 'All open at once' }) : undefined
+        }
         noteAtEnd
         desktop={desktop}
       />

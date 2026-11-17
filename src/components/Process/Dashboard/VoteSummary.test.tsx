@@ -125,7 +125,9 @@ describe('VoteSummary', () => {
         expect(screen.getByText(label)).toBeInTheDocument()
       }
       expect(screen.queryByText('Vote overwrite')).toBeNull()
-      expect(screen.getByText('1, all at once')).toBeInTheDocument()
+      // One question has no "all at once" to it.
+      expect(screen.getByText('Questions').nextElementSibling).toHaveTextContent(/^1$/)
+      expect(screen.queryByText('All open at once')).not.toBeInTheDocument()
       expect(screen.getByText('live, during the vote')).toBeInTheDocument()
     })
 
@@ -143,11 +145,11 @@ describe('VoteSummary', () => {
     })
 
     it('shows how many answered each question, how many left it blank and how it is answered', () => {
-      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 181)] }), 184)
+      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 181), question('q2', 'ONGOING', 184)] }), 184)
 
       expect(screen.getByText('Turnout: 181 of 312')).toBeInTheDocument()
       expect(screen.getByText('3 of the 184 voters left it blank.')).toBeInTheDocument()
-      expect(screen.getByText('Single choice')).toBeInTheDocument()
+      expect(screen.getAllByText('Single choice')).toHaveLength(2)
       expect(screen.getByText('All open at once')).toBeInTheDocument()
     })
 
@@ -295,7 +297,7 @@ describe('VoteSummary', () => {
       renderSummary(createProcess({ startDate: '2099-01-01T10:00:00Z' }), 0)
 
       expect(screen.getByRole('heading', { name: /^Opens by itself / })).toBeInTheDocument()
-      expect(screen.getByText('312 people in the census and 1 question, all open at once.')).toBeInTheDocument()
+      expect(screen.getByText('312 people in the census and 1 question.')).toBeInTheDocument()
       expect(screen.queryByText('%')).toBeNull()
     })
 

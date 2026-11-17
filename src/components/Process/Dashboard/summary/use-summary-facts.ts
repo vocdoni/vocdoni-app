@@ -49,7 +49,8 @@ export const useSummaryFacts = (model: SummaryModel, desktop: boolean): Fact[] =
           count: election.questions.length,
         })
       : t('votes.summary.fact.questions_all', {
-          defaultValue_one: '{{count, number}}, all at once',
+          // One question has no "all at once" to it.
+          defaultValue_one: '{{count, number}}',
           defaultValue_other: '{{count, number}}, all at once',
           count: election.questions.length,
         }),

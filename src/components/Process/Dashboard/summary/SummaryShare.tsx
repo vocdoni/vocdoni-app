@@ -9,34 +9,49 @@ import {
   Input,
   Text,
   useBreakpointValue,
+  VisuallyHidden,
   useClipboard,
 } from '@chakra-ui/react'
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon, CopyIcon } from '~theme/icons'
+import type { VoteState } from '~utils/vote-state'
 import { SummaryCardHeader } from './SummaryCardHeader'
 
 type SummaryShareProps = {
   /** The public voting page. */
   link: string
   desktop: boolean
+  state: VoteState
 }
 
-/** "Per compartir": the link to the digital ballot box, to copy and send to the eligible voters. */
-export const SummaryShare = ({ link, desktop }: SummaryShareProps) => {
+/**
+ * "Per compartir": the link to the digital ballot box, to copy and send to the eligible voters. Once the vote is
+ * closed the link leads to its results, and a canceled vote has nothing to share.
+ */
+export const SummaryShare = ({ link, desktop, state }: SummaryShareProps) => {
   const { t } = useTranslation()
   const titleId = useId()
   const { copy, copied } = useClipboard({ value: link })
   const tablet = useBreakpointValue({ base: false, md: true, lg: false })
 
-  const note = t('votes.summary.share_note', {
-    defaultValue: 'Link to the digital ballot box. Share it with the eligible voters.',
-  })
+  if (state === 'canceled') return null
+
+  const note =
+    state === 'closed'
+      ? t('votes.summary.share_note_closed', { defaultValue: 'Link to the public page of the vote, with its results.' })
+      : t('votes.summary.share_note', {
+          defaultValue: 'Link to the digital ballot box. Share it with the eligible voters.',
+        })
 
   const copyLabel = t('votes.summary.copy_link', { defaultValue: 'Copy the public link' })
   const copyIcon = <Icon as={copied ? CheckIcon : CopyIcon} />
   const row = (
     <Flex gap='2'>
+      {/* The swapped icon is all a sighted user gets; a screen reader hears it said. */}
+      <VisuallyHidden aria-live='polite'>
+        {copied ? t('votes.summary.link_copied', { defaultValue: 'Link copied' }) : ''}
+      </VisuallyHidden>
       <Input
         readOnly
         variant='code'

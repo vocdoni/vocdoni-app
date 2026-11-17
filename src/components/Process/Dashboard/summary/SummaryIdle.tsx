@@ -34,7 +34,9 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
         : t('votes.summary.idle.not_started', { defaultValue: 'It has not started yet' })
       if (total !== undefined) {
         body = t('votes.summary.idle.ready_body', {
-          defaultValue: '{{people}} in the census and {{questions}}, all open at once.',
+          defaultValue_one: '{{people}} in the census and {{questions}}.',
+          defaultValue_other: '{{people}} in the census and {{questions}}, all open at once.',
+          count: election.questions.length,
           people: t('votes.summary.fact.census', {
             defaultValue_one: '{{count, number}} person',
             defaultValue_other: '{{count, number}} people',
