@@ -195,12 +195,41 @@ describe('VoteHeader', () => {
       expect(screen.getByText('Closed')).toBeInTheDocument()
     })
 
-    it('keeps only End the vote on a phone, and says when the vote closes', () => {
+    it('offers Pause and End now on a phone, and says when it started and when it closes', () => {
       isDesktop = false
       renderHeader(byQuestion([question('q1', 'ONGOING')]))
 
-      expect(actions()).toEqual(['End the vote'])
-      expect(screen.getByText(/^Closes Thursday, March 12 at \d\d:\d\d\.$/)).toBeInTheDocument()
+      expect(actions()).toEqual(['Pause', 'End now'])
+      expect(
+        screen.getByText(/^Started Sunday, March 1 at \d\d:\d\d\. Closes Thursday, March 12 at \d\d:\d\d\.$/)
+      ).toBeInTheDocument()
+    })
+
+    it('offers Resume and End now on a phone while the vote is paused', () => {
+      isDesktop = false
+      renderHeader(byQuestion([question('q1', 'PAUSED', { results: { voteCount: 3 } })]))
+
+      expect(actions()).toEqual(['Resume', 'End now'])
+    })
+
+    it('says when it starts on a phone, with no button: the API cannot start it early', () => {
+      isDesktop = false
+      renderHeader(byQuestion([question('q1', 'PAUSED')], { startDate: '2026-03-14T17:30:00Z' }))
+
+      expect(actions()).toEqual([])
+      expect(screen.getByText(/^Starts Saturday, March 14 at \d\d:\d\d\.$/)).toBeInTheDocument()
+    })
+
+    it('offers Duplicate it on a phone once the vote is canceled, and keeps it in More on the desktop', () => {
+      isDesktop = false
+      const canceled = byQuestion([question('q1', 'CANCELED', { endedAt: '2026-03-02T09:00:00Z' })])
+      const { unmount } = renderHeader(canceled)
+      expect(actions()).toEqual(['Duplicate it'])
+      unmount()
+
+      isDesktop = true
+      renderHeader(canceled)
+      expect(actions()).toEqual([])
     })
 
     it('shows a vote paused as a whole as paused, with Resume the vote first', () => {

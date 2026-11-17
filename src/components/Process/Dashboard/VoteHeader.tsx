@@ -53,9 +53,16 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
   const start = parseDate(election.startDate) ?? now
   const end = resolveEndDate(election)
   const upper = (value: string) => ucfirst(value, i18n.language)
+  // "at 18:30" today, the full date otherwise (the touch boards).
+  const when = (date: Date | undefined) =>
+    date && isSameDay(date, now)
+      ? t('votes.date.at_time', { defaultValue: 'at {{time}}', time: time(date) })
+      : t('votes.date.on_date', { defaultValue: '{{date}}', date: dateAt(date) })
 
   switch (state) {
     case 'ready':
+      if (byQuestion && !isDesktop)
+        return t('votes.header.line.starts', { defaultValue: 'Starts {{date}}.', date: dateAt(start) })
       return byQuestion
         ? t('votes.header.line.by_question_ready', {
             defaultValue: '{{date}}. Question by question.',
@@ -78,8 +85,14 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
             })
           : closes
       }
-      // The phone board says when it closes; the desktop board when it started.
-      if (!isDesktop) return closes
+      // The touch boards say when it started and when it closes; the desktop board when it started.
+      if (!isDesktop) {
+        return t('votes.header.line.started_closes', {
+          defaultValue: 'Started {{start}}. Closes {{end}}.',
+          start: when(start),
+          end: when(end),
+        })
+      }
       return isSameDay(start, now)
         ? t('votes.header.line.by_question_live_today', {
             defaultValue: '{{day}}, question by question. Started at {{time}}, {{ago}}.',
@@ -94,6 +107,13 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
           })
     }
     case 'paused':
+      // The touch boards say when it closes ("at 21:00" today); the desktop board when a question-by-question one started.
+      if (byQuestion && !isDesktop) {
+        return t('votes.header.line.closes_paused_touch', {
+          defaultValue: 'Closes {{end}}. The deadline does not stop.',
+          end: when(end),
+        })
+      }
       if (!byQuestion) {
         return t('votes.header.line.closes_paused', {
           defaultValue: 'Closes {{date}}. The deadline does not stop.',
@@ -177,6 +197,8 @@ const StatusLine = (props: HeaderPartProps) => {
 const VoteActions = ({ election, state }: HeaderPartProps) => {
   const { t } = useTranslation()
   const isDesktop = useIsDesktop()
+  const { canManage } = useActions()
+  const { cloneAsDraft, isCloning } = useCloneAsDraft()
   // Equal parts on phones (the row spans the page); natural width from md.
   const fill = { base: '1', md: 'none' } as const
 
@@ -194,15 +216,24 @@ const VoteActions = ({ election, state }: HeaderPartProps) => {
     )
   }
 
-  const endVote = t('votes.page.end_vote', { defaultValue: 'End the vote' })
+  // The desktop board names the whole vote ("Pause the vote"); the touch boards say it short ("Pause", "End now").
+  const endVote = isDesktop
+    ? t('votes.page.end_vote', { defaultValue: 'End the vote' })
+    : t('votes.page.end_now', { defaultValue: 'End now' })
   switch (state) {
     case 'live': {
-      // Pausing needs an open question to hold; the phone board has no "Pause the vote". A vote whose questions are
-      // all closed is closed, so ending is never the only step left here.
-      const canPause = isDesktop && election.questions.some((question) => question.status === 'ONGOING')
+      // Pausing needs an open question to hold. A vote whose questions are all closed is closed, so ending is never
+      // the only step left here.
+      const canPause = election.questions.some((question) => question.status === 'ONGOING')
       return (
         <>
-          {canPause && <ActionPause>{t('votes.page.pause_vote', { defaultValue: 'Pause the vote' })}</ActionPause>}
+          {canPause && (
+            <ActionPause flex={fill}>
+              {isDesktop
+                ? t('votes.page.pause_vote', { defaultValue: 'Pause the vote' })
+                : t('votes.page.pause', { defaultValue: 'Pause' })}
+            </ActionPause>
+          )}
           <ActionEnd variant='outline' flex={fill}>
             {endVote}
           </ActionEnd>
@@ -213,11 +244,20 @@ const VoteActions = ({ election, state }: HeaderPartProps) => {
       return (
         <>
           <ActionContinue flex={fill}>
-            {t('votes.page.resume_vote', { defaultValue: 'Resume the vote' })}
+            {isDesktop
+              ? t('votes.page.resume_vote', { defaultValue: 'Resume the vote' })
+              : t('votes.page.resume', { defaultValue: 'Resume' })}
           </ActionContinue>
           <ActionEnd flex={fill}>{endVote}</ActionEnd>
         </>
       )
+    case 'canceled':
+      // The touch board's way to call it again; the desktop keeps it in "More".
+      return !isDesktop && canManage ? (
+        <Button variant='outline' flex={fill} loading={isCloning} onClick={() => void cloneAsDraft(election)}>
+          {t('votes.summary.idle.duplicate', { defaultValue: 'Duplicate it' })}
+        </Button>
+      ) : null
     default:
       return null
   }
