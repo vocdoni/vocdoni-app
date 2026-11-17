@@ -166,12 +166,14 @@ alike. The client derives nothing brand-related afterwards (cached HTML, brand i
   red), neutrals and surfaces, and the Vocdoni credit (the footer logo and the "made with Vocdoni" line). Never route
   them through `brand` or `accent`.
 - The colour is arbitrary input, so `palette.ts` keeps every pairing readable for any hex, tested on 124 colours in
-  `palette.test.ts`: `solid` at least 3:1 on the page; its label at least 4.5:1 on `solid` and on `solid.hover` (the
-  hover lightens instead of darkening when a black label needs it); `fg` at least 4.5:1 on the page and on `subtle`;
-  the focus ring at least 3:1; `accent.fg.hover` at least 4.5:1. A new pairing a voter screen draws gets a line there.
+  `palette.test.ts`: `solid` at least 3:1 on the page; its label at least 4.5:1 on `solid` and on `solid.hover`, in the
+  light and the dark scope (the hover lightens instead of darkening when a black label needs it); `fg` at least 4.5:1
+  on the page and on `subtle`; the focus ring at least 3:1; `accent.fg.hover` at least 4.5:1. A new pairing a voter screen draws gets a line there.
 - The logo is only ever an `img` source, with the Vocdoni mark as the fallback when it fails to load (`Logo`).
 - `getAppSystem` keeps at most 32 coloured systems (organisation colours are open-ended on the server); the stock one is
   never evicted.
+- The page data also carries the organisation's name and whether the vote is branded (`brand.name`, `brand.branded`).
+  Today only the logo's alt text reads the name; the top bar does not show it yet.
 
 ## Text
 

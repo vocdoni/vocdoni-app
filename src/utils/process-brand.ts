@@ -6,7 +6,7 @@ import { getLocalizedRawText, type LocalizedTextMap } from '~utils/localized-tex
 
 /** How a public process page is branded. Resolved once on the server and carried in the page data. */
 export type ProcessBrand = {
-  /** Organisation logo URL for the page language, when the truth table in D3 shows one. */
+  /** Organisation logo URL for the page language, when the brand shows one (docs/ui-guidelines.md, "Brand per vote"). */
   logo?: string
   /** Validated #rrggbb colour, when the vote is branded and the organisation set one. */
   color?: string
