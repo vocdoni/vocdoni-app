@@ -1,6 +1,5 @@
 import { Box, chakra, HStack, Icon, Input, InputGroup, Text } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
-import { TFunction } from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { HelpIcon, SearchIcon } from '~theme/icons'
@@ -17,28 +16,7 @@ import {
   useProcessParticipants,
 } from '~queries/participants'
 import { Tooltip } from '~components/ui/Tooltip'
-
-// Maps a census credential field to a human label. Unknown fields fall back to their raw key.
-const fieldLabel = (t: TFunction, field: string) => {
-  switch (field) {
-    case 'name':
-      return t('census.search.field.name', { defaultValue: 'Name' })
-    case 'surname':
-      return t('census.search.field.surname', { defaultValue: 'Surname' })
-    case 'email':
-      return t('census.search.field.email', { defaultValue: 'Email' })
-    case 'phone':
-      return t('census.search.field.phone', { defaultValue: 'Phone' })
-    case 'memberNumber':
-      return t('census.search.field.member_number', { defaultValue: 'Member number' })
-    case 'nationalId':
-      return t('census.search.field.national_id', { defaultValue: 'National ID' })
-    case 'birthDate':
-      return t('census.search.field.birth_date', { defaultValue: 'Birth date' })
-    default:
-      return field
-  }
-}
+import { censusFieldLabel } from '../CSP/fields'
 
 // Shows the value of the searched credential next to the name. The response only carries a subset of
 // member fields, so credentials not present in it (e.g. phone, nationalId) fall back to the typed value.
@@ -126,7 +104,7 @@ const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
   const hasSearch = debouncedSearch.trim().length > 0
   const participants = hasSearch ? (data ?? []) : []
 
-  const fieldOptions = options.map((field) => ({ label: fieldLabel(t, field), value: field }))
+  const fieldOptions = options.map((field) => ({ label: censusFieldLabel(t, field), value: field }))
   const selectedOption = fieldOptions.find((option) => option.value === selectedField) ?? null
 
   const memberbaseNote = t('census.search.memberbase_note', {

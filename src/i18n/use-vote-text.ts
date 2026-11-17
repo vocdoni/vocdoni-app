@@ -34,11 +34,14 @@ export const useVoteText = () => {
     return new Intl.DateTimeFormat(i18n.language, withYear ? { ...options, year: 'numeric' } : options).format(value)
   }
 
-  const durationWords = (duration: Duration) =>
-    formatDuration(duration, {
-      locale: datesLocale(i18n.language),
-      delimiter: t('votes.time_left_delimiter', { defaultValue: ' and ' }),
-    })
+  // Each unit in words, then the two as a list in the page's language ("2 days and 4 hours").
+  const durationWords = (duration: Duration) => {
+    const locale = datesLocale(i18n.language)
+    const units = (Object.keys(duration) as (keyof Duration)[])
+      .filter((unit) => duration[unit])
+      .map((unit) => formatDuration({ [unit]: duration[unit] }, { locale }))
+    return new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(units)
+  }
 
   // The boards' date ("dijous 12 de març a les 20:00") is a translated pattern over Intl parts: Intl's own long
   // form puts commas around the weekday and the time in some languages.

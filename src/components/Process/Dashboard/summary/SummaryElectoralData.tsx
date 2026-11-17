@@ -1,42 +1,59 @@
 import { Card, Span, Text } from '@chakra-ui/react'
-import { Fragment, useId, type ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { getAuthFieldLabel } from '~components/Process/CSP/fields'
+import { censusFieldLabel, getAuthFieldLabel } from '~components/Process/CSP/fields'
 import { SummaryCardHeader } from './SummaryCardHeader'
 import type { SummaryModel } from './use-summary-model'
 
 /**
- * How a voter proves who they are, in one sentence: every factor asked for, joined by "plus" (all are needed), and
- * for a one-time code the channels it can travel by, joined by "or". Only the factors stand out. Null for a census
- * that asks for nothing.
+ * How a voter proves who they are, in one whole sentence per case: the fields asked for (a list in the page's
+ * language, all of them needed) and the channels a one-time code travels by. Only the factors stand out. The fields
+ * are named as the voter lookup names them. Null for a census that asks for nothing.
  */
 const useAuthMethod = (authFields: readonly string[], twoFaFields: readonly string[]): ReactNode => {
-  const { t } = useTranslation()
-  const factors: ReactNode[] = authFields.map((field) => getAuthFieldLabel(t, field))
+  const { t, i18n } = useTranslation()
+  const labels = authFields.map((field) =>
+    field === 'password' ? getAuthFieldLabel(t, field) : censusFieldLabel(t, field)
+  )
   const email = twoFaFields.includes('email')
   const phone = twoFaFields.includes('phone')
-  if (email || phone) factors.push(t('votes.summary.auth.code', { defaultValue: 'one-time code' }))
-  if (!factors.length) return null
+  const channel = email && phone ? 'email_or_sms' : email ? 'email' : phone ? 'sms' : null
+  if (!labels.length && !channel) return null
 
-  let channel = ''
-  if (email && phone) channel = t('votes.summary.auth.by_email_or_sms', { defaultValue: ', by email or SMS' })
-  else if (email) channel = t('votes.summary.auth.by_email', { defaultValue: ' by email' })
-  else if (phone) channel = t('votes.summary.auth.by_sms', { defaultValue: ' by SMS' })
-
-  return (
-    <>
-      {factors.map((factor, index) => (
-        <Fragment key={index}>
-          {index > 0 && t('votes.summary.auth.plus', { defaultValue: ' plus ' })}
-          <Span fontWeight='medium' color='fg'>
-            {factor}
-          </Span>
-        </Fragment>
-      ))}
-      {channel}
-      {t('votes.summary.auth.end', { defaultValue: '.' })}
-    </>
+  const fields = new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(labels)
+  const components = { b: <Span fontWeight='medium' color='fg' /> }
+  const sentence = (key: string, defaults: string) => (
+    <Trans i18nKey={key} defaults={defaults} values={{ fields }} components={components} />
   )
+
+  if (!channel) return sentence('votes.summary.auth.fields', '<b>{{fields}}</b>.')
+  if (!labels.length) {
+    switch (channel) {
+      case 'email':
+        return sentence('votes.summary.auth.code_email', '<b>A one-time code</b> sent by email.')
+      case 'sms':
+        return sentence('votes.summary.auth.code_sms', '<b>A one-time code</b> sent by SMS.')
+      default:
+        return sentence('votes.summary.auth.code_email_or_sms', '<b>A one-time code</b> sent by email or SMS.')
+    }
+  }
+  switch (channel) {
+    case 'email':
+      return sentence(
+        'votes.summary.auth.fields_code_email',
+        '<b>{{fields}}</b>, plus a <b>one-time code</b> sent by email.'
+      )
+    case 'sms':
+      return sentence(
+        'votes.summary.auth.fields_code_sms',
+        '<b>{{fields}}</b>, plus a <b>one-time code</b> sent by SMS.'
+      )
+    default:
+      return sentence(
+        'votes.summary.auth.fields_code_email_or_sms',
+        '<b>{{fields}}</b>, plus a <b>one-time code</b> sent by email or SMS.'
+      )
+  }
 }
 
 /**

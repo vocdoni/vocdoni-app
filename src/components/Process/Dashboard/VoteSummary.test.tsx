@@ -230,28 +230,30 @@ describe('VoteSummary', () => {
       expect(screen.getByText('Automatic closing and results for everyone')).toBeInTheDocument()
     })
 
-    it('says how voters authenticate: factors joined by plus, a code with its channels joined by or', () => {
+    it('says how voters authenticate in one sentence: the fields as a list, then the code and its channels', () => {
       renderSummary(
         createProcess({ census: { size: 312, authFields: ['memberNumber'], twoFaFields: ['email', 'phone'] } }),
         184
       )
 
       expect(screen.getByText('Authentication method')).toBeInTheDocument()
-      expect(screen.getByText(textContent('Member Number plus one-time code, by email or SMS.'))).toBeInTheDocument()
+      expect(
+        screen.getByText(textContent('Member number, plus a one-time code sent by email or SMS.'))
+      ).toBeInTheDocument()
     })
 
-    it('names a single channel without a comma, and fields alone when no code is sent', () => {
+    it('lists several fields in the page language, a single channel, and fields alone when no code is sent', () => {
       const { unmount } = renderSummary(
-        createProcess({ census: { size: 312, authFields: ['name', 'nationalId'], twoFaFields: ['phone'] } }),
+        createProcess({ census: { size: 312, authFields: ['name', 'surname', 'nationalId'], twoFaFields: ['phone'] } }),
         184
       )
       expect(
-        screen.getByText(textContent('First Name plus National ID plus one-time code by SMS.'))
+        screen.getByText(textContent('Name, Surname, and National ID, plus a one-time code sent by SMS.'))
       ).toBeInTheDocument()
       unmount()
 
       renderSummary(createProcess(), 184)
-      expect(screen.getByText(textContent('Member Number.'))).toBeInTheDocument()
+      expect(screen.getByText(textContent('Member number.'))).toBeInTheDocument()
     })
 
     it('shows seven facts and the turnout of each question on a phone, with the calendar and without the voting data', () => {
