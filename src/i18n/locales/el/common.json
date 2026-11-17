@@ -5,24 +5,18 @@
   },
   "actions": {
     "cancel": "Ακύρωση",
-    "cancel_description": "Ακύρωση της ψηφοφορίας «{{ election.title.default }}»...\n\nΠροσοχή: αυτή η ενέργεια είναι μη αναστρέψιμη και θα ακυρώσει όλες τις προηγούμενες ψήφους.",
-    "close": "Κλείσιμο",
     "confirm": "Επιβεβαίωση",
     "continue": "Συνεχίστε αμέσως τη διαδικασία, αν έχει τεθεί σε παύση",
-    "continue_description": "Συνέχιση της ψηφοφορίας «{{ election.title.default }}»...",
     "create_first_vote": "Προβολή όλων των διαδικασιών",
     "create_new_vote": "Δημιουργία νέας ψηφοφορίας",
     "edit": "Επεξεργασία",
     "end": "Τερματισμός της ψηφοφορίας τώρα. Δεν θα μπορούν να υποβληθούν νέες ψήφοι και θα εμφανιστούν τα αποτελέσματα (δεν μπορεί να αναιρεθεί).",
-    "end_description": "Τερματισμός της ψηφοφορίας «{{ election.title.default }}»...\n\nΠροσοχή: αυτή η ενέργεια είναι μη αναστρέψιμη και οι ψηφοφόροι δεν θα μπορούν πλέον να ψηφίσουν.",
     "manage_team": "Διαχείριση ομάδας",
     "more": "Περισσότερες επιλογές",
     "pause": "Προσωρινή παύση της ψηφοφορίας μέχρι να συνεχιστεί χειροκίνητα. Όσο είναι σε παύση, οι ψηφοφόροι δεν μπορούν να υποβάλουν ψήφο.",
-    "pause_description": "Παύση της ψηφοφορίας «{{ election.title.default }}»...",
     "save": "Αποθήκευση αλλαγών",
     "save_changes": "Αποθήκευση αλλαγών",
-    "view_active_votes": "Προβολή ενεργών ψηφοφοριών",
-    "waiting_title": "Αναμονή για επιβεβαίωση της συναλλαγής..."
+    "view_active_votes": "Προβολή ενεργών ψηφοφοριών"
   },
   "add_new_org": "Προσθήκη νέου οργανισμού",
   "already_member": "Έχετε ήδη λογαριασμό;",
@@ -1400,10 +1394,6 @@
       "paragraph_4": "Μόλις ολοκληρωθεί η διαδικασία ψηφοφορίας, τα τελικά αποτελέσματα και τα σχετικά αρχεία της διαδικασίας δεσμεύονται στο blockchain. Αυτό καθιστά τη διαδικασία ελέγξιμη και βοηθά να διασφαλιστεί ότι η δημοσιευμένη αναφορά μπορεί να συγκριθεί με τα δημόσια τεχνικά αρχεία."
     }
   },
-  "processes": {
-    "load_error": "Δεν ήταν δυνατή η φόρτωση των ψηφοφοριών",
-    "load_error_description": "Δοκιμάστε ξανά."
-  },
   "profile": {
     "error": "Αποτυχία ενημέρωσης προφίλ",
     "success": "Το προφίλ ενημερώθηκε με επιτυχία"
@@ -1963,6 +1953,7 @@
         "result": "Αποτέλεσμα",
         "view": "Προβολή"
       },
+      "action_label": "{{action}}: {{title}}",
       "closed_on": "στις {{date}}",
       "closes": "Κλείνει την {{date}}.",
       "delete": "Διαγραφή",
@@ -1979,6 +1970,7 @@
         "ready": "Έτοιμες"
       },
       "filter_label": "Φιλτράρισμα ανά κατάσταση",
+      "load_error": "Δεν ήταν δυνατή η φόρτωση των ψηφοφοριών",
       "meta": "{{questions}}, {{voters}}.",
       "meta_no_voters": "{{questions}}.",
       "meta_questions_one": "{{count, number}} ερώτηση",
@@ -2002,7 +1994,8 @@
         "end_passed": "Η ημερομηνία λήξης έχει περάσει.",
         "missing_end": "Δεν υπάρχει ακόμη ημερομηνία λήξης."
       },
-      "when": "{{weekday}} {{day}} στις {{time}}"
+      "when": "{{weekday}} {{day}} στις {{time}}",
+      "when_day": "{{weekday}} {{day}} στις {{time}}"
     },
     "manage": {
       "abstention": "Αποχή",
@@ -2049,23 +2042,19 @@
         "close_one": "Επόμενο βήμα: κλείστε την ερώτηση {{numbers}}",
         "close_other": "Επόμενο βήμα: κλείστε τις ερωτήσεις {{numbers}}",
         "open": "Επόμενο βήμα: ανοίξτε την ερώτηση {{numbers}}",
-        "resume": "Επόμενο βήμα: συνεχίστε την ερώτηση {{numbers}}",
         "resume_vote": "Επόμενο βήμα: συνεχίστε την ψηφοφορία"
       },
-      "note_kind": "{{note}} {{kind}}.",
-      "one_open_note": "Μόνο μία ερώτηση μπορεί να είναι ανοιχτή κάθε φορά: όσο υπάρχει μία, το «Άνοιγμα» είναι απενεργοποιημένο στις άλλες. Το ίδιο και πριν από την ώρα έναρξης.",
       "open": "Άνοιγμα",
-      "pause": "Παύση",
+      "open_off_note": "Το «Άνοιγμα» είναι απενεργοποιημένο όσο είναι ανοιχτή άλλη ερώτηση, και πριν από την ώρα έναρξης.",
       "paused_note": "Κανείς δεν μπορεί να την ψηφίσει.",
       "percent": "{{percent}}%",
       "provisional": "Προσωρινό αποτέλεσμα.",
       "question_ruler": "Ψήφισαν {{voted}} από {{total}} άτομα, {{percent}}%.",
       "question_ruler_count": "Ψήφισαν {{voted}} άτομα.",
-      "resume": "Συνέχιση",
       "starts": "Η ψηφοφορία ξεκινά στις {{date}}.",
       "toggle_hint": "Εμφάνιση ή απόκρυψη λεπτομερειών",
       "toggle_number": "Ερώτηση {{number}}:",
-      "turnout_share": "{{percent}}% συμμετοχή"
+      "turnout_figure": "<n>{{percent}}%</n> συμμετοχή"
     },
     "page": {
       "back": "Ψηφοφορίες",
@@ -2105,6 +2094,8 @@
       "choice_points_other": "{{votes}} πόντοι",
       "choice_votes_one": "{{votes}} ψήφος",
       "choice_votes_other": "{{votes}} ψήφοι",
+      "choice_weight_one": "{{votes}} σταθμισμένη ψήφος",
+      "choice_weight_other": "{{votes}} σταθμισμένες ψήφοι",
       "counting": "Η ψηφοφορία έκλεισε. Τα αποτελέσματα καταμετρώνται και θα εμφανιστούν εδώ σύντομα."
     },
     "state": {
@@ -2118,19 +2109,23 @@
     "summary": {
       "all_open": "Όλες ανοιχτές μαζί",
       "answered": "Συμμετοχή: {{answered}} από {{total}}",
+      "answered_count_label_one": "{{count, number}} άτομο απάντησε στην ερώτηση {{number}}.",
+      "answered_count_label_other": "{{count, number}} άτομα απάντησαν στην ερώτηση {{number}}.",
       "answered_label": "{{answered}} από {{total}} άτομα απάντησαν την ερώτηση {{number}}.",
       "auth": {
-        "by_email": " μέσω email",
-        "by_email_or_sms": ", μέσω email ή SMS",
-        "by_sms": " μέσω SMS",
-        "code": "κωδικός μίας χρήσης",
-        "end": ".",
-        "plus": " και ",
+        "code_email": "<b>Ένας κωδικός μίας χρήσης</b> μέσω email.",
+        "code_email_or_sms": "<b>Ένας κωδικός μίας χρήσης</b> μέσω email ή SMS.",
+        "code_sms": "<b>Ένας κωδικός μίας χρήσης</b> μέσω SMS.",
+        "fields": "<b>{{fields}}</b>.",
+        "fields_code_email": "<b>{{fields}}</b>, και ένας <b>κωδικός μίας χρήσης</b> μέσω email.",
+        "fields_code_email_or_sms": "<b>{{fields}}</b>, και ένας <b>κωδικός μίας χρήσης</b> μέσω email ή SMS.",
+        "fields_code_sms": "<b>{{fields}}</b>, και ένας <b>κωδικός μίας χρήσης</b> μέσω SMS.",
         "title": "Μέθοδος ταυτοποίησης"
       },
       "ballot_link": "Ψηφοδέλτιο",
       "blank_one": "{{count, number}} από τους {{voters}} ψηφοφόρους την άφησε κενή.",
       "blank_other": "{{count, number}} από τους {{voters}} ψηφοφόρους την άφησαν κενή.",
+      "blank_none": "Κανείς δεν την άφησε κενή.",
       "calendar": {
         "at": "Στις {{time}}.",
         "close": "Αυτόματη λήξη και αποτελέσματα για όλους",
@@ -2140,15 +2135,14 @@
         "opens": "Ανοίγει η ψηφοφορία",
         "title": "Ημερολόγιο",
         "today": "Σήμερα",
-        "today_paused": "Σήμερα. Ψηφοφορία σε παύση",
-        "today_paused_note": "Κανείς δεν μπορεί να ψηφίσει μέχρι να τη συνεχίσετε."
+        "today_paused": "Σήμερα. Ψηφοφορία σε παύση"
       },
       "copy_link": "Αντιγραφή του δημόσιου συνδέσμου",
+      "count_unknown": "Δεν ήταν δυνατή η φόρτωση της συμμετοχής.",
       "dock": {
         "label": "Χειρισμοί ψηφοφορίας",
         "state_votes": "{{state}}, {{votes}}",
-        "title": "{{number}}. {{title}}",
-        "vote_paused": "Ψηφοφορία σε παύση"
+        "title": "{{number}}. {{title}}"
       },
       "electoral_title": "Στοιχεία ψηφοφορίας",
       "fact": {
@@ -2156,7 +2150,7 @@
         "census_other": "{{count, number}} άτομα",
         "overwrite_allowed": "Ενεργή",
         "overwrite_not_allowed": "Ανενεργή",
-        "questions_all_one": "{{count, number}}, όλα ταυτόχρονα",
+        "questions_all_one": "{{count, number}}",
         "questions_all_other": "{{count, number}}, όλα ταυτόχρονα",
         "questions_by_question_one": "{{count, number}}, ερώτηση προς ερώτηση",
         "questions_by_question_other": "{{count, number}}, ερώτηση προς ερώτηση",
@@ -2166,10 +2160,6 @@
         "results_out": "δημόσια",
         "started_today": "σήμερα στις {{time}}",
         "starts_planned": "προγραμματισμένη την {{date}}"
-      },
-      "hint": {
-        "closes": "Κλείνει την {{date}}. {{left}}",
-        "paused": "Σε παύση. Η συμμετοχή δεν θα αλλάξει μέχρι να τη συνεχίσετε."
       },
       "idle": {
         "by_question_body": "Όταν ξεκινήσει, οι ερωτήσεις θα είναι κλειστές και θα τις ανοίγετε μία μία.",
@@ -2182,7 +2172,8 @@
         "not_started": "Δεν έχει ξεκινήσει ακόμα",
         "questions_one": "{{count, number}} ερώτηση",
         "questions_other": "{{count, number}} ερωτήσεις",
-        "ready_body": "{{people}} στο μητρώο και {{questions}}, όλες ανοιχτές μαζί.",
+        "ready_body_one": "{{people}} στο μητρώο και {{questions}}.",
+        "ready_body_other": "{{people}} στο μητρώο και {{questions}}, όλες ανοιχτές μαζί.",
         "ready_title": "Θα ανοίξει αυτόματα την {{date}}"
       },
       "label": {
@@ -2196,10 +2187,13 @@
         "start": "Έναρξη",
         "type": "Τύπος"
       },
+      "link_copied": "Ο σύνδεσμος αντιγράφηκε",
       "no_results": "χωρίς αποτελέσματα",
+      "nobody_voted": "Δεν ψήφισε κανείς.",
+      "nobody_voted_yet": "Δεν έχει ψηφίσει κανείς ακόμη.",
       "none_open": "καμία ανοιχτή",
-      "not_voted_one": "<n>{{count}}</n> δεν έχει ψηφίσει ακόμη",
-      "not_voted_other": "<n>{{count}}</n> δεν έχουν ψηφίσει ακόμη",
+      "not_voted_one": "<n>{{count, number}}</n> δεν έχει ψηφίσει ακόμη",
+      "not_voted_other": "<n>{{count, number}}</n> δεν έχουν ψηφίσει ακόμη",
       "paused": {
         "all_at_once_one": "Κανείς δεν μπορεί να ψηφίσει μέχρι να τη συνεχίσετε. Η {{votes}} ψήφος που δόθηκε διατηρείται και η προθεσμία δεν αλλάζει.",
         "all_at_once_other": "Κανείς δεν μπορεί να ψηφίσει μέχρι να τη συνεχίσετε. Οι {{votes}} ψήφοι που δόθηκαν διατηρούνται και η προθεσμία δεν αλλάζει.",
@@ -2218,14 +2212,25 @@
       "ruler_label_other": "{{count, number}} από {{total}} άτομα ψήφισαν, {{percent}}%",
       "ruler_label_any": "Τουλάχιστον {{voted}} από {{total}} άτομα ψήφισαν σε μια ερώτηση, {{percent}}%",
       "share_note": "Σύνδεσμος για την ψηφιακή κάλπη. Μοιραστείτε τον με όσους έχουν δικαίωμα ψήφου.",
+      "share_note_closed": "Σύνδεσμος για τη δημόσια σελίδα της ψηφοφορίας, με τα αποτελέσματά της.",
       "share_title": "Για κοινοποίηση",
       "turnout": "Συμμετοχή",
+      "voted_any_count_one": "Τουλάχιστον {{count, number}} άτομο ψήφισε σε μια ερώτηση",
+      "voted_any_count_other": "Τουλάχιστον {{count, number}} άτομα ψήφισαν σε μια ερώτηση",
       "voted_any_lines": "Τουλάχιστον {{voted}} από {{total}} ψήφισαν <br/>σε μια ερώτηση",
+      "voted_count_one": "{{count, number}} άτομο ψήφισε",
+      "voted_count_other": "{{count, number}} άτομα ψήφισαν",
       "voted_of_one": "Ψήφισαν {{count, number}} από {{total}}",
       "voted_of_other": "Ψήφισαν {{count, number}} από {{total}}"
     },
     "time_left": "Απομένουν {{duration}}",
-    "time_left_delimiter": " και "
+    "waiting": {
+      "cancel": "Ακύρωση της «{{title}}»…",
+      "continue": "Συνέχιση της «{{title}}»…",
+      "end": "Λήξη της «{{title}}»…",
+      "pause": "Παύση της «{{title}}»…",
+      "title": "Αναμονή επιβεβαίωσης της αλλαγής"
+    }
   },
   "voting_link": {
     "title": "Σύνδεσμος ψηφοφορίας"

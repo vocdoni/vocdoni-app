@@ -5,24 +5,18 @@
   },
   "actions": {
     "cancel": "Cancel",
-    "cancel_description": "Attention: canceling \"{{ election.title.default }}\" is irreversible and will discard all previous votes.",
-    "close": "Close",
     "confirm": "Confirm",
     "continue": "Resume the process immediately, in case it has been paused",
-    "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
     "create_first_vote": "View all processes",
     "create_new_vote": "Create new vote",
     "edit": "Edit",
     "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
-    "end_description": "Attention: ending \"{{ election.title.default }}\" is irreversible — voters will no longer be able to vote.",
     "manage_team": "Manage team",
     "more": "More options",
     "pause": "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
-    "pause_description": "Pausing \"{{ election.title.default }}\" voting process...",
     "save": "Save changes",
     "save_changes": "Save changes",
-    "view_active_votes": "View active votes",
-    "waiting_title": "Waiting for transaction confirmation..."
+    "view_active_votes": "View active votes"
   },
   "add_new_org": "Add a new organization",
   "already_member": "Already have an account?",
@@ -1400,10 +1394,6 @@
       "paragraph_4": "Once the voting process is completed, the final results and the relevant process records are anchored in the blockchain. This makes the process auditable and helps ensure that the published report can be compared against public technical records."
     }
   },
-  "processes": {
-    "load_error": "Unable to load voting processes",
-    "load_error_description": "Please try again."
-  },
   "profile": {
     "error": "Failed to update profile",
     "success": "Profile updated successfully"
@@ -1963,6 +1953,7 @@
         "result": "Result",
         "view": "View"
       },
+      "action_label": "{{action}}: {{title}}",
       "closed_on": "on {{date}}",
       "closes": "Closes {{date}}.",
       "delete": "Delete",
@@ -1979,6 +1970,7 @@
         "ready": "Ready"
       },
       "filter_label": "Filter by state",
+      "load_error": "The votes could not be loaded",
       "meta": "{{questions}}, {{voters}}.",
       "meta_no_voters": "{{questions}}.",
       "meta_questions_one": "{{count, number}} question",
@@ -1995,14 +1987,15 @@
       "row_error": "This vote could not be shown.",
       "search": "Search a vote",
       "starts": "Starts {{date}}.",
-      "starts_live": "Live, {{date}}.",
+      "starts_live": "Held live on {{date}}.",
       "title": "Votes",
       "turnout": "{{percent}}% turnout.",
       "warning": {
         "end_passed": "The closing date has passed.",
         "missing_end": "No closing date yet."
       },
-      "when": "{{weekday}} {{day}} at {{time}}"
+      "when": "{{weekday}} {{day}} at {{time}}",
+      "when_day": "{{weekday}} {{day}} at {{time}}"
     },
     "manage": {
       "abstention": "Abstention",
@@ -2049,23 +2042,19 @@
         "close_one": "Next step: close question {{numbers}}",
         "close_other": "Next step: close questions {{numbers}}",
         "open": "Next step: open question {{numbers}}",
-        "resume": "Next step: resume question {{numbers}}",
         "resume_vote": "Next step: resume the vote"
       },
-      "note_kind": "{{note}} {{kind}}.",
-      "one_open_note": "Only one question can be open at a time: while one is, “Open” is disabled on the others. Before the start time, too.",
       "open": "Open",
-      "pause": "Pause",
+      "open_off_note": "“Open” is disabled while another question is open, and before the start time.",
       "paused_note": "No one can vote on it.",
       "percent": "{{percent}}%",
       "provisional": "Provisional result.",
       "question_ruler": "{{voted}} of {{total}} people voted, {{percent}}%.",
       "question_ruler_count": "{{voted}} people voted.",
-      "resume": "Resume",
       "starts": "The vote starts {{date}}.",
       "toggle_hint": "Show or hide the detail",
       "toggle_number": "Question {{number}}:",
-      "turnout_share": "{{percent}}% turnout"
+      "turnout_figure": "<n>{{percent}}%</n> turnout"
     },
     "page": {
       "back": "Votes",
@@ -2105,6 +2094,8 @@
       "choice_points_other": "{{votes}} points",
       "choice_votes_one": "{{votes}} vote",
       "choice_votes_other": "{{votes}} votes",
+      "choice_weight_one": "{{votes}} weighted vote",
+      "choice_weight_other": "{{votes}} weighted votes",
       "counting": "The vote is closed. The results are being counted and will show here shortly."
     },
     "state": {
@@ -2118,19 +2109,23 @@
     "summary": {
       "all_open": "All open at once",
       "answered": "Turnout: {{answered}} of {{total}}",
+      "answered_count_label_one": "{{count, number}} person answered question {{number}}.",
+      "answered_count_label_other": "{{count, number}} people answered question {{number}}.",
       "answered_label": "{{answered}} of {{total}} people answered question {{number}}.",
       "auth": {
-        "by_email": " by email",
-        "by_email_or_sms": ", by email or SMS",
-        "by_sms": " by SMS",
-        "code": "one-time code",
-        "end": ".",
-        "plus": " plus ",
+        "code_email": "<b>A one-time code</b> sent by email.",
+        "code_email_or_sms": "<b>A one-time code</b> sent by email or SMS.",
+        "code_sms": "<b>A one-time code</b> sent by SMS.",
+        "fields": "<b>{{fields}}</b>.",
+        "fields_code_email": "<b>{{fields}}</b>, plus a <b>one-time code</b> sent by email.",
+        "fields_code_email_or_sms": "<b>{{fields}}</b>, plus a <b>one-time code</b> sent by email or SMS.",
+        "fields_code_sms": "<b>{{fields}}</b>, plus a <b>one-time code</b> sent by SMS.",
         "title": "Authentication method"
       },
       "ballot_link": "Ballot",
       "blank_one": "{{count, number}} of the {{voters}} voters left it blank.",
       "blank_other": "{{count, number}} of the {{voters}} voters left it blank.",
+      "blank_none": "Nobody left it blank.",
       "calendar": {
         "at": "At {{time}}.",
         "close": "Automatic closing and results for everyone",
@@ -2140,15 +2135,14 @@
         "opens": "Vote opens",
         "title": "Calendar",
         "today": "Today",
-        "today_paused": "Today. Vote paused",
-        "today_paused_note": "Nobody can vote until you resume it."
+        "today_paused": "Today. Vote paused"
       },
       "copy_link": "Copy the public link",
+      "count_unknown": "The turnout could not be loaded.",
       "dock": {
         "label": "Vote controls",
         "state_votes": "{{state}}, {{votes}}",
-        "title": "{{number}}. {{title}}",
-        "vote_paused": "Vote paused"
+        "title": "{{number}}. {{title}}"
       },
       "electoral_title": "Voting data",
       "fact": {
@@ -2156,7 +2150,7 @@
         "census_other": "{{count, number}} people",
         "overwrite_allowed": "Enabled",
         "overwrite_not_allowed": "Disabled",
-        "questions_all_one": "{{count, number}}, all at once",
+        "questions_all_one": "{{count, number}}",
         "questions_all_other": "{{count, number}}, all at once",
         "questions_by_question_one": "{{count, number}}, question by question",
         "questions_by_question_other": "{{count, number}}, question by question",
@@ -2166,10 +2160,6 @@
         "results_out": "public",
         "started_today": "today at {{time}}",
         "starts_planned": "planned {{date}}"
-      },
-      "hint": {
-        "closes": "Closes {{date}}. {{left}}",
-        "paused": "Paused. Turnout will not move until you resume it."
       },
       "idle": {
         "by_question_body": "When it starts, the questions start closed and you open them one at a time.",
@@ -2182,7 +2172,8 @@
         "not_started": "It has not started yet",
         "questions_one": "{{count, number}} question",
         "questions_other": "{{count, number}} questions",
-        "ready_body": "{{people}} in the census and {{questions}}, all open at once.",
+        "ready_body_one": "{{people}} in the census and {{questions}}.",
+        "ready_body_other": "{{people}} in the census and {{questions}}, all open at once.",
         "ready_title": "Opens by itself {{date}}"
       },
       "label": {
@@ -2196,10 +2187,13 @@
         "start": "Start",
         "type": "Type"
       },
+      "link_copied": "Link copied",
       "no_results": "no results",
+      "nobody_voted": "Nobody voted.",
+      "nobody_voted_yet": "Nobody has voted yet.",
       "none_open": "none open",
-      "not_voted_one": "<n>{{count}}</n> have not voted yet",
-      "not_voted_other": "<n>{{count}}</n> have not voted yet",
+      "not_voted_one": "<n>{{count, number}}</n> has not voted yet",
+      "not_voted_other": "<n>{{count, number}}</n> have not voted yet",
       "paused": {
         "all_at_once_one": "Nobody can vote until you resume it. The {{votes}} vote cast is kept and the deadline does not change.",
         "all_at_once_other": "Nobody can vote until you resume it. The {{votes}} votes cast are kept and the deadline does not change.",
@@ -2218,14 +2212,25 @@
       "ruler_label_other": "{{count, number}} of {{total}} people voted, {{percent}}%",
       "ruler_label_any": "At least {{voted}} of {{total}} people voted on a question, {{percent}}%",
       "share_note": "Link to the digital ballot box. Share it with the eligible voters.",
+      "share_note_closed": "Link to the public page of the vote, with its results.",
       "share_title": "To share",
       "turnout": "Turnout",
+      "voted_any_count_one": "At least {{count, number}} person voted on a question",
+      "voted_any_count_other": "At least {{count, number}} people voted on a question",
       "voted_any_lines": "At least {{voted}} of {{total}} voted <br/>on a question",
+      "voted_count_one": "{{count, number}} person voted",
+      "voted_count_other": "{{count, number}} people voted",
       "voted_of_one": "{{count, number}} of {{total}} voted",
       "voted_of_other": "{{count, number}} of {{total}} voted"
     },
     "time_left": "{{duration}} left",
-    "time_left_delimiter": " and "
+    "waiting": {
+      "cancel": "Canceling “{{title}}”…",
+      "continue": "Resuming “{{title}}”…",
+      "end": "Ending “{{title}}”…",
+      "pause": "Pausing “{{title}}”…",
+      "title": "Waiting for the change to be confirmed"
+    }
   },
   "voting_link": {
     "title": "Voting Link"

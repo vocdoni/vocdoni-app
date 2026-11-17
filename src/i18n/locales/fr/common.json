@@ -5,24 +5,18 @@
   },
   "actions": {
     "cancel": "Annuler",
-    "cancel_description": "Annulation de « {{ election.title.default }} »…\n\nAttention : cette action est irréversible et annulera tous les votes déjà émis.",
-    "close": "Fermer",
     "confirm": "Confirmer",
     "continue": "Reprendre immédiatement le processus s'il a été mis en pause",
-    "continue_description": "Reprise du processus de vote « {{ election.title.default }} »…",
     "create_first_vote": "Voir tous les processus",
     "create_new_vote": "Créer un nouveau vote",
     "edit": "Modifier",
     "end": "Clôt immédiatement le processus, empêche l'envoi de nouveaux votes et affiche les résultats (attention : action irréversible)",
-    "end_description": "Clôture du processus de vote « {{ election.title.default }} »…\n\nAttention : cette action est irréversible et les électeurs ne pourront plus voter.",
     "manage_team": "Gérer l'équipe",
     "more": "Plus d'options",
     "pause": "Met temporairement le processus de vote en pause, jusqu'à reprise manuelle. Pendant la pause, les électeurs ne peuvent pas voter.",
-    "pause_description": "Mise en pause du processus de vote « {{ election.title.default }} »…",
     "save": "Enregistrer les modifications",
     "save_changes": "Enregistrer les modifications",
-    "view_active_votes": "Voir les votes actifs",
-    "waiting_title": "En attente de la confirmation de la transaction…"
+    "view_active_votes": "Voir les votes actifs"
   },
   "add_new_org": "Ajouter une nouvelle organisation",
   "already_member": "Vous avez déjà un compte ?",
@@ -1426,10 +1420,6 @@
       "paragraph_4": "Une fois le processus de vote terminé, les résultats finaux et les enregistrements pertinents du processus sont ancrés dans la blockchain. Cela rend le processus vérifiable et contribue à garantir que le rapport publié peut être comparé aux enregistrements techniques publics."
     }
   },
-  "processes": {
-    "load_error": "Impossible de charger les processus de vote",
-    "load_error_description": "Réessayez."
-  },
   "profile": {
     "error": "Échec de la mise à jour du profil",
     "success": "Profil mis à jour avec succès"
@@ -2014,6 +2004,7 @@
         "result": "Résultat",
         "view": "Voir"
       },
+      "action_label": "{{action}} : {{title}}",
       "closed_on": "le {{date}}",
       "closes": "Se termine le {{date}}.",
       "delete": "Supprimer",
@@ -2030,6 +2021,7 @@
         "ready": "Prêts"
       },
       "filter_label": "Filtrer par état",
+      "load_error": "Impossible de charger les votes",
       "meta": "{{questions}}, {{voters}}.",
       "meta_no_voters": "{{questions}}.",
       "meta_questions_one": "{{count, number}} question",
@@ -2055,7 +2047,8 @@
         "end_passed": "La date de fin est dépassée.",
         "missing_end": "Pas encore de date de fin."
       },
-      "when": "{{weekday}} {{day}} à {{time}}"
+      "when": "{{weekday}} {{day}} à {{time}}",
+      "when_day": "{{weekday}} {{day}} à {{time}}"
     },
     "manage": {
       "abstention": "Abstention",
@@ -2110,23 +2103,19 @@
         "close_many": "Étape suivante : fermer les questions {{numbers}}",
         "close_other": "Étape suivante : fermer les questions {{numbers}}",
         "open": "Étape suivante : ouvrir la question {{numbers}}",
-        "resume": "Étape suivante : reprendre la question {{numbers}}",
         "resume_vote": "Étape suivante : reprendre le vote"
       },
-      "note_kind": "{{note}} {{kind}}.",
-      "one_open_note": "Une seule question peut être ouverte à la fois : tant qu'une question l'est, « Ouvrir » est désactivé sur les autres. Avant l'heure de début aussi.",
       "open": "Ouvrir",
-      "pause": "Mettre en pause",
+      "open_off_note": "« Ouvrir » est désactivé tant qu'une autre question est ouverte, et avant l'heure de début.",
       "paused_note": "Personne ne peut y voter.",
       "percent": "{{percent}} %",
       "provisional": "Résultat provisoire.",
       "question_ruler": "{{voted}} personnes sur {{total}} ont voté, {{percent}} %.",
       "question_ruler_count": "{{voted}} personnes ont voté.",
-      "resume": "Reprendre",
       "starts": "Le vote démarre le {{date}}.",
       "toggle_hint": "Afficher ou masquer le détail",
       "toggle_number": "Question {{number}} :",
-      "turnout_share": "{{percent}} % de participation"
+      "turnout_figure": "<n>{{percent}} %</n> de participation"
     },
     "page": {
       "back": "Votes",
@@ -2168,6 +2157,9 @@
       "choice_votes_one": "{{votes}} vote",
       "choice_votes_many": "{{votes}} votes",
       "choice_votes_other": "{{votes}} votes",
+      "choice_weight_one": "{{votes}} vote pondéré",
+      "choice_weight_many": "{{votes}} votes pondérés",
+      "choice_weight_other": "{{votes}} votes pondérés",
       "counting": "Le vote est clos. Les résultats sont en cours de décompte et s'afficheront ici sous peu."
     },
     "state": {
@@ -2181,20 +2173,25 @@
     "summary": {
       "all_open": "Toutes ouvertes à la fois",
       "answered": "Participation : {{answered}} sur {{total}}",
+      "answered_count_label_one": "{{count, number}} personne a répondu à la question {{number}}.",
+      "answered_count_label_many": "{{count, number}} personnes ont répondu à la question {{number}}.",
+      "answered_count_label_other": "{{count, number}} personnes ont répondu à la question {{number}}.",
       "answered_label": "{{answered}} personnes sur {{total}} ont répondu à la question {{number}}.",
       "auth": {
-        "by_email": " par e-mail",
-        "by_email_or_sms": ", par e-mail ou par SMS",
-        "by_sms": " par SMS",
-        "code": "code à usage unique",
-        "end": ".",
-        "plus": " plus ",
+        "code_email": "<b>Un code à usage unique</b> envoyé par e-mail.",
+        "code_email_or_sms": "<b>Un code à usage unique</b> envoyé par e-mail ou par SMS.",
+        "code_sms": "<b>Un code à usage unique</b> envoyé par SMS.",
+        "fields": "<b>{{fields}}</b>.",
+        "fields_code_email": "<b>{{fields}}</b>, plus un <b>code à usage unique</b> envoyé par e-mail.",
+        "fields_code_email_or_sms": "<b>{{fields}}</b>, plus un <b>code à usage unique</b> envoyé par e-mail ou par SMS.",
+        "fields_code_sms": "<b>{{fields}}</b>, plus un <b>code à usage unique</b> envoyé par SMS.",
         "title": "Méthode d'authentification"
       },
       "ballot_link": "Bulletin",
       "blank_one": "{{count, number}} des {{voters}} électeurs l'a laissée blanche.",
       "blank_many": "{{count, number}} des {{voters}} électeurs l'ont laissée blanche.",
       "blank_other": "{{count, number}} des {{voters}} électeurs l'ont laissée blanche.",
+      "blank_none": "Personne ne l'a laissée blanche.",
       "calendar": {
         "at": "À {{time}}.",
         "close": "Clôture automatique et résultats pour tous",
@@ -2204,15 +2201,14 @@
         "opens": "Ouverture du vote",
         "title": "Calendrier",
         "today": "Aujourd'hui",
-        "today_paused": "Aujourd'hui. Vote en pause",
-        "today_paused_note": "Personne ne peut voter tant que vous ne le reprenez pas."
+        "today_paused": "Aujourd'hui. Vote en pause"
       },
       "copy_link": "Copier le lien public",
+      "count_unknown": "Impossible de charger la participation.",
       "dock": {
         "label": "Commandes du vote",
         "state_votes": "{{state}}, {{votes}}",
-        "title": "{{number}}. {{title}}",
-        "vote_paused": "Vote en pause"
+        "title": "{{number}}. {{title}}"
       },
       "electoral_title": "Données du vote",
       "fact": {
@@ -2221,7 +2217,7 @@
         "census_other": "{{count, number}} personnes",
         "overwrite_allowed": "Activé",
         "overwrite_not_allowed": "Désactivé",
-        "questions_all_one": "{{count, number}}, toutes en même temps",
+        "questions_all_one": "{{count, number}}",
         "questions_all_many": "{{count, number}}, toutes en même temps",
         "questions_all_other": "{{count, number}}, toutes en même temps",
         "questions_by_question_one": "{{count, number}}, question par question",
@@ -2233,10 +2229,6 @@
         "results_out": "publics",
         "started_today": "aujourd'hui à {{time}}",
         "starts_planned": "prévu le {{date}}"
-      },
-      "hint": {
-        "closes": "Se termine le {{date}}. {{left}}",
-        "paused": "En pause. La participation ne bougera pas tant que vous ne le reprenez pas."
       },
       "idle": {
         "by_question_body": "Quand il commencera, les questions seront fermées et vous les ouvrirez une par une.",
@@ -2250,7 +2242,9 @@
         "questions_one": "{{count, number}} question",
         "questions_many": "{{count, number}} questions",
         "questions_other": "{{count, number}} questions",
-        "ready_body": "{{people}} sur la liste électorale et {{questions}}, toutes ouvertes à la fois.",
+        "ready_body_one": "{{people}} sur la liste électorale et {{questions}}.",
+        "ready_body_many": "{{people}} sur la liste électorale et {{questions}}, toutes ouvertes à la fois.",
+        "ready_body_other": "{{people}} sur la liste électorale et {{questions}}, toutes ouvertes à la fois.",
         "ready_title": "S'ouvrira automatiquement le {{date}}"
       },
       "label": {
@@ -2264,11 +2258,14 @@
         "start": "Début",
         "type": "Type"
       },
+      "link_copied": "Lien copié",
       "no_results": "pas de résultats",
+      "nobody_voted": "Personne n'a voté.",
+      "nobody_voted_yet": "Personne n'a encore voté.",
       "none_open": "aucune ouverte",
-      "not_voted_one": "<n>{{count}}</n> n'a pas encore voté",
-      "not_voted_many": "<n>{{count}}</n> n'ont pas encore voté",
-      "not_voted_other": "<n>{{count}}</n> n'ont pas encore voté",
+      "not_voted_one": "<n>{{count, number}}</n> n'a pas encore voté",
+      "not_voted_many": "<n>{{count, number}}</n> n'ont pas encore voté",
+      "not_voted_other": "<n>{{count, number}}</n> n'ont pas encore voté",
       "paused": {
         "all_at_once_one": "Personne ne peut voter tant que vous ne le reprenez pas. Le {{votes}} vote exprimé est conservé et l'échéance ne change pas.",
         "all_at_once_many": "Personne ne peut voter tant que vous ne le reprenez pas. Les {{votes}} votes exprimés sont conservés et l'échéance ne change pas.",
@@ -2290,15 +2287,28 @@
       "ruler_label_other": "{{count, number}} personnes sur {{total}} ont voté, {{percent}} %",
       "ruler_label_any": "Au moins {{voted}} personnes sur {{total}} ont voté à une question, {{percent}} %",
       "share_note": "Lien vers l'urne numérique. Partagez-le avec les personnes ayant le droit de vote.",
+      "share_note_closed": "Lien vers la page publique du vote, avec ses résultats.",
       "share_title": "À partager",
       "turnout": "Participation",
+      "voted_any_count_one": "Au moins {{count, number}} personne a voté à une question",
+      "voted_any_count_many": "Au moins {{count, number}} personnes ont voté à une question",
+      "voted_any_count_other": "Au moins {{count, number}} personnes ont voté à une question",
       "voted_any_lines": "Au moins {{voted}} sur {{total}} ont voté <br/>à une question",
+      "voted_count_one": "{{count, number}} personne a voté",
+      "voted_count_many": "{{count, number}} personnes ont voté",
+      "voted_count_other": "{{count, number}} personnes ont voté",
       "voted_of_one": "{{count, number}} sur {{total}} a voté",
       "voted_of_many": "{{count, number}} sur {{total}} ont voté",
       "voted_of_other": "{{count, number}} sur {{total}} ont voté"
     },
     "time_left": "{{duration}} restant",
-    "time_left_delimiter": " et "
+    "waiting": {
+      "cancel": "Annulation de « {{title}} »…",
+      "continue": "Reprise de « {{title}} »…",
+      "end": "Fin de « {{title}} »…",
+      "pause": "Mise en pause de « {{title}} »…",
+      "title": "En attente de la confirmation du changement"
+    }
   },
   "voting_link": {
     "title": "Lien de vote"

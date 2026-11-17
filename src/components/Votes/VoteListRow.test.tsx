@@ -163,7 +163,7 @@ describe('VoteListRow content', () => {
       }),
       { now: march10 }
     )
-    expect(screen.getByText('Live, Saturday November 14 at 18:30.')).toBeInTheDocument()
+    expect(screen.getByText('Held live on Saturday November 14 at 18:30.')).toBeInTheDocument()
   })
 
   it('adds the year to a date of another year, in the meta line and on a closed row', () => {

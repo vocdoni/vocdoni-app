@@ -74,7 +74,7 @@ export const VoteRowMeta = ({ row, results, now }: VoteRowMetaProps) => {
     return (
       <Text textStyle='meta' color='fg.subtle'>
         {isQuestionByQuestion(process)
-          ? t('votes.list.starts_live', { defaultValue: 'Live, {{date}}.', date })
+          ? t('votes.list.starts_live', { defaultValue: 'Held live on {{date}}.', date })
           : t('votes.list.starts', { defaultValue: 'Starts {{date}}.', date })}
       </Text>
     )

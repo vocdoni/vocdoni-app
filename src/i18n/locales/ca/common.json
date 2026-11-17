@@ -5,24 +5,18 @@
   },
   "actions": {
     "cancel": "Cancel·la",
-    "cancel_description": "Atenció: cancel·lar \"{{ election.title.default }}\" no es pot desfer i anul·larà tots els vots emesos.",
-    "close": "Tanca",
     "confirm": "Confirma",
     "continue": "Reobre el procés immediatament, si s'ha pausat",
-    "continue_description": "Reobrint el procés de votació \"{{ election.title.default }}\"",
     "create_first_vote": "Mostra tots els processos",
     "create_new_vote": "Crea una nova votació",
     "edit": "Edita",
     "end": "Finalitza immediatament el procés, impedint que es presentin nous vots, i mostra els resultats de votació (precaució: no es pot desfer)",
-    "end_description": "Atenció: finalitzar \"{{ election.title.default }}\" no es pot desfer i els votants ja no podran votar.",
     "manage_team": "Gestiona l'equip",
     "more": "Més opcions",
     "pause": "Posa el procés de votació en pausa temporalment, fins que es reprengui manualment. Mentre el procés està en pausa, els votants no poden enviar vots.",
-    "pause_description": "Pausant el procés de votació \"{{ election.title.default }}\"...",
     "save": "Desa els canvis",
     "save_changes": "Desa els canvis",
-    "view_active_votes": "Mostra les votacions actives",
-    "waiting_title": "Esperant la confirmació de la transacció..."
+    "view_active_votes": "Mostra les votacions actives"
   },
   "add_new_org": "Afegeix una nova organització",
   "already_member": "Ja tens un compte?",
@@ -1426,10 +1420,6 @@
       "paragraph_4": "Un cop completat el procés de votació, els resultats finals i els registres rellevants del procés queden ancorats a la blockchain. Això fa que el procés sigui auditable i ajuda a garantir que l'informe publicat es pugui comparar amb registres tècnics públics."
     }
   },
-  "processes": {
-    "load_error": "No s'han pogut carregar els processos de votació",
-    "load_error_description": "Torna-ho a provar."
-  },
   "profile": {
     "error": "No s'ha pogut actualitzar el perfil",
     "success": "Perfil actualitzat correctament"
@@ -2014,6 +2004,7 @@
         "result": "Resultat",
         "view": "Obre"
       },
+      "action_label": "{{action}}: {{title}}",
       "closed_on": "el {{date}}",
       "closes": "Tanca {{date}}.",
       "delete": "Elimina",
@@ -2030,6 +2021,7 @@
         "ready": "Preparades"
       },
       "filter_label": "Filtra per estat",
+      "load_error": "No s'han pogut carregar les votacions",
       "meta": "{{questions}}, {{voters}}.",
       "meta_no_voters": "{{questions}}.",
       "meta_questions_one": "{{count, number}} pregunta",
@@ -2055,7 +2047,8 @@
         "end_passed": "La data de tancament ja ha passat.",
         "missing_end": "Li falta la data de tancament."
       },
-      "when": "{{weekday}} {{day}} a les {{time}}"
+      "when": "{{weekday}} {{day}} a les {{time}}",
+      "when_day": "{{weekday}} {{day}} a les {{time}}"
     },
     "manage": {
       "abstention": "Abstenció",
@@ -2110,23 +2103,19 @@
         "close_many": "Següent pas: tanca les preguntes {{numbers}}",
         "close_other": "Següent pas: tanca les preguntes {{numbers}}",
         "open": "Següent pas: obre la pregunta {{numbers}}",
-        "resume": "Següent pas: reprèn la pregunta {{numbers}}",
         "resume_vote": "Següent pas: reprèn la votació"
       },
-      "note_kind": "{{note}} {{kind}}.",
-      "one_open_note": "Només hi pot haver una pregunta oberta alhora: mentre n'hi ha una, «Obre» surt desactivat a les altres. Abans de l'hora d'inici, també.",
       "open": "Obre",
-      "pause": "Pausa",
+      "open_off_note": "«Obre» surt desactivat mentre hi ha una altra pregunta oberta, i abans de l'hora d'inici.",
       "paused_note": "Ningú la pot votar.",
       "percent": "{{percent}}%",
       "provisional": "Resultat provisional.",
       "question_ruler": "Han votat {{voted}} de {{total}} persones, el {{percent}}%.",
       "question_ruler_count": "Han votat {{voted}} persones.",
-      "resume": "Reprèn",
       "starts": "La votació comença {{date}}.",
       "toggle_hint": "Mostra o amaga el detall",
       "toggle_number": "Pregunta {{number}}:",
-      "turnout_share": "{{percent}}% de participació"
+      "turnout_figure": "<n>{{percent}}%</n> de participació"
     },
     "page": {
       "back": "Votacions",
@@ -2168,6 +2157,9 @@
       "choice_votes_one": "{{votes}} vot",
       "choice_votes_many": "{{votes}} vots",
       "choice_votes_other": "{{votes}} vots",
+      "choice_weight_one": "{{votes}} vot ponderat",
+      "choice_weight_many": "{{votes}} vots ponderats",
+      "choice_weight_other": "{{votes}} vots ponderats",
       "counting": "La votació està tancada. Els resultats s'estan comptant i es veuran aquí d'aquí a poc."
     },
     "state": {
@@ -2181,20 +2173,25 @@
     "summary": {
       "all_open": "Totes obertes alhora",
       "answered": "Participació: {{answered}} de {{total}}",
+      "answered_count_label_one": "Ha respost la pregunta {{number}} {{count, number}} persona.",
+      "answered_count_label_many": "Han respost la pregunta {{number}} {{count, number}} persones.",
+      "answered_count_label_other": "Han respost la pregunta {{number}} {{count, number}} persones.",
       "answered_label": "Han respost la pregunta {{number}} {{answered}} de {{total}} persones.",
       "auth": {
-        "by_email": " per correu",
-        "by_email_or_sms": ", per correu o per SMS",
-        "by_sms": " per SMS",
-        "code": "codi d'un sol ús",
-        "end": ".",
-        "plus": " més ",
+        "code_email": "<b>Un codi d'un sol ús</b> per correu.",
+        "code_email_or_sms": "<b>Un codi d'un sol ús</b> per correu o per SMS.",
+        "code_sms": "<b>Un codi d'un sol ús</b> per SMS.",
+        "fields": "<b>{{fields}}</b>.",
+        "fields_code_email": "<b>{{fields}}</b>, més un <b>codi d'un sol ús</b> per correu.",
+        "fields_code_email_or_sms": "<b>{{fields}}</b>, més un <b>codi d'un sol ús</b> per correu o per SMS.",
+        "fields_code_sms": "<b>{{fields}}</b>, més un <b>codi d'un sol ús</b> per SMS.",
         "title": "Mètode d'autenticació"
       },
       "ballot_link": "Papereta",
       "blank_one": "{{count, number}} dels {{voters}} votants l'ha deixat en blanc.",
       "blank_many": "{{count, number}} dels {{voters}} votants l'han deixat en blanc.",
       "blank_other": "{{count, number}} dels {{voters}} votants l'han deixat en blanc.",
+      "blank_none": "Ningú l'ha deixat en blanc.",
       "calendar": {
         "at": "A les {{time}}.",
         "close": "Tancament automàtic i resultats a tothom",
@@ -2204,15 +2201,14 @@
         "opens": "S'obre la votació",
         "title": "Calendari",
         "today": "Avui",
-        "today_paused": "Avui. Votació en pausa",
-        "today_paused_note": "Ningú pot votar fins que la reprenguis."
+        "today_paused": "Avui. Votació en pausa"
       },
       "copy_link": "Copia l'enllaç públic",
+      "count_unknown": "No s'ha pogut carregar la participació.",
       "dock": {
         "label": "Controls de la votació",
         "state_votes": "{{state}}, {{votes}}",
-        "title": "{{number}}. {{title}}",
-        "vote_paused": "Votació en pausa"
+        "title": "{{number}}. {{title}}"
       },
       "electoral_title": "Dades electorals",
       "fact": {
@@ -2221,7 +2217,7 @@
         "census_other": "{{count, number}} persones",
         "overwrite_allowed": "Activada",
         "overwrite_not_allowed": "Desactivada",
-        "questions_all_one": "{{count, number}}, totes alhora",
+        "questions_all_one": "{{count, number}}",
         "questions_all_many": "{{count, number}}, totes alhora",
         "questions_all_other": "{{count, number}}, totes alhora",
         "questions_by_question_one": "{{count, number}}, pregunta per pregunta",
@@ -2233,10 +2229,6 @@
         "results_out": "públics",
         "started_today": "avui a les {{time}}",
         "starts_planned": "previst {{date}}"
-      },
-      "hint": {
-        "closes": "Tanca {{date}}. {{left}}",
-        "paused": "En pausa. La participació no es mourà fins que la reprenguis."
       },
       "idle": {
         "by_question_body": "Quan comenci, les preguntes començaran tancades i les aniràs obrint d'una en una.",
@@ -2250,7 +2242,9 @@
         "questions_one": "{{count, number}} pregunta",
         "questions_many": "{{count, number}} preguntes",
         "questions_other": "{{count, number}} preguntes",
-        "ready_body": "{{people}} al cens i {{questions}}, totes obertes alhora.",
+        "ready_body_one": "{{people}} al cens i {{questions}}.",
+        "ready_body_many": "{{people}} al cens i {{questions}}, totes obertes alhora.",
+        "ready_body_other": "{{people}} al cens i {{questions}}, totes obertes alhora.",
         "ready_title": "S'obrirà sola {{date}}"
       },
       "label": {
@@ -2264,11 +2258,14 @@
         "start": "Inici",
         "type": "Tipus"
       },
+      "link_copied": "Enllaç copiat",
       "no_results": "sense resultats",
+      "nobody_voted": "No ha votat ningú.",
+      "nobody_voted_yet": "Encara no ha votat ningú.",
       "none_open": "cap d'oberta",
-      "not_voted_one": "<n>{{count}}</n> encara no ha votat",
-      "not_voted_many": "<n>{{count}}</n> encara no han votat",
-      "not_voted_other": "<n>{{count}}</n> encara no han votat",
+      "not_voted_one": "<n>{{count, number}}</n> encara no ha votat",
+      "not_voted_many": "<n>{{count, number}}</n> encara no han votat",
+      "not_voted_other": "<n>{{count, number}}</n> encara no han votat",
       "paused": {
         "all_at_once_one": "Ningú pot votar fins que la reprenguis. El {{votes}} vot emès es conserva i el termini no canvia.",
         "all_at_once_many": "Ningú pot votar fins que la reprenguis. Els {{votes}} vots emesos es conserven i el termini no canvia.",
@@ -2290,15 +2287,28 @@
       "ruler_label_other": "{{count, number}} de {{total}} persones han votat, {{percent}}%",
       "ruler_label_any": "Almenys {{voted}} de {{total}} persones han votat alguna pregunta, el {{percent}}%",
       "share_note": "Enllaç a l'urna digital. Comparteix-lo amb les persones amb dret a vot.",
+      "share_note_closed": "Enllaç a la pàgina pública de la votació, amb els resultats.",
       "share_title": "Per compartir",
       "turnout": "Participació",
+      "voted_any_count_one": "Almenys {{count, number}} persona ha votat alguna pregunta",
+      "voted_any_count_many": "Almenys {{count, number}} persones han votat alguna pregunta",
+      "voted_any_count_other": "Almenys {{count, number}} persones han votat alguna pregunta",
       "voted_any_lines": "Almenys {{voted}} de {{total}} han votat <br/>alguna pregunta",
+      "voted_count_one": "Ha votat {{count, number}} persona",
+      "voted_count_many": "Han votat {{count, number}} persones",
+      "voted_count_other": "Han votat {{count, number}} persones",
       "voted_of_one": "{{count, number}} de {{total}} han votat",
       "voted_of_many": "{{count, number}} de {{total}} han votat",
       "voted_of_other": "{{count, number}} de {{total}} han votat"
     },
     "time_left": "Queden {{duration}}",
-    "time_left_delimiter": " i "
+    "waiting": {
+      "cancel": "Cancel·lant «{{title}}»…",
+      "continue": "Reprenent «{{title}}»…",
+      "end": "Finalitzant «{{title}}»…",
+      "pause": "Pausant «{{title}}»…",
+      "title": "Esperant que es confirmi el canvi"
+    }
   },
   "voting_link": {
     "title": "Enllaç de votació"
