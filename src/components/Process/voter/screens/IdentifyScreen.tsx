@@ -1,0 +1,174 @@
+import { Alert, Button, chakra, Checkbox, Field, Input, Link } from '@chakra-ui/react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { Trans, useTranslation } from 'react-i18next'
+import { buildCspAuthRequest } from '~components/Process/CSP/auth-request'
+import { useCspAuthContext } from '~components/Process/CSP/CSPStepsProvider'
+import { useIsCspAuthBusy } from '~components/Process/CSP/basics'
+import { getAuthFieldInputType, getAuthFieldLabel, getContactFieldLabel } from '~components/Process/CSP/fields'
+import { useAppEnv } from '~src/app-env'
+import { hashMemberPassword } from '~utils/member-password'
+import { useVoterFlow } from '../flow-context'
+import { textOf } from '../format'
+import { AnonymityLine } from '../parts/AnonymityLine'
+import { InlineAction, ScreenHeading, ScreenHelp, VoterScreenFrame } from '../parts/ScreenParts'
+import { VoterActionBar } from '../parts/VoterActionBar'
+import { VoteStatusLine } from '../parts/VoteStatusLine'
+import { VoterMedia } from '../parts/VoterMedia'
+import { useVoterIdentify } from '../use-voter-identify'
+
+type IdentifyValues = Record<string, string>
+
+/**
+ * Identify (board V4VoterWide 1, mismatch V4VoterWideLive 7): the census's fields, the contact when it sends a code,
+ * the terms, one button. A failed match marks every field and names none (audit F10); other refusals keep today's
+ * messages and mark nothing.
+ */
+export const IdentifyScreen = ({ notice }: { notice?: 'sessionExpired' }) => {
+  const { t } = useTranslation()
+  const { election, facts, moved, showResults } = useVoterFlow()
+  const { authFields, twoFaFields, setAuthData, setCurrentStep } = useCspAuthContext()
+  const { TERMS_OF_SERVICE_URL, PRIVACY_POLICY_URL } = useAppEnv()
+  const formId = useId()
+  const identify = useVoterIdentify()
+  const isAuthBusy = useIsCspAuthBusy()
+  const submitting = useRef(false)
+  const [hashFailed, setHashFailed] = useState(false)
+  // Until hydration a click would submit the form natively, as a GET with the voter's details in the URL: the button
+  // stays off until React owns the form.
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => setHydrated(true), [])
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IdentifyValues>()
+  const twoFactor = twoFaFields.length > 0
+  const hasPassword = authFields.includes('password')
+  const fields = [
+    ...authFields.filter((field) => field !== 'password'),
+    ...authFields.filter((field) => field === 'password'),
+  ]
+  const mismatch = identify.error?.mismatch === true
+  // Secret until the end: the count stays hidden, but once the vote is over the results are public (audit F16).
+  const showLiveResults =
+    !facts.secretUntilTheEnd || facts.endedBySchedule || facts.status === 'ENDED' || facts.status === 'RESULTS'
+
+  const onSubmit = async (values: IdentifyValues) => {
+    if (submitting.current || isAuthBusy()) return
+    submitting.current = true
+    setHashFailed(false)
+    try {
+      const request = buildCspAuthRequest(values, authFields, twoFaFields) as Record<string, string>
+      // The plaintext password never leaves the browser: the request carries its hash, salted with the organisation.
+      if (request.password) {
+        try {
+          request.password = await hashMemberPassword(election.orgAddress ?? '', request.password)
+        } catch (error) {
+          console.error('CSP password hashing failed:', error)
+          setHashFailed(true)
+          return
+        }
+      }
+      await identify.mutateAsync(request)
+      setAuthData({ email: request.email, phone: request.phone })
+      if (twoFactor) setCurrentStep(1)
+    } catch {
+      // The mutation keeps the error for the screen.
+    } finally {
+      submitting.current = false
+    }
+  }
+
+  const failure = hashFailed
+    ? t('csp.password_unavailable')
+    : identify.error
+      ? mismatch && !hasPassword
+        ? t('voter.identify.mismatch')
+        : identify.error.message
+      : null
+
+  return (
+    <VoterScreenFrame kind='identify'>
+      <VoteStatusLine />
+      <ScreenHeading focus={moved} mt='2.5'>
+        {textOf(election.title as Parameters<typeof textOf>[0])}
+      </ScreenHeading>
+      <ScreenHelp>{t('voter.identify.help')}</ScreenHelp>
+      <VoterMedia />
+      <AnonymityLine />
+      {notice === 'sessionExpired' && !failure && (
+        <Alert.Root status='warning' layout='ballot' mt='6' role='status'>
+          <Alert.Content>
+            <Alert.Description>{t('voter.identify.session_expired')}</Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      )}
+      {failure && (
+        <Alert.Root status='error' layout='ballot' mt='6' role='alert'>
+          <Alert.Content>
+            <Alert.Description>{failure}</Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      )}
+      <chakra.form
+        id={formId}
+        method='post'
+        onSubmit={handleSubmit(onSubmit)}
+        display='flex'
+        flexDirection='column'
+        gap='4.5'
+        mt='7'
+      >
+        {fields.map((field) => (
+          <Field.Root key={field} size='ballot' required invalid={mismatch || !!errors[field]}>
+            <Field.Label>{getAuthFieldLabel(t, field)}</Field.Label>
+            <Input
+              size='ballot'
+              type={getAuthFieldInputType(field)}
+              autoComplete='off'
+              {...register(field, { required: true })}
+            />
+          </Field.Root>
+        ))}
+        {twoFactor && (
+          <Field.Root size='ballot' required invalid={mismatch || !!errors.contact}>
+            <Field.Label>{getContactFieldLabel(t, twoFaFields)}</Field.Label>
+            <Input size='ballot' type='text' autoComplete='off' {...register('contact', { required: true })} />
+            <Field.HelperText>{t('csp.contact_match_help')}</Field.HelperText>
+          </Field.Root>
+        )}
+        <Field.Root required>
+          <Checkbox.Root alignItems='flex-start' gap='3' textStyle='ballot-hint' color='fg.muted'>
+            <Checkbox.HiddenInput />
+            <Checkbox.Control />
+            <Checkbox.Label>
+              <Trans
+                i18nKey='voter.identify.terms'
+                components={{
+                  terms: <Link href={TERMS_OF_SERVICE_URL} target='_blank' rel='noopener noreferrer' />,
+                  privacy: <Link href={PRIVACY_POLICY_URL} target='_blank' rel='noopener noreferrer' />,
+                }}
+              />
+            </Checkbox.Label>
+          </Checkbox.Root>
+        </Field.Root>
+      </chakra.form>
+      <VoterActionBar
+        primary={
+          <Button type='submit' form={formId} size='ballot' loading={identify.isPending} disabled={!hydrated}>
+            {failure ? t('voter.identify.retry') : t('voter.continue')}
+          </Button>
+        }
+        note={
+          showLiveResults ? (
+            // data-testid: the e2e observer reaches the live count through this link; its only other handle is copy.
+            <InlineAction testId='voter-show-results' onClick={() => showResults(true)}>
+              {t('voter.results.show')}
+            </InlineAction>
+          ) : undefined
+        }
+      />
+    </VoterScreenFrame>
+  )
+}
