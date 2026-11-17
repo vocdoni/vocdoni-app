@@ -166,7 +166,7 @@ export const PublishSummary = ({
                 onChange={onEdit && (() => onEdit(target))}
                 changeLabel={t('process.publish_review.change_what', {
                   defaultValue: 'Change {{what}}',
-                  what: label.toLocaleLowerCase(locale),
+                  what: label,
                 })}
               />
             ))}

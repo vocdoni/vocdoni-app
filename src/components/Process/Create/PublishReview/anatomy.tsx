@@ -197,7 +197,7 @@ export type PublishReviewFactRowProps = {
   /** Muted text after the value. */
   detail?: ReactNode
   muted?: boolean
-  /** Shows a quiet "Change" action; `changeLabel` is its accessible name ("Change dates"). */
+  /** Shows a quiet "Change" action; `changeLabel` is its accessible name ("Change Dates"). */
   onChange?: () => void
   changeLabel?: string
 }

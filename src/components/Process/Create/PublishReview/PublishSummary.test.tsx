@@ -209,12 +209,12 @@ describe('PublishSummary', () => {
     const onEdit = vi.fn()
     const { user } = setup({ onEdit })
 
-    await user.click(screen.getByRole('button', { name: 'Change dates' }))
-    await user.click(screen.getByRole('button', { name: 'Change vote weight' }))
-    await user.click(screen.getByRole('button', { name: 'Change results' }))
-    await user.click(screen.getByRole('button', { name: 'Change credentials' }))
-    await user.click(screen.getByRole('button', { name: 'Change 2fa' }))
-    await user.click(screen.getByRole('button', { name: 'Change anonymous vote' }))
+    await user.click(screen.getByRole('button', { name: 'Change Dates' }))
+    await user.click(screen.getByRole('button', { name: 'Change Vote weight' }))
+    await user.click(screen.getByRole('button', { name: 'Change Results' }))
+    await user.click(screen.getByRole('button', { name: 'Change Credentials' }))
+    await user.click(screen.getByRole('button', { name: 'Change 2FA' }))
+    await user.click(screen.getByRole('button', { name: 'Change Anonymous vote' }))
 
     expect(onEdit.mock.calls.map(([target]) => target)).toEqual([
       'dates',

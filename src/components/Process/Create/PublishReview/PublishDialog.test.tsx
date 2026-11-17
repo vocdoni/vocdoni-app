@@ -206,7 +206,7 @@ describe('PublishDialog', () => {
     const onEdit = vi.fn()
     const { user, onClose } = renderDialog({ onEdit })
 
-    await user.click(await screen.findByRole('button', { name: 'Change dates' }))
+    await user.click(await screen.findByRole('button', { name: 'Change Dates' }))
 
     expect(onClose).toHaveBeenCalledTimes(1)
     expect(onEdit).toHaveBeenCalledWith('dates')
