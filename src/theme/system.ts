@@ -7,7 +7,14 @@ import {
 } from '@chakra-ui/react'
 import { DEFAULT_PRIMARY_COLOR, PAGE_BACKGROUNDS } from './colors'
 import { withEscapeHatch } from './escapeHatch'
-import { generateAccentTokens, generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
+import { lruMemo } from './lru-memo'
+import {
+  generateAccentTokens,
+  generateBrandSemanticTokens,
+  generatePaletteScale,
+  generateSolidHover,
+  normalizeHexColor,
+} from './palette'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import { textStyles } from './textStyles'
@@ -56,14 +63,15 @@ export const createAppSystem = (primaryColor?: string) => {
       }
   const brandSemantic = {
     ...asTokens(slots),
-    // A filled button's hover. Fil pins it; a brand colour gets its own fill mixed 12% towards black, so a hover
-    // never lightens. Other palettes have no such slot, so the button recipe falls back to the same mix.
+    // A filled button's hover. Fil pins it; a brand colour gets its fill moved 12% towards black, or towards white
+    // when black would take its label under 4.5:1 (palette.ts). Other palettes have no such slot, so the button
+    // recipe falls back to a mix towards black.
     solid: {
       DEFAULT: { value: slots.solid },
       hover: {
         value: {
-          _light: brand ? 'color-mix(in oklab, {colors.brand.solid} 88%, black)' : FIL_ACCENT.solidHover,
-          _dark: brand ? 'color-mix(in oklab, {colors.brand.solid} 94%, white)' : FIL_ACCENT_DARK.solidHover,
+          _light: brand ? generateSolidHover(scale, PAGE_BACKGROUNDS) : FIL_ACCENT.solidHover,
+          _dark: brand ? '{colors.brand.solid/90}' : FIL_ACCENT_DARK.solidHover,
         },
       },
     },
@@ -143,19 +151,16 @@ export const createAppSystem = (primaryColor?: string) => {
 
 export type AppSystem = ReturnType<typeof createAppSystem>
 
-// Systems are memoized per color: building one is not free and the color is
-// constant for a process (server) or a page load (client), so the provider can
-// call this on every render without paying for it.
-const systems = new Map<string, AppSystem>()
+// Systems are memoized per colour: building one is not free, and the provider calls this on every render. Organisation
+// colours are open-ended input on the server (one per branded vote), so only the 32 most recently used are kept; the
+// stock system sits outside that memo and is never evicted.
+const MAX_SYSTEMS = 32
+const stockSystem = createAppSystem()
+const colorSystem = lruMemo(MAX_SYSTEMS, (color) => createAppSystem(color))
 
 export const getAppSystem = (primaryColor?: string): AppSystem => {
-  const key = normalizeHexColor(primaryColor) ?? ''
-  let cached = systems.get(key)
-  if (!cached) {
-    cached = createAppSystem(key || undefined)
-    systems.set(key, cached)
-  }
-  return cached
+  const color = normalizeHexColor(primaryColor)
+  return color ? colorSystem(color) : stockSystem
 }
 
 // The stock system (no PRIMARY_COLOR). Also what `chakra typegen` reads.

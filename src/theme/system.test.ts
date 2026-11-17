@@ -1,7 +1,7 @@
 import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
 import { PAGE_BACKGROUNDS } from './colors'
-import { contrastRatio, PALETTE_SLOTS } from './palette'
+import { contrastRatio, generatePaletteScale, generateSolidHover, PALETTE_SLOTS, solidHoverColor } from './palette'
 import { DashboardContents as dashboardContents } from './recipes/dashboard'
 import { dragHandle } from './recipes/dragHandle'
 import { ConfirmModal } from './recipes/confirmModal'
@@ -376,9 +376,9 @@ describe('PRIMARY_COLOR-driven system', () => {
     (_name, sys, palette) => {
       expect(conditions(sys, 'accent.solid')).toEqual({ base: `{colors.${palette}.solid}` })
       expect(conditions(sys, 'accent.solid.hover')).toEqual({ base: `{colors.${palette}.solid.hover}` })
-      // Without a PRIMARY_COLOR the light hover is Fil's pinned value; a brand colour is mixed towards black.
+      // Without a PRIMARY_COLOR the light hover is Fil's pinned value; a brand colour gets the palette's hover fill.
       expect(conditions(sys, 'brand.solid.hover')?._light).toBe(
-        sys === system ? '#1554cf' : 'color-mix(in oklab, {colors.brand.solid} 88%, black)'
+        sys === system ? '#1554cf' : generateSolidHover(generatePaletteScale('#1a73e8'), PAGE_BACKGROUNDS)
       )
       expect(conditions(sys, 'accent.contrast')).toEqual({ base: `{colors.${palette}.contrast}` })
       expect(conditions(sys, 'accent.subtle')).toEqual({ base: `{colors.${palette}.subtle}` })
@@ -399,8 +399,33 @@ describe('PRIMARY_COLOR-driven system', () => {
   it('memoizes systems per normalized color', () => {
     expect(getAppSystem()).toBe(system)
     expect(getAppSystem(undefined)).toBe(system)
+    expect(getAppSystem('not-a-color')).toBe(system)
     expect(getAppSystem('#1A73E8')).toBe(getAppSystem('1a73e8'))
     expect(getAppSystem('#1a73e8')).not.toBe(system)
+  })
+
+  // A branded vote's colour is the organisation's, not a curated deployment one: palette.test.ts checks the maths on
+  // 124 colours, this checks that the built system wires those values.
+  it.each(['#fff59d', '#0b1a3a', '#df5020'])(
+    'keeps an organisation colour (%s) readable in the built system',
+    (color) => {
+      const sys = createAppSystem(color)
+      const light = (name: string) => {
+        const value = conditions(sys, name)!._light
+        return value.startsWith('{') ? (sys.tokens.getByName(value.slice(1, -1))?.value as string) : value
+      }
+      expect(contrastRatio(light('brand.focusRing'), PAGE_BACKGROUNDS.light)).toBeGreaterThanOrEqual(3)
+      expect(contrastRatio(light('brand.solid'), light('brand.contrast'))).toBeGreaterThanOrEqual(4.5)
+      expect(contrastRatio(light('brand.solid.hover'), light('brand.contrast'))).toBeGreaterThanOrEqual(4.5)
+      expect(contrastRatio(light('brand.fg'), light('brand.subtle'))).toBeGreaterThanOrEqual(4.5)
+      expect(contrastRatio(light('accent.fg.hover'), PAGE_BACKGROUNDS.light)).toBeGreaterThanOrEqual(4.5)
+    }
+  )
+
+  it('takes the hover fill from the palette, lightening it when a black label needs that', () => {
+    const sys = createAppSystem('#df5020')
+    expect(conditions(sys, 'brand.solid')?._light).toBe('{colors.brand.500}')
+    expect(conditions(sys, 'brand.solid.hover')?._light).toBe(solidHoverColor('#df5020'))
   })
 })
 

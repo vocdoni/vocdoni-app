@@ -143,6 +143,11 @@ const MIN_TEXT_CONTRAST = 4.5
 const LIGHT_FG_STEPS: Array<keyof PaletteScale> = [700, 800, 900, 950]
 const DARK_FG_STEPS: Array<keyof PaletteScale> = [300, 200, 100, 50]
 
+// The first step that clears the text bar on every given background (the last candidate if none does).
+const pickTextStep = (scale: PaletteScale, candidates: Array<keyof PaletteScale>, backgrounds: string[]) =>
+  candidates.find((step) => backgrounds.every((bg) => contrastRatio(scale[step], bg) >= MIN_TEXT_CONTRAST)) ??
+  candidates[candidates.length - 1]
+
 // Text color for a filled surface of the given color. White is preferred as
 // long as it clears the text bar: raw luminance would pick black on most mid
 // tones (a mid blue scores 4.66 for black vs 4.51 for white), which is not what
@@ -183,8 +188,9 @@ type Backgrounds = { light: string; dark: string }
 export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Backgrounds): PaletteSemanticTokens => {
   const lightSolid = pickReadableStep(scale, LIGHT_SOLID_STEPS, backgrounds.light)
   const darkSolid = pickReadableStep(scale, DARK_SOLID_STEPS, backgrounds.dark)
-  const lightFg = pickReadableStep(scale, LIGHT_FG_STEPS, backgrounds.light, MIN_TEXT_CONTRAST)
-  const darkFg = pickReadableStep(scale, DARK_FG_STEPS, backgrounds.dark, MIN_TEXT_CONTRAST)
+  // `fg` is also the text of a selected option, drawn on `subtle` (100 light, 900 dark), so it must read there too.
+  const lightFg = pickTextStep(scale, LIGHT_FG_STEPS, [backgrounds.light, scale[100]])
+  const darkFg = pickTextStep(scale, DARK_FG_STEPS, [backgrounds.dark, scale[900]])
   const ref = (step: keyof PaletteScale) => `{colors.brand.${step}}`
 
   return {
@@ -217,3 +223,21 @@ export const generateAccentTokens = (scale: PaletteScale, backgrounds: Backgroun
     fg: { _light: '{colors.brand.fg}', _dark: whiteOnDark ? '{colors.white}' : '{colors.brand.fg}' },
   }
 }
+
+// How far a filled control's hover moves from its fill, in OKLab (the old CSS `color-mix(… 88%, black)`).
+const HOVER_MIX = 0.12
+
+/**
+ * Light-mode hover fill of a filled control: `solid` 12% towards black, or towards white when darkening would take its
+ * label under 4.5:1 (a mid-light colour whose label is black). Lightening only raises a black label's contrast.
+ */
+export const solidHoverColor = (solid: string): string => {
+  const lab = rgbToLab(hexToRgb(solid))
+  const darker = rgbToHex(labToRgb(mix(lab, 0, HOVER_MIX)))
+  if (contrastRatio(darker, contrastColor(solid)) >= MIN_TEXT_CONTRAST) return darker
+  return rgbToHex(labToRgb(mix(lab, 1, HOVER_MIX)))
+}
+
+/** The light hover fill for a generated scale: `solidHoverColor` of the step `solid` lands on. */
+export const generateSolidHover = (scale: PaletteScale, backgrounds: Backgrounds): string =>
+  solidHoverColor(scale[pickReadableStep(scale, LIGHT_SOLID_STEPS, backgrounds.light)])

@@ -6,7 +6,9 @@ import {
   generateAccentTokens,
   generateBrandSemanticTokens,
   generatePaletteScale,
+  generateSolidHover,
   normalizeHexColor,
+  solidHoverColor,
   type PaletteScale,
 } from './palette'
 
@@ -199,5 +201,70 @@ describe('generateAccentTokens', () => {
   it.each(['#1a73e8', '#ffd600', '#0b1a3a', '#cccccc'])('follows the brand in both modes for %s', (base) => {
     const tokens = generateAccentTokens(generatePaletteScale(base), BACKGROUNDS)
     expect(tokens.fg).toEqual({ _light: '{colors.brand.fg}', _dark: '{colors.brand.fg}' })
+  })
+})
+
+describe('solidHoverColor', () => {
+  it('darkens a fill whose label is white', () => {
+    expect(contrastColor('#1a73e8')).toBe('#ffffff')
+    expect(luminanceOf(solidHoverColor('#1a73e8'))).toBeLessThan(luminanceOf('#1a73e8'))
+  })
+
+  // White is under 4.5:1 on this orange, so its label is black; 12% darker would take black under 4.5:1 too.
+  it('lightens a fill whose black label would not read on a darker hover', () => {
+    expect(contrastColor('#df5020')).toBe('#000000')
+    const hover = solidHoverColor('#df5020')
+    expect(luminanceOf(hover)).toBeGreaterThan(luminanceOf('#df5020'))
+    expect(contrastRatio(hover, '#000000')).toBeGreaterThanOrEqual(4.5)
+  })
+})
+
+// An organisation colour is arbitrary input (a branded vote paints the page with it), so every pairing the voter page
+// draws is checked on 24 hues x 5 lightness steps at 75% saturation, plus white, black, a pale yellow and a mid grey.
+const hslToHex = (hue: number, saturation: number, lightness: number) => {
+  const k = (n: number) => (n + hue / 30) % 12
+  const a = saturation * Math.min(lightness, 1 - lightness)
+  const channel = (n: number) => lightness - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1))
+  return `#${[0, 8, 4]
+    .map((n) =>
+      Math.round(channel(n) * 255)
+        .toString(16)
+        .padStart(2, '0')
+    )
+    .join('')}`
+}
+
+const ORGANISATION_COLOURS = [
+  ...Array.from({ length: 24 }, (_, i) => [0.2, 0.35, 0.5, 0.65, 0.8].map((l) => hslToHex(i * 15, 0.75, l))).flat(),
+  '#ffffff',
+  '#000000',
+  '#fff59d',
+  '#808080',
+]
+
+describe('readability of any organisation colour', () => {
+  it('covers 124 colours', () => {
+    expect(new Set(ORGANISATION_COLOURS).size).toBe(124)
+  })
+
+  it.each(ORGANISATION_COLOURS)('keeps every accent pairing readable for %s', (base) => {
+    const scale = generatePaletteScale(base)
+    const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
+    const at = (ref: string) => scale[Number(/\{colors\.brand\.(\d+)\}/.exec(ref)?.[1]) as keyof PaletteScale]
+    const solid = at(tokens.solid._light)
+
+    // Already guaranteed before branding per vote.
+    expect(contrastRatio(solid, BACKGROUNDS.light), 'solid on the page').toBeGreaterThanOrEqual(3)
+    expect(contrastRatio(solid, tokens.contrast._light), 'label on solid').toBeGreaterThanOrEqual(4.5)
+    expect(contrastRatio(at(tokens.focusRing._light), BACKGROUNDS.light), 'focus ring').toBeGreaterThanOrEqual(3)
+    expect(contrastRatio(at(tokens.fg._light), BACKGROUNDS.light), 'fg on the page').toBeGreaterThanOrEqual(4.5)
+    // The label on the hover fill, a selected option's text on its subtle fill, a link under the pointer.
+    const hover = generateSolidHover(scale, BACKGROUNDS)
+    expect(contrastRatio(hover, tokens.contrast._light), 'label on solid.hover').toBeGreaterThanOrEqual(4.5)
+    expect(contrastRatio(at(tokens.fg._light), at(tokens.subtle._light)), 'fg on subtle').toBeGreaterThanOrEqual(4.5)
+    expect(contrastRatio(at(tokens.fg._dark), at(tokens.subtle._dark)), 'fg on subtle, dark').toBeGreaterThanOrEqual(
+      4.5
+    )
+    expect(contrastRatio(scale[950], BACKGROUNDS.light), 'accent.fg.hover (brand.950)').toBeGreaterThanOrEqual(4.5)
   })
 })
