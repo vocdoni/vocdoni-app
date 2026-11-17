@@ -10,5 +10,5 @@ export const solidEdge = `[${INNER}]`
 export const ringEdges = `[0 0 0 {borderWidths.hairline} ${EDGE}, ${INNER}]`
 
 /** Outside a chosen option's border, after the `rings` it already draws; `spread` is how far out the line ends. */
-export const chosenEdge = (rings: string[] = [], spread = '{borderWidths.hairline}') =>
+export const chosenEdge = (rings: string[] = [], spread = '{borderWidths.hairline}'): `[${string}]` =>
   `[${[...rings, `0 0 0 ${spread} ${EDGE}`].join(', ')}]`
