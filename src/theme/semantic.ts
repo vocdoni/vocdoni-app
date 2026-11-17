@@ -76,7 +76,7 @@ const colors = defineSemanticTokens.colors({
     success: {
       value: {
         _light: '#f0faf3',
-        _dark: '{colors.green.950}',
+        _dark: '{colors.bg.subtle}',
       },
     },
     info: {
@@ -183,7 +183,10 @@ const colors = defineSemanticTokens.colors({
         },
       },
       tooltip: {
-        value: '{colors.bg.panel}',
+        value: {
+          _light: '{colors.bg.panel}',
+          _dark: '{colors.carbon.850}',
+        },
       },
     },
     // Dialogs and drawers; `drawer` is the sidebar colour for the mobile dashboard menu.
@@ -255,7 +258,7 @@ const colors = defineSemanticTokens.colors({
       bg: {
         value: {
           _light: '{colors.white}',
-          _dark: '{colors.ink.950}',
+          _dark: '{colors.bg.panel}',
         },
       },
       // Painted in light mode only (card `standalone`).
@@ -313,7 +316,7 @@ const colors = defineSemanticTokens.colors({
     subtle: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.gray.950}',
+        _dark: '{colors.carbon.875}',
       },
     },
     emphasized: {
@@ -434,7 +437,7 @@ const colors = defineSemanticTokens.colors({
         bg: {
           value: {
             _light: '{colors.white}',
-            _dark: '{colors.ink.950}',
+            _dark: '{colors.bg.panel}',
           },
         },
       },
@@ -442,7 +445,7 @@ const colors = defineSemanticTokens.colors({
     bg: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.ink.700}',
+        _dark: '{colors.bg.muted}',
       },
     },
   },

@@ -29,7 +29,10 @@ describe.each([
   })
 
   it('defines the toast fills and text from the status palettes', () => {
-    expect(sys.tokens.getByName('colors.toast.success.bg')?.originalValue).toBe('{colors.success.700}')
+    expect(conditions('colors.toast.success.bg', sys)).toEqual({
+      _light: '{colors.success.700}',
+      _dark: '{colors.success.solid}',
+    })
     expect(conditions('colors.toast.warning.bg', sys)).toEqual({
       _light: '{colors.warning.700}',
       _dark: '{colors.warning.500}',

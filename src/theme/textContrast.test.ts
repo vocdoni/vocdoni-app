@@ -19,7 +19,8 @@ const resolve = (name: string, mode: Mode, sys = system, depth = 0): string => {
 
 // Composites a translucent surface (e.g. `surface.sunken` in dark mode) over the page it sits on.
 const opaque = (color: string, mode: Mode): string => {
-  const match = /^rgba\((\d+), (\d+), (\d+), ([\d.]+)\)$/.exec(color)
+  // Both spellings: `rgba(r, g, b, a)` and Fil's `rgb(r g b / a)`.
+  const match = /^rgba?\((\d+)[, ]+(\d+)[, ]+(\d+)(?:, | \/ )([\d.]+)\)$/.exec(color)
   if (!match) return color
   const page = resolve('bg', mode)
   const channels = [1, 2, 3].map((group, index) => {
@@ -67,7 +68,7 @@ describe('text colour contrast (WCAG AA)', () => {
 
   it('keeps the inactive tab label readable on the tab list', () => {
     for (const mode of ['light', 'dark'] as const) {
-      expect(contrastRatio(resolve('tabs.tab.color', mode), resolve('tabs.bg', mode))).toBeGreaterThanOrEqual(4.5)
+      expect(contrastRatio(resolve('tabs.tab.color', mode), opaque(resolve('tabs.bg', mode), mode))).toBeGreaterThanOrEqual(4.5)
     }
   })
 

@@ -4,12 +4,11 @@
 export const DEFAULT_PRIMARY_COLOR = '#1d62e9'
 
 export const colors = {
-  // Pure black and a dark grey for the few surfaces that are not on the gray scale. Kept separate from `brand` on
+  // Pure black, for the few marks that must not be the gray scale's near-black. Kept separate from `brand` on
   // purpose: a configured PRIMARY_COLOR must recolor the accent, never tint the surfaces.
   // Steps are numbered by lightness, like Chakra's scales: a higher step is darker.
   ink: {
     950: { value: '#000000' },
-    700: { value: '#2e2e2e' },
   },
 
   // The dark ("Carbó") steps that fall between the `gray` steps, untinted like them: the sidebar, dialog and menu

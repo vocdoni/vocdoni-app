@@ -21,8 +21,8 @@ describe.each(Object.entries(systems))('interaction-state and chart tokens (%s)'
   it.each<[string, string, string]>([
     ['state.hover.bg', 'rgb(0 0 0 / 0.04)', 'bg.muted'],
     ['state.selected.bg', 'rgb(0 0 0 / 0.06)', 'rgb(255 255 255 / 0.1)'],
-    ['state.selected.fg', 'gray.900', 'white'],
-    ['state.hover.fg', 'gray.900', 'white'],
+    ['state.selected.fg', 'gray.900', 'carbon.100'],
+    ['state.hover.fg', 'gray.900', 'carbon.100'],
     ['state.current.bg', 'rgb(0 0 0 / 0.06)', 'bg.emphasized'],
     ['chart.track', 'bg.emphasized', 'bg.emphasized'],
     ['meter.warning', '#875500', 'orange.500'],

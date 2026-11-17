@@ -32,7 +32,7 @@ const ROLES: Record<string, Record<Mode, string>> = {
   'colors.surface.card': { light: '{colors.bg.panel}', dark: '{colors.bg.panel}' },
   'colors.surface.sunken': { light: '{colors.bg.subtle}', dark: '{colors.whiteAlpha.50}' },
   'colors.surface.raised': { light: '{colors.bg}', dark: '{colors.carbon.850}' },
-  'colors.surface.raised.tooltip': { light: '{colors.bg.panel}', dark: '{colors.bg.panel}' },
+  'colors.surface.raised.tooltip': { light: '{colors.bg.panel}', dark: '{colors.carbon.850}' },
   'colors.surface.overlay': { light: '{colors.bg.panel}', dark: '{colors.carbon.875}' },
   'colors.surface.control': { light: '{colors.white}', dark: 'rgb(255 255 255 / 0.05)' },
   'colors.border.dash': { light: '{colors.gray.300}', dark: '{colors.gray.700}' },

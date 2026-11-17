@@ -10,7 +10,7 @@ export const stateColors = defineSemanticTokens.colors({
     hover: {
       // Translucent so it shows on white and on the sidebar tint alike (it is the only keyboard highlight in menus).
       bg: { value: { _light: 'rgb(0 0 0 / 0.04)', _dark: '{colors.bg.muted}' } },
-      fg: { value: { _light: '{colors.gray.900}', _dark: '{colors.white}' } },
+      fg: { value: { _light: '{colors.gray.900}', _dark: '{colors.fg}' } },
     },
     pressed: {
       bg: { value: '{colors.bg.emphasized}' },
@@ -18,7 +18,7 @@ export const stateColors = defineSemanticTokens.colors({
     },
     selected: {
       bg: { value: { _light: 'rgb(0 0 0 / 0.06)', _dark: 'rgb(255 255 255 / 0.1)' } },
-      fg: { value: { _light: '{colors.gray.900}', _dark: '{colors.white}' } },
+      fg: { value: { _light: '{colors.gray.900}', _dark: '{colors.fg}' } },
     },
     current: {
       bg: { value: { _light: 'rgb(0 0 0 / 0.06)', _dark: '{colors.bg.emphasized}' } },

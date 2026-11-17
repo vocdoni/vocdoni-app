@@ -52,7 +52,7 @@ export const createAppSystem = (primaryColor?: string) => {
         contrast: { ...generated.contrast, _light: '#ffffff', _dark: FIL_ACCENT_DARK.contrast },
         fg: { ...generated.fg, _light: '{colors.brand.500}', _dark: FIL_ACCENT_DARK.fg },
         subtle: { ...generated.subtle, _light: FIL_ACCENT.subtle, _dark: FIL_ACCENT_DARK.subtle },
-        focusRing: { ...generated.focusRing, _light: '{colors.brand.500}' },
+        focusRing: { ...generated.focusRing, _light: '{colors.brand.500}', _dark: FIL_ACCENT_DARK.fg },
       }
   const brandSemantic = {
     ...asTokens(slots),
