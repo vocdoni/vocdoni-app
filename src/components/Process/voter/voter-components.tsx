@@ -155,11 +155,17 @@ export const voterComponents: ComponentsPartialDefinition = {
       )
     }
   ),
-  QuestionsError: defineComponent<'QuestionsError'>(({ error }) => (
-    <Text as='p' textStyle='ballot-hint' color='status.error.fg' mt='3.5' role='alert'>
-      {error}
-    </Text>
-  )),
+  // A question's field validation says nothing here: the hint and the off "Continua" already do. The SDK's locked
+  // question notices come through this slot as `variant='field'` too, but carry the question's id, so they stay.
+  QuestionsError: defineComponent<'QuestionsError'>(({ error, variant, ...props }) => {
+    const locked = 'data-question-id' in props
+    if (variant === 'field' && !locked) return null
+    return (
+      <Text as='p' textStyle='ballot-hint' color='status.error.fg' mt='3.5' role='alert'>
+        {error}
+      </Text>
+    )
+  }),
 }
 
 /** The voter page's `ComponentsProvider` set: the app's slots with the voter's over them (a nested provider does not merge). */

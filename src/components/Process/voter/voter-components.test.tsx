@@ -126,3 +126,22 @@ describe('the voter question slot', () => {
     expect(screen.getByText('voter.question.chosen voter.question.can_leave')).toBeInTheDocument()
   })
 })
+
+describe('the voter question error slot', () => {
+  const Error = slot('QuestionsError')
+
+  it('says nothing for a question\'s field validation: the hint and the off button already do', () => {
+    renderSlot(<Error error='Ordena les 3 opcions' variant='field' />)
+    expect(screen.queryByText('Ordena les 3 opcions')).not.toBeInTheDocument()
+  })
+
+  it('still shows the form-level cast error', () => {
+    renderSlot(<Error error='No s\'ha pogut enviar' variant='form' />)
+    expect(screen.getByRole('alert')).toHaveTextContent('No s\'ha pogut enviar')
+  })
+
+  it('still shows a locked question notice, which carries the question id', () => {
+    renderSlot(<Error error='Pendent de reenviar' variant='field' data-question-id='q1' />)
+    expect(screen.getByRole('alert')).toHaveTextContent('Pendent de reenviar')
+  })
+})
