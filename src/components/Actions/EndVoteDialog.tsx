@@ -15,7 +15,7 @@ type DialogCopy = { title: string; description: string; warning?: string; confir
 const useEndCopy = (): DialogCopy | null => {
   const { t } = useTranslation()
   const { election, results } = useElection()
-  const { votePause } = useActions()
+  const { votePause, now } = useActions()
   const list = useNumberList()
   if (!election) return null
 
@@ -42,7 +42,7 @@ const useEndCopy = (): DialogCopy | null => {
     }
   }
 
-  const { active, unopened } = groupQuestions(election, votePause.heldQuestionIds, new Date())
+  const { active, unopened } = groupQuestions(election, votePause.heldQuestionIds, now)
   const [first] = active
   const closing =
     active.length === 1

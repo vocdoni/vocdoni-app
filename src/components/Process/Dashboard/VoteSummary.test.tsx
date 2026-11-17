@@ -5,7 +5,7 @@ import { VoteSummary } from './VoteSummary'
 
 let desktop = true
 let canManage = true
-let pause = { isHeld: false, heldQuestionIds: [] as string[] }
+let currentElection: VotingProcessResponse
 const cloneAsDraft = vi.fn()
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
@@ -14,11 +14,19 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   return { ...actual, ...getReactProvidersMock() }
 })
 vi.mock('~queries/process-end-date', () => ({ useProcessEarlyEndDate: () => ({ data: null }) }))
-vi.mock('~queries/vote-pause', () => ({
-  useVotePause: () => ({ ...pause, pause: vi.fn(), resume: vi.fn(), isPending: false }),
-}))
 vi.mock('~components/ui/useIsMobile', () => ({ useIsDesktop: () => desktop, useIsMobile: () => !desktop }))
-vi.mock('~components/Actions/ActionsContext', () => ({ useActions: () => ({ canManage }) }))
+// The provider's values, with the real state derivation (no pause memory: what another device sees).
+vi.mock('~components/Actions/ActionsContext', async () => {
+  const { deriveVoteState, pausedHoldIds } = await import('~utils/vote-state')
+  return {
+    useActions: () => {
+      const now = new Date()
+      const state = deriveVoteState(currentElection, now)
+      const heldQuestionIds = state === 'paused' ? pausedHoldIds(currentElection) : []
+      return { canManage, now, state, votePause: { isHeld: heldQuestionIds.length > 0, heldQuestionIds } }
+    },
+  }
+})
 vi.mock('./use-clone-as-draft', () => ({ useCloneAsDraft: () => ({ cloneAsDraft, isCloning: false }) }))
 vi.mock('./CensusSearch', () => ({ CensusSearch: () => <div>CensusSearch</div> }))
 
@@ -62,6 +70,7 @@ const createProcess = (overrides: Record<string, unknown> = {}) =>
 const byQuestion = (questions: unknown[]) => createProcess({ initialStatus: 'PAUSED', questions })
 
 const renderSummary = (election: VotingProcessResponse, voteCount?: number) => {
+  currentElection = election
   setReactProvidersMock({
     useElection: () => ({
       election,
@@ -81,7 +90,6 @@ const textContent = (text: string) => (_: string, element: Element | null) =>
 beforeEach(() => {
   desktop = true
   canManage = true
-  pause = { isHeld: false, heldQuestionIds: [] }
   cloneAsDraft.mockClear()
 })
 
@@ -256,7 +264,6 @@ describe('VoteSummary', () => {
     })
 
     it('shows a vote paused as a whole, with the held questions paused', () => {
-      pause = { isHeld: true, heldQuestionIds: ['q2'] }
       renderSummary(byQuestion([questions[0], question('q2', 'PAUSED', 120), questions[2]]), 200)
 
       expect(screen.getByText('1 closed · 1 paused · 1 to open')).toBeInTheDocument()

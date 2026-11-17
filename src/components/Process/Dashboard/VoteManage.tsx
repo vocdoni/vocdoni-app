@@ -7,15 +7,12 @@ import { generatePath, Navigate } from 'react-router'
 import { useActions } from '~components/Actions/ActionsContext'
 import { useVoteText } from '~i18n/use-vote-text'
 import { useQuestionStatusAction } from '~queries/question-status'
-import { useVotePause } from '~queries/vote-pause'
-import { useCanManageVotes } from '~queries/votes'
 import { Routes } from '~routes'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { useNow } from '~utils/use-now'
-import { deriveVoteState, hasEndedBySchedule, questionElectorate } from '~utils/vote-state'
+import { hasEndedBySchedule, questionElectorate } from '~utils/vote-state'
 import { ActiveQuestionRow } from './manage/ActiveQuestionRow'
 import { ClosedQuestionRow } from './manage/ClosedQuestionRow'
-import { CloseQuestionDialog, type ClosingQuestion } from './manage/CloseQuestionDialog'
+import { CloseQuestionDialog } from './manage/CloseQuestionDialog'
 import { ManageStrip } from './manage/ManageStrip'
 import { ActiveButtons, OpenButton, type QuestionControls } from './manage/QuestionButtons'
 import { QuestionsHeader } from './manage/QuestionsHeader'
@@ -33,21 +30,19 @@ export const VoteManage = () => {
   const { election, results } = useElection()
   const { dateAt } = useVoteText()
   const manageText = useManageText()
-  const now = useNow()
   const { change, pending, isBusy } = useQuestionStatusAction(election?.id)
-  const { disabled: headerBusy } = useActions()
-  const votePause = useVotePause(election)
-  const canManage = useCanManageVotes()
+  const { votePause, canManage, state: voteState, now } = useActions()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
-  const [closing, setClosing] = useState<ClosingQuestion | null>(null)
+  // Only the question's id: the dialog reads the live question, so votes arriving while it is open count.
+  const [closingId, setClosingId] = useState<string | null>(null)
 
   // Questions held by a whole-vote pause read "Paused" with their own note, and no question can change meanwhile.
-  const heldKey = votePause.isHeld ? votePause.heldQuestionIds.join() : ''
+  const { heldQuestionIds } = votePause
   const states = useMemo(() => {
     if (!election) return []
-    const held = new Set(heldKey ? heldKey.split(',') : [])
+    const held = new Set(heldQuestionIds)
     return election.questions.map((question) => deriveRowState(question, election, now, held))
-  }, [election, now, heldKey])
+  }, [election, now, heldQuestionIds])
   const counts = useMemo(() => countRows(states), [states])
 
   if (!election) return null
@@ -55,12 +50,11 @@ export const VoteManage = () => {
     return <Navigate to={generatePath(Routes.dashboard.process, { id: election.id })} replace />
   }
 
-  const voteState = deriveVoteState(election, now)
   const started = !isBeforeStart(election.startDate, now)
   const ended = hasEndedBySchedule(election, now)
   const canceled = voteState === 'canceled'
   const underWay = started && !ended && !canceled
-  const isHeld = votePause.isHeld && underWay
+  const isHeld = votePause.isHeld
   const step = underWay ? nextManageStep(states, isHeld) : null
   const canAct = canManage && underWay && !isHeld
   const weighted = !!election.census?.weighted
@@ -77,19 +71,20 @@ export const VoteManage = () => {
   if (next && cardCounts.length + next.length > HEADER_CHARS) next = null
 
   const controls: QuestionControls = {
-    busy: isBusy || headerBusy || votePause.isPending,
+    // Every status change of this vote (header, whole-vote pause, any row) shares one busy flag.
+    busy: isBusy,
     isLoading: (questionId, status) => pending?.questionId === questionId && pending.status === status,
     run: (questionId, status) => void change({ questionId, status }),
-    askClose: (questionId) => {
-      const index = election.questions.findIndex(({ id }) => id === questionId)
-      if (index >= 0) setClosing({ question: election.questions[index], number: index + 1 })
-    },
+    askClose: (questionId) => setClosingId(questionId),
   }
+
+  const closingIndex = closingId ? election.questions.findIndex(({ id }) => id === closingId) : -1
+  const closing = closingIndex >= 0 ? { question: election.questions[closingIndex], number: closingIndex + 1 } : null
 
   const confirmClose = async () => {
     if (!closing) return
     await change({ questionId: closing.question.id, status: 'ended' })
-    setClosing(null)
+    setClosingId(null)
   }
 
   const toggle = (id: string) => () => setExpanded((current) => ({ ...current, [id]: !current[id] }))
@@ -97,7 +92,7 @@ export const VoteManage = () => {
   return (
     <Stack gap={{ base: '3', md: '4', lg: '8' }}>
       <ManageStrip
-        state={isHeld ? 'paused' : voteState}
+        state={voteState ?? 'ready'}
         voted={voted}
         total={election.census?.size}
         counts={showCounts ? manageText.counts(counts, 'band') : ''}
@@ -182,7 +177,7 @@ export const VoteManage = () => {
       <CloseQuestionDialog
         closing={closing}
         onConfirm={confirmClose}
-        onCancel={() => setClosing(null)}
+        onCancel={() => setClosingId(null)}
         loading={!!closing && controls.isLoading(closing.question.id, 'ended')}
         busy={isBusy}
       />

@@ -1,51 +1,50 @@
-import { notifyManager, useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useEffect, useMemo, useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useToast } from '~components/Toast'
-import { useApiClient } from '~src/providers/ApiClientProvider'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { hasEndedBySchedule } from '~utils/vote-state'
-import { QueryKeys } from './keys'
-import { questionStatusErrorKind } from './question-status'
-
-type VotePauseAction = 'pause' | 'resume'
-type VotePauseVariables = { action: VotePauseAction; questionIds: string[] }
+import { deriveVoteState, isTerminalQuestion, pausedHoldIds } from '~utils/vote-state'
+import { useStatusJob } from './status-job'
 
 export type VotePause = {
-  /** The vote was paused as a whole and not resumed: no question open, at least one held by that pause. */
+  /** The question-by-question vote reads paused: started, nothing open, a question that was open is paused. */
   isHeld: boolean
-  /** The questions the pause stopped, still paused. Empty unless `isHeld`. */
+  /** The questions "Resume the vote" reopens. Empty unless `isHeld`. */
   heldQuestionIds: string[]
   pause: () => Promise<void>
   resume: () => Promise<void>
-  /** A pause or a resume of this vote is running, from any screen. */
+  /** A pause or a resume of this vote is running. */
   isPending: boolean
 }
 
-// Which questions a pause stopped, per vote. The backend has no process-level pause, so this browser remembers them
-// (another device falls back to reopening every paused question that has votes, ruling R20).
+// Which questions a whole-vote pause stopped, per vote. Only a hint for "this question was open" (one with no votes
+// cannot tell otherwise) and for what Resume reopens; the state itself is derived from the process.
 const STORAGE_PREFIX = 'votes.pause.held.'
-// As useQuestionStatusAction: one transaction per question, serialised per organisation.
-const STATUS_JOB_TIMEOUT_MS = 120_000
 
+const NONE: ReadonlySet<string> = new Set()
 const listeners = new Set<() => void>()
+let version = 0
+const cache = new Map<string, { raw: string | null; ids: ReadonlySet<string> }>()
+
+const notify = () => {
+  version += 1
+  listeners.forEach((listener) => listener())
+}
+
+// Another tab paused or resumed a vote: re-read, never prune from here.
+const onStorage = (event: StorageEvent) => {
+  if (event.key === null || event.key.startsWith(STORAGE_PREFIX)) notify()
+}
 
 const subscribe = (listener: () => void) => {
   listeners.add(listener)
-  // Another tab paused or resumed a vote.
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === null || event.key.startsWith(STORAGE_PREFIX)) listener()
-  }
-  window.addEventListener('storage', onStorage)
+  if (listeners.size === 1) window.addEventListener('storage', onStorage)
   return () => {
     listeners.delete(listener)
-    window.removeEventListener('storage', onStorage)
+    if (!listeners.size) window.removeEventListener('storage', onStorage)
   }
 }
 
-const readHeld = (processId: string | undefined): string | null => {
-  if (!processId || typeof localStorage === 'undefined') return null
+const readRaw = (processId: string): string | null => {
   try {
     return localStorage.getItem(STORAGE_PREFIX + processId)
   } catch {
@@ -53,140 +52,124 @@ const readHeld = (processId: string | undefined): string | null => {
   }
 }
 
-const writeHeld = (processId: string, questionIds: string[]) => {
-  try {
-    if (questionIds.length) localStorage.setItem(STORAGE_PREFIX + processId, JSON.stringify(questionIds))
-    else localStorage.removeItem(STORAGE_PREFIX + processId)
-  } catch {
-    // Storage blocked: resume falls back to every paused question that has votes.
-  }
-  listeners.forEach((listener) => listener())
-}
-
-const parseHeld = (raw: string | null): string[] => {
-  if (!raw) return []
+const parse = (raw: string | null): ReadonlySet<string> => {
+  if (!raw) return NONE
   try {
     const value: unknown = JSON.parse(raw)
-    return Array.isArray(value) ? value.filter((id): id is string => typeof id === 'string') : []
+    return Array.isArray(value) ? new Set(value.filter((id): id is string => typeof id === 'string')) : NONE
   } catch {
-    return []
+    return NONE
   }
 }
+
+/** This browser's pause memory of a vote; the same set object until it changes. */
+export const readRemembered = (processId: string | undefined): ReadonlySet<string> => {
+  if (!processId || typeof localStorage === 'undefined') return NONE
+  const raw = readRaw(processId)
+  const cached = cache.get(processId)
+  if (cached && cached.raw === raw) return cached.ids
+  const ids = parse(raw)
+  cache.set(processId, { raw, ids })
+  return ids
+}
+
+const writeRemembered = (processId: string, ids: Iterable<string>) => {
+  const list = [...new Set(ids)]
+  try {
+    if (list.length) localStorage.setItem(STORAGE_PREFIX + processId, JSON.stringify(list))
+    else localStorage.removeItem(STORAGE_PREFIX + processId)
+  } catch {
+    // Storage blocked: Resume falls back to every paused question that has votes.
+  }
+  notify()
+}
+
+/** Re-renders when any vote's pause memory changes, in this tab or another; read the sets with `readRemembered`. */
+export const usePauseMemoryVersion = () =>
+  useSyncExternalStore(
+    subscribe,
+    () => version,
+    () => 0
+  )
+
+export const useRemembered = (processId: string | undefined): ReadonlySet<string> => {
+  const memoryVersion = usePauseMemoryVersion()
+  // The version is what tells the memory changed; the read keeps the set's identity while it does not.
+  return useMemo(() => readRemembered(processId), [processId, memoryVersion])
+}
+
+const pausedIn = (process: VotingProcessResponse) =>
+  new Set(process.questions.filter((question) => question.status === 'PAUSED').map(({ id }) => id))
 
 /**
  * Pauses a question-by-question vote as a whole ("Pause the vote": every open question to `paused`) and resumes it
- * (the questions that pause stopped back to `ready`). Like useQuestionStatusAction it waits for the job, re-reads the
- * process into the query the ElectionProvider observes, refreshes the results and the votes list, and reports a
- * failure in the organiser's words. It shares that hook's mutation key prefix, so every status button on the page
- * waits for it.
+ * (the held questions back to `ready`), through the shared status-job runner. Call it once per vote page (the actions
+ * provider); screens read it from `useActions()`. The memory only grows on a pause and only shrinks after a change
+ * the re-read confirms, or when a remembered question is over, so a failure, a timeout or a stale tab never loses it.
  */
-export const useVotePause = (process: VotingProcessResponse | null | undefined): VotePause => {
+export const useVotePause = (process: VotingProcessResponse | null | undefined, now: Date): VotePause => {
   const { t } = useTranslation()
-  const { client } = useApiClient()
-  const queryClient = useQueryClient()
-  const toast = useToast()
   const processId = process?.id
-  const questions = process?.questions
-  const mutationKey = [...QueryKeys.process.questionStatus(processId), 'vote-pause']
+  const { run, pending } = useStatusJob(processId)
+  const remembered = useRemembered(processId)
 
-  const raw = useSyncExternalStore(
-    subscribe,
-    () => readHeld(processId),
-    () => null
-  )
-  const remembered = useMemo(() => parseHeld(raw), [raw])
-  const stillPaused = useMemo(() => {
-    const paused = new Set((questions ?? []).filter((q) => q.status === 'PAUSED').map((q) => q.id))
-    return remembered.filter((id) => paused.has(id))
-  }, [questions, remembered])
-  // A held question reopened, closed or voided (here or elsewhere) ends the pause: forget it.
-  const broken = !!questions && stillPaused.length < remembered.length
-
+  // A question that is over never reopens, so even an old read may forget it.
   useEffect(() => {
-    if (processId && broken) writeHeld(processId, [])
-  }, [processId, broken])
+    if (!processId || !process || !remembered.size) return
+    const over = new Set(process.questions.filter(isTerminalQuestion).map(({ id }) => id))
+    if ([...remembered].some((id) => over.has(id))) {
+      writeRemembered(
+        processId,
+        [...remembered].filter((id) => !over.has(id))
+      )
+    }
+  }, [processId, process, remembered])
 
-  const isHeld =
-    !!process &&
-    isQuestionByQuestion(process) &&
-    !broken &&
-    stillPaused.length > 0 &&
-    !process.questions.some((q) => q.status === 'ONGOING') &&
-    !hasEndedBySchedule(process, new Date())
-
-  const mutation = useMutation<void, unknown, VotePauseVariables>({
-    mutationKey,
-    mutationFn: async ({ action, questionIds }) => {
-      if (!processId) throw new Error('No process to change')
-      const { jobId } = await client.elections.bulkSetQuestionStatus(processId, {
-        status: action === 'pause' ? 'paused' : 'ready',
-        questions: questionIds.map((id) => ({ id })),
-      })
-      await client.jobs.waitFor(jobId, { timeoutMs: STATUS_JOB_TIMEOUT_MS })
-    },
-    onError: (error, { action }) => {
-      const kind = questionStatusErrorKind(error)
-      const description = {
-        busy: t('votes.manage.error.busy', {
-          defaultValue: 'Another change is under way. Try again in a few seconds.',
-        }),
-        stale: t('votes.manage.error.stale', { defaultValue: 'The question had already changed state.' }),
-        timeout: t('votes.manage.error.timeout', {
-          defaultValue: 'This is taking longer than expected. The state will update on its own.',
-        }),
-        other: error instanceof Error ? error.message : String(error),
-      }[kind]
-      toast({
-        title:
-          action === 'pause'
-            ? t('votes.pause.error.pause', { defaultValue: 'The vote could not be paused' })
-            : t('votes.pause.error.resume', { defaultValue: 'The vote could not be resumed' }),
-        description,
-        type: kind === 'timeout' ? 'info' : 'error',
-        duration: 7000,
-        closable: true,
-      })
-    },
-    onSettled: async (_data, _error, { action, questionIds }) => {
-      if (!processId) return
-      const processKey = QueryKeys.election.process(processId)
-      try {
-        const refreshed = await client.elections.get(processId)
-        // A poll that left before the change must not overwrite the re-read.
-        await queryClient.cancelQueries({ queryKey: processKey })
-        const paused = new Set(refreshed.questions.filter((q) => q.status === 'PAUSED').map((q) => q.id))
-        // One render for the process and the memory: a held question compared with the process from before the
-        // pause would read as reopened and be forgotten.
-        notifyManager.batch(() => {
-          queryClient.setQueryData(processKey, refreshed)
-          notifyManager.schedule(() =>
-            writeHeld(processId, action === 'pause' ? questionIds.filter((id) => paused.has(id)) : [])
-          )
-        })
-      } catch {
-        // The 30s poll catches up; a failed re-read must not hide the action's own outcome.
-      }
-      void queryClient.invalidateQueries({ queryKey: QueryKeys.election.results(processId) })
-      void queryClient.invalidateQueries({ queryKey: QueryKeys.organization.votesAll })
-    },
-  })
-
-  const isPending = useIsMutating({ mutationKey }) > 0
-  const { mutateAsync } = mutation
+  const isHeld = !!process && isQuestionByQuestion(process) && deriveVoteState(process, now, remembered) === 'paused'
+  const heldKey = isHeld && process ? pausedHoldIds(process, remembered).join() : ''
+  const isPending = pending?.tag === 'pauseVote' || pending?.tag === 'resumeVote'
 
   return useMemo<VotePause>(() => {
+    const heldQuestionIds = heldKey ? heldKey.split(',') : []
     const pause = async () => {
-      const open = (questions ?? []).filter((q) => q.status === 'ONGOING').map((q) => q.id)
+      if (!processId || !process) return
+      const open = process.questions.filter((question) => question.status === 'ONGOING').map(({ id }) => id)
       if (!open.length) return
-      await mutateAsync({ action: 'pause', questionIds: open }).catch(() => undefined)
+      // Remembered before sending: a pause that times out may still land, and must not land unremembered.
+      writeRemembered(processId, [...readRemembered(processId), ...open])
+      await run({
+        questionIds: open,
+        status: 'paused',
+        tag: 'pauseVote',
+        errorTitle: t('votes.pause.error.pause', { defaultValue: 'The vote could not be paused' }),
+        onRefreshed: (refreshed, ok) => {
+          if (!ok) return
+          const paused = pausedIn(refreshed)
+          writeRemembered(
+            processId,
+            [...readRemembered(processId)].filter((id) => paused.has(id))
+          )
+        },
+      })
     }
     const resume = async () => {
-      const targets = remembered.length
-        ? stillPaused
-        : (questions ?? []).filter((q) => q.status === 'PAUSED' && (q.results?.voteCount ?? 0) > 0).map((q) => q.id)
-      if (!targets.length) return
-      await mutateAsync({ action: 'resume', questionIds: targets }).catch(() => undefined)
+      if (!processId || !heldQuestionIds.length) return
+      await run({
+        questionIds: heldQuestionIds,
+        status: 'ready',
+        tag: 'resumeVote',
+        errorTitle: t('votes.pause.error.resume', { defaultValue: 'The vote could not be resumed' }),
+        onRefreshed: (refreshed, ok) => {
+          // Only a confirmed resume forgets: after a failure the questions may still be held.
+          if (!ok) return
+          const paused = pausedIn(refreshed)
+          writeRemembered(
+            processId,
+            [...readRemembered(processId)].filter((id) => paused.has(id))
+          )
+        },
+      })
     }
-    return { isHeld, heldQuestionIds: isHeld ? stillPaused : [], pause, resume, isPending }
-  }, [isHeld, isPending, mutateAsync, questions, remembered, stillPaused])
+    return { isHeld, heldQuestionIds, pause, resume, isPending }
+  }, [heldKey, isHeld, isPending, process, processId, run, t])
 }

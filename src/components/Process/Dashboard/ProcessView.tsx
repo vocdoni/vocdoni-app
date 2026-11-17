@@ -9,7 +9,6 @@ import { DashboardContents } from '~components/Dashboard/Contents'
 import { RoutedTabs, type RoutedTab } from '~components/ui/RoutedTabs'
 import { Routes } from '~src/router/routes'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { useNow } from '~utils/use-now'
 import { deriveVoteState } from '~utils/vote-state'
 import { PauseBanner } from './PauseBanner'
 import { VoteHeader } from './VoteHeader'
@@ -17,10 +16,9 @@ import { VoteHeader } from './VoteHeader'
 /** The tabs, with the pause banner under them on Resum and Gestió while the vote is paused (as a whole). */
 const VoteTabs = ({ tabs, value, withNotice }: { tabs: RoutedTab[]; value: string; withNotice: boolean }) => {
   const { election, results } = useElection()
-  const { votePause } = useActions()
-  const now = useNow()
+  const { state } = useActions()
   const byQuestion = isQuestionByQuestion(election)
-  const paused = !!election && (byQuestion ? votePause.isHeld : deriveVoteState(election, now) === 'paused')
+  const paused = state === 'paused'
   const notice =
     withNotice && paused ? <PauseBanner byQuestion={byQuestion} votes={processVoteCount(results)} /> : undefined
   return <RoutedTabs tabs={tabs} value={value} rhythm='page' notice={notice} />

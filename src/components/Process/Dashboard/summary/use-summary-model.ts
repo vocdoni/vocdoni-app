@@ -2,17 +2,16 @@ import { isSecretUntilTheEnd, processVoteCount, resolveEndDate } from '@vocdoni/
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useElection } from '@vocdoni/react-components'
 import { useMemo } from 'react'
+import { useActions } from '~components/Actions/ActionsContext'
 import { useProcessEarlyEndDate } from '~queries/process-end-date'
-import { useVotePause } from '~queries/vote-pause'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { useNow } from '~utils/use-now'
-import { deriveQuestionState, deriveVoteState, percentOf, type QuestionState, type VoteState } from '~utils/vote-state'
+import { deriveQuestionState, percentOf, type QuestionState, type VoteState } from '~utils/vote-state'
 
 /** Everything Resum shows, derived once from the single process read. */
 export type SummaryModel = {
   election: VotingProcessResponse
   byQuestion: boolean
-  /** `paused` also for a question-by-question vote held as a whole (`useVotePause`). */
+  /** The page's state (`useActions().state`), whole-vote pause included. */
   state: VoteState
   /** People who voted: the highest per-question count on a question-by-question vote, hence "at least". */
   count: number
@@ -30,24 +29,20 @@ export type SummaryModel = {
 
 export const useSummaryModel = (): SummaryModel | null => {
   const { election, results } = useElection()
-  const now = useNow()
+  const { state, now, votePause } = useActions()
   const { data: earlyEndDate } = useProcessEarlyEndDate(election)
-  const { isHeld, heldQuestionIds } = useVotePause(election)
-  const held = heldQuestionIds.join()
+  const { heldQuestionIds } = votePause
 
   return useMemo(() => {
-    if (!election) return null
+    if (!election || !state) return null
     const byQuestion = isQuestionByQuestion(election)
-    const voteState = deriveVoteState(election, now)
-    // With every question held and none closed, the derived state reads `ready`: the pause wins over both.
-    const paused = byQuestion && isHeld && (voteState === 'live' || voteState === 'ready')
-    const heldIds = new Set(paused ? held.split(',') : [])
+    const heldIds = new Set(heldQuestionIds)
     const total = election.census?.size
     const count = processVoteCount(results)
     return {
       election,
       byQuestion,
-      state: paused ? 'paused' : voteState,
+      state,
       count,
       total,
       percent: percentOf(count, total),
@@ -58,5 +53,5 @@ export const useSummaryModel = (): SummaryModel | null => {
       ),
       now,
     }
-  }, [election, results, now, earlyEndDate, isHeld, held])
+  }, [election, results, now, earlyEndDate, state, heldQuestionIds])
 }

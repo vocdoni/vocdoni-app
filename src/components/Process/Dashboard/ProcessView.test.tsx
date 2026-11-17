@@ -13,8 +13,13 @@ vi.mock('~components/Actions', () => ({
   ActionsProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }))
 
-let isHeld = false
-vi.mock('~components/Actions/ActionsContext', () => ({ useActions: () => ({ votePause: { isHeld } }) }))
+let currentElection: VotingProcessResponse
+let remembered: string[] = []
+// The provider's state, with the real derivation and this browser's pause memory.
+vi.mock('~components/Actions/ActionsContext', async () => {
+  const { deriveVoteState } = await import('~utils/vote-state')
+  return { useActions: () => ({ state: deriveVoteState(currentElection, new Date(), new Set(remembered)) }) }
+})
 
 vi.mock('./VoteHeader', () => ({ VoteHeader: () => <div>VoteHeader</div> }))
 
@@ -34,6 +39,7 @@ const createProcess = (status: QuestionStatus, initialStatus?: 'PAUSED', cancele
 const results = { questions: [{ voteCount: 184 }] }
 
 const renderAt = (election: VotingProcessResponse, path = '/admin/process/0xabc') => {
+  currentElection = election
   setReactProvidersMock({
     useElection: () => ({ id: election.id, election, status: election.questions[0].status, results }),
   })
@@ -46,7 +52,7 @@ const renderAt = (election: VotingProcessResponse, path = '/admin/process/0xabc'
 
 describe('ProcessView', () => {
   beforeEach(() => {
-    isHeld = false
+    remembered = []
   })
 
   it('offers Summary, Ballot and Results for an all-at-once vote', () => {
@@ -93,7 +99,7 @@ describe('ProcessView', () => {
   })
 
   it('shows the banner on Manage for a question-by-question vote paused as a whole', () => {
-    isHeld = true
+    remembered = ['q1']
     renderAt(createProcess('PAUSED', 'PAUSED'), '/admin/process/0xabc/manage')
 
     expect(screen.getByRole('status')).toHaveTextContent(

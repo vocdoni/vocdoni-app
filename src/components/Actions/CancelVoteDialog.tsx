@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useVoteText } from '~i18n/use-vote-text'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { deriveVoteState } from '~utils/vote-state'
 import { useActions } from './ActionsContext'
 import type { VoteDialogProps } from './EndVoteDialog'
 import { trackProcessAction } from './track'
@@ -14,7 +13,7 @@ import { groupQuestions, useNumberList } from './vote-questions'
 const useCancelCopy = () => {
   const { t } = useTranslation()
   const { election, results } = useElection()
-  const { votePause } = useActions()
+  const { votePause, now, state } = useActions()
   const list = useNumberList()
   if (!election) return null
 
@@ -39,7 +38,7 @@ const useCancelCopy = () => {
           }),
         })
       : noVotes
-    const { active } = groupQuestions(election, votePause.heldQuestionIds, new Date())
+    const { active } = groupQuestions(election, votePause.heldQuestionIds, now)
     warning = active.length
       ? t('votes.cancel.open_now', {
           defaultValue_one: 'Question {{numbers}} is open right now.',
@@ -51,7 +50,7 @@ const useCancelCopy = () => {
   } else {
     const count = processVoteCount(results)
     discarded =
-      deriveVoteState(election) === 'ready'
+      state === 'ready'
         ? t('votes.cancel.body_not_open', { defaultValue: 'It has not opened yet and there are no votes.' })
         : count
           ? t('votes.cancel.body_all', {

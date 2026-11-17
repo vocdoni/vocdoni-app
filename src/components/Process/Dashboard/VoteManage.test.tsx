@@ -9,19 +9,30 @@ import { VoteManage } from './VoteManage'
 
 const change = vi.fn()
 let questionStatus: { pending?: { questionId: string; status: string }; isBusy: boolean } = { isBusy: false }
-let votePause = { isHeld: false, heldQuestionIds: [] as string[], isPending: false }
 let canManage = true
 let currentNow = new Date('2026-03-01T12:00:00Z')
+let currentElection: VotingProcessResponse
 
 vi.mock('~queries/question-status', () => ({
   useQuestionStatusAction: () => ({ change, ...questionStatus }),
 }))
-vi.mock('~queries/vote-pause', () => ({
-  useVotePause: () => ({ ...votePause, pause: vi.fn(), resume: vi.fn() }),
-}))
-vi.mock('~queries/votes', () => ({ useCanManageVotes: () => canManage }))
-vi.mock('~components/Actions/ActionsContext', () => ({ useActions: () => ({ disabled: false }) }))
-vi.mock('~utils/use-now', () => ({ useNow: () => currentNow }))
+// The provider's values, with the real state derivation (no pause memory: what another device sees).
+vi.mock('~components/Actions/ActionsContext', async () => {
+  const { deriveVoteState, pausedHoldIds } = await import('~utils/vote-state')
+  return {
+    useActions: () => {
+      const state = deriveVoteState(currentElection, currentNow)
+      const isHeld = state === 'paused'
+      return {
+        disabled: false,
+        canManage,
+        now: currentNow,
+        state,
+        votePause: { isHeld, heldQuestionIds: isHeld ? pausedHoldIds(currentElection) : [], isPending: false },
+      }
+    },
+  }
+})
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
   const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
@@ -67,6 +78,7 @@ const build = (overrides: Partial<VotingProcessResponse> = {}) =>
 const withQuestions = (list: VotingProcessQuestion[]) => build({ questions: list })
 
 const show = (election: VotingProcessResponse) => {
+  currentElection = election
   setReactProvidersMock({
     ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
     useElection: () => mockUseElection({ election, results: null }),
@@ -87,7 +99,6 @@ describe('VoteManage', () => {
   beforeEach(() => {
     change.mockReset()
     questionStatus = { isBusy: false }
-    votePause = { isHeld: false, heldQuestionIds: [], isPending: false }
     canManage = true
     currentNow = new Date('2026-03-01T12:00:00Z')
   })
@@ -221,23 +232,22 @@ describe('VoteManage', () => {
     expect(third).toHaveAttribute('data-variant', 'outline')
   })
 
-  it('offers Resume and Close on a paused question, and says nobody can vote on it', async () => {
+  it('offers Resume and Close on a paused question while another is open, and says nobody can vote on it', async () => {
     show(
       withQuestions([
-        createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+        createQuestion({ id: 'q1', status: 'ONGOING', results: createQuestionResults({ voteCount: 4 }) }),
         createQuestion({ id: 'q2', status: 'PAUSED', results: createQuestionResults({ voteCount: 5 }) }),
       ])
     )
-    expect(screen.getByText('Next step: resume question 2')).toBeInTheDocument()
+    expect(screen.getByText('Next step: close question 1')).toBeInTheDocument()
     expect(screen.getByText('No one can vote on it.')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Resume' })).toHaveAttribute('data-variant', 'solid')
-    expect(screen.getByRole('button', { name: 'Close' })).toHaveAttribute('data-variant', 'outline')
+    expect(screen.getByRole('button', { name: 'Resume' })).toHaveAttribute('data-variant', 'outline')
     await userEvent.click(screen.getByRole('button', { name: 'Resume' }))
     expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'ready' })
   })
 
   it('holds every question while the whole vote is paused', () => {
-    votePause = { isHeld: true, heldQuestionIds: ['q2'], isPending: false }
+    // A question with votes paused and none open: the vote is paused as a whole, on any device.
     show(
       withQuestions([
         createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
@@ -253,7 +263,7 @@ describe('VoteManage', () => {
     expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
   })
 
-  it('reads a vote whose questions are all closed as closed, with no next step (R22)', () => {
+  it('reads a vote whose questions are all closed as closed, with no next step', () => {
     show(
       withQuestions([
         createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),

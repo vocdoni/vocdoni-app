@@ -7,7 +7,7 @@ import { VoteHeader } from './VoteHeader'
 const NOW = new Date('2026-03-10T12:00:00Z')
 let canManage = true
 let isDesktop = true
-let isHeld = false
+let currentElection: VotingProcessResponse
 let earlyEndDate: Date | null = null
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
@@ -27,9 +27,17 @@ vi.mock('~components/Actions', () => {
     CancelVoteDialog: ({ open }: { open: boolean }) => (open ? <div role='dialog'>Cancel dialog</div> : null),
   }
 })
-vi.mock('~components/Actions/ActionsContext', () => ({
-  useActions: () => ({ canManage, disabled: false, votePause: { isHeld, heldQuestionIds: [] } }),
-}))
+// The provider's values, with the real state derivation (no pause memory: what another device sees).
+vi.mock('~components/Actions/ActionsContext', async () => {
+  const { deriveVoteState } = await import('~utils/vote-state')
+  return {
+    useActions: () => {
+      const now = new Date()
+      const state = deriveVoteState(currentElection, now)
+      return { canManage, disabled: false, now, state, votePause: { isHeld: state === 'paused', heldQuestionIds: [] } }
+    },
+  }
+})
 vi.mock('~components/ui/useIsMobile', () => ({ useIsDesktop: () => isDesktop, useIsMobile: () => !isDesktop }))
 vi.mock('./use-clone-as-draft', () => ({ useCloneAsDraft: () => ({ cloneAsDraft: vi.fn(), isCloning: false }) }))
 vi.mock('~queries/process-end-date', () => ({ useProcessEarlyEndDate: () => ({ data: earlyEndDate }) }))
@@ -81,6 +89,7 @@ const byQuestion = (questions: Question[], overrides: Record<string, unknown> = 
   createProcess({ initialStatus: 'PAUSED', questions, ...overrides })
 
 const renderHeader = (election: VotingProcessResponse) => {
+  currentElection = election
   setReactProvidersMock({ useElection: () => ({ election, status: election.questions[0].status }) })
   return render(
     <TestMemoryRouter>
@@ -104,7 +113,6 @@ describe('VoteHeader', () => {
     vi.setSystemTime(NOW)
     canManage = true
     isDesktop = true
-    isHeld = false
     earlyEndDate = null
   })
   afterEach(() => vi.useRealTimers())
@@ -195,7 +203,6 @@ describe('VoteHeader', () => {
     })
 
     it('shows a vote paused as a whole as paused, with Resume the vote first', () => {
-      isHeld = true
       renderHeader(byQuestion([question('q1', 'PAUSED', { results: { voteCount: 3 } })]))
 
       expect(actions()).toEqual(['Resume the vote', 'End the vote'])

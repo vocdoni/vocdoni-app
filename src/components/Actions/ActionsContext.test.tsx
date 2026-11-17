@@ -1,10 +1,12 @@
+import { useQuery } from '@tanstack/react-query'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import type { VotingProcessWithMode } from '~src/types/voting-process'
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import { QueryKeys } from '~queries/keys'
-import { fireEvent, renderWithProviders, screen, waitFor } from '~src/test-utils'
+import { createTestQueryClient, fireEvent, renderWithProviders, screen, waitFor } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ActionContinue, ActionEnd, ActionPause } from './ActionButtons'
-import { ActionsProvider } from './ActionsContext'
+import { ActionsProvider, useActions } from './ActionsContext'
 import { CancelVoteDialog } from './CancelVoteDialog'
 
 const client = {
@@ -61,6 +63,32 @@ const showCancel = (process: VotingProcessResponse, results: unknown = null) => 
     <ActionsProvider>
       <CancelVoteDialog open onClose={vi.fn()} />
     </ActionsProvider>
+  )
+}
+
+/** The page's state as every screen reads it, and the questions Resume would reopen. */
+const Probe = () => {
+  const { state, votePause } = useActions()
+  return <output data-testid='probe'>{`${state}:${votePause.heldQuestionIds.join()}`}</output>
+}
+
+/** The real provider over a process read from the query cache, so the runner's re-reads reach it as on the page. */
+const showLive = (process: VotingProcessResponse) => {
+  const queryClient = createTestQueryClient()
+  queryClient.setQueryData(QueryKeys.election.process('p1'), process)
+  setReactProvidersMock({
+    useElection: () => {
+      const { data } = useQuery<VotingProcessResponse>({ queryKey: QueryKeys.election.process('p1'), enabled: false })
+      return { election: data, status: 'ONGOING', results: null, loading: {}, errors: {} }
+    },
+  })
+  return renderWithProviders(
+    <ActionsProvider>
+      <ActionContinue />
+      <ActionPause />
+      <Probe />
+    </ActionsProvider>,
+    { queryClient }
   )
 }
 
@@ -164,6 +192,20 @@ describe('header actions', () => {
     )
   })
 
+  it("tells a failed end in the organiser's words, never the backend text, and re-reads the vote", async () => {
+    client.elections.bulkSetQuestionStatus.mockRejectedValue(new VocdoniApiError(503, {}, 'lock held by job 42', 50303))
+    show(election())
+
+    fireEvent.click(button('actions.end')!)
+    fireEvent.click(await screen.findByRole('button', { name: 'End the vote' }))
+
+    expect(await screen.findByText('The vote could not be ended')).toBeInTheDocument()
+    expect(screen.getByText('Another change is under way. Try again in a few seconds.')).toBeInTheDocument()
+    expect(screen.queryByText(/lock held/)).toBeNull()
+    await waitFor(() => expect(client.elections.get).toHaveBeenCalledWith('p1'))
+    await waitFor(() => expect(button('actions.end')).toBeEnabled())
+  })
+
   it('disables ending when every question is already closed', () => {
     show(election({ initialStatus: undefined, questions: [question('q0', 'ENDED'), question('q1', 'ENDED')] }), 'ENDED')
 
@@ -219,5 +261,39 @@ describe('cancel dialog', () => {
     expect(
       await screen.findByText('It has not opened yet and there are no votes. It cannot be undone.')
     ).toBeInTheDocument()
+  })
+})
+
+describe('whole-vote pause through the real provider', () => {
+  const paused = (ids: string[]) =>
+    election({
+      questions: [
+        question('q0', 'RESULTS', 4),
+        ...['q1', 'q2'].map((id) => question(id, ids.includes(id) ? 'PAUSED' : 'ONGOING', 0)),
+      ],
+    })
+
+  it('pauses, keeps the pause through a failed resume, then resumes', async () => {
+    client.elections.get.mockResolvedValue(paused(['q1', 'q2']))
+    showLive(paused([]))
+    expect(screen.getByTestId('probe')).toHaveTextContent('live:')
+
+    fireEvent.click(button('actions.pause')!)
+    await waitFor(() => expect(screen.getByTestId('probe')).toHaveTextContent('paused:q1,q2'))
+
+    client.elections.bulkSetQuestionStatus.mockRejectedValueOnce(new VocdoniApiError(503, {}, 'busy', 50303))
+    fireEvent.click(button('actions.continue')!)
+    expect(await screen.findByText('The vote could not be resumed')).toBeInTheDocument()
+    await waitFor(() => expect(button('actions.continue')).toBeEnabled())
+    expect(screen.getByTestId('probe')).toHaveTextContent('paused:q1,q2')
+
+    client.elections.get.mockResolvedValue(paused([]))
+    fireEvent.click(button('actions.continue')!)
+    await waitFor(() => expect(screen.getByTestId('probe')).toHaveTextContent('live:'))
+    expect(client.elections.bulkSetQuestionStatus).toHaveBeenLastCalledWith('p1', {
+      status: 'ready',
+      questions: [{ id: 'q1' }, { id: 'q2' }],
+    })
+    expect(localStorage.getItem('votes.pause.held.p1')).toBeNull()
   })
 })

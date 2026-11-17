@@ -31,8 +31,7 @@ import {
   ViewIcon,
 } from '~theme/icons'
 import { ucfirst } from '~utils/strings'
-import { useNow } from '~utils/use-now'
-import { deriveVoteState, isTerminalQuestion, type VoteState } from '~utils/vote-state'
+import { isTerminalQuestion, type VoteState } from '~utils/vote-state'
 import { useVotingReportPdfDownload } from '../VotingReportPdf/VotingReportPdfButton'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
@@ -50,7 +49,8 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
   const { dateAt, day, time, shortDate, timeLeft, ago, duration } = useVoteText()
   const { data: earlyEndDate } = useProcessEarlyEndDate(election)
   const byQuestion = isQuestionByQuestion(election)
-  const start = new Date(election.startDate)
+  // Older published processes may lack a start date; an invalid date would throw in the relative-time formatter.
+  const start = parseDate(election.startDate) ?? now
   const end = resolveEndDate(election)
   const upper = (value: string) => ucfirst(value, i18n.language)
 
@@ -334,14 +334,11 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
 export const VoteHeader = () => {
   const { t } = useTranslation()
   const { election } = useElection()
-  const { votePause } = useActions()
-  const now = useNow()
+  const { state, now } = useActions()
   const { text } = useVoteText()
 
-  if (!election) return null
+  if (!election || !state) return null
 
-  // A question-by-question vote paused as a whole has no state of its own in the API: the pause memory gives it.
-  const state = votePause.isHeld ? 'paused' : deriveVoteState(election, now)
   const part: HeaderPartProps = { election, state, now }
 
   return (
