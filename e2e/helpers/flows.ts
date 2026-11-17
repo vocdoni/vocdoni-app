@@ -353,11 +353,11 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
 
   await page.getByRole('button', { name: /^Publish$/ }).click()
 
-  // Publish saves the draft and opens the review dialog. Its primary is the last
-  // button of its footer, enabled once the price is read: "Publish" for the
+  // Publish saves the draft and opens the review dialog. Its primary is the
+  // `data-primary` button, enabled once the price is read: "publish" for the
   // stack's small, free census.
   const review = page.getByRole('dialog')
-  const reviewPrimary = review.getByRole('button').last()
+  const reviewPrimary = review.locator('[data-primary]')
   await expect(reviewPrimary).toBeEnabled({ timeout: 60_000 })
   await reviewPrimary.click()
 
@@ -365,7 +365,7 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   // the suite by a wide margin.
   const published = page.waitForURL(/\/admin\/process\/[^/]+$/, { timeout: 180_000 })
   // A vote the organization's balance pays for asks once more, on its wallet step
-  const walletPrimary = review.getByRole('button', { name: 'Pay from the balance and publish' })
+  const walletPrimary = review.locator('[data-primary=pay-from-balance]')
   const walletStep = walletPrimary.waitFor({ state: 'visible', timeout: 180_000 }).then(
     () => true,
     () => false

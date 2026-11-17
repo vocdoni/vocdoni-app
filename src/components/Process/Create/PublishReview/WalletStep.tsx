@@ -94,7 +94,8 @@ export const WalletStep = ({ flow, titleId, currencyCode, totalCents, afterCents
         <Button variant='outline' onClick={flow.backToSummary}>
           {t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
         </Button>
-        <Button onClick={flow.publish}>
+        {/* Its label is translated, so the e2e suite finds it by this attribute, not by its copy */}
+        <Button data-primary='pay-from-balance' onClick={flow.publish}>
           {t('process.publish_review.wallet.cta', { defaultValue: 'Pay from the balance and publish' })}
         </Button>
       </PublishReviewFooter>

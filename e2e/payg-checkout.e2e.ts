@@ -90,11 +90,11 @@ test.describe('pay-per-process checkout', () => {
         twoFactor: false,
       })
 
-      // Publish saves the draft and opens the review dialog. Its primary, the last button of its
-      // footer, reads "Add … and publish" once the price and the short wallet are read.
+      // Publish saves the draft and opens the review dialog. Its primary is the `data-primary` button,
+      // which becomes "card" (reads "Add … and publish") once the price and the short wallet are read.
       await page.getByRole('button', { name: /^Publish$/ }).click()
-      const reviewPrimary = page.getByRole('dialog').getByRole('button').last()
-      await expect(reviewPrimary).toHaveText(/and publish$/, { timeout: 60_000 })
+      const reviewPrimary = page.getByRole('dialog').locator('[data-primary]')
+      await expect(reviewPrimary).toHaveAttribute('data-primary', 'card', { timeout: 60_000 })
       await expect(reviewPrimary).toBeEnabled()
 
       // Listened for before the click: the card step opens the top-up session.
