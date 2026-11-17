@@ -82,6 +82,7 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
               results={question.results}
               weighted={!!model.election.census?.weighted}
               final={state === 'closed' && isSettledQuestion(question)}
+              layout='plain'
             />
           </Box>
         )}
@@ -92,7 +93,7 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
 
 /**
  * A question of an all-at-once vote on the desktop: its title and how it is answered, then (once voting has begun)
- * when the results are public its result with a bar per choice, how many answered it and how many left it blank.
+ * how many answered it and how many left it blank, and last, when the results are public, a bar per choice.
  */
 export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
   const { t } = useTranslation()
@@ -120,20 +121,6 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
               </Text>
             )}
           </Box>
-          {outcome && !question.results?.finalResults && (
-            <Text textStyle='body-sm' color='fg.subtle'>
-              {t('votes.summary.provisional', { defaultValue: 'Provisional result' })}
-            </Text>
-          )}
-          {/* The tally itself, as Gestió draws it: Resum must answer "how is it going" without opening Results. */}
-          {outcome && (
-            <QuestionResultBars
-              question={question}
-              results={question.results}
-              weighted={!!model.election.census?.weighted}
-              final={!!question.results?.finalResults}
-            />
-          )}
           {started && (
             <TurnoutBar
               caption={
@@ -173,6 +160,16 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
                 voters: quantity(model.count),
               })}
             </Text>
+          )}
+          {/* The tally last, as the board draws it: Resum answers "how is it going" without opening Results. */}
+          {outcome && (
+            <QuestionResultBars
+              question={question}
+              results={question.results}
+              weighted={!!model.election.census?.weighted}
+              final={!!question.results?.finalResults}
+              layout='plain'
+            />
           )}
         </Stack>
       </Grid>

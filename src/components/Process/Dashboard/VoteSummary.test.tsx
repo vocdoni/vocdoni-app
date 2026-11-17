@@ -130,14 +130,17 @@ describe('VoteSummary', () => {
       expect(screen.getByText('All open at once')).toBeInTheDocument()
     })
 
-    it('shows the result of each question once results are public', () => {
-      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 184, ['150', '34'])] }), 184)
+    it('shows the result of each question last, once results are public', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 181, ['150', '31'])] }), 184)
 
-      // One bar per choice with its votes; no winner sentence while the vote runs.
-      expect(screen.getByText('150')).toBeInTheDocument()
-      expect(screen.getByText('34')).toBeInTheDocument()
-      expect(screen.queryByText(/wins with|150 to 34/)).not.toBeInTheDocument()
-      expect(screen.getByText('Provisional result')).toBeInTheDocument()
+      // One bar per choice with its votes, after the turnout and the blank note; no winner sentence, no label.
+      const bar = screen.getByRole('progressbar', { name: 'Yes, 150 votes, 83%' })
+      expect(screen.getByRole('progressbar', { name: 'No, 31 votes, 17%' })).toBeInTheDocument()
+      const blank = screen.getByText('3 of the 184 voters left it blank.')
+      expect(blank.compareDocumentPosition(bar) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+      expect(screen.queryByText(/wins with|150 to 31/)).not.toBeInTheDocument()
+      expect(screen.queryByText('Provisional result')).not.toBeInTheDocument()
+      expect(screen.queryByRole('img', { name: 'Winning choice' })).not.toBeInTheDocument()
     })
 
     it('links the ballot from the questions card', () => {
@@ -255,7 +258,7 @@ describe('VoteSummary', () => {
       )
     })
 
-    it('draws a bar per choice under each opened question with a public tally, the winner once it is final', () => {
+    it('draws a bar per choice under each opened question with a public tally, the top one in bold once final', () => {
       renderSummary(
         byQuestion([
           question('q1', 'ENDED', 200, ['150', '50']),
@@ -268,14 +271,20 @@ describe('VoteSummary', () => {
       )
       const bars = (name: string) => screen.queryAllByRole('progressbar', { name })
 
-      expect(bars('Yes, 150, 75%')).toHaveLength(1)
-      expect(bars('No, 50, 25%')).toHaveLength(1)
-      expect(bars('Yes, 70, 58%')).toHaveLength(1)
-      expect(bars('Yes, 30, 75%')).toHaveLength(1)
+      expect(bars('Yes, 150 votes, 75%')).toHaveLength(1)
+      expect(bars('No, 50 votes, 25%')).toHaveLength(1)
+      expect(bars('Yes, 70 votes, 58%')).toHaveLength(1)
+      expect(bars('Yes, 30 votes, 75%')).toHaveLength(1)
       // A secret tally stays hidden while open; a question still to open has nothing to draw.
-      expect(bars('Yes, 20, 67%')).toHaveLength(0)
-      expect(bars('Yes, 0, 0%')).toHaveLength(0)
-      expect(screen.getAllByRole('img', { name: 'Winning choice' })).toHaveLength(1)
+      expect(bars('Yes, 20 votes, 67%')).toHaveLength(0)
+      expect(bars('Yes, 0 votes, 0%')).toHaveLength(0)
+      // The plain layout: no check column; only the closed question's losing bar is dimmed.
+      expect(screen.queryByRole('img', { name: 'Winning choice' })).not.toBeInTheDocument()
+      const dimmed = (name: string) =>
+        getComputedStyle(bars(name)[0].querySelector('[data-part="range"]')!).opacity.includes('outvoted')
+      expect(dimmed('No, 50 votes, 25%')).toBe(true)
+      expect(dimmed('Yes, 150 votes, 75%')).toBe(false)
+      expect(dimmed('No, 50 votes, 42%')).toBe(false)
       expect(screen.getByText('150 to 50')).toBeInTheDocument()
     })
 

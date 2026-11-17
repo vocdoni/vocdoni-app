@@ -2031,6 +2031,10 @@
       "to_open": "Zu öffnen"
     },
     "results": {
+      "choice_points_one": "{{votes}} Punkt",
+      "choice_points_other": "{{votes}} Punkte",
+      "choice_votes_one": "{{votes}} Stimme",
+      "choice_votes_other": "{{votes}} Stimmen",
       "counting": "Die Abstimmung ist geschlossen. Die Ergebnisse werden ausgezählt und erscheinen in Kürze hier."
     },
     "state": {
@@ -2129,7 +2133,6 @@
         "by_question": "Niemand kann abstimmen, und keine Frage kann geöffnet oder geschlossen werden, bis du sie fortsetzt. Die abgegebenen Stimmen bleiben erhalten.",
         "title": "Die Abstimmung ist pausiert."
       },
-      "provisional": "Vorläufiges Ergebnis",
       "question_turnout": "{{votes}} · {{percent}} %",
       "question_votes_one": "{{count, number}} Stimme",
       "question_votes_other": "{{count, number}} Stimmen",

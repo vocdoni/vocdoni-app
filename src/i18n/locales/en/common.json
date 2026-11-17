@@ -2031,6 +2031,10 @@
       "to_open": "To open"
     },
     "results": {
+      "choice_points_one": "{{votes}} point",
+      "choice_points_other": "{{votes}} points",
+      "choice_votes_one": "{{votes}} vote",
+      "choice_votes_other": "{{votes}} votes",
       "counting": "The vote is closed. The results are being counted and will show here shortly."
     },
     "state": {
@@ -2129,7 +2133,6 @@
         "by_question": "Nobody can vote, and no question can be opened or closed until you resume it. The votes cast are kept.",
         "title": "The vote is paused."
       },
-      "provisional": "Provisional result",
       "question_turnout": "{{votes}} · {{percent}}%",
       "question_votes_one": "{{count, number}} vote",
       "question_votes_other": "{{count, number}} votes",

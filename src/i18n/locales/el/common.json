@@ -2031,6 +2031,10 @@
       "to_open": "Προς άνοιγμα"
     },
     "results": {
+      "choice_points_one": "{{votes}} πόντος",
+      "choice_points_other": "{{votes}} πόντοι",
+      "choice_votes_one": "{{votes}} ψήφος",
+      "choice_votes_other": "{{votes}} ψήφοι",
       "counting": "Η ψηφοφορία έκλεισε. Τα αποτελέσματα καταμετρώνται και θα εμφανιστούν εδώ σύντομα."
     },
     "state": {
@@ -2129,7 +2133,6 @@
         "by_question": "Κανείς δεν μπορεί να ψηφίσει και καμία ερώτηση δεν μπορεί να ανοίξει ή να κλείσει μέχρι να τη συνεχίσετε. Οι ψήφοι που δόθηκαν διατηρούνται.",
         "title": "Η ψηφοφορία είναι σε παύση."
       },
-      "provisional": "Προσωρινό αποτέλεσμα",
       "question_turnout": "{{votes}} · {{percent}}%",
       "question_votes_one": "{{count, number}} ψήφος",
       "question_votes_other": "{{count, number}} ψήφοι",

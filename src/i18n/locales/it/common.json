@@ -2081,6 +2081,12 @@
       "to_open": "Da aprire"
     },
     "results": {
+      "choice_points_one": "{{votes}} punto",
+      "choice_points_many": "{{votes}} punti",
+      "choice_points_other": "{{votes}} punti",
+      "choice_votes_one": "{{votes}} voto",
+      "choice_votes_many": "{{votes}} voti",
+      "choice_votes_other": "{{votes}} voti",
       "counting": "La votazione è chiusa. I risultati sono in fase di conteggio e appariranno qui a breve."
     },
     "state": {
@@ -2190,7 +2196,6 @@
         "by_question": "Nessuno può votare e nessuna domanda può essere aperta o chiusa finché non la riprendi. I voti espressi restano validi.",
         "title": "La votazione è in pausa."
       },
-      "provisional": "Risultato provvisorio",
       "question_turnout": "{{votes}} · {{percent}}%",
       "question_votes_one": "{{count, number}} voto",
       "question_votes_many": "{{count, number}} voti",

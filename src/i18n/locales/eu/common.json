@@ -2031,6 +2031,10 @@
       "to_open": "Irekitzeko"
     },
     "results": {
+      "choice_points_one": "{{votes}} puntu",
+      "choice_points_other": "{{votes}} puntu",
+      "choice_votes_one": "{{votes}} boto",
+      "choice_votes_other": "{{votes}} boto",
       "counting": "Bozketa itxita dago. Emaitzak zenbatzen ari dira eta laster agertuko dira hemen."
     },
     "state": {
@@ -2129,7 +2133,6 @@
         "by_question": "Inork ezin du bozkatu, eta ezin da galderarik ireki edo itxi berrekin arte. Emandako botoak gorde egiten dira.",
         "title": "Bozketa pausatuta dago."
       },
-      "provisional": "Behin-behineko emaitza",
       "question_turnout": "{{votes}} · %{{percent}}",
       "question_votes_one": "{{count, number}} boto",
       "question_votes_other": "{{count, number}} boto",
