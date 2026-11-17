@@ -38,7 +38,11 @@ export const ActiveQuestionRow = ({
   const { text } = useVoteText()
   const count = question.results?.voteCount ?? 0
   const share = percentOf(count, electorate)
-  const values = { voted: quantity(count), total: electorate ? quantity(electorate) : '?' }
+  const values = { voted: quantity(count), total: electorate ? quantity(electorate) : '' }
+  // Without a known electorate the sentences leave the total out instead of printing a placeholder.
+  const voted = electorate
+    ? t('votes.manage.question_voted', { defaultValue: '{{voted}} of {{total}} voted', ...values })
+    : t('votes.manage.question_voted_count', { defaultValue: '{{voted}} voted', ...values })
   const live = !question.secretUntilTheEnd
   const hasBars = live && !!question.results?.results?.length
   // What the board says under the bar, after a lock while results are secret (not on a held question). The board's
@@ -86,7 +90,7 @@ export const ActiveQuestionRow = ({
         <TurnoutBar
           gridColumn={wide}
           maxW={{ md: 'turnout.max', lg: 'full' }}
-          caption={t('votes.manage.question_voted', { defaultValue: '{{voted}} of {{total}} voted', ...values })}
+          caption={voted}
           share={
             share !== undefined
               ? t('votes.manage.percent', { defaultValue: '{{percent}}%', percent: share })
@@ -94,11 +98,15 @@ export const ActiveQuestionRow = ({
           }
           value={count}
           max={electorate}
-          label={t('votes.manage.question_ruler', {
-            defaultValue: '{{voted}} of {{total}} people voted, {{percent}}%.',
-            ...values,
-            percent: share ?? 0,
-          })}
+          label={
+            electorate
+              ? t('votes.manage.question_ruler', {
+                  defaultValue: '{{voted}} of {{total}} people voted, {{percent}}%.',
+                  ...values,
+                  percent: share ?? 0,
+                })
+              : t('votes.manage.question_ruler_count', { defaultValue: '{{voted}} people voted.', ...values })
+          }
           layout={{ base: 'scale', lg: 'compact' }}
         />
         {hasBars && (

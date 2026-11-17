@@ -24,7 +24,7 @@ export type ManageStripProps = {
 export const ManageStrip = ({ state, voted, total, counts, summaryHref }: ManageStripProps) => {
   const { t } = useTranslation()
   const percent = percentOf(voted, total)
-  const values = { voted: quantity(voted), total: total ? quantity(total) : '?' }
+  const values = { voted: quantity(voted), total: total ? quantity(total) : '' }
   const desktop = { base: 'none', lg: 'block' } as const
 
   return (
@@ -45,11 +45,16 @@ export const ManageStrip = ({ state, voted, total, counts, summaryHref }: Manage
     >
       <ProcessStatus state={state} />
       <Text textStyle='control' fontWeight='medium-plus' color='fg' whiteSpace='nowrap' display={desktop}>
+        {/* Without a known census the sentence leaves the total out instead of printing a placeholder. */}
         <Figures
-          text={t('votes.manage.voted_any', {
-            defaultValue: 'At least {{voted}} of {{total}} voted on a question',
-            ...values,
-          })}
+          text={
+            total
+              ? t('votes.manage.voted_any', {
+                  defaultValue: 'At least {{voted}} of {{total}} voted on a question',
+                  ...values,
+                })
+              : t('votes.manage.voted_any_count', { defaultValue: 'At least {{voted}} voted on a question', ...values })
+          }
         />
       </Text>
       <CensusRuler
@@ -59,11 +64,18 @@ export const ManageStrip = ({ state, voted, total, counts, summaryHref }: Manage
         flex='1'
         minW='20'
         display={desktop}
-        label={t('votes.manage.ruler_label', {
-          defaultValue: 'At least {{voted}} of {{total}} people voted on a question, {{percent}}%.',
-          ...values,
-          percent: percent ?? 0,
-        })}
+        label={
+          total
+            ? t('votes.manage.ruler_label', {
+                defaultValue: 'At least {{voted}} of {{total}} people voted on a question, {{percent}}%.',
+                ...values,
+                percent: percent ?? 0,
+              })
+            : t('votes.manage.ruler_label_count', {
+                defaultValue: 'At least {{voted}} people voted on a question.',
+                ...values,
+              })
+        }
       />
       {percent !== undefined && (
         <Text textStyle='figure' color='fg.subtle' display={desktop}>

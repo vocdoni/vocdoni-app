@@ -64,8 +64,11 @@ export const WaitingQuestionRow = ({
                 : undefined
             }
           >
-            <Stack gap='0' flex='1' minW='0'>
+            {/* Spans: the line can be the row's toggle button, which takes phrasing content only. */}
+            <Stack as='span' gap='0' flex='1' minW='0'>
               <Text
+                as='span'
+                display='block'
                 textStyle='question-line'
                 color={{ base: 'fg', lg: 'fg.muted' }}
                 whiteSpace={{ lg: 'nowrap' }}
@@ -74,11 +77,11 @@ export const WaitingQuestionRow = ({
               >
                 {title}
               </Text>
-              <Text textStyle='note' color='fg.subtle' display={{ lg: 'none' }}>
+              <Text as='span' textStyle='note' color='fg.subtle' display={{ base: 'block', lg: 'none' }}>
                 {meta}
               </Text>
             </Stack>
-            <ProcessStatus kind='question' state={state} display={{ base: 'none', lg: 'inline-flex' }} />
+            <ProcessStatus as='span' kind='question' state={state} display={{ base: 'none', lg: 'inline-flex' }} />
             {hasDetail && <RowChevron expanded={expanded} desktopOnly />}
           </RowHead>
           {action}

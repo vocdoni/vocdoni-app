@@ -114,7 +114,11 @@ export const ClosedQuestionRow = ({
   const count = results?.voteCount ?? 0
   const share = percentOf(count, electorate)
   const desktop = { base: 'none', lg: 'inline-flex' } as const
-  const values = { voted: quantity(count), total: electorate ? quantity(electorate) : '?' }
+  const values = { voted: quantity(count), total: electorate ? quantity(electorate) : '' }
+  // Without a known electorate the sentences leave the total out instead of printing a placeholder.
+  const voted = electorate
+    ? t('votes.manage.question_voted', { defaultValue: '{{voted}} of {{total}} voted', ...values })
+    : t('votes.manage.question_voted_count', { defaultValue: '{{voted}} voted', ...values })
 
   return (
     <QuestionRowFrame number={number}>
@@ -128,8 +132,11 @@ export const ClosedQuestionRow = ({
             number,
           }}
         >
-          <Stack gap='0' flex='1' minW='0'>
+          {/* Spans: the line is the row's toggle button, which takes phrasing content only. */}
+          <Stack as='span' gap='0' flex='1' minW='0'>
             <Text
+              as='span'
+              display='block'
               textStyle='question-line'
               whiteSpace={{ lg: 'nowrap' }}
               overflow={{ lg: 'hidden' }}
@@ -137,7 +144,7 @@ export const ClosedQuestionRow = ({
             >
               {title}
             </Text>
-            <Text textStyle='note' color='fg.subtle' display={{ lg: 'none' }}>
+            <Text as='span' textStyle='note' color='fg.subtle' display={{ base: 'block', lg: 'none' }}>
               <ClosedMeta verdict={verdict} />
             </Text>
           </Stack>
@@ -164,7 +171,7 @@ export const ClosedQuestionRow = ({
               {t('votes.manage.percent', { defaultValue: '{{percent}}%', percent: share })}
             </Text>
           )}
-          <ProcessStatus kind='question' state='closed' display={desktop} />
+          <ProcessStatus as='span' kind='question' state='closed' display={desktop} />
           <RowChevron expanded={expanded} />
         </RowHead>
         <Box id={detailId} hidden={!expanded}>
@@ -176,7 +183,7 @@ export const ClosedQuestionRow = ({
                 </Text>
               )}
               <TurnoutBar
-                caption={t('votes.manage.question_voted', { defaultValue: '{{voted}} of {{total}} voted', ...values })}
+                caption={voted}
                 share={
                   share !== undefined
                     ? t('votes.manage.percent', { defaultValue: '{{percent}}%', percent: share })
@@ -184,11 +191,15 @@ export const ClosedQuestionRow = ({
                 }
                 value={count}
                 max={electorate}
-                label={t('votes.manage.question_ruler', {
-                  defaultValue: '{{voted}} of {{total}} people voted, {{percent}}%.',
-                  ...values,
-                  percent: share ?? 0,
-                })}
+                label={
+                  electorate
+                    ? t('votes.manage.question_ruler', {
+                        defaultValue: '{{voted}} of {{total}} people voted, {{percent}}%.',
+                        ...values,
+                        percent: share ?? 0,
+                      })
+                    : t('votes.manage.question_ruler_count', { defaultValue: '{{voted}} people voted.', ...values })
+                }
                 layout={{ base: 'scale', lg: 'compact' }}
                 maxW={{ md: 'turnout.max', lg: 'full' }}
               />
