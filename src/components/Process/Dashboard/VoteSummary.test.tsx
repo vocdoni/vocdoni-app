@@ -1,6 +1,6 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { QueryKeys } from '~queries/keys'
-import { createTestQueryClient, fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { createTestQueryClient, fireEvent, render, screen, TestMemoryRouter, within } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { VoteSummary } from './VoteSummary'
@@ -116,17 +116,18 @@ const resultsViewed = () =>
 
 describe('VoteSummary', () => {
   describe('an all-at-once vote', () => {
-    it('shows the turnout, how many voted and the four desktop facts', () => {
+    it('shows the turnout, how many voted and the same facts at every width', () => {
       renderSummary(createProcess(), 184)
 
       expect(screen.getByText('59')).toBeInTheDocument()
       expect(screen.getByText('184 of 312 voted')).toBeInTheDocument()
-      for (const label of ['Census', 'Questions', 'Closes', 'Results']) {
-        expect(screen.getByText(label)).toBeInTheDocument()
-      }
-      expect(screen.queryByText('Vote overwrite')).toBeNull()
+      const labels = screen.getAllByRole('term').map((term) => term.textContent)
+      expect(labels).toEqual(['Census', 'Questions', 'Closes', 'Results', 'Type', 'Vote overwrite'])
+      // Anonymity is no fact of the hero at any width (R33 D2).
+      expect(screen.queryByText('Anonymity')).toBeNull()
+      expect(screen.getByText('Disabled')).toBeInTheDocument()
       // One question has no "all at once" to it.
-      expect(screen.getByText('Questions').nextElementSibling).toHaveTextContent(/^1$/)
+      expect(screen.getAllByRole('term')[1].nextElementSibling).toHaveTextContent(/^1$/)
       expect(screen.queryByText('All open at once')).not.toBeInTheDocument()
       expect(screen.getByText('live, during the vote')).toBeInTheDocument()
     })
@@ -149,7 +150,8 @@ describe('VoteSummary', () => {
 
       expect(screen.getByText('Turnout: 181 of 312')).toBeInTheDocument()
       expect(screen.getByText('3 of the 184 voters left it blank.')).toBeInTheDocument()
-      expect(screen.getAllByText('Single choice')).toHaveLength(2)
+      const card = within(screen.getByRole('region', { name: 'Questions' }))
+      expect(card.getAllByText('Single choice')).toHaveLength(2)
       expect(screen.getByText('All open at once')).toBeInTheDocument()
     })
 
@@ -258,22 +260,7 @@ describe('VoteSummary', () => {
       expect(screen.getByText(textContent('Member number.'))).toBeInTheDocument()
     })
 
-    it('shows seven facts and the turnout of each question on a phone, with the calendar and without the voting data', () => {
-      desktop = false
-      renderSummary(createProcess(), 184)
-
-      for (const label of ['Census', 'Questions', 'Closes', 'Results', 'Type', 'Anonymity', 'Vote overwrite']) {
-        expect(screen.getByText(label)).toBeInTheDocument()
-      }
-      expect(screen.getByText('Anonymous').closest('[data-part="trigger"]')).not.toBeNull()
-      expect(screen.getByText('Disabled')).toBeInTheDocument()
-      expect(screen.getAllByText('Turnout: 184 of 312').length).toBeGreaterThan(0)
-      expect(screen.getByText('Calendar')).toBeInTheDocument()
-      expect(screen.queryByRole('link', { name: 'Ballot' })).toBeNull()
-    })
-
-    it('leaves the ballot type and vote overwrite out on a phone when the questions do not share them', () => {
-      desktop = false
+    it('leaves the ballot type and vote overwrite out when the questions do not share them', () => {
       const multiple = {
         ...question('q2', 'ONGOING', 100),
         type: 'multichoice',
@@ -283,7 +270,7 @@ describe('VoteSummary', () => {
 
       expect(screen.queryByText('Type')).toBeNull()
       expect(screen.queryByText('Vote overwrite')).toBeNull()
-      expect(screen.getByText('Anonymity')).toBeInTheDocument()
+      expect(screen.getByText('Census')).toBeInTheDocument()
     })
 
     it('says a paused vote is paused in the calendar, and leaves what it means to the banner', () => {

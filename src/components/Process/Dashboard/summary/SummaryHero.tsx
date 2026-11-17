@@ -18,17 +18,16 @@ const NARROW_COLUMNS = '[minmax(0, 3fr) minmax(0, 2fr)]'
 /**
  * The participation hero: the share that voted, how many of the census, the facts and the ruler. A phone stacks the
  * figure, the ruler and the facts; from `lg` the facts sit beside the figure and the ruler runs under both. A closed
- * all-at-once vote adds whether its results are final in a row under the ruler, from `lg` (a live or paused one says
- * its deadline in the header).
+ * all-at-once vote adds whether its results are final in a row under the ruler (a live or paused one says its deadline
+ * in the header).
  */
-export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
+export const SummaryHero = ({ model }: { model: SummaryModel }) => {
   const { t } = useTranslation()
   const labelId = useId()
-  const facts = useSummaryFacts(model, desktop)
+  const facts = useSummaryFacts(model)
   const { byQuestion, state, count, countUnknown, total, percent } = model
-  // Before the start (and once canceled, on touch screens) a question-by-question vote says where it stands in place
-  // of the figure.
-  const stateCard = byQuestion && (state === 'ready' || (!desktop && state === 'canceled'))
+  // Before the start, and once canceled, a question-by-question vote says where it stands in place of the figure.
+  const stateCard = byQuestion && (state === 'ready' || state === 'canceled')
 
   let caption: ReactNode = null
   if (countUnknown) {
@@ -163,7 +162,7 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
             mt={{ lg: byQuestion ? 'hero.compact' : 'hero.ruler' }}
             value={count}
             max={total}
-            // The count under the fill only on the all-at-once hero (from lg, by the ruler's own CSS).
+            // The count under the fill only on the all-at-once hero.
             marker={!byQuestion}
             closed={state === 'closed' || state === 'canceled'}
             label={rulerLabel}
@@ -172,11 +171,11 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
       </Grid>
       {hint && (
         <Flex
-          hideBelow='lg'
           align='center'
           gap='2'
           minH='11'
-          px='6'
+          py={{ base: '2', lg: '0' }}
+          px={{ base: '4', md: 'card', lg: '6' }}
           borderTopWidth='hairline'
           borderColor='border.muted'
           textStyle='body-sm'

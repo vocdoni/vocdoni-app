@@ -5,7 +5,7 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 // sits at the top and the labels 8px under it (the phone board). The component places the quorum (its share) and the
 // count, which is data, not look.
 //
-// 0 and the total are always shown. The count (`marker`, from `lg` only) ends where the fill ends, and is clamped so
+// 0 and the total are always shown. The count (`marker`) ends where the fill ends, and is clamped so
 // it never covers them: at least one character clear of "0" and of the total (the labels are mono: 1ch is a digit).
 export const CensusRuler = defineSlotRecipe({
   slots: ['root', 'track', 'range', 'quorum', 'scale', 'start', 'end', 'marker', 'quorumLabel'],
@@ -38,7 +38,6 @@ export const CensusRuler = defineSlotRecipe({
       transform: '[translateX(-50%)]',
     },
     marker: {
-      display: { base: 'none', lg: 'block' },
       position: 'absolute',
       top: '0',
       transform: '[translateX(-100%)]',

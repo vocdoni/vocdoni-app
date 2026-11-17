@@ -126,7 +126,7 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
       <SummaryCardHeader
         id={titleId}
-        title={t('process.questions')}
+        title={t('process.questions', { defaultValue: 'Questions' })}
         count={election.questions.length}
         note={
           election.questions.length > 1 ? t('votes.summary.all_open', { defaultValue: 'All open at once' }) : undefined

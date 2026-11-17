@@ -36,7 +36,7 @@ export const VoteSummary = () => {
 
   return (
     <Stack gap={{ base: '5', md: '6', lg: '8' }} css={dockPage}>
-      {idle ? <SummaryIdle model={model} /> : <SummaryHero model={model} desktop={desktop} />}
+      {idle ? <SummaryIdle model={model} /> : <SummaryHero model={model} />}
       {/* Two columns only from `xl`, the boards' width: narrower, the question rows would lose their titles. */}
       <Grid
         templateColumns={{ base: 'minmax(0, 1fr)', xl: SUMMARY_COLUMNS }}
