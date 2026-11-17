@@ -21,39 +21,63 @@ const useAuthMethod = (authFields: readonly string[], twoFaFields: readonly stri
   if (!labels.length && !channel) return null
 
   const fields = new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(labels)
-  const components = { b: <Span fontWeight='medium' color='fg' /> }
-  const sentence = (key: string, defaults: string) => (
-    <Trans i18nKey={key} defaults={defaults} values={{ fields }} components={components} />
-  )
+  const b = <Span fontWeight='medium' color='fg' />
 
-  if (!channel) return sentence('votes.summary.auth.fields', '<b>{{fields}}</b>.')
+  if (!channel)
+    return (
+      <Trans i18nKey='votes.summary.auth.fields' defaults='<b>{{fields}}</b>.' values={{ fields }} components={{ b }} />
+    )
   if (!labels.length) {
-    switch (channel) {
-      case 'email':
-        return sentence('votes.summary.auth.code_email', '<b>A one-time code</b> sent by email.')
-      case 'sms':
-        return sentence('votes.summary.auth.code_sms', '<b>A one-time code</b> sent by SMS.')
-      default:
-        return sentence('votes.summary.auth.code_email_or_sms', '<b>A one-time code</b> sent by email or SMS.')
-    }
+    if (channel === 'email')
+      return (
+        <Trans
+          i18nKey='votes.summary.auth.code_email'
+          defaults='<b>A one-time code</b> sent by email.'
+          components={{ b }}
+        />
+      )
+    if (channel === 'sms')
+      return (
+        <Trans
+          i18nKey='votes.summary.auth.code_sms'
+          defaults='<b>A one-time code</b> sent by SMS.'
+          components={{ b }}
+        />
+      )
+    return (
+      <Trans
+        i18nKey='votes.summary.auth.code_email_or_sms'
+        defaults='<b>A one-time code</b> sent by email or SMS.'
+        components={{ b }}
+      />
+    )
   }
-  switch (channel) {
-    case 'email':
-      return sentence(
-        'votes.summary.auth.fields_code_email',
-        '<b>{{fields}}</b>, plus a <b>one-time code</b> sent by email.'
-      )
-    case 'sms':
-      return sentence(
-        'votes.summary.auth.fields_code_sms',
-        '<b>{{fields}}</b>, plus a <b>one-time code</b> sent by SMS.'
-      )
-    default:
-      return sentence(
-        'votes.summary.auth.fields_code_email_or_sms',
-        '<b>{{fields}}</b>, plus a <b>one-time code</b> sent by email or SMS.'
-      )
-  }
+  if (channel === 'email')
+    return (
+      <Trans
+        i18nKey='votes.summary.auth.fields_code_email'
+        defaults='<b>{{fields}}</b>, plus a <b>one-time code</b> sent by email.'
+        values={{ fields }}
+        components={{ b }}
+      />
+    )
+  if (channel === 'sms')
+    return (
+      <Trans
+        i18nKey='votes.summary.auth.fields_code_sms'
+        defaults='<b>{{fields}}</b>, plus a <b>one-time code</b> sent by SMS.'
+        values={{ fields }}
+        components={{ b }}
+      />
+    )
+  return (
+    <Trans
+      i18nKey='votes.summary.auth.fields_code_email_or_sms'
+      defaults='<b>{{fields}}</b>, plus a <b>one-time code</b> sent by email or SMS.'
+      values={{ fields }}
+      components={{ b }}
+    />
+  )
 }
 
 /**

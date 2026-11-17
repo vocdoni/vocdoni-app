@@ -56,7 +56,7 @@ export const CloseQuestionDialog = ({
       }
       warning={
         last
-          ? t('votes.manage.close_lastShownwarning', {
+          ? t('votes.manage.close_last_warning', {
               defaultValue: 'This is the last question: closing it closes the vote too.',
             })
           : undefined
