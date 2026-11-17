@@ -14,16 +14,7 @@ export type TurnoutBarProps = RulerProps &
  * "184 of 312 voted" and its share over a CensusRuler, with the same ruler props: a live vote's row, an open
  * question. The caption sits 8px over the track below `lg` and 6px over the ruler's box from `lg`.
  */
-export const TurnoutBar = ({
-  caption,
-  share,
-  value,
-  max,
-  label,
-  closed,
-  layout,
-  ...props
-}: TurnoutBarProps) => (
+export const TurnoutBar = ({ caption, share, value, max, label, closed, layout, ...props }: TurnoutBarProps) => (
   <Stack gap={{ base: '2', lg: '1.5' }} minW='0' {...props}>
     <Flex justify='space-between' align='baseline' gap='3'>
       <Text textStyle='bar-caption' minW='0'>
