@@ -2256,7 +2256,6 @@
       "not_voted_one": "<n>{{count}}</n> ainda não votou",
       "not_voted_many": "<n>{{count}}</n> ainda não votaram",
       "not_voted_other": "<n>{{count}}</n> ainda não votaram",
-      "overview": "Resumo da votação",
       "paused": {
         "all_at_once_one": "Ninguém pode votar até você retomá-la. O {{votes}} voto emitido é mantido e o prazo não muda.",
         "all_at_once_many": "Ninguém pode votar até você retomá-la. Os {{votes}} votos emitidos são mantidos e o prazo não muda.",

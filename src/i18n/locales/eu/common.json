@@ -2185,7 +2185,6 @@
       "none_open": "bat ere ez irekita",
       "not_voted_one": "<n>{{count}}</n>ek ez du oraindik bozkatu",
       "not_voted_other": "<n>{{count}}</n>k ez dute oraindik bozkatu",
-      "overview": "Bozketaren laburpena",
       "paused": {
         "all_at_once_one": "Inork ezin du bozkatu berrekin arte. Emandako boto {{votes}} gorde egiten da eta epea ez da aldatzen.",
         "all_at_once_other": "Inork ezin du bozkatu berrekin arte. Emandako {{votes}} botoak gorde egiten dira eta epea ez da aldatzen.",

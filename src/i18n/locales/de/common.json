@@ -2185,7 +2185,6 @@
       "none_open": "keine offen",
       "not_voted_one": "<n>{{count}}</n> hat noch nicht abgestimmt",
       "not_voted_other": "<n>{{count}}</n> haben noch nicht abgestimmt",
-      "overview": "Zusammenfassung der Abstimmung",
       "paused": {
         "all_at_once_one": "Niemand kann abstimmen, bis du sie fortsetzt. Die {{votes}} abgegebene Stimme bleibt erhalten, und die Frist ändert sich nicht.",
         "all_at_once_other": "Niemand kann abstimmen, bis du sie fortsetzt. Die {{votes}} abgegebenen Stimmen bleiben erhalten, und die Frist ändert sich nicht.",

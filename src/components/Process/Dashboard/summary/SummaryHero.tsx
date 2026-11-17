@@ -26,8 +26,6 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
   const labelId = useId()
   const facts = useSummaryFacts(model, desktop)
   const { byQuestion, state, count, total, percent, endDate, now } = model
-  // The question-by-question board heads its hero with the vote's state; every other board says "Turnout".
-  const headedByState = desktop && byQuestion
   // Before the start and once canceled, the touch board says where the vote stands in place of the figure.
   const stateCard = !desktop && byQuestion && (state === 'ready' || state === 'canceled')
 
@@ -77,12 +75,7 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
   }
 
   return (
-    <Card.Root
-      variant='frame'
-      as='section'
-      aria-label={headedByState ? t('votes.summary.overview', { defaultValue: 'Vote summary' }) : undefined}
-      aria-labelledby={headedByState ? undefined : labelId}
-    >
+    <Card.Root variant='frame' as='section' aria-labelledby={labelId}>
       <Grid
         templateColumns={{ base: 'minmax(0, 1fr)', lg: NARROW_COLUMNS, xl: SUMMARY_COLUMNS }}
         templateAreas={
@@ -118,15 +111,12 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
             gridArea='figure'
             minW='0'
             justifyContent='space-between'
-            gap={{ base: '4.5', md: 'card', lg: headedByState ? 'hero.compact' : '0' }}
+            gap={{ base: '4.5', md: 'card', lg: '0' }}
           >
-            {headedByState ? (
-              <ProcessStatus state={state} alignSelf='flex-start' gap='2' />
-            ) : (
-              <Stat.Label as='div' id={labelId}>
-                {t('votes.summary.turnout', { defaultValue: 'Turnout' })}
-              </Stat.Label>
-            )}
+            {/* The header already names the vote's state: the card says what its figure is. */}
+            <Stat.Label as='div' id={labelId}>
+              {t('votes.summary.turnout', { defaultValue: 'Turnout' })}
+            </Stat.Label>
             <Flex
               direction={{ base: 'column', md: 'row' }}
               align={{ base: 'flex-start', md: 'flex-end' }}

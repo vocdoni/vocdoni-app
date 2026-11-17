@@ -2185,7 +2185,6 @@
       "none_open": "none open",
       "not_voted_one": "<n>{{count}}</n> have not voted yet",
       "not_voted_other": "<n>{{count}}</n> have not voted yet",
-      "overview": "Vote summary",
       "paused": {
         "all_at_once_one": "Nobody can vote until you resume it. The {{votes}} vote cast is kept and the deadline does not change.",
         "all_at_once_other": "Nobody can vote until you resume it. The {{votes}} votes cast are kept and the deadline does not change.",

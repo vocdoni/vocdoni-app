@@ -341,10 +341,10 @@ describe('VoteSummary', () => {
       question('q3', 'PAUSED'),
     ]
 
-    it('heads the desktop hero with the state and words the count as a floor', () => {
+    it('heads the desktop hero with Turnout, not the state again, and words the count as a floor', () => {
       renderSummary(byQuestion(questions), 200)
 
-      expect(screen.getByRole('region', { name: 'Vote summary' })).toBeInTheDocument()
+      expect(screen.getByRole('region', { name: 'Turnout' })).toBeInTheDocument()
       expect(screen.getByText('At least 200 of 312 voted on a question')).toBeInTheDocument()
       for (const label of ['Census', 'Start', 'Results']) {
         expect(screen.getByText(label)).toBeInTheDocument()

@@ -2256,7 +2256,6 @@
       "not_voted_one": "<n>{{count}}</n> non ha ancora votato",
       "not_voted_many": "<n>{{count}}</n> non hanno ancora votato",
       "not_voted_other": "<n>{{count}}</n> non hanno ancora votato",
-      "overview": "Riepilogo della votazione",
       "paused": {
         "all_at_once_one": "Nessuno può votare finché non la riprendi. Il {{votes}} voto espresso resta valido e la scadenza non cambia.",
         "all_at_once_many": "Nessuno può votare finché non la riprendi. I {{votes}} voti espressi restano validi e la scadenza non cambia.",

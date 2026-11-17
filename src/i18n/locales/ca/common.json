@@ -2256,7 +2256,6 @@
       "not_voted_one": "<n>{{count}}</n> encara no ha votat",
       "not_voted_many": "<n>{{count}}</n> encara no han votat",
       "not_voted_other": "<n>{{count}}</n> encara no han votat",
-      "overview": "Resum de la votació",
       "paused": {
         "all_at_once_one": "Ningú pot votar fins que la reprenguis. El {{votes}} vot emès es conserva i el termini no canvia.",
         "all_at_once_many": "Ningú pot votar fins que la reprenguis. Els {{votes}} vots emesos es conserven i el termini no canvia.",
