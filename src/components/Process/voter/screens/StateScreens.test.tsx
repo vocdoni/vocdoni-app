@@ -66,6 +66,17 @@ describe('state screens', () => {
     expect(screen.getByTestId('voter-screen')).toHaveClass('ph-no-capture')
   })
 
+  it('alreadyVoted opens with the success disc before the heading', () => {
+    renderWithFlow(<AlreadyVotedScreen />, testFlow({ voteIds: { q1: 'a3f1000000000000009c2e' } }))
+    const frame = screen.getByTestId('voter-screen')
+    expect(frame.querySelector('[data-part="success-disc"]')).not.toBeNull()
+    expect(
+      frame
+        .querySelector('[data-part="success-disc"]')!
+        .compareDocumentPosition(screen.getByRole('heading', { level: 1 }))
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+  })
+
   it('alreadyVoted explains a vote signed but not confirmable from here, or an anonymous receipt that is gone', () => {
     renderWithFlow(<AlreadyVotedScreen />, testFlow({ statuses: ['signed', 'signed'] }))
     expect(screen.getByText('vote.disabled.signed')).toBeInTheDocument()

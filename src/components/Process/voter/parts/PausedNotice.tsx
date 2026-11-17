@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 export const PausedNotice = () => {
   const { t } = useTranslation()
   return (
-    <Alert.Root status='warning' layout='ballot' mb='6' role='status'>
+    <Alert.Root status='warning' layout='ballot' mb='5' role='status'>
       <Alert.Content>
         <Alert.Description>
           <b>{t('voter.paused.notice_title')}</b> {t('voter.paused.notice_body')}

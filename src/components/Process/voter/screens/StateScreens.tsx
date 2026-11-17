@@ -1,8 +1,9 @@
 import { Box, Button, Spinner, Status, Text } from '@chakra-ui/react'
 import { resolveEndDate } from '@vocdoni/api-client'
 import { useReactComponentsLocalize } from '@vocdoni/react-components'
-import type { ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { SuccessDisc } from '~components/ui/SuccessDisc'
 import { useAppEnv } from '~src/app-env'
 import { useVoterFlow } from '../flow-context'
 import { formatVoteDay, formatVoteTime, textOf, voterTurnout, type Turnout } from '../format'
@@ -23,6 +24,10 @@ import type { VoterScreenKind } from '../voter-flow'
 type CentredProps = {
   kind: VoterScreenKind
   kicker?: ReactNode
+  /** Rendered before the heading (the success disc). */
+  lead?: ReactNode
+  /** The heading's top margin, when the board's differs from the default. */
+  headingMt?: ComponentProps<typeof ScreenHeading>['mt']
   title: ReactNode
   body?: ReactNode
   children?: ReactNode
@@ -30,12 +35,15 @@ type CentredProps = {
 }
 
 /** The boards' centred pattern for a state (kicker or status line, title, sentence, an optional card or button). */
-const Centred = ({ kind, kicker, title, body, children, privateContent }: CentredProps) => {
+const Centred = ({ kind, kicker, lead, headingMt, title, body, children, privateContent }: CentredProps) => {
   const { moved } = useVoterFlow()
   return (
     <VoterScreenFrame kind={kind} privateContent={privateContent}>
+      {lead}
       {kicker}
-      <ScreenHeading focus={moved}>{title}</ScreenHeading>
+      <ScreenHeading focus={moved} mt={headingMt}>
+        {title}
+      </ScreenHeading>
       {body ? <ScreenHelp>{body}</ScreenHelp> : null}
       {children}
     </VoterScreenFrame>
@@ -45,7 +53,7 @@ const Centred = ({ kind, kicker, title, body, children, privateContent }: Centre
 const useVoteTexts = () => {
   const { i18n } = useTranslation()
   const { election, brand } = useVoterFlow()
-  const day = (date: Date) => formatVoteDay(date, i18n.language)
+  const day = (date: Date, reference?: Date) => formatVoteDay(date, i18n.language, { reference })
   const time = (date: Date, zone = false) => formatVoteTime(date, i18n.language, { zone })
   return { title: textOf(election.title as Parameters<typeof textOf>[0]), organization: brand.name, day, time }
 }
@@ -103,7 +111,7 @@ export const UpcomingScreen = () => {
             {t('voter.upcoming.sentence', {
               startDate: day(start),
               startTime: time(start, true),
-              endDate: day(end),
+              endDate: day(end, start),
               endTime: time(end, true),
             })}
           </LocalText>
@@ -160,6 +168,7 @@ export const PausedScreen = () => {
   return (
     <Centred
       kind='paused'
+      headingMt='2.5'
       kicker={
         <Status.Root size='ballot' tone='warning'>
           <Status.Indicator />
@@ -183,6 +192,7 @@ export const CanceledScreen = () => {
   return (
     <Centred
       kind='canceled'
+      headingMt='2.5'
       kicker={
         <Status.Root size='ballot' tone='danger'>
           <Status.Indicator />
@@ -234,7 +244,14 @@ export const AlreadyVotedScreen = () => {
   const hasCodes = election.questions.some((question) => voteIds[question.id])
   const locked = statuses.find((status) => status === 'unconfirmed' || status === 'signed')
   return (
-    <Centred kind='alreadyVoted' title={t('voter.voted.title')} body={t('voter.voted.body')} privateContent>
+    <Centred
+      kind='alreadyVoted'
+      lead={<SuccessDisc />}
+      headingMt='5'
+      title={t('voter.voted.title')}
+      body={t('voter.voted.body')}
+      privateContent
+    >
       {hasCodes ? (
         <ReceiptCard />
       ) : locked ? (
