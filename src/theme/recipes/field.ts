@@ -9,4 +9,10 @@ export const Field = defineSlotRecipe({
     helperText: { textStyle: 'sm', color: 'fg.subtle' },
     errorText: { textStyle: 'sm', color: 'status.error.fg' },
   },
+  variants: {
+    // The voter's field: its label at 15px, medium (`ballot-label`). The input takes `size='ballot'`.
+    size: {
+      ballot: { label: { textStyle: 'ballot-label', fontWeight: 'medium' } },
+    },
+  },
 })
