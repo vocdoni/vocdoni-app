@@ -22,7 +22,6 @@ export const B_AAO_ENDED = '650000000000000000000a14'
 export const B_AAO_CANCELED = '650000000000000000000c11'
 export const B_QBQ_READY = '650000000000000000000b16'
 export const B_QBQ_LIVE = '650000000000000000000b11'
-export const B_QBQ_TWO = '650000000000000000000b12'
 export const B_QBQ_HELD = '650000000000000000000b13'
 export const B_QBQ_CLOSED = '650000000000000000000b14'
 export const B_QBQ_ENDED = '650000000000000000000b15'
@@ -400,7 +399,7 @@ const qbqVote = (id, statuses, extra = {}, list = QBQ) =>
   })
 const closedAt = (time) => ({ endedAt: at(time) })
 
-// The sixteen questions of the board's "many" demo: seven closed, three open, six to open.
+// The sixteen questions of the board's "many" demo: nine closed, one open, six to open (one open at a time, R29).
 const MANY = [
   ["Acta de l'assemblea anterior", "Aprovem l'acta de l'assemblea anterior?", [198, 7, 9]],
   ["Memòria d'activitats", "Aprovem la memòria d'activitats de 2026?", [201, 12, 8]],
@@ -409,8 +408,8 @@ const MANY = [
   ['Quotes 2027', "Apugem la quota a 48 EUR l'any el 2027?", [171, 52, 11]],
   ['Estatuts, article 4', "Aprovem el nou redactat de l'article 4, sobre els fins de l'entitat?", [192, 18, 15]],
   ['Estatuts, article 9', "Aprovem el nou redactat de l'article 9, sobre les delegacions de vot?", [141, 71, 13]],
-  ['Estatuts, article 12', "Aprovem el nou redactat de l'article 12, sobre la durada dels càrrecs?", [163, 27, 17]],
-  ['Presidència', 'Ratifiquem Laia Puig Ferrer com a presidenta?', [147, 9, 8]],
+  ['Estatuts, article 12', "Aprovem el nou redactat de l'article 12, sobre la durada dels càrrecs?", [165, 27, 15]],
+  ['Presidència', 'Ratifiquem Laia Puig Ferrer com a presidenta?', [205, 12, 12]],
   ['Secretaria', 'Ratifiquem Oriol Mas Costa com a secretari?', [86, 7, 5]],
   ['Tresoreria', 'Ratifiquem Núria Font Serra com a tresorera?', [0, 0, 0]],
   ['Vocalia de cultura', 'Ratifiquem Marc Serra Pons com a vocal de cultura?', [0, 0, 0]],
@@ -490,7 +489,6 @@ const BOARD_PROCESSES = [
     unlisted: false,
   },
   qbqVote(B_QBQ_LIVE, [['RESULTS', closedAt('09:41:00')], ['RESULTS', closedAt('09:53:00')], 'ONGOING', 'PAUSED']),
-  qbqVote(B_QBQ_TWO, [['RESULTS', closedAt('09:41:00')], ['RESULTS', closedAt('09:53:00')], 'ONGOING', 'ONGOING']),
   qbqVote(B_QBQ_HELD, [
     ['RESULTS', closedAt('09:41:00')],
     ['RESULTS', closedAt('09:53:00')],
@@ -513,8 +511,9 @@ const BOARD_PROCESSES = [
   qbqVote(
     B_QBQ_MANY,
     MANY.map((_, i) => {
-      if (i < 7) return ['RESULTS', closedAt(`0${Math.floor(i / 2) + 6}:${String((i * 17) % 60).padStart(2, '0')}:00`)]
-      return i < 10 ? 'ONGOING' : 'PAUSED'
+      const hour = String(Math.floor(i / 3) + 6).padStart(2, '0')
+      if (i < 9) return ['RESULTS', closedAt(`${hour}:${String((i * 17) % 60).padStart(2, '0')}:00`)]
+      return i === 9 ? 'ONGOING' : 'PAUSED'
     }),
     { startDate: '2026-06-14T16:00:00.000Z' },
     MANY
