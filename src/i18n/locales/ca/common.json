@@ -2002,7 +2002,7 @@
         "follow": "Seguiment",
         "manage": "Gestiona la votació",
         "result": "Resultat",
-        "view": "Obre"
+        "view": "Mostra"
       },
       "action_label": "{{action}}: {{title}}",
       "closed_on": "el {{date}}",

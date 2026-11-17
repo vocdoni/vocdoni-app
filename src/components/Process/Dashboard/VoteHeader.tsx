@@ -413,9 +413,10 @@ export const VoteHeader = () => {
     // Phone: everything stacked, the actions on a row of their own. Tablet: the actions beside the title and its
     // state line. Desktop: the actions beside the title, the state line under both.
     <Grid
-      templateColumns={{ base: 'minmax(0, 1fr)', md: 'minmax(0, 1fr) auto' }}
+      templateColumns='minmax(0, 1fr) auto'
       templateAreas={{
-        base: '"back" "title" "line" "actions"',
+        // `menu` is empty (and takes no room) unless the menu is the only action: see the actions row below.
+        base: '"back back" "title menu" "line line" "actions actions"',
         md: '"back back" "title actions" "line actions"',
         // The actions line up with the title's bottom and rise beside the way back, as the board's header.
         lg: '"back actions" "title actions" "line line"',
@@ -446,7 +447,22 @@ export const VoteHeader = () => {
         {text(election.title)}
       </PageTitle>
       <StatusLine {...part} />
-      <Flex ref={actionsRef} gridArea='actions' gap='2' mt={{ base: '4', md: '0' }} alignItems='center'>
+      {/* On a phone, with no action but the menu, "…" sits at the end of the title's line instead of alone on a row. */}
+      <Flex
+        ref={actionsRef}
+        gridArea='actions'
+        gap='2'
+        mt={{ base: '4', md: '0' }}
+        alignItems='center'
+        css={{
+          '&:has(> :only-child)': {
+            gridArea: { base: 'menu', md: 'actions' },
+            mt: '0',
+            my: { base: '-2.5', md: '0' },
+            alignSelf: { base: 'center', md: 'auto' },
+          },
+        }}
+      >
         <VoteActions {...part} />
         <VoteMenu {...part} />
       </Flex>
