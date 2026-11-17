@@ -1,12 +1,10 @@
 import { act, renderHook } from '@testing-library/react'
-import type { Choice } from '@vocdoni/api-types'
 import i18n from 'i18next'
 import type { ReactNode } from 'react'
 import { AllProviders } from '~src/test-utils'
 import { useVoteText } from './use-vote-text'
 
 const wrapper = ({ children }: { children: ReactNode }) => <AllProviders>{children}</AllProviders>
-const choice = (title: string, value = 0): Choice => ({ title: { default: title }, value })
 
 const setup = () => renderHook(() => useVoteText(), { wrapper }).result.current
 
@@ -15,38 +13,6 @@ afterEach(async () => {
 })
 
 describe('useVoteText', () => {
-  describe('outcome', () => {
-    it('words a pair as "winner, N to M"', () => {
-      const { outcome } = setup()
-      expect(outcome({ kind: 'pair', winner: choice('Yes'), winnerVotes: 198, otherVotes: 7 })).toBe('Yes, 198 to 7')
-    })
-
-    it('says tie', () => {
-      expect(setup().outcome({ kind: 'tie' })).toBe('Tie')
-    })
-
-    it('pluralises the votes of a winner and speaks of weight on a weighted census', () => {
-      const { outcome } = setup()
-      expect(outcome({ kind: 'winner', winner: choice('Red'), votes: 1, weighted: false })).toBe('Red wins with 1 vote')
-      expect(outcome({ kind: 'winner', winner: choice('Red'), votes: 12, weighted: false })).toBe(
-        'Red wins with 12 votes'
-      )
-      expect(outcome({ kind: 'winner', winner: choice('Red'), votes: 12, weighted: true })).toBe(
-        'Red wins with a weight of 12'
-      )
-    })
-
-    it('names the most voted choice of a multiple choice', () => {
-      expect(setup().outcome({ kind: 'top', choice: choice('Blue'), votes: 3, weighted: false })).toBe(
-        'Most voted: Blue'
-      )
-    })
-
-    it('has nothing to say without an outcome', () => {
-      expect(setup().outcome(null)).toBeNull()
-    })
-  })
-
   describe('timeLeft', () => {
     const now = new Date('2026-01-10T10:00:00Z')
 

@@ -138,13 +138,14 @@ describe('VoteListRow content', () => {
     expect(screen.getByText('No closing date yet.')).toBeInTheDocument()
   })
 
-  it('shows the outcome and the turnout of a closed single-question vote', () => {
+  it('gives the turnout of a closed vote and says nothing about who won', () => {
     const results = {
       id: 'p1',
       questions: [{ questionId: 'q1', finalResults: true, voteCount: 205, results: [['198', '7']] }],
     } as unknown as VotingProcessResultsResponse
     renderRow(make({ census: { size: 312 }, questions: [question('ENDED')] }), { results })
-    expect(screen.getByRole('article')).toHaveTextContent('1 question, 312 voters. Yes, 198 to 7 with 66% turnout.')
+    expect(screen.getByRole('article')).toHaveTextContent('1 question, 312 voters. 66% turnout.')
+    expect(screen.getByRole('article')).not.toHaveTextContent(/Yes|198|wins/)
   })
 
   it('tells a live vote by when it closes, without the month in the current month', () => {

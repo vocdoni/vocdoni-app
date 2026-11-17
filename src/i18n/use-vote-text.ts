@@ -82,37 +82,5 @@ export const useVoteText = () => {
       if (!duration) return null
       return t('votes.time_left', { defaultValue: '{{duration}} left', duration: durationWords(duration) })
     },
-    /** A question's result in a few words, or null when there is none to show. */
-    outcome: (outcome: QuestionOutcome | null) => {
-      if (!outcome) return null
-      const name = (choice: Choice) => text(choice.title)
-      switch (outcome.kind) {
-        case 'tie':
-          return t('votes.outcome.tie', { defaultValue: 'Tie' })
-        case 'pair':
-          return t('votes.outcome.pair', {
-            defaultValue: '{{winner}}, {{winnerVotes}} to {{otherVotes}}',
-            winner: name(outcome.winner),
-            winnerVotes: quantity(outcome.winnerVotes),
-            otherVotes: quantity(outcome.otherVotes),
-          })
-        case 'winner':
-          return outcome.weighted
-            ? t('votes.outcome.winner_weighted', {
-                defaultValue: '{{winner}} wins with a weight of {{votes}}',
-                winner: name(outcome.winner),
-                votes: quantity(outcome.votes),
-              })
-            : t('votes.outcome.winner', {
-                defaultValue_one: '{{winner}} wins with {{votes}} vote',
-                defaultValue_other: '{{winner}} wins with {{votes}} votes',
-                count: outcome.votes,
-                winner: name(outcome.winner),
-                votes: quantity(outcome.votes),
-              })
-        case 'top':
-          return t('votes.outcome.top', { defaultValue: 'Most voted: {{choice}}', choice: name(outcome.choice) })
-      }
-    },
   }
 }

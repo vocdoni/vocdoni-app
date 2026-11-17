@@ -1,12 +1,9 @@
 import { Text } from '@chakra-ui/react'
 import { processVoteCount, resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessResultsResponse } from '@vocdoni/api-types'
-import { useMemo, type ReactNode } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
-import { useVoteText } from '~i18n/use-vote-text'
+import { useTranslation } from 'react-i18next'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { questionOutcome } from '~utils/vote-outcome'
-import { draftWarning, isSettledQuestion, percentOf, type VoteRow } from '~utils/vote-state'
+import { draftWarning, percentOf, type VoteRow } from '~utils/vote-state'
 
 type VoteRowMetaProps = {
   row: VoteRow
@@ -32,25 +29,14 @@ const useRowDate = (now: Date) => {
 }
 
 /**
- * The sentences under a vote's title, as the board writes them per state, with its two stressed fragments: what a
- * draft lacks (warning) and a closed vote's result.
+ * The sentences under a vote's title, as the board writes them per state, with the one stressed fragment: what a draft
+ * lacks (warning). A closed vote gives its turnout, never who won.
  */
 export const VoteRowMeta = ({ row, results, now }: VoteRowMetaProps) => {
   const { t } = useTranslation()
-  const { outcome } = useVoteText()
   const rowDate = useRowDate(now)
   const { process, state } = row
   const size = process.census?.size
-
-  // Decoding a tally is the one costly step here; the rest is wording.
-  const closedOutcome = useMemo(() => {
-    const [question] = process.questions
-    if (state !== 'closed' || process.questions.length !== 1 || !question) return null
-    const entry = results?.questions.find((candidate) => candidate.questionId === question.id)
-    // A result only once the tally is final: closed by the clock alone, votes may still land.
-    if (!isSettledQuestion(question, entry)) return null
-    return questionOutcome(question, entry, { weighted: !!process.census?.weighted })
-  }, [process, state, results])
 
   const questions = t('votes.list.meta_questions', {
     count: process.questions.length,
@@ -96,27 +82,10 @@ export const VoteRowMeta = ({ row, results, now }: VoteRowMetaProps) => {
         ? t('votes.list.warning.end_passed', { defaultValue: 'The closing date has passed.' })
         : null
 
-  const result = state === 'closed' ? outcome(closedOutcome) : null
+  // A closed vote says how many took part and nothing about who won: the result is read on its page.
   const percent = state === 'closed' && results ? percentOf(processVoteCount(results), size) : undefined
-  const strong = <Text as='span' fontWeight='medium-plus' color='fg' />
-  // One sentence per variant, so a language can put the result and the turnout in its own order.
-  let closing: ReactNode = null
-  if (result && percent !== undefined) {
-    closing = (
-      <Trans
-        i18nKey='votes.list.result_turnout'
-        defaults='<b>{{result}}</b> with {{percent}}% turnout.'
-        values={{ result, percent }}
-        components={{ b: strong }}
-      />
-    )
-  } else if (result) {
-    closing = (
-      <Trans i18nKey='votes.list.result' defaults='<b>{{result}}</b>.' values={{ result }} components={{ b: strong }} />
-    )
-  } else if (percent !== undefined) {
-    closing = t('votes.list.turnout', { defaultValue: '{{percent}}% turnout.', percent })
-  }
+  const closing =
+    percent === undefined ? null : t('votes.list.turnout', { defaultValue: '{{percent}}% turnout.', percent })
 
   return (
     <Text textStyle='meta' color='fg.subtle'>

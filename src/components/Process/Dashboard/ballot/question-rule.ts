@@ -23,7 +23,7 @@ export const questionRule = (t: TFunction, question: VotingProcessQuestion): Que
     case BallotType.SingleChoice:
       return {
         mark: 'one',
-        note: t('votes.ballot.rule.single', { defaultValue: 'Pick one option. The one with the most votes wins.' }),
+        note: t('votes.ballot.rule.single', { defaultValue: 'Pick one option.' }),
         tag: t('votes.ballot.tag.single', { defaultValue: 'One option' }),
       }
     case BallotType.MultiChoice: {
@@ -33,8 +33,8 @@ export const questionRule = (t: TFunction, question: VotingProcessQuestion): Que
         return {
           mark: 'many',
           note: t('votes.ballot.rule.multiple_exact', {
-            defaultValue_one: 'Mark {{count, number}} option. The one with the most votes is chosen.',
-            defaultValue_other: 'Mark {{count, number}} options. The {{count, number}} with the most votes are chosen.',
+            defaultValue_one: 'Mark {{count, number}} option.',
+            defaultValue_other: 'Mark {{count, number}} options.',
             count: max,
           }),
           tag: t('votes.ballot.tag.exact', { defaultValue: '{{max}} of {{total}}', max, total: options }),
@@ -45,15 +45,13 @@ export const questionRule = (t: TFunction, question: VotingProcessQuestion): Que
         note:
           min > 1
             ? t('votes.ballot.rule.multiple_between', {
-                defaultValue: 'Mark between {{min}} and {{max}} options. The {{max}} with the most votes are chosen.',
+                defaultValue: 'Mark between {{min}} and {{max}} options.',
                 min,
                 max,
               })
             : t('votes.ballot.rule.multiple_up_to', {
-                defaultValue_one:
-                  'Up to {{count, number}} option can be marked. The one with the most votes is chosen.',
-                defaultValue_other:
-                  'Up to {{count, number}} options can be marked. The {{count, number}} with the most votes are chosen.',
+                defaultValue_one: 'Up to {{count, number}} option can be marked.',
+                defaultValue_other: 'Up to {{count, number}} options can be marked.',
                 count: max,
               }),
         tag: upTo,
@@ -66,11 +64,11 @@ export const questionRule = (t: TFunction, question: VotingProcessQuestion): Que
         mark: 'many',
         note: any
           ? t('votes.ballot.rule.approval_any', {
-              defaultValue: 'Any number of options can be approved. The one approved most wins.',
+              defaultValue: 'Any number of options can be approved.',
             })
           : t('votes.ballot.rule.approval_up_to', {
-              defaultValue_one: 'Up to {{count, number}} option can be approved. The one approved most wins.',
-              defaultValue_other: 'Up to {{count, number}} options can be approved. The one approved most wins.',
+              defaultValue_one: 'Up to {{count, number}} option can be approved.',
+              defaultValue_other: 'Up to {{count, number}} options can be approved.',
               count: max,
             }),
         tag: any

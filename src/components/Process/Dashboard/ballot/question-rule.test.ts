@@ -32,7 +32,7 @@ describe('questionRule', () => {
   it('draws a single choice as radios, one option', () => {
     expect(questionRule(t, question({}))).toEqual({
       mark: 'one',
-      note: 'Pick one option. The one with the most votes wins.',
+      note: 'Pick one option.',
       tag: 'One option',
     })
   })
@@ -51,7 +51,7 @@ describe('questionRule', () => {
     )
     expect(rule).toEqual({
       mark: 'many',
-      note: 'Up to 2 options can be marked. The 2 with the most votes are chosen.',
+      note: 'Up to 2 options can be marked.',
       tag: 'Up to 2 of 4',
     })
   })
@@ -68,7 +68,7 @@ describe('questionRule', () => {
         4
       )
     )
-    expect(rule?.note).toBe('Mark 2 options. The 2 with the most votes are chosen.')
+    expect(rule?.note).toBe('Mark 2 options.')
     expect(rule?.tag).toBe('2 of 4')
   })
 
@@ -122,7 +122,7 @@ describe('questionRule', () => {
       question({ type: 'approval', ballotProtocol: { ...PROTOCOL, maxCount: 3, maxValue: 1, maxTotalCost: 3 } })
     )
     expect(rule?.mark).toBe('many')
-    expect(rule?.note).toBe('Any number of options can be approved. The one approved most wins.')
+    expect(rule?.note).toBe('Any number of options can be approved.')
   })
 
   it('has no rule for a legacy question whose type cannot be read', () => {

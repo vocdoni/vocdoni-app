@@ -106,7 +106,7 @@ describe('VoteBallot', () => {
         .getAllByRole('listitem')
         .map((item) => item.textContent)
     ).toEqual(['Yes', 'No', 'Abstain'])
-    expect(screen.getByText('Pick one option. The one with the most votes wins.')).toBeInTheDocument()
+    expect(screen.getByText('Pick one option.')).toBeInTheDocument()
     expect(screen.getByText('One option')).toBeInTheDocument()
 
     // A points box shows its empty amount before each option.
