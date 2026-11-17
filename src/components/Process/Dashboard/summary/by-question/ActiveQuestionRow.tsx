@@ -1,8 +1,8 @@
-import { Box, Flex, Grid, HStack, Icon, Stack, Text } from '@chakra-ui/react'
+import { Box, Flex, Grid, HStack, Icon, Stack, Text, VisuallyHidden } from '@chakra-ui/react'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ProcessStatus } from '~components/ui/ProcessStatus'
+import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
 import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
 import { LockIcon } from '~theme/icons'
@@ -40,6 +40,7 @@ export const ActiveQuestionRow = ({
   const { t } = useTranslation()
   const { text } = useVoteText()
   const manageText = useManageText()
+  const stateLabel = useProcessStateLabel()
   const count = question.results?.voteCount ?? 0
   const share = percentOf(count, electorate)
   const live = !question.secretUntilTheEnd
@@ -86,6 +87,11 @@ export const ActiveQuestionRow = ({
               state={state === 'held' ? 'paused' : state}
               display={{ base: 'none', lg: 'inline-flex' }}
             />
+            {/* Below `lg` the state is told by the tint and the buttons alone: a screen reader, and anyone who sees no
+                buttons, gets the word. */}
+            <VisuallyHidden display={{ lg: 'none' }}>
+              {stateLabel(state === 'held' ? 'paused' : state, 'question')}
+            </VisuallyHidden>
           </Flex>
           {note && (
             <Text textStyle='note' color='fg.subtle' lineClamp={3}>
