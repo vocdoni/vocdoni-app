@@ -1,3 +1,4 @@
+import { renderHook, waitFor } from '@testing-library/react'
 import { resolveCssVar, useCheckoutAppearance } from './stripe'
 
 vi.mock('~theme/color-mode', () => ({
@@ -28,8 +29,7 @@ describe('resolveCssVar', () => {
   })
 })
 
-// useCheckoutAppearance is called outside a React tree here; color mode is mocked above.
-// jsdom provides getComputedStyle and document, so reading CSS vars works.
+// color mode is mocked above. jsdom provides getComputedStyle and document, so reading CSS vars works.
 describe('useCheckoutAppearance', () => {
   afterEach(() => {
     for (const v of [
@@ -46,7 +46,8 @@ describe('useCheckoutAppearance', () => {
   })
 
   it('leaves an unset theme variable to Stripe instead of sending it empty', () => {
-    const { appearance } = useCheckoutAppearance()
+    const { result } = renderHook(() => useCheckoutAppearance())
+    const { appearance } = result.current
     expect(appearance?.variables).not.toHaveProperty('colorPrimary')
     expect(appearance?.variables?.colorBackground).toBe('white')
   })
@@ -60,7 +61,8 @@ describe('useCheckoutAppearance', () => {
     document.documentElement.style.setProperty('--chakra-colors-fg-error', '#cc0000')
     document.documentElement.style.setProperty('--chakra-colors-brand-fg', '#1a73e8')
 
-    const { appearance } = useCheckoutAppearance()
+    const { result } = renderHook(() => useCheckoutAppearance())
+    const { appearance } = result.current
 
     expect(appearance?.variables?.borderRadius).toBe('8px')
     expect(appearance?.variables?.fontFamily).toBe('"Inter", sans-serif')
@@ -75,8 +77,23 @@ describe('useCheckoutAppearance', () => {
     document.documentElement.style.setProperty('--chakra-colors-brand-700', '#1a5b9b')
     document.documentElement.style.setProperty('--chakra-colors-brand-fg', 'var(--chakra-colors-brand-700)')
 
-    const { appearance } = useCheckoutAppearance()
+    const { result } = renderHook(() => useCheckoutAppearance())
+    const { appearance } = result.current
 
     expect(appearance?.variables?.colorPrimary).toBe('#1a5b9b')
+  })
+  it('reads the variables again when the page class changes, so they match the applied theme', async () => {
+    document.documentElement.style.setProperty('--chakra-colors-fg', '#111111')
+    const { result } = renderHook(() => useCheckoutAppearance())
+    expect(result.current.appearance?.variables?.colorText).toBe('#111111')
+
+    // next-themes sets the class after the colour mode changes: the value follows the class, not the render
+    document.documentElement.style.setProperty('--chakra-colors-fg', '#eeeeee')
+    document.documentElement.classList.add('dark')
+    try {
+      await waitFor(() => expect(result.current.appearance?.variables?.colorText).toBe('#eeeeee'))
+    } finally {
+      document.documentElement.classList.remove('dark')
+    }
   })
 })
