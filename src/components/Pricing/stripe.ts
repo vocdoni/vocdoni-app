@@ -20,15 +20,29 @@ export const useStripePromise = (): Promise<Stripe | null> | null => {
   return stripePromise
 }
 
+// Stripe renders in an iframe, so theme CSS vars are unreachable; these raw values mirror the Fil dark tokens
+// (bg, fg, field ring, primary). Light keeps Stripe's own look apart from the page background.
+const STRIPE_DARK = {
+  background: '#0a0a0a',
+  text: '#ededed',
+  fieldRing: '#707070',
+  primary: '#1d62e9',
+}
+
 export const useCheckoutAppearance = (): Appearance => {
   const { colorMode } = useColorMode()
-  return {
-    theme: colorMode === 'dark' ? ('night' as const) : ('stripe' as const),
-    variables: {
-      // Stripe renders in an iframe, so theme CSS vars are unreachable; raw values mirror the `bg` token
-      colorBackground: colorMode === 'dark' ? '#0a0a0a' : 'white',
-    },
+  if (colorMode === 'dark') {
+    return {
+      theme: 'night',
+      variables: {
+        colorBackground: STRIPE_DARK.background,
+        colorText: STRIPE_DARK.text,
+        colorPrimary: STRIPE_DARK.primary,
+      },
+      rules: { '.Input': { border: `1px solid ${STRIPE_DARK.fieldRing}` } },
+    }
   }
+  return { theme: 'stripe', variables: { colorBackground: 'white' } }
 }
 
 // Base for a redirect-based payment's return URL: the current page without query or hash, with
