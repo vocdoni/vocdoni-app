@@ -1,12 +1,8 @@
-import { Box, Card, Link, Text } from '@chakra-ui/react'
-import { Trans, useTranslation } from 'react-i18next'
-import { useToast } from '~components/Toast'
-import { ReceiptCodes, type ReceiptCode } from '~components/ui/ReceiptCodes'
+import { Box, Text } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
 import { SuccessDisc } from '~components/ui/SuccessDisc'
-import { useAppEnv } from '~src/app-env'
-import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useVoterFlow } from '../flow-context'
-import { textOf } from '../format'
+import { ReceiptCard } from '../parts/ReceiptCard'
 import { ResultsLine } from '../parts/ResultsLine'
 import { ScreenHeading, ScreenHelp, VoterScreenFrame } from '../parts/ScreenParts'
 
@@ -17,24 +13,8 @@ import { ScreenHeading, ScreenHelp, VoterScreenFrame } from '../parts/ScreenPart
  */
 export const ReceiptScreen = () => {
   const { t } = useTranslation()
-  const toast = useToast()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
   const { election, voteIds, anonymous, moved } = useVoterFlow()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
-  const items: ReceiptCode[] = election.questions
-    .filter((question) => voteIds[question.id])
-    .map((question) => ({
-      id: question.id,
-      title: textOf(question.title as Parameters<typeof textOf>[0]),
-      voteId: voteIds[question.id],
-    }))
-  const verifyUrl = (item: ReceiptCode) => `${explorerUrl}/verify/${item.voteId}`
-
-  const copy = (item: ReceiptCode) => {
-    void navigator.clipboard
-      ?.writeText(item.voteId)
-      .then(() => toast({ title: t('voter.receipt.copied'), type: 'success', duration: 3000, isClosable: true }))
-  }
+  const hasCodes = election.questions.some((question) => voteIds[question.id])
 
   return (
     <VoterScreenFrame kind='receipt' privateContent>
@@ -45,54 +25,8 @@ export const ReceiptScreen = () => {
           {t('voter.receipt.title')}
         </ScreenHeading>
         <ScreenHelp>{t('voter.receipt.help', { count: election.questions.length })}</ScreenHelp>
-        {items.length > 0 && (
-          <>
-            <Card.Root variant='ballot' mt='6' className='ph-no-capture'>
-              <Card.Header>
-                <Card.Title textStyle='ballot-body' fontWeight='semibold'>
-                  {t('voter.receipt.card_title')}
-                </Card.Title>
-                <Card.Description textStyle='body' color='fg.subtle'>
-                  {t('voter.receipt.card_note', { count: items.length })}
-                </Card.Description>
-              </Card.Header>
-              <ReceiptCodes
-                items={items}
-                onCopy={copy}
-                copyLabel={(item) => t('voter.receipt.copy', { question: String(item.title) })}
-              />
-            </Card.Root>
-            <Text as='p' textStyle='ballot-hint' color='fg.muted' mt='3.5'>
-              {items.length === 1 ? (
-                <Trans
-                  i18nKey='voter.receipt.verify'
-                  count={1}
-                  components={{
-                    explorer: <Link href={verifyUrl(items[0])} target='_blank' rel='noopener noreferrer' />,
-                  }}
-                />
-              ) : (
-                <Trans
-                  i18nKey='voter.receipt.verify'
-                  count={items.length}
-                  components={{ explorer: <Text as='span' fontWeight='semibold' /> }}
-                />
-              )}
-            </Text>
-            {items.length > 1 && (
-              <Box as='ul' role='list' textStyle='ballot-hint' mt='1.5' className='ph-no-capture'>
-                {items.map((item) => (
-                  <li key={item.id}>
-                    <Link href={verifyUrl(item)} target='_blank' rel='noopener noreferrer' color='accent.fg'>
-                      {item.title}
-                    </Link>
-                  </li>
-                ))}
-              </Box>
-            )}
-          </>
-        )}
-        {anonymous && items.length > 0 && (
+        <ReceiptCard />
+        {anonymous && hasCodes && (
           <Text as='p' textStyle='ballot-hint' fontWeight='semibold' mt='3.5'>
             {t('vote.anonymous_receipt')}
           </Text>

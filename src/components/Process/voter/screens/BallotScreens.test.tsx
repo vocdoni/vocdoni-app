@@ -92,6 +92,18 @@ describe('receipt', () => {
     expect(screen.getByTestId('voter-screen')).toHaveClass('ph-no-capture')
   })
 
+  it('links each code to its own verification, in one card with no Explorer sentence or list', () => {
+    renderWithFlow(
+      <ReceiptScreen />,
+      testFlow({ voteIds: { q1: 'a3f1000000000000009c2e', q2: '77b000000000000041da' } })
+    )
+    const link = screen.getByRole('link', { name: 'a3f1…9c2e' })
+    expect(link.getAttribute('href')).toMatch(/\/verify\/a3f1000000000000009c2e$/)
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(screen.getAllByRole('link')).toHaveLength(2)
+    expect(screen.queryByText(/voter\.receipt\.verify/)).not.toBeInTheDocument()
+  })
+
   it('says when the results come if they are secret until the end, else offers them', () => {
     const flow = testFlow({ facts: testFacts({ secretUntilTheEnd: true }) })
     const { unmount } = renderWithFlow(<ReceiptScreen />, flow)
