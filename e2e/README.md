@@ -111,6 +111,13 @@ plans were retired fails signup with `no default plan available`.
 Everything runs through the UI. Nothing is provisioned behind the app's back, so
 a break anywhere along that chain fails here.
 
+The voter side drives the guided voter page (one screen at a time) through structural handles:
+`[data-testid="voter-screen"][data-screen="<kind>"]` is the screen on display (`identify`, `code`, `welcome`,
+`question`, `review`, `receipt`, `results`...), `voter-continue` and `voter-cast` are the ballot's two buttons,
+`vote-receipt` is the receipt and `voter-show-results` the identify screen's link to the live count
+(`process-vote-count`, read by the observers). Questions are readable only after identifying, so the extended-info
+and weight assertions sit on the question and review screens.
+
 ## Pay-per-process checkout
 
 `payg-checkout.e2e.ts` tops up an organization's wallet through the app's

@@ -4,8 +4,10 @@ import {
   createAndPublishTwoFactorProcess,
   fillBallot,
   importMembers,
+  openPublicCount,
   signUpWithOrganization,
   submitBallot,
+  voterScreen,
 } from './helpers/flows'
 import { expect, prepareContext, test } from './helpers/fixtures'
 
@@ -91,21 +93,12 @@ test.describe('weighted voting across the question matrix', () => {
       await voter.goto(`/processes/${processId}`)
       await expect(voter.getByRole('heading', { name: `E2E matrix ${seed}` }).first()).toBeVisible()
 
-      // Extended info made it through publish: the per-choice descriptions the
-      // wizard stored as metadata render on the public ballot.
-      await expect(voter.getByText('Extends the board mandate for two more years')).toBeVisible()
-      await expect(voter.getByText('Green area next to the river')).toBeVisible()
-
       await authenticateVoterWithOtp(voter, member)
 
-      // The census weight reached the voter session: the weighted process
-      // shows the member's voting power next to the vote button.
-      const weightBadge = voter.getByText(/voting power/i).locator('..')
-      await expect(weightBadge).toBeVisible()
-      await expect(weightBadge).toContainText('7')
-
-      // Nobody has voted yet.
-      await expect(voter.getByTestId('process-vote-count')).toContainText('0')
+      // Extended info made it through publish: the per-choice descriptions the
+      // wizard stored as metadata render on the ballot (readable once identified).
+      await voterScreen(voter, 'welcome').locator('[data-scope="action-bar"] button').first().click()
+      await expect(voter.getByText('Extends the board mandate for two more years')).toBeVisible()
 
       // One ballot across all three questions — a single-choice pick, a
       // full multi-choice selection, and a partial one — relayed as one batch.
@@ -114,6 +107,10 @@ test.describe('weighted voting across the question matrix', () => {
         { question: 1, type: 'multiple', choices: [0, 1] }, // Alice + Bob
         { question: 2, type: 'multiple', choices: [0] }, // New park
       ])
+
+      // The census weight reached the voter session: the review's first row is the member's vote weight.
+      await expect(voterScreen(voter, 'review')).toContainText(/Your vote counts 7/)
+
       await submitBallot(voter)
     } finally {
       await voterContext.close()
@@ -130,15 +127,11 @@ test.describe('weighted voting across the question matrix', () => {
       await observer.goto(`/processes/${processId}`)
 
       // One ballot was cast (the count is ballots, not weight)...
-      await expect(observer.getByTestId('process-vote-count')).toContainText('1', { timeout: 120_000 })
+      await expect(await openPublicCount(observer)).toContainText('1', { timeout: 120_000 })
 
       // ...but every selected choice tallies the voter's weight of 7. This is
       // the weighted-census assertion: a non-weighted census would read 1.
-      // Only the trigger part carries `data-value`; the content part is
-      // addressed by its selected state (zag marks the active panel with
-      // `data-selected` and hides the rest).
-      await observer.locator('[data-scope="tabs"][data-part="trigger"][data-value="results"]').click()
-      const results = observer.locator('[data-scope="tabs"][data-part="content"][data-selected]')
+      const results = voterScreen(observer, 'results')
 
       // The innermost div holding the choice label is its tally row (ancestors
       // match `hasText` too, so `.last()` — document order puts the deepest

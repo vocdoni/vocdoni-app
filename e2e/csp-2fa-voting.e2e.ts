@@ -5,6 +5,7 @@ import {
   createAndPublishTwoFactorProcess,
   importMembers,
   openIdentifyModal,
+  openPublicCount,
   signUpWithOrganization,
 } from './helpers/flows'
 import { expect, prepareContext, test } from './helpers/fixtures'
@@ -64,9 +65,6 @@ test.describe('voting with a CSP + email 2FA census', () => {
       expect(challenge.subject).toContain(organizationName)
       expect(challenge.body).toMatch(/verification code is:\s*\d{6}/)
 
-      // The census counted 3 members and nobody has voted yet.
-      await expect(voter.getByTestId('process-vote-count')).toContainText('0')
-
       await castVote(voter, 0)
 
       // The envelope really reached the chain, rather than the UI merely
@@ -81,7 +79,7 @@ test.describe('voting with a CSP + email 2FA census', () => {
       try {
         const observer = await observerContext.newPage()
         await observer.goto(`/processes/${processId}`)
-        await expect(observer.getByTestId('process-vote-count')).toContainText('1', { timeout: 120_000 })
+        await expect(await openPublicCount(observer)).toContainText('1', { timeout: 120_000 })
       } finally {
         await observerContext.close()
       }
@@ -115,14 +113,14 @@ test.describe('voting with a CSP + email 2FA census', () => {
       const stranger = { memberNumber: '000000-not-a-member', email: uniqueEmail('stranger') }
       await voter.goto(`/processes/${processId}`)
 
-      const dialog = await openIdentifyModal(voter)
-      await dialog.locator('input[name="memberNumber"]').fill(stranger.memberNumber)
-      await dialog.locator('input[name="contact"]').fill(stranger.email)
-      await dialog.locator('[data-scope="checkbox"][data-part="control"]').first().click()
-      await dialog.locator('button[type="submit"]').click()
+      const screen = await openIdentifyModal(voter)
+      await screen.locator('input[name="memberNumber"]').fill(stranger.memberNumber)
+      await screen.locator('input[name="contact"]').fill(stranger.email)
+      await screen.locator('[data-scope="checkbox"][data-part="control"]').first().click()
+      await screen.locator('button[type="submit"]').click()
 
-      // The voter is told they are not in the census...
-      await expect(dialog.getByText(/not listed in the census|incorrect/i).first()).toBeVisible({ timeout: 30_000 })
+      // The voter is told nobody matches, with every field marked and none named...
+      await expect(screen.getByText(/found no one with these details/i).first()).toBeVisible({ timeout: 30_000 })
 
       // ...and, more importantly, no challenge was mailed. Without this, a
       // backend that mailed a code before checking membership would let anyone
