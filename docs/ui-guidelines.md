@@ -3,6 +3,10 @@
 How to style the app so it stays themable. A rule that names its check (a test, `tsc` or a CI job)
 is enforced, and the file is named so you can read the real thing. The rest are conventions that reviewers check.
 
+This is the token-level reference. How screens are composed and how a mockup maps onto the theme is in
+[`DESIGN.md`](../DESIGN.md), the brand and copy rules in [`BRAND.md`](../BRAND.md), and the step-by-step for a change in the
+`ui-change` skill (`.agents/skills/ui-change/SKILL.md`).
+
 ## The rule
 
 A component never decides how it looks. It picks a role (a token, a text style, a recipe variant, a shared component)

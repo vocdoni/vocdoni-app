@@ -203,7 +203,9 @@ While we welcome contributions from the community, we do not track all of our is
 
 Please review our [development guidelines](https://developer.vocdoni.io/development-guidelines).
 
-For UI and theme changes, follow the [UI guidelines](docs/ui-guidelines.md).
+The working rules are in [AGENTS.md](AGENTS.md) (for people and coding agents alike). Copy, voice and logo use follow
+[BRAND.md](BRAND.md); how screens are built follows [DESIGN.md](DESIGN.md), and UI and theme changes the
+[UI guidelines](docs/ui-guidelines.md). Task-specific procedures live as agent skills in `.agents/skills/`.
 
 ### Contributions and pull requests
 
