@@ -48,7 +48,8 @@ const SupportChatWidget = () => {
       {teaserVisible && !open && (
         <Flex
           position='fixed'
-          bottom='24'
+          bottom='20'
+          hideBelow='lg'
           right='6'
           zIndex='overlay'
           align='center'
@@ -88,7 +89,8 @@ const SupportChatWidget = () => {
         present={open}
         lazyMount
         position='fixed'
-        bottom='24'
+        bottom='20'
+        hideBelow='lg'
         right='6'
         zIndex='overlay'
         transformOrigin='bottom right'
@@ -118,6 +120,8 @@ const SupportChatWidget = () => {
         right='6'
         zIndex='overlay'
         variant='floating'
+        // Large screens only: on a phone or tablet it would sit over the page's own actions. Support stays in the menu.
+        hideBelow='lg'
         aria-label={
           open
             ? t('support_chat.close_label', { defaultValue: 'Close support chat' })
@@ -128,7 +132,7 @@ const SupportChatWidget = () => {
         aria-controls={open ? 'support-chat-panel' : undefined}
         onClick={open ? close : openChat}
       >
-        <Icon as={open ? CloseIcon : ChatIcon} boxSize='icon.lg' />
+        <Icon as={open ? CloseIcon : ChatIcon} boxSize='icon.md' />
       </IconButton>
     </>
   )

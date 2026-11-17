@@ -247,7 +247,7 @@ const sizes = defineTokens.sizes({
   toolbar: { value: '42px' },
   // Square controls drawn by recipes: the support chat launcher (button `floating`) and link `icon-button`.
   control: {
-    floating: { value: '52px' },
+    floating: { value: '44px' },
     'icon-link': { value: '30px' },
     // Fil's default control height, shared by buttons, inputs and selects.
     md: { value: '34px' },
