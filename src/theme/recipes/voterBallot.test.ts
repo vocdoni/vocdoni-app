@@ -98,7 +98,7 @@ describe('voter action bar (questionDock `ballot`)', () => {
       flexDirection: 'column',
       paddingInline: 'var(--chakra-spacing-5)',
       paddingTop: 'var(--chakra-spacing-3)',
-      paddingBottom: 'calc(var(--chakra-spacing-1) + env(safe-area-inset-bottom))',
+      paddingBottom: 'env(safe-area-inset-bottom)',
       borderTopWidth: 'var(--chakra-border-widths-hairline)',
     })
     expect(at(root, '48rem')).toMatchObject({

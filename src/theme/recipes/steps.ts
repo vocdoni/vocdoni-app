@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from '@chakra-ui/react'
+import { touchTarget } from './touchTarget'
 
 // The voter's numbered agenda beside the column from `lg` (ui/StepRail, board V4VoterWide). Each row is a 24px badge
 // and the question's title, with its answer or state under it; `data-state` on the row and its badge is `pending`,
@@ -22,6 +23,7 @@ export const StepRail = defineSlotRecipe({
       '&[data-state=done]': { color: 'fg.muted' },
       '&[data-state=now]': { color: 'fg', fontWeight: 'semibold' },
       '&:is(button)': {
+        ...touchTarget,
         cursor: 'button',
         borderRadius: 'sm',
         focusVisibleRing: 'outside',
@@ -39,7 +41,12 @@ export const StepRail = defineSlotRecipe({
       fontWeight: 'normal',
       boxShadow: 'shadow.mark',
       '&[data-state=done]': { bg: 'bg.inverted', color: 'fg.inverted', boxShadow: '[none]' },
-      '&[data-state=now]': { bg: 'accent.solid', color: 'accent.contrast', boxShadow: 'shadow.edge.inner' },
+      '&[data-state=now]': {
+        bg: 'accent.solid',
+        color: 'accent.contrast',
+        boxShadow: 'shadow.edge.inner',
+        fontWeight: 'semibold',
+      },
     },
     tick: { boxSize: '3.5' },
     title: { gridColumn: '2', minW: '0' },
