@@ -33,12 +33,19 @@ export const Stat = defineSlotRecipe({
       hero: {
         // A quiet 13px label up to `lg`, the section title from `lg`.
         label: {
-          textStyle: { base: 'sm', lg: 'section-title' },
+          textStyle: { base: 'body-sm', lg: 'section-title' },
           fontWeight: { base: 'medium', lg: 'semibold' },
           color: { base: 'fg.subtle', lg: 'fg' },
         },
         // The unit sits against the figure, a step further from it as the figure grows.
-        valueText: { textStyle: 'figure-hero', letterSpacing: 'figure.hero', fontWeight: 'semibold', gap: '0' },
+        // From `lg` the figure starts 6px into the card's padding, as the board's.
+        valueText: {
+          textStyle: 'figure-hero',
+          letterSpacing: 'figure.hero',
+          fontWeight: 'semibold',
+          gap: '0',
+          ms: { lg: '-1.5' },
+        },
         valueUnit: {
           textStyle: 'figure-hero-unit',
           letterSpacing: 'figure.unit',

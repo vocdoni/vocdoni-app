@@ -19,11 +19,12 @@ describe('text styles', () => {
     }
   })
 
-  it('sets the control role in the control size with no weight, and figures in mono at the small size', () => {
+  it('sets the control role in the control size on the running line height with no weight, and figures in mono at the small size', () => {
     expect(system.css({ textStyle: 'control' })).toEqual({
       fontSize: 'var(--chakra-font-sizes-control)',
-      lineHeight: '1.25rem',
+      lineHeight: 'var(--chakra-line-heights-moderate)',
     })
+    expect(system.token('lineHeights.moderate')).toBe(1.45)
     expect(system.css({ textStyle: 'figure' })).toEqual({
       fontFamily: 'var(--chakra-fonts-figure)',
       fontSize: 'var(--chakra-font-sizes-xs)',
@@ -42,14 +43,14 @@ describe('text styles', () => {
   })
 
   it('sets titles in semibold with the tighter tracking of larger type', () => {
-    expect(system.css({ textStyle: 'page-title' })).toMatchObject({
-      fontWeight: 'var(--chakra-font-weights-semibold)',
-      letterSpacing: 'var(--chakra-letter-spacings-heading-page)',
-    })
-    expect(system.css({ textStyle: 'section-title' })).toMatchObject({
-      fontSize: 'var(--chakra-font-sizes-control)',
-      fontWeight: 'var(--chakra-font-weights-semibold)',
-    })
+    const pageTitle = JSON.stringify(system.css({ textStyle: 'page-title' }))
+    expect(pageTitle).toContain('var(--chakra-font-weights-semibold)')
+    // Tighter from a tablet up, and on a 1.1 line (1.15 on a phone).
+    expect(pageTitle).toContain('var(--chakra-letter-spacings-heading-page)')
+    expect(pageTitle).toContain('var(--chakra-line-heights-page)')
+    const sectionTitle = JSON.stringify(system.css({ textStyle: 'section-title' }))
+    expect(sectionTitle).toContain('var(--chakra-font-sizes-control)')
+    expect(sectionTitle).toContain('var(--chakra-font-weights-semibold)')
   })
 
   // Each role replaces the props one component set by hand, so it must emit exactly those declarations.

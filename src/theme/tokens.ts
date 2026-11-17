@@ -33,6 +33,8 @@ const fontSizes = defineTokens.fontSizes({
   vote: { value: '1.375rem' },
   // The title of a bottom sheet and of a dialog on a tablet (dialog-title below lg).
   sheet: { value: '1.0625rem' },
+  // A fact's value on a phone or tablet (dataList `summary`).
+  fact: { value: '0.90625rem' },
   // The voter's ballot: an option's label and a question's title.
   ballot: {
     option: { value: '1.0625rem' },
@@ -47,14 +49,31 @@ const fontSizes = defineTokens.fontSizes({
   },
 })
 
-// The app's four line heights: captions and figures, titles, running text, long reads. Chakra's
-// other step (`taller`) stays for its own recipes.
+// The app's four line heights: captions and figures, titles, running text (the guide's root, 1.45), long reads.
+// Chakra's other step (`taller`) stays for its own recipes.
 const lineHeights = defineTokens.lineHeights({
   shorter: { value: 1.2 },
   short: { value: 1.3 },
-  moderate: { value: 1.5 },
+  moderate: { value: 1.45 },
+  // A page's and a vote's title: 1.1 from `md`, 1.15 on a phone.
+  page: {
+    DEFAULT: { value: 1.1 },
+    touch: { value: 1.15 },
+  },
+  // Rows set on a fixed line (the boards): a row's title in a list (20px, 22px on a phone), a question's title in a
+  // card (21px), a row's secondary line (18px, 20px on a phone) and a small label (17px).
+  row: {
+    title: { value: '1.25rem' },
+    question: { value: '1.3125rem' },
+    touch: { value: '1.375rem' },
+    meta: { value: '1.125rem' },
+    'meta-touch': { value: '1.25rem' },
+    label: { value: '1.0625rem' },
+  },
   question: { value: 1.08 },
   tall: { value: 1.6 },
+  // A fact's value on a phone or tablet.
+  fact: { value: 1.35 },
   // A headline figure sits on its baseline: the line box hugs the digits.
   hero: { value: 0.74 },
 })
@@ -65,9 +84,15 @@ const letterSpacings = defineTokens.letterSpacings({
   body: { value: '-0.006em' },
   heading: {
     snug: { value: '-0.4px' },
+    // A row's or a question's title (15px).
+    row: { value: '-0.012em' },
     item: { value: '-0.015em' },
     section: { value: '-0.028em' },
-    page: { value: '-0.035em' },
+    // A page title: -0.035em from `md`, -0.03em on a phone.
+    page: {
+      DEFAULT: { value: '-0.035em' },
+      touch: { value: '-0.03em' },
+    },
     question: { value: '-0.038em' },
   },
   voter: { value: '-0.008em' },
@@ -114,6 +139,28 @@ const spacing = defineTokens.spacing({
   track: { value: '3px' },
   // The inner edge of a card from a tablet up (16px, spacing 4, on a phone): see the card recipe.
   card: { value: '22px' },
+  // The top of a one-line row in a card (Resum's question lines, the empty page's legend) and of the legend's head.
+  row: {
+    DEFAULT: { value: '11px' },
+    head: { value: '13px' },
+  },
+  // Between a question's title and the note under it.
+  note: { value: '1px' },
+  // Between a filter chip's label and its count.
+  chip: { value: '7px' },
+  // Above and below a fact in a vote's facts column (dataList `summary` from `lg`).
+  fact: { value: '7px' },
+  // The participation hero from `lg`: the ruler under the figure (34px; 30px on a question-by-question vote, also
+  // between its state and the figure).
+  hero: {
+    ruler: { value: '34px' },
+    compact: { value: '30px' },
+  },
+  // The card that says where a vote stands instead of the hero: its padding from `lg` and its footer's end.
+  idle: {
+    DEFAULT: { value: '26px' },
+    end: { value: '13px' },
+  },
   // How far below the top of the screen a confirm dialog sits: from `lg`, and on a tablet.
   dialog: {
     top: {
@@ -154,12 +201,30 @@ const sizes = defineTokens.sizes({
     xl: { value: '{sizes.12}' },
     // The chevron of a control that opens a menu ("More").
     chevron: { value: '15px' },
+    // A mark inside a line of small text (the winning choice's check).
+    xs: { value: '13px' },
   },
-  // The three page widths, read through ui/PageContainer: the public shell, then two narrower columns.
+  // The three page widths, read through ui/PageContainer: the public shell, then two narrower columns; `list` is
+  // the votes list's column.
   content: {
     wide: { value: '1600px' },
     medium: { value: '1200px' },
     narrow: { value: '900px' },
+    list: { value: '920px' },
+  },
+  // The measure of a lead paragraph under a card's title (an empty page, a vote waiting to open): 560px, 584px on a
+  // tablet.
+  lead: {
+    DEFAULT: { value: '560px' },
+    tablet: { value: '584px' },
+  },
+  // A vote's facts beside the headline figure, and the column beside the questions on Resum.
+  facts: { value: '392px' },
+  // A card's footer that holds a button (the idle card's).
+  actionbar: { value: '60px' },
+  // The share column of a result bar ("69%"), right-aligned.
+  results: {
+    share: { value: '38px' },
   },
   // Empty-state cards (no organizations, no results) and the leading column of a table that holds row actions.
   card: {
@@ -170,7 +235,10 @@ const sizes = defineTokens.sizes({
   },
   // The leading column of a list row: a vote's state and its date.
   list: {
-    label: { value: '112px' },
+    label: {
+      DEFAULT: { value: '112px' },
+      tablet: { value: '104px' },
+    },
   },
   // Minimum height of a row of controls, so a row with a button and one without line up.
   toolbar: { value: '42px' },
@@ -232,9 +300,12 @@ const durations = defineTokens.durations({
 
 // Two fades. `inactive` is content that cannot be used right now (a revoked key, a busy check, an unavailable
 // option); `dimmed` is only de-emphasised and matches Chakra's own `_disabled` layer style (0.5).
+// `outvoted` is a choice that lost a final tally; `count` the count inside a filter chip.
 const opacity = defineTokens.opacity({
   inactive: { value: 0.6 },
   dimmed: { value: 0.5 },
+  outvoted: { value: 0.4 },
+  count: { value: 0.72 },
 })
 
 const tokens = defineTokens({

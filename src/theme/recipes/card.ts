@@ -69,10 +69,11 @@ export const Card = defineSlotRecipe({
         },
       },
       // A border around content that spaces itself, such as a table.
+      // A ring, not a border, as the guide's cards: it takes no room, so the card is as tall as its content.
       frame: {
         root: {
-          borderWidth: 'hairline',
-          borderColor: 'border',
+          borderWidth: '[0]',
+          boxShadow: 'shadow.ring',
         },
       },
       // A tinted block inside a form or card: a faint fill with the hairline.

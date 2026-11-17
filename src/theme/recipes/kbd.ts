@@ -4,8 +4,14 @@ import { defineRecipe } from '@chakra-ui/react'
 export const Kbd = defineRecipe({
   variants: {
     variant: {
+      // 18px square at 12px.
       hint: {
         fontFamily: 'body',
+        fontSize: 'xs',
+        lineHeight: 'row.meta',
+        h: '4.5',
+        px: '1',
+        letterSpacing: 'none',
         fontWeight: 'medium',
         color: 'fg.subtle',
         bg: 'bg.panel',

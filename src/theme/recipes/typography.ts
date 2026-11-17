@@ -30,6 +30,8 @@ export const heading = defineRecipe({
 
 export const link = defineRecipe({
   base: {
+    // The guide's link: label and chevron 4px apart.
+    gap: '1',
     color: 'accent.fg',
     fontWeight: 'medium-plus',
     textDecoration: 'none',
@@ -89,6 +91,8 @@ export const link = defineRecipe({
         alignItems: 'center',
         gap: '0.5',
         textStyle: { base: 'md', lg: 'xs' },
+        lineHeight: { lg: 'row.label' },
+        letterSpacing: { lg: 'none' },
         fontWeight: { base: 'medium', lg: 'normal' },
         minH: { base: 'control.touch', md: 'control.tablet', lg: 'auto' },
         color: 'fg.subtle',
@@ -101,6 +105,7 @@ export const link = defineRecipe({
         alignItems: 'center',
         gap: '1',
         textStyle: 'control-touch',
+        _icon: { boxSize: { lg: 'icon.xs' } },
         whiteSpace: 'nowrap',
         minH: { base: 'control.touch', md: 'control.tablet', lg: 'auto' },
       },

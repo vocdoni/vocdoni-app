@@ -15,7 +15,8 @@ const controlSize = defineStyle({
   px: { base: '4', md: '3.5', lg: '3' },
   textStyle: 'control-touch',
   gap: '2',
-  _icon: { width: 'icon.sm', height: 'icon.sm' },
+  // The guide's buttons carry a 14px icon from `lg`.
+  _icon: { width: { base: 'icon.sm', lg: '3.5' }, height: { base: 'icon.sm', lg: '3.5' } },
 })
 // The compact size is the 28px one on a desktop. An icon button is drawn at it, so its hit area is 44px, 40px, 28px
 // (the icon keeps its size).
@@ -241,17 +242,19 @@ const toggle = defineStyle({
 
 // A filter chip in a group (votes by state); the chosen one carries `aria-pressed`. Use at `size='sm'`. Its height
 // and text are set by the compound variant below: 36px, 32px, 28px.
+// A border, not a ring: the guide's chip is 1px wider each side than its padding (transparent when chosen).
 const chip = defineStyle({
   ...ghost,
   color: 'fg.muted',
   bg: 'bg.panel',
   fontWeight: 'medium-plus',
-  boxShadow: 'shadow.control',
+  borderWidth: 'hairline',
+  borderColor: 'border.strong',
   _hover: { bg: 'state.hover.bg' },
   _pressed: {
     bg: 'state.selected.bg',
     color: 'fg',
-    boxShadow: '[none]',
+    borderColor: 'transparent',
     _hover: { bg: 'state.selected.bg' },
   },
 })
@@ -312,7 +315,7 @@ const row = defineStyle({
   px: { base: '3.5', lg: '2.5' },
   gap: '2',
   fontSize: { base: 'item', md: 'md', lg: 'sm' },
-  lineHeight: '[1.25rem]',
+  lineHeight: 'moderate',
   _icon: { width: 'icon.sm', height: 'icon.sm' },
 })
 
@@ -389,6 +392,6 @@ export const Button = defineRecipe({
       },
     },
     // The chip is a smaller control than a button at every width: 36px on a phone, 32px on a tablet, 28px from `lg`.
-    { variant: 'chip', css: { h: chipHeight, minW: '0', textStyle: 'control-chip' } },
+    { variant: 'chip', css: { h: chipHeight, minW: '0', gap: 'chip', textStyle: 'control-chip' } },
   ],
 })

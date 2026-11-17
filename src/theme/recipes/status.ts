@@ -10,6 +10,7 @@ export const Status = defineSlotRecipe({
     root: {
       gap: '1.5',
       fontWeight: 'medium',
+      letterSpacing: 'none',
       whiteSpace: 'nowrap',
     },
     indicator: {

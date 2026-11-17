@@ -21,6 +21,11 @@ export const Alert = defineSlotRecipe({
       compact: { root: { py: '3' } },
       // A status panel with a title, several lines and its own close button.
       panel: { root: { px: '6', py: '6' } },
+      // The guide's notice (a paused vote): a tinted band in ink with a ring in the tone and a 15px icon.
+      notice: {
+        root: { px: '3.5', py: 'row', gap: '2.5', alignItems: 'flex-start', borderRadius: 'md', textStyle: 'control' },
+        indicator: { boxSize: 'icon.chevron', mt: '0.5' },
+      },
     },
   },
   // After chakra's `variant`, so the look holds whichever variant is asked for.
@@ -43,6 +48,11 @@ export const Alert = defineSlotRecipe({
     {
       status: ['info', 'neutral'],
       css: { root: { bg: 'bg.subtle', color: 'fg.muted' }, indicator: { color: 'fg.muted' } },
+    },
+    {
+      status: 'warning',
+      layout: 'notice',
+      css: { root: { color: 'fg', boxShadow: '[inset 0 0 0 {borderWidths.hairline} {colors.status.warning.ring}]' } },
     },
   ],
   defaultVariants: {

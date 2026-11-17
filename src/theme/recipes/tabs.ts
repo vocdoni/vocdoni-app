@@ -15,11 +15,15 @@ const line = {
     scrollbarWidth: '[none]',
     '&::-webkit-scrollbar': { display: 'none' },
   },
-  // 44px tall with 15px text up to `lg`, where it is the text and a 10px gap above the line.
+  // 44px tall with 15px text up to `lg`, where it is the text over a 12px gap above the line (the boards' 10px
+  // under a line box their count slot makes 21px tall). The boards keep a 6px slot for a count after every label.
   trigger: {
-    px: '0',
+    gap: '1.5',
+    ps: '0',
+    pe: { base: '0', lg: '1.5' },
+    '&:has(.chakra-badge)': { pe: '0' },
     pt: '0',
-    pb: { base: '0', lg: '2.5' },
+    pb: { base: '0', lg: '3' },
     h: { base: 'control.touch', lg: 'auto' },
     flexShrink: '0',
     whiteSpace: 'nowrap',
