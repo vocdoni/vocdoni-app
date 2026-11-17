@@ -68,6 +68,26 @@ describe('PageMetaHead image dimensions', () => {
   })
 })
 
+describe('PageMetaHead image alt', () => {
+  it('emits og:image:alt and twitter:image:alt only when present', () => {
+    const withAlt = renderToStaticMarkup(
+      <PageMetaHead
+        meta={{
+          ...baseMeta,
+          openGraph: { ...baseMeta.openGraph, imageAlt: 'Card alt' },
+          twitter: { ...baseMeta.twitter, imageAlt: 'Card alt' },
+        }}
+      />
+    )
+    const without = renderToStaticMarkup(<PageMetaHead meta={baseMeta} />)
+
+    expect(withAlt).toContain('property="og:image:alt" content="Card alt"')
+    expect(withAlt).toContain('name="twitter:image:alt" content="Card alt"')
+    expect(without).not.toContain('og:image:alt')
+    expect(without).not.toContain('twitter:image:alt')
+  })
+})
+
 describe('PageMetaHead', () => {
   it('renders canonical, alternate, open graph, and twitter tags without duplicating title or description tags', () => {
     const html = renderToStaticMarkup(

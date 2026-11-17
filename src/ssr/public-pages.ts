@@ -12,6 +12,7 @@ import {
   type LegacyOrganization,
 } from '~src/legacy/vochain-archive'
 import {
+  getOpenGraphImageAlt,
   getOpenGraphImagePath,
   OPEN_GRAPH_IMAGE_HEIGHT,
   OPEN_GRAPH_IMAGE_WIDTH,
@@ -116,6 +117,7 @@ type PublicMeta = {
     image: string
     imageWidth?: number
     imageHeight?: number
+    imageAlt?: string
     siteName: string
   }
   twitter: {
@@ -123,6 +125,7 @@ type PublicMeta = {
     title: string
     description: string
     image: string
+    imageAlt?: string
     site: string
     creator: string
   }
@@ -222,6 +225,7 @@ const resolveSocialImage = ({
     image: canonicalUrl ? new URL(path, canonicalUrl).toString() : path,
     imageWidth: OPEN_GRAPH_IMAGE_WIDTH,
     imageHeight: OPEN_GRAPH_IMAGE_HEIGHT,
+    imageAlt: getOpenGraphImageAlt(language),
     card: 'summary_large_image' as const,
   }
 }
@@ -327,6 +331,7 @@ export const buildOrganizationMeta = ({
       image: socialImage.image,
       imageWidth: socialImage.imageWidth,
       imageHeight: socialImage.imageHeight,
+      imageAlt: socialImage.imageAlt,
       siteName: publicSiteName,
     },
     twitter: {
@@ -334,6 +339,7 @@ export const buildOrganizationMeta = ({
       title,
       description,
       image: socialImage.image,
+      imageAlt: socialImage.imageAlt,
       site: publicTwitterAccount,
       creator: publicTwitterAccount,
     },
@@ -378,6 +384,7 @@ export const buildProcessMeta = ({
       image: socialImage.image,
       imageWidth: socialImage.imageWidth,
       imageHeight: socialImage.imageHeight,
+      imageAlt: socialImage.imageAlt,
       siteName: publicSiteName,
     },
     twitter: {
@@ -385,6 +392,7 @@ export const buildProcessMeta = ({
       title,
       description,
       image: socialImage.image,
+      imageAlt: socialImage.imageAlt,
       site: publicTwitterAccount,
       creator: publicTwitterAccount,
     },

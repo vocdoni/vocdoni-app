@@ -1,5 +1,6 @@
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { VochainNotFoundError } from '~src/legacy/vochain-archive'
+import { getOpenGraphImageAlt } from '~src/pages/shared/openGraphImage'
 import {
   buildOrganizationMeta,
   getHomeProcessPath,
@@ -332,6 +333,8 @@ describe('metadata builders', () => {
     expect(meta.openGraph.image).toBe('https://app.example.org/assets/og/en.png')
     expect(meta.openGraph.imageWidth).toBe(1200)
     expect(meta.openGraph.imageHeight).toBe(630)
+    expect(meta.openGraph.imageAlt).toBe(getOpenGraphImageAlt('en'))
+    expect(meta.twitter.imageAlt).toBe(getOpenGraphImageAlt('en'))
     expect(meta.organizationLogo).toBeUndefined()
   })
 
@@ -345,6 +348,7 @@ describe('metadata builders', () => {
 
     expect(meta.openGraph.image).toBe('https://app.example.org/assets/og/ca.png')
     expect(meta.twitter.image).toBe('https://app.example.org/assets/og/ca.png')
+    expect(meta.openGraph.imageAlt).toBe(getOpenGraphImageAlt('ca'))
   })
 
   it('keeps the organization logo as a summary card without card dimensions', () => {
@@ -358,6 +362,8 @@ describe('metadata builders', () => {
     expect(meta.openGraph.image).toBe('https://cdn.example.org/logo.png')
     expect(meta.openGraph.imageWidth).toBeUndefined()
     expect(meta.openGraph.imageHeight).toBeUndefined()
+    expect(meta.openGraph.imageAlt).toBeUndefined()
+    expect(meta.twitter.imageAlt).toBeUndefined()
     expect(meta.twitter.card).toBe('summary')
     expect(meta.organizationLogo).toBe('https://cdn.example.org/logo.png')
   })

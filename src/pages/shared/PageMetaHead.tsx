@@ -32,12 +32,14 @@ const PageMetaHead = ({ meta, structuredData = [] }: PageMetaHeadProps) => {
       {meta.openGraph.imageHeight ? (
         <meta property='og:image:height' content={String(meta.openGraph.imageHeight)} />
       ) : null}
+      {meta.openGraph.imageAlt ? <meta property='og:image:alt' content={meta.openGraph.imageAlt} /> : null}
       <meta property='og:site_name' content={meta.openGraph.siteName} />
       {meta.openGraph.url ? <meta property='og:url' content={meta.openGraph.url} /> : null}
       <meta name='twitter:card' content={meta.twitter.card} />
       <meta name='twitter:title' content={meta.twitter.title} />
       <meta name='twitter:description' content={meta.twitter.description} />
       <meta name='twitter:image' content={meta.twitter.image} />
+      {meta.twitter.imageAlt ? <meta name='twitter:image:alt' content={meta.twitter.imageAlt} /> : null}
       <meta name='twitter:site' content={meta.twitter.site} />
       <meta name='twitter:creator' content={meta.twitter.creator} />
       {meta.canonicalUrl ? <link rel='canonical' href={meta.canonicalUrl} /> : null}
