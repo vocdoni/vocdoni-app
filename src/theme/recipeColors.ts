@@ -9,16 +9,10 @@ const link = {
   },
   fg: {
     DEFAULT: {
-      value: {
-        _light: '{colors.accent.fg}',
-        _dark: '{colors.gray.400}',
-      },
+      value: '{colors.accent.fg}',
     },
     hover: {
-      value: {
-        _light: '{colors.accent.fg.hover}',
-        _dark: '{colors.gray.200}',
-      },
+      value: '{colors.accent.fg.hover}',
     },
   },
 }
@@ -30,13 +24,13 @@ const switchColors = {
     DEFAULT: {
       value: {
         _light: '{colors.white}',
-        _dark: '{colors.gray.600}',
+        _dark: '{colors.carbon.300}',
       },
     },
     checked: {
       value: {
         _light: '{colors.colorPalette.contrast}',
-        _dark: '{colors.gray.600}',
+        _dark: '{colors.white}',
       },
     },
   },

@@ -30,6 +30,8 @@ const opaque = (color: string, mode: Mode): string => {
 }
 
 const SURFACES = ['bg', 'bg.panel', 'bg.subtle', 'surface.raised', 'surface.sunken']
+// The dark page, sidebar, card, dialog and menu greys, which carry the body text.
+const DARK_LAYERS = ['bg', 'surface.sidebar', 'surface.card', 'surface.overlay', 'surface.raised']
 
 // WCAG AA for text: 4.5:1 against every surface the text is painted on, in both colour modes.
 describe('text colour contrast (WCAG AA)', () => {
@@ -41,6 +43,16 @@ describe('text colour contrast (WCAG AA)', () => {
           const ratio = contrastRatio(resolve(token, mode), opaque(resolve(surface, mode), mode))
           expect(ratio, `${token} on ${surface} (${mode})`).toBeGreaterThanOrEqual(4.5)
         }
+      }
+    }
+  )
+
+  it.each(['fg', 'fg.muted', 'fg.subtle', 'fg.success', 'fg.warning', 'accent.fg'])(
+    '%s reads at 4.5:1 on every dark layer',
+    (token) => {
+      for (const layer of DARK_LAYERS) {
+        const ratio = contrastRatio(resolve(token, 'dark'), resolve(layer, 'dark'))
+        expect(ratio, `${token} on ${layer}`).toBeGreaterThanOrEqual(4.5)
       }
     }
   )
