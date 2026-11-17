@@ -5,7 +5,7 @@ import PublicOrganizationPage from './organization/PublicPage'
 import PublicProcessPage from './processes/PublicPage'
 import PublicProcessSummaryView from './processes/PublicSummary'
 
-const providerProps = vi.hoisted(() => ({ organization: vi.fn() }))
+const providerProps = vi.hoisted(() => ({ organization: vi.fn(), voter: vi.fn() }))
 
 vi.mock('~components/Organization/View', () => ({
   default: ({ initialElectionsPage }: { initialElectionsPage?: { items?: unknown[] } }) => (
@@ -13,8 +13,11 @@ vi.mock('~components/Organization/View', () => ({
   ),
 }))
 
-vi.mock('~components/Process/View', () => ({
-  ProcessView: () => <div>process-view</div>,
+vi.mock('~components/Process/voter/VoterPage', () => ({
+  VoterPage: (props: Record<string, unknown>) => {
+    providerProps.voter(props)
+    return <div>voter-page</div>
+  },
 }))
 
 vi.mock('~components/Process/Summary', () => ({
@@ -60,17 +63,39 @@ describe('SSR public page wrappers', () => {
     expect(screen.getByText('organization-view-2')).toBeInTheDocument()
   })
 
-  it('renders the process view with its legal notice', () => {
+  it('renders the voter page with the server data, the brand and the language links', () => {
+    const election = { id: '0x0', orgAddress: 'abc' } as any
+    const brand = { branded: true, name: 'Acme Org', logo: 'https://cdn.example/acme.svg' }
+    const links = { en: '/en/processes/0x0', ca: '/ca/processes/0x0' }
+    render(
+      <PublicProcessPage
+        id='0x0'
+        election={election}
+        organization={{ address: '0xabc' } as any}
+        brand={brand}
+        publicLanguageLinks={links}
+      />
+    )
+
+    expect(screen.getByText('voter-page')).toBeInTheDocument()
+    expect(providerProps.voter).toHaveBeenCalledWith(
+      expect.objectContaining({ id: '0x0', election, brand, publicLanguageLinks: links })
+    )
+  })
+
+  it('names the voter page after the organisation when the page data carries no brand', () => {
+    providerProps.voter.mockClear()
     render(
       <PublicProcessPage
         id='0x0'
         election={{ id: '0x0', orgAddress: 'abc' } as any}
-        organization={{ address: '0xabc' } as any}
+        organization={{ address: '0xabc', name: { default: 'Acme Org' } } as any}
       />
     )
 
-    expect(screen.getByText('process-view')).toBeInTheDocument()
-    expect(screen.getByText('legal-notice')).toBeInTheDocument()
+    expect(providerProps.voter).toHaveBeenCalledWith(
+      expect.objectContaining({ brand: { branded: false, name: 'Acme Org' } })
+    )
   })
 
   // The organisation the server loaded seeds the provider, so its name and logo render without a fetch.
