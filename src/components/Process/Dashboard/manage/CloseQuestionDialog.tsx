@@ -8,6 +8,8 @@ export type ClosingQuestion = { question: VotingProcessQuestion; number: number 
 
 type CloseQuestionDialogProps = {
   closing: ClosingQuestion | null
+  /** Every other question is over: closing this one closes the vote too (R30). */
+  last: boolean
   onConfirm: () => void
   onCancel: () => void
   /** The close is under way: the dialog stays, its confirm shows progress and it cannot be dismissed. */
@@ -16,7 +18,14 @@ type CloseQuestionDialogProps = {
 }
 
 /** The board's "Vols tancar la pregunta 3?": closing is final, so it asks first; the action is the primary. */
-export const CloseQuestionDialog = ({ closing, onConfirm, onCancel, loading, busy }: CloseQuestionDialogProps) => {
+export const CloseQuestionDialog = ({
+  closing,
+  last,
+  onConfirm,
+  onCancel,
+  loading,
+  busy,
+}: CloseQuestionDialogProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
   const number = closing?.number
@@ -37,6 +46,13 @@ export const CloseQuestionDialog = ({ closing, onConfirm, onCancel, loading, bus
               title: text(closing.question.title),
               count: votes,
               votes: quantity(votes),
+            })
+          : undefined
+      }
+      warning={
+        last
+          ? t('votes.manage.close_last_warning', {
+              defaultValue: 'This is the last question: closing it closes the vote too.',
             })
           : undefined
       }

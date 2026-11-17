@@ -105,6 +105,49 @@ export const deriveQuestionState = (
   return 'toOpen'
 }
 
+/** The open or paused questions of a question-by-question vote: the ones a voter can or could vote now. */
+export const activeQuestionIds = (process: VotingProcessResponse, now: Date = new Date()): string[] =>
+  isQuestionByQuestion(process)
+    ? process.questions
+        .filter((question) => ['open', 'paused'].includes(deriveQuestionState(question, process, now)))
+        .map(({ id }) => id)
+    : []
+
+/** Why a question cannot open (or resume) on its own right now. */
+export type OpenQuestionBlock = 'notByQuestion' | 'over' | 'notWaiting' | 'beforeStart' | 'votePaused' | 'otherActive'
+
+/**
+ * The one rule for opening a question (R29): only one question is open or paused at a time, and never before the
+ * start nor while the whole vote is paused ("Resume the vote" reopens the questions that pause holds). Null: it can.
+ */
+export const openQuestionBlock = (
+  process: VotingProcessResponse,
+  question: VotingProcessQuestion,
+  now: Date = new Date(),
+  remembered: ReadonlySet<string> = NO_IDS
+): OpenQuestionBlock | null => {
+  if (!isQuestionByQuestion(process)) return 'notByQuestion'
+  const vote = deriveVoteState(process, now, remembered)
+  if (vote === 'draft' || vote === 'closed' || vote === 'canceled') return 'over'
+  const state = deriveQuestionState(question, process, now)
+  if (state !== 'toOpen' && state !== 'paused') return 'notWaiting'
+  if (isBeforeStart(process.startDate, now)) return 'beforeStart'
+  if (vote === 'paused') return 'votePaused'
+  return activeQuestionIds(process, now).some((id) => id !== question.id) ? 'otherActive' : null
+}
+
+export const canOpenQuestion = (
+  process: VotingProcessResponse,
+  question: VotingProcessQuestion,
+  now: Date = new Date(),
+  remembered: ReadonlySet<string> = NO_IDS
+): boolean => openQuestionBlock(process, question, now, remembered) === null
+
+/** Whether closing this question closes the vote: every other question is already over (R30). */
+export const isLastQuestionLeft = (process: VotingProcessResponse, questionId: string): boolean =>
+  process.questions.some(({ id }) => id === questionId) &&
+  process.questions.every((question) => question.id === questionId || isOverQuestion(question))
+
 export type QuestionStateCounts = Record<QuestionState, number>
 
 export const countQuestionStates = (states: readonly QuestionState[]): QuestionStateCounts =>

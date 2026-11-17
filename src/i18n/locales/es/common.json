@@ -1966,6 +1966,7 @@
       "close_body_other": "«{{title}}» se cerrará con los {{votes}} votos que tiene ahora y el resultado será definitivo. Una pregunta cerrada no se puede volver a abrir.",
       "close_cancel": "No, déjala abierta",
       "close_confirm": "Cerrar la pregunta {{number}}",
+      "close_last_warning": "Es la última pregunta: al cerrarla, la votación también se cierra.",
       "close_title": "¿Cerrar la pregunta {{number}}?",
       "closed": "La votación se cerró el {{date}}.",
       "closes": "La votación cierra el {{date}}. Las preguntas que sigan abiertas se cerrarán entonces.",
@@ -2013,6 +2014,7 @@
         "resume_vote": "Siguiente paso: reanuda la votación"
       },
       "not_opened_note": "La votación se finalizó sin abrirla.",
+      "one_open_note": "Solo puede haber una pregunta abierta a la vez: mientras haya una, «Abrir» aparece desactivado en las demás. Antes de la hora de inicio, también.",
       "open": "Abrir",
       "pause": "Pausar",
       "paused_note": "Nadie puede votarla.",

@@ -1924,6 +1924,7 @@
       "close_body_other": "„{{title}}“ wird mit den {{votes}} Stimmen geschlossen, die sie jetzt hat, und das Ergebnis ist endgültig. Eine geschlossene Frage kann nicht wieder geöffnet werden.",
       "close_cancel": "Nein, offen lassen",
       "close_confirm": "Frage {{number}} schließen",
+      "close_last_warning": "Das ist die letzte Frage: Wenn du sie schließt, wird auch die Abstimmung geschlossen.",
       "close_title": "Frage {{number}} schließen?",
       "closed": "Die Abstimmung wurde am {{date}} beendet.",
       "closes": "Die Abstimmung endet am {{date}}. Fragen, die dann noch offen sind, werden geschlossen.",
@@ -1964,6 +1965,7 @@
         "resume_vote": "Nächster Schritt: Abstimmung fortsetzen"
       },
       "not_opened_note": "Die Abstimmung wurde beendet, ohne sie zu öffnen.",
+      "one_open_note": "Es kann immer nur eine Frage offen sein: Solange eine offen ist, ist „Öffnen“ bei den anderen deaktiviert. Vor der Startzeit ebenfalls.",
       "open": "Öffnen",
       "pause": "Pausieren",
       "paused_note": "Niemand kann darüber abstimmen.",

@@ -1924,6 +1924,7 @@
       "close_body_other": "“{{title}}” will close with the {{votes}} votes it has now, and the result will be final. A closed question cannot be reopened.",
       "close_cancel": "No, leave it open",
       "close_confirm": "Close question {{number}}",
+      "close_last_warning": "This is the last question: closing it closes the vote too.",
       "close_title": "Close question {{number}}?",
       "closed": "The vote closed on {{date}}.",
       "closes": "The vote closes {{date}}. Questions still open will close then.",
@@ -1964,6 +1965,7 @@
         "resume_vote": "Next step: resume the vote"
       },
       "not_opened_note": "The vote ended without opening it.",
+      "one_open_note": "Only one question can be open at a time: while one is, “Open” is disabled on the others. Before the start time, too.",
       "open": "Open",
       "pause": "Pause",
       "paused_note": "No one can vote on it.",

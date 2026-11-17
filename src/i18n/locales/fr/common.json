@@ -1966,6 +1966,7 @@
       "close_body_other": "« {{title}} » sera fermée avec les {{votes}} votes qu'elle a maintenant et le résultat sera définitif. Une question fermée ne peut pas être rouverte.",
       "close_cancel": "Non, la laisser ouverte",
       "close_confirm": "Fermer la question {{number}}",
+      "close_last_warning": "C'est la dernière question : en la fermant, vous fermez aussi le vote.",
       "close_title": "Fermer la question {{number}} ?",
       "closed": "Le vote s'est terminé le {{date}}.",
       "closes": "Le vote se termine le {{date}}. Les questions encore ouvertes seront alors fermées.",
@@ -2013,6 +2014,7 @@
         "resume_vote": "Étape suivante : reprendre le vote"
       },
       "not_opened_note": "Le vote a été terminé sans l'ouvrir.",
+      "one_open_note": "Une seule question peut être ouverte à la fois : tant qu'une question l'est, « Ouvrir » est désactivé sur les autres. Avant l'heure de début aussi.",
       "open": "Ouvrir",
       "pause": "Mettre en pause",
       "paused_note": "Personne ne peut y voter.",

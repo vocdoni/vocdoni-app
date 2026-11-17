@@ -1,15 +1,19 @@
 import type { QuestionStatus, VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import {
+  activeQuestionIds,
+  canOpenQuestion,
   compareVoteRows,
   countByFilter,
   countQuestionStates,
   deriveQuestionState,
   deriveVoteState,
   draftWarning,
+  isLastQuestionLeft,
   isSettledQuestion,
   matchesSearch,
   nonTerminalQuestionIds,
   normalizeSearch,
+  openQuestionBlock,
   pausedHoldIds,
   percentOf,
   questionElectorate,
@@ -132,6 +136,69 @@ describe('pausedHoldIds', () => {
   it('falls back to every paused question with votes without a memory', () => {
     expect(pausedHoldIds(process())).toEqual(['q0'])
     expect(pausedHoldIds(vote(['PAUSED']), new Set(['q0']))).toEqual([])
+  })
+})
+
+describe('one question open at a time (R29)', () => {
+  const qbq = (statuses: QuestionStatus[], voted: number[] = []) => {
+    const p = vote(statuses, byQuestion)
+    voted.forEach((index) => (p.questions[index].results = { voteCount: 5 }))
+    return p
+  }
+  const block = (p: VotingProcessResponse, index: number, now = NOW, remembered?: ReadonlySet<string>) =>
+    openQuestionBlock(p, p.questions[index], now, remembered)
+
+  it('blocks every other question while one is open, and the open one is not waiting', () => {
+    const p = qbq(['RESULTS', 'ONGOING', 'PAUSED', 'PAUSED'], [0, 1])
+    expect(activeQuestionIds(p, NOW)).toEqual(['q1'])
+    expect(block(p, 2)).toBe('otherActive')
+    expect(block(p, 3)).toBe('otherActive')
+    expect(block(p, 1)).toBe('notWaiting')
+    expect(canOpenQuestion(p, p.questions[2], NOW)).toBe(false)
+  })
+
+  it('counts a paused question as active: beside an open one it cannot resume, alone it pauses the vote', () => {
+    const both = qbq(['ONGOING', 'PAUSED', 'PAUSED'], [0, 1])
+    expect(activeQuestionIds(both, NOW)).toEqual(['q0', 'q1'])
+    expect(block(both, 1)).toBe('otherActive')
+    expect(block(both, 2)).toBe('otherActive')
+    // Nothing open and a voted question paused: the vote reads paused, and only "Resume the vote" moves it.
+    const alone = qbq(['RESULTS', 'PAUSED', 'PAUSED'], [0, 1])
+    expect(activeQuestionIds(alone, NOW)).toEqual(['q1'])
+    expect(block(alone, 1)).toBe('votePaused')
+    expect(block(alone, 2)).toBe('votePaused')
+  })
+
+  it('lets any question to open open when none is active', () => {
+    const p = qbq(['RESULTS', 'PAUSED', 'PAUSED'], [0])
+    expect(activeQuestionIds(p, NOW)).toEqual([])
+    expect(block(p, 1)).toBeNull()
+    expect(canOpenQuestion(p, p.questions[2], NOW)).toBe(true)
+  })
+
+  it('holds every question while the whole vote is paused, even one this browser remembers with no votes', () => {
+    const p = qbq(['PAUSED', 'PAUSED'])
+    expect(block(p, 1)).toBeNull()
+    expect(block(p, 1, NOW, new Set(['q0']))).toBe('votePaused')
+  })
+
+  it('opens nothing when every question is closed, before the start, nor in an all-at-once vote', () => {
+    const closed = qbq(['RESULTS', 'ENDED'], [0, 1])
+    expect(block(closed, 1)).toBe('over')
+    const early = qbq(['PAUSED', 'PAUSED'])
+    expect(block(early, 0, new Date('2026-05-01T12:00:00Z'))).toBe('beforeStart')
+    const together = vote(['PAUSED'])
+    expect(block(together, 0)).toBe('notByQuestion')
+  })
+})
+
+describe('isLastQuestionLeft (R30)', () => {
+  it('is true only when every other question is over', () => {
+    const p = vote(['RESULTS', 'CANCELED', 'ONGOING'], byQuestion)
+    expect(isLastQuestionLeft(p, 'q2')).toBe(true)
+    const more = vote(['RESULTS', 'ONGOING', 'PAUSED'], byQuestion)
+    expect(isLastQuestionLeft(more, 'q1')).toBe(false)
+    expect(isLastQuestionLeft(more, 'missing')).toBe(false)
   })
 })
 

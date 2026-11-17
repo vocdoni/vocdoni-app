@@ -1966,6 +1966,7 @@
       "close_body_other": "«{{title}}» si chiuderà con i {{votes}} voti che ha ora e il risultato sarà definitivo. Una domanda chiusa non si può riaprire.",
       "close_cancel": "No, lasciala aperta",
       "close_confirm": "Chiudi la domanda {{number}}",
+      "close_last_warning": "È l'ultima domanda: chiudendola, si chiude anche la votazione.",
       "close_title": "Chiudere la domanda {{number}}?",
       "closed": "La votazione si è chiusa il {{date}}.",
       "closes": "La votazione si chiude {{date}}. Le domande ancora aperte si chiuderanno allora.",
@@ -2013,6 +2014,7 @@
         "resume_vote": "Passo successivo: riprendi la votazione"
       },
       "not_opened_note": "La votazione è terminata senza aprirla.",
+      "one_open_note": "Può esserci una sola domanda aperta alla volta: finché ce n'è una, «Apri» è disattivato sulle altre. Anche prima dell'ora di inizio.",
       "open": "Apri",
       "pause": "Metti in pausa",
       "paused_note": "Nessuno può votarla.",

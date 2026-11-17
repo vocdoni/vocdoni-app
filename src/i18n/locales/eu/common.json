@@ -1924,6 +1924,7 @@
       "close_body_other": "«{{title}}» orain dituen {{votes}} botoekin itxiko da eta emaitza behin betikoa izango da. Itxitako galdera ezin da berriro ireki.",
       "close_cancel": "Ez, utzi irekita",
       "close_confirm": "Itxi {{number}}. galdera",
+      "close_last_warning": "Azken galdera da: ixten baduzu, bozketa ere itxi egingo da.",
       "close_title": "{{number}}. galdera itxi?",
       "closed": "Bozketa {{date}}(e)an itxi zen.",
       "closes": "Bozketa {{date}} itxiko da. Orduan irekita dauden galderak itxi egingo dira.",
@@ -1964,6 +1965,7 @@
         "resume_vote": "Hurrengo urratsa: berrekin bozketari"
       },
       "not_opened_note": "Bozketa ireki gabe amaitu zen.",
+      "one_open_note": "Galdera bakarra egon daiteke irekita aldi berean: bat irekita dagoen bitartean, «Ireki» desgaituta agertzen da besteetan. Hasiera-ordua baino lehen ere bai.",
       "open": "Ireki",
       "pause": "Pausatu",
       "paused_note": "Inork ezin du bozkatu.",

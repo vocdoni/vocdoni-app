@@ -93,6 +93,9 @@ const show = (election: VotingProcessResponse) => {
   )
 }
 
+const NOTE =
+  'Only one question can be open at a time: while one is, “Open” is disabled on the others. Before the start time, too.'
+
 const questionsList = () => within(screen.getByRole('region', { name: 'Questions' }))
 
 // The phone and tablet line sets its verdict in its own span: match the whole sentence on the innermost element.
@@ -142,11 +145,20 @@ describe('VoteManage', () => {
     expect(screen.getByText('Do we approve the new article 4?')).toBeInTheDocument()
   })
 
-  it('opens and pauses questions, and closes only after a primary confirm', async () => {
+  it('draws Open off on the others while a question is open: focusable, described, and it does nothing', async () => {
     show(build())
-    await userEvent.click(screen.getByRole('button', { name: 'Open' }))
-    expect(change).toHaveBeenCalledWith({ questionId: 'q3', status: 'ready' })
-    expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute('data-variant', 'outline')
+    const open = screen.getByRole('button', { name: 'Open' })
+    expect(open).toHaveAttribute('data-variant', 'off')
+    expect(open).toHaveAttribute('aria-disabled', 'true')
+    expect(open).not.toBeDisabled()
+    expect(open).toHaveAccessibleDescription(NOTE)
+    expect(screen.getByText(NOTE)).toBeInTheDocument()
+    await userEvent.click(open)
+    expect(change).not.toHaveBeenCalled()
+  })
+
+  it('pauses questions, and closes only after a primary confirm', async () => {
+    show(build())
     await userEvent.click(screen.getByRole('button', { name: 'Pause' }))
     expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'paused' })
     expect(screen.getByRole('button', { name: 'Close' })).toHaveAttribute('data-variant', 'solid')
@@ -172,14 +184,16 @@ describe('VoteManage', () => {
     expect(loading[0]).toHaveTextContent('Pause')
     expect(screen.getByRole('button', { name: 'Close' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Close' })).not.toHaveAttribute('data-loading')
-    expect(screen.getByRole('button', { name: 'Open' })).toBeDisabled()
+    // Open is off anyway while question 2 is open (R29).
+    expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute('aria-disabled', 'true')
     expect(screen.getByRole('button', { name: 'Open' })).not.toHaveAttribute('data-loading')
   })
 
-  it('before the start disables Open and says when it starts', () => {
+  it('before the start draws Open off and says when it starts', () => {
     currentNow = new Date('2026-01-01T12:00:00Z')
     show(build())
-    expect(screen.getByRole('button', { name: 'Open' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.getByRole('button', { name: 'Open' })).toHaveAccessibleDescription(NOTE)
     expect(screen.getByText(/The vote starts/)).toBeInTheDocument()
     expect(screen.queryByText('1 closed · 1 open · 1 to open')).not.toBeInTheDocument()
   })
@@ -261,9 +275,23 @@ describe('VoteManage', () => {
     const [second, third] = screen.getAllByRole('button', { name: 'Open' })
     expect(second).toHaveAttribute('data-variant', 'solid')
     expect(third).toHaveAttribute('data-variant', 'outline')
+    expect(third).not.toHaveAttribute('aria-disabled')
+    expect(screen.queryByText(NOTE)).not.toBeInTheDocument()
   })
 
-  it('offers Resume and Close on a paused question while another is open, and says nobody can vote on it', async () => {
+  it('opens any question to open when none is active', async () => {
+    show(
+      withQuestions([
+        createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+        createQuestion({ id: 'q2', status: 'PAUSED', results: undefined }),
+        createQuestion({ id: 'q3', status: 'PAUSED', results: undefined }),
+      ])
+    )
+    await userEvent.click(screen.getAllByRole('button', { name: 'Open' })[1])
+    expect(change).toHaveBeenCalledWith({ questionId: 'q3', status: 'ready' })
+  })
+
+  it('draws Resume off on a paused question while another is open, and says nobody can vote on it', async () => {
     show(
       withQuestions([
         createQuestion({ id: 'q1', status: 'ONGOING', results: createQuestionResults({ voteCount: 4 }) }),
@@ -272,9 +300,31 @@ describe('VoteManage', () => {
     )
     expect(screen.getByText('Next step: close question 1')).toBeInTheDocument()
     expect(screen.getByText('No one can vote on it.')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Resume' })).toHaveAttribute('data-variant', 'outline')
-    await userEvent.click(screen.getByRole('button', { name: 'Resume' }))
-    expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'ready' })
+    const resume = screen.getByRole('button', { name: 'Resume' })
+    expect(resume).toHaveAttribute('data-variant', 'off')
+    expect(resume).toHaveAccessibleDescription(NOTE)
+    await userEvent.click(resume)
+    expect(change).not.toHaveBeenCalled()
+    expect(screen.getAllByRole('button', { name: 'Close' })[0]).toBeEnabled()
+  })
+
+  it('warns that closing the last question left closes the vote, and only then', async () => {
+    show(
+      withQuestions([
+        createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+        createQuestion({ id: 'q2', status: 'ONGOING', results: createQuestionResults({ voteCount: 6 }) }),
+      ])
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    const dialog = await screen.findByRole('dialog')
+    expect(within(dialog).getByText('This is the last question: closing it closes the vote too.')).toBeInTheDocument()
+  })
+
+  it('does not warn when other questions are left to close', async () => {
+    show(build())
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    const dialog = await screen.findByRole('dialog')
+    expect(within(dialog).queryByText(/This is the last question/)).not.toBeInTheDocument()
   })
 
   it('holds every question while the whole vote is paused', () => {

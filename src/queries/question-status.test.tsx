@@ -52,6 +52,33 @@ describe('useQuestionStatusAction', () => {
     expect(toast).not.toHaveBeenCalled()
   })
 
+  it('refuses to open a question while another one is open, without calling the backend (R29)', async () => {
+    const { result, queryClient } = setup()
+    queryClient.setQueryData(QueryKeys.election.process('p1'), {
+      id: 'p1',
+      published: true,
+      initialStatus: 'PAUSED',
+      startDate: '2026-01-01T00:00:00Z',
+      endDate: '2099-01-01T00:00:00Z',
+      questions: [
+        { id: 'q1', status: 'ONGOING', results: { voteCount: 3 } },
+        { id: 'q2', status: 'PAUSED' },
+      ],
+    })
+
+    let outcome: unknown
+    await act(async () => {
+      outcome = await result.current.row.change({ questionId: 'q2', status: 'ready' })
+    })
+
+    expect(outcome).toEqual({ ok: false })
+    expect(client.elections.setQuestionStatus).not.toHaveBeenCalled()
+    // Pausing or closing the open question still goes through.
+    client.jobs.waitFor.mockResolvedValue({ status: 'completed' })
+    await act(() => result.current.row.change({ questionId: 'q1', status: 'paused' }))
+    expect(client.elections.setQuestionStatus).toHaveBeenCalledWith('p1', 'q1', 'paused')
+  })
+
   it('marks every instance busy while one change runs, and only the clicked one as pending', async () => {
     let finish: () => void = () => undefined
     client.jobs.waitFor.mockReturnValue(new Promise<void>((resolve) => (finish = resolve)))

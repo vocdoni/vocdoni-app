@@ -1,22 +1,23 @@
 import { Box, Card, Stack, Text } from '@chakra-ui/react'
 import { isBeforeStart, processVoteCount, resolveEndDate } from '@vocdoni/api-client'
 import { useElection } from '@vocdoni/react-components'
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Navigate } from 'react-router'
 import { useActions } from '~components/Actions/ActionsContext'
 import { useVoteText } from '~i18n/use-vote-text'
 import { useQuestionStatusAction } from '~queries/question-status'
+import { useRemembered } from '~queries/vote-pause'
 import { Routes } from '~routes'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { hasEndedBySchedule, questionElectorate } from '~utils/vote-state'
+import { hasEndedBySchedule, isLastQuestionLeft, openQuestionBlock, questionElectorate } from '~utils/vote-state'
 import { ActiveQuestionRow } from './manage/ActiveQuestionRow'
 import { ClosedQuestionRow } from './manage/ClosedQuestionRow'
 import { CloseQuestionDialog } from './manage/CloseQuestionDialog'
 import { ManageStrip } from './manage/ManageStrip'
 import { ActiveButtons, OpenButton, type QuestionControls } from './manage/QuestionButtons'
 import { QuestionsHeader } from './manage/QuestionsHeader'
-import { countRows, deriveRowState, isActiveRow, isStepFor, nextManageStep } from './manage/row-state'
+import { countRows, deriveRowState, isActiveRow, isStepFor, nextManageStep, type RowState } from './manage/row-state'
 import { useManageText } from './manage/use-manage-text'
 import { WaitingQuestionRow } from './manage/WaitingQuestionRow'
 
@@ -35,6 +36,8 @@ export const VoteManage = () => {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   // Only the question's id: the dialog reads the live question, so votes arriving while it is open count.
   const [closingId, setClosingId] = useState<string | null>(null)
+  const remembered = useRemembered(election?.id)
+  const reasonId = useId()
 
   // Questions held by a whole-vote pause read "Paused" with their own note, and no question can change meanwhile.
   const { heldQuestionIds } = votePause
@@ -88,6 +91,13 @@ export const VoteManage = () => {
   }
 
   const toggle = (id: string) => () => setExpanded((current) => ({ ...current, [id]: !current[id] }))
+  // One question open at a time (R29): Open (or Resume) is the `off` button on the others, and a note says why.
+  const offs = election.questions.map((question) => {
+    const block = openQuestionBlock(election, question, now, remembered)
+    return block === 'otherActive' || block === 'beforeStart'
+  })
+  const openable = (state: RowState) => state === 'toOpen' && canManage && !canceled && !ended && !isHeld
+  const showsOff = states.some((state, index) => offs[index] && (openable(state) || (state === 'paused' && canAct)))
 
   return (
     <Stack gap={{ base: '3', md: '4', lg: '8' }}>
@@ -144,13 +154,14 @@ export const VoteManage = () => {
                         controls={controls}
                         paused={state === 'paused'}
                         resumePrimary={isStepFor(step, 'resume', number)}
+                        resumeOff={offs[index]}
+                        reasonId={reasonId}
                       />
                     )
                   }
                 />
               )
             }
-            const openable = state === 'toOpen' && canManage && !canceled && !ended && !isHeld
             return (
               <WaitingQuestionRow
                 key={question.id}
@@ -159,12 +170,14 @@ export const VoteManage = () => {
                 expanded={!!expanded[question.id]}
                 onToggle={toggle(question.id)}
                 action={
-                  openable && (
+                  openable(state) && (
                     <OpenButton
                       questionId={question.id}
                       controls={controls}
                       primary={isStepFor(step, 'open', number)}
                       beforeStart={!started}
+                      off={offs[index]}
+                      reasonId={reasonId}
                     />
                   )
                 }
@@ -173,9 +186,19 @@ export const VoteManage = () => {
           })}
         </Box>
       </Card.Root>
+      {showsOff && (
+        // The phone and tablet boards say it under the list; from `lg` it is only the off buttons' description.
+        <Text id={reasonId} textStyle='note' color='fg.subtle' display={{ lg: 'none' }}>
+          {t('votes.manage.one_open_note', {
+            defaultValue:
+              'Only one question can be open at a time: while one is, “Open” is disabled on the others. Before the start time, too.',
+          })}
+        </Text>
+      )}
 
       <CloseQuestionDialog
         closing={closing}
+        last={!!closing && isLastQuestionLeft(election, closing.question.id)}
         onConfirm={confirmClose}
         onCancel={() => setClosingId(null)}
         loading={!!closing && controls.isLoading(closing.question.id, 'ended')}

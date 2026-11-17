@@ -15,14 +15,28 @@ type OpenButtonProps = {
   controls: QuestionControls
   /** The next step: the primary button. */
   primary: boolean
-  /** Before the start: shown disabled on a phone and a tablet, left out from `lg` (boards). */
+  /** Before the start: shown off on a phone and a tablet, left out from `lg` (boards). */
   beforeStart?: boolean
+  /**
+   * Another question is open or paused (R29), or the vote has not started: the boards' `off` button, which does
+   * nothing. `aria-disabled` keeps it focusable, and `reasonId` names the note that says why.
+   */
+  off?: boolean
+  reasonId?: string
 }
 
 /** The board's 28px "Open" (`.btn.s28`), 40px below `lg`. */
-export const OpenButton = ({ questionId, controls, primary, beforeStart = false }: OpenButtonProps) => {
+export const OpenButton = ({
+  questionId,
+  controls,
+  primary,
+  beforeStart = false,
+  off = false,
+  reasonId,
+}: OpenButtonProps) => {
   const { t } = useTranslation()
-  const variant = primary && !beforeStart ? 'solid' : 'outline'
+  const unavailable = off || beforeStart
+  const variant = unavailable ? 'off' : primary ? 'solid' : 'outline'
   return (
     <Button
       variant={variant}
@@ -31,8 +45,10 @@ export const OpenButton = ({ questionId, controls, primary, beforeStart = false 
       flexShrink={0}
       display={beforeStart ? { lg: 'none' } : undefined}
       loading={controls.isLoading(questionId, 'ready')}
-      disabled={controls.busy || beforeStart}
-      onClick={() => controls.run(questionId, 'ready')}
+      disabled={!unavailable && controls.busy}
+      aria-disabled={unavailable || undefined}
+      aria-describedby={unavailable ? reasonId : undefined}
+      onClick={unavailable ? undefined : () => controls.run(questionId, 'ready')}
     >
       {t('votes.manage.open', { defaultValue: 'Open' })}
     </Button>
@@ -45,14 +61,25 @@ type ActiveButtonsProps = {
   paused: boolean
   /** A paused question whose Resume is the next step. */
   resumePrimary: boolean
+  /** Another question is open (R29): Resume is the `off` button, described by `reasonId`. */
+  resumeOff?: boolean
+  reasonId?: string
 }
 
 /** Open: Pause (secondary) and Close (primary). Paused: Resume (primary when it is the next step) and Close. */
-export const ActiveButtons = ({ questionId, controls, paused, resumePrimary }: ActiveButtonsProps) => {
+export const ActiveButtons = ({
+  questionId,
+  controls,
+  paused,
+  resumePrimary,
+  resumeOff = false,
+  reasonId,
+}: ActiveButtonsProps) => {
   const { t } = useTranslation()
   const grow = { base: '1', md: 'none' } as const
   const status = paused ? 'ready' : 'paused'
-  const first = paused && resumePrimary ? 'solid' : 'outline'
+  const firstOff = paused && resumeOff
+  const first = firstOff ? 'off' : paused && resumePrimary ? 'solid' : 'outline'
   const close = paused ? 'outline' : 'solid'
   // `data-variant` says which one is the primary (tests and the e2e suite).
   return (
@@ -62,8 +89,10 @@ export const ActiveButtons = ({ questionId, controls, paused, resumePrimary }: A
         data-variant={first}
         flex={grow}
         loading={controls.isLoading(questionId, status)}
-        disabled={controls.busy}
-        onClick={() => controls.run(questionId, status)}
+        disabled={!firstOff && controls.busy}
+        aria-disabled={firstOff || undefined}
+        aria-describedby={firstOff ? reasonId : undefined}
+        onClick={firstOff ? undefined : () => controls.run(questionId, status)}
       >
         {paused
           ? t('votes.manage.resume', { defaultValue: 'Resume' })

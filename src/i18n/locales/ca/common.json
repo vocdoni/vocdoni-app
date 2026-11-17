@@ -1966,6 +1966,7 @@
       "close_body_other": "«{{title}}» es tancarà amb els {{votes}} vots que té ara i el resultat serà final. Una pregunta tancada no es pot tornar a obrir.",
       "close_cancel": "No, deixa-la oberta",
       "close_confirm": "Tanca la pregunta {{number}}",
+      "close_last_warning": "És l'última pregunta: en tancar-la, la votació també es tanca.",
       "close_title": "Vols tancar la pregunta {{number}}?",
       "closed": "La votació es va tancar el {{date}}.",
       "closes": "La votació es tanca {{date}}. Les preguntes que quedin obertes es tancaran llavors.",
@@ -2013,6 +2014,7 @@
         "resume_vote": "Següent pas: reprèn la votació"
       },
       "not_opened_note": "La votació es va finalitzar sense obrir-la.",
+      "one_open_note": "Només hi pot haver una pregunta oberta alhora: mentre n'hi ha una, «Obre» surt desactivat a les altres. Abans de l'hora d'inici, també.",
       "open": "Obre",
       "pause": "Pausa",
       "paused_note": "Ningú la pot votar.",
