@@ -1,12 +1,12 @@
 import Cal, { getCalApi } from '@calcom/embed-react'
 import { Button, ButtonProps, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
-import { EMBED_DARK } from '~components/Pricing/stripe'
 import { CloseButton } from '~components/ui/CloseButton'
 import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { CalendarIcon } from '~theme/icons'
 import { useAppEnv } from '~src/app-env'
 import { useColorMode } from '~theme/color-mode'
+import { EMBED_DARK } from '~theme/embedColors'
 
 type BookerProps = {
   callback?: () => void
