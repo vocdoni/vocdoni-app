@@ -174,6 +174,8 @@ const spacing = defineTokens.spacing({
     gutter: { value: '72px' },
     dock: { value: '150px' },
     options: { value: '22px' },
+    // Above the agenda list on the welcome screen: the same 22px.
+    agenda: { value: '{spacing.ballot.options}' },
   },
 })
 

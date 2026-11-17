@@ -52,14 +52,18 @@ describe('receipt codes recipe', () => {
     })
   })
 
-  it('gives a code the voter can copy a 44px hit area', () => {
-    const button = layer(styles.code)['&:is(button)'] as Rules
+  it('gives a code that links to its verification a 44px hit area', () => {
+    const button = layer(styles.code)['&:is(button), &:is(a)'] as Rules
     expect(button['&::before']).toMatchObject({ inset: 'calc((100% - var(--chakra-sizes-control-touch)) / 2)' })
   })
 })
 
 describe('agenda list recipe', () => {
   const styles = system.sva(AgendaList)({})
+
+  it('sits 22px under what comes before it', () => {
+    expect(layer(styles.root)).toMatchObject({ marginTop: 'var(--chakra-spacing-ballot-agenda)' })
+  })
 
   it('rules each row, 11px above and below, the number in mono 14px wide and 14px before the title', () => {
     expect(layer(styles.item)).toMatchObject({
