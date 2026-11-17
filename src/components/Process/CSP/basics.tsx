@@ -51,8 +51,20 @@ const useTranslateCspError = () => {
   const { t } = useTranslation()
   const hasPassword = !!useOptionalCspAuthContext()?.authFields.includes('password')
 
-  return (error: unknown): Error => {
+  // `request`: the step-0 request that failed, when there is one
+  return (error: unknown, request?: AuthRequest): Error => {
     if (error instanceof VocdoniApiError) {
+      // A certificate code proves census membership already (the gateway checked it): a refused one
+      // is expired, spent or bound to another verifier, or (with 2FA) the contact doesn't match.
+      if (error.code === 40802 && request?.certCode) {
+        return new Error(
+          request.email || request.phone
+            ? t('csp.cert.errors.code_refused_contact', {
+                defaultValue: "Your certificate sign-in expired, or the email or phone doesn't match. Sign in again.",
+              })
+            : t('csp.cert.errors.code_refused', { defaultValue: 'Your certificate sign-in expired. Sign in again.' })
+        )
+      }
       switch (error.code) {
         // 40802 covers both an unknown participant and a contact mismatch; older backends send 40029.
         case 40029:
@@ -132,7 +144,7 @@ export const useCspAuth0 = () => {
       try {
         await auth0(participant)
       } catch (error) {
-        throw translateError(error)
+        throw translateError(error, participant)
       }
     },
   })

@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { act, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { certAuthStorageKey, RETRYABLE_CERT_ERRORS, STICKY_CERT_ERRORS } from './cert-auth'
@@ -40,7 +41,15 @@ const useCensus = (twoFaFields: string[]) =>
   setReactProvidersMock({
     useElection: () => ({ election: { id: PID, census: { authFields: ['nationalId'], twoFaFields, certAuth: true } } }),
     useElectionAuth: () => ({ connected: false, authToken: null, weight: null, auth0 }),
+    useOrganization: () => ({ organization: { name: { default: 'Club Example' } } }),
   })
+
+const INSTAGRAM_IOS =
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 350.0'
+const WHATSAPP_ANDROID =
+  'Mozilla/5.0 (Linux; Android 14; Pixel 8; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.102 Mobile Safari/537.36'
+const asBrowser = (ua: string) => vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(ua)
+const spentCode = () => new VocdoniApiError(401, { error: 'auth failed', code: 40802 }, 'auth failed', 40802)
 
 /** Lands on the voting page as the gateway sends the voter back. */
 const landWith = (fragment: string, stored: object | null = { state: STATE, codeVerifier: VERIFIER }) => {
@@ -62,6 +71,7 @@ describe('certificate voter flow', () => {
     ;(window as any).$crisp = { push: crispPush }
     window.history.replaceState(null, '', `/en/processes/${PID}`)
   })
+  afterEach(() => vi.restoreAllMocks())
 
   it('requires the terms, then sends the voter to the gateway, storing only state and verifier', async () => {
     useCensus([])
@@ -72,7 +82,7 @@ describe('certificate voter flow', () => {
 
     const start = screen.getByRole('button', { name: 'Sign in with a digital certificate' })
     expect(start).toBeDisabled()
-    expect(screen.getByText(/try again from another network, such as mobile data/)).toBeInTheDocument()
+    expect(screen.queryByText(/another network, such as mobile data/)).not.toBeInTheDocument()
     await user.click(screen.getByRole('checkbox'))
     await user.click(start)
 
@@ -218,11 +228,13 @@ describe('certificate voter flow', () => {
   it.each([
     ['a state that is not the stored one', { state: 'x'.repeat(22), codeVerifier: VERIFIER }],
     ['nothing stored', null],
-  ])('%s: strips the fragment, shows the generic error and calls nothing', async (_, stored) => {
+  ])('%s: strips the fragment, calls nothing and offers the start again', async (_, stored) => {
     useCensus([])
     landWith(`certCode=${CODE}&state=${STATE}`, stored)
 
-    expect(await screen.findByText("We couldn't sign you in with your certificate.")).toBeInTheDocument()
+    expect(await screen.findByText(/didn't finish in this tab/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Sign in with a digital certificate' })).toBeInTheDocument()
+    expect(screen.queryByText(/another network/)).not.toBeInTheDocument()
     expect(window.location.hash).toBe('')
     expect(auth0).not.toHaveBeenCalled()
   })
@@ -251,5 +263,120 @@ describe('certificate voter flow', () => {
     expect(screen.queryByText(/close every window of the browser/)).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Try again' }))
     await waitFor(() => expect(navigate).toHaveBeenCalledWith(expect.stringContaining(`${GATEWAY}/v1/auth?`)))
+  })
+
+  it.each([
+    ['auth-only', [], /^Your certificate sign-in expired\. Sign in again\.$/],
+    ['with 2FA', ['email'], /expired, or the email or phone doesn't match/],
+  ])(
+    '%s: a code the backend refuses (40802) asks to sign in again, never "not in the census"',
+    async (_, twoFaFields, message) => {
+      useCensus(twoFaFields)
+      auth0.mockRejectedValue(spentCode())
+      const user = userEvent.setup()
+      landWith(`certCode=${CODE}&state=${STATE}`)
+      if (twoFaFields.length) {
+        await user.type(await screen.findByRole('textbox'), 'voter@example.com')
+        await user.click(screen.getByRole('button', { name: 'Receive Code' }))
+      }
+
+      expect(await screen.findByText(message)).toBeInTheDocument()
+      expect(screen.queryByText(/not listed in the census/)).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Sign in with a digital certificate' })).toBeInTheDocument()
+    }
+  )
+
+  it('announces the sign-in in progress', async () => {
+    useCensus([])
+    auth0.mockReturnValue(new Promise(() => {}))
+    landWith(`certCode=${CODE}&state=${STATE}`)
+    expect(await screen.findByRole('status')).toHaveTextContent('Signing you in…')
+  })
+
+  it('guides the choice of certificate, naming the accepted issuers', async () => {
+    useCensus([])
+    const { CertAuthStart } = await import('./CertAuth')
+    render(<CertAuthStart />, { appEnv })
+    expect(screen.getByText(/choose the one with your name/)).toHaveTextContent(
+      /FNMT, idCAT, ACCV, DIGITEL, Bewor (and|or) Sectigo/
+    )
+    expect(screen.getByText(/idCAT Mòbil and Cl@ve are not certificates/)).toBeInTheDocument()
+  })
+
+  it('back on the page from a gateway that never answered: suggests another network', async () => {
+    useCensus([])
+    sessionStorage.setItem(certAuthStorageKey(PID), JSON.stringify({ state: STATE, codeVerifier: VERIFIER }))
+    const { CertAuthStart } = await import('./CertAuth')
+    render(<CertAuthStart />, { appEnv })
+    expect(
+      screen.getByText(/certificate page didn't load\? Try another network, such as mobile data/)
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /copy link/i })).toBeInTheDocument()
+  })
+
+  it('in an in-app browser: explains why, offers the link and no certificate button', async () => {
+    useCensus([])
+    asBrowser(INSTAGRAM_IOS)
+    const user = userEvent.setup()
+    const { CertAuthStart } = await import('./CertAuth')
+    render(<CertAuthStart />, { appEnv })
+
+    expect(screen.getByText(/opened this link inside an app/)).toBeInTheDocument()
+    expect(screen.getByText(/open this link in your browser/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Sign in with a digital certificate' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /open in your browser/i })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /copy link/i }))
+    expect(await navigator.clipboard.readText()).toBe(`${window.location.origin}/en/processes/${PID}`)
+    expect(await screen.findByText('Link copied')).toBeInTheDocument()
+  })
+
+  it('in an Android in-app browser: also offers an intent link to the browser', async () => {
+    useCensus([])
+    asBrowser(WHATSAPP_ANDROID)
+    const { CertAuthStart } = await import('./CertAuth')
+    render(<CertAuthStart />, { appEnv })
+    expect(screen.getByRole('link', { name: /open in your browser/i })).toHaveAttribute(
+      'href',
+      `intent://${window.location.host}/en/processes/${PID}#Intent;scheme=https;end`
+    )
+  })
+
+  it('no_certificate in an in-app browser: says to open the link in the browser, not to restart it', () => {
+    useCensus([])
+    asBrowser(INSTAGRAM_IOS)
+    render(<CertAuthError code='no_certificate' />, { appEnv })
+    expect(screen.getByText(/opened this link inside an app/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /copy link/i })).toBeInTheDocument()
+    expect(screen.queryByText(/close every window of the browser/)).not.toBeInTheDocument()
+  })
+
+  it('no_certificate in a normal browser: also offers the link for another device', () => {
+    useCensus([])
+    render(<CertAuthError code='no_certificate' />, { appEnv })
+    expect(screen.getByText(/close every window of the browser/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /copy link/i })).toBeInTheDocument()
+  })
+
+  it.each(STICKY_CERT_ERRORS)('%s: has its own message, not the generic one', (code) => {
+    useCensus([])
+    render(<CertAuthError code={code} />, { appEnv })
+    expect(screen.queryByText("We couldn't sign you in with your certificate.")).not.toBeInTheDocument()
+  })
+
+  it('tells an expired certificate from one not valid yet', () => {
+    useCensus([])
+    const { unmount } = render(<CertAuthError code='expired' />, { appEnv })
+    expect(screen.getByText(/has expired/)).toBeInTheDocument()
+    unmount()
+    render(<CertAuthError code='not_yet_valid' />, { appEnv })
+    expect(screen.getByText(/isn't active yet/)).toBeInTheDocument()
+  })
+
+  it('ends with the organisation to contact and the support reference', async () => {
+    useCensus([])
+    const ref = '0123456789abcdef0123456789abcdef'
+    landWith(`certError=revoked&ref=${ref}&state=${STATE}`)
+    expect(await screen.findByText(/If you keep having problems, contact Club Example/)).toBeInTheDocument()
+    expect(screen.getByText(new RegExp(ref))).toBeInTheDocument()
   })
 })

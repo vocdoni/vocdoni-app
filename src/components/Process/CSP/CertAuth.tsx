@@ -19,7 +19,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import type { OrgMemberTwoFaField } from '@vocdoni/api-types'
-import { useElection } from '@vocdoni/react-components'
+import { useElection, useOrganization } from '@vocdoni/react-components'
 import type { TFunction } from 'i18next'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -30,8 +30,9 @@ import { CloseButton } from '~components/ui/CloseButton'
 import { DialogHeader } from '~components/ui/DialogHeader'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { useCspAuth0 } from './basics'
-import { RETRYABLE_CERT_ERRORS, startCertAuth, STICKY_CERT_ERRORS } from './cert-auth'
-import { useCspAuthContext } from './CSPStepsProvider'
+import { detectCertificateBrowser, readBrowserEnv } from './browser-support'
+import { hasPendingCertAuth, RETRYABLE_CERT_ERRORS, startCertAuth, STICKY_CERT_ERRORS } from './cert-auth'
+import { useCspAuthContext, useOptionalCspAuthContext } from './CSPStepsProvider'
 import { getContactFieldLabel } from './fields'
 import { Step1Base } from './Step1'
 
@@ -60,20 +61,100 @@ const useStartCertAuth = (navigate: (url: string) => void = (url) => window.loca
   }
 }
 
+/** The platform of an in-app browser (WhatsApp, Instagram, Gmail…), which can't present a certificate. */
+const inAppPlatform = () => {
+  if (typeof navigator === 'undefined') return null
+  const browser = detectCertificateBrowser(readBrowserEnv())
+  return browser.kind === 'in-app' ? browser.platform : null
+}
+
+/** This voting page without query or fragment: what the voter opens elsewhere. */
+const pageUrl = () => window.location.origin + window.location.pathname
+
+/** Copies the voting page's link, saying whether it worked. */
+const CopyLinkButton = () => {
+  const { t } = useTranslation()
+  const [result, setResult] = useState<'copied' | 'failed' | null>(null)
+  return (
+    <Stack gap='1'>
+      <Button
+        w='full'
+        variant='outline'
+        onClick={() =>
+          navigator.clipboard.writeText(pageUrl()).then(
+            () => setResult('copied'),
+            () => setResult('failed')
+          )
+        }
+      >
+        {t('csp.cert.copy_link', { defaultValue: 'Copy link' })}
+      </Button>
+      <Text role='status' textStyle='body-sm' color={result === 'failed' ? 'fg.error' : 'fg.muted'}>
+        {result === 'copied' && t('csp.cert.link_copied', { defaultValue: 'Link copied' })}
+        {result === 'failed' &&
+          t('csp.cert.copy_failed', {
+            defaultValue: "Couldn't copy. Copy the address from your browser's address bar.",
+          })}
+      </Text>
+    </Stack>
+  )
+}
+
+/** An in-app browser can't use certificates: the way on is the same link in the real browser. */
+const OpenInBrowser = ({ platform }: { platform: 'android' | 'ios' | 'other' }) => {
+  const { t } = useTranslation()
+  return (
+    <Stack gap='3'>
+      <Alert status='warning'>
+        <AlertIndicator />
+        <AlertDescription>
+          {t('csp.cert.in_app.explanation', {
+            defaultValue:
+              "You opened this link inside an app. Its built-in viewer can't use your digital certificate, but your browser can.",
+          })}
+        </AlertDescription>
+      </Alert>
+      <Text textStyle='body-sm'>
+        {t('csp.cert.in_app.steps', {
+          defaultValue:
+            'Copy the link, then open this link in your browser. Many apps also have a menu option to open the page in your browser.',
+        })}
+      </Text>
+      {platform === 'android' && (
+        // no package: Android opens the default browser, or asks which one
+        <Button asChild w='full'>
+          <a href={`intent://${window.location.host}${window.location.pathname}#Intent;scheme=https;end`}>
+            {t('csp.cert.in_app.open', { defaultValue: 'Open in your browser' })}
+          </a>
+        </Button>
+      )}
+      <CopyLinkButton />
+    </Stack>
+  )
+}
+
 /** Step 0 of a certificate census: the terms, then the certificate button. */
 export const CertAuthStart = ({ navigate }: { navigate?: (url: string) => void }) => {
   const { t } = useTranslation()
   const { PRIVACY_POLICY_URL: privacyPolicyUrl, TERMS_OF_SERVICE_URL: termsOfServiceUrl } = useAppEnv()
+  const { election } = useElection()
+  const certReturn = useOptionalCspAuthContext()?.certReturn
   const start = useStartCertAuth(navigate)
   const [accepted, setAccepted] = useState(false)
   const [starting, setStarting] = useState(false)
+  // a login this tab started that never came back with an answer
+  const pendingNow = () => !certReturn && !!election && hasPendingCertAuth(election.id)
+  const [pending, setPending] = useState(pendingNow)
 
   // the page can come back from the back/forward cache after a failed navigation to the gateway
   useEffect(() => {
-    const reset = () => setStarting(false)
+    const reset = () => {
+      setStarting(false)
+      setPending(pendingNow())
+    }
     window.addEventListener('pageshow', reset)
     return () => window.removeEventListener('pageshow', reset)
-  }, [])
+  })
 
   if (!start) {
     return (
@@ -86,8 +167,25 @@ export const CertAuthStart = ({ navigate }: { navigate?: (url: string) => void }
     )
   }
 
+  const platform = inAppPlatform()
+  if (platform) return <OpenInBrowser platform={platform} />
+
   return (
     <Stack gap='4'>
+      {pending && (
+        <Stack gap='2'>
+          <Alert status='warning'>
+            <AlertIndicator />
+            <AlertDescription>
+              {t('csp.cert.not_loaded', {
+                defaultValue:
+                  "The certificate page didn't load? Try another network, such as mobile data, or copy the link and open it on another device.",
+              })}
+            </AlertDescription>
+          </Alert>
+          <CopyLinkButton />
+        </Stack>
+      )}
       <FormControl required>
         <CheckboxRoot checked={accepted} onCheckedChange={({ checked }) => setAccepted(checked === true)}>
           <CheckboxHiddenInput />
@@ -123,9 +221,15 @@ export const CertAuthStart = ({ navigate }: { navigate?: (url: string) => void }
         {t('csp.cert.start', { defaultValue: 'Sign in with a digital certificate' })}
       </Button>
       <Text textStyle='body-sm' color='fg.muted'>
-        {t('csp.cert.network_note', {
+        {t('csp.cert.picker_help', {
           defaultValue:
-            "If the certificate page doesn't load, your network may block it: try again from another network, such as mobile data.",
+            'Your browser will ask you to choose a certificate: choose the one with your name. We accept FNMT, idCAT, ACCV, DIGITEL, Bewor and Sectigo certificates.',
+        })}
+      </Text>
+      <Text textStyle='body-sm' color='fg.muted'>
+        {t('csp.cert.not_a_certificate', {
+          defaultValue:
+            'idCAT Mòbil and Cl@ve are not certificates: you need a digital certificate installed on this device.',
         })}
       </Text>
     </Stack>
@@ -147,16 +251,59 @@ const certErrorMessage = (t: TFunction, code: string): string => {
       })
     case 'provider_mismatch':
     case 'untrusted_issuer':
-    case 'unsupported_profile':
       return t('csp.cert.errors.unsupported_certificate', {
         defaultValue:
           "This certificate isn't accepted. Use a personal certificate from FNMT, idCAT, ACCV, DIGITEL, Bewor or Sectigo.",
       })
+    case 'unsupported_profile':
+      return t('csp.cert.errors.unsupported_profile', {
+        defaultValue:
+          'This certificate is for a company, a representative or an employee. Use the certificate issued to you as a person.',
+      })
+    case 'invalid_chain':
+      return t('csp.cert.errors.invalid_chain', {
+        defaultValue: "We couldn't verify this certificate. Use another certificate if you have one.",
+      })
+    case 'unsupported_purpose':
+      return t('csp.cert.errors.unsupported_purpose', {
+        defaultValue: "This certificate can't be used to sign in. Use the certificate you use to identify yourself.",
+      })
+    case 'weak_algorithm':
+      return t('csp.cert.errors.weak_algorithm', {
+        defaultValue: 'This certificate is too old to use here. Get a new one from its issuer.',
+      })
+    case 'test_certificate':
+      return t('csp.cert.errors.test_certificate', {
+        defaultValue: 'This is a test certificate. Use your real certificate.',
+      })
+    case 'identity_invalid':
+      return t('csp.cert.errors.identity_invalid', {
+        defaultValue: "We couldn't read the identity in this certificate. Use another certificate if you have one.",
+      })
+    case 'identity_unsupported_document':
+      return t('csp.cert.errors.identity_unsupported_document', {
+        defaultValue: 'This certificate has no DNI or NIE. You need a certificate issued with your DNI or NIE.',
+      })
+    case 'revocation_unknown':
+      return t('csp.cert.errors.revocation_unknown', {
+        defaultValue:
+          "We couldn't confirm with its issuer that this certificate is still valid. Use another certificate if you have one.",
+      })
     case 'expired':
+      return t('csp.cert.errors.expired', {
+        defaultValue: 'This certificate has expired. Get a new one from its issuer.',
+      })
     case 'not_yet_valid':
-      return t('csp.cert.errors.expired', { defaultValue: "This certificate isn't valid today." })
+      return t('csp.cert.errors.not_yet_valid', {
+        defaultValue:
+          "This certificate isn't active yet. If you got it today, try again later. If not, check your device's date and time.",
+      })
     case 'revoked':
       return t('csp.cert.errors.revoked', { defaultValue: 'This certificate has been revoked.' })
+    case 'mismatch':
+      return t('csp.cert.errors.mismatch', {
+        defaultValue: "Your certificate sign-in didn't finish in this tab. Sign in again.",
+      })
     case 'revocation_unavailable':
     case 'internal':
       return t('csp.cert.errors.check_unavailable', {
@@ -179,12 +326,24 @@ const certErrorMessage = (t: TFunction, code: string): string => {
   }
 }
 
-/** A failed certificate login: the message, then how to go on. */
-export const CertAuthError = ({ code, navigate }: { code: string; navigate?: (url: string) => void }) => {
+/** A failed certificate login: the message, then how to go on. `ref`: the gateway's support reference. */
+export const CertAuthError = ({
+  code,
+  reference,
+  navigate,
+}: {
+  code: string
+  reference?: string
+  navigate?: (url: string) => void
+}) => {
   const { t } = useTranslation()
+  const { organization } = useOrganization()
   const start = useStartCertAuth(navigate)
   const sticky = (STICKY_CERT_ERRORS as readonly string[]).includes(code)
   const retryable = (RETRYABLE_CERT_ERRORS as readonly string[]).includes(code)
+  // an in-app browser has no certificate to offer: restarting it changes nothing
+  const platform = code === 'no_certificate' ? inAppPlatform() : null
+  const organizationName = organization?.name?.default
 
   return (
     <Stack gap='4'>
@@ -192,7 +351,8 @@ export const CertAuthError = ({ code, navigate }: { code: string; navigate?: (ur
         <AlertIndicator />
         <AlertDescription>{certErrorMessage(t, code)}</AlertDescription>
       </Alert>
-      {sticky && (
+      {platform && <OpenInBrowser platform={platform} />}
+      {sticky && !platform && (
         <Text textStyle='body-sm'>
           {t('csp.cert.restart_browser', {
             defaultValue:
@@ -200,11 +360,33 @@ export const CertAuthError = ({ code, navigate }: { code: string; navigate?: (ur
           })}
         </Text>
       )}
+      {code === 'no_certificate' && !platform && (
+        <>
+          <Text textStyle='body-sm'>
+            {t('csp.cert.other_device', {
+              defaultValue: 'Is your certificate on another device? Copy the link and open it there.',
+            })}
+          </Text>
+          <CopyLinkButton />
+        </>
+      )}
       {retryable && start && (
         <Button w='full' onClick={() => start()}>
           {t('csp.cert.retry', { defaultValue: 'Try again' })}
         </Button>
       )}
+      {code === 'mismatch' && <CertAuthStart navigate={navigate} />}
+      <Text textStyle='body-sm' color='fg.muted'>
+        {organizationName
+          ? t('csp.cert.contact_organization', {
+              defaultValue: 'If you keep having problems, contact {{organization}}.',
+              organization: organizationName,
+            })
+          : t('csp.cert.contact_organization_unnamed', {
+              defaultValue: 'If you keep having problems, contact the organization running this vote.',
+            })}
+        {reference && <> {t('csp.cert.reference', { defaultValue: 'Support reference: {{reference}}', reference })}</>}
+      </Text>
     </Stack>
   )
 }
@@ -253,7 +435,7 @@ const CertAutoLogin = ({ certCode, codeVerifier }: { certCode: string; codeVerif
     )
   }
   return (
-    <Stack align='center' gap='3' py='4'>
+    <Stack role='status' align='center' gap='3' py='4'>
       <Spinner />
       <Text>{t('csp.cert.signing_in', { defaultValue: 'Signing you in…' })}</Text>
     </Stack>
@@ -322,7 +504,12 @@ export const CertAuthReturnDialog = () => {
   if (certReturn.kind === 'redeemed') {
     body = currentStep === 1 ? <Step1Base /> : <CertAuthStart />
   } else if (certReturn.kind !== 'code') {
-    body = <CertAuthError code={certReturn.kind === 'error' ? certReturn.code : 'mismatch'} />
+    body =
+      certReturn.kind === 'error' ? (
+        <CertAuthError code={certReturn.code} reference={certReturn.ref} />
+      ) : (
+        <CertAuthError code='mismatch' />
+      )
   } else if (twoFaFields.length === 0) {
     body = <CertAutoLogin certCode={certReturn.certCode} codeVerifier={certReturn.codeVerifier} />
   } else {

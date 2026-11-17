@@ -2,7 +2,7 @@
 //
 // The voting page sends the voter to the gateway with a random `state` and the S256 challenge of
 // a random PKCE `codeVerifier`, both kept in this tab's sessionStorage. The gateway sends the voter
-// back to the voting page with `#certCode=…&state=…` (or `#certError=…&state=…`) in the fragment.
+// back to the voting page with `#certCode=…&state=…` (or `#certError=…&ref=…&state=…`) in the fragment.
 // The page accepts the code only when `state` matches the stored one, and redeems it at step 0 with
 // the verifier. Nothing else is stored: no DNI, name or certificate data ever reaches the browser.
 
@@ -50,7 +50,8 @@ export type CertReturn =
   | { kind: 'code'; certCode: string; codeVerifier: string }
   // step 0 took the code (2FA census): it is spent, so only the code step or a new certificate login is left
   | { kind: 'redeemed' }
-  | { kind: 'error'; code: string }
+  // `ref`: the gateway's diagnostic id (32 hex digits), shown as the support reference
+  | { kind: 'error'; code: string; ref?: string }
   // a fragment whose state is not the one this tab stored (or none was): nothing is called
   | { kind: 'mismatch' }
 
@@ -130,5 +131,13 @@ export const readCertReturn = (
 
   storage.removeItem(certAuthStorageKey(processId))
   if (certCode) return { kind: 'code', certCode, codeVerifier: stored.codeVerifier }
-  return { kind: 'error', code: certError ?? 'internal' }
+  const ref = params.get('ref') ?? ''
+  return { kind: 'error', code: certError ?? 'internal', ...(/^[0-9a-f]{32}$/.test(ref) && { ref }) }
 }
+
+/**
+ * Whether this tab started a certificate login for the process that never came back: with no
+ * fragment to read, the gateway page most likely didn't load (a network that blocks its port).
+ */
+export const hasPendingCertAuth = (processId: string, storage: Pick<Storage, 'getItem'> = window.sessionStorage) =>
+  storage.getItem(certAuthStorageKey(processId)) !== null

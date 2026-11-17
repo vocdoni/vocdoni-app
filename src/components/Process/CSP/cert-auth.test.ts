@@ -1,6 +1,7 @@
 import {
   certAuthStorageKey,
   codeChallengeOf,
+  hasPendingCertAuth,
   readCertReturn,
   RETRYABLE_CERT_ERRORS,
   startCertAuth,
@@ -109,6 +110,24 @@ describe('cert-auth', () => {
     )
     const { history, location } = fakeWindow(`#certError=not_in_census&state=${'s'.repeat(22)}`)
     expect(readCertReturn(PID, { history, location })).toEqual({ kind: 'error', code: 'not_in_census' })
+  })
+
+  it('reads the support reference of an error, and drops one that is not 32 hex digits', () => {
+    const flow = JSON.stringify({ state: 's'.repeat(22), codeVerifier: 'v'.repeat(43) })
+    const ref = '0123456789abcdef0123456789abcdef'
+    sessionStorage.setItem(certAuthStorageKey(PID), flow)
+    const ok = fakeWindow(`#certError=expired&ref=${ref}&state=${'s'.repeat(22)}`)
+    expect(readCertReturn(PID, ok)).toEqual({ kind: 'error', code: 'expired', ref })
+
+    sessionStorage.setItem(certAuthStorageKey(PID), flow)
+    const bad = fakeWindow(`#certError=expired&ref=<b>hi</b>&state=${'s'.repeat(22)}`)
+    expect(readCertReturn(PID, bad)).toStrictEqual({ kind: 'error', code: 'expired' })
+  })
+
+  it('tells whether a certificate login was started in this tab and never answered', () => {
+    expect(hasPendingCertAuth(PID)).toBe(false)
+    sessionStorage.setItem(certAuthStorageKey(PID), JSON.stringify({ state: 's', codeVerifier: 'v' }))
+    expect(hasPendingCertAuth(PID)).toBe(true)
   })
 
   it.each([
