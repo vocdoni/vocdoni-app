@@ -153,15 +153,18 @@ export type AppSystem = ReturnType<typeof createAppSystem>
 
 // Systems are memoized per colour: building one is not free, and the provider calls this on every render. Organisation
 // colours are open-ended input on the server (one per branded vote), so only the 32 most recently used are kept; the
-// stock system sits outside that memo and is never evicted.
+// stock system sits outside that memo, is built on first use and is never evicted.
 const MAX_SYSTEMS = 32
-const stockSystem = createAppSystem()
+let stockSystem: AppSystem | undefined
 const colorSystem = lruMemo(MAX_SYSTEMS, (color) => createAppSystem(color))
 
 export const getAppSystem = (primaryColor?: string): AppSystem => {
   const color = normalizeHexColor(primaryColor)
-  return color ? colorSystem(color) : stockSystem
+  if (color) return colorSystem(color)
+  stockSystem ??= createAppSystem()
+  return stockSystem
 }
 
 // The stock system (no PRIMARY_COLOR). Also what `chakra typegen` reads.
-export const system = getAppSystem()
+// Marked pure so a production bundle that never reads `system` (only tests, style-inventory and typegen do) drops it.
+export const system = /* @__PURE__ */ getAppSystem()
