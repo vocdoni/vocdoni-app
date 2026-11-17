@@ -147,12 +147,17 @@ const colors = defineSemanticTokens.colors({
   // Surface layers. A sub-role is a member that paints a different colour from its layer (tooltip vs
   // menu, drawer vs dialog).
   surface: {
+    // The dashboard page behind the content: a light grey in light mode, so the white cards, fields and
+    // sidebar stand out on it.
     canvas: {
-      value: '{colors.bg}',
+      value: {
+        _light: '{colors.bg.subtle}',
+        _dark: '{colors.bg}',
+      },
     },
     sidebar: {
       value: {
-        _light: '{colors.dashboardMenu.light}',
+        _light: '{colors.white}',
         _dark: '{colors.dashboardMenu.dark}',
       },
     },
@@ -347,9 +352,13 @@ const colors = defineSemanticTokens.colors({
     },
   },
   dashboard: {
-    // Borrowed by the support cards and the chat header; the sidebar reads `surface.sidebar`.
+    // The light grey tint of the support cards and the chat header, which sit on white panels; the sidebar
+    // itself reads `surface.sidebar`.
     menu: {
-      value: '{colors.surface.sidebar}',
+      value: {
+        _light: '{colors.bg.subtle}',
+        _dark: '{colors.dashboardMenu.dark}',
+      },
     },
   },
   // Footer band of the public layout (elements/PublicLayout.tsx): the page surface everywhere except on

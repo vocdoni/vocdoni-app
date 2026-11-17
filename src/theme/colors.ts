@@ -32,7 +32,6 @@ export const colors = {
   },
 
   dashboardMenu: {
-    light: { value: '#fafafa' },
     dark: { value: '#18181b' },
   },
 
