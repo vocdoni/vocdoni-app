@@ -122,7 +122,7 @@ describe('VoteSummary', () => {
       for (const label of ['Census', 'Questions', 'Closes', 'Results']) {
         expect(screen.getByText(label)).toBeInTheDocument()
       }
-      expect(screen.queryByText('Vote change')).toBeNull()
+      expect(screen.queryByText('Vote overwrite')).toBeNull()
       expect(screen.getByText('1, all at once')).toBeInTheDocument()
       expect(screen.getByText('live, during the vote')).toBeInTheDocument()
     })
@@ -205,11 +205,11 @@ describe('VoteSummary', () => {
       desktop = false
       renderSummary(createProcess(), 184)
 
-      for (const label of ['Census', 'Questions', 'Closes', 'Results', 'Type', 'Anonymity', 'Vote change']) {
+      for (const label of ['Census', 'Questions', 'Closes', 'Results', 'Type', 'Anonymity', 'Vote overwrite']) {
         expect(screen.getByText(label)).toBeInTheDocument()
       }
       expect(screen.getByText('Anonymous').closest('[data-part="trigger"]')).not.toBeNull()
-      expect(screen.getByText('Cannot be changed')).toBeInTheDocument()
+      expect(screen.getByText('Disabled')).toBeInTheDocument()
       expect(screen.getAllByText('Turnout: 184 of 312').length).toBeGreaterThan(0)
       expect(screen.getByText('Calendar')).toBeInTheDocument()
       expect(screen.queryByRole('link', { name: 'Ballot' })).toBeNull()

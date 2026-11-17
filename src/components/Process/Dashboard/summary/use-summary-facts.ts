@@ -98,10 +98,10 @@ export const useSummaryFacts = (model: SummaryModel, desktop: boolean): Fact[] =
     },
     {
       id: 'overwrite',
-      label: t('votes.summary.label.overwrite', { defaultValue: 'Vote change' }),
+      label: t('votes.summary.label.overwrite', { defaultValue: 'Vote overwrite' }),
       value: firstQuestion?.ballotProtocol?.maxVoteOverwrites
-        ? t('votes.summary.fact.overwrite_allowed', { defaultValue: 'Can be changed' })
-        : t('votes.summary.fact.overwrite_not_allowed', { defaultValue: 'Cannot be changed' }),
+        ? t('votes.summary.fact.overwrite_allowed', { defaultValue: 'Enabled' })
+        : t('votes.summary.fact.overwrite_not_allowed', { defaultValue: 'Disabled' }),
     },
   ]
 }
