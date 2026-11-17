@@ -196,17 +196,6 @@ describe('useFormDraftSaver', () => {
     expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-2') })
   })
 
-  it('re-prices a draft as soon as it is created, so its first price is not a stale one', async () => {
-    create.mockResolvedValueOnce('draft-new')
-    const { result, queryClient } = renderSaver(null)
-    const invalidate = vi.spyOn(queryClient, 'invalidateQueries').mockReturnValue(new Promise(() => {}))
-
-    await act(() => result.current.saveDraft(false))
-
-    expect(create).toHaveBeenCalledTimes(1)
-    expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-new') })
-  })
-
   it('explains a draft locked by its payment once, not on every auto-save', async () => {
     const locked = new VocdoniApiError(
       409,

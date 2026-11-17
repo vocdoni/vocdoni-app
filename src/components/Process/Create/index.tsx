@@ -476,14 +476,9 @@ const LeaveConfirmationModal = ({
 
 export const useCreateProcess = () => {
   const { client } = useApiClient()
-  const queryClient = useQueryClient()
 
   return useMutation<string, Error, CreateVotingProcessRequest>({
     mutationFn: (request) => client.elections.create(request),
-    // A new draft has no price yet: read it again, as useUpdateProcess does for every save
-    onSuccess: (processId) => {
-      void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
-    },
   })
 }
 

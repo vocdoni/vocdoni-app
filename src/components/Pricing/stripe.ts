@@ -58,11 +58,9 @@ const readAppearance = (colorMode: ColorMode): Appearance => {
 }
 
 /**
- * The Stripe Elements options of every checkout (publish card step, wallet top-up, census checkout),
- * so they all wear the app's theme. Stripe's iframes cannot read the page's CSS variables, so their
- * values are read here, again whenever the page's class changes: next-themes applies that class in
- * an effect, after the colour mode has already changed. The font is named but not loaded into the
- * iframes: Vite hashes the font files, so there is no stable URL to hand Stripe.
+ * Stripe Elements options for every checkout, in the app's theme: Stripe's iframes cannot read the page's CSS
+ * variables, so they are re-read whenever the html class changes (next-themes applies it in an effect).
+ * The font is named but not loaded: Vite hashes the font files, so there is no stable URL to hand Stripe.
  */
 export const useCheckoutAppearance = (): StripeCheckoutElementsOptions => {
   const { colorMode } = useColorMode()
