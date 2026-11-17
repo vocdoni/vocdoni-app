@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
+import { JobFailedError, JobsClient, VocdoniApiError } from '@vocdoni/api-client'
 import type { ReactNode } from 'react'
 import { QueryKeys } from './keys'
 import { statusJobErrorKind, useIsStatusJobRunning, useStatusJob } from './status-job'
@@ -191,6 +191,14 @@ describe('useStatusJob', () => {
     expect(toast).toHaveBeenCalledWith(
       expect.objectContaining({ description: expect.stringContaining('1 of 3'), type: 'error' })
     )
+  })
+
+  it("tells the SDK's own deadline as a timeout (the real waitFor, not a copy of its message)", async () => {
+    // The SDK has no timeout error class: pin the plain Error its waitFor throws, so a rewording upstream fails here.
+    const jobs = new JobsClient((async () => ({ jobId: 'job-1', status: 'pending' })) as never)
+    const error = await jobs.waitFor('job-1', { timeoutMs: 0, intervalMs: 0 }).catch((caught: unknown) => caught)
+
+    expect(statusJobErrorKind(error)).toBe('timeout')
   })
 
   it('maps every error kind, never from the backend text', () => {
