@@ -71,21 +71,40 @@ describe('dashboard process routes', () => {
     ])
   })
 
-  it.each([
-    ['Results', Routes.dashboard.processResults, 'results'],
-    ['Manage', Routes.dashboard.processManage, 'manage'],
-  ])('redirects the retired %s tab to the vote summary', async (_, path, segment) => {
+  it('redirects the retired Results tab to the vote summary', async () => {
     const { useDashboardRoutes } = await import('./dashboard')
     const { result } = renderHook(() => useDashboardRoutes())
-    const route = findRoute([result.current], path)!
+    const route = findRoute([result.current], Routes.dashboard.processResults)!
     const response = (await (route.loader as LoaderFunction)({
-      request: new Request(`https://app.test/admin/process/0xabc/${segment}`),
+      request: new Request('https://app.test/admin/process/0xabc/results'),
       params: { id: '0xabc' },
     } as unknown as LoaderFunctionArgs)) as Response
 
     expect(route.element).toBeUndefined()
     expect(response.status).toBe(302)
     expect(response.headers.get('Location')).toBe('/admin/process/0xabc')
+  })
+})
+
+describe('a draft opened at a vote address', () => {
+  it('goes to the editor instead of being drawn as a running vote', async () => {
+    const get = vi.fn().mockResolvedValue({ id: '0xdraft', published: false })
+    vi.doMock('~src/providers/ApiClientProvider', () => ({ useApiClient: () => ({ client: { elections: { get } } }) }))
+    vi.resetModules()
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { Routes: routes } = await import('.')
+    const { result } = renderHook(() => useDashboardRoutes())
+    const route = findRoute([result.current], routes.dashboard.process)!
+    const response = (await (route.loader as LoaderFunction)({
+      request: new Request('https://app.test/admin/process/0xdraft'),
+      params: { id: '0xdraft' },
+    } as unknown as LoaderFunctionArgs)) as Response
+
+    expect(get).toHaveBeenCalledWith('0xdraft')
+    expect(response.status).toBe(302)
+    expect(response.headers.get('Location')).toBe('/admin/processes/create?draftId=0xdraft')
+    vi.doUnmock('~src/providers/ApiClientProvider')
+    vi.resetModules()
   })
 })
 

@@ -2,7 +2,14 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Fragment, lazy } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { generatePath, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router'
+import {
+  createSearchParams,
+  generatePath,
+  Navigate,
+  Params,
+  redirect,
+  ShouldRevalidateFunctionArgs,
+} from 'react-router'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
 import { QueryKeys } from '~queries/keys'
@@ -118,6 +125,11 @@ export const useDashboardRoutes = () => {
                     HydrateFallback: PageLoader,
                     loader: async ({ params }: { params: Params<string> }) => {
                       const rawElection = await client.elections.get(params.id!)
+                      // A draft is not a running vote: it opens in the editor, as its list row does.
+                      if (!rawElection.published) {
+                        const search = createSearchParams({ draftId: rawElection.id }).toString()
+                        return redirect(`${generatePath(Routes.processes.create)}?${search}`)
+                      }
                       // Pre-seed the ElectionProvider query so the view renders without re-fetching
                       queryClient.setQueryData(QueryKeys.election.process(rawElection.id), rawElection)
                       return rawElection
@@ -147,11 +159,6 @@ export const useDashboardRoutes = () => {
                   // not wait for the process read.
                   {
                     path: Routes.dashboard.processResults,
-                    ...redirectLegacyPath(Routes.dashboard.process),
-                  },
-                  // So is Gestió (R32): a question-by-question vote is run from Resum.
-                  {
-                    path: Routes.dashboard.processManage,
                     ...redirectLegacyPath(Routes.dashboard.process),
                   },
                   {

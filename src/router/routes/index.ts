@@ -41,8 +41,7 @@ export const Routes = {
     organizationCreate: '/admin/organization/create', // Organization create with dashboard layout
     process: '/admin/process/:id',
     processBallot: '/admin/process/:id/ballot',
-    // Retired tabs: they only redirect to the vote's Resum now (old links and bookmarks).
-    processManage: '/admin/process/:id/manage',
+    // The retired Results tab: it only redirects to the vote's Resum now (old links and bookmarks).
     processResults: '/admin/process/:id/results',
     processes: {
       base: '/admin/processes',
