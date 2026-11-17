@@ -62,7 +62,7 @@ export const ProcessView = () => {
 
   return (
     <ActionsProvider>
-      <DashboardContents>
+      <DashboardContents rhythm='board'>
         {/* Header to tabs as the boards: 20px on a phone, 24px on a tablet, 18px on the desktop. */}
         <Stack gap={{ base: '5', md: '6', lg: '4.5' }}>
           <VoteHeader />

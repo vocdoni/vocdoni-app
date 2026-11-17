@@ -27,12 +27,12 @@ export const QuestionsHeader = ({ headingId, total, counts, next }: QuestionsHea
         {quantity(total)}
       </Text>
       {counts && (
-        <Text textStyle='meta' color='fg.subtle' ms='1.5' truncate>
+        <Text textStyle='note' color='fg.subtle' ms='1.5' truncate>
           {counts}
         </Text>
       )}
       {next && (
-        <Text textStyle='meta' color='fg.subtle' ms='auto' whiteSpace='nowrap'>
+        <Text textStyle='note' color='fg.subtle' ms='auto' whiteSpace='nowrap'>
           {next}
         </Text>
       )}

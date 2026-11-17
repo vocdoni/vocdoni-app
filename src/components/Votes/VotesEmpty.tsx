@@ -31,7 +31,7 @@ const StateLegend = () => {
 
   return (
     <Card.Root variant='note' as='section' aria-label={title} p='0'>
-      <Flex align='baseline' gap='2.5' pt='3.5' pb='3' px={{ base: '4', md: 'card' }}>
+      <Flex align='baseline' gap='2.5' pt={{ base: '3.5', lg: 'row.head' }} pb='3' px={{ base: '4', md: 'card' }}>
         <Text as='h2' textStyle='section-title'>
           {title}
         </Text>
@@ -46,11 +46,16 @@ const StateLegend = () => {
           <Grid
             as='li'
             key={state}
-            templateColumns={{ base: 'minmax(0, 1fr)', md: '[{sizes.list.label} minmax(0, 1fr)]' }}
+            templateColumns={{
+              base: 'minmax(0, 1fr)',
+              md: '[{sizes.list.label.tablet} minmax(0, 1fr)]',
+              lg: '[{sizes.list.label} minmax(0, 1fr)]',
+            }}
             columnGap={{ md: '3', lg: '4' }}
             rowGap='0.5'
             alignItems='baseline'
-            py='3'
+            pt={{ base: '3', lg: 'row' }}
+            pb='3'
             px={{ base: '4', md: '5', lg: 'card' }}
             {...dashedRule}
           >
@@ -76,10 +81,10 @@ export const VotesEmpty = () => {
         <Stack
           gap={{ base: '5', lg: '4.5' }}
           pt={{ base: '6', md: '8', lg: '7' }}
-          pb={{ base: '5', md: '7', lg: '6' }}
+          pb={{ base: '5', md: '7', lg: 'idle' }}
           px={{ base: '4', md: '7', lg: 'card' }}
         >
-          <Stack gap='1.5' maxW='xl'>
+          <Stack gap='1.5' maxW={{ md: 'lead.tablet', lg: 'lead' }}>
             <Text as='h2' textStyle='feature-title'>
               {title}
             </Text>

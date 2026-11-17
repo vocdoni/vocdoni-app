@@ -26,10 +26,7 @@ export const QuestionRowFrame = ({ number, active = false, children }: QuestionR
   >
     <Grid templateColumns='[{sizes.6} minmax(0, 1fr)]' columnGap={{ base: '2', lg: '0' }} alignItems='start'>
       <Text
-        fontFamily='figure'
-        fontSize='sm'
-        letterSpacing='none'
-        lineHeight='tall'
+        textStyle='question-number'
         color={active ? 'accent.fg' : 'fg.subtle'}
         fontWeight={active ? 'medium' : 'normal'}
       >
@@ -57,14 +54,16 @@ export const RowHead = ({
   toggle,
   alignItems = 'center',
   flex,
+  minH,
   children,
 }: {
   toggle?: RowToggle
   alignItems?: FlexProps['alignItems']
   flex?: FlexProps['flex']
+  minH?: FlexProps['minH']
   children: ReactNode
 }) => {
-  const layout = { display: 'flex', alignItems, flex, gap: { base: '2', lg: '3' }, minW: '0' } as const
+  const layout = { display: 'flex', alignItems, flex, minH, gap: { base: '2', lg: '3' }, minW: '0' } as const
   if (!toggle) return <Flex {...layout}>{children}</Flex>
   return (
     <chakra.button

@@ -352,7 +352,8 @@ export const VoteHeader = () => {
       templateAreas={{
         base: '"back" "title" "line" "actions"',
         md: '"back back" "title actions" "line actions"',
-        lg: '"back back" "title actions" "line line"',
+        // The actions line up with the title's bottom and rise beside the way back, as the board's header.
+        lg: '"back actions" "title actions" "line line"',
       }}
       columnGap='4'
       alignItems='end'

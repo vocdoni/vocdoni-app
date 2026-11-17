@@ -159,7 +159,7 @@ export const VotesPage = () => {
 
   return (
     // The header stands apart from the list; the toolbar and the list keep together.
-    <Stack gap={{ base: '5', md: '6', lg: '8' }} maxW='content.narrow'>
+    <Stack gap={{ base: '5', md: '6', lg: '8' }} maxW='content.list'>
       {/* Centred on a phone and a tablet; from `lg` the button lines up with the title's bottom edge, as the board. */}
       <Flex justify='space-between' align={{ base: 'center', lg: 'flex-end' }} gap={{ base: '3', lg: '4' }}>
         <PageTitle>{t('votes.list.title', { defaultValue: 'Votes' })}</PageTitle>
@@ -168,7 +168,10 @@ export const VotesPage = () => {
             <RouterLink to={createPath}>
               <Icon as={AddIcon} />
               {t('votes.list.new', { defaultValue: 'New vote' })}
-              <KeyHint display={{ base: 'none', lg: 'inline-flex' }}>N</KeyHint>
+              {/* The key reaches 4px into the button's end padding, as the board's. */}
+              <KeyHint display={{ base: 'none', lg: 'inline-flex' }} me='-1'>
+                N
+              </KeyHint>
             </RouterLink>
           </Button>
         )}
@@ -207,7 +210,7 @@ export const VotesPage = () => {
                   >
                     {/* The space keeps the accessible name "All 4"; a flex gap draws the visual one. */}
                     {filterLabel[item]}{' '}
-                    <Text as='span' textStyle='figure' fontWeight='normal' color='fg.subtle'>
+                    <Text as='span' textStyle='figure' fontWeight='normal' opacity='count'>
                       {quantity(counts[item])}
                     </Text>
                   </Button>

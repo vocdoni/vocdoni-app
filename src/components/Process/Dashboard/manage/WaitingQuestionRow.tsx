@@ -49,9 +49,11 @@ export const WaitingQuestionRow = ({
   return (
     <QuestionRowFrame number={number}>
       <Stack gap='0' minW='0'>
-        <Flex align='center' gap='3' minW='0'>
+        {/* From `lg` the line is a 28px toggle pulled into the row's padding, as tall as the Open beside it. */}
+        <Flex align='center' gap='3' minW='0' my={{ lg: '-1' }}>
           <RowHead
             flex='1'
+            minH={{ lg: '7' }}
             toggle={
               hasDetail
                 ? {
@@ -70,7 +72,7 @@ export const WaitingQuestionRow = ({
           >
             <Stack gap='0' flex='1' minW='0'>
               <Text
-                textStyle='item-title'
+                textStyle='question-title'
                 color='fg.muted'
                 whiteSpace={{ lg: 'nowrap' }}
                 overflow={{ lg: 'hidden' }}
@@ -78,7 +80,7 @@ export const WaitingQuestionRow = ({
               >
                 {title}
               </Text>
-              <Text textStyle='meta' color='fg.subtle' display={{ lg: 'none' }}>
+              <Text textStyle='note' color='fg.subtle' display={{ lg: 'none' }}>
                 {meta}
               </Text>
             </Stack>
@@ -92,12 +94,12 @@ export const WaitingQuestionRow = ({
             {expanded && (
               <Stack gap='3' pt='0.5'>
                 {description && (
-                  <Text textStyle='meta' color='fg.subtle'>
+                  <Text textStyle='note' color='fg.subtle'>
                     {description}
                   </Text>
                 )}
                 {note && (
-                  <Text textStyle='meta' color='fg.subtle'>
+                  <Text textStyle='note' color='fg.subtle'>
                     {note}
                   </Text>
                 )}

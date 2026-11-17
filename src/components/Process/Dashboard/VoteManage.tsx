@@ -105,7 +105,7 @@ export const VoteManage = () => {
       />
       {end && !canceled && (
         // The phone and tablet boards repeat the deadline under the band; the desktop header already says it.
-        <Text textStyle='meta' color='fg.subtle' display={{ lg: 'none' }}>
+        <Text textStyle='note' color='fg.subtle' display={{ lg: 'none' }}>
           {ended
             ? t('votes.manage.closed', { defaultValue: 'The vote closed on {{date}}.', date: dateAt(end) })
             : t('votes.manage.closes', {

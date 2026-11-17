@@ -21,11 +21,17 @@ const useOutcome = (question: VotingProcessQuestion, weighted: boolean) =>
 
 const counts = (state: QuestionState) => state === 'open' || state === 'paused' || state === 'closed'
 
-const QuestionNumber = ({ index }: { index: number }) => (
-  <Text fontFamily='figure' fontSize='sm' letterSpacing='none' color='fg.subtle'>
-    {index + 1}
-  </Text>
-)
+// On a question title's line, or (`inline`) on the running line of a one-line row.
+const QuestionNumber = ({ index, inline = false }: { index: number; inline?: boolean }) =>
+  inline ? (
+    <Text fontFamily='figure' fontSize='sm' letterSpacing='none' color='fg.subtle'>
+      {index + 1}
+    </Text>
+  ) : (
+    <Text textStyle='question-number' color='fg.subtle'>
+      {index + 1}
+    </Text>
+  )
 
 /**
  * A question of a question-by-question vote on the desktop: one line with its number, title, result, votes with
@@ -40,9 +46,9 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
   const title = text(question.title)
 
   return (
-    <Card.Body py='3'>
+    <Card.Body pt='row' pb='3'>
       <Grid templateColumns='[{sizes.6} minmax(0, 1fr) auto auto {sizes.24}]' columnGap='3' alignItems='baseline'>
-        <QuestionNumber index={index} />
+        <QuestionNumber index={index} inline />
         <Text
           fontWeight='medium-plus'
           truncate
@@ -91,11 +97,11 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
         <QuestionNumber index={index} />
         <Stack gap='3' minW='0'>
           <Box>
-            <Heading as='h3' textStyle='item-title'>
+            <Heading as='h3' textStyle='question-title'>
               {text(question.title)}
             </Heading>
             {kind && (
-              <Text textStyle='body-sm' color='fg.subtle'>
+              <Text textStyle='body-sm' color='fg.subtle' mt='note'>
                 {kind}
               </Text>
             )}
@@ -199,7 +205,7 @@ export const CompactQuestionRow = ({ question, index, model, state }: RowProps) 
           {text(question.title)}
         </Text>
         {meta && (
-          <Text gridColumn='2' textStyle='meta' color='fg.subtle'>
+          <Text gridColumn='2' textStyle='note' color='fg.subtle'>
             {meta}
           </Text>
         )}

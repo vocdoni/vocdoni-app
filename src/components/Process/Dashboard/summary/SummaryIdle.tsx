@@ -10,10 +10,6 @@ import { ForwardIcon, InfoIcon } from '~theme/icons'
 import { useCloneAsDraft } from '../use-clone-as-draft'
 import type { SummaryModel } from './use-summary-model'
 
-// The board's 26px padding and 60px footer, on the card's 22px inner edge.
-const PAD_26 = '[calc({spacing.card} + {spacing.1})]'
-const FOOTER_60 = '[calc({sizes.14} + {sizes.1})]'
-
 /**
  * Instead of the participation hero, an all-at-once vote that is ready, ended or canceled says where it stands, with
  * the one thing to do next: see the results, or duplicate it. Starting a scheduled vote early has no backend yet.
@@ -93,20 +89,13 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
-      <Stack gap='0' px={{ base: '4', md: 'card', lg: '6' }} py={{ base: '4.5', md: 'card', lg: PAD_26 }}>
-        <ProcessStatus state={state} alignSelf='flex-start' />
-        <Heading
-          as='h2'
-          id={titleId}
-          mt='2.5'
-          textStyle='status-title'
-          letterSpacing='heading.section'
-          lineHeight='shorter'
-        >
+      <Stack gap='0' px={{ base: '4', md: 'card', lg: '6' }} py={{ base: '4.5', md: 'card', lg: 'idle' }}>
+        <ProcessStatus state={state} alignSelf='flex-start' gap='2' />
+        <Heading as='h2' id={titleId} mt='2.5' textStyle='state-title'>
           {title}
         </Heading>
         {body && (
-          <Text mt='1.5' maxW='xl' textStyle='control' color='fg.muted'>
+          <Text mt='1.5' maxW='lead' textStyle='control' color='fg.muted'>
             {body}
           </Text>
         )}
@@ -116,9 +105,9 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
           align='center'
           wrap='wrap'
           gap='2'
-          minH={FOOTER_60}
+          minH='actionbar'
           ps={{ base: '4', md: 'card', lg: '6' }}
-          pe={{ base: '4', md: 'card', lg: '3' }}
+          pe={{ base: '4', md: 'card', lg: 'idle.end' }}
           py={{ base: '3', lg: '0' }}
           borderTopWidth='hairline'
           borderColor='border.muted'

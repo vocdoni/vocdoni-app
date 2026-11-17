@@ -53,7 +53,9 @@ export const QuestionResultBars = ({ question, results, final = false, weighted 
   }, [final, question, results, weighted])
   if (!tally) return null
 
-  const base = results?.voteCount || tally.reduce((sum, entry) => sum + entry.votes, 0)
+  // A weighted tally counts weight, not voters: its share is of the total weight.
+  const total = tally.reduce((sum, entry) => sum + entry.votes, 0)
+  const base = weighted ? total : results?.voteCount || total
   const choiceTitle = (entry: Tally) => {
     const choice = question.choices.find((candidate) => candidate.value === entry.value)
     return choice ? text(choice.title) : t('votes.manage.abstention', { defaultValue: 'Abstention' })
@@ -72,7 +74,7 @@ export const QuestionResultBars = ({ question, results, final = false, weighted 
             <Box alignSelf='center' display='flex' color='status.success.fg'>
               {won && (
                 <Box as='span' role='img' aria-label={t('votes.manage.winner', { defaultValue: 'Winning choice' })}>
-                  <Icon as={CheckIcon} boxSize='3.5' aria-hidden />
+                  <Icon as={CheckIcon} boxSize='icon.xs' aria-hidden />
                 </Box>
               )}
             </Box>
@@ -88,18 +90,18 @@ export const QuestionResultBars = ({ question, results, final = false, weighted 
               <Span textStyle='figure' fontWeight='medium'>
                 {votes}
               </Span>
-              <Span textStyle='figure' color='fg.subtle' display='inline-block' minW='9' textAlign='end'>
+              <Span textStyle='figure' color='fg.subtle' display='inline-block' minW='results.share' textAlign='end'>
                 {share}
               </Span>
             </Text>
             <Progress.Root
               variant='results'
-              value={percent}
+              value={Math.min(percent, 100)}
               gridColumn='2 / span 2'
               translations={{ value: () => `${label}, ${votes}, ${share}` }}
             >
               <Progress.Track>
-                <Progress.Range opacity={final && winner !== undefined && !won ? 'dimmed' : undefined} />
+                <Progress.Range opacity={final && winner !== undefined && !won ? 'outvoted' : undefined} />
               </Progress.Track>
             </Progress.Root>
           </Grid>

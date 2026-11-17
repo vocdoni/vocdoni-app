@@ -10,7 +10,7 @@ import { quantity } from '~utils/numbers'
 export const PauseBanner = ({ byQuestion, votes }: { byQuestion: boolean; votes: number }) => {
   const { t } = useTranslation()
   return (
-    <Alert.Root status='warning' layout='compact' role='status'>
+    <Alert.Root status='warning' layout='notice' role='status'>
       <Alert.Indicator>
         <PauseIcon />
       </Alert.Indicator>

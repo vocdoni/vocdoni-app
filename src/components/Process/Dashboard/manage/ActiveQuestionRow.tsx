@@ -65,20 +65,20 @@ export const ActiveQuestionRow = ({
         alignItems='center'
         minW='0'
       >
-        <Stack gap='0.5' gridColumn={wide} minW='0'>
+        <Stack gap={{ base: '0.5', lg: 'note' }} gridColumn={wide} minW='0'>
           <Flex
             direction={{ base: 'column', lg: 'row' }}
             align={{ base: 'flex-start', lg: 'baseline' }}
             justify='space-between'
             gap={{ base: '0.5', lg: '3' }}
           >
-            <Text as='h3' textStyle='item-title'>
+            <Text as='h3' textStyle='question-title'>
               {text(question.title)}
             </Text>
             <ProcessStatus kind='question' state={state === 'held' ? 'paused' : state} />
           </Flex>
           {question.description && (
-            <Text textStyle='meta' color='fg.subtle' display={{ base: 'none', lg: 'block' }}>
+            <Text textStyle='note' color='fg.subtle' display={{ base: 'none', lg: 'block' }}>
               {text(question.description)}
             </Text>
           )}
@@ -106,10 +106,12 @@ export const ActiveQuestionRow = ({
             <QuestionResultBars question={question} results={question.results} weighted={weighted} />
           </Box>
         )}
+        {/* The board's footer line is a button's height from `lg`, buttons or not. */}
         <HStack
           gridColumn='1'
           gap='2'
-          textStyle='meta'
+          minH={{ lg: 'control.md' }}
+          textStyle='note'
           color='fg.subtle'
           minW='0'
           display={noteOnDesktopOnly ? { base: 'none', lg: 'flex' } : 'flex'}

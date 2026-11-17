@@ -88,17 +88,17 @@ export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
             >
               {day.format(entry.day)}
             </Text>
-            {/* A filled accent dot for where the vote is now, a hollow mark for the rest. */}
-            <Box
-              aria-hidden
-              flexShrink='0'
-              boxSize='dot'
-              mt='2'
-              borderRadius='full'
-              bg={entry.current ? 'accent.solid' : 'transparent'}
-              borderWidth={entry.current ? '[0]' : 'mark'}
-              borderColor='fg.faint'
-            />
+            {/* A filled accent dot for where the vote is now, a hollow mark for the rest, centred in a column a little
+                wider than the dot (the board's). */}
+            <Flex aria-hidden flexShrink='0' w='[calc({sizes.dot} + {spacing.0.5})]' justify='center' pt='1.5'>
+              <Box
+                boxSize='dot'
+                borderRadius='full'
+                bg={entry.current ? 'accent.solid' : 'transparent'}
+                borderWidth={entry.current ? '[0]' : 'mark'}
+                borderColor='fg.faint'
+              />
+            </Flex>
             <Box minW='0'>
               <Text fontWeight={entry.current ? 'medium-plus' : 'medium'}>{entry.what}</Text>
               {entry.note && (

@@ -10,11 +10,8 @@ import { quantity } from '~utils/numbers'
 import { useSummaryFacts } from './use-summary-facts'
 import type { SummaryModel } from './use-summary-model'
 
-// The boards' one-off distances, built on the card's 22px inner edge: 30px and 34px over the ruler.
-const GAP_30 = '[calc({spacing.card} + {spacing.2})]'
-const GAP_34 = '[calc({spacing.card} + {spacing.3})]'
-/** A flexible column and the boards' 392px one: the hero's figure and facts, and Resum's cards under it. */
-export const SUMMARY_COLUMNS = '[minmax(0, 1fr) calc({sizes.sm} + {sizes.2})]'
+/** A flexible column and the facts' one: the hero's figure and facts, and Resum's cards under it. */
+export const SUMMARY_COLUMNS = '[minmax(0, 1fr) {sizes.facts}]'
 
 /**
  * The participation hero: the share that voted, how many of the census, the facts and the ruler. A phone stacks the
@@ -93,10 +90,10 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
           gridArea='figure'
           minW='0'
           justifyContent='space-between'
-          gap={{ base: '4.5', md: 'card', lg: headedByState ? GAP_30 : '6' }}
+          gap={{ base: '4.5', md: 'card', lg: headedByState ? 'hero.compact' : '0' }}
         >
           {headedByState ? (
-            <ProcessStatus state={state} alignSelf='flex-start' />
+            <ProcessStatus state={state} alignSelf='flex-start' gap='2' />
           ) : (
             <Stat.Label as='div' id={labelId}>
               {t('votes.summary.turnout', { defaultValue: 'Turnout' })}
@@ -113,17 +110,13 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
                 <Stat.ValueUnit>%</Stat.ValueUnit>
               </Stat.ValueText>
             )}
-            {caption && (
-              <Text fontSize='item' fontWeight='medium-plus' letterSpacing='heading.item'>
-                {caption}
-              </Text>
-            )}
+            {caption && <Text textStyle='hero-caption'>{caption}</Text>}
           </Flex>
         </Stat.Root>
         <FactList facts={facts} layout='summary' gridArea='facts' alignSelf='end' />
         <CensusRuler
           gridArea='bar'
-          mt={{ lg: byQuestion ? GAP_30 : GAP_34 }}
+          mt={{ lg: byQuestion ? 'hero.compact' : 'hero.ruler' }}
           value={count}
           max={total}
           // The count under the fill only on the all-at-once hero (from lg, by the ruler's own CSS).

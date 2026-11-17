@@ -39,8 +39,7 @@ export const ManageStrip = ({ state, voted, total, counts, summaryHref }: Manage
       py={{ base: '3', lg: '3.5' }}
       borderRadius='md'
       bg={{ base: 'bg.muted', lg: 'bg.panel' }}
-      borderWidth={{ base: '[0]', lg: 'hairline' }}
-      borderColor='border'
+      boxShadow={{ lg: 'shadow.ring' }}
       textStyle='body'
       color='fg.muted'
     >
@@ -71,7 +70,7 @@ export const ManageStrip = ({ state, voted, total, counts, summaryHref }: Manage
           {t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })}
         </Text>
       )}
-      <Link asChild display={desktop} whiteSpace='nowrap'>
+      <Link asChild textStyle='control' display={desktop} whiteSpace='nowrap'>
         <RouterLink to={summaryHref}>{t('votes.manage.summary_link', { defaultValue: 'Summary' })}</RouterLink>
       </Link>
       {counts && <Text display={{ lg: 'none' }}>{counts}</Text>}

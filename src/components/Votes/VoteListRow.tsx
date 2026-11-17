@@ -152,7 +152,11 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
       pe={{ base: '1.5', md: '2.5', lg: 'card' }}
     >
       <Grid
-        templateColumns={{ base: 'minmax(0, 1fr) auto', md: '[{sizes.list.label} minmax(0, 1fr) auto auto]' }}
+        templateColumns={{
+          base: 'minmax(0, 1fr) auto',
+          md: '[{sizes.list.label.tablet} minmax(0, 1fr) auto auto]',
+          lg: '[{sizes.list.label} minmax(0, 1fr) auto auto]',
+        }}
         templateAreas={GRID_AREAS}
         columnGap={{ base: '0', md: '3', lg: '4' }}
         alignItems={{ base: 'center', md: 'start' }}

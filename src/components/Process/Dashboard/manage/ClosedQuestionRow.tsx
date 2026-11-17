@@ -130,14 +130,14 @@ export const ClosedQuestionRow = ({
         >
           <Stack gap='0' flex='1' minW='0'>
             <Text
-              textStyle='item-title'
+              textStyle='question-title'
               whiteSpace={{ lg: 'nowrap' }}
               overflow={{ lg: 'hidden' }}
               textOverflow={{ lg: 'ellipsis' }}
             >
               {title}
             </Text>
-            <Text textStyle='meta' color='fg.subtle' display={{ lg: 'none' }}>
+            <Text textStyle='note' color='fg.subtle' display={{ lg: 'none' }}>
               <ClosedMeta verdict={verdict} />
             </Text>
           </Stack>
@@ -150,7 +150,7 @@ export const ClosedQuestionRow = ({
               color={verdict.won ? 'status.success.fg' : 'fg'}
               display={desktop}
             >
-              {verdict.won && <Icon as={CheckIcon} boxSize='3.5' aria-hidden />}
+              {verdict.won && <Icon as={CheckIcon} boxSize='icon.xs' aria-hidden />}
               {verdict.verdict}
             </HStack>
           )}
@@ -171,7 +171,7 @@ export const ClosedQuestionRow = ({
           {expanded && (
             <Stack gap='3' pt={question.description ? '0.5' : '3'}>
               {question.description && (
-                <Text textStyle='meta' color='fg.subtle'>
+                <Text textStyle='note' color='fg.subtle'>
                   {text(question.description)}
                 </Text>
               )}
