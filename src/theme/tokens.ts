@@ -327,13 +327,12 @@ const durations = defineTokens.durations({
 
 // Two fades. `inactive` is content that cannot be used right now (a revoked key, a busy check, an unavailable
 // option); `dimmed` is only de-emphasised and matches Chakra's own `_disabled` layer style (0.5).
-// `outvoted` is a choice that lost a final tally; `count` the count inside a filter chip; `opaque` undoes Chakra's
+// `outvoted` is a choice that lost a final tally; `opaque` undoes Chakra's
 // `_disabled` fade on a control that draws its own unavailable look.
 const opacity = defineTokens.opacity({
   inactive: { value: 0.6 },
   dimmed: { value: 0.5 },
   outvoted: { value: 0.4 },
-  count: { value: 0.72 },
   opaque: { value: 1 },
 })
 
