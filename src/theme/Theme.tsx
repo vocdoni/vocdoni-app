@@ -10,13 +10,14 @@ import { getAppSystem } from '~theme/system'
 import '@fontsource-variable/commissioner/wght.css'
 import '@fontsource-variable/jetbrains-mono/wght.css'
 
-export const Theme = ({ children }: PropsWithChildren) => {
+// `followSystem`: a voter page, which ignores the dashboard's saved colour mode (see ColorModeProvider).
+export const Theme = ({ children, followSystem }: PropsWithChildren<{ followSystem?: boolean }>) => {
   // The accent color is runtime config (PRIMARY_COLOR), so the chakra system is
   // picked per env rather than imported statically. getAppSystem memoizes it.
   const { PRIMARY_COLOR } = useAppEnv()
 
   return (
-    <ColorModeProvider>
+    <ColorModeProvider followSystem={followSystem}>
       <ChakraProvider value={getAppSystem(PRIMARY_COLOR)}>{children}</ChakraProvider>
     </ColorModeProvider>
   )
