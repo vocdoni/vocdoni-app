@@ -237,7 +237,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
   const { text } = useVoteText()
   const { canManage } = useActions()
   const isDesktop = useIsDesktop()
-  const { cloneAsDraft } = useCloneAsDraft()
+  const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const publicLanguage = usePublicLanguage()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
   const pdf = useVotingReportPdfDownload(election)
@@ -267,6 +267,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
               ? t('votes.page.duplicate_vote', { defaultValue: 'Duplicate the vote' })
               : t('votes.page.duplicate', { defaultValue: 'Duplicate' }),
             icon: CopyIcon,
+            disabled: isCloning,
             onSelect: () => void cloneAsDraft(election),
           },
         ]

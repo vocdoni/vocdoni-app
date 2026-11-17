@@ -80,7 +80,8 @@ const DeleteDraftDialog = ({ draftId, open, onClose }: { draftId: string; open: 
       description={t('votes.list.delete_body', { defaultValue: 'It cannot be undone.' })}
       confirmText={t('votes.list.delete_confirm', { defaultValue: 'Delete draft' })}
       loading={mutation.isPending}
-      onConfirm={() => mutation.mutate({ draftId }, { onSettled: onClose })}
+      // Closes on success only: after a failure (told by a toast) the draft is still there to try again.
+      onConfirm={() => mutation.mutate({ draftId }, { onSuccess: onClose })}
     />
   )
 }
@@ -104,7 +105,8 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
   const action = useMemo(() => rowAction(row), [row])
 
   const isDraft = state === 'draft'
-  const canDuplicate = canManage && !isLegacyProcess(process)
+  // A draft with no question yet has nothing to copy.
+  const canDuplicate = canManage && !isLegacyProcess(process) && (process.questions?.length ?? 0) > 0
   const canDelete = canManage && isDraft
   const title =
     text(process.title) || (isDraft ? t('drafts.not_defined', { defaultValue: 'Not defined yet' }) : process.id)

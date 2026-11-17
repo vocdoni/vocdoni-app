@@ -189,9 +189,23 @@ describe('useCloneAsDraft', () => {
 
       expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }))
       expect(mockNavigate).toHaveBeenCalledWith(
-        expect.objectContaining({ search: expect.stringContaining('draftId=draft-123') }),
-        { replace: true }
+        expect.objectContaining({ search: expect.stringContaining('draftId=draft-123') })
       )
+    })
+
+    it('makes one copy however many times it is asked while the first runs', async () => {
+      let finish: (id: string) => void = () => undefined
+      mockMutateAsync.mockReturnValue(new Promise((resolve) => (finish = resolve)))
+      const election = createMockElection([{ title: 'Option 1' }])
+      const { result } = renderClone()
+
+      await act(async () => {
+        void result.current.cloneAsDraft(election)
+        void result.current.cloneAsDraft(election)
+        finish('draft-123')
+      })
+
+      expect(mockMutateAsync).toHaveBeenCalledTimes(1)
     })
   })
 

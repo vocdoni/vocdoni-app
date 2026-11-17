@@ -1,5 +1,6 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useQueryClient } from '@tanstack/react-query'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, useNavigate } from 'react-router'
 import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
@@ -24,9 +25,13 @@ export const useCloneAsDraft = () => {
   const queryClient = useQueryClient()
   const createProcess = useCreateProcess()
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting, QUESTION_BY_QUESTION: questionByQuestion } = useAppEnv()
+  // A second click before the first copy returns would make a second draft (and may hit the draft limit).
+  const inFlight = useRef(false)
 
   const cloneAsDraft = async (process: VotingProcessResponse | null | undefined) => {
-    if (!process?.id || !process.questions?.length) return
+    // Callers only offer it for a process with questions; an empty draft has nothing to copy.
+    if (!process?.id || !process.questions?.length || inFlight.current) return
+    inFlight.current = true
 
     const sourceIsByQuestion = isQuestionByQuestion(process)
     const request: CreateVotingProcessRequestWithMode = {
@@ -49,15 +54,13 @@ export const useCloneAsDraft = () => {
         duration: 3000,
         isClosable: true,
       })
-      void queryClient.invalidateQueries({ queryKey: QueryKeys.organization.votes(process.orgAddress) })
+      void queryClient.invalidateQueries({ queryKey: QueryKeys.organization.votesAll })
 
-      navigate(
-        {
-          pathname: generatePath(Routes.processes.create),
-          search: createSearchParams({ draftId: clonedDraftId }).toString(),
-        },
-        { replace: true }
-      )
+      // A new history entry: Back from the wizard returns to the list or the vote it was copied from.
+      navigate({
+        pathname: generatePath(Routes.processes.create),
+        search: createSearchParams({ draftId: clonedDraftId }).toString(),
+      })
     } catch (error) {
       // Any other refusal (a legacy process over today's question cap, for one) carries the backend's own reason
       const isDraftLimit = apiErrorDetails(error)?.code === ErrorCode.DraftLimitReached
@@ -76,6 +79,8 @@ export const useCloneAsDraft = () => {
         duration: 10000,
         isClosable: true,
       })
+    } finally {
+      inFlight.current = false
     }
   }
 

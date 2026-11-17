@@ -97,7 +97,7 @@ export const useStatusJob = (processId: string | undefined) => {
           timeout: t('votes.manage.error.timeout', {
             defaultValue: 'This is taking longer than expected. The state will update on its own.',
           }),
-          other: t('votes.job.other', { defaultValue: 'Something went wrong. Reload the page and try again.' }),
+          other: t('votes.error.other', { defaultValue: 'Something went wrong. Reload the page and try again.' }),
         }[kind]
     toast({
       title: kind === 'timeout' ? slowTitle() : title,
