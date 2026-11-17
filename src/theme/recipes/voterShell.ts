@@ -24,7 +24,6 @@ export const VoterShell = defineSlotRecipe({
     'main',
     'foot',
     'credit',
-    'wordmark',
     'links',
   ],
   base: {
@@ -125,7 +124,7 @@ export const VoterShell = defineSlotRecipe({
     foot: { display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, h: '12' },
     // "Votació feta amb", the Vocdoni wordmark and the terms and privacy links, 6px apart: 12px in the quiet ink, the
     // wordmark 13px tall in ink. It never takes the vote's colour. On a narrow phone the links wrap onto a second line,
-    // centred.
+    // centred. The wordmark is sized here, so the svg carries no style of its own.
     credit: {
       display: 'inline-flex',
       flexWrap: 'wrap',
@@ -135,8 +134,8 @@ export const VoterShell = defineSlotRecipe({
       rowGap: '0',
       textStyle: 'caption',
       color: 'fg.subtle',
+      '& > svg': { h: 'wordmark.credit', w: 'auto' },
     },
-    wordmark: { h: 'wordmark.credit', w: 'auto' },
     // The links after the wordmark, behind a middle dot (owner ruling R18).
     links: { _before: { content: '"·"', me: '1.5' } },
   },

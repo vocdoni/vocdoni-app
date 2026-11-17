@@ -86,7 +86,10 @@ describe('voter shell recipe', () => {
       fontSize: 'var(--chakra-font-sizes-xs)',
       color: 'var(--chakra-colors-fg-subtle)',
     })
-    expect(layer(styles.wordmark)).toMatchObject({ height: 'var(--chakra-sizes-wordmark-credit)' })
+    expect(credit['& > svg']).toEqual({
+      height: 'var(--chakra-sizes-wordmark-credit)',
+      width: 'var(--chakra-sizes-auto)',
+    })
   })
 
   it('puts the terms and privacy links after the wordmark behind a middle dot, 6px clear (ruling R18)', () => {

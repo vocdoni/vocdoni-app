@@ -106,4 +106,20 @@ describe('VoterCredit', () => {
     const wordmark = within(line).getByRole('img', { name: 'Vocdoni' })
     expect(wordmark.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
+
+  it('renders the same inside the shell, where it takes the styles the shell resolved, as on its own', () => {
+    const alone = render(<VoterCredit {...credit} />)
+    const aloneClass = screen.getByText('Votació feta amb').parentElement?.className
+    alone.unmount()
+    render(
+      <VoterShell name='Ateneu' credit={credit}>
+        <VoterCredit {...credit} />
+      </VoterShell>
+    )
+
+    const inShell = within(screen.getByRole('main')).getByText('Votació feta amb').parentElement
+    const inFoot = within(screen.getByRole('contentinfo')).getByText('Votació feta amb').parentElement
+    expect(inShell?.className).toBe(aloneClass)
+    expect(inFoot?.className).toBe(aloneClass)
+  })
 })

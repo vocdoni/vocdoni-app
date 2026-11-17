@@ -1,10 +1,17 @@
-import { Box, Text, useSlotRecipe } from '@chakra-ui/react'
-import type { ReactNode } from 'react'
+import { Box, Text, useSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
+import { createContext, useContext, type ReactNode } from 'react'
 import { VocdoniLogo } from '~components/Layout/Logo'
 import { VoterShell as voterShellRecipe } from '~theme/recipes/voterShell'
 
 /** The column's width from `lg`: the recipe's `column` variant. */
 export type VoterShellColumn = 'rail' | 'narrow' | 'code' | 'sending' | 'status' | 'results'
+
+type VoterShellStyles = Record<string, SystemStyleObject>
+
+// The shell's styles, resolved once per render by the shell, for the credits inside it (the foot's and the phone
+// action bar's). A credit resolving the recipe on its own came out with another class in the browser than on the
+// server (conformance D-23), while everything the shell styles itself hydrated cleanly.
+const VoterShellStylesContext = createContext<VoterShellStyles | undefined>(undefined)
 
 export type VoterCreditProps = {
   /** The words before the wordmark: "Votació feta amb". */
@@ -17,11 +24,13 @@ export type VoterCreditProps = {
 
 /** "Votació feta amb", the Vocdoni wordmark and the legal links: at the page's foot, or in the phone's action bar. */
 export const VoterCredit = ({ text, brand, links }: VoterCreditProps) => {
-  const styles = useSlotRecipe({ recipe: voterShellRecipe })()
+  const shellStyles = useContext(VoterShellStylesContext)
+  const ownStyles = useSlotRecipe({ recipe: voterShellRecipe })()
+  const styles = shellStyles ?? ownStyles
   return (
     <Box as='p' css={styles.credit}>
       <span>{text}</span>
-      <VocdoniLogo role='img' aria-label={brand} color='fg' css={styles.wordmark} />
+      <VocdoniLogo role='img' aria-label={brand} color='fg' />
       {links && (
         <Box as='span' css={styles.links}>
           {links}
@@ -88,34 +97,36 @@ export const VoterShell = ({
   )
 
   return (
-    <Box css={styles.root} data-scope='voter-shell' data-part='root'>
-      <Box as='header' css={styles.topbar}>
-        <Box css={styles.brand}>{logo ?? <VocdoniLogo minimal aria-hidden color='fg' css={styles.symbol} />}</Box>
-        <Text as='span' css={styles.name}>
-          {name}
-        </Text>
-        {actions && <Box css={styles.actions}>{actions}</Box>}
-      </Box>
-      {head && (
-        <Box css={styles.strip} data-scope='voter-shell' data-part='strip'>
-          <Box css={styles.head}>{headContent}</Box>
-          {progress}
+    <VoterShellStylesContext.Provider value={styles}>
+      <Box css={styles.root} data-scope='voter-shell' data-part='root'>
+        <Box as='header' css={styles.topbar}>
+          <Box css={styles.brand}>{logo ?? <VocdoniLogo minimal aria-hidden color='fg' css={styles.symbol} />}</Box>
+          <Text as='span' css={styles.name}>
+            {name}
+          </Text>
+          {actions && <Box css={styles.actions}>{actions}</Box>}
         </Box>
-      )}
-      <Box css={styles.body}>
-        {(head || rail) && (
-          <Box as='aside' aria-label={railLabel} css={styles.rail} data-scope='voter-shell' data-part='rail'>
-            {head && <Box css={styles.railHead}>{headContent}</Box>}
-            {rail}
+        {head && (
+          <Box css={styles.strip} data-scope='voter-shell' data-part='strip'>
+            <Box css={styles.head}>{headContent}</Box>
+            {progress}
           </Box>
         )}
-        <Box as='main' css={styles.main} data-scope='voter-shell' data-part='main'>
-          {children}
+        <Box css={styles.body}>
+          {(head || rail) && (
+            <Box as='aside' aria-label={railLabel} css={styles.rail} data-scope='voter-shell' data-part='rail'>
+              {head && <Box css={styles.railHead}>{headContent}</Box>}
+              {rail}
+            </Box>
+          )}
+          <Box as='main' css={styles.main} data-scope='voter-shell' data-part='main'>
+            {children}
+          </Box>
+        </Box>
+        <Box as='footer' css={styles.foot} data-scope='voter-shell' data-part='foot'>
+          <VoterCredit {...credit} />
         </Box>
       </Box>
-      <Box as='footer' css={styles.foot} data-scope='voter-shell' data-part='foot'>
-        <VoterCredit {...credit} />
-      </Box>
-    </Box>
+    </VoterShellStylesContext.Provider>
   )
 }
