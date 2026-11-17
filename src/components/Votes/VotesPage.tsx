@@ -1,6 +1,6 @@
 import { Box, Button, Card, Flex, HStack, Icon, Input, InputGroup, Stack, Text } from '@chakra-ui/react'
 import { RoutedPaginationProvider, useOrganization } from '@vocdoni/react-components'
-import { useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as RouterLink, matchPath, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
@@ -46,7 +46,7 @@ const RowFallback = () => {
   )
 }
 
-/** Every vote of the organisation in one column: filter by state, search, and the live one on top. */
+/** Every vote of the organisation in one column of plain rows: filter by state and search. */
 export const VotesPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -63,7 +63,8 @@ export const VotesPage = () => {
   const query = searchParams.get('q') ?? ''
 
   const createPath = generatePath(Routes.processes.create)
-  useListShortcuts({ onNew: () => navigate(createPath), searchRef, enabled: isDesktop })
+  const onNew = useCallback(() => navigate(createPath), [navigate, createPath])
+  useListShortcuts({ onNew, searchRef, enabled: isDesktop })
 
   const rows = useMemo(() => toVoteRows(data ?? [], now), [data, now])
   // Counts ignore the search, so the chips tell what each state holds in total.
@@ -159,7 +160,8 @@ export const VotesPage = () => {
   return (
     // The header stands apart from the list; the toolbar and the list keep together.
     <Stack gap={{ base: '5', md: '6', lg: '8' }} maxW='content.narrow'>
-      <Flex justify='space-between' align={{ base: 'center', md: 'flex-end' }} gap='4'>
+      {/* Centred on a phone and a tablet; from `lg` the button lines up with the title's bottom edge, as the board. */}
+      <Flex justify='space-between' align={{ base: 'center', lg: 'flex-end' }} gap={{ base: '3', lg: '4' }}>
         <PageTitle>{t('votes.list.title', { defaultValue: 'Votes' })}</PageTitle>
         {rows.length > 0 && (
           <Button variant='outline' asChild aria-keyshortcuts='n'>
@@ -176,16 +178,16 @@ export const VotesPage = () => {
         {showToolbar && (
           // The search sits over the chips up to `lg` (at most `80` wide from md), beside them from `lg`.
           <Flex direction={{ base: 'column', lg: 'row' }} justify='space-between' gap={{ base: '3', lg: '4' }}>
-            {/* On phones: one line that scrolls sideways and bleeds to the screen edge (the page gutter is 6). A scroll
+            {/* On phones: one line that scrolls sideways and bleeds to the screen edge (the page gutter is 4). A scroll
               box clips what is drawn outside its children, so it keeps room for the chips' 1px ring on every side.
               From md the chips fit, nothing scrolls and nothing is clipped. */}
             <Box
               order={{ base: 2, lg: 1 }}
               overflowX={{ base: 'auto', md: 'visible' }}
               scrollbar='hidden'
-              mx={{ base: '-6', md: '0' }}
+              mx={{ base: '-4', md: '0' }}
               my={{ base: '-0.5', md: '0' }}
-              px={{ base: '6', md: '0' }}
+              px={{ base: '4', md: '0' }}
               py={{ base: '0.5', md: '0' }}
             >
               <HStack
@@ -218,12 +220,19 @@ export const VotesPage = () => {
               maxW={{ md: '80' }}
               flexShrink={0}
               startElement={<Icon as={SearchIcon} />}
+              startElementProps={{ color: 'fg.subtle', px: { base: '3', lg: '2.5' } }}
               endElement={<KeyHint display={{ base: 'none', lg: 'inline-flex' }}>/</KeyHint>}
+              endElementProps={{ px: '1.5' }}
             >
+              {/* The board's search is a compact field from `lg` (as tall as the chips beside it), the touch one
+                below; the padding clears the icon and, from `lg`, the key hint. */}
               <Input
                 ref={searchRef}
                 type='search'
                 size='sm'
+                h={{ base: 'control.touch', md: 'control.tablet', lg: '7' }}
+                ps={{ base: '9', lg: '8' }}
+                pe={{ base: '3', lg: '8' }}
                 value={query}
                 onChange={(event) => go(filter, event.target.value, true)}
                 aria-label={t('votes.list.search', { defaultValue: 'Search a vote' })}

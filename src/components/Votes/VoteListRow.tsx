@@ -1,9 +1,10 @@
 import { Card, Grid, GridItem, Icon, IconButton, Link, Text } from '@chakra-ui/react'
-import { processVoteCount, resolveEndDate } from '@vocdoni/api-client'
-import type { VotingProcessResponse, VotingProcessResultsResponse } from '@vocdoni/api-types'
-import { memo, useMemo, useState } from 'react'
+import { resolveEndDate } from '@vocdoni/api-client'
+import type { VotingProcessResultsResponse } from '@vocdoni/api-types'
+import { memo, useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, Link as RouterLink } from 'react-router'
+import { useCloneAsDraft } from '~components/Process/Dashboard/use-clone-as-draft'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { ResponsiveMenu, type ResponsiveMenuItem } from '~components/ui/ResponsiveMenu'
@@ -12,9 +13,8 @@ import { useDeleteDraft } from '~queries/votes'
 import { Routes } from '~routes'
 import { isLegacyProcess, isQuestionByQuestion } from '~src/types/voting-process'
 import { ChevronRightIcon, CopyIcon, DeleteIcon, MoreIcon } from '~theme/icons'
-import { questionOutcome } from '~utils/vote-outcome'
-import { draftWarning, percentOf, type VoteRow } from '~utils/vote-state'
-import { useCloneAsDraft } from '~components/Process/Dashboard/use-clone-as-draft'
+import type { VoteRow, VoteState } from '~utils/vote-state'
+import { VoteRowMeta } from './VoteRowMeta'
 
 export type VoteListRowProps = {
   row: VoteRow
@@ -66,85 +66,45 @@ const useActionLabel = () => {
   }
 }
 
+// The state word under the phone sheet's title ("Draft"), with the keys ProcessStatus shows.
+const useStateWord = () => {
+  const { t } = useTranslation()
+  return (state: VoteState) => {
+    switch (state) {
+      case 'draft':
+        return t('votes.state.draft', { defaultValue: 'Draft' })
+      case 'ready':
+        return t('votes.state.ready', { defaultValue: 'Ready' })
+      case 'live':
+        return t('votes.state.live', { defaultValue: 'Live' })
+      case 'paused':
+        return t('votes.state.paused', { defaultValue: 'Paused' })
+      case 'closed':
+        return t('votes.state.closed', { defaultValue: 'Closed' })
+      case 'canceled':
+        return t('votes.state.canceled', { defaultValue: 'Canceled' })
+    }
+  }
+}
+
 const DeleteDraftDialog = ({ draftId, open, onClose }: { draftId: string; open: boolean; onClose: () => void }) => {
   const { t } = useTranslation()
   const mutation = useDeleteDraft()
   return (
+    // The guide's decision dialog; the default `danger` tone is the outline with danger text, never a filled red.
     <ConfirmDialog
       open={open}
       onOpenChange={({ open: next }) => !next && onClose()}
       lazyMount
       unmountOnExit
-      layout='inline'
       title={t('votes.list.delete_title', { defaultValue: 'Delete this draft?' })}
       description={t('votes.list.delete_body', { defaultValue: 'It cannot be undone.' })}
-      confirmText={t('drafts.delete', { defaultValue: 'Delete draft' })}
+      confirmText={t('votes.list.delete_confirm', { defaultValue: 'Delete draft' })}
       loading={mutation.isPending}
       onConfirm={() => mutation.mutate({ draftId }, { onSettled: onClose })}
     />
   )
 }
-
-/** Sentences under a vote's title, joined by a space. */
-const useMeta = (row: VoteRow, results: VotingProcessResultsResponse | null | undefined, now: Date) => {
-  const { t } = useTranslation()
-  const { longDate, outcome } = useVoteText()
-  const { process, state } = row
-  const size = process.census?.size
-  const count = process.questions.length
-
-  const questions = t('votes.list.meta_questions', {
-    count,
-    defaultValue_one: '{{count}} question',
-    defaultValue_other: '{{count}} questions',
-  })
-  const parts: string[] = [
-    size === undefined
-      ? t('votes.list.meta_no_voters', { defaultValue: '{{questions}}.', questions })
-      : t('votes.list.meta', {
-          defaultValue: '{{questions}}, {{voters}}.',
-          questions,
-          voters: t('votes.list.meta_voters', {
-            count: size,
-            defaultValue_one: '{{count}} voter',
-            defaultValue_other: '{{count}} voters',
-          }),
-        }),
-  ]
-  const end = resolveEndDate(process)
-  if (state === 'live' || state === 'paused') {
-    if (end) parts.push(t('votes.list.closes', { defaultValue: 'Closes {{date}}.', date: longDate(end) }))
-  } else if (state === 'ready') {
-    parts.push(t('votes.list.starts', { defaultValue: 'Starts {{date}}.', date: longDate(process.startDate) }))
-    if (isQuestionByQuestion(process))
-      parts.push(t('votes.list.by_question', { defaultValue: 'Question by question.' }))
-  }
-
-  let result: string | null = null
-  let turnout: string | null = null
-  if (state === 'closed') {
-    const [question] = process.questions
-    if (process.questions.length === 1 && question) {
-      const entry = results?.questions.find((candidate) => candidate.questionId === question.id)
-      result = outcome(questionOutcome(question, entry, { weighted: !!process.census?.weighted }))
-    }
-    const percent = results ? percentOf(processVoteCount(results), size) : undefined
-    if (percent !== undefined) turnout = t('votes.list.turnout', { defaultValue: '{{percent}}% turnout.', percent })
-  }
-
-  const warning = state === 'draft' ? draftWarning(process, now) : null
-  const warningText =
-    warning === 'missingEndDate'
-      ? t('votes.list.warning.missing_end', { defaultValue: 'No closing date yet.' })
-      : warning === 'endDatePassed'
-        ? t('votes.list.warning.end_passed', { defaultValue: 'The closing date has passed.' })
-        : null
-
-  return { text: parts.join(' '), result, turnout, warning: warningText }
-}
-
-const titleOf = (process: VotingProcessResponse, text: ReturnType<typeof useVoteText>['text'], fallback: string) =>
-  text(process.title) || fallback
 
 // A phone stacks the row under its state line, with "More" beside the state; from md the desktop grid returns:
 // state, content, action, More.
@@ -159,22 +119,20 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const actionLabel = useActionLabel()
+  const stateWord = useStateWord()
+  const titleId = useId()
   const { process, state } = row
-  const meta = useMeta(row, results, now)
   const action = useMemo(() => rowAction(row), [row])
 
-  const legacy = isLegacyProcess(process)
   const isDraft = state === 'draft'
-  const canDuplicate = canManage && !legacy
+  const canDuplicate = canManage && !isLegacyProcess(process)
   const canDelete = canManage && isDraft
-  const title = titleOf(
-    process,
-    text,
-    isDraft ? t('drafts.not_defined', { defaultValue: 'Not defined yet' }) : process.id
-  )
+  const title =
+    text(process.title) || (isDraft ? t('drafts.not_defined', { defaultValue: 'Not defined yet' }) : process.id)
   const closedOn = state === 'closed' || state === 'canceled' ? shortDate(resolveEndDate(process)) : ''
 
-  // Every row keeps its secondary actions in one menu: duplicate, and delete for a draft.
+  // Every row keeps its secondary actions in one "More" menu at every width (owner ruling): duplicate, and delete
+  // last for a draft.
   const items: ResponsiveMenuItem[] = [
     ...(canDuplicate
       ? [
@@ -191,7 +149,7 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
       ? [
           {
             value: 'delete',
-            label: t('drafts.delete', { defaultValue: 'Delete draft' }),
+            label: t('votes.list.delete', { defaultValue: 'Delete' }),
             icon: DeleteIcon,
             danger: true,
             onSelect: () => setConfirmingDelete(true),
@@ -200,21 +158,22 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
       : []),
   ]
 
-  const actionText = actionLabel(action.key)
+  const more = t('votes.list.more', { defaultValue: 'More actions' })
   // The text columns keep clear of the phone row's tight end padding, which only the 44px "More" button uses.
   const textEnd = { base: '2.5', md: '0' } as const
 
   return (
     <Card.Body
       as='article'
+      aria-labelledby={titleId}
       // The 44px "More" button sets the phone row's top edge, so the row pads less there and at the end.
       pt={{ base: '1.5', md: '3.5' }}
       pb='3.5'
       ps={{ base: '4', md: '5', lg: 'card' }}
-      pe={{ base: '1.5', md: '2.5', lg: '4' }}
+      pe={{ base: '1.5', md: '2.5', lg: 'card' }}
     >
       <Grid
-        templateColumns={{ base: '1fr auto', md: '[{sizes.list.label} minmax(0, 1fr) auto auto]' }}
+        templateColumns={{ base: 'minmax(0, 1fr) auto', md: '[{sizes.list.label} minmax(0, 1fr) auto auto]' }}
         templateAreas={GRID_AREAS}
         columnGap={{ base: '0', md: '3', lg: '4' }}
         alignItems={{ base: 'center', md: 'start' }}
@@ -227,55 +186,34 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
         </GridItem>
 
         <GridItem area='title' minW='0' pe={textEnd}>
-          <Text as='h2' textStyle='item-title' lineClamp={2}>
+          <Text as='h2' id={titleId} textStyle='item-title' lineClamp={2}>
             {title}
           </Text>
         </GridItem>
 
         <GridItem area='meta' minW='0' mt='0.5' pe={textEnd}>
-          <Text textStyle='meta' color='fg.subtle'>
-            {meta.text}
-            {meta.result && (
-              <Text as='span' fontWeight='medium-plus' color='fg'>
-                {' '}
-                {meta.result}
-              </Text>
-            )}
-            {meta.turnout && <> {meta.turnout}</>}
-            {meta.warning && (
-              <Text as='span' fontWeight='medium-plus' color='status.warning.fg'>
-                {' '}
-                {meta.warning}
-              </Text>
-            )}
-          </Text>
+          <VoteRowMeta row={row} results={results} now={now} />
         </GridItem>
 
         <GridItem area='action' mt={{ base: '1', md: '0' }} pe={textEnd} alignSelf={{ base: 'auto', md: 'center' }}>
           {/* The phone's 44px hit area overhangs the row's bottom padding instead of growing the row. */}
           <Link asChild variant='row-action' mb={{ base: '-3', md: '0' }}>
             <RouterLink to={action.to}>
-              {actionText}
+              {actionLabel(action.key)}
               <Icon as={ChevronRightIcon} />
             </RouterLink>
           </Link>
         </GridItem>
 
-        <GridItem area='more' justifySelf='end' alignSelf='center'>
+        {/* From `lg` the board puts its row icon 14px after the action, 2px closer than the grid's gap. */}
+        <GridItem area='more' justifySelf='end' alignSelf='center' ms={{ lg: '-0.5' }}>
           {items.length > 0 && (
             <ResponsiveMenu
-              label={t('votes.list.more', { defaultValue: 'More actions' })}
+              label={more}
               title={title}
+              subtitle={stateWord(state)}
               trigger={
-                <IconButton
-                  variant='ghost'
-                  size='sm'
-                  aria-label={
-                    isDraft
-                      ? t('drafts.actions', { defaultValue: 'Draft actions' })
-                      : t('votes.list.more', { defaultValue: 'More actions' })
-                  }
-                >
+                <IconButton variant='ghost' size='sm' aria-label={more}>
                   <MoreIcon />
                 </IconButton>
               }

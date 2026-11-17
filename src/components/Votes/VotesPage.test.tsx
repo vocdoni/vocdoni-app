@@ -138,11 +138,20 @@ describe('VotesPage', () => {
     expect(screen.queryByText('Eleccions')).not.toBeInTheDocument()
   })
 
-  it('promotes the first live vote on page 1 and does not repeat it', () => {
+  it('lists every vote once as a plain row, live ones included', () => {
     renderPage()
     expect(screen.getAllByText('Assemblea General')).toHaveLength(1)
-    expect(articles()[0]).toHaveTextContent('Assemblea General')
     expect(articles()).toHaveLength(9)
+    // No promoted live row: no turnout bar and no filled "Follow" button, only the row links.
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Follow' })).not.toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: 'Follow' })).toHaveLength(3)
+  })
+
+  it('names each row by its vote and gives every row its "More" menu', () => {
+    renderPage()
+    expect(screen.getByRole('article', { name: 'Eleccions' })).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'More actions' })).toHaveLength(9)
   })
 
   it('asks for results of the closed votes of the page only', () => {
@@ -167,8 +176,15 @@ describe('VotesPage', () => {
   it('shows the empty layout when there are no votes', () => {
     votes.data = []
     renderPage()
-    expect(screen.getByText('No votes yet')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Create a vote' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'No votes yet' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Create a vote' })).toHaveAttribute('href', '/admin/processes/create')
+    // No toolbar and no second "New vote" call to action on an empty list.
+    expect(screen.queryByRole('searchbox')).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /New vote/ })).not.toBeInTheDocument()
+    const legend = screen.getByRole('region', { name: 'What you will see here' })
+    expect(within(legend).getAllByRole('listitem')).toHaveLength(4)
+    for (const state of ['Draft', 'Ready', 'Live', 'Closed'])
+      expect(within(legend).getByText(state)).toBeInTheDocument()
   })
 
   it('says so when no vote matches', async () => {
