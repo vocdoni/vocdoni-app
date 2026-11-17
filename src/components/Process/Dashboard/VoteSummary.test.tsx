@@ -258,6 +258,27 @@ describe('VoteSummary', () => {
       expect(screen.queryByText(/being counted/)).not.toBeInTheDocument()
     })
 
+    it('offers the results in CSV and the final report on a closed vote only', () => {
+      const { unmount } = renderSummary(
+        createProcess({ questions: [question('q1', 'RESULTS', 181, ['150', '31'])] }),
+        181
+      )
+
+      expect(screen.getByRole('region', { name: 'Download the results' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Download the results in CSV' })).toBeEnabled()
+      expect(screen.getByRole('button', { name: 'Download the final report in PDF' })).toBeInTheDocument()
+      unmount()
+
+      renderSummary(createProcess(), 184)
+      expect(screen.queryByRole('region', { name: 'Download the results' })).not.toBeInTheDocument()
+    })
+
+    it('keeps the CSV off while a closed vote has no tally yet', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'ENDED', 184)] }), 184)
+
+      expect(screen.getByRole('button', { name: 'Download the results in CSV' })).toBeDisabled()
+    })
+
     it('drops the counting message once the tally of an ended vote is on screen', () => {
       // The dev backend serves the tally of a vote ended by hand while its questions still read ENDED.
       renderSummary(createProcess({ questions: [question('q1', 'ENDED', 181, ['150', '31'])] }), 181)

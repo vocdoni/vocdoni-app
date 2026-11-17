@@ -1913,6 +1913,23 @@
       "day": "{{weekday}} {{day}}",
       "on_date": "{{date}}"
     },
+    "downloads": {
+      "csv": {
+        "action": "Baixa els resultats en CSV",
+        "note": "Els vots de cada opció, pregunta per pregunta.",
+        "number": "Número de pregunta",
+        "option": "Opció",
+        "question": "Pregunta",
+        "title": "Resultats en CSV",
+        "votes": "Vots"
+      },
+      "pdf": {
+        "action": "Baixa l'informe final en PDF",
+        "note": "Per a una auditoria.",
+        "title": "Informe final en PDF"
+      },
+      "title": "Baixa els resultats"
+    },
     "empty": {
       "body": "Crea la primera quan vulguis. Tries què es vota, qui vota i fins quan, i la publiques quan estigui a punt.",
       "create": "Crea una votació",

@@ -1,10 +1,11 @@
 import { Grid, Progress, Span, Stack, Text } from '@chakra-ui/react'
 import type { QuestionResults, VotingProcessQuestion } from '@vocdoni/api-types'
-import { BallotType, decodeQuestionResults, tryInferQuestionBallotType } from '@vocdoni/ballot'
+import { BallotType, tryInferQuestionBallotType } from '@vocdoni/ballot'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
 import { quantity } from '~utils/numbers'
+import { tallyOf, type Tally } from '~utils/question-tally'
 import { questionOutcome } from '~utils/vote-outcome'
 
 export type QuestionResultBarsProps = {
@@ -20,26 +21,6 @@ export type QuestionResultBarsProps = {
    * `plain`: the bars align with the title and counts carry their unit.
    */
   layout?: 'indented' | 'plain'
-}
-
-type Tally = { key: string; value?: number; votes: number }
-
-// One entry per choice, in ballot order, then the abstentions of a multiple-choice question.
-const tallyOf = (question: VotingProcessQuestion, results?: QuestionResults): Tally[] | null => {
-  if (!results?.results?.length || !tryInferQuestionBallotType(question)) return null
-  try {
-    const decoded = decodeQuestionResults(question, results.results)
-    const byChoice = new Map<number | 'abstain', number>(decoded.map((entry) => [entry.choice, entry.votes] as const))
-    const rows: Tally[] = question.choices.map((choice) => ({
-      key: String(choice.value),
-      value: choice.value,
-      votes: byChoice.get(choice.value) ?? 0,
-    }))
-    const abstain = byChoice.get('abstain')
-    return abstain !== undefined ? [...rows, { key: 'abstain', votes: abstain }] : rows
-  } catch {
-    return null
-  }
 }
 
 // Ranked and budget tallies count points; a quadratic one counts several votes per voter.

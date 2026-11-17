@@ -1913,6 +1913,23 @@
       "day": "{{weekday}}, {{day}}",
       "on_date": "{{date}}"
     },
+    "downloads": {
+      "csv": {
+        "action": "Baixar os resultados em CSV",
+        "note": "Os votos de cada opção, pergunta por pergunta.",
+        "number": "Número da pergunta",
+        "option": "Opção",
+        "question": "Pergunta",
+        "title": "Resultados em CSV",
+        "votes": "Votos"
+      },
+      "pdf": {
+        "action": "Baixar o relatório final em PDF",
+        "note": "Para uma auditoria.",
+        "title": "Relatório final em PDF"
+      },
+      "title": "Baixar os resultados"
+    },
     "empty": {
       "body": "Crie a primeira quando quiser. Você escolhe o que é votado, quem vota e até quando, e publica quando ela estiver pronta.",
       "create": "Criar uma votação",

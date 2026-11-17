@@ -1866,6 +1866,23 @@
       "day": "{{weekday}}, {{day}}",
       "on_date": "{{date}}"
     },
+    "downloads": {
+      "csv": {
+        "action": "Deskargatu emaitzak CSV formatuan",
+        "note": "Aukera bakoitzaren botoak, galderaz galdera.",
+        "number": "Galdera-zenbakia",
+        "option": "Aukera",
+        "question": "Galdera",
+        "title": "Emaitzak CSV formatuan",
+        "votes": "Botoak"
+      },
+      "pdf": {
+        "action": "Deskargatu azken txostena PDF formatuan",
+        "note": "Auditoria baterako.",
+        "title": "Azken txostena PDF formatuan"
+      },
+      "title": "Deskargatu emaitzak"
+    },
     "empty": {
       "body": "Sortu lehena nahi duzunean. Zer bozkatzen den, nork bozkatzen duen eta noiz arte aukeratzen duzu, eta prest dagoenean argitaratzen duzu.",
       "create": "Sortu bozketa bat",

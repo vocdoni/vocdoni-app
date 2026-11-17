@@ -25,14 +25,12 @@ import {
   ChevronDownIcon,
   ChevronLeftIcon,
   CopyIcon,
-  DownloadFileIcon,
   ExternalLinkIcon,
   MoreIcon,
   ViewIcon,
 } from '~theme/icons'
 import { ucfirst } from '~utils/strings'
 import { isTerminalQuestion, type VoteState } from '~utils/vote-state'
-import { useVotingReportPdfDownload } from '../VotingReportPdf/VotingReportPdfButton'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 type HeaderPartProps = { election: VotingProcessResponse; state: VoteState; now: Date }
@@ -272,7 +270,6 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const publicLanguage = usePublicLanguage()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const pdf = useVotingReportPdfDownload(election)
   const stateLabel = useProcessStateLabel()
   const [cancelling, setCancelling] = useState(false)
 
@@ -302,17 +299,6 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
             icon: CopyIcon,
             disabled: isCloning,
             onSelect: () => void cloneAsDraft(election),
-          },
-        ]
-      : []),
-    ...(pdf.report || pdf.isPendingResults
-      ? [
-          {
-            value: 'download-pdf',
-            label: t('process_pdf.download', { defaultValue: 'Election report (PDF)' }),
-            icon: DownloadFileIcon,
-            onSelect: () => void pdf.download(),
-            disabled: !pdf.report || pdf.isGenerating,
           },
         ]
       : []),

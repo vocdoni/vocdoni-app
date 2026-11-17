@@ -1866,6 +1866,23 @@
       "day": "{{weekday}}, {{day}}",
       "on_date": "{{date}}"
     },
+    "downloads": {
+      "csv": {
+        "action": "Download the results in CSV",
+        "note": "The votes of each option, question by question.",
+        "number": "Question number",
+        "option": "Option",
+        "question": "Question",
+        "title": "Results in CSV",
+        "votes": "Votes"
+      },
+      "pdf": {
+        "action": "Download the final report in PDF",
+        "note": "For an audit.",
+        "title": "Final report in PDF"
+      },
+      "title": "Download the results"
+    },
     "empty": {
       "body": "Create the first one whenever you like. You choose what is voted, who votes and until when, and publish it when it is ready.",
       "create": "Create a vote",

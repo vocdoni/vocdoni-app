@@ -1866,6 +1866,23 @@
       "day": "{{weekday}}, {{day}}",
       "on_date": "am {{date}}"
     },
+    "downloads": {
+      "csv": {
+        "action": "Ergebnisse als CSV herunterladen",
+        "note": "Die Stimmen jeder Option, Frage für Frage.",
+        "number": "Fragenummer",
+        "option": "Option",
+        "question": "Frage",
+        "title": "Ergebnisse als CSV",
+        "votes": "Stimmen"
+      },
+      "pdf": {
+        "action": "Abschlussbericht als PDF herunterladen",
+        "note": "Für eine Prüfung.",
+        "title": "Abschlussbericht als PDF"
+      },
+      "title": "Ergebnisse herunterladen"
+    },
     "empty": {
       "body": "Erstelle die erste, wann du willst. Du legst fest, worüber abgestimmt wird, wer abstimmt und bis wann, und veröffentlichst sie, wenn sie bereit ist.",
       "create": "Abstimmung erstellen",

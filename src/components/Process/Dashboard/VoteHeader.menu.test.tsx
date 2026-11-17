@@ -65,7 +65,6 @@ it('ends the vote menu with the destructive cancel and opens the outside pages i
   expect(items.map((item) => item.textContent)).toEqual([
     'Show as voter',
     'Duplicate the vote',
-    'Election report (PDF)',
     'View in explorer',
     'Cancel the vote',
   ])

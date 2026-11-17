@@ -5,6 +5,7 @@ import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { CensusSearch } from './CensusSearch'
 import { useQuestionDockPage } from './summary/by-question/QuestionDock'
 import { SummaryCalendar } from './summary/SummaryCalendar'
+import { SummaryDownloads } from './summary/SummaryDownloads'
 import { SummaryElectoralData } from './summary/SummaryElectoralData'
 import { SUMMARY_COLUMNS, SummaryHero } from './summary/SummaryHero'
 import { SummaryIdle } from './summary/SummaryIdle'
@@ -44,6 +45,7 @@ export const VoteSummary = () => {
       >
         <SummaryQuestions model={model} desktop={desktop} />
         <Stack gap={{ base: '5', md: '6', xl: '4' }} minW='0'>
+          <SummaryDownloads model={model} desktop={desktop} />
           {desktop && !byQuestion && <SummaryElectoralData model={model} />}
           {!byQuestion && <SummaryCalendar model={model} desktop={desktop} />}
           <SummaryShare link={votingLink} desktop={desktop} />

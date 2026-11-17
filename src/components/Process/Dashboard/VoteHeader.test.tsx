@@ -271,7 +271,7 @@ describe('VoteHeader', () => {
         within(menu())
           .getAllByRole('button')
           .map((item) => item.textContent)
-      ).toEqual(['Show as voter', 'Duplicate the vote', 'Election report (PDF)', 'View in explorer', 'Cancel the vote'])
+      ).toEqual(['Show as voter', 'Duplicate the vote', 'View in explorer', 'Cancel the vote'])
       expect(menu()).toHaveAttribute('data-subtitle', 'Live')
     })
 
