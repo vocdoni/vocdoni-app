@@ -35,6 +35,9 @@ vi.mock('~components/Actions/ActionsContext', async () => {
 })
 vi.mock('./use-clone-as-draft', () => ({ useCloneAsDraft: () => ({ cloneAsDraft, isCloning: false }) }))
 vi.mock('./CensusSearch', () => ({ CensusSearch: () => <div>CensusSearch</div> }))
+vi.mock('~queries/question-status', () => ({
+  useQuestionStatusAction: () => ({ change: vi.fn(), isBusy: false }),
+}))
 
 const PROTOCOL = {
   maxCount: 1,
@@ -74,6 +77,12 @@ const createProcess = (overrides: Record<string, unknown> = {}) =>
   }) as unknown as VotingProcessResponse
 
 const byQuestion = (questions: unknown[]) => createProcess({ initialStatus: 'PAUSED', questions })
+const byQuestionReady = () =>
+  createProcess({
+    initialStatus: 'PAUSED',
+    startDate: '2099-01-01T10:00:00Z',
+    questions: [question('q1', 'PAUSED'), question('q2', 'PAUSED'), question('q3', 'PAUSED')],
+  })
 
 const renderSummary = (election: VotingProcessResponse, voteCount?: number) => {
   currentElection = election
@@ -319,77 +328,58 @@ describe('VoteSummary', () => {
       expect(screen.getByText('live, during the vote')).toBeInTheDocument()
     })
 
-    it('shows each question on one line with its votes and state, and the counts in the header', () => {
+    it('runs the questions from Summary: counts, next step and the open question with its buttons', () => {
       renderSummary(byQuestion(questions), 200)
 
       expect(screen.getByText('1 closed · 1 open · 1 to open')).toBeInTheDocument()
-      // The bars carry the result; the line says no verdict.
-      expect(screen.queryByText('150 to 50')).not.toBeInTheDocument()
-      expect(screen.getByText('200 · 64%')).toBeInTheDocument()
-      expect(screen.getByText('120 · 38%')).toBeInTheDocument()
-      expect(screen.getByText('Closed')).toBeInTheDocument()
-      expect(screen.getByText('To open')).toBeInTheDocument()
-      expect(screen.getByRole('link', { name: 'Manage questions' })).toHaveAttribute(
-        'href',
-        '/admin/process/0xabc/manage'
-      )
+      expect(screen.getByText('Next step: close question 2')).toBeInTheDocument()
+      // The closed line says its turnout, never a verdict.
+      expect(screen.getByText(textContent('64% turnout'))).toBeInTheDocument()
+      expect(screen.queryByText(/150 to 50/)).not.toBeInTheDocument()
+      expect(screen.getByText('Turnout: 120 of 312')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Pause: question 2, Question q2' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Close: question 2, Question q2' })).toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: 'Manage questions' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('region', { name: 'Vote controls' })).not.toBeInTheDocument()
     })
 
-    it('draws a bar per choice under each opened question with a public tally, the top one in bold once final', () => {
+    it('draws the bars of an open question with a public tally, and of a closed one once opened', () => {
       renderSummary(
         byQuestion([
           question('q1', 'ENDED', 200, ['150', '50']),
           question('q2', 'ONGOING', 120, ['70', '50']),
-          { ...question('q3', 'ONGOING', 30, ['20', '10']), secretUntilTheEnd: true },
-          question('q4', 'PAUSED', 40, ['30', '10']),
-          question('q5', 'PAUSED', 0, ['0', '0']),
-        ]),
-        200
-      )
-      const bars = (name: string) => screen.queryAllByRole('progressbar', { name })
-
-      expect(bars('Yes, 150 votes, 75%')).toHaveLength(1)
-      expect(bars('No, 50 votes, 25%')).toHaveLength(1)
-      expect(bars('Yes, 70 votes, 58%')).toHaveLength(1)
-      expect(bars('Yes, 30 votes, 75%')).toHaveLength(1)
-      // A secret tally stays hidden while open; a question still to open has nothing to draw.
-      expect(bars('Yes, 20 votes, 67%')).toHaveLength(0)
-      expect(bars('Yes, 0 votes, 0%')).toHaveLength(0)
-      // The plain layout: no check column; only the closed question's losing bar is dimmed.
-      expect(screen.queryByRole('img', { name: 'Winning choice' })).not.toBeInTheDocument()
-      const dimmed = (name: string) =>
-        getComputedStyle(bars(name)[0].querySelector('[data-part="range"]')!).opacity.includes('outvoted')
-      expect(dimmed('No, 50 votes, 25%')).toBe(true)
-      expect(dimmed('Yes, 150 votes, 75%')).toBe(false)
-      expect(dimmed('No, 50 votes, 42%')).toBe(false)
-    })
-
-    it('says the state and its detail in one line per question on a phone', () => {
-      desktop = false
-      renderSummary(byQuestion(questions), 200)
-
-      expect(screen.getByText('Turnout')).toBeInTheDocument()
-      expect(screen.getByText('Closed. Yes, 150 to 50.')).toBeInTheDocument()
-      expect(screen.getByText('Open. 120 votes.')).toBeInTheDocument()
-      expect(screen.getByText('To open.')).toBeInTheDocument()
-      expect(screen.getByText('3, question by question')).toBeInTheDocument()
-    })
-
-    it('draws the bars on a phone by the same rule as the desktop rows', () => {
-      desktop = false
-      renderSummary(
-        byQuestion([
-          question('q1', 'ENDED', 200, ['150', '50']),
-          { ...question('q2', 'ONGOING', 30, ['20', '10']), secretUntilTheEnd: true },
           question('q3', 'PAUSED', 0, ['0', '0']),
         ]),
         200
       )
       const bars = (name: string) => screen.queryAllByRole('progressbar', { name })
 
-      expect(bars('Yes, 150 votes, 75%')).toHaveLength(1)
-      expect(bars('Yes, 20 votes, 67%')).toHaveLength(0)
-      expect(bars('Yes, 0 votes, 0%')).toHaveLength(0)
+      expect(bars('Yes, 70, 58%')).toHaveLength(1)
+      expect(bars('Yes, 150, 75%')).toHaveLength(0)
+      fireEvent.click(screen.getByRole('button', { name: /^Question 1: Question q1/ }))
+      expect(bars('Yes, 150, 75%')).toHaveLength(1)
+      expect(bars('Yes, 0, 0%')).toHaveLength(0)
+    })
+
+    it('says where it stands in place of the figure on a phone before it starts, with no bottom bar', () => {
+      desktop = false
+      renderSummary(byQuestionReady(), 0)
+
+      expect(screen.getByRole('heading', { name: 'It has not started yet' })).toBeInTheDocument()
+      expect(screen.queryByText('Turnout')).not.toBeInTheDocument()
+      expect(screen.getByText('none open')).toBeInTheDocument()
+      expect(screen.getByText('3, question by question')).toBeInTheDocument()
+      expect(screen.queryByRole('region', { name: 'Vote controls' })).not.toBeInTheDocument()
+    })
+
+    it('docks the open question at the bottom of a phone, with the turnout hero above', () => {
+      desktop = false
+      renderSummary(byQuestion(questions), 200)
+
+      expect(screen.getByText('Turnout')).toBeInTheDocument()
+      expect(screen.getByText('Closed. 64% turnout.')).toBeInTheDocument()
+      expect(screen.getByText('1 closed, 1 open, 1 to open')).toBeInTheDocument()
+      expect(screen.getByRole('region', { name: 'Vote controls' })).toHaveTextContent('2. Question q2')
     })
 
     it('shows a vote paused as a whole, with the held questions paused', () => {

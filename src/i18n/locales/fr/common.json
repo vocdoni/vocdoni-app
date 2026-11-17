@@ -1835,7 +1835,9 @@
     },
     "date": {
       "at": "{{weekday}} {{day}} à {{time}}",
-      "day": "{{weekday}} {{day}}"
+      "at_time": "à {{time}}",
+      "day": "{{weekday}} {{day}}",
+      "on_date": "le {{date}}"
     },
     "empty": {
       "body": "Créez le premier quand vous voulez. Vous choisissez ce qui est voté, qui vote et jusqu'à quand, puis vous le publiez quand il est prêt.",
@@ -1889,9 +1891,12 @@
         "closes": "Se termine le {{date}}.",
         "closes_left": "Se termine le {{date}}. {{left}}.",
         "closes_paused": "Se termine le {{date}}. Le délai continue de courir.",
+        "closes_paused_touch": "Se termine {{end}}. Le délai continue de courir.",
         "ended": "Terminé le {{date}}.",
         "ended_today": "Terminé aujourd'hui, {{day}}, à {{time}}.",
-        "opens": "Ouvre le {{start}} et se termine le {{end}}."
+        "opens": "Ouvre le {{start}} et se termine le {{end}}.",
+        "started_closes": "Commencé {{start}}. Se termine {{end}}.",
+        "starts": "Commence le {{date}}."
       }
     },
     "job": {
@@ -1955,7 +1960,7 @@
     },
     "manage": {
       "abstention": "Abstention",
-      "canceled_note": "Les votes ont été écartés.",
+      "action_label": "{{action}} : question {{number}}, {{title}}",
       "close": "Fermer",
       "close_body_one": "« {{title}} » sera fermée avec le {{votes}} vote qu'elle a maintenant et le résultat sera définitif. Une question fermée ne peut pas être rouverte.",
       "close_body_many": "« {{title}} » sera fermée avec les {{votes}} votes qu'elle a maintenant et le résultat sera définitif. Une question fermée ne peut pas être rouverte.",
@@ -1964,8 +1969,6 @@
       "close_confirm": "Fermer la question {{number}}",
       "close_last_warning": "C'est la dernière question : en la fermant, vous fermez aussi le vote.",
       "close_title": "Fermer la question {{number}} ?",
-      "closed": "Le vote s'est terminé le {{date}}.",
-      "closes": "Le vote se termine le {{date}}. Les questions encore ouvertes seront alors fermées.",
       "count": {
         "canceled_one": "{{count, number}} annulée",
         "canceled_many": "{{count, number}} annulées",
@@ -1993,11 +1996,13 @@
         "title": "La question n'a pas pu changer d'état"
       },
       "held_note": "Arrêtée par la pause du vote.",
+      "kind": "{{kind}}.",
       "locked": "Les résultats s'afficheront à la fermeture de la question.",
       "meta": {
-        "canceled": "Annulée. Les votes ont été écartés.",
+        "canceled": "Annulée.",
         "closed": "Fermée.",
-        "closed_verdict": "Fermée. <b>{{verdict}}</b>.",
+        "closed_turnout": "Fermée. {{percent}} % de participation.",
+        "held": "Arrêtée avec le vote.",
         "not_opened": "Non ouverte. Le vote a été terminé sans l'ouvrir.",
         "to_open": "À ouvrir."
       },
@@ -2009,7 +2014,7 @@
         "resume": "Étape suivante : reprendre la question {{numbers}}",
         "resume_vote": "Étape suivante : reprendre le vote"
       },
-      "not_opened_note": "Le vote a été terminé sans l'ouvrir.",
+      "note_kind": "{{note}} {{kind}}.",
       "one_open_note": "Une seule question peut être ouverte à la fois : tant qu'une question l'est, « Ouvrir » est désactivé sur les autres. Avant l'heure de début aussi.",
       "open": "Ouvrir",
       "pause": "Mettre en pause",
@@ -2018,20 +2023,11 @@
       "provisional": "Résultat provisoire.",
       "question_ruler": "{{voted}} personnes sur {{total}} ont voté, {{percent}} %.",
       "question_ruler_count": "{{voted}} personnes ont voté.",
-      "question_voted": "{{voted}} sur {{total}} ont voté",
-      "question_voted_count": "{{voted}} ont voté",
       "resume": "Reprendre",
-      "ruler_label": "Au moins {{voted}} personnes sur {{total}} ont voté à une question, {{percent}} %.",
-      "ruler_label_count": "Au moins {{voted}} personnes ont voté à une question.",
       "starts": "Le vote démarre le {{date}}.",
-      "strip_label": "État du vote",
-      "summary_link": "Résumé",
       "toggle_hint": "Afficher ou masquer le détail",
       "toggle_number": "Question {{number}} :",
-      "voted_any": "Au moins {{voted}} sur {{total}} ont voté à une question",
-      "voted_any_count": "Au moins {{voted}} ont voté à une question",
-      "winner": "Option gagnante",
-      "winner_tag": "Gagnante"
+      "turnout_share": "{{percent}} % de participation"
     },
     "outcome": {
       "pair": "{{winner}}, {{winnerVotes}} contre {{otherVotes}}",
@@ -2058,7 +2054,6 @@
       "show_as_voter": "Voir comme un électeur",
       "tab": {
         "ballot": "Bulletin",
-        "manage": "Gérer",
         "summary": "Résumé"
       }
     },
@@ -2114,6 +2109,12 @@
         "today_paused_note": "Personne ne peut voter tant que vous ne le reprenez pas."
       },
       "copy_link": "Copier le lien public",
+      "dock": {
+        "label": "Commandes du vote",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}",
+        "vote_paused": "Vote en pause"
+      },
       "electoral_title": "Données du vote",
       "fact": {
         "census_one": "{{count, number}} personne",
@@ -2138,6 +2139,7 @@
         "paused": "En pause. La participation ne bougera pas tant que vous ne le reprenez pas."
       },
       "idle": {
+        "by_question_body": "Quand il commencera, les questions seront fermées et vous les ouvrirez une par une.",
         "canceled_body": "Les votes exprimés ont été écartés. Il n'y a pas de résultats.",
         "canceled_hint": "Vous pouvez le dupliquer pour le convoquer à nouveau.",
         "canceled_title": "Vote annulé",
@@ -2148,6 +2150,7 @@
         "ended_title_many": "Vote terminé avec {{count, number}} votes",
         "ended_title_other": "Vote terminé avec {{count, number}} votes",
         "ended_turnout": "{{percent}} % des inscrits ont voté.",
+        "not_started": "Il n'a pas encore commencé",
         "questions_one": "{{count, number}} question",
         "questions_many": "{{count, number}} questions",
         "questions_other": "{{count, number}} questions",
@@ -2178,7 +2181,8 @@
         "start": "Début",
         "type": "Type"
       },
-      "manage_link": "Gérer les questions",
+      "no_results": "pas de résultats",
+      "none_open": "aucune ouverte",
       "not_voted_one": "<n>{{count}}</n> n'a pas encore voté",
       "not_voted_many": "<n>{{count}}</n> n'ont pas encore voté",
       "not_voted_other": "<n>{{count}}</n> n'ont pas encore voté",
@@ -2190,7 +2194,6 @@
         "by_question": "Personne ne peut voter, et aucune question ne peut être ouverte ni fermée tant que vous ne le reprenez pas. Les votes exprimés sont conservés.",
         "title": "Le vote est en pause."
       },
-      "question_turnout": "{{votes}} · {{percent}} %",
       "question_votes_one": "{{count, number}} vote",
       "question_votes_many": "{{count, number}} votes",
       "question_votes_other": "{{count, number}} votes",
@@ -2199,10 +2202,6 @@
         "none": "Il n'y aura pas de résultats.",
         "public": "Les résultats sont désormais publics.",
         "secret": "Les résultats s'afficheront à la clôture du vote."
-      },
-      "row": {
-        "state": "{{state}}.",
-        "state_detail": "{{state}}. {{detail}}."
       },
       "ruler_label_one": "{{count, number}} personne sur {{total}} a voté, {{percent}} %",
       "ruler_label_many": "{{count, number}} personnes sur {{total}} ont voté, {{percent}} %",

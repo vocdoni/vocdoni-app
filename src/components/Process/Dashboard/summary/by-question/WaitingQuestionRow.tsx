@@ -2,9 +2,10 @@ import { Box, Flex, Stack, Text } from '@chakra-ui/react'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { useVoteText } from '~i18n/use-vote-text'
 import { QuestionRowFrame, RowChevron, RowHead } from './QuestionRow'
-import { ProcessStatus } from '~components/ui/ProcessStatus'
+import { useManageText } from './use-manage-text'
 
 export type WaitingQuestionRowProps = {
   question: VotingProcessQuestion
@@ -12,8 +13,9 @@ export type WaitingQuestionRowProps = {
   state: 'toOpen' | 'notOpened' | 'canceled'
   expanded: boolean
   onToggle: () => void
-  /** The "Open" button, when the question can be opened (or shown disabled before the start). */
+  /** The "Open" button, when the question can be opened (or shown off before the start). */
   action?: ReactNode
+  desktop: boolean
 }
 
 /**
@@ -27,23 +29,21 @@ export const WaitingQuestionRow = ({
   expanded,
   onToggle,
   action,
+  desktop,
 }: WaitingQuestionRowProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
+  const manageText = useManageText()
   const detailId = useId()
   const title = text(question.title)
-  const description = question.description ? text(question.description) : ''
-  const note = {
-    toOpen: '',
-    notOpened: t('votes.manage.not_opened_note', { defaultValue: 'The vote ended without opening it.' }),
-    canceled: t('votes.manage.canceled_note', { defaultValue: 'The votes were discarded.' }),
-  }[state]
   const meta = {
     toOpen: t('votes.manage.meta.to_open', { defaultValue: 'To open.' }),
     notOpened: t('votes.manage.meta.not_opened', { defaultValue: 'Not opened. The vote ended without opening it.' }),
-    canceled: t('votes.manage.meta.canceled', { defaultValue: 'Voided. The votes were discarded.' }),
+    canceled: t('votes.manage.meta.canceled', { defaultValue: 'Voided.' }),
   }[state]
-  const hasDetail = !!(description || note)
+  // Only the desktop board opens these rows, onto the question and how it is answered.
+  const note = desktop ? manageText.note(question) : ''
+  const hasDetail = !!note
 
   return (
     <QuestionRowFrame number={number}>
@@ -89,18 +89,9 @@ export const WaitingQuestionRow = ({
         {hasDetail && (
           <Box id={detailId} hidden={!expanded}>
             {expanded && (
-              <Stack gap='3' pt='0.5'>
-                {description && (
-                  <Text textStyle='note' color='fg.subtle'>
-                    {description}
-                  </Text>
-                )}
-                {note && (
-                  <Text textStyle='note' color='fg.subtle'>
-                    {note}
-                  </Text>
-                )}
-              </Stack>
+              <Text textStyle='note' color='fg.subtle' pt='note'>
+                {note}
+              </Text>
             )}
           </Box>
         )}

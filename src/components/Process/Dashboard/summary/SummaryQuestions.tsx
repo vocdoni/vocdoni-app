@@ -12,9 +12,8 @@ import { Routes } from '~src/router/routes'
 import { isLegacyProcess } from '~src/types/voting-process'
 import { ChevronRightIcon, LockIcon } from '~theme/icons'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
-import { countQuestionStates } from '~utils/vote-state'
-import { useManageText } from '../manage/use-manage-text'
-import { AllAtOnceRow, ByQuestionRow, CompactQuestionRow, showsTally } from './QuestionRows'
+import { ByQuestionCard } from './by-question/ByQuestionCard'
+import { AllAtOnceRow, CompactQuestionRow, showsTally } from './QuestionRows'
 import { SummaryCardHeader } from './SummaryCardHeader'
 import type { SummaryModel } from './use-summary-model'
 
@@ -78,13 +77,11 @@ const useTrackResultsViewed = (model: SummaryModel, visible: boolean) => {
 }
 
 /**
- * The vote's questions. Question by question: one line each on the desktop with its result, votes and state, and
- * how many are in each state in the header. All at once: each question's turnout and blank votes, and when the
- * results show. A phone or tablet lists them with one quiet line each.
+ * The vote's questions. Question by question, the card that runs them (ByQuestionCard). All at once: each question's
+ * turnout and blank votes, and when the results show; a phone or tablet lists them with one quiet line each.
  */
 export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
   const { t } = useTranslation()
-  const manageText = useManageText()
   const titleId = useId()
   const { results } = useElection()
   const { election, byQuestion, state, questionStates } = model
@@ -108,21 +105,17 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
     (undecodable || questions.some((question, index) => showsTally(question, questionStates[index], model)))
   useTrackResultsViewed(model, visible)
 
-  let note: string | undefined
-  if (byQuestion) {
-    // The board counts states only once something has happened: not before the start, not after a cancel.
-    if (state !== 'ready' && state !== 'canceled') note = manageText.counts(countQuestionStates(questionStates), 'card')
-  } else {
-    note = t('votes.summary.all_open', { defaultValue: 'All open at once' })
-  }
+  const countingNote = counting && (
+    <Card.Body py='3'>
+      <Text textStyle='body-sm' color='fg.muted'>
+        {t('votes.results.counting', {
+          defaultValue: 'The vote is closed. The results are being counted and will show here shortly.',
+        })}
+      </Text>
+    </Card.Body>
+  )
 
-  const manage = byQuestion ? (
-    <Link asChild textStyle='control'>
-      <RouterLink to={generatePath(Routes.dashboard.processManage, { id: election.id })}>
-        {t('votes.summary.manage_link', { defaultValue: 'Manage questions' })}
-      </RouterLink>
-    </Link>
-  ) : undefined
+  if (byQuestion) return <ByQuestionCard questions={questions} notice={countingNote} desktop={desktop} />
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
@@ -130,20 +123,11 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
         id={titleId}
         title={t('process.questions')}
         count={election.questions.length}
-        note={note}
-        noteAtEnd={!byQuestion}
-        action={manage}
+        note={t('votes.summary.all_open', { defaultValue: 'All open at once' })}
+        noteAtEnd
         desktop={desktop}
       />
-      {counting && (
-        <Card.Body py='3'>
-          <Text textStyle='body-sm' color='fg.muted'>
-            {t('votes.results.counting', {
-              defaultValue: 'The vote is closed. The results are being counted and will show here shortly.',
-            })}
-          </Text>
-        </Card.Body>
-      )}
+      {countingNote}
       {undecodable ? (
         <Card.Body>
           <ErrorBoundary
@@ -160,11 +144,14 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
       ) : (
         questions.map((question, index) => {
           const row = { question, index, model, state: questionStates[index] }
-          if (!desktop) return <CompactQuestionRow key={question.id} {...row} />
-          return byQuestion ? <ByQuestionRow key={question.id} {...row} /> : <AllAtOnceRow key={question.id} {...row} />
+          return desktop ? (
+            <AllAtOnceRow key={question.id} {...row} />
+          ) : (
+            <CompactQuestionRow key={question.id} {...row} />
+          )
         })
       )}
-      {desktop && !byQuestion && <ResultsLine model={model} />}
+      {desktop && <ResultsLine model={model} />}
     </Card.Root>
   )
 }

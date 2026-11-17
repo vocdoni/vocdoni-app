@@ -7,22 +7,24 @@ export type QuestionRowFrameProps = {
   number: number
   /** Open, paused or held: the accent edge, the number in the accent and, below `lg`, the tinted block. */
   active?: boolean
+  /** Held by a whole-vote pause: below `lg` the block takes the warning tint (M4VoteOne). */
+  held?: boolean
   children: ReactNode
 }
 
 /**
- * One question of the Gestió list: its number, then the row. From `lg` every row is padded 14 22 16 under a rule;
+ * One question of Resum's list: its number, then the row, each under a rule. From `lg` every row is padded 14 22 16;
  * below `lg` the closed and waiting rows are the phone board's compact line and the active one a tinted block.
  */
-export const QuestionRowFrame = ({ number, active = false, children }: QuestionRowFrameProps) => (
+export const QuestionRowFrame = ({ number, active = false, held = false, children }: QuestionRowFrameProps) => (
   <Card.Body
     as='li'
     data-current={active ? '' : undefined}
-    bg={active ? { base: 'bg.subtle', lg: 'transparent' } : undefined}
+    bg={active ? { base: held ? 'status.warning.bg' : 'bg.subtle', lg: 'transparent' } : undefined}
     pt={active ? { base: '3.5', md: '4', lg: '3.5' } : { base: '2.5', lg: '3.5' }}
     pb={active ? { base: '4', md: '4.5', lg: '4' } : { base: '2.5', lg: '4' }}
     pe={active ? undefined : { base: '2', md: '3.5', lg: 'card' }}
-    borderTopWidth={{ lg: 'hairline' }}
+    borderTopWidth='hairline'
     borderColor='border'
   >
     <Grid templateColumns='[{sizes.6} minmax(0, 1fr)]' columnGap={{ base: '2', lg: '0' }} alignItems='start'>

@@ -1,5 +1,5 @@
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
-import { createElection, createQuestion, createQuestionResults } from '../../VotingReportPdf/__fixtures__'
+import { createElection, createQuestion, createQuestionResults } from '../../../VotingReportPdf/__fixtures__'
 import { countRows, deriveRowState, isStepFor, nextManageStep, type RowState } from './row-state'
 
 const LIVE = new Date('2026-01-01T12:00:00Z')

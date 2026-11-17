@@ -1,7 +1,7 @@
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import { deriveQuestionState, type QuestionState } from '~utils/vote-state'
 
-/** What a question row of the Gestió tab shows: a question state, or `held` (open when the whole vote was paused). */
+/** What a question row of Resum shows (question by question): a question state, or `held` (open when the whole vote was paused). */
 export type RowState = QuestionState | 'held'
 
 /** Open, paused or held: the row with the accent edge, the turnout bar and the buttons. */

@@ -1835,7 +1835,9 @@
     },
     "date": {
       "at": "{{weekday}} {{day}} alle {{time}}",
-      "day": "{{weekday}} {{day}}"
+      "at_time": "alle {{time}}",
+      "day": "{{weekday}} {{day}}",
+      "on_date": "{{date}}"
     },
     "empty": {
       "body": "Crea la prima quando vuoi. Scegli su cosa si vota, chi vota e fino a quando, e la pubblichi quando è pronta.",
@@ -1889,9 +1891,12 @@
         "closes": "Si chiude {{date}}.",
         "closes_left": "Si chiude {{date}}. {{left}}.",
         "closes_paused": "Si chiude {{date}}. La scadenza non si ferma.",
+        "closes_paused_touch": "Si chiude {{end}}. Il termine non si ferma.",
         "ended": "Terminata {{date}}.",
         "ended_today": "Terminata oggi, {{day}}, alle {{time}}.",
-        "opens": "Si apre {{start}} e si chiude {{end}}."
+        "opens": "Si apre {{start}} e si chiude {{end}}.",
+        "started_closes": "Iniziata {{start}}. Si chiude {{end}}.",
+        "starts": "Inizia {{date}}."
       }
     },
     "job": {
@@ -1955,7 +1960,7 @@
     },
     "manage": {
       "abstention": "Astensione",
-      "canceled_note": "I voti sono stati scartati.",
+      "action_label": "{{action}}: domanda {{number}}, {{title}}",
       "close": "Chiudi",
       "close_body_one": "«{{title}}» si chiuderà con il {{votes}} voto che ha ora e il risultato sarà definitivo. Una domanda chiusa non si può riaprire.",
       "close_body_many": "«{{title}}» si chiuderà con i {{votes}} voti che ha ora e il risultato sarà definitivo. Una domanda chiusa non si può riaprire.",
@@ -1964,8 +1969,6 @@
       "close_confirm": "Chiudi la domanda {{number}}",
       "close_last_warning": "È l'ultima domanda: chiudendola, si chiude anche la votazione.",
       "close_title": "Chiudere la domanda {{number}}?",
-      "closed": "La votazione si è chiusa il {{date}}.",
-      "closes": "La votazione si chiude {{date}}. Le domande ancora aperte si chiuderanno allora.",
       "count": {
         "canceled_one": "{{count, number}} annullata",
         "canceled_many": "{{count, number}} annullate",
@@ -1993,11 +1996,13 @@
         "title": "Non è stato possibile cambiare la domanda"
       },
       "held_note": "Ferma per la pausa della votazione.",
+      "kind": "{{kind}}.",
       "locked": "I risultati si vedranno alla chiusura della domanda.",
       "meta": {
-        "canceled": "Annullata. I voti sono stati scartati.",
+        "canceled": "Annullata.",
         "closed": "Chiusa.",
-        "closed_verdict": "Chiusa. <b>{{verdict}}</b>.",
+        "closed_turnout": "Chiusa. {{percent}}% di partecipazione.",
+        "held": "Ferma con la votazione.",
         "not_opened": "Non aperta. La votazione è terminata senza aprirla.",
         "to_open": "Da aprire."
       },
@@ -2009,7 +2014,7 @@
         "resume": "Passo successivo: riprendi la domanda {{numbers}}",
         "resume_vote": "Passo successivo: riprendi la votazione"
       },
-      "not_opened_note": "La votazione è terminata senza aprirla.",
+      "note_kind": "{{note}} {{kind}}.",
       "one_open_note": "Può esserci una sola domanda aperta alla volta: finché ce n'è una, «Apri» è disattivato sulle altre. Anche prima dell'ora di inizio.",
       "open": "Apri",
       "pause": "Metti in pausa",
@@ -2018,20 +2023,11 @@
       "provisional": "Risultato provvisorio.",
       "question_ruler": "Hanno votato {{voted}} persone su {{total}}, il {{percent}}%.",
       "question_ruler_count": "Hanno votato {{voted}} persone.",
-      "question_voted": "{{voted}} su {{total}} hanno votato",
-      "question_voted_count": "{{voted}} hanno votato",
       "resume": "Riprendi",
-      "ruler_label": "Almeno {{voted}} persone su {{total}} hanno votato a una domanda, il {{percent}}%.",
-      "ruler_label_count": "Almeno {{voted}} persone hanno votato a una domanda.",
       "starts": "La votazione inizia il {{date}}.",
-      "strip_label": "Stato della votazione",
-      "summary_link": "Riepilogo",
       "toggle_hint": "Mostra o nascondi il dettaglio",
       "toggle_number": "Domanda {{number}}:",
-      "voted_any": "Almeno {{voted}} su {{total}} hanno votato a una domanda",
-      "voted_any_count": "Almeno {{voted}} hanno votato a una domanda",
-      "winner": "Opzione vincente",
-      "winner_tag": "Vincente"
+      "turnout_share": "{{percent}}% di partecipazione"
     },
     "outcome": {
       "pair": "{{winner}}, {{winnerVotes}} a {{otherVotes}}",
@@ -2058,7 +2054,6 @@
       "show_as_voter": "Mostra come votante",
       "tab": {
         "ballot": "Scheda",
-        "manage": "Gestione",
         "summary": "Riepilogo"
       }
     },
@@ -2114,6 +2109,12 @@
         "today_paused_note": "Nessuno può votare finché non la riprendi."
       },
       "copy_link": "Copia il link pubblico",
+      "dock": {
+        "label": "Comandi della votazione",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}",
+        "vote_paused": "Votazione in pausa"
+      },
       "electoral_title": "Dati della votazione",
       "fact": {
         "census_one": "{{count, number}} persona",
@@ -2138,6 +2139,7 @@
         "paused": "In pausa. L’affluenza non cambierà finché non la riprendi."
       },
       "idle": {
+        "by_question_body": "Quando inizia, le domande sono chiuse e le apri una alla volta.",
         "canceled_body": "I voti espressi sono stati scartati. Non ci sono risultati.",
         "canceled_hint": "Puoi duplicarla per convocarla di nuovo.",
         "canceled_title": "Votazione annullata",
@@ -2148,6 +2150,7 @@
         "ended_title_many": "Votazione terminata con {{count, number}} voti",
         "ended_title_other": "Votazione terminata con {{count, number}} voti",
         "ended_turnout": "Ha votato il {{percent}}% del censimento.",
+        "not_started": "Non è ancora iniziata",
         "questions_one": "{{count, number}} domanda",
         "questions_many": "{{count, number}} domande",
         "questions_other": "{{count, number}} domande",
@@ -2178,7 +2181,8 @@
         "start": "Inizio",
         "type": "Tipo"
       },
-      "manage_link": "Gestisci le domande",
+      "no_results": "nessun risultato",
+      "none_open": "nessuna aperta",
       "not_voted_one": "<n>{{count}}</n> non ha ancora votato",
       "not_voted_many": "<n>{{count}}</n> non hanno ancora votato",
       "not_voted_other": "<n>{{count}}</n> non hanno ancora votato",
@@ -2190,7 +2194,6 @@
         "by_question": "Nessuno può votare e nessuna domanda può essere aperta o chiusa finché non la riprendi. I voti espressi restano validi.",
         "title": "La votazione è in pausa."
       },
-      "question_turnout": "{{votes}} · {{percent}}%",
       "question_votes_one": "{{count, number}} voto",
       "question_votes_many": "{{count, number}} voti",
       "question_votes_other": "{{count, number}} voti",
@@ -2199,10 +2202,6 @@
         "none": "Non ci saranno risultati.",
         "public": "I risultati sono già pubblici.",
         "secret": "I risultati si vedranno alla chiusura della votazione."
-      },
-      "row": {
-        "state": "{{state}}.",
-        "state_detail": "{{state}}. {{detail}}."
       },
       "ruler_label_one": "{{count, number}} persona su {{total}} ha votato, {{percent}}%",
       "ruler_label_many": "{{count, number}} persone su {{total}} hanno votato, {{percent}}%",

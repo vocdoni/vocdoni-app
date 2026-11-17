@@ -1800,7 +1800,9 @@
     },
     "date": {
       "at": "{{weekday}}, {{day}} at {{time}}",
-      "day": "{{weekday}}, {{day}}"
+      "at_time": "at {{time}}",
+      "day": "{{weekday}}, {{day}}",
+      "on_date": "{{date}}"
     },
     "empty": {
       "body": "Create the first one whenever you like. You choose what is voted, who votes and until when, and publish it when it is ready.",
@@ -1850,9 +1852,12 @@
         "closes": "Closes {{date}}.",
         "closes_left": "Closes {{date}}. {{left}}.",
         "closes_paused": "Closes {{date}}. The deadline does not stop.",
+        "closes_paused_touch": "Closes {{end}}. The deadline does not stop.",
         "ended": "Ended {{date}}.",
         "ended_today": "Ended today, {{day}}, at {{time}}.",
-        "opens": "Opens {{start}} and closes {{end}}."
+        "opens": "Opens {{start}} and closes {{end}}.",
+        "started_closes": "Started {{start}}. Closes {{end}}.",
+        "starts": "Starts {{date}}."
       }
     },
     "job": {
@@ -1914,7 +1919,7 @@
     },
     "manage": {
       "abstention": "Abstention",
-      "canceled_note": "The votes were discarded.",
+      "action_label": "{{action}}: question {{number}}, {{title}}",
       "close": "Close",
       "close_body_one": "“{{title}}” will close with the {{votes}} vote it has now, and the result will be final. A closed question cannot be reopened.",
       "close_body_other": "“{{title}}” will close with the {{votes}} votes it has now, and the result will be final. A closed question cannot be reopened.",
@@ -1922,8 +1927,6 @@
       "close_confirm": "Close question {{number}}",
       "close_last_warning": "This is the last question: closing it closes the vote too.",
       "close_title": "Close question {{number}}?",
-      "closed": "The vote closed on {{date}}.",
-      "closes": "The vote closes {{date}}. Questions still open will close then.",
       "count": {
         "canceled_one": "{{count, number}} voided",
         "canceled_other": "{{count, number}} voided",
@@ -1945,11 +1948,13 @@
         "title": "The question could not change"
       },
       "held_note": "Held by the pause of the vote.",
+      "kind": "{{kind}}.",
       "locked": "Results will show when the question closes.",
       "meta": {
-        "canceled": "Voided. The votes were discarded.",
+        "canceled": "Voided.",
         "closed": "Closed.",
-        "closed_verdict": "Closed. <b>{{verdict}}</b>.",
+        "closed_turnout": "Closed. {{percent}}% turnout.",
+        "held": "Held with the vote.",
         "not_opened": "Not opened. The vote ended without opening it.",
         "to_open": "To open."
       },
@@ -1960,7 +1965,7 @@
         "resume": "Next step: resume question {{numbers}}",
         "resume_vote": "Next step: resume the vote"
       },
-      "not_opened_note": "The vote ended without opening it.",
+      "note_kind": "{{note}} {{kind}}.",
       "one_open_note": "Only one question can be open at a time: while one is, “Open” is disabled on the others. Before the start time, too.",
       "open": "Open",
       "pause": "Pause",
@@ -1969,20 +1974,11 @@
       "provisional": "Provisional result.",
       "question_ruler": "{{voted}} of {{total}} people voted, {{percent}}%.",
       "question_ruler_count": "{{voted}} people voted.",
-      "question_voted": "{{voted}} of {{total}} voted",
-      "question_voted_count": "{{voted}} voted",
       "resume": "Resume",
-      "ruler_label": "At least {{voted}} of {{total}} people voted on a question, {{percent}}%.",
-      "ruler_label_count": "At least {{voted}} people voted on a question.",
       "starts": "The vote starts {{date}}.",
-      "strip_label": "Vote status",
-      "summary_link": "Summary",
       "toggle_hint": "Show or hide the detail",
       "toggle_number": "Question {{number}}:",
-      "voted_any": "At least {{voted}} of {{total}} voted on a question",
-      "voted_any_count": "At least {{voted}} voted on a question",
-      "winner": "Winning choice",
-      "winner_tag": "Winner"
+      "turnout_share": "{{percent}}% turnout"
     },
     "outcome": {
       "pair": "{{winner}}, {{winnerVotes}} to {{otherVotes}}",
@@ -2008,7 +2004,6 @@
       "show_as_voter": "Show as voter",
       "tab": {
         "ballot": "Ballot",
-        "manage": "Manage",
         "summary": "Summary"
       }
     },
@@ -2061,6 +2056,12 @@
         "today_paused_note": "Nobody can vote until you resume it."
       },
       "copy_link": "Copy the public link",
+      "dock": {
+        "label": "Vote controls",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}",
+        "vote_paused": "Vote paused"
+      },
       "electoral_title": "Voting data",
       "fact": {
         "census_one": "{{count, number}} person",
@@ -2082,6 +2083,7 @@
         "paused": "Paused. Turnout will not move until you resume it."
       },
       "idle": {
+        "by_question_body": "When it starts, the questions start closed and you open them one at a time.",
         "canceled_body": "The votes cast were discarded. There are no results.",
         "canceled_hint": "You can duplicate it to call it again.",
         "canceled_title": "Vote canceled",
@@ -2091,6 +2093,7 @@
         "ended_title_one": "Vote ended with {{count, number}} vote",
         "ended_title_other": "Vote ended with {{count, number}} votes",
         "ended_turnout": "{{percent}}% of the census voted.",
+        "not_started": "It has not started yet",
         "questions_one": "{{count, number}} question",
         "questions_other": "{{count, number}} questions",
         "ready_body": "{{people}} in the census and {{questions}}, all open at once.",
@@ -2117,7 +2120,8 @@
         "start": "Start",
         "type": "Type"
       },
-      "manage_link": "Manage questions",
+      "no_results": "no results",
+      "none_open": "none open",
       "not_voted_one": "<n>{{count}}</n> have not voted yet",
       "not_voted_other": "<n>{{count}}</n> have not voted yet",
       "overview": "Vote summary",
@@ -2127,7 +2131,6 @@
         "by_question": "Nobody can vote, and no question can be opened or closed until you resume it. The votes cast are kept.",
         "title": "The vote is paused."
       },
-      "question_turnout": "{{votes}} · {{percent}}%",
       "question_votes_one": "{{count, number}} vote",
       "question_votes_other": "{{count, number}} votes",
       "results_line": {
@@ -2135,10 +2138,6 @@
         "none": "There will be no results.",
         "public": "The results are public now.",
         "secret": "The results will show when the vote closes."
-      },
-      "row": {
-        "state": "{{state}}.",
-        "state_detail": "{{state}}. {{detail}}."
       },
       "ruler_label_one": "{{count, number}} of {{total}} people voted, {{percent}}%",
       "ruler_label_other": "{{count, number}} of {{total}} people voted, {{percent}}%",

@@ -1,18 +1,20 @@
+import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { useTranslation } from 'react-i18next'
+import { useVoteText } from '~i18n/use-vote-text'
+import { quantity } from '~utils/numbers'
 import type { QuestionStateCounts } from '~utils/vote-state'
+import { questionKind } from '../question-kind'
 import type { ManageStep } from './row-state'
 
 type CountState = keyof QuestionStateCounts
 
-// The questions cards count closed first; the phone band starts with what is open (boards).
-const ORDER: Record<'card' | 'band', CountState[]> = {
-  card: ['closed', 'open', 'paused', 'toOpen', 'notOpened', 'canceled'],
-  band: ['open', 'paused', 'closed', 'toOpen', 'notOpened', 'canceled'],
-}
+// Closed first, as both boards count them.
+const ORDER: CountState[] = ['closed', 'open', 'paused', 'toOpen', 'notOpened', 'canceled']
 
-/** The question counts (Gestió and Resum) and the next-step line of the Gestió tab. */
+/** The question counts, the next step and the lines of Resum's question rows (question by question). */
 export const useManageText = () => {
   const { t, i18n } = useTranslation()
+  const { text } = useVoteText()
 
   const part = (state: CountState, count: number) => {
     switch (state) {
@@ -59,14 +61,45 @@ export const useManageText = () => {
     new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(numbers.map(String))
 
   return {
-    /** "2 closed · 1 open · 1 to open" (card) or "1 open, 2 closed, 1 to open" (band). Held questions count as paused. */
-    counts: (counts: QuestionStateCounts & { held?: number }, where: 'card' | 'band') => {
+    /** "2 closed · 1 open · 1 to open" on the desktop, with commas on a phone or tablet. Held questions count as paused. */
+    counts: (counts: QuestionStateCounts & { held?: number }, desktop: boolean) => {
       const of: QuestionStateCounts = { ...counts, paused: counts.paused + (counts.held ?? 0) }
-      return ORDER[where]
-        .filter((state) => of[state] > 0)
+      return ORDER.filter((state) => of[state] > 0)
         .map((state) => part(state, of[state]))
-        .join(where === 'card' ? ' · ' : ', ')
+        .join(desktop ? ' · ' : ', ')
     },
+    /** The quiet line under a question's title: its text and how it is answered ("One choice, simple majority."). */
+    note: (question: VotingProcessQuestion, withDescription = true) => {
+      const kind = questionKind(t, question)
+      const description = withDescription && question.description ? text(question.description) : ''
+      if (description && kind)
+        return t('votes.manage.note_kind', { defaultValue: '{{note}} {{kind}}.', note: description, kind })
+      if (kind) return t('votes.manage.kind', { defaultValue: '{{kind}}.', kind })
+      return description
+    },
+    /** "Turnout: 172 of 312" over a question's bar, or its votes when the electorate is unknown. */
+    turnout: (votes: number, electorate?: number) =>
+      electorate
+        ? t('votes.summary.answered', {
+            defaultValue: 'Turnout: {{answered}} of {{total}}',
+            answered: quantity(votes),
+            total: quantity(electorate),
+          })
+        : t('votes.summary.question_votes', {
+            defaultValue_one: '{{count, number}} vote',
+            defaultValue_other: '{{count, number}} votes',
+            count: votes,
+          }),
+    /** The bar's accessible name. */
+    turnoutLabel: (votes: number, electorate: number | undefined, percent: number | undefined) =>
+      electorate
+        ? t('votes.manage.question_ruler', {
+            defaultValue: '{{voted}} of {{total}} people voted, {{percent}}%.',
+            voted: quantity(votes),
+            total: quantity(electorate),
+            percent: percent ?? 0,
+          })
+        : t('votes.manage.question_ruler_count', { defaultValue: '{{voted}} people voted.', voted: quantity(votes) }),
     next: (step: ManageStep) => {
       switch (step.action) {
         case 'close':

@@ -1,10 +1,10 @@
 import { Span } from '@chakra-ui/react'
 
-// A number as `quantity()` prints it: digits, with dots, commas or narrow spaces between groups.
-const NUMBER = /(\d+(?:[.,  ]\d+)*)/
+// A number as `quantity()` prints it (digits, with dots, commas or narrow spaces between groups), with its percent sign.
+const NUMBER = /(%?\d+(?:[.,  ]\d+)*(?:[   ]?%)?)/
 
 export type FiguresProps = {
-  /** A translated sentence, such as "At least 229 of 312 voted on a question". */
+  /** A translated sentence, such as "69% turnout". */
   text: string
 }
 

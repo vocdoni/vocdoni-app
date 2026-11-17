@@ -1800,7 +1800,9 @@
     },
     "date": {
       "at": "{{weekday}}, {{day}}, {{time}}",
-      "day": "{{weekday}}, {{day}}"
+      "at_time": "{{time}}etan",
+      "day": "{{weekday}}, {{day}}",
+      "on_date": "{{date}}"
     },
     "empty": {
       "body": "Sortu lehena nahi duzunean. Zer bozkatzen den, nork bozkatzen duen eta noiz arte aukeratzen duzu, eta prest dagoenean argitaratzen duzu.",
@@ -1850,9 +1852,12 @@
         "closes": "Itxiera: {{date}}.",
         "closes_left": "Itxiera: {{date}}. {{left}}.",
         "closes_paused": "Itxiera: {{date}}. Epea ez da gelditzen.",
+        "closes_paused_touch": "Itxiera: {{end}}. Epea ez da gelditzen.",
         "ended": "Amaiera: {{date}}.",
         "ended_today": "Gaur amaitua, {{day}}, {{time}}.",
-        "opens": "Irekiera: {{start}}. Itxiera: {{end}}."
+        "opens": "Irekiera: {{start}}. Itxiera: {{end}}.",
+        "started_closes": "Hasiera: {{start}}. Itxiera: {{end}}.",
+        "starts": "Hasiera: {{date}}."
       }
     },
     "job": {
@@ -1914,7 +1919,7 @@
     },
     "manage": {
       "abstention": "Abstentzioa",
-      "canceled_note": "Botoak baztertu dira.",
+      "action_label": "{{action}}: {{number}}. galdera, {{title}}",
       "close": "Itxi",
       "close_body_one": "«{{title}}» orain duen boto {{votes}}rekin itxiko da eta emaitza behin betikoa izango da. Itxitako galdera ezin da berriro ireki.",
       "close_body_other": "«{{title}}» orain dituen {{votes}} botoekin itxiko da eta emaitza behin betikoa izango da. Itxitako galdera ezin da berriro ireki.",
@@ -1922,8 +1927,6 @@
       "close_confirm": "Itxi {{number}}. galdera",
       "close_last_warning": "Azken galdera da: ixten baduzu, bozketa ere itxi egingo da.",
       "close_title": "{{number}}. galdera itxi?",
-      "closed": "Bozketa {{date}}(e)an itxi zen.",
-      "closes": "Bozketa {{date}} itxiko da. Orduan irekita dauden galderak itxi egingo dira.",
       "count": {
         "canceled_one": "{{count, number}} baliogabetua",
         "canceled_other": "{{count, number}} baliogabetuak",
@@ -1945,11 +1948,13 @@
         "title": "Ezin izan da galdera aldatu"
       },
       "held_note": "Bozketaren pausak geldituta.",
+      "kind": "{{kind}}.",
       "locked": "Emaitzak galdera ixtean ikusiko dira.",
       "meta": {
-        "canceled": "Baliogabetua. Botoak baztertu dira.",
+        "canceled": "Baliogabetua.",
         "closed": "Itxita.",
-        "closed_verdict": "Itxita. <b>{{verdict}}</b>.",
+        "closed_turnout": "Itxita. %{{percent}}eko parte-hartzea.",
+        "held": "Bozketarekin batera geldituta.",
         "not_opened": "Ireki gabea. Bozketa ireki gabe amaitu zen.",
         "to_open": "Irekitzeko."
       },
@@ -1960,7 +1965,7 @@
         "resume": "Hurrengo urratsa: berrekin {{numbers}}. galderari",
         "resume_vote": "Hurrengo urratsa: berrekin bozketari"
       },
-      "not_opened_note": "Bozketa ireki gabe amaitu zen.",
+      "note_kind": "{{note}} {{kind}}.",
       "one_open_note": "Galdera bakarra egon daiteke irekita aldi berean: bat irekita dagoen bitartean, «Ireki» desgaituta agertzen da besteetan. Hasiera-ordua baino lehen ere bai.",
       "open": "Ireki",
       "pause": "Pausatu",
@@ -1969,20 +1974,11 @@
       "provisional": "Behin-behineko emaitza.",
       "question_ruler": "{{total}} pertsonatik {{voted}}k bozkatu dute, %{{percent}}.",
       "question_ruler_count": "{{voted}} pertsonak bozkatu dute.",
-      "question_voted": "{{total}}tik {{voted}}k bozkatu dute",
-      "question_voted_count": "{{voted}}k bozkatu dute",
       "resume": "Berrekin",
-      "ruler_label": "Gutxienez {{total}} pertsonatik {{voted}}k galderaren bat bozkatu dute, %{{percent}}.",
-      "ruler_label_count": "Gutxienez {{voted}} pertsonak galderaren bat bozkatu dute.",
       "starts": "Bozketa {{date}}(e)an hasten da.",
-      "strip_label": "Bozketaren egoera",
-      "summary_link": "Laburpena",
       "toggle_hint": "Erakutsi edo ezkutatu xehetasuna",
       "toggle_number": "{{number}}. galdera:",
-      "voted_any": "Gutxienez {{total}}tik {{voted}}k galderaren bat bozkatu dute",
-      "voted_any_count": "Gutxienez {{voted}}k galderaren bat bozkatu dute",
-      "winner": "Aukera irabazlea",
-      "winner_tag": "Irabazlea"
+      "turnout_share": "%{{percent}}eko parte-hartzea"
     },
     "outcome": {
       "pair": "{{winner}}, {{winnerVotes}} - {{otherVotes}}",
@@ -2008,7 +2004,6 @@
       "show_as_voter": "Erakutsi botogile gisa",
       "tab": {
         "ballot": "Botoa",
-        "manage": "Kudeaketa",
         "summary": "Laburpena"
       }
     },
@@ -2061,6 +2056,12 @@
         "today_paused_note": "Inork ezin du bozkatu berrekin arte."
       },
       "copy_link": "Kopiatu esteka publikoa",
+      "dock": {
+        "label": "Bozketaren kontrolak",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}",
+        "vote_paused": "Bozketa pausatuta"
+      },
       "electoral_title": "Bozketaren datuak",
       "fact": {
         "census_one": "Pertsona {{count, number}}",
@@ -2082,6 +2083,7 @@
         "paused": "Pausatuta. Parte-hartzea ez da mugituko berrekin arte."
       },
       "idle": {
+        "by_question_body": "Hasten denean, galderak itxita egongo dira eta banan-banan irekiko dituzu.",
         "canceled_body": "Emandako botoak baztertu dira. Ez dago emaitzarik.",
         "canceled_hint": "Bikoiztu dezakezu berriro deitzeko.",
         "canceled_title": "Bozketa bertan behera utzita",
@@ -2091,6 +2093,7 @@
         "ended_title_one": "Bozketa boto {{count, number}}rekin amaitu da",
         "ended_title_other": "Bozketa {{count, number}} botorekin amaitu da",
         "ended_turnout": "Erroldearen %{{percent}}k bozkatu du.",
+        "not_started": "Oraindik ez da hasi",
         "questions_one": "galdera {{count, number}}",
         "questions_other": "{{count, number}} galdera",
         "ready_body": "{{people}} erroldean eta {{questions}}, denak batera irekita.",
@@ -2117,7 +2120,8 @@
         "start": "Hasiera",
         "type": "Mota"
       },
-      "manage_link": "Kudeatu galderak",
+      "no_results": "emaitzarik gabe",
+      "none_open": "bat ere ez irekita",
       "not_voted_one": "<n>{{count}}</n>ek ez du oraindik bozkatu",
       "not_voted_other": "<n>{{count}}</n>k ez dute oraindik bozkatu",
       "overview": "Bozketaren laburpena",
@@ -2127,7 +2131,6 @@
         "by_question": "Inork ezin du bozkatu, eta ezin da galderarik ireki edo itxi berrekin arte. Emandako botoak gorde egiten dira.",
         "title": "Bozketa pausatuta dago."
       },
-      "question_turnout": "{{votes}} · %{{percent}}",
       "question_votes_one": "{{count, number}} boto",
       "question_votes_other": "{{count, number}} boto",
       "results_line": {
@@ -2135,10 +2138,6 @@
         "none": "Ez da emaitzarik izango.",
         "public": "Emaitzak publikoak dira jada.",
         "secret": "Emaitzak bozketa ixtean ikusiko dira."
-      },
-      "row": {
-        "state": "{{state}}.",
-        "state_detail": "{{state}}. {{detail}}."
       },
       "ruler_label_one": "{{total}} pertsonatik {{count, number}}k bozkatu dute, {{percent}}%",
       "ruler_label_other": "{{total}} pertsonatik {{count, number}}k bozkatu dute, {{percent}}%",

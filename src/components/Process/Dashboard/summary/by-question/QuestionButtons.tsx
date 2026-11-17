@@ -8,6 +8,8 @@ export type QuestionControls = {
   isLoading: (questionId: string, status: QuestionStatusChange) => boolean
   run: (questionId: string, status: 'ready' | 'paused') => void
   askClose: (questionId: string) => void
+  /** A button's accessible name: its visible label, then the question it acts on (several rows show "Open"). */
+  name: (questionId: string, action: string) => string
 }
 
 type OpenButtonProps = {
@@ -15,14 +17,16 @@ type OpenButtonProps = {
   controls: QuestionControls
   /** The next step: the primary button. */
   primary: boolean
-  /** Before the start: shown off on a phone and a tablet, left out from `lg` (boards). */
-  beforeStart?: boolean
+  /** Before the start or while the vote is paused: off on a phone and a tablet, left out from `lg` (boards). */
+  touchOnly?: boolean
   /**
    * Another question is open or paused (R29), or the vote has not started: the boards' `off` button, which does
    * nothing. `aria-disabled` keeps it focusable, and `reasonId` names the note that says why.
    */
   off?: boolean
   reasonId?: string
+  /** `md` in the phone's bottom bar, where it is a full touch button. */
+  size?: 'row' | 'md'
 }
 
 /** The board's 28px "Open" (`.btn.s28`), 40px below `lg`. */
@@ -30,27 +34,31 @@ export const OpenButton = ({
   questionId,
   controls,
   primary,
-  beforeStart = false,
+  touchOnly = false,
   off = false,
   reasonId,
+  size = 'row',
 }: OpenButtonProps) => {
   const { t } = useTranslation()
-  const unavailable = off || beforeStart
+  const unavailable = off || touchOnly
   const variant = unavailable ? 'off' : primary ? 'solid' : 'outline'
+  const label = t('votes.manage.open', { defaultValue: 'Open' })
   return (
     <Button
+      aria-label={controls.name(questionId, label)}
       variant={variant}
       data-variant={variant}
-      size='row'
+      size={size}
+      flex={size === 'md' ? '1' : undefined}
       flexShrink={0}
-      display={beforeStart ? { lg: 'none' } : undefined}
+      display={touchOnly ? { lg: 'none' } : undefined}
       loading={controls.isLoading(questionId, 'ready')}
       disabled={!unavailable && controls.busy}
       aria-disabled={unavailable || undefined}
       aria-describedby={unavailable ? reasonId : undefined}
       onClick={unavailable ? undefined : () => controls.run(questionId, 'ready')}
     >
-      {t('votes.manage.open', { defaultValue: 'Open' })}
+      {label}
     </Button>
   )
 }
@@ -81,10 +89,15 @@ export const ActiveButtons = ({
   const firstOff = paused && resumeOff
   const first = firstOff ? 'off' : paused && resumePrimary ? 'solid' : 'outline'
   const close = paused ? 'outline' : 'solid'
+  const firstLabel = paused
+    ? t('votes.manage.resume', { defaultValue: 'Resume' })
+    : t('votes.manage.pause', { defaultValue: 'Pause' })
+  const closeLabel = t('votes.manage.close', { defaultValue: 'Close' })
   // `data-variant` says which one is the primary (tests and the e2e suite).
   return (
     <>
       <Button
+        aria-label={controls.name(questionId, firstLabel)}
         variant={first}
         data-variant={first}
         flex={grow}
@@ -94,11 +107,10 @@ export const ActiveButtons = ({
         aria-describedby={firstOff ? reasonId : undefined}
         onClick={firstOff ? undefined : () => controls.run(questionId, status)}
       >
-        {paused
-          ? t('votes.manage.resume', { defaultValue: 'Resume' })
-          : t('votes.manage.pause', { defaultValue: 'Pause' })}
+        {firstLabel}
       </Button>
       <Button
+        aria-label={controls.name(questionId, closeLabel)}
         variant={close}
         data-variant={close}
         flex={grow}
@@ -106,7 +118,7 @@ export const ActiveButtons = ({
         disabled={controls.busy}
         onClick={() => controls.askClose(questionId)}
       >
-        {t('votes.manage.close', { defaultValue: 'Close' })}
+        {closeLabel}
       </Button>
     </>
   )

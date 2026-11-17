@@ -1835,7 +1835,9 @@
     },
     "date": {
       "at": "{{weekday}} {{day}} a las {{time}}",
-      "day": "{{weekday}} {{day}}"
+      "at_time": "a las {{time}}",
+      "day": "{{weekday}} {{day}}",
+      "on_date": "el {{date}}"
     },
     "empty": {
       "body": "Crea la primera cuando quieras. Eliges qué se vota, quién vota y hasta cuándo, y la publicas cuando esté lista.",
@@ -1889,9 +1891,12 @@
         "closes": "Cierra el {{date}}.",
         "closes_left": "Cierra el {{date}}. {{left}}.",
         "closes_paused": "Cierra el {{date}}. El plazo no se detiene.",
+        "closes_paused_touch": "Cierra {{end}}. El plazo no se detiene.",
         "ended": "Finalizada el {{date}}.",
         "ended_today": "Finalizada hoy, {{day}}, a las {{time}}.",
-        "opens": "Se abre el {{start}} y cierra el {{end}}."
+        "opens": "Se abre el {{start}} y cierra el {{end}}.",
+        "started_closes": "Empezó {{start}}. Cierra {{end}}.",
+        "starts": "Empieza el {{date}}."
       }
     },
     "job": {
@@ -1955,7 +1960,7 @@
     },
     "manage": {
       "abstention": "Abstención",
-      "canceled_note": "Los votos se han descartado.",
+      "action_label": "{{action}}: pregunta {{number}}, {{title}}",
       "close": "Cerrar",
       "close_body_one": "«{{title}}» se cerrará con el {{votes}} voto que tiene ahora y el resultado será definitivo. Una pregunta cerrada no se puede volver a abrir.",
       "close_body_many": "«{{title}}» se cerrará con los {{votes}} votos que tiene ahora y el resultado será definitivo. Una pregunta cerrada no se puede volver a abrir.",
@@ -1964,8 +1969,6 @@
       "close_confirm": "Cerrar la pregunta {{number}}",
       "close_last_warning": "Es la última pregunta: al cerrarla, la votación también se cierra.",
       "close_title": "¿Cerrar la pregunta {{number}}?",
-      "closed": "La votación se cerró el {{date}}.",
-      "closes": "La votación cierra el {{date}}. Las preguntas que sigan abiertas se cerrarán entonces.",
       "count": {
         "canceled_one": "{{count, number}} anulada",
         "canceled_many": "{{count, number}} anuladas",
@@ -1993,11 +1996,13 @@
         "title": "No se ha podido cambiar la pregunta"
       },
       "held_note": "Detenida por la pausa de la votación.",
+      "kind": "{{kind}}.",
       "locked": "Los resultados se verán al cerrar la pregunta.",
       "meta": {
-        "canceled": "Anulada. Los votos se han descartado.",
+        "canceled": "Anulada.",
         "closed": "Cerrada.",
-        "closed_verdict": "Cerrada. <b>{{verdict}}</b>.",
+        "closed_turnout": "Cerrada. {{percent}}% de participación.",
+        "held": "Detenida con la votación.",
         "not_opened": "No abierta. La votación se finalizó sin abrirla.",
         "to_open": "Por abrir."
       },
@@ -2009,7 +2014,7 @@
         "resume": "Siguiente paso: reanuda la pregunta {{numbers}}",
         "resume_vote": "Siguiente paso: reanuda la votación"
       },
-      "not_opened_note": "La votación se finalizó sin abrirla.",
+      "note_kind": "{{note}} {{kind}}.",
       "one_open_note": "Solo puede haber una pregunta abierta a la vez: mientras haya una, «Abrir» aparece desactivado en las demás. Antes de la hora de inicio, también.",
       "open": "Abrir",
       "pause": "Pausar",
@@ -2018,20 +2023,11 @@
       "provisional": "Resultado provisional.",
       "question_ruler": "Han votado {{voted}} de {{total}} personas, el {{percent}}%.",
       "question_ruler_count": "Han votado {{voted}} personas.",
-      "question_voted": "{{voted}} de {{total}} han votado",
-      "question_voted_count": "{{voted}} han votado",
       "resume": "Reanudar",
-      "ruler_label": "Al menos {{voted}} de {{total}} personas han votado alguna pregunta, el {{percent}}%.",
-      "ruler_label_count": "Al menos {{voted}} personas han votado alguna pregunta.",
       "starts": "La votación empieza el {{date}}.",
-      "strip_label": "Estado de la votación",
-      "summary_link": "Resumen",
       "toggle_hint": "Muestra u oculta el detalle",
       "toggle_number": "Pregunta {{number}}:",
-      "voted_any": "Al menos {{voted}} de {{total}} han votado alguna pregunta",
-      "voted_any_count": "Al menos {{voted}} han votado alguna pregunta",
-      "winner": "Opción ganadora",
-      "winner_tag": "Ganadora"
+      "turnout_share": "{{percent}}% de participación"
     },
     "outcome": {
       "pair": "{{winner}}, {{winnerVotes}} a {{otherVotes}}",
@@ -2058,7 +2054,6 @@
       "show_as_voter": "Mostrar como votante",
       "tab": {
         "ballot": "Papeleta",
-        "manage": "Gestión",
         "summary": "Resumen"
       }
     },
@@ -2114,6 +2109,12 @@
         "today_paused_note": "Nadie puede votar hasta que la reanudes."
       },
       "copy_link": "Copiar el enlace público",
+      "dock": {
+        "label": "Controles de la votación",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}",
+        "vote_paused": "Votación en pausa"
+      },
       "electoral_title": "Datos electorales",
       "fact": {
         "census_one": "{{count, number}} persona",
@@ -2138,6 +2139,7 @@
         "paused": "En pausa. La participación no se moverá hasta que la reanudes."
       },
       "idle": {
+        "by_question_body": "Cuando empiece, las preguntas empezarán cerradas y las irás abriendo de una en una.",
         "canceled_body": "Los votos emitidos se han descartado. No hay resultados.",
         "canceled_hint": "Puedes duplicarla para volver a convocarla.",
         "canceled_title": "Votación cancelada",
@@ -2148,6 +2150,7 @@
         "ended_title_many": "Votación finalizada con {{count, number}} votos",
         "ended_title_other": "Votación finalizada con {{count, number}} votos",
         "ended_turnout": "Ha votado el {{percent}}% del censo.",
+        "not_started": "Todavía no ha empezado",
         "questions_one": "{{count, number}} pregunta",
         "questions_many": "{{count, number}} preguntas",
         "questions_other": "{{count, number}} preguntas",
@@ -2178,7 +2181,8 @@
         "start": "Inicio",
         "type": "Tipo"
       },
-      "manage_link": "Gestionar las preguntas",
+      "no_results": "sin resultados",
+      "none_open": "ninguna abierta",
       "not_voted_one": "<n>{{count}}</n> todavía no ha votado",
       "not_voted_many": "<n>{{count}}</n> todavía no han votado",
       "not_voted_other": "<n>{{count}}</n> todavía no han votado",
@@ -2190,7 +2194,6 @@
         "by_question": "Nadie puede votar y no se puede abrir ni cerrar ninguna pregunta hasta que la reanudes. Los votos emitidos se conservan.",
         "title": "La votación está en pausa."
       },
-      "question_turnout": "{{votes}} · {{percent}}%",
       "question_votes_one": "{{count, number}} voto",
       "question_votes_many": "{{count, number}} votos",
       "question_votes_other": "{{count, number}} votos",
@@ -2199,10 +2202,6 @@
         "none": "No habrá resultados.",
         "public": "Los resultados ya son públicos.",
         "secret": "Los resultados se verán al cerrar la votación."
-      },
-      "row": {
-        "state": "{{state}}.",
-        "state_detail": "{{state}}. {{detail}}."
       },
       "ruler_label_one": "{{count, number}} de {{total}} personas han votado, {{percent}}%",
       "ruler_label_many": "{{count, number}} de {{total}} personas han votado, {{percent}}%",

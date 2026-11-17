@@ -15,7 +15,9 @@ export const PauseBanner = ({ byQuestion, votes }: { byQuestion: boolean; votes:
         <PauseIcon />
       </Alert.Indicator>
       <Alert.Description>
-        <Span fontWeight='medium-plus'>{t('votes.summary.paused.title', { defaultValue: 'The vote is paused.' })}</Span>{' '}
+        <Span color='fg' fontWeight={{ base: 'semibold', lg: 'medium-plus' }}>
+          {t('votes.summary.paused.title', { defaultValue: 'The vote is paused.' })}
+        </Span>{' '}
         {byQuestion
           ? t('votes.summary.paused.by_question', {
               defaultValue:

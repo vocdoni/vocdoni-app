@@ -3,6 +3,7 @@ import { useIsDesktop } from '~components/ui/useIsMobile'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { CensusSearch } from './CensusSearch'
+import { useQuestionDockPage } from './summary/by-question/QuestionDock'
 import { SummaryCalendar } from './summary/SummaryCalendar'
 import { SummaryElectoralData } from './summary/SummaryElectoralData'
 import { SUMMARY_COLUMNS, SummaryHero } from './summary/SummaryHero'
@@ -12,14 +13,16 @@ import { SummaryShare } from './summary/SummaryShare'
 import { useSummaryModel } from './summary/use-summary-model'
 
 /**
- * Resum: the participation hero (or, for an all-at-once vote that is not running, where it stands), the questions
- * with their results, and beside them the voting data and calendar (all at once, desktop), the voting link and the
- * voter lookup. The desktop follows the V4 boards, a phone or tablet the M4 ones.
+ * Resum: the participation hero (or, for a vote that is not running, where it stands), the questions with their
+ * results (and, question by question, the buttons that run them), and beside them the voting data and calendar (all
+ * at once, desktop), the voting link and the voter lookup. The desktop follows the V4 boards, a phone or tablet the
+ * M4 ones.
  */
 export const VoteSummary = () => {
   const model = useSummaryModel()
   const desktop = useIsDesktop()
   const publicLanguage = usePublicLanguage()
+  const dockPage = useQuestionDockPage()
 
   if (!model) return null
 
@@ -30,7 +33,7 @@ export const VoteSummary = () => {
   const votingLink = `${document.location.origin}${getPublicProcessPath({ id: election.id, language: publicLanguage })}`
 
   return (
-    <Stack gap={{ base: '5', md: '6', lg: '8' }}>
+    <Stack gap={{ base: '5', md: '6', lg: '8' }} css={dockPage}>
       {idle ? <SummaryIdle model={model} /> : <SummaryHero model={model} desktop={desktop} />}
       {/* Two columns only from `xl`, the boards' width: narrower, the question rows would lose their titles. */}
       <Grid

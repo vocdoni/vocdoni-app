@@ -1,4 +1,4 @@
-import { Card, chakra, Flex, Grid, Icon, Stat, Text } from '@chakra-ui/react'
+import { Box, Card, chakra, Flex, Grid, Heading, Icon, Stat, Text } from '@chakra-ui/react'
 import { useId, type ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { CensusRuler } from '~components/ui/CensusRuler'
@@ -28,6 +28,8 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
   const { byQuestion, state, count, total, percent, endDate, now } = model
   // The question-by-question board heads its hero with the vote's state; every other board says "Turnout".
   const headedByState = desktop && byQuestion
+  // Before the start and once canceled, the touch board says where the vote stands in place of the figure.
+  const stateCard = !desktop && byQuestion && (state === 'ready' || state === 'canceled')
 
   let caption: ReactNode = null
   if (total !== undefined) {
@@ -83,53 +85,76 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
     >
       <Grid
         templateColumns={{ base: 'minmax(0, 1fr)', lg: NARROW_COLUMNS, xl: SUMMARY_COLUMNS }}
-        templateAreas={{ base: '"figure" "bar" "facts"', lg: '"figure facts" "bar bar"' }}
+        templateAreas={
+          stateCard ? '"figure" "facts"' : { base: '"figure" "bar" "facts"', lg: '"figure facts" "bar bar"' }
+        }
         columnGap='8'
         rowGap={{ base: '4.5', md: 'card', lg: '0' }}
         px={{ base: '4', md: 'card', lg: '6' }}
         pt={{ base: '4.5', md: 'card', lg: byQuestion ? '6' : 'card' }}
         pb={{ base: '4.5', md: 'card' }}
       >
-        <Stat.Root
-          size='hero'
-          as='div'
-          gridArea='figure'
-          minW='0'
-          justifyContent='space-between'
-          gap={{ base: '4.5', md: 'card', lg: headedByState ? 'hero.compact' : '0' }}
-        >
-          {headedByState ? (
-            <ProcessStatus state={state} alignSelf='flex-start' gap='2' />
-          ) : (
-            <Stat.Label as='div' id={labelId}>
-              {t('votes.summary.turnout', { defaultValue: 'Turnout' })}
-            </Stat.Label>
-          )}
-          <Flex
-            direction={{ base: 'column', md: 'row' }}
-            align={{ base: 'flex-start', md: 'flex-end' }}
-            gap={{ base: '2.5', md: '4.5', lg: '5' }}
+        {stateCard ? (
+          <Box gridArea='figure'>
+            <Heading as='h2' id={labelId} textStyle='state-title'>
+              {state === 'ready'
+                ? t('votes.summary.idle.not_started', { defaultValue: 'It has not started yet' })
+                : t('votes.summary.idle.canceled_title', { defaultValue: 'Vote canceled' })}
+            </Heading>
+            <Text mt='1.5' textStyle='state-body' color='fg.muted'>
+              {state === 'ready'
+                ? t('votes.summary.idle.by_question_body', {
+                    defaultValue: 'When it starts, the questions start closed and you open them one at a time.',
+                  })
+                : t('votes.summary.idle.canceled_body', {
+                    defaultValue: 'The votes cast were discarded. There are no results.',
+                  })}
+            </Text>
+          </Box>
+        ) : (
+          <Stat.Root
+            size='hero'
+            as='div'
+            gridArea='figure'
+            minW='0'
+            justifyContent='space-between'
+            gap={{ base: '4.5', md: 'card', lg: headedByState ? 'hero.compact' : '0' }}
           >
-            {percent !== undefined && (
-              <Stat.ValueText as='div'>
-                {percent}
-                <Stat.ValueUnit>%</Stat.ValueUnit>
-              </Stat.ValueText>
+            {headedByState ? (
+              <ProcessStatus state={state} alignSelf='flex-start' gap='2' />
+            ) : (
+              <Stat.Label as='div' id={labelId}>
+                {t('votes.summary.turnout', { defaultValue: 'Turnout' })}
+              </Stat.Label>
             )}
-            {caption && <Text textStyle='hero-caption'>{caption}</Text>}
-          </Flex>
-        </Stat.Root>
+            <Flex
+              direction={{ base: 'column', md: 'row' }}
+              align={{ base: 'flex-start', md: 'flex-end' }}
+              gap={{ base: '2.5', md: '4.5', lg: '5' }}
+            >
+              {percent !== undefined && (
+                <Stat.ValueText as='div'>
+                  {percent}
+                  <Stat.ValueUnit>%</Stat.ValueUnit>
+                </Stat.ValueText>
+              )}
+              {caption && <Text textStyle='hero-caption'>{caption}</Text>}
+            </Flex>
+          </Stat.Root>
+        )}
         <FactList facts={facts} layout='summary' gridArea='facts' alignSelf='end' />
-        <CensusRuler
-          gridArea='bar'
-          mt={{ lg: byQuestion ? 'hero.compact' : 'hero.ruler' }}
-          value={count}
-          max={total}
-          // The count under the fill only on the all-at-once hero (from lg, by the ruler's own CSS).
-          marker={!byQuestion}
-          closed={state === 'closed' || state === 'canceled'}
-          label={rulerLabel}
-        />
+        {!stateCard && (
+          <CensusRuler
+            gridArea='bar'
+            mt={{ lg: byQuestion ? 'hero.compact' : 'hero.ruler' }}
+            value={count}
+            max={total}
+            // The count under the fill only on the all-at-once hero (from lg, by the ruler's own CSS).
+            marker={!byQuestion}
+            closed={state === 'closed' || state === 'canceled'}
+            label={rulerLabel}
+          />
+        )}
       </Grid>
       {hint && (
         <Flex

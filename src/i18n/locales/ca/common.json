@@ -1835,7 +1835,9 @@
     },
     "date": {
       "at": "{{weekday}} {{day}} a les {{time}}",
-      "day": "{{weekday}} {{day}}"
+      "at_time": "a les {{time}}",
+      "day": "{{weekday}} {{day}}",
+      "on_date": "{{date}}"
     },
     "empty": {
       "body": "Crea la primera quan vulguis. Tries què es vota, qui vota i fins quan, i la publiques quan estigui a punt.",
@@ -1889,9 +1891,12 @@
         "closes": "Tanca {{date}}.",
         "closes_left": "Tanca {{date}}. {{left}}.",
         "closes_paused": "Tanca {{date}}. El termini no s'atura.",
+        "closes_paused_touch": "Tanca {{end}}. El termini no s'atura.",
         "ended": "Finalitzada {{date}}.",
         "ended_today": "Finalitzada avui, {{day}}, a les {{time}}.",
-        "opens": "S'obre {{start}} i tanca {{end}}."
+        "opens": "S'obre {{start}} i tanca {{end}}.",
+        "started_closes": "Va començar {{start}}. Tanca {{end}}.",
+        "starts": "Comença {{date}}."
       }
     },
     "job": {
@@ -1955,7 +1960,7 @@
     },
     "manage": {
       "abstention": "Abstenció",
-      "canceled_note": "Els vots s'han descartat.",
+      "action_label": "{{action}}: pregunta {{number}}, {{title}}",
       "close": "Tanca",
       "close_body_one": "«{{title}}» es tancarà amb el {{votes}} vot que té ara i el resultat serà final. Una pregunta tancada no es pot tornar a obrir.",
       "close_body_many": "«{{title}}» es tancarà amb els {{votes}} vots que té ara i el resultat serà final. Una pregunta tancada no es pot tornar a obrir.",
@@ -1964,8 +1969,6 @@
       "close_confirm": "Tanca la pregunta {{number}}",
       "close_last_warning": "És l'última pregunta: en tancar-la, la votació també es tanca.",
       "close_title": "Vols tancar la pregunta {{number}}?",
-      "closed": "La votació es va tancar el {{date}}.",
-      "closes": "La votació es tanca {{date}}. Les preguntes que quedin obertes es tancaran llavors.",
       "count": {
         "canceled_one": "{{count, number}} anul·lada",
         "canceled_many": "{{count, number}} anul·lades",
@@ -1993,11 +1996,13 @@
         "title": "No s'ha pogut canviar la pregunta"
       },
       "held_note": "Aturada per la pausa de la votació.",
+      "kind": "{{kind}}.",
       "locked": "Els resultats es veuran en tancar la pregunta.",
       "meta": {
-        "canceled": "Anul·lada. Els vots s'han descartat.",
+        "canceled": "Anul·lada.",
         "closed": "Tancada.",
-        "closed_verdict": "Tancada. <b>{{verdict}}</b>.",
+        "closed_turnout": "Tancada. {{percent}}% de participació.",
+        "held": "Aturada amb la votació.",
         "not_opened": "No oberta. La votació es va finalitzar sense obrir-la.",
         "to_open": "Per obrir."
       },
@@ -2009,7 +2014,7 @@
         "resume": "Següent pas: reprèn la pregunta {{numbers}}",
         "resume_vote": "Següent pas: reprèn la votació"
       },
-      "not_opened_note": "La votació es va finalitzar sense obrir-la.",
+      "note_kind": "{{note}} {{kind}}.",
       "one_open_note": "Només hi pot haver una pregunta oberta alhora: mentre n'hi ha una, «Obre» surt desactivat a les altres. Abans de l'hora d'inici, també.",
       "open": "Obre",
       "pause": "Pausa",
@@ -2018,20 +2023,11 @@
       "provisional": "Resultat provisional.",
       "question_ruler": "Han votat {{voted}} de {{total}} persones, el {{percent}}%.",
       "question_ruler_count": "Han votat {{voted}} persones.",
-      "question_voted": "{{voted}} de {{total}} han votat",
-      "question_voted_count": "{{voted}} han votat",
       "resume": "Reprèn",
-      "ruler_label": "Almenys {{voted}} de {{total}} persones han votat alguna pregunta, el {{percent}}%.",
-      "ruler_label_count": "Almenys {{voted}} persones han votat alguna pregunta.",
       "starts": "La votació comença {{date}}.",
-      "strip_label": "Estat de la votació",
-      "summary_link": "Resum",
       "toggle_hint": "Mostra o amaga el detall",
       "toggle_number": "Pregunta {{number}}:",
-      "voted_any": "Almenys {{voted}} de {{total}} han votat alguna pregunta",
-      "voted_any_count": "Almenys {{voted}} han votat alguna pregunta",
-      "winner": "Opció guanyadora",
-      "winner_tag": "Guanyadora"
+      "turnout_share": "{{percent}}% de participació"
     },
     "outcome": {
       "pair": "{{winner}}, {{winnerVotes}} a {{otherVotes}}",
@@ -2058,7 +2054,6 @@
       "show_as_voter": "Mostra-la com a votant",
       "tab": {
         "ballot": "Papereta",
-        "manage": "Gestió",
         "summary": "Resum"
       }
     },
@@ -2114,6 +2109,12 @@
         "today_paused_note": "Ningú pot votar fins que la reprenguis."
       },
       "copy_link": "Copia l'enllaç públic",
+      "dock": {
+        "label": "Controls de la votació",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}",
+        "vote_paused": "Votació en pausa"
+      },
       "electoral_title": "Dades electorals",
       "fact": {
         "census_one": "{{count, number}} persona",
@@ -2138,6 +2139,7 @@
         "paused": "En pausa. La participació no es mourà fins que la reprenguis."
       },
       "idle": {
+        "by_question_body": "Quan comenci, les preguntes començaran tancades i les aniràs obrint d'una en una.",
         "canceled_body": "Els vots emesos s'han descartat. No hi ha resultats.",
         "canceled_hint": "La pots duplicar per tornar-la a convocar.",
         "canceled_title": "Votació cancel·lada",
@@ -2148,6 +2150,7 @@
         "ended_title_many": "Votació finalitzada amb {{count, number}} vots",
         "ended_title_other": "Votació finalitzada amb {{count, number}} vots",
         "ended_turnout": "Ha votat el {{percent}}% del cens.",
+        "not_started": "Encara no ha començat",
         "questions_one": "{{count, number}} pregunta",
         "questions_many": "{{count, number}} preguntes",
         "questions_other": "{{count, number}} preguntes",
@@ -2178,7 +2181,8 @@
         "start": "Inici",
         "type": "Tipus"
       },
-      "manage_link": "Gestiona les preguntes",
+      "no_results": "sense resultats",
+      "none_open": "cap d'oberta",
       "not_voted_one": "<n>{{count}}</n> encara no ha votat",
       "not_voted_many": "<n>{{count}}</n> encara no han votat",
       "not_voted_other": "<n>{{count}}</n> encara no han votat",
@@ -2190,7 +2194,6 @@
         "by_question": "Ningú pot votar i no es pot obrir ni tancar cap pregunta fins que la reprenguis. Els vots emesos es conserven.",
         "title": "La votació està en pausa."
       },
-      "question_turnout": "{{votes}} · {{percent}}%",
       "question_votes_one": "{{count, number}} vot",
       "question_votes_many": "{{count, number}} vots",
       "question_votes_other": "{{count, number}} vots",
@@ -2199,10 +2202,6 @@
         "none": "No hi haurà resultats.",
         "public": "Els resultats ja són públics.",
         "secret": "Els resultats es veuran en tancar la votació."
-      },
-      "row": {
-        "state": "{{state}}.",
-        "state_detail": "{{state}}. {{detail}}."
       },
       "ruler_label_one": "{{count, number}} de {{total}} persones han votat, {{percent}}%",
       "ruler_label_many": "{{count, number}} de {{total}} persones han votat, {{percent}}%",

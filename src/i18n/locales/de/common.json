@@ -1800,7 +1800,9 @@
     },
     "date": {
       "at": "{{weekday}}, {{day}} um {{time}}",
-      "day": "{{weekday}}, {{day}}"
+      "at_time": "um {{time}}",
+      "day": "{{weekday}}, {{day}}",
+      "on_date": "am {{date}}"
     },
     "empty": {
       "body": "Erstelle die erste, wann du willst. Du legst fest, worüber abgestimmt wird, wer abstimmt und bis wann, und veröffentlichst sie, wenn sie bereit ist.",
@@ -1850,9 +1852,12 @@
         "closes": "Endet am {{date}}.",
         "closes_left": "Endet am {{date}}. {{left}}.",
         "closes_paused": "Endet am {{date}}. Die Frist läuft weiter.",
+        "closes_paused_touch": "Endet {{end}}. Die Frist läuft weiter.",
         "ended": "Beendet am {{date}}.",
         "ended_today": "Heute beendet, {{day}}, um {{time}}.",
-        "opens": "Beginnt am {{start}} und endet am {{end}}."
+        "opens": "Beginnt am {{start}} und endet am {{end}}.",
+        "started_closes": "Begonnen {{start}}. Endet {{end}}.",
+        "starts": "Beginnt am {{date}}."
       }
     },
     "job": {
@@ -1914,7 +1919,7 @@
     },
     "manage": {
       "abstention": "Enthaltung",
-      "canceled_note": "Die Stimmen wurden verworfen.",
+      "action_label": "{{action}}: Frage {{number}}, {{title}}",
       "close": "Schließen",
       "close_body_one": "„{{title}}“ wird mit der {{votes}} Stimme geschlossen, die sie jetzt hat, und das Ergebnis ist endgültig. Eine geschlossene Frage kann nicht wieder geöffnet werden.",
       "close_body_other": "„{{title}}“ wird mit den {{votes}} Stimmen geschlossen, die sie jetzt hat, und das Ergebnis ist endgültig. Eine geschlossene Frage kann nicht wieder geöffnet werden.",
@@ -1922,8 +1927,6 @@
       "close_confirm": "Frage {{number}} schließen",
       "close_last_warning": "Das ist die letzte Frage: Wenn du sie schließt, wird auch die Abstimmung geschlossen.",
       "close_title": "Frage {{number}} schließen?",
-      "closed": "Die Abstimmung wurde am {{date}} beendet.",
-      "closes": "Die Abstimmung endet am {{date}}. Fragen, die dann noch offen sind, werden geschlossen.",
       "count": {
         "canceled_one": "{{count, number}} ungültig",
         "canceled_other": "{{count, number}} ungültig",
@@ -1945,11 +1948,13 @@
         "title": "Die Frage konnte nicht geändert werden"
       },
       "held_note": "Durch die Pause der Abstimmung angehalten.",
+      "kind": "{{kind}}.",
       "locked": "Die Ergebnisse sind sichtbar, wenn die Frage geschlossen wird.",
       "meta": {
-        "canceled": "Ungültig. Die Stimmen wurden verworfen.",
+        "canceled": "Ungültig.",
         "closed": "Geschlossen.",
-        "closed_verdict": "Geschlossen. <b>{{verdict}}</b>.",
+        "closed_turnout": "Geschlossen. {{percent}} % Beteiligung.",
+        "held": "Mit der Abstimmung angehalten.",
         "not_opened": "Nicht geöffnet. Die Abstimmung wurde beendet, ohne sie zu öffnen.",
         "to_open": "Zu öffnen."
       },
@@ -1960,7 +1965,7 @@
         "resume": "Nächster Schritt: Frage {{numbers}} fortsetzen",
         "resume_vote": "Nächster Schritt: Abstimmung fortsetzen"
       },
-      "not_opened_note": "Die Abstimmung wurde beendet, ohne sie zu öffnen.",
+      "note_kind": "{{note}} {{kind}}.",
       "one_open_note": "Es kann immer nur eine Frage offen sein: Solange eine offen ist, ist „Öffnen“ bei den anderen deaktiviert. Vor der Startzeit ebenfalls.",
       "open": "Öffnen",
       "pause": "Pausieren",
@@ -1969,20 +1974,11 @@
       "provisional": "Vorläufiges Ergebnis.",
       "question_ruler": "{{voted}} von {{total}} Personen haben abgestimmt, {{percent}} %.",
       "question_ruler_count": "{{voted}} Personen haben abgestimmt.",
-      "question_voted": "{{voted}} von {{total}} haben abgestimmt",
-      "question_voted_count": "{{voted}} haben abgestimmt",
       "resume": "Fortsetzen",
-      "ruler_label": "Mindestens {{voted}} von {{total}} Personen haben bei einer Frage abgestimmt, {{percent}} %.",
-      "ruler_label_count": "Mindestens {{voted}} Personen haben bei einer Frage abgestimmt.",
       "starts": "Die Abstimmung beginnt am {{date}}.",
-      "strip_label": "Stand der Abstimmung",
-      "summary_link": "Zusammenfassung",
       "toggle_hint": "Details ein- oder ausblenden",
       "toggle_number": "Frage {{number}}:",
-      "voted_any": "Mindestens {{voted}} von {{total}} haben bei einer Frage abgestimmt",
-      "voted_any_count": "Mindestens {{voted}} haben bei einer Frage abgestimmt",
-      "winner": "Gewinnende Option",
-      "winner_tag": "Gewinner"
+      "turnout_share": "{{percent}} % Beteiligung"
     },
     "outcome": {
       "pair": "{{winner}}, {{winnerVotes}} zu {{otherVotes}}",
@@ -2008,7 +2004,6 @@
       "show_as_voter": "Als Wählende Person ansehen",
       "tab": {
         "ballot": "Stimmzettel",
-        "manage": "Verwalten",
         "summary": "Zusammenfassung"
       }
     },
@@ -2061,6 +2056,12 @@
         "today_paused_note": "Niemand kann abstimmen, bis du sie fortsetzt."
       },
       "copy_link": "Öffentlichen Link kopieren",
+      "dock": {
+        "label": "Steuerung der Abstimmung",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}",
+        "vote_paused": "Abstimmung pausiert"
+      },
       "electoral_title": "Abstimmungsdaten",
       "fact": {
         "census_one": "{{count, number}} Person",
@@ -2082,6 +2083,7 @@
         "paused": "Pausiert. Die Beteiligung ändert sich nicht, bis du sie fortsetzt."
       },
       "idle": {
+        "by_question_body": "Wenn sie beginnt, sind die Fragen geschlossen, und du öffnest sie eine nach der anderen.",
         "canceled_body": "Die abgegebenen Stimmen wurden verworfen. Es gibt keine Ergebnisse.",
         "canceled_hint": "Du kannst sie duplizieren, um sie erneut anzusetzen.",
         "canceled_title": "Abstimmung abgebrochen",
@@ -2091,6 +2093,7 @@
         "ended_title_one": "Abstimmung mit {{count, number}} Stimme beendet",
         "ended_title_other": "Abstimmung mit {{count, number}} Stimmen beendet",
         "ended_turnout": "{{percent}} % der Teilnehmerliste haben abgestimmt.",
+        "not_started": "Sie hat noch nicht begonnen",
         "questions_one": "{{count, number}} Frage",
         "questions_other": "{{count, number}} Fragen",
         "ready_body": "{{people}} auf der Teilnehmerliste und {{questions}}, alle gleichzeitig offen.",
@@ -2117,7 +2120,8 @@
         "start": "Beginn",
         "type": "Art"
       },
-      "manage_link": "Fragen verwalten",
+      "no_results": "keine Ergebnisse",
+      "none_open": "keine offen",
       "not_voted_one": "<n>{{count}}</n> hat noch nicht abgestimmt",
       "not_voted_other": "<n>{{count}}</n> haben noch nicht abgestimmt",
       "overview": "Zusammenfassung der Abstimmung",
@@ -2127,7 +2131,6 @@
         "by_question": "Niemand kann abstimmen, und keine Frage kann geöffnet oder geschlossen werden, bis du sie fortsetzt. Die abgegebenen Stimmen bleiben erhalten.",
         "title": "Die Abstimmung ist pausiert."
       },
-      "question_turnout": "{{votes}} · {{percent}} %",
       "question_votes_one": "{{count, number}} Stimme",
       "question_votes_other": "{{count, number}} Stimmen",
       "results_line": {
@@ -2135,10 +2138,6 @@
         "none": "Es wird keine Ergebnisse geben.",
         "public": "Die Ergebnisse sind jetzt öffentlich.",
         "secret": "Die Ergebnisse sind sichtbar, wenn die Abstimmung endet."
-      },
-      "row": {
-        "state": "{{state}}.",
-        "state_detail": "{{state}}. {{detail}}."
       },
       "ruler_label_one": "{{count, number}} von {{total}} Personen hat abgestimmt, {{percent}} %",
       "ruler_label_other": "{{count, number}} von {{total}} Personen haben abgestimmt, {{percent}} %",
