@@ -7,7 +7,6 @@ import { createElection, createQuestion, createQuestionResults } from '../../../
 import { ByQuestionCard } from './ByQuestionCard'
 
 const change = vi.fn()
-const resumeVote = vi.fn()
 let questionStatus: { pending?: { questionId: string; status: string }; isBusy: boolean } = { isBusy: false }
 let canManage = true
 let phone = false
@@ -18,9 +17,6 @@ vi.mock('~queries/question-status', () => ({
   useQuestionStatusAction: () => ({ change, ...questionStatus }),
 }))
 vi.mock('~components/ui/useIsMobile', () => ({ useIsMobile: () => phone, useIsDesktop: () => !phone }))
-vi.mock('~components/Actions', () => ({
-  ActionContinue: ({ children }: { children: ReactNode }) => <button onClick={resumeVote}>{children}</button>,
-}))
 // The provider's values, with the real state derivation (no pause memory: what another device sees).
 vi.mock('~components/Actions/ActionsContext', async () => {
   const { deriveVoteState, pausedHoldIds } = await import('~utils/vote-state')
@@ -104,7 +100,6 @@ const queryButton = (label: string) => screen.queryByRole('button', { name: new 
 describe('ByQuestionCard', () => {
   beforeEach(() => {
     change.mockReset()
-    resumeVote.mockReset()
     questionStatus = { isBusy: false }
     canManage = true
     phone = false
@@ -164,10 +159,10 @@ describe('ByQuestionCard', () => {
       expect(change).not.toHaveBeenCalled()
     })
 
-    it('pauses questions, and closes only after a primary confirm', async () => {
+    it('has no pause of its own on a question (the header pauses the vote), and closes only after a primary confirm', async () => {
       show(build())
-      await userEvent.click(button('Pause'))
-      expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'paused' })
+      expect(queryButton('Pause')).not.toBeInTheDocument()
+      expect(queryButton('Resume')).not.toBeInTheDocument()
       expect(button('Close')).toHaveAccessibleName('Close: question 2, Board')
       expect(button('Close')).toHaveAttribute('data-variant', 'solid')
       await userEvent.click(button('Close'))
@@ -183,15 +178,13 @@ describe('ByQuestionCard', () => {
     })
 
     it('locks every status button while busy and shows progress on the pending one only', () => {
-      questionStatus = { isBusy: true, pending: { questionId: 'q2', status: 'paused' } }
+      questionStatus = { isBusy: true, pending: { questionId: 'q2', status: 'ended' } }
       show(build())
       // A loading Chakra button swaps its label for a spinner, so find the pending one by its state.
       const loading = document.querySelectorAll('[data-loading]')
       expect(loading).toHaveLength(1)
       expect(loading[0]).toBeDisabled()
-      expect(loading[0]).toHaveTextContent('Pause')
-      expect(button('Close')).toBeDisabled()
-      expect(button('Close')).not.toHaveAttribute('data-loading')
+      expect(loading[0]).toHaveTextContent('Close')
       // Open is off anyway while question 2 is open (R29).
       expect(button('Open')).toHaveAttribute('aria-disabled', 'true')
     })
@@ -281,7 +274,7 @@ describe('ByQuestionCard', () => {
       expect(change).toHaveBeenCalledWith({ questionId: 'q3', status: 'ready' })
     })
 
-    it('draws Resume off on a paused question while another is open, and says nobody can vote on it', async () => {
+    it('draws Open off on a paused question while another is open, and says nobody can vote on it', async () => {
       show(
         withQuestions([
           createQuestion({ id: 'q1', status: 'ONGOING', results: createQuestionResults({ voteCount: 4 }) }),
@@ -290,10 +283,12 @@ describe('ByQuestionCard', () => {
       )
       expect(screen.getByText('Next step: close question 1')).toBeInTheDocument()
       expect(screen.getByText('No one can vote on it.')).toBeInTheDocument()
-      const resume = button('Resume')
-      expect(resume).toHaveAttribute('data-variant', 'off')
-      expect(resume).toHaveAccessibleDescription(NOTE)
-      await userEvent.click(resume)
+      expect(queryButton('Resume')).not.toBeInTheDocument()
+      const reopen = button('Open')
+      expect(reopen).toHaveAccessibleName(/^Open: question 2, /)
+      expect(reopen).toHaveAttribute('data-variant', 'off')
+      expect(reopen).toHaveAccessibleDescription(NOTE)
+      await userEvent.click(reopen)
       expect(change).not.toHaveBeenCalled()
       expect(buttons('Close')[0]).toBeEnabled()
     })
@@ -381,12 +376,12 @@ describe('ByQuestionCard', () => {
       expect(screen.getByRole('progressbar', { name: /^Approve, 7 votes/ })).toBeInTheDocument()
     })
 
-    it('docks the open question with Pause and Close, the same buttons as its row', async () => {
+    it('docks the open question with Close, the same button as its row, and no pause', async () => {
       show(build())
       const bar = within(dock()!)
       expect(bar.getByText('2. Board')).toBeInTheDocument()
       expect(bar.getByText('Open, 172 votes')).toBeInTheDocument()
-      expect(bar.getByRole('button', { name: 'Pause: question 2, Board' })).toHaveAttribute('data-variant', 'outline')
+      expect(bar.queryByRole('button', { name: /^Pause/ })).not.toBeInTheDocument()
       expect(bar.getByRole('button', { name: 'Close: question 2, Board' })).toHaveAttribute('data-variant', 'solid')
       await userEvent.click(bar.getByRole('button', { name: 'Close: question 2, Board' }))
       expect(await screen.findByRole('dialog')).toHaveTextContent('Close question 2?')
@@ -408,7 +403,7 @@ describe('ByQuestionCard', () => {
       expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'ready' })
     })
 
-    it('docks Resume the vote while the vote is paused, and shows the held question tinted with its line', async () => {
+    it('has no bar while the vote is paused (the header resumes it), and shows the held question tinted with its line', () => {
       show(
         withQuestions([
           createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
@@ -416,10 +411,7 @@ describe('ByQuestionCard', () => {
           createQuestion({ id: 'q3', status: 'PAUSED', results: undefined }),
         ])
       )
-      const bar = within(dock()!)
-      expect(bar.getByText('Vote paused')).toBeInTheDocument()
-      await userEvent.click(bar.getByRole('button', { name: 'Resume the vote' }))
-      expect(resumeVote).toHaveBeenCalled()
+      expect(dock()).not.toBeInTheDocument()
       expect(screen.getByText(/^Held with the vote\./)).toBeInTheDocument()
       expect(button('Open')).toHaveAttribute('aria-disabled', 'true')
     })
@@ -453,7 +445,7 @@ describe('ByQuestionCard', () => {
       phone = false
       show(build(), false)
       expect(dock()).not.toBeInTheDocument()
-      expect(button('Pause')).toBeInTheDocument()
+      expect(button('Close')).toBeInTheDocument()
     })
   })
 })

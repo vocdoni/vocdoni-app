@@ -6,13 +6,16 @@ import { QueryKeys } from './keys'
 import { useIsStatusJobRunning, useStatusJob, type StatusJobOutcome } from './status-job'
 import { readRemembered } from './vote-pause'
 
-/** The transitions an organiser makes on one question (`canceled` is a whole-vote action). */
-export type QuestionStatusChange = Extract<SetElectionStatusRequest['status'], 'ready' | 'paused' | 'ended'>
+/**
+ * The transitions an organiser makes on one question: open or reopen it (`ready`) and close it (`ended`). Pausing is the
+ * whole vote's (`useVotePause`) and canceling a whole-vote action.
+ */
+export type QuestionStatusChange = Extract<SetElectionStatusRequest['status'], 'ready' | 'ended'>
 
 export type QuestionStatusVariables = { questionId: string; status: QuestionStatusChange }
 
 /**
- * Opens (`ready`), pauses or closes (`ended`) one question of a vote through the shared status-job runner. `isBusy` is
+ * Opens (`ready`) or closes (`ended`) one question of a vote through the shared status-job runner. `isBusy` is
  * true while any status change of this vote runs, so every other status button on the page can disable itself.
  * Closing a question is confirmed by the caller (ConfirmDialog), not here.
  */

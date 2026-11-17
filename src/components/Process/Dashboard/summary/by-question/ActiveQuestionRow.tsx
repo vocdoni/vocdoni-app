@@ -17,7 +17,7 @@ export type ActiveQuestionRowProps = {
   state: 'open' | 'paused' | 'held'
   electorate?: number
   weighted: boolean
-  /** Pause and Close, or Resume and Close; none while the vote is paused as a whole. */
+  /** Close, or Open and Close on a paused question; none while the vote is paused as a whole. */
   buttons?: ReactNode
   desktop: boolean
 }

@@ -442,7 +442,7 @@ describe('VoteSummary', () => {
       expect(screen.getByText(textContent('64% turnout'))).toBeInTheDocument()
       expect(screen.queryByText(/150 to 50/)).not.toBeInTheDocument()
       expect(screen.getByText('Turnout: 120 of 312')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Pause: question 2, Question q2' })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /^Pause: / })).not.toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Close: question 2, Question q2' })).toBeInTheDocument()
       expect(screen.queryByRole('link', { name: 'Manage questions' })).not.toBeInTheDocument()
       expect(screen.queryByRole('region', { name: 'Vote controls' })).not.toBeInTheDocument()

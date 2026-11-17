@@ -4,7 +4,6 @@ import { useElection } from '@vocdoni/react-components'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { useId, useMemo, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActionContinue } from '~components/Actions'
 import { useActions } from '~components/Actions/ActionsContext'
 import { useProcessStateLabel } from '~components/ui/ProcessStatus'
 import { useIsMobile } from '~components/ui/useIsMobile'
@@ -114,7 +113,7 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
   }
 
   const toggle = (id: string) => () => setExpanded((current) => ({ ...current, [id]: !current[id] }))
-  // One question open at a time (R29): Open (or Resume) is the `off` button on the others, and says why.
+  // One question open at a time (R29): Open is the `off` button on the others, and says why.
   const offs = election.questions.map((question) => {
     const block = openQuestionBlock(election, question, now, remembered)
     return block === 'otherActive' || block === 'beforeStart'
@@ -128,8 +127,8 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
       questionId={question.id}
       controls={controls}
       paused={state === 'paused'}
-      resumePrimary={isStepFor(step, 'resume', index + 1)}
-      resumeOff={offs[index]}
+      openPrimary={isStepFor(step, 'open', index + 1)}
+      openOff={offs[index]}
       reasonId={reasonId}
     />
   )
@@ -145,10 +144,11 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
     />
   )
 
-  // The phone's bottom bar: the vote's pause, else the active question, else the next one to open. None before the
-  // start (the API has no "start now"), once it is over, or for someone who cannot change it.
+  // The phone's bottom bar: the active question, else the next one to open. None before the start (the API has no
+  // "start now"), while the vote is paused (the header's "Resume" is the one control), once it is over, or for someone
+  // who cannot change it.
   let dock: { title: string; note?: string; buttons: ReactNode } | null = null
-  if (phone && canManage && underWay) {
+  if (phone && canManage && underWay && !isHeld) {
     const activeIndex = states.findIndex((state) => state === 'open' || state === 'paused')
     const dockTitle = (index: number) =>
       t('votes.summary.dock.title', {
@@ -156,14 +156,7 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
         number: index + 1,
         title: text(election.questions[index].title),
       })
-    if (isHeld) {
-      dock = {
-        title: t('votes.summary.dock.vote_paused', { defaultValue: 'Vote paused' }),
-        buttons: (
-          <ActionContinue flex='1'>{t('votes.page.resume_vote', { defaultValue: 'Resume the vote' })}</ActionContinue>
-        ),
-      }
-    } else if (activeIndex >= 0) {
+    if (activeIndex >= 0) {
       const state = states[activeIndex]
       const question = questions[activeIndex]
       dock = {
@@ -244,7 +237,7 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
           })}
         </Box>
       </Card.Root>
-      {/* What an `off` Open or Resume describes itself with; the boards draw it nowhere. */}
+      {/* What an `off` Open describes itself with; the boards draw it nowhere. */}
       <VisuallyHidden id={reasonId}>
         {t('votes.manage.one_open_note', {
           defaultValue:

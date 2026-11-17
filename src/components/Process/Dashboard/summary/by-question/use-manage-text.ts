@@ -114,11 +114,6 @@ export const useManageText = () => {
             defaultValue: 'Next step: open question {{numbers}}',
             numbers: list(step.numbers),
           })
-        case 'resume':
-          return t('votes.manage.next.resume', {
-            defaultValue: 'Next step: resume question {{numbers}}',
-            numbers: list(step.numbers),
-          })
         case 'resumeVote':
           return t('votes.manage.next.resume_vote', { defaultValue: 'Next step: resume the vote' })
       }

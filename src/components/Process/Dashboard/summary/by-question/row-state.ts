@@ -32,7 +32,7 @@ export const countRows = (states: readonly RowState[]): RowCounts =>
   })
 
 /** The board's "Next step": `numbers` are 1-based question numbers. */
-export type ManageStep = { action: 'close' | 'open' | 'resume'; numbers: number[] } | { action: 'resumeVote' }
+export type ManageStep = { action: 'close' | 'open'; numbers: number[] } | { action: 'resumeVote' }
 
 /** For a vote that is under way (started, not ended, not canceled); a vote with every question closed is closed. */
 export const nextManageStep = (states: readonly RowState[], isHeld: boolean): ManageStep | null => {
@@ -43,10 +43,11 @@ export const nextManageStep = (states: readonly RowState[], isHeld: boolean): Ma
   if (open.length) return { action: 'close', numbers: open }
   const toOpen = numbersOf('toOpen')
   if (toOpen.length) return { action: 'open', numbers: [toOpen[0]] }
+  // A paused question reopens with the same Open as one never opened.
   const paused = numbersOf('paused')
-  return paused.length ? { action: 'resume', numbers: [paused[0]] } : null
+  return paused.length ? { action: 'open', numbers: [paused[0]] } : null
 }
 
-/** Whether a row's Open or Resume is the next step, which makes it the primary button. */
-export const isStepFor = (step: ManageStep | null, action: 'open' | 'resume', number: number) =>
+/** Whether a row's Open is the next step, which makes it the primary button. */
+export const isStepFor = (step: ManageStep | null, action: 'open', number: number) =>
   !!step && step.action === action && step.numbers[0] === number

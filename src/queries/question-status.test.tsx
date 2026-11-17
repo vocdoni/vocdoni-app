@@ -73,10 +73,10 @@ describe('useQuestionStatusAction', () => {
 
     expect(outcome).toEqual({ ok: false })
     expect(client.elections.setQuestionStatus).not.toHaveBeenCalled()
-    // Pausing or closing the open question still goes through.
+    // Closing the open question still goes through.
     client.jobs.waitFor.mockResolvedValue({ status: 'completed' })
-    await act(() => result.current.row.change({ questionId: 'q1', status: 'paused' }))
-    expect(client.elections.setQuestionStatus).toHaveBeenCalledWith('p1', 'q1', 'paused')
+    await act(() => result.current.row.change({ questionId: 'q1', status: 'ended' }))
+    expect(client.elections.setQuestionStatus).toHaveBeenCalledWith('p1', 'q1', 'ended')
   })
 
   it('marks every instance busy while one change runs, and only the clicked one as pending', async () => {

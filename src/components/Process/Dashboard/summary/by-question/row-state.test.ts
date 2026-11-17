@@ -48,9 +48,9 @@ describe('nextManageStep', () => {
     expect(step(['closed', 'open', 'open', 'toOpen'])).toEqual({ action: 'close', numbers: [2, 3] })
   })
 
-  it('then opens the first question to open, then resumes the first paused one', () => {
+  it('then opens the first question to open, then reopens the first paused one', () => {
     expect(step(['closed', 'paused', 'toOpen', 'toOpen'])).toEqual({ action: 'open', numbers: [3] })
-    expect(step(['closed', 'paused', 'paused'])).toEqual({ action: 'resume', numbers: [2] })
+    expect(step(['closed', 'paused', 'paused'])).toEqual({ action: 'open', numbers: [2] })
   })
 
   it('has no step once every question is closed, and resumes a held vote before anything else', () => {
@@ -63,7 +63,6 @@ describe('nextManageStep', () => {
     const next = step(['closed', 'toOpen', 'toOpen'])
     expect(isStepFor(next, 'open', 2)).toBe(true)
     expect(isStepFor(next, 'open', 3)).toBe(false)
-    expect(isStepFor(next, 'resume', 2)).toBe(false)
   })
 })
 

@@ -6,7 +6,7 @@ import type { QuestionStatusChange } from '~queries/question-status'
 export type QuestionControls = {
   busy: boolean
   isLoading: (questionId: string, status: QuestionStatusChange) => boolean
-  run: (questionId: string, status: 'ready' | 'paused') => void
+  run: (questionId: string, status: 'ready') => void
   askClose: (questionId: string) => void
   /** A button's accessible name: its visible label, then the question it acts on (several rows show "Open"). */
   name: (questionId: string, action: string) => string
@@ -67,48 +67,49 @@ type ActiveButtonsProps = {
   questionId: string
   controls: QuestionControls
   paused: boolean
-  /** A paused question whose Resume is the next step. */
-  resumePrimary: boolean
-  /** Another question is open (R29): Resume is the `off` button, described by `reasonId`. */
-  resumeOff?: boolean
+  /** A paused question whose Open is the next step. */
+  openPrimary: boolean
+  /** Another question is open (R29): Open is the `off` button, described by `reasonId`. */
+  openOff?: boolean
   reasonId?: string
 }
 
-/** Open: Pause (secondary) and Close (primary). Paused: Resume (primary when it is the next step) and Close. */
+/**
+ * Open: Close (primary). Paused (another question is open meanwhile): Open (primary when it is the next step) and
+ * Close. The vote's own pause is the header's "Pause the vote": a question has no pause button of its own.
+ */
 export const ActiveButtons = ({
   questionId,
   controls,
   paused,
-  resumePrimary,
-  resumeOff = false,
+  openPrimary,
+  openOff = false,
   reasonId,
 }: ActiveButtonsProps) => {
   const { t } = useTranslation()
   const grow = { base: '1', md: 'none' } as const
-  const status = paused ? 'ready' : 'paused'
-  const firstOff = paused && resumeOff
-  const first = firstOff ? 'off' : paused && resumePrimary ? 'solid' : 'outline'
+  const open = openOff ? 'off' : openPrimary ? 'solid' : 'outline'
   const close = paused ? 'outline' : 'solid'
-  const firstLabel = paused
-    ? t('votes.manage.resume', { defaultValue: 'Resume' })
-    : t('votes.manage.pause', { defaultValue: 'Pause' })
+  const openLabel = t('votes.manage.open', { defaultValue: 'Open' })
   const closeLabel = t('votes.manage.close', { defaultValue: 'Close' })
   // `data-variant` says which one is the primary (tests and the e2e suite).
   return (
     <>
-      <Button
-        aria-label={controls.name(questionId, firstLabel)}
-        variant={first}
-        data-variant={first}
-        flex={grow}
-        loading={controls.isLoading(questionId, status)}
-        disabled={!firstOff && controls.busy}
-        aria-disabled={firstOff || undefined}
-        aria-describedby={firstOff ? reasonId : undefined}
-        onClick={firstOff ? undefined : () => controls.run(questionId, status)}
-      >
-        {firstLabel}
-      </Button>
+      {paused && (
+        <Button
+          aria-label={controls.name(questionId, openLabel)}
+          variant={open}
+          data-variant={open}
+          flex={grow}
+          loading={controls.isLoading(questionId, 'ready')}
+          disabled={!openOff && controls.busy}
+          aria-disabled={openOff || undefined}
+          aria-describedby={openOff ? reasonId : undefined}
+          onClick={openOff ? undefined : () => controls.run(questionId, 'ready')}
+        >
+          {openLabel}
+        </Button>
+      )}
       <Button
         aria-label={controls.name(questionId, closeLabel)}
         variant={close}
