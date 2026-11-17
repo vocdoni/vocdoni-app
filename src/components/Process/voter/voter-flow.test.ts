@@ -121,7 +121,7 @@ describe('deriveVoterScreen: precedence, first match wins', () => {
     expect(screen({ status: 'ENDED', connected: false }, { checkReceipt: true })).toEqual({ kind: 'identify' })
   })
 
-  it('12c-bis. a member who voted every question open to them and can vote no other is already voted, not ineligible', () => {
+  it('12c-bis. every question open to the member is settled: already voted, not ineligible', () => {
     // `hasVoted` is false (a question is not on chain) but every question left is settled for this voter.
     expect(screen({ isAbleToVote: false, everyQuestionSettled: true, hasVoted: false })).toEqual({
       kind: 'alreadyVoted',
