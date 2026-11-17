@@ -40,7 +40,10 @@ export const DataList = defineSlotRecipe({
           alignItems: { base: 'flex-start', lg: 'baseline' },
           gap: { base: '0', lg: '4' },
           py: { base: '0', lg: 'fact' },
-          _notFirst: { borderTopWidth: { base: '[0]', lg: 'hairline' }, borderColor: 'border.muted' },
+          // From `lg` every row has its rule, the first one clear, so each row is as tall as the board's.
+          borderTopWidth: { base: '[0]', lg: 'hairline' },
+          borderColor: 'border.muted',
+          _first: { borderColor: 'transparent' },
         },
         itemLabel: { color: 'fg.subtle', minW: '0', textStyle: { base: 'body-sm', lg: 'control' } },
         itemValue: {

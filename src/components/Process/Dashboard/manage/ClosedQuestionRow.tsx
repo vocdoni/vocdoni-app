@@ -130,7 +130,7 @@ export const ClosedQuestionRow = ({
         >
           <Stack gap='0' flex='1' minW='0'>
             <Text
-              textStyle='question-title'
+              textStyle='question-line'
               whiteSpace={{ lg: 'nowrap' }}
               overflow={{ lg: 'hidden' }}
               textOverflow={{ lg: 'ellipsis' }}

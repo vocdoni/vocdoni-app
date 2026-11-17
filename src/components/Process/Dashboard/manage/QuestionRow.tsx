@@ -27,8 +27,9 @@ export const QuestionRowFrame = ({ number, active = false, children }: QuestionR
     <Grid templateColumns='[{sizes.6} minmax(0, 1fr)]' columnGap={{ base: '2', lg: '0' }} alignItems='start'>
       <Text
         textStyle='question-number'
-        color={active ? 'accent.fg' : 'fg.subtle'}
-        fontWeight={active ? 'medium' : 'normal'}
+        // The accent marks the row being worked on from `lg`; the touch boards keep every number quiet.
+        color={active ? { base: 'fg.subtle', lg: 'accent.fg' } : 'fg.subtle'}
+        fontWeight={active ? { base: 'normal', lg: 'medium' } : 'normal'}
       >
         {number}
       </Text>

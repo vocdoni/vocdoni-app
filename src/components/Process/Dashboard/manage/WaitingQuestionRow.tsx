@@ -72,8 +72,8 @@ export const WaitingQuestionRow = ({
           >
             <Stack gap='0' flex='1' minW='0'>
               <Text
-                textStyle='question-title'
-                color='fg.muted'
+                textStyle='question-line'
+                color={{ base: 'fg', lg: 'fg.muted' }}
                 whiteSpace={{ lg: 'nowrap' }}
                 overflow={{ lg: 'hidden' }}
                 textOverflow={{ lg: 'ellipsis' }}

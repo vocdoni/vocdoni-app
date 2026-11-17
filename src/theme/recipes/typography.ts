@@ -91,7 +91,7 @@ export const link = defineRecipe({
         alignItems: 'center',
         gap: '0.5',
         textStyle: { base: 'md', lg: 'xs' },
-        lineHeight: { lg: 'row.label' },
+        lineHeight: { base: 'moderate', lg: 'row.label' },
         letterSpacing: { lg: 'none' },
         fontWeight: { base: 'medium', lg: 'normal' },
         minH: { base: 'control.touch', md: 'control.tablet', lg: 'auto' },

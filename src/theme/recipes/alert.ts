@@ -25,6 +25,7 @@ export const Alert = defineSlotRecipe({
       notice: {
         root: { px: '3.5', py: 'row', gap: '2.5', alignItems: 'flex-start', borderRadius: 'md', textStyle: 'control' },
         indicator: { boxSize: 'icon.chevron', mt: '0.5' },
+        description: { textStyle: 'control' },
       },
     },
   },

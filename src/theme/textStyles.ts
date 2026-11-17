@@ -12,7 +12,7 @@ export const textStyles = defineTextStyles({
   'page-title': {
     value: {
       fontSize: { base: 'page', md: '2xl' },
-      lineHeight: { base: 'page.touch', md: 'page' },
+      lineHeight: { base: 'page.touch', lg: 'page' },
       fontWeight: 'semibold',
       letterSpacing: { base: 'heading.page.touch', md: 'heading.page' },
     },
@@ -87,9 +87,9 @@ export const textStyles = defineTextStyles({
   'vote-title': {
     value: {
       fontSize: { base: 'vote', md: '2xl' },
-      lineHeight: { base: 'page.touch', md: 'page' },
+      lineHeight: { base: 'page.touch', lg: 'page' },
       fontWeight: 'semibold',
-      letterSpacing: 'heading.page',
+      letterSpacing: { base: 'heading.section', lg: 'heading.page' },
     },
   },
   // A confirm dialog's title (ui/ConfirmDialog) and a bottom sheet's: 17px on a phone and a tablet, the page size
@@ -111,10 +111,25 @@ export const textStyles = defineTextStyles({
   // Secondary text of a list row (dates, counts, who and where), on the row's fixed line; `note` is the quiet line
   // under a question's title in a vote's card, on the running line height.
   meta: { value: { fontSize: { base: 'md', md: 'sm' }, lineHeight: { base: 'row.meta-touch', md: 'row.meta' } } },
-  note: { value: { fontSize: { base: 'md', md: 'sm' }, lineHeight: 'moderate' } },
+  note: { value: { fontSize: { base: 'md', lg: 'sm' }, lineHeight: { base: 'row.meta-touch', lg: 'moderate' } } },
   // A question's number at the start of its row, in figures on the question title's line.
   'question-number': {
-    value: { fontFamily: 'figure', fontSize: 'sm', lineHeight: 'row.question', letterSpacing: 'none' },
+    value: {
+      fontFamily: 'figure',
+      fontSize: 'sm',
+      lineHeight: { base: 'row.touch', lg: 'row.question' },
+      letterSpacing: 'none',
+    },
+  },
+  // A closed or waiting question's title on its one line: 15px medium-plus on a touch screen, the question title
+  // from `lg`.
+  'question-line': {
+    value: {
+      fontSize: 'item',
+      lineHeight: { base: 'row.touch', lg: 'row.question' },
+      fontWeight: { base: 'medium-plus', lg: 'semibold' },
+      letterSpacing: { base: 'body', lg: 'heading.row' },
+    },
   },
   // The line beside the headline figure ("184 of 312 voted").
   'hero-caption': {
@@ -130,7 +145,7 @@ export const textStyles = defineTextStyles({
   'figure-hero': {
     value: {
       fontSize: { base: 'figure.small', md: 'figure.large', lg: 'figure.hero' },
-      lineHeight: 'hero',
+      lineHeight: { base: 'hero.touch', lg: 'hero' },
       fontWeight: 'semibold',
       letterSpacing: 'figure.hero',
       fontVariantNumeric: 'tabular-nums',
@@ -138,10 +153,10 @@ export const textStyles = defineTextStyles({
   },
   'figure-hero-unit': {
     value: {
-      fontSize: { base: '3xl', md: '5xl' },
-      lineHeight: 'hero',
+      fontSize: { base: '2xl', md: '5xl' },
+      lineHeight: { base: 'hero.touch', lg: 'hero' },
       fontWeight: 'medium',
-      letterSpacing: 'figure.unit',
+      letterSpacing: { base: 'none', lg: 'figure.unit' },
     },
   },
 })

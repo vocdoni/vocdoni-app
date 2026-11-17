@@ -201,9 +201,7 @@ export const CompactQuestionRow = ({ question, index, model, state }: RowProps) 
     <Card.Body py='3'>
       <Grid templateColumns='[{sizes.6} minmax(0, 1fr)]' columnGap='2' rowGap='0.5' alignItems='baseline'>
         <QuestionNumber index={index} />
-        <Text fontSize='item' fontWeight='medium-plus'>
-          {text(question.title)}
-        </Text>
+        <Text textStyle='question-line'>{text(question.title)}</Text>
         {meta && (
           <Text gridColumn='2' textStyle='note' color='fg.subtle'>
             {meta}

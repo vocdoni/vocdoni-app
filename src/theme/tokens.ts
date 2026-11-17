@@ -74,8 +74,11 @@ const lineHeights = defineTokens.lineHeights({
   tall: { value: 1.6 },
   // A fact's value on a phone or tablet.
   fact: { value: 1.35 },
-  // A headline figure sits on its baseline: the line box hugs the digits.
-  hero: { value: 0.74 },
+  // A headline figure sits on its baseline: the line box hugs the digits (0.8 below `lg`).
+  hero: {
+    DEFAULT: { value: 0.74 },
+    touch: { value: 0.8 },
+  },
 })
 
 // Tracking that falls between Chakra's letterSpacings steps: the body, and the tighter steps of larger type.

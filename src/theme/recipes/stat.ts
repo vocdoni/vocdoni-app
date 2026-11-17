@@ -44,11 +44,11 @@ export const Stat = defineSlotRecipe({
           letterSpacing: 'figure.hero',
           fontWeight: 'semibold',
           gap: '0',
-          ms: { lg: '-1.5' },
+          ms: { base: '-0.5', lg: '-1.5' },
         },
         valueUnit: {
           textStyle: 'figure-hero-unit',
-          letterSpacing: 'figure.unit',
+          letterSpacing: { base: 'none', lg: 'figure.unit' },
           fontWeight: 'medium',
           color: 'fg.subtle',
           ms: { base: '0.5', lg: '1.5' },
