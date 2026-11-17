@@ -187,7 +187,7 @@ export const PublishSummary = ({
         <Button variant='outline' onClick={onKeepEditing}>
           {t('process.publish_review.keep_editing', { defaultValue: 'Keep editing' })}
         </Button>
-        {/* The label is translated, so e2e finds the primary by its kind (wallet, card, publish), not its copy */}
+        {/* The label is translated, so e2e finds the primary by its kind, not its copy */}
         <Button
           data-primary={primary.kind}
           disabled={!action}
