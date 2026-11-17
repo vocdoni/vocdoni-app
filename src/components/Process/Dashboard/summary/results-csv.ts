@@ -3,7 +3,7 @@ import { tryInferQuestionBallotType } from '@vocdoni/ballot'
 import type { TFunction } from 'i18next'
 import { resultTypeLabel } from '~components/Process/resultTypeLabels'
 import { tallyBase, tallyOf, tallyUnit, type Tally, type TallyUnit } from '~utils/question-tally'
-import { questionElectorate } from '~utils/vote-state'
+import { isSettledQuestion, questionElectorate } from '~utils/vote-state'
 
 // `useVoteText().text`: a localized title in the reader's language.
 type Text = (value: LocalizedInput | undefined) => string
@@ -16,6 +16,25 @@ export const questionTallies = (election: VotingProcessResponse, results?: Votin
     const merged = entry?.results?.length ? { ...question.results, ...entry } : question.results
     return { question, results: merged, tally: tallyOf(question, merged) }
   })
+}
+
+/**
+ * Whether the CSV may be downloaded: some question has a tally, and every tally is settled (a close told only by the
+ * browser clock is not, so the file would carry a provisional tally with nothing saying so).
+ */
+export const csvReady = (tallies: ReturnType<typeof questionTallies>): boolean => {
+  const withTally = tallies.filter(({ tally }) => tally)
+  return withTally.length > 0 && withTally.every(({ question, results }) => isSettledQuestion(question, results))
+}
+
+/** The CSV's name from the vote's title: letters (accents kept), figures and dashes, safe on every current system. */
+export const resultsFileName = (title: string, id: string): string => {
+  const name = title
+    .normalize('NFC')
+    .replace(/[^\p{L}\p{M}\p{N}]+/gu, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80)
+  return `${name || 'results'}-${id}.csv`
 }
 
 const unitLabel = (t: TFunction, unit: TallyUnit) => {
@@ -38,7 +57,9 @@ export const resultsCsvRows = (
   election: VotingProcessResponse,
   results: VotingProcessResultsResponse | null | undefined,
   t: TFunction,
-  text: Text
+  text: Text,
+  /** Whether the user manages the vote: the census column is left empty for anyone else (see questionElectorate). */
+  canManage: boolean
 ): (string | number)[][] => {
   const weighted = !!election.census?.weighted
   const rows: (string | number)[][] = [
@@ -61,7 +82,7 @@ export const resultsCsvRows = (
     const method = resultTypeLabel(t, tryInferQuestionBallotType(question))
     const unit = unitLabel(t, tallyUnit(question, weighted))
     const answered = merged?.voteCount ?? ''
-    const census = questionElectorate(question, election) ?? ''
+    const census = questionElectorate(question, election, canManage) ?? ''
     const optionOf = (entry: Tally) => {
       const choice = question.choices.find((candidate) => candidate.value === entry.value)
       return choice ? text(choice.title) : t('votes.manage.abstention', { defaultValue: 'Abstention' })

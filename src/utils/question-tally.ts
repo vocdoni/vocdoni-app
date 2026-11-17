@@ -51,3 +51,13 @@ export const tallyBase = (
   const total = tally.reduce((sum, entry) => sum + entry.votes, 0)
   return weighted || (type && SHARE_OF_TOTAL.has(type)) ? total : results?.voteCount || total
 }
+
+/**
+ * Whether a question's tally may be shown: it has votes, it can be read, and a secret one only once the chain marked
+ * it final. Any ballot type the tally decodes counts, ranked, budget and quadratic included.
+ */
+export const tallyIsPublic = (
+  question: VotingProcessQuestion,
+  results: QuestionResults | undefined = question.results
+): boolean =>
+  !!results?.voteCount && (!question.secretUntilTheEnd || results.finalResults === true) && !!tallyOf(question, results)

@@ -283,8 +283,12 @@ describe('participation', () => {
 
   it('divides a restricted question by its own electorate', () => {
     const process = vote(['ONGOING'])
-    expect(questionElectorate(question('ONGOING', 0, { eligibleMemberIds: ['a', 'b'] }), process)).toBe(2)
-    expect(questionElectorate(question('ONGOING'), process)).toBe(312)
+    expect(questionElectorate(question('ONGOING', 0, { eligibleMemberIds: ['a', 'b'] }), process, true)).toBe(2)
+    expect(questionElectorate(question('ONGOING'), process, true)).toBe(312)
+  })
+
+  it('knows no electorate for someone who cannot manage the vote (the API strips the restriction for them)', () => {
+    expect(questionElectorate(question('ONGOING'), vote(['ONGOING']), false)).toBeUndefined()
   })
 })
 

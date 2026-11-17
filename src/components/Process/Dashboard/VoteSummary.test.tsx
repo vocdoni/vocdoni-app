@@ -162,6 +162,57 @@ describe('VoteSummary', () => {
       expect(screen.queryByRole('img', { name: 'Winning choice' })).not.toBeInTheDocument()
     })
 
+    it('draws the tally of a ranked question, which names no leader, once it is public', () => {
+      const ranked = {
+        ...question('q1', 'RESULTS', 10),
+        type: undefined,
+        metadata: { type: { name: 'ranked' } },
+        ballotProtocol: { ...PROTOCOL, maxCount: 3, maxValue: 2, uniqueValues: true },
+        choices: [
+          { title: { default: 'Roof' }, value: 0 },
+          { title: { default: 'Heating' }, value: 1 },
+          { title: { default: 'Ramp' }, value: 2 },
+        ],
+        results: {
+          voteCount: 10,
+          finalResults: true,
+          results: [
+            ['1', '2', '7'],
+            ['3', '5', '2'],
+            ['6', '3', '1'],
+          ],
+        },
+      }
+      renderSummary(createProcess({ questions: [ranked] }), 10)
+
+      expect(screen.getByRole('progressbar', { name: 'Roof, 16 points, 53%' })).toBeInTheDocument()
+      expect(screen.queryByText(/being counted/)).not.toBeInTheDocument()
+      expect(resultsViewed()).toHaveLength(1)
+    })
+
+    it('says nobody left a question blank when everyone answered it', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 184)] }), 184)
+
+      expect(screen.getByText('Nobody left it blank.')).toBeInTheDocument()
+    })
+
+    it('says nothing about blank votes on a question with its own electorate, and divides it by that electorate', () => {
+      const restricted = { ...question('q2', 'ONGOING', 40), eligibleMemberIds: Array.from({ length: 50 }, String) }
+      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 200), restricted] }), 200)
+
+      expect(screen.getByText('Turnout: 40 of 50')).toBeInTheDocument()
+      expect(screen.queryByText(/of the 200 voters left it blank/)).not.toBeInTheDocument()
+    })
+
+    it('shows a question count without a share to someone who cannot manage the vote', () => {
+      canManage = false
+      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 181)] }), 184)
+
+      expect(screen.getByText('181 votes')).toBeInTheDocument()
+      expect(screen.queryByText('Turnout: 181 of 312')).not.toBeInTheDocument()
+      expect(screen.queryByText(/left it blank/)).not.toBeInTheDocument()
+    })
+
     it('links the ballot from the questions card', () => {
       renderSummary(createProcess(), 184)
 

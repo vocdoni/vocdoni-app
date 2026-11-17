@@ -1,21 +1,16 @@
 import { Box, Card, Grid, Heading, Stack, Text } from '@chakra-ui/react'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
 import { quantity } from '~utils/numbers'
-import { questionOutcome } from '~utils/vote-outcome'
+import { tallyIsPublic } from '~utils/question-tally'
 import { percentOf, questionElectorate, type QuestionState } from '~utils/vote-state'
 import { QuestionResultBars } from '../QuestionResultBars'
 import { questionKind } from './question-kind'
 import type { SummaryModel } from './use-summary-model'
 
 type RowProps = { question: VotingProcessQuestion; index: number; model: SummaryModel; state: QuestionState }
-
-/** Decoded once per question: null while the tally is hidden, empty or unreadable. */
-const useOutcome = (question: VotingProcessQuestion, weighted: boolean) =>
-  useMemo(() => questionOutcome(question, question.results, { weighted }), [question, weighted])
 
 const counts = (state: QuestionState) => state === 'open' || state === 'paused' || state === 'closed'
 
@@ -28,9 +23,7 @@ const byQuestionBars = (question: VotingProcessQuestion, state: QuestionState) =
 
 /** Whether Resum shows this question's tally, in either mode (the same rule on every width): the analytics read it. */
 export const showsTally = (question: VotingProcessQuestion, state: QuestionState, model: SummaryModel) =>
-  model.byQuestion
-    ? byQuestionBars(question, state)
-    : !!questionOutcome(question, question.results, { weighted: !!model.election.census?.weighted })
+  model.byQuestion ? byQuestionBars(question, state) : tallyIsPublic(question)
 
 /** The per-choice bars of a row, as Resum draws them on every width. */
 const RowBars = ({
@@ -65,7 +58,7 @@ const hasStarted = (model: SummaryModel) =>
 const QuestionTurnout = ({ question, index, model }: Omit<RowProps, 'state'>) => {
   const { t } = useTranslation()
   const votes = question.results?.voteCount ?? 0
-  const electorate = questionElectorate(question, model.election)
+  const electorate = questionElectorate(question, model.election, model.canManage)
   const percent = percentOf(votes, electorate)
 
   return (
@@ -105,11 +98,13 @@ const QuestionTurnout = ({ question, index, model }: Omit<RowProps, 'state'>) =>
 export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
-  const outcome = useOutcome(question, !!model.election.census?.weighted)
   const votes = question.results?.voteCount ?? 0
   const kind = questionKind(t, question)
   const started = hasStarted(model)
   const blank = Math.max(0, model.count - votes)
+  // "Left it blank" only holds when every voter could answer it: never for a question with its own electorate, and
+  // not for someone the API does not tell whether it has one.
+  const showBlank = started && model.count > 0 && model.canManage && !question.eligibleMemberIds?.length
 
   return (
     <Card.Body pb='4'>
@@ -127,18 +122,22 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
             )}
           </Box>
           {started && <QuestionTurnout question={question} index={index} model={model} />}
-          {started && model.count > 0 && (
+          {showBlank && (
             <Text textStyle='body-sm' color='fg.subtle'>
-              {t('votes.summary.blank', {
-                defaultValue_one: '{{count, number}} of the {{voters}} voters left it blank.',
-                defaultValue_other: '{{count, number}} of the {{voters}} voters left it blank.',
-                count: blank,
-                voters: quantity(model.count),
-              })}
+              {blank > 0
+                ? t('votes.summary.blank', {
+                    defaultValue_one: '{{count, number}} of the {{voters}} voters left it blank.',
+                    defaultValue_other: '{{count, number}} of the {{voters}} voters left it blank.',
+                    count: blank,
+                    voters: quantity(model.count),
+                  })
+                : t('votes.summary.blank_none', { defaultValue: 'Nobody left it blank.' })}
             </Text>
           )}
           {/* The tally last, as the board draws it: Resum is where the results are read. */}
-          {outcome && <RowBars question={question} model={model} final={!!question.results?.finalResults} />}
+          {tallyIsPublic(question) && (
+            <RowBars question={question} model={model} final={!!question.results?.finalResults} />
+          )}
         </Stack>
       </Grid>
     </Card.Body>
@@ -151,7 +150,6 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
  */
 export const CompactQuestionRow = ({ question, index, model }: RowProps) => {
   const { text } = useVoteText()
-  const outcome = useOutcome(question, !!model.election.census?.weighted)
 
   return (
     <Card.Body py='3'>
@@ -163,7 +161,7 @@ export const CompactQuestionRow = ({ question, index, model }: RowProps) => {
             <QuestionTurnout question={question} index={index} model={model} />
           </Box>
         )}
-        {outcome && (
+        {tallyIsPublic(question) && (
           <Box gridColumn='2' pt='2.5' maxW={{ md: 'lg' }}>
             <RowBars question={question} model={model} final={!!question.results?.finalResults} />
           </Box>

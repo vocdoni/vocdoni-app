@@ -44,7 +44,7 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
   const { dateAt, text } = useVoteText()
   const manageText = useManageText()
   const stateLabel = useProcessStateLabel()
-  const phone = useIsMobile()
+  const phone = useIsMobile({ ssr: false })
   const { change, pending, isBusy } = useQuestionStatusAction(election?.id)
   const { votePause, canManage, state: voteState, now } = useActions()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -212,7 +212,7 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
                 <ClosedQuestionRow
                   key={question.id}
                   {...common}
-                  electorate={questionElectorate(question, election)}
+                  electorate={questionElectorate(question, election, canManage)}
                   weighted={weighted}
                   expanded={!!expanded[question.id]}
                   onToggle={toggle(question.id)}
@@ -225,7 +225,7 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
                   key={question.id}
                   {...common}
                   state={state}
-                  electorate={questionElectorate(question, election)}
+                  electorate={questionElectorate(question, election, canManage)}
                   weighted={weighted}
                   buttons={canAct && activeButtons(question, index, state)}
                 />

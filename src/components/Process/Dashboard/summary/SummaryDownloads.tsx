@@ -9,7 +9,7 @@ import {
 import { useVoteText } from '~i18n/use-vote-text'
 import { DownloadFileIcon } from '~theme/icons'
 import { downloadTextFile, toCsv } from '~utils/csv'
-import { questionTallies, resultsCsvRows } from './results-csv'
+import { csvReady, questionTallies, resultsCsvRows, resultsFileName } from './results-csv'
 import { SummaryCardHeader } from './SummaryCardHeader'
 import type { SummaryModel } from './use-summary-model'
 
@@ -43,12 +43,12 @@ export const SummaryDownloads = ({ model, desktop }: { model: SummaryModel; desk
 
   if (state !== 'closed') return null
 
-  const hasTally = questionTallies(election, results).some(({ tally }) => tally)
+  const ready = csvReady(questionTallies(election, results))
 
   const downloadCsv = () =>
     downloadTextFile(
-      `${fileName(text(election.title)) || 'results'}-${election.id}.csv`,
-      toCsv(resultsCsvRows(election, results, t, text)),
+      resultsFileName(text(election.title), election.id),
+      toCsv(resultsCsvRows(election, results, t, text, model.canManage)),
       'text/csv'
     )
 
@@ -62,14 +62,14 @@ export const SummaryDownloads = ({ model, desktop }: { model: SummaryModel; desk
       <DownloadRow
         title={t('votes.downloads.csv.title', { defaultValue: 'Results in CSV' })}
         note={
-          hasTally
+          ready
             ? t('votes.downloads.csv.note', { defaultValue: 'The result of each option, question by question.' })
             : pendingResultsHint(t)
         }
         action={
           <Button
             variant='outline'
-            disabled={!hasTally}
+            disabled={!ready}
             onClick={downloadCsv}
             aria-label={t('votes.downloads.csv.action', { defaultValue: 'Download the results in CSV' })}
           >
@@ -97,11 +97,3 @@ export const SummaryDownloads = ({ model, desktop }: { model: SummaryModel; desk
     </Card.Root>
   )
 }
-
-// Letters, figures and dashes only, so the name is safe on every system.
-const fileName = (value: string) =>
-  value
-    .normalize('NFKD')
-    .replace(/[^\p{L}\p{N}]+/gu, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80)

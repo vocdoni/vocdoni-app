@@ -170,9 +170,16 @@ export const percentOf = (part: number, whole: number | undefined): number | und
   return Math.round(exact)
 }
 
-/** Who may vote a question: its own restriction when it has one, else the whole census. */
-export const questionElectorate = (question: VotingProcessQuestion, process: VotingProcessResponse) =>
-  question.eligibleMemberIds?.length || process.census?.size || undefined
+/**
+ * Who may vote a question: its own restriction when it has one, else the whole census. The API strips the restriction
+ * for whoever cannot manage the vote, so for them it is unknown (undefined), never guessed as the census.
+ */
+export const questionElectorate = (
+  question: VotingProcessQuestion,
+  process: VotingProcessResponse,
+  canManage: boolean
+): number | undefined =>
+  canManage ? question.eligibleMemberIds?.length || process.census?.size || undefined : undefined
 
 /** Questions a header action may target: never a terminal one (the backend rejects the whole batch). */
 export const nonTerminalQuestionIds = (process: VotingProcessResponse | null | undefined): string[] =>

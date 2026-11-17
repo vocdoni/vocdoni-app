@@ -24,6 +24,8 @@ export type SummaryModel = {
   endDate?: Date
   /** Someone ended it before its scheduled closing. */
   endedEarly: boolean
+  /** A manager of the vote: only they are served each question's own electorate. */
+  canManage: boolean
   /** Per question, in order; a question held by a whole-vote pause reads as paused. */
   questionStates: QuestionState[]
   now: Date
@@ -31,7 +33,7 @@ export type SummaryModel = {
 
 export const useSummaryModel = (): SummaryModel | null => {
   const { election, results } = useElection()
-  const { state, now, votePause } = useActions()
+  const { state, now, votePause, canManage } = useActions()
   const { data: earlyEndDate } = useProcessEarlyEndDate(election)
   const { heldQuestionIds } = votePause
 
@@ -51,10 +53,11 @@ export const useSummaryModel = (): SummaryModel | null => {
       secret: isSecretUntilTheEnd(election),
       endDate: earlyEndDate ?? resolveEndDate(election),
       endedEarly: !!earlyEndDate,
+      canManage,
       questionStates: election.questions.map((question) =>
         heldIds.has(question.id) ? 'paused' : deriveQuestionState(question, election, now)
       ),
       now,
     }
-  }, [election, results, now, earlyEndDate, state, heldQuestionIds])
+  }, [election, results, now, earlyEndDate, state, heldQuestionIds, canManage])
 }
