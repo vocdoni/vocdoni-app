@@ -1947,7 +1947,7 @@
     },
     "list": {
       "action": {
-        "continue": "Continue",
+        "continue": "Edit",
         "follow": "Follow",
         "manage": "Manage vote",
         "result": "Result",

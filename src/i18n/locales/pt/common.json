@@ -1998,7 +1998,7 @@
     },
     "list": {
       "action": {
-        "continue": "Continuar",
+        "continue": "Editar",
         "follow": "Acompanhar",
         "manage": "Gerir votação",
         "result": "Resultado",

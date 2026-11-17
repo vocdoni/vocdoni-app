@@ -128,7 +128,7 @@ describe('VoteListRow actions', () => {
 
   it('continues a draft in the create form', () => {
     renderRow(make({ id: 'd1', published: false, endDate: undefined }))
-    expect(href('Continue')).toBe('/admin/processes/create?draftId=d1')
+    expect(href('Edit')).toBe('/admin/processes/create?draftId=d1')
   })
 })
 

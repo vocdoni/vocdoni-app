@@ -1947,7 +1947,7 @@
     },
     "list": {
       "action": {
-        "continue": "Fortsetzen",
+        "continue": "Bearbeiten",
         "follow": "Verfolgen",
         "manage": "Abstimmung verwalten",
         "result": "Ergebnis",

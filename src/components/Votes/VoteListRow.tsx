@@ -53,7 +53,7 @@ const useActionLabel = () => {
   return (key: RowAction['key']) => {
     switch (key) {
       case 'continue':
-        return t('votes.list.action.continue', { defaultValue: 'Continue' })
+        return t('votes.list.action.continue', { defaultValue: 'Edit' })
       case 'manage':
         return t('votes.list.action.manage', { defaultValue: 'Manage vote' })
       case 'follow':
