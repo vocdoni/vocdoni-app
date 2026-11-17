@@ -35,7 +35,8 @@ const QuestionNumber = ({ index, inline = false }: { index: number; inline?: boo
 
 /**
  * A question of a question-by-question vote on the desktop: one line with its number, title, result, votes with
- * their share of the electorate, and state.
+ * their share of the electorate, and state; under it, once it has opened and while its tally is public, a bar per
+ * choice.
  */
 export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
   const { t } = useTranslation()
@@ -44,6 +45,9 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
   const votes = question.results?.voteCount ?? 0
   const percent = percentOf(votes, questionElectorate(question, model.election))
   const title = text(question.title)
+  // A secret tally is public only once the question is over; a question to open has none.
+  const visible = counts(state) && (state === 'closed' || !question.secretUntilTheEnd)
+  const hasBars = visible && !!question.results?.results?.length
 
   return (
     <Card.Body pt='row' pb='3'>
@@ -71,6 +75,16 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
                 }))}
         </Text>
         <ProcessStatus kind='question' state={state} />
+        {hasBars && (
+          <Box gridColumn='2 / -1' pt='3'>
+            <QuestionResultBars
+              question={question}
+              results={question.results}
+              weighted={!!model.election.census?.weighted}
+              final={state === 'closed' && isSettledQuestion(question)}
+            />
+          </Box>
+        )}
       </Grid>
     </Card.Body>
   )

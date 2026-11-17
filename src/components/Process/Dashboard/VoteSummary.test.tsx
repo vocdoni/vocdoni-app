@@ -255,6 +255,30 @@ describe('VoteSummary', () => {
       )
     })
 
+    it('draws a bar per choice under each opened question with a public tally, the winner once it is final', () => {
+      renderSummary(
+        byQuestion([
+          question('q1', 'ENDED', 200, ['150', '50']),
+          question('q2', 'ONGOING', 120, ['70', '50']),
+          { ...question('q3', 'ONGOING', 30, ['20', '10']), secretUntilTheEnd: true },
+          question('q4', 'PAUSED', 40, ['30', '10']),
+          question('q5', 'PAUSED', 0, ['0', '0']),
+        ]),
+        200
+      )
+      const bars = (name: string) => screen.queryAllByRole('progressbar', { name })
+
+      expect(bars('Yes, 150, 75%')).toHaveLength(1)
+      expect(bars('No, 50, 25%')).toHaveLength(1)
+      expect(bars('Yes, 70, 58%')).toHaveLength(1)
+      expect(bars('Yes, 30, 75%')).toHaveLength(1)
+      // A secret tally stays hidden while open; a question still to open has nothing to draw.
+      expect(bars('Yes, 20, 67%')).toHaveLength(0)
+      expect(bars('Yes, 0, 0%')).toHaveLength(0)
+      expect(screen.getAllByRole('img', { name: 'Winning choice' })).toHaveLength(1)
+      expect(screen.getByText('150 to 50')).toBeInTheDocument()
+    })
+
     it('says the state and its detail in one line per question on a phone', () => {
       desktop = false
       renderSummary(byQuestion(questions), 200)
