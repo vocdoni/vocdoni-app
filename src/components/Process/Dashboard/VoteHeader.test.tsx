@@ -174,6 +174,22 @@ describe('VoteHeader', () => {
     expect(screen.getByText(/^Starts Friday, March 20 at \d\d:\d\d\.$/)).toBeInTheDocument()
   })
 
+  it('moves focus to Resume when the Pause it was on is replaced, instead of dropping it to the page', () => {
+    const { rerender } = renderHeader(createProcess())
+    screen.getByRole('button', { name: 'Pause' }).focus()
+
+    const paused = createProcess({}, 'PAUSED')
+    currentElection = paused
+    setReactProvidersMock({ useElection: () => ({ election: paused, status: 'PAUSED' }) })
+    rerender(
+      <TestMemoryRouter>
+        <VoteHeader />
+      </TestMemoryRouter>
+    )
+
+    expect(screen.getByRole('button', { name: 'Resume' })).toHaveFocus()
+  })
+
   describe('question by question', () => {
     it('offers Pause the vote and End the vote, secondary, while a question is open', () => {
       renderHeader(byQuestion([question('q1', 'ENDED'), question('q2', 'ONGOING')]))

@@ -73,7 +73,7 @@ const useCancelCopy = () => {
 }
 
 /** "Cancel the vote", from the vote's "More" menu: the boards' confirm, with the danger outline. */
-export const CancelVoteDialog = ({ open, onClose }: VoteDialogProps) => {
+export const CancelVoteDialog = ({ open, onClose, finalFocusEl }: VoteDialogProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
   const { election } = useElection()
@@ -93,6 +93,7 @@ export const CancelVoteDialog = ({ open, onClose }: VoteDialogProps) => {
   return (
     <ConfirmDialog
       open={open}
+      finalFocusEl={finalFocusEl}
       onOpenChange={({ open }) => !open && !loading && onClose()}
       title={t('votes.cancel.title', { defaultValue: 'Cancel “{{title}}”?', title: text(election.title) })}
       description={copy.description}

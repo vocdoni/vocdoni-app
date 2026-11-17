@@ -3,7 +3,7 @@ import { questionsEndedAt, resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useElection } from '@vocdoni/react-components'
 import { isSameDay } from 'date-fns'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router'
 import { ActionContinue, ActionEnd, ActionPause, CancelVoteDialog } from '~components/Actions'
@@ -300,6 +300,8 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
   const publicLanguage = usePublicLanguage()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
   const [cancelling, setCancelling] = useState(false)
+  // The menu item that opened the cancel dialog is gone when it closes: focus returns to "More".
+  const moreRef = useRef<HTMLButtonElement>(null)
 
   const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const explorerProcessId = election.questions[0]?.upstreamId
@@ -361,19 +363,21 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
         title={text(election.title)}
         trigger={
           isDesktop ? (
-            <Button variant='dropdown'>
+            <Button variant='dropdown' ref={moreRef}>
               {t('votes.page.more', { defaultValue: 'More' })}
               <Icon as={ChevronDownIcon} />
             </Button>
           ) : (
-            <IconButton variant='ghost' aria-label={moreActions}>
+            <IconButton variant='ghost' aria-label={moreActions} ref={moreRef}>
               <MoreIcon />
             </IconButton>
           )
         }
         items={items}
       />
-      {canCancel && <CancelVoteDialog open={cancelling} onClose={() => setCancelling(false)} />}
+      {canCancel && (
+        <CancelVoteDialog open={cancelling} onClose={() => setCancelling(false)} finalFocusEl={() => moreRef.current} />
+      )}
     </>
   )
 }
@@ -382,8 +386,26 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
 export const VoteHeader = () => {
   const { t } = useTranslation()
   const { election } = useElection()
-  const { state, now } = useActions()
+  const { state, now, disabled } = useActions()
   const { text } = useVoteText()
+  const actionsRef = useRef<HTMLDivElement>(null)
+  const focusWasInActions = useRef(false)
+
+  // Pause and Resume replace each other once the change lands, and the focused button goes with it (it is disabled
+  // while the change runs, too): focus moves to the button that took its place, the first action, once it can take
+  // it, instead of falling to the page.
+  useEffect(() => {
+    const track = (event: FocusEvent) => {
+      focusWasInActions.current = !!actionsRef.current?.contains(event.target as Node)
+    }
+    document.addEventListener('focusin', track)
+    return () => document.removeEventListener('focusin', track)
+  }, [])
+  useEffect(() => {
+    const lost = !document.activeElement || document.activeElement === document.body
+    if (!lost || !focusWasInActions.current) return
+    actionsRef.current?.querySelector<HTMLButtonElement>('button:not([disabled])')?.focus()
+  }, [state, disabled])
 
   if (!election || !state) return null
 
@@ -426,7 +448,7 @@ export const VoteHeader = () => {
         {text(election.title)}
       </PageTitle>
       <StatusLine {...part} />
-      <Flex gridArea='actions' gap='2' mt={{ base: '4', md: '0' }} alignItems='center'>
+      <Flex ref={actionsRef} gridArea='actions' gap='2' mt={{ base: '4', md: '0' }} alignItems='center'>
         <VoteActions {...part} />
         <VoteMenu {...part} />
       </Flex>

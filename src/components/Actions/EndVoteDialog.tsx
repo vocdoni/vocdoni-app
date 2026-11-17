@@ -7,7 +7,12 @@ import { useActions } from './ActionsContext'
 import { trackProcessAction } from './track'
 import { groupQuestions, useNumberList } from './vote-questions'
 
-export type VoteDialogProps = { open: boolean; onClose: () => void }
+export type VoteDialogProps = {
+  open: boolean
+  onClose: () => void
+  /** Where focus goes when it closes, when the control that opened it is gone (a menu item). */
+  finalFocusEl?: () => HTMLElement | null
+}
 
 type DialogCopy = { title: string; description: string; warning?: string; confirm: string }
 
