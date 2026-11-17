@@ -217,3 +217,11 @@ The CI workflow prints the resolved image digests on every run, so a job that
 goes red with no change in this repo can be reproduced locally. Locally, the
 `VOCDONI_NODE_IMAGE` and `SAAS_BACKEND_IMAGE` environment variables override the
 `:main` images (see [Pinning upstream commits](#pinning-upstream-commits)).
+
+Release and hotfix PRs into `stage` or `main` also run against `saas-backend:main`,
+the only tag saas-backend publishes besides `latest`. Their app code is behind
+`develop`, so it can break on backend changes it never saw: an older
+`integration-stack.sh` fails on `GET /plans`, which `:main` dropped with
+pay-per-process. Pin the backend branch the base deploys against instead:
+`/integration saas-backend=stage` on a PR into `stage`, `saas-backend=lts` on one
+into `main`.
