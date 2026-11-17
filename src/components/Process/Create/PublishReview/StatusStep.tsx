@@ -1,4 +1,4 @@
-import { VisuallyHidden } from '@chakra-ui/react'
+import { Text, VisuallyHidden } from '@chakra-ui/react'
 import type { ReactNode } from 'react'
 import { InlineLoader } from '~components/ui/Loader'
 import { CheckIcon } from '~theme/icons'
@@ -8,7 +8,6 @@ import {
   PublishReviewProgressItem,
   PublishReviewPublishedMark,
   PublishReviewStatus,
-  PublishReviewStatusHint,
   PublishReviewStep,
 } from './anatomy'
 
@@ -17,7 +16,6 @@ export type StatusProgress = { key: string; label: string; state: 'done' | 'acti
 
 export type StatusStepProps = {
   title: string
-  titleId: string
   /** Id for the message, which describes the dialog. */
   descriptionId?: string
   onClose?: () => void
@@ -31,12 +29,12 @@ export type StatusStepProps = {
 
 // A wait: no close button when given no onClose, since the publish is under way. The dialog's live
 // region announces it; its message also describes the dialog, for when the dialog remounts with it
-export const StatusStep = ({ title, titleId, descriptionId, onClose, progress, hint, children }: StatusStepProps) => (
+export const StatusStep = ({ title, descriptionId, onClose, progress, hint, children }: StatusStepProps) => (
   <PublishReviewStep>
-    <PublishReviewHeader eyebrow={title} titleId={titleId} onClose={onClose} />
+    <PublishReviewHeader eyebrow={title} onClose={onClose} />
     <PublishReviewStatus>
       {progress ? (
-        <PublishReviewProgress>
+        <PublishReviewProgress alignItems='flex-start'>
           {progress.map(({ key, label, state }) => (
             <PublishReviewProgressItem key={key} data-state={state}>
               {state === 'done' ? <CheckIcon aria-hidden /> : <InlineLoader />}
@@ -47,7 +45,11 @@ export const StatusStep = ({ title, titleId, descriptionId, onClose, progress, h
       ) : (
         <InlineLoader />
       )}
-      {hint && <PublishReviewStatusHint>{hint}</PublishReviewStatusHint>}
+      {hint && (
+        <Text textStyle='body-sm' color='fg.muted'>
+          {hint}
+        </Text>
+      )}
       {children && (
         <VisuallyHidden asChild>
           <p id={descriptionId}>{children}</p>
@@ -58,9 +60,9 @@ export const StatusStep = ({ title, titleId, descriptionId, onClose, progress, h
 )
 
 /** The success moment before the hand-off: a check and the news. */
-export const PublishedStep = ({ title, titleId, label }: { title: string; titleId: string; label: string }) => (
+export const PublishedStep = ({ title, label }: { title: string; label: string }) => (
   <PublishReviewStep>
-    <PublishReviewHeader eyebrow={title} titleId={titleId} />
+    <PublishReviewHeader eyebrow={title} />
     <PublishReviewStatus>
       <PublishReviewPublishedMark aria-hidden>
         <CheckIcon />

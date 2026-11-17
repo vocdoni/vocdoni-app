@@ -140,10 +140,11 @@ describe('PublishDialog', () => {
     api.waitForJob.mockResolvedValue({ jobId: 'job-1', status: 'completed' })
   })
 
-  it('opens on the summary, named by its eyebrow and modal over the page', async () => {
+  it('opens on the summary, named by its lead and modal over the page', async () => {
     renderDialog()
 
-    expect(await screen.findByRole('dialog', { name: 'Review before publishing' })).toBeInTheDocument()
+    expect(await screen.findByRole('dialog', { name: /can vote on 1 question/ })).toBeInTheDocument()
+    expect(screen.getByText('Review before publishing')).toBeInTheDocument()
     await waitFor(() => expect(screen.queryByRole('button', { name: 'outside' })).not.toBeInTheDocument())
   })
 

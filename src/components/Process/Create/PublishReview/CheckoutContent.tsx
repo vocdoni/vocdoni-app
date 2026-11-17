@@ -13,8 +13,6 @@ import { failedLead, outcomeText, paymentReceived, publishedText, waitText } fro
 type ProcessCheckoutContentProps = {
   flow: ProcessCheckoutFlow
   processId: string
-  /** Id of the element that names the dialog. */
-  titleId: string
   /** Id for the message of a wait or an outcome, which describes the dialog. */
   descriptionId?: string
   /** The price's currency, until the session says its own. */
@@ -31,7 +29,6 @@ type ProcessCheckoutContentProps = {
 export const ProcessCheckoutContent = ({
   flow,
   processId,
-  titleId,
   descriptionId,
   currencyCode,
   totalCents,
@@ -46,7 +43,7 @@ export const ProcessCheckoutContent = ({
   const title = flow.topUp ? t('process.checkout.title', { defaultValue: 'Top up and publish' }) : publishTitle
 
   const outcome = (body: ReactNode, actions?: ReactNode) => (
-    <OutcomeStep title={title} titleId={titleId} descriptionId={descriptionId} onClose={onClose} actions={actions}>
+    <OutcomeStep title={title} descriptionId={descriptionId} onClose={onClose} actions={actions}>
       {body}
     </OutcomeStep>
   )
@@ -75,7 +72,6 @@ export const ProcessCheckoutContent = ({
       return (
         <CardLayout
           title={title}
-          titleId={titleId}
           processId={processId}
           shortfall={flow.shortfall}
           currencyCode={currencyCode}
@@ -99,7 +95,6 @@ export const ProcessCheckoutContent = ({
       return (
         <CardStep
           title={title}
-          titleId={titleId}
           processId={processId}
           session={step.session}
           shortfall={flow.shortfall}
@@ -118,7 +113,6 @@ export const ProcessCheckoutContent = ({
       return (
         <StatusStep
           title={publishTitle}
-          titleId={titleId}
           descriptionId={descriptionId}
           progress={[
             ...(paymentReceived(step, flow.paymentSeen)
@@ -145,7 +139,7 @@ export const ProcessCheckoutContent = ({
         </StatusStep>
       )
     case 'published':
-      return <PublishedStep title={publishTitle} titleId={titleId} label={publishedText(t)} />
+      return <PublishedStep title={publishTitle} label={publishedText(t)} />
     case 'unconfirmed':
       return outcome(
         <Outcome status='info'>{outcomeText(t, step)}</Outcome>,

@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import { Alert, Button, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import type { ProcessCheckoutFlow } from '~components/Pricing/ProcessCheckout'
 import { usePrimaryShortcut } from './usePrimaryShortcut'
@@ -6,21 +6,18 @@ import { amountFigure, currencyExact } from '~utils/numbers'
 import {
   PublishReviewAmountRow,
   PublishReviewAmounts,
-  PublishReviewCallout,
   PublishReviewColumn,
   PublishReviewColumns,
   PublishReviewFooter,
   PublishReviewHeader,
   PublishReviewIntro,
   PublishReviewLead,
-  PublishReviewNote,
   PublishReviewSectionTitle,
   PublishReviewStep,
 } from './anatomy'
 
 export type WalletStepProps = {
   flow: ProcessCheckoutFlow
-  titleId: string
   currencyCode?: string
   /** The live price and what the wallet has left after it, as the summary reads them. */
   totalCents: number
@@ -29,7 +26,7 @@ export type WalletStepProps = {
 }
 
 // The wallet covers the whole price: nothing to pay by card
-export const WalletStep = ({ flow, titleId, currencyCode, totalCents, afterCents, onClose }: WalletStepProps) => {
+export const WalletStep = ({ flow, currencyCode, totalCents, afterCents, onClose }: WalletStepProps) => {
   const { t } = useTranslation()
   usePrimaryShortcut(true, flow.publish)
   const total = currencyExact(totalCents, currencyCode)
@@ -37,7 +34,7 @@ export const WalletStep = ({ flow, titleId, currencyCode, totalCents, afterCents
   return (
     <PublishReviewStep>
       <PublishReviewHeader onBack={flow.backToSummary} onClose={onClose}>
-        <PublishReviewLead id={titleId}>
+        <PublishReviewLead>
           {t('process.publish_review.wallet.title', {
             defaultValue: 'Pay {{total}} from the balance and the vote is published.',
             total,
@@ -71,22 +68,27 @@ export const WalletStep = ({ flow, titleId, currencyCode, totalCents, afterCents
               ruled
             />
           </PublishReviewAmounts>
-          <PublishReviewNote>
+          <Text textStyle='caption' color='fg.muted' textWrap='pretty'>
             {t('process.publish_review.wallet.note', {
               defaultValue: 'After publishing, the balance will have {{after}} left.',
               after: currencyExact(afterCents, currencyCode),
             })}
-          </PublishReviewNote>
+          </Text>
         </PublishReviewColumn>
         <PublishReviewColumn>
           <PublishReviewSectionTitle>
             {t('process.publish_review.how_you_pay', { defaultValue: 'How you pay' })}
           </PublishReviewSectionTitle>
-          <PublishReviewCallout tone='positive'>
-            {t('process.publish_review.wallet.covers', {
-              defaultValue: "The organization's balance covers the whole cost. No card is needed.",
-            })}
-          </PublishReviewCallout>
+          <Alert.Root status='success' layout='compact'>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Description>
+                {t('process.publish_review.wallet.covers', {
+                  defaultValue: "The organization's balance covers the whole cost. No card is needed.",
+                })}
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
         </PublishReviewColumn>
       </PublishReviewColumns>
 

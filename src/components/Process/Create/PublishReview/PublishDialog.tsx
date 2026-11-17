@@ -1,4 +1,4 @@
-import { Dialog, Portal, useSlotRecipe, VisuallyHidden } from '@chakra-ui/react'
+import { Dialog, Portal, VisuallyHidden } from '@chakra-ui/react'
 import { type RefObject, useEffect, useId, useLayoutEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isPublishing, type PublishFlowStart, useProcessCheckout } from '~components/Pricing/ProcessCheckout'
@@ -46,7 +46,6 @@ export const PublishDialog = ({
   const { t } = useTranslation()
   const titleId = useId()
   const descriptionId = useId()
-  const frame = useSlotRecipe({ key: 'publishReview' })({}).frame
   const contentRef = useRef<HTMLDivElement>(null)
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymous } = useAppEnv()
   const { price, query: priceQuery } = useProcessPrice(processId)
@@ -131,7 +130,6 @@ export const PublishDialog = ({
         wallet={wallet}
         canTopUp={canTopUp}
         disableAnonymous={disableAnonymous}
-        titleId={titleId}
         onKeepEditing={close}
         onClose={close}
         onEdit={onEdit && edit}
@@ -146,7 +144,6 @@ export const PublishDialog = ({
     ) : step.name === 'wallet' && primary.kind === 'wallet' ? (
       <WalletStep
         flow={flow}
-        titleId={titleId}
         currencyCode={currencyCode}
         totalCents={primary.totalCents}
         afterCents={primary.afterCents}
@@ -156,7 +153,6 @@ export const PublishDialog = ({
       <ProcessCheckoutContent
         flow={flow}
         processId={processId}
-        titleId={titleId}
         descriptionId={descriptionId}
         currencyCode={currencyCode}
         totalCents={price?.totalCents}
@@ -175,9 +171,7 @@ export const PublishDialog = ({
       }}
       ids={{ title: titleId, description: descriptionId }}
       initialFocusEl={() => stepFocusTarget(contentRef.current)}
-      size={{ base: 'full', md: 'xl' }}
-      // Pinned to the top from md up, so its header stays put while the steps change height; full screen on phones
-      placement={{ base: 'center', md: 'top' }}
+      size='review'
       scrollBehavior='inside'
       lazyMount
       unmountOnExit
@@ -191,7 +185,7 @@ export const PublishDialog = ({
       <Portal>
         <Dialog.Backdrop _open={remounted ? { animationName: '[none]' } : undefined} />
         <Dialog.Positioner>
-          <Dialog.Content ref={contentRef} css={frame}>
+          <Dialog.Content ref={contentRef}>
             {content}
             {/* Always mounted, so a change of its text is read out (one inserted already filled is not) */}
             <VisuallyHidden role='status' aria-live='polite'>

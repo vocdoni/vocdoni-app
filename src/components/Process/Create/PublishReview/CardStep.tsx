@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import { Button, Text } from '@chakra-ui/react'
 import {
   BillingAddressElement,
   CheckoutElementsProvider,
@@ -23,7 +23,6 @@ import {
   PublishReviewHeader,
   PublishReviewIntro,
   PublishReviewLead,
-  PublishReviewNote,
   PublishReviewSecureNote,
   PublishReviewSectionTitle,
   PublishReviewSkeleton,
@@ -35,7 +34,6 @@ import { failedLead } from './step-copy'
 
 type CardStepProps = {
   title: string
-  titleId: string
   processId: string
   session: ProcessCheckoutResponse
   shortfall?: WalletShortfall
@@ -62,16 +60,11 @@ export const CardStep = ({ stripePromise, session, ...props }: CardStepProps) =>
 const CardForm = (props: Omit<CardStepProps, 'stripePromise'>) => {
   const { t } = useTranslation()
   const checkoutState = useCheckoutElements()
-  const { title, titleId, onBack, onClose } = props
+  const { title, onBack, onClose } = props
 
   if (checkoutState.type === 'error') {
     return (
-      <OutcomeStep
-        title={title}
-        titleId={titleId}
-        onClose={onClose}
-        actions={<ExitButton onBack={onBack} onClose={onClose} />}
-      >
+      <OutcomeStep title={title} onClose={onClose} actions={<ExitButton onBack={onBack} onClose={onClose} />}>
         <Outcome status='error' lead={failedLead(t)}>
           {checkoutState.error.message}
         </Outcome>
@@ -95,7 +88,6 @@ type StripeCheckout = Extract<ReturnType<typeof useCheckoutElements>, { type: 's
 // The card step, from the moment its session opens: the frame does not change once Stripe is in
 export const CardLayout = ({
   title,
-  titleId,
   processId,
   session,
   checkout,
@@ -192,12 +184,10 @@ export const CardLayout = ({
       >
         <PublishReviewHeader
           eyebrow={onBack ? undefined : title}
-          titleId={onBack ? undefined : titleId}
           onBack={onBack && !isSubmitting ? onBack : undefined}
           onClose={isSubmitting ? undefined : onClose}
         >
           <PublishReviewLead
-            id={onBack ? titleId : undefined}
             // Names the dialog while the amount is a skeleton
             aria-label={
               payAmount ? undefined : t('process.publish_review.card.cta_loading', { defaultValue: 'Pay and publish' })
@@ -268,7 +258,11 @@ export const CardLayout = ({
                 )
               )}
             </PublishReviewAmounts>
-            {note && <PublishReviewNote>{note}</PublishReviewNote>}
+            {note && (
+              <Text textStyle='caption' color='fg.muted' textWrap='pretty'>
+                {note}
+              </Text>
+            )}
             <PublishReviewSectionTitle>
               {t('process.publish_review.card.billing', { defaultValue: 'Billing details' })}
             </PublishReviewSectionTitle>
@@ -306,11 +300,11 @@ export const CardLayout = ({
             </PublishReviewStripeField>
             <PublishReviewSecureNote>
               <LockIcon aria-hidden />
-              <span>
+              <Text as='span' textStyle='caption' color='fg.muted'>
                 {t('process.publish_review.card.secure', {
                   defaultValue: 'Secure payment processed by Stripe. Vocdoni neither sees nor stores the card details.',
                 })}
-              </span>
+              </Text>
             </PublishReviewSecureNote>
           </PublishReviewColumn>
         </PublishReviewColumns>

@@ -1,15 +1,24 @@
 import {
-  CloseButton,
+  Button,
+  ButtonGroup,
+  type ButtonGroupProps,
+  type ButtonProps,
+  Card,
   type CloseButtonProps,
   createSlotRecipeContext,
+  Dialog,
+  type DialogDescriptionProps,
+  type DialogTitleProps,
   type HTMLChakraProps,
   Skeleton,
+  Text,
 } from '@chakra-ui/react'
-import { forwardRef, type ReactNode, type RefObject, useEffect, useRef } from 'react'
+import { type ComponentProps, type ReactNode, type RefObject, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackIcon, CheckIcon, WarningIcon } from '~theme/icons'
+import { CloseButton } from '~components/ui/CloseButton'
+import { BackIcon } from '~theme/icons'
 
-// Every piece reads its look from the `publishReview` slot recipe, so a re-theme edits only that file
+// Every piece reads its layout from the `publishReview` slot recipe; colours and type come from the theme
 const { withProvider, withContext } = createSlotRecipeContext({ key: 'publishReview' })
 
 const StepRoot = withProvider<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'root')
@@ -61,19 +70,18 @@ export const PublishReviewStep = (props: HTMLChakraProps<'div'>) => {
 const HeaderBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'header')
 const TopBar = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'topBar')
 const Eyebrow = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'eyebrow')
-const BackButton = withContext<HTMLButtonElement, HTMLChakraProps<'button'>>('button', 'back')
+// A step without a lead: its eyebrow is the dialog's title. Dialog.Title passes the slot on, so the slot's
+// text role wins over the dialog title's own
+const EyebrowTitle = withContext<HTMLHeadingElement, DialogTitleProps>(Dialog.Title, 'eyebrow')
 const CloseSlot = withContext<HTMLButtonElement, CloseButtonProps>(CloseButton, 'close')
-
-const LeadBox = withContext<HTMLHeadingElement, HTMLChakraProps<'h2'>>('h2', 'lead')
+const LeadTitle = withContext<HTMLHeadingElement, DialogTitleProps>(Dialog.Title, 'lead')
 
 /**
- * The step's sentence, its top heading. Focus lands on it when a step opens, so a screen reader
- * reads what changed (see `stepFocusTarget`).
+ * The step's sentence, the dialog's title: Dialog.Title names the dialog. Focus lands on it when a step
+ * opens, so a screen reader reads what changed (see `stepFocusTarget`).
  */
-export const PublishReviewLead = forwardRef<HTMLHeadingElement, HTMLChakraProps<'h2'>>(
-  function PublishReviewLead(props, ref) {
-    return <LeadBox ref={ref} tabIndex={-1} data-step-focus='lead' {...props} />
-  }
+export const PublishReviewLead = (props: DialogTitleProps) => (
+  <LeadTitle tabIndex={-1} data-step-focus='lead' {...props} />
 )
 
 /** Where focus goes when a step opens: its lead, or the eyebrow of a step without one (a wait, an outcome). */
@@ -81,45 +89,47 @@ export const stepFocusTarget = (root?: HTMLElement | null) =>
   root?.querySelector<HTMLElement>('[data-step-focus=lead]') ??
   root?.querySelector<HTMLElement>('[data-step-focus=eyebrow]') ??
   null
-export const PublishReviewIntro = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'intro')
+
+/** The text under the lead: the dialog's description, read after its title. */
+export const PublishReviewIntro = withContext<HTMLDivElement, DialogDescriptionProps>(Dialog.Description, 'intro')
 /** The intro's generic sentence, which phones leave out. */
 export const PublishReviewIntroGeneric = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'introGeneric')
 export const PublishReviewColumns = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'columns')
 export const PublishReviewColumn = withContext<HTMLElement, HTMLChakraProps<'section'>>('section', 'column')
 export const PublishReviewSectionTitle = withContext<HTMLHeadingElement, HTMLChakraProps<'h3'>>('h3', 'sectionTitle')
-export const PublishReviewQuestionList = withContext<HTMLOListElement, HTMLChakraProps<'ol'>>('ol', 'questionList')
+export const PublishReviewQuestionList = withContext<HTMLOListElement, HTMLChakraProps<'ol'>>('ol', 'list')
 export const PublishReviewQuestionItem = withContext<HTMLLIElement, HTMLChakraProps<'li'>>('li', 'questionItem')
 export const PublishReviewQuestionNumber = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>(
   'span',
   'questionNumber'
 )
 export const PublishReviewQuestionTitle = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'questionTitle')
-export const PublishReviewQuestionType = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'questionType')
-export const PublishReviewFacts = withContext<HTMLDListElement, HTMLChakraProps<'dl'>>('dl', 'facts')
 export const PublishReviewCost = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'cost')
 export const PublishReviewCostSkeleton = withContext<HTMLDivElement, HTMLChakraProps<'div'>>(Skeleton, 'costSkeleton')
-export const PublishReviewCostToggle = withContext<HTMLButtonElement, HTMLChakraProps<'button'>>('button', 'costToggle')
+// The frame around the disclosure: `variant='frame'`, like the facts it sits among
+export const PublishReviewCostRow = withContext<HTMLDivElement, ComponentProps<typeof Card.Root>>(Card.Root, 'costRow')
+// The disclosure of the cost: a full-width button that opens the breakdown
+export const PublishReviewCostToggle = withContext<HTMLButtonElement, ButtonProps>(Button, 'costToggle')
 export const PublishReviewCostSummary = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'costSummary')
 export const PublishReviewCostAction = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'costAction')
 export const PublishReviewCostPanel = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'costPanel')
-export const PublishReviewCostTitle = withContext<HTMLHeadingElement, HTMLChakraProps<'h4'>>('h4', 'costTitle')
-/** The sunken box of amounts ("What you pay now"); flat when placed inside the cost panel. */
+/** The title of the cost breakdown: a heading in the section-title role, like the step's section titles. */
+export const PublishReviewCostTitle = withContext<HTMLHeadingElement, HTMLChakraProps<'h4'>>('h4', 'sectionTitle')
+/** The sunken box of amounts ("What you pay now", the cost breakdown). */
 export const PublishReviewAmounts = withContext<HTMLDListElement, HTMLChakraProps<'dl'>>('dl', 'amounts')
-export const PublishReviewNote = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'note')
 /** Padded body of a one-message step (a checkout outcome). */
 export const PublishReviewBody = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'body')
 /** Centred spinner and message of a wait. */
 export const PublishReviewStatus = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'status')
 /** The stages of a wait; each item has `data-state` `done` or `active`. */
-export const PublishReviewProgress = withContext<HTMLUListElement, HTMLChakraProps<'ul'>>('ul', 'progress')
+export const PublishReviewProgress = withContext<HTMLUListElement, HTMLChakraProps<'ul'>>('ul', 'list')
 export const PublishReviewProgressItem = withContext<HTMLLIElement, HTMLChakraProps<'li'>>('li', 'progressItem')
-export const PublishReviewStatusHint = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'statusHint')
 /** The round check of the success moment. */
 export const PublishReviewPublishedMark = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'publishedMark')
 /** Placeholder while Stripe loads; `data-kind` is `lead`, `amounts` or `field`. */
 export const PublishReviewSkeleton = withContext<HTMLDivElement, HTMLChakraProps<'div'>>(Skeleton, 'skeleton')
 /** The lock line under the card form; the icon goes first. */
-export const PublishReviewSecureNote = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'secureNote')
+export const PublishReviewSecureNote = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'secureNote')
 
 const StripeFieldBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'stripeField')
 const StripeMount = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'stripeMount')
@@ -128,59 +138,53 @@ const FactRowBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'f
 const FactLabel = withContext<HTMLElement, HTMLChakraProps<'dt'>>('dt', 'factLabel')
 const FactValue = withContext<HTMLElement, HTMLChakraProps<'dd'>>('dd', 'factValue')
 const FactText = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'factText')
-const FactDetail = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'factDetail')
-const FactChange = withContext<HTMLButtonElement, HTMLChakraProps<'button'>>('button', 'factChange')
+const FactChange = withContext<HTMLButtonElement, ButtonProps>(Button, 'factChange')
 const AmountRowBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'amountRow')
-const CalloutBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'callout')
-const CalloutIcon = withContext<HTMLSpanElement, HTMLChakraProps<'span'>>('span', 'calloutIcon')
 const FooterBox = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'footer')
 const FooterNote = withContext<HTMLParagraphElement, HTMLChakraProps<'p'>>('p', 'footerNote')
-const Actions = withContext<HTMLDivElement, HTMLChakraProps<'div'>>('div', 'actions')
+// The footer's buttons: the group gives them the phone and desktop size, so no button sets its own
+const Actions = withContext<HTMLDivElement, ButtonGroupProps>(ButtonGroup, 'actions')
 
 // Data attributes take no value: present means on
 const flag = (on?: boolean) => (on ? '' : undefined)
 
 export type PublishReviewHeaderProps = {
-  /** Small label on top of the summary step ("Review before publishing"). */
+  /** Small label on top of the step ("Review before publishing"). Without a lead, it is the dialog's title. */
   eyebrow?: ReactNode
-  /** Id for the eyebrow, to label the dialog with it (`Dialog.Root ids={{ title }}`). */
-  titleId?: string
   /** Shows a "Back to the summary" link in place of the eyebrow. */
   onBack?: () => void
   backLabel?: ReactNode
   /** Shows the close button; leave it out while the dialog must not be dismissed. */
   onClose?: () => void
-  /** The lead sentence and intro under the top bar. */
+  /** The lead (`PublishReviewLead`) and intro under the top bar; the lead names the dialog. */
   children?: ReactNode
 }
 
-export const PublishReviewHeader = ({
-  eyebrow,
-  titleId,
-  onBack,
-  backLabel,
-  onClose,
-  children,
-}: PublishReviewHeaderProps) => {
+export const PublishReviewHeader = ({ eyebrow, onBack, backLabel, onClose, children }: PublishReviewHeaderProps) => {
   const { t } = useTranslation()
+  // A step without a lead has nothing else to name it, so its eyebrow is the dialog's title
+  const leading = onBack ? (
+    <Button type='button' variant='quiet' onClick={onBack}>
+      <BackIcon aria-hidden />
+      {backLabel ?? t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
+    </Button>
+  ) : children == null || children === false ? (
+    <EyebrowTitle as='span' tabIndex={-1} data-step-focus='eyebrow'>
+      {eyebrow}
+    </EyebrowTitle>
+  ) : (
+    <Eyebrow tabIndex={-1} data-step-focus='eyebrow'>
+      {eyebrow}
+    </Eyebrow>
+  )
 
   return (
     <HeaderBox>
       <TopBar>
-        {onBack ? (
-          <BackButton type='button' onClick={onBack}>
-            <BackIcon aria-hidden />
-            {backLabel ?? t('process.publish_review.back', { defaultValue: 'Back to the summary' })}
-          </BackButton>
-        ) : (
-          <Eyebrow id={titleId} tabIndex={-1} data-step-focus='eyebrow'>
-            {eyebrow}
-          </Eyebrow>
-        )}
+        {leading}
         {onClose && (
           <CloseSlot
-            size='sm'
-            variant='ghost'
+            size={{ base: 'lg', md: 'sm' }}
             onClick={onClose}
             aria-label={t('process.publish_review.close', { defaultValue: 'Close' })}
           />
@@ -202,7 +206,7 @@ export type PublishReviewFactRowProps = {
   changeLabel?: string
 }
 
-/** A label / value row of `PublishReviewFacts`. */
+/** A label / value row of the summary's facts (a `Card.Root` as `dl`). */
 export const PublishReviewFactRow = ({
   label,
   value,
@@ -218,10 +222,14 @@ export const PublishReviewFactRow = ({
       <FactValue data-muted={flag(muted)}>
         <FactText>
           {value}
-          {detail && <FactDetail>{detail}</FactDetail>}
+          {detail && (
+            <Text as='span' ms='1.5' color='fg.muted' whiteSpace='nowrap'>
+              {detail}
+            </Text>
+          )}
         </FactText>
         {onChange && (
-          <FactChange type='button' onClick={onChange} aria-label={changeLabel}>
+          <FactChange type='button' variant='quiet' onClick={onChange} aria-label={changeLabel}>
             {t('process.publish_review.change', { defaultValue: 'Change' })}
           </FactChange>
         )}
@@ -240,23 +248,12 @@ export type PublishReviewAmountRowProps = {
   muted?: boolean
 }
 
-/** One line of `PublishReviewAmounts` or of the cost panel. */
+/** One line of `PublishReviewAmounts`. */
 export const PublishReviewAmountRow = ({ label, value, strong, ruled, muted }: PublishReviewAmountRowProps) => (
   <AmountRowBox data-strong={flag(strong)} data-ruled={flag(ruled)} data-muted={flag(muted)}>
     <dt>{label}</dt>
     <dd>{value}</dd>
   </AmountRowBox>
-)
-
-export type PublishReviewCalloutProps = { tone: 'positive' | 'warning'; children: ReactNode }
-
-export const PublishReviewCallout = ({ tone, children }: PublishReviewCalloutProps) => (
-  <CalloutBox data-tone={tone} role={tone === 'warning' ? 'alert' : undefined}>
-    <CalloutIcon aria-hidden asChild>
-      {tone === 'positive' ? <CheckIcon /> : <WarningIcon />}
-    </CalloutIcon>
-    <span>{children}</span>
-  </CalloutBox>
 )
 
 export type PublishReviewStripeFieldProps = {
@@ -287,6 +284,14 @@ export type PublishReviewFooterProps = {
 export const PublishReviewFooter = ({ note, children }: PublishReviewFooterProps) => (
   <FooterBox>
     <FooterNote>{note}</FooterNote>
-    <Actions>{children}</Actions>
+    <Actions
+      size={{ base: 'lg', md: 'md' }}
+      // Primary on top and full width on phones, a row on the right from md up. Props, since Group's
+      // own row and centring would win over the slot
+      flexDirection={{ base: 'column-reverse', md: 'row' }}
+      alignItems={{ base: 'stretch', md: 'center' }}
+    >
+      {children}
+    </Actions>
   </FooterBox>
 )

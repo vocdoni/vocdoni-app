@@ -18,59 +18,47 @@ const scrollArea = {
 } as const
 
 /**
- * The pre-publish dialog: summary, wallet and card steps share this anatomy. It sits inside the
- * stock Dialog.Content, so it only styles what goes in it; re-theming the dialog edits this file.
- * Per-row and per-callout looks are data attributes (`data-strong`, `data-tone`...), not variants,
- * because one step mixes several of them.
+ * Layout of the publish dialog's steps. Dialog.Content's `review` size gives the frame, and the theme gives
+ * the look; per-row looks are data attributes, since one step mixes several.
  */
 export const PublishReview = defineSlotRecipe({
   className: 'publish-review',
   slots: [
-    'frame',
     'root',
     'header',
     'topBar',
     'eyebrow',
-    'back',
     'close',
     'lead',
     'intro',
+    'introGeneric',
     'columns',
     'column',
     'sectionTitle',
-    'questionList',
+    'list',
     'questionItem',
     'questionNumber',
     'questionTitle',
-    'questionType',
-    'facts',
     'factRow',
     'factLabel',
     'factValue',
     'factText',
-    'factDetail',
     'factChange',
-    'introGeneric',
+    'costRow',
     'cost',
     'costSkeleton',
     'costToggle',
     'costSummary',
     'costAction',
     'costPanel',
-    'costTitle',
     'amounts',
     'amountRow',
-    'note',
-    'callout',
-    'calloutIcon',
     'footer',
     'footerNote',
     'actions',
     'body',
     'status',
-    'progress',
     'progressItem',
-    'statusHint',
     'publishedMark',
     'skeleton',
     'stripeField',
@@ -78,19 +66,6 @@ export const PublishReview = defineSlotRecipe({
     'secureNote',
   ],
   base: {
-    // Dialog.Content itself. Its phone-sized 'full' size fills the viewport: undone from md up, or the
-    // dialog would too
-    frame: {
-      maxW: { md: 'publish-review.dialog' },
-      minH: { md: 'auto' },
-      borderRadius: { md: 'l3' },
-      mx: { md: '4' },
-      // The phone's full size zeroes the margins too; pinned to the top, keep the canvas's gap
-      mt: { md: '16' },
-      mb: { md: '12' },
-      [shortScreen]: { mt: { md: '4' }, mb: { md: '4' } },
-      overflow: 'hidden',
-    },
     // Fills Dialog.Content (a flex column capped at the viewport) and may shrink below its content,
     // so the middle part scrolls while the header and the footer stay in view
     root: {
@@ -102,9 +77,7 @@ export const PublishReview = defineSlotRecipe({
       overflowY: { base: 'auto', md: 'visible' },
       [shortScreen]: { overflowY: 'auto' },
       color: 'fg',
-      fontFamily: 'body',
-      fontSize: 'sm',
-      lineHeight: 'moderate',
+      textStyle: 'body-sm',
     },
     header: {
       display: 'flex',
@@ -122,51 +95,30 @@ export const PublishReview = defineSlotRecipe({
       gap: '3',
       minH: '8',
     },
+    // The label above the lead, or the title itself on a step without one (Dialog.Title, see anatomy)
     eyebrow: {
-      fontSize: 'sm',
+      textStyle: 'body-sm',
+      fontWeight: 'normal',
       color: 'fg.muted',
-      // Focused by script when a step opens, to be read out; it is not a control
       _focus: { outline: 'none' },
     },
-    back: {
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '1.5',
-      // 44px targets on phones
-      h: { base: '11', md: '8' },
-      p: '0',
-      bg: 'transparent',
-      fontSize: 'sm',
-      fontWeight: 'semibold',
-      color: 'fg.muted',
-      cursor: 'button',
-      borderRadius: 'l2',
-      _hover: { color: 'fg' },
-      _focusVisible: { outline: '2px solid', outlineColor: 'colorPalette.focusRing', outlineOffset: '2px' },
-    },
+    // The corner close button, pulled into the padding so its icon lines up with the gutter
     close: {
       color: 'fg.muted',
       me: '-2',
-      boxSize: { base: '11', md: '8' },
-      minW: { base: '11', md: '8' },
     },
+    // The step's sentence, the dialog's title: a section title on a phone, the page title from md up
     lead: {
       m: '0',
-      fontFamily: 'heading',
-      fontSize: { base: 'lg', md: '2xl' },
-      // `bolder` is 500 in this theme: lighter than the section titles, as the design has it
-      fontWeight: 'bolder',
-      letterSpacing: 'tight',
-      lineHeight: 'short',
+      textStyle: { base: 'section-title', md: 'page-title' },
       textWrap: 'pretty',
       _focus: { outline: 'none' },
     },
     intro: {
       m: '0',
-      fontSize: 'md',
-      color: 'fg.muted',
-      textWrap: 'pretty',
+      textStyle: 'body',
       maxW: '[65ch]',
+      textWrap: 'pretty',
     },
     // Phones skip the generic sentence
     introGeneric: {
@@ -196,14 +148,16 @@ export const PublishReview = defineSlotRecipe({
         borderColor: 'border',
       },
     },
+    // Also the title of the cost breakdown (an h4): both are one heading role in the dialog
     sectionTitle: {
       m: '0',
-      fontSize: 'md',
+      textStyle: 'body',
       fontWeight: 'semibold',
       // A second section in one column (the card step's billing details)
-      '&:not(:first-child)': { mt: '2' },
+      '&:not(:first-of-type)': { mt: '2' },
     },
-    questionList: {
+    // The numbered questions and the stages of a wait: both lists with no bullets
+    list: {
       display: 'flex',
       flexDirection: 'column',
       gap: '3',
@@ -224,22 +178,9 @@ export const PublishReview = defineSlotRecipe({
     },
     questionTitle: {
       display: 'block',
-      fontSize: 'md',
+      textStyle: 'body',
       fontWeight: 'semibold',
       overflowWrap: 'anywhere',
-    },
-    questionType: {
-      display: 'block',
-      color: 'fg.muted',
-    },
-    facts: {
-      display: 'flex',
-      flexDirection: 'column',
-      m: '0',
-      borderWidth: 'hairline',
-      borderColor: 'border',
-      borderRadius: 'l3',
-      overflow: 'hidden',
     },
     factRow: {
       display: 'flex',
@@ -260,7 +201,6 @@ export const PublishReview = defineSlotRecipe({
       alignItems: 'baseline',
       justifyContent: 'flex-end',
       columnGap: '3',
-      fontWeight: 'medium',
       textAlign: 'end',
       '&[data-muted]': { color: 'fg.muted' },
     },
@@ -268,33 +208,14 @@ export const PublishReview = defineSlotRecipe({
       minW: '0',
       overflowWrap: 'anywhere',
     },
-    // How long the vote runs, after the range
-    factDetail: {
-      ms: '1.5',
-      color: 'fg.muted',
-      fontWeight: 'normal',
-      whiteSpace: 'nowrap',
-    },
-    // Link-like and quiet until pointed at; a 44px target on phones without growing the row
     factChange: {
       flex: '0 0 auto',
       alignSelf: 'center',
-      display: 'inline-flex',
-      alignItems: 'center',
-      minH: { base: '11', md: '6' },
-      my: { base: '-2.5', md: '0' },
-      px: '1',
-      bg: 'transparent',
-      fontSize: 'sm',
-      fontWeight: 'normal',
-      color: 'fg.muted',
-      cursor: 'button',
-      borderRadius: 'l1',
-      textDecoration: 'underline',
-      textDecorationColor: 'transparent',
-      textUnderlineOffset: '3px',
-      _hover: { color: 'fg', textDecorationColor: '[currentColor]' },
-      _focusVisible: { outline: '2px solid', outlineColor: 'colorPalette.focusRing', outlineOffset: '2px' },
+    },
+    // The frame around the cost disclosure; the disclosure fills it, so the whole box is the button
+    costRow: {
+      p: '0',
+      _hover: { bg: 'state.hover.bg' },
     },
     cost: {
       display: 'flex',
@@ -307,33 +228,24 @@ export const PublishReview = defineSlotRecipe({
       h: '11',
       borderRadius: 'l3',
     },
+    // The full-width row of the disclosure; "Review the details" drops under a long summary
     costToggle: {
-      display: 'flex',
-      // "Review the details" drops under a long summary instead of squeezing it
-      flexWrap: 'wrap',
-      alignItems: 'baseline',
-      justifyContent: 'space-between',
-      columnGap: '3',
-      rowGap: '1',
       w: 'full',
-      minH: '11',
       px: '3.5',
       py: '2.5',
-      bg: 'transparent',
-      borderWidth: 'hairline',
-      borderColor: 'border',
-      borderRadius: 'l3',
-      textAlign: 'start',
-      cursor: 'button',
-      '&[aria-expanded=true] svg': { transform: 'rotate(180deg)' },
-      _hover: { bg: 'bg.subtle' },
-      _focusVisible: { outline: '2px solid', outlineColor: 'colorPalette.focusRing', outlineOffset: '2px' },
+      my: '0',
+      minH: '11',
+      justifyContent: 'space-between',
+      flexWrap: 'wrap',
+      columnGap: '3',
+      rowGap: '1',
     },
     // Its natural width, so "Cost: €33.00" and "Review the details" share a line whenever they fit;
-    // the row wraps only when they do not
+    // the row wraps only when they do not. The toggle is muted, the total is not
     costSummary: {
       flex: '1 1 auto',
       minW: '0',
+      color: 'fg',
       fontWeight: 'semibold',
     },
     costAction: {
@@ -342,27 +254,17 @@ export const PublishReview = defineSlotRecipe({
       gap: '1',
       flex: '0 0 auto',
       fontWeight: 'semibold',
-      color: 'fg.muted',
       '& svg': { _motionSafe: { transitionProperty: '[transform]', transitionDuration: 'fast' } },
+      '&[data-open] svg': { transform: 'rotate(180deg)' },
     },
+    // The breakdown under the disclosure; the sunken box of its amounts is the only fill
     costPanel: {
       display: 'flex',
       flexDirection: 'column',
       gap: '2',
-      px: '4',
-      pt: '3.5',
-      pb: '4',
-      bg: 'bg.muted',
-      // In dark mode `bg.muted` is lighter than the dialog, which raises the box instead of sinking it
-      _dark: { bg: 'black' },
-      borderRadius: 'l3',
+      pt: '2',
     },
-    costTitle: {
-      m: '0',
-      fontSize: 'sm',
-      fontWeight: 'semibold',
-    },
-    // The sunken box of the pay steps; inside the cost panel it is already sunken, so it goes flat
+    // The sunken box of the pay steps and of the cost breakdown
     amounts: {
       display: 'flex',
       flexDirection: 'column',
@@ -370,11 +272,9 @@ export const PublishReview = defineSlotRecipe({
       m: '0',
       px: '4',
       py: '3.5',
-      bg: 'bg.muted',
-      _dark: { bg: 'black' },
+      bg: 'surface.inset',
       borderRadius: 'l3',
       fontVariantNumeric: 'tabular-nums',
-      '.publish-review__costPanel &': { p: '0', bg: 'transparent', _dark: { bg: 'transparent' }, borderRadius: 'none' },
     },
     amountRow: {
       display: 'flex',
@@ -385,30 +285,6 @@ export const PublishReview = defineSlotRecipe({
       '&[data-ruled]': { mt: '0.5', pt: '2', borderTopWidth: 'hairline', borderColor: 'border' },
       '&[data-strong]': { color: 'fg', fontWeight: 'semibold' },
       '&[data-muted]': { color: 'fg.muted' },
-    },
-    note: {
-      m: '0',
-      fontSize: 'xs',
-      color: 'fg.muted',
-      textWrap: 'pretty',
-    },
-    callout: {
-      display: 'flex',
-      alignItems: 'flex-start',
-      gap: '2.5',
-      px: '3.5',
-      py: '3',
-      borderRadius: 'l3',
-      bg: 'colorPalette.subtle',
-      color: 'fg',
-      '&[data-tone=positive]': { colorPalette: 'green' },
-      '&[data-tone=warning]': { colorPalette: 'orange' },
-    },
-    calloutIcon: {
-      flex: '0 0 auto',
-      mt: '0.5',
-      boxSize: '4',
-      color: 'colorPalette.fg',
     },
     footer: {
       display: 'flex',
@@ -456,15 +332,10 @@ export const PublishReview = defineSlotRecipe({
       // A refused card, shown where Pay was clicked
       '&:has([data-tone=error])': { color: 'fg.error' },
     },
-    // Primary on top and full width on phones, beside each other on the right from md up
     actions: {
       display: 'flex',
-      flexDirection: { base: 'column-reverse', md: 'row' },
-      alignItems: { base: 'stretch', md: 'center' },
       gap: { base: '2', md: '2.5' },
       ms: { base: '0', md: 'auto' },
-      // Two classes deep, so it beats the button's own size whatever order the styles load in
-      '& > *, & > .chakra-button': { w: { base: 'full', md: 'auto' }, h: { base: '11', md: '10' } },
     },
     // A wait or an outcome is about as tall as the summary, so the dialog keeps its size between steps
     body: {
@@ -491,29 +362,15 @@ export const PublishReview = defineSlotRecipe({
       pt: '4',
       pb: '10',
       textAlign: 'center',
-      fontSize: 'md',
+      textStyle: 'body',
       '& > p': { m: '0' },
-    },
-    // The stages of a wait: done ones muted, the one under way in full
-    progress: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-      gap: '3',
-      m: '0',
-      p: '0',
-      listStyle: 'none',
     },
     progressItem: {
       display: 'flex',
       alignItems: 'center',
       gap: '2.5',
-      '&[data-state=done]': { color: 'fg.muted' },
-      '&[data-state=done] svg': { boxSize: '5', color: 'green.fg' },
-    },
-    statusHint: {
-      color: 'fg.muted',
-      fontSize: 'sm',
+      '&[data-state=done]': { colorPalette: 'success', color: 'fg.muted' },
+      '&[data-state=done] svg': { boxSize: 'icon.md', color: 'colorPalette.fg' },
     },
     publishedMark: {
       display: 'inline-flex',
@@ -521,9 +378,10 @@ export const PublishReview = defineSlotRecipe({
       justifyContent: 'center',
       boxSize: '12',
       borderRadius: 'full',
-      bg: 'green.subtle',
-      color: 'green.fg',
-      '& svg': { boxSize: '6' },
+      colorPalette: 'success',
+      bg: 'colorPalette.subtle',
+      color: 'colorPalette.fg',
+      '& svg': { boxSize: 'icon.lg' },
     },
     // Stand-ins for what Stripe renders once loaded, sized like it
     skeleton: {
@@ -554,9 +412,7 @@ export const PublishReview = defineSlotRecipe({
       alignItems: 'flex-start',
       gap: '2',
       m: '0',
-      fontSize: 'xs',
-      color: 'fg.muted',
-      '& > svg': { flex: '0 0 auto', boxSize: '3.5', mt: '0.5' },
+      '& > svg': { flex: '0 0 auto', boxSize: 'icon.sm', mt: '0.5' },
     },
   },
 })

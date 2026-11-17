@@ -5,7 +5,6 @@ import { PublishReviewBody, PublishReviewFooter, PublishReviewHeader, PublishRev
 
 export type OutcomeStepProps = {
   title: string
-  titleId: string
   /** Id for the message, which describes the dialog. */
   descriptionId?: string
   onClose?: () => void
@@ -15,9 +14,9 @@ export type OutcomeStepProps = {
 }
 
 /** The end of a checkout state that needs the user: a message and what to do next. */
-export const OutcomeStep = ({ title, titleId, descriptionId, onClose, actions, children }: OutcomeStepProps) => (
+export const OutcomeStep = ({ title, descriptionId, onClose, actions, children }: OutcomeStepProps) => (
   <PublishReviewStep>
-    <PublishReviewHeader eyebrow={title} titleId={titleId} onClose={onClose} />
+    <PublishReviewHeader eyebrow={title} onClose={onClose} />
     <PublishReviewBody id={descriptionId}>{children}</PublishReviewBody>
     {actions && <PublishReviewFooter>{actions}</PublishReviewFooter>}
   </PublishReviewStep>

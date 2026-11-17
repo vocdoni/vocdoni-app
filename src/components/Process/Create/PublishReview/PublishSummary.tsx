@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import { Button, Card, Text } from '@chakra-ui/react'
 import type { ProcessPriceResponse } from '@vocdoni/api-types'
 import { useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,20 +17,18 @@ import {
   PublishReviewCostSkeleton,
   PublishReviewCostSummary,
   PublishReviewCostTitle,
+  PublishReviewCostRow,
   PublishReviewCostToggle,
   PublishReviewFactRow,
-  PublishReviewFacts,
   PublishReviewFooter,
   PublishReviewHeader,
   PublishReviewIntro,
   PublishReviewIntroGeneric,
   PublishReviewLead,
-  PublishReviewNote,
   PublishReviewQuestionItem,
   PublishReviewQuestionList,
   PublishReviewQuestionNumber,
   PublishReviewQuestionTitle,
-  PublishReviewQuestionType,
   PublishReviewSectionTitle,
   PublishReviewStep,
 } from './anatomy'
@@ -67,8 +65,6 @@ export type PublishSummaryProps = {
   wallet?: PublishWallet
   canTopUp: boolean
   disableAnonymous?: boolean
-  /** Id for the eyebrow, to label the dialog with it. */
-  titleId?: string
   onKeepEditing: () => void
   /** Closes the dialog from the header; left out, no close button shows. */
   onClose?: () => void
@@ -90,7 +86,6 @@ export const PublishSummary = ({
   wallet,
   canTopUp,
   disableAnonymous,
-  titleId,
   onKeepEditing,
   onClose,
   onPrimary,
@@ -112,7 +107,6 @@ export const PublishSummary = ({
   return (
     <PublishReviewStep>
       <PublishReviewHeader
-        titleId={titleId}
         eyebrow={t('process.publish_review.eyebrow', { defaultValue: 'Review before publishing' })}
         onClose={onClose}
       >
@@ -144,7 +138,9 @@ export const PublishSummary = ({
                 <PublishReviewQuestionNumber aria-hidden>{index + 1}</PublishReviewQuestionNumber>
                 <span>
                   <PublishReviewQuestionTitle>{question.title}</PublishReviewQuestionTitle>
-                  <PublishReviewQuestionType>{questionTypeLabel(t, question.type)}</PublishReviewQuestionType>
+                  <Text as='span' display='block' color='fg.muted'>
+                    {questionTypeLabel(t, question.type)}
+                  </Text>
                 </span>
               </PublishReviewQuestionItem>
             ))}
@@ -155,7 +151,7 @@ export const PublishSummary = ({
           <PublishReviewSectionTitle>
             {t('process.publish_review.vote_summary', { defaultValue: 'Vote summary' })}
           </PublishReviewSectionTitle>
-          <PublishReviewFacts>
+          <Card.Root variant='frame' as='dl'>
             {summaryFacts(t, form, { locale, disableAnonymous }).map(({ key, label, value, detail, muted, target }) => (
               <PublishReviewFactRow
                 key={key}
@@ -170,7 +166,7 @@ export const PublishSummary = ({
                 })}
               />
             ))}
-          </PublishReviewFacts>
+          </Card.Root>
           <CostBox
             price={shownPrice}
             primary={primary}
@@ -252,9 +248,9 @@ const CostBox = ({ price, primary, voters, wallet, currencyCode, onRetry, retryi
   if (primary.kind === 'waiting' && primary.reason === 'error') {
     return (
       <PublishReviewCost data-error=''>
-        <PublishReviewNote>
+        <Text textStyle='caption' color='fg.muted' textWrap='pretty'>
           {t('process.price.error', { defaultValue: 'The price could not be loaded.' })}
-        </PublishReviewNote>
+        </Text>
         {onRetry && (
           <Button size='xs' variant='outline' onClick={onRetry} loading={retrying}>
             {t('common.retry', { defaultValue: 'Try again' })}
@@ -267,7 +263,12 @@ const CostBox = ({ price, primary, voters, wallet, currencyCode, onRetry, retryi
   if (!price) return <PublishReviewCostSkeleton />
 
   // A quote-only price has no lines and its zero total is not a price
-  if (primary.kind === 'waiting') return <PublishReviewNote>{costNote(t, price, primary)}</PublishReviewNote>
+  if (primary.kind === 'waiting')
+    return (
+      <Text textStyle='caption' color='fg.muted' textWrap='pretty'>
+        {costNote(t, price, primary)}
+      </Text>
+    )
 
   const total = currencyExact(price.totalCents, currencyCode)
   // Only the price: what the balance lacks is the payment step's business, not something to work out here
@@ -275,18 +276,21 @@ const CostBox = ({ price, primary, voters, wallet, currencyCode, onRetry, retryi
 
   return (
     <PublishReviewCost>
-      <PublishReviewCostToggle
-        type='button'
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={() => setOpen((value) => !value)}
-      >
-        <PublishReviewCostSummary>{summary}</PublishReviewCostSummary>
-        <PublishReviewCostAction>
-          {t('process.publish_review.cost.details', { defaultValue: 'Review the details' })}
-          <ChevronDownIcon aria-hidden />
-        </PublishReviewCostAction>
-      </PublishReviewCostToggle>
+      <PublishReviewCostRow variant='frame'>
+        <PublishReviewCostToggle
+          type='button'
+          variant='quiet'
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={() => setOpen((value) => !value)}
+        >
+          <PublishReviewCostSummary>{summary}</PublishReviewCostSummary>
+          <PublishReviewCostAction data-open={open ? '' : undefined}>
+            {t('process.publish_review.cost.details', { defaultValue: 'Review the details' })}
+            <ChevronDownIcon aria-hidden />
+          </PublishReviewCostAction>
+        </PublishReviewCostToggle>
+      </PublishReviewCostRow>
       {open && (
         <PublishReviewCostPanel id={panelId} ref={panelRef}>
           <PublishReviewCostTitle>
@@ -297,7 +301,9 @@ const CostBox = ({ price, primary, voters, wallet, currencyCode, onRetry, retryi
               <PublishReviewAmountRow key={key} {...line} />
             ))}
           </PublishReviewAmounts>
-          <PublishReviewNote>{costNote(t, price, primary)}</PublishReviewNote>
+          <Text textStyle='caption' color='fg.muted' textWrap='pretty'>
+            {costNote(t, price, primary)}
+          </Text>
         </PublishReviewCostPanel>
       )}
     </PublishReviewCost>

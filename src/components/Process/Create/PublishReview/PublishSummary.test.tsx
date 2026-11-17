@@ -1,5 +1,7 @@
+import { Dialog } from '@chakra-ui/react'
 import userEvent from '@testing-library/user-event'
 import type { ProcessPriceResponse } from '@vocdoni/api-types'
+import type { ReactElement } from 'react'
 import { render, screen, within } from '~src/test-utils'
 import { defaultProcessValues, type Process, SelectorTypes } from '../common'
 import { PublishSummary, type PublishSummaryProps } from './PublishSummary'
@@ -29,9 +31,12 @@ const form: Process = {
   census: { credentials: ['memberNumber'], use2FA: true, use2FAMethod: 'email' },
 }
 
+// The steps name the dialog and read its context, so they render inside its root, as they do in PublishDialog
+const inDialog = (step: ReactElement) => <Dialog.Root open>{step}</Dialog.Root>
+
 const setup = (props: Partial<PublishSummaryProps> = {}) => {
   const handlers = { onKeepEditing: vi.fn(), onPrimary: vi.fn(), onClose: vi.fn(), onRetryPrice: vi.fn() }
-  render(<PublishSummary form={form} voters={312} price={price()} canTopUp {...handlers} {...props} />)
+  render(inDialog(<PublishSummary form={form} voters={312} price={price()} canTopUp {...handlers} {...props} />))
   return { ...handlers, user: userEvent.setup() }
 }
 
@@ -64,7 +69,9 @@ describe('PublishSummary', () => {
   it('offers a free test run only when the census alone makes the vote paid', () => {
     const noSms = price({ lines: [{ kind: 'base', description: 'base', amountCents: 15716 }], totalCents: 15716 })
     const { unmount } = render(
-      <PublishSummary form={form} voters={312} price={noSms} canTopUp onKeepEditing={vi.fn()} onPrimary={vi.fn()} />
+      inDialog(
+        <PublishSummary form={form} voters={312} price={noSms} canTopUp onKeepEditing={vi.fn()} onPrimary={vi.fn()} />
+      )
     )
     expect(screen.getByText(/pick a census of 25 people or fewer: it's free/)).toBeInTheDocument()
     unmount()
@@ -134,11 +141,11 @@ describe('PublishSummary', () => {
     const handlers = { onKeepEditing: vi.fn(), onPrimary: vi.fn() }
     const props = { form, voters: 312, price: price(), canTopUp: true, ...handlers }
     const wallet = { balanceCents: 13080, currency: 'eur' }
-    const { rerender } = render(<PublishSummary {...props} wallet={wallet} />)
+    const { rerender } = render(inDialog(<PublishSummary {...props} wallet={wallet} />))
     const user = userEvent.setup()
     await user.click(screen.getByRole('button', { name: /Review the details/ }))
 
-    rerender(<PublishSummary {...props} wallet={wallet} priceRefreshing />)
+    rerender(inDialog(<PublishSummary {...props} wallet={wallet} priceRefreshing />))
 
     expect(screen.getByText('Cost: €172.76')).toBeInTheDocument()
     expect(screen.getByText('What you pay for')).toBeInTheDocument()
