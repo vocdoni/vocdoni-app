@@ -26,10 +26,12 @@ export const useVoteText = () => {
   const text = (value: LocalizedInput | undefined) =>
     typeof value === 'string' ? value : getLocalizedRawText(value, i18n.language)
 
-  // Intl, because Catalan needs "9 d'abril", which no date-fns pattern gives.
+  // Intl, because Catalan needs "9 d'abril", which no date-fns pattern gives. A day of another year carries it.
   const formatDate = (date: Date | string | undefined, options: Intl.DateTimeFormatOptions) => {
     const value = date ? new Date(date) : undefined
-    return value && !isNaN(value.getTime()) ? new Intl.DateTimeFormat(i18n.language, options).format(value) : ''
+    if (!value || isNaN(value.getTime())) return ''
+    const withYear = options.month && value.getFullYear() !== new Date().getFullYear()
+    return new Intl.DateTimeFormat(i18n.language, withYear ? { ...options, year: 'numeric' } : options).format(value)
   }
 
   const durationWords = (duration: Duration) =>
@@ -53,7 +55,7 @@ export const useVoteText = () => {
   return {
     /** "Thursday, March 12" (ca "dijous 12 de març"): weekday, day and month. */
     day,
-    /** "Thursday, March 12 at 20:00" (ca "dijous 12 de març a les 20:00"): the boards' date and time, no year. */
+    /** "Thursday, March 12 at 20:00" (ca "dijous 12 de març a les 20:00"): the boards' date and time; the year only when it is not this one. */
     dateAt: (date: Date | string | undefined) => {
       const parts = dateParts(date)
       return parts.day ? t('votes.date.at', { defaultValue: '{{weekday}}, {{day}} at {{time}}', ...parts }) : ''
@@ -72,9 +74,9 @@ export const useVoteText = () => {
     duration: (start: Date, end: Date) => durationWords(timeLeft(end, start) ?? { minutes: 1 }),
     /** A title, choice or description in the page language. */
     text,
-    /** "Thursday, April 9 at 20:00": weekday, no year. */
+    /** "Thursday, April 9 at 20:00": weekday; the year only when it is not this one. */
     longDate: (date: Date | string | undefined) => formatDate(date, LONG_DATE),
-    /** "April 9": the closed date in the list's state column. */
+    /** "April 9" ("April 9, 2024" another year): the closed date in the list's state column. */
     shortDate: (date: Date | string | undefined) => formatDate(date, SHORT_DATE),
     /** "2 days and 4 hours left", or null once the end has passed. */
     timeLeft: (end: Date | undefined, now: Date) => {

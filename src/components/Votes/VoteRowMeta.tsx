@@ -11,19 +11,31 @@ type VoteRowMetaProps = {
   now: Date
 }
 
-/** "Thursday 12 at 20:00": the month only when it is not this month's, as the board writes a near date. */
+/**
+ * "Thursday 12 at 20:00": the month only when it is not this month's, as the board writes a near date, and the year
+ * only when it is not this one. The day alone has its own pattern (German writes it "17.").
+ */
 const useRowDate = (now: Date) => {
   const { t, i18n } = useTranslation()
   return (value: Date | string | undefined) => {
     const date = value ? new Date(value) : undefined
     if (!date || isNaN(date.getTime())) return ''
     const format = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(i18n.language, options).format(date)
-    const thisMonth = date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth()
+    const thisYear = date.getFullYear() === now.getFullYear()
+    const parts = {
+      weekday: format({ weekday: 'long' }),
+      time: format({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }),
+    }
+    if (thisYear && date.getMonth() === now.getMonth())
+      return t('votes.list.when_day', {
+        defaultValue: '{{weekday}} {{day}} at {{time}}',
+        day: format({ day: 'numeric' }),
+        ...parts,
+      })
     return t('votes.list.when', {
       defaultValue: '{{weekday}} {{day}} at {{time}}',
-      weekday: format({ weekday: 'long' }),
-      day: format(thisMonth ? { day: 'numeric' } : { day: 'numeric', month: 'long' }),
-      time: format({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }),
+      day: format(thisYear ? { day: 'numeric', month: 'long' } : { day: 'numeric', month: 'long', year: 'numeric' }),
+      ...parts,
     })
   }
 }
