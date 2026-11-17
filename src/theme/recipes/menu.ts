@@ -60,16 +60,16 @@ export const Menu = defineSlotRecipe({
       },
     },
   },
-  // The boards' action menu, after the sizes so it keeps its own rows. On a tablet a 200px menu of 40px rows with
-  // 18px icons; from `lg` a 252px menu of 34px rows without icons, a halo around its ring and a rule before the
-  // destructive items. A destructive item (`data-danger`) is in the danger colour, its icon too.
+  // The action menu, after the sizes so it keeps its own rows: as wide as its longest item (owner ruling, the boards'
+  // fixed widths left empty space), every item with its icon. 40px rows on a tablet; from `lg` 34px rows, a halo
+  // around its ring and a rule before the destructive items. A destructive item (`data-danger`) is in danger colour.
   compoundVariants: [
     {
       variant: 'actions',
       css: {
         content: {
-          w: { base: 'menu', lg: 'menu.wide' },
-          minW: '0',
+          w: 'auto',
+          minW: '36',
           p: '1',
           borderRadius: 'md',
           boxShadow: { base: 'shadow.raised', lg: 'shadow.raised.halo' },
@@ -78,12 +78,13 @@ export const Menu = defineSlotRecipe({
           minH: '0',
           h: { base: 'control.tablet', lg: 'control.md' },
           py: '0',
-          px: '2.5',
+          ps: '2.5',
+          pe: '4',
           gap: { base: '3', lg: '2' },
           borderRadius: 'sm',
           fontWeight: 'medium',
           color: 'fg',
-          _icon: { boxSize: '4.5', color: 'fg.subtle', display: { base: 'block', lg: 'none' } },
+          _icon: { boxSize: { base: '4.5', lg: '4' }, color: 'fg.subtle' },
           '&[data-danger]': { color: 'danger.action', _icon: { color: 'danger.action' } },
         },
         separator: {

@@ -13,7 +13,7 @@ export type ResponsiveMenuItem = {
   external?: boolean
   danger?: boolean
   disabled?: boolean
-  /** A concept icon from ~theme/icons, drawn before the label on a phone and a tablet (the desktop menu has none). */
+  /** A concept icon from ~theme/icons, drawn before the label. */
   icon?: ElementType
 }
 
@@ -48,7 +48,7 @@ const ItemContent = ({ item }: { item: ResponsiveMenuItem }) => {
 }
 
 /**
- * A list of actions: a dropdown from `md` (menu `actions`: 200px with icons on a tablet, 252px without from `lg`, a
+ * A list of actions: a dropdown from `md` (menu `actions`: as wide as its items, each with its icon, a
  * rule before the destructive items), a bottom sheet of 52px rows below it (a menu is hard to hit with a thumb).
  * Destructive items come last, in the danger colour; with `href` an item is a link.
  */

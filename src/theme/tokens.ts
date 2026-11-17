@@ -259,11 +259,6 @@ const sizes = defineTokens.sizes({
     // Minimum height of a textarea.
     area: { value: '76px' },
   },
-  // Width of a dropdown menu (ui/ResponsiveMenu): 200px on a tablet, `wide` from `lg`.
-  menu: {
-    DEFAULT: { value: '200px' },
-    wide: { value: '252px' },
-  },
   // Width of a confirm dialog (ui/ConfirmDialog): on a tablet and from `lg`. A bottom sheet below `md`.
   dialog: {
     tablet: { value: '440px' },
