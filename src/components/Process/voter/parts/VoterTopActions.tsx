@@ -55,7 +55,7 @@ export const VoterTopActions = ({ publicLanguageLinks }: VoterTopActionsProps) =
         </Menu.Root>
       )}
       {facts.connected && !facts.voting && (
-        <Button variant='ghost' size='sm' textStyle='topbar-link' onClick={signOut}>
+        <Button variant='topbar' onClick={signOut}>
           {t('voter.sign_out')}
         </Button>
       )}

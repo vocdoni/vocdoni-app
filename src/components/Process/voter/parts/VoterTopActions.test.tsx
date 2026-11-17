@@ -1,3 +1,4 @@
+import { Button } from '@chakra-ui/react'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { renderWithFlow, testFacts, testFlow } from '../test-flow'
 import { VoterTopActions } from './VoterTopActions'
@@ -38,6 +39,14 @@ describe('voter top bar actions', () => {
     renderWithFlow(<VoterTopActions />, flow)
     fireEvent.click(screen.getByRole('button', { name: 'voter.sign_out' }))
     expect(flow.signOut).toHaveBeenCalled()
+  })
+
+  it('draws "Surt" as top-bar text: the `topbar` variant with no size and nothing on top (conformance D-7)', () => {
+    const { unmount } = renderWithFlow(<Button variant='topbar'>voter.sign_out</Button>, testFlow())
+    const plain = screen.getByRole('button', { name: 'voter.sign_out' }).className
+    unmount()
+    renderWithFlow(<VoterTopActions />, testFlow())
+    expect(screen.getByRole('button', { name: 'voter.sign_out' }).className).toBe(plain)
   })
 
   it('does not offer sign out while a cast is in flight (audit F15)', () => {

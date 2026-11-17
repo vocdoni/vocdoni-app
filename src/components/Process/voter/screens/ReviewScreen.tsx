@@ -14,11 +14,14 @@ const ReviewRow = ({
   value,
   action,
   first = false,
+  shaded = false,
 }: {
   label: ReactNode
   value: ReactNode
   action?: ReactNode
   first?: boolean
+  /** The vote-weight row: the board's light fill under the card's top corners (V4VoterWideMore 5). */
+  shaded?: boolean
 }) => (
   <Box
     display='grid'
@@ -30,6 +33,8 @@ const ReviewRow = ({
     py='3.5'
     borderTopWidth={first ? undefined : 'hairline'}
     borderColor='border'
+    bg={shaded ? 'bg.subtle' : undefined}
+    borderTopRadius={shaded ? 'xl' : undefined}
   >
     <Text as='span' fontSize='md' lineHeight='moderate' color='fg.subtle' gridColumn='1'>
       {label}
@@ -72,7 +77,12 @@ export const ReviewScreen = ({ paused }: { paused: boolean }) => {
       </ScreenHelp>
       <Card.Root variant='ballot' mt='6' className='ph-no-capture'>
         {weighted && weight !== null && (
-          <ReviewRow first label={t('voter.review.weight_label')} value={t('voter.review.weight_value', { weight })} />
+          <ReviewRow
+            first
+            shaded
+            label={t('voter.review.weight_label')}
+            value={t('voter.review.weight_value', { weight })}
+          />
         )}
         {election.questions.map((question, index) => {
           const notice = lockedNotice(question.id)
@@ -126,7 +136,7 @@ export const ReviewScreen = ({ paused }: { paused: boolean }) => {
             {failed ? t('voter.review.retry') : t('voter.review.cast')}
           </Button>
         }
-        note={t('voter.review.note')}
+        note={paused ? t('voter.status.paused') : t('voter.review.note')}
       />
     </VoterScreenFrame>
   )

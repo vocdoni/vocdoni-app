@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Status } from '@chakra-ui/react'
+import { Alert, Box, Button } from '@chakra-ui/react'
 import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '@vocdoni/ballot'
 import { ElectionQuestion, useReactComponentsLocalize } from '@vocdoni/react-components'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
@@ -91,14 +91,8 @@ export const QuestionScreen = ({ index, paused }: { index: number; paused: boole
           ) : undefined
         }
         primary={primary}
-        note={
-          paused ? (
-            <Status.Root size='ballot' tone='warning'>
-              <Status.Indicator />
-              {t('voter.status.paused')}
-            </Status.Root>
-          ) : undefined
-        }
+        // While paused the note says so in the bar's own quiet style; the notice above carries the warning (D-19).
+        note={paused ? t('voter.status.paused') : undefined}
       />
     </VoterScreenFrame>
   )

@@ -31,7 +31,15 @@ describe('ActionBar', () => {
 
     const region = screen.getByRole('region', { name: 'Accions' })
     expect(within(region).getAllByRole('button')).toHaveLength(1)
-    expect(region.querySelector('p + p')).toBeNull()
+    expect(region.children).toHaveLength(2)
+  })
+
+  it('holds its note in a block, so a block inside it never lands in a paragraph (conformance D-19)', () => {
+    render(<ActionBar label='Accions' note={<div>En pausa</div>} credit={credit} />)
+
+    const note = within(screen.getByRole('region', { name: 'Accions' })).getByText('En pausa')
+    expect(note.parentElement?.tagName).toBe('DIV')
+    expect(note.closest('p')).toBeNull()
   })
 
   it('marks itself so the voter shell keeps clear of it and hands it the credit', () => {

@@ -41,12 +41,21 @@ describe('review', () => {
     expect(flow.change).toHaveBeenCalledWith(1)
   })
 
-  it('shows the weight first on a weighted census', () => {
+  it('shows the weight first on a weighted census, on the light fill under the card top corners', () => {
     renderWithFlow(<ReviewScreen paused={false} />, testFlow({ state: answered, weighted: true, weight: 3 }))
-    const rows = screen.getByText('voter.review.weight_label').parentElement?.parentElement
+    const row = screen.getByText('voter.review.weight_label').parentElement as HTMLElement
+    const rows = row.parentElement
     expect(within(rows as HTMLElement).getAllByText(/voter\.review\.weight|Question/)[0]).toHaveTextContent(
       'voter.review.weight_label'
     )
+    expect(row).toHaveStyle({
+      background: 'var(--chakra-colors-bg-subtle)',
+      borderTopLeftRadius: 'var(--chakra-radii-xl)',
+      borderTopRightRadius: 'var(--chakra-radii-xl)',
+    })
+    // The question rows keep the card's plain panel.
+    const question = screen.getByText('Question 1').parentElement
+    expect(question).not.toHaveStyle({ background: 'var(--chakra-colors-bg-subtle)' })
   })
 
   it('casts once, stays off while casting or paused, and shows a failure with "Torna-ho a provar"', () => {
