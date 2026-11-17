@@ -43,8 +43,6 @@ type CardStepProps = {
   stripePromise: NonNullable<ReturnType<typeof useStripePromise>>
   totalCents?: number
   balanceCents?: number
-  /** Prefills the billing form's business name, unless Stripe already holds one for the customer. */
-  businessName?: string
   onPaid: () => void
   onBack?: () => void
   onClose: () => void
@@ -105,7 +103,6 @@ export const CardLayout = ({
   currencyCode,
   totalCents,
   balanceCents,
-  businessName,
   onPaid,
   onBack,
   onClose,
@@ -283,13 +280,7 @@ export const CardLayout = ({
                       failToLoad(event.error.message)
                     }}
                   />
-                  <TaxIdElement
-                    options={{
-                      visibility: 'auto',
-                      // A name Stripe saved for this customer wins over the organization's
-                      defaultValues: checkout.businessName || !businessName ? undefined : { businessName },
-                    }}
-                  />
+                  <TaxIdElement options={{ visibility: 'auto' }} />
                 </>
               )}
             </PublishReviewStripeField>

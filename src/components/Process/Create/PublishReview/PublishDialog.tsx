@@ -23,8 +23,6 @@ export type PublishDialogProps = {
   onPublished: (processId: string) => void
   /** How long "Vote published" shows before `onPublished`; see `useProcessCheckout`. */
   successMs?: number
-  /** The organization's name, to prefill the card step's billing form. */
-  organizationName?: string
   /** Closes the dialog and takes the user to the setting a summary row stands for. */
   onEdit?: (target: PublishEditTarget) => void
   /** Closes the dialog; never called while a publish is under way. */
@@ -40,7 +38,6 @@ export const PublishDialog = ({
   start,
   canTopUp,
   onPublished,
-  organizationName,
   successMs,
   onEdit,
   onClose,
@@ -150,7 +147,6 @@ export const PublishDialog = ({
         currencyCode={currencyCode}
         totalCents={price?.totalCents}
         balanceCents={wallet?.balanceCents}
-        businessName={organizationName}
         onBack={form ? flow.backToSummary : undefined}
         onClose={close}
       />

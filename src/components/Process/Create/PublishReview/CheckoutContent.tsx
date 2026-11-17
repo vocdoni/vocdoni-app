@@ -22,8 +22,6 @@ type ProcessCheckoutContentProps = {
   /** The draft's price, VAT excluded, and the wallet balance, when known. */
   totalCents?: number
   balanceCents?: number
-  /** The organization's name, to prefill the billing form's business name. */
-  businessName?: string
   /** Back to the summary; left out when the dialog has none (the return from a payment). */
   onBack?: () => void
   onClose: () => void
@@ -38,7 +36,6 @@ export const ProcessCheckoutContent = ({
   currencyCode,
   totalCents,
   balanceCents,
-  businessName,
   onBack,
   onClose,
 }: ProcessCheckoutContentProps) => {
@@ -110,7 +107,6 @@ export const ProcessCheckoutContent = ({
           stripePromise={stripePromise}
           totalCents={totalCents}
           balanceCents={balanceCents}
-          businessName={businessName}
           onPaid={flow.paid}
           onBack={onBack}
           onClose={onClose}
