@@ -18,13 +18,13 @@ const model = (state: VoteState, startDate = '2026-03-02T09:16:00Z', endedEarly 
 const steps = () => screen.getAllByRole('listitem').map((item) => item.textContent)
 
 describe('SummaryCalendar', () => {
-  it('lists the opening, today and the closing of a live vote, today as the current step', () => {
+  it('lists the closing, today and the opening of a live vote, newest first, today as the current step', () => {
     render(<SummaryCalendar model={model('live')} />)
 
     expect(steps()).toEqual([
-      expect.stringContaining('Vote opened'),
-      expect.stringContaining('Today'),
       expect.stringContaining('Automatic closing and results for everyone'),
+      expect.stringContaining('Today'),
+      expect.stringContaining('Vote opened'),
     ])
     expect(screen.getByText('Today').closest('li')).toHaveAttribute('aria-current', 'step')
   })
@@ -39,19 +39,19 @@ describe('SummaryCalendar', () => {
   it('looks ahead for a vote that has not opened yet', () => {
     render(<SummaryCalendar model={model('ready', '2026-03-11T09:00:00Z')} />)
 
-    expect(steps()).toEqual([expect.stringContaining('Vote opens'), expect.stringContaining('Automatic closing')])
+    expect(steps()).toEqual([expect.stringContaining('Automatic closing'), expect.stringContaining('Vote opens')])
   })
 
   it('ends an ended vote at its end, and a canceled one with no closing', () => {
     const { unmount } = render(<SummaryCalendar model={model('closed')} />)
     expect(steps()).toEqual([
-      expect.stringContaining('Vote opened'),
       expect.stringContaining('Closed automatically at the deadline'),
+      expect.stringContaining('Vote opened'),
     ])
     unmount()
 
     render(<SummaryCalendar model={model('closed', undefined, true)} />)
-    expect(steps()[1]).toContain('Ended manually')
+    expect(steps()[0]).toContain('Ended manually')
     cleanup()
 
     render(<SummaryCalendar model={model('canceled')} />)

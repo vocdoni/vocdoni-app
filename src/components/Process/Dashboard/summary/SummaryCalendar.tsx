@@ -11,8 +11,8 @@ const DAY: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric' }
 const TIME: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
 
 /**
- * The all-at-once vote's calendar: when it opens, today (paused, if it is), and when it closes and everyone sees the
- * results, or when it ended. The board's convocation, quorum and votes-today entries have no backend data.
+ * The all-at-once vote's calendar, newest first: when it closes and everyone sees the results (or how it ended),
+ * today (paused, if it is) and when it opens. The board's convocation, quorum and votes-today entries have no backend data.
  */
 export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
   const { t, i18n } = useTranslation()
@@ -68,7 +68,8 @@ export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
         note: at(endDate),
       })
     }
-    return list
+    // Newest first: what comes next (or how it ended) on top, the opening at the bottom.
+    return list.reverse()
   }, [t, i18n.language, election.startDate, state, endDate, endedEarly, now])
 
   if (!entries.length) return null
