@@ -53,6 +53,7 @@ import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
 import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
+import { getOrganizationName } from '~utils/organization'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
@@ -651,6 +652,9 @@ const ProcessCreateView = () => {
   // Where focus goes back when the publish dialog closes
   const publishButtonRef = useRef<HTMLButtonElement>(null)
   const { canTopUp } = useWalletAccess()
+  // A billing name is not a translation: the organization's default name, else whichever it has
+  const organizationNames = getOrganizationName(organization)
+  const organizationName = organizationNames?.default || Object.values(organizationNames ?? {}).find(Boolean)
   const { trackEvent } = useAnalytics()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const effectiveDraftId = draftId ?? storedDraftId
@@ -1064,6 +1068,7 @@ const ProcessCreateView = () => {
           form={publishDialog.form}
           start={publishDialog.start}
           canTopUp={canTopUp}
+          organizationName={organizationName}
           onPublished={(processId) => handlePublished(processId, publishDialog.form)}
           onEdit={editFromPublishDialog}
           onClose={closePublishDialog}

@@ -11,6 +11,7 @@ const state = vi.hoisted(() => ({
   checkout: {} as any,
   stripePromise: Promise.resolve({}) as Promise<any> | null,
   providerOptions: undefined as any,
+  taxIdOptions: undefined as any,
   // Whether the Stripe elements say they painted (onReady)
   elementsReady: true,
 }))
@@ -66,7 +67,10 @@ vi.mock('@stripe/react-stripe-js/checkout', async () => {
       }, [onReady])
       return React.createElement('div', null, 'billing-address')
     },
-    TaxIdElement: () => React.createElement('div', null, 'tax-id'),
+    TaxIdElement: ({ options }: { options: any }) => {
+      state.taxIdOptions = options
+      return React.createElement('div', null, 'tax-id')
+    },
     PaymentElement: ({ onReady }: { onReady?: () => void }) => {
       React.useEffect(() => {
         if (state.elementsReady) onReady?.()
@@ -106,7 +110,13 @@ const renderView = ({
   start = { kind: 'checkout' } as ProcessCheckoutStart,
   onPublished = vi.fn(),
   onClose = vi.fn(),
-}: { start?: ProcessCheckoutStart; onPublished?: () => void; onClose?: () => void } = {}) => {
+  organizationName,
+}: {
+  start?: ProcessCheckoutStart
+  onPublished?: () => void
+  onClose?: () => void
+  organizationName?: string
+} = {}) => {
   render(
     <TestMemoryRouter>
       <button type='button'>outside</button>
@@ -115,6 +125,7 @@ const renderView = ({
         form={null}
         start={start}
         canTopUp
+        organizationName={organizationName}
         onPublished={onPublished}
         onClose={onClose}
       />
@@ -153,6 +164,26 @@ describe('CardStep', () => {
   })
 
   describe('the card form', () => {
+    it('prefills the business name with the organization', async () => {
+      renderView({ organizationName: 'Ateneu de Vallnova' })
+      await payButton()
+      expect(state.taxIdOptions.defaultValues).toEqual({ businessName: 'Ateneu de Vallnova' })
+    })
+
+    it('keeps the business name Stripe already holds for the customer', async () => {
+      const saved = readyCheckout()
+      state.checkout = { ...saved, checkout: { ...saved.checkout, businessName: 'Saved SL' } }
+      renderView({ organizationName: 'Ateneu de Vallnova' })
+      await payButton()
+      expect(state.taxIdOptions.defaultValues).toBeUndefined()
+    })
+
+    it('leaves the business name empty without an organization name', async () => {
+      renderView()
+      await payButton()
+      expect(state.taxIdOptions.defaultValues).toBeUndefined()
+    })
+
     it('shows the price, the balance and the shortfall, with the VAT and total Stripe charges', async () => {
       api.checkout.mockResolvedValue(session({ amountCents: 550 }))
       renderView({ start: { kind: 'checkout', shortfall: { shortfallCents: 550, balanceCents: 450 } } })
