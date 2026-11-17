@@ -52,13 +52,18 @@ const useCancelCopy = () => {
     discarded =
       state === 'ready'
         ? t('votes.cancel.body_not_open', { defaultValue: 'It has not opened yet and there are no votes.' })
-        : count
-          ? t('votes.cancel.body_all', {
-              defaultValue_one: 'The {{count}} vote cast will be discarded and there will be no results.',
-              defaultValue_other: 'The {{count}} votes cast will be discarded and there will be no results.',
-              count,
+        : !results
+          ? // No figure until the results are read, not even "no vote yet".
+            t('votes.cancel.body_all_unknown', {
+              defaultValue: 'The votes cast will be discarded and there will be no results.',
             })
-          : noVotes
+          : count
+            ? t('votes.cancel.body_all', {
+                defaultValue_one: 'The {{count}} vote cast will be discarded and there will be no results.',
+                defaultValue_other: 'The {{count}} votes cast will be discarded and there will be no results.',
+                count,
+              })
+            : noVotes
   }
 
   return {

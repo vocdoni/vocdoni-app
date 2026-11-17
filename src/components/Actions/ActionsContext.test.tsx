@@ -166,6 +166,19 @@ describe('header actions', () => {
     expect(screen.getByRole('button', { name: 'End now' })).toHaveAttribute('data-tone', 'primary')
   })
 
+  it('states no vote count while the results are not read yet', async () => {
+    show(election({ initialStatus: undefined, census: { size: 10 }, questions: [question('q1', 'ONGOING')] } as never))
+
+    fireEvent.click(button('actions.end')!)
+
+    expect(
+      await screen.findByText(
+        'It will close before the deadline, with the votes cast. The results will be published and the voters will see them. It cannot be reopened.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/have not voted yet/)).toBeNull()
+  })
+
   it('pauses a question-by-question vote as a whole: every open question', async () => {
     show(election())
 
@@ -251,6 +264,14 @@ describe('cancel dialog', () => {
         questions: [{ id: 'q1' }, { id: 'q2' }],
       })
     )
+  })
+
+  it('states no vote count for an all-at-once vote while the results are not read yet', async () => {
+    showCancel(election({ initialStatus: undefined, questions: [question('q1', 'ONGOING')] }))
+
+    expect(
+      await screen.findByText('The votes cast will be discarded and there will be no results. It cannot be undone.')
+    ).toBeInTheDocument()
   })
 
   it('says a ready all-at-once vote has not opened', async () => {

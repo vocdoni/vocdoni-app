@@ -20,17 +20,24 @@ const useEndCopy = (): DialogCopy | null => {
   if (!election) return null
 
   if (!isQuestionByQuestion(election)) {
+    // No figure until the results are read: "0 votes" or "312 have not voted" would be stated as fact.
+    const known = !!results
     const count = processVoteCount(results)
-    const notVoted = Math.max(0, (election.census?.size ?? 0) - count)
+    const notVoted = known ? Math.max(0, (election.census?.size ?? 0) - count) : 0
     return {
       title: t('votes.end.title_now', { defaultValue: 'End the vote now?' }),
-      description: t('votes.end.body_all', {
-        defaultValue_one:
-          'It will close before the deadline, with the {{count}} vote cast. The results will be published and the voters will see them. It cannot be reopened.',
-        defaultValue_other:
-          'It will close before the deadline, with the {{count}} votes cast. The results will be published and the voters will see them. It cannot be reopened.',
-        count,
-      }),
+      description: !known
+        ? t('votes.end.body_all_unknown', {
+            defaultValue:
+              'It will close before the deadline, with the votes cast. The results will be published and the voters will see them. It cannot be reopened.',
+          })
+        : t('votes.end.body_all', {
+            defaultValue_one:
+              'It will close before the deadline, with the {{count}} vote cast. The results will be published and the voters will see them. It cannot be reopened.',
+            defaultValue_other:
+              'It will close before the deadline, with the {{count}} votes cast. The results will be published and the voters will see them. It cannot be reopened.',
+            count,
+          }),
       warning: notVoted
         ? t('votes.end.not_voted', {
             defaultValue_one: '{{count}} person has not voted yet and will no longer be able to.',
