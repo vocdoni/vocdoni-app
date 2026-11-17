@@ -390,13 +390,16 @@ export const VoteHeader = () => {
       columnGap='4'
       alignItems='end'
     >
-      {/* A 44px hit area below lg, pulled into the page's top padding as the phone board does. */}
+      {/* A 44px hit area below lg, pulled into the page's top padding as the phone board does. From `lg` its line and
+          the 6px under it take 24px of that padding, so the title starts where a page without a way back starts it. */}
       <Link
         asChild
         variant='back'
         gridArea='back'
         justifySelf='start'
-        mt={{ base: '-3', lg: '0' }}
+        alignItems={{ lg: 'flex-end' }}
+        h={{ lg: '4.5' }}
+        mt={{ base: '-3', lg: '-6' }}
         ms={{ base: '-1', lg: '0' }}
         mb={{ base: '0.5', lg: '1.5' }}
       >

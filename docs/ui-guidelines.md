@@ -204,7 +204,7 @@ and `control-tab` (15px, 13.5px from `lg`) are what button, field, menu, chip an
 
 - **Opacity**: `inactive` (0.6), `dimmed` (0.5), `outvoted` (0.4, a choice that lost a final tally), `count` (0.72, a chip's count).
 - **Page rhythm**: `DashboardContents rhythm='board'` is the votes screens' page padding (20 40 on a phone, 28 48 on a
-  tablet, 36 40 from `lg`); the `line` tabs keep the boards' 6px count slot after a label without a count.
+  tablet, 48 40 from `lg`, where every page title starts 48px down and a line over it climbs into the padding); the `line` tabs keep the boards' 6px count slot after a label without a count.
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
   focus ring, `thick`): `<Box borderWidth='thick' />`.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
