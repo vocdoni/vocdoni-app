@@ -1,24 +1,24 @@
 import { statAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe } from '@chakra-ui/react'
 
-// Figures and labelled values (`Stat`), merged over chakra's own stat recipe: a muted eyebrow label over
-// the value, with an optional muted unit after it. Figures keep the font's own letter spacing (chakra
-// tightens them).
+// Figures and labelled values (`Stat`), merged over chakra's own stat recipe: a quiet label over
+// the value, with an optional faint unit after it. The number stays sans: mono is for small data only.
 export const Stat = defineSlotRecipe({
   slots: statAnatomy.keys(),
   base: {
     label: {
-      textStyle: 'eyebrow',
-      color: 'fg.muted',
+      textStyle: 'caption',
+      color: 'fg.subtle',
     },
     valueText: {
-      fontWeight: 'bold',
-      letterSpacing: '[normal]',
+      fontVariantNumeric: 'tabular-nums',
+      fontWeight: 'semibold',
+      letterSpacing: 'tight',
       alignItems: 'baseline',
     },
     valueUnit: {
       textStyle: 'body-sm',
-      color: 'fg.muted',
+      color: 'fg.subtle',
     },
   },
   variants: {

@@ -2,8 +2,9 @@ import { defineSemanticTokens } from '@chakra-ui/react'
 
 // Status palettes: `colorPalette='success' | 'warning' | 'danger' | 'info'`, defined the way
 // `brand` is. Each aliases the raw scale chakra's Alert picks for its `status` prop, so chips,
-// buttons and alerts agree, and the app picks the colour in one place. Neutral is plain `gray`.
-const SCALES = { success: 'green', warning: 'orange', danger: 'red', info: 'blue' } as const
+// buttons and alerts agree, and the app picks the colour in one place. Neutral is plain `gray`, and so is `info`:
+// Fil has no info colour, blue means action.
+const SCALES = { success: 'green', warning: 'orange', danger: 'red', info: 'gray' } as const
 // Chakra's own name for the same status in its `fg.*` / `bg.*` roles.
 const CHAKRA_ROLE = { success: 'success', warning: 'warning', danger: 'error', info: 'info' } as const
 
@@ -13,13 +14,26 @@ const STEPS = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '90
 // Every slot chakra defines on its own palettes. Recipes read them through `colorPalette.<slot>`.
 const SLOTS = ['solid', 'contrast', 'fg', 'muted', 'subtle', 'emphasized', 'focusRing', 'border'] as const
 
+// Fil's light-mode values for the slots it names, set over the stock scale; dark keeps the scale's own.
+const LIGHT: Partial<Record<StatusPalette, Partial<Record<(typeof SLOTS)[number], string>>>> = {
+  success: { solid: '#2caa4f', fg: '#0b7636', subtle: '#f0faf3' },
+  warning: { solid: '#875500', contrast: '#ffffff', fg: '#875500', subtle: '#fff8eb' },
+  danger: { solid: '#ca2a30', contrast: '#ffffff', fg: '#ca2a30', subtle: '#fff0f0' },
+}
+
+const slot = (name: StatusPalette, slotName: (typeof SLOTS)[number]) => {
+  const stock = `{colors.${SCALES[name]}.${slotName}}`
+  const light = LIGHT[name]?.[slotName]
+  return { value: light ? { _light: light, _dark: stock } : stock }
+}
+
 const palette = (name: StatusPalette) => {
   const scale = SCALES[name]
   const role = CHAKRA_ROLE[name]
   return {
     // `colorPalette.500` style reads (summary card, button and form recipes).
     ...Object.fromEntries(STEPS.map((step) => [step, { value: `{colors.${scale}.${step}}` }])),
-    ...Object.fromEntries(SLOTS.map((slot) => [slot, { value: `{colors.${scale}.${slot}}` }])),
+    ...Object.fromEntries(SLOTS.map((slotName) => [slotName, slot(name, slotName)])),
     // Chakra's status roles for text and surfaces (`fg.error`, `bg.warning`…); `status.*` aliases these.
     text: { value: `{colors.fg.${role}}` },
     wash: { value: `{colors.bg.${role}}` },

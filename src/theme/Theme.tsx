@@ -7,9 +7,8 @@ import { getAppSystem } from '~theme/system'
 // One static import per file of each family in WEB_FONTS (~theme/fonts); fonts.test.ts
 // fails when the two drift. Static so Vite bundles the @font-face CSS and Vike
 // links it from the SSR HTML of every page that renders <Theme>.
-import '@fontsource/inter/300.css'
-import '@fontsource/inter/400.css'
-import '@fontsource/inter/500.css'
+import '@fontsource-variable/commissioner/wght.css'
+import '@fontsource-variable/jetbrains-mono/wght.css'
 
 export const Theme = ({ children }: PropsWithChildren) => {
   // The accent color is runtime config (PRIMARY_COLOR), so the chakra system is

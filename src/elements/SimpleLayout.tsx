@@ -1,7 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react'
 import { ReactNode, useState } from 'react'
 import { Outlet, ScrollRestoration, useLocation } from 'react-router'
-import { ColorModeSwitcher } from '~components/Layout/ColorModeSwitcher'
 import { VocdoniLogo } from '~components/Layout/Logo'
 import { LanguagesMenu } from '~components/Navbar/LanguagesList'
 import PublicLayout from './PublicLayout'
@@ -23,7 +22,6 @@ const Layout = () => {
           {logo ?? <VocdoniLogo height='6' />}
           <Box display='flex' alignItems='center' gap='4'>
             <LanguagesMenu />
-            <ColorModeSwitcher />
           </Box>
         </Flex>
       }

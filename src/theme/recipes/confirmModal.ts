@@ -30,12 +30,12 @@ export const ConfirmModal = defineSlotRecipe({
       // Rendered by useConfirm inside react-components' ConfirmShell. The title keeps the line height the
       // header inherits from the dialog content.
       shell: {
-        title: { fontSize: 'lg', lineHeight: '[1.25rem]', fontWeight: 'extrabold' },
+        title: { fontSize: 'lg', lineHeight: '[1.25rem]', fontWeight: 'semibold' },
       },
       // The vote confirmation: heading-sized title with the description under it, in the header.
       summary: {
         header: { flexDirection: 'column' },
-        title: { fontFamily: 'heading', textStyle: 'xl', fontWeight: 'extrabold' },
+        title: { fontFamily: 'heading', textStyle: 'xl', fontWeight: 'semibold', letterSpacing: 'tight' },
         description: mutedDescription,
       },
     },

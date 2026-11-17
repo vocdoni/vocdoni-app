@@ -15,7 +15,7 @@ const ProseHeading = ({ level, ...props }: HeadingProps & { level: keyof typeof 
 
 const defaultComponents: NonNullable<Options['components']> = {
   a: ({ children, ...props }) => (
-    <Link {...chakraProps(props)} target='_blank' rel='noreferrer'>
+    <Link {...chakraProps(props)} textDecoration='underline' target='_blank' rel='noreferrer'>
       {children}
     </Link>
   ),

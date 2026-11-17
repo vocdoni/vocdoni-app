@@ -465,7 +465,7 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
         />
       </InputGroup>
       {data?.members?.length >= 1 && (
-        <Button variant='outline' colorPalette='danger' onClick={onDelete}>
+        <Button variant='danger' onClick={onDelete}>
           <Icon as={DeleteIcon} />
           {t('members.table.delete_all', {
             defaultValue: 'Delete (All)',
@@ -642,7 +642,7 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
             <Icon as={AddToListIcon} />
             {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
           </Button>
-          <Button size='sm' colorPalette='danger' variant='outline' onClick={() => onDelete()}>
+          <Button size='sm' variant='danger' onClick={() => onDelete()}>
             <Icon as={DeleteIcon} />
             {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
           </Button>

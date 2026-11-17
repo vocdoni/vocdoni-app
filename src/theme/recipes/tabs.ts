@@ -1,30 +1,59 @@
 import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { tabsAnatomy } from '@chakra-ui/react/anatomy'
 
+// The default look: a hairline under the list and a 2px line in the text colour (ink, never the accent) under
+// the current tab. Chakra's `line` variant draws the line; this restyles it over the size axis' padding.
+const line = {
+  root: {
+    '--tabs-height': 'auto',
+  },
+  list: {
+    gap: '6',
+  },
+  trigger: {
+    px: '0',
+    pt: '0',
+    pb: '2.5',
+    textStyle: 'control',
+    fontWeight: 'medium',
+    color: 'fg.subtle',
+    _selected: {
+      color: 'fg',
+      fontWeight: 'semibold',
+      _horizontal: { '--indicator-color': 'colors.fg' },
+      _vertical: { '--indicator-color': 'colors.fg' },
+    },
+  },
+} satisfies Partial<Record<string, SystemStyleObject>>
+
+// A segmented control: a recessed track and a raised, ringed current segment.
 const pill = {
   root: {
     '--tabs-height': 'auto',
   },
   list: {
-    p: '1',
-    bgColor: 'tabs.bg',
-    borderRadius: 'sm',
+    p: '[calc({spacing.1} * 0.75)]', // 3px
+    gap: '0.5',
+    bg: 'bg.muted',
+    borderRadius: 'l2',
     w: 'fit',
     maxWidth: 'full',
     overflowX: 'auto',
   },
   trigger: {
-    py: '1.5',
+    height: '7',
+    py: '0',
     px: '3',
     whiteSpace: 'nowrap',
-    borderRadius: 'sm',
+    borderRadius: 'l1',
+    textStyle: 'control',
     fontWeight: 'medium',
-    color: 'tabs.tab.color',
-    fontSize: 'sm',
+    color: 'fg.muted',
     _selected: {
-      bgColor: 'tabs.tab.active.bg',
-      color: 'tabs.tab.active.color',
-      boxShadow: 'xs',
+      bg: 'bg.panel',
+      color: 'fg',
+      fontWeight: 'semibold',
+      boxShadow: '[0 0 0 1px {colors.border}]',
     },
   },
   content: {
@@ -36,7 +65,7 @@ const pill = {
 export const Tabs = defineSlotRecipe({
   slots: tabsAnatomy.keys(),
   variants: {
-    variant: { pill },
+    variant: { line, pill },
   },
-  defaultVariants: { variant: 'pill' },
+  defaultVariants: { variant: 'line' },
 })

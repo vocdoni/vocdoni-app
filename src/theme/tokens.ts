@@ -14,9 +14,21 @@ const fontWeights = defineTokens.fontWeights(
   Object.fromEntries(Object.entries(FONT_WEIGHTS).map(([name, weight]) => [name, { value: String(weight) }]))
 )
 
-// The size of a control's label and value (button, field, menu item): Chakra's control recipes read `sm` today.
+// Fil's smaller steps, over Chakra's `xs` to `2xl`; `control` is the size of a control's label and value
+// (button, field, menu item). `2xs` and `3xl` upward stay Chakra's.
 const fontSizes = defineTokens.fontSizes({
-  control: { value: '{fontSizes.sm}' },
+  xs: { value: '0.75rem' },
+  sm: { value: '0.8125rem' },
+  control: { value: '0.84375rem' },
+  md: { value: '0.875rem' },
+  lg: { value: '1rem' },
+  xl: { value: '1.25rem' },
+  '2xl': { value: '1.75rem' },
+  // The voter's ballot: an option's label and a question's title.
+  ballot: {
+    option: { value: '1.0625rem' },
+    question: { value: '2rem' },
+  },
 })
 
 // The app's four line heights: captions and figures, titles, running text, long reads. Chakra's
@@ -25,19 +37,24 @@ const lineHeights = defineTokens.lineHeights({
   shorter: { value: 1.2 },
   short: { value: 1.3 },
   moderate: { value: 1.5 },
+  question: { value: 1.08 },
   tall: { value: 1.6 },
 })
 
-// Display-text tracking that falls between Chakra's letterSpacings steps.
+// Tracking that falls between Chakra's letterSpacings steps: the body, and the tighter steps of larger type.
 const letterSpacings = defineTokens.letterSpacings({
+  none: { value: '0em' },
+  body: { value: '-0.006em' },
   heading: {
     snug: { value: '-0.4px' },
+    item: { value: '-0.015em' },
+    section: { value: '-0.028em' },
+    page: { value: '-0.035em' },
+    question: { value: '-0.038em' },
   },
+  voter: { value: '-0.008em' },
   quote: {
     tight: { value: '-0.3px' },
-  },
-  eyebrow: {
-    wide: { value: '0.14em' },
   },
 })
 
@@ -46,16 +63,19 @@ const borderWidths = defineTokens.borderWidths({
   thick: { value: '2px' },
   // Hand-drawn focus rings (outline or box-shadow), as wide as Chakra's own.
   focusRing: { value: '{borderWidths.thick}' },
+  // The ring of a checkbox or radio, and the filled ring that is a checked radio's mark.
+  mark: { value: '1.5px' },
+  radio: { value: '5px' },
 })
 
 const radii = defineTokens.radii({
   none: { value: '0rem' },
-  xs: { value: '4px' },
-  sm: { value: '6px' },
-  md: { value: '8px' },
-  lg: { value: '10px' },
+  xs: { value: '3px' },
+  sm: { value: '4px' },
+  md: { value: '6px' },
+  lg: { value: '6px' },
   xl: { value: '12px' },
-  '2xl': { value: '16px' },
+  '2xl': { value: '12px' },
   full: { value: '9999px' },
 })
 
@@ -65,6 +85,8 @@ const radii = defineTokens.radii({
 const spacing = defineTokens.spacing({
   '0': { value: '0' },
   auto: { value: 'auto' },
+  // Gutter between a segmented control's track and its items.
+  track: { value: '3px' },
   dashboard: {
     panel: { value: '{sizes.dashboard.panel}' },
   },
@@ -84,6 +106,8 @@ const sizes = defineTokens.sizes({
     header: { value: '47px' },
     panel: { value: '350px' },
   },
+  // The status dot (7px).
+  dot: { value: '7px' },
   // The four icon sizes (inline, control, feature, empty state). sm–lg are Chakra's Icon sizes, so
   // `boxSize='icon.md'` and `<Icon size='md'>` cannot drift apart.
   icon: {
@@ -111,6 +135,10 @@ const sizes = defineTokens.sizes({
   control: {
     floating: { value: '52px' },
     'icon-link': { value: '30px' },
+    // Fil's default control height, shared by buttons, inputs and selects.
+    md: { value: '34px' },
+    // Minimum height of a textarea.
+    area: { value: '76px' },
   },
   // Minimum height of ui/Loader's PageLoader, so a page with nothing yet does not collapse.
   loader: { value: '300px' },

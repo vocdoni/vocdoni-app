@@ -72,10 +72,17 @@ export const ElectionQuestions = defineSlotRecipe({
     title: {
       display: 'block',
       textAlign: 'start',
-      lineHeight: 'short',
-      fontSize: 'lg',
+      lineHeight: 'question',
+      fontSize: 'ballot.question',
       fontWeight: 'semibold',
+      letterSpacing: 'heading.question',
       mb: '6',
+    },
+    description: {
+      fontSize: 'lg',
+      letterSpacing: 'voter',
+      color: 'fg.muted',
+      mb: '4',
     },
     body: {
       width: 'full',
@@ -156,10 +163,13 @@ export const ElectionResults = defineSlotRecipe({
     choiceTitle: {
       color: 'fg',
       fontSize: 'sm',
+      fontWeight: 'medium',
       minW: '0',
       overflowWrap: 'break-word',
     },
+    // The tally string carries the percentage, so the whole line takes the figure face.
     choiceVotes: {
+      textStyle: 'figure',
       color: 'fg.muted',
       fontSize: 'sm',
       whiteSpace: 'nowrap',
@@ -168,15 +178,25 @@ export const ElectionResults = defineSlotRecipe({
       width: 'full',
       minW: '0',
     },
+    // One choice of a result. In a final result with a clear leader that row carries `data-leading` (a medium
+    // figure) and the others `data-dimmed` (their bar at 0.4). It is highlighted, never called the winner: the
+    // organisation decides how many options win. Live, provisional or tied results set neither.
+    choice: {
+      '&[data-dimmed] [data-scope="progress"][data-part="root"]': {
+        opacity: '[0.4]',
+      },
+      '&[data-leading] [data-result-figure]': {
+        fontWeight: 'medium',
+      },
+    },
   },
 })
 
 export const ElectionSchedule = defineRecipe({
   base: {
-    fontWeight: 'bold',
+    fontWeight: 'normal',
     fontSize: 'sm',
     textAlign: 'center',
-    fontStyle: 'italic',
     color: 'ballot.schedule',
   },
 })
@@ -198,15 +218,17 @@ export const QuestionChoice = defineSlotRecipe({
     image: {
       w: 'full',
       h: 'full',
-      borderTopRadius: 'lg',
+      borderTopRadius: 'xl',
       objectFit: 'cover',
       objectPosition: 'center',
     },
 
-    // Body size on both controls: the checkbox label would otherwise pass on its smaller one.
+    // The option label is larger than body text and medium; the chosen one turns semibold (see `context`).
+    // Set on both controls: the checkbox label would otherwise pass on its smaller one.
     label: {
-      textStyle: 'body',
-      fontWeight: 'semibold',
+      fontSize: 'ballot.option',
+      lineHeight: 'short',
+      fontWeight: 'medium',
       wordBreak: 'break-word',
     },
 
@@ -233,15 +255,38 @@ export const QuestionChoice = defineSlotRecipe({
       },
       card: {
         wrapper: {
-          borderRadius: 'md',
+          minH: '16',
+          px: '4.5',
+          borderRadius: 'xl',
           borderWidth: 'hairline',
           borderColor: 'ballot.choice.border',
           transition:
             '[border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease]',
-          bg: 'transparent',
-          p: '3',
+          bg: 'bg.panel',
+          // A second 1px ring of the border's colour: the choice reads 2px without moving the layout.
           '&[data-state="checked"]': {
             borderColor: 'colorPalette.solid',
+            boxShadow: '[0 0 0 1px {colors.colorPalette.solid}]',
+            bg: 'accent.subtle',
+            '& [data-choice-label]': { fontWeight: 'semibold' },
+          },
+          '& [data-choice-control][data-control-type="checkbox"]': {
+            boxSize: 'icon.lg',
+            borderRadius: 'xs',
+            borderWidth: 'mark',
+            borderColor: 'ballot.choice.ring',
+            bg: 'transparent',
+            '&[data-state="checked"]': {
+              borderColor: 'colorPalette.solid',
+              bg: 'colorPalette.solid',
+              color: 'accent.contrast',
+            },
+          },
+          '&:has(input:focus-visible)': {
+            outlineWidth: '{borderWidths.focusRing}',
+            outlineStyle: 'solid',
+            outlineColor: 'colorPalette.focusRing',
+            outlineOffset: '{spacing.0.5}',
           },
           '&[data-disabled="true"]': {
             opacity: 'inactive',
@@ -262,7 +307,7 @@ export const QuestionChoice = defineSlotRecipe({
         wrapper: {
           display: 'flex',
           alignItems: 'center',
-          gap: '3',
+          gap: '3.5',
           '& [data-choice-body]': {
             display: 'flex',
             flexDirection: 'column',
@@ -290,7 +335,7 @@ export const QuestionChoice = defineSlotRecipe({
           '& [data-choice-control][data-control-type="checkbox"]': {
             borderWidth: 'hairline',
             borderColor: 'border',
-            boxShadow: 'sm',
+            bg: 'bg.panel',
           },
           '& [data-choice-control][data-control-type="radio"]': {
             bg: 'transparent',
@@ -339,7 +384,7 @@ export const QuestionsConfirmation = defineSlotRecipe({
       mb: '4',
     },
     title: {
-      fontWeight: 'bold',
+      fontWeight: 'semibold',
     },
   },
 })
@@ -359,7 +404,7 @@ export const QuestionsEmpty = defineSlotRecipe({
     },
     description: {
       fontSize: 'sm',
-      color: 'fg.muted',
+      color: 'fg.subtle',
       textAlign: 'center',
     },
   },
@@ -376,8 +421,9 @@ export const QuestionsTip = defineSlotRecipe({
       alignItems: 'end',
     },
     text: {
-      fontSize: 'sm',
-      fontWeight: 'semibold',
+      fontSize: 'lg',
+      letterSpacing: 'voter',
+      color: 'fg.subtle',
     },
   },
 })
@@ -385,13 +431,21 @@ export const QuestionsTip = defineSlotRecipe({
 export const QuestionsTypeBadge = defineSlotRecipe({
   slots: questionTypeBadgeAnatomy,
   base: {
+    // A ringed tag, never a filled pill.
     box: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '2',
+      display: 'inline-flex',
+      alignItems: 'center',
+      w: '[fit-content]',
+      px: '1.5',
+      borderWidth: 'hairline',
+      borderColor: 'border.emphasized',
+      borderRadius: 'xs',
     },
     title: {
-      fontWeight: 'bold',
+      fontSize: 'xs',
+      fontWeight: 'medium',
+      lineHeight: 'moderate',
+      color: 'fg.subtle',
     },
     tooltip: {},
   },
@@ -400,7 +454,31 @@ export const QuestionsTypeBadge = defineSlotRecipe({
 export const Voted = defineSlotRecipe({
   slots: votedAnatomy,
   base: {
+    // No coloured panel: the green is the disc alone.
+    container: {
+      bg: 'transparent',
+      borderColor: 'border',
+      color: 'fg',
+      gap: '3',
+    },
+    // Fil's done disc: a filled disc in the success ink with a white tick.
+    icon: {
+      boxSize: 'control.floating',
+      borderRadius: 'full',
+      bg: 'status.success.fg',
+      color: 'accent.contrast',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      '& svg': { boxSize: '6' },
+    },
+    title: {
+      fontSize: 'xl',
+      fontWeight: 'semibold',
+      color: 'fg',
+    },
     description: {
+      color: 'fg',
       '& > a': {
         wordBreak: 'break-word',
       },
@@ -416,7 +494,7 @@ export const VoteWeight = defineSlotRecipe({
       gap: '2',
     },
     weight: {
-      fontWeight: 'bold',
+      fontWeight: 'semibold',
     },
   },
 })

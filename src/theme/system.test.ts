@@ -46,6 +46,8 @@ const COLOR_PROPS = new Set([
 const RAW_LITERAL_ALLOWLIST = new Set<string>([
   // Chakra's card `size` variants set it; card variants that pad their root read it.
   'var(--card-padding)',
+  // The toast recipe sets it per type; the indicator icon reads it.
+  'var(--toast-indicator, currentColor)',
 ])
 
 // Non-color style props whose token-looking string values must resolve in their token category
@@ -280,7 +282,7 @@ describe('theme system integrity', () => {
     for (const slot of PALETTE_SLOTS) {
       visit(sys.tokens.getByName(`colors.brand.${slot}`)?.extensions?.conditions, `brand.${slot}`)
     }
-    for (const slot of ['fg', 'solid', 'solid.hover', 'contrast', 'subtle']) {
+    for (const slot of ['fg', 'fg.hover', 'solid', 'solid.hover', 'contrast', 'subtle']) {
       visit(sys.tokens.getByName(`colors.accent.${slot}`)?.extensions?.conditions, `accent.${slot}`)
     }
     expect(violations, `\n${formatViolations(violations)}`).toEqual([])
@@ -304,9 +306,16 @@ describe('PRIMARY_COLOR-driven system', () => {
   const conditions = (sys: typeof system, name: string) =>
     sys.tokens.getByName(`colors.${name}`)?.extensions?.conditions as Record<string, string> | undefined
 
-  it('keeps the stock look when no color is configured: gray palette, black brand', () => {
-    expect(system.tokens.getByName('colors.brand.500')?.value).toBe('#000000')
-    expect(system._config.globalCss?.html).toMatchObject({ colorPalette: 'gray' })
+  it('uses Fil blue when no color is configured, with its light values pinned', () => {
+    expect(system.tokens.getByName('colors.brand.500')?.value).toBe('#1d62e9')
+    expect(system._config.globalCss?.html).toMatchObject({ colorPalette: 'brand' })
+    expect(conditions(system, 'brand.solid')?._light).toBe('{colors.brand.500}')
+    expect(conditions(system, 'brand.contrast')?._light).toBe('#ffffff')
+    expect(conditions(system, 'brand.fg')?._light).toBe('{colors.brand.500}')
+    expect(conditions(system, 'brand.subtle')?._light).toBe('#f0f5ff')
+    expect(conditions(system, 'brand.focusRing')?._light).toBe('{colors.brand.500}')
+    expect(conditions(system, 'brand.solid.hover')?._light).toBe('#1554cf')
+    expect(conditions(system, 'accent.fg.hover')?._light).toBe('#1554cf')
   })
 
   it('generates the brand scale and slots from the configured color and makes brand the global palette', () => {
@@ -320,9 +329,9 @@ describe('PRIMARY_COLOR-driven system', () => {
     expect(conditions(BRANDED, 'brand.fg')).toEqual({ _light: '{colors.brand.700}', _dark: '{colors.brand.300}' })
   })
 
-  // Chakra's own gray.focusRing is gray.400 (#b2b2b2 on this app's gray scale): 2.12:1 on
-  // white, under the 3:1 WCAG asks of focus indicators. The stock theme (no PRIMARY_COLOR)
-  // draws every focus ring with it, so it is locked against the real page backgrounds.
+  // Chakra's own gray.focusRing is gray.400, under the 3:1 WCAG asks of focus indicators on white.
+  // Neutral components (`colorPalette='gray'`) draw their focus ring with it, so it is locked against the real
+  // page backgrounds.
   it('keeps the stock focus ring at 3:1 or better on the page in both modes', () => {
     const ring = conditions(system, 'gray.focusRing')
     const resolve = (ref: string) => system.tokens.getByName(ref.replace(/^\{|\}$/g, ''))?.value as string
@@ -339,13 +348,17 @@ describe('PRIMARY_COLOR-driven system', () => {
 
   // A recipe that moves from `colorPalette.solid` to `accent.solid` must paint the same, with and without a brand.
   it.each([
-    ['stock', system, 'gray'],
+    ['stock', system, 'brand'],
     ['branded', BRANDED, 'brand'],
   ] as const)(
     'aliases the accent steps to the palette colorPalette falls back to (%s system)',
     (_name, sys, palette) => {
       expect(conditions(sys, 'accent.solid')).toEqual({ base: `{colors.${palette}.solid}` })
-      expect(conditions(sys, 'accent.solid.hover')).toEqual({ base: `{colors.${palette}.solid/90}` })
+      expect(conditions(sys, 'accent.solid.hover')).toEqual({ base: `{colors.${palette}.solid.hover}` })
+      // Without a PRIMARY_COLOR the light hover is Fil's pinned value; a brand colour is mixed towards black.
+      expect(conditions(sys, 'brand.solid.hover')?._light).toBe(
+        sys === system ? '#1554cf' : 'color-mix(in oklab, {colors.brand.solid} 88%, black)'
+      )
       expect(conditions(sys, 'accent.contrast')).toEqual({ base: `{colors.${palette}.contrast}` })
       expect(conditions(sys, 'accent.subtle')).toEqual({ base: `{colors.${palette}.subtle}` })
     }
@@ -358,8 +371,8 @@ describe('PRIMARY_COLOR-driven system', () => {
 
   it('treats an invalid color as unset', () => {
     const sys = createAppSystem('not-a-color')
-    expect(sys.tokens.getByName('colors.brand.500')?.value).toBe('#000000')
-    expect(sys._config.globalCss?.html).toMatchObject({ colorPalette: 'gray' })
+    expect(sys.tokens.getByName('colors.brand.500')?.value).toBe('#1d62e9')
+    expect(sys._config.globalCss?.html).toMatchObject({ colorPalette: 'brand' })
   })
 
   it('memoizes systems per normalized color', () => {
@@ -370,20 +383,43 @@ describe('PRIMARY_COLOR-driven system', () => {
   })
 })
 
-// Roles a retheme gives their own value. Each starts as an alias of what renders today, so adding it changes nothing.
-describe('roles waiting for a retheme', () => {
+// Roles Fil gives their own value, split from the step they used to alias.
+describe('Fil roles', () => {
   const base = (name: string) => system.tokens.getByName(name)?.extensions?.conditions
 
-  it('alias the token that paints today', () => {
-    expect(base('colors.fg.faint')).toEqual({ base: '{colors.fg.subtle}' })
-    expect(base('colors.border.strong')).toEqual({ base: '{colors.border.emphasized}' })
-    expect(base('shadows.shadow.control')).toEqual({ base: 'none' })
+  it('give the faint text and strong border steps their own grey', () => {
+    expect(base('colors.fg.faint')).toEqual({ _light: '{colors.gray.400}', _dark: '{colors.gray.500}' })
+    expect(base('colors.border.strong')).toEqual({ _light: '{colors.gray.400}', _dark: '{colors.gray.700}' })
   })
 
-  it("write out Chakra's semantic radii with its own mapping", () => {
-    expect(base('radii.l1')).toEqual({ base: '{radii.xs}' })
-    expect(base('radii.l2')).toEqual({ base: '{radii.sm}' })
+  it('draws depth as a 1px ring, with no blur or offset', () => {
+    const ring = { base: '0 0 0 1px {colors.border.emphasized}' }
+    for (const name of [
+      'control',
+      'raised',
+      'raised.popover',
+      'raised.tooltip',
+      'overlay',
+      'floating',
+      'floating.panel',
+    ]) {
+      const token = system.tokens.getByName(`shadows.shadow.${name}`)
+      expect(JSON.stringify(token?.extensions?.conditions), name).toMatch(/\{shadows\.|border\.emphasized/)
+    }
+    for (const size of ['xs', 'sm', 'md', 'lg', 'xl', '2xl']) {
+      expect(base(`shadows.${size}`), size).toEqual(ring)
+    }
+    expect(base('shadows.shadow.control')).toEqual(ring)
+    expect(base('shadows.shadow.card')).toEqual({ base: 'none' })
+  })
+
+  it("maps Chakra's semantic radii onto Fil's scale", () => {
+    expect(base('radii.l1')).toEqual({ base: '{radii.sm}' })
+    expect(base('radii.l2')).toEqual({ base: '{radii.md}' })
     expect(base('radii.l3')).toEqual({ base: '{radii.md}' })
+    expect(system.token('radii.xs')).toBe('3px')
+    expect(system.token('radii.md')).toBe('6px')
+    expect(system.token('radii.xl')).toBe('12px')
   })
 })
 

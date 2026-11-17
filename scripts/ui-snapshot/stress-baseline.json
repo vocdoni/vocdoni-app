@@ -59,13 +59,11 @@
   },
   "dashboard--user-menu-1440-dark": {
     "grey color #09090b": 2,
-    "spacing 2px": 1,
-    "spacing 8px": 1
+    "spacing 2px": 1
   },
   "dashboard--user-menu-1440-light": {
     "grey color #09090b": 2,
-    "spacing 2px": 1,
-    "spacing 8px": 1
+    "spacing 2px": 1
   },
   "dashboard-1440-dark": {
     "grey color #09090b": 2
@@ -83,68 +81,56 @@
     "grey color #ffffff": 11,
     "radius 6px": 2,
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "memberbase-members--add-member-1440-light": {
     "grey color #ffffff": 11,
     "radius 6px": 2,
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "memberbase-members--add-member-390-dark": {
     "grey color #ffffff": 11,
     "radius 6px": 2,
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "memberbase-members--add-member-390-light": {
     "grey color #ffffff": 11,
     "radius 6px": 2,
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "memberbase-members-1440-dark": {
     "grey color #ffffff": 11,
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "memberbase-members-1440-light": {
     "grey color #ffffff": 11,
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "memberbase-members-390-dark": {
     "grey color #ffffff": 11,
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "memberbase-members-390-light": {
     "grey color #ffffff": 11,
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "organization-create-1440-dark": {
-    "grey background #3b3b3b": 3,
     "spacing 2px": 4
   },
   "organization-create-1440-light": {
-    "grey background #ffffff": 3,
     "spacing 2px": 4
   },
   "organization-create-390-dark": {
-    "grey background #3b3b3b": 3,
     "spacing 2px": 4
   },
   "organization-create-390-light": {
-    "grey background #ffffff": 3,
     "spacing 2px": 4
   },
   "plans-loggedin-1440-dark": {
@@ -173,22 +159,18 @@
   },
   "process-ongoing--end-vote-confirm-1440-dark": {
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-ongoing--end-vote-confirm-1440-light": {
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-ongoing-1440-dark": {
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-ongoing-1440-light": {
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-ongoing-390-dark": {
@@ -199,12 +181,10 @@
   },
   "process-results-1440-dark": {
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-results-1440-light": {
     "spacing 2px": 1,
-    "spacing 40px": 1,
     "spacing 8px": 3
   },
   "process-results-390-dark": {
@@ -262,19 +242,15 @@
     "spacing 8px": 1
   },
   "settings-organization-1440-dark": {
-    "grey background #3b3b3b": 1,
     "spacing 2px": 4
   },
   "settings-organization-1440-light": {
-    "grey background #ffffff": 1,
     "spacing 2px": 4
   },
   "settings-organization-390-dark": {
-    "grey background #3b3b3b": 1,
     "spacing 2px": 4
   },
   "settings-organization-390-light": {
-    "grey background #ffffff": 1,
     "spacing 2px": 4
   },
   "settings-subscription--contact-dialog-1440-dark": {
@@ -290,38 +266,30 @@
     "grey background #000000/36": 1
   },
   "settings-support-1440-dark": {
-    "grey background #3b3b3b": 1,
     "spacing 2px": 1
   },
   "settings-support-1440-light": {
-    "grey background #ffffff": 1,
     "spacing 2px": 1
   },
   "settings-support-390-dark": {
-    "grey background #3b3b3b": 1,
     "spacing 2px": 1
   },
   "settings-support-390-light": {
-    "grey background #ffffff": 1,
     "spacing 2px": 1
   },
   "settings-team--invite-1440-dark": {
-    "grey background #3b3b3b": 1,
     "spacing 2px": 1,
     "spacing 8px": 4
   },
   "settings-team--invite-1440-light": {
-    "grey background #ffffff": 1,
     "spacing 2px": 1,
     "spacing 8px": 4
   },
   "settings-team--invite-390-dark": {
-    "grey background #3b3b3b": 1,
     "spacing 2px": 1,
     "spacing 8px": 4
   },
   "settings-team--invite-390-light": {
-    "grey background #ffffff": 1,
     "spacing 2px": 1,
     "spacing 8px": 4
   },
@@ -338,39 +306,31 @@
     "spacing 8px": 4
   },
   "signin-1440-dark": {
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signin-1440-light": {
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signin-390-dark": {
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signin-390-light": {
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signup-1440-dark": {
     "grey color #ffffff": 2,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signup-1440-light": {
     "grey color #ffffff": 2,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signup-390-dark": {
     "grey color #ffffff": 2,
-    "spacing 40px": 1,
     "spacing 8px": 1
   },
   "signup-390-light": {
     "grey color #ffffff": 2,
-    "spacing 40px": 1,
     "spacing 8px": 1
   }
 }

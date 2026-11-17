@@ -41,9 +41,16 @@ const colors = defineSemanticTokens.colors({
         _dark: '{colors.gray.800}',
       },
     },
+    // The empty track of a progress bar.
+    track: {
+      value: {
+        _light: '#c4c4c4',
+        _dark: '{colors.gray.700}',
+      },
+    },
     inverted: {
       value: {
-        _light: '{colors.black}',
+        _light: '{colors.gray.900}',
         _dark: '{colors.white}',
       },
     },
@@ -53,11 +60,36 @@ const colors = defineSemanticTokens.colors({
         _dark: '{colors.gray.950}',
       },
     },
+    // Washes of the status tones (light); dark keeps Chakra's.
+    error: {
+      value: {
+        _light: '#fff0f0',
+        _dark: '{colors.red.950}',
+      },
+    },
+    warning: {
+      value: {
+        _light: '#fff8eb',
+        _dark: '{colors.orange.950}',
+      },
+    },
+    success: {
+      value: {
+        _light: '#f0faf3',
+        _dark: '{colors.green.950}',
+      },
+    },
+    info: {
+      value: {
+        _light: '{colors.gray.100}',
+        _dark: '{colors.gray.900}',
+      },
+    },
   },
   fg: {
     DEFAULT: {
       value: {
-        _light: '{colors.black}',
+        _light: '{colors.gray.900}',
         _dark: '{colors.gray.50}',
       },
     },
@@ -69,37 +101,63 @@ const colors = defineSemanticTokens.colors({
     },
     subtle: {
       value: {
+        _light: '{colors.gray.500}',
+        _dark: '{colors.gray.500}',
+      },
+    },
+    // The faintest text step, below `subtle`: placeholders, disabled and decorative text.
+    faint: {
+      value: {
         _light: '{colors.gray.400}',
         _dark: '{colors.gray.500}',
       },
     },
-    // The faintest text step, below `subtle`. The same grey for now, so a retheme can split the two.
-    faint: {
-      value: '{colors.fg.subtle}',
-    },
     inverted: {
       value: {
-        _light: '{colors.gray.50}',
+        _light: '{colors.white}',
         _dark: '{colors.black}',
       },
     },
-    // Chakra's red.500 fails AA on white, so light mode takes red.600; dark keeps Chakra's red.400.
+    // Fil's status text colours (light); dark keeps Chakra's. `info` is neutral: blue means action.
     error: {
       value: {
-        _light: '{colors.red.600}',
+        _light: '#ca2a30',
         _dark: '{colors.red.400}',
+      },
+    },
+    warning: {
+      value: {
+        _light: '#875500',
+        _dark: '{colors.orange.300}',
+      },
+    },
+    success: {
+      value: {
+        _light: '#0b7636',
+        _dark: '{colors.green.300}',
+      },
+    },
+    info: {
+      value: {
+        _light: '{colors.gray.600}',
+        _dark: '{colors.gray.400}',
       },
     },
   },
   // Surface layers. A sub-role is a member that paints a different colour from its layer (tooltip vs
   // menu, drawer vs dialog).
   surface: {
+    // The dashboard page behind the content: a light grey in light mode, so the white cards, fields and
+    // sidebar stand out on it.
     canvas: {
-      value: '{colors.bg}',
+      value: {
+        _light: '{colors.bg.subtle}',
+        _dark: '{colors.bg}',
+      },
     },
     sidebar: {
       value: {
-        _light: '{colors.dashboardMenu.light}',
+        _light: '{colors.white}',
         _dark: '{colors.dashboardMenu.dark}',
       },
     },
@@ -157,8 +215,9 @@ const colors = defineSemanticTokens.colors({
         DEFAULT: {
           value: '{colors.white}',
         },
+        // gray.300, not 400: on the dark panel the fainter grey drops under AA for small text.
         muted: {
-          value: '{colors.gray.400}',
+          value: '{colors.gray.300}',
         },
       },
     },
@@ -169,7 +228,7 @@ const colors = defineSemanticTokens.colors({
       value: '{colors.blackAlpha.400}',
     },
     strong: {
-      value: '{colors.blackAlpha.500}',
+      value: 'rgb(23 23 23 / 0.56)',
     },
     fg: {
       value: '{colors.surface.inverse.fg}',
@@ -225,32 +284,41 @@ const colors = defineSemanticTokens.colors({
   border: {
     DEFAULT: {
       value: {
-        _light: '{colors.gray.200}',
+        _light: 'rgb(0 0 0 / 0.1)',
         _dark: '{colors.gray.800}',
       },
     },
     muted: {
       value: {
-        _light: '{colors.gray.100}',
+        _light: '{colors.gray.200}',
         _dark: '{colors.gray.900}',
       },
     },
     subtle: {
       value: {
-        _light: '{colors.gray.50}',
+        _light: '{colors.gray.100}',
         _dark: '{colors.gray.950}',
       },
     },
     emphasized: {
       value: {
-        _light: '{colors.gray.300}',
+        _light: 'rgb(0 0 0 / 0.18)',
         _dark: '{colors.gray.700}',
       },
     },
-    // The outline of a control drawn as a line (checkbox, radio, a dashed drop zone). `emphasized` until a retheme
-    // splits them.
+    // The ring of a field, select, textarea and voter option.
+    field: {
+      value: {
+        _light: '{colors.gray.400}',
+        _dark: '{colors.gray.700}',
+      },
+    },
+    // The outline of a control drawn as a line (checkbox, radio, a dashed drop zone): a solid grey, not a hairline.
     strong: {
-      value: '{colors.border.emphasized}',
+      value: {
+        _light: '{colors.gray.400}',
+        _dark: '{colors.gray.700}',
+      },
     },
     inverted: {
       value: {
@@ -269,9 +337,9 @@ const colors = defineSemanticTokens.colors({
   },
   ...illustrationColors,
   // Raw values kept as semantic tokens so a retheme (and the stress theme) can move them: the horizontal
-  // rule of Layout/Separators, translucent so it works over both color modes.
+  // rule of Layout/Separators.
   separator: {
-    value: 'rgba(135, 140, 189, 0.3)',
+    value: '{colors.border.muted}',
   },
   // Accents of the per-vertical auth showcase, read as `${accent}.900` (src/components/Auth/vertical).
   // 900 is the panel surface: a deep, desaturated tone, dark enough to carry white type at roughly 13:1.
@@ -284,9 +352,13 @@ const colors = defineSemanticTokens.colors({
     },
   },
   dashboard: {
-    // Borrowed by the support cards and the chat header; the sidebar reads `surface.sidebar`.
+    // The light grey tint of the support cards and the chat header, which sit on white panels; the sidebar
+    // itself reads `surface.sidebar`.
     menu: {
-      value: '{colors.surface.sidebar}',
+      value: {
+        _light: '{colors.bg.subtle}',
+        _dark: '{colors.dashboardMenu.dark}',
+      },
     },
   },
   // Footer band of the public layout (elements/PublicLayout.tsx): the page surface everywhere except on
@@ -326,12 +398,15 @@ const colors = defineSemanticTokens.colors({
   tabs: {
     tab: {
       color: {
-        value: '{colors.fg.muted}',
+        value: {
+          _light: '{colors.fg.muted}',
+          _dark: '{colors.gray.300}',
+        },
       },
       active: {
-        // The accent text step, not the raw 500: an arbitrary PRIMARY_COLOR at 500 carries no contrast guarantee.
+        // Fil marks the current tab with ink, not the accent.
         color: {
-          value: '{colors.accent.fg}',
+          value: '{colors.fg}',
         },
         bg: {
           value: {
@@ -352,8 +427,19 @@ const colors = defineSemanticTokens.colors({
   ...ballotColors,
 })
 
-// Elevation by role; each points at a Chakra size, which carries its own dark-mode value.
+// Fil draws depth with a 1px ring, never a blur or an offset. Chakra's own sizes are overridden with the same
+// ring so stock recipes lose their blur too; the roles below point at them.
+const RING = '0 0 0 1px {colors.border.emphasized}'
+
 const shadows = defineSemanticTokens.shadows({
+  xs: { value: RING },
+  sm: { value: RING },
+  md: { value: RING },
+  lg: { value: RING },
+  xl: { value: RING },
+  '2xl': { value: RING },
+  // Chakra's `inner` is blurred; `inset` has no blur and stays.
+  inner: { value: 'inset 0 0 0 1px {colors.border}' },
   shadow: {
     // Cards are told apart by their border, not a shadow
     card: {
@@ -385,9 +471,17 @@ const shadows = defineSemanticTokens.shadows({
     overlay: {
       value: '{shadows.lg}',
     },
-    // A ring around a control (button, field) in place of its border. Controls draw a border today, so none.
+    // A ring around a control (button, field) in place of its border.
     control: {
-      value: 'none',
+      value: RING,
+    },
+    // The ring of a field, select, textarea and voter option: the darker `border.field`.
+    field: {
+      value: '0 0 0 1px {colors.border.field}',
+    },
+    // A plain hairline ring in the default border colour.
+    ring: {
+      value: '0 0 0 1px {colors.border}',
     },
   },
 })
@@ -395,8 +489,8 @@ const shadows = defineSemanticTokens.shadows({
 // Chakra's semantic radii, which its control recipes read (`l2` for buttons and fields), written out with Chakra's
 // mapping so a retheme moves them here.
 const radii = defineSemanticTokens.radii({
-  l1: { value: '{radii.xs}' },
-  l2: { value: '{radii.sm}' },
+  l1: { value: '{radii.sm}' },
+  l2: { value: '{radii.md}' },
   l3: { value: '{radii.md}' },
 })
 

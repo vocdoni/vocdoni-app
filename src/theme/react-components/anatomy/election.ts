@@ -46,6 +46,7 @@ export const resultsAnatomy = [
   'choiceHeader',
   'choiceTitle',
   'choiceVotes',
+  'choice',
 ] as const
 
 export const voteWeightAnatomy = ['wrapper', 'weight'] as const

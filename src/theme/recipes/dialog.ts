@@ -7,7 +7,13 @@ const baseStyle = {
   },
   content: {
     bg: 'surface.overlay',
+    borderRadius: 'l3',
     boxShadow: 'shadow.overlay',
+  },
+  title: {
+    textStyle: 'xl',
+    fontWeight: 'semibold',
+    letterSpacing: 'tight',
   },
   // ui/DialogHeader: the title over its muted description.
   header: {

@@ -32,26 +32,32 @@ const lg = defineStyle({
 })
 
 export const Badge = defineRecipe({
+  // The stock variants read the page palette, which is the accent: a chip stays neutral unless asked otherwise.
+  base: { colorPalette: 'gray' },
   variants: {
     variant: {
-      // A count next to a label, such as a tab's.
+      // A count next to a label, such as a tab's: a bare figure, no fill.
       count: {
         colorPalette: 'gray',
-        bg: 'colorPalette.subtle',
-        color: 'colorPalette.fg',
-        borderRadius: 'full',
+        textStyle: 'figure',
+        bg: 'transparent',
+        color: 'fg.subtle',
       },
-      // A neutral label showing a raw value (a role name), capitalised. Chakra's `surface` look.
+      // A neutral label showing a raw value (a role name), capitalised.
       label: {
-        bg: 'colorPalette.subtle',
-        color: 'colorPalette.fg',
-        boxShadow: '[inset 0 0 0 {borderWidths.hairline} {colors.colorPalette.muted}]',
+        bg: 'bg.muted',
+        color: 'fg.muted',
         textTransform: 'capitalize',
       },
     },
     size: { xs, sm, md, lg },
   },
   // Padding is a `size` value, and sizes apply after the variant.
-  compoundVariants: [{ variant: 'count', css: { px: '1.5' } }],
+  compoundVariants: [{ variant: 'count', css: { px: '0' } }],
   defaultVariants: { size: 'xs' },
+})
+
+// `Code` shares Chakra's badge variants, so it needs the same neutral default.
+export const Code = defineRecipe({
+  base: { colorPalette: 'gray' },
 })

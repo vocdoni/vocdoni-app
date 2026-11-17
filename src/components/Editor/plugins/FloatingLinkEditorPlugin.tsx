@@ -257,6 +257,7 @@ function FloatingLinkEditor({
           <IconButton
             aria-label={t('editor.link.cancel', { defaultValue: 'Cancel' })}
             size='xs'
+            variant='ghost'
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsLinkEditMode(false)}
           >
@@ -279,6 +280,7 @@ function FloatingLinkEditor({
           <IconButton
             aria-label={t('editor.link.edit', { defaultValue: 'Edit link' })}
             size='xs'
+            variant='ghost'
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => {
               setEditedLinkUrl(linkUrl)
@@ -290,7 +292,7 @@ function FloatingLinkEditor({
           <IconButton
             aria-label={t('editor.link.remove', { defaultValue: 'Remove link' })}
             size='xs'
-            colorPalette='danger'
+            variant='danger'
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)}
           >

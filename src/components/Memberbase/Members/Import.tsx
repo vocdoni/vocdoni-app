@@ -217,7 +217,7 @@ export const ImportProgress = () => {
               defaultValue: 'Your data was imported with some errors.',
             })}
           </Text>
-          <Button onClick={onOpenErrors} size='sm' mt='1' alignSelf='start'>
+          <Button onClick={onOpenErrors} variant='outline' size='sm' mt='1' alignSelf='start'>
             {t('import_progress.view_errors', {
               defaultValue: `View {{count}} errors`,
               count: data.errors.length,

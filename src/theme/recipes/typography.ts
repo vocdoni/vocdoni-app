@@ -6,12 +6,22 @@ const sectionSubtitle = defineStyle({
 
 export const heading = defineRecipe({
   base: {
-    fontWeight: 'bold',
+    fontWeight: 'semibold',
   },
   variants: {
+    // Large sizes are set tight; Chakra's size axis only picks the text style.
+    size: {
+      xl: { letterSpacing: 'tight' },
+      '2xl': { letterSpacing: 'tight' },
+      '3xl': { letterSpacing: 'tighter' },
+      '4xl': { letterSpacing: 'tighter' },
+      '5xl': { letterSpacing: 'tighter' },
+      '6xl': { letterSpacing: 'tighter' },
+      '7xl': { letterSpacing: 'tighter' },
+    },
     variant: {
       heavy: {
-        fontWeight: 'extrabold',
+        fontWeight: 'semibold',
       },
       subsection: sectionSubtitle,
     },
@@ -20,10 +30,9 @@ export const heading = defineRecipe({
 
 export const link = defineRecipe({
   base: {
-    color: 'link.fg',
-    textDecoration: 'underline',
-    textDecorationThickness: 'from-font',
-    textUnderlineOffset: '0.15em',
+    color: 'accent.fg',
+    fontWeight: 'medium-plus',
+    textDecoration: 'none',
     // Repeats the token on purpose: `.dark &` is more specific than a single class, so in dark mode
     // it beats the palette colour of Chakra's plain/underline variants and of a Button rendering a
     // Link (`asChild`), as the members CSV template download does.
@@ -34,19 +43,18 @@ export const link = defineRecipe({
       },
     },
     _hover: {
-      color: 'link.fg.hover',
+      color: 'accent.fg.hover',
     },
   },
   variants: {
     variant: {
-      // Chakra's default `plain` variant (applied via defaultVariants) fades the
-      // underline to currentColor/20 and shifts its offset to 3px on hover,
-      // fighting the base styles above — pin both so hover keeps a solid,
-      // consistent underline.
+      // Chakra's default `plain` variant (applied via defaultVariants) sets its own colour, and variants beat the
+      // base: restate the accent colour. Never underlined: hover only darkens it, and keyboard focus keeps the
+      // outline.
       plain: {
+        color: 'accent.fg',
         _hover: {
-          textDecorationColor: 'current',
-          textUnderlineOffset: '0.15em',
+          color: 'accent.fg.hover',
         },
       },
       unstyled: {
@@ -66,12 +74,12 @@ export const link = defineRecipe({
         cursor: 'button',
         textDecoration: 'none',
       },
-      // Grey, underlined only on hover; the hover colour still follows the base.
+      // Grey, darkening to the text colour on hover; never underlined.
       subtle: {
         textDecoration: 'none',
         color: 'fg.muted',
         _hover: {
-          textDecoration: 'underline',
+          color: 'fg',
         },
       },
       // A whole row-sized link used as a tile: a centred label with badges laid over its corners.
@@ -119,11 +127,11 @@ export const link = defineRecipe({
         _hover: { color: 'fg.muted' },
         _dark: { color: 'fg.muted', _hover: { color: 'fg.muted' } },
       },
-      // Navigation-style links: text colour, underlined only on hover.
+      // Navigation-style links: the text colour in every state, never underlined.
       quiet: {
         color: 'fg',
         textDecoration: 'none',
-        _hover: { color: 'fg', textDecoration: 'underline' },
+        _hover: { color: 'fg' },
         _dark: { color: 'fg', _hover: { color: 'fg' } },
       },
     },

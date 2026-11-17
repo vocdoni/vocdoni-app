@@ -42,11 +42,11 @@ describe('Theme', () => {
     expect(css).toMatch(/--chakra-colors-color-palette-solid:\s*var\(--chakra-colors-brand-solid\)/)
   })
 
-  it('keeps the stock black brand and gray palette without PRIMARY_COLOR', () => {
+  it('uses the Fil blue brand without PRIMARY_COLOR', () => {
     renderWithEnv({})
 
     const css = injectedCss()
-    expect(css).toMatch(/--chakra-colors-brand-500:\s*#000000/)
-    expect(css).toMatch(/--chakra-colors-color-palette-solid:\s*var\(--chakra-colors-gray-solid\)/)
+    expect(css).toMatch(/--chakra-colors-brand-500:\s*#1d62e9/)
+    expect(css).toMatch(/--chakra-colors-color-palette-solid:\s*var\(--chakra-colors-brand-solid\)/)
   })
 })
