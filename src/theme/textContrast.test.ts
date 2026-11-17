@@ -68,7 +68,9 @@ describe('text colour contrast (WCAG AA)', () => {
 
   it('keeps the inactive tab label readable on the tab list', () => {
     for (const mode of ['light', 'dark'] as const) {
-      expect(contrastRatio(resolve('tabs.tab.color', mode), opaque(resolve('tabs.bg', mode), mode))).toBeGreaterThanOrEqual(4.5)
+      expect(
+        contrastRatio(resolve('tabs.tab.color', mode), opaque(resolve('tabs.bg', mode), mode))
+      ).toBeGreaterThanOrEqual(4.5)
     }
   })
 
