@@ -1,6 +1,6 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useQueryClient } from '@tanstack/react-query'
-import { useRef } from 'react'
+import { useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, useNavigate } from 'react-router'
 import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
@@ -12,6 +12,23 @@ import { Routes } from '~src/router/routes'
 import { isQuestionByQuestion, type CreateVotingProcessRequestWithMode } from '~src/types/voting-process'
 import { useCreateProcess } from '../Create'
 import { votingProcessToCreateRequest } from '../Create/draft-mapping'
+
+// The copies in flight, by source process, shared by every instance of the hook: one page offers "Duplicate" in the
+// header, the idle card and the sheet, and tapping two of them must make one draft (a second may hit the draft limit).
+const cloning = new Set<string>()
+const listeners = new Set<() => void>()
+const setCloning = (id: string, on: boolean) => {
+  if (on) cloning.add(id)
+  else cloning.delete(id)
+  listeners.forEach((listener) => listener())
+}
+const subscribe = (listener: () => void) => {
+  listeners.add(listener)
+  return () => {
+    listeners.delete(listener)
+  }
+}
+const anyCloning = () => cloning.size > 0
 
 /**
  * Copies a process into a new draft and opens it in the wizard. Takes the process, so list rows (which have no
@@ -25,13 +42,13 @@ export const useCloneAsDraft = () => {
   const queryClient = useQueryClient()
   const createProcess = useCreateProcess()
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting, QUESTION_BY_QUESTION: questionByQuestion } = useAppEnv()
-  // A second click before the first copy returns would make a second draft (and may hit the draft limit).
-  const inFlight = useRef(false)
+  const isCloning = useSyncExternalStore(subscribe, anyCloning, anyCloning)
 
   const cloneAsDraft = async (process: VotingProcessResponse | null | undefined) => {
     // Callers only offer it for a process with questions; an empty draft has nothing to copy.
-    if (!process?.id || !process.questions?.length || inFlight.current) return
-    inFlight.current = true
+    if (!process?.id || !process.questions?.length || cloning.has(process.id)) return
+    const sourceId = process.id
+    setCloning(sourceId, true)
 
     const sourceIsByQuestion = isQuestionByQuestion(process)
     const request: CreateVotingProcessRequestWithMode = {
@@ -80,9 +97,9 @@ export const useCloneAsDraft = () => {
         isClosable: true,
       })
     } finally {
-      inFlight.current = false
+      setCloning(sourceId, false)
     }
   }
 
-  return { cloneAsDraft, isCloning: createProcess.isPending }
+  return { cloneAsDraft, isCloning }
 }

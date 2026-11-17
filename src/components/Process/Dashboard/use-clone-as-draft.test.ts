@@ -207,6 +207,25 @@ describe('useCloneAsDraft', () => {
 
       expect(mockMutateAsync).toHaveBeenCalledTimes(1)
     })
+
+    it('makes one copy when two buttons of the page (two instances) ask for it, and both show it running', async () => {
+      let finish: (id: string) => void = () => undefined
+      mockMutateAsync.mockReturnValue(new Promise((resolve) => (finish = resolve)))
+      const election = createMockElection([{ title: 'Option 1' }])
+      const header = renderClone()
+      const card = renderClone()
+
+      await act(async () => {
+        void header.result.current.cloneAsDraft(election)
+        void card.result.current.cloneAsDraft(election)
+      })
+      expect(header.result.current.isCloning).toBe(true)
+      expect(card.result.current.isCloning).toBe(true)
+      await act(async () => finish('draft-123'))
+
+      expect(mockMutateAsync).toHaveBeenCalledTimes(1)
+      expect(card.result.current.isCloning).toBe(false)
+    })
   })
 
   describe('error flow', () => {
