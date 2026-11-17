@@ -130,9 +130,6 @@
       "voted_partial": "Botoa emana {{voted}}/{{total}}"
     }
   },
-  "census_ruler": {
-    "quorum": "quoruma {{value}}"
-  },
   "change_password": {
     "subtitle": "Sartu zure egungo pasahitza eta berri bat zure kredentzialak eguneratzeko.",
     "title": "Aldatu pasahitza"

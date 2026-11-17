@@ -132,9 +132,6 @@
       "voted_partial": "A voté {{voted}}/{{total}}"
     }
   },
-  "census_ruler": {
-    "quorum": "quorum {{value}}"
-  },
   "change_password": {
     "subtitle": "Saisissez votre mot de passe actuel et un nouveau mot de passe pour mettre à jour vos identifiants.",
     "title": "Changer le mot de passe"

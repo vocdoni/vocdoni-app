@@ -21,7 +21,6 @@ export const TurnoutBar = ({
   max,
   label,
   closed,
-  quorum,
   layout,
   ...props
 }: TurnoutBarProps) => (
@@ -36,6 +35,6 @@ export const TurnoutBar = ({
         </Text>
       )}
     </Flex>
-    <CensusRuler {...{ value, max, label, closed, quorum, layout }} />
+    <CensusRuler {...{ value, max, label, closed, layout }} />
   </Stack>
 )

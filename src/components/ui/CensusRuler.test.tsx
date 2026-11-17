@@ -18,20 +18,6 @@ describe('CensusRuler', () => {
     expect(screen.queryByText('184')).not.toBeInTheDocument()
   })
 
-  it('marks and labels the quorum when given', () => {
-    render(<CensusRuler value={184} max={312} quorum={156} label={NAME} />)
-
-    expect(screen.getByText('quorum 156')).toBeInTheDocument()
-    expect(document.querySelector('[data-part="quorum"]')).not.toBeNull()
-  })
-
-  it('has no quorum without one', () => {
-    render(<CensusRuler value={184} max={312} label={NAME} />)
-
-    expect(screen.queryByText(/quorum/)).not.toBeInTheDocument()
-    expect(document.querySelector('[data-part="quorum"]')).toBeNull()
-  })
-
   it('caps the fill at the total', () => {
     render(<CensusRuler value={400} max={312} label='turnout' />)
 

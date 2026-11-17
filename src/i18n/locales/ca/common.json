@@ -132,9 +132,6 @@
       "voted_partial": "Ha votat {{voted}}/{{total}}"
     }
   },
-  "census_ruler": {
-    "quorum": "quòrum {{value}}"
-  },
   "change_password": {
     "subtitle": "Introdueix la contrasenya actual i una de nova per actualitzar les teves credencials.",
     "title": "Canvia la contrasenya"

@@ -130,9 +130,6 @@
       "voted_partial": "Voted {{voted}}/{{total}}"
     }
   },
-  "census_ruler": {
-    "quorum": "quorum {{value}}"
-  },
   "change_password": {
     "subtitle": "Enter your current password and a new password to update your credentials.",
     "title": "Change password"
