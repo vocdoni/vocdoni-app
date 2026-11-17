@@ -8,10 +8,11 @@ const stock = (stockVariants?.variant ?? {}) as StyleMap
 // Fil has two control heights; `control.md` is the 34px default. Below `lg` a control grows to a touch target: 40px on
 // a tablet, 44px on a phone, and its text from 13.5px to 14px and 15px (`control-touch`).
 const touchHeight = { base: 'control.touch', md: 'control.tablet', lg: 'control.md' } as const
+// Its sides follow the guide too: 16px on a phone, 14px on a tablet, 12px from `lg`.
 const controlSize = defineStyle({
   h: touchHeight,
   minW: touchHeight,
-  px: '3',
+  px: { base: '4', md: '3.5', lg: '3' },
   textStyle: 'control-touch',
   gap: '2',
   _icon: { width: 'icon.sm', height: 'icon.sm' },
@@ -181,16 +182,30 @@ const menuItem = defineStyle({
   },
 })
 
-// A row of a bottom sheet (ui/ResponsiveMenu on a phone); a destructive one carries `data-danger`. The height and
-// text are set by the compound variants below.
+// A row of a bottom sheet (ui/ResponsiveMenu on a phone), under a rule, with an 18px muted icon; a destructive one
+// carries `data-danger` and is in the danger colour, icon too. The height and text are set by the compound variants
+// below. The 6px inset is the boards' (their rows are buttons with the browser's padding).
 const sheetRow = defineStyle({
   ...menuItem,
-  px: '3',
-  '&[data-danger]': { color: 'danger.action' },
+  px: '1.5',
+  py: '0',
+  gap: '3',
+  borderRadius: 'none',
+  borderTopWidth: 'hairline',
+  borderTopColor: 'border',
+  color: 'fg',
+  fontWeight: 'medium',
+  _hover: { bg: 'transparent' },
+  _icon: { color: 'fg.subtle' },
+  '&[data-danger]': { color: 'danger.action', _icon: { color: 'danger.action' } },
 })
 
-// The sheet's closing row: a centred secondary.
+// The sheet's closing button: a full-width secondary at the touch height.
 const sheetClose = defineStyle({ ...outline, w: 'full', justifyContent: 'center', mt: '2' })
+
+// A secondary that opens a menu ("More"): label, then a 15px muted chevron, with a tighter end. The size would
+// reset the gap, end padding and icon, so they live in a compound variant.
+const dropdown = defineStyle({ ...outline })
 
 // Button that opens a menu about the current user: avatar, names and a chevron, left-aligned.
 const menuTrigger = defineStyle({
@@ -291,6 +306,16 @@ const cta = defineStyle({
 
 const chipHeight = { base: '9', md: '8', lg: '7' } as const
 
+const row = defineStyle({
+  h: { base: 'control.tablet', lg: '7' },
+  minW: '0',
+  px: { base: '3.5', lg: '2.5' },
+  gap: '2',
+  fontSize: { base: 'item', md: 'md', lg: 'sm' },
+  lineHeight: '[1.25rem]',
+  _icon: { width: 'icon.sm', height: 'icon.sm' },
+})
+
 export const Button = defineRecipe({
   base: baseStyle,
   variants: {
@@ -308,6 +333,7 @@ export const Button = defineRecipe({
       'menu-item-strong': { ...menuItem, fontWeight: 'bold' },
       'sheet-row': sheetRow,
       'sheet-close': sheetClose,
+      dropdown,
       'menu-trigger': menuTrigger,
       segment,
       toggle,
@@ -317,8 +343,9 @@ export const Button = defineRecipe({
       floating,
       whatsapp,
     },
-    // An open map, so the compound variants below can name Chakra's own sizes.
-    size: { ...sizes, cta } as StyleMap,
+    // An open map, so the compound variants below can name Chakra's own sizes. `row` is the small action inside a
+    // list row (Gestió's "Open"): 40px with 14px sides below `lg`, 28px with 10px sides and 13px text from `lg`.
+    size: { ...sizes, cta, row } as StyleMap,
     // Long labels wrap onto more lines instead of overflowing the button.
     multiline: {
       true: {
@@ -339,11 +366,28 @@ export const Button = defineRecipe({
     // The sidebar entry and the segment keep their own height next to any size.
     { variant: 'nav-item', css: { h: '8', minW: '0' } },
     { variant: 'segment', css: { h: '7', minW: '0' } },
-    // A sheet row is 52px with 16px text whatever the size.
-    ...(['sheet-row', 'sheet-close'] as const).map((variant) => ({
-      variant,
-      css: { h: 'control.row' as const, minW: '0' as const, textStyle: 'control-input' as const },
-    })),
+    // A sheet row is 52px with 16px text whatever the size; the close button is a 44px, 15px button.
+    {
+      variant: 'sheet-row',
+      css: {
+        h: 'control.row',
+        minW: '0',
+        px: '1.5',
+        gap: '3',
+        textStyle: 'control-input',
+        _icon: { width: '4.5', height: '4.5' },
+      },
+    },
+    { variant: 'sheet-close', css: { h: 'control.touch', minW: '0', textStyle: 'control-touch' } },
+    // The dropdown keeps its tighter end next to any size.
+    {
+      variant: 'dropdown',
+      css: {
+        gap: '1',
+        pe: { base: '3', lg: '2' },
+        _icon: { width: 'icon.chevron', height: 'icon.chevron', color: 'fg.subtle' },
+      },
+    },
     // The chip is a smaller control than a button at every width: 36px on a phone, 32px on a tablet, 28px from `lg`.
     { variant: 'chip', css: { h: chipHeight, minW: '0', textStyle: 'control-chip' } },
   ],
