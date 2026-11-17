@@ -1,4 +1,4 @@
-import { isBeforeStart, resolveEndDate } from '@vocdoni/api-client'
+import { isBeforeStart, questionsEndedAt, resolveEndDate } from '@vocdoni/api-client'
 import type { QuestionStatus, VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import { intervalToDuration, type Duration } from 'date-fns'
 import { isQuestionByQuestion } from '~src/types/voting-process'
@@ -28,6 +28,24 @@ export const hasEndedBySchedule = (process: VotingProcessResponse, now: Date): b
 }
 
 const NO_IDS: ReadonlySet<string> = new Set()
+
+/**
+ * When a closed vote closed. A question-by-question vote closes with its last question and the process keeps no time
+ * of its own, so that question's `endedAt` wins; otherwise the end the chain recorded (`earlyEnd`), else the schedule.
+ */
+export const closedAt = (process: VotingProcessResponse, earlyEnd?: Date | null): Date | undefined =>
+  (isQuestionByQuestion(process) ? questionsEndedAt(process.questions) : undefined) ??
+  earlyEnd ??
+  resolveEndDate(process)
+
+// The chain stops a vote at the block that crosses its end, a few seconds either side of the schedule.
+const ON_SCHEDULE_MS = 60_000
+
+/** Whether a vote closed at `closed` stopped before its scheduled end (someone ended it, or its last question closed). */
+export const closedBeforeSchedule = (process: VotingProcessResponse, closed: Date | undefined): boolean => {
+  const scheduled = process.endDate ? new Date(process.endDate).getTime() : NaN
+  return !!closed && Number.isFinite(scheduled) && scheduled - closed.getTime() > ON_SCHEDULE_MS
+}
 
 /**
  * The paused questions of a question-by-question vote that a pause holds, i.e. that were open before: the ones this

@@ -39,14 +39,12 @@ export const SummaryCalendar = ({ model, desktop }: { model: SummaryModel; deskt
     }
     if (state === 'live' || state === 'paused') {
       list.push(
+        // What a pause means is the banner's to say, once.
         state === 'paused'
           ? {
               id: 'today',
               day: now,
               what: t('votes.summary.calendar.today_paused', { defaultValue: 'Today. Vote paused' }),
-              note: t('votes.summary.calendar.today_paused_note', {
-                defaultValue: 'Nobody can vote until you resume it.',
-              }),
               current: true,
             }
           : { id: 'today', day: now, what: t('votes.summary.calendar.today', { defaultValue: 'Today' }), current: true }
@@ -56,7 +54,7 @@ export const SummaryCalendar = ({ model, desktop }: { model: SummaryModel; deskt
       list.push({
         id: 'ended',
         day: endDate,
-        // An organiser ending it and the schedule closing it read differently.
+        // Stopping before the schedule and the schedule closing it read differently.
         what: endedEarly
           ? t('votes.summary.calendar.ended_manual', { defaultValue: 'Ended manually' })
           : t('votes.summary.calendar.ended_auto', { defaultValue: 'Closed automatically at the deadline' }),

@@ -167,6 +167,15 @@ describe('VoteHeader', () => {
     })
   })
 
+  it('drops a sentence whose date the process lacks instead of printing it empty or as now', () => {
+    const { unmount } = renderHeader(createProcess({ startDate: undefined, endDate: undefined }))
+    expect(screen.queryByText(/Closes|Opens|Started/)).not.toBeInTheDocument()
+    unmount()
+
+    renderHeader(createProcess({ startDate: '2026-03-20T10:00:00Z', endDate: undefined }, 'PAUSED'))
+    expect(screen.getByText(/^Starts Friday, March 20 at \d\d:\d\d\.$/)).toBeInTheDocument()
+  })
+
   describe('question by question', () => {
     it('offers Pause the vote and End the vote, secondary, while a question is open', () => {
       renderHeader(byQuestion([question('q1', 'ENDED'), question('q2', 'ONGOING')]))
@@ -174,7 +183,9 @@ describe('VoteHeader', () => {
       expect(actions()).toEqual(['Pause the vote', 'End the vote'])
       expect(screen.getByRole('button', { name: 'End the vote' })).toHaveAttribute('data-variant', 'outline')
       expect(
-        screen.getByText(/^Question by question\. Started Sunday, March 1 at \d\d:\d\d, 9 days ago\.$/)
+        screen.getByText(
+          /^Question by question\. Started Sunday, March 1 at \d\d:\d\d, 9 days ago\. Closes Thursday, March 12 at \d\d:\d\d\.$/
+        )
       ).toBeVisible()
     })
 
@@ -237,14 +248,23 @@ describe('VoteHeader', () => {
 
       expect(actions()).toEqual(['Resume the vote', 'End the vote'])
       expect(screen.getByText('Paused')).toBeInTheDocument()
-      expect(screen.getByText(/^Question by question\. Started Sunday, March 1 at \d\d:\d\d\.$/)).toBeVisible()
+      // The deadline a pause does not move, on the desktop too.
+      expect(
+        screen.getByText(
+          /^Question by question\. Started Sunday, March 1 at \d\d:\d\d\. Closes Thursday, March 12 at \d\d:\d\d\. The deadline does not stop\.$/
+        )
+      ).toBeVisible()
     })
 
     it('offers only More before the first question opens, with the start date', () => {
       renderHeader(byQuestion([question('q1', 'PAUSED')], { startDate: '2026-03-14T17:30:00Z' }))
 
       expect(actions()).toEqual([])
-      expect(screen.getByText(/^Saturday, March 14 at \d\d:\d\d\. Question by question\.$/)).toBeVisible()
+      expect(
+        screen.getByText(
+          /^Saturday, March 14 at \d\d:\d\d\. Question by question\. Closes Thursday, March 12 at \d\d:\d\d\.$/
+        )
+      ).toBeVisible()
     })
 
     it('keeps only the menu on an ended vote and says when it ended and after how long', () => {
@@ -254,6 +274,17 @@ describe('VoteHeader', () => {
       expect(screen.queryByRole('link', { name: 'Show the results' })).not.toBeInTheDocument()
       expect(actions()).toEqual([])
       expect(screen.getByText(/^On March 1 at \d\d:\d\d, after 1 hour and 28 minutes\.$/)).toBeVisible()
+    })
+
+    it("says a vote closed with its last question at that question's close, not at the schedule", () => {
+      renderHeader(
+        byQuestion([
+          question('q1', 'ENDED', { endedAt: '2026-03-01T10:20:00Z' }),
+          question('q2', 'RESULTS', { endedAt: '2026-03-01T10:42:00Z' }),
+        ])
+      )
+
+      expect(screen.getByText(/^On March 1 at \d\d:\d\d, after 42 minutes\.$/)).toBeVisible()
     })
 
     it('says when a canceled vote was canceled', () => {

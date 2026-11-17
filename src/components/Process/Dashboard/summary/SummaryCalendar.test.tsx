@@ -4,13 +4,15 @@ import type { VoteState } from '~utils/vote-state'
 import { SummaryCalendar } from './SummaryCalendar'
 import type { SummaryModel } from './use-summary-model'
 
-const NOW = new Date('2026-03-10T12:00:00Z')
+// Local times, so the days printed are the same in every time zone the suite runs in.
+const NOW = new Date(2026, 2, 10, 12, 0)
+const local = (day: number, hour: number, minute = 0) => new Date(2026, 2, day, hour, minute).toISOString()
 
-const model = (state: VoteState, startDate = '2026-03-02T09:16:00Z', endedEarly = false) =>
+const model = (state: VoteState, startDate = local(2, 9, 16), endedEarly = false) =>
   ({
     election: { startDate } as VotingProcessResponse,
     state,
-    endDate: new Date('2026-03-12T20:00:00Z'),
+    endDate: new Date(2026, 2, 12, 20, 0),
     endedEarly,
     now: NOW,
   }) as SummaryModel
@@ -29,24 +31,22 @@ describe('SummaryCalendar', () => {
     expect(screen.getByText('Today').closest('li')).toHaveAttribute('aria-current', 'step')
   })
 
-  it('prints each date as day and month in figures, and joins the marks with a thread but for the last', () => {
+  it('prints each date as day and month in figures', () => {
     render(<SummaryCalendar desktop model={model('live')} />)
 
     const items = screen.getAllByRole('listitem')
     expect(items.map((item) => item.querySelector('span')?.textContent)).toEqual(['12/03', '10/03', '02/03'])
-    // The mark column holds the dot and, under it, the thread.
-    expect(items.map((item) => item.querySelector('[aria-hidden]')?.childElementCount)).toEqual([2, 2, 1])
   })
 
-  it('says today that a paused vote is paused', () => {
+  it("says today that a paused vote is paused, once: what it means is the banner's to say", () => {
     render(<SummaryCalendar desktop model={model('paused')} />)
 
     expect(screen.getByText('Today. Vote paused')).toBeInTheDocument()
-    expect(screen.getByText('Nobody can vote until you resume it.')).toBeInTheDocument()
+    expect(screen.queryByText(/Nobody can vote/)).not.toBeInTheDocument()
   })
 
   it('looks ahead for a vote that has not opened yet', () => {
-    render(<SummaryCalendar desktop model={model('ready', '2026-03-11T09:00:00Z')} />)
+    render(<SummaryCalendar desktop model={model('ready', local(11, 9))} />)
 
     expect(steps()).toEqual([expect.stringContaining('Automatic closing'), expect.stringContaining('Vote opens')])
   })

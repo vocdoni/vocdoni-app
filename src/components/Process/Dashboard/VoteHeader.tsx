@@ -30,7 +30,7 @@ import {
   ViewIcon,
 } from '~theme/icons'
 import { ucfirst } from '~utils/strings'
-import { isTerminalQuestion, type VoteState } from '~utils/vote-state'
+import { closedAt, isTerminalQuestion, type VoteState } from '~utils/vote-state'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 type HeaderPartProps = { election: VotingProcessResponse; state: VoteState; now: Date }
@@ -40,7 +40,10 @@ const parseDate = (value: string | undefined) => {
   return date && !isNaN(date.getTime()) ? date : undefined
 }
 
-/** The line beside the state, per state and mode, in the boards' words. */
+/**
+ * The line beside the state, per state and mode, in the boards' words. A date the process lacks drops its sentence,
+ * never shows as empty or as "now".
+ */
 const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
   const { t, i18n } = useTranslation()
   const isDesktop = useIsDesktop({ ssr: false })
@@ -48,32 +51,79 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
   const { data: earlyEndDate } = useProcessEarlyEndDate(election)
   const byQuestion = isQuestionByQuestion(election)
   // Older published processes may lack a start date; an invalid date would throw in the relative-time formatter.
-  const start = parseDate(election.startDate) ?? now
+  const start = parseDate(election.startDate)
   const end = resolveEndDate(election)
   const upper = (value: string) => ucfirst(value, i18n.language)
   // "at 18:30" today, the full date otherwise (the touch boards).
-  const when = (date: Date | undefined) =>
-    date && isSameDay(date, now)
+  const when = (date: Date) =>
+    isSameDay(date, now)
       ? t('votes.date.at_time', { defaultValue: 'at {{time}}', time: time(date) })
       : t('votes.date.on_date', { defaultValue: '{{date}}', date: dateAt(date) })
+  // Whole sentences, each one only when its date is known.
+  const sentences = (...parts: (string | false | undefined)[]) => parts.filter(Boolean).join(' ')
+  const closesOn = (date: Date | undefined) =>
+    date && t('votes.header.line.closes', { defaultValue: 'Closes {{date}}.', date: when(date) })
+  const closesPaused = (date: Date | undefined) =>
+    date &&
+    t('votes.header.line.closes_paused_touch', {
+      defaultValue: 'Closes {{end}}. The deadline does not stop.',
+      end: when(date),
+    })
+  // A question-by-question vote's start, as the desktop board says it.
+  const startedByQuestion = (date: Date, paused: boolean) => {
+    if (paused) {
+      return isSameDay(date, now)
+        ? t('votes.header.line.by_question_paused_today', {
+            defaultValue: 'Question by question. Started at {{time}}.',
+            time: time(date),
+          })
+        : t('votes.header.line.by_question_paused', {
+            defaultValue: 'Question by question. Started {{date}}.',
+            date: dateAt(date),
+          })
+    }
+    return isSameDay(date, now)
+      ? t('votes.header.line.by_question_live_today', {
+          defaultValue: '{{day}}, question by question. Started at {{time}}, {{ago}}.',
+          day: upper(day(date)),
+          time: time(date),
+          ago: ago(date, now),
+        })
+      : t('votes.header.line.by_question_live', {
+          defaultValue: 'Question by question. Started {{date}}, {{ago}}.',
+          date: dateAt(date),
+          ago: ago(date, now),
+        })
+  }
 
   switch (state) {
     case 'ready':
       if (byQuestion && !isDesktop)
-        return t('votes.header.line.starts', { defaultValue: 'Starts {{date}}.', date: dateAt(start) })
-      return byQuestion
-        ? t('votes.header.line.by_question_ready', {
-            defaultValue: '{{date}}. Question by question.',
-            date: upper(dateAt(start)),
-          })
-        : t('votes.header.line.opens', {
-            defaultValue: 'Opens {{start}} and closes {{end}}.',
-            start: dateAt(start),
-            end: dateAt(end),
-          })
+        return start ? t('votes.header.line.starts', { defaultValue: 'Starts {{date}}.', date: dateAt(start) }) : ''
+      if (byQuestion) {
+        return sentences(
+          start &&
+            t('votes.header.line.by_question_ready', {
+              defaultValue: '{{date}}. Question by question.',
+              date: upper(dateAt(start)),
+            }),
+          closesOn(end)
+        )
+      }
+      if (start && end) {
+        return t('votes.header.line.opens', {
+          defaultValue: 'Opens {{start}} and closes {{end}}.',
+          start: dateAt(start),
+          end: dateAt(end),
+        })
+      }
+      return sentences(
+        start && t('votes.header.line.starts', { defaultValue: 'Starts {{date}}.', date: dateAt(start) }),
+        closesOn(end)
+      )
     case 'live': {
-      const closes = t('votes.header.line.closes', { defaultValue: 'Closes {{date}}.', date: dateAt(end) })
       if (!byQuestion) {
+        if (!end) return ''
         const left = timeLeft(end, now)
         return left
           ? t('votes.header.line.closes_left', {
@@ -81,56 +131,35 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
               date: dateAt(end),
               left: upper(left),
             })
-          : closes
+          : t('votes.header.line.closes', { defaultValue: 'Closes {{date}}.', date: dateAt(end) })
       }
-      // The touch boards say when it started and when it closes; the desktop board when it started.
+      // The touch boards say when it started and when it closes; the desktop board the day too.
       if (!isDesktop) {
-        return t('votes.header.line.started_closes', {
-          defaultValue: 'Started {{start}}. Closes {{end}}.',
-          start: when(start),
-          end: when(end),
-        })
+        return start && end
+          ? t('votes.header.line.started_closes', {
+              defaultValue: 'Started {{start}}. Closes {{end}}.',
+              start: when(start),
+              end: when(end),
+            })
+          : sentences(closesOn(end))
       }
-      return isSameDay(start, now)
-        ? t('votes.header.line.by_question_live_today', {
-            defaultValue: '{{day}}, question by question. Started at {{time}}, {{ago}}.',
-            day: upper(day(start)),
-            time: time(start),
-            ago: ago(start, now),
-          })
-        : t('votes.header.line.by_question_live', {
-            defaultValue: 'Question by question. Started {{date}}, {{ago}}.',
-            date: dateAt(start),
-            ago: ago(start, now),
-          })
+      return sentences(start && startedByQuestion(start, false), closesOn(end))
     }
     case 'paused':
-      // The touch boards say when it closes ("at 21:00" today); the desktop board when a question-by-question one started.
-      if (byQuestion && !isDesktop) {
-        return t('votes.header.line.closes_paused_touch', {
-          defaultValue: 'Closes {{end}}. The deadline does not stop.',
-          end: when(end),
-        })
-      }
       if (!byQuestion) {
-        return t('votes.header.line.closes_paused', {
-          defaultValue: 'Closes {{date}}. The deadline does not stop.',
-          date: dateAt(end),
-        })
+        return end
+          ? t('votes.header.line.closes_paused', {
+              defaultValue: 'Closes {{date}}. The deadline does not stop.',
+              date: dateAt(end),
+            })
+          : ''
       }
-      return isSameDay(start, now)
-        ? t('votes.header.line.by_question_paused_today', {
-            defaultValue: 'Question by question. Started at {{time}}.',
-            time: time(start),
-          })
-        : t('votes.header.line.by_question_paused', {
-            defaultValue: 'Question by question. Started {{date}}.',
-            date: dateAt(start),
-          })
+      // The deadline a pause does not move, on every width; the desktop board says when it started first.
+      return sentences(isDesktop && start && startedByQuestion(start, true), closesPaused(end))
     case 'closed': {
-      const endedAt = earlyEndDate ?? end
+      const endedAt = closedAt(election, earlyEndDate)
       if (!endedAt) return ''
-      if (byQuestion) {
+      if (byQuestion && start) {
         return t('votes.header.line.by_question_ended', {
           defaultValue: 'On {{day}} at {{time}}, after {{duration}}.',
           day: shortDate(endedAt),
