@@ -81,7 +81,7 @@ export const PublishReview = defineSlotRecipe({
     // Dialog.Content itself. Its phone-sized 'full' size fills the viewport: undone from md up, or the
     // dialog would too
     frame: {
-      maxW: { md: '[820px]' },
+      maxW: { md: 'publish-review.dialog' },
       minH: { md: 'auto' },
       borderRadius: { md: 'l3' },
       mx: { md: '4' },
@@ -440,9 +440,8 @@ export const PublishReview = defineSlotRecipe({
         h: '6',
         pointerEvents: 'none',
         bgGradient: 'to-t',
-        gradientFrom: 'blackAlpha.100',
+        gradientFrom: 'scroll.edge',
         gradientTo: 'transparent',
-        _dark: { gradientFrom: 'whiteAlpha.100' },
         opacity: '[0]',
         _motionSafe: { transitionProperty: '[opacity]', transitionDuration: 'fast' },
       },
@@ -470,7 +469,7 @@ export const PublishReview = defineSlotRecipe({
     // A wait or an outcome is about as tall as the summary, so the dialog keeps its size between steps
     body: {
       ...scrollArea,
-      minH: { base: '0', md: '[22rem]' },
+      minH: { base: '0', md: 'publish-review.step' },
       [shortScreen]: { ...scrollArea[shortScreen], minH: '0' },
       display: 'flex',
       flexDirection: 'column',
@@ -481,7 +480,7 @@ export const PublishReview = defineSlotRecipe({
     },
     status: {
       ...scrollArea,
-      minH: { base: '0', md: '[22rem]' },
+      minH: { base: '0', md: 'publish-review.step' },
       [shortScreen]: { ...scrollArea[shortScreen], minH: '0' },
       display: 'flex',
       flexDirection: 'column',
@@ -531,7 +530,7 @@ export const PublishReview = defineSlotRecipe({
       display: 'block',
       w: 'full',
       borderRadius: 'l2',
-      '&[data-kind=lead]': { h: '8', maxW: '[24rem]' },
+      '&[data-kind=lead]': { h: '8', maxW: 'sm' },
       '&[data-kind=amounts]': { h: '12' },
       '&[data-kind=field]': { h: '40', borderRadius: 'l3' },
     },
