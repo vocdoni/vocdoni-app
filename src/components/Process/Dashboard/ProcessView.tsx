@@ -35,7 +35,7 @@ export const ProcessView = () => {
 
   const summary = generatePath(Routes.dashboard.process, { id })
   const tabs: RoutedTab[] = [
-    { label: t('votes.page.tab.summary', { defaultValue: 'Summary' }), route: summary },
+    { label: t('votes.page.tab.summary', { defaultValue: 'Manage' }), route: summary },
     {
       label: t('votes.page.tab.ballot', { defaultValue: 'Ballot' }),
       route: generatePath(Routes.dashboard.processBallot, { id }),

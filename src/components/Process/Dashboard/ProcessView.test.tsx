@@ -55,16 +55,16 @@ describe('ProcessView', () => {
     remembered = []
   })
 
-  it('offers Summary and Ballot for an all-at-once vote: the results are read on Summary', () => {
+  it('offers Manage and Ballot for an all-at-once vote: the results are read on Manage', () => {
     renderAt(createProcess('ONGOING'))
 
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Summary', 'Ballot'])
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Manage', 'Ballot'])
   })
 
-  it('offers the same two tabs for a question-by-question vote, which is run from Summary', () => {
+  it('offers the same two tabs for a question-by-question vote, which is run from Manage', () => {
     renderAt(createProcess('PAUSED', 'PAUSED'))
 
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Summary', 'Ballot'])
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Manage', 'Ballot'])
   })
 
   it('has no Results tab for a closed vote either', () => {
@@ -75,7 +75,7 @@ describe('ProcessView', () => {
 
   it('selects the tab of the current route', () => {
     renderAt(createProcess('RESULTS'))
-    expect(screen.getByRole('tab', { name: 'Summary' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Manage' })).toHaveAttribute('aria-selected', 'true')
   })
 
   it('selects Ballot on its route', () => {
@@ -84,7 +84,7 @@ describe('ProcessView', () => {
     expect(screen.getByRole('tab', { name: 'Ballot' })).toHaveAttribute('aria-selected', 'true')
   })
 
-  it('puts the pause banner under the tabs of a paused vote, on Summary', () => {
+  it('puts the pause banner under the tabs of a paused vote, on Manage', () => {
     const paused = createProcess('PAUSED')
     renderAt(paused)
     expect(screen.getByRole('status')).toHaveTextContent(
@@ -98,7 +98,7 @@ describe('ProcessView', () => {
     expect(screen.queryByRole('status')).toBeNull()
   })
 
-  it('shows the banner on Summary for a question-by-question vote paused as a whole', () => {
+  it('shows the banner on Manage for a question-by-question vote paused as a whole', () => {
     remembered = ['q1']
     renderAt(createProcess('PAUSED', 'PAUSED'))
 
