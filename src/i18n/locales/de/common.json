@@ -137,6 +137,9 @@
       "voted_partial": "Abgestimmt {{voted}}/{{total}}"
     }
   },
+  "census_ruler": {
+    "quorum": "Quorum {{value}}"
+  },
   "change_password": {
     "subtitle": "Gib dein aktuelles Passwort und ein neues Passwort ein, um deine Zugangsdaten zu aktualisieren.",
     "title": "Passwort ändern"
@@ -1850,12 +1853,10 @@
       "no_match_hint": "Probiere einen anderen Filter oder eine andere Suche.",
       "percent": "{{percent}} %",
       "row_error": "Diese Abstimmung konnte nicht angezeigt werden.",
-      "ruler_label": "{{voted}} von {{total}} Personen haben abgestimmt, {{percent}} %",
       "search": "Abstimmung suchen",
       "starts": "Beginnt am {{date}}.",
       "title": "Abstimmungen",
       "turnout": "{{percent}} % Beteiligung.",
-      "voted_of": "{{voted}} von {{total}} haben abgestimmt",
       "warning": {
         "end_passed": "Das Enddatum ist verstrichen.",
         "missing_end": "Noch kein Enddatum."

@@ -137,6 +137,9 @@
       "voted_partial": "Botoa emana {{voted}}/{{total}}"
     }
   },
+  "census_ruler": {
+    "quorum": "quoruma {{value}}"
+  },
   "change_password": {
     "subtitle": "Sartu zure egungo pasahitza eta berri bat zure kredentzialak eguneratzeko.",
     "title": "Aldatu pasahitza"
@@ -1850,12 +1853,10 @@
       "no_match_hint": "Saiatu beste iragazki edo bilaketa batekin.",
       "percent": "{{percent}}%",
       "row_error": "Ezin izan da bozketa hau erakutsi.",
-      "ruler_label": "{{total}} pertsonatik {{voted}}k bozkatu dute, {{percent}}%",
       "search": "Bilatu bozketa bat",
       "starts": "{{date}}(e)an hasten da.",
       "title": "Bozketak",
       "turnout": "Parte-hartzea: %{{percent}}.",
-      "voted_of": "{{total}}tik {{voted}}k bozkatu dute",
       "warning": {
         "end_passed": "Itxiera-data igaro da.",
         "missing_end": "Oraindik ez dauka itxiera-datarik."

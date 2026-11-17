@@ -139,6 +139,9 @@
       "voted_partial": "Ha votat {{voted}}/{{total}}"
     }
   },
+  "census_ruler": {
+    "quorum": "quòrum {{value}}"
+  },
   "change_password": {
     "subtitle": "Introdueix la contrasenya actual i una de nova per actualitzar les teves credencials.",
     "title": "Canvia la contrasenya"
@@ -1885,12 +1888,10 @@
       "no_match_hint": "Prova un altre filtre o una altra cerca.",
       "percent": "{{percent}}%",
       "row_error": "No s'ha pogut mostrar aquesta votació.",
-      "ruler_label": "{{voted}} de {{total}} persones han votat, {{percent}}%",
       "search": "Cerca una votació",
       "starts": "Comença el {{date}}.",
       "title": "Votacions",
       "turnout": "{{percent}}% de participació.",
-      "voted_of": "{{voted}} de {{total}} han votat",
       "warning": {
         "end_passed": "La data de tancament ja ha passat.",
         "missing_end": "Li falta la data de tancament."

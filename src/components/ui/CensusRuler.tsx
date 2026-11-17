@@ -1,46 +1,79 @@
-import { Box, Progress, useSlotRecipe, type ProgressRootProps } from '@chakra-ui/react'
+import { Box, type ConditionalValue, Progress, useSlotRecipe, type ProgressRootProps } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
 import { quantity } from '~utils/numbers'
 
-export type CensusRulerProps = Omit<ProgressRootProps, 'value' | 'max' | 'variant' | 'children'> & {
+export type CensusRulerLayout = 'scale' | 'compact'
+
+/** The props CensusRuler and TurnoutBar share: the bar, its scale and its look. */
+export type RulerProps = {
   /** People who voted (or the highest per-question count for a question-by-question vote). */
   value: number
   /** The census or a question's electorate. Without one there is nothing to measure: the scale hides. */
   max?: number
-  /** The bar's accessible name, e.g. "184 of 312 people voted, 59%". */
+  /** The bar's accessible name, e.g. "184 of 312 people voted, 59%. The quorum is 156." */
   label: string
-  /** Print the count under the end of the fill. */
+  /** Print the count under the end of the fill (from `lg`; the boards leave it out on narrower bars). */
   marker?: boolean
+  /** The vote is over: the fill (and the count) in ink instead of the accent. */
+  closed?: boolean
+  /** People needed for the vote to count: a dashed mark on the bar and "quorum N" under it. */
+  quorum?: number
+  /** `scale` (default) prints 0, the total, the quorum and the count; `compact` is the bar alone, for strips and
+   * rows. Responsive: `{ base: 'scale', lg: 'compact' }`. */
+  layout?: ConditionalValue<CensusRulerLayout>
 }
 
-// Hide an end label when the count would sit on top of it.
-const EDGE = 12
+export type CensusRulerProps = Omit<ProgressRootProps, 'value' | 'max' | 'variant' | 'children'> & RulerProps
 
-/** A turnout bar with its scale: 0, the count under the fill and the total (spec F). */
-export const CensusRuler = ({ value, max, label, marker = false, ...props }: CensusRulerProps) => {
-  const styles = useSlotRecipe({ key: 'censusRuler' })()
-  const percent = max && max > 0 ? Math.min((value / max) * 100, 100) : 0
+const share = (part: number, max?: number) => (max && max > 0 ? Math.min(Math.max((part / max) * 100, 0), 100) : 0)
+
+/** A turnout bar with its scale: 0 and the total always, the count under the fill and the quorum when given. */
+export const CensusRuler = ({
+  value,
+  max,
+  label,
+  marker = false,
+  closed = false,
+  quorum,
+  layout,
+  ...props
+}: CensusRulerProps) => {
+  const { t } = useTranslation()
+  const styles = useSlotRecipe({ key: 'censusRuler' })({ layout, closed })
+  const percent = share(value, max)
+  const hasQuorum = !!max && quorum !== undefined && quorum > 0
+  const start = '0'
+  const count = quantity(value)
+  const total = max ? quantity(max) : ''
+  const quorumAt = `[${hasQuorum ? share(quorum, max) : 0}%]` as const
+  // The count's end follows the fill, kept one character clear of "0" (and of itself) and of the total.
+  const markerAt =
+    `[clamp(${start.length + count.length + 1}ch, ${percent}%, calc(100% - ${total.length + 1}ch))]` as const
+
   return (
-    <Progress.Root variant='turnout' value={percent} translations={{ value: () => label }} w='full' {...props}>
-      <Progress.Track>
-        <Progress.Range />
+    <Progress.Root variant='turnout' value={percent} translations={{ value: () => label }} css={styles.root} {...props}>
+      <Progress.Track css={styles.track}>
+        <Progress.Range css={styles.range} />
       </Progress.Track>
+      {hasQuorum && <Box css={styles.quorum} insetStart={quorumAt} aria-hidden data-part='quorum' />}
       {!!max && (
-        <Box css={styles.scale} aria-hidden>
-          {(!marker || percent > EDGE) && (
-            <Box as='span' css={styles.start}>
-              0
+        <Box css={styles.scale} aria-hidden data-part='scale'>
+          <Box as='span' css={styles.start}>
+            {start}
+          </Box>
+          {hasQuorum && (
+            <Box as='span' css={styles.quorumLabel} insetStart={quorumAt}>
+              {t('census_ruler.quorum', { defaultValue: 'quorum {{value}}', value: quantity(quorum) })}
             </Box>
           )}
           {marker && (
-            <Box as='span' css={styles.marker} insetStart={`[${percent}%]`} transform={`[translateX(-${percent}%)]`}>
-              {quantity(value)}
+            <Box as='span' css={styles.marker} insetStart={markerAt} data-part='marker'>
+              {count}
             </Box>
           )}
-          {(!marker || percent < 100 - EDGE) && (
-            <Box as='span' css={styles.end}>
-              {quantity(max)}
-            </Box>
-          )}
+          <Box as='span' css={styles.end}>
+            {total}
+          </Box>
         </Box>
       )}
     </Progress.Root>

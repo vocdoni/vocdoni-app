@@ -139,6 +139,9 @@
       "voted_partial": "Ha votado {{voted}}/{{total}}"
     }
   },
+  "census_ruler": {
+    "quorum": "quórum {{value}}"
+  },
   "change_password": {
     "subtitle": "Introduce tu contraseña actual y una nueva para actualizar tus credenciales.",
     "title": "Cambiar contraseña"
@@ -1885,12 +1888,10 @@
       "no_match_hint": "Prueba otro filtro u otra búsqueda.",
       "percent": "{{percent}}%",
       "row_error": "No se ha podido mostrar esta votación.",
-      "ruler_label": "{{voted}} de {{total}} personas han votado, {{percent}}%",
       "search": "Buscar una votación",
       "starts": "Empieza el {{date}}.",
       "title": "Votaciones",
       "turnout": "{{percent}}% de participación.",
-      "voted_of": "{{voted}} de {{total}} han votado",
       "warning": {
         "end_passed": "La fecha de cierre ya ha pasado.",
         "missing_end": "Todavía no tiene fecha de cierre."
