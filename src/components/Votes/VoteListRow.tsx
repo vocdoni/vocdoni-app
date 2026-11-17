@@ -26,7 +26,7 @@ type RowAction = { key: 'continue' | 'manage' | 'follow' | 'result' | 'view'; to
 
 const rowAction = ({ process, state }: VoteRow): RowAction => {
   const id = process.id
-  // The results are read on Resum (R31), and a question-by-question vote is run from there (R32).
+  // The results are read on Gestió (R31), and a question-by-question vote is run from there (R32).
   const open = generatePath(Routes.dashboard.process, { id })
   if (isLegacyProcess(process)) return { key: 'result', to: open }
   switch (state) {

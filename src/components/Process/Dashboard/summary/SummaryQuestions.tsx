@@ -57,7 +57,7 @@ const ResultsLine = ({ model }: { model: SummaryModel }) => {
   )
 }
 
-/** Fires `ProcessResultsViewed` once per vote, the first time Resum shows its results. */
+/** Fires `ProcessResultsViewed` once per visit to the tab, the first time Gestió shows the vote's results. */
 const useTrackResultsViewed = (model: SummaryModel, visible: boolean) => {
   const { results, status } = useElection()
   const { size: censusSize } = useCensusSize()
@@ -99,7 +99,7 @@ export const SummaryQuestions = ({ model }: { model: SummaryModel }) => {
     })
   }, [election.questions, results])
   // Legacy votes can carry questions with no ballot type: their tallies cannot be decoded, so the package's own
-  // results list them (choices without numbers) instead of Resum guessing.
+  // results list them (choices without numbers) instead of Gestió guessing.
   const undecodable =
     isLegacyProcess(election) && questions.some((question) => tryInferQuestionBallotType(question) === undefined)
   const visible =

@@ -13,7 +13,7 @@ import { SummaryShare } from './summary/SummaryShare'
 import { useSummaryModel } from './summary/use-summary-model'
 
 /**
- * Resum: the turnout card (or, for a vote that is not running, where it stands), the questions with their results
+ * Gestió: the turnout card (or, for a vote that is not running, where it stands), the questions with their results
  * (and, question by question, the buttons that run them), and beside them (under them below `xl`) the voting link,
  * the downloads of a closed vote, the voting data, the calendar (all at once) and the voter lookup. The same content
  * at every width.

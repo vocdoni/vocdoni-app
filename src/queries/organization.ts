@@ -86,7 +86,7 @@ export const paginatedElectionsQuery = (
       published: true,
     })
     // Pre-seed each process into the ElectionProvider query so per-row providers
-    // (ProcessesTable, dashboard cards) render from cache instead of re-fetching.
+    // (the organization dashboard's cards) render from cache instead of re-fetching.
     if (queryClient) {
       result.processes.forEach((process) => {
         queryClient.setQueryData(QueryKeys.election.process(process.id), process)

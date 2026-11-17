@@ -7,7 +7,7 @@ import { quantity } from '~utils/numbers'
 import { isSettledQuestion, timeLeft } from '~utils/vote-state'
 import type { SummaryModel } from './use-summary-model'
 
-/** A flexible column and the facts' one: Resum's questions and the cards beside them. */
+/** A flexible column and the side one: the questions and the cards beside them, on Gestió and Papereta. */
 export const SUMMARY_COLUMNS = '[minmax(0, 1fr) {sizes.facts}]'
 
 /** What the headline says: how many voted, of how many, and the share; or that nobody has. */
@@ -76,7 +76,7 @@ const useSecondLine = ({ election, state, endDate, now }: SummaryModel): ReactNo
 }
 
 /**
- * The top card of Resum (board V4VoteManageAll, R34): a sentence that says how many voted, a line on the time left,
+ * The top card of Gestió (board V4VoteManageAll, R34): a sentence that says how many voted, a line on the time left,
  * the pause or the results, and the turnout bar from 0 to the census. A vote that is ready or canceled shows
  * `SummaryIdle` instead. The same card at every width; the type steps down below `lg`.
  */

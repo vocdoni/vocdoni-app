@@ -155,7 +155,7 @@ export const useDashboardRoutes = () => {
                       },
                     ],
                   },
-                  // The Results tab is retired (R31): its results are read on Resum. A sibling, so the redirect does
+                  // The Results tab is retired (R31): its results are read on Gestió. A sibling, so the redirect does
                   // not wait for the process read.
                   {
                     path: Routes.dashboard.processResults,

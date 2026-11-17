@@ -3,11 +3,11 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export type QuestionDockProps = {
-  /** "3. Quotes 2027", or "Vote paused". */
+  /** "3. Quotes 2027". */
   title: string
   /** "Open, 172 votes", "To open"; nothing when the board has only a time the API does not keep. */
   note?: string
-  /** The question's buttons (the same ones as its row), or "Resume the vote". */
+  /** The question's buttons (the same ones as its row). */
   children: ReactNode
 }
 

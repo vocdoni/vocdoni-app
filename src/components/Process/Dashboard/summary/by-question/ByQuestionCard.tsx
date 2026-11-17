@@ -22,12 +22,12 @@ import { useManageText } from './use-manage-text'
 import { WaitingQuestionRow } from './WaitingQuestionRow'
 
 /**
- * Resum's questions card for a question-by-question vote (V4VoteOne, M4VoteOne): every question with its state and
+ * Gestió's questions card for a question-by-question vote (V4VoteOne, M4VoteOne): every question with its state and
  * result, the open one with its turnout and buttons, and on a phone a bottom bar with the active question's buttons.
- * Opening, pausing and closing run through the shared status runner; one question is open at a time (R29).
+ * Opening and closing run through the shared status runner; one question is open at a time (R29).
  */
 export type ByQuestionCardProps = {
-  /** The questions as Resum shows them (the served tally merged in), in the process read's order. */
+  /** The questions as Gestió shows them (the served tally merged in), in the process read's order. */
   questions: VotingProcessQuestion[]
   /** A line under the header ("The results are being counted"). */
   notice?: ReactNode

@@ -91,7 +91,7 @@ export const ROUTES = [
   vote('vote-aao-ended', B_AAO_ENDED, [voteMenu]),
   vote('vote-aao-canceled', B_AAO_CANCELED),
   vote('vote-qbq-ready', B_QBQ_READY, [cancelVote]),
-  // A question-by-question vote is run from Resum (R32): its row and bottom-bar buttons name the question after the
+  // A question-by-question vote is run from Gestió (R32): its row and bottom-bar buttons name the question after the
   // label, so they match on the label's start.
   vote('vote-qbq-live', B_QBQ_LIVE, [
     voteMenu,

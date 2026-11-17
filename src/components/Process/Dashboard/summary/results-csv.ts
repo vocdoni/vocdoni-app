@@ -8,7 +8,7 @@ import { isSettledQuestion, questionElectorate } from '~utils/vote-state'
 // `useVoteText().text`: a localized title in the reader's language.
 type Text = (value: LocalizedInput | undefined) => string
 
-/** Each question with the tally Resum shows for it: the served one wins over the one the process read carries. */
+/** Each question with the tally Gestió shows for it: the served one wins over the one the process read carries. */
 export const questionTallies = (election: VotingProcessResponse, results?: VotingProcessResultsResponse | null) => {
   const served = new Map((results?.questions ?? []).map((entry) => [entry.questionId, entry]))
   return election.questions.map((question) => {

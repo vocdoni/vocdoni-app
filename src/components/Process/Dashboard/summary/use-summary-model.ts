@@ -16,7 +16,7 @@ import {
   type VoteState,
 } from '~utils/vote-state'
 
-/** Everything Resum shows, derived once from the single process read. */
+/** Everything Gestió shows, derived once from the single process read. */
 export type SummaryModel = {
   election: VotingProcessResponse
   byQuestion: boolean

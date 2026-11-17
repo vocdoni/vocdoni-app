@@ -21,11 +21,11 @@ const counts = (state: QuestionState) => state === 'open' || state === 'paused' 
 const byQuestionBars = (question: VotingProcessQuestion, state: QuestionState) =>
   counts(state) && (state === 'closed' || !question.secretUntilTheEnd) && !!question.results?.results?.length
 
-/** Whether Resum shows this question's tally, in either mode (the same rule on every width): the analytics read it. */
+/** Whether Gestió shows this question's tally, in either mode (the same rule on every width): the analytics read it. */
 export const showsTally = (question: VotingProcessQuestion, state: QuestionState, model: SummaryModel) =>
   model.byQuestion ? byQuestionBars(question, state) : tallyIsPublic(question)
 
-/** The per-choice bars of a row, as Resum draws them on every width. */
+/** The per-choice bars of a row, as Gestió draws them on every width. */
 const RowBars = ({
   question,
   model,
@@ -153,7 +153,7 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
                 : t('votes.summary.blank_none', { defaultValue: 'Nobody left it blank.' })}
             </Text>
           )}
-          {/* The tally last, as the board draws it: Resum is where the results are read. */}
+          {/* The tally last, as the board draws it: Gestió is where the results are read. */}
           {tallyIsPublic(question) && (
             <Box maxW={readable}>
               <RowBars question={question} model={model} final={!!question.results?.finalResults} />

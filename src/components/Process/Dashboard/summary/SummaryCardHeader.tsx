@@ -13,7 +13,7 @@ type SummaryCardHeaderProps = {
 }
 
 /**
- * The title line of a Resum card, as the boards draw it: one 44px line from `lg` (title, count in figures, note), a
+ * The title line of a Gestió card, as the boards draw it: one 44px line from `lg` (title, count in figures, note), a
  * roomier line below it with the count at its end.
  */
 export const SummaryCardHeader = ({ id, title, count, note }: SummaryCardHeaderProps) => (

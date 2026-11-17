@@ -29,7 +29,7 @@ const plainText = (markdown: string) =>
 // Closed first, as both boards count them.
 const ORDER: CountState[] = ['closed', 'open', 'paused', 'toOpen', 'notOpened', 'canceled']
 
-/** The question counts, the next step and the lines of Resum's question rows (question by question). */
+/** The question counts, the next step and the lines of Gestió's question rows (question by question). */
 export const useManageText = () => {
   const { t, i18n } = useTranslation()
   const { text } = useVoteText()

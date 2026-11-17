@@ -12,7 +12,7 @@ import { isQuestionByQuestion } from '~src/types/voting-process'
 import { PauseBanner } from './PauseBanner'
 import { VoteHeader } from './VoteHeader'
 
-/** The tabs, with the pause banner under them on Resum while the vote is paused (as a whole). */
+/** The tabs, with the pause banner under them on Gestió while the vote is paused (as a whole). */
 const VoteTabs = ({ tabs, value, withNotice }: { tabs: RoutedTab[]; value: string; withNotice: boolean }) => {
   const { election, results } = useElection()
   const { state } = useActions()
@@ -25,8 +25,9 @@ const VoteTabs = ({ tabs, value, withNotice }: { tabs: RoutedTab[]; value: strin
 }
 
 /**
- * The organiser's vote page: header and tabs. Each tab is a child route (Resum, Papereta) that `RoutedTabs` renders
- * in its outlet. The results are read on Resum (R31), and a question-by-question vote is run from there (R32).
+ * The organiser's vote page: header and tabs. Each tab is a child route (Gestió, Papereta) that `RoutedTabs` renders
+ * in its outlet. The results are read on Gestió (R31), and a question-by-question vote is run from there (R32).
+ * Gestió ("Manage", once called Resum) is `summary` in the code: its route, its components and its translation keys.
  */
 export const ProcessView = () => {
   const { t } = useTranslation()

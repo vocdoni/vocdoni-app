@@ -13,7 +13,7 @@ const cloneAsDraft = vi.fn()
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
   const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
-  // The package's own results, kept for legacy questions Resum cannot decode.
+  // The package's own results, kept for legacy questions Gestió cannot decode.
   return { ...actual, ...getReactProvidersMock(), ElectionResults: () => <div>ElectionResults</div> }
 })
 vi.mock('~utils/analytics', async (importOriginal) => ({
@@ -21,7 +21,7 @@ vi.mock('~utils/analytics', async (importOriginal) => ({
   trackAnalyticsEvent: vi.fn(),
 }))
 vi.mock('~queries/process-end-date', () => ({ useProcessEarlyEndDate: () => ({ data: null }) }))
-// Resum is one tree at every width but for the phone's bottom bar and, held for the owner, the voting data card.
+// Gestió is one tree at every width but for the phone's bottom bar and, held for the owner, the voting data card.
 vi.mock('~components/ui/useIsMobile', () => ({ useIsMobile: () => phone, useIsDesktop: () => !phone }))
 // The provider's values, with the real state derivation (no pause memory: what another device sees).
 vi.mock('~components/Actions/ActionsContext', async () => {

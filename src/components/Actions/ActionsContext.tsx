@@ -26,7 +26,7 @@ export type ActionsContextValue = {
   disabled: boolean
   /** Whole-vote pause of a question-by-question vote ("Pause the vote" / "Resume the vote"). */
   votePause: VotePause
-  /** The vote's state for every part of the page (header, tabs, Resum, Papereta), whole-vote pause included. */
+  /** The vote's state for every part of the page (header, tabs, Gestió, Papereta), whole-vote pause included. */
   state: VoteState | undefined
   /** The page's one clock, so the header, the tabs and their content change together at a start or an end. */
   now: Date

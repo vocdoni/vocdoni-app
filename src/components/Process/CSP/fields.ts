@@ -55,7 +55,7 @@ export const getAuthFieldInputType = (field: string): string => {
 }
 
 /**
- * A census field named as the organiser reads it (the voter lookup, Resum's voting data): sentence case, so it sits
+ * A census field named as the organiser reads it (the voter lookup, Gestió's voting data): sentence case, so it sits
  * inside a sentence. Unknown fields fall back to their raw key.
  */
 export const censusFieldLabel = (t: TFunction, field: string): string => {

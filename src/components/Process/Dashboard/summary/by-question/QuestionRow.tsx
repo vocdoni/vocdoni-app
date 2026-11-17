@@ -24,7 +24,7 @@ export type QuestionRowFrameProps = {
 }
 
 /**
- * One question of Resum's list: its number, then the row, each under a rule. From `lg` every row is padded 14 22 16;
+ * One question of Gestió's list: its number, then the row, each under a rule. From `lg` every row is padded 14 22 16;
  * below `lg` the closed and waiting rows are the phone board's compact line and the active one a tinted block.
  */
 export const QuestionRowFrame = ({ number, active = false, held = false, children }: QuestionRowFrameProps) => (

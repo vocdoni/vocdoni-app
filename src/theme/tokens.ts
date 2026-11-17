@@ -131,7 +131,7 @@ const spacing = defineTokens.spacing({
   track: { value: '3px' },
   // The inner edge of a card from a tablet up (16px, spacing 4, on a phone): see the card recipe.
   card: { value: '22px' },
-  // The top of a one-line row in a card (Resum's question lines, the empty page's legend) and of the legend's head.
+  // The top of a one-line row in a card (Gestió's question lines, the empty page's legend) and of the legend's head.
   row: {
     DEFAULT: { value: '11px' },
     head: { value: '13px' },
@@ -210,7 +210,7 @@ const sizes = defineTokens.sizes({
     DEFAULT: { value: '560px' },
     tablet: { value: '584px' },
   },
-  // A vote's facts beside the headline figure, and the column beside the questions on Resum.
+  // The side column beside the questions of a vote, on Gestió and Papereta.
   facts: { value: '392px' },
   // A card's footer that holds a button (the idle card's).
   actionbar: { value: '60px' },
