@@ -60,6 +60,8 @@ const solid = defineStyle({
   },
 })
 
+const PANEL_HOVER = '[linear-gradient({colors.state.hover.bg}, {colors.state.hover.bg})]'
+
 // The secondary: a panel with a 1px ring instead of a border.
 const outline = defineStyle({
   // Chakra's outline variant draws a 1px border; the ring replaces it.
@@ -67,8 +69,10 @@ const outline = defineStyle({
   bg: 'bg.panel',
   color: 'fg',
   boxShadow: 'shadow.control',
-  _hover: { bg: 'state.hover.bg' },
-  _expanded: { bg: 'state.hover.bg' },
+  // The hover tint is laid over the panel, not in its place: alone it is translucent, and on the grey page the
+  // button would lose its fill and its ring would read heavier.
+  _hover: { bg: 'bg.panel', bgImage: PANEL_HOVER },
+  _expanded: { bg: 'bg.panel', bgImage: PANEL_HOVER },
   // A loading secondary keeps its ring and ink; only a truly disabled one fades.
   _disabled: { '&[data-loading]': { opacity: '[1]', cursor: '[progress]' } },
 })
