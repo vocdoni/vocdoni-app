@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
 import { isQuestionByQuestion } from '~src/types/voting-process'
 import { questionOutcome } from '~utils/vote-outcome'
-import { draftWarning, percentOf, type VoteRow } from '~utils/vote-state'
+import { draftWarning, isSettledQuestion, percentOf, type VoteRow } from '~utils/vote-state'
 
 type VoteRowMetaProps = {
   row: VoteRow
@@ -47,6 +47,8 @@ export const VoteRowMeta = ({ row, results, now }: VoteRowMetaProps) => {
     const [question] = process.questions
     if (state !== 'closed' || process.questions.length !== 1 || !question) return null
     const entry = results?.questions.find((candidate) => candidate.questionId === question.id)
+    // A result only once the tally is final: closed by the clock alone, votes may still land.
+    if (!isSettledQuestion(question, entry)) return null
     return questionOutcome(question, entry, { weighted: !!process.census?.weighted })
   }, [process, state, results])
 

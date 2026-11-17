@@ -7,7 +7,7 @@ import { useVoteText } from '~i18n/use-vote-text'
 import { CheckIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { questionOutcome, type QuestionOutcome } from '~utils/vote-outcome'
-import { percentOf } from '~utils/vote-state'
+import { isSettledQuestion, percentOf } from '~utils/vote-state'
 import { QuestionResultBars } from '../QuestionResultBars'
 import { Figures } from './Figures'
 import { QuestionRowFrame, RowChevron, RowHead } from './QuestionRow'
@@ -103,7 +103,12 @@ export const ClosedQuestionRow = ({
   const toVerdict = useVerdict()
   const detailId = useId()
   const results = question.results
-  const outcome = useMemo(() => questionOutcome(question, results, { weighted }), [question, results, weighted])
+  // Closed by the clock alone, votes may still land: no verdict and no winner until the server says it is over.
+  const settled = isSettledQuestion(question)
+  const outcome = useMemo(
+    () => (settled ? questionOutcome(question, results, { weighted }) : null),
+    [settled, question, results, weighted]
+  )
   const verdict = toVerdict(outcome)
   const title = text(question.title)
   const count = results?.voteCount ?? 0
@@ -187,7 +192,7 @@ export const ClosedQuestionRow = ({
                 layout={{ base: 'scale', lg: 'compact' }}
                 maxW={{ md: 'turnout.max', lg: 'full' }}
               />
-              <QuestionResultBars question={question} results={results} weighted={weighted} final />
+              <QuestionResultBars question={question} results={results} weighted={weighted} final={settled} />
             </Stack>
           )}
         </Box>

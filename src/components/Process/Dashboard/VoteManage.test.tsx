@@ -189,6 +189,20 @@ describe('VoteManage', () => {
     expect(questionsList().getByText('Not opened')).toBeInTheDocument()
   })
 
+  it('names no winner for a question closed only by the clock, until the server says it is over', () => {
+    currentNow = new Date('2026-05-01T12:00:00Z')
+    const tally = createQuestionResults({ voteCount: 10, finalResults: false })
+    show(
+      withQuestions([
+        createQuestion({ id: 'q1', title: { default: 'Settled' }, status: 'RESULTS', results: tally }),
+        createQuestion({ id: 'q2', title: { default: 'Clock' }, status: 'ONGOING', results: tally }),
+      ])
+    )
+    const [settled, clock] = questionsList().getAllByRole('listitem')
+    expect(within(settled).getByText(/^Closed\. .+\.$/)).toBeInTheDocument()
+    expect(within(clock).getByText('Closed.')).toBeInTheDocument()
+  })
+
   it('shows no buttons and no next step to a viewer', () => {
     canManage = false
     show(build())

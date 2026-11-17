@@ -8,7 +8,7 @@ import { useVoteText } from '~i18n/use-vote-text'
 import { CheckIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { questionOutcome } from '~utils/vote-outcome'
-import { percentOf, questionElectorate, type QuestionState } from '~utils/vote-state'
+import { isSettledQuestion, percentOf, questionElectorate, type QuestionState } from '~utils/vote-state'
 import { questionKind } from './question-kind'
 import { QuestionVerdict } from './QuestionVerdict'
 import type { SummaryModel } from './use-summary-model'
@@ -58,7 +58,7 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
           {title}
         </Text>
         <Text textStyle='eyebrow' whiteSpace='nowrap'>
-          {state === 'closed' && outcome && <QuestionVerdict outcome={outcome} />}
+          {state === 'closed' && outcome && isSettledQuestion(question) && <QuestionVerdict outcome={outcome} />}
         </Text>
         <Text textStyle='figure' color='fg.subtle' textAlign='end' whiteSpace='nowrap'>
           {counts(state) &&
@@ -184,7 +184,7 @@ export const CompactQuestionRow = ({ question, index, model, state }: RowProps) 
 
   let meta: string | null
   if (model.byQuestion) {
-    const result = state === 'closed' ? describe(outcome) : null
+    const result = state === 'closed' && isSettledQuestion(question) ? describe(outcome) : null
     const detail = result ?? (counts(state) && votes > 0 ? votesText : null)
     meta = detail
       ? t('votes.summary.row.state_detail', {

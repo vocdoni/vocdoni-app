@@ -7,6 +7,7 @@ import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { useVoteText } from '~i18n/use-vote-text'
 import { Routes } from '~src/router/routes'
 import { ForwardIcon, InfoIcon } from '~theme/icons'
+import { isSettledQuestion } from '~utils/vote-state'
 import { useCloneAsDraft } from '../use-clone-as-draft'
 import type { SummaryModel } from './use-summary-model'
 
@@ -57,7 +58,12 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
       body = [
         percent !== undefined &&
           t('votes.summary.idle.ended_turnout', { defaultValue: '{{percent}}% of the census voted.', percent }),
-        t('votes.summary.idle.ended_final', { defaultValue: 'The results are final and voters can already see them.' }),
+        // Only once the server has every question over: until then the tally may still change.
+        election.questions.every((question) => isSettledQuestion(question))
+          ? t('votes.summary.idle.ended_final', {
+              defaultValue: 'The results are final and voters can already see them.',
+            })
+          : t('votes.summary.idle.ended_counting', { defaultValue: 'The final results are still being counted.' }),
       ]
         .filter(Boolean)
         .join(' ')
