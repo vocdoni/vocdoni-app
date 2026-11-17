@@ -68,13 +68,13 @@ export const ActiveQuestionRow = ({
       >
         <Stack gap={{ base: '0', lg: 'note' }} gridColumn={wide} minW='0'>
           <Flex align='baseline' justify='space-between' gap='3'>
-            <Text as='h3' textStyle='question-head'>
+            <Text as='h3' textStyle='item-title'>
               {text(question.title)}
             </Text>
             <ProcessStatus kind='question' state={state === 'held' ? 'paused' : state} flexShrink={0} />
           </Flex>
           {note && (
-            <Text textStyle='note' color='fg.subtle' lineClamp={3}>
+            <Text textStyle='meta' color='fg.subtle' lineClamp={3}>
               {note}
             </Text>
           )}
@@ -99,7 +99,7 @@ export const ActiveQuestionRow = ({
           </Box>
         )}
         {/* From `lg` the note's line is a button's height, buttons or not. */}
-        <HStack gridColumn='1' gap='1.5' minH={{ lg: 'control.md' }} textStyle='note' color='fg.subtle' minW='0'>
+        <HStack gridColumn='1' gap='1.5' minH={{ lg: 'control.md' }} textStyle='meta' color='fg.subtle' minW='0'>
           {locked && <Icon as={LockIcon} boxSize='3.5' flexShrink={0} />}
           <Text>{footNote}</Text>
         </HStack>

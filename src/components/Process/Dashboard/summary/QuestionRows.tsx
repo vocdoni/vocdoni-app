@@ -127,7 +127,7 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
         <QuestionNumber index={index} />
         <Stack gap={{ base: '2.5', lg: '3' }} minW='0'>
           <Box>
-            <Heading as='h3' textStyle='question-line'>
+            <Heading as='h3' textStyle='item-title'>
               {text(question.title)}
             </Heading>
             {kind && (

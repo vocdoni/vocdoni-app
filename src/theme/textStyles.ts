@@ -59,20 +59,12 @@ export const textStyles = defineTextStyles({
   'status-title': { value: { fontSize: 'xl', fontWeight: 'semibold' } },
   // A member's role shown from its raw value (`admin`), capitalised like the badge `label` variant.
   'role-name': { value: { fontWeight: 'semibold', textTransform: 'capitalize' } },
-  // A row's title in a list (a vote), a question's title in a vote's card, and the larger title of an empty page.
+  // A row's title in a list (a vote), a question's title in a vote's card in every state, and the larger title of an
+  // empty page.
   'item-title': {
     value: {
       fontSize: { base: 'lg', md: 'item' },
       lineHeight: { base: 'row.touch', md: 'row.title' },
-      fontWeight: 'semibold',
-      letterSpacing: 'heading.row',
-    },
-  },
-  // The open question's title in its row: 16px on a 22px line up to `lg` (the touch boards keep it on a tablet too).
-  'question-head': {
-    value: {
-      fontSize: { base: 'lg', lg: 'item' },
-      lineHeight: { base: 'row.touch', lg: 'row.question' },
       fontWeight: 'semibold',
       letterSpacing: 'heading.row',
     },
@@ -110,27 +102,16 @@ export const textStyles = defineTextStyles({
   'bar-caption': {
     value: { fontSize: { base: 'md', lg: 'control' }, lineHeight: '[1.45]', fontWeight: 'medium-plus' },
   },
-  // Secondary text of a list row (dates, counts, who and where), on the row's fixed line; `note` is the quiet line
-  // under a question's title in a vote's card, on the running line height.
+  // Secondary text of a list row (dates, counts, who and where) and the quiet line under a question's title in a
+  // vote's card, on the row's fixed line.
   meta: { value: { fontSize: { base: 'md', md: 'sm' }, lineHeight: { base: 'row.meta-touch', md: 'row.meta' } } },
-  note: { value: { fontSize: { base: 'md', lg: 'sm' }, lineHeight: { base: 'row.meta-touch', lg: 'moderate' } } },
   // A question's number at the start of its row, in figures on the question title's line.
   'question-number': {
     value: {
       fontFamily: 'figure',
       fontSize: 'sm',
-      lineHeight: { base: 'row.touch', lg: 'row.question' },
+      lineHeight: { base: 'row.touch', md: 'row.title' },
       letterSpacing: 'none',
-    },
-  },
-  // A closed or waiting question's title on its one line: 15px medium-plus on a touch screen, the question title
-  // from `lg`.
-  'question-line': {
-    value: {
-      fontSize: 'item',
-      lineHeight: { base: 'row.touch', lg: 'row.question' },
-      fontWeight: { base: 'medium-plus', lg: 'semibold' },
-      letterSpacing: { base: 'body', lg: 'heading.row' },
     },
   },
   // The headline sentence of a vote's turnout card ("184 of 312 people have voted, 59%."): 22px on a phone, 28px on a
@@ -150,15 +131,6 @@ export const textStyles = defineTextStyles({
       lineHeight: 'short',
       fontWeight: 'medium',
       letterSpacing: 'heading.line',
-    },
-  },
-  // The headline of the card that says where a vote stands ("Vote ended with 184 votes"): 19px below `lg`.
-  'state-title': {
-    value: {
-      fontSize: { base: 'feature', lg: 'xl' },
-      lineHeight: { base: 'state', lg: 'shorter' },
-      fontWeight: 'semibold',
-      letterSpacing: { base: 'heading.feature', lg: 'heading.section' },
     },
   },
 })

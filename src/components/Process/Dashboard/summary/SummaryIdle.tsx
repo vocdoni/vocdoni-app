@@ -86,7 +86,7 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
       <Stack gap='0' px={{ base: '4', md: 'card', lg: '6' }} py={{ base: '4.5', md: 'card', lg: 'idle' }}>
         {/* The header already names the vote's state: the card goes straight to what it means. */}
-        <Heading as='h2' id={titleId} textStyle='state-title'>
+        <Heading as='h2' id={titleId} textStyle='feature-title'>
           {title}
         </Heading>
         {body && (

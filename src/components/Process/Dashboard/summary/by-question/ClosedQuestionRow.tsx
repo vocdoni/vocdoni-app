@@ -55,7 +55,7 @@ export const ClosedQuestionRow = ({
             {share !== undefined && (
               <Text
                 as='span'
-                textStyle={{ base: 'note', lg: 'caption' }}
+                textStyle={{ base: 'meta', lg: 'caption' }}
                 letterSpacing='body'
                 color='fg.subtle'
                 whiteSpace='nowrap'
@@ -83,7 +83,7 @@ export const ClosedQuestionRow = ({
               maxW={{ md: 'results.detail', lg: 'full' }}
             >
               {note && (
-                <Text textStyle='note' color='fg.subtle' lineClamp={3}>
+                <Text textStyle='meta' color='fg.subtle' lineClamp={3}>
                   {note}
                 </Text>
               )}

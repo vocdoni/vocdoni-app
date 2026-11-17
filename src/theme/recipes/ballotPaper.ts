@@ -3,7 +3,7 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 // The empty mark a voter will fill: a 1.5px ring in the control outline, larger below `lg` (boards M4VotePaper).
 const ring = '[inset 0 0 0 {borderWidths.mark} {colors.border.strong}]'
 const dot = { boxSize: { base: '4.5', lg: '4' } }
-// The quiet note of the boards: 14px up to `lg`, 13px from `lg`, on the running line (the `note` style sets a fixed
+// The quiet note of the boards: 14px up to `lg`, 13px from `lg`, on the running line (the `meta` style sets a fixed
 // 20px line on touch screens, which drifts a third of a pixel per line from the boards).
 const quiet = { fontSize: { base: 'md', lg: 'sm' }, lineHeight: 'moderate', color: 'fg.subtle' } as const
 

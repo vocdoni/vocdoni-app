@@ -46,8 +46,6 @@ const fontSizes = defineTokens.fontSizes({
 // Chakra's other step (`taller`) stays for its own recipes.
 const lineHeights = defineTokens.lineHeights({
   shorter: { value: 1.2 },
-  // The headline of the card that says where a vote stands, on a touch screen.
-  state: { value: 1.25 },
   short: { value: 1.3 },
   moderate: { value: 1.45 },
   // A page's and a vote's title: 1.1 from `md`, 1.15 on a phone.
@@ -59,7 +57,6 @@ const lineHeights = defineTokens.lineHeights({
   // card (21px), a row's secondary line (18px, 20px on a phone) and a small label (17px).
   row: {
     title: { value: '1.25rem' },
-    question: { value: '1.3125rem' },
     touch: { value: '1.375rem' },
     meta: { value: '1.125rem' },
     'meta-touch': { value: '1.25rem' },
@@ -80,8 +77,6 @@ const letterSpacings = defineTokens.letterSpacings({
     // A row's or a question's title (15px).
     row: { value: '-0.012em' },
     item: { value: '-0.015em' },
-    // The 19px headline of a touch screen's state card.
-    feature: { value: '-0.025em' },
     section: { value: '-0.028em' },
     // A page title: -0.035em from `md`, -0.03em on a phone.
     page: {

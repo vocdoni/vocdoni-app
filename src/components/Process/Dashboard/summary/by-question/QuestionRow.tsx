@@ -145,7 +145,7 @@ export const RowTitleLine = ({
     <Text
       as={heading ? 'h3' : 'span'}
       display='block'
-      textStyle='question-line'
+      textStyle='item-title'
       color={color}
       flexBasis={{ base: 'full', lg: 'auto' }}
       flex={{ lg: '1' }}

@@ -60,7 +60,7 @@ export const WaitingQuestionRow = ({
         {hasDetail && (
           <Box id={detailId} hidden={!expanded}>
             {expanded && (
-              <Text textStyle='note' color='fg.subtle' pt='note' lineClamp={3}>
+              <Text textStyle='meta' color='fg.subtle' pt='note' lineClamp={3}>
                 {note}
               </Text>
             )}
