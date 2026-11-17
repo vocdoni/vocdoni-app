@@ -35,8 +35,8 @@ const rankedTally = createQuestionResults({
 
 const ranges = () => Array.from(document.querySelectorAll('[data-part="range"]'))
 // The winner's row of a final tally is marked, whatever the look sets it apart with.
-const leads = (choice: string) => !!screen.getByText(choice).closest('[data-leader]')
-const anyLeader = () => !!document.querySelector('[data-leader]')
+const leads = (choice: string) => !!screen.getByText(choice).closest('[data-leading]')
+const anyLeader = () => !!document.querySelector('[data-leading]')
 
 describe('QuestionResultBars', () => {
   it('lists every choice with its votes and its share of the question votes', () => {

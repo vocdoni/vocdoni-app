@@ -110,10 +110,10 @@ export const QuestionResultBars = ({
         const count = countOf(entry)
         const share = t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })
         return (
-          // `data-leader` marks the winner of a final tally, the row set apart.
+          // `data-leading` marks the most voted option of a final tally, the row set apart.
           <Grid
             key={entry.key}
-            data-leader={leads ? '' : undefined}
+            data-leading={leads ? '' : undefined}
             templateColumns={look.columns}
             rowGap='1'
             alignItems='baseline'

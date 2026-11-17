@@ -231,10 +231,10 @@ describe('ByQuestionCard', () => {
       const [settled, clock] = questionsList().getAllByRole('listitem')
       await userEvent.click(within(settled).getByRole('button', { expanded: false }))
       await userEvent.click(within(clock).getByRole('button', { expanded: false }))
-      const leads = (row: HTMLElement, choice: string) => !!within(row).getByText(choice).closest('[data-leader]')
+      const leads = (row: HTMLElement, choice: string) => !!within(row).getByText(choice).closest('[data-leading]')
       expect(leads(settled, 'Approve')).toBe(true)
       expect(leads(settled, 'Reject')).toBe(false)
-      expect(within(clock).queryByText('Approve')?.closest('[data-leader]')).toBeNull()
+      expect(within(clock).queryByText('Approve')?.closest('[data-leading]')).toBeNull()
     })
 
     it('shows no buttons and no next step to a viewer', () => {
