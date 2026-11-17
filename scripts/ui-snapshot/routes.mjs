@@ -92,7 +92,7 @@ export const ROUTES = [
   vote('vote-qbq-live', B_QBQ_LIVE, [voteMenu]),
   manage('manage-qbq-live', B_QBQ_LIVE, [
     { slug: 'close-question', open: [[named('button', 'Close', 'Tanca')]] },
-    { slug: 'expand-closed', open: [[['css', 'role=button[name=/^(Question|Pregunta) 1, /]']]] },
+    { slug: 'expand-closed', open: [[['css', 'role=button[name=/^(Question|Pregunta) 1: /]']]] },
     endVote,
   ]),
   manage('manage-qbq-two', B_QBQ_TWO, [endVote]),
