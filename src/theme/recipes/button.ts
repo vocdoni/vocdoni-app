@@ -72,6 +72,15 @@ const outline = defineStyle({
   _disabled: { '&[data-loading]': { opacity: '[1]', cursor: '[progress]' } },
 })
 
+// The boards' `.btn.off`: an action that exists but is not available now. Set `aria-disabled` with it, not `disabled`,
+// so it stays focusable and its reason reaches a screen reader. Sunken fill, no ring, no hover; deeper from `lg`.
+const off = defineStyle({
+  bg: { base: 'bg.muted', lg: 'bg.emphasized' },
+  color: { base: 'fg.subtle', lg: 'fg.muted' },
+  cursor: 'unavailable',
+  _disabled: { opacity: 'opaque', cursor: 'unavailable' },
+})
+
 // Discreet: no fill until hovered.
 const ghost = defineStyle({
   bg: 'transparent',
@@ -324,6 +333,7 @@ export const Button = defineRecipe({
   variants: {
     variant: {
       solid,
+      off,
       outline,
       ghost,
       subtle,
