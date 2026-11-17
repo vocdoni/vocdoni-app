@@ -2163,6 +2163,8 @@
       },
       "idle": {
         "by_question_body": "Wenn sie beginnt, sind die Fragen geschlossen, und du öffnest sie eine nach der anderen.",
+        "by_question_started_body": "Öffne die erste Frage, um die Abstimmung zu beginnen.",
+        "by_question_started_title": "Noch ist keine Frage offen",
         "canceled_body": "Die abgegebenen Stimmen wurden verworfen. Es gibt keine Ergebnisse.",
         "canceled_hint": "Du kannst sie duplizieren, um sie erneut anzusetzen.",
         "canceled_title": "Abstimmung abgebrochen",

@@ -2163,6 +2163,8 @@
       },
       "idle": {
         "by_question_body": "Hasten denean, galderak itxita egongo dira eta banan-banan irekiko dituzu.",
+        "by_question_started_body": "Ireki lehen galdera bozketa hasteko.",
+        "by_question_started_title": "Oraindik ez dago galdera irekirik",
         "canceled_body": "Emandako botoak baztertu dira. Ez dago emaitzarik.",
         "canceled_hint": "Bikoiztu dezakezu berriro deitzeko.",
         "canceled_title": "Bozketa bertan behera utzita",

@@ -2163,6 +2163,8 @@
       },
       "idle": {
         "by_question_body": "When it starts, the questions start closed and you open them one at a time.",
+        "by_question_started_body": "Open the first question to start the vote.",
+        "by_question_started_title": "No question is open yet",
         "canceled_body": "The votes cast were discarded. There are no results.",
         "canceled_hint": "You can duplicate it to call it again.",
         "canceled_title": "Vote canceled",

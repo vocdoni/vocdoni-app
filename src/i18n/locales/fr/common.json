@@ -2235,6 +2235,8 @@
       },
       "idle": {
         "by_question_body": "Quand il commencera, les questions seront fermées et vous les ouvrirez une par une.",
+        "by_question_started_body": "Ouvrez la première question pour commencer le vote.",
+        "by_question_started_title": "Aucune question n'est encore ouverte",
         "canceled_body": "Les votes exprimés ont été écartés. Il n'y a pas de résultats.",
         "canceled_hint": "Vous pouvez le dupliquer pour le convoquer à nouveau.",
         "canceled_title": "Vote annulé",

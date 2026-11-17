@@ -2235,6 +2235,8 @@
       },
       "idle": {
         "by_question_body": "Quan comenci, les preguntes començaran tancades i les aniràs obrint d'una en una.",
+        "by_question_started_body": "Obre la primera pregunta per començar la votació.",
+        "by_question_started_title": "Encara no hi ha cap pregunta oberta",
         "canceled_body": "Els vots emesos s'han descartat. No hi ha resultats.",
         "canceled_hint": "La pots duplicar per tornar-la a convocar.",
         "canceled_title": "Votació cancel·lada",

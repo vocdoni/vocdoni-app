@@ -2235,6 +2235,8 @@
       },
       "idle": {
         "by_question_body": "Quando inizia, le domande sono chiuse e le apri una alla volta.",
+        "by_question_started_body": "Apri la prima domanda per iniziare la votazione.",
+        "by_question_started_title": "Non c'è ancora nessuna domanda aperta",
         "canceled_body": "I voti espressi sono stati scartati. Non ci sono risultati.",
         "canceled_hint": "Puoi duplicarla per convocarla di nuovo.",
         "canceled_title": "Votazione annullata",

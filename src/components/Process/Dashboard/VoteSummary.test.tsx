@@ -600,6 +600,14 @@ describe('VoteSummary', () => {
       expect(screen.queryByRole('region', { name: 'Vote controls' })).not.toBeInTheDocument()
     })
 
+    it('asks for the first question once the start has passed and none is open, never "not started"', () => {
+      renderSummary(byQuestion([question('q1', 'PAUSED'), question('q2', 'PAUSED')]), 0)
+
+      expect(screen.getByRole('heading', { name: 'No question is open yet' })).toBeInTheDocument()
+      expect(screen.getByText('Open the first question to start the vote.')).toBeInTheDocument()
+      expect(screen.queryByText('It has not started yet')).not.toBeInTheDocument()
+    })
+
     it('docks the open question at the bottom of a phone, with the turnout hero above', () => {
       phone = true
       renderSummary(byQuestion(questions), 200)

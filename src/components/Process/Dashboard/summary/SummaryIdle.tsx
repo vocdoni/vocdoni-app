@@ -1,4 +1,5 @@
 import { Button, Card, Flex, Heading, Icon, Stack, Text } from '@chakra-ui/react'
+import { isBeforeStart } from '@vocdoni/api-client'
 import { useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useActions } from '~components/Actions/ActionsContext'
@@ -17,7 +18,7 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
   const { canManage } = useActions()
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const titleId = useId()
-  const { election, byQuestion, state, total } = model
+  const { election, byQuestion, state, total, now } = model
 
   let title = ''
   let body: string | null = null
@@ -26,10 +27,18 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
   switch (state) {
     case 'ready':
       if (byQuestion) {
-        title = t('votes.summary.idle.not_started', { defaultValue: 'It has not started yet' })
-        body = t('votes.summary.idle.by_question_body', {
-          defaultValue: 'When it starts, the questions start closed and you open them one at a time.',
-        })
+        // Ready until a question opens: before the start it waits for the clock, after it for the organiser.
+        const started = !isBeforeStart(election.startDate, now)
+        title = started
+          ? t('votes.summary.idle.by_question_started_title', { defaultValue: 'No question is open yet' })
+          : t('votes.summary.idle.not_started', { defaultValue: 'It has not started yet' })
+        body = started
+          ? t('votes.summary.idle.by_question_started_body', {
+              defaultValue: 'Open the first question to start the vote.',
+            })
+          : t('votes.summary.idle.by_question_body', {
+              defaultValue: 'When it starts, the questions start closed and you open them one at a time.',
+            })
         break
       }
       // With no start date there is no day to give: say where it stands.
