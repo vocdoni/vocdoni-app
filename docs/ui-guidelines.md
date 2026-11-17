@@ -107,6 +107,7 @@ Rules of thumb:
   | `fg.info`, `input.placeholder`, `ballot.choice.ring` | `fg.muted`, `fg.subtle`, `border.strong` |
   | `gray.subtle`, `gray.muted`, `gray.solid`, `gray.contrast` | `bg.muted`, `bg.emphasized`, `carbon.100`, `gray.950` |
   | `scrim.strong` | black at 64% |
+  | `scrim.sheet` | black at 40%, as in light |
   | `fg.error`, `fg.warning`, `fg.success` | #f97770, #e4ac59, #6fc884 (the status palettes' `fg` slots too) |
   | `bg.error`, `bg.warning`, `bg.success`, `bg.info`, `footer.bg.muted` | `bg.subtle` |
   | `success.solid`, `success.contrast` | #2caa4f, #0a0a0a |

@@ -249,9 +249,13 @@ const colors = defineSemanticTokens.colors({
         _dark: 'rgb(0 0 0 / 0.64)',
       },
     },
-    // Behind a bottom sheet and a tablet's dialog: a lighter, neutral dim (the desktop keeps `strong`).
+    // Behind a bottom sheet and a tablet's dialog: a lighter, neutral dim (the desktop keeps `strong`). The same in
+    // both modes, on purpose.
     sheet: {
-      value: 'rgb(0 0 0 / 0.4)',
+      value: {
+        _light: 'rgb(0 0 0 / 0.4)',
+        _dark: 'rgb(0 0 0 / 0.4)',
+      },
     },
     fg: {
       value: '{colors.surface.inverse.fg}',
