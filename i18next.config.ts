@@ -17,6 +17,10 @@ export default defineConfig({
     functions: ['t', '*.t'],
     transComponents: ['Trans'],
     ignoreNamespaces: ['react-components'],
+    // The Open Graph card copy (`og.*`) is read by scripts/og/generate.mjs, outside the extractor's
+    // input; only `og.headline` also appears in src (as og:image:alt), so keep the rest from being
+    // pruned as unused.
+    preservePatterns: ['og.*'],
   },
   types: {
     input: ['src/i18n/locales/{{language}}/{{namespace}}.json'],

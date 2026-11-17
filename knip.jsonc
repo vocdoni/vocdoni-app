@@ -6,6 +6,7 @@
     "i18next.config.ts", // read by i18next-cli (pnpm translations)
     "scripts/*.mjs",
     "scripts/ui-snapshot/{snapshot,diff,mock-saas}.mjs",
+    "scripts/og/generate.mjs", // pnpm og:generate
     "server/index.mjs", // the SSR server, started by `pnpm serve:ssr` and the Dockerfile
     "stress/loadgen.mjs", // spawned by stress/loadgen.test.ts and run-stress.sh
     "src/utils/use-feature-flag.ts", // documented API (docs/analytics.md), no caller yet
