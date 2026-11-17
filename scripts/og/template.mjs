@@ -63,7 +63,7 @@ export const themes = {
 export const WIDTH = 1200
 export const HEIGHT = 630
 // The copy column; the headline is sized to fit it on two lines when it can.
-export const HEADLINE_WIDTH = 600
+const HEADLINE_WIDTH = 600
 const HEADLINE_SIZES = { max: 56, min: 42, fallback: 46 }
 
 const LOGO_RATIO = 1001 / 216
