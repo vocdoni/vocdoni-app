@@ -36,7 +36,8 @@ const sizes: StyleMap = {
 
 // A focus ring is an outline of the palette's ring colour, offset 1px from the control.
 const focusRing = defineStyle({
-  outlineWidth: 'focusRing',
+  // `outlineWidth` has no token category in Chakra: a bare 'focusRing' is dropped, so it is a reference.
+  outlineWidth: '{borderWidths.focusRing}',
   outlineStyle: '[solid]',
   outlineColor: 'colorPalette.focusRing',
   outlineOffset: '[1px]',

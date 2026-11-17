@@ -206,7 +206,8 @@ and `control-tab` (15px, 13.5px from `lg`) are what button, field, menu, chip an
 - **Page rhythm**: `DashboardContents rhythm='board'` is the votes screens' page padding (20 40 on a phone, 28 48 on a
   tablet, 48 40 from `lg`, where every page title starts 48px down and a line over it climbs into the padding); the `line` tabs keep the boards' 6px count slot after a label without a count.
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
-  focus ring, `thick`): `<Box borderWidth='thick' />`.
+  focus ring, `thick`): `<Box borderWidth='thick' />`. `outlineWidth` has no token category, so a recipe writes it as a
+  reference, `'{borderWidths.focusRing}'`: a bare `'focusRing'` is dropped without an error and the ring is not drawn.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
   (1.5rem, feature), `icon.xl` (3rem, empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
   `icon.sm` to `icon.lg` alias Chakra's Icon sizes (`{sizes.4}`, `5`, `6`), so `boxSize='icon.md'` and
