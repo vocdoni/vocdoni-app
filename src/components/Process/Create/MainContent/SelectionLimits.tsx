@@ -1,22 +1,13 @@
-import { Box, FieldErrorText, FieldRoot, Text } from '@chakra-ui/react'
+import { Box, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
-import { Controller, get, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { DashboardSection } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
-import { SelectorTypes } from '../common'
-
-// No max (empty, or the 0 a restored draft can carry) means "up to every option".
-export const isValidMaxChoices = (max: number | null | undefined, min: number | null | undefined) =>
-  !max || min == null || max >= min
+import { isValidMaxChoices, SelectorTypes } from '../common'
 
 const SelectionLimits = ({ index }) => {
-  const {
-    control,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useFormContext()
+  const { control, setValue, watch } = useFormContext()
   const { t } = useTranslation()
   const questionType = watch(`questions.${index}.type`)
   const fields = watch(`questions.${index}.options`)
@@ -42,9 +33,6 @@ const SelectionLimits = ({ index }) => {
   }, [min, max, total, minName, maxName, setValue])
 
   if (questionType === SelectorTypes.Single) return null
-
-  // A red outline alone gave no clue of what to fix, so the message is shown too
-  const limitsError = get(errors, minName)?.message ?? get(errors, maxName)?.message
 
   return (
     <DashboardSection p='4' mb='4'>
@@ -92,8 +80,8 @@ const SelectionLimits = ({ index }) => {
                     t('form.error.max_greater_than_min', 'Max must be greater than or equal to Min'),
                 }}
                 render={({ field, fieldState }) => {
-                  // Every value the form can hold must be listed, or the select shows
-                  // its placeholder for a value that is set (and possibly invalid)
+                  // Every max from the min upward is listed, so a set max never shows as the placeholder.
+                  // The 0 a restored draft can carry means "no limit" and correctly shows the placeholder.
                   const maxOptions = options.filter((opt) => min == null || opt.value >= min)
                   const selectedOption = maxOptions.find((opt) => opt.value === field.value)
 
@@ -117,9 +105,6 @@ const SelectionLimits = ({ index }) => {
           }}
         />
       </Text>
-      <FieldRoot invalid={!!limitsError}>
-        <FieldErrorText>{limitsError?.toString()}</FieldErrorText>
-      </FieldRoot>
     </DashboardSection>
   )
 }

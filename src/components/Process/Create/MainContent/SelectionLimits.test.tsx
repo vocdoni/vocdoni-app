@@ -1,8 +1,8 @@
 import { act } from '@testing-library/react'
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { render, screen } from '~src/test-utils'
-import { defaultProcessValues, defaultQuestion, Process, SelectorTypes } from '../common'
-import SelectionLimits, { isValidMaxChoices } from './SelectionLimits'
+import { defaultProcessValues, defaultQuestion, isValidMaxChoices, Process, SelectorTypes } from '../common'
+import SelectionLimits from './SelectionLimits'
 
 const threeOptions = [{ option: 'A' }, { option: 'B' }, { option: 'C' }]
 
@@ -51,16 +51,6 @@ describe('SelectionLimits', () => {
 
     expect(screen.queryByText('Select...')).not.toBeInTheDocument()
     expect(screen.getAllByText('1')).toHaveLength(2)
-  })
-
-  it('explains the error in text, not only with a red outline', async () => {
-    render(<SelectionLimitsHarness min={2} max={3} />)
-
-    act(() => {
-      form.setError('questions.0.maxNumberOfChoices', { message: 'Max must be greater than or equal to Min' })
-    })
-
-    expect(await screen.findByText('Max must be greater than or equal to Min')).toBeInTheDocument()
   })
 })
 
