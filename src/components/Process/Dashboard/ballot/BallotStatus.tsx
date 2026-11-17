@@ -11,7 +11,7 @@ import { useCloneAsDraft } from '../use-clone-as-draft'
  * "The ballot can no longer be changed": the questions are fixed once the vote is published. For whoever manages the
  * vote, the way to correct a mistake: cancel it (while it can still be canceled) and duplicate it.
  */
-export const BallotStatus = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
+export const BallotStatus = ({ model }: { model: SummaryModel }) => {
   const { t } = useTranslation()
   const { canManage } = useActions()
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
@@ -23,17 +23,9 @@ export const BallotStatus = ({ model, desktop }: { model: SummaryModel; desktop:
   const opened = !isBeforeStart(election.startDate, now)
   const cancelable = canCancelVote(election, state)
 
-  let fixNote: string
-  if (cancelable)
-    fixNote = desktop
-      ? t('votes.ballot.fix.cancel_and_duplicate', {
-          defaultValue: 'Cancel the vote and duplicate it to correct it.',
-        })
-      : t('votes.ballot.fix.cancel_and_duplicate_short', { defaultValue: 'Cancel the vote and duplicate it.' })
-  else
-    fixNote = desktop
-      ? t('votes.ballot.fix.duplicate', { defaultValue: 'Duplicate it to correct it in a new vote.' })
-      : t('votes.ballot.fix.duplicate_short', { defaultValue: 'Duplicate it to correct it.' })
+  const fixNote = cancelable
+    ? t('votes.ballot.fix.cancel_and_duplicate', { defaultValue: 'Cancel the vote and duplicate it to correct it.' })
+    : t('votes.ballot.fix.duplicate', { defaultValue: 'Duplicate it to correct it in a new vote.' })
 
   return (
     <Card.Root

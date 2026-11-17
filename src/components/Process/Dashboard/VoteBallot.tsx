@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import { FactList, type Fact } from '~components/ui/FactList'
 import { Markdown } from '~components/ui/Markdown'
-import { useIsDesktop } from '~components/ui/useIsMobile'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useVoteText } from '~i18n/use-vote-text'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
@@ -38,7 +37,7 @@ const BallotIntro = ({ description }: { description: string }) => {
   )
 }
 
-const BallotPaper = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
+const BallotPaper = ({ model }: { model: SummaryModel }) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
   const publicLanguage = usePublicLanguage()
@@ -96,9 +95,7 @@ const BallotPaper = ({ model, desktop }: { model: SummaryModel; desktop: boolean
             target='_blank'
             rel='noopener noreferrer'
           >
-            {desktop
-              ? t('votes.page.show_as_voter', { defaultValue: 'Show as voter' })
-              : t('votes.ballot.as_voter', { defaultValue: 'As a voter' })}
+            {t('votes.page.show_as_voter', { defaultValue: 'Show as voter' })}
             <Icon as={ChevronRightIcon} boxSize={{ base: '3.5', lg: 'icon.xs' }} />
           </Link>
         </Flex>
@@ -120,7 +117,7 @@ const BallotPaper = ({ model, desktop }: { model: SummaryModel; desktop: boolean
         </Stack>
       </Stack>
       <Stack gap='4' minW='0'>
-        <BallotStatus model={model} desktop={desktop} />
+        <BallotStatus model={model} />
         <Card.Root variant='frame' as='section' aria-labelledby={factsId}>
           <SummaryCardHeader id={factsId} title={t('votes.ballot.rules_title', { defaultValue: 'How voting works' })} />
           <FactList facts={facts} layout='ruled' />
@@ -136,7 +133,6 @@ const BallotPaper = ({ model, desktop }: { model: SummaryModel; desktop: boolean
  */
 export const VoteBallot = () => {
   const model = useSummaryModel()
-  const desktop = useIsDesktop({ ssr: false })
   if (!model) return null
-  return <BallotPaper model={model} desktop={desktop} />
+  return <BallotPaper model={model} />
 }

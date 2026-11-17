@@ -3,7 +3,6 @@ import { fireEvent, render, screen, TestMemoryRouter, within } from '~src/test-u
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VoteBallot } from './VoteBallot'
 
-let desktop = true
 let canManage = true
 let currentElection: VotingProcessResponse
 const cloneAsDraft = vi.fn()
@@ -14,7 +13,6 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   return { ...actual, ...getReactProvidersMock() }
 })
 vi.mock('~queries/process-end-date', () => ({ useProcessEarlyEndDate: () => ({ data: null }) }))
-vi.mock('~components/ui/useIsMobile', () => ({ useIsDesktop: () => desktop, useIsMobile: () => !desktop }))
 vi.mock('~components/Actions/ActionsContext', async () => {
   const { deriveVoteState } = await import('~utils/vote-state')
   return {
@@ -87,7 +85,6 @@ const renderBallot = (election: VotingProcessResponse) => {
 }
 
 beforeEach(() => {
-  desktop = true
   canManage = true
   cloneAsDraft.mockClear()
 })
@@ -172,14 +169,6 @@ describe('VoteBallot', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Duplicate' }))
     expect(cloneAsDraft).toHaveBeenCalledWith(expect.objectContaining({ id: '0xabc' }))
-  })
-
-  it('shortens the fix line on a phone', () => {
-    desktop = false
-    renderBallot(createProcess())
-
-    expect(screen.getByText('Cancel the vote and duplicate it.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /As a voter/ })).toBeInTheDocument()
   })
 
   it('says it is fixed since it was published before the start', () => {
