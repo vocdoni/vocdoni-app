@@ -6,7 +6,6 @@ import { ColorModeProvider, useColorMode, useColorModeValue } from './color-mode
 const themeProviderSpy = vi.fn()
 const themeState = {
   resolvedTheme: 'dark' as string | undefined,
-  forcedTheme: undefined as string | undefined,
   setTheme: vi.fn(),
 }
 
@@ -28,7 +27,6 @@ const ColorModeValueProbe = () => {
 describe('ColorModeProvider', () => {
   beforeEach(() => {
     themeState.resolvedTheme = 'dark'
-    themeState.forcedTheme = undefined
     themeState.setTheme.mockReset()
   })
 
@@ -46,7 +44,6 @@ describe('ColorModeProvider', () => {
         storageKey: 'theme-preference',
         defaultTheme: 'system',
         enableSystem: true,
-        forcedTheme: 'light',
       })
     )
   })
@@ -86,12 +83,14 @@ describe('ColorModeProvider', () => {
     container.remove()
   })
 
-  it('answers light while the theme is forced light, whatever the OS prefers', () => {
-    themeState.resolvedTheme = 'dark'
-    themeState.forcedTheme = 'light'
+  it('does not force a theme, so the OS preference reaches the app', () => {
+    render(
+      <ColorModeProvider>
+        <ColorModeProbe />
+      </ColorModeProvider>
+    )
 
-    render(<ColorModeProbe />)
-
-    expect(screen.getByTestId('color-mode')).toHaveTextContent('light')
+    expect(screen.getByTestId('color-mode')).toHaveTextContent('dark')
+    expect(themeProviderSpy.mock.calls.at(-1)?.[0]).not.toHaveProperty('forcedTheme')
   })
 })
