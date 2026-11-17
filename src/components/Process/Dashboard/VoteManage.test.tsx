@@ -95,6 +95,10 @@ const show = (election: VotingProcessResponse) => {
 
 const questionsList = () => within(screen.getByRole('region', { name: 'Questions' }))
 
+// The phone and tablet line sets its verdict in its own span: match the whole sentence on the innermost element.
+const lineText = (text: string) => (_: string, element: Element | null) =>
+  element?.textContent === text && Array.from(element.children).every((child) => child.textContent !== text)
+
 describe('VoteManage', () => {
   beforeEach(() => {
     change.mockReset()
@@ -117,12 +121,13 @@ describe('VoteManage', () => {
     expect(screen.getByText(/Questions still open will close then/)).toBeInTheDocument()
   })
 
-  it('opens a closed question on its whole line: verdict, tally, turnout and final bars', async () => {
+  it('opens a closed question on its whole line: verdict and turnout, the tally only in the detail', async () => {
     show(build())
     const toggle = screen.getByRole('button', { name: /^Question 1: Budget.*Approve.*Show or hide the detail$/ })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
-    expect(toggle).toHaveTextContent('7 to 3')
     expect(toggle).toHaveTextContent('5%')
+    expect(toggle).not.toHaveTextContent('7 to 3')
+    expect(within(toggle).getByText(lineText('Closed. Approve.'))).toBeInTheDocument()
     await userEvent.click(toggle)
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText('10 of 200 voted')).toBeInTheDocument()
@@ -199,7 +204,7 @@ describe('VoteManage', () => {
       ])
     )
     const [settled, clock] = questionsList().getAllByRole('listitem')
-    expect(within(settled).getByText(/^Closed\. .+\.$/)).toBeInTheDocument()
+    expect(within(settled).getByText(lineText('Closed. Approve.'))).toBeInTheDocument()
     expect(within(clock).getByText('Closed.')).toBeInTheDocument()
   })
 
@@ -209,6 +214,18 @@ describe('VoteManage', () => {
     expect(screen.queryByRole('button', { name: 'Open' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Pause' })).not.toBeInTheDocument()
     expect(screen.queryByText(/Next step/)).not.toBeInTheDocument()
+  })
+
+  it('names a weighted winner without its weight', () => {
+    show(
+      build({
+        census: { size: 200, weighted: true, authFields: [], twoFaFields: [] },
+        questions: [createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 10 }) })],
+      } as Partial<VotingProcessResponse>)
+    )
+    const [row] = questionsList().getAllByRole('listitem')
+    expect(within(row).getByText(lineText('Closed. Approve.'))).toBeInTheDocument()
+    expect(row).not.toHaveTextContent(/weight|votes/)
   })
 
   it('shows the lock note and no bars for a secret open question', () => {

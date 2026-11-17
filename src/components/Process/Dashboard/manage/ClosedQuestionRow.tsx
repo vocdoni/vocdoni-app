@@ -9,13 +9,12 @@ import { quantity } from '~utils/numbers'
 import { questionOutcome, type QuestionOutcome } from '~utils/vote-outcome'
 import { isSettledQuestion, percentOf } from '~utils/vote-state'
 import { QuestionResultBars } from '../QuestionResultBars'
-import { Figures } from './Figures'
 import { QuestionRowFrame, RowChevron, RowHead } from './QuestionRow'
 import { ProcessStatus } from '~components/ui/ProcessStatus'
 
-type Verdict = { verdict: string; won: boolean; figures?: string }
+type Verdict = { verdict: string; won: boolean }
 
-/** The verdict of a closed question (the winning choice, or "Tie", until approval semantics exist) and its tally. */
+/** The verdict of a closed question: the winning choice, or "Tie" until approval semantics exist. No tally. */
 const useVerdict = () => {
   const { t } = useTranslation()
   const { text } = useVoteText()
@@ -24,28 +23,8 @@ const useVerdict = () => {
       case 'tie':
         return { verdict: t('votes.outcome.tie', { defaultValue: 'Tie' }), won: false }
       case 'pair':
-        return {
-          verdict: text(outcome.winner.title),
-          won: true,
-          figures: t('votes.manage.pair_figures', {
-            defaultValue: '{{winnerVotes}} to {{otherVotes}}',
-            winnerVotes: quantity(outcome.winnerVotes),
-            otherVotes: quantity(outcome.otherVotes),
-          }),
-        }
       case 'winner':
-        return {
-          verdict: text(outcome.winner.title),
-          won: true,
-          figures: outcome.weighted
-            ? t('votes.manage.weight_figures', { defaultValue: 'weight {{votes}}', votes: quantity(outcome.votes) })
-            : t('votes.manage.vote_figures', {
-                defaultValue_one: '{{votes}} vote',
-                defaultValue_other: '{{votes}} votes',
-                count: outcome.votes,
-                votes: quantity(outcome.votes),
-              }),
-        }
+        return { verdict: text(outcome.winner.title), won: true }
       case 'top':
         return { verdict: text(outcome.choice.title), won: true }
       default:
@@ -54,24 +33,16 @@ const useVerdict = () => {
   }
 }
 
-/** The phone and tablet line under the title: "Closed. **Yes**, 198 to 7." */
+/** The phone and tablet line under the title: "Closed. **Yes**." */
 const ClosedMeta = ({ verdict }: { verdict: Verdict | null }) => {
   const { t } = useTranslation()
   if (!verdict) return <>{t('votes.manage.meta.closed', { defaultValue: 'Closed.' })}</>
-  const strong = <Span fontWeight='medium-plus' color={verdict.won ? 'status.success.fg' : 'fg'} />
-  return verdict.figures ? (
-    <Trans
-      i18nKey='votes.manage.meta.closed_result'
-      defaults='Closed. <b>{{verdict}}</b>, {{figures}}.'
-      values={{ verdict: verdict.verdict, figures: verdict.figures }}
-      components={{ b: strong }}
-    />
-  ) : (
+  return (
     <Trans
       i18nKey='votes.manage.meta.closed_verdict'
       defaults='Closed. <b>{{verdict}}</b>.'
       values={{ verdict: verdict.verdict }}
-      components={{ b: strong }}
+      components={{ b: <Span fontWeight='medium-plus' color={verdict.won ? 'status.success.fg' : 'fg'} /> }}
     />
   )
 }
@@ -86,9 +57,9 @@ export type ClosedQuestionRowProps = {
 }
 
 /**
- * A closed question: one line that opens its detail. From `lg` the title, the verdict with its check, "198 to 7", the
- * share of the census, the state and a turning chevron; below `lg` the title over "Closed. **Yes**, 198 to 7.". The
- * detail is the question, its turnout and the final result bars.
+ * A closed question: one line that opens its detail. From `lg` the title, the verdict with its check, the share of
+ * the census, the state and a turning chevron; below `lg` the title over "Closed. **Yes**.". The tally lives in the
+ * detail: the question, its turnout and the final result bars.
  */
 export const ClosedQuestionRow = ({
   question,
@@ -160,11 +131,6 @@ export const ClosedQuestionRow = ({
               {verdict.won && <Icon as={CheckIcon} boxSize='icon.xs' aria-hidden />}
               {verdict.verdict}
             </HStack>
-          )}
-          {verdict?.figures && (
-            <Text as='span' fontSize='xs' whiteSpace='nowrap' display={desktop}>
-              <Figures text={verdict.figures} strong />
-            </Text>
           )}
           {share !== undefined && (
             <Text as='span' textStyle='figure' color='fg.subtle' display={desktop}>

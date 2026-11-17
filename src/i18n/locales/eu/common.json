@@ -1952,7 +1952,6 @@
       "meta": {
         "canceled": "Baliogabetua. Botoak baztertu dira.",
         "closed": "Itxita.",
-        "closed_result": "Itxita. <b>{{verdict}}</b>, {{figures}}.",
         "closed_verdict": "Itxita. <b>{{verdict}}</b>.",
         "not_opened": "Ireki gabea. Bozketa ireki gabe amaitu zen.",
         "to_open": "Irekitzeko."
@@ -1966,7 +1965,6 @@
       },
       "not_opened_note": "Bozketa ireki gabe amaitu zen.",
       "open": "Ireki",
-      "pair_figures": "{{winnerVotes}} eta {{otherVotes}}",
       "pause": "Pausatu",
       "paused_note": "Inork ezin du bozkatu.",
       "percent": "%{{percent}}",
@@ -1983,11 +1981,8 @@
       "summary_link": "Laburpena",
       "toggle_hint": "Erakutsi edo ezkutatu xehetasuna",
       "toggle_number": "{{number}}. galdera:",
-      "vote_figures_one": "{{votes}} boto",
-      "vote_figures_other": "{{votes}} boto",
       "voted_any": "Gutxienez {{total}}tik {{voted}}k galderaren bat bozkatu dute",
       "voted_any_count": "Gutxienez {{voted}}k galderaren bat bozkatu dute",
-      "weight_figures": "{{votes}} pisu",
       "winner": "Aukera irabazlea",
       "winner_tag": "Irabazlea"
     },

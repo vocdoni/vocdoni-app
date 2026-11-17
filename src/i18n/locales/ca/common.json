@@ -2000,7 +2000,6 @@
       "meta": {
         "canceled": "Anul·lada. Els vots s'han descartat.",
         "closed": "Tancada.",
-        "closed_result": "Tancada. <b>{{verdict}}</b>, {{figures}}.",
         "closed_verdict": "Tancada. <b>{{verdict}}</b>.",
         "not_opened": "No oberta. La votació es va finalitzar sense obrir-la.",
         "to_open": "Per obrir."
@@ -2015,7 +2014,6 @@
       },
       "not_opened_note": "La votació es va finalitzar sense obrir-la.",
       "open": "Obre",
-      "pair_figures": "{{winnerVotes}} a {{otherVotes}}",
       "pause": "Pausa",
       "paused_note": "Ningú la pot votar.",
       "percent": "{{percent}}%",
@@ -2032,12 +2030,8 @@
       "summary_link": "Resum",
       "toggle_hint": "Mostra o amaga el detall",
       "toggle_number": "Pregunta {{number}}:",
-      "vote_figures_one": "{{votes}} vot",
-      "vote_figures_many": "{{votes}} vots",
-      "vote_figures_other": "{{votes}} vots",
       "voted_any": "Almenys {{voted}} de {{total}} han votat alguna pregunta",
       "voted_any_count": "Almenys {{voted}} han votat alguna pregunta",
-      "weight_figures": "pes {{votes}}",
       "winner": "Opció guanyadora",
       "winner_tag": "Guanyadora"
     },

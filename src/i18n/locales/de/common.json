@@ -1952,7 +1952,6 @@
       "meta": {
         "canceled": "Ungültig. Die Stimmen wurden verworfen.",
         "closed": "Geschlossen.",
-        "closed_result": "Geschlossen. <b>{{verdict}}</b>, {{figures}}.",
         "closed_verdict": "Geschlossen. <b>{{verdict}}</b>.",
         "not_opened": "Nicht geöffnet. Die Abstimmung wurde beendet, ohne sie zu öffnen.",
         "to_open": "Zu öffnen."
@@ -1966,7 +1965,6 @@
       },
       "not_opened_note": "Die Abstimmung wurde beendet, ohne sie zu öffnen.",
       "open": "Öffnen",
-      "pair_figures": "{{winnerVotes}} zu {{otherVotes}}",
       "pause": "Pausieren",
       "paused_note": "Niemand kann darüber abstimmen.",
       "percent": "{{percent}} %",
@@ -1983,11 +1981,8 @@
       "summary_link": "Zusammenfassung",
       "toggle_hint": "Details ein- oder ausblenden",
       "toggle_number": "Frage {{number}}:",
-      "vote_figures_one": "{{votes}} Stimme",
-      "vote_figures_other": "{{votes}} Stimmen",
       "voted_any": "Mindestens {{voted}} von {{total}} haben bei einer Frage abgestimmt",
       "voted_any_count": "Mindestens {{voted}} haben bei einer Frage abgestimmt",
-      "weight_figures": "Gewicht {{votes}}",
       "winner": "Gewinnende Option",
       "winner_tag": "Gewinner"
     },

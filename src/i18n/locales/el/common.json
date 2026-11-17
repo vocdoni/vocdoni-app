@@ -1952,7 +1952,6 @@
       "meta": {
         "canceled": "Άκυρη. Οι ψήφοι απορρίφθηκαν.",
         "closed": "Κλειστή.",
-        "closed_result": "Κλειστή. <b>{{verdict}}</b>, {{figures}}.",
         "closed_verdict": "Κλειστή. <b>{{verdict}}</b>.",
         "not_opened": "Δεν άνοιξε. Η ψηφοφορία έληξε χωρίς να ανοίξει.",
         "to_open": "Προς άνοιγμα."
@@ -1966,7 +1965,6 @@
       },
       "not_opened_note": "Η ψηφοφορία έληξε χωρίς να ανοίξει.",
       "open": "Άνοιγμα",
-      "pair_figures": "{{winnerVotes}} έναντι {{otherVotes}}",
       "pause": "Παύση",
       "paused_note": "Κανείς δεν μπορεί να την ψηφίσει.",
       "percent": "{{percent}}%",
@@ -1983,11 +1981,8 @@
       "summary_link": "Σύνοψη",
       "toggle_hint": "Εμφάνιση ή απόκρυψη λεπτομερειών",
       "toggle_number": "Ερώτηση {{number}}:",
-      "vote_figures_one": "{{votes}} ψήφος",
-      "vote_figures_other": "{{votes}} ψήφοι",
       "voted_any": "Ψήφισαν τουλάχιστον {{voted}} από {{total}} σε μια ερώτηση",
       "voted_any_count": "Ψήφισαν τουλάχιστον {{voted}} σε μια ερώτηση",
-      "weight_figures": "βαρύτητα {{votes}}",
       "winner": "Νικήτρια επιλογή",
       "winner_tag": "Νικήτρια"
     },
