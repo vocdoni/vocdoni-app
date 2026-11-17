@@ -63,7 +63,8 @@ export type RowToggle = {
 
 /**
  * The line of a closed or waiting row. With `toggle` the whole line is a button that shows the detail under it (the
- * board's row); without one it is plain.
+ * board's row), inside the question's `h3` (the accordion pattern); without one it is plain and `RowTitleLine` makes
+ * the title the `h3`. Either way every question of the list is a heading, as the active one is.
  */
 export const RowHead = ({
   toggle,
@@ -79,51 +80,61 @@ export const RowHead = ({
   children: ReactNode
 }) => {
   const { t } = useTranslation()
-  const layout = { display: 'flex', alignItems, flex, minH, gap: { base: '2', lg: '3' }, minW: '0' } as const
-  if (!toggle) return <Flex {...layout}>{children}</Flex>
+  const layout = { display: 'flex', alignItems, minH, gap: { base: '2', lg: '3' }, minW: '0' } as const
+  if (!toggle)
+    return (
+      <Flex {...layout} flex={flex}>
+        {children}
+      </Flex>
+    )
   // Named by what it shows, so the name holds the visible text (WCAG 2.5.3), with the number before it and what it
   // does after it for a screen reader.
   return (
-    <chakra.button
-      type='button'
-      aria-expanded={toggle.expanded}
-      aria-controls={toggle.controls}
-      onClick={toggle.onToggle}
-      w='full'
-      textAlign='start'
-      cursor='button'
-      borderRadius='sm'
-      focusVisibleRing='outside'
-      {...layout}
-    >
-      <VisuallyHidden>
-        {t('votes.manage.toggle_number', { defaultValue: 'Question {{number}}:', number: toggle.number })}{' '}
-      </VisuallyHidden>
-      {children}
-      <VisuallyHidden> {t('votes.manage.toggle_hint', { defaultValue: 'Show or hide the detail' })}</VisuallyHidden>
-    </chakra.button>
+    <chakra.h3 display='flex' flex={flex} minW='0'>
+      <chakra.button
+        type='button'
+        aria-expanded={toggle.expanded}
+        aria-controls={toggle.controls}
+        onClick={toggle.onToggle}
+        flex='1'
+        textAlign='start'
+        cursor='button'
+        borderRadius='sm'
+        focusVisibleRing='outside'
+        {...layout}
+      >
+        <VisuallyHidden>
+          {t('votes.manage.toggle_number', { defaultValue: 'Question {{number}}:', number: toggle.number })}{' '}
+        </VisuallyHidden>
+        {children}
+        <VisuallyHidden> {t('votes.manage.toggle_hint', { defaultValue: 'Show or hide the detail' })}</VisuallyHidden>
+      </chakra.button>
+    </chakra.h3>
   )
 }
 
 /**
  * The title of a closed or waiting row and what follows it (its turnout, its state): on one line from `lg`, the title
  * cut with an ellipsis; below `lg` the title on a line of its own and the rest under it. Spans: the line can be the
- * row's toggle button, which takes phrasing content only.
+ * row's toggle button, which takes phrasing content only. Outside a toggle, `heading` makes the title the row's `h3`.
  */
 export const RowTitleLine = ({
   title,
   color,
   align = 'baseline',
+  heading = false,
   children,
 }: {
   title: ReactNode
   color?: TextProps['color']
   /** How the title and what follows line up on one line (from `lg`). */
   align?: FlexProps['alignItems']
+  /** The line is not inside a toggle: the title is the question's heading. */
+  heading?: boolean
   children: ReactNode
 }) => (
   <Flex
-    as='span'
+    as={heading ? 'div' : 'span'}
     flex='1'
     minW='0'
     wrap={{ base: 'wrap', lg: 'nowrap' }}
@@ -132,7 +143,7 @@ export const RowTitleLine = ({
     rowGap='note'
   >
     <Text
-      as='span'
+      as={heading ? 'h3' : 'span'}
       display='block'
       textStyle='question-line'
       color={color}

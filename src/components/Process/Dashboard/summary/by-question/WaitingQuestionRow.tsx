@@ -45,7 +45,12 @@ export const WaitingQuestionRow = ({
             minH={{ lg: '7' }}
             toggle={hasDetail ? { expanded, onToggle, controls: detailId, number } : undefined}
           >
-            <RowTitleLine title={text(question.title)} color={{ base: 'fg', lg: 'fg.muted' }} align='center'>
+            <RowTitleLine
+              title={text(question.title)}
+              color={{ base: 'fg', lg: 'fg.muted' }}
+              align='center'
+              heading={!hasDetail}
+            >
               <ProcessStatus as='span' kind='question' state={state} />
             </RowTitleLine>
             {hasDetail && <RowChevron expanded={expanded} />}

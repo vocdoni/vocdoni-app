@@ -114,6 +114,16 @@ describe('ByQuestionCard', () => {
       expect(screen.getByText('Next step: close question 2')).toBeInTheDocument()
     })
 
+    it('makes every question a heading, whatever its state, so the outline holds as questions open and close', () => {
+      show(build())
+      const headings = questionsList().getAllByRole('heading', { level: 3 })
+      expect(headings).toHaveLength(3)
+      expect(headings[0]).toHaveTextContent('Budget')
+      expect(headings[2]).toHaveTextContent('Statutes')
+      // A closed or waiting question's heading holds its toggle (the accordion pattern).
+      expect(within(headings[0]).getByRole('button', { name: /^Question 1: Budget/ })).toBeInTheDocument()
+    })
+
     it('opens a closed question on its whole line: turnout only, then the tally in the detail', async () => {
       show(build())
       const toggle = screen.getByRole('button', { name: /^Question 1: Budget.*Show or hide the detail$/ })
