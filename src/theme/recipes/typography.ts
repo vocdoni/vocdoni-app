@@ -24,6 +24,9 @@ export const heading = defineRecipe({
         fontWeight: 'semibold',
       },
       subsection: sectionSubtitle,
+      // The page's one title (`PageTitle`). From `lg` it sits in a box as tall as a control with the text at its foot,
+      // so a title beside buttons and one alone read on the same line, on every page.
+      page: { display: { lg: 'flex' }, alignItems: { lg: 'flex-end' }, minH: { lg: 'control.md' } },
     },
   },
 })

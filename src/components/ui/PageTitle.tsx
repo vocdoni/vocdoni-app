@@ -1,9 +1,10 @@
 import { Heading, type HeadingProps, Text, type TextProps } from '@chakra-ui/react'
 import { forwardRef } from 'react'
 
-// The page's one h1. Section titles inside it are h2 (`section-title` role).
+// The page's one h1. Section titles inside it are h2 (`section-title` role). The `page` variant gives it the same
+// height beside buttons or alone, from `lg`.
 export const PageTitle = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref) => (
-  <Heading as='h1' textStyle='page-title' ref={ref} {...props} />
+  <Heading as='h1' textStyle='page-title' variant='page' ref={ref} {...props} />
 ))
 
 // A literal `color` next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
