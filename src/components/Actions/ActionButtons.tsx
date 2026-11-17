@@ -1,46 +1,33 @@
 import { Button, type ButtonProps } from '@chakra-ui/react'
-import { useConfirm, useElection } from '@vocdoni/react-components'
-import { isUpcoming } from '@vocdoni/api-client'
-import { forwardRef } from 'react'
+import { useElection } from '@vocdoni/react-components'
+import { forwardRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
-import { deriveQuestionState, isTerminalQuestion } from '~utils/vote-state'
 import { useActions } from './ActionsContext'
-import { ConfirmActionModal } from './ConfirmActionModal'
+import { EndVoteDialog } from './EndVoteDialog'
+import { trackProcessAction } from './track'
 
-const trackProcessAction = (action: string, election: { id?: string } | null | undefined) =>
-  trackAnalyticsEvent({
-    name: AnalyticsEvents.ProcessAction,
-    props: { action, election_id: election?.id ?? 'unknown' },
-  })
+// The vote header decides which of these a state shows (the boards' action matrix); each one only acts. A
+// question-by-question vote pauses and resumes as a whole: every open question, then the ones that pause held.
 
 export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { election, status } = useElection()
-  const {
-    resume,
-    disabled,
-    targets,
-    canManage,
-    loading: { continue: loading },
-  } = useActions()
+  const { election } = useElection()
+  const { resume, disabled, canManage, loading, votePause } = useActions()
   const { t } = useTranslation()
 
-  // A question-by-question vote is opened and paused question by question, in Gestió (audit F1).
-  if (!election || !canManage || isQuestionByQuestion(election)) {
-    return null
-  }
+  if (!election || !canManage) return null
+  const byQuestion = isQuestionByQuestion(election)
 
   return (
     <Button
       ref={ref}
-      loading={loading}
+      loading={byQuestion ? votePause.isPending : loading.continue}
       onClick={() => {
-        trackProcessAction('resume', election)
-        return resume()
+        trackProcessAction(byQuestion ? 'resume_vote' : 'resume', election)
+        return byQuestion ? votePause.resume() : resume()
       }}
-      disabled={disabled || !targets.length || status !== 'PAUSED'}
-      variant='outline'
+      disabled={disabled}
+      variant='solid'
       {...props}
     >
       {children ?? t('actions.continue')}
@@ -50,30 +37,22 @@ export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ chil
 ActionContinue.displayName = 'ActionContinue'
 
 export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { election, status } = useElection()
-  const {
-    pause,
-    disabled,
-    targets,
-    canManage,
-    loading: { pause: loading },
-  } = useActions()
+  const { election } = useElection()
+  const { pause, disabled, canManage, loading, votePause } = useActions()
   const { t } = useTranslation()
 
-  // A question-by-question vote is opened and paused question by question, in Gestió (audit F1).
-  if (!election || !canManage || isQuestionByQuestion(election)) {
-    return null
-  }
+  if (!election || !canManage) return null
+  const byQuestion = isQuestionByQuestion(election)
 
   return (
     <Button
       ref={ref}
-      loading={loading}
+      loading={byQuestion ? votePause.isPending : loading.pause}
       onClick={() => {
-        trackProcessAction('pause', election)
-        return pause()
+        trackProcessAction(byQuestion ? 'pause_vote' : 'pause', election)
+        return byQuestion ? votePause.pause() : pause()
       }}
-      disabled={disabled || !targets.length || status !== 'ONGOING'}
+      disabled={disabled}
       variant='outline'
       {...props}
     >
@@ -84,121 +63,32 @@ export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ childre
 ActionPause.displayName = 'ActionPause'
 
 export const ActionEnd = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { confirm } = useConfirm()
   const { election } = useElection()
   const {
-    end,
     disabled,
     targets,
     canManage,
     loading: { end: loading },
   } = useActions()
   const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
 
-  // A question-by-question vote ends every question still open or never opened: say how many of each.
-  const endDescription = () => {
-    if (!election || !isQuestionByQuestion(election)) return t('actions.end_description', { election })
-    const now = new Date()
-    const unopened = election.questions.filter(
-      (question) => targets.includes(question.id) && deriveQuestionState(question, election, now) === 'toOpen'
-    ).length
-    const closing = t('votes.actions.end_questions', {
-      defaultValue_one: '{{count}} question will close and its result becomes final.',
-      defaultValue_other: '{{count}} questions will close and their results become final.',
-      count: targets.length,
-    })
-    if (!unopened) return closing
-    const never = t('votes.actions.end_questions_unopened', {
-      defaultValue_one: '{{count}} of them was never opened and stays without votes.',
-      defaultValue_other: '{{count}} of them were never opened and stay without votes.',
-      count: unopened,
-    })
-    return `${closing} ${never}`
-  }
-
-  const handle = async () => {
-    if (
-      await confirm(
-        <ConfirmActionModal
-          title={t('confirm.end_process_title')}
-          description={endDescription()}
-          confirm={t('confirm.end_process_button')}
-          cancel={t('confirm.cancel_button')}
-        />
-      )
-    ) {
-      trackProcessAction('end', election)
-      await end()
-    }
-  }
-
-  if (!election || !canManage) {
-    return null
-  }
+  if (!election || !canManage) return null
 
   return (
-    <Button
-      ref={ref}
-      loading={loading}
-      onClick={handle}
-      disabled={disabled || !targets.length || isUpcoming(election)}
-      variant='outline'
-      {...props}
-    >
-      {children ?? t('actions.end')}
-    </Button>
+    <>
+      <Button
+        ref={ref}
+        loading={loading}
+        onClick={() => setOpen(true)}
+        disabled={disabled || !targets.length}
+        variant='outline'
+        {...props}
+      >
+        {children ?? t('actions.end')}
+      </Button>
+      <EndVoteDialog open={open} onClose={() => setOpen(false)} />
+    </>
   )
 })
 ActionEnd.displayName = 'ActionEnd'
-
-export const ActionCancel = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { confirm } = useConfirm()
-  const { election } = useElection()
-  const {
-    cancel,
-    disabled,
-    targets,
-    canManage,
-    loading: { cancel: loading },
-  } = useActions()
-  const { t } = useTranslation()
-
-  const handle = async () => {
-    if (
-      await confirm(
-        <ConfirmActionModal
-          title={t('confirm.cancel_process_title')}
-          description={t('actions.cancel_description', { election })}
-          confirm={t('confirm.cancel_process_button')}
-          cancel={t('confirm.cancel_button')}
-        />
-      )
-    ) {
-      trackProcessAction('cancel', election)
-      await cancel()
-    }
-  }
-
-  if (!election || !canManage) {
-    return null
-  }
-
-  // Once a question is closed with a result, the vote can only be ended, not voided (audit F1).
-  const hasClosedQuestion = election.questions.some(
-    (question) => isTerminalQuestion(question) && question.status !== 'CANCELED'
-  )
-
-  return (
-    <Button
-      ref={ref}
-      loading={loading}
-      onClick={handle}
-      disabled={disabled || !targets.length || hasClosedQuestion}
-      variant='outline'
-      {...props}
-    >
-      {children ?? t('actions.cancel')}
-    </Button>
-  )
-})
-ActionCancel.displayName = 'ActionCancel'

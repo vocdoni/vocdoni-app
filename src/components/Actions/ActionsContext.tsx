@@ -4,6 +4,7 @@ import type { SetElectionStatusRequest } from '@vocdoni/api-types'
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~queries/keys'
+import { useVotePause, type VotePause } from '~queries/vote-pause'
 import { useCanManageVotes } from '~queries/votes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { sameAddress } from '~utils/address'
@@ -23,6 +24,8 @@ export type ActionsContextValue = {
   /** Whether the user may change this vote: a manager or admin of its organisation (audit F17). */
   canManage: boolean
   disabled: boolean
+  /** Whole-vote pause of a question-by-question vote ("Pause the vote" / "Resume the vote"). */
+  votePause: VotePause
   info: ActionMessage
   error: ActionMessage
 }
@@ -61,7 +64,8 @@ export const ActionsProvider = ({ children }: { children: ReactNode }) => {
   const { currentAddress } = useAuth()
   const canManageVotes = useCanManageVotes()
   const canManage = canManageVotes && !!election && sameAddress(election.orgAddress, currentAddress)
-  // A per-question change (Gestió) holds the organisation's transaction lock too: wait for it.
+  const votePause = useVotePause(election)
+  // A per-question change (Gestió) or a whole-vote pause holds the organisation's transaction lock too: wait for it.
   const questionChanges = useIsMutating({ mutationKey: QueryKeys.process.questionStatus(election?.id) })
   const targets = useMemo(() => nonTerminalQuestionIds(election), [election])
 
@@ -106,10 +110,11 @@ export const ActionsProvider = ({ children }: { children: ReactNode }) => {
       targets,
       canManage,
       disabled: loading.continue || loading.pause || loading.end || loading.cancel || questionChanges > 0,
+      votePause,
       info,
       error,
     }
-  }, [client, election, queryClient, loading, info, error, targets, canManage, questionChanges])
+  }, [client, election, queryClient, loading, info, error, targets, canManage, questionChanges, votePause])
 
   return <ActionsContext.Provider value={value}>{children}</ActionsContext.Provider>
 }
