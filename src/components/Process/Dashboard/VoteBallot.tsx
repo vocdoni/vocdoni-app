@@ -140,7 +140,7 @@ const BallotPaper = ({ model, desktop }: { model: SummaryModel; desktop: boolean
  */
 export const VoteBallot = () => {
   const model = useSummaryModel()
-  const desktop = useIsDesktop()
+  const desktop = useIsDesktop({ ssr: false })
   if (!model) return null
   return <BallotPaper model={model} desktop={desktop} />
 }

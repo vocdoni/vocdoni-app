@@ -21,7 +21,7 @@ import { useSummaryModel } from './summary/use-summary-model'
  */
 export const VoteSummary = () => {
   const model = useSummaryModel()
-  const desktop = useIsDesktop()
+  const desktop = useIsDesktop({ ssr: false })
   const publicLanguage = usePublicLanguage()
   const dockPage = useQuestionDockPage()
 

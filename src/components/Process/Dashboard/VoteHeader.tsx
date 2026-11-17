@@ -43,7 +43,7 @@ const parseDate = (value: string | undefined) => {
 /** The line beside the state, per state and mode, in the boards' words. */
 const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
   const { t, i18n } = useTranslation()
-  const isDesktop = useIsDesktop()
+  const isDesktop = useIsDesktop({ ssr: false })
   const { dateAt, day, time, shortDate, timeLeft, ago, duration } = useVoteText()
   const { data: earlyEndDate } = useProcessEarlyEndDate(election)
   const byQuestion = isQuestionByQuestion(election)
@@ -194,7 +194,7 @@ const StatusLine = (props: HeaderPartProps) => {
 /** The boards' action matrix: which buttons each state shows, in order, and which one is primary. */
 const VoteActions = ({ election, state }: HeaderPartProps) => {
   const { t } = useTranslation()
-  const isDesktop = useIsDesktop()
+  const isDesktop = useIsDesktop({ ssr: false })
   const { canManage } = useActions()
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   // Equal parts on phones (the row spans the page); natural width from md.
@@ -266,7 +266,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
   const { canManage } = useActions()
-  const isDesktop = useIsDesktop()
+  const isDesktop = useIsDesktop({ ssr: false })
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const publicLanguage = usePublicLanguage()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
