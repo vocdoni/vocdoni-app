@@ -6,6 +6,10 @@ import { DashboardContents as dashboardContents } from './recipes/dashboard'
 import { dragHandle } from './recipes/dragHandle'
 import { ConfirmModal } from './recipes/confirmModal'
 import { recipes, slotRecipes } from './recipes'
+import { StepProgress, StepRail } from './recipes/steps'
+import { AgendaList, PhaseList, ReceiptCodes } from './recipes/voterLists'
+import { RankBadge, SuccessDisc } from './recipes/voterMarks'
+import { VoterShell } from './recipes/voterShell'
 import semanticTokens from './semantic'
 import { createAppSystem, getAppSystem, system } from './system'
 
@@ -112,6 +116,15 @@ const ALL_RECIPES: Record<string, unknown> = {
   dragHandle,
   dashboardContents,
   confirmModal: ConfirmModal,
+  // The voter page's pieces, each imported by its own ui/ component.
+  voterShell: VoterShell,
+  stepRail: StepRail,
+  stepProgress: StepProgress,
+  rankBadge: RankBadge,
+  successDisc: SuccessDisc,
+  phaseList: PhaseList,
+  receiptCodes: ReceiptCodes,
+  agendaList: AgendaList,
 }
 
 const isTokenPath = (value: string) => /^[a-zA-Z][\w-]*(\.[\w-]+)+$/.test(value)
