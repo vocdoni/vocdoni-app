@@ -35,9 +35,19 @@ describe('Fil container recipes', () => {
     expect(text(alert({ status: 'success' }).root)).toContain('--chakra-colors-bg-subtle')
   })
 
+  // A line on the page, so `accent.line`: the line step in light (3:1 on the page, where a pale organisation colour
+  // fills buttons as given but would vanish as a 2px line), the text blue in dark.
   it('puts a 2px accent line (the text blue in dark) on the left of a selected table row', () => {
     const table = system.sva(system.getSlotRecipe('table'))
     expect(text(table().row)).toContain('inset 2px 0 0 var(--chakra-colors-accent-line)')
+  })
+
+  it('outlines the highlight card and a dragged-over drop zone with the accent line', () => {
+    const card = system.sva(system.getSlotRecipe('card'))
+    expect(layer(card({ variant: 'highlight' }).root)).toMatchObject({
+      borderColor: 'var(--chakra-colors-accent-line)',
+    })
+    expect(text(card({ variant: 'dropzone' }).root)).toContain('var(--chakra-colors-accent-line)')
   })
 
   it('underlines the current tab in ink and makes the line look the default', () => {

@@ -1,5 +1,6 @@
 import { defineRecipe, defineSlotRecipe, defineStyle } from '@chakra-ui/react'
 import { switchAnatomy } from '@chakra-ui/react/anatomy'
+import { solidEdge } from './solidEdge'
 
 // The ring replaces the border, so every field state is drawn through `boxShadow` and the focus outline.
 const baseStyle = defineStyle({
@@ -18,7 +19,8 @@ export const field = defineStyle({
   borderWidth: '[0]',
   boxShadow: 'shadow.field',
   focusVisibleRing: 'outside',
-  focusRingColor: 'colorPalette.solid',
+  // The ring slot, not `solid`: a pale brand fill would vanish on the page, the ring keeps 3:1. In dark the text step.
+  focusRingColor: 'colorPalette.focusRing',
   _dark: { focusRingColor: 'colorPalette.fg' },
   _readOnly: { bg: 'bg.muted' },
   _invalid: {
@@ -111,7 +113,8 @@ export const textarea = defineRecipe({
 })
 
 // 36 by 20 with a 2px gutter, square-ish corners (not a pill) and a white thumb. The thumb colours come from
-// `switch.thumb*`; off, the track has an inset line so it reads on a white page.
+// `switch.thumb*`; off, the track has an inset line so it reads on a white page, and on, the fill's own edge when it is
+// too pale for the page (`solid.edge`).
 export const switchRecipe = defineSlotRecipe({
   slots: switchAnatomy.keys(),
   variants: {
@@ -122,7 +125,7 @@ export const switchRecipe = defineSlotRecipe({
           p: '0.5',
           bg: 'bg.emphasized',
           boxShadow: '[inset 0 0 0 {borderWidths.hairline} {colors.border.emphasized}]',
-          _checked: { bg: 'colorPalette.solid', boxShadow: '[none]' },
+          _checked: { bg: 'colorPalette.solid', boxShadow: solidEdge },
         },
         thumb: {
           bg: 'switch.thumb',

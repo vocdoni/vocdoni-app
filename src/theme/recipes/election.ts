@@ -10,6 +10,7 @@ import {
   votedAnatomy,
   voteWeightAnatomy,
 } from '~theme/react-components/anatomy/election'
+import { chosenEdge, solidEdge } from './solidEdge'
 
 export const ElectionDescription = defineRecipe({
   base: {
@@ -208,6 +209,8 @@ export const QuestionChoice = defineSlotRecipe({
       '& [data-choice-control]': {
         flexShrink: 0,
       },
+      // The chosen radio's disc (react-components/election.tsx), edged when the colour is too pale for the page.
+      '&[data-state="checked"] [data-choice-mark]': { boxShadow: solidEdge },
     },
 
     skeleton: {
@@ -263,10 +266,14 @@ export const QuestionChoice = defineSlotRecipe({
           transition:
             '[border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease]',
           bg: 'bg.panel',
-          // A second 1px ring of the border's colour: the choice reads 2px without moving the layout.
+          // A second 1px ring of the border's colour: the choice reads 2px without moving the layout. Outside it, the
+          // hairline a colour too pale for the page draws (`solid.edge`, transparent otherwise).
           '&[data-state="checked"]': {
             borderColor: 'colorPalette.solid',
-            boxShadow: '[0 0 0 1px {colors.colorPalette.solid}]',
+            boxShadow: chosenEdge(
+              ['0 0 0 {borderWidths.hairline} {colors.colorPalette.solid}'],
+              '{borderWidths.thick}'
+            ),
             bg: 'accent.subtle',
             // A line, so in dark the text blue, as the guide draws the chosen option.
             _dark: { borderColor: 'colorPalette.fg', boxShadow: '[0 0 0 1px {colors.colorPalette.fg}]' },
@@ -282,6 +289,7 @@ export const QuestionChoice = defineSlotRecipe({
               borderColor: 'colorPalette.solid',
               bg: 'colorPalette.solid',
               color: 'accent.contrast',
+              boxShadow: solidEdge,
             },
           },
           '&:has(input:focus-visible)': {

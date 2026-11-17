@@ -60,6 +60,17 @@ describe('button', () => {
     expect(solid.background).toBe('var(--chakra-colors-color-palette-solid)')
   })
 
+  // `solid.edge` is the control line for a fill too pale for the page and transparent otherwise (Fil's blue); a
+  // palette without the slot (gray, danger) falls back to no edge.
+  it('edges the primary inside its fill, and not once it is greyed out', () => {
+    const solid = layer(button({ variant: 'solid' })) as Record<string, any>
+    expect(solid.boxShadow).toBe(
+      'inset 0 0 0 var(--chakra-border-widths-hairline) var(--chakra-colors-color-palette-solid-edge, transparent)'
+    )
+    const disabled = solid['&:is(:disabled, [disabled], [data-disabled], [aria-disabled=true])']
+    expect(disabled['&:not([data-loading])'].boxShadow).toBe('none')
+  })
+
   it('keeps the loading secondary ringed and inked', () => {
     const outline = layer(button({ variant: 'outline' })) as Record<string, any>
     const disabled = outline['&:is(:disabled, [disabled], [data-disabled], [aria-disabled=true])']
@@ -92,6 +103,13 @@ describe('input and textarea', () => {
     }
   })
 
+  // The ring slot keeps 3:1 on the page; a pale organisation colour's fill would not.
+  it('draws the focus ring in the palette ring colour, not its fill', () => {
+    const styles = JSON.stringify(layer(input({})))
+    expect(styles).toContain('var(--chakra-colors-color-palette-focus-ring)')
+    expect(styles).not.toContain('color-palette-solid')
+  })
+
   it('keeps the inline variant flat', () => {
     expect(layer(input({ variant: 'inline' })).boxShadow).toBe('none')
   })
@@ -115,6 +133,17 @@ describe('checkbox, radio and switch', () => {
   it('draw the unchecked outline in border.strong', () => {
     expect(checkboxStyles.variants?.variant?.solid?.control).toMatchObject({ borderColor: 'border.strong' })
     expect(radioStyles.variants?.variant?.solid?.itemControl).toMatchObject({ borderColor: 'border.strong' })
+  })
+
+  it('edge the checked box, the checked ring and the checked track when the colour needs it', () => {
+    const edge = 'var(--chakra-colors-color-palette-solid-edge, transparent)'
+    const inner = `inset 0 0 0 {borderWidths.hairline} ${edge}`
+    const checkbox = checkboxStyles.variants?.variant?.solid?.control as Record<string, Record<string, unknown>>
+    expect(checkbox['&:is([data-state=checked], [data-state=indeterminate])'].boxShadow).toBe(`[${inner}]`)
+    const radio = radioStyles.variants?.variant?.solid?.itemControl as Record<string, Record<string, unknown>>
+    expect(radio._checked.boxShadow).toBe(`[0 0 0 {borderWidths.hairline} ${edge}, ${inner}]`)
+    const track = system.getSlotRecipe('switch').variants?.variant?.solid?.control as Record<string, any>
+    expect(track._checked.boxShadow).toBe(`[${inner}]`)
   })
 
   it('draws the switch track as a 36 by 20 box, not a pill', () => {

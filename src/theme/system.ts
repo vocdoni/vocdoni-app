@@ -103,9 +103,9 @@ export const createAppSystem = (primaryColor?: string) => {
     contrast: { value: `{colors.${palette}.contrast}` },
     border: { value: `{colors.${palette}.border}` },
     subtle: { value: `{colors.${palette}.subtle}` },
-    // The accent as a line or edge (a selected row, an outlined notice, a drop target): the fill in light, the
-    // lighter text blue in dark, where the fill is too dark against the page.
-    line: { value: { _light: '{colors.accent.solid}', _dark: '{colors.accent.fg}' } },
+    // The accent as a line or edge (a selected row, an outlined notice, a drop target): the line step in light (the
+    // fill itself unless an organisation colour is too pale for 3:1 on the page), the lighter text blue in dark.
+    line: { value: { _light: '{colors.accent.border}', _dark: '{colors.accent.fg}' } },
   }
 
   const appSystem = createSystem(defaultConfig, {
