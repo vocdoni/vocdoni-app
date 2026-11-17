@@ -184,7 +184,7 @@ describe('VoteHeader', () => {
       expect(actions()).toEqual(['End the vote'])
     })
 
-    it('reads a vote whose questions are all closed as closed, with Show the results (R22)', () => {
+    it('reads a vote whose questions are all closed as closed, with Show the results', () => {
       renderHeader(
         byQuestion([question('q1', 'ENDED'), question('q2', 'ONGOING', { endedAt: '2026-03-10T11:00:00Z' })])
       )

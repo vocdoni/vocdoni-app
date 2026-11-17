@@ -45,7 +45,7 @@ export const Routes = {
     processResults: '/admin/process/:id/results',
     processes: {
       base: '/admin/processes',
-      // One static path per filter of the votes list (spec A, audit F13), so none can shadow `create`.
+      // One static path per filter of the votes list, so none can shadow `create`.
       all: '/admin/processes/all/:page?',
       live: '/admin/processes/live/:page?',
       ready: '/admin/processes/ready/:page?',

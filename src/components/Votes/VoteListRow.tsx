@@ -112,7 +112,7 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
     text(process.title) || (isDraft ? t('drafts.not_defined', { defaultValue: 'Not defined yet' }) : process.id)
   const closedOn = state === 'closed' || state === 'canceled' ? shortDate(resolveEndDate(process)) : ''
 
-  // Every row keeps its secondary actions in one "More" menu at every width (owner ruling): duplicate, and delete
+  // Every row keeps its secondary actions in one "More" menu at every width: duplicate, and delete
   // last for a draft.
   const items: ResponsiveMenuItem[] = [
     ...(canDuplicate

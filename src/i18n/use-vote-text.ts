@@ -26,7 +26,7 @@ export const useVoteText = () => {
   const text = (value: LocalizedInput | undefined) =>
     typeof value === 'string' ? value : getLocalizedRawText(value, i18n.language)
 
-  // Intl, because Catalan needs "9 d'abril", which no date-fns pattern gives (audit F6).
+  // Intl, because Catalan needs "9 d'abril", which no date-fns pattern gives.
   const formatDate = (date: Date | string | undefined, options: Intl.DateTimeFormatOptions) => {
     const value = date ? new Date(date) : undefined
     return value && !isNaN(value.getTime()) ? new Intl.DateTimeFormat(i18n.language, options).format(value) : ''

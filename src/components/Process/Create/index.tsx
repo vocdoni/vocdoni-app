@@ -609,7 +609,7 @@ export const useFormToVotingProcessRequest = () => {
       census: disableAnonymousVoting ? { ...censusSpec, anonymous: undefined } : censusSpec,
       questions,
       // Sent on create and on every update: the draft PUT replaces everything and an absent `initialStatus`
-      // resets the mode (audit F9). The flag only hides the switch.
+      // resets the mode. The flag only hides the switch.
       ...(form.votingMode === 'byQuestion' ? { initialStatus: 'PAUSED' as const } : {}),
     }
   }

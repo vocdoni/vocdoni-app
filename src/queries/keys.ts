@@ -33,7 +33,7 @@ export const QueryKeys = {
     membersImportProgress: (address?: string, jobID?: string) =>
       ['organizations', 'members', address, 'importJobProgress', jobID].filter(Boolean),
     drafts: (address?: string) => ['organizations', 'drafts', address].filter(Boolean),
-    // Every process of the organization, drafts included (the votes list loads them all, audit F2).
+    // Every process of the organization, drafts included (the votes list loads them all).
     votes: (address?: string) => ['organizations', 'votes', address ?? null],
     // Prefix of every votes list key: what a publish, a draft save or a status change invalidates.
     votesAll: ['organizations', 'votes'],

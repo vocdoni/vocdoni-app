@@ -7,7 +7,7 @@ import {
 } from '@vocdoni/ballot'
 
 /**
- * A question's result in a few words (audit F10). There is no approval semantic, so the most voted choice is the
+ * A question's result in a few words. There is no approval semantic, so the most voted choice is the
  * outcome. `votes` are voters on a plain census and summed weight on a weighted one.
  * - `pair`: single choice with exactly two choices on an unweighted census ("198 to 7")
  * - `winner`: any other single choice ("X wins with N votes")
