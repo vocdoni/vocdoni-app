@@ -1916,12 +1916,22 @@
     "downloads": {
       "csv": {
         "action": "Baixa els resultats en CSV",
-        "note": "Els vots de cada opció, pregunta per pregunta.",
+        "answered": "Persones que han respost",
+        "census": "Cens",
+        "method": "Mètode",
+        "note": "El resultat de cada opció, pregunta per pregunta.",
         "number": "Número de pregunta",
         "option": "Opció",
         "question": "Pregunta",
+        "result": "Resultat",
+        "share": "Percentatge (%)",
         "title": "Resultats en CSV",
-        "votes": "Vots"
+        "unit": {
+          "header": "Unitat",
+          "points": "punts",
+          "votes": "vots",
+          "weight": "pes"
+        }
       },
       "pdf": {
         "action": "Baixa l'informe final en PDF",

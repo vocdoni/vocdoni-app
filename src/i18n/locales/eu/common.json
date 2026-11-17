@@ -1869,12 +1869,22 @@
     "downloads": {
       "csv": {
         "action": "Deskargatu emaitzak CSV formatuan",
-        "note": "Aukera bakoitzaren botoak, galderaz galdera.",
+        "answered": "Erantzun duten pertsonak",
+        "census": "Erroldea",
+        "method": "Metodoa",
+        "note": "Aukera bakoitzaren emaitza, galderaz galdera.",
         "number": "Galdera-zenbakia",
         "option": "Aukera",
         "question": "Galdera",
+        "result": "Emaitza",
+        "share": "Ehunekoa (%)",
         "title": "Emaitzak CSV formatuan",
-        "votes": "Botoak"
+        "unit": {
+          "header": "Unitatea",
+          "points": "puntuak",
+          "votes": "botoak",
+          "weight": "pisua"
+        }
       },
       "pdf": {
         "action": "Deskargatu azken txostena PDF formatuan",

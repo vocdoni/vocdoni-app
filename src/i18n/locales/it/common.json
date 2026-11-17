@@ -1916,12 +1916,22 @@
     "downloads": {
       "csv": {
         "action": "Scarica i risultati in CSV",
-        "note": "I voti di ogni opzione, domanda per domanda.",
+        "answered": "Persone che hanno risposto",
+        "census": "Censimento",
+        "method": "Metodo",
+        "note": "Il risultato di ogni opzione, domanda per domanda.",
         "number": "Numero della domanda",
         "option": "Opzione",
         "question": "Domanda",
+        "result": "Risultato",
+        "share": "Percentuale (%)",
         "title": "Risultati in CSV",
-        "votes": "Voti"
+        "unit": {
+          "header": "Unità",
+          "points": "punti",
+          "votes": "voti",
+          "weight": "peso"
+        }
       },
       "pdf": {
         "action": "Scarica il rapporto finale in PDF",

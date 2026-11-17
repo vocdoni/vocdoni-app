@@ -1,6 +1,5 @@
 import { Box, Button, Card, Flex, Icon, Text } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
-import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -10,7 +9,7 @@ import {
 import { useVoteText } from '~i18n/use-vote-text'
 import { DownloadFileIcon } from '~theme/icons'
 import { downloadTextFile, toCsv } from '~utils/csv'
-import { tallyOf } from '~utils/question-tally'
+import { questionTallies, resultsCsvRows } from './results-csv'
 import { SummaryCardHeader } from './SummaryCardHeader'
 import type { SummaryModel } from './use-summary-model'
 
@@ -44,37 +43,14 @@ export const SummaryDownloads = ({ model, desktop }: { model: SummaryModel; desk
 
   if (state !== 'closed') return null
 
-  // The served tally wins over the one the process read carries, as on the questions card.
-  const served = new Map((results?.questions ?? []).map((entry) => [entry.questionId, entry]))
-  const tallies = election.questions.map((question: VotingProcessQuestion) => {
-    const entry = served.get(question.id)
-    return tallyOf(question, entry?.results?.length ? { ...question.results, ...entry } : question.results)
-  })
-  const hasTally = tallies.some(Boolean)
+  const hasTally = questionTallies(election, results).some(({ tally }) => tally)
 
-  const downloadCsv = () => {
-    const rows: (string | number)[][] = [
-      [
-        t('votes.downloads.csv.number', { defaultValue: 'Question number' }),
-        t('votes.downloads.csv.question', { defaultValue: 'Question' }),
-        t('votes.downloads.csv.option', { defaultValue: 'Option' }),
-        // A ranked or budget question counts points and a weighted census sums weights: the figure the page shows.
-        t('votes.downloads.csv.votes', { defaultValue: 'Votes' }),
-      ],
-    ]
-    election.questions.forEach((question, index) => {
-      for (const entry of tallies[index] ?? []) {
-        const choice = question.choices.find((candidate) => candidate.value === entry.value)
-        rows.push([
-          index + 1,
-          text(question.title),
-          choice ? text(choice.title) : t('votes.manage.abstention', { defaultValue: 'Abstention' }),
-          entry.votes,
-        ])
-      }
-    })
-    downloadTextFile(`${fileName(text(election.title)) || 'results'}-${election.id}.csv`, toCsv(rows), 'text/csv')
-  }
+  const downloadCsv = () =>
+    downloadTextFile(
+      `${fileName(text(election.title)) || 'results'}-${election.id}.csv`,
+      toCsv(resultsCsvRows(election, results, t, text)),
+      'text/csv'
+    )
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
@@ -87,7 +63,7 @@ export const SummaryDownloads = ({ model, desktop }: { model: SummaryModel; desk
         title={t('votes.downloads.csv.title', { defaultValue: 'Results in CSV' })}
         note={
           hasTally
-            ? t('votes.downloads.csv.note', { defaultValue: 'The votes of each option, question by question.' })
+            ? t('votes.downloads.csv.note', { defaultValue: 'The result of each option, question by question.' })
             : pendingResultsHint(t)
         }
         action={

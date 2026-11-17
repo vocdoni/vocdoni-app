@@ -1,11 +1,10 @@
 import { Grid, Progress, Span, Stack, Text } from '@chakra-ui/react'
 import type { QuestionResults, VotingProcessQuestion } from '@vocdoni/api-types'
-import { BallotType, tryInferQuestionBallotType } from '@vocdoni/ballot'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
 import { quantity } from '~utils/numbers'
-import { tallyOf, type Tally } from '~utils/question-tally'
+import { tallyBase, tallyOf, tallyUnit, type Tally } from '~utils/question-tally'
 import { questionOutcome } from '~utils/vote-outcome'
 
 export type QuestionResultBarsProps = {
@@ -22,10 +21,6 @@ export type QuestionResultBarsProps = {
    */
   layout?: 'indented' | 'plain'
 }
-
-// Ranked and budget tallies count points; a quadratic one counts several votes per voter.
-const POINTS: ReadonlySet<BallotType> = new Set([BallotType.Ranked, BallotType.Budget])
-const SHARE_OF_TOTAL: ReadonlySet<BallotType> = new Set([...POINTS, BallotType.Quadratic])
 
 /**
  * One bar per choice of a question: the choice, its votes and their share, and a 6px bar under them. The `indented`
@@ -48,10 +43,8 @@ export const QuestionResultBars = ({
   }, [final, layout, question, results, weighted])
   if (!tally) return null
 
-  const type = tryInferQuestionBallotType(question)
   // A weighted or point-based tally is not one entry per voter: its share is of the total.
-  const total = tally.reduce((sum, entry) => sum + entry.votes, 0)
-  const base = weighted || (type && SHARE_OF_TOTAL.has(type)) ? total : results?.voteCount || total
+  const base = tallyBase(question, results, tally, weighted)
   const choiceTitle = (entry: Tally) => {
     const choice = question.choices.find((candidate) => candidate.value === entry.value)
     return choice ? text(choice.title) : t('votes.manage.abstention', { defaultValue: 'Abstention' })
@@ -59,7 +52,7 @@ export const QuestionResultBars = ({
   const percentOf = (entry: Tally) => (base > 0 ? Math.round((entry.votes / base) * 100) : 0)
 
   if (layout === 'plain') {
-    const points = !!type && POINTS.has(type)
+    const points = tallyUnit(question, weighted) === 'points'
     const top = Math.max(...tally.map((entry) => entry.votes))
     return (
       <Stack gap='2'>

@@ -1916,12 +1916,22 @@
     "downloads": {
       "csv": {
         "action": "Télécharger les résultats en CSV",
-        "note": "Les votes de chaque option, question par question.",
+        "answered": "Personnes ayant répondu",
+        "census": "Liste électorale",
+        "method": "Méthode",
+        "note": "Le résultat de chaque option, question par question.",
         "number": "Numéro de question",
         "option": "Option",
         "question": "Question",
+        "result": "Résultat",
+        "share": "Part (%)",
         "title": "Résultats en CSV",
-        "votes": "Votes"
+        "unit": {
+          "header": "Unité",
+          "points": "points",
+          "votes": "votes",
+          "weight": "poids"
+        }
       },
       "pdf": {
         "action": "Télécharger le rapport final en PDF",

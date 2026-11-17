@@ -1869,12 +1869,22 @@
     "downloads": {
       "csv": {
         "action": "Download the results in CSV",
-        "note": "The votes of each option, question by question.",
+        "answered": "People who answered",
+        "census": "Census",
+        "method": "Method",
+        "note": "The result of each option, question by question.",
         "number": "Question number",
         "option": "Option",
         "question": "Question",
+        "result": "Result",
+        "share": "Share (%)",
         "title": "Results in CSV",
-        "votes": "Votes"
+        "unit": {
+          "header": "Unit",
+          "points": "points",
+          "votes": "votes",
+          "weight": "weight"
+        }
       },
       "pdf": {
         "action": "Download the final report in PDF",

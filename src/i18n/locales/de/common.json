@@ -1869,12 +1869,22 @@
     "downloads": {
       "csv": {
         "action": "Ergebnisse als CSV herunterladen",
-        "note": "Die Stimmen jeder Option, Frage für Frage.",
+        "answered": "Personen, die geantwortet haben",
+        "census": "Teilnehmerliste",
+        "method": "Methode",
+        "note": "Das Ergebnis jeder Option, Frage für Frage.",
         "number": "Fragenummer",
         "option": "Option",
         "question": "Frage",
+        "result": "Ergebnis",
+        "share": "Anteil (%)",
         "title": "Ergebnisse als CSV",
-        "votes": "Stimmen"
+        "unit": {
+          "header": "Einheit",
+          "points": "Punkte",
+          "votes": "Stimmen",
+          "weight": "Gewicht"
+        }
       },
       "pdf": {
         "action": "Abschlussbericht als PDF herunterladen",

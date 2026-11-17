@@ -1,5 +1,5 @@
 import type { QuestionResults, VotingProcessQuestion } from '@vocdoni/api-types'
-import { decodeQuestionResults, tryInferQuestionBallotType } from '@vocdoni/ballot'
+import { BallotType, decodeQuestionResults, tryInferQuestionBallotType } from '@vocdoni/ballot'
 
 export type Tally = { key: string; value?: number; votes: number }
 
@@ -22,4 +22,32 @@ export const tallyOf = (question: VotingProcessQuestion, results?: QuestionResul
   } catch {
     return null
   }
+}
+
+// Ranked and budget tallies count points; a quadratic one counts several votes per voter.
+const POINTS: ReadonlySet<BallotType> = new Set([BallotType.Ranked, BallotType.Budget])
+const SHARE_OF_TOTAL: ReadonlySet<BallotType> = new Set([...POINTS, BallotType.Quadratic])
+
+/** What a tally's figures count: points (ranked, budget), summed weights (a weighted census) or votes. */
+export type TallyUnit = 'votes' | 'points' | 'weight'
+
+export const tallyUnit = (question: VotingProcessQuestion, weighted: boolean): TallyUnit => {
+  const type = tryInferQuestionBallotType(question)
+  if (type && POINTS.has(type)) return 'points'
+  return weighted ? 'weight' : 'votes'
+}
+
+/**
+ * What a choice's share is taken of: the people who answered, or the tally's total where a figure is not one per
+ * voter (points, several votes per voter, weights).
+ */
+export const tallyBase = (
+  question: VotingProcessQuestion,
+  results: QuestionResults | undefined,
+  tally: Tally[],
+  weighted: boolean
+): number => {
+  const type = tryInferQuestionBallotType(question)
+  const total = tally.reduce((sum, entry) => sum + entry.votes, 0)
+  return weighted || (type && SHARE_OF_TOTAL.has(type)) ? total : results?.voteCount || total
 }
