@@ -174,6 +174,8 @@ describe('VotesPage', () => {
     expect(within(legend).getAllByRole('listitem')).toHaveLength(4)
     for (const state of ['Draft', 'Ready', 'Live', 'Closed'])
       expect(within(legend).getByText(state)).toBeInTheDocument()
+    // The hint beside the title is no desktop-only text: it is drawn at every width.
+    expect(within(legend).getByText('Each vote shows here with its state.')).not.toHaveStyle({ display: 'none' })
   })
 
   it('says so when no vote matches', async () => {

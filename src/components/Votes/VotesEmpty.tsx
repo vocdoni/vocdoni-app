@@ -31,12 +31,19 @@ const StateLegend = () => {
 
   return (
     <Card.Root variant='note' as='section' aria-label={title} p='0'>
-      <Flex align='baseline' gap='2.5' pt={{ base: '3.5', lg: 'row.head' }} pb='3' px={{ base: '4', md: 'card' }}>
+      <Flex
+        align='baseline'
+        wrap='wrap'
+        columnGap='2.5'
+        rowGap='0.5'
+        pt={{ base: '3.5', lg: 'row.head' }}
+        pb='3'
+        px={{ base: '4', md: 'card' }}
+      >
         <Text as='h2' textStyle='section-title'>
           {title}
         </Text>
-        {/* The phone and tablet boards drop the hint. */}
-        <Text textStyle='body-sm' color='fg.subtle' display={{ base: 'none', lg: 'block' }}>
+        <Text textStyle='body-sm' color='fg.subtle'>
           {t('votes.empty.legend_hint', { defaultValue: 'Each vote shows here with its state.' })}
         </Text>
       </Flex>
