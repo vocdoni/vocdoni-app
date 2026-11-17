@@ -4,6 +4,7 @@ import { PAGE_BACKGROUNDS } from './colors'
 import { contrastRatio, PALETTE_SLOTS } from './palette'
 import { DashboardContents as dashboardContents } from './recipes/dashboard'
 import { dragHandle } from './recipes/dragHandle'
+import { ConfirmModal } from './recipes/confirmModal'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import { createAppSystem, getAppSystem, system } from './system'
@@ -105,7 +106,13 @@ const KNOWN_INVALID = new Set<string>()
 
 const confirmedInvalid = new Set<string>()
 
-const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes, dragHandle, dashboardContents }
+const ALL_RECIPES: Record<string, unknown> = {
+  ...recipes,
+  ...slotRecipes,
+  dragHandle,
+  dashboardContents,
+  confirmModal: ConfirmModal,
+}
 
 const isTokenPath = (value: string) => /^[a-zA-Z][\w-]*(\.[\w-]+)+$/.test(value)
 

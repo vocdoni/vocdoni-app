@@ -32,7 +32,7 @@ export const AccountEdit = () => {
       </DashboardBox>
       <ConfirmDialog
         layout='compact'
-        destructive={false}
+        tone='primary'
         size='md'
         open={isOpen}
         onOpenChange={({ open }) => setOpen(open)}
