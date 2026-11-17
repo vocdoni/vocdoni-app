@@ -47,8 +47,9 @@ export const ProcessView = () => {
   return (
     <ActionsProvider>
       <DashboardContents rhythm='board'>
-        {/* Header to tabs as the boards: 20px on a phone, 24px on a tablet, 18px on the desktop. */}
-        <Stack gap={{ base: '5', md: '6', lg: '4.5' }}>
+        {/* Header to tabs as the boards: 20px on a phone, 24px on a tablet, 18px on the desktop. On a very wide
+            screen the page keeps a readable width and sits centred, as the votes list does (board V4VotesWide). */}
+        <Stack gap={{ base: '5', md: '6', lg: '4.5' }} w='full' maxW='content.medium' mx={{ '2xl': 'auto' }}>
           <VoteHeader />
           <VoteTabs tabs={tabs} value={value} withNotice={value === summary} />
         </Stack>

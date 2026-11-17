@@ -215,8 +215,9 @@ export const VotesPage = () => {
   const showToolbar = loading || !!error || rows.length > 0
 
   return (
-    // The header stands apart from the list; the toolbar and the list keep together.
-    <Stack gap={{ base: '5', md: '6', lg: '8' }} maxW='content.list'>
+    // The header stands apart from the list; the toolbar and the list keep together. On a very wide screen the
+    // column keeps its width and sits centred in the page (board V4VotesWide).
+    <Stack gap={{ base: '5', md: '6', lg: '8' }} w='full' maxW='content.list' mx={{ '2xl': 'auto' }}>
       {/* Centred on a phone and a tablet; from `lg` the button lines up with the title's bottom edge, as the board. */}
       <Flex justify='space-between' align={{ base: 'center', lg: 'flex-end' }} gap={{ base: '3', lg: '4' }}>
         <PageTitle>{t('votes.list.title', { defaultValue: 'Votes' })}</PageTitle>
