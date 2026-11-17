@@ -31,6 +31,17 @@ export const B_QBQ_CANCELED = '650000000000000000000c12'
 export const BRAND_ORG = '0xb2a4d000000000000000000000000000000f00d1'
 export const P_BRANDED = '650000000000000000000f01'
 export const P_BRAND_OFF = '650000000000000000000f02'
+// The voter page's states (spec AC3), reached by id only: see "voter flow votes" below.
+export const V_LIVE = '650000000000000000001001'
+export const V_SECRET = '650000000000000000001002'
+export const V_2FA = '650000000000000000001003'
+export const V_WEIGHTED = '650000000000000000001004'
+export const V_VOTED = '650000000000000000001005'
+export const V_NOT_IN = '650000000000000000001006'
+export const V_CHECKING = '650000000000000000001007'
+export const V_PAUSED = '650000000000000000001008'
+/** The member number the voter votes' auth-only censuses answer; any other one is not in the census. */
+export const VOTER_MEMBER = 'A-1001'
 export const FAKE_TOKEN = 'fake-local-token'
 export const TOKEN_EXPIRY = '2031-01-01T00:00:00.000Z'
 
@@ -595,6 +606,72 @@ const brandVote = (id, addOns) => ({
 })
 PROCESSES.push(brandVote(P_BRANDED, { branding: true }), brandVote(P_BRAND_OFF))
 
+// ---- voter flow votes ---------------------------------------------------------------------
+// The voter page's states with the boards' questions (V4VoterWide 4 to 6): one choice, two of four people with a blank
+// vote, and a ranking. Dated far from FIXED_NOW, as the main votes, so the server's real clock and the browser's
+// frozen one agree. The censuses ask for the member number only, except the 2FA one.
+const VOTER_CENSUS = { ...BOARD_CENSUS, authFields: ['memberNumber'], twoFaFields: [] }
+const pickSlot = (choices, max) => ({
+  type: 'multichoice',
+  typeSetup: { maxChoices: max, minChoices: 0, uniqueChoices: false },
+  // Room for the abstain values, so a blank vote can be cast.
+  ballotProtocol: { ...ballot(choices), maxCount: max, maxValue: choices + max - 1, uniqueValues: true },
+})
+const VOTER_QUESTIONS = [
+  ['Aproves els comptes anuals de 2025?', ['Sí', 'No', 'Abstenció'], {}],
+  [
+    'Qui vols a les dues vocalies?',
+    ['Laia Puig Ferrer', 'Oriol Mas Costa', 'Núria Font Serra', 'Marc Serra Pons'],
+    pickSlot(4, 2),
+  ],
+  [
+    'Quina inversió va primer?',
+    ['Arreglar la teulada', 'Canviar la calefacció', "Rampa d'accés"],
+    {
+      type: undefined,
+      typeSetup: undefined,
+      metadata: { type: { name: 'ranked' } },
+      ballotProtocol: { ...ballot(3), maxCount: 3, maxValue: 2, uniqueValues: true },
+    },
+  ],
+]
+const voterVote = (id, { census = VOTER_CENSUS, secret = false, status = 'ONGOING' } = {}) =>
+  boardVote(id, 'Assemblea General Ordinària 2026', {
+    unlisted: true,
+    census,
+    startDate: '2026-06-08T07:00:00.000Z',
+    endDate: '2030-06-17T18:00:00.000Z',
+    questions: VOTER_QUESTIONS.map(([title, choices, shape], i) => ({
+      ...question(id, i + 1, title, choices, status, {
+        voteCount: 184,
+        maxVoters: 312,
+        finalResults: false,
+        results: [],
+      }),
+      id: boardQuestionId(id, i + 1),
+      description: ml(''),
+      // A secret question with no published keys: the SDK refuses the cast before signing (the failed review).
+      secretUntilTheEnd: secret,
+      ...shape,
+    })),
+  })
+PROCESSES.push(
+  voterVote(V_LIVE),
+  voterVote(V_SECRET, { secret: true }),
+  voterVote(V_2FA, { census: { ...VOTER_CENSUS, twoFaFields: ['email'] } }),
+  voterVote(V_WEIGHTED, { census: { ...VOTER_CENSUS, weighted: true } }),
+  voterVote(V_VOTED),
+  voterVote(V_NOT_IN),
+  voterVote(V_CHECKING),
+  voterVote(V_PAUSED, { status: 'PAUSED' })
+)
+/** V_LIVE paused by the organisation: what the page reads once it refetches (the paused mid-ballot capture). */
+export const VOTER_LIVE_PAUSED = voterVote(V_LIVE, { status: 'PAUSED' })
+/** A relay that never settles (the sending capture). */
+export const RELAY_PENDING = { jobId: 'job-relay', type: 'relay_votes', status: 'pending', result: { votes: [] } }
+/** A handler's answer that leaves the request open (the checking capture). */
+export const HANG = Symbol('hang')
+
 // The question-by-question vote paused as a whole: the pause memory the app keeps in this browser (vote-pause.ts).
 export const HELD_STORAGE = { [`votes.pause.held.${B_QBQ_HELD}`]: JSON.stringify([boardQuestionId(B_QBQ_HELD, 3)]) }
 
@@ -703,6 +780,19 @@ on('GET', '/organizations/[^/]+/censuses', () => ({
 on('GET', '/organizations/[^/]+/users', () => TEAM)
 on('GET', '/organizations/[^/]+/users/pending', () => PENDING)
 on('GET', '/jobs', () => ({ jobs: [], pagination: pagination(0) }))
+// The voter's relay (POST /votes): one outcome per vote of the last batch, all on chain. Before the generic job.
+let lastBatch = 0
+on('GET', '/jobs/job-relay', () => ({
+  jobId: 'job-relay',
+  type: 'relay_votes',
+  status: 'completed',
+  result: {
+    votes: Array.from({ length: lastBatch }, (_, i) => ({
+      status: 'completed',
+      voteID: hex64(String.fromCharCode(97 + i)),
+    })),
+  },
+}))
 // MOCK_SLOW_JOB_MS keeps a status change pending that long, to see the "still working" state.
 const SLOW_JOB_MS = Number(process.env.MOCK_SLOW_JOB_MS) || 0
 const statusJobs = new Map()
@@ -820,6 +910,69 @@ on('GET', '/processes/([0-9a-f]{24})/participants', () => ({
     questions: [{ questionId: 'q1', hasVoted: i !== 2 }],
   })),
 }))
+// The voter's CSP (auth, check, sign) and relay. An auth-only census knows VOTER_MEMBER only; a 2FA census sends a code
+// to any contact and takes any code. V_VOTED has voted every question, V_NOT_IN is not in the census and V_CHECKING
+// never answers the check.
+const processById = (id) => PROCESSES.find((x) => x.id === id)
+on('POST', '/processes/([0-9a-f]{24})/auth/0', (m, q, body) => {
+  const p = processById(m[1])
+  if (!p) return [404, { error: 'process not found', code: 404 }]
+  let member = {}
+  try {
+    member = JSON.parse(body || '{}')
+  } catch {}
+  const twoFactor = (p.census.twoFaFields ?? []).length > 0
+  if (!twoFactor && member.memberNumber !== VOTER_MEMBER) return [401, { error: 'participant not found', code: 40802 }]
+  return { authToken: `voter-${m[1]}`, ...(p.census.weighted ? { weight: '03' } : {}) }
+})
+on('POST', '/processes/([0-9a-f]{24})/auth/1', (m) => ({ authToken: `voter-${m[1]}` }))
+on('POST', '/processes/([0-9a-f]{24})/auth/resend', () => ({}))
+on('POST', '/processes/([0-9a-f]{24})/check', (m) => {
+  const p = processById(m[1])
+  if (!p) return [404, { error: 'process not found', code: 404 }]
+  if (m[1] === V_CHECKING) return HANG
+  const voted = m[1] === V_VOTED
+  return {
+    belongsToProcess: m[1] !== V_NOT_IN,
+    ...(p.census.weighted ? { weight: '03' } : {}),
+    questions: p.questions.map((qq) => ({
+      questionId: qq.id,
+      upstreamId: qq.upstreamId,
+      canVote: true,
+      hasVoted: voted,
+      hasSigned: voted,
+    })),
+  }
+})
+on('POST', '/processes/([0-9a-f]{24})/sign-info', (m) => {
+  const p = processById(m[1])
+  const consumed =
+    m[1] === V_VOTED
+      ? (p?.questions ?? []).map((qq, i) => ({ questionId: qq.id, nullifier: hex64(String(i + 1)) }))
+      : []
+  return { consumed }
+})
+on('POST', '/processes/([0-9a-f]{24})/sign-batch', (m, q, body) => {
+  let ballots = []
+  try {
+    ballots = JSON.parse(body || '{}').ballots ?? []
+  } catch {}
+  return {
+    signatures: ballots.map((ballot) => ({
+      upstreamId: ballot.upstreamId,
+      signature: `0x${'1b'.repeat(65)}`,
+      weight: '01',
+    })),
+  }
+})
+on('POST', '/votes', (m, q, body) => {
+  try {
+    lastBatch = (JSON.parse(body || '{}').votes ?? []).length
+  } catch {
+    lastBatch = 0
+  }
+  return { jobId: 'job-relay' }
+})
 on('GET', '/processes/([0-9a-f]{24})/questions/([^/]+)', (m) => {
   const p = PROCESSES.find((x) => x.id === m[1]) || PROCESSES[0]
   return p.questions.find((qq) => qq.id === m[2]) || p.questions[0]
@@ -867,6 +1020,7 @@ export const startMock = ({ port = MOCK_PORT, log = () => {} } = {}) =>
         let out
         if (r) {
           out = r.handler(p.match(r.re), url.searchParams, body)
+          if (out === HANG) return log(`${req.method} ${url.pathname}${url.search} -> (left open)`)
           if (Array.isArray(out) && typeof out[0] === 'number') [status, out] = out
         } else if (req.method === 'GET') {
           status = 404
@@ -888,7 +1042,12 @@ export const startMock = ({ port = MOCK_PORT, log = () => {} } = {}) =>
         server,
         unmatched,
         url: `http://${MOCK_HOST}:${port}`,
-        close: () => new Promise((done) => server.close(() => done())),
+        close: () =>
+          new Promise((done) => {
+            // A request left open (HANG) would keep the server from closing.
+            server.closeAllConnections?.()
+            server.close(() => done())
+          }),
       })
     )
   })

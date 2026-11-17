@@ -211,6 +211,23 @@ by hand: `MOCK_STATUS_BUSY=1` answers every status change with 503 (another chan
 `MOCK_SLOW_JOB_MS=150000` keeps a status job pending that long (the "still working" message after two minutes).
 The list endpoint pages by `page` and `limit` and, as the API, carries no per-question results.
 
+## Voter flow
+
+The `voter-*` routes render every screen of the voter page (spec AC3) with the boards' questions (`mock-saas.mjs`,
+"voter flow votes"). A state walks the flow from identify with three more step kinds: `['fill', selector, value]`
+types into a field, `['mock', pathname, body]` answers a mock path with that JSON from then on (in this page only) and
+`['refocus']` fires the page's focus event, so react-query refetches what is stale. The auth-only censuses accept the
+member number `A-1001`; any other number is a failed match. Run them at the boards' three widths, in Catalan to compare:
+
+```bash
+UI_SNAPSHOT_PORT=3009 pnpm ui:snapshot -- --label voter --viewports 1440,768,390 --modes light --lang ca \
+  --routes voter-live,voter-sending,voter-secret,voter-2fa,voter-weighted,voter-voted,voter-not-in,voter-checking,voter-upcoming,voter-closed,voter-paused,voter-canceled,voter-unsupported
+```
+
+`voter-checking` leaves the membership check unanswered on purpose: its capture waits out the settle timeouts (about
+30 s per width) and logs "network never idle". `paused-mid-ballot` pauses the vote in the browser's copy of the
+process read (`['mock', …]`) and refocuses the page.
+
 ## Known limits
 
 - **Mock data, no backend.** Screens show what the mock returns: one admin user, two organizations (the second, a cooperative with the branding add-on's logo and colour, only behind
