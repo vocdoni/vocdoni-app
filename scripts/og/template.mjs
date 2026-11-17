@@ -79,36 +79,36 @@ const h = (type, style = {}, children = [], extra = {}) => {
 
 const logo = (src, height) => h('img', { height }, [], { src, width: Math.round(height * LOGO_RATIO), height })
 
-// Width estimate used only when no measurer is given (mockups): Inter 500 averages ~0.46em per
-// character, Greek runs wider. `fitHeadline` below is what the generator uses.
-const estimateHeadlineSize = (text, maxWidth, { max, min } = HEADLINE_SIZES, lines = 2) => {
-  const perChar = /\p{Script=Greek}/u.test(text) ? 0.5 : 0.46
-  const longest = Math.max(...text.split(/\s+/).map((word) => word.length))
-  for (let size = max; size >= min; size -= 2) {
-    if (longest * 0.56 * size <= maxWidth && text.length * perChar * size <= maxWidth * lines * 0.9) return size
-  }
-  return min
-}
+// Shared with measure.mjs, which must lay the headline out exactly as the card does.
+export const headlineTextStyle = (size) => ({
+  fontSize: size,
+  fontWeight: 500,
+  lineHeight: 1.08,
+  letterSpacing: -(size * 0.025),
+})
 
 const splitSentences = (title) => title.split(/(?<=[.!?])\s+/)
 
-/**
- * Picks the largest size (56 down to 42, in steps of 2) at which the headline takes two lines in
- * the copy column, falling back to 46 on three lines when none does (Greek). A headline made of
- * short sentences breaks after each sentence when every sentence fits on one line at that size.
- * `countLines(text, size, width)` is the satori-backed measurer from measure.mjs.
- */
+// Largest size (56 to 42, step 2) that fits two lines in the copy column, else 46px on up to three
+// lines (throws beyond, failing og:generate). Up to three sentences break one per line when each fits.
+// `countLines` is the satori-backed measurer from measure.mjs.
 export const fitHeadline = async (title, countLines) => {
   const { max, min, fallback } = HEADLINE_SIZES
-  let size = fallback
+  let size
   for (let candidate = max; candidate >= min; candidate -= 2) {
     if ((await countLines(title, candidate, HEADLINE_WIDTH)) <= 2) {
       size = candidate
       break
     }
   }
+  if (size === undefined) {
+    size = fallback
+    if ((await countLines(title, size, HEADLINE_WIDTH)) > 3) {
+      throw new Error(`og.headline does not fit the card in 3 lines at ${size}px: "${title}"`)
+    }
+  }
   const sentences = splitSentences(title)
-  if (sentences.length > 1) {
+  if (sentences.length > 1 && sentences.length <= 3) {
     const fits = await Promise.all(sentences.map((sentence) => countLines(sentence, size, HEADLINE_WIDTH)))
     if (fits.every((lines) => lines === 1)) return { size, lines: sentences }
   }
@@ -203,32 +203,22 @@ const ballot = (t, voteLabel, width) =>
     ]
   )
 
-// Estimate-only sentence split for mockups; the generator passes measured lines instead.
-const estimateHeadlineLines = (title, maxWidth, size) => {
-  const sentences = splitSentences(title)
-  if (sentences.length < 2) return [title]
-  const perChar = /\p{Script=Greek}/u.test(title) ? 0.5 : 0.46
-  return sentences.every((sentence) => sentence.length * perChar * size <= maxWidth) ? sentences : [title]
-}
-
 const headline = (copy, t, maxWidth, fit) => {
-  const size = fit?.size ?? estimateHeadlineSize(copy.title, maxWidth)
-  const lines = fit?.lines ?? estimateHeadlineLines(copy.title, maxWidth, size)
-  const textStyle = { fontSize: size, fontWeight: 500, lineHeight: 1.08, letterSpacing: -(size * 0.025), color: t.fg }
+  const textStyle = { ...headlineTextStyle(fit.size), color: t.fg }
   return h('div', { display: 'flex', flexDirection: 'column', gap: 22, width: maxWidth }, [
     h(
       'div',
       { display: 'flex', flexDirection: 'column' },
-      lines.map((line) => h('div', textStyle, [line]))
+      fit.lines.map((line) => h('div', textStyle, [line]))
     ),
     h('div', { fontSize: 24, lineHeight: 1.4, color: t.muted, fontWeight: 400 }, [copy.tagline]),
   ])
 }
 
 /**
- * @param {{ title: string, tagline: string, vote: string }} copy localized strings
- * @param {{ logo: string, theme?: keyof typeof themes, headline?: { size: number, lines: string[] } }} options
- *   logo as a data URI; `headline` is the result of `fitHeadline` (measured), estimated when absent
+ * @param {{ tagline: string, vote: string }} copy localized strings
+ * @param {{ logo: string, theme?: keyof typeof themes, headline: { size: number, lines: string[] } }} options
+ *   logo as a data URI; `headline` is the result of `fitHeadline`
  */
 export const buildOpenGraphCard = (copy, { logo: logoSrc, theme = 'light', headline: fit }) => {
   const t = themes[theme]
