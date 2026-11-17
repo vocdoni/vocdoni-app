@@ -266,6 +266,11 @@ describe('VotesPage', () => {
     restore()
   })
 
+  it('falls back to the default page size for a limit that is not a number', () => {
+    renderPage('/admin/processes/all/1?limit=abc')
+    expect(articles()).toHaveLength(9)
+  })
+
   it('marks the list region with the current filter', () => {
     renderPage('/admin/processes/drafts/1')
     const section = screen.getByRole('region', { name: 'Drafts' })

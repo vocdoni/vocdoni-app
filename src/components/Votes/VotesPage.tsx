@@ -128,7 +128,8 @@ export const VotesPage = () => {
   }, [rows, filter, deferredSearch])
 
   const lastPage = Math.max(1, Math.ceil(visible.length / limit))
-  const currentPage = Math.min(Math.max(1, page), lastPage)
+  // A page that is not a whole number (`/abc`) reads as the first one instead of an empty frame.
+  const currentPage = Math.min(Math.max(1, Number.isInteger(page) ? page : 1), lastPage)
   const pageRows = useMemo(
     () => visible.slice((currentPage - 1) * limit, currentPage * limit),
     [visible, currentPage, limit]
