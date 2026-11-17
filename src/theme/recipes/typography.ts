@@ -98,13 +98,14 @@ export const link = defineRecipe({
         color: 'fg.subtle',
         _hover: { color: 'fg' },
       },
-      // The one action of a list row ("Continue", "Result"): touch-sized text and hit area up to `lg`, text alone
-      // from `lg`.
+      // The one action of a list row or card ("Continue", "Duplicate"): 15px text and a touch hit area up to `lg` (the
+      // touch boards keep 15px on a tablet too), text alone from `lg`.
       'row-action': {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '1',
-        textStyle: 'control-touch',
+        fontSize: { base: 'item', lg: 'control' },
+        lineHeight: 'moderate',
         _icon: { boxSize: { lg: 'icon.xs' } },
         whiteSpace: 'nowrap',
         minH: { base: 'control.touch', md: 'control.tablet', lg: 'auto' },

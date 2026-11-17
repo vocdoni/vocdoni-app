@@ -36,6 +36,14 @@ export const Tag = defineSlotRecipe({
       solid: outlined,
       outline: outlined,
       surface: outlined,
+      // What kind of thing it is (a question's ballot type on the organiser's ballot): the outlined word in the
+      // muted ink, a step darker than the other tags.
+      kind: {
+        root: {
+          ...outlined.root,
+          color: 'fg.muted',
+        },
+      },
       // Something proposed, not decided: dashed.
       proposal: {
         root: {

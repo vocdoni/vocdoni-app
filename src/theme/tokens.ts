@@ -155,6 +155,8 @@ const spacing = defineTokens.spacing({
   note: {
     DEFAULT: { value: '1px' },
     icon: { value: '7px' },
+    // A question's title to its note on the organiser's ballot (Papereta), from `lg`.
+    paper: { value: '3px' },
   },
   // Between a filter chip's label and its count.
   chip: { value: '7px' },
@@ -234,6 +236,22 @@ const sizes = defineTokens.sizes({
   facts: { value: '392px' },
   // A card's footer that holds a button (the idle card's).
   actionbar: { value: '60px' },
+  // An option's row on the organiser's ballot (Papereta): 42px from `md`, 48px on a phone.
+  option: {
+    DEFAULT: { value: '42px' },
+    touch: { value: '{sizes.12}' },
+  },
+  // The empty mark before an option on that ballot: a rank box and a points box (`wide`), larger below `lg`.
+  mark: {
+    box: {
+      DEFAULT: { value: '{sizes.6}' },
+      touch: { value: '26px' },
+    },
+    wide: {
+      DEFAULT: { value: '{sizes.9}' },
+      touch: { value: '38px' },
+    },
+  },
   // The share column of a result bar ("69%"), right-aligned.
   results: {
     share: { value: '38px' },

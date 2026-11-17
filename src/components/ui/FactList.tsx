@@ -11,10 +11,13 @@ export const FactList = ({
   ...props
 }: {
   facts: Fact[]
-  /** `rows` (label left, value right) everywhere, or `summary`: label over value in a grid below `lg`. */
-  layout?: 'rows' | 'summary'
+  /**
+   * `rows` (label left, value right) everywhere, `summary`: label over value in a grid below `lg`, or `ruled`: the
+   * rows of a card, each under a rule and padded to the card's edge.
+   */
+  layout?: 'rows' | 'summary' | 'ruled'
 } & Omit<DataListRootProps, 'variant' | 'orientation'>) => (
-  <DataList.Root orientation='horizontal' variant={layout === 'summary' ? 'summary' : 'facts'} {...props}>
+  <DataList.Root orientation='horizontal' variant={layout === 'rows' ? 'facts' : layout} {...props}>
     {facts.map((fact) => (
       <DataList.Item key={fact.id}>
         <DataList.ItemLabel>{fact.label}</DataList.ItemLabel>

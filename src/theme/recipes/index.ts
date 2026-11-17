@@ -2,6 +2,7 @@ import { defineRecipe, RecipeDefinition, SlotRecipeDefinition } from '@chakra-ui
 import { Alert } from './alert'
 import { Avatar } from './avatar'
 import { Badge, Code } from './badge'
+import { BallotPaper } from './ballotPaper'
 import { Button } from './button'
 import { Card } from './card'
 import { checkbox } from './checkbox'
@@ -74,6 +75,7 @@ export const recipes: Record<string, RecipeDefinition> = {
 export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   alert: Alert,
   avatar: Avatar,
+  ballotPaper: BallotPaper,
   card: Card,
   censusRuler: CensusRuler,
   checkbox,
