@@ -4,7 +4,7 @@ import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 const listItem = {
   root: {
     w: 'full',
-    bgColor: 'transparent',
+    bgColor: 'surface.card',
     border: '[{borderWidths.hairline} solid]',
     borderColor: 'border',
     p: '4',
@@ -29,7 +29,8 @@ const title = { textStyle: 'control', fontWeight: 'medium-plus' } as const
 
 // Cards are named by what they are for. Radius comes from Chakra's base (`l3`) unless a variant sets
 // its own; `size` sets `--card-padding`, which the variants that pad their root read.
-// The 1px border is the card's ring, so none of the variants adds a shadow.
+// The 1px border is the card's ring, so none of the variants adds a shadow. Every card paints its own fill: the
+// dashboard page is grey, so a card that left its background unset would vanish into it.
 export const Card = defineSlotRecipe({
   slots: cardAnatomy.keys(),
   base: {
@@ -59,10 +60,11 @@ export const Card = defineSlotRecipe({
           bg: 'surface.card',
         },
       },
-      // A bordered region of a page. Unfilled, so it shows whatever holds it; padded on the root, so its
-      // content goes straight in, without Card.Body.
+      // A bordered region of a page, padded on the root, so its content goes straight in, without Card.Body.
+      // Filled like every card, since the dashboard page behind it is grey.
       section: {
         root: {
+          bg: 'surface.card',
           borderWidth: 'hairline',
           borderColor: 'border',
           p: 'var(--card-padding)',
@@ -121,6 +123,7 @@ export const Card = defineSlotRecipe({
       // `data-dragging` while a file is over it.
       dropzone: {
         root: {
+          bg: 'surface.card',
           borderWidth: 'hairline',
           borderStyle: '[dashed]',
           borderColor: 'border.emphasized',
