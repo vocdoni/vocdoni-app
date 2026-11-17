@@ -31,7 +31,13 @@ import { DialogHeader } from '~components/ui/DialogHeader'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import { useCspAuth0 } from './basics'
 import { detectCertificateBrowser, readBrowserEnv } from './browser-support'
-import { hasPendingCertAuth, RETRYABLE_CERT_ERRORS, startCertAuth, STICKY_CERT_ERRORS } from './cert-auth'
+import {
+  hasPendingCertAuth,
+  PROCESS_CERT_ERRORS,
+  RETRYABLE_CERT_ERRORS,
+  startCertAuth,
+  STICKY_CERT_ERRORS,
+} from './cert-auth'
 import { useCspAuthContext, useOptionalCspAuthContext } from './CSPStepsProvider'
 import { getContactFieldLabel } from './fields'
 import { Step1Base } from './Step1'
@@ -339,7 +345,10 @@ export const CertAuthError = ({
   const { t } = useTranslation()
   const { organization } = useOrganization()
   const start = useStartCertAuth(navigate)
-  const sticky = (STICKY_CERT_ERRORS as readonly string[]).includes(code)
+  // a process-level code stays the same whatever certificate is chosen: no retry, no restart hint
+  const sticky =
+    (STICKY_CERT_ERRORS as readonly string[]).includes(code) &&
+    !(PROCESS_CERT_ERRORS as readonly string[]).includes(code)
   const retryable = (RETRYABLE_CERT_ERRORS as readonly string[]).includes(code)
   // an in-app browser has no certificate to offer: restarting it changes nothing
   const platform = code === 'no_certificate' ? inAppPlatform() : null

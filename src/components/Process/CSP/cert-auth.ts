@@ -32,6 +32,9 @@ export const STICKY_CERT_ERRORS = [
   'revocation_unknown',
 ] as const
 
+/** Sticky codes about the process or its census, not the certificate: no other attempt helps. */
+export const PROCESS_CERT_ERRORS = ['process_not_open', 'not_cert_census', 'anonymous_unavailable'] as const
+
 /** Error codes worth retrying as is, a bit later. */
 export const RETRYABLE_CERT_ERRORS = [
   'revocation_unavailable',

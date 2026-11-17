@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { act, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { certAuthStorageKey, RETRYABLE_CERT_ERRORS, STICKY_CERT_ERRORS } from './cert-auth'
+import { certAuthStorageKey, PROCESS_CERT_ERRORS, RETRYABLE_CERT_ERRORS, STICKY_CERT_ERRORS } from './cert-auth'
 import { CertAuthError } from './CertAuth'
 import { CspAuth, CspAuthSession } from './CSPAuthModal'
 
@@ -250,7 +250,15 @@ describe('certificate voter flow', () => {
     expect(auth0).not.toHaveBeenCalled()
   })
 
-  it.each(STICKY_CERT_ERRORS)(
+  it.each(PROCESS_CERT_ERRORS)('%s: offers no retry, since another certificate cannot help', (code) => {
+    useCensus([])
+    render(<CertAuthError code={code} navigate={vi.fn()} />, { appEnv })
+    expect(screen.getByText("This vote can't be accessed with a certificate right now.")).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/close every window of the browser/)).not.toBeInTheDocument()
+  })
+
+  it.each(STICKY_CERT_ERRORS.filter((code) => !(PROCESS_CERT_ERRORS as readonly string[]).includes(code)))(
     '%s: offers "Try again" on a new host, with restarting the browser only as a hint',
     async (code) => {
       useCensus([])
