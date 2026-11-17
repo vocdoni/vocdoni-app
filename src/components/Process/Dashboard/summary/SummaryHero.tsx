@@ -4,7 +4,6 @@ import { Trans, useTranslation } from 'react-i18next'
 import { CensusRuler } from '~components/ui/CensusRuler'
 import { FactList } from '~components/ui/FactList'
 import { ProcessStatus } from '~components/ui/ProcessStatus'
-import { useVoteText } from '~i18n/use-vote-text'
 import { InfoIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { useSummaryFacts } from './use-summary-facts'
@@ -18,20 +17,41 @@ const NARROW_COLUMNS = '[minmax(0, 3fr) minmax(0, 2fr)]'
 
 /**
  * The participation hero: the share that voted, how many of the census, the facts and the ruler. A phone stacks the
- * figure, the ruler and the facts; from `lg` the facts sit beside the figure and the ruler runs under both. A live or
- * paused all-at-once vote adds the deadline (or the pause) in a row under the ruler, from `lg`.
+ * figure, the ruler and the facts; from `lg` the facts sit beside the figure and the ruler runs under both. A closed
+ * all-at-once vote adds whether its results are final in a row under the ruler, from `lg` (a live or paused one says
+ * its deadline in the header).
  */
 export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
   const { t } = useTranslation()
-  const { dateAt, timeLeft } = useVoteText()
   const labelId = useId()
   const facts = useSummaryFacts(model, desktop)
-  const { byQuestion, state, count, total, percent, endDate, now } = model
-  // Before the start and once canceled, the touch board says where the vote stands in place of the figure.
-  const stateCard = !desktop && byQuestion && (state === 'ready' || state === 'canceled')
+  const { byQuestion, state, count, countUnknown, total, percent } = model
+  // Before the start (and once canceled, on touch screens) a question-by-question vote says where it stands in place
+  // of the figure.
+  const stateCard = byQuestion && (state === 'ready' || (!desktop && state === 'canceled'))
 
   let caption: ReactNode = null
-  if (total !== undefined) {
+  if (countUnknown) {
+    caption = t('votes.summary.count_unknown', { defaultValue: 'The turnout could not be loaded.' })
+  } else if (count === 0) {
+    caption =
+      state === 'closed'
+        ? t('votes.summary.nobody_voted', { defaultValue: 'Nobody voted.' })
+        : t('votes.summary.nobody_voted_yet', { defaultValue: 'Nobody has voted yet.' })
+  } else if (total === undefined) {
+    // No census size: the count alone, which is known.
+    caption = byQuestion
+      ? t('votes.summary.voted_any_count', {
+          defaultValue_one: 'At least {{count, number}} person voted on a question',
+          defaultValue_other: 'At least {{count, number}} people voted on a question',
+          count,
+        })
+      : t('votes.summary.voted_count', {
+          defaultValue_one: '{{count, number}} person voted',
+          defaultValue_other: '{{count, number}} people voted',
+          count,
+        })
+  } else {
     caption = byQuestion ? (
       // One line on a phone, two on the desktop board ("… voted / on a question").
       <Trans
@@ -49,6 +69,8 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
     )
   }
 
+  // The ruler needs a census to measure against, and a count to draw.
+  const ruler = !stateCard && !countUnknown && total !== undefined
   const rulerLabel = byQuestion
     ? t('votes.summary.ruler_label_any', {
         defaultValue: 'At least {{voted}} of {{total}} people voted on a question, {{percent}}%',
@@ -63,24 +85,14 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
         percent: percent ?? 0,
       })
 
+  // Only once the server has every question over: until then the tally may still change.
   let hint: string | null = null
-  if (!byQuestion) {
-    if (state === 'closed') {
-      // Only once the server has every question over: until then the tally may still change.
-      hint = model.election.questions.every((question) => isSettledQuestion(question))
-        ? t('votes.summary.idle.ended_final', {
-            defaultValue: 'The results are final and voters can already see them.',
-          })
-        : t('votes.summary.idle.ended_counting', { defaultValue: 'The final results are still being counted.' })
-    } else if (state === 'paused') {
-      hint = t('votes.summary.hint.paused', { defaultValue: 'Paused. Turnout will not move until you resume it.' })
-    } else {
-      hint = t('votes.summary.hint.closes', {
-        defaultValue: 'Closes {{date}}. {{left}}',
-        date: dateAt(endDate),
-        left: timeLeft(endDate, now) ?? '',
-      }).trim()
-    }
+  if (!byQuestion && state === 'closed') {
+    hint = model.election.questions.every((question) => isSettledQuestion(question))
+      ? t('votes.summary.idle.ended_final', {
+          defaultValue: 'The results are final and voters can already see them.',
+        })
+      : t('votes.summary.idle.ended_counting', { defaultValue: 'The final results are still being counted.' })
   }
 
   return (
@@ -88,7 +100,9 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
       <Grid
         templateColumns={{ base: 'minmax(0, 1fr)', lg: NARROW_COLUMNS, xl: SUMMARY_COLUMNS }}
         templateAreas={
-          stateCard ? '"figure" "facts"' : { base: '"figure" "bar" "facts"', lg: '"figure facts" "bar bar"' }
+          stateCard
+            ? { base: '"figure" "facts"', lg: '"figure facts"' }
+            : { base: '"figure" "bar" "facts"', lg: '"figure facts" "bar bar"' }
         }
         columnGap='8'
         rowGap={{ base: '4.5', md: 'card', lg: '0' }}
@@ -120,7 +134,8 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
             gridArea='figure'
             minW='0'
             justifyContent='space-between'
-            gap={{ base: '4.5', md: 'card', lg: '0' }}
+            // From `lg` the figure sits at the foot of the facts' column, never right under the label.
+            gap={{ base: '4.5', md: 'card', lg: '6' }}
           >
             {/* The header already names the vote's state: the card says what its figure is. */}
             <Stat.Label as='div' id={labelId}>
@@ -131,7 +146,7 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
               align={{ base: 'flex-start', md: 'flex-end' }}
               gap={{ base: '2.5', md: '4.5', lg: '5' }}
             >
-              {percent !== undefined && (
+              {percent !== undefined && !countUnknown && (
                 <Stat.ValueText as='div'>
                   {percent}
                   <Stat.ValueUnit>%</Stat.ValueUnit>
@@ -142,7 +157,7 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
           </Stat.Root>
         )}
         <FactList facts={facts} layout='summary' gridArea='facts' alignSelf='end' />
-        {!stateCard && (
+        {ruler && (
           <CensusRuler
             gridArea='bar'
             mt={{ lg: byQuestion ? 'hero.compact' : 'hero.ruler' }}

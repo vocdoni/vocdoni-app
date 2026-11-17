@@ -81,12 +81,21 @@ const QuestionTurnout = ({ question, index, model }: Omit<RowProps, 'state'>) =>
       max={electorate}
       layout='compact'
       closed={model.state === 'closed'}
-      label={t('votes.summary.answered_label', {
-        defaultValue: '{{answered}} of {{total}} people answered question {{number}}.',
-        answered: votes,
-        total: electorate ?? 0,
-        number: index + 1,
-      })}
+      label={
+        electorate
+          ? t('votes.summary.answered_label', {
+              defaultValue: '{{answered}} of {{total}} people answered question {{number}}.',
+              answered: votes,
+              total: electorate,
+              number: index + 1,
+            })
+          : t('votes.summary.answered_count_label', {
+              defaultValue_one: '{{count, number}} person answered question {{number}}.',
+              defaultValue_other: '{{count, number}} people answered question {{number}}.',
+              count: votes,
+              number: index + 1,
+            })
+      }
     />
   )
 }

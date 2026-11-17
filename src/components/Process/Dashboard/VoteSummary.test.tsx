@@ -1,5 +1,6 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
-import { fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { QueryKeys } from '~queries/keys'
+import { createTestQueryClient, fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { VoteSummary } from './VoteSummary'
@@ -84,7 +85,7 @@ const byQuestionReady = () =>
     questions: [question('q1', 'PAUSED'), question('q2', 'PAUSED'), question('q3', 'PAUSED')],
   })
 
-const renderSummary = (election: VotingProcessResponse, voteCount?: number) => {
+const renderSummary = (election: VotingProcessResponse, voteCount?: number, queryClient = createTestQueryClient()) => {
   currentElection = election
   setReactProvidersMock({
     useElection: () => ({
@@ -95,7 +96,8 @@ const renderSummary = (election: VotingProcessResponse, voteCount?: number) => {
   return render(
     <TestMemoryRouter>
       <VoteSummary />
-    </TestMemoryRouter>
+    </TestMemoryRouter>,
+    { queryClient }
   )
 }
 
@@ -134,10 +136,10 @@ describe('VoteSummary', () => {
       expect(screen.getByText('The results will show when the vote closes.')).toBeInTheDocument()
     })
 
-    it('says when it closes under the ruler', () => {
+    it('adds no deadline under the ruler of a live vote: the header says it', () => {
       renderSummary(createProcess(), 184)
 
-      expect(screen.getByText(/^Closes .+ left$/)).toBeInTheDocument()
+      expect(screen.queryByText(/^Closes .+ left/)).not.toBeInTheDocument()
     })
 
     it('shows how many answered each question, how many left it blank and how it is answered', () => {
@@ -266,10 +268,24 @@ describe('VoteSummary', () => {
       expect(screen.queryByRole('link', { name: 'Ballot' })).toBeNull()
     })
 
-    it('says a paused vote is paused under the ruler and in the calendar', () => {
+    it('leaves the ballot type and vote overwrite out on a phone when the questions do not share them', () => {
+      desktop = false
+      const multiple = {
+        ...question('q2', 'ONGOING', 100),
+        type: 'multichoice',
+        ballotProtocol: { ...PROTOCOL, maxCount: 2, maxVoteOverwrites: 3 },
+      }
+      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 184), multiple] }), 184)
+
+      expect(screen.queryByText('Type')).toBeNull()
+      expect(screen.queryByText('Vote overwrite')).toBeNull()
+      expect(screen.getByText('Anonymity')).toBeInTheDocument()
+    })
+
+    it('says a paused vote is paused in the calendar, and leaves what it means to the banner', () => {
       renderSummary(createProcess({ questions: [question('q1', 'PAUSED', 184)] }), 184)
 
-      expect(screen.getByText('Paused. Turnout will not move until you resume it.')).toBeInTheDocument()
+      expect(screen.queryByText(/Turnout will not move/)).not.toBeInTheDocument()
       expect(screen.getByText('Today. Vote paused')).toBeInTheDocument()
     })
 
@@ -407,11 +423,41 @@ describe('VoteSummary', () => {
       expect(screen.queryByRole('button', { name: 'Duplicate it' })).toBeNull()
     })
 
-    it('shows no figure without a census size', () => {
-      renderSummary(createProcess({ census: {} }), 10)
+    it('shows the count without a share, a ruler or a census fact when the census size is unknown', () => {
+      renderSummary(createProcess({ census: {}, questions: [question('q1', 'ONGOING', 10)] }), 10)
 
+      expect(screen.getByText('10 people voted')).toBeInTheDocument()
       expect(screen.queryByText('%')).toBeNull()
-      expect(screen.queryByText(/voted$/)).toBeNull()
+      expect(screen.queryByText(/of \d+ voted/)).toBeNull()
+      expect(screen.queryByText('Census')).toBeNull()
+      expect(screen.queryByText(/^0 people/)).toBeNull()
+    })
+
+    it('falls back to the counts the process read carries when the results are not served', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'ENDED', 181)] }))
+
+      expect(screen.getByText('181 of 312 voted')).toBeInTheDocument()
+      expect(screen.queryByText('0 of 312 voted')).toBeNull()
+    })
+
+    it('says the turnout could not be loaded when the results fail and the process carries no count', () => {
+      const queryClient = createTestQueryClient()
+      queryClient
+        .getQueryCache()
+        .build(queryClient, { queryKey: QueryKeys.election.results('0xabc') })
+        .setState({ status: 'error', error: new Error('500') })
+      const uncounted = { ...question('q1', 'ENDED'), results: undefined }
+      renderSummary(createProcess({ questions: [uncounted] }), undefined, queryClient)
+
+      expect(screen.getByText('The turnout could not be loaded.')).toBeInTheDocument()
+      expect(screen.queryByText(/^0 of 312/)).toBeNull()
+      expect(screen.queryByText('%')).toBeNull()
+    })
+
+    it('says nobody has voted yet rather than a zero count', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 0)] }), 0)
+
+      expect(screen.getByText('Nobody has voted yet.')).toBeInTheDocument()
     })
   })
 
@@ -431,6 +477,26 @@ describe('VoteSummary', () => {
         expect(screen.getByText(label)).toBeInTheDocument()
       }
       expect(screen.getByText('live, during the vote')).toBeInTheDocument()
+    })
+
+    it('says when it closes on the desktop too', () => {
+      renderSummary(byQuestion(questions), 200)
+
+      expect(screen.getByText('Closes')).toBeInTheDocument()
+    })
+
+    it('reads a closed vote as closed: when its last question closed, and public results', () => {
+      const ended = (id: string, endedAt: string) => ({
+        ...question(id, 'RESULTS', 200, ['150', '50']),
+        endedAt,
+      })
+      renderSummary(byQuestion([ended('q1', '2026-03-01T10:20:00Z'), ended('q2', '2026-03-01T10:42:00Z')]), 200)
+
+      // The fact's label (the question rows say "Closed" too).
+      expect(screen.getAllByText('Closed').some((element) => element.tagName === 'DT')).toBe(true)
+      expect(screen.getByText('public')).toBeInTheDocument()
+      expect(screen.queryByText('Start')).toBeNull()
+      expect(screen.queryByText('when each question closes')).toBeNull()
     })
 
     it('runs the questions from Summary: counts, next step and the open question with its buttons', () => {
