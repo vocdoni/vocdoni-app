@@ -185,8 +185,11 @@ describe('VotesPage', () => {
     votes.data = undefined as never
     votes.error = new Error('down')
     renderPage()
-    expect(screen.getByRole('alert')).toHaveTextContent('Unable to load voting processes')
+    expect(screen.getByRole('alert')).toHaveTextContent('The votes could not be loaded')
     expect(screen.queryByText('No votes yet')).not.toBeInTheDocument()
+    // No false zero in the chips, and the way to create a vote stays.
+    expect(screen.getByRole('button', { name: /^All$/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /New vote/ })).toBeInTheDocument()
     await userEvent.click(within(screen.getByRole('alert')).getByRole('button', { name: 'Try again' }))
     expect(votes.refetch).toHaveBeenCalled()
   })

@@ -51,13 +51,14 @@ const LoadAlert = ({ stale, retrying, onRetry }: { stale: boolean; retrying: boo
         <Alert.Title>
           {stale
             ? t('votes.list.refresh_error', { defaultValue: 'The list could not be refreshed' })
-            : t('processes.load_error', { defaultValue: 'Unable to load voting processes' })}
+            : t('votes.list.load_error', { defaultValue: 'The votes could not be loaded' })}
         </Alert.Title>
-        <Alert.Description>
-          {stale
-            ? t('votes.list.refresh_error_hint', { defaultValue: 'It shows the votes as they were last loaded.' })
-            : t('processes.load_error_description', { defaultValue: 'Please try again.' })}
-        </Alert.Description>
+        {/* The button says what to do next; only a stale list needs a word on what it shows. */}
+        {stale && (
+          <Alert.Description>
+            {t('votes.list.refresh_error_hint', { defaultValue: 'It shows the votes as they were last loaded.' })}
+          </Alert.Description>
+        )}
       </Alert.Content>
       <Button size='sm' variant='outline' loading={retrying} onClick={onRetry}>
         {t('votes.list.retry', { defaultValue: 'Try again' })}
@@ -176,6 +177,7 @@ export const VotesPage = () => {
   const loading = !organization || isLoading
   // A failed refresh keeps the rows already loaded; only a first load that failed has nothing to show.
   const failed = !!error && !data
+  const hasData = !loading && !failed
   let content = null
   if (!loading && !failed) {
     if (!rows.length) {
@@ -221,7 +223,8 @@ export const VotesPage = () => {
       {/* Centred on a phone and a tablet; from `lg` the button lines up with the title's bottom edge, as the board. */}
       <Flex justify='space-between' align={{ base: 'center', lg: 'flex-end' }} gap={{ base: '3', lg: '4' }}>
         <PageTitle>{t('votes.list.title', { defaultValue: 'Votes' })}</PageTitle>
-        {rows.length > 0 && canManage && (
+        {/* The empty list carries its own call to action; while loading or after a failure the button stays. */}
+        {(rows.length > 0 || !hasData) && canManage && (
           <Button variant='outline' asChild>
             <RouterLink to={createPath}>
               <Icon as={AddIcon} />
@@ -263,10 +266,12 @@ export const VotesPage = () => {
                     onClick={() => go(item, searchText)}
                   >
                     {/* The space keeps the accessible name "All 4"; a flex gap draws the visual one. */}
-                    {filterLabel[item]}{' '}
-                    <Text as='span' textStyle='figure' fontWeight='normal' opacity='count'>
-                      {quantity(counts[item])}
-                    </Text>
+                    {filterLabel[item]} {/* No count until the list has loaded: a 0 there would be false. */}
+                    {hasData && (
+                      <Text as='span' textStyle='figure' fontWeight='normal' color='fg.subtle'>
+                        {quantity(counts[item])}
+                      </Text>
+                    )}
                   </Button>
                 ))}
               </HStack>
