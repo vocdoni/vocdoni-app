@@ -128,8 +128,11 @@ export const SummaryQuestions = ({ model }: { model: SummaryModel }) => {
         id={titleId}
         title={t('process.questions', { defaultValue: 'Questions' })}
         count={election.questions.length}
+        // Only while they are open: a vote that is ready, closed or canceled has no open questions.
         note={
-          election.questions.length > 1 ? t('votes.summary.all_open', { defaultValue: 'All open at once' }) : undefined
+          state === 'live' && election.questions.length > 1
+            ? t('votes.summary.all_open', { defaultValue: 'All open at once' })
+            : undefined
         }
         noteAtEnd
       />
