@@ -96,7 +96,7 @@ export const useVotesResults = (processIds: readonly string[]) => {
   })
 }
 
-/** Deletes a draft; moved here from the old drafts page. Refreshes both the votes list and the legacy drafts key. */
+/** Deletes a draft; moved here from the old drafts page. Refreshes the votes list. */
 export const useDeleteDraft = () => {
   const { t } = useTranslation()
   const { client } = useApiClient()
@@ -105,7 +105,6 @@ export const useDeleteDraft = () => {
   const toast = useToast()
 
   return useMutation<void, unknown, { draftId: string; silent?: boolean }>({
-    mutationKey: QueryKeys.organization.drafts(organization?.address),
     mutationFn: ({ draftId }) => client.elections.delete(draftId),
     onSuccess: (_data, variables) => {
       // Only forget the resumable draft pointer once the server deleted it, and only when it points at this draft
@@ -119,10 +118,6 @@ export const useDeleteDraft = () => {
         })
       }
       void queryClient.invalidateQueries({ queryKey: QueryKeys.organization.votesAll })
-      void queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.drafts(organization?.address),
-        exact: false,
-      })
     },
     onError: (error, variables) => {
       if (variables.silent) return

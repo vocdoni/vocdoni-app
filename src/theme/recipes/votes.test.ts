@@ -40,7 +40,7 @@ describe('votes theme additions', () => {
 
   it('splits the facts rows with the muted border', () => {
     const dataList = system.sva(system.getSlotRecipe('dataList'))
-    expect(text(dataList({ variant: 'facts' }).item)).toContain('--chakra-colors-border-muted')
+    expect(text(dataList({ variant: 'ruled' }).item)).toContain('--chakra-colors-border-muted')
   })
 
   it('draws a closed ruler in ink', () => {

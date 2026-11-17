@@ -225,13 +225,10 @@ const sheetClose = defineStyle({
   mt: '2',
 })
 
-// A secondary that opens a menu ("More"): label, then a 15px muted chevron, with a tighter end. The size would
-// reset the gap, end padding and icon, so they live in a compound variant.
-const dropdown = defineStyle({ ...outline })
-
 // A page header's "More" menu button: below `lg` the "…" icon alone, borderless and square (a ghost icon button);
-// from `lg` a labelled dropdown as `dropdown`. The button shows its word and chevron from `lg` and the icon below it
-// (`hideBelow` / `hideFrom` on its children), keeping one name at every width. Sides and icons in a compound variant.
+// from `lg` a labelled secondary: its word, then a 15px muted chevron, with a tighter end. The button shows its word
+// and chevron from `lg` and the icon below it (`hideBelow` / `hideFrom` on its children), keeping one name at every
+// width. Sides and icons in a compound variant.
 const more = defineStyle({
   bg: { base: 'transparent', lg: 'surface.control' },
   color: { base: 'fg.muted', lg: 'fg' },
@@ -369,7 +366,6 @@ export const Button = defineRecipe({
       'menu-item-strong': { ...menuItem, fontWeight: 'bold' },
       'sheet-row': sheetRow,
       'sheet-close': sheetClose,
-      dropdown,
       more,
       'menu-trigger': menuTrigger,
       segment,
@@ -416,16 +412,7 @@ export const Button = defineRecipe({
       },
     },
     { variant: 'sheet-close', css: { h: 'control.touch', minW: '0', textStyle: 'control-touch' } },
-    // The dropdown keeps its tighter end next to any size.
-    {
-      variant: 'dropdown',
-      css: {
-        gap: '1',
-        pe: { base: '3', lg: '2' },
-        _icon: { width: 'icon.chevron', height: 'icon.chevron', color: 'fg.subtle' },
-      },
-    },
-    // "More": square below `lg` (no sides), the dropdown's sides, gap and chevron from `lg`.
+    // "More": square below `lg` (no sides), a tighter end, gap and chevron from `lg`. The size would reset them.
     {
       variant: 'more',
       css: {

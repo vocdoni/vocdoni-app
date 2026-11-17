@@ -67,14 +67,6 @@ export const textStyles = defineTextStyles({
       letterSpacing: 'heading.row',
     },
   },
-  'question-title': {
-    value: {
-      fontSize: { base: 'lg', md: 'item' },
-      lineHeight: { base: 'row.touch', md: 'row.question' },
-      fontWeight: 'semibold',
-      letterSpacing: 'heading.row',
-    },
-  },
   // The open question's title in its row: 16px on a 22px line up to `lg` (the touch boards keep it on a tablet too).
   'question-head': {
     value: {

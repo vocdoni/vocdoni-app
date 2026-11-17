@@ -138,7 +138,7 @@ const BallotPaper = ({ model }: { model: SummaryModel }) => {
         <BallotStatus model={model} />
         <Card.Root variant='frame' as='section' aria-labelledby={factsId}>
           <SummaryCardHeader id={factsId} title={t('votes.ballot.rules_title', { defaultValue: 'How voting works' })} />
-          <FactList facts={facts} layout='ruled' />
+          <FactList facts={facts} />
         </Card.Root>
       </Stack>
     </Grid>

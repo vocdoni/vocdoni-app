@@ -10,7 +10,7 @@ import { QuestionResultBars } from '../QuestionResultBars'
 import { questionKind } from './question-kind'
 import type { SummaryModel } from './use-summary-model'
 
-type RowProps = { question: VotingProcessQuestion; index: number; model: SummaryModel; state: QuestionState }
+type RowProps = { question: VotingProcessQuestion; index: number; model: SummaryModel }
 
 const counts = (state: QuestionState) => state === 'open' || state === 'paused' || state === 'closed'
 
@@ -55,7 +55,7 @@ const hasStarted = (model: SummaryModel) =>
   model.state === 'live' || model.state === 'paused' || model.state === 'closed'
 
 /** "Turnout: 184 of 312" with its share over the bar: how many answered this question, on every width. */
-const QuestionTurnout = ({ question, index, model }: Omit<RowProps, 'state'>) => {
+const QuestionTurnout = ({ question, index, model }: RowProps) => {
   const { t } = useTranslation()
   const votes = question.results?.voteCount ?? 0
   const electorate = questionElectorate(question, model.election, model.canManage)

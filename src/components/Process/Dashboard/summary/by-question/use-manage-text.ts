@@ -79,9 +79,9 @@ export const useManageText = () => {
      * The quiet line under a question's title: its text, as plain text (it is written in markdown), and how it is
      * answered as a sentence of its own ("Single choice."). Nothing is added after the organiser's text.
      */
-    note: (question: VotingProcessQuestion, withDescription = true) => {
+    note: (question: VotingProcessQuestion) => {
       const kind = questionKind(t, question)
-      const description = withDescription && question.description ? plainText(text(question.description)) : ''
+      const description = question.description ? plainText(text(question.description)) : ''
       const kindSentence = kind ? t('votes.manage.kind', { defaultValue: '{{kind}}.', kind }) : ''
       return [description, kindSentence].filter(Boolean).join(' ')
     },

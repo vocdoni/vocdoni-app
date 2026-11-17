@@ -5,14 +5,6 @@ import { getLocalizedRawText } from '~utils/localized-text'
 import { timeLeft } from '~utils/vote-state'
 import { datesLocale } from './locales'
 
-const LONG_DATE: Intl.DateTimeFormatOptions = {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  hour: '2-digit',
-  minute: '2-digit',
-  hourCycle: 'h23',
-}
 const SHORT_DATE: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' }
 const WEEKDAY: Intl.DateTimeFormatOptions = { weekday: 'long' }
 const TIME: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
@@ -75,8 +67,6 @@ export const useVoteText = () => {
     duration: (start: Date, end: Date) => durationWords(timeLeft(end, start) ?? { minutes: 1 }),
     /** A title, choice or description in the page language. */
     text,
-    /** "Thursday, April 9 at 20:00": weekday; the year only when it is not this one. */
-    longDate: (date: Date | string | undefined) => formatDate(date, LONG_DATE),
     /** "April 9" ("April 9, 2024" another year): the closed date in the list's state column. */
     shortDate: (date: Date | string | undefined) => formatDate(date, SHORT_DATE),
     /** "2 days and 4 hours left", or null once the end has passed. */

@@ -134,7 +134,6 @@ export const SummaryQuestions = ({ model }: { model: SummaryModel }) => {
             ? t('votes.summary.all_open', { defaultValue: 'All open at once' })
             : undefined
         }
-        noteAtEnd
       />
       {countingNote}
       {undecodable ? (
@@ -152,13 +151,7 @@ export const SummaryQuestions = ({ model }: { model: SummaryModel }) => {
         </Card.Body>
       ) : (
         questions.map((question, index) => (
-          <AllAtOnceRow
-            key={question.id}
-            question={question}
-            index={index}
-            model={model}
-            state={questionStates[index]}
-          />
+          <AllAtOnceRow key={question.id} question={question} index={index} model={model} />
         ))
       )}
       <ResultsLine model={model} />

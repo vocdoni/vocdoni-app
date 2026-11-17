@@ -30,20 +30,19 @@ describe('useVoteText', () => {
   describe('dates', () => {
     const date = new Date(2026, 3, 9, 20, 0)
 
-    it('writes the long date with weekday and no year, in English', () => {
-      expect(setup().longDate(date)).toMatch(/^Thursday, April 9.*20:00$/)
+    it('writes the short date with no year, in English', () => {
       expect(setup().shortDate(date)).toBe('April 9')
     })
 
     it('writes "d’abril" in Catalan, which no date-fns pattern can', async () => {
       await act(() => i18n.changeLanguage('ca'))
-      expect(setup().longDate(date)).toContain('d’abril')
+      expect(setup().shortDate(date)).toContain('d’abril')
     })
 
     it('is empty for a missing or unreadable date', () => {
-      expect(setup().longDate(undefined)).toBe('')
-      expect(setup().longDate('')).toBe('')
-      expect(setup().longDate('not a date')).toBe('')
+      expect(setup().shortDate(undefined)).toBe('')
+      expect(setup().shortDate('')).toBe('')
+      expect(setup().shortDate('not a date')).toBe('')
       expect(setup().dateAt(undefined)).toBe('')
       expect(setup().day('not a date')).toBe('')
     })
