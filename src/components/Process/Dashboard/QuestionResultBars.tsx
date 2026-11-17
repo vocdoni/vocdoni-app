@@ -1,26 +1,25 @@
-import { Box, Grid, Icon, Progress, Span, Stack, Text } from '@chakra-ui/react'
+import { Grid, Progress, Span, Stack, Text } from '@chakra-ui/react'
 import type { QuestionResults, VotingProcessQuestion } from '@vocdoni/api-types'
 import { BallotType, decodeQuestionResults, tryInferQuestionBallotType } from '@vocdoni/ballot'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
-import { CheckIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { questionOutcome } from '~utils/vote-outcome'
 
 export type QuestionResultBarsProps = {
   question: VotingProcessQuestion
   results?: QuestionResults
-  /** A closed question's tally: the winner gets the check, the weight and the tag, the other choices dim. Without
-   * it the bars are provisional (an open question with live results): no winner, nothing dimmed. */
+  /** A closed question's tally: the winner's label is set in bold and the other choices dim. Without it the bars are
+   * provisional (an open question with live results): no winner, nothing dimmed. */
   final?: boolean
   /** Votes are summed weights. */
   weighted?: boolean
   /**
-   * `checked` (Gestió): a check column, the winner's tag and plain counts. `plain` (Resum): the bars align with the
-   * title, counts carry their unit and a final tally only sets the top choice in bold and dims the others.
+   * `indented` (a question-by-question row from `lg`): an empty 20px column before the label and plain counts.
+   * `plain`: the bars align with the title and counts carry their unit.
    */
-  layout?: 'checked' | 'plain'
+  layout?: 'indented' | 'plain'
 }
 
 type Tally = { key: string; value?: number; votes: number }
@@ -48,21 +47,21 @@ const POINTS: ReadonlySet<BallotType> = new Set([BallotType.Ranked, BallotType.B
 const SHARE_OF_TOTAL: ReadonlySet<BallotType> = new Set([...POINTS, BallotType.Quadratic])
 
 /**
- * One bar per choice of a question: the choice, its votes and their share, and a 6px bar under them. The `checked`
- * layout (board V4VoteManage) adds a column for the winner's check and its tag; `plain` (V4VoteManageAll) is below.
+ * One bar per choice of a question: the choice, its votes and their share, and a 6px bar under them. The `indented`
+ * layout (board V4VoteOne) leaves a 20px column before the label; `plain` (V4VoteManageAll, the touch boards) is below.
  */
 export const QuestionResultBars = ({
   question,
   results,
   final = false,
   weighted = false,
-  layout = 'checked',
+  layout = 'indented',
 }: QuestionResultBarsProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
   const tally = useMemo(() => tallyOf(question, results), [question, results])
   const winner = useMemo(() => {
-    const outcome = final && layout === 'checked' ? questionOutcome(question, results, { weighted }) : null
+    const outcome = final && layout === 'indented' ? questionOutcome(question, results, { weighted }) : null
     if (outcome?.kind === 'pair' || outcome?.kind === 'winner') return outcome.winner.value
     return outcome?.kind === 'top' ? outcome.choice.value : undefined
   }, [final, layout, question, results, weighted])
@@ -104,11 +103,17 @@ export const QuestionResultBars = ({
           const share = t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })
           return (
             <Grid key={entry.key} templateColumns='[minmax(0, 1fr) auto]' rowGap='1' alignItems='baseline'>
-              <Text minW='0' textStyle='control' lineHeight='row.title' fontWeight={leads ? 'semibold' : 'normal'}>
+              {/* The touch boards keep the label and the count regular; the desktop one weighs the top choice. */}
+              <Text
+                minW='0'
+                textStyle={{ base: 'body', lg: 'control' }}
+                lineHeight='row.title'
+                fontWeight={leads ? { base: 'normal', lg: 'semibold' } : 'normal'}
+              >
                 {label}
               </Text>
               <Text whiteSpace='nowrap' textStyle='figure' lineHeight='row.title'>
-                <Span fontWeight='medium'>{count}</Span>
+                <Span fontWeight={{ base: 'normal', lg: 'medium' }}>{count}</Span>
                 <Span color='fg.subtle' display='inline-block' minW='results.share' textAlign='end'>
                   {share}
                 </Span>
@@ -139,21 +144,15 @@ export const QuestionResultBars = ({
         const votes = quantity(entry.votes)
         const share = t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })
         return (
-          <Grid key={entry.key} templateColumns='[{sizes.5} minmax(0, 1fr) auto]' rowGap='1' alignItems='baseline'>
-            <Box alignSelf='center' display='flex' color='status.success.fg'>
-              {won && (
-                <Box as='span' role='img' aria-label={t('votes.manage.winner', { defaultValue: 'Winning choice' })}>
-                  <Icon as={CheckIcon} boxSize='icon.xs' aria-hidden />
-                </Box>
-              )}
-            </Box>
-            <Text minW='0' display='inline-flex' alignItems='baseline' gap='2'>
-              <Span fontWeight={won ? 'semibold' : 'normal'}>{label}</Span>
-              {won && (
-                <Span textStyle='eyebrow' color='status.success.fg'>
-                  {t('votes.manage.winner_tag', { defaultValue: 'Winner' })}
-                </Span>
-              )}
+          <Grid
+            key={entry.key}
+            templateColumns='[{sizes.5} minmax(0, 1fr) auto]'
+            rowGap='1'
+            alignItems='baseline'
+            lineHeight='row.title'
+          >
+            <Text gridColumn='2' minW='0' fontWeight={won ? 'semibold' : 'normal'}>
+              {label}
             </Text>
             <Text whiteSpace='nowrap'>
               <Span textStyle='figure' fontWeight='medium'>
