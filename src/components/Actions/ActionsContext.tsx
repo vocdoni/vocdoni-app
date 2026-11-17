@@ -10,8 +10,7 @@ import { sameAddress } from '~utils/address'
 import { useNow } from '~utils/use-now'
 import { deriveVoteState, nonTerminalQuestionIds, type VoteState } from '~utils/vote-state'
 
-type ActionKey = 'continue' | 'pause' | 'end' | 'cancel'
-type ActionMessage = { title?: string; description?: string } | null
+export type ActionKey = 'continue' | 'pause' | 'end' | 'cancel'
 
 export type ActionsContextValue = {
   resume: () => Promise<void>
@@ -27,23 +26,22 @@ export type ActionsContextValue = {
   disabled: boolean
   /** Whole-vote pause of a question-by-question vote ("Pause the vote" / "Resume the vote"). */
   votePause: VotePause
-  /** The vote's state for every part of the page (header, tabs, Resum, Gestió), whole-vote pause included. */
+  /** The vote's state for every part of the page (header, tabs, Resum, Papereta), whole-vote pause included. */
   state: VoteState | undefined
   /** The page's one clock, so the header, the tabs and their content change together at a start or an end. */
   now: Date
-  /** The "waiting for the transaction" toast's text while a header action runs. */
-  info: ActionMessage
+  /** The header action running, which the "waiting for the transaction" toast names. */
+  info: ActionKey | null
 }
 
 const ActionsContext = createContext<ActionsContextValue | null>(null)
 
-// Each header action maps to a status transition and the i18n description of the "waiting for the transaction"
-// toast (translated by use-actions-toast, which interpolates the election).
-const ACTION_CONFIG: Record<ActionKey, { status: SetElectionStatusRequest['status']; description: string }> = {
-  continue: { status: 'ready', description: 'actions.continue_description' },
-  pause: { status: 'paused', description: 'actions.pause_description' },
-  end: { status: 'ended', description: 'actions.end_description' },
-  cancel: { status: 'canceled', description: 'actions.cancel_description' },
+// Each header action maps to a status transition; use-actions-toast names the running one.
+const ACTION_STATUS: Record<ActionKey, SetElectionStatusRequest['status']> = {
+  continue: 'ready',
+  pause: 'paused',
+  end: 'ended',
+  cancel: 'canceled',
 }
 
 /**
@@ -54,13 +52,13 @@ const ACTION_CONFIG: Record<ActionKey, { status: SetElectionStatusRequest['statu
 export const ActionsProvider = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation()
   const { election } = useElection()
-  const [info, setInfo] = useState<ActionMessage>(null)
+  const [info, setInfo] = useState<ActionKey | null>(null)
   const { currentAddress } = useAuth()
   const canManageVotes = useCanManageVotes()
   const canManage = canManageVotes && !!election && sameAddress(election.orgAddress, currentAddress)
   const now = useNow()
   const remembered = useRemembered(election?.id)
-  const votePause = useVotePause(election, now)
+  const rawVotePause = useVotePause(election, now)
   const { run, pending } = useStatusJob(election?.id)
   const running = useIsStatusJobRunning(election?.id)
   const targets = useMemo(() => nonTerminalQuestionIds(election), [election])
@@ -77,13 +75,26 @@ export const ActionsProvider = ({ children }: { children: ReactNode }) => {
       // Never an empty list (it targets every question) and never a terminal question (the backend rejects the
       // whole batch when one is ENDED, RESULTS or CANCELED and the request asks otherwise).
       if (!election?.id || !targets.length || running) return
-      const { status, description } = ACTION_CONFIG[key]
-      setInfo({ title: 'actions.waiting_title', description })
+      setInfo(key)
       try {
-        await run({ questionIds: targets, status, tag: key, errorTitle: errorTitles[key] })
+        await run({ questionIds: targets, status: ACTION_STATUS[key], tag: key, errorTitle: errorTitles[key] })
       } finally {
         setInfo(null)
       }
+    }
+    // The whole-vote pause of a question-by-question vote names itself in the same toast.
+    const told = (key: ActionKey, change: () => Promise<void>) => async () => {
+      setInfo(key)
+      try {
+        await change()
+      } finally {
+        setInfo(null)
+      }
+    }
+    const votePause: VotePause = {
+      ...rawVotePause,
+      pause: told('pause', rawVotePause.pause),
+      resume: told('continue', rawVotePause.resume),
     }
     const isRunning = (key: ActionKey) => pending?.tag === key
 
@@ -106,7 +117,7 @@ export const ActionsProvider = ({ children }: { children: ReactNode }) => {
       now,
       info,
     }
-  }, [t, election, targets, running, run, pending, canManage, votePause, state, now, info])
+  }, [t, election, targets, running, run, pending, canManage, rawVotePause, state, now, info])
 
   return <ActionsContext.Provider value={value}>{children}</ActionsContext.Provider>
 }
