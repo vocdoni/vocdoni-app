@@ -15,7 +15,6 @@
     "edit": "Bearbeiten",
     "end": "Prozess sofort beenden, sodass keine neuen Stimmen mehr abgegeben werden können, und Abstimmungsergebnisse anzeigen (Achtung: nicht rückgängig zu machen)",
     "end_description": "Abstimmungsprozess \"{{ election.title.default }}\" wird beendet...\n\nAchtung: Diese Aktion ist unwiderruflich und Wählende können nicht mehr abstimmen.",
-    "error_title": "Bei der Ausführung der Transaktion ist ein Fehler aufgetreten",
     "manage_team": "Team verwalten",
     "more": "Weitere Optionen",
     "pause": "Den Abstimmungsprozess vorübergehend pausieren, bis er manuell fortgesetzt wird. Während der Pause können Wählende keine Stimmen abgeben.",
@@ -1784,18 +1783,20 @@
   },
   "votes": {
     "cancel": {
-      "body_all_one": "Die {{count}} abgegebene Stimme wird verworfen, und es gibt keine Ergebnisse.",
-      "body_all_other": "Die {{count}} abgegebenen Stimmen werden verworfen, und es gibt keine Ergebnisse.",
-      "body_by_question_one": "Die {{count}} in {{questions}} abgegebene Stimme wird verworfen, und kein Ergebnis wird wirksam.",
-      "body_by_question_other": "Die {{count}} in {{questions}} abgegebenen Stimmen werden verworfen, und kein Ergebnis wird wirksam.",
+      "body_all_one": "Die {{count, number}} abgegebene Stimme wird verworfen, und es gibt keine Ergebnisse.",
+      "body_all_other": "Die {{count, number}} abgegebenen Stimmen werden verworfen, und es gibt keine Ergebnisse.",
+      "body_all_unknown": "Die abgegebenen Stimmen werden verworfen, und es gibt keine Ergebnisse.",
+      "body_by_question_one": "Die {{count, number}} in {{questions}} abgegebene Stimme wird verworfen, und kein Ergebnis wird wirksam.",
+      "body_by_question_other": "Die {{count, number}} in {{questions}} abgegebenen Stimmen werden verworfen, und kein Ergebnis wird wirksam.",
       "body_final": "Das kann nicht rückgängig gemacht werden.",
       "body_none": "Es wurde noch keine Stimme abgegeben.",
       "body_not_open": "Sie hat noch nicht begonnen, und es gibt keine Stimmen.",
+      "error": "Die Abstimmung konnte nicht abgebrochen werden",
       "keep": "Nein, Abstimmung fortsetzen",
       "open_now_one": "Frage {{numbers}} ist gerade offen.",
       "open_now_other": "Die Fragen {{numbers}} sind gerade offen.",
-      "questions_one": "{{count}} Frage",
-      "questions_other": "{{count}} Fragen",
+      "questions_one": "{{count, number}} Frage",
+      "questions_other": "{{count, number}} Fragen",
       "title": "„{{title}}“ abbrechen?"
     },
     "clone": {
@@ -1819,19 +1820,24 @@
       "title": "Noch keine Abstimmungen"
     },
     "end": {
-      "body_all_one": "Sie endet vor Ablauf der Frist, mit der {{count}} abgegebenen Stimme. Die Ergebnisse werden veröffentlicht und die Wählenden sehen sie. Sie kann nicht wieder geöffnet werden.",
-      "body_all_other": "Sie endet vor Ablauf der Frist, mit den {{count}} abgegebenen Stimmen. Die Ergebnisse werden veröffentlicht und die Wählenden sehen sie. Sie kann nicht wieder geöffnet werden.",
+      "body_all_one": "Sie endet vor Ablauf der Frist, mit der {{count, number}} abgegebenen Stimme. Die Ergebnisse werden veröffentlicht und die Wählenden sehen sie. Sie kann nicht wieder geöffnet werden.",
+      "body_all_other": "Sie endet vor Ablauf der Frist, mit den {{count, number}} abgegebenen Stimmen. Die Ergebnisse werden veröffentlicht und die Wählenden sehen sie. Sie kann nicht wieder geöffnet werden.",
+      "body_all_unknown": "Sie endet vor Ablauf der Frist, mit den abgegebenen Stimmen. Die Ergebnisse werden veröffentlicht und die Wählenden sehen sie. Sie kann nicht wieder geöffnet werden.",
       "body_final": "Die Ergebnisse sind endgültig, und die Wählenden sehen sie.",
-      "body_question_one": "Frage {{number}} wird mit der {{count}} Stimme geschlossen, die sie jetzt hat.",
-      "body_question_other": "Frage {{number}} wird mit den {{count}} Stimmen geschlossen, die sie jetzt hat.",
+      "body_question_one": "Frage {{number}} wird mit der {{count, number}} Stimme geschlossen, die sie jetzt hat.",
+      "body_question_other": "Frage {{number}} wird mit den {{count, number}} Stimmen geschlossen, die sie jetzt hat.",
       "body_questions": "Die Fragen {{numbers}} werden mit den Stimmen geschlossen, die sie jetzt haben.",
+      "error": "Die Abstimmung konnte nicht beendet werden",
       "keep": "Abstimmung fortsetzen",
-      "not_voted_one": "{{count}} Person hat noch nicht abgestimmt und kann es danach nicht mehr.",
-      "not_voted_other": "{{count}} Personen haben noch nicht abgestimmt und können es danach nicht mehr.",
+      "not_voted_one": "{{count, number}} Person hat noch nicht abgestimmt und kann es danach nicht mehr.",
+      "not_voted_other": "{{count, number}} Personen haben noch nicht abgestimmt und können es danach nicht mehr.",
       "title": "Abstimmung beenden?",
       "title_now": "Abstimmung jetzt beenden?",
       "unopened_one": "Frage {{numbers}} wurde nicht geöffnet und bleibt ohne Stimmen.",
       "unopened_other": "Die Fragen {{numbers}} wurden nicht geöffnet und bleiben ohne Stimmen."
+    },
+    "error": {
+      "other": "Etwas ist schiefgelaufen. Lade die Seite neu und versuche es noch einmal."
     },
     "header": {
       "line": {
@@ -1853,6 +1859,12 @@
         "opens": "Beginnt am {{start}} und endet am {{end}}."
       }
     },
+    "job": {
+      "partial": "Einige Fragen konnten nicht geändert werden: {{failed, number}} von {{total, number}}. Die Seite zeigt, wo jede steht.",
+      "slow": "Die Änderung ist noch nicht abgeschlossen. Wir warten weiter und aktualisieren die Seite, sobald sie fertig ist.",
+      "slow_title": "Wir arbeiten noch daran",
+      "stale": "Der Status einer Frage hatte sich bereits geändert. Die Seite zeigt jetzt, wo jede steht."
+    },
     "list": {
       "action": {
         "continue": "Fortsetzen",
@@ -1866,6 +1878,7 @@
       "delete": "Löschen",
       "delete_body": "Das lässt sich nicht rückgängig machen.",
       "delete_confirm": "Entwurf löschen",
+      "delete_error": "Der Entwurf konnte nicht gelöscht werden",
       "delete_title": "Diesen Entwurf löschen?",
       "duplicate_short": "Duplizieren",
       "filter": {
@@ -1878,15 +1891,19 @@
       "filter_label": "Nach Status filtern",
       "meta": "{{questions}}, {{voters}}.",
       "meta_no_voters": "{{questions}}.",
-      "meta_questions_one": "{{count}} Frage",
-      "meta_questions_other": "{{count}} Fragen",
-      "meta_voters_one": "{{count}} Wählende Person",
-      "meta_voters_other": "{{count}} Wählende Personen",
+      "meta_questions_one": "{{count, number}} Frage",
+      "meta_questions_other": "{{count, number}} Fragen",
+      "meta_voters_one": "{{count, number}} Wählende Person",
+      "meta_voters_other": "{{count, number}} Wählende Personen",
       "more": "Weitere Aktionen",
       "new": "Neue Abstimmung",
       "no_match": "Keine Abstimmung passt",
       "no_match_hint": "Probiere einen anderen Filter oder eine andere Suche.",
-      "outcome": "{{result}}.",
+      "refresh_error": "Die Liste konnte nicht aktualisiert werden",
+      "refresh_error_hint": "Sie zeigt die Abstimmungen so, wie sie zuletzt geladen wurden.",
+      "result": "<b>{{result}}</b>.",
+      "result_turnout": "<b>{{result}}</b> bei {{percent}} % Beteiligung.",
+      "retry": "Erneut versuchen",
       "row_error": "Diese Abstimmung konnte nicht angezeigt werden.",
       "search": "Abstimmung suchen",
       "starts": "Beginnt am {{date}}.",
@@ -1897,8 +1914,7 @@
         "end_passed": "Das Enddatum ist verstrichen.",
         "missing_end": "Noch kein Enddatum."
       },
-      "when": "{{weekday}}, {{day}} um {{time}}",
-      "with_turnout": "bei {{percent}} % Beteiligung."
+      "when": "{{weekday}}, {{day}} um {{time}}"
     },
     "manage": {
       "abstention": "Enthaltung",
@@ -1912,18 +1928,18 @@
       "closed": "Die Abstimmung wurde am {{date}} beendet.",
       "closes": "Die Abstimmung endet am {{date}}. Fragen, die dann noch offen sind, werden geschlossen.",
       "count": {
-        "canceled_one": "{{count}} ungültig",
-        "canceled_other": "{{count}} ungültig",
-        "closed_one": "{{count}} geschlossen",
-        "closed_other": "{{count}} geschlossen",
-        "not_opened_one": "{{count}} nicht geöffnet",
-        "not_opened_other": "{{count}} nicht geöffnet",
-        "open_one": "{{count}} offen",
-        "open_other": "{{count}} offen",
-        "paused_one": "{{count}} pausiert",
-        "paused_other": "{{count}} pausiert",
-        "to_open_one": "{{count}} zu öffnen",
-        "to_open_other": "{{count}} zu öffnen"
+        "canceled_one": "{{count, number}} ungültig",
+        "canceled_other": "{{count, number}} ungültig",
+        "closed_one": "{{count, number}} geschlossen",
+        "closed_other": "{{count, number}} geschlossen",
+        "not_opened_one": "{{count, number}} nicht geöffnet",
+        "not_opened_other": "{{count, number}} nicht geöffnet",
+        "open_one": "{{count, number}} offen",
+        "open_other": "{{count, number}} offen",
+        "paused_one": "{{count, number}} pausiert",
+        "paused_other": "{{count, number}} pausiert",
+        "to_open_one": "{{count, number}} zu öffnen",
+        "to_open_other": "{{count, number}} zu öffnen"
       },
       "error": {
         "busy": "Eine andere Änderung läuft gerade. Versuche es in ein paar Sekunden erneut.",
@@ -1956,9 +1972,12 @@
       "percent": "{{percent}} %",
       "provisional": "Vorläufiges Ergebnis.",
       "question_ruler": "{{voted}} von {{total}} Personen haben abgestimmt, {{percent}} %.",
+      "question_ruler_count": "{{voted}} Personen haben abgestimmt.",
       "question_voted": "{{voted}} von {{total}} haben abgestimmt",
+      "question_voted_count": "{{voted}} haben abgestimmt",
       "resume": "Fortsetzen",
       "ruler_label": "Mindestens {{voted}} von {{total}} Personen haben bei einer Frage abgestimmt, {{percent}} %.",
+      "ruler_label_count": "Mindestens {{voted}} Personen haben bei einer Frage abgestimmt.",
       "starts": "Die Abstimmung beginnt am {{date}}.",
       "strip_label": "Stand der Abstimmung",
       "summary_link": "Zusammenfassung",
@@ -1967,6 +1986,7 @@
       "vote_figures_one": "{{votes}} Stimme",
       "vote_figures_other": "{{votes}} Stimmen",
       "voted_any": "Mindestens {{voted}} von {{total}} haben bei einer Frage abgestimmt",
+      "voted_any_count": "Mindestens {{voted}} haben bei einer Frage abgestimmt",
       "weight_figures": "Gewicht {{votes}}",
       "winner": "Gewinnende Option",
       "winner_tag": "Gewinner"
@@ -2028,8 +2048,8 @@
       "answered": "{{answered}} von {{total}} haben sie beantwortet",
       "answered_label": "{{answered}} von {{total}} Personen haben Frage {{number}} beantwortet.",
       "ballot_link": "Stimmzettel",
-      "blank_one": "{{count}} der {{voters}} Wählenden hat sie leer gelassen.",
-      "blank_other": "{{count}} der {{voters}} Wählenden haben sie leer gelassen.",
+      "blank_one": "{{count, number}} der {{voters}} Wählenden hat sie leer gelassen.",
+      "blank_other": "{{count, number}} der {{voters}} Wählenden haben sie leer gelassen.",
       "calendar": {
         "at": "Um {{time}}.",
         "close": "Ende und Ergebnisse für alle",
@@ -2044,14 +2064,14 @@
       "copy_link": "Öffentlichen Link kopieren",
       "electoral_title": "Abstimmungsdaten",
       "fact": {
-        "census_one": "{{count}} Person",
-        "census_other": "{{count}} Personen",
+        "census_one": "{{count, number}} Person",
+        "census_other": "{{count, number}} Personen",
         "overwrite_allowed": "Kann geändert werden",
         "overwrite_not_allowed": "Kann nicht geändert werden",
-        "questions_all_one": "{{count}}, alle auf einmal",
-        "questions_all_other": "{{count}}, alle auf einmal",
-        "questions_by_question_one": "{{count}}, Frage für Frage",
-        "questions_by_question_other": "{{count}}, Frage für Frage",
+        "questions_all_one": "{{count, number}}, alle auf einmal",
+        "questions_all_other": "{{count, number}}, alle auf einmal",
+        "questions_by_question_one": "{{count, number}}, Frage für Frage",
+        "questions_by_question_other": "{{count, number}}, Frage für Frage",
         "results_hidden": "wenn die Abstimmung endet",
         "results_hidden_by_question": "wenn jede Frage geschlossen wird",
         "results_live": "live, während der Abstimmung",
@@ -2067,25 +2087,26 @@
         "canceled_hint": "Du kannst sie duplizieren, um sie erneut anzusetzen.",
         "canceled_title": "Abstimmung abgebrochen",
         "duplicate": "Duplizieren",
+        "ended_counting": "Die endgültigen Ergebnisse werden noch ausgezählt.",
         "ended_final": "Die Ergebnisse sind endgültig, und die Wählenden können sie schon sehen.",
         "ended_hint": "Die Ergebnisse jeder Frage stehen auf der Ergebnisseite.",
-        "ended_title_one": "Abstimmung mit {{count}} Stimme beendet",
-        "ended_title_other": "Abstimmung mit {{count}} Stimmen beendet",
+        "ended_title_one": "Abstimmung mit {{count, number}} Stimme beendet",
+        "ended_title_other": "Abstimmung mit {{count, number}} Stimmen beendet",
         "ended_turnout": "{{percent}} % der Teilnehmerliste haben abgestimmt.",
-        "questions_one": "{{count}} Frage",
-        "questions_other": "{{count}} Fragen",
+        "questions_one": "{{count, number}} Frage",
+        "questions_other": "{{count, number}} Fragen",
         "ready_body": "{{people}} auf der Teilnehmerliste und {{questions}}, alle gleichzeitig offen.",
         "ready_title": "Beginnt von selbst am {{date}}",
         "show_results": "Ergebnisse anzeigen"
       },
       "kind": {
-        "budget_one": "{{count}} Punkt pro Person",
-        "budget_other": "{{count}} Punkte pro Person",
+        "budget_one": "{{count, number}} Punkt pro Person",
+        "budget_other": "{{count, number}} Punkte pro Person",
         "multiple": "Bis zu {{max}} von {{choices}} Optionen",
-        "quadratic_one": "{{count}} Guthaben pro Person",
-        "quadratic_other": "{{count}} Guthaben pro Person",
-        "ranked_one": "{{count}} Option wird gereiht",
-        "ranked_other": "{{count}} Optionen werden gereiht",
+        "quadratic_one": "{{count, number}} Guthaben pro Person",
+        "quadratic_other": "{{count, number}} Guthaben pro Person",
+        "ranked_one": "{{count, number}} Option wird gereiht",
+        "ranked_other": "{{count, number}} Optionen werden gereiht",
         "single": "Eine Option, einfache Mehrheit"
       },
       "label": {
@@ -2111,8 +2132,8 @@
       },
       "provisional": "Vorläufiges Ergebnis",
       "question_turnout": "{{votes}} · {{percent}} %",
-      "question_votes_one": "{{count}} Stimme",
-      "question_votes_other": "{{count}} Stimmen",
+      "question_votes_one": "{{count, number}} Stimme",
+      "question_votes_other": "{{count, number}} Stimmen",
       "results_line": {
         "live": "Die Ergebnisse sind live sichtbar, während der Abstimmung.",
         "none": "Es wird keine Ergebnisse geben.",
@@ -2123,8 +2144,8 @@
         "state": "{{state}}.",
         "state_detail": "{{state}}. {{detail}}."
       },
-      "ruler_label_one": "{{count}} von {{total}} Personen hat abgestimmt, {{percent}} %",
-      "ruler_label_other": "{{count}} von {{total}} Personen haben abgestimmt, {{percent}} %",
+      "ruler_label_one": "{{count, number}} von {{total}} Personen hat abgestimmt, {{percent}} %",
+      "ruler_label_other": "{{count, number}} von {{total}} Personen haben abgestimmt, {{percent}} %",
       "ruler_label_any": "Mindestens {{voted}} von {{total}} Personen haben bei einer Frage abgestimmt, {{percent}} %",
       "share_asks": "Fragt nach {{fields}}.",
       "share_field": {
@@ -2144,8 +2165,8 @@
       "turnout": "Beteiligung",
       "verdict_figures": "{{winnerVotes}} zu {{otherVotes}}",
       "voted_any_lines": "Mindestens {{voted}} von {{total}} haben <br/>bei einer Frage abgestimmt",
-      "voted_of_one": "{{count}} von {{total}} hat abgestimmt",
-      "voted_of_other": "{{count}} von {{total}} haben abgestimmt"
+      "voted_of_one": "{{count, number}} von {{total}} hat abgestimmt",
+      "voted_of_other": "{{count, number}} von {{total}} haben abgestimmt"
     },
     "time_left": "Noch {{duration}}",
     "time_left_delimiter": " und "

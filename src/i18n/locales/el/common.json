@@ -15,7 +15,6 @@
     "edit": "Επεξεργασία",
     "end": "Τερματισμός της ψηφοφορίας τώρα. Δεν θα μπορούν να υποβληθούν νέες ψήφοι και θα εμφανιστούν τα αποτελέσματα (δεν μπορεί να αναιρεθεί).",
     "end_description": "Τερματισμός της ψηφοφορίας «{{ election.title.default }}»...\n\nΠροσοχή: αυτή η ενέργεια είναι μη αναστρέψιμη και οι ψηφοφόροι δεν θα μπορούν πλέον να ψηφίσουν.",
-    "error_title": "Παρουσιάστηκε σφάλμα κατά την εκτέλεση της συναλλαγής",
     "manage_team": "Διαχείριση ομάδας",
     "more": "Περισσότερες επιλογές",
     "pause": "Προσωρινή παύση της ψηφοφορίας μέχρι να συνεχιστεί χειροκίνητα. Όσο είναι σε παύση, οι ψηφοφόροι δεν μπορούν να υποβάλουν ψήφο.",
@@ -1784,18 +1783,20 @@
   },
   "votes": {
     "cancel": {
-      "body_all_one": "Η {{count}} ψήφος που δόθηκε θα απορριφθεί και δεν θα υπάρξουν αποτελέσματα.",
-      "body_all_other": "Οι {{count}} ψήφοι που δόθηκαν θα απορριφθούν και δεν θα υπάρξουν αποτελέσματα.",
-      "body_by_question_one": "Η {{count}} ψήφος που δόθηκε σε {{questions}} θα απορριφθεί και κανένα αποτέλεσμα δεν θα ισχύσει.",
-      "body_by_question_other": "Οι {{count}} ψήφοι που δόθηκαν σε {{questions}} θα απορριφθούν και κανένα αποτέλεσμα δεν θα ισχύσει.",
+      "body_all_one": "Η {{count, number}} ψήφος που δόθηκε θα απορριφθεί και δεν θα υπάρξουν αποτελέσματα.",
+      "body_all_other": "Οι {{count, number}} ψήφοι που δόθηκαν θα απορριφθούν και δεν θα υπάρξουν αποτελέσματα.",
+      "body_all_unknown": "Οι ψήφοι που δόθηκαν θα απορριφθούν και δεν θα υπάρξουν αποτελέσματα.",
+      "body_by_question_one": "Η {{count, number}} ψήφος που δόθηκε σε {{questions}} θα απορριφθεί και κανένα αποτέλεσμα δεν θα ισχύσει.",
+      "body_by_question_other": "Οι {{count, number}} ψήφοι που δόθηκαν σε {{questions}} θα απορριφθούν και κανένα αποτέλεσμα δεν θα ισχύσει.",
       "body_final": "Δεν μπορεί να αναιρεθεί.",
       "body_none": "Δεν έχει δοθεί ακόμη καμία ψήφος.",
       "body_not_open": "Δεν έχει ανοίξει ακόμη και δεν υπάρχει καμία ψήφος.",
+      "error": "Δεν ήταν δυνατή η ακύρωση της ψηφοφορίας",
       "keep": "Όχι, συνέχιση της ψηφοφορίας",
       "open_now_one": "Η ερώτηση {{numbers}} είναι ανοιχτή αυτή τη στιγμή.",
       "open_now_other": "Οι ερωτήσεις {{numbers}} είναι ανοιχτές αυτή τη στιγμή.",
-      "questions_one": "{{count}} ερώτηση",
-      "questions_other": "{{count}} ερωτήσεις",
+      "questions_one": "{{count, number}} ερώτηση",
+      "questions_other": "{{count, number}} ερωτήσεις",
       "title": "Ακύρωση της «{{title}}»;"
     },
     "clone": {
@@ -1819,19 +1820,24 @@
       "title": "Δεν υπάρχουν ακόμη ψηφοφορίες"
     },
     "end": {
-      "body_all_one": "Θα κλείσει πριν από τη λήξη της προθεσμίας, με την {{count}} ψήφο που δόθηκε. Τα αποτελέσματα θα δημοσιευτούν και οι ψηφοφόροι θα τα δουν. Δεν μπορεί να ανοίξει ξανά.",
-      "body_all_other": "Θα κλείσει πριν από τη λήξη της προθεσμίας, με τις {{count}} ψήφους που δόθηκαν. Τα αποτελέσματα θα δημοσιευτούν και οι ψηφοφόροι θα τα δουν. Δεν μπορεί να ανοίξει ξανά.",
+      "body_all_one": "Θα κλείσει πριν από τη λήξη της προθεσμίας, με την {{count, number}} ψήφο που δόθηκε. Τα αποτελέσματα θα δημοσιευτούν και οι ψηφοφόροι θα τα δουν. Δεν μπορεί να ανοίξει ξανά.",
+      "body_all_other": "Θα κλείσει πριν από τη λήξη της προθεσμίας, με τις {{count, number}} ψήφους που δόθηκαν. Τα αποτελέσματα θα δημοσιευτούν και οι ψηφοφόροι θα τα δουν. Δεν μπορεί να ανοίξει ξανά.",
+      "body_all_unknown": "Θα κλείσει πριν από τη λήξη της προθεσμίας, με τις ψήφους που δόθηκαν. Τα αποτελέσματα θα δημοσιευτούν και οι ψηφοφόροι θα τα δουν. Δεν μπορεί να ανοίξει ξανά.",
       "body_final": "Τα αποτελέσματα θα είναι οριστικά και οι ψηφοφόροι θα τα δουν.",
-      "body_question_one": "Η ερώτηση {{number}} θα κλείσει με την {{count}} ψήφο που έχει τώρα.",
-      "body_question_other": "Η ερώτηση {{number}} θα κλείσει με τις {{count}} ψήφους που έχει τώρα.",
+      "body_question_one": "Η ερώτηση {{number}} θα κλείσει με την {{count, number}} ψήφο που έχει τώρα.",
+      "body_question_other": "Η ερώτηση {{number}} θα κλείσει με τις {{count, number}} ψήφους που έχει τώρα.",
       "body_questions": "Οι ερωτήσεις {{numbers}} θα κλείσουν με τις ψήφους που έχουν τώρα.",
+      "error": "Δεν ήταν δυνατή η λήξη της ψηφοφορίας",
       "keep": "Συνέχιση της ψηφοφορίας",
-      "not_voted_one": "{{count}} άτομο δεν έχει ψηφίσει ακόμη και δεν θα μπορεί πλέον να ψηφίσει.",
-      "not_voted_other": "{{count}} άτομα δεν έχουν ψηφίσει ακόμη και δεν θα μπορούν πλέον να ψηφίσουν.",
+      "not_voted_one": "{{count, number}} άτομο δεν έχει ψηφίσει ακόμη και δεν θα μπορεί πλέον να ψηφίσει.",
+      "not_voted_other": "{{count, number}} άτομα δεν έχουν ψηφίσει ακόμη και δεν θα μπορούν πλέον να ψηφίσουν.",
       "title": "Λήξη της ψηφοφορίας;",
       "title_now": "Λήξη της ψηφοφορίας τώρα;",
       "unopened_one": "Η ερώτηση {{numbers}} δεν άνοιξε και θα μείνει χωρίς ψήφους.",
       "unopened_other": "Οι ερωτήσεις {{numbers}} δεν άνοιξαν και θα μείνουν χωρίς ψήφους."
+    },
+    "error": {
+      "other": "Κάτι πήγε στραβά. Φορτώστε ξανά τη σελίδα και δοκιμάστε πάλι."
     },
     "header": {
       "line": {
@@ -1853,6 +1859,12 @@
         "opens": "Ανοίγει την {{start}} και κλείνει την {{end}}."
       }
     },
+    "job": {
+      "partial": "Ορισμένες ερωτήσεις δεν μπόρεσαν να αλλάξουν: {{failed, number}} από {{total, number}}. Η σελίδα δείχνει σε ποια κατάσταση είναι η καθεμία.",
+      "slow": "Η αλλαγή δεν έχει ολοκληρωθεί ακόμη. Συνεχίζουμε να περιμένουμε και θα ανανεώσουμε τη σελίδα όταν ολοκληρωθεί.",
+      "slow_title": "Εξακολουθούμε να εργαζόμαστε",
+      "stale": "Μια ερώτηση είχε ήδη αλλάξει κατάσταση. Η σελίδα δείχνει τώρα σε ποια κατάσταση είναι η καθεμία."
+    },
     "list": {
       "action": {
         "continue": "Συνέχιση",
@@ -1866,6 +1878,7 @@
       "delete": "Διαγραφή",
       "delete_body": "Δεν μπορεί να αναιρεθεί.",
       "delete_confirm": "Διαγραφή του πρόχειρου",
+      "delete_error": "Δεν ήταν δυνατή η διαγραφή του πρόχειρου",
       "delete_title": "Διαγραφή αυτού του προχείρου;",
       "duplicate_short": "Αντιγραφή",
       "filter": {
@@ -1878,15 +1891,19 @@
       "filter_label": "Φιλτράρισμα ανά κατάσταση",
       "meta": "{{questions}}, {{voters}}.",
       "meta_no_voters": "{{questions}}.",
-      "meta_questions_one": "{{count}} ερώτηση",
-      "meta_questions_other": "{{count}} ερωτήσεις",
-      "meta_voters_one": "{{count}} ψηφοφόρος",
-      "meta_voters_other": "{{count}} ψηφοφόροι",
+      "meta_questions_one": "{{count, number}} ερώτηση",
+      "meta_questions_other": "{{count, number}} ερωτήσεις",
+      "meta_voters_one": "{{count, number}} ψηφοφόρος",
+      "meta_voters_other": "{{count, number}} ψηφοφόροι",
       "more": "Περισσότερες ενέργειες",
       "new": "Νέα ψηφοφορία",
       "no_match": "Καμία ψηφοφορία δεν ταιριάζει",
       "no_match_hint": "Δοκιμάστε άλλο φίλτρο ή άλλη αναζήτηση.",
-      "outcome": "{{result}}.",
+      "refresh_error": "Δεν ήταν δυνατή η ανανέωση της λίστας",
+      "refresh_error_hint": "Δείχνει τις ψηφοφορίες όπως φορτώθηκαν την τελευταία φορά.",
+      "result": "<b>{{result}}</b>.",
+      "result_turnout": "<b>{{result}}</b> με συμμετοχή {{percent}}%.",
+      "retry": "Δοκιμάστε ξανά",
       "row_error": "Αυτή η ψηφοφορία δεν μπόρεσε να εμφανιστεί.",
       "search": "Αναζήτηση ψηφοφορίας",
       "starts": "Ξεκινά στις {{date}}.",
@@ -1897,8 +1914,7 @@
         "end_passed": "Η ημερομηνία λήξης έχει περάσει.",
         "missing_end": "Δεν υπάρχει ακόμη ημερομηνία λήξης."
       },
-      "when": "{{weekday}} {{day}} στις {{time}}",
-      "with_turnout": "με συμμετοχή {{percent}}%."
+      "when": "{{weekday}} {{day}} στις {{time}}"
     },
     "manage": {
       "abstention": "Αποχή",
@@ -1912,18 +1928,18 @@
       "closed": "Η ψηφοφορία έκλεισε στις {{date}}.",
       "closes": "Η ψηφοφορία κλείνει την {{date}}. Όσες ερωτήσεις μείνουν ανοιχτές θα κλείσουν τότε.",
       "count": {
-        "canceled_one": "{{count}} άκυρη",
-        "canceled_other": "{{count}} άκυρες",
-        "closed_one": "{{count}} κλειστή",
-        "closed_other": "{{count}} κλειστές",
-        "not_opened_one": "{{count}} δεν άνοιξε",
-        "not_opened_other": "{{count}} δεν άνοιξαν",
-        "open_one": "{{count}} ανοιχτή",
-        "open_other": "{{count}} ανοιχτές",
-        "paused_one": "{{count}} σε παύση",
-        "paused_other": "{{count}} σε παύση",
-        "to_open_one": "{{count}} προς άνοιγμα",
-        "to_open_other": "{{count}} προς άνοιγμα"
+        "canceled_one": "{{count, number}} άκυρη",
+        "canceled_other": "{{count, number}} άκυρες",
+        "closed_one": "{{count, number}} κλειστή",
+        "closed_other": "{{count, number}} κλειστές",
+        "not_opened_one": "{{count, number}} δεν άνοιξε",
+        "not_opened_other": "{{count, number}} δεν άνοιξαν",
+        "open_one": "{{count, number}} ανοιχτή",
+        "open_other": "{{count, number}} ανοιχτές",
+        "paused_one": "{{count, number}} σε παύση",
+        "paused_other": "{{count, number}} σε παύση",
+        "to_open_one": "{{count, number}} προς άνοιγμα",
+        "to_open_other": "{{count, number}} προς άνοιγμα"
       },
       "error": {
         "busy": "Μια άλλη αλλαγή βρίσκεται σε εξέλιξη. Δοκιμάστε ξανά σε λίγα δευτερόλεπτα.",
@@ -1956,9 +1972,12 @@
       "percent": "{{percent}}%",
       "provisional": "Προσωρινό αποτέλεσμα.",
       "question_ruler": "Ψήφισαν {{voted}} από {{total}} άτομα, {{percent}}%.",
+      "question_ruler_count": "Ψήφισαν {{voted}} άτομα.",
       "question_voted": "Ψήφισαν {{voted}} από {{total}}",
+      "question_voted_count": "Ψήφισαν {{voted}}",
       "resume": "Συνέχιση",
       "ruler_label": "Τουλάχιστον {{voted}} από {{total}} άτομα ψήφισαν σε μια ερώτηση, {{percent}}%.",
+      "ruler_label_count": "Τουλάχιστον {{voted}} άτομα ψήφισαν σε μια ερώτηση.",
       "starts": "Η ψηφοφορία ξεκινά στις {{date}}.",
       "strip_label": "Κατάσταση της ψηφοφορίας",
       "summary_link": "Σύνοψη",
@@ -1967,6 +1986,7 @@
       "vote_figures_one": "{{votes}} ψήφος",
       "vote_figures_other": "{{votes}} ψήφοι",
       "voted_any": "Ψήφισαν τουλάχιστον {{voted}} από {{total}} σε μια ερώτηση",
+      "voted_any_count": "Ψήφισαν τουλάχιστον {{voted}} σε μια ερώτηση",
       "weight_figures": "βαρύτητα {{votes}}",
       "winner": "Νικήτρια επιλογή",
       "winner_tag": "Νικήτρια"
@@ -2028,8 +2048,8 @@
       "answered": "{{answered}} από {{total}} την απάντησαν",
       "answered_label": "{{answered}} από {{total}} άτομα απάντησαν την ερώτηση {{number}}.",
       "ballot_link": "Ψηφοδέλτιο",
-      "blank_one": "{{count}} από τους {{voters}} ψηφοφόρους την άφησε κενή.",
-      "blank_other": "{{count}} από τους {{voters}} ψηφοφόρους την άφησαν κενή.",
+      "blank_one": "{{count, number}} από τους {{voters}} ψηφοφόρους την άφησε κενή.",
+      "blank_other": "{{count, number}} από τους {{voters}} ψηφοφόρους την άφησαν κενή.",
       "calendar": {
         "at": "Στις {{time}}.",
         "close": "Λήξη και αποτελέσματα για όλους",
@@ -2044,14 +2064,14 @@
       "copy_link": "Αντιγραφή του δημόσιου συνδέσμου",
       "electoral_title": "Στοιχεία ψηφοφορίας",
       "fact": {
-        "census_one": "{{count}} άτομο",
-        "census_other": "{{count}} άτομα",
+        "census_one": "{{count, number}} άτομο",
+        "census_other": "{{count, number}} άτομα",
         "overwrite_allowed": "Μπορεί να αλλάξει",
         "overwrite_not_allowed": "Δεν μπορεί να αλλάξει",
-        "questions_all_one": "{{count}}, όλα ταυτόχρονα",
-        "questions_all_other": "{{count}}, όλα ταυτόχρονα",
-        "questions_by_question_one": "{{count}}, ερώτηση προς ερώτηση",
-        "questions_by_question_other": "{{count}}, ερώτηση προς ερώτηση",
+        "questions_all_one": "{{count, number}}, όλα ταυτόχρονα",
+        "questions_all_other": "{{count, number}}, όλα ταυτόχρονα",
+        "questions_by_question_one": "{{count, number}}, ερώτηση προς ερώτηση",
+        "questions_by_question_other": "{{count, number}}, ερώτηση προς ερώτηση",
         "results_hidden": "όταν κλείσει η ψηφοφορία",
         "results_hidden_by_question": "όταν κλείσει κάθε ερώτηση",
         "results_live": "ζωντανά, κατά τη διάρκεια της ψηφοφορίας",
@@ -2067,25 +2087,26 @@
         "canceled_hint": "Μπορείτε να την αντιγράψετε για να τη συγκαλέσετε ξανά.",
         "canceled_title": "Η ψηφοφορία ακυρώθηκε",
         "duplicate": "Αντιγραφή",
+        "ended_counting": "Τα οριστικά αποτελέσματα καταμετρώνται ακόμη.",
         "ended_final": "Τα αποτελέσματα είναι οριστικά και οι ψηφοφόροι μπορούν ήδη να τα δουν.",
         "ended_hint": "Τα αποτελέσματα κάθε ερώτησης βρίσκονται στη σελίδα αποτελεσμάτων.",
-        "ended_title_one": "Η ψηφοφορία έληξε με {{count}} ψήφο",
-        "ended_title_other": "Η ψηφοφορία έληξε με {{count}} ψήφους",
+        "ended_title_one": "Η ψηφοφορία έληξε με {{count, number}} ψήφο",
+        "ended_title_other": "Η ψηφοφορία έληξε με {{count, number}} ψήφους",
         "ended_turnout": "Ψήφισε το {{percent}}% του μητρώου.",
-        "questions_one": "{{count}} ερώτηση",
-        "questions_other": "{{count}} ερωτήσεις",
+        "questions_one": "{{count, number}} ερώτηση",
+        "questions_other": "{{count, number}} ερωτήσεις",
         "ready_body": "{{people}} στο μητρώο και {{questions}}, όλες ανοιχτές μαζί.",
         "ready_title": "Θα ανοίξει αυτόματα την {{date}}",
         "show_results": "Εμφάνιση των αποτελεσμάτων"
       },
       "kind": {
-        "budget_one": "{{count}} πόντος ανά άτομο",
-        "budget_other": "{{count}} πόντοι ανά άτομο",
+        "budget_one": "{{count, number}} πόντος ανά άτομο",
+        "budget_other": "{{count, number}} πόντοι ανά άτομο",
         "multiple": "Έως {{max}} από {{choices}} επιλογές",
-        "quadratic_one": "{{count}} μονάδα ανά άτομο",
-        "quadratic_other": "{{count}} μονάδες ανά άτομο",
-        "ranked_one": "Κατατάσσεται {{count}} επιλογή",
-        "ranked_other": "Κατατάσσονται {{count}} επιλογές",
+        "quadratic_one": "{{count, number}} μονάδα ανά άτομο",
+        "quadratic_other": "{{count, number}} μονάδες ανά άτομο",
+        "ranked_one": "Κατατάσσεται {{count, number}} επιλογή",
+        "ranked_other": "Κατατάσσονται {{count, number}} επιλογές",
         "single": "Μία επιλογή, απλή πλειοψηφία"
       },
       "label": {
@@ -2111,8 +2132,8 @@
       },
       "provisional": "Προσωρινό αποτέλεσμα",
       "question_turnout": "{{votes}} · {{percent}}%",
-      "question_votes_one": "{{count}} ψήφος",
-      "question_votes_other": "{{count}} ψήφοι",
+      "question_votes_one": "{{count, number}} ψήφος",
+      "question_votes_other": "{{count, number}} ψήφοι",
       "results_line": {
         "live": "Τα αποτελέσματα φαίνονται ζωντανά, κατά τη διάρκεια της ψηφοφορίας.",
         "none": "Δεν θα υπάρξουν αποτελέσματα.",
@@ -2123,8 +2144,8 @@
         "state": "{{state}}.",
         "state_detail": "{{state}}. {{detail}}."
       },
-      "ruler_label_one": "{{count}} από {{total}} άτομα ψήφισαν, {{percent}}%",
-      "ruler_label_other": "{{count}} από {{total}} άτομα ψήφισαν, {{percent}}%",
+      "ruler_label_one": "{{count, number}} από {{total}} άτομα ψήφισαν, {{percent}}%",
+      "ruler_label_other": "{{count, number}} από {{total}} άτομα ψήφισαν, {{percent}}%",
       "ruler_label_any": "Τουλάχιστον {{voted}} από {{total}} άτομα ψήφισαν σε μια ερώτηση, {{percent}}%",
       "share_asks": "Ζητά {{fields}}.",
       "share_field": {
@@ -2144,8 +2165,8 @@
       "turnout": "Συμμετοχή",
       "verdict_figures": "{{winnerVotes}} έναντι {{otherVotes}}",
       "voted_any_lines": "Τουλάχιστον {{voted}} από {{total}} ψήφισαν <br/>σε μια ερώτηση",
-      "voted_of_one": "Ψήφισαν {{count}} από {{total}}",
-      "voted_of_other": "Ψήφισαν {{count}} από {{total}}"
+      "voted_of_one": "Ψήφισαν {{count, number}} από {{total}}",
+      "voted_of_other": "Ψήφισαν {{count, number}} από {{total}}"
     },
     "time_left": "Απομένουν {{duration}}",
     "time_left_delimiter": " και "

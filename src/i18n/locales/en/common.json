@@ -15,7 +15,6 @@
     "edit": "Edit",
     "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
     "end_description": "Attention: ending \"{{ election.title.default }}\" is irreversible — voters will no longer be able to vote.",
-    "error_title": "There was some error while executing the transaction",
     "manage_team": "Manage team",
     "more": "More options",
     "pause": "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
@@ -1784,18 +1783,20 @@
   },
   "votes": {
     "cancel": {
-      "body_all_one": "The {{count}} vote cast will be discarded and there will be no results.",
-      "body_all_other": "The {{count}} votes cast will be discarded and there will be no results.",
-      "body_by_question_one": "The {{count}} vote cast in {{questions}} will be discarded and no result will take effect.",
-      "body_by_question_other": "The {{count}} votes cast in {{questions}} will be discarded and no result will take effect.",
+      "body_all_one": "The {{count, number}} vote cast will be discarded and there will be no results.",
+      "body_all_other": "The {{count, number}} votes cast will be discarded and there will be no results.",
+      "body_all_unknown": "The votes cast will be discarded and there will be no results.",
+      "body_by_question_one": "The {{count, number}} vote cast in {{questions}} will be discarded and no result will take effect.",
+      "body_by_question_other": "The {{count, number}} votes cast in {{questions}} will be discarded and no result will take effect.",
       "body_final": "It cannot be undone.",
       "body_none": "No vote has been cast yet.",
       "body_not_open": "It has not opened yet and there are no votes.",
+      "error": "The vote could not be canceled",
       "keep": "No, continue the vote",
       "open_now_one": "Question {{numbers}} is open right now.",
       "open_now_other": "Questions {{numbers}} are open right now.",
-      "questions_one": "{{count}} question",
-      "questions_other": "{{count}} questions",
+      "questions_one": "{{count, number}} question",
+      "questions_other": "{{count, number}} questions",
       "title": "Cancel “{{title}}”?"
     },
     "clone": {
@@ -1819,19 +1820,24 @@
       "title": "No votes yet"
     },
     "end": {
-      "body_all_one": "It will close before the deadline, with the {{count}} vote cast. The results will be published and the voters will see them. It cannot be reopened.",
-      "body_all_other": "It will close before the deadline, with the {{count}} votes cast. The results will be published and the voters will see them. It cannot be reopened.",
+      "body_all_one": "It will close before the deadline, with the {{count, number}} vote cast. The results will be published and the voters will see them. It cannot be reopened.",
+      "body_all_other": "It will close before the deadline, with the {{count, number}} votes cast. The results will be published and the voters will see them. It cannot be reopened.",
+      "body_all_unknown": "It will close before the deadline, with the votes cast. The results will be published and the voters will see them. It cannot be reopened.",
       "body_final": "The results will be final, and the voters will see them.",
-      "body_question_one": "Question {{number}} will close with the {{count}} vote it has now.",
-      "body_question_other": "Question {{number}} will close with the {{count}} votes it has now.",
+      "body_question_one": "Question {{number}} will close with the {{count, number}} vote it has now.",
+      "body_question_other": "Question {{number}} will close with the {{count, number}} votes it has now.",
       "body_questions": "Questions {{numbers}} will close with the votes they have now.",
+      "error": "The vote could not be ended",
       "keep": "Continue the vote",
-      "not_voted_one": "{{count}} person has not voted yet and will no longer be able to.",
-      "not_voted_other": "{{count}} people have not voted yet and will no longer be able to.",
+      "not_voted_one": "{{count, number}} person has not voted yet and will no longer be able to.",
+      "not_voted_other": "{{count, number}} people have not voted yet and will no longer be able to.",
       "title": "End the vote?",
       "title_now": "End the vote now?",
       "unopened_one": "Question {{numbers}} has not been opened and will stay without votes.",
       "unopened_other": "Questions {{numbers}} have not been opened and will stay without votes."
+    },
+    "error": {
+      "other": "Something went wrong. Reload the page and try again."
     },
     "header": {
       "line": {
@@ -1853,6 +1859,12 @@
         "opens": "Opens {{start}} and closes {{end}}."
       }
     },
+    "job": {
+      "partial": "Some questions could not change: {{failed, number}} of {{total, number}}. The page shows where each one stands.",
+      "slow": "The change has not finished yet. We keep waiting and will refresh the page when it does.",
+      "slow_title": "Still working on it",
+      "stale": "A question had already changed state. The page now shows where each one stands."
+    },
     "list": {
       "action": {
         "continue": "Continue",
@@ -1866,6 +1878,7 @@
       "delete": "Delete",
       "delete_body": "It cannot be undone.",
       "delete_confirm": "Delete draft",
+      "delete_error": "The draft could not be deleted",
       "delete_title": "Delete this draft?",
       "duplicate_short": "Duplicate",
       "filter": {
@@ -1878,15 +1891,19 @@
       "filter_label": "Filter by state",
       "meta": "{{questions}}, {{voters}}.",
       "meta_no_voters": "{{questions}}.",
-      "meta_questions_one": "{{count}} question",
-      "meta_questions_other": "{{count}} questions",
-      "meta_voters_one": "{{count}} voter",
-      "meta_voters_other": "{{count}} voters",
+      "meta_questions_one": "{{count, number}} question",
+      "meta_questions_other": "{{count, number}} questions",
+      "meta_voters_one": "{{count, number}} voter",
+      "meta_voters_other": "{{count, number}} voters",
       "more": "More actions",
       "new": "New vote",
       "no_match": "No vote matches",
       "no_match_hint": "Try another filter or search.",
-      "outcome": "{{result}}.",
+      "refresh_error": "The list could not be refreshed",
+      "refresh_error_hint": "It shows the votes as they were last loaded.",
+      "result": "<b>{{result}}</b>.",
+      "result_turnout": "<b>{{result}}</b> with {{percent}}% turnout.",
+      "retry": "Try again",
       "row_error": "This vote could not be shown.",
       "search": "Search a vote",
       "starts": "Starts {{date}}.",
@@ -1897,8 +1914,7 @@
         "end_passed": "The closing date has passed.",
         "missing_end": "No closing date yet."
       },
-      "when": "{{weekday}} {{day}} at {{time}}",
-      "with_turnout": "with {{percent}}% turnout."
+      "when": "{{weekday}} {{day}} at {{time}}"
     },
     "manage": {
       "abstention": "Abstention",
@@ -1912,18 +1928,18 @@
       "closed": "The vote closed on {{date}}.",
       "closes": "The vote closes {{date}}. Questions still open will close then.",
       "count": {
-        "canceled_one": "{{count}} voided",
-        "canceled_other": "{{count}} voided",
-        "closed_one": "{{count}} closed",
-        "closed_other": "{{count}} closed",
-        "not_opened_one": "{{count}} not opened",
-        "not_opened_other": "{{count}} not opened",
-        "open_one": "{{count}} open",
-        "open_other": "{{count}} open",
-        "paused_one": "{{count}} paused",
-        "paused_other": "{{count}} paused",
-        "to_open_one": "{{count}} to open",
-        "to_open_other": "{{count}} to open"
+        "canceled_one": "{{count, number}} voided",
+        "canceled_other": "{{count, number}} voided",
+        "closed_one": "{{count, number}} closed",
+        "closed_other": "{{count, number}} closed",
+        "not_opened_one": "{{count, number}} not opened",
+        "not_opened_other": "{{count, number}} not opened",
+        "open_one": "{{count, number}} open",
+        "open_other": "{{count, number}} open",
+        "paused_one": "{{count, number}} paused",
+        "paused_other": "{{count, number}} paused",
+        "to_open_one": "{{count, number}} to open",
+        "to_open_other": "{{count, number}} to open"
       },
       "error": {
         "busy": "Another change is under way. Try again in a few seconds.",
@@ -1956,9 +1972,12 @@
       "percent": "{{percent}}%",
       "provisional": "Provisional result.",
       "question_ruler": "{{voted}} of {{total}} people voted, {{percent}}%.",
+      "question_ruler_count": "{{voted}} people voted.",
       "question_voted": "{{voted}} of {{total}} voted",
+      "question_voted_count": "{{voted}} voted",
       "resume": "Resume",
       "ruler_label": "At least {{voted}} of {{total}} people voted on a question, {{percent}}%.",
+      "ruler_label_count": "At least {{voted}} people voted on a question.",
       "starts": "The vote starts {{date}}.",
       "strip_label": "Vote status",
       "summary_link": "Summary",
@@ -1967,6 +1986,7 @@
       "vote_figures_one": "{{votes}} vote",
       "vote_figures_other": "{{votes}} votes",
       "voted_any": "At least {{voted}} of {{total}} voted on a question",
+      "voted_any_count": "At least {{voted}} voted on a question",
       "weight_figures": "weight {{votes}}",
       "winner": "Winning choice",
       "winner_tag": "Winner"
@@ -2028,8 +2048,8 @@
       "answered": "{{answered}} of {{total}} answered it",
       "answered_label": "{{answered}} of {{total}} people answered question {{number}}.",
       "ballot_link": "Ballot",
-      "blank_one": "{{count}} of the {{voters}} voters left it blank.",
-      "blank_other": "{{count}} of the {{voters}} voters left it blank.",
+      "blank_one": "{{count, number}} of the {{voters}} voters left it blank.",
+      "blank_other": "{{count, number}} of the {{voters}} voters left it blank.",
       "calendar": {
         "at": "At {{time}}.",
         "close": "Closing and results for everyone",
@@ -2044,14 +2064,14 @@
       "copy_link": "Copy the public link",
       "electoral_title": "Voting data",
       "fact": {
-        "census_one": "{{count}} person",
-        "census_other": "{{count}} people",
+        "census_one": "{{count, number}} person",
+        "census_other": "{{count, number}} people",
         "overwrite_allowed": "Can be changed",
         "overwrite_not_allowed": "Cannot be changed",
-        "questions_all_one": "{{count}}, all at once",
-        "questions_all_other": "{{count}}, all at once",
-        "questions_by_question_one": "{{count}}, question by question",
-        "questions_by_question_other": "{{count}}, question by question",
+        "questions_all_one": "{{count, number}}, all at once",
+        "questions_all_other": "{{count, number}}, all at once",
+        "questions_by_question_one": "{{count, number}}, question by question",
+        "questions_by_question_other": "{{count, number}}, question by question",
         "results_hidden": "when the vote closes",
         "results_hidden_by_question": "when each question closes",
         "results_live": "live, during the vote",
@@ -2067,25 +2087,26 @@
         "canceled_hint": "You can duplicate it to call it again.",
         "canceled_title": "Vote canceled",
         "duplicate": "Duplicate it",
+        "ended_counting": "The final results are still being counted.",
         "ended_final": "The results are final and voters can already see them.",
         "ended_hint": "Each question's results are on the results page.",
-        "ended_title_one": "Vote ended with {{count}} vote",
-        "ended_title_other": "Vote ended with {{count}} votes",
+        "ended_title_one": "Vote ended with {{count, number}} vote",
+        "ended_title_other": "Vote ended with {{count, number}} votes",
         "ended_turnout": "{{percent}}% of the census voted.",
-        "questions_one": "{{count}} question",
-        "questions_other": "{{count}} questions",
+        "questions_one": "{{count, number}} question",
+        "questions_other": "{{count, number}} questions",
         "ready_body": "{{people}} in the census and {{questions}}, all open at once.",
         "ready_title": "Opens by itself {{date}}",
         "show_results": "Show the results"
       },
       "kind": {
-        "budget_one": "{{count}} point per person",
-        "budget_other": "{{count}} points per person",
+        "budget_one": "{{count, number}} point per person",
+        "budget_other": "{{count, number}} points per person",
         "multiple": "Up to {{max}} of {{choices}} options",
-        "quadratic_one": "{{count}} credit per person",
-        "quadratic_other": "{{count}} credits per person",
-        "ranked_one": "{{count}} option is ranked",
-        "ranked_other": "{{count}} options are ranked",
+        "quadratic_one": "{{count, number}} credit per person",
+        "quadratic_other": "{{count, number}} credits per person",
+        "ranked_one": "{{count, number}} option is ranked",
+        "ranked_other": "{{count, number}} options are ranked",
         "single": "One choice, simple majority"
       },
       "label": {
@@ -2111,8 +2132,8 @@
       },
       "provisional": "Provisional result",
       "question_turnout": "{{votes}} · {{percent}}%",
-      "question_votes_one": "{{count}} vote",
-      "question_votes_other": "{{count}} votes",
+      "question_votes_one": "{{count, number}} vote",
+      "question_votes_other": "{{count, number}} votes",
       "results_line": {
         "live": "The results show live, during the vote.",
         "none": "There will be no results.",
@@ -2123,8 +2144,8 @@
         "state": "{{state}}.",
         "state_detail": "{{state}}. {{detail}}."
       },
-      "ruler_label_one": "{{count}} of {{total}} people voted, {{percent}}%",
-      "ruler_label_other": "{{count}} of {{total}} people voted, {{percent}}%",
+      "ruler_label_one": "{{count, number}} of {{total}} people voted, {{percent}}%",
+      "ruler_label_other": "{{count, number}} of {{total}} people voted, {{percent}}%",
       "ruler_label_any": "At least {{voted}} of {{total}} people voted on a question, {{percent}}%",
       "share_asks": "Asks for {{fields}}.",
       "share_field": {
@@ -2144,8 +2165,8 @@
       "turnout": "Turnout",
       "verdict_figures": "{{winnerVotes}} to {{otherVotes}}",
       "voted_any_lines": "At least {{voted}} of {{total}} voted <br/>on a question",
-      "voted_of_one": "{{count}} of {{total}} voted",
-      "voted_of_other": "{{count}} of {{total}} voted"
+      "voted_of_one": "{{count, number}} of {{total}} voted",
+      "voted_of_other": "{{count, number}} of {{total}} voted"
     },
     "time_left": "{{duration}} left",
     "time_left_delimiter": " and "
