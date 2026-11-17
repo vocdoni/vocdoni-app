@@ -40,7 +40,7 @@ export const SummaryShare = ({ link, state }: SummaryShareProps) => {
                 })}
           </Text>
         </Box>
-        <Flex gap='2' maxW={{ md: 'lg', lg: 'none' }}>
+        <Flex gap='2' maxW={{ md: 'lg', lg: 'full' }}>
           {/* The swapped icon is all a sighted user gets; a screen reader hears it said. */}
           <VisuallyHidden aria-live='polite'>
             {copied ? t('votes.summary.link_copied', { defaultValue: 'Link copied' }) : ''}
