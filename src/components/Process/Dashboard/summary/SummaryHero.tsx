@@ -77,8 +77,8 @@ const useSecondLine = ({ election, state, endDate, now }: SummaryModel): ReactNo
 
 /**
  * The top card of Resum (board V4VoteManageAll, R34): a sentence that says how many voted, a line on the time left,
- * the pause or the results, and the turnout bar from 0 to the census. A question-by-question vote that has not started
- * or was canceled says where it stands instead. The same card at every width; the type steps down below `lg`.
+ * the pause or the results, and the turnout bar from 0 to the census. A vote that is ready or canceled shows
+ * `SummaryIdle` instead. The same card at every width; the type steps down below `lg`.
  */
 export const SummaryHero = ({ model }: { model: SummaryModel }) => {
   const { t } = useTranslation()
@@ -87,29 +87,6 @@ export const SummaryHero = ({ model }: { model: SummaryModel }) => {
   const second = useSecondLine(model)
   const { byQuestion, state, count, countUnknown, total, percent } = model
   const padding = { px: { base: '4', md: 'card', lg: '6' } } as const
-
-  if (byQuestion && (state === 'ready' || state === 'canceled')) {
-    return (
-      <Card.Root variant='frame' as='section' aria-labelledby={labelId}>
-        <Box {...padding} py={{ base: '4.5', md: 'card', lg: '6' }}>
-          <Heading as='h2' id={labelId} textStyle='state-title'>
-            {state === 'ready'
-              ? t('votes.summary.idle.not_started', { defaultValue: 'It has not started yet' })
-              : t('votes.summary.idle.canceled_title', { defaultValue: 'Vote canceled' })}
-          </Heading>
-          <Text mt='1.5' textStyle='state-body' color='fg.muted'>
-            {state === 'ready'
-              ? t('votes.summary.idle.by_question_body', {
-                  defaultValue: 'When it starts, the questions start closed and you open them one at a time.',
-                })
-              : t('votes.summary.idle.canceled_body', {
-                  defaultValue: 'The votes cast were discarded. There are no results.',
-                })}
-          </Text>
-        </Box>
-      </Card.Root>
-    )
-  }
 
   // The bar needs a census to measure against, and a count to draw.
   const bar = !countUnknown && total !== undefined

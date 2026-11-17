@@ -8,8 +8,8 @@ import { useCloneAsDraft } from '../use-clone-as-draft'
 import type { SummaryModel } from './use-summary-model'
 
 /**
- * Instead of the participation hero, an all-at-once vote that is ready or canceled says where it stands, with the
- * one thing to do next: duplicate it. Starting a scheduled vote early has no backend yet.
+ * Instead of the turnout card, a vote that is ready or canceled says where it stands, in either mode, with the one
+ * thing to do next for a canceled one: duplicate it. Starting a scheduled vote early has no backend yet.
  */
 export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
   const { t } = useTranslation()
@@ -17,7 +17,7 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
   const { canManage } = useActions()
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const titleId = useId()
-  const { election, state, total } = model
+  const { election, byQuestion, state, total } = model
 
   let title = ''
   let body: string | null = null
@@ -25,6 +25,13 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
   let action: ReactNode = null
   switch (state) {
     case 'ready':
+      if (byQuestion) {
+        title = t('votes.summary.idle.not_started', { defaultValue: 'It has not started yet' })
+        body = t('votes.summary.idle.by_question_body', {
+          defaultValue: 'When it starts, the questions start closed and you open them one at a time.',
+        })
+        break
+      }
       // With no start date there is no day to give: say where it stands.
       title = election.startDate
         ? t('votes.summary.idle.ready_title', {

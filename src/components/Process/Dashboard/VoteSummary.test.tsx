@@ -537,6 +537,9 @@ describe('VoteSummary', () => {
       expect(screen.getByText('The votes cast were discarded. There are no results.')).toBeInTheDocument()
       expect(screen.queryByText('Turnout')).not.toBeInTheDocument()
       expect(screen.getByText('no results')).toBeInTheDocument()
+      // The same card as an all-at-once vote, with the same way out.
+      fireEvent.click(screen.getByRole('button', { name: 'Duplicate it' }))
+      expect(cloneAsDraft).toHaveBeenCalledWith(expect.objectContaining({ id: '0xabc' }))
     })
 
     it('reads a closed vote as closed: when its last question closed, and public results', () => {
