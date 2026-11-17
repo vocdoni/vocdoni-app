@@ -31,6 +31,8 @@ const fontSizes = defineTokens.fontSizes({
   item: { value: '0.9375rem' },
   feature: { value: '1.1875rem' },
   vote: { value: '1.375rem' },
+  // The title of a bottom sheet and of a dialog on a tablet (dialog-title below lg).
+  sheet: { value: '1.0625rem' },
   // The voter's ballot: an option's label and a question's title.
   ballot: {
     option: { value: '1.0625rem' },
@@ -97,6 +99,8 @@ const radii = defineTokens.radii({
   lg: { value: '6px' },
   xl: { value: '12px' },
   '2xl': { value: '12px' },
+  // The rounded ends of a 4px bar: a turnout track and its fill, a sheet's grab handle.
+  bar: { value: '2px' },
   full: { value: '9999px' },
 })
 
@@ -110,6 +114,13 @@ const spacing = defineTokens.spacing({
   track: { value: '3px' },
   // The inner edge of a card from a tablet up (16px, spacing 4, on a phone): see the card recipe.
   card: { value: '22px' },
+  // How far below the top of the screen a confirm dialog sits: from `lg`, and on a tablet.
+  dialog: {
+    top: {
+      DEFAULT: { value: '168px' },
+      tablet: { value: '220px' },
+    },
+  },
   dashboard: {
     panel: { value: '{sizes.dashboard.panel}' },
   },
@@ -141,6 +152,8 @@ const sizes = defineTokens.sizes({
     md: { value: '{sizes.5}' },
     lg: { value: '{sizes.6}' },
     xl: { value: '{sizes.12}' },
+    // The chevron of a control that opens a menu ("More").
+    chevron: { value: '15px' },
   },
   // The three page widths, read through ui/PageContainer: the public shell, then two narrower columns.
   content: {
@@ -175,8 +188,16 @@ const sizes = defineTokens.sizes({
     // Minimum height of a textarea.
     area: { value: '76px' },
   },
-  // Width of a dropdown menu (ui/ResponsiveMenu).
-  menu: { value: '200px' },
+  // Width of a dropdown menu (ui/ResponsiveMenu): 200px on a tablet, `wide` from `lg`.
+  menu: {
+    DEFAULT: { value: '200px' },
+    wide: { value: '252px' },
+  },
+  // Width of a confirm dialog (ui/ConfirmDialog): on a tablet and from `lg`. A bottom sheet below `md`.
+  dialog: {
+    tablet: { value: '440px' },
+    desktop: { value: '460px' },
+  },
   // Minimum height of ui/Loader's PageLoader, so a page with nothing yet does not collapse.
   loader: { value: '300px' },
   // The longest a turnout bar grows from `md`; on a phone it fills its column.

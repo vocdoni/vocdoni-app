@@ -75,6 +75,22 @@ export const textStyles = defineTextStyles({
       letterSpacing: 'heading.page',
     },
   },
+  // A confirm dialog's title (ui/ConfirmDialog) and a bottom sheet's: 17px on a phone and a tablet, the page size
+  // with the page's tracking from `lg`.
+  'dialog-title': {
+    value: {
+      fontSize: { base: 'sheet', lg: 'page' },
+      lineHeight: { base: 'short', md: '[1.45]', lg: '[1.15]' },
+      fontWeight: 'semibold',
+      letterSpacing: { base: 'heading.item', md: 'body', lg: 'heading.page' },
+    },
+  },
+  // What a confirm dialog says will happen: 15px on a phone, 14px from `md`.
+  'dialog-body': { value: { fontSize: { base: 'item', md: 'md' }, lineHeight: '[1.45]', letterSpacing: 'body' } },
+  // The line over a bar ("184 of 312 voted", ui/TurnoutBar): 14px, 13.5px from `lg`, medium-plus.
+  'bar-caption': {
+    value: { fontSize: { base: 'md', lg: 'control' }, lineHeight: '[1.45]', fontWeight: 'medium-plus' },
+  },
   // Secondary text of a row (dates, counts, who and where): a step under the body on a phone.
   meta: { value: { fontSize: { base: 'md', md: 'sm' }, lineHeight: 'moderate' } },
   // The one headline figure of a screen and its unit (Stat size `hero`). Sans, not mono: mono is for small data.

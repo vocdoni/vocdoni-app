@@ -225,6 +225,10 @@ const colors = defineSemanticTokens.colors({
     strong: {
       value: 'rgb(23 23 23 / 0.56)',
     },
+    // Behind a bottom sheet and a tablet's dialog: a lighter, neutral dim (the desktop keeps `strong`).
+    sheet: {
+      value: 'rgb(0 0 0 / 0.4)',
+    },
     fg: {
       value: '{colors.surface.inverse.fg}',
     },
@@ -447,6 +451,13 @@ const shadows = defineSemanticTokens.shadows({
       },
       tooltip: {
         value: '{shadows.xs}',
+      },
+      // A desktop dropdown menu: the ring plus a 4px panel-coloured halo that lifts it off the page.
+      halo: {
+        value: {
+          _light: '0 0 0 1px {colors.border.emphasized}, 0 0 0 4px rgb(255 255 255 / 0.9)',
+          _dark: '{shadows.md}',
+        },
       },
     },
     // The support chat launcher and teaser bubble; `panel` is the open chat.
