@@ -98,14 +98,18 @@ describe('text colour contrast (WCAG AA)', () => {
     }
   })
 
+  // A pale organisation colour fills buttons as given, so its label (ink) is checked on the fill and on the hover.
   it.each([
     ['stock', system],
     ['branded', createAppSystem('#1a73e8')],
+    ['pale organisation colour', createAppSystem('#f5d90a')],
   ])('keeps the brand accents readable in both modes (%s system)', (_name, sys) => {
     for (const mode of ['light', 'dark'] as const) {
       const pairs = [
         ['tabs.tab.active.color', 'tabs.tab.active.bg'],
         ['accent.fg', 'bg'],
+        ['accent.contrast', 'accent.solid'],
+        ['accent.contrast', 'brand.solid.hover'],
       ]
       for (const [text, surface] of pairs) {
         const ratio = contrastRatio(resolve(text, mode, sys), resolve(surface, mode, sys))

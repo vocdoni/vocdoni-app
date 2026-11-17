@@ -12,9 +12,9 @@ import {
   generateAccentTokens,
   generateBrandSemanticTokens,
   generatePaletteScale,
-  generateSolidHover,
-  generateSolidHoverDark,
+  generateSolidEdge,
   normalizeHexColor,
+  solidHoverColor,
 } from './palette'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
@@ -64,23 +64,26 @@ export const createAppSystem = (primaryColor?: string) => {
       }
   const brandSemantic = {
     ...asTokens(slots),
-    // A filled button's hover. Fil pins it; a brand colour gets its fill moved 12% towards black, or towards white
-    // when black would take its label under 4.5:1 (palette.ts). Other palettes have no such slot, so the button
-    // recipe falls back to a mix towards black.
+    // A filled control's fill is the colour as given (`brand.500`), in both scopes. Fil pins its light hover; a brand
+    // colour's hover is its fill moved 12% towards black, or towards white when that would take its label under 4.5:1
+    // (palette.ts). `edge` is the hairline a fill too pale for its page draws inside its edge (transparent for Fil's
+    // blue). Other palettes have neither slot, so the recipes fall back to a mix towards black and to no edge.
     solid: {
       DEFAULT: { value: slots.solid },
       hover: {
         value: {
-          _light: brand ? generateSolidHover(scale, PAGE_BACKGROUNDS) : FIL_ACCENT.solidHover,
-          _dark: brand ? generateSolidHoverDark(scale, PAGE_BACKGROUNDS) : FIL_ACCENT_DARK.solidHover,
+          _light: brand ? solidHoverColor(scale[500]) : FIL_ACCENT.solidHover,
+          _dark: brand ? solidHoverColor(scale[500]) : FIL_ACCENT_DARK.solidHover,
         },
       },
+      edge: { value: generateSolidEdge(scale, PAGE_BACKGROUNDS) },
     },
   }
   const palette = defaultColorPalette(brand)
   // The accent steps alias the palette `colorPalette` falls back to, so a recipe that reads `accent.solid` instead
-  // of `colorPalette.solid` paints the same. `fg.hover` is the text colour of a link under the pointer: never
-  // lighter than at rest, so it stays readable for any brand colour.
+  // of `colorPalette.solid` paints the same. `border` is the accent drawn as a line on the page, 3:1 or more against
+  // it. `fg.hover` is the text colour of a link under the pointer: never lighter than at rest, so it stays readable
+  // for any brand colour.
   const accentSlots = generateAccentTokens(scale, PAGE_BACKGROUNDS)
   const accent = {
     fg: {
@@ -95,8 +98,10 @@ export const createAppSystem = (primaryColor?: string) => {
     solid: {
       DEFAULT: { value: `{colors.${palette}.solid}` },
       hover: { value: `{colors.${palette}.solid.hover}` },
+      edge: { value: `{colors.${palette}.solid.edge}` },
     },
     contrast: { value: `{colors.${palette}.contrast}` },
+    border: { value: `{colors.${palette}.border}` },
     subtle: { value: `{colors.${palette}.subtle}` },
     // The accent as a line or edge (a selected row, an outlined notice, a drop target): the fill in light, the
     // lighter text blue in dark, where the fill is too dark against the page.

@@ -40,6 +40,8 @@ describe('Theme', () => {
     const css = injectedCss()
     expect(css).toMatch(/--chakra-colors-brand-500:\s*#1a73e8/)
     expect(css).toMatch(/--chakra-colors-color-palette-solid:\s*var\(--chakra-colors-brand-solid\)/)
+    // The recipes read a fill's edge through the palette (recipes/solidEdge.ts), so the brand must expose it there.
+    expect(css).toMatch(/--chakra-colors-color-palette-solid-edge:\s*var\(--chakra-colors-brand-solid-edge\)/)
   })
 
   // A branded vote's colour (resolved on the server) wins over the deployment's PRIMARY_COLOR on its page.

@@ -549,6 +549,14 @@ const shadows = defineSemanticTokens.shadows({
     ring: {
       value: '0 0 0 1px {colors.border}',
     },
+    // The hairline a brand fill too pale for the page draws (`accent.solid.edge`, transparent for Fil's blue), for a
+    // component that paints `accent.solid` itself. Recipes read the element's own palette (recipes/solidEdge.ts).
+    edge: {
+      // Inside the edge of a filled shape (a dot, a button-like box).
+      inner: { value: 'inset 0 0 0 1px {colors.accent.solid.edge}' },
+      // Outside a chosen option's border.
+      outer: { value: '0 0 0 1px {colors.accent.solid.edge}' },
+    },
   },
 })
 

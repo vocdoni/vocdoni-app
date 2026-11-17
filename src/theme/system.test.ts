@@ -1,14 +1,7 @@
 import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
 import { PAGE_BACKGROUNDS } from './colors'
-import {
-  contrastRatio,
-  generatePaletteScale,
-  generateSolidHover,
-  generateSolidHoverDark,
-  PALETTE_SLOTS,
-  solidHoverColor,
-} from './palette'
+import { contrastRatio, INK, PALETTE_SLOTS, solidHoverColor } from './palette'
 import { DashboardContents as dashboardContents } from './recipes/dashboard'
 import { dragHandle } from './recipes/dragHandle'
 import { ConfirmModal } from './recipes/confirmModal'
@@ -294,10 +287,10 @@ describe('theme system integrity', () => {
     }
     visit(semanticTokens, 'semanticTokens')
     // The generated brand slots are not part of the static semantic map; check them here.
-    for (const slot of PALETTE_SLOTS) {
+    for (const slot of [...PALETTE_SLOTS, 'solid.hover', 'solid.edge']) {
       visit(sys.tokens.getByName(`colors.brand.${slot}`)?.extensions?.conditions, `brand.${slot}`)
     }
-    for (const slot of ['fg', 'fg.hover', 'solid', 'solid.hover', 'contrast', 'subtle']) {
+    for (const slot of ['fg', 'fg.hover', 'solid', 'solid.hover', 'solid.edge', 'contrast', 'border', 'subtle']) {
       visit(sys.tokens.getByName(`colors.accent.${slot}`)?.extensions?.conditions, `accent.${slot}`)
     }
     expect(violations, `\n${formatViolations(violations)}`).toEqual([])
@@ -340,7 +333,7 @@ describe('PRIMARY_COLOR-driven system', () => {
   })
 
   it('leaves a configured brand its generated dark slots', () => {
-    expect(conditions(BRANDED, 'brand.solid.hover')?._dark).toBe('color-mix(in oklab, {colors.brand.solid} 94%, white)')
+    expect(conditions(BRANDED, 'brand.solid.hover')?._dark).toBe(solidHoverColor('#1a73e8'))
     expect(conditions(BRANDED, 'accent.fg.hover')?._dark).toBe('color-mix(in oklab, {colors.brand.fg} 70%, white)')
     expect(conditions(BRANDED, 'brand.fg')?._dark).not.toBe('#6a99f1')
     expect(conditions(BRANDED, 'brand.subtle')?._dark).toBe('{colors.brand.900}')
@@ -383,11 +376,11 @@ describe('PRIMARY_COLOR-driven system', () => {
     (_name, sys, palette) => {
       expect(conditions(sys, 'accent.solid')).toEqual({ base: `{colors.${palette}.solid}` })
       expect(conditions(sys, 'accent.solid.hover')).toEqual({ base: `{colors.${palette}.solid.hover}` })
+      expect(conditions(sys, 'accent.solid.edge')).toEqual({ base: `{colors.${palette}.solid.edge}` })
       // Without a PRIMARY_COLOR the light hover is Fil's pinned value; a brand colour gets the palette's hover fill.
-      expect(conditions(sys, 'brand.solid.hover')?._light).toBe(
-        sys === system ? '#1554cf' : generateSolidHover(generatePaletteScale('#1a73e8'), PAGE_BACKGROUNDS)
-      )
+      expect(conditions(sys, 'brand.solid.hover')?._light).toBe(sys === system ? '#1554cf' : solidHoverColor('#1a73e8'))
       expect(conditions(sys, 'accent.contrast')).toEqual({ base: `{colors.${palette}.contrast}` })
+      expect(conditions(sys, 'accent.border')).toEqual({ base: `{colors.${palette}.border}` })
       expect(conditions(sys, 'accent.subtle')).toEqual({ base: `{colors.${palette}.subtle}` })
     }
   )
@@ -424,13 +417,17 @@ describe('PRIMARY_COLOR-driven system', () => {
   // A branded vote's colour is the organisation's, not a curated deployment one: palette.test.ts checks the maths on
   // 124 colours, this checks that the built system wires those values.
   it.each(['#fff59d', '#0b1a3a', '#df5020'])(
-    'keeps an organisation colour (%s) readable in the built system',
+    'keeps an organisation colour (%s) exact and readable in the built system',
     (color) => {
       const sys = createAppSystem(color)
       const light = (name: string) => {
         const value = conditions(sys, name)!._light
         return value.startsWith('{') ? (sys.tokens.getByName(value.slice(1, -1))?.value as string) : value
       }
+      expect(light('brand.solid')).toBe(color)
+      expect(conditions(sys, 'brand.solid.edge')?._light).toBe(
+        contrastRatio(color, PAGE_BACKGROUNDS.light) < 3 ? '{colors.border.emphasized}' : 'transparent'
+      )
       expect(contrastRatio(light('brand.focusRing'), PAGE_BACKGROUNDS.light)).toBeGreaterThanOrEqual(3)
       expect(contrastRatio(light('brand.solid'), light('brand.contrast'))).toBeGreaterThanOrEqual(4.5)
       expect(contrastRatio(light('brand.solid.hover'), light('brand.contrast'))).toBeGreaterThanOrEqual(4.5)
@@ -445,12 +442,68 @@ describe('PRIMARY_COLOR-driven system', () => {
     expect(conditions(sys, 'brand.solid.hover')?._light).toBe(solidHoverColor('#df5020'))
   })
 
-  // The summary page keeps a dark card in light mode, so the dark hover is reachable with an organisation colour.
-  it('takes the dark hover fill from the palette too', () => {
+  // The summary page keeps a dark card in light mode, so the dark scope paints the organisation colour too: the same
+  // exact fill and the same hover as the light page, its label readable on both.
+  it('fills and hovers with the exact colour in the dark scope too', () => {
     const sys = createAppSystem('#ed0630')
+    expect(conditions(sys, 'brand.solid')).toEqual({ _light: '{colors.brand.500}', _dark: '{colors.brand.500}' })
     const hover = conditions(sys, 'brand.solid.hover')!._dark
-    expect(hover).toBe(generateSolidHoverDark(generatePaletteScale('#ed0630'), PAGE_BACKGROUNDS))
-    expect(contrastRatio(hover, '#000000')).toBeGreaterThanOrEqual(4.5)
+    expect(hover).toBe(solidHoverColor('#ed0630'))
+    expect(contrastRatio(hover, conditions(sys, 'brand.contrast')!._dark)).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('labels a pale organisation colour in ink and edges it on the light page', () => {
+    const sys = createAppSystem('#f5d90a')
+    expect(conditions(sys, 'brand.contrast')).toEqual({ _light: INK, _dark: INK })
+    expect(conditions(sys, 'brand.solid.edge')).toEqual({ _light: '{colors.border.emphasized}', _dark: 'transparent' })
+  })
+})
+
+// Every brand and accent token of the stock system (no PRIMARY_COLOR) as it was before fills took the exact colour
+// (dumped from 9524b1ca7, dark values as Fil's dark mode pins them). Fil's blue must not move by a single value; the
+// edge it gained draws nothing.
+const STOCK_BRAND_TOKENS: Record<string, string | Record<string, string>> = {
+  'colors.brand.50': '#f3f8ff',
+  'colors.brand.100': '#e8f0ff',
+  'colors.brand.200': '#d1e2fe',
+  'colors.brand.300': '#a5c4fb',
+  'colors.brand.400': '#6395f4',
+  'colors.brand.500': '#1d62e9',
+  'colors.brand.600': '#154dbc',
+  'colors.brand.700': '#0e3a90',
+  'colors.brand.800': '#072767',
+  'colors.brand.900': '#031641',
+  'colors.brand.950': '#01061e',
+  'colors.accent.solid': { base: '{colors.brand.solid}' },
+  'colors.accent.solid.hover': { base: '{colors.brand.solid.hover}' },
+  'colors.accent.contrast': { base: '{colors.brand.contrast}' },
+  'colors.accent.subtle': { base: '{colors.brand.subtle}' },
+  'colors.brand.solid': { _light: '{colors.brand.500}', _dark: '{colors.brand.500}' },
+  'colors.brand.solid.hover': { _light: '#1554cf', _dark: '#2d6deb' },
+  'colors.brand.contrast': { _light: '#ffffff', _dark: '#ffffff' },
+  'colors.brand.fg': { _light: '{colors.brand.500}', _dark: '#6a99f1' },
+  'colors.brand.muted': { _light: '{colors.brand.200}', _dark: '{colors.brand.800}' },
+  'colors.brand.subtle': { _light: '#f0f5ff', _dark: 'rgb(29 98 233 / 0.12)' },
+  'colors.brand.emphasized': { _light: '{colors.brand.300}', _dark: '{colors.brand.700}' },
+  'colors.brand.focusRing': { _light: '{colors.brand.500}', _dark: '#6a99f1' },
+  'colors.brand.border': { _light: '{colors.brand.500}', _dark: '{colors.brand.500}' },
+  'colors.accent.fg': { _light: '{colors.brand.fg}', _dark: '{colors.brand.fg}' },
+  'colors.accent.fg.hover': { _light: '#1554cf', _dark: '#96b8f7' },
+}
+
+describe('stock brand tokens', () => {
+  const current = (name: string) => {
+    const token = system.tokens.getByName(name)
+    return (token?.extensions?.conditions as Record<string, string> | undefined) ?? token?.value
+  }
+
+  it.each(Object.keys(STOCK_BRAND_TOKENS))('keeps %s at its value', (name) => {
+    expect(current(name)).toEqual(STOCK_BRAND_TOKENS[name])
+  })
+
+  it('draws no edge on a Fil fill, in either scope', () => {
+    expect(current('colors.brand.solid.edge')).toEqual({ _light: 'transparent', _dark: 'transparent' })
+    expect(current('colors.accent.solid.edge')).toEqual({ base: '{colors.brand.solid.edge}' })
   })
 })
 
