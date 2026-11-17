@@ -120,12 +120,7 @@ export const ClosedQuestionRow = ({
             expanded,
             onToggle,
             controls: detailId,
-            label: t('votes.manage.toggle_closed', {
-              defaultValue: 'Question {{number}}, {{title}}. {{verdict}}. Show or hide the detail',
-              number,
-              title,
-              verdict: verdict?.verdict ?? t('votes.question_state.closed', { defaultValue: 'Closed' }),
-            }),
+            number,
           }}
         >
           <Stack gap='0' flex='1' minW='0'>

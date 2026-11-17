@@ -4,7 +4,7 @@ import { useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
 import { QuestionRowFrame, RowChevron, RowHead } from './QuestionRow'
-import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
+import { ProcessStatus } from '~components/ui/ProcessStatus'
 
 export type WaitingQuestionRowProps = {
   question: VotingProcessQuestion
@@ -30,7 +30,6 @@ export const WaitingQuestionRow = ({
 }: WaitingQuestionRowProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
-  const label = useProcessStateLabel()
   const detailId = useId()
   const title = text(question.title)
   const description = question.description ? text(question.description) : ''
@@ -60,12 +59,7 @@ export const WaitingQuestionRow = ({
                     expanded,
                     onToggle,
                     controls: detailId,
-                    label: t('votes.manage.toggle_waiting', {
-                      defaultValue: 'Question {{number}}, {{title}}. {{state}}. Show or hide the detail',
-                      number,
-                      title,
-                      state: label(state, 'question'),
-                    }),
+                    number,
                   }
                 : undefined
             }

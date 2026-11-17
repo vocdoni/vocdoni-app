@@ -108,7 +108,7 @@ describe('VoteManage', () => {
 
   it('opens a closed question on its whole line: verdict, tally, turnout and final bars', async () => {
     show(build())
-    const toggle = screen.getByRole('button', { name: 'Question 1, Budget. Approve. Show or hide the detail' })
+    const toggle = screen.getByRole('button', { name: /^Question 1: Budget.*Approve.*Show or hide the detail$/ })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
     expect(toggle).toHaveTextContent('7 to 3')
     expect(toggle).toHaveTextContent('5%')
@@ -120,7 +120,7 @@ describe('VoteManage', () => {
 
   it('opens a question to open on its line to show the question', async () => {
     show(build())
-    const toggle = screen.getByRole('button', { name: 'Question 3, Statutes. To open. Show or hide the detail' })
+    const toggle = screen.getByRole('button', { name: /^Question 3: Statutes.*To open.*Show or hide the detail$/ })
     expect(screen.queryByText('Do we approve the new article 4?')).not.toBeInTheDocument()
     await userEvent.click(toggle)
     expect(screen.getByText('Do we approve the new article 4?')).toBeInTheDocument()

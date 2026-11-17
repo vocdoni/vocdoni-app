@@ -1,5 +1,6 @@
-import { Box, Card, chakra, Flex, Grid, Icon, Text, type FlexProps } from '@chakra-ui/react'
+import { Box, Card, chakra, Flex, Grid, Icon, Text, VisuallyHidden, type FlexProps } from '@chakra-ui/react'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon } from '~theme/icons'
 
 export type QuestionRowFrameProps = {
@@ -43,8 +44,8 @@ export type RowToggle = {
   onToggle: () => void
   /** The id of the detail it shows. */
   controls: string
-  /** "Question 1, Budget. Yes. Show or hide the detail". */
-  label: string
+  /** The question's number, read before the line ("Question 1"). */
+  number: number
 }
 
 /**
@@ -64,14 +65,16 @@ export const RowHead = ({
   minH?: FlexProps['minH']
   children: ReactNode
 }) => {
+  const { t } = useTranslation()
   const layout = { display: 'flex', alignItems, flex, minH, gap: { base: '2', lg: '3' }, minW: '0' } as const
   if (!toggle) return <Flex {...layout}>{children}</Flex>
+  // Named by what it shows, so the name holds the visible text (WCAG 2.5.3), with the number before it and what it
+  // does after it for a screen reader.
   return (
     <chakra.button
       type='button'
       aria-expanded={toggle.expanded}
       aria-controls={toggle.controls}
-      aria-label={toggle.label}
       onClick={toggle.onToggle}
       w='full'
       textAlign='start'
@@ -80,7 +83,11 @@ export const RowHead = ({
       focusVisibleRing='outside'
       {...layout}
     >
+      <VisuallyHidden>
+        {t('votes.manage.toggle_number', { defaultValue: 'Question {{number}}:', number: toggle.number })}{' '}
+      </VisuallyHidden>
       {children}
+      <VisuallyHidden> {t('votes.manage.toggle_hint', { defaultValue: 'Show or hide the detail' })}</VisuallyHidden>
     </chakra.button>
   )
 }
