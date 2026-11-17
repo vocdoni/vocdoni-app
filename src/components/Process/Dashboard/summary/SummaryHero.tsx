@@ -8,6 +8,7 @@ import { useVoteText } from '~i18n/use-vote-text'
 import { InfoIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { useSummaryFacts } from './use-summary-facts'
+import { isSettledQuestion } from '~utils/vote-state'
 import type { SummaryModel } from './use-summary-model'
 
 /** A flexible column and the facts' one: the hero's figure and facts, and Resum's cards under it. */
@@ -64,14 +65,22 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
 
   let hint: string | null = null
   if (!byQuestion) {
-    hint =
-      state === 'paused'
-        ? t('votes.summary.hint.paused', { defaultValue: 'Paused. Turnout will not move until you resume it.' })
-        : t('votes.summary.hint.closes', {
-            defaultValue: 'Closes {{date}}. {{left}}',
-            date: dateAt(endDate),
-            left: timeLeft(endDate, now) ?? '',
-          }).trim()
+    if (state === 'closed') {
+      // Only once the server has every question over: until then the tally may still change.
+      hint = model.election.questions.every((question) => isSettledQuestion(question))
+        ? t('votes.summary.idle.ended_final', {
+            defaultValue: 'The results are final and voters can already see them.',
+          })
+        : t('votes.summary.idle.ended_counting', { defaultValue: 'The final results are still being counted.' })
+    } else if (state === 'paused') {
+      hint = t('votes.summary.hint.paused', { defaultValue: 'Paused. Turnout will not move until you resume it.' })
+    } else {
+      hint = t('votes.summary.hint.closes', {
+        defaultValue: 'Closes {{date}}. {{left}}',
+        date: dateAt(endDate),
+        left: timeLeft(endDate, now) ?? '',
+      }).trim()
+    }
   }
 
   return (

@@ -2146,6 +2146,7 @@
         "results_hidden": "bozketa ixtean",
         "results_hidden_by_question": "galdera bakoitza ixtean",
         "results_live": "zuzenean, bozketan zehar",
+        "results_out": "publikoak",
         "started_today": "gaur, {{time}}etan",
         "starts_planned": "aurreikusia: {{date}}"
       },
@@ -2161,9 +2162,6 @@
         "duplicate": "Bikoiztu",
         "ended_counting": "Behin betiko emaitzak zenbatzen ari dira oraindik.",
         "ended_final": "Emaitzak behin betikoak dira eta botogileek ikus ditzakete jada.",
-        "ended_title_one": "Bozketa boto {{count, number}}rekin amaitu da",
-        "ended_title_other": "Bozketa {{count, number}} botorekin amaitu da",
-        "ended_turnout": "Erroldearen %{{percent}}k bozkatu du.",
         "not_started": "Oraindik ez da hasi",
         "questions_one": "galdera {{count, number}}",
         "questions_other": "{{count, number}} galdera",

@@ -233,10 +233,11 @@ describe('VoteSummary', () => {
     it('reads an ended vote on Summary itself, with no way to a results page', () => {
       renderSummary(createProcess({ questions: [question('q1', 'ENDED', 184)] }), 184)
 
-      expect(screen.getByRole('heading', { name: 'Vote ended with 184 votes' })).toBeInTheDocument()
-      expect(
-        screen.getByText('59% of the census voted. The results are final and voters can already see them.')
-      ).toBeInTheDocument()
+      // The same turnout card as a live vote, worded for a closed one.
+      expect(screen.getByText('184 of 312 voted')).toBeInTheDocument()
+      expect(screen.getByText('The results are final and voters can already see them.')).toBeInTheDocument()
+      expect(screen.getByText('Closed')).toBeInTheDocument()
+      expect(screen.getByText('public')).toBeInTheDocument()
       expect(screen.queryByRole('link', { name: 'Show the results' })).not.toBeInTheDocument()
       expect(screen.queryByText(/results page/)).not.toBeInTheDocument()
     })

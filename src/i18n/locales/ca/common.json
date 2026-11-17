@@ -2214,6 +2214,7 @@
         "results_hidden": "en tancar la votació",
         "results_hidden_by_question": "en tancar cada pregunta",
         "results_live": "en directe, durant la votació",
+        "results_out": "públics",
         "started_today": "avui a les {{time}}",
         "starts_planned": "previst {{date}}"
       },
@@ -2229,10 +2230,6 @@
         "duplicate": "Duplica-la",
         "ended_counting": "Els resultats finals encara s'estan comptant.",
         "ended_final": "Els resultats són finals i els votants ja els poden veure.",
-        "ended_title_one": "Votació finalitzada amb {{count, number}} vot",
-        "ended_title_many": "Votació finalitzada amb {{count, number}} vots",
-        "ended_title_other": "Votació finalitzada amb {{count, number}} vots",
-        "ended_turnout": "Ha votat el {{percent}}% del cens.",
         "not_started": "Encara no ha començat",
         "questions_one": "{{count, number}} pregunta",
         "questions_many": "{{count, number}} preguntes",

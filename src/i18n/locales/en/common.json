@@ -2146,6 +2146,7 @@
         "results_hidden": "when the vote closes",
         "results_hidden_by_question": "when each question closes",
         "results_live": "live, during the vote",
+        "results_out": "public",
         "started_today": "today at {{time}}",
         "starts_planned": "planned {{date}}"
       },
@@ -2161,9 +2162,6 @@
         "duplicate": "Duplicate it",
         "ended_counting": "The final results are still being counted.",
         "ended_final": "The results are final and voters can already see them.",
-        "ended_title_one": "Vote ended with {{count, number}} vote",
-        "ended_title_other": "Vote ended with {{count, number}} votes",
-        "ended_turnout": "{{percent}}% of the census voted.",
         "not_started": "It has not started yet",
         "questions_one": "{{count, number}} question",
         "questions_other": "{{count, number}} questions",

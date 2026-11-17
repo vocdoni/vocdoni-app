@@ -4,13 +4,12 @@ import { useTranslation } from 'react-i18next'
 import { useActions } from '~components/Actions/ActionsContext'
 import { useVoteText } from '~i18n/use-vote-text'
 import { InfoIcon } from '~theme/icons'
-import { isSettledQuestion } from '~utils/vote-state'
 import { useCloneAsDraft } from '../use-clone-as-draft'
 import type { SummaryModel } from './use-summary-model'
 
 /**
- * Instead of the participation hero, an all-at-once vote that is ready, ended or canceled says where it stands, with
- * the one thing to do next: see the results, or duplicate it. Starting a scheduled vote early has no backend yet.
+ * Instead of the participation hero, an all-at-once vote that is ready or canceled says where it stands, with the
+ * one thing to do next: duplicate it. Starting a scheduled vote early has no backend yet.
  */
 export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
   const { t } = useTranslation()
@@ -18,7 +17,7 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
   const { canManage } = useActions()
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const titleId = useId()
-  const { election, state, count, total, percent } = model
+  const { election, state, total } = model
 
   let title = ''
   let body: string | null = null
@@ -45,25 +44,6 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
           }),
         })
       }
-      break
-    case 'closed':
-      title = t('votes.summary.idle.ended_title', {
-        defaultValue_one: 'Vote ended with {{count, number}} vote',
-        defaultValue_other: 'Vote ended with {{count, number}} votes',
-        count,
-      })
-      body = [
-        percent !== undefined &&
-          t('votes.summary.idle.ended_turnout', { defaultValue: '{{percent}}% of the census voted.', percent }),
-        // Only once the server has every question over: until then the tally may still change.
-        election.questions.every((question) => isSettledQuestion(question))
-          ? t('votes.summary.idle.ended_final', {
-              defaultValue: 'The results are final and voters can already see them.',
-            })
-          : t('votes.summary.idle.ended_counting', { defaultValue: 'The final results are still being counted.' }),
-      ]
-        .filter(Boolean)
-        .join(' ')
       break
     case 'canceled':
       title = t('votes.summary.idle.canceled_title', { defaultValue: 'Vote canceled' })

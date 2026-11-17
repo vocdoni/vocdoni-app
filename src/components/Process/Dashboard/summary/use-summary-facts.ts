@@ -45,7 +45,6 @@ export const useSummaryFacts = (model: SummaryModel, desktop: boolean): Fact[] =
           count: election.questions.length,
         }),
   }
-  // An all-at-once vote that is ready, closed or canceled shows the idle card instead, so this is always a close.
   const closes: Fact = {
     id: 'closes',
     label:
@@ -57,11 +56,14 @@ export const useSummaryFacts = (model: SummaryModel, desktop: boolean): Fact[] =
   const results: Fact = {
     id: 'results',
     label: t('votes.summary.label.results', { defaultValue: 'Results' }),
-    value: !secret
-      ? t('votes.summary.fact.results_live', { defaultValue: 'live, during the vote' })
-      : byQuestion
-        ? t('votes.summary.fact.results_hidden_by_question', { defaultValue: 'when each question closes' })
-        : t('votes.summary.fact.results_hidden', { defaultValue: 'when the vote closes' }),
+    value:
+      state === 'closed' && !byQuestion
+        ? t('votes.summary.fact.results_out', { defaultValue: 'public' })
+        : !secret
+          ? t('votes.summary.fact.results_live', { defaultValue: 'live, during the vote' })
+          : byQuestion
+            ? t('votes.summary.fact.results_hidden_by_question', { defaultValue: 'when each question closes' })
+            : t('votes.summary.fact.results_hidden', { defaultValue: 'when the vote closes' }),
   }
 
   if (desktop) {

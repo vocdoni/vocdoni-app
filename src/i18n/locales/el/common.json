@@ -2146,6 +2146,7 @@
         "results_hidden": "όταν κλείσει η ψηφοφορία",
         "results_hidden_by_question": "όταν κλείσει κάθε ερώτηση",
         "results_live": "ζωντανά, κατά τη διάρκεια της ψηφοφορίας",
+        "results_out": "δημόσια",
         "started_today": "σήμερα στις {{time}}",
         "starts_planned": "προγραμματισμένη την {{date}}"
       },
@@ -2161,9 +2162,6 @@
         "duplicate": "Αντιγραφή",
         "ended_counting": "Τα οριστικά αποτελέσματα καταμετρώνται ακόμη.",
         "ended_final": "Τα αποτελέσματα είναι οριστικά και οι ψηφοφόροι μπορούν ήδη να τα δουν.",
-        "ended_title_one": "Η ψηφοφορία έληξε με {{count, number}} ψήφο",
-        "ended_title_other": "Η ψηφοφορία έληξε με {{count, number}} ψήφους",
-        "ended_turnout": "Ψήφισε το {{percent}}% του μητρώου.",
         "not_started": "Δεν έχει ξεκινήσει ακόμα",
         "questions_one": "{{count, number}} ερώτηση",
         "questions_other": "{{count, number}} ερωτήσεις",

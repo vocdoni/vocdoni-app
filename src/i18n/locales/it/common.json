@@ -2214,6 +2214,7 @@
         "results_hidden": "alla chiusura della votazione",
         "results_hidden_by_question": "alla chiusura di ogni domanda",
         "results_live": "in diretta, durante la votazione",
+        "results_out": "pubblici",
         "started_today": "oggi alle {{time}}",
         "starts_planned": "prevista {{date}}"
       },
@@ -2229,10 +2230,6 @@
         "duplicate": "Duplicala",
         "ended_counting": "I risultati definitivi sono ancora in fase di conteggio.",
         "ended_final": "I risultati sono definitivi e i votanti possono già vederli.",
-        "ended_title_one": "Votazione terminata con {{count, number}} voto",
-        "ended_title_many": "Votazione terminata con {{count, number}} voti",
-        "ended_title_other": "Votazione terminata con {{count, number}} voti",
-        "ended_turnout": "Ha votato il {{percent}}% del censimento.",
         "not_started": "Non è ancora iniziata",
         "questions_one": "{{count, number}} domanda",
         "questions_many": "{{count, number}} domande",

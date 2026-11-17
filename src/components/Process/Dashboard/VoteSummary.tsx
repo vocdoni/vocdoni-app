@@ -27,7 +27,8 @@ export const VoteSummary = () => {
   if (!model) return null
 
   const { election, byQuestion, state } = model
-  const idle = !byQuestion && (state === 'ready' || state === 'closed' || state === 'canceled')
+  // A closed vote keeps the turnout card, with everything a live one shows; only one that never ran reads as a card.
+  const idle = !byQuestion && (state === 'ready' || state === 'canceled')
   const authFields = election.census?.authFields ?? []
   const twoFaFields = election.census?.twoFaFields ?? []
   const votingLink = `${document.location.origin}${getPublicProcessPath({ id: election.id, language: publicLanguage })}`

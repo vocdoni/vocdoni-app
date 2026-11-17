@@ -2146,6 +2146,7 @@
         "results_hidden": "wenn die Abstimmung endet",
         "results_hidden_by_question": "wenn jede Frage geschlossen wird",
         "results_live": "live, während der Abstimmung",
+        "results_out": "öffentlich",
         "started_today": "heute um {{time}}",
         "starts_planned": "geplant am {{date}}"
       },
@@ -2161,9 +2162,6 @@
         "duplicate": "Duplizieren",
         "ended_counting": "Die endgültigen Ergebnisse werden noch ausgezählt.",
         "ended_final": "Die Ergebnisse sind endgültig, und die Wählenden können sie schon sehen.",
-        "ended_title_one": "Abstimmung mit {{count, number}} Stimme beendet",
-        "ended_title_other": "Abstimmung mit {{count, number}} Stimmen beendet",
-        "ended_turnout": "{{percent}} % der Teilnehmerliste haben abgestimmt.",
         "not_started": "Sie hat noch nicht begonnen",
         "questions_one": "{{count, number}} Frage",
         "questions_other": "{{count, number}} Fragen",
