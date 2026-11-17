@@ -102,24 +102,6 @@ const renderPage = (path = '/admin/processes/all/1') =>
 
 const articles = () => screen.queryAllByRole('article')
 
-const useDesktop = () => {
-  const original = window.matchMedia
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: (query: string) => ({
-      matches: true,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }),
-  })
-  return () => Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
-}
-
 beforeEach(() => {
   votes.data = nine()
   votes.error = null
@@ -248,22 +230,6 @@ describe('VotesPage', () => {
     expect(screen.getByText('Alpha')).toBeInTheDocument()
     expect(screen.getByText('Gamma')).toBeInTheDocument()
     spy.mockRestore()
-  })
-
-  it('focuses the search on / with a draft row on screen', async () => {
-    const restore = useDesktop()
-    renderPage()
-    await userEvent.keyboard('/')
-    expect(screen.getByRole('searchbox', { name: 'Search a vote' })).toHaveFocus()
-    restore()
-  })
-
-  it('opens the create form on n', async () => {
-    const restore = useDesktop()
-    renderPage()
-    await userEvent.keyboard('n')
-    expect(screen.getByTestId('location')).toHaveTextContent('/admin/processes/create')
-    restore()
   })
 
   it('falls back to the default page size for a limit that is not a number', () => {

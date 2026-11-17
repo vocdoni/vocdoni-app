@@ -7,10 +7,8 @@ import { generatePath, Link as RouterLink, matchPath, useLocation, useNavigate, 
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { EmptyState } from '~components/ui/EmptyState'
-import { KeyHint } from '~components/ui/KeyHint'
 import { ListLoader } from '~components/ui/Loader'
 import { PageTitle } from '~components/ui/PageTitle'
-import { useIsDesktop } from '~components/ui/useIsMobile'
 import { useUrlPagination } from '~queries/members'
 import { readRemembered, usePauseMemoryVersion } from '~queries/vote-pause'
 import { useCanManageVotes, useOrganizationVotes, useVotesResults } from '~queries/votes'
@@ -30,7 +28,6 @@ import {
 } from '~utils/vote-state'
 import { VoteListRow } from './VoteListRow'
 import { VotesEmpty } from './VotesEmpty'
-import { useListShortcuts } from './useListShortcuts'
 
 const useFilter = (): VoteFilter => {
   const { pathname } = useLocation()
@@ -93,8 +90,6 @@ export const VotesPage = () => {
   const pagination = useUrlPagination()
   const { page } = pagination
   const limit = clampLimit(pagination.limit)
-  const isDesktop = useIsDesktop()
-  const searchRef = useRef<HTMLInputElement>(null)
   const filter = useFilter()
   const query = searchParams.get('q') ?? ''
   const memoryVersion = usePauseMemoryVersion()
@@ -112,9 +107,6 @@ export const VotesPage = () => {
   const deferredSearch = useDeferredValue(searchText)
 
   const createPath = generatePath(Routes.processes.create)
-  const onNew = useCallback(() => navigate(createPath), [navigate, createPath])
-  // Only admins and managers create votes: other roles get neither the button nor `n`.
-  useListShortcuts({ onNew: canManage ? onNew : undefined, searchRef, enabled: isDesktop })
 
   // This browser's pause memory tells a held question-by-question vote from a ready one (list items carry no votes);
   // its version re-derives the rows when it changes.
@@ -229,14 +221,10 @@ export const VotesPage = () => {
       <Flex justify='space-between' align={{ base: 'center', lg: 'flex-end' }} gap={{ base: '3', lg: '4' }}>
         <PageTitle>{t('votes.list.title', { defaultValue: 'Votes' })}</PageTitle>
         {rows.length > 0 && canManage && (
-          <Button variant='outline' asChild aria-keyshortcuts='n'>
+          <Button variant='outline' asChild>
             <RouterLink to={createPath}>
               <Icon as={AddIcon} />
               {t('votes.list.new', { defaultValue: 'New vote' })}
-              {/* The key reaches 4px into the button's end padding, as the board's. */}
-              <KeyHint display={{ base: 'none', lg: 'inline-flex' }} me='-1'>
-                N
-              </KeyHint>
             </RouterLink>
           </Button>
         )}
@@ -289,18 +277,15 @@ export const VotesPage = () => {
               flexShrink={0}
               startElement={<Icon as={SearchIcon} />}
               startElementProps={{ color: 'fg.subtle', px: { base: '3', lg: '2.5' } }}
-              endElement={<KeyHint display={{ base: 'none', lg: 'inline-flex' }}>/</KeyHint>}
-              endElementProps={{ px: '1.5' }}
             >
               {/* The board's search is a compact field from `lg` (as tall as the chips beside it), the touch one
-                below; the padding clears the icon and, from `lg`, the key hint. */}
+                below; the padding clears the icon. */}
               <Input
-                ref={searchRef}
                 type='search'
                 size='sm'
                 h={{ base: 'control.touch', md: 'control.tablet', lg: '7' }}
                 ps={{ base: '9', lg: '8' }}
-                pe={{ base: '3', lg: '8' }}
+                pe='3'
                 value={searchText}
                 onChange={(event) => setSearchText(event.target.value)}
                 aria-label={t('votes.list.search', { defaultValue: 'Search a vote' })}
