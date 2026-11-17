@@ -40,7 +40,11 @@ export const SummaryHero = ({ model, desktop }: { model: SummaryModel; desktop: 
         components={{ br: <chakra.br hideBelow='lg' /> }}
       />
     ) : (
-      t('votes.summary.voted_of', { defaultValue: '{{count, number}} of {{total}} voted', count, total: quantity(total) })
+      t('votes.summary.voted_of', {
+        defaultValue: '{{count, number}} of {{total}} voted',
+        count,
+        total: quantity(total),
+      })
     )
   }
 
