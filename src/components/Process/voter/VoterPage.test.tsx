@@ -3,11 +3,13 @@ import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { electionQueryKeys } from '@vocdoni/react-components'
 import { QueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+import { hydrateRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
 import { buildAppEnv } from '~src/app-env-build'
 import { AllProviders, createTestQueryClient } from '~src/test-utils'
 import type { ProcessBrand } from '~utils/process-brand'
 import type { VoterScreenKind } from './voter-flow'
+import { VoterServerNow } from './VoterFlowProvider'
 import { VoterPage } from './VoterPage'
 import { showsLegalNotice } from './VoterView'
 
@@ -423,5 +425,37 @@ describe('voter legal notice placement', () => {
     ['checking', false],
   ])('%s: %s', (kind, shown) => {
     expect(showsLegalNotice(kind)).toBe(shown)
+  })
+})
+
+describe('voter page clock at hydration (conformance D-24)', () => {
+  it("draws the server's screen at the server's instant, then follows the browser's clock", async () => {
+    // The vote opens a minute after the server read it; the browser's clock is already past the start.
+    server.process = makeProcess({ startDate: new Date(NOW + 60_000).toISOString() })
+    const page = (
+      <AllProviders queryClient={queryClient}>
+        <VoterServerNow.Provider value={NOW}>
+          <VoterPage id='p1' election={server.process} brand={brand} />
+        </VoterServerNow.Provider>
+      </AllProviders>
+    )
+    const html = renderToString(page)
+    expect(html).toContain('data-screen="upcoming"')
+
+    vi.setSystemTime(NOW + 120_000)
+    const container = document.createElement('div')
+    container.innerHTML = html
+    document.body.appendChild(container)
+    const failures: unknown[] = []
+    let root: ReturnType<typeof hydrateRoot> | undefined
+    await act(async () => {
+      root = hydrateRoot(container, page, { onRecoverableError: (error) => failures.push(error) })
+    })
+    expect(failures).toEqual([])
+    await waitFor(() =>
+      expect(container.querySelector('[data-testid="voter-screen"]')).toHaveAttribute('data-screen', 'identify')
+    )
+    act(() => root?.unmount())
+    container.remove()
   })
 })

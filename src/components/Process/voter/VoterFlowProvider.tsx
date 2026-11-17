@@ -1,7 +1,17 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { isSecretUntilTheEnd } from '@vocdoni/api-client'
+import { computeProcessStatus, isSecretUntilTheEnd } from '@vocdoni/api-client'
 import { electionQueryKeys, lockedQuestionNotice, useElection, useQuestionsForm } from '@vocdoni/react-components'
-import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from 'react'
 import { useCspAuthContext } from '~components/Process/CSP/CSPStepsProvider'
 import { isQuestionByQuestion } from '~src/types/voting-process'
 import type { ProcessBrand } from '~utils/process-brand'
@@ -27,6 +37,18 @@ import {
 
 const SETTLED = new Set(['confirmed', 'signed', 'unconfirmed'])
 
+/**
+ * The instant the server rendered the page (`Date.now()` in its loader, carried in the page data). The browser's first
+ * render reads the clock at this instant, so it picks the screen the server picked (an upcoming vote, a scheduled
+ * end); the browser's own clock takes over right after hydration.
+ */
+export const VoterServerNow = createContext<number | undefined>(undefined)
+
+const subscribeNever = () => () => {}
+// True on the server and while React hydrates its markup; false once the page is the browser's (and on a page the
+// browser renders itself), when React renders again with the client snapshot.
+const useHydrating = () => useSyncExternalStore(subscribeNever, () => false, () => true)
+
 type VoterFlowProviderProps = {
   brand: ProcessBrand
   /** The end-instant timer fired (`useVoterLive`). */
@@ -45,7 +67,7 @@ type VoterFlowProviderProps = {
 export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, children }: VoterFlowProviderProps) => {
   const {
     election,
-    status,
+    status: sdkStatus,
     connected,
     authToken,
     check,
@@ -62,13 +84,23 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
   const csp = useCspAuthContext()
   const { fmethods, vote } = useQuestionsForm()
   const queryClient = useQueryClient()
-  const now = useNow(VOTER_POLL_MS)
+  const clock = useNow(VOTER_POLL_MS)
+  const serverNow = useContext(VoterServerNow)
+  const hydrating = useHydrating()
+  // The SDK reads its own clock for `status` (a vote not started yet is UPCOMING): until hydration ends, both read the
+  // server's instant instead, so the server's HTML and the browser's first render agree (conformance D-24).
+  const firstFrameNow = hydrating && serverNow !== undefined ? new Date(serverNow) : undefined
+  const now = firstFrameNow ?? clock
+  const status =
+    firstFrameNow && election
+      ? computeProcessStatus(election.questions, { startDate: election.startDate, now: firstFrameNow })
+      : sdkStatus
   const [state, dispatch] = useReducer(voterReducer, initialVoterState)
   const { forgetAll } = useOwnedAnswers(state.answers, state.memos, dispatch)
 
   const questions = election?.questions ?? []
   const id = election?.id
-  const statusKey = `${status}:${questions.map((question) => question.status).join(',')}`
+  const statusKey = `${sdkStatus}:${questions.map((question) => question.status).join(',')}`
   const { membership, votedElsewhere } = useVoterCheck({ id, authToken, connected, check, statusKey })
 
   // The SDK publishes the voter's per-question state a moment after the check. If it never does (its own check failed
