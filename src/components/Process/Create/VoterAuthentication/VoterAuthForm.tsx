@@ -29,7 +29,7 @@ import { buildCensusSpec } from '../census-spec'
 import { Census, Process } from '../common'
 import { MemberCheck } from './MemberCheck'
 import { ProtectionMeter } from './ProtectionLevel'
-import { useCensusCheck } from './useCensusCheck'
+import { type CensusCheckIssues, useCensusCheck } from './useCensusCheck'
 import {
   CERT_AUTH_CREDENTIALS,
   CodeMethod,
@@ -102,7 +102,7 @@ const describeFields = (t: TFunction, language: string, { credentials, codeMetho
   // A certificate census also leaves out members whose DNI/NIE is not a valid one.
   const label = (field: string) =>
     certAuth && field === 'nationalId'
-      ? t('voter_auth.cert.missing_label', { defaultValue: 'a valid DNI/NIE (missing or invalid)' })
+      ? t('voter_auth.cert.missing_label', { defaultValue: 'a valid DNI/NIE' })
       : getAuthFieldLabel(t, field)
   const details = credentials.map(label)
   // The backend leaves the password out of duplicate detection, so it never shares a clash.
@@ -202,6 +202,10 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
     censusCheck.status === 'checking' ? settledValues.current : values
   )
 
+  // A certificate census leaves out members with a missing or invalid DNI/NIE (or contact) and still
+  // works: only members that can't be told apart make the backend refuse it.
+  const saveAnyway = (issues: CensusCheckIssues | null) => certAuth && !!issues && !issues.duplicates.length
+
   const groupTitle = group?.isAutoGroup
     ? t('groups_board.auto_group.title', { defaultValue: 'All Members' })
     : group?.title
@@ -221,7 +225,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
     let checked = true
     try {
       const result = await censusCheck.check()
-      if (!result.valid) {
+      if (result.valid === false && !saveAnyway(result.issues)) {
         statusRef.current?.focus()
         return
       }
@@ -328,6 +332,10 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                             {t('voter_auth.cert.description', {
                               defaultValue:
                                 'Voters sign in with their Spanish personal certificate (FNMT, idCAT…), which proves their DNI/NIE.',
+                            })}{' '}
+                            {t('voter_auth.cert.not_a_certificate', {
+                              defaultValue:
+                                'Voters need a certificate already installed: idCAT Mòbil and Cl@ve are not certificates.',
                             })}
                           </CheckboxCard.Description>
                         </CheckboxCard.Content>
@@ -474,6 +482,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             previous={censusCheck.previous}
             missingFields={fieldNames.missing}
             duplicateFields={fieldNames.duplicate}
+            certAuth={certAuth}
             missingByField={(censusCheck.status === 'checking'
               ? censusCheck.previous?.missingByField
               : censusCheck.missingByField
@@ -497,7 +506,9 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
             aria-describedby={passwordAlone ? 'voter-auth-status' : undefined}
             data-testid='voter-auth-save'
           >
-            {t('voter_auth.save.submit', { defaultValue: 'Save' })}
+            {censusCheck.status === 'invalid' && saveAnyway(censusCheck.issues)
+              ? t('voter_auth.save.anyway', { defaultValue: 'Save anyway' })
+              : t('voter_auth.save.submit', { defaultValue: 'Save' })}
           </Button>
         </HStack>
       </Dialog.Footer>

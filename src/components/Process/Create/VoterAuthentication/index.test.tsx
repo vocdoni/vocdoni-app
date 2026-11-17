@@ -321,7 +321,52 @@ describe('VoterAuthentication', () => {
 
     expect(dialog.getByRole('checkbox', { name: /digital certificate/i })).toBeChecked()
     const status = dialog.getByRole('status')
-    await waitFor(() => expect(status).toHaveTextContent('2 members are missing a valid DNI/NIE (missing or invalid).'))
+    await waitFor(() => expect(status).toHaveTextContent("2 members can't sign in: they're missing a valid DNI/NIE."))
+    expect(status).not.toHaveTextContent('missing or invalid')
+  })
+
+  it('lets a certificate census be saved anyway past members with a missing or invalid DNI/NIE', async () => {
+    mockValidateCensus.mockRejectedValue(membersError({ memberIds: ['m1'], duplicates: [], missingData: ['m2', 'm3'] }))
+    const user = userEvent.setup()
+    const certCensus: Census = { credentials: ['nationalId'], use2FA: false, use2FAMethod: 'email', certAuth: true }
+    render(<TestForm initialCensus={{ ...certCensus, credentials: ['memberNumber'], certAuth: false }} />, {
+      appEnv: { CERT_GATEWAY_URL: 'https://cert.test:15140' },
+    })
+    const dialog = await openDialog(user)
+    await user.click(dialog.getByRole('checkbox', { name: /digital certificate/i }))
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'invalid'))
+
+    const save = dialog.getByTestId('voter-auth-save')
+    expect(save).toHaveTextContent('Save anyway')
+    await user.click(save)
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    expect(storedCensus()).toEqual(certCensus)
+  })
+
+  it('still blocks a certificate census whose members share a DNI/NIE', async () => {
+    mockValidateCensus.mockRejectedValue(
+      membersError({ memberIds: ['m1'], duplicates: ['m2', 'm3'], missingData: ['m4'] })
+    )
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />, { appEnv: { CERT_GATEWAY_URL: 'https://cert.test:15140' } })
+    const dialog = await openDialog(user)
+    await user.click(dialog.getByRole('checkbox', { name: /digital certificate/i }))
+    const status = dialog.getByRole('status')
+    await waitFor(() => expect(status).toHaveAttribute('data-status', 'invalid'))
+
+    const save = dialog.getByTestId('voter-auth-save')
+    expect(save).toHaveTextContent(/^Save$/)
+    await user.click(save)
+    await waitFor(() => expect(status).toHaveFocus())
+    expect(storedCensus()).toBeNull()
+  })
+
+  it('warns organisers that idCAT Mòbil and Cl@ve are not certificates', async () => {
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />, { appEnv: { CERT_GATEWAY_URL: 'https://cert.test:15140' } })
+    const dialog = await openDialog(user)
+    expect(dialog.getByText(/idCAT Mòbil and Cl@ve are not certificates/)).toBeInTheDocument()
   })
 
   it('checks the census as it will be published, weighting and anonymity included', async () => {
