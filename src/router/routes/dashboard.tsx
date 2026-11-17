@@ -21,9 +21,6 @@ const DashboardProcessView = lazy(() => import('~elements/dashboard/processes/vi
 const VoteSummary = lazy(() =>
   import('~components/Process/Dashboard/VoteSummary').then((m) => ({ default: m.VoteSummary }))
 )
-const VoteManage = lazy(() =>
-  import('~components/Process/Dashboard/VoteManage').then((m) => ({ default: m.VoteManage }))
-)
 const VoteBallot = lazy(() =>
   import('~components/Process/Dashboard/VoteBallot').then((m) => ({ default: m.VoteBallot }))
 )
@@ -137,14 +134,6 @@ export const useDashboardRoutes = () => {
                         ),
                       },
                       {
-                        path: Routes.dashboard.processManage,
-                        element: (
-                          <SuspenseLoader>
-                            <VoteManage />
-                          </SuspenseLoader>
-                        ),
-                      },
-                      {
                         path: Routes.dashboard.processBallot,
                         element: (
                           <SuspenseLoader>
@@ -158,6 +147,11 @@ export const useDashboardRoutes = () => {
                   // not wait for the process read.
                   {
                     path: Routes.dashboard.processResults,
+                    ...redirectLegacyPath(Routes.dashboard.process),
+                  },
+                  // So is Gestió (R32): a question-by-question vote is run from Resum.
+                  {
+                    path: Routes.dashboard.processManage,
                     ...redirectLegacyPath(Routes.dashboard.process),
                   },
                   {

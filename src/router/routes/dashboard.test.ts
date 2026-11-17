@@ -67,17 +67,19 @@ describe('dashboard process routes', () => {
     expect(processRoute?.shouldRevalidate).toBe(shouldRevalidateDashboardProcess)
     expect(processRoute?.children?.map((child) => (child.index ? 'index' : child.path))).toEqual([
       'index',
-      Routes.dashboard.processManage,
       Routes.dashboard.processBallot,
     ])
   })
 
-  it('redirects the retired Results tab to the vote summary', async () => {
+  it.each([
+    ['Results', Routes.dashboard.processResults, 'results'],
+    ['Manage', Routes.dashboard.processManage, 'manage'],
+  ])('redirects the retired %s tab to the vote summary', async (_, path, segment) => {
     const { useDashboardRoutes } = await import('./dashboard')
     const { result } = renderHook(() => useDashboardRoutes())
-    const route = findRoute([result.current], Routes.dashboard.processResults)!
+    const route = findRoute([result.current], path)!
     const response = (await (route.loader as LoaderFunction)({
-      request: new Request('https://app.test/admin/process/0xabc/results'),
+      request: new Request(`https://app.test/admin/process/0xabc/${segment}`),
       params: { id: '0xabc' },
     } as unknown as LoaderFunctionArgs)) as Response
 

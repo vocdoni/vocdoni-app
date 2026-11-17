@@ -12,7 +12,7 @@ import { isQuestionByQuestion } from '~src/types/voting-process'
 import { PauseBanner } from './PauseBanner'
 import { VoteHeader } from './VoteHeader'
 
-/** The tabs, with the pause banner under them on Resum and Gestió while the vote is paused (as a whole). */
+/** The tabs, with the pause banner under them on Resum while the vote is paused (as a whole). */
 const VoteTabs = ({ tabs, value, withNotice }: { tabs: RoutedTab[]; value: string; withNotice: boolean }) => {
   const { election, results } = useElection()
   const { state } = useActions()
@@ -24,8 +24,8 @@ const VoteTabs = ({ tabs, value, withNotice }: { tabs: RoutedTab[]; value: strin
 }
 
 /**
- * The organiser's vote page: header and tabs. Each tab is a child route (Resum, Gestió for a question-by-question
- * vote, Papereta) that `RoutedTabs` renders in its outlet. The results are read on Resum (R31).
+ * The organiser's vote page: header and tabs. Each tab is a child route (Resum, Papereta) that `RoutedTabs` renders
+ * in its outlet. The results are read on Resum (R31), and a question-by-question vote is run from there (R32).
  */
 export const ProcessView = () => {
   const { t } = useTranslation()
@@ -34,12 +34,8 @@ export const ProcessView = () => {
   const id = election?.id ?? ''
 
   const summary = generatePath(Routes.dashboard.process, { id })
-  const manage = generatePath(Routes.dashboard.processManage, { id })
   const tabs: RoutedTab[] = [
     { label: t('votes.page.tab.summary', { defaultValue: 'Summary' }), route: summary },
-    ...(isQuestionByQuestion(election)
-      ? [{ label: t('votes.page.tab.manage', { defaultValue: 'Manage' }), route: manage }]
-      : []),
     {
       label: t('votes.page.tab.ballot', { defaultValue: 'Ballot' }),
       route: generatePath(Routes.dashboard.processBallot, { id }),
@@ -54,7 +50,7 @@ export const ProcessView = () => {
         {/* Header to tabs as the boards: 20px on a phone, 24px on a tablet, 18px on the desktop. */}
         <Stack gap={{ base: '5', md: '6', lg: '4.5' }}>
           <VoteHeader />
-          <VoteTabs tabs={tabs} value={value} withNotice={value === summary || value === manage} />
+          <VoteTabs tabs={tabs} value={value} withNotice={value === summary} />
         </Stack>
       </DashboardContents>
     </ActionsProvider>

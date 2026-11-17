@@ -42,7 +42,6 @@ const endNow = { slug: 'end-confirm', open: [[named('button', 'End now', 'Finali
 const endVote = { slug: 'end-confirm', open: [[named('button', 'End the vote', 'Finalitza la votació')]] }
 const DRAFT_ROW = `article:has-text("New statutes") >> role=button[name=/^(More actions|Més accions)$/]`
 const vote = (slug, id, states) => ({ slug, path: `/admin/process/${id}`, ...(states && { states }) })
-const manage = (slug, id, states) => ({ slug, path: `/admin/process/${id}/manage`, ...(states && { states }) })
 
 export const ROUTES = [
   {
@@ -78,7 +77,6 @@ export const ROUTES = [
     states: [{ slug: 'end-vote-confirm', open: [[['button', /^End now$/i]]], viewports: DESKTOP }],
   },
   { slug: 'process-qbq', path: `/admin/process/${P_QBQ}` },
-  { slug: 'process-manage', path: `/admin/process/${P_QBQ}/manage` },
   { slug: 'process-ballot', path: `/admin/process/${P_ONGOING}/ballot` },
   // The Fil boards' states (mock-saas.mjs "board votes"), for the side-by-side checks.
   vote('vote-aao-ready', B_AAO_READY, [voteMenu, cancelVote]),
@@ -87,21 +85,18 @@ export const ROUTES = [
   vote('vote-aao-ended', B_AAO_ENDED, [voteMenu]),
   vote('vote-aao-canceled', B_AAO_CANCELED),
   vote('vote-qbq-ready', B_QBQ_READY, [cancelVote]),
-  manage('manage-qbq-ready', B_QBQ_READY),
-  vote('vote-qbq-live', B_QBQ_LIVE, [voteMenu]),
-  manage('manage-qbq-live', B_QBQ_LIVE, [
-    { slug: 'close-question', open: [[named('button', 'Close', 'Tanca')]] },
+  // A question-by-question vote is run from Resum (R32): its row and bottom-bar buttons name the question after the
+  // label, so they match on the label's start.
+  vote('vote-qbq-live', B_QBQ_LIVE, [
+    voteMenu,
+    { slug: 'close-question', open: [[['button', /^(Close|Tanca): /]]] },
     { slug: 'expand-closed', open: [[['css', 'role=button[name=/^(Question|Pregunta) 1: /]']]] },
     endVote,
   ]),
   { ...vote('vote-qbq-held', B_QBQ_HELD), storage: HELD_STORAGE },
-  { ...manage('manage-qbq-held', B_QBQ_HELD), storage: HELD_STORAGE },
   vote('vote-qbq-closed', B_QBQ_CLOSED),
-  manage('manage-qbq-closed', B_QBQ_CLOSED),
   vote('vote-qbq-ended', B_QBQ_ENDED),
-  manage('manage-qbq-ended', B_QBQ_ENDED),
   vote('vote-qbq-many', B_QBQ_MANY),
-  manage('manage-qbq-many', B_QBQ_MANY),
   {
     slug: 'create-empty',
     path: '/admin/processes/create',

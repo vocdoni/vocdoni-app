@@ -11,7 +11,7 @@ import { ResponsiveMenu, type ResponsiveMenuItem } from '~components/ui/Responsi
 import { useVoteText } from '~i18n/use-vote-text'
 import { useDeleteDraft } from '~queries/votes'
 import { Routes } from '~routes'
-import { isLegacyProcess, isQuestionByQuestion } from '~src/types/voting-process'
+import { isLegacyProcess } from '~src/types/voting-process'
 import { ChevronRightIcon, CopyIcon, DeleteIcon, MoreIcon } from '~theme/icons'
 import type { VoteRow, VoteState } from '~utils/vote-state'
 import { VoteRowMeta } from './VoteRowMeta'
@@ -27,10 +27,9 @@ type RowAction = { key: 'continue' | 'manage' | 'follow' | 'result' | 'view'; to
 
 const rowAction = ({ process, state }: VoteRow): RowAction => {
   const id = process.id
-  // The results are read on Resum (R31).
-  if (isLegacyProcess(process)) return { key: 'result', to: generatePath(Routes.dashboard.process, { id }) }
-  const byQuestion = isQuestionByQuestion(process)
-  const open = byQuestion ? Routes.dashboard.processManage : Routes.dashboard.process
+  // The results are read on Resum (R31), and a question-by-question vote is run from there (R32).
+  const open = generatePath(Routes.dashboard.process, { id })
+  if (isLegacyProcess(process)) return { key: 'result', to: open }
   switch (state) {
     case 'draft':
       return {
@@ -38,14 +37,14 @@ const rowAction = ({ process, state }: VoteRow): RowAction => {
         to: `${generatePath(Routes.processes.create)}?${createSearchParams({ draftId: id }).toString()}`,
       }
     case 'ready':
-      return { key: 'manage', to: generatePath(open, { id }) }
+      return { key: 'manage', to: open }
     case 'live':
     case 'paused':
-      return { key: 'follow', to: generatePath(open, { id }) }
+      return { key: 'follow', to: open }
     case 'closed':
-      return { key: 'result', to: generatePath(Routes.dashboard.process, { id }) }
+      return { key: 'result', to: open }
     case 'canceled':
-      return { key: 'view', to: generatePath(Routes.dashboard.process, { id }) }
+      return { key: 'view', to: open }
   }
 }
 

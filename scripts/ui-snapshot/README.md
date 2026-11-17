@@ -192,7 +192,7 @@ one side only as a difference.
 
 ## Board states
 
-The `vote-*`, `manage-*`, `processes-empty` routes and the `processes-all` states render every state of the Fil
+The `vote-*`, `processes-empty` routes and the `processes-all` states render every state of the Fil
 vote boards (`v4/V4Vote*`, `v4m/M4Vote*`) with the boards' data: Catalan titles, a census of 312 and the boards'
 tallies (`mock-saas.mjs`, "board votes"). All at once: ready, live, paused, ended, canceled; question by question:
 before the start, one open, two open, paused as a whole, all closed, ended with a never-opened question and the
@@ -202,7 +202,7 @@ with the boards:
 
 ```bash
 UI_SNAPSHOT_PORT=3009 pnpm ui:snapshot -- --label boards --viewports 1440,768,390 --modes light --lang ca \
-  --routes processes-all,processes-empty,vote-aao-live,manage-qbq-live
+  --routes processes-all,processes-empty,vote-aao-live,vote-qbq-live
 ```
 
 The mock answers question status changes as the API does: a batch that targets a question already over gets a 400

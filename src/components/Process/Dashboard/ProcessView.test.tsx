@@ -61,10 +61,10 @@ describe('ProcessView', () => {
     expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Summary', 'Ballot'])
   })
 
-  it('adds Manage for a question-by-question vote', () => {
+  it('offers the same two tabs for a question-by-question vote, which is run from Summary', () => {
     renderAt(createProcess('PAUSED', 'PAUSED'))
 
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Summary', 'Manage', 'Ballot'])
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Summary', 'Ballot'])
   })
 
   it('has no Results tab for a closed vote either', () => {
@@ -98,9 +98,9 @@ describe('ProcessView', () => {
     expect(screen.queryByRole('status')).toBeNull()
   })
 
-  it('shows the banner on Manage for a question-by-question vote paused as a whole', () => {
+  it('shows the banner on Summary for a question-by-question vote paused as a whole', () => {
     remembered = ['q1']
-    renderAt(createProcess('PAUSED', 'PAUSED'), '/admin/process/0xabc/manage')
+    renderAt(createProcess('PAUSED', 'PAUSED'))
 
     expect(screen.getByRole('status')).toHaveTextContent(
       'The vote is paused. Nobody can vote, and no question can be opened or closed until you resume it.'

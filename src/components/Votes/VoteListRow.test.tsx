@@ -96,9 +96,14 @@ const href = (name: string) => screen.getByRole('link', { name }).getAttribute('
 beforeEach(() => vi.clearAllMocks())
 
 describe('VoteListRow actions', () => {
-  it('sends a ready question-by-question vote to its manage page', () => {
+  it('sends a question-by-question vote to its summary, where it is run', () => {
     renderRow(make({ initialStatus: 'PAUSED', startDate: iso(2), questions: [question('PAUSED')] }))
-    expect(href('Manage vote')).toBe('/admin/process/p1/manage')
+    expect(href('Manage vote')).toBe('/admin/process/p1')
+  })
+
+  it('follows a live question-by-question vote on its summary', () => {
+    renderRow(make({ initialStatus: 'PAUSED', questions: [question('ONGOING')] }))
+    expect(href('Follow')).toBe('/admin/process/p1')
   })
 
   it('sends a ready all-at-once vote to its page', () => {
