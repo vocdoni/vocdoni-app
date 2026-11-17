@@ -27,7 +27,6 @@ import {
 import { EmptyState } from './emptyState'
 import { Field } from './field'
 import { input, switchRecipe, textarea } from './form'
-import { Kbd } from './kbd'
 import { listSlotRecipe } from './list'
 import { Menu } from './menu'
 import { NativeSelect } from './nativeSelect'
@@ -54,7 +53,6 @@ export const recipes: Record<string, RecipeDefinition> = {
   code: Code,
   heading,
   input,
-  kbd: Kbd,
   link,
   text,
   icon: defineRecipe({

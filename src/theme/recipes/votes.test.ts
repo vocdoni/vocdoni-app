@@ -43,12 +43,6 @@ describe('votes theme additions', () => {
     expect(layer(card({ variant: 'note' }).root)).toMatchObject({ borderStyle: 'dashed' })
   })
 
-  it('makes the key hint the default kbd look', () => {
-    const kbd = system.cva(system.getRecipe('kbd'))
-    expect(text(kbd())).toBe(text(kbd({ variant: 'hint' })))
-    expect(text(kbd())).toContain('--chakra-shadows-shadow-control')
-  })
-
   it('splits the facts rows with the muted border', () => {
     const dataList = system.sva(system.getSlotRecipe('dataList'))
     expect(text(dataList({ variant: 'facts' }).item)).toContain('--chakra-colors-border-muted')
