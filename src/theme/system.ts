@@ -85,17 +85,15 @@ export const createAppSystem = (primaryColor?: string) => {
     // A filled control's fill is the colour as given (`brand.500`), in both scopes. Fil pins its light hover; a brand
     // colour's hover is its fill moved 12% towards black, or towards white when that would take its label under 4.5:1
     // (palette.ts). `edge` is the hairline a fill too pale for its page draws inside its edge (transparent for Fil's
-    // blue). The other palettes state their own two slots below (`ownFillSlots`).
-    solid: {
-      DEFAULT: { value: slots.solid },
-      hover: {
-        value: {
-          _light: brand ? solidHoverColor(scale[500]) : FIL_ACCENT.solidHover,
-          _dark: brand ? solidHoverColor(scale[500]) : FIL_ACCENT_DARK.solidHover,
-        },
+    // blue). The other palettes state the same two slots below (`ownFillSlots`), all flat siblings of `solid`.
+    solid: { value: slots.solid },
+    solidHover: {
+      value: {
+        _light: brand ? solidHoverColor(scale[500]) : FIL_ACCENT.solidHover,
+        _dark: brand ? solidHoverColor(scale[500]) : FIL_ACCENT_DARK.solidHover,
       },
-      edge: { value: generateSolidEdge(scale, PAGE_BACKGROUNDS) },
     },
+    solidEdge: { value: generateSolidEdge(scale, PAGE_BACKGROUNDS) },
   }
   const palette = defaultColorPalette(brand)
   // The accent steps alias the palette `colorPalette` falls back to, so a recipe that reads `accent.solid` instead
@@ -113,11 +111,9 @@ export const createAppSystem = (primaryColor?: string) => {
         },
       },
     },
-    solid: {
-      DEFAULT: { value: `{colors.${palette}.solid}` },
-      hover: { value: `{colors.${palette}.solid.hover}` },
-      edge: { value: `{colors.${palette}.solid.edge}` },
-    },
+    solid: { value: `{colors.${palette}.solid}` },
+    solidHover: { value: `{colors.${palette}.solidHover}` },
+    solidEdge: { value: `{colors.${palette}.solidEdge}` },
     contrast: { value: `{colors.${palette}.contrast}` },
     border: { value: `{colors.${palette}.border}` },
     subtle: { value: `{colors.${palette}.subtle}` },
@@ -126,9 +122,10 @@ export const createAppSystem = (primaryColor?: string) => {
     line: { value: { _light: '{colors.accent.border}', _dark: '{colors.accent.fg}' } },
   }
 
-  // Custom properties inherit: an element that sets another palette would still read brand's `solid.hover` and
-  // `solid.edge` from <html>, so every other palette that can fill a control states its own (flat names give the same
-  // CSS variables; a slot nested under chakra's own `solid` token would be dropped).
+  // Custom properties inherit: an element that sets another palette would still read brand's `solidHover` and
+  // `solidEdge` from <html>, so every other palette that can fill a control states its own. Every palette uses the
+  // same flat names (a slot nested under chakra's own `solid` token would be dropped, and a nested one next to a flat
+  // one would share a CSS variable).
   const ownHover = (name: string) => `color-mix(in oklab, {colors.${name}.solid} 88%, black)`
   const ownFillSlots = Object.fromEntries(
     OTHER_PALETTES.map((name) => [

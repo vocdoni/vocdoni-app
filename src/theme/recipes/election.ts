@@ -267,7 +267,7 @@ export const QuestionChoice = defineSlotRecipe({
             '[border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease]',
           bg: 'bg.panel',
           // A second 1px ring of the border's colour: the choice reads 2px without moving the layout. Outside it, the
-          // hairline a colour too pale for the page draws (`solid.edge`, transparent otherwise).
+          // hairline a colour too pale for the page draws (`solidEdge`, transparent otherwise).
           '&[data-state="checked"]': {
             borderColor: 'colorPalette.solid',
             boxShadow: chosenEdge(

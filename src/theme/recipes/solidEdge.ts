@@ -1,4 +1,4 @@
-// The hairline a fill too pale for its page draws (`solid.edge`: the control line, or transparent; see palette.ts).
+// The hairline a fill too pale for its page draws (`solidEdge`: the control line, or transparent; see palette.ts).
 // It is read through the element's own palette; every other palette sets the slot to transparent (system.ts).
 const EDGE = 'var(--chakra-colors-color-palette-solid-edge, transparent)'
 const INNER = `inset 0 0 0 {borderWidths.hairline} ${EDGE}`

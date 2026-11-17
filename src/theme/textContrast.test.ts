@@ -109,7 +109,7 @@ describe('text colour contrast (WCAG AA)', () => {
         ['tabs.tab.active.color', 'tabs.tab.active.bg'],
         ['accent.fg', 'bg'],
         ['accent.contrast', 'accent.solid'],
-        ['accent.contrast', 'brand.solid.hover'],
+        ['accent.contrast', 'brand.solidHover'],
       ]
       for (const [text, surface] of pairs) {
         const ratio = contrastRatio(resolve(text, mode, sys), resolve(surface, mode, sys))

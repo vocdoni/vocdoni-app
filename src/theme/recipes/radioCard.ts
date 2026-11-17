@@ -5,7 +5,7 @@ import { chosenEdge } from './solidEdge'
 // Merged over Chakra's radioCard. Its 0.64 description opacity leaves fg.muted at 3.17:1 on white (needs 4.5:1).
 // The full slot list stays: arrays are replaced on merge, and a shorter one drops the other slots' styles.
 // Unchecked a 1px `border.emphasized`; checked the palette's 1px border over an `accent.subtle` fill, with the hairline
-// outside it when the colour is too pale for the page (`solid.edge`).
+// outside it when the colour is too pale for the page (`solidEdge`).
 export const RadioCard = defineSlotRecipe({
   slots: radioCardAnatomy.keys(),
   base: {

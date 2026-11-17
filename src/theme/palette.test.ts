@@ -313,8 +313,8 @@ describe('readability of any organisation colour', () => {
     const hover = solidHoverColor(solid)
     expect(contrastRatio(solid, tokens.contrast._light), 'label on solid').toBeGreaterThanOrEqual(4.5)
     expect(contrastRatio(solid, tokens.contrast._dark), 'label on solid, dark').toBeGreaterThanOrEqual(4.5)
-    expect(contrastRatio(hover, tokens.contrast._light), 'label on solid.hover').toBeGreaterThanOrEqual(4.5)
-    expect(contrastRatio(hover, tokens.contrast._dark), 'label on solid.hover, dark').toBeGreaterThanOrEqual(4.5)
+    expect(contrastRatio(hover, tokens.contrast._light), 'label on solidHover').toBeGreaterThanOrEqual(4.5)
+    expect(contrastRatio(hover, tokens.contrast._dark), 'label on solidHover, dark').toBeGreaterThanOrEqual(4.5)
     // Lines and text on the page keep walking the scale.
     expect(contrastRatio(at(tokens.focusRing._light), BACKGROUNDS.light), 'focus ring').toBeGreaterThanOrEqual(3)
     expect(contrastRatio(at(tokens.focusRing._dark), BACKGROUNDS.dark), 'focus ring, dark').toBeGreaterThanOrEqual(3)

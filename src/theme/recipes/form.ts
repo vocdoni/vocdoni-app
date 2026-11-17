@@ -114,7 +114,7 @@ export const textarea = defineRecipe({
 
 // 36 by 20 with a 2px gutter, square-ish corners (not a pill) and a white thumb. The thumb colours come from
 // `switch.thumb*`; off, the track has an inset line so it reads on a white page, and on, the fill's own edge when it is
-// too pale for the page (`solid.edge`).
+// too pale for the page (`solidEdge`).
 export const switchRecipe = defineSlotRecipe({
   slots: switchAnatomy.keys(),
   variants: {

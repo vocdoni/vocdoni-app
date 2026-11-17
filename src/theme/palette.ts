@@ -119,7 +119,7 @@ export const generatePaletteScale = (baseHex: string): PaletteScale => {
   return scale
 }
 
-// WCAG minimum for non-text UI (3:1). A fill under it against the page gets a hairline edge (`solid.edge`), and the
+// WCAG minimum for non-text UI (3:1). A fill under it against the page gets a hairline edge (`solidEdge`), and the
 // lines that must be seen on the page (focus ring, outline border) step away from 500 until they clear it.
 const MIN_SURFACE_CONTRAST = 3
 
@@ -214,7 +214,7 @@ export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Ba
 const EDGE_LINE = '{colors.border.emphasized}'
 
 /**
- * `solid.edge`: the 1px hairline a filled control draws inside its edge. The control line where `solid` is under 3:1
+ * `solidEdge`: the 1px hairline a filled control draws inside its edge. The control line where `solid` is under 3:1
  * against the scope's page, so a pale fill still shows its shape; `transparent` otherwise (Fil's blue has none).
  */
 export const generateSolidEdge = (scale: PaletteScale, backgrounds: Backgrounds): PaletteSemanticSlot => ({

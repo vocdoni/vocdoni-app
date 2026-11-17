@@ -45,7 +45,7 @@ const focusRing = defineStyle({
 })
 
 // The app's primary: the palette's fill, with a hairline inside its edge only when that fill is too pale for the page
-// (`solid.edge`). On hover it darkens: the brand palette has its own hover (slot `solid.hover`), any other palette
+// (`solidEdge`). On hover it darkens: the brand palette has its own hover (slot `solidHover`), any other palette
 // mixes its fill 12% towards black.
 const solidHover =
   '[var(--chakra-colors-color-palette-solid-hover, color-mix(in oklab, {colors.colorPalette.solid} 88%, black))]'

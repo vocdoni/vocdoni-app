@@ -41,7 +41,7 @@ describe('stress theme', () => {
         'colors.fg.faint',
         'colors.border.strong',
         'colors.accent.solid',
-        'colors.accent.solid.hover',
+        'colors.accent.solidHover',
         'colors.accent.contrast',
         'colors.accent.subtle',
       ])
