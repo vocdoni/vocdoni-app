@@ -1,5 +1,4 @@
 import { Card, Grid, Stack } from '@chakra-ui/react'
-import { useIsDesktop } from '~components/ui/useIsMobile'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { CensusSearch } from './CensusSearch'
@@ -14,14 +13,13 @@ import { SummaryShare } from './summary/SummaryShare'
 import { useSummaryModel } from './summary/use-summary-model'
 
 /**
- * Resum: the participation hero (or, for a vote that is not running, where it stands), the questions with their
- * results (and, question by question, the buttons that run them), and beside them (under them below `xl`) the
- * voting data (all at once, desktop) and the calendar (all at once), the voting link and the voter lookup.
+ * Resum: the turnout card (or, for a vote that is not running, where it stands), the questions with their results
+ * (and, question by question, the buttons that run them), and beside them (under them below `xl`) the voting link,
+ * the downloads of a closed vote, the voting data, the calendar (all at once) and the voter lookup. The same content
+ * at every width.
  */
 export const VoteSummary = () => {
   const model = useSummaryModel()
-  // Held for the owner's decision on the top card and "Dades electorals" (R33 C15 not applied yet).
-  const desktop = useIsDesktop({ ssr: false })
   const publicLanguage = usePublicLanguage()
   const dockPage = useQuestionDockPage()
 
@@ -45,10 +43,10 @@ export const VoteSummary = () => {
       >
         <SummaryQuestions model={model} />
         <Stack gap={{ base: '5', md: '6', xl: '4' }} minW='0'>
-          <SummaryDownloads model={model} />
-          {desktop && !byQuestion && <SummaryElectoralData model={model} />}
-          {!byQuestion && <SummaryCalendar model={model} />}
           <SummaryShare link={votingLink} state={state} />
+          <SummaryDownloads model={model} />
+          <SummaryElectoralData model={model} />
+          {!byQuestion && <SummaryCalendar model={model} />}
           {authFields.length + twoFaFields.length > 0 && (
             <Card.Root variant='frame'>
               <Card.Body>

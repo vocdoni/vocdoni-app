@@ -11,11 +11,8 @@ export const FactList = ({
   ...props
 }: {
   facts: Fact[]
-  /**
-   * `rows` (label left, value right) everywhere, `summary`: label over value in a grid below `lg`, or `ruled`: the
-   * rows of a card, each under a rule and padded to the card's edge.
-   */
-  layout?: 'rows' | 'summary' | 'ruled'
+  /** `rows` (label left, value right), or `ruled`: the rows of a card, each under a rule and padded to its edge. */
+  layout?: 'rows' | 'ruled'
 } & Omit<DataListRootProps, 'variant' | 'orientation'>) => (
   <DataList.Root orientation='horizontal' variant={layout === 'rows' ? 'facts' : layout} {...props}>
     {facts.map((fact) => (

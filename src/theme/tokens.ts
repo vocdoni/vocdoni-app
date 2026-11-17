@@ -33,20 +33,13 @@ const fontSizes = defineTokens.fontSizes({
   vote: { value: '1.375rem' },
   // The title of a bottom sheet and of a dialog on a tablet (dialog-title below lg).
   sheet: { value: '1.0625rem' },
-  // A fact's value on a phone or tablet (dataList `summary`).
-  fact: { value: '0.90625rem' },
   // The voter's ballot: an option's label and a question's title.
   ballot: {
     option: { value: '1.0625rem' },
     question: { value: '2rem' },
   },
-  // The one headline figure of a screen (a vote's turnout), read through the `figure-hero` text style.
-  // `hero` is the desktop size; `large` (96px) is the tablet and `small` (56px) the phone.
-  figure: {
-    hero: { value: '8.25rem' },
-    large: { value: '6rem' },
-    small: { value: '3.5rem' },
-  },
+  // The headline sentence of a vote's turnout card from `lg` (`turnout-headline`).
+  headline: { value: '2.125rem' },
 })
 
 // The app's four line heights: captions and figures, titles, running text (the guide's root, 1.45), long reads.
@@ -74,13 +67,8 @@ const lineHeights = defineTokens.lineHeights({
   },
   question: { value: 1.08 },
   tall: { value: 1.6 },
-  // A fact's value on a phone or tablet.
-  fact: { value: 1.35 },
-  // A headline figure sits on its baseline: the line box hugs the digits (0.8 below `lg`).
-  hero: {
-    DEFAULT: { value: 0.74 },
-    touch: { value: 0.8 },
-  },
+  // The headline sentence of a vote's turnout card (`turnout-headline`).
+  headline: { value: 1.12 },
 })
 
 // Tracking that falls between Chakra's letterSpacings steps: the body, and the tighter steps of larger type.
@@ -101,15 +89,12 @@ const letterSpacings = defineTokens.letterSpacings({
       touch: { value: '-0.03em' },
     },
     question: { value: '-0.038em' },
+    // The line under a vote's turnout headline (`turnout-line`).
+    line: { value: '-0.02em' },
   },
   voter: { value: '-0.008em' },
   quote: {
     tight: { value: '-0.3px' },
-  },
-  // The headline figure and its unit, tighter as the type grows.
-  figure: {
-    hero: { value: '-0.05em' },
-    unit: { value: '-0.02em' },
   },
 })
 
@@ -159,14 +144,8 @@ const spacing = defineTokens.spacing({
   },
   // Between a filter chip's label and its count.
   chip: { value: '7px' },
-  // Above and below a fact in a vote's facts column (dataList `summary` from `lg`).
-  fact: { value: '7px' },
-  // The participation hero from `lg`: the ruler under the figure (34px; 30px on a question-by-question vote, also
-  // between its state and the figure).
-  hero: {
-    ruler: { value: '34px' },
-    compact: { value: '30px' },
-  },
+  // A vote's turnout card from `lg`: the room above its bar.
+  bar: { value: '30px' },
   // The card that says where a vote stands instead of the hero: its padding from `lg` and its footer's end.
   idle: {
     DEFAULT: { value: '26px' },

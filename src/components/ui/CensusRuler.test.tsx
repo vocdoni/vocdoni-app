@@ -12,31 +12,10 @@ describe('CensusRuler', () => {
     expect(screen.getByText('312')).toBeInTheDocument()
   })
 
-  it('prints the count under the fill with a marker', () => {
-    render(<CensusRuler value={184} max={312} label={NAME} marker />)
+  it('prints only 0 and the total, never the count', () => {
+    render(<CensusRuler value={184} max={312} label={NAME} />)
 
-    expect(screen.getByText('184')).toBeInTheDocument()
-    expect(screen.getByText('0')).toBeInTheDocument()
-  })
-
-  it.each([
-    [10, '10'],
-    [300, '300'],
-    [312, '312'],
-  ])('always prints 0 and the total, whatever the count (%i)', (value, count) => {
-    render(<CensusRuler value={value} max={312} label='turnout' marker />)
-
-    expect(screen.getByText('0')).toBeInTheDocument()
-    expect(screen.getAllByText('312').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getAllByText(count).length).toBeGreaterThanOrEqual(1)
-  })
-
-  it('ends the count at the fill, kept clear of 0 and of the total', () => {
-    render(<CensusRuler value={1234} max={2000} label='turnout' marker />)
-
-    // jsdom does not lay out: check the position handed to the browser.
-    const css = [...document.querySelectorAll('style')].map((style) => style.textContent).join('')
-    expect(css).toContain('clamp(7ch, 61.7%, calc(100% - 6ch))')
+    expect(screen.queryByText('184')).not.toBeInTheDocument()
   })
 
   it('marks and labels the quorum when given', () => {

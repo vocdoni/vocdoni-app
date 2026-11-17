@@ -20,7 +20,6 @@ export const TurnoutBar = ({
   value,
   max,
   label,
-  marker,
   closed,
   quorum,
   layout,
@@ -37,6 +36,6 @@ export const TurnoutBar = ({
         </Text>
       )}
     </Flex>
-    <CensusRuler {...{ value, max, label, marker, closed, quorum, layout }} />
+    <CensusRuler {...{ value, max, label, closed, quorum, layout }} />
   </Stack>
 )

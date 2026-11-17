@@ -28,32 +28,6 @@ export const Stat = defineSlotRecipe({
       md: { valueText: { textStyle: 'body' } },
       // A headline figure.
       lg: { valueText: { textStyle: '2xl' } },
-      // The one headline figure of a screen (a vote's turnout): its label as a section title, the unit faint.
-      // letterSpacing and weight restate the text style's so the base valueText cannot win by prop order.
-      hero: {
-        // A quiet 13px label up to `lg`, the section title from `lg`.
-        label: {
-          textStyle: { base: 'body-sm', lg: 'section-title' },
-          fontWeight: { base: 'medium', lg: 'semibold' },
-          color: { base: 'fg.subtle', lg: 'fg' },
-        },
-        // The unit sits against the figure, a step further from it as the figure grows.
-        // From `lg` the figure starts 6px into the card's padding, as the board's.
-        valueText: {
-          textStyle: 'figure-hero',
-          letterSpacing: 'figure.hero',
-          fontWeight: 'semibold',
-          gap: '0',
-          ms: { base: '-0.5', lg: '-1.5' },
-        },
-        valueUnit: {
-          textStyle: 'figure-hero-unit',
-          letterSpacing: { base: 'none', lg: 'figure.unit' },
-          fontWeight: 'medium',
-          color: 'fg.subtle',
-          ms: { base: '0.5', lg: '1.5' },
-        },
-      },
     },
   },
   defaultVariants: {

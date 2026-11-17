@@ -140,9 +140,24 @@ export const textStyles = defineTextStyles({
       letterSpacing: { base: 'body', lg: 'heading.row' },
     },
   },
-  // The line beside the headline figure ("184 of 312 voted").
-  'hero-caption': {
-    value: { fontSize: 'item', lineHeight: 'moderate', fontWeight: 'medium-plus', letterSpacing: 'heading.row' },
+  // The headline sentence of a vote's turnout card ("184 of 312 people have voted, 59%."): 22px on a phone, 28px on a
+  // tablet, 34px from `lg`.
+  'turnout-headline': {
+    value: {
+      fontSize: { base: 'vote', md: '2xl', lg: 'headline' },
+      lineHeight: 'headline',
+      fontWeight: 'semibold',
+      letterSpacing: { base: 'heading.page.touch', md: 'heading.page' },
+    },
+  },
+  // The line under it (the time left, the pause, the results): 16px on a phone, 20px from `lg`.
+  'turnout-line': {
+    value: {
+      fontSize: { base: 'lg', md: 'feature', lg: 'xl' },
+      lineHeight: 'short',
+      fontWeight: 'medium',
+      letterSpacing: 'heading.line',
+    },
   },
   // The headline of the card that says where a vote stands ("Vote ended with 184 votes"): 19px below `lg`.
   'state-title': {
@@ -155,26 +170,6 @@ export const textStyles = defineTextStyles({
   },
   // What that card says under its headline: 15px on a phone, 14px on a tablet, the control size from `lg`.
   'state-body': { value: { fontSize: { base: 'item', md: 'md', lg: 'control' }, lineHeight: 'moderate' } },
-  // A fact's value under its label on a phone or tablet (dataList `summary`).
-  'fact-value': { value: { fontSize: 'fact', lineHeight: 'fact' } },
-  // The one headline figure of a screen and its unit (Stat size `hero`). Sans, not mono: mono is for small data.
-  'figure-hero': {
-    value: {
-      fontSize: { base: 'figure.small', md: 'figure.large', lg: 'figure.hero' },
-      lineHeight: { base: 'hero.touch', lg: 'hero' },
-      fontWeight: 'semibold',
-      letterSpacing: 'figure.hero',
-      fontVariantNumeric: 'tabular-nums',
-    },
-  },
-  'figure-hero-unit': {
-    value: {
-      fontSize: { base: '2xl', md: '5xl' },
-      lineHeight: { base: 'hero.touch', lg: 'hero' },
-      fontWeight: 'medium',
-      letterSpacing: { base: 'none', lg: 'figure.unit' },
-    },
-  },
 })
 
 // Heading sizes of user-written content by Markdown level, shared by the editor and the rendered Markdown.

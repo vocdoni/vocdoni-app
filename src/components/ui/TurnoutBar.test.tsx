@@ -13,9 +13,9 @@ describe('TurnoutBar', () => {
   })
 
   it('passes the ruler props through', () => {
-    render(<TurnoutBar caption='184 of 312 voted' value={184} max={312} quorum={156} marker label='turnout' />)
+    render(<TurnoutBar caption='184 of 312 voted' value={184} max={312} quorum={156} label='turnout' />)
 
     expect(screen.getByText('quorum 156')).toBeInTheDocument()
-    expect(screen.getByText('184')).toBeInTheDocument()
+    expect(screen.getByText('312')).toBeInTheDocument()
   })
 })

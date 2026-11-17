@@ -81,11 +81,8 @@ describe('responsive text styles', () => {
     expect(system.token(`fontSizes.${md}`)).toBe(mdPx)
   })
 
-  it('steps the headline figure 56px, 96px, 132px', () => {
-    const css = JSON.stringify(system.css({ textStyle: 'figure-hero' } as never))
-    for (const step of ['small', 'large', 'hero']) expect(css).toContain(`--chakra-font-sizes-figure-${step}`)
-    expect(system.token('fontSizes.figure.small')).toBe('3.5rem')
-    expect(system.token('fontSizes.figure.large')).toBe('6rem')
-    expect(system.token('fontSizes.figure.hero')).toBe('8.25rem')
+  it('steps the turnout headline 22px, 28px, 34px', () => {
+    const css = JSON.stringify(system.css({ textStyle: 'turnout-headline' } as never))
+    for (const step of ['vote', '2xl', 'headline']) expect(css).toContain(`--chakra-font-sizes-${step}`)
   })
 })

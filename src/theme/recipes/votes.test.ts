@@ -17,18 +17,13 @@ describe('votes theme additions', () => {
     expect(text(hollow.indicator)).toContain('inset 0 0 0')
   })
 
-  it('sets the headline figure on the hero stat size', () => {
-    const stat = system.sva(system.getSlotRecipe('stat'))
-    const hero = stat({ size: 'hero' })
-    expect(text(hero.valueText)).toContain('figure-hero')
-    expect(text(hero.valueUnit)).toContain('--chakra-letter-spacings-figure-unit')
-  })
-
-  it('resolves the figure-hero text style from its tokens', () => {
-    const css = JSON.stringify(system.css({ textStyle: 'figure-hero' }))
-    expect(css).toContain('--chakra-font-sizes-figure-hero')
-    expect(css).toContain('--chakra-line-heights-hero')
-    expect(css).toContain('--chakra-letter-spacings-figure-hero')
+  it('resolves the turnout headline and its line from their tokens', () => {
+    const headline = JSON.stringify(system.css({ textStyle: 'turnout-headline' }))
+    expect(headline).toContain('--chakra-font-sizes-headline')
+    expect(headline).toContain('--chakra-line-heights-headline')
+    expect(system.token('fontSizes.headline')).toBe('2.125rem')
+    const line = JSON.stringify(system.css({ textStyle: 'turnout-line' }))
+    expect(line).toContain('--chakra-letter-spacings-heading-line')
   })
 
   it('paints a pressed chip with the selected state', () => {
@@ -48,8 +43,8 @@ describe('votes theme additions', () => {
     expect(text(dataList({ variant: 'facts' }).item)).toContain('--chakra-colors-border-muted')
   })
 
-  it('keeps the ruler marker on the scale in the accent colour', () => {
+  it('draws a closed ruler in ink', () => {
     const ruler = system.sva(system.getSlotRecipe('censusRuler'))
-    expect(text(ruler().marker)).toContain('--chakra-colors-accent-fg')
+    expect(text(ruler({ closed: true }).range)).toContain('--chakra-colors-fg')
   })
 })

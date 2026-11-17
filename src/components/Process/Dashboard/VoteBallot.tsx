@@ -13,12 +13,11 @@ import { BallotQuestion } from './ballot/BallotQuestion'
 import { BallotStatus } from './ballot/BallotStatus'
 import { SummaryCardHeader } from './summary/SummaryCardHeader'
 import { SUMMARY_COLUMNS } from './summary/SummaryHero'
-import { useSummaryFacts } from './summary/use-summary-facts'
 import { useSummaryModel, type SummaryModel } from './summary/use-summary-model'
 
-// The Resum facts reused by "How voting works". "Unanswered question" is left out: the process does not say whether
-// a question may be left blank (the voter's form decides it).
-const SHARED_FACTS = ['overwrite', 'results']
+// The one value every question shares, or undefined when they differ (the vote has no single answer then).
+const shared = <T,>(values: T[]): T | undefined =>
+  values.length && values.every((value) => value === values[0]) ? values[0] : undefined
 
 /** Whatever the voters read before the questions: the description, as markdown, in plain paragraphs. */
 const BallotIntro = ({ description }: { description: string }) => {
@@ -43,10 +42,18 @@ const BallotPaper = ({ model }: { model: SummaryModel }) => {
   const publicLanguage = usePublicLanguage()
   const factsId = useId()
   const styles = useSlotRecipe({ key: 'ballotPaper' })()
-  const summaryFacts = useSummaryFacts(model)
-  const { election, byQuestion } = model
+  const { election, byQuestion, state, secret } = model
   const count = election.questions.length
   const description = text(election.description)?.trim()
+  const overwrite = shared(election.questions.map((question) => !!question.ballotProtocol?.maxVoteOverwrites))
+  let results: string
+  if (state === 'closed') results = t('votes.summary.fact.results_out', { defaultValue: 'public' })
+  else if (!secret) results = t('votes.summary.fact.results_live', { defaultValue: 'live, during the vote' })
+  else if (byQuestion)
+    results = t('votes.summary.fact.results_hidden_by_question', { defaultValue: 'when each question closes' })
+  else results = t('votes.summary.fact.results_hidden', { defaultValue: 'when the vote closes' })
+  // "Unanswered question" is left out: the process does not say whether a question may be left blank (the voter's form
+  // decides it). Vote overwrite only when every question agrees.
   const facts: Fact[] = [
     {
       id: 'questions',
@@ -60,7 +67,18 @@ const BallotPaper = ({ model }: { model: SummaryModel }) => {
         ? t('votes.ballot.mode.by_question', { defaultValue: 'Question by question, as they open' })
         : t('votes.ballot.mode.all', { defaultValue: 'All at once, on a single ballot' }),
     },
-    ...SHARED_FACTS.flatMap((id) => summaryFacts.filter((fact) => fact.id === id)),
+    ...(overwrite === undefined
+      ? []
+      : [
+          {
+            id: 'overwrite',
+            label: t('votes.summary.label.overwrite', { defaultValue: 'Vote overwrite' }),
+            value: overwrite
+              ? t('votes.summary.fact.overwrite_allowed', { defaultValue: 'Enabled' })
+              : t('votes.summary.fact.overwrite_not_allowed', { defaultValue: 'Disabled' }),
+          },
+        ]),
+    { id: 'results', label: t('votes.summary.label.results', { defaultValue: 'Results' }), value: results },
   ]
 
   // The questions render through the ballot type, which cannot be inferred for some legacy processes: each card

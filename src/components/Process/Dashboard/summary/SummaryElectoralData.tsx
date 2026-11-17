@@ -2,6 +2,9 @@ import { Card, Span, Text } from '@chakra-ui/react'
 import { useId, type ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { censusFieldLabel, getAuthFieldLabel } from '~components/Process/CSP/fields'
+import { useVoteText } from '~i18n/use-vote-text'
+import { ucfirst } from '~utils/strings'
+import { isSettledQuestion } from '~utils/vote-state'
 import { SummaryCardHeader } from './SummaryCardHeader'
 import type { SummaryModel } from './use-summary-model'
 
@@ -80,44 +83,85 @@ const useAuthMethod = (authFields: readonly string[], twoFaFields: readonly stri
   )
 }
 
+type Row = { id: string; title: string; note: ReactNode }
+
 /**
- * "Voting data" beside the questions of a live or paused all-at-once vote: how voters authenticate and who has not
- * voted yet. The board's other rows (quorum, delegated votes, reminders, bounced notices) have no backend data and
- * are left out.
+ * "Dades electorals" (board V4VoteManageAll, R34), in both modes and in every state the turnout card shows: the census,
+ * how voters authenticate, when it closes (or closed) and when the results show. A row the backend has no data for is
+ * left out. The board's quorum and its other rows have no data either.
  */
 export const SummaryElectoralData = ({ model }: { model: SummaryModel }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const { dateAt } = useVoteText()
   const titleId = useId()
-  const { election, state, total, count } = model
+  const { election, state, byQuestion, secret, endDate } = model
   const authMethod = useAuthMethod(election.census?.authFields ?? [], election.census?.twoFaFields ?? [])
-  if (state !== 'live' && state !== 'paused') return null
-  if (!authMethod && total === undefined) return null
+  if (state !== 'live' && state !== 'paused' && state !== 'closed') return null
+
+  const closed = state === 'closed'
+  let results: string
+  if (closed)
+    // "Already public" only once the server has every question over, as the top card says.
+    results = election.questions.every((question) => isSettledQuestion(question))
+      ? t('votes.summary.electoral.results_public', { defaultValue: 'Public now.' })
+      : t('votes.summary.idle.ended_counting', { defaultValue: 'The final results are still being counted.' })
+  else if (!secret)
+    results = t('votes.summary.electoral.results_live', { defaultValue: 'They show live, during the vote.' })
+  else if (byQuestion)
+    results = t('votes.summary.electoral.results_by_question', { defaultValue: 'They show when each question closes.' })
+  else results = t('votes.summary.electoral.results_secret', { defaultValue: 'They will show when the vote closes.' })
+
+  const census = election.census?.size
+  const rows: (Row | null)[] = [
+    census
+      ? {
+          id: 'census',
+          title: t('votes.summary.label.census', { defaultValue: 'Census' }),
+          note: (
+            <Trans
+              i18nKey='votes.summary.electoral.census'
+              defaults='<n>{{count, number}}</n> people with the right to vote.'
+              count={census}
+              components={{ n: <Span fontFamily='figure' letterSpacing='none' /> }}
+            />
+          ),
+        }
+      : null,
+    authMethod
+      ? {
+          id: 'auth',
+          title: t('votes.summary.auth.title', { defaultValue: 'Authentication method' }),
+          note: authMethod,
+        }
+      : null,
+    endDate
+      ? {
+          id: 'closes',
+          title: closed
+            ? t('votes.summary.label.closed', { defaultValue: 'Closed' })
+            : t('votes.summary.electoral.closing', { defaultValue: 'Closing' }),
+          note: t('votes.summary.electoral.date', {
+            defaultValue: '{{date}}.',
+            date: ucfirst(dateAt(endDate), i18n.language),
+          }),
+        }
+      : null,
+    { id: 'results', title: t('votes.summary.label.results', { defaultValue: 'Results' }), note: results },
+  ]
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
       <SummaryCardHeader id={titleId} title={t('votes.summary.electoral_title', { defaultValue: 'Voting data' })} />
-      {authMethod && (
-        <Card.Body py='3' gap='0'>
-          <Text fontWeight='medium-plus'>
-            {t('votes.summary.auth.title', { defaultValue: 'Authentication method' })}
-          </Text>
-          <Text textStyle='body-sm' color='fg.subtle'>
-            {authMethod}
-          </Text>
-        </Card.Body>
-      )}
-      {total !== undefined && (
-        <Card.Body py='3'>
-          <Text fontWeight='medium-plus'>
-            <Trans
-              i18nKey='votes.summary.not_voted'
-              defaults='<n>{{count, number}}</n> have not voted yet'
-              count={Math.max(0, total - count)}
-              components={{ n: <Span fontFamily='figure' fontSize='sm' letterSpacing='none' /> }}
-            />
-          </Text>
-        </Card.Body>
-      )}
+      {rows
+        .filter((row): row is Row => !!row)
+        .map((row) => (
+          <Card.Body key={row.id} py='3' gap='0'>
+            <Text fontWeight='medium-plus'>{row.title}</Text>
+            <Text textStyle={{ base: 'body', lg: 'body-sm' }} color='fg.subtle'>
+              {row.note}
+            </Text>
+          </Card.Body>
+        ))}
     </Card.Root>
   )
 }

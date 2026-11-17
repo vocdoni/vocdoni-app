@@ -104,6 +104,10 @@ const renderSummary = (election: VotingProcessResponse, voteCount?: number, quer
 
 const textContent = (text: string) => (_: string, element: Element | null) =>
   element?.textContent === text && Array.from(element.children).every((child) => child.textContent !== text)
+// The innermost element whose text, its children's included, matches.
+const textMatching = (pattern: RegExp) => (_: string, element: Element | null) =>
+  !!element?.textContent?.match(pattern) &&
+  Array.from(element.children).every((child) => !child.textContent?.match(pattern))
 
 beforeEach(() => {
   phone = false
@@ -117,27 +121,65 @@ const resultsViewed = () =>
 
 describe('VoteSummary', () => {
   describe('an all-at-once vote', () => {
-    it('shows the turnout, how many voted and the same facts at every width', () => {
+    it('says in a sentence how many voted, how long is left and draws the bar from 0 to the census', () => {
       renderSummary(createProcess(), 184)
 
-      expect(screen.getByText('59')).toBeInTheDocument()
-      expect(screen.getByText('184 of 312 voted')).toBeInTheDocument()
-      const labels = screen.getAllByRole('term').map((term) => term.textContent)
-      expect(labels).toEqual(['Census', 'Questions', 'Closes', 'Results', 'Type', 'Vote overwrite'])
-      // Anonymity is no fact of the hero at any width (R33 D2).
-      expect(screen.queryByText('Anonymity')).toBeNull()
-      expect(screen.getByText('Disabled')).toBeInTheDocument()
-      // One question has no "all at once" to it.
-      expect(screen.getAllByRole('term')[1].nextElementSibling).toHaveTextContent(/^1$/)
+      const card = within(screen.getByRole('region', { name: '184 of 312 people have voted, 59%.' }))
+      expect(card.getByText(textMatching(/^.+ left to vote\.$/))).toBeInTheDocument()
+      expect(card.getByRole('progressbar', { name: '184 of 312 people voted, 59%' })).toBeInTheDocument()
+      expect(card.getByText('0')).toBeInTheDocument()
+      expect(card.getByText('312')).toBeInTheDocument()
+      // Text first: no big figure, no label, no facts in the card (R34).
+      expect(screen.queryByText('59')).toBeNull()
+      expect(screen.queryByText('Turnout')).toBeNull()
+      expect(card.queryAllByRole('term')).toHaveLength(0)
       expect(screen.queryByText('All open at once')).not.toBeInTheDocument()
-      expect(screen.getByText('live, during the vote')).toBeInTheDocument()
     })
 
-    it('words the results fact for a secret vote as the board does', () => {
+    it('says the vote is paused under the headline of a paused vote', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'PAUSED', 184)] }), 184)
+
+      expect(screen.getByRole('heading', { name: '184 of 312 people have voted, 59%.' })).toBeInTheDocument()
+      expect(screen.getByText(textContent('The vote is paused.'))).toBeInTheDocument()
+    })
+
+    it('lists the voting data in order: census, authentication, closing and results', () => {
+      renderSummary(createProcess(), 184)
+
+      const card = screen.getByRole('region', { name: 'Voting data' })
+      const titles = within(card)
+        .getAllByText(/^(Census|Authentication method|Closing|Closed|Results)$/)
+        .map((title) => title.textContent)
+      expect(titles).toEqual(['Census', 'Authentication method', 'Closing', 'Results'])
+      expect(within(card).getByText(textContent('312 people with the right to vote.'))).toBeInTheDocument()
+      expect(within(card).getByText(textContent('Member number.'))).toBeInTheDocument()
+      expect(within(card).getByText(/^Friday, January 2(, 2099)? at \d\d:00\.$/)).toBeInTheDocument()
+      expect(within(card).getByText('They show live, during the vote.')).toBeInTheDocument()
+      // No quorum and no count of who has not voted (R34); anonymity, type and vote overwrite are not facts here.
+      expect(screen.queryByText(/have not voted yet/)).toBeNull()
+      expect(screen.queryByText(/quorum/i)).toBeNull()
+      for (const label of ['Anonymity', 'Type', 'Vote overwrite', 'Questions']) {
+        expect(within(card).queryByText(label)).toBeNull()
+      }
+    })
+
+    it('words the results row and line for a secret vote as the board does', () => {
       renderSummary(createProcess({ questions: [{ ...question('q1', 'ONGOING', 184), secretUntilTheEnd: true }] }), 184)
 
-      expect(screen.getByText('when the vote closes')).toBeInTheDocument()
+      expect(screen.getByText('They will show when the vote closes.')).toBeInTheDocument()
       expect(screen.getByText('The results will show when the vote closes.')).toBeInTheDocument()
+    })
+
+    it('puts the voting link first in the column beside the questions', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'RESULTS', 181, ['150', '31'])] }), 181)
+
+      const order = ['To share', 'Download the results', 'Voting data', 'Calendar'].map((name) =>
+        screen.getByRole('heading', { name })
+      )
+      order.reduce((previous, next) => {
+        expect(previous.compareDocumentPosition(next) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+        return next
+      })
     })
 
     it('adds no deadline under the ruler of a live vote: the header says it', () => {
@@ -226,10 +268,9 @@ describe('VoteSummary', () => {
       expect(screen.getByRole('link', { name: 'Ballot' })).toHaveAttribute('href', '/admin/process/0xabc/ballot')
     })
 
-    it('lists who has not voted yet and the calendar', () => {
+    it('shows the calendar', () => {
       renderSummary(createProcess(), 184)
 
-      expect(screen.getByText(textContent('128 have not voted yet'))).toBeInTheDocument()
       expect(screen.getByText('Vote opened')).toBeInTheDocument()
       expect(screen.getByText('Today')).toBeInTheDocument()
       expect(screen.getByText('Automatic closing and results for everyone')).toBeInTheDocument()
@@ -293,10 +334,11 @@ describe('VoteSummary', () => {
       renderSummary(createProcess({ questions: [question('q1', 'ENDED', 184)] }), 184)
 
       // The same turnout card as a live vote, worded for a closed one.
-      expect(screen.getByText('184 of 312 voted')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: '184 of 312 people have voted, 59%.' })).toBeInTheDocument()
       expect(screen.getByText('The results are final and voters can already see them.')).toBeInTheDocument()
-      expect(screen.getByText('Closed')).toBeInTheDocument()
-      expect(screen.getByText('public')).toBeInTheDocument()
+      const data = within(screen.getByRole('region', { name: 'Voting data' }))
+      expect(data.getByText('Closed')).toBeInTheDocument()
+      expect(data.getByText('Public now.')).toBeInTheDocument()
       expect(screen.queryByRole('link', { name: 'Show the results' })).not.toBeInTheDocument()
       expect(screen.queryByText(/results page/)).not.toBeInTheDocument()
     })
@@ -409,9 +451,9 @@ describe('VoteSummary', () => {
     it('shows the count without a share, a ruler or a census fact when the census size is unknown', () => {
       renderSummary(createProcess({ census: {}, questions: [question('q1', 'ONGOING', 10)] }), 10)
 
-      expect(screen.getByText('10 people voted')).toBeInTheDocument()
-      expect(screen.queryByText('%')).toBeNull()
-      expect(screen.queryByText(/of \d+ voted/)).toBeNull()
+      expect(screen.getByRole('heading', { name: '10 people have voted.' })).toBeInTheDocument()
+      expect(screen.queryByRole('progressbar', { name: /people voted/ })).toBeNull()
+      expect(screen.queryByText(/of \d+ people/)).toBeNull()
       expect(screen.queryByText('Census')).toBeNull()
       expect(screen.queryByText(/^0 people/)).toBeNull()
     })
@@ -419,8 +461,8 @@ describe('VoteSummary', () => {
     it('falls back to the counts the process read carries when the results are not served', () => {
       renderSummary(createProcess({ questions: [question('q1', 'ENDED', 181)] }))
 
-      expect(screen.getByText('181 of 312 voted')).toBeInTheDocument()
-      expect(screen.queryByText('0 of 312 voted')).toBeNull()
+      expect(screen.getByRole('heading', { name: '181 of 312 people have voted, 58%.' })).toBeInTheDocument()
+      expect(screen.queryByText(/^0 of 312/)).toBeNull()
     })
 
     it('says the turnout could not be loaded when the results fail and the process carries no count', () => {
@@ -451,14 +493,34 @@ describe('VoteSummary', () => {
       question('q3', 'PAUSED'),
     ]
 
-    it('heads the hero with Turnout, not the state again, and words the count as a floor', () => {
+    it('words the count as a floor, and lists the same voting data as an all-at-once vote', () => {
       renderSummary(byQuestion(questions), 200)
 
-      expect(screen.getByRole('region', { name: 'Turnout' })).toBeInTheDocument()
-      expect(screen.getByText('At least 200 of 312 voted on a question')).toBeInTheDocument()
-      const labels = screen.getAllByRole('term').map((term) => term.textContent)
-      expect(labels).toEqual(['Census', 'Questions', 'Start', 'Closes', 'Results', 'Type', 'Vote overwrite'])
-      expect(screen.getByText('live, during the vote')).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', { name: 'At least 200 of 312 people have voted on a question, 64%.' })
+      ).toBeInTheDocument()
+      expect(screen.getByText(textMatching(/^.+ left to vote\.$/))).toBeInTheDocument()
+      const card = within(screen.getByRole('region', { name: 'Voting data' }))
+      expect(card.getByText('Closing')).toBeInTheDocument()
+      expect(card.getByText('They show live, during the vote.')).toBeInTheDocument()
+    })
+
+    it('says nobody has voted yet on a started vote with no votes, and when each question shows its results', () => {
+      const secret = (id: string, status: string) => ({ ...question(id, status, 0), secretUntilTheEnd: true })
+      renderSummary(byQuestion([secret('q1', 'ONGOING'), secret('q2', 'PAUSED')]), 0)
+
+      expect(screen.getByRole('heading', { name: 'Nobody has voted yet.' })).toBeInTheDocument()
+      expect(screen.getByText('They show when each question closes.')).toBeInTheDocument()
+    })
+
+    it('words the floor without a share or a bar when the census size is unknown', () => {
+      renderSummary(
+        createProcess({ initialStatus: 'PAUSED', census: {}, questions: [question('q1', 'ONGOING', 10)] }),
+        10
+      )
+
+      expect(screen.getByRole('heading', { name: 'At least 10 people have voted on a question.' })).toBeInTheDocument()
+      expect(screen.queryByRole('progressbar', { name: /voted on a question/ })).toBeNull()
     })
 
     it('says where it stands in place of the figure once canceled', () => {
@@ -478,11 +540,11 @@ describe('VoteSummary', () => {
       })
       renderSummary(byQuestion([ended('q1', '2026-03-01T10:20:00Z'), ended('q2', '2026-03-01T10:42:00Z')]), 200)
 
-      // The fact's label (the question rows say "Closed" too).
-      expect(screen.getAllByText('Closed').some((element) => element.tagName === 'DT')).toBe(true)
-      expect(screen.getByText('public')).toBeInTheDocument()
-      expect(screen.queryByText('Start')).toBeNull()
-      expect(screen.queryByText('when each question closes')).toBeNull()
+      const data = within(screen.getByRole('region', { name: 'Voting data' }))
+      expect(data.getByText('Closed')).toBeInTheDocument()
+      expect(data.getByText(/^Sunday, March 1(, 2026)? at \d\d:42\.$/)).toBeInTheDocument()
+      expect(data.getByText('Public now.')).toBeInTheDocument()
+      expect(screen.getByText('The results are final and voters can already see them.')).toBeInTheDocument()
     })
 
     it('runs the questions from Summary: counts, next step and the open question with its buttons', () => {
@@ -523,9 +585,9 @@ describe('VoteSummary', () => {
       renderSummary(byQuestionReady(), 0)
 
       expect(screen.getByRole('heading', { name: 'It has not started yet' })).toBeInTheDocument()
-      expect(screen.queryByText('Turnout')).not.toBeInTheDocument()
+      expect(screen.queryByRole('progressbar', { name: /people voted/ })).toBeNull()
+      expect(screen.queryByRole('region', { name: 'Voting data' })).toBeNull()
       expect(screen.getByText('none open')).toBeInTheDocument()
-      expect(screen.getByText('3, question by question')).toBeInTheDocument()
       expect(screen.queryByRole('region', { name: 'Vote controls' })).not.toBeInTheDocument()
     })
 
@@ -533,7 +595,7 @@ describe('VoteSummary', () => {
       phone = true
       renderSummary(byQuestion(questions), 200)
 
-      expect(screen.getByText('Turnout')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: /^At least 200 of 312/ })).toBeInTheDocument()
       expect(screen.getByText(textContent('64% turnout'))).toBeInTheDocument()
       expect(screen.getByText('1 closed, 1 open, 1 to open')).toBeInTheDocument()
       expect(screen.getByRole('region', { name: 'Vote controls' })).toHaveTextContent('2. Question q2')
