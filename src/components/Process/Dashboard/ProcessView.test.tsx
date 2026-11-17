@@ -36,9 +36,13 @@ const createProcess = (status: QuestionStatus, initialStatus?: 'PAUSED', cancele
     questions: [{ id: 'q1', title: { default: 'Question' }, choices: [], status: canceled ? 'CANCELED' : status }],
   }) as unknown as VotingProcessResponse
 
-const results = { questions: [{ voteCount: 184 }] }
+const RESULTS = { questions: [{ voteCount: 184 }] }
 
-const renderAt = (election: VotingProcessResponse, path = '/admin/process/0xabc') => {
+const renderAt = (
+  election: VotingProcessResponse,
+  path = '/admin/process/0xabc',
+  results: { questions: { voteCount: number }[] } | null = RESULTS
+) => {
   currentElection = election
   setReactProvidersMock({
     useElection: () => ({ id: election.id, election, status: election.questions[0].status, results }),
@@ -88,8 +92,21 @@ describe('ProcessView', () => {
     const paused = createProcess('PAUSED')
     renderAt(paused)
     expect(screen.getByRole('status')).toHaveTextContent(
-      'The vote is paused. Nobody can vote until you resume it. The 184 votes cast are kept and the deadline does not change.'
+      'The vote is paused. Nobody can vote until it is resumed. The 184 votes cast are kept and the deadline does not change.'
     )
+  })
+
+  it('gives no vote count in the banner before the results are read, nor when nobody has voted', () => {
+    const paused = createProcess('PAUSED')
+    const { unmount } = renderAt(paused, undefined, null)
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'The vote is paused. Nobody can vote until it is resumed. The deadline does not change.'
+    )
+    expect(screen.getByRole('status')).not.toHaveTextContent(/votes? cast/)
+    unmount()
+
+    renderAt(paused, undefined, { questions: [{ voteCount: 0 }] })
+    expect(screen.getByRole('status')).not.toHaveTextContent(/votes? cast/)
   })
 
   it('leaves the banner out of the other tabs', () => {
@@ -103,7 +120,7 @@ describe('ProcessView', () => {
     renderAt(createProcess('PAUSED', 'PAUSED'))
 
     expect(screen.getByRole('status')).toHaveTextContent(
-      'The vote is paused. Nobody can vote, and no question can be opened or closed until you resume it.'
+      'The vote is paused. Nobody can vote, and no question can be opened or closed until it is resumed. The votes cast are kept.'
     )
   })
 })

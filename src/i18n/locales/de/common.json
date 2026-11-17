@@ -2193,9 +2193,11 @@
       "no_results": "keine Ergebnisse",
       "none_open": "keine offen",
       "paused": {
-        "all_at_once_one": "Niemand kann abstimmen, bis du sie fortsetzt. Die {{votes}} abgegebene Stimme bleibt erhalten, und die Frist ändert sich nicht.",
-        "all_at_once_other": "Niemand kann abstimmen, bis du sie fortsetzt. Die {{votes}} abgegebenen Stimmen bleiben erhalten, und die Frist ändert sich nicht.",
-        "by_question": "Niemand kann abstimmen, und keine Frage kann geöffnet oder geschlossen werden, bis du sie fortsetzt. Die abgegebenen Stimmen bleiben erhalten.",
+        "all_at_once_one": "Niemand kann abstimmen, bis sie fortgesetzt wird. Die {{votes}} abgegebene Stimme bleibt erhalten, und die Frist ändert sich nicht.",
+        "all_at_once_other": "Niemand kann abstimmen, bis sie fortgesetzt wird. Die {{votes}} abgegebenen Stimmen bleiben erhalten, und die Frist ändert sich nicht.",
+        "all_at_once_no_votes": "Niemand kann abstimmen, bis sie fortgesetzt wird. Die Frist ändert sich nicht.",
+        "by_question": "Niemand kann abstimmen, und keine Frage kann geöffnet oder geschlossen werden, bis sie fortgesetzt wird. Die abgegebenen Stimmen bleiben erhalten.",
+        "by_question_no_votes": "Niemand kann abstimmen, und keine Frage kann geöffnet oder geschlossen werden, bis sie fortgesetzt wird.",
         "title": "Die Abstimmung ist pausiert."
       },
       "question_votes_one": "{{count, number}} Stimme",

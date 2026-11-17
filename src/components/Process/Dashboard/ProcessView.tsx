@@ -18,8 +18,9 @@ const VoteTabs = ({ tabs, value, withNotice }: { tabs: RoutedTab[]; value: strin
   const { state } = useActions()
   const byQuestion = isQuestionByQuestion(election)
   const paused = state === 'paused'
-  const notice =
-    withNotice && paused ? <PauseBanner byQuestion={byQuestion} votes={processVoteCount(results)} /> : undefined
+  // No figure until the results are read: 0 would be a guess.
+  const votes = results ? processVoteCount(results) : undefined
+  const notice = withNotice && paused ? <PauseBanner byQuestion={byQuestion} votes={votes} /> : undefined
   return <RoutedTabs tabs={tabs} value={value} rhythm='page' notice={notice} />
 }
 

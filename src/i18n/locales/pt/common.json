@@ -2267,10 +2267,12 @@
       "no_results": "sem resultados",
       "none_open": "nenhuma aberta",
       "paused": {
-        "all_at_once_one": "Ninguém pode votar até a retomares. O {{votes}} voto emitido mantém-se e o prazo não muda.",
-        "all_at_once_many": "Ninguém pode votar até a retomares. Os {{votes}} votos emitidos mantêm-se e o prazo não muda.",
-        "all_at_once_other": "Ninguém pode votar até a retomares. Os {{votes}} votos emitidos mantêm-se e o prazo não muda.",
-        "by_question": "Ninguém pode votar e não se pode abrir nem fechar nenhuma pergunta até a retomares. Os votos emitidos mantêm-se.",
+        "all_at_once_one": "Ninguém pode votar até ser retomada. O {{votes}} voto emitido mantém-se e o prazo não muda.",
+        "all_at_once_many": "Ninguém pode votar até ser retomada. Os {{votes}} votos emitidos mantêm-se e o prazo não muda.",
+        "all_at_once_other": "Ninguém pode votar até ser retomada. Os {{votes}} votos emitidos mantêm-se e o prazo não muda.",
+        "all_at_once_no_votes": "Ninguém pode votar até ser retomada. O prazo não muda.",
+        "by_question": "Ninguém pode votar e não se pode abrir nem fechar nenhuma pergunta até ser retomada. Os votos emitidos mantêm-se.",
+        "by_question_no_votes": "Ninguém pode votar e não se pode abrir nem fechar nenhuma pergunta até ser retomada.",
         "title": "A votação está em pausa."
       },
       "question_votes_one": "{{count, number}} voto",

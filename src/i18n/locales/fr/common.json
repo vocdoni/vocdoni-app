@@ -2267,10 +2267,12 @@
       "no_results": "pas de résultats",
       "none_open": "aucune ouverte",
       "paused": {
-        "all_at_once_one": "Personne ne peut voter tant que vous ne le reprenez pas. Le {{votes}} vote exprimé est conservé et l'échéance ne change pas.",
-        "all_at_once_many": "Personne ne peut voter tant que vous ne le reprenez pas. Les {{votes}} votes exprimés sont conservés et l'échéance ne change pas.",
-        "all_at_once_other": "Personne ne peut voter tant que vous ne le reprenez pas. Les {{votes}} votes exprimés sont conservés et l'échéance ne change pas.",
-        "by_question": "Personne ne peut voter, et aucune question ne peut être ouverte ni fermée tant que vous ne le reprenez pas. Les votes exprimés sont conservés.",
+        "all_at_once_one": "Personne ne peut voter tant qu'il n'est pas repris. Le {{votes}} vote exprimé est conservé et l'échéance ne change pas.",
+        "all_at_once_many": "Personne ne peut voter tant qu'il n'est pas repris. Les {{votes}} votes exprimés sont conservés et l'échéance ne change pas.",
+        "all_at_once_other": "Personne ne peut voter tant qu'il n'est pas repris. Les {{votes}} votes exprimés sont conservés et l'échéance ne change pas.",
+        "all_at_once_no_votes": "Personne ne peut voter tant qu'il n'est pas repris. L'échéance ne change pas.",
+        "by_question": "Personne ne peut voter, et aucune question ne peut être ouverte ni fermée tant qu'il n'est pas repris. Les votes exprimés sont conservés.",
+        "by_question_no_votes": "Personne ne peut voter, et aucune question ne peut être ouverte ni fermée tant qu'il n'est pas repris.",
         "title": "Le vote est en pause."
       },
       "question_votes_one": "{{count, number}} vote",

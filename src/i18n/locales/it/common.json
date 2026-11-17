@@ -2267,10 +2267,12 @@
       "no_results": "nessun risultato",
       "none_open": "nessuna aperta",
       "paused": {
-        "all_at_once_one": "Nessuno può votare finché non la riprendi. Il {{votes}} voto espresso resta valido e la scadenza non cambia.",
-        "all_at_once_many": "Nessuno può votare finché non la riprendi. I {{votes}} voti espressi restano validi e la scadenza non cambia.",
-        "all_at_once_other": "Nessuno può votare finché non la riprendi. I {{votes}} voti espressi restano validi e la scadenza non cambia.",
-        "by_question": "Nessuno può votare e nessuna domanda può essere aperta o chiusa finché non la riprendi. I voti espressi restano validi.",
+        "all_at_once_one": "Nessuno può votare finché non viene ripresa. Il {{votes}} voto espresso resta valido e la scadenza non cambia.",
+        "all_at_once_many": "Nessuno può votare finché non viene ripresa. I {{votes}} voti espressi restano validi e la scadenza non cambia.",
+        "all_at_once_other": "Nessuno può votare finché non viene ripresa. I {{votes}} voti espressi restano validi e la scadenza non cambia.",
+        "all_at_once_no_votes": "Nessuno può votare finché non viene ripresa. La scadenza non cambia.",
+        "by_question": "Nessuno può votare e nessuna domanda può essere aperta o chiusa finché non viene ripresa. I voti espressi restano validi.",
+        "by_question_no_votes": "Nessuno può votare e nessuna domanda può essere aperta o chiusa finché non viene ripresa.",
         "title": "La votazione è in pausa."
       },
       "question_votes_one": "{{count, number}} voto",

@@ -2195,7 +2195,9 @@
       "paused": {
         "all_at_once_one": "Inork ezin du bozkatu berrekin arte. Emandako boto {{votes}} gorde egiten da eta epea ez da aldatzen.",
         "all_at_once_other": "Inork ezin du bozkatu berrekin arte. Emandako {{votes}} botoak gorde egiten dira eta epea ez da aldatzen.",
+        "all_at_once_no_votes": "Inork ezin du bozkatu berrekin arte. Epea ez da aldatzen.",
         "by_question": "Inork ezin du bozkatu, eta ezin da galderarik ireki edo itxi berrekin arte. Emandako botoak gorde egiten dira.",
+        "by_question_no_votes": "Inork ezin du bozkatu, eta ezin da galderarik ireki edo itxi berrekin arte.",
         "title": "Bozketa pausatuta dago."
       },
       "question_votes_one": "{{count, number}} boto",

@@ -2267,10 +2267,12 @@
       "no_results": "sense resultats",
       "none_open": "cap d'oberta",
       "paused": {
-        "all_at_once_one": "Ningú pot votar fins que la reprenguis. El {{votes}} vot emès es conserva i el termini no canvia.",
-        "all_at_once_many": "Ningú pot votar fins que la reprenguis. Els {{votes}} vots emesos es conserven i el termini no canvia.",
-        "all_at_once_other": "Ningú pot votar fins que la reprenguis. Els {{votes}} vots emesos es conserven i el termini no canvia.",
-        "by_question": "Ningú pot votar i no es pot obrir ni tancar cap pregunta fins que la reprenguis. Els vots emesos es conserven.",
+        "all_at_once_one": "Ningú pot votar fins que es reprengui. El {{votes}} vot emès es conserva i el termini no canvia.",
+        "all_at_once_many": "Ningú pot votar fins que es reprengui. Els {{votes}} vots emesos es conserven i el termini no canvia.",
+        "all_at_once_other": "Ningú pot votar fins que es reprengui. Els {{votes}} vots emesos es conserven i el termini no canvia.",
+        "all_at_once_no_votes": "Ningú pot votar fins que es reprengui. El termini no canvia.",
+        "by_question": "Ningú pot votar i no es pot obrir ni tancar cap pregunta fins que es reprengui. Els vots emesos es conserven.",
+        "by_question_no_votes": "Ningú pot votar i no es pot obrir ni tancar cap pregunta fins que es reprengui.",
         "title": "La votació està en pausa."
       },
       "question_votes_one": "{{count, number}} vot",

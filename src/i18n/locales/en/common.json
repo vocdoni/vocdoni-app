@@ -2193,9 +2193,11 @@
       "no_results": "no results",
       "none_open": "none open",
       "paused": {
-        "all_at_once_one": "Nobody can vote until you resume it. The {{votes}} vote cast is kept and the deadline does not change.",
-        "all_at_once_other": "Nobody can vote until you resume it. The {{votes}} votes cast are kept and the deadline does not change.",
-        "by_question": "Nobody can vote, and no question can be opened or closed until you resume it. The votes cast are kept.",
+        "all_at_once_one": "Nobody can vote until it is resumed. The {{votes}} vote cast is kept and the deadline does not change.",
+        "all_at_once_other": "Nobody can vote until it is resumed. The {{votes}} votes cast are kept and the deadline does not change.",
+        "all_at_once_no_votes": "Nobody can vote until it is resumed. The deadline does not change.",
+        "by_question": "Nobody can vote, and no question can be opened or closed until it is resumed. The votes cast are kept.",
+        "by_question_no_votes": "Nobody can vote, and no question can be opened or closed until it is resumed.",
         "title": "The vote is paused."
       },
       "question_votes_one": "{{count, number}} vote",
