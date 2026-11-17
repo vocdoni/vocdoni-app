@@ -9,7 +9,6 @@ import { DashboardContents } from '~components/Dashboard/Contents'
 import { RoutedTabs, type RoutedTab } from '~components/ui/RoutedTabs'
 import { Routes } from '~src/router/routes'
 import { isQuestionByQuestion } from '~src/types/voting-process'
-import { deriveVoteState } from '~utils/vote-state'
 import { PauseBanner } from './PauseBanner'
 import { VoteHeader } from './VoteHeader'
 
@@ -26,14 +25,13 @@ const VoteTabs = ({ tabs, value, withNotice }: { tabs: RoutedTab[]; value: strin
 
 /**
  * The organiser's vote page: header and tabs. Each tab is a child route (Resum, Gestió for a question-by-question
- * vote, Papereta, Resultats) that `RoutedTabs` renders in its outlet.
+ * vote, Papereta) that `RoutedTabs` renders in its outlet. The results are read on Resum (R31).
  */
 export const ProcessView = () => {
   const { t } = useTranslation()
   const { election } = useElection()
   const { pathname } = useLocation()
   const id = election?.id ?? ''
-  const canceled = !!election && deriveVoteState(election) === 'canceled'
 
   const summary = generatePath(Routes.dashboard.process, { id })
   const manage = generatePath(Routes.dashboard.processManage, { id })
@@ -46,14 +44,6 @@ export const ProcessView = () => {
       label: t('votes.page.tab.ballot', { defaultValue: 'Ballot' }),
       route: generatePath(Routes.dashboard.processBallot, { id }),
     },
-    ...(canceled
-      ? []
-      : [
-          {
-            label: t('votes.page.tab.results', { defaultValue: 'Results' }),
-            route: generatePath(Routes.dashboard.processResults, { id }),
-          },
-        ]),
   ]
   // RoutedTabs matches the end of the path, which cannot tell the index from the others: match exactly.
   const value = (tabs.find((tab) => matchPath({ path: tab.route, end: true }, pathname)) ?? tabs[0]).route

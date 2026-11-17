@@ -102,7 +102,6 @@ export const ROUTES = [
   manage('manage-qbq-ended', B_QBQ_ENDED),
   vote('vote-qbq-many', B_QBQ_MANY),
   manage('manage-qbq-many', B_QBQ_MANY),
-  { slug: 'process-results', path: `/admin/process/${P_ENDED}/results` },
   {
     slug: 'create-empty',
     path: '/admin/processes/create',

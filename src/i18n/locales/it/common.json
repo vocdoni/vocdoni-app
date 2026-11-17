@@ -1445,11 +1445,7 @@
   "reset_password_button": "Reimposta Password",
   "results_state": {
     "hidden_until_end": "Nascosti fino alla fine",
-    "live_results": "Risultati in tempo reale",
-    "live_results_tooltip": "Questo processo di voto mostra i risultati in tempo reale. Tuttavia, è ancora in corso, quindi i risultati potrebbero cambiare prima della fine del voto.",
-    "results_available": "Risultati disponibili",
-    "secret_until_end": "In attesa dei risultati",
-    "secret_until_end_tooltip": "I risultati sono nascosti e saranno disponibili solo al termine della votazione"
+    "live_results": "Risultati in tempo reale"
   },
   "role": {
     "full_access": {
@@ -2060,11 +2056,9 @@
       "resume": "Riprendi",
       "resume_vote": "Riprendi la votazione",
       "show_as_voter": "Mostra come votante",
-      "show_results": "Mostra i risultati",
       "tab": {
         "ballot": "Scheda",
         "manage": "Gestione",
-        "results": "Risultati",
         "summary": "Riepilogo"
       }
     },
@@ -2150,7 +2144,6 @@
         "duplicate": "Duplicala",
         "ended_counting": "I risultati definitivi sono ancora in fase di conteggio.",
         "ended_final": "I risultati sono definitivi e i votanti possono già vederli.",
-        "ended_hint": "I risultati di ogni domanda sono nella pagina dei risultati.",
         "ended_title_one": "Votazione terminata con {{count, number}} voto",
         "ended_title_many": "Votazione terminata con {{count, number}} voti",
         "ended_title_other": "Votazione terminata con {{count, number}} voti",
@@ -2159,8 +2152,7 @@
         "questions_many": "{{count, number}} domande",
         "questions_other": "{{count, number}} domande",
         "ready_body": "{{people}} nel censimento e {{questions}}, tutte aperte insieme.",
-        "ready_title": "Si aprirà da sola {{date}}",
-        "show_results": "Mostra i risultati"
+        "ready_title": "Si aprirà da sola {{date}}"
       },
       "kind": {
         "budget_one": "{{count, number}} punto a persona",

@@ -27,7 +27,8 @@ type RowAction = { key: 'continue' | 'manage' | 'follow' | 'result' | 'view'; to
 
 const rowAction = ({ process, state }: VoteRow): RowAction => {
   const id = process.id
-  if (isLegacyProcess(process)) return { key: 'result', to: generatePath(Routes.dashboard.processResults, { id }) }
+  // The results are read on Resum (R31).
+  if (isLegacyProcess(process)) return { key: 'result', to: generatePath(Routes.dashboard.process, { id }) }
   const byQuestion = isQuestionByQuestion(process)
   const open = byQuestion ? Routes.dashboard.processManage : Routes.dashboard.process
   switch (state) {
@@ -42,7 +43,7 @@ const rowAction = ({ process, state }: VoteRow): RowAction => {
     case 'paused':
       return { key: 'follow', to: generatePath(open, { id }) }
     case 'closed':
-      return { key: 'result', to: generatePath(Routes.dashboard.processResults, { id }) }
+      return { key: 'result', to: generatePath(Routes.dashboard.process, { id }) }
     case 'canceled':
       return { key: 'view', to: generatePath(Routes.dashboard.process, { id }) }
   }

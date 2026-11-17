@@ -55,25 +55,25 @@ describe('ProcessView', () => {
     remembered = []
   })
 
-  it('offers Summary, Ballot and Results for an all-at-once vote', () => {
+  it('offers Summary and Ballot for an all-at-once vote: the results are read on Summary', () => {
     renderAt(createProcess('ONGOING'))
 
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Summary', 'Ballot', 'Results'])
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Summary', 'Ballot'])
   })
 
   it('adds Manage for a question-by-question vote', () => {
     renderAt(createProcess('PAUSED', 'PAUSED'))
 
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Summary', 'Manage', 'Ballot', 'Results'])
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Summary', 'Manage', 'Ballot'])
   })
 
-  it('has no Results tab for a canceled vote', () => {
-    renderAt(createProcess('ONGOING', undefined, true))
+  it('has no Results tab for a closed vote either', () => {
+    renderAt(createProcess('RESULTS'))
 
     expect(screen.queryByRole('tab', { name: 'Results' })).toBeNull()
   })
 
-  it('selects the tab of the current route and never jumps to the results on its own', () => {
+  it('selects the tab of the current route', () => {
     renderAt(createProcess('RESULTS'))
     expect(screen.getByRole('tab', { name: 'Summary' })).toHaveAttribute('aria-selected', 'true')
   })

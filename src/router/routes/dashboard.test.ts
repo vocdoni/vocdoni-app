@@ -69,8 +69,21 @@ describe('dashboard process routes', () => {
       'index',
       Routes.dashboard.processManage,
       Routes.dashboard.processBallot,
-      Routes.dashboard.processResults,
     ])
+  })
+
+  it('redirects the retired Results tab to the vote summary', async () => {
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { result } = renderHook(() => useDashboardRoutes())
+    const route = findRoute([result.current], Routes.dashboard.processResults)!
+    const response = (await (route.loader as LoaderFunction)({
+      request: new Request('https://app.test/admin/process/0xabc/results'),
+      params: { id: '0xabc' },
+    } as unknown as LoaderFunctionArgs)) as Response
+
+    expect(route.element).toBeUndefined()
+    expect(response.status).toBe(302)
+    expect(response.headers.get('Location')).toBe('/admin/process/0xabc')
   })
 })
 

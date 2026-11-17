@@ -1445,11 +1445,7 @@
   "reset_password_button": "Redefinir senha",
   "results_state": {
     "hidden_until_end": "Ocultos até o fim",
-    "live_results": "Resultados ao vivo",
-    "live_results_tooltip": "Este processo de votação exibe resultados ao vivo. No entanto, ainda está em andamento, portanto os resultados podem mudar antes do encerramento da votação.",
-    "results_available": "Resultados disponíveis",
-    "secret_until_end": "Aguardando resultados",
-    "secret_until_end_tooltip": "Os resultados estão ocultos e só estarão disponíveis quando a votação encerrar"
+    "live_results": "Resultados ao vivo"
   },
   "role": {
     "full_access": {
@@ -2060,11 +2056,9 @@
       "resume": "Retomar",
       "resume_vote": "Retomar a votação",
       "show_as_voter": "Ver como eleitor",
-      "show_results": "Mostrar os resultados",
       "tab": {
         "ballot": "Cédula",
         "manage": "Gerir",
-        "results": "Resultados",
         "summary": "Resumo"
       }
     },
@@ -2150,7 +2144,6 @@
         "duplicate": "Duplicá-la",
         "ended_counting": "Os resultados finais ainda estão sendo contados.",
         "ended_final": "Os resultados são finais e os eleitores já podem vê-los.",
-        "ended_hint": "Os resultados de cada pergunta estão na página de resultados.",
         "ended_title_one": "Votação encerrada com {{count, number}} voto",
         "ended_title_many": "Votação encerrada com {{count, number}} votos",
         "ended_title_other": "Votação encerrada com {{count, number}} votos",
@@ -2159,8 +2152,7 @@
         "questions_many": "{{count, number}} perguntas",
         "questions_other": "{{count, number}} perguntas",
         "ready_body": "{{people}} na lista de participantes e {{questions}}, todas abertas ao mesmo tempo.",
-        "ready_title": "Abre sozinha {{date}}",
-        "show_results": "Mostrar os resultados"
+        "ready_title": "Abre sozinha {{date}}"
       },
       "kind": {
         "budget_one": "{{count, number}} ponto por pessoa",

@@ -1419,11 +1419,7 @@
   "reset_password_button": "Passwort zurücksetzen",
   "results_state": {
     "hidden_until_end": "Verborgen bis zum Ende",
-    "live_results": "Live-Ergebnisse",
-    "live_results_tooltip": "Dieser Abstimmungsprozess zeigt Live-Ergebnisse. Er ist jedoch noch im Gange, sodass sich die Ergebnisse bis zum Ende der Abstimmung noch ändern können.",
-    "results_available": "Ergebnisse verfügbar",
-    "secret_until_end": "Ergebnisse ausstehend",
-    "secret_until_end_tooltip": "Die Ergebnisse sind ausgeblendet und werden erst nach Ende der Abstimmung verfügbar."
+    "live_results": "Live-Ergebnisse"
   },
   "role": {
     "full_access": {
@@ -2010,11 +2006,9 @@
       "resume": "Fortsetzen",
       "resume_vote": "Abstimmung fortsetzen",
       "show_as_voter": "Als Wählende Person ansehen",
-      "show_results": "Ergebnisse anzeigen",
       "tab": {
         "ballot": "Stimmzettel",
         "manage": "Verwalten",
-        "results": "Ergebnisse",
         "summary": "Zusammenfassung"
       }
     },
@@ -2094,15 +2088,13 @@
         "duplicate": "Duplizieren",
         "ended_counting": "Die endgültigen Ergebnisse werden noch ausgezählt.",
         "ended_final": "Die Ergebnisse sind endgültig, und die Wählenden können sie schon sehen.",
-        "ended_hint": "Die Ergebnisse jeder Frage stehen auf der Ergebnisseite.",
         "ended_title_one": "Abstimmung mit {{count, number}} Stimme beendet",
         "ended_title_other": "Abstimmung mit {{count, number}} Stimmen beendet",
         "ended_turnout": "{{percent}} % der Teilnehmerliste haben abgestimmt.",
         "questions_one": "{{count, number}} Frage",
         "questions_other": "{{count, number}} Fragen",
         "ready_body": "{{people}} auf der Teilnehmerliste und {{questions}}, alle gleichzeitig offen.",
-        "ready_title": "Beginnt von selbst am {{date}}",
-        "show_results": "Ergebnisse anzeigen"
+        "ready_title": "Beginnt von selbst am {{date}}"
       },
       "kind": {
         "budget_one": "{{count, number}} Punkt pro Person",

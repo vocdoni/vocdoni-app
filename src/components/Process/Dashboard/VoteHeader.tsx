@@ -5,7 +5,7 @@ import { useElection } from '@vocdoni/react-components'
 import { isSameDay } from 'date-fns'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, Link as RouterLink } from 'react-router'
+import { Link as RouterLink } from 'react-router'
 import { ActionContinue, ActionEnd, ActionPause, CancelVoteDialog } from '~components/Actions'
 import { useActions } from '~components/Actions/ActionsContext'
 import { PageTitle } from '~components/ui/PageTitle'
@@ -217,14 +217,6 @@ const VoteActions = ({ election, state }: HeaderPartProps) => {
           </ActionContinue>
           <ActionEnd flex={fill}>{endVote}</ActionEnd>
         </>
-      )
-    case 'closed':
-      return (
-        <Button asChild variant='solid' flex={fill}>
-          <RouterLink to={generatePath(Routes.dashboard.processResults, { id: election.id })}>
-            {t('votes.page.show_results', { defaultValue: 'Show the results' })}
-          </RouterLink>
-        </Button>
       )
     default:
       return null

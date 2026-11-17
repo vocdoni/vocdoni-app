@@ -111,9 +111,9 @@ describe('VoteListRow actions', () => {
     expect(href('Follow')).toBe('/admin/process/p1')
   })
 
-  it('opens the result of a closed vote', () => {
+  it('opens the result of a closed vote on its summary, where the results are read', () => {
     renderRow(make({ questions: [question('ENDED')] }))
-    expect(href('Result')).toBe('/admin/process/p1/results')
+    expect(href('Result')).toBe('/admin/process/p1')
   })
 
   it('opens a canceled vote on its summary', () => {
@@ -203,7 +203,7 @@ describe('VoteListRow permissions', () => {
 
   it('has only the result and no duplicate for a legacy vote', () => {
     renderRow(make({ legacy: true, questions: [question('ONGOING')] }))
-    expect(href('Result')).toBe('/admin/process/p1/results')
+    expect(href('Result')).toBe('/admin/process/p1')
     expect(screen.queryByRole('button', { name: /duplicate/i })).not.toBeInTheDocument()
   })
 

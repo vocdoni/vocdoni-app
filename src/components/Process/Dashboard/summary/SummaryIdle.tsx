@@ -1,12 +1,10 @@
 import { Button, Card, Flex, Heading, Icon, Stack, Text } from '@chakra-ui/react'
 import { useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, Link as RouterLink } from 'react-router'
 import { useActions } from '~components/Actions/ActionsContext'
 import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { useVoteText } from '~i18n/use-vote-text'
-import { Routes } from '~src/router/routes'
-import { ForwardIcon, InfoIcon } from '~theme/icons'
+import { InfoIcon } from '~theme/icons'
 import { isSettledQuestion } from '~utils/vote-state'
 import { useCloneAsDraft } from '../use-clone-as-draft'
 import type { SummaryModel } from './use-summary-model'
@@ -67,15 +65,6 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
       ]
         .filter(Boolean)
         .join(' ')
-      hint = t('votes.summary.idle.ended_hint', { defaultValue: "Each question's results are on the results page." })
-      action = (
-        <Button asChild variant='solid'>
-          <RouterLink to={generatePath(Routes.dashboard.processResults, { id: election.id })}>
-            {t('votes.summary.idle.show_results', { defaultValue: 'Show the results' })}
-            <Icon as={ForwardIcon} />
-          </RouterLink>
-        </Button>
-      )
       break
     case 'canceled':
       title = t('votes.summary.idle.canceled_title', { defaultValue: 'Vote canceled' })

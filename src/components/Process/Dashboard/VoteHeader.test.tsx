@@ -184,13 +184,14 @@ describe('VoteHeader', () => {
       expect(actions()).toEqual(['End the vote'])
     })
 
-    it('reads a vote whose questions are all closed as closed, with Show the results', () => {
+    it('reads a vote whose questions are all closed as closed, with no action but its menu', () => {
       renderHeader(
         byQuestion([question('q1', 'ENDED'), question('q2', 'ONGOING', { endedAt: '2026-03-10T11:00:00Z' })])
       )
 
       expect(screen.queryByRole('button', { name: 'End the vote' })).not.toBeInTheDocument()
-      expect(screen.getByRole('link', { name: 'Show the results' })).toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: 'Show the results' })).not.toBeInTheDocument()
+      expect(actions()).toEqual([])
       expect(screen.getByText('Closed')).toBeInTheDocument()
     })
 
@@ -217,14 +218,11 @@ describe('VoteHeader', () => {
       expect(screen.getByText(/^Saturday, March 14 at \d\d:\d\d\. Question by question\.$/)).toBeVisible()
     })
 
-    it('links to the results of an ended vote and says when it ended and after how long', () => {
+    it('keeps only the menu on an ended vote and says when it ended and after how long', () => {
       earlyEndDate = new Date('2026-03-01T11:28:00Z')
       renderHeader(byQuestion([question('q1', 'ENDED'), question('q2', 'RESULTS')]))
 
-      expect(screen.getByRole('link', { name: 'Show the results' })).toHaveAttribute(
-        'href',
-        '/admin/process/0xabc/results'
-      )
+      expect(screen.queryByRole('link', { name: 'Show the results' })).not.toBeInTheDocument()
       expect(actions()).toEqual([])
       expect(screen.getByText(/^On March 1 at \d\d:\d\d, after 1 hour and 28 minutes\.$/)).toBeVisible()
     })

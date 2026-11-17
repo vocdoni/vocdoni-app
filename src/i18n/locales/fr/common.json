@@ -1445,11 +1445,7 @@
   "reset_password_button": "Réinitialiser le mot de passe",
   "results_state": {
     "hidden_until_end": "Masqués jusqu'à la fin",
-    "live_results": "Résultats en direct",
-    "live_results_tooltip": "Ce processus de vote affiche les résultats en direct. Toutefois, il est encore en cours, donc les résultats peuvent évoluer avant la clôture du vote.",
-    "results_available": "Résultats disponibles",
-    "secret_until_end": "En attente des résultats",
-    "secret_until_end_tooltip": "Les résultats sont masqués et ne seront disponibles qu'à la clôture du vote"
+    "live_results": "Résultats en direct"
   },
   "role": {
     "full_access": {
@@ -2060,11 +2056,9 @@
       "resume": "Reprendre",
       "resume_vote": "Reprendre le vote",
       "show_as_voter": "Voir comme un électeur",
-      "show_results": "Afficher les résultats",
       "tab": {
         "ballot": "Bulletin",
         "manage": "Gérer",
-        "results": "Résultats",
         "summary": "Résumé"
       }
     },
@@ -2150,7 +2144,6 @@
         "duplicate": "Le dupliquer",
         "ended_counting": "Les résultats définitifs sont encore en cours de décompte.",
         "ended_final": "Les résultats sont définitifs et les électeurs peuvent déjà les voir.",
-        "ended_hint": "Les résultats de chaque question sont sur la page des résultats.",
         "ended_title_one": "Vote terminé avec {{count, number}} vote",
         "ended_title_many": "Vote terminé avec {{count, number}} votes",
         "ended_title_other": "Vote terminé avec {{count, number}} votes",
@@ -2159,8 +2152,7 @@
         "questions_many": "{{count, number}} questions",
         "questions_other": "{{count, number}} questions",
         "ready_body": "{{people}} sur la liste électorale et {{questions}}, toutes ouvertes à la fois.",
-        "ready_title": "S'ouvrira automatiquement le {{date}}",
-        "show_results": "Afficher les résultats"
+        "ready_title": "S'ouvrira automatiquement le {{date}}"
       },
       "kind": {
         "budget_one": "{{count, number}} point par personne",

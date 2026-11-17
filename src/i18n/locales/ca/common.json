@@ -1445,11 +1445,7 @@
   "reset_password_button": "Restableix la contrasenya",
   "results_state": {
     "hidden_until_end": "Ocults fins al final",
-    "live_results": "Resultats en directe",
-    "live_results_tooltip": "Aquest procés de votació mostra els resultats en directe. Tot i així, encara està en curs, per tant els resultats poden canviar abans que acabi la votació.",
-    "results_available": "Resultats disponibles",
-    "secret_until_end": "Resultats pendents",
-    "secret_until_end_tooltip": "Els resultats estan ocults i només estaran disponibles un cop acabi la votació"
+    "live_results": "Resultats en directe"
   },
   "role": {
     "full_access": {
@@ -2060,11 +2056,9 @@
       "resume": "Reprèn",
       "resume_vote": "Reprèn la votació",
       "show_as_voter": "Mostra-la com a votant",
-      "show_results": "Mostra els resultats",
       "tab": {
         "ballot": "Papereta",
         "manage": "Gestió",
-        "results": "Resultats",
         "summary": "Resum"
       }
     },
@@ -2150,7 +2144,6 @@
         "duplicate": "Duplica-la",
         "ended_counting": "Els resultats finals encara s'estan comptant.",
         "ended_final": "Els resultats són finals i els votants ja els poden veure.",
-        "ended_hint": "Els resultats de cada pregunta són a la pàgina de resultats.",
         "ended_title_one": "Votació finalitzada amb {{count, number}} vot",
         "ended_title_many": "Votació finalitzada amb {{count, number}} vots",
         "ended_title_other": "Votació finalitzada amb {{count, number}} vots",
@@ -2159,8 +2152,7 @@
         "questions_many": "{{count, number}} preguntes",
         "questions_other": "{{count, number}} preguntes",
         "ready_body": "{{people}} al cens i {{questions}}, totes obertes alhora.",
-        "ready_title": "S'obrirà sola {{date}}",
-        "show_results": "Mostra els resultats"
+        "ready_title": "S'obrirà sola {{date}}"
       },
       "kind": {
         "budget_one": "{{count, number}} punt per persona",

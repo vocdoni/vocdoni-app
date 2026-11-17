@@ -1419,11 +1419,7 @@
   "reset_password_button": "Berrezarri pasahitza",
   "results_state": {
     "hidden_until_end": "Ezkutuak amaitu arte",
-    "live_results": "Zuzeneko emaitzak",
-    "live_results_tooltip": "Bozketa-prozesu honek zuzeneko emaitzak erakusten ditu. Hala ere, oraindik abian dago, eta beraz, emaitzak alda daitezke bozketa amaitu arte.",
-    "results_available": "Emaitzak eskuragarri",
-    "secret_until_end": "Emaitzen zain",
-    "secret_until_end_tooltip": "Emaitzak ezkutuan jarraitzen dute eta bozketa amaitzen denean soilik egongo dira eskuragarri"
+    "live_results": "Zuzeneko emaitzak"
   },
   "role": {
     "full_access": {
@@ -2010,11 +2006,9 @@
       "resume": "Berrekin",
       "resume_vote": "Berrekin bozketari",
       "show_as_voter": "Erakutsi botogile gisa",
-      "show_results": "Erakutsi emaitzak",
       "tab": {
         "ballot": "Botoa",
         "manage": "Kudeaketa",
-        "results": "Emaitzak",
         "summary": "Laburpena"
       }
     },
@@ -2094,15 +2088,13 @@
         "duplicate": "Bikoiztu",
         "ended_counting": "Behin betiko emaitzak zenbatzen ari dira oraindik.",
         "ended_final": "Emaitzak behin betikoak dira eta botogileek ikus ditzakete jada.",
-        "ended_hint": "Galdera bakoitzaren emaitzak emaitzen orrian daude.",
         "ended_title_one": "Bozketa boto {{count, number}}rekin amaitu da",
         "ended_title_other": "Bozketa {{count, number}} botorekin amaitu da",
         "ended_turnout": "Erroldearen %{{percent}}k bozkatu du.",
         "questions_one": "galdera {{count, number}}",
         "questions_other": "{{count, number}} galdera",
         "ready_body": "{{people}} erroldean eta {{questions}}, denak batera irekita.",
-        "ready_title": "Bere kabuz irekiko da: {{date}}",
-        "show_results": "Erakutsi emaitzak"
+        "ready_title": "Bere kabuz irekiko da: {{date}}"
       },
       "kind": {
         "budget_one": "Puntu {{count, number}} pertsonako",

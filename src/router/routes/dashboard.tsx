@@ -27,9 +27,6 @@ const VoteManage = lazy(() =>
 const VoteBallot = lazy(() =>
   import('~components/Process/Dashboard/VoteBallot').then((m) => ({ default: m.VoteBallot }))
 )
-const VoteResults = lazy(() =>
-  import('~components/Process/Dashboard/VoteResults').then((m) => ({ default: m.VoteResults }))
-)
 const ProcessCreate = lazy(() => import('~elements/dashboard/processes/create'))
 const OrganizationEdit = lazy(() => import('~components/Organization/Dashboard/Organization'))
 const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
@@ -155,15 +152,13 @@ export const useDashboardRoutes = () => {
                           </SuspenseLoader>
                         ),
                       },
-                      {
-                        path: Routes.dashboard.processResults,
-                        element: (
-                          <SuspenseLoader>
-                            <VoteResults />
-                          </SuspenseLoader>
-                        ),
-                      },
                     ],
+                  },
+                  // The Results tab is retired (R31): its results are read on Resum. A sibling, so the redirect does
+                  // not wait for the process read.
+                  {
+                    path: Routes.dashboard.processResults,
+                    ...redirectLegacyPath(Routes.dashboard.process),
                   },
                   {
                     path: Routes.dashboard.census.checkout,

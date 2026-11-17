@@ -1445,11 +1445,7 @@
   "reset_password_button": "Repor palavra-passe",
   "results_state": {
     "hidden_until_end": "Ocultos até ao fim",
-    "live_results": "Resultados em direto",
-    "live_results_tooltip": "Este processo de votação mostra os resultados em direto. No entanto, ainda está a decorrer, pelo que os resultados podem mudar antes do fim da votação.",
-    "results_available": "Resultados disponíveis",
-    "secret_until_end": "À espera dos resultados",
-    "secret_until_end_tooltip": "Os resultados estão ocultos e só estarão disponíveis quando a votação terminar"
+    "live_results": "Resultados em direto"
   },
   "role": {
     "full_access": {
@@ -2060,11 +2056,9 @@
       "resume": "Retomar",
       "resume_vote": "Retomar a votação",
       "show_as_voter": "Ver como votante",
-      "show_results": "Mostrar os resultados",
       "tab": {
         "ballot": "Boletim",
         "manage": "Gerir",
-        "results": "Resultados",
         "summary": "Resumo"
       }
     },
@@ -2150,7 +2144,6 @@
         "duplicate": "Duplicá-la",
         "ended_counting": "Os resultados finais ainda estão a ser contados.",
         "ended_final": "Os resultados são finais e os votantes já os podem ver.",
-        "ended_hint": "Os resultados de cada pergunta estão na página de resultados.",
         "ended_title_one": "Votação terminada com {{count, number}} voto",
         "ended_title_many": "Votação terminada com {{count, number}} votos",
         "ended_title_other": "Votação terminada com {{count, number}} votos",
@@ -2159,8 +2152,7 @@
         "questions_many": "{{count, number}} perguntas",
         "questions_other": "{{count, number}} perguntas",
         "ready_body": "{{people}} na lista de participantes e {{questions}}, todas abertas ao mesmo tempo.",
-        "ready_title": "Abre sozinha {{date}}",
-        "show_results": "Mostrar os resultados"
+        "ready_title": "Abre sozinha {{date}}"
       },
       "kind": {
         "budget_one": "{{count, number}} ponto por pessoa",

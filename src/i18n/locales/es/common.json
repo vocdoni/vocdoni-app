@@ -1445,11 +1445,7 @@
   "reset_password_button": "Restablecer contraseña",
   "results_state": {
     "hidden_until_end": "Ocultos hasta el final",
-    "live_results": "Resultados en directo",
-    "live_results_tooltip": "Este proceso de votación muestra resultados en directo. Sin embargo, aún está en curso, por lo que los resultados pueden variar hasta que finalice la votación.",
-    "results_available": "Resultados disponibles",
-    "secret_until_end": "A la espera de resultados",
-    "secret_until_end_tooltip": "Los resultados permanecen ocultos y solo estarán disponibles una vez que concluya la votación"
+    "live_results": "Resultados en directo"
   },
   "role": {
     "full_access": {
@@ -2060,11 +2056,9 @@
       "resume": "Reanudar",
       "resume_vote": "Reanudar la votación",
       "show_as_voter": "Mostrar como votante",
-      "show_results": "Mostrar los resultados",
       "tab": {
         "ballot": "Papeleta",
         "manage": "Gestión",
-        "results": "Resultados",
         "summary": "Resumen"
       }
     },
@@ -2150,7 +2144,6 @@
         "duplicate": "Duplicarla",
         "ended_counting": "Los resultados definitivos aún se están contando.",
         "ended_final": "Los resultados son definitivos y los votantes ya pueden verlos.",
-        "ended_hint": "Los resultados de cada pregunta están en la página de resultados.",
         "ended_title_one": "Votación finalizada con {{count, number}} voto",
         "ended_title_many": "Votación finalizada con {{count, number}} votos",
         "ended_title_other": "Votación finalizada con {{count, number}} votos",
@@ -2159,8 +2152,7 @@
         "questions_many": "{{count, number}} preguntas",
         "questions_other": "{{count, number}} preguntas",
         "ready_body": "{{people}} en el censo y {{questions}}, todas abiertas a la vez.",
-        "ready_title": "Se abrirá sola el {{date}}",
-        "show_results": "Mostrar los resultados"
+        "ready_title": "Se abrirá sola el {{date}}"
       },
       "kind": {
         "budget_one": "{{count, number}} punto por persona",
