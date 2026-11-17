@@ -1,6 +1,5 @@
 import { BallotType } from '@vocdoni/ballot'
 import type { TFunction } from 'i18next'
-import { useTranslation } from 'react-i18next'
 
 type ResultTypeConfig = {
   key: string
@@ -49,9 +48,4 @@ export const resultTypeLabel = (t: TFunction, type?: BallotType | null, defaultV
   if (!config) return defaultValue
 
   return t(config.key, { defaultValue: config.defaultValue ?? defaultValue })
-}
-
-export const useResultTypeLabel = (type?: BallotType | null, defaultValue = '') => {
-  const { t } = useTranslation()
-  return resultTypeLabel(t, type, defaultValue)
 }
