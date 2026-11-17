@@ -151,10 +151,9 @@ const spacing = defineTokens.spacing({
     DEFAULT: { value: '11px' },
     head: { value: '13px' },
   },
-  // Between a question's title and the note under it; `icon` between a note and the icon before it (a lock).
+  // Between a question's title and the note under it.
   note: {
     DEFAULT: { value: '1px' },
-    icon: { value: '7px' },
     // A question's title to its note on the organiser's ballot (Papereta), from `lg`.
     paper: { value: '3px' },
   },
@@ -215,7 +214,7 @@ const sizes = defineTokens.sizes({
     xl: { value: '{sizes.12}' },
     // The chevron of a control that opens a menu ("More").
     chevron: { value: '15px' },
-    // A mark inside a line of small text (the winning choice's check).
+    // A mark inside a line of small text (a link's chevron).
     xs: { value: '13px' },
   },
   // The three page widths, read through ui/PageContainer: the public shell, then two narrower columns; `list` is

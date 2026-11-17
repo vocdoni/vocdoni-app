@@ -168,16 +168,6 @@ export const isLastQuestionLeft = (process: VotingProcessResponse, questionId: s
 
 export type QuestionStateCounts = Record<QuestionState, number>
 
-export const countQuestionStates = (states: readonly QuestionState[]): QuestionStateCounts =>
-  states.reduce<QuestionStateCounts>((counts, state) => ({ ...counts, [state]: counts[state] + 1 }), {
-    toOpen: 0,
-    open: 0,
-    paused: 0,
-    closed: 0,
-    canceled: 0,
-    notOpened: 0,
-  })
-
 /** Integer percent, or undefined when there is nothing to divide by (an absent census size). */
 export const percentOf = (part: number, whole: number | undefined): number | undefined => {
   if (!whole || whole <= 0) return undefined

@@ -4,7 +4,6 @@ import {
   canOpenQuestion,
   compareVoteRows,
   countByFilter,
-  countQuestionStates,
   deriveQuestionState,
   deriveVoteState,
   draftWarning,
@@ -251,19 +250,6 @@ describe('deriveQuestionState', () => {
   it('keeps an all-at-once question closed after the end', () => {
     const ended = vote(['PAUSED'], { endDate: '2026-06-14T00:00:00Z' })
     expect(deriveQuestionState(question('PAUSED'), ended, NOW)).toBe('closed')
-  })
-})
-
-describe('question counts', () => {
-  it('counts each state', () => {
-    expect(countQuestionStates(['closed', 'closed', 'open', 'toOpen', 'notOpened'])).toEqual({
-      toOpen: 1,
-      open: 1,
-      paused: 0,
-      closed: 2,
-      canceled: 0,
-      notOpened: 1,
-    })
   })
 })
 

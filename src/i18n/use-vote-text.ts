@@ -1,9 +1,7 @@
-import type { LocalizedInput, Choice } from '@vocdoni/api-types'
+import type { LocalizedInput } from '@vocdoni/api-types'
 import { formatDuration, type Duration } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { getLocalizedRawText } from '~utils/localized-text'
-import { quantity } from '~utils/numbers'
-import type { QuestionOutcome } from '~utils/vote-outcome'
 import { timeLeft } from '~utils/vote-state'
 import { datesLocale } from './locales'
 

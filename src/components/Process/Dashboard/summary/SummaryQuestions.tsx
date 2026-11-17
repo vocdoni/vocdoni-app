@@ -86,7 +86,7 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
   const { results } = useElection()
   const { election, byQuestion, state, questionStates } = model
 
-  // The served tally wins over the one the process read carries (the old Results tab read it from there too).
+  // The served tally wins over the one the process read carries.
   const questions = useMemo(() => {
     const served = new Map((results?.questions ?? []).map((entry) => [entry.questionId, entry]))
     return election.questions.map((question): VotingProcessQuestion => {

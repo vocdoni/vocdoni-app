@@ -155,7 +155,7 @@ and `control-tab` (15px, 13.5px from `lg`) are what button, field, menu, chip an
 
 ## Sizes, spacing and radii
 
-- **Spacing tokens of the boards**: `card` (22px), `fact` (7px, above and below a vote's fact), `chip` (7px, a chip's label to its count), `note` (1px, a question's title to its note; `note.icon` 7px, a note to the lock before it; `note.paper` 3px, the same on the organiser's ballot from `lg`), `dock` (110px, what a phone page keeps clear under its content for the bottom action bar), `row` (11px, the top of a one-line row; `row.head` 13px, a legend's head), `hero.ruler` and `hero.compact` (34px and 30px, the participation hero from `lg`), `idle` (26px, the card that says where a vote stands; `idle.end` 13px, its footer's end).
+- **Spacing tokens of the boards**: `card` (22px), `fact` (7px, above and below a vote's fact), `chip` (7px, a chip's label to its count), `note` (1px, a question's title to its note; `note.paper` 3px, the same on the organiser's ballot from `lg`), `dock` (110px, what a phone page keeps clear under its content for the bottom action bar), `row` (11px, the top of a one-line row; `row.head` 13px, a legend's head), `hero.ruler` and `hero.compact` (34px and 30px, the participation hero from `lg`), `idle` (26px, the card that says where a vote stands; `idle.end` 13px, its footer's end).
 - **Spacing**: scale steps (`p='4'`, `gap='2'`), plus `0` and `auto` (`p='0'`, `mx='auto'`). A pixel value is a
   `pxSpacing` ratchet hit.
 - **Sizes**: Chakra's named sizes and the tokens below, plus `0` and `auto`. A pixel value is a `pxSize` ratchet hit.
