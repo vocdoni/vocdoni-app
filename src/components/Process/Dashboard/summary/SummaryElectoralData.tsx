@@ -95,11 +95,7 @@ export const SummaryElectoralData = ({ model }: { model: SummaryModel }) => {
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
-      <SummaryCardHeader
-        id={titleId}
-        title={t('votes.summary.electoral_title', { defaultValue: 'Voting data' })}
-        desktop
-      />
+      <SummaryCardHeader id={titleId} title={t('votes.summary.electoral_title', { defaultValue: 'Voting data' })} />
       {authMethod && (
         <Card.Body py='3' gap='0'>
           <Text fontWeight='medium-plus'>

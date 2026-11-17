@@ -94,11 +94,7 @@ export const SummaryShare = ({ link, desktop, state }: SummaryShareProps) => {
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
-      <SummaryCardHeader
-        id={titleId}
-        title={t('votes.summary.share_title', { defaultValue: 'To share' })}
-        desktop={false}
-      />
+      <SummaryCardHeader id={titleId} title={t('votes.summary.share_title', { defaultValue: 'To share' })} />
       <Card.Body pt='0' pb={{ base: '4', md: '5' }} gap='3' borderTopWidth='[0]'>
         <Text mt='-1.5' textStyle='body' color='fg.subtle'>
           {note}

@@ -18,7 +18,7 @@ const TIME: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', h
  * today (paused, if it is) and when it opens, joined by a thread from mark to mark. The board's convocation, quorum
  * and votes-today entries have no backend data.
  */
-export const SummaryCalendar = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
+export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
   const { t, i18n } = useTranslation()
   const titleId = useId()
   const { election, state, endDate, endedEarly, now } = model
@@ -79,11 +79,7 @@ export const SummaryCalendar = ({ model, desktop }: { model: SummaryModel; deskt
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
-      <SummaryCardHeader
-        id={titleId}
-        title={t('votes.summary.calendar.title', { defaultValue: 'Calendar' })}
-        desktop={desktop}
-      />
+      <SummaryCardHeader id={titleId} title={t('votes.summary.calendar.title', { defaultValue: 'Calendar' })} />
       <Card.Body as='ol' pt={{ base: '0', lg: '2' }} pb='2.5' gap='0' borderTopWidth={{ base: '[0]', lg: 'hairline' }}>
         {entries.map((entry, index) => (
           <Flex

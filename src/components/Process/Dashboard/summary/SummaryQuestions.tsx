@@ -132,7 +132,6 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
           election.questions.length > 1 ? t('votes.summary.all_open', { defaultValue: 'All open at once' }) : undefined
         }
         noteAtEnd
-        desktop={desktop}
       />
       {countingNote}
       {undecodable ? (

@@ -506,7 +506,7 @@ describe('VoteSummary', () => {
     it('runs the questions from Summary: counts, next step and the open question with its buttons', () => {
       renderSummary(byQuestion(questions), 200)
 
-      expect(screen.getByText('1 closed · 1 open · 1 to open')).toBeInTheDocument()
+      expect(screen.getByText('1 closed, 1 open, 1 to open')).toBeInTheDocument()
       expect(screen.getByText('Next step: close question 2')).toBeInTheDocument()
       // The closed line says its turnout, never a verdict.
       expect(screen.getByText(textContent('64% turnout'))).toBeInTheDocument()
@@ -560,7 +560,7 @@ describe('VoteSummary', () => {
     it('shows a vote paused as a whole, with the held questions paused', () => {
       renderSummary(byQuestion([questions[0], question('q2', 'PAUSED', 120), questions[2]]), 200)
 
-      expect(screen.getByText('1 closed · 1 paused · 1 to open')).toBeInTheDocument()
+      expect(screen.getByText('1 closed, 1 paused, 1 to open')).toBeInTheDocument()
     })
   })
 

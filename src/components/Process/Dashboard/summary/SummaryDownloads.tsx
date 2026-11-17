@@ -33,7 +33,7 @@ const DownloadRow = ({ title, note, action }: RowProps) => (
  * "Download the results" on a closed vote (boards V4VoteManageAll, V4VoteOne): the tally as a CSV file and the final
  * report as a PDF. The board's "pay and download" has no backend yet, so the report downloads as it always has.
  */
-export const SummaryDownloads = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
+export const SummaryDownloads = ({ model }: { model: SummaryModel }) => {
   const { t, i18n } = useTranslation()
   const { text } = useVoteText()
   const titleId = useId()
@@ -55,11 +55,7 @@ export const SummaryDownloads = ({ model, desktop }: { model: SummaryModel; desk
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
-      <SummaryCardHeader
-        id={titleId}
-        title={t('votes.downloads.title', { defaultValue: 'Download the results' })}
-        desktop={desktop}
-      />
+      <SummaryCardHeader id={titleId} title={t('votes.downloads.title', { defaultValue: 'Download the results' })} />
       <DownloadRow
         title={t('votes.downloads.csv.title', { defaultValue: 'Results in CSV' })}
         note={

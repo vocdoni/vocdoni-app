@@ -70,11 +70,11 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
   const canAct = canManage && underWay && !isHeld
   const weighted = !!election.census?.weighted
 
-  // The board counts states only once the vote has started; the touch boards name the two cases with none.
+  // States are counted once the vote has started; before it, and once canceled, the header names the case.
   let cardCounts = ''
-  if (canceled) cardCounts = desktop ? '' : t('votes.summary.no_results', { defaultValue: 'no results' })
-  else if (!started) cardCounts = desktop ? '' : t('votes.summary.none_open', { defaultValue: 'none open' })
-  else cardCounts = manageText.counts(counts, desktop)
+  if (canceled) cardCounts = t('votes.summary.no_results', { defaultValue: 'no results' })
+  else if (!started) cardCounts = t('votes.summary.none_open', { defaultValue: 'none open' })
+  else cardCounts = manageText.counts(counts)
 
   let next: string | null = null
   if (canManage && step) next = manageText.next(step)
@@ -184,13 +184,7 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
   return (
     <>
       <Card.Root variant='frame' as='section' aria-labelledby={headingId}>
-        <QuestionsHeader
-          headingId={headingId}
-          total={election.questions.length}
-          counts={cardCounts}
-          next={next}
-          desktop={desktop}
-        />
+        <QuestionsHeader headingId={headingId} total={election.questions.length} counts={cardCounts} next={next} />
         {notice}
         <Box as='ol'>
           {questions.map((question, index) => {

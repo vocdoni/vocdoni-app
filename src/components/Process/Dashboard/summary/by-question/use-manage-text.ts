@@ -69,14 +69,11 @@ export const useManageText = () => {
     new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(numbers.map(String))
 
   return {
-    /**
-     * "2 closed · 1 open · 1 to open" on the desktop board, a list in the page's language on a phone or tablet. Held
-     * questions count as paused.
-     */
-    counts: (counts: QuestionStateCounts & { held?: number }, desktop: boolean) => {
+    /** "2 closed, 1 open, 1 to open": a list in the page's language. Held questions count as paused. */
+    counts: (counts: QuestionStateCounts & { held?: number }) => {
       const of: QuestionStateCounts = { ...counts, paused: counts.paused + (counts.held ?? 0) }
       const parts = ORDER.filter((state) => of[state] > 0).map((state) => part(state, of[state]))
-      return desktop ? parts.join(' · ') : new Intl.ListFormat(i18n.language, { type: 'unit' }).format(parts)
+      return new Intl.ListFormat(i18n.language, { type: 'unit' }).format(parts)
     },
     /**
      * The quiet line under a question's title: its text, as plain text (it is written in markdown), and how it is

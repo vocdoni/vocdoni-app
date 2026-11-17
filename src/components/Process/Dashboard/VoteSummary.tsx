@@ -45,9 +45,9 @@ export const VoteSummary = () => {
       >
         <SummaryQuestions model={model} desktop={desktop} />
         <Stack gap={{ base: '5', md: '6', xl: '4' }} minW='0'>
-          <SummaryDownloads model={model} desktop={desktop} />
+          <SummaryDownloads model={model} />
           {desktop && !byQuestion && <SummaryElectoralData model={model} />}
-          {!byQuestion && <SummaryCalendar model={model} desktop={desktop} />}
+          {!byQuestion && <SummaryCalendar model={model} />}
           <SummaryShare link={votingLink} desktop={desktop} state={state} />
           {authFields.length + twoFaFields.length > 0 && (
             <Card.Root variant='frame'>

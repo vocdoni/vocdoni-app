@@ -109,7 +109,7 @@ describe('ByQuestionCard', () => {
   describe('on the desktop', () => {
     it('counts the questions in the header and hints the next step', () => {
       show(build())
-      expect(screen.getByText('1 closed · 1 open · 1 to open')).toBeInTheDocument()
+      expect(screen.getByText('1 closed, 1 open, 1 to open')).toBeInTheDocument()
       expect(screen.getByText('Next step: close question 2')).toBeInTheDocument()
     })
 
@@ -194,7 +194,8 @@ describe('ByQuestionCard', () => {
       expect(button('Open')).toHaveAttribute('aria-disabled', 'true')
       expect(button('Open')).toHaveAccessibleDescription(NOTE)
       expect(screen.getByText(/The vote starts/)).toBeInTheDocument()
-      expect(screen.queryByText('1 closed · 1 open · 1 to open')).not.toBeInTheDocument()
+      expect(screen.queryByText('1 closed, 1 open, 1 to open')).not.toBeInTheDocument()
+      expect(screen.getByText('none open')).toBeInTheDocument()
     })
 
     it('after the end drops the buttons and reads a never-opened question as not opened', () => {
@@ -322,7 +323,7 @@ describe('ByQuestionCard', () => {
       )
       expect(screen.getByText('Held by the pause of the vote.')).toBeInTheDocument()
       expect(screen.getByText('Next step: resume the vote')).toBeInTheDocument()
-      expect(screen.getByText('1 closed · 1 paused · 1 to open')).toBeInTheDocument()
+      expect(screen.getByText('1 closed, 1 paused, 1 to open')).toBeInTheDocument()
       expect(queryButton('Resume')).not.toBeInTheDocument()
       expect(queryButton('Close')).not.toBeInTheDocument()
       // Off on the touch boards, left out from `lg`: the CSS hides it there.
@@ -346,6 +347,7 @@ describe('ByQuestionCard', () => {
       show(withQuestions([voided('q1'), voided('q2')]))
       expect(questionsList().getAllByText('Voided')).toHaveLength(2)
       expect(screen.queryByText(/\d (closed|open|voided)/)).not.toBeInTheDocument()
+      expect(screen.getByText('no results')).toBeInTheDocument()
     })
 
     it('has no bottom bar', () => {
@@ -357,12 +359,6 @@ describe('ByQuestionCard', () => {
   describe('on a phone', () => {
     beforeEach(() => {
       phone = true
-    })
-
-    it('counts the questions with commas and has no next step', () => {
-      show(build())
-      expect(screen.getByText('1 closed, 1 open, 1 to open')).toBeInTheDocument()
-      expect(screen.queryByText(/Next step/)).not.toBeInTheDocument()
     })
 
     it('says a closed question closed with its turnout, and opens it onto the turnout and the bars', async () => {

@@ -28,18 +28,18 @@ describe('SummaryCalendar', () => {
 
   it('writes the day and month as the language does, and the British way in English', async () => {
     const days = () => screen.getAllByRole('listitem').map((item) => item.querySelector('span')?.textContent)
-    const { unmount } = render(<SummaryCalendar desktop model={model('live')} />)
+    const { unmount } = render(<SummaryCalendar model={model('live')} />)
     // 12 March, never "03/12".
     expect(days()[0]).toBe('12/03')
     unmount()
 
     await act(() => i18n.changeLanguage('de'))
-    render(<SummaryCalendar desktop model={model('live')} />)
+    render(<SummaryCalendar model={model('live')} />)
     expect(days()[0]).toBe('12.03.')
   })
 
   it('lists the closing, today and the opening of a live vote, newest first, today as the current step', () => {
-    render(<SummaryCalendar desktop model={model('live')} />)
+    render(<SummaryCalendar model={model('live')} />)
 
     expect(steps()).toEqual([
       expect.stringContaining('Automatic closing and results for everyone'),
@@ -50,38 +50,38 @@ describe('SummaryCalendar', () => {
   })
 
   it('prints each date as day and month in figures', () => {
-    render(<SummaryCalendar desktop model={model('live')} />)
+    render(<SummaryCalendar model={model('live')} />)
 
     const items = screen.getAllByRole('listitem')
     expect(items.map((item) => item.querySelector('span')?.textContent)).toEqual(['12/03', '10/03', '02/03'])
   })
 
   it("says today that a paused vote is paused, once: what it means is the banner's to say", () => {
-    render(<SummaryCalendar desktop model={model('paused')} />)
+    render(<SummaryCalendar model={model('paused')} />)
 
     expect(screen.getByText('Today. Vote paused')).toBeInTheDocument()
     expect(screen.queryByText(/Nobody can vote/)).not.toBeInTheDocument()
   })
 
   it('looks ahead for a vote that has not opened yet', () => {
-    render(<SummaryCalendar desktop model={model('ready', local(11, 9))} />)
+    render(<SummaryCalendar model={model('ready', local(11, 9))} />)
 
     expect(steps()).toEqual([expect.stringContaining('Automatic closing'), expect.stringContaining('Vote opens')])
   })
 
   it('ends an ended vote at its end, and a canceled one with no closing', () => {
-    const { unmount } = render(<SummaryCalendar desktop model={model('closed')} />)
+    const { unmount } = render(<SummaryCalendar model={model('closed')} />)
     expect(steps()).toEqual([
       expect.stringContaining('Closed automatically at the deadline'),
       expect.stringContaining('Vote opened'),
     ])
     unmount()
 
-    render(<SummaryCalendar desktop model={model('closed', undefined, true)} />)
+    render(<SummaryCalendar model={model('closed', undefined, true)} />)
     expect(steps()[0]).toContain('Ended manually')
     cleanup()
 
-    render(<SummaryCalendar desktop model={model('canceled')} />)
+    render(<SummaryCalendar model={model('canceled')} />)
     expect(steps()).toEqual([expect.stringContaining('Vote opened')])
   })
 })

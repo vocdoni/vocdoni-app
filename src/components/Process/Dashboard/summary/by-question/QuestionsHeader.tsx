@@ -5,52 +5,67 @@ import { quantity } from '~utils/numbers'
 export type QuestionsHeaderProps = {
   headingId: string
   total: number
-  /** "2 closed · 1 open · 1 to open" (with commas below `lg`), or the touch boards' word for none. */
+  /** "2 closed, 1 open and 1 to open", or the word for none. */
   counts: string
-  /** "Next step: close question 3", or nothing. Desktop only. */
+  /** "Next step: close question 3", or nothing. */
   next?: string | null
-  desktop: boolean
 }
 
-/**
- * The questions card's title line. From `lg` one 44px line: the title, how many, the counts and the next step at the
- * end. Below `lg` the title with the counts at the end of the line (M4VoteOne).
- */
-export const QuestionsHeader = ({ headingId, total, counts, next, desktop }: QuestionsHeaderProps) => {
-  const { t } = useTranslation()
-  const heading = (
-    <Heading as='h2' id={headingId} textStyle='section-title' flexShrink={0}>
-      {t('process.questions', { defaultValue: 'Questions' })}
-    </Heading>
-  )
+// One line from `lg`, cut with an ellipsis when it runs out of room.
+const truncateFromLg = {
+  whiteSpace: { lg: 'nowrap' },
+  overflow: { lg: 'hidden' },
+  textOverflow: { lg: 'ellipsis' },
+} as const
 
-  if (!desktop) {
-    return (
-      <Card.Header flexDirection='row' alignItems='baseline' justifyContent='space-between' gap='3' pt='3.5' pb='3'>
-        {heading}
-        {counts && (
-          <Text textStyle='body' color='fg.subtle' textAlign='end'>
-            {counts}
-          </Text>
-        )}
-      </Card.Header>
-    )
-  }
+/**
+ * The questions card's title line: the title, how many, the counts and the next step. From `lg` one 44px line with
+ * the next step at its end; below `lg` the counts at the end of the line and the next step on a line of its own.
+ */
+export const QuestionsHeader = ({ headingId, total, counts, next }: QuestionsHeaderProps) => {
+  const { t } = useTranslation()
 
   return (
-    <Card.Header flexDirection='row' alignItems='center' gap='2' h='11' py='0'>
-      {heading}
-      <Text textStyle='figure' color='fg.subtle'>
+    <Card.Header
+      flexDirection='row'
+      flexWrap={{ base: 'wrap', lg: 'nowrap' }}
+      alignItems={{ base: 'baseline', lg: 'center' }}
+      columnGap={{ base: '3', lg: '2' }}
+      rowGap={{ base: '1', lg: '2' }}
+      h={{ lg: '11' }}
+      pt={{ base: '3.5', lg: '0' }}
+      pb={{ base: '3', lg: '0' }}
+    >
+      <Heading as='h2' id={headingId} textStyle='section-title' flexShrink={0}>
+        {t('process.questions', { defaultValue: 'Questions' })}
+      </Heading>
+      <Text textStyle={{ base: 'body', lg: 'figure' }} color='fg.subtle'>
         {quantity(total)}
       </Text>
       {counts && (
-        <Text textStyle='note' color='fg.subtle' ms='1.5' truncate>
+        <Text
+          textStyle={{ base: 'body', lg: 'body-sm' }}
+          color='fg.subtle'
+          ms={{ base: 'auto', lg: '1.5' }}
+          textAlign={{ base: 'end', lg: 'start' }}
+          minW='0'
+          {...truncateFromLg}
+        >
           {counts}
         </Text>
       )}
-      {/* When the line is short the next step gives way first (it truncates long before the counts do). */}
+      {/* From `lg`, when the line is short, the next step gives way first (it truncates long before the counts do). */}
       {next && (
-        <Text textStyle='note' color='fg.subtle' ms='auto' minW='0' flexShrink={100} truncate title={next}>
+        <Text
+          textStyle={{ base: 'body', lg: 'body-sm' }}
+          color='fg.subtle'
+          ms={{ lg: 'auto' }}
+          minW='0'
+          flexBasis={{ base: 'full', lg: 'auto' }}
+          flexShrink={100}
+          title={next}
+          {...truncateFromLg}
+        >
           {next}
         </Text>
       )}

@@ -122,11 +122,7 @@ const BallotPaper = ({ model, desktop }: { model: SummaryModel; desktop: boolean
       <Stack gap='4' minW='0'>
         <BallotStatus model={model} desktop={desktop} />
         <Card.Root variant='frame' as='section' aria-labelledby={factsId}>
-          <SummaryCardHeader
-            id={factsId}
-            title={t('votes.ballot.rules_title', { defaultValue: 'How voting works' })}
-            desktop={desktop}
-          />
+          <SummaryCardHeader id={factsId} title={t('votes.ballot.rules_title', { defaultValue: 'How voting works' })} />
           <FactList facts={facts} layout='ruled' />
         </Card.Root>
       </Stack>
