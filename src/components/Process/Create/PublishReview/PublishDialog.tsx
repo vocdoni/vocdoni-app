@@ -1,5 +1,5 @@
 import { Dialog, Portal, useSlotRecipe, VisuallyHidden } from '@chakra-ui/react'
-import { type RefObject, useEffect, useId, useRef } from 'react'
+import { type RefObject, useEffect, useId, useLayoutEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isPublishing, type PublishFlowStart, useProcessCheckout } from '~components/Pricing/ProcessCheckout'
 import { useAppEnv } from '~src/app-env'
@@ -110,8 +110,9 @@ export const PublishDialog = ({
   // The wallet step shows what the summary would charge now, so it reads the price and balance live
   const primary = resolvePublishPrimary({ price, wallet, canTopUp })
   const { backToSummary } = flow
-  // A price or balance that moved past the wallet leaves the step: the summary says what it takes now
-  useEffect(() => {
+  // A price or balance that moved past the wallet (or a wallet that failed to re-read) leaves the step:
+  // the summary says what it takes now. Before paint, or the dialog shows an empty frame
+  useLayoutEffect(() => {
     if (step.name === 'wallet' && primary.kind !== 'wallet') backToSummary()
   }, [step.name, primary.kind, backToSummary])
 
