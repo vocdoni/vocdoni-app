@@ -24,7 +24,7 @@ export const QuestionDock = defineSlotRecipe({
       pb: '[calc({spacing.4} + env(safe-area-inset-bottom))]',
       bg: 'surface.card',
       borderTopWidth: 'hairline',
-      borderColor: 'border.strong',
+      borderColor: 'border.emphasized',
     },
     line: {
       display: 'flex',

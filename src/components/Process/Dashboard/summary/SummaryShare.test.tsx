@@ -21,10 +21,9 @@ describe('SummaryShare', () => {
     expect(screen.getByRole('button', { name: 'Copy the public link' })).toBeInTheDocument()
   })
 
-  it('puts "Public link" at the end of the title line on a phone', () => {
+  it('says what the link is on a phone too', () => {
     renderShare(false)
 
-    expect(screen.getByText('Public link')).toBeInTheDocument()
-    expect(screen.queryByText(/digital ballot box/)).toBeNull()
+    expect(screen.getByText(/digital ballot box/)).toBeInTheDocument()
   })
 })

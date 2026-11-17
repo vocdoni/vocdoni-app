@@ -7,14 +7,17 @@ import type { SummaryModel } from './use-summary-model'
 
 type CalendarEntry = { id: string; day: Date; what: string; note?: string; current?: boolean }
 
-const DAY: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric' }
+// Day and month in figures ("12/03") in every language: a weekday and a day alone do not say which month.
+const dayMonth = (date: Date) =>
+  `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`
 const TIME: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
 
 /**
  * The all-at-once vote's calendar, newest first: when it closes and everyone sees the results (or how it ended),
- * today (paused, if it is) and when it opens. The board's convocation, quorum and votes-today entries have no backend data.
+ * today (paused, if it is) and when it opens, joined by a thread from mark to mark. The board's convocation, quorum
+ * and votes-today entries have no backend data.
  */
-export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
+export const SummaryCalendar = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
   const { t, i18n } = useTranslation()
   const titleId = useId()
   const { election, state, endDate, endedEarly, now } = model
@@ -73,40 +76,68 @@ export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
   }, [t, i18n.language, election.startDate, state, endDate, endedEarly, now])
 
   if (!entries.length) return null
-  const day = new Intl.DateTimeFormat(i18n.language, DAY)
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
-      <SummaryCardHeader id={titleId} title={t('votes.summary.calendar.title', { defaultValue: 'Calendar' })} desktop />
-      <Card.Body as='ol' pt='2' pb='2.5' gap='0'>
-        {entries.map((entry) => (
-          <Flex as='li' key={entry.id} gap='3' py='1.5' aria-current={entry.current ? 'step' : undefined}>
+      <SummaryCardHeader
+        id={titleId}
+        title={t('votes.summary.calendar.title', { defaultValue: 'Calendar' })}
+        desktop={desktop}
+      />
+      <Card.Body as='ol' pt={{ base: '0', lg: '2' }} pb='2.5' gap='0' borderTopWidth={{ base: '[0]', lg: 'hairline' }}>
+        {entries.map((entry, index) => (
+          <Flex
+            as='li'
+            key={entry.id}
+            gap='3'
+            py={{ base: '2', lg: '1.5' }}
+            aria-current={entry.current ? 'step' : undefined}
+          >
             <Text
               as='span'
               textStyle='figure'
-              w='10'
+              w={{ base: '11', lg: '10' }}
               flexShrink='0'
-              pt='0.5'
+              pt={{ base: '1', lg: '0.5' }}
               color={entry.current ? 'fg' : 'fg.subtle'}
               fontWeight={entry.current ? 'medium' : 'normal'}
             >
-              {day.format(entry.day)}
+              {dayMonth(entry.day)}
             </Text>
-            {/* A filled accent dot for where the vote is now, a hollow mark for the rest, centred in a column a little
-                wider than the dot (the board's). */}
-            <Flex aria-hidden flexShrink='0' w='[calc({sizes.dot} + {spacing.0.5})]' justify='center' pt='1.5'>
+            {/* A filled accent dot for where the vote is now, a hollow mark for the rest, and under each but the last
+                the thread that runs down to the next mark, through the rows' padding. */}
+            <Flex
+              aria-hidden
+              direction='column'
+              align='center'
+              gap='1'
+              flexShrink='0'
+              w='[calc({sizes.dot} + {spacing.0.5})]'
+              pt={{ base: '2', lg: '1.5' }}
+            >
               <Box
                 boxSize='dot'
+                flexShrink='0'
                 borderRadius='full'
                 bg={entry.current ? 'accent.solid' : 'transparent'}
                 borderWidth={entry.current ? '[0]' : 'mark'}
                 borderColor='fg.faint'
               />
+              {index < entries.length - 1 && (
+                <Box
+                  flex='1'
+                  borderInlineStartWidth='hairline'
+                  borderColor='border.emphasized'
+                  mb={{ base: '-5', lg: '-4' }}
+                />
+              )}
             </Flex>
             <Box minW='0'>
-              <Text fontWeight={entry.current ? 'medium-plus' : 'medium'}>{entry.what}</Text>
+              <Text fontSize={{ base: 'item', lg: 'md' }} fontWeight={entry.current ? 'medium-plus' : 'medium'}>
+                {entry.what}
+              </Text>
               {entry.note && (
-                <Text textStyle='body-sm' color='fg.subtle'>
+                <Text textStyle={{ base: 'body', lg: 'body-sm' }} color='fg.subtle'>
                   {entry.note}
                 </Text>
               )}

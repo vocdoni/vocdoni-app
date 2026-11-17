@@ -14,8 +14,8 @@ import { useSummaryModel } from './summary/use-summary-model'
 
 /**
  * Resum: the participation hero (or, for a vote that is not running, where it stands), the questions with their
- * results (and, question by question, the buttons that run them), and beside them the voting data and calendar (all
- * at once, desktop), the voting link and the voter lookup. The desktop follows the V4 boards, a phone or tablet the
+ * results (and, question by question, the buttons that run them), and beside them the voting data (all at once,
+ * desktop) and the calendar (all at once), the voting link and the voter lookup. The desktop follows the V4 boards, a phone or tablet the
  * M4 ones.
  */
 export const VoteSummary = () => {
@@ -44,7 +44,7 @@ export const VoteSummary = () => {
         <SummaryQuestions model={model} desktop={desktop} />
         <Stack gap={{ base: '5', md: '6', xl: '4' }} minW='0'>
           {desktop && !byQuestion && <SummaryElectoralData model={model} />}
-          {desktop && !byQuestion && <SummaryCalendar model={model} />}
+          {!byQuestion && <SummaryCalendar model={model} desktop={desktop} />}
           <SummaryShare link={votingLink} desktop={desktop} />
           {authFields.length + twoFaFields.length > 0 && (
             <Card.Root variant='frame'>

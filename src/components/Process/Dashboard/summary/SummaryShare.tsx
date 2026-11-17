@@ -82,15 +82,13 @@ export const SummaryShare = ({ link, desktop }: SummaryShareProps) => {
       <SummaryCardHeader
         id={titleId}
         title={t('votes.summary.share_title', { defaultValue: 'To share' })}
-        action={
-          <Text textStyle='body' color='fg.subtle'>
-            {t('votes.summary.share_public_short', { defaultValue: 'Public link' })}
-          </Text>
-        }
         desktop={false}
       />
-      <Card.Body pt='0' pb={{ base: '4', md: '5' }} maxW={{ md: 'lg' }} borderTopWidth='[0]'>
-        {row}
+      <Card.Body pt='0' pb={{ base: '4', md: '5' }} gap='3' borderTopWidth='[0]'>
+        <Text mt='-1.5' textStyle='body' color='fg.subtle'>
+          {note}
+        </Text>
+        <Box maxW={{ md: 'lg' }}>{row}</Box>
       </Card.Body>
     </Card.Root>
   )
