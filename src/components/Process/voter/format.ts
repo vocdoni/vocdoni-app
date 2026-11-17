@@ -24,16 +24,41 @@ export const maskContact = (contact: string | undefined): string => {
   return digits.length > 3 ? `•••${digits.slice(-3)}` : '•••'
 }
 
-type DateOptions = { month?: boolean; timeZone?: string }
+type DateOptions = { reference?: Date; timeZone?: string }
 
-/** "dijous 12 de març", or "dijous 12" without the month, in the page's language. */
-export const formatVoteDay = (date: Date, language: string, { month = true, timeZone }: DateOptions = {}): string =>
-  new Intl.DateTimeFormat(language, {
-    weekday: 'long',
-    day: 'numeric',
-    ...(month ? { month: 'long' } : {}),
-    timeZone,
-  }).format(date)
+const yearOf = (date: Date, timeZone?: string): string =>
+  new Intl.DateTimeFormat('en', { year: 'numeric', timeZone }).format(date)
+
+const monthOf = (date: Date, timeZone?: string): string =>
+  new Intl.DateTimeFormat('en', { month: 'numeric', timeZone }).format(date)
+
+/** The date's parts in the locale's own order, from `formatToParts`: no month name or order is written here. */
+const dayText = (date: Date, locale: string, fields: Intl.DateTimeFormatOptions, timeZone?: string) =>
+  new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', ...fields, timeZone }).formatToParts(date)
+
+/**
+ * The vote's day as the boards draw it, relative to a `reference` ("now" by default; for the end date inside the
+ * upcoming sentence, the start date): in the reference's month and year "dilluns 17"; in another month "dilluns 17
+ * de juny"; in another year the year too. English always carries the month
+ * and reads in English order ("Monday 17 November"), as does any language whose weekday and day do not read weekday
+ * first.
+ */
+export const formatVoteDay = (
+  date: Date,
+  language: string,
+  { reference = new Date(), timeZone }: DateOptions = {}
+): string => {
+  const english = language.split('-')[0] === 'en'
+  const locale = english ? 'en-GB' : language
+  const sameYear = yearOf(date, timeZone) === yearOf(reference, timeZone)
+  if (!english && sameYear && monthOf(date, timeZone) === monthOf(reference, timeZone)) {
+    const short = dayText(date, locale, {}, timeZone)
+    const types = short.map((part) => part.type)
+    if (types.indexOf('weekday') < types.indexOf('day')) return short.map((part) => part.value).join('')
+  }
+  const full = dayText(date, locale, { month: 'long', ...(sameYear ? {} : { year: 'numeric' }) }, timeZone)
+  return full.map((part) => part.value).join('')
+}
 
 /** "20:00", or "20:00 CET" with the zone (the opening time always carries it: spec D4 "upcoming", audit F18). */
 export const formatVoteTime = (

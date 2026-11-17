@@ -9,7 +9,7 @@ import { LocalText } from './ScreenParts'
  * The vote's status line (conformance LV / ST): "Oberta fins dijous 12 a les 20:00" while open, "En pausa" or
  * "Cancel·lada". The date is in the visitor's zone, so `LocalText` swaps the server's text after hydration.
  */
-export const VoteStatusLine = () => {
+export const VoteStatusLine = ({ context = 'screen' }: { context?: 'head' | 'screen' }) => {
   const { t, i18n } = useTranslation()
   const { election, facts } = useVoterFlow()
   if (facts.status === 'CANCELED') {
@@ -20,7 +20,8 @@ export const VoteStatusLine = () => {
       </Status.Root>
     )
   }
-  if (facts.status === 'PAUSED') {
+  // In the strip and rail the paused state shows in the notice and the note: the head keeps the open-until line.
+  if (facts.status === 'PAUSED' && context === 'screen') {
     return (
       <Status.Root size='ballot' tone='warning'>
         <Status.Indicator />
@@ -35,7 +36,7 @@ export const VoteStatusLine = () => {
       <Status.Indicator />
       <LocalText>
         {t('voter.status.open_until', {
-          date: formatVoteDay(end, i18n.language, { month: false }),
+          date: formatVoteDay(end, i18n.language),
           time: formatVoteTime(end, i18n.language),
         })}
       </LocalText>

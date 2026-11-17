@@ -44,11 +44,48 @@ describe('maskContact', () => {
 describe('dates', () => {
   const date = new Date(Date.UTC(2026, 2, 12, 19, 0))
 
-  it('writes the day with or without the month, and the time with or without the zone', () => {
-    expect(formatVoteDay(date, 'ca', { timeZone: 'UTC' })).toMatch(/^dijous,? 12 de març$/)
-    expect(formatVoteDay(date, 'ca', { month: false, timeZone: 'UTC' })).toBe('dijous 12')
+  it('writes the time with or without the zone', () => {
     expect(formatVoteTime(date, 'ca', { timeZone: 'UTC' })).toBe('19:00')
     expect(formatVoteTime(date, 'en', { zone: true, timeZone: 'UTC' })).toBe('19:00 UTC')
+  })
+})
+
+describe('formatVoteDay', () => {
+  const reference = new Date(Date.UTC(2026, 10, 10, 12, 0))
+  const sameMonth = new Date(Date.UTC(2026, 10, 17, 19, 0))
+  const otherMonth = new Date(Date.UTC(2026, 11, 17, 19, 0))
+  const otherYear = new Date(Date.UTC(2027, 0, 18, 19, 0))
+  const day = (date: Date, language: string) => formatVoteDay(date, language, { reference, timeZone: 'UTC' })
+
+  it('drops the month in the reference month and year', () => {
+    expect(day(sameMonth, 'ca')).toMatch(/^dimarts,? 17$/)
+    expect(day(sameMonth, 'es')).toMatch(/^martes,? 17$/)
+    expect(day(sameMonth, 'de')).toMatch(/^Dienstag,? 17\.?$/)
+  })
+
+  it('adds the month in another month of the same year', () => {
+    expect(day(otherMonth, 'ca')).toMatch(/^dijous,? 17 de desembre$/)
+    expect(day(otherMonth, 'es')).toMatch(/^jueves,? 17 de diciembre$/)
+    expect(day(otherMonth, 'de')).toMatch(/^Donnerstag,? 17\. Dezember$/)
+  })
+
+  it('adds the month and the year in another year', () => {
+    expect(day(otherYear, 'ca')).toMatch(/^dilluns,? 18 de gener de 2027$/)
+    expect(day(otherYear, 'es')).toMatch(/^lunes,? 18 de enero de 2027$/)
+    expect(day(otherYear, 'de')).toMatch(/^Montag,? 18\. Januar 2027$/)
+    expect(day(otherYear, 'en')).toMatch(/^Monday,? 18 January 2027$/)
+  })
+
+  it('always gives English the month, in English order', () => {
+    expect(day(sameMonth, 'en')).toMatch(/^Tuesday,? 17 November$/)
+    expect(day(otherMonth, 'en')).toMatch(/^Thursday,? 17 December$/)
+    expect(day(sameMonth, 'en-GB')).toMatch(/^Tuesday,? 17 November$/)
+  })
+
+  it('compares the month in the given time zone', () => {
+    const lateNight = new Date(Date.UTC(2026, 10, 30, 23, 30))
+    expect(formatVoteDay(lateNight, 'ca', { reference, timeZone: 'Europe/Madrid' })).toMatch(/de desembre$/)
+    expect(formatVoteDay(lateNight, 'ca', { reference, timeZone: 'UTC' })).toMatch(/^dilluns,? 30$/)
   })
 })
 
