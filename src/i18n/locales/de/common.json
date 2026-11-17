@@ -1981,6 +1981,7 @@
       "starts_live": "Live, {{date}}.",
       "title": "Abstimmungen",
       "turnout": "{{percent}} % Beteiligung.",
+      "turnout_any": "Mindestens {{percent}} % Beteiligung.",
       "warning": {
         "end_passed": "Das Enddatum ist verstrichen.",
         "missing_end": "Noch kein Enddatum."

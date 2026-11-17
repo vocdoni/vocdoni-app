@@ -1981,6 +1981,7 @@
       "starts_live": "Held live on {{date}}.",
       "title": "Votes",
       "turnout": "{{percent}}% turnout.",
+      "turnout_any": "At least {{percent}}% turnout.",
       "warning": {
         "end_passed": "The closing date has passed.",
         "missing_end": "No closing date yet."

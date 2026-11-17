@@ -167,6 +167,15 @@ describe('VoteListRow content', () => {
     expect(screen.getByRole('article')).not.toHaveTextContent(/Yes|198|wins/)
   })
 
+  it('says "at least" for the turnout of a closed question-by-question vote, as its page does', () => {
+    const results = {
+      id: 'p1',
+      questions: [{ questionId: 'q1', finalResults: true, voteCount: 205, results: [['198', '7']] }],
+    } as unknown as VotingProcessResultsResponse
+    renderRow(make({ initialStatus: 'PAUSED', questions: [question('ENDED')] }), { results })
+    expect(screen.getByRole('article')).toHaveTextContent('1 question, 312 voters. At least 66% turnout.')
+  })
+
   it('tells a live vote by when it closes, without the month in the current month', () => {
     const march10 = new Date(2026, 2, 10, 12)
     const closes = new Date(2026, 2, 12, 20).toISOString()

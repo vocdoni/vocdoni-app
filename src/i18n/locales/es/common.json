@@ -2034,6 +2034,7 @@
       "starts_live": "En directo, {{date}}.",
       "title": "Votaciones",
       "turnout": "{{percent}}% de participación.",
+      "turnout_any": "Al menos un {{percent}}% de participación.",
       "warning": {
         "end_passed": "La fecha de cierre ya ha pasado.",
         "missing_end": "Todavía no tiene fecha de cierre."

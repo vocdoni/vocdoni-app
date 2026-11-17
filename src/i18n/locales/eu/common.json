@@ -1981,6 +1981,7 @@
       "starts_live": "Zuzenean, {{date}}.",
       "title": "Bozketak",
       "turnout": "Parte-hartzea: %{{percent}}.",
+      "turnout_any": "Parte-hartzea: gutxienez %{{percent}}.",
       "warning": {
         "end_passed": "Itxiera-data igaro da.",
         "missing_end": "Oraindik ez dauka itxiera-datarik."

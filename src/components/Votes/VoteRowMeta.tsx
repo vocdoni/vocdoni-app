@@ -94,10 +94,15 @@ export const VoteRowMeta = ({ row, results, now }: VoteRowMetaProps) => {
         ? t('votes.list.warning.end_passed', { defaultValue: 'The closing date has passed.' })
         : null
 
-  // A closed vote says how many took part and nothing about who won: the result is read on its page.
+  // A closed vote says how many took part and nothing about who won: the result is read on its page. Question by
+  // question the count is the busiest question's, so, as on its page, it is "at least".
   const percent = state === 'closed' && results ? percentOf(processVoteCount(results), size) : undefined
   const closing =
-    percent === undefined ? null : t('votes.list.turnout', { defaultValue: '{{percent}}% turnout.', percent })
+    percent === undefined
+      ? null
+      : isQuestionByQuestion(process)
+        ? t('votes.list.turnout_any', { defaultValue: 'At least {{percent}}% turnout.', percent })
+        : t('votes.list.turnout', { defaultValue: '{{percent}}% turnout.', percent })
 
   return (
     <Text textStyle='meta' color='fg.subtle'>
