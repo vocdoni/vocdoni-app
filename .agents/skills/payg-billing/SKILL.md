@@ -24,8 +24,8 @@ Read the code paths named here before changing them; the comments in them record
    refs (`openingRef`, `startedRef`). Keep those guards when refactoring.
 4. **Never claim success without proof.** A timeout means "may still land", never "failed". Without the sessionStorage
    snapshot (blocked in private windows, every access is try/catch) the return pages show neutral copy.
-5. **No modal focus trap around Stripe.** A trapped dialog breaks Stripe's 3D Secure window. The checkout renders inline
-   (or a non-modal dialog with the background made `inert`).
+5. **No modal focus trap around Stripe.** A trapped dialog breaks Stripe's 3D Secure window. The census checkout renders
+   inline; the publish dialog turns non-modal once Stripe mounts and makes the page behind it `inert`.
 6. **Stripe's appearance is the only place in billing where raw colours are allowed** (`src/components/Pricing/stripe.ts`, a listed
    style-inventory exception): its iframe cannot read CSS variables. Everything around it uses theme roles.
 7. **Prices come from the backend.** No price tables, bands or estimates in the UI. A price query in error shows no
@@ -82,13 +82,15 @@ The request and response types are in `@vocdoni/api-types` (`ProcessQuote`, `Pro
 - **Price in the wizard.** The sidebar mounts `ProcessPriceBreakdown`; every draft save invalidates the price.
   `WalletCoverage` says whether the wallet covers it or how much is short. `ProcessQuoteAlert` warns about quotes; a
   quote-only draft cannot be published.
-- **Publish.** `src/components/Process/Create/index.tsx` saves the draft and calls publish. On a 40178 for an admin it
-  opens the checkout (`ProcessCheckout`, steps: conflict, opening, checkout, publishing, waiting, unconfirmed, unpaid,
-  timeout, error). Opening POSTs the checkout (a 400 means the wallet now covers it: publish from the wallet once); the
-  card form is Stripe Checkout Elements (`BillingAddressElement`, `TaxIdElement`, `PaymentElement`) and pays the
-  shortfall plus any extra the user tops up. It then waits up to 15 minutes for publication. Open PR #2012 moves this
-  into a "review before publishing" dialog (`src/components/Process/Create/PublishReview/`); if it has merged, read that
-  first and update this skill.
+- **Publish.** Publish in `src/components/Process/Create/index.tsx` saves the draft and opens `PublishDialog`
+  (`src/components/Process/Create/PublishReview/`): a summary of the vote and its cost, then a wallet step when the
+  balance covers it or a card step for the shortfall, then the publishing, waiting and outcome states, all inside the
+  dialog. The flow is the `useProcessCheckout` hook in `src/components/Pricing/ProcessCheckout.ts` (steps: summary,
+  wallet, conflict, opening, checkout, publishing, waiting, published, unconfirmed, unpaid, timeout, error). Opening
+  POSTs the checkout (a 400 means the wallet now covers it: publish from the wallet once); the card step
+  (`CardStep.tsx`) is Stripe Checkout Elements (`BillingAddressElement`, `TaxIdElement`, `PaymentElement`) and pays the
+  shortfall plus any extra the user tops up. Once Stripe mounts, the dialog remounts non-modal and makes the wizard
+  `inert`. It then waits up to 15 minutes for publication. Its look is the `publishReview` slot recipe.
 - **Return from a redirect** (3D Secure, bank redirects). Stripe appends `/{sessionId}` to the return routes in
   `src/router/routes/index.ts` (wizard, billing settings, integrator billing, census checkout). The page reads its
   sessionStorage snapshot (`process-checkout-pending`, `wallet-topup-pending`, `census-checkout-pending`), resumes
