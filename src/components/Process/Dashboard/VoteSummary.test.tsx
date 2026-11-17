@@ -257,6 +257,14 @@ describe('VoteSummary', () => {
       expect(screen.queryByText(/being counted/)).not.toBeInTheDocument()
     })
 
+    it('drops the counting message once the tally of an ended vote is on screen', () => {
+      // The dev backend serves the tally of a vote ended by hand while its questions still read ENDED.
+      renderSummary(createProcess({ questions: [question('q1', 'ENDED', 181, ['150', '31'])] }), 181)
+
+      expect(screen.getByRole('progressbar', { name: 'Yes, 150 votes, 83%' })).toBeInTheDocument()
+      expect(screen.queryByText(/being counted/)).not.toBeInTheDocument()
+    })
+
     it('draws the same bars under each question on a phone once results are public', () => {
       desktop = false
       renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 181, ['150', '31'])] }), 184)

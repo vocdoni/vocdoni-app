@@ -94,8 +94,6 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
       return tally?.results?.length ? { ...question, results: { ...question.results, ...tally } } : question
     })
   }, [election.questions, results])
-  // Closed, tally not served yet: say it is being counted instead of showing nothing.
-  const counting = state === 'closed' && !hasResults(election)
   // Legacy votes can carry questions with no ballot type: their tallies cannot be decoded, so the package's own
   // results list them (choices without numbers) instead of Resum guessing.
   const undecodable =
@@ -104,6 +102,9 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
     state !== 'canceled' &&
     (undecodable || questions.some((question, index) => showsTally(question, questionStates[index], model)))
   useTrackResultsViewed(model, visible)
+  // Closed with no tally on screen yet: say it is being counted instead of showing nothing. A tally already drawn
+  // speaks for itself, even while the process has not reached its results status.
+  const counting = state === 'closed' && !hasResults(election) && !visible
 
   const countingNote = counting && (
     <Card.Body py='3'>
