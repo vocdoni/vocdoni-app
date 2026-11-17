@@ -14,6 +14,19 @@ export const P_DRAFT = '650000000000000000000d01'
 export const P_ONGOING = '650000000000000000000a01'
 export const P_ENDED = '650000000000000000000e01'
 export const P_QBQ = '650000000000000000000b01'
+// The Fil boards' votes, with the boards' data, for the side-by-side checks (README.md "Board states").
+export const B_AAO_READY = '650000000000000000000a12'
+export const B_AAO_LIVE = '650000000000000000000a11'
+export const B_AAO_PAUSED = '650000000000000000000a13'
+export const B_AAO_ENDED = '650000000000000000000a14'
+export const B_AAO_CANCELED = '650000000000000000000c11'
+export const B_QBQ_READY = '650000000000000000000b16'
+export const B_QBQ_LIVE = '650000000000000000000b11'
+export const B_QBQ_TWO = '650000000000000000000b12'
+export const B_QBQ_HELD = '650000000000000000000b13'
+export const B_QBQ_CLOSED = '650000000000000000000b14'
+export const B_QBQ_ENDED = '650000000000000000000b15'
+export const B_QBQ_MANY = '650000000000000000000b17'
 export const FAKE_TOKEN = 'fake-local-token'
 export const TOKEN_EXPIRY = '2031-01-01T00:00:00.000Z'
 
@@ -328,6 +341,191 @@ const PROCESSES = [
     ],
   },
 ]
+// ---- board votes --------------------------------------------------------------------------
+// The votes of the Fil boards (Catalan titles, a census of 312, the boards' tallies), dated around FIXED_NOW. The
+// list shows the ready, paused and canceled ones; the other states are reached by their id only (`unlisted`).
+const BOARD_CENSUS = { ...census, size: 312, totalWeight: 312 }
+const FOR = ['A favor', 'En contra', 'Abstenció']
+const tally = (votes, final) => ({
+  voteCount: votes.reduce((sum, n) => sum + n, 0),
+  maxVoters: 312,
+  finalResults: final,
+  results: [votes.map(String)],
+})
+const at = (time) => `2026-06-15T${time}Z`
+const boardVote = (id, title, extra) => ({
+  id,
+  orgAddress: ORG_NOPFX,
+  chainId: 'vocdoni/DEV/fake',
+  title: ml(title),
+  description: ml(''),
+  header: '',
+  census: BOARD_CENSUS,
+  published: true,
+  createdAt: '2026-05-20T08:00:00.000Z',
+  ...extra,
+})
+
+// Question by question: the short title is the question's title, the full question its description.
+const QBQ = [
+  ["Acta de l'assemblea anterior", "Aprovem l'acta de l'assemblea anterior?", [198, 7, 9]],
+  ["Memòria d'activitats", "Aprovem la memòria d'activitats de 2026?", [201, 12, 8]],
+  ['Quotes 2027', "Apugem la quota a 48 EUR l'any el 2027?", [126, 38, 8]],
+  ['Elecció de dues vocalies', 'Ratifiquem les dues vocalies proposades?', [20, 2, 1]],
+]
+// Unique per vote (the older fixtures share one id prefix).
+const boardQuestionId = (pid, idx) => `${pid}q${String(idx).padStart(2, '0')}`
+const qbqQuestion = (pid, idx, [short, full, votes], status, { voted, ...extra } = {}) => {
+  const final = status === 'RESULTS' || status === 'ENDED'
+  const counted = status === 'PAUSED' && !voted ? votes.map(() => 0) : votes
+  return {
+    ...question(pid, idx, short, FOR, status, tally(counted, final)),
+    id: boardQuestionId(pid, idx),
+    description: ml(full),
+    secretUntilTheEnd: true,
+    ...extra,
+  }
+}
+const qbqVote = (id, statuses, extra = {}, list = QBQ) =>
+  boardVote(id, 'Assemblea General de tardor', {
+    initialStatus: 'PAUSED',
+    startDate: at('09:14:00'),
+    endDate: at('19:00:00'),
+    unlisted: true,
+    questions: statuses.map((entry, i) => {
+      const [status, more] = Array.isArray(entry) ? entry : [entry, {}]
+      return qbqQuestion(id, i + 1, list[i], status, more)
+    }),
+    ...extra,
+  })
+const closedAt = (time) => ({ endedAt: at(time) })
+
+// The sixteen questions of the board's "many" demo: seven closed, three open, six to open.
+const MANY = [
+  ["Acta de l'assemblea anterior", "Aprovem l'acta de l'assemblea anterior?", [198, 7, 9]],
+  ["Memòria d'activitats", "Aprovem la memòria d'activitats de 2026?", [201, 12, 8]],
+  ['Comptes de 2026', 'Aprovem els comptes anuals de 2026?', [189, 21, 14]],
+  ['Pressupost de 2027', 'Aprovem el pressupost de 2027?', [176, 38, 12]],
+  ['Quotes 2027', "Apugem la quota a 48 EUR l'any el 2027?", [171, 52, 11]],
+  ['Estatuts, article 4', "Aprovem el nou redactat de l'article 4, sobre els fins de l'entitat?", [192, 18, 15]],
+  ['Estatuts, article 9', "Aprovem el nou redactat de l'article 9, sobre les delegacions de vot?", [141, 71, 13]],
+  ['Estatuts, article 12', "Aprovem el nou redactat de l'article 12, sobre la durada dels càrrecs?", [163, 27, 17]],
+  ['Presidència', 'Ratifiquem Laia Puig Ferrer com a presidenta?', [147, 9, 8]],
+  ['Secretaria', 'Ratifiquem Oriol Mas Costa com a secretari?', [86, 7, 5]],
+  ['Tresoreria', 'Ratifiquem Núria Font Serra com a tresorera?', [0, 0, 0]],
+  ['Vocalia de cultura', 'Ratifiquem Marc Serra Pons com a vocal de cultura?', [0, 0, 0]],
+  ['Vocalia de joventut', 'Ratifiquem Carme Riera Soler com a vocal de joventut?', [0, 0, 0]],
+  ['Elecció de dues vocalies', 'Ratifiquem les dues vocalies proposades?', [0, 0, 0]],
+  ['Auditoria de comptes', 'Encarreguem una auditoria externa dels comptes?', [0, 0, 0]],
+  ['Canvi de seu social', 'Traslladem la seu social al carrer Major, 12?', [0, 0, 0]],
+]
+
+// All at once: the four ballot kinds of the board.
+const multi = (max, n) => ({
+  type: 'multichoice',
+  typeSetup: { maxChoices: max, minChoices: 0, uniqueChoices: false },
+  ballotProtocol: { ...ballot(n), maxCount: n, maxValue: 1, maxTotalCost: max },
+})
+const AAO = [
+  ['Aproves els comptes anuals de 2025?', ['Sí', 'No', 'Abstenció'], {}, [150, 22, 9]],
+  ['Qui vols a les dues vocalies?', ['Laia Puig', 'Oriol Mas', 'Núria Font', 'Marc Serra'], multi(2, 4)],
+  [
+    'Quina inversió va primer?',
+    ['Teulada', 'Calefacció', 'Biblioteca'],
+    {
+      type: undefined,
+      typeSetup: undefined,
+      metadata: { type: { name: 'ranked' } },
+      ballotProtocol: { ...ballot(3), maxCount: 3, maxValue: 2, uniqueValues: true },
+    },
+  ],
+  [
+    'Reparteix 10 punts entre les activitats',
+    ['Teatre', 'Música', 'Esports', 'Excursions'],
+    {
+      type: 'budget-based',
+      typeSetup: undefined,
+      ballotProtocol: { ...ballot(4), maxCount: 4, maxValue: 0, maxTotalCost: 10 },
+    },
+  ],
+]
+const AAO_VOTES = [181, 176, 169, 172]
+const aaoVote = (id, status, extra = {}) =>
+  boardVote(id, 'Assemblea General Ordinària 2026', {
+    startDate: '2026-06-08T07:00:00.000Z',
+    endDate: '2026-06-17T18:00:00.000Z',
+    questions: AAO.map(([title, choices, shape, single], i) => {
+      const counted = status !== 'CANCELED' && extra.counted !== false
+      const final = status === 'RESULTS'
+      const voteCount = counted ? AAO_VOTES[i] : 0
+      // The single-choice question carries a tally; the others only their count (secret until the end).
+      const results =
+        single && counted ? tally(single, final) : { voteCount, maxVoters: 312, finalResults: final, results: [] }
+      return {
+        ...question(id, i + 1, title, choices, status, results),
+        id: boardQuestionId(id, i + 1),
+        secretUntilTheEnd: true,
+        ...shape,
+        ...(extra.endedAt ? { endedAt: extra.endedAt } : {}),
+      }
+    }),
+    ...extra,
+  })
+
+const BOARD_PROCESSES = [
+  aaoVote(B_AAO_READY, 'ONGOING', {
+    startDate: '2026-06-22T07:00:00.000Z',
+    endDate: '2026-06-25T18:00:00.000Z',
+    counted: false,
+  }),
+  { ...aaoVote(B_AAO_LIVE, 'ONGOING'), unlisted: true },
+  aaoVote(B_AAO_PAUSED, 'PAUSED'),
+  { ...aaoVote(B_AAO_ENDED, 'RESULTS', { endedAt: at('09:42:00') }), unlisted: true },
+  aaoVote(B_AAO_CANCELED, 'CANCELED', { endedAt: at('09:42:00') }),
+  {
+    ...qbqVote(B_QBQ_READY, ['PAUSED', 'PAUSED', 'PAUSED', 'PAUSED'], {
+      startDate: '2026-06-20T16:30:00.000Z',
+      endDate: '2026-06-20T19:00:00.000Z',
+    }),
+    unlisted: false,
+  },
+  qbqVote(B_QBQ_LIVE, [['RESULTS', closedAt('09:41:00')], ['RESULTS', closedAt('09:53:00')], 'ONGOING', 'PAUSED']),
+  qbqVote(B_QBQ_TWO, [['RESULTS', closedAt('09:41:00')], ['RESULTS', closedAt('09:53:00')], 'ONGOING', 'ONGOING']),
+  qbqVote(B_QBQ_HELD, [
+    ['RESULTS', closedAt('09:41:00')],
+    ['RESULTS', closedAt('09:53:00')],
+    ['PAUSED', { voted: true }],
+    'PAUSED',
+  ]),
+  qbqVote(B_QBQ_CLOSED, [
+    ['RESULTS', closedAt('09:41:00')],
+    ['RESULTS', closedAt('09:44:00')],
+    ['RESULTS', closedAt('09:50:00')],
+    ['RESULTS', closedAt('09:56:00')],
+  ]),
+  // Ended with the last question never opened: ending the vote closed the open one and the unopened one together.
+  qbqVote(B_QBQ_ENDED, [
+    ['RESULTS', closedAt('09:41:00')],
+    ['RESULTS', closedAt('09:53:00')],
+    ['ENDED', closedAt('09:58:00')],
+    ['ENDED', { endedAt: at('09:58:01'), results: tally([0, 0, 0], true) }],
+  ]),
+  qbqVote(
+    B_QBQ_MANY,
+    MANY.map((_, i) => {
+      if (i < 7) return ['RESULTS', closedAt(`0${Math.floor(i / 2) + 6}:${String((i * 17) % 60).padStart(2, '0')}:00`)]
+      return i < 10 ? 'ONGOING' : 'PAUSED'
+    }),
+    { startDate: '2026-06-14T16:00:00.000Z' },
+    MANY
+  ),
+]
+
+PROCESSES.push(...BOARD_PROCESSES)
+
+// The question-by-question vote paused as a whole: the pause memory the app keeps in this browser (vote-pause.ts).
+export const HELD_STORAGE = { [`votes.pause.held.${B_QBQ_HELD}`]: JSON.stringify([boardQuestionId(B_QBQ_HELD, 3)]) }
+
 const STATUS_OF = (p) => {
   if (!p.published) return 'DRAFT'
   const s = p.questions[0].status
@@ -443,7 +641,7 @@ on('GET', '/jobs/([^/]+)', (m) => ({
   errors: [],
 }))
 on('GET', '/processes', (m, q) => {
-  let list = PROCESSES
+  let list = PROCESSES.filter((p) => !p.unlisted)
   const pub = q.get('published')
   if (pub === 'true') list = list.filter((p) => p.published)
   if (pub === 'false') list = list.filter((p) => !p.published)
