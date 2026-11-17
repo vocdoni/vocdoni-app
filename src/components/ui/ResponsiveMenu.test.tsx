@@ -51,6 +51,25 @@ describe('ResponsiveMenu', () => {
       expect(await screen.findByRole('menuitem', { name: 'Docs' })).toHaveAttribute('href', 'https://example.com/docs')
     })
 
+    it('rules off the destructive items, and only when other items come before them', async () => {
+      const { unmount } = render(<ResponsiveMenu label='Vote actions' items={items()} />)
+      await userEvent.click(screen.getByRole('button', { name: 'Vote actions' }))
+      await screen.findByRole('menuitem', { name: 'Delete' })
+
+      const separator = document.querySelector('[data-scope="menu"][data-part="separator"]')
+      expect(separator).not.toBeNull()
+      expect(
+        separator!.compareDocumentPosition(screen.getByRole('menuitem', { name: 'Delete' })) &
+          Node.DOCUMENT_POSITION_FOLLOWING
+      ).toBeTruthy()
+      unmount()
+
+      render(<ResponsiveMenu label='Only danger' items={[{ value: 'delete', label: 'Delete', danger: true }]} />)
+      await userEvent.click(screen.getByRole('button', { name: 'Only danger' }))
+      await screen.findByRole('menuitem', { name: 'Delete' })
+      expect(document.querySelector('[data-scope="menu"][data-part="separator"]')).toBeNull()
+    })
+
     it('uses a given trigger', () => {
       render(<ResponsiveMenu label='Vote actions' trigger={<button>Open</button>} items={items()} />)
 
@@ -70,6 +89,22 @@ describe('ResponsiveMenu', () => {
       expect(await screen.findByRole('dialog', { name: 'Vote actions' })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument()
       expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    })
+
+    it('titles the sheet with what it acts on and its state', async () => {
+      render(<ResponsiveMenu label='Vote actions' title='Annual budget' subtitle='Live' items={items()} />)
+      await userEvent.click(screen.getByRole('button', { name: 'Vote actions' }))
+
+      expect(await screen.findByRole('dialog', { name: 'Annual budget' })).toBeInTheDocument()
+      expect(screen.getByText('Live')).toBeInTheDocument()
+    })
+
+    it('still takes the old description prop as the subtitle', async () => {
+      render(<ResponsiveMenu label='Vote actions' description='Draft' items={items()} />)
+      await userEvent.click(screen.getByRole('button', { name: 'Vote actions' }))
+
+      await screen.findByRole('dialog')
+      expect(screen.getByText('Draft')).toBeInTheDocument()
     })
 
     it('lists destructive items last and marks them', async () => {

@@ -1,5 +1,5 @@
-import { Button, Drawer, Icon, IconButton, Menu, Portal } from '@chakra-ui/react'
-import { cloneElement, useState, type ElementType, type ReactElement } from 'react'
+import { Button, Drawer, IconButton, Menu, Portal } from '@chakra-ui/react'
+import { cloneElement, Fragment, useState, type ElementType, type ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { MoreIcon } from '~theme/icons'
@@ -11,7 +11,7 @@ export type ResponsiveMenuItem = {
   href?: string
   danger?: boolean
   disabled?: boolean
-  /** A concept icon from ~theme/icons, drawn before the label. */
+  /** A concept icon from ~theme/icons, drawn before the label on a phone and a tablet (the desktop menu has none). */
   icon?: ElementType
 }
 
@@ -20,7 +20,9 @@ export type ResponsiveMenuProps = {
   label: string
   /** The sheet's title on a phone: the name of what the actions act on (a vote). Defaults to `label`. */
   title?: string
-  /** A line under the sheet's title, such as the state of that vote. */
+  /** The line under the sheet's title on a phone: the state of what the actions act on ("Live"). */
+  subtitle?: string
+  /** @deprecated Use `subtitle`. */
   description?: string
   /** Defaults to an icon button with the "more" icon, named by `label`. */
   trigger?: ReactElement
@@ -30,15 +32,28 @@ export type ResponsiveMenuProps = {
 // Destructive items last, the rest in the order given.
 const ordered = (items: ResponsiveMenuItem[]) => [...items.filter((i) => !i.danger), ...items.filter((i) => i.danger)]
 
+const ItemContent = ({ item }: { item: ResponsiveMenuItem }) => {
+  const ItemIcon = item.icon
+  return (
+    <>
+      {ItemIcon && <ItemIcon aria-hidden />}
+      {item.label}
+    </>
+  )
+}
+
 /**
- * A list of actions: a dropdown from `md`, a bottom sheet of 52px rows below it (a menu is hard to hit with a thumb).
- * Destructive items come last, in the error colour; with `href` an item is a link.
+ * A list of actions: a dropdown from `md` (menu `actions`: 200px with icons on a tablet, 252px without from `lg`, a
+ * rule before the destructive items), a bottom sheet of 52px rows below it (a menu is hard to hit with a thumb).
+ * Destructive items come last, in the danger colour; with `href` an item is a link.
  */
-export const ResponsiveMenu = ({ label, title, description, trigger, items }: ResponsiveMenuProps) => {
+export const ResponsiveMenu = ({ label, title, subtitle, description, trigger, items }: ResponsiveMenuProps) => {
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   const [open, setOpen] = useState(false)
   const sorted = ordered(items)
+  const sub = subtitle ?? description
+  const firstDanger = sorted.findIndex((item) => item.danger)
 
   const defaultTrigger = (
     <IconButton variant='ghost' size='sm' aria-label={label}>
@@ -70,9 +85,9 @@ export const ResponsiveMenu = ({ label, title, description, trigger, items }: Re
               <Drawer.Content>
                 <Drawer.Header>
                   <Drawer.Title>{title ?? label}</Drawer.Title>
-                  {description && <Drawer.Description>{description}</Drawer.Description>}
+                  {sub && <Drawer.Description>{sub}</Drawer.Description>}
                 </Drawer.Header>
-                <Drawer.Body display='flex' flexDirection='column' gap='1' pb='4'>
+                <Drawer.Body>
                   {sorted.map((item) => {
                     const select = () => {
                       item.onSelect?.()
@@ -84,25 +99,22 @@ export const ResponsiveMenu = ({ label, title, description, trigger, items }: Re
                       'data-danger': item.danger ? 'true' : undefined,
                       onClick: select,
                     } as const
-                    const content = (
-                      <>
-                        {item.icon && <Icon as={item.icon} boxSize='icon.sm' aria-hidden />}
-                        {item.label}
-                      </>
-                    )
                     return item.href ? (
                       <Button key={item.value} asChild {...rowProps}>
-                        <a href={item.href}>{content}</a>
+                        <a href={item.href}>
+                          <ItemContent item={item} />
+                        </a>
                       </Button>
                     ) : (
                       <Button key={item.value} {...rowProps}>
-                        {content}
+                        <ItemContent item={item} />
                       </Button>
                     )
                   })}
-                  <Drawer.CloseTrigger asChild>
+                  {/* ActionTrigger, not CloseTrigger: that one carries the corner close button's absolute position. */}
+                  <Drawer.ActionTrigger asChild>
                     <Button variant='sheet-close'>{t('actions.close', { defaultValue: 'Close' })}</Button>
-                  </Drawer.CloseTrigger>
+                  </Drawer.ActionTrigger>
                 </Drawer.Body>
               </Drawer.Content>
             </Drawer.Positioner>
@@ -113,35 +125,33 @@ export const ResponsiveMenu = ({ label, title, description, trigger, items }: Re
   }
 
   return (
-    <Menu.Root positioning={{ placement: 'bottom-end' }}>
+    // 6px under the trigger, as the boards place it.
+    <Menu.Root variant='actions' positioning={{ placement: 'bottom-end', gutter: 6 }}>
       <Menu.Trigger asChild aria-haspopup='menu'>
         {trigger ?? defaultTrigger}
       </Menu.Trigger>
       <Portal>
         <Menu.Positioner>
-          <Menu.Content w='auto' aria-label={label}>
-            {sorted.map((item) => (
-              <Menu.Item
-                key={item.value}
-                value={item.value}
-                disabled={item.disabled}
-                color={item.danger ? 'danger.action' : undefined}
-                data-danger={item.danger ? 'true' : undefined}
-                onSelect={item.onSelect}
-                asChild={!!item.href}
-              >
-                {item.href ? (
-                  <a href={item.href}>
-                    {item.icon && <Icon as={item.icon} boxSize='icon.sm' aria-hidden />}
-                    {item.label}
-                  </a>
-                ) : (
-                  <>
-                    {item.icon && <Icon as={item.icon} boxSize='icon.sm' aria-hidden />}
-                    {item.label}
-                  </>
-                )}
-              </Menu.Item>
+          <Menu.Content aria-label={label}>
+            {sorted.map((item, index) => (
+              <Fragment key={item.value}>
+                {index === firstDanger && index > 0 && <Menu.Separator />}
+                <Menu.Item
+                  value={item.value}
+                  disabled={item.disabled}
+                  data-danger={item.danger ? 'true' : undefined}
+                  onSelect={item.onSelect}
+                  asChild={!!item.href}
+                >
+                  {item.href ? (
+                    <a href={item.href}>
+                      <ItemContent item={item} />
+                    </a>
+                  ) : (
+                    <ItemContent item={item} />
+                  )}
+                </Menu.Item>
+              </Fragment>
             ))}
           </Menu.Content>
         </Menu.Positioner>
