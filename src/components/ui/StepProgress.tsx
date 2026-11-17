@@ -23,7 +23,14 @@ export const StepProgress = ({ label, value, total }: StepProgressProps) => {
       <Box as='span' css={styles.label} aria-live='polite'>
         {label}
       </Box>
-      <Progress.Root variant='line' value={reached} max={total} translations={{ value: () => label }} css={styles.bar}>
+      <Progress.Root
+        variant='line'
+        value={reached}
+        max={total}
+        translations={{ value: () => label }}
+        css={styles.bar}
+        aria-hidden
+      >
         <Progress.Track>
           <Progress.Range />
         </Progress.Track>

@@ -26,7 +26,7 @@ export const AgendaList = ({ label, items }: AgendaListProps) => {
       <Box as='span' id={labelId} css={styles.label}>
         {label}
       </Box>
-      <Box as='ol' css={styles.list} aria-labelledby={labelId}>
+      <Box as='ol' role='list' css={styles.list} aria-labelledby={labelId}>
         {items.map((item) => (
           <Box as='li' key={item.id} css={styles.item}>
             <Box as='span' css={styles.number} aria-hidden>

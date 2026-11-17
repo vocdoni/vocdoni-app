@@ -26,7 +26,7 @@ export const shortVoteId = (voteId: string, keep = 4) =>
 export const ReceiptCodes = ({ items, onCopy, copyLabel }: ReceiptCodesProps) => {
   const styles = useSlotRecipe({ recipe: receiptCodesRecipe })()
   return (
-    <Box as='ul' css={styles.root}>
+    <Box as='ul' role='list' css={styles.root}>
       {items.map((item) => (
         <Box as='li' key={item.id} css={styles.row}>
           <Box as='span' css={styles.title}>

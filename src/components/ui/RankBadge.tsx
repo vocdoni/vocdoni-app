@@ -12,7 +12,7 @@ export type RankBadgeProps = {
 export const RankBadge = ({ value, set = false }: RankBadgeProps) => {
   const styles = useRecipe({ recipe: rankBadgeRecipe })({ set })
   return (
-    <Box as='span' css={styles} data-set={set ? '' : undefined}>
+    <Box as='span' css={styles} data-set={set ? '' : undefined} aria-hidden>
       {value}
     </Box>
   )

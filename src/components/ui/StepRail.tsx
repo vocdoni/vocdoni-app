@@ -25,7 +25,7 @@ export type StepRailProps = {
 export const StepRail = ({ items }: StepRailProps) => {
   const styles = useSlotRecipe({ recipe: stepRailRecipe })()
   return (
-    <Box as='ol' css={styles.root}>
+    <Box as='ol' role='list' css={styles.root}>
       {items.map((item) => {
         const content = (
           <>

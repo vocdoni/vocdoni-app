@@ -30,7 +30,10 @@ export const PinInput = defineSlotRecipe({
           color: 'fg',
           borderWidth: '[0]',
           boxShadow: 'shadow.field',
-          _focus: { boxShadow: '[inset 0 0 0 {borderWidths.thick} {colors.colorPalette.focusRing}]' },
+          _focus: {
+            boxShadow: '[inset 0 0 0 {borderWidths.thick} {colors.colorPalette.focusRing}]',
+            outline: '[{borderWidths.thick} solid transparent]',
+          },
           _invalid: { boxShadow: 'shadow.invalid' },
         },
       },

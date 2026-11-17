@@ -19,7 +19,7 @@ export type PhaseListProps = {
 export const PhaseList = ({ items }: PhaseListProps) => {
   const styles = useSlotRecipe({ recipe: phaseListRecipe })()
   return (
-    <Box as='ol' css={styles.root}>
+    <Box as='ol' role='list' css={styles.root}>
       {items.map((item) => (
         <Box
           as='li'
