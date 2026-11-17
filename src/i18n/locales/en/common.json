@@ -29,10 +29,6 @@
   "appearance": "Appearance",
   "aside": {
     "anonymous_receipt_gone": "Your receipt was shown when you voted and cannot be retrieved.",
-    "has_already_voted": "Your vote is properly cast",
-    "is_not_in_census": "You are not in the census",
-    "votes_one": "<span>1</span> <text>voter</text>",
-    "votes_other": "<span>{{ count }}</span> <text>voters</text>",
     "votes_weight_one": "<span>1</span> <text>vote</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>votes</text>"
   },
@@ -961,7 +957,6 @@
         "title": "Private vote"
       }
     },
-    "census": "Census",
     "checkout": {
       "cancel_open": "Cancel the open payment",
       "check_again": "Check again",
@@ -1030,17 +1025,14 @@
         "draft": "Draft"
       }
     },
-    "created_by": "Created by",
     "date": {
       "ended": "Ended",
       "ends": "Ends",
-      "relative": "{{ date, relative(past: %time ago; future: in %time) }}",
       "relative_inline": "{{ status }} {{ date, relative(past: %time ago; future: in %time) }}",
       "starts": "Starts"
     },
     "extended_info": "Extended info",
     "is_invalid": "This process has wrong data, thus making it invalid",
-    "no_description": "No description provided",
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "A payment for a voting process using these members is still being processed. Try again once it completes.",
@@ -1106,16 +1098,9 @@
       "canceled": "Process canceled",
       "ended": "Ended",
       "paused": "Process paused",
-      "paused_description": "Voting is not possible right now",
       "results": "Results available",
       "unknown": "Unknown",
       "upcoming": "Upcoming"
-    },
-    "success_modal": {
-      "btn": "Close",
-      "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. You can verify it <verify>here</verify>.</p>",
-      "text_no_id": "<p>Your vote has been cast successfully.</p>",
-      "title": "Vote submitted!"
     },
     "summary": {
       "countdown": "{{days}}d : {{hours}}h : {{minutes}}m",
@@ -1137,19 +1122,10 @@
       "tech_verifiability": "<b>Verifiability:</b> any participant can check that their vote was correctly recorded and counted, without compromising vote secrecy.",
       "time_remaining": "Time remaining to vote",
       "time_until_start": "Time until start",
-      "view_summary": "Follow the process",
       "votes_cast_one": "{{votes}} vote cast",
       "votes_cast_other": "{{votes}} votes cast"
     },
-    "vote_failed": {
-      "close": "Close",
-      "none": "No answer was registered. Please try again.",
-      "partial": "Some answers were not registered. Vote again to send the remaining ones.",
-      "title": "Your vote could not be cast"
-    },
     "voters": "Voters",
-    "voting": "We are processing your vote. This process will take a few seconds. Please do not close or refresh this page.",
-    "voting_label": "Submitting your vote",
     "voting_method": {
       "approval": "Approval",
       "budget": "Budget allocation",
@@ -1680,10 +1656,10 @@
     "checking": "Checking your details",
     "closed": {
       "sentence": "The vote closed on {{date}} at {{time}}.",
-      "turnout_count_one": "{{count}} person voted.",
-      "turnout_count_other": "{{count}} people voted.",
       "turnout_one": "{{count}} of {{total}} people voted.",
-      "turnout_other": "{{count}} of {{total}} people voted."
+      "turnout_other": "{{count}} of {{total}} people voted.",
+      "turnout_count_one": "{{count}} person voted.",
+      "turnout_count_other": "{{count}} people voted."
     },
     "code": {
       "label": "One-time code",

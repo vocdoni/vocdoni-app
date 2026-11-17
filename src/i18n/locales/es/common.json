@@ -29,11 +29,6 @@
   "appearance": "Apariencia",
   "aside": {
     "anonymous_receipt_gone": "Tu comprobante se mostró al votar y no se puede recuperar.",
-    "has_already_voted": "Tu voto se ha emitido correctamente",
-    "is_not_in_census": "No figuras en el censo",
-    "votes_one": "<span>1</span> <text>votante</text>",
-    "votes_many": "<span>{{ count }}</span> <text>votantes</text>",
-    "votes_other": "<span>{{ count }}</span> <text>votantes</text>",
     "votes_weight_one": "<span>1</span> <text>voto</text>",
     "votes_weight_many": "<span>{{ count }}</span> <text>votos</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>"
@@ -982,7 +977,6 @@
         "title": "Voto privado"
       }
     },
-    "census": "Censo",
     "checkout": {
       "cancel_open": "Cancelar el pago abierto",
       "check_again": "Volver a comprobar",
@@ -1052,17 +1046,14 @@
         "draft": "Borrador"
       }
     },
-    "created_by": "Creado por",
     "date": {
       "ended": "Finalizado",
       "ends": "Finaliza",
-      "relative": "{{ date, relative(past: hace %time; future: en %time) }}",
       "relative_inline": "{{ status }} {{ date, relative(past: hace %time; future: en %time) }}",
       "starts": "Comienza"
     },
     "extended_info": "Información ampliada",
     "is_invalid": "Este proceso contiene datos incorrectos y, por tanto, no es válido",
-    "no_description": "No se ha proporcionado descripción",
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Todavía se está procesando el pago de un proceso de votación que usa estos miembros. Vuelve a intentarlo cuando termine.",
@@ -1129,16 +1120,9 @@
       "canceled": "Proceso cancelado",
       "ended": "Finalizado",
       "paused": "Proceso en pausa",
-      "paused_description": "La votación no está disponible en este momento",
       "results": "Resultados disponibles",
       "unknown": "Desconocido",
       "upcoming": "Próximo"
-    },
-    "success_modal": {
-      "btn": "Cerrar",
-      "text": "<p>Tu voto ha sido emitido y almacenado de forma segura con la tecnología de Vocdoni. Puedes comprobarlo <verify>aquí</verify>.</p>",
-      "text_no_id": "<p>Tu voto se ha emitido correctamente.</p>",
-      "title": "¡Voto enviado!"
     },
     "summary": {
       "countdown": "{{days}}d : {{hours}}h : {{minutes}}m",
@@ -1160,20 +1144,11 @@
       "tech_verifiability": "<b>Verificabilidad:</b> cualquier participante puede comprobar que su voto ha sido correctamente registrado y contabilizado, sin comprometer el secreto del voto.",
       "time_remaining": "Tiempo restante para votar",
       "time_until_start": "Tiempo hasta el inicio",
-      "view_summary": "Ir al seguimiento del proceso",
       "votes_cast_one": "{{votes}} voto emitido",
       "votes_cast_many": "{{votes}} votos emitidos",
       "votes_cast_other": "{{votes}} votos emitidos"
     },
-    "vote_failed": {
-      "close": "Cerrar",
-      "none": "No se ha registrado ninguna respuesta. Inténtalo de nuevo.",
-      "partial": "Algunas respuestas no se han registrado. Vuelve a votar para enviar las restantes.",
-      "title": "No se ha podido emitir tu voto"
-    },
     "voters": "Votantes",
-    "voting": "Estamos procesando tu voto. Este proceso tardará unos segundos. No cierres ni actualices esta página.",
-    "voting_label": "Enviando tu voto",
     "voting_method": {
       "approval": "Aprobación",
       "budget": "Asignación presupuestaria",
@@ -1707,12 +1682,12 @@
     "checking": "Comprobando tus datos",
     "closed": {
       "sentence": "La votación se cerró el {{date}} a las {{time}}.",
-      "turnout_count_many": "Votaron {{count}} personas.",
-      "turnout_count_one": "Votó {{count}} persona.",
-      "turnout_count_other": "Votaron {{count}} personas.",
-      "turnout_many": "Votaron {{count}} de {{total}} personas.",
       "turnout_one": "Votó {{count}} de {{total}} personas.",
-      "turnout_other": "Votaron {{count}} de {{total}} personas."
+      "turnout_many": "Votaron {{count}} de {{total}} personas.",
+      "turnout_other": "Votaron {{count}} de {{total}} personas.",
+      "turnout_count_one": "Votó {{count}} persona.",
+      "turnout_count_many": "Votaron {{count}} personas.",
+      "turnout_count_other": "Votaron {{count}} personas."
     },
     "code": {
       "label": "Código de un solo uso",
@@ -1762,21 +1737,21 @@
     "question": {
       "blank": "Voto en blanco",
       "can_leave": "Puedes dejarlo así.",
-      "chosen_many": "{{count}} de {{max}} elegidas.",
       "chosen_one": "{{count}} de {{max}} elegida.",
+      "chosen_many": "{{count}} de {{max}} elegidas.",
       "chosen_other": "{{count}} de {{max}} elegidas.",
       "help_approval": "Elige todas las opciones que apruebes.",
-      "help_exact_many": "Elige {{count}} opciones.",
       "help_exact_one": "Elige {{count}} opción.",
+      "help_exact_many": "Elige {{count}} opciones.",
       "help_exact_other": "Elige {{count}} opciones.",
-      "help_multiple_many": "Elige hasta {{count}} opciones.",
       "help_multiple_one": "Elige hasta {{count}} opción.",
+      "help_multiple_many": "Elige hasta {{count}} opciones.",
       "help_multiple_other": "Elige hasta {{count}} opciones.",
       "help_range": "Elige entre {{min}} y {{max}} opciones.",
       "help_ranked": "Tócalas por orden de preferencia. Vuelve a tocar una para quitarla.",
       "help_single": "Elige una respuesta.",
-      "missing_many": "Faltan {{count}}.",
       "missing_one": "Falta {{count}}.",
+      "missing_many": "Faltan {{count}}.",
       "missing_other": "Faltan {{count}}.",
       "rank_all": "Ordenarlas todas",
       "rank_next": "{{label}}: ponerla en la posición {{position}}",
@@ -1786,19 +1761,19 @@
       "review": "Revisa y emite el voto"
     },
     "receipt": {
-      "card_note_many": "Un código por respuesta. Sirve para comprobar que se han contado, sin decir qué has votado.",
       "card_note_one": "Sirve para comprobar que tu voto se ha contado, sin decir qué has votado.",
+      "card_note_many": "Un código por respuesta. Sirve para comprobar que se han contado, sin decir qué has votado.",
       "card_note_other": "Un código por respuesta. Sirve para comprobar que se han contado, sin decir qué has votado.",
       "card_title": "Tu comprobante",
       "copied": "Código copiado",
       "copy": "Copiar el código de {{question}}",
-      "help_many": "Comprobado: las {{count}} respuestas están en el registro. Ya puedes cerrar la página.",
       "help_one": "Comprobado: la respuesta está en el registro. Ya puedes cerrar la página.",
+      "help_many": "Comprobado: las {{count}} respuestas están en el registro. Ya puedes cerrar la página.",
       "help_other": "Comprobado: las {{count}} respuestas están en el registro. Ya puedes cerrar la página.",
       "results_later": "Los resultados se publicarán aquí mismo el {{date}} a las {{time}}.",
       "title": "Voto emitido. Gracias.",
-      "verify_many": "Puedes comprobar cada código en el <explorer>Explorer</explorer>.",
       "verify_one": "Puedes comprobarlo en el <explorer>Explorer</explorer>.",
+      "verify_many": "Puedes comprobar cada código en el <explorer>Explorer</explorer>.",
       "verify_other": "Puedes comprobar cada código en el <explorer>Explorer</explorer>."
     },
     "results": {
@@ -1819,12 +1794,12 @@
     },
     "sending": {
       "authorizing": "Autorizando el voto",
-      "confirming_many": "Confirmando que han llegado",
       "confirming_one": "Confirmando que ha llegado",
+      "confirming_many": "Confirmando que han llegado",
       "confirming_other": "Confirmando que han llegado",
       "hint": "No cierres esta página. Si se corta la conexión, lo volveremos a enviar solos.",
-      "sending_many": "Enviando las {{count}} respuestas",
       "sending_one": "Enviando la respuesta",
+      "sending_many": "Enviando las {{count}} respuestas",
       "sending_other": "Enviando las {{count}} respuestas",
       "title": "Estamos registrando tu voto"
     },
@@ -1852,8 +1827,8 @@
       "title": "Ya has votado"
     },
     "welcome": {
-      "count_many": "<b>{{count}} personas</b> ya han votado.",
       "count_one": "<b>{{count}} persona</b> ya ha votado.",
+      "count_many": "<b>{{count}} personas</b> ya han votado.",
       "count_other": "<b>{{count}} personas</b> ya han votado.",
       "lead": "Estas son las preguntas de esta votación.",
       "start": "Empezar a votar"

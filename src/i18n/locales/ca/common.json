@@ -29,11 +29,6 @@
   "appearance": "Aparença",
   "aside": {
     "anonymous_receipt_gone": "El teu comprovant es va mostrar en votar i no es pot recuperar.",
-    "has_already_voted": "El teu vot s'ha registrat correctament",
-    "is_not_in_census": "No estàs en el cens",
-    "votes_one": "<span>1</span> <text>votant</text>",
-    "votes_many": "<span>{{ count }}</span> <text>votants</text>",
-    "votes_other": "<span>{{ count }}</span> <text>votants</text>",
     "votes_weight_one": "<span>1</span> <text>vot</text>",
     "votes_weight_many": "<span>{{ count }}</span> <text>vots</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>vots</text>"
@@ -982,7 +977,6 @@
         "title": "Vot privat"
       }
     },
-    "census": "Cens",
     "checkout": {
       "cancel_open": "Cancel·la el pagament obert",
       "check_again": "Torna a comprovar",
@@ -1052,17 +1046,14 @@
         "draft": "Esborrany"
       }
     },
-    "created_by": "Creat per",
     "date": {
       "ended": "Finalitzat",
       "ends": "Finalitza",
-      "relative": "{{ date, relative(past: fa %time; future: en %time) }}",
       "relative_inline": "{{ status }} {{ date, relative(past: fa %time; future: en %time) }}",
       "starts": "Comença el procés"
     },
     "extended_info": "Informació ampliada",
     "is_invalid": "Aquest procés té dades no vàlides i per tant no pot carregar-se",
-    "no_description": "No hi ha cap descripció proporcionada",
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Encara s'està processant el pagament d'un procés de votació que fa servir aquests membres. Torna-ho a provar quan acabi.",
@@ -1129,16 +1120,9 @@
       "canceled": "Procés cancel·lat",
       "ended": "Finalitzat",
       "paused": "Procés en pausa",
-      "paused_description": "No és possible votar ara mateix.",
       "results": "Resultats disponibles",
       "unknown": "Desconegut",
       "upcoming": "Previst"
-    },
-    "success_modal": {
-      "btn": "Finalitzar",
-      "text": "<p>El teu vot ha estat emès i emmagatzemat de forma segura amb la tecnologia de Vocdoni. Pots comprovar-ho <verify>aquí</verify>.</p>",
-      "text_no_id": "<p>El teu vot s’ha emès correctament.</p>",
-      "title": "Vot emès correctament!"
     },
     "summary": {
       "countdown": "{{days}}d : {{hours}}h : {{minutes}}m",
@@ -1160,20 +1144,11 @@
       "tech_verifiability": "<b>Verificabilitat:</b> qualsevol participant pot comprovar que el seu vot ha estat correctament registrat i comptabilitzat, sense comprometre el secret del vot.",
       "time_remaining": "Temps restant per votar",
       "time_until_start": "Temps fins a l'inici",
-      "view_summary": "Vés al seguiment del procés",
       "votes_cast_one": "{{votes}} vot emès",
       "votes_cast_many": "{{votes}} vots emesos",
       "votes_cast_other": "{{votes}} vots emesos"
     },
-    "vote_failed": {
-      "close": "Tanca",
-      "none": "No s’ha registrat cap resposta. Torna-ho a provar.",
-      "partial": "Algunes respostes no s’han registrat. Torna a votar per enviar les restants.",
-      "title": "No s’ha pogut emetre el teu vot"
-    },
     "voters": "Votants",
-    "voting": "Estem processant el teu vot. Aquest procés trigarà uns segons. Si us plau, no tanquis ni actualitzis aquesta pàgina.",
-    "voting_label": "Enviant el teu vot",
     "voting_method": {
       "approval": "Aprovació",
       "budget": "Assignació pressupostària",
@@ -1707,12 +1682,12 @@
     "checking": "Comprovant les teves dades",
     "closed": {
       "sentence": "La votació es va tancar {{date}} a les {{time}}.",
-      "turnout_count_many": "Hi van votar {{count}} persones.",
-      "turnout_count_one": "Hi va votar {{count}} persona.",
-      "turnout_count_other": "Hi van votar {{count}} persones.",
-      "turnout_many": "Hi van votar {{count}} de {{total}} persones.",
       "turnout_one": "Hi va votar {{count}} de {{total}} persones.",
-      "turnout_other": "Hi van votar {{count}} de {{total}} persones."
+      "turnout_many": "Hi van votar {{count}} de {{total}} persones.",
+      "turnout_other": "Hi van votar {{count}} de {{total}} persones.",
+      "turnout_count_one": "Hi va votar {{count}} persona.",
+      "turnout_count_many": "Hi van votar {{count}} persones.",
+      "turnout_count_other": "Hi van votar {{count}} persones."
     },
     "code": {
       "label": "Codi d'un sol ús",
@@ -1762,21 +1737,21 @@
     "question": {
       "blank": "Vot en blanc",
       "can_leave": "Pots deixar-ho així.",
-      "chosen_many": "{{count}} de {{max}} triades.",
       "chosen_one": "{{count}} de {{max}} triada.",
+      "chosen_many": "{{count}} de {{max}} triades.",
       "chosen_other": "{{count}} de {{max}} triades.",
       "help_approval": "Tria totes les opcions que aprovis.",
-      "help_exact_many": "Tria {{count}} opcions.",
       "help_exact_one": "Tria {{count}} opció.",
+      "help_exact_many": "Tria {{count}} opcions.",
       "help_exact_other": "Tria {{count}} opcions.",
-      "help_multiple_many": "Tria fins a {{count}} opcions.",
       "help_multiple_one": "Tria fins a {{count}} opció.",
+      "help_multiple_many": "Tria fins a {{count}} opcions.",
       "help_multiple_other": "Tria fins a {{count}} opcions.",
       "help_range": "Tria entre {{min}} i {{max}} opcions.",
       "help_ranked": "Toca-les per ordre de preferència. Torna a tocar-ne una per treure-la.",
       "help_single": "Tria una resposta.",
-      "missing_many": "En falten {{count}}.",
       "missing_one": "En falta {{count}}.",
+      "missing_many": "En falten {{count}}.",
       "missing_other": "En falten {{count}}.",
       "rank_all": "Ordena-les totes",
       "rank_next": "{{label}}: posa-la a la posició {{position}}",
@@ -1786,19 +1761,19 @@
       "review": "Revisa i emet el vot"
     },
     "receipt": {
-      "card_note_many": "Un codi per resposta. Serveix per comprovar que s'han comptat, sense dir què has votat.",
       "card_note_one": "Serveix per comprovar que el teu vot s'ha comptat, sense dir què has votat.",
+      "card_note_many": "Un codi per resposta. Serveix per comprovar que s'han comptat, sense dir què has votat.",
       "card_note_other": "Un codi per resposta. Serveix per comprovar que s'han comptat, sense dir què has votat.",
       "card_title": "El teu comprovant",
       "copied": "Codi copiat",
       "copy": "Copia el codi de {{question}}",
-      "help_many": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
       "help_one": "Comprovat: la resposta és al registre. Ja pots tancar la pàgina.",
+      "help_many": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
       "help_other": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
       "results_later": "Els resultats es publicaran aquí mateix {{date}} a les {{time}}.",
       "title": "Vot emès. Gràcies.",
-      "verify_many": "Pots comprovar cada codi a l'<explorer>Explorer</explorer>.",
       "verify_one": "El pots comprovar a l'<explorer>Explorer</explorer>.",
+      "verify_many": "Pots comprovar cada codi a l'<explorer>Explorer</explorer>.",
       "verify_other": "Pots comprovar cada codi a l'<explorer>Explorer</explorer>."
     },
     "results": {
@@ -1819,12 +1794,12 @@
     },
     "sending": {
       "authorizing": "Autoritzant el vot",
-      "confirming_many": "Confirmant que han arribat",
       "confirming_one": "Confirmant que ha arribat",
+      "confirming_many": "Confirmant que han arribat",
       "confirming_other": "Confirmant que han arribat",
       "hint": "No tanquis aquesta pàgina. Si es talla la connexió, ho tornarem a enviar sols.",
-      "sending_many": "Enviant les {{count}} respostes",
       "sending_one": "Enviant la resposta",
+      "sending_many": "Enviant les {{count}} respostes",
       "sending_other": "Enviant les {{count}} respostes",
       "title": "Estem registrant el teu vot"
     },
@@ -1852,8 +1827,8 @@
       "title": "Ja has votat"
     },
     "welcome": {
-      "count_many": "<b>{{count}} persones</b> ja han votat.",
       "count_one": "<b>{{count}} persona</b> ja ha votat.",
+      "count_many": "<b>{{count}} persones</b> ja han votat.",
       "count_other": "<b>{{count}} persones</b> ja han votat.",
       "lead": "Aquestes són les preguntes d'aquesta votació.",
       "start": "Comença a votar"

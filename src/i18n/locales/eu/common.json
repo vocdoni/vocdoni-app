@@ -29,10 +29,6 @@
   "appearance": "Itxura",
   "aside": {
     "anonymous_receipt_gone": "Zure egiaztagiria bozkatu zenuenean erakutsi zen, eta ezin da berreskuratu.",
-    "has_already_voted": "Zure botoa behar bezala eman da",
-    "is_not_in_census": "Ez zaude erroldan",
-    "votes_one": "<span>1</span> <text>boto-emaile</text>",
-    "votes_other": "<span>{{ count }}</span> <text>boto-emaile</text>",
     "votes_weight_one": "<span>1</span> <text>boto</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>boto</text>"
   },
@@ -961,7 +957,6 @@
         "title": "Boto pribatua"
       }
     },
-    "census": "Errolda",
     "checkout": {
       "cancel_open": "Ordainketa irekia bertan behera utzi",
       "check_again": "Berriro egiaztatu",
@@ -1030,17 +1025,14 @@
         "draft": "Zirriborroa"
       }
     },
-    "created_by": "Sortzailea",
     "date": {
       "ended": "Amaitua",
       "ends": "Amaiera",
-      "relative": "{{ date, relative(past: duela %time; future: %time barru) }}",
       "relative_inline": "{{ status }} {{ date, relative(past: duela %time; future: %time barru) }}",
       "starts": "Hasiera"
     },
     "extended_info": "Informazio zabaldua",
     "is_invalid": "Prozesu honek datu okerrak ditu eta, beraz, ez da baliozkoa",
-    "no_description": "Ez da deskribapenik eman",
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Kide hauek erabiltzen dituen boto-ematearen prozesu baten ordainketa oraindik prozesatzen ari da. Saiatu berriro amaitzen denean.",
@@ -1106,16 +1098,9 @@
       "canceled": "Prozesua bertan behera utzia",
       "ended": "Amaitua",
       "paused": "Prozesua etenda",
-      "paused_description": "Bozketa une honetan ez dago eskuragarri",
       "results": "Emaitzak eskuragarri",
       "unknown": "Ezezaguna",
       "upcoming": "Datorrena"
-    },
-    "success_modal": {
-      "btn": "Itxi",
-      "text": "<p>Zure botoa eman da eta modu seguruan gorde da Vocdoniren teknologiarekin. <verify>Hemen egiazta dezakezu</verify>.</p>",
-      "text_no_id": "<p>Zure botoa behar bezala eman da.</p>",
-      "title": "Botoa bidalita!"
     },
     "summary": {
       "countdown": "{{days}}d : {{hours}}h : {{minutes}}m",
@@ -1137,19 +1122,10 @@
       "tech_verifiability": "<b>Egiaztagarritasuna:</b> edozein parte-hartzailek egiazta dezake bere botoa behar bezala erregistratu eta zenbatu dela, boto-sekretua arriskuan jarri gabe.",
       "time_remaining": "Bozkatzeko geratzen den denbora",
       "time_until_start": "Hasteko geratzen den denbora",
-      "view_summary": "Jarraitu prozesua",
       "votes_cast_one": "{{votes}} boto eman da",
       "votes_cast_other": "{{votes}} boto eman dira"
     },
-    "vote_failed": {
-      "close": "Itxi",
-      "none": "Ez da erantzunik erregistratu. Saiatu berriro.",
-      "partial": "Erantzun batzuk ez dira erregistratu. Bozkatu berriro gainerakoak bidaltzeko.",
-      "title": "Ezin izan da zure botoa eman"
-    },
     "voters": "Boto-emaileak",
-    "voting": "Zure botoa prozesatzen ari gara. Honek segundo batzuk iraungo ditu. Ez itxi edo eguneratu orrialde hau.",
-    "voting_label": "Zure botoa bidaltzen",
     "voting_method": {
       "approval": "Onarpena",
       "budget": "Aurrekontu-esleipena",
@@ -1680,10 +1656,10 @@
     "checking": "Zure datuak egiaztatzen",
     "closed": {
       "sentence": "Bozketa itxi zen: {{date}}, {{time}}.",
-      "turnout_count_one": "Bozkatu zuen: {{count}} pertsona.",
-      "turnout_count_other": "Bozkatu zuten: {{count}} pertsona.",
       "turnout_one": "Bozkatu zuen: {{count}} / {{total}} pertsona.",
-      "turnout_other": "Bozkatu zuten: {{count}} / {{total}} pertsona."
+      "turnout_other": "Bozkatu zuten: {{count}} / {{total}} pertsona.",
+      "turnout_count_one": "Bozkatu zuen: {{count}} pertsona.",
+      "turnout_count_other": "Bozkatu zuten: {{count}} pertsona."
     },
     "code": {
       "label": "Erabilera bakarreko kodea",

@@ -29,11 +29,6 @@
   "appearance": "Apparence",
   "aside": {
     "anonymous_receipt_gone": "Votre reçu a été affiché lors de votre vote et ne peut pas être récupéré.",
-    "has_already_voted": "Votre vote a bien été enregistré",
-    "is_not_in_census": "Vous ne figurez pas sur la liste électorale",
-    "votes_one": "<span>{{ count }}</span> <text>votant</text>",
-    "votes_many": "<span>{{ count }}</span> <text>votants</text>",
-    "votes_other": "<span>{{ count }}</span> <text>votants</text>",
     "votes_weight_one": "<span>{{ count }}</span> <text>voix</text>",
     "votes_weight_many": "<span>{{ count }}</span> <text>voix</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>voix</text>"
@@ -982,7 +977,6 @@
         "title": "Vote privé"
       }
     },
-    "census": "Liste électorale",
     "checkout": {
       "cancel_open": "Annuler le paiement en cours",
       "check_again": "Vérifier à nouveau",
@@ -1052,17 +1046,14 @@
         "draft": "Brouillon"
       }
     },
-    "created_by": "Créé par",
     "date": {
       "ended": "Terminé",
       "ends": "Se termine",
-      "relative": "{{ date, relative(past: il y a %time; future: dans %time) }}",
       "relative_inline": "{{ status }} {{ date, relative(past: il y a %time; future: dans %time) }}",
       "starts": "Commence"
     },
     "extended_info": "Informations détaillées",
     "is_invalid": "Ce processus contient des données erronées et est donc invalide",
-    "no_description": "Aucune description fournie",
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Le paiement d'un processus de vote utilisant ces membres est encore en cours de traitement. Réessayez une fois qu'il sera terminé.",
@@ -1129,16 +1120,9 @@
       "canceled": "Processus annulé",
       "ended": "Terminé",
       "paused": "Processus en pause",
-      "paused_description": "Le vote n'est pas possible pour le moment",
       "results": "Résultats disponibles",
       "unknown": "Inconnu",
       "upcoming": "À venir"
-    },
-    "success_modal": {
-      "btn": "Fermer",
-      "text": "<p>Votre vote a été émis et stocké de manière sécurisée grâce à la technologie de Vocdoni. Vous pouvez le vérifier <verify>ici</verify>.</p>",
-      "text_no_id": "<p>Votre vote a bien été émis.</p>",
-      "title": "Vote envoyé !"
     },
     "summary": {
       "countdown": "{{days}}j : {{hours}}h : {{minutes}}min",
@@ -1160,20 +1144,11 @@
       "tech_verifiability": "<b>Vérifiabilité :</b> chaque participant peut vérifier que son vote a été correctement enregistré et comptabilisé, sans compromettre le secret du vote.",
       "time_remaining": "Temps restant pour voter",
       "time_until_start": "Temps avant le début",
-      "view_summary": "Suivre le processus",
       "votes_cast_one": "{{votes}} vote exprimé",
       "votes_cast_many": "{{votes}} votes exprimés",
       "votes_cast_other": "{{votes}} votes exprimés"
     },
-    "vote_failed": {
-      "close": "Fermer",
-      "none": "Aucune réponse n’a été enregistrée. Réessayez.",
-      "partial": "Certaines réponses n’ont pas été enregistrées. Votez à nouveau pour envoyer les restantes.",
-      "title": "Votre vote n’a pas pu être enregistré"
-    },
     "voters": "Électeurs",
-    "voting": "Nous traitons votre vote. Cela prendra quelques secondes. Veuillez ne pas fermer ni actualiser cette page.",
-    "voting_label": "Envoi de votre vote",
     "voting_method": {
       "approval": "Approbation",
       "budget": "Allocation budgétaire",
@@ -1707,16 +1682,16 @@
     "checking": "Vérification de vos informations",
     "closed": {
       "sentence": "Le vote s'est clôturé le {{date}} à {{time}}.",
-      "turnout_count_many": "{{count}} personnes ont voté.",
-      "turnout_count_one": "{{count}} personne a voté.",
-      "turnout_count_other": "{{count}} personnes ont voté.",
-      "turnout_many": "{{count}} personnes sur {{total}} ont voté.",
       "turnout_one": "{{count}} personne sur {{total}} a voté.",
-      "turnout_other": "{{count}} personnes sur {{total}} ont voté."
+      "turnout_many": "{{count}} personnes sur {{total}} ont voté.",
+      "turnout_other": "{{count}} personnes sur {{total}} ont voté.",
+      "turnout_count_one": "{{count}} personne a voté.",
+      "turnout_count_many": "{{count}} personnes ont voté.",
+      "turnout_count_other": "{{count}} personnes ont voté."
     },
     "code": {
       "label": "Code à usage unique",
-      "resend": "Vous ne l'avez pas reçu\u202f? <resend>Renvoyer le code</resend>.",
+      "resend": "Vous ne l'avez pas reçu ? <resend>Renvoyer le code</resend>.",
       "resent": "Nous vous avons envoyé un nouveau code.",
       "sent_to": "Nous l'avons envoyé à {{contact}}.",
       "spam_hint": "Si vous avez choisi de le recevoir par e-mail, pensez à vérifier votre dossier de courriers indésirables.",
@@ -1737,22 +1712,22 @@
     "language": {
       "cancel": "Continuer à voter",
       "confirm": "Changer de langue",
-      "confirm_body": "Changer de langue fait tout recommencer\u202f: vous devrez vous identifier et répondre à nouveau.",
-      "confirm_title": "Changer de langue\u202f?",
-      "label": "Langue\u202f: {{language}}"
+      "confirm_body": "Changer de langue fait tout recommencer : vous devrez vous identifier et répondre à nouveau.",
+      "confirm_title": "Changer de langue ?",
+      "label": "Langue : {{language}}"
     },
     "not_eligible": {
       "body": "Vous vous êtes identifié correctement, mais vous ne figurez pas sur la liste des personnes qui peuvent y voter.",
       "card_body": "Contactez {{organization}}. Seule l'organisation peut vous ajouter à la liste électorale.",
-      "card_title": "Vous pensez que c'est une erreur\u202f?",
+      "card_title": "Vous pensez que c'est une erreur ?",
       "title": "Vous n'avez pas le droit de vote pour ce vote"
     },
-    "not_you": "Ce n'est pas vous\u202f? <exit>Se déconnecter</exit>",
+    "not_you": "Ce n'est pas vous ? <exit>Se déconnecter</exit>",
     "paused": {
       "body": "L'organisation a suspendu le vote temporairement. Vous ne pouvez pas voter pour le moment.",
       "card_body": "Cette page se met à jour toute seule à la reprise. Le vote se clôture le {{date}} à {{time}}.",
       "card_title": "Revenez dans un moment",
-      "notice_body": "Ne fermez pas la page\u202f: vous pourrez continuer à la reprise.",
+      "notice_body": "Ne fermez pas la page : vous pourrez continuer à la reprise.",
       "notice_title": "Le vote a été suspendu temporairement."
     },
     "progress": {
@@ -1762,43 +1737,43 @@
     "question": {
       "blank": "Vote blanc",
       "can_leave": "Vous pouvez laisser ainsi.",
-      "chosen_many": "{{count}} sur {{max}} choisies.",
       "chosen_one": "{{count}} sur {{max}} choisie.",
+      "chosen_many": "{{count}} sur {{max}} choisies.",
       "chosen_other": "{{count}} sur {{max}} choisies.",
       "help_approval": "Choisissez toutes les options que vous approuvez.",
-      "help_exact_many": "Choisissez {{count}} options.",
       "help_exact_one": "Choisissez {{count}} option.",
+      "help_exact_many": "Choisissez {{count}} options.",
       "help_exact_other": "Choisissez {{count}} options.",
-      "help_multiple_many": "Choisissez jusqu'à {{count}} options.",
       "help_multiple_one": "Choisissez jusqu'à {{count}} option.",
+      "help_multiple_many": "Choisissez jusqu'à {{count}} options.",
       "help_multiple_other": "Choisissez jusqu'à {{count}} options.",
       "help_range": "Choisissez entre {{min}} et {{max}} options.",
       "help_ranked": "Touchez-les par ordre de préférence. Touchez-en une à nouveau pour la retirer.",
       "help_single": "Choisissez une réponse.",
-      "missing_many": "Il en manque {{count}}.",
       "missing_one": "Il en manque {{count}}.",
+      "missing_many": "Il en manque {{count}}.",
       "missing_other": "Il en manque {{count}}.",
       "rank_all": "Classez-les toutes",
-      "rank_next": "{{label}}\u202f: la placer en position {{position}}",
+      "rank_next": "{{label}} : la placer en position {{position}}",
       "ranked_at": "{{label}}, en position {{position}}. Touchez pour la retirer."
     },
     "rail": {
       "review": "Vérifier et voter"
     },
     "receipt": {
-      "card_note_many": "Un code par réponse. Ils permettent de vérifier qu'elles ont été comptabilisées, sans révéler ce que vous avez voté.",
       "card_note_one": "Il permet de vérifier que votre vote a été comptabilisé, sans révéler ce que vous avez voté.",
+      "card_note_many": "Un code par réponse. Ils permettent de vérifier qu'elles ont été comptabilisées, sans révéler ce que vous avez voté.",
       "card_note_other": "Un code par réponse. Ils permettent de vérifier qu'elles ont été comptabilisées, sans révéler ce que vous avez voté.",
       "card_title": "Votre reçu",
       "copied": "Code copié",
       "copy": "Copier le code de {{question}}",
-      "help_many": "Vérifié\u202f: les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
-      "help_one": "Vérifié\u202f: votre réponse est enregistrée. Vous pouvez fermer la page.",
-      "help_other": "Vérifié\u202f: les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
+      "help_one": "Vérifié : votre réponse est enregistrée. Vous pouvez fermer la page.",
+      "help_many": "Vérifié : les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
+      "help_other": "Vérifié : les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
       "results_later": "Les résultats seront publiés ici même le {{date}} à {{time}}.",
       "title": "Vote enregistré. Merci.",
-      "verify_many": "Vous pouvez vérifier chaque code dans l'<explorer>Explorer</explorer>.",
       "verify_one": "Vous pouvez le vérifier dans l'<explorer>Explorer</explorer>.",
+      "verify_many": "Vous pouvez vérifier chaque code dans l'<explorer>Explorer</explorer>.",
       "verify_other": "Vous pouvez vérifier chaque code dans l'<explorer>Explorer</explorer>."
     },
     "results": {
@@ -1819,12 +1794,12 @@
     },
     "sending": {
       "authorizing": "Autorisation du vote",
-      "confirming_many": "Confirmation de la réception",
       "confirming_one": "Confirmation de la réception",
+      "confirming_many": "Confirmation de la réception",
       "confirming_other": "Confirmation de la réception",
       "hint": "Ne fermez pas cette page. Si la connexion est coupée, nous le renverrons automatiquement.",
-      "sending_many": "Envoi des {{count}} réponses",
       "sending_one": "Envoi de la réponse",
+      "sending_many": "Envoi des {{count}} réponses",
       "sending_other": "Envoi des {{count}} réponses",
       "title": "Nous enregistrons votre vote"
     },
@@ -1852,8 +1827,8 @@
       "title": "Vous avez déjà voté"
     },
     "welcome": {
-      "count_many": "<b>{{count}} personnes</b> ont déjà voté.",
       "count_one": "<b>{{count}} personne</b> a déjà voté.",
+      "count_many": "<b>{{count}} personnes</b> ont déjà voté.",
       "count_other": "<b>{{count}} personnes</b> ont déjà voté.",
       "lead": "Voici les questions de ce vote.",
       "start": "Commencer à voter"
