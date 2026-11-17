@@ -2040,6 +2040,15 @@
       "all_open": "Όλες ανοιχτές μαζί",
       "answered": "Συμμετοχή: {{answered}} από {{total}}",
       "answered_label": "{{answered}} από {{total}} άτομα απάντησαν την ερώτηση {{number}}.",
+      "auth": {
+        "by_email": " μέσω email",
+        "by_email_or_sms": ", μέσω email ή SMS",
+        "by_sms": " μέσω SMS",
+        "code": "κωδικός μίας χρήσης",
+        "end": ".",
+        "plus": " και ",
+        "title": "Μέθοδος ταυτοποίησης"
+      },
       "ballot_link": "Ψηφοδέλτιο",
       "blank_one": "{{count, number}} από τους {{voters}} ψηφοφόρους την άφησε κενή.",
       "blank_other": "{{count, number}} από τους {{voters}} ψηφοφόρους την άφησαν κενή.",

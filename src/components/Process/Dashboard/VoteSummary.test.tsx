@@ -177,6 +177,30 @@ describe('VoteSummary', () => {
       expect(screen.getByText('Automatic closing and results for everyone')).toBeInTheDocument()
     })
 
+    it('says how voters authenticate: factors joined by plus, a code with its channels joined by or', () => {
+      renderSummary(
+        createProcess({ census: { size: 312, authFields: ['memberNumber'], twoFaFields: ['email', 'phone'] } }),
+        184
+      )
+
+      expect(screen.getByText('Authentication method')).toBeInTheDocument()
+      expect(screen.getByText(textContent('Member Number plus one-time code, by email or SMS.'))).toBeInTheDocument()
+    })
+
+    it('names a single channel without a comma, and fields alone when no code is sent', () => {
+      const { unmount } = renderSummary(
+        createProcess({ census: { size: 312, authFields: ['name', 'nationalId'], twoFaFields: ['phone'] } }),
+        184
+      )
+      expect(
+        screen.getByText(textContent('First Name plus National ID plus one-time code by SMS.'))
+      ).toBeInTheDocument()
+      unmount()
+
+      renderSummary(createProcess(), 184)
+      expect(screen.getByText(textContent('Member Number.'))).toBeInTheDocument()
+    })
+
     it('shows seven facts and the turnout of each question on a phone, with the calendar and without the voting data', () => {
       desktop = false
       renderSummary(createProcess(), 184)

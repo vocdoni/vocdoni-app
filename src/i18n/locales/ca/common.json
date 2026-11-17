@@ -2092,6 +2092,15 @@
       "all_open": "Totes obertes alhora",
       "answered": "Participació: {{answered}} de {{total}}",
       "answered_label": "Han respost la pregunta {{number}} {{answered}} de {{total}} persones.",
+      "auth": {
+        "by_email": " per correu",
+        "by_email_or_sms": ", per correu o per SMS",
+        "by_sms": " per SMS",
+        "code": "codi d'un sol ús",
+        "end": ".",
+        "plus": " més ",
+        "title": "Mètode d'autenticació"
+      },
       "ballot_link": "Papereta",
       "blank_one": "{{count, number}} dels {{voters}} votants l'ha deixat en blanc.",
       "blank_many": "{{count, number}} dels {{voters}} votants l'han deixat en blanc.",

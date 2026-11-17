@@ -2092,6 +2092,15 @@
       "all_open": "Tutte aperte insieme",
       "answered": "Partecipazione: {{answered}} su {{total}}",
       "answered_label": "{{answered}} persone su {{total}} hanno risposto alla domanda {{number}}.",
+      "auth": {
+        "by_email": " via email",
+        "by_email_or_sms": ", via email o SMS",
+        "by_sms": " via SMS",
+        "code": "codice monouso",
+        "end": ".",
+        "plus": " più ",
+        "title": "Metodo di autenticazione"
+      },
       "ballot_link": "Scheda",
       "blank_one": "{{count, number}} dei {{voters}} votanti l’ha lasciata in bianco.",
       "blank_many": "{{count, number}} dei {{voters}} votanti l’hanno lasciata in bianco.",

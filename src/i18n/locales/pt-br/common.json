@@ -2092,6 +2092,15 @@
       "all_open": "Todas abertas ao mesmo tempo",
       "answered": "Participação: {{answered}} de {{total}}",
       "answered_label": "{{answered}} de {{total}} pessoas responderam à pergunta {{number}}.",
+      "auth": {
+        "by_email": " por e-mail",
+        "by_email_or_sms": ", por e-mail ou por SMS",
+        "by_sms": " por SMS",
+        "code": "código de uso único",
+        "end": ".",
+        "plus": " mais ",
+        "title": "Método de autenticação"
+      },
       "ballot_link": "Cédula",
       "blank_one": "{{count, number}} dos {{voters}} eleitores deixou em branco.",
       "blank_many": "{{count, number}} dos {{voters}} eleitores deixaram em branco.",

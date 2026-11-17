@@ -2092,6 +2092,15 @@
       "all_open": "Toutes ouvertes à la fois",
       "answered": "Participation : {{answered}} sur {{total}}",
       "answered_label": "{{answered}} personnes sur {{total}} ont répondu à la question {{number}}.",
+      "auth": {
+        "by_email": " par e-mail",
+        "by_email_or_sms": ", par e-mail ou par SMS",
+        "by_sms": " par SMS",
+        "code": "code à usage unique",
+        "end": ".",
+        "plus": " plus ",
+        "title": "Méthode d'authentification"
+      },
       "ballot_link": "Bulletin",
       "blank_one": "{{count, number}} des {{voters}} électeurs l'a laissée blanche.",
       "blank_many": "{{count, number}} des {{voters}} électeurs l'ont laissée blanche.",

@@ -2040,6 +2040,15 @@
       "all_open": "All open at once",
       "answered": "Turnout: {{answered}} of {{total}}",
       "answered_label": "{{answered}} of {{total}} people answered question {{number}}.",
+      "auth": {
+        "by_email": " by email",
+        "by_email_or_sms": ", by email or SMS",
+        "by_sms": " by SMS",
+        "code": "one-time code",
+        "end": ".",
+        "plus": " plus ",
+        "title": "Authentication method"
+      },
       "ballot_link": "Ballot",
       "blank_one": "{{count, number}} of the {{voters}} voters left it blank.",
       "blank_other": "{{count, number}} of the {{voters}} voters left it blank.",

@@ -2040,6 +2040,15 @@
       "all_open": "Alle gleichzeitig offen",
       "answered": "Beteiligung: {{answered}} von {{total}}",
       "answered_label": "{{answered}} von {{total}} Personen haben Frage {{number}} beantwortet.",
+      "auth": {
+        "by_email": " per E-Mail",
+        "by_email_or_sms": ", per E-Mail oder SMS",
+        "by_sms": " per SMS",
+        "code": "Einmalcode",
+        "end": ".",
+        "plus": " plus ",
+        "title": "Authentifizierungsmethode"
+      },
       "ballot_link": "Stimmzettel",
       "blank_one": "{{count, number}} der {{voters}} Wählenden hat sie leer gelassen.",
       "blank_other": "{{count, number}} der {{voters}} Wählenden haben sie leer gelassen.",

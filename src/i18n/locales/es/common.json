@@ -2092,6 +2092,15 @@
       "all_open": "Todas abiertas a la vez",
       "answered": "Participación: {{answered}} de {{total}}",
       "answered_label": "{{answered}} de {{total}} personas han respondido la pregunta {{number}}.",
+      "auth": {
+        "by_email": " por correo",
+        "by_email_or_sms": ", por correo o por SMS",
+        "by_sms": " por SMS",
+        "code": "código de un solo uso",
+        "end": ".",
+        "plus": " más ",
+        "title": "Método de autenticación"
+      },
       "ballot_link": "Papeleta",
       "blank_one": "{{count, number}} de los {{voters}} votantes la ha dejado en blanco.",
       "blank_many": "{{count, number}} de los {{voters}} votantes la han dejado en blanco.",

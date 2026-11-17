@@ -2040,6 +2040,15 @@
       "all_open": "Denak batera irekita",
       "answered": "Parte-hartzea: {{total}}etik {{answered}}",
       "answered_label": "{{total}} pertsonatik {{answered}}k erantzun dute {{number}}. galdera.",
+      "auth": {
+        "by_email": " posta elektronikoz",
+        "by_email_or_sms": ", posta elektronikoz edo SMS bidez",
+        "by_sms": " SMS bidez",
+        "code": "erabilera bakarreko kodea",
+        "end": ".",
+        "plus": " gehi ",
+        "title": "Autentifikazio-metodoa"
+      },
       "ballot_link": "Botoa",
       "blank_one": "{{voters}} botogiletik {{count, number}}ek zuri utzi du.",
       "blank_other": "{{voters}} botogiletik {{count, number}}k zuri utzi dute.",
