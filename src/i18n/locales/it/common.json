@@ -2157,19 +2157,6 @@
         "ready_body": "{{people}} nel censimento e {{questions}}, tutte aperte insieme.",
         "ready_title": "Si aprirà da sola {{date}}"
       },
-      "kind": {
-        "budget_one": "{{count, number}} punto a persona",
-        "budget_many": "{{count, number}} punti a persona",
-        "budget_other": "{{count, number}} punti a persona",
-        "multiple": "Fino a {{max}} opzioni su {{choices}}",
-        "quadratic_one": "{{count, number}} credito a persona",
-        "quadratic_many": "{{count, number}} crediti a persona",
-        "quadratic_other": "{{count, number}} crediti a persona",
-        "ranked_one": "Si ordina {{count, number}} opzione",
-        "ranked_many": "Si ordinano {{count, number}} opzioni",
-        "ranked_other": "Si ordinano {{count, number}} opzioni",
-        "single": "Una opzione, maggioranza semplice"
-      },
       "label": {
         "anonymity": "Anonimato",
         "census": "Censimento",
@@ -2208,7 +2195,6 @@
       "ruler_label_other": "{{count, number}} persone su {{total}} hanno votato, {{percent}}%",
       "ruler_label_any": "Almeno {{voted}} persone su {{total}} hanno votato a una domanda, il {{percent}}%",
       "share_note": "Link all'urna digitale. Condividilo con chi ha diritto di voto.",
-      "share_public_short": "Link pubblico",
       "share_title": "Da condividere",
       "turnout": "Affluenza",
       "voted_any_lines": "Almeno {{voted}} su {{total}} hanno votato <br/>a una domanda",

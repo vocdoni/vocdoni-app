@@ -58,6 +58,46 @@ const QuestionNumber = ({ index }: { index: number }) => (
   </Text>
 )
 
+const hasStarted = (model: SummaryModel) =>
+  model.state === 'live' || model.state === 'paused' || model.state === 'closed'
+
+/** "Turnout: 184 of 312" with its share over the bar: how many answered this question, on every width. */
+const QuestionTurnout = ({ question, index, model }: Omit<RowProps, 'state'>) => {
+  const { t } = useTranslation()
+  const votes = question.results?.voteCount ?? 0
+  const electorate = questionElectorate(question, model.election)
+  const percent = percentOf(votes, electorate)
+
+  return (
+    <TurnoutBar
+      caption={
+        electorate
+          ? t('votes.summary.answered', {
+              defaultValue: 'Turnout: {{answered}} of {{total}}',
+              answered: quantity(votes),
+              total: quantity(electorate),
+            })
+          : t('votes.summary.question_votes', {
+              defaultValue_one: '{{count, number}} vote',
+              defaultValue_other: '{{count, number}} votes',
+              count: votes,
+            })
+      }
+      share={percent === undefined ? undefined : t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })}
+      value={votes}
+      max={electorate}
+      layout='compact'
+      closed={model.state === 'closed'}
+      label={t('votes.summary.answered_label', {
+        defaultValue: '{{answered}} of {{total}} people answered question {{number}}.',
+        answered: votes,
+        total: electorate ?? 0,
+        number: index + 1,
+      })}
+    />
+  )
+}
+
 /**
  * A question of an all-at-once vote on the desktop: its title and how it is answered, then (once voting has begun)
  * how many answered it and how many left it blank, and last, when the results are public, a bar per choice.
@@ -67,10 +107,8 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
   const { text } = useVoteText()
   const outcome = useOutcome(question, !!model.election.census?.weighted)
   const votes = question.results?.voteCount ?? 0
-  const electorate = questionElectorate(question, model.election)
-  const percent = percentOf(votes, electorate)
   const kind = questionKind(t, question)
-  const started = model.state === 'live' || model.state === 'paused' || model.state === 'closed'
+  const started = hasStarted(model)
   const blank = Math.max(0, model.count - votes)
 
   return (
@@ -88,36 +126,7 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
               </Text>
             )}
           </Box>
-          {started && (
-            <TurnoutBar
-              caption={
-                electorate
-                  ? t('votes.summary.answered', {
-                      defaultValue: 'Turnout: {{answered}} of {{total}}',
-                      answered: quantity(votes),
-                      total: quantity(electorate),
-                    })
-                  : t('votes.summary.question_votes', {
-                      defaultValue_one: '{{count, number}} vote',
-                      defaultValue_other: '{{count, number}} votes',
-                      count: votes,
-                    })
-              }
-              share={
-                percent === undefined ? undefined : t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })
-              }
-              value={votes}
-              max={electorate}
-              layout='compact'
-              closed={model.state === 'closed'}
-              label={t('votes.summary.answered_label', {
-                defaultValue: '{{answered}} of {{total}} people answered question {{number}}.',
-                answered: votes,
-                total: electorate ?? 0,
-                number: index + 1,
-              })}
-            />
-          )}
+          {started && <QuestionTurnout question={question} index={index} model={model} />}
           {started && model.count > 0 && (
             <Text textStyle='body-sm' color='fg.subtle'>
               {t('votes.summary.blank', {
@@ -137,33 +146,25 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
 }
 
 /**
- * A question of an all-at-once vote on a phone or tablet: number, title and one quiet line with the result when public
- * and the votes. Under it, the same bars as the desktop rows whenever the tally is public.
+ * A question of an all-at-once vote on a phone or tablet (M4Vote): number and title, once voting has begun how many
+ * answered it, and the same bars as the desktop rows whenever the tally is public. No sentence says who wins.
  */
 export const CompactQuestionRow = ({ question, index, model }: RowProps) => {
-  const { t } = useTranslation()
-  const { text, outcome: describe } = useVoteText()
+  const { text } = useVoteText()
   const outcome = useOutcome(question, !!model.election.census?.weighted)
-  const votes = question.results?.voteCount ?? 0
-  const votesText = t('votes.summary.question_votes', {
-    defaultValue_one: '{{count, number}} vote',
-    defaultValue_other: '{{count, number}} votes',
-    count: votes,
-  })
-  const meta = [describe(outcome), votes > 0 ? votesText : null].filter(Boolean).join(', ') || null
 
   return (
     <Card.Body py='3'>
       <Grid templateColumns='[{sizes.6} minmax(0, 1fr)]' columnGap='2' rowGap='0.5' alignItems='baseline'>
         <QuestionNumber index={index} />
         <Text textStyle='question-line'>{text(question.title)}</Text>
-        {meta && (
-          <Text gridColumn='2' textStyle='note' color='fg.subtle'>
-            {meta}
-          </Text>
+        {hasStarted(model) && (
+          <Box gridColumn='2' pt='2' maxW={{ md: 'lg' }}>
+            <QuestionTurnout question={question} index={index} model={model} />
+          </Box>
         )}
         {outcome && (
-          <Box gridColumn='2' pt='2.5'>
+          <Box gridColumn='2' pt='2.5' maxW={{ md: 'lg' }}>
             <RowBars question={question} model={model} final={!!question.results?.finalResults} />
           </Box>
         )}

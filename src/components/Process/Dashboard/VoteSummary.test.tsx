@@ -145,7 +145,7 @@ describe('VoteSummary', () => {
 
       expect(screen.getByText('Turnout: 181 of 312')).toBeInTheDocument()
       expect(screen.getByText('3 of the 184 voters left it blank.')).toBeInTheDocument()
-      expect(screen.getByText('One choice, simple majority')).toBeInTheDocument()
+      expect(screen.getByText('Single choice')).toBeInTheDocument()
       expect(screen.getByText('All open at once')).toBeInTheDocument()
     })
 
@@ -177,7 +177,7 @@ describe('VoteSummary', () => {
       expect(screen.getByText('Automatic closing and results for everyone')).toBeInTheDocument()
     })
 
-    it('shows seven facts and one quiet line per question on a phone, without the desktop cards', () => {
+    it('shows seven facts and the turnout of each question on a phone, with the calendar and without the voting data', () => {
       desktop = false
       renderSummary(createProcess(), 184)
 
@@ -186,8 +186,8 @@ describe('VoteSummary', () => {
       }
       expect(screen.getByText('Anonymous').closest('[data-part="trigger"]')).not.toBeNull()
       expect(screen.getByText('Cannot be changed')).toBeInTheDocument()
-      expect(screen.getByText('184 votes')).toBeInTheDocument()
-      expect(screen.queryByText('Calendar')).toBeNull()
+      expect(screen.getAllByText('Turnout: 184 of 312').length).toBeGreaterThan(0)
+      expect(screen.getByText('Calendar')).toBeInTheDocument()
       expect(screen.queryByRole('link', { name: 'Ballot' })).toBeNull()
     })
 

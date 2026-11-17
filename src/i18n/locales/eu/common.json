@@ -2099,16 +2099,6 @@
         "ready_body": "{{people}} erroldean eta {{questions}}, denak batera irekita.",
         "ready_title": "Bere kabuz irekiko da: {{date}}"
       },
-      "kind": {
-        "budget_one": "Puntu {{count, number}} pertsonako",
-        "budget_other": "{{count, number}} puntu pertsonako",
-        "multiple": "{{choices}} aukeretatik {{max}} gehienez",
-        "quadratic_one": "Kreditu {{count, number}} pertsonako",
-        "quadratic_other": "{{count, number}} kreditu pertsonako",
-        "ranked_one": "Aukera {{count, number}} ordenatzen da",
-        "ranked_other": "{{count, number}} aukera ordenatzen dira",
-        "single": "Aukera bat, gehiengo soila"
-      },
       "label": {
         "anonymity": "Anonimotasuna",
         "census": "Erroldea",
@@ -2143,7 +2133,6 @@
       "ruler_label_other": "{{total}} pertsonatik {{count, number}}k bozkatu dute, {{percent}}%",
       "ruler_label_any": "Gutxienez {{total}} pertsonatik {{voted}}k galderaren bat bozkatu dute, %{{percent}}",
       "share_note": "Hautestontzi digitalerako esteka. Partekatu boto-eskubidea dutenekin.",
-      "share_public_short": "Esteka publikoa",
       "share_title": "Partekatzeko",
       "turnout": "Parte-hartzea",
       "voted_any_lines": "Gutxienez {{total}}tik {{voted}}k <br/>galderaren bat bozkatu dute",

@@ -2099,16 +2099,6 @@
         "ready_body": "{{people}} στο μητρώο και {{questions}}, όλες ανοιχτές μαζί.",
         "ready_title": "Θα ανοίξει αυτόματα την {{date}}"
       },
-      "kind": {
-        "budget_one": "{{count, number}} πόντος ανά άτομο",
-        "budget_other": "{{count, number}} πόντοι ανά άτομο",
-        "multiple": "Έως {{max}} από {{choices}} επιλογές",
-        "quadratic_one": "{{count, number}} μονάδα ανά άτομο",
-        "quadratic_other": "{{count, number}} μονάδες ανά άτομο",
-        "ranked_one": "Κατατάσσεται {{count, number}} επιλογή",
-        "ranked_other": "Κατατάσσονται {{count, number}} επιλογές",
-        "single": "Μία επιλογή, απλή πλειοψηφία"
-      },
       "label": {
         "anonymity": "Ανωνυμία",
         "census": "Μητρώο",
@@ -2143,7 +2133,6 @@
       "ruler_label_other": "{{count, number}} από {{total}} άτομα ψήφισαν, {{percent}}%",
       "ruler_label_any": "Τουλάχιστον {{voted}} από {{total}} άτομα ψήφισαν σε μια ερώτηση, {{percent}}%",
       "share_note": "Σύνδεσμος για την ψηφιακή κάλπη. Μοιραστείτε τον με όσους έχουν δικαίωμα ψήφου.",
-      "share_public_short": "Δημόσιος σύνδεσμος",
       "share_title": "Για κοινοποίηση",
       "turnout": "Συμμετοχή",
       "voted_any_lines": "Τουλάχιστον {{voted}} από {{total}} ψήφισαν <br/>σε μια ερώτηση",

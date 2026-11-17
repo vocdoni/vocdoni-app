@@ -2099,16 +2099,6 @@
         "ready_body": "{{people}} in the census and {{questions}}, all open at once.",
         "ready_title": "Opens by itself {{date}}"
       },
-      "kind": {
-        "budget_one": "{{count, number}} point per person",
-        "budget_other": "{{count, number}} points per person",
-        "multiple": "Up to {{max}} of {{choices}} options",
-        "quadratic_one": "{{count, number}} credit per person",
-        "quadratic_other": "{{count, number}} credits per person",
-        "ranked_one": "{{count, number}} option is ranked",
-        "ranked_other": "{{count, number}} options are ranked",
-        "single": "One choice, simple majority"
-      },
       "label": {
         "anonymity": "Anonymity",
         "census": "Census",
@@ -2143,7 +2133,6 @@
       "ruler_label_other": "{{count, number}} of {{total}} people voted, {{percent}}%",
       "ruler_label_any": "At least {{voted}} of {{total}} people voted on a question, {{percent}}%",
       "share_note": "Link to the digital ballot box. Share it with the eligible voters.",
-      "share_public_short": "Public link",
       "share_title": "To share",
       "turnout": "Turnout",
       "voted_any_lines": "At least {{voted}} of {{total}} voted <br/>on a question",

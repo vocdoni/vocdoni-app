@@ -2157,19 +2157,6 @@
         "ready_body": "{{people}} na lista de participantes e {{questions}}, todas abertas ao mesmo tempo.",
         "ready_title": "Abre sozinha {{date}}"
       },
-      "kind": {
-        "budget_one": "{{count, number}} ponto por pessoa",
-        "budget_many": "{{count, number}} pontos por pessoa",
-        "budget_other": "{{count, number}} pontos por pessoa",
-        "multiple": "Até {{max}} de {{choices}} opções",
-        "quadratic_one": "{{count, number}} crédito por pessoa",
-        "quadratic_many": "{{count, number}} créditos por pessoa",
-        "quadratic_other": "{{count, number}} créditos por pessoa",
-        "ranked_one": "{{count, number}} opção é ordenada",
-        "ranked_many": "{{count, number}} opções são ordenadas",
-        "ranked_other": "{{count, number}} opções são ordenadas",
-        "single": "Uma opção, maioria simples"
-      },
       "label": {
         "anonymity": "Anonimato",
         "census": "Lista de participantes",
@@ -2208,7 +2195,6 @@
       "ruler_label_other": "{{count, number}} de {{total}} pessoas votaram, {{percent}}%",
       "ruler_label_any": "Pelo menos {{voted}} de {{total}} pessoas votaram em uma pergunta, {{percent}}%",
       "share_note": "Link para a urna digital. Compartilhe com as pessoas com direito a voto.",
-      "share_public_short": "Link público",
       "share_title": "Para compartilhar",
       "turnout": "Participação",
       "voted_any_lines": "Pelo menos {{voted}} de {{total}} votaram <br/>em uma pergunta",

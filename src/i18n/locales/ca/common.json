@@ -2157,19 +2157,6 @@
         "ready_body": "{{people}} al cens i {{questions}}, totes obertes alhora.",
         "ready_title": "S'obrirà sola {{date}}"
       },
-      "kind": {
-        "budget_one": "{{count, number}} punt per persona",
-        "budget_many": "{{count, number}} punts per persona",
-        "budget_other": "{{count, number}} punts per persona",
-        "multiple": "Fins a {{max}} de {{choices}} opcions",
-        "quadratic_one": "{{count, number}} crèdit per persona",
-        "quadratic_many": "{{count, number}} crèdits per persona",
-        "quadratic_other": "{{count, number}} crèdits per persona",
-        "ranked_one": "S'ordena {{count, number}} opció",
-        "ranked_many": "S'ordenen {{count, number}} opcions",
-        "ranked_other": "S'ordenen {{count, number}} opcions",
-        "single": "Una opció, majoria simple"
-      },
       "label": {
         "anonymity": "Anonimat",
         "census": "Cens",
@@ -2208,7 +2195,6 @@
       "ruler_label_other": "{{count, number}} de {{total}} persones han votat, {{percent}}%",
       "ruler_label_any": "Almenys {{voted}} de {{total}} persones han votat alguna pregunta, el {{percent}}%",
       "share_note": "Enllaç a l'urna digital. Comparteix-lo amb les persones amb dret a vot.",
-      "share_public_short": "Enllaç públic",
       "share_title": "Per compartir",
       "turnout": "Participació",
       "voted_any_lines": "Almenys {{voted}} de {{total}} han votat <br/>alguna pregunta",

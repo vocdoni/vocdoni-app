@@ -2157,19 +2157,6 @@
         "ready_body": "{{people}} sur la liste électorale et {{questions}}, toutes ouvertes à la fois.",
         "ready_title": "S'ouvrira automatiquement le {{date}}"
       },
-      "kind": {
-        "budget_one": "{{count, number}} point par personne",
-        "budget_many": "{{count, number}} points par personne",
-        "budget_other": "{{count, number}} points par personne",
-        "multiple": "Jusqu'à {{max}} options sur {{choices}}",
-        "quadratic_one": "{{count, number}} crédit par personne",
-        "quadratic_many": "{{count, number}} crédits par personne",
-        "quadratic_other": "{{count, number}} crédits par personne",
-        "ranked_one": "{{count, number}} option à classer",
-        "ranked_many": "{{count, number}} options à classer",
-        "ranked_other": "{{count, number}} options à classer",
-        "single": "Une option, majorité simple"
-      },
       "label": {
         "anonymity": "Anonymat",
         "census": "Liste électorale",
@@ -2208,7 +2195,6 @@
       "ruler_label_other": "{{count, number}} personnes sur {{total}} ont voté, {{percent}} %",
       "ruler_label_any": "Au moins {{voted}} personnes sur {{total}} ont voté à une question, {{percent}} %",
       "share_note": "Lien vers l'urne numérique. Partagez-le avec les personnes ayant le droit de vote.",
-      "share_public_short": "Lien public",
       "share_title": "À partager",
       "turnout": "Participation",
       "voted_any_lines": "Au moins {{voted}} sur {{total}} ont voté <br/>à une question",

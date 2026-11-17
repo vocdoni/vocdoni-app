@@ -2099,16 +2099,6 @@
         "ready_body": "{{people}} auf der Teilnehmerliste und {{questions}}, alle gleichzeitig offen.",
         "ready_title": "Beginnt von selbst am {{date}}"
       },
-      "kind": {
-        "budget_one": "{{count, number}} Punkt pro Person",
-        "budget_other": "{{count, number}} Punkte pro Person",
-        "multiple": "Bis zu {{max}} von {{choices}} Optionen",
-        "quadratic_one": "{{count, number}} Guthaben pro Person",
-        "quadratic_other": "{{count, number}} Guthaben pro Person",
-        "ranked_one": "{{count, number}} Option wird gereiht",
-        "ranked_other": "{{count, number}} Optionen werden gereiht",
-        "single": "Eine Option, einfache Mehrheit"
-      },
       "label": {
         "anonymity": "Anonymität",
         "census": "Teilnehmerliste",
@@ -2143,7 +2133,6 @@
       "ruler_label_other": "{{count, number}} von {{total}} Personen haben abgestimmt, {{percent}} %",
       "ruler_label_any": "Mindestens {{voted}} von {{total}} Personen haben bei einer Frage abgestimmt, {{percent}} %",
       "share_note": "Link zur digitalen Wahlurne. Teile ihn mit den Stimmberechtigten.",
-      "share_public_short": "Öffentlicher Link",
       "share_title": "Zum Teilen",
       "turnout": "Beteiligung",
       "voted_any_lines": "Mindestens {{voted}} von {{total}} haben <br/>bei einer Frage abgestimmt",

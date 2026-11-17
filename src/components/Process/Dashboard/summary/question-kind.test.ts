@@ -25,27 +25,27 @@ const question = (extra: Partial<VotingProcessQuestion>) =>
   }) as VotingProcessQuestion
 
 describe('questionKind', () => {
-  it('says a single choice is decided by a simple majority', () => {
-    expect(questionKind(t, question({}))).toBe('One choice, simple majority')
+  it('names a single choice by its method alone', () => {
+    expect(questionKind(t, question({}))).toBe('Single choice')
   })
 
-  it('says how many options a multiple choice allows', () => {
+  it('names a multiple choice', () => {
     const multiple = question({
       type: 'multichoice',
       ballotProtocol: protocol({ maxCount: 4, maxValue: 1, maxTotalCost: 2 }),
       typeSetup: { maxChoices: 2, minChoices: 0, uniqueChoices: false },
     })
-    expect(questionKind(t, multiple)).toMatch(/^Up to \d of 4 options$/)
+    expect(questionKind(t, multiple)).toBe('Multiple choice')
   })
 
-  it('counts the options of a ranking', () => {
+  it('names a ranking', () => {
     // A ranked question is created with no `type` (the backend rejects 'ranked'), only the declared name.
     const ranked = question({
       type: undefined,
       metadata: { type: { name: 'ranked' } },
       ballotProtocol: protocol({ maxCount: 4, maxValue: 3, uniqueValues: true }),
     })
-    expect(questionKind(t, ranked)).toBe('4 options are ranked')
+    expect(questionKind(t, ranked)).toBe('Ranked voting')
   })
 
   it('says nothing for a question whose ballot cannot be read', () => {

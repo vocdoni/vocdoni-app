@@ -1,4 +1,5 @@
 import { BallotType } from '@vocdoni/ballot'
+import type { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
 
 type ResultTypeConfig = {
@@ -40,15 +41,17 @@ const RESULT_TYPE_CONFIG: Record<BallotType, ResultTypeConfig> = {
 // t('process.voting_method.quadratic', { defaultValue: 'Quadratic voting' })
 // t('process.voting_method.ranked', { defaultValue: 'Ranked voting' })
 
-export const useResultTypeLabel = (type?: BallotType | null, defaultValue = '') => {
-  const { t } = useTranslation()
-
+/** The method's name ("Single choice", "Ranked voting"), or `defaultValue` for a type that cannot be read. */
+export const resultTypeLabel = (t: TFunction, type?: BallotType | null, defaultValue = ''): string => {
   if (type == null) return defaultValue
 
   const config = RESULT_TYPE_CONFIG[type]
   if (!config) return defaultValue
 
-  return t(config.key, {
-    defaultValue: config.defaultValue ?? defaultValue,
-  })
+  return t(config.key, { defaultValue: config.defaultValue ?? defaultValue })
+}
+
+export const useResultTypeLabel = (type?: BallotType | null, defaultValue = '') => {
+  const { t } = useTranslation()
+  return resultTypeLabel(t, type, defaultValue)
 }
