@@ -1,6 +1,7 @@
 import type { QuestionStatus, VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import {
   activeQuestionIds,
+  canceledAt,
   canOpenQuestion,
   compareVoteRows,
   countByFilter,
@@ -285,6 +286,26 @@ describe('nonTerminalQuestionIds', () => {
   })
 })
 
+describe('canceledAt', () => {
+  it('is the end the backend recorded, also for a vote canceled before its start', () => {
+    const p = vote(['CANCELED'], {
+      startDate: '2026-06-20T00:00:00Z',
+      endDate: '2026-07-01T00:00:00Z',
+      endedAt: '2026-06-11T09:30:00Z',
+    })
+    expect(canceledAt(p)).toEqual(new Date('2026-06-11T09:30:00Z'))
+  })
+
+  it("falls back to the questions' end, and never to the schedule", () => {
+    const fromQuestions = vote([], {
+      startDate: '2026-06-20T00:00:00Z',
+      questions: [question('CANCELED', 0, { endedAt: '2026-06-11T09:30:00Z' })],
+    })
+    expect(canceledAt(fromQuestions)).toEqual(new Date('2026-06-11T09:30:00Z'))
+    expect(canceledAt(vote(['CANCELED'], { startDate: '2026-06-20T00:00:00Z' }))).toBeUndefined()
+  })
+})
+
 describe('list rows', () => {
   const fixtures: VotingProcessResponse[] = [
     vote(['UPCOMING'], { id: 'draft', published: false }),
@@ -295,7 +316,7 @@ describe('list rows', () => {
     vote(['ENDED', 'PAUSED'], { id: 'qbq-mid', ...byQuestion }),
     vote(['ENDED'], { id: 'ended', endDate: '2026-06-10T00:00:00Z' }),
     vote(['RESULTS'], { id: 'results', endDate: '2026-06-12T00:00:00Z' }),
-    vote(['CANCELED'], { id: 'canceled', endDate: '2026-06-11T00:00:00Z' }),
+    vote(['CANCELED'], { id: 'canceled', endDate: '2026-06-11T00:00:00Z', endedAt: '2026-06-11T00:00:00Z' }),
   ]
 
   it('counts each chip so the four add up to all', () => {
@@ -310,6 +331,18 @@ describe('list rows', () => {
     expect(
       compareVoteRows({ process: fixtures[2], state: 'live' }, { process: fixtures[3], state: 'paused' })
     ).toBeLessThan(0)
+  })
+
+  it('sorts a vote canceled before its start by when it was canceled, never by its schedule', () => {
+    // Canceled on 11 June, scheduled 20 June to 1 July: it belongs between the 12 June and the 10 June closes.
+    const early = vote(['CANCELED'], {
+      id: 'canceled-early',
+      startDate: '2026-06-20T00:00:00Z',
+      endDate: '2026-07-01T00:00:00Z',
+      endedAt: '2026-06-11T00:00:00Z',
+    })
+    const rows = toVoteRows([fixtures[6], fixtures[7], early], NOW).map(({ process }) => process.id)
+    expect(rows).toEqual(['results', 'canceled-early', 'ended'])
   })
 
   it('puts the live vote that ends soonest first', () => {

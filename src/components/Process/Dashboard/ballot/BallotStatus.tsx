@@ -3,7 +3,7 @@ import { isBeforeStart } from '@vocdoni/api-client'
 import { useTranslation } from 'react-i18next'
 import { useActions } from '~components/Actions/ActionsContext'
 import { ChevronRightIcon, LockIcon } from '~theme/icons'
-import { canCancelVote } from '~utils/vote-state'
+import { canCancelVote, canceledAt } from '~utils/vote-state'
 import type { SummaryModel } from '../summary/use-summary-model'
 import { useCloneAsDraft } from '../use-clone-as-draft'
 
@@ -20,7 +20,8 @@ export const BallotStatus = ({ model }: { model: SummaryModel }) => {
   // A draft can still be edited, so it is not locked.
   if (state === 'draft') return null
 
-  const opened = !isBeforeStart(election.startDate, now)
+  // A canceled vote opened only if it was canceled after its start.
+  const opened = !isBeforeStart(election.startDate, state === 'canceled' ? (canceledAt(election) ?? now) : now)
   const cancelable = canCancelVote(election, state)
 
   const fixNote = cancelable

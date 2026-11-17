@@ -16,7 +16,8 @@ const TIME: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', h
 /**
  * The all-at-once vote's calendar, newest first: when it closes and everyone sees the results (or how it ended),
  * today (paused, if it is) and when it opens, joined by a thread from mark to mark. The board's convocation, quorum
- * and votes-today entries have no backend data.
+ * and votes-today entries have no backend data. None for a canceled vote: it may never have opened, and the state card
+ * above already says it was canceled.
  */
 export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
   const { t, i18n } = useTranslation()
@@ -27,6 +28,7 @@ export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
     const time = new Intl.DateTimeFormat(i18n.language, TIME)
     const at = (date: Date) => t('votes.summary.calendar.at', { defaultValue: 'At {{time}}.', time: time.format(date) })
     const list: CalendarEntry[] = []
+    if (state === 'canceled') return list
     const start = election.startDate ? new Date(election.startDate) : undefined
     if (start && !isNaN(start.getTime())) {
       list.push({
@@ -62,7 +64,7 @@ export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
         note: at(endDate),
         current: true,
       })
-    } else if (endDate && state !== 'canceled') {
+    } else if (endDate) {
       list.push({
         id: 'close',
         day: endDate,

@@ -12,7 +12,7 @@ import { useDeleteDraft } from '~queries/votes'
 import { Routes } from '~routes'
 import { isLegacyProcess } from '~src/types/voting-process'
 import { ChevronRightIcon, CopyIcon, DeleteIcon, MoreIcon } from '~theme/icons'
-import { closedAt, type VoteRow, type VoteState } from '~utils/vote-state'
+import { canceledAt, closedAt, type VoteRow, type VoteState } from '~utils/vote-state'
 import { VoteRowMeta } from './VoteRowMeta'
 
 export type VoteListRowProps = {
@@ -108,7 +108,9 @@ export const VoteListRow = ({ row, results, canManage, now }: VoteListRowProps) 
   const canDelete = canManage && isDraft
   const title =
     text(process.title) || (isDraft ? t('drafts.not_defined', { defaultValue: 'Not defined yet' }) : process.id)
-  const closedOn = state === 'closed' || state === 'canceled' ? shortDate(closedAt(process)) : ''
+  // A canceled vote shows when it was canceled, never its schedule (it may have been canceled before it began).
+  const closedOn =
+    state === 'canceled' ? shortDate(canceledAt(process)) : state === 'closed' ? shortDate(closedAt(process)) : ''
 
   // Every row keeps its secondary actions in one "More" menu at every width: duplicate, and delete
   // last for a draft.

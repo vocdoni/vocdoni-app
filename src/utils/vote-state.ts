@@ -38,6 +38,15 @@ export const closedAt = (process: VotingProcessResponse, earlyEnd?: Date | null)
   earlyEnd ??
   resolveEndDate(process)
 
+/**
+ * When a canceled vote was canceled: the end the backend recorded, else its questions' latest end. Never the schedule,
+ * which `resolveEndDate` falls back to for a vote canceled before it began. Undefined when nothing recorded it.
+ */
+export const canceledAt = (process: VotingProcessResponse): Date | undefined => {
+  const ended = process.endedAt ? new Date(process.endedAt) : undefined
+  return ended && !isNaN(ended.getTime()) ? ended : questionsEndedAt(process.questions)
+}
+
 // The chain stops a vote at the block that crosses its end, a few seconds either side of the schedule.
 const ON_SCHEDULE_MS = 60_000
 
@@ -223,10 +232,13 @@ export const countByFilter = (rows: readonly VoteRow[]): Record<VoteFilter, numb
 
 const RANK: Record<VoteState, number> = { live: 0, paused: 1, ready: 2, draft: 3, closed: 4, canceled: 4 }
 const time = (value: string | Date | undefined | null) => (value ? new Date(value).getTime() || 0 : 0)
+// Closed and canceled rows share a rank, so both sides of a comparison need the same kind of date.
+const overAt = ({ process, state }: VoteRow) =>
+  time(state === 'canceled' ? canceledAt(process) : resolveEndDate(process))
 
 /**
- * Live, then paused, both by end (soonest first); ready by start (soonest first), drafts newest first, closed and
- * canceled by end, latest first.
+ * Live, then paused, both by end (soonest first); ready by start (soonest first), drafts newest first, closed by end
+ * and canceled by when they were canceled, latest first.
  */
 export const compareVoteRows = (a: VoteRow, b: VoteRow): number => {
   const byRank = RANK[a.state] - RANK[b.state]
@@ -242,7 +254,7 @@ export const compareVoteRows = (a: VoteRow, b: VoteRow): number => {
       return a.process.id < b.process.id ? 1 : a.process.id > b.process.id ? -1 : 0
     case 'closed':
     case 'canceled':
-      return time(resolveEndDate(b.process)) - time(resolveEndDate(a.process))
+      return overAt(b) - overAt(a)
     default:
       return 0
   }

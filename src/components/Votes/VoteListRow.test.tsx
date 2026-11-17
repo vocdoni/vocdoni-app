@@ -130,6 +130,28 @@ describe('VoteListRow actions', () => {
 })
 
 describe('VoteListRow content', () => {
+  it('dates a canceled vote by when it was canceled, never by its schedule', () => {
+    // Canceled yesterday, before its scheduled start: the row must not show the scheduled end, a day still to come.
+    const canceledOn = iso(-1)
+    renderRow(
+      make({
+        startDate: iso(3),
+        endDate: iso(10),
+        endedAt: canceledOn,
+        questions: [question('CANCELED', { endedAt: canceledOn })],
+      })
+    )
+    const onDay = (value: string) =>
+      `on ${new Intl.DateTimeFormat('en', { day: 'numeric', month: 'long' }).format(new Date(value))}`
+    expect(screen.getByText(onDay(canceledOn))).toBeInTheDocument()
+    expect(screen.queryByText(onDay(iso(10)))).not.toBeInTheDocument()
+  })
+
+  it('gives a canceled vote no date when nothing recorded when it was canceled', () => {
+    renderRow(make({ startDate: iso(3), endDate: iso(10), questions: [question('CANCELED')] }))
+    expect(screen.queryByText(/^on /)).not.toBeInTheDocument()
+  })
+
   it('warns about a draft with no closing date', () => {
     renderRow(make({ published: false, endDate: undefined }))
     expect(screen.getByText('No closing date yet.')).toBeInTheDocument()

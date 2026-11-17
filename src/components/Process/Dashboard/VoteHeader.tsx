@@ -1,5 +1,5 @@
 import { Button, Flex, Grid, Icon, Link, Span, Text } from '@chakra-ui/react'
-import { questionsEndedAt, resolveEndDate } from '@vocdoni/api-client'
+import { resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useElection } from '@vocdoni/react-components'
 import { isSameDay } from 'date-fns'
@@ -29,7 +29,7 @@ import {
   ViewIcon,
 } from '~theme/icons'
 import { ucfirst } from '~utils/strings'
-import { canCancelVote, closedAt, type VoteState } from '~utils/vote-state'
+import { canCancelVote, canceledAt, closedAt, type VoteState } from '~utils/vote-state'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 type HeaderPartProps = { election: VotingProcessResponse; state: VoteState; now: Date }
@@ -162,24 +162,24 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
         : t('votes.header.line.ended', { defaultValue: 'Ended {{date}}.', date: dateAt(endedAt) })
     }
     case 'canceled': {
-      const canceledAt = parseDate(election.endedAt) ?? questionsEndedAt(election.questions)
-      if (!canceledAt) return t('votes.header.line.canceled', { defaultValue: 'The votes were discarded.' })
+      const canceled = canceledAt(election)
+      if (!canceled) return t('votes.header.line.canceled', { defaultValue: 'The votes were discarded.' })
       if (byQuestion) {
         return t('votes.header.line.by_question_canceled', {
           defaultValue: 'On {{day}} at {{time}}. The votes were discarded.',
-          day: shortDate(canceledAt),
-          time: time(canceledAt),
+          day: shortDate(canceled),
+          time: time(canceled),
         })
       }
-      return isSameDay(canceledAt, now)
+      return isSameDay(canceled, now)
         ? t('votes.header.line.canceled_today', {
             defaultValue: 'Today, {{day}}, at {{time}}. The votes were discarded.',
-            day: day(canceledAt),
-            time: time(canceledAt),
+            day: day(canceled),
+            time: time(canceled),
           })
         : t('votes.header.line.canceled_on', {
             defaultValue: '{{date}}. The votes were discarded.',
-            date: upper(dateAt(canceledAt)),
+            date: upper(dateAt(canceled)),
           })
     }
     default:

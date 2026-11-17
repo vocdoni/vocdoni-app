@@ -1,7 +1,7 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { act } from '@testing-library/react'
 import i18n from 'i18next'
-import { cleanup, render, screen } from '~src/test-utils'
+import { render, screen } from '~src/test-utils'
 import type { VoteState } from '~utils/vote-state'
 import { SummaryCalendar } from './SummaryCalendar'
 import type { SummaryModel } from './use-summary-model'
@@ -69,7 +69,7 @@ describe('SummaryCalendar', () => {
     expect(steps()).toEqual([expect.stringContaining('Automatic closing'), expect.stringContaining('Vote opens')])
   })
 
-  it('ends an ended vote at its end, and a canceled one with no closing', () => {
+  it('ends an ended vote at its end', () => {
     const { unmount } = render(<SummaryCalendar model={model('closed')} />)
     expect(steps()).toEqual([
       expect.stringContaining('Closed automatically at the deadline'),
@@ -79,9 +79,16 @@ describe('SummaryCalendar', () => {
 
     render(<SummaryCalendar model={model('closed', undefined, true)} />)
     expect(steps()[0]).toContain('Ended manually')
-    cleanup()
+  })
 
-    render(<SummaryCalendar model={model('canceled')} />)
-    expect(steps()).toEqual([expect.stringContaining('Vote opened')])
+  it('shows no calendar for a canceled vote, which may never have opened', () => {
+    // Canceled after its start, and canceled before its scheduled start passed: neither says when it opens or opened.
+    const { unmount } = render(<SummaryCalendar model={model('canceled')} />)
+    expect(screen.queryByRole('region', { name: 'Calendar' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('listitem')).not.toBeInTheDocument()
+    unmount()
+
+    render(<SummaryCalendar model={model('canceled', local(11, 9))} />)
+    expect(screen.queryByText(/Vote open/)).not.toBeInTheDocument()
   })
 })
