@@ -228,7 +228,8 @@ export const ByQuestionCard = ({ questions, notice }: ByQuestionCardProps) => {
       {/* What an `off` Open describes itself with; the boards draw it nowhere. */}
       <VisuallyHidden id={reasonId}>
         {t('votes.manage.open_off_note', {
-          defaultValue: '“Open” is disabled while another question is open, and before the start time.',
+          defaultValue:
+            '“Open” is disabled while another question is open, before the start time and while the vote is paused.',
         })}
       </VisuallyHidden>
       {dock && (

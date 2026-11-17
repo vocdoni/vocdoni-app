@@ -2089,7 +2089,7 @@
         "resume_vote": "Próximo passo: retomar a votação"
       },
       "open": "Abrir",
-      "open_off_note": "«Abrir» fica desativado enquanto houver outra pergunta aberta, e antes da hora de início.",
+      "open_off_note": "«Abrir» fica desativado enquanto houver outra pergunta aberta, antes da hora de início e enquanto a votação estiver em pausa.",
       "paused_note": "Ninguém pode votar nela.",
       "percent": "{{percent}}%",
       "provisional": "Resultado provisório.",

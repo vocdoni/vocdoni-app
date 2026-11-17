@@ -2028,7 +2028,7 @@
         "resume_vote": "Hurrengo urratsa: berrekin bozketari"
       },
       "open": "Ireki",
-      "open_off_note": "«Ireki» desgaituta dago beste galdera bat irekita dagoen bitartean, eta hasiera-ordua baino lehen.",
+      "open_off_note": "«Ireki» desgaituta dago beste galdera bat irekita dagoen bitartean, hasiera-ordua baino lehen eta bozketa pausatuta dagoen bitartean.",
       "paused_note": "Inork ezin du bozkatu.",
       "percent": "%{{percent}}",
       "provisional": "Behin-behineko emaitza.",

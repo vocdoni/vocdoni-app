@@ -2089,7 +2089,7 @@
         "resume_vote": "Passo successivo: riprendi la votazione"
       },
       "open": "Apri",
-      "open_off_note": "«Apri» è disattivato finché è aperta un'altra domanda, e prima dell'ora di inizio.",
+      "open_off_note": "«Apri» è disattivato finché è aperta un'altra domanda, prima dell'ora di inizio e mentre la votazione è in pausa.",
       "paused_note": "Nessuno può votarla.",
       "percent": "{{percent}}%",
       "provisional": "Risultato provvisorio.",

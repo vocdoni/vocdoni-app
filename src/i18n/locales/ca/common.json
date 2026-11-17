@@ -2089,7 +2089,7 @@
         "resume_vote": "Següent pas: reprèn la votació"
       },
       "open": "Obre",
-      "open_off_note": "«Obre» surt desactivat mentre hi ha una altra pregunta oberta, i abans de l'hora d'inici.",
+      "open_off_note": "«Obre» surt desactivat mentre hi ha una altra pregunta oberta, abans de l'hora d'inici i mentre la votació està en pausa.",
       "paused_note": "Ningú la pot votar.",
       "percent": "{{percent}}%",
       "provisional": "Resultat provisional.",

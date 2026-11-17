@@ -88,7 +88,7 @@ const show = (election: VotingProcessResponse) => {
   return render(<ByQuestionCard questions={election.questions} />)
 }
 
-const NOTE = '“Open” is disabled while another question is open, and before the start time.'
+const NOTE = '“Open” is disabled while another question is open, before the start time and while the vote is paused.'
 
 const questionsList = () => within(screen.getByRole('region', { name: 'Questions' }))
 const dock = () => screen.queryByRole('region', { name: 'Vote controls' })

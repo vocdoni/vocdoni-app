@@ -2089,7 +2089,7 @@
         "resume_vote": "Étape suivante : reprendre le vote"
       },
       "open": "Ouvrir",
-      "open_off_note": "« Ouvrir » est désactivé tant qu'une autre question est ouverte, et avant l'heure de début.",
+      "open_off_note": "« Ouvrir » est désactivé tant qu'une autre question est ouverte, avant l'heure de début et tant que le vote est en pause.",
       "paused_note": "Personne ne peut y voter.",
       "percent": "{{percent}} %",
       "provisional": "Résultat provisoire.",

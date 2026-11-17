@@ -2028,7 +2028,7 @@
         "resume_vote": "Next step: resume the vote"
       },
       "open": "Open",
-      "open_off_note": "“Open” is disabled while another question is open, and before the start time.",
+      "open_off_note": "“Open” is disabled while another question is open, before the start time and while the vote is paused.",
       "paused_note": "No one can vote on it.",
       "percent": "{{percent}}%",
       "provisional": "Provisional result.",

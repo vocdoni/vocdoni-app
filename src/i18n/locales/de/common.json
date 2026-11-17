@@ -2028,7 +2028,7 @@
         "resume_vote": "Nächster Schritt: Abstimmung fortsetzen"
       },
       "open": "Öffnen",
-      "open_off_note": "„Öffnen“ ist deaktiviert, solange eine andere Frage offen ist, und vor der Startzeit.",
+      "open_off_note": "„Öffnen“ ist deaktiviert, solange eine andere Frage offen ist, vor der Startzeit und solange die Abstimmung pausiert ist.",
       "paused_note": "Niemand kann darüber abstimmen.",
       "percent": "{{percent}} %",
       "provisional": "Vorläufiges Ergebnis.",
