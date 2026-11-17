@@ -70,8 +70,8 @@ const StateLegend = () => {
   )
 }
 
-/** The list of an organisation with no votes: how to start, and what each state will mean. */
-export const VotesEmpty = () => {
+/** The list of an organisation with no votes: how to start (for whoever may create one), and what each state means. */
+export const VotesEmpty = ({ canCreate = true }: { canCreate?: boolean }) => {
   const { t } = useTranslation()
   const title = t('votes.empty.title', { defaultValue: 'No votes yet' })
 
@@ -98,13 +98,15 @@ export const VotesEmpty = () => {
           </Stack>
           {/* Full width on phones, where it is the one action of the screen. The phone and tablet boards lead with a
               plus, the desktop one ends with an arrow. */}
-          <Button asChild alignSelf={{ base: 'stretch', md: 'flex-start' }}>
-            <RouterLink to={generatePath(Routes.processes.create)}>
-              <Icon as={AddIcon} display={{ lg: 'none' }} />
-              {t('votes.empty.create', { defaultValue: 'Create a vote' })}
-              <Icon as={ForwardIcon} display={{ base: 'none', lg: 'inline-block' }} />
-            </RouterLink>
-          </Button>
+          {canCreate && (
+            <Button asChild alignSelf={{ base: 'stretch', md: 'flex-start' }}>
+              <RouterLink to={generatePath(Routes.processes.create)}>
+                <Icon as={AddIcon} display={{ lg: 'none' }} />
+                {t('votes.empty.create', { defaultValue: 'Create a vote' })}
+                <Icon as={ForwardIcon} display={{ base: 'none', lg: 'inline-block' }} />
+              </RouterLink>
+            </Button>
+          )}
         </Stack>
       </Card.Root>
       <StateLegend />

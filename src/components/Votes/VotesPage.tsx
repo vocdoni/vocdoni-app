@@ -113,7 +113,8 @@ export const VotesPage = () => {
 
   const createPath = generatePath(Routes.processes.create)
   const onNew = useCallback(() => navigate(createPath), [navigate, createPath])
-  useListShortcuts({ onNew, searchRef, enabled: isDesktop })
+  // Only admins and managers create votes: other roles get neither the button nor `n`.
+  useListShortcuts({ onNew: canManage ? onNew : undefined, searchRef, enabled: isDesktop })
 
   // This browser's pause memory tells a held question-by-question vote from a ready one (list items carry no votes);
   // its version re-derives the rows when it changes.
@@ -185,7 +186,7 @@ export const VotesPage = () => {
   let content = null
   if (!loading && !failed) {
     if (!rows.length) {
-      content = <VotesEmpty />
+      content = <VotesEmpty canCreate={canManage} />
     } else if (!visible.length) {
       content = (
         <EmptyState
@@ -226,7 +227,7 @@ export const VotesPage = () => {
       {/* Centred on a phone and a tablet; from `lg` the button lines up with the title's bottom edge, as the board. */}
       <Flex justify='space-between' align={{ base: 'center', lg: 'flex-end' }} gap={{ base: '3', lg: '4' }}>
         <PageTitle>{t('votes.list.title', { defaultValue: 'Votes' })}</PageTitle>
-        {rows.length > 0 && (
+        {rows.length > 0 && canManage && (
           <Button variant='outline' asChild aria-keyshortcuts='n'>
             <RouterLink to={createPath}>
               <Icon as={AddIcon} />
