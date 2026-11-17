@@ -28,8 +28,25 @@ const baseStyle = {
 export const Dialog = defineSlotRecipe({
   slots: parts.keys(),
   base: baseStyle,
-  // Every dialog sits in the middle of the screen; a taller one still scrolls from its top.
+  // From `md` every dialog sits in the middle of the screen; a taller one still scrolls from its top. Below `md` it
+  // is a bottom sheet: pinned to the bottom edge, full width, rounded on top and clear of the home indicator.
   // Chakra's placement variants stay as they are: naming `center` lets it be the default.
-  variants: { placement: { center: {} } },
+  variants: {
+    placement: {
+      center: {
+        positioner: { mdDown: { alignItems: 'flex-end' } },
+        content: {
+          mdDown: {
+            '--dialog-base-margin': '0',
+            mx: '0',
+            maxW: 'full',
+            borderBottomRadius: 'none',
+            borderTopRadius: 'xl',
+            pb: '[env(safe-area-inset-bottom)]',
+          },
+        },
+      },
+    },
+  },
   defaultVariants: { placement: 'center' },
 })

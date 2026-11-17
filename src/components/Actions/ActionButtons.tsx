@@ -1,44 +1,33 @@
 import { Button, type ButtonProps } from '@chakra-ui/react'
-import { useConfirm, useElection } from '@vocdoni/react-components'
-import { hasResults, isUpcoming } from '@vocdoni/api-client'
-import { forwardRef } from 'react'
+import { useElection } from '@vocdoni/react-components'
+import { forwardRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from '~components/Auth/useAuth'
-import { sameAddress } from '~utils/address'
-import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { isQuestionByQuestion } from '~src/types/voting-process'
 import { useActions } from './ActionsContext'
-import { ConfirmActionModal } from './ConfirmActionModal'
+import { EndVoteDialog } from './EndVoteDialog'
+import { trackProcessAction } from './track'
 
-const trackProcessAction = (action: string, election: { id?: string } | null | undefined) =>
-  trackAnalyticsEvent({
-    name: AnalyticsEvents.ProcessAction,
-    props: { action, election_id: election?.id ?? 'unknown' },
-  })
+// The vote header decides which of these a state shows (the boards' action matrix); each one only acts. A
+// question-by-question vote pauses and resumes as a whole: every open question, then the ones that pause held.
 
 export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { currentAddress } = useAuth()
-  const { election, status } = useElection()
-  const {
-    resume,
-    disabled,
-    loading: { continue: loading },
-  } = useActions()
+  const { election } = useElection()
+  const { resume, disabled, canManage, loading, votePause } = useActions()
   const { t } = useTranslation()
 
-  if (!election || !sameAddress(election.orgAddress, currentAddress)) {
-    return null
-  }
+  if (!election || !canManage) return null
+  const byQuestion = isQuestionByQuestion(election)
 
   return (
     <Button
       ref={ref}
-      loading={loading}
+      loading={byQuestion ? votePause.isPending : loading.continue}
       onClick={() => {
-        trackProcessAction('resume', election)
-        return resume()
+        trackProcessAction(byQuestion ? 'resume_vote' : 'resume', election)
+        return byQuestion ? votePause.resume() : resume()
       }}
-      disabled={disabled || status !== 'PAUSED'}
-      variant='outline'
+      disabled={disabled}
+      variant='solid'
       {...props}
     >
       {children ?? t('actions.continue')}
@@ -48,28 +37,22 @@ export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ chil
 ActionContinue.displayName = 'ActionContinue'
 
 export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { currentAddress } = useAuth()
-  const { election, status } = useElection()
-  const {
-    pause,
-    disabled,
-    loading: { pause: loading },
-  } = useActions()
+  const { election } = useElection()
+  const { pause, disabled, canManage, loading, votePause } = useActions()
   const { t } = useTranslation()
 
-  if (!election || !sameAddress(election.orgAddress, currentAddress)) {
-    return null
-  }
+  if (!election || !canManage) return null
+  const byQuestion = isQuestionByQuestion(election)
 
   return (
     <Button
       ref={ref}
-      loading={loading}
+      loading={byQuestion ? votePause.isPending : loading.pause}
       onClick={() => {
-        trackProcessAction('pause', election)
-        return pause()
+        trackProcessAction(byQuestion ? 'pause_vote' : 'pause', election)
+        return byQuestion ? votePause.pause() : pause()
       }}
-      disabled={disabled || status !== 'ONGOING'}
+      disabled={disabled}
       variant='outline'
       {...props}
     >
@@ -80,93 +63,32 @@ export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ childre
 ActionPause.displayName = 'ActionPause'
 
 export const ActionEnd = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { currentAddress } = useAuth()
-  const { confirm } = useConfirm()
-  const { election, status } = useElection()
+  const { election } = useElection()
   const {
-    end,
     disabled,
+    targets,
+    canManage,
     loading: { end: loading },
   } = useActions()
   const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
 
-  const handle = async () => {
-    if (
-      await confirm(
-        <ConfirmActionModal
-          title={t('confirm.end_process_title')}
-          description={t('actions.end_description', { election })}
-          confirm={t('confirm.end_process_button')}
-          cancel={t('confirm.cancel_button')}
-        />
-      )
-    ) {
-      trackProcessAction('end', election)
-      await end()
-    }
-  }
-
-  if (!election || !sameAddress(election.orgAddress, currentAddress)) {
-    return null
-  }
+  if (!election || !canManage) return null
 
   return (
-    <Button
-      ref={ref}
-      loading={loading}
-      onClick={handle}
-      disabled={disabled || hasResults(election) || status === 'ENDED' || status === 'CANCELED' || isUpcoming(election)}
-      variant='outline'
-      {...props}
-    >
-      {children ?? t('actions.end')}
-    </Button>
+    <>
+      <Button
+        ref={ref}
+        loading={loading}
+        onClick={() => setOpen(true)}
+        disabled={disabled || !targets.length}
+        variant='outline'
+        {...props}
+      >
+        {children ?? t('actions.end')}
+      </Button>
+      <EndVoteDialog open={open} onClose={() => setOpen(false)} />
+    </>
   )
 })
 ActionEnd.displayName = 'ActionEnd'
-
-export const ActionCancel = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { currentAddress } = useAuth()
-  const { confirm } = useConfirm()
-  const { election, status } = useElection()
-  const {
-    cancel,
-    disabled,
-    loading: { cancel: loading },
-  } = useActions()
-  const { t } = useTranslation()
-
-  const handle = async () => {
-    if (
-      await confirm(
-        <ConfirmActionModal
-          title={t('confirm.cancel_process_title')}
-          description={t('actions.cancel_description', { election })}
-          confirm={t('confirm.cancel_process_button')}
-          cancel={t('confirm.cancel_button')}
-        />
-      )
-    ) {
-      trackProcessAction('cancel', election)
-      await cancel()
-    }
-  }
-
-  if (!election || !sameAddress(election.orgAddress, currentAddress)) {
-    return null
-  }
-
-  return (
-    <Button
-      ref={ref}
-      loading={loading}
-      onClick={handle}
-      disabled={disabled || status === 'CANCELED' || status === 'ENDED' || hasResults(election)}
-      variant='outline'
-      {...props}
-    >
-      {children ?? t('actions.cancel')}
-    </Button>
-  )
-})
-ActionCancel.displayName = 'ActionCancel'

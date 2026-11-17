@@ -33,21 +33,21 @@ const xxl = defineStyle({
   },
 })
 
-// iOS Safari auto-zooms focused inputs with a font-size below 16px; keep base at
-// `lg` (the 1rem step) on mobile and restore the control size from `md` up.
+// iOS Safari auto-zooms focused inputs with a font-size below 16px: 16px on a phone, 14px on a tablet and the
+// control size from `lg`.
 // Set at variant level so it overrides Chakra's default size variants (textStyle `sm`).
 export const mobileSafeFontSize = defineStyle({
-  fontSize: { base: 'lg', md: 'control' },
+  fontSize: { base: 'lg', md: 'md', lg: 'control' },
   _placeholder: {
-    fontSize: { base: 'lg', md: 'control' },
+    fontSize: { base: 'lg', md: 'md', lg: 'control' },
   },
 })
 
-// One field height, the shared control size.
+// One field height, the shared control size: 44px on a phone, 40px on a tablet, 34px from `lg`.
 const sm = defineStyle({
   borderRadius: 'l2',
   px: '3',
-  '--input-height': 'sizes.control.md',
+  '--input-height': { base: 'sizes.control.touch', md: 'sizes.control.tablet', lg: 'sizes.control.md' },
   ...mobileSafeFontSize,
 })
 
@@ -68,6 +68,18 @@ export const input = defineRecipe({
         px: '0',
         bg: 'transparent',
         boxShadow: '[none]',
+      },
+      // A read-only value to copy (a voting link): a sunken fill, no ring, in the figure face.
+      code: {
+        border: '[none]',
+        boxShadow: '[none]',
+        bg: 'bg.muted',
+        color: 'fg.muted',
+        // Restated over the size's field text: 13px up to `lg`, 12px from `lg`. Read-only, so iOS never zooms.
+        fontFamily: 'figure',
+        fontSize: { base: 'sm', lg: 'xs' },
+        letterSpacing: 'none',
+        textOverflow: 'ellipsis',
       },
     },
   },

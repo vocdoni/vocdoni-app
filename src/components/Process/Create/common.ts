@@ -41,6 +41,8 @@ export type Census = {
   use2FAMethod: TwoFAMethod
 }
 
+export type VotingMode = 'all' | 'byQuestion'
+
 export type Process = {
   title: string
   description: string
@@ -58,6 +60,7 @@ export type Process = {
   censusType: CensusTypes
   streamUri?: string
   draft?: boolean
+  votingMode: VotingMode
 }
 
 export const defaultQuestion: Question = {
@@ -86,4 +89,5 @@ export const defaultProcessValues: Process = {
   census: null,
   censusType: CensusTypes.CSP,
   streamUri: '',
+  votingMode: 'all',
 }

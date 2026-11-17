@@ -94,10 +94,6 @@ vi.mock('~components/Pricing/ProcessCheckout', async (importOriginal) => {
   }
 })
 
-vi.mock('~elements/dashboard/processes/drafts', () => ({
-  useDeleteDraft: () => ({}),
-}))
-
 vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
   useApiClient: () => ({ client: mockApiClient }),
@@ -143,6 +139,7 @@ describe('useFormToVotingProcessRequest', () => {
       title: 'Test Election',
       description: 'Test Description',
       autoStart: true,
+      votingMode: 'all',
       startDate: '',
       startTime: '',
       endDate: '2025-12-31',

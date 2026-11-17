@@ -34,10 +34,17 @@ const title = { textStyle: 'control', fontWeight: 'medium-plus' } as const
 export const Card = defineSlotRecipe({
   slots: cardAnatomy.keys(),
   base: {
-    header: { px: '5', pt: '4', pb: '3' },
+    // The card's inner edge is the guide's: 16px on a phone, 22px from a tablet.
+    header: { px: { base: '4', md: 'card' }, pt: '4', pb: '3' },
     // Rows after the header are told apart by a hairline.
-    body: { px: '5', py: '3.5', _notFirst: { borderTopWidth: 'hairline', borderColor: 'border' } },
-    footer: { px: '5', pb: '4' },
+    body: {
+      px: { base: '4', md: 'card' },
+      py: '3.5',
+      _notFirst: { borderTopWidth: 'hairline', borderColor: 'border' },
+      // The row being worked on (an open question): an accent rule on its leading edge.
+      '&[data-current]': { boxShadow: '[inset {borderWidths.thick} 0 0 {colors.accent.solid}]' },
+    },
+    footer: { px: { base: '4', md: 'card' }, pb: '4' },
   },
   variants: {
     // Chakra's sizes only set the title style and `--card-padding`; every title is a control label.
@@ -64,11 +71,13 @@ export const Card = defineSlotRecipe({
         },
       },
       // A border around content that spaces itself, such as a table.
+      // A ring, not a border, as the guide's cards: it takes no room, so the card is as tall as its content.
       frame: {
         root: {
+          // Filled: the dashboard page is grey, and a card stays white on it.
           bg: 'surface.card',
-          borderWidth: 'hairline',
-          borderColor: 'border',
+          borderWidth: '[0]',
+          boxShadow: 'shadow.ring',
         },
       },
       // A tinted block inside a form or card: a faint fill with the hairline.
@@ -124,6 +133,15 @@ export const Card = defineSlotRecipe({
           _dragging: {
             borderColor: 'accent.solid',
           },
+        },
+      },
+      // An explanation rather than data (what each vote state means): a dashed edge, no fill.
+      note: {
+        root: {
+          borderWidth: 'hairline',
+          borderStyle: '[dashed]',
+          borderColor: 'border.emphasized',
+          p: 'var(--card-padding)',
         },
       },
       // A filled card without a border, around a page-level empty state.

@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { Route, Routes } from 'react-router'
-import { render, screen, TestMemoryRouter } from '~src/test-utils'
+import { fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { RoutedTabs } from './RoutedTabs'
 
 const tabs = [
@@ -24,5 +25,37 @@ describe('RoutedTabs', () => {
     const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '')
     expect(panel).not.toBeNull()
     expect(panel).toContainElement(screen.getByText('Second content'))
+  })
+
+  it('keeps the tab mounted, with its state, when the notice comes and goes', () => {
+    const Counter = () => {
+      const [clicks, setClicks] = useState(0)
+      return <button onClick={() => setClicks((value) => value + 1)}>{`Clicked ${clicks}`}</button>
+    }
+    const Page = () => {
+      const [notice, setNotice] = useState(false)
+      return (
+        <>
+          <button onClick={() => setNotice((value) => !value)}>Toggle notice</button>
+          <RoutedTabs tabs={tabs} notice={notice ? <p>Paused</p> : undefined} />
+        </>
+      )
+    }
+    render(
+      <TestMemoryRouter initialEntries={['/admin/first']}>
+        <Routes>
+          <Route path='/admin' element={<Page />}>
+            <Route path='first' element={<Counter />} />
+          </Route>
+        </Routes>
+      </TestMemoryRouter>
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clicked 0' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Toggle notice' }))
+    expect(screen.getByText('Paused')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Toggle notice' }))
+
+    expect(screen.getByRole('button', { name: 'Clicked 1' })).toBeInTheDocument()
   })
 })

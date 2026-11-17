@@ -69,6 +69,13 @@ describe('votingProcessToForm', () => {
     ])
   })
 
+  it('maps a question-by-question process to the byQuestion mode', () => {
+    const paused = process({ initialStatus: 'PAUSED' } as Partial<VotingProcessResponse>)
+
+    expect(votingProcessToForm(paused).votingMode).toBe('byQuestion')
+    expect(votingProcessToForm(process()).votingMode).toBe('all')
+  })
+
   describe('extended info', () => {
     it('is off when no choice carries a description or an image', () => {
       expect(votingProcessToForm(process()).questions[0].extendedInfo).toBe(false)

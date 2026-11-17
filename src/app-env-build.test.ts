@@ -42,6 +42,13 @@ describe('buildAppEnv', () => {
     expect(buildAppEnv({ DISABLE_ANONYMOUS_VOTING: '1' }).DISABLE_ANONYMOUS_VOTING).toBe(false)
   })
 
+  it('only enables QUESTION_BY_QUESTION for the exact string "true"', () => {
+    expect(buildAppEnv({}).QUESTION_BY_QUESTION).toBe(false)
+    expect(buildAppEnv({ QUESTION_BY_QUESTION: 'true' }).QUESTION_BY_QUESTION).toBe(true)
+    expect(buildAppEnv({ QUESTION_BY_QUESTION: 'false' }).QUESTION_BY_QUESTION).toBe(false)
+    expect(buildAppEnv({ QUESTION_BY_QUESTION: '1' }).QUESTION_BY_QUESTION).toBe(false)
+  })
+
   it('resolves HOME_PROCESS_ID, treating blank values as unset', () => {
     expect(buildAppEnv({}).HOME_PROCESS_ID).toBeUndefined()
     expect(buildAppEnv({ HOME_PROCESS_ID: '   ' }).HOME_PROCESS_ID).toBeUndefined()

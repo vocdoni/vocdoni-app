@@ -5,28 +5,20 @@
   },
   "actions": {
     "cancel": "Annulla",
-    "cancel_description": "Attenzione: annullare \"{{ election.title.default }}\" è irreversibile e annullerà tutti i voti precedenti.",
     "confirm": "Conferma",
     "continue": "Riprendi immediatamente il processo, nel caso fosse stato messo in pausa",
-    "continue_description": "Ripresa del processo di voto \"{{ election.title.default }}\"...",
     "create_first_vote": "Visualizza tutti i processi",
     "create_new_vote": "Crea nuova votazione",
     "edit": "Modifica",
     "end": "Termina immediatamente il processo, impedendo l'invio di nuovi voti e mostrando i risultati (attenzione: non può essere annullato)",
-    "end_description": "Attenzione: chiudere \"{{ election.title.default }}\" è irreversibile e i votanti non potranno più votare.",
-    "error_title": "Si è verificato un errore durante l'esecuzione della transazione",
     "manage_team": "Gestisci team",
     "more": "Altre opzioni",
     "pause": "Mette in pausa temporaneamente il processo di voto, fino alla ripresa manuale. Mentre il processo è in pausa, i votanti non possono inviare voti.",
-    "pause_description": "Messa in pausa del processo di voto \"{{ election.title.default }}\"...",
     "save": "Salva modifiche",
     "save_changes": "Salva modifiche",
-    "view_active_votes": "Visualizza votazioni attive",
-    "waiting_title": "In attesa di conferma della transazione..."
+    "view_active_votes": "Visualizza votazioni attive"
   },
   "add_new_org": "Aggiungi una nuova organizzazione",
-  "additional_actions": "Azioni aggiuntive",
-  "all_processes": "Tutti",
   "already_member": "Hai già un account?",
   "alt": {
     "images": {
@@ -96,11 +88,9 @@
     "unavailable": "La prenotazione non è al momento disponibile. Riprova più tardi."
   },
   "calendar": {
-    "max_duration_exceeded": "La durata supera il limite di {{ maxDuration }} giorni. Ridurre la durata della votazione.",
-    "title": "Programma"
+    "max_duration_exceeded": "La durata supera il limite di {{ maxDuration }} giorni. Ridurre la durata della votazione."
   },
   "cancel": "Annulla",
-  "cancel_vote": "Annulla votazione",
   "census": {
     "checkout": {
       "admin_only": "Solo gli amministratori possono aggiungere posti per votanti.",
@@ -142,7 +132,6 @@
       "voted_partial": "Ha votato {{voted}}/{{total}}"
     }
   },
-  "census_size": "Dimensione del censimento",
   "change_password": {
     "subtitle": "Inserire la password attuale e una nuova password per aggiornare le credenziali.",
     "title": "Cambia password"
@@ -155,12 +144,7 @@
   },
   "confirm": {
     "cancel": "Annulla",
-    "cancel_button": "Annulla",
-    "cancel_process_button": "Annulla voto",
-    "cancel_process_title": "Annulla voto",
-    "confirm": "Conferma voto",
-    "end_process_button": "Termina voto",
-    "end_process_title": "Termina voto"
+    "confirm": "Conferma voto"
   },
   "confirm_password": "Conferma password",
   "confirm_password_placeholder": "Conferma la nuova password",
@@ -171,7 +155,6 @@
     "restored_title": "Connessione ripristinata"
   },
   "contact_us": "Contattaci",
-  "control_panel": "Pannello di controllo",
   "cookies": {
     "accept": "Accetta",
     "aria_label": "Banner di consenso cookie",
@@ -182,8 +165,7 @@
   },
   "copy": {
     "address": "Copia indirizzo",
-    "copied_title": "Copiato!",
-    "copy": "Copia"
+    "copied_title": "Copiato!"
   },
   "country_selector": {
     "selector_label": "Paese"
@@ -255,10 +237,6 @@
       "reset_form": "Reimposta modulo",
       "toggle_sidebar": "Attiva/disattiva barra laterale"
     },
-    "process_view": {
-      "date_format": "do MMMM y",
-      "time_format": "p"
-    },
     "usage": {
       "description": "Monitora l'utilizzo della tua organizzazione rispetto ai suoi limiti.",
       "limit_exceeded_message": "La tua base di membri ha raggiunto il limite di {{max}} membri.",
@@ -298,23 +276,11 @@
   "delete_my_account": "Elimina il mio account",
   "description": "Descrizione",
   "do_it_later": "Fallo più tardi",
-  "draft_processes": "Bozze",
   "drafts": {
-    "actions": "Azioni",
-    "clone": "Clona bozza",
     "cloned_draft": "Bozza clonata con successo",
     "cloned_draft_error": "Errore durante la clonazione della bozza",
-    "delete": "Elimina bozza",
     "deleted_draft": "Bozza eliminata con successo",
-    "edit": "Modifica bozza",
-    "empty": "Nessuna bozza trovata",
-    "empty_description": "Crea una bozza per iniziare.",
-    "load_error": "Impossibile caricare le bozze",
-    "load_error_description": "Riprova.",
-    "not_defined": "Non ancora definito",
-    "question_type": {
-      "mixed": "Misto"
-    }
+    "not_defined": "Non ancora definito"
   },
   "drag_handle": {
     "label": "Trascina per riordinare"
@@ -347,10 +313,7 @@
   },
   "email": "Email",
   "email_placeholder": "nome@email.com",
-  "end_date": "Data fine",
   "end_time": "Ora fine",
-  "end_vote": "Termina votazione",
-  "ended_processes": "Terminati",
   "error": {
     "crash_description": "Ricarica la pagina o torna alla dashboard.",
     "crash_title": "Qualcosa è andato storto",
@@ -859,6 +822,7 @@
     "selector_label": "Dimensione associazione"
   },
   "menu": {
+    "close": "Chiudi menu",
     "collapse": "Comprimi menu",
     "create": "Crea processo",
     "dashboard": "Dashboard",
@@ -880,7 +844,6 @@
   "new_password_placeholder": "Inserisci la tua nuova password",
   "new_vote": "Nuovo voto",
   "new_voting": "Nuovo voto",
-  "no_results_filtering": "Il filtro di ricerca attuale non restituisce risultati",
   "not_registred_yet": "Non hai un account?",
   "oauth": {
     "link": {
@@ -990,7 +953,6 @@
     "success": "Password aggiornata con successo"
   },
   "passwords_do_not_match": "Le password non coincidono",
-  "pause_vote": "Metti in pausa voto",
   "payment": {
     "stripe_unavailable": "I pagamenti non sono temporaneamente disponibili. Riprova più tardi."
   },
@@ -1000,7 +962,6 @@
   },
   "please_check_email_to_verify": "Controlla la tua email per verificare il tuo account",
   "preferences": "Preferenze",
-  "preview": "Anteprima",
   "privacy_policy": "Privacy policy",
   "process": {
     "anonymity": {
@@ -1225,12 +1186,6 @@
   "process_actions": {
     "manage": "Gestisci nella dashboard"
   },
-  "process_context": {
-    "clone_as_draft": "Clona come bozza",
-    "explorer": "Explorer",
-    "more_info": "Maggiori informazioni",
-    "public_voting_page": "Pagina di voto pubblico"
-  },
   "process_create": {
     "anonymity": {
       "title": "Voto anonimo",
@@ -1301,6 +1256,12 @@
     },
     "settings": "Impostazioni",
     "start_datetime": "Data e ora di inizio",
+    "voting_mode": {
+      "all": "Tutte insieme",
+      "by_question": "Domanda per domanda",
+      "by_question_hint": "Le domande partono chiuse. Le apri una alla volta dalla pagina della votazione, e il risultato di ogni domanda compare quando la chiudi.",
+      "label": "Come votano le persone"
+    },
     "weight": {
       "equal": "Una persona, un voto",
       "title": "Potere di voto",
@@ -1311,17 +1272,6 @@
       "accordion_title": "Allega video (opzionale)",
       "title": "Video live streaming"
     }
-  },
-  "process_list": {
-    "end_date": "Data fine",
-    "not_yet": "Non ancora",
-    "recount": "Riconteggio",
-    "results": "Risultati",
-    "results_live": "Live",
-    "start_date": "Data inizio",
-    "status": "Stato",
-    "title": "Titolo",
-    "type": "Tipo"
   },
   "process_pdf": {
     "authentication": {
@@ -1466,10 +1416,6 @@
       "paragraph_4": "Una volta completato il processo di voto, i risultati finali e i registri rilevanti del processo vengono ancorati nella blockchain. Questo rende il processo auditabile e contribuisce a garantire che il report pubblicato possa essere confrontato con registri tecnici pubblici."
     }
   },
-  "processes": {
-    "load_error": "Impossibile caricare i processi di voto",
-    "load_error_description": "Riprova."
-  },
   "profile": {
     "error": "Errore durante l'aggiornamento del profilo",
     "success": "Profilo aggiornato con successo"
@@ -1479,26 +1425,14 @@
     "verify": "Verifica sull’esploratore della blockchain:",
     "verify_process": "Vedi il processo"
   },
-  "questions_and_results": "Domande e risultati",
   "registration_failed": "Registrazione non riuscita",
   "registration_successful": "egistrazione avvenuta con successo",
   "remove_avatar": "Rimuovi avatar",
   "reset_password_button": "Reimposta Password",
-  "result_visibility": "Visibilità risultati",
   "results_state": {
-    "enabled": "Abilitato",
     "hidden_until_end": "Nascosti fino alla fine",
-    "live_results": "Risultati in tempo reale",
-    "live_results_tooltip": "Questo processo di voto mostra i risultati in tempo reale. Tuttavia, è ancora in corso, quindi i risultati potrebbero cambiare prima della fine del voto.",
-    "not_enabled": "Non abilitato",
-    "results_available": "Risultati disponibili",
-    "secret_until_end": "In attesa dei risultati",
-    "secret_until_end_tooltip": "I risultati sono nascosti e saranno disponibili solo al termine della votazione"
+    "live_results": "Risultati in tempo reale"
   },
-  "results_type": {
-    "title": "Tipo di voto"
-  },
-  "resume_vote": "Riprendi",
   "role": {
     "full_access": {
       "badge": "(Accesso completo)",
@@ -1556,7 +1490,6 @@
   "spreadsheet": {
     "access_button": "Identifica"
   },
-  "start_date": "Data inizio",
   "start_time": "Ora inizio",
   "support": "Supporto",
   "support_chat": {
@@ -1699,8 +1632,6 @@
       "text": "Con Vocdoni abbiamo trovato un'ottima soluzione, essendo un'infrastruttura neutrale e verificabile che garantiva sia l'integrità del conteggio sia la privacy dei votanti. Questo permetteva a ogni docente di votare una sola volta, in modo sicuro e anonimo."
     }
   },
-  "total_votes": "Totale voti",
-  "turnout": "Affluenza",
   "uploaded_image_preview": "Anteprima dell'immagine caricata",
   "uploader": {
     "avatar_upload_failed": "Caricamento avatar non riuscito",
@@ -1761,8 +1692,6 @@
     "anonymous_receipt": "Voto anonimo: conserva ora questa ricevuta, la piattaforma non potrà mostrartela di nuovo.",
     "voted_title": "Voto espresso con successo!"
   },
-  "vote_information": "Informazioni sul voto",
-  "vote_overwrite": "Sovrascrittura voto",
   "voter_anonymity": "Anonimato del votante",
   "voter_auth": {
     "anonymity": "Anonimato del voto: {{ mode }}",
@@ -1864,14 +1793,516 @@
       "title": "Accesso dei votanti"
     }
   },
+  "votes": {
+    "ballot": {
+      "count_all_one": "{{count, number}} domanda",
+      "count_all_many": "{{count, number}} domande, tutte insieme",
+      "count_all_other": "{{count, number}} domande, tutte insieme",
+      "count_by_question_one": "{{count, number}} domanda",
+      "count_by_question_many": "{{count, number}} domande, domanda per domanda",
+      "count_by_question_other": "{{count, number}} domande, domanda per domanda",
+      "credits_one": "{{count, number}} credito",
+      "credits_many": "{{count, number}} crediti",
+      "credits_other": "{{count, number}} crediti",
+      "fix": {
+        "cancel_and_duplicate": "Annulla la votazione e duplicala per correggerla.",
+        "duplicate": "Duplicala per correggerla in una nuova votazione.",
+        "title": "Hai notato un errore?"
+      },
+      "intro": "Testo introduttivo",
+      "label": {
+        "mode": "Come si votano"
+      },
+      "locked": {
+        "opened": "Da quando la votazione è stata aperta, le domande e le opzioni sono fissate. Tutti votano lo stesso testo.",
+        "published": "Da quando la votazione è stata pubblicata, le domande e le opzioni sono fissate. Tutti voteranno lo stesso testo.",
+        "title": "La scheda non può più essere modificata"
+      },
+      "mode": {
+        "all": "Tutte insieme, in un’unica scheda",
+        "by_question": "Domanda per domanda, man mano che si aprono"
+      },
+      "options_label": "Opzioni della domanda {{number}}",
+      "points_one": "{{count, number}} punto",
+      "points_many": "{{count, number}} punti",
+      "points_other": "{{count, number}} punti",
+      "rule": {
+        "approval_any": "Si possono approvare tutte le opzioni che si vuole.",
+        "approval_up_to_one": "Si può approvare fino a {{count, number}} opzione.",
+        "approval_up_to_many": "Si possono approvare fino a {{count, number}} opzioni.",
+        "approval_up_to_other": "Si possono approvare fino a {{count, number}} opzioni.",
+        "budget_one": "Ogni persona distribuisce {{amount}} su {{count, number}} opzione, come vuole.",
+        "budget_many": "Ogni persona distribuisce {{amount}} tra le {{count, number}} opzioni, come vuole.",
+        "budget_other": "Ogni persona distribuisce {{amount}} tra le {{count, number}} opzioni, come vuole.",
+        "budget_weighted_one": "Ogni persona distribuisce punti su {{count, number}} opzione, come vuole.",
+        "budget_weighted_many": "Ogni persona distribuisce punti tra le {{count, number}} opzioni, come vuole.",
+        "budget_weighted_other": "Ogni persona distribuisce punti tra le {{count, number}} opzioni, come vuole.",
+        "multiple_between": "Si segnano tra {{min}} e {{max}} opzioni.",
+        "multiple_exact_one": "Si segna {{count, number}} opzione.",
+        "multiple_exact_many": "Si segnano {{count, number}} opzioni.",
+        "multiple_exact_other": "Si segnano {{count, number}} opzioni.",
+        "multiple_up_to_one": "Si può segnare fino a {{count, number}} opzione.",
+        "multiple_up_to_many": "Si possono segnare fino a {{count, number}} opzioni.",
+        "multiple_up_to_other": "Si possono segnare fino a {{count, number}} opzioni.",
+        "quadratic_one": "Ogni persona spende {{amount}} su {{count, number}} opzione. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_many": "Ogni persona distribuisce {{amount}} tra le {{count, number}} opzioni. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_other": "Ogni persona distribuisce {{amount}} tra le {{count, number}} opzioni. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_weighted_one": "Ogni persona spende crediti su {{count, number}} opzione. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_weighted_many": "Ogni persona distribuisce crediti tra le {{count, number}} opzioni. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_weighted_other": "Ogni persona distribuisce crediti tra le {{count, number}} opzioni. Ogni voto in più alla stessa opzione costa più crediti.",
+        "ranked_one": "Si ordina {{count, number}} opzione, dalla più desiderata alla meno desiderata.",
+        "ranked_many": "Si ordinano le {{count, number}} opzioni, dalla più desiderata alla meno desiderata.",
+        "ranked_other": "Si ordinano le {{count, number}} opzioni, dalla più desiderata alla meno desiderata.",
+        "single": "Si sceglie una sola opzione."
+      },
+      "rules_title": "Come si vota",
+      "status_label": "Stato della scheda",
+      "tag": {
+        "exact": "{{max}} su {{total}}",
+        "per_person": "{{amount}} a persona",
+        "single": "Un’opzione",
+        "up_to": "Fino a {{max}} su {{total}}"
+      },
+      "title": "Cosa vede chi vota"
+    },
+    "cancel": {
+      "body_all_one": "Il {{count, number}} voto espresso verrà scartato e non ci saranno risultati.",
+      "body_all_many": "I {{count, number}} voti espressi verranno scartati e non ci saranno risultati.",
+      "body_all_other": "I {{count, number}} voti espressi verranno scartati e non ci saranno risultati.",
+      "body_all_unknown": "I voti espressi verranno scartati e non ci saranno risultati.",
+      "body_by_question_one": "Il {{count, number}} voto espresso in {{questions}} verrà scartato e nessun risultato avrà effetto.",
+      "body_by_question_many": "I {{count, number}} voti espressi in {{questions}} verranno scartati e nessun risultato avrà effetto.",
+      "body_by_question_other": "I {{count, number}} voti espressi in {{questions}} verranno scartati e nessun risultato avrà effetto.",
+      "body_final": "Non si può annullare.",
+      "body_none": "Non è ancora stato espresso nessun voto.",
+      "body_not_open": "Non si è ancora aperta e non ci sono voti.",
+      "error": "Non è stato possibile annullare la votazione",
+      "keep": "No, continua la votazione",
+      "open_now_one": "La domanda {{numbers}} è aperta in questo momento.",
+      "open_now_many": "Le domande {{numbers}} sono aperte in questo momento.",
+      "open_now_other": "Le domande {{numbers}} sono aperte in questo momento.",
+      "questions_one": "{{count, number}} domanda",
+      "questions_many": "{{count, number}} domande",
+      "questions_other": "{{count, number}} domande",
+      "title": "Vuoi annullare «{{title}}»?"
+    },
+    "clone": {
+      "all_at_once": "La copia vota tutte le domande insieme."
+    },
+    "date": {
+      "at": "{{weekday}} {{day}} alle {{time}}",
+      "at_time": "alle {{time}}",
+      "day": "{{weekday}} {{day}}",
+      "on_date": "{{date}}"
+    },
+    "downloads": {
+      "csv": {
+        "action": "Scarica i risultati in CSV",
+        "answered": "Persone che hanno risposto",
+        "census": "Censimento",
+        "method": "Metodo",
+        "note": "Il risultato di ogni opzione, domanda per domanda.",
+        "number": "Numero della domanda",
+        "option": "Opzione",
+        "question": "Domanda",
+        "result": "Risultato",
+        "share": "Percentuale (%)",
+        "title": "Risultati in CSV",
+        "unit": {
+          "header": "Unità",
+          "points": "punti",
+          "votes": "voti",
+          "weight": "peso"
+        }
+      },
+      "pdf": {
+        "action": "Scarica il rapporto finale in PDF",
+        "note": "Per una verifica.",
+        "title": "Rapporto finale in PDF"
+      },
+      "title": "Scarica i risultati"
+    },
+    "empty": {
+      "body": "Crea la prima quando vuoi. Scegli su cosa si vota, chi vota e fino a quando, e la pubblichi quando è pronta.",
+      "create": "Crea una votazione",
+      "legend": {
+        "closed": "Hai il risultato e puoi duplicarla per la prossima.",
+        "draft": "La prepari con i tuoi tempi. Nessuno la vede e non costa nulla.",
+        "live": "Le persone votano e tu segui la partecipazione.",
+        "ready": "È pubblicata e aspetta il giorno che hai scelto."
+      },
+      "legend_hint": "Ogni votazione compare qui con il suo stato.",
+      "legend_title": "Cosa vedrai qui",
+      "title": "Nessuna votazione per ora"
+    },
+    "end": {
+      "body_all_one": "Si chiuderà prima della scadenza, con il {{count, number}} voto espresso. I risultati verranno pubblicati e i votanti li vedranno. Non si può riaprire.",
+      "body_all_many": "Si chiuderà prima della scadenza, con i {{count, number}} voti espressi. I risultati verranno pubblicati e i votanti li vedranno. Non si può riaprire.",
+      "body_all_other": "Si chiuderà prima della scadenza, con i {{count, number}} voti espressi. I risultati verranno pubblicati e i votanti li vedranno. Non si può riaprire.",
+      "body_all_unknown": "Si chiuderà prima della scadenza, con i voti espressi. I risultati verranno pubblicati e i votanti li vedranno. Non si può riaprire.",
+      "body_final": "I risultati saranno definitivi e i votanti li vedranno.",
+      "body_question_one": "La domanda {{number}} si chiuderà con il {{count, number}} voto che ha ora.",
+      "body_question_many": "La domanda {{number}} si chiuderà con i {{count, number}} voti che ha ora.",
+      "body_question_other": "La domanda {{number}} si chiuderà con i {{count, number}} voti che ha ora.",
+      "body_questions": "Le domande {{numbers}} si chiuderanno con i voti che hanno ora.",
+      "error": "Non è stato possibile terminare la votazione",
+      "keep": "Continua la votazione",
+      "not_voted_one": "{{count, number}} persona non ha ancora votato e non potrà più farlo.",
+      "not_voted_many": "{{count, number}} persone non hanno ancora votato e non potranno più farlo.",
+      "not_voted_other": "{{count, number}} persone non hanno ancora votato e non potranno più farlo.",
+      "title": "Vuoi terminare la votazione?",
+      "title_now": "Vuoi terminare la votazione ora?",
+      "unopened_one": "La domanda {{numbers}} non è stata aperta e resterà senza voti.",
+      "unopened_many": "Le domande {{numbers}} non sono state aperte e resteranno senza voti.",
+      "unopened_other": "Le domande {{numbers}} non sono state aperte e resteranno senza voti."
+    },
+    "error": {
+      "other": "Qualcosa è andato storto. Ricarica la pagina e riprova."
+    },
+    "header": {
+      "line": {
+        "by_question_canceled": "Il {{day}} alle {{time}}. I voti sono stati scartati.",
+        "by_question_ended": "Il {{day}} alle {{time}}, dopo {{duration}}.",
+        "by_question_live": "Domanda per domanda. Iniziata {{date}}, {{ago}}.",
+        "by_question_live_today": "{{day}}, domanda per domanda. Iniziata alle {{time}}, {{ago}}.",
+        "by_question_paused": "Domanda per domanda. Iniziata {{date}}.",
+        "by_question_paused_today": "Domanda per domanda. Iniziata alle {{time}}.",
+        "by_question_ready": "{{date}}. Domanda per domanda.",
+        "canceled": "I voti sono stati scartati.",
+        "canceled_on": "{{date}}. I voti sono stati scartati.",
+        "canceled_today": "Oggi, {{day}}, alle {{time}}. I voti sono stati scartati.",
+        "closes": "Si chiude {{date}}.",
+        "closes_left": "Si chiude {{date}}. {{left}}.",
+        "closes_paused": "Si chiude {{date}}. La scadenza non si ferma.",
+        "closes_paused_touch": "Si chiude {{end}}. Il termine non si ferma.",
+        "ended": "Terminata {{date}}.",
+        "ended_today": "Terminata oggi, {{day}}, alle {{time}}.",
+        "opens": "Si apre {{start}} e si chiude {{end}}.",
+        "starts": "Inizia {{date}}."
+      }
+    },
+    "job": {
+      "partial": "Alcune domande non sono cambiate: {{failed, number}} su {{total, number}}. La pagina mostra a che punto è ciascuna.",
+      "slow": "La modifica non è ancora terminata. Continuiamo ad aspettare e aggiorneremo la pagina quando sarà finita.",
+      "slow_title": "Ci stiamo ancora lavorando",
+      "stale": "Una domanda aveva già cambiato stato. Ora la pagina mostra a che punto è ciascuna."
+    },
+    "list": {
+      "action": {
+        "continue": "Modifica",
+        "follow": "Segui",
+        "manage": "Gestisci la votazione",
+        "result": "Risultato",
+        "view": "Visualizza"
+      },
+      "action_label": "{{action}}: {{title}}",
+      "closed_on": "il {{date}}",
+      "closes": "Si chiude il {{date}}.",
+      "delete": "Elimina",
+      "delete_body": "Non si può annullare.",
+      "delete_confirm": "Elimina la bozza",
+      "delete_error": "Non è stato possibile eliminare la bozza",
+      "delete_title": "Eliminare questa bozza?",
+      "duplicate_short": "Duplica",
+      "filter": {
+        "all": "Tutte",
+        "closed": "Chiuse",
+        "drafts": "Bozze",
+        "live": "In corso",
+        "ready": "Pronte"
+      },
+      "filter_label": "Filtra per stato",
+      "load_error": "Impossibile caricare le votazioni",
+      "meta": "{{questions}}, {{voters}}.",
+      "meta_no_voters": "{{questions}}.",
+      "meta_questions_one": "{{count, number}} domanda",
+      "meta_questions_many": "{{count, number}} domande",
+      "meta_questions_other": "{{count, number}} domande",
+      "meta_voters_one": "{{count, number}} votante",
+      "meta_voters_many": "{{count, number}} votanti",
+      "meta_voters_other": "{{count, number}} votanti",
+      "more": "Altre azioni",
+      "new": "Nuova votazione",
+      "no_match": "Nessuna votazione corrisponde",
+      "no_match_hint": "Prova un altro filtro o un’altra ricerca.",
+      "refresh_error": "Non è stato possibile aggiornare l’elenco",
+      "refresh_error_hint": "Mostra le votazioni come sono state caricate l’ultima volta.",
+      "retry": "Riprova",
+      "row_error": "Non è stato possibile mostrare questa votazione.",
+      "search": "Cerca una votazione",
+      "starts": "Inizia il {{date}}.",
+      "starts_live": "In diretta, {{date}}.",
+      "title": "Votazioni",
+      "turnout": "Affluenza {{percent}}%.",
+      "turnout_any": "Affluenza di almeno il {{percent}}%.",
+      "warning": {
+        "end_passed": "La data di chiusura è passata.",
+        "missing_end": "Ancora nessuna data di chiusura."
+      },
+      "when": "{{weekday}} {{day}} alle {{time}}",
+      "when_day": "{{weekday}} {{day}} alle {{time}}"
+    },
+    "manage": {
+      "abstention": "Astensione",
+      "action_label": "{{action}}: domanda {{number}}, {{title}}",
+      "close": "Chiudi",
+      "close_body_one": "«{{title}}» si chiuderà con il {{votes}} voto che ha ora e il risultato sarà definitivo. Una domanda chiusa non si può riaprire.",
+      "close_body_many": "«{{title}}» si chiuderà con i {{votes}} voti che ha ora e il risultato sarà definitivo. Una domanda chiusa non si può riaprire.",
+      "close_body_other": "«{{title}}» si chiuderà con i {{votes}} voti che ha ora e il risultato sarà definitivo. Una domanda chiusa non si può riaprire.",
+      "close_cancel": "No, lasciala aperta",
+      "close_confirm": "Chiudi la domanda {{number}}",
+      "close_last_warning": "È l'ultima domanda: chiudendola, si chiude anche la votazione.",
+      "close_title": "Chiudere la domanda {{number}}?",
+      "count": {
+        "canceled_one": "{{count, number}} annullata",
+        "canceled_many": "{{count, number}} annullate",
+        "canceled_other": "{{count, number}} annullate",
+        "closed_one": "{{count, number}} chiusa",
+        "closed_many": "{{count, number}} chiuse",
+        "closed_other": "{{count, number}} chiuse",
+        "not_opened_one": "{{count, number}} non aperta",
+        "not_opened_many": "{{count, number}} non aperte",
+        "not_opened_other": "{{count, number}} non aperte",
+        "open_one": "{{count, number}} aperta",
+        "open_many": "{{count, number}} aperte",
+        "open_other": "{{count, number}} aperte",
+        "paused_one": "{{count, number}} in pausa",
+        "paused_many": "{{count, number}} in pausa",
+        "paused_other": "{{count, number}} in pausa",
+        "to_open_one": "{{count, number}} da aprire",
+        "to_open_many": "{{count, number}} da aprire",
+        "to_open_other": "{{count, number}} da aprire"
+      },
+      "error": {
+        "busy": "Un altro cambiamento è in corso. Riprova tra qualche secondo.",
+        "stale": "Lo stato della domanda era già cambiato.",
+        "timeout": "Ci vuole più tempo del previsto. Lo stato si aggiornerà da solo.",
+        "title": "Non è stato possibile cambiare la domanda"
+      },
+      "held_note": "Ferma per la pausa della votazione.",
+      "kind": "{{kind}}.",
+      "locked": "I risultati si vedranno alla chiusura della domanda.",
+      "next": {
+        "close_one": "Passo successivo: chiudi la domanda {{numbers}}",
+        "close_many": "Passo successivo: chiudi le domande {{numbers}}",
+        "close_other": "Passo successivo: chiudi le domande {{numbers}}",
+        "open": "Passo successivo: apri la domanda {{numbers}}",
+        "resume_vote": "Passo successivo: riprendi la votazione"
+      },
+      "open": "Apri",
+      "open_off_note": "«Apri» è disattivato finché è aperta un'altra domanda, prima dell'ora di inizio e mentre la votazione è in pausa.",
+      "paused_note": "Nessuno può votarla.",
+      "percent": "{{percent}}%",
+      "provisional": "Risultato provvisorio.",
+      "question_ruler": "Hanno votato {{voted}} persone su {{total}}, il {{percent}}%.",
+      "question_ruler_count": "Hanno votato {{voted}} persone.",
+      "starts": "La votazione inizia il {{date}}.",
+      "toggle_hint": "Mostra o nascondi il dettaglio",
+      "toggle_number": "Domanda {{number}}:",
+      "turnout_figure": "<n>{{percent}}%</n> di partecipazione"
+    },
+    "page": {
+      "back": "Votazioni",
+      "cancel_vote": "Annulla la votazione",
+      "duplicate": "Duplica",
+      "duplicate_vote": "Duplica la votazione",
+      "end_now": "Termina ora",
+      "end_vote": "Termina la votazione",
+      "more": "Altro",
+      "more_actions": "Altre azioni",
+      "pause": "Metti in pausa",
+      "resume": "Riprendi",
+      "show_as_voter": "Mostra come votante",
+      "tab": {
+        "ballot": "Scheda",
+        "summary": "Gestione"
+      }
+    },
+    "pause": {
+      "error": {
+        "pause": "Non è stato possibile mettere in pausa la votazione",
+        "resume": "Non è stato possibile riprendere la votazione"
+      }
+    },
+    "question_state": {
+      "canceled": "Annullata",
+      "closed": "Chiusa",
+      "not_opened": "Non aperta",
+      "open": "Aperta",
+      "paused": "In pausa",
+      "to_open": "Da aprire"
+    },
+    "results": {
+      "choice_points_one": "{{votes}} punto",
+      "choice_points_many": "{{votes}} punti",
+      "choice_points_other": "{{votes}} punti",
+      "choice_votes_one": "{{votes}} voto",
+      "choice_votes_many": "{{votes}} voti",
+      "choice_votes_other": "{{votes}} voti",
+      "choice_weight_one": "{{votes}} voto ponderato",
+      "choice_weight_many": "{{votes}} voti ponderati",
+      "choice_weight_other": "{{votes}} voti ponderati",
+      "counting": "La votazione è chiusa. I risultati sono in fase di conteggio e appariranno qui a breve."
+    },
+    "state": {
+      "canceled": "Annullata",
+      "closed": "Chiusa",
+      "draft": "Bozza",
+      "live": "In corso",
+      "paused": "In pausa",
+      "ready": "Pronta"
+    },
+    "summary": {
+      "all_open": "Tutte aperte insieme",
+      "answered": "Partecipazione: {{answered}} su {{total}}",
+      "answered_count_label_one": "{{count, number}} persona ha risposto alla domanda {{number}}.",
+      "answered_count_label_many": "{{count, number}} persone hanno risposto alla domanda {{number}}.",
+      "answered_count_label_other": "{{count, number}} persone hanno risposto alla domanda {{number}}.",
+      "answered_label": "{{answered}} persone su {{total}} hanno risposto alla domanda {{number}}.",
+      "auth": {
+        "code_email": "<b>Un codice monouso</b> inviato via email.",
+        "code_email_or_sms": "<b>Un codice monouso</b> inviato via email o SMS.",
+        "code_sms": "<b>Un codice monouso</b> inviato via SMS.",
+        "fields": "<b>{{fields}}</b>.",
+        "fields_code_email": "<b>{{fields}}</b>, più un <b>codice monouso</b> inviato via email.",
+        "fields_code_email_or_sms": "<b>{{fields}}</b>, più un <b>codice monouso</b> inviato via email o SMS.",
+        "fields_code_sms": "<b>{{fields}}</b>, più un <b>codice monouso</b> inviato via SMS.",
+        "title": "Metodo di autenticazione"
+      },
+      "ballot_link": "Scheda",
+      "blank_one": "{{count, number}} dei {{voters}} votanti l’ha lasciata in bianco.",
+      "blank_many": "{{count, number}} dei {{voters}} votanti l’hanno lasciata in bianco.",
+      "blank_other": "{{count, number}} dei {{voters}} votanti l’hanno lasciata in bianco.",
+      "blank_none": "Nessuno l’ha lasciata in bianco.",
+      "calendar": {
+        "at": "Alle {{time}}.",
+        "close": "Chiusura automatica e risultati per tutti",
+        "ended_auto": "Chiusa automaticamente alla scadenza",
+        "ended_manual": "Terminata manualmente",
+        "opened": "Votazione aperta",
+        "opens": "Si apre la votazione",
+        "title": "Calendario",
+        "today": "Oggi",
+        "today_paused": "Oggi. Votazione in pausa"
+      },
+      "copy_link": "Copia il link pubblico",
+      "count_unknown": "Impossibile caricare la partecipazione.",
+      "dock": {
+        "label": "Comandi della votazione",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}"
+      },
+      "electoral": {
+        "census_one": "<n>{{count, number}}</n> persona con diritto di voto.",
+        "census_many": "<n>{{count, number}}</n> persone con diritto di voto.",
+        "census_other": "<n>{{count, number}}</n> persone con diritto di voto.",
+        "closing": "Chiusura",
+        "date": "{{date}}.",
+        "results_by_question": "Si vedono alla chiusura di ogni domanda.",
+        "results_live": "Si vedono in diretta, durante la votazione.",
+        "results_public": "Sono già pubblici.",
+        "results_secret": "Si vedranno alla chiusura della votazione."
+      },
+      "electoral_title": "Dati della votazione",
+      "fact": {
+        "census_one": "{{count, number}} persona",
+        "census_many": "{{count, number}} persone",
+        "census_other": "{{count, number}} persone",
+        "overwrite_allowed": "Attivata",
+        "overwrite_not_allowed": "Disattivata",
+        "results_hidden": "alla chiusura della votazione",
+        "results_hidden_by_question": "alla chiusura di ogni domanda",
+        "results_live": "in diretta, durante la votazione",
+        "results_out": "pubblici"
+      },
+      "headline": {
+        "any_count_one": "Almeno {{count, number}} persona ha votato a una domanda.",
+        "any_count_many": "Almeno {{count, number}} persone hanno votato a una domanda.",
+        "any_count_other": "Almeno {{count, number}} persone hanno votato a una domanda.",
+        "any_of_one": "Almeno {{count, number}} persona su {{total}} ha votato a una domanda, il {{percent}}%.",
+        "any_of_many": "Almeno {{count, number}} persone su {{total}} hanno votato a una domanda, il {{percent}}%.",
+        "any_of_other": "Almeno {{count, number}} persone su {{total}} hanno votato a una domanda, il {{percent}}%.",
+        "count_one": "Ha votato {{count, number}} persona.",
+        "count_many": "Hanno votato {{count, number}} persone.",
+        "count_other": "Hanno votato {{count, number}} persone.",
+        "nobody": "Non ha votato nessuno.",
+        "nobody_yet": "Non ha ancora votato nessuno.",
+        "of_one": "Ha votato {{count, number}} persona su {{total}}, il {{percent}}%.",
+        "of_many": "Hanno votato {{count, number}} persone su {{total}}, il {{percent}}%.",
+        "of_other": "Hanno votato {{count, number}} persone su {{total}}, il {{percent}}%."
+      },
+      "idle": {
+        "by_question_body": "Quando inizia, le domande sono chiuse e le apri una alla volta.",
+        "by_question_started_body": "Apri la prima domanda per iniziare la votazione.",
+        "by_question_started_title": "Non c'è ancora nessuna domanda aperta",
+        "canceled_body": "I voti espressi sono stati scartati. Non ci sono risultati.",
+        "canceled_hint": "Puoi duplicarla per convocarla di nuovo.",
+        "canceled_title": "Votazione annullata",
+        "duplicate": "Duplicala",
+        "ended_counting": "I risultati definitivi sono ancora in fase di conteggio.",
+        "ended_final": "I risultati sono definitivi e i votanti possono già vederli.",
+        "not_started": "Non è ancora iniziata",
+        "questions_one": "{{count, number}} domanda",
+        "questions_many": "{{count, number}} domande",
+        "questions_other": "{{count, number}} domande",
+        "ready_body_one": "{{people}} nel censimento e {{questions}}.",
+        "ready_body_many": "{{people}} nel censimento e {{questions}}, tutte aperte insieme.",
+        "ready_body_other": "{{people}} nel censimento e {{questions}}, tutte aperte insieme.",
+        "ready_title": "Si aprirà da sola {{date}}"
+      },
+      "label": {
+        "census": "Censimento",
+        "closed": "Chiusura",
+        "overwrite": "Sovrascrittura del voto",
+        "questions": "Domande",
+        "results": "Risultati"
+      },
+      "line": {
+        "left": "Mancano <b>{{left}}</b> per votare.",
+        "paused": "La votazione è <b>in pausa</b>."
+      },
+      "link_copied": "Link copiato",
+      "no_results": "nessun risultato",
+      "none_open": "nessuna aperta",
+      "paused": {
+        "all_at_once_one": "Nessuno può votare finché non viene ripresa. Il {{votes}} voto espresso resta valido e la scadenza non cambia.",
+        "all_at_once_many": "Nessuno può votare finché non viene ripresa. I {{votes}} voti espressi restano validi e la scadenza non cambia.",
+        "all_at_once_other": "Nessuno può votare finché non viene ripresa. I {{votes}} voti espressi restano validi e la scadenza non cambia.",
+        "all_at_once_no_votes": "Nessuno può votare finché non viene ripresa. La scadenza non cambia.",
+        "by_question": "Nessuno può votare e nessuna domanda può essere aperta o chiusa finché non viene ripresa. I voti espressi restano validi.",
+        "by_question_no_votes": "Nessuno può votare e nessuna domanda può essere aperta o chiusa finché non viene ripresa.",
+        "title": "La votazione è in pausa."
+      },
+      "question_votes_one": "{{count, number}} voto",
+      "question_votes_many": "{{count, number}} voti",
+      "question_votes_other": "{{count, number}} voti",
+      "results_line": {
+        "live": "I risultati si vedono in diretta, durante la votazione.",
+        "none": "Non ci saranno risultati.",
+        "public": "I risultati sono già pubblici.",
+        "secret": "I risultati si vedranno alla chiusura della votazione."
+      },
+      "ruler_label_one": "{{count, number}} persona su {{total}} ha votato, {{percent}}%",
+      "ruler_label_many": "{{count, number}} persone su {{total}} hanno votato, {{percent}}%",
+      "ruler_label_other": "{{count, number}} persone su {{total}} hanno votato, {{percent}}%",
+      "ruler_label_any": "Almeno {{voted}} persone su {{total}} hanno votato a una domanda, il {{percent}}%",
+      "share_note": "Link all'urna digitale. Condividilo con chi ha diritto di voto.",
+      "share_note_closed": "Link alla pagina pubblica della votazione, con i risultati.",
+      "share_title": "Da condividere"
+    },
+    "time_left": "Mancano {{duration}}",
+    "waiting": {
+      "cancel": "Annullamento di «{{title}}»…",
+      "continue": "Ripresa di «{{title}}»…",
+      "end": "Chiusura di «{{title}}»…",
+      "pause": "Messa in pausa di «{{title}}»…",
+      "title": "In attesa della conferma della modifica"
+    }
+  },
   "voting_link": {
-    "description": "Condividi questo link con i tuoi votanti per partecipare al processo di voto",
     "title": "Link di Voto"
   },
   "voting_processes": "Processi di voto",
-  "voting_processes_description": "Gestisci e monitora i tuoi processi di voto",
-  "voting_settings": "Impostazioni di voto",
-  "voting_status": "Stato del voto",
   "wallet": {
     "balance": "Saldo",
     "balance_note": "Credito prepagato, IVA esclusa. La pubblicazione di un processo di voto a pagamento viene addebitata da questo saldo.",

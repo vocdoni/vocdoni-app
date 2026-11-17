@@ -13,6 +13,20 @@ export const ORG = '0x7e57c0de00000000000000000000000000a11ce5'
 export const P_DRAFT = '650000000000000000000d01'
 export const P_ONGOING = '650000000000000000000a01'
 export const P_ENDED = '650000000000000000000e01'
+export const P_QBQ = '650000000000000000000b01'
+// The Fil boards' votes, with the boards' data, for the side-by-side checks (README.md "Board states").
+export const B_AAO_READY = '650000000000000000000a12'
+export const B_AAO_LIVE = '650000000000000000000a11'
+export const B_AAO_PAUSED = '650000000000000000000a13'
+export const B_AAO_ENDED = '650000000000000000000a14'
+export const B_AAO_CANCELED = '650000000000000000000c11'
+export const B_QBQ_READY = '650000000000000000000b16'
+export const B_QBQ_LIVE = '650000000000000000000b11'
+export const B_QBQ_HELD = '650000000000000000000b13'
+export const B_QBQ_CLOSED = '650000000000000000000b14'
+export const B_QBQ_ENDED = '650000000000000000000b15'
+export const B_QBQ_MANY = '650000000000000000000b17'
+export const B_QBQ_CANCELED = '650000000000000000000c12'
 export const FAKE_TOKEN = 'fake-local-token'
 export const TOKEN_EXPIRY = '2031-01-01T00:00:00.000Z'
 
@@ -272,6 +286,44 @@ const PROCESSES = [
     ],
   },
   {
+    // Question by question (initialStatus PAUSED): one question closed with a result, one open, one still to open.
+    id: P_QBQ,
+    orgAddress: ORG_NOPFX,
+    chainId: 'vocdoni/DEV/fake',
+    title: ml('Autumn general assembly'),
+    description: ml('An assembly voted question by question. Everything here is fake.'),
+    header: '',
+    census,
+    published: true,
+    initialStatus: 'PAUSED',
+    startDate: '2026-06-01T08:00:00.000Z',
+    endDate: '2030-12-31T20:00:00.000Z',
+    createdAt: '2026-05-29T08:00:00.000Z',
+    questions: [
+      {
+        ...question(P_QBQ, 1, 'Approve the minutes of the last assembly?', ['Yes', 'No'], 'RESULTS', {
+          voteCount: 8,
+          maxVoters: 10,
+          finalResults: true,
+          results: [['7', '1']],
+        }),
+        endedAt: '2026-06-01T08:20:00.000Z',
+      },
+      question(P_QBQ, 2, 'Raise the yearly fee to 48 EUR?', ['Yes', 'No', 'Abstain'], 'ONGOING', {
+        voteCount: 6,
+        maxVoters: 10,
+        finalResults: false,
+        results: [['4', '1', '1']],
+      }),
+      question(P_QBQ, 3, 'Elect two board members', ['Marta Fake', 'Jordi Sample', 'Lucía Mockson'], 'PAUSED', {
+        voteCount: 0,
+        maxVoters: 10,
+        finalResults: false,
+        results: [['0', '0', '0']],
+      }),
+    ],
+  },
+  {
     id: P_DRAFT,
     orgAddress: ORG_NOPFX,
     title: ml('New statutes (draft)'),
@@ -289,6 +341,198 @@ const PROCESSES = [
     ],
   },
 ]
+// ---- board votes --------------------------------------------------------------------------
+// The votes of the Fil boards (Catalan titles, a census of 312, the boards' tallies), dated around FIXED_NOW. The
+// list shows the ready, paused and canceled ones; the other states are reached by their id only (`unlisted`).
+const BOARD_CENSUS = { ...census, size: 312, totalWeight: 312 }
+const FOR = ['A favor', 'En contra', 'Abstenció']
+const tally = (votes, final) => ({
+  voteCount: votes.reduce((sum, n) => sum + n, 0),
+  maxVoters: 312,
+  finalResults: final,
+  results: [votes.map(String)],
+})
+const at = (time) => `2026-06-15T${time}Z`
+const boardVote = (id, title, extra) => ({
+  id,
+  orgAddress: ORG_NOPFX,
+  chainId: 'vocdoni/DEV/fake',
+  title: ml(title),
+  description: ml(''),
+  header: '',
+  census: BOARD_CENSUS,
+  published: true,
+  createdAt: '2026-05-20T08:00:00.000Z',
+  ...extra,
+})
+
+// Question by question: the short title is the question's title, the full question its description.
+const QBQ = [
+  ["Acta de l'assemblea anterior", "Aprovem l'acta de l'assemblea anterior?", [198, 7, 9]],
+  ["Memòria d'activitats", "Aprovem la memòria d'activitats de 2026?", [201, 12, 8]],
+  ['Quotes 2027', "Apugem la quota a 48 EUR l'any el 2027?", [126, 38, 8]],
+  ['Elecció de dues vocalies', 'Ratifiquem les dues vocalies proposades?', [20, 2, 1]],
+]
+// Unique per vote (the older fixtures share one id prefix).
+const boardQuestionId = (pid, idx) => `${pid}q${String(idx).padStart(2, '0')}`
+const qbqQuestion = (pid, idx, [short, full, votes], status, { voted, ...extra } = {}) => {
+  const final = status === 'RESULTS' || status === 'ENDED'
+  const counted = status === 'PAUSED' && !voted ? votes.map(() => 0) : votes
+  return {
+    ...question(pid, idx, short, FOR, status, tally(counted, final)),
+    id: boardQuestionId(pid, idx),
+    description: ml(full),
+    secretUntilTheEnd: true,
+    ...extra,
+  }
+}
+const qbqVote = (id, statuses, extra = {}, list = QBQ) =>
+  boardVote(id, 'Assemblea General de tardor', {
+    initialStatus: 'PAUSED',
+    startDate: at('09:14:00'),
+    endDate: at('19:00:00'),
+    unlisted: true,
+    questions: statuses.map((entry, i) => {
+      const [status, more] = Array.isArray(entry) ? entry : [entry, {}]
+      return qbqQuestion(id, i + 1, list[i], status, more)
+    }),
+    ...extra,
+  })
+const closedAt = (time) => ({ endedAt: at(time) })
+
+// The sixteen questions of the board's "many" demo: nine closed, one open, six to open (one open at a time, R29).
+const MANY = [
+  ["Acta de l'assemblea anterior", "Aprovem l'acta de l'assemblea anterior?", [198, 7, 9]],
+  ["Memòria d'activitats", "Aprovem la memòria d'activitats de 2026?", [201, 12, 8]],
+  ['Comptes de 2026', 'Aprovem els comptes anuals de 2026?', [189, 21, 14]],
+  ['Pressupost de 2027', 'Aprovem el pressupost de 2027?', [176, 38, 12]],
+  ['Quotes 2027', "Apugem la quota a 48 EUR l'any el 2027?", [171, 52, 11]],
+  ['Estatuts, article 4', "Aprovem el nou redactat de l'article 4, sobre els fins de l'entitat?", [192, 18, 15]],
+  ['Estatuts, article 9', "Aprovem el nou redactat de l'article 9, sobre les delegacions de vot?", [141, 71, 13]],
+  ['Estatuts, article 12', "Aprovem el nou redactat de l'article 12, sobre la durada dels càrrecs?", [165, 27, 15]],
+  ['Presidència', 'Ratifiquem Laia Puig Ferrer com a presidenta?', [205, 12, 12]],
+  ['Secretaria', 'Ratifiquem Oriol Mas Costa com a secretari?', [86, 7, 5]],
+  ['Tresoreria', 'Ratifiquem Núria Font Serra com a tresorera?', [0, 0, 0]],
+  ['Vocalia de cultura', 'Ratifiquem Marc Serra Pons com a vocal de cultura?', [0, 0, 0]],
+  ['Vocalia de joventut', 'Ratifiquem Carme Riera Soler com a vocal de joventut?', [0, 0, 0]],
+  ['Elecció de dues vocalies', 'Ratifiquem les dues vocalies proposades?', [0, 0, 0]],
+  ['Auditoria de comptes', 'Encarreguem una auditoria externa dels comptes?', [0, 0, 0]],
+  ['Canvi de seu social', 'Traslladem la seu social al carrer Major, 12?', [0, 0, 0]],
+]
+
+// All at once: the four ballot kinds of the board.
+const multi = (max, n) => ({
+  type: 'multichoice',
+  typeSetup: { maxChoices: max, minChoices: 0, uniqueChoices: false },
+  ballotProtocol: { ...ballot(n), maxCount: n, maxValue: 1, maxTotalCost: max },
+})
+const AAO = [
+  ['Aproves els comptes anuals de 2025?', ['Sí', 'No', 'Abstenció'], {}, [150, 22, 9]],
+  ['Qui vols a les dues vocalies?', ['Laia Puig', 'Oriol Mas', 'Núria Font', 'Marc Serra'], multi(2, 4)],
+  [
+    'Quina inversió va primer?',
+    ['Teulada', 'Calefacció', 'Biblioteca'],
+    {
+      type: undefined,
+      typeSetup: undefined,
+      metadata: { type: { name: 'ranked' } },
+      ballotProtocol: { ...ballot(3), maxCount: 3, maxValue: 2, uniqueValues: true },
+    },
+  ],
+  [
+    'Reparteix 10 punts entre les activitats',
+    ['Teatre', 'Música', 'Esports', 'Excursions'],
+    {
+      type: 'budget-based',
+      typeSetup: undefined,
+      ballotProtocol: { ...ballot(4), maxCount: 4, maxValue: 0, maxTotalCost: 10 },
+    },
+  ],
+]
+const AAO_VOTES = [181, 176, 169, 172]
+const aaoVote = (id, status, extra = {}) =>
+  boardVote(id, 'Assemblea General Ordinària 2026', {
+    startDate: '2026-06-08T07:00:00.000Z',
+    endDate: '2026-06-17T18:00:00.000Z',
+    questions: AAO.map(([title, choices, shape, single], i) => {
+      const counted = status !== 'CANCELED' && extra.counted !== false
+      const final = status === 'RESULTS'
+      const voteCount = counted ? AAO_VOTES[i] : 0
+      // The single-choice question carries a tally; the others only their count (secret until the end).
+      const results =
+        single && counted ? tally(single, final) : { voteCount, maxVoters: 312, finalResults: final, results: [] }
+      return {
+        ...question(id, i + 1, title, choices, status, results),
+        id: boardQuestionId(id, i + 1),
+        secretUntilTheEnd: true,
+        ...shape,
+        ...(extra.endedAt ? { endedAt: extra.endedAt } : {}),
+      }
+    }),
+    ...extra,
+  })
+
+const BOARD_PROCESSES = [
+  aaoVote(B_AAO_READY, 'ONGOING', {
+    startDate: '2026-06-22T07:00:00.000Z',
+    endDate: '2026-06-25T18:00:00.000Z',
+    counted: false,
+  }),
+  { ...aaoVote(B_AAO_LIVE, 'ONGOING'), unlisted: true },
+  aaoVote(B_AAO_PAUSED, 'PAUSED'),
+  { ...aaoVote(B_AAO_ENDED, 'RESULTS', { endedAt: at('09:42:00') }), unlisted: true },
+  aaoVote(B_AAO_CANCELED, 'CANCELED', { endedAt: at('09:42:00') }),
+  {
+    ...qbqVote(B_QBQ_READY, ['PAUSED', 'PAUSED', 'PAUSED', 'PAUSED'], {
+      startDate: '2026-06-20T16:30:00.000Z',
+      endDate: '2026-06-20T19:00:00.000Z',
+    }),
+    unlisted: false,
+  },
+  qbqVote(B_QBQ_LIVE, [['RESULTS', closedAt('09:41:00')], ['RESULTS', closedAt('09:53:00')], 'ONGOING', 'PAUSED']),
+  qbqVote(B_QBQ_HELD, [
+    ['RESULTS', closedAt('09:41:00')],
+    ['RESULTS', closedAt('09:53:00')],
+    ['PAUSED', { voted: true }],
+    'PAUSED',
+  ]),
+  qbqVote(B_QBQ_CLOSED, [
+    ['RESULTS', closedAt('09:41:00')],
+    ['RESULTS', closedAt('09:44:00')],
+    ['RESULTS', closedAt('09:50:00')],
+    ['RESULTS', closedAt('09:56:00')],
+  ]),
+  // Ended with the last question never opened: ending the vote closed the open one and the unopened one together.
+  qbqVote(B_QBQ_ENDED, [
+    ['RESULTS', closedAt('09:41:00')],
+    ['RESULTS', closedAt('09:53:00')],
+    ['ENDED', closedAt('09:58:00')],
+    ['ENDED', { endedAt: at('09:58:01'), results: tally([0, 0, 0], true) }],
+  ]),
+  // Canceled after its first question closed: every question voided, the votes discarded.
+  qbqVote(B_QBQ_CANCELED, [
+    ['CANCELED', closedAt('09:42:00')],
+    ['CANCELED', closedAt('09:42:00')],
+    ['CANCELED', closedAt('09:42:00')],
+    ['CANCELED', closedAt('09:42:00')],
+  ]),
+  qbqVote(
+    B_QBQ_MANY,
+    MANY.map((_, i) => {
+      const hour = String(Math.floor(i / 3) + 6).padStart(2, '0')
+      if (i < 9) return ['RESULTS', closedAt(`${hour}:${String((i * 17) % 60).padStart(2, '0')}:00`)]
+      return i === 9 ? 'ONGOING' : 'PAUSED'
+    }),
+    { startDate: '2026-06-14T16:00:00.000Z' },
+    MANY
+  ),
+]
+
+PROCESSES.push(...BOARD_PROCESSES)
+
+// The question-by-question vote paused as a whole: the pause memory the app keeps in this browser (vote-pause.ts).
+export const HELD_STORAGE = { [`votes.pause.held.${B_QBQ_HELD}`]: JSON.stringify([boardQuestionId(B_QBQ_HELD, 3)]) }
+
 const STATUS_OF = (p) => {
   if (!p.published) return 'DRAFT'
   const s = p.questions[0].status
@@ -394,23 +638,41 @@ on('GET', '/organizations/[^/]+/censuses', () => ({
 on('GET', '/organizations/[^/]+/users', () => TEAM)
 on('GET', '/organizations/[^/]+/users/pending', () => PENDING)
 on('GET', '/jobs', () => ({ jobs: [], pagination: pagination(0) }))
-on('GET', '/jobs/([^/]+)', (m) => ({
-  jobId: m[1],
-  type: 'org_members',
-  status: 'completed',
-  progress: 100,
-  total: 0,
-  added: 0,
-  errors: [],
-}))
+// MOCK_SLOW_JOB_MS keeps a status change pending that long, to see the "still working" state.
+const SLOW_JOB_MS = Number(process.env.MOCK_SLOW_JOB_MS) || 0
+const statusJobs = new Map()
+on('GET', '/jobs/([^/]+)', (m) => {
+  const startedAt = statusJobs.get(m[1])
+  if (startedAt !== undefined) {
+    const pending = Date.now() - startedAt < SLOW_JOB_MS
+    return { jobId: m[1], type: 'set_process_status', status: pending ? 'pending' : 'completed', errors: [] }
+  }
+  return { jobId: m[1], type: 'org_members', status: 'completed', progress: 100, total: 0, added: 0, errors: [] }
+})
 on('GET', '/processes', (m, q) => {
-  let list = PROCESSES
+  let list = PROCESSES.filter((p) => !p.unlisted)
   const pub = q.get('published')
   if (pub === 'true') list = list.filter((p) => p.published)
   if (pub === 'false') list = list.filter((p) => !p.published)
   const st = q.get('status')
   if (st) list = list.filter((p) => STATUS_OF(p) === st)
-  return { processes: list, pagination: pagination(list.length) }
+  // As the API: list items never carry per-question results, and pages follow `page` and `limit`.
+  const limit = Math.min(Math.max(Number(q.get('limit')) || 10, 1), 100)
+  const lastPage = Math.max(1, Math.ceil(list.length / limit))
+  const page = Math.min(Math.max(Number(q.get('page')) || 1, 1), lastPage)
+  const processes = list
+    .slice((page - 1) * limit, page * limit)
+    .map((p) => ({ ...p, questions: p.questions.map(({ results, ...rest }) => rest) }))
+  return {
+    processes,
+    pagination: {
+      totalItems: list.length,
+      previousPage: page > 1 ? page - 1 : null,
+      currentPage: page,
+      nextPage: page < lastPage ? page + 1 : null,
+      lastPage,
+    },
+  }
 })
 on('POST', '/processes', () => ({ processId: P_DRAFT }))
 on('POST', '/processes/census/validation', () => '')
@@ -420,6 +682,50 @@ on(
   (m) => PROCESSES.find((p) => p.id === m[1]) || [404, { error: 'process not found', code: 404 }]
 )
 on('PUT', '/processes/([0-9a-f]{24})', () => undefined)
+// Question status changes: applied at once so a local demo can click through. As the backend, a batch that targets a
+// question already over is refused whole. MOCK_STATUS_BUSY=1 answers 503, as when another change holds the lock.
+const WIRE_STATUS = { ready: 'ONGOING', paused: 'PAUSED', ended: 'ENDED', canceled: 'CANCELED' }
+const OVER = new Set(['ENDED', 'RESULTS', 'CANCELED'])
+const setStatus = (p, ids, body) => {
+  if (process.env.MOCK_STATUS_BUSY === '1') return [503, { error: 'another status change is under way', code: 50303 }]
+  let status
+  try {
+    status = WIRE_STATUS[String(JSON.parse(body || '{}').status || '').toLowerCase()]
+  } catch {}
+  if (!p || !status) return [400, { error: 'bad status', code: 40001 }]
+  const targets = p.questions.filter((qq) => !ids || ids.includes(qq.id))
+  const over = targets.find((qq) => OVER.has(qq.status) && qq.status !== status)
+  if (over) return [400, { error: `question ${over.id} is ${over.status} and cannot change`, code: 40001 }]
+  const now = new Date().toISOString()
+  for (const qq of targets) {
+    qq.status = status
+    if (status === 'ENDED' || status === 'CANCELED') {
+      qq.endedAt = now
+      if (qq.results) qq.results = { ...qq.results, finalResults: true }
+    }
+  }
+  const jobId = `job-status-${statusJobs.size + 1}`
+  statusJobs.set(jobId, Date.now())
+  return { jobId }
+}
+on('PUT', '/processes/([0-9a-f]{24})/questions/status', (m, q, body) => {
+  let ids
+  try {
+    ids = (JSON.parse(body || '{}').questions || []).map((x) => x.id)
+  } catch {}
+  return setStatus(
+    PROCESSES.find((x) => x.id === m[1]),
+    ids?.length ? ids : undefined,
+    body
+  )
+})
+on('PUT', '/processes/([0-9a-f]{24})/questions/([^/]+)/status', (m, q, body) =>
+  setStatus(
+    PROCESSES.find((x) => x.id === m[1]),
+    [m[2]],
+    body
+  )
+)
 on('GET', '/processes/([0-9a-f]{24})/results', (m) => {
   const p = PROCESSES.find((x) => x.id === m[1])
   if (!p) return [404, { error: 'not found' }]

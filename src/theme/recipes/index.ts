@@ -2,10 +2,13 @@ import { defineRecipe, RecipeDefinition, SlotRecipeDefinition } from '@chakra-ui
 import { Alert } from './alert'
 import { Avatar } from './avatar'
 import { Badge, Code } from './badge'
+import { BallotPaper } from './ballotPaper'
 import { Button } from './button'
 import { Card } from './card'
 import { checkbox } from './checkbox'
+import { CensusRuler } from './censusRuler'
 import { Dialog } from './dialog'
+import { DataList } from './dataList'
 import { Drawer } from './drawer'
 import {
   ElectionDescription,
@@ -32,6 +35,7 @@ import { OrganizationDescription, OrganizationImage, OrganizationName } from './
 import { Pagination, PaginationButton } from './pagination'
 import { Popover } from './popover'
 import { Progress } from './progress'
+import { QuestionDock } from './questionDock'
 import { RadioCard } from './radioCard'
 import { RadioGroup } from './radioGroup'
 import { SegmentGroup } from './segmentGroup'
@@ -71,8 +75,11 @@ export const recipes: Record<string, RecipeDefinition> = {
 export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   alert: Alert,
   avatar: Avatar,
+  ballotPaper: BallotPaper,
   card: Card,
+  censusRuler: CensusRuler,
   checkbox,
+  dataList: DataList,
   dialog: Dialog,
   drawer: Drawer,
   emptyState: EmptyState,
@@ -82,6 +89,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   nativeSelect: NativeSelect,
   popover: Popover,
   progress: Progress,
+  questionDock: QuestionDock,
   radioCard: RadioCard,
   radioGroup: RadioGroup,
   segmentGroup: SegmentGroup,

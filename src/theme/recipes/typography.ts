@@ -24,12 +24,17 @@ export const heading = defineRecipe({
         fontWeight: 'semibold',
       },
       subsection: sectionSubtitle,
+      // The page's one title (`PageTitle`). From `lg` it sits in a box as tall as a control with the text at its foot,
+      // so a title beside buttons and one alone read on the same line, on every page.
+      page: { display: { lg: 'flex' }, alignItems: { lg: 'flex-end' }, minH: { lg: 'control.md' } },
     },
   },
 })
 
 export const link = defineRecipe({
   base: {
+    // The guide's link: label and chevron 4px apart.
+    gap: '1',
     color: 'accent.fg',
     fontWeight: 'medium-plus',
     textDecoration: 'none',
@@ -57,6 +62,13 @@ export const link = defineRecipe({
           color: 'accent.fg.hover',
         },
       },
+      // A title that opens what it names (a list row's): the heading's own ink and weight, the accent on hover.
+      title: {
+        color: '[inherit]',
+        fontWeight: '[inherit]',
+        _hover: { color: 'accent.fg.hover' },
+        _dark: { color: '[inherit]', _hover: { color: 'link.fg.hover' } },
+      },
       unstyled: {
         textDecoration: 'none',
         _hover: {
@@ -81,6 +93,32 @@ export const link = defineRecipe({
         _hover: {
           color: 'fg',
         },
+      },
+      // The way back to the parent page over a page title: a chevron and 14px medium up to `lg` (the chevron is
+      // the component's, hidden from `lg`), a quiet 12px label from `lg`.
+      back: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.5',
+        textStyle: { base: 'md', lg: 'xs' },
+        lineHeight: { base: 'moderate', lg: 'row.label' },
+        letterSpacing: { lg: 'none' },
+        fontWeight: { base: 'medium', lg: 'normal' },
+        minH: { base: 'control.touch', md: 'control.tablet', lg: 'auto' },
+        color: 'fg.subtle',
+        _hover: { color: 'fg' },
+      },
+      // The one action of a list row or card ("Continue", "Duplicate"): 15px text and a touch hit area up to `lg` (the
+      // touch boards keep 15px on a tablet too), text alone from `lg`.
+      'row-action': {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '1',
+        fontSize: { base: 'item', lg: 'control' },
+        lineHeight: 'moderate',
+        _icon: { boxSize: { lg: 'icon.xs' } },
+        whiteSpace: 'nowrap',
+        minH: { base: 'control.touch', md: 'control.tablet', lg: 'auto' },
       },
       // A whole row-sized link used as a tile: a centred label with badges laid over its corners.
       tile: {

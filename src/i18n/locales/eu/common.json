@@ -5,28 +5,20 @@
   },
   "actions": {
     "cancel": "Utzi",
-    "cancel_description": "«{{ election.title.default }}» bertan behera uzten...\n\nKontuz: ekintza hau ezin da desegin eta emandako boto guztiak baliogabetuko ditu.",
     "confirm": "Berretsi",
     "continue": "Prozesuari berehala berrekin, etenda bazegoen.",
-    "continue_description": "«{{ election.title.default }}» bozketa-prozesuari berrekiten...",
     "create_first_vote": "Ikusi prozesu guztiak",
     "create_new_vote": "Sortu bozketa berria",
     "edit": "Editatu",
     "end": "Bozketa berehala amaitu, boto berririk eman ezin dadin, eta emaitzak agertarazi (kontuz: ezin da desegin).",
-    "end_description": "«{{ election.title.default }}» bozketa-prozesua amaitzen...\n\nKontuz: ekintza hau ezin da desegin eta hautesleek ezingo dute jada bozkatu.",
-    "error_title": "Errorea gertatu da transakzioa burutzean",
     "manage_team": "Kudeatu taldea",
     "more": "Aukera gehiago",
     "pause": "Bozketa-prozesua aldi baterako etenarazi, eskuz berrekiten ez zaion arte. Etenda dagoen bitartean, hautesleek ezingo dute botorik eman.",
-    "pause_description": "«{{ election.title.default }}» bozketa-prozesua etenarazten...",
     "save": "Gorde aldaketak",
     "save_changes": "Gorde aldaketak",
-    "view_active_votes": "Ikusi bozketa aktiboak",
-    "waiting_title": "Transakzioa berresteko zain..."
+    "view_active_votes": "Ikusi bozketa aktiboak"
   },
   "add_new_org": "Gehitu erakunde berri bat",
-  "additional_actions": "Ekintza osagarriak",
-  "all_processes": "Guztiak",
   "already_member": "Baduzu kontua?",
   "alt": {
     "images": {
@@ -94,11 +86,9 @@
     "unavailable": "Erreserba ez dago erabilgarri une honetan. Saiatu berriro geroago."
   },
   "calendar": {
-    "max_duration_exceeded": "Iraupena {{ maxDuration }} eguneko muga gainditzen du. Murriztu bozketa-aldia.",
-    "title": "Egutegia"
+    "max_duration_exceeded": "Iraupena {{ maxDuration }} eguneko muga gainditzen du. Murriztu bozketa-aldia."
   },
   "cancel": "Utzi",
-  "cancel_vote": "Utzi botoa",
   "census": {
     "checkout": {
       "admin_only": "Administratzaileek bakarrik gehi ditzakete botogile-lekuak.",
@@ -140,7 +130,6 @@
       "voted_partial": "Botoa emana {{voted}}/{{total}}"
     }
   },
-  "census_size": "Erroldeko tamaina",
   "change_password": {
     "subtitle": "Sartu zure egungo pasahitza eta berri bat zure kredentzialak eguneratzeko.",
     "title": "Aldatu pasahitza"
@@ -153,12 +142,7 @@
   },
   "confirm": {
     "cancel": "Utzi",
-    "cancel_button": "Utzi",
-    "cancel_process_button": "Bertan behera utzi bozketa",
-    "cancel_process_title": "Bertan behera utzi bozketa",
-    "confirm": "Berretsi botoa",
-    "end_process_button": "Amaitu bozketa",
-    "end_process_title": "Amaitu bozketa"
+    "confirm": "Berretsi botoa"
   },
   "confirm_password": "Berretsi pasahitza",
   "confirm_password_placeholder": "Berretsi zure pasahitz berria",
@@ -169,7 +153,6 @@
     "restored_title": "Konexioa berreskuratu da"
   },
   "contact_us": "Jarri gurekin harremanetan",
-  "control_panel": "Aginte-panela",
   "cookies": {
     "accept": "Onartu",
     "aria_label": "Cookien onarpen-bannerra",
@@ -180,8 +163,7 @@
   },
   "copy": {
     "address": "Kopiatu helbidea",
-    "copied_title": "Kopiatuta!",
-    "copy": "Kopiatu"
+    "copied_title": "Kopiatuta!"
   },
   "country_selector": {
     "selector_label": "Herrialdea"
@@ -251,10 +233,6 @@
       "reset_form": "Berrezarri inprimakia",
       "toggle_sidebar": "Txandakatu alboko barra"
     },
-    "process_view": {
-      "date_format": "y MMMM do",
-      "time_format": "p"
-    },
     "usage": {
       "description": "Jarraitu zure erakundearen erabilera bere mugen arabera.",
       "limit_exceeded_message": "Zure kide-oinarriak {{max}} kideko muga iritsi du.",
@@ -294,23 +272,11 @@
   "delete_my_account": "Ezabatu nire kontua",
   "description": "Deskribapena",
   "do_it_later": "Geroago egin",
-  "draft_processes": "Zirriborroak",
   "drafts": {
-    "actions": "Ekintzak",
-    "clone": "Klonatu zirriborroa",
     "cloned_draft": "Zirriborroa behar bezala klonatu da",
     "cloned_draft_error": "Errorea zirriborroa klonatzean",
-    "delete": "Ezabatu zirriborroa",
     "deleted_draft": "Zirriborroa behar bezala ezabatu da",
-    "edit": "Editatu zirriborroa",
-    "empty": "Ez da zirriborrorik aurkitu",
-    "empty_description": "Sortu zirriborro bat hasteko.",
-    "load_error": "Ezin izan dira zirriborroak kargatu",
-    "load_error_description": "Saiatu berriro.",
-    "not_defined": "Oraindik definitu gabe",
-    "question_type": {
-      "mixed": "Nahasia"
-    }
+    "not_defined": "Oraindik definitu gabe"
   },
   "drag_handle": {
     "label": "Arrastatu berrantolatzeko"
@@ -343,10 +309,7 @@
   },
   "email": "Posta elektronikoa",
   "email_placeholder": "izena@posta.com",
-  "end_date": "Amaiera-data",
   "end_time": "Amaiera-ordua",
-  "end_vote": "Amaitu bozketa",
-  "ended_processes": "Amaituak",
   "error": {
     "crash_description": "Kargatu berriro orria edo itzuli Dashboard-era.",
     "crash_title": "Zerbait gaizki joan da",
@@ -838,6 +801,7 @@
     "selector_label": "Kide-kopurua"
   },
   "menu": {
+    "close": "Itxi menua",
     "collapse": "Tolestu menua",
     "create": "Sortu prozesua",
     "dashboard": "Panela",
@@ -859,7 +823,6 @@
   "new_password_placeholder": "Sartu zure pasahitz berria",
   "new_vote": "Bozketa berria",
   "new_voting": "Bozketa berria",
-  "no_results_filtering": "Zure bilaketa-iragazkiak ez du emaitzarik itzultzen",
   "not_registred_yet": "Ez duzu konturik?",
   "oauth": {
     "link": {
@@ -969,7 +932,6 @@
     "success": "Pasahitza behar bezala eguneratu da"
   },
   "passwords_do_not_match": "Pasahitzak ez datoz bat",
-  "pause_vote": "Pausatu bozketa",
   "payment": {
     "stripe_unavailable": "Ordainketak aldi baterako ez daude erabilgarri. Saiatu berriro geroago."
   },
@@ -979,7 +941,6 @@
   },
   "please_check_email_to_verify": "Mesedez, begiratu zure posta elektronikoa kontua egiaztatzeko",
   "preferences": "Hobespenak",
-  "preview": "Aurrebista",
   "privacy_policy": "Pribatutasun-politika",
   "process": {
     "anonymity": {
@@ -1201,12 +1162,6 @@
   "process_actions": {
     "manage": "Kudeatu panelean"
   },
-  "process_context": {
-    "clone_as_draft": "Klonatu zirriborro gisa",
-    "explorer": "Esploratzailea",
-    "more_info": "Informazio gehiago",
-    "public_voting_page": "Bozketa-orrialde publikoa"
-  },
   "process_create": {
     "anonymity": {
       "title": "Bozketa anonimoa",
@@ -1276,6 +1231,12 @@
     },
     "settings": "Konfigurazioa",
     "start_datetime": "Hasiera-data eta -ordua",
+    "voting_mode": {
+      "all": "Dena batera",
+      "by_question": "Galdera bakoitza bere aldetik",
+      "by_question_hint": "Galderak itxita hasten dira. Banan-banan irekitzen dituzu bozketaren orritik, eta galdera bakoitzaren emaitza ixten duzunean erakusten da.",
+      "label": "Jendeak nola bozkatzen duen"
+    },
     "weight": {
       "equal": "Pertsona bat, boto bat",
       "title": "Boto-pisua",
@@ -1286,17 +1247,6 @@
       "accordion_title": "Erantsi bideoa (aukerakoa)",
       "title": "Zuzeneko bideo-transmisioa"
     }
-  },
-  "process_list": {
-    "end_date": "Amaiera-data",
-    "not_yet": "Oraindik ez",
-    "recount": "Berriro zenbatu",
-    "results": "Emaitzak",
-    "results_live": "Zuzenean",
-    "start_date": "Hasiera-data",
-    "status": "Egoera",
-    "title": "Izenburua",
-    "type": "Mota"
   },
   "process_pdf": {
     "authentication": {
@@ -1440,10 +1390,6 @@
       "paragraph_4": "Bozketa-prozesua amaitutakoan, emaitza finalak eta prozesuaren erregistro egokiak blockchainean finkatzen dira. Horrek prozesua aztergarri bihurtzen du eta argitaratutako txostena erregistro tekniko publikoekin konpara daitekeela bermatzen laguntzen du."
     }
   },
-  "processes": {
-    "load_error": "Ezin izan dira bozketa-prozesuak kargatu",
-    "load_error_description": "Saiatu berriro."
-  },
   "profile": {
     "error": "Errorea profila eguneratzean",
     "success": "Profila behar bezala eguneratu da"
@@ -1453,26 +1399,14 @@
     "verify": "Egiaztatu blockchain esploratzailean:",
     "verify_process": "Ikusi prozesua"
   },
-  "questions_and_results": "Galderak eta emaitzak",
   "registration_failed": "Errorea izen-ematean",
   "registration_successful": "Izen-ematea behar bezala egin da",
   "remove_avatar": "Kendu avatarra",
   "reset_password_button": "Berrezarri pasahitza",
-  "result_visibility": "Emaitzen ikusgaitasuna",
   "results_state": {
-    "enabled": "Gaituta",
     "hidden_until_end": "Ezkutuak amaitu arte",
-    "live_results": "Zuzeneko emaitzak",
-    "live_results_tooltip": "Bozketa-prozesu honek zuzeneko emaitzak erakusten ditu. Hala ere, oraindik abian dago, eta beraz, emaitzak alda daitezke bozketa amaitu arte.",
-    "not_enabled": "Gaitu gabe",
-    "results_available": "Emaitzak eskuragarri",
-    "secret_until_end": "Emaitzen zain",
-    "secret_until_end_tooltip": "Emaitzak ezkutuan jarraitzen dute eta bozketa amaitzen denean soilik egongo dira eskuragarri"
+    "live_results": "Zuzeneko emaitzak"
   },
-  "results_type": {
-    "title": "Bozketa mota"
-  },
-  "resume_vote": "Berrekin",
   "role": {
     "full_access": {
       "badge": "(Sarbide osoa)",
@@ -1530,7 +1464,6 @@
   "spreadsheet": {
     "access_button": "Identifikatu"
   },
-  "start_date": "Hasiera-data",
   "start_time": "Hasiera-ordua",
   "support": "Laguntza",
   "support_chat": {
@@ -1673,8 +1606,6 @@
       "text": "Vocdonirekin irtenbide oso ona aurkitu genuen, azpiegitura neutral eta egiaztagarria izanik, zenbaketaren osotasuna zein boto-emaileen pribatutasuna bermatzen baitzituen. Horri esker, irakasle bakoitzak behin bakarrik bozka zezakeen, modu seguru eta anonimoan."
     }
   },
-  "total_votes": "Boto guztira",
-  "turnout": "Parte-hartzea",
   "uploaded_image_preview": "Kargatutako irudiaren aurrebista",
   "uploader": {
     "avatar_upload_failed": "Errorea avatarra kargatzean",
@@ -1734,8 +1665,6 @@
     "anonymous_receipt": "Boto anonimoa: gorde egiaztagiri hau orain; plataformak ezin izango dizu berriro erakutsi.",
     "voted_title": "Zure botoa behar bezala eman da!"
   },
-  "vote_information": "Botoaren informazioa",
-  "vote_overwrite": "Botoa berridaztea",
   "voter_anonymity": "Boto-emaileen anonimotasuna",
   "voter_auth": {
     "anonymity": "Botoaren anonimotasuna: {{ mode }}",
@@ -1833,14 +1762,470 @@
       "title": "Botogilearen saio-hasiera"
     }
   },
+  "votes": {
+    "ballot": {
+      "count_all_one": "{{count, number}} galdera",
+      "count_all_other": "{{count, number}} galdera, denak batera",
+      "count_by_question_one": "{{count, number}} galdera",
+      "count_by_question_other": "{{count, number}} galdera, galdera bakoitza bere aldetik",
+      "credits_one": "{{count, number}} kreditu",
+      "credits_other": "{{count, number}} kreditu",
+      "fix": {
+        "cancel_and_duplicate": "Utzi bozketa bertan behera eta bikoiztu, zuzentzeko.",
+        "duplicate": "Bikoiztu, bozketa berri batean zuzentzeko.",
+        "title": "Akatsen bat ikusi duzu?"
+      },
+      "intro": "Sarrerako testua",
+      "label": {
+        "mode": "Nola bozkatzen diren"
+      },
+      "locked": {
+        "opened": "Bozketa ireki zenetik, galderak eta aukerak finkatuta daude. Denek testu bera bozkatzen dute.",
+        "published": "Bozketa argitaratu zenetik, galderak eta aukerak finkatuta daude. Denek testu bera bozkatuko dute.",
+        "title": "Botoa ezin da jada aldatu"
+      },
+      "mode": {
+        "all": "Denak batera, boto-txartel bakarrean",
+        "by_question": "Galderaz galdera, irekitzen diren heinean"
+      },
+      "options_label": "{{number}}. galderaren aukerak",
+      "points_one": "{{count, number}} puntu",
+      "points_other": "{{count, number}} puntu",
+      "rule": {
+        "approval_any": "Nahi adina aukera onar daitezke.",
+        "approval_up_to_one": "Gehienez {{count, number}} aukera onar daiteke.",
+        "approval_up_to_other": "Gehienez {{count, number}} aukera onar daitezke.",
+        "budget_one": "Pertsona bakoitzak {{amount}} banatzen ditu {{count, number}} aukeratan, nahi duen moduan.",
+        "budget_other": "Pertsona bakoitzak {{amount}} banatzen ditu {{count, number}} aukeren artean, nahi duen moduan.",
+        "budget_weighted_one": "Pertsona bakoitzak puntuak banatzen ditu {{count, number}} aukeratan, nahi duen moduan.",
+        "budget_weighted_other": "Pertsona bakoitzak puntuak banatzen ditu {{count, number}} aukeren artean, nahi duen moduan.",
+        "multiple_between": "{{min}} eta {{max}} aukera artean markatzen dira.",
+        "multiple_exact_one": "{{count, number}} aukera markatzen da.",
+        "multiple_exact_other": "{{count, number}} aukera markatzen dira.",
+        "multiple_up_to_one": "Gehienez {{count, number}} aukera marka daiteke.",
+        "multiple_up_to_other": "Gehienez {{count, number}} aukera marka daitezke.",
+        "quadratic_one": "Pertsona bakoitzak {{amount}} gastatzen ditu {{count, number}} aukeratan. Aukera berari emandako boto gehigarri bakoitzak kreditu gehiago kostatzen du.",
+        "quadratic_other": "Pertsona bakoitzak {{amount}} banatzen ditu {{count, number}} aukeren artean. Aukera berari emandako boto gehigarri bakoitzak kreditu gehiago kostatzen du.",
+        "quadratic_weighted_one": "Pertsona bakoitzak kredituak gastatzen ditu {{count, number}} aukeratan. Aukera berari emandako boto gehigarri bakoitzak kreditu gehiago kostatzen du.",
+        "quadratic_weighted_other": "Pertsona bakoitzak kredituak banatzen ditu {{count, number}} aukeren artean. Aukera berari emandako boto gehigarri bakoitzak kreditu gehiago kostatzen du.",
+        "ranked_one": "{{count, number}} aukera ordenatzen da, nahiago denetik gutxien nahi denera.",
+        "ranked_other": "{{count, number}} aukerak ordenatzen dira, nahiago denetik gutxien nahi denera.",
+        "single": "Aukera bakarra hautatzen da."
+      },
+      "rules_title": "Nola bozkatzen da",
+      "status_label": "Botoaren egoera",
+      "tag": {
+        "exact": "{{max}} / {{total}}",
+        "per_person": "{{amount}} pertsonako",
+        "single": "Aukera bat",
+        "up_to": "Gehienez {{max}} / {{total}}"
+      },
+      "title": "Botogileek ikusten dutena"
+    },
+    "cancel": {
+      "body_all_one": "Emandako boto {{count, number}} baztertuko da eta ez da emaitzarik izango.",
+      "body_all_other": "Emandako {{count, number}} botoak baztertuko dira eta ez da emaitzarik izango.",
+      "body_all_unknown": "Emandako botoak baztertuko dira eta ez da emaitzarik izango.",
+      "body_by_question_one": "{{questions}} emandako boto {{count, number}} baztertuko da eta emaitzak ez du ondoriorik izango.",
+      "body_by_question_other": "{{questions}} emandako {{count, number}} botoak baztertuko dira eta emaitzek ez dute ondoriorik izango.",
+      "body_final": "Ezin da desegin.",
+      "body_none": "Oraindik ez da botorik eman.",
+      "body_not_open": "Oraindik ez da ireki eta ez dago botorik.",
+      "error": "Ezin izan da bozketa bertan behera utzi",
+      "keep": "Ez, jarraitu bozketarekin",
+      "open_now_one": "{{numbers}}. galdera irekita dago orain.",
+      "open_now_other": "{{numbers}}. galderak irekita daude orain.",
+      "questions_one": "{{count, number}} galderatan",
+      "questions_other": "{{count, number}} galderatan",
+      "title": "«{{title}}» bertan behera utzi?"
+    },
+    "clone": {
+      "all_at_once": "Kopiak galdera guztiak batera bozkatzen ditu."
+    },
+    "date": {
+      "at": "{{weekday}}, {{day}}, {{time}}",
+      "at_time": "{{time}}etan",
+      "day": "{{weekday}}, {{day}}",
+      "on_date": "{{date}}"
+    },
+    "downloads": {
+      "csv": {
+        "action": "Deskargatu emaitzak CSV formatuan",
+        "answered": "Erantzun duten pertsonak",
+        "census": "Erroldea",
+        "method": "Metodoa",
+        "note": "Aukera bakoitzaren emaitza, galderaz galdera.",
+        "number": "Galdera-zenbakia",
+        "option": "Aukera",
+        "question": "Galdera",
+        "result": "Emaitza",
+        "share": "Ehunekoa (%)",
+        "title": "Emaitzak CSV formatuan",
+        "unit": {
+          "header": "Unitatea",
+          "points": "puntuak",
+          "votes": "botoak",
+          "weight": "pisua"
+        }
+      },
+      "pdf": {
+        "action": "Deskargatu azken txostena PDF formatuan",
+        "note": "Auditoria baterako.",
+        "title": "Azken txostena PDF formatuan"
+      },
+      "title": "Deskargatu emaitzak"
+    },
+    "empty": {
+      "body": "Sortu lehena nahi duzunean. Zer bozkatzen den, nork bozkatzen duen eta noiz arte aukeratzen duzu, eta prest dagoenean argitaratzen duzu.",
+      "create": "Sortu bozketa bat",
+      "legend": {
+        "closed": "Emaitza duzu, eta hurrengorako bikoiztu dezakezu.",
+        "draft": "Zure erritmoan prestatzen duzu. Inork ez du ikusten eta ez du ezer balio.",
+        "live": "Jendeak bozkatzen du eta zuk parte-hartzea jarraitzen duzu.",
+        "ready": "Argitaratuta dago eta aukeratu duzun egunaren zain dago."
+      },
+      "legend_hint": "Bozketa bakoitza hemen agertzen da bere egoerarekin.",
+      "legend_title": "Zer ikusiko duzu hemen",
+      "title": "Oraindik ez dago bozketarik"
+    },
+    "end": {
+      "body_all_one": "Epea amaitu baino lehen itxiko da, emandako boto {{count, number}}rekin. Emaitzak argitaratuko dira eta botogileek ikusiko dituzte. Ezin da berriro ireki.",
+      "body_all_other": "Epea amaitu baino lehen itxiko da, emandako {{count, number}} botoekin. Emaitzak argitaratuko dira eta botogileek ikusiko dituzte. Ezin da berriro ireki.",
+      "body_all_unknown": "Epea amaitu baino lehen itxiko da, emandako botoekin. Emaitzak argitaratuko dira eta botogileek ikusiko dituzte. Ezin da berriro ireki.",
+      "body_final": "Emaitzak behin betikoak izango dira, eta botogileek ikusiko dituzte.",
+      "body_question_one": "{{number}}. galdera orain duen boto {{count, number}}rekin itxiko da.",
+      "body_question_other": "{{number}}. galdera orain dituen {{count, number}} botoekin itxiko da.",
+      "body_questions": "{{numbers}}. galderak orain dituzten botoekin itxiko dira.",
+      "error": "Ezin izan da bozketa amaitu",
+      "keep": "Jarraitu bozketarekin",
+      "not_voted_one": "Pertsona {{count, number}}ek ez du oraindik bozkatu eta ezin izango du gehiago.",
+      "not_voted_other": "{{count, number}} pertsonak ez dute oraindik bozkatu eta ezin izango dute gehiago.",
+      "title": "Bozketa amaitu?",
+      "title_now": "Bozketa orain amaitu?",
+      "unopened_one": "{{numbers}}. galdera ez da ireki eta botorik gabe geratuko da.",
+      "unopened_other": "{{numbers}}. galderak ez dira ireki eta botorik gabe geratuko dira."
+    },
+    "error": {
+      "other": "Zerbait gaizki joan da. Kargatu berriro orria eta saiatu berriro."
+    },
+    "header": {
+      "line": {
+        "by_question_canceled": "{{day}}, {{time}}. Botoak baztertu dira.",
+        "by_question_ended": "{{day}}, {{time}}, {{duration}} ondoren.",
+        "by_question_live": "Galderaz galdera. Hasiera: {{date}}, {{ago}}.",
+        "by_question_live_today": "{{day}}, galderaz galdera. Hasiera: {{time}}, {{ago}}.",
+        "by_question_paused": "Galderaz galdera. Hasiera: {{date}}.",
+        "by_question_paused_today": "Galderaz galdera. Hasiera: {{time}}.",
+        "by_question_ready": "{{date}}. Galderaz galdera.",
+        "canceled": "Botoak baztertu dira.",
+        "canceled_on": "{{date}}. Botoak baztertu dira.",
+        "canceled_today": "Gaur, {{day}}, {{time}}. Botoak baztertu dira.",
+        "closes": "Itxiera: {{date}}.",
+        "closes_left": "Itxiera: {{date}}. {{left}}.",
+        "closes_paused": "Itxiera: {{date}}. Epea ez da gelditzen.",
+        "closes_paused_touch": "Itxiera: {{end}}. Epea ez da gelditzen.",
+        "ended": "Amaiera: {{date}}.",
+        "ended_today": "Gaur amaitua, {{day}}, {{time}}.",
+        "opens": "Irekiera: {{start}}. Itxiera: {{end}}.",
+        "starts": "Hasiera: {{date}}."
+      }
+    },
+    "job": {
+      "partial": "Galdera batzuk ezin izan dira aldatu: {{total, number}}tik {{failed, number}}. Orriak erakusten du bakoitza nola dagoen.",
+      "slow": "Aldaketa ez da oraindik amaitu. Itxaroten jarraituko dugu eta orria eguneratuko dugu amaitzen denean.",
+      "slow_title": "Oraindik lanean ari gara",
+      "stale": "Galdera batek lehendik ere egoera aldatuta zuen. Orriak orain erakusten du bakoitza nola dagoen."
+    },
+    "list": {
+      "action": {
+        "continue": "Editatu",
+        "follow": "Jarraipena",
+        "manage": "Kudeatu bozketa",
+        "result": "Emaitza",
+        "view": "Ikusi"
+      },
+      "action_label": "{{action}}: {{title}}",
+      "closed_on": "{{date}}",
+      "closes": "{{date}}(e)an ixten da.",
+      "delete": "Ezabatu",
+      "delete_body": "Ezin da desegin.",
+      "delete_confirm": "Ezabatu zirriborroa",
+      "delete_error": "Ezin izan da zirriborroa ezabatu",
+      "delete_title": "Zirriborro hau ezabatu?",
+      "duplicate_short": "Bikoiztu",
+      "filter": {
+        "all": "Denak",
+        "closed": "Itxiak",
+        "drafts": "Zirriborroak",
+        "live": "Martxan",
+        "ready": "Prest"
+      },
+      "filter_label": "Iragazi egoeraren arabera",
+      "load_error": "Ezin izan dira bozketak kargatu",
+      "meta": "{{questions}}, {{voters}}.",
+      "meta_no_voters": "{{questions}}.",
+      "meta_questions_one": "Galdera {{count, number}}",
+      "meta_questions_other": "{{count, number}} galdera",
+      "meta_voters_one": "Botogile {{count, number}}",
+      "meta_voters_other": "{{count, number}} botogile",
+      "more": "Ekintza gehiago",
+      "new": "Bozketa berria",
+      "no_match": "Ez dago bat datorren bozketarik",
+      "no_match_hint": "Saiatu beste iragazki edo bilaketa batekin.",
+      "refresh_error": "Ezin izan da zerrenda eguneratu",
+      "refresh_error_hint": "Bozketak azken aldiz kargatu ziren bezala erakusten ditu.",
+      "retry": "Saiatu berriro",
+      "row_error": "Ezin izan da bozketa hau erakutsi.",
+      "search": "Bilatu bozketa bat",
+      "starts": "{{date}}(e)an hasten da.",
+      "starts_live": "Zuzenean, {{date}}.",
+      "title": "Bozketak",
+      "turnout": "Parte-hartzea: %{{percent}}.",
+      "turnout_any": "Parte-hartzea: gutxienez %{{percent}}.",
+      "warning": {
+        "end_passed": "Itxiera-data igaro da.",
+        "missing_end": "Oraindik ez dauka itxiera-datarik."
+      },
+      "when": "{{weekday}}, {{day}}, {{time}}",
+      "when_day": "{{weekday}}, {{day}}, {{time}}"
+    },
+    "manage": {
+      "abstention": "Abstentzioa",
+      "action_label": "{{action}}: {{number}}. galdera, {{title}}",
+      "close": "Itxi",
+      "close_body_one": "«{{title}}» orain duen boto {{votes}}rekin itxiko da eta emaitza behin betikoa izango da. Itxitako galdera ezin da berriro ireki.",
+      "close_body_other": "«{{title}}» orain dituen {{votes}} botoekin itxiko da eta emaitza behin betikoa izango da. Itxitako galdera ezin da berriro ireki.",
+      "close_cancel": "Ez, utzi irekita",
+      "close_confirm": "Itxi {{number}}. galdera",
+      "close_last_warning": "Azken galdera da: ixten baduzu, bozketa ere itxi egingo da.",
+      "close_title": "{{number}}. galdera itxi?",
+      "count": {
+        "canceled_one": "{{count, number}} baliogabetua",
+        "canceled_other": "{{count, number}} baliogabetuak",
+        "closed_one": "{{count, number}} itxita",
+        "closed_other": "{{count, number}} itxita",
+        "not_opened_one": "{{count, number}} ireki gabea",
+        "not_opened_other": "{{count, number}} ireki gabeak",
+        "open_one": "{{count, number}} irekita",
+        "open_other": "{{count, number}} irekita",
+        "paused_one": "{{count, number}} pausatuta",
+        "paused_other": "{{count, number}} pausatuta",
+        "to_open_one": "{{count, number}} irekitzeko",
+        "to_open_other": "{{count, number}} irekitzeko"
+      },
+      "error": {
+        "busy": "Beste aldaketa bat abian da. Saiatu berriro segundo batzuen buruan.",
+        "stale": "Galderak lehendik ere egoera aldatuta zuen.",
+        "timeout": "Espero baino gehiago irauten ari da. Egoera bere kabuz eguneratuko da.",
+        "title": "Ezin izan da galdera aldatu"
+      },
+      "held_note": "Bozketaren pausak geldituta.",
+      "kind": "{{kind}}.",
+      "locked": "Emaitzak galdera ixtean ikusiko dira.",
+      "next": {
+        "close_one": "Hurrengo urratsa: itxi {{numbers}}. galdera",
+        "close_other": "Hurrengo urratsa: itxi {{numbers}}. galderak",
+        "open": "Hurrengo urratsa: ireki {{numbers}}. galdera",
+        "resume_vote": "Hurrengo urratsa: berrekin bozketari"
+      },
+      "open": "Ireki",
+      "open_off_note": "«Ireki» desgaituta dago beste galdera bat irekita dagoen bitartean, hasiera-ordua baino lehen eta bozketa pausatuta dagoen bitartean.",
+      "paused_note": "Inork ezin du bozkatu.",
+      "percent": "%{{percent}}",
+      "provisional": "Behin-behineko emaitza.",
+      "question_ruler": "{{total}} pertsonatik {{voted}}k bozkatu dute, %{{percent}}.",
+      "question_ruler_count": "{{voted}} pertsonak bozkatu dute.",
+      "starts": "Bozketa {{date}}(e)an hasten da.",
+      "toggle_hint": "Erakutsi edo ezkutatu xehetasuna",
+      "toggle_number": "{{number}}. galdera:",
+      "turnout_figure": "<n>%{{percent}}</n>eko parte-hartzea"
+    },
+    "page": {
+      "back": "Bozketak",
+      "cancel_vote": "Utzi bozketa bertan behera",
+      "duplicate": "Bikoiztu",
+      "duplicate_vote": "Bikoiztu bozketa",
+      "end_now": "Amaitu orain",
+      "end_vote": "Amaitu bozketa",
+      "more": "Gehiago",
+      "more_actions": "Ekintza gehiago",
+      "pause": "Pausatu",
+      "resume": "Berrekin",
+      "show_as_voter": "Erakutsi botogile gisa",
+      "tab": {
+        "ballot": "Botoa",
+        "summary": "Kudeaketa"
+      }
+    },
+    "pause": {
+      "error": {
+        "pause": "Ezin izan da bozketa pausatu",
+        "resume": "Ezin izan zaio bozketari berrekin"
+      }
+    },
+    "question_state": {
+      "canceled": "Baliogabetua",
+      "closed": "Itxita",
+      "not_opened": "Ireki gabea",
+      "open": "Irekita",
+      "paused": "Pausatuta",
+      "to_open": "Irekitzeko"
+    },
+    "results": {
+      "choice_points_one": "{{votes}} puntu",
+      "choice_points_other": "{{votes}} puntu",
+      "choice_votes_one": "{{votes}} boto",
+      "choice_votes_other": "{{votes}} boto",
+      "choice_weight_one": "{{votes}} boto haztatu",
+      "choice_weight_other": "{{votes}} boto haztatu",
+      "counting": "Bozketa itxita dago. Emaitzak zenbatzen ari dira eta laster agertuko dira hemen."
+    },
+    "state": {
+      "canceled": "Bertan behera utzia",
+      "closed": "Itxia",
+      "draft": "Zirriborroa",
+      "live": "Martxan",
+      "paused": "Pausatuta",
+      "ready": "Prest"
+    },
+    "summary": {
+      "all_open": "Denak batera irekita",
+      "answered": "Parte-hartzea: {{total}}etik {{answered}}",
+      "answered_count_label_one": "{{count, number}} pertsonak erantzun dio {{number}}. galderari.",
+      "answered_count_label_other": "{{count, number}} pertsonak erantzun diote {{number}}. galderari.",
+      "answered_label": "{{total}} pertsonatik {{answered}}k erantzun dute {{number}}. galdera.",
+      "auth": {
+        "code_email": "Posta elektronikoz bidalitako <b>erabilera bakarreko kode bat</b>.",
+        "code_email_or_sms": "Posta elektronikoz edo SMS bidez bidalitako <b>erabilera bakarreko kode bat</b>.",
+        "code_sms": "SMS bidez bidalitako <b>erabilera bakarreko kode bat</b>.",
+        "fields": "<b>{{fields}}</b>.",
+        "fields_code_email": "<b>{{fields}}</b>, gehi posta elektronikoz bidalitako <b>erabilera bakarreko kode bat</b>.",
+        "fields_code_email_or_sms": "<b>{{fields}}</b>, gehi posta elektronikoz edo SMS bidez bidalitako <b>erabilera bakarreko kode bat</b>.",
+        "fields_code_sms": "<b>{{fields}}</b>, gehi sMS bidez bidalitako <b>erabilera bakarreko kode bat</b>.",
+        "title": "Autentifikazio-metodoa"
+      },
+      "ballot_link": "Botoa",
+      "blank_one": "{{voters}} botogiletik {{count, number}}ek zuri utzi du.",
+      "blank_other": "{{voters}} botogiletik {{count, number}}k zuri utzi dute.",
+      "blank_none": "Inork ez du zuri utzi.",
+      "calendar": {
+        "at": "{{time}}etan.",
+        "close": "Itxiera automatikoa eta emaitzak guztientzat",
+        "ended_auto": "Automatikoki itxia epea amaitzean",
+        "ended_manual": "Eskuz amaitua",
+        "opened": "Bozketa irekita",
+        "opens": "Bozketa irekitzen da",
+        "title": "Egutegia",
+        "today": "Gaur",
+        "today_paused": "Gaur. Bozketa pausatuta"
+      },
+      "copy_link": "Kopiatu esteka publikoa",
+      "count_unknown": "Ezin izan da parte-hartzea kargatu.",
+      "dock": {
+        "label": "Bozketaren kontrolak",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}"
+      },
+      "electoral": {
+        "census_one": "Botoa emateko eskubidea duen <n>{{count, number}}</n> pertsona.",
+        "census_other": "Botoa emateko eskubidea duten <n>{{count, number}}</n> pertsona.",
+        "closing": "Itxiera",
+        "date": "{{date}}.",
+        "results_by_question": "Galdera bakoitza ixtean ikusten dira.",
+        "results_live": "Zuzenean ikusten dira, bozketan zehar.",
+        "results_public": "Publikoak dira jada.",
+        "results_secret": "Bozketa ixtean ikusiko dira."
+      },
+      "electoral_title": "Bozketaren datuak",
+      "fact": {
+        "census_one": "Pertsona {{count, number}}",
+        "census_other": "{{count, number}} pertsona",
+        "overwrite_allowed": "Gaituta",
+        "overwrite_not_allowed": "Desgaituta",
+        "results_hidden": "bozketa ixtean",
+        "results_hidden_by_question": "galdera bakoitza ixtean",
+        "results_live": "zuzenean, bozketan zehar",
+        "results_out": "publikoak"
+      },
+      "headline": {
+        "any_count_one": "Gutxienez {{count, number}} pertsonak bozkatu du galderaren bat.",
+        "any_count_other": "Gutxienez {{count, number}} pertsonak bozkatu dute galderaren bat.",
+        "any_of_one": "{{total}} pertsonatik gutxienez {{count, number}}k bozkatu du galderaren bat, %{{percent}}.",
+        "any_of_other": "{{total}} pertsonatik gutxienez {{count, number}}k bozkatu dute galderaren bat, %{{percent}}.",
+        "count_one": "{{count, number}} pertsonak bozkatu du.",
+        "count_other": "{{count, number}} pertsonak bozkatu dute.",
+        "nobody": "Inork ez du bozkatu.",
+        "nobody_yet": "Oraindik ez du inork bozkatu.",
+        "of_one": "{{total}} pertsonatik {{count, number}}k bozkatu du, %{{percent}}.",
+        "of_other": "{{total}} pertsonatik {{count, number}}k bozkatu dute, %{{percent}}."
+      },
+      "idle": {
+        "by_question_body": "Hasten denean, galderak itxita egongo dira eta banan-banan irekiko dituzu.",
+        "by_question_started_body": "Ireki lehen galdera bozketa hasteko.",
+        "by_question_started_title": "Oraindik ez dago galdera irekirik",
+        "canceled_body": "Emandako botoak baztertu dira. Ez dago emaitzarik.",
+        "canceled_hint": "Bikoiztu dezakezu berriro deitzeko.",
+        "canceled_title": "Bozketa bertan behera utzita",
+        "duplicate": "Bikoiztu",
+        "ended_counting": "Behin betiko emaitzak zenbatzen ari dira oraindik.",
+        "ended_final": "Emaitzak behin betikoak dira eta botogileek ikus ditzakete jada.",
+        "not_started": "Oraindik ez da hasi",
+        "questions_one": "galdera {{count, number}}",
+        "questions_other": "{{count, number}} galdera",
+        "ready_body_one": "{{people}} erroldean eta {{questions}}.",
+        "ready_body_other": "{{people}} erroldean eta {{questions}}, denak batera irekita.",
+        "ready_title": "Bere kabuz irekiko da: {{date}}"
+      },
+      "label": {
+        "census": "Erroldea",
+        "closed": "Itxia",
+        "overwrite": "Botoa gainidaztea",
+        "questions": "Galderak",
+        "results": "Emaitzak"
+      },
+      "line": {
+        "left": "<b>{{left}}</b> geratzen dira bozkatzeko.",
+        "paused": "Bozketa <b>pausatuta</b> dago."
+      },
+      "link_copied": "Esteka kopiatu da",
+      "no_results": "emaitzarik gabe",
+      "none_open": "bat ere ez irekita",
+      "paused": {
+        "all_at_once_one": "Inork ezin du bozkatu berrekin arte. Emandako boto {{votes}} gorde egiten da eta epea ez da aldatzen.",
+        "all_at_once_other": "Inork ezin du bozkatu berrekin arte. Emandako {{votes}} botoak gorde egiten dira eta epea ez da aldatzen.",
+        "all_at_once_no_votes": "Inork ezin du bozkatu berrekin arte. Epea ez da aldatzen.",
+        "by_question": "Inork ezin du bozkatu, eta ezin da galderarik ireki edo itxi berrekin arte. Emandako botoak gorde egiten dira.",
+        "by_question_no_votes": "Inork ezin du bozkatu, eta ezin da galderarik ireki edo itxi berrekin arte.",
+        "title": "Bozketa pausatuta dago."
+      },
+      "question_votes_one": "{{count, number}} boto",
+      "question_votes_other": "{{count, number}} boto",
+      "results_line": {
+        "live": "Emaitzak zuzenean ikusten dira, bozketan zehar.",
+        "none": "Ez da emaitzarik izango.",
+        "public": "Emaitzak publikoak dira jada.",
+        "secret": "Emaitzak bozketa ixtean ikusiko dira."
+      },
+      "ruler_label_one": "{{total}} pertsonatik {{count, number}}k bozkatu dute, {{percent}}%",
+      "ruler_label_other": "{{total}} pertsonatik {{count, number}}k bozkatu dute, {{percent}}%",
+      "ruler_label_any": "Gutxienez {{total}} pertsonatik {{voted}}k galderaren bat bozkatu dute, %{{percent}}",
+      "share_note": "Hautestontzi digitalerako esteka. Partekatu boto-eskubidea dutenekin.",
+      "share_note_closed": "Bozketaren orri publikorako esteka, emaitzekin.",
+      "share_title": "Partekatzeko"
+    },
+    "time_left": "{{duration}} geratzen dira",
+    "waiting": {
+      "cancel": "«{{title}}» bertan behera uzten…",
+      "continue": "«{{title}}» berrabiarazten…",
+      "end": "«{{title}}» amaitzen…",
+      "pause": "«{{title}}» pausatzen…",
+      "title": "Aldaketa berretsi arte zain"
+    }
+  },
   "voting_link": {
-    "description": "Partekatu esteka hau zure hautesleekin bozketa-prozesuan parte hartzeko",
     "title": "Bozketa-esteka"
   },
   "voting_processes": "Bozketa-prozesuak",
-  "voting_processes_description": "Kudeatu eta gainbegiratu zure bozketa-prozesuak",
-  "voting_settings": "Bozketa-ezarpenak",
-  "voting_status": "Bozketaren egoera",
   "wallet": {
     "balance": "Saldoa",
     "balance_note": "Aurrez ordaindutako kredituak, BEZ gabe. Ordainpeko boto-prozesu bat argitaratzean saldo honetatik kobratzen da.",

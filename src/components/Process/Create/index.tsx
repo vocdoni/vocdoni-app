@@ -56,7 +56,9 @@ import Editor from '~components/Editor'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
+import type { CreateVotingProcessRequestWithMode } from '~src/types/voting-process'
 import { MaxDraftsPerOrg } from '~constants'
+import { useInvalidateVotes } from '~queries/votes'
 import { QueryKeys } from '~queries/keys'
 import { clearPendingCheckout, enqueuedJobId, readPendingCheckout } from '~queries/process-checkout'
 import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
@@ -497,15 +499,21 @@ const LeaveConfirmationModal = ({
 
 export const useCreateProcess = () => {
   const { client } = useApiClient()
+  const invalidateVotes = useInvalidateVotes()
 
   return useMutation<string, Error, CreateVotingProcessRequest>({
     mutationFn: (request) => client.elections.create(request),
+    // The votes list lives under its own key: a new draft or vote must show in it at once.
+    onSuccess: () => {
+      void invalidateVotes()
+    },
   })
 }
 
 const useUpdateProcess = () => {
   const { client } = useApiClient()
   const queryClient = useQueryClient()
+  const invalidateVotes = useInvalidateVotes()
 
   return useMutation<void, Error, UpdateProcessRequest>({
     mutationFn: async ({ processId, body }) => {
@@ -520,6 +528,7 @@ const useUpdateProcess = () => {
     // until the price is read again.
     onSuccess: (_, { processId }) => {
       void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
+      void invalidateVotes()
     },
   })
 }
@@ -533,7 +542,7 @@ export const useFormToVotingProcessRequest = () => {
     return parseFormDateTime(dateStr, timeStr).toISOString()
   }
 
-  return (form: Process, censusSpec: CensusSpec): CreateVotingProcessRequest => {
+  return (form: Process, censusSpec: CensusSpec): CreateVotingProcessRequestWithMode => {
     // The SAAS API rejects processes without an owner org. Draft saves are skipped and
     // the publish/save buttons are disabled until the address resolves, so reaching this
     // guard means a caller bypassed those checks.
@@ -599,6 +608,9 @@ export const useFormToVotingProcessRequest = () => {
       // so never let the flag through when the anonymous voting option is not offered.
       census: disableAnonymousVoting ? { ...censusSpec, anonymous: undefined } : censusSpec,
       questions,
+      // Sent on create and on every update: the draft PUT replaces everything and an absent `initialStatus`
+      // resets the mode. The flag only hides the switch.
+      ...(form.votingMode === 'byQuestion' ? { initialStatus: 'PAUSED' as const } : {}),
     }
   }
 }
@@ -655,6 +667,7 @@ const ProcessCreateView = () => {
   // resumes (and tries to update) a draft owned by a different org
   const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
+  const invalidateVotes = useInvalidateVotes()
   const { isSubmitting, isSubmitSuccessful, isDirty: isFormDirty } = methods.formState
   // Back from a redirect-based payment (the return route), the draft it was opened for is read from storage
   const returningFromCheckout = sessionId !== undefined
@@ -822,6 +835,7 @@ const ProcessCreateView = () => {
     queryClient.removeQueries({
       queryKey: QueryKeys.organization.elections(organization?.address),
     })
+    void invalidateVotes()
 
     // Not sent when the draft values are missing (a return from a payment, for one): blank props would skew it
     if (form) {

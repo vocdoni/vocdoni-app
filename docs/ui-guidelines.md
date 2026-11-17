@@ -24,7 +24,7 @@ or, as text and line, a lighter `#6a99f1`. The values are in the dark table belo
 | Meaning of colours (surfaces, text, borders, light and dark)             | `src/theme/semantic.ts` and one module per family (below)                                                                                                 |
 | Brand colour and `accent` (generated from `PRIMARY_COLOR`)               | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                |
 | Text roles                                                               | `src/theme/textStyles.ts`                                                                                                                                 |
-| How a component looks and its variants                                   | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports |
+| How a component looks and its variants                                   | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports, and `dashboard` (`DashboardContents`) |
 | Voting UI from `@vocdoni/react-components`                               | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                        |
 | Shared building blocks                                                   | `src/components/ui/`                                                                                                                                      |
 | Shared layout pieces                                                     | `src/components/Layout/Separators.tsx` (`LabelledSeparator`)                                                                                              |
@@ -50,7 +50,7 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint`, `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.track` (the empty track of a progress bar), `bg.inverted`, `bg.panel`                                                                          | `semantic.ts`     |
 | Borders                          | `border` (the hairline of cards, rows and dividers, black at 10%), `border.emphasized` (a firmer hairline, such as the rule above a docked bar, black at 18%), `border.muted`, `border.subtle`, `border.strong` (outlines of checkboxes, radios and dashed drop zones, `#8f8f8f`), `border.field` (the ring of fields, selects, textareas and voter options, `#8f8f8f`), `border.inverted` | `semantic.ts`     |
 | Surface layers                   | `surface.canvas` (the dashboard page, `#fafafa` in light mode), `.sidebar` (white), `.content`, `.card`, `.sunken`, `.control` (the fill of a secondary button, an avatar and the entity selector: white in light mode, white at 5% in dark), `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`)                                                                                                                  | `semantic.ts`     |
-| Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.fg`                                                                                                                                                                                                                            | `semantic.ts`     |
+| Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.sheet` (behind a bottom sheet and a tablet's confirm dialog), `scrim.fg`                                                                                                                                                                                                                            | `semantic.ts`     |
 | Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                                                                                                                                           | `semantic.ts`     |
 | Interaction states (bg/fg pairs) | `state.hover`, `state.pressed`, `state.selected`, `state.current`, `state.dragover.border`                                                                                                                                                                                                   | `states.ts`       |
 | Status palettes                  | `colorPalette='success' \| 'warning' \| 'danger' \| 'info'`, each with the slots of a Chakra palette (`solid`, `contrast`, `fg`, `muted`, `subtle`, `border`…)                                                                                                                               | `status.ts`       |
@@ -60,7 +60,7 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                                                                                                                                        | `illustration.ts` |
 | Links, switch, segments          | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `segment.selected` (the chosen segment or pill tab: `bg.panel` in light) | `recipeColors.ts` |
 | Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                                                                                                                                  | `recipeColors.ts` |
-| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`); every shadow is a 1px ring, no blur | `semantic.ts`     |
+| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`), `shadow.raised.halo` (a desktop action menu: the ring plus a 4px panel-coloured halo); every shadow is a 1px ring, no blur | `semantic.ts`     |
 | Brand accent in dark mode        | `accent.fg`: the brand's `fg` (`#6a99f1` for Fil's stock blue), or white on the dark page for a neutral brand (active tab, highlight card)                                                                                                                                                                                    | `palette.ts`      |
 | Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                         | `system.ts`       |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                                                                                                                                         | `semantic.ts`     |
@@ -107,6 +107,7 @@ Rules of thumb:
   | `fg.info`, `input.placeholder`, `ballot.choice.ring` | `fg.muted`, `fg.subtle`, `border.strong` |
   | `gray.subtle`, `gray.muted`, `gray.solid`, `gray.contrast` | `bg.muted`, `bg.emphasized`, `carbon.100`, `gray.950` |
   | `scrim.strong` | black at 64% |
+  | `scrim.sheet` | black at 40%, as in light |
   | `fg.error`, `fg.warning`, `fg.success` | #f97770, #e4ac59, #6fc884 (the status palettes' `fg` slots too) |
   | `bg.error`, `bg.warning`, `bg.success`, `bg.info`, `footer.bg.muted` | `bg.subtle` |
   | `success.solid`, `success.contrast` | #2caa4f, #0a0a0a |
@@ -150,10 +151,16 @@ Typography is a role, not three props.
 ```
 
 App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (12px, medium; Fil has no uppercase),
-`page-title` (28px, semibold, tight tracking), `section-title` (the `control` size, semibold), `display`, `control` (a control's text, on the `control` font
+`page-title` (24px on a phone, 28px from `md`, semibold, tight tracking), `section-title` (the `control` size, semibold), `display`, `control` (a control's text, on the `control` font
 size, with no weight: buttons, field labels and card titles add 550 in their recipes), `figure` (numerals, dates, counts and codes: JetBrains Mono at 12px), `quote-label` (the sector over a featured quote), `separator-label` (the label of a
 `LabelledSeparator`), `status-title` (a process status as a headline) and `role-name` (a role shown from its raw
-value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
+value, capitalised), `item-title` (a row's title in a list, 16px, 15px from `md`), `feature-title` (the larger title of the row a
+list promotes, 19px, 20px from `md`), `vote-title` (a vote's page title, 22px, 28px from `md`), `meta` (secondary text of a row and the quiet line under a question's title, 14px,
+13px from `md`), `turnout-headline` (the headline sentence of a vote's turnout card: 22px, 28px from `md`, 34px from `lg`) and `turnout-line` (the line under it: 16px, 19px, 20px),
+`question-number` (its number, in figures), `dialog-title` (a confirm dialog's and a bottom sheet's title: 17px below `lg`, 24px with the page's tracking from `lg`), `dialog-body` (what a
+confirm dialog says: 15px on a phone, 14px from `md`, 1.45) and `bar-caption` (the line over a bar, "184 of 312 voted": 14px, 13.5px from `lg`, 550).
+The control roles `control-touch` (15px, 14px, 13.5px), `control-input` (16px, 14px, 13.5px) and `control-chip` (14px, 13.5px from `lg`)
+and `control-tab` (15px, 13.5px from `lg`) are what button, field, menu, chip and tab recipes read; do not use them in components. Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 
 - A role holds typography only. Colour stays a separate prop. Do not pass a `textStyle` and a prop that sets the same
   property: they resolve in prop order.
@@ -161,13 +168,14 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
   card, section or settings-block title is a `SectionHeader` (below): an `h2` in the `section-title` role over a muted
   `body-sm` description. Do not write that pair by hand.
 - A labelled figure (a usage count, a date on a card) is the `stat` recipe, not a `Text` with a bigger size: a 12px
-  eyebrow label over a figure, with an optional muted unit. See `UsageMeter` below.
+  eyebrow label over a figure, with an optional muted unit. See `UsageMeter` below. A vote's turnout is a sentence
+  (`turnout-headline`), not a figure.
 - Body copy needs no `textStyle`: `body` in `globalCss` (`system.ts`) gives it the `body` role, so a bare `Text`,
   markdown or a list item inherits that. The `text` recipe has no default size, so set `textStyle` or `size` on any
   `Text` that should be something else. For inline emphasis inside smaller text, use `chakra.span` or `Span`.
-- Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.5), `tall` (1.6), plus `question` (1.08, the voter's question title). Letter spacing:
-  `body` (the page's -0.006em), `heading.item`, `heading.section` and `heading.page` (tighter as the type grows),
-  `heading.snug`, `heading.question`, `quote.tight`, `voter`, plus Chakra's own steps.
+- Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.45, the guide's root: running text and controls), `tall` (1.6), plus `question` (1.08, the voter's question title), `headline` (1.12, the turnout headline), `page` (1.1, a page's and a vote's title; `page.touch` 1.15 below `lg`) and the fixed lines the boards set rows on: `row.title` (20px, a list row's and a question's title), `row.touch` (22px, both on a touch screen), `row.meta` (18px, a list row's secondary line; `row.meta-touch` 20px) and `row.label` (17px, the way back over a page title). Letter spacing:
+  `body` (the page's -0.006em), `heading.row` (-0.012em, a row's or a question's title), `heading.item`, `heading.section` and `heading.page` (tighter as the type grows; `heading.page.touch` -0.03em on a phone),
+  `heading.snug`, `heading.question`, `heading.line` (-0.02em, the line under the turnout headline), `quote.tight`, `voter`, plus Chakra's own steps.
 - Families and weights live together in `src/theme/fonts.ts`: each family with the files it ships (`SANS` and `MONO`, a static
   family or a variable range), the stacks (`body`, `heading`, `figure`, `mono`) and the ladder of which weight each
   name renders (`FONT_WEIGHTS`). Commissioner (interface) and JetBrains Mono (figures) are variable, 400 to 700:
@@ -179,26 +187,72 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
 
 ## Sizes, spacing and radii
 
+- **Spacing tokens of the boards**: `card` (22px), `chip` (7px, a chip's label to its count), `note` (1px, a question's title to its note; `note.paper` 3px, the same on the organiser's ballot from `lg`), `dock` (110px, what a phone page keeps clear under its content for the bottom action bar), `row` (11px, the top of a one-line row; `row.head` 13px, a legend's head), `bar` (30px, above the bar of a vote's turnout card from `lg`), `idle` (26px, the card that says where a vote stands; `idle.end` 13px, its footer's end).
 - **Spacing**: scale steps (`p='4'`, `gap='2'`), plus `0` and `auto` (`p='0'`, `mx='auto'`). A pixel value is a
   `pxSpacing` ratchet hit.
 - **Sizes**: Chakra's named sizes and the tokens below, plus `0` and `auto`. A pixel value is a `pxSize` ratchet hit.
-- **Radii**: `xs` (3px), `sm` (4px), `md` and `lg` (6px), `xl` and `2xl` (12px), `full`, `none`. Pixel radii fail the
+- **Radii**: `xs` (3px), `sm` (4px), `md` and `lg` (6px), `xl` and `2xl` (12px), `bar` (2px, the ends of a 4px bar: the turnout
+  track, a sheet's grab handle), `full`, `none`. Pixel radii fail the
   inventory. Chakra's own recipes read the semantic `l1`, `l2` and `l3` (`sm`, `md`, `md`), written out in `semantic.ts`.
-- **Font sizes**: `xs` 12px, `sm` 13px, `control` 13.5px (a control's label and value), `md` 14px, `lg` 16px,
-  `xl` 20px, `2xl` 28px; `2xs` and `3xl` upward are Chakra's.
+- **Font sizes**: the touch steps `page` (24px), `item` (15px), `feature` (19px), `vote` (22px), `sheet` (17px, a sheet's or a tablet dialog's title)
+  sit next to `xs` 12px, `sm` 13px, `control` 13.5px (a control's label and value), `md` 14px, `lg` 16px,
+  `xl` 20px, `2xl` 28px, `headline` (34px, the turnout headline from `lg`); `2xs` and `3xl` upward are Chakra's.
+- **Responsive** (the whole app, not a screen): the breakpoints are Chakra's, `base` (under 768px, a phone), `md`
+  (768 to 1023px, a tablet) and `lg` (1024px and up, a desktop, which is the size every value below keeps). Controls
+  grow into touch targets through the recipes, so a component never writes the steps itself:
+
+  | What                            | Phone (`base`) | Tablet (`md`) | Desktop (`lg`) |
+  | ------------------------------- | -------------- | ------------- | -------------- |
+  | Button height, text, sides      | 44px, 15px, 16px | 40px, 14px, 14px | 34px, 13.5px, 12px |
+  | Icon button hit area            | 44px           | 40px          | 28px           |
+  | Chip (`variant='chip'`)         | 36px, 14px     | 32px, 14px    | 28px, 13.5px   |
+  | Field and select height, text   | 44px, 16px     | 40px, 14px    | 34px, 13.5px   |
+  | Menu item height, text          | 52px, 16px     | 40px, 14px    | 32px, 13.5px   |
+  | Action menu (`ResponsiveMenu`)  | sheet, 52px rows | fits its items, 40px rows, 18px icons | fits its items, 34px rows, 16px icons |
+  | Confirm dialog                  | bottom sheet   | 440px, 22px padding, 12px corners | 460px, 6px corners, ruled footer |
+  | Tab height, text (line variant) | 44px, 15px     | 44px, 15px    | text, 13.5px   |
+
+  The tokens are `sizes.control.touch` (44px), `control.tablet` (40px) and `control.row` (52px, a menu or sheet row). The field text is 16px on a phone so iOS Safari does not zoom on
+  focus. The `line` tab bar stays on one line and scrolls sideways (no scrollbar), with a 24px gap. A `dialog` is a
+  bottom sheet below `md` (full width, 12px top corners, padded for the home indicator) and keeps its centred look from
+  `md`. A confirm (`ConfirmDialog`, layout `decision`) is the guide's: a sheet with a grab handle and the action first
+  below `md`, a 440px dialog `dialog.top.tablet` (220px) from the top on a tablet, a 460px one `dialog.top` (168px) from the top
+  from `lg` (`sizes.dialog.tablet`, `dialog.desktop`). The `drawer` has a `sheet` variant for the same shape (`placement='bottom'`), and the button has the
+  `sheet-row` and `sheet-close` variants for its rows. Use `ResponsiveMenu` (below) for a list of actions rather than
+  a hand-built `Menu` plus `Drawer`.
+
+  The dashboard shell (`elements/DashboardShell.tsx`) follows the same split:
+
+  | What                 | Phone (`base`)                         | Tablet (`md`)                          | Desktop (`lg`)                                   |
+  | -------------------- | -------------------------------------- | -------------------------------------- | ------------------------------------------------ |
+  | Navigation           | 52px top bar, 296px drawer (`sidebar`) | 52px top bar, 296px drawer (`sidebar`) | fixed 240px sidebar (48px collapsed)             |
+  | Page side gutter     | 16px                                   | 24px                                   | 28px                                             |
+
+  The sizes are `sizes.dashboard.topbar`, `dashboard.drawer` (read by the drawer `sidebar` variant) and
+  `dashboard.menu.expanded|collapsed`. The top bar (`Dashboard/TopBar.tsx`) holds the menu button, the organization and
+  the account menu, and is hidden from `lg` by CSS; the drawer shows the sidebar's items in the same order and closes on
+  navigation, on Escape and from its close button. Only the sidebar collapses. The gutter is the
+  `recipes/dashboard.ts` recipe read by `DashboardContents`, so a page never sets its own.
+
+- **Opacity**: `inactive` (0.6), `dimmed` (0.5), `outvoted` (0.4, a choice that lost a final tally), `opaque` (1, undoes Chakra's `_disabled` fade on a control that draws its own unavailable look).
+- **Page rhythm**: `DashboardContents rhythm='board'` is the votes screens' page padding (20 40 on a phone, 28 48 on a
+  tablet, 48 40 from `lg`, where every page title starts 48px down and a line over it climbs into the padding); the `line` tabs keep the boards' 6px count slot after a label without a count.
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
-  focus ring, `thick`): `<Box borderWidth='thick' />`.
+  focus ring, `thick`): `<Box borderWidth='thick' />`. `outlineWidth` has no token category, so a recipe writes it as a
+  reference, `'{borderWidths.focusRing}'`: a bare `'focusRing'` is dropped without an error and the ring is not drawn.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
   (1.5rem, feature), `icon.xl` (3rem, empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
   `icon.sm` to `icon.lg` alias Chakra's Icon sizes (`{sizes.4}`, `5`, `6`), so `boxSize='icon.md'` and
   `<Icon size='md'>` cannot drift apart; `icon.xl` is `{sizes.12}`.
 - **Page widths**: `content.wide` (1600px), `content.medium` (1200px), `content.narrow` (900px), read through
   `PageContainer` (below).
-- **Other named sizes**: `card.empty`, `table.action`, `toolbar`, `dashboard.menu.expanded|collapsed`,
-  `dashboard.header`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon
+- **Other named sizes**: `card.empty`, `table.action`, `list.label` (the leading column of a list row: a vote's state and date, 112px; `list.label.tablet` 104px), `content.list` (920px, the votes list's column), `lead` (560px, the measure of a lead paragraph; `lead.tablet` 584px), `facts` (392px, the side column of a vote's Gestió and Papereta tabs), `results.share` (38px, a result bar's share; `results.detail` 520px, the longest a question's turnout and bars grow on a tablet), `actionbar` (60px, a card footer that holds a button), `option` (42px, an option's row on the organiser's ballot; `option.touch` 48px on a phone), `mark.box` and `mark.wide` (24px and 36px, the empty rank and points boxes before an option; `.touch` 26px and 38px below `lg`), `icon.xs` (13px, a mark in small text), `toolbar`, `dashboard.menu.expanded|collapsed`,
+  `dashboard.header`, `dashboard.topbar`, `dashboard.drawer`, `dashboard.panel`, `dialog.tablet` and `dialog.desktop` (a confirm dialog's width), `icon.chevron` (15px, the chevron of a control that opens a menu), `control.floating` (support chat launcher), `control.icon-link` (square icon
   link), `control.md` (34px, the default height of buttons, inputs and selects), `control.area` (76px, textarea
   minimum height), `dot` (7px status dot), `loader` (min height of `PageLoader`), `wordmark` (width of the Vocdoni wordmark:
-  `<VocdoniLogo w='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
+  `<VocdoniLogo w='wordmark' />`), `turnout.max` (420px, the longest a turnout bar grows from `md`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
+- **Card inner edge**: 16px on a phone and the `card` spacing token (22px) from `md`, read by the `card` recipe's
+  header, body and footer, so a card's content lines up with the guide everywhere.
 - **Fil marks**: `borderWidths.mark` (1.5px ring of a checkbox or radio), `borderWidths.radio` (5px, a checked radio's
   filled ring) and `spacing.track` (3px gutter of a segmented control).
 - **z-index**: tokens only (`background`, `contents`, `sidebar`, `topbar`, `top`, `public-header`, `dashboard-menu`).
@@ -221,24 +275,30 @@ has no variant that already means the same thing; two looks for one meaning is a
 
 What exists today:
 
-| Recipe              | Variants and axes                                                                                                                                                                                                                                                      |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `button`            | `variant`: `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `menu-trigger`, `segment`, `toggle`, `disclosure`, `danger`, `floating`, `whatsapp`; `size`: `cta`; `multiline`. Chakra's own `solid`, `outline`, `ghost`… stay |
-| `card`              | `outline`, `section`, `frame`, `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `plain` (a filled card without a border, around a page-level empty state)                                                                                      |
-| `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                    |
-| `link`              | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                         |
-| `tabs`              | `variant`: `line` (default: hairline and a 2px ink line under the current tab), `pill` (segmented)                                                                                                                                                                     |
-| `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the mobile dashboard menu); dialog and drawer backdrops both paint `scrim.strong`                                                                                                         |
-| `dialog`            | `placement` defaults to `center`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                |
-| `menu`              | Items highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                       |
-| `progress`          | `variant`: `results` (thin bar in ink, one per choice, never dimmed: the slot cannot tell a final tally from a live one), `turnout` (the share that voted, a thin bar with a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                     |
-| `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                          |
-| `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe)                                                                                                                                                    |
-| `list`              | `variant`: `marker`                                                                                                                                                                                                                                                    |
-| `emptyState`        | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                               |
-| `text`, `heading`   | `text`: `size`, `variant='muted'`; `heading`: `variant` `heavy`, `subsection`                                                                                                                                                                                          |
-| `badge`, `tag`      | Badge `size` (`xs` to `lg`), `variant`: `count` (tab counter), `label` (neutral role chip, capitalised); Tag has one look (radius `sm` by default), use `StatusBadge`                                                                                                  |
-| `nativeSelect`      | The input's field look (panel, ring, outside focus ring) at the shared control height, whatever the size; `code` is a neutral chip like `badge` (both default to the `gray` palette, not the accent)                                                                   |
+| Recipe              | Variants and axes                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `button`            | `variant`: `off` (an action shown but not available now, as "Open" while another question is open: sunken fill, no ring, `cursor.unavailable`; pair it with `aria-disabled` and a described reason, never `disabled`), `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `sheet-row` (a 52px sheet row under a rule, 18px muted icon), `sheet-close` (the sheet's 44px dismiss button, its ring drawn inside so the scrolling body does not clip it), `menu-trigger`, `more` (a page header's "More": the borderless "…" icon alone below `lg`, from `lg` a secondary with its word, a 15px muted chevron and a tighter end; its word and chevron carry `hideBelow='lg'`, the icon `hideFrom='lg'`, under one accessible name), `segment`, `toggle`, `chip` (a filter chip, at `size='sm'`: a 1px border, transparent when chosen, and its count in `fg.subtle`), `disclosure`, `danger` (the destructive secondary: danger text, `bg.error` hover, never filled), `floating`, `whatsapp`; `size`: `cta`, `row` (the small action inside a list row: 40px below `lg`, 28px with 10px sides and 13px text from `lg`); `multiline`; every size carries a 14px icon from `lg`. Chakra's own `solid`, `outline`, `ghost`… stay |
+| `card`              | `outline`, `section`, `frame` (a 1px ring, not a border, so it takes no room, as the guide's cards), `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `note` (a dashed explanation, no fill), `plain` (a filled card without a border, around a page-level empty state); `Card.Body data-current` marks the row being worked on with an accent rule                                                               |
+| `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`, `notice` (the guide's notice, a paused vote: tinted band in ink, `status.warning.ring`, 15px icon); Chakra's `status` stays                                                                                                                                                                                                                                                                                 |
+| `link`              | `variant`: `plain`, `title` (a title that opens what it names, as a list row's: the heading's ink and weight, the accent on hover), `unstyled`, `icon-button`, `subtle`, `tile`, `back` (the way back over a page title: 14px medium with a chevron up to `lg`, a quiet 12px label from `lg`), `row-action` (a list row's or card's one action: 15px text and a 44/40px hit area up to `lg`, 13.5px text alone from `lg`); `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                                                                                                                      |
+| `tabs`              | `variant`: `line` (default: hairline and a 2px ink line under the current tab), `pill` (segmented)                                                                                                                                                                                                                                                                  |
+| `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the dashboard's navigation below `lg`, `dashboard.drawer` wide), `sheet` (a bottom sheet as the boards draw it: grab handle, `dialog-title`, rows under rules, padding 8 16 24, `scrim.sheet`); dialog and drawer backdrops otherwise paint `scrim.strong`                                                                                                                                                                            |
+| `dialog`            | `placement` defaults to `center`, which is a bottom sheet below `md`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                                                                         |
+| `menu`              | Items are 52px, 40px, 32px rows by breakpoint, highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused). `variant='actions'` is `ResponsiveMenu`'s dropdown: as wide as its longest item, every item with its icon; 40px rows and 18px icons on a tablet, 34px rows, 16px icons, `shadow.raised.halo` and a rule before the destructive items from `lg` |
+| `progress`          | `variant`: `results` (thin bar in ink, one per choice, never dimmed: the slot cannot tell a final tally from a live one), `turnout` (the share that voted, a 4px bar with round ends and a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                                                                                                                  |
+| `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                                                                                            |
+| `status`            | size `sm` is 13px up to `lg` and 12px from `lg`; `tone`: `success`, `warning`, `danger`, `gray`, `ink`, `hollow` (a dot and a word; `ProcessStatus` picks the tone)                                                                                                                                                                                                                                                  |
+| `dataList`          | `variant`: `ruled` (the rows of a card under its title, label left and value right, each under a `border.muted` rule and padded to the card's edge; the label keeps its line; see `FactList`)                                                                                                                                                                                                                                                                          |
+| `ballotPaper`       | Slots `header`, `heading`, `count`, `intro`, `introLabel`, `introText`, `head`, `number`, `title`, `description` (a question's own text, as markdown), `note`, `tag`, `option`, `mark`, `statement`, `statementTitle`, `statementNote`, `statementText`, `tile`: the organiser's view of a ballot (Papereta, boards V4VotePaper and M4VotePaper); `kind` (`one`, `many`, `rank`, `points`) picks the empty mark before each option: a radio, a checkbox, a rank box or a points box |
+| `questionDock`      | Slots `page`, `root`, `line`, `title`, `note`, `actions`: the phone's bottom action bar of a question-by-question vote (board M4VoteOne), fixed, padded for the home indicator, hidden from `md`; `page` goes on the page around it and keeps its content clear of the bar while it is there (`QuestionDock`) |
+| `censusRuler`       | Slots `root`, `track`, `range`, `scale`, `start`, `end` (`CensusRuler`); `layout`: `scale` (default), `compact` (the bar alone, 12px tall from `lg`; responsive values work); `closed` (ink fill) |
+| `confirmModal`      | Imported by `ui/ConfirmDialog`. `layout`: `decision` (default, the guide's confirm: sheet, tablet dialog, desktop dialog), and the older `panel`, `inline`, `compact`, `summary`; slots include `backdrop`, `positioner`, `content`, `warning`, `warningIcon` |
+| `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe); input `code` (a read-only value to copy, such as a voting link: sunken, no ring, in the figure face)                                                                                                                                                                                                                                                 |
+| `list`              | `variant`: `marker`                                                                                                                                                                                                                                                                                                                                                 |
+| `emptyState`        | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                                                                                                                            |
+| `text`, `heading`   | `text`: `size`, `variant='muted'`; `heading`: `variant` `heavy`, `subsection`, `page` (`PageTitle`'s: from `lg` a control-tall box with the text at its foot, so every page title reads on the same line)                                                                                                                                                                                                                                                                                       |
+| `badge`, `tag`      | Badge `size` (`xs` to `lg`), `variant`: `count` (tab counter), `label` (neutral role chip, capitalised); Tag has one outlined look (radius `xs`), plus `kind` (the same in `fg.muted`: a question's ballot type) and `proposal` (dashed); for a status use `StatusBadge`                                                                                                                                                                                               |
+| `nativeSelect`      | The input's field look (panel, ring, outside focus ring) at the shared control height, whatever the size; `code` is a neutral chip like `badge` (both default to the `gray` palette, not the accent)                                                                                                                                                                |
 
 To add a variant:
 
@@ -265,24 +325,29 @@ write a custom field wrapper.
 
 All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 
-| Component                                  | Use it for                                                                                                                                     |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PageContainer`, `PageSection`             | A page column: `size` (`wide`, `medium`, `narrow`) and `gutter`. `PageSection` is the same without gutters                                     |
-| `PageTitle`, `PageSubtitle`                | The page's one `h1` and the line under it                                                                                                      |
-| `SectionHeader`                            | The title of a card, section or settings block: `title`, `description`, `actions`, `icon`, `rule`. Actions drop below the title under `md`     |
-| `UsageMeter`                               | A usage figure with an optional bar: `label`, `value`, `max`, `unit`, `icon`, `tooltip`, `color`, `softLimit`; `children` render under the bar |
-| `RoutedTabs`                               | Tabs that are child routes: `tabs` (`{ label, route, count? }`), optional `value`, `outletContext`; renders the `Outlet`                       |
-| `ListStateAlert`                           | A list or block that failed to load: `error`, `title`, `fallback` (for a non-`Error`), `show`. Use it instead of a hand-built error `Alert`    |
-| `Tooltip`                                  | Every tooltip: `content`, `showArrow`, `contentProps`, `portalled` (off inside another portal)                                                 |
-| `useIsMobile`, `useTableAsCards`           | The mobile breakpoint (below `md`) as a boolean; the second is the same hook, named for tables shown as cards                                  |
-| `ConfirmDialog` (`ConfirmDialogContent`)   | Every confirmation. `layout`: `panel`, `inline`, `compact`, `shell`, `summary`; `destructive` is on by default                                 |
-| `StatusBadge`                              | A status chip: `colorPalette` (`success`, `warning`, `danger`, `info`, `gray`), `variant` (`subtle`, `surface`, `solid`)                       |
-| `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                                             |
-| `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`                              |
-| `CloseButton`                              | A close control with a translated `aria-label`                                                                                                 |
-| `PanelDrawer` (`ui/Drawer`)                | Every side panel: `title`, `description`, `footer` (pinned actions), `trigger`; a close button in the corner is built in                       |
-| `DialogHeader`                             | A dialog's `title` (its accessible name) and muted `description`. Dialogs are centred by default; do not set `placement`                       |
-| `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                                         |
+| Component                                  | Use it for                                                                                                                                                                                                              |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PageContainer`, `PageSection`             | A page column: `size` (`wide`, `medium`, `narrow`) and `gutter`. `PageSection` is the same without gutters                                                                                                              |
+| `PageTitle`, `PageSubtitle`                | The page's one `h1` and the line under it                                                                                                                                                                               |
+| `SectionHeader`                            | The title of a card, section or settings block: `title`, `description`, `actions`, `icon`, `rule`. Actions drop below the title under `md`                                                                              |
+| `UsageMeter`                               | A usage figure with an optional bar: `label`, `value`, `max`, `unit`, `icon`, `tooltip`, `color`, `softLimit`; `children` render under the bar                                                                          |
+| `RoutedTabs`                               | Tabs that are child routes: `tabs` (`{ label, route, count? }`), optional `value`, `outletContext`, `rhythm` (`page`: 20/24/32px to the content, a vote's tabs), `notice` (a banner between the tabs and the content); renders the `Outlet`                                                                                                |
+| `ListStateAlert`                           | A list or block that failed to load: `error`, `title`, `fallback` (for a non-`Error`), `show`. Use it instead of a hand-built error `Alert`                                                                             |
+| `Tooltip`                                  | Every tooltip: `content`, `showArrow`, `contentProps`, `portalled` (off inside another portal)                                                                                                                          |
+| `useIsMobile`, `useTableAsCards`, `useIsDesktop` | The mobile breakpoint (below `md`) as a boolean; the second is the same hook, named for tables shown as cards; the third is `lg` and up (the dashboard's fixed sidebar). Only for behaviour that differs by width (a sheet or a dropdown, the phone's bottom bar, the dashboard's sidebar): what a screen shows and says is one tree, styled by width                                                                                                           |
+| `ConfirmDialog` (`ConfirmDialogContent`, `ConfirmDialogShell`) | Every confirmation. `title`, `description`, `warning` (the amber line with the warning icon), `tone` (`danger`, the default: an outline in the danger colour, never filled; `primary`: the filled accent), `layout` (`decision`, the default and the guide's; `panel`, `inline`, `compact`, `summary` for older screens). `useConfirm` prompts render in the same shell |
+| `StatusBadge`                              | A status chip: `colorPalette` (`success`, `warning`, `danger`, `info`, `gray`), `variant` (`subtle`, `surface`, `solid`)                                                                                                |
+| `ProcessStatus`                            | A vote's or question's state as a dot and a word: `state`, `kind` (`vote`, `question`), `detail` (a quiet note such as the closing day: inline on a phone, under the word from `md`)                                                                                                                                  |
+| `CensusRuler`                              | A turnout bar with its scale (`RulerProps`): `value`, `max`, `label` (accessible name), `closed` (ink fill), `layout` (`scale`, `compact`; responsive). 0 and the total are always printed |
+| `TurnoutBar`                               | "184 of 312 voted" and its share over a `CensusRuler`: `caption`, `share` (formatted), and every `RulerProps` prop                                                                                                            |
+| `FactList`                                 | Label and value rows as a `dl`, the ruled rows of a card: `facts` (`{ id, label, value }`)                                                                                                                                              |
+| `PageLoader`, `ListLoader`, `InlineLoader` | A page with nothing yet, a list or block that is fetching, a wait inside a control                                                                                                                                      |
+| `EmptyState`                               | Nothing to show. `size` `sm` (table row), `md` (inside a card), `lg` (instead of a whole list); `icon` or `image`                                                                                                       |
+| `CloseButton`                              | A close control with a translated `aria-label`                                                                                                                                                                          |
+| `ResponsiveMenu`                           | A list of actions: `label` (trigger name and sheet title), `title` (the sheet's title when it names an item), `trigger`, `items` (`{ value, label, onSelect?, href?, danger?, disabled?, icon? }`). Menu `actions` from `md`, a bottom sheet of 52px rows and a Cancel button below it; danger items last, ruled off from `lg` |
+| `PanelDrawer` (`ui/Drawer`)                | Every side panel: `title`, `description`, `footer` (pinned actions), `trigger`; a close button in the corner is built in                                                                                                |
+| `DialogHeader`                             | A dialog's `title` (its accessible name) and muted `description`. Dialogs are centred by default; do not set `placement`                                                                                                |
+| `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                                                                                                                  |
 
 ```tsx
 import { PageSection } from '~components/ui/PageContainer'

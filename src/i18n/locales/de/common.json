@@ -5,28 +5,20 @@
   },
   "actions": {
     "cancel": "Abbrechen",
-    "cancel_description": "\"{{ election.title.default }}\" wird abgebrochen...\n\nAchtung: Diese Aktion ist unwiderruflich und bricht alle bisherigen Stimmen ab",
     "confirm": "Bestätigen",
     "continue": "Prozess sofort fortsetzen, falls er pausiert wurde",
-    "continue_description": "Abstimmungsprozess \"{{ election.title.default }}\" wird fortgesetzt...",
     "create_first_vote": "Alle Prozesse anzeigen",
     "create_new_vote": "Neue Abstimmung erstellen",
     "edit": "Bearbeiten",
     "end": "Prozess sofort beenden, sodass keine neuen Stimmen mehr abgegeben werden können, und Abstimmungsergebnisse anzeigen (Achtung: nicht rückgängig zu machen)",
-    "end_description": "Abstimmungsprozess \"{{ election.title.default }}\" wird beendet...\n\nAchtung: Diese Aktion ist unwiderruflich und Wählende können nicht mehr abstimmen.",
-    "error_title": "Bei der Ausführung der Transaktion ist ein Fehler aufgetreten",
     "manage_team": "Team verwalten",
     "more": "Weitere Optionen",
     "pause": "Den Abstimmungsprozess vorübergehend pausieren, bis er manuell fortgesetzt wird. Während der Pause können Wählende keine Stimmen abgeben.",
-    "pause_description": "Abstimmungsprozess \"{{ election.title.default }}\" wird pausiert...",
     "save": "Änderungen speichern",
     "save_changes": "Änderungen speichern",
-    "view_active_votes": "Aktive Abstimmungen anzeigen",
-    "waiting_title": "Warte auf Transaktionsbestätigung..."
+    "view_active_votes": "Aktive Abstimmungen anzeigen"
   },
   "add_new_org": "Neue Organisation hinzufügen",
-  "additional_actions": "Weitere Aktionen",
-  "all_processes": "Alle",
   "already_member": "Bereits ein Konto?",
   "alt": {
     "images": {
@@ -94,11 +86,9 @@
     "unavailable": "Die Buchung ist derzeit nicht verfügbar. Bitte versuche es später erneut."
   },
   "calendar": {
-    "max_duration_exceeded": "Die Dauer überschreitet das Limit von {{ maxDuration }} Tagen. Verkürze den Abstimmungszeitraum.",
-    "title": "Zeitplan"
+    "max_duration_exceeded": "Die Dauer überschreitet das Limit von {{ maxDuration }} Tagen. Verkürze den Abstimmungszeitraum."
   },
   "cancel": "Abbrechen",
-  "cancel_vote": "Abstimmung abbrechen",
   "census": {
     "checkout": {
       "admin_only": "Nur Administratoren können Wählerplätze hinzufügen.",
@@ -140,7 +130,6 @@
       "voted_partial": "Abgestimmt {{voted}}/{{total}}"
     }
   },
-  "census_size": "Teilnehmerzahl",
   "change_password": {
     "subtitle": "Gib dein aktuelles Passwort und ein neues Passwort ein, um deine Zugangsdaten zu aktualisieren.",
     "title": "Passwort ändern"
@@ -153,12 +142,7 @@
   },
   "confirm": {
     "cancel": "Abbrechen",
-    "cancel_button": "Abbrechen",
-    "cancel_process_button": "Abstimmung abbrechen",
-    "cancel_process_title": "Abstimmung abbrechen",
-    "confirm": "Abstimmung bestätigen",
-    "end_process_button": "Abstimmung beenden",
-    "end_process_title": "Abstimmung beenden"
+    "confirm": "Abstimmung bestätigen"
   },
   "confirm_password": "Passwort bestätigen",
   "confirm_password_placeholder": "Neues Passwort bestätigen",
@@ -169,7 +153,6 @@
     "restored_title": "Verbindung wiederhergestellt"
   },
   "contact_us": "Kontaktiere uns",
-  "control_panel": "Steuerungspanel",
   "cookies": {
     "accept": "Akzeptieren",
     "aria_label": "Cookie-Zustimmungsbanner",
@@ -180,8 +163,7 @@
   },
   "copy": {
     "address": "Adresse kopieren",
-    "copied_title": "Kopiert!",
-    "copy": "Kopieren"
+    "copied_title": "Kopiert!"
   },
   "country_selector": {
     "selector_label": "Land"
@@ -251,10 +233,6 @@
       "reset_form": "Formular zurücksetzen",
       "toggle_sidebar": "Seitenleiste ein-/ausblenden"
     },
-    "process_view": {
-      "date_format": "MMMM do, y",
-      "time_format": "p"
-    },
     "usage": {
       "description": "Verfolge die Nutzung deiner Organisation im Verhältnis zu ihren Limits.",
       "limit_exceeded_message": "Deine Mitgliederdatenbank hat das Limit von {{max}} Mitgliedern erreicht.",
@@ -294,23 +272,11 @@
   "delete_my_account": "Mein Konto löschen",
   "description": "Beschreibung",
   "do_it_later": "Später erledigen",
-  "draft_processes": "Entwürfe",
   "drafts": {
-    "actions": "Entwurfsaktionen",
-    "clone": "Entwurf klonen",
     "cloned_draft": "Entwurf erfolgreich geklont",
     "cloned_draft_error": "Fehler beim Klonen des Entwurfs",
-    "delete": "Entwurf löschen",
     "deleted_draft": "Entwurf erfolgreich gelöscht",
-    "edit": "Entwurf bearbeiten",
-    "empty": "Keine Entwürfe gefunden",
-    "empty_description": "Erstelle einen Entwurf, um loszulegen.",
-    "load_error": "Entwürfe konnten nicht geladen werden",
-    "load_error_description": "Bitte versuche es erneut.",
-    "not_defined": "Noch nicht festgelegt",
-    "question_type": {
-      "mixed": "Gemischt"
-    }
+    "not_defined": "Noch nicht festgelegt"
   },
   "drag_handle": {
     "label": "Zum Neuordnen ziehen"
@@ -343,10 +309,7 @@
   },
   "email": "E-Mail",
   "email_placeholder": "name@email.com",
-  "end_date": "Enddatum",
   "end_time": "Endzeit",
-  "end_vote": "Abstimmung beenden",
-  "ended_processes": "Beendet",
   "error": {
     "crash_description": "Lade die Seite neu oder kehre zum Dashboard zurück.",
     "crash_title": "Etwas ist schiefgelaufen",
@@ -838,6 +801,7 @@
     "selector_label": "Mitgliederzahl"
   },
   "menu": {
+    "close": "Menü schließen",
     "collapse": "Menü einklappen",
     "create": "Abstimmung erstellen",
     "dashboard": "Dashboard",
@@ -859,7 +823,6 @@
   "new_password_placeholder": "Gib dein neues Passwort ein",
   "new_vote": "Neue Abstimmung",
   "new_voting": "Neue Abstimmung",
-  "no_results_filtering": "Dein aktueller Suchfilter liefert keine Ergebnisse",
   "not_registred_yet": "Noch kein Konto?",
   "oauth": {
     "link": {
@@ -969,7 +932,6 @@
     "success": "Passwort erfolgreich aktualisiert"
   },
   "passwords_do_not_match": "Passwörter stimmen nicht überein",
-  "pause_vote": "Abstimmung pausieren",
   "payment": {
     "stripe_unavailable": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuche es später erneut."
   },
@@ -979,7 +941,6 @@
   },
   "please_check_email_to_verify": "Bitte überprüfe deine E-Mail, um dein Konto zu bestätigen",
   "preferences": "Einstellungen",
-  "preview": "Vorschau",
   "privacy_policy": "Datenschutzerklärung",
   "process": {
     "anonymity": {
@@ -1201,12 +1162,6 @@
   "process_actions": {
     "manage": "Im Dashboard verwalten"
   },
-  "process_context": {
-    "clone_as_draft": "Als Entwurf klonen",
-    "explorer": "Explorer",
-    "more_info": "Mehr Infos",
-    "public_voting_page": "Öffentliche Abstimmungsseite"
-  },
   "process_create": {
     "anonymity": {
       "title": "Anonyme Abstimmung",
@@ -1276,6 +1231,12 @@
     },
     "settings": "Einstellungen",
     "start_datetime": "Startdatum und -uhrzeit",
+    "voting_mode": {
+      "all": "Alle auf einmal",
+      "by_question": "Frage für Frage",
+      "by_question_hint": "Die Fragen starten geschlossen. Du öffnest sie einzeln auf der Seite der Abstimmung, und das Ergebnis jeder Frage erscheint, sobald du sie schließt.",
+      "label": "Wie abgestimmt wird"
+    },
     "weight": {
       "equal": "Eine Person, eine Stimme",
       "title": "Stimmgewicht",
@@ -1286,17 +1247,6 @@
       "accordion_title": "Video anhängen (optional)",
       "title": "Livestreaming-Video"
     }
-  },
-  "process_list": {
-    "end_date": "Enddatum",
-    "not_yet": "Noch nicht",
-    "recount": "Neuauszählung",
-    "results": "Ergebnisse",
-    "results_live": "Live",
-    "start_date": "Startdatum",
-    "status": "Status",
-    "title": "Titel",
-    "type": "Typ"
   },
   "process_pdf": {
     "authentication": {
@@ -1440,10 +1390,6 @@
       "paragraph_4": "Nach Abschluss des Abstimmungsprozesses werden die Endergebnisse und die relevanten Prozessaufzeichnungen in der Blockchain verankert. Dadurch ist der Prozess prüfbar, und der veröffentlichte Bericht kann mit den öffentlichen technischen Aufzeichnungen verglichen werden."
     }
   },
-  "processes": {
-    "load_error": "Abstimmungsprozesse konnten nicht geladen werden",
-    "load_error_description": "Bitte versuche es erneut."
-  },
   "profile": {
     "error": "Profil konnte nicht aktualisiert werden",
     "success": "Profil erfolgreich aktualisiert"
@@ -1453,26 +1399,14 @@
     "verify": "Auf dem Blockchain-Explorer überprüfen:",
     "verify_process": "Prozess ansehen"
   },
-  "questions_and_results": "Fragen und Ergebnisse",
   "registration_failed": "Registrierung fehlgeschlagen",
   "registration_successful": "Registrierung erfolgreich",
   "remove_avatar": "Avatar entfernen",
   "reset_password_button": "Passwort zurücksetzen",
-  "result_visibility": "Sichtbarkeit der Ergebnisse",
   "results_state": {
-    "enabled": "Aktiviert",
     "hidden_until_end": "Verborgen bis zum Ende",
-    "live_results": "Live-Ergebnisse",
-    "live_results_tooltip": "Dieser Abstimmungsprozess zeigt Live-Ergebnisse. Er ist jedoch noch im Gange, sodass sich die Ergebnisse bis zum Ende der Abstimmung noch ändern können.",
-    "not_enabled": "Nicht aktiviert",
-    "results_available": "Ergebnisse verfügbar",
-    "secret_until_end": "Ergebnisse ausstehend",
-    "secret_until_end_tooltip": "Die Ergebnisse sind ausgeblendet und werden erst nach Ende der Abstimmung verfügbar."
+    "live_results": "Live-Ergebnisse"
   },
-  "results_type": {
-    "title": "Abstimmungstyp"
-  },
-  "resume_vote": "Fortsetzen",
   "role": {
     "full_access": {
       "badge": "(Vollzugriff)",
@@ -1530,7 +1464,6 @@
   "spreadsheet": {
     "access_button": "Identifizieren"
   },
-  "start_date": "Startdatum",
   "start_time": "Startzeit",
   "support": "Support",
   "support_chat": {
@@ -1673,8 +1606,6 @@
       "text": "Mit Vocdoni fanden wir eine sehr gute Lösung, da es eine neutrale und überprüfbare Infrastruktur ist, die sowohl die Integrität der Auszählung als auch die Privatsphäre der Wählenden gewährleistet. So konnte jede Lehrkraft nur einmal sicher und anonym abstimmen."
     }
   },
-  "total_votes": "Stimmen gesamt",
-  "turnout": "Beteiligung",
   "uploaded_image_preview": "Vorschau des hochgeladenen Bildes",
   "uploader": {
     "avatar_upload_failed": "Avatar-Upload fehlgeschlagen",
@@ -1734,8 +1665,6 @@
     "anonymous_receipt": "Anonyme Stimmabgabe: Speichere diesen Beleg jetzt, die Plattform kann ihn dir nicht erneut anzeigen.",
     "voted_title": "Deine Stimme wurde erfolgreich abgegeben!"
   },
-  "vote_information": "Abstimmungsdetails",
-  "vote_overwrite": "Stimme überschreiben",
   "voter_anonymity": "Anonymität der Wählenden",
   "voter_auth": {
     "anonymity": "Anonymität der Stimmabgabe: {{ mode }}",
@@ -1833,14 +1762,470 @@
       "title": "Anmeldung der Wählenden"
     }
   },
+  "votes": {
+    "ballot": {
+      "count_all_one": "{{count, number}} Frage",
+      "count_all_other": "{{count, number}} Fragen, alle auf einmal",
+      "count_by_question_one": "{{count, number}} Frage",
+      "count_by_question_other": "{{count, number}} Fragen, Frage für Frage",
+      "credits_one": "{{count, number}} Credit",
+      "credits_other": "{{count, number}} Credits",
+      "fix": {
+        "cancel_and_duplicate": "Brich die Abstimmung ab und dupliziere sie, um sie zu korrigieren.",
+        "duplicate": "Dupliziere sie, um sie in einer neuen Abstimmung zu korrigieren.",
+        "title": "Einen Fehler entdeckt?"
+      },
+      "intro": "Einleitungstext",
+      "label": {
+        "mode": "Wie abgestimmt wird"
+      },
+      "locked": {
+        "opened": "Seit die Abstimmung geöffnet wurde, stehen die Fragen und Optionen fest. Alle stimmen über denselben Text ab.",
+        "published": "Seit die Abstimmung veröffentlicht wurde, stehen die Fragen und Optionen fest. Alle werden über denselben Text abstimmen.",
+        "title": "Der Stimmzettel kann nicht mehr geändert werden"
+      },
+      "mode": {
+        "all": "Alle auf einmal, auf einem einzigen Stimmzettel",
+        "by_question": "Frage für Frage, sobald sie geöffnet werden"
+      },
+      "options_label": "Optionen von Frage {{number}}",
+      "points_one": "{{count, number}} Punkt",
+      "points_other": "{{count, number}} Punkte",
+      "rule": {
+        "approval_any": "Beliebig viele Optionen können befürwortet werden.",
+        "approval_up_to_one": "Bis zu {{count, number}} Option kann befürwortet werden.",
+        "approval_up_to_other": "Bis zu {{count, number}} Optionen können befürwortet werden.",
+        "budget_one": "Jede Person verteilt {{amount}} auf {{count, number}} Option, wie sie möchte.",
+        "budget_other": "Jede Person verteilt {{amount}} auf die {{count, number}} Optionen, wie sie möchte.",
+        "budget_weighted_one": "Jede Person verteilt Punkte auf {{count, number}} Option, wie sie möchte.",
+        "budget_weighted_other": "Jede Person verteilt Punkte auf die {{count, number}} Optionen, wie sie möchte.",
+        "multiple_between": "Es werden zwischen {{min}} und {{max}} Optionen markiert.",
+        "multiple_exact_one": "Es wird {{count, number}} Option markiert.",
+        "multiple_exact_other": "Es werden {{count, number}} Optionen markiert.",
+        "multiple_up_to_one": "Bis zu {{count, number}} Option kann markiert werden.",
+        "multiple_up_to_other": "Bis zu {{count, number}} Optionen können markiert werden.",
+        "quadratic_one": "Jede Person setzt {{amount}} für {{count, number}} Option ein. Jede weitere Stimme für dieselbe Option kostet mehr Credits.",
+        "quadratic_other": "Jede Person verteilt {{amount}} auf die {{count, number}} Optionen. Jede weitere Stimme für dieselbe Option kostet mehr Credits.",
+        "quadratic_weighted_one": "Jede Person setzt Credits für {{count, number}} Option ein. Jede weitere Stimme für dieselbe Option kostet mehr Credits.",
+        "quadratic_weighted_other": "Jede Person verteilt Credits auf die {{count, number}} Optionen. Jede weitere Stimme für dieselbe Option kostet mehr Credits.",
+        "ranked_one": "{{count, number}} Option wird geordnet, von der meistgewünschten bis zur am wenigsten gewünschten.",
+        "ranked_other": "Die {{count, number}} Optionen werden geordnet, von der meistgewünschten bis zur am wenigsten gewünschten.",
+        "single": "Es wird eine einzige Option gewählt."
+      },
+      "rules_title": "So wird abgestimmt",
+      "status_label": "Status des Stimmzettels",
+      "tag": {
+        "exact": "{{max}} von {{total}}",
+        "per_person": "{{amount}} pro Person",
+        "single": "Eine Option",
+        "up_to": "Bis zu {{max}} von {{total}}"
+      },
+      "title": "Was Wählende sehen"
+    },
+    "cancel": {
+      "body_all_one": "Die {{count, number}} abgegebene Stimme wird verworfen, und es gibt keine Ergebnisse.",
+      "body_all_other": "Die {{count, number}} abgegebenen Stimmen werden verworfen, und es gibt keine Ergebnisse.",
+      "body_all_unknown": "Die abgegebenen Stimmen werden verworfen, und es gibt keine Ergebnisse.",
+      "body_by_question_one": "Die {{count, number}} in {{questions}} abgegebene Stimme wird verworfen, und kein Ergebnis wird wirksam.",
+      "body_by_question_other": "Die {{count, number}} in {{questions}} abgegebenen Stimmen werden verworfen, und kein Ergebnis wird wirksam.",
+      "body_final": "Das kann nicht rückgängig gemacht werden.",
+      "body_none": "Es wurde noch keine Stimme abgegeben.",
+      "body_not_open": "Sie hat noch nicht begonnen, und es gibt keine Stimmen.",
+      "error": "Die Abstimmung konnte nicht abgebrochen werden",
+      "keep": "Nein, Abstimmung fortsetzen",
+      "open_now_one": "Frage {{numbers}} ist gerade offen.",
+      "open_now_other": "Die Fragen {{numbers}} sind gerade offen.",
+      "questions_one": "{{count, number}} Frage",
+      "questions_other": "{{count, number}} Fragen",
+      "title": "„{{title}}“ abbrechen?"
+    },
+    "clone": {
+      "all_at_once": "Die Kopie stimmt über alle Fragen auf einmal ab."
+    },
+    "date": {
+      "at": "{{weekday}}, {{day}} um {{time}}",
+      "at_time": "um {{time}}",
+      "day": "{{weekday}}, {{day}}",
+      "on_date": "am {{date}}"
+    },
+    "downloads": {
+      "csv": {
+        "action": "Ergebnisse als CSV herunterladen",
+        "answered": "Personen, die geantwortet haben",
+        "census": "Teilnehmerliste",
+        "method": "Methode",
+        "note": "Das Ergebnis jeder Option, Frage für Frage.",
+        "number": "Fragenummer",
+        "option": "Option",
+        "question": "Frage",
+        "result": "Ergebnis",
+        "share": "Anteil (%)",
+        "title": "Ergebnisse als CSV",
+        "unit": {
+          "header": "Einheit",
+          "points": "Punkte",
+          "votes": "Stimmen",
+          "weight": "Gewicht"
+        }
+      },
+      "pdf": {
+        "action": "Abschlussbericht als PDF herunterladen",
+        "note": "Für eine Prüfung.",
+        "title": "Abschlussbericht als PDF"
+      },
+      "title": "Ergebnisse herunterladen"
+    },
+    "empty": {
+      "body": "Erstelle die erste, wann du willst. Du legst fest, worüber abgestimmt wird, wer abstimmt und bis wann, und veröffentlichst sie, wenn sie bereit ist.",
+      "create": "Abstimmung erstellen",
+      "legend": {
+        "closed": "Du hast das Ergebnis und kannst die Abstimmung für die nächste duplizieren.",
+        "draft": "Du bereitest sie in deinem Tempo vor. Niemand sieht sie und sie kostet nichts.",
+        "live": "Die Leute stimmen ab und du verfolgst die Beteiligung.",
+        "ready": "Sie ist veröffentlicht und wartet auf den Tag, den du gewählt hast."
+      },
+      "legend_hint": "Jede Abstimmung erscheint hier mit ihrem Status.",
+      "legend_title": "Das siehst du hier",
+      "title": "Noch keine Abstimmungen"
+    },
+    "end": {
+      "body_all_one": "Sie endet vor Ablauf der Frist, mit der {{count, number}} abgegebenen Stimme. Die Ergebnisse werden veröffentlicht und die Wählenden sehen sie. Sie kann nicht wieder geöffnet werden.",
+      "body_all_other": "Sie endet vor Ablauf der Frist, mit den {{count, number}} abgegebenen Stimmen. Die Ergebnisse werden veröffentlicht und die Wählenden sehen sie. Sie kann nicht wieder geöffnet werden.",
+      "body_all_unknown": "Sie endet vor Ablauf der Frist, mit den abgegebenen Stimmen. Die Ergebnisse werden veröffentlicht und die Wählenden sehen sie. Sie kann nicht wieder geöffnet werden.",
+      "body_final": "Die Ergebnisse sind endgültig, und die Wählenden sehen sie.",
+      "body_question_one": "Frage {{number}} wird mit der {{count, number}} Stimme geschlossen, die sie jetzt hat.",
+      "body_question_other": "Frage {{number}} wird mit den {{count, number}} Stimmen geschlossen, die sie jetzt hat.",
+      "body_questions": "Die Fragen {{numbers}} werden mit den Stimmen geschlossen, die sie jetzt haben.",
+      "error": "Die Abstimmung konnte nicht beendet werden",
+      "keep": "Abstimmung fortsetzen",
+      "not_voted_one": "{{count, number}} Person hat noch nicht abgestimmt und kann es danach nicht mehr.",
+      "not_voted_other": "{{count, number}} Personen haben noch nicht abgestimmt und können es danach nicht mehr.",
+      "title": "Abstimmung beenden?",
+      "title_now": "Abstimmung jetzt beenden?",
+      "unopened_one": "Frage {{numbers}} wurde nicht geöffnet und bleibt ohne Stimmen.",
+      "unopened_other": "Die Fragen {{numbers}} wurden nicht geöffnet und bleiben ohne Stimmen."
+    },
+    "error": {
+      "other": "Etwas ist schiefgelaufen. Lade die Seite neu und versuche es noch einmal."
+    },
+    "header": {
+      "line": {
+        "by_question_canceled": "Am {{day}} um {{time}}. Die Stimmen wurden verworfen.",
+        "by_question_ended": "Am {{day}} um {{time}}, nach {{duration}}.",
+        "by_question_live": "Frage für Frage. Begonnen am {{date}}, {{ago}}.",
+        "by_question_live_today": "{{day}}, Frage für Frage. Begonnen um {{time}}, {{ago}}.",
+        "by_question_paused": "Frage für Frage. Begonnen am {{date}}.",
+        "by_question_paused_today": "Frage für Frage. Begonnen um {{time}}.",
+        "by_question_ready": "{{date}}. Frage für Frage.",
+        "canceled": "Die Stimmen wurden verworfen.",
+        "canceled_on": "{{date}}. Die Stimmen wurden verworfen.",
+        "canceled_today": "Heute, {{day}}, um {{time}}. Die Stimmen wurden verworfen.",
+        "closes": "Endet am {{date}}.",
+        "closes_left": "Endet am {{date}}. {{left}}.",
+        "closes_paused": "Endet am {{date}}. Die Frist läuft weiter.",
+        "closes_paused_touch": "Endet {{end}}. Die Frist läuft weiter.",
+        "ended": "Beendet am {{date}}.",
+        "ended_today": "Heute beendet, {{day}}, um {{time}}.",
+        "opens": "Beginnt am {{start}} und endet am {{end}}.",
+        "starts": "Beginnt am {{date}}."
+      }
+    },
+    "job": {
+      "partial": "Einige Fragen konnten nicht geändert werden: {{failed, number}} von {{total, number}}. Die Seite zeigt, wo jede steht.",
+      "slow": "Die Änderung ist noch nicht abgeschlossen. Wir warten weiter und aktualisieren die Seite, sobald sie fertig ist.",
+      "slow_title": "Wir arbeiten noch daran",
+      "stale": "Der Status einer Frage hatte sich bereits geändert. Die Seite zeigt jetzt, wo jede steht."
+    },
+    "list": {
+      "action": {
+        "continue": "Bearbeiten",
+        "follow": "Verfolgen",
+        "manage": "Abstimmung verwalten",
+        "result": "Ergebnis",
+        "view": "Ansehen"
+      },
+      "action_label": "{{action}}: {{title}}",
+      "closed_on": "am {{date}}",
+      "closes": "Endet am {{date}}.",
+      "delete": "Löschen",
+      "delete_body": "Das lässt sich nicht rückgängig machen.",
+      "delete_confirm": "Entwurf löschen",
+      "delete_error": "Der Entwurf konnte nicht gelöscht werden",
+      "delete_title": "Diesen Entwurf löschen?",
+      "duplicate_short": "Duplizieren",
+      "filter": {
+        "all": "Alle",
+        "closed": "Beendet",
+        "drafts": "Entwürfe",
+        "live": "Läuft",
+        "ready": "Bereit"
+      },
+      "filter_label": "Nach Status filtern",
+      "load_error": "Die Abstimmungen konnten nicht geladen werden",
+      "meta": "{{questions}}, {{voters}}.",
+      "meta_no_voters": "{{questions}}.",
+      "meta_questions_one": "{{count, number}} Frage",
+      "meta_questions_other": "{{count, number}} Fragen",
+      "meta_voters_one": "{{count, number}} stimmberechtigte Person",
+      "meta_voters_other": "{{count, number}} Stimmberechtigte",
+      "more": "Weitere Aktionen",
+      "new": "Neue Abstimmung",
+      "no_match": "Keine Abstimmung passt",
+      "no_match_hint": "Probiere einen anderen Filter oder eine andere Suche.",
+      "refresh_error": "Die Liste konnte nicht aktualisiert werden",
+      "refresh_error_hint": "Sie zeigt die Abstimmungen so, wie sie zuletzt geladen wurden.",
+      "retry": "Erneut versuchen",
+      "row_error": "Diese Abstimmung konnte nicht angezeigt werden.",
+      "search": "Abstimmung suchen",
+      "starts": "Beginnt am {{date}}.",
+      "starts_live": "Live, {{date}}.",
+      "title": "Abstimmungen",
+      "turnout": "{{percent}} % Beteiligung.",
+      "turnout_any": "Mindestens {{percent}} % Beteiligung.",
+      "warning": {
+        "end_passed": "Das Enddatum ist verstrichen.",
+        "missing_end": "Noch kein Enddatum."
+      },
+      "when": "{{weekday}}, {{day}} um {{time}}",
+      "when_day": "{{weekday}}, {{day}}. um {{time}}"
+    },
+    "manage": {
+      "abstention": "Enthaltung",
+      "action_label": "{{action}}: Frage {{number}}, {{title}}",
+      "close": "Schließen",
+      "close_body_one": "„{{title}}“ wird mit der {{votes}} Stimme geschlossen, die sie jetzt hat, und das Ergebnis ist endgültig. Eine geschlossene Frage kann nicht wieder geöffnet werden.",
+      "close_body_other": "„{{title}}“ wird mit den {{votes}} Stimmen geschlossen, die sie jetzt hat, und das Ergebnis ist endgültig. Eine geschlossene Frage kann nicht wieder geöffnet werden.",
+      "close_cancel": "Nein, offen lassen",
+      "close_confirm": "Frage {{number}} schließen",
+      "close_last_warning": "Das ist die letzte Frage: Wenn du sie schließt, wird auch die Abstimmung geschlossen.",
+      "close_title": "Frage {{number}} schließen?",
+      "count": {
+        "canceled_one": "{{count, number}} ungültig",
+        "canceled_other": "{{count, number}} ungültig",
+        "closed_one": "{{count, number}} geschlossen",
+        "closed_other": "{{count, number}} geschlossen",
+        "not_opened_one": "{{count, number}} nicht geöffnet",
+        "not_opened_other": "{{count, number}} nicht geöffnet",
+        "open_one": "{{count, number}} offen",
+        "open_other": "{{count, number}} offen",
+        "paused_one": "{{count, number}} pausiert",
+        "paused_other": "{{count, number}} pausiert",
+        "to_open_one": "{{count, number}} zu öffnen",
+        "to_open_other": "{{count, number}} zu öffnen"
+      },
+      "error": {
+        "busy": "Eine andere Änderung läuft gerade. Versuche es in ein paar Sekunden erneut.",
+        "stale": "Der Status der Frage hatte sich bereits geändert.",
+        "timeout": "Das dauert länger als erwartet. Der Status aktualisiert sich von selbst.",
+        "title": "Die Frage konnte nicht geändert werden"
+      },
+      "held_note": "Durch die Pause der Abstimmung angehalten.",
+      "kind": "{{kind}}.",
+      "locked": "Die Ergebnisse sind sichtbar, wenn die Frage geschlossen wird.",
+      "next": {
+        "close_one": "Nächster Schritt: Frage {{numbers}} schließen",
+        "close_other": "Nächster Schritt: Fragen {{numbers}} schließen",
+        "open": "Nächster Schritt: Frage {{numbers}} öffnen",
+        "resume_vote": "Nächster Schritt: Abstimmung fortsetzen"
+      },
+      "open": "Öffnen",
+      "open_off_note": "„Öffnen“ ist deaktiviert, solange eine andere Frage offen ist, vor der Startzeit und solange die Abstimmung pausiert ist.",
+      "paused_note": "Niemand kann darüber abstimmen.",
+      "percent": "{{percent}} %",
+      "provisional": "Vorläufiges Ergebnis.",
+      "question_ruler": "{{voted}} von {{total}} Personen haben abgestimmt, {{percent}} %.",
+      "question_ruler_count": "{{voted}} Personen haben abgestimmt.",
+      "starts": "Die Abstimmung beginnt am {{date}}.",
+      "toggle_hint": "Details ein- oder ausblenden",
+      "toggle_number": "Frage {{number}}:",
+      "turnout_figure": "<n>{{percent}} %</n> Beteiligung"
+    },
+    "page": {
+      "back": "Abstimmungen",
+      "cancel_vote": "Abstimmung abbrechen",
+      "duplicate": "Duplizieren",
+      "duplicate_vote": "Abstimmung duplizieren",
+      "end_now": "Jetzt beenden",
+      "end_vote": "Abstimmung beenden",
+      "more": "Mehr",
+      "more_actions": "Weitere Aktionen",
+      "pause": "Pausieren",
+      "resume": "Fortsetzen",
+      "show_as_voter": "Aus Sicht der Wählenden ansehen",
+      "tab": {
+        "ballot": "Stimmzettel",
+        "summary": "Verwaltung"
+      }
+    },
+    "pause": {
+      "error": {
+        "pause": "Die Abstimmung konnte nicht pausiert werden",
+        "resume": "Die Abstimmung konnte nicht fortgesetzt werden"
+      }
+    },
+    "question_state": {
+      "canceled": "Ungültig",
+      "closed": "Geschlossen",
+      "not_opened": "Nicht geöffnet",
+      "open": "Offen",
+      "paused": "Pausiert",
+      "to_open": "Zu öffnen"
+    },
+    "results": {
+      "choice_points_one": "{{votes}} Punkt",
+      "choice_points_other": "{{votes}} Punkte",
+      "choice_votes_one": "{{votes}} Stimme",
+      "choice_votes_other": "{{votes}} Stimmen",
+      "choice_weight_one": "{{votes}} gewichtete Stimme",
+      "choice_weight_other": "{{votes}} gewichtete Stimmen",
+      "counting": "Die Abstimmung ist geschlossen. Die Ergebnisse werden ausgezählt und erscheinen in Kürze hier."
+    },
+    "state": {
+      "canceled": "Abgebrochen",
+      "closed": "Beendet",
+      "draft": "Entwurf",
+      "live": "Läuft",
+      "paused": "Pausiert",
+      "ready": "Bereit"
+    },
+    "summary": {
+      "all_open": "Alle gleichzeitig offen",
+      "answered": "Beteiligung: {{answered}} von {{total}}",
+      "answered_count_label_one": "{{count, number}} Person hat Frage {{number}} beantwortet.",
+      "answered_count_label_other": "{{count, number}} Personen haben Frage {{number}} beantwortet.",
+      "answered_label": "{{answered}} von {{total}} Personen haben Frage {{number}} beantwortet.",
+      "auth": {
+        "code_email": "<b>Ein Einmalcode</b> per E-Mail.",
+        "code_email_or_sms": "<b>Ein Einmalcode</b> per E-Mail oder SMS.",
+        "code_sms": "<b>Ein Einmalcode</b> per SMS.",
+        "fields": "<b>{{fields}}</b>.",
+        "fields_code_email": "<b>{{fields}}</b>, dazu ein <b>Einmalcode</b> per E-Mail.",
+        "fields_code_email_or_sms": "<b>{{fields}}</b>, dazu ein <b>Einmalcode</b> per E-Mail oder SMS.",
+        "fields_code_sms": "<b>{{fields}}</b>, dazu ein <b>Einmalcode</b> per SMS.",
+        "title": "Authentifizierungsmethode"
+      },
+      "ballot_link": "Stimmzettel",
+      "blank_one": "{{count, number}} der {{voters}} Wählenden hat sie leer gelassen.",
+      "blank_other": "{{count, number}} der {{voters}} Wählenden haben sie leer gelassen.",
+      "blank_none": "Niemand hat sie leer gelassen.",
+      "calendar": {
+        "at": "Um {{time}}.",
+        "close": "Automatisches Ende und Ergebnisse für alle",
+        "ended_auto": "Automatisch zum Fristende geschlossen",
+        "ended_manual": "Manuell beendet",
+        "opened": "Abstimmung begonnen",
+        "opens": "Abstimmung beginnt",
+        "title": "Kalender",
+        "today": "Heute",
+        "today_paused": "Heute. Abstimmung pausiert"
+      },
+      "copy_link": "Öffentlichen Link kopieren",
+      "count_unknown": "Die Beteiligung konnte nicht geladen werden.",
+      "dock": {
+        "label": "Steuerung der Abstimmung",
+        "state_votes": "{{state}}, {{votes}}",
+        "title": "{{number}}. {{title}}"
+      },
+      "electoral": {
+        "census_one": "<n>{{count, number}}</n> stimmberechtigte Person.",
+        "census_other": "<n>{{count, number}}</n> stimmberechtigte Personen.",
+        "closing": "Ende",
+        "date": "{{date}}.",
+        "results_by_question": "Sichtbar, wenn die jeweilige Frage endet.",
+        "results_live": "Live sichtbar, während der Abstimmung.",
+        "results_public": "Jetzt öffentlich.",
+        "results_secret": "Sichtbar, wenn die Abstimmung endet."
+      },
+      "electoral_title": "Abstimmungsdaten",
+      "fact": {
+        "census_one": "{{count, number}} Person",
+        "census_other": "{{count, number}} Personen",
+        "overwrite_allowed": "Aktiviert",
+        "overwrite_not_allowed": "Deaktiviert",
+        "results_hidden": "wenn die Abstimmung endet",
+        "results_hidden_by_question": "wenn jede Frage geschlossen wird",
+        "results_live": "live, während der Abstimmung",
+        "results_out": "öffentlich"
+      },
+      "headline": {
+        "any_count_one": "Mindestens {{count, number}} Person hat bei einer Frage abgestimmt.",
+        "any_count_other": "Mindestens {{count, number}} Personen haben bei einer Frage abgestimmt.",
+        "any_of_one": "Mindestens {{count, number}} von {{total}} Personen hat bei einer Frage abgestimmt, {{percent}} %.",
+        "any_of_other": "Mindestens {{count, number}} von {{total}} Personen haben bei einer Frage abgestimmt, {{percent}} %.",
+        "count_one": "{{count, number}} Person hat abgestimmt.",
+        "count_other": "{{count, number}} Personen haben abgestimmt.",
+        "nobody": "Niemand hat abgestimmt.",
+        "nobody_yet": "Noch hat niemand abgestimmt.",
+        "of_one": "{{count, number}} von {{total}} Personen hat abgestimmt, {{percent}} %.",
+        "of_other": "{{count, number}} von {{total}} Personen haben abgestimmt, {{percent}} %."
+      },
+      "idle": {
+        "by_question_body": "Wenn sie beginnt, sind die Fragen geschlossen, und du öffnest sie eine nach der anderen.",
+        "by_question_started_body": "Öffne die erste Frage, um die Abstimmung zu beginnen.",
+        "by_question_started_title": "Noch ist keine Frage offen",
+        "canceled_body": "Die abgegebenen Stimmen wurden verworfen. Es gibt keine Ergebnisse.",
+        "canceled_hint": "Du kannst sie duplizieren, um sie erneut anzusetzen.",
+        "canceled_title": "Abstimmung abgebrochen",
+        "duplicate": "Duplizieren",
+        "ended_counting": "Die endgültigen Ergebnisse werden noch ausgezählt.",
+        "ended_final": "Die Ergebnisse sind endgültig, und die Wählenden können sie schon sehen.",
+        "not_started": "Sie hat noch nicht begonnen",
+        "questions_one": "{{count, number}} Frage",
+        "questions_other": "{{count, number}} Fragen",
+        "ready_body_one": "{{people}} auf der Teilnehmerliste und {{questions}}.",
+        "ready_body_other": "{{people}} auf der Teilnehmerliste und {{questions}}, alle gleichzeitig offen.",
+        "ready_title": "Beginnt von selbst am {{date}}"
+      },
+      "label": {
+        "census": "Teilnehmerliste",
+        "closed": "Beendet",
+        "overwrite": "Stimme überschreiben",
+        "questions": "Fragen",
+        "results": "Ergebnisse"
+      },
+      "line": {
+        "left": "Noch <b>{{left}}</b> zum Abstimmen.",
+        "paused": "Die Abstimmung ist <b>pausiert</b>."
+      },
+      "link_copied": "Link kopiert",
+      "no_results": "keine Ergebnisse",
+      "none_open": "keine offen",
+      "paused": {
+        "all_at_once_one": "Niemand kann abstimmen, bis sie fortgesetzt wird. Die {{votes}} abgegebene Stimme bleibt erhalten, und die Frist ändert sich nicht.",
+        "all_at_once_other": "Niemand kann abstimmen, bis sie fortgesetzt wird. Die {{votes}} abgegebenen Stimmen bleiben erhalten, und die Frist ändert sich nicht.",
+        "all_at_once_no_votes": "Niemand kann abstimmen, bis sie fortgesetzt wird. Die Frist ändert sich nicht.",
+        "by_question": "Niemand kann abstimmen, und keine Frage kann geöffnet oder geschlossen werden, bis sie fortgesetzt wird. Die abgegebenen Stimmen bleiben erhalten.",
+        "by_question_no_votes": "Niemand kann abstimmen, und keine Frage kann geöffnet oder geschlossen werden, bis sie fortgesetzt wird.",
+        "title": "Die Abstimmung ist pausiert."
+      },
+      "question_votes_one": "{{count, number}} Stimme",
+      "question_votes_other": "{{count, number}} Stimmen",
+      "results_line": {
+        "live": "Die Ergebnisse sind live sichtbar, während der Abstimmung.",
+        "none": "Es wird keine Ergebnisse geben.",
+        "public": "Die Ergebnisse sind jetzt öffentlich.",
+        "secret": "Die Ergebnisse sind sichtbar, wenn die Abstimmung endet."
+      },
+      "ruler_label_one": "{{count, number}} von {{total}} Personen hat abgestimmt, {{percent}} %",
+      "ruler_label_other": "{{count, number}} von {{total}} Personen haben abgestimmt, {{percent}} %",
+      "ruler_label_any": "Mindestens {{voted}} von {{total}} Personen haben bei einer Frage abgestimmt, {{percent}} %",
+      "share_note": "Link zur digitalen Wahlurne. Teile ihn mit den Stimmberechtigten.",
+      "share_note_closed": "Link zur öffentlichen Seite der Abstimmung, mit ihren Ergebnissen.",
+      "share_title": "Zum Teilen"
+    },
+    "time_left": "Noch {{duration}}",
+    "waiting": {
+      "cancel": "„{{title}}“ wird abgebrochen…",
+      "continue": "„{{title}}“ wird fortgesetzt…",
+      "end": "„{{title}}“ wird beendet…",
+      "pause": "„{{title}}“ wird pausiert…",
+      "title": "Warte auf die Bestätigung der Änderung"
+    }
+  },
   "voting_link": {
-    "description": "Teile diesen Link mit deinen Wählenden, um an der Abstimmung teilzunehmen",
     "title": "Abstimmungslink"
   },
   "voting_processes": "Abstimmungsprozesse",
-  "voting_processes_description": "Deine Abstimmungsprozesse verwalten und überwachen",
-  "voting_settings": "Abstimmungseinstellungen",
-  "voting_status": "Abstimmungsstatus",
   "wallet": {
     "balance": "Guthaben",
     "balance_note": "Prepaid-Guthaben, ohne MwSt. Die Veröffentlichung eines kostenpflichtigen Abstimmungsprozesses wird davon abgebucht.",

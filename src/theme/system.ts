@@ -97,6 +97,9 @@ export const createAppSystem = (primaryColor?: string) => {
     globalCss: {
       html: {
         colorPalette: palette,
+        // Room for the scrollbar on every page, so going from a short page to a long one does not shift the layout.
+        // Chakra's typings take this property for a spacing one; `stable` is its CSS keyword.
+        scrollbarGutter: 'stable' as never,
       },
       // Text that sets no size (a bare Text, markdown, list items) inherits the body role, so a new type
       // scale reaches it too.
@@ -107,6 +110,10 @@ export const createAppSystem = (primaryColor?: string) => {
         fontVariantNumeric: 'tabular-nums',
         // Chakra's style types omit the vendor-prefixed property, so it is cast in.
         ...({ WebkitFontSmoothing: 'antialiased' } as SystemStyleObject),
+      },
+      // Chakra's Group (InputGroup, button groups) spaces its items with a raw 0.5rem unless this is set.
+      '.chakra-group': {
+        '--group-gap': '{spacing.2}',
       },
       // The CSS default (`bolder`) would ask for 700; the interface tops out at 600.
       'b, strong': {

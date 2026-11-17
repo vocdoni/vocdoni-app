@@ -31,12 +31,12 @@ const DashboardMenu = ({
 
   return (
     <>
-      {/* Sidebar for large screens */}
+      {/* The sidebar, from `lg` */}
       <Box
         borderRight='sm'
         borderRightColor='border'
         bgColor='surface.sidebar'
-        display={{ base: 'none', md: 'flex' }}
+        display={{ base: 'none', lg: 'flex' }}
         flexDirection='column'
         position='sticky'
         top='0'
@@ -48,7 +48,8 @@ const DashboardMenu = ({
         <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} />
       </Box>
 
-      {/* Sidebar for small screens. It has no visible title, so the label is its accessible name. */}
+      {/* The same navigation in a drawer below `lg`, opened from the top bar. It has no visible title, so the label is
+      its accessible name; the dialog traps focus, and Escape or the backdrop close it. */}
       <Drawer.Root
         aria-label={t('menu.title', { defaultValue: 'Menu' })}
         variant='sidebar'
@@ -59,7 +60,7 @@ const DashboardMenu = ({
         <Drawer.Backdrop />
         <Drawer.Positioner>
           <Drawer.Content p='4'>
-            <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} alignLogoCenter />
+            <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} onClose={onClose} />
           </Drawer.Content>
         </Drawer.Positioner>
       </Drawer.Root>
@@ -109,15 +110,16 @@ const SidebarTutorial = () => {
   )
 }
 
-// Common menu contents
+// Common menu contents. In the drawer (`onClose` given) the logo row ends with its close button instead of the
+// sidebar's collapse toggle.
 const DashboardMenuContent = ({
   onToggleReduced,
   menu,
-  alignLogoCenter = false,
+  onClose,
 }: {
   onToggleReduced: () => void
   menu: DashboardMenuConfig
-  alignLogoCenter?: boolean
+  onClose?: () => void
 }) => {
   const { reduced } = useContext(DashboardLayoutContext)
   const { t } = useTranslation()
@@ -128,7 +130,7 @@ const DashboardMenuContent = ({
       <Box p='2'>
         <Flex
           alignItems='center'
-          justifyContent={alignLogoCenter ? 'center' : 'flex-start'}
+          justifyContent='flex-start'
           h='dashboard.header'
           mb='2'
           role='group'
@@ -151,29 +153,39 @@ const DashboardMenuContent = ({
           >
             <VocdoniLogo width={reduced ? 'full' : '[150px]'} minimal={reduced} maxH='8' aria-hidden />
           </ReactRouterLink>
-          <IconButton
-            className='dashboard-collapse-toggle'
-            aria-label={
-              reduced
-                ? t('menu.expand', { defaultValue: 'Expand menu' })
-                : t('menu.collapse', { defaultValue: 'Collapse menu' })
-            }
-            colorPalette='gray'
-            variant='subtle'
-            size='xs'
-            onClick={onToggleReduced}
-            display={{ base: 'none', md: 'inline-flex' }}
-            position='absolute'
-            right='1'
-            top='[50%]'
-            left={reduced ? '[50%]' : undefined}
-            transform={reduced ? 'translate(-50%, -50%)' : 'translateY(-50%)'}
-            opacity={reduced ? '[0]' : '[1]'}
-            pointerEvents={reduced ? 'none' : 'auto'}
-            zIndex='contents'
-          >
-            <Icon as={SidebarIcon} />
-          </IconButton>
+          {onClose ? (
+            <CloseButton
+              size='sm'
+              colorPalette='gray'
+              ms='auto'
+              aria-label={t('menu.close', { defaultValue: 'Close menu' })}
+              onClick={onClose}
+            />
+          ) : (
+            <IconButton
+              className='dashboard-collapse-toggle'
+              aria-label={
+                reduced
+                  ? t('menu.expand', { defaultValue: 'Expand menu' })
+                  : t('menu.collapse', { defaultValue: 'Collapse menu' })
+              }
+              colorPalette='gray'
+              variant='subtle'
+              size='xs'
+              onClick={onToggleReduced}
+              display={{ base: 'none', lg: 'inline-flex' }}
+              position='absolute'
+              right='1'
+              top='[50%]'
+              left={reduced ? '[50%]' : undefined}
+              transform={reduced ? 'translate(-50%, -50%)' : 'translateY(-50%)'}
+              opacity={reduced ? '[0]' : '[1]'}
+              pointerEvents={reduced ? 'none' : 'auto'}
+              zIndex='contents'
+            >
+              <Icon as={SidebarIcon} />
+            </IconButton>
+          )}
         </Flex>
         {menu.newVote && (
           <Button asChild w='full' minW='0' mt='2' mb='8' size={'xs'} variant='outline'>

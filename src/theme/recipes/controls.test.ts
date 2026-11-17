@@ -9,13 +9,28 @@ const textarea = system.cva(system.getRecipe('textarea'))
 const layer = (styles: unknown) => (styles as Record<string, Record<string, unknown>>)['@layer recipes']
 const height = (styles: unknown) => layer(styles).height ?? layer(styles).h
 
+// A responsive declaration: the phone value at the top, the tablet one under the `md` query (48em) and the
+// desktop one under `lg` (64em).
+const steps = (styles: unknown, ...props: string[]) => {
+  const at = (node: Record<string, unknown>) => props.map((prop) => node[prop]).find((value) => value !== undefined)
+  const rules = layer(styles)
+  const media = (min: string) => {
+    const key = Object.keys(rules).find((name) => name.startsWith('@media') && name.includes(`min-width: ${min}`))
+    return key ? at(rules[key] as Record<string, unknown>) : undefined
+  }
+  return { base: at(rules), md: media('48rem'), lg: media('64rem') }
+}
+const var_ = (token: string) => `var(--chakra-sizes-${token})`
+const touch = var_('control-touch')
+const tablet = var_('control-tablet')
+
 describe('button', () => {
-  it.each(['md', 'lg', 'xl', '2xl', 'cta'] as const)('size %s is the 34px control', (size) => {
-    expect(height(button({ size }))).toBe('var(--chakra-sizes-control-md)')
+  it.each(['md', 'lg', 'xl', '2xl', 'cta'] as const)('size %s is 44px, 40px, then the 34px control', (size) => {
+    expect(steps(button({ size }), 'height', 'h')).toEqual({ base: touch, md: tablet, lg: var_('control-md') })
   })
 
-  it.each(['2xs', 'xs', 'sm'] as const)('size %s is the 28px compact control', (size) => {
-    expect(height(button({ size }))).toBe('var(--chakra-sizes-7)')
+  it.each(['2xs', 'xs', 'sm'] as const)('size %s is 44px, 40px, then the 28px compact control', (size) => {
+    expect(steps(button({ size }), 'height', 'h')).toEqual({ base: touch, md: tablet, lg: var_('7') })
   })
 
   it('keeps the sidebar entry at 32px and the segment at 28px next to any size', () => {
@@ -62,9 +77,9 @@ describe('button', () => {
 })
 
 describe('input and textarea', () => {
-  it('are 34px panels with a ring and no border', () => {
+  it('are 44px, 40px, then 34px panels with a ring and no border', () => {
     const styles = layer(input({}))
-    expect(styles['--input-height']).toBe('var(--chakra-sizes-control-md)')
+    expect(steps(input({}), '--input-height')).toEqual({ base: touch, md: tablet, lg: var_('control-md') })
     expect(styles.boxShadow).toBe('var(--chakra-shadows-shadow-field)')
     expect(styles.borderWidth).toBe('0')
   })

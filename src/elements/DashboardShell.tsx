@@ -1,50 +1,49 @@
-import { Flex, IconButton, useDisclosure } from '@chakra-ui/react'
+import { Flex, useDisclosure } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { OrganizationProvider } from '@vocdoni/react-components'
 import React, { PropsWithChildren, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { SidebarIcon } from '~theme/icons'
 import { Outlet, useLocation } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import DashboardMenu from '~components/Dashboard/Menu'
 import { OrganizationGate } from '~components/Organization/OrganizationGate'
 import { DashboardMenuConfig } from '~components/Dashboard/Menu/menus'
+import { DashboardTopBar } from '~components/Dashboard/TopBar'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import SupportChat from '~components/SupportChat'
 import { LocalStorageKeys } from '~constants'
 import { DashboardLayoutContext, DashboardOutletContext } from '~elements/DashboardLayoutContext'
-import { useIsMobile } from '~components/ui/useIsMobile'
+import { useIsDesktop } from '~components/ui/useIsMobile'
 
 /**
- * Shared dashboard layout (sidebar + user menu + content) used by both the admin and integrator
- * apps. The only difference between the two is the `menu` config passed in.
+ * Shared dashboard layout used by both the admin and integrator apps: from `lg` a fixed sidebar, below it a top bar
+ * whose button opens the same navigation in a drawer. The only difference between the two apps is the `menu` config.
  */
 const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
   const { open: isOpen, onOpen, onClose } = useDisclosure()
-  const isMobile = useIsMobile()
+  const isDesktop = useIsDesktop()
   const [reduced, setReduced] = useLocalStorage(LocalStorageKeys.DashboardMenuReduced, false)
-  const { t } = useTranslation()
   const { pathname } = useLocation()
 
-  // Close the mobile drawer when leaving mobile
+  // Close the navigation drawer once the sidebar takes over
   useEffect(() => {
-    if (!isMobile) {
+    if (isDesktop) {
       onClose()
     }
-  }, [isMobile])
+  }, [isDesktop])
 
-  // Close the mobile drawer after navigating to another section
+  // Close the navigation drawer after navigating to another section
   useEffect(() => {
     onClose()
   }, [pathname])
 
-  const reducedValue = reduced && !isMobile
+  // Only the sidebar collapses: the drawer always shows the full menu
+  const reducedValue = reduced && isDesktop
 
   return (
     <DashboardLayoutContext.Provider value={{ reduced: reducedValue }}>
       <DashboardLayoutProviders>
         <Flex minH='dvh' w='full' bg='surface.canvas'>
-          {/* Sidebar for large screens */}
+          {/* The sidebar from `lg`, and the drawer below it */}
           <DashboardMenu
             isOpen={isOpen}
             onClose={onClose}
@@ -53,20 +52,8 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
           />
 
           <Flex flex='1 1 0' flexDirection='column' minW='0'>
+            <DashboardTopBar isMenuOpen={isOpen} onOpenMenu={onOpen} />
             <AnnouncementBanner />
-            <Flex
-              alignItems='center'
-              justifyContent='space-between'
-              px='4'
-              pt='3'
-              pb='2'
-              display={{ base: 'flex', md: 'none' }}
-              gap='2'
-            >
-              <IconButton aria-label={t('menu.open')} colorPalette='gray' variant='subtle' size='xs' onClick={onOpen}>
-                <SidebarIcon />
-              </IconButton>
-            </Flex>
             <OrganizationGate>
               <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
             </OrganizationGate>

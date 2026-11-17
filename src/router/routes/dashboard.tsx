@@ -2,7 +2,14 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Fragment, lazy } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { generatePath, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router'
+import {
+  createSearchParams,
+  generatePath,
+  Navigate,
+  Params,
+  redirect,
+  ShouldRevalidateFunctionArgs,
+} from 'react-router'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
 import { QueryKeys } from '~queries/keys'
@@ -17,10 +24,13 @@ import { SuspenseLoader } from '../SuspenseLoader'
 // elements/pages
 const DashboardCreateOrg = lazy(() => import('~elements/dashboard/organization/create'))
 const DashboardProcesses = lazy(() => import('~elements/dashboard/processes'))
-const AllProcesses = lazy(() => import('~elements/dashboard/processes/all'))
-const EndedProcesses = lazy(() => import('~elements/dashboard/processes/ended'))
-const Drafts = lazy(() => import('~elements/dashboard/processes/drafts'))
 const DashboardProcessView = lazy(() => import('~elements/dashboard/processes/view'))
+const VoteSummary = lazy(() =>
+  import('~components/Process/Dashboard/VoteSummary').then((m) => ({ default: m.VoteSummary }))
+)
+const VoteBallot = lazy(() =>
+  import('~components/Process/Dashboard/VoteBallot').then((m) => ({ default: m.VoteBallot }))
+)
 const ProcessCreate = lazy(() => import('~elements/dashboard/processes/create'))
 const OrganizationEdit = lazy(() => import('~components/Organization/Dashboard/Organization'))
 const WalletPanel = lazy(() => import('~components/Wallet/Wallet'))
@@ -115,6 +125,11 @@ export const useDashboardRoutes = () => {
                     HydrateFallback: PageLoader,
                     loader: async ({ params }: { params: Params<string> }) => {
                       const rawElection = await client.elections.get(params.id!)
+                      // A draft is not a running vote: it opens in the editor, as its list row does.
+                      if (!rawElection.published) {
+                        const search = createSearchParams({ draftId: rawElection.id }).toString()
+                        return redirect(`${generatePath(Routes.processes.create)}?${search}`)
+                      }
                       // Pre-seed the ElectionProvider query so the view renders without re-fetching
                       queryClient.setQueryData(QueryKeys.election.process(rawElection.id), rawElection)
                       return rawElection
@@ -122,9 +137,29 @@ export const useDashboardRoutes = () => {
                     shouldRevalidate: shouldRevalidateDashboardProcess,
                     errorElement: <Error />,
                     children: [
-                      { index: true, element: <Fragment /> },
-                      { path: Routes.dashboard.processResults, element: <Fragment /> },
+                      {
+                        index: true,
+                        element: (
+                          <SuspenseLoader>
+                            <VoteSummary />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.processBallot,
+                        element: (
+                          <SuspenseLoader>
+                            <VoteBallot />
+                          </SuspenseLoader>
+                        ),
+                      },
                     ],
+                  },
+                  // The Results tab is retired (R31): its results are read on Gestió. A sibling, so the redirect does
+                  // not wait for the process read.
+                  {
+                    path: Routes.dashboard.processResults,
+                    ...redirectLegacyPath(Routes.dashboard.process),
                   },
                   {
                     path: Routes.dashboard.census.checkout,
@@ -156,29 +191,14 @@ export const useDashboardRoutes = () => {
                         index: true,
                         element: <Navigate to={generatePath(Routes.dashboard.processes.all)} replace />,
                       },
-                      {
-                        path: Routes.dashboard.processes.all,
-                        element: (
-                          <SuspenseLoader>
-                            <AllProcesses />
-                          </SuspenseLoader>
-                        ),
-                      },
+                      // The list is one page (the Outlet's parent); each filter path only selects the filter.
+                      ...(['all', 'live', 'ready', 'drafts', 'closed'] as const).map((filter) => ({
+                        path: Routes.dashboard.processes[filter],
+                        element: <Fragment />,
+                      })),
                       {
                         path: Routes.dashboard.processes.ended,
-                        element: (
-                          <SuspenseLoader>
-                            <EndedProcesses />
-                          </SuspenseLoader>
-                        ),
-                      },
-                      {
-                        path: Routes.dashboard.processes.drafts,
-                        element: (
-                          <SuspenseLoader>
-                            <Drafts />
-                          </SuspenseLoader>
-                        ),
+                        ...redirectLegacyPath(Routes.dashboard.processes.closed),
                       },
                     ],
 

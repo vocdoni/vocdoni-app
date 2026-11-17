@@ -55,4 +55,43 @@ describe('ConfirmDialog', () => {
     expect(onCancel).toHaveBeenCalledTimes(1)
     expect(onOpenChange).not.toHaveBeenCalled()
   })
+
+  it('draws a danger confirm by default and a primary one on request', () => {
+    const { unmount } = render(<ConfirmDialog open title='Delete?' confirmText='Delete' onConfirm={() => {}} />)
+    expect(screen.getByRole('button', { name: 'Delete' })).toHaveAttribute('data-tone', 'danger')
+    unmount()
+
+    render(<ConfirmDialog open tone='primary' title='End now?' confirmText='End now' onConfirm={() => {}} />)
+    expect(screen.getByRole('button', { name: 'End now' })).toHaveAttribute('data-tone', 'primary')
+  })
+
+  it('prints the warning line under the description', () => {
+    render(
+      <ConfirmDialog
+        open
+        title='End the vote now?'
+        description='It closes with the votes cast.'
+        warning='3 people have not voted yet.'
+        onConfirm={() => {}}
+      />
+    )
+
+    const description = screen.getByText('It closes with the votes cast.')
+    const warning = screen.getByText('3 people have not voted yet.')
+    expect(description.compareDocumentPosition(warning) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('describes the dialog with its description', async () => {
+    render(
+      <ConfirmDialog open title='Close question 3?' description='Its result becomes final.' onConfirm={() => {}} />
+    )
+
+    expect(await screen.findByRole('dialog', { description: 'Its result becomes final.' })).toBeInTheDocument()
+  })
+
+  it('has no warning line without a warning', () => {
+    render(<ConfirmDialog open title='Confirm' description='Body' onConfirm={() => {}} />)
+
+    expect(document.querySelector('[data-part="warning"]')).toBeNull()
+  })
 })

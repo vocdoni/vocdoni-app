@@ -210,7 +210,7 @@ const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
 
   return (
     <ComponentsProvider components={uiScaffoldComponents}>
-      {/* App-owned components (ActionButtons, ConfirmActionModal) call useConfirm
+      {/* App-owned components call useConfirm
           outside any react-components auto-mounted provider, so one is needed for
           the whole tree. It must sit inside ComponentsProvider because the confirm
           modal renders through the themed component slots. */}
