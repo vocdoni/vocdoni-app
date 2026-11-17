@@ -2221,17 +2221,17 @@
         "any_count_one": "Almenys {{count, number}} persona ha votat alguna pregunta.",
         "any_count_many": "Almenys {{count, number}} persones han votat alguna pregunta.",
         "any_count_other": "Almenys {{count, number}} persones han votat alguna pregunta.",
-        "any_of_one": "Almenys {{voted}} de {{count, number}} persona ha votat alguna pregunta, el {{percent}}%.",
-        "any_of_many": "Almenys {{voted}} de {{count, number}} persones han votat alguna pregunta, el {{percent}}%.",
-        "any_of_other": "Almenys {{voted}} de {{count, number}} persones han votat alguna pregunta, el {{percent}}%.",
+        "any_of_one": "Almenys {{count, number}} de {{total}} persones ha votat alguna pregunta, el {{percent}}%.",
+        "any_of_many": "Almenys {{count, number}} de {{total}} persones han votat alguna pregunta, el {{percent}}%.",
+        "any_of_other": "Almenys {{count, number}} de {{total}} persones han votat alguna pregunta, el {{percent}}%.",
         "count_one": "Ha votat {{count, number}} persona.",
         "count_many": "Han votat {{count, number}} persones.",
         "count_other": "Han votat {{count, number}} persones.",
         "nobody": "No ha votat ningú.",
         "nobody_yet": "Encara no ha votat ningú.",
-        "of_one": "Ha votat {{voted}} de {{count, number}} persona, el {{percent}}%.",
-        "of_many": "Han votat {{voted}} de {{count, number}} persones, el {{percent}}%.",
-        "of_other": "Han votat {{voted}} de {{count, number}} persones, el {{percent}}%."
+        "of_one": "Ha votat {{count, number}} de {{total}} persones, el {{percent}}%.",
+        "of_many": "Han votat {{count, number}} de {{total}} persones, el {{percent}}%.",
+        "of_other": "Han votat {{count, number}} de {{total}} persones, el {{percent}}%."
       },
       "idle": {
         "by_question_body": "Quan comenci, les preguntes començaran tancades i les aniràs obrint d'una en una.",

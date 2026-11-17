@@ -2152,14 +2152,14 @@
       "headline": {
         "any_count_one": "Τουλάχιστον {{count, number}} άτομο έχει ψηφίσει σε μια ερώτηση.",
         "any_count_other": "Τουλάχιστον {{count, number}} άτομα έχουν ψηφίσει σε μια ερώτηση.",
-        "any_of_one": "Τουλάχιστον {{voted}} από {{count, number}} άτομο έχει ψηφίσει σε μια ερώτηση, το {{percent}}%.",
-        "any_of_other": "Τουλάχιστον {{voted}} από {{count, number}} άτομα έχουν ψηφίσει σε μια ερώτηση, το {{percent}}%.",
+        "any_of_one": "Τουλάχιστον {{count, number}} από {{total}} άτομα έχει ψηφίσει σε μια ερώτηση, το {{percent}}%.",
+        "any_of_other": "Τουλάχιστον {{count, number}} από {{total}} άτομα έχουν ψηφίσει σε μια ερώτηση, το {{percent}}%.",
         "count_one": "Έχει ψηφίσει {{count, number}} άτομο.",
         "count_other": "Έχουν ψηφίσει {{count, number}} άτομα.",
         "nobody": "Δεν ψήφισε κανείς.",
         "nobody_yet": "Δεν έχει ψηφίσει κανείς ακόμη.",
-        "of_one": "Έχει ψηφίσει {{voted}} από {{count, number}} άτομο, το {{percent}}%.",
-        "of_other": "Έχουν ψηφίσει {{voted}} από {{count, number}} άτομα, το {{percent}}%."
+        "of_one": "Έχει ψηφίσει {{count, number}} από {{total}} άτομα, το {{percent}}%.",
+        "of_other": "Έχουν ψηφίσει {{count, number}} από {{total}} άτομα, το {{percent}}%."
       },
       "idle": {
         "by_question_body": "Όταν ξεκινήσει, οι ερωτήσεις θα είναι κλειστές και θα τις ανοίγετε μία μία.",

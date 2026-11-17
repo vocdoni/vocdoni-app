@@ -2152,14 +2152,14 @@
       "headline": {
         "any_count_one": "Gutxienez {{count, number}} pertsonak bozkatu du galderaren bat.",
         "any_count_other": "Gutxienez {{count, number}} pertsonak bozkatu dute galderaren bat.",
-        "any_of_one": "{{count, number}} pertsonatik gutxienez {{voted}}k bozkatu du galderaren bat, %{{percent}}.",
-        "any_of_other": "{{count, number}} pertsonatik gutxienez {{voted}}k bozkatu dute galderaren bat, %{{percent}}.",
+        "any_of_one": "{{total}} pertsonatik gutxienez {{count, number}}k bozkatu du galderaren bat, %{{percent}}.",
+        "any_of_other": "{{total}} pertsonatik gutxienez {{count, number}}k bozkatu dute galderaren bat, %{{percent}}.",
         "count_one": "{{count, number}} pertsonak bozkatu du.",
         "count_other": "{{count, number}} pertsonak bozkatu dute.",
         "nobody": "Inork ez du bozkatu.",
         "nobody_yet": "Oraindik ez du inork bozkatu.",
-        "of_one": "{{count, number}} pertsonatik {{voted}}k bozkatu du, %{{percent}}.",
-        "of_other": "{{count, number}} pertsonatik {{voted}}k bozkatu dute, %{{percent}}."
+        "of_one": "{{total}} pertsonatik {{count, number}}k bozkatu du, %{{percent}}.",
+        "of_other": "{{total}} pertsonatik {{count, number}}k bozkatu dute, %{{percent}}."
       },
       "idle": {
         "by_question_body": "Hasten denean, galderak itxita egongo dira eta banan-banan irekiko dituzu.",

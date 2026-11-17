@@ -2152,14 +2152,14 @@
       "headline": {
         "any_count_one": "Mindestens {{count, number}} Person hat bei einer Frage abgestimmt.",
         "any_count_other": "Mindestens {{count, number}} Personen haben bei einer Frage abgestimmt.",
-        "any_of_one": "Mindestens {{voted}} von {{count, number}} Person hat bei einer Frage abgestimmt, {{percent}} %.",
-        "any_of_other": "Mindestens {{voted}} von {{count, number}} Personen haben bei einer Frage abgestimmt, {{percent}} %.",
+        "any_of_one": "Mindestens {{count, number}} von {{total}} Personen hat bei einer Frage abgestimmt, {{percent}} %.",
+        "any_of_other": "Mindestens {{count, number}} von {{total}} Personen haben bei einer Frage abgestimmt, {{percent}} %.",
         "count_one": "{{count, number}} Person hat abgestimmt.",
         "count_other": "{{count, number}} Personen haben abgestimmt.",
         "nobody": "Niemand hat abgestimmt.",
         "nobody_yet": "Noch hat niemand abgestimmt.",
-        "of_one": "{{voted}} von {{count, number}} Person hat abgestimmt, {{percent}} %.",
-        "of_other": "{{voted}} von {{count, number}} Personen haben abgestimmt, {{percent}} %."
+        "of_one": "{{count, number}} von {{total}} Personen hat abgestimmt, {{percent}} %.",
+        "of_other": "{{count, number}} von {{total}} Personen haben abgestimmt, {{percent}} %."
       },
       "idle": {
         "by_question_body": "Wenn sie beginnt, sind die Fragen geschlossen, und du öffnest sie eine nach der anderen.",

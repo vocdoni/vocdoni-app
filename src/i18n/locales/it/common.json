@@ -2221,17 +2221,17 @@
         "any_count_one": "Almeno {{count, number}} persona ha votato a una domanda.",
         "any_count_many": "Almeno {{count, number}} persone hanno votato a una domanda.",
         "any_count_other": "Almeno {{count, number}} persone hanno votato a una domanda.",
-        "any_of_one": "Almeno {{voted}} persona su {{count, number}} ha votato a una domanda, il {{percent}}%.",
-        "any_of_many": "Almeno {{voted}} persone su {{count, number}} hanno votato a una domanda, il {{percent}}%.",
-        "any_of_other": "Almeno {{voted}} persone su {{count, number}} hanno votato a una domanda, il {{percent}}%.",
+        "any_of_one": "Almeno {{count, number}} persona su {{total}} ha votato a una domanda, il {{percent}}%.",
+        "any_of_many": "Almeno {{count, number}} persone su {{total}} hanno votato a una domanda, il {{percent}}%.",
+        "any_of_other": "Almeno {{count, number}} persone su {{total}} hanno votato a una domanda, il {{percent}}%.",
         "count_one": "Ha votato {{count, number}} persona.",
         "count_many": "Hanno votato {{count, number}} persone.",
         "count_other": "Hanno votato {{count, number}} persone.",
         "nobody": "Non ha votato nessuno.",
         "nobody_yet": "Non ha ancora votato nessuno.",
-        "of_one": "Ha votato {{voted}} persona su {{count, number}}, il {{percent}}%.",
-        "of_many": "Hanno votato {{voted}} persone su {{count, number}}, il {{percent}}%.",
-        "of_other": "Hanno votato {{voted}} persone su {{count, number}}, il {{percent}}%."
+        "of_one": "Ha votato {{count, number}} persona su {{total}}, il {{percent}}%.",
+        "of_many": "Hanno votato {{count, number}} persone su {{total}}, il {{percent}}%.",
+        "of_other": "Hanno votato {{count, number}} persone su {{total}}, il {{percent}}%."
       },
       "idle": {
         "by_question_body": "Quando inizia, le domande sono chiuse e le apri una alla volta.",

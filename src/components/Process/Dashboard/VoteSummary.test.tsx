@@ -458,6 +458,12 @@ describe('VoteSummary', () => {
       expect(screen.queryByText(/^0 people/)).toBeNull()
     })
 
+    it('puts the verb in the singular for one voter, whatever the census', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 1)] }), 1)
+
+      expect(screen.getByRole('heading', { name: '1 of 312 people has voted, 1%.' })).toBeInTheDocument()
+    })
+
     it('falls back to the counts the process read carries when the results are not served', () => {
       renderSummary(createProcess({ questions: [question('q1', 'ENDED', 181)] }))
 

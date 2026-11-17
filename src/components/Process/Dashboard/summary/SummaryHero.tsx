@@ -31,20 +31,20 @@ const useHeadline = ({ byQuestion, state, count, countUnknown, total, percent }:
           defaultValue_other: '{{count, number}} people have voted.',
           count,
         })
-  // The noun goes with the census ("1 of 312 people").
+  // The plural follows the voters ("1 of 312 people has voted"); the census is a plain figure.
   return byQuestion
     ? t('votes.summary.headline.any_of', {
-        defaultValue_one: 'At least {{voted}} of {{count, number}} person has voted on a question, {{percent}}%.',
-        defaultValue_other: 'At least {{voted}} of {{count, number}} people have voted on a question, {{percent}}%.',
-        voted: quantity(count),
-        count: total,
+        defaultValue_one: 'At least {{count, number}} of {{total}} people has voted on a question, {{percent}}%.',
+        defaultValue_other: 'At least {{count, number}} of {{total}} people have voted on a question, {{percent}}%.',
+        count,
+        total: quantity(total),
         percent,
       })
     : t('votes.summary.headline.of', {
-        defaultValue_one: '{{voted}} of {{count, number}} person has voted, {{percent}}%.',
-        defaultValue_other: '{{voted}} of {{count, number}} people have voted, {{percent}}%.',
-        voted: quantity(count),
-        count: total,
+        defaultValue_one: '{{count, number}} of {{total}} people has voted, {{percent}}%.',
+        defaultValue_other: '{{count, number}} of {{total}} people have voted, {{percent}}%.',
+        count,
+        total: quantity(total),
         percent,
       })
 }
