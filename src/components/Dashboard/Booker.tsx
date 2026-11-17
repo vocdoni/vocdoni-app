@@ -1,5 +1,6 @@
 import Cal, { getCalApi } from '@calcom/embed-react'
 import { Button, ButtonProps, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
+import { EMBED_DARK } from '~components/Pricing/stripe'
 import { CloseButton } from '~components/ui/CloseButton'
 import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -19,13 +20,33 @@ const Booker = ({ callback }: BookerProps) => {
   useEffect(() => {
     ;(async function () {
       const cal = await getCalApi({ namespace: '30min' })
-      cal('ui', { hideEventTypeDetails: false, layout: 'month_view', theme: colorMode })
       cal('on', {
         action: 'bookingSuccessfulV2',
         callback,
       })
     })()
   }, [])
+
+  // Re-sent on every mode change so an open booker follows it. Cal sits in a dialog, so dark paints the dialog grey.
+  useEffect(() => {
+    ;(async function () {
+      const cal = await getCalApi({ namespace: '30min' })
+      cal('ui', {
+        hideEventTypeDetails: false,
+        layout: 'month_view',
+        theme: colorMode,
+        cssVarsPerTheme: {
+          light: {},
+          dark: {
+            'cal-bg': EMBED_DARK.dialog,
+            'cal-text': EMBED_DARK.text,
+            'cal-border': EMBED_DARK.fieldRing,
+            'cal-brand': EMBED_DARK.primary,
+          },
+        },
+      })
+    })()
+  }, [colorMode])
 
   if (!appEnv.CALCOM_EVENT_SLUG) {
     return (
