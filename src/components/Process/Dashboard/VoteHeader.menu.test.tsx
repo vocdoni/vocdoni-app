@@ -32,7 +32,8 @@ vi.mock('~components/Actions/ActionsContext', async () => {
     },
   }
 })
-vi.mock('~components/ui/useIsMobile', () => ({ useIsDesktop: () => true, useIsMobile: () => false }))
+// The dropdown, not the phone's sheet: the one width-dependent behaviour ResponsiveMenu has.
+vi.mock('~components/ui/useIsMobile', () => ({ useIsMobile: () => false }))
 vi.mock('./use-clone-as-draft', () => ({ useCloneAsDraft: () => ({ cloneAsDraft: vi.fn(), isCloning: false }) }))
 vi.mock('~queries/process-end-date', () => ({ useProcessEarlyEndDate: () => ({ data: null }) }))
 vi.mock('../VotingReportPdf/VotingReportPdfButton', () => ({
@@ -59,7 +60,8 @@ it('ends the vote menu with the destructive cancel and opens the outside pages i
     </TestMemoryRouter>
   )
 
-  await userEvent.click(screen.getByRole('button', { name: /More/ }))
+  // One name at every width: the word "More" shows from `lg`, the icon below it.
+  await userEvent.click(screen.getByRole('button', { name: 'More actions' }))
 
   const items = await screen.findAllByRole('menuitem')
   expect(items.map((item) => item.textContent)).toEqual([

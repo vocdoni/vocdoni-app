@@ -52,7 +52,9 @@ const ItemContent = ({ item }: { item: ResponsiveMenuItem }) => {
  */
 export const ResponsiveMenu = ({ label, title, trigger, items }: ResponsiveMenuProps) => {
   const { t } = useTranslation()
-  const isMobile = useIsMobile()
+  // Behaviour, not look: a phone gets a bottom sheet, wider screens a dropdown. Every user is on the client-only
+  // dashboard, so the first render reads the screen.
+  const isMobile = useIsMobile({ ssr: false })
   const [open, setOpen] = useState(false)
   const sorted = ordered(items)
   const firstDanger = sorted.findIndex((item) => item.danger)

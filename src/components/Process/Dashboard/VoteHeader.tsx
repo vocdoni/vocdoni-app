@@ -1,4 +1,4 @@
-import { Button, Flex, Grid, Icon, IconButton, Link, Text } from '@chakra-ui/react'
+import { Button, Flex, Grid, Icon, Link, Span, Text } from '@chakra-ui/react'
 import { questionsEndedAt, resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useElection } from '@vocdoni/react-components'
@@ -11,7 +11,6 @@ import { useActions } from '~components/Actions/ActionsContext'
 import { PageTitle } from '~components/ui/PageTitle'
 import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { ResponsiveMenu, type ResponsiveMenuItem } from '~components/ui/ResponsiveMenu'
-import { useIsDesktop } from '~components/ui/useIsMobile'
 import { useVoteText } from '~i18n/use-vote-text'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useProcessEarlyEndDate } from '~queries/process-end-date'
@@ -46,7 +45,6 @@ const parseDate = (value: string | undefined) => {
  */
 const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
   const { t, i18n } = useTranslation()
-  const isDesktop = useIsDesktop({ ssr: false })
   const { dateAt, day, time, shortDate, timeLeft, ago, duration } = useVoteText()
   const { data: earlyEndDate } = useProcessEarlyEndDate(election)
   const byQuestion = isQuestionByQuestion(election)
@@ -54,7 +52,7 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
   const start = parseDate(election.startDate)
   const end = resolveEndDate(election)
   const upper = (value: string) => ucfirst(value, i18n.language)
-  // "at 18:30" today, the full date otherwise (the touch boards).
+  // "at 18:30" today, the full date otherwise.
   const when = (date: Date) =>
     isSameDay(date, now)
       ? t('votes.date.at_time', { defaultValue: 'at {{time}}', time: time(date) })
@@ -69,7 +67,7 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
       defaultValue: 'Closes {{end}}. The deadline does not stop.',
       end: when(date),
     })
-  // A question-by-question vote's start, as the desktop board says it.
+  // A question-by-question vote's start.
   const startedByQuestion = (date: Date, paused: boolean) => {
     if (paused) {
       return isSameDay(date, now)
@@ -98,8 +96,6 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
 
   switch (state) {
     case 'ready':
-      if (byQuestion && !isDesktop)
-        return start ? t('votes.header.line.starts', { defaultValue: 'Starts {{date}}.', date: dateAt(start) }) : ''
       if (byQuestion) {
         return sentences(
           start &&
@@ -133,16 +129,6 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
             })
           : t('votes.header.line.closes', { defaultValue: 'Closes {{date}}.', date: dateAt(end) })
       }
-      // The touch boards say when it started and when it closes; the desktop board the day too.
-      if (!isDesktop) {
-        return start && end
-          ? t('votes.header.line.started_closes', {
-              defaultValue: 'Started {{start}}. Closes {{end}}.',
-              start: when(start),
-              end: when(end),
-            })
-          : sentences(closesOn(end))
-      }
       return sentences(start && startedByQuestion(start, false), closesOn(end))
     }
     case 'paused':
@@ -154,8 +140,8 @@ const useStatusLine = ({ election, state, now }: HeaderPartProps): string => {
             })
           : ''
       }
-      // The deadline a pause does not move, on every width; the desktop board says when it started first.
-      return sentences(isDesktop && start && startedByQuestion(start, true), closesPaused(end))
+      // When it started, then the deadline a pause does not move.
+      return sentences(start && startedByQuestion(start, true), closesPaused(end))
     case 'closed': {
       const endedAt = closedAt(election, earlyEndDate)
       if (!endedAt) return ''
@@ -223,30 +209,23 @@ const StatusLine = (props: HeaderPartProps) => {
 /** The boards' action matrix: which buttons each state shows, in order, and which one is primary. */
 const VoteActions = ({ election, state }: HeaderPartProps) => {
   const { t } = useTranslation()
-  const isDesktop = useIsDesktop({ ssr: false })
-  const { canManage } = useActions()
-  const { cloneAsDraft, isCloning } = useCloneAsDraft()
   // Equal parts on phones (the row spans the page); natural width from md.
   const fill = { base: '1', md: 'none' } as const
+  const pause = t('votes.page.pause', { defaultValue: 'Pause' })
+  const resume = t('votes.page.resume', { defaultValue: 'Resume' })
+  const endNow = t('votes.page.end_now', { defaultValue: 'End now' })
 
   if (!isQuestionByQuestion(election)) {
     return (
       <>
-        {state === 'live' && <ActionPause flex={fill}>{t('votes.page.pause', { defaultValue: 'Pause' })}</ActionPause>}
-        {state === 'paused' && (
-          <ActionContinue flex={fill}>{t('votes.page.resume', { defaultValue: 'Resume' })}</ActionContinue>
-        )}
-        {(state === 'live' || state === 'paused') && (
-          <ActionEnd flex={fill}>{t('votes.page.end_now', { defaultValue: 'End now' })}</ActionEnd>
-        )}
+        {state === 'live' && <ActionPause flex={fill}>{pause}</ActionPause>}
+        {state === 'paused' && <ActionContinue flex={fill}>{resume}</ActionContinue>}
+        {(state === 'live' || state === 'paused') && <ActionEnd flex={fill}>{endNow}</ActionEnd>}
       </>
     )
   }
 
-  // The desktop board names the whole vote ("Pause the vote"); the touch boards say it short ("Pause", "End now").
-  const endVote = isDesktop
-    ? t('votes.page.end_vote', { defaultValue: 'End the vote' })
-    : t('votes.page.end_now', { defaultValue: 'End now' })
+  // Short at every width, as an all-at-once vote's (R33 D1): the header acts on the whole vote.
   switch (state) {
     case 'live': {
       // Pausing needs an open question to hold. A vote whose questions are all closed is closed, so ending is never
@@ -254,15 +233,9 @@ const VoteActions = ({ election, state }: HeaderPartProps) => {
       const canPause = election.questions.some((question) => question.status === 'ONGOING')
       return (
         <>
-          {canPause && (
-            <ActionPause flex={fill}>
-              {isDesktop
-                ? t('votes.page.pause_vote', { defaultValue: 'Pause the vote' })
-                : t('votes.page.pause', { defaultValue: 'Pause' })}
-            </ActionPause>
-          )}
+          {canPause && <ActionPause flex={fill}>{pause}</ActionPause>}
           <ActionEnd variant='outline' flex={fill}>
-            {endVote}
+            {endNow}
           </ActionEnd>
         </>
       )
@@ -270,32 +243,24 @@ const VoteActions = ({ election, state }: HeaderPartProps) => {
     case 'paused':
       return (
         <>
-          <ActionContinue flex={fill}>
-            {isDesktop
-              ? t('votes.page.resume_vote', { defaultValue: 'Resume the vote' })
-              : t('votes.page.resume', { defaultValue: 'Resume' })}
-          </ActionContinue>
-          <ActionEnd flex={fill}>{endVote}</ActionEnd>
+          <ActionContinue flex={fill}>{resume}</ActionContinue>
+          <ActionEnd flex={fill}>{endNow}</ActionEnd>
         </>
       )
-    case 'canceled':
-      // The touch board's way to call it again; the desktop keeps it in "More".
-      return !isDesktop && canManage ? (
-        <Button variant='outline' flex={fill} loading={isCloning} onClick={() => void cloneAsDraft(election)}>
-          {t('votes.summary.idle.duplicate', { defaultValue: 'Duplicate it' })}
-        </Button>
-      ) : null
+    // A canceled vote is duplicated from "More", at every width.
     default:
       return null
   }
 }
 
-/** "More": a labelled dropdown on the desktop, the "…" button and a sheet on touch screens. */
+/**
+ * "More": one button named "More actions" (the word and a chevron from `lg`, the "…" icon below it); a dropdown from
+ * `md`, a sheet on a phone (ResponsiveMenu).
+ */
 const VoteMenu = ({ election, state }: HeaderPartProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
   const { canManage } = useActions()
-  const isDesktop = useIsDesktop({ ssr: false })
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const publicLanguage = usePublicLanguage()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
@@ -320,10 +285,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
       ? [
           {
             value: 'duplicate',
-            // "Duplicate the vote" in the desktop menu, "Duplicate" in the phone sheet.
-            label: isDesktop
-              ? t('votes.page.duplicate_vote', { defaultValue: 'Duplicate the vote' })
-              : t('votes.page.duplicate', { defaultValue: 'Duplicate' }),
+            label: t('votes.page.duplicate_vote', { defaultValue: 'Duplicate the vote' }),
             icon: CopyIcon,
             disabled: isCloning,
             onSelect: () => void cloneAsDraft(election),
@@ -360,16 +322,11 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
         label={moreActions}
         title={text(election.title)}
         trigger={
-          isDesktop ? (
-            <Button variant='dropdown' ref={moreRef}>
-              {t('votes.page.more', { defaultValue: 'More' })}
-              <Icon as={ChevronDownIcon} />
-            </Button>
-          ) : (
-            <IconButton variant='ghost' aria-label={moreActions} ref={moreRef}>
-              <MoreIcon />
-            </IconButton>
-          )
+          <Button variant='more' aria-label={moreActions} ref={moreRef}>
+            <Span hideBelow='lg'>{t('votes.page.more', { defaultValue: 'More' })}</Span>
+            <Icon as={ChevronDownIcon} hideBelow='lg' />
+            <Icon as={MoreIcon} hideFrom='lg' />
+          </Button>
         }
         items={items}
       />

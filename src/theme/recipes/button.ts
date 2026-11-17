@@ -229,6 +229,17 @@ const sheetClose = defineStyle({
 // reset the gap, end padding and icon, so they live in a compound variant.
 const dropdown = defineStyle({ ...outline })
 
+// A page header's "More" menu button: below `lg` the "…" icon alone, borderless and square (a ghost icon button);
+// from `lg` a labelled dropdown as `dropdown`. The button shows its word and chevron from `lg` and the icon below it
+// (`hideBelow` / `hideFrom` on its children), keeping one name at every width. Sides and icons in a compound variant.
+const more = defineStyle({
+  bg: { base: 'transparent', lg: 'bg.panel' },
+  color: { base: 'fg.muted', lg: 'fg' },
+  boxShadow: { base: '[none]', lg: 'shadow.control' },
+  _hover: { bg: { base: 'state.hover.bg', lg: 'bg.panel' }, bgImage: { lg: PANEL_HOVER }, color: 'fg' },
+  _expanded: { bg: { base: 'state.hover.bg', lg: 'bg.panel' }, bgImage: { lg: PANEL_HOVER }, color: 'fg' },
+})
+
 // Button that opens a menu about the current user: avatar, names and a chevron, left-aligned.
 const menuTrigger = defineStyle({
   ...subtle,
@@ -359,6 +370,7 @@ export const Button = defineRecipe({
       'sheet-row': sheetRow,
       'sheet-close': sheetClose,
       dropdown,
+      more,
       'menu-trigger': menuTrigger,
       segment,
       toggle,
@@ -411,6 +423,20 @@ export const Button = defineRecipe({
         gap: '1',
         pe: { base: '3', lg: '2' },
         _icon: { width: 'icon.chevron', height: 'icon.chevron', color: 'fg.subtle' },
+      },
+    },
+    // "More": square below `lg` (no sides), the dropdown's sides, gap and chevron from `lg`.
+    {
+      variant: 'more',
+      css: {
+        gap: '1',
+        px: { base: '0', lg: '3' },
+        pe: { base: '0', lg: '2' },
+        _icon: {
+          width: { base: 'icon.sm', lg: 'icon.chevron' },
+          height: { base: 'icon.sm', lg: 'icon.chevron' },
+          color: { lg: 'fg.subtle' },
+        },
       },
     },
     // The chip is a smaller control than a button at every width: 36px on a phone, 32px on a tablet, 28px from `lg`.

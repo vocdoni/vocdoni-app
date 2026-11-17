@@ -6,7 +6,6 @@ import { VoteHeader } from './VoteHeader'
 
 const NOW = new Date('2026-03-10T12:00:00Z')
 let canManage = true
-let isDesktop = true
 let currentElection: VotingProcessResponse
 let earlyEndDate: Date | null = null
 
@@ -38,7 +37,6 @@ vi.mock('~components/Actions/ActionsContext', async () => {
     },
   }
 })
-vi.mock('~components/ui/useIsMobile', () => ({ useIsDesktop: () => isDesktop, useIsMobile: () => !isDesktop }))
 vi.mock('./use-clone-as-draft', () => ({ useCloneAsDraft: () => ({ cloneAsDraft: vi.fn(), isCloning: false }) }))
 vi.mock('~queries/process-end-date', () => ({ useProcessEarlyEndDate: () => ({ data: earlyEndDate }) }))
 vi.mock('../VotingReportPdf/VotingReportPdfButton', () => ({
@@ -110,7 +108,6 @@ describe('VoteHeader', () => {
     vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] })
     vi.setSystemTime(NOW)
     canManage = true
-    isDesktop = true
     earlyEndDate = null
   })
   afterEach(() => vi.useRealTimers())
@@ -191,11 +188,11 @@ describe('VoteHeader', () => {
   })
 
   describe('question by question', () => {
-    it('offers Pause the vote and End the vote, secondary, while a question is open', () => {
+    it('offers Pause and End now, secondary, while a question is open, as an all-at-once vote words them', () => {
       renderHeader(byQuestion([question('q1', 'ENDED'), question('q2', 'ONGOING')]))
 
-      expect(actions()).toEqual(['Pause the vote', 'End the vote'])
-      expect(screen.getByRole('button', { name: 'End the vote' })).toHaveAttribute('data-variant', 'outline')
+      expect(actions()).toEqual(['Pause', 'End now'])
+      expect(screen.getByRole('button', { name: 'End now' })).toHaveAttribute('data-variant', 'outline')
       expect(
         screen.getByText(
           /^Question by question\. Started Sunday, March 1 at \d\d:\d\d, 9 days ago\. Closes Thursday, March 12 at \d\d:\d\d\.$/
@@ -206,7 +203,7 @@ describe('VoteHeader', () => {
     it('has nothing to pause when no question is open', () => {
       renderHeader(byQuestion([question('q1', 'ENDED'), question('q2', 'PAUSED')]))
 
-      expect(actions()).toEqual(['End the vote'])
+      expect(actions()).toEqual(['End now'])
     })
 
     it('reads a vote whose questions are all closed as closed, with no action but its menu', () => {
@@ -214,55 +211,25 @@ describe('VoteHeader', () => {
         byQuestion([question('q1', 'ENDED'), question('q2', 'ONGOING', { endedAt: '2026-03-10T11:00:00Z' })])
       )
 
-      expect(screen.queryByRole('button', { name: 'End the vote' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'End now' })).not.toBeInTheDocument()
       expect(screen.queryByRole('link', { name: 'Show the results' })).not.toBeInTheDocument()
       expect(actions()).toEqual([])
       expect(screen.getByText('Closed')).toBeInTheDocument()
     })
 
-    it('offers Pause and End now on a phone, and says when it started and when it closes', () => {
-      isDesktop = false
-      renderHeader(byQuestion([question('q1', 'ONGOING')]))
+    it('keeps the duplicate of a canceled vote in More, with no button of its own', () => {
+      renderHeader(byQuestion([question('q1', 'CANCELED', { endedAt: '2026-03-02T09:00:00Z' })]))
 
-      expect(actions()).toEqual(['Pause', 'End now'])
-      expect(
-        screen.getByText(/^Started Sunday, March 1 at \d\d:\d\d\. Closes Thursday, March 12 at \d\d:\d\d\.$/)
-      ).toBeInTheDocument()
+      expect(actions()).toEqual([])
+      expect(within(menu()).getByRole('button', { name: 'Duplicate the vote' })).toBeInTheDocument()
     })
 
-    it('offers Resume and End now on a phone while the vote is paused', () => {
-      isDesktop = false
+    it('shows a vote paused as a whole as paused, with Resume first', () => {
       renderHeader(byQuestion([question('q1', 'PAUSED', { results: { voteCount: 3 } })]))
 
       expect(actions()).toEqual(['Resume', 'End now'])
-    })
-
-    it('says when it starts on a phone, with no button: the API cannot start it early', () => {
-      isDesktop = false
-      renderHeader(byQuestion([question('q1', 'PAUSED')], { startDate: '2026-03-14T17:30:00Z' }))
-
-      expect(actions()).toEqual([])
-      expect(screen.getByText(/^Starts Saturday, March 14 at \d\d:\d\d\.$/)).toBeInTheDocument()
-    })
-
-    it('offers Duplicate it on a phone once the vote is canceled, and keeps it in More on the desktop', () => {
-      isDesktop = false
-      const canceled = byQuestion([question('q1', 'CANCELED', { endedAt: '2026-03-02T09:00:00Z' })])
-      const { unmount } = renderHeader(canceled)
-      expect(actions()).toEqual(['Duplicate it'])
-      unmount()
-
-      isDesktop = true
-      renderHeader(canceled)
-      expect(actions()).toEqual([])
-    })
-
-    it('shows a vote paused as a whole as paused, with Resume the vote first', () => {
-      renderHeader(byQuestion([question('q1', 'PAUSED', { results: { voteCount: 3 } })]))
-
-      expect(actions()).toEqual(['Resume the vote', 'End the vote'])
       expect(screen.getByText('Paused')).toBeInTheDocument()
-      // The deadline a pause does not move, on the desktop too.
+      // When it started, then the deadline a pause does not move.
       expect(
         screen.getByText(
           /^Question by question\. Started Sunday, March 1 at \d\d:\d\d\. Closes Thursday, March 12 at \d\d:\d\d\. The deadline does not stop\.$/
@@ -317,13 +284,6 @@ describe('VoteHeader', () => {
           .getAllByRole('button')
           .map((item) => item.textContent)
       ).toEqual(['Show as voter', 'Duplicate the vote', 'View in explorer', 'Cancel the vote'])
-    })
-
-    it('says Duplicate in the phone sheet', () => {
-      isDesktop = false
-      renderHeader(createProcess())
-
-      expect(within(menu()).getByRole('button', { name: 'Duplicate' })).toBeInTheDocument()
     })
 
     it('asks before cancelling', () => {
