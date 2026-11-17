@@ -534,6 +534,9 @@ const collectStyles = (props) => {
 // Runs one step of a state. A candidate is `[role, name]` or `['css', selector]` (click the first visible match),
 // `['fill', selector, value]` (type into the first visible match), `['mock', pathname, body]` (from now on, answer that
 // mock path with this JSON in this page) or `['refocus']` (the page regains focus: react-query refetches what is stale).
+// How long a css or fill step waits for its target to show.
+const STEP_WAIT_MS = 8000
+
 const runStep = async (page, candidates) => {
   for (const [role, name, value] of candidates) {
     if (role === 'refocus') {
@@ -548,6 +551,14 @@ const runStep = async (page, candidates) => {
       return true
     }
     const loc = role === 'css' || role === 'fill' ? page.locator(name) : page.getByRole(role, { name })
+    // A voter step often follows a screen change that waits on the mock (identify, the membership check, the cast):
+    // give its target a moment to show before deciding it is not there.
+    if (role === 'css' || role === 'fill') {
+      await loc
+        .first()
+        .waitFor({ state: 'visible', timeout: STEP_WAIT_MS })
+        .catch(() => {})
+    }
     const n = await loc.count()
     for (let i = 0; i < n; i++) {
       const el = loc.nth(i)
