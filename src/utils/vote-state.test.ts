@@ -255,6 +255,12 @@ describe('list rows', () => {
     ).toBeLessThan(0)
   })
 
+  it('puts the live vote that ends soonest first', () => {
+    const later = vote(['ONGOING'], { id: 'later', endDate: '2026-08-01T00:00:00Z' })
+    const sooner = vote(['ONGOING'], { id: 'sooner', endDate: '2026-06-20T00:00:00Z' })
+    expect(toVoteRows([later, sooner], NOW).map(({ process }) => process.id)).toEqual(['sooner', 'later'])
+  })
+
   it('searches every language of the title, ignoring case and accents', () => {
     const process = vote([], { title: { default: 'Assemblea General', es: 'Asamblea Económica' } })
     expect(matchesSearch(process, normalizeSearch('ECONOMICA'))).toBe(true)

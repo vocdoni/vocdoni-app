@@ -159,11 +159,17 @@ export const countByFilter = (rows: readonly VoteRow[]): Record<VoteFilter, numb
 const RANK: Record<VoteState, number> = { live: 0, paused: 1, ready: 2, draft: 3, closed: 4, canceled: 4 }
 const time = (value: string | Date | undefined | null) => (value ? new Date(value).getTime() || 0 : 0)
 
-/** Live first, then paused, ready by start (soonest first), drafts newest first, closed and canceled by end, latest first. */
+/**
+ * Live, then paused, both by end (soonest first); ready by start (soonest first), drafts newest first, closed and
+ * canceled by end, latest first.
+ */
 export const compareVoteRows = (a: VoteRow, b: VoteRow): number => {
   const byRank = RANK[a.state] - RANK[b.state]
   if (byRank) return byRank
   switch (a.state) {
+    case 'live':
+    case 'paused':
+      return time(resolveEndDate(a.process)) - time(resolveEndDate(b.process))
     case 'ready':
       return time(a.process.startDate) - time(b.process.startDate)
     case 'draft':
