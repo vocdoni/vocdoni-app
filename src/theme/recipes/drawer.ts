@@ -23,7 +23,7 @@ export const Drawer = defineSlotRecipe({
       // Use with `placement='start'`; its width is the guide's drawer, whatever the size.
       sidebar: { content: { bg: 'surface.overlay.drawer', maxW: 'dashboard.drawer' } },
       // A bottom sheet (ui/ResponsiveMenu on a phone), as the boards draw it: rounded on top, a grab handle, the
-      // title over a muted line, then the rows (button `sheet-row`, each under a rule) and the close button
+      // title, then the rows (button `sheet-row`, each under a rule) and the close button
       // (`sheet-close`); clear of the home indicator. Use with `placement='bottom'`.
       sheet: {
         backdrop: { bg: 'scrim.sheet' },
@@ -39,6 +39,7 @@ export const Drawer = defineSlotRecipe({
           alignItems: 'flex-start',
           gap: '0',
           p: '0',
+          pb: '2',
           _before: {
             content: '""',
             alignSelf: 'center',
@@ -49,10 +50,9 @@ export const Drawer = defineSlotRecipe({
             bg: 'bg.track',
           },
         },
-        // The name of what the actions act on, over its state.
-        // The base's `tight` tracking would win over the text style's: restate the sheet's.
+        // The name of what the actions act on. The base's `tight` tracking would win over the text style's: restate
+        // the sheet's.
         title: { textStyle: 'dialog-title', letterSpacing: 'heading.item', color: 'fg' },
-        description: { fontSize: 'md', lineHeight: '[1.45]', color: 'fg.subtle', pb: '2' },
         body: { display: 'flex', flexDirection: 'column', p: '0' },
       },
       // The header stacks the title over its description; the end padding keeps both clear of the close button.

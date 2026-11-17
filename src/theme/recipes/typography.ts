@@ -59,6 +59,13 @@ export const link = defineRecipe({
           color: 'accent.fg.hover',
         },
       },
+      // A title that opens what it names (a list row's): the heading's own ink and weight, the accent on hover.
+      title: {
+        color: '[inherit]',
+        fontWeight: '[inherit]',
+        _hover: { color: 'accent.fg.hover' },
+        _dark: { color: '[inherit]', _hover: { color: 'link.fg.hover' } },
+      },
       unstyled: {
         textDecoration: 'none',
         _hover: {
