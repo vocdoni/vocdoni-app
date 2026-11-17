@@ -21,9 +21,6 @@ import { countRows, deriveRowState, isActiveRow, isStepFor, nextManageStep, type
 import { useManageText } from './use-manage-text'
 import { WaitingQuestionRow } from './WaitingQuestionRow'
 
-// The board drops the next step when it and the counts would not fit the header's one line.
-const HEADER_CHARS = 72
-
 /**
  * Resum's questions card for a question-by-question vote (V4VoteOne, M4VoteOne): every question with its state and
  * result, the open one with its turnout and buttons, and on a phone a bottom bar with the active question's buttons.
@@ -84,7 +81,6 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
   // There is no "start now": before the start the hint says when it begins.
   else if (canManage && !started && !canceled)
     next = t('votes.manage.starts', { defaultValue: 'The vote starts {{date}}.', date: dateAt(election.startDate) })
-  if (next && cardCounts.length + next.length > HEADER_CHARS) next = null
 
   const numberOf = (questionId: string) => election.questions.findIndex(({ id }) => id === questionId) + 1
   const titleOf = (questionId: string) => text(election.questions.find(({ id }) => id === questionId)?.title)

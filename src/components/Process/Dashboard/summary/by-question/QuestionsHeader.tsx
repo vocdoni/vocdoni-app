@@ -48,8 +48,9 @@ export const QuestionsHeader = ({ headingId, total, counts, next, desktop }: Que
           {counts}
         </Text>
       )}
+      {/* When the line is short the next step gives way first (it truncates long before the counts do). */}
       {next && (
-        <Text textStyle='note' color='fg.subtle' ms='auto' whiteSpace='nowrap'>
+        <Text textStyle='note' color='fg.subtle' ms='auto' minW='0' flexShrink={100} truncate title={next}>
           {next}
         </Text>
       )}

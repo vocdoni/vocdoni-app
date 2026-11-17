@@ -25,10 +25,13 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
   let action: ReactNode = null
   switch (state) {
     case 'ready':
-      title = t('votes.summary.idle.ready_title', {
-        defaultValue: 'Opens by itself {{date}}',
-        date: dateAt(election.startDate),
-      })
+      // With no start date there is no day to give: say where it stands.
+      title = election.startDate
+        ? t('votes.summary.idle.ready_title', {
+            defaultValue: 'Opens by itself {{date}}',
+            date: dateAt(election.startDate),
+          })
+        : t('votes.summary.idle.not_started', { defaultValue: 'It has not started yet' })
       if (total !== undefined) {
         body = t('votes.summary.idle.ready_body', {
           defaultValue: '{{people}} in the census and {{questions}}, all open at once.',
