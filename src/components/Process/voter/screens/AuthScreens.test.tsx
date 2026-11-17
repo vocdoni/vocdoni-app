@@ -68,6 +68,40 @@ describe('identify', () => {
     expect(screen.getByRole('textbox', { name: /Member Number/ })).not.toHaveAttribute('aria-invalid', 'true')
   })
 
+  it('asks for what is missing in the page, without the browser bubbles, and sends nothing', async () => {
+    csp.context.authFields = ['memberNumber', 'password']
+    renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
+    const form = screen.getByRole('button', { name: 'voter.continue' }).closest('form') ?? document.forms[0]
+    expect(form).toHaveAttribute('novalidate')
+    fireEvent.click(screen.getByRole('button', { name: 'voter.continue' }))
+    expect(await screen.findAllByText('voter.identify.field_required')).toHaveLength(2)
+    expect(screen.getByText('voter.identify.terms_required')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: /Member Number/ })).not.toBeRequired()
+    expect(csp.identify.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it('never shows the SDK message of an unknown failure: a generic sentence, the error for support', () => {
+    const logged = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    csp.identify.error = { mismatch: false, message: 'fetch failed: ECONNRESET 10.0.0.3' }
+    renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
+    expect(screen.getByRole('alert')).toHaveTextContent('voter.identify.failed')
+    expect(screen.queryByText(/ECONNRESET/)).toBeNull()
+    expect(logged).toHaveBeenCalledWith('Voter identification failed:', csp.identify.error)
+    logged.mockRestore()
+  })
+
+  it('opens the terms and privacy links in a new tab and does not toggle the checkbox', () => {
+    renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
+    const links = screen.getAllByRole('link')
+    expect(links.length).toBeGreaterThanOrEqual(2)
+    for (const link of links) {
+      expect(link).toHaveAttribute('target', '_blank')
+      expect(link.getAttribute('rel')).toContain('noopener')
+      fireEvent.click(link)
+    }
+    expect(screen.getByRole('checkbox', { hidden: true })).not.toBeChecked()
+  })
+
   it('offers the live results only when they are public, and notes an expired session', () => {
     const flow = testFlow({ facts: testFacts({ connected: false }) })
     const { unmount } = renderWithFlow(<IdentifyScreen notice='sessionExpired' />, flow)

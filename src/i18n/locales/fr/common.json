@@ -1703,11 +1703,14 @@
       "text": "Vote réalisé avec"
     },
     "identify": {
+      "failed": "Nous n'avons pas pu vous identifier. Réessayez dans un instant.",
+      "field_required": "Renseignez ce champ.",
       "help": "Identifiez-vous pour voter.",
       "mismatch": "Nous n'avons trouvé personne avec ces informations dans la liste électorale de ce vote. Vérifiez-les et réessayez.",
       "retry": "Réessayer",
       "session_expired": "Votre session a expiré. Identifiez-vous à nouveau.",
-      "terms": "J'ai lu et j'accepte les <terms>conditions</terms> et la <privacy>politique de confidentialité</privacy>."
+      "terms": "J'ai lu et j'accepte les <terms>conditions</terms> et la <privacy>politique de confidentialité</privacy>.",
+      "terms_required": "Acceptez les conditions pour continuer."
     },
     "language": {
       "cancel": "Continuer à voter",

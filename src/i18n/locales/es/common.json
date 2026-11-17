@@ -1703,11 +1703,14 @@
       "text": "Votación hecha con"
     },
     "identify": {
+      "failed": "No hemos podido identificarte. Vuelve a intentarlo dentro de un momento.",
+      "field_required": "Rellena este campo.",
       "help": "Identifícate para votar.",
       "mismatch": "No hemos encontrado a nadie con estos datos en el censo de esta votación. Revísalos y vuelve a intentarlo.",
       "retry": "Volver a intentarlo",
       "session_expired": "La sesión ha caducado. Vuelve a identificarte.",
-      "terms": "He leído y acepto las <terms>condiciones</terms> y la <privacy>política de privacidad</privacy>."
+      "terms": "He leído y acepto las <terms>condiciones</terms> y la <privacy>política de privacidad</privacy>.",
+      "terms_required": "Acepta las condiciones para continuar."
     },
     "language": {
       "cancel": "Seguir votando",

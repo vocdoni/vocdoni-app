@@ -1675,11 +1675,14 @@
       "text": "Abstimmung mit"
     },
     "identify": {
+      "failed": "Wir konnten dich nicht identifizieren. Versuche es gleich noch einmal.",
+      "field_required": "Fülle dieses Feld aus.",
       "help": "Melde dich an, um abzustimmen.",
       "mismatch": "Wir haben niemanden mit diesen Angaben in der Teilnehmerliste dieser Abstimmung gefunden. Prüfe sie und versuche es erneut.",
       "retry": "Erneut versuchen",
       "session_expired": "Deine Sitzung ist abgelaufen. Melde dich erneut an.",
-      "terms": "Ich habe die <terms>Bedingungen</terms> und die <privacy>Datenschutzerklärung</privacy> gelesen und akzeptiere sie."
+      "terms": "Ich habe die <terms>Bedingungen</terms> und die <privacy>Datenschutzerklärung</privacy> gelesen und akzeptiere sie.",
+      "terms_required": "Akzeptiere die Bedingungen, um fortzufahren."
     },
     "language": {
       "cancel": "Weiter abstimmen",

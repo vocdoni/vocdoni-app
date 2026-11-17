@@ -1675,11 +1675,14 @@
       "text": "Bozketa honekin egina:"
     },
     "identify": {
+      "failed": "Ezin izan zaitugu identifikatu. Saiatu berriro une batean.",
+      "field_required": "Bete eremu hau.",
       "help": "Identifikatu bozkatzeko.",
       "mismatch": "Ez dugu inor aurkitu datu hauekin bozketa honen erroldan. Berrikusi itzazu eta saiatu berriro.",
       "retry": "Saiatu berriro",
       "session_expired": "Saioa iraungi da. Identifikatu berriro.",
-      "terms": "<terms>Baldintzak</terms> eta <privacy>pribatutasun-politika</privacy> irakurri eta onartzen ditut."
+      "terms": "<terms>Baldintzak</terms> eta <privacy>pribatutasun-politika</privacy> irakurri eta onartzen ditut.",
+      "terms_required": "Onartu baldintzak jarraitzeko."
     },
     "language": {
       "cancel": "Jarraitu bozkatzen",

@@ -1675,11 +1675,14 @@
       "text": "Vote run with"
     },
     "identify": {
+      "failed": "We could not identify you. Try again in a moment.",
+      "field_required": "Fill in this field.",
       "help": "Identify yourself to vote.",
       "mismatch": "We found no one with these details in this vote's census. Check them and try again.",
       "retry": "Try again",
       "session_expired": "Your session expired. Identify yourself again.",
-      "terms": "I have read and accept the <terms>terms</terms> and the <privacy>privacy policy</privacy>."
+      "terms": "I have read and accept the <terms>terms</terms> and the <privacy>privacy policy</privacy>.",
+      "terms_required": "Accept the terms to continue."
     },
     "language": {
       "cancel": "Keep voting",

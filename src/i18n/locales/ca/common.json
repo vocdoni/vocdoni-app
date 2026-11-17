@@ -1703,11 +1703,14 @@
       "text": "Votació feta amb"
     },
     "identify": {
+      "failed": "No t'hem pogut identificar. Torna-ho a provar d'aquí a una estona.",
+      "field_required": "Omple aquest camp.",
       "help": "Identifica't per votar.",
       "mismatch": "No hem trobat ningú amb aquestes dades al cens d'aquesta votació. Revisa-les i torna-ho a provar.",
       "retry": "Torna-ho a provar",
       "session_expired": "La sessió ha caducat. Torna a identificar-te.",
-      "terms": "He llegit i accepto les <terms>condicions</terms> i la <privacy>política de privacitat</privacy>."
+      "terms": "He llegit i accepto les <terms>condicions</terms> i la <privacy>política de privacitat</privacy>.",
+      "terms_required": "Accepta les condicions per continuar."
     },
     "language": {
       "cancel": "Continua votant",
