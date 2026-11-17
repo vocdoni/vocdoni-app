@@ -31,7 +31,7 @@ const FIL_ACCENT_DARK = {
 /**
  * Builds the chakra system for a given primary/accent color.
  *
- * Without a color `brand` is Fil's blue, with its light values pinned. With one,
+ * Without a color `brand` is Fil's blue, with its light and dark values pinned. With one,
  * the `brand` scale and its semantic slots are generated from it. Either way
  * `brand` is the global palette, so buttons, checkboxes, tabs, focus rings and
  * every accent token follow it. Dark-mode surfaces live on the neutral

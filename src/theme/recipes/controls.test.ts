@@ -28,7 +28,7 @@ describe('button', () => {
     const outline = layer(button({ variant: 'outline' }))
     expect(outline.boxShadow).toBe('var(--chakra-shadows-shadow-control)')
     expect(outline.borderWidth).toBe('0')
-    expect(outline.background).toBe('var(--chakra-colors-bg-panel)')
+    expect(outline.background).toBe('var(--chakra-colors-surface-control)')
   })
 
   it('fills the primary from the palette and greys it when disabled', () => {

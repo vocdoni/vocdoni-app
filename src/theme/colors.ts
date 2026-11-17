@@ -4,9 +4,7 @@
 export const DEFAULT_PRIMARY_COLOR = '#1d62e9'
 
 export const colors = {
-  // Pure black, for the few marks that must not be the gray scale's near-black. Kept separate from `brand` on
-  // purpose: a configured PRIMARY_COLOR must recolor the accent, never tint the surfaces.
-  // Steps are numbered by lightness, like Chakra's scales: a higher step is darker.
+  // Pure black, for the few marks that must not be the gray scale's near-black (the logo, the progress stripe).
   ink: {
     950: { value: '#000000' },
   },
@@ -47,6 +45,6 @@ export const colors = {
 
 // The page backgrounds a generated brand palette must stay readable against —
 // the two sides of the `bg` semantic token (see semantic.ts). Defined here, next
-// to the `ink` scale it reads from, so the palette generator, the theme and the
+// to the `gray` scale it reads from, so the palette generator, the theme and the
 // tests all measure contrast against the background the app actually paints.
 export const PAGE_BACKGROUNDS = { light: '#ffffff', dark: colors.gray[950].value }

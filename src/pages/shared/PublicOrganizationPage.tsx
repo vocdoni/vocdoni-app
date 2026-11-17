@@ -18,7 +18,7 @@ export default function PublicOrganizationPage() {
   })
 
   return (
-    <AppProviders language={data.meta.language}>
+    <AppProviders language={data.meta.language} followSystem>
       <PublicLayout
         pathname={pathname}
         publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}

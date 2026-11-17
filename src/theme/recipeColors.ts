@@ -28,10 +28,17 @@ const switchColors = {
       },
     },
     checked: {
-      value: {
-        _light: '{colors.colorPalette.contrast}',
-        _dark: '{colors.white}',
-      },
+      value: '{colors.colorPalette.contrast}',
+    },
+  },
+}
+
+// The chosen segment of a segmented control or pill tabs: a white panel in light, lighter than its track in dark.
+const segment = {
+  selected: {
+    value: {
+      _light: '{colors.bg.panel}',
+      _dark: '{colors.state.selected.bg}',
     },
   },
 }
@@ -49,7 +56,7 @@ const progress = {
 // Solid toast fills and their text. Chakra's green.600 and orange.600 leave white text at 3.30 and 3.56; these reach
 // 6.8 and 7.9. Dark mode keeps orange.500 under black text (7.49). The text is the status contrast colour, as in stock.
 const toast = {
-  // Dark mode: Fil's live green under near-black text (7.3), as the guide pairs them.
+  // Dark mode: Fil's live green under near-black text (6.6), as the guide pairs them.
   success: {
     bg: { value: { _light: '{colors.success.700}', _dark: '{colors.success.solid}' } },
     fg: { value: '{colors.success.contrast}' },
@@ -60,4 +67,4 @@ const toast = {
   },
 }
 
-export const recipeColors = defineSemanticTokens.colors({ link, switch: switchColors, progress, toast })
+export const recipeColors = defineSemanticTokens.colors({ link, switch: switchColors, segment, progress, toast })

@@ -20,10 +20,12 @@ export const useStripePromise = (): Promise<Stripe | null> | null => {
   return stripePromise
 }
 
-// Stripe renders in an iframe, so theme CSS vars are unreachable; these raw values mirror the Fil dark tokens
-// (bg, fg, field ring, primary). Light keeps Stripe's own look apart from the page background.
-const STRIPE_DARK = {
+// Stripe and Cal.com render in iframes, so theme CSS vars are unreachable; these raw values mirror the Fil dark
+// tokens (bg, the dialog grey, fg, field ring, primary). The one place for them, shared by both embeds. Light keeps
+// each embed's own look apart from the page background.
+export const EMBED_DARK = {
   background: '#0a0a0a',
+  dialog: '#1c1c1c',
   text: '#ededed',
   fieldRing: '#707070',
   primary: '#1d62e9',
@@ -35,11 +37,11 @@ export const useCheckoutAppearance = (): Appearance => {
     return {
       theme: 'night',
       variables: {
-        colorBackground: STRIPE_DARK.background,
-        colorText: STRIPE_DARK.text,
-        colorPrimary: STRIPE_DARK.primary,
+        colorBackground: EMBED_DARK.background,
+        colorText: EMBED_DARK.text,
+        colorPrimary: EMBED_DARK.primary,
       },
-      rules: { '.Input': { border: `1px solid ${STRIPE_DARK.fieldRing}` } },
+      rules: { '.Input': { border: `1px solid ${EMBED_DARK.fieldRing}` } },
     }
   }
   return { theme: 'stripe', variables: { colorBackground: 'white' } }
