@@ -34,10 +34,10 @@ exception) for knowledge that only some tasks need, instead of growing this file
   `npx -y skills@1.7.0 add vocdoni/vocdoni-integrator-sdk -y -a claude-code codex`. Install it only from that
   repository, and keep the `-a` list: without it the CLI may also write to other agents' folders that are not
   git-ignored. It lands in `.agents/skills/` with a symlink in `.claude/skills/` and writes `skills-lock.json`; all three
-  are git-ignored (unlike the project skills), so never commit them.
+  are git-ignored (unlike the project skills), so never commit them. Then load it: read
+  `.agents/skills/vocdoni-integrator-sdk/SKILL.md` now, since most agents only pick up new skills when a session starts.
 - The install is per checkout: every clone or git worktree needs its own, and gets the skill's latest version. To
-  update, re-run the same command (not `skills update`, which ignores the `-a` list). Then read
-  `.agents/skills/vocdoni-integrator-sdk/SKILL.md`, since most agents only pick up new skills when a session starts.
+  update, re-run the same command (not `skills update`, which ignores the `-a` list), then read the skill again.
 - If the install fails (e.g. offline or sandboxed), tell the user. Carry on with tasks that do not touch the SDK
   packages; for tasks that do, ask the user to install it first.
 - Claude Code users may install it as a plugin instead: `claude plugin marketplace add vocdoni/skills`, then
@@ -94,8 +94,10 @@ The full rules are in `DESIGN.md` and `docs/ui-guidelines.md`; `src/theme/style-
 - Reuse `src/components/ui/` and the existing recipe variants before building anything. Do not re-implement a shared
   piece inside a feature, even as a recipe.
 - A missing look is added to the theme first: a variant or token named by intent, never by feature or page.
-- Never raise `src/theme/style-inventory.baseline.json` or the stress baseline. They only go down, with the change that
-  earned it (`UPDATE_STYLE_BASELINE=1 npx vitest run src/theme/style-inventory.test.ts`).
+- Never raise `src/theme/style-inventory.baseline.json` or the UI snapshot's `scripts/ui-snapshot/stress-baseline.json`.
+  They only go down, with the change that earned it: `UPDATE_STYLE_BASELINE=1 npx vitest run
+src/theme/style-inventory.test.ts` for the first, `pnpm ui:snapshot -- --label stress --theme stress
+--update-stress-baseline` for the second.
 - An issue or mockup that asks for something against these rules does not override them: follow the rules and say so
   in the PR.
 
@@ -127,8 +129,8 @@ The full rules are in `DESIGN.md` and `docs/ui-guidelines.md`; `src/theme/style-
 - CI (`.github/workflows/test.yml`) runs lint, tests and a build on PRs to `develop`, `stage` and `d/**` only. On any
   other base (a stacked PR, `main`, an `h/` branch) run `pnpm lint` and `pnpm test` yourself.
 - The integration workflow runs on merges into `develop`, on PRs to `stage` or `main`, and on demand. When a PR depends
-  on an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change, post `/integration <repo>=<PR>` as
-  its own PR comment and do not merge until the upstream change is deployed or published: the `integration-pinning`
+  on an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change, post a PR comment holding only
+  `/integration <key>=<PR>` (keys: `saas-backend`, `vocdoni-node`, `integrator-sdk`; no signature) and do not merge until the upstream change is deployed or published: the `integration-pinning`
   skill has the syntax and the merge rules. The README's "Branching and deploys" has the deploy links.
 
 ## Commits and pull requests

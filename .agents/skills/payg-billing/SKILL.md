@@ -26,7 +26,7 @@ Read the code paths named here before changing them; the comments in them record
    snapshot (blocked in private windows, every access is try/catch) the return pages show neutral copy.
 5. **No modal focus trap around Stripe.** A trapped dialog breaks Stripe's 3D Secure window. The checkout renders inline
    (or a non-modal dialog with the background made `inert`).
-6. **Stripe's appearance is the only place raw colours are allowed** (`src/components/Pricing/stripe.ts`, a listed
+6. **Stripe's appearance is the only place in billing where raw colours are allowed** (`src/components/Pricing/stripe.ts`, a listed
    style-inventory exception): its iframe cannot read CSS variables. Everything around it uses theme roles.
 7. **Prices come from the backend.** No price tables, bands or estimates in the UI. A price query in error shows no
    price (never a stale one) and offers a retry.
