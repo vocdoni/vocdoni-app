@@ -34,6 +34,9 @@ const rankedTally = createQuestionResults({
 })
 
 const ranges = () => Array.from(document.querySelectorAll('[data-part="range"]'))
+// The winner's row of a final tally is marked, whatever the look sets it apart with.
+const leads = (choice: string) => !!screen.getByText(choice).closest('[data-leader]')
+const anyLeader = () => !!document.querySelector('[data-leader]')
 
 describe('QuestionResultBars', () => {
   it('lists every choice with its votes and its share of the question votes', () => {
@@ -48,13 +51,13 @@ describe('QuestionResultBars', () => {
 
   it('sets the winner of a final tally in bold (from `lg`) and dims the others, with no check and no tag', () => {
     const { rerender } = render(<QuestionResultBars question={threeChoices} results={tally} final />)
-    // The weight is responsive (regular on the touch boards), so it shows as its own class, not a computed value.
-    expect(screen.getByText('For').className).not.toBe(screen.getByText('Against').className)
+    expect(leads('For')).toBe(true)
+    expect(leads('Against')).toBe(false)
     expect(ranges().map((range) => getComputedStyle(range).opacity.includes('outvoted'))).toEqual([false, true, true])
     expect(screen.queryByRole('img', { name: 'Winning choice' })).not.toBeInTheDocument()
     expect(screen.queryByText('Winner')).not.toBeInTheDocument()
     rerender(<QuestionResultBars question={threeChoices} results={tally} />)
-    expect(screen.getByText('For').className).toBe(screen.getByText('Against').className)
+    expect(anyLeader()).toBe(false)
   })
 
   it('marks no winner on a tie', () => {
@@ -65,7 +68,7 @@ describe('QuestionResultBars', () => {
         final
       />
     )
-    expect(screen.getByText('For').className).toBe(screen.getByText('Against').className)
+    expect(anyLeader()).toBe(false)
   })
 
   it('renders nothing without a tally', () => {
@@ -83,7 +86,7 @@ describe('QuestionResultBars', () => {
           layout='plain'
         />
       )
-      expect(screen.getByText('For').className).toBe(screen.getByText('Against').className)
+      expect(anyLeader()).toBe(false)
       expect(ranges().some((range) => getComputedStyle(range).opacity.includes('outvoted'))).toBe(false)
     })
 
@@ -119,12 +122,12 @@ describe('QuestionResultBars', () => {
 
     it('weighs the top choice of a final tally (from `lg`) and dims the other bars, and nothing while it runs', () => {
       const { rerender } = render(<QuestionResultBars question={threeChoices} results={tally} final layout='plain' />)
-      // The weight is responsive (regular on the touch boards), so it shows as its own class, not a computed value.
-      expect(screen.getByText('For').className).not.toBe(screen.getByText('Against').className)
+      expect(leads('For')).toBe(true)
+      expect(leads('Against')).toBe(false)
       expect(ranges().map((range) => getComputedStyle(range).opacity.includes('outvoted'))).toEqual([false, true, true])
 
       rerender(<QuestionResultBars question={threeChoices} results={tally} layout='plain' />)
-      expect(screen.getByText('For').className).toBe(screen.getByText('Against').className)
+      expect(anyLeader()).toBe(false)
       expect(ranges().some((range) => getComputedStyle(range).opacity.includes('outvoted'))).toBe(false)
     })
   })
