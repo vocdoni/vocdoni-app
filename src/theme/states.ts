@@ -17,7 +17,7 @@ export const stateColors = defineSemanticTokens.colors({
       fg: { value: '{colors.fg}' },
     },
     selected: {
-      bg: { value: { _light: 'rgb(0 0 0 / 0.06)', _dark: '{colors.ink.700}' } },
+      bg: { value: { _light: 'rgb(0 0 0 / 0.06)', _dark: 'rgb(255 255 255 / 0.1)' } },
       fg: { value: { _light: '{colors.gray.900}', _dark: '{colors.white}' } },
     },
     current: {

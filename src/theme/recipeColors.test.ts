@@ -11,11 +11,9 @@ describe.each([
   ['branded', createAppSystem('#1a73e8')],
 ])('recipe tokens (%s system)', (_name, sys) => {
   it('defines the link colours with the values links render with', () => {
-    expect(conditions('colors.link.fg', sys)).toEqual({ _light: '{colors.accent.fg}', _dark: '{colors.gray.400}' })
-    expect(conditions('colors.link.fg.hover', sys)).toEqual({
-      _light: '{colors.accent.fg.hover}',
-      _dark: '{colors.gray.200}',
-    })
+    // The same in both modes: the accent text colour, which has its own dark value.
+    expect(sys.tokens.getByName('colors.link.fg')?.originalValue).toBe('{colors.accent.fg}')
+    expect(sys.tokens.getByName('colors.link.fg.hover')?.originalValue).toBe('{colors.accent.fg.hover}')
   })
 
   it('defines the 1px border width', () => {
