@@ -22,7 +22,6 @@ import { QuestionsHeader } from './manage/QuestionsHeader'
 import { countRows, deriveRowState, isActiveRow, isStepFor, nextManageStep } from './manage/row-state'
 import { useManageText } from './manage/use-manage-text'
 import { WaitingQuestionRow } from './manage/WaitingQuestionRow'
-import { PauseBanner } from './summary/PauseBanner'
 
 const HEADING_ID = 'vote-manage-questions'
 // The board drops the next step when it and the counts would not fit the header's one line.
@@ -97,7 +96,6 @@ export const VoteManage = () => {
 
   return (
     <Stack gap={{ base: '3', md: '4', lg: '8' }}>
-      {isHeld && <PauseBanner byQuestion votes={voted} />}
       <ManageStrip
         state={isHeld ? 'paused' : voteState}
         voted={voted}

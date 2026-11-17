@@ -13,6 +13,9 @@ vi.mock('~components/Actions', () => ({
   ActionsProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }))
 
+let isHeld = false
+vi.mock('~components/Actions/ActionsContext', () => ({ useActions: () => ({ votePause: { isHeld } }) }))
+
 vi.mock('./VoteHeader', () => ({ VoteHeader: () => <div>VoteHeader</div> }))
 
 const createProcess = (status: QuestionStatus, initialStatus?: 'PAUSED', canceled = false) =>
@@ -28,9 +31,11 @@ const createProcess = (status: QuestionStatus, initialStatus?: 'PAUSED', cancele
     questions: [{ id: 'q1', title: { default: 'Question' }, choices: [], status: canceled ? 'CANCELED' : status }],
   }) as unknown as VotingProcessResponse
 
+const results = { questions: [{ voteCount: 184 }] }
+
 const renderAt = (election: VotingProcessResponse, path = '/admin/process/0xabc') => {
   setReactProvidersMock({
-    useElection: () => ({ id: election.id, election, status: election.questions[0].status, results: null }),
+    useElection: () => ({ id: election.id, election, status: election.questions[0].status, results }),
   })
   return render(
     <TestMemoryRouter initialEntries={[path]}>
@@ -40,6 +45,10 @@ const renderAt = (election: VotingProcessResponse, path = '/admin/process/0xabc'
 }
 
 describe('ProcessView', () => {
+  beforeEach(() => {
+    isHeld = false
+  })
+
   it('offers Summary, Ballot and Results for an all-at-once vote', () => {
     renderAt(createProcess('ONGOING'))
 
@@ -67,5 +76,28 @@ describe('ProcessView', () => {
     renderAt(createProcess('ONGOING'), '/admin/process/0xabc/ballot')
 
     expect(screen.getByRole('tab', { name: 'Ballot' })).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('puts the pause banner under the tabs of a paused vote, on Summary', () => {
+    const paused = createProcess('PAUSED')
+    renderAt(paused)
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'The vote is paused. Nobody can vote until you resume it. The 184 votes cast are kept and the deadline does not change.'
+    )
+  })
+
+  it('leaves the banner out of the other tabs', () => {
+    renderAt(createProcess('PAUSED'), '/admin/process/0xabc/ballot')
+
+    expect(screen.queryByRole('status')).toBeNull()
+  })
+
+  it('shows the banner on Manage for a question-by-question vote paused as a whole', () => {
+    isHeld = true
+    renderAt(createProcess('PAUSED', 'PAUSED'), '/admin/process/0xabc/manage')
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'The vote is paused. Nobody can vote, and no question can be opened or closed until you resume it.'
+    )
   })
 })

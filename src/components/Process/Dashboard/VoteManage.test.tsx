@@ -245,7 +245,6 @@ describe('VoteManage', () => {
         createQuestion({ id: 'q3', status: 'PAUSED', results: undefined }),
       ])
     )
-    expect(screen.getByText('The vote is paused.')).toBeInTheDocument()
     expect(screen.getByText('Held by the pause of the vote.')).toBeInTheDocument()
     expect(screen.getByText('Next step: resume the vote')).toBeInTheDocument()
     expect(screen.getByText('1 closed · 1 paused · 1 to open')).toBeInTheDocument()
@@ -254,13 +253,14 @@ describe('VoteManage', () => {
     expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
   })
 
-  it('asks to end the vote once every question is closed', () => {
+  it('reads a vote whose questions are all closed as closed, with no next step (R22)', () => {
     show(
       withQuestions([
         createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
         createQuestion({ id: 'q2', status: 'ENDED', results: createQuestionResults({ voteCount: 6 }) }),
       ])
     )
-    expect(screen.getByText('Next step: end the vote')).toBeInTheDocument()
+    expect(screen.queryByText(/^Next step/)).not.toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Vote status' })).toHaveTextContent('Closed')
   })
 })

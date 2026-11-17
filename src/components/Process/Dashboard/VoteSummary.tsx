@@ -3,7 +3,6 @@ import { useIsDesktop } from '~components/ui/useIsMobile'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { CensusSearch } from './CensusSearch'
-import { PauseBanner } from './summary/PauseBanner'
 import { SummaryCalendar } from './summary/SummaryCalendar'
 import { SummaryElectoralData } from './summary/SummaryElectoralData'
 import { SUMMARY_COLUMNS, SummaryHero } from './summary/SummaryHero'
@@ -32,7 +31,6 @@ export const VoteSummary = () => {
 
   return (
     <Stack gap={{ base: '5', md: '6', lg: '8' }}>
-      {state === 'paused' && <PauseBanner byQuestion={byQuestion} votes={model.count} />}
       {idle ? <SummaryIdle model={model} /> : <SummaryHero model={model} desktop={desktop} />}
       <Grid
         templateColumns={{ base: 'minmax(0, 1fr)', lg: SUMMARY_COLUMNS }}

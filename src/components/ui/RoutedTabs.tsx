@@ -1,4 +1,5 @@
-import { Badge, Tabs } from '@chakra-ui/react'
+import { Badge, Stack, Tabs } from '@chakra-ui/react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router'
 import { stripCheckoutReturn } from '~src/router/routes'
@@ -15,10 +16,20 @@ type RoutedTabsProps = {
   // suffix), else the first one.
   value?: string
   outletContext?: unknown
+  /**
+   * `page` spaces the content as a page's main tabs do (a vote's): 20px under the tabs on a phone, 24px on a tablet,
+   * 32px on the desktop. `section` (default) keeps 24px.
+   */
+  rhythm?: 'section' | 'page'
+  /** A notice between the tabs and the content (a paused vote's banner), spaced as the header is from the tabs. */
+  notice?: ReactNode
 }
 
+const CONTENT_GAP = { section: '6', page: { base: '5', md: '6', lg: '8' } } as const
+const NOTICE_GAP = { section: '6', page: { base: '5', md: '6', lg: '4.5' } } as const
+
 // Tabs that are child routes, so each one is deep-linkable; the selected tab's route renders in the outlet.
-export const RoutedTabs = ({ tabs, value, outletContext }: RoutedTabsProps) => {
+export const RoutedTabs = ({ tabs, value, outletContext, rhythm = 'section', notice }: RoutedTabsProps) => {
   const { i18n } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
@@ -34,7 +45,7 @@ export const RoutedTabs = ({ tabs, value, outletContext }: RoutedTabsProps) => {
       }}
       lazyMount
     >
-      <Tabs.List mb='6'>
+      <Tabs.List mb={notice ? NOTICE_GAP[rhythm] : CONTENT_GAP[rhythm]}>
         {tabs.map((tab) => (
           <Tabs.Trigger key={tab.route} value={tab.route}>
             {tab.label}
@@ -46,7 +57,14 @@ export const RoutedTabs = ({ tabs, value, outletContext }: RoutedTabsProps) => {
       </Tabs.List>
       {/* The panel the selected trigger controls (aria-controls); the recipe's padding is cancelled. */}
       <Tabs.Content value={activeValue ?? ''} p='0'>
-        <Outlet context={outletContext} />
+        {notice ? (
+          <Stack gap={CONTENT_GAP[rhythm]}>
+            {notice}
+            <Outlet context={outletContext} />
+          </Stack>
+        ) : (
+          <Outlet context={outletContext} />
+        )}
       </Tabs.Content>
     </Tabs.Root>
   )

@@ -158,12 +158,9 @@ describe('VoteSummary', () => {
       expect(screen.queryByRole('link', { name: 'Ballot' })).toBeNull()
     })
 
-    it('says a paused vote is paused, above the hero and under the ruler', () => {
+    it('says a paused vote is paused under the ruler and in the calendar', () => {
       renderSummary(createProcess({ questions: [question('q1', 'PAUSED', 184)] }), 184)
 
-      expect(screen.getByRole('status')).toHaveTextContent(
-        'The vote is paused. Nobody can vote until you resume it. The 184 votes cast are kept and the deadline does not change.'
-      )
       expect(screen.getByText('Paused. Turnout will not move until you resume it.')).toBeInTheDocument()
       expect(screen.getByText('Today. Vote paused')).toBeInTheDocument()
     })
@@ -262,7 +259,6 @@ describe('VoteSummary', () => {
       pause = { isHeld: true, heldQuestionIds: ['q2'] }
       renderSummary(byQuestion([questions[0], question('q2', 'PAUSED', 120), questions[2]]), 200)
 
-      expect(screen.getByRole('status')).toHaveTextContent('The vote is paused.')
       expect(screen.getByText('1 closed · 1 paused · 1 to open')).toBeInTheDocument()
     })
   })
