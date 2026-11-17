@@ -1205,7 +1205,7 @@
         "wallet": "Veröffentlichen und {{total}} zahlen"
       },
       "progress": {
-        "hint": "Das kann eine Minute dauern.",
+        "hint": "Sobald die Abstimmung veröffentlicht ist, leiten wir dich zu ihr weiter. Bitte hab etwas Geduld, das kann einen Moment dauern.",
         "payment": "Zahlung eingegangen",
         "published": "Abstimmung veröffentlicht",
         "publishing": "Die Abstimmung wird veröffentlicht…"

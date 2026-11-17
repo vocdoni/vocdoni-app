@@ -1205,7 +1205,7 @@
         "wallet": "Argitaratu eta ordaindu {{total}}"
       },
       "progress": {
-        "hint": "Minutu bat behar izan dezake.",
+        "hint": "Argitaratu bezain laster eramango zaitugu boto-emateara. Izan pazientzia, une bat behar izan dezake.",
         "payment": "Ordainketa jasota",
         "published": "Boto-ematea argitaratuta",
         "publishing": "Boto-ematea argitaratzen…"

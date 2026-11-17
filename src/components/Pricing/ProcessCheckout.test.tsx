@@ -343,7 +343,15 @@ describe('ProcessCheckout', () => {
 
       expect(await screen.findByText('Payment received', visible)).toBeInTheDocument()
       expect(screen.getByText('Publishing the vote…', visible)).toBeInTheDocument()
-      expect(screen.getByText('This can take a minute.', visible)).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          "We'll take you to the vote as soon as it is published. Please be patient, it can take a moment.",
+          visible
+        )
+      ).toBeInTheDocument()
+      // Paid by now: the wait is for the publication, not for a top-up
+      expect(screen.getByText('Publish voting process')).toBeInTheDocument()
+      expect(screen.queryByText('Top up and publish')).not.toBeInTheDocument()
     })
 
     it('lists only the publication when nothing was paid', async () => {
@@ -352,7 +360,12 @@ describe('ProcessCheckout', () => {
 
       expect(await screen.findByText('Publishing the vote…', visible)).toBeInTheDocument()
       expect(screen.queryByText('Payment received', visible)).not.toBeInTheDocument()
-      expect(screen.getByText('This can take a minute.', visible)).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          "We'll take you to the vote as soon as it is published. Please be patient, it can take a moment.",
+          visible
+        )
+      ).toBeInTheDocument()
     })
 
     it('shows "Vote published", announces it, and hands off only after the beat', async () => {

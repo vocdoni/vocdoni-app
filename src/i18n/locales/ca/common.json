@@ -1234,7 +1234,7 @@
         "wallet": "Publica i paga {{total}}"
       },
       "progress": {
-        "hint": "Pot trigar un minut.",
+        "hint": "Et redirigirem a la votació així que estigui publicada. Tingues paciència, pot trigar una mica.",
         "payment": "Pagament rebut",
         "published": "Votació publicada",
         "publishing": "Publicant la votació…"

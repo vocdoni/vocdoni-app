@@ -22,6 +22,8 @@ type ProcessCheckoutContentProps = {
   /** The draft's price, VAT excluded, and the wallet balance, when known. */
   totalCents?: number
   balanceCents?: number
+  /** The organization's name, to prefill the billing form's business name. */
+  businessName?: string
   /** Back to the summary; left out when the dialog has none (the return from a payment). */
   onBack?: () => void
   onClose: () => void
@@ -36,15 +38,15 @@ export const ProcessCheckoutContent = ({
   currencyCode,
   totalCents,
   balanceCents,
+  businessName,
   onBack,
   onClose,
 }: ProcessCheckoutContentProps) => {
   const { t } = useTranslation()
   const stripePromise = useStripePromise()
   const { step } = flow
-  const title = flow.topUp
-    ? t('process.checkout.title', { defaultValue: 'Top up and publish' })
-    : t('process.checkout.publish_title', { defaultValue: 'Publish voting process' })
+  const publishTitle = t('process.checkout.publish_title', { defaultValue: 'Publish voting process' })
+  const title = flow.topUp ? t('process.checkout.title', { defaultValue: 'Top up and publish' }) : publishTitle
 
   const outcome = (body: ReactNode, actions?: ReactNode) => (
     <OutcomeStep title={title} titleId={titleId} descriptionId={descriptionId} onClose={onClose} actions={actions}>
@@ -108,6 +110,7 @@ export const ProcessCheckoutContent = ({
           stripePromise={stripePromise}
           totalCents={totalCents}
           balanceCents={balanceCents}
+          businessName={businessName}
           onPaid={flow.paid}
           onBack={onBack}
           onClose={onClose}
@@ -115,9 +118,10 @@ export const ProcessCheckoutContent = ({
       )
     case 'publishing':
     case 'waiting':
+      // Whatever was paid is paid by now: the wait is only for the publication
       return (
         <StatusStep
-          title={title}
+          title={publishTitle}
           titleId={titleId}
           descriptionId={descriptionId}
           progress={[
@@ -136,13 +140,16 @@ export const ProcessCheckoutContent = ({
               state: 'active' as const,
             },
           ]}
-          hint={t('process.publish_review.progress.hint', { defaultValue: 'This can take a minute.' })}
+          hint={t('process.publish_review.progress.hint', {
+            defaultValue:
+              "We'll take you to the vote as soon as it is published. Please be patient, it can take a moment.",
+          })}
         >
           {waitText(t, step, flow.paymentSeen)}
         </StatusStep>
       )
     case 'published':
-      return <PublishedStep title={title} titleId={titleId} label={publishedText(t)} />
+      return <PublishedStep title={publishTitle} titleId={titleId} label={publishedText(t)} />
     case 'unconfirmed':
       return outcome(
         <Outcome status='info'>{outcomeText(t, step)}</Outcome>,

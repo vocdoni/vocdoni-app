@@ -1234,7 +1234,7 @@
         "wallet": "Publica y paga {{total}}"
       },
       "progress": {
-        "hint": "Puede tardar un minuto.",
+        "hint": "Te redirigiremos a la votación en cuanto esté publicada. Ten paciencia, puede tardar un poco.",
         "payment": "Pago recibido",
         "published": "Votación publicada",
         "publishing": "Publicando la votación…"
