@@ -1,7 +1,14 @@
 import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
 import { PAGE_BACKGROUNDS } from './colors'
-import { contrastRatio, generatePaletteScale, generateSolidHover, PALETTE_SLOTS, solidHoverColor } from './palette'
+import {
+  contrastRatio,
+  generatePaletteScale,
+  generateSolidHover,
+  generateSolidHoverDark,
+  PALETTE_SLOTS,
+  solidHoverColor,
+} from './palette'
 import { DashboardContents as dashboardContents } from './recipes/dashboard'
 import { dragHandle } from './recipes/dragHandle'
 import { ConfirmModal } from './recipes/confirmModal'
@@ -404,6 +411,16 @@ describe('PRIMARY_COLOR-driven system', () => {
     expect(getAppSystem('#1a73e8')).not.toBe(system)
   })
 
+  // Organisation colours are open-ended on the server: 32 coloured systems at most, and the stock one outside them.
+  it('keeps at most 32 coloured systems and never evicts the stock one', () => {
+    const colour = (i: number) => `#0101${i.toString(16).padStart(2, '0')}`
+    const first = getAppSystem(colour(1))
+    for (let i = 2; i <= 33; i++) getAppSystem(colour(i))
+    expect(getAppSystem(colour(33))).toBe(getAppSystem(colour(33)))
+    expect(getAppSystem(colour(1))).not.toBe(first)
+    expect(getAppSystem()).toBe(system)
+  }, 30000)
+
   // A branded vote's colour is the organisation's, not a curated deployment one: palette.test.ts checks the maths on
   // 124 colours, this checks that the built system wires those values.
   it.each(['#fff59d', '#0b1a3a', '#df5020'])(
@@ -426,6 +443,14 @@ describe('PRIMARY_COLOR-driven system', () => {
     const sys = createAppSystem('#df5020')
     expect(conditions(sys, 'brand.solid')?._light).toBe('{colors.brand.500}')
     expect(conditions(sys, 'brand.solid.hover')?._light).toBe(solidHoverColor('#df5020'))
+  })
+
+  // The summary page keeps a dark card in light mode, so the dark hover is reachable with an organisation colour.
+  it('takes the dark hover fill from the palette too', () => {
+    const sys = createAppSystem('#ed0630')
+    const hover = conditions(sys, 'brand.solid.hover')!._dark
+    expect(hover).toBe(generateSolidHoverDark(generatePaletteScale('#ed0630'), PAGE_BACKGROUNDS))
+    expect(contrastRatio(hover, '#000000')).toBeGreaterThanOrEqual(4.5)
   })
 })
 

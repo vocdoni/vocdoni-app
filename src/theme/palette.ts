@@ -228,8 +228,8 @@ export const generateAccentTokens = (scale: PaletteScale, backgrounds: Backgroun
 const HOVER_MIX = 0.12
 
 /**
- * Light-mode hover fill of a filled control: `solid` 12% towards black, or towards white when darkening would take its
- * label under 4.5:1 (a mid-light colour whose label is black). Lightening only raises a black label's contrast.
+ * Hover fill of a filled control: `solid` 12% towards black, or towards white when darkening would take its label
+ * under 4.5:1 (a mid-light colour whose label is black). Lightening only raises a black label's contrast.
  */
 export const solidHoverColor = (solid: string): string => {
   const lab = rgbToLab(hexToRgb(solid))
@@ -241,3 +241,7 @@ export const solidHoverColor = (solid: string): string => {
 /** The light hover fill for a generated scale: `solidHoverColor` of the step `solid` lands on. */
 export const generateSolidHover = (scale: PaletteScale, backgrounds: Backgrounds): string =>
   solidHoverColor(scale[pickReadableStep(scale, LIGHT_SOLID_STEPS, backgrounds.light)])
+
+/** The same for the dark scope (dark mode, and cards that stay dark such as the summary's): the step `solid` lands on there. */
+export const generateSolidHoverDark = (scale: PaletteScale, backgrounds: Backgrounds): string =>
+  solidHoverColor(scale[pickReadableStep(scale, DARK_SOLID_STEPS, backgrounds.dark)])

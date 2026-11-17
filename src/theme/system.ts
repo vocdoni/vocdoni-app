@@ -13,6 +13,7 @@ import {
   generateBrandSemanticTokens,
   generatePaletteScale,
   generateSolidHover,
+  generateSolidHoverDark,
   normalizeHexColor,
 } from './palette'
 import { recipes, slotRecipes } from './recipes'
@@ -71,7 +72,7 @@ export const createAppSystem = (primaryColor?: string) => {
       hover: {
         value: {
           _light: brand ? generateSolidHover(scale, PAGE_BACKGROUNDS) : FIL_ACCENT.solidHover,
-          _dark: brand ? '{colors.brand.solid/90}' : FIL_ACCENT_DARK.solidHover,
+          _dark: brand ? generateSolidHoverDark(scale, PAGE_BACKGROUNDS) : FIL_ACCENT_DARK.solidHover,
         },
       },
     },

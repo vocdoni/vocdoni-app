@@ -7,6 +7,7 @@ import {
   generateBrandSemanticTokens,
   generatePaletteScale,
   generateSolidHover,
+  generateSolidHoverDark,
   normalizeHexColor,
   solidHoverColor,
   type PaletteScale,
@@ -261,6 +262,10 @@ describe('readability of any organisation colour', () => {
     // The label on the hover fill, a selected option's text on its subtle fill, a link under the pointer.
     const hover = generateSolidHover(scale, BACKGROUNDS)
     expect(contrastRatio(hover, tokens.contrast._light), 'label on solid.hover').toBeGreaterThanOrEqual(4.5)
+    expect(
+      contrastRatio(generateSolidHoverDark(scale, BACKGROUNDS), tokens.contrast._dark),
+      'label on solid.hover, dark'
+    ).toBeGreaterThanOrEqual(4.5)
     expect(contrastRatio(at(tokens.fg._light), at(tokens.subtle._light)), 'fg on subtle').toBeGreaterThanOrEqual(4.5)
     expect(contrastRatio(at(tokens.fg._dark), at(tokens.subtle._dark)), 'fg on subtle, dark').toBeGreaterThanOrEqual(
       4.5
