@@ -60,9 +60,9 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                                                                                                                                        | `illustration.ts` |
 | Links, switch, segments          | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `segment.selected` (the chosen segment or pill tab: `bg.panel` in light) | `recipeColors.ts` |
 | Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                                                                                                                                  | `recipeColors.ts` |
-| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`), `shadow.raised.halo` (a desktop action menu: the ring plus a 4px panel-coloured halo); every shadow is a 1px ring, no blur | `semantic.ts`     |
+| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`), `shadow.raised.halo` (a desktop action menu: the ring plus a 4px panel-coloured halo), `shadow.edge.inner` and `.outer` (the hairline of an accent fill too pale for the page, for a component that paints `accent.solid` itself); every shadow is a 1px ring, no blur | `semantic.ts`     |
 | Brand accent in dark mode        | `accent.fg`: the brand's `fg` (`#6a99f1` for Fil's stock blue), or white on the dark page for a neutral brand (active tab, highlight card)                                                                                                                                                                                    | `palette.ts`      |
-| Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`, `accent.line` (the accent as a line or edge: `accent.border`, the 3:1 line step, in light, `accent.fg` in dark): the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                         | `system.ts`       |
+| Accent fills                     | `accent.solid` (`.hover`, `.edge`), `accent.contrast`, `accent.subtle`, `accent.border` (the 3:1 line step), `accent.line` (the accent as a line or edge: `accent.border` in light, `accent.fg` in dark): the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                         | `system.ts`       |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                                                                                                                                         | `semantic.ts`     |
 
 Rules of thumb:
@@ -73,6 +73,12 @@ Rules of thumb:
   component paints brand-coloured text (active tab, highlighted notice), read `accent.fg`, not `brand.fg`: it is the
   brand's `fg`, except on the dark page for a neutral brand too dark to read there (such as the stock black), which
   gets white. Borders may still read `brand.fg`.
+- **Accent fills, lines and rings**: `solid` is the brand colour exactly as given, so it is for fills only. A fill
+  draws its edge: a recipe adds `solidEdge` (or `ringEdges`, `chosenEdge`) from `src/theme/recipes/solidEdge.ts`, a
+  component that paints `accent.solid` adds `shadow.edge.inner` (`.outer` beside a chosen option's border). The edge
+  is the control line when the colour is under 3:1 against the page and transparent otherwise, so Fil's blue draws
+  none. A line or stripe that marks a state on the page reads `colorPalette.border` or `accent.line`, and a focus
+  ring `colorPalette.focusRing`: those keep 3:1 against the page, a pale `solid` would not.
 - **Status colour**: status colours are Chakra semantic palettes defined in `src/theme/status.ts`. Pick one with
   `colorPalette='danger' | 'success' | 'warning' | 'info'`, and `gray` for neutral; never a local status-to-colour map
   or a raw `red`/`green`. `StatusBadge` takes `colorPalette`. Code that reads a colour rather than a palette uses
@@ -165,10 +171,14 @@ alike. The client derives nothing brand-related afterwards (cached HTML, brand i
 - What never changes colour: status colours (`success`, `danger`, `warning`, `info`: the live and done green, the error
   red), neutrals and surfaces, and the Vocdoni credit (the footer logo and the "made with Vocdoni" line). Never route
   them through `brand` or `accent`.
-- The colour is arbitrary input, so `palette.ts` keeps every pairing readable for any hex, tested on 124 colours in
-  `palette.test.ts`: `solid` at least 3:1 on the page; its label at least 4.5:1 on `solid` and on `solid.hover`, in the
-  light and the dark scope (the hover lightens instead of darkening when a black label needs it); `fg` at least 4.5:1
-  on the page and on `subtle`; the focus ring at least 3:1; `accent.fg.hover` at least 4.5:1. A new pairing a voter screen draws gets a line there.
+- The app always respects the organisation's colour: `solid` is the colour as given, in the light and the dark scope,
+  for the vote's colour and for `PRIMARY_COLOR` alike. The colour is arbitrary input, so `palette.ts` keeps every
+  pairing readable for any hex, tested on 124 colours in `palette.test.ts`: the label on `solid` and on `solid.hover`
+  is white when white reaches 4.5:1, else ink (`gray.900`), else black (one of the three always does), in both scopes
+  (the hover lightens instead of darkening when a dark label needs it); a `solid` under 3:1 against the page has
+  `solid.edge` (the control line) and the others have none; `fg` at least 4.5:1 on the page and on `subtle` (links
+  and accent text take a darker step of the same hue); the focus ring and `border` at least 3:1; `accent.fg.hover`
+  at least 4.5:1. A new pairing a voter screen draws gets a line there.
 - The logo is only ever an `img` source, with the Vocdoni mark as the fallback when it fails to load (`Logo`).
 - `getAppSystem` keeps at most 32 coloured systems (organisation colours are open-ended on the server); the stock one is
   never evicted.
