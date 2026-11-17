@@ -476,9 +476,14 @@ const LeaveConfirmationModal = ({
 
 export const useCreateProcess = () => {
   const { client } = useApiClient()
+  const queryClient = useQueryClient()
 
   return useMutation<string, Error, CreateVotingProcessRequest>({
     mutationFn: (request) => client.elections.create(request),
+    // A new draft has no price yet: read it again, as useUpdateProcess does for every save
+    onSuccess: (processId) => {
+      void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
+    },
   })
 }
 
@@ -842,9 +847,8 @@ const ProcessCreateView = () => {
       // it resolves the draft id inside the queue, so a blur auto-save still in flight
       // is updated rather than raced.
       const processId = await writeDraft(() => request)
-      // The dialog prices what was just saved, against the balance as it is now
-      void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
-      // Every page of the wallet: the key's tail is the page and its size
+      // The dialog checks the balance as it is now: re-read every page of the wallet
+      // (the key's tail is the page and its size)
       void queryClient.invalidateQueries({ queryKey: QueryKeys.organization.wallet(organization?.address).slice(0, 3) })
       setPublishDialog({ processId, start: { kind: 'summary' }, form })
     } catch (error) {
