@@ -166,8 +166,7 @@
   },
   "copy": {
     "address": "Copy address",
-    "copied_title": "Copied!",
-    "copy": "Copy"
+    "copied_title": "Copied!"
   },
   "country_selector": {
     "selector_label": "Country"
@@ -1769,7 +1768,6 @@
   },
   "votes": {
     "ballot": {
-      "as_voter": "As a voter",
       "count_all_one": "{{count, number}} question",
       "count_all_other": "{{count, number}} questions, all at once",
       "count_by_question_one": "{{count, number}} question",
@@ -1778,9 +1776,7 @@
       "credits_other": "{{count, number}} credits",
       "fix": {
         "cancel_and_duplicate": "Cancel the vote and duplicate it to correct it.",
-        "cancel_and_duplicate_short": "Cancel the vote and duplicate it.",
         "duplicate": "Duplicate it to correct it in a new vote.",
-        "duplicate_short": "Duplicate it to correct it.",
         "title": "Spotted a mistake?"
       },
       "intro": "Intro text",
@@ -1935,7 +1931,6 @@
         "ended": "Ended {{date}}.",
         "ended_today": "Ended today, {{day}}, at {{time}}.",
         "opens": "Opens {{start}} and closes {{end}}.",
-        "started_closes": "Started {{start}}. Closes {{end}}.",
         "starts": "Starts {{date}}."
       }
     },
@@ -2030,14 +2025,6 @@
       "held_note": "Held by the pause of the vote.",
       "kind": "{{kind}}.",
       "locked": "Results will show when the question closes.",
-      "meta": {
-        "canceled": "Voided.",
-        "closed": "Closed.",
-        "closed_turnout": "Closed. {{percent}}% turnout.",
-        "held": "Held with the vote.",
-        "not_opened": "Not opened. The vote ended without opening it.",
-        "to_open": "To open."
-      },
       "next": {
         "close_one": "Next step: close question {{numbers}}",
         "close_other": "Next step: close questions {{numbers}}",
@@ -2066,9 +2053,7 @@
       "more": "More",
       "more_actions": "More actions",
       "pause": "Pause",
-      "pause_vote": "Pause the vote",
       "resume": "Resume",
-      "resume_vote": "Resume the vote",
       "show_as_voter": "Show as voter",
       "tab": {
         "ballot": "Ballot",
@@ -2144,22 +2129,38 @@
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
+      "electoral": {
+        "census_one": "<n>{{count, number}}</n> person with the right to vote.",
+        "census_other": "<n>{{count, number}}</n> people with the right to vote.",
+        "closing": "Closing",
+        "date": "{{date}}.",
+        "results_by_question": "They show when each question closes.",
+        "results_live": "They show live, during the vote.",
+        "results_public": "Public now.",
+        "results_secret": "They will show when the vote closes."
+      },
       "electoral_title": "Voting data",
       "fact": {
         "census_one": "{{count, number}} person",
         "census_other": "{{count, number}} people",
         "overwrite_allowed": "Enabled",
         "overwrite_not_allowed": "Disabled",
-        "questions_all_one": "{{count, number}}",
-        "questions_all_other": "{{count, number}}, all at once",
-        "questions_by_question_one": "{{count, number}}, question by question",
-        "questions_by_question_other": "{{count, number}}, question by question",
         "results_hidden": "when the vote closes",
         "results_hidden_by_question": "when each question closes",
         "results_live": "live, during the vote",
-        "results_out": "public",
-        "started_today": "today at {{time}}",
-        "starts_planned": "planned {{date}}"
+        "results_out": "public"
+      },
+      "headline": {
+        "any_count_one": "At least {{count, number}} person has voted on a question.",
+        "any_count_other": "At least {{count, number}} people have voted on a question.",
+        "any_of_one": "At least {{voted}} of {{count, number}} person has voted on a question, {{percent}}%.",
+        "any_of_other": "At least {{voted}} of {{count, number}} people have voted on a question, {{percent}}%.",
+        "count_one": "{{count, number}} person has voted.",
+        "count_other": "{{count, number}} people have voted.",
+        "nobody": "Nobody voted.",
+        "nobody_yet": "Nobody has voted yet.",
+        "of_one": "{{voted}} of {{count, number}} person has voted, {{percent}}%.",
+        "of_other": "{{voted}} of {{count, number}} people have voted, {{percent}}%."
       },
       "idle": {
         "by_question_body": "When it starts, the questions start closed and you open them one at a time.",
@@ -2177,23 +2178,19 @@
         "ready_title": "Opens by itself {{date}}"
       },
       "label": {
-        "anonymity": "Anonymity",
         "census": "Census",
         "closed": "Closed",
-        "closes": "Closes",
         "overwrite": "Vote overwrite",
         "questions": "Questions",
-        "results": "Results",
-        "start": "Start",
-        "type": "Type"
+        "results": "Results"
+      },
+      "line": {
+        "left": "<b>{{left}}</b> left to vote.",
+        "paused": "The vote is <b>paused</b>."
       },
       "link_copied": "Link copied",
       "no_results": "no results",
-      "nobody_voted": "Nobody voted.",
-      "nobody_voted_yet": "Nobody has voted yet.",
       "none_open": "none open",
-      "not_voted_one": "<n>{{count, number}}</n> has not voted yet",
-      "not_voted_other": "<n>{{count, number}}</n> have not voted yet",
       "paused": {
         "all_at_once_one": "Nobody can vote until you resume it. The {{votes}} vote cast is kept and the deadline does not change.",
         "all_at_once_other": "Nobody can vote until you resume it. The {{votes}} votes cast are kept and the deadline does not change.",
@@ -2213,15 +2210,7 @@
       "ruler_label_any": "At least {{voted}} of {{total}} people voted on a question, {{percent}}%",
       "share_note": "Link to the digital ballot box. Share it with the eligible voters.",
       "share_note_closed": "Link to the public page of the vote, with its results.",
-      "share_title": "To share",
-      "turnout": "Turnout",
-      "voted_any_count_one": "At least {{count, number}} person voted on a question",
-      "voted_any_count_other": "At least {{count, number}} people voted on a question",
-      "voted_any_lines": "At least {{voted}} of {{total}} voted <br/>on a question",
-      "voted_count_one": "{{count, number}} person voted",
-      "voted_count_other": "{{count, number}} people voted",
-      "voted_of_one": "{{count, number}} of {{total}} voted",
-      "voted_of_other": "{{count, number}} of {{total}} voted"
+      "share_title": "To share"
     },
     "time_left": "{{duration}} left",
     "waiting": {

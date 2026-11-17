@@ -168,8 +168,7 @@
   },
   "copy": {
     "address": "Copier l'adresse",
-    "copied_title": "Copié !",
-    "copy": "Copier"
+    "copied_title": "Copié !"
   },
   "country_selector": {
     "selector_label": "Pays"
@@ -1800,7 +1799,6 @@
   },
   "votes": {
     "ballot": {
-      "as_voter": "Comme électeur",
       "count_all_one": "{{count, number}} question",
       "count_all_many": "{{count, number}} questions, toutes en même temps",
       "count_all_other": "{{count, number}} questions, toutes en même temps",
@@ -1812,9 +1810,7 @@
       "credits_other": "{{count, number}} crédits",
       "fix": {
         "cancel_and_duplicate": "Annulez le vote et dupliquez-le pour le corriger.",
-        "cancel_and_duplicate_short": "Annulez le vote et dupliquez-le.",
         "duplicate": "Dupliquez-le pour le corriger dans un nouveau vote.",
-        "duplicate_short": "Dupliquez-le pour le corriger.",
         "title": "Vous avez repéré une erreur ?"
       },
       "intro": "Texte d'introduction",
@@ -1986,7 +1982,6 @@
         "ended": "Terminé le {{date}}.",
         "ended_today": "Terminé aujourd'hui, {{day}}, à {{time}}.",
         "opens": "Ouvre le {{start}} et se termine le {{end}}.",
-        "started_closes": "Commencé {{start}}. Se termine {{end}}.",
         "starts": "Commence le {{date}}."
       }
     },
@@ -2090,14 +2085,6 @@
       "held_note": "Arrêtée par la pause du vote.",
       "kind": "{{kind}}.",
       "locked": "Les résultats s'afficheront à la fermeture de la question.",
-      "meta": {
-        "canceled": "Annulée.",
-        "closed": "Fermée.",
-        "closed_turnout": "Fermée. {{percent}} % de participation.",
-        "held": "Arrêtée avec le vote.",
-        "not_opened": "Non ouverte. Le vote a été terminé sans l'ouvrir.",
-        "to_open": "À ouvrir."
-      },
       "next": {
         "close_one": "Étape suivante : fermer la question {{numbers}}",
         "close_many": "Étape suivante : fermer les questions {{numbers}}",
@@ -2127,9 +2114,7 @@
       "more": "Plus",
       "more_actions": "Plus d'actions",
       "pause": "Mettre en pause",
-      "pause_vote": "Mettre le vote en pause",
       "resume": "Reprendre",
-      "resume_vote": "Reprendre le vote",
       "show_as_voter": "Voir comme un électeur",
       "tab": {
         "ballot": "Bulletin",
@@ -2210,6 +2195,17 @@
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
+      "electoral": {
+        "census_one": "<n>{{count, number}}</n> personne ayant le droit de vote.",
+        "census_many": "<n>{{count, number}}</n> personnes ayant le droit de vote.",
+        "census_other": "<n>{{count, number}}</n> personnes ayant le droit de vote.",
+        "closing": "Clôture",
+        "date": "{{date}}.",
+        "results_by_question": "Ils s'affichent à la clôture de chaque question.",
+        "results_live": "Ils s'affichent en direct, pendant le vote.",
+        "results_public": "Ils sont désormais publics.",
+        "results_secret": "Ils s'afficheront à la clôture du vote."
+      },
       "electoral_title": "Données du vote",
       "fact": {
         "census_one": "{{count, number}} personne",
@@ -2217,18 +2213,26 @@
         "census_other": "{{count, number}} personnes",
         "overwrite_allowed": "Activé",
         "overwrite_not_allowed": "Désactivé",
-        "questions_all_one": "{{count, number}}",
-        "questions_all_many": "{{count, number}}, toutes en même temps",
-        "questions_all_other": "{{count, number}}, toutes en même temps",
-        "questions_by_question_one": "{{count, number}}, question par question",
-        "questions_by_question_many": "{{count, number}}, question par question",
-        "questions_by_question_other": "{{count, number}}, question par question",
         "results_hidden": "à la clôture du vote",
         "results_hidden_by_question": "à la fermeture de chaque question",
         "results_live": "en direct, pendant le vote",
-        "results_out": "publics",
-        "started_today": "aujourd'hui à {{time}}",
-        "starts_planned": "prévu le {{date}}"
+        "results_out": "publics"
+      },
+      "headline": {
+        "any_count_one": "Au moins {{count, number}} personne a voté à une question.",
+        "any_count_many": "Au moins {{count, number}} personnes ont voté à une question.",
+        "any_count_other": "Au moins {{count, number}} personnes ont voté à une question.",
+        "any_of_one": "Au moins {{voted}} personne sur {{count, number}} a voté à une question, soit {{percent}} %.",
+        "any_of_many": "Au moins {{voted}} personnes sur {{count, number}} ont voté à une question, soit {{percent}} %.",
+        "any_of_other": "Au moins {{voted}} personnes sur {{count, number}} ont voté à une question, soit {{percent}} %.",
+        "count_one": "{{count, number}} personne a voté.",
+        "count_many": "{{count, number}} personnes ont voté.",
+        "count_other": "{{count, number}} personnes ont voté.",
+        "nobody": "Personne n'a voté.",
+        "nobody_yet": "Personne n'a encore voté.",
+        "of_one": "{{voted}} personne sur {{count, number}} a voté, soit {{percent}} %.",
+        "of_many": "{{voted}} personnes sur {{count, number}} ont voté, soit {{percent}} %.",
+        "of_other": "{{voted}} personnes sur {{count, number}} ont voté, soit {{percent}} %."
       },
       "idle": {
         "by_question_body": "Quand il commencera, les questions seront fermées et vous les ouvrirez une par une.",
@@ -2248,24 +2252,19 @@
         "ready_title": "S'ouvrira automatiquement le {{date}}"
       },
       "label": {
-        "anonymity": "Anonymat",
         "census": "Liste électorale",
         "closed": "Terminé",
-        "closes": "Fin",
         "overwrite": "Remplacement du vote",
         "questions": "Questions",
-        "results": "Résultats",
-        "start": "Début",
-        "type": "Type"
+        "results": "Résultats"
+      },
+      "line": {
+        "left": "Il reste <b>{{left}}</b> pour voter.",
+        "paused": "Le vote est <b>en pause</b>."
       },
       "link_copied": "Lien copié",
       "no_results": "pas de résultats",
-      "nobody_voted": "Personne n'a voté.",
-      "nobody_voted_yet": "Personne n'a encore voté.",
       "none_open": "aucune ouverte",
-      "not_voted_one": "<n>{{count, number}}</n> n'a pas encore voté",
-      "not_voted_many": "<n>{{count, number}}</n> n'ont pas encore voté",
-      "not_voted_other": "<n>{{count, number}}</n> n'ont pas encore voté",
       "paused": {
         "all_at_once_one": "Personne ne peut voter tant que vous ne le reprenez pas. Le {{votes}} vote exprimé est conservé et l'échéance ne change pas.",
         "all_at_once_many": "Personne ne peut voter tant que vous ne le reprenez pas. Les {{votes}} votes exprimés sont conservés et l'échéance ne change pas.",
@@ -2288,18 +2287,7 @@
       "ruler_label_any": "Au moins {{voted}} personnes sur {{total}} ont voté à une question, {{percent}} %",
       "share_note": "Lien vers l'urne numérique. Partagez-le avec les personnes ayant le droit de vote.",
       "share_note_closed": "Lien vers la page publique du vote, avec ses résultats.",
-      "share_title": "À partager",
-      "turnout": "Participation",
-      "voted_any_count_one": "Au moins {{count, number}} personne a voté à une question",
-      "voted_any_count_many": "Au moins {{count, number}} personnes ont voté à une question",
-      "voted_any_count_other": "Au moins {{count, number}} personnes ont voté à une question",
-      "voted_any_lines": "Au moins {{voted}} sur {{total}} ont voté <br/>à une question",
-      "voted_count_one": "{{count, number}} personne a voté",
-      "voted_count_many": "{{count, number}} personnes ont voté",
-      "voted_count_other": "{{count, number}} personnes ont voté",
-      "voted_of_one": "{{count, number}} sur {{total}} a voté",
-      "voted_of_many": "{{count, number}} sur {{total}} ont voté",
-      "voted_of_other": "{{count, number}} sur {{total}} ont voté"
+      "share_title": "À partager"
     },
     "time_left": "{{duration}} restant",
     "waiting": {

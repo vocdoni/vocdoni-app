@@ -166,8 +166,7 @@
   },
   "copy": {
     "address": "Adresse kopieren",
-    "copied_title": "Kopiert!",
-    "copy": "Kopieren"
+    "copied_title": "Kopiert!"
   },
   "country_selector": {
     "selector_label": "Land"
@@ -1769,7 +1768,6 @@
   },
   "votes": {
     "ballot": {
-      "as_voter": "Aus Sicht der Wählenden",
       "count_all_one": "{{count, number}} Frage",
       "count_all_other": "{{count, number}} Fragen, alle auf einmal",
       "count_by_question_one": "{{count, number}} Frage",
@@ -1778,9 +1776,7 @@
       "credits_other": "{{count, number}} Credits",
       "fix": {
         "cancel_and_duplicate": "Brich die Abstimmung ab und dupliziere sie, um sie zu korrigieren.",
-        "cancel_and_duplicate_short": "Brich die Abstimmung ab und dupliziere sie.",
         "duplicate": "Dupliziere sie, um sie in einer neuen Abstimmung zu korrigieren.",
-        "duplicate_short": "Dupliziere sie, um sie zu korrigieren.",
         "title": "Einen Fehler entdeckt?"
       },
       "intro": "Einleitungstext",
@@ -1935,7 +1931,6 @@
         "ended": "Beendet am {{date}}.",
         "ended_today": "Heute beendet, {{day}}, um {{time}}.",
         "opens": "Beginnt am {{start}} und endet am {{end}}.",
-        "started_closes": "Begonnen {{start}}. Endet {{end}}.",
         "starts": "Beginnt am {{date}}."
       }
     },
@@ -2030,14 +2025,6 @@
       "held_note": "Durch die Pause der Abstimmung angehalten.",
       "kind": "{{kind}}.",
       "locked": "Die Ergebnisse sind sichtbar, wenn die Frage geschlossen wird.",
-      "meta": {
-        "canceled": "Ungültig.",
-        "closed": "Geschlossen.",
-        "closed_turnout": "Geschlossen. {{percent}} % Beteiligung.",
-        "held": "Mit der Abstimmung angehalten.",
-        "not_opened": "Nicht geöffnet. Die Abstimmung wurde beendet, ohne sie zu öffnen.",
-        "to_open": "Zu öffnen."
-      },
       "next": {
         "close_one": "Nächster Schritt: Frage {{numbers}} schließen",
         "close_other": "Nächster Schritt: Fragen {{numbers}} schließen",
@@ -2066,9 +2053,7 @@
       "more": "Mehr",
       "more_actions": "Weitere Aktionen",
       "pause": "Pausieren",
-      "pause_vote": "Abstimmung pausieren",
       "resume": "Fortsetzen",
-      "resume_vote": "Abstimmung fortsetzen",
       "show_as_voter": "Aus Sicht der Wählenden ansehen",
       "tab": {
         "ballot": "Stimmzettel",
@@ -2144,22 +2129,38 @@
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
+      "electoral": {
+        "census_one": "<n>{{count, number}}</n> stimmberechtigte Person.",
+        "census_other": "<n>{{count, number}}</n> stimmberechtigte Personen.",
+        "closing": "Ende",
+        "date": "{{date}}.",
+        "results_by_question": "Sichtbar, wenn die jeweilige Frage endet.",
+        "results_live": "Live sichtbar, während der Abstimmung.",
+        "results_public": "Jetzt öffentlich.",
+        "results_secret": "Sichtbar, wenn die Abstimmung endet."
+      },
       "electoral_title": "Abstimmungsdaten",
       "fact": {
         "census_one": "{{count, number}} Person",
         "census_other": "{{count, number}} Personen",
         "overwrite_allowed": "Aktiviert",
         "overwrite_not_allowed": "Deaktiviert",
-        "questions_all_one": "{{count, number}}",
-        "questions_all_other": "{{count, number}}, alle auf einmal",
-        "questions_by_question_one": "{{count, number}}, Frage für Frage",
-        "questions_by_question_other": "{{count, number}}, Frage für Frage",
         "results_hidden": "wenn die Abstimmung endet",
         "results_hidden_by_question": "wenn jede Frage geschlossen wird",
         "results_live": "live, während der Abstimmung",
-        "results_out": "öffentlich",
-        "started_today": "heute um {{time}}",
-        "starts_planned": "geplant am {{date}}"
+        "results_out": "öffentlich"
+      },
+      "headline": {
+        "any_count_one": "Mindestens {{count, number}} Person hat bei einer Frage abgestimmt.",
+        "any_count_other": "Mindestens {{count, number}} Personen haben bei einer Frage abgestimmt.",
+        "any_of_one": "Mindestens {{voted}} von {{count, number}} Person hat bei einer Frage abgestimmt, {{percent}} %.",
+        "any_of_other": "Mindestens {{voted}} von {{count, number}} Personen haben bei einer Frage abgestimmt, {{percent}} %.",
+        "count_one": "{{count, number}} Person hat abgestimmt.",
+        "count_other": "{{count, number}} Personen haben abgestimmt.",
+        "nobody": "Niemand hat abgestimmt.",
+        "nobody_yet": "Noch hat niemand abgestimmt.",
+        "of_one": "{{voted}} von {{count, number}} Person hat abgestimmt, {{percent}} %.",
+        "of_other": "{{voted}} von {{count, number}} Personen haben abgestimmt, {{percent}} %."
       },
       "idle": {
         "by_question_body": "Wenn sie beginnt, sind die Fragen geschlossen, und du öffnest sie eine nach der anderen.",
@@ -2177,23 +2178,19 @@
         "ready_title": "Beginnt von selbst am {{date}}"
       },
       "label": {
-        "anonymity": "Anonymität",
         "census": "Teilnehmerliste",
         "closed": "Beendet",
-        "closes": "Ende",
         "overwrite": "Stimme überschreiben",
         "questions": "Fragen",
-        "results": "Ergebnisse",
-        "start": "Beginn",
-        "type": "Art"
+        "results": "Ergebnisse"
+      },
+      "line": {
+        "left": "Noch <b>{{left}}</b> zum Abstimmen.",
+        "paused": "Die Abstimmung ist <b>pausiert</b>."
       },
       "link_copied": "Link kopiert",
       "no_results": "keine Ergebnisse",
-      "nobody_voted": "Niemand hat abgestimmt.",
-      "nobody_voted_yet": "Noch hat niemand abgestimmt.",
       "none_open": "keine offen",
-      "not_voted_one": "<n>{{count, number}}</n> hat noch nicht abgestimmt",
-      "not_voted_other": "<n>{{count, number}}</n> haben noch nicht abgestimmt",
       "paused": {
         "all_at_once_one": "Niemand kann abstimmen, bis du sie fortsetzt. Die {{votes}} abgegebene Stimme bleibt erhalten, und die Frist ändert sich nicht.",
         "all_at_once_other": "Niemand kann abstimmen, bis du sie fortsetzt. Die {{votes}} abgegebenen Stimmen bleiben erhalten, und die Frist ändert sich nicht.",
@@ -2213,15 +2210,7 @@
       "ruler_label_any": "Mindestens {{voted}} von {{total}} Personen haben bei einer Frage abgestimmt, {{percent}} %",
       "share_note": "Link zur digitalen Wahlurne. Teile ihn mit den Stimmberechtigten.",
       "share_note_closed": "Link zur öffentlichen Seite der Abstimmung, mit ihren Ergebnissen.",
-      "share_title": "Zum Teilen",
-      "turnout": "Beteiligung",
-      "voted_any_count_one": "Mindestens {{count, number}} Person hat bei einer Frage abgestimmt",
-      "voted_any_count_other": "Mindestens {{count, number}} Personen haben bei einer Frage abgestimmt",
-      "voted_any_lines": "Mindestens {{voted}} von {{total}} haben <br/>bei einer Frage abgestimmt",
-      "voted_count_one": "{{count, number}} Person hat abgestimmt",
-      "voted_count_other": "{{count, number}} Personen haben abgestimmt",
-      "voted_of_one": "{{count, number}} von {{total}} hat abgestimmt",
-      "voted_of_other": "{{count, number}} von {{total}} haben abgestimmt"
+      "share_title": "Zum Teilen"
     },
     "time_left": "Noch {{duration}}",
     "waiting": {

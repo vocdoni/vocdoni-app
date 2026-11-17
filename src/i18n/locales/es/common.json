@@ -168,8 +168,7 @@
   },
   "copy": {
     "address": "Copiar dirección",
-    "copied_title": "¡Copiado!",
-    "copy": "Copiar"
+    "copied_title": "¡Copiado!"
   },
   "country_selector": {
     "selector_label": "País"
@@ -1800,7 +1799,6 @@
   },
   "votes": {
     "ballot": {
-      "as_voter": "Como votante",
       "count_all_one": "{{count, number}} pregunta",
       "count_all_many": "{{count, number}} preguntas, todas a la vez",
       "count_all_other": "{{count, number}} preguntas, todas a la vez",
@@ -1812,9 +1810,7 @@
       "credits_other": "{{count, number}} créditos",
       "fix": {
         "cancel_and_duplicate": "Cancela la votación y duplícala para corregirla.",
-        "cancel_and_duplicate_short": "Cancela la votación y duplícala.",
         "duplicate": "Duplícala para corregirla en una votación nueva.",
-        "duplicate_short": "Duplícala para corregirla.",
         "title": "¿Has visto un error?"
       },
       "intro": "Texto de entrada",
@@ -1986,7 +1982,6 @@
         "ended": "Finalizada el {{date}}.",
         "ended_today": "Finalizada hoy, {{day}}, a las {{time}}.",
         "opens": "Se abre el {{start}} y cierra el {{end}}.",
-        "started_closes": "Empezó {{start}}. Cierra {{end}}.",
         "starts": "Empieza el {{date}}."
       }
     },
@@ -2090,14 +2085,6 @@
       "held_note": "Detenida por la pausa de la votación.",
       "kind": "{{kind}}.",
       "locked": "Los resultados se verán al cerrar la pregunta.",
-      "meta": {
-        "canceled": "Anulada.",
-        "closed": "Cerrada.",
-        "closed_turnout": "Cerrada. {{percent}}% de participación.",
-        "held": "Detenida con la votación.",
-        "not_opened": "No abierta. La votación se finalizó sin abrirla.",
-        "to_open": "Por abrir."
-      },
       "next": {
         "close_one": "Siguiente paso: cierra la pregunta {{numbers}}",
         "close_many": "Siguiente paso: cierra las preguntas {{numbers}}",
@@ -2127,9 +2114,7 @@
       "more": "Más",
       "more_actions": "Más acciones",
       "pause": "Pausar",
-      "pause_vote": "Pausar la votación",
       "resume": "Reanudar",
-      "resume_vote": "Reanudar la votación",
       "show_as_voter": "Mostrar como votante",
       "tab": {
         "ballot": "Papeleta",
@@ -2210,6 +2195,17 @@
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
+      "electoral": {
+        "census_one": "<n>{{count, number}}</n> persona con derecho a voto.",
+        "census_many": "<n>{{count, number}}</n> personas con derecho a voto.",
+        "census_other": "<n>{{count, number}}</n> personas con derecho a voto.",
+        "closing": "Cierre",
+        "date": "{{date}}.",
+        "results_by_question": "Se ven al cerrar cada pregunta.",
+        "results_live": "Se ven en directo, durante la votación.",
+        "results_public": "Ya son públicos.",
+        "results_secret": "Se verán al cerrar la votación."
+      },
       "electoral_title": "Datos electorales",
       "fact": {
         "census_one": "{{count, number}} persona",
@@ -2217,18 +2213,26 @@
         "census_other": "{{count, number}} personas",
         "overwrite_allowed": "Activada",
         "overwrite_not_allowed": "Desactivada",
-        "questions_all_one": "{{count, number}}",
-        "questions_all_many": "{{count, number}}, todas a la vez",
-        "questions_all_other": "{{count, number}}, todas a la vez",
-        "questions_by_question_one": "{{count, number}}, pregunta a pregunta",
-        "questions_by_question_many": "{{count, number}}, pregunta a pregunta",
-        "questions_by_question_other": "{{count, number}}, pregunta a pregunta",
         "results_hidden": "al cerrar la votación",
         "results_hidden_by_question": "al cerrar cada pregunta",
         "results_live": "en directo, durante la votación",
-        "results_out": "públicos",
-        "started_today": "hoy a las {{time}}",
-        "starts_planned": "previsto el {{date}}"
+        "results_out": "públicos"
+      },
+      "headline": {
+        "any_count_one": "Al menos {{count, number}} persona ha votado alguna pregunta.",
+        "any_count_many": "Al menos {{count, number}} personas han votado alguna pregunta.",
+        "any_count_other": "Al menos {{count, number}} personas han votado alguna pregunta.",
+        "any_of_one": "Al menos {{voted}} de {{count, number}} persona ha votado alguna pregunta, el {{percent}}%.",
+        "any_of_many": "Al menos {{voted}} de {{count, number}} personas han votado alguna pregunta, el {{percent}}%.",
+        "any_of_other": "Al menos {{voted}} de {{count, number}} personas han votado alguna pregunta, el {{percent}}%.",
+        "count_one": "Ha votado {{count, number}} persona.",
+        "count_many": "Han votado {{count, number}} personas.",
+        "count_other": "Han votado {{count, number}} personas.",
+        "nobody": "No ha votado nadie.",
+        "nobody_yet": "Todavía no ha votado nadie.",
+        "of_one": "Ha votado {{voted}} de {{count, number}} persona, el {{percent}}%.",
+        "of_many": "Han votado {{voted}} de {{count, number}} personas, el {{percent}}%.",
+        "of_other": "Han votado {{voted}} de {{count, number}} personas, el {{percent}}%."
       },
       "idle": {
         "by_question_body": "Cuando empiece, las preguntas empezarán cerradas y las irás abriendo de una en una.",
@@ -2248,24 +2252,19 @@
         "ready_title": "Se abrirá sola el {{date}}"
       },
       "label": {
-        "anonymity": "Anonimato",
         "census": "Censo",
         "closed": "Cerrada",
-        "closes": "Cierra",
         "overwrite": "Sobrescritura de voto",
         "questions": "Preguntas",
-        "results": "Resultados",
-        "start": "Inicio",
-        "type": "Tipo"
+        "results": "Resultados"
+      },
+      "line": {
+        "left": "Quedan <b>{{left}}</b> para votar.",
+        "paused": "La votación está <b>en pausa</b>."
       },
       "link_copied": "Enlace copiado",
       "no_results": "sin resultados",
-      "nobody_voted": "No ha votado nadie.",
-      "nobody_voted_yet": "Todavía no ha votado nadie.",
       "none_open": "ninguna abierta",
-      "not_voted_one": "<n>{{count, number}}</n> todavía no ha votado",
-      "not_voted_many": "<n>{{count, number}}</n> todavía no han votado",
-      "not_voted_other": "<n>{{count, number}}</n> todavía no han votado",
       "paused": {
         "all_at_once_one": "Nadie puede votar hasta que la reanudes. El {{votes}} voto emitido se conserva y el plazo no cambia.",
         "all_at_once_many": "Nadie puede votar hasta que la reanudes. Los {{votes}} votos emitidos se conservan y el plazo no cambia.",
@@ -2288,18 +2287,7 @@
       "ruler_label_any": "Al menos {{voted}} de {{total}} personas han votado alguna pregunta, el {{percent}}%",
       "share_note": "Enlace a la urna digital. Compártelo con las personas con derecho a voto.",
       "share_note_closed": "Enlace a la página pública de la votación, con sus resultados.",
-      "share_title": "Para compartir",
-      "turnout": "Participación",
-      "voted_any_count_one": "Al menos {{count, number}} persona ha votado alguna pregunta",
-      "voted_any_count_many": "Al menos {{count, number}} personas han votado alguna pregunta",
-      "voted_any_count_other": "Al menos {{count, number}} personas han votado alguna pregunta",
-      "voted_any_lines": "Al menos {{voted}} de {{total}} han votado <br/>alguna pregunta",
-      "voted_count_one": "Ha votado {{count, number}} persona",
-      "voted_count_many": "Han votado {{count, number}} personas",
-      "voted_count_other": "Han votado {{count, number}} personas",
-      "voted_of_one": "{{count, number}} de {{total}} han votado",
-      "voted_of_many": "{{count, number}} de {{total}} han votado",
-      "voted_of_other": "{{count, number}} de {{total}} han votado"
+      "share_title": "Para compartir"
     },
     "time_left": "Quedan {{duration}}",
     "waiting": {

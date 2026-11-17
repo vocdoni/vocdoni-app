@@ -168,8 +168,7 @@
   },
   "copy": {
     "address": "Copia l'adreça",
-    "copied_title": "Copiat!",
-    "copy": "Copia"
+    "copied_title": "Copiat!"
   },
   "country_selector": {
     "selector_label": "País"
@@ -1800,7 +1799,6 @@
   },
   "votes": {
     "ballot": {
-      "as_voter": "Com a votant",
       "count_all_one": "{{count, number}} pregunta",
       "count_all_many": "{{count, number}} preguntes, totes alhora",
       "count_all_other": "{{count, number}} preguntes, totes alhora",
@@ -1812,9 +1810,7 @@
       "credits_other": "{{count, number}} crèdits",
       "fix": {
         "cancel_and_duplicate": "Cancel·la la votació i duplica-la per corregir-la.",
-        "cancel_and_duplicate_short": "Cancel·la la votació i duplica-la.",
         "duplicate": "Duplica-la per corregir-la en una votació nova.",
-        "duplicate_short": "Duplica-la per corregir-la.",
         "title": "Hi has vist un error?"
       },
       "intro": "Text d'entrada",
@@ -1986,7 +1982,6 @@
         "ended": "Finalitzada {{date}}.",
         "ended_today": "Finalitzada avui, {{day}}, a les {{time}}.",
         "opens": "S'obre {{start}} i tanca {{end}}.",
-        "started_closes": "Va començar {{start}}. Tanca {{end}}.",
         "starts": "Comença {{date}}."
       }
     },
@@ -2090,14 +2085,6 @@
       "held_note": "Aturada per la pausa de la votació.",
       "kind": "{{kind}}.",
       "locked": "Els resultats es veuran en tancar la pregunta.",
-      "meta": {
-        "canceled": "Anul·lada.",
-        "closed": "Tancada.",
-        "closed_turnout": "Tancada. {{percent}}% de participació.",
-        "held": "Aturada amb la votació.",
-        "not_opened": "No oberta. La votació es va finalitzar sense obrir-la.",
-        "to_open": "Per obrir."
-      },
       "next": {
         "close_one": "Següent pas: tanca la pregunta {{numbers}}",
         "close_many": "Següent pas: tanca les preguntes {{numbers}}",
@@ -2127,9 +2114,7 @@
       "more": "Més",
       "more_actions": "Més accions",
       "pause": "Pausa",
-      "pause_vote": "Pausa la votació",
       "resume": "Reprèn",
-      "resume_vote": "Reprèn la votació",
       "show_as_voter": "Mostra-la com a votant",
       "tab": {
         "ballot": "Papereta",
@@ -2210,6 +2195,17 @@
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
+      "electoral": {
+        "census_one": "<n>{{count, number}}</n> persona amb dret a vot.",
+        "census_many": "<n>{{count, number}}</n> persones amb dret a vot.",
+        "census_other": "<n>{{count, number}}</n> persones amb dret a vot.",
+        "closing": "Tancament",
+        "date": "{{date}}.",
+        "results_by_question": "Es veuen en tancar cada pregunta.",
+        "results_live": "Es veuen en directe, durant la votació.",
+        "results_public": "Ja són públics.",
+        "results_secret": "Es veuran en tancar la votació."
+      },
       "electoral_title": "Dades electorals",
       "fact": {
         "census_one": "{{count, number}} persona",
@@ -2217,18 +2213,26 @@
         "census_other": "{{count, number}} persones",
         "overwrite_allowed": "Activada",
         "overwrite_not_allowed": "Desactivada",
-        "questions_all_one": "{{count, number}}",
-        "questions_all_many": "{{count, number}}, totes alhora",
-        "questions_all_other": "{{count, number}}, totes alhora",
-        "questions_by_question_one": "{{count, number}}, pregunta per pregunta",
-        "questions_by_question_many": "{{count, number}}, pregunta per pregunta",
-        "questions_by_question_other": "{{count, number}}, pregunta per pregunta",
         "results_hidden": "en tancar la votació",
         "results_hidden_by_question": "en tancar cada pregunta",
         "results_live": "en directe, durant la votació",
-        "results_out": "públics",
-        "started_today": "avui a les {{time}}",
-        "starts_planned": "previst {{date}}"
+        "results_out": "públics"
+      },
+      "headline": {
+        "any_count_one": "Almenys {{count, number}} persona ha votat alguna pregunta.",
+        "any_count_many": "Almenys {{count, number}} persones han votat alguna pregunta.",
+        "any_count_other": "Almenys {{count, number}} persones han votat alguna pregunta.",
+        "any_of_one": "Almenys {{voted}} de {{count, number}} persona ha votat alguna pregunta, el {{percent}}%.",
+        "any_of_many": "Almenys {{voted}} de {{count, number}} persones han votat alguna pregunta, el {{percent}}%.",
+        "any_of_other": "Almenys {{voted}} de {{count, number}} persones han votat alguna pregunta, el {{percent}}%.",
+        "count_one": "Ha votat {{count, number}} persona.",
+        "count_many": "Han votat {{count, number}} persones.",
+        "count_other": "Han votat {{count, number}} persones.",
+        "nobody": "No ha votat ningú.",
+        "nobody_yet": "Encara no ha votat ningú.",
+        "of_one": "Ha votat {{voted}} de {{count, number}} persona, el {{percent}}%.",
+        "of_many": "Han votat {{voted}} de {{count, number}} persones, el {{percent}}%.",
+        "of_other": "Han votat {{voted}} de {{count, number}} persones, el {{percent}}%."
       },
       "idle": {
         "by_question_body": "Quan comenci, les preguntes començaran tancades i les aniràs obrint d'una en una.",
@@ -2248,24 +2252,19 @@
         "ready_title": "S'obrirà sola {{date}}"
       },
       "label": {
-        "anonymity": "Anonimat",
         "census": "Cens",
         "closed": "Tancada",
-        "closes": "Tanca",
         "overwrite": "Sobreescriptura de vot",
         "questions": "Preguntes",
-        "results": "Resultats",
-        "start": "Inici",
-        "type": "Tipus"
+        "results": "Resultats"
+      },
+      "line": {
+        "left": "Queden <b>{{left}}</b> per votar.",
+        "paused": "La votació és <b>en pausa</b>."
       },
       "link_copied": "Enllaç copiat",
       "no_results": "sense resultats",
-      "nobody_voted": "No ha votat ningú.",
-      "nobody_voted_yet": "Encara no ha votat ningú.",
       "none_open": "cap d'oberta",
-      "not_voted_one": "<n>{{count, number}}</n> encara no ha votat",
-      "not_voted_many": "<n>{{count, number}}</n> encara no han votat",
-      "not_voted_other": "<n>{{count, number}}</n> encara no han votat",
       "paused": {
         "all_at_once_one": "Ningú pot votar fins que la reprenguis. El {{votes}} vot emès es conserva i el termini no canvia.",
         "all_at_once_many": "Ningú pot votar fins que la reprenguis. Els {{votes}} vots emesos es conserven i el termini no canvia.",
@@ -2288,18 +2287,7 @@
       "ruler_label_any": "Almenys {{voted}} de {{total}} persones han votat alguna pregunta, el {{percent}}%",
       "share_note": "Enllaç a l'urna digital. Comparteix-lo amb les persones amb dret a vot.",
       "share_note_closed": "Enllaç a la pàgina pública de la votació, amb els resultats.",
-      "share_title": "Per compartir",
-      "turnout": "Participació",
-      "voted_any_count_one": "Almenys {{count, number}} persona ha votat alguna pregunta",
-      "voted_any_count_many": "Almenys {{count, number}} persones han votat alguna pregunta",
-      "voted_any_count_other": "Almenys {{count, number}} persones han votat alguna pregunta",
-      "voted_any_lines": "Almenys {{voted}} de {{total}} han votat <br/>alguna pregunta",
-      "voted_count_one": "Ha votat {{count, number}} persona",
-      "voted_count_many": "Han votat {{count, number}} persones",
-      "voted_count_other": "Han votat {{count, number}} persones",
-      "voted_of_one": "{{count, number}} de {{total}} han votat",
-      "voted_of_many": "{{count, number}} de {{total}} han votat",
-      "voted_of_other": "{{count, number}} de {{total}} han votat"
+      "share_title": "Per compartir"
     },
     "time_left": "Queden {{duration}}",
     "waiting": {
