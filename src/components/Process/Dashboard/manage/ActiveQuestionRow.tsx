@@ -9,7 +9,7 @@ import { quantity } from '~utils/numbers'
 import { percentOf } from '~utils/vote-state'
 import { QuestionResultBars } from '../QuestionResultBars'
 import { QuestionRowFrame } from './QuestionRow'
-import { QuestionStatus } from './QuestionStatus'
+import { ProcessStatus } from '~components/ui/ProcessStatus'
 
 export type ActiveQuestionRowProps = {
   question: VotingProcessQuestion
@@ -75,7 +75,7 @@ export const ActiveQuestionRow = ({
             <Text as='h3' textStyle='item-title'>
               {text(question.title)}
             </Text>
-            <QuestionStatus state={state} />
+            <ProcessStatus kind='question' state={state === 'held' ? 'paused' : state} />
           </Flex>
           {question.description && (
             <Text textStyle='meta' color='fg.subtle' display={{ base: 'none', lg: 'block' }}>

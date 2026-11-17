@@ -53,8 +53,8 @@ describe('nextManageStep', () => {
     expect(step(['closed', 'paused', 'paused'])).toEqual({ action: 'resume', numbers: [2] })
   })
 
-  it('ends the vote once every question is closed, and resumes a held vote before anything else', () => {
-    expect(step(['closed', 'canceled'])).toEqual({ action: 'endVote' })
+  it('has no step once every question is closed, and resumes a held vote before anything else', () => {
+    expect(step(['closed', 'canceled'])).toBeNull()
     expect(step(['held', 'toOpen'], true)).toEqual({ action: 'resumeVote' })
     expect(step([])).toBeNull()
   })

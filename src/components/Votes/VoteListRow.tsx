@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, Link as RouterLink } from 'react-router'
 import { useCloneAsDraft } from '~components/Process/Dashboard/use-clone-as-draft'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
-import { ProcessStatus } from '~components/ui/ProcessStatus'
+import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
 import { ResponsiveMenu, type ResponsiveMenuItem } from '~components/ui/ResponsiveMenu'
 import { useVoteText } from '~i18n/use-vote-text'
 import { useDeleteDraft } from '~queries/votes'
@@ -66,27 +66,6 @@ const useActionLabel = () => {
   }
 }
 
-// The state word under the phone sheet's title ("Draft"), with the keys ProcessStatus shows.
-const useStateWord = () => {
-  const { t } = useTranslation()
-  return (state: VoteState) => {
-    switch (state) {
-      case 'draft':
-        return t('votes.state.draft', { defaultValue: 'Draft' })
-      case 'ready':
-        return t('votes.state.ready', { defaultValue: 'Ready' })
-      case 'live':
-        return t('votes.state.live', { defaultValue: 'Live' })
-      case 'paused':
-        return t('votes.state.paused', { defaultValue: 'Paused' })
-      case 'closed':
-        return t('votes.state.closed', { defaultValue: 'Closed' })
-      case 'canceled':
-        return t('votes.state.canceled', { defaultValue: 'Canceled' })
-    }
-  }
-}
-
 const DeleteDraftDialog = ({ draftId, open, onClose }: { draftId: string; open: boolean; onClose: () => void }) => {
   const { t } = useTranslation()
   const mutation = useDeleteDraft()
@@ -119,7 +98,7 @@ const VoteListRowBase = ({ row, results, canManage, now }: VoteListRowProps) => 
   const { cloneAsDraft, isCloning } = useCloneAsDraft()
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const actionLabel = useActionLabel()
-  const stateWord = useStateWord()
+  const stateWord = useProcessStateLabel()
   const titleId = useId()
   const { process, state } = row
   const action = useMemo(() => rowAction(row), [row])

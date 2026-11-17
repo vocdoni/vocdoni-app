@@ -11,7 +11,7 @@ import { percentOf } from '~utils/vote-state'
 import { QuestionResultBars } from '../QuestionResultBars'
 import { Figures } from './Figures'
 import { QuestionRowFrame, RowChevron, RowHead } from './QuestionRow'
-import { QuestionStatus } from './QuestionStatus'
+import { ProcessStatus } from '~components/ui/ProcessStatus'
 
 type Verdict = { verdict: string; won: boolean; figures?: string }
 
@@ -164,7 +164,7 @@ export const ClosedQuestionRow = ({
               {t('votes.manage.percent', { defaultValue: '{{percent}}%', percent: share })}
             </Text>
           )}
-          <QuestionStatus state='closed' display={desktop} />
+          <ProcessStatus kind='question' state='closed' display={desktop} />
           <RowChevron expanded={expanded} />
         </RowHead>
         <Box id={detailId} hidden={!expanded}>

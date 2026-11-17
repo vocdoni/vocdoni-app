@@ -6,13 +6,16 @@ import { isQuestionByQuestion } from '~src/types/voting-process'
 /** The one state a vote shows in the dashboard. Never depends on vote counts, so the list and the vote page agree. */
 export type VoteState = 'draft' | 'ready' | 'live' | 'paused' | 'closed' | 'canceled'
 
-/** The state of one question of a question-by-question vote. */
-export type QuestionState = 'toOpen' | 'open' | 'paused' | 'closed' | 'canceled'
+/** The state of one question of a question-by-question vote; `notOpened` once the vote ended before it opened. */
+export type QuestionState = 'toOpen' | 'open' | 'paused' | 'closed' | 'canceled' | 'notOpened'
 
 const TERMINAL: ReadonlySet<QuestionStatus> = new Set<QuestionStatus>(['ENDED', 'RESULTS', 'CANCELED'])
 
 export const isTerminalQuestion = (question: Pick<VotingProcessQuestion, 'status'>): boolean =>
   TERMINAL.has(question.status)
+
+// A stored status can lag behind its end time; either one says the question is over.
+const isOverQuestion = (question: VotingProcessQuestion): boolean => isTerminalQuestion(question) || !!question.endedAt
 
 /** Stored statuses go stale after the scheduled end (they are reconciled on a single read only), so the clock wins. */
 export const hasEndedBySchedule = (process: VotingProcessResponse, now: Date): boolean => {
@@ -26,13 +29,34 @@ export const deriveVoteState = (process: VotingProcessResponse, now: Date = new 
   if (!process.published) return 'draft'
   const { questions } = process
   if (questions.length > 0 && questions.every((question) => question.status === 'CANCELED')) return 'canceled'
-  if (questions.every(isTerminalQuestion) || hasEndedBySchedule(process, now)) return 'closed'
+  // A question-by-question vote whose questions are all over is closed too: nothing is left to end (R22).
+  if (questions.every(isOverQuestion) || hasEndedBySchedule(process, now)) return 'closed'
   const anyOngoing = questions.some((question) => question.status === 'ONGOING')
-  // A question-by-question vote opens its questions one by one: it is ready until one opens or closes, and never
-  // paused as a whole (a live one with nothing open reads "no question open").
-  if (isQuestionByQuestion(process)) return !anyOngoing && !questions.some(isTerminalQuestion) ? 'ready' : 'live'
+  // A question-by-question vote opens its questions one by one: it is ready until one opens or closes. Its pause as
+  // a whole lives in the pause memory (`useVotePause`), not in the API.
+  if (isQuestionByQuestion(process)) return !anyOngoing && !questions.some(isOverQuestion) ? 'ready' : 'live'
   if (isBeforeStart(process.startDate, now)) return 'ready'
   return anyOngoing ? 'live' : 'paused'
+}
+
+const ENDED_TOGETHER_MS = 60_000
+const endTime = (question: VotingProcessQuestion) => (question.endedAt ? new Date(question.endedAt).getTime() : NaN)
+
+/**
+ * Whether a question-by-question vote ended before this question was ever opened. The API keeps no opened-at time,
+ * so a question with no votes counts as never opened (the same rule that shows it as "to open") when the vote ended
+ * by its schedule while it was still paused, or when it closed in the vote's last batch (ending the vote closes every
+ * question left at once).
+ */
+const endedUnopened = (question: VotingProcessQuestion, process: VotingProcessResponse, now: Date): boolean => {
+  if (!isQuestionByQuestion(process) || (question.results?.voteCount ?? 0) > 0) return false
+  if (!isOverQuestion(question)) return question.status === 'PAUSED' && hasEndedBySchedule(process, now)
+  const own = endTime(question)
+  if (!Number.isFinite(own)) return false
+  const ends = process.questions.map(endTime).filter(Number.isFinite)
+  const last = Math.max(...ends)
+  const inLastBatch = (time: number) => last - time < ENDED_TOGETHER_MS
+  return inLastBatch(own) && ends.filter(inLastBatch).length > 1
 }
 
 /** Per-question state, from the single process read (it carries `results.voteCount`; list items do not). */
@@ -42,8 +66,8 @@ export const deriveQuestionState = (
   now: Date = new Date()
 ): QuestionState => {
   if (question.status === 'CANCELED') return 'canceled'
-  if (question.status === 'ENDED' || question.status === 'RESULTS' || question.endedAt) return 'closed'
-  if (hasEndedBySchedule(process, now)) return 'closed'
+  if (endedUnopened(question, process, now)) return 'notOpened'
+  if (isOverQuestion(question) || hasEndedBySchedule(process, now)) return 'closed'
   if (question.status === 'ONGOING') return 'open'
   // A paused question with no votes cannot be told apart from one never opened: both show as "to open".
   if (question.status === 'PAUSED' && (question.results?.voteCount ?? 0) > 0) return 'paused'
@@ -59,21 +83,8 @@ export const countQuestionStates = (states: readonly QuestionState[]): QuestionS
     paused: 0,
     closed: 0,
     canceled: 0,
+    notOpened: 0,
   })
-
-/** The hint over the question list. `numbers` are 1-based question numbers. */
-export type QuestionStep = { action: 'close' | 'open' | 'resume'; numbers: number[] }
-
-export const nextQuestionStep = (states: readonly QuestionState[]): QuestionStep | null => {
-  const numbersOf = (wanted: QuestionState) => states.flatMap((state, index) => (state === wanted ? [index + 1] : []))
-  const open = numbersOf('open')
-  if (open.length) return { action: 'close', numbers: open }
-  const toOpen = numbersOf('toOpen')
-  if (toOpen.length) return { action: 'open', numbers: [toOpen[0]] }
-  const paused = numbersOf('paused')
-  if (paused.length) return { action: 'resume', numbers: [paused[0]] }
-  return null
-}
 
 /** Integer percent, or undefined when there is nothing to divide by (an absent census size). */
 export const percentOf = (part: number, whole: number | undefined): number | undefined =>

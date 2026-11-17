@@ -4,7 +4,7 @@ import { useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
 import { QuestionRowFrame, RowChevron, RowHead } from './QuestionRow'
-import { QuestionStatus, useRowStateLabel } from './QuestionStatus'
+import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
 
 export type WaitingQuestionRowProps = {
   question: VotingProcessQuestion
@@ -30,7 +30,7 @@ export const WaitingQuestionRow = ({
 }: WaitingQuestionRowProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
-  const label = useRowStateLabel()
+  const label = useProcessStateLabel()
   const detailId = useId()
   const title = text(question.title)
   const description = question.description ? text(question.description) : ''
@@ -62,7 +62,7 @@ export const WaitingQuestionRow = ({
                       defaultValue: 'Question {{number}}, {{title}}. {{state}}. Show or hide the detail',
                       number,
                       title,
-                      state: label(state),
+                      state: label(state, 'question'),
                     }),
                   }
                 : undefined
@@ -82,7 +82,7 @@ export const WaitingQuestionRow = ({
                 {meta}
               </Text>
             </Stack>
-            <QuestionStatus state={state} display={{ base: 'none', lg: 'inline-flex' }} />
+            <ProcessStatus kind='question' state={state} display={{ base: 'none', lg: 'inline-flex' }} />
             {hasDetail && <RowChevron expanded={expanded} desktopOnly />}
           </RowHead>
           {action}

@@ -1,51 +1,14 @@
 import { Card, Flex, Icon, Link, Text } from '@chakra-ui/react'
-import type { TFunction } from 'i18next'
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as RouterLink } from 'react-router'
 import { Routes } from '~src/router/routes'
 import { ChevronRightIcon, LockIcon } from '~theme/icons'
-import { countQuestionStates, type QuestionStateCounts } from '~utils/vote-state'
+import { countQuestionStates } from '~utils/vote-state'
+import { useManageText } from '../manage/use-manage-text'
 import { AllAtOnceRow, ByQuestionRow, CompactQuestionRow } from './QuestionRows'
 import { SummaryCardHeader } from './SummaryCardHeader'
 import type { SummaryModel } from './use-summary-model'
-
-/** "2 closed · 1 open · 1 to open": every state that has questions, in the order a vote goes through them. */
-const countsNote = (t: TFunction, counts: QuestionStateCounts): string =>
-  [
-    counts.closed &&
-      t('votes.summary.count.closed', {
-        defaultValue_one: '{{count}} closed',
-        defaultValue_other: '{{count}} closed',
-        count: counts.closed,
-      }),
-    counts.open &&
-      t('votes.summary.count.open', {
-        defaultValue_one: '{{count}} open',
-        defaultValue_other: '{{count}} open',
-        count: counts.open,
-      }),
-    counts.paused &&
-      t('votes.summary.count.paused', {
-        defaultValue_one: '{{count}} paused',
-        defaultValue_other: '{{count}} paused',
-        count: counts.paused,
-      }),
-    counts.toOpen &&
-      t('votes.summary.count.to_open', {
-        defaultValue_one: '{{count}} to open',
-        defaultValue_other: '{{count}} to open',
-        count: counts.toOpen,
-      }),
-    counts.canceled &&
-      t('votes.summary.count.canceled', {
-        defaultValue_one: '{{count}} voided',
-        defaultValue_other: '{{count}} voided',
-        count: counts.canceled,
-      }),
-  ]
-    .filter(Boolean)
-    .join(' · ')
 
 /** The all-at-once card's last line: when the results show, and the way to the ballot. */
 const ResultsLine = ({ model }: { model: SummaryModel }) => {
@@ -90,13 +53,14 @@ const ResultsLine = ({ model }: { model: SummaryModel }) => {
  */
 export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desktop: boolean }) => {
   const { t } = useTranslation()
+  const manageText = useManageText()
   const titleId = useId()
   const { election, byQuestion, state, questionStates } = model
 
   let note: string | undefined
   if (byQuestion) {
     // The board counts states only once something has happened: not before the start, not after a cancel.
-    if (state !== 'ready' && state !== 'canceled') note = countsNote(t, countQuestionStates(questionStates))
+    if (state !== 'ready' && state !== 'canceled') note = manageText.counts(countQuestionStates(questionStates), 'card')
   } else {
     note = t('votes.summary.all_open', { defaultValue: 'All open at once' })
   }

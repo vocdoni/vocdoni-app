@@ -2,7 +2,7 @@ import { Box, Card, Flex, Grid, Heading, Icon, Span, Stack, Text } from '@chakra
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ProcessStatus } from '~components/ui/ProcessStatus'
+import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
 import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
 import { CheckIcon } from '~theme/icons'
@@ -26,25 +26,6 @@ const QuestionNumber = ({ index }: { index: number }) => (
     {index + 1}
   </Text>
 )
-
-/** The same words as `ProcessStatus`, for a sentence ("Closed. Yes, 198 to 7."). */
-const useQuestionStateWord = () => {
-  const { t } = useTranslation()
-  return (state: QuestionState) => {
-    switch (state) {
-      case 'toOpen':
-        return t('votes.question_state.to_open', { defaultValue: 'To open' })
-      case 'open':
-        return t('votes.question_state.open', { defaultValue: 'Open' })
-      case 'paused':
-        return t('votes.question_state.paused', { defaultValue: 'Paused' })
-      case 'canceled':
-        return t('votes.question_state.canceled', { defaultValue: 'Voided' })
-      default:
-        return t('votes.question_state.closed', { defaultValue: 'Closed' })
-    }
-  }
-}
 
 /**
  * A question of a question-by-question vote on the desktop: one line with its number, title, result, votes with
@@ -186,7 +167,7 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
 export const CompactQuestionRow = ({ question, index, model, state }: RowProps) => {
   const { t } = useTranslation()
   const { text, outcome: describe } = useVoteText()
-  const stateWord = useQuestionStateWord()
+  const stateLabel = useProcessStateLabel()
   const outcome = useOutcome(question, !!model.election.census?.weighted)
   const votes = question.results?.voteCount ?? 0
   const votesText = t('votes.summary.question_votes', {
@@ -200,8 +181,12 @@ export const CompactQuestionRow = ({ question, index, model, state }: RowProps) 
     const result = state === 'closed' ? describe(outcome) : null
     const detail = result ?? (counts(state) && votes > 0 ? votesText : null)
     meta = detail
-      ? t('votes.summary.row.state_detail', { defaultValue: '{{state}}. {{detail}}.', state: stateWord(state), detail })
-      : t('votes.summary.row.state', { defaultValue: '{{state}}.', state: stateWord(state) })
+      ? t('votes.summary.row.state_detail', {
+          defaultValue: '{{state}}. {{detail}}.',
+          state: stateLabel(state, 'question'),
+          detail,
+        })
+      : t('votes.summary.row.state', { defaultValue: '{{state}}.', state: stateLabel(state, 'question') })
   } else {
     meta = [describe(outcome), votes > 0 ? votesText : null].filter(Boolean).join(', ') || null
   }

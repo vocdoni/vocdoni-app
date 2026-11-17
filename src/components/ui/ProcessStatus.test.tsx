@@ -21,6 +21,7 @@ const QUESTION: [ProcessStatusState, string][] = [
   ['paused', 'Paused'],
   ['closed', 'Closed'],
   ['canceled', 'Voided'],
+  ['notOpened', 'Not opened'],
 ]
 
 // The dot's classes carry the role it is painted with.
@@ -54,5 +55,14 @@ describe('ProcessStatus', () => {
     render(<ProcessStatus state={state} />)
 
     expect(dotPaints(word, pattern)).toBe(true)
+  })
+
+  it.each<[ProcessStatusState, string]>([
+    ['canceled', 'Voided'],
+    ['notOpened', 'Not opened'],
+  ])('draws a %s question hollow, not red', (state, word) => {
+    render(<ProcessStatus state={state} kind='question' />)
+
+    expect(dotPaints(word, 'inset 0 0 0')).toBe(true)
   })
 })

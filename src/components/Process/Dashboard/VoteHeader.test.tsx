@@ -176,12 +176,14 @@ describe('VoteHeader', () => {
       expect(actions()).toEqual(['End the vote'])
     })
 
-    it('makes End the vote primary once every question is closed', () => {
+    it('reads a vote whose questions are all closed as closed, with Show the results (R22)', () => {
       renderHeader(
         byQuestion([question('q1', 'ENDED'), question('q2', 'ONGOING', { endedAt: '2026-03-10T11:00:00Z' })])
       )
 
-      expect(screen.getByRole('button', { name: 'End the vote' })).toHaveAttribute('data-variant', 'solid')
+      expect(screen.queryByRole('button', { name: 'End the vote' })).not.toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Show the results' })).toBeInTheDocument()
+      expect(screen.getByText('Closed')).toBeInTheDocument()
     })
 
     it('keeps only End the vote on a phone, and says when the vote closes', () => {

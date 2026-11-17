@@ -7,7 +7,6 @@ import {
   deriveVoteState,
   draftWarning,
   matchesSearch,
-  nextQuestionStep,
   nonTerminalQuestionIds,
   normalizeSearch,
   percentOf,
@@ -79,6 +78,7 @@ describe('deriveVoteState', () => {
     ],
     ['question by question with an open question is live', vote(['RESULTS', 'ONGOING', 'PAUSED'], byQuestion), 'live'],
     ['question by question with one closed and none open is live', vote(['ENDED', 'PAUSED'], byQuestion), 'live'],
+    ['question by question with every question closed is closed', vote(['ENDED', 'CANCELED'], byQuestion), 'closed'],
   ])('%s', (_name, process, expected) => {
     expect(deriveVoteState(process, NOW)).toBe(expected)
   })
@@ -99,32 +99,42 @@ describe('deriveQuestionState', () => {
     expect(deriveQuestionState(q, process, NOW)).toBe(expected)
   })
 
-  it('shows every non-terminal question as closed once the vote has ended', () => {
+  it('shows an open or voted question as closed once the vote has ended, and one never opened as not opened', () => {
     const ended = vote(['ONGOING'], { ...byQuestion, endDate: '2026-06-14T00:00:00Z' })
     expect(deriveQuestionState(question('ONGOING'), ended, NOW)).toBe('closed')
+    expect(deriveQuestionState(question('PAUSED', 0, { results: { voteCount: 2 } }), ended, NOW)).toBe('closed')
+    expect(deriveQuestionState(question('PAUSED'), ended, NOW)).toBe('notOpened')
+  })
+
+  it('reads the unvoted questions the end of the vote closed together as not opened', () => {
+    const at = (time: string, votes: number) => ({ endedAt: time, results: { voteCount: votes } })
+    const ended = {
+      ...vote([], byQuestion),
+      questions: [
+        question('ENDED', 0, at('2026-06-14T10:00:00Z', 0)),
+        question('ENDED', 1, at('2026-06-14T11:00:00Z', 12)),
+        question('ENDED', 2, at('2026-06-14T11:00:01Z', 0)),
+      ],
+    } as VotingProcessResponse
+    expect(ended.questions.map((q) => deriveQuestionState(q, ended, NOW))).toEqual(['closed', 'closed', 'notOpened'])
+  })
+
+  it('keeps an all-at-once question closed after the end', () => {
+    const ended = vote(['PAUSED'], { endDate: '2026-06-14T00:00:00Z' })
     expect(deriveQuestionState(question('PAUSED'), ended, NOW)).toBe('closed')
   })
 })
 
-describe('question counts and next step', () => {
+describe('question counts', () => {
   it('counts each state', () => {
-    expect(countQuestionStates(['closed', 'closed', 'open', 'toOpen'])).toEqual({
+    expect(countQuestionStates(['closed', 'closed', 'open', 'toOpen', 'notOpened'])).toEqual({
       toOpen: 1,
       open: 1,
       paused: 0,
       closed: 2,
       canceled: 0,
+      notOpened: 1,
     })
-  })
-
-  it.each([
-    [['closed', 'closed', 'open', 'toOpen'], { action: 'close', numbers: [3] }],
-    [['open', 'open', 'toOpen'], { action: 'close', numbers: [1, 2] }],
-    [['closed', 'toOpen', 'toOpen'], { action: 'open', numbers: [2] }],
-    [['closed', 'paused'], { action: 'resume', numbers: [2] }],
-    [['closed', 'closed'], null],
-  ] as const)('%j suggests %j', (states, step) => {
-    expect(nextQuestionStep(states)).toEqual(step)
   })
 })
 

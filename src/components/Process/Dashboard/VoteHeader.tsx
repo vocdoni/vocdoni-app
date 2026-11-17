@@ -9,7 +9,7 @@ import { generatePath, Link as RouterLink } from 'react-router'
 import { ActionContinue, ActionEnd, ActionPause, CancelVoteDialog } from '~components/Actions'
 import { useActions } from '~components/Actions/ActionsContext'
 import { PageTitle } from '~components/ui/PageTitle'
-import { ProcessStatus } from '~components/ui/ProcessStatus'
+import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
 import { ResponsiveMenu, type ResponsiveMenuItem } from '~components/ui/ResponsiveMenu'
 import { useIsDesktop } from '~components/ui/useIsMobile'
 import { useVoteText } from '~i18n/use-vote-text'
@@ -32,7 +32,7 @@ import {
 } from '~theme/icons'
 import { ucfirst } from '~utils/strings'
 import { useNow } from '~utils/use-now'
-import { deriveQuestionState, deriveVoteState, isTerminalQuestion, type VoteState } from '~utils/vote-state'
+import { deriveVoteState, isTerminalQuestion, type VoteState } from '~utils/vote-state'
 import { useVotingReportPdfDownload } from '../VotingReportPdf/VotingReportPdfButton'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
@@ -174,7 +174,7 @@ const StatusLine = (props: HeaderPartProps) => {
 }
 
 /** The boards' action matrix: which buttons each state shows, in order, and which one is primary. */
-const VoteActions = ({ election, state, now }: HeaderPartProps) => {
+const VoteActions = ({ election, state }: HeaderPartProps) => {
   const { t } = useTranslation()
   const isDesktop = useIsDesktop()
   // Equal parts on phones (the row spans the page); natural width from md.
@@ -197,16 +197,13 @@ const VoteActions = ({ election, state, now }: HeaderPartProps) => {
   const endVote = t('votes.page.end_vote', { defaultValue: 'End the vote' })
   switch (state) {
     case 'live': {
-      // Pausing needs an open question to hold; the phone board has no "Pause the vote".
+      // Pausing needs an open question to hold; the phone board has no "Pause the vote". A vote whose questions are
+      // all closed is closed (R22), so ending is never the only step left here.
       const canPause = isDesktop && election.questions.some((question) => question.status === 'ONGOING')
-      // Nothing left to open or close: ending is the next step.
-      const allClosed = election.questions.every((question) =>
-        ['closed', 'canceled'].includes(deriveQuestionState(question, election, now))
-      )
       return (
         <>
           {canPause && <ActionPause>{t('votes.page.pause_vote', { defaultValue: 'Pause the vote' })}</ActionPause>}
-          <ActionEnd variant={allClosed ? 'solid' : 'outline'} flex={fill}>
+          <ActionEnd variant='outline' flex={fill}>
             {endVote}
           </ActionEnd>
         </>
@@ -234,25 +231,6 @@ const VoteActions = ({ election, state, now }: HeaderPartProps) => {
   }
 }
 
-/** The state word, as the status shows it: the sheet's line under the vote's title. */
-const useStateWord = (state: VoteState) => {
-  const { t } = useTranslation()
-  switch (state) {
-    case 'draft':
-      return t('votes.state.draft', { defaultValue: 'Draft' })
-    case 'ready':
-      return t('votes.state.ready', { defaultValue: 'Ready' })
-    case 'live':
-      return t('votes.state.live', { defaultValue: 'Live' })
-    case 'paused':
-      return t('votes.state.paused', { defaultValue: 'Paused' })
-    case 'canceled':
-      return t('votes.state.canceled', { defaultValue: 'Canceled' })
-    default:
-      return t('votes.state.closed', { defaultValue: 'Closed' })
-  }
-}
-
 /** "More": a labelled dropdown on the desktop, the "…" button and a sheet on touch screens. */
 const VoteMenu = ({ election, state }: HeaderPartProps) => {
   const { t } = useTranslation()
@@ -263,7 +241,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
   const publicLanguage = usePublicLanguage()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
   const pdf = useVotingReportPdfDownload(election)
-  const stateWord = useStateWord(state)
+  const stateLabel = useProcessStateLabel()
   const [cancelling, setCancelling] = useState(false)
 
   const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
@@ -332,7 +310,7 @@ const VoteMenu = ({ election, state }: HeaderPartProps) => {
       <ResponsiveMenu
         label={moreActions}
         title={text(election.title)}
-        subtitle={stateWord}
+        subtitle={stateLabel(state)}
         trigger={
           isDesktop ? (
             <Button variant='dropdown'>

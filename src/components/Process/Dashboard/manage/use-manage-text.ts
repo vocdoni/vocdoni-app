@@ -1,15 +1,16 @@
 import { useTranslation } from 'react-i18next'
-import type { ManageStep, RowCounts } from './row-state'
+import type { QuestionStateCounts } from '~utils/vote-state'
+import type { ManageStep } from './row-state'
 
-type CountState = 'closed' | 'open' | 'paused' | 'toOpen' | 'notOpened'
+type CountState = keyof QuestionStateCounts
 
-// The questions card counts closed first; the phone band starts with what is open (boards).
+// The questions cards count closed first; the phone band starts with what is open (boards).
 const ORDER: Record<'card' | 'band', CountState[]> = {
-  card: ['closed', 'open', 'paused', 'toOpen', 'notOpened'],
-  band: ['open', 'paused', 'closed', 'toOpen', 'notOpened'],
+  card: ['closed', 'open', 'paused', 'toOpen', 'notOpened', 'canceled'],
+  band: ['open', 'paused', 'closed', 'toOpen', 'notOpened', 'canceled'],
 }
 
-/** The counts and the next-step line of the Gestió tab. */
+/** The question counts (Gestió and Resum) and the next-step line of the Gestió tab. */
 export const useManageText = () => {
   const { t, i18n } = useTranslation()
 
@@ -45,6 +46,12 @@ export const useManageText = () => {
           defaultValue_other: '{{count}} not opened',
           count,
         })
+      case 'canceled':
+        return t('votes.manage.count.canceled', {
+          defaultValue_one: '{{count}} voided',
+          defaultValue_other: '{{count}} voided',
+          count,
+        })
     }
   }
 
@@ -53,8 +60,8 @@ export const useManageText = () => {
 
   return {
     /** "2 closed · 1 open · 1 to open" (card) or "1 open, 2 closed, 1 to open" (band). Held questions count as paused. */
-    counts: (counts: RowCounts, where: 'card' | 'band') => {
-      const of: Record<CountState, number> = { ...counts, paused: counts.paused + counts.held }
+    counts: (counts: QuestionStateCounts & { held?: number }, where: 'card' | 'band') => {
+      const of: QuestionStateCounts = { ...counts, paused: counts.paused + (counts.held ?? 0) }
       return ORDER[where]
         .filter((state) => of[state] > 0)
         .map((state) => part(state, of[state]))
@@ -81,8 +88,6 @@ export const useManageText = () => {
           })
         case 'resumeVote':
           return t('votes.manage.next.resume_vote', { defaultValue: 'Next step: resume the vote' })
-        case 'endVote':
-          return t('votes.manage.next.end_vote', { defaultValue: 'Next step: end the vote' })
       }
     },
   }
