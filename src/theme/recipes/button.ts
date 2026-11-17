@@ -212,7 +212,14 @@ const sheetRow = defineStyle({
 })
 
 // The sheet's closing button: a full-width secondary at the touch height.
-const sheetClose = defineStyle({ ...outline, w: 'full', justifyContent: 'center', mt: '2' })
+// The sheet's body scrolls, which clips an outer ring on three sides: the same ring, drawn inside the button.
+const sheetClose = defineStyle({
+  ...outline,
+  boxShadow: '[inset 0 0 0 {borderWidths.hairline} {colors.border.emphasized}]',
+  w: 'full',
+  justifyContent: 'center',
+  mt: '2',
+})
 
 // A secondary that opens a menu ("More"): label, then a 15px muted chevron, with a tighter end. The size would
 // reset the gap, end padding and icon, so they live in a compound variant.
