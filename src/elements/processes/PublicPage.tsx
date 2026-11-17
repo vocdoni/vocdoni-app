@@ -1,4 +1,4 @@
-import type { VotingProcessResponse } from '@vocdoni/api-types'
+import type { Organization, VotingProcessResponse } from '@vocdoni/api-types'
 import { ElectionProvider, OrganizationProvider } from '@vocdoni/react-components'
 import LegalNotice, { StaticLegalNotice } from '~components/Layout/LegalNotice'
 import ArchiveProcessView from '~components/Process/Archive/View'
@@ -10,7 +10,8 @@ type PublicProcessPageProps = {
   id: string
   /** Prefetched process (SSR/route loader) — rendered immediately, still refetchable. */
   election?: VotingProcessResponse
-  organizationAddress?: string
+  /** Prefetched organization, seeded into the provider so its name and logo do not flash. */
+  organization?: Organization
   /** Archive-era (64-hex vochain id) election: rendered read-only, no providers needed. */
   legacyElection?: LegacyElection
   legacyOrganization?: LegacyOrganization
@@ -19,7 +20,7 @@ type PublicProcessPageProps = {
 const PublicProcessPage = ({
   id,
   election,
-  organizationAddress,
+  organization,
   legacyElection,
   legacyOrganization,
 }: PublicProcessPageProps) => {
@@ -39,7 +40,7 @@ const PublicProcessPage = ({
   }
 
   return (
-    <OrganizationProvider id={organizationAddress}>
+    <OrganizationProvider organization={organization}>
       {/* The ElectionProvider hosts the election data, results and the voter's
           CSP auth session; poll both reads so an open tab tracks status changes
           and live tallies. */}

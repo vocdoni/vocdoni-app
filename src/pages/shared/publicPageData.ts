@@ -147,6 +147,7 @@ const loadProcessPublicPageDataWith = async (pageContext: PageContextServer, bui
         pathnameByLanguage,
         origin,
       }),
+      showOrganizationLogo: getServerAppEnv().SHOW_ORG_LOGO === true,
     })
   } catch (error) {
     renderNotFoundIfNeeded(error)

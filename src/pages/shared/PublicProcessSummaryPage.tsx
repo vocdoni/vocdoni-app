@@ -3,7 +3,7 @@ import { usePageContext } from 'vike-react/usePageContext'
 import PublicLayout from '~elements/PublicLayout'
 import PublicProcessSummaryView from '~elements/processes/PublicSummary'
 import { AppProviders } from '~src/Providers'
-import { getHeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
+import { headerLogoFromBrand } from '~src/pages/shared/headerOrganizationLogo'
 import { getPublicLanguageLinksFromMeta } from '~src/pages/shared/publicPageData'
 import { usePreferredPublicLanguageRedirect } from '~src/pages/shared/publicPageRedirect'
 import type { PublicProcessPageData } from '~src/ssr/public-pages'
@@ -24,7 +24,7 @@ export default function PublicProcessSummaryPage() {
         publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}
         enableChat={false}
         showDashboardButton={false}
-        organizationLogo={getHeaderOrganizationLogo(data)}
+        organizationLogo={headerLogoFromBrand(data.brand)}
       >
         {data.era === 'archive' ? (
           <PublicProcessSummaryView
@@ -33,11 +33,7 @@ export default function PublicProcessSummaryPage() {
             legacyOrganization={data.legacyOrganization}
           />
         ) : (
-          <PublicProcessSummaryView
-            id={data.id}
-            election={data.election}
-            organizationAddress={data.organization?.address}
-          />
+          <PublicProcessSummaryView id={data.id} election={data.election} organization={data.organization} />
         )}
       </PublicLayout>
     </AppProviders>

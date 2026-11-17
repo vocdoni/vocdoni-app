@@ -9,7 +9,7 @@ vi.mock('~components/Layout/CrispChat', () => ({ default: () => null }))
 
 const organizationLogo = { src: 'https://cdn/acme.png', name: 'Acme' }
 
-const renderLayout = async (appEnv?: { SHOW_ORG_LOGO?: boolean }) => {
+const renderLayout = async (logo?: typeof organizationLogo) => {
   const i18nInstance = await createTestI18n({
     useReactI18next: true,
     resources: {
@@ -24,16 +24,18 @@ const renderLayout = async (appEnv?: { SHOW_ORG_LOGO?: boolean }) => {
 
   return render(
     <TestMemoryRouter>
-      <PublicLayout pathname='/en/processes/abc' organizationLogo={organizationLogo}>
+      <PublicLayout pathname='/en/processes/abc' organizationLogo={logo}>
         <div>content</div>
       </PublicLayout>
     </TestMemoryRouter>,
-    { i18nInstance, appEnv }
+    { i18nInstance }
   )
 }
 
+// Whether a process page shows its organisation's logo is decided by its brand, on the server (resolveProcessBrand);
+// the layout shows whatever logo it is given.
 describe('PublicLayout', () => {
-  it('keeps the Vocdoni logo in the header while SHOW_ORG_LOGO is off', async () => {
+  it('keeps the Vocdoni logo in the header without an organisation logo', async () => {
     await renderLayout()
 
     // Desktop and mobile variants, one hidden by CSS at any width.
@@ -41,16 +43,16 @@ describe('PublicLayout', () => {
     expect(screen.queryByAltText('Acme logo')).toBeNull()
   })
 
-  it('shows the organization logo in the header when SHOW_ORG_LOGO is on', async () => {
-    await renderLayout({ SHOW_ORG_LOGO: true })
+  it('shows the organisation logo it is given, whatever SHOW_ORG_LOGO says', async () => {
+    await renderLayout(organizationLogo)
 
     expect(screen.getByAltText('Acme logo')).toHaveAttribute('src', 'https://cdn/acme.png')
   })
 
   // The org logo brands the header only: the footer credits the platform, so it
-  // must keep saying Vocdoni however the deployment is branded.
+  // must keep saying Vocdoni however the page is branded.
   it('keeps the Vocdoni logo in the footer either way', async () => {
-    const { unmount } = await renderLayout({ SHOW_ORG_LOGO: true })
+    const { unmount } = await renderLayout(organizationLogo)
     expect(screen.getByRole('img', { name: 'Vocdoni logo' })).toBeInTheDocument()
     unmount()
 

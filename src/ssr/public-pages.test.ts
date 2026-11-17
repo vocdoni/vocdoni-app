@@ -238,9 +238,54 @@ describe('loadProcessPageData', () => {
       expect(pageData.legacyOrganization?.account?.name).toEqual({ default: 'Legacy Org' })
       expect(pageData.meta.title).toContain('Legacy annual vote')
       expect(pageData.meta.title).toContain('Legacy Org')
+      // Archive votes are never branded; without SHOW_ORG_LOGO there is no logo either.
+      expect(pageData.brand).toEqual({ branded: false, name: 'Legacy Org' })
     } finally {
       fetchSpy.mockRestore()
     }
+  })
+
+  const loadSaas = (election: unknown, organization: unknown, showOrganizationLogo?: boolean) =>
+    loadProcessPageData({
+      client: createMockClient({
+        organizationsGet: vi.fn().mockResolvedValue(organization),
+        electionsGet: vi.fn().mockResolvedValue(election),
+      }) as any,
+      id: '0xprocess',
+      language: 'ca',
+      alternates: [],
+      showOrganizationLogo,
+    })
+
+  it('resolves the brand of a vote with the branding add-on in the page language', async () => {
+    const pageData = await loadSaas(
+      createElection({ addOns: { branding: true } }),
+      createOrganization({
+        logo: { default: 'https://cdn.example/en.png', ca: 'https://cdn.example/ca.png' },
+        color: '#F5D90A',
+      })
+    )
+
+    expect(pageData.brand).toEqual({
+      branded: true,
+      name: 'Vocdoni Association',
+      logo: 'https://cdn.example/ca.png',
+      color: '#f5d90a',
+    })
+  })
+
+  it('leaves a vote without the add-on unbranded, with the logo only under SHOW_ORG_LOGO', async () => {
+    const organization = createOrganization({ logo: { default: 'https://cdn.example/en.png' }, color: '#f5d90a' })
+
+    expect((await loadSaas(createElection(), organization)).brand).toEqual({
+      branded: false,
+      name: 'Vocdoni Association',
+    })
+    expect((await loadSaas(createElection(), organization, true)).brand).toEqual({
+      branded: false,
+      name: 'Vocdoni Association',
+      logo: 'https://cdn.example/en.png',
+    })
   })
 })
 
