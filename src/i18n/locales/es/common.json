@@ -1809,6 +1809,80 @@
     }
   },
   "votes": {
+    "ballot": {
+      "as_voter": "Como votante",
+      "count_all_one": "{{count, number}} pregunta",
+      "count_all_many": "{{count, number}} preguntas, todas a la vez",
+      "count_all_other": "{{count, number}} preguntas, todas a la vez",
+      "count_by_question_one": "{{count, number}} pregunta",
+      "count_by_question_many": "{{count, number}} preguntas, pregunta a pregunta",
+      "count_by_question_other": "{{count, number}} preguntas, pregunta a pregunta",
+      "credits_one": "{{count, number}} crédito",
+      "credits_many": "{{count, number}} créditos",
+      "credits_other": "{{count, number}} créditos",
+      "fix": {
+        "cancel_and_duplicate": "Cancela la votación y duplícala para corregirla.",
+        "cancel_and_duplicate_short": "Cancela la votación y duplícala.",
+        "duplicate": "Duplícala para corregirla en una votación nueva.",
+        "duplicate_short": "Duplícala para corregirla.",
+        "title": "¿Has visto un error?"
+      },
+      "intro": "Texto de entrada",
+      "label": {
+        "mode": "Cómo se votan"
+      },
+      "locked": {
+        "opened": "Desde que se abrió la votación, las preguntas y las opciones quedan fijadas. Todo el mundo vota el mismo texto.",
+        "published": "Desde que se publicó la votación, las preguntas y las opciones quedan fijadas. Todo el mundo votará el mismo texto.",
+        "title": "La papeleta ya no se puede cambiar"
+      },
+      "mode": {
+        "all": "Todas a la vez, en una sola papeleta",
+        "by_question": "Pregunta a pregunta, a medida que se abren"
+      },
+      "options_label": "Opciones de la pregunta {{number}}",
+      "points_one": "{{count, number}} punto",
+      "points_many": "{{count, number}} puntos",
+      "points_other": "{{count, number}} puntos",
+      "rule": {
+        "approval_any": "Se pueden aprobar todas las opciones que se quiera. Gana la más aprobada.",
+        "approval_up_to_one": "Se puede aprobar hasta {{count, number}} opción. Gana la más aprobada.",
+        "approval_up_to_many": "Se pueden aprobar hasta {{count, number}} opciones. Gana la más aprobada.",
+        "approval_up_to_other": "Se pueden aprobar hasta {{count, number}} opciones. Gana la más aprobada.",
+        "budget_one": "Cada persona reparte {{amount}} en {{count, number}} opción, como quiera.",
+        "budget_many": "Cada persona reparte {{amount}} entre las {{count, number}} opciones, como quiera.",
+        "budget_other": "Cada persona reparte {{amount}} entre las {{count, number}} opciones, como quiera.",
+        "budget_weighted_one": "Cada persona reparte puntos en {{count, number}} opción, como quiera.",
+        "budget_weighted_many": "Cada persona reparte puntos entre las {{count, number}} opciones, como quiera.",
+        "budget_weighted_other": "Cada persona reparte puntos entre las {{count, number}} opciones, como quiera.",
+        "multiple_between": "Se marcan entre {{min}} y {{max}} opciones. Salen elegidas las {{max}} más votadas.",
+        "multiple_exact_one": "Se marca {{count, number}} opción. Sale elegida la más votada.",
+        "multiple_exact_many": "Se marcan {{count, number}} opciones. Salen elegidas las {{count, number}} más votadas.",
+        "multiple_exact_other": "Se marcan {{count, number}} opciones. Salen elegidas las {{count, number}} más votadas.",
+        "multiple_up_to_one": "Se puede marcar hasta {{count, number}} opción. Sale elegida la más votada.",
+        "multiple_up_to_many": "Se pueden marcar hasta {{count, number}} opciones. Salen elegidas las {{count, number}} más votadas.",
+        "multiple_up_to_other": "Se pueden marcar hasta {{count, number}} opciones. Salen elegidas las {{count, number}} más votadas.",
+        "quadratic_one": "Cada persona gasta {{amount}} en {{count, number}} opción. Cada voto de más a la misma opción cuesta más créditos.",
+        "quadratic_many": "Cada persona reparte {{amount}} entre las {{count, number}} opciones. Cada voto de más a la misma opción cuesta más créditos.",
+        "quadratic_other": "Cada persona reparte {{amount}} entre las {{count, number}} opciones. Cada voto de más a la misma opción cuesta más créditos.",
+        "quadratic_weighted_one": "Cada persona gasta créditos en {{count, number}} opción. Cada voto de más a la misma opción cuesta más créditos.",
+        "quadratic_weighted_many": "Cada persona reparte créditos entre las {{count, number}} opciones. Cada voto de más a la misma opción cuesta más créditos.",
+        "quadratic_weighted_other": "Cada persona reparte créditos entre las {{count, number}} opciones. Cada voto de más a la misma opción cuesta más créditos.",
+        "ranked_one": "Se ordena {{count, number}} opción, de la que más se quiere a la que menos.",
+        "ranked_many": "Se ordenan las {{count, number}} opciones, de la que más se quiere a la que menos.",
+        "ranked_other": "Se ordenan las {{count, number}} opciones, de la que más se quiere a la que menos.",
+        "single": "Se elige una sola opción. Gana la que tiene más votos."
+      },
+      "rules_title": "Cómo se vota",
+      "status_label": "Estado de la papeleta",
+      "tag": {
+        "exact": "{{max}} de {{total}}",
+        "per_person": "{{amount}} por persona",
+        "single": "Una opción",
+        "up_to": "Hasta {{max}} de {{total}}"
+      },
+      "title": "Lo que ve quien vota"
+    },
     "cancel": {
       "body_all_one": "El {{count, number}} voto emitido se descartará y no habrá resultados.",
       "body_all_many": "Los {{count, number}} votos emitidos se descartarán y no habrá resultados.",

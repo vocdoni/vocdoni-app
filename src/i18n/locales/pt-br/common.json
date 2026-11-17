@@ -1809,6 +1809,80 @@
     }
   },
   "votes": {
+    "ballot": {
+      "as_voter": "Como eleitor",
+      "count_all_one": "{{count, number}} pergunta",
+      "count_all_many": "{{count, number}} perguntas, tudo de uma vez",
+      "count_all_other": "{{count, number}} perguntas, tudo de uma vez",
+      "count_by_question_one": "{{count, number}} pergunta",
+      "count_by_question_many": "{{count, number}} perguntas, pergunta a pergunta",
+      "count_by_question_other": "{{count, number}} perguntas, pergunta a pergunta",
+      "credits_one": "{{count, number}} crédito",
+      "credits_many": "{{count, number}} créditos",
+      "credits_other": "{{count, number}} créditos",
+      "fix": {
+        "cancel_and_duplicate": "Cancele a votação e duplique-a para corrigi-la.",
+        "cancel_and_duplicate_short": "Cancele a votação e duplique-a.",
+        "duplicate": "Duplique-a para corrigi-la em uma nova votação.",
+        "duplicate_short": "Duplique-a para corrigi-la.",
+        "title": "Viu um erro?"
+      },
+      "intro": "Texto de introdução",
+      "label": {
+        "mode": "Como são votadas"
+      },
+      "locked": {
+        "opened": "Desde que a votação foi aberta, as perguntas e as opções ficam fixas. Todos votam no mesmo texto.",
+        "published": "Desde que a votação foi publicada, as perguntas e as opções ficam fixas. Todos vão votar no mesmo texto.",
+        "title": "A cédula não pode mais ser alterada"
+      },
+      "mode": {
+        "all": "Todas de uma vez, em uma única cédula",
+        "by_question": "Pergunta a pergunta, à medida que são abertas"
+      },
+      "options_label": "Opções da pergunta {{number}}",
+      "points_one": "{{count, number}} ponto",
+      "points_many": "{{count, number}} pontos",
+      "points_other": "{{count, number}} pontos",
+      "rule": {
+        "approval_any": "É possível aprovar quantas opções quiser. Vence a mais aprovada.",
+        "approval_up_to_one": "É possível aprovar até {{count, number}} opção. Vence a mais aprovada.",
+        "approval_up_to_many": "É possível aprovar até {{count, number}} opções. Vence a mais aprovada.",
+        "approval_up_to_other": "É possível aprovar até {{count, number}} opções. Vence a mais aprovada.",
+        "budget_one": "Cada pessoa distribui {{amount}} em {{count, number}} opção, como quiser.",
+        "budget_many": "Cada pessoa distribui {{amount}} entre as {{count, number}} opções, como quiser.",
+        "budget_other": "Cada pessoa distribui {{amount}} entre as {{count, number}} opções, como quiser.",
+        "budget_weighted_one": "Cada pessoa distribui pontos em {{count, number}} opção, como quiser.",
+        "budget_weighted_many": "Cada pessoa distribui pontos entre as {{count, number}} opções, como quiser.",
+        "budget_weighted_other": "Cada pessoa distribui pontos entre as {{count, number}} opções, como quiser.",
+        "multiple_between": "É preciso marcar entre {{min}} e {{max}} opções. São eleitas as {{max}} mais votadas.",
+        "multiple_exact_one": "É preciso marcar {{count, number}} opção. É eleita a mais votada.",
+        "multiple_exact_many": "É preciso marcar {{count, number}} opções. São eleitas as {{count, number}} mais votadas.",
+        "multiple_exact_other": "É preciso marcar {{count, number}} opções. São eleitas as {{count, number}} mais votadas.",
+        "multiple_up_to_one": "É possível marcar até {{count, number}} opção. É eleita a mais votada.",
+        "multiple_up_to_many": "É possível marcar até {{count, number}} opções. São eleitas as {{count, number}} mais votadas.",
+        "multiple_up_to_other": "É possível marcar até {{count, number}} opções. São eleitas as {{count, number}} mais votadas.",
+        "quadratic_one": "Cada pessoa gasta {{amount}} em {{count, number}} opção. Cada voto a mais na mesma opção custa mais créditos.",
+        "quadratic_many": "Cada pessoa distribui {{amount}} entre as {{count, number}} opções. Cada voto a mais na mesma opção custa mais créditos.",
+        "quadratic_other": "Cada pessoa distribui {{amount}} entre as {{count, number}} opções. Cada voto a mais na mesma opção custa mais créditos.",
+        "quadratic_weighted_one": "Cada pessoa gasta créditos em {{count, number}} opção. Cada voto a mais na mesma opção custa mais créditos.",
+        "quadratic_weighted_many": "Cada pessoa distribui créditos entre as {{count, number}} opções. Cada voto a mais na mesma opção custa mais créditos.",
+        "quadratic_weighted_other": "Cada pessoa distribui créditos entre as {{count, number}} opções. Cada voto a mais na mesma opção custa mais créditos.",
+        "ranked_one": "{{count, number}} opção é ordenada, da mais desejada à menos desejada.",
+        "ranked_many": "As {{count, number}} opções são ordenadas, da mais desejada à menos desejada.",
+        "ranked_other": "As {{count, number}} opções são ordenadas, da mais desejada à menos desejada.",
+        "single": "Escolha uma única opção. Vence a que tiver mais votos."
+      },
+      "rules_title": "Como se vota",
+      "status_label": "Status da cédula",
+      "tag": {
+        "exact": "{{max}} de {{total}}",
+        "per_person": "{{amount}} por pessoa",
+        "single": "Uma opção",
+        "up_to": "Até {{max}} de {{total}}"
+      },
+      "title": "O que o eleitor vê"
+    },
     "cancel": {
       "body_all_one": "O {{count, number}} voto emitido será descartado e não haverá resultados.",
       "body_all_many": "Os {{count, number}} votos emitidos serão descartados e não haverá resultados.",

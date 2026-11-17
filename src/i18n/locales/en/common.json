@@ -1778,6 +1778,68 @@
     }
   },
   "votes": {
+    "ballot": {
+      "as_voter": "As a voter",
+      "count_all_one": "{{count, number}} question",
+      "count_all_other": "{{count, number}} questions, all at once",
+      "count_by_question_one": "{{count, number}} question",
+      "count_by_question_other": "{{count, number}} questions, question by question",
+      "credits_one": "{{count, number}} credit",
+      "credits_other": "{{count, number}} credits",
+      "fix": {
+        "cancel_and_duplicate": "Cancel the vote and duplicate it to correct it.",
+        "cancel_and_duplicate_short": "Cancel the vote and duplicate it.",
+        "duplicate": "Duplicate it to correct it in a new vote.",
+        "duplicate_short": "Duplicate it to correct it.",
+        "title": "Spotted a mistake?"
+      },
+      "intro": "Intro text",
+      "label": {
+        "mode": "How they are voted"
+      },
+      "locked": {
+        "opened": "Since the vote opened, the questions and the options are fixed. Everyone votes on the same text.",
+        "published": "Since the vote was published, the questions and the options are fixed. Everyone will vote on the same text.",
+        "title": "The ballot can no longer be changed"
+      },
+      "mode": {
+        "all": "All at once, on a single ballot",
+        "by_question": "Question by question, as they open"
+      },
+      "options_label": "Options of question {{number}}",
+      "points_one": "{{count, number}} point",
+      "points_other": "{{count, number}} points",
+      "rule": {
+        "approval_any": "Any number of options can be approved. The one approved most wins.",
+        "approval_up_to_one": "Up to {{count, number}} option can be approved. The one approved most wins.",
+        "approval_up_to_other": "Up to {{count, number}} options can be approved. The one approved most wins.",
+        "budget_one": "Each person shares out {{amount}} among the {{count, number}} option, as they like.",
+        "budget_other": "Each person shares out {{amount}} among the {{count, number}} options, as they like.",
+        "budget_weighted_one": "Each person shares out points among the {{count, number}} option, as they like.",
+        "budget_weighted_other": "Each person shares out points among the {{count, number}} options, as they like.",
+        "multiple_between": "Mark between {{min}} and {{max}} options. The {{max}} with the most votes are chosen.",
+        "multiple_exact_one": "Mark {{count, number}} option. The one with the most votes is chosen.",
+        "multiple_exact_other": "Mark {{count, number}} options. The {{count, number}} with the most votes are chosen.",
+        "multiple_up_to_one": "Up to {{count, number}} option can be marked. The one with the most votes is chosen.",
+        "multiple_up_to_other": "Up to {{count, number}} options can be marked. The {{count, number}} with the most votes are chosen.",
+        "quadratic_one": "Each person spends {{amount}} on the {{count, number}} option. Each extra vote for the same option costs more credits.",
+        "quadratic_other": "Each person spends {{amount}} across the {{count, number}} options. Each extra vote for the same option costs more credits.",
+        "quadratic_weighted_one": "Each person spends credits on the {{count, number}} option. Each extra vote for the same option costs more credits.",
+        "quadratic_weighted_other": "Each person spends credits across the {{count, number}} options. Each extra vote for the same option costs more credits.",
+        "ranked_one": "The {{count, number}} option is put in order, from the most wanted to the least.",
+        "ranked_other": "The {{count, number}} options are put in order, from the most wanted to the least.",
+        "single": "Pick one option. The one with the most votes wins."
+      },
+      "rules_title": "How voting works",
+      "status_label": "Ballot status",
+      "tag": {
+        "exact": "{{max}} of {{total}}",
+        "per_person": "{{amount}} per person",
+        "single": "One option",
+        "up_to": "Up to {{max}} of {{total}}"
+      },
+      "title": "What voters see"
+    },
     "cancel": {
       "body_all_one": "The {{count, number}} vote cast will be discarded and there will be no results.",
       "body_all_other": "The {{count, number}} votes cast will be discarded and there will be no results.",

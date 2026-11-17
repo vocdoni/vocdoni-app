@@ -1809,6 +1809,80 @@
     }
   },
   "votes": {
+    "ballot": {
+      "as_voter": "Com a votant",
+      "count_all_one": "{{count, number}} pregunta",
+      "count_all_many": "{{count, number}} preguntes, totes alhora",
+      "count_all_other": "{{count, number}} preguntes, totes alhora",
+      "count_by_question_one": "{{count, number}} pregunta",
+      "count_by_question_many": "{{count, number}} preguntes, pregunta per pregunta",
+      "count_by_question_other": "{{count, number}} preguntes, pregunta per pregunta",
+      "credits_one": "{{count, number}} crèdit",
+      "credits_many": "{{count, number}} crèdits",
+      "credits_other": "{{count, number}} crèdits",
+      "fix": {
+        "cancel_and_duplicate": "Cancel·la la votació i duplica-la per corregir-la.",
+        "cancel_and_duplicate_short": "Cancel·la la votació i duplica-la.",
+        "duplicate": "Duplica-la per corregir-la en una votació nova.",
+        "duplicate_short": "Duplica-la per corregir-la.",
+        "title": "Hi has vist un error?"
+      },
+      "intro": "Text d'entrada",
+      "label": {
+        "mode": "Com es voten"
+      },
+      "locked": {
+        "opened": "Des que es va obrir la votació, les preguntes i les opcions queden fixades. Tothom vota el mateix text.",
+        "published": "Des que es va publicar la votació, les preguntes i les opcions queden fixades. Tothom votarà el mateix text.",
+        "title": "La papereta ja no es pot canviar"
+      },
+      "mode": {
+        "all": "Totes alhora, en una sola papereta",
+        "by_question": "Pregunta per pregunta, a mesura que s'obren"
+      },
+      "options_label": "Opcions de la pregunta {{number}}",
+      "points_one": "{{count, number}} punt",
+      "points_many": "{{count, number}} punts",
+      "points_other": "{{count, number}} punts",
+      "rule": {
+        "approval_any": "Es poden aprovar totes les opcions que es vulgui. Guanya la més aprovada.",
+        "approval_up_to_one": "Es pot aprovar fins a {{count, number}} opció. Guanya la més aprovada.",
+        "approval_up_to_many": "Es poden aprovar fins a {{count, number}} opcions. Guanya la més aprovada.",
+        "approval_up_to_other": "Es poden aprovar fins a {{count, number}} opcions. Guanya la més aprovada.",
+        "budget_one": "Cada persona reparteix {{amount}} en {{count, number}} opció, com vulgui.",
+        "budget_many": "Cada persona reparteix {{amount}} entre les {{count, number}} opcions, com vulgui.",
+        "budget_other": "Cada persona reparteix {{amount}} entre les {{count, number}} opcions, com vulgui.",
+        "budget_weighted_one": "Cada persona reparteix punts en {{count, number}} opció, com vulgui.",
+        "budget_weighted_many": "Cada persona reparteix punts entre les {{count, number}} opcions, com vulgui.",
+        "budget_weighted_other": "Cada persona reparteix punts entre les {{count, number}} opcions, com vulgui.",
+        "multiple_between": "Es marquen entre {{min}} i {{max}} opcions. Surten elegides les {{max}} més votades.",
+        "multiple_exact_one": "Es marca {{count, number}} opció. Surt elegida la més votada.",
+        "multiple_exact_many": "Es marquen {{count, number}} opcions. Surten elegides les {{count, number}} més votades.",
+        "multiple_exact_other": "Es marquen {{count, number}} opcions. Surten elegides les {{count, number}} més votades.",
+        "multiple_up_to_one": "Es pot marcar fins a {{count, number}} opció. Surt elegida la més votada.",
+        "multiple_up_to_many": "Es poden marcar fins a {{count, number}} opcions. Surten elegides les {{count, number}} més votades.",
+        "multiple_up_to_other": "Es poden marcar fins a {{count, number}} opcions. Surten elegides les {{count, number}} més votades.",
+        "quadratic_one": "Cada persona gasta {{amount}} en {{count, number}} opció. Cada vot de més a la mateixa opció costa més crèdits.",
+        "quadratic_many": "Cada persona reparteix {{amount}} entre les {{count, number}} opcions. Cada vot de més a la mateixa opció costa més crèdits.",
+        "quadratic_other": "Cada persona reparteix {{amount}} entre les {{count, number}} opcions. Cada vot de més a la mateixa opció costa més crèdits.",
+        "quadratic_weighted_one": "Cada persona gasta crèdits en {{count, number}} opció. Cada vot de més a la mateixa opció costa més crèdits.",
+        "quadratic_weighted_many": "Cada persona reparteix crèdits entre les {{count, number}} opcions. Cada vot de més a la mateixa opció costa més crèdits.",
+        "quadratic_weighted_other": "Cada persona reparteix crèdits entre les {{count, number}} opcions. Cada vot de més a la mateixa opció costa més crèdits.",
+        "ranked_one": "S'ordena {{count, number}} opció, de la que es vol primer a la que es vol última.",
+        "ranked_many": "S'ordenen les {{count, number}} opcions, de la que es vol primer a la que es vol última.",
+        "ranked_other": "S'ordenen les {{count, number}} opcions, de la que es vol primer a la que es vol última.",
+        "single": "Es tria una sola opció. Guanya la que té més vots."
+      },
+      "rules_title": "Com es vota",
+      "status_label": "Estat de la papereta",
+      "tag": {
+        "exact": "{{max}} de {{total}}",
+        "per_person": "{{amount}} per persona",
+        "single": "Una opció",
+        "up_to": "Fins a {{max}} de {{total}}"
+      },
+      "title": "El que veu qui vota"
+    },
     "cancel": {
       "body_all_one": "El {{count, number}} vot emès es descartarà i no hi haurà resultats.",
       "body_all_many": "Els {{count, number}} vots emesos es descartaran i no hi haurà resultats.",

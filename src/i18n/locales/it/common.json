@@ -1809,6 +1809,80 @@
     }
   },
   "votes": {
+    "ballot": {
+      "as_voter": "Come votante",
+      "count_all_one": "{{count, number}} domanda",
+      "count_all_many": "{{count, number}} domande, tutte insieme",
+      "count_all_other": "{{count, number}} domande, tutte insieme",
+      "count_by_question_one": "{{count, number}} domanda",
+      "count_by_question_many": "{{count, number}} domande, domanda per domanda",
+      "count_by_question_other": "{{count, number}} domande, domanda per domanda",
+      "credits_one": "{{count, number}} credito",
+      "credits_many": "{{count, number}} crediti",
+      "credits_other": "{{count, number}} crediti",
+      "fix": {
+        "cancel_and_duplicate": "Annulla la votazione e duplicala per correggerla.",
+        "cancel_and_duplicate_short": "Annulla la votazione e duplicala.",
+        "duplicate": "Duplicala per correggerla in una nuova votazione.",
+        "duplicate_short": "Duplicala per correggerla.",
+        "title": "Hai notato un errore?"
+      },
+      "intro": "Testo introduttivo",
+      "label": {
+        "mode": "Come si votano"
+      },
+      "locked": {
+        "opened": "Da quando la votazione è stata aperta, le domande e le opzioni sono fissate. Tutti votano lo stesso testo.",
+        "published": "Da quando la votazione è stata pubblicata, le domande e le opzioni sono fissate. Tutti voteranno lo stesso testo.",
+        "title": "La scheda non può più essere modificata"
+      },
+      "mode": {
+        "all": "Tutte insieme, in un’unica scheda",
+        "by_question": "Domanda per domanda, man mano che si aprono"
+      },
+      "options_label": "Opzioni della domanda {{number}}",
+      "points_one": "{{count, number}} punto",
+      "points_many": "{{count, number}} punti",
+      "points_other": "{{count, number}} punti",
+      "rule": {
+        "approval_any": "Si possono approvare tutte le opzioni che si vuole. Vince la più approvata.",
+        "approval_up_to_one": "Si può approvare fino a {{count, number}} opzione. Vince la più approvata.",
+        "approval_up_to_many": "Si possono approvare fino a {{count, number}} opzioni. Vince la più approvata.",
+        "approval_up_to_other": "Si possono approvare fino a {{count, number}} opzioni. Vince la più approvata.",
+        "budget_one": "Ogni persona distribuisce {{amount}} su {{count, number}} opzione, come vuole.",
+        "budget_many": "Ogni persona distribuisce {{amount}} tra le {{count, number}} opzioni, come vuole.",
+        "budget_other": "Ogni persona distribuisce {{amount}} tra le {{count, number}} opzioni, come vuole.",
+        "budget_weighted_one": "Ogni persona distribuisce punti su {{count, number}} opzione, come vuole.",
+        "budget_weighted_many": "Ogni persona distribuisce punti tra le {{count, number}} opzioni, come vuole.",
+        "budget_weighted_other": "Ogni persona distribuisce punti tra le {{count, number}} opzioni, come vuole.",
+        "multiple_between": "Si segnano tra {{min}} e {{max}} opzioni. Vengono elette le {{max}} più votate.",
+        "multiple_exact_one": "Si segna {{count, number}} opzione. Viene eletta la più votata.",
+        "multiple_exact_many": "Si segnano {{count, number}} opzioni. Vengono elette le {{count, number}} più votate.",
+        "multiple_exact_other": "Si segnano {{count, number}} opzioni. Vengono elette le {{count, number}} più votate.",
+        "multiple_up_to_one": "Si può segnare fino a {{count, number}} opzione. Viene eletta la più votata.",
+        "multiple_up_to_many": "Si possono segnare fino a {{count, number}} opzioni. Vengono elette le {{count, number}} più votate.",
+        "multiple_up_to_other": "Si possono segnare fino a {{count, number}} opzioni. Vengono elette le {{count, number}} più votate.",
+        "quadratic_one": "Ogni persona spende {{amount}} su {{count, number}} opzione. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_many": "Ogni persona distribuisce {{amount}} tra le {{count, number}} opzioni. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_other": "Ogni persona distribuisce {{amount}} tra le {{count, number}} opzioni. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_weighted_one": "Ogni persona spende crediti su {{count, number}} opzione. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_weighted_many": "Ogni persona distribuisce crediti tra le {{count, number}} opzioni. Ogni voto in più alla stessa opzione costa più crediti.",
+        "quadratic_weighted_other": "Ogni persona distribuisce crediti tra le {{count, number}} opzioni. Ogni voto in più alla stessa opzione costa più crediti.",
+        "ranked_one": "Si ordina {{count, number}} opzione, dalla più desiderata alla meno desiderata.",
+        "ranked_many": "Si ordinano le {{count, number}} opzioni, dalla più desiderata alla meno desiderata.",
+        "ranked_other": "Si ordinano le {{count, number}} opzioni, dalla più desiderata alla meno desiderata.",
+        "single": "Si sceglie una sola opzione. Vince quella con più voti."
+      },
+      "rules_title": "Come si vota",
+      "status_label": "Stato della scheda",
+      "tag": {
+        "exact": "{{max}} su {{total}}",
+        "per_person": "{{amount}} a persona",
+        "single": "Un’opzione",
+        "up_to": "Fino a {{max}} su {{total}}"
+      },
+      "title": "Cosa vede chi vota"
+    },
     "cancel": {
       "body_all_one": "Il {{count, number}} voto espresso verrà scartato e non ci saranno risultati.",
       "body_all_many": "I {{count, number}} voti espressi verranno scartati e non ci saranno risultati.",

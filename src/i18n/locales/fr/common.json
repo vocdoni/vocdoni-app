@@ -1809,6 +1809,80 @@
     }
   },
   "votes": {
+    "ballot": {
+      "as_voter": "Comme électeur",
+      "count_all_one": "{{count, number}} question",
+      "count_all_many": "{{count, number}} questions, toutes en même temps",
+      "count_all_other": "{{count, number}} questions, toutes en même temps",
+      "count_by_question_one": "{{count, number}} question",
+      "count_by_question_many": "{{count, number}} questions, question par question",
+      "count_by_question_other": "{{count, number}} questions, question par question",
+      "credits_one": "{{count, number}} crédit",
+      "credits_many": "{{count, number}} crédits",
+      "credits_other": "{{count, number}} crédits",
+      "fix": {
+        "cancel_and_duplicate": "Annulez le vote et dupliquez-le pour le corriger.",
+        "cancel_and_duplicate_short": "Annulez le vote et dupliquez-le.",
+        "duplicate": "Dupliquez-le pour le corriger dans un nouveau vote.",
+        "duplicate_short": "Dupliquez-le pour le corriger.",
+        "title": "Vous avez repéré une erreur ?"
+      },
+      "intro": "Texte d'introduction",
+      "label": {
+        "mode": "Mode de vote"
+      },
+      "locked": {
+        "opened": "Depuis l'ouverture du vote, les questions et les options sont figées. Tout le monde vote sur le même texte.",
+        "published": "Depuis la publication du vote, les questions et les options sont figées. Tout le monde votera sur le même texte.",
+        "title": "Le bulletin ne peut plus être modifié"
+      },
+      "mode": {
+        "all": "Toutes en même temps, sur un seul bulletin",
+        "by_question": "Question par question, au fur et à mesure de leur ouverture"
+      },
+      "options_label": "Options de la question {{number}}",
+      "points_one": "{{count, number}} point",
+      "points_many": "{{count, number}} points",
+      "points_other": "{{count, number}} points",
+      "rule": {
+        "approval_any": "Toutes les options souhaitées peuvent être approuvées. La plus approuvée l'emporte.",
+        "approval_up_to_one": "Jusqu'à {{count, number}} option peut être approuvée. La plus approuvée l'emporte.",
+        "approval_up_to_many": "Jusqu'à {{count, number}} options peuvent être approuvées. La plus approuvée l'emporte.",
+        "approval_up_to_other": "Jusqu'à {{count, number}} options peuvent être approuvées. La plus approuvée l'emporte.",
+        "budget_one": "Chaque personne répartit {{amount}} sur {{count, number}} option, comme elle le souhaite.",
+        "budget_many": "Chaque personne répartit {{amount}} entre les {{count, number}} options, comme elle le souhaite.",
+        "budget_other": "Chaque personne répartit {{amount}} entre les {{count, number}} options, comme elle le souhaite.",
+        "budget_weighted_one": "Chaque personne répartit des points sur {{count, number}} option, comme elle le souhaite.",
+        "budget_weighted_many": "Chaque personne répartit des points entre les {{count, number}} options, comme elle le souhaite.",
+        "budget_weighted_other": "Chaque personne répartit des points entre les {{count, number}} options, comme elle le souhaite.",
+        "multiple_between": "Entre {{min}} et {{max}} options sont à cocher. Les {{max}} les plus votées sont retenues.",
+        "multiple_exact_one": "{{count, number}} option est à cocher. La plus votée est retenue.",
+        "multiple_exact_many": "{{count, number}} options sont à cocher. Les {{count, number}} les plus votées sont retenues.",
+        "multiple_exact_other": "{{count, number}} options sont à cocher. Les {{count, number}} les plus votées sont retenues.",
+        "multiple_up_to_one": "Jusqu'à {{count, number}} option peut être cochée. La plus votée est retenue.",
+        "multiple_up_to_many": "Jusqu'à {{count, number}} options peuvent être cochées. Les {{count, number}} les plus votées sont retenues.",
+        "multiple_up_to_other": "Jusqu'à {{count, number}} options peuvent être cochées. Les {{count, number}} les plus votées sont retenues.",
+        "quadratic_one": "Chaque personne dépense {{amount}} sur {{count, number}} option. Chaque vote supplémentaire pour la même option coûte plus de crédits.",
+        "quadratic_many": "Chaque personne répartit {{amount}} entre les {{count, number}} options. Chaque vote supplémentaire pour la même option coûte plus de crédits.",
+        "quadratic_other": "Chaque personne répartit {{amount}} entre les {{count, number}} options. Chaque vote supplémentaire pour la même option coûte plus de crédits.",
+        "quadratic_weighted_one": "Chaque personne dépense des crédits sur {{count, number}} option. Chaque vote supplémentaire pour la même option coûte plus de crédits.",
+        "quadratic_weighted_many": "Chaque personne répartit des crédits entre les {{count, number}} options. Chaque vote supplémentaire pour la même option coûte plus de crédits.",
+        "quadratic_weighted_other": "Chaque personne répartit des crédits entre les {{count, number}} options. Chaque vote supplémentaire pour la même option coûte plus de crédits.",
+        "ranked_one": "{{count, number}} option est classée, de la plus souhaitée à la moins souhaitée.",
+        "ranked_many": "Les {{count, number}} options sont classées, de la plus souhaitée à la moins souhaitée.",
+        "ranked_other": "Les {{count, number}} options sont classées, de la plus souhaitée à la moins souhaitée.",
+        "single": "Une seule option est choisie. Celle qui obtient le plus de voix l'emporte."
+      },
+      "rules_title": "Comment voter",
+      "status_label": "État du bulletin",
+      "tag": {
+        "exact": "{{max}} sur {{total}}",
+        "per_person": "{{amount}} par personne",
+        "single": "Une option",
+        "up_to": "Jusqu'à {{max}} sur {{total}}"
+      },
+      "title": "Ce que voient les électeurs"
+    },
     "cancel": {
       "body_all_one": "Le {{count, number}} vote exprimé sera écarté et il n'y aura pas de résultats.",
       "body_all_many": "Les {{count, number}} votes exprimés seront écartés et il n'y aura pas de résultats.",

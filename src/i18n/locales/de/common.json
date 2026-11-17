@@ -1778,6 +1778,68 @@
     }
   },
   "votes": {
+    "ballot": {
+      "as_voter": "Als Wählende Person",
+      "count_all_one": "{{count, number}} Frage",
+      "count_all_other": "{{count, number}} Fragen, alle auf einmal",
+      "count_by_question_one": "{{count, number}} Frage",
+      "count_by_question_other": "{{count, number}} Fragen, Frage für Frage",
+      "credits_one": "{{count, number}} Credit",
+      "credits_other": "{{count, number}} Credits",
+      "fix": {
+        "cancel_and_duplicate": "Brich die Abstimmung ab und dupliziere sie, um sie zu korrigieren.",
+        "cancel_and_duplicate_short": "Brich die Abstimmung ab und dupliziere sie.",
+        "duplicate": "Dupliziere sie, um sie in einer neuen Abstimmung zu korrigieren.",
+        "duplicate_short": "Dupliziere sie, um sie zu korrigieren.",
+        "title": "Einen Fehler entdeckt?"
+      },
+      "intro": "Einleitungstext",
+      "label": {
+        "mode": "Wie abgestimmt wird"
+      },
+      "locked": {
+        "opened": "Seit die Abstimmung geöffnet wurde, stehen die Fragen und Optionen fest. Alle stimmen über denselben Text ab.",
+        "published": "Seit die Abstimmung veröffentlicht wurde, stehen die Fragen und Optionen fest. Alle werden über denselben Text abstimmen.",
+        "title": "Der Stimmzettel kann nicht mehr geändert werden"
+      },
+      "mode": {
+        "all": "Alle auf einmal, auf einem einzigen Stimmzettel",
+        "by_question": "Frage für Frage, sobald sie geöffnet werden"
+      },
+      "options_label": "Optionen von Frage {{number}}",
+      "points_one": "{{count, number}} Punkt",
+      "points_other": "{{count, number}} Punkte",
+      "rule": {
+        "approval_any": "Beliebig viele Optionen können befürwortet werden. Die meistbefürwortete gewinnt.",
+        "approval_up_to_one": "Bis zu {{count, number}} Option kann befürwortet werden. Die meistbefürwortete gewinnt.",
+        "approval_up_to_other": "Bis zu {{count, number}} Optionen können befürwortet werden. Die meistbefürwortete gewinnt.",
+        "budget_one": "Jede Person verteilt {{amount}} auf {{count, number}} Option, wie sie möchte.",
+        "budget_other": "Jede Person verteilt {{amount}} auf die {{count, number}} Optionen, wie sie möchte.",
+        "budget_weighted_one": "Jede Person verteilt Punkte auf {{count, number}} Option, wie sie möchte.",
+        "budget_weighted_other": "Jede Person verteilt Punkte auf die {{count, number}} Optionen, wie sie möchte.",
+        "multiple_between": "Es werden zwischen {{min}} und {{max}} Optionen markiert. Die {{max}} mit den meisten Stimmen sind gewählt.",
+        "multiple_exact_one": "Es wird {{count, number}} Option markiert. Die mit den meisten Stimmen ist gewählt.",
+        "multiple_exact_other": "Es werden {{count, number}} Optionen markiert. Die {{count, number}} mit den meisten Stimmen sind gewählt.",
+        "multiple_up_to_one": "Bis zu {{count, number}} Option kann markiert werden. Die mit den meisten Stimmen ist gewählt.",
+        "multiple_up_to_other": "Bis zu {{count, number}} Optionen können markiert werden. Die {{count, number}} mit den meisten Stimmen sind gewählt.",
+        "quadratic_one": "Jede Person setzt {{amount}} für {{count, number}} Option ein. Jede weitere Stimme für dieselbe Option kostet mehr Credits.",
+        "quadratic_other": "Jede Person verteilt {{amount}} auf die {{count, number}} Optionen. Jede weitere Stimme für dieselbe Option kostet mehr Credits.",
+        "quadratic_weighted_one": "Jede Person setzt Credits für {{count, number}} Option ein. Jede weitere Stimme für dieselbe Option kostet mehr Credits.",
+        "quadratic_weighted_other": "Jede Person verteilt Credits auf die {{count, number}} Optionen. Jede weitere Stimme für dieselbe Option kostet mehr Credits.",
+        "ranked_one": "{{count, number}} Option wird geordnet, von der meistgewünschten bis zur am wenigsten gewünschten.",
+        "ranked_other": "Die {{count, number}} Optionen werden geordnet, von der meistgewünschten bis zur am wenigsten gewünschten.",
+        "single": "Es wird eine einzige Option gewählt. Die mit den meisten Stimmen gewinnt."
+      },
+      "rules_title": "So wird abgestimmt",
+      "status_label": "Status des Stimmzettels",
+      "tag": {
+        "exact": "{{max}} von {{total}}",
+        "per_person": "{{amount}} pro Person",
+        "single": "Eine Option",
+        "up_to": "Bis zu {{max}} von {{total}}"
+      },
+      "title": "Was Wählende sehen"
+    },
     "cancel": {
       "body_all_one": "Die {{count, number}} abgegebene Stimme wird verworfen, und es gibt keine Ergebnisse.",
       "body_all_other": "Die {{count, number}} abgegebenen Stimmen werden verworfen, und es gibt keine Ergebnisse.",
