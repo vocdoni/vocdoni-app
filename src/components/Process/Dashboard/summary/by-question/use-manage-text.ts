@@ -8,6 +8,14 @@ import type { ManageStep } from './row-state'
 
 type CountState = keyof QuestionStateCounts
 
+// A description is markdown: its links keep their text, its emphasis and heading marks go.
+const plainText = (markdown: string) =>
+  markdown
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[*_~`#>]+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
 // Closed first, as both boards count them.
 const ORDER: CountState[] = ['closed', 'open', 'paused', 'toOpen', 'notOpened', 'canceled']
 
@@ -61,21 +69,24 @@ export const useManageText = () => {
     new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(numbers.map(String))
 
   return {
-    /** "2 closed · 1 open · 1 to open" on the desktop, with commas on a phone or tablet. Held questions count as paused. */
+    /**
+     * "2 closed · 1 open · 1 to open" on the desktop board, a list in the page's language on a phone or tablet. Held
+     * questions count as paused.
+     */
     counts: (counts: QuestionStateCounts & { held?: number }, desktop: boolean) => {
       const of: QuestionStateCounts = { ...counts, paused: counts.paused + (counts.held ?? 0) }
-      return ORDER.filter((state) => of[state] > 0)
-        .map((state) => part(state, of[state]))
-        .join(desktop ? ' · ' : ', ')
+      const parts = ORDER.filter((state) => of[state] > 0).map((state) => part(state, of[state]))
+      return desktop ? parts.join(' · ') : new Intl.ListFormat(i18n.language, { type: 'unit' }).format(parts)
     },
-    /** The quiet line under a question's title: its text and how it is answered ("One choice, simple majority."). */
+    /**
+     * The quiet line under a question's title: its text, as plain text (it is written in markdown), and how it is
+     * answered as a sentence of its own ("Single choice."). Nothing is added after the organiser's text.
+     */
     note: (question: VotingProcessQuestion, withDescription = true) => {
       const kind = questionKind(t, question)
-      const description = withDescription && question.description ? text(question.description) : ''
-      if (description && kind)
-        return t('votes.manage.note_kind', { defaultValue: '{{note}} {{kind}}.', note: description, kind })
-      if (kind) return t('votes.manage.kind', { defaultValue: '{{kind}}.', kind })
-      return description
+      const description = withDescription && question.description ? plainText(text(question.description)) : ''
+      const kindSentence = kind ? t('votes.manage.kind', { defaultValue: '{{kind}}.', kind }) : ''
+      return [description, kindSentence].filter(Boolean).join(' ')
     },
     /** "Turnout: 172 of 312" over a question's bar, or its votes when the electorate is unknown. */
     turnout: (votes: number, electorate?: number) =>

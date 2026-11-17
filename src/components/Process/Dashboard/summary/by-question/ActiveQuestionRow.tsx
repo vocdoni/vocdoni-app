@@ -88,7 +88,7 @@ export const ActiveQuestionRow = ({
             />
           </Flex>
           {note && (
-            <Text textStyle='note' color='fg.subtle'>
+            <Text textStyle='note' color='fg.subtle' lineClamp={3}>
               {note}
             </Text>
           )}

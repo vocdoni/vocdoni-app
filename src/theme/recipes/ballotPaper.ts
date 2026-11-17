@@ -7,8 +7,18 @@ const dot = { boxSize: { base: '4.5', lg: '4' } }
 // 20px line on touch screens, which drifts a third of a pixel per line from the boards).
 const quiet = { fontSize: { base: 'md', lg: 'sm' }, lineHeight: 'moderate', color: 'fg.subtle' } as const
 
+// The voters' running text (the intro, a question's description), as markdown paragraphs.
+const running = {
+  mt: '1',
+  maxW: { lg: 'lead' },
+  fontSize: { base: 'item', lg: 'md' },
+  lineHeight: 'moderate',
+  color: 'fg.muted',
+  '& > * + *': { mt: '2' },
+} as const
+
 // The organiser's view of a ballot (Papereta, boards V4VotePaper and M4VotePaper): the title line, the intro card,
-// each question's head (number, title, note, type tag) and its option rows with an empty mark, and the statement rows
+// each question's head (number, title, description, note, type tag) and its option rows with an empty mark, and the statement rows
 // of the side cards. `kind` picks the mark: a radio, a checkbox, a rank box or a points box.
 export const BallotPaper = defineSlotRecipe({
   slots: [
@@ -21,6 +31,7 @@ export const BallotPaper = defineSlotRecipe({
     'head',
     'number',
     'title',
+    'description',
     'note',
     'tag',
     'option',
@@ -64,14 +75,7 @@ export const BallotPaper = defineSlotRecipe({
       fontWeight: 'medium',
       color: 'fg.subtle',
     },
-    introText: {
-      mt: '1',
-      maxW: { lg: 'lead' },
-      fontSize: { base: 'item', lg: 'md' },
-      lineHeight: 'moderate',
-      color: 'fg.muted',
-      '& > * + *': { mt: '2' },
-    },
+    introText: running,
     // Number, title and note; the tag goes under the note on a phone and at the end of the title's line from `md`.
     // The 1px short at the bottom is the first option's rule.
     head: {
@@ -98,6 +102,8 @@ export const BallotPaper = defineSlotRecipe({
       fontWeight: 'semibold',
       letterSpacing: 'heading.item',
     },
+    // A question's own text under its title, as the intro's.
+    description: { ...running, gridColumn: '2' },
     note: { ...quiet, gridColumn: '2', mt: { lg: 'note.paper' } },
     // Centred on the title's first line from `md`; on a tablet the board stretches it to the row (21px).
     tag: {

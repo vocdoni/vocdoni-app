@@ -119,6 +119,18 @@ describe('VoteBallot', () => {
     expect(screen.getByText('10 points per person')).toBeInTheDocument()
   })
 
+  it("renders a question's own text under its title as markdown, as voters read it", () => {
+    const described = {
+      ...QUESTIONS[0],
+      description: { default: 'See **article 4** of the [statutes](https://example.org).' },
+    }
+    renderBallot(createProcess({ questions: [described] }))
+
+    expect(screen.getByText('article 4').tagName).toBe('STRONG')
+    expect(screen.getByRole('link', { name: 'statutes' })).toHaveAttribute('href', 'https://example.org')
+    expect(screen.queryByText(/\*\*/)).not.toBeInTheDocument()
+  })
+
   it('opens the public page as a voter', () => {
     renderBallot(createProcess())
 

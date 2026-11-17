@@ -2,6 +2,7 @@ import { Box, Card, chakra, Tag, useSlotRecipe } from '@chakra-ui/react'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Markdown } from '~components/ui/Markdown'
 import { useVoteText } from '~i18n/use-vote-text'
 import { questionRule } from './question-rule'
 
@@ -13,7 +14,7 @@ type BallotQuestionProps = {
 }
 
 /**
- * One question as voters will read it: number, title, how it is answered (a sentence and a tag) and each option
+ * One question as voters will read it: number, title, its text, how it is answered (a sentence and a tag) and each option
  * with the empty mark the voter will fill.
  */
 export const BallotQuestion = ({ question, index, plain = false }: BallotQuestionProps) => {
@@ -22,12 +23,19 @@ export const BallotQuestion = ({ question, index, plain = false }: BallotQuestio
   const rule = useMemo(() => (plain ? null : questionRule(t, question)), [plain, t, question])
   const styles = useSlotRecipe({ key: 'ballotPaper' })({ kind: rule?.mark })
   const number = index + 1
+  // What voters read under the title, as they read it: markdown.
+  const description = question.description ? text(question.description) : ''
 
   return (
     <Card.Root as='li' variant='frame' overflow='hidden'>
       <Box css={styles.head}>
         <chakra.span css={styles.number}>{number}</chakra.span>
         <chakra.h3 css={styles.title}>{text(question.title)}</chakra.h3>
+        {description && (
+          <Box css={styles.description}>
+            <Markdown components={{ p: ({ children }) => <chakra.p>{children}</chakra.p> }}>{description}</Markdown>
+          </Box>
+        )}
         {rule && <chakra.p css={styles.note}>{rule.note}</chakra.p>}
         {rule && (
           <Tag.Root variant='kind' size='md' css={styles.tag}>

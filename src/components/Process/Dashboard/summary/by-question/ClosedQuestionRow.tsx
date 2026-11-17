@@ -103,7 +103,7 @@ export const ClosedQuestionRow = ({
               maxW={{ md: 'results.detail', lg: 'full' }}
             >
               {note && (
-                <Text textStyle='note' color='fg.subtle'>
+                <Text textStyle='note' color='fg.subtle' lineClamp={3}>
                   {note}
                 </Text>
               )}
