@@ -6,9 +6,11 @@ import {
   deriveQuestionState,
   deriveVoteState,
   draftWarning,
+  isSettledQuestion,
   matchesSearch,
   nonTerminalQuestionIds,
   normalizeSearch,
+  pausedHoldIds,
   percentOf,
   questionElectorate,
   timeLeft,
@@ -79,8 +81,68 @@ describe('deriveVoteState', () => {
     ['question by question with an open question is live', vote(['RESULTS', 'ONGOING', 'PAUSED'], byQuestion), 'live'],
     ['question by question with one closed and none open is live', vote(['ENDED', 'PAUSED'], byQuestion), 'live'],
     ['question by question with every question closed is closed', vote(['ENDED', 'CANCELED'], byQuestion), 'closed'],
+    ['a published process with no questions is ready', vote([]), 'ready'],
+    [
+      'a published process with no questions is closed past its end',
+      vote([], { endDate: '2026-06-10T00:00:00Z' }),
+      'closed',
+    ],
   ])('%s', (_name, process, expected) => {
     expect(deriveVoteState(process, NOW)).toBe(expected)
+  })
+
+  describe('a question-by-question vote with nothing open', () => {
+    const withVotes = (statuses: QuestionStatus[], votes: number[], extra: Record<string, unknown> = {}) => {
+      const process = vote(statuses, { ...byQuestion, ...extra })
+      process.questions.forEach((q, index) => (q.results = { voteCount: votes[index] ?? 0 }))
+      return process
+    }
+
+    it('is paused when a question that had votes was paused on its own, on any device', () => {
+      expect(deriveVoteState(withVotes(['PAUSED', 'PAUSED'], [12, 0]), NOW)).toBe('paused')
+      expect(deriveVoteState(withVotes(['ENDED', 'PAUSED'], [9, 4]), NOW)).toBe('paused')
+    })
+
+    it('is paused when this browser remembers holding a question with no votes yet', () => {
+      expect(deriveVoteState(withVotes(['PAUSED', 'PAUSED'], [0, 0]), NOW, new Set(['q1']))).toBe('paused')
+    })
+
+    it('stays ready before its start, and ready or live when no paused question was open', () => {
+      const early = withVotes(['PAUSED'], [3], { startDate: '2026-06-20T00:00:00Z' })
+      expect(deriveVoteState(early, NOW, new Set(['q0']))).toBe('ready')
+      expect(deriveVoteState(withVotes(['PAUSED', 'PAUSED'], [0, 0]), NOW)).toBe('ready')
+      expect(deriveVoteState(withVotes(['ENDED', 'PAUSED'], [9, 0]), NOW)).toBe('live')
+      // A memory of a question that is open again or over says nothing.
+      expect(deriveVoteState(withVotes(['ENDED', 'PAUSED'], [9, 0]), NOW, new Set(['q0']))).toBe('live')
+    })
+  })
+})
+
+describe('pausedHoldIds', () => {
+  const process = () => {
+    const p = vote(['PAUSED', 'PAUSED', 'PAUSED', 'ONGOING'], byQuestion)
+    p.questions[0].results = { voteCount: 5 }
+    return p
+  }
+
+  it('takes the remembered paused questions over the voted ones', () => {
+    expect(pausedHoldIds(process(), new Set(['q1', 'q3']))).toEqual(['q1'])
+  })
+
+  it('falls back to every paused question with votes without a memory', () => {
+    expect(pausedHoldIds(process())).toEqual(['q0'])
+    expect(pausedHoldIds(vote(['PAUSED']), new Set(['q0']))).toEqual([])
+  })
+})
+
+describe('isSettledQuestion', () => {
+  it('is settled on a final tally or a terminal status, never on the clock alone', () => {
+    expect(isSettledQuestion(question('ENDED'))).toBe(true)
+    expect(isSettledQuestion(question('RESULTS'))).toBe(true)
+    expect(isSettledQuestion(question('ONGOING', 0, { results: { finalResults: true } }))).toBe(true)
+    expect(isSettledQuestion(question('ONGOING'), { finalResults: true })).toBe(true)
+    expect(isSettledQuestion(question('ONGOING'), { finalResults: false })).toBe(false)
+    expect(isSettledQuestion(question('PAUSED'))).toBe(false)
   })
 })
 
@@ -145,6 +207,13 @@ describe('participation', () => {
     expect(percentOf(5, undefined)).toBeUndefined()
   })
 
+  it('never rounds a partial share to 0% or 100%', () => {
+    expect(percentOf(311, 312)).toBe(99)
+    expect(percentOf(1, 400)).toBe(1)
+    expect(percentOf(0, 400)).toBe(0)
+    expect(percentOf(400, 400)).toBe(100)
+  })
+
   it('divides a restricted question by its own electorate', () => {
     const process = vote(['ONGOING'])
     expect(questionElectorate(question('ONGOING', 0, { eligibleMemberIds: ['a', 'b'] }), process)).toBe(2)
@@ -172,7 +241,7 @@ describe('list rows', () => {
     vote(['CANCELED'], { id: 'canceled', endDate: '2026-06-11T00:00:00Z' }),
   ]
 
-  it('counts each chip so the four add up to all (audit F2)', () => {
+  it('counts each chip so the four add up to all', () => {
     expect(countByFilter(toVoteRows(fixtures, NOW))).toEqual({ all: 9, live: 3, ready: 2, drafts: 1, closed: 3 })
   })
 

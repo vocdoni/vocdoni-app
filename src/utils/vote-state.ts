@@ -3,7 +3,10 @@ import type { QuestionStatus, VotingProcessQuestion, VotingProcessResponse } fro
 import { intervalToDuration, type Duration } from 'date-fns'
 import { isQuestionByQuestion } from '~src/types/voting-process'
 
-/** The one state a vote shows in the dashboard. Never depends on vote counts, so the list and the vote page agree. */
+/**
+ * The one state a vote shows in the dashboard. The list and the vote page derive it with the same function; only a
+ * question-by-question pause reads vote counts, which list items lack (see `pausedHoldIds`).
+ */
 export type VoteState = 'draft' | 'ready' | 'live' | 'paused' | 'closed' | 'canceled'
 
 /** The state of one question of a question-by-question vote; `notOpened` once the vote ended before it opened. */
@@ -24,17 +27,45 @@ export const hasEndedBySchedule = (process: VotingProcessResponse, now: Date): b
   return !!end && now.getTime() >= end.getTime()
 }
 
-/** First match wins (spec B, audit F3). Statuses arrive normalised by the client (`READY` reads as `ONGOING`). */
-export const deriveVoteState = (process: VotingProcessResponse, now: Date = new Date()): VoteState => {
+const NO_IDS: ReadonlySet<string> = new Set()
+
+/**
+ * The paused questions of a question-by-question vote that a pause holds, i.e. that were open before: the ones this
+ * browser remembers pausing when it remembers any (`remembered`), else every paused question that has votes. Only the
+ * single read carries vote counts, so on a list item only the memory can tell.
+ */
+export const pausedHoldIds = (process: VotingProcessResponse, remembered: ReadonlySet<string> = NO_IDS): string[] => {
+  if (!isQuestionByQuestion(process)) return []
+  const paused = process.questions.filter((question) => question.status === 'PAUSED')
+  const fromMemory = paused.filter((question) => remembered.has(question.id))
+  const held = fromMemory.length ? fromMemory : paused.filter((question) => (question.results?.voteCount ?? 0) > 0)
+  return held.map(({ id }) => id)
+}
+
+/**
+ * First match wins. Statuses arrive normalised by the client (`READY` reads as `ONGOING`). `remembered` is the pause
+ * memory of this browser for this vote (question ids), never the source of the state on its own.
+ */
+export const deriveVoteState = (
+  process: VotingProcessResponse,
+  now: Date = new Date(),
+  remembered: ReadonlySet<string> = NO_IDS
+): VoteState => {
   if (!process.published) return 'draft'
   const { questions } = process
-  if (questions.length > 0 && questions.every((question) => question.status === 'CANCELED')) return 'canceled'
-  // A question-by-question vote whose questions are all over is closed too: nothing is left to end (R22).
+  // A published process with no questions has nothing open nor closed: only its schedule can end it.
+  if (!questions.length) return hasEndedBySchedule(process, now) ? 'closed' : 'ready'
+  if (questions.every((question) => question.status === 'CANCELED')) return 'canceled'
+  // A question-by-question vote whose questions are all over is closed too: nothing is left to end on chain.
   if (questions.every(isOverQuestion) || hasEndedBySchedule(process, now)) return 'closed'
   const anyOngoing = questions.some((question) => question.status === 'ONGOING')
-  // A question-by-question vote opens its questions one by one: it is ready until one opens or closes. Its pause as
-  // a whole lives in the pause memory (`useVotePause`), not in the API.
-  if (isQuestionByQuestion(process)) return !anyOngoing && !questions.some(isOverQuestion) ? 'ready' : 'live'
+  if (isQuestionByQuestion(process)) {
+    if (anyOngoing) return 'live'
+    // Started, nothing open and a question that was open now paused: nobody can vote, so the vote is paused.
+    if (!isBeforeStart(process.startDate, now) && pausedHoldIds(process, remembered).length) return 'paused'
+    // Otherwise it opens its questions one by one: ready until one opens or closes, live between questions.
+    return questions.some(isOverQuestion) ? 'live' : 'ready'
+  }
   if (isBeforeStart(process.startDate, now)) return 'ready'
   return anyOngoing ? 'live' : 'paused'
 }
@@ -87,14 +118,20 @@ export const countQuestionStates = (states: readonly QuestionState[]): QuestionS
   })
 
 /** Integer percent, or undefined when there is nothing to divide by (an absent census size). */
-export const percentOf = (part: number, whole: number | undefined): number | undefined =>
-  whole && whole > 0 ? Math.round((part / whole) * 100) : undefined
+export const percentOf = (part: number, whole: number | undefined): number | undefined => {
+  if (!whole || whole <= 0) return undefined
+  const exact = (part / whole) * 100
+  // Never round a partial share to 0% or 100%: 311 of 312 is 99%, 1 of 400 is 1%.
+  if (exact > 0 && exact < 1) return 1
+  if (exact > 99 && exact < 100) return 99
+  return Math.round(exact)
+}
 
 /** Who may vote a question: its own restriction when it has one, else the whole census. */
 export const questionElectorate = (question: VotingProcessQuestion, process: VotingProcessResponse) =>
   question.eligibleMemberIds?.length || process.census?.size || undefined
 
-/** Questions a header action may target: never a terminal one (the backend rejects the whole batch, audit F1). */
+/** Questions a header action may target: never a terminal one (the backend rejects the whole batch). */
 export const nonTerminalQuestionIds = (process: VotingProcessResponse | null | undefined): string[] =>
   (process?.questions ?? []).filter((question) => !isTerminalQuestion(question)).map(({ id }) => id)
 
@@ -140,9 +177,28 @@ export const compareVoteRows = (a: VoteRow, b: VoteRow): number => {
   }
 }
 
-/** Builds, sorts and memo-friendly freezes the list rows. */
-export const toVoteRows = (processes: readonly VotingProcessResponse[], now: Date): VoteRow[] =>
-  processes.map((process) => ({ process, state: deriveVoteState(process, now) })).sort(compareVoteRows)
+/** Builds and sorts the list rows; `rememberedOf` gives this browser's pause memory of each vote. */
+export const toVoteRows = (
+  processes: readonly VotingProcessResponse[],
+  now: Date,
+  rememberedOf: (processId: string) => ReadonlySet<string> = () => NO_IDS
+): VoteRow[] =>
+  processes
+    .map((process) => ({ process, state: deriveVoteState(process, now, rememberedOf(process.id)) }))
+    .sort(compareVoteRows)
+
+/**
+ * Whether a closed question's tally can be called the result: the chain marked it final, or the question reached a
+ * terminal status on the server (no vote can land any more). A close told only by the browser clock is not settled.
+ */
+export const isSettledQuestion = (
+  question: Pick<VotingProcessQuestion, 'status' | 'results'>,
+  results?: { finalResults?: boolean } | null
+): boolean =>
+  results?.finalResults === true ||
+  question.results?.finalResults === true ||
+  question.status === 'ENDED' ||
+  question.status === 'RESULTS'
 
 /** Case and accent insensitive. The list API has no search parameter, so the list filters the rows it loaded. */
 export const normalizeSearch = (value: string): string =>
