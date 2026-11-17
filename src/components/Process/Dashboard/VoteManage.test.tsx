@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event'
-import type { VotingProcessResponse } from '@vocdoni/api-types'
+import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { mockUseElection, render, screen, within } from '~src/test-utils'
@@ -9,11 +9,15 @@ import { VoteManage } from './VoteManage'
 
 const change = vi.fn()
 let questionStatus: { pending?: { questionId: string; status: string }; isBusy: boolean } = { isBusy: false }
+let votePause = { isHeld: false, heldQuestionIds: [] as string[], isPending: false }
 let canManage = true
 let currentNow = new Date('2026-03-01T12:00:00Z')
 
 vi.mock('~queries/question-status', () => ({
   useQuestionStatusAction: () => ({ change, ...questionStatus }),
+}))
+vi.mock('~queries/vote-pause', () => ({
+  useVotePause: () => ({ ...votePause, pause: vi.fn(), resume: vi.fn() }),
 }))
 vi.mock('~queries/votes', () => ({ useCanManageVotes: () => canManage }))
 vi.mock('~components/Actions/ActionsContext', () => ({ useActions: () => ({ disabled: false }) }))
@@ -35,9 +39,16 @@ const questions = () => [
     id: 'q2',
     title: { default: 'Board' },
     status: 'ONGOING',
+    secretUntilTheEnd: true,
     results: createQuestionResults({ questionId: 'q2', voteCount: 172, finalResults: false }),
   }),
-  createQuestion({ id: 'q3', title: { default: 'Statutes' }, status: 'PAUSED', results: undefined }),
+  createQuestion({
+    id: 'q3',
+    title: { default: 'Statutes' },
+    description: { default: 'Do we approve the new article 4?' },
+    status: 'PAUSED',
+    results: undefined,
+  }),
 ]
 
 const build = (overrides: Partial<VotingProcessResponse> = {}) =>
@@ -52,6 +63,8 @@ const build = (overrides: Partial<VotingProcessResponse> = {}) =>
     initialStatus: 'PAUSED',
     ...overrides,
   }) as unknown as VotingProcessResponse
+
+const withQuestions = (list: VotingProcessQuestion[]) => build({ questions: list })
 
 const show = (election: VotingProcessResponse) => {
   setReactProvidersMock({
@@ -68,10 +81,13 @@ const show = (election: VotingProcessResponse) => {
   )
 }
 
+const questionsList = () => within(screen.getByRole('region', { name: 'Questions' }))
+
 describe('VoteManage', () => {
   beforeEach(() => {
     change.mockReset()
     questionStatus = { isBusy: false }
+    votePause = { isHeld: false, heldQuestionIds: [], isPending: false }
     canManage = true
     currentNow = new Date('2026-03-01T12:00:00Z')
   })
@@ -82,27 +98,51 @@ describe('VoteManage', () => {
     expect(screen.getByText('summary page')).toBeInTheDocument()
   })
 
-  it('counts the questions, hints the next step and toggles a closed result', async () => {
+  it('counts the questions in the card and the band, and hints the next step', () => {
     show(build())
     expect(screen.getByText('1 closed · 1 open · 1 to open')).toBeInTheDocument()
-    expect(screen.getByText('Next: close question 2')).toBeInTheDocument()
-    const toggle = screen.getByRole('button', { name: 'Show the result of question 1' })
-    expect(toggle).toHaveAttribute('aria-expanded', 'false')
-    await userEvent.click(toggle)
-    expect(toggle).toHaveAttribute('aria-expanded', 'true')
-    expect(screen.getAllByRole('progressbar').length).toBeGreaterThan(0)
+    expect(screen.getByText('1 open, 1 closed, 1 to open')).toBeInTheDocument()
+    expect(screen.getByText('Next step: close question 2')).toBeInTheDocument()
+    expect(screen.getByText(/Questions still open will close then/)).toBeInTheDocument()
   })
 
-  it('opens and pauses questions, and closes only after confirming', async () => {
+  it('opens a closed question on its whole line: verdict, tally, turnout and final bars', async () => {
+    show(build())
+    const toggle = screen.getByRole('button', { name: 'Question 1, Budget. Approve. Show or hide the detail' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(toggle).toHaveTextContent('7 to 3')
+    expect(toggle).toHaveTextContent('5%')
+    await userEvent.click(toggle)
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('10 of 200 voted')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Winning choice' })).toBeInTheDocument()
+  })
+
+  it('opens a question to open on its line to show the question', async () => {
+    show(build())
+    const toggle = screen.getByRole('button', { name: 'Question 3, Statutes. To open. Show or hide the detail' })
+    expect(screen.queryByText('Do we approve the new article 4?')).not.toBeInTheDocument()
+    await userEvent.click(toggle)
+    expect(screen.getByText('Do we approve the new article 4?')).toBeInTheDocument()
+  })
+
+  it('opens and pauses questions, and closes only after a primary confirm', async () => {
     show(build())
     await userEvent.click(screen.getByRole('button', { name: 'Open' }))
     expect(change).toHaveBeenCalledWith({ questionId: 'q3', status: 'ready' })
+    expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute('data-variant', 'outline')
     await userEvent.click(screen.getByRole('button', { name: 'Pause' }))
     expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'paused' })
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveAttribute('data-variant', 'solid')
     await userEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(change).not.toHaveBeenCalledWith({ questionId: 'q2', status: 'ended' })
     const dialog = await screen.findByRole('dialog')
-    await userEvent.click(within(dialog).getByRole('button', { name: 'Close question 2' }))
+    expect(within(dialog).getByText('Close question 2?')).toBeInTheDocument()
+    expect(within(dialog).getByText(/“Board” will close with the 172 votes it has now/)).toBeInTheDocument()
+    expect(within(dialog).getByRole('button', { name: 'No, leave it open' })).toBeInTheDocument()
+    const confirm = within(dialog).getByRole('button', { name: 'Close question 2' })
+    expect(confirm).toHaveAttribute('data-tone', 'primary')
+    await userEvent.click(confirm)
     expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'ended' })
   })
 
@@ -120,41 +160,107 @@ describe('VoteManage', () => {
     expect(screen.getByRole('button', { name: 'Open' })).not.toHaveAttribute('data-loading')
   })
 
-  it('disables Open before the start and drops the buttons after the end', () => {
+  it('before the start disables Open and says when it starts', () => {
     currentNow = new Date('2026-01-01T12:00:00Z')
-    const { unmount } = show(build())
+    show(build())
     expect(screen.getByRole('button', { name: 'Open' })).toBeDisabled()
     expect(screen.getByText(/The vote starts/)).toBeInTheDocument()
-    unmount()
+    expect(screen.queryByText('1 closed · 1 open · 1 to open')).not.toBeInTheDocument()
+  })
+
+  it('after the end drops the buttons and reads a never-opened question as not opened', () => {
     currentNow = new Date('2026-05-01T12:00:00Z')
     show(build())
     expect(screen.queryByRole('button', { name: 'Open' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Pause' })).not.toBeInTheDocument()
-    // The vote's own state reads Closed too, so count inside the questions list.
-    expect(within(screen.getByRole('region', { name: 'Questions' })).getAllByText('Closed')).toHaveLength(3)
+    expect(screen.queryByText(/Next step/)).not.toBeInTheDocument()
+    expect(questionsList().getAllByText('Closed')).toHaveLength(2)
+    expect(questionsList().getByText('Not opened')).toBeInTheDocument()
   })
 
-  it('shows no buttons to a viewer', () => {
+  it('shows no buttons and no next step to a viewer', () => {
     canManage = false
     show(build())
     expect(screen.queryByRole('button', { name: 'Open' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Pause' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/Next step/)).not.toBeInTheDocument()
   })
 
   it('shows the lock note and no bars for a secret open question', () => {
+    show(withQuestions([questions()[1]]))
+    expect(screen.getByText('Results will show when the question closes.')).toBeInTheDocument()
+    expect(questionsList().queryByText('Approve')).not.toBeInTheDocument()
+  })
+
+  it('shows provisional bars, with no winner, while results are live', () => {
     show(
-      build({
-        questions: [
-          createQuestion({
-            id: 'q2',
-            status: 'ONGOING',
-            secretUntilTheEnd: true,
-            results: createQuestionResults({ voteCount: 5, finalResults: false }),
-          }),
-        ],
-      })
+      withQuestions([
+        createQuestion({
+          id: 'q2',
+          status: 'ONGOING',
+          results: createQuestionResults({ voteCount: 10, finalResults: false }),
+        }),
+      ])
     )
-    expect(screen.getByText('Results show when the question closes.')).toBeInTheDocument()
-    expect(screen.queryByText(/Approve/)).not.toBeInTheDocument()
+    expect(screen.getByText('Provisional result.')).toBeInTheDocument()
+    expect(questionsList().getByText('Approve')).toBeInTheDocument()
+    expect(screen.queryByRole('img', { name: 'Winning choice' })).not.toBeInTheDocument()
+  })
+
+  it('makes Open the primary only when it is the next step', () => {
+    show(
+      withQuestions([
+        createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+        createQuestion({ id: 'q2', title: { default: 'Second' }, status: 'PAUSED', results: undefined }),
+        createQuestion({ id: 'q3', title: { default: 'Third' }, status: 'PAUSED', results: undefined }),
+      ])
+    )
+    expect(screen.getByText('Next step: open question 2')).toBeInTheDocument()
+    const [second, third] = screen.getAllByRole('button', { name: 'Open' })
+    expect(second).toHaveAttribute('data-variant', 'solid')
+    expect(third).toHaveAttribute('data-variant', 'outline')
+  })
+
+  it('offers Resume and Close on a paused question, and says nobody can vote on it', async () => {
+    show(
+      withQuestions([
+        createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+        createQuestion({ id: 'q2', status: 'PAUSED', results: createQuestionResults({ voteCount: 5 }) }),
+      ])
+    )
+    expect(screen.getByText('Next step: resume question 2')).toBeInTheDocument()
+    expect(screen.getByText('No one can vote on it.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Resume' })).toHaveAttribute('data-variant', 'solid')
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveAttribute('data-variant', 'outline')
+    await userEvent.click(screen.getByRole('button', { name: 'Resume' }))
+    expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'ready' })
+  })
+
+  it('holds every question while the whole vote is paused', () => {
+    votePause = { isHeld: true, heldQuestionIds: ['q2'], isPending: false }
+    show(
+      withQuestions([
+        createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+        createQuestion({ id: 'q2', status: 'PAUSED', results: createQuestionResults({ voteCount: 5 }) }),
+        createQuestion({ id: 'q3', status: 'PAUSED', results: undefined }),
+      ])
+    )
+    expect(screen.getByText('The vote is paused.')).toBeInTheDocument()
+    expect(screen.getByText('Held by the pause of the vote.')).toBeInTheDocument()
+    expect(screen.getByText('Next step: resume the vote')).toBeInTheDocument()
+    expect(screen.getByText('1 closed · 1 paused · 1 to open')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Open' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Resume' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+  })
+
+  it('asks to end the vote once every question is closed', () => {
+    show(
+      withQuestions([
+        createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+        createQuestion({ id: 'q2', status: 'ENDED', results: createQuestionResults({ voteCount: 6 }) }),
+      ])
+    )
+    expect(screen.getByText('Next step: end the vote')).toBeInTheDocument()
   })
 })

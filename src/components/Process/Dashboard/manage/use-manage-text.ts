@@ -1,0 +1,89 @@
+import { useTranslation } from 'react-i18next'
+import type { ManageStep, RowCounts } from './row-state'
+
+type CountState = 'closed' | 'open' | 'paused' | 'toOpen' | 'notOpened'
+
+// The questions card counts closed first; the phone band starts with what is open (boards).
+const ORDER: Record<'card' | 'band', CountState[]> = {
+  card: ['closed', 'open', 'paused', 'toOpen', 'notOpened'],
+  band: ['open', 'paused', 'closed', 'toOpen', 'notOpened'],
+}
+
+/** The counts and the next-step line of the Gestió tab. */
+export const useManageText = () => {
+  const { t, i18n } = useTranslation()
+
+  const part = (state: CountState, count: number) => {
+    switch (state) {
+      case 'closed':
+        return t('votes.manage.count.closed', {
+          defaultValue_one: '{{count}} closed',
+          defaultValue_other: '{{count}} closed',
+          count,
+        })
+      case 'open':
+        return t('votes.manage.count.open', {
+          defaultValue_one: '{{count}} open',
+          defaultValue_other: '{{count}} open',
+          count,
+        })
+      case 'paused':
+        return t('votes.manage.count.paused', {
+          defaultValue_one: '{{count}} paused',
+          defaultValue_other: '{{count}} paused',
+          count,
+        })
+      case 'toOpen':
+        return t('votes.manage.count.to_open', {
+          defaultValue_one: '{{count}} to open',
+          defaultValue_other: '{{count}} to open',
+          count,
+        })
+      case 'notOpened':
+        return t('votes.manage.count.not_opened', {
+          defaultValue_one: '{{count}} not opened',
+          defaultValue_other: '{{count}} not opened',
+          count,
+        })
+    }
+  }
+
+  const list = (numbers: number[]) =>
+    new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(numbers.map(String))
+
+  return {
+    /** "2 closed · 1 open · 1 to open" (card) or "1 open, 2 closed, 1 to open" (band). Held questions count as paused. */
+    counts: (counts: RowCounts, where: 'card' | 'band') => {
+      const of: Record<CountState, number> = { ...counts, paused: counts.paused + counts.held }
+      return ORDER[where]
+        .filter((state) => of[state] > 0)
+        .map((state) => part(state, of[state]))
+        .join(where === 'card' ? ' · ' : ', ')
+    },
+    next: (step: ManageStep) => {
+      switch (step.action) {
+        case 'close':
+          return t('votes.manage.next.close', {
+            defaultValue_one: 'Next step: close question {{numbers}}',
+            defaultValue_other: 'Next step: close questions {{numbers}}',
+            count: step.numbers.length,
+            numbers: list(step.numbers),
+          })
+        case 'open':
+          return t('votes.manage.next.open', {
+            defaultValue: 'Next step: open question {{numbers}}',
+            numbers: list(step.numbers),
+          })
+        case 'resume':
+          return t('votes.manage.next.resume', {
+            defaultValue: 'Next step: resume question {{numbers}}',
+            numbers: list(step.numbers),
+          })
+        case 'resumeVote':
+          return t('votes.manage.next.resume_vote', { defaultValue: 'Next step: resume the vote' })
+        case 'endVote':
+          return t('votes.manage.next.end_vote', { defaultValue: 'Next step: end the vote' })
+      }
+    },
+  }
+}

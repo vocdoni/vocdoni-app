@@ -1,54 +1,108 @@
-import { Flex, Progress, Stack, Text } from '@chakra-ui/react'
+import { Box, Grid, Icon, Progress, Span, Stack, Text } from '@chakra-ui/react'
 import type { QuestionResults, VotingProcessQuestion } from '@vocdoni/api-types'
-import { decodeQuestionResults, tryInferQuestionBallotType, type DecodedChoiceResult } from '@vocdoni/ballot'
+import { decodeQuestionResults, tryInferQuestionBallotType } from '@vocdoni/ballot'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
+import { CheckIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
+import { questionOutcome } from '~utils/vote-outcome'
 
 export type QuestionResultBarsProps = {
   question: VotingProcessQuestion
   results?: QuestionResults
+  /** A closed question's tally: the winner gets the check, the weight and the tag, the other choices dim. Without
+   * it the bars are provisional (an open question with live results): no winner, nothing dimmed. */
+  final?: boolean
+  /** Votes are summed weights. */
+  weighted?: boolean
 }
 
-/** One bar per choice of a question, with its votes and share. No winner highlight: there is no approval semantic. */
-export const QuestionResultBars = ({ question, results }: QuestionResultBarsProps) => {
-  const { t } = useTranslation()
-  const { text } = useVoteText()
-  if (!results?.results?.length || !tryInferQuestionBallotType(question)) return null
+type Tally = { key: string; value?: number; votes: number }
 
-  let tallies: DecodedChoiceResult[]
+// One entry per choice, in ballot order, then the abstentions of a multiple-choice question.
+const tallyOf = (question: VotingProcessQuestion, results?: QuestionResults): Tally[] | null => {
+  if (!results?.results?.length || !tryInferQuestionBallotType(question)) return null
   try {
-    tallies = decodeQuestionResults(question, results.results).filter(
-      (entry): entry is DecodedChoiceResult => entry.choice !== 'abstain'
-    )
+    const decoded = decodeQuestionResults(question, results.results)
+    const byChoice = new Map<number | 'abstain', number>(decoded.map((entry) => [entry.choice, entry.votes] as const))
+    const rows: Tally[] = question.choices.map((choice) => ({
+      key: String(choice.value),
+      value: choice.value,
+      votes: byChoice.get(choice.value) ?? 0,
+    }))
+    const abstain = byChoice.get('abstain')
+    return abstain !== undefined ? [...rows, { key: 'abstain', votes: abstain }] : rows
   } catch {
     return null
   }
-  const total = tallies.reduce((sum, entry) => sum + entry.votes, 0)
+}
+
+/**
+ * One bar per choice of a question (board V4VoteManage): a column for the winner's check, the choice and its tag,
+ * the votes and the share of the question's votes, and a 6px bar under them.
+ */
+export const QuestionResultBars = ({ question, results, final = false, weighted = false }: QuestionResultBarsProps) => {
+  const { t } = useTranslation()
+  const { text } = useVoteText()
+  const tally = useMemo(() => tallyOf(question, results), [question, results])
+  const winner = useMemo(() => {
+    const outcome = final ? questionOutcome(question, results, { weighted }) : null
+    if (outcome?.kind === 'pair' || outcome?.kind === 'winner') return outcome.winner.value
+    return outcome?.kind === 'top' ? outcome.choice.value : undefined
+  }, [final, question, results, weighted])
+  if (!tally) return null
+
+  const base = results?.voteCount || tally.reduce((sum, entry) => sum + entry.votes, 0)
+  const choiceTitle = (entry: Tally) => {
+    const choice = question.choices.find((candidate) => candidate.value === entry.value)
+    return choice ? text(choice.title) : t('votes.manage.abstention', { defaultValue: 'Abstention' })
+  }
 
   return (
-    <Stack gap='3'>
-      {question.choices.map((choice) => {
-        const votes = tallies.find((entry) => entry.choice === choice.value)?.votes ?? 0
-        const percent = total > 0 ? Math.round((votes / total) * 100) : 0
-        const title = text(choice.title)
-        const figure = t('votes.manage.result_figure', {
-          defaultValue: '{{votes}} · {{percent}}%',
-          votes: quantity(votes),
-          percent,
-        })
+    <Stack gap='2'>
+      {tally.map((entry) => {
+        const won = entry.value !== undefined && entry.value === winner
+        const percent = base > 0 ? Math.round((entry.votes / base) * 100) : 0
+        const label = choiceTitle(entry)
+        const votes = quantity(entry.votes)
+        const share = t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })
         return (
-          <Stack key={String(choice.value)} gap='1'>
-            <Flex justify='space-between' gap='3'>
-              <Text textStyle='body-sm'>{title}</Text>
-              <Text textStyle='figure'>{figure}</Text>
-            </Flex>
-            <Progress.Root variant='results' value={percent} translations={{ value: () => `${title}, ${figure}` }}>
+          <Grid key={entry.key} templateColumns='[{sizes.5} minmax(0, 1fr) auto]' rowGap='1' alignItems='baseline'>
+            <Box alignSelf='center' display='flex' color='status.success.fg'>
+              {won && (
+                <Box as='span' role='img' aria-label={t('votes.manage.winner', { defaultValue: 'Winning choice' })}>
+                  <Icon as={CheckIcon} boxSize='3.5' aria-hidden />
+                </Box>
+              )}
+            </Box>
+            <Text minW='0' display='inline-flex' alignItems='baseline' gap='2'>
+              <Span fontWeight={won ? 'semibold' : 'normal'}>{label}</Span>
+              {won && (
+                <Span textStyle='eyebrow' color='status.success.fg'>
+                  {t('votes.manage.winner_tag', { defaultValue: 'Winner' })}
+                </Span>
+              )}
+            </Text>
+            <Text whiteSpace='nowrap'>
+              <Span textStyle='figure' fontWeight='medium'>
+                {votes}
+              </Span>
+              <Span textStyle='figure' color='fg.subtle' display='inline-block' minW='9' textAlign='end'>
+                {share}
+              </Span>
+            </Text>
+            <Progress.Root
+              variant='results'
+              value={percent}
+              gridColumn='2 / span 2'
+              translations={{ value: () => `${label}, ${votes}, ${share}` }}
+            >
               <Progress.Track>
-                <Progress.Range />
+                <Progress.Range opacity={final && winner !== undefined && !won ? 'dimmed' : undefined} />
               </Progress.Track>
             </Progress.Root>
-          </Stack>
+          </Grid>
         )
       })}
     </Stack>
