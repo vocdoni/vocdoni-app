@@ -42,6 +42,32 @@ describe('Theme', () => {
     expect(css).toMatch(/--chakra-colors-color-palette-solid:\s*var\(--chakra-colors-brand-solid\)/)
   })
 
+  // A branded vote's colour (resolved on the server) wins over the deployment's PRIMARY_COLOR on its page.
+  it('builds the system from a valid primaryColor instead of PRIMARY_COLOR', () => {
+    render(
+      <AppEnvProvider value={buildAppEnv({ PRIMARY_COLOR: '#1a73e8' })}>
+        <Theme primaryColor='#F5D90A'>
+          <div>child</div>
+        </Theme>
+      </AppEnvProvider>
+    )
+
+    expect(injectedCss()).toMatch(/--chakra-colors-brand-500:\s*#f5d90a/)
+    expect(injectedCss()).not.toMatch(/--chakra-colors-brand-500:\s*#1a73e8/)
+  })
+
+  it('keeps PRIMARY_COLOR when primaryColor is not a hex colour', () => {
+    render(
+      <AppEnvProvider value={buildAppEnv({ PRIMARY_COLOR: '#1a73e8' })}>
+        <Theme primaryColor='red'>
+          <div>child</div>
+        </Theme>
+      </AppEnvProvider>
+    )
+
+    expect(injectedCss()).toMatch(/--chakra-colors-brand-500:\s*#1a73e8/)
+  })
+
   it('uses the Fil blue brand without PRIMARY_COLOR', () => {
     renderWithEnv({})
 

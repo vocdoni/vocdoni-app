@@ -18,7 +18,7 @@ export default function PublicProcessPage() {
   })
 
   return (
-    <AppProviders language={data.meta.language} followSystem>
+    <AppProviders language={data.meta.language} followSystem primaryColor={data.brand?.color}>
       <PublicLayout
         pathname={pathname}
         publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}
