@@ -12,6 +12,7 @@ import { Routes } from '~src/router/routes'
 import { isLegacyProcess } from '~src/types/voting-process'
 import { ChevronRightIcon, LockIcon } from '~theme/icons'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { isSettledQuestion } from '~utils/vote-state'
 import { ByQuestionCard } from './by-question/ByQuestionCard'
 import { AllAtOnceRow, CompactQuestionRow, showsTally } from './QuestionRows'
 import { SummaryCardHeader } from './SummaryCardHeader'
@@ -23,8 +24,11 @@ const ResultsLine = ({ model }: { model: SummaryModel }) => {
   let line: string
   if (model.state === 'canceled')
     line = t('votes.summary.results_line.none', { defaultValue: 'There will be no results.' })
+  // As the hero: public only once the server has every question over.
   else if (model.state === 'closed')
-    line = t('votes.summary.results_line.public', { defaultValue: 'The results are public now.' })
+    line = model.election.questions.every((question) => isSettledQuestion(question))
+      ? t('votes.summary.results_line.public', { defaultValue: 'The results are public now.' })
+      : t('votes.summary.idle.ended_counting', { defaultValue: 'The final results are still being counted.' })
   else if (model.secret)
     line = t('votes.summary.results_line.secret', { defaultValue: 'The results will show when the vote closes.' })
   else line = t('votes.summary.results_line.live', { defaultValue: 'The results show live, during the vote.' })
