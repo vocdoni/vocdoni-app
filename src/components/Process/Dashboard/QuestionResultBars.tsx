@@ -5,27 +5,53 @@ import { useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
 import { quantity } from '~utils/numbers'
 import { tallyBase, tallyOf, tallyUnit, type Tally } from '~utils/question-tally'
-import { questionOutcome } from '~utils/vote-outcome'
+import { percentOf } from '~utils/vote-state'
 
 export type QuestionResultBarsProps = {
   question: VotingProcessQuestion
   results?: QuestionResults
-  /** A closed question's tally: the winner's label is set in bold and the other choices dim. Without it the bars are
-   * provisional (an open question with live results): no winner, nothing dimmed. */
+  /** A closed question's tally: the leading choice's label weighs more and the other bars dim. Without it the bars
+   * are provisional (an open question with live results): nothing is set apart. */
   final?: boolean
   /** Votes are summed weights. */
   weighted?: boolean
   /**
-   * `indented` (a question-by-question row from `lg`): an empty 20px column before the label and plain counts.
-   * `plain`: the bars align with the title and counts carry their unit.
+   * `indented` (a question-by-question row from `lg`, board V4VoteOne): an empty 20px column before the label and
+   * plain counts. `plain` (V4VoteManageAll, the touch boards): the bars align with the title and counts carry their
+   * unit; the label and count stay regular below `lg`.
    */
   layout?: 'indented' | 'plain'
 }
 
 /**
- * One bar per choice of a question: the choice, its votes and their share, and a 6px bar under them. The `indented`
- * layout (board V4VoteOne) leaves a 20px column before the label; `plain` (V4VoteManageAll, the touch boards) is below.
+ * The one choice set apart in a final tally: the single top count, never an abstention. A tie sets none apart, so the
+ * drawing says no more than the words (nothing names a winner).
  */
+const leaderOf = (tally: Tally[]): string | undefined => {
+  const choices = tally.filter((entry) => entry.key !== 'abstain')
+  const top = Math.max(0, ...choices.map((entry) => entry.votes))
+  const leaders = choices.filter((entry) => entry.votes === top)
+  return top > 0 && leaders.length === 1 ? leaders[0].key : undefined
+}
+
+const LAYOUT = {
+  indented: {
+    columns: '[{sizes.5} minmax(0, 1fr) auto]',
+    span: '2 / span 2',
+    label: { gridColumn: '2' },
+    weight: 'semibold',
+    countWeight: 'medium',
+  },
+  plain: {
+    columns: '[minmax(0, 1fr) auto]',
+    span: '1 / span 2',
+    label: { textStyle: { base: 'body', lg: 'control' } },
+    weight: { base: 'normal', lg: 'semibold' },
+    countWeight: { base: 'normal', lg: 'medium' },
+  },
+} as const
+
+/** One bar per choice of a question: the choice, its count and its share, and a 6px bar under them. */
 export const QuestionResultBars = ({
   question,
   results,
@@ -36,114 +62,72 @@ export const QuestionResultBars = ({
   const { t } = useTranslation()
   const { text } = useVoteText()
   const tally = useMemo(() => tallyOf(question, results), [question, results])
-  const winner = useMemo(() => {
-    const outcome = final && layout === 'indented' ? questionOutcome(question, results, { weighted }) : null
-    if (outcome?.kind === 'pair' || outcome?.kind === 'winner') return outcome.winner.value
-    return outcome?.kind === 'top' ? outcome.choice.value : undefined
-  }, [final, layout, question, results, weighted])
   if (!tally) return null
 
+  const look = LAYOUT[layout]
   // A weighted or point-based tally is not one entry per voter: its share is of the total.
   const base = tallyBase(question, results, tally, weighted)
+  const unit = tallyUnit(question, weighted)
+  const leader = final ? leaderOf(tally) : undefined
   const choiceTitle = (entry: Tally) => {
     const choice = question.choices.find((candidate) => candidate.value === entry.value)
     return choice ? text(choice.title) : t('votes.manage.abstention', { defaultValue: 'Abstention' })
   }
-  const percentOf = (entry: Tally) => (base > 0 ? Math.round((entry.votes / base) * 100) : 0)
-
-  if (layout === 'plain') {
-    const points = tallyUnit(question, weighted) === 'points'
-    const top = Math.max(...tally.map((entry) => entry.votes))
-    return (
-      <Stack gap='2'>
-        {tally.map((entry) => {
-          const leads = final && top > 0 && entry.votes === top
-          const percent = percentOf(entry)
-          const label = choiceTitle(entry)
-          const votes = quantity(entry.votes)
-          const count = points
-            ? t('votes.results.choice_points', {
-                defaultValue_one: '{{votes}} point',
-                defaultValue_other: '{{votes}} points',
-                count: entry.votes,
-                votes,
-              })
-            : t('votes.results.choice_votes', {
-                defaultValue_one: '{{votes}} vote',
-                defaultValue_other: '{{votes}} votes',
-                count: entry.votes,
-                votes,
-              })
-          const share = t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })
-          return (
-            <Grid key={entry.key} templateColumns='[minmax(0, 1fr) auto]' rowGap='1' alignItems='baseline'>
-              {/* The touch boards keep the label and the count regular; the desktop one weighs the top choice. */}
-              <Text
-                minW='0'
-                textStyle={{ base: 'body', lg: 'control' }}
-                lineHeight='row.title'
-                fontWeight={leads ? { base: 'normal', lg: 'semibold' } : 'normal'}
-              >
-                {label}
-              </Text>
-              <Text whiteSpace='nowrap' textStyle='figure' lineHeight='row.title'>
-                <Span fontWeight={{ base: 'normal', lg: 'medium' }}>{count}</Span>
-                <Span color='fg.subtle' display='inline-block' minW='results.share' textAlign='end'>
-                  {share}
-                </Span>
-              </Text>
-              <Progress.Root
-                variant='results'
-                value={Math.min(percent, 100)}
-                gridColumn='1 / span 2'
-                translations={{ value: () => `${label}, ${count}, ${share}` }}
-              >
-                <Progress.Track>
-                  <Progress.Range opacity={final && top > 0 && !leads ? 'outvoted' : undefined} />
-                </Progress.Track>
-              </Progress.Root>
-            </Grid>
-          )
-        })}
-      </Stack>
-    )
+  const countOf = (entry: Tally) => {
+    const votes = quantity(entry.votes)
+    if (layout === 'indented') return votes
+    switch (unit) {
+      case 'points':
+        return t('votes.results.choice_points', {
+          defaultValue_one: '{{votes}} point',
+          defaultValue_other: '{{votes}} points',
+          count: entry.votes,
+          votes,
+        })
+      case 'weight':
+        return t('votes.results.choice_weight', {
+          defaultValue_one: '{{votes}} weighted vote',
+          defaultValue_other: '{{votes}} weighted votes',
+          count: entry.votes,
+          votes,
+        })
+      default:
+        return t('votes.results.choice_votes', {
+          defaultValue_one: '{{votes}} vote',
+          defaultValue_other: '{{votes}} votes',
+          count: entry.votes,
+          votes,
+        })
+    }
   }
 
   return (
     <Stack gap='2'>
       {tally.map((entry) => {
-        const won = entry.value !== undefined && entry.value === winner
-        const percent = percentOf(entry)
+        const leads = entry.key === leader
+        const percent = percentOf(entry.votes, base) ?? 0
         const label = choiceTitle(entry)
-        const votes = quantity(entry.votes)
+        const count = countOf(entry)
         const share = t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })
         return (
-          <Grid
-            key={entry.key}
-            templateColumns='[{sizes.5} minmax(0, 1fr) auto]'
-            rowGap='1'
-            alignItems='baseline'
-            lineHeight='row.title'
-          >
-            <Text gridColumn='2' minW='0' fontWeight={won ? 'semibold' : 'normal'}>
+          <Grid key={entry.key} templateColumns={look.columns} rowGap='1' alignItems='baseline' lineHeight='row.title'>
+            <Text minW='0' lineHeight='row.title' {...look.label} fontWeight={leads ? look.weight : 'normal'}>
               {label}
             </Text>
-            <Text whiteSpace='nowrap'>
-              <Span textStyle='figure' fontWeight='medium'>
-                {votes}
-              </Span>
-              <Span textStyle='figure' color='fg.subtle' display='inline-block' minW='results.share' textAlign='end'>
+            <Text whiteSpace='nowrap' textStyle='figure' lineHeight='row.title'>
+              <Span fontWeight={look.countWeight}>{count}</Span>
+              <Span color='fg.subtle' display='inline-block' minW='results.share' textAlign='end'>
                 {share}
               </Span>
             </Text>
             <Progress.Root
               variant='results'
               value={Math.min(percent, 100)}
-              gridColumn='2 / span 2'
-              translations={{ value: () => `${label}, ${votes}, ${share}` }}
+              gridColumn={look.span}
+              translations={{ value: () => `${label}, ${count}, ${share}` }}
             >
               <Progress.Track>
-                <Progress.Range opacity={final && winner !== undefined && !won ? 'outvoted' : undefined} />
+                <Progress.Range opacity={leader !== undefined && !leads ? 'outvoted' : undefined} />
               </Progress.Track>
             </Progress.Root>
           </Grid>

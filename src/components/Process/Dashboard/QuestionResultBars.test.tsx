@@ -73,6 +73,35 @@ describe('QuestionResultBars', () => {
   })
 
   describe('the plain layout', () => {
+    it('sets no choice apart on a tie, as the indented one', () => {
+      render(
+        <QuestionResultBars
+          question={threeChoices}
+          results={createQuestionResults({ voteCount: 10, results: [['5', '5', '0']] })}
+          final
+          layout='plain'
+        />
+      )
+      expect(screen.getByText('For').className).toBe(screen.getByText('Against').className)
+      expect(ranges().some((range) => getComputedStyle(range).opacity.includes('outvoted'))).toBe(false)
+    })
+
+    it('labels a weighted tally as weighted votes, as the CSV counts weight', () => {
+      render(<QuestionResultBars question={threeChoices} results={tally} weighted layout='plain' />)
+      expect(screen.getByRole('progressbar', { name: 'For, 14 weighted votes, 70%' })).toBeInTheDocument()
+    })
+
+    it('never rounds a partial share to 0%', () => {
+      render(
+        <QuestionResultBars
+          question={threeChoices}
+          results={createQuestionResults({ voteCount: 400, results: [['399', '1', '0']] })}
+          layout='plain'
+        />
+      )
+      expect(screen.getByRole('progressbar', { name: 'Against, 1 vote, 1%' })).toBeInTheDocument()
+    })
+
     it('gives each count its unit and its share of the question votes, with no check and no tag', () => {
       render(<QuestionResultBars question={threeChoices} results={tally} final layout='plain' />)
       expect(screen.getByRole('progressbar', { name: 'For, 14 votes, 70%' })).toBeInTheDocument()
