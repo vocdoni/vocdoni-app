@@ -27,9 +27,9 @@ export const statusJobErrorKind = (error: unknown): StatusJobErrorKind => {
 }
 
 // One transaction per question, serialised per organisation: past this the organiser hears it is slow.
-export const STATUS_JOB_SLOW_MS = 120_000
+const STATUS_JOB_SLOW_MS = 120_000
 // The runner keeps waiting (buttons still guarded) until this, then leaves it to the page's own refresh.
-export const STATUS_JOB_GIVE_UP_MS = 600_000
+const STATUS_JOB_GIVE_UP_MS = 600_000
 
 export type StatusJobRequest =
   | { questionId: string; status: StatusChange }
