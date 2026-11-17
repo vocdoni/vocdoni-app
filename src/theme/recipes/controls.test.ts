@@ -60,8 +60,8 @@ describe('button', () => {
     expect(solid.background).toBe('var(--chakra-colors-color-palette-solid)')
   })
 
-  // `solid.edge` is the control line for a fill too pale for the page and transparent otherwise (Fil's blue); a
-  // palette without the slot (gray, danger) falls back to no edge.
+  // `solid.edge` is the control line for a fill too pale for the page and transparent otherwise (Fil's blue); every
+  // other palette sets it to transparent (system.test.ts).
   it('edges the primary inside its fill, and not once it is greyed out', () => {
     const solid = layer(button({ variant: 'solid' })) as Record<string, any>
     expect(solid.boxShadow).toBe(

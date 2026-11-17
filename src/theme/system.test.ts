@@ -650,3 +650,17 @@ describe('token names', () => {
     expect(cssVarOwners({ raw: tokens as TokenTree, semantic: semantic as TokenTree })).toEqual([])
   })
 })
+
+// Custom properties inherit, so a palette without its own slots would read brand's hover and edge from <html>.
+describe('palettes other than brand', () => {
+  it.each(['gray', 'red', 'green', 'danger', 'success', 'warning', 'info'])(
+    'gives %s its own hover and no edge',
+    (name) => {
+      const sys = createAppSystem('#f5d90a')
+      const vars = sys.css({ colorPalette: name } as never) as Record<string, string>
+      expect(vars['--chakra-colors-color-palette-solid-hover']).toBe(`var(--chakra-colors-${name}-solid-hover)`)
+      expect(vars['--chakra-colors-color-palette-solid-edge']).toBe(`var(--chakra-colors-${name}-solid-edge)`)
+      expect(sys.tokens.getByName(`colors.${name}.solidEdge`)?.value).toBe('transparent')
+    }
+  )
+})

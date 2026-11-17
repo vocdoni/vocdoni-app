@@ -25,6 +25,24 @@ import tokens from './tokens'
 // until PRIMARY_COLOR replaces it. The argument is kept so callers need not change.
 export const defaultColorPalette = (_primaryColor?: string) => 'brand' as const
 
+// Every palette but `brand` that a filled control can take: chakra's own and the status ones (status.ts).
+const OTHER_PALETTES = [
+  'gray',
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'teal',
+  'blue',
+  'cyan',
+  'purple',
+  'pink',
+  'success',
+  'warning',
+  'danger',
+  'info',
+] as const
+
 // Fil's exact accent values, pinned instead of the generated steps when no PRIMARY_COLOR is set. The dark ones are
 // the blue as a fill (`solid`, `solidHover`), as text or a line (`fg`, `fgHover`) and as a wash (`subtle`).
 const FIL_ACCENT = { solidHover: '#1554cf', subtle: '#f0f5ff' } as const
@@ -67,7 +85,7 @@ export const createAppSystem = (primaryColor?: string) => {
     // A filled control's fill is the colour as given (`brand.500`), in both scopes. Fil pins its light hover; a brand
     // colour's hover is its fill moved 12% towards black, or towards white when that would take its label under 4.5:1
     // (palette.ts). `edge` is the hairline a fill too pale for its page draws inside its edge (transparent for Fil's
-    // blue). Other palettes have neither slot, so the recipes fall back to a mix towards black and to no edge.
+    // blue). The other palettes state their own two slots below (`ownFillSlots`).
     solid: {
       DEFAULT: { value: slots.solid },
       hover: {
@@ -108,6 +126,21 @@ export const createAppSystem = (primaryColor?: string) => {
     line: { value: { _light: '{colors.accent.border}', _dark: '{colors.accent.fg}' } },
   }
 
+  // Custom properties inherit: an element that sets another palette would still read brand's `solid.hover` and
+  // `solid.edge` from <html>, so every other palette that can fill a control states its own (flat names give the same
+  // CSS variables; a slot nested under chakra's own `solid` token would be dropped).
+  const ownHover = (name: string) => `color-mix(in oklab, {colors.${name}.solid} 88%, black)`
+  const ownFillSlots = Object.fromEntries(
+    OTHER_PALETTES.map((name) => [
+      name,
+      {
+        ...(semanticTokens.colors as Record<string, object>)[name],
+        solidHover: { value: { _light: ownHover(name), _dark: ownHover(name) } },
+        solidEdge: { value: 'transparent' },
+      },
+    ])
+  )
+
   const appSystem = createSystem(defaultConfig, {
     // Style props only take theme tokens; `[value]` is the escape for non-design values (0, auto, 100%).
     strictTokens: true,
@@ -144,7 +177,7 @@ export const createAppSystem = (primaryColor?: string) => {
       }),
       semanticTokens: defineSemanticTokens({
         ...semanticTokens,
-        colors: { ...semanticTokens.colors, brand: brandSemantic, accent },
+        colors: { ...semanticTokens.colors, ...ownFillSlots, brand: brandSemantic, accent },
       }),
       textStyles,
       recipes,
