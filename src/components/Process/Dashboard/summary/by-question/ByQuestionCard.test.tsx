@@ -87,8 +87,7 @@ const show = (election: VotingProcessResponse, desktop = !phone) => {
   return render(<ByQuestionCard questions={election.questions} desktop={desktop} />)
 }
 
-const NOTE =
-  'Only one question can be open at a time: while one is, “Open” is disabled on the others. Before the start time, too.'
+const NOTE = '“Open” is disabled while another question is open, and before the start time.'
 
 const questionsList = () => within(screen.getByRole('region', { name: 'Questions' }))
 const dock = () => screen.queryByRole('region', { name: 'Vote controls' })

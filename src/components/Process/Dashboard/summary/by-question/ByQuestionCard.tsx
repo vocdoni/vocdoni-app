@@ -235,9 +235,8 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
       </Card.Root>
       {/* What an `off` Open describes itself with; the boards draw it nowhere. */}
       <VisuallyHidden id={reasonId}>
-        {t('votes.manage.one_open_note', {
-          defaultValue:
-            'Only one question can be open at a time: while one is, “Open” is disabled on the others. Before the start time, too.',
+        {t('votes.manage.open_off_note', {
+          defaultValue: '“Open” is disabled while another question is open, and before the start time.',
         })}
       </VisuallyHidden>
       {dock && (
