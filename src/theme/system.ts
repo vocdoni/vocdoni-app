@@ -90,7 +90,8 @@ export const createAppSystem = (primaryColor?: string) => {
       html: {
         colorPalette: palette,
         // Room for the scrollbar on every page, so going from a short page to a long one does not shift the layout.
-        scrollbarGutter: '[stable]',
+        // Chakra's typings take this property for a spacing one; `stable` is its CSS keyword.
+        scrollbarGutter: 'stable' as never,
       },
       // Text that sets no size (a bare Text, markdown, list items) inherits the body role, so a new type
       // scale reaches it too.
