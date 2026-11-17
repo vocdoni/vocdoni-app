@@ -1,4 +1,6 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
+import { act } from '@testing-library/react'
+import i18n from 'i18next'
 import { cleanup, render, screen } from '~src/test-utils'
 import type { VoteState } from '~utils/vote-state'
 import { SummaryCalendar } from './SummaryCalendar'
@@ -20,6 +22,22 @@ const model = (state: VoteState, startDate = local(2, 9, 16), endedEarly = false
 const steps = () => screen.getAllByRole('listitem').map((item) => item.textContent)
 
 describe('SummaryCalendar', () => {
+  afterEach(async () => {
+    await act(() => i18n.changeLanguage('en'))
+  })
+
+  it('writes the day and month as the language does, and the British way in English', async () => {
+    const days = () => screen.getAllByRole('listitem').map((item) => item.querySelector('span')?.textContent)
+    const { unmount } = render(<SummaryCalendar desktop model={model('live')} />)
+    // 12 March, never "03/12".
+    expect(days()[0]).toBe('12/03')
+    unmount()
+
+    await act(() => i18n.changeLanguage('de'))
+    render(<SummaryCalendar desktop model={model('live')} />)
+    expect(days()[0]).toBe('12.03.')
+  })
+
   it('lists the closing, today and the opening of a live vote, newest first, today as the current step', () => {
     render(<SummaryCalendar desktop model={model('live')} />)
 

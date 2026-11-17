@@ -7,9 +7,10 @@ import type { SummaryModel } from './use-summary-model'
 
 type CalendarEntry = { id: string; day: Date; what: string; note?: string; current?: boolean }
 
-// Day and month in figures ("12/03") in every language: a weekday and a day alone do not say which month.
-const dayMonth = (date: Date) =>
-  `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`
+// Day and month in figures, written as the reader's language writes them ("12/03", "12.03."). English reads the
+// British way, day first: the American order would turn 12 March into 3 December for most of our readers.
+const DAY_MONTH: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit' }
+const dayMonthLocale = (language: string) => (language.split('-')[0] === 'en' ? 'en-GB' : language)
 const TIME: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
 
 /**
@@ -74,6 +75,7 @@ export const SummaryCalendar = ({ model, desktop }: { model: SummaryModel; deskt
   }, [t, i18n.language, election.startDate, state, endDate, endedEarly, now])
 
   if (!entries.length) return null
+  const dayMonth = new Intl.DateTimeFormat(dayMonthLocale(i18n.language), DAY_MONTH)
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
@@ -94,13 +96,14 @@ export const SummaryCalendar = ({ model, desktop }: { model: SummaryModel; deskt
             <Text
               as='span'
               textStyle='figure'
-              w={{ base: '11', lg: '10' }}
+              minW={{ base: '11', lg: '10' }}
+              whiteSpace='nowrap'
               flexShrink='0'
               pt={{ base: '1', lg: '0.5' }}
               color={entry.current ? 'fg' : 'fg.subtle'}
               fontWeight={entry.current ? 'medium' : 'normal'}
             >
-              {dayMonth(entry.day)}
+              {dayMonth.format(entry.day)}
             </Text>
             {/* A filled accent dot for where the vote is now, a hollow mark for the rest, and under each but the last
                 the thread that runs down to the next mark, through the rows' padding. */}
