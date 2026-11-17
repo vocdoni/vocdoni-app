@@ -1,17 +1,18 @@
-import { Box, Button, Card, Flex, HStack, Icon, Input, InputGroup, Stack, Text } from '@chakra-ui/react'
+import { Alert, Box, Button, Card, Flex, HStack, Icon, Input, InputGroup, Stack, Text } from '@chakra-ui/react'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { RoutedPaginationProvider, useOrganization } from '@vocdoni/react-components'
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as RouterLink, matchPath, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { EmptyState } from '~components/ui/EmptyState'
 import { KeyHint } from '~components/ui/KeyHint'
-import { ListStateAlert } from '~components/ui/ListStateAlert'
 import { ListLoader } from '~components/ui/Loader'
 import { PageTitle } from '~components/ui/PageTitle'
 import { useIsDesktop } from '~components/ui/useIsMobile'
 import { useUrlPagination } from '~queries/members'
+import { readRemembered, usePauseMemoryVersion } from '~queries/vote-pause'
 import { useCanManageVotes, useOrganizationVotes, useVotesResults } from '~queries/votes'
 import { Routes } from '~routes'
 import { AddIcon, SearchIcon } from '~theme/icons'
@@ -25,6 +26,7 @@ import {
   toVoteRows,
   VOTE_FILTERS,
   type VoteFilter,
+  type VoteRow,
 } from '~utils/vote-state'
 import { VoteListRow } from './VoteListRow'
 import { VotesEmpty } from './VotesEmpty'
@@ -33,6 +35,38 @@ import { useListShortcuts } from './useListShortcuts'
 const useFilter = (): VoteFilter => {
   const { pathname } = useLocation()
   return VOTE_FILTERS.find((filter) => matchPath(Routes.dashboard.processes[filter], pathname)) ?? 'all'
+}
+
+// Out-of-range `?limit=` values would render nothing (0, NaN) or every row at once, with one results read each.
+const clampLimit = (limit: number) => (Number.isInteger(limit) ? Math.min(Math.max(limit, 1), 100) : 10)
+// The URL follows the search field this long after the last keystroke.
+const SEARCH_URL_DELAY_MS = 150
+
+const NO_VOTES: VotingProcessResponse[] = []
+
+/** A failed load, or a failed refresh over the rows already shown (then the rows stay), with a way to try again. */
+const LoadAlert = ({ stale, retrying, onRetry }: { stale: boolean; retrying: boolean; onRetry: () => void }) => {
+  const { t } = useTranslation()
+  return (
+    <Alert.Root status={stale ? 'warning' : 'error'} role='alert' alignItems='center'>
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Title>
+          {stale
+            ? t('votes.list.refresh_error', { defaultValue: 'The list could not be refreshed' })
+            : t('processes.load_error', { defaultValue: 'Unable to load voting processes' })}
+        </Alert.Title>
+        <Alert.Description>
+          {stale
+            ? t('votes.list.refresh_error_hint', { defaultValue: 'It shows the votes as they were last loaded.' })
+            : t('processes.load_error_description', { defaultValue: 'Please try again.' })}
+        </Alert.Description>
+      </Alert.Content>
+      <Button size='sm' variant='outline' loading={retrying} onClick={onRetry}>
+        {t('votes.list.retry', { defaultValue: 'Try again' })}
+      </Button>
+    </Alert.Root>
+  )
 }
 
 const RowFallback = () => {
@@ -53,27 +87,44 @@ export const VotesPage = () => {
   const { search } = useLocation()
   const [searchParams] = useSearchParams()
   const { organization } = useOrganization()
-  const { data, isLoading, error } = useOrganizationVotes()
+  const { data, isLoading, error, refetch, isFetching } = useOrganizationVotes()
   const canManage = useCanManageVotes()
   const now = useNow()
-  const { page, limit } = useUrlPagination()
+  const pagination = useUrlPagination()
+  const { page } = pagination
+  const limit = clampLimit(pagination.limit)
   const isDesktop = useIsDesktop()
   const searchRef = useRef<HTMLInputElement>(null)
   const filter = useFilter()
   const query = searchParams.get('q') ?? ''
+  const memoryVersion = usePauseMemoryVersion()
+
+  // The field owns its text (no caret jumps, no lost keys); the URL follows it shortly after, and a URL changed
+  // elsewhere (Back, a link) refills it.
+  const [searchText, setSearchText] = useState(query)
+  const urlWritten = useRef(query)
+  useEffect(() => {
+    if (query !== urlWritten.current) {
+      urlWritten.current = query
+      setSearchText(query)
+    }
+  }, [query])
+  const deferredSearch = useDeferredValue(searchText)
 
   const createPath = generatePath(Routes.processes.create)
   const onNew = useCallback(() => navigate(createPath), [navigate, createPath])
   useListShortcuts({ onNew, searchRef, enabled: isDesktop })
 
-  const rows = useMemo(() => toVoteRows(data ?? [], now), [data, now])
+  // This browser's pause memory tells a held question-by-question vote from a ready one (list items carry no votes);
+  // its version re-derives the rows when it changes.
+  const rows = useMemo(() => toVoteRows(data ?? NO_VOTES, now, readRemembered), [data, now, memoryVersion])
   // Counts ignore the search, so the chips tell what each state holds in total.
   const counts = useMemo(() => countByFilter(rows), [rows])
   // The list API has no search parameter, so the loaded rows are filtered here.
   const visible = useMemo(() => {
-    const normalized = normalizeSearch(query)
+    const normalized = normalizeSearch(deferredSearch)
     return rows.filter((row) => matchesFilter(row.state, filter) && matchesSearch(row.process, normalized))
-  }, [rows, filter, query])
+  }, [rows, filter, deferredSearch])
 
   const lastPage = Math.max(1, Math.ceil(visible.length / limit))
   const currentPage = Math.min(Math.max(1, page), lastPage)
@@ -90,19 +141,29 @@ export const VotesPage = () => {
   const results = useVotesResults(resultIds)
 
   // Search and filter changes keep `?limit=` and start again on page 1.
-  const go = (nextFilter: VoteFilter, nextQuery: string, replace = false) => {
-    const params = new URLSearchParams(search)
-    if (nextQuery) params.set('q', nextQuery)
-    else params.delete('q')
-    const queryString = params.toString()
-    navigate(
-      {
-        pathname: generatePath(Routes.dashboard.processes[nextFilter], { page: '1' }),
-        search: queryString ? `?${queryString}` : '',
-      },
-      { replace }
-    )
-  }
+  const go = useCallback(
+    (nextFilter: VoteFilter, nextQuery: string, replace = false) => {
+      const params = new URLSearchParams(search)
+      if (nextQuery) params.set('q', nextQuery)
+      else params.delete('q')
+      const queryString = params.toString()
+      urlWritten.current = nextQuery
+      navigate(
+        {
+          pathname: generatePath(Routes.dashboard.processes[nextFilter], { page: '1' }),
+          search: queryString ? `?${queryString}` : '',
+        },
+        { replace }
+      )
+    },
+    [navigate, search]
+  )
+
+  useEffect(() => {
+    if (searchText === urlWritten.current) return
+    const timer = setTimeout(() => go(filter, searchText, true), SEARCH_URL_DELAY_MS)
+    return () => clearTimeout(timer)
+  }, [searchText, filter, go])
 
   const filterLabel: Record<VoteFilter, string> = {
     all: t('votes.list.filter.all', { defaultValue: 'All' }),
@@ -112,15 +173,17 @@ export const VotesPage = () => {
     closed: t('votes.list.filter.closed', { defaultValue: 'Closed' }),
   }
 
-  const renderRow = (row: (typeof rows)[number]) => (
+  const renderRow = (row: VoteRow) => (
     <ErrorBoundary key={row.process.id} resetKeys={[row.process]} fallback={<RowFallback />}>
       <VoteListRow row={row} results={results[row.process.id]} canManage={canManage} now={now} />
     </ErrorBoundary>
   )
 
   const loading = !organization || isLoading
+  // A failed refresh keeps the rows already loaded; only a first load that failed has nothing to show.
+  const failed = !!error && !data
   let content = null
-  if (!loading && !error) {
+  if (!loading && !failed) {
     if (!rows.length) {
       content = <VotesEmpty />
     } else if (!visible.length) {
@@ -206,7 +269,7 @@ export const VotesPage = () => {
                     variant='chip'
                     size='sm'
                     aria-pressed={item === filter}
-                    onClick={() => go(item, query)}
+                    onClick={() => go(item, searchText)}
                   >
                     {/* The space keeps the accessible name "All 4"; a flex gap draws the visual one. */}
                     {filterLabel[item]}{' '}
@@ -236,8 +299,8 @@ export const VotesPage = () => {
                 h={{ base: 'control.touch', md: 'control.tablet', lg: '7' }}
                 ps={{ base: '9', lg: '8' }}
                 pe={{ base: '3', lg: '8' }}
-                value={query}
-                onChange={(event) => go(filter, event.target.value, true)}
+                value={searchText}
+                onChange={(event) => setSearchText(event.target.value)}
                 aria-label={t('votes.list.search', { defaultValue: 'Search a vote' })}
                 placeholder={t('votes.list.search', { defaultValue: 'Search a vote' })}
               />
@@ -245,11 +308,7 @@ export const VotesPage = () => {
           </Flex>
         )}
 
-        <ListStateAlert
-          error={error}
-          title={t('processes.load_error', { defaultValue: 'Unable to load voting processes' })}
-          fallback={t('processes.load_error_description', { defaultValue: 'Please try again.' })}
-        />
+        {!!error && !loading && <LoadAlert stale={!failed} retrying={isFetching} onRetry={() => void refetch()} />}
         {loading && <ListLoader />}
         {content}
       </Stack>

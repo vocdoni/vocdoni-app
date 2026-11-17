@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { useLocation } from 'react-router'
-import { render, screen, TestMemoryRouter, within } from '~src/test-utils'
+import { render, screen, TestMemoryRouter, waitFor, within } from '~src/test-utils'
 import legacyProcesses from './__fixtures__/legacy-processes.json'
 import { VotesPage } from './VotesPage'
 
@@ -11,10 +11,17 @@ const votes = vi.hoisted(() => ({
   error: null as unknown,
   isLoading: false,
   results: vi.fn((_ids: readonly string[]) => ({})),
+  refetch: vi.fn(),
 }))
 
 vi.mock('~queries/votes', () => ({
-  useOrganizationVotes: () => ({ data: votes.data, error: votes.error, isLoading: votes.isLoading }),
+  useOrganizationVotes: () => ({
+    data: votes.data,
+    error: votes.error,
+    isLoading: votes.isLoading,
+    isFetching: false,
+    refetch: votes.refetch,
+  }),
   useVotesResults: (ids: readonly string[]) => votes.results(ids),
   useCanManageVotes: () => true,
   useDeleteDraft: () => ({ mutate: vi.fn(), isPending: false }),
@@ -164,7 +171,7 @@ describe('VotesPage', () => {
     await userEvent.type(screen.getByRole('searchbox', { name: 'Search a vote' }), 'economica')
     expect(screen.getByText('Assemblea Econòmica')).toBeInTheDocument()
     expect(articles()).toHaveLength(1)
-    expect(screen.getByTestId('location')).toHaveTextContent('?q=economica')
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('?q=economica'))
   })
 
   it('keeps the search when the filter changes', async () => {
@@ -192,12 +199,38 @@ describe('VotesPage', () => {
     expect(screen.getByText('No vote matches')).toBeInTheDocument()
   })
 
-  it('shows the alert when the list fails to load', () => {
-    votes.data = []
+  it('shows the alert, with a retry, when the list fails to load', async () => {
+    votes.data = undefined as never
     votes.error = new Error('down')
     renderPage()
     expect(screen.getByRole('alert')).toHaveTextContent('Unable to load voting processes')
     expect(screen.queryByText('No votes yet')).not.toBeInTheDocument()
+    await userEvent.click(within(screen.getByRole('alert')).getByRole('button', { name: 'Try again' }))
+    expect(votes.refetch).toHaveBeenCalled()
+  })
+
+  it('keeps the rows it has when a refresh fails, and offers to try again', () => {
+    votes.error = new Error('down')
+    renderPage()
+    expect(screen.getByRole('alert')).toHaveTextContent('The list could not be refreshed')
+    expect(articles()).toHaveLength(9)
+  })
+
+  it('reads a vote this browser paused as a whole as paused, even with no votes yet', () => {
+    localStorage.setItem('votes.pause.held.qbq', JSON.stringify(['qbq-q']))
+    votes.data = [make('qbq', 'Held', { initialStatus: 'PAUSED' }, 'PAUSED')]
+    renderPage()
+    expect(screen.getByRole('button', { name: /^Live 1$/ })).toBeInTheDocument()
+    expect(screen.getAllByText('Paused').length).toBeGreaterThan(0)
+    localStorage.clear()
+  })
+
+  it('keeps every typed character in the field and the URL catches up', async () => {
+    renderPage('/admin/processes/all/1?q=asse')
+    const field = screen.getByRole('searchbox', { name: 'Search a vote' })
+    await userEvent.type(field, 'mblea')
+    expect(field).toHaveValue('assemblea')
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('?q=assemblea'))
   })
 
   it('renders one row per legacy process, none with a duplicate button', () => {

@@ -1,8 +1,16 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import type { ReactNode } from 'react'
 import { QueryKeys } from './keys'
-import { resultsStaleTime, useCanManageVotes, useDeleteDraft, useInvalidateVotes, useOrganizationVotes } from './votes'
+import {
+  resultsStaleTime,
+  useCanManageVotes,
+  useDeleteDraft,
+  useInvalidateVotes,
+  useOrganizationVotes,
+  useVotesResults,
+} from './votes'
 
 const client = { elections: { list: vi.fn(), delete: vi.fn(), getResults: vi.fn() } }
 const toast = vi.fn()
@@ -49,15 +57,59 @@ describe('useOrganizationVotes', () => {
     expect(client.elections.list).toHaveBeenNthCalledWith(2, { orgAddress: '0xorg', page: 2, limit: 100 })
   })
 
-  it('seeds the vote page query without overwriting a full read', async () => {
-    client.elections.list.mockResolvedValue(page(['a', 'b'], null))
-    const { result, queryClient } = setup(useOrganizationVotes)
-    const fullRead = { id: 'a', questions: [], results: 'kept' }
-    queryClient.setQueryData(QueryKeys.election.process('a'), fullRead)
+  it('stops on a next page that does not advance, and after 50 pages at most', async () => {
+    client.elections.list.mockResolvedValueOnce(page(['a'], 2)).mockResolvedValueOnce(page(['b'], 2))
+    const { result } = setup(useOrganizationVotes)
+    await waitFor(() => expect(result.current.data?.map(({ id }) => id)).toEqual(['a', 'b']))
+    expect(client.elections.list).toHaveBeenCalledTimes(2)
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(queryClient.getQueryData(QueryKeys.election.process('a'))).toBe(fullRead)
-    expect(queryClient.getQueryData(QueryKeys.election.process('b'))).toEqual({ id: 'b', questions: [] })
+    client.elections.list.mockReset()
+    let next = 1
+    client.elections.list.mockImplementation(async () => page([`p${next}`], ++next))
+    const endless = setup(useOrganizationVotes)
+    await waitFor(() => expect(endless.result.current.data).toHaveLength(50))
+    expect(client.elections.list).toHaveBeenCalledTimes(50)
+  })
+
+  it('stops paging once the query is cancelled', async () => {
+    let answer: (value: unknown) => void = () => undefined
+    client.elections.list.mockReturnValueOnce(new Promise((resolve) => (answer = resolve)))
+    const { queryClient } = setup(useOrganizationVotes)
+    await waitFor(() => expect(client.elections.list).toHaveBeenCalledTimes(1))
+
+    await act(() => queryClient.cancelQueries({ queryKey: QueryKeys.organization.votes('0xorg') }))
+    await act(async () => answer(page(['a'], 2)))
+
+    expect(client.elections.list).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('useVotesResults', () => {
+  it('maps each process to its results, a 404 to null, and rethrows other failures', async () => {
+    client.elections.getResults.mockImplementation(async (id: string) => {
+      if (id === 'none') throw new VocdoniApiError(404, {}, 'not found')
+      if (id === 'down') throw new VocdoniApiError(500, {}, 'down')
+      return { id, questions: [{ questionId: 'q', finalResults: true }] }
+    })
+    const ids = ['a', 'none', 'down']
+    const { result, queryClient } = setup(() => useVotesResults(ids))
+
+    await waitFor(() =>
+      expect(result.current.a).toEqual({ id: 'a', questions: [{ questionId: 'q', finalResults: true }] })
+    )
+    await waitFor(() => expect(result.current.none).toBeNull())
+    await waitFor(() => expect(queryClient.getQueryState(QueryKeys.election.results('down'))?.status).toBe('error'))
+    expect(result.current.down).toBeUndefined()
+  })
+
+  it('shares the vote page query and keeps a final tally without asking again', async () => {
+    client.elections.getResults.mockResolvedValue({ id: 'a', questions: [{ questionId: 'q', finalResults: true }] })
+    const first = setup(() => useVotesResults(['a']))
+    await waitFor(() => expect(first.result.current.a).toBeTruthy())
+
+    first.rerender()
+    expect(client.elections.getResults).toHaveBeenCalledTimes(1)
+    expect(first.queryClient.getQueryData(QueryKeys.election.results('a'))).toEqual(first.result.current.a)
   })
 })
 
@@ -90,7 +142,7 @@ describe('useDeleteDraft', () => {
 
     expect(clearStoredDraftId).toHaveBeenCalledWith('0xorg', 'd1')
     expect(toast).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }))
-    expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.organization.votes('0xorg') })
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.organization.votesAll })
   })
 
   it('stays quiet when asked to', async () => {
@@ -100,12 +152,16 @@ describe('useDeleteDraft', () => {
     expect(toast).not.toHaveBeenCalled()
   })
 
-  it('keeps the stored draft when the delete fails', async () => {
-    client.elections.delete.mockRejectedValue(new Error('nope'))
+  it('keeps the stored draft when the delete fails, and says it failed in its own words', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    client.elections.delete.mockRejectedValue(new Error('raw backend text'))
     const { result } = setup(useDeleteDraft)
     await act(() => result.current.mutateAsync({ draftId: 'd1' }).catch(() => undefined))
     expect(clearStoredDraftId).not.toHaveBeenCalled()
-    expect(toast).not.toHaveBeenCalled()
+    expect(toast).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'error', title: 'The draft could not be deleted' })
+    )
+    expect(JSON.stringify(toast.mock.calls)).not.toContain('raw backend text')
   })
 })
 
