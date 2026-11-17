@@ -9,7 +9,11 @@ export const DashboardContents = defineRecipe({
     flexDirection: 'column',
     w: 'full',
     px: { base: '4', md: '6', lg: '7' },
-    py: '6',
+    pt: { base: '6', lg: '12' },
+    pb: '6',
+    // From `lg` every page title sits at the same height: 48px down, in a box as tall as a control with the text at
+    // its foot, so a title beside buttons and one alone read on the same line.
+    '& h1': { display: { lg: 'flex' }, alignItems: { lg: 'flex-end' }, minH: { lg: 'control.md' } },
   },
   variants: {
     // The votes screens' page padding, as the Fil boards draw it: 20 40 on a phone, 28 48 on a tablet, 48 40 from `lg`.
