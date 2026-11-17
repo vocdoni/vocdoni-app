@@ -60,7 +60,7 @@ const colors = defineSemanticTokens.colors({
         _dark: '{colors.gray.900}',
       },
     },
-    // Washes of the status tones (light); dark keeps Chakra's.
+    // Washes of the status tones; dark uses the sidebar grey.
     error: {
       value: {
         _light: '#fff0f0',
@@ -82,7 +82,7 @@ const colors = defineSemanticTokens.colors({
     info: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.gray.900}',
+        _dark: '{colors.bg.subtle}',
       },
     },
   },
@@ -140,7 +140,7 @@ const colors = defineSemanticTokens.colors({
     info: {
       value: {
         _light: '{colors.gray.600}',
-        _dark: '{colors.gray.400}',
+        _dark: '{colors.fg.muted}',
       },
     },
   },
@@ -339,13 +339,6 @@ const colors = defineSemanticTokens.colors({
         _dark: '{colors.carbon.500}',
       },
     },
-    // The dashed outline of an empty drop zone or placeholder.
-    dash: {
-      value: {
-        _light: '{colors.gray.300}',
-        _dark: '{colors.gray.700}',
-      },
-    },
     inverted: {
       value: {
         _light: '{colors.gray.800}',
@@ -397,15 +390,40 @@ const colors = defineSemanticTokens.colors({
       muted: {
         value: {
           _light: '{colors.gray.100}',
-          _dark: '{colors.gray.800}',
+          _dark: '{colors.bg.subtle}',
         },
       },
     },
   },
   // Chakra's gray.focusRing (gray.400) misses the 3:1 WCAG floor for focus indicators on a white page,
   // so light mode steps to gray.800; dark keeps gray.400, which clears it on the dark page.
-  // Deep-merges with chakra's other gray slots.
+  // The other slots keep Chakra's light values and move dark onto the Carbó steps (Chakra's dark `black` is tinted).
+  // Deep-merges with chakra's `fg`, `emphasized` and `border` gray slots.
   gray: {
+    subtle: {
+      value: {
+        _light: '{colors.gray.100}',
+        _dark: '{colors.bg.muted}',
+      },
+    },
+    muted: {
+      value: {
+        _light: '{colors.gray.200}',
+        _dark: '{colors.bg.emphasized}',
+      },
+    },
+    solid: {
+      value: {
+        _light: '{colors.gray.900}',
+        _dark: '{colors.carbon.100}',
+      },
+    },
+    contrast: {
+      value: {
+        _light: '{colors.white}',
+        _dark: '{colors.gray.950}',
+      },
+    },
     focusRing: {
       value: {
         _light: '{colors.gray.800}',
@@ -417,7 +435,7 @@ const colors = defineSemanticTokens.colors({
     placeholder: {
       value: {
         _light: '{colors.gray.500}',
-        _dark: '{colors.gray.400}',
+        _dark: '{colors.fg.subtle}',
       },
     },
   },

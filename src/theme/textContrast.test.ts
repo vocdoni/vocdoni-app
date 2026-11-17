@@ -48,12 +48,24 @@ describe('text colour contrast (WCAG AA)', () => {
     }
   )
 
-  it.each(['fg', 'fg.muted', 'fg.subtle', 'fg.success', 'fg.warning', 'accent.fg'])(
+  // `fg.faint` is left out on purpose: a graphics-only role (marks and rules), under 4.5:1 by the guide's design.
+  it.each(['fg', 'fg.muted', 'fg.subtle', 'fg.error', 'fg.success', 'fg.warning', 'accent.fg'])(
     '%s reads at 4.5:1 on every dark layer',
     (token) => {
       for (const layer of DARK_LAYERS) {
         const ratio = contrastRatio(resolve(token, 'dark'), resolve(layer, 'dark'))
         expect(ratio, `${token} on ${layer}`).toBeGreaterThanOrEqual(4.5)
+      }
+    }
+  )
+
+  // WCAG 1.4.11: a control's outline needs 3:1 against the surface it sits on.
+  it.each(['border.field', 'border.strong'])(
+    '%s draws a control outline at 3:1 on the dark page, card and dialog',
+    (token) => {
+      for (const layer of ['bg', 'surface.card', 'surface.overlay']) {
+        const ratio = contrastRatio(resolve(token, 'dark'), resolve(layer, 'dark'))
+        expect(ratio, `${token} on ${layer}`).toBeGreaterThanOrEqual(3)
       }
     }
   )

@@ -35,7 +35,6 @@ const ROLES: Record<string, Record<Mode, string>> = {
   'colors.surface.raised.tooltip': { light: '{colors.bg.panel}', dark: '{colors.carbon.850}' },
   'colors.surface.overlay': { light: '{colors.bg.panel}', dark: '{colors.carbon.875}' },
   'colors.surface.control': { light: '{colors.white}', dark: 'rgb(255 255 255 / 0.05)' },
-  'colors.border.dash': { light: '{colors.gray.300}', dark: '{colors.gray.700}' },
   'colors.surface.overlay.drawer': { light: '{colors.surface.sidebar}', dark: '{colors.surface.sidebar}' },
   'colors.surface.inverse': { light: '{colors.gray.800}', dark: '{colors.gray.800}' },
   'shadows.shadow.card': { light: 'none', dark: 'none' },

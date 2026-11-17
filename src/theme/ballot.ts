@@ -14,7 +14,7 @@ export const ballotColors = defineSemanticTokens.colors({
       ring: {
         value: {
           _light: '{colors.fg.faint}',
-          _dark: '{colors.gray.500}',
+          _dark: '{colors.border.strong}',
         },
       },
       bg: {
