@@ -18,15 +18,20 @@ import {
   PublishReviewStep,
 } from './anatomy'
 
-export type WalletStepProps = { flow: ProcessCheckoutFlow; titleId: string; currencyCode?: string; onClose: () => void }
+export type WalletStepProps = {
+  flow: ProcessCheckoutFlow
+  titleId: string
+  currencyCode?: string
+  /** The live price and what the wallet has left after it, as the summary reads them. */
+  totalCents: number
+  afterCents: number
+  onClose: () => void
+}
 
 // The wallet covers the whole price: nothing to pay by card
-export const WalletStep = ({ flow, titleId, currencyCode, onClose }: WalletStepProps) => {
+export const WalletStep = ({ flow, titleId, currencyCode, totalCents, afterCents, onClose }: WalletStepProps) => {
   const { t } = useTranslation()
-  const onWallet = flow.step.name === 'wallet'
-  usePrimaryShortcut(onWallet, flow.publish)
-  if (flow.step.name !== 'wallet') return null
-  const { totalCents, afterCents } = flow.step
+  usePrimaryShortcut(true, flow.publish)
   const total = currencyExact(totalCents, currencyCode)
 
   return (

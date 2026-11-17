@@ -118,12 +118,14 @@ export const CardLayout = ({
   // The session charges in its own currency; the price's until it is open
   const code = session?.currency?.toUpperCase() ?? currencyCode
   const walletBalanceCents = shortfall?.balanceCents ?? balanceCents
-  // The refusal's shortfall when there was one; otherwise what the price and the balance leave
-  const shortCents =
+  // The refusal's shortfall when there was one; otherwise what the price and the balance leave. Only a
+  // real shortfall is shown: a balance that covers the price (a resumed payment) leaves nothing short
+  const leftShortCents =
     shortfall?.shortfallCents ??
     (totalCents !== undefined && walletBalanceCents !== undefined
       ? Math.max(totalCents - walletBalanceCents, 0)
       : undefined)
+  const shortCents = leftShortCents !== undefined && leftShortCents > 0 ? leftShortCents : undefined
   // Above the shortfall when the €1 minimum top-up is more than what is short
   const restStaysInWallet = !!session && shortCents !== undefined && session.amountCents > shortCents
   // The amount Stripe charges, VAT included, when it says so
@@ -158,8 +160,9 @@ export const CardLayout = ({
     }
   }
 
+  // Only a shortfall says what the balance covers; without one there is nothing to say about the balance
   const lead =
-    walletBalanceCents === undefined
+    shortCents === undefined || walletBalanceCents === undefined
       ? null
       : walletBalanceCents > 0
         ? t('process.publish_review.card.lead_balance', {

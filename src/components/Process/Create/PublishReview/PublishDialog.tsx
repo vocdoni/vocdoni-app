@@ -107,6 +107,13 @@ export const PublishDialog = ({
 
   const announcement = stepAnnouncement(t, flow)
   const currencyCode = price?.currency?.toUpperCase()
+  // The wallet step shows what the summary would charge now, so it reads the price and balance live
+  const primary = resolvePublishPrimary({ price, wallet, canTopUp })
+  const { backToSummary } = flow
+  // A price or balance that moved past the wallet leaves the step: the summary says what it takes now
+  useEffect(() => {
+    if (step.name === 'wallet' && primary.kind !== 'wallet') backToSummary()
+  }, [step.name, primary.kind, backToSummary])
 
   const content =
     step.name === 'summary' && form ? (
@@ -128,16 +135,22 @@ export const PublishDialog = ({
         onClose={close}
         onEdit={onEdit && edit}
         onPrimary={(action) => {
-          const primary = resolvePublishPrimary({ price, wallet, canTopUp })
           if (action === 'wallet' && primary.kind === 'wallet') {
-            flow.showWallet({ totalCents: primary.totalCents, afterCents: primary.afterCents })
+            flow.showWallet()
           } else if (action === 'card' && primary.kind === 'card') {
             flow.payByCard({ shortfallCents: primary.shortfallCents, balanceCents: primary.balanceCents })
           } else if (action === 'publish') flow.publish()
         }}
       />
-    ) : step.name === 'wallet' ? (
-      <WalletStep flow={flow} titleId={titleId} currencyCode={currencyCode} onClose={close} />
+    ) : step.name === 'wallet' && primary.kind === 'wallet' ? (
+      <WalletStep
+        flow={flow}
+        titleId={titleId}
+        currencyCode={currencyCode}
+        totalCents={primary.totalCents}
+        afterCents={primary.afterCents}
+        onClose={close}
+      />
     ) : (
       <ProcessCheckoutContent
         flow={flow}

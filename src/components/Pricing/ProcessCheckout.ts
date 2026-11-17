@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHref } from 'react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import { ApiErrorCode, isApiError, JobFailedError, VocdoniApiError } from '@vocdoni/api-client'
 import type { ProcessCheckoutResponse } from '@vocdoni/api-types'
 import { apiErrorDetails } from '~components/Auth/api'
 import { Routes } from '~routes'
+import { QueryKeys } from '~queries/keys'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import {
   enqueuedJobId,
@@ -37,8 +39,8 @@ export type PublishFlowStart = { kind: 'summary' } | ProcessCheckoutStart
 
 export type ProcessCheckoutStep =
   | { name: 'summary' }
-  // The wallet covers the price: what it takes and what is left, as the summary showed them
-  | { name: 'wallet'; totalCents: number; afterCents: number }
+  // The wallet covers the price: the dialog reads what it takes from the live price and balance
+  | { name: 'wallet' }
   | { name: 'conflict' }
   | { name: 'opening' }
   | { name: 'checkout'; session: ProcessCheckoutResponse }
@@ -128,6 +130,7 @@ export const useProcessCheckout = ({
   const { t, i18n } = useTranslation()
   const { client } = useApiClient()
   const checkoutApi = useProcessCheckoutApi()
+  const queryClient = useQueryClient()
   const [step, setStep] = useState<ProcessCheckoutStep>(() => initialStep(start))
   // Whether a payment is part of this publish: it names the outcome views
   const [topUp, setTopUp] = useState(start.kind !== 'summary' && start.kind !== 'publishing')
@@ -323,14 +326,26 @@ export const useProcessCheckout = ({
     shortfall,
     /** Publishes from the wallet (a free or wallet-paid vote), or after a timeout. */
     publish: () => publishDraft(),
-    showWallet: (quote: { totalCents: number; afterCents: number }) => setStep({ name: 'wallet', ...quote }),
+    showWallet: () => setStep({ name: 'wallet' }),
     /** Opens the card checkout for what the wallet lacks. */
     payByCard: (known?: WalletShortfall) => {
       setShortfall(known)
       setStep({ name: 'opening' })
     },
-    backToSummary: () => setStep({ name: 'summary' }),
-    resumePayment: () => setStep({ name: 'opening' }),
+    // A fresh attempt starts from the summary: the wallet and the price are read again (a refusal may
+    // have moved them), and the one-off wallet publish and the top-up title start over
+    backToSummary: () => {
+      walletPublishRef.current = false
+      setTopUp(false)
+      // Every address and page of the wallet
+      void queryClient.invalidateQueries({ queryKey: QueryKeys.organization.wallet().slice(0, 2) })
+      void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
+      setStep({ name: 'summary' })
+    },
+    resumePayment: () => {
+      setShortfall(undefined)
+      setStep({ name: 'opening' })
+    },
     cancelOpenPayment: () =>
       publishDraft(() =>
         // Nothing open to cancel is fine: the publish is what is left to do
@@ -338,7 +353,10 @@ export const useProcessCheckout = ({
           if (httpStatus(error) !== 404) throw error
         })
       ),
-    checkAgain: () => setStep({ name: 'waiting', afterPayment: true, paid: false }),
+    checkAgain: () => {
+      setShortfall(undefined)
+      setStep({ name: 'waiting', afterPayment: true, paid: false })
+    },
     paid: () => setStep({ name: 'waiting', afterPayment: true, paid: true }),
   }
 }

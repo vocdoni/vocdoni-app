@@ -1,7 +1,8 @@
 import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
 import userEvent from '@testing-library/user-event'
 import { useRef, useState } from 'react'
-import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
+import { act, createTestQueryClient, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
+import { QueryKeys } from '~queries/keys'
 import { defaultProcessValues, type Process } from '../common'
 import { PublishDialog, type PublishDialogProps } from './PublishDialog'
 
@@ -104,13 +105,14 @@ const shortRefusal = refusal(402, ApiErrorCode.PaymentRequired, {
   shortfallCents: 4000,
 })
 
-const renderDialog = (props: Partial<PublishDialogProps> = {}) => {
+const renderDialog = (props: Partial<PublishDialogProps> = {}, queryClient = createTestQueryClient()) => {
   const handlers = { onPublished: vi.fn(), onClose: vi.fn() }
   render(
     <TestMemoryRouter>
       <button type='button'>outside</button>
       <PublishDialog processId={processId} form={form} start={{ kind: 'summary' }} canTopUp {...handlers} {...props} />
-    </TestMemoryRouter>
+    </TestMemoryRouter>,
+    { queryClient }
   )
   return { ...handlers, user: userEvent.setup() }
 }
@@ -290,6 +292,40 @@ describe('PublishDialog', () => {
 
       expect(await screen.findByText('Review before publishing')).toBeInTheDocument()
     })
+
+    it('reads the wallet and the price again when it goes back to the summary', async () => {
+      const queryClient = createTestQueryClient()
+      const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
+      const { user } = renderDialog({}, queryClient)
+
+      await user.click(await primary('Publish and pay €10.00'))
+      await screen.findByText('Pay €10.00 from the balance and the vote is published.')
+      await user.click(screen.getAllByRole('button', { name: 'Back to the summary' })[0])
+
+      expect(invalidate).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['organizations', 'wallet'] }))
+      expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price(processId) })
+    })
+
+    it('shows the live price in the wallet step, and goes back to the summary once the balance no longer covers it', async () => {
+      const queryClient = createTestQueryClient()
+      const { user } = renderDialog({}, queryClient)
+
+      await user.click(await primary('Publish and pay €10.00'))
+      await screen.findByText('Pay €10.00 from the balance and the vote is published.')
+
+      api.getPrice.mockResolvedValue(priced(2000))
+      await act(() => queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) }))
+
+      expect(await screen.findByText('Pay €20.00 from the balance and the vote is published.')).toBeInTheDocument()
+      expect(screen.getByText('After publishing, the balance will have €30.00 left.')).toBeInTheDocument()
+      expect(screen.getByText('This vote').nextElementSibling).toHaveTextContent(/^€20\.00$/)
+
+      api.getPrice.mockResolvedValue(priced(9000))
+      await act(() => queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) }))
+
+      expect(await screen.findByText('Review before publishing')).toBeInTheDocument()
+      expect(api.publish).not.toHaveBeenCalled()
+    })
   })
 
   describe('when the wallet is short', () => {
@@ -438,6 +474,68 @@ describe('PublishDialog', () => {
 
       expect(await screen.findByRole('button', { name: 'Resume payment' })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Cancel the open payment' })).toBeInTheDocument()
+    })
+  })
+
+  describe('a second attempt after a refusal', () => {
+    beforeEach(() => {
+      api.getPrice.mockResolvedValue(priced(1000))
+      state.wallet = { balanceCents: 400, currency: 'eur', history: [], pagination: {} }
+    })
+
+    it('opens the card again from the summary, and the wallet publish of it is tried once more', async () => {
+      // The checkout refuses the open as a 400 (the wallet covers the price), so the publish follows it
+      api.checkout.mockRejectedValue(new VocdoniApiError(400, { error: 'refused' }, 'refused'))
+      api.publish.mockRejectedValueOnce(shortRefusal)
+      const { user, onPublished } = renderDialog()
+
+      await user.click(await primary('Add €6.00 and publish'))
+      expect(await screen.findByRole('link', { name: 'Open wallet' })).toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: 'Back to the summary' }))
+      await user.click(await primary('Add €6.00 and publish'))
+
+      await waitFor(() => expect(onPublished).toHaveBeenCalledWith(processId))
+      expect(api.publish).toHaveBeenCalledTimes(2)
+      expect(screen.queryByText('refused')).not.toBeInTheDocument()
+    })
+
+    it('does not carry the top-up title over to a later wallet publish', async () => {
+      const { user } = renderDialog()
+
+      await user.click(await primary('Add €6.00 and publish'))
+      await screen.findByRole('button', { name: 'Pay €7.26 and publish' })
+
+      // The wallet now covers the price, and the summary says so once it is read again
+      state.wallet = { balanceCents: 5000, currency: 'eur', history: [], pagination: {} }
+      await user.click(screen.getAllByRole('button', { name: 'Back to the summary' }).at(-1)!)
+      await user.click(await primary('Publish and pay €10.00'))
+      api.publish.mockRejectedValueOnce(new Error('The publish failed'))
+      await user.click(await screen.findByRole('button', { name: 'Pay from the balance and publish' }))
+
+      expect(await screen.findByText('The publish failed')).toBeInTheDocument()
+      expect(screen.queryByText('Top up and publish')).not.toBeInTheDocument()
+    })
+
+    it('does not show a shortfall left from the card when the wallet covers a resumed payment', async () => {
+      const { user, onPublished } = renderDialog()
+
+      await user.click(await primary('Add €6.00 and publish'))
+      await screen.findByRole('button', { name: 'Pay €7.26 and publish' })
+
+      state.wallet = { balanceCents: 5000, currency: 'eur', history: [], pagination: {} }
+      await user.click(screen.getAllByRole('button', { name: 'Back to the summary' }).at(-1)!)
+      await user.click(await primary('Publish and pay €10.00'))
+      api.publish.mockRejectedValueOnce(refusal(409, ApiErrorCode.PaymentSessionConflict))
+      await user.click(await screen.findByRole('button', { name: 'Pay from the balance and publish' }))
+      await user.click(await screen.findByRole('button', { name: 'Resume payment' }))
+
+      expect(await screen.findByRole('button', { name: 'Pay €7.26 and publish' })).toBeInTheDocument()
+      expect(screen.getByText('This vote')).toBeInTheDocument()
+      expect(screen.queryByText('Short')).not.toBeInTheDocument()
+      expect(screen.queryByText('The rest stays in your wallet.')).not.toBeInTheDocument()
+      expect(screen.queryByText(/balance covers/)).not.toBeInTheDocument()
+      expect(onPublished).not.toHaveBeenCalled()
     })
   })
 })
