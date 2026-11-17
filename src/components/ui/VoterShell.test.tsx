@@ -20,6 +20,17 @@ describe('VoterShell', () => {
     expect(screen.getByText('Votació feta amb')).toBeInTheDocument()
   })
 
+  it('carries the credit links in its foot', () => {
+    render(
+      <VoterShell name='Ateneu' credit={{ ...credit, links: <a href='/privacy'>Política de privacitat</a> }}>
+        <p>content</p>
+      </VoterShell>
+    )
+
+    const foot = screen.getByRole('contentinfo')
+    expect(within(foot).getByRole('link', { name: 'Política de privacitat' })).toBeInTheDocument()
+  })
+
   it('shows the organisation logo instead of the symbol when given', () => {
     render(
       <VoterShell name='Ateneu de Vallnova' logo={<img alt='Ateneu de Vallnova' src='logo.png' />} credit={credit}>
@@ -85,5 +96,14 @@ describe('VoterCredit', () => {
 
     expect(screen.getByText('Votació feta amb')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'Vocdoni' })).toBeInTheDocument()
+  })
+
+  it('puts the links after the wordmark, on the same line (owner ruling R18)', () => {
+    render(<VoterCredit {...credit} links={<a href='/terms'>Termes d'ús</a>} />)
+
+    const line = screen.getByText('Votació feta amb').parentElement as HTMLElement
+    const link = within(line).getByRole('link', { name: "Termes d'ús" })
+    const wordmark = within(line).getByRole('img', { name: 'Vocdoni' })
+    expect(wordmark.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 })

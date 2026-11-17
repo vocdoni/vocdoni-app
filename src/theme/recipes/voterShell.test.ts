@@ -77,11 +77,19 @@ describe('voter shell recipe', () => {
 
   it('sets the credit at 12px in the quiet ink with a 13px wordmark, in a 48px row', () => {
     expect(layer(styles.foot)).toMatchObject({ height: 'var(--chakra-sizes-12)' })
-    expect(layer(styles.credit)).toMatchObject({
+    const credit = layer(styles.credit)
+    expect(credit).toMatchObject({
       gap: 'var(--chakra-spacing-1\\.5)',
+      rowGap: 'var(--chakra-spacing-0)',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
       fontSize: 'var(--chakra-font-sizes-xs)',
       color: 'var(--chakra-colors-fg-subtle)',
     })
     expect(layer(styles.wordmark)).toMatchObject({ height: 'var(--chakra-sizes-wordmark-credit)' })
+  })
+
+  it('puts the terms and privacy links after the wordmark behind a middle dot, 6px clear (ruling R18)', () => {
+    expect(layer(styles.links)['&::before']).toEqual({ content: '"·"', marginInlineEnd: 'var(--chakra-spacing-1\\.5)' })
   })
 })

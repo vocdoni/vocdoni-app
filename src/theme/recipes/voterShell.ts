@@ -25,6 +25,7 @@ export const VoterShell = defineSlotRecipe({
     'foot',
     'credit',
     'wordmark',
+    'links',
   ],
   base: {
     root: {
@@ -122,10 +123,22 @@ export const VoterShell = defineSlotRecipe({
     },
     // The credit's row at the page's foot: 48px, centred.
     foot: { display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, h: '12' },
-    // "Votació feta amb" and the Vocdoni wordmark, 6px apart: 12px in the quiet ink, the wordmark 13px tall in ink. It
-    // never takes the vote's colour.
-    credit: { display: 'inline-flex', alignItems: 'center', gap: '1.5', textStyle: 'caption', color: 'fg.subtle' },
+    // "Votació feta amb", the Vocdoni wordmark and the terms and privacy links, 6px apart: 12px in the quiet ink, the
+    // wordmark 13px tall in ink. It never takes the vote's colour. On a narrow phone the links wrap onto a second line,
+    // centred.
+    credit: {
+      display: 'inline-flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '1.5',
+      rowGap: '0',
+      textStyle: 'caption',
+      color: 'fg.subtle',
+    },
     wordmark: { h: 'wordmark.credit', w: 'auto' },
+    // The links after the wordmark, behind a middle dot (owner ruling R18).
+    links: { _before: { content: '"·"', me: '1.5' } },
   },
   variants: {
     // The column from `lg`: beside the rail (600px), or centred on its own: identification (440px), the one-time code

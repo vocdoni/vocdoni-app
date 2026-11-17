@@ -11,15 +11,22 @@ export type VoterCreditProps = {
   text: string
   /** The wordmark's accessible name: "Vocdoni". */
   brand: string
+  /** The terms and privacy links, after the wordmark and a separator (owner ruling R18). */
+  links?: ReactNode
 }
 
-/** "Votació feta amb" and the Vocdoni wordmark: at the page's foot, or inside the phone's action bar. */
-export const VoterCredit = ({ text, brand }: VoterCreditProps) => {
+/** "Votació feta amb", the Vocdoni wordmark and the legal links: at the page's foot, or in the phone's action bar. */
+export const VoterCredit = ({ text, brand, links }: VoterCreditProps) => {
   const styles = useSlotRecipe({ recipe: voterShellRecipe })()
   return (
     <Box as='p' css={styles.credit}>
       <span>{text}</span>
       <VocdoniLogo role='img' aria-label={brand} color='fg' css={styles.wordmark} />
+      {links && (
+        <Box as='span' css={styles.links}>
+          {links}
+        </Box>
+      )}
     </Box>
   )
 }
@@ -48,7 +55,7 @@ export type VoterShellProps = {
   railLabel?: string
   /** The column's width from `lg` (default `status`, 560px; `rail` beside the agenda). */
   column?: VoterShellColumn
-  /** The "made with Vocdoni" line, at the foot (inside the action bar below `md` when the page has one). */
+  /** The "made with Vocdoni" line and its links, at the foot (in the action bar below `md` when the page has one). */
   credit: VoterCreditProps
   children: ReactNode
 }

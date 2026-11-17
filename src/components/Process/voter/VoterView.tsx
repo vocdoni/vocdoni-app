@@ -1,11 +1,10 @@
 import { Box, Link } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
-import { StaticLegalNotice } from '~components/Layout/LegalNotice'
 import { StepProgress } from '~components/ui/StepProgress'
 import { VoterShell, type VoterShellColumn } from '~components/ui/VoterShell'
-import { useAppEnv } from '~src/app-env'
 import { useVoterFlow } from './flow-context'
 import { textOf } from './format'
+import { VoterLegalLinks } from './parts/VoterActionBar'
 import { VoterBrandLogo } from './parts/VoterBrandLogo'
 import { VoterRail } from './parts/VoterRail'
 import { VoterTopActions } from './parts/VoterTopActions'
@@ -81,21 +80,42 @@ const Screen = ({ screen }: { screen: VoterScreen }) => {
   }
 }
 
+// The screens that carry the legal notice: identification, the welcome and the state screens. The ballot, the sending
+// and the receipt stay clear of it (controller ruling on the conformance pass's Q2).
+const LEGAL_NOTICE_SCREENS: ReadonlySet<VoterScreenKind> = new Set<VoterScreenKind>([
+  'identify',
+  'welcome',
+  'alreadyVoted',
+  'upcoming',
+  'closed',
+  'paused',
+  'canceled',
+  'notEligible',
+  'unavailable',
+  'unsupported',
+  'results',
+])
+
+/** Whether a screen shows the legal notice under its content. */
+export const showsLegalNotice = (kind: VoterScreenKind): boolean => LEGAL_NOTICE_SCREENS.has(kind)
+
 /**
- * The terms and privacy links today's footer carries (owner ruling R18), at the end of the column, right above the
- * credit: the shell's foot takes the credit only, and the phone's action bar covers it.
+ * "Per garantir un vot segur, …, fa servir la plataforma Vocdoni …": in the voter's note style (14px in the quiet
+ * ink), aligned with the column. Nothing for an organisation with no name. The link opens in a new tab.
  */
-const VoterLegalLinks = () => {
-  const { TERMS_OF_SERVICE_URL, PRIVACY_POLICY_URL } = useAppEnv()
+const VoterLegalNotice = ({ orgName }: { orgName: string }) => {
+  if (!orgName) return null
   return (
-    <Box as='p' mt='4' textStyle='caption' color='fg.subtle' textAlign='center'>
+    <Box as='p' data-testid='layout-legal-notice' mt='8' textStyle='body' color='fg.subtle'>
       <Trans
-        i18nKey='footer.terms_and_privacy'
-        components={{
-          link1: <Link href={TERMS_OF_SERVICE_URL} target='_blank' rel='noopener noreferrer' tone='muted' />,
-          link2: <Link href={PRIVACY_POLICY_URL} target='_blank' rel='noopener noreferrer' tone='muted' />,
-        }}
-      />
+        i18nKey='layout.legal_notice'
+        values={{ orgName }}
+        components={{ strong: <Box as='strong' color='fg' fontWeight='semibold' /> }}
+      />{' '}
+      <Link href='https://vocdoni.io/' target='_blank' rel='noopener noreferrer'>
+        vocdoni.io
+      </Link>
+      .
     </Box>
   )
 }
@@ -123,7 +143,11 @@ export const VoterView = ({ publicLanguageLinks }: { publicLanguageLinks?: Recor
       actions={<VoterTopActions publicLanguageLinks={publicLanguageLinks} />}
       head={
         ballot
-          ? { title: textOf(election.title as Parameters<typeof textOf>[0]), status: <VoteStatusLine /> }
+          ? {
+              title: textOf(election.title as Parameters<typeof textOf>[0]),
+              // The head keeps the open-until line while the vote is paused: the notice and the note say it (D-20).
+              status: <VoteStatusLine context='head' />,
+            }
           : undefined
       }
       progress={ballot ? <StepProgress label={label} value={reached} total={total} /> : undefined}
@@ -137,11 +161,10 @@ export const VoterView = ({ publicLanguageLinks }: { publicLanguageLinks?: Recor
       }
       railLabel={t('voter.agenda')}
       column={COLUMN[screen.kind] ?? 'status'}
-      credit={{ text: t('voter.credit.text'), brand: t('voter.credit.brand') }}
+      credit={{ text: t('voter.credit.text'), brand: t('voter.credit.brand'), links: <VoterLegalLinks /> }}
     >
       <Screen screen={screen} />
-      <StaticLegalNotice orgName={brand.name} />
-      <VoterLegalLinks />
+      {showsLegalNotice(screen.kind) && <VoterLegalNotice orgName={brand.name} />}
     </VoterShell>
   )
 }

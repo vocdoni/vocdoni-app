@@ -7,7 +7,9 @@ import { renderToString } from 'react-dom/server'
 import { buildAppEnv } from '~src/app-env-build'
 import { AllProviders, createTestQueryClient } from '~src/test-utils'
 import type { ProcessBrand } from '~utils/process-brand'
+import type { VoterScreenKind } from './voter-flow'
 import { VoterPage } from './VoterPage'
+import { showsLegalNotice } from './VoterView'
 
 // The real SDK (providers, question form and fields): only the network is faked. The setup file stubs
 // react-components' hooks for component tests; this suite needs the real ones.
@@ -356,7 +358,7 @@ describe('voter page shell', () => {
     expect(header).toHaveTextContent('Ateneu')
   })
 
-  it('carries the credit and the terms and privacy links of the footer (ruling R18)', async () => {
+  it('puts the terms and privacy links in the credit line, at the foot and in the bar (ruling R18)', async () => {
     i18n.addResource(
       'en',
       'common',
@@ -366,8 +368,60 @@ describe('voter page shell', () => {
     const env = buildAppEnv({})
     renderPage()
     await onScreen('identify')
-    expect(screen.getByRole('link', { name: 'Terms of use' })).toHaveAttribute('href', env.TERMS_OF_SERVICE_URL)
-    expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute('href', env.PRIVACY_POLICY_URL)
-    expect(document.querySelector('footer')).toHaveTextContent('voter.credit.text')
+    const foot = document.querySelector('footer') as HTMLElement
+    const bar = screen.getByRole('region', { name: 'voter.actions_label' })
+    expect(foot).toHaveTextContent('voter.credit.text')
+    for (const place of [foot, bar]) {
+      const credit = within(place).getByText('voter.credit.text').parentElement as HTMLElement
+      const terms = within(credit).getByRole('link', { name: 'Terms of use' })
+      const privacy = within(credit).getByRole('link', { name: 'Privacy Policy' })
+      expect(terms).toHaveAttribute('href', env.TERMS_OF_SERVICE_URL)
+      expect(privacy).toHaveAttribute('href', env.PRIVACY_POLICY_URL)
+      // A new tab, so reading them never ends the voter's session.
+      for (const link of [terms, privacy]) {
+        expect(link).toHaveAttribute('target', '_blank')
+        expect(link.getAttribute('rel')).toContain('noopener')
+      }
+    }
+    // Nothing of the footer is left at the end of the column.
+    expect(within(screen.getByRole('main')).getAllByRole('link', { name: 'Terms of use' })).toHaveLength(1)
+    expect(within(bar).getByRole('link', { name: 'Terms of use' })).toBeInTheDocument()
+  })
+
+  it('shows the legal notice on identification, in a new tab for its link, and not on a question', async () => {
+    renderPage()
+    await onScreen('identify')
+    const notice = screen.getByTestId('layout-legal-notice')
+    expect(screen.getByRole('main')).toContainElement(notice)
+    expect(within(notice).getByRole('link', { name: 'vocdoni.io' })).toHaveAttribute('target', '_blank')
+    await identify()
+    expect(screen.getByTestId('layout-legal-notice')).toBeInTheDocument()
+    fireEvent.click(within(current()).getByRole('button', { name: 'voter.welcome.start' }))
+    await onScreen('question')
+    expect(screen.queryByTestId('layout-legal-notice')).toBeNull()
+  })
+})
+
+describe('voter legal notice placement', () => {
+  it.each<[VoterScreenKind, boolean]>([
+    ['identify', true],
+    ['welcome', true],
+    ['alreadyVoted', true],
+    ['upcoming', true],
+    ['closed', true],
+    ['paused', true],
+    ['canceled', true],
+    ['notEligible', true],
+    ['unavailable', true],
+    ['unsupported', true],
+    ['results', true],
+    ['question', false],
+    ['review', false],
+    ['sending', false],
+    ['receipt', false],
+    ['code', false],
+    ['checking', false],
+  ])('%s: %s', (kind, shown) => {
+    expect(showsLegalNotice(kind)).toBe(shown)
   })
 })
