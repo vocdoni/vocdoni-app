@@ -47,14 +47,12 @@ vi.mock('../VotingReportPdf/VotingReportPdfButton', () => ({
 vi.mock('~components/ui/ResponsiveMenu', () => ({
   ResponsiveMenu: ({
     label,
-    subtitle,
     items,
   }: {
     label: string
-    subtitle?: string
     items: { value: string; label: string; onSelect?: () => void }[]
   }) => (
-    <ul aria-label={label} data-subtitle={subtitle}>
+    <ul aria-label={label}>
       {items.map((item) => (
         <li key={item.value}>
           <button onClick={item.onSelect}>{item.label}</button>
@@ -295,7 +293,7 @@ describe('VoteHeader', () => {
   })
 
   describe('More', () => {
-    it('lists the voter page, duplicate, report, explorer and cancel, with the state under the sheet title', () => {
+    it('lists the voter page, duplicate, explorer and cancel', () => {
       renderHeader(createProcess({}, 'ONGOING', '0xchain'))
 
       expect(
@@ -303,7 +301,6 @@ describe('VoteHeader', () => {
           .getAllByRole('button')
           .map((item) => item.textContent)
       ).toEqual(['Show as voter', 'Duplicate the vote', 'View in explorer', 'Cancel the vote'])
-      expect(menu()).toHaveAttribute('data-subtitle', 'Live')
     })
 
     it('says Duplicate in the phone sheet', () => {
