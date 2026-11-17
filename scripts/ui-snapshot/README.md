@@ -195,8 +195,8 @@ one side only as a difference.
 The `vote-*`, `processes-empty` routes and the `processes-all` states render every state of the Fil
 vote boards (`v4/V4Vote*`, `v4m/M4Vote*`) with the boards' data: Catalan titles, a census of 312 and the boards'
 tallies (`mock-saas.mjs`, "board votes"). All at once: ready, live, paused, ended, canceled; question by question:
-before the start, one open, two open, paused as a whole, all closed, ended with a never-opened question and the
-16-question demo; the end, cancel, close-question and delete-draft confirmations and the vote and row menus. Only the
+before the start, one open, two open, paused as a whole, all closed, ended with a never-opened question, canceled
+and the 16-question demo; the Papereta tab of a live, an ended and a question-by-question vote; the end, cancel, close-question and delete-draft confirmations and the vote and row menus. Only the
 ready, paused and canceled ones join the votes list; the rest are reached by id. Run them in Catalan to compare
 with the boards:
 

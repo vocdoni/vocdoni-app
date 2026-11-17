@@ -26,6 +26,7 @@ export const B_QBQ_HELD = '650000000000000000000b13'
 export const B_QBQ_CLOSED = '650000000000000000000b14'
 export const B_QBQ_ENDED = '650000000000000000000b15'
 export const B_QBQ_MANY = '650000000000000000000b17'
+export const B_QBQ_CANCELED = '650000000000000000000c12'
 export const FAKE_TOKEN = 'fake-local-token'
 export const TOKEN_EXPIRY = '2031-01-01T00:00:00.000Z'
 
@@ -507,6 +508,13 @@ const BOARD_PROCESSES = [
     ['RESULTS', closedAt('09:53:00')],
     ['ENDED', closedAt('09:58:00')],
     ['ENDED', { endedAt: at('09:58:01'), results: tally([0, 0, 0], true) }],
+  ]),
+  // Canceled after its first question closed: every question voided, the votes discarded.
+  qbqVote(B_QBQ_CANCELED, [
+    ['CANCELED', closedAt('09:42:00')],
+    ['CANCELED', closedAt('09:42:00')],
+    ['CANCELED', closedAt('09:42:00')],
+    ['CANCELED', closedAt('09:42:00')],
   ]),
   qbqVote(
     B_QBQ_MANY,

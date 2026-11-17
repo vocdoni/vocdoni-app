@@ -6,6 +6,7 @@ import {
   B_AAO_LIVE,
   B_AAO_PAUSED,
   B_AAO_READY,
+  B_QBQ_CANCELED,
   B_QBQ_CLOSED,
   B_QBQ_ENDED,
   B_QBQ_HELD,
@@ -39,9 +40,14 @@ const cancelVote = {
   ],
 }
 const endNow = { slug: 'end-confirm', open: [[named('button', 'End now', 'Finalitza ara')]] }
-const endVote = { slug: 'end-confirm', open: [[named('button', 'End the vote', 'Finalitza la votació')]] }
+// The question-by-question header said "End the vote" on the desktop until R33 made it "End now" at every width.
+const endVote = {
+  slug: 'end-confirm',
+  open: [[named('button', 'End the vote|End now', 'Finalitza la votació|Finalitza ara')]],
+}
 const DRAFT_ROW = `article:has-text("New statutes") >> role=button[name=/^(More actions|Més accions)$/]`
 const vote = (slug, id, states) => ({ slug, path: `/admin/process/${id}`, ...(states && { states }) })
+const ballot = (slug, id) => ({ slug, path: `/admin/process/${id}/ballot` })
 
 export const ROUTES = [
   {
@@ -97,6 +103,11 @@ export const ROUTES = [
   vote('vote-qbq-closed', B_QBQ_CLOSED),
   vote('vote-qbq-ended', B_QBQ_ENDED),
   vote('vote-qbq-many', B_QBQ_MANY),
+  vote('vote-qbq-canceled', B_QBQ_CANCELED),
+  // Papereta: one that can still be canceled, one that can no longer be, and a question-by-question one.
+  ballot('vote-aao-ballot', B_AAO_LIVE),
+  ballot('vote-aao-ended-ballot', B_AAO_ENDED),
+  ballot('vote-qbq-ballot', B_QBQ_LIVE),
   {
     slug: 'create-empty',
     path: '/admin/processes/create',
