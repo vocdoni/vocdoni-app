@@ -71,8 +71,8 @@ const outline = defineStyle({
   boxShadow: 'shadow.control',
   // The hover tint is laid over the panel, not in its place: alone it is translucent, and on the grey page the
   // button would lose its fill and its ring would read heavier.
-  _hover: { bg: 'bg.panel', bgImage: PANEL_HOVER },
-  _expanded: { bg: 'bg.panel', bgImage: PANEL_HOVER },
+  _hover: { bg: 'surface.control', bgImage: PANEL_HOVER },
+  _expanded: { bg: 'surface.control', bgImage: PANEL_HOVER },
   // A loading secondary keeps its ring and ink; only a truly disabled one fades.
   _disabled: { '&[data-loading]': { opacity: '[1]', cursor: '[progress]' } },
 })
@@ -233,11 +233,11 @@ const dropdown = defineStyle({ ...outline })
 // from `lg` a labelled dropdown as `dropdown`. The button shows its word and chevron from `lg` and the icon below it
 // (`hideBelow` / `hideFrom` on its children), keeping one name at every width. Sides and icons in a compound variant.
 const more = defineStyle({
-  bg: { base: 'transparent', lg: 'bg.panel' },
+  bg: { base: 'transparent', lg: 'surface.control' },
   color: { base: 'fg.muted', lg: 'fg' },
   boxShadow: { base: '[none]', lg: 'shadow.control' },
-  _hover: { bg: { base: 'state.hover.bg', lg: 'bg.panel' }, bgImage: { lg: PANEL_HOVER }, color: 'fg' },
-  _expanded: { bg: { base: 'state.hover.bg', lg: 'bg.panel' }, bgImage: { lg: PANEL_HOVER }, color: 'fg' },
+  _hover: { bg: { base: 'state.hover.bg', lg: 'surface.control' }, bgImage: { lg: PANEL_HOVER }, color: 'fg' },
+  _expanded: { bg: { base: 'state.hover.bg', lg: 'surface.control' }, bgImage: { lg: PANEL_HOVER }, color: 'fg' },
 })
 
 // Button that opens a menu about the current user: avatar, names and a chevron, left-aligned.
