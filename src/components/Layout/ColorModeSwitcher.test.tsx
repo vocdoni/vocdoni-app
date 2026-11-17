@@ -2,7 +2,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { system } from '~theme/system'
-import { ThemeToggleGroup } from './ColorModeSwitcher'
+import { AppearanceSegment } from './ColorModeSwitcher'
 
 const setTheme = vi.fn()
 
@@ -14,58 +14,44 @@ vi.mock('next-themes', () => ({
   }),
 }))
 
-const setColorMode = vi.fn()
-
-vi.mock('~theme/color-mode', () => ({
-  useColorMode: () => ({
-    setColorMode,
-  }),
-  useColorModeValue: (light: string, _dark: string) => light,
-}))
-
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (_key: string, fallback?: string) => fallback ?? _key,
   }),
 }))
 
-describe('ThemeToggleGroup', () => {
-  it('renders theme toggle buttons', () => {
-    render(
-      <ChakraProvider value={system}>
-        <ThemeToggleGroup />
-      </ChakraProvider>
-    )
+const renderSegment = () =>
+  render(
+    <ChakraProvider value={system}>
+      <AppearanceSegment />
+    </ChakraProvider>
+  )
 
-    expect(screen.getByRole('button', { name: 'System' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Light' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Dark' })).toBeInTheDocument()
+describe('AppearanceSegment', () => {
+  beforeEach(() => setTheme.mockReset())
+
+  it('renders the three positions as text and marks the current theme', () => {
+    renderSegment()
+
+    expect(screen.getByRole('radio', { name: 'System' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Light' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Dark' })).toBeChecked()
   })
 
-  it('sets theme to light when light is selected', async () => {
+  it('sets the theme to light when Light is picked', async () => {
     const user = userEvent.setup()
+    renderSegment()
 
-    render(
-      <ChakraProvider value={system}>
-        <ThemeToggleGroup />
-      </ChakraProvider>
-    )
-
-    await user.click(screen.getByRole('button', { name: 'Light' }))
+    await user.click(screen.getByText('Light'))
 
     expect(setTheme).toHaveBeenCalledWith('light')
   })
 
-  it('sets theme to system when system is selected', async () => {
+  it('sets the theme to system when System is picked', async () => {
     const user = userEvent.setup()
+    renderSegment()
 
-    render(
-      <ChakraProvider value={system}>
-        <ThemeToggleGroup />
-      </ChakraProvider>
-    )
-
-    await user.click(screen.getByRole('button', { name: 'System' }))
+    await user.click(screen.getByText('System'))
 
     expect(setTheme).toHaveBeenCalledWith('system')
   })

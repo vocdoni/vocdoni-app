@@ -12,9 +12,9 @@ use it.
 The payoff: `PRIMARY_COLOR` recolours the accent, dark mode flips from CSS (no flash on SSR pages), and a redesign
 touches `src/theme/` instead of hundreds of components.
 
-The theme is Fil: untinted greys, a 1px ring instead of shadows, one blue. It is light only for now:
-`ColorModeProvider` forces the light theme and the colour-mode switchers are not rendered, so dark values are not
-designed yet (the `_dark` side of each token is kept as it was).
+The theme is Fil: untinted greys, a 1px ring instead of shadows, one blue. Its dark side is "Carbó": five pure grey
+steps (page, sidebar, card, dialog, menu), white-alpha lines, no shadows, gradients or glow, and the blue as a fill
+or, as text and line, a lighter `#6a99f1`. The values are in the dark table below.
 
 ## Where things live
 
@@ -47,9 +47,9 @@ Token families, each in its own module under `src/theme/` and spread into `color
 
 | Family                           | Tokens                                                                                                                                                                                                                                                                                       | Module            |
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint` (`fg.subtle` today), `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.track` (the empty track of a progress bar), `bg.inverted`, `bg.panel`                                                                          | `semantic.ts`     |
+| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint`, `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.track` (the empty track of a progress bar), `bg.inverted`, `bg.panel`                                                                          | `semantic.ts`     |
 | Borders                          | `border` (the hairline of cards, rows and dividers, black at 10%), `border.emphasized` (a firmer hairline, such as the rule above a docked bar, black at 18%), `border.muted`, `border.subtle`, `border.strong` (outlines of checkboxes, radios and dashed drop zones, `#8f8f8f`), `border.field` (the ring of fields, selects, textareas and voter options, `#8f8f8f`), `border.inverted` | `semantic.ts`     |
-| Surface layers                   | `surface.canvas` (the dashboard page, `#fafafa` in light mode), `.sidebar` (white), `.content`, `.card`, `.sunken`, `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`)                                                                                                                  | `semantic.ts`     |
+| Surface layers                   | `surface.canvas` (the dashboard page, `#fafafa` in light mode), `.sidebar` (white), `.content`, `.card`, `.sunken`, `.control` (the fill of a secondary button, an avatar and the entity selector: white in light mode, white at 5% in dark), `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`)                                                                                                                  | `semantic.ts`     |
 | Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.fg`                                                                                                                                                                                                                            | `semantic.ts`     |
 | Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                                                                                                                                           | `semantic.ts`     |
 | Interaction states (bg/fg pairs) | `state.hover`, `state.pressed`, `state.selected`, `state.current`, `state.dragover.border`                                                                                                                                                                                                   | `states.ts`       |
@@ -58,10 +58,10 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}` (the info, warning and error `solid`)                                                                                                                                                            | `charts.ts`       |
 | Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                                                                                                                                        | `ballot.ts`       |
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                                                                                                                                        | `illustration.ts` |
-| Links, switch                    | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`                                                                                                                                                                                            | `recipeColors.ts` |
+| Links, switch, segments          | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `segment.selected` (the chosen segment or pill tab: `bg.panel` in light) | `recipeColors.ts` |
 | Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                                                                                                                                  | `recipeColors.ts` |
 | Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`); every shadow is a 1px ring, no blur | `semantic.ts`     |
-| Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                                                                                                                                    | `palette.ts`      |
+| Brand accent in dark mode        | `accent.fg`: the brand's `fg` (`#6a99f1` for Fil's stock blue), or white on the dark page for a neutral brand (active tab, highlight card)                                                                                                                                                                                    | `palette.ts`      |
 | Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                         | `system.ts`       |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                                                                                                                                         | `semantic.ts`     |
 
@@ -82,11 +82,42 @@ Rules of thumb:
   are `colorModeLogic` and fail the inventory
   (they also flash the light value on SSR pages before hydration). The only allowed `_dark` are the two listed in the
   exceptions: an image filter on empty-state artwork and the white tile behind organisation logos.
-- **Dark greys**: the raw `ink` scale in `colors.ts` is numbered by lightness, like Chakra's scales, so a higher step is
-  darker: `ink.950` (#000000), `ink.900` (#0a0a0a, the dark page), `ink.850` (#1f1f22), `ink.800` (#262626), `ink.700`
-  (#2e2e2e). Components never read it; the semantic tokens do. The dark `bg.muted` is `ink.850`, so the dark steps run
-  `bg.subtle` < `bg.muted` (hover) < `bg.emphasized` (pressed, current), the same order as light. `state.hover.bg` is a 4% black
-  wash in light mode so it shows on white and on the sidebar tint alike.
+- **Dark greys**: the dark steps are the `gray` scale plus `carbon` in `colors.ts`, both numbered by lightness (a higher
+  step is darker). `carbon` holds the steps that fall between the grays: `925` (#111111), `875` (#1c1c1c), `850`
+  (#222222), `750` (#333333), `500` (#707070), `400` (#999999), `300` (#b4b4b4), `100` (#ededed); `ink` keeps only pure
+  black (`950`). Components never read them; the semantic tokens do. Dark values:
+
+  | Role | Dark value |
+  | --- | --- |
+  | `bg`, `surface.canvas`, `surface.inset` | `gray.950` #0a0a0a |
+  | `bg.subtle`, `surface.sidebar` | `carbon.925` #111111 |
+  | `bg.panel`, `surface.card` | `gray.900` #171717 |
+  | `surface.overlay` (dialog) | `carbon.875` #1c1c1c |
+  | `surface.raised` (menu) | `carbon.850` #222222 |
+  | `surface.control` | white at 5% |
+  | `bg.muted`, `state.hover.bg` | white at 6% |
+  | `bg.emphasized`, `state.current.bg` | white at 8% |
+  | `state.selected.bg` | white at 10% |
+  | `bg.track` | `carbon.750` #333333 |
+  | `bg.inverted` | `carbon.100` #ededed |
+  | `fg`, `fg.muted`, `fg.subtle`, `fg.faint` | #ededed, #b4b4b4, #999999, #707070 (`fg.inverted` is `gray.950`) |
+  | `border`, `border.emphasized` | white at 10% and 18% |
+  | `border.strong`, `border.field` | `carbon.500` #707070 |
+  | `border.muted` | `gray.800` #262626 |
+  | `fg.info`, `input.placeholder`, `ballot.choice.ring` | `fg.muted`, `fg.subtle`, `border.strong` |
+  | `gray.subtle`, `gray.muted`, `gray.solid`, `gray.contrast` | `bg.muted`, `bg.emphasized`, `carbon.100`, `gray.950` |
+  | `scrim.strong` | black at 64% |
+  | `fg.error`, `fg.warning`, `fg.success` | #f97770, #e4ac59, #6fc884 (the status palettes' `fg` slots too) |
+  | `bg.error`, `bg.warning`, `bg.success`, `bg.info`, `footer.bg.muted` | `bg.subtle` |
+  | `success.solid`, `success.contrast` | #2caa4f, #0a0a0a |
+  | `switch.thumb`, `switch.thumb.checked` | `carbon.300` #b4b4b4, the palette's `contrast` (white for the stock blue) |
+  | `segment.selected` (chosen segment, pill tab) | `state.selected.bg`, white at 10%, lighter than its `bg.muted` track |
+  | `link.fg`, `link.fg.hover` | `accent.fg`, `accent.fg.hover` (both modes) |
+  | `accent.solid` (hover), `fg` (hover), `subtle` | #1d62e9 (#2d6deb), #6a99f1 (#96b8f7), #1d62e9 at 12%; stock blue only, pinned in `system.ts` |
+
+  The rings stay as in light mode (1px, no shadows). A configured `PRIMARY_COLOR` keeps its generated dark slots. The
+  steps run `bg.subtle` < `bg.muted` (hover) < `bg.emphasized` (pressed, current), as in light. `state.hover.bg` is a 4%
+  black wash in light mode so it shows on white and on the sidebar tint alike.
 - **Text on a coloured fill**: use the pair the token family ships (`status.error.contrast` on `status.error.solid`,
   `surface.inverse.fg` on `surface.inverse`), not an ad hoc black or white. `textContrast.test.ts` and `palette.test.ts`
   check contrast.
@@ -97,7 +128,7 @@ Fil rules the theme enforces:
 
 - Two rings. A button and an avatar draw `shadow.control`; an input, textarea, native or searchable select and a voter
   option draw `shadow.field` (the darker `border.field`). Focus, invalid and read-only states stay as they are.
-- `#8f8f8f` (`fg.faint`, `border.field`) is never a text colour. It is for marks and rules only.
+- `#8f8f8f` (`fg.faint`, `border.field`; `#707070` in dark) is never a text colour. It is for marks and rules only.
 - A progress bar's empty track is `bg.track`; the `results` variant keeps `bg.muted`.
 - A `Button` with `loading` keeps its filled look (primary) or its ring and ink (secondary) with the spinner, and is not
   pressable. Grey is only for a truly disabled button: the recipes tell the two apart by `data-loading`.
@@ -337,8 +368,9 @@ an optional `match` (a regular expression on the whole source text of the occurr
 that narrows the exception to the occurrences it names) and a `reason`. Today:
 
 - **PDF report** (`VotingReportPdf`): react-pdf renders outside Chakra, so raw values are the only option.
-- **Stripe Elements** (`src/components/Pricing/stripe.ts`): its appearance API takes raw CSS colours. The app is light only,
-  so it always gets the light theme (`useColorMode` honours the forced theme).
+- **Stripe Elements and Cal.com** (`src/components/Pricing/stripe.ts`): both render in iframes and take raw CSS colours.
+  `EMBED_DARK` there is the one copy of the Fil dark values they get (Cal.com's booker reads it); light keeps each
+  embed's own look. `useColorMode` reports the forced mode on voter pages.
 - **react-select**: the menu portal of `SaasSelector.tsx` and `CensusSearch.tsx` needs a raw `zIndex` above Chakra
   modals, and `isLoading` on the react-select wrapper (`SaasSelector.tsx`, `Members/index.tsx`, `CensusCreation.tsx`) is
   a react-select prop, not a Chakra v2 one.
@@ -376,7 +408,7 @@ it when the code goes.
 
    export const exampleColors = defineSemanticTokens.colors({
      example: {
-       DEFAULT: { value: { _light: '{colors.gray.100}', _dark: '{colors.ink.800}' } },
+       DEFAULT: { value: { _light: '{colors.gray.100}', _dark: '{colors.gray.800}' } },
        strong: { value: { _light: '{colors.gray.200}', _dark: '{colors.gray.800}' } },
      },
    })

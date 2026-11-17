@@ -34,6 +34,7 @@
       "organization_logo": "Organization logo"
     }
   },
+  "appearance": "Appearance",
   "aside": {
     "anonymous_receipt_gone": "Your receipt was shown when you voted and cannot be retrieved.",
     "has_already_voted": "Your vote is properly cast",
@@ -145,7 +146,6 @@
     "title": "Change password"
   },
   "close": "Close",
-  "color_mode_switcher": "Color mode switcher",
   "common": {
     "back": "Back",
     "home": "Home",
@@ -1560,7 +1560,6 @@
     "teaser_dismiss": "Dismiss",
     "whatsapp": "Chat on WhatsApp"
   },
-  "switch_mode": "Switch to {{ mode }} mode",
   "switch_organization": "Switch organization",
   "system": "System",
   "team": {

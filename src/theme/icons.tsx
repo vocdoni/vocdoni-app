@@ -47,8 +47,6 @@ import {
   LuMail,
   LuMessageCircle,
   LuMessagesSquare,
-  LuMonitor,
-  LuMoon,
   LuNetwork,
   LuPalette,
   LuPanelLeft,
@@ -67,7 +65,6 @@ import {
   LuSmartphone,
   LuSparkles,
   LuStrikethrough,
-  LuSun,
   LuTerminal,
   LuText,
   LuTrash2,
@@ -168,11 +165,6 @@ export const UserCogIcon = LuUserCog
 export const UsersIcon = LuUsers
 export const VoteIcon = LuVote
 export const ProfileIcon = LuUserPen
-
-// Color mode
-export const DarkModeIcon = LuMoon
-export const LightModeIcon = LuSun
-export const SystemModeIcon = LuMonitor
 
 // Text editor
 export const BoldIcon = LuBold

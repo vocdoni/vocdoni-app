@@ -34,6 +34,7 @@
       "organization_logo": "Logo der Organisation"
     }
   },
+  "appearance": "Darstellung",
   "aside": {
     "anonymous_receipt_gone": "Dein Beleg wurde bei der Stimmabgabe angezeigt und kann nicht erneut abgerufen werden.",
     "has_already_voted": "Deine Stimme wurde erfolgreich abgegeben",
@@ -145,7 +146,6 @@
     "title": "Passwort ändern"
   },
   "close": "Schließen",
-  "color_mode_switcher": "Farbmodus-Umschalter",
   "common": {
     "back": "Zurück",
     "home": "Startseite",
@@ -1560,7 +1560,6 @@
     "teaser_dismiss": "Schließen",
     "whatsapp": "Über WhatsApp schreiben"
   },
-  "switch_mode": "Zum {{ mode }}-Modus wechseln",
   "switch_organization": "Organisation wechseln",
   "system": "System",
   "team": {

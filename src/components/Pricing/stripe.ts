@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
 import { useColorMode } from '~theme/color-mode'
+import { EMBED_DARK } from '~theme/embedColors'
 
 // Lazy initializer so loadStripe runs once (not on every render), and only when
 // a key is configured — loadStripe('') throws, and STRIPE_PUBLIC_KEY is optional.
@@ -22,13 +23,18 @@ export const useStripePromise = (): Promise<Stripe | null> | null => {
 
 export const useCheckoutAppearance = (): Appearance => {
   const { colorMode } = useColorMode()
-  return {
-    theme: colorMode === 'dark' ? ('night' as const) : ('stripe' as const),
-    variables: {
-      // Stripe renders in an iframe, so theme CSS vars are unreachable; raw values mirror the `bg` token
-      colorBackground: colorMode === 'dark' ? '#0a0a0a' : 'white',
-    },
+  if (colorMode === 'dark') {
+    return {
+      theme: 'night',
+      variables: {
+        colorBackground: EMBED_DARK.background,
+        colorText: EMBED_DARK.text,
+        colorPrimary: EMBED_DARK.primary,
+      },
+      rules: { '.Input': { border: `1px solid ${EMBED_DARK.fieldRing}` } },
+    }
   }
+  return { theme: 'stripe', variables: { colorBackground: 'white' } }
 }
 
 // Base for a redirect-based payment's return URL: the current page without query or hash, with
