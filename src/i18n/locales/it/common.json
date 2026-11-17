@@ -1719,7 +1719,7 @@
       "resend": "Non ti è arrivato? <resend>Invialo di nuovo</resend>.",
       "resent": "Ti abbiamo inviato un nuovo codice.",
       "sent_to": "L'abbiamo inviato a {{contact}}.",
-      "spam_hint": "Abbiamo inviato un codice di verifica al numero di telefono o all’indirizzo email indicato. Se hai scelto di riceverlo via email, controlla anche la cartella spam.",
+      "spam_hint": "Se hai scelto di riceverlo via email, controlla anche la cartella spam.",
       "title": "Inserisci il codice che ti abbiamo inviato"
     },
     "continue": "Continua",

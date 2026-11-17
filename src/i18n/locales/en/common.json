@@ -1690,7 +1690,7 @@
       "resend": "Didn't get it? <resend>Send it again</resend>.",
       "resent": "We've sent you a new code.",
       "sent_to": "We sent it to {{contact}}.",
-      "spam_hint": "We've sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder.",
+      "spam_hint": "If you chose to receive it by email, please check your spam folder.",
       "title": "Enter the code we sent you"
     },
     "continue": "Continue",

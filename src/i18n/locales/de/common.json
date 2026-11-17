@@ -1690,7 +1690,7 @@
       "resend": "Nicht angekommen? <resend>Erneut senden</resend>.",
       "resent": "Wir haben dir einen neuen Code geschickt.",
       "sent_to": "Wir haben ihn an {{contact}} geschickt.",
-      "spam_hint": "Wir haben einen Code an deine Telefonnummer oder E-Mail-Adresse gesendet. Wenn du ihn per E-Mail erhalten hast, prüfe bitte auch deinen Spam-Ordner.",
+      "spam_hint": "Wenn du ihn per E-Mail erhalten hast, prüfe bitte auch deinen Spam-Ordner.",
       "title": "Gib den Code ein, den wir dir geschickt haben"
     },
     "continue": "Weiter",

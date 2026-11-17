@@ -1719,7 +1719,7 @@
       "resend": "No t'ha arribat? <resend>Torna'l a enviar</resend>.",
       "resent": "T'hem enviat un codi nou.",
       "sent_to": "L'hem enviat a {{contact}}.",
-      "spam_hint": "Hem enviat un codi al telèfon o al correu electrònic indicats. Si has triat el correu electrònic, revisa també la carpeta de correu brossa.",
+      "spam_hint": "Si has triat el correu electrònic, revisa també la carpeta de correu brossa.",
       "title": "Escriu el codi que t'hem enviat"
     },
     "continue": "Continua",

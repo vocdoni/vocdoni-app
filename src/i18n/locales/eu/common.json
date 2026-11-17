@@ -1690,7 +1690,7 @@
       "resend": "Ez zaizu iritsi? <resend>Bidali berriro</resend>.",
       "resent": "Kode berri bat bidali dizugu.",
       "sent_to": "Hona bidali dugu: {{contact}}.",
-      "spam_hint": "Adierazitako telefonora edo posta elektronikora kode bat bidali dugu. Posta elektronikoz jasotzea aukeratu baduzu, begiratu spam karpeta ere.",
+      "spam_hint": "Posta elektronikoz jasotzea aukeratu baduzu, begiratu spam karpeta ere.",
       "title": "Idatzi bidali dizugun kodea"
     },
     "continue": "Jarraitu",
