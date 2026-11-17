@@ -205,6 +205,12 @@ UI_SNAPSHOT_PORT=3009 pnpm ui:snapshot -- --label boards --viewports 1440,768,39
   --routes processes-all,processes-empty,vote-aao-live,manage-qbq-live
 ```
 
+The mock answers question status changes as the API does: a batch that targets a question already over gets a 400
+and changes nothing, and ending a question stamps its end time and final tally. Two switches show the failure paths
+by hand: `MOCK_STATUS_BUSY=1` answers every status change with 503 (another change holds the lock) and
+`MOCK_SLOW_JOB_MS=150000` keeps a status job pending that long (the "still working" message after two minutes).
+The list endpoint pages by `page` and `limit` and, as the API, carries no per-question results.
+
 ## Known limits
 
 - **Mock data, no backend.** Screens show what the mock returns: one admin user, one organization

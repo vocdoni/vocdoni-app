@@ -631,15 +631,17 @@ on('GET', '/organizations/[^/]+/censuses', () => ({
 on('GET', '/organizations/[^/]+/users', () => TEAM)
 on('GET', '/organizations/[^/]+/users/pending', () => PENDING)
 on('GET', '/jobs', () => ({ jobs: [], pagination: pagination(0) }))
-on('GET', '/jobs/([^/]+)', (m) => ({
-  jobId: m[1],
-  type: 'org_members',
-  status: 'completed',
-  progress: 100,
-  total: 0,
-  added: 0,
-  errors: [],
-}))
+// MOCK_SLOW_JOB_MS keeps a status change pending that long, to see the "still working" state.
+const SLOW_JOB_MS = Number(process.env.MOCK_SLOW_JOB_MS) || 0
+const statusJobs = new Map()
+on('GET', '/jobs/([^/]+)', (m) => {
+  const startedAt = statusJobs.get(m[1])
+  if (startedAt !== undefined) {
+    const pending = Date.now() - startedAt < SLOW_JOB_MS
+    return { jobId: m[1], type: 'set_process_status', status: pending ? 'pending' : 'completed', errors: [] }
+  }
+  return { jobId: m[1], type: 'org_members', status: 'completed', progress: 100, total: 0, added: 0, errors: [] }
+})
 on('GET', '/processes', (m, q) => {
   let list = PROCESSES.filter((p) => !p.unlisted)
   const pub = q.get('published')
@@ -647,7 +649,23 @@ on('GET', '/processes', (m, q) => {
   if (pub === 'false') list = list.filter((p) => !p.published)
   const st = q.get('status')
   if (st) list = list.filter((p) => STATUS_OF(p) === st)
-  return { processes: list, pagination: pagination(list.length) }
+  // As the API: list items never carry per-question results, and pages follow `page` and `limit`.
+  const limit = Math.min(Math.max(Number(q.get('limit')) || 10, 1), 100)
+  const lastPage = Math.max(1, Math.ceil(list.length / limit))
+  const page = Math.min(Math.max(Number(q.get('page')) || 1, 1), lastPage)
+  const processes = list
+    .slice((page - 1) * limit, page * limit)
+    .map((p) => ({ ...p, questions: p.questions.map(({ results, ...rest }) => rest) }))
+  return {
+    processes,
+    pagination: {
+      totalItems: list.length,
+      previousPage: page > 1 ? page - 1 : null,
+      currentPage: page,
+      nextPage: page < lastPage ? page + 1 : null,
+      lastPage,
+    },
+  }
 })
 on('POST', '/processes', () => ({ processId: P_DRAFT }))
 on('POST', '/processes/census/validation', () => '')
@@ -657,17 +675,31 @@ on(
   (m) => PROCESSES.find((p) => p.id === m[1]) || [404, { error: 'process not found', code: 404 }]
 )
 on('PUT', '/processes/([0-9a-f]{24})', () => undefined)
-// Question status changes (question by question): applied at once so a local demo can click through; the job is
-// always completed.
+// Question status changes: applied at once so a local demo can click through. As the backend, a batch that targets a
+// question already over is refused whole. MOCK_STATUS_BUSY=1 answers 503, as when another change holds the lock.
 const WIRE_STATUS = { ready: 'ONGOING', paused: 'PAUSED', ended: 'ENDED', canceled: 'CANCELED' }
+const OVER = new Set(['ENDED', 'RESULTS', 'CANCELED'])
 const setStatus = (p, ids, body) => {
+  if (process.env.MOCK_STATUS_BUSY === '1') return [503, { error: 'another status change is under way', code: 50303 }]
   let status
   try {
     status = WIRE_STATUS[String(JSON.parse(body || '{}').status || '').toLowerCase()]
   } catch {}
   if (!p || !status) return [400, { error: 'bad status', code: 40001 }]
-  for (const qq of p.questions) if (!ids || ids.includes(qq.id)) qq.status = status
-  return { jobId: 'job-status-0001' }
+  const targets = p.questions.filter((qq) => !ids || ids.includes(qq.id))
+  const over = targets.find((qq) => OVER.has(qq.status) && qq.status !== status)
+  if (over) return [400, { error: `question ${over.id} is ${over.status} and cannot change`, code: 40001 }]
+  const now = new Date().toISOString()
+  for (const qq of targets) {
+    qq.status = status
+    if (status === 'ENDED' || status === 'CANCELED') {
+      qq.endedAt = now
+      if (qq.results) qq.results = { ...qq.results, finalResults: true }
+    }
+  }
+  const jobId = `job-status-${statusJobs.size + 1}`
+  statusJobs.set(jobId, Date.now())
+  return { jobId }
 }
 on('PUT', '/processes/([0-9a-f]{24})/questions/status', (m, q, body) => {
   let ids
