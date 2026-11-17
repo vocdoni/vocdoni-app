@@ -9,6 +9,7 @@ import { CheckIcon } from '~theme/icons'
 import { quantity } from '~utils/numbers'
 import { questionOutcome } from '~utils/vote-outcome'
 import { isSettledQuestion, percentOf, questionElectorate, type QuestionState } from '~utils/vote-state'
+import { QuestionResultBars } from '../QuestionResultBars'
 import { questionKind } from './question-kind'
 import { QuestionVerdict } from './QuestionVerdict'
 import type { SummaryModel } from './use-summary-model'
@@ -78,7 +79,7 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
 
 /**
  * A question of an all-at-once vote on the desktop: its title and how it is answered, then (once voting has begun)
- * how many answered it over a compact bar, how many left it blank and, when the results are public, its result.
+ * when the results are public its result with a bar per choice, how many answered it and how many left it blank.
  */
 export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
   const { t } = useTranslation()
@@ -120,6 +121,15 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
                 </Span>
               )}
             </Flex>
+          )}
+          {/* The tally itself, as Gestió draws it: Resum must answer "how is it going" without opening Results. */}
+          {outcome && (
+            <QuestionResultBars
+              question={question}
+              results={question.results}
+              weighted={!!model.election.census?.weighted}
+              final={!!question.results?.finalResults}
+            />
           )}
           {started && (
             <TurnoutBar
