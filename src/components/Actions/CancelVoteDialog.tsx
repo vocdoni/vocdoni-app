@@ -27,13 +27,13 @@ const useCancelCopy = () => {
     discarded = cast
       ? t('votes.cancel.body_by_question', {
           defaultValue_one:
-            'The {{count}} vote cast in {{questions}} will be discarded and no result will take effect.',
+            'The {{count, number}} vote cast in {{questions}} will be discarded and no result will take effect.',
           defaultValue_other:
-            'The {{count}} votes cast in {{questions}} will be discarded and no result will take effect.',
+            'The {{count, number}} votes cast in {{questions}} will be discarded and no result will take effect.',
           count: cast,
           questions: t('votes.cancel.questions', {
-            defaultValue_one: '{{count}} question',
-            defaultValue_other: '{{count}} questions',
+            defaultValue_one: '{{count, number}} question',
+            defaultValue_other: '{{count, number}} questions',
             count: voted.filter(Boolean).length,
           }),
         })
@@ -59,8 +59,8 @@ const useCancelCopy = () => {
             })
           : count
             ? t('votes.cancel.body_all', {
-                defaultValue_one: 'The {{count}} vote cast will be discarded and there will be no results.',
-                defaultValue_other: 'The {{count}} votes cast will be discarded and there will be no results.',
+                defaultValue_one: 'The {{count, number}} vote cast will be discarded and there will be no results.',
+                defaultValue_other: 'The {{count, number}} votes cast will be discarded and there will be no results.',
                 count,
               })
             : noVotes

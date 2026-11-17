@@ -26,7 +26,7 @@ export const SummaryElectoralData = ({ model }: { model: SummaryModel }) => {
         <Text fontWeight='medium-plus'>
           <Trans
             i18nKey='votes.summary.not_voted'
-            defaults='<n>{{count}}</n> have not voted yet'
+            defaults='<n>{{count, number}}</n> have not voted yet'
             count={notVoted}
             components={{ n: <Span fontFamily='figure' fontSize='sm' letterSpacing='none' /> }}
           />

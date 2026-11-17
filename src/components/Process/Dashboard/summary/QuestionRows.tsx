@@ -131,12 +131,14 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
                       total: quantity(electorate),
                     })
                   : t('votes.summary.question_votes', {
-                      defaultValue_one: '{{count}} vote',
-                      defaultValue_other: '{{count}} votes',
+                      defaultValue_one: '{{count, number}} vote',
+                      defaultValue_other: '{{count, number}} votes',
                       count: votes,
                     })
               }
-              share={percent === undefined ? undefined : `${percent}%`}
+              share={
+                percent === undefined ? undefined : t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })
+              }
               value={votes}
               max={electorate}
               layout='compact'
@@ -152,8 +154,8 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
           {started && model.count > 0 && (
             <Text textStyle='body-sm' color='fg.subtle'>
               {t('votes.summary.blank', {
-                defaultValue_one: '{{count}} of the {{voters}} voters left it blank.',
-                defaultValue_other: '{{count}} of the {{voters}} voters left it blank.',
+                defaultValue_one: '{{count, number}} of the {{voters}} voters left it blank.',
+                defaultValue_other: '{{count, number}} of the {{voters}} voters left it blank.',
                 count: blank,
                 voters: quantity(model.count),
               })}
@@ -177,8 +179,8 @@ export const CompactQuestionRow = ({ question, index, model, state }: RowProps) 
   const outcome = useOutcome(question, !!model.election.census?.weighted)
   const votes = question.results?.voteCount ?? 0
   const votesText = t('votes.summary.question_votes', {
-    defaultValue_one: '{{count}} vote',
-    defaultValue_other: '{{count}} votes',
+    defaultValue_one: '{{count, number}} vote',
+    defaultValue_other: '{{count, number}} votes',
     count: votes,
   })
 

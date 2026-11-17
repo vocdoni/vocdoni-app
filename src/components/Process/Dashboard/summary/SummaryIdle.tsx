@@ -37,13 +37,13 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
         body = t('votes.summary.idle.ready_body', {
           defaultValue: '{{people}} in the census and {{questions}}, all open at once.',
           people: t('votes.summary.fact.census', {
-            defaultValue_one: '{{count}} person',
-            defaultValue_other: '{{count}} people',
+            defaultValue_one: '{{count, number}} person',
+            defaultValue_other: '{{count, number}} people',
             count: total,
           }),
           questions: t('votes.summary.idle.questions', {
-            defaultValue_one: '{{count}} question',
-            defaultValue_other: '{{count}} questions',
+            defaultValue_one: '{{count, number}} question',
+            defaultValue_other: '{{count, number}} questions',
             count: election.questions.length,
           }),
         })
@@ -51,8 +51,8 @@ export const SummaryIdle = ({ model }: { model: SummaryModel }) => {
       break
     case 'closed':
       title = t('votes.summary.idle.ended_title', {
-        defaultValue_one: 'Vote ended with {{count}} vote',
-        defaultValue_other: 'Vote ended with {{count}} votes',
+        defaultValue_one: 'Vote ended with {{count, number}} vote',
+        defaultValue_other: 'Vote ended with {{count, number}} votes',
         count,
       })
       body = [

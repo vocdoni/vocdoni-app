@@ -18,38 +18,38 @@ export const useManageText = () => {
     switch (state) {
       case 'closed':
         return t('votes.manage.count.closed', {
-          defaultValue_one: '{{count}} closed',
-          defaultValue_other: '{{count}} closed',
+          defaultValue_one: '{{count, number}} closed',
+          defaultValue_other: '{{count, number}} closed',
           count,
         })
       case 'open':
         return t('votes.manage.count.open', {
-          defaultValue_one: '{{count}} open',
-          defaultValue_other: '{{count}} open',
+          defaultValue_one: '{{count, number}} open',
+          defaultValue_other: '{{count, number}} open',
           count,
         })
       case 'paused':
         return t('votes.manage.count.paused', {
-          defaultValue_one: '{{count}} paused',
-          defaultValue_other: '{{count}} paused',
+          defaultValue_one: '{{count, number}} paused',
+          defaultValue_other: '{{count, number}} paused',
           count,
         })
       case 'toOpen':
         return t('votes.manage.count.to_open', {
-          defaultValue_one: '{{count}} to open',
-          defaultValue_other: '{{count}} to open',
+          defaultValue_one: '{{count, number}} to open',
+          defaultValue_other: '{{count, number}} to open',
           count,
         })
       case 'notOpened':
         return t('votes.manage.count.not_opened', {
-          defaultValue_one: '{{count}} not opened',
-          defaultValue_other: '{{count}} not opened',
+          defaultValue_one: '{{count, number}} not opened',
+          defaultValue_other: '{{count, number}} not opened',
           count,
         })
       case 'canceled':
         return t('votes.manage.count.canceled', {
-          defaultValue_one: '{{count}} voided',
-          defaultValue_other: '{{count}} voided',
+          defaultValue_one: '{{count, number}} voided',
+          defaultValue_other: '{{count, number}} voided',
           count,
         })
     }

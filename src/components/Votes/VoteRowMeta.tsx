@@ -1,8 +1,8 @@
 import { Text } from '@chakra-ui/react'
 import { processVoteCount, resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessResultsResponse } from '@vocdoni/api-types'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useMemo, type ReactNode } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
 import { isQuestionByQuestion } from '~src/types/voting-process'
 import { questionOutcome } from '~utils/vote-outcome'
@@ -54,8 +54,8 @@ export const VoteRowMeta = ({ row, results, now }: VoteRowMetaProps) => {
 
   const questions = t('votes.list.meta_questions', {
     count: process.questions.length,
-    defaultValue_one: '{{count}} question',
-    defaultValue_other: '{{count}} questions',
+    defaultValue_one: '{{count, number}} question',
+    defaultValue_other: '{{count, number}} questions',
   })
   const counts =
     size === undefined
@@ -65,8 +65,8 @@ export const VoteRowMeta = ({ row, results, now }: VoteRowMetaProps) => {
           questions,
           voters: t('votes.list.meta_voters', {
             count: size,
-            defaultValue_one: '{{count}} voter',
-            defaultValue_other: '{{count}} voters',
+            defaultValue_one: '{{count, number}} voter',
+            defaultValue_other: '{{count, number}} voters',
           }),
         })
 
@@ -98,12 +98,25 @@ export const VoteRowMeta = ({ row, results, now }: VoteRowMetaProps) => {
 
   const result = state === 'closed' ? outcome(closedOutcome) : null
   const percent = state === 'closed' && results ? percentOf(processVoteCount(results), size) : undefined
-  const turnout =
-    percent === undefined
-      ? null
-      : result
-        ? t('votes.list.with_turnout', { defaultValue: 'with {{percent}}% turnout.', percent })
-        : t('votes.list.turnout', { defaultValue: '{{percent}}% turnout.', percent })
+  const strong = <Text as='span' fontWeight='medium-plus' color='fg' />
+  // One sentence per variant, so a language can put the result and the turnout in its own order.
+  let closing: ReactNode = null
+  if (result && percent !== undefined) {
+    closing = (
+      <Trans
+        i18nKey='votes.list.result_turnout'
+        defaults='<b>{{result}}</b> with {{percent}}% turnout.'
+        values={{ result, percent }}
+        components={{ b: strong }}
+      />
+    )
+  } else if (result) {
+    closing = (
+      <Trans i18nKey='votes.list.result' defaults='<b>{{result}}</b>.' values={{ result }} components={{ b: strong }} />
+    )
+  } else if (percent !== undefined) {
+    closing = t('votes.list.turnout', { defaultValue: '{{percent}}% turnout.', percent })
+  }
 
   return (
     <Text textStyle='meta' color='fg.subtle'>
@@ -117,15 +130,7 @@ export const VoteRowMeta = ({ row, results, now }: VoteRowMetaProps) => {
           </Text>
         </>
       )}
-      {result && (
-        <>
-          {' '}
-          <Text as='span' fontWeight='medium-plus' color='fg'>
-            {turnout ? result : t('votes.list.outcome', { defaultValue: '{{result}}.', result })}
-          </Text>
-        </>
-      )}
-      {turnout && ` ${turnout}`}
+      {closing && <> {closing}</>}
     </Text>
   )
 }

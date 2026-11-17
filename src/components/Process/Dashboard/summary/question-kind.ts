@@ -24,23 +24,23 @@ export const questionKind = (t: TFunction, question: VotingProcessQuestion): str
     }
     case BallotType.Ranked:
       return t('votes.summary.kind.ranked', {
-        defaultValue_one: '{{count}} option is ranked',
-        defaultValue_other: '{{count}} options are ranked',
+        defaultValue_one: '{{count, number}} option is ranked',
+        defaultValue_other: '{{count, number}} options are ranked',
         count: choices,
       })
     case BallotType.Budget:
       return budget
         ? t('votes.summary.kind.budget', {
-            defaultValue_one: '{{count}} point per person',
-            defaultValue_other: '{{count}} points per person',
+            defaultValue_one: '{{count, number}} point per person',
+            defaultValue_other: '{{count, number}} points per person',
             count: budget,
           })
         : null
     case BallotType.Quadratic:
       return budget
         ? t('votes.summary.kind.quadratic', {
-            defaultValue_one: '{{count}} credit per person',
-            defaultValue_other: '{{count}} credits per person',
+            defaultValue_one: '{{count, number}} credit per person',
+            defaultValue_other: '{{count, number}} credits per person',
             count: budget,
           })
         : null

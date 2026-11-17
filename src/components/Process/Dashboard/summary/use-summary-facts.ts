@@ -25,8 +25,8 @@ export const useSummaryFacts = (model: SummaryModel, desktop: boolean): Fact[] =
     id: 'census',
     label: t('votes.summary.label.census', { defaultValue: 'Census' }),
     value: t('votes.summary.fact.census', {
-      defaultValue_one: '{{count}} person',
-      defaultValue_other: '{{count}} people',
+      defaultValue_one: '{{count, number}} person',
+      defaultValue_other: '{{count, number}} people',
       count: election.census?.size ?? 0,
     }),
   }
@@ -35,13 +35,13 @@ export const useSummaryFacts = (model: SummaryModel, desktop: boolean): Fact[] =
     label: t('votes.summary.label.questions', { defaultValue: 'Questions' }),
     value: byQuestion
       ? t('votes.summary.fact.questions_by_question', {
-          defaultValue_one: '{{count}}, question by question',
-          defaultValue_other: '{{count}}, question by question',
+          defaultValue_one: '{{count, number}}, question by question',
+          defaultValue_other: '{{count, number}}, question by question',
           count: election.questions.length,
         })
       : t('votes.summary.fact.questions_all', {
-          defaultValue_one: '{{count}}, all at once',
-          defaultValue_other: '{{count}}, all at once',
+          defaultValue_one: '{{count, number}}, all at once',
+          defaultValue_other: '{{count, number}}, all at once',
           count: election.questions.length,
         }),
   }

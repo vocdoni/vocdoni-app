@@ -33,15 +33,15 @@ const useEndCopy = (): DialogCopy | null => {
           })
         : t('votes.end.body_all', {
             defaultValue_one:
-              'It will close before the deadline, with the {{count}} vote cast. The results will be published and the voters will see them. It cannot be reopened.',
+              'It will close before the deadline, with the {{count, number}} vote cast. The results will be published and the voters will see them. It cannot be reopened.',
             defaultValue_other:
-              'It will close before the deadline, with the {{count}} votes cast. The results will be published and the voters will see them. It cannot be reopened.',
+              'It will close before the deadline, with the {{count, number}} votes cast. The results will be published and the voters will see them. It cannot be reopened.',
             count,
           }),
       warning: notVoted
         ? t('votes.end.not_voted', {
-            defaultValue_one: '{{count}} person has not voted yet and will no longer be able to.',
-            defaultValue_other: '{{count}} people have not voted yet and will no longer be able to.',
+            defaultValue_one: '{{count, number}} person has not voted yet and will no longer be able to.',
+            defaultValue_other: '{{count, number}} people have not voted yet and will no longer be able to.',
             count: notVoted,
           })
         : undefined,
@@ -54,8 +54,8 @@ const useEndCopy = (): DialogCopy | null => {
   const closing =
     active.length === 1
       ? t('votes.end.body_question', {
-          defaultValue_one: 'Question {{number}} will close with the {{count}} vote it has now.',
-          defaultValue_other: 'Question {{number}} will close with the {{count}} votes it has now.',
+          defaultValue_one: 'Question {{number}} will close with the {{count, number}} vote it has now.',
+          defaultValue_other: 'Question {{number}} will close with the {{count, number}} votes it has now.',
           number: first.number,
           count: first.question.results?.voteCount ?? 0,
         })
