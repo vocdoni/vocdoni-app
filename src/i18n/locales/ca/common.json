@@ -1692,6 +1692,173 @@
     "anonymous_receipt": "Vot anònim: desa ara aquest comprovant, la plataforma no te’l podrà tornar a mostrar.",
     "voted_title": "El teu vot s'ha registrat amb èxit!"
   },
+  "voter": {
+    "actions_label": "Accions de la votació",
+    "agenda": "Ordre del dia",
+    "answer": {
+      "ranked_item": "{{position}}. {{label}}"
+    },
+    "back": "Enrere",
+    "canceled": {
+      "body": "L'entitat ha cancel·lat aquesta votació. No s'hi pot votar i no hi haurà resultats.",
+      "card_body": "El teu vot no es comptarà. Si l'entitat la torna a convocar, rebràs un enllaç nou.",
+      "card_title": "Si ja havies votat"
+    },
+    "checking": "Comprovant les teves dades",
+    "closed": {
+      "sentence": "La votació es va tancar {{date}} a les {{time}}.",
+      "turnout_count_many": "Hi van votar {{count}} persones.",
+      "turnout_count_one": "Hi va votar {{count}} persona.",
+      "turnout_count_other": "Hi van votar {{count}} persones.",
+      "turnout_many": "Hi van votar {{count}} de {{total}} persones.",
+      "turnout_one": "Hi va votar {{count}} de {{total}} persones.",
+      "turnout_other": "Hi van votar {{count}} de {{total}} persones."
+    },
+    "code": {
+      "label": "Codi d'un sol ús",
+      "resend": "No t'ha arribat? <resend>Torna'l a enviar</resend>.",
+      "resent": "T'hem enviat un codi nou.",
+      "sent_to": "L'hem enviat a {{contact}}.",
+      "spam_hint": "Hem enviat un codi al telèfon o al correu electrònic indicats. Si has triat el correu electrònic, revisa també la carpeta de correu brossa.",
+      "title": "Escriu el codi que t'hem enviat"
+    },
+    "continue": "Continua",
+    "credit": {
+      "brand": "Vocdoni",
+      "text": "Votació feta amb"
+    },
+    "identify": {
+      "help": "Identifica't per votar.",
+      "mismatch": "No hem trobat ningú amb aquestes dades al cens d'aquesta votació. Revisa-les i torna-ho a provar.",
+      "retry": "Torna-ho a provar",
+      "session_expired": "La sessió ha caducat. Torna a identificar-te.",
+      "terms": "He llegit i accepto les <terms>condicions</terms> i la <privacy>política de privacitat</privacy>."
+    },
+    "language": {
+      "cancel": "Continua votant",
+      "confirm": "Canvia d'idioma",
+      "confirm_body": "Si canvies d'idioma, tornaràs a començar: t'hauràs d'identificar i respondre de nou.",
+      "confirm_title": "Vols canviar d'idioma?",
+      "label": "Idioma: {{language}}"
+    },
+    "not_eligible": {
+      "body": "T'has identificat correctament, però no ets a la llista de persones que hi poden votar.",
+      "card_body": "Parla amb {{organization}}. Només l'entitat pot afegir-te al cens.",
+      "card_title": "Creus que és un error?",
+      "title": "No tens dret a vot en aquesta votació"
+    },
+    "not_you": "No ets tu? <exit>Surt</exit>",
+    "paused": {
+      "body": "L'entitat ha aturat la votació temporalment. Ara mateix no es pot votar.",
+      "card_body": "Aquesta pàgina s'actualitza sola quan es reprengui. La votació es tanca {{date}} a les {{time}}.",
+      "card_title": "Torna-hi d'aquí a una estona",
+      "notice_body": "No tanquis la pàgina: podràs continuar quan es reprengui.",
+      "notice_title": "La votació s'ha aturat temporalment."
+    },
+    "progress": {
+      "question": "Pregunta {{current}} de {{total}}",
+      "review": "Revisió"
+    },
+    "question": {
+      "blank": "Vot en blanc",
+      "can_leave": "Pots deixar-ho així.",
+      "chosen_many": "{{count}} de {{max}} triades.",
+      "chosen_one": "{{count}} de {{max}} triada.",
+      "chosen_other": "{{count}} de {{max}} triades.",
+      "help_approval": "Tria totes les opcions que aprovis.",
+      "help_exact_many": "Tria {{count}} opcions.",
+      "help_exact_one": "Tria {{count}} opció.",
+      "help_exact_other": "Tria {{count}} opcions.",
+      "help_multiple_many": "Tria fins a {{count}} opcions.",
+      "help_multiple_one": "Tria fins a {{count}} opció.",
+      "help_multiple_other": "Tria fins a {{count}} opcions.",
+      "help_range": "Tria entre {{min}} i {{max}} opcions.",
+      "help_ranked": "Toca-les per ordre de preferència. Torna a tocar-ne una per treure-la.",
+      "help_single": "Tria una resposta.",
+      "missing_many": "En falten {{count}}.",
+      "missing_one": "En falta {{count}}.",
+      "missing_other": "En falten {{count}}.",
+      "rank_all": "Ordena-les totes",
+      "rank_next": "{{label}}: posa-la a la posició {{position}}",
+      "ranked_at": "{{label}}, a la posició {{position}}. Toca-la per treure-la."
+    },
+    "rail": {
+      "review": "Revisa i emet el vot"
+    },
+    "receipt": {
+      "card_note_many": "Un codi per resposta. Serveix per comprovar que s'han comptat, sense dir què has votat.",
+      "card_note_one": "Serveix per comprovar que el teu vot s'ha comptat, sense dir què has votat.",
+      "card_note_other": "Un codi per resposta. Serveix per comprovar que s'han comptat, sense dir què has votat.",
+      "card_title": "El teu comprovant",
+      "copied": "Codi copiat",
+      "copy": "Copia el codi de {{question}}",
+      "help_many": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
+      "help_one": "Comprovat: la resposta és al registre. Ja pots tancar la pàgina.",
+      "help_other": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
+      "results_later": "Els resultats es publicaran aquí mateix {{date}} a les {{time}}.",
+      "title": "Vot emès. Gràcies.",
+      "verify_many": "Pots comprovar cada codi a l'<explorer>Explorer</explorer>.",
+      "verify_one": "El pots comprovar a l'<explorer>Explorer</explorer>.",
+      "verify_other": "Pots comprovar cada codi a l'<explorer>Explorer</explorer>."
+    },
+    "results": {
+      "check_vote": "Comprova el teu vot",
+      "kicker": "Resultats",
+      "show": "Mostra els resultats"
+    },
+    "review": {
+      "cast": "Emet el vot",
+      "change": "Canvia",
+      "change_label": "Canvia la resposta a {{question}}",
+      "kicker": "Últim pas",
+      "note": "Un cop emès no es pot canviar.",
+      "retry": "Torna-ho a provar",
+      "title": "Això és el que votaràs",
+      "weight_label": "Pes del teu vot",
+      "weight_value": "El teu vot val {{weight}}"
+    },
+    "sending": {
+      "authorizing": "Autoritzant el vot",
+      "confirming_many": "Confirmant que han arribat",
+      "confirming_one": "Confirmant que ha arribat",
+      "confirming_other": "Confirmant que han arribat",
+      "hint": "No tanquis aquesta pàgina. Si es talla la connexió, ho tornarem a enviar sols.",
+      "sending_many": "Enviant les {{count}} respostes",
+      "sending_one": "Enviant la resposta",
+      "sending_other": "Enviant les {{count}} respostes",
+      "title": "Estem registrant el teu vot"
+    },
+    "sign_out": "Surt",
+    "status": {
+      "canceled": "Cancel·lada",
+      "open_until": "Oberta fins {{date}} a les {{time}}",
+      "paused": "En pausa"
+    },
+    "unavailable": {
+      "body": "Aquesta pàgina ho tornarà a provar sola.",
+      "title": "Ara mateix no es pot mostrar aquesta votació"
+    },
+    "unsupported": {
+      "body": "Encara no s'hi pot votar des d'aquesta pàgina.",
+      "title": "Aquesta votació es fa pregunta per pregunta"
+    },
+    "upcoming": {
+      "card_body": "Torna a aquesta pàgina quan s'hagi obert.",
+      "card_title": "Encara no es pot votar",
+      "sentence": "La votació s'obre {{startDate}} a les {{startTime}} i es tanca {{endDate}} a les {{endTime}}."
+    },
+    "voted": {
+      "body": "No es pot tornar a votar.",
+      "title": "Ja has votat"
+    },
+    "welcome": {
+      "count_many": "<b>{{count}} persones</b> ja han votat.",
+      "count_one": "<b>{{count}} persona</b> ja ha votat.",
+      "count_other": "<b>{{count}} persones</b> ja han votat.",
+      "lead": "Aquestes són les preguntes d'aquesta votació.",
+      "start": "Comença a votar"
+    }
+  },
   "voter_anonymity": "Anonimat del votant",
   "voter_auth": {
     "anonymity": "Anonimat del vot: {{ mode }}",

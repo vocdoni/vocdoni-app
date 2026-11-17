@@ -1665,6 +1665,161 @@
     "anonymous_receipt": "Boto anonimoa: gorde egiaztagiri hau orain; plataformak ezin izango dizu berriro erakutsi.",
     "voted_title": "Zure botoa behar bezala eman da!"
   },
+  "voter": {
+    "actions_label": "Bozketaren ekintzak",
+    "agenda": "Gai-zerrenda",
+    "answer": {
+      "ranked_item": "{{position}}. {{label}}"
+    },
+    "back": "Atzera",
+    "canceled": {
+      "body": "Erakundeak bozketa hau bertan behera utzi du. Ezin da bozkatu eta ez da emaitzarik izango.",
+      "card_body": "Zure botoa ez da zenbatuko. Erakundeak berriro deitzen badu, esteka berri bat jasoko duzu.",
+      "card_title": "Dagoeneko bozkatu baduzu"
+    },
+    "checking": "Zure datuak egiaztatzen",
+    "closed": {
+      "sentence": "Bozketa itxi zen: {{date}}, {{time}}.",
+      "turnout_count_one": "Bozkatu zuen: {{count}} pertsona.",
+      "turnout_count_other": "Bozkatu zuten: {{count}} pertsona.",
+      "turnout_one": "Bozkatu zuen: {{count}} / {{total}} pertsona.",
+      "turnout_other": "Bozkatu zuten: {{count}} / {{total}} pertsona."
+    },
+    "code": {
+      "label": "Erabilera bakarreko kodea",
+      "resend": "Ez zaizu iritsi? <resend>Bidali berriro</resend>.",
+      "resent": "Kode berri bat bidali dizugu.",
+      "sent_to": "Hona bidali dugu: {{contact}}.",
+      "spam_hint": "Adierazitako telefonora edo posta elektronikora kode bat bidali dugu. Posta elektronikoz jasotzea aukeratu baduzu, begiratu spam karpeta ere.",
+      "title": "Idatzi bidali dizugun kodea"
+    },
+    "continue": "Jarraitu",
+    "credit": {
+      "brand": "Vocdoni",
+      "text": "Bozketa honekin egina:"
+    },
+    "identify": {
+      "help": "Identifikatu bozkatzeko.",
+      "mismatch": "Ez dugu inor aurkitu datu hauekin bozketa honen erroldan. Berrikusi itzazu eta saiatu berriro.",
+      "retry": "Saiatu berriro",
+      "session_expired": "Saioa iraungi da. Identifikatu berriro.",
+      "terms": "<terms>Baldintzak</terms> eta <privacy>pribatutasun-politika</privacy> irakurri eta onartzen ditut."
+    },
+    "language": {
+      "cancel": "Jarraitu bozkatzen",
+      "confirm": "Aldatu hizkuntza",
+      "confirm_body": "Hizkuntza aldatuz gero, hasieratik hasiko zara: berriro identifikatu eta erantzun beharko duzu.",
+      "confirm_title": "Hizkuntza aldatu nahi duzu?",
+      "label": "Hizkuntza: {{language}}"
+    },
+    "not_eligible": {
+      "body": "Ondo identifikatu zara, baina ez zaude bozka dezaketen pertsonen zerrendan.",
+      "card_body": "Hitz egin {{organization}} erakundearekin. Erakundeak bakarrik gehi zaitzake erroldan.",
+      "card_title": "Akats bat dela uste duzu?",
+      "title": "Ez duzu botorik bozketa honetan"
+    },
+    "not_you": "Ez zara zu? <exit>Irten</exit>",
+    "paused": {
+      "body": "Erakundeak bozketa aldi baterako gelditu du. Une honetan ezin da bozkatu.",
+      "card_body": "Orri hau bere kabuz eguneratuko da bozketa berriro hasten denean. Bozketa itxiko da: {{date}}, {{time}}.",
+      "card_title": "Itzuli geroxeago",
+      "notice_body": "Ez itxi orria: bozketa berriro hasten denean jarraitu ahal izango duzu.",
+      "notice_title": "Bozketa aldi baterako gelditu da."
+    },
+    "progress": {
+      "question": "Galdera: {{current}}/{{total}}",
+      "review": "Berrikuspena"
+    },
+    "question": {
+      "blank": "Boto zuria",
+      "can_leave": "Horrela utz dezakezu.",
+      "chosen_one": "{{count}}/{{max}} aukeratuta.",
+      "chosen_other": "{{count}}/{{max}} aukeratuta.",
+      "help_approval": "Aukeratu onartzen dituzun aukera guztiak.",
+      "help_exact_one": "Aukeratu {{count}} aukera.",
+      "help_exact_other": "Aukeratu {{count}} aukera.",
+      "help_multiple_one": "Aukeratu gehienez {{count}} aukera.",
+      "help_multiple_other": "Aukeratu gehienez {{count}} aukera.",
+      "help_range": "Aukeratu {{min}} eta {{max}} aukera artean.",
+      "help_ranked": "Sakatu itzazu nahiago dituzun ordenan. Sakatu berriro bat kentzeko.",
+      "help_single": "Aukeratu erantzun bat.",
+      "missing_one": "{{count}} falta da.",
+      "missing_other": "{{count}} falta dira.",
+      "rank_all": "Ordenatu guztiak",
+      "rank_next": "{{label}}: jarri {{position}}. postuan",
+      "ranked_at": "{{label}}, {{position}}. postuan. Sakatu kentzeko."
+    },
+    "rail": {
+      "review": "Berrikusi eta eman botoa"
+    },
+    "receipt": {
+      "card_note_one": "Zure botoa zenbatu dela egiaztatzeko balio du, zer bozkatu duzun esan gabe.",
+      "card_note_other": "Kode bat erantzun bakoitzeko. Zenbatu direla egiaztatzeko balio dute, zer bozkatu duzun esan gabe.",
+      "card_title": "Zure ziurtagiria",
+      "copied": "Kodea kopiatu da",
+      "copy": "Kopiatu galdera honen kodea: {{question}}",
+      "help_one": "Egiaztatuta: erantzuna erregistroan dago. Orria itxi dezakezu orain.",
+      "help_other": "Egiaztatuta: {{count}} erantzunak erregistroan daude. Orria itxi dezakezu orain.",
+      "results_later": "Emaitzak hemen bertan argitaratuko dira: {{date}}, {{time}}.",
+      "title": "Botoa emanda. Eskerrik asko.",
+      "verify_one": "<explorer>Explorer</explorer>-en egiazta dezakezu.",
+      "verify_other": "Kode bakoitza <explorer>Explorer</explorer>-en egiazta dezakezu."
+    },
+    "results": {
+      "check_vote": "Egiaztatu zure botoa",
+      "kicker": "Emaitzak",
+      "show": "Erakutsi emaitzak"
+    },
+    "review": {
+      "cast": "Eman botoa",
+      "change": "Aldatu",
+      "change_label": "Aldatu galdera honen erantzuna: {{question}}",
+      "kicker": "Azken urratsa",
+      "note": "Behin emanda, ezin da aldatu.",
+      "retry": "Saiatu berriro",
+      "title": "Hau da bozkatuko duzuna",
+      "weight_label": "Zure botoaren pisua",
+      "weight_value": "Zure botoak {{weight}} balio du"
+    },
+    "sending": {
+      "authorizing": "Botoa baimentzen",
+      "confirming_one": "Iritsi dela egiaztatzen",
+      "confirming_other": "Iritsi direla egiaztatzen",
+      "hint": "Ez itxi orri hau. Konexioa eteten bada, guk geuk bidaliko dugu berriro.",
+      "sending_one": "Erantzuna bidaltzen",
+      "sending_other": "{{count}} erantzunak bidaltzen",
+      "title": "Zure botoa erregistratzen ari gara"
+    },
+    "sign_out": "Irten",
+    "status": {
+      "canceled": "Bertan behera utzita",
+      "open_until": "Irekita, noiz arte: {{date}}, {{time}}",
+      "paused": "Pausatuta"
+    },
+    "unavailable": {
+      "body": "Orria bere kabuz saiatuko da berriro.",
+      "title": "Une honetan ezin da bozketa hau erakutsi"
+    },
+    "unsupported": {
+      "body": "Oraindik ezin da orri honetatik bozkatu.",
+      "title": "Bozketa hau galderaz galdera egiten da"
+    },
+    "upcoming": {
+      "card_body": "Itzuli orri honetara ireki ondoren.",
+      "card_title": "Oraindik ezin da bozkatu",
+      "sentence": "Bozketa irekiko da: {{startDate}}, {{startTime}}. Itxiko da: {{endDate}}, {{endTime}}."
+    },
+    "voted": {
+      "body": "Ezin da berriro bozkatu.",
+      "title": "Dagoeneko bozkatu duzu"
+    },
+    "welcome": {
+      "count_one": "Dagoeneko bozkatu du: <b>{{count}} pertsona</b>.",
+      "count_other": "Dagoeneko bozkatu dute: <b>{{count}} pertsona</b>.",
+      "lead": "Hauek dira bozketa honen galderak.",
+      "start": "Hasi bozkatzen"
+    }
+  },
   "voter_anonymity": "Boto-emaileen anonimotasuna",
   "voter_auth": {
     "anonymity": "Botoaren anonimotasuna: {{ mode }}",

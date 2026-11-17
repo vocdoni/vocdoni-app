@@ -1692,6 +1692,173 @@
     "anonymous_receipt": "Voto anonimo: conserva ora questa ricevuta, la piattaforma non potrà mostrartela di nuovo.",
     "voted_title": "Voto espresso con successo!"
   },
+  "voter": {
+    "actions_label": "Azioni della votazione",
+    "agenda": "Ordine del giorno",
+    "answer": {
+      "ranked_item": "{{position}}. {{label}}"
+    },
+    "back": "Indietro",
+    "canceled": {
+      "body": "L'organizzazione ha annullato questa votazione. Non puoi votare e non ci saranno risultati.",
+      "card_body": "Il tuo voto non sarà conteggiato. Se l'organizzazione la convoca di nuovo, riceverai un nuovo link.",
+      "card_title": "Se avevi già votato"
+    },
+    "checking": "Verifica dei tuoi dati",
+    "closed": {
+      "sentence": "La votazione si è chiusa {{date}} alle {{time}}.",
+      "turnout_count_many": "Hanno votato {{count}} persone.",
+      "turnout_count_one": "Ha votato {{count}} persona.",
+      "turnout_count_other": "Hanno votato {{count}} persone.",
+      "turnout_many": "Hanno votato {{count}} persone su {{total}}.",
+      "turnout_one": "Ha votato {{count}} persona su {{total}}.",
+      "turnout_other": "Hanno votato {{count}} persone su {{total}}."
+    },
+    "code": {
+      "label": "Codice monouso",
+      "resend": "Non ti è arrivato? <resend>Invialo di nuovo</resend>.",
+      "resent": "Ti abbiamo inviato un nuovo codice.",
+      "sent_to": "L'abbiamo inviato a {{contact}}.",
+      "spam_hint": "Abbiamo inviato un codice di verifica al numero di telefono o all’indirizzo email indicato. Se hai scelto di riceverlo via email, controlla anche la cartella spam.",
+      "title": "Inserisci il codice che ti abbiamo inviato"
+    },
+    "continue": "Continua",
+    "credit": {
+      "brand": "Vocdoni",
+      "text": "Votazione realizzata con"
+    },
+    "identify": {
+      "help": "Identificati per votare.",
+      "mismatch": "Non abbiamo trovato nessuno con questi dati nel censimento di questa votazione. Controllali e riprova.",
+      "retry": "Riprova",
+      "session_expired": "La sessione è scaduta. Identificati di nuovo.",
+      "terms": "Ho letto e accetto le <terms>condizioni</terms> e l'<privacy>informativa sulla privacy</privacy>."
+    },
+    "language": {
+      "cancel": "Continua a votare",
+      "confirm": "Cambia lingua",
+      "confirm_body": "Cambiando lingua ricominci da capo: dovrai identificarti e rispondere di nuovo.",
+      "confirm_title": "Vuoi cambiare lingua?",
+      "label": "Lingua: {{language}}"
+    },
+    "not_eligible": {
+      "body": "Ti sei identificato correttamente, ma non sei nell'elenco delle persone che possono votare.",
+      "card_body": "Parla con {{organization}}. Solo l'organizzazione può aggiungerti al censimento.",
+      "card_title": "Pensi che sia un errore?",
+      "title": "Non hai diritto di voto in questa votazione"
+    },
+    "not_you": "Non sei tu? <exit>Esci</exit>",
+    "paused": {
+      "body": "L'organizzazione ha sospeso temporaneamente la votazione. In questo momento non si può votare.",
+      "card_body": "Questa pagina si aggiorna da sola quando riprende. La votazione si chiude {{date}} alle {{time}}.",
+      "card_title": "Torna tra un po'",
+      "notice_body": "Non chiudere la pagina: potrai continuare quando riprende.",
+      "notice_title": "La votazione è stata sospesa temporaneamente."
+    },
+    "progress": {
+      "question": "Domanda {{current}} di {{total}}",
+      "review": "Riepilogo"
+    },
+    "question": {
+      "blank": "Scheda bianca",
+      "can_leave": "Puoi lasciarlo così.",
+      "chosen_many": "{{count}} di {{max}} scelte.",
+      "chosen_one": "{{count}} di {{max}} scelta.",
+      "chosen_other": "{{count}} di {{max}} scelte.",
+      "help_approval": "Scegli tutte le opzioni che approvi.",
+      "help_exact_many": "Scegli {{count}} opzioni.",
+      "help_exact_one": "Scegli {{count}} opzione.",
+      "help_exact_other": "Scegli {{count}} opzioni.",
+      "help_multiple_many": "Scegli fino a {{count}} opzioni.",
+      "help_multiple_one": "Scegli fino a {{count}} opzione.",
+      "help_multiple_other": "Scegli fino a {{count}} opzioni.",
+      "help_range": "Scegli da {{min}} a {{max}} opzioni.",
+      "help_ranked": "Toccale in ordine di preferenza. Toccane di nuovo una per toglierla.",
+      "help_single": "Scegli una risposta.",
+      "missing_many": "Ne mancano {{count}}.",
+      "missing_one": "Ne manca {{count}}.",
+      "missing_other": "Ne mancano {{count}}.",
+      "rank_all": "Ordinale tutte",
+      "rank_next": "{{label}}: mettila in posizione {{position}}",
+      "ranked_at": "{{label}}, in posizione {{position}}. Tocca per toglierla."
+    },
+    "rail": {
+      "review": "Controlla ed esprimi il voto"
+    },
+    "receipt": {
+      "card_note_many": "Un codice per risposta. Servono a verificare che siano state conteggiate, senza rivelare cosa hai votato.",
+      "card_note_one": "Serve a verificare che il tuo voto sia stato conteggiato, senza rivelare cosa hai votato.",
+      "card_note_other": "Un codice per risposta. Servono a verificare che siano state conteggiate, senza rivelare cosa hai votato.",
+      "card_title": "La tua ricevuta",
+      "copied": "Codice copiato",
+      "copy": "Copia il codice di {{question}}",
+      "help_many": "Verificato: le {{count}} risposte sono registrate. Ora puoi chiudere la pagina.",
+      "help_one": "Verificato: la risposta è registrata. Ora puoi chiudere la pagina.",
+      "help_other": "Verificato: le {{count}} risposte sono registrate. Ora puoi chiudere la pagina.",
+      "results_later": "I risultati saranno pubblicati qui {{date}} alle {{time}}.",
+      "title": "Voto espresso. Grazie.",
+      "verify_many": "Puoi verificare ogni codice nell'<explorer>Explorer</explorer>.",
+      "verify_one": "Puoi verificarlo nell'<explorer>Explorer</explorer>.",
+      "verify_other": "Puoi verificare ogni codice nell'<explorer>Explorer</explorer>."
+    },
+    "results": {
+      "check_vote": "Verifica il tuo voto",
+      "kicker": "Risultati",
+      "show": "Mostra i risultati"
+    },
+    "review": {
+      "cast": "Esprimi il voto",
+      "change": "Cambia",
+      "change_label": "Cambia la risposta a {{question}}",
+      "kicker": "Ultimo passo",
+      "note": "Una volta espresso, non si può cambiare.",
+      "retry": "Riprova",
+      "title": "Questo è ciò che voterai",
+      "weight_label": "Peso del tuo voto",
+      "weight_value": "Il tuo voto vale {{weight}}"
+    },
+    "sending": {
+      "authorizing": "Autorizzazione del voto",
+      "confirming_many": "Conferma dell'arrivo",
+      "confirming_one": "Conferma dell'arrivo",
+      "confirming_other": "Conferma dell'arrivo",
+      "hint": "Non chiudere questa pagina. Se la connessione si interrompe, lo invieremo di nuovo da soli.",
+      "sending_many": "Invio delle {{count}} risposte",
+      "sending_one": "Invio della risposta",
+      "sending_other": "Invio delle {{count}} risposte",
+      "title": "Stiamo registrando il tuo voto"
+    },
+    "sign_out": "Esci",
+    "status": {
+      "canceled": "Annullata",
+      "open_until": "Aperta fino a {{date}} alle {{time}}",
+      "paused": "In pausa"
+    },
+    "unavailable": {
+      "body": "Questa pagina riproverà da sola.",
+      "title": "In questo momento non è possibile mostrare questa votazione"
+    },
+    "unsupported": {
+      "body": "Non è ancora possibile votare da questa pagina.",
+      "title": "Questa votazione si svolge domanda per domanda"
+    },
+    "upcoming": {
+      "card_body": "Torna su questa pagina quando sarà aperta.",
+      "card_title": "Non si può ancora votare",
+      "sentence": "La votazione si apre {{startDate}} alle {{startTime}} e si chiude {{endDate}} alle {{endTime}}."
+    },
+    "voted": {
+      "body": "Non si può votare di nuovo.",
+      "title": "Hai già votato"
+    },
+    "welcome": {
+      "count_many": "<b>{{count}} persone</b> hanno già votato.",
+      "count_one": "<b>{{count}} persona</b> ha già votato.",
+      "count_other": "<b>{{count}} persone</b> hanno già votato.",
+      "lead": "Queste sono le domande di questa votazione.",
+      "start": "Inizia a votare"
+    }
+  },
   "voter_anonymity": "Anonimato del votante",
   "voter_auth": {
     "anonymity": "Anonimato del voto: {{ mode }}",

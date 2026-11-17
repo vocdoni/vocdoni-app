@@ -1665,6 +1665,161 @@
     "anonymous_receipt": "Anonyme Stimmabgabe: Speichere diesen Beleg jetzt, die Plattform kann ihn dir nicht erneut anzeigen.",
     "voted_title": "Deine Stimme wurde erfolgreich abgegeben!"
   },
+  "voter": {
+    "actions_label": "Aktionen der Abstimmung",
+    "agenda": "Tagesordnung",
+    "answer": {
+      "ranked_item": "{{position}}. {{label}}"
+    },
+    "back": "Zurück",
+    "canceled": {
+      "body": "Die Organisation hat diese Abstimmung abgebrochen. Du kannst nicht abstimmen, und es wird keine Ergebnisse geben.",
+      "card_body": "Deine Stimme wird nicht gezählt. Setzt die Organisation die Abstimmung neu an, bekommst du einen neuen Link.",
+      "card_title": "Falls du schon abgestimmt hattest"
+    },
+    "checking": "Deine Angaben werden geprüft",
+    "closed": {
+      "sentence": "Die Abstimmung endete am {{date}} um {{time}}.",
+      "turnout_count_one": "{{count}} Person hat abgestimmt.",
+      "turnout_count_other": "{{count}} Personen haben abgestimmt.",
+      "turnout_one": "{{count}} von {{total}} Personen hat abgestimmt.",
+      "turnout_other": "{{count}} von {{total}} Personen haben abgestimmt."
+    },
+    "code": {
+      "label": "Einmalcode",
+      "resend": "Nicht angekommen? <resend>Erneut senden</resend>.",
+      "resent": "Wir haben dir einen neuen Code geschickt.",
+      "sent_to": "Wir haben ihn an {{contact}} geschickt.",
+      "spam_hint": "Wir haben einen Code an deine Telefonnummer oder E-Mail-Adresse gesendet. Wenn du ihn per E-Mail erhalten hast, prüfe bitte auch deinen Spam-Ordner.",
+      "title": "Gib den Code ein, den wir dir geschickt haben"
+    },
+    "continue": "Weiter",
+    "credit": {
+      "brand": "Vocdoni",
+      "text": "Abstimmung mit"
+    },
+    "identify": {
+      "help": "Melde dich an, um abzustimmen.",
+      "mismatch": "Wir haben niemanden mit diesen Angaben in der Teilnehmerliste dieser Abstimmung gefunden. Prüfe sie und versuche es erneut.",
+      "retry": "Erneut versuchen",
+      "session_expired": "Deine Sitzung ist abgelaufen. Melde dich erneut an.",
+      "terms": "Ich habe die <terms>Bedingungen</terms> und die <privacy>Datenschutzerklärung</privacy> gelesen und akzeptiere sie."
+    },
+    "language": {
+      "cancel": "Weiter abstimmen",
+      "confirm": "Sprache wechseln",
+      "confirm_body": "Ein Sprachwechsel fängt von vorn an: Du meldest dich erneut an und antwortest noch einmal.",
+      "confirm_title": "Sprache wechseln?",
+      "label": "Sprache: {{language}}"
+    },
+    "not_eligible": {
+      "body": "Du hast dich korrekt angemeldet, stehst aber nicht auf der Liste der Personen, die hier abstimmen dürfen.",
+      "card_body": "Wende dich an {{organization}}. Nur die Organisation kann dich zur Teilnehmerliste hinzufügen.",
+      "card_title": "Hältst du das für einen Fehler?",
+      "title": "Du bist in dieser Abstimmung nicht stimmberechtigt"
+    },
+    "not_you": "Nicht du? <exit>Abmelden</exit>",
+    "paused": {
+      "body": "Die Organisation hat die Abstimmung vorübergehend pausiert. Gerade kannst du nicht abstimmen.",
+      "card_body": "Diese Seite aktualisiert sich von selbst, sobald es weitergeht. Die Abstimmung endet am {{date}} um {{time}}.",
+      "card_title": "Schau später wieder vorbei",
+      "notice_body": "Schließ die Seite nicht: Du kannst weitermachen, sobald es weitergeht.",
+      "notice_title": "Die Abstimmung wurde vorübergehend pausiert."
+    },
+    "progress": {
+      "question": "Frage {{current}} von {{total}}",
+      "review": "Überprüfung"
+    },
+    "question": {
+      "blank": "Leere Stimme",
+      "can_leave": "Du kannst es so lassen.",
+      "chosen_one": "{{count}} von {{max}} gewählt.",
+      "chosen_other": "{{count}} von {{max}} gewählt.",
+      "help_approval": "Wähle alle Optionen, denen du zustimmst.",
+      "help_exact_one": "Wähle {{count}} Option.",
+      "help_exact_other": "Wähle {{count}} Optionen.",
+      "help_multiple_one": "Wähle bis zu {{count}} Option.",
+      "help_multiple_other": "Wähle bis zu {{count}} Optionen.",
+      "help_range": "Wähle zwischen {{min}} und {{max}} Optionen.",
+      "help_ranked": "Tippe sie in der Reihenfolge an, die du bevorzugst. Tippe eine erneut an, um sie zu entfernen.",
+      "help_single": "Wähle eine Antwort.",
+      "missing_one": "Noch {{count}} fehlt.",
+      "missing_other": "Noch {{count}} fehlen.",
+      "rank_all": "Alle ordnen",
+      "rank_next": "{{label}}: auf Platz {{position}} setzen",
+      "ranked_at": "{{label}}, auf Platz {{position}}. Antippen, um sie zu entfernen."
+    },
+    "rail": {
+      "review": "Überprüfen und abstimmen"
+    },
+    "receipt": {
+      "card_note_one": "Damit kannst du prüfen, ob deine Stimme gezählt wurde, ohne zu verraten, wie du abgestimmt hast.",
+      "card_note_other": "Ein Code pro Antwort. Damit kannst du prüfen, ob sie gezählt wurden, ohne zu verraten, wie du abgestimmt hast.",
+      "card_title": "Deine Quittung",
+      "copied": "Code kopiert",
+      "copy": "Code für {{question}} kopieren",
+      "help_one": "Geprüft: Deine Antwort ist erfasst. Du kannst die Seite jetzt schließen.",
+      "help_other": "Geprüft: Die {{count}} Antworten sind erfasst. Du kannst die Seite jetzt schließen.",
+      "results_later": "Die Ergebnisse werden am {{date}} um {{time}} hier veröffentlicht.",
+      "title": "Stimme abgegeben. Danke.",
+      "verify_one": "Du kannst sie im <explorer>Explorer</explorer> prüfen.",
+      "verify_other": "Du kannst jeden Code im <explorer>Explorer</explorer> prüfen."
+    },
+    "results": {
+      "check_vote": "Deine Stimme prüfen",
+      "kicker": "Ergebnisse",
+      "show": "Ergebnisse anzeigen"
+    },
+    "review": {
+      "cast": "Stimme abgeben",
+      "change": "Ändern",
+      "change_label": "Antwort zu {{question}} ändern",
+      "kicker": "Letzter Schritt",
+      "note": "Einmal abgegeben, lässt sie sich nicht mehr ändern.",
+      "retry": "Erneut versuchen",
+      "title": "So stimmst du ab",
+      "weight_label": "Dein Stimmgewicht",
+      "weight_value": "Deine Stimme zählt {{weight}}"
+    },
+    "sending": {
+      "authorizing": "Stimme wird autorisiert",
+      "confirming_one": "Eingang wird bestätigt",
+      "confirming_other": "Eingang wird bestätigt",
+      "hint": "Schließ diese Seite nicht. Bricht die Verbindung ab, senden wir sie von selbst erneut.",
+      "sending_one": "Antwort wird gesendet",
+      "sending_other": "{{count}} Antworten werden gesendet",
+      "title": "Wir erfassen deine Stimme"
+    },
+    "sign_out": "Abmelden",
+    "status": {
+      "canceled": "Abgebrochen",
+      "open_until": "Offen bis {{date}} um {{time}}",
+      "paused": "Pausiert"
+    },
+    "unavailable": {
+      "body": "Diese Seite versucht es von selbst erneut.",
+      "title": "Diese Abstimmung kann gerade nicht angezeigt werden"
+    },
+    "unsupported": {
+      "body": "Über diese Seite kann noch nicht abgestimmt werden.",
+      "title": "Diese Abstimmung läuft Frage für Frage"
+    },
+    "upcoming": {
+      "card_body": "Komm auf diese Seite zurück, sobald sie geöffnet ist.",
+      "card_title": "Abstimmen ist noch nicht möglich",
+      "sentence": "Die Abstimmung beginnt am {{startDate}} um {{startTime}} und endet am {{endDate}} um {{endTime}}."
+    },
+    "voted": {
+      "body": "Du kannst nicht noch einmal abstimmen.",
+      "title": "Du hast bereits abgestimmt"
+    },
+    "welcome": {
+      "count_one": "<b>{{count}} Person</b> hat bereits abgestimmt.",
+      "count_other": "<b>{{count}} Personen</b> haben bereits abgestimmt.",
+      "lead": "Das sind die Fragen dieser Abstimmung.",
+      "start": "Abstimmung beginnen"
+    }
+  },
   "voter_anonymity": "Anonymität der Wählenden",
   "voter_auth": {
     "anonymity": "Anonymität der Stimmabgabe: {{ mode }}",
