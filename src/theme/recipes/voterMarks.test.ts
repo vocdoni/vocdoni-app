@@ -17,6 +17,7 @@ describe('rank badge recipe', () => {
       fontSize: 'var(--chakra-font-sizes-item)',
       color: 'var(--chakra-colors-fg-subtle)',
       boxShadow: 'var(--chakra-shadows-shadow-mark)',
+      fontWeight: 'var(--chakra-font-weights-normal)',
     })
   })
 

@@ -268,7 +268,7 @@ export const ChoiceCard = ({
             style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
           />
           <Box data-choice-mark='' {...(context === 'card' ? cardMark(selected) : undefined)}>
-            {selected ? <Icon as={CheckIcon} boxSize='4' /> : null}
+            {selected ? <Icon as={CheckIcon} boxSize={context === 'voter' ? '3.5' : '4'} /> : null}
           </Box>
         </Box>
         {media}

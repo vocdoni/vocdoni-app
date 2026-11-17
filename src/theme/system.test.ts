@@ -635,6 +635,9 @@ describe('voter tokens', () => {
   it('rings a mark still to come in the track grey and a failed field in 2px of the error colour', () => {
     expect(base('colors.border.pending')).toEqual({ base: '{colors.bg.track}' })
     expect(base('shadows.shadow.mark')).toEqual({ base: 'inset 0 0 0 {borderWidths.mark} {colors.border.pending}' })
+    expect(base('shadows.mark.field')).toEqual({
+      base: 'inset 0 0 0 {borderWidths.mark} {colors.ballot.choice.ring}',
+    })
     expect(base('shadows.shadow.invalid')).toEqual({
       base: 'inset 0 0 0 {borderWidths.thick} {colors.status.error.fg}',
     })

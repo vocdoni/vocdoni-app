@@ -12,13 +12,13 @@ export const RankBadge = defineRecipe({
     boxSize: '8',
     borderRadius: 'md',
     textStyle: 'ballot-rank',
-    fontWeight: 'medium',
+    fontWeight: 'normal',
     color: 'fg.subtle',
     boxShadow: 'shadow.mark',
   },
   variants: {
     set: {
-      true: { bg: 'accent.solid', color: 'accent.contrast', boxShadow: 'shadow.edge.inner' },
+      true: { fontWeight: 'medium', bg: 'accent.solid', color: 'accent.contrast', boxShadow: 'shadow.edge.inner' },
       false: {},
     },
   },

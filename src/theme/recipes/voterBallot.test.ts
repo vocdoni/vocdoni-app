@@ -52,6 +52,31 @@ describe('voter option (QuestionChoice context `voter`)', () => {
     })
   })
 
+  it('keeps a paused vote readable: control, label and mark stay opaque, only an unchosen option goes quiet', () => {
+    const opaque = system.css({ opacity: 'opaque' })
+    expect(wrapper['&[data-disabled="true"]']).toMatchObject(opaque)
+    expect(
+      wrapper['&[data-disabled="true"] :is([data-part="control"], [data-part="label"], [data-choice-mark])']
+    ).toEqual(opaque)
+  })
+
+  it('draws the unchosen ring as the mark shadow, not a border, and keeps the brand edge on a chosen mark', () => {
+    const ring = 'var(--chakra-shadows-mark-field)'
+    expect(wrapper['& [data-choice-mark]']).toMatchObject({ boxShadow: ring })
+    expect(wrapper['& [data-choice-mark]']).not.toHaveProperty('borderColor')
+    expect(wrapper['& [data-choice-control][data-control-type="checkbox"]']).toMatchObject({ boxShadow: ring })
+    expect(wrapper['&[data-state="checked"] [data-choice-mark]']).toMatchObject({
+      boxShadow: (layer(choice({ context: 'card', layout: 'list' }).wrapper)['&[data-state="checked"] [data-choice-mark]'] as Rules)
+        .boxShadow,
+    })
+  })
+
+  it('sets the tick at 14px in the radio disc and the checkbox box', () => {
+    const tick = { width: 'var(--chakra-sizes-3\\.5)', height: 'var(--chakra-sizes-3\\.5)' }
+    expect((wrapper['& [data-choice-mark]'] as Rules)['& svg']).toMatchObject(tick)
+    expect((wrapper['& [data-choice-control][data-control-type="checkbox"]'] as Rules)['& svg']).toMatchObject(tick)
+  })
+
   it('sets the label on the running line height', () => {
     expect(layer(styles.label).lineHeight).toBe('var(--chakra-line-heights-moderate)')
   })
