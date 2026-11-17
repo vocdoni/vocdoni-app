@@ -1,6 +1,7 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { VoteSummary } from './VoteSummary'
 
 let desktop = true
@@ -11,8 +12,13 @@ const cloneAsDraft = vi.fn()
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
   const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
-  return { ...actual, ...getReactProvidersMock() }
+  // The package's own results, kept for legacy questions Resum cannot decode.
+  return { ...actual, ...getReactProvidersMock(), ElectionResults: () => <div>ElectionResults</div> }
 })
+vi.mock('~utils/analytics', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/analytics')>()),
+  trackAnalyticsEvent: vi.fn(),
+}))
 vi.mock('~queries/process-end-date', () => ({ useProcessEarlyEndDate: () => ({ data: null }) }))
 vi.mock('~components/ui/useIsMobile', () => ({ useIsDesktop: () => desktop, useIsMobile: () => !desktop }))
 // The provider's values, with the real state derivation (no pause memory: what another device sees).
@@ -91,7 +97,11 @@ beforeEach(() => {
   desktop = true
   canManage = true
   cloneAsDraft.mockClear()
+  vi.mocked(trackAnalyticsEvent).mockClear()
 })
+
+const resultsViewed = () =>
+  vi.mocked(trackAnalyticsEvent).mock.calls.filter(([event]) => event.name === AnalyticsEvents.ProcessResultsViewed)
 
 describe('VoteSummary', () => {
   describe('an all-at-once vote', () => {
@@ -187,18 +197,84 @@ describe('VoteSummary', () => {
       expect(screen.queryByText('%')).toBeNull()
     })
 
-    it('leads an ended vote to its results', () => {
+    it('reads an ended vote on Summary itself, with no way to a results page', () => {
       renderSummary(createProcess({ questions: [question('q1', 'ENDED', 184)] }), 184)
 
       expect(screen.getByRole('heading', { name: 'Vote ended with 184 votes' })).toBeInTheDocument()
       expect(
         screen.getByText('59% of the census voted. The results are final and voters can already see them.')
       ).toBeInTheDocument()
-      expect(screen.getByRole('link', { name: 'Show the results' })).toHaveAttribute(
-        'href',
-        '/admin/process/0xabc/results'
+      expect(screen.queryByRole('link', { name: 'Show the results' })).not.toBeInTheDocument()
+      expect(screen.queryByText(/results page/)).not.toBeInTheDocument()
+    })
+
+    it('says a closed vote is being counted while its tally is not served yet', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'ENDED', 184)] }), 184)
+
+      expect(
+        screen.getByText('The vote is closed. The results are being counted and will show here shortly.')
+      ).toBeInTheDocument()
+      expect(resultsViewed()).toHaveLength(0)
+    })
+
+    it('shows the final tally of a vote whose results are out, and no counting message', () => {
+      renderSummary(createProcess({ questions: [question('q1', 'RESULTS', 181, ['150', '31'])] }), 181)
+
+      expect(screen.getByRole('progressbar', { name: 'Yes, 150 votes, 83%' })).toBeInTheDocument()
+      expect(screen.queryByText(/being counted/)).not.toBeInTheDocument()
+    })
+
+    it('draws the same bars under each question on a phone once results are public', () => {
+      desktop = false
+      renderSummary(createProcess({ questions: [question('q1', 'ONGOING', 181, ['150', '31'])] }), 184)
+
+      expect(screen.getByRole('progressbar', { name: 'Yes, 150 votes, 83%' })).toBeInTheDocument()
+      expect(screen.getByRole('progressbar', { name: 'No, 31 votes, 17%' })).toBeInTheDocument()
+    })
+
+    it('draws no bars on a phone while a secret tally is hidden', () => {
+      desktop = false
+      renderSummary(
+        createProcess({ questions: [{ ...question('q1', 'ONGOING', 181, ['150', '31']), secretUntilTheEnd: true }] }),
+        184
       )
-      expect(screen.getByText('The results are public now.')).toBeInTheDocument()
+
+      expect(screen.queryAllByRole('progressbar', { name: /votes/ })).toHaveLength(0)
+      expect(resultsViewed()).toHaveLength(0)
+    })
+
+    it('reports the results viewed once per vote, with the old Results tab props', () => {
+      const election = createProcess({ questions: [question('q1', 'ONGOING', 181, ['150', '31'])] })
+      const { rerender } = renderSummary(election, 184)
+      rerender(
+        <TestMemoryRouter>
+          <VoteSummary />
+        </TestMemoryRouter>
+      )
+
+      expect(resultsViewed()).toEqual([
+        [
+          {
+            name: AnalyticsEvents.ProcessResultsViewed,
+            props: { election_id: '0xabc', status: 'unknown', vote_count: 184, census_size: 312, turnout_pct: 59 },
+          },
+        ],
+      ])
+    })
+
+    it("lists a legacy vote's undecodable questions through the package's results instead of guessing", () => {
+      const untyped = { ...question('q1', 'RESULTS', 5, ['3', '2']), type: '', ballotProtocol: undefined }
+      renderSummary(createProcess({ legacy: true, questions: [untyped] }), 5)
+
+      expect(screen.getByText('ElectionResults')).toBeInTheDocument()
+      expect(screen.queryAllByRole('progressbar', { name: /votes/ })).toHaveLength(0)
+    })
+
+    it('decodes the tally of a legacy vote whose questions carry a ballot type', () => {
+      renderSummary(createProcess({ legacy: true, questions: [question('q1', 'RESULTS', 181, ['150', '31'])] }), 181)
+
+      expect(screen.queryByText('ElectionResults')).not.toBeInTheDocument()
+      expect(screen.getByRole('progressbar', { name: 'Yes, 150 votes, 83%' })).toBeInTheDocument()
     })
 
     it('offers to duplicate a canceled vote to whoever can manage it', () => {
@@ -297,6 +373,23 @@ describe('VoteSummary', () => {
       expect(screen.getByText('Open. 120 votes.')).toBeInTheDocument()
       expect(screen.getByText('To open.')).toBeInTheDocument()
       expect(screen.getByText('3, question by question')).toBeInTheDocument()
+    })
+
+    it('draws the bars on a phone by the same rule as the desktop rows', () => {
+      desktop = false
+      renderSummary(
+        byQuestion([
+          question('q1', 'ENDED', 200, ['150', '50']),
+          { ...question('q2', 'ONGOING', 30, ['20', '10']), secretUntilTheEnd: true },
+          question('q3', 'PAUSED', 0, ['0', '0']),
+        ]),
+        200
+      )
+      const bars = (name: string) => screen.queryAllByRole('progressbar', { name })
+
+      expect(bars('Yes, 150 votes, 75%')).toHaveLength(1)
+      expect(bars('Yes, 20 votes, 67%')).toHaveLength(0)
+      expect(bars('Yes, 0 votes, 0%')).toHaveLength(0)
     })
 
     it('shows a vote paused as a whole, with the held questions paused', () => {

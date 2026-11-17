@@ -1,12 +1,20 @@
 import { Card, Flex, Icon, Link, Text } from '@chakra-ui/react'
-import { useId } from 'react'
+import { hasResults, processVoteCount } from '@vocdoni/api-client'
+import type { VotingProcessQuestion } from '@vocdoni/api-types'
+import { tryInferQuestionBallotType } from '@vocdoni/ballot'
+import { ElectionResults, useElection } from '@vocdoni/react-components'
+import { useEffect, useId, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as RouterLink } from 'react-router'
+import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
+import { useCensusSize } from '~queries/census'
 import { Routes } from '~src/router/routes'
+import { isLegacyProcess } from '~src/types/voting-process'
 import { ChevronRightIcon, LockIcon } from '~theme/icons'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { countQuestionStates } from '~utils/vote-state'
 import { useManageText } from '../manage/use-manage-text'
-import { AllAtOnceRow, ByQuestionRow, CompactQuestionRow } from './QuestionRows'
+import { AllAtOnceRow, ByQuestionRow, CompactQuestionRow, showsTally } from './QuestionRows'
 import { SummaryCardHeader } from './SummaryCardHeader'
 import type { SummaryModel } from './use-summary-model'
 
@@ -46,6 +54,29 @@ const ResultsLine = ({ model }: { model: SummaryModel }) => {
   )
 }
 
+/** Fires `ProcessResultsViewed` once per vote, the first time Resum shows its results. */
+const useTrackResultsViewed = (model: SummaryModel, visible: boolean) => {
+  const { results, status } = useElection()
+  const { size: censusSize } = useCensusSize()
+  const tracked = useRef<string | null>(null)
+  const { election, state } = model
+  useEffect(() => {
+    if (!visible || !election.published || state === 'canceled' || tracked.current === election.id) return
+    tracked.current = election.id
+    const voteCount = processVoteCount(results)
+    trackAnalyticsEvent({
+      name: AnalyticsEvents.ProcessResultsViewed,
+      props: {
+        election_id: election.id,
+        status: status ?? 'unknown',
+        vote_count: voteCount,
+        census_size: censusSize,
+        turnout_pct: censusSize ? Math.round((voteCount / censusSize) * 100) : 0,
+      },
+    })
+  }, [visible, election, state, results, status, censusSize])
+}
+
 /**
  * The vote's questions. Question by question: one line each on the desktop with its result, votes and state, and
  * how many are in each state in the header. All at once: each question's turnout and blank votes, and when the
@@ -55,7 +86,27 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
   const { t } = useTranslation()
   const manageText = useManageText()
   const titleId = useId()
+  const { results } = useElection()
   const { election, byQuestion, state, questionStates } = model
+
+  // The served tally wins over the one the process read carries (the old Results tab read it from there too).
+  const questions = useMemo(() => {
+    const served = new Map((results?.questions ?? []).map((entry) => [entry.questionId, entry]))
+    return election.questions.map((question): VotingProcessQuestion => {
+      const tally = served.get(question.id)
+      return tally?.results?.length ? { ...question, results: { ...question.results, ...tally } } : question
+    })
+  }, [election.questions, results])
+  // Closed, tally not served yet: say it is being counted instead of showing nothing.
+  const counting = state === 'closed' && !hasResults(election)
+  // Legacy votes can carry questions with no ballot type: their tallies cannot be decoded, so the package's own
+  // results list them (choices without numbers) instead of Resum guessing.
+  const undecodable =
+    isLegacyProcess(election) && questions.some((question) => tryInferQuestionBallotType(question) === undefined)
+  const visible =
+    state !== 'canceled' &&
+    (undecodable || questions.some((question, index) => showsTally(question, questionStates[index], model)))
+  useTrackResultsViewed(model, visible)
 
   let note: string | undefined
   if (byQuestion) {
@@ -84,11 +135,35 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
         action={manage}
         desktop={desktop}
       />
-      {election.questions.map((question, index) => {
-        const row = { question, index, model, state: questionStates[index] }
-        if (!desktop) return <CompactQuestionRow key={question.id} {...row} />
-        return byQuestion ? <ByQuestionRow key={question.id} {...row} /> : <AllAtOnceRow key={question.id} {...row} />
-      })}
+      {counting && (
+        <Card.Body py='3'>
+          <Text textStyle='body-sm' color='fg.muted'>
+            {t('votes.results.counting', {
+              defaultValue: 'The vote is closed. The results are being counted and will show here shortly.',
+            })}
+          </Text>
+        </Card.Body>
+      )}
+      {undecodable ? (
+        <Card.Body>
+          <ErrorBoundary
+            fallback={
+              <Text color='fg.muted'>
+                {t('error.loading_section', { defaultValue: 'This section could not be loaded' })}
+              </Text>
+            }
+            resetKeys={[election, results]}
+          >
+            <ElectionResults />
+          </ErrorBoundary>
+        </Card.Body>
+      ) : (
+        questions.map((question, index) => {
+          const row = { question, index, model, state: questionStates[index] }
+          if (!desktop) return <CompactQuestionRow key={question.id} {...row} />
+          return byQuestion ? <ByQuestionRow key={question.id} {...row} /> : <AllAtOnceRow key={question.id} {...row} />
+        })
+      )}
       {desktop && !byQuestion && <ResultsLine model={model} />}
     </Card.Root>
   )

@@ -20,6 +20,38 @@ const useOutcome = (question: VotingProcessQuestion, weighted: boolean) =>
 
 const counts = (state: QuestionState) => state === 'open' || state === 'paused' || state === 'closed'
 
+/**
+ * Whether a question-by-question row draws its bars: once opened, while its tally is public (a secret one only once
+ * the question is over) and the tally is served.
+ */
+const byQuestionBars = (question: VotingProcessQuestion, state: QuestionState) =>
+  counts(state) && (state === 'closed' || !question.secretUntilTheEnd) && !!question.results?.results?.length
+
+/** Whether Resum shows this question's tally, in either mode (the same rule on every width). */
+export const showsTally = (question: VotingProcessQuestion, state: QuestionState, model: SummaryModel) =>
+  model.byQuestion
+    ? byQuestionBars(question, state)
+    : !!questionOutcome(question, question.results, { weighted: !!model.election.census?.weighted })
+
+/** The per-choice bars of a row, as Resum draws them on every width. */
+const RowBars = ({
+  question,
+  model,
+  final,
+}: {
+  question: VotingProcessQuestion
+  model: SummaryModel
+  final: boolean
+}) => (
+  <QuestionResultBars
+    question={question}
+    results={question.results}
+    weighted={!!model.election.census?.weighted}
+    final={final}
+    layout='plain'
+  />
+)
+
 // On a question title's line, or (`inline`) on the running line of a one-line row.
 const QuestionNumber = ({ index, inline = false }: { index: number; inline?: boolean }) =>
   inline ? (
@@ -43,9 +75,7 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
   const votes = question.results?.voteCount ?? 0
   const percent = percentOf(votes, questionElectorate(question, model.election))
   const title = text(question.title)
-  // A secret tally is public only once the question is over; a question to open has none.
-  const visible = counts(state) && (state === 'closed' || !question.secretUntilTheEnd)
-  const hasBars = visible && !!question.results?.results?.length
+  const hasBars = byQuestionBars(question, state)
 
   return (
     <Card.Body pt='row' pb='3'>
@@ -72,13 +102,7 @@ export const ByQuestionRow = ({ question, index, model, state }: RowProps) => {
         <ProcessStatus kind='question' state={state} />
         {hasBars && (
           <Box gridColumn='2 / -1' pt='3'>
-            <QuestionResultBars
-              question={question}
-              results={question.results}
-              weighted={!!model.election.census?.weighted}
-              final={state === 'closed' && isSettledQuestion(question)}
-              layout='plain'
-            />
+            <RowBars question={question} model={model} final={state === 'closed' && isSettledQuestion(question)} />
           </Box>
         )}
       </Grid>
@@ -156,16 +180,8 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
               })}
             </Text>
           )}
-          {/* The tally last, as the board draws it: Resum answers "how is it going" without opening Results. */}
-          {outcome && (
-            <QuestionResultBars
-              question={question}
-              results={question.results}
-              weighted={!!model.election.census?.weighted}
-              final={!!question.results?.finalResults}
-              layout='plain'
-            />
-          )}
+          {/* The tally last, as the board draws it: Resum is where the results are read. */}
+          {outcome && <RowBars question={question} model={model} final={!!question.results?.finalResults} />}
         </Stack>
       </Grid>
     </Card.Body>
@@ -175,7 +191,7 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
 /**
  * A question on a phone or tablet, in either mode: number, title and one quiet line. Question by question it says
  * the state and its detail ("Closed. Yes, 198 to 7.", "Open. 172 votes.", "To open."); all at once, the result
- * when public and the votes.
+ * when public and the votes. Under it, the same bars as the desktop rows whenever the tally is public.
  */
 export const CompactQuestionRow = ({ question, index, model, state }: RowProps) => {
   const { t } = useTranslation()
@@ -203,6 +219,8 @@ export const CompactQuestionRow = ({ question, index, model, state }: RowProps) 
   } else {
     meta = [describe(outcome), votes > 0 ? votesText : null].filter(Boolean).join(', ') || null
   }
+  const bars = model.byQuestion ? byQuestionBars(question, state) : !!outcome
+  const final = model.byQuestion ? state === 'closed' && isSettledQuestion(question) : !!question.results?.finalResults
 
   return (
     <Card.Body py='3'>
@@ -213,6 +231,11 @@ export const CompactQuestionRow = ({ question, index, model, state }: RowProps) 
           <Text gridColumn='2' textStyle='note' color='fg.subtle'>
             {meta}
           </Text>
+        )}
+        {bars && (
+          <Box gridColumn='2' pt='2.5'>
+            <RowBars question={question} model={model} final={final} />
+          </Box>
         )}
       </Grid>
     </Card.Body>
