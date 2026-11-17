@@ -16,9 +16,9 @@ export type QuestionResultBarsProps = {
   /** Votes are summed weights. */
   weighted?: boolean
   /**
-   * `indented` (a question-by-question row from `lg`, board V4VoteOne): an empty 20px column before the label and
-   * plain counts. `plain` (V4VoteManageAll, the touch boards): the bars align with the title and counts carry their
-   * unit; the label and count stay regular below `lg`.
+   * `indented` (a question-by-question row, board V4VoteOne): plain counts, and from `lg` an empty 20px column before
+   * the label. `plain` (V4VoteManageAll): the bars align with the title and counts carry their unit. Below `lg` both
+   * align with the title, label and count regular (the touch boards).
    */
   layout?: 'indented' | 'plain'
 }
@@ -36,11 +36,11 @@ const leaderOf = (tally: Tally[]): string | undefined => {
 
 const LAYOUT = {
   indented: {
-    columns: '[{sizes.5} minmax(0, 1fr) auto]',
-    span: '2 / span 2',
-    label: { gridColumn: '2' },
-    weight: 'semibold',
-    countWeight: 'medium',
+    columns: { base: '[minmax(0, 1fr) auto]', lg: '[{sizes.5} minmax(0, 1fr) auto]' },
+    span: { base: '1 / span 2', lg: '2 / span 2' },
+    label: { gridColumn: { base: '1', lg: '2' }, lineHeight: { base: 'moderate', lg: 'row.title' } },
+    weight: { base: 'normal', lg: 'semibold' },
+    countWeight: { base: 'normal', lg: 'medium' },
   },
   plain: {
     columns: '[minmax(0, 1fr) auto]',

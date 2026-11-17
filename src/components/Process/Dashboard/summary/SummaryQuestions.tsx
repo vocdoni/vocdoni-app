@@ -14,7 +14,7 @@ import { ChevronRightIcon, LockIcon } from '~theme/icons'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { isSettledQuestion } from '~utils/vote-state'
 import { ByQuestionCard } from './by-question/ByQuestionCard'
-import { AllAtOnceRow, CompactQuestionRow, showsTally } from './QuestionRows'
+import { AllAtOnceRow, showsTally } from './QuestionRows'
 import { SummaryCardHeader } from './SummaryCardHeader'
 import type { SummaryModel } from './use-summary-model'
 
@@ -120,7 +120,7 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
     </Card.Body>
   )
 
-  if (byQuestion) return <ByQuestionCard questions={questions} notice={countingNote} desktop={desktop} />
+  if (byQuestion) return <ByQuestionCard questions={questions} notice={countingNote} />
 
   return (
     <Card.Root variant='frame' as='section' aria-labelledby={titleId}>
@@ -148,14 +148,15 @@ export const SummaryQuestions = ({ model, desktop }: { model: SummaryModel; desk
           </ErrorBoundary>
         </Card.Body>
       ) : (
-        questions.map((question, index) => {
-          const row = { question, index, model, state: questionStates[index] }
-          return desktop ? (
-            <AllAtOnceRow key={question.id} {...row} />
-          ) : (
-            <CompactQuestionRow key={question.id} {...row} />
-          )
-        })
+        questions.map((question, index) => (
+          <AllAtOnceRow
+            key={question.id}
+            question={question}
+            index={index}
+            model={model}
+            state={questionStates[index]}
+          />
+        ))
       )}
       {desktop && <ResultsLine model={model} />}
     </Card.Root>

@@ -101,8 +101,9 @@ const QuestionTurnout = ({ question, index, model }: Omit<RowProps, 'state'>) =>
 }
 
 /**
- * A question of an all-at-once vote on the desktop: its title and how it is answered, then (once voting has begun)
- * how many answered it and how many left it blank, and last, when the results are public, a bar per choice.
+ * A question of an all-at-once vote: its number, title and how it is answered, then (once voting has begun) how many
+ * answered it and how many left it blank, and last, when the results are public, a bar per choice. No sentence says
+ * who wins. From `lg` the turnout and bars run the row's width; below it they keep a readable width on a tablet.
  */
 export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
   const { t } = useTranslation()
@@ -114,25 +115,34 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
   // "Left it blank" only holds when every voter could answer it: never for a question with its own electorate, and
   // not for someone the API does not tell whether it has one.
   const showBlank = started && model.count > 0 && model.canManage && !question.eligibleMemberIds?.length
+  const readable = { md: 'lg', lg: 'full' } as const
 
   return (
-    <Card.Body pb='4'>
-      <Grid templateColumns='[{sizes.6} minmax(0, 1fr)]'>
+    <Card.Body pt={{ base: '3', lg: '3.5' }} pb={{ base: '3', lg: '4' }}>
+      <Grid
+        templateColumns='[{sizes.6} minmax(0, 1fr)]'
+        columnGap={{ base: '2', lg: '0' }}
+        alignItems={{ base: 'baseline', lg: 'start' }}
+      >
         <QuestionNumber index={index} />
-        <Stack gap='3' minW='0'>
+        <Stack gap={{ base: '2.5', lg: '3' }} minW='0'>
           <Box>
-            <Heading as='h3' textStyle='question-title'>
+            <Heading as='h3' textStyle='question-line'>
               {text(question.title)}
             </Heading>
             {kind && (
-              <Text textStyle='body-sm' color='fg.subtle' mt='note'>
+              <Text textStyle={{ base: 'body', lg: 'body-sm' }} color='fg.subtle' mt='note'>
                 {kind}
               </Text>
             )}
           </Box>
-          {started && <QuestionTurnout question={question} index={index} model={model} />}
+          {started && (
+            <Box maxW={readable}>
+              <QuestionTurnout question={question} index={index} model={model} />
+            </Box>
+          )}
           {showBlank && (
-            <Text textStyle='body-sm' color='fg.subtle'>
+            <Text textStyle={{ base: 'body', lg: 'body-sm' }} color='fg.subtle'>
               {blank > 0
                 ? t('votes.summary.blank', {
                     defaultValue_one: '{{count, number}} of the {{voters}} voters left it blank.',
@@ -145,36 +155,11 @@ export const AllAtOnceRow = ({ question, index, model }: RowProps) => {
           )}
           {/* The tally last, as the board draws it: Resum is where the results are read. */}
           {tallyIsPublic(question) && (
-            <RowBars question={question} model={model} final={!!question.results?.finalResults} />
+            <Box maxW={readable}>
+              <RowBars question={question} model={model} final={!!question.results?.finalResults} />
+            </Box>
           )}
         </Stack>
-      </Grid>
-    </Card.Body>
-  )
-}
-
-/**
- * A question of an all-at-once vote on a phone or tablet (M4Vote): number and title, once voting has begun how many
- * answered it, and the same bars as the desktop rows whenever the tally is public. No sentence says who wins.
- */
-export const CompactQuestionRow = ({ question, index, model }: RowProps) => {
-  const { text } = useVoteText()
-
-  return (
-    <Card.Body py='3'>
-      <Grid templateColumns='[{sizes.6} minmax(0, 1fr)]' columnGap='2' rowGap='0.5' alignItems='baseline'>
-        <QuestionNumber index={index} />
-        <Text textStyle='question-line'>{text(question.title)}</Text>
-        {hasStarted(model) && (
-          <Box gridColumn='2' pt='2' maxW={{ md: 'lg' }}>
-            <QuestionTurnout question={question} index={index} model={model} />
-          </Box>
-        )}
-        {tallyIsPublic(question) && (
-          <Box gridColumn='2' pt='2.5' maxW={{ md: 'lg' }}>
-            <RowBars question={question} model={model} final={!!question.results?.finalResults} />
-          </Box>
-        )}
       </Grid>
     </Card.Body>
   )

@@ -46,14 +46,15 @@ describe('QuestionResultBars', () => {
     expect(screen.getByText('10%')).toBeInTheDocument()
   })
 
-  it('sets the winner of a final tally in bold and dims the others, with no check and no tag', () => {
+  it('sets the winner of a final tally in bold (from `lg`) and dims the others, with no check and no tag', () => {
     const { rerender } = render(<QuestionResultBars question={threeChoices} results={tally} final />)
-    expect(getComputedStyle(screen.getByText('For')).fontWeight).toContain('semibold')
+    // The weight is responsive (regular on the touch boards), so it shows as its own class, not a computed value.
+    expect(screen.getByText('For').className).not.toBe(screen.getByText('Against').className)
     expect(ranges().map((range) => getComputedStyle(range).opacity.includes('outvoted'))).toEqual([false, true, true])
     expect(screen.queryByRole('img', { name: 'Winning choice' })).not.toBeInTheDocument()
     expect(screen.queryByText('Winner')).not.toBeInTheDocument()
     rerender(<QuestionResultBars question={threeChoices} results={tally} />)
-    expect(getComputedStyle(screen.getByText('For')).fontWeight).not.toContain('semibold')
+    expect(screen.getByText('For').className).toBe(screen.getByText('Against').className)
   })
 
   it('marks no winner on a tie', () => {
@@ -64,7 +65,7 @@ describe('QuestionResultBars', () => {
         final
       />
     )
-    expect(getComputedStyle(screen.getByText('For')).fontWeight).not.toContain('semibold')
+    expect(screen.getByText('For').className).toBe(screen.getByText('Against').className)
   })
 
   it('renders nothing without a tally', () => {

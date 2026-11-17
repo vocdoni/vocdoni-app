@@ -31,15 +31,15 @@ export type ByQuestionCardProps = {
   questions: VotingProcessQuestion[]
   /** A line under the header ("The results are being counted"). */
   notice?: ReactNode
-  desktop: boolean
 }
 
-export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardProps) => {
+export const ByQuestionCard = ({ questions, notice }: ByQuestionCardProps) => {
   const { t } = useTranslation()
   const { election } = useElection()
   const { dateAt, text } = useVoteText()
   const manageText = useManageText()
   const stateLabel = useProcessStateLabel()
+  // Behaviour, not look: only a phone gets the bottom bar (a second set of the active question's buttons).
   const phone = useIsMobile({ ssr: false })
   const { change, pending, isBusy } = useQuestionStatusAction(election?.id)
   const { votePause, canManage, state: voteState, now } = useActions()
@@ -114,9 +114,8 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
     const block = openQuestionBlock(election, question, now, remembered)
     return block === 'otherActive' || block === 'beforeStart'
   })
+  // Before the start and while the vote is paused Open shows, off: the header says when it starts, or resumes it.
   const openable = (state: RowState) => state === 'toOpen' && canManage && !canceled && !ended
-  // Before the start and while the vote is paused the desktop board leaves Open out; the touch boards show it off.
-  const touchOnly = !started || isHeld
 
   const activeButtons = (question: VotingProcessQuestion, index: number, state: RowState) => (
     <ActiveButtons
@@ -133,8 +132,7 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
       questionId={question.id}
       controls={controls}
       primary={isStepFor(step, 'open', index + 1)}
-      touchOnly={touchOnly}
-      off={offs[index]}
+      off={offs[index] || isHeld}
       reasonId={reasonId}
       size={size}
     />
@@ -189,7 +187,7 @@ export const ByQuestionCard = ({ questions, notice, desktop }: ByQuestionCardPro
         <Box as='ol'>
           {questions.map((question, index) => {
             const state = states[index]
-            const common = { question, number: index + 1, desktop }
+            const common = { question, number: index + 1 }
             if (state === 'closed') {
               return (
                 <ClosedQuestionRow

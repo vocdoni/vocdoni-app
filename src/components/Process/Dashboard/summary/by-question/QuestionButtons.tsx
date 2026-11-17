@@ -17,8 +17,6 @@ type OpenButtonProps = {
   controls: QuestionControls
   /** The next step: the primary button. */
   primary: boolean
-  /** Before the start or while the vote is paused: off on a phone and a tablet, left out from `lg` (boards). */
-  touchOnly?: boolean
   /**
    * Another question is open or paused (R29), or the vote has not started: the boards' `off` button, which does
    * nothing. `aria-disabled` keeps it focusable, and `reasonId` names the note that says why.
@@ -30,17 +28,9 @@ type OpenButtonProps = {
 }
 
 /** The board's 28px "Open" (`.btn.s28`), 40px below `lg`. */
-export const OpenButton = ({
-  questionId,
-  controls,
-  primary,
-  touchOnly = false,
-  off = false,
-  reasonId,
-  size = 'row',
-}: OpenButtonProps) => {
+export const OpenButton = ({ questionId, controls, primary, off = false, reasonId, size = 'row' }: OpenButtonProps) => {
   const { t } = useTranslation()
-  const unavailable = off || touchOnly
+  const unavailable = off
   const variant = unavailable ? 'off' : primary ? 'solid' : 'outline'
   const label = t('votes.manage.open', { defaultValue: 'Open' })
   return (
@@ -51,7 +41,6 @@ export const OpenButton = ({
       size={size}
       flex={size === 'md' ? '1' : undefined}
       flexShrink={0}
-      display={touchOnly ? { lg: 'none' } : undefined}
       loading={controls.isLoading(questionId, 'ready')}
       disabled={!unavailable && controls.busy}
       aria-disabled={unavailable || undefined}

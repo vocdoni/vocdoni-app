@@ -1,4 +1,15 @@
-import { Box, Card, chakra, Flex, Grid, Icon, Text, VisuallyHidden, type FlexProps } from '@chakra-ui/react'
+import {
+  Box,
+  Card,
+  chakra,
+  Flex,
+  Grid,
+  Icon,
+  Text,
+  VisuallyHidden,
+  type FlexProps,
+  type TextProps,
+} from '@chakra-ui/react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon } from '~theme/icons'
@@ -94,11 +105,55 @@ export const RowHead = ({
   )
 }
 
+/**
+ * The title of a closed or waiting row and what follows it (its turnout, its state): on one line from `lg`, the title
+ * cut with an ellipsis; below `lg` the title on a line of its own and the rest under it. Spans: the line can be the
+ * row's toggle button, which takes phrasing content only.
+ */
+export const RowTitleLine = ({
+  title,
+  color,
+  align = 'baseline',
+  children,
+}: {
+  title: ReactNode
+  color?: TextProps['color']
+  /** How the title and what follows line up on one line (from `lg`). */
+  align?: FlexProps['alignItems']
+  children: ReactNode
+}) => (
+  <Flex
+    as='span'
+    flex='1'
+    minW='0'
+    wrap={{ base: 'wrap', lg: 'nowrap' }}
+    align={align}
+    columnGap={{ base: '2', lg: '3' }}
+    rowGap='note'
+  >
+    <Text
+      as='span'
+      display='block'
+      textStyle='question-line'
+      color={color}
+      flexBasis={{ base: 'full', lg: 'auto' }}
+      flex={{ lg: '1' }}
+      minW='0'
+      whiteSpace={{ lg: 'nowrap' }}
+      overflow={{ lg: 'hidden' }}
+      textOverflow={{ lg: 'ellipsis' }}
+    >
+      {title}
+    </Text>
+    {children}
+  </Flex>
+)
+
 /** The chevron at the end of a row's line: 15px and muted from `lg`, in a 44px (40px on a tablet) box below it. */
-export const RowChevron = ({ expanded, desktopOnly = false }: { expanded: boolean; desktopOnly?: boolean }) => (
+export const RowChevron = ({ expanded }: { expanded: boolean }) => (
   <Box
     as='span'
-    display={{ base: desktopOnly ? 'none' : 'inline-flex', lg: 'inline-flex' }}
+    display='inline-flex'
     alignItems='center'
     justifyContent='center'
     flexShrink={0}

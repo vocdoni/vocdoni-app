@@ -7,7 +7,7 @@ import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
 import { isSettledQuestion, percentOf } from '~utils/vote-state'
 import { QuestionResultBars } from '../../QuestionResultBars'
-import { QuestionRowFrame, RowChevron, RowHead } from './QuestionRow'
+import { QuestionRowFrame, RowChevron, RowHead, RowTitleLine } from './QuestionRow'
 import { useManageText } from './use-manage-text'
 
 export type ClosedQuestionRowProps = {
@@ -17,13 +17,12 @@ export type ClosedQuestionRowProps = {
   weighted: boolean
   expanded: boolean
   onToggle: () => void
-  desktop: boolean
 }
 
 /**
- * A closed question: one line that opens its result. From `lg` the title, "69% turnout", the state and a turning
- * chevron, and under it the question, its turnout and a bar per choice; below `lg` the title over "Closed. 69%
- * turnout." and, opened, the turnout and the bars. No verdict: the bars tell it (owner).
+ * A closed question: one line that opens its result. The title, "69% turnout", the state and a turning chevron (from
+ * `lg` on one line, below it the turnout and the state under the title), and opened, the question, its turnout and a
+ * bar per choice. No verdict: the bars tell it (owner).
  */
 export const ClosedQuestionRow = ({
   question,
@@ -32,7 +31,6 @@ export const ClosedQuestionRow = ({
   weighted,
   expanded,
   onToggle,
-  desktop,
 }: ClosedQuestionRowProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
@@ -44,7 +42,7 @@ export const ClosedQuestionRow = ({
   const count = results?.voteCount ?? 0
   const share = percentOf(count, electorate)
   const percent = share !== undefined ? t('votes.manage.percent', { defaultValue: '{{percent}}%', percent: share }) : ''
-  const note = desktop ? manageText.note(question) : ''
+  const note = manageText.note(question)
 
   return (
     <QuestionRowFrame number={number}>
@@ -53,47 +51,26 @@ export const ClosedQuestionRow = ({
           alignItems={{ base: 'center', lg: 'baseline' }}
           toggle={{ expanded, onToggle, controls: detailId, number }}
         >
-          {/* Spans: the line is the row's toggle button, which takes phrasing content only. */}
-          {/* The touch board's two lines share the 44px chevron's height: 1px between them. */}
-          <Stack as='span' gap={{ base: 'note', lg: '0' }} flex='1' minW='0'>
-            <Text
-              as='span'
-              display='block'
-              textStyle='question-line'
-              whiteSpace={{ lg: 'nowrap' }}
-              overflow={{ lg: 'hidden' }}
-              textOverflow={{ lg: 'ellipsis' }}
-            >
-              {text(question.title)}
-            </Text>
-            <Text as='span' textStyle='note' color='fg.subtle' display={{ base: 'block', lg: 'none' }}>
-              {share !== undefined
-                ? t('votes.manage.meta.closed_turnout', {
-                    defaultValue: 'Closed. {{percent}}% turnout.',
-                    percent: share,
-                  })
-                : t('votes.manage.meta.closed', { defaultValue: 'Closed.' })}
-            </Text>
-          </Stack>
-          {share !== undefined && (
-            <Text
-              as='span'
-              textStyle='caption'
-              letterSpacing='body'
-              color='fg.subtle'
-              whiteSpace='nowrap'
-              display={{ base: 'none', lg: 'inline' }}
-            >
-              {/* The figure in the figure face (the boards' `.m`), the words as they are. */}
-              <Trans
-                i18nKey='votes.manage.turnout_figure'
-                defaults='<n>{{percent}}%</n> turnout'
-                values={{ percent: share }}
-                components={{ n: <Span fontFamily='figure' letterSpacing='none' /> }}
-              />
-            </Text>
-          )}
-          <ProcessStatus as='span' kind='question' state='closed' display={{ base: 'none', lg: 'inline-flex' }} />
+          <RowTitleLine title={text(question.title)}>
+            {share !== undefined && (
+              <Text
+                as='span'
+                textStyle={{ base: 'note', lg: 'caption' }}
+                letterSpacing='body'
+                color='fg.subtle'
+                whiteSpace='nowrap'
+              >
+                {/* The figure in the figure face (the boards' `.m`), the words as they are. */}
+                <Trans
+                  i18nKey='votes.manage.turnout_figure'
+                  defaults='<n>{{percent}}%</n> turnout'
+                  values={{ percent: share }}
+                  components={{ n: <Span fontFamily='figure' letterSpacing='none' /> }}
+                />
+              </Text>
+            )}
+            <ProcessStatus as='span' kind='question' state='closed' />
+          </RowTitleLine>
           <RowChevron expanded={expanded} />
         </RowHead>
         <Box id={detailId} hidden={!expanded}>
@@ -118,13 +95,7 @@ export const ClosedQuestionRow = ({
                 label={manageText.turnoutLabel(count, electorate, share)}
                 layout='compact'
               />
-              <QuestionResultBars
-                question={question}
-                results={results}
-                weighted={weighted}
-                final={settled}
-                layout={desktop ? 'indented' : 'plain'}
-              />
+              <QuestionResultBars question={question} results={results} weighted={weighted} final={settled} />
             </Stack>
           )}
         </Box>

@@ -552,7 +552,7 @@ describe('VoteSummary', () => {
       renderSummary(byQuestion(questions), 200)
 
       expect(screen.getByText('Turnout')).toBeInTheDocument()
-      expect(screen.getByText('Closed. 64% turnout.')).toBeInTheDocument()
+      expect(screen.getByText(textContent('64% turnout'))).toBeInTheDocument()
       expect(screen.getByText('1 closed, 1 open, 1 to open')).toBeInTheDocument()
       expect(screen.getByRole('region', { name: 'Vote controls' })).toHaveTextContent('2. Question q2')
     })

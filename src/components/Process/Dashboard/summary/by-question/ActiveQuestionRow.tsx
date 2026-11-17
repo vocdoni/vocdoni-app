@@ -1,8 +1,8 @@
-import { Box, Flex, Grid, HStack, Icon, Stack, Text, VisuallyHidden } from '@chakra-ui/react'
+import { Box, Flex, Grid, HStack, Icon, Stack, Text } from '@chakra-ui/react'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ProcessStatus, useProcessStateLabel } from '~components/ui/ProcessStatus'
+import { ProcessStatus } from '~components/ui/ProcessStatus'
 import { TurnoutBar } from '~components/ui/TurnoutBar'
 import { useVoteText } from '~i18n/use-vote-text'
 import { LockIcon } from '~theme/icons'
@@ -19,14 +19,13 @@ export type ActiveQuestionRowProps = {
   weighted: boolean
   /** Close, or Open and Close on a paused question; none while the vote is paused as a whole. */
   buttons?: ReactNode
-  desktop: boolean
 }
 
 /**
- * An open, paused or held question. From `lg` (V4VoteOne): title and state, the question and how it is answered,
- * "Turnout: 172 of 312" over the bar, the provisional bars when results are live, then the note and the buttons.
- * Below `lg` (M4VoteOne) a tinted block: title, one line of state and kind, the bar with its scale and the buttons,
- * at the end of the row on a tablet and across it in equal parts on a phone.
+ * An open, paused or held question: title and state, the question and how it is answered, "Turnout: 172 of 312" over
+ * the bar, the provisional bars when results are live, then a note on what it means and the buttons. From `lg` a
+ * plain row (V4VoteOne); below `lg` a tinted block (M4VoteOne) with the buttons at the end of the row on a tablet and
+ * across it in equal parts on a phone.
  */
 export const ActiveQuestionRow = ({
   question,
@@ -35,18 +34,16 @@ export const ActiveQuestionRow = ({
   electorate,
   weighted,
   buttons,
-  desktop,
 }: ActiveQuestionRowProps) => {
   const { t } = useTranslation()
   const { text } = useVoteText()
   const manageText = useManageText()
-  const stateLabel = useProcessStateLabel()
   const count = question.results?.voteCount ?? 0
   const share = percentOf(count, electorate)
   const live = !question.secretUntilTheEnd
   const hasBars = live && !!question.results?.results?.length
-  // The desktop board's note under the bar, after a lock while results are secret (not on a held question). The
-  // opening and pause times it adds are not recorded by the API.
+  // The note under the bar, after a lock while results are secret (not on a held question). The opening and pause
+  // times the board adds are not recorded by the API.
   const footNote = {
     held: t('votes.manage.held_note', { defaultValue: 'Held by the pause of the vote.' }),
     paused: t('votes.manage.paused_note', { defaultValue: 'No one can vote on it.' }),
@@ -54,18 +51,10 @@ export const ActiveQuestionRow = ({
       ? t('votes.manage.provisional', { defaultValue: 'Provisional result.' })
       : t('votes.manage.locked', { defaultValue: 'Results will show when the question closes.' }),
   }[state]
-  // The touch boards' line under the title: the state (none while open) and how it is answered.
-  const kind = manageText.note(question, false)
-  const touchState = {
-    held: t('votes.manage.meta.held', { defaultValue: 'Held with the vote.' }),
-    paused: t('votes.manage.paused_note', { defaultValue: 'No one can vote on it.' }),
-    open: '',
-  }[state]
-  const touchNote = touchState && kind ? `${touchState} ${kind}` : touchState || kind
-  const note = desktop ? manageText.note(question) : touchNote
+  const note = manageText.note(question)
   const locked = !live && state !== 'held'
-  // The column under the title: head, bar and bars. The tablet's buttons span it.
-  const tabletRows = 2 + (hasBars ? 1 : 0)
+  // The column under the title: head, bar, bars and the note. The tablet's buttons span it.
+  const tabletRows = 3 + (hasBars ? 1 : 0)
   const wide = { base: '1', lg: '1 / -1' } as const
 
   return (
@@ -82,16 +71,7 @@ export const ActiveQuestionRow = ({
             <Text as='h3' textStyle='question-head'>
               {text(question.title)}
             </Text>
-            <ProcessStatus
-              kind='question'
-              state={state === 'held' ? 'paused' : state}
-              display={{ base: 'none', lg: 'inline-flex' }}
-            />
-            {/* Below `lg` the state is told by the tint and the buttons alone: a screen reader, and anyone who sees no
-                buttons, gets the word. */}
-            <VisuallyHidden display={{ lg: 'none' }}>
-              {stateLabel(state === 'held' ? 'paused' : state, 'question')}
-            </VisuallyHidden>
+            <ProcessStatus kind='question' state={state === 'held' ? 'paused' : state} flexShrink={0} />
           </Flex>
           {note && (
             <Text textStyle='note' color='fg.subtle' lineClamp={3}>
@@ -111,28 +91,15 @@ export const ActiveQuestionRow = ({
           value={count}
           max={electorate}
           label={manageText.turnoutLabel(count, electorate, share)}
-          layout={{ base: 'scale', lg: 'compact' }}
+          layout='compact'
         />
         {hasBars && (
           <Box gridColumn={wide} maxW={{ md: 'results.detail', lg: 'full' }}>
-            <QuestionResultBars
-              question={question}
-              results={question.results}
-              weighted={weighted}
-              layout={desktop ? 'indented' : 'plain'}
-            />
+            <QuestionResultBars question={question} results={question.results} weighted={weighted} />
           </Box>
         )}
-        {/* The desktop board's footer line is a button's height, buttons or not. */}
-        <HStack
-          gridColumn='1'
-          gap='1.5'
-          minH='control.md'
-          textStyle='note'
-          color='fg.subtle'
-          minW='0'
-          display={{ base: 'none', lg: 'flex' }}
-        >
+        {/* From `lg` the note's line is a button's height, buttons or not. */}
+        <HStack gridColumn='1' gap='1.5' minH={{ lg: 'control.md' }} textStyle='note' color='fg.subtle' minW='0'>
           {locked && <Icon as={LockIcon} boxSize='3.5' flexShrink={0} />}
           <Text>{footNote}</Text>
         </HStack>
@@ -149,7 +116,7 @@ export const ActiveQuestionRow = ({
             {buttons}
           </HStack>
         )}
-        {/* Without buttons the phone board keeps their 16px top margin under the bar (its held row). */}
+        {/* Without buttons the phone board keeps their 16px top margin under the note (its held row). */}
         {!buttons && <Box hideFrom='md' h='1' />}
       </Grid>
     </QuestionRowFrame>

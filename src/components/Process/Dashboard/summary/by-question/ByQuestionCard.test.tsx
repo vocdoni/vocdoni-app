@@ -16,7 +16,8 @@ let currentElection: VotingProcessResponse
 vi.mock('~queries/question-status', () => ({
   useQuestionStatusAction: () => ({ change, ...questionStatus }),
 }))
-vi.mock('~components/ui/useIsMobile', () => ({ useIsMobile: () => phone, useIsDesktop: () => !phone }))
+// Only the bottom bar depends on the width (it is a phone's alone): the rows are one tree at every width.
+vi.mock('~components/ui/useIsMobile', () => ({ useIsMobile: () => phone }))
 // The provider's values, with the real state derivation (no pause memory: what another device sees).
 vi.mock('~components/Actions/ActionsContext', async () => {
   const { deriveVoteState, pausedHoldIds } = await import('~utils/vote-state')
@@ -78,13 +79,13 @@ const build = (overrides: Partial<VotingProcessResponse> = {}) =>
 
 const withQuestions = (list: VotingProcessQuestion[]) => build({ questions: list })
 
-const show = (election: VotingProcessResponse, desktop = !phone) => {
+const show = (election: VotingProcessResponse) => {
   currentElection = election
   setReactProvidersMock({
     ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
     useElection: () => mockUseElection({ election, results: null }),
   })
-  return render(<ByQuestionCard questions={election.questions} desktop={desktop} />)
+  return render(<ByQuestionCard questions={election.questions} />)
 }
 
 const NOTE = '“Open” is disabled while another question is open, and before the start time.'
@@ -106,7 +107,7 @@ describe('ByQuestionCard', () => {
   })
   afterEach(() => resetReactProvidersMock())
 
-  describe('on the desktop', () => {
+  describe('at every width', () => {
     it('counts the questions in the header and hints the next step', () => {
       show(build())
       expect(screen.getByText('1 closed, 1 open, 1 to open')).toBeInTheDocument()
@@ -220,8 +221,10 @@ describe('ByQuestionCard', () => {
       const [settled, clock] = questionsList().getAllByRole('listitem')
       await userEvent.click(within(settled).getByRole('button', { expanded: false }))
       await userEvent.click(within(clock).getByRole('button', { expanded: false }))
-      expect(getComputedStyle(within(settled).getByText('Approve')).fontWeight).toContain('semibold')
-      expect(getComputedStyle(within(clock).getByText('Approve')).fontWeight).not.toContain('semibold')
+      // The weight is responsive (from `lg`), so it shows as its own class, not a computed value.
+      const weight = (row: HTMLElement, choice: string) => within(row).getByText(choice).className
+      expect(weight(settled, 'Approve')).not.toBe(weight(settled, 'Reject'))
+      expect(weight(clock, 'Approve')).toBe(weight(clock, 'Reject'))
     })
 
     it('shows no buttons and no next step to a viewer', () => {
@@ -326,8 +329,9 @@ describe('ByQuestionCard', () => {
       expect(screen.getByText('1 closed, 1 paused, 1 to open')).toBeInTheDocument()
       expect(queryButton('Resume')).not.toBeInTheDocument()
       expect(queryButton('Close')).not.toBeInTheDocument()
-      // Off on the touch boards, left out from `lg`: the CSS hides it there.
+      // Shown off, never hidden: the header's "Resume" is what lets it open again.
       expect(button('Open')).toHaveAttribute('data-variant', 'off')
+      expect(button('Open')).toHaveAccessibleDescription(NOTE)
     })
 
     it('reads a vote whose questions are all closed as closed, with no next step and no buttons', () => {
@@ -350,25 +354,16 @@ describe('ByQuestionCard', () => {
       expect(screen.getByText('no results')).toBeInTheDocument()
     })
 
-    it('has no bottom bar', () => {
+    it('has no bottom bar from a tablet up', () => {
       show(build())
       expect(dock()).not.toBeInTheDocument()
+      expect(button('Close')).toBeInTheDocument()
     })
   })
 
-  describe('on a phone', () => {
+  describe('the bottom bar on a phone', () => {
     beforeEach(() => {
       phone = true
-    })
-
-    it('says a closed question closed with its turnout, and opens it onto the turnout and the bars', async () => {
-      show(build())
-      const toggle = screen.getByRole('button', { name: /^Question 1: Budget/ })
-      expect(within(toggle).getByText('Closed. 5% turnout.')).toBeInTheDocument()
-      await userEvent.click(toggle)
-      expect(toggle).toHaveAttribute('aria-expanded', 'true')
-      expect(screen.getByText('Turnout: 10 of 200')).toBeInTheDocument()
-      expect(screen.getByRole('progressbar', { name: /^Approve, 7 votes/ })).toBeInTheDocument()
     })
 
     it('docks the open question with Close, the same button as its row, and no pause', async () => {
@@ -398,7 +393,7 @@ describe('ByQuestionCard', () => {
       expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'ready' })
     })
 
-    it('has no bar while the vote is paused (the header resumes it), and shows the held question tinted with its line', () => {
+    it('has no bar while the vote is paused (the header resumes it)', () => {
       show(
         withQuestions([
           createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
@@ -407,7 +402,7 @@ describe('ByQuestionCard', () => {
         ])
       )
       expect(dock()).not.toBeInTheDocument()
-      expect(screen.getByText(/^Held with the vote\./)).toBeInTheDocument()
+      expect(screen.getByText('Held by the pause of the vote.')).toBeInTheDocument()
       expect(button('Open')).toHaveAttribute('aria-disabled', 'true')
     })
 
@@ -428,19 +423,10 @@ describe('ByQuestionCard', () => {
       expect(dock()).not.toBeInTheDocument()
     })
 
-    it('has no bar on a canceled vote, whose questions read voided with no results', () => {
+    it('has no bar on a canceled vote', () => {
       const voided = (id: string) => createQuestion({ id, status: 'CANCELED', results: undefined })
       show(withQuestions([voided('q1'), voided('q2')]))
       expect(dock()).not.toBeInTheDocument()
-      expect(screen.getByText('no results')).toBeInTheDocument()
-      expect(questionsList().getAllByText('Voided.')).toHaveLength(2)
-    })
-
-    it('has no bar on a tablet either', () => {
-      phone = false
-      show(build(), false)
-      expect(dock()).not.toBeInTheDocument()
-      expect(button('Close')).toBeInTheDocument()
     })
   })
 })
