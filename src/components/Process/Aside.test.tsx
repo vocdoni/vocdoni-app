@@ -1,179 +1,27 @@
-import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
+import { mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import ProcessAside, { VoteButton } from './Aside'
-
-vi.mock('@vocdoni/react-components', async (importOriginal) => {
-  const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
-  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
-  return {
-    ...actual,
-    ...getReactProvidersMock(),
-    VoteButton: (props: any) => <button {...props}>Vote</button>,
-    VoteWeight: () => <div>Weight</div>,
-    environment: { verifyVote: () => '/verify' },
-  }
-})
+import { CensusConnectButton } from './Aside'
 
 vi.mock('./CSP/CSPAuthModal', () => ({
   CspAuth: () => <div>CSP</div>,
 }))
 
-// Minimal v2 VotingProcessResponse-shaped election: only the fields Aside.tsx
-// actually reads (census.weighted, questions[].secretUntilTheEnd).
-const baseElection = {
-  id: 'p1',
-  census: { weighted: false },
-  questions: [{ secretUntilTheEnd: false }],
-}
-const baseResults = { id: 'p1', questions: [{ questionId: 'p1-q1', voteCount: 3 }] }
+const election = { id: 'p1', census: { weighted: false }, questions: [] }
 
-describe('ProcessAside', () => {
-  beforeEach(() => {
-    setReactProvidersMock({
-      useElection: () =>
-        mockUseElection({
-          election: baseElection,
-          status: 'ONGOING',
-          results: baseResults,
-          isInCensus: true,
-          hasVoted: false,
-          voteId: null,
-          isAbleToVote: true,
-          connected: false,
-        }),
-      useClient: () => mockUseClient({ env: 'prod' }),
-    })
-  })
-
-  it('renders status and the CSP identify flow', () => {
-    render(<ProcessAside />)
-
-    // Uppercase comes from the `status-title` text style, which jsdom does not apply to the text.
-    expect(screen.getByText('process.status.active')).toBeInTheDocument()
+describe('CensusConnectButton', () => {
+  it('offers the identify flow to a visitor of an open vote', () => {
+    setReactProvidersMock({ useElection: () => mockUseElection({ election, status: 'ONGOING', connected: false }) })
+    render(<CensusConnectButton />)
     expect(screen.getByText('CSP')).toBeInTheDocument()
   })
 
-  it('renders the vote count without a definition list', () => {
-    render(<ProcessAside />)
-
-    expect(screen.getByTestId('process-vote-count')).toBeInTheDocument()
-    expect(document.querySelector('dl')).toBeNull()
-  })
-
-  it('shows the identify flow in sidebar and floating CTA when disconnected', () => {
-    render(
-      <>
-        <ProcessAside />
-        <VoteButton setQuestionsTab={vi.fn()} />
-      </>
-    )
-
-    expect(screen.getAllByText('CSP')).toHaveLength(2)
-    expect(screen.queryByText('logout')).not.toBeInTheDocument()
-    expect(screen.queryByText('Vote')).not.toBeInTheDocument()
-  })
-
-  it('shows sidebar logout and hides floating vote while connected and not yet a census member', () => {
-    setReactProvidersMock({
-      useElection: () =>
-        mockUseElection({
-          election: baseElection,
-          status: 'ONGOING',
-          results: baseResults,
-          isInCensus: false,
-          hasVoted: false,
-          voteId: null,
-          isAbleToVote: false,
-          connected: true,
-        }),
-    })
-
-    render(
-      <>
-        <ProcessAside />
-        <VoteButton setQuestionsTab={vi.fn()} />
-      </>
-    )
-
-    expect(screen.getByText('logout')).toBeInTheDocument()
-    expect(screen.getByText('aside.is_not_in_census')).toBeInTheDocument()
-    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
-    expect(screen.queryByText('Vote')).not.toBeInTheDocument()
-  })
-
-  it('shows sidebar logout and enabled vote when connected and eligible', () => {
-    setReactProvidersMock({
-      useElection: () =>
-        mockUseElection({
-          election: baseElection,
-          status: 'ONGOING',
-          results: baseResults,
-          isInCensus: true,
-          hasVoted: false,
-          voteId: null,
-          isAbleToVote: true,
-          connected: true,
-        }),
-    })
-
-    render(
-      <>
-        <ProcessAside />
-        <VoteButton setQuestionsTab={vi.fn()} />
-      </>
-    )
-
-    expect(screen.getByText('logout')).toBeInTheDocument()
-    expect(screen.getByText('Vote')).toBeEnabled()
-    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
-  })
-
-  it('shows sidebar logout and hides floating vote when connected and ineligible (already voted)', () => {
-    setReactProvidersMock({
-      useElection: () =>
-        mockUseElection({
-          election: baseElection,
-          status: 'ONGOING',
-          results: baseResults,
-          isInCensus: true,
-          hasVoted: true,
-          voteId: 'vote-123',
-          isAbleToVote: false,
-          connected: true,
-        }),
-    })
-
-    render(
-      <>
-        <ProcessAside />
-        <VoteButton setQuestionsTab={vi.fn()} />
-      </>
-    )
-
-    expect(screen.getByText('logout')).toBeInTheDocument()
-    expect(screen.queryByText('Vote')).not.toBeInTheDocument()
-    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
-  })
-
-  it('shows the has-voted message without the explorer link once the voter has cast a vote', () => {
-    setReactProvidersMock({
-      useElection: () =>
-        mockUseElection({
-          election: baseElection,
-          status: 'ONGOING',
-          results: baseResults,
-          isInCensus: true,
-          hasVoted: true,
-          voteId: 'vote-123',
-          isAbleToVote: false,
-          connected: true,
-        }),
-    })
-
-    render(<ProcessAside />)
-
-    expect(screen.getByText('aside.has_already_voted')).toBeInTheDocument()
-    // The explorer verify links moved to the Voted notice (one per question).
-    expect(screen.queryByText('aside.verify_vote_on_explorer')).not.toBeInTheDocument()
+  it('renders nothing once connected, or on a canceled vote', () => {
+    setReactProvidersMock({ useElection: () => mockUseElection({ election, status: 'ONGOING', connected: true }) })
+    const { unmount } = render(<CensusConnectButton />)
+    expect(screen.queryByText('CSP')).toBeNull()
+    unmount()
+    setReactProvidersMock({ useElection: () => mockUseElection({ election, status: 'CANCELED', connected: false }) })
+    render(<CensusConnectButton />)
+    expect(screen.queryByText('CSP')).toBeNull()
   })
 })
