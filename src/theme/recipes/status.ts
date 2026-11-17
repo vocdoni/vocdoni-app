@@ -26,6 +26,9 @@ export const Status = defineSlotRecipe({
       sm: { root: { fontSize: { base: 'sm', lg: 'xs' }, lineHeight: { base: 'moderate', lg: '[1.25rem]' } } },
       md: { root: { lineHeight: '[1.25rem]' } },
       lg: { root: { lineHeight: '[1.25rem]' } },
+      // The voter page's status line (live, paused, cancelled, closed): 13.5px medium on the running line, the dot 8px
+      // from the word, in the voter's tracking.
+      ballot: { root: { textStyle: 'ballot-status', gap: '2' } },
     },
     tone: {
       success: { root: { color: 'status.success.fg' }, indicator: { bg: 'status.success.solid' } },
@@ -39,6 +42,8 @@ export const Status = defineSlotRecipe({
         root: { color: 'fg.muted' },
         indicator: { bg: 'transparent', boxShadow: '[inset 0 0 0 {borderWidths.mark} {colors.fg.subtle}]' },
       },
+      // A vote that is over, on the voter page: the muted word and the faint dot (a mark, never text).
+      closed: { root: { color: 'fg.muted' }, indicator: { bg: 'fg.faint' } },
     },
   },
   defaultVariants: { tone: 'gray' },
