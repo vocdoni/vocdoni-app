@@ -104,10 +104,13 @@ there, here's a list of variables you can use:
   palette (tints, shades, text and focus-ring colors) is generated from it and applied to buttons, form
   controls, tabs and highlights in both color modes. Filled surfaces use the exact color wherever it reads at
   3:1 against the page background and the closest readable shade otherwise (a very dark color in dark mode, a
-  very pale one in light mode). Unset, the app keeps its stock black accent. It is read at runtime, so a single
+  very pale one in light mode). Unset, the app keeps Fil blue (`#1d62e9`). On the public pages of a vote with
+  the branding add-on, the organisation's colour replaces it. It is read at runtime, so a single
   build/image can be recolored with `docker run -e PRIMARY_COLOR=...`.
 - `SHOW_ORG_LOGO` set it to `true` to brand the header of process pages with the logo of the organization
-  that created the process, instead of the Vocdoni logo. It applies to the public voting page
+  that created the process, instead of the Vocdoni logo. A vote with the branding add-on shows its
+  organisation's logo on these pages whatever this flag says; the flag shows the logo on every vote but never
+  applies the organisation's colour. It applies to the public voting page
   (`/<lang>/processes/<id>`), its summary (`/<lang>/processes/<id>/summary`) and the `HOME_PROCESS_ID`
   root, which render that logo server-side — there is no client-side swap. Pages with no process behind
   them (the dashboard, auth, pricing…) keep the Vocdoni logo, and so does an organization that has no logo

@@ -67,11 +67,12 @@ Token families, each in its own module under `src/theme/` and spread into `color
 
 Rules of thumb:
 
-- **Accent**: leave `colorPalette` alone (it is `brand`: Fil blue `#1d62e9`, or `PRIMARY_COLOR` when set) and read
-  `colorPalette.solid`, `colorPalette.fg` and so on. Use `colorPalette='gray'` only for things that must stay neutral.
-  When a recipe or component paints brand-coloured text (active tab, highlighted notice), read `accent.fg`, not
-  `brand.fg`: it is the brand's `fg`, except on the dark page for a neutral brand too dark to read there (such as the
-  stock black), which gets white. Borders may still read `brand.fg`.
+- **Accent**: leave `colorPalette` alone (it is `brand`: Fil blue `#1d62e9`, `PRIMARY_COLOR` when set, or the
+  organisation's colour on a branded vote's pages; see "Brand per vote") and read `colorPalette.solid`,
+  `colorPalette.fg` and so on. Use `colorPalette='gray'` only for things that must stay neutral. When a recipe or
+  component paints brand-coloured text (active tab, highlighted notice), read `accent.fg`, not `brand.fg`: it is the
+  brand's `fg`, except on the dark page for a neutral brand too dark to read there (such as the stock black), which
+  gets white. Borders may still read `brand.fg`.
 - **Status colour**: status colours are Chakra semantic palettes defined in `src/theme/status.ts`. Pick one with
   `colorPalette='danger' | 'success' | 'warning' | 'info'`, and `gray` for neutral; never a local status-to-colour map
   or a raw `red`/`green`. `StatusBadge` takes `colorPalette`. Code that reads a colour rather than a palette uses
@@ -142,6 +143,35 @@ Fil rules the theme enforces:
   user-written text (`Markdown`). Hover only darkens to `accent.fg.hover`; keyboard focus keeps the outline.
 - The voter ballot scale: `fontSizes.ballot.option` (17px) and `ballot.question` (32px), `lineHeights.question`,
   `letterSpacings.heading.question` and `letterSpacings.voter`.
+
+### Brand per vote
+
+A vote with the branding add-on (`election.addOns.branding`) paints its public pages (`/processes/:id`, its summary
+and the `HOME_PROCESS_ID` root) with its organisation's logo and colour. The page loader resolves the brand once on the
+server (`resolveProcessBrand` in `src/utils/process-brand.ts`) and the page data carries it; `AppProviders
+primaryColor` builds the chakra system from that colour instead of `PRIMARY_COLOR`, on the server and at hydration
+alike. The client derives nothing brand-related afterwards (cached HTML, brand included, can be a minute old).
+
+| Vote | Header logo | Colour |
+|---|---|---|
+| Add-on on | the organisation's logo | the organisation's colour if it is a valid hex, else the deployment's |
+| Add-on off, `SHOW_ORG_LOGO` on | the organisation's logo | the deployment's |
+| Add-on off, flag off | the Vocdoni mark | the deployment's |
+| Archive (legacy) vote | the organisation's avatar under `SHOW_ORG_LOGO`, else the Vocdoni mark | the deployment's, never the organisation's |
+
+- Colour reaches components only through `colorPalette` (it falls back to `brand`), `brand.*` and `accent.*`. A
+  component that reads them follows the vote; nothing else may carry the organisation's colour (no inline style, no
+  CSS variable set by hand, no second palette).
+- What never changes colour: status colours (`success`, `danger`, `warning`, `info`: the live and done green, the error
+  red), neutrals and surfaces, and the Vocdoni credit (the footer logo and the "made with Vocdoni" line). Never route
+  them through `brand` or `accent`.
+- The colour is arbitrary input, so `palette.ts` keeps every pairing readable for any hex, tested on 124 colours in
+  `palette.test.ts`: `solid` at least 3:1 on the page; its label at least 4.5:1 on `solid` and on `solid.hover` (the
+  hover lightens instead of darkening when a black label needs it); `fg` at least 4.5:1 on the page and on `subtle`;
+  the focus ring at least 3:1; `accent.fg.hover` at least 4.5:1. A new pairing a voter screen draws gets a line there.
+- The logo is only ever an `img` source, with the Vocdoni mark as the fallback when it fails to load (`Logo`).
+- `getAppSystem` keeps at most 32 coloured systems (organisation colours are open-ended on the server); the stock one is
+  never evicted.
 
 ## Text
 
