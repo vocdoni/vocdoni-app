@@ -5,7 +5,8 @@ import { system } from '../system'
 // existing value of those recipes resolved to before the voter pieces landed (feat/fil-voter-brand), one hash per
 // value, so a voter change that moves an existing look fails here and names the value. Never update a hash to make
 // a voter change pass: the look it pins is on screen today.
-
+// It pins recipe values by token name: a token whose value changes is caught by system.test.ts, not here.
+//
 // Empty style objects carry no look (a slot added without base styles resolves to one), so they are left out.
 const prune = (value: unknown): unknown => {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return value
@@ -111,6 +112,7 @@ const pinned = {
       size: ['xs', 'sm', 'md', 'lg', 'xl'],
       shape: ['square', 'rounded', 'full'],
       striped: [true],
+      animated: [true],
     }),
   status: () =>
     resolveAll(slotRecipe('status'), {
@@ -249,6 +251,7 @@ const EXPECTED: Record<keyof typeof pinned, Record<string, string>> = {
     'shape=rounded': '7c062440',
     'shape=full': '7279bb3a',
     'striped=true': 'c20d312e',
+    'animated=true': 'a51a433b',
   },
   status: {
     default: 'f1922a96',
