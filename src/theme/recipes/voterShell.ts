@@ -131,27 +131,27 @@ export const VoterShell = defineSlotRecipe({
     },
     // The credit's row at the page's foot: 48px, centred.
     foot: { display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, h: '12' },
-    // "Votació feta amb", the Vocdoni wordmark and the terms and privacy links, 6px apart: 12px in the quiet ink, the
-    // wordmark 13px tall in ink. It never takes the vote's colour. On a narrow phone the links wrap onto a second line,
-    // centred. The wordmark is sized here, so the svg carries no style of its own.
+    // "Votació feta amb" with the Vocdoni wordmark, then the terms and privacy links (owner ruling R18), 12px apart:
+    // 12px in the quiet ink, the wordmark 13px tall in ink. It never takes the vote's colour. On a narrow phone the
+    // links wrap onto a second line as a unit, centred. No separator between the two groups: one drawn on either side
+    // was left dangling at a line's end or start whenever the links wrapped, so the gap alone separates them. The
+    // wordmark is sized here, so the svg carries no style of its own.
     credit: {
       display: 'inline-flex',
       flexWrap: 'wrap',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '1.5',
+      columnGap: '3',
       rowGap: '0',
       textStyle: 'caption',
       color: 'fg.subtle',
       '& svg': { h: 'wordmark.credit', w: 'auto' },
     },
-    // The words and the wordmark, kept together. The middle dot before the links (owner ruling R18) closes this group,
-    // so when the links wrap no line starts with it (conformance pass 2, R-1).
+    // The words and the wordmark, kept together, 6px apart.
     made: {
       display: 'inline-flex',
       alignItems: 'center',
       gap: '1.5',
-      '&:not(:last-child)::after': { content: '"·"' },
     },
     links: {},
   },

@@ -79,7 +79,7 @@ describe('voter shell recipe', () => {
     expect(layer(styles.foot)).toMatchObject({ height: 'var(--chakra-sizes-12)' })
     const credit = layer(styles.credit)
     expect(credit).toMatchObject({
-      gap: 'var(--chakra-spacing-1\\.5)',
+      columnGap: 'var(--chakra-spacing-3)',
       rowGap: 'var(--chakra-spacing-0)',
       flexWrap: 'wrap',
       justifyContent: 'center',
@@ -107,12 +107,14 @@ describe('voter shell recipe', () => {
     }
   })
 
-  it('puts the terms and privacy links after the wordmark behind a middle dot, 6px clear (ruling R18)', () => {
-    // The dot closes the words-and-wordmark group, 6px after the wordmark, and only when the links follow: when the
-    // links wrap, no line starts with it (conformance pass 2, R-1). The 6px after it is the credit's own gap.
+  it('puts the terms and privacy links 12px after the wordmark, with no separator to dangle when they wrap (R18)', () => {
+    // The words and the wordmark stay one group, 6px apart; the links are the other, and wrap to their own line as a
+    // unit. A middle dot on either group was left at the end or the start of a line whenever they wrapped.
     const made = layer(styles.made)
-    expect(made).toMatchObject({ display: 'inline-flex', gap: 'var(--chakra-spacing-1\\.5)' })
-    expect(made['&:not(:last-child)::after']).toEqual({ content: '"·"' })
-    expect(layer(styles.credit).gap).toBe('var(--chakra-spacing-1\\.5)')
+    expect(made).toEqual({ display: 'inline-flex', alignItems: 'center', gap: 'var(--chakra-spacing-1\\.5)' })
+    const credit = layer(styles.credit)
+    expect(credit).toMatchObject({ flexWrap: 'wrap', columnGap: 'var(--chakra-spacing-3)' })
+    expect(credit.gap).toBeUndefined()
+    expect(JSON.stringify([credit, made, layer(styles.links) ?? {}])).not.toMatch(/::(after|before)/)
   })
 })

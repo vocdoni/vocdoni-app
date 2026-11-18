@@ -18,7 +18,7 @@ export type VoterCreditProps = {
   text: string
   /** The wordmark's accessible name: "Vocdoni". */
   brand: string
-  /** The terms and privacy links, after the wordmark and a separator (owner ruling R18). */
+  /** The terms and privacy links, after the wordmark; they wrap to a second line as one group (owner ruling R18). */
   links?: ReactNode
 }
 
