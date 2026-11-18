@@ -40,6 +40,9 @@ export const V_VOTED = '650000000000000000001005'
 export const V_NOT_IN = '650000000000000000001006'
 export const V_CHECKING = '650000000000000000001007'
 export const V_PAUSED = '650000000000000000001008'
+export const V_RESULTS = '650000000000000000001009'
+export const V_RESULTS_ENDED = '65000000000000000000100a'
+export const V_RESULTS_SECRET = '65000000000000000000100b'
 /** The member number the voter votes' auth-only censuses answer; any other one is not in the census. */
 export const VOTER_MEMBER = 'A-1001'
 export const FAKE_TOKEN = 'fake-local-token'
@@ -645,9 +648,32 @@ const VOTER_HEADER = `data:image/svg+xml,${encodeURIComponent(
     '<circle cx="960" cy="120" r="70" fill="#f5d90a"/>' +
     '<path d="M0 330 L300 200 L520 300 L780 170 L1200 320 V400 H0Z" fill="#7a8ca8"/></svg>'
 )}`
+// The boards' results (M10, M11): 221 voters. Q1 one row of three; Q2 a pick-slot of two, one row per slot (options,
+// then the two abstain values); Q3 ranked, one row per option (rank 0 to 2, 2 the best).
+const VOTER_TALLIES = [
+  [['163', '41', '17']],
+  [
+    ['100', '70', '35', '16', '0', '0'],
+    ['48', '51', '52', '36', '0', '0'],
+  ],
+  [
+    ['40', '70', '111'],
+    ['70', '80', '71'],
+    ['111', '71', '39'],
+  ],
+]
 const voterVote = (
   id,
-  { census = VOTER_CENSUS, secret = false, status = 'ONGOING', description = '', header = '' } = {}
+  {
+    census = VOTER_CENSUS,
+    secret = false,
+    status = 'ONGOING',
+    description = '',
+    header = '',
+    endDate = '2030-06-17T18:00:00.000Z',
+    tallies,
+    final = false,
+  } = {}
 ) =>
   boardVote(id, 'Assemblea General Ordinària 2026', {
     unlisted: true,
@@ -655,13 +681,13 @@ const voterVote = (
     description: ml(description),
     header,
     startDate: '2026-06-08T07:00:00.000Z',
-    endDate: '2030-06-17T18:00:00.000Z',
+    endDate,
     questions: VOTER_QUESTIONS.map(([title, choices, shape], i) => ({
       ...question(id, i + 1, title, choices, status, {
-        voteCount: 184,
+        voteCount: tallies ? 221 : 184,
         maxVoters: 312,
-        finalResults: false,
-        results: [],
+        finalResults: final,
+        results: tallies?.[i] ?? [],
       }),
       id: boardQuestionId(id, i + 1),
       description: ml(''),
@@ -670,6 +696,8 @@ const voterVote = (
       ...shape,
     })),
   })
+// The results' ended votes closed on this day (before the browser's clock), so the page reads them as over.
+const VOTER_ENDED = '2026-06-12T18:00:00.000Z'
 PROCESSES.push(
   voterVote(V_LIVE, { description: VOTER_DESCRIPTION }),
   voterVote(V_SECRET, { secret: true, header: VOTER_HEADER }),
@@ -678,10 +706,15 @@ PROCESSES.push(
   voterVote(V_VOTED),
   voterVote(V_NOT_IN),
   voterVote(V_CHECKING),
-  voterVote(V_PAUSED, { status: 'PAUSED' })
+  voterVote(V_PAUSED, { status: 'PAUSED' }),
+  voterVote(V_RESULTS, { tallies: VOTER_TALLIES }),
+  voterVote(V_RESULTS_ENDED, { status: 'RESULTS', endDate: VOTER_ENDED, tallies: VOTER_TALLIES, final: true }),
+  voterVote(V_RESULTS_SECRET, { status: 'ENDED', endDate: VOTER_ENDED, secret: true })
 )
 /** V_LIVE paused by the organisation: what the page reads once it refetches (the paused mid-ballot capture). */
 export const VOTER_LIVE_PAUSED = voterVote(V_LIVE, { status: 'PAUSED', description: VOTER_DESCRIPTION })
+/** V_RESULTS_SECRET extended by the organiser: open and secret again (the hidden results capture). */
+export const VOTER_RESULTS_SECRET_REOPENED = voterVote(V_RESULTS_SECRET, { secret: true })
 /** A relay that never settles (the sending capture). */
 export const RELAY_PENDING = { jobId: 'job-relay', type: 'relay_votes', status: 'pending', result: { votes: [] } }
 /** A handler's answer that leaves the request open (the checking capture). */
@@ -926,7 +959,7 @@ on('GET', '/processes/([0-9a-f]{24})/participants', () => ({
   })),
 }))
 // The voter's CSP (auth, check, sign) and relay. An auth-only census knows VOTER_MEMBER only; a 2FA census sends a code
-// to any contact and takes any code. V_VOTED has voted every question, V_NOT_IN is not in the census and V_CHECKING
+// to any contact and takes any code. V_VOTED and V_RESULTS_SECRET have voted every question, V_NOT_IN is not in the census and V_CHECKING
 // never answers the check.
 const processById = (id) => PROCESSES.find((x) => x.id === id)
 on('POST', '/processes/([0-9a-f]{24})/auth/0', (m, q, body) => {
@@ -946,7 +979,7 @@ on('POST', '/processes/([0-9a-f]{24})/check', (m) => {
   const p = processById(m[1])
   if (!p) return [404, { error: 'process not found', code: 404 }]
   if (m[1] === V_CHECKING) return HANG
-  const voted = m[1] === V_VOTED
+  const voted = m[1] === V_VOTED || m[1] === V_RESULTS_SECRET
   return {
     belongsToProcess: m[1] !== V_NOT_IN,
     ...(p.census.weighted ? { weight: '03' } : {}),
@@ -962,7 +995,7 @@ on('POST', '/processes/([0-9a-f]{24})/check', (m) => {
 on('POST', '/processes/([0-9a-f]{24})/sign-info', (m) => {
   const p = processById(m[1])
   const consumed =
-    m[1] === V_VOTED
+    m[1] === V_VOTED || m[1] === V_RESULTS_SECRET
       ? (p?.questions ?? []).map((qq, i) => ({ questionId: qq.id, nullifier: hex64(String(i + 1)) }))
       : []
   return { consumed }

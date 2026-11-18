@@ -26,11 +26,15 @@ import {
   V_LIVE,
   V_NOT_IN,
   V_PAUSED,
+  V_RESULTS,
+  V_RESULTS_ENDED,
+  V_RESULTS_SECRET,
   V_SECRET,
   V_VOTED,
   V_WEIGHTED,
   VOTER_LIVE_PAUSED,
   VOTER_MEMBER,
+  VOTER_RESULTS_SECRET_REOPENED,
 } from './mock-saas.mjs'
 
 // At phone width these triggers sit behind a drawer or menu, so their states are desktop only.
@@ -81,6 +85,11 @@ const RANKED = [
 ]
 const REVIEW = [...RANKED, [['css', onScreen('question', 'button[data-choice-value="2"]')]], CONTINUE]
 const CAST = [...REVIEW, [['css', '[data-testid="voter-cast"]']]]
+// The results (boards V4VoterWideMore 9 to 11). The buttons are named in both languages the captures run in.
+const SHOW_RESULTS = [['button', /^(Show the results|Mostra els resultats)$/]]
+const CHECK_VOTE = [['button', /^(Check your vote|Comprova el teu vot)$/]]
+// An ended secret vote: identify through "Comprova el teu vot", then the results while its tally is being counted.
+const COUNTING = [CHECK_VOTE, ...IDENTIFY, SHOW_RESULTS]
 const voter = (slug, id, states) => ({ slug, path: `/processes/${id}`, auth: false, ...(states && { states }) })
 
 export const ROUTES = [
@@ -226,6 +235,20 @@ export const ROUTES = [
   voter('voter-paused', V_PAUSED, [{ slug: 'paused', open: IDENTIFY }]),
   voter('voter-canceled', B_AAO_CANCELED),
   voter('voter-unsupported', B_QBQ_LIVE),
+  voter('voter-results', V_RESULTS, [{ slug: 'provisional', open: [[['css', '[data-testid="voter-show-results"]']]] }]),
+  voter('voter-results-final', V_RESULTS_ENDED, [{ slug: 'final', open: [SHOW_RESULTS] }]),
+  voter('voter-results-secret', V_RESULTS_SECRET, [
+    { slug: 'counting', open: COUNTING },
+    // The organiser extends the vote: the next read says it is open and secret again (board M9).
+    {
+      slug: 'hidden',
+      open: [
+        ...COUNTING,
+        [['mock', `/processes/${V_RESULTS_SECRET}`, VOTER_RESULTS_SECRET_REOPENED]],
+        [['refocus']],
+      ],
+    },
+  ]),
 ]
 
 export const DEFAULT_VIEWPORTS = [1440, 390]
