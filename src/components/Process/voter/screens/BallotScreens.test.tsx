@@ -1,4 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { createTestI18n } from '~src/test-utils'
 import { renderWithFlow, testElection, testFacts, testFlow } from '../test-flow'
 import { initialVoterState } from '../voter-flow'
 import { ReceiptScreen } from './ReceiptScreen'
@@ -112,6 +113,22 @@ describe('receipt', () => {
     expect(link).toHaveAttribute('target', '_blank')
     expect(screen.getAllByRole('link')).toHaveLength(2)
     expect(screen.queryByText(/voter\.receipt\.verify/)).not.toBeInTheDocument()
+  })
+
+  it('counts only the answers the chain confirmed, and says why another one is missing (gate F3)', async () => {
+    const i18nInstance = await createTestI18n({
+      resources: {
+        en: { common: { voter: { receipt: { help_one: '{{count}} answer', help_other: '{{count}} answers' } } } },
+      },
+      useReactI18next: true,
+    })
+    renderWithFlow(
+      <ReceiptScreen />,
+      testFlow({ statuses: ['confirmed', 'unconfirmed'], voteIds: { q1: 'a3f1000000000000009c2e' } }),
+      { i18nInstance }
+    )
+    expect(screen.getByText('1 answer')).toBeInTheDocument()
+    expect(screen.getByText('vote.disabled.unconfirmed')).toBeInTheDocument()
   })
 
   it('says when the results come if they are secret until the end, else offers them', () => {

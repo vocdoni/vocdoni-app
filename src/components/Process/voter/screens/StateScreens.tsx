@@ -235,30 +235,33 @@ export const NotEligibleScreen = () => {
 
 /**
  * Board V4VoterWideLive 5 (the cast time is omitted: nothing feeds it): the receipt codes the SDK recovered, or why
- * there are none (an anonymous census in another tab, a vote signed but not confirmable from here).
+ * there are none (an anonymous census in another tab, a vote signed but not confirmable from here). A vote the chain
+ * does not hold (`unconfirmed`) gets no success mark and no "Ja has votat" (gate F3): the vote's title, the codes of
+ * what did land, and the SDK's sentence about what did not.
  */
 export const AlreadyVotedScreen = () => {
   const { t } = useTranslation()
   const localize = useReactComponentsLocalize()
   const { election, voteIds, anonymous, statuses } = useVoterFlow()
+  const { title } = useVoteTexts()
   const hasCodes = election.questions.some((question) => voteIds[question.id])
   const locked = statuses.find((status) => status === 'unconfirmed' || status === 'signed')
+  const lost = locked === 'unconfirmed'
   return (
     <Centred
       kind='alreadyVoted'
-      lead={<SuccessDisc />}
-      headingMt='5'
-      title={t('voter.voted.title')}
-      body={t('voter.voted.body')}
+      lead={lost ? undefined : <SuccessDisc />}
+      headingMt={lost ? undefined : '5'}
+      title={lost ? title : t('voter.voted.title')}
+      body={lost ? undefined : t('voter.voted.body')}
       privateContent
     >
-      {hasCodes ? (
-        <ReceiptCard />
-      ) : locked ? (
+      {hasCodes ? <ReceiptCard /> : null}
+      {locked ? (
         <NoticeCard
           title={locked === 'signed' ? localize('vote.disabled.signed') : localize('vote.disabled.unconfirmed')}
         />
-      ) : anonymous ? (
+      ) : !hasCodes && anonymous ? (
         <NoticeCard title={t('aside.anonymous_receipt_gone')} />
       ) : null}
       <ResultsLine />

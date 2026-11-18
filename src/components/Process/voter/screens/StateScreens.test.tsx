@@ -83,4 +83,18 @@ describe('state screens', () => {
     renderWithFlow(<AlreadyVotedScreen />, testFlow({ anonymous: true }))
     expect(screen.getByText('aside.anonymous_receipt_gone')).toBeInTheDocument()
   })
+
+  it('alreadyVoted never says "Ja has votat" for a vote the chain does not hold (gate F3)', () => {
+    renderWithFlow(
+      <AlreadyVotedScreen />,
+      testFlow({ statuses: ['confirmed', 'unconfirmed'], voteIds: { q1: 'a3f1000000000000009c2e' } })
+    )
+    const frame = screen.getByTestId('voter-screen')
+    expect(frame).not.toHaveTextContent('voter.voted.title')
+    expect(frame.querySelector('[data-part="success-disc"]')).toBeNull()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Assemblea General')
+    // What landed keeps its code; what did not is said in the SDK's sentence, next to it.
+    expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
+    expect(screen.getByText('vote.disabled.unconfirmed')).toBeInTheDocument()
+  })
 })
