@@ -41,6 +41,10 @@ const COLUMN: Partial<Record<VoterScreenKind, VoterShellColumn>> = {
   results: 'results',
 }
 
+// The hidden results are a status screen (560px, board M9); the figures take the results column (640px, M10, M11).
+const columnOf = (screen: VoterScreen): VoterShellColumn =>
+  screen.kind === 'results' && screen.state === 'hidden' ? 'status' : (COLUMN[screen.kind] ?? 'status')
+
 const Screen = ({ screen }: { screen: VoterScreen }) => {
   switch (screen.kind) {
     case 'identify':
@@ -160,7 +164,7 @@ export const VoterView = ({ publicLanguageLinks }: { publicLanguageLinks?: Recor
         ) : undefined
       }
       railLabel={t('voter.agenda')}
-      column={COLUMN[screen.kind] ?? 'status'}
+      column={columnOf(screen)}
       credit={{ text: t('voter.credit.text'), brand: t('voter.credit.brand'), links: <VoterLegalLinks /> }}
     >
       <Screen screen={screen} />

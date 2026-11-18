@@ -59,8 +59,6 @@ export const isSettledProcess = (process: VotingProcessResponse | null | undefin
 export type VoterLiveState = {
   /** Until when (ms epoch) the end-instant window keeps the fast poll; unset before the end instant. */
   endWindowUntil?: number
-  /** A results view is on screen and its figures can still change. */
-  resultsLive: boolean
   /** The tab's jitter factor (`jitterFactor`). */
   factor: number
   now: () => number
@@ -71,10 +69,11 @@ type IntervalQuery = { state: { data: unknown } }
 /**
  * The `queryOptions` and `resultsQueryOptions` of the voter page's `ElectionProvider` (audit F8: the provider owns
  * the key, the fetcher and the initial data, so the intervals are functions of the query's own data). Focus and
- * reconnect refetch explicitly, because the app's QueryClient turns focus refetching off. The results read is off
- * (no interval, never stale) unless a results view is open; the provider still fetches it once.
+ * reconnect refetch explicitly, because the app's QueryClient turns focus refetching off. The results screen reads
+ * its figures from the process read, as the organiser's Resum does (spec D7), so the results read is never polled:
+ * the provider fetches it once.
  */
-export const voterLiveQueryOptions = ({ endWindowUntil, resultsLive, factor, now }: VoterLiveState) => ({
+export const voterLiveQueryOptions = ({ endWindowUntil, factor, now }: VoterLiveState) => ({
   queryOptions: {
     refetchInterval: (query: IntervalQuery) => {
       if (isSettledProcess(query.state.data as VotingProcessResponse | undefined)) return false as const
@@ -85,12 +84,10 @@ export const voterLiveQueryOptions = ({ endWindowUntil, resultsLive, factor, now
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   },
-  resultsQueryOptions: resultsLive
-    ? {
-        refetchInterval: Math.round(VOTER_POLL_MS * factor),
-        refetchIntervalInBackground: false,
-        refetchOnWindowFocus: true,
-        refetchOnReconnect: true,
-      }
-    : { refetchInterval: false as const, staleTime: Infinity, refetchOnWindowFocus: false, refetchOnReconnect: false },
+  resultsQueryOptions: {
+    refetchInterval: false as const,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  },
 })

@@ -14,8 +14,8 @@ const process = (...questions: { status: string; finalResults?: boolean }[]) =>
     questions: questions.map(({ status, finalResults }) => ({ status, results: { finalResults: !!finalResults } })),
   }) as unknown as VotingProcessResponse
 const query = (data: unknown) => ({ state: { data } })
-const at = (now: number, endWindowUntil?: number, resultsLive = false) =>
-  voterLiveQueryOptions({ endWindowUntil, resultsLive, factor: 1, now: () => now })
+const at = (now: number, endWindowUntil?: number) =>
+  voterLiveQueryOptions({ endWindowUntil, factor: 1, now: () => now })
 
 describe('jitterFactor', () => {
   it('spreads intervals by up to 20% either way', () => {
@@ -78,17 +78,16 @@ describe('voterLiveQueryOptions', () => {
   })
 
   it('applies the tab factor', () => {
-    const { queryOptions } = voterLiveQueryOptions({ resultsLive: false, factor: 1.1, now: () => 0 })
+    const { queryOptions } = voterLiveQueryOptions({ factor: 1.1, now: () => 0 })
     expect(queryOptions.refetchInterval(query(process({ status: 'ONGOING' })))).toBe(33_000)
   })
 
-  it('keeps the results read off unless a live results view is open', () => {
+  it('never polls the results read: the figures come with the process read (spec D7)', () => {
     expect(at(0).resultsQueryOptions).toEqual({
       refetchInterval: false,
       staleTime: Infinity,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
     })
-    expect(at(0, undefined, true).resultsQueryOptions).toMatchObject({ refetchInterval: VOTER_POLL_MS })
   })
 })
