@@ -5,8 +5,8 @@ import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '
 export type ResultsState = 'hidden' | 'provisional' | 'final'
 
 /**
- * The one thing the voter page shows (spec D4). SP4 adds `room`, `openQuestion` and `castWaiting`; SP5 replaces the
- * interim `results` screen with its own.
+ * The one thing the voter page shows (spec D4). SP4 adds `room`, `openQuestion` and `castWaiting`; `results` is SP5's
+ * screen (boards V4VoterWideMore 9 to 11).
  */
 export type VoterScreen =
   | { kind: 'identify'; notice?: 'sessionExpired' }
@@ -150,7 +150,7 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
     case 'memo':
       return { ...state, memos: { ...state.memos, [action.key]: action.value } }
     case 'castStarted':
-      return { ...state, castError: null, castUnconfirmed: false, sent: { ...state.answers } }
+      return { ...state, castError: null, castUnconfirmed: false, sent: { ...state.answers }, viewResults: false }
     case 'castSucceeded':
       return { ...state, castDone: true, castError: null, castUnconfirmed: false }
     case 'castFailed':
@@ -183,11 +183,13 @@ export const firstUnanswered = (answered: readonly boolean[]): number => answere
 export const deriveVoterScreen = (facts: VoterFacts, local: VoterLocalState): VoterScreen => {
   if (!facts.loaded) return { kind: 'checking' }
   if (facts.voting) return { kind: 'sending' }
-  if (local.castDone) return { kind: 'receipt' }
+  // The receipt offers the results (R19 Q1): they open over it while asked for, and "Enrere" comes back to it.
+  if (local.castDone && !local.viewResults) return { kind: 'receipt' }
   if (facts.status === 'CANCELED') return { kind: 'canceled' }
   if (facts.status === 'UPCOMING') return { kind: 'upcoming' }
 
   const results: VoterScreen = { kind: 'results', state: resultsStateOf(facts) }
+  if (local.castDone) return results
   const over = isVoteOver(facts)
   if (over && !local.checkReceipt) return local.viewResults ? results : { kind: 'closed' }
   // A question-by-question vote cannot be voted here; once it is over the closed screen and its results apply (F8).

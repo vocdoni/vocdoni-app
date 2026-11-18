@@ -177,13 +177,40 @@ describe('deriveVoterScreen: results links', () => {
     expect(screen({ secretUntilTheEnd: true }, { viewResults: true })).toEqual({ kind: 'results', state: 'hidden' })
   })
 
-  it('never over sending, receipt, canceled, unsupported or upcoming', () => {
+  it('never over sending, canceled, unsupported, upcoming or a pending code', () => {
     expect(screen({ voting: true }, { viewResults: true }).kind).toBe('sending')
-    expect(screen({}, { viewResults: true, castDone: true }).kind).toBe('receipt')
     expect(screen({ status: 'CANCELED' }, { viewResults: true }).kind).toBe('canceled')
     expect(screen({ questionByQuestion: true }, { viewResults: true }).kind).toBe('unsupported')
     expect(screen({ status: 'UPCOMING' }, { viewResults: true }).kind).toBe('upcoming')
     expect(screen({ connected: false, challengePending: true }, { viewResults: true }).kind).toBe('code')
+  })
+
+  it('opens the results over the receipt that offers them, and goes back to it (R19 Q1)', () => {
+    expect(screen({}, { castDone: true })).toEqual({ kind: 'receipt' })
+    expect(screen({}, { castDone: true, viewResults: true })).toEqual({ kind: 'results', state: 'provisional' })
+    expect(screen({ status: 'ENDED' }, { castDone: true, viewResults: true })).toEqual({
+      kind: 'results',
+      state: 'final',
+    })
+    // Canceled after the cast: there is nothing to show. A cast in flight is never interrupted.
+    expect(screen({ status: 'CANCELED' }, { castDone: true, viewResults: true }).kind).toBe('canceled')
+    expect(screen({ voting: true }, { castDone: true, viewResults: true }).kind).toBe('sending')
+  })
+
+  it('follows the vote: hidden or provisional turn final when it ends, by its status or by the clock', () => {
+    const visitor = { connected: false }
+    expect(screen({ ...visitor, secretUntilTheEnd: true }, { viewResults: true })).toEqual({
+      kind: 'results',
+      state: 'hidden',
+    })
+    expect(screen({ ...visitor, secretUntilTheEnd: true, status: 'RESULTS' }, { viewResults: true })).toEqual({
+      kind: 'results',
+      state: 'final',
+    })
+    expect(screen({ ...visitor, endedBySchedule: true }, { viewResults: true })).toEqual({
+      kind: 'results',
+      state: 'final',
+    })
   })
 })
 
@@ -271,6 +298,10 @@ describe('voterReducer', () => {
     expect(results.viewResults).toBe(true)
     expect(voterReducer(results, { type: 'checkReceipt' })).toMatchObject({ checkReceipt: true, viewResults: false })
     expect(voterReducer(results, { type: 'go', step: { name: 'welcome' } }).viewResults).toBe(false)
+  })
+
+  it('a cast closes any results view, so its receipt shows first', () => {
+    expect(voterReducer(local({ viewResults: true }), { type: 'castStarted' }).viewResults).toBe(false)
   })
 
   it('signing out forgets everything, answers included', () => {
