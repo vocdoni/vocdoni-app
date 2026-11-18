@@ -241,6 +241,21 @@ const signBatchCalls = () =>
     (input instanceof Request ? input.url : String(input)).includes('sign-batch')
   )
 
+/** The process with a tally on both questions: 6 and 3 of 9 voters unless told otherwise. */
+const tallied = (process: VotingProcessResponse, { results = [['6', '3']], final = false, secret = false } = {}) =>
+  ({
+    ...process,
+    questions: process.questions.map((question) => ({
+      ...question,
+      secretUntilTheEnd: secret,
+      results: { ...question.results, voteCount: 9, results, finalResults: final },
+    })),
+  }) as VotingProcessResponse
+const heading = () => screen.getByRole('heading', { level: 1 })
+const firstBar = () => screen.getAllByRole('progressbar')[0]
+const EARLIER = new Date(NOW - 60_000).toISOString()
+const LATER = '2026-12-01T00:00:00.000Z'
+
 describe('voter page transitions (AC4)', () => {
   it('the start instant passes: upcoming, then identify, with no reload', async () => {
     server.process = makeProcess({ startDate: new Date(NOW + 60_000).toISOString() })
@@ -680,5 +695,65 @@ describe('voter page clock at hydration (conformance D-24)', () => {
     )
     act(() => root?.unmount())
     container.remove()
+  })
+})
+
+describe('voter results follow the vote with no reload (SP5)', () => {
+  it('provisional figures change with a poll, then count and turn final when the vote ends', async () => {
+    const endDate = new Date(NOW + 120_000).toISOString()
+    server.process = tallied(makeProcess({ endDate }))
+    renderPage()
+    await onScreen('identify')
+    fireEvent.click(screen.getByTestId('voter-show-results'))
+    await onScreen('results')
+    expect(heading()).toHaveTextContent('voter.results.provisional_title')
+    expect(firstBar()).toHaveAttribute('aria-valuenow', '67')
+    const focusedOnOpen = document.activeElement
+    pushServer(tallied(makeProcess({ endDate }), { results: [['7', '2']] }))
+    await waitFor(() => expect(firstBar()).toHaveAttribute('aria-valuenow', '78'))
+    expect(document.querySelector('[data-leading]')).toBeNull()
+    // The end instant passes: over by the clock, before the chain marks the tally final.
+    await act(() => vi.advanceTimersByTimeAsync(121_000))
+    await waitFor(() => expect(heading()).toHaveTextContent('voter.results.counting_title'))
+    // A live change never moves the focus (it stays where opening the results put it).
+    expect(document.activeElement).toBe(focusedOnOpen)
+    expect(document.querySelector('[data-leading]')).toBeNull()
+    pushServer(tallied(makeProcess({ status: 'RESULTS', endDate }), { results: [['7', '2']], final: true }))
+    await waitFor(() => expect(heading()).toHaveTextContent('voter.results.final_title'))
+    expect(current()).toHaveAttribute('data-screen', 'results')
+    expect(document.querySelector('[data-leading]')).not.toBeNull()
+  })
+
+  it('a secret vote shows no figure until the chain publishes its tally, hidden again if it is extended', async () => {
+    // Over by the clock; its secret tally is not published yet.
+    server.process = tallied(makeProcess({ endDate: EARLIER }), { secret: true, results: [] })
+    renderPage()
+    await onScreen('closed')
+    fireEvent.click(within(current()).getByRole('button', { name: 'voter.results.show' }))
+    await onScreen('results')
+    expect(heading()).toHaveTextContent('voter.results.counting_title')
+    expect(screen.queryAllByRole('progressbar')).toHaveLength(0)
+    // The organiser extends the vote: secret until it closes again.
+    pushServer(tallied(makeProcess({ endDate: LATER }), { secret: true, results: [] }))
+    await waitFor(() => expect(heading()).toHaveTextContent('Assemblea'))
+    expect(within(current()).getByText('voter.results.hidden_help')).toBeInTheDocument()
+    expect(screen.queryAllByRole('progressbar')).toHaveLength(0)
+    // It closes and the chain publishes the tally.
+    pushServer(tallied(makeProcess({ status: 'RESULTS', endDate: EARLIER }), { secret: true, final: true }))
+    await waitFor(() => expect(heading()).toHaveTextContent('voter.results.final_title'))
+    expect(screen.getAllByRole('progressbar')).toHaveLength(4)
+    expect(document.querySelector('[data-leading]')).not.toBeNull()
+  })
+
+  it('the receipt offers the results and "Enrere" comes back to it', async () => {
+    renderPage()
+    await identify()
+    await answerBoth()
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    await onScreen('receipt')
+    fireEvent.click(within(current()).getByRole('button', { name: 'voter.results.show' }))
+    await onScreen('results')
+    fireEvent.click(within(current()).getByRole('button', { name: 'voter.back' }))
+    await onScreen('receipt')
   })
 })
