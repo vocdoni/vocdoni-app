@@ -167,7 +167,10 @@ describe('resultKind', () => {
   it('names how each castable type is answered (boards M10, M11)', () => {
     expect(
       resultKind(
-        question({ type: 'singlechoice', ballotProtocol: { ...PROTOCOL, maxCount: 1, maxValue: 2, uniqueValues: false } })
+        question({
+          type: 'singlechoice',
+          ballotProtocol: { ...PROTOCOL, maxCount: 1, maxValue: 2, uniqueValues: false },
+        })
       )
     ).toEqual({ key: 'single' })
     expect(
@@ -182,8 +185,9 @@ describe('resultKind', () => {
     expect(
       resultKind(
         question({
+          type: undefined,
           metadata: { type: { name: 'approval' } },
-          typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: false },
+          ballotProtocol: { ...PROTOCOL, maxCount: 3, maxValue: 1, uniqueValues: false },
         } as Partial<VotingProcessQuestion>)
       )
     ).toEqual({ key: 'approval' })

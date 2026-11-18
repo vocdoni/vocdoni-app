@@ -45,6 +45,8 @@ const single = (n: number, status: Status, voteCount = 0, secret = false) => ({
     costFromWeight: false,
   },
   secretUntilTheEnd: secret,
+  // A secret question is cast sealed to the keykeepers' keys; the provider refuses to cast it before they are published.
+  encryptionKeys: secret ? [{ index: 0, key: hex('3') }] : undefined,
   status,
   metadata: {},
   results: { voteCount, maxVoters: 10, finalResults: status === 'RESULTS', results: [] },
