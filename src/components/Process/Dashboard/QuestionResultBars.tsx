@@ -65,8 +65,7 @@ export const QuestionResultBars = ({
   if (!tally) return null
 
   const look = LAYOUT[layout]
-  // A weighted or point-based tally is not one entry per voter: its share is of the total.
-  const base = tallyBase(question, results, tally, weighted)
+  const base = tallyBase(tally)
   const unit = tallyUnit(question, weighted)
   const leader = final ? leaderOf(tally) : undefined
   const choiceTitle = (entry: Tally) => {

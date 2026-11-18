@@ -78,7 +78,7 @@ export const resultsCsvRows = (
 
   questionTallies(election, results).forEach(({ question, results: merged, tally }, index) => {
     if (!tally) return
-    const base = tallyBase(question, merged, tally, weighted)
+    const base = tallyBase(tally)
     const method = resultTypeLabel(t, tryInferQuestionBallotType(question))
     const unit = unitLabel(t, tallyUnit(question, weighted))
     const answered = merged?.voteCount ?? ''

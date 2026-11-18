@@ -26,7 +26,6 @@ export const tallyOf = (question: VotingProcessQuestion, results?: QuestionResul
 
 // Ranked and budget tallies count points; a quadratic one counts several votes per voter.
 const POINTS: ReadonlySet<BallotType> = new Set([BallotType.Ranked, BallotType.Budget])
-const SHARE_OF_TOTAL: ReadonlySet<BallotType> = new Set([...POINTS, BallotType.Quadratic])
 
 /** What a tally's figures count: points (ranked, budget), summed weights (a weighted census) or votes. */
 export type TallyUnit = 'votes' | 'points' | 'weight'
@@ -38,19 +37,10 @@ export const tallyUnit = (question: VotingProcessQuestion, weighted: boolean): T
 }
 
 /**
- * What a choice's share is taken of: the people who answered, or the tally's total where a figure is not one per
- * voter (points, several votes per voter, weights).
+ * What a choice's share is taken of: the tally's total, so a question's shares add up to 100% whatever its type (a
+ * multiple-choice share is of all the choices made, not of the people who answered; owner ruling 2026-11-18).
  */
-export const tallyBase = (
-  question: VotingProcessQuestion,
-  results: QuestionResults | undefined,
-  tally: Tally[],
-  weighted: boolean
-): number => {
-  const type = tryInferQuestionBallotType(question)
-  const total = tally.reduce((sum, entry) => sum + entry.votes, 0)
-  return weighted || (type && SHARE_OF_TOTAL.has(type)) ? total : results?.voteCount || total
-}
+export const tallyBase = (tally: Tally[]): number => tally.reduce((sum, entry) => sum + entry.votes, 0)
 
 /**
  * Whether a question's tally may be shown: it has votes, it can be read, and a secret one only once the chain marked

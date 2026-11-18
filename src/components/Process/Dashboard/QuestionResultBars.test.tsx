@@ -49,6 +49,30 @@ describe('QuestionResultBars', () => {
     expect(screen.getByText('10%')).toBeInTheDocument()
   })
 
+  // Owner ruling 2026-11-18: three people picked up to two of three, five choices in all; shares are of the five.
+  it('takes a multiple-choice share of all the choices made, so the shares add up to 100%', () => {
+    const multiple = createQuestion({
+      type: 'multichoice',
+      ballotProtocol: { ...createQuestion().ballotProtocol, maxCount: 2, maxValue: 2, uniqueValues: true },
+      choices: [
+        { title: { default: 'Laia' }, value: 0 },
+        { title: { default: 'Oriol' }, value: 1 },
+        { title: { default: 'Núria' }, value: 2 },
+      ],
+    } as Partial<VotingProcessQuestion>)
+    const results = createQuestionResults({
+      voteCount: 3,
+      results: [
+        ['2', '1', '0'],
+        ['0', '1', '1'],
+      ],
+    })
+    render(<QuestionResultBars question={multiple} results={results} />)
+    expect(screen.getAllByText('40%')).toHaveLength(2)
+    expect(screen.getByText('20%')).toBeInTheDocument()
+    expect(screen.queryByText('67%')).not.toBeInTheDocument()
+  })
+
   it('sets the winner of a final tally in bold (from `lg`) and dims the others, with no check and no tag', () => {
     const { rerender } = render(<QuestionResultBars question={threeChoices} results={tally} final />)
     expect(leads('For')).toBe(true)
