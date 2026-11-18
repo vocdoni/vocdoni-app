@@ -50,7 +50,11 @@ export const useVoterCheck = ({ id, authToken, connected, check, statusKey }: Vo
   let membership: Membership = 'pending'
   if (!connected) membership = 'idle'
   else if (query.status === 'error') membership = isUnauthorized(query.error) ? 'sessionLost' : 'pending'
-  else if (query.data) membership = query.data.belongsToProcess ? 'ok' : 'notInProcess'
+  // A member the check lists no question for has nothing to vote here: the same screen as a non-member, with "Surt",
+  // not a wait for a per-question state that never comes and a false "session expired" (gate F9).
+  else if (query.data) {
+    membership = query.data.belongsToProcess && query.data.questions.length > 0 ? 'ok' : 'notInProcess'
+  }
 
   const answers = query.data?.questions ?? []
   // Every question this voter may vote is on chain: a vote cast from another device, or the only questions open to

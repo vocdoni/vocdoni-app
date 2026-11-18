@@ -81,6 +81,8 @@ const server = {
   votedQuestions: new Set<string>(),
   /** Questions the CSP signed, with the nullifier sign-info reports for them. */
   signed: {} as Record<string, string>,
+  /** What the membership check answers once the voter has identified: `empty` lists no question. */
+  check: 'ok' as 'ok' | 'empty' | 'unauthorized',
   /** The connection drops right after the batch is relayed. */
   dropAfterRelay: false,
   offline: false,
@@ -97,9 +99,10 @@ const fetchStub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => 
   if (pathname === '/processes/p1/auth/0') return json(200, { authToken: 'tok' })
   if (server.offline) throw new TypeError('Failed to fetch')
   if (pathname === '/processes/p1/check') {
+    if (server.check === 'unauthorized') return json(401, { error: 'session expired', code: 40100 })
     return json(200, {
       belongsToProcess: true,
-      questions: ['q1', 'q2'].map((id, i) => ({
+      questions: (server.check === 'empty' ? [] : ['q1', 'q2']).map((id, i) => ({
         questionId: id,
         upstreamId: hex(String(i + 1)),
         canVote: true,
@@ -180,6 +183,7 @@ beforeEach(() => {
   server.voted = false
   server.votedQuestions = new Set()
   server.signed = {}
+  server.check = 'ok'
   server.dropAfterRelay = false
   server.offline = false
   queryClient = createTestQueryClient()
@@ -447,6 +451,31 @@ describe('voter page transitions (AC4)', () => {
     expect(html).toContain('data-screen="identify"')
     expect(html).toContain(logo)
     expect(html).toMatch(/<button[^>]*type="submit"[^>]*disabled/)
+  })
+})
+
+describe('voter page membership check', () => {
+  // Gate F9: a member the check lists no question for has nothing to vote, and is never told the session expired.
+  it('a check that lists no question lands on notEligible and stays there', async () => {
+    server.check = 'empty'
+    renderPage()
+    await onScreen('identify')
+    fireEvent.change(within(current()).getByRole('textbox'), { target: { value: '42' } })
+    fireEvent.click(within(current()).getByRole('checkbox', { hidden: true }))
+    fireEvent.click(within(current()).getByRole('button', { name: 'voter.continue' }))
+    await onScreen('notEligible')
+    await act(() => vi.advanceTimersByTimeAsync(25_000))
+    expect(current()).toHaveAttribute('data-screen', 'notEligible')
+  })
+
+  // Gate F11: the page, not only the reducer, signs out on a 401 from the check.
+  it('a 401 from the check after identification goes back to identify with the session note', async () => {
+    renderPage()
+    await identify()
+    server.check = 'unauthorized'
+    act(() => void queryClient.invalidateQueries({ queryKey: ['voter-check'] }))
+    await onScreen('identify')
+    expect(within(current()).getByText('voter.identify.session_expired')).toBeInTheDocument()
   })
 })
 
