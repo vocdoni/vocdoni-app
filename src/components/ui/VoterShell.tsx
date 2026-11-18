@@ -29,8 +29,10 @@ export const VoterCredit = ({ text, brand, links }: VoterCreditProps) => {
   const styles = shellStyles ?? ownStyles
   return (
     <Box as='p' css={styles.credit}>
-      <span>{text}</span>
-      <VocdoniLogo role='img' aria-label={brand} color='fg' />
+      <Box as='span' css={styles.made}>
+        {text}
+        <VocdoniLogo role='img' aria-label={brand} color='fg' />
+      </Box>
       {links && (
         <Box as='span' css={styles.links}>
           {links}

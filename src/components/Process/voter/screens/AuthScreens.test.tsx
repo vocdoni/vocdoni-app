@@ -173,6 +173,14 @@ describe('code', () => {
     expect(csp.context.resetFlow).toHaveBeenCalled()
   })
 
+  it('leaves the empty code boxes blank, as the board draws them (conformance pass 2, N-1)', () => {
+    renderWithFlow(<CodeScreen />, testFlow({ facts: testFacts({ connected: false, challengePending: true }) }))
+    const boxes = document.querySelectorAll('input[data-scope="pin-input"][data-part="input"]')
+    expect(boxes.length).toBeGreaterThan(0)
+    // Only the box being typed in may differ; the others would show Ark's "○" without the prop.
+    expect([...boxes].filter((box) => box.getAttribute('placeholder') === '\u25CB')).toHaveLength(0)
+  })
+
   it('resends the code to the same contact and confirms it inline', async () => {
     const i18nInstance = await createTestI18n({
       resources: { en: { common: { voter: { code: { resend: "Didn't get it? <resend>Send it again</resend>." } } } } },

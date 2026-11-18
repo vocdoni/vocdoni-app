@@ -86,13 +86,33 @@ describe('voter shell recipe', () => {
       fontSize: 'var(--chakra-font-sizes-xs)',
       color: 'var(--chakra-colors-fg-subtle)',
     })
-    expect(credit['& > svg']).toEqual({
+    // The wordmark sits in the group with the words (`made`), so it is reached as a descendant.
+    expect(credit['& svg']).toEqual({
       height: 'var(--chakra-sizes-wordmark-credit)',
       width: 'var(--chakra-sizes-auto)',
     })
   })
 
+  it('lets a long status line wrap inside the strip and the rail head, the dot on its first line (R-2)', () => {
+    for (const slot of [styles.head, styles.railHead]) {
+      const rules = layer(slot)
+      expect(rules['& [data-scope="status"][data-part="root"]']).toEqual({
+        whiteSpace: 'normal',
+        alignItems: 'flex-start',
+      })
+      expect(rules['& [data-scope="status"][data-part="indicator"]']).toEqual({
+        flexShrink: 0,
+        marginTop: 'var(--chakra-spacing-1\\.5)',
+      })
+    }
+  })
+
   it('puts the terms and privacy links after the wordmark behind a middle dot, 6px clear (ruling R18)', () => {
-    expect(layer(styles.links)['&::before']).toEqual({ content: '"·"', marginInlineEnd: 'var(--chakra-spacing-1\\.5)' })
+    // The dot closes the words-and-wordmark group, 6px after the wordmark, and only when the links follow: when the
+    // links wrap, no line starts with it (conformance pass 2, R-1). The 6px after it is the credit's own gap.
+    const made = layer(styles.made)
+    expect(made).toMatchObject({ display: 'inline-flex', gap: 'var(--chakra-spacing-1\\.5)' })
+    expect(made['&:not(:last-child)::after']).toEqual({ content: '"·"' })
+    expect(layer(styles.credit).gap).toBe('var(--chakra-spacing-1\\.5)')
   })
 })

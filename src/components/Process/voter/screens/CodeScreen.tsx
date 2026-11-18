@@ -101,6 +101,8 @@ export const CodeScreen = () => {
           size='ballot'
           count={DIGITS}
           otp
+          // Empty boxes are blank, as the board draws them, not Ark's "○" (conformance pass 2, N-1).
+          placeholder=''
           autoFocus
           value={code}
           invalid={!!auth.error || !!validation}

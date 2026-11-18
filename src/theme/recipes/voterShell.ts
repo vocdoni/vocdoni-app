@@ -1,8 +1,15 @@
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 
 // Where the shell keeps clear of the phone's action bar (ui/ActionBar, recipe `questionDock` variant `ballot`) and
 // hands it the credit.
 const WITH_BAR = '&:has([data-scope="action-bar"][data-part="root"])'
+
+// The vote's status line in the strip and the rail head: a long date wraps inside the column instead of running past
+// it (conformance pass 2, R-2), the dot on the first line.
+const WRAPPING_STATUS = {
+  '& [data-scope="status"][data-part="root"]': { whiteSpace: 'normal', alignItems: 'flex-start' },
+  '& [data-scope="status"][data-part="indicator"]': { flexShrink: 0, mt: '1.5' },
+} satisfies SystemStyleObject
 
 // The voter page's frame (ui/VoterShell), boards V4Voter* and M4Voter*: the top bar, the vote's strip below `lg`, the
 // body with the agenda rail from `lg`, and the "made with Vocdoni" credit at the foot. The column's width from `lg`
@@ -24,6 +31,7 @@ export const VoterShell = defineSlotRecipe({
     'main',
     'foot',
     'credit',
+    'made',
     'links',
   ],
   base: {
@@ -82,7 +90,7 @@ export const VoterShell = defineSlotRecipe({
       borderBottomWidth: 'hairline',
       borderColor: 'border',
     },
-    head: { display: 'flex', flexDirection: 'column', gap: '0.5' },
+    head: { display: 'flex', flexDirection: 'column', gap: '0.5', ...WRAPPING_STATUS },
     title: { textStyle: 'ballot-rail-title' },
     body: {
       display: 'flex',
@@ -103,6 +111,7 @@ export const VoterShell = defineSlotRecipe({
       flexShrink: 0,
     },
     railHead: {
+      ...WRAPPING_STATUS,
       display: 'flex',
       flexDirection: 'column',
       gap: '1',
@@ -134,10 +143,17 @@ export const VoterShell = defineSlotRecipe({
       rowGap: '0',
       textStyle: 'caption',
       color: 'fg.subtle',
-      '& > svg': { h: 'wordmark.credit', w: 'auto' },
+      '& svg': { h: 'wordmark.credit', w: 'auto' },
     },
-    // The links after the wordmark, behind a middle dot (owner ruling R18).
-    links: { _before: { content: '"·"', me: '1.5' } },
+    // The words and the wordmark, kept together. The middle dot before the links (owner ruling R18) closes this group,
+    // so when the links wrap no line starts with it (conformance pass 2, R-1).
+    made: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '1.5',
+      '&:not(:last-child)::after': { content: '"·"' },
+    },
+    links: {},
   },
   variants: {
     // The column from `lg`: beside the rail (600px), or centred on its own: identification (440px), the one-time code

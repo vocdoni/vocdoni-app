@@ -114,4 +114,15 @@ describe('voter controls', () => {
     const md = checkbox({ size: 'md' }) as unknown as Record<string, Rules>
     expect(layer(md.control)).toMatchObject({ width: 'var(--chakra-sizes-4)', height: 'var(--chakra-sizes-4)' })
   })
+
+  it('rings the consent box like the ballot marks, with a 14px tick, and keeps the edge when checked (D-6)', () => {
+    const control = layer((checkbox({ size: 'ballot' }) as unknown as Record<string, Rules>).control)
+    expect(control).toMatchObject({ borderWidth: '0', boxShadow: 'var(--chakra-shadows-mark-field)' })
+    expect(control['& svg']).toEqual({ width: 'var(--chakra-sizes-3\\.5)', height: 'var(--chakra-sizes-3\\.5)' })
+    const checked = control['&:is([data-state=checked], [data-state=indeterminate])'] as Rules
+    expect(checked.boxShadow).not.toBe('var(--chakra-shadows-mark-field)')
+    // The other sizes keep their 1.5px border.
+    const md = layer((checkbox({ size: 'md' }) as unknown as Record<string, Rules>).control)
+    expect(md.boxShadow).toBeUndefined()
+  })
 })
