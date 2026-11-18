@@ -111,6 +111,15 @@ describe('ResultsScreen', () => {
     expect(screen.queryByText('voter.results.not_counted')).toBeNull()
   })
 
+  it('counting, public with no votes: "no votes yet", not the secret "not counted", and the public help', () => {
+    show('final', { election: tallied({ voteCount: 0, results: [] }), facts: testFacts({ status: 'ENDED' }) })
+    expect(screen.getAllByText('voter.results.no_votes')).toHaveLength(2)
+    expect(screen.queryByText('voter.results.not_counted')).toBeNull()
+    expect(screen.getByText('voter.results.counting_help')).toBeInTheDocument()
+    expect(screen.getByText('voter.results.counting_last')).toBeInTheDocument()
+    expect(screen.getAllByText('voter.results.kind_single')).toHaveLength(2)
+  })
+
   it('says a question has no votes yet instead of drawing empty bars', () => {
     show('provisional', { election: tallied({ voteCount: 0, results: [] }) })
     expect(screen.getAllByText('voter.results.no_votes')).toHaveLength(2)
