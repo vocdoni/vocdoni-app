@@ -344,6 +344,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     casting,
     signOut,
     showResults: (on) => dispatch({ type: 'viewResults', on }),
+    verifyReceipt: (on) => dispatch({ type: 'verifyReceipt', on }),
     checkReceipt: () => {
       dispatch({ type: 'checkReceipt' })
       // A connected voter whose vote could not be confirmed as it closed asks the chain again (gate-2 N2).

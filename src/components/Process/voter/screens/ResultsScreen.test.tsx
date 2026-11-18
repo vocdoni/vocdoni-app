@@ -84,6 +84,22 @@ describe('ResultsScreen', () => {
     expect(flow.checkReceipt).toHaveBeenCalled()
   })
 
+  it('final, anonymous census: "Verifica el teu comprovant" opens the receipt check, whoever is connected (R8)', () => {
+    const flow = show('final', {
+      election: tallied({ finalResults: true }),
+      anonymous: true,
+      facts: testFacts({ status: 'RESULTS', connected: true }),
+    })
+    expect(screen.queryByTestId('voter-check-vote')).toBeNull()
+    fireEvent.click(screen.getByTestId('voter-verify-receipt'))
+    expect(flow.verifyReceipt).toHaveBeenCalledWith(true)
+  })
+
+  it('open vote, anonymous census: nothing to verify yet', () => {
+    show('provisional', { election: tallied(), anonymous: true, facts: testFacts({ connected: false }) })
+    expect(screen.queryByTestId('voter-verify-receipt')).toBeNull()
+  })
+
   it('counting, secret until the end (board 10c): the closed line, the help without "final", each question not counted', () => {
     show('final', {
       election: tallied({ secret: true, results: [] }),

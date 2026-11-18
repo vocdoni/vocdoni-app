@@ -20,6 +20,7 @@ export type VoterScreen =
   | { kind: 'sending' }
   | { kind: 'receipt' }
   | { kind: 'alreadyVoted' }
+  | { kind: 'verifyReceipt' }
   | { kind: 'upcoming' }
   | { kind: 'closed' }
   | { kind: 'paused' }
@@ -90,6 +91,8 @@ export type VoterLocalState = {
   checkReceipt: boolean
   /** "Mostra els resultats" and the other links to results. */
   viewResults: boolean
+  /** "Verifica el teu comprovant" (anonymous census): the page where one receipt code is checked on the Explorer. */
+  verifyReceipt: boolean
   notice: 'sessionExpired' | null
 }
 
@@ -103,6 +106,7 @@ export type VoterAction =
   | { type: 'castFailed'; message: string; unconfirmed?: boolean }
   | { type: 'checkReceipt' }
   | { type: 'viewResults'; on: boolean }
+  | { type: 'verifyReceipt'; on: boolean }
   | { type: 'signedOut'; notice?: 'sessionExpired' }
 
 export const WELCOME: VoterStep = { name: 'welcome' }
@@ -131,6 +135,7 @@ export const initialVoterState: VoterLocalState = {
   castUnconfirmed: false,
   checkReceipt: false,
   viewResults: false,
+  verifyReceipt: false,
   notice: null,
 }
 
@@ -159,6 +164,8 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
       return { ...state, checkReceipt: true, viewResults: false }
     case 'viewResults':
       return { ...state, viewResults: action.on }
+    case 'verifyReceipt':
+      return { ...state, verifyReceipt: action.on }
     case 'signedOut':
       return { ...initialVoterState, notice: action.notice ?? null }
   }
@@ -167,7 +174,7 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
 const ENDED: ReadonlySet<QuestionStatus> = new Set<QuestionStatus>(['ENDED', 'RESULTS'])
 
 /** The vote is over: its stored status, or the clock (stored statuses lag the scheduled end). */
-const isVoteOver = (facts: Pick<VoterFacts, 'status' | 'endedBySchedule'>): boolean =>
+export const isVoteOver = (facts: Pick<VoterFacts, 'status' | 'endedBySchedule'>): boolean =>
   (facts.status !== null && ENDED.has(facts.status)) || facts.endedBySchedule
 
 const resultsStateOf = (facts: Pick<VoterFacts, 'status' | 'endedBySchedule' | 'secretUntilTheEnd'>) =>
@@ -183,6 +190,8 @@ export const firstUnanswered = (answered: readonly boolean[]): number => answere
 export const deriveVoterScreen = (facts: VoterFacts, local: VoterLocalState): VoterScreen => {
   if (!facts.loaded) return { kind: 'checking' }
   if (facts.voting) return { kind: 'sending' }
+  // One code is checked on the Explorer with no identification, from any screen that links to it ("Enrere" leaves).
+  if (local.verifyReceipt) return { kind: 'verifyReceipt' }
   // The receipt offers the results (R19 Q1): they open over it while asked for, and "Enrere" comes back to it.
   if (local.castDone && !local.viewResults) return { kind: 'receipt' }
   if (facts.status === 'CANCELED') return { kind: 'canceled' }

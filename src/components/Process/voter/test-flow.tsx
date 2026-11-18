@@ -79,6 +79,7 @@ export const testFlow = (over: Partial<VoterFlow> = {}): VoterFlow => ({
   signOut: vi.fn(),
   showResults: vi.fn(),
   checkReceipt: vi.fn(),
+  verifyReceipt: vi.fn(),
   ...over,
 })
 

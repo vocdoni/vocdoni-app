@@ -27,6 +27,7 @@ import {
   UnsupportedScreen,
   UpcomingScreen,
 } from './screens/StateScreens'
+import { VerifyReceiptScreen } from './screens/VerifyReceiptScreen'
 import { WelcomeScreen } from './screens/WelcomeScreen'
 import type { VoterScreen, VoterScreenKind } from './voter-flow'
 
@@ -38,6 +39,7 @@ const COLUMN: Partial<Record<VoterScreenKind, VoterShellColumn>> = {
   review: 'rail',
   sending: 'sending',
   receipt: 'rail',
+  verifyReceipt: 'narrow',
   results: 'results',
 }
 
@@ -69,6 +71,8 @@ const Screen = ({ screen }: { screen: VoterScreen }) => {
       return <ReceiptScreen />
     case 'alreadyVoted':
       return <AlreadyVotedScreen />
+    case 'verifyReceipt':
+      return <VerifyReceiptScreen />
     case 'upcoming':
       return <UpcomingScreen />
     case 'closed':

@@ -538,6 +538,35 @@ describe('sendingPhase (audit F15)', () => {
   })
 })
 
+describe('verifyReceipt ("Verifica el teu comprovant", anonymous census)', () => {
+  it('shows its own screen from any state that links to it, and "Enrere" returns to where it came from', () => {
+    // From the closed screen, from the final results and from an already-voted screen, with no identification.
+    expect(screen({ status: 'ENDED', connected: false }, { verifyReceipt: true })).toEqual({ kind: 'verifyReceipt' })
+    expect(screen({ status: 'ENDED', connected: false }, { verifyReceipt: true, viewResults: true })).toEqual({
+      kind: 'verifyReceipt',
+    })
+    expect(screen({ hasVoted: true }, { verifyReceipt: true })).toEqual({ kind: 'verifyReceipt' })
+    // Back: the flag goes and the screen underneath comes back unchanged.
+    expect(screen({ status: 'ENDED', connected: false }, { viewResults: true })).toEqual({
+      kind: 'results',
+      state: 'final',
+    })
+    expect(screen({ status: 'ENDED', connected: false })).toEqual({ kind: 'closed' })
+    expect(screen({ hasVoted: true })).toEqual({ kind: 'alreadyVoted' })
+  })
+
+  it('never interrupts a cast in flight', () => {
+    expect(screen({ voting: true }, { verifyReceipt: true })).toEqual({ kind: 'sending' })
+  })
+
+  it('is set and cleared by its own action and cleared by signing out', () => {
+    const open = voterReducer(local(), { type: 'verifyReceipt', on: true })
+    expect(open.verifyReceipt).toBe(true)
+    expect(voterReducer(open, { type: 'verifyReceipt', on: false }).verifyReceipt).toBe(false)
+    expect(voterReducer(open, { type: 'signedOut' }).verifyReceipt).toBe(false)
+  })
+})
+
 describe('formValuesFor', () => {
   it('builds the SDK form values from the flow, memos under `memo`', () => {
     expect(formValuesFor({ answers: { '0': '1' }, memos: {} })).toEqual({ '0': '1' })

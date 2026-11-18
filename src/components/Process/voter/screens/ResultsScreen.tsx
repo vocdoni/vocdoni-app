@@ -19,7 +19,8 @@ import {
   voterTurnout,
   type Turnout,
 } from '../format'
-import { InlineAction, LocalText, NoticeCard, ScreenHeading, ScreenHelp, VoterScreenFrame } from '../parts/ScreenParts'
+import { LocalText, NoticeCard, ScreenHeading, ScreenHelp, VoterScreenFrame } from '../parts/ScreenParts'
+import { CheckVoteAction } from '../parts/CheckVoteAction'
 import { VoterActionBar } from '../parts/VoterActionBar'
 import { VoteClosedLine, VoteStatusLine } from '../parts/VoteStatusLine'
 import type { ResultsState } from '../voter-flow'
@@ -131,7 +132,7 @@ const QuestionBlock = ({
 export const ResultsScreen = ({ state }: { state: ResultsState }) => {
   const { t, i18n } = useTranslation()
   const env = useAppEnv()
-  const { election, facts, state: local, moved, showResults, checkReceipt } = useVoterFlow()
+  const { election, facts, anonymous, state: local, moved, showResults } = useVoterFlow()
   const title = textOf(election.title as Parameters<typeof textOf>[0])
   const end = resolveEndDate(election)
 
@@ -142,14 +143,8 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
           {t('voter.back')}
         </Button>
       }
-      // testId: the e2e spec that checks a vote after the end clicks it.
-      note={
-        state === 'final' && !facts.connected ? (
-          <InlineAction onClick={checkReceipt} testId='voter-check-vote'>
-            {t('voter.results.check_vote')}
-          </InlineAction>
-        ) : undefined
-      }
+      // An anonymous census verifies a code on the Explorer, so it is always offered (ruling R8).
+      note={state === 'final' && (anonymous || !facts.connected) ? <CheckVoteAction /> : undefined}
     />
   )
 

@@ -1,6 +1,6 @@
-import { Box, Text } from '@chakra-ui/react'
+import { Alert, Box } from '@chakra-ui/react'
 import { useReactComponentsLocalize } from '@vocdoni/react-components'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { SuccessDisc } from '~components/ui/SuccessDisc'
 import { useVoterFlow } from '../flow-context'
 import { ReceiptCard } from '../parts/ReceiptCard'
@@ -10,8 +10,9 @@ import { VoterActionBar } from '../parts/VoterActionBar'
 
 /**
  * Receipt (board V4VoterWide 10, without the voter's name): the vote landed, its codes, and when the results come.
- * Each code links to the same per-vote verify URL the old success dialog built (ruling R7). The anonymous census's
- * one-time warning stays here (audit F6).
+ * Each code links to the same per-vote verify URL the old success dialog built (ruling R7). An anonymous census cannot
+ * show the receipt again (audit F6, board V4VoterWideMore 12): the help no longer says the page can be closed, a
+ * warning says to keep the codes now, and the card offers to copy or download them.
  */
 export const ReceiptScreen = () => {
   const { t } = useTranslation()
@@ -23,6 +24,7 @@ export const ReceiptScreen = () => {
   const recorded = election.questions.filter(
     (question, index) => statuses[index] === 'confirmed' || !!voteIds[question.id]
   ).length
+  const keepCodes = anonymous && hasCodes
   const locked = statuses.find((status) => status === 'unconfirmed' || status === 'signed')
 
   return (
@@ -33,17 +35,25 @@ export const ReceiptScreen = () => {
         <ScreenHeading focus={moved} mt='5'>
           {t('voter.receipt.title')}
         </ScreenHeading>
-        <ScreenHelp>{t('voter.receipt.help', { count: recorded })}</ScreenHelp>
-        <ReceiptCard />
+        <ScreenHelp>
+          {keepCodes
+            ? t('voter.receipt.help_anonymous', { count: recorded })
+            : t('voter.receipt.help', { count: recorded })}
+        </ScreenHelp>
+        {keepCodes && (
+          <Alert.Root status='warning' layout='ballot' mt='5' role='status'>
+            <Alert.Content>
+              <Alert.Description>
+                <Trans i18nKey='voter.receipt.anonymous_warning' components={{ strong: <strong /> }} />
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+        )}
+        <ReceiptCard anonymous={keepCodes} />
         {locked && (
           <NoticeCard
             title={locked === 'signed' ? localize('vote.disabled.signed') : localize('vote.disabled.unconfirmed')}
           />
-        )}
-        {anonymous && hasCodes && (
-          <Text as='p' textStyle='ballot-hint' fontWeight='semibold' mt='3.5'>
-            {t('vote.anonymous_receipt')}
-          </Text>
         )}
       </Box>
       <VoterActionBar primary={<ShowResultsButton />} />

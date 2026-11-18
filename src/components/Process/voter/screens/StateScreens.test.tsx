@@ -159,6 +159,58 @@ describe('state screens', () => {
     expect(screen.getByText('aside.anonymous_receipt_gone')).toBeInTheDocument()
   })
 
+  // Board V4VoterWideMore 13.
+  describe('alreadyVoted, anonymous census, signed with no codes held (board 13)', () => {
+    it('says only what the platform knows: no tick, no "Ja has votat", and the way to verify a receipt', () => {
+      const flow = testFlow({ anonymous: true, statuses: ['signed', 'signed'] })
+      renderWithFlow(<AlreadyVotedScreen />, flow)
+      const frame = screen.getByTestId('voter-screen')
+      expect(frame.querySelector('[data-part="success-disc"]')).toBeNull()
+      expect(frame).not.toHaveTextContent('voter.voted.title')
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.voted.anonymous_title')
+      expect(frame).toHaveTextContent('voter.voted.anonymous_help')
+      expect(frame).toHaveTextContent('voter.receipt.card_title')
+      expect(frame).toHaveTextContent('voter.voted.anonymous_card_note')
+      expect(screen.queryByText('vote.disabled.signed')).toBeNull()
+      fireEvent.click(screen.getByRole('button', { name: 'voter.verify.title' }))
+      expect(flow.verifyReceipt).toHaveBeenCalledWith(true)
+      fireEvent.click(screen.getByRole('button', { name: 'voter.results.show' }))
+      expect(flow.showResults).toHaveBeenCalledWith(true)
+    })
+
+    it('keeps the current screen with its codes when this tab holds them', () => {
+      renderWithFlow(
+        <AlreadyVotedScreen />,
+        testFlow({ anonymous: true, statuses: ['signed', 'signed'], voteIds: { q1: 'a3f1000000000000009c2e' } })
+      )
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.voted.title')
+      expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
+    })
+
+    it('does not apply to a plain census', () => {
+      renderWithFlow(<AlreadyVotedScreen />, testFlow({ statuses: ['signed', 'signed'] }))
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.voted.title')
+      expect(screen.queryByText('voter.voted.anonymous_title')).toBeNull()
+    })
+  })
+
+  it('closed, anonymous census: "Verifica el teu comprovant" replaces "Comprova el teu vot", for a member too (R8)', () => {
+    const flow = testFlow({ anonymous: true, facts: testFacts({ status: 'ENDED', connected: true }) })
+    renderWithFlow(<ClosedScreen />, flow)
+    expect(screen.queryByTestId('voter-check-vote')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'voter.results.check_vote' })).toBeNull()
+    fireEvent.click(screen.getByTestId('voter-verify-receipt'))
+    expect(screen.getByTestId('voter-verify-receipt')).toHaveTextContent('voter.verify.title')
+    expect(flow.verifyReceipt).toHaveBeenCalledWith(true)
+    expect(flow.checkReceipt).not.toHaveBeenCalled()
+  })
+
+  it('closed, plain census: still "Comprova el teu vot" with its own handle', () => {
+    renderWithFlow(<ClosedScreen />, testFlow({ facts: testFacts({ status: 'ENDED', connected: false }) }))
+    expect(screen.getByTestId('voter-check-vote')).toHaveTextContent('voter.results.check_vote')
+    expect(screen.queryByTestId('voter-verify-receipt')).toBeNull()
+  })
+
   it('alreadyVoted never says "Ja has votat" for a vote the chain does not hold (gate F3)', () => {
     renderWithFlow(
       <AlreadyVotedScreen />,
