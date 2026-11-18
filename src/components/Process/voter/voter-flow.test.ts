@@ -421,7 +421,8 @@ describe('sendingPhase (audit F15)', () => {
   it('ignores failed, unconfirmed and signed questions; the automatic re-send starts at phase 2', () => {
     expect(sendingPhase(['failed', 'confirming', 'signed', undefined])).toBe(3)
     expect(sendingPhase(['submitting', 'unconfirmed'])).toBe(2)
-    expect(batchSize(['submitting', 'unconfirmed', 'confirmed', undefined])).toBe(2)
+    // A question already on chain is not in the batch of a re-send (gate F15).
+    expect(batchSize(['submitting', 'unconfirmed', 'confirmed', undefined])).toBe(1)
   })
 })
 

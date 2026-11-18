@@ -1,4 +1,5 @@
 import { Box } from '@chakra-ui/react'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PhaseList, type PhaseState } from '~components/ui/PhaseList'
 import { useVoterFlow } from '../flow-context'
@@ -13,7 +14,10 @@ export const SendingScreen = () => {
   const { t } = useTranslation()
   const { statuses, moved, election } = useVoterFlow()
   const phase = sendingPhase(statuses)
-  const count = batchSize(statuses) || election.questions.length
+  // The questions in flight, at their most: one that confirms while the others wait still belongs to this batch.
+  const largest = useRef(0)
+  largest.current = Math.max(largest.current, batchSize(statuses))
+  const count = largest.current || election.questions.length
   const state = (step: 1 | 2 | 3): PhaseState => (phase > step ? 'done' : phase === step ? 'now' : 'next')
   return (
     <VoterScreenFrame kind='sending' privateContent>

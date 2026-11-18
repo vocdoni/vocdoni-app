@@ -289,9 +289,14 @@ export const sendingPhase = (statuses: readonly (string | undefined)[]): Sending
   return 3
 }
 
-/** How many answers the batch carries, for "Enviant les 4 respostes". */
+const IN_FLIGHT = new Set(['signing', 'submitting', 'confirming'])
+
+/**
+ * How many answers the batch carries, for "Enviant les 4 respostes": the ones in flight. A question already on chain
+ * reads `confirmed` from the start of a re-send after a partial cast and is not in it (gate F15).
+ */
 export const batchSize = (statuses: readonly (string | undefined)[]): number =>
-  statuses.filter((status) => !!status && IN_BATCH.has(status)).length
+  statuses.filter((status) => !!status && IN_FLIGHT.has(status)).length
 
 const HISTORY_KEY = 'voterStep'
 

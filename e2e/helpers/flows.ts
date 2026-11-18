@@ -391,8 +391,8 @@ export const authenticateVoterWithOtp = async (page: Page, member: TestMember): 
   // One field for both channels: the form routes it to `email` or `phone`
   // depending on the census's twoFaFields (email only, here).
   await screen.locator('input[name="contact"]').fill(member.email)
-  // Terms acceptance: its Field.Root marks it required, which propagates to the hidden input and makes the browser
-  // block submission until it is ticked.
+  // Terms acceptance: required, and until it is ticked the page refuses to continue with its own message (the form is
+  // `noValidate`, so the browser does not block it).
   await checkCheckbox(screen)
 
   const requestedAt = new Date()
