@@ -192,9 +192,12 @@ export const ClosedScreen = () => {
             {t('voter.results.show')}
           </Button>
         }
+        // testId: the e2e spec that checks a vote after the end clicks it.
         note={
           !facts.connected || cast.unknown ? (
-            <InlineAction onClick={checkReceipt}>{t('voter.results.check_vote')}</InlineAction>
+            <InlineAction onClick={checkReceipt} testId='voter-check-vote'>
+              {t('voter.results.check_vote')}
+            </InlineAction>
           ) : undefined
         }
       />

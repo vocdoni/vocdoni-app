@@ -142,9 +142,12 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
           {t('voter.back')}
         </Button>
       }
+      // testId: the e2e spec that checks a vote after the end clicks it.
       note={
         state === 'final' && !facts.connected ? (
-          <InlineAction onClick={checkReceipt}>{t('voter.results.check_vote')}</InlineAction>
+          <InlineAction onClick={checkReceipt} testId='voter-check-vote'>
+            {t('voter.results.check_vote')}
+          </InlineAction>
         ) : undefined
       }
     />

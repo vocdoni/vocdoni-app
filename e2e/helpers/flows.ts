@@ -197,6 +197,11 @@ export type ProcessSpec = {
   credentials?: string[]
   /** Email 2FA on top of the credentials. Defaults to on. */
   twoFactor?: boolean
+  /**
+   * Closing time, in minutes from now (the pickers have minute resolution, so it ends within the minute after).
+   * Unset, the wizard's end fields stay as they are.
+   */
+  endsInMinutes?: number
 }
 
 /**
@@ -290,6 +295,20 @@ export const fillProcessWizard = async (page: Page, spec: ProcessSpec): Promise<
   // suite is about the email/OTP journey, so keep the ballot path plain.
   await selectComboboxOption(page, page.locator('#resultVisibility'), /Live results/i)
 
+  if (spec.endsInMinutes !== undefined) {
+    // Formatted in the browser so the picker sees its own time zone, whatever the runner's.
+    const { date, time } = await page.evaluate((minutes) => {
+      const end = new Date(Date.now() + minutes * 60_000 + 60_000)
+      const two = (n: number) => String(n).padStart(2, '0')
+      return {
+        date: `${end.getFullYear()}-${two(end.getMonth() + 1)}-${two(end.getDate())}`,
+        time: `${two(end.getHours())}:${two(end.getMinutes())}`,
+      }
+    }, spec.endsInMinutes)
+    await page.locator('input[name="endDate"]').fill(date)
+    await page.locator('input[name="endTime"]').fill(time)
+  }
+
   if (spec.weighted) {
     // Votes weighted by the memberbase voting-power column — the members must
     // have been imported with weights or the census validation below rejects.
@@ -382,9 +401,13 @@ export const openIdentifyModal = async (page: Page): Promise<Locator> => {
 
 /**
  * Authenticates a voter against a 2FA census: identify (credentials + contact) → read the emailed OTP → the code
- * screen. Leaves the voter on the welcome screen, ready to vote.
+ * screen. Leaves the voter on the welcome screen (or `landing`), ready to vote.
  */
-export const authenticateVoterWithOtp = async (page: Page, member: TestMember): Promise<string> => {
+export const authenticateVoterWithOtp = async (
+  page: Page,
+  member: TestMember,
+  landing = 'welcome'
+): Promise<string> => {
   const screen = await openIdentifyModal(page)
 
   await screen.locator('input[name="memberNumber"]').fill(member.memberNumber)
@@ -408,8 +431,9 @@ export const authenticateVoterWithOtp = async (page: Page, member: TestMember): 
   // in-flight request.
   await fillPinInput(voterScreen(page, 'code'), otp)
 
-  // Identified: the page moves to the welcome screen once the membership check answers.
-  await expect(voterScreen(page, 'welcome')).toBeVisible({ timeout: 60_000 })
+  // Identified: the page moves to the welcome screen once the membership check answers (`landing` names another
+  // screen for the flows that identify to check a vote, which lands on `alreadyVoted`).
+  await expect(voterScreen(page, landing)).toBeVisible({ timeout: 60_000 })
 
   return otp
 }
