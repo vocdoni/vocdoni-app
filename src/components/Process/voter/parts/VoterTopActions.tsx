@@ -10,8 +10,8 @@ type VoterTopActionsProps = { publicLanguageLinks?: Record<string, string> }
 
 /**
  * The end of the top bar: the language tag ("CA") and, once identified, "Surt". The page is server-routed, so a
- * language change reloads it and the session (held in memory) is lost: after identification it asks first (audit
- * F14); before, it goes at once. "Surt" is not offered while a cast is in flight (audit F15).
+ * language change reloads it and the session (held in memory) is lost: after identification, or once a code was sent,
+ * it asks first (audit F14, gate F13); before, it goes at once. "Surt" is not offered while a cast is in flight (audit F15).
  */
 export const VoterTopActions = ({ publicLanguageLinks }: VoterTopActionsProps) => {
   const { t } = useTranslation()
@@ -24,7 +24,8 @@ export const VoterTopActions = ({ publicLanguageLinks }: VoterTopActionsProps) =
 
   const choose = (language: string) => {
     if (language.toLowerCase() === current) return
-    if (facts.connected) setPending(language)
+    // A code sent and waiting is lost with the reload too, with the details typed for it (gate F13).
+    if (facts.connected || facts.challengePending) setPending(language)
     else void navigateToLanguage(language)
   }
 

@@ -34,6 +34,13 @@ describe('voter top bar actions', () => {
     await waitFor(() => expect(routing.navigateToLanguage).toHaveBeenCalledWith('en'))
   })
 
+  it('asks first on the code screen too, where the reload would lose the code sent (gate F13)', async () => {
+    renderWithFlow(<VoterTopActions />, testFlow({ facts: testFacts({ connected: false, challengePending: true }) }))
+    await pick('English')
+    expect(routing.navigateToLanguage).not.toHaveBeenCalled()
+    expect(await screen.findByRole('button', { name: 'voter.language.confirm' })).toBeInTheDocument()
+  })
+
   it('signs out from the top bar on every connected screen', () => {
     const flow = testFlow()
     renderWithFlow(<VoterTopActions />, flow)
