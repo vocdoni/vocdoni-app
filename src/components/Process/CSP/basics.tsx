@@ -134,7 +134,7 @@ export const useCspErrorDetails = () => {
 
 // The dialog's form of `translateCspError`: a recognised refusal as a `KnownCspError` with its message; any other
 // failure is passed on as it came (an Error), keeping the API's own message.
-export const useTranslateCspError = () => {
+const useTranslateCspError = () => {
   const details = useCspErrorDetails()
 
   return (error: unknown): Error => {
