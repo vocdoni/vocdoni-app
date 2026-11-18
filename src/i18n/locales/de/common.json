@@ -1653,6 +1653,7 @@
     },
     "checking": "Deine Angaben werden geprüft",
     "closed": {
+      "not_cast": "Deine Stimme wurde nicht erfasst, bevor die Abstimmung endete.",
       "sentence": "Die Abstimmung endete am {{date}} um {{time}}.",
       "turnout_one": "{{count}} von {{total}} Personen hat abgestimmt.",
       "turnout_other": "{{count}} von {{total}} Personen haben abgestimmt.",

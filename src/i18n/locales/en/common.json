@@ -1653,6 +1653,7 @@
     },
     "checking": "Checking your details",
     "closed": {
+      "not_cast": "Your vote was not recorded before the vote closed.",
       "sentence": "The vote closed on {{date}} at {{time}}.",
       "turnout_one": "{{count}} of {{total}} people voted.",
       "turnout_other": "{{count}} of {{total}} people voted.",

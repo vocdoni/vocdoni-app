@@ -1678,6 +1678,7 @@
     },
     "checking": "Verifica dei tuoi dati",
     "closed": {
+      "not_cast": "Il tuo voto non è stato registrato prima della chiusura della votazione.",
       "sentence": "La votazione si è chiusa {{date}} alle {{time}}.",
       "turnout_one": "Ha votato {{count}} persona su {{total}}.",
       "turnout_many": "Hanno votato {{count}} persone su {{total}}.",

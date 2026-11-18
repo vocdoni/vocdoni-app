@@ -1653,6 +1653,7 @@
     },
     "checking": "Zure datuak egiaztatzen",
     "closed": {
+      "not_cast": "Zure botoa ez da erregistratu bozketa itxi aurretik.",
       "sentence": "Bozketa itxi zen: {{date}}, {{time}}.",
       "turnout_one": "Bozkatu zuen: {{count}} / {{total}} pertsona.",
       "turnout_other": "Bozkatu zuten: {{count}} / {{total}} pertsona.",

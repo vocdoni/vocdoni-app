@@ -1,5 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { renderWithFlow, testElection, testFacts, testFlow } from '../test-flow'
+import { initialVoterState } from '../voter-flow'
 import {
   AlreadyVotedScreen,
   CanceledScreen,
@@ -34,6 +35,17 @@ describe('state screens', () => {
     expect(flow.showResults).toHaveBeenCalledWith(true)
     fireEvent.click(screen.getByRole('button', { name: 'voter.results.check_vote' }))
     expect(flow.checkReceipt).toHaveBeenCalled()
+  })
+
+  it('closed says a cast that failed as the vote closed was not recorded, and nothing else when none failed (gate F6)', () => {
+    const { unmount } = renderWithFlow(<ClosedScreen />, testFlow({ facts: testFacts({ status: 'ENDED' }) }))
+    expect(screen.queryByRole('alert')).toBeNull()
+    unmount()
+    renderWithFlow(
+      <ClosedScreen />,
+      testFlow({ facts: testFacts({ status: 'ENDED' }), state: { ...initialVoterState, castError: '' } })
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent('voter.closed.not_cast')
   })
 
   it('closed hides the count when the deployment hides counts', () => {

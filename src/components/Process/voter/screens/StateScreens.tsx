@@ -1,4 +1,4 @@
-import { Box, Button, Spinner, Status, Text } from '@chakra-ui/react'
+import { Alert, Box, Button, Spinner, Status, Text } from '@chakra-ui/react'
 import { resolveEndDate } from '@vocdoni/api-client'
 import { useReactComponentsLocalize } from '@vocdoni/react-components'
 import type { ComponentProps, ReactNode } from 'react'
@@ -123,11 +123,14 @@ export const UpcomingScreen = () => {
   )
 }
 
-/** Board V4VoterWideLive 8, with "Comprova el teu vot" (owner ruling). */
+/**
+ * Board V4VoterWideLive 8, with "Comprova el teu vot" (owner ruling). A cast that failed as the vote closed says so
+ * here (gate F6): the review that would show its error is gone, and nothing will be re-sent.
+ */
 export const ClosedScreen = () => {
   const { t } = useTranslation()
   const env = useAppEnv()
-  const { election, facts, showResults, checkReceipt } = useVoterFlow()
+  const { election, facts, state, showResults, checkReceipt } = useVoterFlow()
   const { title, organization, day, time } = useVoteTexts()
   const end = resolveEndDate(election)
   const turnout = voterTurnout(election, env)
@@ -143,6 +146,13 @@ export const ClosedScreen = () => {
         </>
       }
     >
+      {state.castError !== null && (
+        <Alert.Root status='error' layout='ballot' mt='6' role='alert'>
+          <Alert.Content>
+            <Alert.Description>{t('voter.closed.not_cast')}</Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      )}
       <VoterActionBar
         primary={
           <Button size='ballot' onClick={() => showResults(true)}>

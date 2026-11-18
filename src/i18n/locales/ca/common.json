@@ -1678,6 +1678,7 @@
     },
     "checking": "Comprovant les teves dades",
     "closed": {
+      "not_cast": "El teu vot no s'ha registrat abans que es tanqués la votació.",
       "sentence": "La votació es va tancar {{date}} a les {{time}}.",
       "turnout_one": "Hi va votar {{count}} de {{total}} persones.",
       "turnout_many": "Hi van votar {{count}} de {{total}} persones.",

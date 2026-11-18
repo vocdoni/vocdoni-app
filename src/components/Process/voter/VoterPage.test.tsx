@@ -364,6 +364,19 @@ describe('voter page transitions (AC4)', () => {
     expect(signBatchCalls()).toHaveLength(0)
   })
 
+  // Gate F6: the review that would show the error is gone once the vote closes.
+  it('a cast that fails as the vote closes says on the closed screen that the vote was not recorded', async () => {
+    server.process = makeProcess({ endDate: new Date(NOW + 5_000).toISOString() })
+    server.votes = 'reject'
+    renderPage()
+    await identify()
+    await answerBoth()
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    await act(() => vi.advanceTimersByTimeAsync(6_000))
+    await onScreen('closed')
+    expect(within(current()).getByRole('alert')).toHaveTextContent('voter.closed.not_cast')
+  })
+
   it('offline then online while sending: the screen stays, then settles on the receipt', async () => {
     server.dropAfterRelay = true
     renderPage()
