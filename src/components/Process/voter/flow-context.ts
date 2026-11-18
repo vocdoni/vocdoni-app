@@ -1,7 +1,7 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { createContext, useContext } from 'react'
 import type { ProcessBrand } from '~utils/process-brand'
-import type { VoterFacts, VoterLocalState, VoterScreen } from './voter-flow'
+import type { ChainRecord, VoterFacts, VoterLocalState, VoterScreen } from './voter-flow'
 
 /** What every voter screen reads (`useVoterFlow()`). Screens call no SDK hook of their own except the SDK's fields. */
 export type VoterFlow = {
@@ -22,6 +22,8 @@ export type VoterFlow = {
   lockedNotice: (questionId: string) => string | undefined
   /** Per question, in order: the SDK's `voteStatus` value. */
   statuses: (string | undefined)[]
+  /** Per question, in order: what the chain is known to hold of its vote (`chainRecordOf`). */
+  chain: ChainRecord[]
   // Navigation (each pushes the step to history.state).
   start: () => void
   next: (index: number) => void

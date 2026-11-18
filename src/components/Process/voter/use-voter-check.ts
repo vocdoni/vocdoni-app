@@ -84,5 +84,7 @@ export const useVoterCheck = ({ id, authToken, connected, check, statusKey }: Vo
     connected &&
     answers.some((question) => question.hasVoted) &&
     answers.every((question) => question.hasVoted || !question.canVote)
-  return { membership, votedElsewhere }
+  // The questions the check's last answer lists as on chain, re-read after every cast and when a status changes.
+  const votedIds = answers.filter((question) => question.hasVoted).map((question) => question.questionId)
+  return { membership, votedElsewhere, votedIds }
 }

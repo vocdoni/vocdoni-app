@@ -1679,13 +1679,20 @@
     "checking": "Comprovant les teves dades",
     "closed": {
       "not_cast": "El teu vot no s'ha registrat abans que es tanqués la votació.",
+      "partly_cast_one": "Només s'ha registrat {{count}} de les teves {{total}} respostes abans que es tanqués la votació.",
+      "partly_cast_many": "Només s'han registrat {{count}} de les teves {{total}} respostes abans que es tanqués la votació.",
+      "partly_cast_other": "Només s'han registrat {{count}} de les teves {{total}} respostes abans que es tanqués la votació.",
+      "partly_unconfirmed_one": "S'ha confirmat que {{count}} de les teves {{total}} respostes és al registre. La resta no s'ha pogut confirmar abans que es tanqués la votació i és possible que també s'hagi registrat: comprova el teu vot per saber-ho.",
+      "partly_unconfirmed_many": "S'ha confirmat que {{count}} de les teves {{total}} respostes són al registre. La resta no s'ha pogut confirmar abans que es tanqués la votació i és possible que també s'hagi registrat: comprova el teu vot per saber-ho.",
+      "partly_unconfirmed_other": "S'ha confirmat que {{count}} de les teves {{total}} respostes són al registre. La resta no s'ha pogut confirmar abans que es tanqués la votació i és possible que també s'hagi registrat: comprova el teu vot per saber-ho.",
       "sentence": "La votació es va tancar {{date}} a les {{time}}.",
       "turnout_one": "Hi va votar {{count}} de {{total}} persones.",
       "turnout_many": "Hi van votar {{count}} de {{total}} persones.",
       "turnout_other": "Hi van votar {{count}} de {{total}} persones.",
       "turnout_count_one": "Hi va votar {{count}} persona.",
       "turnout_count_many": "Hi van votar {{count}} persones.",
-      "turnout_count_other": "Hi van votar {{count}} persones."
+      "turnout_count_other": "Hi van votar {{count}} persones.",
+      "unconfirmed": "No s'ha pogut confirmar el teu vot abans que es tanqués la votació. És possible que s'hagi registrat: comprova el teu vot per saber-ho."
     },
     "code": {
       "label": "Codi d'un sol ús",

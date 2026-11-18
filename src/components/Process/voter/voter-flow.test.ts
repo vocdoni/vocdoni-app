@@ -2,6 +2,7 @@ import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import {
   allowsBlankVote,
   batchSize,
+  chainRecordOf,
   deriveVoterScreen,
   encodableAnswer,
   firstUnanswered,
@@ -245,6 +246,15 @@ describe('voterReducer', () => {
     expect(voterReducer(failed, { type: 'castSucceeded' })).toMatchObject({ castDone: true, castError: null })
   })
 
+  it('remembers whether a failed cast could not learn its outcome, until the next cast or answer (gate-2 N2)', () => {
+    const unknown = voterReducer(local(), { type: 'castFailed', message: 'x', unconfirmed: true })
+    expect(unknown.castUnconfirmed).toBe(true)
+    expect(voterReducer(local(), { type: 'castFailed', message: 'x' }).castUnconfirmed).toBe(false)
+    expect(voterReducer(unknown, { type: 'castStarted' }).castUnconfirmed).toBe(false)
+    expect(voterReducer(unknown, { type: 'answer', key: '0', value: '1' }).castUnconfirmed).toBe(false)
+    expect(voterReducer(unknown, { type: 'signedOut' }).castUnconfirmed).toBe(false)
+  })
+
   it('keeps what a cast sent, so an answer typed later never shows as sent (gate F2)', () => {
     const started = voterReducer(local({ answers: { '0': '1' } }), { type: 'castStarted' })
     expect(started.sent).toEqual({ '0': '1' })
@@ -406,6 +416,32 @@ describe('isAnswered', () => {
     // A dense multiple choice always asks for one at least, whatever its typeSetup says.
     expect(allowsBlankVote(multiple(0, 2))).toBe(false)
     expect(allowsBlankVote(single)).toBe(false)
+  })
+})
+
+describe('chainRecordOf (gate-2 N2)', () => {
+  const record = (over: Partial<Parameters<typeof chainRecordOf>[0]> = {}) =>
+    chainRecordOf({ onChain: false, status: undefined, pending: false, outcomeUnknown: false, ...over })
+
+  it('on chain wins over any status', () => {
+    expect(record({ onChain: true, status: 'failed', pending: true, outcomeUnknown: true })).toBe('recorded')
+  })
+
+  it('a refused relay, a signature that never came, or a vote the chain was read without: not recorded', () => {
+    // A refused relay keeps its transaction to resend, but it never reached the chain.
+    expect(record({ status: 'failed', pending: true })).toBe('missing')
+    expect(record({ status: 'signing' })).toBe('missing')
+    expect(record({ status: 'unconfirmed' })).toBe('missing')
+    expect(record()).toBe('missing')
+  })
+
+  it('a transaction whose landing was never checked, or an anonymous vote this tab cannot verify: unknown', () => {
+    expect(record({ status: 'failed', pending: true, outcomeUnknown: true })).toBe('unknown')
+    expect(record({ status: 'signed' })).toBe('unknown')
+    expect(record({ status: 'submitting' })).toBe('unknown')
+    expect(record({ status: 'confirming' })).toBe('unknown')
+    // Once the SDK reads the chain again (it drops the stored transaction at the end), the answer is known.
+    expect(record({ status: 'unconfirmed', outcomeUnknown: true })).toBe('missing')
   })
 })
 

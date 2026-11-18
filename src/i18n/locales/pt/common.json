@@ -1679,13 +1679,20 @@
     "checking": "A verificar os teus dados",
     "closed": {
       "not_cast": "O teu voto não foi registado antes de a votação terminar.",
+      "partly_cast_one": "Só {{count}} das tuas {{total}} respostas foi registada antes de a votação terminar.",
+      "partly_cast_many": "Só {{count}} das tuas {{total}} respostas foram registadas antes de a votação terminar.",
+      "partly_cast_other": "Só {{count}} das tuas {{total}} respostas foram registadas antes de a votação terminar.",
+      "partly_unconfirmed_one": "Está confirmado que {{count}} das tuas {{total}} respostas está no registo. O resto não pôde ser confirmado antes de a votação terminar e pode ter sido registado também: verifica o teu voto para saberes.",
+      "partly_unconfirmed_many": "Está confirmado que {{count}} das tuas {{total}} respostas estão no registo. O resto não pôde ser confirmado antes de a votação terminar e pode ter sido registado também: verifica o teu voto para saberes.",
+      "partly_unconfirmed_other": "Está confirmado que {{count}} das tuas {{total}} respostas estão no registo. O resto não pôde ser confirmado antes de a votação terminar e pode ter sido registado também: verifica o teu voto para saberes.",
       "sentence": "A votação terminou {{date}} às {{time}}.",
       "turnout_one": "Votou {{count}} de {{total}} pessoas.",
       "turnout_many": "Votaram {{count}} de {{total}} pessoas.",
       "turnout_other": "Votaram {{count}} de {{total}} pessoas.",
       "turnout_count_one": "Votou {{count}} pessoa.",
       "turnout_count_many": "Votaram {{count}} pessoas.",
-      "turnout_count_other": "Votaram {{count}} pessoas."
+      "turnout_count_other": "Votaram {{count}} pessoas.",
+      "unconfirmed": "Não foi possível confirmar o teu voto antes de a votação terminar. Pode ter sido registado: verifica o teu voto para saberes."
     },
     "code": {
       "label": "Código de utilização única",

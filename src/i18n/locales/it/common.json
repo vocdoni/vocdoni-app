@@ -1679,13 +1679,20 @@
     "checking": "Verifica dei tuoi dati",
     "closed": {
       "not_cast": "Il tuo voto non è stato registrato prima della chiusura della votazione.",
+      "partly_cast_one": "Solo {{count}} delle tue {{total}} risposte è stata registrata prima della chiusura della votazione.",
+      "partly_cast_many": "Solo {{count}} delle tue {{total}} risposte sono state registrate prima della chiusura della votazione.",
+      "partly_cast_other": "Solo {{count}} delle tue {{total}} risposte sono state registrate prima della chiusura della votazione.",
+      "partly_unconfirmed_one": "{{count}} delle tue {{total}} risposte risulta registrata. Il resto non è stato confermato prima della chiusura della votazione e potrebbe essere stato registrato comunque: verifica il tuo voto per saperlo.",
+      "partly_unconfirmed_many": "{{count}} delle tue {{total}} risposte risultano registrate. Il resto non è stato confermato prima della chiusura della votazione e potrebbe essere stato registrato comunque: verifica il tuo voto per saperlo.",
+      "partly_unconfirmed_other": "{{count}} delle tue {{total}} risposte risultano registrate. Il resto non è stato confermato prima della chiusura della votazione e potrebbe essere stato registrato comunque: verifica il tuo voto per saperlo.",
       "sentence": "La votazione si è chiusa {{date}} alle {{time}}.",
       "turnout_one": "Ha votato {{count}} persona su {{total}}.",
       "turnout_many": "Hanno votato {{count}} persone su {{total}}.",
       "turnout_other": "Hanno votato {{count}} persone su {{total}}.",
       "turnout_count_one": "Ha votato {{count}} persona.",
       "turnout_count_many": "Hanno votato {{count}} persone.",
-      "turnout_count_other": "Hanno votato {{count}} persone."
+      "turnout_count_other": "Hanno votato {{count}} persone.",
+      "unconfirmed": "Non è stato possibile confermare il tuo voto prima della chiusura della votazione. Potrebbe essere stato registrato: verifica il tuo voto per saperlo."
     },
     "code": {
       "label": "Codice monouso",

@@ -1679,13 +1679,20 @@
     "checking": "Vérification de vos informations",
     "closed": {
       "not_cast": "Votre vote n'a pas été enregistré avant la clôture du vote.",
+      "partly_cast_one": "Seule {{count}} de vos {{total}} réponses a été enregistrée avant la clôture du vote.",
+      "partly_cast_many": "Seules {{count}} de vos {{total}} réponses ont été enregistrées avant la clôture du vote.",
+      "partly_cast_other": "Seules {{count}} de vos {{total}} réponses ont été enregistrées avant la clôture du vote.",
+      "partly_unconfirmed_one": "{{count}} de vos {{total}} réponses est confirmée comme enregistrée. Le reste n'a pas pu être confirmé avant la clôture du vote et a peut-être aussi été enregistré : vérifiez votre vote pour le savoir.",
+      "partly_unconfirmed_many": "{{count}} de vos {{total}} réponses sont confirmées comme enregistrées. Le reste n'a pas pu être confirmé avant la clôture du vote et a peut-être aussi été enregistré : vérifiez votre vote pour le savoir.",
+      "partly_unconfirmed_other": "{{count}} de vos {{total}} réponses sont confirmées comme enregistrées. Le reste n'a pas pu être confirmé avant la clôture du vote et a peut-être aussi été enregistré : vérifiez votre vote pour le savoir.",
       "sentence": "Le vote s'est clôturé le {{date}} à {{time}}.",
       "turnout_one": "{{count}} personne sur {{total}} a voté.",
       "turnout_many": "{{count}} personnes sur {{total}} ont voté.",
       "turnout_other": "{{count}} personnes sur {{total}} ont voté.",
       "turnout_count_one": "{{count}} personne a voté.",
       "turnout_count_many": "{{count}} personnes ont voté.",
-      "turnout_count_other": "{{count}} personnes ont voté."
+      "turnout_count_other": "{{count}} personnes ont voté.",
+      "unconfirmed": "Votre vote n'a pas pu être confirmé avant la clôture du vote. Il a peut-être été enregistré : vérifiez votre vote pour le savoir."
     },
     "code": {
       "label": "Code à usage unique",

@@ -127,16 +127,45 @@ export const UpcomingScreen = () => {
 }
 
 /**
- * Board V4VoterWideLive 8, with "Comprova el teu vot" (owner ruling). A cast that failed as the vote closed says so
- * here (gate F6): the review that would show its error is gone, and nothing will be re-sent.
+ * What a cast that failed as the vote closed left on chain, in one true sentence (gate F6, gate-2 N2): nothing, some
+ * questions (how many, with their codes), or not known (it may have landed: "Comprova el teu vot" asks again). Once
+ * every question is on chain (a vote from another device, or one recovered at the end) nothing is said about it.
+ */
+const useFailedCast = () => {
+  const { t } = useTranslation()
+  const { election, state, chain } = useVoterFlow()
+  const records = election.questions.map((_question, index) => chain[index] ?? 'missing')
+  const total = records.length
+  const recorded = records.filter((record) => record === 'recorded').length
+  const unknown = records.filter((record) => record === 'unknown').length
+  const failed = state.castError !== null && recorded < total
+  let sentence = t('voter.closed.not_cast')
+  if (unknown > 0) {
+    sentence =
+      recorded > 0 ? t('voter.closed.partly_unconfirmed', { count: recorded, total }) : t('voter.closed.unconfirmed')
+  } else if (recorded > 0) {
+    sentence = t('voter.closed.partly_cast', { count: recorded, total })
+  }
+  return {
+    failed,
+    unknown: failed && unknown > 0,
+    sentence,
+    receipt: state.castError !== null && recorded > 0,
+  }
+}
+
+/**
+ * Board V4VoterWideLive 8, with "Comprova el teu vot" (owner ruling). A cast that failed as the vote closed says what
+ * it left on chain here (`useFailedCast`): the review that would show its error is gone, and nothing will be re-sent.
  */
 export const ClosedScreen = () => {
   const { t } = useTranslation()
   const env = useAppEnv()
-  const { election, facts, state, showResults, checkReceipt } = useVoterFlow()
+  const { election, facts, showResults, checkReceipt } = useVoterFlow()
   const { title, organization, day, time } = useVoteTexts()
   const end = resolveEndDate(election)
   const turnout = voterTurnout(election, env)
+  const cast = useFailedCast()
   return (
     <Centred
       kind='closed'
@@ -149,13 +178,14 @@ export const ClosedScreen = () => {
         </>
       }
     >
-      {state.castError !== null && (
-        <Alert.Root status='error' layout='ballot' mt='6' role='alert'>
+      {cast.failed && (
+        <Alert.Root status={cast.unknown ? 'warning' : 'error'} layout='ballot' mt='6' role='alert'>
           <Alert.Content>
-            <Alert.Description>{t('voter.closed.not_cast')}</Alert.Description>
+            <Alert.Description>{cast.sentence}</Alert.Description>
           </Alert.Content>
         </Alert.Root>
       )}
+      {cast.receipt && <ReceiptCard />}
       <VoterActionBar
         primary={
           <Button size='ballot' onClick={() => showResults(true)}>
@@ -163,9 +193,9 @@ export const ClosedScreen = () => {
           </Button>
         }
         note={
-          facts.connected ? undefined : (
+          !facts.connected || cast.unknown ? (
             <InlineAction onClick={checkReceipt}>{t('voter.results.check_vote')}</InlineAction>
-          )
+          ) : undefined
         }
       />
     </Centred>

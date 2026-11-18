@@ -1,6 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { computeProcessStatus, isSecretUntilTheEnd } from '@vocdoni/api-client'
-import { electionQueryKeys, lockedQuestionNotice, useElection, useQuestionsForm } from '@vocdoni/react-components'
+import {
+  electionQueryKeys,
+  lockedQuestionNotice,
+  useElection,
+  useQuestionsForm,
+  useReactComponentsLocalize,
+} from '@vocdoni/react-components'
 import {
   createContext,
   useCallback,
@@ -22,6 +28,7 @@ import { VOTER_CLOCK_TOLERANCE_MS, VOTER_POLL_MS, VOTER_STATE_GRACE_MS } from '.
 import { useOwnedAnswers } from './use-owned-answers'
 import { useVoterCheck, voterCheckKey } from './use-voter-check'
 import {
+  chainRecordOf,
   deriveVoterScreen,
   encodableAnswer,
   firstUnanswered,
@@ -90,6 +97,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
   } = useElection()
   const csp = useCspAuthContext()
   const { fmethods, vote } = useQuestionsForm()
+  const localize = useReactComponentsLocalize()
   const queryClient = useQueryClient()
   const clock = useNow(VOTER_POLL_MS)
   const serverNow = useContext(VoterServerNow)
@@ -113,7 +121,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
   const questions = election?.questions ?? []
   const id = election?.id
   const statusKey = `${sdkStatus}:${questions.map((question) => question.status).join(',')}`
-  const { membership, votedElsewhere } = useVoterCheck({ id, authToken, connected, check, statusKey })
+  const { membership, votedElsewhere, votedIds } = useVoterCheck({ id, authToken, connected, check, statusKey })
 
   // The SDK publishes the voter's per-question state a moment after the check. If it never does (its own check failed
   // and it does not retry), nothing can be cast from this session: back to identification, never a wrong sentence.
@@ -258,7 +266,12 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
           root?: { vote?: { message?: unknown } }
         }
         const fieldError = questions.map((_question, index) => errors[String(index)]?.message).find(Boolean)
-        dispatch({ type: 'castFailed', message: String(errors.root?.vote?.message ?? fieldError ?? '') })
+        const message = String(errors.root?.vote?.message ?? fieldError ?? '')
+        // The SDK reports a cast whose landing it could not check only in its sentence (alone, or inside the partial
+        // one): read here, in the language it was written in, so the closed screen never calls it unrecorded (gate-2 N2).
+        const unknownOutcome = localize('errors.vote_unconfirmed')
+        const unconfirmed = unknownOutcome !== '' && message.includes(unknownOutcome)
+        dispatch({ type: 'castFailed', message, unconfirmed })
         // A question may have closed or the vote paused meanwhile ("question is not open for voting"): read the
         // process again and let the facts decide. Never a sign out.
         if (id) void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) })
@@ -277,7 +290,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
       castingRef.current = false
       setCasting(false)
     }
-  }, [answered, fmethods, id, onChain, queryClient, questions, vote, voting])
+  }, [answered, fmethods, id, localize, onChain, queryClient, questions, vote, voting])
 
   const signOut = useCallback(() => {
     clearVoter()
@@ -315,6 +328,14 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
     voteIds,
     lockedNotice,
     statuses: questions.map((question) => voteStatus[question.id]),
+    chain: questions.map((question) =>
+      chainRecordOf({
+        onChain: onChain(question.id) || !!voteIds[question.id] || votedIds.includes(question.id),
+        status: voteStatus[question.id],
+        pending: !!pendingVotes[question.id],
+        outcomeUnknown: state.castUnconfirmed,
+      })
+    ),
     start: () => go(first === -1 ? { name: 'review' } : { name: 'question', index: first }),
     next,
     back: (index) => {
@@ -329,7 +350,11 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
     casting,
     signOut,
     showResults: (on) => dispatch({ type: 'viewResults', on }),
-    checkReceipt: () => dispatch({ type: 'checkReceipt' }),
+    checkReceipt: () => {
+      dispatch({ type: 'checkReceipt' })
+      // A connected voter whose vote could not be confirmed as it closed asks the chain again (gate-2 N2).
+      if (connected) void queryClient.invalidateQueries({ queryKey: voterCheckKey(id) })
+    },
   }
 
   return <VoterFlowContext.Provider value={flow}>{children}</VoterFlowContext.Provider>

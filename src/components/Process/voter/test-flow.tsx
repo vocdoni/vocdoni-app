@@ -66,6 +66,7 @@ export const testFlow = (over: Partial<VoterFlow> = {}): VoterFlow => ({
   voteIds: {},
   lockedNotice: () => undefined,
   statuses: [],
+  chain: [],
   start: vi.fn(),
   next: vi.fn(),
   back: vi.fn(),

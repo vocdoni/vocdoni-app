@@ -84,6 +84,8 @@ export type VoterLocalState = {
   sent: Record<string, Answer>
   /** The SDK's sentence for the last failed cast; kept by the flow because a poll resets the form's errors. */
   castError: string | null
+  /** The last failed cast could not learn whether its votes landed (the SDK's `errors.vote_unconfirmed`). */
+  castUnconfirmed: boolean
   /** "Comprova el teu vot": identify on an ended vote to reach the receipt. */
   checkReceipt: boolean
   /** "Mostra els resultats" and the other links to results. */
@@ -98,7 +100,7 @@ export type VoterAction =
   | { type: 'memo'; key: string; value: string }
   | { type: 'castStarted' }
   | { type: 'castSucceeded' }
-  | { type: 'castFailed'; message: string }
+  | { type: 'castFailed'; message: string; unconfirmed?: boolean }
   | { type: 'checkReceipt' }
   | { type: 'viewResults'; on: boolean }
   | { type: 'signedOut'; notice?: 'sessionExpired' }
@@ -126,6 +128,7 @@ export const initialVoterState: VoterLocalState = {
   sent: {},
   castDone: false,
   castError: null,
+  castUnconfirmed: false,
   checkReceipt: false,
   viewResults: false,
   notice: null,
@@ -138,15 +141,20 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
     case 'restore':
       return { ...state, step: action.step, returnToReview: false }
     case 'answer':
-      return { ...state, answers: { ...state.answers, [action.key]: action.value }, castError: null }
+      return {
+        ...state,
+        answers: { ...state.answers, [action.key]: action.value },
+        castError: null,
+        castUnconfirmed: false,
+      }
     case 'memo':
       return { ...state, memos: { ...state.memos, [action.key]: action.value } }
     case 'castStarted':
-      return { ...state, castError: null, sent: { ...state.answers } }
+      return { ...state, castError: null, castUnconfirmed: false, sent: { ...state.answers } }
     case 'castSucceeded':
-      return { ...state, castDone: true, castError: null }
+      return { ...state, castDone: true, castError: null, castUnconfirmed: false }
     case 'castFailed':
-      return { ...state, castError: action.message }
+      return { ...state, castError: action.message, castUnconfirmed: action.unconfirmed ?? false }
     case 'checkReceipt':
       return { ...state, checkReceipt: true, viewResults: false }
     case 'viewResults':
@@ -273,6 +281,36 @@ export const encodableAnswer = (question: QuestionShape): Answer => {
 /** A multiple-choice question whose range lets the voter choose nothing: the SDK accepts a blank vote. */
 export const allowsBlankVote = (question: QuestionShape): boolean =>
   tryInferQuestionBallotType(question) === BallotType.MultiChoice && questionSelectionRange(question).min === 0
+
+/** What the chain is known to hold of one question's vote (gate-2 N2): on it, not on it, or not known from here. */
+export type ChainRecord = 'recorded' | 'missing' | 'unknown'
+
+// Statuses whose outcome nobody has settled: `signed` is an anonymous vote this tab cannot verify; `submitting` and
+// `confirming` are a transaction that went out and was never answered. `signing` built no transaction; `failed` and
+// `unconfirmed` are answers (`unconfirmed`: signed, and the backend read the chain without it, with nothing to resend).
+const OUTCOME_UNKNOWN = new Set(['signed', 'submitting', 'confirming'])
+
+/**
+ * One question's `ChainRecord`. `onChain`: the SDK or the flow's own check holds it as voted, or the voter holds its
+ * vote id. `pending`: the SDK keeps its transaction to send again, after a refusal or an unknown outcome alike.
+ * `outcomeUnknown`: the last cast failed because the chain could not be read (`VoterLocalState.castUnconfirmed`), so
+ * a pending transaction may have landed until the SDK reads the chain again (it does when the vote ends).
+ */
+export const chainRecordOf = ({
+  onChain,
+  status,
+  pending,
+  outcomeUnknown,
+}: {
+  onChain: boolean
+  status: string | undefined
+  pending: boolean
+  outcomeUnknown: boolean
+}): ChainRecord => {
+  if (onChain) return 'recorded'
+  if ((pending && outcomeUnknown) || (status !== undefined && OUTCOME_UNKNOWN.has(status))) return 'unknown'
+  return 'missing'
+}
 
 export type SendingPhase = 1 | 2 | 3
 

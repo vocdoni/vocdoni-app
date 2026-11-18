@@ -1654,11 +1654,16 @@
     "checking": "Zure datuak egiaztatzen",
     "closed": {
       "not_cast": "Zure botoa ez da erregistratu bozketa itxi aurretik.",
+      "partly_cast_one": "Zure {{total}} erantzunetatik {{count}} bakarrik erregistratu da bozketa itxi aurretik.",
+      "partly_cast_other": "Zure {{total}} erantzunetatik {{count}} bakarrik erregistratu dira bozketa itxi aurretik.",
+      "partly_unconfirmed_one": "Zure {{total}} erantzunetatik {{count}} erregistratuta dagoela berretsi da. Gainerakoa ezin izan da berretsi bozketa itxi aurretik, eta baliteke hura ere erregistratuta egotea: egiaztatu zure botoa jakiteko.",
+      "partly_unconfirmed_other": "Zure {{total}} erantzunetatik {{count}} erregistratuta daudela berretsi da. Gainerakoa ezin izan da berretsi bozketa itxi aurretik, eta baliteke hura ere erregistratuta egotea: egiaztatu zure botoa jakiteko.",
       "sentence": "Bozketa itxi zen: {{date}}, {{time}}.",
       "turnout_one": "Bozkatu zuen: {{count}} / {{total}} pertsona.",
       "turnout_other": "Bozkatu zuten: {{count}} / {{total}} pertsona.",
       "turnout_count_one": "Bozkatu zuen: {{count}} pertsona.",
-      "turnout_count_other": "Bozkatu zuten: {{count}} pertsona."
+      "turnout_count_other": "Bozkatu zuten: {{count}} pertsona.",
+      "unconfirmed": "Ezin izan da zure botoa berretsi bozketa itxi aurretik. Baliteke erregistratuta egotea: egiaztatu zure botoa jakiteko."
     },
     "code": {
       "label": "Erabilera bakarreko kodea",

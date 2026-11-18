@@ -1679,13 +1679,20 @@
     "checking": "Comprobando tus datos",
     "closed": {
       "not_cast": "Tu voto no se registró antes de que se cerrara la votación.",
+      "partly_cast_one": "Solo se registró {{count}} de tus {{total}} respuestas antes de que se cerrara la votación.",
+      "partly_cast_many": "Solo se registraron {{count}} de tus {{total}} respuestas antes de que se cerrara la votación.",
+      "partly_cast_other": "Solo se registraron {{count}} de tus {{total}} respuestas antes de que se cerrara la votación.",
+      "partly_unconfirmed_one": "Está confirmado que {{count}} de tus {{total}} respuestas está en el registro. El resto no se pudo confirmar antes de que se cerrara la votación y es posible que también se haya registrado: comprueba tu voto para saberlo.",
+      "partly_unconfirmed_many": "Está confirmado que {{count}} de tus {{total}} respuestas están en el registro. El resto no se pudo confirmar antes de que se cerrara la votación y es posible que también se haya registrado: comprueba tu voto para saberlo.",
+      "partly_unconfirmed_other": "Está confirmado que {{count}} de tus {{total}} respuestas están en el registro. El resto no se pudo confirmar antes de que se cerrara la votación y es posible que también se haya registrado: comprueba tu voto para saberlo.",
       "sentence": "La votación se cerró el {{date}} a las {{time}}.",
       "turnout_one": "Votó {{count}} de {{total}} personas.",
       "turnout_many": "Votaron {{count}} de {{total}} personas.",
       "turnout_other": "Votaron {{count}} de {{total}} personas.",
       "turnout_count_one": "Votó {{count}} persona.",
       "turnout_count_many": "Votaron {{count}} personas.",
-      "turnout_count_other": "Votaron {{count}} personas."
+      "turnout_count_other": "Votaron {{count}} personas.",
+      "unconfirmed": "No se pudo confirmar tu voto antes de que se cerrara la votación. Es posible que se haya registrado: comprueba tu voto para saberlo."
     },
     "code": {
       "label": "Código de un solo uso",

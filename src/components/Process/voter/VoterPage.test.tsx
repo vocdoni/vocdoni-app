@@ -384,6 +384,45 @@ describe('voter page transitions (AC4)', () => {
     expect(within(current()).getByRole('alert')).toHaveTextContent('voter.closed.not_cast')
   })
 
+  // Gate-2 N2 (a): question 1 lands, question 2 is refused, the voter does not retry, the vote closes.
+  it('a partial cast as the vote closes says how many answers were recorded, with their code', async () => {
+    server.process = makeProcess({ endDate: new Date(NOW + 5_000).toISOString() })
+    server.jobs = 'partial'
+    renderPage()
+    await identify()
+    await answerBoth()
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    await act(() => vi.advanceTimersByTimeAsync(6_000))
+    await onScreen('closed')
+    const alert = within(current()).getByRole('alert')
+    expect(alert).toHaveTextContent('voter.closed.partly_cast')
+    expect(alert).not.toHaveTextContent('voter.closed.not_cast')
+    expect(within(current()).getByText('voter.receipt.card_title')).toBeInTheDocument()
+  })
+
+  // Gate-2 N2 (b): the relay's answer is lost and the chain cannot be read for the SDK's two minutes, then the vote
+  // closes. The vote may have landed: the screen says so, and "Comprova el teu vot" reads the chain again.
+  it('a cast whose landing could not be checked as the vote closes says it may be recorded, then checks', async () => {
+    server.process = makeProcess({ endDate: new Date(NOW + 200_000).toISOString() })
+    server.dropAfterRelay = true
+    renderPage()
+    await identify()
+    await answerBoth()
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    await onScreen('sending')
+    await act(() => vi.advanceTimersByTimeAsync(125_000))
+    await onScreen('review')
+    expect(within(current()).getByRole('alert')).toHaveTextContent('errors.vote_unconfirmed')
+    await act(() => vi.advanceTimersByTimeAsync(80_000))
+    await onScreen('closed')
+    expect(within(current()).getByRole('alert')).toHaveTextContent('voter.closed.unconfirmed')
+    // It had landed.
+    server.offline = false
+    server.voted = true
+    fireEvent.click(within(current()).getByRole('button', { name: 'voter.results.check_vote' }))
+    await onScreen('alreadyVoted')
+  })
+
   it('offline then online while sending: the screen stays, then settles on the receipt', async () => {
     server.dropAfterRelay = true
     renderPage()

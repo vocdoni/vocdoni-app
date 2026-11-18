@@ -1,4 +1,5 @@
 import { fireEvent, screen } from '@testing-library/react'
+import type { VoterFlow } from '../flow-context'
 import { renderWithFlow, testElection, testFacts, testFlow } from '../test-flow'
 import { initialVoterState } from '../voter-flow'
 import {
@@ -50,6 +51,55 @@ describe('state screens', () => {
       testFlow({ facts: testFacts({ status: 'ENDED' }), state: { ...initialVoterState, castError: '' } })
     )
     expect(screen.getByRole('alert')).toHaveTextContent('voter.closed.not_cast')
+  })
+
+  // Gate-2 N2: the sentence follows what the chain is known to hold, never "not recorded" for an answer that is.
+  describe('closed after a cast that failed as the vote closed (gate-2 N2)', () => {
+    const closedWith = (chain: VoterFlow['chain'], voteIds: Record<string, string> = {}) => {
+      const flow = testFlow({
+        facts: testFacts({ status: 'ENDED' }),
+        state: { ...initialVoterState, castError: 'x' },
+        chain,
+        voteIds,
+      })
+      renderWithFlow(<ClosedScreen />, flow)
+      return flow
+    }
+
+    it('nothing on chain: not recorded, and no receipt', () => {
+      closedWith(['missing', 'missing'])
+      expect(screen.getByRole('alert')).toHaveTextContent('voter.closed.not_cast')
+      expect(screen.queryByText('voter.receipt.card_title')).toBeNull()
+      expect(screen.queryByRole('button', { name: 'voter.results.check_vote' })).toBeNull()
+    })
+
+    it('some questions on chain: how many of how many, with the codes of those', () => {
+      closedWith(['recorded', 'missing'], { q1: 'a3f1000000000000009c2e' })
+      expect(screen.getByRole('alert')).toHaveTextContent('voter.closed.partly_cast')
+      expect(screen.getByRole('alert')).not.toHaveTextContent('voter.closed.not_cast')
+      expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
+    })
+
+    it('outcome unknown: it may have been recorded, and "Comprova el teu vot" asks again', () => {
+      const flow = closedWith(['unknown', 'unknown'])
+      expect(screen.getByRole('alert')).toHaveTextContent('voter.closed.unconfirmed')
+      fireEvent.click(screen.getByRole('button', { name: 'voter.results.check_vote' }))
+      expect(flow.checkReceipt).toHaveBeenCalled()
+    })
+
+    it('some on chain and the rest unknown: the confirmed count, and the rest may be recorded too', () => {
+      closedWith(['recorded', 'unknown'], { q1: 'a3f1000000000000009c2e' })
+      expect(screen.getByRole('alert')).toHaveTextContent('voter.closed.partly_unconfirmed')
+      expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'voter.results.check_vote' })).toBeInTheDocument()
+    })
+
+    it('every question on chain (another device, or recovered at the end): nothing about a failed cast', () => {
+      closedWith(['recorded', 'recorded'], { q1: 'a3f1000000000000009c2e', q2: 'b7c2000000000000001d4f' })
+      expect(screen.queryByRole('alert')).toBeNull()
+      expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
+      expect(screen.getByText('b7c2…1d4f')).toBeInTheDocument()
+    })
   })
 
   it('closed hides the count when the deployment hides counts', () => {

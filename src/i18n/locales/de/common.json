@@ -1654,11 +1654,16 @@
     "checking": "Deine Angaben werden geprüft",
     "closed": {
       "not_cast": "Deine Stimme wurde nicht erfasst, bevor die Abstimmung endete.",
+      "partly_cast_one": "Nur {{count}} deiner {{total}} Antworten wurde erfasst, bevor die Abstimmung endete.",
+      "partly_cast_other": "Nur {{count}} deiner {{total}} Antworten wurden erfasst, bevor die Abstimmung endete.",
+      "partly_unconfirmed_one": "{{count}} deiner {{total}} Antworten ist bestätigt erfasst. Der Rest konnte nicht bestätigt werden, bevor die Abstimmung endete, und wurde vielleicht ebenfalls erfasst: Prüfe deine Stimme, um es herauszufinden.",
+      "partly_unconfirmed_other": "{{count}} deiner {{total}} Antworten sind bestätigt erfasst. Der Rest konnte nicht bestätigt werden, bevor die Abstimmung endete, und wurde vielleicht ebenfalls erfasst: Prüfe deine Stimme, um es herauszufinden.",
       "sentence": "Die Abstimmung endete am {{date}} um {{time}}.",
       "turnout_one": "{{count}} von {{total}} Personen hat abgestimmt.",
       "turnout_other": "{{count}} von {{total}} Personen haben abgestimmt.",
       "turnout_count_one": "{{count}} Person hat abgestimmt.",
-      "turnout_count_other": "{{count}} Personen haben abgestimmt."
+      "turnout_count_other": "{{count}} Personen haben abgestimmt.",
+      "unconfirmed": "Deine Stimme konnte nicht bestätigt werden, bevor die Abstimmung endete. Vielleicht wurde sie trotzdem erfasst: Prüfe deine Stimme, um es herauszufinden."
     },
     "code": {
       "label": "Einmalcode",
