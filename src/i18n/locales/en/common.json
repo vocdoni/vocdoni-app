@@ -1736,11 +1736,21 @@
       "review": "Review and cast your vote"
     },
     "receipt": {
+      "anonymous_warning": "<strong>Anonymous vote:</strong> save this receipt now, the platform will not be able to show it again.",
       "card_note_one": "It lets you check your vote was counted, without revealing what you voted.",
       "card_note_other": "One code per answer. They let you check they were counted, without revealing what you voted.",
+      "card_note_anonymous_one": "It lets you verify your vote was counted, without revealing what you voted.",
+      "card_note_anonymous_other": "One code per answer. They let you verify they were counted, without revealing what you voted.",
       "card_title": "Your receipt",
+      "copied": "Copied",
+      "copied_announce": "Codes copied to the clipboard.",
+      "copy": "Copy the codes",
+      "download": "Download them",
+      "file_name": "receipt",
       "help_one": "Checked: your answer is in the record. You can close the page now.",
       "help_other": "Checked: the {{count}} answers are in the record. You can close the page now.",
+      "help_anonymous_one": "Checked: your answer is in the record.",
+      "help_anonymous_other": "Checked: the {{count}} answers are in the record.",
       "title": "Vote cast. Thank you."
     },
     "results": {
@@ -1809,7 +1819,19 @@
       "card_title": "You can't vote yet",
       "sentence": "The vote opens on {{startDate}} at {{startTime}} and closes on {{endDate}} at {{endTime}}."
     },
+    "verify": {
+      "error_format": "This code does not have the right format. Copy it in full from the receipt.",
+      "error_incomplete": "This code is not complete. Copy it in full from the receipt, without the ellipsis.",
+      "field_label": "Receipt code",
+      "help": "Paste one of the codes from the receipt you saved when you voted. There is one per question: you can verify them one at a time.",
+      "hint": "The Explorer will open in a new tab. You do not need to identify yourself.",
+      "submit": "Verify on the Explorer",
+      "title": "Verify your receipt"
+    },
     "voted": {
+      "anonymous_card_note": "It was shown when you finished voting. With those codes you can verify on the Explorer that your vote was counted.",
+      "anonymous_help": "The vote is anonymous: the platform does not know which vote is yours, so it cannot confirm or show it from this device.",
+      "anonymous_title": "Your vote was already authorised",
       "body": "You can't vote again.",
       "title": "You have already voted"
     },

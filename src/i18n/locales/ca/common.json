@@ -1769,13 +1769,25 @@
       "review": "Revisa i emet el vot"
     },
     "receipt": {
+      "anonymous_warning": "<strong>Vot anònim:</strong> desa ara aquest comprovant, la plataforma no te'l podrà tornar a mostrar.",
       "card_note_one": "Serveix per comprovar que el teu vot s'ha comptat, sense dir què has votat.",
       "card_note_many": "Un codi per resposta. Serveix per comprovar que s'han comptat, sense dir què has votat.",
       "card_note_other": "Un codi per resposta. Serveix per comprovar que s'han comptat, sense dir què has votat.",
+      "card_note_anonymous_one": "Serveix per verificar que s'ha comptat el teu vot, sense dir què has votat.",
+      "card_note_anonymous_many": "Un codi per resposta. Serveix per verificar que s'han comptat, sense dir què has votat.",
+      "card_note_anonymous_other": "Un codi per resposta. Serveix per verificar que s'han comptat, sense dir què has votat.",
       "card_title": "El teu comprovant",
+      "copied": "Copiat",
+      "copied_announce": "Codis copiats al porta-retalls.",
+      "copy": "Copia els codis",
+      "download": "Baixa'ls",
+      "file_name": "comprovant",
       "help_one": "Comprovat: la resposta és al registre. Ja pots tancar la pàgina.",
       "help_many": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
       "help_other": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
+      "help_anonymous_one": "Comprovat: la resposta és al registre.",
+      "help_anonymous_many": "Comprovat: les {{count}} respostes són al registre.",
+      "help_anonymous_other": "Comprovat: les {{count}} respostes són al registre.",
       "title": "Vot emès. Gràcies."
     },
     "results": {
@@ -1849,7 +1861,19 @@
       "card_title": "Encara no es pot votar",
       "sentence": "La votació s'obre {{startDate}} a les {{startTime}} i es tanca {{endDate}} a les {{endTime}}."
     },
+    "verify": {
+      "error_format": "Aquest codi no té el format correcte. Copia'l sencer del comprovant.",
+      "error_incomplete": "Aquest codi no és complet. Copia'l sencer del comprovant, sense punts suspensius.",
+      "field_label": "Codi del comprovant",
+      "help": "Enganxa un dels codis del comprovant que vas desar en votar. N'hi ha un per pregunta: els pots verificar d'un en un.",
+      "hint": "S'obrirà l'Explorer en una pestanya nova. No cal que t'identifiquis.",
+      "submit": "Verifica a l'Explorer",
+      "title": "Verifica el teu comprovant"
+    },
     "voted": {
+      "anonymous_card_note": "Es va mostrar quan vas acabar de votar. Amb aquells codis pots verificar a l'Explorer que el teu vot s'ha comptat.",
+      "anonymous_help": "La votació és anònima: la plataforma no sap quin vot és el teu, i per això no el pot confirmar ni mostrar des d'aquest dispositiu.",
+      "anonymous_title": "El teu vot ja es va autoritzar",
       "body": "No es pot tornar a votar.",
       "title": "Ja has votat"
     },

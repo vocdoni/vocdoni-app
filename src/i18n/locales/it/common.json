@@ -1769,13 +1769,25 @@
       "review": "Controlla ed esprimi il voto"
     },
     "receipt": {
+      "anonymous_warning": "<strong>Voto anonimo:</strong> conserva ora questa ricevuta, la piattaforma non potrà mostrartela di nuovo.",
       "card_note_one": "Serve a verificare che il tuo voto sia stato conteggiato, senza rivelare cosa hai votato.",
       "card_note_many": "Un codice per risposta. Servono a verificare che siano state conteggiate, senza rivelare cosa hai votato.",
       "card_note_other": "Un codice per risposta. Servono a verificare che siano state conteggiate, senza rivelare cosa hai votato.",
+      "card_note_anonymous_one": "Serve a verificare che il tuo voto sia stato conteggiato, senza rivelare cosa hai votato.",
+      "card_note_anonymous_many": "Un codice per risposta. Servono a verificare che siano state conteggiate, senza rivelare cosa hai votato.",
+      "card_note_anonymous_other": "Un codice per risposta. Servono a verificare che siano state conteggiate, senza rivelare cosa hai votato.",
       "card_title": "La tua ricevuta",
+      "copied": "Copiato",
+      "copied_announce": "Codici copiati negli appunti.",
+      "copy": "Copia i codici",
+      "download": "Scaricali",
+      "file_name": "ricevuta",
       "help_one": "Verificato: la risposta è registrata. Ora puoi chiudere la pagina.",
       "help_many": "Verificato: le {{count}} risposte sono registrate. Ora puoi chiudere la pagina.",
       "help_other": "Verificato: le {{count}} risposte sono registrate. Ora puoi chiudere la pagina.",
+      "help_anonymous_one": "Verificato: la risposta è registrata.",
+      "help_anonymous_many": "Verificato: le {{count}} risposte sono registrate.",
+      "help_anonymous_other": "Verificato: le {{count}} risposte sono registrate.",
       "title": "Voto espresso. Grazie."
     },
     "results": {
@@ -1849,7 +1861,19 @@
       "card_title": "Non si può ancora votare",
       "sentence": "La votazione si apre {{startDate}} alle {{startTime}} e si chiude {{endDate}} alle {{endTime}}."
     },
+    "verify": {
+      "error_format": "Questo codice non ha il formato corretto. Copialo per intero dalla ricevuta.",
+      "error_incomplete": "Questo codice non è completo. Copialo per intero dalla ricevuta, senza i puntini di sospensione.",
+      "field_label": "Codice della ricevuta",
+      "help": "Incolla uno dei codici della ricevuta che hai conservato quando hai votato. Ce n'è uno per domanda: puoi verificarli uno alla volta.",
+      "hint": "L'Explorer si aprirà in una nuova scheda. Non serve identificarti.",
+      "submit": "Verifica nell'Explorer",
+      "title": "Verifica la tua ricevuta"
+    },
     "voted": {
+      "anonymous_card_note": "È stata mostrata quando hai finito di votare. Con quei codici puoi verificare nell'Explorer che il tuo voto è stato conteggiato.",
+      "anonymous_help": "Il voto è anonimo: la piattaforma non sa quale sia il tuo voto, quindi non può confermarlo né mostrarlo da questo dispositivo.",
+      "anonymous_title": "Il tuo voto è già stato autorizzato",
       "body": "Non si può votare di nuovo.",
       "title": "Hai già votato"
     },

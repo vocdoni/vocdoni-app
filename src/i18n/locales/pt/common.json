@@ -1769,13 +1769,25 @@
       "review": "Rever e emitir o voto"
     },
     "receipt": {
+      "anonymous_warning": "<strong>Voto anónimo:</strong> guarda este comprovativo agora, a plataforma não o pode voltar a mostrar.",
       "card_note_one": "Serve para verificar que o teu voto foi contado, sem revelar em que votaste.",
       "card_note_many": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que votaste.",
       "card_note_other": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que votaste.",
+      "card_note_anonymous_one": "Serve para verificar que o teu voto foi contado, sem revelar em que votaste.",
+      "card_note_anonymous_many": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que votaste.",
+      "card_note_anonymous_other": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que votaste.",
       "card_title": "O teu comprovativo",
+      "copied": "Copiado",
+      "copied_announce": "Códigos copiados para a área de transferência.",
+      "copy": "Copiar os códigos",
+      "download": "Transferi-los",
+      "file_name": "comprovativo",
       "help_one": "Verificado: a resposta está no registo. Já podes fechar a página.",
       "help_many": "Verificado: as {{count}} respostas estão no registo. Já podes fechar a página.",
       "help_other": "Verificado: as {{count}} respostas estão no registo. Já podes fechar a página.",
+      "help_anonymous_one": "Verificado: a resposta está no registo.",
+      "help_anonymous_many": "Verificado: as {{count}} respostas estão no registo.",
+      "help_anonymous_other": "Verificado: as {{count}} respostas estão no registo.",
       "title": "Voto emitido. Obrigado."
     },
     "results": {
@@ -1849,7 +1861,19 @@
       "card_title": "Ainda não é possível votar",
       "sentence": "A votação abre {{startDate}} às {{startTime}} e termina {{endDate}} às {{endTime}}."
     },
+    "verify": {
+      "error_format": "Este código não tem o formato correto. Copia-o inteiro do comprovativo.",
+      "error_incomplete": "Este código não está completo. Copia-o inteiro do comprovativo, sem reticências.",
+      "field_label": "Código do comprovativo",
+      "help": "Cola um dos códigos do comprovativo que guardaste ao votar. Há um por pergunta: podes verificá-los um de cada vez.",
+      "hint": "O Explorer abre num novo separador. Não precisas de te identificar.",
+      "submit": "Verificar no Explorer",
+      "title": "Verifica o teu comprovativo"
+    },
     "voted": {
+      "anonymous_card_note": "Foi mostrado quando acabaste de votar. Com esses códigos podes verificar no Explorer que o teu voto foi contado.",
+      "anonymous_help": "A votação é anónima: a plataforma não sabe qual é o teu voto, por isso não o pode confirmar nem mostrar neste dispositivo.",
+      "anonymous_title": "O teu voto já foi autorizado",
       "body": "Não é possível votar de novo.",
       "title": "Já votaste"
     },

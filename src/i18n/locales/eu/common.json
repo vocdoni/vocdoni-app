@@ -1736,11 +1736,21 @@
       "review": "Berrikusi eta eman botoa"
     },
     "receipt": {
+      "anonymous_warning": "<strong>Boto anonimoa:</strong> gorde ziurtagiri hau orain; plataformak ezin izango dizu berriro erakutsi.",
       "card_note_one": "Zure botoa zenbatu dela egiaztatzeko balio du, zer bozkatu duzun esan gabe.",
       "card_note_other": "Kode bat erantzun bakoitzeko. Zenbatu direla egiaztatzeko balio dute, zer bozkatu duzun esan gabe.",
+      "card_note_anonymous_one": "Zure botoa zenbatu dela egiaztatzeko balio du, zer bozkatu duzun esan gabe.",
+      "card_note_anonymous_other": "Kode bat erantzun bakoitzeko. Zenbatu direla egiaztatzeko balio dute, zer bozkatu duzun esan gabe.",
       "card_title": "Zure ziurtagiria",
+      "copied": "Kopiatuta",
+      "copied_announce": "Kodeak arbelera kopiatu dira.",
+      "copy": "Kopiatu kodeak",
+      "download": "Deskargatu",
+      "file_name": "ziurtagiria",
       "help_one": "Egiaztatuta: erantzuna erregistroan dago. Orria itxi dezakezu orain.",
       "help_other": "Egiaztatuta: {{count}} erantzunak erregistroan daude. Orria itxi dezakezu orain.",
+      "help_anonymous_one": "Egiaztatuta: erantzuna erregistroan dago.",
+      "help_anonymous_other": "Egiaztatuta: {{count}} erantzunak erregistroan daude.",
       "title": "Botoa emanda. Eskerrik asko."
     },
     "results": {
@@ -1809,7 +1819,19 @@
       "card_title": "Oraindik ezin da bozkatu",
       "sentence": "Bozketa irekiko da: {{startDate}}, {{startTime}}. Itxiko da: {{endDate}}, {{endTime}}."
     },
+    "verify": {
+      "error_format": "Kode honek ez du formatu zuzena. Kopiatu ezazu osorik ziurtagiritik.",
+      "error_incomplete": "Kode hau ez dago osorik. Kopiatu ezazu osorik ziurtagiritik, hiru punturik gabe.",
+      "field_label": "Ziurtagiriaren kodea",
+      "help": "Itsatsi botoa ematean gorde zenuen ziurtagiriko kodeetako bat. Galdera bakoitzeko bat dago: banan-banan egiaztatu ditzakezu.",
+      "hint": "Explorer fitxa berri batean irekiko da. Ez duzu zertan identifikatu.",
+      "submit": "Egiaztatu Explorer-en",
+      "title": "Egiaztatu zure ziurtagiria"
+    },
     "voted": {
+      "anonymous_card_note": "Botoa ematen amaitu zenuenean erakutsi zen. Kode horiekin Explorer-en egiaztatu dezakezu zure botoa zenbatu dela.",
+      "anonymous_help": "Bozketa anonimoa da: plataformak ez daki zein den zure botoa, eta horregatik ezin du gailu honetatik baieztatu ez erakutsi.",
+      "anonymous_title": "Zure botoa baimenduta dago jada",
       "body": "Ezin da berriro bozkatu.",
       "title": "Dagoeneko bozkatu duzu"
     },
