@@ -267,6 +267,13 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
         dispatch({ type: 'castSucceeded' })
       }
       void queryClient.invalidateQueries({ queryKey: voterCheckKey(id) })
+    } catch (error) {
+      // `vote()` reports its failures through the form, but anything it throws must still end on review with a
+      // sentence (the SDK's generic one, from an empty message), not an unhandled rejection (gate F14). The error
+      // holds no answer.
+      console.error('Voter cast failed:', error)
+      dispatch({ type: 'castFailed', message: '' })
+      void queryClient.invalidateQueries({ queryKey: voterCheckKey(id) })
     } finally {
       castingRef.current = false
       setCasting(false)
