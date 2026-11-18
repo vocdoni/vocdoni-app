@@ -127,7 +127,7 @@ test.describe('weighted voting across the question matrix', () => {
       await observer.goto(`/processes/${processId}`)
 
       // One ballot was cast (the count is ballots, not weight)...
-      await expect(await openPublicCount(observer)).toContainText('1', { timeout: 120_000 })
+      await expect(await openPublicCount(observer)).toContainText(/^1\b/, { timeout: 120_000 })
 
       // ...but every selected choice tallies the voter's weight of 7. This is
       // the weighted-census assertion: a non-weighted census would read 1.

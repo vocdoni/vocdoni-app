@@ -323,6 +323,8 @@ describe('voter page transitions (AC4)', () => {
     fireEvent.click(screen.getByTestId('voter-cast'))
     await onScreen('review')
     await waitFor(() => expect(within(current()).getByRole('alert')).toHaveTextContent('errors.vote_failed'))
+    // The SDK's sentence for this failure, not the generic fallback that also contains `errors.vote_failed` (gate F11).
+    expect(within(current()).getByRole('alert')).not.toHaveTextContent('errors.vote_failed_unknown')
     // The CSP signed both questions: their answers can no longer change, and "Torna-ho a provar" re-sends them.
     expect(within(current()).getAllByText('vote.pending_resend')).toHaveLength(2)
     expect(screen.getByTestId('voter-cast')).toHaveTextContent('voter.review.retry')

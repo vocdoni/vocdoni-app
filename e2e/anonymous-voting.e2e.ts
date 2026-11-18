@@ -75,7 +75,7 @@ test.describe('voting on an anonymous census', () => {
       try {
         const observer = await observerContext.newPage()
         await observer.goto(`/processes/${processId}`)
-        await expect(await openPublicCount(observer)).toContainText('1', { timeout: 120_000 })
+        await expect(await openPublicCount(observer)).toContainText(/^1\b/, { timeout: 120_000 })
       } finally {
         await observerContext.close()
       }
