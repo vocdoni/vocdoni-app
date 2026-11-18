@@ -2142,7 +2142,8 @@
       "choice_weight_one": "{{votes}} vote pondéré",
       "choice_weight_many": "{{votes}} votes pondérés",
       "choice_weight_other": "{{votes}} votes pondérés",
-      "counting": "Le vote est clos. Les résultats sont en cours de décompte et s'afficheront ici sous peu."
+      "counting": "Le vote est clos. Les résultats sont en cours de décompte et s'afficheront ici sous peu.",
+      "share_of_people": "{{percent}} % des personnes"
     },
     "state": {
       "canceled": "Annulé",

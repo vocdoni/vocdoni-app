@@ -43,6 +43,21 @@ export const tallyUnit = (question: VotingProcessQuestion, weighted: boolean): T
 export const tallyBase = (tally: Tally[]): number => tally.reduce((sum, entry) => sum + entry.votes, 0)
 
 /**
+ * How many people a multiple-choice question's shares can also be read against: the people who answered, when each
+ * could pick several choices and every pick counts as one vote. Undefined for any other question, where the share of
+ * the total already reads per person (one choice) or counts no people (points, weights).
+ */
+export const tallyPeople = (
+  question: VotingProcessQuestion,
+  results: QuestionResults | undefined,
+  weighted: boolean
+): number | undefined => {
+  const type = tryInferQuestionBallotType(question)
+  if (weighted || (type !== BallotType.MultiChoice && type !== BallotType.Approval)) return undefined
+  return results?.voteCount || undefined
+}
+
+/**
  * Whether a question's tally may be shown: it has votes, it can be read, and a secret one only once the chain marked
  * it final. Any ballot type the tally decodes counts, ranked, budget and quadratic included.
  */

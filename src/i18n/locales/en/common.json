@@ -2078,7 +2078,8 @@
       "choice_votes_other": "{{votes}} votes",
       "choice_weight_one": "{{votes}} weighted vote",
       "choice_weight_other": "{{votes}} weighted votes",
-      "counting": "The vote is closed. The results are being counted and will show here shortly."
+      "counting": "The vote is closed. The results are being counted and will show here shortly.",
+      "share_of_people": "{{percent}}% of people"
     },
     "state": {
       "canceled": "Canceled",

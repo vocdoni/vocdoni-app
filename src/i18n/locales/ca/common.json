@@ -2142,7 +2142,8 @@
       "choice_weight_one": "{{votes}} vot ponderat",
       "choice_weight_many": "{{votes}} vots ponderats",
       "choice_weight_other": "{{votes}} vots ponderats",
-      "counting": "La votació està tancada. Els resultats s'estan comptant i es veuran aquí d'aquí a poc."
+      "counting": "La votació està tancada. Els resultats s'estan comptant i es veuran aquí d'aquí a poc.",
+      "share_of_people": "el {{percent}}% de les persones"
     },
     "state": {
       "canceled": "Cancel·lada",

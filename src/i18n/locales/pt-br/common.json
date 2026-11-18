@@ -2142,7 +2142,8 @@
       "choice_weight_one": "{{votes}} voto ponderado",
       "choice_weight_many": "{{votes}} votos ponderados",
       "choice_weight_other": "{{votes}} votos ponderados",
-      "counting": "A votação está encerrada. Os resultados estão sendo contados e aparecerão aqui em breve."
+      "counting": "A votação está encerrada. Os resultados estão sendo contados e aparecerão aqui em breve.",
+      "share_of_people": "{{percent}}% das pessoas"
     },
     "state": {
       "canceled": "Cancelada",

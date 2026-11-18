@@ -2078,7 +2078,8 @@
       "choice_votes_other": "{{votes}} boto",
       "choice_weight_one": "{{votes}} boto haztatu",
       "choice_weight_other": "{{votes}} boto haztatu",
-      "counting": "Bozketa itxita dago. Emaitzak zenbatzen ari dira eta laster agertuko dira hemen."
+      "counting": "Bozketa itxita dago. Emaitzak zenbatzen ari dira eta laster agertuko dira hemen.",
+      "share_of_people": "pertsonen %{{percent}}"
     },
     "state": {
       "canceled": "Bertan behera utzia",

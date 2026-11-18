@@ -70,7 +70,14 @@ describe('QuestionResultBars', () => {
     render(<QuestionResultBars question={multiple} results={results} />)
     expect(screen.getAllByText('40%')).toHaveLength(2)
     expect(screen.getByText('20%')).toBeInTheDocument()
-    expect(screen.queryByText('67%')).not.toBeInTheDocument()
+    // Beside each choice, the share of the three people who answered that picked it.
+    expect(screen.getAllByText('67% of people')).toHaveLength(2)
+    expect(screen.getByText('33% of people')).toBeInTheDocument()
+  })
+
+  it('gives no share of people where each person makes one choice', () => {
+    render(<QuestionResultBars question={threeChoices} results={tally} final />)
+    expect(screen.queryByText(/of people/)).not.toBeInTheDocument()
   })
 
   it('sets the winner of a final tally in bold (from `lg`) and dims the others, with no check and no tag', () => {

@@ -2078,7 +2078,8 @@
       "choice_votes_other": "{{votes}} Stimmen",
       "choice_weight_one": "{{votes}} gewichtete Stimme",
       "choice_weight_other": "{{votes}} gewichtete Stimmen",
-      "counting": "Die Abstimmung ist geschlossen. Die Ergebnisse werden ausgezählt und erscheinen in Kürze hier."
+      "counting": "Die Abstimmung ist geschlossen. Die Ergebnisse werden ausgezählt und erscheinen in Kürze hier.",
+      "share_of_people": "{{percent}}% der Personen"
     },
     "state": {
       "canceled": "Abgebrochen",

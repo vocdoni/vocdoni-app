@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useVoteText } from '~i18n/use-vote-text'
 import { quantity } from '~utils/numbers'
-import { tallyBase, tallyOf, tallyUnit, type Tally } from '~utils/question-tally'
+import { tallyBase, tallyOf, tallyPeople, tallyUnit, type Tally } from '~utils/question-tally'
 import { percentOf } from '~utils/vote-state'
 
 export type QuestionResultBarsProps = {
@@ -66,6 +66,8 @@ export const QuestionResultBars = ({
 
   const look = LAYOUT[layout]
   const base = tallyBase(tally)
+  // A multiple-choice share is of every pick; beside it, the share of the people who answered that picked it.
+  const people = tallyPeople(question, results, weighted)
   const unit = tallyUnit(question, weighted)
   const leader = final ? leaderOf(tally) : undefined
   const choiceTitle = (entry: Tally) => {
@@ -108,6 +110,13 @@ export const QuestionResultBars = ({
         const label = choiceTitle(entry)
         const count = countOf(entry)
         const share = t('votes.manage.percent', { defaultValue: '{{percent}}%', percent })
+        const ofPeople =
+          people !== undefined && entry.key !== 'abstain'
+            ? t('votes.results.share_of_people', {
+                defaultValue: '{{percent}}% of people',
+                percent: percentOf(entry.votes, people) ?? 0,
+              })
+            : undefined
         return (
           // `data-leading` marks the most voted option of a final tally, the row set apart.
           <Grid
@@ -120,6 +129,19 @@ export const QuestionResultBars = ({
           >
             <Text minW='0' lineHeight='row.title' {...look.label} fontWeight={leads ? look.weight : 'normal'}>
               {label}
+              {ofPeople && (
+                // Its own line on a phone, so the choice's name never breaks around it.
+                <Span
+                  display={{ base: 'block', md: 'inline' }}
+                  ms={{ base: '0', md: '2' }}
+                  fontWeight='normal'
+                  color='fg.subtle'
+                  textStyle='meta'
+                  whiteSpace='nowrap'
+                >
+                  {ofPeople}
+                </Span>
+              )}
             </Text>
             <Text whiteSpace='nowrap' textStyle='figure' lineHeight='row.title'>
               <Span fontWeight={look.countWeight}>{count}</Span>
@@ -131,7 +153,7 @@ export const QuestionResultBars = ({
               variant='results'
               value={Math.min(percent, 100)}
               gridColumn={look.span}
-              translations={{ value: () => `${label}, ${count}, ${share}` }}
+              translations={{ value: () => [label, count, share, ofPeople].filter(Boolean).join(', ') }}
             >
               <Progress.Track>
                 <Progress.Range opacity={leader !== undefined && !leads ? 'outvoted' : undefined} />
