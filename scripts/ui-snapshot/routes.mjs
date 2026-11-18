@@ -27,6 +27,7 @@ import {
   V_NOT_IN,
   V_PAUSED,
   V_RESULTS,
+  V_RESULTS_COUNTING,
   V_RESULTS_ENDED,
   V_RESULTS_SECRET,
   V_SECRET,
@@ -237,16 +238,13 @@ export const ROUTES = [
   voter('voter-unsupported', B_QBQ_LIVE),
   voter('voter-results', V_RESULTS, [{ slug: 'provisional', open: [[['css', '[data-testid="voter-show-results"]']]] }]),
   voter('voter-results-final', V_RESULTS_ENDED, [{ slug: 'final', open: [SHOW_RESULTS] }]),
+  voter('voter-results-counting', V_RESULTS_COUNTING, [{ slug: 'counting', open: [SHOW_RESULTS] }]),
   voter('voter-results-secret', V_RESULTS_SECRET, [
     { slug: 'counting', open: COUNTING },
     // The organiser extends the vote: the next read says it is open and secret again (board M9).
     {
       slug: 'hidden',
-      open: [
-        ...COUNTING,
-        [['mock', `/processes/${V_RESULTS_SECRET}`, VOTER_RESULTS_SECRET_REOPENED]],
-        [['refocus']],
-      ],
+      open: [...COUNTING, [['mock', `/processes/${V_RESULTS_SECRET}`, VOTER_RESULTS_SECRET_REOPENED]], [['refocus']]],
     },
   ]),
 ]

@@ -43,6 +43,7 @@ export const V_PAUSED = '650000000000000000001008'
 export const V_RESULTS = '650000000000000000001009'
 export const V_RESULTS_ENDED = '65000000000000000000100a'
 export const V_RESULTS_SECRET = '65000000000000000000100b'
+export const V_RESULTS_COUNTING = '65000000000000000000100c'
 /** The member number the voter votes' auth-only censuses answer; any other one is not in the census. */
 export const VOTER_MEMBER = 'A-1001'
 export const FAKE_TOKEN = 'fake-local-token'
@@ -709,7 +710,9 @@ PROCESSES.push(
   voterVote(V_PAUSED, { status: 'PAUSED' }),
   voterVote(V_RESULTS, { tallies: VOTER_TALLIES }),
   voterVote(V_RESULTS_ENDED, { status: 'RESULTS', endDate: VOTER_ENDED, tallies: VOTER_TALLIES, final: true }),
-  voterVote(V_RESULTS_SECRET, { status: 'ENDED', endDate: VOTER_ENDED, secret: true })
+  voterVote(V_RESULTS_SECRET, { status: 'ENDED', endDate: VOTER_ENDED, secret: true }),
+  // Ended with the last live bars, the tally not final yet (board 10b).
+  voterVote(V_RESULTS_COUNTING, { status: 'ENDED', endDate: VOTER_ENDED, tallies: VOTER_TALLIES })
 )
 /** V_LIVE paused by the organisation: what the page reads once it refetches (the paused mid-ballot capture). */
 export const VOTER_LIVE_PAUSED = voterVote(V_LIVE, { status: 'PAUSED', description: VOTER_DESCRIPTION })

@@ -552,25 +552,32 @@ const waitHydrated = (page) =>
     .catch(() => {})
 
 const runStep = async (page, candidates) => {
-  for (const [role, name, value] of candidates) {
+  const instant = ([role]) => role === 'refocus' || role === 'mock'
+  const run = async ([role, name, value]) => {
     if (role === 'refocus') {
       await page.evaluate(() => window.dispatchEvent(new Event('visibilitychange')))
-      return true
-    }
-    if (role === 'mock') {
+    } else {
       await page.route(
         (url) => url.port === String(MOCK_PORT) && url.pathname === name,
         (request) => request.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(value) })
       )
-      return true
     }
-    const loc = role === 'css' || role === 'fill' ? page.locator(name) : page.getByRole(role, { name })
-    // A voter step often follows a screen change that waits on the mock (identify, the membership check, the cast) or
-    // on hydration: poll for its target, found by selector or by role, until a visible one takes the action. A single
-    // wait is not enough: a screen can show the target for a frame and re-render it away (the check settling), and the
-    // element is then gone by the time it is counted.
-    const deadline = Date.now() + STEP_WAIT_MS
-    do {
+  }
+  const targets = candidates
+    .filter((candidate) => !instant(candidate))
+    .map(([role, name, value]) => ({
+      role,
+      value,
+      loc: role === 'css' || role === 'fill' ? page.locator(name) : page.getByRole(role, { name }),
+    }))
+  // A voter step often follows a screen change that waits on the mock (identify, the membership check, the cast) or
+  // on hydration: poll for its target, found by selector or by role, until a visible one takes the action. A single
+  // wait is not enough: a screen can show the target for a frame and re-render it away (the check settling), and the
+  // element is then gone by the time it is counted. All alternatives share one deadline, so an absent one costs nothing.
+  const deadline = Date.now() + STEP_WAIT_MS
+  let lastError = null
+  while (targets.length) {
+    for (const { role, value, loc } of targets) {
       const n = await loc.count()
       for (let i = 0; i < n; i++) {
         const el = loc.nth(i)
@@ -579,13 +586,20 @@ const runStep = async (page, candidates) => {
           if (role === 'fill') await el.fill(value, { timeout: 5000 })
           else await el.click({ timeout: 5000 })
           return true
-        } catch {
+        } catch (error) {
           // Detached or covered while acting: look again.
+          lastError = error
         }
       }
-      await page.waitForTimeout(100)
-    } while (Date.now() < deadline)
+    }
+    if (Date.now() >= deadline) break
+    await page.waitForTimeout(100)
   }
+  for (const candidate of candidates.filter(instant)) {
+    await run(candidate)
+    return true
+  }
+  if (lastError) console.warn(`step found its target but could not act: ${String(lastError.message).split('\n')[0]}`)
   return false
 }
 
