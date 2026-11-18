@@ -31,9 +31,7 @@ export const VoterActionBar = (props: VoterActionBarProps) => {
   return (
     <ActionBar
       label={t('voter.actions_label')}
-      credit={
-        <VoterCredit text={t('voter.credit.text')} brand={t('voter.credit.brand')} links={<VoterLegalLinks />} />
-      }
+      credit={<VoterCredit text={t('voter.credit.text')} brand={t('voter.credit.brand')} links={<VoterLegalLinks />} />}
       {...props}
     />
   )

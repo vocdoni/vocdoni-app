@@ -68,8 +68,11 @@ describe('voter option (QuestionChoice context `voter`)', () => {
     expect(wrapper['& [data-choice-mark]']).not.toHaveProperty('borderColor')
     expect(wrapper['& [data-choice-control][data-control-type="checkbox"]']).toMatchObject({ boxShadow: ring })
     expect(wrapper['&[data-state="checked"] [data-choice-mark]']).toMatchObject({
-      boxShadow: (layer(choice({ context: 'card', layout: 'list' }).wrapper)['&[data-state="checked"] [data-choice-mark]'] as Rules)
-        .boxShadow,
+      boxShadow: (
+        layer(choice({ context: 'card', layout: 'list' }).wrapper)[
+          '&[data-state="checked"] [data-choice-mark]'
+        ] as Rules
+      ).boxShadow,
     })
   })
 

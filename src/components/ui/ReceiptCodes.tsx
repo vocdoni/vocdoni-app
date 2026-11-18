@@ -31,13 +31,7 @@ export const ReceiptCodes = ({ items }: ReceiptCodesProps) => {
             {item.title}
           </Box>
           {item.href ? (
-            <chakra.a
-              href={item.href}
-              target='_blank'
-              rel='noopener noreferrer'
-              css={styles.code}
-              title={item.voteId}
-            >
+            <chakra.a href={item.href} target='_blank' rel='noopener noreferrer' css={styles.code} title={item.voteId}>
               {shortVoteId(item.voteId)}
             </chakra.a>
           ) : (

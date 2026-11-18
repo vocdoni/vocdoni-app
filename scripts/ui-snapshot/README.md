@@ -22,17 +22,17 @@ pnpm ui:diff -- before after
 
 `pnpm ui:snapshot` options:
 
-| option                  | default       | what it does                                                              |
-| ----------------------- | ------------- | ------------------------------------------------------------------------- |
-| `--label <name>`        | required      | output folder: `.ui-snapshot/<name>/` (git-ignored; replaced on each run) |
-| `--routes a,b`          | all           | only these route slugs (see `routes.mjs`); their states come along        |
-| `--viewports 1440,390`  | `1440,390`    | widths; height is 900 (844 below 768)                                     |
-| `--modes light,dark`    | `light,dark`  | colour modes                                                              |
-| `--primary-color <hex>` | unset         | starts the app with `PRIMARY_COLOR`, to see a brand colour change         |
-| `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                  |
-| `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")           |
-| `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")        |
-| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                |
+| option                  | default       | what it does                                                                                     |
+| ----------------------- | ------------- | ------------------------------------------------------------------------------------------------ |
+| `--label <name>`        | required      | output folder: `.ui-snapshot/<name>/` (git-ignored; replaced on each run)                        |
+| `--routes a,b`          | all           | only these route slugs (see `routes.mjs`); their states come along                               |
+| `--viewports 1440,390`  | `1440,390`    | widths; height is 900 (844 below 768)                                                            |
+| `--modes light,dark`    | `light,dark`  | colour modes                                                                                     |
+| `--primary-color <hex>` | unset         | starts the app with `PRIMARY_COLOR`, to see a brand colour change                                |
+| `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                                         |
+| `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")                                  |
+| `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")                               |
+| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                                       |
 | `--lang ca`             | `en`          | opens `/<lang><path>`, for side-by-side checks against Catalan boards (stock theme, no `--a11y`) |
 
 `pnpm ui:diff -- <labelA> <labelB>` options: `--ignore width,height` drops properties from the

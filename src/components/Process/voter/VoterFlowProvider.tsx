@@ -47,7 +47,12 @@ export const VoterServerNow = createContext<number | undefined>(undefined)
 const subscribeNever = () => () => {}
 // True on the server and while React hydrates its markup; false once the page is the browser's (and on a page the
 // browser renders itself), when React renders again with the client snapshot.
-const useHydrating = () => useSyncExternalStore(subscribeNever, () => false, () => true)
+const useHydrating = () =>
+  useSyncExternalStore(
+    subscribeNever,
+    () => false,
+    () => true
+  )
 
 type VoterFlowProviderProps = {
   brand: ProcessBrand
