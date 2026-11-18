@@ -35,13 +35,15 @@ export const MAX_TIMEOUT_MS = 2_147_483_647
 export const jitterFactor = (random: number): number => 1 + (random * 2 - 1) * VOTER_JITTER
 
 /**
- * The wait before the next membership check after `failures` failed ones (gate F5): doubling from
- * `VOTER_CHECK_RETRY_MS` up to `VOTER_CHECK_RETRY_MAX_MS`, spread per call so the tabs of a room do not retry in step.
+ * The wait before the next membership check after `failures` failed ones in a row (gate F5): doubling from
+ * `VOTER_CHECK_RETRY_MS` up to `VOTER_CHECK_RETRY_MAX_MS`, times the tab's own `factor` (`jitterFactor`), so the tabs
+ * of a room do not retry in step. The same input gives the same number: the query observer works the interval out
+ * again on every render and restarts its timer when the number differs, so a number drawn per call would never let a
+ * wait longer than the gap between two renders finish (gate-2 N1).
  */
-export const checkRetryDelay = (failures: number, random: number = Math.random()): number =>
+export const checkRetryDelay = (failures: number, factor = 1): number =>
   Math.round(
-    Math.min(VOTER_CHECK_RETRY_MAX_MS, VOTER_CHECK_RETRY_MS * 2 ** Math.min(Math.max(failures - 1, 0), 6)) *
-      jitterFactor(random)
+    Math.min(VOTER_CHECK_RETRY_MAX_MS, VOTER_CHECK_RETRY_MS * 2 ** Math.min(Math.max(failures - 1, 0), 6)) * factor
   )
 
 /** Nothing will change any more: every question canceled, or every one ended with its final tally. */

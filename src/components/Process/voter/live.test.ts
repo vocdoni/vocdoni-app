@@ -27,14 +27,19 @@ describe('jitterFactor', () => {
 
 describe('checkRetryDelay (gate F5)', () => {
   it('doubles from 5 s to a 60 s ceiling while the membership check fails', () => {
-    expect([1, 2, 3, 4, 5, 6, 20].map((failures) => checkRetryDelay(failures, 0.5))).toEqual([
+    expect([1, 2, 3, 4, 5, 6, 20].map((failures) => checkRetryDelay(failures))).toEqual([
       5_000, 10_000, 20_000, 40_000, 60_000, 60_000, 60_000,
     ])
   })
 
-  it('spreads each wait so the tabs of a room do not retry in step', () => {
-    expect(checkRetryDelay(1, 0)).toBe(4_000)
-    expect(checkRetryDelay(5, 0.999999)).toBe(72_000)
+  it('spreads each wait by the tab factor so the tabs of a room do not retry in step', () => {
+    expect(checkRetryDelay(1, jitterFactor(0))).toBe(4_000)
+    expect(checkRetryDelay(5, jitterFactor(0.999999))).toBe(72_000)
+  })
+
+  it('gives the same wait for the same failures and factor, so a re-render does not restart it (gate-2 N1)', () => {
+    const factor = jitterFactor(0.3)
+    expect(checkRetryDelay(4, factor)).toBe(checkRetryDelay(4, factor))
   })
 })
 

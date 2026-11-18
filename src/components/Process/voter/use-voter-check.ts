@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { ProcessCheckResponse } from '@vocdoni/api-types'
-import { useEffect, useRef } from 'react'
-import { checkRetryDelay } from './live'
+import { useEffect, useRef, useState } from 'react'
+import { checkRetryDelay, jitterFactor } from './live'
 import type { Membership } from './voter-flow'
 
 export const voterCheckKey = (id: string | undefined) => ['voter-check', id] as const
@@ -25,18 +25,36 @@ type VoterCheckInput = {
  */
 export const useVoterCheck = ({ id, authToken, connected, check, statusKey }: VoterCheckInput) => {
   const queryClient = useQueryClient()
+  // One spread per tab, fixed (see `checkRetryDelay`), and the failures in a row: the query's own `errorUpdateCount`
+  // never goes back to zero, so one bad minute would leave every later retry at the ceiling (gate-2 N1).
+  const [factor] = useState(() => jitterFactor(Math.random()))
+  const failures = useRef(0)
+  useEffect(() => {
+    failures.current = 0
+  }, [id, authToken])
   const query = useQuery({
     queryKey: [...voterCheckKey(id), authToken],
-    queryFn: () => check(),
+    queryFn: async () => {
+      try {
+        const answer = await check()
+        failures.current = 0
+        return answer
+      } catch (error) {
+        failures.current += 1
+        throw error
+      }
+    },
     enabled: connected && !!authToken && !!id,
     // No quick retries: a failing check backs off with jitter instead (gate F5), as the room's tabs would otherwise
-    // hit the failing endpoint in step every few seconds.
+    // hit the failing endpoint in step every few seconds. The interval only runs while the page is visible; focus and
+    // reconnect check again at once. A 401 is never retried: the session is gone.
     retry: false,
     refetchInterval: (current) =>
       current.state.status === 'error' && !isUnauthorized(current.state.error)
-        ? checkRetryDelay(current.state.errorUpdateCount)
+        ? checkRetryDelay(failures.current, factor)
         : false,
     refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     gcTime: 0,
   })
 
