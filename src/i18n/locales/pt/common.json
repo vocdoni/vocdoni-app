@@ -1666,7 +1666,7 @@
   },
   "voter": {
     "actions_label": "Ações da votação",
-    "agenda": "Ordem de trabalhos",
+    "agenda": "Perguntas a votar",
     "answer": {
       "ranked_item": "{{position}}. {{label}}"
     },

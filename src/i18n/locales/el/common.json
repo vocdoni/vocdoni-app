@@ -1641,7 +1641,7 @@
   },
   "voter": {
     "actions_label": "Ενέργειες ψηφοφορίας",
-    "agenda": "Ημερήσια διάταξη",
+    "agenda": "Ερωτήσεις προς ψήφιση",
     "answer": {
       "ranked_item": "{{position}}. {{label}}"
     },

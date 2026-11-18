@@ -1666,7 +1666,7 @@
   },
   "voter": {
     "actions_label": "Accions de la votació",
-    "agenda": "Ordre del dia",
+    "agenda": "Preguntes a votar",
     "answer": {
       "ranked_item": "{{position}}. {{label}}"
     },

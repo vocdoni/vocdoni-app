@@ -1641,7 +1641,7 @@
   },
   "voter": {
     "actions_label": "Aktionen der Abstimmung",
-    "agenda": "Tagesordnung",
+    "agenda": "Fragen zur Abstimmung",
     "answer": {
       "ranked_item": "{{position}}. {{label}}"
     },

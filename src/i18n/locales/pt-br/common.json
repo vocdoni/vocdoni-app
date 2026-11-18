@@ -1666,7 +1666,7 @@
   },
   "voter": {
     "actions_label": "Ações da votação",
-    "agenda": "Pauta",
+    "agenda": "Perguntas para votar",
     "answer": {
       "ranked_item": "{{position}}. {{label}}"
     },

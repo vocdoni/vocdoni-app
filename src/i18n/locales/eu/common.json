@@ -1641,7 +1641,7 @@
   },
   "voter": {
     "actions_label": "Bozketaren ekintzak",
-    "agenda": "Gai-zerrenda",
+    "agenda": "Bozkatzeko galderak",
     "answer": {
       "ranked_item": "{{position}}. {{label}}"
     },

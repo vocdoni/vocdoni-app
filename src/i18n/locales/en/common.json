@@ -1641,7 +1641,7 @@
   },
   "voter": {
     "actions_label": "Vote actions",
-    "agenda": "Agenda",
+    "agenda": "Questions to vote on",
     "answer": {
       "ranked_item": "{{position}}. {{label}}"
     },
