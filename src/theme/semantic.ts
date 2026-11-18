@@ -504,6 +504,10 @@ const shadows = defineSemanticTokens.shadows({
   '2xl': { value: RING },
   // Chakra's `inner` is blurred; `inset` has no blur and stays.
   inner: { value: 'inset 0 0 0 1px {colors.border}' },
+  // The voter page's radio and checkbox ring: the mark width drawn inside the box, as a shadow, so it paints at DPR 1.
+  mark: {
+    field: { value: 'inset 0 0 0 {borderWidths.mark} {colors.ballot.choice.ring}' },
+  },
   shadow: {
     // Cards are told apart by their border, not a shadow
     card: {

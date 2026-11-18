@@ -30,6 +30,7 @@ import {
 } from '@chakra-ui/react'
 import { CloseButton } from '~components/ui/CloseButton'
 import {
+  type ComponentsDefinition,
   type ComponentsPartialDefinition,
   defineComponent,
   getElectionTitle,
@@ -38,7 +39,7 @@ import {
   useElection,
   useReactComponentsLocalize,
 } from '@vocdoni/react-components'
-import { ChangeEvent, isValidElement, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, type ComponentProps, isValidElement, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon } from '~theme/icons'
 import { ConfirmDialogContent, ConfirmDialogShell } from '~components/ui/ConfirmDialog'
@@ -76,6 +77,224 @@ const clearLeader = (choices: { votes?: string }[]) => {
 }
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
+
+// The public ballot's radio mark, drawn here for the `card` context; the voter page's (`voter`) is drawn by its recipe.
+// The input is invisible, so its keyboard focus is drawn on the mark, as Chakra's radiomark draws it.
+const cardMark = (selected: boolean): BoxProps => ({
+  boxSize: 'icon.lg',
+  borderWidth: selected ? '[0]' : 'mark',
+  borderColor: 'ballot.choice.ring',
+  borderRadius: 'full',
+  bg: selected ? 'colorPalette.solid' : 'transparent',
+  color: 'accent.contrast',
+  _peerFocusVisible: {
+    outlineWidth: '{borderWidths.focusRing}',
+    outlineStyle: 'solid',
+    outlineColor: 'colorPalette.focusRing',
+    outlineOffset: '{spacing.0.5}',
+  },
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export type ChoiceCardProps = ComponentProps<ComponentsDefinition['QuestionChoice']> & {
+  /** `card`: the public ballot everywhere (dashboard preview, summary). `voter`: the voter page's own slot set. */
+  context?: 'card' | 'voter'
+  /** A quiet option (the voter's blank vote): its text in the subtle ink until chosen. */
+  quiet?: boolean
+}
+
+/** One option of a single or multiple choice question, as the `QuestionChoice` slot renders it. */
+export const ChoiceCard = ({
+  context = 'card',
+  quiet = false,
+  value,
+  label,
+  description,
+  image,
+  compact,
+  selected,
+  disabled,
+  controlType,
+  canOpenImageModal,
+  dataAttrs,
+  onSelect,
+}: ChoiceCardProps) => {
+  const recipe = useSlotRecipe({ key: 'QuestionChoice' })
+  const layout = dataAttrs?.['data-layout'] === 'grid' ? 'grid' : 'list'
+  const styles = recipe({ layout, context })
+  const [isOpen, setIsOpen] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const imageRef = useRef<HTMLImageElement>(null)
+
+  const imageDefault = image?.default
+  const imageThumbnail = image?.thumbnail ?? imageDefault
+  const hasImage = Boolean(imageThumbnail)
+
+  // An image can already be fully loaded before React attaches `onLoad` — it
+  // happens with cached responses and, on SSR pages, with images the browser
+  // started fetching from the server-rendered markup before hydration. In
+  // those cases `onLoad` never fires, leaving the Skeleton overlay covering an
+  // image that is actually present (matching the "url is there, hovering shows
+  // it, but it stays grey" reports). Reconcile against the DOM `complete` flag
+  // on every src change so a new image that isn't loaded yet shows the skeleton
+  // again instead of inheriting the previous image's loaded state.
+  useEffect(() => {
+    setLoaded(imageRef.current?.complete ?? false)
+  }, [imageThumbnail])
+
+  const thumbnail = (
+    <Image
+      ref={imageRef}
+      css={styles.image}
+      src={imageThumbnail}
+      alt={label}
+      onLoad={() => setLoaded(true)}
+      // Don't let a failed request hang as an eternal skeleton either.
+      onError={() => setLoaded(true)}
+    />
+  )
+
+  const media = hasImage ? (
+    <Box data-choice-media={dataAttrs?.['data-choice-media']}>
+      <Skeleton loading={!loaded} css={styles.skeleton}>
+        {canOpenImageModal && imageDefault ? (
+          // Named by the image's alt: a name of its own would also end up in the choice's accessible name.
+          <chakra.button
+            type='button'
+            aria-haspopup='dialog'
+            display='block'
+            w='full'
+            h='full'
+            borderTopRadius='lg'
+            focusVisibleRing='inside'
+            onClick={(event) => {
+              event.preventDefault()
+              setIsOpen(true)
+            }}
+          >
+            {thumbnail}
+          </chakra.button>
+        ) : (
+          thumbnail
+        )}
+      </Skeleton>
+    </Box>
+  ) : null
+
+  const body = (
+    <Box data-choice-body={dataAttrs?.['data-choice-body']} data-compact={compact ? '' : undefined}>
+      <Text css={styles.label} data-choice-label=''>
+        {label}
+      </Text>
+      {description ? <Box css={styles.description}>{markdown(description)}</Box> : null}
+    </Box>
+  )
+
+  if (controlType === 'checkbox') {
+    const idBase = dataAttrs?.['data-choice-id-base'] ?? `question-choice-${value}`
+    const inputName = dataAttrs?.['data-choice-field-name']
+
+    return (
+      <>
+        <Checkbox.Root
+          ids={{
+            root: `${idBase}-root`,
+            hiddenInput: `${idBase}-input`,
+            control: `${idBase}-control`,
+            label: `${idBase}-label`,
+          }}
+          css={styles.wrapper}
+          w='full'
+          data-state={selected ? 'checked' : 'unchecked'}
+          data-disabled={disabled ? 'true' : undefined}
+          data-choice-card={dataAttrs?.['data-choice-card']}
+          data-quiet={quiet ? '' : undefined}
+          data-layout={layout}
+          checked={selected}
+          disabled={disabled}
+          onCheckedChange={(details) => onSelect(Boolean(details.checked))}
+        >
+          <Checkbox.HiddenInput value={value} name={inputName} />
+          <Checkbox.Control data-choice-control={dataAttrs?.['data-choice-control']} data-control-type='checkbox'>
+            <Checkbox.Indicator />
+          </Checkbox.Control>
+          {media}
+          <Checkbox.Label as='div'>{body}</Checkbox.Label>
+        </Checkbox.Root>
+
+        {canOpenImageModal && imageDefault ? (
+          <Dialog.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)}>
+            <Dialog.Backdrop css={styles.modalOverlay} />
+            <Dialog.Positioner>
+              <Dialog.Content css={styles.modalContent} aria-label={label}>
+                <Dialog.CloseTrigger asChild>
+                  <CloseButton css={styles.modalClose} />
+                </Dialog.CloseTrigger>
+                <Dialog.Body css={styles.modalBody}>
+                  <Image src={imageDefault} alt={label} css={styles.modalImage} />
+                  <Text css={styles.modalLabel}>{label}</Text>
+                  {description ? <Box css={styles.modalDescription}>{markdown(description)}</Box> : null}
+                </Dialog.Body>
+              </Dialog.Content>
+            </Dialog.Positioner>
+          </Dialog.Root>
+        ) : null}
+      </>
+    )
+  }
+
+  return (
+    <>
+      <Box
+        as='label'
+        css={styles.wrapper}
+        w='full'
+        data-state={selected ? 'checked' : 'unchecked'}
+        data-disabled={disabled ? 'true' : undefined}
+        data-choice-card={dataAttrs?.['data-choice-card']}
+        data-quiet={quiet ? '' : undefined}
+        data-layout={layout}
+      >
+        <Box data-choice-control={dataAttrs?.['data-choice-control']} data-control-type='radio'>
+          <input
+            type={controlType}
+            value={value}
+            checked={selected}
+            disabled={disabled}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => onSelect(event.target.checked)}
+            className='peer'
+            style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
+          />
+          <Box data-choice-mark='' {...(context === 'card' ? cardMark(selected) : undefined)}>
+            {selected ? <Icon as={CheckIcon} boxSize={context === 'voter' ? '3.5' : '4'} /> : null}
+          </Box>
+        </Box>
+        {media}
+        {body}
+      </Box>
+
+      {canOpenImageModal && imageDefault ? (
+        <Dialog.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)}>
+          <Dialog.Backdrop css={styles.modalOverlay} />
+          <Dialog.Positioner>
+            <Dialog.Content css={styles.modalContent} aria-label={label}>
+              <Dialog.CloseTrigger asChild>
+                <CloseButton css={styles.modalClose} />
+              </Dialog.CloseTrigger>
+              <Dialog.Body css={styles.modalBody}>
+                <Image src={imageDefault} alt={label} css={styles.modalImage} />
+                <Text css={styles.modalLabel}>{label}</Text>
+                {description ? <Box css={styles.modalDescription}>{markdown(description)}</Box> : null}
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Dialog.Root>
+      ) : null}
+    </>
+  )
+}
 
 export const electionComponents: ComponentsPartialDefinition = {
   HR: defineComponent<'HR', BoxProps>((props) => <Box {...hrStyle} {...(props as BoxProps)} />),
@@ -154,213 +373,7 @@ export const electionComponents: ComponentsPartialDefinition = {
       )
     }
   ),
-  QuestionChoice: defineComponent<'QuestionChoice', BoxProps>(
-    ({
-      value,
-      label,
-      description,
-      image,
-      compact,
-      selected,
-      disabled,
-      controlType,
-      presentation,
-      canOpenImageModal,
-      dataAttrs,
-      onSelect,
-    }) => {
-      const recipe = useSlotRecipe({ key: 'QuestionChoice' })
-      const layout = dataAttrs?.['data-layout'] === 'grid' ? 'grid' : 'list'
-      const context = 'card'
-      const styles = recipe({ layout, context })
-      const [isOpen, setIsOpen] = useState(false)
-      const [loaded, setLoaded] = useState(false)
-      const imageRef = useRef<HTMLImageElement>(null)
-
-      const imageDefault = image?.default
-      const imageThumbnail = image?.thumbnail ?? imageDefault
-      const hasImage = Boolean(imageThumbnail)
-
-      // An image can already be fully loaded before React attaches `onLoad` — it
-      // happens with cached responses and, on SSR pages, with images the browser
-      // started fetching from the server-rendered markup before hydration. In
-      // those cases `onLoad` never fires, leaving the Skeleton overlay covering an
-      // image that is actually present (matching the "url is there, hovering shows
-      // it, but it stays grey" reports). Reconcile against the DOM `complete` flag
-      // on every src change so a new image that isn't loaded yet shows the skeleton
-      // again instead of inheriting the previous image's loaded state.
-      useEffect(() => {
-        setLoaded(imageRef.current?.complete ?? false)
-      }, [imageThumbnail])
-
-      const thumbnail = (
-        <Image
-          ref={imageRef}
-          css={styles.image}
-          src={imageThumbnail}
-          alt={label}
-          onLoad={() => setLoaded(true)}
-          // Don't let a failed request hang as an eternal skeleton either.
-          onError={() => setLoaded(true)}
-        />
-      )
-
-      const media = hasImage ? (
-        <Box data-choice-media={dataAttrs?.['data-choice-media']}>
-          <Skeleton loading={!loaded} css={styles.skeleton}>
-            {canOpenImageModal && imageDefault ? (
-              // Named by the image's alt: a name of its own would also end up in the choice's accessible name.
-              <chakra.button
-                type='button'
-                aria-haspopup='dialog'
-                display='block'
-                w='full'
-                h='full'
-                borderTopRadius='lg'
-                focusVisibleRing='inside'
-                onClick={(event) => {
-                  event.preventDefault()
-                  setIsOpen(true)
-                }}
-              >
-                {thumbnail}
-              </chakra.button>
-            ) : (
-              thumbnail
-            )}
-          </Skeleton>
-        </Box>
-      ) : null
-
-      const body = (
-        <Box data-choice-body={dataAttrs?.['data-choice-body']} data-compact={compact ? '' : undefined}>
-          <Text css={styles.label} data-choice-label=''>
-            {label}
-          </Text>
-          {description ? <Box css={styles.description}>{markdown(description)}</Box> : null}
-        </Box>
-      )
-
-      if (controlType === 'checkbox') {
-        const idBase = dataAttrs?.['data-choice-id-base'] ?? `question-choice-${value}`
-        const inputName = dataAttrs?.['data-choice-field-name']
-
-        return (
-          <>
-            <Checkbox.Root
-              ids={{
-                root: `${idBase}-root`,
-                hiddenInput: `${idBase}-input`,
-                control: `${idBase}-control`,
-                label: `${idBase}-label`,
-              }}
-              css={styles.wrapper}
-              w='full'
-              data-state={selected ? 'checked' : 'unchecked'}
-              data-disabled={disabled ? 'true' : undefined}
-              data-choice-card={dataAttrs?.['data-choice-card']}
-              data-layout={layout}
-              checked={selected}
-              disabled={disabled}
-              onCheckedChange={(details) => onSelect(Boolean(details.checked))}
-            >
-              <Checkbox.HiddenInput value={value} name={inputName} />
-              <Checkbox.Control data-choice-control={dataAttrs?.['data-choice-control']} data-control-type='checkbox'>
-                <Checkbox.Indicator />
-              </Checkbox.Control>
-              {media}
-              <Checkbox.Label as='div'>{body}</Checkbox.Label>
-            </Checkbox.Root>
-
-            {canOpenImageModal && imageDefault ? (
-              <Dialog.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)}>
-                <Dialog.Backdrop css={styles.modalOverlay} />
-                <Dialog.Positioner>
-                  <Dialog.Content css={styles.modalContent} aria-label={label}>
-                    <Dialog.CloseTrigger asChild>
-                      <CloseButton css={styles.modalClose} />
-                    </Dialog.CloseTrigger>
-                    <Dialog.Body css={styles.modalBody}>
-                      <Image src={imageDefault} alt={label} css={styles.modalImage} />
-                      <Text css={styles.modalLabel}>{label}</Text>
-                      {description ? <Box css={styles.modalDescription}>{markdown(description)}</Box> : null}
-                    </Dialog.Body>
-                  </Dialog.Content>
-                </Dialog.Positioner>
-              </Dialog.Root>
-            ) : null}
-          </>
-        )
-      }
-
-      return (
-        <>
-          <Box
-            as='label'
-            css={styles.wrapper}
-            w='full'
-            data-state={selected ? 'checked' : 'unchecked'}
-            data-disabled={disabled ? 'true' : undefined}
-            data-choice-card={dataAttrs?.['data-choice-card']}
-            data-layout={layout}
-          >
-            <Box data-choice-control={dataAttrs?.['data-choice-control']} data-control-type='radio'>
-              <input
-                type={controlType}
-                value={value}
-                checked={selected}
-                disabled={disabled}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => onSelect(event.target.checked)}
-                className='peer'
-                style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
-              />
-              <Box
-                data-choice-mark=''
-                boxSize='icon.lg'
-                borderWidth={selected ? '[0]' : 'mark'}
-                borderColor='ballot.choice.ring'
-                borderRadius='full'
-                bg={selected ? 'colorPalette.solid' : 'transparent'}
-                color='accent.contrast'
-                // The input is invisible, so its keyboard focus is drawn here, as Chakra's radiomark draws it.
-                _peerFocusVisible={{
-                  outlineWidth: '{borderWidths.focusRing}',
-                  outlineStyle: 'solid',
-                  outlineColor: 'colorPalette.focusRing',
-                  outlineOffset: '{spacing.0.5}',
-                }}
-                display='flex'
-                alignItems='center'
-                justifyContent='center'
-              >
-                {selected ? <Icon as={CheckIcon} boxSize='4' /> : null}
-              </Box>
-            </Box>
-            {media}
-            {body}
-          </Box>
-
-          {canOpenImageModal && imageDefault ? (
-            <Dialog.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)}>
-              <Dialog.Backdrop css={styles.modalOverlay} />
-              <Dialog.Positioner>
-                <Dialog.Content css={styles.modalContent} aria-label={label}>
-                  <Dialog.CloseTrigger asChild>
-                    <CloseButton css={styles.modalClose} />
-                  </Dialog.CloseTrigger>
-                  <Dialog.Body css={styles.modalBody}>
-                    <Image src={imageDefault} alt={label} css={styles.modalImage} />
-                    <Text css={styles.modalLabel}>{label}</Text>
-                    {description ? <Box css={styles.modalDescription}>{markdown(description)}</Box> : null}
-                  </Dialog.Body>
-                </Dialog.Content>
-              </Dialog.Positioner>
-            </Dialog.Root>
-          ) : null}
-        </>
-      )
-    }
-  ),
+  QuestionChoice: defineComponent<'QuestionChoice', BoxProps>((props) => <ChoiceCard {...props} />),
   QuestionRankChoice: defineComponent<'QuestionRankChoice', BoxProps>(
     ({
       choice,

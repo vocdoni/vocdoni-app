@@ -8,14 +8,12 @@ export type ReceiptCode = {
   title: ReactNode
   /** The full vote id; the row shows it shortened, and in full on hover. */
   voteId: string
+  /** Where the voter checks this code: with it, the code is a link opening in a new tab. */
+  href?: string
 }
 
 export type ReceiptCodesProps = {
   items: ReceiptCode[]
-  /** Copies a code: with it, each code is a button. */
-  onCopy?: (item: ReceiptCode) => void
-  /** The copy button's accessible name for a row ("Copia el codi de Comptes anuals de 2025"). */
-  copyLabel?: (item: ReceiptCode) => string
 }
 
 /** A vote id as the receipt prints it: its first and last four characters ("a3f1…9c2e"). */
@@ -23,7 +21,7 @@ export const shortVoteId = (voteId: string, keep = 4) =>
   voteId.length <= keep * 2 + 1 ? voteId : `${voteId.slice(0, keep)}…${voteId.slice(-keep)}`
 
 /** One row per question with its shortened vote id (the receipt card's body). */
-export const ReceiptCodes = ({ items, onCopy, copyLabel }: ReceiptCodesProps) => {
+export const ReceiptCodes = ({ items }: ReceiptCodesProps) => {
   const styles = useSlotRecipe({ recipe: receiptCodesRecipe })()
   return (
     <Box as='ul' role='list' css={styles.root}>
@@ -32,16 +30,10 @@ export const ReceiptCodes = ({ items, onCopy, copyLabel }: ReceiptCodesProps) =>
           <Box as='span' css={styles.title}>
             {item.title}
           </Box>
-          {onCopy ? (
-            <chakra.button
-              type='button'
-              css={styles.code}
-              title={item.voteId}
-              aria-label={copyLabel?.(item)}
-              onClick={() => onCopy(item)}
-            >
+          {item.href ? (
+            <chakra.a href={item.href} target='_blank' rel='noopener noreferrer' css={styles.code} title={item.voteId}>
               {shortVoteId(item.voteId)}
-            </chakra.button>
+            </chakra.a>
           ) : (
             <Box as='span' css={styles.code} title={item.voteId}>
               {shortVoteId(item.voteId)}

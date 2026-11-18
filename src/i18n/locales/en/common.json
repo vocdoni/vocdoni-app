@@ -28,13 +28,7 @@
   },
   "appearance": "Appearance",
   "aside": {
-    "anonymous_receipt_gone": "Your receipt was shown when you voted and cannot be retrieved.",
-    "has_already_voted": "Your vote is properly cast",
-    "is_not_in_census": "You are not in the census",
-    "votes_one": "<span>1</span> <text>voter</text>",
-    "votes_other": "<span>{{ count }}</span> <text>voters</text>",
-    "votes_weight_one": "<span>1</span> <text>vote</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>votes</text>"
+    "anonymous_receipt_gone": "Your receipt was shown when you voted and cannot be retrieved."
   },
   "auth": {
     "showcase": {
@@ -961,7 +955,6 @@
         "title": "Private vote"
       }
     },
-    "census": "Census",
     "checkout": {
       "cancel_open": "Cancel the open payment",
       "check_again": "Check again",
@@ -1030,17 +1023,14 @@
         "draft": "Draft"
       }
     },
-    "created_by": "Created by",
     "date": {
       "ended": "Ended",
       "ends": "Ends",
-      "relative": "{{ date, relative(past: %time ago; future: in %time) }}",
       "relative_inline": "{{ status }} {{ date, relative(past: %time ago; future: in %time) }}",
       "starts": "Starts"
     },
     "extended_info": "Extended info",
     "is_invalid": "This process has wrong data, thus making it invalid",
-    "no_description": "No description provided",
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "A payment for a voting process using these members is still being processed. Try again once it completes.",
@@ -1106,16 +1096,9 @@
       "canceled": "Process canceled",
       "ended": "Ended",
       "paused": "Process paused",
-      "paused_description": "Voting is not possible right now",
       "results": "Results available",
       "unknown": "Unknown",
       "upcoming": "Upcoming"
-    },
-    "success_modal": {
-      "btn": "Close",
-      "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. You can verify it <verify>here</verify>.</p>",
-      "text_no_id": "<p>Your vote has been cast successfully.</p>",
-      "title": "Vote submitted!"
     },
     "summary": {
       "countdown": "{{days}}d : {{hours}}h : {{minutes}}m",
@@ -1137,19 +1120,10 @@
       "tech_verifiability": "<b>Verifiability:</b> any participant can check that their vote was correctly recorded and counted, without compromising vote secrecy.",
       "time_remaining": "Time remaining to vote",
       "time_until_start": "Time until start",
-      "view_summary": "Follow the process",
       "votes_cast_one": "{{votes}} vote cast",
       "votes_cast_other": "{{votes}} votes cast"
     },
-    "vote_failed": {
-      "close": "Close",
-      "none": "No answer was registered. Please try again.",
-      "partial": "Some answers were not registered. Vote again to send the remaining ones.",
-      "title": "Your vote could not be cast"
-    },
     "voters": "Voters",
-    "voting": "We are processing your vote. This process will take a few seconds. Please do not close or refresh this page.",
-    "voting_label": "Submitting your vote",
     "voting_method": {
       "approval": "Approval",
       "budget": "Budget allocation",
@@ -1664,6 +1638,164 @@
   "vote": {
     "anonymous_receipt": "Anonymous vote: save this receipt now, the platform cannot show it to you again.",
     "voted_title": "Your vote was successfully cast!"
+  },
+  "voter": {
+    "actions_label": "Vote actions",
+    "agenda": "Questions to vote on",
+    "answer": {
+      "ranked_item": "{{position}}. {{label}}"
+    },
+    "back": "Back",
+    "canceled": {
+      "body": "The organization has canceled this vote. You can't vote in it and there will be no results.",
+      "card_body": "Your vote won't be counted. If the organization calls the vote again, you'll get a new link.",
+      "card_title": "If you had already voted"
+    },
+    "checking": "Checking your details",
+    "closed": {
+      "not_cast": "Your vote was not recorded before the vote closed.",
+      "partly_cast_one": "Only {{count}} of your {{total}} answers was recorded before the vote closed.",
+      "partly_cast_other": "Only {{count}} of your {{total}} answers were recorded before the vote closed.",
+      "partly_unconfirmed_one": "{{count}} of your {{total}} answers was confirmed as recorded. The rest could not be confirmed before the vote closed and may have been recorded too: check your vote to find out.",
+      "partly_unconfirmed_other": "{{count}} of your {{total}} answers were confirmed as recorded. The rest could not be confirmed before the vote closed and may have been recorded too: check your vote to find out.",
+      "sentence": "The vote closed on {{date}} at {{time}}.",
+      "turnout_one": "{{count}} of {{total}} people voted.",
+      "turnout_other": "{{count}} of {{total}} people voted.",
+      "turnout_count_one": "{{count}} person voted.",
+      "turnout_count_other": "{{count}} people voted.",
+      "unconfirmed": "Your vote could not be confirmed before the vote closed. It may have been recorded: check your vote to find out."
+    },
+    "code": {
+      "label": "One-time code",
+      "resend": "Didn't get it? <resend>Send it again</resend>.",
+      "resent": "We've sent you a new code.",
+      "sent_to": "We sent it to {{contact}}.",
+      "spam_hint": "If you chose to receive it by email, please check your spam folder.",
+      "title": "Enter the code we sent you"
+    },
+    "continue": "Continue",
+    "credit": {
+      "brand": "Vocdoni",
+      "text": "Vote run with"
+    },
+    "identify": {
+      "failed": "We could not identify you. Try again in a moment.",
+      "field_required": "Fill in this field.",
+      "help": "Identify yourself to vote.",
+      "mismatch": "We found no one with these details in this vote's census. Check them and try again.",
+      "retry": "Try again",
+      "session_expired": "Your session expired. Identify yourself again.",
+      "terms": "I have read and accept the <terms>terms</terms> and the <privacy>privacy policy</privacy>.",
+      "terms_required": "Accept the terms to continue."
+    },
+    "language": {
+      "cancel": "Keep voting",
+      "confirm": "Change language",
+      "confirm_body": "Changing language starts again: you will identify yourself and answer again.",
+      "confirm_title": "Change language?",
+      "label": "Language: {{language}}"
+    },
+    "not_eligible": {
+      "body": "You identified yourself correctly, but you're not on the list of people who can vote in it.",
+      "card_body": "Talk to {{organization}}. Only the organization can add you to the census.",
+      "card_title": "Think it's a mistake?",
+      "title": "You're not entitled to vote in this vote"
+    },
+    "not_you": "Not you? <exit>Sign out</exit>",
+    "paused": {
+      "body": "The organization has paused the vote for now. You can't vote right now.",
+      "card_body": "This page updates by itself when it resumes. The vote closes on {{date}} at {{time}}.",
+      "card_title": "Come back in a while",
+      "notice_body": "Don't close the page: you can continue when it resumes.",
+      "notice_title": "The vote has been paused for now."
+    },
+    "progress": {
+      "question": "Question {{current}} of {{total}}",
+      "review": "Review"
+    },
+    "question": {
+      "blank": "Blank vote",
+      "can_leave": "You can leave it like this.",
+      "chosen_one": "{{count}} of {{max}} chosen.",
+      "chosen_other": "{{count}} of {{max}} chosen.",
+      "help_approval": "Choose every option you approve of.",
+      "help_exact_one": "Choose {{count}} option.",
+      "help_exact_other": "Choose {{count}} options.",
+      "help_multiple_one": "Choose up to {{count}} option.",
+      "help_multiple_other": "Choose up to {{count}} options.",
+      "help_range": "Choose between {{min}} and {{max}} options.",
+      "help_ranked": "Tap them in order of preference. Tap one again to remove it.",
+      "help_single": "Choose one answer.",
+      "missing_one": "{{count}} left.",
+      "missing_other": "{{count}} left.",
+      "rank_all": "Rank them all",
+      "rank_position": "In place {{position}} of {{total}}. Tap to remove it.",
+      "rank_unranked": "Not ranked yet. Tap to put it in place {{position}}."
+    },
+    "rail": {
+      "review": "Review and cast your vote"
+    },
+    "receipt": {
+      "card_note_one": "It lets you check your vote was counted, without revealing what you voted.",
+      "card_note_other": "One code per answer. They let you check they were counted, without revealing what you voted.",
+      "card_title": "Your receipt",
+      "help_one": "Checked: your answer is in the record. You can close the page now.",
+      "help_other": "Checked: the {{count}} answers are in the record. You can close the page now.",
+      "results_later": "The results will be published right here on {{date}} at {{time}}.",
+      "title": "Vote cast. Thank you."
+    },
+    "results": {
+      "check_vote": "Check your vote",
+      "kicker": "Results",
+      "show": "Show the results"
+    },
+    "review": {
+      "cast": "Cast your vote",
+      "change": "Change",
+      "change_label": "Change your answer to {{question}}",
+      "kicker": "Last step",
+      "note": "Once cast, it can't be changed.",
+      "retry": "Try again",
+      "title": "This is what you'll vote",
+      "weight_label": "Your vote's weight",
+      "weight_value": "Your vote counts {{weight}}"
+    },
+    "sending": {
+      "authorizing": "Authorizing the vote",
+      "confirming_one": "Confirming it arrived",
+      "confirming_other": "Confirming they arrived",
+      "hint": "Don't close this page. If the connection drops, we'll send it again on our own.",
+      "sending_one": "Sending the answer",
+      "sending_other": "Sending the {{count}} answers",
+      "title": "We're recording your vote"
+    },
+    "sign_out": "Sign out",
+    "status": {
+      "canceled": "Canceled",
+      "open_until": "Open until {{date}} at {{time}}",
+      "paused": "Paused"
+    },
+    "unavailable": {
+      "body": "This page will try again on its own.",
+      "title": "This vote can't be shown right now"
+    },
+    "unsupported": {
+      "body": "It can't be voted from this page yet.",
+      "title": "This vote is held question by question"
+    },
+    "upcoming": {
+      "card_body": "Come back to this page once it opens.",
+      "card_title": "You can't vote yet",
+      "sentence": "The vote opens on {{startDate}} at {{startTime}} and closes on {{endDate}} at {{endTime}}."
+    },
+    "voted": {
+      "body": "You can't vote again.",
+      "title": "You have already voted"
+    },
+    "welcome": {
+      "lead": "These are the questions of this vote.",
+      "start": "Start voting"
+    }
   },
   "voter_anonymity": "Voter anonymity",
   "voter_auth": {

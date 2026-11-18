@@ -2,6 +2,7 @@ import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-quer
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { AuthRequest, OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useElectionAuth } from '@vocdoni/react-components'
+import type { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { useOptionalCspAuthContext } from './CSPStepsProvider'
 
@@ -43,72 +44,102 @@ const retryAfterSeconds = (body: unknown): number | undefined => {
   return typeof retryAfter === 'number' && retryAfter > 0 ? retryAfter : undefined
 }
 
-// Maps the SaaS CSP auth error codes to translated, voter-facing messages. Any
-// other failure keeps the API's own message.
-const useTranslateCspError = () => {
-  const { t } = useTranslation()
-  const hasPassword = !!useOptionalCspAuthContext()?.authFields.includes('password')
+/** A failed match (unknown participant, wrong contact or password): every field is suspect, none is named. */
+export const isCspMismatch = (error: unknown): boolean =>
+  error instanceof VocdoniApiError && (error.code === 40029 || error.code === 40802)
 
-  return (error: unknown): Error => {
-    if (error instanceof VocdoniApiError) {
-      switch (error.code) {
-        // 40802 covers both an unknown participant and a contact mismatch; older backends send 40029.
-        case 40029:
-        case 40802:
-          // A wrong password is answered like an unknown participant (no membership oracle), so with a
-          // password the message must not blame the password, or any single field, specifically.
-          if (hasPassword) {
-            return new Error(
-              t('csp.errors.credentials_or_password_incorrect', {
-                defaultValue:
-                  "We couldn't verify your identity. Check your credentials and your password and try again.",
-              })
-            )
-          }
-          return new Error(
-            t('csp.errors.participant_not_found', {
-              defaultValue: 'The voter is not listed in the census, or the provided credentials are incorrect.',
-            })
-          )
-        case 40017: {
-          const retryAfter = retryAfterSeconds(error.body)
-          if (retryAfter === undefined) {
-            return new Error(
-              t('csp.errors.too_many_attempts', { defaultValue: 'Too many attempts. Please try again later.' })
-            )
-          }
-          if (retryAfter < 3600) {
-            return new Error(
-              t('csp.errors.too_many_attempts_minutes', {
-                count: Math.max(1, Math.ceil(retryAfter / 60)),
-                defaultValue_one: 'Too many attempts. Please try again in {{count}} minute.',
-                defaultValue_other: 'Too many attempts. Please try again in {{count}} minutes.',
-              })
-            )
-          }
-          return new Error(
-            t('csp.errors.too_many_attempts_hours', {
-              count: Math.ceil(retryAfter / 3600),
-              defaultValue_one: 'Too many attempts. Please try again in {{count}} hour.',
-              defaultValue_other: 'Too many attempts. Please try again in {{count}} hours.',
+/** A CSP auth failure as the voter reads it, and whether it was one of the refusals worded here. */
+export type TranslatedCspError = { message: string; known: boolean }
+
+/**
+ * Maps the SaaS CSP auth error codes to translated, voter-facing messages (`known: true`). Any other failure keeps
+ * the API's own message with `known: false`, so a screen can decide not to show it. With `hasPassword` a failed match
+ * does not blame any single field.
+ */
+export const translateCspError = (
+  error: unknown,
+  t: TFunction,
+  { hasPassword = false }: { hasPassword?: boolean } = {}
+): TranslatedCspError => {
+  const known = (message: string): TranslatedCspError => ({ message, known: true })
+  if (error instanceof VocdoniApiError) {
+    switch (error.code) {
+      // 40802 covers both an unknown participant and a contact mismatch; older backends send 40029.
+      case 40029:
+      case 40802:
+        // A wrong password is answered like an unknown participant (no membership oracle), so with a
+        // password the message must not blame the password, or any single field, specifically.
+        if (hasPassword) {
+          return known(
+            t('csp.errors.credentials_or_password_incorrect', {
+              defaultValue: "We couldn't verify your identity. Check your credentials and your password and try again.",
             })
           )
         }
-        case 40103:
-          return new Error(
-            t('csp.errors.requests_on_cooldown', {
-              defaultValue: 'Too many requests. Please wait a moment before trying again.',
+        return known(
+          t('csp.errors.participant_not_found', {
+            defaultValue: 'The voter is not listed in the census, or the provided credentials are incorrect.',
+          })
+        )
+      case 40017: {
+        const retryAfter = retryAfterSeconds(error.body)
+        if (retryAfter === undefined) {
+          return known(
+            t('csp.errors.too_many_attempts', { defaultValue: 'Too many attempts. Please try again later.' })
+          )
+        }
+        if (retryAfter < 3600) {
+          return known(
+            t('csp.errors.too_many_attempts_minutes', {
+              count: Math.max(1, Math.ceil(retryAfter / 60)),
+              defaultValue_one: 'Too many attempts. Please try again in {{count}} minute.',
+              defaultValue_other: 'Too many attempts. Please try again in {{count}} minutes.',
             })
           )
-        case 40801:
-          return new Error(
-            t('csp.errors.zero_voting_weight', {
-              defaultValue: "You don't have enough voting power to access the election.",
-            })
-          )
+        }
+        return known(
+          t('csp.errors.too_many_attempts_hours', {
+            count: Math.ceil(retryAfter / 3600),
+            defaultValue_one: 'Too many attempts. Please try again in {{count}} hour.',
+            defaultValue_other: 'Too many attempts. Please try again in {{count}} hours.',
+          })
+        )
       }
+      case 40103:
+        return known(
+          t('csp.errors.requests_on_cooldown', {
+            defaultValue: 'Too many requests. Please wait a moment before trying again.',
+          })
+        )
+      case 40801:
+        return known(
+          t('csp.errors.zero_voting_weight', {
+            defaultValue: "You don't have enough voting power to access the election.",
+          })
+        )
     }
+  }
+  return { message: error instanceof Error ? error.message : String(error), known: false }
+}
 
+/** A refusal `translateCspError` recognised: the mutations below throw it, so a screen can tell it from a raw one. */
+export class KnownCspError extends Error {}
+
+/** `translateCspError` with the page's `t` and whether the census asks for a password. */
+export const useCspErrorDetails = () => {
+  const { t } = useTranslation()
+  const hasPassword = !!useOptionalCspAuthContext()?.authFields.includes('password')
+  return (error: unknown): TranslatedCspError => translateCspError(error, t, { hasPassword })
+}
+
+// The dialog's form of `translateCspError`: a recognised refusal as a `KnownCspError` with its message; any other
+// failure is passed on as it came (an Error), keeping the API's own message.
+const useTranslateCspError = () => {
+  const details = useCspErrorDetails()
+
+  return (error: unknown): Error => {
+    const { message, known } = details(error)
+    if (known) return new KnownCspError(message)
     return error instanceof Error ? error : new Error(String(error))
   }
 }
@@ -116,7 +147,7 @@ const useTranslateCspError = () => {
 // Both auth steps are keyed under one prefix so their in-flight state outlives
 // the dialog that started them: closing the modal unmounts the step (and its
 // mutation observer), but not the request.
-const cspAuthMutationKey = ['csp', 'auth']
+export const cspAuthMutationKey = ['csp', 'auth']
 
 // Step 0 — identify the participant against the process census. For auth-only
 // censuses (no 2FA fields) the provider already marks the voter connected.

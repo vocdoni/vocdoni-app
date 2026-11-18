@@ -20,6 +20,17 @@ import {
   P_ENDED,
   P_ONGOING,
   P_QBQ,
+  RELAY_PENDING,
+  V_2FA,
+  V_CHECKING,
+  V_LIVE,
+  V_NOT_IN,
+  V_PAUSED,
+  V_SECRET,
+  V_VOTED,
+  V_WEIGHTED,
+  VOTER_LIVE_PAUSED,
+  VOTER_MEMBER,
 } from './mock-saas.mjs'
 
 // At phone width these triggers sit behind a drawer or menu, so their states are desktop only.
@@ -50,6 +61,27 @@ const endVote = {
 const DRAFT_ROW = `article:has-text("New statutes") >> role=button[name=/^(More actions|Més accions)$/]`
 const vote = (slug, id, states) => ({ slug, path: `/admin/process/${id}`, ...(states && { states }) })
 const ballot = (slug, id) => ({ slug, path: `/admin/process/${id}/ballot` })
+
+// The voter page (spec AC3): each state walks the flow from identify, through the screens' structural handles.
+const onScreen = (kind, selector) => `[data-testid="voter-screen"][data-screen="${kind}"] ${selector}`
+const IDENTIFY = [
+  [['fill', 'input[name="memberNumber"]', VOTER_MEMBER]],
+  [['css', '[data-scope="checkbox"][data-part="control"]']],
+  [['css', onScreen('identify', 'button[type="submit"]')]],
+]
+const START = [...IDENTIFY, [['css', onScreen('welcome', '[data-scope="action-bar"] button')]]]
+const CONTINUE = [['css', '[data-testid="voter-continue"]']]
+const SINGLE = [...START, [['css', onScreen('question', 'label[data-choice-card]:has(input[value="0"])')]]]
+const MULTIPLE = [...SINGLE, CONTINUE, [['css', '[id="question-1-choice-0-control"]']]]
+const RANKED = [
+  ...MULTIPLE,
+  CONTINUE,
+  [['css', onScreen('question', 'button[data-choice-value="0"]')]],
+  [['css', onScreen('question', 'button[data-choice-value="1"]')]],
+]
+const REVIEW = [...RANKED, [['css', onScreen('question', 'button[data-choice-value="2"]')]], CONTINUE]
+const CAST = [...REVIEW, [['css', '[data-testid="voter-cast"]']]]
+const voter = (slug, id, states) => ({ slug, path: `/processes/${id}`, auth: false, ...(states && { states }) })
 
 export const ROUTES = [
   {
@@ -154,6 +186,46 @@ export const ROUTES = [
   // the Vocdoni mark and Fil blue (vote-ongoing is the plain vote of the main organisation).
   { slug: 'vote-branded', path: `/processes/${P_BRANDED}`, auth: false },
   { slug: 'vote-brand-off', path: `/processes/${P_BRAND_OFF}`, auth: false },
+  // The voter flow, one route per vote: the route itself is its first screen; run at 1440, 768 and 390 (README.md
+  // "Voter flow").
+  voter('voter-live', V_LIVE, [
+    { slug: 'identify-mismatch', open: [[['fill', 'input[name="memberNumber"]', '0000']], ...IDENTIFY.slice(1)] },
+    { slug: 'welcome', open: IDENTIFY },
+    { slug: 'question-single', open: SINGLE },
+    { slug: 'question-multiple', open: MULTIPLE },
+    { slug: 'question-ranked', open: RANKED },
+    { slug: 'review', open: REVIEW },
+    { slug: 'receipt', open: CAST },
+    // The organisation pauses the vote while the voter answers question 2: the next read says so.
+    {
+      slug: 'paused-mid-ballot',
+      open: [...MULTIPLE, [['mock', `/processes/${V_LIVE}`, VOTER_LIVE_PAUSED]], [['refocus']]],
+    },
+  ]),
+  { ...voter('voter-sending', V_LIVE, [{ slug: 'sending', open: CAST }]), mock: { '/jobs/job-relay': RELAY_PENDING } },
+  voter('voter-secret', V_SECRET, [
+    { slug: 'welcome', open: IDENTIFY },
+    { slug: 'review-failed', open: CAST },
+  ]),
+  voter('voter-2fa', V_2FA, [
+    {
+      slug: 'code',
+      open: [
+        [['fill', 'input[name="memberNumber"]', VOTER_MEMBER]],
+        [['fill', 'input[name="contact"]', 'anna@example.test']],
+        ...IDENTIFY.slice(1),
+      ],
+    },
+  ]),
+  voter('voter-weighted', V_WEIGHTED, [{ slug: 'review-weighted', open: REVIEW }]),
+  voter('voter-voted', V_VOTED, [{ slug: 'already-voted', open: IDENTIFY }]),
+  voter('voter-not-in', V_NOT_IN, [{ slug: 'not-eligible', open: IDENTIFY }]),
+  voter('voter-checking', V_CHECKING, [{ slug: 'checking', open: IDENTIFY }]),
+  voter('voter-upcoming', B_AAO_READY),
+  voter('voter-closed', B_AAO_ENDED),
+  voter('voter-paused', V_PAUSED, [{ slug: 'paused', open: IDENTIFY }]),
+  voter('voter-canceled', B_AAO_CANCELED),
+  voter('voter-unsupported', B_QBQ_LIVE),
 ]
 
 export const DEFAULT_VIEWPORTS = [1440, 390]

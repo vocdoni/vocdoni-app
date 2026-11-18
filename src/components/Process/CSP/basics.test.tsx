@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { AllProviders } from '~src/test-utils'
 import { CspAuthProvider } from './CSPStepsProvider'
-import { useCspAuth0, useCspAuth1, useCspAuthPending } from './basics'
+import { KnownCspError, translateCspError, useCspAuth0, useCspAuth1, useCspAuthPending } from './basics'
 
 const { auth0, auth1 } = vi.hoisted(() => ({ auth0: vi.fn(), auth1: vi.fn() }))
 
@@ -116,6 +116,45 @@ describe('useCspAuth0 errors', () => {
     const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
 
     await expect(result.current.mutateAsync({})).rejects.toThrow('unexpected failure')
+  })
+})
+
+describe('translateCspError', () => {
+  const t = ((key: string) => key) as never
+  const apiError = (code: number, data?: Record<string, unknown>) =>
+    new VocdoniApiError(400, { code, error: 'server error', data }, 'server error', code)
+
+  it.each([
+    [40029, 'csp.errors.participant_not_found'],
+    [40802, 'csp.errors.participant_not_found'],
+    [40017, 'csp.errors.too_many_attempts'],
+    [40103, 'csp.errors.requests_on_cooldown'],
+    [40801, 'csp.errors.zero_voting_weight'],
+  ])('says it recognised %i', (code, message) => {
+    expect(translateCspError(apiError(code), t)).toEqual({ message, known: true })
+  })
+
+  it('words a failed match without blaming a field when the census asks for a password', () => {
+    expect(translateCspError(apiError(40802), t, { hasPassword: true })).toEqual({
+      message: 'csp.errors.credentials_or_password_incorrect',
+      known: true,
+    })
+  })
+
+  it('keeps the raw message of anything else and says it did not recognise it', () => {
+    expect(translateCspError(apiError(50000), t)).toEqual({ message: 'server error', known: false })
+    expect(translateCspError(new TypeError('fetch failed'), t)).toEqual({ message: 'fetch failed', known: false })
+    expect(translateCspError('boom', t)).toEqual({ message: 'boom', known: false })
+  })
+
+  it('makes the mutations throw a recognised refusal as a KnownCspError and pass anything else on', async () => {
+    mockAuthError(40103)
+    const known = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
+    await expect(known.result.current.mutateAsync({})).rejects.toBeInstanceOf(KnownCspError)
+    const raw = new TypeError('fetch failed')
+    auth0.mockRejectedValue(raw)
+    const other = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
+    await expect(other.result.current.mutateAsync({})).rejects.toBe(raw)
   })
 })
 

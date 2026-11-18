@@ -27,11 +27,8 @@ export const ActionBar = ({ label, primary, secondary, note, credit }: ActionBar
         {secondary && <Box css={styles.secondary}>{secondary}</Box>}
         {primary && <Box css={styles.primary}>{primary}</Box>}
       </Box>
-      {note && (
-        <Box as='p' css={styles.note}>
-          {note}
-        </Box>
-      )}
+      {/* A block, not a paragraph: a block a screen puts in the note never lands in a `p` (conformance D-19). */}
+      {note && <Box css={styles.note}>{note}</Box>}
       <Box css={styles.credit}>{credit}</Box>
     </Box>
   )

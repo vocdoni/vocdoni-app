@@ -12,7 +12,7 @@ export type AgendaListItem = {
 }
 
 export type AgendaListProps = {
-  /** The list's label and accessible name: "Ordre del dia", "La següent". */
+  /** The list's label and accessible name: "Preguntes a votar", "La següent". */
   label: string
   items: AgendaListItem[]
 }

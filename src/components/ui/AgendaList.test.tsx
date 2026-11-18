@@ -5,7 +5,7 @@ describe('AgendaList', () => {
   it('is a list named by its label, with each title and its note', () => {
     render(
       <AgendaList
-        label='Ordre del dia'
+        label='Preguntes a votar'
         items={[
           { id: 'q1', number: '1', title: 'Comptes anuals de 2025' },
           { id: 'q2', number: '2', title: 'Dues vocalies', note: 'Fins a 2 persones' },
@@ -13,7 +13,7 @@ describe('AgendaList', () => {
       />
     )
 
-    const list = screen.getByRole('list', { name: 'Ordre del dia' })
+    const list = screen.getByRole('list', { name: 'Preguntes a votar' })
     const rows = within(list).getAllByRole('listitem')
     expect(rows).toHaveLength(2)
     expect(rows[0]).toHaveTextContent('Comptes anuals de 2025')

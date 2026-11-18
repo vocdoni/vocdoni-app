@@ -15,7 +15,16 @@ export const checkbox = defineSlotRecipe({
     },
   },
   variants: {
-    size: { sm: box, md: box, lg: box },
+    // The voter page's consent box: 22px, 4px corners, a 15px label.
+    size: {
+      sm: box,
+      md: box,
+      lg: box,
+      ballot: {
+        control: { boxSize: 'mark.ballot', p: '0', borderRadius: 'sm', '& svg': { boxSize: '3.5' } },
+        label: { textStyle: 'ballot-hint' },
+      },
+    },
     variant: {
       solid: {
         control: {
@@ -33,4 +42,13 @@ export const checkbox = defineSlotRecipe({
       },
     },
   },
+  // The voter's consent box rings like the ballot's marks (conformance pass 2, D-6): the mark shadow on a zero border,
+  // as a 1.5px border paints 1px at DPR 1. Checked, the variant's own edge wins.
+  compoundVariants: [
+    {
+      size: 'ballot',
+      variant: 'solid',
+      css: { control: { borderWidth: '[0]', boxShadow: 'mark.field' } },
+    },
+  ],
 })

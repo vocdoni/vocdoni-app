@@ -20,6 +20,17 @@ describe('VoterShell', () => {
     expect(screen.getByText('Votació feta amb')).toBeInTheDocument()
   })
 
+  it('carries the credit links in its foot', () => {
+    render(
+      <VoterShell name='Ateneu' credit={{ ...credit, links: <a href='/privacy'>Política de privacitat</a> }}>
+        <p>content</p>
+      </VoterShell>
+    )
+
+    const foot = screen.getByRole('contentinfo')
+    expect(within(foot).getByRole('link', { name: 'Política de privacitat' })).toBeInTheDocument()
+  })
+
   it('shows the organisation logo instead of the symbol when given', () => {
     render(
       <VoterShell name='Ateneu de Vallnova' logo={<img alt='Ateneu de Vallnova' src='logo.png' />} credit={credit}>
@@ -50,7 +61,7 @@ describe('VoterShell', () => {
         head={{ title: 'Assemblea General Ordinària 2026', status: <span>Oberta fins dijous</span> }}
         progress={<div>Pregunta 1 de 4</div>}
         rail={<ol aria-label='steps' />}
-        railLabel='Ordre del dia'
+        railLabel='Preguntes a votar'
         column='rail'
         credit={credit}
       >
@@ -61,7 +72,7 @@ describe('VoterShell', () => {
     const strip = document.querySelector('[data-part="strip"]') as HTMLElement
     expect(within(strip).getByText('Assemblea General Ordinària 2026')).toBeInTheDocument()
     expect(within(strip).getByText('Pregunta 1 de 4')).toBeInTheDocument()
-    const rail = screen.getByRole('complementary', { name: 'Ordre del dia' })
+    const rail = screen.getByRole('complementary', { name: 'Preguntes a votar' })
     expect(within(rail).getByText('Assemblea General Ordinària 2026')).toBeInTheDocument()
     expect(within(rail).getByText('Oberta fins dijous')).toBeInTheDocument()
     expect(within(rail).getByRole('list', { name: 'steps' })).toBeInTheDocument()
@@ -85,5 +96,30 @@ describe('VoterCredit', () => {
 
     expect(screen.getByText('Votació feta amb')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'Vocdoni' })).toBeInTheDocument()
+  })
+
+  it('puts the links after the wordmark, on the same line (owner ruling R18)', () => {
+    render(<VoterCredit {...credit} links={<a href='/terms'>Termes d'ús</a>} />)
+
+    const line = screen.getByText('Votació feta amb').parentElement as HTMLElement
+    const link = within(line).getByRole('link', { name: "Termes d'ús" })
+    const wordmark = within(line).getByRole('img', { name: 'Vocdoni' })
+    expect(wordmark.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('renders the same inside the shell, where it takes the styles the shell resolved, as on its own', () => {
+    const alone = render(<VoterCredit {...credit} />)
+    const aloneClass = screen.getByText('Votació feta amb').parentElement?.className
+    alone.unmount()
+    render(
+      <VoterShell name='Ateneu' credit={credit}>
+        <VoterCredit {...credit} />
+      </VoterShell>
+    )
+
+    const inShell = within(screen.getByRole('main')).getByText('Votació feta amb').parentElement
+    const inFoot = within(screen.getByRole('contentinfo')).getByText('Votació feta amb').parentElement
+    expect(inShell?.className).toBe(aloneClass)
+    expect(inFoot?.className).toBe(aloneClass)
   })
 })

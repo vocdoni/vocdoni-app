@@ -392,6 +392,21 @@ const langTag = defineStyle({
   _expanded: { bg: 'state.hover.bg' },
 })
 
+// The voter's top-bar link ("Surt"): plain text like the board's links, 14px medium in the muted ink, ink on hover, no
+// box and no sides, with the focus ring of every button. Used with no `size`: the default size's height, sides and
+// text are replaced here. Its hit area still reaches 44px (`touchTarget`).
+const topbar = defineStyle({
+  ...touchTarget,
+  h: 'auto',
+  minW: '0',
+  px: '0',
+  bg: 'transparent',
+  color: 'fg.muted',
+  textStyle: 'topbar-link',
+  _hover: { color: 'fg' },
+  _expanded: { color: 'fg' },
+})
+
 // A control drawn as a small tag (the language tag): 13px medium on a 22px line with 6px sides, at every width.
 const tag = defineStyle({ h: 'auto', minW: '0', px: '1.5', gap: '1', textStyle: 'topbar-lang' })
 
@@ -423,6 +438,7 @@ export const Button = defineRecipe({
       floating,
       whatsapp,
       'lang-tag': langTag,
+      topbar,
     },
     // An open map, so the compound variants below can name Chakra's own sizes. `row` is the small action inside a
     // list row (a question's "Open"): 40px with 14px sides below `lg`, 28px with 10px sides and 13px text from `lg`.

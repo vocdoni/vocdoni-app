@@ -28,15 +28,7 @@
   },
   "appearance": "Aparência",
   "aside": {
-    "anonymous_receipt_gone": "O teu comprovativo foi mostrado quando votaste e não pode ser recuperado.",
-    "has_already_voted": "O teu voto foi registado corretamente",
-    "is_not_in_census": "Não constas da lista de participantes",
-    "votes_one": "<span>{{ count }}</span> <text>votante</text>",
-    "votes_many": "<span>{{ count }}</span> <text>votantes</text>",
-    "votes_other": "<span>{{ count }}</span> <text>votantes</text>",
-    "votes_weight_one": "<span>{{ count }}</span> <text>voto</text>",
-    "votes_weight_many": "<span>{{ count }}</span> <text>votos</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>"
+    "anonymous_receipt_gone": "O teu comprovativo foi mostrado quando votaste e não pode ser recuperado."
   },
   "auth": {
     "showcase": {
@@ -982,7 +974,6 @@
         "title": "Voto privado"
       }
     },
-    "census": "Lista de participantes",
     "checkout": {
       "cancel_open": "Cancelar o pagamento em curso",
       "check_again": "Verificar novamente",
@@ -1052,17 +1043,14 @@
         "draft": "Rascunho"
       }
     },
-    "created_by": "Criado por",
     "date": {
       "ended": "Terminado",
       "ends": "Termina",
-      "relative": "{{ date, relative(past: há %time; future: dentro de %time) }}",
       "relative_inline": "{{ status }} {{ date, relative(past: há %time; future: dentro de %time) }}",
       "starts": "Começa"
     },
     "extended_info": "Informações detalhadas",
     "is_invalid": "Este processo contém dados incorretos, sendo por isso inválido",
-    "no_description": "Não foi fornecida descrição",
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "O pagamento de um processo de votação que usa estes membros ainda está a ser processado. Tenta novamente quando terminar.",
@@ -1129,16 +1117,9 @@
       "canceled": "Processo cancelado",
       "ended": "Terminado",
       "paused": "Processo em pausa",
-      "paused_description": "Não é possível votar de momento",
       "results": "Resultados disponíveis",
       "unknown": "Desconhecido",
       "upcoming": "Por iniciar"
-    },
-    "success_modal": {
-      "btn": "Fechar",
-      "text": "<p>O teu voto foi submetido e armazenado de forma segura através da tecnologia do Vocdoni. <verify>Podes verificá-lo aqui</verify>.</p>",
-      "text_no_id": "<p>O teu voto foi submetido com sucesso.</p>",
-      "title": "Voto submetido!"
     },
     "summary": {
       "countdown": "{{days}}d : {{hours}}h : {{minutes}}min",
@@ -1160,20 +1141,11 @@
       "tech_verifiability": "<b>Verificabilidade:</b> qualquer participante pode verificar que o seu voto foi corretamente registado e contado, sem comprometer o secretismo do voto.",
       "time_remaining": "Tempo restante para votar",
       "time_until_start": "Tempo até ao início",
-      "view_summary": "Acompanhar o processo",
       "votes_cast_one": "{{votes}} voto emitido",
       "votes_cast_many": "{{votes}} votos emitidos",
       "votes_cast_other": "{{votes}} votos emitidos"
     },
-    "vote_failed": {
-      "close": "Fechar",
-      "none": "Não foi registada nenhuma resposta. Tenta novamente.",
-      "partial": "Algumas respostas não foram registadas. Vota novamente para enviar as restantes.",
-      "title": "Não foi possível emitir o teu voto"
-    },
     "voters": "Votantes",
-    "voting": "Estamos a processar o teu voto. Este processo demorará alguns segundos. Não feches nem atualizes esta página.",
-    "voting_label": "A enviar o teu voto",
     "voting_method": {
       "approval": "Aprovação",
       "budget": "Afetação de orçamento",
@@ -1691,6 +1663,176 @@
   "vote": {
     "anonymous_receipt": "Voto anónimo: guarda este comprovativo agora, a plataforma não o pode voltar a mostrar.",
     "voted_title": "O teu voto foi registado com sucesso!"
+  },
+  "voter": {
+    "actions_label": "Ações da votação",
+    "agenda": "Perguntas a votar",
+    "answer": {
+      "ranked_item": "{{position}}. {{label}}"
+    },
+    "back": "Voltar",
+    "canceled": {
+      "body": "A organização cancelou esta votação. Não é possível votar e não haverá resultados.",
+      "card_body": "O teu voto não será contado. Se a organização a convocar de novo, receberás uma nova ligação.",
+      "card_title": "Se já tinhas votado"
+    },
+    "checking": "A verificar os teus dados",
+    "closed": {
+      "not_cast": "O teu voto não foi registado antes de a votação terminar.",
+      "partly_cast_one": "Só {{count}} das tuas {{total}} respostas foi registada antes de a votação terminar.",
+      "partly_cast_many": "Só {{count}} das tuas {{total}} respostas foram registadas antes de a votação terminar.",
+      "partly_cast_other": "Só {{count}} das tuas {{total}} respostas foram registadas antes de a votação terminar.",
+      "partly_unconfirmed_one": "Está confirmado que {{count}} das tuas {{total}} respostas está no registo. O resto não pôde ser confirmado antes de a votação terminar e pode ter sido registado também: verifica o teu voto para saberes.",
+      "partly_unconfirmed_many": "Está confirmado que {{count}} das tuas {{total}} respostas estão no registo. O resto não pôde ser confirmado antes de a votação terminar e pode ter sido registado também: verifica o teu voto para saberes.",
+      "partly_unconfirmed_other": "Está confirmado que {{count}} das tuas {{total}} respostas estão no registo. O resto não pôde ser confirmado antes de a votação terminar e pode ter sido registado também: verifica o teu voto para saberes.",
+      "sentence": "A votação terminou {{date}} às {{time}}.",
+      "turnout_one": "Votou {{count}} de {{total}} pessoas.",
+      "turnout_many": "Votaram {{count}} de {{total}} pessoas.",
+      "turnout_other": "Votaram {{count}} de {{total}} pessoas.",
+      "turnout_count_one": "Votou {{count}} pessoa.",
+      "turnout_count_many": "Votaram {{count}} pessoas.",
+      "turnout_count_other": "Votaram {{count}} pessoas.",
+      "unconfirmed": "Não foi possível confirmar o teu voto antes de a votação terminar. Pode ter sido registado: verifica o teu voto para saberes."
+    },
+    "code": {
+      "label": "Código de utilização única",
+      "resend": "Não te chegou? <resend>Envia-o de novo</resend>.",
+      "resent": "Enviámos-te um código novo.",
+      "sent_to": "Enviámo-lo para {{contact}}.",
+      "spam_hint": "Se optaste por recebê-lo por email, verifica também a pasta de spam.",
+      "title": "Escreve o código que te enviámos"
+    },
+    "continue": "Continuar",
+    "credit": {
+      "brand": "Vocdoni",
+      "text": "Votação feita com"
+    },
+    "identify": {
+      "failed": "Não conseguimos identificar-te. Tenta de novo daqui a pouco.",
+      "field_required": "Preenche este campo.",
+      "help": "Identifica-te para votar.",
+      "mismatch": "Não encontrámos ninguém com estes dados na lista de participantes desta votação. Revê-os e tenta de novo.",
+      "retry": "Tentar de novo",
+      "session_expired": "A sessão expirou. Identifica-te de novo.",
+      "terms": "Li e aceito as <terms>condições</terms> e a <privacy>política de privacidade</privacy>.",
+      "terms_required": "Aceita as condições para continuar."
+    },
+    "language": {
+      "cancel": "Continuar a votar",
+      "confirm": "Mudar de idioma",
+      "confirm_body": "Mudar de idioma recomeça tudo: terás de te identificar e responder de novo.",
+      "confirm_title": "Queres mudar de idioma?",
+      "label": "Idioma: {{language}}"
+    },
+    "not_eligible": {
+      "body": "Identificaste-te corretamente, mas não estás na lista de pessoas que podem votar.",
+      "card_body": "Fala com {{organization}}. Só a organização te pode adicionar à lista de participantes.",
+      "card_title": "Achas que é um erro?",
+      "title": "Não tens direito de voto nesta votação"
+    },
+    "not_you": "Não és tu? <exit>Terminar sessão</exit>",
+    "paused": {
+      "body": "A organização parou a votação temporariamente. Neste momento não é possível votar.",
+      "card_body": "Esta página atualiza-se sozinha quando a votação for retomada. A votação termina {{date}} às {{time}}.",
+      "card_title": "Volta daqui a pouco",
+      "notice_body": "Não feches a página: poderás continuar quando a votação for retomada.",
+      "notice_title": "A votação foi parada temporariamente."
+    },
+    "progress": {
+      "question": "Pergunta {{current}} de {{total}}",
+      "review": "Revisão"
+    },
+    "question": {
+      "blank": "Voto em branco",
+      "can_leave": "Podes deixar assim.",
+      "chosen_one": "{{count}} de {{max}} escolhida.",
+      "chosen_many": "{{count}} de {{max}} escolhidas.",
+      "chosen_other": "{{count}} de {{max}} escolhidas.",
+      "help_approval": "Escolhe todas as opções que aprovas.",
+      "help_exact_one": "Escolhe {{count}} opção.",
+      "help_exact_many": "Escolhe {{count}} opções.",
+      "help_exact_other": "Escolhe {{count}} opções.",
+      "help_multiple_one": "Escolhe até {{count}} opção.",
+      "help_multiple_many": "Escolhe até {{count}} opções.",
+      "help_multiple_other": "Escolhe até {{count}} opções.",
+      "help_range": "Escolhe entre {{min}} e {{max}} opções.",
+      "help_ranked": "Toca-as por ordem de preferência. Toca de novo numa para a retirar.",
+      "help_single": "Escolhe uma resposta.",
+      "missing_one": "Falta {{count}}.",
+      "missing_many": "Faltam {{count}}.",
+      "missing_other": "Faltam {{count}}.",
+      "rank_all": "Ordena-as todas",
+      "rank_position": "Na posição {{position}} de {{total}}. Toca para a retirar.",
+      "rank_unranked": "Ainda sem posição. Toca para a colocar na posição {{position}}."
+    },
+    "rail": {
+      "review": "Rever e emitir o voto"
+    },
+    "receipt": {
+      "card_note_one": "Serve para verificar que o teu voto foi contado, sem revelar em que votaste.",
+      "card_note_many": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que votaste.",
+      "card_note_other": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que votaste.",
+      "card_title": "O teu comprovativo",
+      "help_one": "Verificado: a resposta está no registo. Já podes fechar a página.",
+      "help_many": "Verificado: as {{count}} respostas estão no registo. Já podes fechar a página.",
+      "help_other": "Verificado: as {{count}} respostas estão no registo. Já podes fechar a página.",
+      "results_later": "Os resultados serão publicados aqui mesmo {{date}} às {{time}}.",
+      "title": "Voto emitido. Obrigado."
+    },
+    "results": {
+      "check_vote": "Verificar o teu voto",
+      "kicker": "Resultados",
+      "show": "Mostrar os resultados"
+    },
+    "review": {
+      "cast": "Emitir o voto",
+      "change": "Alterar",
+      "change_label": "Alterar a resposta a {{question}}",
+      "kicker": "Último passo",
+      "note": "Depois de emitido, não pode ser alterado.",
+      "retry": "Tentar de novo",
+      "title": "Isto é o que vais votar",
+      "weight_label": "Peso do teu voto",
+      "weight_value": "O teu voto vale {{weight}}"
+    },
+    "sending": {
+      "authorizing": "A autorizar o voto",
+      "confirming_one": "A confirmar que chegou",
+      "confirming_many": "A confirmar que chegaram",
+      "confirming_other": "A confirmar que chegaram",
+      "hint": "Não feches esta página. Se a ligação cair, voltaremos a enviá-lo automaticamente.",
+      "sending_one": "A enviar a resposta",
+      "sending_many": "A enviar as {{count}} respostas",
+      "sending_other": "A enviar as {{count}} respostas",
+      "title": "Estamos a registar o teu voto"
+    },
+    "sign_out": "Terminar sessão",
+    "status": {
+      "canceled": "Cancelada",
+      "open_until": "Aberta até {{date}} às {{time}}",
+      "paused": "Em pausa"
+    },
+    "unavailable": {
+      "body": "Esta página vai tentar de novo automaticamente.",
+      "title": "Neste momento não é possível mostrar esta votação"
+    },
+    "unsupported": {
+      "body": "Ainda não é possível votar a partir desta página.",
+      "title": "Esta votação decorre pergunta a pergunta"
+    },
+    "upcoming": {
+      "card_body": "Volta a esta página quando abrir.",
+      "card_title": "Ainda não é possível votar",
+      "sentence": "A votação abre {{startDate}} às {{startTime}} e termina {{endDate}} às {{endTime}}."
+    },
+    "voted": {
+      "body": "Não é possível votar de novo.",
+      "title": "Já votaste"
+    },
+    "welcome": {
+      "lead": "Estas são as perguntas desta votação.",
+      "start": "Começar a votar"
+    }
   },
   "voter_anonymity": "Anonimato dos votantes",
   "voter_auth": {

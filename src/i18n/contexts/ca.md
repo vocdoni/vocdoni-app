@@ -42,7 +42,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | download | baixar | Or "descarregar" |
 | spreadsheet | full de càlcul | |
 | log in / sign in | iniciar sessió | Not "entrar" |
-| log out / sign out | tancar sessió | |
+| log out / sign out | tancar sessió | On the voter page (`voter.*` keys) the boards' words win: "Surt", "Identifica't", "votació" |
 | process | procés | In the context of a voting process |
 | results | resultats | |
 | cancel (a process) | cancel·lar | Note the "l·l" (ela geminada). For destructive/irreversible actions |

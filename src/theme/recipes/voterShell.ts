@@ -1,8 +1,15 @@
-import { defineSlotRecipe } from '@chakra-ui/react'
+import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 
 // Where the shell keeps clear of the phone's action bar (ui/ActionBar, recipe `questionDock` variant `ballot`) and
 // hands it the credit.
 const WITH_BAR = '&:has([data-scope="action-bar"][data-part="root"])'
+
+// The vote's status line in the strip and the rail head: a long date wraps inside the column instead of running past
+// it (conformance pass 2, R-2), the dot on the first line.
+const WRAPPING_STATUS = {
+  '& [data-scope="status"][data-part="root"]': { whiteSpace: 'normal', alignItems: 'flex-start' },
+  '& [data-scope="status"][data-part="indicator"]': { flexShrink: 0, mt: '1.5' },
+} satisfies SystemStyleObject
 
 // The voter page's frame (ui/VoterShell), boards V4Voter* and M4Voter*: the top bar, the vote's strip below `lg`, the
 // body with the agenda rail from `lg`, and the "made with Vocdoni" credit at the foot. The column's width from `lg`
@@ -24,7 +31,8 @@ export const VoterShell = defineSlotRecipe({
     'main',
     'foot',
     'credit',
-    'wordmark',
+    'made',
+    'links',
   ],
   base: {
     root: {
@@ -82,7 +90,7 @@ export const VoterShell = defineSlotRecipe({
       borderBottomWidth: 'hairline',
       borderColor: 'border',
     },
-    head: { display: 'flex', flexDirection: 'column', gap: '0.5' },
+    head: { display: 'flex', flexDirection: 'column', gap: '0.5', ...WRAPPING_STATUS },
     title: { textStyle: 'ballot-rail-title' },
     body: {
       display: 'flex',
@@ -103,6 +111,7 @@ export const VoterShell = defineSlotRecipe({
       flexShrink: 0,
     },
     railHead: {
+      ...WRAPPING_STATUS,
       display: 'flex',
       flexDirection: 'column',
       gap: '1',
@@ -122,10 +131,29 @@ export const VoterShell = defineSlotRecipe({
     },
     // The credit's row at the page's foot: 48px, centred.
     foot: { display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, h: '12' },
-    // "Votació feta amb" and the Vocdoni wordmark, 6px apart: 12px in the quiet ink, the wordmark 13px tall in ink. It
-    // never takes the vote's colour.
-    credit: { display: 'inline-flex', alignItems: 'center', gap: '1.5', textStyle: 'caption', color: 'fg.subtle' },
-    wordmark: { h: 'wordmark.credit', w: 'auto' },
+    // "Votació feta amb" with the Vocdoni wordmark, then the terms and privacy links (owner ruling R18), 12px apart:
+    // 12px in the quiet ink, the wordmark 13px tall in ink. It never takes the vote's colour. On a narrow phone the
+    // links wrap onto a second line as a unit, centred. No separator between the two groups: one drawn on either side
+    // was left dangling at a line's end or start whenever the links wrapped, so the gap alone separates them. The
+    // wordmark is sized here, so the svg carries no style of its own.
+    credit: {
+      display: 'inline-flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      justifyContent: 'center',
+      columnGap: '3',
+      rowGap: '0',
+      textStyle: 'caption',
+      color: 'fg.subtle',
+      '& svg': { h: 'wordmark.credit', w: 'auto' },
+    },
+    // The words and the wordmark, kept together, 6px apart.
+    made: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '1.5',
+    },
+    links: {},
   },
   variants: {
     // The column from `lg`: beside the rail (600px), or centred on its own: identification (440px), the one-time code

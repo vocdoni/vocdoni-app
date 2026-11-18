@@ -68,6 +68,8 @@ type PublicProcessPageData =
       /** Logo, colour and name the page paints, resolved here so the server and the client agree. */
       brand: ProcessBrand
       meta: PublicMeta
+      /** The instant of this read (ms): the voter page picks its time-dependent screen with it until hydration ends. */
+      now?: number
     }
   | {
       era: 'archive'
@@ -472,6 +474,7 @@ export const loadProcessPageData = async ({
     organization,
     brand: resolveProcessBrand(election, organization, language, env),
     meta: buildProcessMeta({ election, organization, canonicalUrl, language, alternates }),
+    now: Date.now(),
   }
 }
 

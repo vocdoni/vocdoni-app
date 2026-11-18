@@ -174,6 +174,10 @@ const spacing = defineTokens.spacing({
     gutter: { value: '72px' },
     dock: { value: '150px' },
     options: { value: '22px' },
+    // Above the agenda list on the welcome screen: the same 22px.
+    agenda: { value: '{spacing.ballot.options}' },
+    // The consent checkbox's 22px box under the top of its label's first line (15px on a 21.75px line).
+    mark: { value: '1px' },
   },
 })
 

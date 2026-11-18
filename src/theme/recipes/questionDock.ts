@@ -71,12 +71,16 @@ export const QuestionDock = defineSlotRecipe({
         actions: { gap: { base: '2.5', lg: '3' }, flexShrink: 0 },
         primary: { display: 'grid', flex: { base: '1 1 0', md: '0 0 auto' }, minW: '0' },
         secondary: { display: 'grid', flex: '0 0 auto' },
+        // The credit's row spans the bar's whole width (it sits inside the bar's 20px sides), 12px in from each
+        // edge, so the one-line credit of the boards fits a 390px phone (conformance pass 2, R-1).
         credit: {
           display: { base: 'flex', md: 'none' },
           alignItems: 'center',
           justifyContent: 'center',
           h: 'ballot.credit',
           mt: '-1.5',
+          mx: '-5',
+          px: '3',
         },
       },
     },

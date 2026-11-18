@@ -25,6 +25,7 @@ import { useAppEnv } from '~src/app-env'
 import { hashMemberPassword } from '~utils/member-password'
 import { CSPStep0FormData, CSPStep0RequestData, useCspAuth0, useCspAuthPending, useIsCspAuthBusy } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
+import { buildCspAuthRequest } from './auth-request'
 import { getAuthFieldInputType, getAuthFieldLabel, getContactFieldLabel } from './fields'
 
 export const Step0Base = () => {
@@ -57,33 +58,7 @@ export const Step0Base = () => {
     if (submitting.current || isAuthBusy()) return
     submitting.current = true
 
-    const trimmed: CSPStep0FormData = Object.fromEntries(
-      Object.entries(values).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
-    )
-    const form: CSPStep0RequestData = {}
-
-    // Add auth fields to the form
-    authFields.forEach((field) => {
-      if (trimmed[field]) {
-        form[field] = trimmed[field]
-      }
-    })
-
-    // Handle 2FA field - process based on available methods
-    if (trimmed.contact) {
-      if (twoFaFields.includes('email') && twoFaFields.includes('phone')) {
-        // Both are supported, determine based on content
-        if (trimmed.contact.includes('@')) {
-          form.email = trimmed.contact
-        } else {
-          form.phone = trimmed.contact
-        }
-      } else if (twoFaFields.includes('email')) {
-        form.email = trimmed.contact
-      } else if (twoFaFields.includes('phone')) {
-        form.phone = trimmed.contact
-      }
-    }
+    const form = buildCspAuthRequest(values, authFields, twoFaFields) as CSPStep0RequestData
 
     const pushCrispUserFields = (fields: Record<string, string | undefined>) => {
       if (!crispWebsiteId || typeof window === 'undefined') {

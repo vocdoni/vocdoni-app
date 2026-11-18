@@ -22,17 +22,17 @@ pnpm ui:diff -- before after
 
 `pnpm ui:snapshot` options:
 
-| option                  | default       | what it does                                                              |
-| ----------------------- | ------------- | ------------------------------------------------------------------------- |
-| `--label <name>`        | required      | output folder: `.ui-snapshot/<name>/` (git-ignored; replaced on each run) |
-| `--routes a,b`          | all           | only these route slugs (see `routes.mjs`); their states come along        |
-| `--viewports 1440,390`  | `1440,390`    | widths; height is 900 (844 below 768)                                     |
-| `--modes light,dark`    | `light,dark`  | colour modes                                                              |
-| `--primary-color <hex>` | unset         | starts the app with `PRIMARY_COLOR`, to see a brand colour change         |
-| `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                  |
-| `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")           |
-| `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")        |
-| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                |
+| option                  | default       | what it does                                                                                     |
+| ----------------------- | ------------- | ------------------------------------------------------------------------------------------------ |
+| `--label <name>`        | required      | output folder: `.ui-snapshot/<name>/` (git-ignored; replaced on each run)                        |
+| `--routes a,b`          | all           | only these route slugs (see `routes.mjs`); their states come along                               |
+| `--viewports 1440,390`  | `1440,390`    | widths; height is 900 (844 below 768)                                                            |
+| `--modes light,dark`    | `light,dark`  | colour modes                                                                                     |
+| `--primary-color <hex>` | unset         | starts the app with `PRIMARY_COLOR`, to see a brand colour change                                |
+| `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                                         |
+| `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")                                  |
+| `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")                               |
+| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                                       |
 | `--lang ca`             | `en`          | opens `/<lang><path>`, for side-by-side checks against Catalan boards (stock theme, no `--a11y`) |
 
 `pnpm ui:diff -- <labelA> <labelB>` options: `--ignore width,height` drops properties from the
@@ -210,6 +210,25 @@ and changes nothing, and ending a question stamps its end time and final tally. 
 by hand: `MOCK_STATUS_BUSY=1` answers every status change with 503 (another change holds the lock) and
 `MOCK_SLOW_JOB_MS=150000` keeps a status job pending that long (the "still working" message after two minutes).
 The list endpoint pages by `page` and `limit` and, as the API, carries no per-question results.
+
+## Voter flow
+
+The `voter-*` routes render every screen of the voter page (spec AC3) with the boards' questions (`mock-saas.mjs`,
+"voter flow votes"). A state walks the flow from identify with three more step kinds: `['fill', selector, value]`
+types into a field, `['mock', pathname, body]` answers a mock path with that JSON from then on (in this page only) and
+`['refocus']` fires the page's focus event, so react-query refetches what is stale. The auth-only censuses accept the
+member number `A-1001`; any other number is a failed match. The main vote (`voter-live`) has a fictional description
+and the secret one (`voter-secret`) an inline header image, so identify and welcome show both. Run them at the boards'
+three widths, in Catalan to compare:
+
+```bash
+UI_SNAPSHOT_PORT=3009 pnpm ui:snapshot -- --label voter --viewports 1440,768,390 --modes light --lang ca \
+  --routes voter-live,voter-sending,voter-secret,voter-2fa,voter-weighted,voter-voted,voter-not-in,voter-checking,voter-upcoming,voter-closed,voter-paused,voter-canceled,voter-unsupported
+```
+
+`voter-checking` leaves the membership check unanswered on purpose: its capture waits out the settle timeouts (about
+30 s per width) and logs "network never idle". `paused-mid-ballot` pauses the vote in the browser's copy of the
+process read (`['mock', …]`) and refocuses the page.
 
 ## Known limits
 

@@ -531,15 +531,40 @@ const collectStyles = (props) => {
   return { props, styles, elements }
 }
 
-// Clicks the first visible match among the candidates of one step.
-const clickFirst = async (page, candidates) => {
-  for (const [role, name] of candidates) {
-    const loc = role === 'css' ? page.locator(name) : page.getByRole(role, { name })
+// Runs one step of a state. A candidate is `[role, name]` or `['css', selector]` (click the first visible match),
+// `['fill', selector, value]` (type into the first visible match), `['mock', pathname, body]` (from now on, answer that
+// mock path with this JSON in this page) or `['refocus']` (the page regains focus: react-query refetches what is stale).
+// How long a css or fill step waits for its target to show.
+const STEP_WAIT_MS = 8000
+
+const runStep = async (page, candidates) => {
+  for (const [role, name, value] of candidates) {
+    if (role === 'refocus') {
+      await page.evaluate(() => window.dispatchEvent(new Event('visibilitychange')))
+      return true
+    }
+    if (role === 'mock') {
+      await page.route(
+        (url) => url.port === String(MOCK_PORT) && url.pathname === name,
+        (request) => request.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(value) })
+      )
+      return true
+    }
+    const loc = role === 'css' || role === 'fill' ? page.locator(name) : page.getByRole(role, { name })
+    // A voter step often follows a screen change that waits on the mock (identify, the membership check, the cast):
+    // give its target a moment to show before deciding it is not there.
+    if (role === 'css' || role === 'fill') {
+      await loc
+        .first()
+        .waitFor({ state: 'visible', timeout: STEP_WAIT_MS })
+        .catch(() => {})
+    }
     const n = await loc.count()
     for (let i = 0; i < n; i++) {
       const el = loc.nth(i)
       if (await el.isVisible().catch(() => false)) {
-        await el.click({ timeout: 5000 })
+        if (role === 'fill') await el.fill(value, { timeout: 5000 })
+        else await el.click({ timeout: 5000 })
         return true
       }
     }
@@ -692,7 +717,7 @@ const main = async () => {
           const { context, page } = await visit({ route, width: 1440, mode: 'light' }).catch(() => ({}))
           if (!page) continue
           for (const state of route.states || []) {
-            for (const step of state.open) await clickFirst(page, step).catch(() => {})
+            for (const step of state.open) await runStep(page, step).catch(() => {})
             await page.waitForTimeout(500)
           }
           await context.close()
@@ -760,7 +785,7 @@ const main = async () => {
           const failedBefore = visited.record.failedRequests.length
           const warnings = []
           for (const step of state.open) {
-            if (!(await clickFirst(visited.page, step))) throw new Error(`no visible trigger for ${state.slug}`)
+            if (!(await runStep(visited.page, step))) throw new Error(`no visible trigger for ${state.slug}`)
           }
           await settle(visited.page, warnings)
           const elements = await save(visited.page, name, false)

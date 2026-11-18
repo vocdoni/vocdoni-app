@@ -1,4 +1,3 @@
-import userEvent from '@testing-library/user-event'
 import { render, screen } from '~src/test-utils'
 import { ReceiptCodes, shortVoteId } from './ReceiptCodes'
 
@@ -23,11 +22,14 @@ describe('ReceiptCodes', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
-  it('makes each code a named button when it can be copied', async () => {
-    const onCopy = vi.fn()
-    render(<ReceiptCodes items={items} onCopy={onCopy} copyLabel={(item) => `Copia el codi: ${item.title}`} />)
+  it('makes each code a link to its verification in a new tab when it has an address', () => {
+    const linked = items.map((item) => ({ ...item, href: `https://explorer.example/verify/${item.voteId}` }))
+    render(<ReceiptCodes items={linked} />)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Copia el codi: Dues vocalies' }))
-    expect(onCopy).toHaveBeenCalledWith(items[1])
+    const link = screen.getByRole('link', { name: '77b0…41da' })
+    expect(link).toHaveAttribute('href', 'https://explorer.example/verify/77b0aa11bb22cc3341da')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 })
