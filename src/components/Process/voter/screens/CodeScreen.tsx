@@ -1,8 +1,14 @@
 import { Alert, Button, chakra, PinInput } from '@chakra-ui/react'
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useCspAuthContext } from '~components/Process/CSP/CSPStepsProvider'
-import { useCspAuth1, useCspAuthPending, useCspResend, useIsCspAuthBusy } from '~components/Process/CSP/basics'
+import {
+  KnownCspError,
+  useCspAuth1,
+  useCspAuthPending,
+  useCspResend,
+  useIsCspAuthBusy,
+} from '~components/Process/CSP/basics'
 import { useVoterFlow } from '../flow-context'
 import { maskContact, textOf } from '../format'
 import {
@@ -61,7 +67,21 @@ export const CodeScreen = () => {
     }
   }
 
-  const errorMessage = validation ?? auth.error?.message ?? resend.error?.message
+  // A refusal the app words keeps its message; anything else is the SDK's own text, which the voter never sees:
+  // a generic sentence instead, and the error in the console for support.
+  const failure = auth.error ?? resend.error
+  const knownFailure = failure instanceof KnownCspError
+  useEffect(() => {
+    if (failure && !knownFailure) console.error('Voter code step failed:', failure)
+  }, [failure, knownFailure])
+  const failureMessage = !failure
+    ? undefined
+    : knownFailure
+      ? failure.message
+      : auth.error
+        ? t('csp.auth_failed')
+        : t('csp.step1.resend_failed')
+  const errorMessage = validation ?? failureMessage
 
   return (
     <VoterScreenFrame kind='code'>

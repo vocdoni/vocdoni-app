@@ -13,14 +13,20 @@ const csp = vi.hoisted(() => ({
     setCurrentStep: vi.fn(),
     resetFlow: vi.fn(),
   },
-  identify: { mutateAsync: vi.fn(), isPending: false, error: null as null | { mismatch: boolean; message: string } },
+  identify: {
+    mutateAsync: vi.fn(),
+    isPending: false,
+    error: null as null | { mismatch: boolean; message: string; known: boolean; cause?: unknown },
+  },
   auth1: { mutate: vi.fn(), error: null as null | Error },
+  KnownCspError: class KnownCspError extends Error {},
   resend: { mutateAsync: vi.fn(async () => undefined), error: null as null | Error },
 }))
 
 vi.mock('~components/Process/CSP/CSPStepsProvider', () => ({ useCspAuthContext: () => csp.context }))
 vi.mock('../use-voter-identify', () => ({ useVoterIdentify: () => csp.identify }))
 vi.mock('~components/Process/CSP/basics', () => ({
+  KnownCspError: csp.KnownCspError,
   useCspAuth1: () => csp.auth1,
   useCspResend: () => csp.resend,
   useCspAuthPending: () => false,
@@ -32,6 +38,8 @@ beforeEach(() => {
   csp.context.twoFaFields = []
   csp.identify.error = null
   csp.identify.mutateAsync.mockReset()
+  csp.auth1.error = null
+  csp.resend.error = null
 })
 
 describe('identify', () => {
@@ -49,7 +57,7 @@ describe('identify', () => {
   })
 
   it('a failed match shows the board sentence and marks every field, naming none', () => {
-    csp.identify.error = { mismatch: true, message: 'csp.errors.participant_not_found' }
+    csp.identify.error = { mismatch: true, message: 'csp.errors.participant_not_found', known: true }
     renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
     expect(screen.getByRole('alert')).toHaveTextContent('voter.identify.mismatch')
     expect(screen.getByRole('textbox', { name: /Member Number/ })).toHaveAttribute('aria-invalid', 'true')
@@ -58,14 +66,23 @@ describe('identify', () => {
 
   it('keeps the password variant and other refusals as today, marking no field for the latter', () => {
     csp.context.authFields = ['memberNumber', 'password']
-    csp.identify.error = { mismatch: true, message: 'csp.errors.credentials_or_password_incorrect' }
+    csp.identify.error = { mismatch: true, message: 'csp.errors.credentials_or_password_incorrect', known: true }
     const { unmount } = renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
     expect(screen.getByRole('alert')).toHaveTextContent('csp.errors.credentials_or_password_incorrect')
     unmount()
-    csp.identify.error = { mismatch: false, message: 'csp.errors.requests_on_cooldown' }
+    csp.identify.error = { mismatch: false, message: 'csp.errors.requests_on_cooldown', known: true }
     renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
     expect(screen.getByRole('alert')).toHaveTextContent('csp.errors.requests_on_cooldown')
     expect(screen.getByRole('textbox', { name: /Member Number/ })).not.toHaveAttribute('aria-invalid', 'true')
+  })
+
+  it('shows a recognised refusal as worded, whatever its text, and logs nothing', () => {
+    const logged = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    csp.identify.error = { mismatch: false, message: 'Too many attempts. Please try again in 3 days.', known: true }
+    renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
+    expect(screen.getByRole('alert')).toHaveTextContent('Too many attempts. Please try again in 3 days.')
+    expect(logged).not.toHaveBeenCalled()
+    logged.mockRestore()
   })
 
   it('asks for what is missing in the page, without the browser bubbles, and sends nothing', async () => {
@@ -82,11 +99,12 @@ describe('identify', () => {
 
   it('never shows the SDK message of an unknown failure: a generic sentence, the error for support', () => {
     const logged = vi.spyOn(console, 'error').mockImplementation(() => undefined)
-    csp.identify.error = { mismatch: false, message: 'fetch failed: ECONNRESET 10.0.0.3' }
+    const cause = new TypeError('fetch failed: ECONNRESET 10.0.0.3')
+    csp.identify.error = { mismatch: false, message: cause.message, known: false, cause }
     renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
     expect(screen.getByRole('alert')).toHaveTextContent('voter.identify.failed')
     expect(screen.queryByText(/ECONNRESET/)).toBeNull()
-    expect(logged).toHaveBeenCalledWith('Voter identification failed:', csp.identify.error)
+    expect(logged).toHaveBeenCalledWith('Voter identification failed:', cause)
     logged.mockRestore()
   })
 
@@ -96,7 +114,9 @@ describe('identify', () => {
       resources: {
         en: {
           common: {
-            voter: { identify: { terms: 'I accept the <terms>terms</terms> and the <privacy>privacy policy</privacy>.' } },
+            voter: {
+              identify: { terms: 'I accept the <terms>terms</terms> and the <privacy>privacy policy</privacy>.' },
+            },
             footer: { terms_and_privacy: '<link1>Terms of use</link1> & <link2>Privacy Policy</link2>' },
           },
         },
@@ -146,5 +166,28 @@ describe('code', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Send it again' }))
     await waitFor(() => expect(csp.resend.mutateAsync).toHaveBeenCalledWith({ email: 'anna@exemple.cat' }))
     expect(await screen.findByText('voter.code.resent')).toBeInTheDocument()
+  })
+
+  it('shows a recognised refusal as worded and hides a raw one behind a generic sentence, logged for support', () => {
+    const logged = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const flow = testFlow({ facts: testFacts({ connected: false, challengePending: true }) })
+    csp.auth1.error = new csp.KnownCspError('csp.errors.requests_on_cooldown')
+    const known = renderWithFlow(<CodeScreen />, flow)
+    expect(screen.getByRole('alert')).toHaveTextContent('csp.errors.requests_on_cooldown')
+    expect(logged).not.toHaveBeenCalled()
+    known.unmount()
+    const raw = new Error('otp mismatch at row 42')
+    csp.auth1.error = raw
+    const code = renderWithFlow(<CodeScreen />, flow)
+    expect(screen.getByRole('alert')).toHaveTextContent('csp.auth_failed')
+    expect(screen.queryByText(/row 42/)).toBeNull()
+    expect(logged).toHaveBeenCalledWith('Voter code step failed:', raw)
+    code.unmount()
+    csp.auth1.error = null
+    csp.resend.error = new Error('smtp: 550 mailbox unavailable')
+    renderWithFlow(<CodeScreen />, flow)
+    expect(screen.getByRole('alert')).toHaveTextContent('csp.step1.resend_failed')
+    expect(screen.queryByText(/smtp/)).toBeNull()
+    logged.mockRestore()
   })
 })

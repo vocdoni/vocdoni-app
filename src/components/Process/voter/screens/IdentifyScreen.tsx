@@ -1,5 +1,5 @@
 import { Alert, Button, chakra, Checkbox, Field, Input, Link } from '@chakra-ui/react'
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { buildCspAuthRequest } from '~components/Process/CSP/auth-request'
@@ -17,16 +17,6 @@ import { VoterMedia } from '../parts/VoterMedia'
 import { useVoterIdentify } from '../use-voter-identify'
 
 type IdentifyValues = Record<string, string | boolean>
-
-// The refusals `useTranslateCspError` words itself, as the screen sees them. Anything else is the SDK's own message,
-// which is never shown. The counted ones are listed up to a week of waiting.
-const knownCspErrorKeys = [
-  'csp.errors.participant_not_found',
-  'csp.errors.credentials_or_password_incorrect',
-  'csp.errors.too_many_attempts',
-  'csp.errors.requests_on_cooldown',
-  'csp.errors.zero_voting_weight',
-]
 
 /**
  * Identify (board V4VoterWide 1, mismatch V4VoterWideLive 7): the census's fields, the contact when it sends a code,
@@ -60,16 +50,10 @@ export const IdentifyScreen = ({ notice }: { notice?: 'sessionExpired' }) => {
     ...authFields.filter((field) => field === 'password'),
   ]
   const mismatch = identify.error?.mismatch === true
-  const knownMessages = useMemo(() => {
-    const known = new Set(knownCspErrorKeys.map((key) => t(key)))
-    for (let count = 1; count < 60; count++) known.add(t('csp.errors.too_many_attempts_minutes', { count }))
-    for (let count = 1; count <= 168; count++) known.add(t('csp.errors.too_many_attempts_hours', { count }))
-    return known
-  }, [t])
-  const unknownFailure = !!identify.error && !mismatch && !knownMessages.has(identify.error.message)
+  const unknownFailure = !!identify.error && !mismatch && !identify.error.known
   // The SDK's raw message never reaches the voter; support gets it from the console.
   useEffect(() => {
-    if (unknownFailure) console.error('Voter identification failed:', identify.error)
+    if (unknownFailure) console.error('Voter identification failed:', identify.error?.cause ?? identify.error)
   }, [unknownFailure, identify.error])
   // Secret until the end: the count stays hidden, but once the vote is over the results are public (audit F16).
   const showLiveResults =
