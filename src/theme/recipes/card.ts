@@ -27,6 +27,14 @@ const listItem = {
 
 const title = { textStyle: 'control', fontWeight: 'medium-plus' } as const
 
+// The voter page's cards: a panel with the thin ring (no border, so it takes no room) and 12px corners.
+const voterCard = {
+  bg: 'surface.card',
+  borderWidth: '[0]',
+  boxShadow: 'shadow.ring',
+  borderRadius: 'xl',
+} satisfies SystemStyleObject
+
 // Cards are named by what they are for. Radius comes from Chakra's base (`l3`) unless a variant sets
 // its own; `size` sets `--card-padding`, which the variants that pad their root read.
 // The 1px border is the card's ring, so none of the variants adds a shadow. Every card paints its own fill: the
@@ -150,6 +158,28 @@ export const Card = defineSlotRecipe({
           bgColor: 'bg.panel',
         },
       },
+      // A card of the voter page: the thin ring, 12px corners, its rows 14px and 18px from the edge at every width (a
+      // review row, a receipt's head).
+      ballot: {
+        root: voterCard,
+        header: { px: '4.5', py: '3.5' },
+        body: { px: '4.5', py: '3.5' },
+        footer: { px: '4.5', py: '3.5' },
+      },
+      // The same card around one notice ("Encara no es pot votar"), padded 18px and 20px on the root: its title in
+      // semibold over a quiet note (compound variant below, after the size's title).
+      'ballot-notice': {
+        root: { ...voterCard, px: '5', py: '4.5' },
+      },
     },
   },
+  compoundVariants: [
+    {
+      variant: 'ballot-notice',
+      css: {
+        title: { textStyle: 'ballot-body', fontWeight: 'semibold' },
+        description: { textStyle: 'body', color: 'fg.subtle', mt: '0.5' },
+      },
+    },
+  ],
 })

@@ -24,7 +24,7 @@ or, as text and line, a lighter `#6a99f1`. The values are in the dark table belo
 | Meaning of colours (surfaces, text, borders, light and dark)             | `src/theme/semantic.ts` and one module per family (below)                                                                                                 |
 | Brand colour and `accent` (generated from `PRIMARY_COLOR`)               | `src/theme/palette.ts`, assembled in `src/theme/system.ts`                                                                                                |
 | Text roles                                                               | `src/theme/textStyles.ts`                                                                                                                                 |
-| How a component looks and its variants                                   | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports, and `dashboard` (`DashboardContents`) |
+| How a component looks and its variants                                   | `src/theme/recipes/*.ts`: registered in `recipes/index.ts`, except `page`, `confirmModal`, `loader` and `dragHandle`, which their `ui/` component imports, `dashboard` (`DashboardContents`), and the voter page's `voterShell`, `steps`, `voterMarks` and `voterLists`, which their `ui/` components import |
 | Voting UI from `@vocdoni/react-components`                               | `src/theme/react-components/*` and `src/theme/recipes/election.ts`                                                                                        |
 | Shared building blocks                                                   | `src/components/ui/`                                                                                                                                      |
 | Shared layout pieces                                                     | `src/components/Layout/Separators.tsx` (`LabelledSeparator`)                                                                                              |
@@ -48,7 +48,7 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Family                           | Tokens                                                                                                                                                                                                                                                                                                                                                                                     | Module            |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- |
 | Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint`, `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.track` (the empty track of a progress bar), `bg.field` (a field's fill: white in light, the page colour in dark), `bg.inverted`, `bg.panel`                                                                                                                      | `semantic.ts`     |
-| Borders                          | `border` (the hairline of cards, rows and dividers, black at 10%), `border.emphasized` (a firmer hairline, such as the rule above a docked bar, black at 18%), `border.muted`, `border.subtle`, `border.strong` (outlines of checkboxes, radios and dashed drop zones, `#8f8f8f`), `border.field` (the ring of fields, selects, textareas and voter options, `#8f8f8f`), `border.inverted` | `semantic.ts`     |
+| Borders                          | `border` (the hairline of cards, rows and dividers, black at 10%), `border.emphasized` (a firmer hairline, such as the rule above a docked bar, black at 18%), `border.muted`, `border.subtle`, `border.strong` (outlines of checkboxes, radios and dashed drop zones, `#8f8f8f`), `border.field` (the ring of fields, selects, textareas and voter options, `#8f8f8f`), `border.inverted`, `border.pending` (the ring of a voter mark still to come: the track grey) | `semantic.ts`     |
 | Surface layers                   | `surface.canvas` (the dashboard page, `#fafafa` in light mode), `.sidebar` (white), `.content`, `.card`, `.sunken`, `.control` (the fill of a secondary button, an avatar and the entity selector: white in light mode, white at 5% in dark), `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`)                                                                                                                  | `semantic.ts`     |
 | Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.sheet` (behind a bottom sheet and a tablet's confirm dialog), `scrim.fg`                                                                                                                                                                                                                            | `semantic.ts`     |
 | Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                                                                                                                                           | `semantic.ts`     |
@@ -60,7 +60,7 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                                                                                                                                        | `illustration.ts` |
 | Links, switch, segments          | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `segment.selected` (the chosen segment or pill tab: `bg.panel` in light) | `recipeColors.ts` |
 | Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                                                                                                                                  | `recipeColors.ts` |
-| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`), `shadow.raised.halo` (a desktop action menu: the ring plus a 4px panel-coloured halo), `shadow.edge.inner` and `.outer` (the hairline of an accent fill too pale for the page, for a component that paints `accent.solid` itself); every shadow is a 1px ring, no blur | `semantic.ts`     |
+| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`), `shadow.raised.halo` (a desktop action menu: the ring plus a 4px panel-coloured halo), `shadow.edge.inner` and `.outer` (the hairline of an accent fill too pale for the page, for a component that paints `accent.solid` itself), `shadow.mark` (the voter's 1.5px inner ring of a mark still to come) and `shadow.invalid` (the voter's 2px inner ring of a failed field); every other shadow is a 1px ring, no blur | `semantic.ts`     |
 | Brand accent in dark mode        | `accent.fg`: the brand's `fg` (`#6a99f1` for Fil's stock blue), or white on the dark page for a neutral brand (active tab, highlight card)                                                                                                                                                                                    | `palette.ts`      |
 | Accent fills                     | `accent.solid`, `accent.solidHover`, `accent.solidEdge`, `accent.contrast`, `accent.subtle`, `accent.border` (the 3:1 line step), `accent.line` (the accent as a line or edge: `accent.border` in light, `accent.fg` in dark): the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                         | `system.ts`       |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                                                                                                                                         | `semantic.ts`     |
@@ -148,7 +148,8 @@ Fil rules the theme enforces:
 - Links are never underlined in any state, apart from the explicit `link-underline` button and links inside
   user-written text (`Markdown`). Hover only darkens to `accent.fg.hover`; keyboard focus keeps the outline.
 - The voter ballot scale: `fontSizes.ballot.option` (17px) and `ballot.question` (32px), `lineHeights.question`,
-  `letterSpacings.heading.question` and `letterSpacings.voter`.
+  `letterSpacings.heading.question` and `letterSpacings.voter`; the rest of the voter page's scale is in
+  [Voter page](#voter-page).
 
 ### Brand per vote
 
@@ -322,28 +323,30 @@ What exists today:
 
 | Recipe              | Variants and axes                                                                                                                                                                                                                                                                                                                                                   |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `button`            | `variant`: `off` (an action shown but not available now, as "Open" while another question is open: sunken fill, no ring, `cursor.unavailable`; pair it with `aria-disabled` and a described reason, never `disabled`), `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `sheet-row` (a 52px sheet row under a rule, 18px muted icon), `sheet-close` (the sheet's 44px dismiss button, its ring drawn inside so the scrolling body does not clip it), `menu-trigger`, `more` (a page header's "More": the borderless "…" icon alone below `lg`, from `lg` a secondary with its word, a 15px muted chevron and a tighter end; its word and chevron carry `hideBelow='lg'`, the icon `hideFrom='lg'`, under one accessible name), `segment`, `toggle`, `chip` (a filter chip, at `size='sm'`: a 1px border, transparent when chosen, and its count in `fg.subtle`), `disclosure`, `danger` (the destructive secondary: danger text, `bg.error` hover, never filled), `floating`, `whatsapp`; `size`: `cta`, `row` (the small action inside a list row: 40px below `lg`, 28px with 10px sides and 13px text from `lg`); `multiline`; every size carries a 14px icon from `lg`. Chakra's own `solid`, `outline`, `ghost`… stay |
-| `card`              | `outline`, `section`, `frame` (a 1px ring, not a border, so it takes no room, as the guide's cards), `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `note` (a dashed explanation, no fill), `plain` (a filled card without a border, around a page-level empty state); `Card.Body data-current` marks the row being worked on with an accent rule                                                               |
-| `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`, `notice` (the guide's notice, a paused vote: tinted band in ink, `status.warning.ring`, 15px icon); Chakra's `status` stays                                                                                                                                                                                                                                                                                 |
+| `button`            | `variant`: `off` (an action shown but not available now, as "Open" while another question is open: sunken fill, no ring, `cursor.unavailable`; pair it with `aria-disabled` and a described reason, never `disabled`), `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `sheet-row` (a 52px sheet row under a rule, 18px muted icon), `sheet-close` (the sheet's 44px dismiss button, its ring drawn inside so the scrolling body does not clip it), `menu-trigger`, `more` (a page header's "More": the borderless "…" icon alone below `lg`, from `lg` a secondary with its word, a 15px muted chevron and a tighter end; its word and chevron carry `hideBelow='lg'`, the icon `hideFrom='lg'`, under one accessible name), `segment`, `toggle`, `chip` (a filter chip, at `size='sm'`: a 1px border, transparent when chosen, and its count in `fg.subtle`), `disclosure`, `danger` (the destructive secondary: danger text, `bg.error` hover, never filled), `floating`, `whatsapp`, `lang-tag` (the voter's language trigger, at `size='tag'`); `size`: `cta`, `row` (the small action inside a list row: 40px below `lg`, 28px with 10px sides and 13px text from `lg`), `ballot` (the voter scale: 52px, 17px; with `outline` 550 and with `off` sunken at every width), `tag` (a control drawn as a small tag); `multiline`; every size carries a 14px icon from `lg`. Chakra's own `solid`, `outline`, `ghost`… stay |
+| `card`              | `outline`, `section`, `frame` (a 1px ring, not a border, so it takes no room, as the guide's cards), `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `note` (a dashed explanation, no fill), `plain` (a filled card without a border, around a page-level empty state), `ballot` and `ballot-notice` (the voter page's cards: thin ring, 12px corners); `Card.Body data-current` marks the row being worked on with an accent rule                                                               |
+| `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`, `notice` (the guide's notice, a paused vote: tinted band in ink, `status.warning.ring`, 15px icon), `ballot` (the voter page's notice: tinted band in ink at every width, inner hairline, 12px corners, 15px, no icon); Chakra's `status` stays                                                                                                                                                                                                                                                                                 |
 | `link`              | `variant`: `plain`, `title` (a title that opens what it names, as a list row's: the heading's ink and weight, the accent on hover), `unstyled`, `icon-button`, `subtle`, `tile`, `back` (the way back over a page title: 14px medium with a chevron up to `lg`, a quiet 12px label from `lg`), `row-action` (a list row's or card's one action: 15px text and a 44/40px hit area up to `lg`, 13.5px text alone from `lg`); `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                                                                                                                      |
 | `tabs`              | `variant`: `line` (default: hairline and a 2px ink line under the current tab), `pill` (segmented)                                                                                                                                                                                                                                                                  |
 | `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the dashboard's navigation below `lg`, `dashboard.drawer` wide), `sheet` (a bottom sheet as the boards draw it: grab handle, `dialog-title`, rows under rules, padding 8 16 24, `scrim.sheet`); dialog and drawer backdrops otherwise paint `scrim.strong`                                                                                                                                                                            |
 | `dialog`            | `placement` defaults to `center`, which is a bottom sheet below `md`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                                                                         |
 | `menu`              | Items are 52px, 40px, 32px rows by breakpoint, highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused). `variant='actions'` is `ResponsiveMenu`'s dropdown: as wide as its longest item, every item with its icon; 40px rows and 18px icons on a tablet, 34px rows, 16px icons, `shadow.raised.halo` and a rule before the destructive items from `lg` |
-| `progress`          | `variant`: `results` (thin bar in ink, one per choice; in a final result with a clear leader the other bars are dimmed, set by `ElectionResults` through `data-dimmed`, and no option is ticked as the winner), `turnout` (the share that voted, a 4px bar with round ends and a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                                                                                                                  |
+| `progress`          | `variant`: `results` (thin bar in ink, one per choice; in a final result with a clear leader the other bars are dimmed, set by `ElectionResults` through `data-dimmed`, and no option is ticked as the winner), `turnout` (the share that voted, a 4px bar with round ends and a gap after the fill), `meter` (`UsageMeter`), `job` (a background job), `line` (the voter's step progress: 3px in the exact fill, no track, no edge; `StepProgress`)                                                                                                                  |
 | `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                                                                                            |
-| `status`            | size `sm` is 13px up to `lg` and 12px from `lg`; `tone`: `success`, `warning`, `danger`, `gray`, `ink`, `hollow` (a dot and a word; `ProcessStatus` picks the tone)                                                                                                                                                                                                                                                  |
+| `status`            | size `sm` is 13px up to `lg` and 12px from `lg`, `ballot` is the voter's status line (13.5px medium, 8px after the dot); `tone`: `success`, `warning`, `danger`, `gray`, `ink`, `hollow`, `closed` (the voter's ended vote: muted word, faint dot) (a dot and a word; `ProcessStatus` picks the tone)                                                                                                                                                                                                                                                  |
 | `dataList`          | `variant`: `ruled` (the rows of a card under its title, label left and value right, each under a `border.muted` rule and padded to the card's edge; the label keeps its line; see `FactList`)                                                                                                                                                                                                                                                                          |
 | `ballotPaper`       | Slots `header`, `heading`, `count`, `intro`, `introLabel`, `introText`, `head`, `number`, `title`, `description` (a question's own text, as markdown), `note`, `tag`, `option`, `mark`, `statement`, `statementTitle`, `statementNote`, `statementText`, `tile`: the organiser's view of a ballot (Papereta, boards V4VotePaper and M4VotePaper); `kind` (`one`, `many`, `rank`, `points`) picks the empty mark before each option: a radio, a checkbox, a rank box or a points box |
-| `questionDock`      | Slots `page`, `root`, `line`, `title`, `note`, `actions`: the phone's bottom action bar of a question-by-question vote (board M4VoteOne), fixed, padded for the home indicator, hidden from `md`; `page` goes on the page around it and keeps its content clear of the bar while it is there (`QuestionDock`) |
+| `questionDock`      | Slots `page`, `root`, `line`, `title`, `note`, `actions`: the phone's bottom action bar of a question-by-question vote (board M4VoteOne), fixed, padded for the home indicator, hidden from `md`; `page` goes on the page around it and keeps its content clear of the bar while it is there (`QuestionDock`); `variant='ballot'` is the voter page's action bar, with the `primary`, `secondary` and `credit` slots (`ActionBar`) |
 | `censusRuler`       | Slots `root`, `track`, `range`, `scale`, `start`, `end` (`CensusRuler`); `layout`: `scale` (default), `compact` (the bar alone, 12px tall from `lg`; responsive values work); `closed` (ink fill) |
 | `confirmModal`      | Imported by `ui/ConfirmDialog`. `layout`: `decision` (default, the guide's confirm: sheet, tablet dialog, desktop dialog), and the older `panel`, `inline`, `compact`, `summary`; slots include `backdrop`, `positioner`, `content`, `warning`, `warningIcon` |
-| `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe); input `code` (a read-only value to copy, such as a voting link: sunken, no ring, in the figure face)                                                                                                                                                                                                                                                 |
+| `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe); input `code` (a read-only value to copy, such as a voting link: sunken, no ring, in the figure face); input `size='ballot'` (the voter's 52px field, 16px text, `shadow.invalid` when it fails) with `field` `size='ballot'` (its 15px medium label)                                                                                                                                                                                                                                                 |
 | `list`              | `variant`: `marker`                                                                                                                                                                                                                                                                                                                                                 |
 | `emptyState`        | `size`: `sm`, `md`, `lg`                                                                                                                                                                                                                                                                                                                                            |
 | `text`, `heading`   | `text`: `size`, `variant='muted'`; `heading`: `variant` `heavy`, `subsection`, `page` (`PageTitle`'s: from `lg` a control-tall box with the text at its foot, so every page title reads on the same line)                                                                                                                                                                                                                                                                                       |
 | `badge`, `tag`      | Badge `size` (`xs` to `lg`), `variant`: `count` (tab counter), `label` (neutral role chip, capitalised); Tag has one outlined look (radius `xs`), plus `kind` (the same in `fg.muted`: a question's ballot type) and `proposal` (dashed); for a status use `StatusBadge`                                                                                                                                                                                               |
 | `nativeSelect`      | The input's field look (panel, ring, outside focus ring) at the shared control height, whatever the size; `code` is a neutral chip like `badge` (both default to the `gray` palette, not the accent)                                                                                                                                                                |
+| `pinInput`          | Merged into Chakra's: its sizes, variants and defaults stay (`CSP/Step1`, `Auth/Verify`). `variant='field'` with `size='ballot'` is the voter's one-time code: 56 by 64 boxes (48 by 58 below `md`), the field ring, a 2px inner ring of the focus colour on the box being typed in |
+| `QuestionChoice`, `ElectionQuestions`, `QuestionsTip` | The voter page's slots read context `voter` (the option at the board's measures, 22px marks, `data-quiet` and `data-disabled` quiet the text) and layout `voter` (the question's help, options and hint spacing); the app-wide slots keep `card` and `list` |
 
 To add a variant:
 
@@ -393,6 +396,7 @@ All in `src/components/ui/`. Use them instead of rebuilding the pattern.
 | `PanelDrawer` (`ui/Drawer`)                | Every side panel: `title`, `description`, `footer` (pinned actions), `trigger`; a close button in the corner is built in                                                                                                |
 | `DialogHeader`                             | A dialog's `title` (its accessible name) and muted `description`. Dialogs are centred by default; do not set `placement`                                                                                                |
 | `DragHandle`                               | The grip of a sortable item: `placement` `start`, `center` or `corner`, and `dragging`                                                                                                                                  |
+| `VoterShell`, `VoterCredit`, `StepProgress`, `StepRail`, `ActionBar`, `AgendaList`, `PhaseList`, `SuccessDisc`, `ReceiptCodes`, `RankBadge` | The voter page's pieces: see [Voter page](#voter-page). Not for organiser screens |
 
 ```tsx
 import { PageSection } from '~components/ui/PageContainer'
@@ -449,6 +453,101 @@ Not in `ui/`: `LabelledSeparator` (`~components/Layout/Separators`), a hairline 
 `OrSeparator`'s "or continue with". Do not build one from a `Flex` and two `Box`es.
 
 New user-facing text in any of these goes through `t(…)`, like everywhere else (see `AGENTS.md`).
+
+### Voter page
+
+The public voting page (`/processes/:id` and the `HOME_PROCESS_ID` root) has its own scale, drawn on boards
+V4Voter* and M4Voter* (canvas v148): larger controls and type for people who vote once, the same at every width.
+Only the voter page uses it. Organiser screens (the dashboard, Papereta, Resum) never take a voter size, variant, layout
+or text style: no `size='ballot'`, no `ballot-*` role, no voter component outside the voter page.
+
+The voter scale (tokens):
+
+| What | Token | Value |
+| --- | --- | --- |
+| Button and field height | `sizes.control.ballot` | 52px at every width |
+| Radio, checkbox, phase disc | `sizes.mark.ballot` | 22px |
+| One-time code box | `sizes.ballot.code.width`, `.height` (`.touch` below `md`) | 56 by 64; 48 by 58 |
+| Column from `lg` | `sizes.ballot.column` (beside the rail), `.narrow`, `.code`, `.sending`, `.results`; `lead` on a status screen | 600, 440, 480, 520, 640, 560px |
+| Rail, logo, Vocdoni symbol, credit row in the phone bar | `sizes.ballot.rail`, `.logo`, `.symbol`, `.credit` | 280, 30, 22, 38px |
+| Wordmark in the credit | `sizes.wordmark.credit` (`wordmark` keeps its 125px width) | 13px tall |
+| Step progress line | `sizes.bar.thin` | 3px |
+| Rail to column, phone clearance under the action bar, help to options below `lg` | `spacing.ballot.gutter`, `.dock`, `.options` | 72, 150, 22px |
+| Above and below an agenda step | `spacing.step` | 9px |
+| Type | `fontSizes.ballot.lead` (18px), `.code` (26px), `.status` (13.5px), next to `.option` (17px) and `.question` (32px); `letterSpacings.heading.open` (-0.02em) | |
+| A mark still to come | `border.pending` (the track grey) and `shadow.mark` (its 1.5px inner ring) | |
+| A field that failed | `shadow.invalid` (a 2px inner ring in `status.error.fg`) | |
+
+Text roles, in the voter's tracking (`letterSpacings.voter`) on the running line height unless they name their own:
+`ballot-title` (a question's title, 32px semibold), `ballot-kicker` (14px medium), `ballot-lead` (the welcome line,
+18px), `ballot-body` (16px: help, field values, agenda rows, the shell's root), `ballot-hint` (15px: hints, notices,
+receipt rows), `ballot-label` (a field's label, 15px medium), `ballot-button` (17px, the button recipe sets the
+weight), `ballot-rail-title` (the vote's title, 15px, 17px from `lg`, semibold), `ballot-rail-meta` (13px, 14px from
+`lg`), `ballot-progress` (the strip's label, 13px medium), `ballot-status` (13.5px medium), `ballot-row-value` (a review
+value, 16px, 17px from `lg`, 550), `ballot-phase` (17px), `ballot-open-title` (22px semibold), `ballot-caption` (15px,
+550), `ballot-result-title` (17px semibold), and in mono `ballot-code-digit` (26px),
+`ballot-rank` (15px), `ballot-figure` (12px), `ballot-receipt` (13px), `ballot-code` (13px with no tracking: agenda
+numbers, a share); the top bar's `topbar-name` (15px, 550), `topbar-link` (14px medium) and `topbar-lang` (13px medium on
+a 22px line).
+
+Recipes at the voter scale:
+
+- `Button size='ballot'`: 52px, 24px sides, 12px corners, 17px semibold. `solid` is the primary, `outline` the secondary
+  (550), `off` the unavailable action (sunken at every width, 16px, 550; pair it with `aria-disabled`).
+- `Button variant='lang-tag' size='tag'`: the language trigger in the top bar, the code as a 22px-line tag ringed in
+  `border.strong`, with a 44px hit area.
+- `Input size='ballot'` with `Field.Root size='ballot'`: 52px, 16px text, 12px corners, a 15px medium label, and
+  `shadow.invalid` when it fails.
+- `PinInput.Root variant='field' size='ballot'`: the one-time code, 56 by 64 boxes (48 by 58 below `md`), the field ring,
+  a 2px inner ring of the focus colour on the box being typed in. Without these the pin input keeps Chakra's look
+  (`CSP/Step1`, `Auth/Verify`).
+- `QuestionChoice` context `voter` (the voter page's own slot): the ballot card with 8px and 16px padding (18px from
+  `md`), 22px marks, a checkbox with 4px corners, the radio mark drawn by the recipe; `data-quiet` (a blank vote) and
+  `data-disabled` (a paused vote) quiet the text unless chosen.
+- `ElectionQuestions` and `QuestionsTip` layout `voter`: help 10px under the title, options 10px apart and 22px (28px
+  from `lg`) under it; the hint at 15px, 14px under the options.
+- `Card variant='ballot'` (thin ring, 12px corners, rows 14px and 18px in) and `'ballot-notice'` (one notice: padded
+  18px and 20px, a semibold title over a quiet note).
+- `Alert layout='ballot'` with `status='warning'` or `'error'`: a tinted band in ink with the inner hairline, 12px
+  corners, 15px text with a semibold lead sentence, no icon. The page sets `role='status'` or `role='alert'`.
+- `Status size='ballot'`: every status line (live, paused, cancelled, closed) at 13.5px medium, 8px after the dot;
+  `tone='closed'` is the muted word with the `fg.faint` dot.
+- `Progress variant='line'` (inside `StepProgress`) and `questionDock variant='ballot'` (inside `ActionBar`).
+
+Shared components (`src/components/ui/`, each with its recipe in `src/theme/recipes/` and a test). They take every
+visible and accessible string as a prop and hold no logic: the page translates and decides.
+
+- `VoterShell`: the frame. Top bar (56px, 64px from `lg`) with the organisation's `logo` or the Vocdoni symbol, its
+  `name` and `actions`; the vote's `head` (title, status) as the strip below `lg`, with `progress` under it, and as the
+  `rail`'s head from `lg`; the column (`column`: `rail`, `narrow`, `code`, `sending`, `status`, `results`); the
+  `credit` at the foot.
+- `VoterCredit`: "Votació feta amb" and the Vocdoni wordmark in ink (`text`, `brand`).
+- `StepProgress`: the strip's label and the 3px line on its bottom rule (`label`, `value`, `total`); a progress bar
+  named by the label; nothing for a one-question vote.
+- `StepRail`: the numbered agenda from `lg` (`items`: `number`, `title`, `state` `pending`, `now` or `done`, `detail`,
+  `onSelect` to make the row a button); the current step has `aria-current='step'`.
+- `ActionBar`: the buttons (`primary`, `secondary`, `note`, `credit`, `label`). Fixed to the bottom below `md`, padded
+  for the home indicator, the credit inside it; a row in the flow from `md`. Inside `VoterShell` the column keeps clear
+  of it and the foot's credit hides below `md`.
+- `AgendaList`: the ruled list of questions (`label`, `items` with `number`, `title`, `note`).
+- `PhaseList`: the phases while a vote is sent (`items` with `state` `done`, `now` or `next`); the current disc turns
+  unless the reader asks for less motion.
+- `SuccessDisc`: the green disc over a vote that landed (decoration only).
+- `ReceiptCodes`: one row per question with its shortened vote id (`shortVoteId`), the full id on hover, and a copy
+  button when given `onCopy` (name it with `copyLabel`).
+- `RankBadge`: the rank before a ranked option (`value`, `set`).
+
+Rules:
+
+- What paints the accent reads `accent.*` or `colorPalette.*`, so a branded vote repaints it: the primary, the chosen
+  option, the current agenda step's badge and a given rank (both edged with `shadow.edge.inner` when the colour is too
+  pale for the page). The step progress line is a bar: the exact colour, no edge. The turning arc of the current phase
+  is a line on the page and reads `colorPalette.border`. Status colours (the live green, the success disc) and the
+  credit never take the vote's colour.
+- A control smaller than a fingertip (the language tag, a receipt code) spreads `touchTarget`
+  (`src/theme/recipes/touchTarget.ts`) in its recipe: a 44px hit area that does not move the layout.
+- Not built yet, because nothing feeds them: the points stepper, the participation bar of a question-by-question vote,
+  the open question's card, the organisation's letter tile. The voter's results reuse `QuestionResultBars` as it is.
 
 ### Icons
 
