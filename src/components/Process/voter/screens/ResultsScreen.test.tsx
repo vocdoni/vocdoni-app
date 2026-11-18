@@ -161,21 +161,27 @@ describe('ResultsScreen', () => {
       election: tallied(),
       facts: testFacts({ status: 'ONGOING' }),
     })
-    const { rerender } = renderWithFlow(<ResultsScreen state='provisional' />, flow)
+    // The flow and the state change under one stable tree: wrapping the rerender in another provider would remount.
+    let current = { flow, state: 'provisional' as ResultsState }
+    const Screen = () => (
+      <VoterFlowContext.Provider value={current.flow}>
+        <ResultsScreen state={current.state} />
+      </VoterFlowContext.Provider>
+    )
+    const { rerender } = renderWithFlow(<Screen />, flow)
     const region = title().closest('[aria-live]') as HTMLElement
     expect(region).toHaveAttribute('aria-live', 'polite')
     const heading = title()
     expect(region).toHaveTextContent('voter.results.provisional_title')
+    // The turnout changes on every poll: it stays out of the region.
+    expect(region).not.toContainElement(screen.queryByTestId('process-vote-count'))
     const ended = testFlow({
       screen: { kind: 'results', state: 'final' },
       election: tallied(),
       facts: testFacts({ status: 'ENDED' }),
     })
-    rerender(
-      <VoterFlowContext.Provider value={ended}>
-        <ResultsScreen state='final' />
-      </VoterFlowContext.Provider>
-    )
+    current = { flow: ended, state: 'final' }
+    rerender(<Screen />)
     expect(title()).toBe(heading)
     expect(title().closest('[aria-live]')).toBe(region)
     expect(region).toHaveTextContent('voter.results.counting_title')

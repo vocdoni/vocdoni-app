@@ -149,37 +149,37 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
 
   return (
     <VoterScreenFrame kind='results'>
-      {/* One live region for the heading block: a change from provisional to counting to final is announced, and
-          the focus never moves on it (ruling R1). */}
+      {/* A live region for the status and heading only: a change from provisional to counting to final is announced
+          and the focus never moves on it (ruling R1); the turnout below changes on every poll and stays quiet. */}
       <Box aria-live='polite'>
         {state === 'final' ? <VoteClosedLine /> : <VoteStatusLine />}
         <ScreenHeading focus={moved} mt='2.5'>
           {heading}
         </ScreenHeading>
-        {hidden ? (
-          end ? (
-            <ScreenHelp>
-              <LocalText>
-                {t('voter.results.hidden_help', {
-                  date: formatVoteDay(end, i18n.language),
-                  time: formatVoteTime(end, i18n.language),
-                })}
-              </LocalText>
-            </ScreenHelp>
-          ) : null
-        ) : (
-          <ScreenHelp>
-            {t('voter.results.of_vote', { title })}
-            {turnout ? (
-              <>
-                {' '}
-                <ResultsTurnout turnout={turnout} share={state === 'final'} />
-              </>
-            ) : null}
-            {note ? ` ${note}` : null}
-          </ScreenHelp>
-        )}
       </Box>
+      {hidden ? (
+        end ? (
+          <ScreenHelp>
+            <LocalText>
+              {t('voter.results.hidden_help', {
+                date: formatVoteDay(end, i18n.language),
+                time: formatVoteTime(end, i18n.language),
+              })}
+            </LocalText>
+          </ScreenHelp>
+        ) : null
+      ) : (
+        <ScreenHelp>
+          {t('voter.results.of_vote', { title })}
+          {turnout ? (
+            <>
+              {' '}
+              <ResultsTurnout turnout={turnout} share={state === 'final'} />
+            </>
+          ) : null}
+          {note ? ` ${note}` : null}
+        </ScreenHelp>
+      )}
       {hidden ? (
         voted ? (
           <NoticeCard title={t('voter.voted.title')}>
