@@ -1789,7 +1789,6 @@
       "final_title": "Resultats finals",
       "hidden_card_body": "No cal que facis res més. Pots tancar la pàgina i tornar-hi {{day}}.",
       "hidden_help": "Els resultats es veuran aquí mateix quan es tanqui la votació, {{date}} a les {{time}}.",
-      "kicker": "Resultats",
       "kind_approval": "Votació per aprovació",
       "kind_multiple_one": "Fins a {{count}} opció",
       "kind_multiple_many": "Fins a {{count}} opcions",

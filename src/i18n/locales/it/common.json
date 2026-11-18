@@ -1789,7 +1789,6 @@
       "final_title": "Risultati finali",
       "hidden_card_body": "Non devi fare nient'altro. Puoi chiudere la pagina e tornare {{day}}.",
       "hidden_help": "I risultati compariranno proprio qui quando la votazione si chiuderà, {{date}} alle {{time}}.",
-      "kicker": "Risultati",
       "kind_approval": "Voto per approvazione",
       "kind_multiple_one": "Fino a {{count}} opzione",
       "kind_multiple_many": "Fino a {{count}} opzioni",

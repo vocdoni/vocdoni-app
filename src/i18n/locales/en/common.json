@@ -1754,7 +1754,6 @@
       "final_title": "Final results",
       "hidden_card_body": "There is nothing else to do. You can close the page and come back on {{day}}.",
       "hidden_help": "The results will show right here when the vote closes, on {{date}} at {{time}}.",
-      "kicker": "Results",
       "kind_approval": "Approval voting",
       "kind_multiple_one": "Up to {{count}} option",
       "kind_multiple_other": "Up to {{count}} options",

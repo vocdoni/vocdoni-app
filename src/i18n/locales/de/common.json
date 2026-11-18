@@ -1754,7 +1754,6 @@
       "final_title": "Endergebnisse",
       "hidden_card_body": "Du musst nichts weiter tun. Du kannst die Seite schließen und am {{day}} wiederkommen.",
       "hidden_help": "Die Ergebnisse erscheinen genau hier, wenn die Abstimmung am {{date}} um {{time}} endet.",
-      "kicker": "Ergebnisse",
       "kind_approval": "Zustimmungsabstimmung",
       "kind_multiple_one": "Bis zu {{count}} Option",
       "kind_multiple_other": "Bis zu {{count}} Optionen",
