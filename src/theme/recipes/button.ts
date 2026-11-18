@@ -286,6 +286,13 @@ const chip = defineStyle({
     borderColor: 'transparent',
     _hover: { bg: 'state.selected.bg' },
   },
+  // The dark boards: no fill and the softer hairline; the chosen chip keeps its selected fill.
+  _dark: {
+    bg: 'transparent',
+    borderColor: 'border.emphasized',
+    _hover: { bg: 'state.hover.bg' },
+    _pressed: { bg: 'state.selected.bg', borderColor: 'transparent', _hover: { bg: 'state.selected.bg' } },
+  },
 })
 
 // Show/hide toggle for a section, flush with the content it folds.
