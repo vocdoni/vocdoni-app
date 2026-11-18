@@ -217,7 +217,9 @@ The `voter-*` routes render every screen of the voter page (spec AC3) with the b
 "voter flow votes"). A state walks the flow from identify with three more step kinds: `['fill', selector, value]`
 types into a field, `['mock', pathname, body]` answers a mock path with that JSON from then on (in this page only) and
 `['refocus']` fires the page's focus event, so react-query refetches what is stale. The auth-only censuses accept the
-member number `A-1001`; any other number is a failed match. Run them at the boards' three widths, in Catalan to compare:
+member number `A-1001`; any other number is a failed match. The main vote (`voter-live`) has a fictional description
+and the secret one (`voter-secret`) an inline header image, so identify and welcome show both. Run them at the boards'
+three widths, in Catalan to compare:
 
 ```bash
 UI_SNAPSHOT_PORT=3009 pnpm ui:snapshot -- --label voter --viewports 1440,768,390 --modes light --lang ca \

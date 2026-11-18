@@ -635,10 +635,25 @@ const VOTER_QUESTIONS = [
     },
   ],
 ]
-const voterVote = (id, { census = VOTER_CENSUS, secret = false, status = 'ONGOING' } = {}) =>
+// The voter flow's demo media: a description on the main vote and a header image on the secret one, so identify and
+// welcome show both in the captures. The image is inline, like the brand logo, so no request leaves.
+const VOTER_DESCRIPTION =
+  'The yearly general assembly of a made-up residents association. Everything on this page is fictional: the ' +
+  'accounts, the candidates and the investments.'
+const VOTER_HEADER = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect width="1200" height="400" fill="#dbe4f0"/>' +
+    '<circle cx="960" cy="120" r="70" fill="#f5d90a"/>' +
+    '<path d="M0 330 L300 200 L520 300 L780 170 L1200 320 V400 H0Z" fill="#7a8ca8"/></svg>'
+)}`
+const voterVote = (
+  id,
+  { census = VOTER_CENSUS, secret = false, status = 'ONGOING', description = '', header = '' } = {}
+) =>
   boardVote(id, 'Assemblea General Ordinària 2026', {
     unlisted: true,
     census,
+    description: ml(description),
+    header,
     startDate: '2026-06-08T07:00:00.000Z',
     endDate: '2030-06-17T18:00:00.000Z',
     questions: VOTER_QUESTIONS.map(([title, choices, shape], i) => ({
@@ -656,8 +671,8 @@ const voterVote = (id, { census = VOTER_CENSUS, secret = false, status = 'ONGOIN
     })),
   })
 PROCESSES.push(
-  voterVote(V_LIVE),
-  voterVote(V_SECRET, { secret: true }),
+  voterVote(V_LIVE, { description: VOTER_DESCRIPTION }),
+  voterVote(V_SECRET, { secret: true, header: VOTER_HEADER }),
   voterVote(V_2FA, { census: { ...VOTER_CENSUS, twoFaFields: ['email'] } }),
   voterVote(V_WEIGHTED, { census: { ...VOTER_CENSUS, weighted: true } }),
   voterVote(V_VOTED),
@@ -666,7 +681,7 @@ PROCESSES.push(
   voterVote(V_PAUSED, { status: 'PAUSED' })
 )
 /** V_LIVE paused by the organisation: what the page reads once it refetches (the paused mid-ballot capture). */
-export const VOTER_LIVE_PAUSED = voterVote(V_LIVE, { status: 'PAUSED' })
+export const VOTER_LIVE_PAUSED = voterVote(V_LIVE, { status: 'PAUSED', description: VOTER_DESCRIPTION })
 /** A relay that never settles (the sending capture). */
 export const RELAY_PENDING = { jobId: 'job-relay', type: 'relay_votes', status: 'pending', result: { votes: [] } }
 /** A handler's answer that leaves the request open (the checking capture). */
