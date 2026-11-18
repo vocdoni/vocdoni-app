@@ -140,8 +140,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
   )
   const lockedNotice = useCallback(
     (questionId: string) =>
-      lockedQuestionNotice(questionId, pendingVotes, voteStatus) ??
-      (onChain(questionId) ? ON_CHAIN_NOTICE : undefined),
+      lockedQuestionNotice(questionId, pendingVotes, voteStatus) ?? (onChain(questionId) ? ON_CHAIN_NOTICE : undefined),
     [pendingVotes, voteStatus, onChain]
   )
   const answered = questions.map((question, index) =>

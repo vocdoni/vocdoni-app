@@ -20,7 +20,9 @@ export const VoterRail = () => {
       number: String(index + 1),
       title: textOf(question.title as Parameters<typeof textOf>[0]),
       state: index === current ? 'now' : done ? 'done' : 'pending',
-      detail: done ? describeAnswer(question, shownAnswer(state, String(index), notice), words) || undefined : undefined,
+      detail: done
+        ? describeAnswer(question, shownAnswer(state, String(index), notice), words) || undefined
+        : undefined,
       onSelect:
         !notice && index !== current && (reachable === -1 || index <= reachable) ? () => goTo(index) : undefined,
     }

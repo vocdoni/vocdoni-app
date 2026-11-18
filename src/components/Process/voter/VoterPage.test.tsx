@@ -120,8 +120,7 @@ const fetchStub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => 
     for (const ballot of body.ballots as { upstreamId: string; address: string }[]) {
       try {
         server.signed[QUESTION_OF[ballot.upstreamId]] = voteNullifier(ballot.address, ballot.upstreamId)
-      } catch (e) {
-          }
+      } catch (e) {}
     }
     return json(200, {
       signatures: body.ballots.map((ballot: { upstreamId: string }) => ({
@@ -235,7 +234,9 @@ const answerBoth = async () => {
   await waitFor(() => expect(screen.getByTestId('voter-cast')).toBeEnabled())
 }
 const signBatchCalls = () =>
-  fetchStub.mock.calls.filter(([input]) => (input instanceof Request ? input.url : String(input)).includes('sign-batch'))
+  fetchStub.mock.calls.filter(([input]) =>
+    (input instanceof Request ? input.url : String(input)).includes('sign-batch')
+  )
 
 describe('voter page transitions (AC4)', () => {
   it('the start instant passes: upcoming, then identify, with no reload', async () => {
