@@ -1776,14 +1776,15 @@
       "help_one": "Vérifié : votre réponse est enregistrée. Vous pouvez fermer la page.",
       "help_many": "Vérifié : les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
       "help_other": "Vérifié : les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
-      "results_later": "Les résultats seront publiés ici même le {{date}} à {{time}}.",
       "title": "Vote enregistré. Merci."
     },
     "results": {
       "check_vote": "Vérifier votre vote",
       "closed": "Fermé",
       "closed_on": "Fermé le {{date}} à {{time}}",
-      "counting_help": "Les résultats s'afficheront ici dès qu'ils seront comptés. Inutile de recharger la page.",
+      "counting_help": "Les résultats définitifs s'afficheront ici dès qu'ils seront comptés. Inutile de recharger la page.",
+      "counting_help_secret": "Les résultats s'afficheront ici dès qu'ils seront comptés. Inutile de recharger la page.",
+      "counting_last": "Derniers résultats avant le dépouillement. Ils peuvent encore changer.",
       "counting_title": "Dépouillement des votes",
       "final_title": "Résultats finaux",
       "hidden_card_body": "Vous n'avez rien d'autre à faire. Vous pouvez fermer la page et revenir le {{day}}.",

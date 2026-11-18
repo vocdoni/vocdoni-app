@@ -1741,14 +1741,15 @@
       "card_title": "Deine Quittung",
       "help_one": "Geprüft: Deine Antwort ist erfasst. Du kannst die Seite jetzt schließen.",
       "help_other": "Geprüft: Die {{count}} Antworten sind erfasst. Du kannst die Seite jetzt schließen.",
-      "results_later": "Die Ergebnisse werden am {{date}} um {{time}} hier veröffentlicht.",
       "title": "Stimme abgegeben. Danke."
     },
     "results": {
       "check_vote": "Deine Stimme prüfen",
       "closed": "Beendet",
       "closed_on": "Beendet am {{date}} um {{time}}",
-      "counting_help": "Die Ergebnisse erscheinen hier, sobald sie ausgezählt sind. Du musst die Seite nicht neu laden.",
+      "counting_help": "Die endgültigen Ergebnisse erscheinen hier, sobald sie ausgezählt sind. Du musst die Seite nicht neu laden.",
+      "counting_help_secret": "Die Ergebnisse erscheinen hier, sobald sie ausgezählt sind. Du musst die Seite nicht neu laden.",
+      "counting_last": "Letzte Ergebnisse vor der Auszählung. Sie können sich noch ändern.",
       "counting_title": "Die Stimmen werden ausgezählt",
       "final_title": "Endergebnisse",
       "hidden_card_body": "Du musst nichts weiter tun. Du kannst die Seite schließen und am {{day}} wiederkommen.",

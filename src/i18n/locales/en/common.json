@@ -1741,14 +1741,15 @@
       "card_title": "Your receipt",
       "help_one": "Checked: your answer is in the record. You can close the page now.",
       "help_other": "Checked: the {{count}} answers are in the record. You can close the page now.",
-      "results_later": "The results will be published right here on {{date}} at {{time}}.",
       "title": "Vote cast. Thank you."
     },
     "results": {
       "check_vote": "Check your vote",
       "closed": "Closed",
       "closed_on": "Closed on {{date}} at {{time}}",
-      "counting_help": "The results will show here as soon as they are counted. There is no need to reload the page.",
+      "counting_help": "The final results will show here as soon as they are counted. There is no need to reload the page.",
+      "counting_help_secret": "The results will show here as soon as they are counted. There is no need to reload the page.",
+      "counting_last": "Latest results before the count. They may still change.",
       "counting_title": "Counting the votes",
       "final_title": "Final results",
       "hidden_card_body": "There is nothing else to do. You can close the page and come back on {{day}}.",

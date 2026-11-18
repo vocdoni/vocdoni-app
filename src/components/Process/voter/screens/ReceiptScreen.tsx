@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { SuccessDisc } from '~components/ui/SuccessDisc'
 import { useVoterFlow } from '../flow-context'
 import { ReceiptCard } from '../parts/ReceiptCard'
-import { ResultsLine } from '../parts/ResultsLine'
 import { NoticeCard, ScreenHeading, ScreenHelp, VoterScreenFrame } from '../parts/ScreenParts'
+import { ShowResultsButton } from '../parts/ShowResultsButton'
+import { VoterActionBar } from '../parts/VoterActionBar'
 
 /**
  * Receipt (board V4VoterWide 10, without the voter's name): the vote landed, its codes, and when the results come.
@@ -44,8 +45,8 @@ export const ReceiptScreen = () => {
             {t('vote.anonymous_receipt')}
           </Text>
         )}
-        <ResultsLine />
       </Box>
+      <VoterActionBar primary={<ShowResultsButton />} />
     </VoterScreenFrame>
   )
 }

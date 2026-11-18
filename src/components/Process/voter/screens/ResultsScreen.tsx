@@ -56,9 +56,20 @@ const useKindLine = () => {
  * so instead. `final` follows the question's own tally, as the organiser's Resum does: the leading choice is set
  * apart only there, and nothing names a winner.
  */
-const QuestionBlock = ({ question, first }: { question: VotingProcessQuestion; first: boolean }) => {
+const QuestionBlock = ({
+  question,
+  first,
+  counting,
+}: {
+  question: VotingProcessQuestion
+  first: boolean
+  /** The vote is over and the count is not final: the last figures, nothing set apart; a secret tally is not counted. */
+  counting: boolean
+}) => {
   const { t } = useTranslation()
   const { election } = useVoterFlow()
+  // The secret counting card (board 10c) is the title and "not counted yet", nothing more.
+  const secretCounting = counting && !tallyIsPublic(question)
   const kind = useKindLine()(question)
   const titleId = useId()
   return (
@@ -74,23 +85,25 @@ const QuestionBlock = ({ question, first }: { question: VotingProcessQuestion; f
       <Heading as='h2' id={titleId} textStyle='ballot-result-title'>
         {textOf(question.title as Parameters<typeof textOf>[0])}
       </Heading>
-      {kind ? (
+      {kind && !secretCounting ? (
         <Text textStyle='body' color='fg.subtle' mt='0.5'>
           {kind}
         </Text>
       ) : null}
-      <Box mt='3'>
+      <Box mt={secretCounting ? '0.5' : '3'}>
         {tallyIsPublic(question) ? (
           <QuestionResultBars
             question={question}
             results={question.results}
-            final={question.results?.finalResults === true}
+            final={!counting && question.results?.finalResults === true}
             weighted={election.census?.weighted === true}
             layout='plain'
           />
         ) : (
           <Text textStyle='body' color='fg.subtle'>
-            {question.results?.voteCount ? t('voter.results.not_counted') : t('voter.results.no_votes')}
+            {question.results?.voteCount || secretCounting
+              ? t('voter.results.not_counted')
+              : t('voter.results.no_votes')}
           </Text>
         )}
       </Box>
@@ -131,7 +144,10 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
   const voted = facts.hasVoted || local.castDone
   const settled = state === 'final' && resultsFinal(election)
   const turnout = hidden ? null : voterTurnout(election, env)
-  // The counting copy is provisional (plan Q6): it lives here only, so the wording can change without code changes.
+  // The counting copy (boards 10b public, 10c secret) is chosen here only (ruling R5): a public vote keeps its last
+  // live figures under a line that says they may still change; a secret one has nothing to show yet.
+  const counting = state === 'final' && !settled
+  const publicCounting = counting && election.questions.some((question) => tallyIsPublic(question))
   const heading = hidden
     ? title
     : state === 'provisional'
@@ -145,7 +161,9 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
       ? t('voter.results.provisional_note')
       : settled
         ? null
-        : t('voter.results.counting_help')
+        : publicCounting
+          ? t('voter.results.counting_help')
+          : t('voter.results.counting_help_secret')
 
   return (
     <VoterScreenFrame kind='results'>
@@ -170,16 +188,21 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
         ) : null
       ) : (
         <ScreenHelp>
-          {t('voter.results.of_vote', { title })}
-          {turnout ? (
+          {counting ? null : t('voter.results.of_vote', { title })}
+          {turnout && !counting ? (
             <>
               {' '}
               <ResultsTurnout turnout={turnout} share={state === 'final'} />
             </>
           ) : null}
-          {note ? ` ${note}` : null}
+          {note ? (counting ? note : ` ${note}`) : null}
         </ScreenHelp>
       )}
+      {publicCounting ? (
+        <Text textStyle='ballot-hint' color='fg.subtle' mt='5'>
+          {t('voter.results.counting_last')}
+        </Text>
+      ) : null}
       {hidden ? (
         voted ? (
           <NoticeCard title={t('voter.voted.title')}>
@@ -189,9 +212,9 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
           </NoticeCard>
         ) : null
       ) : (
-        <Card.Root variant='ballot' mt='6'>
+        <Card.Root variant='ballot' mt={publicCounting ? '2' : '6'}>
           {election.questions.map((question, index) => (
-            <QuestionBlock key={question.id} question={question} first={index === 0} />
+            <QuestionBlock key={question.id} question={question} first={index === 0} counting={counting} />
           ))}
         </Card.Root>
       )}

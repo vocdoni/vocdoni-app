@@ -1776,14 +1776,15 @@
       "help_one": "Comprovat: la resposta és al registre. Ja pots tancar la pàgina.",
       "help_many": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
       "help_other": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
-      "results_later": "Els resultats es publicaran aquí mateix {{date}} a les {{time}}.",
       "title": "Vot emès. Gràcies."
     },
     "results": {
       "check_vote": "Comprova el teu vot",
       "closed": "Tancada",
       "closed_on": "Tancada {{date}} a les {{time}}",
-      "counting_help": "Els resultats sortiran aquí mateix quan s'hagin comptat. No cal que recarreguis la pàgina.",
+      "counting_help": "Els resultats finals sortiran aquí mateix quan s'hagin comptat. No cal que recarreguis la pàgina.",
+      "counting_help_secret": "Els resultats sortiran aquí mateix quan s'hagin comptat. No cal que recarreguis la pàgina.",
+      "counting_last": "Últims resultats abans del recompte. Encara poden canviar.",
       "counting_title": "S'estan comptant els vots",
       "final_title": "Resultats finals",
       "hidden_card_body": "No cal que facis res més. Pots tancar la pàgina i tornar-hi {{day}}.",

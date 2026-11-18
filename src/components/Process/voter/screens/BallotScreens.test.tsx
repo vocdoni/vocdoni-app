@@ -135,7 +135,10 @@ describe('receipt', () => {
     const flow = testFlow({ facts: testFacts({ secretUntilTheEnd: true }) })
     renderWithFlow(<ReceiptScreen />, flow)
     expect(screen.queryByText(/voter\.receipt\.results_later/)).toBeNull()
-    fireEvent.click(screen.getByRole('button', { name: 'voter.results.show' }))
+    // The screen's one button, in the action bar as its primary action.
+    const bar = screen.getByRole('region', { name: 'voter.actions_label' })
+    expect(within(bar).getAllByRole('button')).toHaveLength(1)
+    fireEvent.click(within(bar).getByRole('button', { name: 'voter.results.show' }))
     expect(flow.showResults).toHaveBeenCalledWith(true)
   })
 })

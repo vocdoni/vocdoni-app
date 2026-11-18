@@ -1776,14 +1776,15 @@
       "help_one": "Verificato: la risposta è registrata. Ora puoi chiudere la pagina.",
       "help_many": "Verificato: le {{count}} risposte sono registrate. Ora puoi chiudere la pagina.",
       "help_other": "Verificato: le {{count}} risposte sono registrate. Ora puoi chiudere la pagina.",
-      "results_later": "I risultati saranno pubblicati qui {{date}} alle {{time}}.",
       "title": "Voto espresso. Grazie."
     },
     "results": {
       "check_vote": "Verifica il tuo voto",
       "closed": "Chiusa",
       "closed_on": "Chiusa il {{date}} alle {{time}}",
-      "counting_help": "I risultati compariranno qui appena saranno stati contati. Non serve ricaricare la pagina.",
+      "counting_help": "I risultati finali compariranno qui appena saranno stati contati. Non serve ricaricare la pagina.",
+      "counting_help_secret": "I risultati compariranno qui appena saranno stati contati. Non serve ricaricare la pagina.",
+      "counting_last": "Ultimi risultati prima del conteggio. Possono ancora cambiare.",
       "counting_title": "Conteggio dei voti in corso",
       "final_title": "Risultati finali",
       "hidden_card_body": "Non devi fare nient'altro. Puoi chiudere la pagina e tornare {{day}}.",

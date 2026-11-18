@@ -1776,14 +1776,15 @@
       "help_one": "Verificado: a resposta está no registo. Já podes fechar a página.",
       "help_many": "Verificado: as {{count}} respostas estão no registo. Já podes fechar a página.",
       "help_other": "Verificado: as {{count}} respostas estão no registo. Já podes fechar a página.",
-      "results_later": "Os resultados serão publicados aqui mesmo {{date}} às {{time}}.",
       "title": "Voto emitido. Obrigado."
     },
     "results": {
       "check_vote": "Verificar o teu voto",
       "closed": "Encerrada",
       "closed_on": "Encerrada em {{date}} às {{time}}",
-      "counting_help": "Os resultados vão aparecer aqui assim que forem contados. Não precisas de recarregar a página.",
+      "counting_help": "Os resultados finais vão aparecer aqui assim que forem contados. Não precisas de recarregar a página.",
+      "counting_help_secret": "Os resultados vão aparecer aqui assim que forem contados. Não precisas de recarregar a página.",
+      "counting_last": "Últimos resultados antes da contagem. Ainda podem mudar.",
       "counting_title": "A contar os votos",
       "final_title": "Resultados finais",
       "hidden_card_body": "Não precisas de fazer mais nada. Podes fechar a página e voltar {{day}}.",

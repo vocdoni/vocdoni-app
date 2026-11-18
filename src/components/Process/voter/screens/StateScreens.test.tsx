@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import type { VoterFlow } from '../flow-context'
 import { renderWithFlow, testElection, testFacts, testFlow } from '../test-flow'
 import { initialVoterState } from '../voter-flow'
@@ -130,6 +130,15 @@ describe('state screens', () => {
     renderWithFlow(<AlreadyVotedScreen />, testFlow({ voteIds: { q1: 'a3f1000000000000009c2e' } }))
     expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
     expect(screen.getByTestId('voter-screen')).toHaveClass('ph-no-capture')
+  })
+
+  it('alreadyVoted: "Mostra els resultats" is the only button, in the action bar', () => {
+    const flow = testFlow({ voteIds: { q1: 'a3f1000000000000009c2e' } })
+    renderWithFlow(<AlreadyVotedScreen />, flow)
+    const bar = screen.getByRole('region', { name: 'voter.actions_label' })
+    expect(within(bar).getAllByRole('button')).toHaveLength(1)
+    fireEvent.click(within(bar).getByRole('button', { name: 'voter.results.show' }))
+    expect(flow.showResults).toHaveBeenCalledWith(true)
   })
 
   it('alreadyVoted opens with the success disc before the heading', () => {

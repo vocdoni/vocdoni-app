@@ -84,22 +84,31 @@ describe('ResultsScreen', () => {
     expect(flow.checkReceipt).toHaveBeenCalled()
   })
 
-  it('counting: an ended vote whose secret tallies are not published says so, with no figure', () => {
+  it('counting, secret until the end (board 10c): the closed line, the help without "final", each question not counted', () => {
     show('final', {
       election: tallied({ secret: true, results: [] }),
       facts: testFacts({ status: 'ENDED', connected: false, secretUntilTheEnd: true }),
     })
     expect(title()).toHaveTextContent('voter.results.counting_title')
-    expect(screen.getByText(/voter\.results\.counting_help/)).toBeInTheDocument()
+    expect(screen.getByText('voter.results.closed_on')).toBeInTheDocument()
+    expect(screen.getByText(/voter\.results\.counting_help_secret/)).toBeInTheDocument()
+    expect(screen.queryByText('voter.results.counting_last')).toBeNull()
     expect(screen.queryAllByRole('progressbar')).toHaveLength(0)
-    expect(screen.getAllByText('voter.results.not_counted')).toHaveLength(2)
+    expect(screen.queryByText('voter.results.kind_single')).toBeNull()
+    for (const name of ['Question 1', 'Question 2']) {
+      expect(within(screen.getByRole('region', { name })).getByText('voter.results.not_counted')).toBeInTheDocument()
+    }
   })
 
-  it('counting, for a public vote: the last live figures stay, with nothing set apart', () => {
+  it('counting, public (board 10b): the final-results help, the "may still change" line, the last figures with nothing set apart', () => {
     show('final', { election: tallied(), facts: testFacts({ status: 'ENDED' }) })
+    expect(screen.getByText('voter.results.closed_on')).toBeInTheDocument()
     expect(title()).toHaveTextContent('voter.results.counting_title')
+    expect(screen.getByText('voter.results.counting_help')).toBeInTheDocument()
+    expect(screen.getByText('voter.results.counting_last')).toBeInTheDocument()
     expect(screen.getAllByRole('progressbar')).toHaveLength(4)
     expect(leading()).toBeNull()
+    expect(screen.queryByText('voter.results.not_counted')).toBeNull()
   })
 
   it('says a question has no votes yet instead of drawing empty bars', () => {

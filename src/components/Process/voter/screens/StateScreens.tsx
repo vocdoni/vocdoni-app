@@ -8,7 +8,6 @@ import { useAppEnv } from '~src/app-env'
 import { useVoterFlow } from '../flow-context'
 import { formatVoteDay, formatVoteTime, textOf, voterTurnout, type Turnout } from '../format'
 import { ReceiptCard } from '../parts/ReceiptCard'
-import { ResultsLine } from '../parts/ResultsLine'
 import {
   InlineAction,
   LocalText,
@@ -18,6 +17,7 @@ import {
   ScreenKicker,
   VoterScreenFrame,
 } from '../parts/ScreenParts'
+import { ShowResultsButton } from '../parts/ShowResultsButton'
 import { VoterActionBar } from '../parts/VoterActionBar'
 import type { VoterScreenKind } from '../voter-flow'
 
@@ -307,7 +307,7 @@ export const AlreadyVotedScreen = () => {
       ) : !hasCodes && anonymous ? (
         <NoticeCard title={t('aside.anonymous_receipt_gone')} />
       ) : null}
-      <ResultsLine />
+      <VoterActionBar primary={<ShowResultsButton />} />
     </Centred>
   )
 }

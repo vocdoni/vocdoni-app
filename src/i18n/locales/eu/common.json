@@ -1741,14 +1741,15 @@
       "card_title": "Zure ziurtagiria",
       "help_one": "Egiaztatuta: erantzuna erregistroan dago. Orria itxi dezakezu orain.",
       "help_other": "Egiaztatuta: {{count}} erantzunak erregistroan daude. Orria itxi dezakezu orain.",
-      "results_later": "Emaitzak hemen bertan argitaratuko dira: {{date}}, {{time}}.",
       "title": "Botoa emanda. Eskerrik asko."
     },
     "results": {
       "check_vote": "Egiaztatu zure botoa",
       "closed": "Itxita",
       "closed_on": "Itxita: {{date}}, {{time}}",
-      "counting_help": "Emaitzak hemen bertan agertuko dira zenbatu bezain laster. Ez duzu orria berriro kargatu beharrik.",
+      "counting_help": "Azken emaitzak hemen bertan agertuko dira zenbatu bezain laster. Ez duzu orria berriro kargatu beharrik.",
+      "counting_help_secret": "Emaitzak hemen bertan agertuko dira zenbatu bezain laster. Ez duzu orria berriro kargatu beharrik.",
+      "counting_last": "Zenbaketaren aurreko azken emaitzak. Alda daitezke oraindik.",
       "counting_title": "Botoak zenbatzen ari dira",
       "final_title": "Azken emaitzak",
       "hidden_card_body": "Ez duzu beste ezer egin beharrik. Orria itxi dezakezu eta {{day}} itzuli.",
