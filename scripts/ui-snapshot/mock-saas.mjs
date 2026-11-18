@@ -428,7 +428,19 @@ const multi = (max, n) => ({
 })
 const AAO = [
   ['Aproves els comptes anuals de 2025?', ['Sí', 'No', 'Abstenció'], {}, [150, 22, 9]],
-  ['Qui vols a les dues vocalies?', ['Laia Puig', 'Oriol Mas', 'Núria Font', 'Marc Serra'], multi(2, 4)],
+  // Dense 0/1 fields, one per choice: [did not pick, picked] of the 176 who answered (148 + 97 + 62 + 35 picks).
+  [
+    'Qui vols a les dues vocalies?',
+    ['Laia Puig', 'Oriol Mas', 'Núria Font', 'Marc Serra'],
+    multi(2, 4),
+    undefined,
+    [
+      [28, 148],
+      [79, 97],
+      [114, 62],
+      [141, 35],
+    ],
+  ],
   [
     'Quina inversió va primer?',
     ['Teulada', 'Calefacció', 'Biblioteca'],
@@ -454,13 +466,17 @@ const aaoVote = (id, status, extra = {}) =>
   boardVote(id, 'Assemblea General Ordinària 2026', {
     startDate: '2026-06-08T07:00:00.000Z',
     endDate: '2026-06-17T18:00:00.000Z',
-    questions: AAO.map(([title, choices, shape, single], i) => {
+    questions: AAO.map(([title, choices, shape, single, fields], i) => {
       const counted = status !== 'CANCELED' && extra.counted !== false
       const final = status === 'RESULTS'
       const voteCount = counted ? AAO_VOTES[i] : 0
-      // The single-choice question carries a tally; the others only their count (secret until the end).
+      // The single- and multiple-choice questions carry a tally; the others only their count (secret until the end).
       const results =
-        single && counted ? tally(single, final) : { voteCount, maxVoters: 312, finalResults: final, results: [] }
+        single && counted
+          ? tally(single, final)
+          : fields && counted
+            ? { voteCount, maxVoters: 312, finalResults: final, results: fields.map((pair) => pair.map(String)) }
+            : { voteCount, maxVoters: 312, finalResults: final, results: [] }
       return {
         ...question(id, i + 1, title, choices, status, results),
         id: boardQuestionId(id, i + 1),
