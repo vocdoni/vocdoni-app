@@ -1,7 +1,7 @@
-import { Alert, Box, Button, Spinner, Status, Text } from '@chakra-ui/react'
+import { Alert, Box, Button, Spinner, Status, Text, VisuallyHidden } from '@chakra-ui/react'
 import { resolveEndDate } from '@vocdoni/api-client'
 import { useReactComponentsLocalize } from '@vocdoni/react-components'
-import type { ComponentProps, ReactNode } from 'react'
+import { useId, type ComponentProps, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SuccessDisc } from '~components/ui/SuccessDisc'
 import { useAppEnv } from '~src/app-env'
@@ -73,10 +73,13 @@ export const TurnoutLine = ({ turnout }: { turnout: Turnout }) => {
 
 export const CheckingScreen = () => {
   const { t } = useTranslation()
+  const labelId = useId()
   return (
     <VoterScreenFrame kind='checking'>
-      <Box display='flex' justifyContent='center' py='16'>
-        <Spinner size='lg' aria-label={t('voter.checking')} css={{ _motionReduce: { animationDuration: 'instant' } }} />
+      {/* The status carries the name; the spinner is decoration (axe aria-prohibited-attr on a role-less label). */}
+      <Box display='flex' justifyContent='center' py='16' role='status' aria-labelledby={labelId}>
+        <Spinner size='lg' aria-hidden css={{ _motionReduce: { animationDuration: 'instant' } }} />
+        <VisuallyHidden id={labelId}>{t('voter.checking')}</VisuallyHidden>
       </Box>
     </VoterScreenFrame>
   )

@@ -21,6 +21,8 @@ export const VoterTopActions = ({ publicLanguageLinks }: VoterTopActionsProps) =
   const [pending, setPending] = useState<string>()
   const entries = Object.entries(languages).sort(([a], [b]) => a.localeCompare(b))
   const current = (currentLanguage ?? '').toLowerCase()
+  const code = current.split('-')[0].toUpperCase()
+  const languageLabel = t('voter.language.label', { language: languages[current] ?? current })
 
   const choose = (language: string) => {
     if (language.toLowerCase() === current) return
@@ -34,12 +36,10 @@ export const VoterTopActions = ({ publicLanguageLinks }: VoterTopActionsProps) =
       {entries.length > 1 && (
         <Menu.Root positioning={{ placement: 'bottom-end' }}>
           <Menu.Trigger asChild>
-            <Button
-              variant='lang-tag'
-              size='tag'
-              aria-label={t('voter.language.label', { language: languages[current] ?? current })}
-            >
-              {current.split('-')[0].toUpperCase()}
+            {/* Named by its visible code first ("CA Idioma: Català"), so a voice command that says what it sees
+                reaches it (axe label-content-name-mismatch). */}
+            <Button variant='lang-tag' size='tag' aria-label={`${code} ${languageLabel}`}>
+              {code}
             </Button>
           </Menu.Trigger>
           <Portal>

@@ -13,14 +13,15 @@ vi.mock('~src/app-env', async (importOriginal) => ({
 beforeEach(() => routing.navigateToLanguage.mockReset())
 
 const pick = async (name: string) => {
-  fireEvent.click(screen.getByRole('button', { name: 'voter.language.label' }))
+  fireEvent.click(screen.getByRole('button', { name: 'CA voter.language.label' }))
   fireEvent.click(await screen.findByRole('menuitem', { name }))
 }
 
 describe('voter top bar actions', () => {
   it('shows the language as a tag and changes it at once before identification', async () => {
     renderWithFlow(<VoterTopActions />, testFlow({ facts: testFacts({ connected: false }) }))
-    expect(screen.getByRole('button', { name: 'voter.language.label' })).toHaveTextContent('CA')
+    // Its accessible name starts with what it shows (axe label-content-name-mismatch).
+    expect(screen.getByRole('button', { name: 'CA voter.language.label' })).toHaveTextContent(/^CA/)
     expect(screen.queryByRole('button', { name: 'voter.sign_out' })).toBeNull()
     await pick('English')
     expect(routing.navigateToLanguage).toHaveBeenCalledWith('en')

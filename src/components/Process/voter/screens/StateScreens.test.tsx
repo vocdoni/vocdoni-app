@@ -17,6 +17,10 @@ describe('state screens', () => {
     renderWithFlow(<CheckingScreen />, testFlow())
     expect(screen.getByTestId('voter-screen')).toHaveAttribute('data-screen', 'checking')
     expect(screen.queryByRole('heading')).toBeNull()
+    // A named status announces it; the spinner itself is hidden and carries no label of its own (axe).
+    const status = screen.getByRole('status', { name: 'voter.checking' })
+    expect(status).toHaveTextContent('voter.checking')
+    expect(status.querySelector('[aria-label]')).toBeNull()
   })
 
   it('upcoming gives both dates with their time zone', () => {
