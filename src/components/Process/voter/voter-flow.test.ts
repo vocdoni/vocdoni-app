@@ -374,6 +374,22 @@ describe('isAnswered', () => {
     expect(isAnswered(ranked, ['2', '0'])).toBe(false)
   })
 
+  it('approval: one at least and no more than its cap (gate F10)', () => {
+    const approval = q({
+      metadata: { type: { name: 'approval' } },
+      typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: false },
+    })
+    expect(isAnswered(approval, ['0'])).toBe(true)
+    expect(isAnswered(approval, ['0', '2'])).toBe(true)
+    expect(isAnswered(approval, ['0', '1', '2'])).toBe(false)
+    expect(isAnswered(approval, [])).toBe(false)
+  })
+
+  it('budget and quadratic questions are never answered here (gate F10)', () => {
+    expect(isAnswered(q({ metadata: { type: { name: 'budget-based' } } }), '1')).toBe(false)
+    expect(isAnswered(q({ metadata: { type: { name: 'quadratic' } } }), '1')).toBe(false)
+  })
+
   it('a locked question counts as done; a question with no ballot type never does', () => {
     expect(isAnswered(single, undefined, true)).toBe(true)
     expect(isAnswered(q({ type: '' }), '1')).toBe(false)

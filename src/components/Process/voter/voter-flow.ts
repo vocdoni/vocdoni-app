@@ -231,7 +231,9 @@ type QuestionShape = Parameters<typeof questionSelectionRange>[0]
 export const isAnswered = (question: QuestionShape, answer: Answer | undefined, locked = false): boolean => {
   if (locked) return true
   const type = tryInferQuestionBallotType(question)
-  if (type === undefined) return false
+  // Budget and quadratic questions have no field here (the SDK would draw them as a single choice, an answer the
+  // tally would misread): never answered, so never cast (gate F10).
+  if (type === undefined || type === BallotType.Budget || type === BallotType.Quadratic) return false
   switch (type) {
     case BallotType.MultiChoice: {
       if (!Array.isArray(answer)) return false
@@ -239,8 +241,12 @@ export const isAnswered = (question: QuestionShape, answer: Answer | undefined, 
       const count = answer.filter((value) => value !== '').length
       return count >= min && count <= max
     }
-    case BallotType.Approval:
-      return Array.isArray(answer) && answer.some((value) => value !== '')
+    case BallotType.Approval: {
+      // At least one, and no more than the question's cap: the encoder refuses more (gate F10).
+      if (!Array.isArray(answer)) return false
+      const count = answer.filter((value) => value !== '').length
+      return count >= 1 && count <= questionSelectionRange(question).max
+    }
     case BallotType.Ranked:
       return Array.isArray(answer) && answer.length === question.choices.length && answer.every((value) => value !== '')
     default:

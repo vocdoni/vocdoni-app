@@ -53,8 +53,11 @@ export const QuestionScreen = ({ index, paused }: { index: number; paused: boole
   const { fmethods } = useQuestionsForm()
   const { errors } = useFormState({ control: fmethods.control, name: String(index) })
   const fieldError = (errors as Record<string, { type?: unknown; message?: unknown } | undefined>)[String(index)]
+  // Budget and quadratic questions cannot be cast here (the SDK would draw them as a single choice): the notice
+  // replaces their ballot (gate F10).
+  const castable = ballotType !== BallotType.Budget && ballotType !== BallotType.Quadratic
   const blocker =
-    ballotType === undefined
+    ballotType === undefined || !castable
       ? localize('errors.question_unsupported')
       : fieldError && castBlockers.has(String(fieldError.type)) && fieldError.message
         ? String(fieldError.message)
@@ -98,7 +101,7 @@ export const QuestionScreen = ({ index, paused }: { index: number; paused: boole
         </Alert.Root>
       ) : (
         <>
-          <ElectionQuestion index={String(index)} question={question} />
+          {castable && <ElectionQuestion index={String(index)} question={question} />}
           {blocker && <QuestionErrorLine>{blocker}</QuestionErrorLine>}
         </>
       )}

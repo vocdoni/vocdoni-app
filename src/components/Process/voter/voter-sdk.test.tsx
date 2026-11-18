@@ -323,6 +323,18 @@ describe('the question screen shows the errors that stop a cast and hides the se
     expect(screen.getAllByText(unsupportedNotice)).toHaveLength(1)
   })
 
+  // Gate F10: the SDK would draw these as a single choice and pass one value through as an amounts array.
+  it.each(['budget-based', 'quadratic'])(
+    'replaces the ballot of a %s question with the unsupported notice',
+    async (name) => {
+      const budget = { ...question(1), type: '', ballotProtocol: undefined, metadata: { type: { name } } }
+      renderQuestion(process([budget as never, question(2)]))
+      expect(await screen.findByRole('alert')).toHaveTextContent(unsupportedNotice)
+      expect(screen.queryAllByRole('radio')).toHaveLength(0)
+      expect(screen.queryByText('Yes')).toBeNull()
+    }
+  )
+
   it.each(['unsupported', 'encode'])('shows a %s error the vote sets on the question', async (type) => {
     renderQuestion()
     act(() =>
