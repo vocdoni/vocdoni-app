@@ -1,5 +1,6 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import {
+  checkRetryDelay,
   isSettledProcess,
   jitterFactor,
   VOTER_END_POLL_MS,
@@ -21,6 +22,19 @@ describe('jitterFactor', () => {
     expect(jitterFactor(0)).toBeCloseTo(1 - VOTER_JITTER)
     expect(jitterFactor(0.5)).toBe(1)
     expect(jitterFactor(0.999999)).toBeCloseTo(1 + VOTER_JITTER)
+  })
+})
+
+describe('checkRetryDelay (gate F5)', () => {
+  it('doubles from 5 s to a 60 s ceiling while the membership check fails', () => {
+    expect([1, 2, 3, 4, 5, 6, 20].map((failures) => checkRetryDelay(failures, 0.5))).toEqual([
+      5_000, 10_000, 20_000, 40_000, 60_000, 60_000, 60_000,
+    ])
+  })
+
+  it('spreads each wait so the tabs of a room do not retry in step', () => {
+    expect(checkRetryDelay(1, 0)).toBe(4_000)
+    expect(checkRetryDelay(5, 0.999999)).toBe(72_000)
   })
 })
 

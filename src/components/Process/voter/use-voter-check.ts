@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { ProcessCheckResponse } from '@vocdoni/api-types'
 import { useEffect, useRef } from 'react'
-import { VOTER_CHECK_RETRY_MS } from './live'
+import { checkRetryDelay } from './live'
 import type { Membership } from './voter-flow'
 
 export const voterCheckKey = (id: string | undefined) => ['voter-check', id] as const
@@ -29,9 +29,13 @@ export const useVoterCheck = ({ id, authToken, connected, check, statusKey }: Vo
     queryKey: [...voterCheckKey(id), authToken],
     queryFn: () => check(),
     enabled: connected && !!authToken && !!id,
-    retry: (count, error) => !isUnauthorized(error) && count < 2,
+    // No quick retries: a failing check backs off with jitter instead (gate F5), as the room's tabs would otherwise
+    // hit the failing endpoint in step every few seconds.
+    retry: false,
     refetchInterval: (current) =>
-      current.state.status === 'error' && !isUnauthorized(current.state.error) ? VOTER_CHECK_RETRY_MS : false,
+      current.state.status === 'error' && !isUnauthorized(current.state.error)
+        ? checkRetryDelay(current.state.errorUpdateCount)
+        : false,
     refetchOnWindowFocus: true,
     gcTime: 0,
   })

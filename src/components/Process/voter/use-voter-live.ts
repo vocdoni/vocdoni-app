@@ -3,7 +3,7 @@ import { resolveEndDate } from '@vocdoni/api-client'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { electionQueryKeys } from '@vocdoni/react-components'
 import { useEffect, useMemo, useState } from 'react'
-import { jitterFactor, MAX_TIMEOUT_MS, VOTER_END_WINDOW_MS, voterLiveQueryOptions } from './live'
+import { jitterFactor, MAX_TIMEOUT_MS, VOTER_END_POLL_MS, VOTER_END_WINDOW_MS, voterLiveQueryOptions } from './live'
 
 /**
  * The voter page's reads (spec D5): the provider options, plus the end-instant timer. At the scheduled end it
@@ -24,11 +24,19 @@ export const useVoterLive = (
     if (end === undefined) return
     const remaining = end - Date.now()
     if (remaining <= 0 || remaining > MAX_TIMEOUT_MS) return
+    let spread: ReturnType<typeof setTimeout> | undefined
     const timer = setTimeout(() => {
       setEndWindowUntil(Date.now() + VOTER_END_WINDOW_MS)
-      void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) })
+      // Every open tab reaches the end at the same instant: the read is spread over one fast-poll interval (gate F5).
+      spread = setTimeout(
+        () => void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) }),
+        Math.random() * VOTER_END_POLL_MS
+      )
     }, remaining)
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(spread)
+    }
   }, [end, id, queryClient])
 
   const options = useMemo(

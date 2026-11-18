@@ -14,8 +14,10 @@ export const VOTER_JITTER = 0.2
  * voter back to identification.
  */
 export const VOTER_STATE_GRACE_MS = 20_000
-/** The membership check's retry while it fails for another reason than an expired session. */
+/** The membership check's first retry while it fails for another reason than an expired session. */
 export const VOTER_CHECK_RETRY_MS = 5_000
+/** Its ceiling: each failure doubles the wait up to this (gate F5). */
+export const VOTER_CHECK_RETRY_MAX_MS = 60_000
 /**
  * How long "Emet el vot" stays off after review appears (gate F1): on a phone it sits where "Continua" was, so the
  * second tap of a double tap meant for "Continua" must never cast.
@@ -31,6 +33,16 @@ export const MAX_TIMEOUT_MS = 2_147_483_647
 
 /** A per-tab factor in [1 - VOTER_JITTER, 1 + VOTER_JITTER] from a number in [0, 1). */
 export const jitterFactor = (random: number): number => 1 + (random * 2 - 1) * VOTER_JITTER
+
+/**
+ * The wait before the next membership check after `failures` failed ones (gate F5): doubling from
+ * `VOTER_CHECK_RETRY_MS` up to `VOTER_CHECK_RETRY_MAX_MS`, spread per call so the tabs of a room do not retry in step.
+ */
+export const checkRetryDelay = (failures: number, random: number = Math.random()): number =>
+  Math.round(
+    Math.min(VOTER_CHECK_RETRY_MAX_MS, VOTER_CHECK_RETRY_MS * 2 ** Math.min(Math.max(failures - 1, 0), 6)) *
+      jitterFactor(random)
+  )
 
 /** Nothing will change any more: every question canceled, or every one ended with its final tally. */
 export const isSettledProcess = (process: VotingProcessResponse | null | undefined): boolean => {
