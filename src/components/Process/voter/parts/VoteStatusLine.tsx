@@ -29,6 +29,8 @@ export const VoteStatusLine = ({ context = 'screen' }: { context?: 'head' | 'scr
       </Status.Root>
     )
   }
+  // An ended vote (reached by "Comprova el teu vot") is not "open until" anything (gate F7).
+  if (facts.endedBySchedule || facts.status === 'ENDED' || facts.status === 'RESULTS') return null
   const end = resolveEndDate(election)
   if (!end) return null
   return (

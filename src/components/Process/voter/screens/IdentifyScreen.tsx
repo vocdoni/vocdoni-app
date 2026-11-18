@@ -25,7 +25,7 @@ type IdentifyValues = Record<string, string | boolean>
  */
 export const IdentifyScreen = ({ notice }: { notice?: 'sessionExpired' }) => {
   const { t } = useTranslation()
-  const { election, facts, moved, showResults } = useVoterFlow()
+  const { election, facts, state, moved, showResults } = useVoterFlow()
   const { authFields, twoFaFields, setAuthData, setCurrentStep } = useCspAuthContext()
   const { TERMS_OF_SERVICE_URL, PRIVACY_POLICY_URL } = useAppEnv()
   const formId = useId()
@@ -105,7 +105,8 @@ export const IdentifyScreen = ({ notice }: { notice?: 'sessionExpired' }) => {
       <ScreenHeading focus={moved} mt='2.5'>
         {textOf(election.title as Parameters<typeof textOf>[0])}
       </ScreenHeading>
-      <ScreenHelp>{t('voter.identify.help')}</ScreenHelp>
+      {/* After "Comprova el teu vot" on an ended vote the voter identifies to check, not to vote (gate F7). */}
+      <ScreenHelp>{state.checkReceipt ? t('voter.results.check_vote') : t('voter.identify.help')}</ScreenHelp>
       <VoterMedia />
       {notice === 'sessionExpired' && !failure && (
         <Alert.Root status='warning' layout='ballot' mt='5' role='status'>

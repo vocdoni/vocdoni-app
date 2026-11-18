@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { createTestI18n } from '~src/test-utils'
 import { renderWithFlow, testFacts, testFlow } from '../test-flow'
+import { initialVoterState } from '../voter-flow'
 import { CodeScreen } from './CodeScreen'
 import { IdentifyScreen } from './IdentifyScreen'
 
@@ -54,6 +55,23 @@ describe('identify', () => {
       expect(csp.identify.mutateAsync).toHaveBeenCalledWith({ memberNumber: '42', email: 'anna@exemple.cat' })
     )
     expect(csp.context.setCurrentStep).toHaveBeenCalledWith(1)
+  })
+
+  it('on an ended vote reached by "Comprova el teu vot" it says neither "open until" nor "identify to vote" (gate F7)', () => {
+    const open = renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
+    expect(screen.getByText(/voter\.status\.open_until/)).toBeInTheDocument()
+    expect(screen.getByText('voter.identify.help')).toBeInTheDocument()
+    open.unmount()
+    renderWithFlow(
+      <IdentifyScreen />,
+      testFlow({
+        facts: testFacts({ connected: false, status: 'ENDED' }),
+        state: { ...initialVoterState, checkReceipt: true },
+      })
+    )
+    expect(screen.queryByText(/voter\.status\.open_until/)).toBeNull()
+    expect(screen.queryByText('voter.identify.help')).toBeNull()
+    expect(screen.getByText('voter.results.check_vote')).toBeInTheDocument()
   })
 
   it('a failed match shows the board sentence and marks every field, naming none', () => {

@@ -64,6 +64,14 @@ describe('deriveVoterScreen: precedence, first match wins', () => {
     expect(screen({ questionByQuestion: true, status: 'PROCESS_UNKNOWN' })).toEqual({ kind: 'unsupported' })
   })
 
+  it('4b. an ended question-by-question vote is closed, with its results (gate F8)', () => {
+    expect(screen({ questionByQuestion: true, status: 'ENDED', connected: false })).toEqual({ kind: 'closed' })
+    expect(screen({ questionByQuestion: true, endedBySchedule: true }, { viewResults: true })).toEqual({
+      kind: 'results',
+      state: 'final',
+    })
+  })
+
   it('5. upcoming always precedes identification', () => {
     expect(screen({ status: 'UPCOMING', connected: false })).toEqual({ kind: 'upcoming' })
     expect(screen({ status: 'UPCOMING' }, { checkReceipt: true })).toEqual({ kind: 'upcoming' })

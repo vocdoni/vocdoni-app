@@ -177,12 +177,13 @@ export const deriveVoterScreen = (facts: VoterFacts, local: VoterLocalState): Vo
   if (facts.voting) return { kind: 'sending' }
   if (local.castDone) return { kind: 'receipt' }
   if (facts.status === 'CANCELED') return { kind: 'canceled' }
-  if (facts.questionByQuestion) return { kind: 'unsupported' }
   if (facts.status === 'UPCOMING') return { kind: 'upcoming' }
 
   const results: VoterScreen = { kind: 'results', state: resultsStateOf(facts) }
   const over = isVoteOver(facts)
   if (over && !local.checkReceipt) return local.viewResults ? results : { kind: 'closed' }
+  // A question-by-question vote cannot be voted here; once it is over the closed screen and its results apply (F8).
+  if (facts.questionByQuestion) return { kind: 'unsupported' }
   if (facts.status === null || facts.status === 'PROCESS_UNKNOWN') return { kind: 'unavailable' }
 
   if (!facts.connected) {
