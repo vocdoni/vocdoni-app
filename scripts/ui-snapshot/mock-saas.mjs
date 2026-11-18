@@ -44,6 +44,11 @@ export const V_RESULTS = '650000000000000000001009'
 export const V_RESULTS_ENDED = '65000000000000000000100a'
 export const V_RESULTS_SECRET = '65000000000000000000100b'
 export const V_RESULTS_COUNTING = '65000000000000000000100c'
+// Anonymous (blind CSP) censuses: one to cast in (receipt with copy and download), one this voter already signed from
+// another device (no stored codes), one ended (the verify page from the closed screen).
+export const V_ANON = '65000000000000000000100d'
+export const V_ANON_SIGNED = '65000000000000000000100e'
+export const V_ANON_ENDED = '65000000000000000000100f'
 /** The member number the voter votes' auth-only censuses answer; any other one is not in the census. */
 export const VOTER_MEMBER = 'A-1001'
 export const FAKE_TOKEN = 'fake-local-token'
@@ -615,6 +620,8 @@ PROCESSES.push(brandVote(P_BRANDED, { branding: true }), brandVote(P_BRAND_OFF))
 // vote, and a ranking. Dated far from FIXED_NOW, as the main votes, so the server's real clock and the browser's
 // frozen one agree. The censuses ask for the member number only, except the 2FA one.
 const VOTER_CENSUS = { ...BOARD_CENSUS, authFields: ['memberNumber'], twoFaFields: [] }
+// An anonymous census: the CSP blind-signs, so it never learns which ballot is whose.
+const VOTER_ANON_CENSUS = { ...VOTER_CENSUS, anonymous: true }
 const pickSlot = (choices, max) => ({
   type: 'multichoice',
   typeSetup: { maxChoices: max, minChoices: 0, uniqueChoices: false },
@@ -712,7 +719,10 @@ PROCESSES.push(
   voterVote(V_RESULTS_ENDED, { status: 'RESULTS', endDate: VOTER_ENDED, tallies: VOTER_TALLIES, final: true }),
   voterVote(V_RESULTS_SECRET, { status: 'ENDED', endDate: VOTER_ENDED, secret: true }),
   // Ended with the last live bars, the tally not final yet (board 10b).
-  voterVote(V_RESULTS_COUNTING, { status: 'ENDED', endDate: VOTER_ENDED, tallies: VOTER_TALLIES })
+  voterVote(V_RESULTS_COUNTING, { status: 'ENDED', endDate: VOTER_ENDED, tallies: VOTER_TALLIES }),
+  voterVote(V_ANON, { census: VOTER_ANON_CENSUS }),
+  voterVote(V_ANON_SIGNED, { census: VOTER_ANON_CENSUS }),
+  voterVote(V_ANON_ENDED, { census: VOTER_ANON_CENSUS, status: 'ENDED', endDate: VOTER_ENDED })
 )
 /** V_LIVE paused by the organisation: what the page reads once it refetches (the paused mid-ballot capture). */
 export const VOTER_LIVE_PAUSED = voterVote(V_LIVE, { status: 'PAUSED', description: VOTER_DESCRIPTION })
@@ -983,6 +993,8 @@ on('POST', '/processes/([0-9a-f]{24})/check', (m) => {
   if (!p) return [404, { error: 'process not found', code: 404 }]
   if (m[1] === V_CHECKING) return HANG
   const voted = m[1] === V_VOTED || m[1] === V_RESULTS_SECRET
+  // An anonymous census never reports hasVoted (the CSP cannot link a ballot to a voter); it only knows it signed.
+  const signed = voted || m[1] === V_ANON_SIGNED
   return {
     belongsToProcess: m[1] !== V_NOT_IN,
     ...(p.census.weighted ? { weight: '03' } : {}),
@@ -991,12 +1003,14 @@ on('POST', '/processes/([0-9a-f]{24})/check', (m) => {
       upstreamId: qq.upstreamId,
       canVote: true,
       hasVoted: voted,
-      hasSigned: voted,
+      hasSigned: signed,
     })),
   }
 })
 on('POST', '/processes/([0-9a-f]{24})/sign-info', (m) => {
   const p = processById(m[1])
+  // An anonymous census lists what was consumed with no address or nullifier.
+  if (m[1] === V_ANON_SIGNED) return { consumed: (p?.questions ?? []).map((qq) => ({ questionId: qq.id })) }
   const consumed =
     m[1] === V_VOTED || m[1] === V_RESULTS_SECRET
       ? (p?.questions ?? []).map((qq, i) => ({ questionId: qq.id, nullifier: hex64(String(i + 1)) }))
@@ -1016,6 +1030,26 @@ on('POST', '/processes/([0-9a-f]{24})/sign-batch', (m, q, body) => {
     })),
   }
 })
+// The blind CSP: round 1 hands out a point per question (the curve's generator, X then the oddness byte, weight 01);
+// round 2 signs whatever was blinded (the scalar is not checked here: nothing verifies the proof offline).
+const BLIND_POINT_R = '79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f8179800'
+const bodyOf = (body) => {
+  try {
+    return JSON.parse(body || '{}')
+  } catch {
+    return {}
+  }
+}
+on('POST', '/processes/([0-9a-f]{24})/blind-point', (m, q, body) => ({
+  points: (bodyOf(body).electionIds ?? []).map((upstreamId) => ({ upstreamId, tokenR: BLIND_POINT_R, weight: '01' })),
+}))
+on('POST', '/processes/([0-9a-f]{24})/blind-sign', (m, q, body) => ({
+  signatures: (bodyOf(body).ballots ?? []).map((ballot) => ({ upstreamId: ballot.upstreamId, signature: hex64('5') })),
+}))
+// The Explorer-side check of stored nullifiers: every one is on chain.
+on('POST', '/votes/verify', (m, q, body) => ({
+  votes: (bodyOf(body).nullifiers ?? []).map((nullifier) => ({ nullifier, verified: true })),
+}))
 on('POST', '/votes', (m, q, body) => {
   try {
     lastBatch = (JSON.parse(body || '{}').votes ?? []).length

@@ -237,6 +237,21 @@ tally is not published: `counting` identifies through "Comprova el teu vot" (the
 the results; `hidden` then answers the process read as extended (open and secret again) and refocuses, which is the
 only way the page reaches the hidden state without a link (plan Open question 1).
 
+The anonymous-census routes (boards V4VoterWideMore 12 to 14b) use censuses with `anonymous: true`, which the mock
+answers as the backend does: `/check` never says `hasVoted`, `/sign-info` lists consumed questions with no address or
+nullifier, and `/blind-point`, `/blind-sign` and `/votes/verify` stand in for the blind CSP and the chain.
+
+| route               | vote            | states                                                                                                                   |
+| ------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `voter-anon-cast`   | `V_ANON`        | `receipt` (12): the cast through the blind CSP, the receipt with its keep-the-codes warning, copy, download              |
+| `voter-anon-signed` | `V_ANON_SIGNED` | `authorised` (13): identified, signed from another device, no codes; `verify` (14): its link opened                      |
+| `voter-anon-ended`  | `V_ANON_ENDED`  | the closed screen; `verify` (14) from it; `verify-short-code` (14b): `a3f1…9c2e` typed and submitted, so the error shows |
+
+```bash
+pnpm ui:snapshot -- --label anon --lang ca --viewports 1440 --modes light \
+  --routes voter-anon-cast,voter-anon-signed,voter-anon-ended
+```
+
 ## Known limits
 
 - **Mock data, no backend.** Screens show what the mock returns: one admin user, two organizations (the second, a cooperative with the branding add-on's logo and colour, only behind
