@@ -131,14 +131,11 @@ describe('receipt', () => {
     expect(screen.getByText('vote.disabled.unconfirmed')).toBeInTheDocument()
   })
 
-  it('says when the results come if they are secret until the end, else offers them', () => {
+  it('offers the results, also for a vote that is secret until the end (the results screen says when they come)', () => {
     const flow = testFlow({ facts: testFacts({ secretUntilTheEnd: true }) })
-    const { unmount } = renderWithFlow(<ReceiptScreen />, flow)
-    expect(screen.getByText(/voter\.receipt\.results_later/)).toBeInTheDocument()
-    unmount()
-    const live = testFlow()
-    renderWithFlow(<ReceiptScreen />, live)
+    renderWithFlow(<ReceiptScreen />, flow)
+    expect(screen.queryByText(/voter\.receipt\.results_later/)).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'voter.results.show' }))
-    expect(live.showResults).toHaveBeenCalledWith(true)
+    expect(flow.showResults).toHaveBeenCalledWith(true)
   })
 })

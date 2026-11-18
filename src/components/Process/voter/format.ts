@@ -1,6 +1,6 @@
 import { processVoteCount } from '@vocdoni/api-client'
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
-import { BallotType, tryInferQuestionBallotType } from '@vocdoni/ballot'
+import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '@vocdoni/ballot'
 import type { Answer } from './voter-flow'
 
 type Text = string | Record<string, string | undefined> | undefined
@@ -144,3 +144,30 @@ export const voterTurnout = (
   const totals = election.questions.map((question) => question.results?.maxVoters ?? 0).filter((value) => value > 0)
   return totals.length ? { count, total: Math.max(...totals) } : { count }
 }
+
+/** How a question was answered, for the line under its title on the results (boards M10, M11). */
+type ResultKind = { key: 'single' } | { key: 'multiple'; count: number } | { key: 'approval' } | { key: 'ranked' }
+
+/**
+ * A question's `ResultKind`, or null when the line says nothing: a legacy question with no ballot type, and the
+ * budget and quadratic types the voter page cannot cast (their bars still count points).
+ */
+export const resultKind = (question: VotingProcessQuestion): ResultKind | null => {
+  const shape = question as Parameters<typeof questionSelectionRange>[0]
+  switch (tryInferQuestionBallotType(shape)) {
+    case BallotType.SingleChoice:
+      return { key: 'single' }
+    case BallotType.MultiChoice:
+      return { key: 'multiple', count: questionSelectionRange(shape).max }
+    case BallotType.Approval:
+      return { key: 'approval' }
+    case BallotType.Ranked:
+      return { key: 'ranked' }
+    default:
+      return null
+  }
+}
+
+/** Every question carries the chain's final tally: the results are final, no longer being counted. */
+export const resultsFinal = (election: Pick<VotingProcessResponse, 'questions'>): boolean =>
+  election.questions.length > 0 && election.questions.every((question) => question.results?.finalResults === true)

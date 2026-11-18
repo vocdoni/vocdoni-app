@@ -1,5 +1,14 @@
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
-import { describeAnswer, formatVoteDay, formatVoteTime, maskContact, textOf, voterTurnout } from './format'
+import {
+  describeAnswer,
+  formatVoteDay,
+  formatVoteTime,
+  maskContact,
+  resultKind,
+  resultsFinal,
+  textOf,
+  voterTurnout,
+} from './format'
 
 const question = (over: Partial<VotingProcessQuestion> = {}) =>
   ({
@@ -149,5 +158,60 @@ describe('voterTurnout', () => {
   it('omits the denominator when the read has none, and everything when the deployment hides counts', () => {
     expect(voterTurnout({ questions: [{ id: 'q1', results: { voteCount: 3 } }] } as never, {})).toEqual({ count: 3 })
     expect(voterTurnout(election, { HIDE_VOTER_COUNT: true })).toBeNull()
+  })
+})
+
+const PROTOCOL = { maxVoteOverwrites: 0, costExponent: 1, maxTotalCost: 0, costFromWeight: false }
+
+describe('resultKind', () => {
+  it('names how each castable type is answered (boards M10, M11)', () => {
+    expect(
+      resultKind(
+        question({ type: 'singlechoice', ballotProtocol: { ...PROTOCOL, maxCount: 1, maxValue: 2, uniqueValues: false } })
+      )
+    ).toEqual({ key: 'single' })
+    expect(
+      resultKind(
+        question({
+          type: 'multichoice',
+          typeSetup: { maxChoices: 2, minChoices: 0, uniqueChoices: false },
+          ballotProtocol: { ...PROTOCOL, maxCount: 2, maxValue: 4, uniqueValues: true },
+        })
+      )
+    ).toEqual({ key: 'multiple', count: 2 })
+    expect(
+      resultKind(
+        question({
+          metadata: { type: { name: 'approval' } },
+          typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: false },
+        } as Partial<VotingProcessQuestion>)
+      )
+    ).toEqual({ key: 'approval' })
+    expect(
+      resultKind(
+        question({
+          metadata: { type: { name: 'ranked' } },
+          ballotProtocol: { ...PROTOCOL, maxCount: 3, maxValue: 2, uniqueValues: true },
+        } as Partial<VotingProcessQuestion>)
+      )
+    ).toEqual({ key: 'ranked' })
+  })
+
+  it('says nothing for a question whose type cannot be read (a legacy projection)', () => {
+    expect(resultKind(question({ type: '' } as Partial<VotingProcessQuestion>))).toBeNull()
+  })
+})
+
+describe('resultsFinal', () => {
+  const withFinal = (...flags: (boolean | undefined)[]) =>
+    ({
+      questions: flags.map((finalResults) => ({ results: finalResults === undefined ? undefined : { finalResults } })),
+    }) as never
+
+  it('is final only when every question carries the chain final tally', () => {
+    expect(resultsFinal(withFinal(true, true))).toBe(true)
+    expect(resultsFinal(withFinal(true, false))).toBe(false)
+    expect(resultsFinal(withFinal(true, undefined))).toBe(false)
+    expect(resultsFinal(withFinal())).toBe(false)
   })
 })

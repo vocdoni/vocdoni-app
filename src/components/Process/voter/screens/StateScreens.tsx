@@ -59,7 +59,7 @@ const useVoteTexts = () => {
 }
 
 /** "Hi van votar 221 de 312 persones.": the count e2e reads, when the deployment shows counts. */
-export const TurnoutLine = ({ turnout }: { turnout: Turnout }) => {
+const TurnoutLine = ({ turnout }: { turnout: Turnout }) => {
   const { t } = useTranslation()
   return (
     // data-testid: the count is interpolated in a plural sentence; the e2e observer reads the number from here.

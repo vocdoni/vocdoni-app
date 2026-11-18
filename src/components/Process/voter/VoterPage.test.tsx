@@ -23,7 +23,7 @@ const hex = (c: string) => c.repeat(64)
 const brand: ProcessBrand = { branded: false, name: 'Ateneu' }
 
 type Status = 'ONGOING' | 'PAUSED' | 'CANCELED' | 'ENDED' | 'RESULTS'
-const single = (n: number, status: Status, voteCount = 0) => ({
+const single = (n: number, status: Status, voteCount = 0, secret = false) => ({
   id: `q${n}`,
   parentProcessId: 'p1',
   upstreamId: hex(String(n)),
@@ -44,7 +44,7 @@ const single = (n: number, status: Status, voteCount = 0) => ({
     maxTotalCost: 0,
     costFromWeight: false,
   },
-  secretUntilTheEnd: false,
+  secretUntilTheEnd: secret,
   status,
   metadata: {},
   results: { voteCount, maxVoters: 10, finalResults: status === 'RESULTS', results: [] },
@@ -54,6 +54,7 @@ const makeProcess = ({
   startDate = '2026-06-01T00:00:00.000Z',
   endDate = '2026-12-01T00:00:00.000Z',
   voteCount = 0,
+  secret = false,
 } = {}) =>
   ({
     id: 'p1',
@@ -66,7 +67,7 @@ const makeProcess = ({
     startDate,
     endDate,
     census: { authFields: ['memberNumber'], twoFaFields: [], weighted: false, anonymous: false },
-    questions: [single(1, status, voteCount), single(2, status, voteCount)],
+    questions: [single(1, status, voteCount, secret), single(2, status, voteCount, secret)],
   }) as unknown as VotingProcessResponse
 
 // The fake backend: what GET /processes/p1 answers, and how the cast endpoints behave.
@@ -421,6 +422,24 @@ describe('voter page transitions (AC4)', () => {
     server.voted = true
     fireEvent.click(within(current()).getByRole('button', { name: 'voter.results.check_vote' }))
     await onScreen('alreadyVoted')
+  })
+
+  it('a secret open vote: the receipt offers the results, and they open as "hidden" with the date', async () => {
+    server.process = makeProcess({ secret: true })
+    server.jobs = 'hold'
+    renderPage()
+    await identify()
+    await answerBoth()
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    await onScreen('sending')
+    await waitFor(() => expect(releaseJob).toBeDefined())
+    act(() => releaseJob?.())
+    await onScreen('receipt')
+    expect(within(current()).queryByText(/voter\.receipt\.results_later/)).toBeNull()
+    fireEvent.click(within(current()).getByRole('button', { name: 'voter.results.show' }))
+    await onScreen('results')
+    expect(within(current()).getByText('voter.results.hidden_help')).toBeInTheDocument()
+    expect(within(current()).queryAllByRole('progressbar')).toHaveLength(0)
   })
 
   it('offline then online while sending: the screen stays, then settles on the receipt', async () => {
