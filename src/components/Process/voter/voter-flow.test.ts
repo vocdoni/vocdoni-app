@@ -1,4 +1,5 @@
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
+import { encodeQuestionSelections, questionSelectionRange } from '@vocdoni/ballot'
 import {
   allowsBlankVote,
   batchSize,
@@ -393,6 +394,50 @@ describe('isAnswered', () => {
     expect(isAnswered(approval, ['0', '2'])).toBe(true)
     expect(isAnswered(approval, ['0', '1', '2'])).toBe(false)
     expect(isAnswered(approval, [])).toBe(false)
+  })
+
+  // Gate-2 N4: the flow's rule is the only guard on an approval's cap, so it is pinned to the SDK's own range, the
+  // number its fields and badge read, for every way a question can declare that cap.
+  it('approval: answered exactly when 1 <= count <= questionSelectionRange(question).max (gate-2 N4)', () => {
+    const protocol = (maxTotalCost: number) => ({
+      maxCount: 3,
+      maxValue: 1,
+      maxVoteOverwrites: 0,
+      costExponent: 1,
+      uniqueValues: false,
+      maxTotalCost,
+      costFromWeight: false,
+    })
+    const approvals = [
+      q({
+        metadata: { type: { name: 'approval' } },
+        typeSetup: { maxChoices: 1, minChoices: 1, uniqueChoices: false },
+      }),
+      q({
+        metadata: { type: { name: 'approval' } },
+        typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: false },
+      }),
+      q({ metadata: { type: { name: 'approval' } } }),
+      q({ metadata: { type: { name: 'approval' } }, ballotProtocol: protocol(2) }),
+    ] as VotingProcessQuestion[]
+    expect(approvals.map((question) => questionSelectionRange(question).max)).toEqual([1, 2, 3, 2])
+    for (const question of approvals) {
+      const { max } = questionSelectionRange(question)
+      for (let count = 0; count <= question.choices.length; count++) {
+        const answer = question.choices.slice(0, count).map((choice) => String(choice.value))
+        expect(isAnswered(question, answer)).toBe(count >= 1 && count <= max)
+      }
+    }
+  })
+
+  it('approval: the encoder takes a selection over the cap, which is why the rule above guards it (gate-2 N4)', () => {
+    const approval = q({
+      metadata: { type: { name: 'approval' } },
+      typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: false },
+    })
+    // If this ever throws, the encoder guards the cap too: say so in the comment on the approval rule.
+    expect(() => encodeQuestionSelections(approval, [0, 1, 2])).not.toThrow()
+    expect(isAnswered(approval, ['0', '1', '2'])).toBe(false)
   })
 
   it('budget and quadratic questions are never answered here (gate F10)', () => {

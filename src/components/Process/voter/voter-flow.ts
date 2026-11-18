@@ -250,7 +250,8 @@ export const isAnswered = (question: QuestionShape, answer: Answer | undefined, 
       return count >= min && count <= max
     }
     case BallotType.Approval: {
-      // At least one, and no more than the question's cap: the encoder refuses more (gate F10).
+      // At least one, and no more than the question's cap. Nothing else checks the cap: the SDK's approval field
+      // asks for one or more and the encoder does not count them, so this rule is the only guard (gate F10, gate-2 N4).
       if (!Array.isArray(answer)) return false
       const count = answer.filter((value) => value !== '').length
       return count >= 1 && count <= questionSelectionRange(question).max
