@@ -74,7 +74,7 @@ export const ReceiptCodes = defineSlotRecipe({
   },
 })
 
-// The ruled list of questions on the welcome screen ("Ordre del dia") and of the next one when none is open ("La
+// The ruled list of questions on the welcome screen ("Preguntes a votar") and of the next one when none is open ("La
 // següent"): a 12px label, then rows under a rule, 11px above and below, each a 14px mono number 14px before the
 // title, with an optional quiet note under it; a rule closes the list.
 export const AgendaList = defineSlotRecipe({

@@ -60,7 +60,7 @@ export type VoterShellProps = {
   progress?: ReactNode
   /** The agenda (ui/StepRail), under the rail's head from `lg`. */
   rail?: ReactNode
-  /** The rail's accessible name ("Ordre del dia"). */
+  /** The rail's accessible name ("Preguntes a votar"). */
   railLabel?: string
   /** The column's width from `lg` (default `status`, 560px; `rail` beside the agenda). */
   column?: VoterShellColumn

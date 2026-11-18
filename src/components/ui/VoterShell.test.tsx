@@ -61,7 +61,7 @@ describe('VoterShell', () => {
         head={{ title: 'Assemblea General Ordinària 2026', status: <span>Oberta fins dijous</span> }}
         progress={<div>Pregunta 1 de 4</div>}
         rail={<ol aria-label='steps' />}
-        railLabel='Ordre del dia'
+        railLabel='Preguntes a votar'
         column='rail'
         credit={credit}
       >
@@ -72,7 +72,7 @@ describe('VoterShell', () => {
     const strip = document.querySelector('[data-part="strip"]') as HTMLElement
     expect(within(strip).getByText('Assemblea General Ordinària 2026')).toBeInTheDocument()
     expect(within(strip).getByText('Pregunta 1 de 4')).toBeInTheDocument()
-    const rail = screen.getByRole('complementary', { name: 'Ordre del dia' })
+    const rail = screen.getByRole('complementary', { name: 'Preguntes a votar' })
     expect(within(rail).getByText('Assemblea General Ordinària 2026')).toBeInTheDocument()
     expect(within(rail).getByText('Oberta fins dijous')).toBeInTheDocument()
     expect(within(rail).getByRole('list', { name: 'steps' })).toBeInTheDocument()
