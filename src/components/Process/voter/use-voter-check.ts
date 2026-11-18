@@ -67,7 +67,10 @@ export const useVoterCheck = ({ id, authToken, connected, check, statusKey }: Vo
 
   let membership: Membership = 'pending'
   if (!connected) membership = 'idle'
-  else if (query.status === 'error') membership = isUnauthorized(query.error) ? 'sessionLost' : 'pending'
+  else if (query.status === 'error' && isUnauthorized(query.error)) membership = 'sessionLost'
+  // A refetch that failed for another reason keeps the last answer while the retry goes on behind it: one dropped
+  // request does not take the ballot away (gate-2 N3). With no answer yet, the check stays pending. The SDK checks
+  // again inside every cast, so a stale "ok" cannot cast anything the backend would refuse.
   // A member the check lists no question for has nothing to vote here: the same screen as a non-member, with "Surt",
   // not a wait for a per-question state that never comes and a false "session expired" (gate F9).
   else if (query.data) {

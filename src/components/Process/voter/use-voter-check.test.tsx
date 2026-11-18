@@ -68,6 +68,37 @@ describe('useVoterCheck', () => {
     expect(check).toHaveBeenCalledTimes(7)
   })
 
+  it('keeps the last answer while a background check fails, so the ballot stays on screen (gate-2 N3)', async () => {
+    const check = vi.fn().mockResolvedValueOnce(member).mockRejectedValue(new Error('503'))
+    const { client, result } = run(check)
+    await advance(0)
+    expect(result.current.membership).toBe('ok')
+    await act(() => client.invalidateQueries({ queryKey: ['voter-check'] }))
+    await advance(0)
+    expect(check).toHaveBeenCalledTimes(2)
+    expect(result.current.membership).toBe('ok')
+  })
+
+  it('stays pending when the first check fails: there is no answer to keep', async () => {
+    const check = vi.fn().mockRejectedValue(new Error('503'))
+    const { result } = run(check)
+    await advance(0)
+    expect(check).toHaveBeenCalledTimes(1)
+    expect(result.current.membership).toBe('pending')
+  })
+
+  it('a 401 on a background check still ends the session, even with an answer kept', async () => {
+    const check = vi
+      .fn()
+      .mockResolvedValueOnce(member)
+      .mockRejectedValue(new VocdoniApiError(401, { error: 'expired' }, 'expired', 401))
+    const { client, result } = run(check)
+    await advance(0)
+    await act(() => client.invalidateQueries({ queryKey: ['voter-check'] }))
+    await advance(0)
+    expect(result.current.membership).toBe('sessionLost')
+  })
+
   it('stops at once on an expired session, with no retry (401)', async () => {
     const check = vi.fn().mockRejectedValue(new VocdoniApiError(401, { error: 'expired' }, 'expired', 401))
     const { result } = run(check)
