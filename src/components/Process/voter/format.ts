@@ -40,12 +40,18 @@ const dayText = (date: Date, locale: string, fields: Intl.DateTimeFormatOptions,
  * Joins the parts as ICU words them, except the comma some locales put after a leading weekday ("dijous, 17 de
  * desembre"): the date sits mid-sentence ("Oberta fins dijous 17 de desembre a les 20:00"), where it would dangle.
  */
-const joinDay = (parts: Intl.DateTimeFormatPart[]): string =>
+const dropWeekdayComma = (parts: Intl.DateTimeFormatPart[]): string =>
   parts
     .map((part, index) =>
       part.type === 'literal' && parts[index - 1]?.type === 'weekday' ? part.value.replace(/^\s*,\s*/, ' ') : part.value
     )
     .join('')
+
+/** Languages whose weekday keeps its comma mid-sentence ("am Donnerstag, 17. Dezember", gate F16): ICU's own text. */
+const KEEPS_WEEKDAY_COMMA = new Set(['de'])
+
+const joinDay = (parts: Intl.DateTimeFormatPart[], language: string): string =>
+  KEEPS_WEEKDAY_COMMA.has(language.split('-')[0]) ? parts.map((part) => part.value).join('') : dropWeekdayComma(parts)
 
 /**
  * The vote's day as the boards draw it, relative to a `reference` ("now" by default; for the end date inside the
@@ -65,9 +71,9 @@ export const formatVoteDay = (
   if (!english && sameYear && monthOf(date, timeZone) === monthOf(reference, timeZone)) {
     const short = dayText(date, locale, {}, timeZone)
     const types = short.map((part) => part.type)
-    if (types.indexOf('weekday') < types.indexOf('day')) return joinDay(short)
+    if (types.indexOf('weekday') < types.indexOf('day')) return joinDay(short, language)
   }
-  return joinDay(dayText(date, locale, { month: 'long', ...(sameYear ? {} : { year: 'numeric' }) }, timeZone))
+  return joinDay(dayText(date, locale, { month: 'long', ...(sameYear ? {} : { year: 'numeric' }) }, timeZone), language)
 }
 
 /** "20:00", or "20:00 CET" with the zone (the opening time always carries it: spec D4 "upcoming", audit F18). */
