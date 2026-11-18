@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { electionQueryKeys } from '@vocdoni/react-components'
 import { QueryClient } from '@tanstack/react-query'
+import { voteNullifier } from '@vocdoni/api-voting'
 import i18n from 'i18next'
 import { hydrateRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
@@ -69,11 +70,17 @@ const makeProcess = ({
   }) as unknown as VotingProcessResponse
 
 // The fake backend: what GET /processes/p1 answers, and how the cast endpoints behave.
+const QUESTION_OF: Record<string, string> = { [hex('1')]: 'q1', [hex('2')]: 'q2' }
 const server = {
   process: makeProcess(),
   votes: 'ok' as 'ok' | 'reject',
-  jobs: 'done' as 'done' | 'hold',
+  /** `partial`: the next relay lands question 1 and fails question 2, then relays behave as `done`. */
+  jobs: 'done' as 'done' | 'hold' | 'partial',
   voted: false,
+  /** Questions on chain one by one (a partial cast). */
+  votedQuestions: new Set<string>(),
+  /** Questions the CSP signed, with the nullifier sign-info reports for them. */
+  signed: {} as Record<string, string>,
   /** The connection drops right after the batch is relayed. */
   dropAfterRelay: false,
   offline: false,
@@ -96,14 +103,23 @@ const fetchStub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => 
         questionId: id,
         upstreamId: hex(String(i + 1)),
         canVote: true,
-        hasVoted: server.voted,
-        hasSigned: server.voted,
+        hasVoted: server.voted || server.votedQuestions.has(id),
+        hasSigned: server.voted || id in server.signed,
       })),
     })
   }
-  if (pathname === '/processes/p1/sign-info') return json(200, { consumed: [] })
+  if (pathname === '/processes/p1/sign-info') {
+    const consumed = Object.entries(server.signed).map(([questionId, nullifier]) => ({ questionId, nullifier }))
+    return json(200, { consumed })
+  }
   if (pathname === '/processes/p1/sign-batch') {
     const body = JSON.parse(await request.text())
+    for (const ballot of body.ballots as { upstreamId: string; address: string }[]) {
+      try {
+        server.signed[QUESTION_OF[ballot.upstreamId]] = voteNullifier(ballot.address, ballot.upstreamId)
+      } catch (e) {
+          }
+    }
     return json(200, {
       signatures: body.ballots.map((ballot: { upstreamId: string }) => ({
         upstreamId: ballot.upstreamId,
@@ -118,6 +134,21 @@ const fetchStub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => 
     return json(200, { jobId: 'job-1' })
   }
   if (pathname === '/jobs/job-1') {
+    if (server.jobs === 'partial') {
+      server.jobs = 'done'
+      server.votedQuestions.add('q1')
+      return json(200, {
+        jobId: 'job-1',
+        type: 'relay_votes',
+        status: 'completed',
+        result: {
+          votes: [
+            { status: 'completed', voteID: 'vote-1' },
+            { status: 'failed', error: 'the chain refused it' },
+          ],
+        },
+      })
+    }
     if (server.jobs === 'hold') await new Promise<void>((resolve) => (releaseJob = resolve))
     server.voted = true
     return json(200, {
@@ -147,6 +178,8 @@ beforeEach(() => {
   server.votes = 'ok'
   server.jobs = 'done'
   server.voted = false
+  server.votedQuestions = new Set()
+  server.signed = {}
   server.dropAfterRelay = false
   server.offline = false
   queryClient = createTestQueryClient()
@@ -292,6 +325,43 @@ describe('voter page transitions (AC4)', () => {
     server.votes = 'ok'
     fireEvent.click(screen.getByTestId('voter-cast'))
     await onScreen('receipt')
+  })
+
+  // Gate F2: question 1 lands, question 2 fails. Question 1 is on chain: no route may change its answer, review shows
+  // what was sent for it, and the retry re-sends question 2 only.
+  it('after a partial cast the question on chain is locked everywhere and only the failed one is re-sent', async () => {
+    server.jobs = 'partial'
+    renderPage()
+    await identify()
+    await answerBoth()
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    await onScreen('review')
+    await waitFor(() => expect(within(current()).getByRole('alert')).toHaveTextContent('errors.vote_partial'))
+    // Review: the answer that was sent for question 1, with no "Canvia"; question 2 waits to be re-sent.
+    expect(within(current()).getByText('No 1')).toBeInTheDocument()
+    expect(within(current()).getByText('vote.pending_resend')).toBeInTheDocument()
+    expect(within(current()).queryAllByRole('button', { name: 'voter.review.change_label' })).toHaveLength(0)
+    // The rail does not offer question 1.
+    const rail = document.querySelector('[data-scope="voter-shell"][data-part="rail"]') as HTMLElement
+    expect(within(rail).queryByRole('button', { name: /Question 1/ })).toBeNull()
+    // The browser's Back to question 1 shows the notice, with no field to change.
+    act(() => {
+      window.dispatchEvent(new PopStateEvent('popstate', { state: { voterStep: { name: 'question', index: 0 } } }))
+    })
+    await onScreen('question')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Question 1')
+    expect(within(current()).getByText('vote.disabled.voted')).toBeInTheDocument()
+    expect(within(current()).queryAllByRole('radio')).toHaveLength(0)
+    act(() => {
+      window.dispatchEvent(new PopStateEvent('popstate', { state: { voterStep: { name: 'review' } } }))
+    })
+    await onScreen('review')
+    await waitFor(() => expect(screen.getByTestId('voter-cast')).toBeEnabled())
+    fetchStub.mockClear()
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    await onScreen('receipt')
+    // Re-sent from the stored transaction: nothing is signed again, question 1 least of all.
+    expect(signBatchCalls()).toHaveLength(0)
   })
 
   it('offline then online while sending: the screen stays, then settles on the receipt', async () => {

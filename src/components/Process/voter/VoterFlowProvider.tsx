@@ -23,11 +23,13 @@ import { useOwnedAnswers } from './use-owned-answers'
 import { useVoterCheck, voterCheckKey } from './use-voter-check'
 import {
   deriveVoterScreen,
+  encodableAnswer,
   firstUnanswered,
   formValuesFor,
   historyStateFor,
   initialVoterState,
   isAnswered,
+  ON_CHAIN_NOTICE,
   stepFromHistory,
   voterReducer,
   WELCOME,
@@ -122,9 +124,20 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
     return () => clearTimeout(timer)
   }, [stateMissing]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // A question whose vote is already on chain (a partial cast, or a session resumed after one) has nothing left to
+  // answer (gate F2): the SDK skips it on the next cast, so an answer changed here would show on review and never be
+  // sent. It is locked like the ones the SDK's own rule locks, so no route (rail, "Enrere", Back) reaches its fields.
+  const onChain = useCallback(
+    (questionId: string) =>
+      voteStatus[questionId] === 'confirmed' ||
+      voterQuestions.some((entry) => entry.questionId === questionId && entry.hasVoted),
+    [voteStatus, voterQuestions]
+  )
   const lockedNotice = useCallback(
-    (questionId: string) => lockedQuestionNotice(questionId, pendingVotes, voteStatus),
-    [pendingVotes, voteStatus]
+    (questionId: string) =>
+      lockedQuestionNotice(questionId, pendingVotes, voteStatus) ??
+      (onChain(questionId) ? ON_CHAIN_NOTICE : undefined),
+    [pendingVotes, voteStatus, onChain]
   )
   const answered = questions.map((question, index) =>
     isAnswered(question, state.answers[String(index)], !!lockedNotice(question.id))
@@ -225,7 +238,16 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
     setCasting(true)
     dispatch({ type: 'castStarted' })
     try {
-      const result = await vote(formValuesFor(latest.current))
+      const values = formValuesFor(latest.current)
+      // A question on chain with no answer in this session (resumed after a partial cast) still goes through the
+      // SDK's encoder, which refuses an empty answer: it gets a placeholder the SDK never signs (gate F2).
+      questions.forEach((question, index) => {
+        const key = String(index)
+        if (onChain(question.id) && !isAnswered(question, latest.current.answers[key])) {
+          values[key] = encodableAnswer(question)
+        }
+      })
+      const result = await vote(values)
       if (result === false) {
         const errors = fmethods.formState.errors as Record<string, { message?: unknown } | undefined> & {
           root?: { vote?: { message?: unknown } }
@@ -243,7 +265,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
       castingRef.current = false
       setCasting(false)
     }
-  }, [answered, fmethods, id, queryClient, questions, vote, voting])
+  }, [answered, fmethods, id, onChain, queryClient, questions, vote, voting])
 
   const signOut = useCallback(() => {
     clearVoter()

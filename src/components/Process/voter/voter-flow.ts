@@ -77,6 +77,11 @@ export type VoterLocalState = {
   memos: Record<string, string>
   /** A cast of this session was confirmed. */
   castDone: boolean
+  /**
+   * The answers of the last cast, as sent (gate F2): review shows these for a question already on chain, never an
+   * answer typed after it (or for another device's vote). Memory only, like `answers`.
+   */
+  sent: Record<string, Answer>
   /** The SDK's sentence for the last failed cast; kept by the flow because a poll resets the form's errors. */
   castError: string | null
   /** "Comprova el teu vot": identify on an ended vote to reach the receipt. */
@@ -100,11 +105,25 @@ export type VoterAction =
 
 export const WELCOME: VoterStep = { name: 'welcome' }
 
+/** The SDK's notice ("Ja has votat") the flow gives a question whose vote is already on chain (gate F2). */
+export const ON_CHAIN_NOTICE = 'vote.disabled.voted'
+
+/**
+ * What review and the rail show for a question: for one on chain, the answer this session sent for it (nothing when
+ * it was cast elsewhere); otherwise the answer being prepared.
+ */
+export const shownAnswer = (
+  local: Pick<VoterLocalState, 'answers' | 'sent'>,
+  key: string,
+  notice: string | undefined
+): Answer | undefined => (notice === ON_CHAIN_NOTICE ? local.sent[key] : local.answers[key])
+
 export const initialVoterState: VoterLocalState = {
   step: WELCOME,
   returnToReview: false,
   answers: {},
   memos: {},
+  sent: {},
   castDone: false,
   castError: null,
   checkReceipt: false,
@@ -123,7 +142,7 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
     case 'memo':
       return { ...state, memos: { ...state.memos, [action.key]: action.value } }
     case 'castStarted':
-      return { ...state, castError: null }
+      return { ...state, castError: null, sent: { ...state.answers } }
     case 'castSucceeded':
       return { ...state, castDone: true, castError: null }
     case 'castFailed':
@@ -226,6 +245,22 @@ export const isAnswered = (question: QuestionShape, answer: Answer | undefined, 
     default:
       return typeof answer === 'string' && answer !== ''
   }
+}
+
+/**
+ * A selection the SDK's encoder accepts for a question that is already on chain (gate F2). `vote()` encodes every
+ * question its own rule does not lock and only then skips the confirmed ones (`castVotes` signs state `open` only), so
+ * this value is never signed or sent: it only keeps the encoder from refusing an empty answer in a session resumed
+ * after a partial cast. Remove once the SDK skips the encoder for them.
+ */
+export const encodableAnswer = (question: QuestionShape): Answer => {
+  const values = question.choices.map((choice) => String(choice.value))
+  const type = tryInferQuestionBallotType(question)
+  if (type === BallotType.Ranked) return values
+  if (type === BallotType.MultiChoice || type === BallotType.Approval) {
+    return values.slice(0, Math.max(1, questionSelectionRange(question).min))
+  }
+  return values[0] ?? ''
 }
 
 /** A multiple-choice question whose range lets the voter choose nothing: the SDK accepts a blank vote. */

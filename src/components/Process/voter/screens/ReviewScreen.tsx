@@ -5,6 +5,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { useVoterFlow } from '../flow-context'
 import { describeAnswer, textOf } from '../format'
 import { VOTER_CAST_ARM_MS } from '../live'
+import { ON_CHAIN_NOTICE } from '../voter-flow'
 import { PausedNotice } from '../parts/PausedNotice'
 import { InlineAction, ScreenHeading, ScreenHelp, ScreenKicker, VoterScreenFrame } from '../parts/ScreenParts'
 import { VoterActionBar } from '../parts/VoterActionBar'
@@ -96,15 +97,18 @@ export const ReviewScreen = ({ paused }: { paused: boolean }) => {
         {election.questions.map((question, index) => {
           const notice = lockedNotice(question.id)
           const title = textOf(question.title as Parameters<typeof textOf>[0])
+          // A locked question shows the SDK's notice; one already on chain shows the answer this session sent for it,
+          // when it sent one (gate F2).
+          const sent = notice === ON_CHAIN_NOTICE ? state.sent[String(index)] : undefined
           return (
             <ReviewRow
               key={question.id}
               first={index === 0 && !(weighted && weight !== null)}
               label={title}
               value={
-                notice
+                notice && sent === undefined
                   ? localize(notice)
-                  : describeAnswer(question, state.answers[String(index)], words, { positions: true })
+                  : describeAnswer(question, sent ?? state.answers[String(index)], words, { positions: true })
               }
               action={
                 notice || voteIds[question.id] ? undefined : (

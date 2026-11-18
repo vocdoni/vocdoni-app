@@ -3,12 +3,15 @@ import {
   allowsBlankVote,
   batchSize,
   deriveVoterScreen,
+  encodableAnswer,
   firstUnanswered,
   formValuesFor,
   historyStateFor,
   initialVoterState,
   isAnswered,
+  ON_CHAIN_NOTICE,
   sendingPhase,
+  shownAnswer,
   stepFromHistory,
   voterReducer,
   type VoterFacts,
@@ -234,6 +237,16 @@ describe('voterReducer', () => {
     expect(voterReducer(failed, { type: 'castSucceeded' })).toMatchObject({ castDone: true, castError: null })
   })
 
+  it('keeps what a cast sent, so an answer typed later never shows as sent (gate F2)', () => {
+    const started = voterReducer(local({ answers: { '0': '1' } }), { type: 'castStarted' })
+    expect(started.sent).toEqual({ '0': '1' })
+    const later = voterReducer(started, { type: 'answer', key: '0', value: '0' })
+    expect(shownAnswer(later, '0', ON_CHAIN_NOTICE)).toBe('1')
+    expect(shownAnswer(later, '0', undefined)).toBe('0')
+    // On chain from another device: nothing of this session to show.
+    expect(shownAnswer(local({ answers: { '1': '0' } }), '1', ON_CHAIN_NOTICE)).toBeUndefined()
+  })
+
   it('sets the results and receipt flags; navigating clears the results view', () => {
     const results = voterReducer(local(), { type: 'viewResults', on: true })
     expect(results.viewResults).toBe(true)
@@ -356,6 +369,12 @@ describe('isAnswered', () => {
   it('a locked question counts as done; a question with no ballot type never does', () => {
     expect(isAnswered(single, undefined, true)).toBe(true)
     expect(isAnswered(q({ type: '' }), '1')).toBe(false)
+  })
+
+  it('gives a question already on chain a placeholder its encoder accepts (gate F2)', () => {
+    for (const question of [single, multiple(1, 2), multiple(2, 3), ranked]) {
+      expect(isAnswered(question, encodableAnswer(question))).toBe(true)
+    }
   })
 
   it('offers a blank vote only where the range allows choosing nothing', () => {
