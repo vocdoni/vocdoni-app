@@ -51,10 +51,6 @@ test.describe('voting on an anonymous census', () => {
       await voter.goto(`/processes/${processId}`)
       await expect(voter.getByRole('heading', { name: `E2E anon ${seed}` }).first()).toBeVisible()
 
-      // The identify screen states which kind of ballot this is: the promise the
-      // voter is being asked to trust.
-      await expect(voter.getByText(/no vote can be traced back to a voter/i)).toBeVisible()
-
       const requestedAt = new Date()
       await authenticateVoterWithOtp(voter, member)
 

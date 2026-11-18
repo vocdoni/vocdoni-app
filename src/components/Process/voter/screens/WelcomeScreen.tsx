@@ -4,7 +4,6 @@ import { AgendaList } from '~components/ui/AgendaList'
 import { useAppEnv } from '~src/app-env'
 import { useVoterFlow } from '../flow-context'
 import { textOf, voterTurnout } from '../format'
-import { AnonymityLine } from '../parts/AnonymityLine'
 import { InlineAction, ScreenHeading, ScreenLead, VoterScreenFrame } from '../parts/ScreenParts'
 import { VoterActionBar } from '../parts/VoterActionBar'
 import { VoteStatusLine } from '../parts/VoteStatusLine'
@@ -48,7 +47,6 @@ export const WelcomeScreen = () => {
       )}
       <ScreenLead>{t('voter.welcome.lead')}</ScreenLead>
       <VoterMedia />
-      <AnonymityLine />
       <AgendaList
         label={t('voter.agenda')}
         items={election.questions.map((question, index) => ({

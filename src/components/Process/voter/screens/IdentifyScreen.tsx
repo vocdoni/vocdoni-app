@@ -10,7 +10,6 @@ import { useAppEnv } from '~src/app-env'
 import { hashMemberPassword } from '~utils/member-password'
 import { useVoterFlow } from '../flow-context'
 import { textOf } from '../format'
-import { AnonymityLine } from '../parts/AnonymityLine'
 import { InlineAction, ScreenHeading, ScreenHelp, VoterScreenFrame } from '../parts/ScreenParts'
 import { VoterActionBar } from '../parts/VoterActionBar'
 import { VoteStatusLine } from '../parts/VoteStatusLine'
@@ -124,7 +123,6 @@ export const IdentifyScreen = ({ notice }: { notice?: 'sessionExpired' }) => {
       </ScreenHeading>
       <ScreenHelp>{t('voter.identify.help')}</ScreenHelp>
       <VoterMedia />
-      <AnonymityLine />
       {notice === 'sessionExpired' && !failure && (
         <Alert.Root status='warning' layout='ballot' mt='5' role='status'>
           <Alert.Content>
