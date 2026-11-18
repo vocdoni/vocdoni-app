@@ -1761,7 +1761,7 @@
       "kind_single": "One option",
       "no_votes": "No votes yet.",
       "not_counted": "Not counted yet.",
-      "of_vote": "{{title}}.",
+      "of_vote": "{{title}}{{stop}}",
       "provisional_note": "The vote is still open and these results may change.",
       "provisional_title": "Provisional results",
       "show": "Show the results",

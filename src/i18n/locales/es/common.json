@@ -1797,16 +1797,16 @@
       "kind_single": "Una opción",
       "no_votes": "Todavía no hay votos.",
       "not_counted": "Todavía no se ha contado.",
-      "of_vote": "{{title}}.",
+      "of_vote": "{{title}}{{stop}}",
       "provisional_note": "La votación sigue abierta y estos resultados pueden cambiar.",
       "provisional_title": "Resultados provisionales",
       "show": "Ver los resultados",
-      "turnout_one": "Votó {{count}} persona.",
-      "turnout_many": "Votaron {{count}} personas.",
-      "turnout_other": "Votaron {{count}} personas.",
-      "turnout_share_one": "Votó {{count}} de {{total}} personas ({{percent}}%).",
-      "turnout_share_many": "Votaron {{count}} de {{total}} personas ({{percent}}%).",
-      "turnout_share_other": "Votaron {{count}} de {{total}} personas ({{percent}}%)."
+      "turnout_one": "Ha votado {{count}} persona.",
+      "turnout_many": "Han votado {{count}} personas.",
+      "turnout_other": "Han votado {{count}} personas.",
+      "turnout_share_one": "Ha votado {{count}} de {{total}} personas ({{percent}}%).",
+      "turnout_share_many": "Han votado {{count}} de {{total}} personas ({{percent}}%).",
+      "turnout_share_other": "Han votado {{count}} de {{total}} personas ({{percent}}%)."
     },
     "review": {
       "cast": "Emitir el voto",

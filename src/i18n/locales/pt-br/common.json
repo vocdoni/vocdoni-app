@@ -1797,7 +1797,7 @@
       "kind_single": "Uma opção",
       "no_votes": "Ainda não há votos.",
       "not_counted": "Ainda não foi contado.",
-      "of_vote": "{{title}}.",
+      "of_vote": "{{title}}{{stop}}",
       "provisional_note": "A votação ainda está aberta e estes resultados podem mudar.",
       "provisional_title": "Resultados provisórios",
       "show": "Mostrar os resultados",

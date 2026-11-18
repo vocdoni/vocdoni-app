@@ -1761,7 +1761,7 @@
       "kind_single": "Eine Option",
       "no_votes": "Noch keine Stimmen.",
       "not_counted": "Noch nicht ausgezählt.",
-      "of_vote": "{{title}}.",
+      "of_vote": "{{title}}{{stop}}",
       "provisional_note": "Die Abstimmung läuft noch und diese Ergebnisse können sich ändern.",
       "provisional_title": "Vorläufige Ergebnisse",
       "show": "Ergebnisse anzeigen",

@@ -1797,7 +1797,7 @@
       "kind_single": "Una opció",
       "no_votes": "Encara no hi ha vots.",
       "not_counted": "Encara no s'ha comptat.",
-      "of_vote": "{{title}}.",
+      "of_vote": "{{title}}{{stop}}",
       "provisional_note": "La votació segueix oberta i aquests resultats poden canviar.",
       "provisional_title": "Resultats provisionals",
       "show": "Mostra els resultats",
