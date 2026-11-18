@@ -1729,8 +1729,8 @@
       "missing_one": "{{count}} falta da.",
       "missing_other": "{{count}} falta dira.",
       "rank_all": "Ordenatu guztiak",
-      "rank_next": "{{label}}: jarri {{position}}. postuan",
-      "ranked_at": "{{label}}, {{position}}. postuan. Sakatu kentzeko."
+      "rank_position": "{{position}}. postuan ({{total}} guztira). Sakatu kentzeko.",
+      "rank_unranked": "Ordenatu gabe. Sakatu {{position}}. postuan jartzeko."
     },
     "rail": {
       "review": "Berrikusi eta eman botoa"

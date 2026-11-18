@@ -1729,8 +1729,8 @@
       "missing_one": "{{count}} left.",
       "missing_other": "{{count}} left.",
       "rank_all": "Rank them all",
-      "rank_next": "{{label}}: put it in place {{position}}",
-      "ranked_at": "{{label}}, in place {{position}}. Tap to remove it."
+      "rank_position": "In place {{position}} of {{total}}. Tap to remove it.",
+      "rank_unranked": "Not ranked yet. Tap to put it in place {{position}}."
     },
     "rail": {
       "review": "Review and cast your vote"

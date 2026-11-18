@@ -1,4 +1,4 @@
-import { Box, chakra, Text, useSlotRecipe } from '@chakra-ui/react'
+import { Box, chakra, Text, useSlotRecipe, VisuallyHidden } from '@chakra-ui/react'
 import {
   composeComponents,
   defineComponent,
@@ -6,7 +6,7 @@ import {
   type ComponentsPartialDefinition,
 } from '@vocdoni/react-components'
 import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '@vocdoni/ballot'
-import { useEffect, useRef, type ComponentProps, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ComponentProps, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Markdown } from '~components/ui/Markdown'
 import { RankBadge } from '~components/ui/RankBadge'
@@ -120,45 +120,53 @@ export const voterComponents: ComponentsPartialDefinition = {
   }),
   QuestionChoice: defineComponent<'QuestionChoice'>((props) => <ChoiceCard {...props} context='voter' />),
   // Tap to rank (board V4VoterWide 6): an option takes the next free place, a second tap gives it back. The SDK's
-  // ordering and its swap rule stay the SDK's: the slot only calls `onRank`.
+  // ordering and its swap rule stay the SDK's: the slot only calls `onRank`. The button is named by what it shows
+  // (the badge is hidden from assistive tech), and the place it holds or would take is its description: a name that
+  // did not contain the visible label failed axe's label-content-name-mismatch.
   QuestionRankChoice: defineComponent<'QuestionRankChoice'>(
     ({ value, label, description, dataAttrs, position, options, disabled, onRank }: RankProps) => {
       const { t } = useTranslation()
+      const placeId = useId()
       const styles = useSlotRecipe({ key: 'QuestionChoice' })({ layout: 'list', context: 'voter' })
       const ranked = position !== null && position !== undefined
       const nextFree = options.find((option) => !option.taken)?.position ?? options.length
       const shown = ranked ? position : nextFree
       return (
-        <chakra.button
-          type='button'
-          css={styles.wrapper}
-          w='full'
-          textAlign='start'
-          data-state={ranked ? 'checked' : 'unchecked'}
-          data-disabled={disabled ? 'true' : undefined}
-          data-choice-card={dataAttrs?.['data-choice-card']}
-          data-choice-value={value}
-          aria-pressed={ranked}
-          aria-label={
-            ranked
-              ? t('voter.question.ranked_at', { label, position: shown })
-              : t('voter.question.rank_next', { label, position: shown })
-          }
-          disabled={disabled}
-          onClick={() => onRank(ranked ? null : shown)}
-        >
-          <RankBadge value={String(shown)} set={ranked} />
-          <Box data-choice-body={dataAttrs?.['data-choice-body']}>
-            <Text css={styles.label} data-choice-label=''>
-              {label}
-            </Text>
-            {description ? (
-              <Box css={styles.description}>
-                <Markdown>{description}</Markdown>
-              </Box>
-            ) : null}
-          </Box>
-        </chakra.button>
+        <>
+          <chakra.button
+            type='button'
+            css={styles.wrapper}
+            w='full'
+            textAlign='start'
+            data-state={ranked ? 'checked' : 'unchecked'}
+            data-disabled={disabled ? 'true' : undefined}
+            data-choice-card={dataAttrs?.['data-choice-card']}
+            data-choice-value={value}
+            aria-pressed={ranked}
+            aria-describedby={placeId}
+            disabled={disabled}
+            onClick={() => onRank(ranked ? null : shown)}
+          >
+            <RankBadge value={String(shown)} set={ranked} />
+            <Box data-choice-body={dataAttrs?.['data-choice-body']}>
+              <Text css={styles.label} data-choice-label=''>
+                {label}
+              </Text>
+              {description ? (
+                <Box css={styles.description}>
+                  <Markdown>{description}</Markdown>
+                </Box>
+              ) : null}
+            </Box>
+          </chakra.button>
+          {/* Out of the button, so it is not read twice as part of its name; out of the flow, so the column's gap
+              ignores it. */}
+          <VisuallyHidden id={placeId}>
+            {ranked
+              ? t('voter.question.rank_position', { position: shown, total: options.length })
+              : t('voter.question.rank_unranked', { position: shown })}
+          </VisuallyHidden>
+        </>
       )
     }
   ),

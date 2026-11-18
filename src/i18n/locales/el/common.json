@@ -1729,8 +1729,8 @@
       "missing_one": "Λείπει {{count}}.",
       "missing_other": "Λείπουν {{count}}.",
       "rank_all": "Κατατάξτε τις όλες",
-      "rank_next": "{{label}}: τοποθετήστε τη στη θέση {{position}}",
-      "ranked_at": "{{label}}, στη θέση {{position}}. Πατήστε για να την αφαιρέσετε."
+      "rank_position": "Στη θέση {{position}} από {{total}}. Πατήστε για να την αφαιρέσετε.",
+      "rank_unranked": "Χωρίς σειρά ακόμη. Πατήστε για να την τοποθετήσετε στη θέση {{position}}."
     },
     "rail": {
       "review": "Έλεγχος και υποβολή ψήφου"

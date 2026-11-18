@@ -1729,8 +1729,8 @@
       "missing_one": "Noch {{count}} fehlt.",
       "missing_other": "Noch {{count}} fehlen.",
       "rank_all": "Alle ordnen",
-      "rank_next": "{{label}}: auf Platz {{position}} setzen",
-      "ranked_at": "{{label}}, auf Platz {{position}}. Antippen, um sie zu entfernen."
+      "rank_position": "Auf Platz {{position}} von {{total}}. Antippen, um sie zu entfernen.",
+      "rank_unranked": "Noch nicht eingeordnet. Antippen, um sie auf Platz {{position}} zu setzen."
     },
     "rail": {
       "review": "Überprüfen und abstimmen"

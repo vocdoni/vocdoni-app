@@ -1762,8 +1762,8 @@
       "missing_many": "Faltan {{count}}.",
       "missing_other": "Faltan {{count}}.",
       "rank_all": "Ordenarlas todas",
-      "rank_next": "{{label}}: ponerla en la posición {{position}}",
-      "ranked_at": "{{label}}, en la posición {{position}}. Tócala para quitarla."
+      "rank_position": "En la posición {{position}} de {{total}}. Tócala para quitarla.",
+      "rank_unranked": "Sin ordenar. Tócala para ponerla en la posición {{position}}."
     },
     "rail": {
       "review": "Revisa y emite el voto"

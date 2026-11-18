@@ -70,6 +70,24 @@ describe('tap to rank (board V4VoterWide 6)', () => {
     fireEvent.click(screen.getByRole('button', { pressed: true }))
     expect(p.onRank).toHaveBeenCalledWith(null)
   })
+
+  // axe label-content-name-mismatch: the name must contain what the button shows, starting with its label.
+  it('is named by its visible label, the badge hidden, with the place it holds or would take as its description', () => {
+    renderSlot(<Rank {...props(null, [true, false, false])} />)
+    const unranked = screen.getByRole('button', { pressed: false })
+    expect(unranked).toHaveAccessibleName(/^Teulada/)
+    expect(unranked).toHaveAccessibleName('Teulada')
+    expect(unranked).not.toHaveAttribute('aria-label')
+    expect(unranked).toHaveAccessibleDescription('voter.question.rank_unranked')
+    expect(unranked.querySelector('[aria-hidden="true"]')).toHaveTextContent('2')
+  })
+
+  it('a ranked option describes its place out of the total', () => {
+    renderSlot(<Rank {...props(2, [true, false, false])} />)
+    const ranked = screen.getByRole('button', { pressed: true })
+    expect(ranked).toHaveAccessibleName('Teulada')
+    expect(ranked).toHaveAccessibleDescription('voter.question.rank_position')
+  })
 })
 
 describe('the voter question slot', () => {

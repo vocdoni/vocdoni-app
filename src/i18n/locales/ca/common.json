@@ -1762,8 +1762,8 @@
       "missing_many": "En falten {{count}}.",
       "missing_other": "En falten {{count}}.",
       "rank_all": "Ordena-les totes",
-      "rank_next": "{{label}}: posa-la a la posició {{position}}",
-      "ranked_at": "{{label}}, a la posició {{position}}. Toca-la per treure-la."
+      "rank_position": "A la posició {{position}} de {{total}}. Toca-la per treure-la.",
+      "rank_unranked": "Sense ordenar. Toca-la per posar-la a la posició {{position}}."
     },
     "rail": {
       "review": "Revisa i emet el vot"
