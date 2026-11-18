@@ -17,6 +17,9 @@ import { uiScaffoldComponents } from '~theme/react-components'
 import { voterComponents } from './voter-components'
 import { useOwnedAnswers } from './use-owned-answers'
 import { formValuesFor, initialVoterState, voterReducer } from './voter-flow'
+import { VoterFlowContext } from './flow-context'
+import { QuestionScreen } from './screens/QuestionScreen'
+import { testFacts, testFlow } from './test-flow'
 
 // The real SDK everywhere: the setup file stubs react-components' hooks for component tests.
 vi.mock('@vocdoni/react-components', async (importOriginal) => importOriginal())
@@ -285,5 +288,56 @@ describe('casting through the SDK vote() with the review screen as the confirmat
     expect(screen.queryByRole('dialog')).toBeNull()
     await waitFor(() => expect(handle.current.election.hasVoted).toBe(true))
     expect(handle.current.election.voteIds).toEqual({ q1: 'vote-1', q2: 'vote-2' })
+  })
+})
+
+describe('the question screen shows the errors that stop a cast and hides the selection checks', () => {
+  // The SDK form for real, with the voter's slots; `Form` keeps a handle on it to set the errors its vote would set.
+  const Form = () => {
+    handle.current = { fmethods: useQuestionsForm().fmethods }
+    return null
+  }
+  const renderQuestion = (election = process()) =>
+    render(
+      <AllProviders>
+        <ElectionProvider id='p1' election={election} queryOptions={{ staleTime: Infinity }}>
+          <ComponentsProvider components={composeComponents(uiScaffoldComponents, voterComponents)}>
+            <ConfirmProvider>
+              <QuestionsFormProvider>
+                <VoterFlowContext.Provider value={testFlow({ election, facts: testFacts({ questionCount: 2 }) })}>
+                  <Form />
+                  <QuestionScreen index={0} paused={false} />
+                </VoterFlowContext.Provider>
+              </QuestionsFormProvider>
+            </ConfirmProvider>
+          </ComponentsProvider>
+        </ElectionProvider>
+      </AllProviders>
+    )
+  // The test i18n has no react-components strings, so the SDK's localiser answers with the key.
+  const unsupportedNotice = 'errors.question_unsupported'
+
+  it('shows the SDK notice of a question whose ballot type is not supported, once', async () => {
+    renderQuestion(process([{ ...question(1), type: undefined, ballotProtocol: undefined } as never, question(2)]))
+    expect(await screen.findByRole('alert')).toHaveTextContent(unsupportedNotice)
+    expect(screen.getAllByText(unsupportedNotice)).toHaveLength(1)
+  })
+
+  it.each(['unsupported', 'encode'])('shows a %s error the vote sets on the question', async (type) => {
+    renderQuestion()
+    act(() =>
+      handle.current.fmethods.setError('0', { type, message: 'This question publishes a choice no voter can cast.' })
+    )
+    expect(await screen.findByRole('alert')).toHaveTextContent('This question publishes a choice no voter can cast.')
+  })
+
+  it.each(['required', 'validate'])('hides an ordinary %s selection error', async (type) => {
+    renderQuestion()
+    act(() => handle.current.fmethods.setError('0', { type, message: 'Select an option' }))
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 20))
+    })
+    expect(screen.queryByText('Select an option')).toBeNull()
+    expect(screen.queryByRole('alert')).toBeNull()
   })
 })

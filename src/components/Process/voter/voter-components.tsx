@@ -6,7 +6,7 @@ import {
   type ComponentsPartialDefinition,
 } from '@vocdoni/react-components'
 import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '@vocdoni/ballot'
-import { useEffect, useRef, type ComponentProps } from 'react'
+import { useEffect, useRef, type ComponentProps, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Markdown } from '~components/ui/Markdown'
 import { RankBadge } from '~components/ui/RankBadge'
@@ -14,6 +14,13 @@ import { uiScaffoldComponents } from '~theme/react-components'
 import { ChoiceCard } from '~theme/react-components/election'
 import { useVoterFlow } from './flow-context'
 import { allowsBlankVote } from './voter-flow'
+
+/** A question's error as the voter page draws it: under the options, in the error colour, announced. */
+export const QuestionErrorLine = ({ children }: { children: ReactNode }) => (
+  <Text as='p' textStyle='ballot-hint' color='status.error.fg' mt='3.5' role='alert'>
+    {children}
+  </Text>
+)
 
 /** The id of a question's heading on the voter page: its options group is labelled by it. */
 export const questionTitleId = (index: string) => `voter-question-${index}-title`
@@ -156,15 +163,13 @@ export const voterComponents: ComponentsPartialDefinition = {
     }
   ),
   // A question's field validation says nothing here: the hint and the off "Continua" already do. The SDK's locked
-  // question notices come through this slot as `variant='field'` too, but carry the question's id, so they stay.
+  // question notices come through this slot as `variant='field'` too, but carry the question's id, so they stay. The
+  // unsupported-question notice and a choice that cannot be encoded arrive with the same props as a selection check,
+  // so the question screen shows those itself, from the form error's type (`QuestionScreen`).
   QuestionsError: defineComponent<'QuestionsError'>(({ error, variant, ...props }) => {
     const locked = 'data-question-id' in props
     if (variant === 'field' && !locked) return null
-    return (
-      <Text as='p' textStyle='ballot-hint' color='status.error.fg' mt='3.5' role='alert'>
-        {error}
-      </Text>
-    )
+    return <QuestionErrorLine>{error}</QuestionErrorLine>
   }),
 }
 

@@ -1,8 +1,9 @@
 import { Alert, Box, Button } from '@chakra-ui/react'
 import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '@vocdoni/ballot'
-import { ElectionQuestion, useReactComponentsLocalize } from '@vocdoni/react-components'
+import { ElectionQuestion, useQuestionsForm, useReactComponentsLocalize } from '@vocdoni/react-components'
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import type { TFunction } from 'i18next'
+import { useFormState } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Markdown } from '~components/ui/Markdown'
 import { useVoterFlow } from '../flow-context'
@@ -10,7 +11,7 @@ import { textOf } from '../format'
 import { PausedNotice } from '../parts/PausedNotice'
 import { ScreenHeading, ScreenHelp, ScreenKicker, VoterScreenFrame } from '../parts/ScreenParts'
 import { VoterActionBar } from '../parts/VoterActionBar'
-import { questionTitleId } from '../voter-components'
+import { QuestionErrorLine, questionTitleId } from '../voter-components'
 
 /** "Tria una resposta.", "Tria fins a 2 opcions."…: how to answer, from the question's ballot type. */
 const helpFor = (t: TFunction, question: VotingProcessQuestion): string => {
@@ -25,6 +26,10 @@ const helpFor = (t: TFunction, question: VotingProcessQuestion): string => {
   return t('voter.question.help_range', { min, max })
 }
 
+// The SDK's form errors that stop a cast, unlike its selection checks (required, min, max, a ranking not finished),
+// which the hint and the off "Continua" already say: a ballot type this app cannot cast, and a choice it cannot encode.
+const castBlockers = new Set(['unsupported', 'encode'])
+
 /**
  * One question (boards V4VoterWide 4 to 6; paused mid-ballot V4VoterWideMore 2). The SDK renders its fields, with
  * its own validation and ids, through the voter's slots; "Continua" is the flow's (audit F4).
@@ -38,10 +43,22 @@ export const QuestionScreen = ({ index, paused }: { index: number; paused: boole
   const notice = lockedNotice(question.id)
   // A question whose vote is already on its way has nothing left to answer: it never blocks "Continua" (F14).
   const answered = facts.answered[index] || !!notice
-  const ranked =
-    tryInferQuestionBallotType(question as Parameters<typeof tryInferQuestionBallotType>[0]) === BallotType.Ranked
+  const ballotType = tryInferQuestionBallotType(question as Parameters<typeof tryInferQuestionBallotType>[0])
+  const ranked = ballotType === BallotType.Ranked
   const description = textOf(question.description as Parameters<typeof textOf>[0])
   const help = helpFor(t, question)
+  // The voter's error slot hides every field error, as it cannot tell these from a selection check (same props), so
+  // the screen shows them, from the error's type: the unsupported notice the SDK draws for a question with no ballot
+  // type, and the errors the SDK's vote sets (`unsupported`, `encode`).
+  const { fmethods } = useQuestionsForm()
+  const { errors } = useFormState({ control: fmethods.control, name: String(index) })
+  const fieldError = (errors as Record<string, { type?: unknown; message?: unknown } | undefined>)[String(index)]
+  const blocker =
+    ballotType === undefined
+      ? localize('errors.question_unsupported')
+      : fieldError && castBlockers.has(String(fieldError.type)) && fieldError.message
+        ? String(fieldError.message)
+        : null
 
   const primary = paused ? (
     <Button variant='off' size='ballot' aria-disabled data-testid='voter-continue'>
@@ -80,7 +97,10 @@ export const QuestionScreen = ({ index, paused }: { index: number; paused: boole
           </Alert.Content>
         </Alert.Root>
       ) : (
-        <ElectionQuestion index={String(index)} question={question} />
+        <>
+          <ElectionQuestion index={String(index)} question={question} />
+          {blocker && <QuestionErrorLine>{blocker}</QuestionErrorLine>}
+        </>
       )}
       <VoterActionBar
         secondary={
