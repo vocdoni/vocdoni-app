@@ -119,13 +119,12 @@ export const generatePaletteScale = (baseHex: string): PaletteScale => {
   return scale
 }
 
-// WCAG minimum for non-text UI (3:1). A solid surface below this against the
-// page background is invisible, so the semantic `solid` slot steps away from
-// 500 until it clears the bar.
+// WCAG minimum for non-text UI (3:1). A fill under it against the page gets a hairline edge (`solidEdge`), and the
+// lines that must be seen on the page (focus ring, outline border) step away from 500 until they clear it.
 const MIN_SURFACE_CONTRAST = 3
 
-const LIGHT_SOLID_STEPS: Array<keyof PaletteScale> = [500, 600, 700, 800, 900, 950]
-const DARK_SOLID_STEPS: Array<keyof PaletteScale> = [500, 400, 300, 200, 100, 50]
+const LIGHT_LINE_STEPS: Array<keyof PaletteScale> = [500, 600, 700, 800, 900, 950]
+const DARK_LINE_STEPS: Array<keyof PaletteScale> = [500, 400, 300, 200, 100, 50]
 
 const pickReadableStep = (
   scale: PaletteScale,
@@ -143,16 +142,24 @@ const MIN_TEXT_CONTRAST = 4.5
 const LIGHT_FG_STEPS: Array<keyof PaletteScale> = [700, 800, 900, 950]
 const DARK_FG_STEPS: Array<keyof PaletteScale> = [300, 200, 100, 50]
 
-// Text color for a filled surface of the given color. White is preferred as
-// long as it clears the text bar: raw luminance would pick black on most mid
-// tones (a mid blue scores 4.66 for black vs 4.51 for white), which is not what
-// any design system does with its brand buttons. Black only when white can't.
-//
-// This always yields at least 4.5:1: the two ratios multiply to exactly 21
-// (1.05/(L+0.05) * (L+0.05)/0.05), so whenever white falls below 4.5 black is
-// necessarily above 21/4.5 = 4.67.
-export const contrastColor = (hex: string): '#ffffff' | '#000000' =>
-  contrastRatio(hex, '#ffffff') >= MIN_TEXT_CONTRAST ? '#ffffff' : '#000000'
+// The first step that clears the text bar on every given background (the last candidate if none does).
+const pickTextStep = (scale: PaletteScale, candidates: Array<keyof PaletteScale>, backgrounds: string[]) =>
+  candidates.find((step) => backgrounds.every((bg) => contrastRatio(scale[step], bg) >= MIN_TEXT_CONTRAST)) ??
+  candidates[candidates.length - 1]
+
+/** Fil's ink (`gray.900` in colors.ts; palette.test.ts keeps the two equal): the dark label on a light fill. */
+export const INK = '#171717'
+
+export type LabelColor = '#ffffff' | typeof INK | '#000000'
+
+// Label (text, tick, switch thumb) for a filled surface of the given colour: white while it reaches 4.5:1, as every
+// design system does with its brand buttons, else Fil's ink, else black. Always at least 4.5:1: white and black
+// multiply to exactly 21, so where white fails (luminance over 0.1833) black is above 21/4.5 = 4.67; ink needs a
+// luminance of 0.2136 or more, and in the band between the two black takes over.
+export const contrastColor = (hex: string): LabelColor => {
+  if (contrastRatio(hex, '#ffffff') >= MIN_TEXT_CONTRAST) return '#ffffff'
+  return contrastRatio(hex, INK) >= MIN_TEXT_CONTRAST ? INK : '#000000'
+}
 
 export type PaletteSemanticSlot = { _light: string; _dark: string }
 
@@ -176,28 +183,44 @@ export type PaletteSemanticTokens = Record<(typeof PALETTE_SLOTS)[number], Palet
 type Backgrounds = { light: string; dark: string }
 
 /**
- * Semantic slots for a generated scale on chakra's mapping (fg 700/300, muted 200/800, subtle
- * 100/900, emphasized 300/700). `solid` (500) and `fg` walk the scale only when unreadable on a
- * mode's page background; `contrast`, `focusRing` and `border` follow the step `solid` lands on.
+ * Semantic slots for a generated scale on chakra's mapping (fg 700/300, muted 200/800, subtle 100/900, emphasized
+ * 300/700). `solid` is the given colour itself (500) in both scopes, and `contrast` its label. `fg` walks the scale
+ * only when unreadable on a mode's page background; `focusRing` and `border` are lines that must be seen on the page,
+ * so they take the first step from 500 that reaches 3:1 against it.
  */
 export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Backgrounds): PaletteSemanticTokens => {
-  const lightSolid = pickReadableStep(scale, LIGHT_SOLID_STEPS, backgrounds.light)
-  const darkSolid = pickReadableStep(scale, DARK_SOLID_STEPS, backgrounds.dark)
-  const lightFg = pickReadableStep(scale, LIGHT_FG_STEPS, backgrounds.light, MIN_TEXT_CONTRAST)
-  const darkFg = pickReadableStep(scale, DARK_FG_STEPS, backgrounds.dark, MIN_TEXT_CONTRAST)
+  const lightLine = pickReadableStep(scale, LIGHT_LINE_STEPS, backgrounds.light)
+  const darkLine = pickReadableStep(scale, DARK_LINE_STEPS, backgrounds.dark)
+  // `fg` is also the text of a selected option, drawn on `subtle` (100 light, 900 dark), so it must read there too.
+  const lightFg = pickTextStep(scale, LIGHT_FG_STEPS, [backgrounds.light, scale[100]])
+  const darkFg = pickTextStep(scale, DARK_FG_STEPS, [backgrounds.dark, scale[900]])
   const ref = (step: keyof PaletteScale) => `{colors.brand.${step}}`
+  const label = contrastColor(scale[500])
 
   return {
-    solid: { _light: ref(lightSolid), _dark: ref(darkSolid) },
-    contrast: { _light: contrastColor(scale[lightSolid]), _dark: contrastColor(scale[darkSolid]) },
+    solid: { _light: ref(500), _dark: ref(500) },
+    contrast: { _light: label, _dark: label },
     fg: { _light: ref(lightFg), _dark: ref(darkFg) },
     muted: { _light: ref(200), _dark: ref(800) },
     subtle: { _light: ref(100), _dark: ref(900) },
     emphasized: { _light: ref(300), _dark: ref(700) },
-    focusRing: { _light: ref(lightSolid), _dark: ref(darkSolid) },
-    border: { _light: ref(lightSolid), _dark: ref(darkSolid) },
+    focusRing: { _light: ref(lightLine), _dark: ref(darkLine) },
+    border: { _light: ref(lightLine), _dark: ref(darkLine) },
   }
 }
+
+// The control line (`border.emphasized`, the boards' black at 18%) a fill is edged with when it is too close to the
+// page to show its own shape.
+const EDGE_LINE = '{colors.border.emphasized}'
+
+/**
+ * `solidEdge`: the 1px hairline a filled control draws inside its edge. The control line where `solid` is under 3:1
+ * against the scope's page, so a pale fill still shows its shape; `transparent` otherwise (Fil's blue has none).
+ */
+export const generateSolidEdge = (scale: PaletteScale, backgrounds: Backgrounds): PaletteSemanticSlot => ({
+  _light: contrastRatio(scale[500], backgrounds.light) < MIN_SURFACE_CONTRAST ? EDGE_LINE : 'transparent',
+  _dark: contrastRatio(scale[500], backgrounds.dark) < MIN_SURFACE_CONTRAST ? EDGE_LINE : 'transparent',
+})
 
 export type AccentTokens = Record<'fg', PaletteSemanticSlot>
 
@@ -216,4 +239,18 @@ export const generateAccentTokens = (scale: PaletteScale, backgrounds: Backgroun
   return {
     fg: { _light: '{colors.brand.fg}', _dark: whiteOnDark ? '{colors.white}' : '{colors.brand.fg}' },
   }
+}
+
+// How far a filled control's hover moves from its fill, in OKLab (the old CSS `color-mix(… 88%, black)`).
+const HOVER_MIX = 0.12
+
+/**
+ * Hover fill of a filled control: `solid` 12% towards black, or towards white when darkening would take its label
+ * under 4.5:1 (a mid-light colour whose label is ink or black). Lightening only raises a dark label's contrast.
+ */
+export const solidHoverColor = (solid: string): string => {
+  const lab = rgbToLab(hexToRgb(solid))
+  const darker = rgbToHex(labToRgb(mix(lab, 0, HOVER_MIX)))
+  if (contrastRatio(darker, contrastColor(solid)) >= MIN_TEXT_CONTRAST) return darker
+  return rgbToHex(labToRgb(mix(lab, 1, HOVER_MIX)))
 }

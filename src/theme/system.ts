@@ -7,7 +7,15 @@ import {
 } from '@chakra-ui/react'
 import { DEFAULT_PRIMARY_COLOR, PAGE_BACKGROUNDS } from './colors'
 import { withEscapeHatch } from './escapeHatch'
-import { generateAccentTokens, generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
+import { lruMemo } from './lru-memo'
+import {
+  generateAccentTokens,
+  generateBrandSemanticTokens,
+  generatePaletteScale,
+  generateSolidEdge,
+  normalizeHexColor,
+  solidHoverColor,
+} from './palette'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import { textStyles } from './textStyles'
@@ -16,6 +24,24 @@ import tokens from './tokens'
 // The palette `colorPalette`-aware components fall back to when none is set: always `brand`, which is Fil's blue
 // until PRIMARY_COLOR replaces it. The argument is kept so callers need not change.
 export const defaultColorPalette = (_primaryColor?: string) => 'brand' as const
+
+// Every palette but `brand` that a filled control can take: chakra's own and the status ones (status.ts).
+const OTHER_PALETTES = [
+  'gray',
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'teal',
+  'blue',
+  'cyan',
+  'purple',
+  'pink',
+  'success',
+  'warning',
+  'danger',
+  'info',
+] as const
 
 // Fil's exact accent values, pinned instead of the generated steps when no PRIMARY_COLOR is set. The dark ones are
 // the blue as a fill (`solid`, `solidHover`), as text or a line (`fg`, `fgHover`) and as a wash (`subtle`).
@@ -56,22 +82,24 @@ export const createAppSystem = (primaryColor?: string) => {
       }
   const brandSemantic = {
     ...asTokens(slots),
-    // A filled button's hover. Fil pins it; a brand colour gets its own fill mixed 12% towards black, so a hover
-    // never lightens. Other palettes have no such slot, so the button recipe falls back to the same mix.
-    solid: {
-      DEFAULT: { value: slots.solid },
-      hover: {
-        value: {
-          _light: brand ? 'color-mix(in oklab, {colors.brand.solid} 88%, black)' : FIL_ACCENT.solidHover,
-          _dark: brand ? 'color-mix(in oklab, {colors.brand.solid} 94%, white)' : FIL_ACCENT_DARK.solidHover,
-        },
+    // A filled control's fill is the colour as given (`brand.500`), in both scopes. Fil pins its light hover; a brand
+    // colour's hover is its fill moved 12% towards black, or towards white when that would take its label under 4.5:1
+    // (palette.ts). `edge` is the hairline a fill too pale for its page draws inside its edge (transparent for Fil's
+    // blue). The other palettes state the same two slots below (`ownFillSlots`), all flat siblings of `solid`.
+    solid: { value: slots.solid },
+    solidHover: {
+      value: {
+        _light: brand ? solidHoverColor(scale[500]) : FIL_ACCENT.solidHover,
+        _dark: brand ? solidHoverColor(scale[500]) : FIL_ACCENT_DARK.solidHover,
       },
     },
+    solidEdge: { value: generateSolidEdge(scale, PAGE_BACKGROUNDS) },
   }
   const palette = defaultColorPalette(brand)
   // The accent steps alias the palette `colorPalette` falls back to, so a recipe that reads `accent.solid` instead
-  // of `colorPalette.solid` paints the same. `fg.hover` is the text colour of a link under the pointer: never
-  // lighter than at rest, so it stays readable for any brand colour.
+  // of `colorPalette.solid` paints the same. `border` is the accent drawn as a line on the page, 3:1 or more against
+  // it. `fg.hover` is the text colour of a link under the pointer: never lighter than at rest, so it stays readable
+  // for any brand colour.
   const accentSlots = generateAccentTokens(scale, PAGE_BACKGROUNDS)
   const accent = {
     fg: {
@@ -83,16 +111,32 @@ export const createAppSystem = (primaryColor?: string) => {
         },
       },
     },
-    solid: {
-      DEFAULT: { value: `{colors.${palette}.solid}` },
-      hover: { value: `{colors.${palette}.solid.hover}` },
-    },
+    solid: { value: `{colors.${palette}.solid}` },
+    solidHover: { value: `{colors.${palette}.solidHover}` },
+    solidEdge: { value: `{colors.${palette}.solidEdge}` },
     contrast: { value: `{colors.${palette}.contrast}` },
+    border: { value: `{colors.${palette}.border}` },
     subtle: { value: `{colors.${palette}.subtle}` },
-    // The accent as a line or edge (a selected row, an outlined notice, a drop target): the fill in light, the
-    // lighter text blue in dark, where the fill is too dark against the page.
-    line: { value: { _light: '{colors.accent.solid}', _dark: '{colors.accent.fg}' } },
+    // The accent as a line or edge (a selected row, an outlined notice, a drop target): the line step in light (the
+    // fill itself unless an organisation colour is too pale for 3:1 on the page), the lighter text blue in dark.
+    line: { value: { _light: '{colors.accent.border}', _dark: '{colors.accent.fg}' } },
   }
+
+  // Custom properties inherit: an element that sets another palette would still read brand's `solidHover` and
+  // `solidEdge` from <html>, so every other palette that can fill a control states its own. Every palette uses the
+  // same flat names (a slot nested under chakra's own `solid` token would be dropped, and a nested one next to a flat
+  // one would share a CSS variable).
+  const ownHover = (name: string) => `color-mix(in oklab, {colors.${name}.solid} 88%, black)`
+  const ownFillSlots = Object.fromEntries(
+    OTHER_PALETTES.map((name) => [
+      name,
+      {
+        ...(semanticTokens.colors as Record<string, object>)[name],
+        solidHover: { value: { _light: ownHover(name), _dark: ownHover(name) } },
+        solidEdge: { value: 'transparent' },
+      },
+    ])
+  )
 
   const appSystem = createSystem(defaultConfig, {
     // Style props only take theme tokens; `[value]` is the escape for non-design values (0, auto, 100%).
@@ -130,7 +174,7 @@ export const createAppSystem = (primaryColor?: string) => {
       }),
       semanticTokens: defineSemanticTokens({
         ...semanticTokens,
-        colors: { ...semanticTokens.colors, brand: brandSemantic, accent },
+        colors: { ...semanticTokens.colors, ...ownFillSlots, brand: brandSemantic, accent },
       }),
       textStyles,
       recipes,
@@ -143,20 +187,20 @@ export const createAppSystem = (primaryColor?: string) => {
 
 export type AppSystem = ReturnType<typeof createAppSystem>
 
-// Systems are memoized per color: building one is not free and the color is
-// constant for a process (server) or a page load (client), so the provider can
-// call this on every render without paying for it.
-const systems = new Map<string, AppSystem>()
+// Systems are memoized per colour: building one is not free, and the provider calls this on every render. Organisation
+// colours are open-ended input on the server (one per branded vote), so only the 32 most recently used are kept; the
+// stock system sits outside that memo, is built on first use and is never evicted.
+const MAX_SYSTEMS = 32
+let stockSystem: AppSystem | undefined
+const colorSystem = lruMemo(MAX_SYSTEMS, (color) => createAppSystem(color))
 
 export const getAppSystem = (primaryColor?: string): AppSystem => {
-  const key = normalizeHexColor(primaryColor) ?? ''
-  let cached = systems.get(key)
-  if (!cached) {
-    cached = createAppSystem(key || undefined)
-    systems.set(key, cached)
-  }
-  return cached
+  const color = normalizeHexColor(primaryColor)
+  if (color) return colorSystem(color)
+  stockSystem ??= createAppSystem()
+  return stockSystem
 }
 
 // The stock system (no PRIMARY_COLOR). Also what `chakra typegen` reads.
-export const system = getAppSystem()
+// Marked pure so a production bundle that never reads `system` (only tests, style-inventory and typegen do) drops it.
+export const system = /* @__PURE__ */ getAppSystem()

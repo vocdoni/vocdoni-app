@@ -7,7 +7,7 @@ import Navbar from '~components/Navbar'
 import { PageContainer } from '~components/ui/PageContainer'
 import { stripPublicLanguagePrefix } from '~i18n/public-language'
 import { Routes } from '~routes'
-import { useAppEnv, useLanguagesEnv } from '~src/app-env'
+import { useLanguagesEnv } from '~src/app-env'
 import { useFollowSystemColorMode } from '~theme/color-mode'
 import type { HeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
 
@@ -17,9 +17,8 @@ type PublicLayoutProps = PropsWithChildren<{
   enableChat?: boolean
   showDashboardButton?: boolean
   /**
-   * Organization branding of the process this page shows, when it has one. Only
-   * honored while SHOW_ORG_LOGO is on, and only for the header — the footer logo
-   * stays Vocdoni in every deployment.
+   * The organization logo of the process this page shows, when its brand shows one (resolved on the server, see
+   * `resolveProcessBrand`). Header only: the footer logo stays Vocdoni in every deployment.
    */
   organizationLogo?: HeaderOrganizationLogo
   /** Replaces the navbar, for the shared-census home that brings its own logo and switchers. */
@@ -45,7 +44,6 @@ const PublicLayout = ({
 }: PublicLayoutProps) => {
   // The voter has no appearance control and always follows the system.
   useFollowSystemColorMode()
-  const { SHOW_ORG_LOGO } = useAppEnv()
   const normalizedPathname = stripPublicLanguagePrefix(pathname, Object.keys(useLanguagesEnv()))
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
   const footerBg = isOrganizationPage ? 'footer.bg.muted' : 'footer.bg'
@@ -59,7 +57,7 @@ const PublicLayout = ({
             <Navbar
               publicLanguageLinks={publicLanguageLinks}
               showDashboardButton={showDashboardButton}
-              organizationLogo={SHOW_ORG_LOGO ? organizationLogo : undefined}
+              organizationLogo={organizationLogo}
             />
           )}
         </PageContainer>

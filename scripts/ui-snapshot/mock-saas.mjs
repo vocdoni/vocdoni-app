@@ -27,6 +27,10 @@ export const B_QBQ_CLOSED = '650000000000000000000b14'
 export const B_QBQ_ENDED = '650000000000000000000b15'
 export const B_QBQ_MANY = '650000000000000000000b17'
 export const B_QBQ_CANCELED = '650000000000000000000c12'
+// Brand per vote: a vote of another organisation with the branding add-on, and one of the same organisation without it.
+export const BRAND_ORG = '0xb2a4d000000000000000000000000000000f00d1'
+export const P_BRANDED = '650000000000000000000f01'
+export const P_BRAND_OFF = '650000000000000000000f02'
 export const FAKE_TOKEN = 'fake-local-token'
 export const TOKEN_EXPIRY = '2031-01-01T00:00:00.000Z'
 
@@ -116,6 +120,25 @@ const ORGANIZATION = {
   counters: USAGE,
   subscription: SUB_DETAILS,
 }
+
+// The organisation behind the branded votes. Its colour is a pale yellow on purpose, so the captures show the contrast
+// fallbacks (a darker solid step, black labels, a hover that lightens). The logo is inline, so no request leaves.
+const BRAND_LOGO = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40"><rect width="40" height="40" rx="8" fill="#1f2937"/>' +
+    '<circle cx="20" cy="20" r="10" fill="#f5d90a"/><rect x="52" y="12" width="100" height="16" rx="4" fill="#1f2937"/></svg>'
+)}`
+const BRAND_ORGANIZATION = {
+  ...ORGANIZATION,
+  address: BRAND_ORG,
+  name: ml('Fictional Cooperative of the Plain'),
+  description: ml('A made-up cooperative that pays for the branding add-on.'),
+  logo: ml(BRAND_LOGO),
+  color: '#f5d90a',
+  subdomain: 'fictional-cooperative',
+}
+// Any address answers with the main organisation, except the branded one.
+const organizationFor = (address) =>
+  address.toLowerCase().replace(/^0x/, '') === BRAND_ORG.slice(2) ? BRAND_ORGANIZATION : ORGANIZATION
 
 const USER = {
   id: 'u-0001',
@@ -546,6 +569,32 @@ const BOARD_PROCESSES = [
 
 PROCESSES.push(...BOARD_PROCESSES)
 
+// Reached by id only (`unlisted`), so the admin lists and their captures do not change.
+const brandVote = (id, addOns) => ({
+  id,
+  orgAddress: BRAND_ORG.slice(2),
+  chainId: 'vocdoni/DEV/fake',
+  title: ml('Members assembly 2027'),
+  description: ml('A vote of the cooperative. Everything here is fake.'),
+  header: '',
+  census,
+  published: true,
+  unlisted: true,
+  startDate: '2026-06-01T08:00:00.000Z',
+  endDate: '2030-12-31T20:00:00.000Z',
+  createdAt: '2026-05-30T08:00:00.000Z',
+  ...(addOns && { addOns }),
+  questions: [
+    question(id, 1, 'Do you approve the 2027 accounts?', ['Yes', 'No', 'Abstain'], 'ONGOING', {
+      voteCount: 4,
+      maxVoters: 10,
+      finalResults: false,
+      results: [['3', '1', '0']],
+    }),
+  ],
+})
+PROCESSES.push(brandVote(P_BRANDED, { branding: true }), brandVote(P_BRAND_OFF))
+
 // The question-by-question vote paused as a whole: the pause memory the app keeps in this browser (vote-pause.ts).
 export const HELD_STORAGE = { [`votes.pause.held.${B_QBQ_HELD}`]: JSON.stringify([boardQuestionId(B_QBQ_HELD, 3)]) }
 
@@ -601,8 +650,8 @@ on('GET', '/plans/([^/]+)', (m) => PLANS.find((p) => p.id === m[1]) || PLAN)
 on('GET', '/organizations/roles', () => ROLES)
 on('GET', '/organizations/types', () => TYPES)
 on('GET', '/organizations/languages', () => ({ languages: ['en', 'es', 'ca'], default: 'en' }))
-on('GET', '/organizations/0x[0-9a-fA-F]+', () => ORGANIZATION)
-on('GET', '/organizations/[0-9a-fA-F]{40}', () => ORGANIZATION)
+on('GET', '/organizations/(0x[0-9a-fA-F]+)', (m) => organizationFor(m[1]))
+on('GET', '/organizations/([0-9a-fA-F]{40})', (m) => organizationFor(m[1]))
 on('PUT', '/organizations/[^/]+', () => ORGANIZATION)
 on('GET', '/organizations/[^/]+/subscription', () => ({ subscriptionDetails: SUB_DETAILS, usage: USAGE, plan: PLAN }))
 on('GET', '/organizations/[^/]+/wallet', () => ({

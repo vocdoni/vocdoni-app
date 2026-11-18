@@ -1,7 +1,9 @@
 import { defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import { radioGroupAnatomy } from '@chakra-ui/react/anatomy'
+import { ringEdges } from './solidEdge'
 
-// 16px circle with a 1.5px `border.strong` outline; checked, a 5px ring of the palette around a white centre.
+// 16px circle with a 1.5px `border.strong` outline; checked, a 5px ring of the palette around a white centre, edged on
+// both sides when the colour is too pale for the page.
 // Chakra's `md` and `lg` draw the same 16px, so call sites keep their size prop.
 const box: Record<string, SystemStyleObject> = { itemControl: { boxSize: '4' }, item: { textStyle: 'control' } }
 
@@ -21,6 +23,7 @@ export const RadioGroup = defineSlotRecipe({
             borderColor: 'colorPalette.solid',
             bg: 'bg.panel',
             color: 'colorPalette.solid',
+            boxShadow: ringEdges,
             _dark: { bg: 'white' },
           },
           // The stock dot would paint inside the ring; the thick border is the mark.

@@ -13,6 +13,7 @@ import {
 } from '~src/legacy/vochain-archive'
 import { ensureAddressPrefix } from '~utils/address'
 import { getLocalizedRawText } from '~utils/localized-text'
+import { resolveArchiveProcessBrand, resolveProcessBrand, type ProcessBrand } from '~utils/process-brand'
 
 type PublicLanguageAlternate = {
   hrefLang: string
@@ -64,6 +65,8 @@ type PublicProcessPageData =
       id: string
       election: VotingProcessResponse
       organization: OrganizationData
+      /** Logo, colour and name the page paints, resolved here so the server and the client agree. */
+      brand: ProcessBrand
       meta: PublicMeta
     }
   | {
@@ -71,6 +74,7 @@ type PublicProcessPageData =
       id: string
       legacyElection: LegacyElection
       legacyOrganization?: LegacyOrganization
+      brand: ProcessBrand
       meta: PublicMeta
     }
 
@@ -421,6 +425,7 @@ export const loadProcessPageData = async ({
   canonicalUrl,
   language,
   alternates,
+  showOrganizationLogo = false,
 }: {
   client: PublicPageClient
   /** When set, 64-hex vochain ids resolve against the read-only archive. */
@@ -429,7 +434,11 @@ export const loadProcessPageData = async ({
   canonicalUrl?: string
   language: string
   alternates: PublicLanguageAlternate[]
+  /** The deployment's SHOW_ORG_LOGO. */
+  showOrganizationLogo?: boolean
 }): Promise<PublicProcessPageData> => {
+  const env = { SHOW_ORG_LOGO: showOrganizationLogo }
+
   if (vochainGateway && isLegacyProcessId(id)) {
     const legacyElection = await fetchLegacyElection(vochainGateway, id)
     const legacyOrganization = await fetchLegacyOrganization(vochainGateway, legacyElection.organizationId).catch(
@@ -441,6 +450,7 @@ export const loadProcessPageData = async ({
       id,
       legacyElection,
       legacyOrganization,
+      brand: resolveArchiveProcessBrand(legacyOrganization, language, env),
       meta: buildProcessMeta({
         election: legacyElection,
         organization: legacyOrganizationToMetaSource(legacyOrganization),
@@ -460,6 +470,7 @@ export const loadProcessPageData = async ({
     id,
     election,
     organization,
+    brand: resolveProcessBrand(election, organization, language, env),
     meta: buildProcessMeta({ election, organization, canonicalUrl, language, alternates }),
   }
 }

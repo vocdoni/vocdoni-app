@@ -14,6 +14,8 @@ import {
   B_QBQ_MANY,
   B_QBQ_READY,
   HELD_STORAGE,
+  P_BRAND_OFF,
+  P_BRANDED,
   P_DRAFT,
   P_ENDED,
   P_ONGOING,
@@ -148,6 +150,10 @@ export const ROUTES = [
   { slug: 'signup', path: '/account/signup', auth: false },
   { slug: 'vote-ongoing', path: `/processes/${P_ONGOING}`, auth: false },
   { slug: 'vote-results', path: `/processes/${P_ENDED}`, auth: false },
+  // Brand per vote: the add-on paints the organisation's logo and pale yellow; the same organisation without it keeps
+  // the Vocdoni mark and Fil blue (vote-ongoing is the plain vote of the main organisation).
+  { slug: 'vote-branded', path: `/processes/${P_BRANDED}`, auth: false },
+  { slug: 'vote-brand-off', path: `/processes/${P_BRAND_OFF}`, auth: false },
 ]
 
 export const DEFAULT_VIEWPORTS = [1440, 390]

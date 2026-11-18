@@ -6,8 +6,8 @@ import type { HeaderOrganizationLogo } from '~src/pages/shared/headerOrganizatio
 
 type LogoProps = {
   /**
-   * Organization branding to show instead of the Vocdoni logo (SHOW_ORG_LOGO).
-   * Unset — or an image that fails to load — keeps the Vocdoni logo.
+   * Organization logo to show instead of the Vocdoni logo, from the process brand (see `resolveProcessBrand`).
+   * Unset, or an image that fails to load, keeps the Vocdoni logo.
    */
   organization?: HeaderOrganizationLogo
 }
