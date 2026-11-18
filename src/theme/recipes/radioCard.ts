@@ -16,7 +16,12 @@ export const RadioCard = defineSlotRecipe({
           borderWidth: 'hairline',
           borderColor: 'border.emphasized',
           bg: 'bg.panel',
-          _checked: { borderColor: 'colorPalette.solid', bg: 'accent.subtle', boxShadow: '[none]' },
+          _checked: {
+            borderColor: 'colorPalette.solid',
+            bg: 'accent.subtle',
+            boxShadow: '[none]',
+            _dark: { borderColor: 'colorPalette.fg' },
+          },
         },
       },
     },

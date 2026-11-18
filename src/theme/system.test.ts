@@ -333,8 +333,8 @@ describe('PRIMARY_COLOR-driven system', () => {
   })
 
   it('leaves a configured brand its generated dark slots', () => {
-    expect(conditions(BRANDED, 'brand.solid.hover')?._dark).toBe('{colors.brand.solid/90}')
-    expect(conditions(BRANDED, 'accent.fg.hover')?._dark).toBe('{colors.brand.fg}')
+    expect(conditions(BRANDED, 'brand.solid.hover')?._dark).toBe('color-mix(in oklab, {colors.brand.solid} 94%, white)')
+    expect(conditions(BRANDED, 'accent.fg.hover')?._dark).toBe('color-mix(in oklab, {colors.brand.fg} 70%, white)')
     expect(conditions(BRANDED, 'brand.fg')?._dark).not.toBe('#6a99f1')
     expect(conditions(BRANDED, 'brand.subtle')?._dark).toBe('{colors.brand.900}')
   })

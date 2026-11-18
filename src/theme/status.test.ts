@@ -13,9 +13,9 @@ const FIL_LIGHT: Record<string, Record<string, string>> = {
 }
 // Fil's dark values for the slots it names; the rest of dark is the raw scale's.
 const FIL_DARK: Record<string, Record<string, string>> = {
-  success: { solid: '#2caa4f', fg: '#6fc884', contrast: '#0a0a0a' },
-  warning: { fg: '#e4ac59' },
-  danger: { fg: '#f97770' },
+  success: { solid: '#2caa4f', fg: '#6fc884', contrast: '#0a0a0a', subtle: '#111111' },
+  warning: { fg: '#e4ac59', subtle: '#111111' },
+  danger: { fg: '#f97770', subtle: '#111111' },
 }
 const PALETTES = Object.keys(SCALE)
 

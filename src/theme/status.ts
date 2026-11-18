@@ -23,9 +23,9 @@ const LIGHT: Partial<Record<StatusPalette, Partial<Record<(typeof SLOTS)[number]
 
 // Fil's dark values: the status text on the dark page, and the green fill with its dark label.
 const DARK: Partial<Record<StatusPalette, Partial<Record<(typeof SLOTS)[number], string>>>> = {
-  success: { solid: '#2caa4f', fg: '#6fc884', contrast: '#0a0a0a' },
-  warning: { fg: '#e4ac59' },
-  danger: { fg: '#f97770' },
+  success: { solid: '#2caa4f', fg: '#6fc884', contrast: '#0a0a0a', subtle: '{colors.bg.subtle}' },
+  warning: { fg: '#e4ac59', subtle: '{colors.bg.subtle}' },
+  danger: { fg: '#f97770', subtle: '{colors.bg.subtle}' },
 }
 
 const slot = (name: StatusPalette, slotName: (typeof SLOTS)[number]) => {
@@ -69,7 +69,12 @@ export const statusColors = defineSemanticTokens.colors({
   },
   info: palette('info'),
   status: {
-    success: statusRole('success'),
+    success: {
+      ...statusRole('success'),
+      // The done disc's fill (a vote cast, a step finished): the success ink in light, the green in dark, under
+      // `status.success.contrast` (white in light, near black in dark).
+      mark: { value: { _light: '{colors.success.text}', _dark: '{colors.success.solid}' } },
+    },
     warning: {
       ...statusRole('warning'),
       // The ring of a warning notice (a paused vote): the warning colour at a quarter.

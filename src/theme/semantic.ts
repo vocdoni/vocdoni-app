@@ -41,6 +41,13 @@ const colors = defineSemanticTokens.colors({
         _dark: 'rgb(255 255 255 / 0.08)',
       },
     },
+    // A field's fill: white in light; in dark a well the colour of the page, darker than the card it sits on.
+    field: {
+      value: {
+        _light: '{colors.bg.panel}',
+        _dark: '{colors.bg}',
+      },
+    },
     // The empty track of a progress bar.
     track: {
       value: {

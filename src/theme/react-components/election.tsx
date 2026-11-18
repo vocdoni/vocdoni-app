@@ -526,8 +526,8 @@ export const electionComponents: ComponentsPartialDefinition = {
                   alignItems='center'
                   justifyContent='center'
                   borderRadius='full'
-                  bg='status.success.fg'
-                  color='accent.contrast'
+                  bg='status.success.mark'
+                  color='status.success.contrast'
                 >
                   <Icon as={CheckIcon} boxSize='3.5' />
                 </Flex>

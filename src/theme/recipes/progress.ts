@@ -9,6 +9,8 @@ const range = defineStyle({
   bgColor: 'colorPalette.solid',
   borderRadius: 'none',
   boxShadow: '[2px 0 0 {colors.bg.panel}]',
+  // In dark the fill is the palette's text colour: the solid blue reads 2.4:1 on the dark track.
+  _dark: { bgColor: 'colorPalette.fg' },
 })
 
 // A vote result is data, not progress: a thicker track and an ink fill.

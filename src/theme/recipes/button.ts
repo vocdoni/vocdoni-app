@@ -300,6 +300,8 @@ const danger = defineStyle({
   color: 'status.error.fg',
   _hover: { bg: 'status.error.bg' },
   _expanded: { bg: 'status.error.bg' },
+  // The dark error wash is an opaque grey, so the dark hover is the neutral wash.
+  _dark: { _hover: { bg: 'state.hover.bg' }, _expanded: { bg: 'state.hover.bg' } },
 })
 
 // Round launcher pinned to a corner of the viewport (support chat).
@@ -316,6 +318,13 @@ const floating = defineStyle({
   _hover: {
     bg: 'bg.inverted/90',
     transform: 'scale(1.06)',
+  },
+  // In dark the launcher is the raised grey with a control ring and ink icon, not a light disc.
+  _dark: {
+    bg: 'surface.raised',
+    color: 'fg',
+    boxShadow: 'shadow.control',
+    _hover: { bg: 'surface.raised' },
   },
   _active: { transform: 'scale(0.96)' },
   _motionReduce: { transition: '[none]', _hover: { transform: 'none' }, _active: { transform: 'none' } },

@@ -45,9 +45,9 @@ component. The inventory test rejects hex and named colours outright; raw palett
 
 Token families, each in its own module under `src/theme/` and spread into `colors` in `semantic.ts`:
 
-| Family                           | Tokens                                                                                                                                                                                                                                                                                       | Module            |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint`, `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.track` (the empty track of a progress bar), `bg.inverted`, `bg.panel`                                                                          | `semantic.ts`     |
+| Family                           | Tokens                                                                                                                                                                                                                                                                                                                                                                                     | Module            |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint`, `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.track` (the empty track of a progress bar), `bg.field` (a field's fill: white in light, the page colour in dark), `bg.inverted`, `bg.panel`                                                                                                                      | `semantic.ts`     |
 | Borders                          | `border` (the hairline of cards, rows and dividers, black at 10%), `border.emphasized` (a firmer hairline, such as the rule above a docked bar, black at 18%), `border.muted`, `border.subtle`, `border.strong` (outlines of checkboxes, radios and dashed drop zones, `#8f8f8f`), `border.field` (the ring of fields, selects, textareas and voter options, `#8f8f8f`), `border.inverted` | `semantic.ts`     |
 | Surface layers                   | `surface.canvas` (the dashboard page, `#fafafa` in light mode), `.sidebar` (white), `.content`, `.card`, `.sunken`, `.control` (the fill of a secondary button, an avatar and the entity selector: white in light mode, white at 5% in dark), `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`)                                                                                                                  | `semantic.ts`     |
 | Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.sheet` (behind a bottom sheet and a tablet's confirm dialog), `scrim.fg`                                                                                                                                                                                                                            | `semantic.ts`     |
@@ -62,7 +62,7 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                                                                                                                                  | `recipeColors.ts` |
 | Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`), `shadow.raised.halo` (a desktop action menu: the ring plus a 4px panel-coloured halo); every shadow is a 1px ring, no blur | `semantic.ts`     |
 | Brand accent in dark mode        | `accent.fg`: the brand's `fg` (`#6a99f1` for Fil's stock blue), or white on the dark page for a neutral brand (active tab, highlight card)                                                                                                                                                                                    | `palette.ts`      |
-| Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                         | `system.ts`       |
+| Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`, `accent.line` (the accent as a line or edge: `accent.solid` in light, `accent.fg` in dark): the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                         | `system.ts`       |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                                                                                                                                         | `semantic.ts`     |
 
 Rules of thumb:
@@ -96,8 +96,8 @@ Rules of thumb:
   | `surface.raised` (menu) | `carbon.850` #222222 |
   | `surface.control` | white at 5% |
   | `bg.muted`, `state.hover.bg` | white at 6% |
-  | `bg.emphasized`, `state.current.bg` | white at 8% |
-  | `state.selected.bg` | white at 10% |
+  | `bg.emphasized` | white at 8% |
+  | `state.selected.bg`, `state.current.bg` | white at 10% |
   | `bg.track` | `carbon.750` #333333 |
   | `bg.inverted` | `carbon.100` #ededed |
   | `fg`, `fg.muted`, `fg.subtle`, `fg.faint` | #ededed, #b4b4b4, #999999, #707070 (`fg.inverted` is `gray.950`) |
@@ -116,9 +116,12 @@ Rules of thumb:
   | `link.fg`, `link.fg.hover` | `accent.fg`, `accent.fg.hover` (both modes) |
   | `accent.solid` (hover), `fg` (hover), `subtle` | #1d62e9 (#2d6deb), #6a99f1 (#96b8f7), #1d62e9 at 12%; stock blue only, pinned in `system.ts` |
 
+  Dark-only rules in the recipes: lines, focus rings and progress fills read the palette's `fg` (#6a99f1 for Fil); fields are a well (`bg.field`); empty checkboxes and radios are transparent and a checked radio has a white centre; the done disc is `success.solid` with a dark tick; the chat launcher and tooltips sit on `surface.raised` with a control ring; warning, danger and success carry no coloured band (`subtle` is `bg.subtle`) and the usage meters use the status text colours.
+
   The rings stay as in light mode (1px, no shadows). A configured `PRIMARY_COLOR` keeps its generated dark slots. The
   steps run `bg.subtle` < `bg.muted` (hover) < `bg.emphasized` (pressed, current), as in light. `state.hover.bg` is a 4%
   black wash in light mode so it shows on white and on the sidebar tint alike.
+
 - **Text on a coloured fill**: use the pair the token family ships (`status.error.contrast` on `status.error.solid`,
   `surface.inverse.fg` on `surface.inverse`), not an ad hoc black or white. `textContrast.test.ts` and `palette.test.ts`
   check contrast.
@@ -285,7 +288,7 @@ What exists today:
 | `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the dashboard's navigation below `lg`, `dashboard.drawer` wide), `sheet` (a bottom sheet as the boards draw it: grab handle, `dialog-title`, rows under rules, padding 8 16 24, `scrim.sheet`); dialog and drawer backdrops otherwise paint `scrim.strong`                                                                                                                                                                            |
 | `dialog`            | `placement` defaults to `center`, which is a bottom sheet below `md`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                                                                         |
 | `menu`              | Items are 52px, 40px, 32px rows by breakpoint, highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused). `variant='actions'` is `ResponsiveMenu`'s dropdown: as wide as its longest item, every item with its icon; 40px rows and 18px icons on a tablet, 34px rows, 16px icons, `shadow.raised.halo` and a rule before the destructive items from `lg` |
-| `progress`          | `variant`: `results` (thin bar in ink, one per choice, never dimmed: the slot cannot tell a final tally from a live one), `turnout` (the share that voted, a 4px bar with round ends and a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                                                                                                                  |
+| `progress`          | `variant`: `results` (thin bar in ink, one per choice; in a final result with a clear leader the other bars are dimmed, set by `ElectionResults` through `data-dimmed`, and no option is ticked as the winner), `turnout` (the share that voted, a 4px bar with round ends and a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                                                                                                                  |
 | `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                                                                                            |
 | `status`            | size `sm` is 13px up to `lg` and 12px from `lg`; `tone`: `success`, `warning`, `danger`, `gray`, `ink`, `hollow` (a dot and a word; `ProcessStatus` picks the tone)                                                                                                                                                                                                                                                  |
 | `dataList`          | `variant`: `ruled` (the rows of a card under its title, label left and value right, each under a `border.muted` rule and padded to the card's edge; the label keeps its line; see `FactList`)                                                                                                                                                                                                                                                                          |
@@ -433,9 +436,9 @@ an optional `match` (a regular expression on the whole source text of the occurr
 that narrows the exception to the occurrences it names) and a `reason`. Today:
 
 - **PDF report** (`VotingReportPdf`): react-pdf renders outside Chakra, so raw values are the only option.
-- **Stripe Elements and Cal.com** (`src/components/Pricing/stripe.ts`): both render in iframes and take raw CSS colours.
-  `EMBED_DARK` there is the one copy of the Fil dark values they get (Cal.com's booker reads it); light keeps each
-  embed's own look. `useColorMode` reports the forced mode on voter pages.
+- **Stripe Elements and Cal.com** (`src/components/Pricing/stripe.ts`, `src/theme/embedColors.ts`): both render in
+  iframes and take raw CSS colours. `EMBED_DARK` in `embedColors.ts` is the one copy of the Fil dark values they get
+  (Stripe and Cal.com's booker both import it); light keeps each embed's own look. `useColorMode` reports the forced mode on voter pages.
 - **react-select**: the menu portal of `SaasSelector.tsx` and `CensusSearch.tsx` needs a raw `zIndex` above Chakra
   modals, and `isLoading` on the react-select wrapper (`SaasSelector.tsx`, `Members/index.tsx`, `CensusCreation.tsx`) is
   a react-select prop, not a Chakra v2 one.

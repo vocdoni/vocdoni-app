@@ -35,9 +35,9 @@ describe('Fil container recipes', () => {
     expect(text(alert({ status: 'success' }).root)).toContain('--chakra-colors-bg-subtle')
   })
 
-  it('puts a 2px accent line on the left of a selected table row', () => {
+  it('puts a 2px accent line (the text blue in dark) on the left of a selected table row', () => {
     const table = system.sva(system.getSlotRecipe('table'))
-    expect(text(table().row)).toContain('inset 2px 0 0 var(--chakra-colors-accent-solid)')
+    expect(text(table().row)).toContain('inset 2px 0 0 var(--chakra-colors-accent-line)')
   })
 
   it('underlines the current tab in ink and makes the line look the default', () => {
