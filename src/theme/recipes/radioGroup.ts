@@ -15,11 +15,13 @@ export const RadioGroup = defineSlotRecipe({
           borderWidth: 'mark',
           borderColor: 'border.strong',
           bg: 'bg.panel',
+          _dark: { bg: 'transparent' },
           _checked: {
             borderWidth: 'radio',
             borderColor: 'colorPalette.solid',
             bg: 'bg.panel',
             color: 'colorPalette.solid',
+            _dark: { bg: 'white' },
           },
           // The stock dot would paint inside the ring; the thick border is the mark.
           '& .dot': { display: 'none' },

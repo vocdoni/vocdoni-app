@@ -63,7 +63,7 @@ export const createAppSystem = (primaryColor?: string) => {
       hover: {
         value: {
           _light: brand ? 'color-mix(in oklab, {colors.brand.solid} 88%, black)' : FIL_ACCENT.solidHover,
-          _dark: brand ? '{colors.brand.solid/90}' : FIL_ACCENT_DARK.solidHover,
+          _dark: brand ? 'color-mix(in oklab, {colors.brand.solid} 94%, white)' : FIL_ACCENT_DARK.solidHover,
         },
       },
     },
@@ -79,7 +79,7 @@ export const createAppSystem = (primaryColor?: string) => {
       hover: {
         value: {
           _light: brand ? '{colors.brand.950}' : FIL_ACCENT.solidHover,
-          _dark: brand ? '{colors.brand.fg}' : FIL_ACCENT_DARK.fgHover,
+          _dark: brand ? 'color-mix(in oklab, {colors.brand.fg} 70%, white)' : FIL_ACCENT_DARK.fgHover,
         },
       },
     },
@@ -89,6 +89,9 @@ export const createAppSystem = (primaryColor?: string) => {
     },
     contrast: { value: `{colors.${palette}.contrast}` },
     subtle: { value: `{colors.${palette}.subtle}` },
+    // The accent as a line or edge (a selected row, an outlined notice, a drop target): the fill in light, the
+    // lighter text blue in dark, where the fill is too dark against the page.
+    line: { value: { _light: '{colors.accent.solid}', _dark: '{colors.accent.fg}' } },
   }
 
   const appSystem = createSystem(defaultConfig, {

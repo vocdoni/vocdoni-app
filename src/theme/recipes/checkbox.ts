@@ -20,6 +20,7 @@ export const checkbox = defineSlotRecipe({
           borderWidth: 'mark',
           borderColor: 'border.strong',
           bg: 'bg.panel',
+          _dark: { bg: 'transparent' },
           '&:is([data-state=checked], [data-state=indeterminate])': {
             bg: 'colorPalette.solid',
             color: 'colorPalette.contrast',

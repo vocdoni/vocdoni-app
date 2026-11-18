@@ -23,10 +23,10 @@ describe.each(Object.entries(systems))('interaction-state and chart tokens (%s)'
     ['state.selected.bg', 'rgb(0 0 0 / 0.06)', 'rgb(255 255 255 / 0.1)'],
     ['state.selected.fg', 'gray.900', 'carbon.100'],
     ['state.hover.fg', 'gray.900', 'carbon.100'],
-    ['state.current.bg', 'rgb(0 0 0 / 0.06)', 'bg.emphasized'],
+    ['state.current.bg', 'rgb(0 0 0 / 0.06)', 'rgb(255 255 255 / 0.1)'],
     ['chart.track', 'bg.emphasized', 'bg.emphasized'],
-    ['meter.warning', '#875500', 'orange.500'],
-    ['meter.critical', '#ca2a30', 'red.600'],
+    ['meter.warning', '#875500', '#e4ac59'],
+    ['meter.critical', '#ca2a30', '#f97770'],
     ['meter.ok', 'gray.solid', 'gray.solid'],
   ])('%s resolves to the value the consumer had before', (token, light, dark) => {
     // A literal (Fil's translucent selection) is compared as written; anything else is a token name.

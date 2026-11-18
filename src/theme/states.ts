@@ -21,12 +21,12 @@ export const stateColors = defineSemanticTokens.colors({
       fg: { value: { _light: '{colors.gray.900}', _dark: '{colors.fg}' } },
     },
     current: {
-      bg: { value: { _light: 'rgb(0 0 0 / 0.06)', _dark: '{colors.bg.emphasized}' } },
+      bg: { value: { _light: 'rgb(0 0 0 / 0.06)', _dark: '{colors.state.selected.bg}' } },
       fg: { value: '{colors.fg}' },
     },
     // A file dragged over a drop target
     dragover: {
-      border: { value: '{colors.accent.solid}' },
+      border: { value: '{colors.accent.line}' },
     },
   },
 })

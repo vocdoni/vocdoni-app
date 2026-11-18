@@ -78,6 +78,18 @@ describe('text colour contrast (WCAG AA)', () => {
     }
   })
 
+  it('keeps the done disc tick readable on its fill in both modes', () => {
+    for (const mode of ['light', 'dark'] as const) {
+      const ratio = contrastRatio(resolve('status.success.contrast', mode), resolve('status.success.mark', mode))
+      expect(ratio, `done disc (${mode})`).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  // WCAG 1.4.11: a bar's fill needs 3:1 against the dark track it runs on.
+  it.each(['accent.line', 'meter.warning', 'meter.critical'])('%s draws a bar at 3:1 on the dark track', (token) => {
+    expect(contrastRatio(resolve(token, 'dark'), resolve('bg.track', 'dark'))).toBeGreaterThanOrEqual(3)
+  })
+
   it('keeps the inactive tab label readable on the tab list', () => {
     for (const mode of ['light', 'dark'] as const) {
       expect(
