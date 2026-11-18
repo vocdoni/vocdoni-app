@@ -57,35 +57,53 @@ describe('formatVoteDay', () => {
   const otherYear = new Date(Date.UTC(2027, 0, 18, 19, 0))
   const day = (date: Date, language: string) => formatVoteDay(date, language, { reference, timeZone: 'UTC' })
 
+  // ICU's wording varies between versions ("de" or "del" before the year in Catalan), so the patterns allow it; what
+  // they pin is the order, the weekday, the day, the month name, whether the year is there, and no comma after the
+  // weekday (the date sits mid-sentence).
   it('drops the month in the reference month and year', () => {
-    expect(day(sameMonth, 'ca')).toMatch(/^dimarts,? 17$/)
-    expect(day(sameMonth, 'es')).toMatch(/^martes,? 17$/)
-    expect(day(sameMonth, 'de')).toMatch(/^Dienstag,? 17\.?$/)
+    expect(day(sameMonth, 'ca')).toMatch(/^dimarts 17$/)
+    expect(day(sameMonth, 'es')).toMatch(/^martes 17$/)
+    expect(day(sameMonth, 'de')).toMatch(/^Dienstag 17\.?$/)
   })
 
   it('adds the month in another month of the same year', () => {
-    expect(day(otherMonth, 'ca')).toMatch(/^dijous,? 17 de desembre$/)
-    expect(day(otherMonth, 'es')).toMatch(/^jueves,? 17 de diciembre$/)
-    expect(day(otherMonth, 'de')).toMatch(/^Donnerstag,? 17\. Dezember$/)
+    expect(day(otherMonth, 'ca')).toMatch(/^dijous 17 de desembre$/)
+    expect(day(otherMonth, 'es')).toMatch(/^jueves 17 de diciembre$/)
+    expect(day(otherMonth, 'de')).toMatch(/^Donnerstag 17\. Dezember$/)
   })
 
   it('adds the month and the year in another year', () => {
-    expect(day(otherYear, 'ca')).toMatch(/^dilluns,? 18 de gener de 2027$/)
-    expect(day(otherYear, 'es')).toMatch(/^lunes,? 18 de enero de 2027$/)
-    expect(day(otherYear, 'de')).toMatch(/^Montag,? 18\. Januar 2027$/)
-    expect(day(otherYear, 'en')).toMatch(/^Monday,? 18 January 2027$/)
+    expect(day(otherYear, 'ca')).toMatch(/^dilluns 18 de gener del? 2027$/)
+    expect(day(otherYear, 'es')).toMatch(/^lunes 18 de enero del? 2027$/)
+    expect(day(otherYear, 'de')).toMatch(/^Montag 18\. Januar 2027$/)
+    expect(day(otherYear, 'en')).toMatch(/^Monday 18 January 2027$/)
   })
 
   it('always gives English the month, in English order', () => {
-    expect(day(sameMonth, 'en')).toMatch(/^Tuesday,? 17 November$/)
-    expect(day(otherMonth, 'en')).toMatch(/^Thursday,? 17 December$/)
-    expect(day(sameMonth, 'en-GB')).toMatch(/^Tuesday,? 17 November$/)
+    expect(day(sameMonth, 'en')).toMatch(/^Tuesday 17 November$/)
+    expect(day(otherMonth, 'en')).toMatch(/^Thursday 17 December$/)
+    expect(day(sameMonth, 'en-GB')).toMatch(/^Tuesday 17 November$/)
+  })
+
+  it('leaves no comma after the weekday and shows the year only in another year, in every locale', () => {
+    for (const language of ['ca', 'de', 'el', 'en', 'es', 'eu', 'fr', 'it', 'pt', 'pt-br']) {
+      const weekday = (date: Date) =>
+        new Intl.DateTimeFormat(language, { weekday: 'long', timeZone: 'UTC' }).format(date)
+      for (const date of [sameMonth, otherMonth, otherYear]) {
+        const text = day(date, language)
+        expect(text).toContain(weekday(date))
+        expect(text).not.toContain(`${weekday(date)},`)
+        expect(text).toMatch(/18|17/)
+      }
+      expect(day(otherMonth, language)).not.toMatch(/2026/)
+      expect(day(otherYear, language)).toMatch(/2027/)
+    }
   })
 
   it('compares the month in the given time zone', () => {
     const lateNight = new Date(Date.UTC(2026, 10, 30, 23, 30))
     expect(formatVoteDay(lateNight, 'ca', { reference, timeZone: 'Europe/Madrid' })).toMatch(/de desembre$/)
-    expect(formatVoteDay(lateNight, 'ca', { reference, timeZone: 'UTC' })).toMatch(/^dilluns,? 30$/)
+    expect(formatVoteDay(lateNight, 'ca', { reference, timeZone: 'UTC' })).toMatch(/^dilluns 30$/)
   })
 })
 

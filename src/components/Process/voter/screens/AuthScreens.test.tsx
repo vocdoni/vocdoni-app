@@ -90,10 +90,23 @@ describe('identify', () => {
     logged.mockRestore()
   })
 
-  it('opens the terms and privacy links in a new tab and does not toggle the checkbox', () => {
-    renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }))
-    const links = screen.getAllByRole('link')
-    expect(links.length).toBeGreaterThanOrEqual(2)
+  it('opens the terms and privacy links in a new tab and does not toggle the checkbox', async () => {
+    // With bare keys `Trans` renders no link: the strings need their link tags.
+    const i18nInstance = await createTestI18n({
+      resources: {
+        en: {
+          common: {
+            voter: { identify: { terms: 'I accept the <terms>terms</terms> and the <privacy>privacy policy</privacy>.' } },
+            footer: { terms_and_privacy: '<link1>Terms of use</link1> & <link2>Privacy Policy</link2>' },
+          },
+        },
+      },
+      useReactI18next: true,
+    })
+    renderWithFlow(<IdentifyScreen />, testFlow({ facts: testFacts({ connected: false }) }), { i18nInstance })
+    const links = ['terms', 'privacy policy', 'Terms of use', 'Privacy Policy'].map((name) =>
+      screen.getByRole('link', { name })
+    )
     for (const link of links) {
       expect(link).toHaveAttribute('target', '_blank')
       expect(link.getAttribute('rel')).toContain('noopener')

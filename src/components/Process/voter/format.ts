@@ -37,9 +37,20 @@ const dayText = (date: Date, locale: string, fields: Intl.DateTimeFormatOptions,
   new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', ...fields, timeZone }).formatToParts(date)
 
 /**
+ * Joins the parts as ICU words them, except the comma some locales put after a leading weekday ("dijous, 17 de
+ * desembre"): the date sits mid-sentence ("Oberta fins dijous 17 de desembre a les 20:00"), where it would dangle.
+ */
+const joinDay = (parts: Intl.DateTimeFormatPart[]): string =>
+  parts
+    .map((part, index) =>
+      part.type === 'literal' && parts[index - 1]?.type === 'weekday' ? part.value.replace(/^\s*,\s*/, ' ') : part.value
+    )
+    .join('')
+
+/**
  * The vote's day as the boards draw it, relative to a `reference` ("now" by default; for the end date inside the
  * upcoming sentence, the start date): in the reference's month and year "dilluns 17"; in another month "dilluns 17
- * de juny"; in another year the year too. English always carries the month
+ * de juny"; in another year the year too, in ICU's wording ("del 2027"). English always carries the month
  * and reads in English order ("Monday 17 November"), as does any language whose weekday and day do not read weekday
  * first.
  */
@@ -54,10 +65,9 @@ export const formatVoteDay = (
   if (!english && sameYear && monthOf(date, timeZone) === monthOf(reference, timeZone)) {
     const short = dayText(date, locale, {}, timeZone)
     const types = short.map((part) => part.type)
-    if (types.indexOf('weekday') < types.indexOf('day')) return short.map((part) => part.value).join('')
+    if (types.indexOf('weekday') < types.indexOf('day')) return joinDay(short)
   }
-  const full = dayText(date, locale, { month: 'long', ...(sameYear ? {} : { year: 'numeric' }) }, timeZone)
-  return full.map((part) => part.value).join('')
+  return joinDay(dayText(date, locale, { month: 'long', ...(sameYear ? {} : { year: 'numeric' }) }, timeZone))
 }
 
 /** "20:00", or "20:00 CET" with the zone (the opening time always carries it: spec D4 "upcoming", audit F18). */

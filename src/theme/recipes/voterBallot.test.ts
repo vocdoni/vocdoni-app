@@ -37,7 +37,9 @@ describe('voter option (QuestionChoice context `voter`)', () => {
     expect(wrapper['& [data-choice-mark]']).toMatchObject({
       width: 'var(--chakra-sizes-mark-ballot)',
       borderRadius: 'var(--chakra-radii-full)',
-      borderColor: 'var(--chakra-colors-ballot-choice-ring)',
+      // The unchosen ring is the mark shadow on a zero border (a 1.5px border paints 1px at DPR 1).
+      borderWidth: '0',
+      boxShadow: 'var(--chakra-shadows-mark-field)',
     })
     expect(wrapper['&[data-state="checked"] [data-choice-mark]']).toMatchObject({
       background: 'var(--chakra-colors-color-palette-solid)',

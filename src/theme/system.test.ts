@@ -630,6 +630,7 @@ describe('voter tokens', () => {
     expect(value('spacing.ballot.dock')).toBe('150px')
     expect(value('spacing.ballot.options')).toBe('22px')
     expect(value('spacing.ballot.agenda')).toBe('var(--chakra-spacing-ballot-options)')
+    expect(value('spacing.ballot.mark')).toBe('1px')
   })
 
   it('rings a mark still to come in the track grey and a failed field in 2px of the error colour', () => {

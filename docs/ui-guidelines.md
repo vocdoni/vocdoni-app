@@ -472,7 +472,7 @@ The voter scale (tokens):
 | Rail, logo, Vocdoni symbol, credit row in the phone bar | `sizes.ballot.rail`, `.logo`, `.symbol`, `.credit` | 280, 30, 22, 38px |
 | Wordmark in the credit | `sizes.wordmark.credit` (`wordmark` keeps its 125px width) | 13px tall |
 | Step progress line | `sizes.bar.thin` | 3px |
-| Rail to column, phone clearance under the action bar, help to options below `lg` | `spacing.ballot.gutter`, `.dock`, `.options`, `.agenda` (the agenda list's top margin, `.options`) | 72, 150, 22, 22px |
+| Rail to column, phone clearance under the action bar, help to options below `lg` | `spacing.ballot.gutter`, `.dock`, `.options`, `.agenda` (the agenda list's top margin, `.options`), `.mark` (the consent checkbox under its label's first line) | 72, 150, 22, 22, 1px |
 | Above and below an agenda step | `spacing.step` | 9px |
 | Type | `fontSizes.ballot.lead` (18px), `.code` (26px), `.status` (13.5px), next to `.option` (17px) and `.question` (32px); `letterSpacings.heading.open` (-0.02em) | |
 | A mark still to come | `border.pending` (the track grey) and `shadow.mark` (its 1.5px inner ring) | |

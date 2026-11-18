@@ -192,7 +192,7 @@ export const IdentifyScreen = ({ notice }: { notice?: 'sessionExpired' }) => {
                 onCheckedChange={(details) => onChange(details.checked === true)}
               >
                 <Checkbox.HiddenInput onBlur={onBlur} />
-                <Checkbox.Control mt='px' />
+                <Checkbox.Control mt='ballot.mark' />
                 <Checkbox.Label>
                   <Trans
                     i18nKey='voter.identify.terms'
