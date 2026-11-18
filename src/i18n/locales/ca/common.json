@@ -1765,16 +1765,11 @@
       "card_note_many": "Un codi per resposta. Serveix per comprovar que s'han comptat, sense dir què has votat.",
       "card_note_other": "Un codi per resposta. Serveix per comprovar que s'han comptat, sense dir què has votat.",
       "card_title": "El teu comprovant",
-      "copied": "Codi copiat",
-      "copy": "Copia el codi de {{question}}",
       "help_one": "Comprovat: la resposta és al registre. Ja pots tancar la pàgina.",
       "help_many": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
       "help_other": "Comprovat: les {{count}} respostes són al registre. Ja pots tancar la pàgina.",
       "results_later": "Els resultats es publicaran aquí mateix {{date}} a les {{time}}.",
-      "title": "Vot emès. Gràcies.",
-      "verify_one": "El pots comprovar a l'<explorer>Explorer</explorer>.",
-      "verify_many": "Pots comprovar cada codi a l'<explorer>Explorer</explorer>.",
-      "verify_other": "Pots comprovar cada codi a l'<explorer>Explorer</explorer>."
+      "title": "Vot emès. Gràcies."
     },
     "results": {
       "check_vote": "Comprova el teu vot",

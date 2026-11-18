@@ -1733,14 +1733,10 @@
       "card_note_one": "It lets you check your vote was counted, without revealing what you voted.",
       "card_note_other": "One code per answer. They let you check they were counted, without revealing what you voted.",
       "card_title": "Your receipt",
-      "copied": "Code copied",
-      "copy": "Copy the code for {{question}}",
       "help_one": "Checked: your answer is in the record. You can close the page now.",
       "help_other": "Checked: the {{count}} answers are in the record. You can close the page now.",
       "results_later": "The results will be published right here on {{date}} at {{time}}.",
-      "title": "Vote cast. Thank you.",
-      "verify_one": "You can check it in the <explorer>Explorer</explorer>.",
-      "verify_other": "You can check each code in the <explorer>Explorer</explorer>."
+      "title": "Vote cast. Thank you."
     },
     "results": {
       "check_vote": "Check your vote",

@@ -1765,16 +1765,11 @@
       "card_note_many": "Un código por respuesta. Sirve para comprobar que se han contado, sin decir qué has votado.",
       "card_note_other": "Un código por respuesta. Sirve para comprobar que se han contado, sin decir qué has votado.",
       "card_title": "Tu comprobante",
-      "copied": "Código copiado",
-      "copy": "Copiar el código de {{question}}",
       "help_one": "Comprobado: la respuesta está en el registro. Ya puedes cerrar la página.",
       "help_many": "Comprobado: las {{count}} respuestas están en el registro. Ya puedes cerrar la página.",
       "help_other": "Comprobado: las {{count}} respuestas están en el registro. Ya puedes cerrar la página.",
       "results_later": "Los resultados se publicarán aquí mismo el {{date}} a las {{time}}.",
-      "title": "Voto emitido. Gracias.",
-      "verify_one": "Puedes comprobarlo en el <explorer>Explorer</explorer>.",
-      "verify_many": "Puedes comprobar cada código en el <explorer>Explorer</explorer>.",
-      "verify_other": "Puedes comprobar cada código en el <explorer>Explorer</explorer>."
+      "title": "Voto emitido. Gracias."
     },
     "results": {
       "check_vote": "Comprobar tu voto",

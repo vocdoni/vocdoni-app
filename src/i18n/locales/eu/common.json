@@ -1733,14 +1733,10 @@
       "card_note_one": "Zure botoa zenbatu dela egiaztatzeko balio du, zer bozkatu duzun esan gabe.",
       "card_note_other": "Kode bat erantzun bakoitzeko. Zenbatu direla egiaztatzeko balio dute, zer bozkatu duzun esan gabe.",
       "card_title": "Zure ziurtagiria",
-      "copied": "Kodea kopiatu da",
-      "copy": "Kopiatu galdera honen kodea: {{question}}",
       "help_one": "Egiaztatuta: erantzuna erregistroan dago. Orria itxi dezakezu orain.",
       "help_other": "Egiaztatuta: {{count}} erantzunak erregistroan daude. Orria itxi dezakezu orain.",
       "results_later": "Emaitzak hemen bertan argitaratuko dira: {{date}}, {{time}}.",
-      "title": "Botoa emanda. Eskerrik asko.",
-      "verify_one": "<explorer>Explorer</explorer>-en egiazta dezakezu.",
-      "verify_other": "Kode bakoitza <explorer>Explorer</explorer>-en egiazta dezakezu."
+      "title": "Botoa emanda. Eskerrik asko."
     },
     "results": {
       "check_vote": "Egiaztatu zure botoa",

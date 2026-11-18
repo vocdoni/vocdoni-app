@@ -1733,14 +1733,10 @@
       "card_note_one": "Damit kannst du prüfen, ob deine Stimme gezählt wurde, ohne zu verraten, wie du abgestimmt hast.",
       "card_note_other": "Ein Code pro Antwort. Damit kannst du prüfen, ob sie gezählt wurden, ohne zu verraten, wie du abgestimmt hast.",
       "card_title": "Deine Quittung",
-      "copied": "Code kopiert",
-      "copy": "Code für {{question}} kopieren",
       "help_one": "Geprüft: Deine Antwort ist erfasst. Du kannst die Seite jetzt schließen.",
       "help_other": "Geprüft: Die {{count}} Antworten sind erfasst. Du kannst die Seite jetzt schließen.",
       "results_later": "Die Ergebnisse werden am {{date}} um {{time}} hier veröffentlicht.",
-      "title": "Stimme abgegeben. Danke.",
-      "verify_one": "Du kannst sie im <explorer>Explorer</explorer> prüfen.",
-      "verify_other": "Du kannst jeden Code im <explorer>Explorer</explorer> prüfen."
+      "title": "Stimme abgegeben. Danke."
     },
     "results": {
       "check_vote": "Deine Stimme prüfen",

@@ -1765,16 +1765,11 @@
       "card_note_many": "Un codice per risposta. Servono a verificare che siano state conteggiate, senza rivelare cosa hai votato.",
       "card_note_other": "Un codice per risposta. Servono a verificare che siano state conteggiate, senza rivelare cosa hai votato.",
       "card_title": "La tua ricevuta",
-      "copied": "Codice copiato",
-      "copy": "Copia il codice di {{question}}",
       "help_one": "Verificato: la risposta è registrata. Ora puoi chiudere la pagina.",
       "help_many": "Verificato: le {{count}} risposte sono registrate. Ora puoi chiudere la pagina.",
       "help_other": "Verificato: le {{count}} risposte sono registrate. Ora puoi chiudere la pagina.",
       "results_later": "I risultati saranno pubblicati qui {{date}} alle {{time}}.",
-      "title": "Voto espresso. Grazie.",
-      "verify_one": "Puoi verificarlo nell'<explorer>Explorer</explorer>.",
-      "verify_many": "Puoi verificare ogni codice nell'<explorer>Explorer</explorer>.",
-      "verify_other": "Puoi verificare ogni codice nell'<explorer>Explorer</explorer>."
+      "title": "Voto espresso. Grazie."
     },
     "results": {
       "check_vote": "Verifica il tuo voto",

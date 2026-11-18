@@ -1765,16 +1765,11 @@
       "card_note_many": "Un code par réponse. Ils permettent de vérifier qu'elles ont été comptabilisées, sans révéler ce que vous avez voté.",
       "card_note_other": "Un code par réponse. Ils permettent de vérifier qu'elles ont été comptabilisées, sans révéler ce que vous avez voté.",
       "card_title": "Votre reçu",
-      "copied": "Code copié",
-      "copy": "Copier le code de {{question}}",
       "help_one": "Vérifié : votre réponse est enregistrée. Vous pouvez fermer la page.",
       "help_many": "Vérifié : les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
       "help_other": "Vérifié : les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
       "results_later": "Les résultats seront publiés ici même le {{date}} à {{time}}.",
-      "title": "Vote enregistré. Merci.",
-      "verify_one": "Vous pouvez le vérifier dans l'<explorer>Explorer</explorer>.",
-      "verify_many": "Vous pouvez vérifier chaque code dans l'<explorer>Explorer</explorer>.",
-      "verify_other": "Vous pouvez vérifier chaque code dans l'<explorer>Explorer</explorer>."
+      "title": "Vote enregistré. Merci."
     },
     "results": {
       "check_vote": "Vérifier votre vote",

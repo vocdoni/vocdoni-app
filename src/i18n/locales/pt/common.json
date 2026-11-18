@@ -1765,16 +1765,11 @@
       "card_note_many": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que votaste.",
       "card_note_other": "Um código por resposta. Servem para verificar que foram contadas, sem revelar em que votaste.",
       "card_title": "O teu comprovativo",
-      "copied": "Código copiado",
-      "copy": "Copiar o código de {{question}}",
       "help_one": "Verificado: a resposta está no registo. Já podes fechar a página.",
       "help_many": "Verificado: as {{count}} respostas estão no registo. Já podes fechar a página.",
       "help_other": "Verificado: as {{count}} respostas estão no registo. Já podes fechar a página.",
       "results_later": "Os resultados serão publicados aqui mesmo {{date}} às {{time}}.",
-      "title": "Voto emitido. Obrigado.",
-      "verify_one": "Podes verificá-lo no <explorer>Explorer</explorer>.",
-      "verify_many": "Podes verificar cada código no <explorer>Explorer</explorer>.",
-      "verify_other": "Podes verificar cada código no <explorer>Explorer</explorer>."
+      "title": "Voto emitido. Obrigado."
     },
     "results": {
       "check_vote": "Verificar o teu voto",
