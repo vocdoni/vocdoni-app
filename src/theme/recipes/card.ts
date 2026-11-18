@@ -42,7 +42,7 @@ export const Card = defineSlotRecipe({
       py: '3.5',
       _notFirst: { borderTopWidth: 'hairline', borderColor: 'border' },
       // The row being worked on (an open question): an accent rule on its leading edge.
-      '&[data-current]': { boxShadow: '[inset {borderWidths.thick} 0 0 {colors.accent.solid}]' },
+      '&[data-current]': { boxShadow: '[inset {borderWidths.thick} 0 0 {colors.accent.line}]' },
     },
     footer: { px: { base: '4', md: 'card' }, pb: '4' },
   },

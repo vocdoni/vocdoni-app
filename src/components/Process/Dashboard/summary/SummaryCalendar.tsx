@@ -118,7 +118,7 @@ export const SummaryCalendar = ({ model }: { model: SummaryModel }) => {
                 boxSize='dot'
                 flexShrink='0'
                 borderRadius='full'
-                bg={entry.current ? 'accent.solid' : 'transparent'}
+                bg={entry.current ? 'accent.line' : 'transparent'}
                 borderWidth={entry.current ? '[0]' : 'mark'}
                 borderColor='fg.faint'
               />

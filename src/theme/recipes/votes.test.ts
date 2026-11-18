@@ -34,7 +34,7 @@ describe('votes theme additions', () => {
   it('marks the current card row with an accent rule and has a dashed note card', () => {
     const card = system.sva(system.getSlotRecipe('card'))
     expect(text(card().body)).toContain('data-current')
-    expect(text(card().body)).toContain('accent-solid')
+    expect(text(card().body)).toContain('accent-line')
     expect(layer(card({ variant: 'note' }).root)).toMatchObject({ borderStyle: 'dashed' })
   })
 
