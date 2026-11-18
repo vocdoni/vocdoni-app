@@ -2,10 +2,12 @@ import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import {
   describeAnswer,
   formatVoteDay,
+  formatVoteReturnDay,
   formatVoteTime,
   maskContact,
   resultKind,
   resultsFinal,
+  sentenceStop,
   textOf,
   voterTurnout,
 } from './format'
@@ -217,5 +219,30 @@ describe('resultsFinal', () => {
     expect(resultsFinal(withFinal(true, false))).toBe(false)
     expect(resultsFinal(withFinal(true, undefined))).toBe(false)
     expect(resultsFinal(withFinal())).toBe(false)
+  })
+})
+
+describe('formatVoteReturnDay', () => {
+  const reference = new Date(Date.UTC(2026, 10, 10, 12, 0))
+  const at = (date: Date, language = 'ca') => formatVoteReturnDay(date, language, { reference, timeZone: 'UTC' })
+
+  it('is the bare weekday when the date is within the next six days', () => {
+    expect(at(new Date(Date.UTC(2026, 10, 12, 19, 0)))).toBe('dijous')
+    expect(at(new Date(Date.UTC(2026, 10, 16, 19, 0)), 'en')).toBe('Monday')
+    expect(at(reference)).toBe('dimarts')
+  })
+
+  it('keeps the full day from a week on, and for a date already past', () => {
+    expect(at(new Date(Date.UTC(2026, 10, 17, 19, 0)))).toBe('dimarts 17')
+    expect(at(new Date(Date.UTC(2026, 11, 17, 19, 0)))).toMatch(/de desembre$/)
+    expect(at(new Date(Date.UTC(2026, 10, 9, 19, 0)))).toBe('dilluns 9')
+  })
+})
+
+describe('sentenceStop', () => {
+  it('adds a full stop to a plain title and none after punctuation', () => {
+    expect(sentenceStop('Assemblea General')).toBe('.')
+    for (const title of ['Vols aprovar?', 'Endavant!', 'Fi.', 'Etc\u2026', 'Vols aprovar? '])
+      expect(sentenceStop(title)).toBe('')
   })
 })

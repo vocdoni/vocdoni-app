@@ -76,6 +76,39 @@ export const formatVoteDay = (
   return joinDay(dayText(date, locale, { month: 'long', ...(sameYear ? {} : { year: 'numeric' }) }, timeZone), language)
 }
 
+/** The full stop that ends a sentence made of a title: none when the title already ends in punctuation ("Vols?"). */
+export const sentenceStop = (title: string): string => (/[.!?…;]["')»”]?\s*$/.test(title) ? '' : '.')
+
+const calendarDay = (date: Date, timeZone?: string): number => {
+  const [year, month, day] = new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone,
+  })
+    .format(date)
+    .split('-')
+    .map(Number)
+  return Date.UTC(year, month - 1, day) / 86_400_000
+}
+
+/**
+ * The day to come back on, as a sentence says it ("tornar-hi dijous", board 9): the bare weekday when the date falls
+ * in the next six days, where it is unambiguous, else the full day.
+ */
+export const formatVoteReturnDay = (
+  date: Date,
+  language: string,
+  { reference = new Date(), timeZone }: DateOptions = {}
+): string => {
+  const ahead = calendarDay(date, timeZone) - calendarDay(reference, timeZone)
+  if (ahead < 0 || ahead > 6) return formatVoteDay(date, language, { reference, timeZone })
+  return new Intl.DateTimeFormat(language.split('-')[0] === 'en' ? 'en-GB' : language, {
+    weekday: 'long',
+    timeZone,
+  }).format(date)
+}
+
 /** "20:00", or "20:00 CET" with the zone (the opening time always carries it: spec D4 "upcoming", audit F18). */
 export const formatVoteTime = (
   date: Date,

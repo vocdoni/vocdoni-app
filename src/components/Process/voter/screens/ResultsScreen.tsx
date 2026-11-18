@@ -8,7 +8,17 @@ import { useAppEnv } from '~src/app-env'
 import { tallyIsPublic } from '~utils/question-tally'
 import { percentOf } from '~utils/vote-state'
 import { useVoterFlow } from '../flow-context'
-import { formatVoteDay, formatVoteTime, resultKind, resultsFinal, textOf, voterTurnout, type Turnout } from '../format'
+import {
+  formatVoteDay,
+  formatVoteReturnDay,
+  formatVoteTime,
+  resultKind,
+  resultsFinal,
+  sentenceStop,
+  textOf,
+  voterTurnout,
+  type Turnout,
+} from '../format'
 import { InlineAction, LocalText, NoticeCard, ScreenHeading, ScreenHelp, VoterScreenFrame } from '../parts/ScreenParts'
 import { VoterActionBar } from '../parts/VoterActionBar'
 import { VoteClosedLine, VoteStatusLine } from '../parts/VoteStatusLine'
@@ -69,7 +79,7 @@ const QuestionBlock = ({
   const { t } = useTranslation()
   const { election } = useVoterFlow()
   // The secret counting card (board 10c) is the title and "not counted yet", nothing more.
-  const secretCounting = counting && !tallyIsPublic(question)
+  const secretCounting = counting && !!question.secretUntilTheEnd && !tallyIsPublic(question)
   const kind = useKindLine()(question)
   const titleId = useId()
   return (
@@ -147,7 +157,7 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
   // The counting copy (boards 10b public, 10c secret) is chosen here only (ruling R5): a public vote keeps its last
   // live figures under a line that says they may still change; a secret one has nothing to show yet.
   const counting = state === 'final' && !settled
-  const publicCounting = counting && election.questions.some((question) => tallyIsPublic(question))
+  const publicCounting = counting && election.questions.some((question) => !question.secretUntilTheEnd)
   const heading = hidden
     ? title
     : state === 'provisional'
@@ -188,7 +198,7 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
         ) : null
       ) : (
         <ScreenHelp>
-          {counting ? null : t('voter.results.of_vote', { title })}
+          {counting ? null : t('voter.results.of_vote', { title, stop: sentenceStop(title) })}
           {turnout && !counting ? (
             <>
               {' '}
@@ -207,7 +217,9 @@ export const ResultsScreen = ({ state }: { state: ResultsState }) => {
         voted ? (
           <NoticeCard title={t('voter.voted.title')}>
             {end ? (
-              <LocalText>{t('voter.results.hidden_card_body', { day: formatVoteDay(end, i18n.language) })}</LocalText>
+              <LocalText>
+                {t('voter.results.hidden_card_body', { day: formatVoteReturnDay(end, i18n.language) })}
+              </LocalText>
             ) : null}
           </NoticeCard>
         ) : null
