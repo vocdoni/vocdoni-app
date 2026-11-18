@@ -125,9 +125,8 @@ export const describeAnswer = (
 export type Turnout = { count: number; total?: number }
 
 /**
- * Who has voted, for the welcome count, the closed screen and the results (spec D4 "Turnout", audit F16): nothing
- * when the deployment hides counts; the denominator is the questions' `maxVoters` when the read carries it. The
- * welcome screen hides its count line when `count` is 0 (that is the screen's rule; closed and results still show it).
+ * Who has voted, for the closed screen and the results (spec D4 "Turnout", audit F16): nothing when the deployment
+ * hides counts; the denominator is the questions' `maxVoters` when the read carries it.
  */
 export const voterTurnout = (
   election: Pick<VotingProcessResponse, 'questions'>,

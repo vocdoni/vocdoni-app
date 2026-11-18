@@ -28,9 +28,7 @@
   },
   "appearance": "Εμφάνιση",
   "aside": {
-    "anonymous_receipt_gone": "Η απόδειξή σας εμφανίστηκε όταν ψηφίσατε και δεν μπορεί να ανακτηθεί.",
-    "votes_weight_one": "<span>1</span> <text>ψήφος</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>ψήφοι</text>"
+    "anonymous_receipt_gone": "Η απόδειξή σας εμφανίστηκε όταν ψηφίσατε και δεν μπορεί να ανακτηθεί."
   },
   "auth": {
     "showcase": {
@@ -1793,8 +1791,6 @@
       "title": "Έχετε ήδη ψηφίσει"
     },
     "welcome": {
-      "count_one": "<b>{{count}} άτομο</b> έχει ήδη ψηφίσει.",
-      "count_other": "<b>{{count}} άτομα</b> έχουν ήδη ψηφίσει.",
       "lead": "Αυτές είναι οι ερωτήσεις αυτής της ψηφοφορίας.",
       "start": "Έναρξη ψηφοφορίας"
     }

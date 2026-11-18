@@ -28,9 +28,7 @@
   },
   "appearance": "Darstellung",
   "aside": {
-    "anonymous_receipt_gone": "Dein Beleg wurde bei der Stimmabgabe angezeigt und kann nicht erneut abgerufen werden.",
-    "votes_weight_one": "<span>1</span> <text>Stimme</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>Stimmen</text>"
+    "anonymous_receipt_gone": "Dein Beleg wurde bei der Stimmabgabe angezeigt und kann nicht erneut abgerufen werden."
   },
   "auth": {
     "showcase": {
@@ -1793,8 +1791,6 @@
       "title": "Du hast bereits abgestimmt"
     },
     "welcome": {
-      "count_one": "<b>{{count}} Person</b> hat bereits abgestimmt.",
-      "count_other": "<b>{{count}} Personen</b> haben bereits abgestimmt.",
       "lead": "Das sind die Fragen dieser Abstimmung.",
       "start": "Abstimmung beginnen"
     }

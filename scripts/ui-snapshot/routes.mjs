@@ -190,7 +190,7 @@ export const ROUTES = [
   // "Voter flow").
   voter('voter-live', V_LIVE, [
     { slug: 'identify-mismatch', open: [[['fill', 'input[name="memberNumber"]', '0000']], ...IDENTIFY.slice(1)] },
-    { slug: 'welcome-count', open: IDENTIFY },
+    { slug: 'welcome', open: IDENTIFY },
     { slug: 'question-single', open: SINGLE },
     { slug: 'question-multiple', open: MULTIPLE },
     { slug: 'question-ranked', open: RANKED },

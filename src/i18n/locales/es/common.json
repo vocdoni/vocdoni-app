@@ -28,10 +28,7 @@
   },
   "appearance": "Apariencia",
   "aside": {
-    "anonymous_receipt_gone": "Tu comprobante se mostró al votar y no se puede recuperar.",
-    "votes_weight_one": "<span>1</span> <text>voto</text>",
-    "votes_weight_many": "<span>{{ count }}</span> <text>votos</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>"
+    "anonymous_receipt_gone": "Tu comprobante se mostró al votar y no se puede recuperar."
   },
   "auth": {
     "showcase": {
@@ -1830,9 +1827,6 @@
       "title": "Ya has votado"
     },
     "welcome": {
-      "count_one": "<b>{{count}} persona</b> ya ha votado.",
-      "count_many": "<b>{{count}} personas</b> ya han votado.",
-      "count_other": "<b>{{count}} personas</b> ya han votado.",
       "lead": "Estas son las preguntas de esta votación.",
       "start": "Empezar a votar"
     }

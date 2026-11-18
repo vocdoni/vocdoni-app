@@ -28,9 +28,7 @@
   },
   "appearance": "Appearance",
   "aside": {
-    "anonymous_receipt_gone": "Your receipt was shown when you voted and cannot be retrieved.",
-    "votes_weight_one": "<span>1</span> <text>vote</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>votes</text>"
+    "anonymous_receipt_gone": "Your receipt was shown when you voted and cannot be retrieved."
   },
   "auth": {
     "showcase": {
@@ -1793,8 +1791,6 @@
       "title": "You have already voted"
     },
     "welcome": {
-      "count_one": "<b>{{count}} person</b> has already voted.",
-      "count_other": "<b>{{count}} people</b> have already voted.",
       "lead": "These are the questions of this vote.",
       "start": "Start voting"
     }

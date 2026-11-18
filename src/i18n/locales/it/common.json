@@ -28,10 +28,7 @@
   },
   "appearance": "Aspetto",
   "aside": {
-    "anonymous_receipt_gone": "La tua ricevuta è stata mostrata al momento del voto e non può essere recuperata.",
-    "votes_weight_one": "<span>1</span> <text>voto</text>",
-    "votes_weight_many": "<span>{{ count }}</span> <text>voti</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>voti</text>"
+    "anonymous_receipt_gone": "La tua ricevuta è stata mostrata al momento del voto e non può essere recuperata."
   },
   "auth": {
     "showcase": {
@@ -1830,9 +1827,6 @@
       "title": "Hai già votato"
     },
     "welcome": {
-      "count_one": "<b>{{count}} persona</b> ha già votato.",
-      "count_many": "<b>{{count}} persone</b> hanno già votato.",
-      "count_other": "<b>{{count}} persone</b> hanno già votato.",
       "lead": "Queste sono le domande di questa votazione.",
       "start": "Inizia a votare"
     }

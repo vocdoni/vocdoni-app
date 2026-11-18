@@ -28,9 +28,7 @@
   },
   "appearance": "Itxura",
   "aside": {
-    "anonymous_receipt_gone": "Zure egiaztagiria bozkatu zenuenean erakutsi zen, eta ezin da berreskuratu.",
-    "votes_weight_one": "<span>1</span> <text>boto</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>boto</text>"
+    "anonymous_receipt_gone": "Zure egiaztagiria bozkatu zenuenean erakutsi zen, eta ezin da berreskuratu."
   },
   "auth": {
     "showcase": {
@@ -1793,8 +1791,6 @@
       "title": "Dagoeneko bozkatu duzu"
     },
     "welcome": {
-      "count_one": "Dagoeneko bozkatu du: <b>{{count}} pertsona</b>.",
-      "count_other": "Dagoeneko bozkatu dute: <b>{{count}} pertsona</b>.",
       "lead": "Hauek dira bozketa honen galderak.",
       "start": "Hasi bozkatzen"
     }

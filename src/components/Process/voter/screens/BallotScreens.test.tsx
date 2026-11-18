@@ -1,5 +1,5 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import { renderWithFlow, testFacts, testFlow } from '../test-flow'
+import { renderWithFlow, testElection, testFacts, testFlow } from '../test-flow'
 import { initialVoterState } from '../voter-flow'
 import { ReceiptScreen } from './ReceiptScreen'
 import { ReviewScreen } from './ReviewScreen'
@@ -18,15 +18,11 @@ describe('welcome', () => {
     expect(screen.getByTestId('voter-screen')).toHaveClass('ph-no-capture')
   })
 
-  it('shows the vote count unless the results are secret until the end or counts are hidden', () => {
-    const { unmount } = renderWithFlow(<WelcomeScreen />, testFlow())
-    expect(screen.getByText(/voter\.welcome\.count/)).toBeInTheDocument()
-    unmount()
-    const secret = renderWithFlow(<WelcomeScreen />, testFlow({ facts: testFacts({ secretUntilTheEnd: true }) }))
-    expect(screen.queryByText(/voter\.welcome\.count/)).toBeNull()
-    secret.unmount()
-    renderWithFlow(<WelcomeScreen />, testFlow(), { appEnv: { HIDE_VOTER_COUNT: true } })
-    expect(screen.queryByText(/voter\.welcome\.count/)).toBeNull()
+  it('shows neither the vote count nor the census size (ruling R23)', () => {
+    const census = { authFields: ['memberNumber'], twoFaFields: [], weighted: false, anonymous: false, size: 312 }
+    renderWithFlow(<WelcomeScreen />, testFlow({ election: testElection({ census }) }))
+    const welcome = screen.getByTestId('voter-screen')
+    expect(welcome).not.toHaveTextContent(/welcome\.count|people_in_census|votes_weight|184|312/)
   })
 })
 

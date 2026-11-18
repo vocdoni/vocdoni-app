@@ -28,10 +28,7 @@
   },
   "appearance": "Aparença",
   "aside": {
-    "anonymous_receipt_gone": "El teu comprovant es va mostrar en votar i no es pot recuperar.",
-    "votes_weight_one": "<span>1</span> <text>vot</text>",
-    "votes_weight_many": "<span>{{ count }}</span> <text>vots</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>vots</text>"
+    "anonymous_receipt_gone": "El teu comprovant es va mostrar en votar i no es pot recuperar."
   },
   "auth": {
     "showcase": {
@@ -1830,9 +1827,6 @@
       "title": "Ja has votat"
     },
     "welcome": {
-      "count_one": "<b>{{count}} persona</b> ja ha votat.",
-      "count_many": "<b>{{count}} persones</b> ja han votat.",
-      "count_other": "<b>{{count}} persones</b> ja han votat.",
       "lead": "Aquestes són les preguntes d'aquesta votació.",
       "start": "Comença a votar"
     }
