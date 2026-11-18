@@ -526,6 +526,26 @@ describe('voter legal notice placement', () => {
   })
 })
 
+describe('voter page with a device clock that runs ahead (gate F4)', () => {
+  it("keeps the vote open until the server says it ended, not the device's clock", async () => {
+    // The device is ten minutes ahead of the server, the vote ends in five by the server's clock.
+    server.process = makeProcess({ endDate: new Date(NOW + 5 * 60_000).toISOString() })
+    vi.setSystemTime(NOW + 10 * 60_000)
+    render(
+      <AllProviders queryClient={queryClient}>
+        <VoterServerNow.Provider value={NOW}>
+          <VoterPage id='p1' election={server.process} brand={brand} />
+        </VoterServerNow.Provider>
+      </AllProviders>
+    )
+    await onScreen('identify')
+    await act(() => vi.advanceTimersByTimeAsync(1000))
+    expect(current()).toHaveAttribute('data-screen', 'identify')
+    pushServer(makeProcess({ status: 'ENDED', endDate: new Date(NOW + 5 * 60_000).toISOString() }))
+    await onScreen('closed')
+  })
+})
+
 describe('voter page clock at hydration (conformance D-24)', () => {
   it("draws the server's screen at the server's instant, then follows the browser's clock", async () => {
     // The vote opens a minute after the server read it; the browser's clock is already past the start.

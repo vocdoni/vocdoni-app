@@ -18,7 +18,7 @@ import type { ProcessBrand } from '~utils/process-brand'
 import { useNow } from '~utils/use-now'
 import { hasEndedBySchedule } from '~utils/vote-state'
 import { VoterFlowContext, type VoterFlow } from './flow-context'
-import { VOTER_POLL_MS, VOTER_STATE_GRACE_MS } from './live'
+import { VOTER_CLOCK_TOLERANCE_MS, VOTER_POLL_MS, VOTER_STATE_GRACE_MS } from './live'
 import { useOwnedAnswers } from './use-owned-answers'
 import { useVoterCheck, voterCheckKey } from './use-voter-check'
 import {
@@ -94,6 +94,11 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
   const clock = useNow(VOTER_POLL_MS)
   const serverNow = useContext(VoterServerNow)
   const hydrating = useHydrating()
+  // The page data's instant is the server's clock. A device clock far from it (one that runs ahead would close the
+  // vote early for this voter, on every reload) does not decide the end: the process read, polled, does (gate F4).
+  const [clockTrusted] = useState(
+    () => serverNow === undefined || Math.abs(Date.now() - serverNow) <= VOTER_CLOCK_TOLERANCE_MS
+  )
   // The SDK reads its own clock for `status` (a vote not started yet is UPCOMING): until hydration ends, both read the
   // server's instant instead, so the server's HTML and the browser's first render agree (conformance D-24).
   const firstFrameNow = hydrating && serverNow !== undefined ? new Date(serverNow) : undefined
@@ -154,7 +159,8 @@ export const VoterFlowProvider = ({ brand, endPassed = false, onResultsLive, chi
     loaded: !!election,
     status,
     questionByQuestion: isQuestionByQuestion(election),
-    endedBySchedule: endPassed || (!!election && hasEndedBySchedule(election, now)),
+    // `hydrating ||`: the first client render repeats the server's HTML, which read the server's own clock.
+    endedBySchedule: (hydrating || clockTrusted) && (endPassed || (!!election && hasEndedBySchedule(election, now))),
     secretUntilTheEnd: !!election && isSecretUntilTheEnd(election),
     connected,
     challengePending: csp.currentStep === 1,

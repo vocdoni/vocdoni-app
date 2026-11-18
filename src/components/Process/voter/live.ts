@@ -21,6 +21,11 @@ export const VOTER_CHECK_RETRY_MS = 5_000
  * second tap of a double tap meant for "Continua" must never cast.
  */
 export const VOTER_CAST_ARM_MS = 800
+/**
+ * A device clock further than this from the server's is not used to close the vote (gate F4): the stored status,
+ * polled, closes it. The page data's instant is at most a minute old (the HTML cache), so this leaves a margin.
+ */
+export const VOTER_CLOCK_TOLERANCE_MS = 120_000
 /** `setTimeout`'s ceiling: a longer delay fires at once, so the end-instant timer is not armed past it. */
 export const MAX_TIMEOUT_MS = 2_147_483_647
 
