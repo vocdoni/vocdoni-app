@@ -22,15 +22,23 @@ import {
   P_QBQ,
   RELAY_PENDING,
   V_2FA,
+  V_ANON,
+  V_ANON_ENDED,
+  V_ANON_SIGNED,
   V_CHECKING,
   V_LIVE,
   V_NOT_IN,
   V_PAUSED,
+  V_RESULTS,
+  V_RESULTS_COUNTING,
+  V_RESULTS_ENDED,
+  V_RESULTS_SECRET,
   V_SECRET,
   V_VOTED,
   V_WEIGHTED,
   VOTER_LIVE_PAUSED,
   VOTER_MEMBER,
+  VOTER_RESULTS_SECRET_REOPENED,
 } from './mock-saas.mjs'
 
 // At phone width these triggers sit behind a drawer or menu, so their states are desktop only.
@@ -81,6 +89,15 @@ const RANKED = [
 ]
 const REVIEW = [...RANKED, [['css', onScreen('question', 'button[data-choice-value="2"]')]], CONTINUE]
 const CAST = [...REVIEW, [['css', '[data-testid="voter-cast"]']]]
+// The results (boards V4VoterWideMore 9 to 11). The buttons are named in both languages the captures run in.
+const SHOW_RESULTS = [['button', /^(Show the results|Mostra els resultats)$/]]
+const CHECK_VOTE = [['button', /^(Check your vote|Comprova el teu vot)$/]]
+// An ended secret vote: identify through "Comprova el teu vot", then the results while its tally is being counted.
+const COUNTING = [CHECK_VOTE, ...IDENTIFY, SHOW_RESULTS]
+// Anonymous censuses: "Verifica el teu comprovant" is a link on the closed screen and on the authorised-vote screen; the
+// shortened code of the boards (14b) is not a whole code, so submitting it shows the error under the field.
+const VERIFY_RECEIPT = [['css', '[data-testid="voter-verify-receipt"]']]
+const SHORT_CODE = [['fill', 'input[name="code"]', 'a3f1\u20269c2e']]
 const voter = (slug, id, states) => ({ slug, path: `/processes/${id}`, auth: false, ...(states && { states }) })
 
 export const ROUTES = [
@@ -226,6 +243,31 @@ export const ROUTES = [
   voter('voter-paused', V_PAUSED, [{ slug: 'paused', open: IDENTIFY }]),
   voter('voter-canceled', B_AAO_CANCELED),
   voter('voter-unsupported', B_QBQ_LIVE),
+  // Anonymous censuses (boards V4VoterWideMore 12 to 14b): the receipt that must be kept (copy and download), a vote
+  // signed from another device (no codes to show), and the verify page from the closed screen and from that vote.
+  voter('voter-anon-cast', V_ANON, [{ slug: 'receipt', open: CAST }]),
+  voter('voter-anon-signed', V_ANON_SIGNED, [
+    { slug: 'authorised', open: IDENTIFY },
+    { slug: 'verify', open: [...IDENTIFY, VERIFY_RECEIPT] },
+  ]),
+  voter('voter-anon-ended', V_ANON_ENDED, [
+    { slug: 'verify', open: [VERIFY_RECEIPT] },
+    {
+      slug: 'verify-short-code',
+      open: [VERIFY_RECEIPT, SHORT_CODE, [['css', onScreen('verifyReceipt', 'button[type="submit"]')]]],
+    },
+  ]),
+  voter('voter-results', V_RESULTS, [{ slug: 'provisional', open: [[['css', '[data-testid="voter-show-results"]']]] }]),
+  voter('voter-results-final', V_RESULTS_ENDED, [{ slug: 'final', open: [SHOW_RESULTS] }]),
+  voter('voter-results-counting', V_RESULTS_COUNTING, [{ slug: 'counting', open: [SHOW_RESULTS] }]),
+  voter('voter-results-secret', V_RESULTS_SECRET, [
+    { slug: 'counting', open: COUNTING },
+    // The organiser extends the vote: the next read says it is open and secret again (board M9).
+    {
+      slug: 'hidden',
+      open: [...COUNTING, [['mock', `/processes/${V_RESULTS_SECRET}`, VOTER_RESULTS_SECRET_REOPENED]], [['refocus']]],
+    },
+  ]),
 ]
 
 export const DEFAULT_VIEWPORTS = [1440, 390]

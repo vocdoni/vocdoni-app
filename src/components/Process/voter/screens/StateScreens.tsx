@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Spinner, Status, Text, VisuallyHidden } from '@chakra-ui/react'
+import { Alert, Box, Button, Card, Spinner, Status, Text, VisuallyHidden } from '@chakra-ui/react'
 import { resolveEndDate } from '@vocdoni/api-client'
 import { useReactComponentsLocalize } from '@vocdoni/react-components'
 import { useId, type ComponentProps, type ReactNode } from 'react'
@@ -7,8 +7,8 @@ import { SuccessDisc } from '~components/ui/SuccessDisc'
 import { useAppEnv } from '~src/app-env'
 import { useVoterFlow } from '../flow-context'
 import { formatVoteDay, formatVoteTime, textOf, voterTurnout, type Turnout } from '../format'
+import { CheckVoteAction } from '../parts/CheckVoteAction'
 import { ReceiptCard } from '../parts/ReceiptCard'
-import { ResultsLine } from '../parts/ResultsLine'
 import {
   InlineAction,
   LocalText,
@@ -18,6 +18,7 @@ import {
   ScreenKicker,
   VoterScreenFrame,
 } from '../parts/ScreenParts'
+import { ShowResultsButton } from '../parts/ShowResultsButton'
 import { VoterActionBar } from '../parts/VoterActionBar'
 import type { VoterScreenKind } from '../voter-flow'
 
@@ -59,7 +60,7 @@ const useVoteTexts = () => {
 }
 
 /** "Hi van votar 221 de 312 persones.": the count e2e reads, when the deployment shows counts. */
-export const TurnoutLine = ({ turnout }: { turnout: Turnout }) => {
+const TurnoutLine = ({ turnout }: { turnout: Turnout }) => {
   const { t } = useTranslation()
   return (
     // data-testid: the count is interpolated in a plural sentence; the e2e observer reads the number from here.
@@ -161,7 +162,7 @@ const useFailedCast = () => {
 export const ClosedScreen = () => {
   const { t } = useTranslation()
   const env = useAppEnv()
-  const { election, facts, showResults, checkReceipt } = useVoterFlow()
+  const { election, facts, anonymous, showResults } = useVoterFlow()
   const { title, organization, day, time } = useVoteTexts()
   const end = resolveEndDate(election)
   const turnout = voterTurnout(election, env)
@@ -192,11 +193,8 @@ export const ClosedScreen = () => {
             {t('voter.results.show')}
           </Button>
         }
-        note={
-          !facts.connected || cast.unknown ? (
-            <InlineAction onClick={checkReceipt}>{t('voter.results.check_vote')}</InlineAction>
-          ) : undefined
-        }
+        // An anonymous census verifies a code on the Explorer, so it is always offered (ruling R8).
+        note={anonymous || !facts.connected || cast.unknown ? <CheckVoteAction /> : undefined}
       />
     </Centred>
   )
@@ -285,9 +283,40 @@ export const NotEligibleScreen = () => {
 export const AlreadyVotedScreen = () => {
   const { t } = useTranslation()
   const localize = useReactComponentsLocalize()
-  const { election, voteIds, anonymous, statuses } = useVoterFlow()
+  const { election, voteIds, anonymous, statuses, verifyReceipt } = useVoterFlow()
   const { title } = useVoteTexts()
   const hasCodes = election.questions.some((question) => voteIds[question.id])
+  // Board V4VoterWideMore 13: an anonymous vote the platform authorised but cannot show from here (another tab or
+  // device, or after the end). It says only what it knows: no success mark, no "Ja has votat".
+  if (anonymous && !hasCodes && statuses.includes('signed')) {
+    return (
+      <Centred
+        kind='alreadyVoted'
+        title={t('voter.voted.anonymous_title')}
+        body={t('voter.voted.anonymous_help')}
+        privateContent
+      >
+        <Card.Root variant='ballot' mt='6'>
+          <Card.Body gap='2.5' py='4'>
+            <Box>
+              <Card.Title textStyle='ballot-body' fontWeight='semibold'>
+                {t('voter.receipt.card_title')}
+              </Card.Title>
+              <Card.Description textStyle='body' color='fg.subtle' mt='0.5'>
+                {t('voter.voted.anonymous_card_note')}
+              </Card.Description>
+            </Box>
+            <Box>
+              <InlineAction onClick={() => verifyReceipt(true)} testId='voter-verify-receipt'>
+                {t('voter.verify.title')}
+              </InlineAction>
+            </Box>
+          </Card.Body>
+        </Card.Root>
+        <VoterActionBar primary={<ShowResultsButton />} />
+      </Centred>
+    )
+  }
   const locked = statuses.find((status) => status === 'unconfirmed' || status === 'signed')
   const lost = locked === 'unconfirmed'
   return (
@@ -307,7 +336,7 @@ export const AlreadyVotedScreen = () => {
       ) : !hasCodes && anonymous ? (
         <NoticeCard title={t('aside.anonymous_receipt_gone')} />
       ) : null}
-      <ResultsLine />
+      <VoterActionBar primary={<ShowResultsButton />} />
     </Centred>
   )
 }

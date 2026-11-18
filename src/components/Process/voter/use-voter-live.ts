@@ -17,7 +17,6 @@ export const useVoterLive = (
   const queryClient = useQueryClient()
   const [factor] = useState(() => jitterFactor(Math.random()))
   const [endWindowUntil, setEndWindowUntil] = useState<number>()
-  const [resultsLive, setResultsLive] = useState(false)
   const end = election ? resolveEndDate(election)?.getTime() : undefined
 
   useEffect(() => {
@@ -40,8 +39,8 @@ export const useVoterLive = (
   }, [end, id, queryClient])
 
   const options = useMemo(
-    () => voterLiveQueryOptions({ endWindowUntil, resultsLive, factor, now: Date.now }),
-    [endWindowUntil, resultsLive, factor]
+    () => voterLiveQueryOptions({ endWindowUntil, factor, now: Date.now }),
+    [endWindowUntil, factor]
   )
-  return { ...options, endPassed: endWindowUntil !== undefined, setResultsLive }
+  return { ...options, endPassed: endWindowUntil !== undefined }
 }

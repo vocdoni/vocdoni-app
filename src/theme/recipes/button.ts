@@ -380,6 +380,18 @@ const ballot = defineStyle({
   fontWeight: 'semibold',
 })
 
+// The voter scale's smaller button, for an action inside a card ("Copia els codis"): 44px, 16px sides, a 15px label
+// in 550 with the same 12px corners and a 6px gap to its icon.
+const ballotSm = defineStyle({
+  h: 'control.touch',
+  minW: '0',
+  px: '4',
+  gap: '1.5',
+  borderRadius: 'xl',
+  textStyle: 'ballot-hint',
+  fontWeight: 'medium-plus',
+})
+
 // The voter's language trigger in the top bar: the language's code as a small tag ("CA"), ringed in the strong grey,
 // at `size='tag'`. Its hit area still reaches 44px (`touchTarget`).
 const langTag = defineStyle({
@@ -443,7 +455,7 @@ export const Button = defineRecipe({
     // An open map, so the compound variants below can name Chakra's own sizes. `row` is the small action inside a
     // list row (a question's "Open"): 40px with 14px sides below `lg`, 28px with 10px sides and 13px text from `lg`.
     // `ballot` is the voter scale: see the voter page's section of docs/ui-guidelines.md.
-    size: { ...sizes, cta, row, ballot, tag } as StyleMap,
+    size: { ...sizes, cta, row, ballot, 'ballot-sm': ballotSm, tag } as StyleMap,
     // Long labels wrap onto more lines instead of overflowing the button.
     multiline: {
       true: {

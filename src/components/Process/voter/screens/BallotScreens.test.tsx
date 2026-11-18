@@ -93,14 +93,70 @@ describe('sending', () => {
 })
 
 describe('receipt', () => {
-  it('shows the codes and the one-time warning of an anonymous census, kept out of replays', () => {
+  const anonymousReceipt = () =>
     renderWithFlow(
       <ReceiptScreen />,
       testFlow({ anonymous: true, voteIds: { q1: 'a3f1000000000000009c2e', q2: '77b000000000000041da' } })
     )
-    expect(screen.getByTestId('vote-receipt')).toHaveTextContent('vote.anonymous_receipt')
+
+  it('shows the codes and the one-time warning of an anonymous census, kept out of replays (board 12)', () => {
+    anonymousReceipt()
+    const receipt = screen.getByTestId('vote-receipt')
+    expect(receipt).toHaveTextContent('voter.receipt.anonymous_warning')
+    expect(screen.getAllByRole('status').some((node) => node.textContent === 'voter.receipt.anonymous_warning')).toBe(
+      true
+    )
+    // The help no longer says the page can be closed, and the card note is the anonymous one.
+    expect(receipt).toHaveTextContent('voter.receipt.help_anonymous')
+    expect(receipt).not.toHaveTextContent(/voter\.receipt\.help(?!_anonymous)/)
+    expect(receipt).toHaveTextContent('voter.receipt.card_note_anonymous')
     expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
     expect(screen.getByTestId('voter-screen')).toHaveClass('ph-no-capture')
+  })
+
+  it('copies the codes with a brief confirmation announced politely', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+    anonymousReceipt()
+    fireEvent.click(screen.getByRole('button', { name: 'voter.receipt.copy' }))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'voter.receipt.copied' })).toBeInTheDocument())
+    expect(writeText).toHaveBeenCalledWith('Question 1: a3f1000000000000009c2e\nQuestion 2: 77b000000000000041da')
+    expect(screen.getAllByRole('status').some((node) => node.textContent === 'voter.receipt.copied_announce')).toBe(
+      true
+    )
+  })
+
+  it('downloads a text file with the vote title, then each question, its code and its verification URL', async () => {
+    const createObjectURL = vi.fn(() => 'blob:receipt')
+    const revokeObjectURL = vi.fn()
+    Object.defineProperty(URL, 'createObjectURL', { value: createObjectURL, configurable: true })
+    Object.defineProperty(URL, 'revokeObjectURL', { value: revokeObjectURL, configurable: true })
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
+      expect(this.download).toBe('voter.receipt.file_name.txt')
+    })
+    anonymousReceipt()
+    fireEvent.click(screen.getByRole('button', { name: 'voter.receipt.download' }))
+    expect(click).toHaveBeenCalledTimes(1)
+    const blob = (createObjectURL.mock.calls[0] as unknown as [Blob])[0]
+    const text = await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(String(reader.result))
+      reader.readAsText(blob)
+    })
+    expect(text).toMatch(
+      /^Assemblea General\n\nQuestion 1\na3f1000000000000009c2e\nhttps:\/\/[^ ]+\/verify\/a3f1000000000000009c2e\n\nQuestion 2\n/
+    )
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:receipt')
+    click.mockRestore()
+  })
+
+  it('leaves a plain census exactly as it was: no warning, no copy or download', () => {
+    renderWithFlow(<ReceiptScreen />, testFlow({ voteIds: { q1: 'a3f1000000000000009c2e' } }))
+    const receipt = screen.getByTestId('vote-receipt')
+    expect(receipt).toHaveTextContent('voter.receipt.help')
+    expect(receipt).not.toHaveTextContent('anonymous')
+    expect(screen.queryByRole('button', { name: 'voter.receipt.copy' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'voter.receipt.download' })).toBeNull()
   })
 
   it('links each code to its own verification, in one card with no Explorer sentence or list', () => {
@@ -131,14 +187,14 @@ describe('receipt', () => {
     expect(screen.getByText('vote.disabled.unconfirmed')).toBeInTheDocument()
   })
 
-  it('says when the results come if they are secret until the end, else offers them', () => {
+  it('offers the results, also for a vote that is secret until the end (the results screen says when they come)', () => {
     const flow = testFlow({ facts: testFacts({ secretUntilTheEnd: true }) })
-    const { unmount } = renderWithFlow(<ReceiptScreen />, flow)
-    expect(screen.getByText(/voter\.receipt\.results_later/)).toBeInTheDocument()
-    unmount()
-    const live = testFlow()
-    renderWithFlow(<ReceiptScreen />, live)
-    fireEvent.click(screen.getByRole('button', { name: 'voter.results.show' }))
-    expect(live.showResults).toHaveBeenCalledWith(true)
+    renderWithFlow(<ReceiptScreen />, flow)
+    expect(screen.queryByText(/voter\.receipt\.results_later/)).toBeNull()
+    // The screen's one button, in the action bar as its primary action.
+    const bar = screen.getByRole('region', { name: 'voter.actions_label' })
+    expect(within(bar).getAllByRole('button')).toHaveLength(1)
+    fireEvent.click(within(bar).getByRole('button', { name: 'voter.results.show' }))
+    expect(flow.showResults).toHaveBeenCalledWith(true)
   })
 })

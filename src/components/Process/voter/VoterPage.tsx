@@ -42,7 +42,7 @@ export const VoterPage = ({ id, election, brand, publicLanguageLinks }: VoterPag
               }
               processId={id}
             >
-              <VoterFlowProvider brand={brand} endPassed={live.endPassed} onResultsLive={live.setResultsLive}>
+              <VoterFlowProvider brand={brand} endPassed={live.endPassed}>
                 <VoterView publicLanguageLinks={publicLanguageLinks} />
               </VoterFlowProvider>
             </CspAuthProvider>

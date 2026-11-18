@@ -27,6 +27,7 @@ import {
   UnsupportedScreen,
   UpcomingScreen,
 } from './screens/StateScreens'
+import { VerifyReceiptScreen } from './screens/VerifyReceiptScreen'
 import { WelcomeScreen } from './screens/WelcomeScreen'
 import type { VoterScreen, VoterScreenKind } from './voter-flow'
 
@@ -38,8 +39,13 @@ const COLUMN: Partial<Record<VoterScreenKind, VoterShellColumn>> = {
   review: 'rail',
   sending: 'sending',
   receipt: 'rail',
+  verifyReceipt: 'narrow',
   results: 'results',
 }
+
+// The hidden results are a status screen (560px, board M9); the figures take the results column (640px, M10, M11).
+const columnOf = (screen: VoterScreen): VoterShellColumn =>
+  screen.kind === 'results' && screen.state === 'hidden' ? 'status' : (COLUMN[screen.kind] ?? 'status')
 
 const Screen = ({ screen }: { screen: VoterScreen }) => {
   switch (screen.kind) {
@@ -65,6 +71,8 @@ const Screen = ({ screen }: { screen: VoterScreen }) => {
       return <ReceiptScreen />
     case 'alreadyVoted':
       return <AlreadyVotedScreen />
+    case 'verifyReceipt':
+      return <VerifyReceiptScreen />
     case 'upcoming':
       return <UpcomingScreen />
     case 'closed':
@@ -160,7 +168,7 @@ export const VoterView = ({ publicLanguageLinks }: { publicLanguageLinks?: Recor
         ) : undefined
       }
       railLabel={t('voter.agenda')}
-      column={COLUMN[screen.kind] ?? 'status'}
+      column={columnOf(screen)}
       credit={{ text: t('voter.credit.text'), brand: t('voter.credit.brand'), links: <VoterLegalLinks /> }}
     >
       <Screen screen={screen} />

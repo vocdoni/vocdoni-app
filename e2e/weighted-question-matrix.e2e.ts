@@ -134,16 +134,17 @@ test.describe('weighted voting across the question matrix', () => {
       const results = voterScreen(observer, 'results')
 
       // The innermost div holding the choice label is its tally row (ancestors
-      // match `hasText` too, so `.last()` — document order puts the deepest
-      // match at the end).
+      // match `hasText` too, so `.last()`: document order puts the deepest
+      // match at the end). The bars are the organiser's, so a weighted count
+      // carries its unit.
       const tallyRow = (choice: string) => results.locator('div').filter({ hasText: choice }).last()
 
-      await expect(tallyRow('Reject renewal')).toContainText('7 votes')
-      await expect(tallyRow('Approve renewal')).toContainText('0 votes')
-      await expect(tallyRow('Alice Example')).toContainText('7 votes')
-      await expect(tallyRow('Bob Example')).toContainText('7 votes')
-      await expect(tallyRow('New park')).toContainText('7 votes')
-      await expect(tallyRow('New library')).toContainText('0 votes')
+      await expect(tallyRow('Reject renewal')).toContainText('7 weighted votes')
+      await expect(tallyRow('Approve renewal')).toContainText('0 weighted votes')
+      await expect(tallyRow('Alice Example')).toContainText('7 weighted votes')
+      await expect(tallyRow('Bob Example')).toContainText('7 weighted votes')
+      await expect(tallyRow('New park')).toContainText('7 weighted votes')
+      await expect(tallyRow('New library')).toContainText('0 weighted votes')
     } finally {
       await observerContext.close()
     }

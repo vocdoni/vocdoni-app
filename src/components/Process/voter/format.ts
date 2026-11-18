@@ -1,6 +1,6 @@
 import { processVoteCount } from '@vocdoni/api-client'
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
-import { BallotType, tryInferQuestionBallotType } from '@vocdoni/ballot'
+import { BallotType, questionSelectionRange, tryInferQuestionBallotType } from '@vocdoni/ballot'
 import type { Answer } from './voter-flow'
 
 type Text = string | Record<string, string | undefined> | undefined
@@ -76,6 +76,39 @@ export const formatVoteDay = (
   return joinDay(dayText(date, locale, { month: 'long', ...(sameYear ? {} : { year: 'numeric' }) }, timeZone), language)
 }
 
+/** The full stop that ends a sentence made of a title: none when the title already ends in punctuation ("Vols?"). */
+export const sentenceStop = (title: string): string => (/[.!?…;]["')»”]?\s*$/.test(title) ? '' : '.')
+
+const calendarDay = (date: Date, timeZone?: string): number => {
+  const [year, month, day] = new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone,
+  })
+    .format(date)
+    .split('-')
+    .map(Number)
+  return Date.UTC(year, month - 1, day) / 86_400_000
+}
+
+/**
+ * The day to come back on, as a sentence says it ("tornar-hi dijous", board 9): the bare weekday when the date falls
+ * in the next six days, where it is unambiguous, else the full day.
+ */
+export const formatVoteReturnDay = (
+  date: Date,
+  language: string,
+  { reference = new Date(), timeZone }: DateOptions = {}
+): string => {
+  const ahead = calendarDay(date, timeZone) - calendarDay(reference, timeZone)
+  if (ahead < 0 || ahead > 6) return formatVoteDay(date, language, { reference, timeZone })
+  return new Intl.DateTimeFormat(language.split('-')[0] === 'en' ? 'en-GB' : language, {
+    weekday: 'long',
+    timeZone,
+  }).format(date)
+}
+
 /** "20:00", or "20:00 CET" with the zone (the opening time always carries it: spec D4 "upcoming", audit F18). */
 export const formatVoteTime = (
   date: Date,
@@ -144,3 +177,30 @@ export const voterTurnout = (
   const totals = election.questions.map((question) => question.results?.maxVoters ?? 0).filter((value) => value > 0)
   return totals.length ? { count, total: Math.max(...totals) } : { count }
 }
+
+/** How a question was answered, for the line under its title on the results (boards M10, M11). */
+type ResultKind = { key: 'single' } | { key: 'multiple'; count: number } | { key: 'approval' } | { key: 'ranked' }
+
+/**
+ * A question's `ResultKind`, or null when the line says nothing: a legacy question with no ballot type, and the
+ * budget and quadratic types the voter page cannot cast (their bars still count points).
+ */
+export const resultKind = (question: VotingProcessQuestion): ResultKind | null => {
+  const shape = question as Parameters<typeof questionSelectionRange>[0]
+  switch (tryInferQuestionBallotType(shape)) {
+    case BallotType.SingleChoice:
+      return { key: 'single' }
+    case BallotType.MultiChoice:
+      return { key: 'multiple', count: questionSelectionRange(shape).max }
+    case BallotType.Approval:
+      return { key: 'approval' }
+    case BallotType.Ranked:
+      return { key: 'ranked' }
+    default:
+      return null
+  }
+}
+
+/** Every question carries the chain's final tally: the results are final, no longer being counted. */
+export const resultsFinal = (election: Pick<VotingProcessResponse, 'questions'>): boolean =>
+  election.questions.length > 0 && election.questions.every((question) => question.results?.finalResults === true)

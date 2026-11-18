@@ -45,3 +45,25 @@ export const VoteStatusLine = ({ context = 'screen' }: { context?: 'head' | 'scr
     </Status.Root>
   )
 }
+
+/** "Tancada dijous 12 de març a les 20:00": an ended vote's status line on its results (board M11). */
+export const VoteClosedLine = () => {
+  const { t, i18n } = useTranslation()
+  const { election } = useVoterFlow()
+  const end = resolveEndDate(election)
+  return (
+    <Status.Root size='ballot' tone='closed'>
+      <Status.Indicator />
+      {end ? (
+        <LocalText>
+          {t('voter.results.closed_on', {
+            date: formatVoteDay(end, i18n.language),
+            time: formatVoteTime(end, i18n.language),
+          })}
+        </LocalText>
+      ) : (
+        t('voter.results.closed')
+      )}
+    </Status.Root>
+  )
+}
