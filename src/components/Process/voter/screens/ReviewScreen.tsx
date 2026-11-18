@@ -1,9 +1,10 @@
 import { Alert, Box, Button, Card, chakra, Text } from '@chakra-ui/react'
 import { useReactComponentsLocalize } from '@vocdoni/react-components'
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useVoterFlow } from '../flow-context'
 import { describeAnswer, textOf } from '../format'
+import { VOTER_CAST_ARM_MS } from '../live'
 import { PausedNotice } from '../parts/PausedNotice'
 import { InlineAction, ScreenHeading, ScreenHelp, ScreenKicker, VoterScreenFrame } from '../parts/ScreenParts'
 import { VoterActionBar } from '../parts/VoterActionBar'
@@ -66,6 +67,14 @@ export const ReviewScreen = ({ paused }: { paused: boolean }) => {
   }
   const failed = state.castError !== null
   const message = state.castError || localize('errors.vote_failed_unknown')
+  // "Emet el vot" sits where "Continua" was on a phone and this screen replaces the question inside the same tap: the
+  // button stays off (the `disabled` attribute, same size and place) for a moment, so neither the second tap of a
+  // double tap nor a click queued behind it can cast. Each mount arms on its own, a StrictMode re-mount included.
+  const [armed, setArmed] = useState(false)
+  useEffect(() => {
+    const timer = setTimeout(() => setArmed(true), VOTER_CAST_ARM_MS)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <VoterScreenFrame kind='review' privateContent>
@@ -129,9 +138,11 @@ export const ReviewScreen = ({ paused }: { paused: boolean }) => {
           <Button
             size='ballot'
             data-testid='voter-cast'
-            disabled={casting || facts.voting || paused}
+            disabled={!armed || casting || facts.voting || paused}
             loading={casting}
-            onClick={() => void cast()}
+            onClick={() => {
+              if (armed) void cast()
+            }}
           >
             {failed ? t('voter.review.retry') : t('voter.review.cast')}
           </Button>

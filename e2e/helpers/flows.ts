@@ -472,7 +472,8 @@ export const fillBallot = async (page: Page, selections: BallotSelection[]): Pro
 /**
  * Casts the reviewed ballot and waits for the whole batch to be recorded.
  *
- * The review screen is the confirmation: "Emet el vot" (`voter-cast`) casts at once, with no dialog. Waits for the
+ * The review screen is the confirmation: "Emet el vot" (`voter-cast`) casts with no dialog (the button arms a
+ * moment after the screen appears; the click waits for it). Waits for the
  * receipt (`vote-receipt`), not for the sending screen to go: the receipt renders only once every question of the
  * process is on chain, so this is also the multi-question completion check.
  */

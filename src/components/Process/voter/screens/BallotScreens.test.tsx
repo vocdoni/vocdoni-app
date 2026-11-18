@@ -1,4 +1,4 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { renderWithFlow, testElection, testFacts, testFlow } from '../test-flow'
 import { initialVoterState } from '../voter-flow'
 import { ReceiptScreen } from './ReceiptScreen'
@@ -54,9 +54,14 @@ describe('review', () => {
     expect(question).not.toHaveStyle({ background: 'var(--chakra-colors-bg-subtle)' })
   })
 
-  it('casts once, stays off while casting or paused, and shows a failure with "Torna-ho a provar"', () => {
+  it('casts once, stays off while casting or paused, and shows a failure with "Torna-ho a provar"', async () => {
     const flow = testFlow({ state: answered })
     const { unmount } = renderWithFlow(<ReviewScreen paused={false} />, flow)
+    // Off for a moment after it appears, at the same size (gate F1): a tap then does nothing.
+    expect(screen.getByTestId('voter-cast')).toBeDisabled()
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    expect(flow.cast).not.toHaveBeenCalled()
+    await waitFor(() => expect(screen.getByTestId('voter-cast')).toBeEnabled())
     fireEvent.click(screen.getByTestId('voter-cast'))
     expect(flow.cast).toHaveBeenCalledTimes(1)
     unmount()

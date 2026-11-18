@@ -194,7 +194,11 @@ const answerBoth = async () => {
   choose(1, 0)
   fireEvent.click(screen.getByTestId('voter-continue'))
   await onScreen('review')
+  // "Emet el vot" arms a moment after review appears (gate F1).
+  await waitFor(() => expect(screen.getByTestId('voter-cast')).toBeEnabled())
 }
+const signBatchCalls = () =>
+  fetchStub.mock.calls.filter(([input]) => (input instanceof Request ? input.url : String(input)).includes('sign-batch'))
 
 describe('voter page transitions (AC4)', () => {
   it('the start instant passes: upcoming, then identify, with no reload', async () => {
@@ -248,6 +252,30 @@ describe('voter page transitions (AC4)', () => {
     act(() => releaseJob?.())
     await onScreen('receipt')
     expect(screen.getByTestId('vote-receipt')).toHaveTextContent('vote-1'.slice(0, 4))
+  })
+
+  // Gate F1: on a phone "Emet el vot" appears under the finger that tapped "Continua", inside the same tap.
+  it('the second tap of a double tap on the last "Continua" does not cast; a tap once it is armed does', async () => {
+    renderPage()
+    await identify()
+    fireEvent.click(within(current()).getByRole('button', { name: 'voter.welcome.start' }))
+    await onScreen('question')
+    choose(0, 1)
+    fireEvent.click(screen.getByTestId('voter-continue'))
+    await waitFor(() => expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Question 2'))
+    choose(1, 0)
+    fetchStub.mockClear()
+    fireEvent.click(screen.getByTestId('voter-continue'))
+    expect(current()).toHaveAttribute('data-screen', 'review')
+    await act(() => vi.advanceTimersByTimeAsync(100))
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    await act(() => vi.advanceTimersByTimeAsync(100))
+    expect(current()).toHaveAttribute('data-screen', 'review')
+    expect(signBatchCalls()).toHaveLength(0)
+    await waitFor(() => expect(screen.getByTestId('voter-cast')).toBeEnabled())
+    fireEvent.click(screen.getByTestId('voter-cast'))
+    await onScreen('receipt')
+    expect(signBatchCalls()).toHaveLength(1)
   })
 
   it('a relay failure goes back to review with the SDK sentence; the signed ballots wait to be re-sent', async () => {

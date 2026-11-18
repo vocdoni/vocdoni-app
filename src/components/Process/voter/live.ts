@@ -16,6 +16,11 @@ export const VOTER_JITTER = 0.2
 export const VOTER_STATE_GRACE_MS = 20_000
 /** The membership check's retry while it fails for another reason than an expired session. */
 export const VOTER_CHECK_RETRY_MS = 5_000
+/**
+ * How long "Emet el vot" stays off after review appears (gate F1): on a phone it sits where "Continua" was, so the
+ * second tap of a double tap meant for "Continua" must never cast.
+ */
+export const VOTER_CAST_ARM_MS = 800
 /** `setTimeout`'s ceiling: a longer delay fires at once, so the end-instant timer is not armed past it. */
 export const MAX_TIMEOUT_MS = 2_147_483_647
 
