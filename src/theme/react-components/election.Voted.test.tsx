@@ -1,3 +1,4 @@
+import { explorerVoteUrl } from '@vocdoni/api-client'
 import { render, screen } from '~src/test-utils'
 import { electionComponents } from './election'
 
@@ -43,6 +44,33 @@ describe('electionComponents.Voted', () => {
 
     expect(screen.getByText('Only line')).toBeInTheDocument()
     expect(screen.queryByText('joined')).not.toBeInTheDocument()
+  })
+
+  it('links the vote id to its explorer page, as the SDK builds it inside the line', () => {
+    const href = explorerVoteUrl('dev', 'abc')
+
+    render(
+      <Voted
+        title='Cast'
+        description=''
+        votes={[
+          {
+            ...vote('q1', ''),
+            description: (
+              <>
+                To verify, use{' '}
+                <a href={href} target='_blank' rel='noreferrer'>
+                  abc
+                </a>
+                .
+              </>
+            ),
+          },
+        ]}
+      />
+    )
+
+    expect(screen.getByRole('link', { name: 'abc' })).toHaveAttribute('href', 'https://dev.explorer.vote/verify/abc')
   })
 
   it('says the receipt cannot be shown again for an anonymous census', () => {

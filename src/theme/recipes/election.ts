@@ -401,8 +401,23 @@ export const Voted = defineSlotRecipe({
   slots: votedAnatomy,
   base: {
     description: {
-      '& > a': {
-        wordBreak: 'break-word',
+      // The vote id is a bare <a> inside each line's <p>, so the link role is styled here
+      // (mirrors the `link` recipe), not by Chakra's preflight.
+      '& a': {
+        wordBreak: 'break-all',
+        color: 'link.fg',
+        textDecoration: 'underline',
+        textDecorationThickness: 'from-font',
+        textUnderlineOffset: '0.15em',
+        _dark: {
+          color: 'link.fg',
+          _hover: {
+            color: 'link.fg.hover',
+          },
+        },
+        _hover: {
+          color: 'link.fg.hover',
+        },
       },
     },
   },
