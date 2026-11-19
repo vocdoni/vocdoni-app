@@ -310,12 +310,11 @@ export const fetchLegacyOrganizationElections = async (
   address: string,
   page: number = 0
 ): Promise<LegacyElectionsPage> => {
-  const normalized = strip0x(address)
-  const raw = await gatewayFetch<RawElectionsPage>(
-    gateway,
-    `/elections?organizationId=${normalized}&page=${page}`,
-    `account ${address} elections`
-  )
+  const normalized = strip0x(address ?? '')
+  if (!/^[0-9a-f]{40}$/.test(normalized)) throw new VochainNotFoundError(`account ${address}`)
+
+  const query = new URLSearchParams({ organizationId: normalized, page: String(page) })
+  const raw = await gatewayFetch<RawElectionsPage>(gateway, `/elections?${query}`, `account ${address} elections`)
 
   // List items carry no metadata; fetch each election's detail for its title.
   const elections = await Promise.all(

@@ -141,6 +141,19 @@ describe('fetchLegacyOrganization', () => {
 })
 
 describe('fetchLegacyOrganizationElections', () => {
+  it('rejects malformed or empty addresses without hitting the gateway', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+
+    await expect(fetchLegacyOrganizationElections(gateway, 'not-an-address')).rejects.toBeInstanceOf(
+      VochainNotFoundError
+    )
+    await expect(fetchLegacyOrganizationElections(gateway, '')).rejects.toBeInstanceOf(VochainNotFoundError)
+    await expect(fetchLegacyOrganizationElections(gateway, undefined as unknown as string)).rejects.toBeInstanceOf(
+      VochainNotFoundError
+    )
+    expect(fetchSpy).not.toHaveBeenCalled()
+  })
+
   it('lists a page and resolves titles through per-election detail reads', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
       const url = String(input)
@@ -166,7 +179,7 @@ describe('fetchLegacyOrganizationElections', () => {
       return new Response(JSON.stringify(rawElection), { status: 200 }) as Response
     })
 
-    const page = await fetchLegacyOrganizationElections(gateway, rawElection.organizationId, 0)
+    const page = await fetchLegacyOrganizationElections(gateway, `0x${rawElection.organizationId.toUpperCase()}`, 0)
 
     expect(page.elections).toHaveLength(1)
     expect(page.elections[0]).toMatchObject({
@@ -176,7 +189,7 @@ describe('fetchLegacyOrganizationElections', () => {
     })
     expect(page.pagination).toEqual({ totalItems: 1, previousPage: null, currentPage: 0, nextPage: null, lastPage: 0 })
     expect(String(fetchSpy.mock.calls[0][0])).toBe(
-      `${gateway}/elections?organizationId=${rawElection.organizationId.replace(/^0x/i, '').toLowerCase()}&page=0`
+      `${gateway}/elections?organizationId=3d500f14d30d468baee8f4125b02e93697d5d5ee&page=0`
     )
     expect(fetchSpy).toHaveBeenCalledTimes(2)
   })

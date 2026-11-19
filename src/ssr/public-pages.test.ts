@@ -101,7 +101,7 @@ describe('loadOrganizationPageData', () => {
     })
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
       const url = String(input)
-      if (url.includes('/elections/page/')) {
+      if (url.includes('/elections?organizationId=')) {
         return new Response(
           JSON.stringify({ elections: [], pagination: { totalItems: 0, currentPage: 0, lastPage: 0 } }),
           { status: 200 }
@@ -126,6 +126,9 @@ describe('loadOrganizationPageData', () => {
       if (pageData.era !== 'archive') throw new Error('expected archive era')
       expect(pageData.legacyOrganization.account?.name).toEqual({ default: 'Legacy Org' })
       expect(pageData.legacyElectionsPage.elections).toEqual([])
+      expect(fetchSpy.mock.calls.map(([input]) => String(input))).toContainEqual(
+        expect.stringContaining('/elections?organizationId=')
+      )
       expect(pageData.meta.title).toContain('Legacy Org')
     } finally {
       fetchSpy.mockRestore()
