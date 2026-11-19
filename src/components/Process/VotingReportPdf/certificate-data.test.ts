@@ -137,7 +137,6 @@ describe('buildCertificateData', () => {
     const data = buildCertificateData({
       election: createElection(),
       results: createResults(),
-      explorerUrl: 'https://explorer.example',
       t: plainT,
       now: new Date('2026-01-03T10:00:00Z'),
     })
@@ -171,7 +170,6 @@ describe('buildCertificateData', () => {
     const data = buildCertificateData({
       election,
       results: null,
-      explorerUrl: 'https://explorer.example',
       t: translate,
       now: new Date('2026-01-03T10:00:00Z'),
     })
@@ -179,31 +177,29 @@ describe('buildCertificateData', () => {
     expect(data.verification).toEqual([
       {
         label: 'View in verification explorer — Question 1',
-        value: 'https://explorer.example/process/f39c69dabbf5335bd7d53130ad823a71b7ba9834',
+        value: 'https://explorer.vote/process/f39c69dabbf5335bd7d53130ad823a71b7ba9834',
         kind: 'link',
       },
       {
         label: 'View in verification explorer — Question 2',
-        value: 'https://explorer.example/process/a39c69dabbf5335bd7d53130ad823a71b7ba9834',
+        value: 'https://explorer.vote/process/a39c69dabbf5335bd7d53130ad823a71b7ba9834',
         kind: 'link',
       },
     ])
   })
 
-  it('falls back to a not-available verification entry without explorer or on-chain ids', () => {
-    const election = createElection({ questions: [createQuestion({ upstreamId: undefined })] })
+  it('falls back to a not-available verification entry without on-chain ids or a known explorer', () => {
+    const withoutIds = createElection({ questions: [createQuestion({ upstreamId: undefined })] })
+    const unknownChain = createElection({ chainId: 'vocdoni/TEST/1' })
 
-    const data = buildCertificateData({
-      election,
-      results: null,
-      explorerUrl: 'https://explorer.example',
-      t: plainT,
-      now: new Date('2026-01-03T10:00:00Z'),
-    })
-
-    expect(data.verification).toEqual([
-      { label: 'View in verification explorer', value: 'Not available', kind: 'link' },
-    ])
+    expect(
+      buildCertificateData({ election: withoutIds, results: null, t: plainT, now: new Date('2026-01-03T10:00:00Z') })
+        .verification
+    ).toEqual([{ label: 'View in verification explorer', value: 'Not available', kind: 'link' }])
+    expect(
+      buildCertificateData({ election: unknownChain, results: null, t: plainT, now: new Date('2026-01-03T10:00:00Z') })
+        .verification
+    ).toEqual([{ label: 'View in verification explorer', value: 'Not available', kind: 'link' }])
   })
 
   it('combines the issuer provider and legal entity in the provider field', () => {
@@ -242,7 +238,6 @@ describe('buildCertificateData', () => {
       results: null,
       t: translate,
       organizationName: 'Vocdoni',
-      explorerUrl: 'https://explorer.vote',
       now: new Date('2026-05-12T12:00:00Z'),
     })
 
@@ -638,6 +633,47 @@ describe('buildCertificateData', () => {
       votingPowerUsed: '10',
       eligibleVotingPower: '20',
       votingMethod: 'Multiple choice with weighted voting',
+    })
+  })
+
+  it('reports not-available voting power for a budget question, whose cells hold value times weight', () => {
+    // A budget cell sums value x weight, so the cast power is not recoverable from the histogram.
+    const election = createElection({
+      census: { size: 2, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
+      questions: [
+        createQuestion({
+          title: { default: 'Budget split' },
+          type: 'budget',
+          ballotProtocol: {
+            costExponent: 1,
+            costFromWeight: true,
+            maxCount: 2,
+            maxTotalCost: 20,
+            maxValue: 0,
+            maxVoteOverwrites: 0,
+            uniqueValues: false,
+          },
+        }),
+      ],
+    })
+    const results = createResults({
+      questions: [
+        createQuestionResults({
+          voteCount: 2,
+          results: [
+            ['0', '14'],
+            ['0', '6'],
+          ],
+        }),
+      ],
+    })
+
+    const data = buildCertificateData({ election, results, t: translate, now: new Date('2026-01-03T10:00:00Z') })
+
+    expect(data.censusParticipation.find((field) => field.label === 'Voting power used')?.value).toBe('Not available')
+    expect(data.votingProcessQuestions[0]).toMatchObject({
+      totalVotes: 'Not available',
+      votingPowerUsed: 'Not available',
     })
   })
 

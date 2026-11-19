@@ -555,7 +555,6 @@ describe('VotingCertificateDocument', () => {
       election: createElection({ title: { default: 'The' } }),
       results: createResults(),
       t: translate,
-      explorerUrl: 'https://explorer.vote',
       now: new Date('2026-01-03T10:00:00Z'),
     })
 
