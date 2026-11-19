@@ -23,6 +23,62 @@
     "end_process_title": "Terminar votação",
     "title": "Confirmar"
   },
+  "csp": {
+    "auth_failed": "Falha na autenticação",
+    "authenticate": "Identificar-se",
+    "close": "Fechar",
+    "code_info": "Receberás um código único no meio selecionado para verificar a tua identidade e concluir a autenticação",
+    "code_sent": "Código de verificação enviado",
+    "contact_match_help": "Tens de corresponder ao registado no sistema",
+    "errors": {
+      "code_rejected": "O código não é válido ou expirou. Verifica-o ou recomeça para obteres um novo.",
+      "credentials_or_password_incorrect": "Não foi possível verificar a tua identidade. Confirma as tuas credenciais e a tua palavra-passe e tenta novamente.",
+      "missing_data": "Preenche todos os campos.",
+      "participant_not_found": "O votante não consta da lista de participantes ou as credenciais fornecidas estão incorretas.",
+      "requests_on_cooldown": "Demasiados pedidos. Aguarda um momento antes de tentar novamente.",
+      "resend_limit": "Não podes pedir mais códigos para esta tentativa. Recomeça para obteres um novo.",
+      "too_many_attempts": "Demasiadas tentativas. Tenta novamente mais tarde.",
+      "too_many_attempts_hours_many": "Demasiadas tentativas. Tenta novamente daqui a {{count}} horas.",
+      "too_many_attempts_hours_one": "Demasiadas tentativas. Tenta novamente daqui a {{count}} hora.",
+      "too_many_attempts_hours_other": "Demasiadas tentativas. Tenta novamente daqui a {{count}} horas.",
+      "too_many_attempts_minutes_many": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minutos.",
+      "too_many_attempts_minutes_one": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minuto.",
+      "too_many_attempts_minutes_other": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minutos.",
+      "zero_voting_weight": "Não tens poder de voto suficiente para aceder à votação."
+    },
+    "fields": {
+      "birthDate": "Data de nascimento",
+      "contact": "Contacto",
+      "email": "Email",
+      "email_or_phone": "Email ou telefone",
+      "memberNumber": "Número de sócio",
+      "name": "Nome próprio",
+      "nationalId": "Cartão de cidadão",
+      "password": "Palavra-passe",
+      "phone": "Telefone",
+      "surname": "Apelido"
+    },
+    "identify": "Identificar-se",
+    "logout": "Terminar sessão",
+    "modal_title": "Autenticação",
+    "password_unavailable": "Não é possível verificar a palavra-passe neste momento. Recarrega a página e tenta novamente.",
+    "receive_code": "Receber código",
+    "step1": {
+      "footer": "Se tiveres algum problema, contacta a tua organização.",
+      "helper": "Enviámos um código para o teu número de telefone ou endereço de email. Se optaste por recebê-lo por email, verifica também a pasta de spam.",
+      "resend": "Reenviar código",
+      "resend_failed": "Falha ao reenviar o código",
+      "resend_failed_detail": "Falha ao reenviar o código: {{ detail }}",
+      "resend_success": "Código reenviado com sucesso",
+      "start_over": "Recomeçar",
+      "subtitle": "Introduz o código de verificação",
+      "validation": {
+        "length": "O código deve ter 6 dígitos",
+        "required": "O código é obrigatório"
+      }
+    },
+    "terms_required": "Tens de aceitar os termos para continuar."
+  },
   "empty": "Aparentemente, este processo não tem perguntas",
   "errors": {
     "not_voted_in_ended_election": "Assinaste mas não votaste nesta votação já terminada.",
@@ -71,14 +127,6 @@
     "from_begin_to_end": "Votação de {{ begin }} a {{ end }}",
     "paused_end": "Termina {{ distance }}",
     "paused_start": "Começa {{ distance }}"
-  },
-  "spreadsheet": {
-    "access_button": "Identificar-se",
-    "anon_sik_helper": "Isto garante o anonimato do voto",
-    "anon_sik_label": "Define uma palavra-passe para o teu voto",
-    "close": "Fechar",
-    "logout": "Terminar sessão",
-    "modal_title": "Autenticação"
   },
   "statuses": {
     "canceled": "Cancelada",
