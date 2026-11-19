@@ -199,24 +199,8 @@
     "title": "Parlaci della tua organizzazione"
   },
   "csp": {
-    "auth_failed": "Autenticazione non riuscita",
     "authenticate": "Identifica",
-    "code_info": "Si riceverà un codice univoco sul mezzo selezionato per verificare l'identità e completare l'autenticazione",
-    "code_sent": "Codice di verifica inviato",
     "contact_match_help": "Deve corrispondere a quello registrato nel sistema",
-    "errors": {
-      "credentials_or_password_incorrect": "Non siamo riusciti a verificare la tua identità. Controlla le tue credenziali e la tua password e riprova.",
-      "participant_not_found": "Il votante non è presente nel censimento o le credenziali fornite non sono corrette.",
-      "requests_on_cooldown": "Troppe richieste. Attendi un momento prima di riprovare.",
-      "too_many_attempts": "Troppi tentativi. Riprova più tardi.",
-      "too_many_attempts_hours_one": "Troppi tentativi. Riprova tra {{count}} ora.",
-      "too_many_attempts_hours_many": "Troppi tentativi. Riprova tra {{count}} ore.",
-      "too_many_attempts_hours_other": "Troppi tentativi. Riprova tra {{count}} ore.",
-      "too_many_attempts_minutes_one": "Troppi tentativi. Riprova tra {{count}} minuto.",
-      "too_many_attempts_minutes_many": "Troppi tentativi. Riprova tra {{count}} minuti.",
-      "too_many_attempts_minutes_other": "Troppi tentativi. Riprova tra {{count}} minuti.",
-      "zero_voting_weight": "Non hai abbastanza potere di voto per accedere alla votazione."
-    },
     "fields": {
       "birthDate": "Data di nascita",
       "contact": "Contatto",
@@ -230,21 +214,11 @@
       "surname": "Cognome"
     },
     "important": "Importante",
-    "password_unavailable": "Al momento non è possibile verificare la password. Ricarica la pagina e riprova.",
     "receive_code": "Ricevi codice",
     "step1": {
-      "footer_text": "In caso di problemi, contatta la tua organizzazione.",
-      "helper_text": "Abbiamo inviato un codice di verifica al numero di telefono o all’indirizzo email indicato. Se hai scelto di riceverlo via email, controlla anche la cartella spam.",
-      "resend_failed": "Invio del codice non riuscito",
-      "resend_success": "Codice inviato correttamente",
       "resend_text": "Non hai ricevuto il codice? <resendBtn>Invia di nuovo</resendBtn>",
-      "start_over_text": "Dati errati? <restartBtn>Ricomincia</restartBtn>",
       "subtitle": "Inserisci il codice di verifica",
-      "title": "Autenticazione",
-      "validation": {
-        "length": "Il codice deve essere di 6 cifre",
-        "required": "Il codice è obbligatorio"
-      }
+      "title": "Autenticazione"
     },
     "terms_acceptance": "Ho letto e accetto i <2>Termini e condizioni</2> e la <6>Privacy Policy</6>."
   },
@@ -1664,9 +1638,6 @@
   "signup_lastname": "Cognome",
   "signup_subtitle": "Inserisci le tue informazioni per iniziare",
   "signup_title": "Iscriviti",
-  "spreadsheet": {
-    "access_button": "Identifica"
-  },
   "start_date": "Data inizio",
   "start_time": "Ora inizio",
   "support": "Supporto",

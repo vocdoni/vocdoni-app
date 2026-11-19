@@ -197,22 +197,8 @@
     "title": "Esan iezaguzu zure erakundeari buruz"
   },
   "csp": {
-    "auth_failed": "Autentifikazioak huts egin du",
     "authenticate": "Identifikatu",
-    "code_info": "Hautatutako bidetik kode bakar bat jasoko duzu zure nortasuna egiaztatzeko eta autentifikazioa burutzeko.",
-    "code_sent": "Egiaztapen-kodea bidali da",
     "contact_match_help": "Sisteman erregistratutakoarekin bat etorri behar du",
-    "errors": {
-      "credentials_or_password_incorrect": "Ezin izan dugu zure identitatea egiaztatu. Egiaztatu zure kredentzialak eta pasahitza, eta saiatu berriro.",
-      "participant_not_found": "Botogilea ez dago erroldan edo emandako kredentzialak ez dira zuzenak.",
-      "requests_on_cooldown": "Eskaera gehiegi. Itxaron pixka bat berriro saiatu aurretik.",
-      "too_many_attempts": "Saiakera gehiegi. Saiatu berriro geroago.",
-      "too_many_attempts_hours_one": "Saiakera gehiegi. Saiatu berriro {{count}} ordu barru.",
-      "too_many_attempts_hours_other": "Saiakera gehiegi. Saiatu berriro {{count}} ordu barru.",
-      "too_many_attempts_minutes_one": "Saiakera gehiegi. Saiatu berriro {{count}} minutu barru.",
-      "too_many_attempts_minutes_other": "Saiakera gehiegi. Saiatu berriro {{count}} minutu barru.",
-      "zero_voting_weight": "Ez duzu boto-pisu nahikoa bozketara sartzeko."
-    },
     "fields": {
       "birthDate": "Jaioteguna",
       "contact": "Kontaktua",
@@ -226,21 +212,11 @@
       "surname": "Abizenak"
     },
     "important": "Garrantzitsua",
-    "password_unavailable": "Une honetan ezin da pasahitza egiaztatu. Birkargatu orria eta saiatu berriro.",
     "receive_code": "Jaso kodea",
     "step1": {
-      "footer_text": "Arazoren bat baduzu, jarri zure erakundearekin harremanetan.",
-      "helper_text": "Adierazitako telefonora edo posta elektronikora kode bat bidali dugu. Posta elektronikoz jasotzea aukeratu baduzu, begiratu spam karpeta ere.",
-      "resend_failed": "Errorea kodea berbidaltzean",
-      "resend_success": "Kodea behar bezala berbidali da",
       "resend_text": "Ez duzu kodea jaso? <resendBtn>Bidali berriro</resendBtn>",
-      "start_over_text": "Datu okerrak? <restartBtn>Hasi berriro</restartBtn>",
       "subtitle": "Sartu egiaztapen-kodea",
-      "title": "Autentifikazioa",
-      "validation": {
-        "length": "Kodeak 6 digitu izan behar ditu",
-        "required": "Kodea bete beharrekoa da"
-      }
+      "title": "Autentifikazioa"
     },
     "terms_acceptance": "<2>Erabilera-baldintzak</2> eta <6>Pribatutasun-politika</6> irakurri eta onartzen ditut."
   },
@@ -1630,9 +1606,6 @@
   "signup_lastname": "Abizenak",
   "signup_subtitle": "Sartu zure informazioa hasteko",
   "signup_title": "Izen-ematea",
-  "spreadsheet": {
-    "access_button": "Identifikatu"
-  },
   "start_date": "Hasiera-data",
   "start_time": "Hasiera-ordua",
   "support": "Laguntza",
