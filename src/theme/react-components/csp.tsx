@@ -34,8 +34,9 @@ import { stashCrispIdentity } from '~components/Process/CrispNickname'
 import { CloseButton } from '~components/ui/CloseButton'
 import { DialogHeader } from '~components/ui/DialogHeader'
 
-// The Crisp nickname: the first typed field that is neither the password nor the contact, as "<field> <value>".
-// Read from the DOM so the password, which the flow hashes, is never kept in state.
+// The Crisp nickname: the first typed field that is not the password or the contact, as "<field> <value>", else
+// the contact as "email" or "phone" the way the flow routes it. Read from the DOM so the password, which the flow
+// hashes, is never kept in state.
 const crispIdentity = (form: HTMLFormElement, fields: CspAuthField[]) => {
   const values = new FormData(form)
   for (const field of fields) {
@@ -43,7 +44,12 @@ const crispIdentity = (form: HTMLFormElement, fields: CspAuthField[]) => {
     const value = String(values.get(field.name) ?? '').trim()
     if (value) return `${field.name} ${value}`
   }
-  return undefined
+
+  const contact = fields.find((field) => field.name === 'contact')
+  const contactValue = String(values.get('contact') ?? '').trim()
+  if (!contact || !contactValue) return undefined
+  const isEmail = contact.type === 'email' || (contact.type === 'text' && contactValue.includes('@'))
+  return `${isEmail ? 'email' : 'phone'} ${contactValue}`
 }
 
 // The voter's CSP identify flow: the packaged CspAuth decides what each slot shows, these only draw it.

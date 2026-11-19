@@ -36,6 +36,19 @@ const IdentifyHarness = () => {
   )
 }
 
+// A census that only asks for the contact, as the identify form renders it.
+const ContactOnlyHarness = ({ type }: { type: string }) => {
+  const { register, handleSubmit } = useForm<Record<string, unknown>>()
+  return (
+    <IdentifySlot
+      fields={[{ name: 'contact', label: 'Contact', type, required: true, inputProps: register('contact') }]}
+      loading={false}
+      submitLabel='Receive Code'
+      onSubmit={handleSubmit(vi.fn())}
+    />
+  )
+}
+
 const tree = () => (
   <>
     <IdentifyHarness />
@@ -99,6 +112,29 @@ describe('Crisp nickname', () => {
 
     expect(JSON.stringify(queue)).not.toContain('hunter2')
     expect(queue).toEqual([['set', 'user:nickname', ['name Ada']]])
+  })
+
+  it.each([
+    ['email', 'ada@example.com', 'email ada@example.com'],
+    ['tel', '600123123', 'phone 600123123'],
+    ['text', 'ada@example.com', 'email ada@example.com'],
+    ['text', '600123123', 'phone 600123123'],
+  ])('sets the contact as the nickname for a contact-only %s census (%s)', async (type, contact, expected) => {
+    const user = userEvent.setup()
+    const contactOnly = () => (
+      <>
+        <ContactOnlyHarness type={type} />
+        <CrispNicknameObserver />
+      </>
+    )
+    const { rerender } = render(contactOnly(), { appEnv: { CRISP_WEBSITE_ID: 'site-1' } })
+    await user.type(screen.getByLabelText('Contact'), contact)
+    await user.click(screen.getByRole('button', { name: 'Receive Code' }))
+
+    setAuth({ challengePending: true })
+    rerender(contactOnly())
+
+    expect(queue).toEqual([['set', 'user:nickname', [expected]]])
   })
 
   it('does not push without CRISP_WEBSITE_ID', async () => {

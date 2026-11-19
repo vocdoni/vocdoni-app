@@ -14,6 +14,7 @@ import Editor from '~components/Editor'
 import { useAuth } from '~components/Auth/useAuth'
 import { ManageProcessLink } from '~components/Process/ManageProcessLink'
 import { CensusConnectButton } from '~components/Process/Aside'
+import { CrispNicknameObserver } from '~components/Process/CrispNickname'
 import LogoutButton from '~components/Process/LogoutButton'
 import { PageLoader } from '~components/ui/Loader'
 import { PageTitle } from '~components/ui/PageTitle'
@@ -149,6 +150,7 @@ const SharedCensusHomeContent = () => {
           )}
         </Box>
       )}
+      <CrispNicknameObserver />
       <Box>{election && !isAdmin && <CensusConnectButton />}</Box>
       {canViewProcesses && (
         <Box w='[90%]'>
