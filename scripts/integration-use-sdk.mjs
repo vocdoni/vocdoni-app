@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Points every @vocdoni/* package the repo resolves at the tarballs in a
 // directory (built by scripts/integration-build-sdk.sh), by adding one pnpm
-// override per tarball to pnpm-workspace.yaml. Overrides apply to transitive
-// copies too, so e.g. react-components picks up the built react-providers.
+// override per tarball to pnpm-workspace.yaml, replacing any override the file
+// already has for that package. Overrides apply to transitive copies too, so
+// e.g. react-components picks up the built react-providers.
 //
 // Usage:
 //   node scripts/integration-use-sdk.mjs <tarball-dir>
@@ -23,21 +24,23 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 // YAML single-quoted scalar: the only escape is a doubled quote.
 const quote = (value) => `'${value.replace(/'/g, "''")}'`
 
-// Keys of the `overrides:` block, read from its indented lines only.
-function existingOverrideKeys(lines, headerIndex) {
-  const keys = []
-  for (const line of lines.slice(headerIndex + 1)) {
+// Index and key of each entry in the `overrides:` block, read from its indented lines only.
+function overrideEntries(lines, headerIndex) {
+  const entries = []
+  for (let index = headerIndex + 1; index < lines.length; index++) {
+    const line = lines[index]
     if (line.trim() !== '' && !/^\s/.test(line)) break
     const match = /^ +['"]?([^'":]+)['"]?\s*:/.exec(line)
-    if (match) keys.push(match[1])
+    if (match) entries.push({ index, key: match[1] })
   }
-  return keys
+  return entries
 }
 
 // Pure text transform: returns pnpm-workspace.yaml text with one `name: spec`
 // override per entry. Entries go right after the `overrides:` line, or into a
-// new block at the end of the file when there is none. Throws instead of
-// duplicating an override for a name that already has one.
+// new block at the end of the file when there is none. An existing override for
+// one of the names (key `name` or `name@<range>`) is removed first, so the
+// tarball replaces it. Throws when two entries share a name.
 export function addOverrides(yamlText, entries) {
   const lines = yamlText.split('\n')
   const headerIndex = lines.findIndex((line) => line.startsWith('overrides:'))
@@ -45,22 +48,27 @@ export function addOverrides(yamlText, entries) {
     throw new Error(`unsupported overrides line "${lines[headerIndex]}", expected a bare "overrides:" block`)
   }
 
-  const existing = headerIndex === -1 ? [] : existingOverrideKeys(lines, headerIndex)
   const seen = new Set()
   for (const { name } of entries) {
     if (seen.has(name)) {
       throw new Error(`more than one tarball for ${name}`)
     }
     seen.add(name)
-    if (existing.some((key) => key === name || key.startsWith(`${name}@`))) {
-      throw new Error(`pnpm-workspace.yaml already overrides ${name}`)
-    }
   }
+
+  const replaced = new Set(
+    headerIndex === -1
+      ? []
+      : overrideEntries(lines, headerIndex)
+          .filter(({ key }) => entries.some(({ name }) => key === name || key.startsWith(`${name}@`)))
+          .map(({ index }) => index)
+  )
+  const kept = lines.filter((_, index) => !replaced.has(index))
 
   const added = entries.map(({ name, spec }) => `  ${quote(name)}: ${quote(spec)}`)
   if (headerIndex !== -1) {
-    lines.splice(headerIndex + 1, 0, ...added)
-    return lines.join('\n')
+    kept.splice(headerIndex + 1, 0, ...added)
+    return kept.join('\n')
   }
   const base = yamlText === '' || yamlText.endsWith('\n') ? yamlText : `${yamlText}\n`
   return `${base}overrides:\n${added.map((line) => `${line}\n`).join('')}`

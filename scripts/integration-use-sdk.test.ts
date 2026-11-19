@@ -66,14 +66,33 @@ describe('addOverrides', () => {
     expect(out).toBe("packages:\n  - apps/*\noverrides:\n  '@vocdoni/sdk': 'file:/tmp/s.tgz'\n")
   })
 
-  it('rejects a name that is already overridden', () => {
-    expect(() => addOverrides(workspace, [{ name: 'axios', spec: 'file:/tmp/a.tgz' }])).toThrow(
-      /already overrides axios/
+  it('replaces an existing override for the same name', () => {
+    const out = addOverrides(workspace, [{ name: 'axios', spec: 'file:/tmp/a.tgz' }])
+    expect(out).toBe(
+      [
+        '# Security floors for transitive dependencies.',
+        'overrides:',
+        "  'axios': 'file:/tmp/a.tgz'",
+        '  # viem pins ws exact.',
+        "  'ws@^8': ^8.21.0",
+        '',
+        'packages:',
+        "  - 'apps/*'",
+        '',
+      ].join('\n')
     )
   })
 
-  it('rejects a name that is overridden with a version selector', () => {
-    expect(() => addOverrides(workspace, [{ name: 'ws', spec: 'file:/tmp/a.tgz' }])).toThrow(/already overrides ws/)
+  it('replaces an existing override that has a version selector', () => {
+    const out = addOverrides(workspace, [{ name: 'ws', spec: 'file:/tmp/a.tgz' }])
+    expect(out).toContain("  'ws': 'file:/tmp/a.tgz'\n")
+    expect(out).not.toContain("'ws@^8'")
+  })
+
+  it('replaces an existing override that is a scoped package with a version selector', () => {
+    const scoped = "overrides:\n  '@vocdoni/sdk@^2': ^2.0.0\n  axios: ^1.18.0\n"
+    const out = addOverrides(scoped, [{ name: '@vocdoni/sdk', spec: 'file:/tmp/s.tgz' }])
+    expect(out).toBe("overrides:\n  '@vocdoni/sdk': 'file:/tmp/s.tgz'\n  axios: ^1.18.0\n")
   })
 
   it('does not treat a longer package name as a duplicate', () => {
@@ -139,7 +158,7 @@ describe('integration-use-sdk.mjs CLI', () => {
     expect(fs.readFileSync(yamlPath, 'utf8')).toContain(`  '@vocdoni/api-client': '${expectedSpec}'\n`)
   })
 
-  it('fails without touching the workspace file when the package is already overridden', () => {
+  it('replaces an override that the package already has', () => {
     const stage = path.join(tmp, 'stage', 'package')
     fs.mkdirSync(stage, { recursive: true })
     fs.writeFileSync(path.join(stage, 'package.json'), JSON.stringify({ name: 'axios' }))
@@ -154,8 +173,31 @@ describe('integration-use-sdk.mjs CLI', () => {
       encoding: 'utf8',
       env: { ...process.env, INTEGRATION_WORKSPACE_YAML: yamlPath },
     })
+    expect(res.status).toBe(0)
+    expect(res.stderr).toContain('overridden: axios')
+    const yaml = fs.readFileSync(yamlPath, 'utf8')
+    expect(yaml).toContain(`  'axios': 'file:${path.join(tarDir, 'axios-1.0.0.tgz')}'\n`)
+    expect(yaml).not.toContain('axios: ^1.18.0')
+  })
+
+  it('fails without touching the workspace file when two tarballs share a package name', () => {
+    const stage = path.join(tmp, 'stage', 'package')
+    fs.mkdirSync(stage, { recursive: true })
+    fs.writeFileSync(path.join(stage, 'package.json'), JSON.stringify({ name: '@vocdoni/sdk' }))
+    const tarDir = path.join(tmp, 'tarballs')
+    fs.mkdirSync(tarDir)
+    spawnSync('tar', ['-czf', path.join(tarDir, 'a.tgz'), '-C', path.join(tmp, 'stage'), 'package'])
+    spawnSync('tar', ['-czf', path.join(tarDir, 'b.tgz'), '-C', path.join(tmp, 'stage'), 'package'])
+
+    const yamlPath = path.join(tmp, 'pnpm-workspace.yaml')
+    fs.writeFileSync(yamlPath, workspace)
+
+    const res = spawnSync('node', [scriptPath, tarDir], {
+      encoding: 'utf8',
+      env: { ...process.env, INTEGRATION_WORKSPACE_YAML: yamlPath },
+    })
     expect(res.status).toBe(1)
-    expect(res.stderr).toMatch(/^ERROR: pnpm-workspace.yaml already overrides axios/)
+    expect(res.stderr).toMatch(/^ERROR: more than one tarball for @vocdoni\/sdk/)
     expect(fs.readFileSync(yamlPath, 'utf8')).toBe(workspace)
   })
 })
