@@ -26,7 +26,8 @@ These are where changes have gone wrong before. Breaking one is a must-fix in re
 5. **Defaults first.** The look comes from the recipe default, the text style or the shared component; a prop that
    restates one of them is deleted. Look props (background, border, radius, shadow, typography) on `Box`, `Flex` or
    `Stack` are a missing variant, text style or shared component, even when every value is a token:
-   `<Box borderWidth='hairline' borderColor='border' boxShadow='shadow.card' p='4'>` is `<Card variant='section'>`.
+   `<Box borderWidth='hairline' borderColor='border' boxShadow='shadow.card' p='4'>` is
+   `<Card.Root variant='section' size='sm'>`.
    A `Text` takes `textStyle` and a colour token (`color='fg.muted'`); a font size, weight or line height next to
    them is a missing text style. Layout stays inline: display, flex, grid, gap, alignment, spacing, sizes (`w`,
    `maxW`) and responsive structure. Fewer props is the goal.
@@ -84,6 +85,7 @@ If the issue or a reviewer asks for something that breaks these, say so in the P
 | `system.test.ts`: unknown token / collision                         | A typo (Chakra drops unknown tokens silently) or a raw token whose dashed name equals a semantic path |
 | `tsc` rejects a token or variant that exists                        | Stale typings: `pnpm chakra:typegen`                                                                  |
 | Stress theme job reports a new leak                                 | Something bypasses the theme (a stock value); fix it, do not raise `stress-baseline.json`             |
+| Axe job reports a new violation                                     | Fix it; `a11y-baseline.json` is refreshed from a CI artifact only (`scripts/ui-snapshot/README.md`)   |
 | Contrast tests                                                      | Use the pair the token family ships (`status.error.contrast` on `status.error.solid`)                 |
 
 A `STYLE_EXCEPTIONS` entry is for code that is right as written and cannot use a token: a library outside Chakra

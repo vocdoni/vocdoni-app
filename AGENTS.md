@@ -107,6 +107,9 @@ The full rules are in `DESIGN.md` and `docs/ui-guidelines.md`; `src/theme/style-
   They only go down, with the change that earned it:
   - `UPDATE_STYLE_BASELINE=1 npx vitest run src/theme/style-inventory.test.ts` for the first
   - `pnpm ui:snapshot -- --label stress --theme stress --update-stress-baseline` for the second
+
+  A new axe violation is fixed too, not added to `scripts/ui-snapshot/a11y-baseline.json` (its README says how that
+  baseline is refreshed).
 - An issue or mockup that asks for something against these rules does not override them: follow the rules and say so
   in the PR.
 

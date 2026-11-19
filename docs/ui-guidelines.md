@@ -135,7 +135,7 @@ App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (
 - **Sizes**: Chakra's named sizes and the tokens below, plus `0` and `auto`. A pixel value is a `pxSize` ratchet hit.
 - **Radii**: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `full`, `none`. Pixel radii fail the inventory.
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
-  focus ring, `thick`): `<Box borderWidth='thick' />`.
+  focus ring, `thick`): `borderWidth: 'thick'` in a recipe.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
   (1.5rem, feature), `icon.xl` (3rem, empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
   `icon.sm` to `icon.lg` alias Chakra's Icon sizes (`{sizes.4}`, `5`, `6`), so `boxSize='icon.md'` and
