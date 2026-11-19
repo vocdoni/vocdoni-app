@@ -37,6 +37,7 @@
       "participant_not_found": "O votante não consta da lista de participantes ou as credenciais fornecidas estão incorretas.",
       "requests_on_cooldown": "Demasiados pedidos. Aguarda um momento antes de tentar novamente.",
       "resend_limit": "Não podes pedir mais códigos para esta tentativa. Recomeça para obteres um novo.",
+      "resend_expired": "Este código expirou. Recomeça para obteres um novo.",
       "too_many_attempts": "Demasiadas tentativas. Tenta novamente mais tarde.",
       "too_many_attempts_hours_many": "Demasiadas tentativas. Tenta novamente daqui a {{count}} horas.",
       "too_many_attempts_hours_one": "Demasiadas tentativas. Tenta novamente daqui a {{count}} hora.",

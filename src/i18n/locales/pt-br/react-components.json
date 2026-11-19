@@ -37,6 +37,7 @@
       "participant_not_found": "O eleitor não consta na lista de participantes ou as credenciais fornecidas estão incorretas.",
       "requests_on_cooldown": "Muitas solicitações. Aguarde um momento antes de tentar novamente.",
       "resend_limit": "Você não pode solicitar mais códigos para esta tentativa. Recomece para obter um novo.",
+      "resend_expired": "Este código expirou. Recomece para obter um novo.",
       "too_many_attempts": "Muitas tentativas. Tente novamente mais tarde.",
       "too_many_attempts_hours_many": "Muitas tentativas. Tente novamente em {{count}} horas.",
       "too_many_attempts_hours_one": "Muitas tentativas. Tente novamente em {{count}} hora.",

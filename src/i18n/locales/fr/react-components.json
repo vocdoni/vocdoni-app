@@ -37,6 +37,7 @@
       "participant_not_found": "L'électeur ne figure pas sur la liste électorale, ou les identifiants fournis sont incorrects.",
       "requests_on_cooldown": "Trop de tentatives. Veuillez patienter un instant avant de réessayer.",
       "resend_limit": "Vous ne pouvez pas demander d'autres codes pour cette tentative. Recommencez pour obtenir un nouveau code.",
+      "resend_expired": "Ce code a expiré. Recommencez pour obtenir un nouveau code.",
       "too_many_attempts": "Trop de tentatives. Réessayez plus tard.",
       "too_many_attempts_hours_many": "Trop de tentatives. Réessayez dans {{count}} heures.",
       "too_many_attempts_hours_one": "Trop de tentatives. Réessayez dans {{count}} heure.",

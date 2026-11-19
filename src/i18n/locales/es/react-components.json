@@ -37,6 +37,7 @@
       "participant_not_found": "El votante no figura en el censo o las credenciales proporcionadas son incorrectas.",
       "requests_on_cooldown": "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.",
       "resend_limit": "No puedes pedir más códigos para este intento. Empieza de nuevo para obtener uno nuevo.",
+      "resend_expired": "Este código ha caducado. Empieza de nuevo para obtener uno nuevo.",
       "too_many_attempts": "Demasiados intentos. Vuelve a intentarlo más tarde.",
       "too_many_attempts_hours_many": "Demasiados intentos. Vuelve a intentarlo en {{count}} horas.",
       "too_many_attempts_hours_one": "Demasiados intentos. Vuelve a intentarlo en {{count}} hora.",
