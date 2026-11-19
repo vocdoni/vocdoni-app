@@ -88,7 +88,7 @@ You can create a `.env.local` file to set your custom environment variables
 there, here's a list of variables you can use:
 
 - `VOCDONI_ENVIRONMENT`: the vocdoni environment to be used, either
-  `dev` or `prod` (defaults to `dev`).
+  `dev`, `stg` or `prod` (defaults to `dev`). `stg` selects the staging explorer and vochain gateway.
 - `BASE_URL` is used to specify the public base page during build.
 - `BUILD_PATH` Specifies the destination of built files.
 - `CUSTOM_ORGANIZATION_DOMAINS` A JSON.stringified object of custom domains mapped to organization ids, to
