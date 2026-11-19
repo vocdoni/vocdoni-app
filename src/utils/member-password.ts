@@ -1,6 +1,4 @@
-import { ensureAddressPrefix } from './address'
-
-const CANONICAL_ADDRESS = /^0x[0-9a-f]{40}$/
+import { isOrganizationAddress, normalizeOrganizationAddress } from '@vocdoni/api-client'
 
 const normalizeMemberPassword = (password: string): string => password.trim().normalize('NFC')
 
@@ -12,13 +10,13 @@ const normalizeMemberPassword = (password: string): string => password.trim().no
  *   lowercase_hex(SHA-256(UTF-8("vocdoni-member-password:" + canonicalAddress(orgAddress) + ":" + NFC(trim(password)))))
  *
  * where NFC is Unicode normalization form C (so an accented password typed or pasted decomposed hashes the
- * same as the precomposed one) and canonicalAddress is `0x` plus the lowercase address without any `0x` (ensureAddressPrefix).
- * Organization reads return the address `0x`-prefixed and checksummed while process reads return it
+ * same as the precomposed one) and canonicalAddress is `0x` plus the lowercase address (normalizeOrganizationAddress).
+ * Organization reads return the address `0x`-prefixed and checksummed while older reads returned it
  * bare: hashing anything but the canonical form would lock every voter out.
  */
 export const hashMemberPassword = async (orgAddress: string, password: string): Promise<string> => {
-  const address = ensureAddressPrefix(orgAddress)
-  if (!CANONICAL_ADDRESS.test(address)) {
+  const address = normalizeOrganizationAddress(orgAddress)
+  if (!isOrganizationAddress(address)) {
     throw new Error(`Cannot hash a member password: invalid organization address "${orgAddress}"`)
   }
   const data = new TextEncoder().encode(`vocdoni-member-password:${address}:${normalizeMemberPassword(password)}`)

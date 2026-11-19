@@ -11,12 +11,6 @@ export const ensure0x = (value: string): string => (value.startsWith('0x') ? val
 export const sameAddress = (a?: string | null, b?: string | null): boolean =>
   !!a && !!b && normalizeAddress(a) === normalizeAddress(b)
 
-/**
- * Lowercase `0x`-prefixed form of a hex address, for endpoints that expect the
- * prefix (orgs/auth) when the value came from a SAAS process read (unprefixed).
- */
-export const ensureAddressPrefix = (address: string) => `0x${normalizeAddress(address)}`
-
 /** Abbreviated address or id for tables: the first 8 and last 4 characters. */
 export const shortAddress = (address: string) =>
   address && address.length > 14 ? `${address.slice(0, 8)}…${address.slice(-4)}` : address

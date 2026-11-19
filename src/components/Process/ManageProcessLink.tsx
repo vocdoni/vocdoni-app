@@ -24,8 +24,8 @@ export const ManageProcessLink = () => {
 
   if (!election) return null
 
-  // The public pages still serve legacy elections (organizationId, 0x-prefixed) while the
-  // dashboard serves the new process model (orgAddress, unprefixed) — tolerate both.
+  // The public pages still serve legacy elections (organizationId) while the dashboard serves
+  // the new process model (orgAddress) — tolerate both.
   const electionOrgAddress =
     (election as { organizationId?: string }).organizationId ?? (election as { orgAddress?: string }).orgAddress
 
