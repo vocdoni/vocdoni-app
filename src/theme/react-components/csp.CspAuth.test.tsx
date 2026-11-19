@@ -271,6 +271,55 @@ describe('cspAuthComponents.CspAuthCodeForm', () => {
     expect(onCodeChange).toHaveBeenLastCalledWith('7')
   })
 
+  it('keeps each digit in its box when a middle box is cleared and refilled', async () => {
+    const onCodeChange = vi.fn()
+    const user = userEvent.setup()
+
+    await renderCodeForm({ onCodeChange })
+    await user.type(screen.getAllByRole<HTMLInputElement>('textbox')[0], '123456')
+    await user.type(screen.getAllByRole<HTMLInputElement>('textbox')[2], '{Backspace}')
+
+    expect(screen.getAllByRole<HTMLInputElement>('textbox').map((input) => input.value)).toEqual([
+      '1',
+      '2',
+      '',
+      '4',
+      '5',
+      '6',
+    ])
+    expect(onCodeChange).toHaveBeenLastCalledWith('12456')
+
+    await user.type(screen.getAllByRole<HTMLInputElement>('textbox')[2], '9')
+
+    expect(screen.getAllByRole<HTMLInputElement>('textbox').map((input) => input.value)).toEqual([
+      '1',
+      '2',
+      '9',
+      '4',
+      '5',
+      '6',
+    ])
+    expect(onCodeChange).toHaveBeenLastCalledWith('129456')
+  })
+
+  it('empties the boxes when the upstream code is cleared', async () => {
+    const user = userEvent.setup()
+
+    const { rerender } = render(<CodeHarness />)
+    await waitFor(() => expect(screen.getAllByRole('textbox')[0]).toHaveFocus())
+    await user.type(screen.getAllByRole<HTMLInputElement>('textbox')[0], '12')
+    rerender(<CodeHarness code='' />)
+
+    expect(screen.getAllByRole<HTMLInputElement>('textbox').map((input) => input.value)).toEqual([
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ])
+  })
+
   it('resends the code and starts the flow over through their handlers', async () => {
     const onResend = vi.fn()
     const onStartOver = vi.fn()

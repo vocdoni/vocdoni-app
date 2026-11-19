@@ -28,7 +28,7 @@ import {
   type ButtonProps,
 } from '@chakra-ui/react'
 import { defineComponent, type ComponentsPartialDefinition, type CspAuthField } from '@vocdoni/react-components'
-import type { FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { stashCrispIdentity } from '~components/Process/CrispNickname'
 import { CloseButton } from '~components/ui/CloseButton'
@@ -170,65 +170,78 @@ export const cspAuthComponents: ComponentsPartialDefinition = {
       actionsDisabled,
       footer,
       ...props
-    }) => (
-      <chakra.form {...props} noValidate onSubmit={onSubmit} w='full'>
-        <VStack gap='5' align='stretch'>
-          <FormControl>
-            <PinInputRoot
-              size='lg'
-              count={length}
-              otp
-              value={Array.from({ length }, (_, index) => code[index] ?? '')}
-              onValueChange={({ valueAsString }) => onCodeChange(valueAsString)}
-              autoFocus
-            >
-              <PinInputLabel fontWeight='medium'>{title}</PinInputLabel>
-              <PinInputHiddenInput />
-              <PinInputControl w='full' gap='3'>
-                {Array.from({ length }, (_, index) => (
-                  <PinInputInput key={index} index={index} />
-                ))}
-              </PinInputControl>
-            </PinInputRoot>
-            <FormHelperText mt='3'>{helper}</FormHelperText>
-          </FormControl>
+    }) => {
+      // Zag reports the boxes joined, so feeding that back would shift the digits after a cleared box left. The boxes
+      // are kept by position here, and the joined digits still go upstream.
+      const [digits, setDigits] = useState(() => Array.from({ length }, (_, index) => code[index] ?? ''))
+      useEffect(() => {
+        // Upstream clears the code on a resend, a start over or a new step.
+        if (code === '') setDigits(Array.from({ length }, () => ''))
+      }, [code, length])
 
-          {notice ? (
-            <Text role='status' textStyle='body-sm' color='fg.muted'>
-              {notice}
-            </Text>
-          ) : null}
-          {error ? (
-            <Alert status='error' role='alert'>
-              <AlertIndicator />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          ) : null}
+      return (
+        <chakra.form {...props} noValidate onSubmit={onSubmit} w='full'>
+          <VStack gap='5' align='stretch'>
+            <FormControl>
+              <PinInputRoot
+                size='lg'
+                count={length}
+                otp
+                value={digits}
+                onValueChange={({ value, valueAsString }) => {
+                  setDigits(Array.from({ length }, (_, index) => value[index] ?? ''))
+                  onCodeChange(valueAsString)
+                }}
+                autoFocus
+              >
+                <PinInputLabel fontWeight='medium'>{title}</PinInputLabel>
+                <PinInputHiddenInput />
+                <PinInputControl w='full' gap='3'>
+                  {Array.from({ length }, (_, index) => (
+                    <PinInputInput key={index} index={index} />
+                  ))}
+                </PinInputControl>
+              </PinInputRoot>
+              <FormHelperText mt='3'>{helper}</FormHelperText>
+            </FormControl>
 
-          <Button type='submit' w='full' loading={loading}>
-            {submitLabel}
-          </Button>
-          <Flex justify='space-between' wrap='wrap' gap='2'>
-            <Button
-              type='button'
-              variant='link'
-              onClick={onResend}
-              disabled={actionsDisabled || resending}
-              loading={resending}
-            >
-              {resendLabel}
+            {notice ? (
+              <Text role='status' textStyle='body-sm' color='fg.muted'>
+                {notice}
+              </Text>
+            ) : null}
+            {error ? (
+              <Alert status='error' role='alert'>
+                <AlertIndicator />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : null}
+
+            <Button type='submit' w='full' loading={loading}>
+              {submitLabel}
             </Button>
-            <Button type='button' variant='link' onClick={onStartOver} disabled={actionsDisabled}>
-              {startOverLabel}
-            </Button>
-          </Flex>
-          {footer ? (
-            <Text textStyle='body-sm' color='fg.muted'>
-              {footer}
-            </Text>
-          ) : null}
-        </VStack>
-      </chakra.form>
-    )
+            <Flex justify='space-between' wrap='wrap' gap='2'>
+              <Button
+                type='button'
+                variant='link'
+                onClick={onResend}
+                disabled={actionsDisabled || resending}
+                loading={resending}
+              >
+                {resendLabel}
+              </Button>
+              <Button type='button' variant='link' onClick={onStartOver} disabled={actionsDisabled}>
+                {startOverLabel}
+              </Button>
+            </Flex>
+            {footer ? (
+              <Text textStyle='body-sm' color='fg.muted'>
+                {footer}
+              </Text>
+            ) : null}
+          </VStack>
+        </chakra.form>
+      )
+    }
   ),
 }
