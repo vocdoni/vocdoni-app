@@ -58,7 +58,7 @@ function isIgnored(file: string): boolean {
   return match !== null && !match[1].startsWith('!')
 }
 
-// Second path segment of `.agents/skills/<name>/...` or `.claude/skills/<name>`.
+// The skill name: third path segment of `.agents/skills/<name>/...` or `.claude/skills/<name>`.
 const skillNameOf = (file: string) => file.split('/')[2]
 
 const lockFile = path.join(root, 'skills-lock.json')
@@ -156,7 +156,8 @@ describe('project agent skills', () => {
             (name) =>
               `.agents/skills/${name}/SKILL.md is untracked and not in skills-lock.json. If it is a project skill, add its ` +
               `.gitignore exceptions and the .claude/skills/${name} symlink, then commit them. If it is a locally installed ` +
-              `skill, install it with \`npx skills add\` so skills-lock.json records it.`
+              `skill, install it with \`npx skills add\` so skills-lock.json records it. A personal skill belongs in your ` +
+              `user-level skills folder, not here.`
           )
       : []
     expect(problems).toEqual([])
