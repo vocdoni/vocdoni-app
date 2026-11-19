@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event'
+import { cloneElement, type ReactElement } from 'react'
 import { mockUseElection, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { AnonymityInfoCard, ProcessInfoCard, SuccessVoteModal, VotingVoteModal } from './View'
@@ -10,6 +11,19 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...actual,
     ...getReactProvidersMock(),
   }
+})
+
+// The test environment has no translation resources, so the verify slot of the success sentence is
+// rendered here the way Trans would place it: the link (or the bare words) wraps the word "here".
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>()
+  const Trans = (props: { i18nKey?: string; components?: Record<string, ReactElement> }) =>
+    props.i18nKey === 'process.success_modal.text' ? (
+      <p>You can verify it {cloneElement(props.components!.verify, undefined, 'here')}.</p>
+    ) : (
+      <actual.Trans {...(props as any)} />
+    )
+  return { ...actual, Trans }
 })
 
 describe('AnonymityInfoCard', () => {
@@ -130,6 +144,26 @@ describe('SuccessVoteModal', () => {
 
   // The dialog opens from an effect and renders through a portal, so every
   // assertion here waits for it rather than reading the first paint.
+  it('links the vote to its explorer page on the process chain', async () => {
+    setElection({ census: {}, chainId: 'vocdoni/DEV/36' }, { voteId: '0xdeadbeef' })
+
+    render(<SuccessVoteModal />)
+
+    expect(await screen.findByRole('link', { name: 'here' })).toHaveAttribute(
+      'href',
+      'https://dev.explorer.vote/verify/0xdeadbeef'
+    )
+  })
+
+  it('renders no link when the process chain has no explorer', async () => {
+    setElection({ census: {}, chainId: 'vocdoni/TEST/1' }, { voteId: '0xdeadbeef' })
+
+    render(<SuccessVoteModal />)
+
+    expect(await screen.findByTestId('vote-success-modal')).toBeInTheDocument()
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
+  })
+
   it('warns that an anonymous receipt will not come back', async () => {
     setElection({ census: { anonymous: true } }, { voteId: '0xdeadbeef' })
 

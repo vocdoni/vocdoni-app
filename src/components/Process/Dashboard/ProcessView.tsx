@@ -31,12 +31,9 @@ import {
   ElectionTitle,
   useElection,
 } from '@vocdoni/react-components'
-import { hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
+import { explorerElectionUrl, hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import { tryInferQuestionBallotType } from '@vocdoni/ballot'
 import { useDateFns } from '~i18n/use-date-fns'
-import { useAppEnv } from '~src/app-env'
-import { explorerElectionUrl } from '@vocdoni/api-client'
-import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
@@ -406,8 +403,6 @@ const ResultsStateBadge = (props: Omit<StatusBadgeProps, 'colorPalette'>) => {
 const ProcessViewSidebar = () => {
   const { election, results, status } = useElection()
   const { t } = useTranslation()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const { clientEnv } = getVocdoniClientConfig(VOCDONI_ENVIRONMENT)
   // The hook's `participation`/census size fall back to `maxCensusSize` for CSP elections, which is the
   // allowed-voters cap rather than the real census size. Recompute both from the actual census size.
   const { size: censusSize } = useCensusSize()
@@ -420,8 +415,9 @@ const ProcessViewSidebar = () => {
   const { short: anonymityLabel, mechanismDescription: anonymityMechanism } = useAnonymityLabels(
     election?.census?.anonymous
   )
-  // The explorer only knows on-chain (Vochain) ids; each question is its own on-chain election
-  const explorerProcessId = firstQuestion?.upstreamId
+  // The explorer only knows on-chain (Vochain) ids; each question is its own on-chain election.
+  // Resolved on the process' own chain: an unknown chain has no explorer, so no link.
+  const explorerHref = explorerElectionUrl(election?.chainId, firstQuestion?.upstreamId ?? '')
 
   return (
     <Sidebar show={showSidebar}>
@@ -556,9 +552,9 @@ const ProcessViewSidebar = () => {
           <SidebarSubtitle>
             <Trans i18nKey='additional_actions'>Additional actions</Trans>
           </SidebarSubtitle>
-          {explorerProcessId && (
+          {explorerHref && (
             <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
-              <Link href={explorerElectionUrl(clientEnv, explorerProcessId)} target='_blank' rel='noopener noreferrer'>
+              <Link href={explorerHref} target='_blank' rel='noopener noreferrer'>
                 <HStack gap='2'>
                   <Icon as={SearchIcon} />
                   <Text as='span'>

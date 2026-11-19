@@ -123,6 +123,40 @@ describe('ProcessView navigation', () => {
     currentElectionStatus = 'RESULTS'
   })
 
+  it('links the on-chain process to the explorer of its own chain, and to nothing on an unknown chain', async () => {
+    const onChain = (chainId: string) => {
+      const base = createProcess('0xabc', 'RESULTS')
+      return { ...base, chainId, questions: base.questions.map((question) => ({ ...question, upstreamId: 'up-1' })) }
+    }
+    const renderWithChain = (chainId: string) => {
+      setReactProvidersMock({
+        ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+        useElection: () => ({
+          id: '0xabc',
+          election: onChain(chainId),
+          status: 'RESULTS',
+          results: null,
+          loading: false,
+          client: { explorerUrl: 'https://example.test' },
+        }),
+      })
+      return render(
+        <TestMemoryRouter initialEntries={['/admin/process/0xabc']}>
+          <ProcessView />
+        </TestMemoryRouter>
+      )
+    }
+
+    const { unmount } = renderWithChain('vocdoni/DEV/36')
+    await waitFor(() => {
+      expect(document.querySelector('a[href="https://dev.explorer.vote/process/up-1"]')).not.toBeNull()
+    })
+    unmount()
+
+    renderWithChain('vocdoni/TEST/1')
+    expect(document.querySelector('a[href$="/process/up-1"]')).toBeNull()
+  })
+
   it('redirects the base route to results when election results are already available', async () => {
     setReactProvidersMock({
       ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
