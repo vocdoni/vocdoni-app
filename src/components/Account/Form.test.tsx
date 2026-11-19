@@ -23,6 +23,16 @@ vi.mock('~src/queries/account', () => ({
 const bearedFetchMock = vi.fn().mockResolvedValue(undefined)
 const linkSaasOAuthMock = vi.fn().mockResolvedValue(undefined)
 
+const navigateMock = vi.fn()
+
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual<typeof import('react-router')>('react-router')
+  return {
+    ...actual,
+    useNavigate: () => navigateMock,
+  }
+})
+
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({
     bearedFetch: bearedFetchMock,
@@ -45,6 +55,12 @@ const baseProfile = {
 }
 
 describe('AccountForm', () => {
+  beforeEach(() => {
+    bearedFetchMock.mockClear()
+    navigateMock.mockClear()
+    toastSpy.mockClear()
+  })
+
   it('shows unlink action for linked providers', () => {
     render(<AccountForm profile={baseProfile} />)
 
@@ -104,10 +120,32 @@ describe('AccountForm', () => {
     )
   })
 
-  it('shows password request button when no password is set', () => {
+  it('requests a password setup code and opens the setup page when no password is set', async () => {
+    const user = userEvent.setup()
     render(<AccountForm profile={{ ...baseProfile, hasPassword: false }} />)
 
-    expect(screen.getByRole('button', { name: /request password change/i })).toBeInTheDocument()
     expect(screen.queryByLabelText(/change password/i)).toBeNull()
+    await user.click(screen.getByRole('button', { name: /set a password/i }))
+
+    await waitFor(() => expect(navigateMock).toHaveBeenCalledWith('/account/password/setup'))
+    expect(bearedFetchMock).toHaveBeenCalledWith('users/me/password/setup', { method: 'POST' })
+    expect(toastSpy).toHaveBeenCalledWith(expect.objectContaining({ title: 'We sent you an email with a code' }))
+  })
+
+  it('asks to retry later when a setup code was sent recently', async () => {
+    bearedFetchMock.mockRejectedValueOnce(
+      new ApiError({ error: 'a password setup code was sent recently, retry later', code: 40017 })
+    )
+    const user = userEvent.setup()
+    render(<AccountForm profile={{ ...baseProfile, hasPassword: false }} />)
+
+    await user.click(screen.getByRole('button', { name: /set a password/i }))
+
+    await waitFor(() =>
+      expect(toastSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ title: 'A code was sent recently, check your email or try again in a minute' })
+      )
+    )
+    expect(navigateMock).toHaveBeenCalledWith('/account/password/setup')
   })
 })
