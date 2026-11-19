@@ -1871,8 +1871,7 @@
   "view_in_explorer": "Ver en el explorador",
   "vocdoni_logo": "Logotipo de Vocdoni",
   "vote": {
-    "anonymous_receipt": "Voto anónimo: guarda ahora este comprobante, la plataforma no podrá volver a mostrártelo.",
-    "voted_title": "¡Tu voto se ha emitido correctamente!"
+    "anonymous_receipt": "Voto anónimo: guarda ahora este comprobante, la plataforma no podrá volver a mostrártelo."
   },
   "vote_information": "Información del voto",
   "vote_overwrite": "Sobrescritura del voto",

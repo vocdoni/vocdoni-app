@@ -1871,8 +1871,7 @@
   "view_in_explorer": "Mostra a l'explorador",
   "vocdoni_logo": "Logotip de Vocdoni",
   "vote": {
-    "anonymous_receipt": "Vot anònim: desa ara aquest comprovant, la plataforma no te’l podrà tornar a mostrar.",
-    "voted_title": "El teu vot s'ha registrat amb èxit!"
+    "anonymous_receipt": "Vot anònim: desa ara aquest comprovant, la plataforma no te’l podrà tornar a mostrar."
   },
   "vote_information": "Informació de la votació",
   "vote_overwrite": "Sobreescriptura de la votació",
