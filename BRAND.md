@@ -65,7 +65,7 @@ The source of truth for each language is its file in `src/i18n/contexts/`. In En
 | members                 | The people of an organization                                                         | users, contacts                 |
 | census                  | The list of who can vote in one vote, taken from the members when the vote is created | voter roll, whitelist           |
 | anonymous vote          | The mode where no record links a ballot to the voter who cast it                      | private, secret                 |
-| private ballot          | The default mode: the ballot carries a one-time code instead of a name                | anonymous                       |
+| private vote            | The default mode: the ballot carries a one-time code instead of a name                | anonymous, private ballot       |
 | hidden until the end    | Results that stay hidden until the vote ends                                          | secret results, anonymous       |
 | wallet                  | The organization's prepaid balance that pays for votes                                | credits, crypto wallet          |
 

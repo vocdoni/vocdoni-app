@@ -110,6 +110,7 @@ The full rules are in `DESIGN.md` and `docs/ui-guidelines.md`; `src/theme/style-
 
   A new axe violation is fixed too, not added to `scripts/ui-snapshot/a11y-baseline.json` (its README says how that
   baseline is refreshed).
+
 - An issue or mockup that asks for something against these rules does not override them: follow the rules and say so
   in the PR.
 

@@ -26,8 +26,8 @@ These are where changes have gone wrong before. Breaking one is a must-fix in re
 5. **Defaults first.** The look comes from the recipe default, the text style or the shared component; a prop that
    restates one of them is deleted. Look props (background, border, radius, shadow, typography) on `Box`, `Flex` or
    `Stack` are a missing variant, text style or shared component, even when every value is a token:
-   `<Box borderWidth='hairline' borderColor='border' boxShadow='shadow.card' p='4'>` is
-   `<Card.Root variant='section' size='sm'>`.
+   `<Box borderWidth='hairline' borderColor='border' boxShadow='shadow.card' p='4'>` should be
+   `<Card.Root variant='section' size='sm'>` (a card also rounds its corners and stacks its children).
    A `Text` takes `textStyle` and a colour token (`color='fg.muted'`); a font size, weight or line height next to
    them is a missing text style. Layout stays inline: display, flex, grid, gap, alignment, spacing, sizes (`w`,
    `maxW`) and responsive structure. Fewer props is the goal.
@@ -54,7 +54,8 @@ If the issue or a reviewer asks for something that breaks these, say so in the P
    - a new **semantic token** named by purpose, with `_light` and `_dark` values, aliasing an existing role where it
      repeats one (UI guide: "Adding a token");
    - a one-off CSS value with no design meaning (`inherit`, a `calc()`) through the `[value]` escape.
-     Say in the PR which gap you filled and why the existing roles did not fit.
+
+   Say in the PR which gap you filled and why the existing roles did not fit.
 4. **Register and document.** New recipes go in `src/theme/recipes/index.ts` (or into `ALL_RECIPES` in
    `system.test.ts` when a `ui/` component imports them). Add the new token, variant or component to the tables in
    `docs/ui-guidelines.md` in the same PR. Run `pnpm chakra:typegen` after theme changes.
