@@ -2,7 +2,6 @@ import { Box, Button, HStack, Icon, Text } from '@chakra-ui/react'
 import * as ReactPDF from '@react-pdf/renderer'
 import { useQueryClient } from '@tanstack/react-query'
 import { Buffer as BufferPolyfill } from 'buffer'
-import { explorerUrl } from '@vocdoni/api-client'
 import { useOrganization } from '@vocdoni/react-components'
 import { useState } from 'react'
 import type { TFunction } from 'i18next'
@@ -59,7 +58,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
   const { client } = useApiClient()
   const queryClient = useQueryClient()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const { clientEnv } = getVocdoniClientConfig(VOCDONI_ENVIRONMENT)
+  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const electionContext = useOptionalElectionContext()
   // Announced while the tallies are still being computed: the control shows, disabled, instead of
   // appearing out of nowhere once the results land.
@@ -91,7 +90,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
         earlyEndDate,
         t,
         organizationName: getDefaultText(organization?.name) || undefined,
-        explorerUrl: explorerUrl(clientEnv),
+        explorerUrl,
         now: new Date(),
       })
 

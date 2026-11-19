@@ -9,20 +9,13 @@
  */
 import { VOCDONI_NETWORKS } from '@vocdoni/api-client'
 import { decodeResults, type DecodedQuestionResults } from '@vocdoni/ballot'
+import { getVocdoniNetwork } from '~utils/vocdoni-network'
 
 export type LocalizedText = Record<string, string | undefined>
 
 /** Vochain gateway base URL per app environment — same defaults the legacy SDK used. */
-export const getVochainGatewayUrl = (environment: string = 'dev') => {
-  switch (environment.toLowerCase()) {
-    case 'prod':
-      return VOCDONI_NETWORKS.prod.gateway
-    case 'stg':
-      return VOCDONI_NETWORKS.stg.gateway
-    default:
-      return VOCDONI_NETWORKS.dev.gateway
-  }
-}
+export const getVochainGatewayUrl = (environment: string = 'dev') =>
+  VOCDONI_NETWORKS[getVocdoniNetwork(environment)].gateway
 
 /** Thrown for gateway 404s so page loaders can render a proper not-found. */
 export class VochainNotFoundError extends Error {

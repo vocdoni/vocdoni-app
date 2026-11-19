@@ -5,15 +5,6 @@ import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 import { QueryKeys } from './keys'
 
 /**
- * The gateway serving the chain a process was anchored to.
- *
- * Derived from the process' own `chainId` rather than from `VOCDONI_ENVIRONMENT`, because a process can
- * live on another environment's chain. A chain the SDK does not know (e.g. `TEST`) falls back to dev,
- * as it always has here, so the read still goes out instead of being skipped.
- */
-const getGatewayUrlForChain = (chainId?: string) => VOCDONI_NETWORKS[networkFromChainId(chainId) ?? 'dev'].gateway
-
-/**
  * A process left to run its course still ends a few seconds either side of its schedule — the chain
  * stops it at the block crossing `endDate`. Only a larger gap means somebody actually stopped it
  * ahead of time, so anything inside this window is treated as having ended as configured.
@@ -51,10 +42,13 @@ const fetchQuestionEndDate = async (gatewayUrl: string, upstreamId: string): Pro
  * Returns null when no question can be read, leaving callers on the configured `endDate`.
  */
 export const fetchOnChainEndDate = async (election: VotingProcessResponse): Promise<Date | null> => {
-  const gatewayUrl = getGatewayUrlForChain(election.chainId)
+  // Read from the process' own chain, not VOCDONI_ENVIRONMENT. A chain the SDK does not know has no gateway.
+  const network = networkFromChainId(election.chainId)
   const upstreamIds = election.questions.map((question) => question.upstreamId).filter((id): id is string => !!id)
 
-  if (!upstreamIds.length) return null
+  if (!network || !upstreamIds.length) return null
+
+  const gatewayUrl = VOCDONI_NETWORKS[network].gateway
 
   const endDates = (await Promise.all(upstreamIds.map((id) => fetchQuestionEndDate(gatewayUrl, id)))).filter(
     (date): date is Date => date !== null
