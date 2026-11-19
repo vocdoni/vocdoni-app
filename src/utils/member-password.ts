@@ -1,27 +1,13 @@
-import { isOrganizationAddress, normalizeOrganizationAddress } from '@vocdoni/api-client'
+import { hashMemberPassword as hashMemberPasswordWithSdk } from '@vocdoni/api-client'
 
 const normalizeMemberPassword = (password: string): string => password.trim().normalize('NFC')
 
 /**
- * The form a member password travels in, to the SaaS API and nowhere else: the plaintext never
- * leaves the browser. Organizers set it (member form, CSV import) and voters type it (CSP step 0)
- * through this one function, so both sides always derive the same value:
- *
- *   lowercase_hex(SHA-256(UTF-8("vocdoni-member-password:" + canonicalAddress(orgAddress) + ":" + NFC(trim(password)))))
- *
- * where NFC is Unicode normalization form C (so an accented password typed or pasted decomposed hashes the
- * same as the precomposed one) and canonicalAddress is `0x` plus the lowercase address (normalizeOrganizationAddress).
- * The address may arrive checksummed or bare: hashing anything but the canonical form would lock every voter out.
+ * Hashes a member password for the SaaS API, so the plaintext never leaves the browser. Delegates to the SDK,
+ * which voters also use through the packaged CspAuth: both sides derive the same value.
  */
-export const hashMemberPassword = async (orgAddress: string, password: string): Promise<string> => {
-  const address = normalizeOrganizationAddress(orgAddress)
-  if (!isOrganizationAddress(address)) {
-    throw new Error(`Cannot hash a member password: invalid organization address "${orgAddress}"`)
-  }
-  const data = new TextEncoder().encode(`vocdoni-member-password:${address}:${normalizeMemberPassword(password)}`)
-  const digest = await globalThis.crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('')
-}
+export const hashMemberPassword = (orgAddress: string, password: string): Promise<string> =>
+  hashMemberPasswordWithSdk(orgAddress, password)
 
 /**
  * Hashes the `password` of every row (see hashMemberPassword). A row whose password is empty after
