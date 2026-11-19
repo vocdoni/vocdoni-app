@@ -180,11 +180,12 @@ describe('SharedCensus', () => {
     const queue: CrispCommand[] = []
     window.$crisp = queue
     appEnvOverride = { ...appEnvOverride, CRISP_WEBSITE_ID: 'site-1' }
-    const flow = { challengePending: false }
+    const flow = { challengePending: false, owner: null as string | null }
     setReactProvidersMock({
       useElectionAuth: () => ({
         connected: false,
         challengePending: flow.challengePending,
+        owner: flow.owner,
         authToken: null,
         weight: null,
       }),
@@ -194,6 +195,7 @@ describe('SharedCensus', () => {
     const { rerender } = await renderSharedCensus(<SharedCensus />)
     stashCrispIdentity('name Ada')
     flow.challengePending = true
+    flow.owner = 'owner-1'
     await act(async () => rerender(<SharedCensus />))
 
     expect(queue).toEqual([['set', 'user:nickname', ['name Ada']]])

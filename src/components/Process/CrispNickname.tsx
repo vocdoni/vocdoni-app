@@ -28,23 +28,23 @@ const pushCrispNickname = (identity: string) => {
   }
 }
 
-// Sets the Crisp nickname when the voter's flow starts (challenge sent, or connected for an auth-only census).
-// Mount it under CspAuthSession on a page that stays mounted while the voter identifies: a slot unmounts in the render
-// that connects the voter, which is the edge this watches.
+// Sets the Crisp nickname on every successful identify (auth0), so a start-over with another identity updates it.
+// Mount it inside the ElectionProvider, on a page that stays mounted while the voter identifies: a slot unmounts in
+// the render that connects the voter, so the observer must sit outside the slots.
 export const CrispNicknameObserver = () => {
-  const { challengePending, connected } = useElectionAuth()
+  // `owner` is set by every successful auth0 and cleared by clear(), but the published type omits it.
+  const { owner } = useElectionAuth() as ReturnType<typeof useElectionAuth> & { owner?: string | null }
   const { CRISP_WEBSITE_ID } = useAppEnv()
-  const active = challengePending || connected
-  const wasActive = useRef(active)
+  const lastOwner = useRef(owner)
 
   useEffect(() => {
-    const started = active && !wasActive.current
-    wasActive.current = active
-    if (!started) return
+    const identified = owner !== lastOwner.current && !!owner
+    lastOwner.current = owner
+    if (!identified) return
 
     const identity = takeCrispIdentity()
     if (identity && CRISP_WEBSITE_ID) pushCrispNickname(identity)
-  }, [active, CRISP_WEBSITE_ID])
+  }, [owner, CRISP_WEBSITE_ID])
 
   return null
 }

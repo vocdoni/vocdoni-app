@@ -13,7 +13,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
 
 const IdentifySlot = cspAuthComponents.CspAuthIdentifyForm!
 
-const auth = { connected: false, challengePending: false }
+const auth = { connected: false, challengePending: false, owner: null as string | null }
 const setAuth = (next: Partial<typeof auth>) => {
   Object.assign(auth, next)
   setReactProvidersMock({ useElectionAuth: () => ({ ...auth, authToken: null, weight: null }) })
@@ -69,7 +69,7 @@ describe('Crisp nickname', () => {
   beforeEach(() => {
     queue = []
     window.$crisp = queue
-    setAuth({ connected: false, challengePending: false })
+    setAuth({ connected: false, challengePending: false, owner: null })
   })
 
   afterEach(() => {
@@ -82,7 +82,7 @@ describe('Crisp nickname', () => {
     await submitIdentity(user)
     expect(queue).toEqual([])
 
-    setAuth({ challengePending: true })
+    setAuth({ challengePending: true, owner: 'owner-1' })
     rerender(tree())
 
     expect(queue).toEqual([['set', 'user:nickname', ['name Ada']]])
@@ -93,7 +93,7 @@ describe('Crisp nickname', () => {
     const { rerender } = render(tree(), { appEnv: { CRISP_WEBSITE_ID: 'site-1' } })
     await submitIdentity(user)
 
-    setAuth({ connected: true })
+    setAuth({ connected: true, owner: 'owner-1' })
     rerender(tree())
     expect(queue).toHaveLength(1)
 
@@ -107,7 +107,7 @@ describe('Crisp nickname', () => {
     const { rerender } = render(tree(), { appEnv: { CRISP_WEBSITE_ID: 'site-1' } })
     await submitIdentity(user)
 
-    setAuth({ connected: true })
+    setAuth({ connected: true, owner: 'owner-1' })
     rerender(tree())
 
     expect(JSON.stringify(queue)).not.toContain('hunter2')
@@ -131,10 +131,34 @@ describe('Crisp nickname', () => {
     await user.type(screen.getByLabelText('Contact'), contact)
     await user.click(screen.getByRole('button', { name: 'Receive Code' }))
 
-    setAuth({ challengePending: true })
+    setAuth({ challengePending: true, owner: 'owner-1' })
     rerender(contactOnly())
 
     expect(queue).toEqual([['set', 'user:nickname', [expected]]])
+  })
+
+  it('sets the nickname again when a start-over identifies with another identity', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(tree(), { appEnv: { CRISP_WEBSITE_ID: 'site-1' } })
+    await submitIdentity(user)
+    setAuth({ challengePending: true, owner: 'owner-1' })
+    rerender(tree())
+
+    // Start over keeps the challenge pending, so the change of owner is what marks the second identify.
+    await user.clear(screen.getByLabelText('First Name'))
+    await user.type(screen.getByLabelText('First Name'), 'Grace')
+    await user.click(screen.getByRole('button', { name: 'Receive Code' }))
+    setAuth({ owner: 'owner-2' })
+    rerender(tree())
+
+    expect(queue).toEqual([
+      ['set', 'user:nickname', ['name Ada']],
+      ['set', 'user:nickname', ['name Grace']],
+    ])
+
+    setAuth({ connected: true })
+    rerender(tree())
+    expect(queue).toHaveLength(2)
   })
 
   it('does not push without CRISP_WEBSITE_ID', async () => {
@@ -142,7 +166,7 @@ describe('Crisp nickname', () => {
     const { rerender } = render(tree())
     await submitIdentity(user)
 
-    setAuth({ connected: true })
+    setAuth({ connected: true, owner: 'owner-1' })
     rerender(tree())
 
     expect(queue).toEqual([])
@@ -154,7 +178,7 @@ describe('Crisp nickname', () => {
     const { rerender } = render(tree(), { appEnv: { CRISP_WEBSITE_ID: 'site-1' } })
     await submitIdentity(user)
 
-    setAuth({ connected: true })
+    setAuth({ connected: true, owner: 'owner-1' })
     rerender(tree())
 
     expect(queue).toEqual([])
