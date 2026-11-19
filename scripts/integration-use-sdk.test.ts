@@ -103,6 +103,20 @@ describe('addOverrides', () => {
     )
   })
 
+  it('replaces an override whose range starts with >=', () => {
+    const out = addOverrides("overrides:\n  '@vocdoni/api-client@>=2.6.0': ^2.6.0\n", [
+      { name: '@vocdoni/api-client', spec: 'file:/tmp/a.tgz' },
+    ])
+    expect(out).toBe("overrides:\n  '@vocdoni/api-client': 'file:/tmp/a.tgz'\n")
+  })
+
+  it('replaces an override whose range starts with >', () => {
+    const out = addOverrides("overrides:\n  '@vocdoni/api-client@>2': ^2.6.0\n", [
+      { name: '@vocdoni/api-client', spec: 'file:/tmp/a.tgz' },
+    ])
+    expect(out).toBe("overrides:\n  '@vocdoni/api-client': 'file:/tmp/a.tgz'\n")
+  })
+
   it('does not treat a longer package name as a duplicate', () => {
     const out = addOverrides(workspace, [{ name: 'axios-retry', spec: 'file:/tmp/a.tgz' }])
     expect(out).toContain("  'axios-retry': 'file:/tmp/a.tgz'")
