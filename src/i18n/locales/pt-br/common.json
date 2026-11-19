@@ -1262,6 +1262,7 @@
       "btn": "Fechar",
       "text": "<p>Seu voto foi registrado e armazenado com segurança pela tecnologia do Vocdoni. Você pode verificá-lo <verify>aqui</verify>.</p>",
       "text_no_id": "<p>Seu voto foi registrado com sucesso.</p>",
+      "text_no_link": "<p>Seu voto foi registrado e armazenado com segurança pela tecnologia do Vocdoni.</p>",
       "title": "Voto enviado!"
     },
     "summary": {

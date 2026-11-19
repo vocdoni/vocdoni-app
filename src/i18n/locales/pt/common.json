@@ -1262,6 +1262,7 @@
       "btn": "Fechar",
       "text": "<p>O teu voto foi submetido e armazenado de forma segura através da tecnologia do Vocdoni. <verify>Podes verificá-lo aqui</verify>.</p>",
       "text_no_id": "<p>O teu voto foi submetido com sucesso.</p>",
+      "text_no_link": "<p>O teu voto foi submetido e armazenado de forma segura através da tecnologia do Vocdoni.</p>",
       "title": "Voto submetido!"
     },
     "summary": {

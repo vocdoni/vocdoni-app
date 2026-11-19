@@ -1262,6 +1262,7 @@
       "btn": "Fermer",
       "text": "<p>Votre vote a été émis et stocké de manière sécurisée grâce à la technologie de Vocdoni. Vous pouvez le vérifier <verify>ici</verify>.</p>",
       "text_no_id": "<p>Votre vote a bien été émis.</p>",
+      "text_no_link": "<p>Votre vote a été émis et stocké de manière sécurisée grâce à la technologie de Vocdoni.</p>",
       "title": "Vote envoyé !"
     },
     "summary": {

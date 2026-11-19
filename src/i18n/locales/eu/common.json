@@ -1233,6 +1233,7 @@
       "btn": "Itxi",
       "text": "<p>Zure botoa eman da eta modu seguruan gorde da Vocdoniren teknologiarekin. <verify>Hemen egiazta dezakezu</verify>.</p>",
       "text_no_id": "<p>Zure botoa behar bezala eman da.</p>",
+      "text_no_link": "<p>Zure botoa eman da eta modu seguruan gorde da Vocdoniren teknologiarekin.</p>",
       "title": "Botoa bidalita!"
     },
     "summary": {

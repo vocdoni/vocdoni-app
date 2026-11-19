@@ -281,7 +281,7 @@ export const SuccessVoteModal = () => {
 
   const anonymous = !!election.census?.anonymous
   // The vote lives on the process' own chain; an unknown chain has no explorer to verify on, so the
-  // sentence keeps its words without a link rather than linking nowhere.
+  // verify sentence is left out rather than linking nowhere.
   const verifyUrl = voteId ? explorerVoteUrl(election.chainId, voteId) : undefined
 
   return (
@@ -297,13 +297,19 @@ export const SuccessVoteModal = () => {
               <BallotBoxAnimated alignSelf='center' />
             </DialogHeader>
             <Dialog.Body>
-              {voteId ? (
+              {verifyUrl ? (
                 <Trans
                   i18nKey='process.success_modal.text'
                   components={{
-                    verify: verifyUrl ? <Link href={verifyUrl} target='_blank' /> : <span />,
+                    verify: <Link href={verifyUrl} target='_blank' />,
                     p: <Text mb='2' />,
                   }}
+                />
+              ) : voteId ? (
+                <Trans
+                  i18nKey='process.success_modal.text_no_link'
+                  defaults="<p>Your vote has been securely cast and stored using Vocdoni's technology.</p>"
+                  components={{ p: <Text mb='2' /> }}
                 />
               ) : (
                 // Without a vote id there is nothing to verify, and linking the

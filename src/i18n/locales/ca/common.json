@@ -1262,6 +1262,7 @@
       "btn": "Finalitzar",
       "text": "<p>El teu vot ha estat emès i emmagatzemat de forma segura amb la tecnologia de Vocdoni. Pots comprovar-ho <verify>aquí</verify>.</p>",
       "text_no_id": "<p>El teu vot s’ha emès correctament.</p>",
+      "text_no_link": "<p>El teu vot ha estat emès i emmagatzemat de forma segura amb la tecnologia de Vocdoni.</p>",
       "title": "Vot emès correctament!"
     },
     "summary": {

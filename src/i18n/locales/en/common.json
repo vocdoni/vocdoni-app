@@ -1233,6 +1233,7 @@
       "btn": "Close",
       "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. You can verify it <verify>here</verify>.</p>",
       "text_no_id": "<p>Your vote has been cast successfully.</p>",
+      "text_no_link": "<p>Your vote has been securely cast and stored using Vocdoni's technology.</p>",
       "title": "Vote submitted!"
     },
     "summary": {

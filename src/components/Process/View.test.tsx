@@ -158,12 +158,15 @@ describe('SuccessVoteModal', () => {
     )
   })
 
-  it('renders no link when the process chain has no explorer', async () => {
+  it('drops the verify sentence when the process chain has no explorer', async () => {
     setElection({ census: {}, chainId: 'vocdoni/TEST/1' }, { voteId: '0xdeadbeef' })
 
     renderModal()
 
-    expect(await screen.findByTestId('vote-success-modal')).toBeInTheDocument()
+    expect(
+      await screen.findByText("Your vote has been securely cast and stored using Vocdoni's technology.")
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/verify it/)).not.toBeInTheDocument()
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
   })
 

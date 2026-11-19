@@ -1233,6 +1233,7 @@
       "btn": "Schließen",
       "text": "<p>Deine Stimme wurde sicher abgegeben und mit der Technologie von Vocdoni gespeichert. <verify>Du kannst sie hier überprüfen</verify>.</p>",
       "text_no_id": "<p>Deine Stimme wurde erfolgreich abgegeben.</p>",
+      "text_no_link": "<p>Deine Stimme wurde sicher abgegeben und mit der Technologie von Vocdoni gespeichert.</p>",
       "title": "Stimme abgegeben!"
     },
     "summary": {
