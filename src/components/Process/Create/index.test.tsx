@@ -860,6 +860,8 @@ describe('the wizard around the publish dialog', () => {
     // A draft id stored by an earlier test makes the save an update: both refuse
     mockApiClient.elections.create.mockRejectedValue(new Error('backend down'))
     mockApiClient.elections.update.mockRejectedValue(new Error('backend down'))
+    // The failed saves are logged on purpose: auto-save logs its own failure, the manual save logs its own
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
     const writes = () =>
       mockApiClient.elections.create.mock.calls.length + mockApiClient.elections.update.mock.calls.length
     renderWizard('/admin/processes/create')
@@ -868,15 +870,25 @@ describe('the wizard around the publish dialog', () => {
     await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
     await user.click(screen.getByRole('button', { name: 'Publish' }))
 
-    await waitFor(() => expect(writes()).toBeGreaterThan(0))
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(mockApiClient.elections.publish).not.toHaveBeenCalled()
+    try {
+      await waitFor(() => expect(writes()).toBeGreaterThan(0))
+      await waitFor(() =>
+        expect(error).toHaveBeenCalledWith('Error saving the draft to publish:', new Error('backend down'))
+      )
+      expect(error).toHaveBeenCalledWith('Failed to save draft:', new Error('backend down'))
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(mockApiClient.elections.publish).not.toHaveBeenCalled()
 
-    // Auto-save picks up again after the failed save
-    const before = writes()
-    await user.type(screen.getByPlaceholderText('Voting Process Title'), ' edited')
-    await user.tab()
-    await waitFor(() => expect(writes()).toBeGreaterThan(before))
+      // Auto-save picks up again after the failed save, and logs that failure too
+      const before = writes()
+      const logged = error.mock.calls.length
+      await user.type(screen.getByPlaceholderText('Voting Process Title'), ' edited')
+      await user.tab()
+      await waitFor(() => expect(writes()).toBeGreaterThan(before))
+      await waitFor(() => expect(error.mock.calls.length).toBeGreaterThan(logged))
+    } finally {
+      error.mockRestore()
+    }
   })
 
   it('hands a published draft to the post-publish navigation', async () => {
