@@ -9,6 +9,7 @@ import type {
   MultiLangString,
   PublishedVotingProcessResponse,
   VotingProcessQuestion,
+  VotingProcessQuestionResults,
   VotingProcessResponse,
   VotingProcessResultsResponse,
 } from '@vocdoni/api-types'
@@ -101,6 +102,18 @@ export type CertificateData = {
 }
 
 const notAvailable = (t: TFunction) => t('process_pdf.not_available', { defaultValue: 'Not available' })
+
+// Total votes of a question. castVotingPower has no answer for budget and quadratic ballots, so an unweighted
+// census of a known ballot type falls back to the ballot count (each ballot weighs 1).
+const questionVotingPower = (
+  question: VotingProcessQuestion,
+  questionResults: VotingProcessQuestionResults | undefined,
+  isWeighted: boolean
+): number | null => {
+  const votingPower = castVotingPower(question, questionResults?.results)
+  if (votingPower !== null || isWeighted || tryInferQuestionBallotType(question) === undefined) return votingPower
+  return questionResults?.voteCount ?? null
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -323,7 +336,7 @@ export const buildCertificateData = ({
   const totalEligibleVotingPower =
     totalEligibleVotingPowerValue === null ? notAvailableLabel : String(totalEligibleVotingPowerValue)
   const questionVotingPowerTotals = election.questions.map((question) =>
-    castVotingPower(question, questionsResults.get(question.id)?.results)
+    questionVotingPower(question, questionsResults.get(question.id), isWeighted)
   )
   const knownQuestionTotals = questionVotingPowerTotals.filter((value): value is number => value !== null)
   const votingPowerUsed = hasHiddenResults
@@ -571,7 +584,7 @@ export const buildCertificateData = ({
           const decodedAbstain = decoded?.find((entry) => entry.choice === 'abstain')
           const abstainEntry =
             decodedAbstain && isAbstainVisible(question, decodedAbstain.votes) ? decodedAbstain : undefined
-          const questionTotal = castVotingPower(question, questionResults?.results)
+          const questionTotal = questionVotingPower(question, questionResults, isWeighted)
 
           const choiceRows = question.choices.map((choice, choiceIndex) => ({
             name: getDefaultText(choice.title) || notAvailableLabel,

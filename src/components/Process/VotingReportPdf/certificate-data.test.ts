@@ -674,6 +674,66 @@ describe('buildCertificateData', () => {
     })
   })
 
+  it('reports the ballot count as total votes for budget and quadratic questions of an unweighted census', () => {
+    // castVotingPower has no answer for these ballot types; with no weights each ballot counts once.
+    const election = createElection({
+      census: { size: 2, weighted: false, authFields: ['memberNumber'] },
+      questions: [
+        createQuestion({
+          title: { default: 'Budget split' },
+          type: 'budget',
+          ballotProtocol: {
+            costExponent: 1,
+            costFromWeight: true,
+            maxCount: 2,
+            maxTotalCost: 20,
+            maxValue: 0,
+            maxVoteOverwrites: 0,
+            uniqueValues: false,
+          },
+        }),
+        createQuestion({
+          id: 'question-2',
+          title: { default: 'Quadratic split' },
+          type: 'quadratic',
+          ballotProtocol: {
+            costExponent: 2,
+            costFromWeight: false,
+            maxCount: 2,
+            maxTotalCost: 0,
+            maxValue: 0,
+            maxVoteOverwrites: 0,
+            uniqueValues: false,
+          },
+        }),
+      ],
+    })
+    const results = createResults({
+      questions: [
+        createQuestionResults({
+          voteCount: 2,
+          results: [
+            ['0', '4'],
+            ['0', '2'],
+          ],
+        }),
+        createQuestionResults({
+          questionId: 'question-2',
+          voteCount: 2,
+          results: [
+            ['1', '0'],
+            ['0', '1'],
+          ],
+        }),
+      ],
+    })
+
+    const data = buildCertificateData({ election, results, t: translate, now: new Date('2026-01-03T10:00:00Z') })
+
+    expect(data.votingProcessQuestions.map((question) => question.totalVotes)).toEqual(['2', '2'])
+    expect(data.votingProcessQuestions.map((question) => question.votingPowerUsed)).toEqual(['2', '2'])
+  })
+
   it('reports the cast power of an approval question, not the sum of its dense histogram', () => {
     // Dense approval: each option row holds the weight that left it unselected and selected.
     // Both rows total the 10 of power cast; the column total would double it.
