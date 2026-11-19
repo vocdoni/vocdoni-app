@@ -97,5 +97,8 @@
     "voted_question_description": "Your vote id for \"{{ title }}\" is {{ id }}.",
     "voted_title": "Your vote was successfully cast!",
     "weight": "Your voting power is: "
+  },
+  "csp": {
+    "authenticate": "Identify"
   }
 }
