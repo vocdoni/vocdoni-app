@@ -154,6 +154,9 @@ describe('ProcessView navigation', () => {
     unmount()
 
     renderWithChain('vocdoni/TEST/1')
+    await waitFor(() => {
+      expect(screen.getByText('End vote')).toBeInTheDocument()
+    })
     expect(document.querySelector('a[href$="/process/up-1"]')).toBeNull()
   })
 

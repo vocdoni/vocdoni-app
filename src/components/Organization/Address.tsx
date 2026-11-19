@@ -61,7 +61,7 @@ const AddressBtn = ({ ...props }) => {
 
           <MenuItem value='open-explorer' disabled={!explorerOrganization} asChild>
             <Button
-              onClick={() => window.open(explorerOrganization, '_blank')}
+              onClick={() => explorerOrganization && window.open(explorerOrganization, '_blank')}
               display='flex'
               justifyContent='start'
               alignItems='center'

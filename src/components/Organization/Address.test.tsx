@@ -55,8 +55,13 @@ describe('AddressBtn', () => {
         <AddressBtn />
       </ChakraProvider>
     )
+    const open = vi.spyOn(window, 'open').mockReturnValue(null)
+
     await userEvent.click(screen.getByRole('button'))
+    await userEvent.click(screen.getByText('open_in_explorer'))
 
     expect(screen.getByText('open_in_explorer').closest('[data-disabled]')).not.toBeNull()
+    expect(open).not.toHaveBeenCalled()
+    open.mockRestore()
   })
 })

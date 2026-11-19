@@ -1,4 +1,4 @@
-import { explorerUrl, VocdoniApiClient } from '@vocdoni/api-client'
+import { VOCDONI_NETWORKS, VocdoniApiClient } from '@vocdoni/api-client'
 import { getVocdoniNetwork } from '~utils/vocdoni-network'
 
 // Resolves the Vocdoni network configuration from the runtime environment.
@@ -6,7 +6,7 @@ import { getVocdoniNetwork } from '~utils/vocdoni-network'
 // useAppEnv().VOCDONI_ENVIRONMENT; server code passes getServerAppEnv().VOCDONI_ENVIRONMENT.
 export const getVocdoniClientConfig = (environment: string = 'dev') => {
   const clientEnv = getVocdoniNetwork(environment)
-  return { clientEnv, explorerUrl: explorerUrl(clientEnv) }
+  return { clientEnv, explorerUrl: VOCDONI_NETWORKS[clientEnv].explorer }
 }
 
 // Unauthenticated v2 SaaS client for SSR public page loads. `lang` is a plain value,
