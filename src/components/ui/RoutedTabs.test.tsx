@@ -8,7 +8,7 @@ const tabs = [
 ]
 
 describe('RoutedTabs', () => {
-  it('renders the routed content in the panel the selected tab controls', () => {
+  it('renders the routed content in the panel the selected tab controls', async () => {
     render(
       <TestMemoryRouter initialEntries={['/admin/second']}>
         <Routes>
@@ -20,7 +20,8 @@ describe('RoutedTabs', () => {
       </TestMemoryRouter>
     )
 
-    const tab = screen.getByRole('tab', { name: 'Second', selected: true })
+    // TabsRoot updates its state just after mount; findByRole awaits that inside act
+    const tab = await screen.findByRole('tab', { name: 'Second', selected: true })
     const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '')
     expect(panel).not.toBeNull()
     expect(panel).toContainElement(screen.getByText('Second content'))

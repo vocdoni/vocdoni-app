@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { resolveCssVar, useCheckoutAppearance } from './stripe'
 
 vi.mock('~theme/color-mode', () => ({
@@ -93,7 +93,10 @@ describe('useCheckoutAppearance', () => {
     try {
       await waitFor(() => expect(result.current.appearance?.variables?.colorText).toBe('#eeeeee'))
     } finally {
-      document.documentElement.classList.remove('dark')
+      // The observer's refresh is a state update: run it inside act so it is not reported as unwrapped
+      await act(async () => {
+        document.documentElement.classList.remove('dark')
+      })
     }
   })
 })
