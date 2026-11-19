@@ -9,4 +9,8 @@ describe('ElectionResults recipe', () => {
     expect(Voted.base.description).toHaveProperty(['& a', 'color'], 'link.fg')
     expect(Voted.base.description).toHaveProperty(['& a', 'textDecoration'], 'underline')
   })
+
+  it('lets a long vote id wrap when it has no explorer link', () => {
+    expect(Voted.base.description).toHaveProperty('overflowWrap', 'anywhere')
+  })
 })

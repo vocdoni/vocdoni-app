@@ -402,6 +402,8 @@ export const Voted = defineSlotRecipe({
   slots: votedAnatomy,
   base: {
     description: {
+      // Without an explorer the vote id is plain text, so the line has to wrap it on a phone.
+      overflowWrap: 'anywhere',
       // The vote id is a bare <a> inside each line's <p>, so it takes the `link` recipe's base.
       '& a': {
         ...link.base,
