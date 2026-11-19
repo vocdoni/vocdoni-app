@@ -11,8 +11,7 @@ const normalizeMemberPassword = (password: string): string => password.trim().no
  *
  * where NFC is Unicode normalization form C (so an accented password typed or pasted decomposed hashes the
  * same as the precomposed one) and canonicalAddress is `0x` plus the lowercase address (normalizeOrganizationAddress).
- * Organization reads return the address `0x`-prefixed and checksummed while older reads returned it
- * bare: hashing anything but the canonical form would lock every voter out.
+ * The address may arrive checksummed or bare: hashing anything but the canonical form would lock every voter out.
  */
 export const hashMemberPassword = async (orgAddress: string, password: string): Promise<string> => {
   const address = normalizeOrganizationAddress(orgAddress)

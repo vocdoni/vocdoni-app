@@ -3,8 +3,8 @@ import type { ProcessCheckoutRequest, ProcessPaymentStatusResponse } from '@vocd
 import { useMemo } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 
-// The id may come from the URL (?draftId=) or from storage; one that is not a process id could point
-// the request at another endpoint (see isProcessId), so it is refused instead
+// The id may come from the URL (?draftId=) or from storage. Anything but a 24-hex process id is refused
+// here, since the SDK only encodes path segments and does not validate them.
 export const validProcessId = (processId: string) => {
   if (!isProcessId(processId)) throw new Error(`invalid process id: ${processId}`)
   return processId

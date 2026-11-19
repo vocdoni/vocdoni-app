@@ -566,11 +566,8 @@ export const buildCertificateData = ({
           const questionResults = questionsResults.get(question.id)
           const decoded = decodedByQuestionId.get(question.id)
           const decodedChoices = decoded?.filter((entry) => entry.choice !== 'abstain')
-          // `decodeQuestionResults` always appends an abstain bucket for pick-slot
-          // multichoice, even when the protocol reserves no sentinel headroom and the
-          // count is therefore structurally stuck at zero. `isAbstainVisible` is the rule
-          // `<ElectionResults />` applies too, so the report and the UI agree on the row
-          // count: the bucket shows only when abstaining is possible, or the tally says it happened.
+          // Decoding always adds an abstain bucket, which is stuck at zero unless abstaining is possible.
+          // `isAbstainVisible` is the rule `<ElectionResults />` uses too, so both show the same rows.
           const decodedAbstain = decoded?.find((entry) => entry.choice === 'abstain')
           const abstainEntry =
             decodedAbstain && isAbstainVisible(question, decodedAbstain.votes) ? decodedAbstain : undefined
