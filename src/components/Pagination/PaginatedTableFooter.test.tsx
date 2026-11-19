@@ -44,7 +44,7 @@ vi.mock('@chakra-ui/react', async () => {
         },
         children
       ),
-    Text: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) =>
+    Text: ({ children, textStyle, ...props }: { children?: ReactNode; textStyle?: unknown; [key: string]: unknown }) =>
       React.createElement('span', props, children),
   }
 })

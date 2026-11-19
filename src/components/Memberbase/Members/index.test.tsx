@@ -11,7 +11,7 @@ const outletContext = vi.hoisted(() => ({ debouncedSearch: '' }))
 // MembersTable mounts filters, drawers and the delete modal that hit member/group
 // queries on render; stub them so the test stays focused on the breakpoint swap.
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ bearedFetch: vi.fn().mockResolvedValue(undefined) }),
+  useAuth: () => ({ bearedFetch: vi.fn().mockResolvedValue(null) }),
 }))
 
 vi.mock('~src/queries/members', async (importOriginal) => {

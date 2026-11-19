@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { screen, waitFor } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ApiErrorCode } from '@vocdoni/api-client'
 import { ApiError } from '~components/Auth/api'
@@ -165,6 +165,8 @@ describe('MemberManager edit', () => {
 
     expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
     expect(screen.queryByText(/invalid email/i)).not.toBeInTheDocument()
+    // A FieldRoot update trails the rerender; flush it inside act
+    await act(async () => {})
   })
 
   it('still sends the phone removal after a refetch of the same member', async () => {

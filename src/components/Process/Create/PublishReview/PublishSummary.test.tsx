@@ -31,8 +31,15 @@ const form: Process = {
   census: { credentials: ['memberNumber'], use2FA: true, use2FAMethod: 'email' },
 }
 
-// The steps name the dialog and read its context, so they render inside its root, as they do in PublishDialog
-const inDialog = (step: ReactElement) => <Dialog.Root open>{step}</Dialog.Root>
+// The steps name the dialog and read its context, so they render inside its root and content, as they do in
+// PublishDialog. Without the content, zag's dismissable layer warns that its node is missing
+const inDialog = (step: ReactElement) => (
+  <Dialog.Root open>
+    <Dialog.Positioner>
+      <Dialog.Content>{step}</Dialog.Content>
+    </Dialog.Positioner>
+  </Dialog.Root>
+)
 
 const setup = (props: Partial<PublishSummaryProps> = {}) => {
   const handlers = { onKeepEditing: vi.fn(), onPrimary: vi.fn(), onClose: vi.fn(), onRetryPrice: vi.fn() }
@@ -66,16 +73,17 @@ describe('PublishSummary', () => {
     expect(screen.queryByText('Anonymous vote')).not.toBeInTheDocument()
   })
 
-  it('offers a free test run only when the census alone makes the vote paid', () => {
+  it('offers a free test run when the census alone makes the vote paid', () => {
     const noSms = price({ lines: [{ kind: 'base', description: 'base', amountCents: 15716 }], totalCents: 15716 })
-    const { unmount } = render(
+    render(
       inDialog(
         <PublishSummary form={form} voters={312} price={noSms} canTopUp onKeepEditing={vi.fn()} onPrimary={vi.fn()} />
       )
     )
     expect(screen.getByText(/pick a census of 25 people or fewer: it's free/)).toBeInTheDocument()
-    unmount()
+  })
 
+  it('does not offer a free test run when SMS is part of the cost', () => {
     setup()
     expect(screen.queryByText(/pick a census of 25 people or fewer/)).not.toBeInTheDocument()
   })

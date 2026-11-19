@@ -860,23 +860,41 @@ describe('the wizard around the publish dialog', () => {
     // A draft id stored by an earlier test makes the save an update: both refuse
     mockApiClient.elections.create.mockRejectedValue(new Error('backend down'))
     mockApiClient.elections.update.mockRejectedValue(new Error('backend down'))
+    // The failed saves log the backend error on purpose; any other error still reaches the console
+    const realError = console.error.bind(console)
+    const isBackendDown = (args: unknown[]) => args[1] instanceof Error && args[1].message === 'backend down'
+    const error = vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+      if (!isBackendDown(args)) realError(...args)
+    })
     const writes = () =>
       mockApiClient.elections.create.mock.calls.length + mockApiClient.elections.update.mock.calls.length
-    renderWizard('/admin/processes/create')
+    const backendDownLogs = () => error.mock.calls.filter(isBackendDown).length
 
-    const user = userEvent.setup()
-    await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
-    await user.click(screen.getByRole('button', { name: 'Publish' }))
+    try {
+      renderWizard('/admin/processes/create')
 
-    await waitFor(() => expect(writes()).toBeGreaterThan(0))
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(mockApiClient.elections.publish).not.toHaveBeenCalled()
+      const user = userEvent.setup()
+      await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+      await user.click(screen.getByRole('button', { name: 'Publish' }))
 
-    // Auto-save picks up again after the failed save
-    const before = writes()
-    await user.type(screen.getByPlaceholderText('Voting Process Title'), ' edited')
-    await user.tab()
-    await waitFor(() => expect(writes()).toBeGreaterThan(before))
+      await waitFor(() => expect(writes()).toBeGreaterThan(0))
+      // A blur auto-save may fail first; this log is the only sign the publish path itself gave up
+      await waitFor(() =>
+        expect(error).toHaveBeenCalledWith('Error saving the draft to publish:', new Error('backend down'))
+      )
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(mockApiClient.elections.publish).not.toHaveBeenCalled()
+
+      // Auto-save picks up again after the failed save, and logs that failure too
+      const before = writes()
+      const failuresBefore = backendDownLogs()
+      await user.type(screen.getByPlaceholderText('Voting Process Title'), ' edited')
+      await user.tab()
+      await waitFor(() => expect(writes()).toBeGreaterThan(before))
+      await waitFor(() => expect(backendDownLogs()).toBeGreaterThan(failuresBefore))
+    } finally {
+      error.mockRestore()
+    }
   })
 
   it('hands a published draft to the post-publish navigation', async () => {
