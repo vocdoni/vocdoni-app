@@ -10,6 +10,7 @@ import {
   votedAnatomy,
   voteWeightAnatomy,
 } from '~theme/react-components/anatomy/election'
+import { link } from './typography'
 
 export const ElectionDescription = defineRecipe({
   base: {
@@ -401,23 +402,10 @@ export const Voted = defineSlotRecipe({
   slots: votedAnatomy,
   base: {
     description: {
-      // The vote id is a bare <a> inside each line's <p>, so the link role is styled here
-      // (mirrors the `link` recipe), not by Chakra's preflight.
+      // The vote id is a bare <a> inside each line's <p>, so it takes the `link` recipe's base.
       '& a': {
+        ...link.base,
         wordBreak: 'break-all',
-        color: 'link.fg',
-        textDecoration: 'underline',
-        textDecorationThickness: 'from-font',
-        textUnderlineOffset: '0.15em',
-        _dark: {
-          color: 'link.fg',
-          _hover: {
-            color: 'link.fg.hover',
-          },
-        },
-        _hover: {
-          color: 'link.fg.hover',
-        },
       },
     },
   },
