@@ -25,7 +25,7 @@ Read the code paths named here before changing them; the comments in them record
 4. **Never claim success without proof.** A timeout means "may still land", never "failed". Without the sessionStorage
    snapshot (blocked in private windows, every access is try/catch) the return pages show neutral copy.
 5. **No modal focus trap around Stripe.** A trapped dialog breaks Stripe's 3D Secure window. The census checkout renders
-   inline; the publish dialog turns non-modal once Stripe mounts and makes the page behind it `inert`.
+   inline; the publish dialog turns non-modal from the card step on and makes the page behind it `inert`.
 6. **Stripe's appearance is the only place in billing where raw colours are allowed** (`src/components/Pricing/stripe.ts`, a listed
    style-inventory exception): its iframe cannot read CSS variables. Everything around it uses theme roles.
 7. **Prices come from the backend.** No price tables, bands or estimates in the UI. A price query in error shows no
@@ -89,8 +89,11 @@ The request and response types are in `@vocdoni/api-types` (`ProcessQuote`, `Pro
   wallet, conflict, opening, checkout, publishing, waiting, published, unconfirmed, unpaid, timeout, error). Opening
   POSTs the checkout (a 400 means the wallet now covers it: publish from the wallet once); the card step
   (`CardStep.tsx`) is Stripe Checkout Elements (`BillingAddressElement`, `TaxIdElement`, `PaymentElement`) and pays the
-  shortfall plus any extra the user tops up. Once Stripe mounts, the dialog remounts non-modal and makes the wizard
-  `inert`. It then waits up to 15 minutes for publication. Its look is the `publishReview` slot recipe.
+  shortfall plus any extra the user tops up. From the card step on (its `opening` skeleton included), the dialog
+  remounts non-modal and makes the wizard `inert`. It then waits up to 15 minutes for publication. Its look is the
+  `publishReview` slot recipe. That feature-named recipe is the pattern DESIGN.md's "Patterns that have gone wrong
+  before" flags: when changing the dialog's look, compose the shared pieces per the `ui-change` skill rather than
+  extending `publishReview`.
 - **Return from a redirect** (3D Secure, bank redirects). Stripe appends `/{sessionId}` to the return routes in
   `src/router/routes/index.ts` (wizard, billing settings, integrator billing, census checkout). The page reads its
   sessionStorage snapshot (`process-checkout-pending`, `wallet-topup-pending`, `census-checkout-pending`), resumes

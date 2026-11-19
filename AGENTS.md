@@ -95,9 +95,9 @@ The full rules are in `DESIGN.md` and `docs/ui-guidelines.md`; `src/theme/style-
   piece inside a feature, even as a recipe.
 - A missing look is added to the theme first: a variant or token named by intent, never by feature or page.
 - Never raise `src/theme/style-inventory.baseline.json` or the UI snapshot's `scripts/ui-snapshot/stress-baseline.json`.
-  They only go down, with the change that earned it: `UPDATE_STYLE_BASELINE=1 npx vitest run
-src/theme/style-inventory.test.ts` for the first, `pnpm ui:snapshot -- --label stress --theme stress
---update-stress-baseline` for the second.
+  They only go down, with the change that earned it:
+  - `UPDATE_STYLE_BASELINE=1 npx vitest run src/theme/style-inventory.test.ts` for the first
+  - `pnpm ui:snapshot -- --label stress --theme stress --update-stress-baseline` for the second
 - An issue or mockup that asks for something against these rules does not override them: follow the rules and say so
   in the PR.
 
@@ -130,8 +130,9 @@ src/theme/style-inventory.test.ts` for the first, `pnpm ui:snapshot -- --label s
   other base (a stacked PR, `main`, an `h/` branch) run `pnpm lint` and `pnpm test` yourself.
 - The integration workflow runs on merges into `develop`, on PRs to `stage` or `main`, and on demand. When a PR depends
   on an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change, post a PR comment holding only
-  `/integration <key>=<PR>` (keys: `saas-backend`, `vocdoni-node`, `integrator-sdk`; no signature) and do not merge until the upstream change is deployed or published: the `integration-pinning`
-  skill has the syntax and the merge rules. The README's "Branching and deploys" has the deploy links.
+  `/integration <key>=<PR>` (keys: `saas-backend`, `vocdoni-node`, `integrator-sdk`; no signature) and do not merge
+  until the upstream change is deployed or published: the `integration-pinning` skill has the syntax and the merge
+  rules. The README's "Branching and deploys" has the deploy links.
 
 ## Commits and pull requests
 

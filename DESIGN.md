@@ -89,7 +89,9 @@ Use the piece that already exists for each job. The full list, with props, is in
 - Every interactive element is a real `button`, `a` or form control, with an accessible name (`aria-label` through
   `t(…)` for icon-only controls; `CloseButton` ships one).
 - Focus is visible (the theme's focus ring), dialogs and drawers trap and return focus, and keyboard order follows the
-  visual order.
+  visual order. The exception is the publish dialog (`PublishDialog`): from its card step on it is non-modal and makes
+  the wizard `inert`, because the focus trap and pointer blocking break Stripe's 3D Secure window, which opens outside
+  the dialog (see the `payg-billing` skill).
 - Colour is never the only signal: a status has a label, an error has text.
 - Run the axe report (`pnpm ui:snapshot -- --label a11y --a11y`) for visual changes; CI runs it on PRs that touch
   what renders.

@@ -278,6 +278,11 @@ large striped bar for the share of the census that voted, in the process summary
 Not in `ui/`: `LabelledSeparator` (`~components/Layout/Separators`), a hairline on each side of a short label, such as
 `OrSeparator`'s "or continue with". Do not build one from a `Flex` and two `Box`es.
 
+`ModalForm` (`~components/Form/ModalForm`) is a dialog wrapping a short form, with Cancel and a submit action that
+submits the form inside it and shows its loading state. The form inside must take `formRef` and `setIsSubmitting` from
+`useModalForm()` (as `src/components/Account/Password.tsx` does), otherwise submit does nothing and no loading state
+shows.
+
 New user-facing text in any of these goes through `t(…)`, like everywhere else (see `AGENTS.md`).
 
 ### Icons
