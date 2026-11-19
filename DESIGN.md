@@ -13,14 +13,17 @@ read it before writing a style, and use the `ui-change` skill for the step-by-st
 2. **Reuse before you build.** The screen you need is almost always made of pieces that exist: a page container, a page
    title, section headers, cards, a drawer, a confirmation, a status badge, an empty state. Building a second version of
    one of them, even "just for this feature", is the most common way a change goes wrong.
-3. **One meaning, one look.** Two things that mean the same (a section title, a destructive action, an error) look the
+3. **Defaults first.** A shared piece or recipe variant already looks right: use it bare, and add a prop only for
+   what it does not give. Look props on a `Box`, `Flex` or `Stack`, even with tokens, mean a variant or shared
+   component is missing or being ignored. Less styling code is better.
+4. **One meaning, one look.** Two things that mean the same (a section title, a destructive action, an error) look the
    same everywhere. A new look for an existing meaning is a design decision for the team, not something a PR introduces
    on the side.
-4. **Phone first for voters, desk first for organizers.** Public process pages are mostly opened from an email on a
+5. **Phone first for voters, desk first for organizers.** Public process pages are mostly opened from an email on a
    phone. The dashboard is mostly used on a laptop, but must still work on a phone.
-5. **Accessible by default.** Every control is reachable and usable with a keyboard, labelled, and readable in both
+6. **Accessible by default.** Every control is reachable and usable with a keyboard, labelled, and readable in both
    colour modes. Contrast is tested (`textContrast.test.ts`, `palette.test.ts`) and an axe report runs in CI.
-6. **Honest states.** Every screen that loads data has a loading, empty and error state, and anything that costs money
+7. **Honest states.** Every screen that loads data has a loading, empty and error state, and anything that costs money
    or cannot be undone says so before it happens.
 
 ## The app's surfaces
@@ -112,7 +115,8 @@ the app's theme does, and the redesign will change the theme, not components.
    purpose), then add it to the theme first and document it in `docs/ui-guidelines.md`. Never a raw value, and never a
    recipe, variant or token named after the feature or the page (`publishReview`, `pricing-card`).
 4. **Keep layout in the component, look in the theme.** Flex, grid, gap and responsive structure belong with the
-   component; colour, type, radius, borders and shadows belong to tokens and recipes.
+   component; colour, type, radius, borders and shadows belong to tokens and recipes. A look prop on a `Box`, `Flex` or
+   `Stack` is a sign the right variant or component was not used.
 5. **Check it like the rest.** `pnpm lint` and `pnpm test` (style inventory, theme integrity, contrast), both colour
    modes, with and without `PRIMARY_COLOR`, and before and after screenshots in the PR.
 
@@ -126,3 +130,6 @@ the app's theme does, and the redesign will change the theme, not components.
 - An issue that prescribes an implementation that breaks these rules ("put all styles in one recipe"). The rules win;
   point it out in the PR.
 - A `_dark` block, a `useColorModeValue` colour or a hex in a component "just for this case": add the semantic token.
+- A `Box` or `Flex` carrying background, border, radius, shadow and padding tokens to imitate a `Card`, a
+  `SectionHeader` or an alert. Every value was a token, so every check passed; the fix was to delete the props and use
+  the existing piece.

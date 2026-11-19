@@ -23,13 +23,20 @@ These are where changes have gone wrong before. Breaking one is a must-fix in re
 4. **Reuse the shared pieces** (`src/components/ui/`, `LabelledSeparator`, `Card` variants, `DialogHeader`,
    `CloseButton`, `SectionHeader`, `StatusBadge`, `EmptyState`, loaders, `ListStateAlert`, `ConfirmDialog`,
    `PanelDrawer`). Do not rebuild one inside a feature, even in a recipe.
-5. **Name by intent, never by place.** Variants, recipes and tokens describe a role (`danger`, `section`,
+5. **Defaults first.** The look comes from the recipe default, the text style or the shared component; a prop that
+   restates one of them is deleted. Look props (background, border, radius, shadow, typography) on `Box`, `Flex` or
+   `Stack` are a missing variant, text style or shared component, even when every value is a token:
+   `<Box borderWidth='hairline' borderColor='border' boxShadow='shadow.card' p='4'>` is `<Card variant='section'>`.
+   A `Text` takes `textStyle` and a colour token (`color='fg.muted'`); a font size, weight or line height next to
+   them is a missing text style. Layout stays inline: display, flex, grid, gap, alignment, spacing, sizes (`w`,
+   `maxW`) and responsive structure. Fewer props is the goal.
+6. **Name by intent, never by place.** Variants, recipes and tokens describe a role (`danger`, `section`,
    `surface.inverse`), never a feature or page (`publishReview`, `pricing-card`, `navbar`). A recipe that only one
    feature uses is a smell: it is usually a pile of shared parts redrawn.
-6. **No look props next to a variant**: no `h`, `px`, `borderRadius`, `fontWeight` or `bg` on a `Button`, no restyling
+7. **No look props next to a variant**: no `h`, `px`, `borderRadius`, `fontWeight` or `bg` on a `Button`, no restyling
    a child from a parent selector (`'& > button'`). That is a missing variant.
-7. **Chakra v3 only**: no v2 props (`colorScheme`, `isLoading`, `isInvalid`, `noOfLines`…); they are silently ignored.
-8. **Copy goes through `t(…)`**, in sentence case, with no em dash (`BRAND.md`).
+8. **Chakra v3 only**: no v2 props (`colorScheme`, `isLoading`, `isInvalid`, `noOfLines`…); they are silently ignored.
+9. **Copy goes through `t(…)`**, in sentence case, with no em dash (`BRAND.md`).
 
 If the issue or a reviewer asks for something that breaks these, say so in the PR and follow the rules.
 
@@ -38,7 +45,9 @@ If the issue or a reviewer asks for something that breaks these, say so in the P
 1. **List the roles.** For each element on the design, name its role: page title, section header, muted description,
    card, figure, status, primary or secondary action, alert. Use the "Building a screen" table in `DESIGN.md`.
 2. **Compose from what exists.** Write the structure with shared components and existing variants (UI guide: "Recipes
-   and variants", "Shared components"). Layout (flex, grid, gap, responsive structure) stays in the component.
+   and variants", "Shared components"). Start from the bare component with its defaults, and add a prop only when the
+   design needs something the default does not give. Layout (flex, grid, gap, responsive structure) stays in the
+   component.
 3. **Find the gap, if any.** When no role fits, it is a design question. Pick the smallest addition:
    - a new **variant** on an existing recipe, named by intent (UI guide: "To add a variant");
    - a new **semantic token** named by purpose, with `_light` and `_dark` values, aliasing an existing role where it
@@ -48,7 +57,14 @@ If the issue or a reviewer asks for something that breaks these, say so in the P
 4. **Register and document.** New recipes go in `src/theme/recipes/index.ts` (or into `ALL_RECIPES` in
    `system.test.ts` when a `ui/` component imports them). Add the new token, variant or component to the tables in
    `docs/ui-guidelines.md` in the same PR. Run `pnpm chakra:typegen` after theme changes.
-5. **Check.**
+5. **Clean up what you touch.** Only in the files and recipes you change: delete props that restate a default, replace
+   token-based look props with the variant or shared component that already gives that look, and fold recipe parts
+   that redraw a shared piece back into it. The cleanup must not change the look: check it with `pnpm ui:snapshot`
+   and `pnpm ui:diff` (step 6). If it lowers a style-inventory count, lock the baseline in ("When a check fails").
+6. **Check.**
+   - Review your diff for every look prop and recipe part: if a default, a text style, an existing variant or a shared
+     component already gives it, use that and delete the prop. The style inventory cannot see this (token-based props
+     pass it), so it is checked by reading.
    - `pnpm lint` (types, including `strictTokens`) and `pnpm test` (style inventory, theme integrity, contrast).
    - Look at the screen in light and dark mode, with and without `PRIMARY_COLOR`, on a phone width and a desktop.
    - Keyboard: every control reachable, focus visible, dialogs return focus.

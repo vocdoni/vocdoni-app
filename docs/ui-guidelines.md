@@ -13,6 +13,11 @@ A component never decides how it looks. It picks a role (a token, a text style, 
 and the theme decides what that role looks like. If the look you need does not exist, add it to the theme first, then
 use it.
 
+Rely on the theme's defaults. The bare shared component or default variant is the starting point: a prop that restates
+a default is removed, and look props on `Box`, `Flex` or `Stack` mean a missing variant, text style or shared
+component, even when every value is a token. A `Text` takes its role from `textStyle` and a colour token (see
+[Text](#text)). The style inventory does not catch this; review does.
+
 The payoff: `PRIMARY_COLOR` recolours the accent, dark mode flips from CSS (no flash on SSR pages), and a redesign
 touches `src/theme/` instead of hundreds of components.
 
@@ -40,7 +45,7 @@ component. The inventory test rejects hex and named colours outright; raw palett
 [The checks](#the-checks)).
 
 ```tsx
-<Box bg='surface.card' borderColor='border' color='fg.muted' />
+<Text color='fg.muted'>…</Text>
 ```
 
 Token families, each in its own module under `src/theme/` and spread into `colors` in `semantic.ts`:

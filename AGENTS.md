@@ -16,10 +16,12 @@ the files and skills below. Read the ones your task touches before you start, no
 | `e2e/README.md`, `integration/README.md`, `scripts/ui-snapshot/README.md`, `docs/analytics.md` | Their areas                                                                |
 
 The project skills live in `.agents/skills/` (read by Codex, Gemini CLI, Copilot, OpenCode and others) and are
-symlinked from `.claude/skills/` for Claude Code. An agent that does not load skills reads `.agents/skills/<name>/SKILL.md`.
-The symlinks need a checkout with symlinks enabled: on Windows, clone with `git clone -c core.symlinks=true …` (or
-set `git config --global core.symlinks true` first), with Developer Mode or admin rights. Otherwise they check out as text files, Claude Code finds no project skills and
-`scripts/agent-skills.test.ts` fails.
+symlinked from `.claude/skills/` for Claude Code. An agent that does not load skills reads
+`.agents/skills/<name>/SKILL.md`. The symlinks need a checkout with symlinks enabled: on Windows, clone with
+`git clone -c core.symlinks=true …` (or set `git config --global core.symlinks true` first), with Developer Mode or
+admin rights. Otherwise they check out as text files, Claude Code finds no project skills and
+`scripts/agent-skills.test.ts` fails. To fix an existing checkout, run `git config core.symlinks true`, then
+`git checkout -- .claude/skills`.
 Keep a skill current when you change what it describes, and add a new skill (plus its symlink and `.gitignore`
 exception) for knowledge that only some tasks need, instead of growing this file.
 
@@ -97,6 +99,9 @@ The full rules are in `DESIGN.md` and `docs/ui-guidelines.md`; `src/theme/style-
   margin, gap), numeric weight, and no colour-mode logic.
 - Reuse `src/components/ui/` and the existing recipe variants before building anything. Do not re-implement a shared
   piece inside a feature, even as a recipe.
+- Rely on defaults: use a shared component or variant bare, and delete a prop that restates its default. Look props
+  on `Box`, `Flex` or `Stack` (background, border, radius, shadow, typography) are a missing variant, text style or
+  shared component even when every value is a token; layout stays inline. Clean up redundant styles in files you touch.
 - A missing look is added to the theme first: a variant or token named by intent, never by feature or page.
 - Never raise `src/theme/style-inventory.baseline.json` or the UI snapshot's `scripts/ui-snapshot/stress-baseline.json`.
   They only go down, with the change that earned it:
