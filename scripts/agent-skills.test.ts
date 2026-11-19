@@ -18,13 +18,13 @@ function git(...args: string[]): string[] {
   return execFileSync('git', args, { cwd: root, encoding: 'utf8', env: gitEnv }).split('\n').filter(Boolean)
 }
 
-// An empty repository has no info/exclude and, with core.excludesFile disabled, no global excludes: only the repo's
-// .gitignore files apply. `--no-index` checks tracked files too.
+// An empty repository made without a template has no info/exclude and, with core.excludesFile disabled, no global
+// excludes: only the repo's .gitignore files apply. `--no-index` checks tracked files too.
 // Created in beforeAll, so a module-scope failure below leaves no temp directory behind.
 let emptyRepo: string
 beforeAll(() => {
   emptyRepo = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-skills-'))
-  execFileSync('git', ['init', '-q', emptyRepo], { env: gitEnv })
+  execFileSync('git', ['init', '-q', '--template=', emptyRepo], { env: gitEnv })
 })
 afterAll(() => {
   if (emptyRepo) fs.rmSync(emptyRepo, { recursive: true, force: true })
@@ -118,7 +118,7 @@ describe('project agent skills', () => {
     ).toBe(true)
 
     const target = fs.lstatSync(path.join(root, link), { throwIfNoEntry: false })?.isSymbolicLink()
-      ? fs.readlinkSync(path.join(root, link))
+      ? fs.readlinkSync(path.join(root, link)).replaceAll('\\', '/') // Git for Windows writes backslash targets
       : undefined
     expect(target, `${link} must point at ../../.agents/skills/${name} (relative)`).toBe(`../../.agents/skills/${name}`)
   })
