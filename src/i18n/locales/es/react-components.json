@@ -23,6 +23,62 @@
     "end_process_title": "Finalizar votación",
     "title": "Confirmar"
   },
+  "csp": {
+    "auth_failed": "Autenticación fallida",
+    "authenticate": "Identificarse",
+    "close": "Cerrar",
+    "code_info": "Recibirás un código único en el medio seleccionado para verificar tu identidad y completar la autenticación.",
+    "code_sent": "Código de verificación enviado",
+    "contact_match_help": "Debe coincidir con el registrado en el sistema",
+    "errors": {
+      "code_rejected": "El código no es válido o ha caducado. Revísalo o empieza de nuevo para obtener uno nuevo.",
+      "credentials_or_password_incorrect": "No hemos podido verificar tu identidad. Comprueba tus credenciales y tu contraseña e inténtalo de nuevo.",
+      "missing_data": "Rellena todos los campos.",
+      "participant_not_found": "El votante no figura en el censo o las credenciales proporcionadas son incorrectas.",
+      "requests_on_cooldown": "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.",
+      "resend_limit": "No puedes pedir más códigos para este intento. Empieza de nuevo para obtener uno nuevo.",
+      "too_many_attempts": "Demasiados intentos. Vuelve a intentarlo más tarde.",
+      "too_many_attempts_hours_many": "Demasiados intentos. Vuelve a intentarlo en {{count}} horas.",
+      "too_many_attempts_hours_one": "Demasiados intentos. Vuelve a intentarlo en {{count}} hora.",
+      "too_many_attempts_hours_other": "Demasiados intentos. Vuelve a intentarlo en {{count}} horas.",
+      "too_many_attempts_minutes_many": "Demasiados intentos. Vuelve a intentarlo en {{count}} minutos.",
+      "too_many_attempts_minutes_one": "Demasiados intentos. Vuelve a intentarlo en {{count}} minuto.",
+      "too_many_attempts_minutes_other": "Demasiados intentos. Vuelve a intentarlo en {{count}} minutos.",
+      "zero_voting_weight": "No tienes suficiente poder de voto para acceder a la votación."
+    },
+    "fields": {
+      "birthDate": "Fecha de nacimiento",
+      "contact": "Contacto",
+      "email": "Correo electrónico",
+      "email_or_phone": "Correo electrónico o teléfono",
+      "memberNumber": "Número de socio",
+      "name": "Nombre",
+      "nationalId": "DNI/NIE",
+      "password": "Contraseña",
+      "phone": "Teléfono",
+      "surname": "Apellidos"
+    },
+    "identify": "Identificarse",
+    "logout": "Cerrar sesión",
+    "modal_title": "Autenticación",
+    "password_unavailable": "No se puede comprobar la contraseña en este momento. Recarga la página e inténtalo de nuevo.",
+    "receive_code": "Recibir código",
+    "step1": {
+      "footer": "Si tienes algún problema, contacta con tu organización.",
+      "helper": "Hemos enviado un código al número de teléfono o al correo electrónico indicados. Si has elegido recibirlo por correo electrónico, revisa también la carpeta de correo no deseado.",
+      "resend": "Reenviar código",
+      "resend_failed": "Error al reenviar el código",
+      "resend_failed_detail": "Error al reenviar el código: {{ detail }}",
+      "resend_success": "Código reenviado correctamente",
+      "start_over": "Vuelve a empezar",
+      "subtitle": "Introduce el código de verificación",
+      "validation": {
+        "length": "El código debe tener 6 dígitos",
+        "required": "El código es obligatorio"
+      }
+    },
+    "terms_required": "Debes aceptar las condiciones para continuar."
+  },
   "empty": "Aparentemente este proceso no tiene preguntas",
   "errors": {
     "not_voted_in_ended_election": "Has firmado pero no has votado en esta elección finalizada.",
@@ -71,14 +127,6 @@
     "from_begin_to_end": "Votación desde {{ begin }} hasta {{ end }}",
     "paused_end": "Finaliza en {{ distance }}",
     "paused_start": "Comienza en {{ distance }}"
-  },
-  "spreadsheet": {
-    "access_button": "Identificarse",
-    "anon_sik_helper": "Esto garantiza que el voto sea anónimo",
-    "anon_sik_label": "Define una contraseña para tu voto",
-    "close": "Cerrar",
-    "logout": "Logout",
-    "modal_title": "Autenticación"
   },
   "statuses": {
     "canceled": "Cancelada",
