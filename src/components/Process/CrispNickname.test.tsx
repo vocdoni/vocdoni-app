@@ -137,19 +137,18 @@ describe('Crisp nickname', () => {
     expect(queue).toEqual([['set', 'user:nickname', [expected]]])
   })
 
-  it('sets the nickname again when a start-over identifies with another identity', async () => {
+  it('sets the nickname again when a start-over identifies with another contact on the same owner', async () => {
     const user = userEvent.setup()
     const { rerender } = render(tree(), { appEnv: { CRISP_WEBSITE_ID: 'site-1' } })
     await submitIdentity(user)
     setAuth({ challengePending: true, owner: 'owner-1' })
     rerender(tree())
 
-    // Start over keeps the challenge pending, so the change of owner is what marks the second identify.
+    // The owner is the voter's stable voterRef, and a start over keeps the challenge pending: nothing in the auth
+    // state changes, so the second submit is what has to trigger the push.
     await user.clear(screen.getByLabelText('First Name'))
     await user.type(screen.getByLabelText('First Name'), 'Grace')
     await user.click(screen.getByRole('button', { name: 'Receive Code' }))
-    setAuth({ owner: 'owner-2' })
-    rerender(tree())
 
     expect(queue).toEqual([
       ['set', 'user:nickname', ['name Ada']],
@@ -159,6 +158,17 @@ describe('Crisp nickname', () => {
     setAuth({ connected: true })
     rerender(tree())
     expect(queue).toHaveLength(2)
+  })
+
+  it('sets the nickname when the voter has no owner, as without a voterRef or Web Crypto', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(tree(), { appEnv: { CRISP_WEBSITE_ID: 'site-1' } })
+    await submitIdentity(user)
+
+    setAuth({ challengePending: true, owner: null })
+    rerender(tree())
+
+    expect(queue).toEqual([['set', 'user:nickname', ['name Ada']]])
   })
 
   it('does not push without CRISP_WEBSITE_ID', async () => {

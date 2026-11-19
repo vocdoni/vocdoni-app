@@ -1,14 +1,17 @@
 import { useElectionAuth } from '@vocdoni/react-components'
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppEnv } from '~src/app-env'
 
 // The identity the identify form last submitted, kept until the voter's flow starts. It is set on submit and taken
 // once the flow starts, so a failed submit only leaves a value that the next submit overwrites.
 let pendingIdentity: string | undefined
+// Told about every submit: a start over can keep the same owner and pending challenge, so no auth state changes.
+const stashListeners = new Set<() => void>()
 
 // `identity` is "<field> <value>" for the first typed field that is neither the password nor the contact.
 export const stashCrispIdentity = (identity: string | undefined) => {
   pendingIdentity = identity
+  stashListeners.forEach((listener) => listener())
 }
 
 const takeCrispIdentity = () => {
@@ -28,23 +31,28 @@ const pushCrispNickname = (identity: string) => {
   }
 }
 
-// Sets the Crisp nickname on every successful identify (auth0), so a start-over with another identity updates it.
-// Mount it inside the ElectionProvider, on a page that stays mounted while the voter identifies: a slot unmounts in
-// the render that connects the voter, so the observer must sit outside the slots.
+// Sets the Crisp nickname once auth0 accepts a submitted identity (a pending code or a connected voter), so a start
+// over with another contact updates it. The first push takes the identity, so the auth1 connect does not resend it.
+// Mount it inside the ElectionProvider and outside the slots: a slot unmounts in the render that connects the voter.
 export const CrispNicknameObserver = () => {
-  // `owner` is set by every successful auth0 and cleared by clear(), but the published type omits it.
-  const { owner } = useElectionAuth() as ReturnType<typeof useElectionAuth> & { owner?: string | null }
+  const { challengePending, connected } = useElectionAuth()
   const { CRISP_WEBSITE_ID } = useAppEnv()
-  const lastOwner = useRef(owner)
+  const [submissions, setSubmissions] = useState(0)
 
   useEffect(() => {
-    const identified = owner !== lastOwner.current && !!owner
-    lastOwner.current = owner
-    if (!identified) return
+    const onSubmit = () => setSubmissions((count) => count + 1)
+    stashListeners.add(onSubmit)
+    return () => {
+      stashListeners.delete(onSubmit)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!challengePending && !connected) return
 
     const identity = takeCrispIdentity()
     if (identity && CRISP_WEBSITE_ID) pushCrispNickname(identity)
-  }, [owner, CRISP_WEBSITE_ID])
+  }, [challengePending, connected, submissions, CRISP_WEBSITE_ID])
 
   return null
 }
