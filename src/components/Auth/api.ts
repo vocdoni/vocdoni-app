@@ -43,6 +43,8 @@ export enum ApiEndpoints {
   Password = 'users/password',
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
+  PasswordSetup = 'users/me/password/setup',
+  PasswordSetupVerify = 'users/me/password/setup/verify',
   Register = 'users',
   Verify = 'users/verify',
   VerifyCode = 'users/verify/code',
@@ -57,7 +59,9 @@ export enum ErrorCode {
   MalformedJSONBody = 40004,
   UserNotVerified = 40014,
   UserAlreadyVerified = 40015,
+  VerificationMaxAttempts = 40017,
   DraftLimitReached = 40031,
+  UserAlreadyHasPassword = 40045,
 }
 
 interface IApiError {
