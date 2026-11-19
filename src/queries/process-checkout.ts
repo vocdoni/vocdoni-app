@@ -1,8 +1,7 @@
-import { VocdoniApiError } from '@vocdoni/api-client'
+import { isProcessId, VocdoniApiError } from '@vocdoni/api-client'
 import type { ProcessCheckoutRequest, ProcessPaymentStatusResponse } from '@vocdoni/api-types'
 import { useMemo } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { isProcessId } from './process-price'
 
 // The id may come from the URL (?draftId=) or from storage; one that is not a process id could point
 // the request at another endpoint (see isProcessId), so it is refused instead

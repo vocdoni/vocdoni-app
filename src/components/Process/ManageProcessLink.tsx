@@ -1,4 +1,5 @@
 import { Icon, IconButton } from '@chakra-ui/react'
+import { isProcessId } from '@vocdoni/api-client'
 import { useElection } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { SettingsIcon } from '~theme/icons'
@@ -39,7 +40,7 @@ export const ManageProcessLink = () => {
 
   // New-model ids are Mongo ObjectIDs (exactly 24 hex chars) and must pass through untouched;
   // legacy election ids are vochain hex, which the dashboard route expects 0x-prefixed.
-  const dashboardId = /^[0-9a-f]{24}$/i.test(election.id) ? election.id : ensure0x(election.id)
+  const dashboardId = isProcessId(election.id) ? election.id : ensure0x(election.id)
   const manageLabel = t('process_actions.manage', { defaultValue: 'Manage in dashboard' })
 
   return (
