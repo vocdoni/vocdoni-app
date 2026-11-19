@@ -29,8 +29,9 @@ overrides:
   # Unreleased integrator-sdk builds (vocdoni-integrator-sdk#113 and #114 merged
   # onto main), packed into vendor/vocdoni/. The packages pin each other at the
   # unpublished versions, so the transitive copies must point at the same
-  # tarballs. Drop these, the vendor/ tarballs and the file: specs in
-  # package.json once the release is on npm.
+  # tarballs. Drop these, the vendor/ tarballs, the file: specs in
+  # package.json and the Dockerfile `COPY vendor ./vendor` line once the
+  # release is on npm.
   '@vocdoni/api-client': file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz
   '@vocdoni/api-types': file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz
   '@vocdoni/api-voting': file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz

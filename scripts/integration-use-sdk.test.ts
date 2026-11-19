@@ -95,6 +95,14 @@ describe('addOverrides', () => {
     expect(out).toBe("overrides:\n  '@vocdoni/sdk': 'file:/tmp/s.tgz'\n  axios: ^1.18.0\n")
   })
 
+  it('keeps a parent>child override of the package, which pins a nested copy', () => {
+    const nested = "overrides:\n  '@vocdoni/react-components@5>zod': ^3.25.0\n"
+    const out = addOverrides(nested, [{ name: '@vocdoni/react-components', spec: 'file:/tmp/r.tgz' }])
+    expect(out).toBe(
+      "overrides:\n  '@vocdoni/react-components': 'file:/tmp/r.tgz'\n  '@vocdoni/react-components@5>zod': ^3.25.0\n"
+    )
+  })
+
   it('does not treat a longer package name as a duplicate', () => {
     const out = addOverrides(workspace, [{ name: 'axios-retry', spec: 'file:/tmp/a.tgz' }])
     expect(out).toContain("  'axios-retry': 'file:/tmp/a.tgz'")

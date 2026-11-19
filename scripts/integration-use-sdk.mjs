@@ -24,6 +24,9 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 // YAML single-quoted scalar: the only escape is a doubled quote.
 const quote = (value) => `'${value.replace(/'/g, "''")}'`
 
+// Whether an override key pins the package itself (`name` or `name@<range>`), not a child under a parent (`>`).
+const targetsPackage = (key, name) => !key.includes('>') && (key === name || key.startsWith(`${name}@`))
+
 // Index and key of each entry in the `overrides:` block, read from its indented lines only.
 function overrideEntries(lines, headerIndex) {
   const entries = []
@@ -40,7 +43,8 @@ function overrideEntries(lines, headerIndex) {
 // override per entry. Entries go right after the `overrides:` line, or into a
 // new block at the end of the file when there is none. An existing override for
 // one of the names (key `name` or `name@<range>`) is removed first, so the
-// tarball replaces it. Throws when two entries share a name.
+// tarball replaces it. Keys with a `>` (a child under a parent) are left alone, as they
+// pin a nested copy, not the package itself. Throws when two entries share a name.
 export function addOverrides(yamlText, entries) {
   const lines = yamlText.split('\n')
   const headerIndex = lines.findIndex((line) => line.startsWith('overrides:'))
@@ -60,7 +64,7 @@ export function addOverrides(yamlText, entries) {
     headerIndex === -1
       ? []
       : overrideEntries(lines, headerIndex)
-          .filter(({ key }) => entries.some(({ name }) => key === name || key.startsWith(`${name}@`)))
+          .filter(({ key }) => entries.some(({ name }) => targetsPackage(key, name)))
           .map(({ index }) => index)
   )
   const kept = lines.filter((_, index) => !replaced.has(index))
