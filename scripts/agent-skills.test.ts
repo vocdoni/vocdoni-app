@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { afterAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const agentsSkillsDir = path.join(root, '.agents', 'skills')
@@ -20,9 +20,15 @@ function git(...args: string[]): string[] {
 
 // An empty repository has no info/exclude and, with core.excludesFile disabled, no global excludes: only the repo's
 // .gitignore files apply. `--no-index` checks tracked files too.
-const emptyRepo = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-skills-'))
-execFileSync('git', ['init', '-q', emptyRepo], { env: gitEnv })
-afterAll(() => fs.rmSync(emptyRepo, { recursive: true, force: true }))
+// Created in beforeAll, so a module-scope failure below leaves no temp directory behind.
+let emptyRepo: string
+beforeAll(() => {
+  emptyRepo = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-skills-'))
+  execFileSync('git', ['init', '-q', emptyRepo], { env: gitEnv })
+})
+afterAll(() => {
+  if (emptyRepo) fs.rmSync(emptyRepo, { recursive: true, force: true })
+})
 
 // check-ignore exits 1 when nothing matches. With -v a `!` pattern is a negated match, printed with exit 0.
 function isIgnored(file: string): boolean {
