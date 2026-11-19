@@ -17,8 +17,8 @@ the files and skills below. Read the ones your task touches before you start, no
 
 The project skills live in `.agents/skills/` (read by Codex, Gemini CLI, Copilot, OpenCode and others) and are
 symlinked from `.claude/skills/` for Claude Code. An agent that does not load skills reads `.agents/skills/<name>/SKILL.md`.
-The symlinks need a checkout with symlinks enabled: on Windows, `git config core.symlinks true` (with Developer Mode or
-admin rights) before cloning. Otherwise they check out as text files, Claude Code finds no project skills and
+The symlinks need a checkout with symlinks enabled: on Windows, clone with `git clone -c core.symlinks=true …` (or
+set `git config --global core.symlinks true` first), with Developer Mode or admin rights. Otherwise they check out as text files, Claude Code finds no project skills and
 `scripts/agent-skills.test.ts` fails.
 Keep a skill current when you change what it describes, and add a new skill (plus its symlink and `.gitignore`
 exception) for knowledge that only some tasks need, instead of growing this file.

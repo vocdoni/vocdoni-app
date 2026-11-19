@@ -112,6 +112,7 @@ The request and response types are in `@vocdoni/api-types` (`ProcessQuote`, `Pro
 ## Tests
 
 - Unit: `src/components/Pricing/*.test.ts(x)`, `src/components/Wallet/*.test.tsx`,
+  `src/components/Process/Create/PublishReview/*.test.ts(x)` (the publish dialog, card and wallet steps, summary),
   `src/queries/{wallet,process-price,process-checkout,census-checkout}.test.ts`, `src/utils/numbers.test.ts`.
   `payment-errors.test.ts` checks every locale's `quote_required` copy states the 50,000 limit.
 - e2e: `e2e/payg-checkout.e2e.ts` (a refused publish paid by card, then a €50 top-up) runs only in Stripe mode, when
