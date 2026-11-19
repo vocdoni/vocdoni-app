@@ -174,6 +174,8 @@ describe('SharedCensus', () => {
 
   afterEach(() => {
     appEnvOverride = {}
+    setReactProvidersMock({ useElectionAuth: () => ({ connected: false, authToken: null, weight: null }) })
+    delete window.$crisp
   })
 
   it('sets the Crisp nickname when the identify flow starts on the home page', async () => {
@@ -199,8 +201,6 @@ describe('SharedCensus', () => {
     await act(async () => rerender(<SharedCensus />))
 
     expect(queue).toEqual([['set', 'user:nickname', ['name Ada']]])
-    setReactProvidersMock({ useElectionAuth: () => ({ connected: false, authToken: null, weight: null }) })
-    delete window.$crisp
   })
 
   it('renders always-visible and disconnected text when not connected', async () => {
