@@ -1,8 +1,9 @@
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { afterAll, describe, expect, it } from 'vitest'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const agentsSkillsDir = path.join(root, '.agents', 'skills')
@@ -14,24 +15,56 @@ function git(...args: string[]): string[] {
   return execFileSync('git', args, { cwd: root, encoding: 'utf8' }).split('\n').filter(Boolean)
 }
 
-// `--no-index` evaluates the rules even for tracked files. check-ignore exits 1 when the path is not ignored.
+// An empty repository has no info/exclude and, with core.excludesFile disabled, no global excludes: only the repo's
+// .gitignore files apply. `--no-index` checks tracked files too.
+const emptyRepo = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-skills-'))
+execFileSync('git', ['init', '-q', emptyRepo])
+afterAll(() => fs.rmSync(emptyRepo, { recursive: true, force: true }))
+
+// check-ignore exits 1 when nothing matches. With -v a `!` pattern is a negated match, printed with exit 0.
 function isIgnored(file: string): boolean {
+  let output: string
   try {
-    execFileSync('git', ['check-ignore', '-q', '--no-index', '--', file], { cwd: root, stdio: 'ignore' })
-    return true
+    output = execFileSync(
+      'git',
+      [
+        `--git-dir=${emptyRepo}/.git`,
+        `--work-tree=${root}`,
+        '-c',
+        'core.excludesFile=/dev/null',
+        'check-ignore',
+        '-v',
+        '--no-index',
+        '--',
+        file,
+      ],
+      { cwd: root, encoding: 'utf8' }
+    )
   } catch (error) {
     if ((error as { status?: number }).status === 1) return false
     throw error
   }
+  // Each line is `<source>:<linenum>:<pattern>\t<path>`.
+  const match = /:\d+:(.*)\t/.exec(output)
+  return match !== null && !match[1].startsWith('!')
 }
 
 // Second path segment of `.agents/skills/<name>/...` or `.claude/skills/<name>`.
 const skillNameOf = (file: string) => file.split('/')[2]
 
 const lockFile = path.join(root, 'skills-lock.json')
-const lockedSkills = fs.existsSync(lockFile)
-  ? Object.keys(JSON.parse(fs.readFileSync(lockFile, 'utf8')).skills ?? {})
-  : []
+const lockedSkills = fs.existsSync(lockFile) ? Object.keys(parseLockFile(lockFile).skills ?? {}) : []
+
+function parseLockFile(file: string): { skills?: Record<string, unknown> } {
+  let lock: unknown
+  try {
+    lock = JSON.parse(fs.readFileSync(file, 'utf8'))
+  } catch (error) {
+    throw new Error(`skills-lock.json could not be read or parsed: ${(error as Error).message}`)
+  }
+  if (typeof lock !== 'object' || lock === null) throw new Error('skills-lock.json must hold a JSON object')
+  return lock
+}
 
 const projectSkills = [...new Set(git('ls-files', '--', '.agents/skills').map(skillNameOf))].sort()
 
@@ -86,7 +119,7 @@ describe('project agent skills', () => {
     for (const file of files) {
       expect(
         isIgnored(file),
-        `${file} is git-ignored: add its \`!/${file}\` (or \`!/${path.dirname(file)}/${name}/\`) exception to the AI block in .gitignore`
+        `${file} is git-ignored: add the \`!/.agents/skills/${name}/\` and \`!/.claude/skills/${name}\` exceptions to the AI block in .gitignore`
       ).toBe(false)
     }
   })
