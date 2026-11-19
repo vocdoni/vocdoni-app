@@ -10,15 +10,18 @@ const agentsSkillsDir = path.join(root, '.agents', 'skills')
 // Installed by `npx skills add`: git-ignored on purpose, never a project skill.
 const installedSkill = 'vocdoni-integrator-sdk'
 
+// Hooks (pre-push runs the tests) export GIT_DIR and friends, which would override the repos chosen below.
+const gitEnv = Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')))
+
 // Git decides what is ignored, so the rules are never re-implemented here.
 function git(...args: string[]): string[] {
-  return execFileSync('git', args, { cwd: root, encoding: 'utf8' }).split('\n').filter(Boolean)
+  return execFileSync('git', args, { cwd: root, encoding: 'utf8', env: gitEnv }).split('\n').filter(Boolean)
 }
 
 // An empty repository has no info/exclude and, with core.excludesFile disabled, no global excludes: only the repo's
 // .gitignore files apply. `--no-index` checks tracked files too.
 const emptyRepo = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-skills-'))
-execFileSync('git', ['init', '-q', emptyRepo])
+execFileSync('git', ['init', '-q', emptyRepo], { env: gitEnv })
 afterAll(() => fs.rmSync(emptyRepo, { recursive: true, force: true }))
 
 // check-ignore exits 1 when nothing matches. With -v a `!` pattern is a negated match, printed with exit 0.
@@ -38,7 +41,7 @@ function isIgnored(file: string): boolean {
         '--',
         file,
       ],
-      { cwd: root, encoding: 'utf8' }
+      { cwd: root, encoding: 'utf8', env: gitEnv }
     )
   } catch (error) {
     if ((error as { status?: number }).status === 1) return false
