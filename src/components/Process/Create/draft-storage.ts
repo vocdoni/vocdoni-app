@@ -1,5 +1,5 @@
+import { normalizeOrganizationAddress } from '@vocdoni/api-client'
 import { useCallback, useEffect, useState } from 'react'
-import { ensure0x } from '~utils/address'
 
 /**
  * Draft ids are scoped per organization address: a draft created while acting as one org
@@ -11,7 +11,8 @@ export const DraftIdsStorageKey = 'draft-ids'
 /** Pre-scoping key holding a bare draft id with no owner info; discarded on sight */
 export const LegacyDraftIdStorageKey = 'draft-id'
 
-const normalizeAddress = (address?: string | null): string | null => (address ? ensure0x(address).toLowerCase() : null)
+const normalizeAddress = (address?: string | null): string | null =>
+  address ? normalizeOrganizationAddress(address) : null
 
 const readDraftIds = (): Record<string, string> => {
   if (typeof localStorage === 'undefined') return {}

@@ -47,7 +47,6 @@ const buildReportData = ({ questions, choices, title, choiceName, weighted }: Re
       ),
     }),
     t: translate,
-    explorerUrl: 'https://explorer.vote',
     now: new Date('2026-01-03T10:00:00Z'),
   })
 }

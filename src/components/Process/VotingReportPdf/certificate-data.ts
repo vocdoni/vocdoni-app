@@ -1,4 +1,10 @@
-import { computeProcessStatus, hasResults, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
+import {
+  computeProcessStatus,
+  explorerElectionUrl,
+  hasResults,
+  isSecretUntilTheEnd,
+  processVoteCount,
+} from '@vocdoni/api-client'
 import type {
   MultiLangString,
   PublishedVotingProcessResponse,
@@ -8,9 +14,9 @@ import type {
 } from '@vocdoni/api-types'
 import {
   BallotType,
+  castVotingPower,
   decodeQuestionResults,
-  inferQuestionBallotType,
-  questionReservesAbstain,
+  isAbstainVisible,
   tryInferQuestionBallotType,
   type DecodedQuestionResults,
 } from '@vocdoni/ballot'
@@ -206,26 +212,6 @@ const formatPercentageRange = (values: number[], fallback: string) => {
   return min === max ? formatPercentageValue(min) : `${formatPercentageValue(min)} - ${formatPercentageValue(max)}`
 }
 
-/**
- * How many histogram columns one ballot contributes to. The decoded results have
- * one field per pick slot and every ballot fills all of them — slots the voter
- * left unused land in the abstain sentinel — so the column total is
- * `slots x cast voting power`, not the cast power itself. Single-choice
- * questions have exactly one slot, which is why the two only coincide there.
- */
-const getBallotPickSlots = (question: VotingProcessQuestion): number => {
-  if (inferQuestionBallotType(question) !== BallotType.MultiChoice) return 1
-  const slots = question.typeSetup?.maxChoices ?? question.ballotProtocol?.maxCount
-  return slots && slots > 0 ? slots : 1
-}
-
-/** Voting power actually cast on a question, recovered from its decoded histogram. */
-const getCastVotingPower = (question: VotingProcessQuestion, decoded: DecodedQuestionResults | undefined) => {
-  if (!decoded) return null
-  const columnTotal = decoded.reduce((acc, entry) => acc + entry.votes, 0)
-  return columnTotal / getBallotPickSlots(question)
-}
-
 const getVotingMethod = (question: VotingProcessQuestion, t: TFunction, isWeighted: boolean) => {
   const type = tryInferQuestionBallotType(question)
   if (type === undefined) return notAvailable(t)
@@ -261,7 +247,6 @@ export const buildCertificateData = ({
   results,
   t,
   organizationName,
-  explorerUrl,
   now,
   earlyEndDate,
 }: {
@@ -269,7 +254,6 @@ export const buildCertificateData = ({
   results: VotingProcessResultsResponse | null
   t: TFunction
   organizationName?: string
-  explorerUrl?: string
   now: Date
   /** When voting really stopped, set only if the process was stopped early — see `getEarlyEndDate`. */
   earlyEndDate?: Date | null
@@ -339,7 +323,7 @@ export const buildCertificateData = ({
   const totalEligibleVotingPower =
     totalEligibleVotingPowerValue === null ? notAvailableLabel : String(totalEligibleVotingPowerValue)
   const questionVotingPowerTotals = election.questions.map((question) =>
-    getCastVotingPower(question, decodedByQuestionId.get(question.id))
+    castVotingPower(question, questionsResults.get(question.id)?.results)
   )
   const knownQuestionTotals = questionVotingPowerTotals.filter((value): value is number => value !== null)
   const votingPowerUsed = hasHiddenResults
@@ -384,22 +368,25 @@ export const buildCertificateData = ({
   ]
 
   // Each question is its own on-chain (Vochain) process; the explorer only knows
-  // those ids, so verification links go per question.
+  // those ids, so verification links go per question. The chain id picks the explorer.
   const questionExplorerLabel = t('process_pdf.verification.explorer', {
     defaultValue: 'View in verification explorer',
   })
-  const questionsWithUpstreamId = election.questions.filter((question) => question.upstreamId)
+  const questionExplorerLinks = election.questions.flatMap((question) => {
+    const href = question.upstreamId && explorerElectionUrl(election.chainId, question.upstreamId)
+    return href ? [href] : []
+  })
   const verification: CertificateField[] =
-    explorerUrl && questionsWithUpstreamId.length > 0
-      ? questionsWithUpstreamId.map((question, index) => ({
+    questionExplorerLinks.length > 0
+      ? questionExplorerLinks.map((href, index) => ({
           label:
-            questionsWithUpstreamId.length > 1
+            questionExplorerLinks.length > 1
               ? `${questionExplorerLabel} — ${t('process_pdf.verification.question_n', {
                   defaultValue: 'Question {{number}}',
                   number: index + 1,
                 })}`
               : questionExplorerLabel,
-          value: `${explorerUrl}/process/${question.upstreamId}`,
+          value: href,
           kind: 'link' as const,
         }))
       : [{ label: questionExplorerLabel, value: notAvailableLabel, kind: 'link' as const }]
@@ -579,18 +566,12 @@ export const buildCertificateData = ({
           const questionResults = questionsResults.get(question.id)
           const decoded = decodedByQuestionId.get(question.id)
           const decodedChoices = decoded?.filter((entry) => entry.choice !== 'abstain')
-          // `decodeQuestionResults` always appends an abstain bucket for pick-slot
-          // multichoice, even when the protocol reserves no sentinel headroom and the
-          // count is therefore structurally stuck at zero. Mirror the rule
-          // `<ElectionResults />` applies so the report and the UI agree on the row
-          // count: keep the bucket only when abstaining is possible, or when the tally
-          // says it actually happened.
+          // Decoding always adds an abstain bucket, which is stuck at zero unless abstaining is possible.
+          // `isAbstainVisible` is the rule `<ElectionResults />` uses too, so both show the same rows.
           const decodedAbstain = decoded?.find((entry) => entry.choice === 'abstain')
           const abstainEntry =
-            decodedAbstain && (questionReservesAbstain(question) || decodedAbstain.votes > 0)
-              ? decodedAbstain
-              : undefined
-          const questionTotal = getCastVotingPower(question, decoded)
+            decodedAbstain && isAbstainVisible(question, decodedAbstain.votes) ? decodedAbstain : undefined
+          const questionTotal = castVotingPower(question, questionResults?.results)
 
           const choiceRows = question.choices.map((choice, choiceIndex) => ({
             name: getDefaultText(choice.title) || notAvailableLabel,

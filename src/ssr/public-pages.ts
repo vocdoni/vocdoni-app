@@ -17,7 +17,6 @@ import {
   OPEN_GRAPH_IMAGE_HEIGHT,
   OPEN_GRAPH_IMAGE_WIDTH,
 } from '~src/pages/shared/openGraphImage'
-import { ensureAddressPrefix } from '~utils/address'
 import { getLocalizedRawText } from '~utils/localized-text'
 
 type PublicLanguageAlternate = {
@@ -491,8 +490,7 @@ export const loadProcessPageData = async ({
   }
 
   const election = await client.elections.get(id)
-  // Process reads return orgAddress unprefixed; the organization endpoint wants 0x.
-  const organization = await client.organizations.get(ensureAddressPrefix(election.orgAddress))
+  const organization = await client.organizations.get(election.orgAddress)
 
   return {
     era: 'saas',

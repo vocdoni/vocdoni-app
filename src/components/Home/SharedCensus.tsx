@@ -19,7 +19,7 @@ import { PageLoader } from '~components/ui/Loader'
 import { PageTitle } from '~components/ui/PageTitle'
 import { VideoPlayer } from '~components/ui/VideoPlayer'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
-import { ensureAddressPrefix, sameAddress } from '~utils/address'
+import { sameAddress } from '~utils/address'
 import { PageSection } from '~components/ui/PageContainer'
 
 export const parseProcessIds = (value: string | undefined) =>
@@ -50,8 +50,7 @@ const SharedCensus = () => {
 
 const SharedCensusOrganizationBoundary = ({ children }: { children: ReactNode }) => {
   const { election } = useElection()
-  // Process reads return orgAddress unprefixed; the organization API expects 0x.
-  const organizationAddress = election?.orgAddress ? ensureAddressPrefix(election.orgAddress) : undefined
+  const organizationAddress = election?.orgAddress
 
   if (!organizationAddress) {
     return <>{children}</>
