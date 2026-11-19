@@ -28,6 +28,11 @@ describe('fetchOnChainEndDate', () => {
     fetchMock.mockClear()
     await fetchOnChainEndDate(withQuestions(['up-1'], { chainId: 'vocdoni/STG/1' }))
     expect(fetchMock.mock.calls[0][0]).toBe('https://api-stg.vocdoni.net/v2/elections/up-1')
+
+    // A chain the SDK does not know keeps the app's dev fallback.
+    fetchMock.mockClear()
+    await fetchOnChainEndDate(withQuestions(['up-1'], { chainId: 'vocdoni/TEST/1' }))
+    expect(fetchMock.mock.calls[0][0]).toBe('https://api-dev.vocdoni.net/v2/elections/up-1')
   })
 
   it('ends when the last question ends', async () => {

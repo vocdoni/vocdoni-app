@@ -1,18 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
-import { computeProcessStatus } from '@vocdoni/api-client'
+import { computeProcessStatus, networkFromChainId, VOCDONI_NETWORKS } from '@vocdoni/api-client'
 import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 
-import { getVochainGatewayUrl } from '~src/legacy/vochain-archive'
 import { QueryKeys } from './keys'
 
 /**
  * The gateway serving the chain a process was anchored to.
  *
  * Derived from the process' own `chainId` rather than from `VOCDONI_ENVIRONMENT`, because a process can
- * live on another environment's chain: `/LTS/` → production, `/STG/` → staging, otherwise dev.
+ * live on another environment's chain. A chain the SDK does not know (e.g. `TEST`) falls back to dev,
+ * as it always has here, so the read still goes out instead of being skipped.
  */
-const getGatewayUrlForChain = (chainId?: string) =>
-  getVochainGatewayUrl(chainId?.includes('/LTS/') ? 'prod' : chainId?.includes('/STG/') ? 'stg' : 'dev')
+const getGatewayUrlForChain = (chainId?: string) => VOCDONI_NETWORKS[networkFromChainId(chainId) ?? 'dev'].gateway
 
 /**
  * A process left to run its course still ends a few seconds either side of its schedule — the chain

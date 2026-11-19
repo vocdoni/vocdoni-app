@@ -31,6 +31,7 @@ import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
+import { explorerElectionUrl } from '@vocdoni/api-client'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { useTableAsCards } from '~components/ui/useTableAsCards'
@@ -230,7 +231,7 @@ const ProcessContextMenu = () => {
   const { cloneAsDraft } = useCloneAsDraft()
   const publicLanguage = usePublicLanguage()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
+  const { clientEnv } = getVocdoniClientConfig(VOCDONI_ENVIRONMENT)
 
   if (!election) return null
 
@@ -267,7 +268,7 @@ const ProcessContextMenu = () => {
             </Menu.Item>
             {explorerProcessId && (
               <Menu.Item value='explorer' asChild>
-                <a href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
+                <a href={explorerElectionUrl(clientEnv, explorerProcessId)} target='_blank' rel='noopener noreferrer'>
                   <Icon as={SearchIcon} />
                   <Trans i18nKey='process_context.explorer'>Explorer</Trans>
                 </a>

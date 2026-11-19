@@ -7,6 +7,7 @@
  * The gateway serves election and account metadata inline (no IPFS resolution needed),
  * verified against api.vocdoni.io on 2026-07-23.
  */
+import { VOCDONI_NETWORKS } from '@vocdoni/api-client'
 import { decodeResults, type DecodedQuestionResults } from '@vocdoni/ballot'
 
 export type LocalizedText = Record<string, string | undefined>
@@ -15,11 +16,11 @@ export type LocalizedText = Record<string, string | undefined>
 export const getVochainGatewayUrl = (environment: string = 'dev') => {
   switch (environment.toLowerCase()) {
     case 'prod':
-      return 'https://api.vocdoni.io/v2'
+      return VOCDONI_NETWORKS.prod.gateway
     case 'stg':
-      return 'https://api-stg.vocdoni.net/v2'
+      return VOCDONI_NETWORKS.stg.gateway
     default:
-      return 'https://api-dev.vocdoni.net/v2'
+      return VOCDONI_NETWORKS.dev.gateway
   }
 }
 

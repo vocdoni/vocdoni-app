@@ -21,6 +21,7 @@ import { hasResults } from '@vocdoni/api-client'
 import { DialogHeader } from '~components/ui/DialogHeader'
 import { PageLoader } from '~components/ui/Loader'
 import { useAppEnv } from '~src/app-env'
+import { explorerVoteUrl } from '@vocdoni/api-client'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -264,7 +265,7 @@ export const SuccessVoteModal = () => {
   const [isOpen, setOpen] = useState(false)
   const { election, hasVoted, voteId } = useElection()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
+  const { clientEnv } = getVocdoniClientConfig(VOCDONI_ENVIRONMENT)
   const prevHasVotedRef = useRef(false)
 
   useEffect(() => {
@@ -295,7 +296,7 @@ export const SuccessVoteModal = () => {
                 <Trans
                   i18nKey='process.success_modal.text'
                   components={{
-                    verify: <Link href={`${explorerUrl}/verify/${voteId}`} target='_blank' />,
+                    verify: <Link href={explorerVoteUrl(clientEnv, voteId)} target='_blank' />,
                     p: <Text mb='2' />,
                   }}
                 />

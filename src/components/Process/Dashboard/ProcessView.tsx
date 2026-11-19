@@ -35,6 +35,7 @@ import { hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocd
 import { tryInferQuestionBallotType } from '@vocdoni/ballot'
 import { useDateFns } from '~i18n/use-date-fns'
 import { useAppEnv } from '~src/app-env'
+import { explorerElectionUrl } from '@vocdoni/api-client'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -406,7 +407,7 @@ const ProcessViewSidebar = () => {
   const { election, results, status } = useElection()
   const { t } = useTranslation()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
+  const { clientEnv } = getVocdoniClientConfig(VOCDONI_ENVIRONMENT)
   // The hook's `participation`/census size fall back to `maxCensusSize` for CSP elections, which is the
   // allowed-voters cap rather than the real census size. Recompute both from the actual census size.
   const { size: censusSize } = useCensusSize()
@@ -557,7 +558,7 @@ const ProcessViewSidebar = () => {
           </SidebarSubtitle>
           {explorerProcessId && (
             <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
-              <Link href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
+              <Link href={explorerElectionUrl(clientEnv, explorerProcessId)} target='_blank' rel='noopener noreferrer'>
                 <HStack gap='2'>
                   <Icon as={SearchIcon} />
                   <Text as='span'>
