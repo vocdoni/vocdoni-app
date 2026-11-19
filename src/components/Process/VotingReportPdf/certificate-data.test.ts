@@ -188,18 +188,19 @@ describe('buildCertificateData', () => {
     ])
   })
 
-  it('falls back to a not-available verification entry without on-chain ids or a known explorer', () => {
+  it('falls back to a not-available verification entry without on-chain ids or a known chain', () => {
+    // A link on the wrong network is worse than none, so an unknown or missing chain links nowhere.
     const withoutIds = createElection({ questions: [createQuestion({ upstreamId: undefined })] })
     const unknownChain = createElection({ chainId: 'vocdoni/TEST/1' })
+    const missingChain = createElection({ chainId: undefined })
+    const verificationOf = (election: ReturnType<typeof createElection>) =>
+      buildCertificateData({ election, results: null, t: plainT, now: new Date('2026-01-03T10:00:00Z') }).verification
 
-    expect(
-      buildCertificateData({ election: withoutIds, results: null, t: plainT, now: new Date('2026-01-03T10:00:00Z') })
-        .verification
-    ).toEqual([{ label: 'View in verification explorer', value: 'Not available', kind: 'link' }])
-    expect(
-      buildCertificateData({ election: unknownChain, results: null, t: plainT, now: new Date('2026-01-03T10:00:00Z') })
-        .verification
-    ).toEqual([{ label: 'View in verification explorer', value: 'Not available', kind: 'link' }])
+    for (const election of [withoutIds, unknownChain, missingChain]) {
+      expect(verificationOf(election)).toEqual([
+        { label: 'View in verification explorer', value: 'Not available', kind: 'link' },
+      ])
+    }
   })
 
   it('combines the issuer provider and legal entity in the provider field', () => {
@@ -579,12 +580,8 @@ describe('buildCertificateData', () => {
     expect(data.votingProcessQuestions[0].choices[0].ballotCount).toBeUndefined()
   })
 
-  it('divides the multichoice histogram by its pick slots before reporting weighted power', () => {
-    // Weighted census totalling 20; two voters of weight 7 and 3 each cast one
-    // ballot picking a single option on a 2-slot multichoice question. Each
-    // ballot fills both slots (the unused one lands in abstain), so the columns
-    // total 20 — twice the 10 of voting power actually cast. Reporting the raw
-    // column total renders 100% participation for what is really 50%.
+  it('reports the cast power of a padded pick-slot multichoice, not its column total', () => {
+    // Each ballot fills both pick slots, so the histogram columns total 20 for 10 of power cast.
     const election = createElection({
       census: { size: 2, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
       questions: [
@@ -675,6 +672,44 @@ describe('buildCertificateData', () => {
       totalVotes: 'Not available',
       votingPowerUsed: 'Not available',
     })
+  })
+
+  it('reports the cast power of an approval question, not the sum of its dense histogram', () => {
+    // Dense approval: each option row holds the weight that left it unselected and selected.
+    // Both rows total the 10 of power cast; the column total would double it.
+    const election = createElection({
+      census: { size: 2, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
+      questions: [
+        createQuestion({
+          title: { default: 'Approve any' },
+          type: 'approval',
+          ballotProtocol: {
+            costExponent: 1,
+            costFromWeight: false,
+            maxCount: 2,
+            maxTotalCost: 0,
+            maxValue: 1,
+            maxVoteOverwrites: 0,
+            uniqueValues: false,
+          },
+        }),
+      ],
+    })
+    const results = createResults({
+      questions: [
+        createQuestionResults({
+          voteCount: 2,
+          results: [
+            ['3', '7'],
+            ['8', '2'],
+          ],
+        }),
+      ],
+    })
+
+    const data = buildCertificateData({ election, results, t: translate, now: new Date('2026-01-03T10:00:00Z') })
+
+    expect(data.votingProcessQuestions[0]).toMatchObject({ totalVotes: '10', votingPowerUsed: '10' })
   })
 
   it('degrades weighted power values to not-available when totalWeight is absent (list reads)', () => {
