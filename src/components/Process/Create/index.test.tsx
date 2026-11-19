@@ -860,17 +860,24 @@ describe('the wizard around the publish dialog', () => {
     // A draft id stored by an earlier test makes the save an update: both refuse
     mockApiClient.elections.create.mockRejectedValue(new Error('backend down'))
     mockApiClient.elections.update.mockRejectedValue(new Error('backend down'))
-    // The failed saves are logged on purpose: auto-save logs its own failure, the manual save logs its own
-    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    // Both the auto-save and the manual save log their failure on purpose; any other error still reaches the console
+    const realError = console.error.bind(console)
+    const isExpectedLog = (args: unknown[]) =>
+      args[0] === 'Failed to save draft:' || args[0] === 'Error saving the draft to publish:'
+    const error = vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+      if (!isExpectedLog(args)) realError(...args)
+    })
     const writes = () =>
       mockApiClient.elections.create.mock.calls.length + mockApiClient.elections.update.mock.calls.length
-    renderWizard('/admin/processes/create')
-
-    const user = userEvent.setup()
-    await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
-    await user.click(screen.getByRole('button', { name: 'Publish' }))
+    const autoSaveFailures = () => error.mock.calls.filter(([message]) => message === 'Failed to save draft:').length
 
     try {
+      renderWizard('/admin/processes/create')
+
+      const user = userEvent.setup()
+      await user.type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+      await user.click(screen.getByRole('button', { name: 'Publish' }))
+
       await waitFor(() => expect(writes()).toBeGreaterThan(0))
       await waitFor(() =>
         expect(error).toHaveBeenCalledWith('Error saving the draft to publish:', new Error('backend down'))
@@ -881,11 +888,11 @@ describe('the wizard around the publish dialog', () => {
 
       // Auto-save picks up again after the failed save, and logs that failure too
       const before = writes()
-      const logged = error.mock.calls.length
+      const failuresBefore = autoSaveFailures()
       await user.type(screen.getByPlaceholderText('Voting Process Title'), ' edited')
       await user.tab()
       await waitFor(() => expect(writes()).toBeGreaterThan(before))
-      await waitFor(() => expect(error.mock.calls.length).toBeGreaterThan(logged))
+      await waitFor(() => expect(autoSaveFailures()).toBeGreaterThan(failuresBefore))
     } finally {
       error.mockRestore()
     }

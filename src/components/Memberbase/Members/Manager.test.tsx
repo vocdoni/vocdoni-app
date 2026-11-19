@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { screen, waitFor } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ApiErrorCode } from '@vocdoni/api-client'
 import { ApiError } from '~components/Auth/api'
@@ -163,8 +163,9 @@ describe('MemberManager edit', () => {
 
     rerender(<MemberManager member={{ ...member, email: 'ada@example.com' }} open />)
 
-    // A FieldRoot state update trails the rerender; waitFor flushes it inside act().
-    await waitFor(() => expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com'))
+    // A FieldRoot update trails the rerender; flush it inside act.
+    expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
+    await act(async () => {})
     expect(screen.queryByText(/invalid email/i)).not.toBeInTheDocument()
   })
 

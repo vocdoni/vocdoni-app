@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router'
-import { render, screen, TestMemoryRouter } from '~src/test-utils'
+import { act, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { RoutedTabs } from './RoutedTabs'
 
 const tabs = [
@@ -20,8 +20,9 @@ describe('RoutedTabs', () => {
       </TestMemoryRouter>
     )
 
-    // TabsRoot updates its state just after mount; findByRole awaits that inside act
-    const tab = await screen.findByRole('tab', { name: 'Second', selected: true })
+    // TabsRoot updates its state just after mount; flush that update inside act
+    const tab = screen.getByRole('tab', { name: 'Second', selected: true })
+    await act(async () => {})
     const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '')
     expect(panel).not.toBeNull()
     expect(panel).toContainElement(screen.getByText('Second content'))
