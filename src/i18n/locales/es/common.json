@@ -199,24 +199,8 @@
     "title": "Cuéntanos sobre tu organización"
   },
   "csp": {
-    "auth_failed": "Autenticación fallida",
     "authenticate": "Identificarse",
-    "code_info": "Recibirás un código único en el medio seleccionado para verificar tu identidad y completar la autenticación.",
-    "code_sent": "Código de verificación enviado",
     "contact_match_help": "Debe coincidir con el registrado en el sistema",
-    "errors": {
-      "credentials_or_password_incorrect": "No hemos podido verificar tu identidad. Comprueba tus credenciales y tu contraseña e inténtalo de nuevo.",
-      "participant_not_found": "El votante no figura en el censo o las credenciales proporcionadas son incorrectas.",
-      "requests_on_cooldown": "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.",
-      "too_many_attempts": "Demasiados intentos. Vuelve a intentarlo más tarde.",
-      "too_many_attempts_hours_one": "Demasiados intentos. Vuelve a intentarlo en {{count}} hora.",
-      "too_many_attempts_hours_many": "Demasiados intentos. Vuelve a intentarlo en {{count}} horas.",
-      "too_many_attempts_hours_other": "Demasiados intentos. Vuelve a intentarlo en {{count}} horas.",
-      "too_many_attempts_minutes_one": "Demasiados intentos. Vuelve a intentarlo en {{count}} minuto.",
-      "too_many_attempts_minutes_many": "Demasiados intentos. Vuelve a intentarlo en {{count}} minutos.",
-      "too_many_attempts_minutes_other": "Demasiados intentos. Vuelve a intentarlo en {{count}} minutos.",
-      "zero_voting_weight": "No tienes suficiente poder de voto para acceder a la votación."
-    },
     "fields": {
       "birthDate": "Fecha de nacimiento",
       "contact": "Contacto",
@@ -230,21 +214,11 @@
       "surname": "Apellidos"
     },
     "important": "Importante",
-    "password_unavailable": "No se puede comprobar la contraseña en este momento. Recarga la página e inténtalo de nuevo.",
     "receive_code": "Recibir código",
     "step1": {
-      "footer_text": "Si tienes algún problema, contacta con tu organización.",
-      "helper_text": "Hemos enviado un código al número de teléfono o al correo electrónico indicados. Si has elegido recibirlo por correo electrónico, revisa también la carpeta de correo no deseado.",
-      "resend_failed": "Error al reenviar el código",
-      "resend_success": "Código reenviado correctamente",
       "resend_text": "¿No has recibido el código? <resendBtn>Vuelve a enviarlo</resendBtn>",
-      "start_over_text": "¿Datos incorrectos? <restartBtn>Vuelve a empezar</restartBtn>",
       "subtitle": "Introduce el código de verificación",
-      "title": "Autenticación",
-      "validation": {
-        "length": "El código debe tener 6 dígitos",
-        "required": "El código es obligatorio"
-      }
+      "title": "Autenticación"
     },
     "terms_acceptance": "He leído y acepto los <2>Términos y condiciones</2> y la <6>Política de privacidad</6>."
   },
@@ -1664,9 +1638,6 @@
   "signup_lastname": "Apellidos",
   "signup_subtitle": "Introduce tu información para comenzar",
   "signup_title": "Registro",
-  "spreadsheet": {
-    "access_button": "Identificarse"
-  },
   "start_date": "Fecha de inicio",
   "start_time": "Hora de inicio",
   "support": "Soporte",

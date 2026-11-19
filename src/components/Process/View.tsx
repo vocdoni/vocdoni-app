@@ -16,7 +16,13 @@ import {
   TabsTrigger,
   Text,
 } from '@chakra-ui/react'
-import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
+import {
+  CspAuthSession,
+  ElectionQuestions,
+  ElectionResults,
+  useElection,
+  useOrganization,
+} from '@vocdoni/react-components'
 import { hasResults } from '@vocdoni/api-client'
 import { DialogHeader } from '~components/ui/DialogHeader'
 import { PageLoader } from '~components/ui/Loader'
@@ -34,7 +40,6 @@ import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
 import { CreatedBy } from './CreatedBy'
-import { CspAuthSession } from './CSP/CSPAuthModal'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
