@@ -418,9 +418,9 @@ export const authenticateVoterWithOtp = async (page: Page, member: TestMember): 
   // One field for both channels: the form routes it to `email` or `phone`
   // depending on the census's twoFaFields (email only, here).
   await dialog.locator('input[name="contact"]').fill(member.email)
-  // Terms acceptance. It looks decorative — no react-hook-form registration —
-  // but its Field.Root marks it required, which propagates to the hidden input
-  // and makes the browser block submission until it is ticked.
+  // Terms acceptance. The packaged form is noValidate and registers the box
+  // with react-hook-form, so an unticked box stops the submit in the form's own
+  // validation rather than the browser's.
   await checkCheckbox(dialog)
 
   const requestedAt = new Date()

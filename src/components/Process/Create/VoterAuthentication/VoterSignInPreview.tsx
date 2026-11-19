@@ -166,8 +166,8 @@ const EmptyScreen = () => (
 )
 
 /**
- * A static rendering of the voter sign-in dialog (`CSP/Step0` and `Step1`) for
- * the configuration being edited, with sample values. Labels and button texts
+ * A static rendering of the voter sign-in dialog (the packaged CspAuth slots in
+ * `src/theme/react-components/csp.tsx`) for the configuration being edited, with sample values. Labels and button texts
  * come from the same translation keys and helpers as the real dialog.
  */
 export const VoterSignInPreview = ({

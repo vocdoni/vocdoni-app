@@ -175,7 +175,8 @@ export const cspAuthComponents: ComponentsPartialDefinition = {
       // are kept by position here, and the joined digits still go upstream.
       const [digits, setDigits] = useState(() => Array.from({ length }, (_, index) => code[index] ?? ''))
       useEffect(() => {
-        // Upstream clears the code on a resend, a start over or a new step.
+        // Clears the boxes when the host empties `code`. The packaged step never clears it itself, so this
+        // only follows a host that does.
         if (code === '') setDigits(Array.from({ length }, () => ''))
       }, [code, length])
 
