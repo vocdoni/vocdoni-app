@@ -17,6 +17,9 @@ the files and skills below. Read the ones your task touches before you start, no
 
 The project skills live in `.agents/skills/` (read by Codex, Gemini CLI, Copilot, OpenCode and others) and are
 symlinked from `.claude/skills/` for Claude Code. An agent that does not load skills reads `.agents/skills/<name>/SKILL.md`.
+The symlinks need a checkout with symlinks enabled: on Windows, `git config core.symlinks true` (with Developer Mode or
+admin rights) before cloning. Otherwise they check out as text files, Claude Code finds no project skills and
+`scripts/agent-skills.test.ts` fails.
 Keep a skill current when you change what it describes, and add a new skill (plus its symlink and `.gitignore`
 exception) for knowledge that only some tasks need, instead of growing this file.
 
@@ -90,7 +93,8 @@ The full rules are in `DESIGN.md` and `docs/ui-guidelines.md`; `src/theme/style-
 (`strictTokens`) enforce most of them. These are the ones most often broken:
 
 - A component picks a role (semantic token, text style, recipe variant, shared component) and never carries a raw
-  value: no hex, named colour, palette step, px font size, px radius or numeric weight, and no colour-mode logic.
+  value: no hex, named colour, palette step, px font size, px radius, px size (width, height), px spacing (padding,
+  margin, gap), numeric weight, and no colour-mode logic.
 - Reuse `src/components/ui/` and the existing recipe variants before building anything. Do not re-implement a shared
   piece inside a feature, even as a recipe.
 - A missing look is added to the theme first: a variant or token named by intent, never by feature or page.

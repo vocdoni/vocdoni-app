@@ -14,7 +14,8 @@ open the UI guide's section for whatever you are about to touch.
 These are where changes have gone wrong before. Breaking one is a must-fix in review, whatever the issue asked for.
 
 1. **No raw values in components**: no hex, `rgb()`, named colour, palette step (`gray.500`), px font size, px radius,
-   numeric font weight, raw z-index or duration. Use the semantic token or text style.
+   px size (width, height), px spacing (padding, margin, gap), numeric font weight, raw z-index or duration. Use the
+   semantic token or text style.
 2. **No colour-mode logic in components**: no `_dark`/`_light`, `useColorModeValue` with a colour, or `colorMode ===`.
    The token carries both values.
 3. **Never raise `src/theme/style-inventory.baseline.json`**, not even "after a rebase". A new ratchet hit means a
@@ -69,5 +70,6 @@ If the issue or a reviewer asks for something that breaks these, say so in the P
 | Stress theme job reports a new leak                                 | Something bypasses the theme (a stock value); fix it, do not raise `stress-baseline.json`             |
 | Contrast tests                                                      | Use the pair the token family ships (`status.error.contrast` on `status.error.solid`)                 |
 
-Only add a `STYLE_EXCEPTIONS` entry for a real constraint outside Chakra (react-pdf, Stripe's appearance API,
-react-select), with a reason, and mention it in the PR.
+A `STYLE_EXCEPTIONS` entry is for code that is right as written and cannot use a token: a library outside Chakra
+(react-pdf, Stripe's appearance API, react-select) or a deliberate case such as a brand mark. Never add one to silence
+a hit that a token would fix. Give it a reason and mention it in the PR.

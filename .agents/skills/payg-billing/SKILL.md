@@ -13,9 +13,11 @@ Read the code paths named here before changing them; the comments in them record
 
 ## Invariants
 
-1. **Money is integer EUR cents, VAT excluded.** Stripe Tax adds VAT at checkout. Format with `currency(cents)` from
-   `src/utils/numbers.ts` (whole euros show no decimals) and parse user input with `parseEuroAmountCents`. Never divide
-   by 100 or build `€` by hand. The Stripe total and VAT lines arrive already formatted from Stripe.
+1. **Money is integer EUR cents, VAT excluded.** Stripe Tax adds VAT at checkout. Format with the helpers in
+   `src/utils/numbers.ts`: `currency(cents)` in general (whole euros show no decimals), `currencyExact(cents)` inside
+   the publish dialog (both cent digits, for every amount), and `amountFigure(cents)` in amount tables (columns of
+   amounts, always cents, real minus). Parse user input with `parseEuroAmountCents`. Never divide by 100 or build `€`
+   by hand. The Stripe total and VAT lines arrive already formatted from Stripe.
 2. **A browser success proves nothing.** Stripe accepting a card does not mean the vote is published or the wallet is
    credited (the wallet is only credited by the verified webhook). Every flow waits for backend evidence: the publish
    job, the process reading `published`, or a new ledger entry.
