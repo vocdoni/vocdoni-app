@@ -249,16 +249,22 @@ describe('cspAuthComponents.CspAuthCodeForm', () => {
       />
     )
   }
-  const codeForm = (overrides: Partial<Record<string, unknown>> = {}) => <CodeHarness {...overrides} />
 
-  it('shows the typed digit in the pin input and reports the code through onCodeChange', async () => {
+  // The pin input focuses its first digit on mount, a state update that lands after render: wait for it, so the
+  // test does not print an act() warning.
+  const renderCodeForm = async (overrides: Partial<Record<string, unknown>> = {}) => {
+    render(<CodeHarness {...overrides} />)
+    await waitFor(() => expect(screen.getAllByRole('textbox')[0]).toHaveFocus())
+  }
+
+  it('renders the title as the pin group label and shows the typed digit', async () => {
     const onCodeChange = vi.fn()
     const user = userEvent.setup()
 
-    render(codeForm({ onCodeChange }))
-    expect(screen.getByText('Enter the verification code')).toBeInTheDocument()
+    await renderCodeForm({ onCodeChange })
     const pinInputs = screen.getAllByRole<HTMLInputElement>('textbox')
     expect(pinInputs).toHaveLength(6)
+    expect(screen.getByText('Enter the verification code').closest('label')).not.toBeNull()
     await user.type(pinInputs[0], '7')
 
     expect(pinInputs[0]).toHaveValue('7')
@@ -270,7 +276,7 @@ describe('cspAuthComponents.CspAuthCodeForm', () => {
     const onStartOver = vi.fn()
     const user = userEvent.setup()
 
-    render(codeForm({ onResend, onStartOver }))
+    await renderCodeForm({ onResend, onStartOver })
     await user.click(screen.getByRole('button', { name: 'Resend code' }))
     await user.click(screen.getByRole('button', { name: 'Start over' }))
 
@@ -278,15 +284,15 @@ describe('cspAuthComponents.CspAuthCodeForm', () => {
     expect(onStartOver).toHaveBeenCalledTimes(1)
   })
 
-  it('disables resend and start over while an auth request is in flight', () => {
-    render(codeForm({ actionsDisabled: true }))
+  it('disables resend and start over while an auth request is in flight', async () => {
+    await renderCodeForm({ actionsDisabled: true })
 
     expect(screen.getByRole('button', { name: 'Resend code' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Start over' })).toBeDisabled()
   })
 
-  it('shows the notice and the error', () => {
-    render(codeForm({ notice: 'Verification code sent', error: 'The code is not valid or has expired.' }))
+  it('shows the notice and the error', async () => {
+    await renderCodeForm({ notice: 'Verification code sent', error: 'The code is not valid or has expired.' })
 
     expect(screen.getByRole('status')).toHaveTextContent('Verification code sent')
     expect(screen.getByRole('alert')).toHaveTextContent('The code is not valid or has expired.')

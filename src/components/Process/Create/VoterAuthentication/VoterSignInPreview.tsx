@@ -3,7 +3,7 @@ import type { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { ViewIcon } from '~theme/icons'
-import { getAuthFieldLabel, getContactFieldLabel } from '~components/Process/CSP/fields'
+import { getAuthFieldLabel, getContactFieldLabel } from './fields'
 import { CodeMethod, getCodeTwoFaFields, hasAuthConfig, PASSWORD_CREDENTIAL } from './utils'
 
 const getSampleValue = (t: TFunction, field: string) => {

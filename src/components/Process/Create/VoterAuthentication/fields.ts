@@ -1,13 +1,7 @@
 import type { OrgMemberAuthField } from '@vocdoni/api-types'
 import type { TFunction } from 'i18next'
 
-/**
- * The member fields a census can ask voters to type (`CensusSpec.authFields`),
- * in the order the process builder offers them. Kept here, next to the builder's
- * sign-in preview, because the preview must show what the voter's identify form asks for.
- *
- * Pure on purpose: the builder imports it, so it must not pull in anything else.
- */
+/** The member fields a census can ask voters to type (`CensusSpec.authFields`), in the order the builder offers them. */
 export const AUTH_FIELDS: readonly OrgMemberAuthField[] = ['memberNumber', 'name', 'surname', 'nationalId', 'birthDate']
 
 /** The label a voter sees above the input for an auth field. */

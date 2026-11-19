@@ -40,6 +40,7 @@ import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
 import { CreatedBy } from './CreatedBy'
+import { CrispNicknameObserver } from './CrispNickname'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
@@ -195,6 +196,7 @@ export const ProcessView = () => {
     // One identify flow for the whole page: the floating Identify button and
     // the sidebar one must resume the same step.
     <CspAuthSession>
+      <CrispNicknameObserver />
       <PageSection
         size='wide'
         display='grid'

@@ -19,6 +19,7 @@ import {
   PinInputControl,
   PinInputHiddenInput,
   PinInputInput,
+  PinInputLabel,
   PinInputRoot,
   Stack,
   Text,
@@ -26,10 +27,24 @@ import {
   type BoxProps,
   type ButtonProps,
 } from '@chakra-ui/react'
-import { defineComponent, type ComponentsPartialDefinition } from '@vocdoni/react-components'
+import { defineComponent, type ComponentsPartialDefinition, type CspAuthField } from '@vocdoni/react-components'
+import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { stashCrispIdentity } from '~components/Process/CrispNickname'
 import { CloseButton } from '~components/ui/CloseButton'
 import { DialogHeader } from '~components/ui/DialogHeader'
+
+// The Crisp nickname: the first typed field that is neither the password nor the contact, as "<field> <value>".
+// Read from the DOM so the password, which the flow hashes, is never kept in state.
+const crispIdentity = (form: HTMLFormElement, fields: CspAuthField[]) => {
+  const values = new FormData(form)
+  for (const field of fields) {
+    if (field.name === 'password' || field.name === 'contact') continue
+    const value = String(values.get(field.name) ?? '').trim()
+    if (value) return `${field.name} ${value}`
+  }
+  return undefined
+}
 
 // The voter's CSP identify flow: the packaged CspAuth decides what each slot shows, these only draw it.
 export const cspAuthComponents: ComponentsPartialDefinition = {
@@ -66,7 +81,15 @@ export const cspAuthComponents: ComponentsPartialDefinition = {
       const { t } = useTranslation()
 
       return (
-        <chakra.form {...props} noValidate onSubmit={onSubmit} w='full'>
+        <chakra.form
+          {...props}
+          noValidate
+          onSubmit={(event: FormEvent<HTMLFormElement>) => {
+            stashCrispIdentity(crispIdentity(event.currentTarget, fields))
+            onSubmit(event)
+          }}
+          w='full'
+        >
           <Stack gap='4'>
             {fields.map((field) => (
               <FormControl key={field.name} invalid={!!field.error} required={field.required}>
@@ -97,7 +120,7 @@ export const cspAuthComponents: ComponentsPartialDefinition = {
             ) : null}
 
             {termsField ? (
-              <FormControl invalid={!!termsField.error}>
+              <FormControl invalid={!!termsField.error} required>
                 <CheckboxRoot>
                   <CheckboxHiddenInput {...termsField.inputProps} />
                   <CheckboxControl />
@@ -144,15 +167,16 @@ export const cspAuthComponents: ComponentsPartialDefinition = {
     }) => (
       <chakra.form {...props} noValidate onSubmit={onSubmit} w='full'>
         <VStack gap='5' align='stretch'>
-          <Text fontWeight='medium'>{title}</Text>
           <FormControl>
             <PinInputRoot
               size='lg'
               count={length}
+              otp
               value={Array.from({ length }, (_, index) => code[index] ?? '')}
               onValueChange={({ valueAsString }) => onCodeChange(valueAsString)}
               autoFocus
             >
+              <PinInputLabel fontWeight='medium'>{title}</PinInputLabel>
               <PinInputHiddenInput />
               <PinInputControl w='full' gap='3'>
                 {Array.from({ length }, (_, index) => (
