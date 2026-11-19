@@ -944,17 +944,26 @@
   "password_recovery_failed": "Password recovery failed",
   "password_recovery_sent": "Recovery email sent",
   "password_recovery_sent_description": "Check your inbox for the reset link.",
-  "password_request": {
-    "action": "Request password change",
-    "error": "Failed to request password reset",
-    "success": "Password reset email sent"
-  },
   "password_reset": {
     "subtitle": "If your email corresponds to an existing account, you'll receive an email with a code to reset your password.",
     "title": "Password reset"
   },
   "password_reset_failed": "Password reset failed",
   "password_reset_successful": "Password reset successful",
+  "password_setup": {
+    "already_set": "Your account already has a password",
+    "error": "Failed to set the password",
+    "request": {
+      "action": "Set a password",
+      "error": "Failed to send the password setup email",
+      "sent_recently": "A code was sent recently, check your email or try again in a minute",
+      "success": "We sent you an email with a code"
+    },
+    "submit": "Set password",
+    "subtitle": "Enter the code we emailed you and choose a password to sign in with your email.",
+    "success": "Password set successfully",
+    "title": "Set a password"
+  },
   "password_update": {
     "actions": {
       "save": "Save Password"

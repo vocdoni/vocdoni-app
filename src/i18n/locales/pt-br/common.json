@@ -965,17 +965,26 @@
   "password_recovery_failed": "Falha na recuperação de senha",
   "password_recovery_sent": "E-mail de recuperação enviado",
   "password_recovery_sent_description": "Verifique sua caixa de entrada para encontrar o link de redefinição.",
-  "password_request": {
-    "action": "Solicitar alteração de senha",
-    "error": "Falha ao solicitar a redefinição de senha",
-    "success": "E-mail de redefinição de senha enviado"
-  },
   "password_reset": {
     "subtitle": "Se o seu e-mail corresponder a uma conta existente, você receberá uma mensagem com um código para redefinir sua senha.",
     "title": "Redefinição de senha"
   },
   "password_reset_failed": "Falha na redefinição de senha",
   "password_reset_successful": "Senha redefinida com sucesso",
+  "password_setup": {
+    "already_set": "Sua conta já tem uma senha",
+    "error": "Não foi possível definir a senha",
+    "request": {
+      "action": "Definir uma senha",
+      "error": "Não foi possível enviar o e-mail para definir a senha",
+      "sent_recently": "Enviamos um código há pouco. Confira seu e-mail ou tente novamente em um minuto",
+      "success": "Enviamos um e-mail com um código para você"
+    },
+    "submit": "Definir senha",
+    "subtitle": "Digite o código que enviamos por e-mail e escolha uma senha para entrar com seu e-mail.",
+    "success": "Senha definida com sucesso",
+    "title": "Definir uma senha"
+  },
   "password_update": {
     "actions": {
       "save": "Salvar senha"
