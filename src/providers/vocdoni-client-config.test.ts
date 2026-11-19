@@ -23,4 +23,11 @@ describe('getVocdoniClientConfig', () => {
       explorerUrl: 'https://dev.explorer.vote',
     })
   })
+
+  it('resolves the stg environment to the staging explorer', () => {
+    expect(getVocdoniClientConfig('stg')).toEqual({
+      clientEnv: 'stg',
+      explorerUrl: 'https://stg.explorer.vote',
+    })
+  })
 })
