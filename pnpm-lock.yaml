@@ -9,12 +9,6 @@ overrides:
   decode-uri-component@<0.5.0: ^0.5.0
   axios: ^1.18.0
   zod@<4.6.6: ^4.6.7
-  '@vocdoni/api-client': file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz
-  '@vocdoni/api-types': file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz
-  '@vocdoni/api-voting': file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz
-  '@vocdoni/ballot': file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz
-  '@vocdoni/react-components': file:vendor/vocdoni/vocdoni-react-components-5.0.0.tgz
-  '@vocdoni/react-providers': file:vendor/vocdoni/vocdoni-react-providers-4.1.0.tgz
 
 importers:
 
@@ -93,26 +87,26 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@vocdoni/api-client':
-        specifier: file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz
-        version: file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz
+        specifier: ^2.8.0
+        version: 2.8.0
       '@vocdoni/api-types':
-        specifier: file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz
-        version: file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz
+        specifier: ^2.6.0
+        version: 2.6.0
       '@vocdoni/api-voting':
-        specifier: file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz
-        version: file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz
+        specifier: ^1.3.3
+        version: 1.3.3
       '@vocdoni/ballot':
-        specifier: file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz
-        version: file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz
+        specifier: ^1.4.0
+        version: 1.4.0
       '@vocdoni/rainbowkit-wallets':
         specifier: ^1.0.0
         version: 1.0.0(805eb3c842a795a643a4beed41a41efe)
       '@vocdoni/react-components':
-        specifier: file:vendor/vocdoni/vocdoni-react-components-5.0.0.tgz
-        version: file:vendor/vocdoni/vocdoni-react-components-5.0.0.tgz(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz)(@vocdoni/api-types@file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz)(@vocdoni/ballot@file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz)(@vocdoni/react-providers@file:vendor/vocdoni/vocdoni-react-providers-4.1.0.tgz(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz)(@vocdoni/api-types@file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz)(@vocdoni/api-voting@file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz)(react@19.2.7))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(react-router-dom@7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        specifier: ^4.1.0
+        version: 4.1.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.8.0)(@vocdoni/api-types@2.6.0)(@vocdoni/ballot@1.4.0)(@vocdoni/react-providers@4.1.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.8.0)(@vocdoni/api-types@2.6.0)(@vocdoni/api-voting@1.3.3)(react@19.2.7))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(react-router-dom@7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@vocdoni/react-providers':
-        specifier: file:vendor/vocdoni/vocdoni-react-providers-4.1.0.tgz
-        version: file:vendor/vocdoni/vocdoni-react-providers-4.1.0.tgz(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz)(@vocdoni/api-types@file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz)(@vocdoni/api-voting@file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz)(react@19.2.7)
+        specifier: ^4.1.0
+        version: 4.1.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.8.0)(@vocdoni/api-types@2.6.0)(@vocdoni/api-voting@1.3.3)(react@19.2.7)
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2732,21 +2726,17 @@ packages:
   '@vitest/utils@5.0.5':
     resolution: {integrity: sha512-/rBu7gzLDQI/SC79Tn98b5DwOgaHU/Gt4I9OVeP3YofzNaYtbImRCOJQmT1S6vOJg9gEIlWC+r3QxKkjuSa1nQ==}
 
-  '@vocdoni/api-client@file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz':
-    resolution: {integrity: sha512-ByDAGTAaO9xrmLdgSWS16dTfeM5vsPy63aT90psXlcjAebWMNrE59WJaGIj985c+SQXUUV6e+BOJcMgWbpYqug==, tarball: file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz}
-    version: 2.8.0
+  '@vocdoni/api-client@2.8.0':
+    resolution: {integrity: sha512-ByDAGTAaO9xrmLdgSWS16dTfeM5vsPy63aT90psXlcjAebWMNrE59WJaGIj985c+SQXUUV6e+BOJcMgWbpYqug==}
 
-  '@vocdoni/api-types@file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz':
-    resolution: {integrity: sha512-U0RkMR3G0B6t+yHhY7XK06aVam034bK0KK1g/S5OqRzN3qct3zPQdKVmMtFzHIzfQb6VTM2aSp+4DA4tpvbihA==, tarball: file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz}
-    version: 2.6.0
+  '@vocdoni/api-types@2.6.0':
+    resolution: {integrity: sha512-U0RkMR3G0B6t+yHhY7XK06aVam034bK0KK1g/S5OqRzN3qct3zPQdKVmMtFzHIzfQb6VTM2aSp+4DA4tpvbihA==}
 
-  '@vocdoni/api-voting@file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz':
-    resolution: {integrity: sha512-Z9gK8DvJ+5nO3DrlfqxyrO3gVB1YAmozQ0okQkFh/mAnN6wxnvHE2OnJBjlvRrvAl2ZoCt0ticgIpX2VB0w0/A==, tarball: file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz}
-    version: 1.3.3
+  '@vocdoni/api-voting@1.3.3':
+    resolution: {integrity: sha512-Z9gK8DvJ+5nO3DrlfqxyrO3gVB1YAmozQ0okQkFh/mAnN6wxnvHE2OnJBjlvRrvAl2ZoCt0ticgIpX2VB0w0/A==}
 
-  '@vocdoni/ballot@file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz':
-    resolution: {integrity: sha512-9BZdllT3dAuZCGcBjvDODgyotIbyQtkriJFsWaZgxo6LbcGqtIGaqoD7h10u7D8XG+xFYTWGciGo/F+rlgWcxQ==, tarball: file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz}
-    version: 1.4.0
+  '@vocdoni/ballot@1.4.0':
+    resolution: {integrity: sha512-9BZdllT3dAuZCGcBjvDODgyotIbyQtkriJFsWaZgxo6LbcGqtIGaqoD7h10u7D8XG+xFYTWGciGo/F+rlgWcxQ==}
 
   '@vocdoni/proto@1.15.14':
     resolution: {integrity: sha512-Tz+Bk+cOYgo7ofjUEemlAFwhVa7mg/T+4cJyh0ulqGJJLGGLuxUPbzx2BkXPySno7S6CNZGizefC5YYE/UHeLw==}
@@ -2762,9 +2752,8 @@ packages:
       viem: ^2.37.1
       wagmi: ^2.16.9
 
-  '@vocdoni/react-components@file:vendor/vocdoni/vocdoni-react-components-5.0.0.tgz':
-    resolution: {integrity: sha512-yZYe9aAWfNOnP4zjiAFG0297FiX8NsW4WSc1gokqgQHm2Wx3rjIa00EeO+YvLz2Ph/n1+VkKZS8E4WVuWZc6Gw==, tarball: file:vendor/vocdoni/vocdoni-react-components-5.0.0.tgz}
-    version: 5.0.0
+  '@vocdoni/react-components@4.1.0':
+    resolution: {integrity: sha512-9wIwUbny2Ix72E4mNM0NVFsdCv8uN1EA9nUMAwPzMdCnxcR8nFWaXVj6nm2mQrGGNpzC1D18oGPsua5i/fnHFQ==}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
       '@vocdoni/api-client': ^2.8.0
@@ -2780,9 +2769,8 @@ packages:
       react-router-dom:
         optional: true
 
-  '@vocdoni/react-providers@file:vendor/vocdoni/vocdoni-react-providers-4.1.0.tgz':
-    resolution: {integrity: sha512-Dw4ccVUWMXTPxwISlGITkpBO67+UxNp/CLzH03tz3pX0GfUIbi949ouN4GJYivcTFSeoLBd6ycd+rxqJlAeHWA==, tarball: file:vendor/vocdoni/vocdoni-react-providers-4.1.0.tgz}
-    version: 4.1.0
+  '@vocdoni/react-providers@4.1.0':
+    resolution: {integrity: sha512-VRKDvgsJtLryt265ygco+becGWLXDzZuVGLpi+wyIPh5CXsvHnw4Pj/KOmaOqT28z++XNneLQBi9M3iXE9Hugg==}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
       '@vocdoni/api-client': ^2.8.0
@@ -9632,25 +9620,25 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.2.0
 
-  '@vocdoni/api-client@file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz':
+  '@vocdoni/api-client@2.8.0':
     dependencies:
-      '@vocdoni/api-types': file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz
-      '@vocdoni/ballot': file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz
+      '@vocdoni/api-types': 2.6.0
+      '@vocdoni/ballot': 1.4.0
       up-fetch: 2.6.1
 
-  '@vocdoni/api-types@file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz': {}
+  '@vocdoni/api-types@2.6.0': {}
 
-  '@vocdoni/api-voting@file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz':
+  '@vocdoni/api-voting@1.3.3':
     dependencies:
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
-      '@vocdoni/api-types': file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz
+      '@vocdoni/api-types': 2.6.0
       '@vocdoni/proto': 1.15.14
       tweetnacl: 1.0.3
 
-  '@vocdoni/ballot@file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz':
+  '@vocdoni/ballot@1.4.0':
     dependencies:
-      '@vocdoni/api-types': file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz
+      '@vocdoni/api-types': 2.6.0
 
   '@vocdoni/proto@1.15.14':
     dependencies:
@@ -9669,13 +9657,13 @@ snapshots:
       viem: 2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)
       wagmi: 2.19.5(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@19.2.7))(@types/react@19.2.17)(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@19.2.7)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7))(zod@4.6.7)
 
-  '@vocdoni/react-components@file:vendor/vocdoni/vocdoni-react-components-5.0.0.tgz(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz)(@vocdoni/api-types@file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz)(@vocdoni/ballot@file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz)(@vocdoni/react-providers@file:vendor/vocdoni/vocdoni-react-providers-4.1.0.tgz(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz)(@vocdoni/api-types@file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz)(@vocdoni/api-voting@file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz)(react@19.2.7))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(react-router-dom@7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@vocdoni/react-components@4.1.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.8.0)(@vocdoni/api-types@2.6.0)(@vocdoni/ballot@1.4.0)(@vocdoni/react-providers@4.1.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.8.0)(@vocdoni/api-types@2.6.0)(@vocdoni/api-voting@1.3.3)(react@19.2.7))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(react-router-dom@7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@tanstack/react-query': 5.90.16(react@19.2.7)
-      '@vocdoni/api-client': file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz
-      '@vocdoni/api-types': file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz
-      '@vocdoni/ballot': file:vendor/vocdoni/vocdoni-ballot-1.4.0.tgz
-      '@vocdoni/react-providers': file:vendor/vocdoni/vocdoni-react-providers-4.1.0.tgz(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz)(@vocdoni/api-types@file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz)(@vocdoni/api-voting@file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz)(react@19.2.7)
+      '@vocdoni/api-client': 2.8.0
+      '@vocdoni/api-types': 2.6.0
+      '@vocdoni/ballot': 1.4.0
+      '@vocdoni/react-providers': 4.1.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.8.0)(@vocdoni/api-types@2.6.0)(@vocdoni/api-voting@1.3.3)(react@19.2.7)
       date-fns: 4.1.0
       i18next: 25.8.13(typescript@5.9.3)
       latinize: 0.5.0
@@ -9685,12 +9673,12 @@ snapshots:
     optionalDependencies:
       react-router-dom: 7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
 
-  '@vocdoni/react-providers@file:vendor/vocdoni/vocdoni-react-providers-4.1.0.tgz(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz)(@vocdoni/api-types@file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz)(@vocdoni/api-voting@file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz)(react@19.2.7)':
+  '@vocdoni/react-providers@4.1.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.8.0)(@vocdoni/api-types@2.6.0)(@vocdoni/api-voting@1.3.3)(react@19.2.7)':
     dependencies:
       '@tanstack/react-query': 5.90.16(react@19.2.7)
-      '@vocdoni/api-client': file:vendor/vocdoni/vocdoni-api-client-2.8.0.tgz
-      '@vocdoni/api-types': file:vendor/vocdoni/vocdoni-api-types-2.6.0.tgz
-      '@vocdoni/api-voting': file:vendor/vocdoni/vocdoni-api-voting-1.3.3.tgz
+      '@vocdoni/api-client': 2.8.0
+      '@vocdoni/api-types': 2.6.0
+      '@vocdoni/api-voting': 1.3.3
       react: 19.2.7
 
   '@wagmi/connectors@6.2.0(@tanstack/react-query@5.90.16(react@19.2.7))(@types/react@19.2.17)(@wagmi/core@2.22.1(@tanstack/query-core@5.90.16)(@types/react@19.2.17)(react@19.2.7)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.7))(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@19.2.7)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.7))(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7))(wagmi@2.19.5(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@19.2.7))(@types/react@19.2.17)(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@19.2.7)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7))(zod@4.6.7))(zod@4.6.7)':
