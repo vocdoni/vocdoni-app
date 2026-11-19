@@ -163,7 +163,8 @@ describe('MemberManager edit', () => {
 
     rerender(<MemberManager member={{ ...member, email: 'ada@example.com' }} open />)
 
-    expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
+    // A FieldRoot state update trails the rerender; waitFor flushes it inside act().
+    await waitFor(() => expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com'))
     expect(screen.queryByText(/invalid email/i)).not.toBeInTheDocument()
   })
 
