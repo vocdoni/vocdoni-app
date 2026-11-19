@@ -147,7 +147,11 @@ describe('project agent skills', () => {
     const problems = fs.existsSync(agentsSkillsDir)
       ? fs
           .readdirSync(agentsSkillsDir, { withFileTypes: true })
-          .filter((entry) => entry.isDirectory() && fs.existsSync(path.join(agentsSkillsDir, entry.name, 'SKILL.md')))
+          .filter(
+            (entry) =>
+              (entry.isDirectory() || entry.isSymbolicLink()) &&
+              fs.existsSync(path.join(agentsSkillsDir, entry.name, 'SKILL.md'))
+          )
           .map((entry) => entry.name)
           .filter(
             (name) => !lockedSkills.includes(name) && git('ls-files', '--', `.agents/skills/${name}`).length === 0
