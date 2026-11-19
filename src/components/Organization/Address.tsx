@@ -27,6 +27,7 @@ const AddressBtn = ({ ...props }) => {
   const { copy } = useClipboard({ value: organization?.address ?? '' })
 
   const address = organization?.address
+  const explorerOrganization = explorerOrganizationUrl(clientEnv, address ?? '')
 
   return (
     <MenuRoot {...props}>
@@ -58,9 +59,9 @@ const AddressBtn = ({ ...props }) => {
             </Button>
           </MenuItem>
 
-          <MenuItem value='open-explorer' asChild>
+          <MenuItem value='open-explorer' disabled={!explorerOrganization} asChild>
             <Button
-              onClick={() => window.open(explorerOrganizationUrl(clientEnv, address ?? ''), '_blank')}
+              onClick={() => window.open(explorerOrganization, '_blank')}
               display='flex'
               justifyContent='start'
               alignItems='center'

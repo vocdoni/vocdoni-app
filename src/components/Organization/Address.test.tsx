@@ -1,5 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { system } from '~theme/system'
 import AddressBtn from './Address'
@@ -43,5 +44,19 @@ describe('AddressBtn', () => {
     )
 
     expect(screen.getByText('0x123...def')).toBeInTheDocument()
+  })
+
+  it('disables the open-in-explorer item when there is no address to open', async () => {
+    mockUseOrganization.mockReturnValue({ organization: { address: '' } })
+    mockUseClient.mockReturnValue({ client: {} })
+
+    render(
+      <ChakraProvider value={system}>
+        <AddressBtn />
+      </ChakraProvider>
+    )
+    await userEvent.click(screen.getByRole('button'))
+
+    expect(screen.getByText('open_in_explorer').closest('[data-disabled]')).not.toBeNull()
   })
 })
