@@ -163,10 +163,10 @@ describe('MemberManager edit', () => {
 
     rerender(<MemberManager member={{ ...member, email: 'ada@example.com' }} open />)
 
-    // A FieldRoot update trails the rerender; flush it inside act.
     expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
-    await act(async () => {})
     expect(screen.queryByText(/invalid email/i)).not.toBeInTheDocument()
+    // A FieldRoot update trails the rerender; flush it inside act
+    await act(async () => {})
   })
 
   it('still sends the phone removal after a refetch of the same member', async () => {

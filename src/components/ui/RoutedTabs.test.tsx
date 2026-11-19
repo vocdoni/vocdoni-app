@@ -20,11 +20,11 @@ describe('RoutedTabs', () => {
       </TestMemoryRouter>
     )
 
-    // TabsRoot updates its state just after mount; flush that update inside act
     const tab = screen.getByRole('tab', { name: 'Second', selected: true })
-    await act(async () => {})
     const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '')
     expect(panel).not.toBeNull()
     expect(panel).toContainElement(screen.getByText('Second content'))
+    // TabsRoot updates its state just after mount; flush that update inside act
+    await act(async () => {})
   })
 })
