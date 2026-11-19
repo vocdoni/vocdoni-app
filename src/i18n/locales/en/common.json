@@ -197,22 +197,8 @@
     "title": "Tell us about your organization"
   },
   "csp": {
-    "auth_failed": "Authentication failed",
     "authenticate": "Identify",
-    "code_info": "You will receive a unique code on the selected medium to verify your identity and complete authentication",
-    "code_sent": "Verification code sent",
     "contact_match_help": "Must match the one registered in the system",
-    "errors": {
-      "credentials_or_password_incorrect": "We couldn't verify your identity. Check your credentials and your password and try again.",
-      "participant_not_found": "The voter is not listed in the census, or the provided credentials are incorrect.",
-      "requests_on_cooldown": "Too many requests. Please wait a moment before trying again.",
-      "too_many_attempts": "Too many attempts. Please try again later.",
-      "too_many_attempts_hours_one": "Too many attempts. Please try again in {{count}} hour.",
-      "too_many_attempts_hours_other": "Too many attempts. Please try again in {{count}} hours.",
-      "too_many_attempts_minutes_one": "Too many attempts. Please try again in {{count}} minute.",
-      "too_many_attempts_minutes_other": "Too many attempts. Please try again in {{count}} minutes.",
-      "zero_voting_weight": "You don't have enough voting power to access the election."
-    },
     "fields": {
       "birthDate": "Birth Date",
       "contact": "Contact",
@@ -226,21 +212,11 @@
       "surname": "Last Name"
     },
     "important": "Important",
-    "password_unavailable": "The password cannot be checked right now. Reload the page and try again.",
     "receive_code": "Receive Code",
     "step1": {
-      "footer_text": "If you experience any issues, contact your organization.",
-      "helper_text": "We've sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder.",
-      "resend_failed": "Failed to resend code",
-      "resend_success": "Code resent successfully",
       "resend_text": "Didn't receive the code? <resendBtn>Resend it</resendBtn>",
-      "start_over_text": "Wrong details? <restartBtn>Start over</restartBtn>",
       "subtitle": "Enter the verification code",
-      "title": "Authentication",
-      "validation": {
-        "length": "Code must be 6 digits",
-        "required": "Code is required"
-      }
+      "title": "Authentication"
     },
     "terms_acceptance": "I have read and accept the <2>Terms and Conditions</2> and the <6>Privacy Policy</6>."
   },
@@ -1257,6 +1233,7 @@
       "btn": "Close",
       "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. You can verify it <verify>here</verify>.</p>",
       "text_no_id": "<p>Your vote has been cast successfully.</p>",
+      "text_no_link": "<p>Your vote has been securely cast and stored using Vocdoni's technology.</p>",
       "title": "Vote submitted!"
     },
     "summary": {
@@ -1630,9 +1607,6 @@
   "signup_lastname": "Last name",
   "signup_subtitle": "Enter your information to get started",
   "signup_title": "Sign up",
-  "spreadsheet": {
-    "access_button": "Identify"
-  },
   "start_date": "Start date",
   "start_time": "Start time",
   "support": "Support",
@@ -1836,8 +1810,7 @@
   "view_in_explorer": "View in explorer",
   "vocdoni_logo": "Vocdoni logo",
   "vote": {
-    "anonymous_receipt": "Anonymous vote: save this receipt now, the platform cannot show it to you again.",
-    "voted_title": "Your vote was successfully cast!"
+    "anonymous_receipt": "Anonymous vote: save this receipt now, the platform cannot show it to you again."
   },
   "vote_information": "Vote information",
   "vote_overwrite": "Vote overwrite",

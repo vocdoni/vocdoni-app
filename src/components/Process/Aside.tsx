@@ -1,11 +1,10 @@
-import { Card, Flex, Stat, Text } from '@chakra-ui/react'
-import { VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
+import { Card, Flex, Link, Stat, Text } from '@chakra-ui/react'
+import { CspAuth, VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
 import { isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
 import { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
-import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
 
 const ProcessAside = () => {
@@ -111,6 +110,7 @@ const ProcessAside = () => {
 
 export const CensusConnectButton = () => {
   const { election, status, connected } = useElection()
+  const appEnv = useAppEnv()
 
   if (!election || status === 'CANCELED' || connected) {
     return null
@@ -119,8 +119,25 @@ export const CensusConnectButton = () => {
   // Every v2 census is member/CSP-backed (see CensusSpec's doc comment in
   // @vocdoni/api-types), so identifying against the process CSP (auth0/auth1)
   // is the only way into a voting session — the legacy wallet-connect entry
-  // point is gone with the remote-signer model.
-  return <CspAuth />
+  // point is gone with the remote-signer model. Voters must accept the terms first.
+  return (
+    <CspAuth
+      requireTerms
+      terms={
+        <Trans i18nKey='csp.terms_acceptance'>
+          I have read and accept the{' '}
+          <Link href={appEnv.TERMS_OF_SERVICE_URL} target='_blank' rel='noopener noreferrer'>
+            Terms and Conditions
+          </Link>{' '}
+          and the{' '}
+          <Link href={appEnv.PRIVACY_POLICY_URL} target='_blank' rel='noopener noreferrer'>
+            Privacy Policy
+          </Link>
+          .
+        </Trans>
+      }
+    />
+  )
 }
 
 export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () => void }) => {

@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query'
+import { isProcessId } from '@vocdoni/api-client'
 import type { ProcessCensusCheckoutRequest, ProcessCheckoutResponse, WalletLedgerEntry } from '@vocdoni/api-types'
 import { useCallback } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
 import { ensure0x } from '~utils/address'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { defaultSleep, isPermanentFailure } from './process-checkout'
-import { isProcessId } from './process-price'
 
 // The SDK request, plus the process it is for. `returnURL` is where Stripe sends the browser back.
 export type CensusCheckoutRequest = ProcessCensusCheckoutRequest & { processId: string }

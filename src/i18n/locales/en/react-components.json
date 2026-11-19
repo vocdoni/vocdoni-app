@@ -67,14 +67,6 @@
     "paused_end": "Ends {{ distance }}",
     "paused_start": "Starts {{ distance }}"
   },
-  "spreadsheet": {
-    "access_button": "Identify",
-    "anon_sik_helper": "This ensures the vote to be anonymous",
-    "anon_sik_label": "Define a password for your vote",
-    "close": "Close",
-    "logout": "Logout",
-    "modal_title": "Authentication"
-  },
   "statuses": {
     "canceled": "Canceled",
     "ended": "Ended",
@@ -105,5 +97,8 @@
     "voted_question_description": "Your vote id for \"{{ title }}\" is {{ id }}.",
     "voted_title": "Your vote was successfully cast!",
     "weight": "Your voting power is: "
+  },
+  "csp": {
+    "authenticate": "Identify"
   }
 }

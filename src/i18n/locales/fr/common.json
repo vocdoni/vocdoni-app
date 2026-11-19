@@ -199,24 +199,8 @@
     "title": "Parlez-nous de votre organisation"
   },
   "csp": {
-    "auth_failed": "Échec de l'authentification",
     "authenticate": "S'identifier",
-    "code_info": "Vous recevrez un code unique sur le canal sélectionné pour vérifier votre identité et finaliser l'authentification",
-    "code_sent": "Code de vérification envoyé",
     "contact_match_help": "Doit correspondre à celui enregistré dans le système",
-    "errors": {
-      "credentials_or_password_incorrect": "Nous n'avons pas pu vérifier votre identité. Vérifiez vos identifiants et votre mot de passe, puis réessayez.",
-      "participant_not_found": "L'électeur ne figure pas sur la liste électorale, ou les identifiants fournis sont incorrects.",
-      "requests_on_cooldown": "Trop de tentatives. Veuillez patienter un instant avant de réessayer.",
-      "too_many_attempts": "Trop de tentatives. Réessayez plus tard.",
-      "too_many_attempts_hours_one": "Trop de tentatives. Réessayez dans {{count}} heure.",
-      "too_many_attempts_hours_many": "Trop de tentatives. Réessayez dans {{count}} heures.",
-      "too_many_attempts_hours_other": "Trop de tentatives. Réessayez dans {{count}} heures.",
-      "too_many_attempts_minutes_one": "Trop de tentatives. Réessayez dans {{count}} minute.",
-      "too_many_attempts_minutes_many": "Trop de tentatives. Réessayez dans {{count}} minutes.",
-      "too_many_attempts_minutes_other": "Trop de tentatives. Réessayez dans {{count}} minutes.",
-      "zero_voting_weight": "Vous n'avez pas suffisamment de poids de vote pour accéder à l'élection."
-    },
     "fields": {
       "birthDate": "Date de naissance",
       "contact": "Contact",
@@ -230,21 +214,11 @@
       "surname": "Nom"
     },
     "important": "Important",
-    "password_unavailable": "Le mot de passe ne peut pas être vérifié pour le moment. Rechargez la page et réessayez.",
     "receive_code": "Recevoir le code",
     "step1": {
-      "footer_text": "En cas de problème, contactez votre organisation.",
-      "helper_text": "Nous avons envoyé un code à votre numéro de téléphone ou à votre adresse e-mail. Si vous avez choisi de le recevoir par e-mail, pensez à vérifier votre dossier de courriers indésirables.",
-      "resend_failed": "Échec du renvoi du code",
-      "resend_success": "Code renvoyé avec succès",
       "resend_text": "Vous n'avez pas reçu le code ? <resendBtn>Renvoyez-le</resendBtn>",
-      "start_over_text": "Informations incorrectes ? <restartBtn>Recommencez</restartBtn>",
       "subtitle": "Saisissez le code de vérification",
-      "title": "Authentification",
-      "validation": {
-        "length": "Le code doit comporter 6 chiffres",
-        "required": "Le code est obligatoire"
-      }
+      "title": "Authentification"
     },
     "terms_acceptance": "J'ai lu et j'accepte les <2>Conditions générales</2> et la <6>Politique de confidentialité</6>."
   },
@@ -1288,6 +1262,7 @@
       "btn": "Fermer",
       "text": "<p>Votre vote a été émis et stocké de manière sécurisée grâce à la technologie de Vocdoni. Vous pouvez le vérifier <verify>ici</verify>.</p>",
       "text_no_id": "<p>Votre vote a bien été émis.</p>",
+      "text_no_link": "<p>Votre vote a été émis et stocké de manière sécurisée grâce à la technologie de Vocdoni.</p>",
       "title": "Vote envoyé !"
     },
     "summary": {
@@ -1664,9 +1639,6 @@
   "signup_lastname": "Nom",
   "signup_subtitle": "Saisissez vos informations pour commencer",
   "signup_title": "S'inscrire",
-  "spreadsheet": {
-    "access_button": "S'identifier"
-  },
   "start_date": "Date de début",
   "start_time": "Heure de début",
   "support": "Assistance",
@@ -1871,8 +1843,7 @@
   "view_in_explorer": "Voir dans l'Explorer",
   "vocdoni_logo": "Logo de Vocdoni",
   "vote": {
-    "anonymous_receipt": "Vote anonyme : enregistrez ce reçu maintenant, la plateforme ne pourra plus vous l'afficher.",
-    "voted_title": "Votre vote a été enregistré avec succès !"
+    "anonymous_receipt": "Vote anonyme : enregistrez ce reçu maintenant, la plateforme ne pourra plus vous l'afficher."
   },
   "vote_information": "Informations sur le vote",
   "vote_overwrite": "Modification du vote",

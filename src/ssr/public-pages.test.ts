@@ -45,7 +45,7 @@ const createOrganization = (overrides: Record<string, unknown> = {}) =>
 const createElection = (overrides: Record<string, unknown> = {}) =>
   ({
     id: '0xprocess',
-    orgAddress: 'abc',
+    orgAddress: '0xabc',
     title: { default: 'Board election 2026' },
     description: { default: 'Vote for the next board members.' },
     census: {},

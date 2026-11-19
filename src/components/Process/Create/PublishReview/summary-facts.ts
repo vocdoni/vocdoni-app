@@ -1,6 +1,6 @@
 import type { ProcessPriceResponse } from '@vocdoni/api-types'
 import type { TFunction } from 'i18next'
-import { getAuthFieldLabel } from '~components/Process/CSP/fields'
+import { getAuthFieldLabel } from '~components/Process/Create/VoterAuthentication/fields'
 import { lineLabel, priceNote } from '~components/Pricing/ProcessPrice'
 import { isQuoteOnly } from '~queries/process-price'
 import { amountFigure, quantity } from '~utils/numbers'

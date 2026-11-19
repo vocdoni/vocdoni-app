@@ -122,7 +122,7 @@ export const useAuthProvider = () => {
       return
     }
     // Normalized comparison: the stored value may differ from the API list in case or
-    // `0x` prefix (checksummed wallets, unprefixed SAAS reads). Always persist and
+    // `0x` prefix (checksummed wallets, bare addresses). Always persist and
     // expose the canonical value from the list, not the stored variant.
     const stored = getStorageItem(LocalStorageKeys.SignerAddress)
     const selected = (stored && list.find((address) => sameAddress(address, stored))) || list[0]
