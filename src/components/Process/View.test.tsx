@@ -1,6 +1,9 @@
 import userEvent from '@testing-library/user-event'
-import { mockUseElection, render, screen, waitFor } from '~src/test-utils'
+import type { i18n as I18n } from 'i18next'
+import { I18nextProvider } from 'react-i18next'
+import { createTestI18n, mockUseElection, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import enCommon from '~i18n/locales/en/common.json'
 import { AnonymityInfoCard, ProcessInfoCard, SuccessVoteModal, VotingVoteModal } from './View'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
@@ -118,6 +121,20 @@ describe('VotingVoteModal', () => {
 })
 
 describe('SuccessVoteModal', () => {
+  let i18n: I18n
+
+  beforeAll(async () => {
+    i18n = await createTestI18n({ resources: { en: { common: enCommon } } })
+  })
+
+  // The success sentence wraps the explorer link in <verify>, so it needs the real English copy.
+  const renderModal = () =>
+    render(
+      <I18nextProvider i18n={i18n}>
+        <SuccessVoteModal />
+      </I18nextProvider>
+    )
+
   const setElection = (election: Record<string, unknown>, overrides: Record<string, unknown> = {}) =>
     setReactProvidersMock({
       useElection: () =>
@@ -130,10 +147,30 @@ describe('SuccessVoteModal', () => {
 
   // The dialog opens from an effect and renders through a portal, so every
   // assertion here waits for it rather than reading the first paint.
+  it('links the vote to its explorer page on the process chain', async () => {
+    setElection({ census: {}, chainId: 'vocdoni/DEV/36' }, { voteId: '0xdeadbeef' })
+
+    renderModal()
+
+    expect(await screen.findByRole('link', { name: 'here' })).toHaveAttribute(
+      'href',
+      'https://dev.explorer.vote/verify/0xdeadbeef'
+    )
+  })
+
+  it('renders no link when the process chain has no explorer', async () => {
+    setElection({ census: {}, chainId: 'vocdoni/TEST/1' }, { voteId: '0xdeadbeef' })
+
+    renderModal()
+
+    expect(await screen.findByTestId('vote-success-modal')).toBeInTheDocument()
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
+  })
+
   it('warns that an anonymous receipt will not come back', async () => {
     setElection({ census: { anonymous: true } }, { voteId: '0xdeadbeef' })
 
-    render(<SuccessVoteModal />)
+    renderModal()
 
     expect(await screen.findByText(/cannot show it to you again/)).toBeInTheDocument()
   })
@@ -141,7 +178,7 @@ describe('SuccessVoteModal', () => {
   it('says nothing about anonymity on a private ballot', async () => {
     setElection({ census: {} }, { voteId: '0xdeadbeef' })
 
-    render(<SuccessVoteModal />)
+    renderModal()
 
     expect(await screen.findByTestId('vote-success-modal')).toBeInTheDocument()
     expect(screen.queryByText(/cannot show it to you again/)).not.toBeInTheDocument()
@@ -153,7 +190,7 @@ describe('SuccessVoteModal', () => {
     // there is no receipt on screen to tell them to save.
     setElection({ census: { anonymous: true } }, { voteId: null })
 
-    render(<SuccessVoteModal />)
+    renderModal()
 
     expect(await screen.findByText(/cast successfully/)).toBeInTheDocument()
     expect(screen.queryByRole('link')).not.toBeInTheDocument()

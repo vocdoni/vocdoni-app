@@ -17,7 +17,6 @@ import {
   Icon,
   Image,
   type ImageProps,
-  Link,
   NativeSelect,
   Progress,
   Skeleton,
@@ -34,7 +33,6 @@ import {
   getElectionTitle,
   linkifyIpfs,
   useElection,
-  useReactComponentsLocalize,
 } from '@vocdoni/react-components'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,8 +40,6 @@ import { SuccessIcon } from '~theme/icons'
 import { ConfirmDialogContent } from '~components/ui/ConfirmDialog'
 import { Markdown } from '~components/ui/Markdown'
 import { StatusBadge, type StatusBadgeProps } from '~components/ui/StatusBadge'
-import { useAppEnv } from '~src/app-env'
-import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ElectionTitle as electionTitleRecipe } from '~theme/recipes/election'
 
 type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
@@ -511,44 +507,17 @@ export const electionComponents: ComponentsPartialDefinition = {
       )
     }
   ),
-  Voted: defineComponent<'Voted', AlertRootProps>(({ title, description, votes, ...props }) => {
+  // The packaged slot also passes `description` (every line joined in one). It is not rendered: the
+  // per-vote lines already carry the vote id linked to its explorer page.
+  Voted: defineComponent<'Voted', AlertRootProps>(({ title, description: _description, votes, ...props }) => {
     const recipe = useSlotRecipe({ key: 'Voted' })
     const styles = recipe()
     const { t } = useTranslation()
-    const localize = useReactComponentsLocalize()
-    const { VOCDONI_ENVIRONMENT } = useAppEnv()
-    const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
     const { election } = useElection()
     // An anonymous census has no server-side record tying a vote id to its
     // voter, so this notice is the only place the id will ever appear: say so
     // while it is still on screen.
     const anonymous = !!election?.census?.anonymous
-
-    // The SDK-joined `description` runs every vote line together inline and
-    // linkifies the bare nullifier as the href, so rebuild the lines from
-    // `votes`: one paragraph per voted question, with the vote id linking to
-    // the explorer verifier.
-    const linkifyToExplorer = (text: string, id: string) => {
-      const parts = text.split(id)
-      if (parts.length < 2) return text
-
-      return parts.flatMap((part, index) =>
-        index < parts.length - 1
-          ? [
-              part,
-              <Link
-                key={`verify-${index}`}
-                href={`${explorerUrl}/verify/${id}`}
-                target='_blank'
-                rel='noreferrer'
-                wordBreak='break-all'
-              >
-                {id}
-              </Link>,
-            ]
-          : [part]
-      )
-    }
 
     return (
       <Alert.Root
@@ -561,20 +530,11 @@ export const electionComponents: ComponentsPartialDefinition = {
         {...props}
       >
         <Alert.Indicator css={styles.icon} />
-        <Alert.Title css={styles.title}>{t('vote.voted_title')}</Alert.Title>
+        <Alert.Title css={styles.title}>{title}</Alert.Title>
         <Alert.Description css={styles.description} display='flex' flexDirection='column' gap='1'>
-          {votes.map((vote, index) => {
-            const line =
-              votes.length === 1 || !vote.questionTitle
-                ? localize('vote.voted_description', { id: vote.voteId })
-                : localize('vote.voted_question_description', {
-                    title: vote.questionTitle,
-                    id: vote.voteId,
-                    defaultValue: `Your vote id for "${vote.questionTitle}" is ${vote.voteId}.`,
-                  })
-
-            return <Text key={vote.questionId || index}>{linkifyToExplorer(line, vote.voteId)}</Text>
-          })}
+          {votes.map((vote, index) => (
+            <Text key={vote.questionId || index}>{vote.description}</Text>
+          ))}
           {anonymous && (
             <Text textStyle='body-sm' fontWeight='bold'>
               {t('vote.anonymous_receipt', {

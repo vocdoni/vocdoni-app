@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
 import { useAppEnv } from '~src/app-env'
+import { explorerOrganizationUrl } from '@vocdoni/api-client'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useTranslation } from 'react-i18next'
 import { CopyIcon, ExternalLinkIcon, MoreIcon } from '~theme/icons'
@@ -21,11 +22,12 @@ const AddressBtn = ({ ...props }) => {
   const { t } = useTranslation()
   const { organization } = useOrganization()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
+  const { clientEnv } = getVocdoniClientConfig(VOCDONI_ENVIRONMENT)
   const toast = useToast()
   const { copy } = useClipboard({ value: organization?.address ?? '' })
 
   const address = organization?.address
+  const explorerOrganization = explorerOrganizationUrl(clientEnv, address ?? '')
 
   return (
     <MenuRoot {...props}>
@@ -57,9 +59,9 @@ const AddressBtn = ({ ...props }) => {
             </Button>
           </MenuItem>
 
-          <MenuItem value='open-explorer' asChild>
+          <MenuItem value='open-explorer' disabled={!explorerOrganization} asChild>
             <Button
-              onClick={() => window.open(`${explorerUrl}/organization/${address}`, '_blank')}
+              onClick={() => explorerOrganization && window.open(explorerOrganization, '_blank')}
               display='flex'
               justifyContent='start'
               alignItems='center'

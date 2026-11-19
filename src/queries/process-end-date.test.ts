@@ -28,6 +28,11 @@ describe('fetchOnChainEndDate', () => {
     fetchMock.mockClear()
     await fetchOnChainEndDate(withQuestions(['up-1'], { chainId: 'vocdoni/STG/1' }))
     expect(fetchMock.mock.calls[0][0]).toBe('https://api-stg.vocdoni.net/v2/elections/up-1')
+
+    // A chain the SDK does not know has no gateway, so nothing is requested.
+    fetchMock.mockClear()
+    expect(await fetchOnChainEndDate(withQuestions(['up-1'], { chainId: 'vocdoni/TEST/1' }))).toBeNull()
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 
   it('ends when the last question ends', async () => {

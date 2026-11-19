@@ -10,6 +10,7 @@ import {
   votedAnatomy,
   voteWeightAnatomy,
 } from '~theme/react-components/anatomy/election'
+import { link } from './typography'
 
 export const ElectionDescription = defineRecipe({
   base: {
@@ -401,8 +402,10 @@ export const Voted = defineSlotRecipe({
   slots: votedAnatomy,
   base: {
     description: {
-      '& > a': {
-        wordBreak: 'break-word',
+      // The vote id is a bare <a> inside each line's <p>, so it takes the `link` recipe's base.
+      '& a': {
+        ...link.base,
+        wordBreak: 'break-all',
       },
     },
   },
