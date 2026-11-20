@@ -9,9 +9,9 @@ name: vocdoni-app-integration
 #
 # SOURCE OF TRUTH: this file is vendored from integrator-sdk's
 # integration/docker-compose.ci.yml. Both consume the same moving `:main` images,
-# so when saas-backend or vochain-sequencer changes its startup contract, re-sync
+# so when saas-backend or vocdoni-sequencer changes its startup contract, re-sync
 # from there rather than rediscovering the fix.
-# Ahead of integrator-sdk on the vochain-sequencer switch: that change is not on
+# Ahead of integrator-sdk on the vocdoni-sequencer switch: that change is not on
 # its main yet, so do not re-sync this file back to vocdoni-node.
 
 services:
@@ -28,9 +28,9 @@ services:
 
   vocone:
     platform: linux/amd64
-    # Override to run against a vochain-sequencer built from source, e.g. VOCHAIN_SEQUENCER_IMAGE=<image>
+    # Override to run against a vocdoni-sequencer built from source, e.g. VOCDONI_SEQUENCER_IMAGE=<image>
     # printed by scripts/integration-build-image.sh (see integration/README.md).
-    image: ${VOCHAIN_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vochain-sequencer:main}
+    image: ${VOCDONI_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vocdoni-sequencer:main}
     environment:
       VOCONED_DIR: /app/run
       VOCONED_PORT: 9090

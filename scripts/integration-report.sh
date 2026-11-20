@@ -86,7 +86,7 @@ if [ "$EVENT" = pull_request ]; then
   echo "$icon Integration run on push: **$RESULT**"
   echo
   app_line
-  upstream vochain-sequencer vochain-sequencer "$SEQUENCER_REF" "$SEQUENCER_SHA" ':main image'
+  upstream vocdoni-sequencer vocdoni-sequencer "$SEQUENCER_REF" "$SEQUENCER_SHA" ':main image'
   upstream saas-backend saas-backend "$SAAS_REF" "$SAAS_SHA" ':main image'
   upstream integrator-sdk vocdoni-integrator-sdk "$SDK_REF" "$SDK_SHA" 'npm (lockfile)'
   echo "- Run: $RUN_URL"
@@ -125,7 +125,7 @@ fi
     echo "$icon Integration run: **$RESULT**"
     echo
     app_line
-    upstream vochain-sequencer vochain-sequencer "$SEQUENCER_REF" "$SEQUENCER_SHA" ':main image'
+    upstream vocdoni-sequencer vocdoni-sequencer "$SEQUENCER_REF" "$SEQUENCER_SHA" ':main image'
     upstream saas-backend saas-backend "$SAAS_REF" "$SAAS_SHA" ':main image'
     upstream integrator-sdk vocdoni-integrator-sdk "$SDK_REF" "$SDK_SHA" 'npm (lockfile)'
     echo "- Run: $RUN_URL"

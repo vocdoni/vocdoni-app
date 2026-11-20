@@ -90,7 +90,7 @@ because the failing request is made by the page.
 
 If a vote is relayed but never lands (the success modal opens with no vote id,
 the public count stays at 0, and `curl localhost:8080/jobs/<jobId>` reports
-`census origin not compatible`), the cached `vochain-sequencer:main` image is older
+`census origin not compatible`), the cached `vocdoni-sequencer:main` image is older
 than the feature under test. `docker compose -f integration/docker-compose.ci.yml pull`
 and boot again: `up` reuses whatever `:main` docker already has, and only CI
 pulls fresh every run. The same goes for `saas-backend:main`: an image from before
@@ -208,7 +208,7 @@ Other feature PRs into `develop` do not run it (they are covered by `test.yml`);
 use **Run workflow** on the Actions tab to trigger it by hand on any branch.
 
 It is deliberately separate from `test.yml`: the stack tracks
-`ghcr.io/vocdoni/{saas-backend,vochain-sequencer}:main`, so a red run here often
+`ghcr.io/vocdoni/{saas-backend,vocdoni-sequencer}:main`, so a red run here often
 means "upstream moved" rather than "this repo is broken", and that must not gate
 the normal lint/unit/build job. The workflow prints the resolved image digests so
 such a run is reproducible locally, and uploads the Playwright report (with
