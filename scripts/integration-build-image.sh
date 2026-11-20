@@ -41,13 +41,13 @@ dir="$(mktemp -d)"
 trap 'rm -rf "$dir"' EXIT
 
 # Both vocdoni-sequencer and saas-backend are private and reached over SSH: with
-# the respective deploy key (VOCHAIN_SEQUENCER_DEPLOY_KEY or SAAS_BACKEND_DEPLOY_KEY)
+# the respective deploy key (VOCDONI_SEQUENCER_DEPLOY_KEY or SAAS_BACKEND_DEPLOY_KEY)
 # in CI, with the caller's own SSH access otherwise. A throwaway repo fetches every
 # branch, tag and PR head without trees or blobs, so the ref can be looked up among
 # those refs only.
 url="git@github.com:vocdoni/$repo.git"
 if [ "$repo" = vocdoni-sequencer ]; then
-  deploy_key="${VOCHAIN_SEQUENCER_DEPLOY_KEY:-}"
+  deploy_key="${VOCDONI_SEQUENCER_DEPLOY_KEY:-}"
 else
   deploy_key="${SAAS_BACKEND_DEPLOY_KEY:-}"
 fi
@@ -59,7 +59,7 @@ if [ -n "$deploy_key" ]; then
 elif [ -n "${CI:-}" ]; then
   # Fork PRs and Dependabot runs get no secrets, so the key is empty there.
   if [ "$repo" = vocdoni-sequencer ]; then
-    echo "ERROR: VOCHAIN_SEQUENCER_DEPLOY_KEY not available: CI needs it to fetch the private vocdoni-sequencer (fork PRs and Dependabot runs get no secrets)" >&2
+    echo "ERROR: VOCDONI_SEQUENCER_DEPLOY_KEY not available: CI needs it to fetch the private vocdoni-sequencer (fork PRs and Dependabot runs get no secrets)" >&2
   else
     echo "ERROR: SAAS_BACKEND_DEPLOY_KEY not available: CI needs it to fetch the private saas-backend (fork PRs and Dependabot runs get no secrets)" >&2
   fi
