@@ -9,8 +9,8 @@ name: vocdoni-app-integration
 #
 # SOURCE OF TRUTH: this file is vendored from integrator-sdk's
 # integration/docker-compose.ci.yml. Both consume the same moving `:main` images,
-# so when saas-backend or vocdoni-node changes its startup contract, re-sync from
-# there rather than rediscovering the fix.
+# so when saas-backend or vochain-sequencer changes its startup contract, re-sync
+# from there rather than rediscovering the fix.
 
 services:
   mongo:
@@ -26,10 +26,9 @@ services:
 
   vocone:
     platform: linux/amd64
-    # Override to run against a vocdoni-node built from source, e.g. VOCDONI_NODE_IMAGE=<image>
+    # Override to run against a vochain-sequencer built from source, e.g. VOCHAIN_SEQUENCER_IMAGE=<image>
     # printed by scripts/integration-build-image.sh (see integration/README.md).
-    image: ${VOCDONI_NODE_IMAGE:-ghcr.io/vocdoni/vocdoni-node:main}
-    entrypoint: /app/voconed
+    image: ${VOCHAIN_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vochain-sequencer:main}
     environment:
       VOCONED_DIR: /app/run
       VOCONED_PORT: 9090
@@ -42,27 +41,15 @@ services:
       VOCONED_TXCOSTS: 2
       VOCONED_SETTXCOSTS: 'true'
     volumes:
-      # Caches the zk circuit artifacts downloaded on first boot, so repeated
-      # local `up` cycles skip the download entirely. `down -v` drops it, so CI
-      # (which always tears down with -v) still pays a cold download each run.
+      # Persists chain data across local `up` cycles. `down -v` drops it (the
+      # explicit full clean); CI always tears down with -v.
       - vocone_run:/app/run
-    # voconed fetches its zk circuit artifacts over the network during startup
-    # and dies if that download times out:
-    #   FTL could not create base application: cannot load zk circuit:
-    #   error downloading 'census_proving_key.zkey' artifact: context deadline exceeded
-    # It is a known-flaky fetch — saas-backend's own scripts/circuits/main.go
-    # retries it 5 times with backoff for the same reason. A restart policy makes
-    # a transient failure self-heal within the healthcheck window instead of
-    # failing the whole job.
+    # A restart policy lets a transient startup failure self-heal within the
+    # healthcheck window instead of failing the whole job.
     restart: on-failure
     # Deliberately very generous. `api` gates on this via
     # depends_on/service_healthy, so `docker compose up -d` aborts with
     # "dependency failed to start" the moment the retries run out.
-    #
-    # The number that drives the sizing is voconed's OWN deadline on the circuit
-    # download: 300s. A window shorter than that cannot survive even one
-    # slow-but-recoverable fetch. 60s + 120x3s = ~420s covers a full 300s attempt
-    # plus the restart above and part of a second attempt.
     #
     # This costs nothing when the chain comes up fast (typical: well under 60s
     # on a native runner). It only spends time when it is already going wrong,

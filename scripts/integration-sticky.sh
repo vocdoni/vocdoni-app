@@ -9,7 +9,7 @@
 #
 # Input: JSON array of issue comments on stdin, oldest first ({body, user: {login}}).
 # Env: REPO (owner/repo), GH_TOKEN for gh.
-# Output (stdout, exit 0): vocdoni_node_ref=<ref or empty>, saas_backend_ref=<ref or empty>,
+# Output (stdout, exit 0): vochain_sequencer_ref=<ref or empty>, saas_backend_ref=<ref or empty>,
 # integrator_sdk_ref=<ref or empty>
 set -euo pipefail
 
@@ -44,7 +44,7 @@ allowed() {
 # Each comment is base64-encoded so newlines and quotes survive the shell loop.
 encoded="$(jq -r '.[] | {login: (.user.login // ""), body: (.body // "")} | @base64')"
 
-node_ref=""
+sequencer_ref=""
 saas_ref=""
 sdk_ref=""
 while IFS= read -r b64; do
@@ -60,14 +60,14 @@ while IFS= read -r b64; do
     continue
   fi
   if [ "$(sed -n 's/^reset=//p' <<<"$parsed")" = true ]; then
-    node_ref=""
+    sequencer_ref=""
     saas_ref=""
     sdk_ref=""
   elif [ "$(sed -n 's/^sticky=//p' <<<"$parsed")" = true ]; then
-    node_ref="$(sed -n 's/^vocdoni_node_ref=//p' <<<"$parsed")"
+    sequencer_ref="$(sed -n 's/^vochain_sequencer_ref=//p' <<<"$parsed")"
     saas_ref="$(sed -n 's/^saas_backend_ref=//p' <<<"$parsed")"
     sdk_ref="$(sed -n 's/^integrator_sdk_ref=//p' <<<"$parsed")"
   fi
 done <<<"$encoded"
 
-printf 'vocdoni_node_ref=%s\nsaas_backend_ref=%s\nintegrator_sdk_ref=%s\n' "$node_ref" "$saas_ref" "$sdk_ref"
+printf 'vochain_sequencer_ref=%s\nsaas_backend_ref=%s\nintegrator_sdk_ref=%s\n' "$sequencer_ref" "$saas_ref" "$sdk_ref"

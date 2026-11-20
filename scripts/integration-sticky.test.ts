@@ -68,8 +68,8 @@ function sticky(comments: Comment[]) {
   return res.stdout
 }
 
-function refs(node: string, saas: string, sdk = '') {
-  return `vocdoni_node_ref=${node}\nsaas_backend_ref=${saas}\nintegrator_sdk_ref=${sdk}\n`
+function refs(sequencer: string, saas: string, sdk = '') {
+  return `vochain_sequencer_ref=${sequencer}\nsaas_backend_ref=${saas}\nintegrator_sdk_ref=${sdk}\n`
 }
 
 const WRITER = 'alice'
@@ -93,7 +93,7 @@ describe('integration-sticky.sh', () => {
     expect(
       sticky([
         { body: '/integration saas-backend=#760', user: { login: WRITER } },
-        { body: '/integration vocdoni-node=1a2b3c4', user: { login: WRITER } },
+        { body: '/integration vochain-sequencer=1a2b3c4', user: { login: WRITER } },
       ])
     ).toBe(refs('', '#760'))
   })
@@ -110,7 +110,7 @@ describe('integration-sticky.sh', () => {
   it('reset clears the integrator-sdk ref too', () => {
     expect(
       sticky([
-        { body: '/integration vocdoni-node=feat/a integrator-sdk=#88', user: { login: WRITER } },
+        { body: '/integration vochain-sequencer=feat/a integrator-sdk=#88', user: { login: WRITER } },
         { body: '/integration reset', user: { login: WRITER } },
       ])
     ).toBe(refs('', '', ''))
@@ -119,7 +119,7 @@ describe('integration-sticky.sh', () => {
   it('a later sticky comment replaces the earlier one', () => {
     expect(
       sticky([
-        { body: '/integration vocdoni-node=feat/a saas-backend=#1', user: { login: WRITER } },
+        { body: '/integration vochain-sequencer=feat/a saas-backend=#1', user: { login: WRITER } },
         { body: '/integration saas-backend=#2', user: { login: WRITER } },
       ])
     ).toBe(refs('', '#2'))
@@ -132,22 +132,29 @@ describe('integration-sticky.sh', () => {
   it('a sticky comment replaces all three refs, not just the ones it names', () => {
     expect(
       sticky([
-        { body: '/integration vocdoni-node=feat/a saas-backend=#1 integrator-sdk=main', user: { login: WRITER } },
+        {
+          body: '/integration vochain-sequencer=feat/a saas-backend=#1 integrator-sdk=main',
+          user: { login: WRITER },
+        },
         { body: '/integration integrator-sdk=release/1.0.0', user: { login: WRITER } },
       ])
     ).toBe(refs('', '', 'release/1.0.0'))
   })
 
   it('a writer sticky comment counts', () => {
-    expect(sticky([{ body: '/integration vocdoni-node=feat/a', user: { login: WRITER } }])).toBe(refs('feat/a', ''))
+    expect(sticky([{ body: '/integration vochain-sequencer=feat/a', user: { login: WRITER } }])).toBe(
+      refs('feat/a', '')
+    )
   })
 
   it('a maintain sticky comment counts', () => {
-    expect(sticky([{ body: '/integration vocdoni-node=feat/a', user: { login: MAINTAINER } }])).toBe(refs('feat/a', ''))
+    expect(sticky([{ body: '/integration vochain-sequencer=feat/a', user: { login: MAINTAINER } }])).toBe(
+      refs('feat/a', '')
+    )
   })
 
   it('a read-only user sticky comment is ignored', () => {
-    expect(sticky([{ body: '/integration vocdoni-node=feat/b', user: { login: READER } }])).toBe(refs('', ''))
+    expect(sticky([{ body: '/integration vochain-sequencer=feat/b', user: { login: READER } }])).toBe(refs('', ''))
   })
 
   it('a read-only user reset is ignored', () => {
@@ -161,7 +168,7 @@ describe('integration-sticky.sh', () => {
 
   it('an unknown login is ignored with a warning, not a failure', () => {
     const res = run([
-      { body: '/integration vocdoni-node=feat/a', user: { login: 'mallory' } },
+      { body: '/integration vochain-sequencer=feat/a', user: { login: 'mallory' } },
       { body: '/integration saas-backend=#760', user: { login: WRITER } },
     ])
     expect(res.status, res.stderr).toBe(0)
@@ -173,8 +180,8 @@ describe('integration-sticky.sh', () => {
     fs.rmSync(logPath, { force: true })
     expect(
       sticky([
-        { body: '/integration vocdoni-node=feat/a', user: { login: WRITER } },
-        { body: '/integration vocdoni-node=feat/b', user: { login: WRITER } },
+        { body: '/integration vochain-sequencer=feat/a', user: { login: WRITER } },
+        { body: '/integration vochain-sequencer=feat/b', user: { login: WRITER } },
         { body: 'just chatting', user: { login: READER } },
       ])
     ).toBe(refs('feat/b', ''))
@@ -205,7 +212,7 @@ describe('integration-sticky.sh', () => {
     expect(
       sticky([
         {
-          body: '/integration vocdoni-node=feat/a\n\nSome notes with `backticks` and "quotes",\n/integration reset',
+          body: '/integration vochain-sequencer=feat/a\n\nSome notes with `backticks` and "quotes",\n/integration reset',
           user: { login: WRITER },
         },
       ])

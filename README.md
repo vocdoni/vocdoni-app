@@ -34,7 +34,7 @@
     <h3>Key Repositories</h3>
     <a href="https://github.com/vocdoni/vocdoni-app">Vocdoni App</a>
     |
-    <a href="https://github.com/vocdoni/vocdoni-node">Vocdoni Node</a>
+    <a href="https://github.com/vocdoni/vochain-sequencer">Vochain Sequencer</a>
     |
     <a href="https://github.com/vocdoni/vocdoni-integrator-sdk">Vocdoni Integrator SDK</a>
   </div>

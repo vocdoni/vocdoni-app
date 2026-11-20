@@ -4,25 +4,29 @@
 # per-commit images, so this is the only way to get one.
 #
 # Usage:
-#   scripts/integration-build-image.sh <vocdoni-node|saas-backend> <ref|#PR>
+#   scripts/integration-build-image.sh <vochain-sequencer|saas-backend> <ref|#PR>
 #
 # Output (stdout; everything else goes to stderr):
 #   image=vocdoni-app-integration/<repo>:<sha>
 #   sha=<full commit sha>
-# Feed the image to the stack as VOCDONI_NODE_IMAGE or SAAS_BACKEND_IMAGE.
+# Feed the image to the stack as VOCHAIN_SEQUENCER_IMAGE or SAAS_BACKEND_IMAGE.
 set -euo pipefail
 
 if [ "$#" -ne 2 ]; then
-  echo "usage: $0 <vocdoni-node|saas-backend> <ref>" >&2
+  echo "usage: $0 <vochain-sequencer|saas-backend> <ref>" >&2
   exit 1
 fi
 repo="$1"
 ref="$2"
 
 case "$repo" in
-  vocdoni-node | saas-backend) ;;
+  vochain-sequencer | saas-backend) ;;
+  vocdoni-node)
+    echo "ERROR: vocdoni-node is no longer used; use vochain-sequencer instead" >&2
+    exit 1
+    ;;
   *)
-    echo "ERROR: unknown repo '$repo' (expected vocdoni-node or saas-backend)" >&2
+    echo "ERROR: unknown repo '$repo' (expected vochain-sequencer or saas-backend)" >&2
     exit 1
     ;;
 esac
@@ -36,23 +40,30 @@ fi
 dir="$(mktemp -d)"
 trap 'rm -rf "$dir"' EXIT
 
-# Resolves the ref with git alone, then shallow-fetches exactly that commit. saas-backend is
-# private and reached over SSH: with SAAS_BACKEND_DEPLOY_KEY (its read-only deploy key) in CI,
-# with the caller's own SSH access otherwise. A throwaway repo fetches every branch, tag and PR
-# head without trees or blobs, so the ref can be looked up among those refs only.
-url="https://github.com/vocdoni/$repo.git"
-if [ "$repo" = saas-backend ]; then
-  url="git@github.com:vocdoni/$repo.git"
-  if [ -n "${SAAS_BACKEND_DEPLOY_KEY:-}" ]; then
-    printf '%s\n' "$SAAS_BACKEND_DEPLOY_KEY" > "$dir/deploy_key"
-    chmod 600 "$dir/deploy_key"
-    echo "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" > "$dir/known_hosts"
-    export GIT_SSH_COMMAND="ssh -i $dir/deploy_key -o IdentitiesOnly=yes -o UserKnownHostsFile=$dir/known_hosts"
-  elif [ -n "${CI:-}" ]; then
-    # Fork PRs and Dependabot runs get no secrets, so the key is empty there.
+# Both vochain-sequencer and saas-backend are private and reached over SSH: with
+# the respective deploy key (VOCHAIN_SEQUENCER_DEPLOY_KEY or SAAS_BACKEND_DEPLOY_KEY)
+# in CI, with the caller's own SSH access otherwise. A throwaway repo fetches every
+# branch, tag and PR head without trees or blobs, so the ref can be looked up among
+# those refs only.
+url="git@github.com:vocdoni/$repo.git"
+if [ "$repo" = vochain-sequencer ]; then
+  deploy_key="${VOCHAIN_SEQUENCER_DEPLOY_KEY:-}"
+else
+  deploy_key="${SAAS_BACKEND_DEPLOY_KEY:-}"
+fi
+if [ -n "$deploy_key" ]; then
+  printf '%s\n' "$deploy_key" > "$dir/deploy_key"
+  chmod 600 "$dir/deploy_key"
+  echo "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" > "$dir/known_hosts"
+  export GIT_SSH_COMMAND="ssh -i $dir/deploy_key -o IdentitiesOnly=yes -o UserKnownHostsFile=$dir/known_hosts"
+elif [ -n "${CI:-}" ]; then
+  # Fork PRs and Dependabot runs get no secrets, so the key is empty there.
+  if [ "$repo" = vochain-sequencer ]; then
+    echo "ERROR: VOCHAIN_SEQUENCER_DEPLOY_KEY not available: CI needs it to fetch the private vochain-sequencer (fork PRs and Dependabot runs get no secrets)" >&2
+  else
     echo "ERROR: SAAS_BACKEND_DEPLOY_KEY not available: CI needs it to fetch the private saas-backend (fork PRs and Dependabot runs get no secrets)" >&2
-    exit 1
   fi
+  exit 1
 fi
 refs="$dir/refs"
 git init --quiet "$refs" >&2
@@ -88,15 +99,15 @@ git -C "$src" checkout --quiet FETCH_HEAD >&2
 tag="vocdoni-app-integration/$repo:$sha"
 echo "== building $repo@$sha" >&2
 export DOCKER_BUILDKIT=1
-if [ "$repo" = vocdoni-node ]; then
-  docker build --platform linux/amd64 -t "$tag" "$src" >&2
-else
+if [ "$repo" = saas-backend ]; then
   go_version="$(awk '/^go [0-9]/ { print $2; exit }' "$src/go.mod")"
   if [ -z "$go_version" ]; then
     echo "ERROR: no 'go' directive found in saas-backend go.mod" >&2
     exit 1
   fi
   docker build --platform linux/amd64 --build-arg "GOLANG_VERSION=$go_version" -t "$tag" "$src" >&2
+else
+  docker build --platform linux/amd64 -t "$tag" "$src" >&2
 fi
 
 printf 'image=%s\nsha=%s\n' "$tag" "$sha"
