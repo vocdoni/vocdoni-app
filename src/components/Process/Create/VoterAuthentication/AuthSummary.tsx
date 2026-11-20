@@ -41,7 +41,7 @@ type AuthSummaryProps = {
 export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummaryProps) => {
   const { t } = useTranslation()
   const anonymity = useAnonymityLabels(anonymousVoting).title
-  const { credentials, codeMethod } = fromCensus(census)
+  const { credentials, codeMethod, certAuth } = fromCensus(census)
   const level = getProtectionLevel(credentials, codeMethod)
 
   return (
@@ -55,10 +55,12 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
           <HStack gap='2' align='start'>
             <Icon as={IdCardIcon} color='fg.muted' mt='0.5' />
             <Text>
-              {t('voter_auth.summary.details', {
-                defaultValue: 'Voters type: {{fields}}',
-                fields: credentials.map((field) => getAuthFieldLabel(t, field)).join(', '),
-              })}
+              {certAuth
+                ? t('voter_auth.cert.label', { defaultValue: 'Digital certificate' })
+                : t('voter_auth.summary.details', {
+                    defaultValue: 'Voters type: {{fields}}',
+                    fields: credentials.map((field) => getAuthFieldLabel(t, field)).join(', '),
+                  })}
             </Text>
           </HStack>
         )}

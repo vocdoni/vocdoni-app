@@ -198,6 +198,54 @@
   },
   "csp": {
     "authenticate": "Identifizieren",
+    "cert": {
+      "contact_organization": "If you keep having problems, contact {{organization}}.",
+      "contact_organization_unnamed": "If you keep having problems, contact the organization running this vote.",
+      "copy_failed": "Couldn't copy. Copy the address from your browser's address bar.",
+      "copy_link": "Copy link",
+      "errors": {
+        "backend_unavailable": "The voting service didn't answer. Try again in a few minutes.",
+        "check_unavailable": "We couldn't check your certificate right now. Try again in a few minutes.",
+        "code_refused": "Your certificate sign-in expired. Sign in again.",
+        "code_refused_contact": "Your certificate sign-in expired, or the email or phone doesn't match. Sign in again.",
+        "expired": "This certificate has expired. Get a new one from its issuer.",
+        "generic": "We couldn't sign you in with your certificate.",
+        "identity_invalid": "We couldn't read the identity in this certificate. Use another certificate if you have one.",
+        "identity_unsupported_document": "This certificate has no DNI or NIE. You need a certificate issued with your DNI or NIE.",
+        "invalid_chain": "We couldn't verify this certificate. Use another certificate if you have one.",
+        "mismatch": "Your certificate sign-in didn't finish in this tab. Sign in again.",
+        "no_certificate": "No certificate was selected.",
+        "not_in_census": "The DNI/NIE of this certificate isn't in the census of this vote.",
+        "not_yet_valid": "This certificate isn't active yet. If you got it today, try again later. If not, check your device's date and time.",
+        "process_unavailable": "This vote can't be accessed with a certificate right now.",
+        "rate_limited": "Too many attempts. Try again later.",
+        "revocation_unknown": "We couldn't confirm with its issuer that this certificate is still valid. Use another certificate if you have one.",
+        "revoked": "This certificate has been revoked.",
+        "test_certificate": "This is a test certificate. Use your real certificate.",
+        "unsupported_certificate": "This certificate isn't accepted. Use a personal certificate from FNMT, idCAT, ACCV, DIGITEL, Bewor or Sectigo.",
+        "unsupported_profile": "This certificate is for a company, a representative or an employee. Use the certificate issued to you as a person.",
+        "unsupported_purpose": "This certificate can't be used to sign in. Use the certificate you use to identify yourself.",
+        "weak_algorithm": "This certificate is too old to use here. Get a new one from its issuer.",
+        "zero_weight": "You don't have enough voting power to access the vote."
+      },
+      "in_app": {
+        "explanation": "You opened this link inside an app. Its built-in viewer can't use your digital certificate, but your browser can.",
+        "open": "Open in your browser",
+        "steps": "Copy the link, then open this link in your browser. Many apps also have a menu option to open the page in your browser."
+      },
+      "link_copied": "Link copied",
+      "not_a_certificate": "idCAT Mòbil and Cl@ve are not certificates: you need a digital certificate installed on this device.",
+      "not_loaded": "The certificate page didn't load? Try another network, such as mobile data, or copy the link and open it on another device.",
+      "other_device": "Is your certificate on another device? Copy the link and open it there.",
+      "picker_help": "Your browser will ask you to choose a certificate: choose the one with your name. We accept FNMT, idCAT, ACCV, DIGITEL, Bewor and Sectigo certificates.",
+      "reference": "Support reference: {{reference}}",
+      "restart_browser": "If your browser doesn't ask you to choose a certificate again, close every window of the browser and open the voting link again.",
+      "retry": "Try again",
+      "signing_in": "Signing you in…",
+      "start": "Sign in with a digital certificate",
+      "title": "Digital certificate",
+      "unavailable": "Signing in with a digital certificate is not available here."
+    },
     "contact_match_help": "Muss mit dem im System hinterlegten Eintrag übereinstimmen",
     "fields": {
       "birthDate": "Geburtsdatum",
@@ -1830,6 +1878,14 @@
       "configure": "Wähler-Authentifizierung konfigurieren",
       "edit": "Wähler-Authentifizierung bearbeiten"
     },
+    "cert": {
+      "description": "Voters sign in with their Spanish personal certificate (FNMT, idCAT…), which proves their DNI/NIE.",
+      "label": "Digital certificate",
+      "missing_label": "a valid DNI/NIE",
+      "missing_members_one": "{{count}} member can't sign in: they're missing {{fields}}.",
+      "missing_members_other": "{{count}} members can't sign in: they're missing {{fields}}.",
+      "not_a_certificate": "Voters need a certificate already installed: idCAT Mòbil and Cl@ve are not certificates."
+    },
     "code": {
       "description": "Vor der Abstimmung senden wir einen 6-stelligen Code an die E-Mail-Adresse oder Telefonnummer der Wählenden. So ist belegt, dass sie ihnen gehört, und niemand kann mit fremden Angaben abstimmen.",
       "email_description": "Wird an die E-Mail-Adresse in deiner Mitgliederliste gesendet.",
@@ -1889,6 +1945,7 @@
       "surname": "Schmidt"
     },
     "save": {
+      "anyway": "Save anyway",
       "failed": "Anmeldeeinstellungen nicht gespeichert",
       "submit": "Speichern",
       "unchecked": "Gespeichert, aber wir konnten deine Mitgliederliste nicht prüfen"

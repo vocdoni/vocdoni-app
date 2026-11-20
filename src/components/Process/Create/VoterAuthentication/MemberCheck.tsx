@@ -18,6 +18,8 @@ type MemberCheckProps = {
   /** Which field each incomplete member lacks, once known; replaces the combined sentence. */
   missingByField?: { label: string; count: number }[] | null
   membersCount?: number
+  /** A certificate census: members missing data are left out, and only duplicates block saving. */
+  certAuth?: boolean
   /** Set when the admin tried to save without choosing anything. */
   emptyAttempt: boolean
   /** A password alone can't identify voters. The census check is off then, so no result is shown. */
@@ -54,6 +56,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
       duplicateFields,
       missingByField,
       membersCount,
+      certAuth,
       emptyAttempt,
       passwordOnly,
       onRetry,
@@ -131,8 +134,12 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
       // Facts only: what is wrong, and with how many members. Saving stays
       // blocked either way (a duplicate makes the backend refuse the whole
       // census), so no guessed consequence and no advice on what to pick.
+      // A certificate census is the exception: it saves past members missing
+      // data, who then can't sign in, so it says that and warns instead.
+      const blocking = !certAuth || duplicates > 0
+      const color = blocking ? 'fg.error' : 'fg.warning'
       content = (
-        <Line icon={<Icon as={ErrorIcon} boxSize='icon.sm' color='fg.error' />} busy={rechecking}>
+        <Line icon={<Icon as={blocking ? ErrorIcon : WarningIcon} boxSize='icon.sm' color={color} />} busy={rechecking}>
           {duplicates > 0 && (
             <Text as='span' fontWeight='medium' color='fg.error'>
               {t('voter_auth.status.duplicated_members', {
@@ -145,12 +152,19 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
           {missing > 0 &&
             (missingByField?.length ? missingByField : [{ label: missingFields, count: missing }]).map(
               ({ label, count }) => (
-                <Text key={label} as='span' fontWeight='medium' color='fg.error'>
-                  {t('voter_auth.status.missing_members', {
-                    defaultValue: '{{count}} members are missing {{fields}}.',
-                    count,
-                    fields: label,
-                  })}{' '}
+                <Text key={label} as='span' fontWeight='medium' color={color}>
+                  {certAuth
+                    ? t('voter_auth.cert.missing_members', {
+                        defaultValue_one: "{{count}} member can't sign in: they're missing {{fields}}.",
+                        defaultValue_other: "{{count}} members can't sign in: they're missing {{fields}}.",
+                        count,
+                        fields: label,
+                      })
+                    : t('voter_auth.status.missing_members', {
+                        defaultValue: '{{count}} members are missing {{fields}}.',
+                        count,
+                        fields: label,
+                      })}{' '}
                 </Text>
               )
             )}

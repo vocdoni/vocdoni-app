@@ -21,6 +21,12 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   }
 })
 
+// The certificate flow is tested in CertAuth/: here only which identify flow Aside picks.
+vi.mock('./CertAuth/CertAuth', async (importOriginal) => ({
+  ...((await importOriginal()) as object),
+  CertAuthConnect: () => <div>CERT</div>,
+}))
+
 // Minimal v2 VotingProcessResponse-shaped election: only the fields Aside.tsx
 // actually reads (census.weighted, questions[].secretUntilTheEnd).
 const baseElection = {
@@ -55,13 +61,36 @@ describe('ProcessAside', () => {
     expect(screen.getByText('CSP')).toBeInTheDocument()
   })
 
-  it('makes the voter accept the terms and link them to the terms and privacy policy', () => {
-    render(<ProcessAside />, {
-      appEnv: { TERMS_OF_SERVICE_URL: 'https://terms.example', PRIVACY_POLICY_URL: 'https://privacy.example' },
+  it('renders the certificate flow, not the CSP one, for a certificate census', () => {
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: { ...baseElection, census: { weighted: false, certAuth: true } },
+          status: 'ONGOING',
+          results: baseResults,
+          connected: false,
+        }),
     })
+    render(<ProcessAside />)
+
+    expect(screen.getByText('CERT')).toBeInTheDocument()
+    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
+  })
+
+  it('renders the CSP flow, not the certificate one, for a census without certificates', () => {
+    render(<ProcessAside />)
+
+    expect(screen.getByText('CSP')).toBeInTheDocument()
+    expect(screen.queryByText('CERT')).not.toBeInTheDocument()
+  })
+
+  it('makes the voter accept the terms and link them to the terms and privacy policy', () => {
+    const appEnv = { TERMS_OF_SERVICE_URL: 'https://terms.example', PRIVACY_POLICY_URL: 'https://privacy.example' }
+    render(<ProcessAside />, { appEnv })
 
     expect(cspAuth.props?.requireTerms).toBe(true)
-    render(<>{cspAuth.props?.terms}</>)
+    // the terms read the URLs where they render (VoterTerms), as they do inside CspAuth's form
+    render(<>{cspAuth.props?.terms}</>, { appEnv })
     expect(screen.getByRole('link', { name: 'Terms and Conditions' })).toHaveAttribute('href', 'https://terms.example')
     expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute('href', 'https://privacy.example')
   })
