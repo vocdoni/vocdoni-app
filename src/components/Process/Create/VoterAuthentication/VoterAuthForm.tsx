@@ -16,7 +16,7 @@ import {
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { TFunction } from 'i18next'
 import { useEffect, useRef, useState } from 'react'
-import { Controller, useForm, useFormContext } from 'react-hook-form'
+import { Controller, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon, ViewIcon } from '~theme/icons'
 import { getApiErrorMessage } from '~components/Auth/api'
@@ -152,8 +152,11 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
   const { t, i18n } = useTranslation()
   const toast = useToast()
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
-  const { watch: watchProcess } = useFormContext<Process>()
-  const [groupId, anonymousVoting, weightedVote] = watchProcess(['groupId', 'anonymousVoting', 'weightedVote'])
+  const { control: processControl } = useFormContext<Process>()
+  const [groupId, anonymousVoting, weightedVote] = useWatch({
+    control: processControl,
+    name: ['groupId', 'anonymousVoting', 'weightedVote'],
+  })
 
   const { control, watch } = useForm<VoterAuthFormData>({ defaultValues: fromCensus(census) })
   const credentials = watch('credentials') ?? []

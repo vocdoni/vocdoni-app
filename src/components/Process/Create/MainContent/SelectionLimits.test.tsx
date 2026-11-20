@@ -26,7 +26,7 @@ const SelectionLimitsHarness = ({ min, max }: { min: number | null; max: number 
 
   return (
     <FormProvider {...form}>
-      <SelectionLimits index={0} />
+      <SelectionLimits index={0} control={form.control} setValue={form.setValue} />
     </FormProvider>
   )
 }
