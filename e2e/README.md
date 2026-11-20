@@ -35,10 +35,9 @@ It cleans up after itself, with two deliberate exceptions:
   the container logs are the evidence you need to diagnose the failure; tearing
   them down would destroy exactly that. Stop it with
   `scripts/integration-stack.sh down` when you are done.
-- **It stops containers but keeps volumes**, so vocone's cached zk circuit
-  artifacts survive and the next boot skips a slow, known-flaky download.
-  `scripts/integration-stack.sh down` is the explicit full clean (`down -v`),
-  and is what CI uses.
+- **It stops containers but keeps volumes**, so vocone's chain data persists
+  across local runs. `scripts/integration-stack.sh down` is the explicit full
+  clean (`down -v`), and is what CI uses.
 
 Set `INTEGRATION_KEEP_STACK=1` to always leave it running.
 

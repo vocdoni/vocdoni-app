@@ -11,6 +11,8 @@ name: vocdoni-app-integration
 # integration/docker-compose.ci.yml. Both consume the same moving `:main` images,
 # so when saas-backend or vochain-sequencer changes its startup contract, re-sync
 # from there rather than rediscovering the fix.
+# Ahead of integrator-sdk on the vochain-sequencer switch: that change is not on
+# its main yet, so do not re-sync this file back to vocdoni-node.
 
 services:
   mongo:
