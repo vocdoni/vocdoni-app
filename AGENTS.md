@@ -1,184 +1,165 @@
 # Repository Guidelines
 
+Policy for everyone (people and agents) working on vocdoni-app. It holds only what applies to every task; the rest is in
+the files and skills below. Read the ones your task touches before you start, not after review.
+
+| Read                                                                                           | When                                                                       |
+| ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [`BRAND.md`](BRAND.md)                                                                         | Writing any user-facing copy, or using the logo, colour or imagery         |
+| [`DESIGN.md`](DESIGN.md)                                                                       | Building or changing any screen, dialog, form or component                 |
+| [`docs/ui-guidelines.md`](docs/ui-guidelines.md)                                               | Writing a style, or touching `src/theme/` or `src/components/ui/`          |
+| `ui-change` skill                                                                              | Any visual change, mockup or theme work: the steps and the checks          |
+| `translations` skill                                                                           | Adding or changing a `t(…)` string or a locale file                        |
+| `payg-billing` skill                                                                           | Prices, the wallet, Stripe checkout, top-ups, voter places, payment errors |
+| `integration-pinning` skill                                                                    | A PR that depends on unmerged `saas-backend`, `vocdoni-node` or SDK work   |
+| `vocdoni-integrator-sdk` skill                                                                 | Anything that uses the `@vocdoni/*` SDK packages (see below)               |
+| `e2e/README.md`, `integration/README.md`, `scripts/ui-snapshot/README.md`, `docs/analytics.md` | Their areas                                                                |
+
+The project skills live in `.agents/skills/` (read by Codex, Gemini CLI, Copilot, OpenCode and others) and are
+symlinked from `.claude/skills/` for Claude Code. An agent that does not load skills reads
+`.agents/skills/<name>/SKILL.md`. The symlinks need a checkout with symlinks enabled: on Windows, clone with
+`git clone -c core.symlinks=true …` (or set `git config --global core.symlinks true` first), with Developer Mode or
+admin rights. Otherwise they check out as text files, Claude Code finds no project skills and
+`scripts/agent-skills.test.ts` fails. To fix an existing checkout, run `git config core.symlinks true`, then
+`git checkout -- .claude/skills`.
+Keep a skill current when you change what it describes, and add a new skill (plus its symlink and `.gitignore`
+exception) for knowledge that only some tasks need, instead of growing this file.
+
 ## Required Agent Skills
+
 - The `vocdoni-integrator-sdk` skill is mandatory. This app is built on the Integrator SDK packages
-  (`@vocdoni/api-client`, `@vocdoni/api-voting`, `@vocdoni/react-providers`, `@vocdoni/react-components`),
-  and the skill documents their current API, auth flows and ballot model.
-- Before starting any task, check that the skill is loaded under its current name: `vocdoni-integrator-sdk`
-  (or `vocdoni-integrator-sdk:vocdoni-integrator-sdk` when installed as a Claude Code plugin). A skill named
-  `integrator-sdk`, including the plugin form `vocdoni-integrator-sdk:integrator-sdk`, is an outdated copy that
-  documents removed APIs (e.g. `BundleProvider`); it does not count. If one is loaded, never use it, and
-  tell the user so they can update or remove it (it usually lives in their user-level skills or plugins, outside
-  this repository).
+  (`@vocdoni/api-client`, `@vocdoni/api-voting`, `@vocdoni/react-providers`, `@vocdoni/react-components`), and the skill
+  documents their current API, auth flows and ballot model.
+- Before starting any task, check that it is loaded under its current name: `vocdoni-integrator-sdk` (or
+  `vocdoni-integrator-sdk:vocdoni-integrator-sdk` as a Claude Code plugin). A skill named `integrator-sdk`, including the
+  plugin form `vocdoni-integrator-sdk:integrator-sdk`, is an outdated copy that documents removed APIs (e.g.
+  `BundleProvider`); it does not count. If one is loaded, never use it, and tell the user so they can update or remove
+  it (it usually lives in their user-level skills or plugins, outside this repository).
 - If it is not loaded, install it for this project yourself, without asking first:
   `npx -y skills@1.7.0 add vocdoni/vocdoni-integrator-sdk -y -a claude-code codex`. Install it only from that
   repository, and keep the `-a` list: without it the CLI may also write to other agents' folders that are not
-  git-ignored. This puts the skill in `.agents/skills/` (read by Codex, Gemini CLI, Copilot, OpenCode and others),
-  symlinks it into `.claude/skills/` for Claude Code, and writes `skills-lock.json`. All of these are git-ignored;
-  never commit them.
-- The install is per checkout: every clone or git worktree needs its own, and each one gets the skill's latest
-  version at install time. To bring an older install up to date, re-run the same install command (not
-  `skills update`, which ignores the `-a` list).
-- After installing, load the skill: read `.agents/skills/vocdoni-integrator-sdk/SKILL.md` now, since most agents
-  only pick up new skills when a session starts.
-- If the install fails (e.g. offline or sandboxed), tell the user. Carry on with tasks that do not touch the
-  Integrator SDK packages; for tasks that do, ask the user to install the skill before continuing.
-- Claude Code users may install it instead as a plugin from the Vocdoni marketplace
-  (`claude plugin marketplace add vocdoni/skills`, then `claude plugin install vocdoni-integrator-sdk@vocdoni`).
-  An outdated plugin install is updated with `claude plugin marketplace update vocdoni`, then
-  `claude plugin update vocdoni-integrator-sdk@vocdoni`.
+  git-ignored. It lands in `.agents/skills/` with a symlink in `.claude/skills/` and writes `skills-lock.json`; all three
+  are git-ignored (unlike the project skills), so never commit them. Then load it: read
+  `.agents/skills/vocdoni-integrator-sdk/SKILL.md` now, since most agents only pick up new skills when a session starts.
+- The install is per checkout: every clone or git worktree needs its own, and gets the skill's latest version. To
+  update, re-run the same command (not `skills update`, which ignores the `-a` list), then read the skill again.
+- If the install fails (e.g. offline or sandboxed), tell the user. Carry on with tasks that do not touch the SDK
+  packages; for tasks that do, ask the user to install it first.
+- Claude Code users may install it as a plugin instead: `claude plugin marketplace add vocdoni/skills`, then
+  `claude plugin install vocdoni-integrator-sdk@vocdoni` (update with `claude plugin marketplace update vocdoni` and
+  `claude plugin update vocdoni-integrator-sdk@vocdoni`).
 
-## Project Structure & Module Organization
-- `src/components/`: reusable UI and feature components (organized by domain).
-- `src/elements/`: route-level screens composed from components.
-- `src/pages/`: Vike page entries and SSR route definitions.
-- `src/router/` and `src/router/routes/`: application routing and route mappings.
-- `src/ssr/`: shared SSR data loading and metadata helpers for Vike pages.
-- `src/queries/`: API/data access logic and related domain query helpers.
-- `src/utils/`: shared utility functions.
-- `src/constants/`: static constants and configuration values used in code.
-- `src/theme/`: Chakra theme tokens, system config, and visual recipes.
-- `src/i18n/` and `src/i18n/locales/`: language setup and translation dictionaries.
-- `src/__mocks__/`: test mocks for external/problematic modules.
-- `public/`: static files served directly by Vite.
+## Project structure
 
-## Build, Test, and Development Commands
-- `pnpm start` or `pnpm dev`: run the local Vike + Vite development server.
-- `pnpm build`: create the production client and SSR bundles in `dist/client` and `dist/server`.
-- `pnpm lint`: run TypeScript checks, Prettier validation on `src/` and `knip` (unused files, exports and dependencies).
-- `pnpm lint:fix`: apply Prettier formatting fixes.
-- `pnpm test`: run all Vitest tests once.
-- `pnpm test:watch`: run tests in watch mode.
-- `pnpm test:coverage`: generate coverage reports.
-- `pnpm test:stress`: run the load-test harness self-tests in `stress/` (excluded from `pnpm test`; run after changing that directory).
-- `pnpm test:e2e:stack`: boot the disposable backend and run the Playwright end-to-end suite (needs docker).
-- `pnpm translations`: extract i18n keys from source code and update locale files.
-- `pnpm chakra:typegen`: regenerate Chakra typings after theme/system changes.
+- `src/pages/`: Vike page entries and SSR routes. `src/ssr/`: shared SSR data loading and metadata helpers.
+- `src/router/`, `src/router/routes/`: the client-side (SPA) routing. `src/elements/`: route-level screens and layouts.
+- `src/components/`: feature components by domain; `src/components/ui/`: the shared building blocks.
+- `src/queries/`: API access and query hooks. `src/utils/`, `src/constants/`: helpers and static values.
+- `src/theme/`: Chakra tokens, semantic colours, text styles, recipes and the style checks.
+- `src/i18n/`: i18next setup, `locales/<lang>/` dictionaries and `contexts/<lang>.md` translation guides.
+- `src/__mocks__/`: test mocks. `public/`: static files. `e2e/`, `integration/`: the end-to-end suite and its stack.
+  `scripts/`: tooling (OG cards, UI snapshot, integration helpers). `stress/`: the SSR load-test harness.
 
-## Coding Style & Naming Conventions
-- Follow `.editorconfig`: UTF-8, LF, 2-space indentation, final newline.
-- Prettier rules are authoritative: no semicolons, single quotes, trailing commas (`es5`), `printWidth: 120`.
-- Use TypeScript for new code and keep typing explicit in public interfaces.
-- Prefer configured path aliases over long relative imports. Common aliases include `~components/*`, `~queries/*`, `~theme/*`, `~i18n/*`, and `~utils/*`.
-- Naming patterns: components/files in PascalCase, hooks in `useX` format, tests as `*.test.ts` or `*.test.tsx` near related code.
+## Rendering
 
-## UI & Theme
-- Read `docs/ui-guidelines.md` before touching styles, the theme or a shared component. It lists the token roles, recipe
-  variants, `src/components/ui/` components, the allowed exceptions and how to add a token.
-- Components pick roles from the theme and never carry raw values: no hex, named colour, px font size or radius, and no
-  colour-mode logic; palette steps and px sizes and spacing only ratchet down. `src/theme/style-inventory.test.ts` fails
-  on them (part of `pnpm test`).
-- When a cleanup lowers a ratchet count, lock it in with `UPDATE_STYLE_BASELINE=1 npx vitest run src/theme/style-inventory.test.ts`.
-  For UI changes also run `pnpm ui:snapshot` and `pnpm ui:diff` (see `scripts/ui-snapshot/README.md`).
+- Vike owns SSR for `/organization/:address` and `/processes/:id`, and for the app root (`/`, `/:lang`) only when
+  `HOME_PROCESS_ID` is set (`src/pages/home-process/`). Everything else is client-rendered behind the Vike SPA
+  catch-all.
+- New public pages are Vike pages under `src/pages/`, using `+data`, `+Head` and page metadata rather than client-side
+  document changes. Do not move other existing routes to SSR unless asked.
 
-## Internationalization Workflow
-- Any new user-facing text must go through i18next (`t(...)`/translation keys), not hardcoded strings.
-- After adding or changing translation keys, always run `pnpm translations`.
-- Review generated locale diffs and translate new keys for every supported locale: each directory under `src/i18n/locales/` (`ca`, `de`, `el`, `es`, `eu`, `fr`, `it`, `pt`, `pt-br`). `pnpm translations` adds them as empty strings, and with `returnEmptyString: false` an empty value falls back to English.
-- Avoid leaving partial localization changes unreviewed.
-- Per-locale translation guidance lives in `src/i18n/contexts/` (one file per locale, e.g. `es.md`, `ca.md`; `en` is the source language and has none). These files are prompts that capture tone, register, glossary terms, and non-translatable terms (placeholders, component tags, brand/product names) for each language. Read the whole file, glossary included, before translating or reviewing strings for a locale, follow it, and keep it updated whenever its conventions change.
-- `react-components.json` overrides the strings `@vocdoni/react-components` ships, which are English only. `pnpm translations` does not manage it, so when the package adds keys (e.g. after an upgrade), add their translations by hand to every non-English locale. English falls back to the package's own text and only needs a key to change its wording.
-- `src/i18n/locales/index.test.ts` fails when a locale has an empty, whitespace-only or null value, or lacks a key or CLDR plural form (e.g. `_many`) that English has. For `react-components`, "English" is the keys the installed package ships plus the app's own. It does not compare placeholders, so check that `{{ … }}` variables and component tags match English yourself.
+## Commands
 
-## Testing Guidelines
-- Test stack: Vitest + Testing Library (`jsdom` environment).
-- Prefer behavior-focused tests over implementation-detail assertions.
-- Keep tests close to the module being validated.
-- Run targeted tests while iterating (example: `pnpm test src/queries/groups.test.ts`).
-- Visual no-regression checks (theme, recipe or styling refactors that should change nothing on screen): take
-  `pnpm ui:snapshot` before and after and compare with `pnpm ui:diff`; see `scripts/ui-snapshot/README.md`.
+- `pnpm dev` (or `pnpm start`): dev server. `pnpm build`: client and SSR bundles in `dist/`.
+- `pnpm lint`: TypeScript, Prettier on `src/` and `knip`. `pnpm lint:fix`: Prettier fixes.
+- `pnpm test` (all Vitest tests once), `pnpm test <path>` (targeted), `pnpm test:watch`, `pnpm test:coverage`.
+- `pnpm translations`: extract i18n keys. `pnpm og:generate`: re-render the localized Open Graph cards.
+- `pnpm chakra:typegen`: regenerate Chakra typings after theme changes (the output is git-ignored).
+- `pnpm ui:snapshot`, `pnpm ui:diff`: visual and computed-style regression checks.
+- `pnpm test:e2e:stack`: boot the disposable backend and run the Playwright suite (needs docker, a few minutes).
+- `pnpm test:stress`: the `stress/` harness self-tests, after changing that directory.
 
-### End-to-end tests
-- `e2e/` holds a Playwright suite (`*.e2e.ts`) that drives a real browser against a disposable
-  full backend (mongo + vocone + saas-backend + MailHog, see `integration/`). Read
-  `e2e/README.md` before touching it.
-- It is deliberately **not** part of `pnpm test`, which stays fast and unit-only. Run it with
-  `pnpm test:e2e:stack` (needs docker); it takes a few minutes.
-- It covers what only this app owns: the OTP signup journey and the CSP + email-2FA voter
-  journey, plus the pay-per-process Stripe checkout. The suite runs in Stripe mode (the whole
-  suite on the Stripe sandbox) when `INTEGRATION_STRIPE_SECRET_KEY` and
-  `INTEGRATION_STRIPE_PUBLIC_KEY` are set; without them the checkout spec skips. See
-  `integration/README.md`. The generic voting lifecycle is covered upstream in integrator-sdk —
-  don't duplicate it here.
-- While the stack is up, every email the backend sends is browsable at `localhost:8025`. This is
-  the practical way to debug 2FA/verification flows by hand.
-- Prefer structural selectors (`name`, `data-value`, `button[type="submit"]`) over translated
-  copy. Add a `data-testid` in `src/` only when there is no such handle, and comment why.
+## Code style
 
-## Internal Dependencies Context
-- This repository depends on maintained Vocdoni packages; changes may require validating upstream behavior.
-- Key internal dependencies include `@vocdoni/sdk`, `@vocdoni/react-components`, and `@vocdoni/rainbowkit-wallets`.
+- `.editorconfig` and Prettier are authoritative: 2 spaces, LF, no semicolons, single quotes, `es5` trailing commas,
+  120 columns.
+- TypeScript for new code, with explicit types on public interfaces. Use the path aliases (`~components/*`,
+  `~queries/*`, `~theme/*`, `~i18n/*`, `~utils/*`…) over long relative imports.
+- Components and their files in PascalCase, hooks as `useX`, tests as `*.test.ts(x)` next to the code.
+- Import `react-router`'s main entry only, never `react-router/dom`. Import images and assets as modules, not as path
+  strings.
 
-## Rendering Architecture
-- The app is no longer a pure SPA.
-- Vike owns SSR for `/organization/:address` and `/processes/:id`.
-- The app root (`/` and `/:lang`) is also SSR, but only when `HOME_PROCESS_ID` is set: it then renders
-  that process' voting page (`src/pages/home-process/`). Unset, the root stays with the SPA catch-all.
-- The rest of the app remains client-rendered behind the Vike SPA catch-all page.
-- Keep this split incremental: do not move unrelated routes to SSR unless explicitly requested.
-- For public SSR pages, prefer Vike `+data`, `+Head`, and page metadata over client-side document mutations.
+## UI rules
 
-## Branching Model
-- `develop` is the default and integration branch. Branch new work off `develop` and open PRs against it unless told
-  otherwise. It deploys to app-dev.vocdoni.io (SaaS api-dev, vochain dev).
-- `stage` deploys to app-stg.vocdoni.io (SaaS api-stg, vochain LTS) and `main` is production, app.vocdoni.io (SaaS
-  api-lts, vochain LTS). Do not target them with feature or fix PRs: they only receive release PRs, `develop` →
-  `stage` → `main`.
-- Hotfixes for an already deployed version are the one exception: branch from `stage` or `main` (e.g. `h/<name>`) and
-  PR back to that same branch. Only do this when explicitly asked.
-- `d/<name>` branches are long-lived, client-specific deployments that diverge from `develop`. Do not branch from or
-  target them unless the task is about that deployment.
-- CI follows the base branch (`.github/workflows/test.yml`): PRs to `develop` run lint, tests and the dev build; PRs to
-  `stage` or `d/**` run them with the stg build. PRs to any other base (`main`, an `h/` branch, or a feature branch in a
-  stacked PR) get neither job, so a green check there means lint and tests never ran: run `pnpm lint` and `pnpm test`
-  locally. The integration workflow (`.github/workflows/integration.yml`) runs on merges into `develop`, on PRs to
-  `stage` or `main` (release and hotfix alike), on any PR with sticky `/integration` pins, and on a `/integration` PR
-  comment from a user with write access.
-- The full flow and deploy links are in the README's "Branching and deploys" section.
+The full rules are in `DESIGN.md` and `docs/ui-guidelines.md`; `src/theme/style-inventory.test.ts` and `tsc`
+(`strictTokens`) enforce most of them. These are the ones most often broken:
 
-## Integration Tests Against Unmerged Upstream Changes
-The integration suite (`.github/workflows/integration.yml`) runs against the published `:main` images of
-`vocdoni/vocdoni-node` and `vocdoni/saas-backend` and the npm `@vocdoni/*` packages from the lockfile. When a change
-here depends on upstream work that is not merged yet, that run fails or proves nothing. **Rule: when a PR depends on
-an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change, open the PR with its usual description
-(linking the upstream PR), then post a separate PR comment with the `/integration` command pointing at that upstream
-PR, e.g. `/integration saas-backend=760` (bare PR number; `#760` also works, but GitHub autolinks it to this
-repo).** The command does nothing in the PR description; only a comment triggers it. That comment holds the command
-alone, with no signature or other text.
-- Keys: `vocdoni-node=`, `saas-backend=`, `integrator-sdk=` (the SDK repo, built, packed and installed through pnpm
-  overrides for that run only). Each is optional. A ref is a SHA, branch, tag, or a PR number (bare `760` or `#760`).
-  Upstreams are built from source, so the run takes longer.
-- A comment whose refs are all branches, tags or PRs is **sticky**: every later push re-runs against those refs at
-  their current heads. Any SHA makes it a one-shot run, and so does a bare `/integration` (`:main` images and npm
-  packages), without changing the sticky refs. `/integration reset` goes back to the `:main` images and npm packages.
-- Only users with write access can trigger it. The comment trigger runs the workflow from `develop` and replies with a
-  PR comment, and a failed run's reply includes the failing step's output. Sticky re-runs on push
-  show up as the Integration check and post a new PR comment each time, with the same output.
-- This workflow does not run on every PR: its triggers are listed under Branching Model above. A sticky pin also runs
-  the e2e job on PRs into `develop`, which otherwise skip it.
-- Pushes to the upstream PR do not re-run anything here. Push to this PR or comment again.
-- Do not treat a green pinned run as ready to merge. For `saas-backend` or `vocdoni-node`, merge only after the
-  upstream change is merged and deployed to the environment the base branch uses (`develop` → api-dev and vochain
-  dev). For `integrator-sdk`, merge only after it is published to npm and bumped here, since the pinned run commits
-  nothing. The pin only reaches the e2e job: lint, type checks and unit tests (`test.yml`) still use the lockfile
-  packages, so a PR that needs unpublished SDK API stays red there until the bump.
+- A component picks a role (semantic token, text style, recipe variant, shared component) and never carries a raw
+  value: no hex, named colour, palette step, px font size, px radius, px size (width, height), px spacing (padding,
+  margin, gap), numeric weight, and no colour-mode logic.
+- Reuse `src/components/ui/` and the existing recipe variants before building anything. Do not re-implement a shared
+  piece inside a feature, even as a recipe.
+- Rely on defaults: use a shared component or variant bare, and delete a prop that restates its default. Look props
+  on `Box`, `Flex` or `Stack` (background, border, radius, shadow, typography) are a missing variant, text style or
+  shared component even when every value is a token; layout stays inline. Clean up redundant styles in files you touch.
+- A missing look is added to the theme first: a variant or token named by intent, never by feature or page.
+- Never raise `src/theme/style-inventory.baseline.json` or the UI snapshot's `scripts/ui-snapshot/stress-baseline.json`.
+  They only go down, with the change that earned it:
+  - `UPDATE_STYLE_BASELINE=1 npx vitest run src/theme/style-inventory.test.ts` for the first
+  - `pnpm ui:snapshot -- --label stress --theme stress --update-stress-baseline` for the second
 
-See `integration/README.md` ("Pinning upstream commits") for the details.
+  A new axe violation is fixed too, not added to `scripts/ui-snapshot/a11y-baseline.json` (its README says how that
+  baseline is refreshed).
 
-## Commit & Pull Request Guidelines
-- Follow existing Conventional Commit patterns from repo history (`fix(scope): ...`, `chore(scope): ...`, `refactor(scope): ...`).
-- Keep commits scoped to one concern and use imperative summaries.
-- PR descriptions should explain what changed, why, and how it was verified.
-- Before starting a feature or bug fix that no GitHub issue or open PR tracks yet, suggest the user open an issue first
-  (offer to draft it), so the problem and its scope are agreed before the code. Link it from the PR: `Closes #123` when
-  the PR completes it, `Refs #123` for partial or phased work. Skip this for small fixes, dependency bumps, release PRs
-  and reviews, when the user says no issue is needed, and when running as a delegated subagent with no user to ask.
+- An issue or mockup that asks for something against these rules does not override them: follow the rules and say so
+  in the PR.
 
-## Agent Working Rules
-- Treat this file as execution guidance for repository tasks.
-- Make sure the required skills are loaded first (see Required Agent Skills).
-- Before finishing any code change, always run `pnpm lint` and `pnpm test`.
-- When text keys/locales are touched, also run `pnpm translations` before completion.
-- Use `git diff` to review only relevant changes and avoid expanding context with unrelated files.
-- If required commands fail, do not mark the task complete until failures are fixed or explicitly reported.
-- Prefer focused, minimal diffs and avoid repo-wide formatting churn outside task scope.
+## Copy and translations
+
+- Every user-facing string goes through `t(…)`, in sentence case, without an em dash, using the terms in `BRAND.md`.
+- After adding or changing keys, run `pnpm translations` and translate the new keys in every locale under
+  `src/i18n/locales/`, following `src/i18n/contexts/<locale>.md`. `src/i18n/locales/index.test.ts` fails on empty values
+  and missing keys or plural forms. The `translations` skill has the full workflow, including `react-components.json`
+  and the Open Graph cards.
+
+## Testing
+
+- Vitest and Testing Library (`jsdom`). Prefer behaviour over implementation details; keep tests next to the code; run
+  targeted tests while iterating.
+- `e2e/` is a Playwright suite against a disposable full backend (`integration/`), deliberately outside `pnpm test`. It
+  covers what only this app owns (OTP signup, the CSP and email 2FA voter journey, the pay-per-process checkout in
+  Stripe mode); the generic voting lifecycle is covered upstream in integrator-sdk. Read `e2e/README.md` before touching
+  it. Prefer structural selectors over translated copy; add a `data-testid` only when there is no other handle, with a
+  comment saying why.
+
+## Branching and CI
+
+- `develop` is the default and integration branch: branch off it and open PRs against it. It deploys to
+  app-dev.vocdoni.io. `stage` (app-stg) and `main` (production) only receive release PRs, `develop` → `stage` → `main`.
+- Hotfixes for a deployed version branch from `stage` or `main` (`h/<name>`) and PR back to it, only when asked.
+  `d/<name>` branches are long-lived client deployments: do not branch from or target them unless the task is about
+  that deployment.
+- CI (`.github/workflows/test.yml`) runs lint, tests and a build on PRs to `develop`, `stage` and `d/**` only. On any
+  other base (a stacked PR, `main`, an `h/` branch) run `pnpm lint` and `pnpm test` yourself.
+- The integration workflow runs on merges into `develop`, on PRs to `stage` or `main`, and on demand. When a PR depends
+  on an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change, post a PR comment holding only
+  `/integration <key>=<PR>` (keys: `saas-backend`, `vocdoni-node`, `integrator-sdk`; no signature) and do not merge
+  until the upstream change is deployed or published: the `integration-pinning` skill has the syntax and the merge
+  rules. The README's "Branching and deploys" has the deploy links.
+
+## Commits and pull requests
+
+- Conventional Commits (`feat(scope): …`, `fix(scope): …`, `refactor(scope): …`, `docs(scope): …`), one concern per
+  commit, imperative summary.
+- PR descriptions say what changed, why, and how it was verified; visible UI changes include before and after
+  screenshots (light and dark).
+- Before a feature or fix that no issue or open PR tracks, suggest opening an issue first (offer to draft it) and link
+  it from the PR (`Closes #123`, or `Refs #123` for partial work). Skip this for small fixes, dependency bumps, release
+  PRs and reviews, when the user says no issue is needed, and when running as a delegated subagent with no user to ask.
+
+## Before finishing
+
+- Run `pnpm lint` and `pnpm test`; when keys or locales changed, `pnpm translations` too. Do not call the task done
+  while they fail, unless you report the failure.
+- Review your own `git diff`: focused, minimal changes, no formatting churn outside the task.
+- If the task touched what a skill or one of the files above describes, update it in the same PR.

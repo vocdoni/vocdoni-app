@@ -16,12 +16,16 @@ import {
   TabsTrigger,
   Text,
 } from '@chakra-ui/react'
-import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
-import { hasResults } from '@vocdoni/api-client'
+import {
+  CspAuthSession,
+  ElectionQuestions,
+  ElectionResults,
+  useElection,
+  useOrganization,
+} from '@vocdoni/react-components'
+import { explorerVoteUrl, hasResults } from '@vocdoni/api-client'
 import { DialogHeader } from '~components/ui/DialogHeader'
 import { PageLoader } from '~components/ui/Loader'
-import { useAppEnv } from '~src/app-env'
-import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { ErrorIcon, ResultsIcon } from '~theme/icons'
@@ -34,7 +38,7 @@ import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
 import { CreatedBy } from './CreatedBy'
-import { CspAuthSession } from './CSP/CSPAuthModal'
+import { CrispNicknameObserver } from './CrispNickname'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
@@ -190,6 +194,7 @@ export const ProcessView = () => {
     // One identify flow for the whole page: the floating Identify button and
     // the sidebar one must resume the same step.
     <CspAuthSession>
+      <CrispNicknameObserver />
       <PageSection
         size='wide'
         display='grid'
@@ -263,8 +268,6 @@ export const SuccessVoteModal = () => {
   const { t } = useTranslation()
   const [isOpen, setOpen] = useState(false)
   const { election, hasVoted, voteId } = useElection()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const prevHasVotedRef = useRef(false)
 
   useEffect(() => {
@@ -277,6 +280,9 @@ export const SuccessVoteModal = () => {
   if (!election || !hasVoted) return null
 
   const anonymous = !!election.census?.anonymous
+  // The vote lives on the process' own chain; an unknown chain has no explorer to verify on, so the
+  // verify sentence is left out rather than linking nowhere.
+  const verifyUrl = voteId ? explorerVoteUrl(election.chainId, voteId) : undefined
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={({ open }) => setOpen(open)}>
@@ -291,13 +297,19 @@ export const SuccessVoteModal = () => {
               <BallotBoxAnimated alignSelf='center' />
             </DialogHeader>
             <Dialog.Body>
-              {voteId ? (
+              {verifyUrl ? (
                 <Trans
                   i18nKey='process.success_modal.text'
                   components={{
-                    verify: <Link href={`${explorerUrl}/verify/${voteId}`} target='_blank' />,
+                    verify: <Link href={verifyUrl} target='_blank' />,
                     p: <Text mb='2' />,
                   }}
+                />
+              ) : voteId ? (
+                <Trans
+                  i18nKey='process.success_modal.text_no_link'
+                  defaults="<p>Your vote has been securely cast and stored using Vocdoni's technology.</p>"
+                  components={{ p: <Text mb='2' /> }}
                 />
               ) : (
                 // Without a vote id there is nothing to verify, and linking the

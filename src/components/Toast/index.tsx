@@ -1,4 +1,4 @@
-import { Box, Toast, Toaster, createToaster } from '@chakra-ui/react'
+import { Box, Portal, Toast, Toaster, createToaster } from '@chakra-ui/react'
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -12,22 +12,25 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
   return (
     <ToastContext.Provider value={toaster}>
       {children}
-      <Toaster toaster={toaster}>
-        {(toast) => (
-          <Toast.Root w='fit' maxW='sm' mx='auto'>
-            <Toast.Indicator />
-            <Box flex='1'>
-              {toast.title ? <Toast.Title>{toast.title}</Toast.Title> : null}
-              {toast.description ? <Toast.Description>{toast.description}</Toast.Description> : null}
-            </Box>
-            {toast.action ? (
-              // Zag already runs `action.onClick` and dismisses the toast: passing it again ran it twice
-              <Toast.ActionTrigger>{toast.action.label}</Toast.ActionTrigger>
-            ) : null}
-            {toast.closable ? <Toast.CloseTrigger aria-label={t('close', { defaultValue: 'Close' })} /> : null}
-          </Toast.Root>
-        )}
-      </Toaster>
+      {/* Portalled to body, outside #root: a dialog's inert #root must not swallow the toasts it raises */}
+      <Portal>
+        <Toaster toaster={toaster}>
+          {(toast) => (
+            <Toast.Root w='fit' maxW='sm' mx='auto'>
+              <Toast.Indicator />
+              <Box flex='1'>
+                {toast.title ? <Toast.Title>{toast.title}</Toast.Title> : null}
+                {toast.description ? <Toast.Description>{toast.description}</Toast.Description> : null}
+              </Box>
+              {toast.action ? (
+                // Zag already runs `action.onClick` and dismisses the toast: passing it again ran it twice
+                <Toast.ActionTrigger>{toast.action.label}</Toast.ActionTrigger>
+              ) : null}
+              {toast.closable ? <Toast.CloseTrigger aria-label={t('close', { defaultValue: 'Close' })} /> : null}
+            </Toast.Root>
+          )}
+        </Toaster>
+      </Portal>
     </ToastContext.Provider>
   )
 }

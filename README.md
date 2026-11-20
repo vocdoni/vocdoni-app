@@ -88,7 +88,7 @@ You can create a `.env.local` file to set your custom environment variables
 there, here's a list of variables you can use:
 
 - `VOCDONI_ENVIRONMENT`: the vocdoni environment to be used, either
-  `dev` or `prod` (defaults to `dev`).
+  `dev`, `stg` or `prod` (defaults to `dev`). `stg` selects the staging explorer and vochain gateway.
 - `BASE_URL` is used to specify the public base page during build.
 - `BUILD_PATH` Specifies the destination of built files.
 - `COMMIT_SHA` Commit stamped in the `build-commit` meta tag of every page, read by the server at runtime (shortened to 7 characters). On DigitalOcean App Platform set it as a run-time variable to `${_self.COMMIT_HASH}`. Defaults to `git rev-parse --short HEAD`, or `unknown` without git.
@@ -210,7 +210,9 @@ While we welcome contributions from the community, we do not track all of our is
 
 Please review our [development guidelines](https://developer.vocdoni.io/development-guidelines).
 
-For UI and theme changes, follow the [UI guidelines](docs/ui-guidelines.md).
+The working rules are in [AGENTS.md](AGENTS.md) (for people and coding agents alike). Copy, voice and logo use follow
+[BRAND.md](BRAND.md); how screens are built follows [DESIGN.md](DESIGN.md), and UI and theme changes follow the
+[UI guidelines](docs/ui-guidelines.md). Task-specific procedures live as agent skills in `.agents/skills/`.
 
 ### Contributions and pull requests
 

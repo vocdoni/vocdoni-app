@@ -199,7 +199,6 @@
     "title": "Conta-nos sobre a tua organização"
   },
   "csp": {
-    "auth_failed": "Falha na autenticação",
     "authenticate": "Identificar-se",
     "cert": {
       "contact_organization": "If you keep having problems, contact {{organization}}.",
@@ -249,22 +248,7 @@
       "title": "Digital certificate",
       "unavailable": "Signing in with a digital certificate is not available here."
     },
-    "code_info": "Receberás um código único no meio selecionado para verificar a tua identidade e concluir a autenticação",
-    "code_sent": "Código de verificação enviado",
     "contact_match_help": "Tens de corresponder ao registado no sistema",
-    "errors": {
-      "credentials_or_password_incorrect": "Não foi possível verificar a tua identidade. Confirma as tuas credenciais e a tua palavra-passe e tenta novamente.",
-      "participant_not_found": "O votante não consta da lista de participantes ou as credenciais fornecidas estão incorretas.",
-      "requests_on_cooldown": "Demasiados pedidos. Aguarda um momento antes de tentar novamente.",
-      "too_many_attempts": "Demasiadas tentativas. Tenta novamente mais tarde.",
-      "too_many_attempts_hours_one": "Demasiadas tentativas. Tenta novamente daqui a {{count}} hora.",
-      "too_many_attempts_hours_many": "Demasiadas tentativas. Tenta novamente daqui a {{count}} horas.",
-      "too_many_attempts_hours_other": "Demasiadas tentativas. Tenta novamente daqui a {{count}} horas.",
-      "too_many_attempts_minutes_one": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minuto.",
-      "too_many_attempts_minutes_many": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minutos.",
-      "too_many_attempts_minutes_other": "Demasiadas tentativas. Tenta novamente daqui a {{count}} minutos.",
-      "zero_voting_weight": "Não tens poder de voto suficiente para aceder à votação."
-    },
     "fields": {
       "birthDate": "Data de nascimento",
       "contact": "Contacto",
@@ -278,21 +262,11 @@
       "surname": "Apelido"
     },
     "important": "Importante",
-    "password_unavailable": "Não é possível verificar a palavra-passe neste momento. Recarrega a página e tenta novamente.",
     "receive_code": "Receber código",
     "step1": {
-      "footer_text": "Se tiveres algum problema, contacta a tua organização.",
-      "helper_text": "Enviámos um código para o teu número de telefone ou endereço de email. Se optaste por recebê-lo por email, verifica também a pasta de spam.",
-      "resend_failed": "Falha ao reenviar o código",
-      "resend_success": "Código reenviado com sucesso",
       "resend_text": "Não recebeste o código? <resendBtn>Reenviar</resendBtn>",
-      "start_over_text": "Dados incorretos? <restartBtn>Recomeçar</restartBtn>",
       "subtitle": "Introduz o código de verificação",
-      "title": "Autenticação",
-      "validation": {
-        "length": "O código deve ter 6 dígitos",
-        "required": "O código é obrigatório"
-      }
+      "title": "Autenticação"
     },
     "terms_acceptance": "Li e aceito os <2>Termos e Condições</2> e a <6>Política de Privacidade</6>."
   },
@@ -460,7 +434,6 @@
     },
     "process_create": {
       "error_deleting_draft_title": "Erro ao eliminar o rascunho",
-      "error_title": "Erro ao criar o processo",
       "success_description": "A redirecionar-te para a página do processo de votação…",
       "success_title": "Processo de votação criado com sucesso"
     },
@@ -944,6 +917,10 @@
       "success": "Fornecedor desassociado com sucesso"
     }
   },
+  "og": {
+    "headline": "Votação online segura para a tua organização",
+    "tagline": "Votação verificável para organizações de qualquer dimensão, fácil de usar e gratuita até 25 votantes."
+  },
   "open_in_explorer": "Abrir no Explorer",
   "or_continue_with": "ou continuar com",
   "org_type_selector": {
@@ -1074,7 +1051,6 @@
       "cancel_open": "Cancelar o pagamento em curso",
       "check_again": "Verificar novamente",
       "conflict": "Ainda há um carregamento aberto para este processo de votação, por isso ainda não pode ser publicado. Retoma o pagamento para o concluir, ou cancela-o e publica-o a partir da tua wallet.",
-      "draft_total": "Total do rascunho (sem IVA)",
       "pay": "Pagar {{amount}} e publicar",
       "publish_again": "Publicar novamente",
       "publish_title": "Publicar o processo de votação",
@@ -1084,14 +1060,11 @@
       "resume": "Retomar o pagamento",
       "return_to_processes": "Voltar aos teus processos de votação",
       "return_unknown": "Não conseguimos saber a que processo de votação correspondia este pagamento. Se o pagamento foi concluído, o processo de votação é publicado automaticamente. Vê os teus processos de votação para confirmar o estado.",
-      "shortfall": "Valor em falta (sem IVA)",
       "timeout": "O teu pagamento está confirmado e o processo de votação será publicado em breve. Se não for, publica-o novamente: é pago a partir da tua wallet.",
       "timeout_unpaid": "O processo de votação ainda está a ser publicado. Se não aparecer em breve, publica-o novamente: é pago a partir da tua wallet.",
       "title": "Carregar e publicar",
-      "top_up": "Carregamento (sem IVA)",
       "unconfirmed": "O teu pagamento ainda está a ser confirmado. Alguns métodos de pagamento demoram alguns dias a confirmar. O processo de votação é publicado automaticamente assim que o pagamento for confirmado, por isso podes sair desta página.",
-      "unpaid": "O pagamento não foi concluído. Podes tentar novamente.",
-      "wallet_balance": "Saldo da wallet"
+      "unpaid": "O pagamento não foi concluído. Podes tentar novamente."
     },
     "create": {
       "action": {
@@ -1199,6 +1172,118 @@
       "wallet_short": "A tua wallet tem {{balance}}, faltam-lhe {{shortfall}} para este total.",
       "wallet_top_up": "Carregar a wallet"
     },
+    "publish_review": {
+      "back": "Voltar ao resumo",
+      "blocked": "Faltam {{shortfall}} de saldo. Só um administrador o pode carregar.",
+      "card": {
+        "billing": "Dados de faturação",
+        "cta_loading": "Pagar e publicar",
+        "lead_balance": "O saldo da organização cobre {{balance}}. O resto paga-se agora, com IVA.",
+        "lead_whole": "Pagas a votação inteira agora, com IVA.",
+        "note_zero": "Depois de publicar, o saldo fica a zero.",
+        "processing": "A processar o pagamento…",
+        "secure": "Pagamento seguro processado pela Stripe. A Vocdoni não vê nem guarda os dados do cartão.",
+        "short": "Falta",
+        "title": "Paga {{amount}} e a votação é publicada.",
+        "top_up": "Carregamento, sem IVA"
+      },
+      "change": "Alterar",
+      "change_what": "Alterar {{what}}",
+      "close": "Fechar",
+      "code": {
+        "choice": "Código por e-mail ou SMS",
+        "email": "Código por e-mail",
+        "none": "Sem código",
+        "sms": "Código por SMS"
+      },
+      "cost": {
+        "balance_after": "Saldo depois de publicar",
+        "balance_now": "Saldo da organização agora",
+        "base_one": "{{voters}} votante",
+        "base_many": "{{voters}} votantes",
+        "base_other": "{{voters}} votantes",
+        "details": "Revê o detalhe",
+        "note_card": "O que falta paga-se com cartão no passo seguinte. O resto sai do saldo.",
+        "note_wallet": "É descontado do saldo pré-pago da organização. Não é cobrado nada ao cartão: o IVA paga-se quando se carrega saldo.",
+        "short": "Falta",
+        "sms_one": "Código por SMS, {{voters}} votante",
+        "sms_many": "Código por SMS, {{voters}} votantes",
+        "sms_other": "Código por SMS, {{voters}} votantes",
+        "summary": "Custo: {{total}}",
+        "title": "O que se paga",
+        "total": "Total, sem IVA"
+      },
+      "eyebrow": "Revê antes de publicar",
+      "facts": {
+        "anonymous": "Voto anónimo",
+        "code": "2FA",
+        "credentials": "Credenciais",
+        "credentials_none": "Nenhuma",
+        "dates": "Datas",
+        "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} dia",
+        "duration_days_many": "{{count}} dias",
+        "duration_days_other": "{{count}} dias",
+        "duration_hours_one": "{{count}} hora",
+        "duration_hours_many": "{{count}} horas",
+        "duration_hours_other": "{{count}} horas",
+        "equal": "Igual para todos",
+        "now": "Agora",
+        "off": "Desativado",
+        "on": "Ativado",
+        "results": "Resultados",
+        "results_hidden": "Vêem-se ao terminar",
+        "results_live": "Em direto",
+        "weight": "Peso de voto",
+        "weighted": "Ponderado"
+      },
+      "failed": "Não foi possível publicar a votação.",
+      "free_trial": "Se só queres fazer um teste, escolhe uma lista de participantes com {{limit}} pessoas ou menos: é grátis.",
+      "how_you_pay": "Como pagas",
+      "intro": "Este é o resumo da votação e do que vai custar. Se estiver tudo certo, podes pagá-la e publicá-la aqui mesmo.",
+      "keep_editing": "Continuar a editar",
+      "lead_now_one": "{{voters}} poderá votar {{questions}}, desde que publiques até {{end}}.",
+      "lead_now_many": "{{voters}} poderão votar {{questions}}, desde que publiques até {{end}}.",
+      "lead_now_other": "{{voters}} poderão votar {{questions}}, desde que publiques até {{end}}.",
+      "lead_scheduled_one": "{{voters}} poderá votar {{questions}}, de {{start}} até {{end}}.",
+      "lead_scheduled_many": "{{voters}} poderão votar {{questions}}, de {{start}} até {{end}}.",
+      "lead_scheduled_other": "{{voters}} poderão votar {{questions}}, de {{start}} até {{end}}.",
+      "org_balance": "Saldo da organização",
+      "pay_now": "O que pagas agora",
+      "primary": {
+        "card": "Adicionar {{shortfall}} e publicar",
+        "publish": "Publicar",
+        "wallet": "Publicar e pagar {{total}}"
+      },
+      "progress": {
+        "hint": "Vamos redirecionar-te para a votação assim que estiver publicada. Tem paciência, pode demorar um pouco.",
+        "payment": "Pagamento recebido",
+        "published": "Votação publicada",
+        "publishing": "A publicar a votação…"
+      },
+      "questions_one": "{{count}} pergunta",
+      "questions_many": "{{count}} perguntas",
+      "questions_other": "{{count}} perguntas",
+      "this_vote": "Esta votação",
+      "total_now": "Total a pagar agora",
+      "type": {
+        "multiple": "Escolha múltipla",
+        "single": "Escolha simples"
+      },
+      "vote_summary": "Resumo da votação",
+      "voters_one": "{{voters}} pessoa",
+      "voters_many": "{{voters}} pessoas",
+      "voters_other": "{{voters}} pessoas",
+      "voters_unknown": "Os votantes",
+      "wallet": {
+        "covers": "O saldo da organização cobre o custo todo. Não é preciso cartão.",
+        "cta": "Pagar com o saldo e publicar",
+        "lead": "Não tens de pagar mais nada: é descontado do saldo pré-pago.",
+        "note": "Depois de publicar, ficam {{after}} no saldo.",
+        "title": "Paga {{total}} com o saldo e a votação é publicada."
+      },
+      "what_is_voted": "O que se vota"
+    },
     "question_type": {
       "label": "Tipo de pergunta",
       "multiple": "Escolha múltipla",
@@ -1225,6 +1310,7 @@
       "btn": "Fechar",
       "text": "<p>O teu voto foi submetido e armazenado de forma segura através da tecnologia do Vocdoni. <verify>Podes verificá-lo aqui</verify>.</p>",
       "text_no_id": "<p>O teu voto foi submetido com sucesso.</p>",
+      "text_no_link": "<p>O teu voto foi submetido e armazenado de forma segura através da tecnologia do Vocdoni.</p>",
       "title": "Voto submetido!"
     },
     "summary": {
@@ -1601,9 +1687,6 @@
   "signup_lastname": "Apelido",
   "signup_subtitle": "Introduz as tuas informações para começar",
   "signup_title": "Criar conta",
-  "spreadsheet": {
-    "access_button": "Identificar-se"
-  },
   "start_date": "Data de início",
   "start_time": "Hora de início",
   "support": "Apoio",
@@ -1808,8 +1891,7 @@
   "view_in_explorer": "Ver no Explorer",
   "vocdoni_logo": "Logótipo do Vocdoni",
   "vote": {
-    "anonymous_receipt": "Voto anónimo: guarda este comprovativo agora, a plataforma não o pode voltar a mostrar.",
-    "voted_title": "O teu voto foi registado com sucesso!"
+    "anonymous_receipt": "Voto anónimo: guarda este comprovativo agora, a plataforma não o pode voltar a mostrar."
   },
   "vote_information": "Informações sobre o voto",
   "vote_overwrite": "Alteração do voto",

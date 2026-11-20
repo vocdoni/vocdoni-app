@@ -19,7 +19,7 @@ import {
   QuestionsTypeBadge,
   useElection,
 } from '@vocdoni/react-components'
-import { hasResults, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
+import { explorerElectionUrl, hasResults, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { Trans, useTranslation } from 'react-i18next'
 import { CopyIcon, ExternalLinkIcon, InfoIcon, MoreIcon, SearchIcon } from '~theme/icons'
@@ -30,8 +30,6 @@ import { StatusBadge } from '~components/ui/StatusBadge'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
-import { useAppEnv } from '~src/app-env'
-import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { useTableAsCards } from '~components/ui/useTableAsCards'
 import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
@@ -229,8 +227,6 @@ const ProcessContextMenu = () => {
   const { election } = useElection()
   const { cloneAsDraft } = useCloneAsDraft()
   const publicLanguage = usePublicLanguage()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
 
   if (!election) return null
 
@@ -240,8 +236,9 @@ const ProcessContextMenu = () => {
   })
 
   // The explorer knows on-chain (Vochain) process ids; each question is its own
-  // on-chain election, so link the first question's upstream id.
-  const explorerProcessId = election.questions[0]?.upstreamId
+  // on-chain election, so link the first question's upstream id on the process' chain.
+  // An unknown chain has no explorer, so no link.
+  const explorerHref = explorerElectionUrl(election.chainId, election.questions[0]?.upstreamId ?? '')
 
   return (
     <Menu.Root>
@@ -265,9 +262,9 @@ const ProcessContextMenu = () => {
                 <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
               </a>
             </Menu.Item>
-            {explorerProcessId && (
+            {explorerHref && (
               <Menu.Item value='explorer' asChild>
-                <a href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
+                <a href={explorerHref} target='_blank' rel='noopener noreferrer'>
                   <Icon as={SearchIcon} />
                   <Trans i18nKey='process_context.explorer'>Explorer</Trans>
                 </a>

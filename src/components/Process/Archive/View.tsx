@@ -8,6 +8,7 @@ import { useDateFns } from '~i18n/use-date-fns'
 import { useAppEnv } from '~src/app-env'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
 import type { LegacyElection, LegacyElectionStatus } from '~src/legacy/vochain-archive'
+import { explorerElectionUrl } from '@vocdoni/api-client'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { PageSection } from '~components/ui/PageContainer'
 
@@ -43,7 +44,7 @@ const ArchiveProcessView = ({ election }: { election: LegacyElection }) => {
   const { format } = useDateFns()
   const localize = useLocalizedText()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
+  const { clientEnv } = getVocdoniClientConfig(VOCDONI_ENVIRONMENT)
 
   const title = localize(election.title) || election.id
   const description = localize(election.description)
@@ -135,7 +136,7 @@ const ArchiveProcessView = ({ election }: { election: LegacyElection }) => {
           {t('public_process.verify', { defaultValue: 'Verify on the blockchain explorer:' })}
         </Text>
         <Link
-          href={`${explorerUrl}/process/${election.id}`}
+          href={explorerElectionUrl(clientEnv, election.id)}
           target='_blank'
           rel='noopener noreferrer'
           size='sm'

@@ -27,10 +27,22 @@ chakra-config.json
 .turbo
 .worktrees
 
-# AI related
+# AI related: project skills in .agents/skills/ (symlinked from .claude/skills/) are committed;
+# installed ones, such as vocdoni-integrator-sdk, are not
 .codex
-.agents
-.claude/skills
+/.agents/*
+*/**/.agents
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/integration-pinning/
+!/.agents/skills/payg-billing/
+!/.agents/skills/translations/
+!/.agents/skills/ui-change/
+/.claude/skills/*
+!/.claude/skills/integration-pinning
+!/.claude/skills/payg-billing
+!/.claude/skills/translations
+!/.claude/skills/ui-change
 .pi
 skills-lock.json
 

@@ -6,6 +6,7 @@ import type { AppEnv } from '~src/app-env-build'
 import { act, render, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 import { VideoPlayer } from '~components/ui/VideoPlayer'
+import { stashCrispIdentity } from '~components/Process/CrispNickname'
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => getAuthMock(),
@@ -173,6 +174,33 @@ describe('SharedCensus', () => {
 
   afterEach(() => {
     appEnvOverride = {}
+    setReactProvidersMock({ useElectionAuth: () => ({ connected: false, authToken: null, weight: null }) })
+    delete window.$crisp
+  })
+
+  it('sets the Crisp nickname when the identify flow starts on the home page', async () => {
+    const queue: CrispCommand[] = []
+    window.$crisp = queue
+    appEnvOverride = { ...appEnvOverride, CRISP_WEBSITE_ID: 'site-1' }
+    const flow = { challengePending: false, owner: null as string | null }
+    setReactProvidersMock({
+      useElectionAuth: () => ({
+        connected: false,
+        challengePending: flow.challengePending,
+        owner: flow.owner,
+        authToken: null,
+        weight: null,
+      }),
+    })
+
+    const { default: SharedCensus } = await import('./SharedCensus')
+    const { rerender } = await renderSharedCensus(<SharedCensus />)
+    stashCrispIdentity('name Ada')
+    flow.challengePending = true
+    flow.owner = 'owner-1'
+    await act(async () => rerender(<SharedCensus />))
+
+    expect(queue).toEqual([['set', 'user:nickname', ['name Ada']]])
   })
 
   it('renders always-visible and disconnected text when not connected', async () => {

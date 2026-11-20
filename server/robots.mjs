@@ -1,5 +1,4 @@
-// One image serves every environment, and stage runs with VOCDONI_ENVIRONMENT=prod,
-// so the decision is made by hostname: only the production app may be indexed.
+// One image serves every environment, so the decision is made by hostname: only the production app may be indexed.
 
 import { getEffectiveOrigin } from './ssr-cache.mjs'
 

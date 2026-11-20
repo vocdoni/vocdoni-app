@@ -62,4 +62,11 @@ const toast = {
   },
 }
 
-export const recipeColors = defineSemanticTokens.colors({ link, switch: switchColors, progress, toast })
+// The soft edge above a dialog footer while content scrolls under it: black on the light page, white on the dark one.
+const scroll = {
+  edge: {
+    value: { _light: '{colors.blackAlpha.100}', _dark: '{colors.whiteAlpha.100}' },
+  },
+}
+
+export const recipeColors = defineSemanticTokens.colors({ link, switch: switchColors, progress, toast, scroll })

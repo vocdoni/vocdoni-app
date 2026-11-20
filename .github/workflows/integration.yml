@@ -637,6 +637,12 @@ jobs:
           INTEGRATION_STRIPE_SECRET_KEY: ${{ needs.resolve.outputs.fork != 'true' && secrets.INTEGRATION_STRIPE_SECRET_KEY || '' }}
           SAAS_URL: http://localhost:8080
         run: |
+          if [ ! -f scripts/integration-stripe-sweep.mjs ]; then
+            # A comment run uses this workflow on a checkout that can predate the sweep (a release or
+            # hotfix PR into stage or main). The sweep is a backstop and must not turn the run red.
+            echo "::notice::scripts/integration-stripe-sweep.mjs is not in this checkout, nothing to sweep"
+            exit 0
+          fi
           args=()
           if [ -n "${INTEGRATION_STRIPE_SINCE:-}" ]; then args=(--since "$INTEGRATION_STRIPE_SINCE"); fi
           node scripts/integration-stripe-sweep.mjs "${args[@]}"

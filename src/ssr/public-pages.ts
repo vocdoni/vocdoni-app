@@ -11,7 +11,12 @@ import {
   type LegacyElectionsPage,
   type LegacyOrganization,
 } from '~src/legacy/vochain-archive'
-import { ensureAddressPrefix } from '~utils/address'
+import {
+  getOpenGraphImageAlt,
+  getOpenGraphImagePath,
+  OPEN_GRAPH_IMAGE_HEIGHT,
+  OPEN_GRAPH_IMAGE_WIDTH,
+} from '~src/pages/shared/openGraphImage'
 import { getLocalizedRawText } from '~utils/localized-text'
 
 type PublicLanguageAlternate = {
@@ -101,19 +106,25 @@ type PublicMeta = {
   language: string
   canonicalUrl?: string
   alternates: PublicLanguageAlternate[]
+  // The organization's own logo, when it has one (the social image may be the generic card instead).
+  organizationLogo?: string
   openGraph: {
     title: string
     description: string
     url?: string
     type: 'website'
     image: string
+    imageWidth?: number
+    imageHeight?: number
+    imageAlt?: string
     siteName: string
   }
   twitter: {
-    card: 'summary'
+    card: 'summary' | 'summary_large_image'
     title: string
     description: string
     image: string
+    imageAlt?: string
     site: string
     creator: string
   }
@@ -194,13 +205,28 @@ const buildMetaDescription = (primary: string | undefined, ...fallbackParts: Arr
 }
 const buildMetaTitle = (...parts: Array<string | undefined>) =>
   clampText(withBrandSuffix(parts.filter(Boolean).join(' | ')), 60)
-const publicSocialImagePath = '/assets/vocdoni_icon.png'
 const publicSiteName = 'Vocdoni'
 const publicTwitterAccount = '@vocdoni'
-const buildSocialImageUrl = (avatarUrl: string | undefined, canonicalUrl: string | undefined): string => {
-  if (avatarUrl) return avatarUrl
-  if (canonicalUrl) return new URL(publicSocialImagePath, canonicalUrl).toString()
-  return publicSocialImagePath
+// An organization logo is shown as a small summary card; without one, the localized 1200x630 card.
+const resolveSocialImage = ({
+  logo,
+  language,
+  canonicalUrl,
+}: {
+  logo: string | undefined
+  language: string
+  canonicalUrl: string | undefined
+}) => {
+  if (logo) return { image: logo, card: 'summary' as const }
+
+  const path = getOpenGraphImagePath(language)
+  return {
+    image: canonicalUrl ? new URL(path, canonicalUrl).toString() : path,
+    imageWidth: OPEN_GRAPH_IMAGE_WIDTH,
+    imageHeight: OPEN_GRAPH_IMAGE_HEIGHT,
+    imageAlt: getOpenGraphImageAlt(language),
+    card: 'summary_large_image' as const,
+  }
 }
 
 export const resolvePublicLanguage = ({
@@ -285,7 +311,8 @@ export const buildOrganizationMeta = ({
   const description =
     buildMetaDescription(getLocalizedText(organization.description, language), displayName) || displayName
 
-  const socialImage = buildSocialImageUrl(getLocalizedRawText(organization.logo, language) || undefined, canonicalUrl)
+  const organizationLogo = getLocalizedRawText(organization.logo, language) || undefined
+  const socialImage = resolveSocialImage({ logo: organizationLogo, language, canonicalUrl })
   const title = buildMetaTitle(displayName)
 
   return {
@@ -294,19 +321,24 @@ export const buildOrganizationMeta = ({
     language,
     canonicalUrl,
     alternates,
+    organizationLogo,
     openGraph: {
       title,
       description,
       url: canonicalUrl,
       type: 'website',
-      image: socialImage,
+      image: socialImage.image,
+      imageWidth: socialImage.imageWidth,
+      imageHeight: socialImage.imageHeight,
+      imageAlt: socialImage.imageAlt,
       siteName: publicSiteName,
     },
     twitter: {
-      card: 'summary',
+      card: socialImage.card,
       title,
       description,
-      image: socialImage,
+      image: socialImage.image,
+      imageAlt: socialImage.imageAlt,
       site: publicTwitterAccount,
       creator: publicTwitterAccount,
     },
@@ -332,7 +364,8 @@ export const buildProcessMeta = ({
     buildMetaDescription(getLocalizedText(election.description, language), electionTitle, organizationName) ||
     electionTitle
 
-  const socialImage = buildSocialImageUrl(getLocalizedRawText(organization?.logo, language) || undefined, canonicalUrl)
+  const organizationLogo = getLocalizedRawText(organization?.logo, language) || undefined
+  const socialImage = resolveSocialImage({ logo: organizationLogo, language, canonicalUrl })
   const title = buildMetaTitle(electionTitle, organizationName)
 
   return {
@@ -341,19 +374,24 @@ export const buildProcessMeta = ({
     language,
     canonicalUrl,
     alternates,
+    organizationLogo,
     openGraph: {
       title,
       description,
       url: canonicalUrl,
       type: 'website',
-      image: socialImage,
+      image: socialImage.image,
+      imageWidth: socialImage.imageWidth,
+      imageHeight: socialImage.imageHeight,
+      imageAlt: socialImage.imageAlt,
       siteName: publicSiteName,
     },
     twitter: {
-      card: 'summary',
+      card: socialImage.card,
       title,
       description,
-      image: socialImage,
+      image: socialImage.image,
+      imageAlt: socialImage.imageAlt,
       site: publicTwitterAccount,
       creator: publicTwitterAccount,
     },
@@ -452,8 +490,7 @@ export const loadProcessPageData = async ({
   }
 
   const election = await client.elections.get(id)
-  // Process reads return orgAddress unprefixed; the organization endpoint wants 0x.
-  const organization = await client.organizations.get(ensureAddressPrefix(election.orgAddress))
+  const organization = await client.organizations.get(election.orgAddress)
 
   return {
     era: 'saas',

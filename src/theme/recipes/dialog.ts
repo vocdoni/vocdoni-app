@@ -24,6 +24,22 @@ export const Dialog = defineSlotRecipe({
   base: baseStyle,
   // Every dialog sits in the middle of the screen; a taller one still scrolls from its top.
   // Chakra's placement variants stay as they are: naming `center` lets it be the default.
-  variants: { placement: { center: {} } },
+  variants: {
+    placement: { center: {} },
+    // The publish review: full screen on a phone, a centred `publish-review.dialog` panel from md up. Chakra's
+    // sizes cannot do both without overrides, so this size sets the corners, margins and width itself.
+    size: {
+      review: {
+        content: {
+          maxW: { base: '[100dvw]', md: 'publish-review.dialog' },
+          minH: { base: '[100dvh]', md: 'auto' },
+          mx: { base: '0', md: '4' },
+          my: { base: '0', md: 'auto' },
+          borderRadius: { base: 'none', md: 'l3' },
+          overflow: 'hidden',
+        },
+      },
+    },
+  },
   defaultVariants: { placement: 'center' },
 })

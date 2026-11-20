@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
-import { VocdoniApiError } from '@vocdoni/api-client'
+import { ApiErrorCode, VocdoniApiError } from '@vocdoni/api-client'
+import type { CensusValidationErrorData } from '@vocdoni/api-types'
 import { FormProvider, useController, useForm, useFormContext } from 'react-hook-form'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { act, mockUseOrganization, render, screen, waitFor, within } from '~src/test-utils'
@@ -123,8 +124,14 @@ const chooseCode = async (user: ReturnType<typeof userEvent.setup>, value: strin
     screen.getByRole('dialog').querySelector<HTMLInputElement>(`input[name="use2FAMethod"][value="${value}"]`)!
   )
 
-const membersError = (data: Record<string, unknown>) =>
-  new VocdoniApiError(400, { error: 'invalid census', code: 4000, data }, 'invalid census')
+const membersError = (data: Partial<CensusValidationErrorData>) =>
+  new VocdoniApiError(
+    400,
+    { error: 'invalid census', code: ApiErrorCode.InvalidData, data },
+    'invalid census',
+    ApiErrorCode.InvalidData,
+    data
+  )
 
 describe('VoterAuthentication', () => {
   beforeEach(() => {

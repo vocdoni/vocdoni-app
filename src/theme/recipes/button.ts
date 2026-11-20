@@ -127,6 +127,21 @@ const disclosure = defineStyle({
   px: '0',
 })
 
+// A `text` action that stays quiet until pointed at: muted, underlined on hover. On phones its 44px target
+// would grow the row it sits in, so the negative margin takes that back (the row's padding absorbs it).
+// It takes no `size`: a size sets the padding and height this variant sets.
+const quiet = defineStyle({
+  ...text,
+  minH: { base: '11', md: '6' },
+  my: { base: '-2.5', md: '0' },
+  color: 'fg.muted',
+  textAlign: 'start',
+  _hover: {
+    color: 'fg',
+    textDecoration: 'underline',
+  },
+})
+
 // Ghost button for an action that deletes or ends something (revoke a key).
 const danger = defineStyle({
   ...stock.ghost,
@@ -179,6 +194,7 @@ export const Button = defineRecipe({
       segment,
       toggle,
       disclosure,
+      quiet,
       danger,
       floating,
       whatsapp,

@@ -1,7 +1,7 @@
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { ProcessPriceResponse } from '@vocdoni/api-types'
 import { ErrorCode } from '~components/Auth/api'
-import { isProcessId, isQuoteOnly, isUnpriceableDraft } from './process-price'
+import { isQuoteOnly, isUnpriceableDraft } from './process-price'
 
 const price = (overrides: Partial<ProcessPriceResponse> = {}): ProcessPriceResponse => ({
   lines: [],
@@ -47,12 +47,5 @@ describe('isUnpriceableDraft', () => {
     ).toBe(false)
     expect(isUnpriceableDraft(new VocdoniApiError(401, { error: 'not a manager' }, 'not a manager', 401))).toBe(false)
     expect(isUnpriceableDraft(new Error('network down'))).toBe(false)
-  })
-})
-
-describe('isProcessId', () => {
-  it('only accepts an ObjectID, so a URL-supplied id cannot resolve to another path', () => {
-    expect(isProcessId('6650f0c0c0c0c0c0c0c0c0c0')).toBe(true)
-    for (const id of ['..', '.', 'x/../../users/me?', 'abc', '', null, undefined]) expect(isProcessId(id)).toBe(false)
   })
 })

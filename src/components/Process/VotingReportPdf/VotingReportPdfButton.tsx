@@ -12,8 +12,6 @@ import { useToast } from '~components/Toast'
 import { Tooltip } from '~components/ui/Tooltip'
 import { QueryKeys } from '~queries/keys'
 import { fetchOnChainEndDate, getEarlyEndDate } from '~queries/process-end-date'
-import { useAppEnv } from '~src/app-env'
-import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
@@ -57,8 +55,6 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
   const { organization } = useOrganization()
   const { client } = useApiClient()
   const queryClient = useQueryClient()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const electionContext = useOptionalElectionContext()
   // Announced while the tallies are still being computed: the control shows, disabled, instead of
   // appearing out of nowhere once the results land.
@@ -90,7 +86,6 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
         earlyEndDate,
         t,
         organizationName: getDefaultText(organization?.name) || undefined,
-        explorerUrl,
         now: new Date(),
       })
 

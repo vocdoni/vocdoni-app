@@ -9,6 +9,10 @@ import { TwoFAMethod } from './VoterAuthentication/utils'
 export const parseFormDateTime = (date: string, time?: string): Date =>
   parse(`${date} ${time || '00:00'}`, 'yyyy-MM-dd HH:mm', new Date())
 
+// No max (empty, or the 0 a restored draft can carry) means "up to every option".
+export const isValidMaxChoices = (max: number | null | undefined, min: number | null | undefined) =>
+  !max || min == null || max >= min
+
 export enum SelectorTypes {
   Single = 'singleChoice',
   Multiple = 'multiChoice',
