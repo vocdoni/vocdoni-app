@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePageContext } from 'vike-react/usePageContext'
 import { hasAcceptedCookieConsent } from '~components/Cookies/utils'
 import { LanguageRoutingContext } from '~i18n/LanguageRoutingContext'
@@ -10,6 +10,7 @@ import {
 import { getDefaultTitleForLanguage } from '~src/pages/shared/defaultHeadMeta'
 import { AppProviders } from './AppProviders'
 import { normalizeLanguages, resolveAppEnv } from './app-env'
+import { loadLanguages } from './i18n'
 import { RoutesProvider } from './router/Router'
 
 export const Providers = ({ basename, language }: { basename?: string; language?: string } = {}) =>
@@ -31,6 +32,18 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
 
   const [language, setLanguageState] = useState(initialLanguage)
 
+  // Fetch a language before switching to it, so the URL, basename, copy and title change together.
+  // Only the latest switch applies; a popstate passes no `onSwitch`, since its URL already moved.
+  const latestSwitch = useRef(0)
+  const switchLanguage = useCallback((next: string, onSwitch?: () => void) => {
+    const request = ++latestSwitch.current
+    void loadLanguages([next]).then(() => {
+      if (request !== latestSwitch.current) return
+      onSwitch?.()
+      setLanguageState(next)
+    })
+  }, [])
+
   // In-place language switches (pushState, no Vike navigation) never re-run the
   // +title/+lang hooks, so keep the document metadata in the active language ourselves.
   useEffect(() => {
@@ -46,11 +59,11 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
         window.location.pathname.split('/')[1] ?? '',
         supportedLanguages
       )
-      if (urlLanguage) setLanguageState(urlLanguage)
+      if (urlLanguage) switchLanguage(urlLanguage)
     }
     window.addEventListener('popstate', sync)
     return () => window.removeEventListener('popstate', sync)
-  }, [supportedLanguages])
+  }, [supportedLanguages, switchLanguage])
 
   const setLanguage = useCallback(
     (next: string) => {
@@ -58,35 +71,39 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
       if (!normalized) return
 
       // Re-selecting the active language is a no-op; avoids a duplicate history entry.
+      // It also cancels a switch still loading, which would otherwise win after this one.
       const currentUrlLanguage = normalizePublicLanguageCandidate(
         window.location.pathname.split('/')[1] ?? '',
         supportedLanguages
       )
-      if (normalized === currentUrlLanguage) return
+      if (normalized === currentUrlLanguage) {
+        latestSwitch.current += 1
+        return
+      }
 
-      persistPublicLanguagePreferenceClient(normalized, {
-        supportedLanguages,
-        storage: window.localStorage,
-        cookieEnabled: hasAcceptedCookieConsent(),
-        document,
-        location: window.location,
+      switchLanguage(normalized, () => {
+        persistPublicLanguagePreferenceClient(normalized, {
+          supportedLanguages,
+          storage: window.localStorage,
+          cookieEnabled: hasAcceptedCookieConsent(),
+          document,
+          location: window.location,
+        })
+
+        // Swap the visible URL language prefix without navigating/reloading; the
+        // basename change below re-points the router at the already-updated URL.
+        // Use pushState (not replaceState) so the switch is a real history entry the
+        // user can navigate back from — the popstate listener above re-syncs the
+        // language from the URL on back/forward.
+        const target = localizePublicPath({
+          pathname: window.location.pathname,
+          language: normalized,
+          supportedLanguages,
+        })
+        window.history.pushState(null, '', `${target}${window.location.search}${window.location.hash}`)
       })
-
-      // Swap the visible URL language prefix without navigating/reloading; the
-      // basename change below re-points the router at the already-updated URL.
-      // Use pushState (not replaceState) so the switch is a real history entry the
-      // user can navigate back from — the popstate listener above re-syncs the
-      // language from the URL on back/forward.
-      const target = localizePublicPath({
-        pathname: window.location.pathname,
-        language: normalized,
-        supportedLanguages,
-      })
-      window.history.pushState(null, '', `${target}${window.location.search}${window.location.hash}`)
-
-      setLanguageState(normalized)
     },
-    [supportedLanguages]
+    [supportedLanguages, switchLanguage]
   )
 
   const routingValue = useMemo(() => ({ language, setLanguage }), [language, setLanguage])
