@@ -102,7 +102,7 @@ export const useCreateOrganizationRoutes = () => {
             ),
           },
           {
-            // Only behind AccountProtectedRoute, never OrganizationTypeGuard, so the emailed link opens
+            // Only behind AccountProtectedRoute, never PrivateAppGuard, so the emailed link opens
             // for every signed-in account, integrators included.
             path: Routes.auth.passwordSetup,
             element: (
