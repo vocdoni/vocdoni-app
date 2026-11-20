@@ -213,6 +213,8 @@ export const useImportJobProgress = () => {
     queryKey: QueryKeys.organization.membersImportProgress(organization?.address, jobId),
     queryFn: () => bearedFetch<ImportJob>(url),
     retry: false,
+    // A job's status is only true now, and a revisit must not show it as still running
+    staleTime: 0,
     refetchInterval: (query) => {
       const { data, status } = query.state
       if (status === 'error') return false
