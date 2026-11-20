@@ -66,7 +66,7 @@ import {
   parseMemberSort,
   SortOrder,
   useDeleteMembers,
-  usePaginatedMembers,
+  useMembersCount,
   useUrlPagination,
 } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
@@ -435,7 +435,7 @@ const ColumnManager = () => {
 const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
   const { t } = useTranslation()
   const { search, setSearch, submitSearch } = useOutletContext<MemberbaseTabsContext>()
-  const { data } = usePaginatedMembers({ showAll: true })
+  const { total } = useMembersCount()
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value)
@@ -464,7 +464,7 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
           onChange={handleSearchChange}
         />
       </InputGroup>
-      {data?.members?.length >= 1 && (
+      {total >= 1 && (
         <Button variant='outline' colorPalette='danger' onClick={onDelete}>
           <Icon as={DeleteIcon} />
           {t('members.table.delete_all', {
@@ -907,11 +907,12 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
   const toast = useToast()
   const { organization } = useOrganization()
   const deleteMutation = useDeleteMembers()
-  const { data: allMembersData, isFetching: isFetchingAll } = usePaginatedMembers({ showAll: true })
+  // Delete-all sends `{ all: true }`, so the dialog only needs the total, not the member rows.
+  const { total: allTotal, isFetching: isFetchingAll } = useMembersCount()
   const { selectedRows, resetSelectedRows } = useTable()
   const queryClient = useQueryClient()
   const goToFirstPage = useGoToFirstPage()
-  const selectedMembers = mode === DeleteModes.SELECTED ? selectedRows : allMembersData?.members
+  const selectedCount = mode === DeleteModes.SELECTED ? selectedRows.length : (allTotal ?? 0)
   const ids = selectedRows.map((member) => member.id)
   const isDeleteAllMode = mode === DeleteModes.ALL
 
@@ -924,7 +925,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         title: t('memberbase.delete_member.success', {
           defaultValue: 'Member deleted successfully',
           defaultValue_other: 'Members deleted successfully',
-          count: isDeleteAllMode ? allMembersData?.pagination.totalItems : selectedMembers.length,
+          count: selectedCount,
         }),
         type: 'success',
         duration: 3000,
@@ -941,7 +942,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         title: t('memberbase.delete_member.error', {
           defaultValue: 'Error deleting member',
           defaultValue_other: 'Error deleting members',
-          count: selectedMembers.length,
+          count: selectedCount,
         }),
         description: error.message,
         type: 'error',
@@ -963,7 +964,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
           : t('memberbase.delete_member.subtitle', {
               defaultValue: 'Are you sure you want to delete {{count}} member? This action cannot be undone.',
               defaultValue_other: 'Are you sure you want to delete {{count}} members? This action cannot be undone.',
-              count: isDeleteAllMode ? allMembersData?.pagination.totalItems : selectedMembers.length,
+              count: selectedCount,
             })
       }
       open={isOpen}
@@ -972,7 +973,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
       confirmText={t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
       loading={deleteMutation.isPending || isFetchingAll}
       onConfirm={handleDelete}
-      confirmProps={{ disabled: isFetchingAll || selectedMembers.length === 0 }}
+      confirmProps={{ disabled: isFetchingAll || selectedCount === 0 }}
       {...props}
     />
   )

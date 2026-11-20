@@ -51,6 +51,14 @@ export const useDrafts = () => {
     enabled: !!organization?.address,
     // The wizard creates and publishes drafts without touching this list's cache
     staleTime: 0,
+    // Keep the current rows on screen while another page loads, but never another organization's drafts:
+    // the key is [...prefix, page, limit], so the prefix must match.
+    placeholderData: (previousData, previousQuery) => {
+      const prefix = QueryKeys.organization.drafts(organization?.address)
+      return previousQuery && prefix.every((part, index) => previousQuery.queryKey[index] === part)
+        ? previousData
+        : undefined
+    },
     // `published: false` is the drafts-only view; it requires a Manager/Admin
     // session (401 otherwise) and must not be combined with a status filter,
     // which never matches a draft's not-yet-on-chain questions.
