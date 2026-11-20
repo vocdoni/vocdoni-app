@@ -56,7 +56,9 @@ while IFS= read -r b64; do
   [[ "$first" == /integration* ]] || continue
   allowed "$(jq -r '.login' <<<"$item")" || continue
   # Only the first line goes to the parser: a long body must not SIGPIPE the pipe.
-  if ! parsed="$(printf '%s\n' "$first" | "$pins" 2>/dev/null)"; then
+  # The parser writes to stderr only on failure, so on success $parsed is its stdout.
+  if ! parsed="$(printf '%s\n' "$first" | "$pins" 2>&1)"; then
+    echo "::warning::Ignoring /integration comment: $(head -n 1 <<<"$parsed")" >&2
     continue
   fi
   if [ "$(sed -n 's/^reset=//p' <<<"$parsed")" = true ]; then

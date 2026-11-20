@@ -197,15 +197,26 @@ describe('integration-sticky.sh', () => {
   })
 
   it('ignores malformed /integration comments', () => {
-    expect(
-      sticky([
-        { body: '/integration saas-backend=#760', user: { login: WRITER } },
-        { body: '/integration saas-backend=#abc', user: { login: WRITER } },
-        { body: '/integration integrator-sdk=#1 integrator-sdk=#2', user: { login: WRITER } },
-        { body: '/integration reset now', user: { login: WRITER } },
-        { body: 'just chatting', user: { login: WRITER } },
-      ])
-    ).toBe(refs('', '#760'))
+    const res = run([
+      { body: '/integration saas-backend=#760', user: { login: WRITER } },
+      { body: '/integration saas-backend=#abc', user: { login: WRITER } },
+      { body: '/integration integrator-sdk=#1 integrator-sdk=#2', user: { login: WRITER } },
+      { body: '/integration reset now', user: { login: WRITER } },
+      { body: 'just chatting', user: { login: WRITER } },
+    ])
+    expect(res.status, res.stderr).toBe(0)
+    expect(res.stdout).toBe(refs('', '#760'))
+    expect(res.stderr.match(/::warning::Ignoring \/integration comment/g)).toHaveLength(3)
+  })
+
+  it('warns about a comment the parser rejects, naming the reason, and skips it', () => {
+    const res = run([
+      { body: '/integration saas-backend=700', user: { login: WRITER } },
+      { body: '/integration vocdoni-node=#12 saas-backend=760', user: { login: WRITER } },
+    ])
+    expect(res.status, res.stderr).toBe(0)
+    expect(res.stdout).toBe(refs('', '#700'))
+    expect(res.stderr).toContain('::warning::Ignoring /integration comment: ERROR: vocdoni-node is no longer used')
   })
 
   it('reads the first line of a multi-line body', () => {
