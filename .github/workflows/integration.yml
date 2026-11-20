@@ -206,7 +206,7 @@ jobs:
   images:
     name: Build pinned images
     needs: resolve
-    # The only job that references VOCHAIN_SEQUENCER_DEPLOY_KEY and SAAS_BACKEND_DEPLOY_KEY,
+    # The only job that references VOCDONI_SEQUENCER_DEPLOY_KEY and SAAS_BACKEND_DEPLOY_KEY,
     # and it runs no PR code: it checks out github.sha, the default branch for a comment or
     # the dispatched ref for a dispatch. On a pull_request that is the merge commit, so the
     # PR's own build script runs there; a fork gets no secrets, and a same-repo author could
@@ -237,7 +237,7 @@ jobs:
       - name: Build pinned images
         id: pins
         env:
-          VOCHAIN_SEQUENCER_DEPLOY_KEY: ${{ secrets.VOCHAIN_SEQUENCER_DEPLOY_KEY }}
+          VOCDONI_SEQUENCER_DEPLOY_KEY: ${{ secrets.VOCDONI_SEQUENCER_DEPLOY_KEY }}
           SAAS_BACKEND_DEPLOY_KEY: ${{ secrets.SAAS_BACKEND_DEPLOY_KEY }}
           SEQUENCER_REF: ${{ needs.resolve.outputs.vocdoni_sequencer_ref }}
           SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
