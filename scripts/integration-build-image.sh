@@ -4,29 +4,29 @@
 # per-commit images, so this is the only way to get one.
 #
 # Usage:
-#   scripts/integration-build-image.sh <vochain-sequencer|saas-backend> <ref|#PR>
+#   scripts/integration-build-image.sh <vocdoni-sequencer|saas-backend> <ref|#PR>
 #
 # Output (stdout; everything else goes to stderr):
 #   image=vocdoni-app-integration/<repo>:<sha>
 #   sha=<full commit sha>
-# Feed the image to the stack as VOCHAIN_SEQUENCER_IMAGE or SAAS_BACKEND_IMAGE.
+# Feed the image to the stack as VOCDONI_SEQUENCER_IMAGE or SAAS_BACKEND_IMAGE.
 set -euo pipefail
 
 if [ "$#" -ne 2 ]; then
-  echo "usage: $0 <vochain-sequencer|saas-backend> <ref>" >&2
+  echo "usage: $0 <vocdoni-sequencer|saas-backend> <ref>" >&2
   exit 1
 fi
 repo="$1"
 ref="$2"
 
 case "$repo" in
-  vochain-sequencer | saas-backend) ;;
+  vocdoni-sequencer | saas-backend) ;;
   vocdoni-node)
-    echo "ERROR: vocdoni-node is no longer used; use vochain-sequencer instead" >&2
+    echo "ERROR: vocdoni-node is no longer used; use vocdoni-sequencer instead" >&2
     exit 1
     ;;
   *)
-    echo "ERROR: unknown repo '$repo' (expected vochain-sequencer or saas-backend)" >&2
+    echo "ERROR: unknown repo '$repo' (expected vocdoni-sequencer or saas-backend)" >&2
     exit 1
     ;;
 esac
@@ -40,13 +40,13 @@ fi
 dir="$(mktemp -d)"
 trap 'rm -rf "$dir"' EXIT
 
-# Both vochain-sequencer and saas-backend are private and reached over SSH: with
+# Both vocdoni-sequencer and saas-backend are private and reached over SSH: with
 # the respective deploy key (VOCHAIN_SEQUENCER_DEPLOY_KEY or SAAS_BACKEND_DEPLOY_KEY)
 # in CI, with the caller's own SSH access otherwise. A throwaway repo fetches every
 # branch, tag and PR head without trees or blobs, so the ref can be looked up among
 # those refs only.
 url="git@github.com:vocdoni/$repo.git"
-if [ "$repo" = vochain-sequencer ]; then
+if [ "$repo" = vocdoni-sequencer ]; then
   deploy_key="${VOCHAIN_SEQUENCER_DEPLOY_KEY:-}"
 else
   deploy_key="${SAAS_BACKEND_DEPLOY_KEY:-}"
@@ -58,8 +58,8 @@ if [ -n "$deploy_key" ]; then
   export GIT_SSH_COMMAND="ssh -i $dir/deploy_key -o IdentitiesOnly=yes -o UserKnownHostsFile=$dir/known_hosts"
 elif [ -n "${CI:-}" ]; then
   # Fork PRs and Dependabot runs get no secrets, so the key is empty there.
-  if [ "$repo" = vochain-sequencer ]; then
-    echo "ERROR: VOCHAIN_SEQUENCER_DEPLOY_KEY not available: CI needs it to fetch the private vochain-sequencer (fork PRs and Dependabot runs get no secrets)" >&2
+  if [ "$repo" = vocdoni-sequencer ]; then
+    echo "ERROR: VOCHAIN_SEQUENCER_DEPLOY_KEY not available: CI needs it to fetch the private vocdoni-sequencer (fork PRs and Dependabot runs get no secrets)" >&2
   else
     echo "ERROR: SAAS_BACKEND_DEPLOY_KEY not available: CI needs it to fetch the private saas-backend (fork PRs and Dependabot runs get no secrets)" >&2
   fi
