@@ -172,7 +172,7 @@ images it is using, so a run shows what it tested.
 
 Both vocdoni-sequencer and saas-backend are private, so building them locally
 fetches over SSH and needs your own GitHub SSH access. CI uses the read-only
-`VOCHAIN_SEQUENCER_DEPLOY_KEY` and `SAAS_BACKEND_DEPLOY_KEY` deploy keys.
+`VOCDONI_SEQUENCER_DEPLOY_KEY` and `SAAS_BACKEND_DEPLOY_KEY` deploy keys.
 
 Locally, pack the SDK and install it in place of the npm packages:
 
