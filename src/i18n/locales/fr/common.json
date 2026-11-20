@@ -939,17 +939,26 @@
   "password_recovery_failed": "Échec de la récupération du mot de passe",
   "password_recovery_sent": "E-mail de récupération envoyé",
   "password_recovery_sent_description": "Consultez votre boîte de réception pour trouver le lien de réinitialisation.",
-  "password_request": {
-    "action": "Demander le changement de mot de passe",
-    "error": "Échec de la demande de réinitialisation du mot de passe",
-    "success": "E-mail de réinitialisation du mot de passe envoyé"
-  },
   "password_reset": {
     "subtitle": "Si votre adresse e-mail correspond à un compte existant, vous recevrez un e-mail contenant un code pour réinitialiser votre mot de passe.",
     "title": "Réinitialisation du mot de passe"
   },
   "password_reset_failed": "Échec de la réinitialisation du mot de passe",
   "password_reset_successful": "Mot de passe réinitialisé avec succès",
+  "password_setup": {
+    "already_set": "Votre compte a déjà un mot de passe",
+    "error": "Impossible de définir le mot de passe",
+    "request": {
+      "action": "Définir un mot de passe",
+      "error": "Impossible d'envoyer l'e-mail pour définir le mot de passe",
+      "sent_recently": "Un code vous a été envoyé récemment. Consultez vos e-mails ou réessayez dans une minute",
+      "success": "Nous vous avons envoyé un e-mail avec un code"
+    },
+    "submit": "Définir le mot de passe",
+    "subtitle": "Saisissez le code que nous vous avons envoyé par e-mail et choisissez un mot de passe pour vous connecter avec votre adresse e-mail.",
+    "success": "Mot de passe défini avec succès",
+    "title": "Définir un mot de passe"
+  },
   "password_update": {
     "actions": {
       "save": "Enregistrer le mot de passe"

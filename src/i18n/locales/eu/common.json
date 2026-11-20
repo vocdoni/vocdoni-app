@@ -920,17 +920,26 @@
   "password_recovery_failed": "Errorea berreskurapen-mezua bidaltzean",
   "password_recovery_sent": "Berreskurapen-mezua bidali da",
   "password_recovery_sent_description": "Begiratu sarrera-ontzia berrezartzeko esteka aurkitzeko.",
-  "password_request": {
-    "action": "Eskatu pasahitza aldatzea",
-    "error": "Ezin izan da pasahitza berrezartzeko eskaera egin",
-    "success": "Berrezartzeko mezua bidali da"
-  },
   "password_reset": {
     "subtitle": "Zure posta elektronikoa lehendik dagoen kontu bati badagokio, posta elektroniko bat jasoko duzu pasahitza berrezartzeko kode batekin.",
     "title": "Pasahitza berrezartzea"
   },
   "password_reset_failed": "Errorea pasahitza berrezartzean",
   "password_reset_successful": "Pasahitza behar bezala berrezarri da",
+  "password_setup": {
+    "already_set": "Zure kontuak badu pasahitza dagoeneko",
+    "error": "Ezin izan da pasahitza ezarri",
+    "request": {
+      "action": "Ezarri pasahitz bat",
+      "error": "Ezin izan da pasahitza ezartzeko mezu elektronikoa bidali",
+      "sent_recently": "Duela gutxi bidali dizugu kode bat. Begiratu zure posta edo saiatu berriro minutu bat barru",
+      "success": "Kode bat duen mezu elektroniko bat bidali dizugu"
+    },
+    "submit": "Ezarri pasahitza",
+    "subtitle": "Idatzi posta elektronikoz bidali dizugun kodea eta aukeratu pasahitz bat zure posta elektronikoarekin saioa hasteko.",
+    "success": "Pasahitza behar bezala ezarri da",
+    "title": "Ezarri pasahitz bat"
+  },
   "password_update": {
     "actions": {
       "save": "Gorde pasahitza"
