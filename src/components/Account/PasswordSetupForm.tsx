@@ -13,7 +13,7 @@ import { QueryKeys } from '~queries/keys'
 import { Routes } from '~src/router/routes'
 
 type PasswordSetupFormProps = {
-  // Code from the emailed link; absent when the user signed in first (the redirect drops the query string)
+  // Code from the emailed link, prefilled but editable; absent when the user signed in first (the redirect drops the query string)
   code?: string
 }
 
@@ -43,14 +43,15 @@ const PasswordSetupForm = ({ code }: PasswordSetupFormProps) => {
   })
 
   const onSubmit = (data: PasswordSetupFormValues) => {
-    // a disabled input is left out of the submitted values, so fall back to the code from the link
     setupPassword.mutate(
-      { code: data.code || code || '', newPassword: data.newPassword },
+      { code: data.code, newPassword: data.newPassword },
       {
         // setting the password revokes every session, this one included, and answers with a fresh token
         onSuccess: (session) => {
           setSession(session)
-          queryClient.invalidateQueries({ queryKey: QueryKeys.profile })
+          // the bearer still in scope was just revoked: only mark the profile stale, so the profile page
+          // refetches it once it renders with the new token
+          queryClient.invalidateQueries({ queryKey: QueryKeys.profile, refetchType: 'none' })
           toast({ title: t('password_setup.success', { defaultValue: 'Password set successfully' }), type: 'success' })
           navigate(Routes.dashboard.profile)
         },
@@ -83,7 +84,6 @@ const PasswordSetupForm = ({ code }: PasswordSetupFormProps) => {
           placeholder={t('verification_code_placeholder', { defaultValue: 'Enter the verification code' })}
           type='text'
           required
-          disabled={!!code}
         />
         <InputPassword
           formValue='newPassword'

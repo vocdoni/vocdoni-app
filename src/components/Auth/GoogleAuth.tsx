@@ -54,6 +54,10 @@ const GoogleAuth = () => {
         setSession(session)
         refreshAddresses()
       }
+      // the page AccountProtectedRoute saved before sending the user to sign in; cleared on every
+      // OAuth sign-in so it cannot hijack a later password sign-in
+      const redirect = localStorage.getItem('redirectTo')
+      localStorage.removeItem('redirectTo')
       const registered = localStorage.getItem(AuthStorageKeys.Registered)
       const isRegistered = registered === 'true' || registered === '1' || (registered as unknown) === true
       // The wallet writes the flag on every OAuth login; it is 'true' only when this flow created the account
@@ -67,6 +71,7 @@ const GoogleAuth = () => {
         navigate(Routes.auth.organizationCreate)
       } else if (session) {
         trackEvent({ name: AnalyticsEvents.UserLoggedIn, props: { method: 'google' } })
+        if (redirect) navigate(redirect)
       }
       disconnect() // Disconnect the wallet after successful authentication (session is maintained via token)
     }

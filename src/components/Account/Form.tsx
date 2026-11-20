@@ -149,6 +149,15 @@ const AccountForm = ({ profile }: { profile?: User }) => {
         navigate(Routes.auth.passwordSetup)
         return
       }
+      if (apiErrorDetails(error)?.code === ErrorCode.UserAlreadyHasPassword) {
+        // set elsewhere (another tab) while this cached profile still says otherwise
+        queryClient.invalidateQueries({ queryKey: QueryKeys.profile })
+        toast({
+          title: t('password_setup.already_set', { defaultValue: 'Your account already has a password' }),
+          type: 'info',
+        })
+        return
+      }
       toast({
         title: t('password_setup.request.error', { defaultValue: 'Failed to send the password setup email' }),
         description: getApiErrorMessage(error),

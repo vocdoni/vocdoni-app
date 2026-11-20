@@ -148,4 +148,17 @@ describe('AccountForm', () => {
     )
     expect(navigateMock).toHaveBeenCalledWith('/account/password/setup')
   })
+
+  it('refreshes the profile when the account already has a password', async () => {
+    bearedFetchMock.mockRejectedValueOnce(new ApiError({ error: 'user already has a password', code: 40045 }))
+    const user = userEvent.setup()
+    render(<AccountForm profile={{ ...baseProfile, hasPassword: false }} />)
+
+    await user.click(screen.getByRole('button', { name: /set a password/i }))
+
+    await waitFor(() =>
+      expect(toastSpy).toHaveBeenCalledWith(expect.objectContaining({ title: 'Your account already has a password' }))
+    )
+    expect(navigateMock).not.toHaveBeenCalled()
+  })
 })

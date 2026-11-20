@@ -47,13 +47,13 @@ describe('PasswordSetupForm', () => {
     toastSpy.mockReset()
   })
 
-  it('sets the password with the code from the link, keeps the session and refreshes the profile', async () => {
+  it('sets the password with the code from the link, keeps the session and marks the profile stale', async () => {
     const user = userEvent.setup()
     const queryClient = createTestQueryClient()
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
     render(<PasswordSetupForm code='abc123' />, { queryClient })
 
-    expect(screen.getByLabelText(/verification code/i)).toBeDisabled()
+    expect(screen.getByLabelText(/verification code/i)).toHaveValue('abc123')
     await fillPasswords(user)
 
     await waitFor(() => expect(setSessionMock).toHaveBeenCalledWith(session))
@@ -61,7 +61,7 @@ describe('PasswordSetupForm', () => {
       method: 'POST',
       body: { code: 'abc123', newPassword: 'new-password' },
     })
-    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['profile'] })
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['profile'], refetchType: 'none' })
     expect(navigateMock).toHaveBeenCalledWith('/admin/profile')
   })
 
@@ -76,6 +76,23 @@ describe('PasswordSetupForm', () => {
       expect(bearedFetchMock).toHaveBeenCalledWith('users/me/password/setup/verify', {
         method: 'POST',
         body: { code: 'def456', newPassword: 'new-password' },
+      })
+    )
+  })
+
+  it('lets the user replace a stale code from the link', async () => {
+    const user = userEvent.setup()
+    render(<PasswordSetupForm code='stale' />)
+
+    const codeInput = screen.getByLabelText(/verification code/i)
+    await user.clear(codeInput)
+    await user.type(codeInput, 'fresh1')
+    await fillPasswords(user)
+
+    await waitFor(() =>
+      expect(bearedFetchMock).toHaveBeenCalledWith('users/me/password/setup/verify', {
+        method: 'POST',
+        body: { code: 'fresh1', newPassword: 'new-password' },
       })
     )
   })
