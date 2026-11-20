@@ -101,7 +101,7 @@ describe('loadOrganizationPageData', () => {
     })
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
       const url = String(input)
-      if (url.includes('/elections/page/')) {
+      if (url.includes('/elections?organizationId=')) {
         return new Response(
           JSON.stringify({ elections: [], pagination: { totalItems: 0, currentPage: 0, lastPage: 0 } }),
           { status: 200 }

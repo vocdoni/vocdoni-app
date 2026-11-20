@@ -144,7 +144,7 @@ describe('fetchLegacyOrganizationElections', () => {
   it('lists a page and resolves titles through per-election detail reads', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
       const url = String(input)
-      if (url.includes('/elections/page/')) {
+      if (url.includes('/elections?organizationId=')) {
         return new Response(
           JSON.stringify({
             elections: [
@@ -176,5 +176,35 @@ describe('fetchLegacyOrganizationElections', () => {
     })
     expect(page.pagination).toEqual({ totalItems: 1, previousPage: null, currentPage: 0, nextPage: null, lastPage: 0 })
     expect(fetchSpy).toHaveBeenCalledTimes(2)
+    expect(String(fetchSpy.mock.calls[0][0])).toBe(
+      `${gateway}/elections?organizationId=${rawElection.organizationId}&page=0`
+    )
+  })
+
+  it('reads a page past the last one (404 code 4057) as an empty page', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ code: 4057, error: 'page not found' }), { status: 404 }) as Response
+    )
+
+    const page = await fetchLegacyOrganizationElections(gateway, rawElection.organizationId, 3)
+
+    expect(page.elections).toEqual([])
+    expect(page.pagination).toEqual({
+      totalItems: undefined,
+      previousPage: null,
+      currentPage: 3,
+      nextPage: null,
+      lastPage: 3,
+    })
+  })
+
+  it('still throws VochainNotFoundError for an unknown organization (404 code 4006)', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ code: 4006, error: 'organization not found' }), { status: 404 }) as Response
+    )
+
+    await expect(fetchLegacyOrganizationElections(gateway, rawElection.organizationId, 0)).rejects.toBeInstanceOf(
+      VochainNotFoundError
+    )
   })
 })
