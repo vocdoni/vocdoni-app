@@ -9,7 +9,7 @@ import { TableProvider } from '~components/Memberbase/TableProvider'
 import { Routes } from '~routes'
 import { usePaginatedMembers } from '~src/queries/members'
 
-export const useMemberColumns = () => {
+const useMemberColumns = () => {
   const { t } = useTranslation()
 
   return useMemo(
