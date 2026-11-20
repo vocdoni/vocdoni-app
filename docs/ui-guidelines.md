@@ -3,11 +3,20 @@
 How to style the app so it stays themable. A rule that names its check (a test, `tsc` or a CI job)
 is enforced, and the file is named so you can read the real thing. The rest are conventions that reviewers check.
 
+This is the token-level reference. How screens are composed and how a mockup maps onto the theme is in
+[`DESIGN.md`](../DESIGN.md), the brand and copy rules in [`BRAND.md`](../BRAND.md), and the step-by-step for a change in the
+`ui-change` skill (`.agents/skills/ui-change/SKILL.md`).
+
 ## The rule
 
 A component never decides how it looks. It picks a role (a token, a text style, a recipe variant, a shared component)
 and the theme decides what that role looks like. If the look you need does not exist, add it to the theme first, then
 use it.
+
+Rely on the theme's defaults. The bare shared component or default variant is the starting point: a prop that restates
+a default is removed, and look props on `Box`, `Flex` or `Stack` mean a missing variant, text style or shared
+component, even when every value is a token. A `Text` takes its role from `textStyle` and a colour token (see
+[Text](#text)). The style inventory does not catch this; review does.
 
 The payoff: `PRIMARY_COLOR` recolours the accent, dark mode flips from CSS (no flash on SSR pages), and a redesign
 touches `src/theme/` instead of hundreds of components.
@@ -36,7 +45,7 @@ component. The inventory test rejects hex and named colours outright; raw palett
 [The checks](#the-checks)).
 
 ```tsx
-<Box bg='surface.card' borderColor='border' color='fg.muted' />
+<Text color='fg.muted'>…</Text>
 ```
 
 Token families, each in its own module under `src/theme/` and spread into `colors` in `semantic.ts`:
@@ -126,7 +135,7 @@ App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (
 - **Sizes**: Chakra's named sizes and the tokens below, plus `0` and `auto`. A pixel value is a `pxSize` ratchet hit.
 - **Radii**: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `full`, `none`. Pixel radii fail the inventory.
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
-  focus ring, `thick`): `<Box borderWidth='thick' />`.
+  focus ring, `thick`): `borderWidth: 'thick'` in a recipe.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
   (1.5rem, feature), `icon.xl` (3rem, empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
   `icon.sm` to `icon.lg` alias Chakra's Icon sizes (`{sizes.4}`, `5`, `6`), so `boxSize='icon.md'` and
@@ -273,6 +282,11 @@ large striped bar for the share of the census that voted, in the process summary
 
 Not in `ui/`: `LabelledSeparator` (`~components/Layout/Separators`), a hairline on each side of a short label, such as
 `OrSeparator`'s "or continue with". Do not build one from a `Flex` and two `Box`es.
+
+`ModalForm` (`~components/Form/ModalForm`) is a dialog wrapping a short form, with Cancel and a submit action that
+submits the form inside it and shows its loading state. The form inside must take `formRef` and `setIsSubmitting` from
+`useModalForm()` (as `src/components/Account/Password.tsx` does), otherwise submit does nothing and no loading state
+shows.
 
 New user-facing text in any of these goes through `t(…)`, like everywhere else (see `AGENTS.md`).
 
