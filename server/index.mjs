@@ -7,6 +7,7 @@ import { robotsTxtHandler } from './robots.mjs'
 import { securityHeaders } from './security-headers.mjs'
 import { createSsrCacheMiddleware } from './ssr-cache.mjs'
 import { isStaticAssetPath } from './static-asset-guard.mjs'
+import { staticCacheHeaders } from './static-cache.mjs'
 import { isViteInternalPath } from './vite-path-guard.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -40,6 +41,7 @@ if (isProduction) {
   app.use(
     express.static(join(root, 'dist/client'), {
       index: false,
+      setHeaders: staticCacheHeaders,
     })
   )
 } else {

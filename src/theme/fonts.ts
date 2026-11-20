@@ -1,7 +1,8 @@
 /**
  * The one font config: the family and the weights that ship. `tokens.ts` derives the stacks and
- * weight ladder from it; `Theme.tsx` imports one `${FONT_PACKAGE}/<weight>.css` per entry and
- * fonts.test.ts keeps them in sync. No CSS imports here: `chakra typegen` loads this via system.ts.
+ * weight ladder from it; `Theme.tsx` imports one `${FONT_PACKAGE}/latin-<weight>.css` per entry and
+ * fonts.test.ts keeps them in sync; lazyFonts.ts declares the other subsets at the same weights.
+ * No CSS imports here: `chakra typegen` loads this via system.ts.
  */
 
 export const FONT_FAMILY = 'Inter'
