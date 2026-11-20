@@ -11,7 +11,7 @@ the files and skills below. Read the ones your task touches before you start, no
 | `ui-change` skill                                                                              | Any visual change, mockup or theme work: the steps and the checks          |
 | `translations` skill                                                                           | Adding or changing a `t(…)` string or a locale file                        |
 | `payg-billing` skill                                                                           | Prices, the wallet, Stripe checkout, top-ups, voter places, payment errors |
-| `integration-pinning` skill                                                                    | A PR that depends on unmerged `saas-backend`, `vocdoni-node` or SDK work   |
+| `integration-pinning` skill                                                                    | A PR that depends on unmerged `saas-backend`, `vochain-sequencer` or SDK work |
 | `vocdoni-integrator-sdk` skill                                                                 | Anything that uses the `@vocdoni/*` SDK packages (see below)               |
 | `e2e/README.md`, `integration/README.md`, `scripts/ui-snapshot/README.md`, `docs/analytics.md` | Their areas                                                                |
 
@@ -142,8 +142,8 @@ The full rules are in `DESIGN.md` and `docs/ui-guidelines.md`; `src/theme/style-
 - CI (`.github/workflows/test.yml`) runs lint, tests and a build on PRs to `develop`, `stage` and `d/**` only. On any
   other base (a stacked PR, `main`, an `h/` branch) run `pnpm lint` and `pnpm test` yourself.
 - The integration workflow runs on merges into `develop`, on PRs to `stage` or `main`, and on demand. When a PR depends
-  on an unmerged `saas-backend`, `vocdoni-node` or `vocdoni-integrator-sdk` change, post a PR comment holding only
-  `/integration <key>=<PR>` (keys: `saas-backend`, `vocdoni-node`, `integrator-sdk`; no signature) and do not merge
+  on an unmerged `saas-backend`, `vochain-sequencer` or `vocdoni-integrator-sdk` change, post a PR comment holding only
+  `/integration <key>=<PR>` (keys: `saas-backend`, `vochain-sequencer`, `integrator-sdk`; no signature) and do not merge
   until the upstream change is deployed or published: the `integration-pinning` skill has the syntax and the merge
   rules. The README's "Branching and deploys" has the deploy links.
 

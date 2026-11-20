@@ -205,7 +205,7 @@ cmd_up() {
   fi
 
   echo "== starting stack" >&2
-  echo "== images: ${VOCDONI_NODE_IMAGE:-ghcr.io/vocdoni/vocdoni-node:main} ${SAAS_BACKEND_IMAGE:-ghcr.io/vocdoni/saas-backend:main}" >&2
+  echo "== images: ${VOCHAIN_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vochain-sequencer:main} ${SAAS_BACKEND_IMAGE:-ghcr.io/vocdoni/saas-backend:main}" >&2
   if [ -n "$STRIPE_MODE" ]; then
     echo "== billing: Stripe test sandbox" >&2
   fi
@@ -301,9 +301,8 @@ cmd_run() {
   #    evidence you need to diagnose a failed run, and tearing them down would
   #    destroy exactly that.
   #  - It stops with `compose down`, NOT `down -v`. Keeping the volume preserves
-  #    vocone's cached zk circuit artifacts, so the next boot skips a slow (and
-  #    known-flaky) download. `scripts/integration-stack.sh down` is the explicit
-  #    full clean, and is what CI uses.
+  #    vocone's chain data across local runs. `scripts/integration-stack.sh down`
+  #    is the explicit full clean, and is what CI uses.
   if [ -n "${INTEGRATION_KEEP_STACK:-}" ]; then
     echo "== INTEGRATION_KEEP_STACK set — leaving the stack up. Inbox: $INTEGRATION_MAILHOG_URL" >&2
   elif [ "$status" -ne 0 ]; then

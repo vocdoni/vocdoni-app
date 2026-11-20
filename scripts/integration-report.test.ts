@@ -7,7 +7,7 @@ const scriptPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'i
 
 const SHA_APP = 'a'.repeat(40)
 const SHA_MERGE = 'b'.repeat(40)
-const SHA_NODE = 'c'.repeat(40)
+const SHA_SEQUENCER = 'c'.repeat(40)
 const RUN_URL = 'https://github.com/vocdoni/ui-scaffold/actions/runs/1'
 
 function report(env: Record<string, string>) {
@@ -23,10 +23,10 @@ function report(env: Record<string, string>) {
     STICKY: 'false',
     CHECKOUT: SHA_MERGE,
     HEAD_SHA: SHA_APP,
-    NODE_REF: '',
+    SEQUENCER_REF: '',
     SAAS_REF: '',
     SDK_REF: '',
-    NODE_SHA: '',
+    SEQUENCER_SHA: '',
     SAAS_SHA: '',
     SDK_SHA: '',
     FAILURE: '',
@@ -46,12 +46,12 @@ const appLine = `- App: merge of https://github.com/vocdoni/ui-scaffold/commit/$
 
 describe('integration-report.sh', () => {
   it('reports a successful /integration comment run', () => {
-    expect(report({ NODE_REF: '1a2b3c4', NODE_SHA: SHA_NODE, STICKY: 'false' })).toBe(
+    expect(report({ SEQUENCER_REF: '1a2b3c4', SEQUENCER_SHA: SHA_SEQUENCER, STICKY: 'false' })).toBe(
       [
         '✅ Integration run: **success**',
         '',
         appLine,
-        `- vocdoni-node: https://github.com/vocdoni/vocdoni-node/commit/1a2b3c4 → https://github.com/vocdoni/vocdoni-node/commit/${SHA_NODE}`,
+        `- vochain-sequencer: https://github.com/vocdoni/vochain-sequencer/commit/1a2b3c4 → https://github.com/vocdoni/vochain-sequencer/commit/${SHA_SEQUENCER}`,
         '- saas-backend: :main image',
         '- integrator-sdk: npm (lockfile)',
         `- Run: ${RUN_URL}`,
@@ -143,7 +143,7 @@ describe('integration-report.sh', () => {
       EVENT: 'pull_request',
       CHECKOUT: SHA_MERGE,
       SAAS_REF: '#760',
-      SAAS_SHA: SHA_NODE,
+      SAAS_SHA: SHA_SEQUENCER,
       STICKY: 'true',
     })
     expect(out).toBe(
@@ -151,8 +151,8 @@ describe('integration-report.sh', () => {
         '✅ Integration run on push: **success**',
         '',
         appLine,
-        '- vocdoni-node: :main image',
-        `- saas-backend: https://github.com/vocdoni/saas-backend/pull/760 → https://github.com/vocdoni/saas-backend/commit/${SHA_NODE}`,
+        '- vochain-sequencer: :main image',
+        `- saas-backend: https://github.com/vocdoni/saas-backend/pull/760 → https://github.com/vocdoni/saas-backend/commit/${SHA_SEQUENCER}`,
         '- integrator-sdk: npm (lockfile)',
         `- Run: ${RUN_URL}`,
         '',
