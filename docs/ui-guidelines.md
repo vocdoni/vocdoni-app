@@ -3,11 +3,20 @@
 How to style the app so it stays themable. A rule that names its check (a test, `tsc` or a CI job)
 is enforced, and the file is named so you can read the real thing. The rest are conventions that reviewers check.
 
+This is the token-level reference. How screens are composed and how a mockup maps onto the theme is in
+[`DESIGN.md`](../DESIGN.md), the brand and copy rules in [`BRAND.md`](../BRAND.md), and the step-by-step for a change in the
+`ui-change` skill (`.agents/skills/ui-change/SKILL.md`).
+
 ## The rule
 
 A component never decides how it looks. It picks a role (a token, a text style, a recipe variant, a shared component)
 and the theme decides what that role looks like. If the look you need does not exist, add it to the theme first, then
 use it.
+
+Rely on the theme's defaults. The bare shared component or default variant is the starting point: a prop that restates
+a default is removed, and look props on `Box`, `Flex` or `Stack` mean a missing variant, text style or shared
+component, even when every value is a token. A `Text` takes its role from `textStyle` and a colour token (see
+[Text](#text)). The style inventory does not catch this; review does.
 
 The payoff: `PRIMARY_COLOR` recolours the accent, dark mode flips from CSS (no flash on SSR pages), and a redesign
 touches `src/theme/` instead of hundreds of components.
@@ -36,7 +45,7 @@ component. The inventory test rejects hex and named colours outright; raw palett
 [The checks](#the-checks)).
 
 ```tsx
-<Box bg='surface.card' borderColor='border' color='fg.muted' />
+<Text color='fg.muted'>…</Text>
 ```
 
 Token families, each in its own module under `src/theme/` and spread into `colors` in `semantic.ts`:
@@ -54,7 +63,7 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}` (the info, warning and error `solid`)                                           | `charts.ts`       |
 | Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                       | `ballot.ts`       |
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                       | `illustration.ts` |
-| Links, switch, turnout stripes   | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `progress.stripe`                                                        | `recipeColors.ts` |
+| Links, switch, turnout stripes   | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `progress.stripe`, `scroll.edge` (fade above a scrolling dialog footer)  | `recipeColors.ts` |
 | Toasts                           | `toast.{success,warning}.bg` (solid fills) and `toast.{success,warning}.fg` (the text on them, each status's `contrast`)                                                    | `recipeColors.ts` |
 | Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a control, `none` today)           | `semantic.ts`     |
 | Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                   | `palette.ts`      |
@@ -137,7 +146,7 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
   read the semantic `l1`, `l2` and `l3` (`xs`, `sm`, `md`), written out in `semantic.ts`.
 - **Font sizes**: Chakra's steps, plus `control` (a control's label and value, `sm` today).
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
-  focus ring, `thick`): `<Box borderWidth='thick' />`.
+  focus ring, `thick`): `borderWidth: 'thick'` in a recipe.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
   (1.5rem, feature), `icon.xl` (3rem, empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
   `icon.sm` to `icon.lg` alias Chakra's Icon sizes (`{sizes.4}`, `5`, `6`), so `boxSize='icon.md'` and
@@ -147,7 +156,8 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
 - **Other named sizes**: `card.empty`, `table.action`, `toolbar`, `dashboard.menu.expanded|collapsed`,
   `dashboard.header`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon
   link), `loader` (min height of `PageLoader`), `wordmark` (width of the Vocdoni wordmark:
-  `<VocdoniLogo w='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
+  `<VocdoniLogo w='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`,
+  `publish-review.dialog|step` (publish dialog width and its step column).
 - **z-index**: tokens only (`background`, `contents`, `sidebar`, `topbar`, `top`, `public-header`, `dashboard-menu`).
 - **Opacity**: `inactive` (0.6) for content that cannot be used right now, `dimmed` (0.5) for de-emphasis.
 - **Durations**: Chakra's names plus `instant` (0s).
@@ -170,13 +180,13 @@ What exists today:
 
 | Recipe              | Variants and axes                                                                                                                                                                                                                                                      |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `button`            | `variant`: `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `menu-trigger`, `segment`, `toggle`, `disclosure`, `danger`, `floating`, `whatsapp`; `size`: `cta`; `multiline`. Chakra's own `solid`, `outline`, `ghost`… stay |
+| `button`            | `variant`: `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `menu-trigger`, `segment`, `toggle`, `disclosure`, `quiet` (text action), `danger`, `floating`, `whatsapp`; `size`: `cta`; `multiline`. Chakra's `solid`… stay. |
 | `card`              | `outline`, `section`, `frame`, `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `plain` (a filled card without a border, around a page-level empty state)                                                                                      |
 | `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                    |
 | `link`              | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                         |
 | `tabs`              | `variant`: `pill`                                                                                                                                                                                                                                                      |
 | `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the mobile dashboard menu); dialog and drawer backdrops both paint `scrim.strong`                                                                                                         |
-| `dialog`            | `placement` defaults to `center`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                |
+| `dialog`            | `placement` defaults to `center`; `size`: `review` (the publish review, full screen on phones); the header stacks the title over a muted description (`DialogHeader`)                                                                                                  |
 | `menu`              | Items highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                       |
 | `progress`          | `variant`: `results` (thin 8px bar, one per choice), `turnout` (large striped bar for the share that voted), `meter` (`UsageMeter`), `job` (a background job); `results` and `turnout` tracks read `ballot.results.track`                                              |
 | `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                          |
@@ -283,6 +293,11 @@ large striped bar for the share of the census that voted, in the process summary
 
 Not in `ui/`: `LabelledSeparator` (`~components/Layout/Separators`), a hairline on each side of a short label, such as
 `OrSeparator`'s "or continue with". Do not build one from a `Flex` and two `Box`es.
+
+`ModalForm` (`~components/Form/ModalForm`) is a dialog wrapping a short form, with Cancel and a submit action that
+submits the form inside it and shows its loading state. The form inside must take `formRef` and `setIsSubmitting` from
+`useModalForm()` (as `src/components/Account/Password.tsx` does), otherwise submit does nothing and no loading state
+shows.
 
 New user-facing text in any of these goes through `t(…)`, like everywhere else (see `AGENTS.md`).
 

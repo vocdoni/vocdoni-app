@@ -55,7 +55,7 @@ export const buildOrganizationStructuredData = ({
       description,
       url: meta.canonicalUrl,
       identifier: organization.address,
-      logo: meta.openGraph.image,
+      ...(meta.organizationLogo ? { logo: meta.organizationLogo } : {}),
     },
     {
       '@context': 'https://schema.org',

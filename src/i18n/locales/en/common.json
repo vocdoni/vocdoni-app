@@ -197,22 +197,8 @@
     "title": "Tell us about your organization"
   },
   "csp": {
-    "auth_failed": "Authentication failed",
     "authenticate": "Identify",
-    "code_info": "You will receive a unique code on the selected medium to verify your identity and complete authentication",
-    "code_sent": "Verification code sent",
     "contact_match_help": "Must match the one registered in the system",
-    "errors": {
-      "credentials_or_password_incorrect": "We couldn't verify your identity. Check your credentials and your password and try again.",
-      "participant_not_found": "The voter is not listed in the census, or the provided credentials are incorrect.",
-      "requests_on_cooldown": "Too many requests. Please wait a moment before trying again.",
-      "too_many_attempts": "Too many attempts. Please try again later.",
-      "too_many_attempts_hours_one": "Too many attempts. Please try again in {{count}} hour.",
-      "too_many_attempts_hours_other": "Too many attempts. Please try again in {{count}} hours.",
-      "too_many_attempts_minutes_one": "Too many attempts. Please try again in {{count}} minute.",
-      "too_many_attempts_minutes_other": "Too many attempts. Please try again in {{count}} minutes.",
-      "zero_voting_weight": "You don't have enough voting power to access the election."
-    },
     "fields": {
       "birthDate": "Birth Date",
       "contact": "Contact",
@@ -226,21 +212,11 @@
       "surname": "Last Name"
     },
     "important": "Important",
-    "password_unavailable": "The password cannot be checked right now. Reload the page and try again.",
     "receive_code": "Receive Code",
     "step1": {
-      "footer_text": "If you experience any issues, contact your organization.",
-      "helper_text": "We've sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder.",
-      "resend_failed": "Failed to resend code",
-      "resend_success": "Code resent successfully",
       "resend_text": "Didn't receive the code? <resendBtn>Resend it</resendBtn>",
-      "start_over_text": "Wrong details? <restartBtn>Start over</restartBtn>",
       "subtitle": "Enter the verification code",
-      "title": "Authentication",
-      "validation": {
-        "length": "Code must be 6 digits",
-        "required": "Code is required"
-      }
+      "title": "Authentication"
     },
     "terms_acceptance": "I have read and accept the <2>Terms and Conditions</2> and the <6>Privacy Policy</6>."
   },
@@ -408,7 +384,6 @@
     },
     "process_create": {
       "error_deleting_draft_title": "Error deleting draft",
-      "error_title": "Error creating process",
       "success_description": "Redirecting you to the voting process page...",
       "success_title": "Voting process successfully created"
     },
@@ -875,6 +850,10 @@
       "success": "Provider unlinked successfully"
     }
   },
+  "og": {
+    "headline": "Secure online voting for your organization",
+    "tagline": "Verifiable voting for organizations of any size, easy to use and free for up to 25 voters."
+  },
   "open_in_explorer": "Open in explorer",
   "or_continue_with": "or continue with",
   "org_type_selector": {
@@ -941,17 +920,26 @@
   "password_recovery_failed": "Password recovery failed",
   "password_recovery_sent": "Recovery email sent",
   "password_recovery_sent_description": "Check your inbox for the reset link.",
-  "password_request": {
-    "action": "Request password change",
-    "error": "Failed to request password reset",
-    "success": "Password reset email sent"
-  },
   "password_reset": {
     "subtitle": "If your email corresponds to an existing account, you'll receive an email with a code to reset your password.",
     "title": "Password reset"
   },
   "password_reset_failed": "Password reset failed",
   "password_reset_successful": "Password reset successful",
+  "password_setup": {
+    "already_set": "Your account already has a password",
+    "error": "Failed to set the password",
+    "request": {
+      "action": "Set a password",
+      "error": "Failed to send the password setup email",
+      "sent_recently": "A code was sent recently, check your email or try again in a minute",
+      "success": "We sent you an email with a code"
+    },
+    "submit": "Set password",
+    "subtitle": "Enter the code we emailed you and choose a password to sign in with your email.",
+    "success": "Password set successfully",
+    "title": "Set a password"
+  },
   "password_update": {
     "actions": {
       "save": "Save Password"
@@ -1005,7 +993,6 @@
       "cancel_open": "Cancel the open payment",
       "check_again": "Check again",
       "conflict": "A top-up for this voting process is still open, so it cannot be published yet. Resume the payment to finish it, or cancel it and publish from your wallet.",
-      "draft_total": "Draft total (VAT excluded)",
       "pay": "Pay {{amount}} and publish",
       "publish_again": "Publish again",
       "publish_title": "Publish voting process",
@@ -1015,14 +1002,11 @@
       "resume": "Resume payment",
       "return_to_processes": "Back to your voting processes",
       "return_unknown": "We could not tell which voting process this payment was for. If the payment went through, its voting process is published automatically. Check your voting processes to see where it stands.",
-      "shortfall": "Shortfall (VAT excluded)",
       "timeout": "Your payment is confirmed and the voting process publishes shortly. If it does not, publish it again: it is paid from your wallet.",
       "timeout_unpaid": "The voting process is still being published. If it does not appear shortly, publish it again: it is paid from your wallet.",
       "title": "Top up and publish",
-      "top_up": "Top-up (VAT excluded)",
       "unconfirmed": "Your payment is still being confirmed. Some payment methods take a few days to clear. The voting process is published automatically once the payment is confirmed, so you can leave this page.",
-      "unpaid": "The payment did not go through. You can try again.",
-      "wallet_balance": "Wallet balance"
+      "unpaid": "The payment did not go through. You can try again."
     },
     "create": {
       "action": {
@@ -1128,6 +1112,110 @@
       "wallet_short": "Your wallet has {{balance}}, {{shortfall}} short of this total.",
       "wallet_top_up": "Top up wallet"
     },
+    "publish_review": {
+      "back": "Back to the summary",
+      "blocked": "{{shortfall}} short in the balance. Only an admin can top it up.",
+      "card": {
+        "billing": "Billing details",
+        "cta_loading": "Pay and publish",
+        "lead_balance": "The organization's balance covers {{balance}}. The rest is paid now, with VAT.",
+        "lead_whole": "You pay the whole vote now, with VAT.",
+        "note_zero": "After publishing, the balance is left at zero.",
+        "processing": "Processing the payment…",
+        "secure": "Secure payment processed by Stripe. Vocdoni neither sees nor stores the card details.",
+        "short": "Short",
+        "title": "Pay {{amount}} and the vote is published.",
+        "top_up": "Top-up, VAT excluded"
+      },
+      "change": "Change",
+      "change_what": "Change {{what}}",
+      "close": "Close",
+      "code": {
+        "choice": "Code by email or SMS",
+        "email": "Code by email",
+        "none": "No code",
+        "sms": "Code by SMS"
+      },
+      "cost": {
+        "balance_after": "Balance after publishing",
+        "balance_now": "Organization balance now",
+        "base_one": "{{voters}} voter",
+        "base_other": "{{voters}} voters",
+        "details": "Review the details",
+        "note_card": "What is short is paid by card in the next step. The rest comes from the balance.",
+        "note_wallet": "It is taken from the organization's prepaid balance. Nothing is charged to a card: VAT is paid when the balance is topped up.",
+        "short": "Short",
+        "sms_one": "SMS code, {{voters}} voter",
+        "sms_other": "SMS code, {{voters}} voters",
+        "summary": "Cost: {{total}}",
+        "title": "What you pay for",
+        "total": "Total, VAT excluded"
+      },
+      "eyebrow": "Review before publishing",
+      "facts": {
+        "anonymous": "Anonymous vote",
+        "code": "2FA",
+        "credentials": "Credentials",
+        "credentials_none": "None",
+        "dates": "Dates",
+        "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} day",
+        "duration_days_other": "{{count}} days",
+        "duration_hours_one": "{{count}} hour",
+        "duration_hours_other": "{{count}} hours",
+        "equal": "Equal for everyone",
+        "now": "Now",
+        "off": "Off",
+        "on": "On",
+        "results": "Results",
+        "results_hidden": "Shown when it closes",
+        "results_live": "Live",
+        "weight": "Vote weight",
+        "weighted": "Weighted"
+      },
+      "failed": "The vote could not be published.",
+      "free_trial": "If you only want to try it out, pick a census of {{limit}} people or fewer: it's free.",
+      "how_you_pay": "How you pay",
+      "intro": "This is the summary of the vote and what it will cost. If everything is right, you can pay for it and publish it from here.",
+      "keep_editing": "Keep editing",
+      "lead_now_one": "{{voters}} can vote on {{questions}}, from when you publish until {{end}}.",
+      "lead_now_other": "{{voters}} can vote on {{questions}}, from when you publish until {{end}}.",
+      "lead_scheduled_one": "{{voters}} can vote on {{questions}}, from {{start}} until {{end}}.",
+      "lead_scheduled_other": "{{voters}} can vote on {{questions}}, from {{start}} until {{end}}.",
+      "org_balance": "Organization balance",
+      "pay_now": "What you pay now",
+      "primary": {
+        "card": "Add {{shortfall}} and publish",
+        "publish": "Publish",
+        "wallet": "Publish and pay {{total}}"
+      },
+      "progress": {
+        "hint": "We'll take you to the vote as soon as it is published. Please be patient, it can take a moment.",
+        "payment": "Payment received",
+        "published": "Vote published",
+        "publishing": "Publishing the vote…"
+      },
+      "questions_one": "{{count}} question",
+      "questions_other": "{{count}} questions",
+      "this_vote": "This vote",
+      "total_now": "Total to pay now",
+      "type": {
+        "multiple": "Multiple choice",
+        "single": "Single choice"
+      },
+      "vote_summary": "Vote summary",
+      "voters_one": "{{voters}} person",
+      "voters_other": "{{voters}} people",
+      "voters_unknown": "The voters",
+      "wallet": {
+        "covers": "The organization's balance covers the whole cost. No card is needed.",
+        "cta": "Pay from the balance and publish",
+        "lead": "There is nothing more to pay: it is taken from the prepaid balance.",
+        "note": "After publishing, the balance will have {{after}} left.",
+        "title": "Pay {{total}} from the balance and the vote is published."
+      },
+      "what_is_voted": "What is voted"
+    },
     "question_type": {
       "label": "Question type",
       "multiple": "Multiple choice",
@@ -1154,6 +1242,7 @@
       "btn": "Close",
       "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. You can verify it <verify>here</verify>.</p>",
       "text_no_id": "<p>Your vote has been cast successfully.</p>",
+      "text_no_link": "<p>Your vote has been securely cast and stored using Vocdoni's technology.</p>",
       "title": "Vote submitted!"
     },
     "summary": {
@@ -1527,9 +1616,6 @@
   "signup_lastname": "Last name",
   "signup_subtitle": "Enter your information to get started",
   "signup_title": "Sign up",
-  "spreadsheet": {
-    "access_button": "Identify"
-  },
   "start_date": "Start date",
   "start_time": "Start time",
   "support": "Support",
@@ -1733,8 +1819,7 @@
   "view_in_explorer": "View in explorer",
   "vocdoni_logo": "Vocdoni logo",
   "vote": {
-    "anonymous_receipt": "Anonymous vote: save this receipt now, the platform cannot show it to you again.",
-    "voted_title": "Your vote was successfully cast!"
+    "anonymous_receipt": "Anonymous vote: save this receipt now, the platform cannot show it to you again."
   },
   "vote_information": "Vote information",
   "vote_overwrite": "Vote overwrite",

@@ -27,7 +27,6 @@ const collect = (s: any): Promise<Buffer> =>
 
 const PROCESS_ID = process.env.PROCESS_ID ?? ''
 const SAAS_URL = process.env.SAAS_URL ?? 'https://saas-api-dev.vocdoni.net'
-const EXPLORER_URL = process.env.EXPLORER_URL ?? 'https://one-dev.explorer.vote'
 
 const resolveToken = async (): Promise<string | undefined> => {
   if (process.env.AUTH_TOKEN) return process.env.AUTH_TOKEN
@@ -71,7 +70,6 @@ describe.skipIf(!PROCESS_ID)('PDF generator', () => {
       results,
       t,
       organizationName: undefined,
-      explorerUrl: EXPLORER_URL,
       now: new Date(),
     })
 

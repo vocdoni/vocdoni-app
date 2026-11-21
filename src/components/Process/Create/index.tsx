@@ -13,8 +13,8 @@ import {
   Spacer,
   VStack,
 } from '@chakra-ui/react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-components'
+import { MutationObserver, useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { organizationQueryKeys, useOrganization } from '@vocdoni/react-components'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { CensusSpec, Choice, CreateVotingProcessRequest, VotingProcessQuestionRequest } from '@vocdoni/api-types'
 import { addDays } from 'date-fns'
@@ -38,17 +38,8 @@ import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { PageLoader } from '~components/ui/Loader'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
-import {
-  draftSavePaymentErrorMessage,
-  paymentErrorToastOptions,
-  publishNeedsWalletTopUp,
-  publishPaymentErrorMessage,
-} from '~components/Pricing/payment-errors'
-import {
-  checkoutStartForRefusal,
-  ProcessCheckout,
-  type ProcessCheckoutStart,
-} from '~components/Pricing/ProcessCheckout'
+import { draftSavePaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
+import type { PublishFlowStart } from '~components/Pricing/ProcessCheckout'
 import { ProcessQuoteAlert } from '~components/Pricing/ProcessPrice'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
@@ -57,7 +48,7 @@ import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
 import { MaxDraftsPerOrg } from '~constants'
 import { QueryKeys } from '~queries/keys'
-import { clearPendingCheckout, enqueuedJobId, readPendingCheckout } from '~queries/process-checkout'
+import { clearPendingCheckout, readPendingCheckout } from '~queries/process-checkout'
 import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
 import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '~routes'
@@ -70,14 +61,16 @@ import { defaultProcessValues, Option, parseFormDateTime, Process, SelectorTypes
 import { votingProcessToForm } from './draft-mapping'
 import { buildCensusSpec } from './census-spec'
 import { useCensusSetupToast } from './useCensusSetupToast'
-import { VoterAuthDialogProvider } from './VoterAuthentication/VoterAuthDialogContext'
+import { PublishDialog } from './PublishReview/PublishDialog'
+import { focusSetting } from './PublishReview/focus-setting'
+import type { PublishEditTarget } from './PublishReview/summary-facts'
+import { useOpenVoterAuthDialog, VoterAuthDialogProvider } from './VoterAuthentication/VoterAuthDialogContext'
 
 export { buildCensusSpec }
 
 type ConfirmOnNavigateOptions = {
   isDirty: boolean
   isSubmitting?: boolean
-  isSubmitSuccessful?: boolean
   onOpen: () => void
   onClose: () => void
 }
@@ -102,26 +95,21 @@ type UpdateProcessRequest = {
  */
 const isDraftLimitError = (error: unknown) => apiErrorDetails(error)?.code === ErrorCode.DraftLimitReached
 
-/**
- * The payment view a refused publish opens. Only who can top up the wallet may pay; a manager keeps
- * the toast and its way to the wallet.
- */
-export const paymentCheckoutStart = (error: unknown, canTopUp: boolean): ProcessCheckoutStart | undefined =>
-  canTopUp ? checkoutStartForRefusal(error) : undefined
-
 const saveTimeoutMs = 30000
 
-export const useConfirmOnNavigate = ({
-  isDirty,
-  isSubmitting,
-  isSubmitSuccessful,
-  onOpen,
-  onClose,
-}: ConfirmOnNavigateOptions) => {
+/** Every draft write (auto-save, manual save, publish) runs under this key, for whoever shows the saving state. */
+const draftSaveMutationKey = ['draft', 'save'] as const
+
+const draftQueryKey = (draftId?: string | null) => ['draft', draftId] as const
+
+/** Whether a draft write is running. Read it in the component that shows it, not in the form root. */
+const useIsSavingDraft = () => useIsMutating({ mutationKey: draftSaveMutationKey }) > 0
+
+export const useConfirmOnNavigate = ({ isDirty, isSubmitting, onOpen, onClose }: ConfirmOnNavigateOptions) => {
   const [snoozeUntil, setSnoozeUntil] = useState<number | null>(null)
   const isSnoozed = snoozeUntil !== null && Date.now() < snoozeUntil
 
-  const shouldBlock = isDirty && !isSubmitting && !isSubmitSuccessful && !isSnoozed
+  const shouldBlock = isDirty && !isSubmitting && !isSnoozed
   const blocker = useBlocker(shouldBlock)
 
   const isOpenRef = useRef(false)
@@ -272,12 +260,14 @@ export const useFormDraftSaver = (
   saveCooldown?: (ms: number) => void
 ) => {
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
-  const createProcess = useCreateProcess()
-  const updateProcess = useUpdateProcess()
+  const { client } = useApiClient()
+  const queryClient = useQueryClient()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const { organization } = useOrganization()
   const skipNextSaveRef = useRef(false)
   const [draftLimitReached, setDraftLimitReached] = useState(false)
+  // The draft this form created itself: it already holds its values, so they are never read back into it
+  const [createdDraftId, setCreatedDraftId] = useState<string | null>(null)
   const { t } = useTranslation()
   const toast = useToast()
   // Read through a ref: useToast returns a new function every render, which would recreate
@@ -301,9 +291,44 @@ export const useFormDraftSaver = (
     draftIdRef.current = draftId
   }, [draftId])
 
-  const isCreating = createProcess.isPending
-  const isUpdating = updateProcess.isPending
-  const isSaving = isCreating || isUpdating
+  // Once the form moves off the draft it created (reset, discarded), coming back to it reads it like any other
+  useEffect(() => {
+    if (createdDraftId && draftId !== createdDraftId) setCreatedDraftId(null)
+  }, [draftId, createdDraftId])
+
+  // Writes run without a useMutation hook, whose state changes would re-render the whole form on every save;
+  // the Save button reads the saving state itself (useIsSavingDraft).
+  const runDraftWrite = useCallback(
+    <TData, TVariables>(mutationFn: (variables: TVariables) => Promise<TData>, variables: TVariables) => {
+      const observer = new MutationObserver<TData, Error, TVariables>(queryClient, {
+        mutationKey: draftSaveMutationKey,
+        mutationFn,
+      })
+      // Detach once settled, or the mutation and the body it holds are never collected
+      return observer.mutate(variables).finally(() => observer.reset())
+    },
+    [queryClient]
+  )
+
+  const createDraft = useCallback(
+    (body: CreateVotingProcessRequest) => runDraftWrite((request) => client.elections.create(request), body),
+    [client, runDraftWrite]
+  )
+
+  const updateDraft = useCallback(
+    (variables: UpdateProcessRequest) =>
+      runDraftWrite(async ({ processId, body }: UpdateProcessRequest) => {
+        // The PUT replaces the draft's add-ons, and an integrator can set them through the API while
+        // the wizard is open: read the draft's current ones, rather than a copy from when it loaded.
+        const { addOns } = await client.elections.get(processId)
+        await client.elections.update(processId, { ...body, addOns })
+        // Every save re-prices the draft, even one that only touched its texts: the backend rebuilds
+        // its census from the group each time, and the group may have changed since the last save.
+        // Not awaited: it would hold the save, and every write queued behind it, until the price is read again.
+        void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
+      }, variables),
+    [client, queryClient, runDraftWrite]
+  )
 
   const skipSave = (skip) => {
     skipNextSaveRef.current = skip
@@ -334,17 +359,21 @@ export const useFormDraftSaver = (
       enqueueWrite(async () => {
         const body = getBody()
         if (draftIdRef.current) {
-          await updateProcess.mutateAsync({ processId: draftIdRef.current, body })
+          await updateDraft({ processId: draftIdRef.current, body })
           return draftIdRef.current
         }
-        const draftProcessId = await createProcess.mutateAsync(body)
+        const draftProcessId = await createDraft(body)
         // Record the new id before returning: a publish that fails after this
         // point must keep updating this draft instead of leaking another one.
         draftIdRef.current = draftProcessId
+        // The form already holds this draft: seed its query instead of reading it back, which wrote the
+        // values of this save over whatever was typed while it ran (#1890). A copy, as RHF mutates its values.
+        queryClient.setQueryData(draftQueryKey(draftProcessId), structuredClone(getValues()))
+        setCreatedDraftId(draftProcessId)
         storeDraftId(draftProcessId)
         return draftProcessId
       }),
-    [enqueueWrite, updateProcess, createProcess, storeDraftId]
+    [enqueueWrite, updateDraft, createDraft, queryClient, getValues, storeDraftId]
   )
 
   const saveDraft = useCallback(
@@ -447,7 +476,18 @@ export const useFormDraftSaver = (
     [organization?.address, storeDraftId]
   )
 
-  return { saveDraft, isSaving, skipSave, draftLimitReached, writeDraft, clearPublishedDraftId }
+  return { saveDraft, skipSave, draftLimitReached, writeDraft, clearPublishedDraftId, createdDraftId }
+}
+
+// Its own component, so the saving state re-renders this button rather than the whole form
+const SaveDraftButton = ({ onClick, disabled }: { onClick: () => void; disabled: boolean }) => {
+  const isSaving = useIsSavingDraft()
+
+  return (
+    <Button type='button' variant='outline' onClick={onClick} loading={isSaving} disabled={disabled}>
+      <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
+    </Button>
+  )
 }
 
 const LeaveConfirmationModal = ({
@@ -499,27 +539,6 @@ export const useCreateProcess = () => {
 
   return useMutation<string, Error, CreateVotingProcessRequest>({
     mutationFn: (request) => client.elections.create(request),
-  })
-}
-
-const useUpdateProcess = () => {
-  const { client } = useApiClient()
-  const queryClient = useQueryClient()
-
-  return useMutation<void, Error, UpdateProcessRequest>({
-    mutationFn: async ({ processId, body }) => {
-      // The PUT replaces the draft's add-ons, and an integrator can set them through the API while
-      // the wizard is open: read the draft's current ones, rather than a copy from when it loaded.
-      const { addOns } = await client.elections.get(processId)
-      return client.elections.update(processId, { ...body, addOns })
-    },
-    // Every save re-prices the draft, even one that only touched its texts: the backend rebuilds
-    // its census from the group each time, and the group may have changed since the last save.
-    // Not awaited: a returned promise would hold the save, and every write queued behind it,
-    // until the price is read again.
-    onSuccess: (_, { processId }) => {
-      void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
-    },
   })
 }
 
@@ -602,13 +621,13 @@ export const useFormToVotingProcessRequest = () => {
   }
 }
 
-const useDraft = (draftId?: string | null) => {
+export const useDraft = (draftId?: string | null, { enabled = true }: { enabled?: boolean } = {}) => {
   const { client } = useApiClient()
   const { DISABLE_ANONYMOUS_VOTING: disableAnonymousVoting } = useAppEnv()
 
   return useQuery<Process | null, Error>({
-    queryKey: ['draft', draftId],
-    enabled: !!draftId,
+    queryKey: draftQueryKey(draftId),
+    enabled: enabled && !!draftId,
     queryFn: async () => {
       try {
         const election = await client.elections.get(draftId!)
@@ -623,6 +642,8 @@ const useDraft = (draftId?: string | null) => {
       }
     },
     refetchOnWindowFocus: false,
+    // The wizard resumes a draft that a payment may have published meanwhile (see above): always read it on mount
+    staleTime: 0,
   })
 }
 
@@ -649,26 +670,27 @@ const ProcessCreateView = () => {
   const [isLeaveConfirmationOpen, setLeaveConfirmationOpen] = useState(false)
   const openConfirmationModal = () => setLeaveConfirmationOpen(true)
   const { organization } = useOrganization()
-  const { client: apiClient } = useApiClient()
   // Draft ids are stored scoped to the acting organization so switching orgs never
   // resumes (and tries to update) a draft owned by a different org
   const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
-  const { isSubmitting, isSubmitSuccessful, isDirty: isFormDirty } = methods.formState
+  const { isSubmitting, isDirty: isFormDirty } = methods.formState
   // Back from a redirect-based payment (the return route), the draft it was opened for is read from storage
   const returningFromCheckout = sessionId !== undefined
   const [returnDraftId] = useState(() => (returningFromCheckout ? readPendingCheckout() : undefined))
   // A return with nothing stored cannot be placed: it gets a neutral message, never the form
   const returnWithoutDraft = returningFromCheckout && returnDraftId === undefined
-  // The top-up view stands in for the form while it is open: the draft is not auto-saved meanwhile,
-  // and leaving is not guarded, since a payment may redirect to the bank
-  // `form` is what was submitted, for the post-publish analytics; a return from a payment has none
-  const [checkout, setCheckout] = useState<{
+  // While the publish dialog is open the draft is not auto-saved, and leaving is not guarded, since a
+  // payment may redirect to the bank. `form` is what was saved, for the summary and the post-publish
+  // analytics; a return from a payment has none
+  const [publishDialog, setPublishDialog] = useState<{
     processId: string
-    start: ProcessCheckoutStart
+    start: PublishFlowStart
     form: Process | null
   } | null>(() => (returnDraftId ? { processId: returnDraftId, start: { kind: 'return' }, form: null } : null))
-  const isDirty = isFormDirty && !checkout
+  const isDirty = isFormDirty && !publishDialog
+  // Where focus goes back when the publish dialog closes
+  const publishButtonRef = useRef<HTMLButtonElement>(null)
   const { canTopUp } = useWalletAccess()
   const { trackEvent } = useAnalytics()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
@@ -677,18 +699,19 @@ const ProcessCreateView = () => {
   const { isSamePath, cancel, proceed, resetSamePath, saveCooldown } = useConfirmOnNavigate({
     isDirty,
     isSubmitting,
-    isSubmitSuccessful,
     onOpen: openConfirmationModal,
     onClose: () => setLeaveConfirmationOpen(false),
   })
-  const { saveDraft, isSaving, skipSave, writeDraft, clearPublishedDraftId } = useFormDraftSaver(
+  const { saveDraft, skipSave, writeDraft, clearPublishedDraftId, createdDraftId } = useFormDraftSaver(
     isDirty,
     methods.getValues,
     effectiveDraftId,
     storeDraftId,
     saveCooldown
   )
-  const { data: formDraft } = useDraft(effectiveDraftId)
+  // Only a draft opened here is read into the form; the one it created itself is already in it
+  const isOwnDraft = !!effectiveDraftId && effectiveDraftId === createdDraftId
+  const { data: formDraft } = useDraft(effectiveDraftId, { enabled: !isOwnDraft })
   // Above the self-service limit the backend refuses any payment: only a custom quote publishes
   // it, which ProcessQuoteAlert points to, so publishing is not offered.
   const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).price)
@@ -721,23 +744,28 @@ const ProcessCreateView = () => {
     }
   }, [formDraft, effectiveDraftId, draftId, clearPublishedDraftId, setSearchParams])
 
-  // Apply form draft if it exists
   useEffect(() => {
     setFormDraftLoaded(true)
+  }, [])
+
+  // Apply an opened draft. Only then are the editors remounted (`nextId`), to show its texts.
+  useEffect(() => {
+    if (!formDraft || isOwnDraft) return
     setNextId(Date.now().toString())
-    if (!formDraft) return
 
     Object.entries(formDraft).forEach(([key, value]) => {
       // A draft only stores its group once voter authentication is set up (see
       // buildCensusSpec), so a missing one means "not saved yet", not "none":
-      // the draft read that follows the first save must not clear a picked group.
+      // opening it must not clear a picked group.
       if (key === 'groupId' && (groupId || !value)) return
       methods.setValue(key as keyof Process, value as Process[keyof Process], { shouldDirty: true })
     })
-  }, [formDraft, groupId, methods])
+  }, [formDraft, isOwnDraft, groupId, methods])
 
   const resetForm = () => {
     reset()
+    // The description editor only reads its value when it mounts: remount it to show the cleared form
+    setNextId(Date.now().toString())
     skipSave(true)
     queueMicrotask(() => {
       navigate(location.pathname, { replace: true })
@@ -797,6 +825,8 @@ const ProcessCreateView = () => {
       // released; a no-op `proceed()` leaves the user here with their work intact.
       if (!proceed()) return
       reset()
+      // The description editor reads its value only on mount; remount it so it shows the reset value
+      setNextId(Date.now().toString())
       storeDraftId(null)
     } catch (error) {
       toast({
@@ -808,18 +838,15 @@ const ProcessCreateView = () => {
     }
   }
 
-  // A published draft is a process: the wizard leaves for its page. Shared by the form's publish and
-  // by the top-up view, which publishes the draft once it is paid.
+  // A published draft is a process: the wizard leaves for its page, once the publish dialog saw it published.
   const handlePublished = (processId: string, form: Process | null) => {
-    // Drop the cached elections pages so the processes index reflects the new
-    // vote without a full page refresh. The index loads through a route loader
-    // backed by ensureQueryData, which returns cached data without refetching
-    // when it is merely marked stale — so invalidateQueries isn't enough here.
-    // Removing the entries forces the loader to fetch fresh data on its next
-    // navigation. The key omits the pagination params so every paginated/status
-    // variant is evicted.
-    queryClient.removeQueries({
-      queryKey: QueryKeys.organization.elections(organization?.address),
+    // Drop every cached elections page, so the processes index and Home fetch the new vote
+    // instead of serving a list cached before it existed. All organizations, not just this
+    // one: the lists are keyed by the session's address, which may be spelled differently.
+    queryClient.removeQueries({ queryKey: QueryKeys.organization.electionLists })
+    // The organization's process counter (Home usage box) changed too
+    void queryClient.invalidateQueries({
+      queryKey: organizationQueryKeys.organization(organization?.address),
     })
 
     // Not sent when the draft values are missing (a return from a payment, for one): blank props would skew it
@@ -855,56 +882,43 @@ const ProcessCreateView = () => {
     // auto-save: stop it, and queue this write behind any save still running,
     // so the draft is never rewritten by two requests at once.
     skipSave(true)
-    let processId: string | null = null
     try {
       const censusSpec = buildCensusSpec(form, disableAnonymousVoting)
       const request = formToVotingProcessRequest(form, censusSpec)
-      // The draft is the process: publish the one we have been saving instead of
-      // creating a second one and leaving the draft orphaned behind it. Going
-      // through `writeDraft` is what makes that hold — it resolves the draft id
-      // inside the queue, so a blur auto-save still in flight is updated rather
-      // than raced.
-      processId = await writeDraft(() => request)
-      // The publish is answered at once; the view waits for the process, which can take minutes on a
-      // slow chain, instead of giving up after the SDK's one-minute job wait
-      const published = await apiClient.elections.publish(processId)
-      setCheckout({ processId, start: { kind: 'publishing', jobId: enqueuedJobId(published) }, form })
+      // The draft is the process: the dialog publishes the one we have been saving
+      // instead of a second one. Going through `writeDraft` is what makes that hold:
+      // it resolves the draft id inside the queue, so a blur auto-save still in flight
+      // is updated rather than raced.
+      const processId = await writeDraft(() => request)
+      // The dialog checks the balance as it is now: re-read every page of the wallet
+      // (the key's tail is the page and its size)
+      void queryClient.invalidateQueries({ queryKey: QueryKeys.organization.wallet(organization?.address).slice(0, 3) })
+      setPublishDialog({ processId, start: { kind: 'summary' }, form })
     } catch (error) {
-      console.error('Error creating election:', error)
+      console.error('Error saving the draft to publish:', error)
       // The draft is still a draft: let it keep auto-saving while the user fixes
       // whatever went wrong.
       skipSave(false)
-
-      const start = processId ? paymentCheckoutStart(error, canTopUp) : undefined
-      if (processId && start) {
-        // Left to the top-up view, which pays for the draft and publishes it
-        setCheckout({ processId, start, form })
-        return
-      }
-
-      const paymentMessage = publishPaymentErrorMessage(t, error)
-      toast({
-        title: t('form.process_create.error_title', { defaultValue: 'Error creating process' }),
-        description: paymentMessage ?? (error instanceof Error ? error.message : String(error)),
-        type: 'error',
-        duration: 4000,
-        ...(paymentMessage ? paymentErrorToastOptions : {}),
-        ...(publishNeedsWalletTopUp(error)
-          ? {
-              action: {
-                label: t('process.payment.error.open_wallet', { defaultValue: 'Open wallet' }),
-                onClick: () => navigate(Routes.dashboard.settings.billing),
-              },
-            }
-          : {}),
-      })
+      showDraftSaveError(error)
     }
   }
 
-  const closeCheckout = () => {
-    // A direct publish paused the auto-save; the draft is editable again
+  const openVoterAuthDialog = useOpenVoterAuthDialog()
+  // "Change" on a row of the publish dialog (which has just closed): to its setting in the sidebar, or the
+  // voter authentication dialog for the census' credentials
+  const editFromPublishDialog = (target: PublishEditTarget) => {
+    if (target === 'auth') {
+      openVoterAuthDialog()
+      return
+    }
+    openSidebar()
+    focusSetting(target)
+  }
+
+  const closePublishDialog = () => {
+    // Publish paused the auto-save; the draft is editable again
     skipSave(false)
-    setCheckout(null)
+    setPublishDialog(null)
   }
 
   const onError = (errors) => {
@@ -975,131 +989,125 @@ const ProcessCreateView = () => {
 
   return (
     <FormProvider {...methods}>
-      {checkout ? (
-        <DashboardContents maxW='2xl' p={{ base: '4', md: '8' }}>
-          <ProcessCheckout
-            processId={checkout.processId}
-            start={checkout.start}
-            onPublished={(processId) => handlePublished(processId, checkout.form)}
-            onClose={closeCheckout}
-          />
-        </DashboardContents>
-      ) : (
-        <Box position='relative' w='full' overflow='hidden' height='full'>
-          <DashboardContents
-            as='form'
-            onSubmit={methods.handleSubmit(onSubmit, onError)}
+      <Box position='relative' w='full' overflow='hidden' height='full' inert={!!publishDialog}>
+        <DashboardContents
+          as='form'
+          onSubmit={methods.handleSubmit(onSubmit, onError)}
+          display='flex'
+          flexDirection='row'
+          position='relative'
+          id='process-create'
+          overflow='hidden'
+        >
+          <Box
+            flex={1}
+            marginRight={showSidebar ? { base: '0', md: 'dashboard.panel' } : '0'}
+            transition='[margin-right {durations.slow}]'
             display='flex'
-            flexDirection='row'
-            position='relative'
-            id='process-create'
-            overflow='hidden'
+            flexDirection='column'
+            gap='8'
+            paddingRight='4'
+            paddingBottom='4'
           >
-            <Box
-              flex={1}
-              marginRight={showSidebar ? { base: '0', md: 'dashboard.panel' } : '0'}
-              transition='[margin-right {durations.slow}]'
-              display='flex'
-              flexDirection='column'
-              gap='8'
-              paddingRight='4'
-              paddingBottom='4'
-            >
-              {/* Top bar with draft status and sidebar toggle */}
-              <HStack position='sticky' top='[0px]' p='2' bg='bg' zIndex='contents'>
-                {effectiveDraftId && (
-                  <Box px='3' py='1' borderRadius='full' bg='bg.muted' fontSize='sm'>
-                    <Trans i18nKey='process.create.status.draft'>Draft</Trans>
-                  </Box>
-                )}
-                <Spacer />
-                <ButtonGroup size='sm'>
-                  {isDirty && (
-                    <IconButton
-                      onClick={openConfirmationModal}
-                      variant='outline'
-                      aria-label={t('dashboard.actions.reset_form', {
-                        defaultValue: 'Reset form',
-                      })}
-                    >
-                      <Icon as={ResetIcon} />
-                    </IconButton>
-                  )}
-                  {/* data-testid: icon-only, so its only other handle is a
-                    translated aria-label — and below `md` the e2e suite must
-                    open this drawer before it can reach any setting. */}
+            {/* Top bar with draft status and sidebar toggle */}
+            <HStack position='sticky' top='[0px]' p='2' bg='bg' zIndex='contents'>
+              {effectiveDraftId && (
+                <Box px='3' py='1' borderRadius='full' bg='bg.muted' fontSize='sm'>
+                  <Trans i18nKey='process.create.status.draft'>Draft</Trans>
+                </Box>
+              )}
+              <Spacer />
+              <ButtonGroup size='sm'>
+                {isDirty && (
                   <IconButton
-                    data-testid='wizard-settings-toggle'
-                    aria-label={t('dashboard.actions.toggle_sidebar', {
-                      defaultValue: 'Toggle sidebar',
-                    })}
+                    onClick={openConfirmationModal}
                     variant='outline'
-                    onClick={toggleSidebar}
+                    aria-label={t('dashboard.actions.reset_form', {
+                      defaultValue: 'Reset form',
+                    })}
                   >
-                    <Icon as={SettingsIcon} />
+                    <Icon as={ResetIcon} />
                   </IconButton>
-                  {/* Both writes need the owner org address; keep them disabled until it resolves. */}
-                  <Button
-                    type='submit'
-                    alignSelf='flex-end'
-                    loading={methods.formState.isSubmitting}
-                    disabled={!organization?.address || quoteOnly}
-                  >
-                    <Trans i18nKey='process.create.action.publish'>Publish</Trans>
-                  </Button>
-                  <Button
-                    type='button'
-                    variant='outline'
-                    onClick={handleManualSave}
-                    loading={isSaving}
-                    disabled={!organization?.address}
-                  >
-                    <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
-                  </Button>
-                </ButtonGroup>
-              </HStack>
+                )}
+                {/* data-testid: icon-only, so its only other handle is a
+                  translated aria-label — and below `md` the e2e suite must
+                  open this drawer before it can reach any setting. */}
+                <IconButton
+                  data-testid='wizard-settings-toggle'
+                  aria-label={t('dashboard.actions.toggle_sidebar', {
+                    defaultValue: 'Toggle sidebar',
+                  })}
+                  variant='outline'
+                  onClick={toggleSidebar}
+                >
+                  <Icon as={SettingsIcon} />
+                </IconButton>
+                {/* Both writes need the owner org address; keep them disabled until it resolves. */}
+                <Button
+                  ref={publishButtonRef}
+                  type='submit'
+                  alignSelf='flex-end'
+                  loading={methods.formState.isSubmitting}
+                  disabled={!organization?.address || quoteOnly}
+                >
+                  <Trans i18nKey='process.create.action.publish'>Publish</Trans>
+                </Button>
+                <SaveDraftButton onClick={handleManualSave} disabled={!organization?.address} />
+              </ButtonGroup>
+            </HStack>
 
-              <ProcessQuoteAlert processId={effectiveDraftId} />
+            <ProcessQuoteAlert processId={effectiveDraftId} />
 
-              {/* Title, Video, and Description */}
-              <VStack as='header' align='stretch' gap='4'>
-                <FormControl invalid={!!methods.formState.errors.title}>
-                  <Input
-                    variant='inline'
-                    placeholder={t('process.create.description.title', {
-                      defaultValue: 'Voting Process Title',
-                    })}
-                    size='2xl'
-                    fontWeight='bold'
-                    {...methods.register('title', {
-                      required: t('form.error.required', 'This field is required'),
-                    })}
-                  />
-                  <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
-                </FormControl>
-
-                {/* Live streaming video URL */}
-                <LiveStreamingInput />
-                <Controller
-                  name='description'
-                  control={methods.control}
-                  render={({ field }) => (
-                    <Editor
-                      key={nextId}
-                      onChange={field.onChange}
-                      variant='inline'
-                      placeholder={t('process.create.description.placeholder', 'Add a description...')}
-                      defaultValue={field.value}
-                    />
-                  )}
+            {/* Title, Video, and Description */}
+            <VStack as='header' align='stretch' gap='4'>
+              <FormControl invalid={!!methods.formState.errors.title}>
+                <Input
+                  variant='inline'
+                  placeholder={t('process.create.description.title', {
+                    defaultValue: 'Voting Process Title',
+                  })}
+                  size='2xl'
+                  fontWeight='bold'
+                  {...methods.register('title', {
+                    required: t('form.error.required', 'This field is required'),
+                  })}
                 />
-              </VStack>
+                <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
+              </FormControl>
 
-              <Questions />
-            </Box>
-          </DashboardContents>
-          <CreateSidebar draftId={effectiveDraftId} />
-        </Box>
+              {/* Live streaming video URL */}
+              <LiveStreamingInput />
+              <Controller
+                name='description'
+                control={methods.control}
+                render={({ field }) => (
+                  <Editor
+                    key={nextId}
+                    onChange={field.onChange}
+                    variant='inline'
+                    placeholder={t('process.create.description.placeholder', 'Add a description...')}
+                    defaultValue={field.value}
+                  />
+                )}
+              />
+            </VStack>
+
+            <Questions />
+          </Box>
+        </DashboardContents>
+        <CreateSidebar draftId={effectiveDraftId} />
+      </Box>
+      {publishDialog && (
+        <PublishDialog
+          processId={publishDialog.processId}
+          form={publishDialog.form}
+          start={publishDialog.start}
+          canTopUp={canTopUp}
+          onPublished={(processId) => handlePublished(processId, publishDialog.form)}
+          onEdit={editFromPublishDialog}
+          onClose={closePublishDialog}
+          returnFocusRef={publishButtonRef}
+        />
       )}
       <LeaveConfirmationModal
         isOpen={isLeaveConfirmationOpen}

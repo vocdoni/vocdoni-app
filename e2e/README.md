@@ -35,10 +35,9 @@ It cleans up after itself, with two deliberate exceptions:
   the container logs are the evidence you need to diagnose the failure; tearing
   them down would destroy exactly that. Stop it with
   `scripts/integration-stack.sh down` when you are done.
-- **It stops containers but keeps volumes**, so vocone's cached zk circuit
-  artifacts survive and the next boot skips a slow, known-flaky download.
-  `scripts/integration-stack.sh down` is the explicit full clean (`down -v`),
-  and is what CI uses.
+- **It stops containers but keeps volumes**, so vocone's chain data persists
+  across local runs. `scripts/integration-stack.sh down` is the explicit full
+  clean (`down -v`), and is what CI uses.
 
 Set `INTEGRATION_KEEP_STACK=1` to always leave it running.
 
@@ -91,7 +90,7 @@ because the failing request is made by the page.
 
 If a vote is relayed but never lands (the success modal opens with no vote id,
 the public count stays at 0, and `curl localhost:8080/jobs/<jobId>` reports
-`census origin not compatible`), the cached `vocdoni-node:main` image is older
+`census origin not compatible`), the cached `vochain-sequencer:main` image is older
 than the feature under test. `docker compose -f integration/docker-compose.ci.yml pull`
 and boot again: `up` reuses whatever `:main` docker already has, and only CI
 pulls fresh every run. The same goes for `saas-backend:main`: an image from before
@@ -209,7 +208,7 @@ Other feature PRs into `develop` do not run it (they are covered by `test.yml`);
 use **Run workflow** on the Actions tab to trigger it by hand on any branch.
 
 It is deliberately separate from `test.yml`: the stack tracks
-`ghcr.io/vocdoni/{saas-backend,vocdoni-node}:main`, so a red run here often
+`ghcr.io/vocdoni/{saas-backend,vochain-sequencer}:main`, so a red run here often
 means "upstream moved" rather than "this repo is broken", and that must not gate
 the normal lint/unit/build job. The workflow prints the resolved image digests so
 such a run is reproducible locally, and uploads the Playwright report (with

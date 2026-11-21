@@ -12,6 +12,8 @@ export const Routes = {
     recovery: '/account/password',
     verify: '/account/verify',
     passwordReset: '/account/password/reset',
+    // Signed-in page the password setup email links to; any account type can open it.
+    passwordSetup: '/account/password/setup',
   },
   contact: 'https://www.vocdoni.io/contact',
   integrators: {

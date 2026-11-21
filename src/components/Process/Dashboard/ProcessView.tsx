@@ -1,5 +1,4 @@
 import {
-  AspectRatio,
   Box,
   Button,
   Card,
@@ -19,9 +18,7 @@ import {
   TabsTrigger,
   Text,
   useClipboard,
-  useRecipe,
   VStack,
-  type HTMLChakraProps,
 } from '@chakra-ui/react'
 import {
   ElectionDescription,
@@ -31,11 +28,9 @@ import {
   ElectionTitle,
   useElection,
 } from '@vocdoni/react-components'
-import { hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
+import { explorerElectionUrl, hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import { tryInferQuestionBallotType } from '@vocdoni/ballot'
 import { useDateFns } from '~i18n/use-date-fns'
-import { useAppEnv } from '~src/app-env'
-import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
@@ -77,13 +72,13 @@ import { useProcessEarlyEndDate } from '~queries/process-end-date'
 import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { ElectionVideo } from '../ElectionVideo'
 import { useAnonymityLabels } from '../anonymityLabels'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
 import { useIsMobile } from '~components/ui/useIsMobile'
 import { Tooltip } from '~components/ui/Tooltip'
-import { VideoPlayer } from '~components/ui/VideoPlayer'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -92,36 +87,6 @@ export const getProcessViewTabFromPath = (pathname: string): ProcessViewTab =>
 
 export const getProcessViewPathForTab = (id: string, tab: ProcessViewTab): string =>
   generatePath(tab === 'results' ? Routes.dashboard.processResults : Routes.dashboard.process, { id })
-
-type ElectionVideoProps = HTMLChakraProps<'div'>
-
-export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((props, ref) => {
-  const { t } = useTranslation()
-  const { election } = useElection()
-  const { ...rest } = props
-  const recipe = useRecipe({ key: 'ElectionVideo' })
-  const styles = recipe()
-
-  if (!election) return null
-
-  const { streamUri } = election
-
-  if (!streamUri) return null
-
-  return (
-    <Box ref={ref} css={styles} {...rest}>
-      <AspectRatio ratio={16 / 9} width='full' height='full'>
-        <VideoPlayer
-          title={election?.title?.default || t('video.title', { defaultValue: 'Video' })}
-          src={streamUri}
-          width='100%'
-          controls
-          height='100%'
-        />
-      </AspectRatio>
-    </Box>
-  )
-})
 
 export const ProcessView = () => (
   <SidebarVisibilityProvider>
@@ -405,8 +370,6 @@ const ResultsStateBadge = (props: Omit<StatusBadgeProps, 'colorPalette'>) => {
 const ProcessViewSidebar = () => {
   const { election, results, status } = useElection()
   const { t } = useTranslation()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   // The hook's `participation`/census size fall back to `maxCensusSize` for CSP elections, which is the
   // allowed-voters cap rather than the real census size. Recompute both from the actual census size.
   const { size: censusSize } = useCensusSize()
@@ -419,8 +382,9 @@ const ProcessViewSidebar = () => {
   const { short: anonymityLabel, mechanismDescription: anonymityMechanism } = useAnonymityLabels(
     election?.census?.anonymous
   )
-  // The explorer only knows on-chain (Vochain) ids; each question is its own on-chain election
-  const explorerProcessId = firstQuestion?.upstreamId
+  // The explorer only knows on-chain (Vochain) ids; each question is its own on-chain election.
+  // Resolved on the process' own chain: an unknown chain has no explorer, so no link.
+  const explorerHref = explorerElectionUrl(election?.chainId, firstQuestion?.upstreamId ?? '')
 
   return (
     <Sidebar show={showSidebar}>
@@ -555,9 +519,9 @@ const ProcessViewSidebar = () => {
           <SidebarSubtitle>
             <Trans i18nKey='additional_actions'>Additional actions</Trans>
           </SidebarSubtitle>
-          {explorerProcessId && (
+          {explorerHref && (
             <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
-              <Link href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
+              <Link href={explorerHref} target='_blank' rel='noopener noreferrer'>
                 <HStack gap='2'>
                   <Icon as={SearchIcon} />
                   <Text as='span'>

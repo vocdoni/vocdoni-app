@@ -19,7 +19,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { DropzoneInputProps, DropzoneRootProps, FileRejection, useDropzone } from 'react-dropzone'
-import { SetValueConfig, useFormContext } from 'react-hook-form'
+import { SetValueConfig, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { DeleteIcon, UploadIcon } from '~theme/icons'
 import { ApiEndpoints } from '~components/Auth/api'
@@ -233,7 +233,7 @@ export const AvatarUploader = (props: FormControlProps) => {
 
 export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '[150px]' }: ImageUploaderProps) => {
   const { t } = useTranslation()
-  const { watch } = useFormContext()
+  const { control } = useFormContext()
   const { getRootProps, getInputProps, isDragActive, isPending, error } = useImageDropUpload({
     name,
     successTitle: t('uploader.image_upload_success', { defaultValue: 'Image uploaded' }),
@@ -242,7 +242,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '[150px]'
     setValueOptions: { shouldDirty: true },
   })
 
-  const value = watch(name)
+  const value = useWatch({ control, name })
 
   return (
     <FormControl invalid={!!error}>

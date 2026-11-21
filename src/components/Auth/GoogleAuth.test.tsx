@@ -86,6 +86,18 @@ describe('GoogleAuth', () => {
     expect(rememberSignupMethodMock).toHaveBeenCalledWith('google')
   })
 
+  it('sends a returning user to the page saved before sign in, and clears it', async () => {
+    setAuthMock({ setSession: vi.fn(), refreshAddresses: vi.fn() })
+    localStorage.setItem(AuthStorageKeys.Token, 'token-123')
+    localStorage.setItem(AuthStorageKeys.Expiry, 'expiry-123')
+    localStorage.setItem('redirectTo', '/account/password/setup')
+
+    render(<GoogleAuth />)
+
+    await waitFor(() => expect(navigateMock).toHaveBeenCalledWith('/account/password/setup'))
+    expect(localStorage.getItem('redirectTo')).toBeNull()
+  })
+
   it('does not redirect when login is not a signup', async () => {
     const setSessionMock = vi.fn()
     const refreshAddressesMock = vi.fn()

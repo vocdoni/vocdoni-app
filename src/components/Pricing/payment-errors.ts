@@ -1,9 +1,8 @@
-import { ApiErrorCode, isCensusGrowthQuote } from '@vocdoni/api-client'
+import { ApiErrorCode, isCensusGrowthQuote, isProcessId } from '@vocdoni/api-client'
 import type { CensusGrowthQuote, InsufficientWalletBalanceData, PaymentRequiredData } from '@vocdoni/api-types'
 import type { TFunction } from 'i18next'
 import { apiErrorDetails } from '~components/Auth/api'
 import { MaxWritersPerOrg } from '~constants'
-import { isProcessId } from '~queries/process-price'
 import { currency } from '~utils/numbers'
 
 // Pay-per-process billing (saas-backend#819): publish and census growth need payment. Amounts: EUR cents, no VAT.

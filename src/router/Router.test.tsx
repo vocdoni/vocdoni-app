@@ -9,6 +9,14 @@ vi.mock('react-router', () => ({
   RouterProvider: ({ router }: { router: { id: string } }) => <div data-testid='router-provider'>{router.id}</div>,
 }))
 
+const prefetchProviderRoutes = vi.fn()
+vi.mock('./route-prefetch', () => ({
+  RoutePrefetchProvider: ({ routes, children }: { routes?: unknown; children: React.ReactNode }) => {
+    prefetchProviderRoutes(routes)
+    return children
+  },
+}))
+
 vi.mock('./routes/auth', () => ({
   useAuthRoutes: () => ({ path: '/account' }),
   useCreateOrganizationRoutes: () => ({ path: '/account/create-organization' }),
@@ -44,6 +52,16 @@ describe('RoutesProvider', () => {
     render(<RoutesProvider basename='/en' />)
 
     expect(createBrowserRouter).toHaveBeenCalledWith(expect.any(Array), expect.objectContaining({ basename: '/en' }))
+  })
+
+  it('hands the router routes to the prefetch provider', async () => {
+    const routes = [{ path: '/admin' }]
+    createBrowserRouter.mockImplementationOnce(() => ({ id: 'router-routes', dispose, routes }) as never)
+    const { RoutesProvider } = await import('./Router')
+
+    render(<RoutesProvider basename='/en' />)
+
+    expect(prefetchProviderRoutes).toHaveBeenLastCalledWith(routes)
   })
 
   it('recreates and disposes the router when the basename changes', async () => {

@@ -78,8 +78,8 @@ export const getPublicLocalizedProcessSummaryRouteMatch = ({
  *
  * Both the bare root (`/`) and every localized root (`/en`, `/es`, …) are
  * claimed, so the process page is what a visitor gets before and after the
- * client-side language redirect. Returns false when no process id is
- * configured, which leaves the root to the SPA catch-all exactly as before.
+ * language redirect (server/public-language-routing.mjs). Returns false when no
+ * process id is configured, which leaves the root to the SPA catch-all.
  */
 export const getHomeProcessRouteMatch = ({
   urlPathname,

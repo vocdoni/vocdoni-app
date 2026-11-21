@@ -1,4 +1,52 @@
 {
+  "create-draft--publish-cost-1440-dark": {
+    "spacing 2px": 5,
+    "spacing 8px": 8
+  },
+  "create-draft--publish-cost-1440-light": {
+    "spacing 2px": 5,
+    "spacing 8px": 8
+  },
+  "create-draft--publish-cost-390-dark": {
+    "spacing 2px": 2,
+    "spacing 8px": 4
+  },
+  "create-draft--publish-cost-390-light": {
+    "spacing 2px": 2,
+    "spacing 8px": 4
+  },
+  "create-draft--publish-summary-1440-dark": {
+    "spacing 2px": 5,
+    "spacing 8px": 8
+  },
+  "create-draft--publish-summary-1440-light": {
+    "spacing 2px": 5,
+    "spacing 8px": 8
+  },
+  "create-draft--publish-summary-390-dark": {
+    "spacing 2px": 2,
+    "spacing 8px": 4
+  },
+  "create-draft--publish-summary-390-light": {
+    "spacing 2px": 2,
+    "spacing 8px": 4
+  },
+  "create-draft--publish-wallet-1440-dark": {
+    "spacing 2px": 5,
+    "spacing 8px": 8
+  },
+  "create-draft--publish-wallet-1440-light": {
+    "spacing 2px": 5,
+    "spacing 8px": 8
+  },
+  "create-draft--publish-wallet-390-dark": {
+    "spacing 2px": 2,
+    "spacing 8px": 4
+  },
+  "create-draft--publish-wallet-390-light": {
+    "spacing 2px": 2,
+    "spacing 8px": 4
+  },
   "create-draft--voter-auth-dialog-1440-dark": {
     "grey color #ffffff": 5,
     "spacing 2px": 5,

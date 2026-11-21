@@ -1,5 +1,5 @@
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
-import { VocdoniApiError } from '@vocdoni/api-client'
+import { ApiErrorCode, isApiError, VocdoniApiError } from '@vocdoni/api-client'
 import type { CensusSpec } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
 import { useEffect, useRef, useState } from 'react'
@@ -42,18 +42,14 @@ export type CensusCheckOutcome = {
 const DEBOUNCE_MS = 450
 const STALE_MS = 60_000
 
-const toList = (value: unknown): string[] => (Array.isArray(value) ? value.map(String) : [])
-
 const readIssues = (error: unknown): CensusCheckIssues | null => {
-  if (!(error instanceof VocdoniApiError) || error.status !== 400) return null
-  const data = (error.body as { data?: Record<string, unknown> } | undefined)?.data
-  if (!data) return null
+  if (!isApiError(error, ApiErrorCode.InvalidData) || !error.data) return null
 
   const issues = {
-    memberIds: toList(data.memberIds),
-    duplicates: toList(data.duplicates),
-    missingData: toList(data.missingData),
-    notFound: toList(data.notFound),
+    memberIds: error.data.memberIds ?? [],
+    duplicates: error.data.duplicates ?? [],
+    missingData: error.data.missingData ?? [],
+    notFound: error.data.notFound ?? [],
   }
   return issues.duplicates.length || issues.missingData.length ? issues : null
 }

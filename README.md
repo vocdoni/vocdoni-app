@@ -34,8 +34,6 @@
     <h3>Key Repositories</h3>
     <a href="https://github.com/vocdoni/vocdoni-app">Vocdoni App</a>
     |
-    <a href="https://github.com/vocdoni/vocdoni-node">Vocdoni Node</a>
-    |
     <a href="https://github.com/vocdoni/vocdoni-integrator-sdk">Vocdoni Integrator SDK</a>
   </div>
 
@@ -88,7 +86,7 @@ You can create a `.env.local` file to set your custom environment variables
 there, here's a list of variables you can use:
 
 - `VOCDONI_ENVIRONMENT`: the vocdoni environment to be used, either
-  `dev` or `prod` (defaults to `dev`).
+  `dev`, `stg` or `prod` (defaults to `dev`). `stg` selects the staging explorer and vochain gateway.
 - `BASE_URL` is used to specify the public base page during build.
 - `BUILD_PATH` Specifies the destination of built files.
 - `COMMIT_SHA` Commit stamped in the `build-commit` meta tag of every page, read by the server at runtime (shortened to 7 characters). On DigitalOcean App Platform set it as a run-time variable to `${_self.COMMIT_HASH}`. Defaults to `git rev-parse --short HEAD`, or `unknown` without git.
@@ -167,6 +165,21 @@ The output now includes both the client bundle and the Vike SSR server bundle:
 - `dist/client` for browser assets
 - `dist/server` for the SSR entry and page server bundles
 
+#### `pnpm perf:lab`
+
+Loads URLs in headless Chrome, unthrottled and on Fast 4G with a 4x CPU slowdown, and prints the median of
+`--runs` (default 3): time to a ready selector, documents loaded, FCP, LCP, blocking time and JS/font bytes.
+Needs Google Chrome. Add `--json` for machine output and `--storage-state <file>` for logged-in pages (name it
+`perf-lab-state.json`, which is git-ignored: it holds a session token). FCP and LCP count from the start of the first
+navigation. Blocking time covers what the last document did up to one second after it was ready; bytes cover every
+request from the first navigation up to that point. Without `--ready` the script waits for the network to go quiet,
+which adds about 500 ms to the ready time. For a URL that redirects in the browser (such as `/`), pass `--ready`:
+network idle can fire between the two documents.
+
+```sh
+pnpm perf:lab -- --url https://app.vocdoni.io/en/account/signin --ready 'input[type="email"]'
+```
+
 #### `pnpm translations`
 
 Extracts all i18n strings from the code and puts them in the `i18n/locales` json
@@ -203,7 +216,9 @@ While we welcome contributions from the community, we do not track all of our is
 
 Please review our [development guidelines](https://developer.vocdoni.io/development-guidelines).
 
-For UI and theme changes, follow the [UI guidelines](docs/ui-guidelines.md).
+The working rules are in [AGENTS.md](AGENTS.md) (for people and coding agents alike). Copy, voice and logo use follow
+[BRAND.md](BRAND.md); how screens are built follows [DESIGN.md](DESIGN.md), and UI and theme changes follow the
+[UI guidelines](docs/ui-guidelines.md). Task-specific procedures live as agent skills in `.agents/skills/`.
 
 ### Contributions and pull requests
 

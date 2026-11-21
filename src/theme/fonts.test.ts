@@ -73,9 +73,9 @@ describe('font config', () => {
   // No family uses the variable branch yet; this pins what Theme.tsx and the weight check will expect of one.
   it('models a static family as one file per weight and a variable one as one file for its range', () => {
     expect(fontCssFiles(SANS)).toEqual([
-      '@fontsource/inter/300.css',
-      '@fontsource/inter/400.css',
-      '@fontsource/inter/500.css',
+      '@fontsource/inter/latin-300.css',
+      '@fontsource/inter/latin-400.css',
+      '@fontsource/inter/latin-500.css',
     ])
     const variable: WebFont = {
       family: 'Variable Sans',
