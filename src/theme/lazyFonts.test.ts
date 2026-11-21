@@ -1,4 +1,6 @@
-import { LOADED_FONT_WEIGHTS } from './fonts'
+import { SANS } from './fonts'
+
+const LOADED_FONT_WEIGHTS = SANS.files.weights
 import { loadInterSubsets } from './lazyFonts'
 
 const styles = () => document.head.querySelectorAll<HTMLStyleElement>('style[data-inter-subsets]')

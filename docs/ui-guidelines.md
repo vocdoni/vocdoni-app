@@ -52,8 +52,8 @@ Token families, each in its own module under `src/theme/` and spread into `color
 
 | Family                           | Tokens                                                                                                                                                                      | Module            |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.inverted`, `bg.panel`                                         | `semantic.ts`     |
-| Borders                          | `border`, `border.muted`, `border.subtle`, `border.emphasized`, `border.inverted`                                                                                           | `semantic.ts`     |
+| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint` (`fg.subtle` today), `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.inverted`, `bg.panel`         | `semantic.ts`     |
+| Borders                          | `border`, `border.muted`, `border.subtle`, `border.emphasized`, `border.strong` (control outlines, `border.emphasized` today), `border.inverted`                            | `semantic.ts`     |
 | Surface layers                   | `surface.canvas`, `.sidebar`, `.content`, `.card`, `.sunken`, `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`) | `semantic.ts`     |
 | Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.fg`                                                                                                           | `semantic.ts`     |
 | Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                          | `semantic.ts`     |
@@ -65,8 +65,9 @@ Token families, each in its own module under `src/theme/` and spread into `color
 | Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                       | `illustration.ts` |
 | Links, switch, turnout stripes   | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `progress.stripe`, `scroll.edge` (fade above a scrolling dialog footer)  | `recipeColors.ts` |
 | Toasts                           | `toast.{success,warning}.bg` (solid fills) and `toast.{success,warning}.fg` (the text on them, each status's `contrast`)                                                    | `recipeColors.ts` |
-| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`                                                                     | `semantic.ts`     |
+| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a control, `none` today)           | `semantic.ts`     |
 | Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                   | `palette.ts`      |
+| Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (`brand` or `gray`)                                                 | `system.ts`       |
 | Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                        | `semantic.ts`     |
 
 Rules of thumb:
@@ -90,8 +91,8 @@ Rules of thumb:
   darker: `ink.950` (#000000), `ink.900` (#0a0a0a, the dark page), `ink.850` (#1f1f22), `ink.800` (#262626), `ink.700`
   (#2e2e2e). Components never read it; the semantic tokens do. The dark `bg.muted` is `ink.850`, so the dark steps run
   `bg.subtle` < `bg.muted` (hover) < `bg.emphasized` (pressed, current), the same order as light. The track of a bar
-  cannot read `bg.muted` there (it is too close to the page), which is why both progress variants read
-  `ballot.results.track`.
+  cannot read `bg.muted` there (it is too close to the page), which is why the `results` and `turnout` progress
+  variants read `ballot.results.track`.
 - **Text on a coloured fill**: use the pair the token family ships (`status.error.contrast` on `status.error.solid`,
   `surface.inverse.fg` on `surface.inverse`), not an ad hoc black or white. `textContrast.test.ts` and `palette.test.ts`
   check contrast.
@@ -109,7 +110,11 @@ Typography is a role, not three props.
 ```
 
 App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (12px, uppercase, Chakra's `wide` letter spacing, not the `eyebrow.wide` token),
-`page-title` (24px), `section-title` (18px), `display`. Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
+`page-title` (24px), `section-title` (18px), `display`, `control` (a control's label and value, on the `control` font
+size), `figure` (numerals, dates, counts and codes: the `figure` family only, so it keeps the size around it; the
+text family today), `quote-label` (the sector over a featured quote), `separator-label` (the label of a
+`LabelledSeparator`), `status-title` (a process status as a headline) and `role-name` (a role shown from its raw
+value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. Rules:
 
 - A role holds typography only. Colour stays a separate prop. Do not pass a `textStyle` and a prop that sets the same
   property: they resolve in prop order.
@@ -123,9 +128,13 @@ App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (
   `Text` that should be something else. For inline emphasis inside smaller text, use `chakra.span` or `Span`.
 - Line heights are four tokens: `shorter` (1.2), `short` (1.3), `moderate` (1.5), `tall` (1.6). Letter spacing:
   `heading.snug`, `quote.tight`, `eyebrow.wide`, plus Chakra's own steps.
-- Weights: only 300, 400 and 500 ship (`src/theme/fonts.ts`). `normal` and `medium` render 400; `semibold`, `bold` and
-  `extrabold` render 500. Numeric weights fail the inventory (`numericFontWeight`). A weight with no file behind it makes
-  the browser fake it, and `fonts.test.ts` keeps the CSS imports and the list in step.
+- Families and weights live together in `src/theme/fonts.ts`: each family with the files it ships (`SANS`, a static
+  family or a variable range), the stacks (`body`, `heading`, `figure`, `mono`) and the ladder of which weight each
+  name renders (`FONT_WEIGHTS`). Inter ships 300, 400 and 500: `normal`, `normal-plus` and `medium` render 400;
+  `medium-plus`, `semibold`, `bold` and `extrabold` render 500. `normal-plus` and `medium-plus` are the half steps
+  (450, 550) a variable family can draw. Numeric weights fail the inventory (`numericFontWeight`). A weight with no face
+  behind it makes the browser fake it, and `fonts.test.ts` keeps the CSS imports in `Theme.tsx`, the families and the
+  ladder in step.
 - Markdown headings written by users use `proseHeadingSizes`, shared by the editor and the renderer.
 
 ## Sizes, spacing and radii
@@ -133,7 +142,9 @@ App roles (`src/theme/textStyles.ts`): `body`, `body-sm`, `caption`, `eyebrow` (
 - **Spacing**: scale steps (`p='4'`, `gap='2'`), plus `0` and `auto` (`p='0'`, `mx='auto'`). A pixel value is a
   `pxSpacing` ratchet hit.
 - **Sizes**: Chakra's named sizes and the tokens below, plus `0` and `auto`. A pixel value is a `pxSize` ratchet hit.
-- **Radii**: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `full`, `none`. Pixel radii fail the inventory.
+- **Radii**: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `full`, `none`. Pixel radii fail the inventory. Chakra's own recipes
+  read the semantic `l1`, `l2` and `l3` (`xs`, `sm`, `md`), written out in `semantic.ts`.
+- **Font sizes**: Chakra's steps, plus `control` (a control's label and value, `sm` today).
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
   focus ring, `thick`): `borderWidth: 'thick'` in a recipe.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
@@ -177,7 +188,7 @@ What exists today:
 | `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the mobile dashboard menu); dialog and drawer backdrops both paint `scrim.strong`                                                                                                         |
 | `dialog`            | `placement` defaults to `center`; `size`: `review` (the publish review, full screen on phones); the header stacks the title over a muted description (`DialogHeader`)                                                                                                  |
 | `menu`              | Items highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                       |
-| `progress`          | `variant`: `results` (thin 8px bar, one per choice), `turnout` (large striped bar for the share that voted); both tracks read `ballot.results.track`                                                                                                                   |
+| `progress`          | `variant`: `results` (thin 8px bar, one per choice), `turnout` (large striped bar for the share that voted), `meter` (`UsageMeter`), `job` (a background job); `results` and `turnout` tracks read `ballot.results.track`                                              |
 | `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                          |
 | `input`, `textarea` | `variant`: `inline` (no border or side padding; the rich-text `Editor` passes its `variant` to the textarea recipe)                                                                                                                                                    |
 | `list`              | `variant`: `marker`                                                                                                                                                                                                                                                    |

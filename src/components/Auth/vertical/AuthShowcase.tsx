@@ -88,13 +88,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
         </Heading>
       ) : (
         <Stack as='figure' position='relative' m='0' gap={{ md: '5', lg: '7' }} minW='0'>
-          <Text
-            textStyle='caption'
-            fontWeight='bolder'
-            textTransform='uppercase'
-            letterSpacing='eyebrow.wide'
-            color='auth.showcase.fg.muted'
-          >
+          <Text textStyle='quote-label' color='auth.showcase.fg.muted'>
             {copy.label}
           </Text>
           {/* Deliberately unclamped: a quote cut mid-sentence reads as a bug, and the panel is a

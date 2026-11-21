@@ -62,9 +62,9 @@ export const UsageMeter = ({ label, value, max, unit, icon, tooltip, color, soft
       </Stat.ValueText>
       {/* 0.5 % keeps a dot on the track, so an unused meter still reads as a meter. */}
       {max !== undefined && (
-        <Progress.Root value={hasLimit ? Math.max(percentage, 0.5) : 0} size='sm' shape='full'>
-          <Progress.Track bg='chart.track'>
-            <Progress.Range bgColor={usageMeterFill({ value, max, softLimit, color })} borderRadius='full' />
+        <Progress.Root value={hasLimit ? Math.max(percentage, 0.5) : 0} variant='meter'>
+          <Progress.Track>
+            <Progress.Range bgColor={usageMeterFill({ value, max, softLimit, color })} />
           </Progress.Track>
         </Progress.Root>
       )}

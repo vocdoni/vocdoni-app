@@ -4,7 +4,7 @@ import { useAppEnv } from '~src/app-env'
 import { ColorModeProvider } from '~theme/color-mode'
 import { getAppSystem } from '~theme/system'
 
-// One static import per weight in LOADED_FONT_WEIGHTS (~theme/fonts); fonts.test.ts
+// One static import per file of each family in WEB_FONTS (~theme/fonts); fonts.test.ts
 // fails when the two drift. Latin only: these are the files the page preloads, and
 // lazyFonts declares the other subsets after hydration (see below).
 import '@fontsource/inter/latin-300.css'

@@ -15,6 +15,7 @@ export const STRESS_FONT_MARKER = 'Stress'
 const fonts = {
   body: { value: `"${STRESS_FONT_MARKER} Body", "Courier New", monospace` },
   heading: { value: `"${STRESS_FONT_MARKER} Heading", Georgia, serif` },
+  figure: { value: `"${STRESS_FONT_MARKER} Figure", "Courier New", monospace` },
   mono: { value: `"${STRESS_FONT_MARKER} Mono", monospace` },
 }
 

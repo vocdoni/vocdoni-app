@@ -25,10 +25,22 @@ export const Progress = defineSlotRecipe({
           backgroundSize: '[{sizes.4} {sizes.4}]',
         },
       },
+      // A usage figure's bar (ui/UsageMeter) on the chart track. The fill colour is the meter's tone, set per use.
+      meter: {
+        track: { shadow: 'inset', bgColor: 'chart.track' },
+        range: { ...range, borderRadius: 'full' },
+      },
+      // A background job, such as the members import: Chakra's `outline` look with softer corners.
+      job: {
+        track: { shadow: 'inset', bgColor: 'bg.muted' },
+        range,
+      },
     },
   },
   compoundVariants: [
     { variant: 'results', css: { track: { h: '2' } } },
     { variant: 'turnout', css: { track: { h: '3', borderRadius: 'full' } } },
+    { variant: 'meter', css: { track: { h: '2', borderRadius: 'full' } } },
+    { variant: 'job', css: { root: { borderRadius: 'md' }, track: { borderRadius: 'md' } } },
   ],
 })
