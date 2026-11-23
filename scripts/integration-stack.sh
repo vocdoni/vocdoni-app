@@ -261,7 +261,7 @@ cmd_logs() {
     exit 1
   fi
   mkdir -p "$dir"
-  local services=(api vocone mongo mailhog)
+  local services=(api vocone vocone-migrate postgres mongo mailhog)
   if [ -n "$STRIPE_MODE" ]; then
     services+=(stripe-listen)
   fi
