@@ -50,6 +50,9 @@ const viteconfig = ({ mode }: { mode: string }) => {
     },
     build: {
       outDir,
+      // 'hidden' writes .map files without the sourceMappingURL comment; the
+      // Docker build uploads them to PostHog and deletes them (scripts/posthog-sourcemaps.sh).
+      sourcemap: 'hidden',
     },
     plugins: [noTestThemes(), ssr(), tsconfigPaths(), react(), svgr()],
   })
