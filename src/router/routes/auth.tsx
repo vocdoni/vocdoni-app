@@ -13,6 +13,7 @@ const Verify = lazy(() => import('~elements/account/verify'))
 const PasswordForgot = lazy(() => import('~elements/account/password'))
 const PasswordReset = lazy(() => import('~elements/account/password/reset'))
 const CreateOrganization = lazy(() => import('~elements/account/create-organization'))
+const PasswordSetup = lazy(() => import('~elements/account/password/setup'))
 
 const AuthElements = [
   {
@@ -97,6 +98,16 @@ export const useCreateOrganizationRoutes = () => {
             element: (
               <SuspenseLoader>
                 <CreateOrganization />
+              </SuspenseLoader>
+            ),
+          },
+          {
+            // Only behind AccountProtectedRoute, never PrivateAppGuard, so the emailed link opens
+            // for every signed-in account, integrators included.
+            path: Routes.auth.passwordSetup,
+            element: (
+              <SuspenseLoader>
+                <PasswordSetup />
               </SuspenseLoader>
             ),
           },

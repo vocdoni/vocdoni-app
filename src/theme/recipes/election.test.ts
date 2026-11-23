@@ -1,8 +1,19 @@
-import { ElectionResults, QuestionChoice, QuestionsTypeBadge } from './election'
+import { ElectionResults, QuestionChoice, QuestionsTypeBadge, Voted } from './election'
+import { link } from './typography'
 
 describe('ElectionResults recipe', () => {
   it('keeps result questions stacked vertically', () => {
     expect(ElectionResults.base.wrapper.gridTemplateColumns).toBe('1fr')
+  })
+
+  it('styles the vote id link inside the Voted notice', () => {
+    // The link recipe's look: Fil's accent text, without an underline.
+    expect(Voted.base.description).toHaveProperty(['& a', 'color'], link.base?.color)
+    expect(Voted.base.description).toHaveProperty(['& a', 'textDecoration'], link.base?.textDecoration)
+  })
+
+  it('lets a long vote id wrap when it has no explorer link', () => {
+    expect(Voted.base.description).toHaveProperty('overflowWrap', 'anywhere')
   })
 })
 

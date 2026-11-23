@@ -527,19 +527,24 @@ const collectStyles = (props) => {
 }
 
 // Clicks the first visible match among the candidates of one step.
+// Waits up to 5 s for one of the candidates to show: a dialog's later steps often appear after a request.
 const clickFirst = async (page, candidates) => {
-  for (const [role, name] of candidates) {
-    const loc = role === 'css' ? page.locator(name) : page.getByRole(role, { name })
-    const n = await loc.count()
-    for (let i = 0; i < n; i++) {
-      const el = loc.nth(i)
-      if (await el.isVisible().catch(() => false)) {
-        await el.click({ timeout: 5000 })
-        return true
+  const deadline = Date.now() + 5000
+  for (;;) {
+    for (const [role, name] of candidates) {
+      const loc = role === 'css' ? page.locator(name) : page.getByRole(role, { name })
+      const n = await loc.count()
+      for (let i = 0; i < n; i++) {
+        const el = loc.nth(i)
+        if (await el.isVisible().catch(() => false)) {
+          await el.click({ timeout: 5000 })
+          return true
+        }
       }
     }
+    if (Date.now() >= deadline) return false
+    await page.waitForTimeout(100)
   }
-  return false
 }
 
 // ---- run ----------------------------------------------------------------------------------

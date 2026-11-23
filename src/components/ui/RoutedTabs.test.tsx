@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router'
-import { render, screen, TestMemoryRouter } from '~src/test-utils'
+import { act, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { RoutedTabs } from './RoutedTabs'
 
 const tabs = [
@@ -8,7 +8,7 @@ const tabs = [
 ]
 
 describe('RoutedTabs', () => {
-  it('renders the routed content in the panel the selected tab controls', () => {
+  it('renders the routed content in the panel the selected tab controls', async () => {
     render(
       <TestMemoryRouter initialEntries={['/admin/second']}>
         <Routes>
@@ -24,5 +24,7 @@ describe('RoutedTabs', () => {
     const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '')
     expect(panel).not.toBeNull()
     expect(panel).toContainElement(screen.getByText('Second content'))
+    // TabsRoot updates its state just after mount; flush that update inside act
+    await act(async () => {})
   })
 })

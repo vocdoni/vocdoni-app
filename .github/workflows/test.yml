@@ -85,7 +85,7 @@ jobs:
       - name: Build vocdoni app (stg)
         run: pnpm build
         env:
-          VOCDONI_ENVIRONMENT: prod
+          VOCDONI_ENVIRONMENT: stg
           CUSTOM_ORGANIZATION_DOMAINS: ${{ secrets.CUSTOM_ORGANIZATION_DOMAINS }}
           STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
           CALCOM_EVENT_SLUG: ${{ secrets.CALCOM_EVENT_SLUG }}

@@ -9,7 +9,9 @@ export const ROUTES = [
   {
     slug: 'dashboard',
     path: '/admin',
-    states: [{ slug: 'user-menu', open: [[['css', '[data-scope="popover"][data-part="trigger"]']]], viewports: DESKTOP }],
+    states: [
+      { slug: 'user-menu', open: [[['css', '[data-scope="popover"][data-part="trigger"]']]], viewports: DESKTOP },
+    ],
   },
   { slug: 'processes-all', path: '/admin/processes/all' },
   { slug: 'processes-ended', path: '/admin/processes/ended' },
@@ -33,6 +35,17 @@ export const ROUTES = [
         slug: 'voter-auth-dialog',
         open: [[['button', /^(Configure|Edit) Voter Authentication$/i]]],
         viewports: DESKTOP,
+      },
+      // The publish dialog over the valid draft; the mock's balance covers the price, so no card step.
+      // No state presses a publish button: the wallet step is captured without pressing its pay button.
+      { slug: 'publish-summary', open: [[['button', /^Publish$/]]] },
+      {
+        slug: 'publish-cost',
+        open: [[['button', /^Publish$/]], [['button', /Review the details$/]]],
+      },
+      {
+        slug: 'publish-wallet',
+        open: [[['button', /^Publish$/]], [['css', '[data-primary="wallet"]']]],
       },
     ],
   },

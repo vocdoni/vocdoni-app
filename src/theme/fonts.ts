@@ -1,10 +1,13 @@
 /**
  * The one font config: each family, the files it ships and the weight ladder. `tokens.ts` builds the font and
- * weight tokens from it, `Theme.tsx` holds one static import per file and fonts.test.ts keeps them in sync.
+ * weight tokens from it, `Theme.tsx` holds one static import per file and fonts.test.ts keeps them in sync. A static
+ * family loads its Latin files up front; a variable family's CSS gives each subset a unicode-range, so the browser
+ * downloads only the subsets a page uses.
  * No CSS imports here: `chakra typegen` loads this via system.ts.
  */
 
-// One `<package>/<weight>.css` per static weight, or one CSS file that covers a variable family's whole range.
+// One `<package>/latin-<weight>.css` per static weight (Latin only), or one CSS file that covers a variable family's
+// whole range, every subset behind its own unicode-range.
 type FontFiles =
   | { kind: 'static'; weights: readonly number[] }
   | { kind: 'variable'; range: readonly [min: number, max: number]; css: string }
@@ -42,7 +45,7 @@ export const FONT_STACKS = {
 
 // The CSS a family needs, which is what Theme.tsx must import.
 export const fontCssFiles = ({ package: pkg, files }: WebFont) =>
-  files.kind === 'static' ? files.weights.map((weight) => `${pkg}/${weight}.css`) : [`${pkg}/${files.css}`]
+  files.kind === 'static' ? files.weights.map((weight) => `${pkg}/latin-${weight}.css`) : [`${pkg}/${files.css}`]
 
 // Whether a family has a real face for a weight; for any other the browser fakes one.
 export const shipsWeight = ({ files }: WebFont, weight: number) =>

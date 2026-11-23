@@ -1,8 +1,8 @@
-import { loadStripe, type Appearance, type Stripe } from '@stripe/stripe-js'
-import { useState } from 'react'
+import { loadStripe, type Appearance, type Stripe, type StripeCheckoutElementsOptions } from '@stripe/stripe-js'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
-import { useColorMode } from '~theme/color-mode'
+import { type ColorMode, useColorMode } from '~theme/color-mode'
 import { EMBED_DARK } from '~theme/embedColors'
 
 // Lazy initializer so loadStripe runs once (not on every render), and only when
@@ -21,20 +21,63 @@ export const useStripePromise = (): Promise<Stripe | null> | null => {
   return stripePromise
 }
 
-export const useCheckoutAppearance = (): Appearance => {
-  const { colorMode } = useColorMode()
-  if (colorMode === 'dark') {
-    return {
-      theme: 'night',
-      variables: {
-        colorBackground: EMBED_DARK.background,
-        colorText: EMBED_DARK.text,
-        colorPrimary: EMBED_DARK.primary,
-      },
-      rules: { '.Input': { border: `1px solid ${EMBED_DARK.fieldRing}` } },
-    }
+// A theme CSS variable's value, following var() chains (semantic tokens point at scale steps); '' if unset
+export const resolveCssVar = (varName: string, depth = 3): string => {
+  if (typeof document === 'undefined' || depth === 0) return ''
+  const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim()
+  if (!value) return ''
+  if (value.startsWith('var(')) {
+    const inner = value.slice(4, -1).split(',')[0].trim()
+    return resolveCssVar(inner, depth - 1)
   }
-  return { theme: 'stripe', variables: { colorBackground: 'white' } }
+  return value
+}
+
+/** The Stripe appearance for the page's current colour mode, with its CSS variables read from the page now. */
+const readAppearance = (colorMode: ColorMode): Appearance => {
+  const themed = Object.entries({
+    colorPrimary: '--chakra-colors-brand-fg',
+    colorText: '--chakra-colors-fg',
+    colorTextSecondary: '--chakra-colors-fg-muted',
+    colorDanger: '--chakra-colors-fg-error',
+    borderRadius: '--chakra-radii-l3',
+    fontFamily: '--chakra-fonts-body',
+    fontSizeBase: '--chakra-font-sizes-sm',
+  })
+    .map(([name, cssVar]) => [name, resolveCssVar(cssVar)])
+    // An unset variable is left to Stripe's theme rather than sent empty
+    .filter(([, value]) => value)
+
+  return {
+    theme: colorMode === 'dark' ? ('night' as const) : ('stripe' as const),
+    variables: {
+      // The page colour: Fil's dark page from the embed copy, white in light
+      colorBackground: colorMode === 'dark' ? EMBED_DARK.background : 'white',
+      ...Object.fromEntries(themed),
+    },
+    // In dark the fields take the guide's field ring, which Stripe's night theme draws too faint
+    ...(colorMode === 'dark' ? { rules: { '.Input': { border: `1px solid ${EMBED_DARK.fieldRing}` } } } : {}),
+  }
+}
+
+/**
+ * Stripe Elements options for every checkout, in the app's theme: Stripe's iframes cannot read the page's CSS
+ * variables, so they are re-read whenever the html class changes (next-themes applies it in an effect).
+ * The font is named but not loaded: Vite hashes the font files, so there is no stable URL to hand Stripe.
+ */
+export const useCheckoutAppearance = (): StripeCheckoutElementsOptions => {
+  const { colorMode } = useColorMode()
+  const [appearance, setAppearance] = useState<Appearance>(() => readAppearance(colorMode))
+
+  useEffect(() => {
+    const refresh = () => setAppearance(readAppearance(colorMode))
+    refresh()
+    const observer = new MutationObserver(refresh)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [colorMode])
+
+  return { appearance }
 }
 
 // Base for a redirect-based payment's return URL: the current page without query or hash, with

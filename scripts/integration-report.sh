@@ -8,15 +8,15 @@
 # is the report of a push run on a PR, posted as a new comment each time.
 #
 # Env: EVENT, REPO, SERVER_URL, RUN_URL, PARSED, RESOLVE, RESULT, RESET, STICKY,
-#   CHECKOUT, HEAD_SHA, NODE_REF, SAAS_REF, SDK_REF, NODE_SHA, SAAS_SHA, SDK_SHA,
+#   CHECKOUT, HEAD_SHA, SEQUENCER_REF, SAAS_REF, SDK_REF, SEQUENCER_SHA, SAAS_SHA, SDK_SHA,
 #   FAILURE (the e2e failure excerpt), ERROR (the resolve error, one line).
 # Output (stdout, exit 0): the markdown. The failure text goes in a collapsed block
 # whose fence the text itself cannot close.
 set -euo pipefail
 
 : "${EVENT:=}" "${REPO:=}" "${SERVER_URL:=}" "${RUN_URL:=}" "${PARSED:=}" "${RESOLVE:=}" "${RESULT:=}"
-: "${RESET:=}" "${STICKY:=}" "${CHECKOUT:=}" "${HEAD_SHA:=}" "${NODE_REF:=}" "${SAAS_REF:=}" "${SDK_REF:=}"
-: "${NODE_SHA:=}" "${SAAS_SHA:=}" "${SDK_SHA:=}" "${FAILURE:=}" "${ERROR:=}"
+: "${RESET:=}" "${STICKY:=}" "${CHECKOUT:=}" "${HEAD_SHA:=}" "${SEQUENCER_REF:=}" "${SAAS_REF:=}" "${SDK_REF:=}"
+: "${SEQUENCER_SHA:=}" "${SAAS_SHA:=}" "${SDK_SHA:=}" "${FAILURE:=}" "${ERROR:=}"
 
 # upstream <label> <repo> <ref> <sha> <unpinned label>: one line per upstream,
 # 'ref → sha' when pinned. Only a full 40-digit lowercase hex SHA is printed as a
@@ -86,12 +86,12 @@ if [ "$EVENT" = pull_request ]; then
   echo "$icon Integration run on push: **$RESULT**"
   echo
   app_line
-  upstream vocdoni-node vocdoni-node "$NODE_REF" "$NODE_SHA" ':main image'
+  upstream vochain-sequencer vochain-sequencer "$SEQUENCER_REF" "$SEQUENCER_SHA" ':main image'
   upstream saas-backend saas-backend "$SAAS_REF" "$SAAS_SHA" ':main image'
   upstream integrator-sdk vocdoni-integrator-sdk "$SDK_REF" "$SDK_SHA" 'npm (lockfile)'
   echo "- Run: $RUN_URL"
   echo
-  if [ -n "$NODE_REF$SAAS_REF$SDK_REF" ]; then
+  if [ -n "$SEQUENCER_REF$SAAS_REF$SDK_REF" ]; then
     echo "The refs come from this PR's sticky \`/integration\` comment, re-resolved on this push."
   else
     echo "No ref is pinned: this PR targets stage or main, so it ran against the :main images and npm packages."
@@ -125,7 +125,7 @@ fi
     echo "$icon Integration run: **$RESULT**"
     echo
     app_line
-    upstream vocdoni-node vocdoni-node "$NODE_REF" "$NODE_SHA" ':main image'
+    upstream vochain-sequencer vochain-sequencer "$SEQUENCER_REF" "$SEQUENCER_SHA" ':main image'
     upstream saas-backend saas-backend "$SAAS_REF" "$SAAS_SHA" ':main image'
     upstream integrator-sdk vocdoni-integrator-sdk "$SDK_REF" "$SDK_SHA" 'npm (lockfile)'
     echo "- Run: $RUN_URL"

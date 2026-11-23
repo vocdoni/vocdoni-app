@@ -353,9 +353,25 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
 
   await page.getByRole('button', { name: /^Publish$/ }).click()
 
+  // Publish saves the draft and opens the review dialog. Its primary is the
+  // `data-primary` button, enabled once the price is read: "publish" for the
+  // stack's small, free census.
+  const review = page.getByRole('dialog')
+  const reviewPrimary = review.locator('[data-primary]')
+  await expect(reviewPrimary).toBeEnabled({ timeout: 60_000 })
+  await reviewPrimary.click()
+
   // Publishing creates the on-chain elections, so this is the slowest step in
   // the suite by a wide margin.
-  await page.waitForURL(/\/admin\/process\/[^/]+$/, { timeout: 180_000 })
+  const published = page.waitForURL(/\/admin\/process\/[^/]+$/, { timeout: 180_000 })
+  // A vote the organization's balance pays for asks once more, on its wallet step
+  const walletPrimary = review.locator('[data-primary=pay-from-balance]')
+  const walletStep = walletPrimary.waitFor({ state: 'visible', timeout: 180_000 }).then(
+    () => true,
+    () => false
+  )
+  if (await Promise.race([published.then(() => false), walletStep])) await walletPrimary.click()
+  await published
 
   const processId = page.url().split('/').pop()
   if (!processId) throw new Error(`Could not read the process id from ${page.url()}`)
@@ -402,9 +418,9 @@ export const authenticateVoterWithOtp = async (page: Page, member: TestMember): 
   // One field for both channels: the form routes it to `email` or `phone`
   // depending on the census's twoFaFields (email only, here).
   await dialog.locator('input[name="contact"]').fill(member.email)
-  // Terms acceptance. It looks decorative — no react-hook-form registration —
-  // but its Field.Root marks it required, which propagates to the hidden input
-  // and makes the browser block submission until it is ticked.
+  // Terms acceptance. The packaged form is noValidate and registers the box
+  // with react-hook-form, so an unticked box stops the submit in the form's own
+  // validation rather than the browser's.
   await checkCheckbox(dialog)
 
   const requestedAt = new Date()

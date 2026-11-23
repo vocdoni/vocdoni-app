@@ -2,8 +2,7 @@ import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { VideoPlayer } from '~components/ui/VideoPlayer'
-import { ElectionVideo, getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from './ProcessView'
+import { getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from './ProcessView'
 
 const navigateSpy = vi.fn()
 let currentPathname = '/admin/process/0xabc'
@@ -121,6 +120,43 @@ describe('ProcessView navigation', () => {
     currentPathname = '/admin/process/0xabc'
     currentElectionId = '0xabc'
     currentElectionStatus = 'RESULTS'
+  })
+
+  it('links the on-chain process to the explorer of its own chain, and to nothing on an unknown chain', async () => {
+    const onChain = (chainId: string) => {
+      const base = createProcess('0xabc', 'RESULTS')
+      return { ...base, chainId, questions: base.questions.map((question) => ({ ...question, upstreamId: 'up-1' })) }
+    }
+    const renderWithChain = (chainId: string) => {
+      setReactProvidersMock({
+        ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+        useElection: () => ({
+          id: '0xabc',
+          election: onChain(chainId),
+          status: 'RESULTS',
+          results: null,
+          loading: false,
+          client: { explorerUrl: 'https://example.test' },
+        }),
+      })
+      return render(
+        <TestMemoryRouter initialEntries={['/admin/process/0xabc']}>
+          <ProcessView />
+        </TestMemoryRouter>
+      )
+    }
+
+    const { unmount } = renderWithChain('vocdoni/DEV/36')
+    await waitFor(() => {
+      expect(document.querySelector('a[href="https://dev.explorer.vote/process/up-1"]')).not.toBeNull()
+    })
+    unmount()
+
+    renderWithChain('vocdoni/TEST/1')
+    await waitFor(() => {
+      expect(screen.getByText('End vote')).toBeInTheDocument()
+    })
+    expect(document.querySelector('a[href$="/process/up-1"]')).toBeNull()
   })
 
   it('redirects the base route to results when election results are already available', async () => {
@@ -418,24 +454,5 @@ describe('ProcessView voting settings', () => {
     const label = await screen.findByText('Voter anonymity')
 
     expect(label.closest('[data-part="trigger"]')).toBeNull()
-  })
-})
-
-describe('ElectionVideo', () => {
-  const renderVideo = (election: Record<string, unknown>) => {
-    setReactProvidersMock({ useElection: () => ({ election }) })
-    render(<ElectionVideo />)
-  }
-
-  it('titles the player after the election', () => {
-    renderVideo({ streamUri: 'https://example.test/live', title: { default: 'Board election' } })
-
-    expect(vi.mocked(VideoPlayer).mock.lastCall?.[0]).toMatchObject({ title: 'Board election' })
-  })
-
-  it('falls back to a generic title when the election has none', () => {
-    renderVideo({ streamUri: 'https://example.test/live' })
-
-    expect(vi.mocked(VideoPlayer).mock.lastCall?.[0]).toMatchObject({ title: 'Video' })
   })
 })

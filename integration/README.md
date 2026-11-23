@@ -25,9 +25,7 @@ scripts/integration-stack.sh logs <dir>  # one redacted log file per service, wr
 `up` leaves the stack running — that is its job: iterate against it and browse
 the inbox. `run` is one-shot and stops the containers when it finishes, *unless*
 the suite failed (the logs and inbox are the evidence you need) or
-`INTEGRATION_KEEP_STACK` is set. It stops with `down`, not `down -v`, so the
-cached circuit artifacts survive for a fast next boot; `down` is the explicit
-full clean.
+`INTEGRATION_KEEP_STACK` is set. `down` is the explicit full clean.
 
 Ports are overridable with `INTEGRATION_HOST_PORT`, `INTEGRATION_MAILHOG_PORT`
 and `INTEGRATION_APP_PORT`. Re-running `up` against a stack that is already
@@ -39,7 +37,7 @@ To point the app at it:
 SAAS_URL=http://localhost:8080 pnpm build && pnpm serve:ssr
 ```
 
-The stack runs the `:main` images of `vocdoni-node` and `saas-backend` and the
+The stack runs the `:main` images of `vochain-sequencer` and `saas-backend` and the
 npm `@vocdoni/*` packages from the lockfile. To run against unmerged upstream
 commits instead, see [Pinning upstream commits](#pinning-upstream-commits).
 
@@ -107,7 +105,7 @@ Comment on a pull request to run the suite against upstream built from source.
 Each key is optional:
 
 ```text
-/integration vocdoni-node=<ref> saas-backend=<ref> integrator-sdk=<ref>
+/integration vochain-sequencer=<ref> saas-backend=<ref> integrator-sdk=<ref>
 ```
 
 - A bare `/integration` is an ordinary run: `:main` images and the npm packages
@@ -117,7 +115,7 @@ Each key is optional:
   the recommended form. `saas-backend=#760` still works. GitHub autolinks `#760` to
   this repo's issue, and copying a rendered comment pastes links the parser rejects.
   A branch or tag named only 1-6 digits cannot be pinned by name.
-- `vocdoni-node` and `saas-backend` are built into Docker images and the stack
+- `vochain-sequencer` and `saas-backend` are built into Docker images and the stack
   runs those instead of `:main`.
 - `integrator-sdk` is built and packed. Its `@vocdoni/*` packages are installed in
   place of the npm versions, transitive copies included, through pnpm overrides.
@@ -156,7 +154,7 @@ Each key is optional:
 
 ### Actions tab
 
-The "Run workflow" form takes `vocdoni_node_ref`, `saas_backend_ref` (same forms
+The "Run workflow" form takes `vochain_sequencer_ref`, `saas_backend_ref` (same forms
 as above) and `integrator_sdk_ref`: the SDK commit, branch, tag or `#PR` to build
 and install. Leave `integrator_sdk_ref` empty for the npm packages from the
 lockfile. The branch picked in "Use workflow from" is the app under test.
@@ -164,17 +162,17 @@ lockfile. The branch picked in "Use workflow from" is the app under test.
 Locally, build an image and point the stack at it:
 
 ```bash
-out="$(scripts/integration-build-image.sh vocdoni-node <ref>)"
+out="$(scripts/integration-build-image.sh vochain-sequencer <ref>)"
 image="$(sed -n 's/^image=//p' <<<"$out")"
-[ -n "$image" ] && VOCDONI_NODE_IMAGE="$image" pnpm test:e2e:stack
+[ -n "$image" ] && VOCHAIN_SEQUENCER_IMAGE="$image" pnpm test:e2e:stack
 ```
 
 Use `SAAS_BACKEND_IMAGE` and `saas-backend` the same way. `up` prints the two
 images it is using, so a run shows what it tested.
 
-saas-backend is private, so building it locally fetches over SSH and needs your
-own GitHub SSH access to `vocdoni/saas-backend`. CI uses the read-only
-`SAAS_BACKEND_DEPLOY_KEY` deploy key instead.
+Both vochain-sequencer and saas-backend are private, so building them locally
+fetches over SSH and needs your own GitHub SSH access. CI uses the read-only
+`VOCHAIN_SEQUENCER_DEPLOY_KEY` and `SAAS_BACKEND_DEPLOY_KEY` deploy keys.
 
 Locally, pack the SDK and install it in place of the npm packages:
 
@@ -208,12 +206,21 @@ what lets `VOCDONI_SMTPSERVER=127.0.0.1` work with no credentials at all.
 
 `docker-compose.ci.yml` is **vendored from integrator-sdk's**
 `integration/docker-compose.ci.yml`. Both track the moving `:main` tags of
-`saas-backend` and `vocdoni-node`, so when upstream changes its startup
+`saas-backend` and `vochain-sequencer`, so when upstream changes its startup
 contract, re-sync from there rather than rediscovering the fix — the comments in
 that file encode real failure modes (notably the sizing of vocone's healthcheck
-window around its own 300s zk-circuit download deadline; **do not tighten it**).
+window; **do not tighten it**).
 
 The CI workflow prints the resolved image digests on every run, so a job that
 goes red with no change in this repo can be reproduced locally. Locally, the
-`VOCDONI_NODE_IMAGE` and `SAAS_BACKEND_IMAGE` environment variables override the
+`VOCHAIN_SEQUENCER_IMAGE` and `SAAS_BACKEND_IMAGE` environment variables override the
 `:main` images (see [Pinning upstream commits](#pinning-upstream-commits)).
+
+PRs into `stage` or `main` also run against `saas-backend:main`, the only tag
+saas-backend publishes besides `latest`. A `develop` → `stage` release PR carries
+`develop`'s code and needs no pin. Hotfix PRs into `stage` or `main` and `stage` →
+`main` release PRs carry older code that can break on backend changes it never
+saw: their `integration-stack.sh` fails on `GET /plans`, which `:main` dropped with
+pay-per-process. On those, pin the backend branch the base deploys against:
+`/integration saas-backend=stage` for a hotfix into `stage`, `saas-backend=lts`
+for a PR into `main`.

@@ -1,18 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { computeProcessStatus } from '@vocdoni/api-client'
+import { computeProcessStatus, networkFromChainId, VOCDONI_NETWORKS } from '@vocdoni/api-client'
 import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 
-import { getVochainGatewayUrl } from '~src/legacy/vochain-archive'
 import { QueryKeys } from './keys'
-
-/**
- * The gateway serving the chain a process was anchored to.
- *
- * Derived from the process' own `chainId` rather than from `VOCDONI_ENVIRONMENT`, because the two
- * do not always agree: the staging SaaS backend anchors its processes to the production chain
- * (`vocdoni/LTS/…`), so an environment-keyed lookup would query the dev gateway and miss them.
- */
-const getGatewayUrlForChain = (chainId?: string) => getVochainGatewayUrl(chainId?.includes('/LTS/') ? 'prod' : 'dev')
 
 /**
  * A process left to run its course still ends a few seconds either side of its schedule — the chain
@@ -52,10 +42,13 @@ const fetchQuestionEndDate = async (gatewayUrl: string, upstreamId: string): Pro
  * Returns null when no question can be read, leaving callers on the configured `endDate`.
  */
 export const fetchOnChainEndDate = async (election: VotingProcessResponse): Promise<Date | null> => {
-  const gatewayUrl = getGatewayUrlForChain(election.chainId)
+  // Read from the process' own chain, not VOCDONI_ENVIRONMENT. A chain the SDK does not know has no gateway.
+  const network = networkFromChainId(election.chainId)
   const upstreamIds = election.questions.map((question) => question.upstreamId).filter((id): id is string => !!id)
 
-  if (!upstreamIds.length) return null
+  if (!network || !upstreamIds.length) return null
+
+  const gatewayUrl = VOCDONI_NETWORKS[network].gateway
 
   const endDates = (await Promise.all(upstreamIds.map((id) => fetchQuestionEndDate(gatewayUrl, id)))).filter(
     (date): date is Date => date !== null

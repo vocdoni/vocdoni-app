@@ -1,14 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { isApiError } from '@vocdoni/api-client'
+import { isApiError, isProcessId } from '@vocdoni/api-client'
 import type { ProcessPriceResponse } from '@vocdoni/api-types'
 import { ErrorCode } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from './keys'
-
-// Process ids are MongoDB ObjectIDs. The id priced comes from the URL (?draftId=), and encoding it
-// is not enough: "." and ".." survive encodeURIComponent and the URL would resolve them, pointing
-// the request at another endpoint.
-export const isProcessId = (id?: string | null): id is string => !!id && /^[0-9a-f]{24}$/i.test(id)
 
 /**
  * The backend's own price of a draft, the only one the app may show before payment: it depends on
@@ -31,6 +26,8 @@ export const useProcessPrice = (processId?: string | null) => {
     // only delays the hint
     retry: false,
     refetchOnWindowFocus: true,
+    // The price follows the census and the payment state, both of which change away from this screen
+    staleTime: 0,
   })
 
   return { price: query.isError ? undefined : query.data, query }

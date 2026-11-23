@@ -5,7 +5,7 @@ import PublicOrganizationView from '~elements/organization/PublicPage'
 import PublicLayout from '~elements/PublicLayout'
 import { getPublicLanguageLinksFromMeta } from '~src/pages/shared/publicPageData'
 import { usePreferredPublicLanguageRedirect } from '~src/pages/shared/publicPageRedirect'
-import { AppProviders } from '~src/Providers'
+import { AppProviders } from '~src/AppProviders'
 import type { PublicOrganizationPageData } from '~src/ssr/public-pages'
 
 export default function PublicOrganizationPage() {
@@ -30,7 +30,11 @@ export default function PublicOrganizationPage() {
             initialElectionsPage={data.legacyElectionsPage}
           />
         ) : (
-          <PublicOrganizationView organization={data.organization} initialElectionsPage={data.electionsPage} />
+          <PublicOrganizationView
+            organization={data.organization}
+            initialElectionsPage={data.electionsPage}
+            fetchedAt={data.fetchedAt}
+          />
         )}
       </PublicLayout>
     </AppProviders>

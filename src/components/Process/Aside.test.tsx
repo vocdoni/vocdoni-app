@@ -2,21 +2,24 @@ import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import ProcessAside, { VoteButton } from './Aside'
 
+// The packaged CspAuth is stubbed: its flow is tested upstream, here only the props Aside passes are checked.
+const cspAuth = vi.hoisted(() => ({ props: undefined as Record<string, any> | undefined }))
+
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
   const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
   return {
     ...actual,
     ...getReactProvidersMock(),
+    CspAuth: (props: Record<string, any>) => {
+      cspAuth.props = props
+      return <div>CSP</div>
+    },
     VoteButton: (props: any) => <button {...props}>Vote</button>,
     VoteWeight: () => <div>Weight</div>,
     environment: { verifyVote: () => '/verify' },
   }
 })
-
-vi.mock('./CSP/CSPAuthModal', () => ({
-  CspAuth: () => <div>CSP</div>,
-}))
 
 // Minimal v2 VotingProcessResponse-shaped election: only the fields Aside.tsx
 // actually reads (census.weighted, questions[].secretUntilTheEnd).
@@ -51,6 +54,17 @@ describe('ProcessAside', () => {
     // Uppercase comes from the `status-title` text style, which jsdom does not apply to the text.
     expect(screen.getByText('process.status.active')).toBeInTheDocument()
     expect(screen.getByText('CSP')).toBeInTheDocument()
+  })
+
+  it('makes the voter accept the terms and link them to the terms and privacy policy', () => {
+    render(<ProcessAside />, {
+      appEnv: { TERMS_OF_SERVICE_URL: 'https://terms.example', PRIVACY_POLICY_URL: 'https://privacy.example' },
+    })
+
+    expect(cspAuth.props?.requireTerms).toBe(true)
+    render(<>{cspAuth.props?.terms}</>)
+    expect(screen.getByRole('link', { name: 'Terms and Conditions' })).toHaveAttribute('href', 'https://terms.example')
+    expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute('href', 'https://privacy.example')
   })
 
   it('renders the vote count without a definition list', () => {

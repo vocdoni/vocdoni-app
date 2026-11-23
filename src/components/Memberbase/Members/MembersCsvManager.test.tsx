@@ -45,9 +45,7 @@ vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {
 })
 
 vi.mock('~queries/members', () => ({
-  usePaginatedMembers: () => ({
-    data: { pagination: { totalItems: 100 } },
-  }),
+  useMembersCount: () => ({ total: 100 }),
 }))
 
 vi.mock('../TableProvider', () => ({
@@ -89,7 +87,7 @@ describe('MembersCsvManager', () => {
   })
 
   it('rejects an import that takes the organization past the member limit', async () => {
-    // The 100 existing members from usePaginatedMembers count too
+    // The 100 existing members from useMembersCount count too
     mockRowCount = MaxMembersPerOrg - 100 + 1
     render(<MembersCsvManagerForm />)
 
