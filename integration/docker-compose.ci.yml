@@ -1,8 +1,9 @@
 name: vocdoni-app-integration
 
 # Disposable stack for the Playwright end-to-end suite in e2e/: a fresh mongo, a
-# vocone (single-node vochain) instance, the saas-backend API and a MailHog inbox,
-# wired together with published images so CI needs no build step. The app under
+# vocone (single-node vochain) instance with its Postgres indexer, the saas-backend
+# API and a MailHog inbox, wired together with published images so CI needs no
+# build step. The app under
 # test is NOT part of this stack — it runs on the host (`pnpm serve:ssr`) so the
 # suite exercises the same server bundle we ship. See integration/README.md and
 # scripts/integration-stack.sh for how to drive it.
@@ -26,6 +27,33 @@ services:
       interval: 3s
       retries: 20
 
+  # voconed keeps its indexer in Postgres (VOCONED_INDEXER_DSN) and refuses to
+  # start without it.
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: vocone
+      POSTGRES_DB: indexer
+    volumes:
+      - vocone_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'postgres', '-d', 'indexer']
+      interval: 2s
+      retries: 30
+
+  # One-shot: brings the indexer schema to the version the voconed image accepts.
+  # Idempotent, so it also passes on a local `up` over a persisted volume.
+  vocone-migrate:
+    platform: linux/amd64
+    image: ${VOCDONI_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vocdoni-sequencer:main}
+    entrypoint: /app/voconed
+    command: ['migrate']
+    environment:
+      VOCONED_DSN: postgres://postgres:vocone@postgres:5432/indexer?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   vocone:
     platform: linux/amd64
     # Override to run against a vocdoni-sequencer built from source, e.g. VOCDONI_SEQUENCER_IMAGE=<image>
@@ -42,6 +70,10 @@ services:
       VOCONED_CHAINID: dev
       VOCONED_TXCOSTS: 2
       VOCONED_SETTXCOSTS: 'true'
+      VOCONED_INDEXER_DSN: postgres://postgres:vocone@postgres:5432/indexer?sslmode=disable
+    depends_on:
+      vocone-migrate:
+        condition: service_completed_successfully
     volumes:
       # Persists chain data across local `up` cycles. `down -v` drops it (the
       # explicit full clean); CI always tears down with -v.
@@ -123,3 +155,4 @@ services:
 
 volumes:
   vocone_run: {}
+  vocone_pg: {}
