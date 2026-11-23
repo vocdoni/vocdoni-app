@@ -145,6 +145,12 @@ const sizes = defineTokens.sizes({
   // Width of the Vocdoni wordmark image.
   wordmark: { value: '125px' },
   'user-profile': { value: '280px' },
+  // The publish dialog (recipes/publishReview): its width from md up, and the height a step keeps between steps
+  // so the dialog does not jump.
+  'publish-review': {
+    dialog: { value: '820px' },
+    step: { value: '22rem' },
+  },
   voting: {
     sidebar: { value: '320px' },
     contents: {

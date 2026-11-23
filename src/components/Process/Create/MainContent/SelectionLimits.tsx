@@ -1,20 +1,27 @@
 import { Box, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Control, Controller, UseFormSetValue, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { DashboardSection } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
-import { SelectorTypes } from '../common'
+import { isValidMaxChoices, Process, SelectorTypes } from '../common'
 
-const SelectionLimits = ({ index }) => {
-  const { control, setValue, watch } = useFormContext()
+const SelectionLimits = ({
+  index,
+  control,
+  setValue,
+}: {
+  index: number
+  control: Control<Process>
+  setValue: UseFormSetValue<Process>
+}) => {
   const { t } = useTranslation()
-  const questionType = watch(`questions.${index}.type`)
-  const fields = watch(`questions.${index}.options`)
   const minName = `questions.${index}.minNumberOfChoices` as const
   const maxName = `questions.${index}.maxNumberOfChoices` as const
-  const min = watch(minName)
-  const max = watch(maxName)
+  const [questionType, fields, min, max] = useWatch({
+    control,
+    name: [`questions.${index}.type`, `questions.${index}.options`, minName, maxName],
+  })
   const total = fields.length
   const options = fields.map((_, i) => ({ value: i + 1, label: `${i + 1}` }))
 
@@ -74,16 +81,15 @@ const SelectionLimits = ({ index }) => {
                 control={control}
                 rules={{
                   required: false,
-                  validate: (value) => {
-                    return (
-                      value == null ||
-                      value > min ||
-                      t('form.error.max_greater_than_min', 'Max must be greater than or equal to Min')
-                    )
-                  },
+                  // Max equal to min ("choose exactly N") is a valid setup
+                  validate: (value) =>
+                    isValidMaxChoices(value, min) ||
+                    t('form.error.max_greater_than_min', 'Max must be greater than or equal to Min'),
                 }}
                 render={({ field, fieldState }) => {
-                  const maxOptions = options.slice(1).filter((opt) => min === undefined || opt.value >= min)
+                  // Every max from the min upward is listed, so a set max never shows as the placeholder.
+                  // The 0 a restored draft can carry means "no limit" and correctly shows the placeholder.
+                  const maxOptions = options.filter((opt) => min == null || opt.value >= min)
                   const selectedOption = maxOptions.find((opt) => opt.value === field.value)
 
                   return (

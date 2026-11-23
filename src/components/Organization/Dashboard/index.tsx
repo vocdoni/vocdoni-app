@@ -105,14 +105,32 @@ const Tutorial = () => {
           })}
         </Text>
         <AspectRatio ratio={16 / 9}>
-          <VideoPlayer
-            title={t('dashboard.welcome.how_first_vote', { defaultValue: 'How to create your first vote' })}
-            src={videoTutorialSrc}
-            style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
-          />
+          <TutorialVideo src={videoTutorialSrc} />
         </AspectRatio>
       </Flex>
     </DashboardBox>
+  )
+}
+
+// YouTube serves every video's thumbnail at a fixed URL, so the preview needs no oEmbed lookup.
+const YOUTUBE_ID =
+  /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|shorts\/|live\/|watch\?(?:.*&)?v=))([\w-]{11})/
+const videoThumbnail = (src: string): string | true => {
+  const id = src.match(YOUTUBE_ID)?.[1]
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : true
+}
+
+// The player and its scripts load only once the thumbnail is clicked.
+const TutorialVideo = ({ src }: { src: string }) => {
+  const { t } = useTranslation()
+
+  return (
+    <VideoPlayer
+      title={t('dashboard.welcome.how_first_vote', { defaultValue: 'How to create your first vote' })}
+      src={src}
+      preview={videoThumbnail(src)}
+      style={{ width: '100%', height: 'auto', aspectRatio: '16/9' }}
+    />
   )
 }
 
@@ -140,22 +158,17 @@ const OrganizationProcesses = () => {
 const Processes = () => {
   const { t } = useTranslation()
   const { client } = useApiClient()
-  const { organization } = useOrganization()
   const { currentAddress } = useAuth()
   const queryClient = useQueryClient()
 
-  const { queryKey, queryFn } = paginatedElectionsQuery(currentAddress, client, {}, queryClient)
-
+  // Gated on the session address (the builder's `enabled`), not the loaded organization object:
+  // the list only needs the address, so it starts as soon as the session is confirmed.
   const {
     data: elections,
     isLoading,
     isError,
     error,
-  } = useQuery({
-    queryKey,
-    queryFn,
-    enabled: !!organization,
-  })
+  } = useQuery(paginatedElectionsQuery(currentAddress, client, {}, queryClient))
 
   if (isLoading) {
     return <ListLoader />
@@ -164,7 +177,7 @@ const Processes = () => {
   // Checked before the error state on purpose: with no organization this query never ran, and
   // any error on its cache entry belongs to something else. Reporting it would replace the only
   // way forward — the button that creates the missing organization.
-  if (!organization) {
+  if (!currentAddress) {
     return (
       <EmptyState
         size='lg'

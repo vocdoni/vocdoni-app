@@ -7,21 +7,15 @@
  * The gateway serves election and account metadata inline (no IPFS resolution needed),
  * verified against api.vocdoni.io on 2026-07-23.
  */
+import { VOCDONI_NETWORKS } from '@vocdoni/api-client'
 import { decodeResults, type DecodedQuestionResults } from '@vocdoni/ballot'
+import { getVocdoniNetwork } from '~utils/vocdoni-network'
 
 export type LocalizedText = Record<string, string | undefined>
 
 /** Vochain gateway base URL per app environment — same defaults the legacy SDK used. */
-export const getVochainGatewayUrl = (environment: string = 'dev') => {
-  switch (environment.toLowerCase()) {
-    case 'prod':
-      return 'https://api.vocdoni.io/v2'
-    case 'stg':
-      return 'https://api-stg.vocdoni.net/v2'
-    default:
-      return 'https://api-dev.vocdoni.net/v2'
-  }
-}
+export const getVochainGatewayUrl = (environment: string = 'dev') =>
+  VOCDONI_NETWORKS[getVocdoniNetwork(environment)].gateway
 
 /** Thrown for gateway 404s so page loaders can render a proper not-found. */
 export class VochainNotFoundError extends Error {
@@ -310,12 +304,11 @@ export const fetchLegacyOrganizationElections = async (
   address: string,
   page: number = 0
 ): Promise<LegacyElectionsPage> => {
-  const normalized = strip0x(address)
-  const raw = await gatewayFetch<RawElectionsPage>(
-    gateway,
-    `/accounts/${normalized}/elections/page/${page}`,
-    `account ${address} elections`
-  )
+  const normalized = strip0x(address ?? '')
+  if (!/^[0-9a-f]{40}$/.test(normalized)) throw new VochainNotFoundError(`account ${address}`)
+
+  const query = new URLSearchParams({ organizationId: normalized, page: String(page) })
+  const raw = await gatewayFetch<RawElectionsPage>(gateway, `/elections?${query}`, `account ${address} elections`)
 
   // List items carry no metadata; fetch each election's detail for its title.
   const elections = await Promise.all(

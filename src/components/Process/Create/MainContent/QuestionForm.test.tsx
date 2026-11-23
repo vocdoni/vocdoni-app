@@ -32,7 +32,15 @@ const QuestionFormHarness = ({ questions }: { questions: Process['questions'] })
   return (
     <FormProvider {...methods}>
       {questions.map((_, index) => (
-        <QuestionForm key={index} index={index} questionId={`question-${index}`} onRemove={vi.fn()} />
+        <QuestionForm
+          key={index}
+          index={index}
+          total={questions.length}
+          questionId={`question-${index}`}
+          onRemove={vi.fn()}
+          control={methods.control}
+          setValue={methods.setValue}
+        />
       ))}
     </FormProvider>
   )

@@ -20,7 +20,7 @@ vi.mock('react-router', async (importOriginal) => {
 vi.mock('~src/queries/members', () => ({
   useAddMembers: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useImportJobProgress: () => ({ data: undefined, isError: false }),
-  usePaginatedMembers: () => ({ data: { pagination: { totalItems: 0 } } }),
+  useMembersCount: () => ({ total: 0 }),
 }))
 
 vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {

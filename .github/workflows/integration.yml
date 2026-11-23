@@ -6,7 +6,7 @@ name: Integration
 # `/integration` PR comment or the workflow_dispatch inputs (see integration/README.md,
 # "Pinning upstream commits").
 #
-# A writer's `/integration vocdoni-node=<ref> saas-backend=<ref> integrator-sdk=<ref>`
+# A writer's `/integration vochain-sequencer=<ref> saas-backend=<ref> integrator-sdk=<ref>`
 # comment on a pull request runs it once against those refs (each key is optional).
 # Refs that are branches, tags or PR numbers (760 or #760) also stick to the PR until `/integration reset`,
 # and the pull_request event re-resolves sticky refs on every push. workflow_dispatch
@@ -17,7 +17,7 @@ name: Integration
 # to open the Actions tab to see it. A failed run's reply includes the failing step's output.
 #
 # Pinned upstream images are built by the `images` job, the only job that gets the deploy
-# key. It runs no PR code, and e2e loads the built images from an artifact.
+# keys. It runs no PR code, and e2e loads the built images from an artifact.
 #
 # `pnpm test:e2e` runs every project in playwright.config.ts, so this covers both
 # the desktop (`chromium`) and the emulated-phone (`mobile-chrome`) passes. Adding
@@ -42,8 +42,8 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
-      vocdoni_node_ref:
-        description: 'vocdoni-node commit SHA, branch, tag or PR number (760 or #760) to build from source (empty = :main image)'
+      vochain_sequencer_ref:
+        description: 'vochain-sequencer commit SHA, branch, tag or PR number (760 or #760) to build from source (empty = :main image)'
         type: string
         required: false
         default: ''
@@ -79,7 +79,7 @@ jobs:
       sticky: ${{ steps.refs.outputs.sticky }}
       checkout_ref: ${{ steps.refs.outputs.checkout_ref }}
       head_sha: ${{ steps.refs.outputs.head_sha }}
-      vocdoni_node_ref: ${{ steps.refs.outputs.vocdoni_node_ref }}
+      vochain_sequencer_ref: ${{ steps.refs.outputs.vochain_sequencer_ref }}
       saas_backend_ref: ${{ steps.refs.outputs.saas_backend_ref }}
       integrator_sdk_ref: ${{ steps.refs.outputs.integrator_sdk_ref }}
       fork: ${{ steps.refs.outputs.fork }}
@@ -104,7 +104,7 @@ jobs:
           COMMENT_BODY: ${{ github.event.comment.body }}
           PR: ${{ github.event.issue.number }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          DISPATCH_NODE: ${{ inputs.vocdoni_node_ref }}
+          DISPATCH_SEQUENCER: ${{ inputs.vochain_sequencer_ref }}
           DISPATCH_SAAS: ${{ inputs.saas_backend_ref }}
           DISPATCH_SDK: ${{ inputs.integrator_sdk_ref }}
         run: |
@@ -179,14 +179,14 @@ jobs:
             } >> "$GITHUB_OUTPUT"
           else
             # Whitespace would let one input smuggle a second key into the line below.
-            for value in "$DISPATCH_NODE" "$DISPATCH_SAAS" "$DISPATCH_SDK"; do
+            for value in "$DISPATCH_SEQUENCER" "$DISPATCH_SAAS" "$DISPATCH_SDK"; do
               if [[ "$value" =~ [[:space:]] ]]; then
                 fail "ref inputs must not contain whitespace"
               fi
             done
             line="/integration"
-            if [ -n "$DISPATCH_NODE" ]; then
-              line="$line vocdoni-node=$DISPATCH_NODE"
+            if [ -n "$DISPATCH_SEQUENCER" ]; then
+              line="$line vochain-sequencer=$DISPATCH_SEQUENCER"
             fi
             if [ -n "$DISPATCH_SAAS" ]; then
               line="$line saas-backend=$DISPATCH_SAAS"
@@ -206,12 +206,13 @@ jobs:
   images:
     name: Build pinned images
     needs: resolve
-    # The only job that references SAAS_BACKEND_DEPLOY_KEY, and it runs no PR code: it checks out
-    # github.sha, the default branch for a comment or the dispatched ref for a dispatch. On a
-    # pull_request that is the merge commit, so the PR's own build script runs there; a fork gets
-    # no secrets, and a same-repo author could already read them through the workflow file.
-    # e2e gets the built images as an artifact, so no job with the key runs PR code after it.
-    if: ${{ needs.resolve.result == 'success' && needs.resolve.outputs.reset != 'true' && (needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '') }}
+    # The only job that references VOCHAIN_SEQUENCER_DEPLOY_KEY and SAAS_BACKEND_DEPLOY_KEY,
+    # and it runs no PR code: it checks out github.sha, the default branch for a comment or
+    # the dispatched ref for a dispatch. On a pull_request that is the merge commit, so the
+    # PR's own build script runs there; a fork gets no secrets, and a same-repo author could
+    # already read them through the workflow file. e2e gets the built images as an artifact,
+    # so no job with the keys runs PR code after it.
+    if: ${{ needs.resolve.result == 'success' && needs.resolve.outputs.reset != 'true' && (needs.resolve.outputs.vochain_sequencer_ref != '' || needs.resolve.outputs.saas_backend_ref != '') }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     # Same grouping as e2e: a pinned run is never cancelled by a push or another comment.
@@ -221,8 +222,8 @@ jobs:
     permissions:
       contents: read
     outputs:
-      vocdoni_node_image: ${{ steps.pins.outputs.vocdoni_node_image }}
-      vocdoni_node_sha: ${{ steps.pins.outputs.vocdoni_node_sha }}
+      vochain_sequencer_image: ${{ steps.pins.outputs.vochain_sequencer_image }}
+      vochain_sequencer_sha: ${{ steps.pins.outputs.vochain_sequencer_sha }}
       saas_backend_image: ${{ steps.pins.outputs.saas_backend_image }}
       saas_backend_sha: ${{ steps.pins.outputs.saas_backend_sha }}
       failure: ${{ steps.failure.outputs.failure }}
@@ -236,8 +237,9 @@ jobs:
       - name: Build pinned images
         id: pins
         env:
+          VOCHAIN_SEQUENCER_DEPLOY_KEY: ${{ secrets.VOCHAIN_SEQUENCER_DEPLOY_KEY }}
           SAAS_BACKEND_DEPLOY_KEY: ${{ secrets.SAAS_BACKEND_DEPLOY_KEY }}
-          NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
+          SEQUENCER_REF: ${{ needs.resolve.outputs.vochain_sequencer_ref }}
           SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
         run: |
           mkdir -p "$RUNNER_TEMP/steps" "$RUNNER_TEMP/pinned-images"; exec > >(tee -a "$RUNNER_TEMP/steps/pins.log") 2>&1
@@ -265,9 +267,9 @@ jobs:
           }
           names=()
           pids=()
-          if [ -n "$NODE_REF" ]; then
-            build vocdoni-node "$NODE_REF" vocdoni_node_image vocdoni_node_sha &
-            names+=(vocdoni-node)
+          if [ -n "$SEQUENCER_REF" ]; then
+            build vochain-sequencer "$SEQUENCER_REF" vochain_sequencer_image vochain_sequencer_sha &
+            names+=(vochain-sequencer)
             pids+=("$!")
           fi
           if [ -n "$SAAS_REF" ]; then
@@ -335,16 +337,14 @@ jobs:
     # For a pull_request the job runs when the base is stage or main (release and
     # hotfix PRs, as before), or when a ref is pinned, sticky or one-shot. Other
     # feature PRs into develop run only test.yml.
-    if: ${{ !cancelled() && needs.resolve.outputs.reset != 'true' && (needs.resolve.result == 'success' || (needs.resolve.result == 'skipped' && github.event_name != 'issue_comment')) && (needs.images.result == 'success' || needs.images.result == 'skipped') && (github.event_name != 'pull_request' || github.base_ref == 'stage' || github.base_ref == 'main' || needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') }}
+    if: ${{ !cancelled() && needs.resolve.outputs.reset != 'true' && (needs.resolve.result == 'success' || (needs.resolve.result == 'skipped' && github.event_name != 'issue_comment')) && (needs.images.result == 'success' || needs.images.result == 'skipped') && (github.event_name != 'pull_request' || github.base_ref == 'stage' || github.base_ref == 'main' || needs.resolve.outputs.vochain_sequencer_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') }}
     runs-on: ubuntu-latest
-    # The suite publishes real on-chain processes and casts real votes, and
-    # vocone's first boot downloads its zk circuit artifacts. Budget for that —
-    # and note every journey now runs twice, desktop and mobile.
-    #
-    # An SDK build adds a lot of time, and so does loading pinned upstream images
-    # (built in the images job), hence 90 over the default 60. The default is 60, not 45,
-    # because the Stripe checkout spec adds up to 15 minutes when the sandbox keys are set.
-    timeout-minutes: ${{ (needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') && 90 || 60 }}
+    # The suite publishes real on-chain processes and casts real votes, running
+    # twice (desktop and mobile). An SDK build adds a lot of time, and so does
+    # loading pinned upstream images (built in the images job), hence 90 over
+    # the default 60. The default is 60, not 45, because the Stripe checkout
+    # spec adds up to 15 minutes when the sandbox keys are set.
+    timeout-minutes: ${{ (needs.resolve.outputs.vochain_sequencer_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') && 90 || 60 }}
     # Every comment and dispatch run gets its own group, so a pinned run is never
     # cancelled by a push or another comment. Queue order between groups is not
     # guaranteed, so "newest wins" could not be relied on.
@@ -353,7 +353,7 @@ jobs:
       cancel-in-progress: true
     permissions:
       contents: read
-      packages: read # pull ghcr.io/vocdoni/saas-backend
+      packages: read # pull ghcr.io/vocdoni/vochain-sequencer and ghcr.io/vocdoni/saas-backend
     outputs:
       integrator_sdk_sha: ${{ steps.sdk.outputs.integrator_sdk_sha }}
       failure: ${{ steps.failure.outputs.failure }}
@@ -378,7 +378,7 @@ jobs:
         id: pins
         if: needs.images.result == 'success'
         env:
-          NODE_IMAGE: ${{ needs.images.outputs.vocdoni_node_image }}
+          SEQUENCER_IMAGE: ${{ needs.images.outputs.vochain_sequencer_image }}
           SAAS_IMAGE: ${{ needs.images.outputs.saas_backend_image }}
         run: |
           mkdir -p "$RUNNER_TEMP/steps"; exec > >(tee -a "$RUNNER_TEMP/steps/pins.log") 2>&1
@@ -389,7 +389,7 @@ jobs:
               *) gzip -dc "$archive" | docker load ;;
             esac
           done
-          if [ -n "$NODE_IMAGE" ]; then echo "VOCDONI_NODE_IMAGE=$NODE_IMAGE" >> "$GITHUB_ENV"; fi
+          if [ -n "$SEQUENCER_IMAGE" ]; then echo "VOCHAIN_SEQUENCER_IMAGE=$SEQUENCER_IMAGE" >> "$GITHUB_ENV"; fi
           if [ -n "$SAAS_IMAGE" ]; then echo "SAAS_BACKEND_IMAGE=$SAAS_IMAGE" >> "$GITHUB_ENV"; fi
 
       - name: Print resolved image digests
@@ -406,11 +406,11 @@ jobs:
           # not stay in ~/.docker/config.json while PR code runs.
           trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
           printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-          if [ -n "${VOCDONI_NODE_IMAGE:-}" ]; then
-            echo "vocdoni-node built from source: $VOCDONI_NODE_IMAGE"
+          if [ -n "${VOCHAIN_SEQUENCER_IMAGE:-}" ]; then
+            echo "vochain-sequencer built from source: $VOCHAIN_SEQUENCER_IMAGE"
           else
-            docker pull ghcr.io/vocdoni/vocdoni-node:main
-            docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/vocdoni-node:main
+            docker pull ghcr.io/vocdoni/vochain-sequencer:main
+            docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/vochain-sequencer:main
           fi
           if [ -n "${SAAS_BACKEND_IMAGE:-}" ]; then
             echo "saas-backend built from source: $SAAS_BACKEND_IMAGE"
@@ -476,8 +476,8 @@ jobs:
 
       - name: Summarize tested refs
         env:
-          NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
-          NODE_SHA: ${{ needs.images.outputs.vocdoni_node_sha }}
+          SEQUENCER_REF: ${{ needs.resolve.outputs.vochain_sequencer_ref }}
+          SEQUENCER_SHA: ${{ needs.images.outputs.vochain_sequencer_sha }}
           SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
           SAAS_SHA: ${{ needs.images.outputs.saas_backend_sha }}
           SDK_REF: ${{ needs.resolve.outputs.integrator_sdk_ref }}
@@ -487,10 +487,10 @@ jobs:
           {
             echo "### Tested refs"
             echo "- app: \`$(git rev-parse --short HEAD)\`"
-            if [ -n "$NODE_REF" ]; then
-              echo "- vocdoni-node: \`$NODE_REF\` → \`$NODE_SHA\`"
+            if [ -n "$SEQUENCER_REF" ]; then
+              echo "- vochain-sequencer: \`$SEQUENCER_REF\` → \`$SEQUENCER_SHA\`"
             else
-              echo "- vocdoni-node: :main image"
+              echo "- vochain-sequencer: :main image"
             fi
             if [ -n "$SAAS_REF" ]; then
               echo "- saas-backend: \`$SAAS_REF\` → \`$SAAS_SHA\`"
@@ -637,6 +637,12 @@ jobs:
           INTEGRATION_STRIPE_SECRET_KEY: ${{ needs.resolve.outputs.fork != 'true' && secrets.INTEGRATION_STRIPE_SECRET_KEY || '' }}
           SAAS_URL: http://localhost:8080
         run: |
+          if [ ! -f scripts/integration-stripe-sweep.mjs ]; then
+            # A comment run uses this workflow on a checkout that can predate the sweep (a release or
+            # hotfix PR into stage or main). The sweep is a backstop and must not turn the run red.
+            echo "::notice::scripts/integration-stripe-sweep.mjs is not in this checkout, nothing to sweep"
+            exit 0
+          fi
           args=()
           if [ -n "${INTEGRATION_STRIPE_SINCE:-}" ]; then args=(--since "$INTEGRATION_STRIPE_SINCE"); fi
           node scripts/integration-stripe-sweep.mjs "${args[@]}"
@@ -681,10 +687,10 @@ jobs:
           STICKY: ${{ needs.resolve.outputs.sticky }}
           CHECKOUT: ${{ github.event_name == 'pull_request' && github.sha || needs.resolve.outputs.checkout_ref }}
           HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || needs.resolve.outputs.head_sha }}
-          NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
+          SEQUENCER_REF: ${{ needs.resolve.outputs.vochain_sequencer_ref }}
           SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
           SDK_REF: ${{ needs.resolve.outputs.integrator_sdk_ref }}
-          NODE_SHA: ${{ needs.images.outputs.vocdoni_node_sha }}
+          SEQUENCER_SHA: ${{ needs.images.outputs.vochain_sequencer_sha }}
           SAAS_SHA: ${{ needs.images.outputs.saas_backend_sha }}
           SDK_SHA: ${{ needs.e2e.outputs.integrator_sdk_sha }}
           FAILURE: ${{ needs.images.result == 'failure' && needs.images.outputs.failure || needs.e2e.outputs.failure }}

@@ -3,11 +3,20 @@
 How to style the app so it stays themable. A rule that names its check (a test, `tsc` or a CI job)
 is enforced, and the file is named so you can read the real thing. The rest are conventions that reviewers check.
 
+This is the token-level reference. How screens are composed and how a mockup maps onto the theme is in
+[`DESIGN.md`](../DESIGN.md), the brand and copy rules in [`BRAND.md`](../BRAND.md), and the step-by-step for a change in the
+`ui-change` skill (`.agents/skills/ui-change/SKILL.md`).
+
 ## The rule
 
 A component never decides how it looks. It picks a role (a token, a text style, a recipe variant, a shared component)
 and the theme decides what that role looks like. If the look you need does not exist, add it to the theme first, then
 use it.
+
+Rely on the theme's defaults. The bare shared component or default variant is the starting point: a prop that restates
+a default is removed, and look props on `Box`, `Flex` or `Stack` mean a missing variant, text style or shared
+component, even when every value is a token. A `Text` takes its role from `textStyle` and a colour token (see
+[Text](#text)). The style inventory does not catch this; review does.
 
 The payoff: `PRIMARY_COLOR` recolours the accent, dark mode flips from CSS (no flash on SSR pages), and a redesign
 touches `src/theme/` instead of hundreds of components.
@@ -40,30 +49,30 @@ component. The inventory test rejects hex and named colours outright; raw palett
 [The checks](#the-checks)).
 
 ```tsx
-<Box bg='surface.card' borderColor='border' color='fg.muted' />
+<Text color='fg.muted'>…</Text>
 ```
 
 Token families, each in its own module under `src/theme/` and spread into `colors` in `semantic.ts`:
 
-| Family                           | Tokens                                                                                                                                                                                                                                                                                       | Module            |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint` (`fg.subtle` today), `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.track` (the empty track of a progress bar), `bg.inverted`, `bg.panel`                                                                          | `semantic.ts`     |
+| Family                           | Tokens                                                                                                                                                                                                                                                                                                                                                                                     | Module            |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| Page text and fills              | `fg`, `fg.muted`, `fg.subtle`, `fg.faint` (`fg.subtle` today), `fg.inverted`, `fg.error`, `bg`, `bg.subtle`, `bg.muted`, `bg.emphasized`, `bg.track` (the empty track of a progress bar), `bg.inverted`, `bg.panel`                                                                                                                                                                        | `semantic.ts`     |
 | Borders                          | `border` (the hairline of cards, rows and dividers, black at 10%), `border.emphasized` (a firmer hairline, such as the rule above a docked bar, black at 18%), `border.muted`, `border.subtle`, `border.strong` (outlines of checkboxes, radios and dashed drop zones, `#8f8f8f`), `border.field` (the ring of fields, selects, textareas and voter options, `#8f8f8f`), `border.inverted` | `semantic.ts`     |
-| Surface layers                   | `surface.canvas` (the dashboard page, `#fafafa` in light mode), `.sidebar` (white), `.content`, `.card`, `.sunken`, `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`)                                                                                                                  | `semantic.ts`     |
-| Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.fg`                                                                                                                                                                                                                            | `semantic.ts`     |
-| Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                                                                                                                                           | `semantic.ts`     |
-| Interaction states (bg/fg pairs) | `state.hover`, `state.pressed`, `state.selected`, `state.current`, `state.dragover.border`                                                                                                                                                                                                   | `states.ts`       |
-| Status palettes                  | `colorPalette='success' \| 'warning' \| 'danger' \| 'info'`, each with the slots of a Chakra palette (`solid`, `contrast`, `fg`, `muted`, `subtle`, `border`…)                                                                                                                               | `status.ts`       |
-| Status by meaning                | `status.{success,warning,error,info}.{fg,bg,border,solid,contrast,emphasis}`, `status.neutral.{fg,bg,border,solid,contrast}`, `danger.action`                                                                                                                                                | `status.ts`       |
-| Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}` (the info, warning and error `solid`)                                                                                                                                                            | `charts.ts`       |
-| Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                                                                                                                                        | `ballot.ts`       |
-| Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                                                                                                                                        | `illustration.ts` |
-| Links, switch                    | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`                                                                                                                                                                                            | `recipeColors.ts` |
-| Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                                                                                                                                  | `recipeColors.ts` |
-| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`); every shadow is a 1px ring, no blur | `semantic.ts`     |
-| Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                                                                                                                                    | `palette.ts`      |
-| Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                         | `system.ts`       |
-| Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                                                                                                                                         | `semantic.ts`     |
+| Surface layers                   | `surface.canvas` (the dashboard page, `#fafafa` in light mode), `.sidebar` (white), `.content`, `.card`, `.sunken`, `.raised` (`.tooltip`), `.overlay` (`.drawer`), `.inset`, `.inverse` (`.border`, `.rule`, `.fg`, `.fg.muted`)                                                                                                                                                          | `semantic.ts`     |
+| Dimming layer                    | `scrim`, `scrim.strong` (dialog and drawer backdrops), `scrim.fg`                                                                                                                                                                                                                                                                                                                          | `semantic.ts`     |
+| Rules and vertical accents       | `separator`, `verticals.generic.900`, `verticals.professional.900`                                                                                                                                                                                                                                                                                                                         | `semantic.ts`     |
+| Interaction states (bg/fg pairs) | `state.hover`, `state.pressed`, `state.selected`, `state.current`, `state.dragover.border`                                                                                                                                                                                                                                                                                                 | `states.ts`       |
+| Status palettes                  | `colorPalette='success' \| 'warning' \| 'danger' \| 'info'`, each with the slots of a Chakra palette (`solid`, `contrast`, `fg`, `muted`, `subtle`, `border`…)                                                                                                                                                                                                                             | `status.ts`       |
+| Status by meaning                | `status.{success,warning,error,info}.{fg,bg,border,solid,contrast,emphasis}`, `status.neutral.{fg,bg,border,solid,contrast}`, `danger.action`                                                                                                                                                                                                                                              | `status.ts`       |
+| Charts and meters                | `chart.1` to `chart.8` (`.icon` is the glyph), `chart.track`, `meter.{ok,warning,critical}` (the info, warning and error `solid`)                                                                                                                                                                                                                                                          | `charts.ts`       |
+| Public ballot                    | `ballot.choice.{border,ring,bg}`, `ballot.results.track`, `ballot.schedule`, `ballot.error`, `ballot.balance.{success,warning,error}`                                                                                                                                                                                                                                                      | `ballot.ts`       |
+| Artwork and logos                | `illustration.fg`, `illustration.contrast`, `logo.fg`                                                                                                                                                                                                                                                                                                                                      | `illustration.ts` |
+| Links, switch                    | `link.fg`, `link.fg.hover`, `link.tile.hover.bg`, `switch.thumb` (off) and `switch.thumb.checked`, `scroll.edge` (fade above a scrolling dialog footer)                                                                                                                                                                                                                                    | `recipeColors.ts` |
+| Toasts                           | `toast.{success,warning}.bg` and `.fg`: no recipe reads them since Fil toasts are a raised neutral card; kept for dark mode                                                                                                                                                                                                                                                                | `recipeColors.ts` |
+| Shadows                          | `shadow.card`, `shadow.raised` (`.popover`, `.tooltip`), `shadow.floating` (`.panel`), `shadow.overlay`, `shadow.control` (a ring around a button or avatar), `shadow.field` (the darker ring of a field), `shadow.ring` (a plain hairline in `border`); every shadow is a 1px ring, no blur                                                                                               | `semantic.ts`     |
+| Brand accent in dark mode        | `accent.fg`: the brand's `fg`, or white on the dark page for a neutral brand (active tab, highlight card)                                                                                                                                                                                                                                                                                  | `palette.ts`      |
+| Accent fills                     | `accent.solid` (`.hover`), `accent.contrast`, `accent.subtle`: the palette `colorPalette` falls back to (always `brand`: Fil blue until `PRIMARY_COLOR` replaces it)                                                                                                                                                                                                                       | `system.ts`       |
+| Single-purpose                   | `auth.*`, `footer.bg`, `tabs.*`, `input.placeholder`, `dashboard.menu`, `border.pagination.active`, `gray.focusRing`                                                                                                                                                                                                                                                                       | `semantic.ts`     |
 
 Rules of thumb:
 
@@ -156,7 +165,7 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
 - **Font sizes**: `xs` 12px, `sm` 13px, `control` 13.5px (a control's label and value), `md` 14px, `lg` 16px,
   `xl` 20px, `2xl` 28px; `2xs` and `3xl` upward are Chakra's.
 - **Border widths**: `hairline` (1px), `thick` (2px) and `focusRing` (the width of a hand-drawn outline or box-shadow
-  focus ring, `thick`): `<Box borderWidth='thick' />`.
+  focus ring, `thick`): `borderWidth: 'thick'` in a recipe.
 - **Icon sizes**: `icon.sm` (1rem, inline, also what a bare `Icon` gets), `icon.md` (1.25rem, control), `icon.lg`
   (1.5rem, feature), `icon.xl` (3rem, empty state): `<Icon as={ErrorIcon} boxSize='icon.xl' />`.
   `icon.sm` to `icon.lg` alias Chakra's Icon sizes (`{sizes.4}`, `5`, `6`), so `boxSize='icon.md'` and
@@ -167,7 +176,8 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
   `dashboard.header`, `dashboard.panel`, `control.floating` (support chat launcher), `control.icon-link` (square icon
   link), `control.md` (34px, the default height of buttons, inputs and selects), `control.area` (76px, textarea
   minimum height), `dot` (7px status dot), `loader` (min height of `PageLoader`), `wordmark` (width of the Vocdoni wordmark:
-  `<VocdoniLogo w='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`.
+  `<VocdoniLogo w='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`,
+  `publish-review.dialog|step` (publish dialog width and its step column).
 - **Fil marks**: `borderWidths.mark` (1.5px ring of a checkbox or radio), `borderWidths.radio` (5px, a checked radio's
   filled ring) and `spacing.track` (3px gutter of a segmented control).
 - **z-index**: tokens only (`background`, `contents`, `sidebar`, `topbar`, `top`, `public-header`, `dashboard-menu`).
@@ -192,13 +202,13 @@ What exists today:
 
 | Recipe              | Variants and axes                                                                                                                                                                                                                                                      |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `button`            | `variant`: `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `menu-trigger`, `segment`, `toggle`, `disclosure`, `danger`, `floating`, `whatsapp`; `size`: `cta`; `multiline`. Chakra's own `solid`, `outline`, `ghost`… stay |
+| `button`            | `variant`: `link`, `link-underline`, `text`, `text-link`, `nav-item`, `menu-item`, `menu-item-strong`, `menu-trigger`, `segment`, `toggle`, `disclosure`, `quiet` (text action), `danger`, `floating`, `whatsapp`; `size`: `cta`; `multiline`. Chakra's `solid`… stay. |
 | `card`              | `outline`, `section`, `frame`, `sunken`, `inverse`, `highlight`, `list-item`, `standalone`, `dropzone`, `plain` (a filled card without a border, around a page-level empty state)                                                                                      |
 | `alert`             | `layout`: `inline` (default), `banner`, `compact`, `panel`; Chakra's `status` stays                                                                                                                                                                                    |
 | `link`              | `variant`: `plain`, `unstyled`, `icon-button`, `subtle`, `tile`; `size`, `emphasis`, `tone` (`muted`, `quiet`)                                                                                                                                                         |
 | `tabs`              | `variant`: `line` (default: hairline and a 2px ink line under the current tab), `pill` (segmented)                                                                                                                                                                     |
 | `drawer`            | `variant`: `panel` (the default, and the shell of `PanelDrawer`), `sidebar` (the mobile dashboard menu); dialog and drawer backdrops both paint `scrim.strong`                                                                                                         |
-| `dialog`            | `placement` defaults to `center`; the header stacks the title over a muted description (`DialogHeader`)                                                                                                                                                                |
+| `dialog`            | `placement` defaults to `center`; `size`: `review` (the publish review, full screen on phones); the header stacks the title over a muted description (`DialogHeader`)                                                                                                  |
 | `menu`              | Items highlight through `_highlighted` with `state.hover`, and keep `state.selected` when selected, never `_focus` (Ark menu items are highlighted, not focused)                                                                                                       |
 | `progress`          | `variant`: `results` (thin bar in ink, one per choice, never dimmed: the slot cannot tell a final tally from a live one), `turnout` (the share that voted, a thin bar with a gap after the fill), `meter` (`UsageMeter`), `job` (a background job)                     |
 | `stat`              | `size`: `sm` (labelled field), `md`, `lg` (default, headline figure); parts `label`, `valueText`, `valueUnit`                                                                                                                                                          |
@@ -306,6 +316,11 @@ thin bar with a gap after the fill for the share of the census that voted, in th
 
 Not in `ui/`: `LabelledSeparator` (`~components/Layout/Separators`), a hairline on each side of a short label, such as
 `OrSeparator`'s "or continue with". Do not build one from a `Flex` and two `Box`es.
+
+`ModalForm` (`~components/Form/ModalForm`) is a dialog wrapping a short form, with Cancel and a submit action that
+submits the form inside it and shows its loading state. The form inside must take `formRef` and `setIsSubmitting` from
+`useModalForm()` (as `src/components/Account/Password.tsx` does), otherwise submit does nothing and no loading state
+shows.
 
 New user-facing text in any of these goes through `t(…)`, like everywhere else (see `AGENTS.md`).
 

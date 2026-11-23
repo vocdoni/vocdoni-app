@@ -137,7 +137,6 @@ describe('buildCertificateData', () => {
     const data = buildCertificateData({
       election: createElection(),
       results: createResults(),
-      explorerUrl: 'https://explorer.example',
       t: plainT,
       now: new Date('2026-01-03T10:00:00Z'),
     })
@@ -171,7 +170,6 @@ describe('buildCertificateData', () => {
     const data = buildCertificateData({
       election,
       results: null,
-      explorerUrl: 'https://explorer.example',
       t: translate,
       now: new Date('2026-01-03T10:00:00Z'),
     })
@@ -179,31 +177,30 @@ describe('buildCertificateData', () => {
     expect(data.verification).toEqual([
       {
         label: 'View in verification explorer — Question 1',
-        value: 'https://explorer.example/process/f39c69dabbf5335bd7d53130ad823a71b7ba9834',
+        value: 'https://explorer.vote/process/f39c69dabbf5335bd7d53130ad823a71b7ba9834',
         kind: 'link',
       },
       {
         label: 'View in verification explorer — Question 2',
-        value: 'https://explorer.example/process/a39c69dabbf5335bd7d53130ad823a71b7ba9834',
+        value: 'https://explorer.vote/process/a39c69dabbf5335bd7d53130ad823a71b7ba9834',
         kind: 'link',
       },
     ])
   })
 
-  it('falls back to a not-available verification entry without explorer or on-chain ids', () => {
-    const election = createElection({ questions: [createQuestion({ upstreamId: undefined })] })
+  it('falls back to a not-available verification entry without on-chain ids or a known chain', () => {
+    // A link on the wrong network is worse than none, so an unknown or missing chain links nowhere.
+    const withoutIds = createElection({ questions: [createQuestion({ upstreamId: undefined })] })
+    const unknownChain = createElection({ chainId: 'vocdoni/TEST/1' })
+    const missingChain = createElection({ chainId: undefined })
+    const verificationOf = (election: ReturnType<typeof createElection>) =>
+      buildCertificateData({ election, results: null, t: plainT, now: new Date('2026-01-03T10:00:00Z') }).verification
 
-    const data = buildCertificateData({
-      election,
-      results: null,
-      explorerUrl: 'https://explorer.example',
-      t: plainT,
-      now: new Date('2026-01-03T10:00:00Z'),
-    })
-
-    expect(data.verification).toEqual([
-      { label: 'View in verification explorer', value: 'Not available', kind: 'link' },
-    ])
+    for (const election of [withoutIds, unknownChain, missingChain]) {
+      expect(verificationOf(election)).toEqual([
+        { label: 'View in verification explorer', value: 'Not available', kind: 'link' },
+      ])
+    }
   })
 
   it('combines the issuer provider and legal entity in the provider field', () => {
@@ -242,7 +239,6 @@ describe('buildCertificateData', () => {
       results: null,
       t: translate,
       organizationName: 'Vocdoni',
-      explorerUrl: 'https://explorer.vote',
       now: new Date('2026-05-12T12:00:00Z'),
     })
 
@@ -584,12 +580,8 @@ describe('buildCertificateData', () => {
     expect(data.votingProcessQuestions[0].choices[0].ballotCount).toBeUndefined()
   })
 
-  it('divides the multichoice histogram by its pick slots before reporting weighted power', () => {
-    // Weighted census totalling 20; two voters of weight 7 and 3 each cast one
-    // ballot picking a single option on a 2-slot multichoice question. Each
-    // ballot fills both slots (the unused one lands in abstain), so the columns
-    // total 20 — twice the 10 of voting power actually cast. Reporting the raw
-    // column total renders 100% participation for what is really 50%.
+  it('reports the cast power of a padded pick-slot multichoice, not its column total', () => {
+    // Each ballot fills both pick slots, so the histogram columns total 20 for 10 of power cast.
     const election = createElection({
       census: { size: 2, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
       questions: [
@@ -639,6 +631,145 @@ describe('buildCertificateData', () => {
       eligibleVotingPower: '20',
       votingMethod: 'Multiple choice with weighted voting',
     })
+  })
+
+  it('reports not-available voting power for a budget question, whose cells hold value times weight', () => {
+    // A budget cell sums value x weight, so the cast power is not recoverable from the histogram.
+    const election = createElection({
+      census: { size: 2, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
+      questions: [
+        createQuestion({
+          title: { default: 'Budget split' },
+          type: 'budget',
+          ballotProtocol: {
+            costExponent: 1,
+            costFromWeight: true,
+            maxCount: 2,
+            maxTotalCost: 20,
+            maxValue: 0,
+            maxVoteOverwrites: 0,
+            uniqueValues: false,
+          },
+        }),
+      ],
+    })
+    const results = createResults({
+      questions: [
+        createQuestionResults({
+          voteCount: 2,
+          results: [
+            ['0', '14'],
+            ['0', '6'],
+          ],
+        }),
+      ],
+    })
+
+    const data = buildCertificateData({ election, results, t: translate, now: new Date('2026-01-03T10:00:00Z') })
+
+    expect(data.censusParticipation.find((field) => field.label === 'Voting power used')?.value).toBe('Not available')
+    expect(data.votingProcessQuestions[0]).toMatchObject({
+      totalVotes: 'Not available',
+      votingPowerUsed: 'Not available',
+    })
+  })
+
+  it('reports the ballot count as total votes for budget and quadratic questions of an unweighted census', () => {
+    // castVotingPower has no answer for these ballot types; with no weights each ballot counts once.
+    const election = createElection({
+      census: { size: 2, weighted: false, authFields: ['memberNumber'] },
+      questions: [
+        createQuestion({
+          title: { default: 'Budget split' },
+          type: 'budget',
+          ballotProtocol: {
+            costExponent: 1,
+            costFromWeight: true,
+            maxCount: 2,
+            maxTotalCost: 20,
+            maxValue: 0,
+            maxVoteOverwrites: 0,
+            uniqueValues: false,
+          },
+        }),
+        createQuestion({
+          id: 'question-2',
+          title: { default: 'Quadratic split' },
+          type: 'quadratic',
+          ballotProtocol: {
+            costExponent: 2,
+            costFromWeight: false,
+            maxCount: 2,
+            maxTotalCost: 0,
+            maxValue: 0,
+            maxVoteOverwrites: 0,
+            uniqueValues: false,
+          },
+        }),
+      ],
+    })
+    const results = createResults({
+      questions: [
+        createQuestionResults({
+          voteCount: 2,
+          results: [
+            ['0', '4'],
+            ['0', '2'],
+          ],
+        }),
+        createQuestionResults({
+          questionId: 'question-2',
+          voteCount: 2,
+          results: [
+            ['1', '0'],
+            ['0', '1'],
+          ],
+        }),
+      ],
+    })
+
+    const data = buildCertificateData({ election, results, t: translate, now: new Date('2026-01-03T10:00:00Z') })
+
+    expect(data.votingProcessQuestions.map((question) => question.totalVotes)).toEqual(['2', '2'])
+    expect(data.votingProcessQuestions.map((question) => question.votingPowerUsed)).toEqual(['2', '2'])
+  })
+
+  it('reports the cast power of an approval question, not the sum of its dense histogram', () => {
+    // Dense approval: each option row holds the weight that left it unselected and selected.
+    // Both rows total the 10 of power cast; the column total would double it.
+    const election = createElection({
+      census: { size: 2, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
+      questions: [
+        createQuestion({
+          title: { default: 'Approve any' },
+          type: 'approval',
+          ballotProtocol: {
+            costExponent: 1,
+            costFromWeight: false,
+            maxCount: 2,
+            maxTotalCost: 0,
+            maxValue: 1,
+            maxVoteOverwrites: 0,
+            uniqueValues: false,
+          },
+        }),
+      ],
+    })
+    const results = createResults({
+      questions: [
+        createQuestionResults({
+          voteCount: 2,
+          results: [
+            ['3', '7'],
+            ['8', '2'],
+          ],
+        }),
+      ],
+    })
+
+    const data = buildCertificateData({ election, results, t: translate, now: new Date('2026-01-03T10:00:00Z') })
+
+    expect(data.votingProcessQuestions[0]).toMatchObject({ totalVotes: '10', votingPowerUsed: '10' })
   })
 
   it('degrades weighted power values to not-available when totalWeight is absent (list reads)', () => {

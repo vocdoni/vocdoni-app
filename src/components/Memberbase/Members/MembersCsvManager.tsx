@@ -23,7 +23,7 @@ import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spread
 import SpreadsheetError from '~components/Spreadsheet/errors/SpreadsheetError'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { MaxMembersPerOrg } from '~constants'
-import { usePaginatedMembers } from '~queries/members'
+import { useMembersCount } from '~queries/members'
 import { quantity } from '~utils/numbers'
 import { useTable } from '../TableProvider'
 
@@ -61,9 +61,9 @@ export const MembersCsvManager = () => {
     formState: { errors },
   } = useFormContext()
   const { columns } = useTable()
-  const { data: membersData } = usePaginatedMembers({ showAll: true })
+  const { total } = useMembersCount()
   const manager: SpreadsheetManager | undefined = watch('spreadsheet')
-  const existingMembers = membersData?.pagination?.totalItems ?? 0
+  const existingMembers = total ?? 0
 
   // File dropzone
   // A slow read from an earlier drop can't overwrite the outcome of a newer one. The drawer also unmounts this

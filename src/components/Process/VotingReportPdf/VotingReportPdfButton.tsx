@@ -1,7 +1,5 @@
 import { Box, Button, HStack, Icon, Text } from '@chakra-ui/react'
-import * as ReactPDF from '@react-pdf/renderer'
 import { useQueryClient } from '@tanstack/react-query'
-import { Buffer as BufferPolyfill } from 'buffer'
 import { useOrganization } from '@vocdoni/react-components'
 import { useState } from 'react'
 import type { TFunction } from 'i18next'
@@ -12,8 +10,6 @@ import { useToast } from '~components/Toast'
 import { Tooltip } from '~components/ui/Tooltip'
 import { QueryKeys } from '~queries/keys'
 import { fetchOnChainEndDate, getEarlyEndDate } from '~queries/process-end-date'
-import { useAppEnv } from '~src/app-env'
-import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
@@ -28,11 +24,8 @@ import {
   useOptionalElectionContext,
   type ElectionLike,
 } from './certificate-data'
-import { VotingCertificateDocument } from './pdf-document'
 
 export type { ElectionLike } from './certificate-data'
-
-const { pdf } = ReactPDF
 
 /** Shared by the button and the menu item so the disabled state explains itself the same way. */
 export const pendingResultsHint = (t: TFunction) =>
@@ -57,8 +50,6 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
   const { organization } = useOrganization()
   const { client } = useApiClient()
   const queryClient = useQueryClient()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const electionContext = useOptionalElectionContext()
   // Announced while the tallies are still being computed: the control shows, disabled, instead of
   // appearing out of nowhere once the results land.
@@ -70,6 +61,10 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
     if (!report || isGenerating) return
 
     setIsGenerating(true)
+    // The renderer chunk loads while the process and tallies are re-read; the button already shows its
+    // loading state. The rejection is handled where the promise is awaited, not here.
+    const rendererPromise = import('./render-report')
+    rendererPromise.catch(() => undefined)
     try {
       // Always re-read the process and its tallies here instead of certifying the election
       // context's cached copies: the process views poll only every 30s, list rows never poll, and
@@ -90,32 +85,11 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
         earlyEndDate,
         t,
         organizationName: getDefaultText(organization?.name) || undefined,
-        explorerUrl,
         now: new Date(),
       })
 
-      // @react-pdf/layout calls `Buffer.isBuffer` after loading each image. Browsers have no Buffer,
-      // so that call throws (logged as "Buffer is not defined") before the image cache key is set,
-      // and the running-header icon gets embedded again on every page. The global is installed only
-      // when a report is generated, not when the dashboard loads. Node (tests) keeps its own Buffer.
-      globalThis.Buffer ??= BufferPolyfill as unknown as typeof globalThis.Buffer
-
-      // --- Pass 1: capture actual page starts ---
-      const capturedPages: Record<string, number> = {}
-      const captureDoc = (
-        <VotingCertificateDocument
-          data={data}
-          t={t}
-          onCapturePage={(id, n) => {
-            capturedPages[id] = n
-          }}
-        />
-      )
-      await pdf(captureDoc).toBlob() // discard; only needed to run layout
-
-      // --- Pass 2: final PDF with real page numbers ---
-      const finalDoc = <VotingCertificateDocument data={data} t={t} capturedPages={capturedPages} />
-      const blob = await pdf(finalDoc).toBlob()
+      const { renderVotingReportPdf } = await rendererPromise
+      const blob = await renderVotingReportPdf(data, t)
       const url = URL.createObjectURL(blob)
       const anchor = document.createElement('a')
       anchor.href = url

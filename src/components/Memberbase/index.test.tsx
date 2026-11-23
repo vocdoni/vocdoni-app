@@ -12,7 +12,9 @@ vi.mock('~src/queries/members', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~src/queries/members')>()
   return {
     ...actual,
-    usePaginatedMembers: () => ({ data: membersQuery.data }),
+    useMembersCount: () => ({
+      total: (membersQuery.data as { pagination?: { totalItems?: number } } | undefined)?.pagination?.totalItems,
+    }),
   }
 })
 

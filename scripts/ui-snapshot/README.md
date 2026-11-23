@@ -38,7 +38,7 @@ pnpm ui:diff -- before after
 comparison; `--limit <n>` caps the elements printed per capture (default 50; totals always count
 everything).
 
-A full run (20 routes and 7 dialog/menu states at 2 widths and 2 modes: 102 captures) takes about 6
+A full run (20 routes and 10 dialog/menu states at 2 widths and 2 modes: 114 captures) takes about 6
 minutes and writes about 18 MB.
 
 ### What the snapshot does
@@ -181,7 +181,8 @@ Add an entry to `ROUTES` in `routes.mjs`:
 
 `path` has no language prefix (the snapshot opens `/en<path>`). Each state step clicks the first
 visible match among its candidates (`[role, name]` or `['css', selector]`); use `viewports: [1440]`
-when the trigger only exists on desktop. If the screen needs data the mock lacks, add a handler in
+when the trigger only exists on desktop. A step waits up to 5 s for a candidate to appear, as a
+dialog's next step does after a request. If the screen needs data the mock lacks, add a handler in
 `mock-saas.mjs` (`summary.json` lists every request the mock could not answer under
 `mockUnmatched`). Take a new baseline after adding routes: `ui:diff` counts a capture that exists on
 one side only as a difference.
@@ -196,9 +197,15 @@ one side only as a difference.
   server with the real clock while the browser runs on the fixed one, so relative dates ("in over 4
   years" vs "3 months ago") differ and React re-renders that tree on the client. What gets captured
   is the client render, which is deterministic.
-- **Two more expected console errors**: the admin results page reads each ended question's end
+- **Three more expected console errors**: the admin results page reads each ended question's end
   date from the public vochain gateway (`api-dev.vocdoni.net`), which is blocked, and the app
-  logs `[ProcessCreate] Validation failed` on purpose in the `publish-errors` state.
+  logs `[ProcessCreate] Validation failed` on purpose in the `publish-errors` state. The three
+  `create-draft--publish-*` states log one browser warning about `:first-child` in SSR (from the
+  publish dialog's styles).
+- **Publish dialog states stop before publishing.** They open the review of the valid draft
+  (summary, cost panel, wallet step). The mock's balance covers the price, so the card step never
+  shows (Stripe is off), and the outcome step is not captured: reaching it means a publish, which
+  the snapshot never sends.
 - **Blocked third parties render as placeholders**: the tutorial video is an empty frame, the
   "Schedule a call" dialog says booking is unavailable, Stripe never loads.
 - **Full-page captures of fixed elements**: a `100vh` sidebar ends at the viewport height, and

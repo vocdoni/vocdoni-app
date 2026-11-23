@@ -1,0 +1,40 @@
+import { Navigate, Outlet, useOutletContext } from 'react-router'
+import { useAuth } from '~components/Auth/useAuth'
+import { useProfile } from '~src/queries/account'
+import { usePrefetchOrganization } from '~src/queries/organization'
+import { PageSkeleton } from '~components/ui/PageSkeleton'
+import { getPrivateAppRoot } from './privateAppRouting'
+
+type PrivateAppGuardProps = {
+  // The private app root this route tree belongs to (/admin or /integrators).
+  redirectPath: string
+}
+
+/**
+ * The waiting state of a private app, inside its frame: it waits for the session probe and the profile, fetched in
+ * parallel, then sends an organization of the other type to its own app. AccountProtectedRoute above already
+ * handles visitors with no session.
+ */
+const PrivateAppGuard = ({ redirectPath }: PrivateAppGuardProps) => {
+  const context = useOutletContext()
+  const { isAuthenticated, isAuthLoading, currentAddress, unconfirmedAddress } = useAuth()
+  const { data: profile, isLoading: isProfileLoading } = useProfile({ enabled: isAuthenticated })
+
+  // Starts the stored organization's reads alongside the session probe. Pages only render
+  // through the confirmed `currentAddress`, and a rejected address's data is dropped.
+  usePrefetchOrganization(unconfirmedAddress)
+
+  // The same skeleton the router shows while the page's code arrives, so a cold load shows one.
+  if (!isAuthenticated || isAuthLoading || isProfileLoading) {
+    return <PageSkeleton />
+  }
+
+  const actualRoot = getPrivateAppRoot(profile ?? null, currentAddress ?? '')
+  if (actualRoot !== redirectPath) {
+    return <Navigate to={actualRoot} replace />
+  }
+
+  return <Outlet context={context} />
+}
+
+export default PrivateAppGuard

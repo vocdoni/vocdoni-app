@@ -12,7 +12,7 @@ vi.mock('~components/Account/SaasAccountProvider', () => ({
 const members = vi.hoisted(() => ({ total: 50 }))
 
 vi.mock('~queries/members', () => ({
-  usePaginatedMembers: () => ({ data: { pagination: { totalItems: members.total } } }),
+  useMembersCount: () => ({ total: members.total }),
 }))
 
 describe('UsageLimits', () => {

@@ -32,6 +32,7 @@ import { OrganizationDescription, OrganizationImage, OrganizationName } from './
 import { Pagination, PaginationButton } from './pagination'
 import { Popover } from './popover'
 import { Progress } from './progress'
+import { PublishReview } from './publishReview'
 import { RadioCard } from './radioCard'
 import { RadioGroup } from './radioGroup'
 import { SegmentGroup } from './segmentGroup'
@@ -82,6 +83,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   nativeSelect: NativeSelect,
   popover: Popover,
   progress: Progress,
+  publishReview: PublishReview,
   radioCard: RadioCard,
   radioGroup: RadioGroup,
   segmentGroup: SegmentGroup,

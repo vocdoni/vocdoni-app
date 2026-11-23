@@ -1,5 +1,6 @@
 import { composeComponents, type ComponentsPartialDefinition } from '@vocdoni/react-components'
 import { accountComponents } from './account'
+import { cspAuthComponents } from './csp'
 import { electionComponents } from './election'
 import { organizationComponents } from './organization'
 import { paginationComponents } from './pagination'
@@ -8,5 +9,6 @@ export const uiScaffoldComponents: ComponentsPartialDefinition = composeComponen
   electionComponents,
   organizationComponents,
   paginationComponents,
-  accountComponents
+  accountComponents,
+  cspAuthComponents
 )

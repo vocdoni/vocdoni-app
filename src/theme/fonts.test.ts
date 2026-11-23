@@ -99,7 +99,10 @@ describe('font config', () => {
       package: '@fontsource/static-sans',
       files: { kind: 'static', weights: [400, 500] },
     }
-    expect(fontCssFiles(staticFont)).toEqual(['@fontsource/static-sans/400.css', '@fontsource/static-sans/500.css'])
+    expect(fontCssFiles(staticFont)).toEqual([
+      '@fontsource/static-sans/latin-400.css',
+      '@fontsource/static-sans/latin-500.css',
+    ])
     expect(shipsWeight(staticFont, 450)).toBe(false)
     expect(shipsWeight(SANS, 550)).toBe(true)
   })

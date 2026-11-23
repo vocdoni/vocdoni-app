@@ -397,7 +397,7 @@ const CheckoutStep = ({
   onPaid,
 }: CheckoutStepProps) => {
   const { t } = useTranslation()
-  const appearance = useCheckoutAppearance()
+  const elementsOptions = useCheckoutAppearance()
 
   if (!stripePromise) {
     return (
@@ -411,7 +411,7 @@ const CheckoutStep = ({
 
   return (
     // The session is already open, so Stripe only needs its client secret
-    <CheckoutElementsProvider stripe={stripePromise} options={{ clientSecret, elementsOptions: { appearance } }}>
+    <CheckoutElementsProvider stripe={stripePromise} options={{ clientSecret, elementsOptions }}>
       <CheckoutFormFields
         processId={processId}
         amountCents={amountCents}

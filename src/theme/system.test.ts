@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { PAGE_BACKGROUNDS } from './colors'
 import { contrastRatio, PALETTE_SLOTS } from './palette'
 import { dragHandle } from './recipes/dragHandle'
+import { VideoPreview } from './recipes/videoPreview'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import { createAppSystem, getAppSystem, system } from './system'
@@ -104,7 +105,7 @@ const KNOWN_INVALID = new Set<string>()
 
 const confirmedInvalid = new Set<string>()
 
-const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes, dragHandle }
+const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes, dragHandle, VideoPreview }
 
 const isTokenPath = (value: string) => /^[a-zA-Z][\w-]*(\.[\w-]+)+$/.test(value)
 

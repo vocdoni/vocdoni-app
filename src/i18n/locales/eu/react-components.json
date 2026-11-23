@@ -23,6 +23,61 @@
     "end_process_title": "Amaitu bozketa",
     "title": "Berretsi"
   },
+  "csp": {
+    "auth_failed": "Autentifikazioak huts egin du",
+    "authenticate": "Identifikatu",
+    "close": "Itxi",
+    "code_info": "Hautatutako bidetik kode bakar bat jasoko duzu zure nortasuna egiaztatzeko eta autentifikazioa burutzeko.",
+    "code_sent": "Egiaztapen-kodea bidali da",
+    "contact_match_help": "Sisteman erregistratutakoarekin bat etorri behar du",
+    "errors": {
+      "code_rejected": "Kodea baliogabea da edo iraungi da. Egiaztatu, edo hasi berriro kode berri bat lortzeko.",
+      "credentials_or_password_incorrect": "Ezin izan dugu zure identitatea egiaztatu. Egiaztatu zure kredentzialak eta pasahitza, eta saiatu berriro.",
+      "missing_data": "Bete eremu guztiak.",
+      "participant_not_found": "Botogilea ez dago erroldan edo emandako kredentzialak ez dira zuzenak.",
+      "requests_on_cooldown": "Eskaera gehiegi. Itxaron pixka bat berriro saiatu aurretik.",
+      "resend_limit": "Ezin duzu kode gehiago eskatu saiakera honetarako. Hasi berriro kode berri bat lortzeko.",
+      "resend_expired": "Kode hau iraungi da. Hasi berriro kode berri bat lortzeko.",
+      "too_many_attempts": "Saiakera gehiegi. Saiatu berriro geroago.",
+      "too_many_attempts_hours_one": "Saiakera gehiegi. Saiatu berriro {{count}} ordu barru.",
+      "too_many_attempts_hours_other": "Saiakera gehiegi. Saiatu berriro {{count}} ordu barru.",
+      "too_many_attempts_minutes_one": "Saiakera gehiegi. Saiatu berriro {{count}} minutu barru.",
+      "too_many_attempts_minutes_other": "Saiakera gehiegi. Saiatu berriro {{count}} minutu barru.",
+      "zero_voting_weight": "Ez duzu boto-pisu nahikoa bozketara sartzeko."
+    },
+    "fields": {
+      "birthDate": "Jaioteguna",
+      "contact": "Kontaktua",
+      "email": "Posta elektronikoa",
+      "email_or_phone": "Posta elektronikoa edo telefonoa",
+      "memberNumber": "Bazkide-zenbakia",
+      "name": "Izena",
+      "nationalId": "NAN/AIZ",
+      "password": "Pasahitza",
+      "phone": "Telefonoa",
+      "surname": "Abizenak"
+    },
+    "identify": "Identifikatu",
+    "logout": "Amaitu saioa",
+    "modal_title": "Autentifikazioa",
+    "password_unavailable": "Une honetan ezin da pasahitza egiaztatu. Birkargatu orria eta saiatu berriro.",
+    "receive_code": "Jaso kodea",
+    "step1": {
+      "footer": "Arazoren bat baduzu, jarri zure erakundearekin harremanetan.",
+      "helper": "Adierazitako telefonora edo posta elektronikora kode bat bidali dugu. Posta elektronikoz jasotzea aukeratu baduzu, begiratu spam karpeta ere.",
+      "resend": "Bidali kodea berriro",
+      "resend_failed": "Errorea kodea berbidaltzean",
+      "resend_failed_detail": "Errorea kodea berbidaltzean: {{ detail }}",
+      "resend_success": "Kodea behar bezala berbidali da",
+      "start_over": "Hasi berriro",
+      "subtitle": "Sartu egiaztapen-kodea",
+      "validation": {
+        "length": "Kodeak 6 digitu izan behar ditu",
+        "required": "Kodea bete beharrekoa da"
+      }
+    },
+    "terms_required": "Baldintzak onartu behar dituzu jarraitzeko."
+  },
   "empty": "Badirudi prozesu honek ez duela galderarik",
   "errors": {
     "not_voted_in_ended_election": "Sinatu duzu, baina ez duzu botorik eman amaitu den bozketa honetan.",
@@ -71,14 +126,6 @@
     "from_begin_to_end": "Bozketa: {{ begin }}etik {{ end }}era",
     "paused_end": "Amaiera: {{ distance }}",
     "paused_start": "Hasiera: {{ distance }}"
-  },
-  "spreadsheet": {
-    "access_button": "Identifikatu",
-    "anon_sik_helper": "Horrela, botoa anonimoa dela bermatzen da",
-    "anon_sik_label": "Ezarri pasahitz bat zure botorako",
-    "close": "Itxi",
-    "logout": "Amaitu saioa",
-    "modal_title": "Autentifikazioa"
   },
   "statuses": {
     "canceled": "Bertan behera utzia",

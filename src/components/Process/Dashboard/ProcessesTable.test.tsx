@@ -86,6 +86,48 @@ describe('ProcessesTable', () => {
     })
   })
 
+  it('links the explorer item to the process chain, and drops it on an unknown chain', async () => {
+    // RESULTS shows the PDF item, which doubles as the sign that the menu is open.
+    const onChain = (chainId: string) => ({
+      ...election,
+      chainId,
+      questions: election.questions.map((question) => ({ ...question, status: 'RESULTS', upstreamId: 'up-1' })),
+    })
+    const renderWithChain = (chainId: string) => {
+      const withChain = onChain(chainId)
+      setReactProvidersMock({
+        ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+        useElection: () =>
+          mockUseElection({
+            election: withChain,
+            localize: (key: string) => key,
+            client: { explorerUrl: 'https://example.test' },
+          }),
+        useRoutedPagination: () => ({ pagination: null, initialPage: 1 }),
+      })
+      return render(
+        <TestMemoryRouter>
+          <ProcessesTable processes={[withChain as any]} />
+        </TestMemoryRouter>
+      )
+    }
+
+    const { unmount } = renderWithChain('vocdoni/LTS/1.2')
+    fireEvent.click(screen.getByLabelText('Open actions'))
+    await waitFor(() => {
+      expect(screen.getByText('Election report (PDF)')).toBeInTheDocument()
+    })
+    expect(document.querySelector('a[href="https://explorer.vote/process/up-1"]')).not.toBeNull()
+    unmount()
+
+    renderWithChain('vocdoni/TEST/1')
+    fireEvent.click(screen.getByLabelText('Open actions'))
+    await waitFor(() => {
+      expect(screen.getByText('Election report (PDF)')).toBeInTheDocument()
+    })
+    expect(document.querySelector('a[href$="/process/up-1"]')).toBeNull()
+  })
+
   // The global matchMedia stub matches nothing, so useBreakpointValue resolves the `base` value
   // and the list renders stacked cards instead of the desktop table.
   it('renders stacked cards without a table on mobile', () => {

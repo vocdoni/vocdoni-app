@@ -197,22 +197,8 @@
     "title": "Erzähl uns von deiner Organisation"
   },
   "csp": {
-    "auth_failed": "Authentifizierung fehlgeschlagen",
     "authenticate": "Identifizieren",
-    "code_info": "Du erhältst einen einmaligen Code über das gewählte Medium, um deine Identität zu bestätigen und die Authentifizierung abzuschließen",
-    "code_sent": "Bestätigungscode gesendet",
     "contact_match_help": "Muss mit dem im System hinterlegten Eintrag übereinstimmen",
-    "errors": {
-      "credentials_or_password_incorrect": "Wir konnten deine Identität nicht überprüfen. Prüfe deine Zugangsdaten und dein Passwort und versuche es erneut.",
-      "participant_not_found": "Die/der Wählende ist nicht in der Teilnehmerliste aufgeführt, oder die angegebenen Zugangsdaten sind falsch.",
-      "requests_on_cooldown": "Zu viele Anfragen. Bitte warte einen Moment, bevor du es erneut versuchst.",
-      "too_many_attempts": "Zu viele Versuche. Bitte versuche es später erneut.",
-      "too_many_attempts_hours_one": "Zu viele Versuche. Bitte versuche es in {{count}} Stunde erneut.",
-      "too_many_attempts_hours_other": "Zu viele Versuche. Bitte versuche es in {{count}} Stunden erneut.",
-      "too_many_attempts_minutes_one": "Zu viele Versuche. Bitte versuche es in {{count}} Minute erneut.",
-      "too_many_attempts_minutes_other": "Zu viele Versuche. Bitte versuche es in {{count}} Minuten erneut.",
-      "zero_voting_weight": "Du hast kein ausreichendes Stimmgewicht, um an der Abstimmung teilzunehmen."
-    },
     "fields": {
       "birthDate": "Geburtsdatum",
       "contact": "Kontakt",
@@ -226,21 +212,11 @@
       "surname": "Nachname"
     },
     "important": "Wichtig",
-    "password_unavailable": "Das Passwort kann gerade nicht geprüft werden. Lade die Seite neu und versuche es erneut.",
     "receive_code": "Code empfangen",
     "step1": {
-      "footer_text": "Bei Problemen wende dich an deine Organisation.",
-      "helper_text": "Wir haben einen Code an deine Telefonnummer oder E-Mail-Adresse gesendet. Wenn du ihn per E-Mail erhalten hast, prüfe bitte auch deinen Spam-Ordner.",
-      "resend_failed": "Code erneut senden fehlgeschlagen",
-      "resend_success": "Code erfolgreich erneut gesendet",
       "resend_text": "Code nicht erhalten? <resendBtn>Erneut senden</resendBtn>",
-      "start_over_text": "Falsche Angaben? <restartBtn>Neu beginnen</restartBtn>",
       "subtitle": "Bestätigungscode eingeben",
-      "title": "Authentifizierung",
-      "validation": {
-        "length": "Der Code muss 6 Ziffern haben",
-        "required": "Code ist erforderlich"
-      }
+      "title": "Authentifizierung"
     },
     "terms_acceptance": "Ich habe die <2>Allgemeinen Geschäftsbedingungen</2> und die <6>Datenschutzrichtlinie</6> gelesen und akzeptiere sie."
   },
@@ -408,7 +384,6 @@
     },
     "process_create": {
       "error_deleting_draft_title": "Fehler beim Löschen des Entwurfs",
-      "error_title": "Fehler beim Erstellen des Prozesses",
       "success_description": "Du wirst zur Seite des Abstimmungsprozesses weitergeleitet...",
       "success_title": "Abstimmungsprozess erfolgreich erstellt"
     },
@@ -875,6 +850,10 @@
       "success": "Anbieter erfolgreich getrennt"
     }
   },
+  "og": {
+    "headline": "Sichere Online-Abstimmungen für deine Organisation",
+    "tagline": "Verifizierbare Abstimmungen für Organisationen jeder Größe, einfach bedienbar und bis 25 Wählende kostenlos."
+  },
   "open_in_explorer": "Im Explorer öffnen",
   "or_continue_with": "oder weiter mit",
   "org_type_selector": {
@@ -941,17 +920,26 @@
   "password_recovery_failed": "Passwortwiederherstellung fehlgeschlagen",
   "password_recovery_sent": "Wiederherstellungs-E-Mail gesendet",
   "password_recovery_sent_description": "Überprüfe deinen Posteingang auf den Link zum Zurücksetzen.",
-  "password_request": {
-    "action": "Passwortänderung anfordern",
-    "error": "Passwort-Zurücksetzen konnte nicht angefordert werden",
-    "success": "E-Mail zum Zurücksetzen des Passworts gesendet"
-  },
   "password_reset": {
     "subtitle": "Wenn deine E-Mail-Adresse einem bestehenden Konto entspricht, erhältst du eine E-Mail mit einem Code zum Zurücksetzen deines Passworts.",
     "title": "Passwort zurücksetzen"
   },
   "password_reset_failed": "Passwort zurücksetzen fehlgeschlagen",
   "password_reset_successful": "Passwort erfolgreich zurückgesetzt",
+  "password_setup": {
+    "already_set": "Dein Konto hat bereits ein Passwort",
+    "error": "Das Passwort konnte nicht festgelegt werden",
+    "request": {
+      "action": "Passwort festlegen",
+      "error": "Die E-Mail zum Festlegen des Passworts konnte nicht gesendet werden",
+      "sent_recently": "Wir haben dir vor Kurzem einen Code geschickt. Prüfe deine E-Mails oder versuche es in einer Minute erneut",
+      "success": "Wir haben dir eine E-Mail mit einem Code geschickt"
+    },
+    "submit": "Passwort festlegen",
+    "subtitle": "Gib den Code ein, den wir dir per E-Mail geschickt haben, und wähle ein Passwort, um dich mit deiner E-Mail-Adresse anzumelden.",
+    "success": "Passwort erfolgreich festgelegt",
+    "title": "Passwort festlegen"
+  },
   "password_update": {
     "actions": {
       "save": "Passwort speichern"
@@ -1005,7 +993,6 @@
       "cancel_open": "Offene Zahlung abbrechen",
       "check_again": "Erneut prüfen",
       "conflict": "Für diesen Abstimmungsprozess ist noch eine Aufladung offen, daher kann er noch nicht veröffentlicht werden. Setze die Zahlung fort, um sie abzuschließen, oder brich sie ab und veröffentliche den Prozess von deinem Wallet aus.",
-      "draft_total": "Gesamtbetrag des Entwurfs (ohne MwSt.)",
       "pay": "{{amount}} zahlen und veröffentlichen",
       "publish_again": "Erneut veröffentlichen",
       "publish_title": "Abstimmungsprozess veröffentlichen",
@@ -1015,14 +1002,11 @@
       "resume": "Zahlung fortsetzen",
       "return_to_processes": "Zurück zu deinen Abstimmungsprozessen",
       "return_unknown": "Wir konnten nicht feststellen, zu welchem Abstimmungsprozess diese Zahlung gehörte. Wenn die Zahlung abgeschlossen wurde, wird der Abstimmungsprozess automatisch veröffentlicht. Prüfe deine Abstimmungsprozesse, um den Stand zu sehen.",
-      "shortfall": "Fehlbetrag (ohne MwSt.)",
       "timeout": "Deine Zahlung ist bestätigt, und der Abstimmungsprozess wird in Kürze veröffentlicht. Falls nicht, veröffentliche ihn erneut: Er wird aus deinem Wallet bezahlt.",
       "timeout_unpaid": "Der Abstimmungsprozess wird noch veröffentlicht. Falls er nicht bald erscheint, veröffentliche ihn erneut: Er wird aus deinem Wallet bezahlt.",
       "title": "Aufladen und veröffentlichen",
-      "top_up": "Aufladung (ohne MwSt.)",
       "unconfirmed": "Deine Zahlung wird noch bestätigt. Manche Zahlungsarten brauchen einige Tage dafür. Der Abstimmungsprozess wird automatisch veröffentlicht, sobald die Zahlung bestätigt ist, du kannst diese Seite also verlassen.",
-      "unpaid": "Die Zahlung ist nicht durchgegangen. Du kannst es noch einmal versuchen.",
-      "wallet_balance": "Guthaben im Wallet"
+      "unpaid": "Die Zahlung ist nicht durchgegangen. Du kannst es noch einmal versuchen."
     },
     "create": {
       "action": {
@@ -1128,6 +1112,110 @@
       "wallet_short": "Dein Wallet hat {{balance}}, dir fehlen {{shortfall}} für diesen Gesamtbetrag.",
       "wallet_top_up": "Wallet aufladen"
     },
+    "publish_review": {
+      "back": "Zurück zur Übersicht",
+      "blocked": "Es fehlen {{shortfall}} Guthaben. Nur ein Admin kann es aufladen.",
+      "card": {
+        "billing": "Rechnungsdaten",
+        "cta_loading": "Bezahlen und veröffentlichen",
+        "lead_balance": "Das Guthaben der Organisation deckt {{balance}}. Der Rest wird jetzt bezahlt, inklusive MwSt.",
+        "lead_whole": "Du bezahlst die ganze Abstimmung jetzt, inklusive MwSt.",
+        "note_zero": "Nach der Veröffentlichung bleibt kein Guthaben übrig.",
+        "processing": "Zahlung wird verarbeitet…",
+        "secure": "Sichere Zahlung über Stripe. Vocdoni sieht und speichert die Kartendaten nicht.",
+        "short": "Fehlt",
+        "title": "Zahle {{amount}} und die Abstimmung wird veröffentlicht.",
+        "top_up": "Aufladung, ohne MwSt."
+      },
+      "change": "Ändern",
+      "change_what": "{{what}} ändern",
+      "close": "Schließen",
+      "code": {
+        "choice": "Code per E-Mail oder SMS",
+        "email": "Code per E-Mail",
+        "none": "Kein Code",
+        "sms": "Code per SMS"
+      },
+      "cost": {
+        "balance_after": "Guthaben nach der Veröffentlichung",
+        "balance_now": "Guthaben der Organisation jetzt",
+        "base_one": "{{voters}} Wähler",
+        "base_other": "{{voters}} Wähler",
+        "details": "Details ansehen",
+        "note_card": "Der fehlende Betrag wird im nächsten Schritt per Karte bezahlt. Der Rest kommt aus dem Guthaben.",
+        "note_wallet": "Der Betrag wird vom Prepaid-Guthaben der Organisation abgezogen. Der Karte wird nichts belastet: Die MwSt. wird beim Aufladen des Guthabens bezahlt.",
+        "short": "Fehlt",
+        "sms_one": "SMS-Code, {{voters}} Wähler",
+        "sms_other": "SMS-Code, {{voters}} Wähler",
+        "summary": "Kosten: {{total}}",
+        "title": "Wofür du zahlst",
+        "total": "Gesamt, ohne MwSt."
+      },
+      "eyebrow": "Vor der Veröffentlichung prüfen",
+      "facts": {
+        "anonymous": "Anonyme Stimmabgabe",
+        "code": "2FA",
+        "credentials": "Zugangsdaten",
+        "credentials_none": "Keine",
+        "dates": "Zeitraum",
+        "dates_value": "{{start}} → {{end}}",
+        "duration_days_one": "{{count}} Tag",
+        "duration_days_other": "{{count}} Tage",
+        "duration_hours_one": "{{count}} Stunde",
+        "duration_hours_other": "{{count}} Stunden",
+        "equal": "Für alle gleich",
+        "now": "Jetzt",
+        "off": "Aus",
+        "on": "An",
+        "results": "Ergebnisse",
+        "results_hidden": "Sichtbar nach Ende",
+        "results_live": "Live",
+        "weight": "Stimmgewicht",
+        "weighted": "Gewichtet"
+      },
+      "failed": "Die Abstimmung konnte nicht veröffentlicht werden.",
+      "free_trial": "Wenn du es nur ausprobieren willst, wähle eine Teilnehmerliste mit höchstens {{limit}} Personen: Das ist kostenlos.",
+      "how_you_pay": "So zahlst du",
+      "intro": "Das ist die Zusammenfassung der Abstimmung und was sie kosten wird. Wenn alles stimmt, kannst du sie gleich hier bezahlen und veröffentlichen.",
+      "keep_editing": "Weiter bearbeiten",
+      "lead_now_one": "{{voters}} kann über {{questions}} abstimmen, ab der Veröffentlichung bis {{end}}.",
+      "lead_now_other": "{{voters}} können über {{questions}} abstimmen, ab der Veröffentlichung bis {{end}}.",
+      "lead_scheduled_one": "{{voters}} kann über {{questions}} abstimmen, von {{start}} bis {{end}}.",
+      "lead_scheduled_other": "{{voters}} können über {{questions}} abstimmen, von {{start}} bis {{end}}.",
+      "org_balance": "Guthaben der Organisation",
+      "pay_now": "Was du jetzt zahlst",
+      "primary": {
+        "card": "{{shortfall}} aufladen und veröffentlichen",
+        "publish": "Veröffentlichen",
+        "wallet": "Veröffentlichen und {{total}} zahlen"
+      },
+      "progress": {
+        "hint": "Sobald die Abstimmung veröffentlicht ist, leiten wir dich zu ihr weiter. Bitte hab etwas Geduld, das kann einen Moment dauern.",
+        "payment": "Zahlung eingegangen",
+        "published": "Abstimmung veröffentlicht",
+        "publishing": "Die Abstimmung wird veröffentlicht…"
+      },
+      "questions_one": "{{count}} Frage",
+      "questions_other": "{{count}} Fragen",
+      "this_vote": "Diese Abstimmung",
+      "total_now": "Jetzt zu zahlen",
+      "type": {
+        "multiple": "Mehrfachauswahl",
+        "single": "Einzelauswahl"
+      },
+      "vote_summary": "Zusammenfassung der Abstimmung",
+      "voters_one": "{{voters}} Person",
+      "voters_other": "{{voters}} Personen",
+      "voters_unknown": "Die Wähler",
+      "wallet": {
+        "covers": "Das Guthaben der Organisation deckt die gesamten Kosten. Eine Karte ist nicht nötig.",
+        "cta": "Mit dem Guthaben zahlen und veröffentlichen",
+        "lead": "Du musst nichts weiter zahlen: Der Betrag wird vom Prepaid-Guthaben abgezogen.",
+        "note": "Nach der Veröffentlichung bleiben {{after}} Guthaben übrig.",
+        "title": "Zahle {{total}} mit dem Guthaben und die Abstimmung wird veröffentlicht."
+      },
+      "what_is_voted": "Worüber abgestimmt wird"
+    },
     "question_type": {
       "label": "Fragetyp",
       "multiple": "Mehrfachauswahl",
@@ -1154,6 +1242,7 @@
       "btn": "Schließen",
       "text": "<p>Deine Stimme wurde sicher abgegeben und mit der Technologie von Vocdoni gespeichert. <verify>Du kannst sie hier überprüfen</verify>.</p>",
       "text_no_id": "<p>Deine Stimme wurde erfolgreich abgegeben.</p>",
+      "text_no_link": "<p>Deine Stimme wurde sicher abgegeben und mit der Technologie von Vocdoni gespeichert.</p>",
       "title": "Stimme abgegeben!"
     },
     "summary": {
@@ -1527,9 +1616,6 @@
   "signup_lastname": "Nachname",
   "signup_subtitle": "Gib deine Daten ein, um loszulegen",
   "signup_title": "Registrieren",
-  "spreadsheet": {
-    "access_button": "Identifizieren"
-  },
   "start_date": "Startdatum",
   "start_time": "Startzeit",
   "support": "Support",
@@ -1732,8 +1818,7 @@
   "view_in_explorer": "Im Explorer anzeigen",
   "vocdoni_logo": "Vocdoni Logo",
   "vote": {
-    "anonymous_receipt": "Anonyme Stimmabgabe: Speichere diesen Beleg jetzt, die Plattform kann ihn dir nicht erneut anzeigen.",
-    "voted_title": "Deine Stimme wurde erfolgreich abgegeben!"
+    "anonymous_receipt": "Anonyme Stimmabgabe: Speichere diesen Beleg jetzt, die Plattform kann ihn dir nicht erneut anzeigen."
   },
   "vote_information": "Abstimmungsdetails",
   "vote_overwrite": "Stimme überschreiben",
