@@ -54,6 +54,10 @@
         "label": "Associacions",
         "trust_bar": "Assemblees generals, eleccions a junta i consultes als socis segures. Les associacions ja confien en Vocdoni:"
       },
+      "cooperatives": {
+        "label": "Cooperatives",
+        "trust_bar": "Assemblees generals, eleccions al consell rector i consultes als socis segures. Les cooperatives ja confien en Vocdoni:"
+      },
       "generic": {
         "label": "Casos d'èxit",
         "trust_bar": "Assemblees, eleccions i consultes segures. Ja confien en Vocdoni organitzacions de tots els sectors:"
@@ -81,6 +85,10 @@
       "trade_unions": {
         "label": "Sindicats",
         "trust_bar": "Votacions de vaga, de conveni i eleccions a la direcció segures. Els sindicats ja confien en Vocdoni:"
+      },
+      "universities_schools": {
+        "label": "Educació",
+        "trust_bar": "Eleccions a junta, assemblees i consultes segures. Les comunitats educatives ja confien en Vocdoni:"
       }
     }
   },
@@ -1723,6 +1731,10 @@
   },
   "terms_of_service": "Termes del Servei",
   "testimonials": {
+    "afa_collserola": {
+      "position": "Vocal de la Junta",
+      "text": "A l'AFA de l'Escola Collserola volíem que l'elecció de la Junta Directiva arribés a totes les famílies, no només a les que podien venir a l'assemblea. Cada família té les seves circumstàncies: horaris de feina, criatures petites, desplaçaments... Amb Vocdoni vam aconseguir que tothom pogués votar a distància, de manera senzilla i segura."
+    },
     "aguicat": {
       "company": "Associació de Guies Habilitats de Catalunya",
       "position": "Responsable de TI",
@@ -1765,6 +1777,10 @@
     "erc": {
       "position": "Secretària Nacional d'Afiliació, Lluita Antirepressiva i Benestar Emocional",
       "text": "Fa anys que confiem en Vocdoni perquè ens ofereix un sistema segur, auditable i fàcil d'utilitzar, que ens permet organitzar votacions digitals amb totes les garanties i adaptades a les necessitats de la nostra organització."
+    },
+    "foodcoop": {
+      "position": "Vocal del Consell Rector",
+      "text": "Moltes sòcies de FoodcoopBCN no sempre poden venir a l'assemblea, per feina, per cures o perquè viuen lluny. Amb el vot híbrid, 30 sòcies van seguir l'assemblea per streaming i van votar des de casa de forma segura. Són veus que una assemblea només presencial hauria deixat fora."
     },
     "granollers": {
       "position": "Responsable de comunicació",

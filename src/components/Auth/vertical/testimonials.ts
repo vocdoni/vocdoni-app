@@ -12,7 +12,7 @@ import type { AuthTestimonial } from './types'
  * The `ceec`, `bellpuig` and `eic` ids (and their default values) predate this module and are
  * already translated into all 10 locales — do not rename or reword them.
  *
- * The other 12 are the organizations' own approved wording, lifted from the marketing site
+ * The other 14 are the organizations' own approved wording, lifted from the marketing site
  * (`vocdoni.io` → `testimonials_marquee.items`) together with its 10 translations. Where the full
  * quote was too long for the panel, whole sentences were dropped — the same ones in every language,
  * never an edit inside a sentence. Reword one here and it silently diverges from 9 locales.
@@ -208,6 +208,30 @@ export const useAuthTestimonials = (): AuthTestimonial[] => {
       }),
       verticals: ['trade-unions'],
       logo: 'ustec',
+    },
+    {
+      id: 'foodcoop',
+      author: 'Gerard Palou',
+      position: t('testimonials.foodcoop.position', { defaultValue: 'Member of the Consell Rector' }),
+      company: 'Foodcoop BCN',
+      quote: t('testimonials.foodcoop.text', {
+        defaultValue:
+          "Many FoodcoopBCN members can't always make it to the assembly, because of work, care duties or because they live far away. With hybrid voting, 30 members followed the assembly by livestream and voted securely from home. Those are voices an in-person-only assembly would have left out.",
+      }),
+      verticals: ['cooperatives'],
+      logo: 'foodcoop',
+    },
+    {
+      id: 'afa_collserola',
+      author: 'Alba Fernández',
+      position: t('testimonials.afa_collserola.position', { defaultValue: 'Board member' }),
+      company: 'AFA Collserola',
+      quote: t('testimonials.afa_collserola.text', {
+        defaultValue:
+          "At the Escola Collserola families' association (AFA), we wanted the board election to reach every family, not just those who could come to the assembly. Every family has its own circumstances: work hours, young children, travel... With Vocdoni we made it possible for everyone to vote remotely, simply and securely.",
+      }),
+      verticals: ['universities-schools', 'associations'],
+      logo: 'afa_collserola',
     },
   ]
 }

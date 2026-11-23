@@ -54,6 +54,10 @@
         "label": "Associazioni",
         "trust_bar": "Assemblee generali, elezioni del consiglio direttivo e consultazioni dei soci sicure. Le associazioni si affidano già a Vocdoni:"
       },
+      "cooperatives": {
+        "label": "Cooperative",
+        "trust_bar": "Assemblee generali, elezioni del consiglio di amministrazione e consultazioni dei soci sicure. Le cooperative si affidano già a Vocdoni:"
+      },
       "generic": {
         "label": "Storie di successo",
         "trust_bar": "Assemblee, elezioni e consultazioni sicure. Si affidano già a Vocdoni organizzazioni di ogni settore:"
@@ -81,6 +85,10 @@
       "trade_unions": {
         "label": "Sindacati",
         "trust_bar": "Votazioni di sciopero, sui contratti collettivi ed elezioni della dirigenza sicure. I sindacati si affidano già a Vocdoni:"
+      },
+      "universities_schools": {
+        "label": "Istruzione",
+        "trust_bar": "Elezioni del consiglio direttivo, assemblee e consultazioni sicure. Le comunità scolastiche si affidano già a Vocdoni:"
       }
     }
   },
@@ -1723,6 +1731,10 @@
   },
   "terms_of_service": "Termini di servizio",
   "testimonials": {
+    "afa_collserola": {
+      "position": "Membro del consiglio direttivo",
+      "text": "All'AFA dell'Escola Collserola, l'associazione delle famiglie degli alunni, volevamo che l'elezione del consiglio direttivo arrivasse a tutte le famiglie, non solo a quelle che potevano venire all'assemblea. Ogni famiglia ha la sua situazione: orari di lavoro, bambini piccoli, spostamenti... Con Vocdoni siamo riusciti a far votare tutti a distanza, in modo semplice e sicuro."
+    },
     "aguicat": {
       "company": "Associació de Guies Habilitats de Catalunya",
       "position": "Responsabile IT",
@@ -1765,6 +1777,10 @@
     "erc": {
       "position": "Segretaria Nazionale per l'Adesione, la Lotta Antirepressiva e il Benessere Emotivo",
       "text": "Da anni ci affidiamo a Vocdoni perché ci offre un sistema sicuro, verificabile e facile da usare, che ci permette di organizzare votazioni digitali con tutte le garanzie e adattate alle esigenze della nostra organizzazione."
+    },
+    "foodcoop": {
+      "position": "Membro del Consell Rector",
+      "text": "Molti soci di FoodcoopBCN non sempre riescono a partecipare all'assemblea, per lavoro, per impegni familiari o perché vivono lontano. Con il voto ibrido, 30 soci hanno seguito l'assemblea in streaming e hanno votato da casa in tutta sicurezza. Sono voci che un'assemblea solo in presenza avrebbe escluso."
     },
     "granollers": {
       "position": "Responsabile della comunicazione",

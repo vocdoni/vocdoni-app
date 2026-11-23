@@ -82,6 +82,20 @@ export const useVerticalCopy = (): VerticalCopyMap => {
           'Secure strike ballots, collective agreement votes and leadership elections. Unions already trust Vocdoni:',
       }),
     },
+    cooperatives: {
+      label: t('auth.verticals.cooperatives.label', { defaultValue: 'Cooperatives' }),
+      trustBar: t('auth.verticals.cooperatives.trust_bar', {
+        defaultValue:
+          'Secure general assemblies, board elections and member consultations. Cooperatives already trust Vocdoni:',
+      }),
+    },
+    'universities-schools': {
+      label: t('auth.verticals.universities_schools.label', { defaultValue: 'Education' }),
+      trustBar: t('auth.verticals.universities_schools.trust_bar', {
+        defaultValue:
+          'Secure board elections, assemblies and consultations. Educational communities already trust Vocdoni:',
+      }),
+    },
     'sports-clubs': {
       label: t('auth.verticals.sports_clubs.label', { defaultValue: 'Sports clubs' }),
       trustBar: t('auth.verticals.sports_clubs.trust_bar', {
