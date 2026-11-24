@@ -152,6 +152,14 @@ describe('integration-pins.sh', () => {
       expectError('')
     })
 
+    it('accepts the pre-rename vochain-sequencer key as vocdoni-sequencer', () => {
+      const res = parse('/integration vochain-sequencer=main saas-backend=760')
+      expect(res.status).toBe(0)
+      expect(res.stdout).toContain('vocdoni_sequencer_ref=main')
+      expect(res.stdout).toContain('saas_backend_ref=#760')
+      expectError('/integration vochain-sequencer=a vocdoni-sequencer=b')
+    })
+
     it('rejects the old vocdoni-node key with a clear message', () => {
       const res = parse('/integration vocdoni-node=abc')
       expect(res.status).toBe(1)

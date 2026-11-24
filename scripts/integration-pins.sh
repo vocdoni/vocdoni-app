@@ -68,7 +68,8 @@ for tok in ${tokens[@]+"${tokens[@]}"}; do
     ref="#$((10#${ref:1}))"
   fi
   case "$key" in
-    vocdoni-sequencer)
+    # vochain-sequencer is the pre-rename key; keep honouring pins already posted with it.
+    vocdoni-sequencer | vochain-sequencer)
       [ "$seen_sequencer" = 0 ] || fail "vocdoni-sequencer given twice"
       seen_sequencer=1
       sequencer_ref="$ref"
