@@ -1,8 +1,8 @@
 # End-to-end tests
 
 Playwright specs that drive a real browser through the app's **email-driven
-journeys**, against a disposable full stack (mongo + vocone + saas-backend +
-MailHog) started from `integration/docker-compose.ci.yml`.
+journeys**, against a disposable full stack (mongo + vocone with its Postgres
+indexer + saas-backend + MailHog) started from `integration/docker-compose.ci.yml`.
 
 They are **not** part of `pnpm test` — that stays a fast, unit-only run. These
 need docker, a live chain and a few minutes.
@@ -35,9 +35,10 @@ It cleans up after itself, with two deliberate exceptions:
   the container logs are the evidence you need to diagnose the failure; tearing
   them down would destroy exactly that. Stop it with
   `scripts/integration-stack.sh down` when you are done.
-- **It stops containers but keeps volumes**, so vocone's chain data persists
-  across local runs. `scripts/integration-stack.sh down` is the explicit full
-  clean (`down -v`), and is what CI uses.
+- **It stops containers but keeps volumes**, so vocone's chain data and
+  indexer (`vocone_run` and `vocone_pg`) persist across local runs.
+  `scripts/integration-stack.sh down` is the explicit full clean (`down -v`),
+  and is what CI uses.
 
 Set `INTEGRATION_KEEP_STACK=1` to always leave it running.
 

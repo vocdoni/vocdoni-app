@@ -23,7 +23,8 @@ When a PR depends on an unmerged `saas-backend`, `vocdoni-sequencer` or `vocdoni
 
 - Keys: `vocdoni-sequencer=`, `saas-backend=`, `integrator-sdk=` (the SDK repo, built, packed and installed through pnpm
   overrides for that run only). Each is optional. A ref is a SHA, branch, tag, or PR number (bare `760` or `#760`).
-  Upstreams are built from source, so the run takes longer.
+  Upstreams are built from source, so the run takes longer. A `vocdoni-sequencer` ref must include 62b1ae30 (the
+  `voconed migrate` subcommand) or be later; see `integration/README.md`, "Pinning upstream commits".
 - Refs that are all branches, tags or PRs make the pin **sticky**: every later push re-runs against those refs at their
   current heads. Any SHA makes it a one-shot run, and so does a bare `/integration` (`:main` images and npm packages),
   without changing the sticky refs. `/integration reset` goes back to the `:main` images and npm packages.

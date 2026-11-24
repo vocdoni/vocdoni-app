@@ -1,7 +1,8 @@
 name: Integration
 
 # Runs the Playwright end-to-end suite (e2e/) against a disposable
-# mongo + vocone + saas-backend + MailHog stack (integration/docker-compose.ci.yml),
+# mongo + vocone (with its Postgres indexer) + saas-backend + MailHog stack
+# (integration/docker-compose.ci.yml),
 # built from published `:main` images, or from source at refs pinned by a
 # `/integration` PR comment or the workflow_dispatch inputs (see integration/README.md,
 # "Pinning upstream commits").
