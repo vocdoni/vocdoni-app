@@ -38,7 +38,9 @@ services:
       VOCONED_BLOCKPERIOD: 1
       VOCONED_BLOCKSIZE: 2000
       VOCONED_LOGLEVEL: info
-      VOCONED_ENABLEFAUCETWITHAMOUNT: 100000
+      # The saas-backend account (address of VOCDONI_PRIVATEKEY below) is funded at
+      # genesis; it funds every org it creates with faucet packages from that balance.
+      VOCONED_FUNDEDACCOUNTS: '0x7319196AdC5f396c7311A520a195E164496309eD:100000000'
       VOCONED_CHAINID: dev
       VOCONED_TXCOSTS: 2
       VOCONED_SETTXCOSTS: 'true'
