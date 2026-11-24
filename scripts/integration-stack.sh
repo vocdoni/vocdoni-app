@@ -204,6 +204,10 @@ cmd_up() {
     derive_stripe_webhook_secret
   fi
 
+  if [ -n "${VOCHAIN_SEQUENCER_IMAGE:-}" ] && [ -z "${VOCDONI_SEQUENCER_IMAGE:-}" ]; then
+    echo "WARNING: VOCHAIN_SEQUENCER_IMAGE was renamed to VOCDONI_SEQUENCER_IMAGE; using its value for now. Rename it in your environment." >&2
+    export VOCDONI_SEQUENCER_IMAGE="$VOCHAIN_SEQUENCER_IMAGE"
+  fi
   echo "== starting stack" >&2
   echo "== images: ${VOCDONI_SEQUENCER_IMAGE:-ghcr.io/vocdoni/vocdoni-sequencer:main} ${SAAS_BACKEND_IMAGE:-ghcr.io/vocdoni/saas-backend:main}" >&2
   if [ -n "$STRIPE_MODE" ]; then
