@@ -38,6 +38,7 @@ import { RadioGroup } from './radioGroup'
 import { SegmentGroup } from './segmentGroup'
 import { Stat } from './stat'
 import { Status } from './status'
+import { StepMark } from './stepMark'
 import { Table } from './table'
 import { Tabs } from './tabs'
 import { Tag } from './tag'
@@ -67,6 +68,7 @@ export const recipes: Record<string, RecipeDefinition> = {
   OrganizationImage,
   OrganizationName,
   PaginationButton,
+  stepMark: StepMark,
 }
 
 export const slotRecipes: Record<string, SlotRecipeDefinition> = {

@@ -179,7 +179,8 @@ value, capitalised). Chakra's own `2xs` to `7xl` and `label` keep their names. R
   `<VocdoniLogo w='wordmark' />`), `voting.sidebar`, `voting.contents.min`, `user-profile`, `cookies-consent`,
   `publish-review.dialog|step` (publish dialog width and its step column).
 - **Fil marks**: `borderWidths.mark` (1.5px ring of a checkbox or radio), `borderWidths.radio` (5px, a checked radio's
-  filled ring) and `spacing.track` (3px gutter of a segmented control).
+  filled ring), `spacing.track` (3px gutter of a segmented control) and `spacing.mark` (1px, drops a step mark onto
+  its label's first line).
 - **z-index**: tokens only (`background`, `contents`, `sidebar`, `topbar`, `top`, `public-header`, `dashboard-menu`).
 - **Opacity**: `inactive` (0.6) for content that cannot be used right now, `dimmed` (0.5) for de-emphasis.
 - **Durations**: Chakra's names plus `instant` (0s).
@@ -232,6 +233,14 @@ To add a variant:
 3. Use it at the call site with `variant`, `size` or `layout`, with no extra look props next to it.
 4. A custom state is a `data-*` attribute styled by the recipe (see `_dragging` in `recipes/dragHandle.ts` and
    `ui/DragHandle.tsx`), not a ternary on style props in the component.
+
+A figure or letter inside a small mark (a step number, an avatar's initials, a rank box, a count in a disc) spreads
+`figureMark` (`src/theme/recipes/figureMark.ts`) after its text style: a line height of 1 and `text-box: trim-both cap
+alphabetic`, so the ink is centred in the mark and not the line (digits and capitals have no descender, so flex
+centring leaves them off by about a pixel, most in JetBrains Mono). It is the default for any recipe that draws one; a
+component never sets it (or a line height or offset) by hand: a mark drawn without a recipe moves to one, and
+`figureMark.test.ts` fails on any use outside `src/theme`. Measure the ink, not the box: a padding cannot
+fine-tune it, because text lands on whole pixels.
 
 Do not restyle a component from a parent selector (`'& > button'`), and do not put `h`, `px`, `borderRadius`,
 `fontWeight` or `bg` on a `Button`: that is a missing variant.

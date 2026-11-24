@@ -87,6 +87,8 @@ const spacing = defineTokens.spacing({
   auto: { value: 'auto' },
   // Gutter between a segmented control's track and its items.
   track: { value: '3px' },
+  // Drops a mark beside a label onto the label's first line: half of a 20px line minus an 18px mark.
+  mark: { value: '1px' },
   dashboard: {
     panel: { value: '{sizes.dashboard.panel}' },
   },
