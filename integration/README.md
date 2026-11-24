@@ -3,12 +3,14 @@
 A disposable, self-contained Vocdoni backend for local development and for the
 end-to-end suite in [`e2e/`](../e2e/README.md):
 
-| Service   | What it is                            | Published on            |
-| --------- | ------------------------------------- | ----------------------- |
-| `mongo`   | saas-backend's database               | —                       |
-| `vocone`  | single-node Vochain (`voconed`)       | —                       |
-| `api`     | `ghcr.io/vocdoni/saas-backend:main`   | `localhost:8080`        |
-| `mailhog` | SMTP sink with a readable HTTP inbox  | `localhost:8025`        |
+| Service          | What it is                                     | Published on     |
+| ---------------- | ---------------------------------------------- | ---------------- |
+| `mongo`          | saas-backend's database                        | —                |
+| `postgres`       | vocone's indexer database (`vocone_pg`)        | —                |
+| `vocone-migrate` | one-shot: brings the indexer schema up to date | —                |
+| `vocone`         | single-node Vochain (`voconed`)                | —                |
+| `api`            | `ghcr.io/vocdoni/saas-backend:main`            | `localhost:8080` |
+| `mailhog`        | SMTP sink with a readable HTTP inbox           | `localhost:8025` |
 
 The app under test is **not** part of the stack — it runs on the host
 (`pnpm serve:ssr`), so the suite exercises the same server bundle we ship.
@@ -26,6 +28,11 @@ scripts/integration-stack.sh logs <dir>  # one redacted log file per service, wr
 the inbox. `run` is one-shot and stops the containers when it finishes, *unless*
 the suite failed (the logs and inbox are the evidence you need) or
 `INTEGRATION_KEEP_STACK` is set. `down` is the explicit full clean.
+
+**After pulling the Postgres indexer change**, run `scripts/integration-stack.sh down`
+once. A `vocone_run` volume from before it pairs with the new, empty `vocone_pg`
+indexer and shows missing blocks. The two volumes must be reset together, so
+`down` (which drops both) is the only safe reset.
 
 Ports are overridable with `INTEGRATION_HOST_PORT`, `INTEGRATION_MAILHOG_PORT`
 and `INTEGRATION_APP_PORT`. Re-running `up` against a stack that is already
@@ -96,8 +103,9 @@ are refused before anything starts.
   filters by org metadata.
 
 Switching modes on a running stack: `up` reconciles it. Default mode removes an
-orphaned `stripe-listen`. Mongo keeps its data in an anonymous volume: `run` keeps
-it, and `down` (`down -v`) drops it.
+orphaned `stripe-listen`. Mongo keeps its data in an anonymous volume, and vocone
+keeps its chain data in `vocone_run` and its indexer in `vocone_pg`: `run` keeps
+them all, and `down` (`down -v`) drops them.
 
 ## Pinning upstream commits
 
@@ -117,6 +125,9 @@ Each key is optional:
   A branch or tag named only 1-6 digits cannot be pinned by name.
 - `vocdoni-sequencer` and `saas-backend` are built into Docker images and the stack
   runs those instead of `:main`.
+- A `vocdoni-sequencer` pin must include commit `62b1ae30` (the `migrate` subcommand)
+  or be later. An older build ignores `migrate` and runs a node forever, so
+  `vocone-migrate` times out after 120s and `up` fails.
 - `integrator-sdk` is built and packed. Its `@vocdoni/*` packages are installed in
   place of the npm versions, transitive copies included, through pnpm overrides.
   The overrides are added to `pnpm-workspace.yaml` for that run only, so nothing
