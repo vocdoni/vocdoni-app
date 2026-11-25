@@ -71,6 +71,23 @@ describe('useProfile', () => {
       expect(mockBearedFetch).toHaveBeenCalledWith('users/me')
     })
 
+    it('drops memberships whose organization is missing', async () => {
+      // Production: a membership with `organization: null` crashed the admin shell on `organization.address`.
+      const valid = { role: 'admin', organization: { address: '0xabc' } }
+      mockBearedFetch.mockResolvedValue({
+        id: '1',
+        organizations: [{ role: 'admin', organization: null }, valid, { role: 'viewer' }, null],
+      })
+
+      const { result } = renderHook(() => useProfile(), { wrapper })
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      expect(result.current.data?.organizations).toEqual([valid])
+    })
+
     it('should call recordSuccess when query succeeds', async () => {
       mockBearedFetch.mockResolvedValue({ id: '1' })
 

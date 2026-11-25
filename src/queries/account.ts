@@ -50,6 +50,13 @@ export interface AuthResponse {
   expirity: string
 }
 
+// /users/me has been seen returning a membership whose organization is null (production, Nov 2026), and the
+// admin shell reads `organization.address` on every membership. Drop those here, at the only place that fetches it.
+const withoutOrphanMemberships = (user: User): User => ({
+  ...user,
+  organizations: (user.organizations ?? []).filter((membership) => !!membership?.organization?.address),
+})
+
 export const useProfile = (
   options?: Omit<UndefinedInitialDataOptions<User, Error, User, QueryKey>, 'queryKey' | 'queryFn'>
 ) => {
@@ -60,7 +67,7 @@ export const useProfile = (
     ...options,
     queryKey: QueryKeys.profile,
     refetchOnWindowFocus: false,
-    queryFn: () => bearedFetch<User>(ApiEndpoints.Me),
+    queryFn: () => bearedFetch<User>(ApiEndpoints.Me).then(withoutOrphanMemberships),
     // Use default retry (3 attempts) so query can fail and enter error state
     retry: (_failureCount, error) => {
       // Don't retry auth errors - those won't fix themselves
