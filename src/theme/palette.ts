@@ -125,9 +125,9 @@ export const generatePaletteScale = (baseHex: string): PaletteScale => {
 const MIN_SURFACE_CONTRAST = 3
 
 const LIGHT_SOLID_STEPS: Array<keyof PaletteScale> = [500, 600, 700, 800, 900, 950]
-const DARK_SOLID_STEPS: Array<keyof PaletteScale> = [500, 400, 300, 200, 100, 50]
+export const DARK_SOLID_STEPS: Array<keyof PaletteScale> = [500, 400, 300, 200, 100, 50]
 
-const pickReadableStep = (
+export const pickReadableStep = (
   scale: PaletteScale,
   candidates: Array<keyof PaletteScale>,
   background: string,
