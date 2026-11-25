@@ -47,8 +47,8 @@ type ElectionTitleVariantProps = RecipeVariantProps<typeof electionTitleRecipe>
 // A literal style prop next to a spread of all the style props overflows TypeScript (TS2590), so it is typed once and spread.
 const hrStyle: BoxProps = { as: 'hr', borderColor: 'border' }
 const questionsErrorStyle: TextProps = { color: 'ballot.error' }
-// The ballot's one filled action is taller than the dashboard buttons (`xl` is 48px, Fil's voter button 52px); the
-// button recipe is not touched, so the extra look is set here. `control.floating` is the 52px size token.
+// The ballot's one filled action is taller than the dashboard buttons: `xl` draws the same control as `md`, so the
+// extra height is set here and the button recipe is not touched. `control.floating` is the taller control token.
 const ballotAction: ButtonProps = {
   size: 'xl',
   h: 'control.floating',
