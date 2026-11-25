@@ -1,33 +1,28 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { clearPublicLanguageCookie, getStoredPublicLanguage, persistPublicLanguageCookie } from '~i18n/public-language'
+import { parseProcessIds } from '~components/Home/processIds'
+import { isVotingPath } from '~utils/analytics'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 
 import { AlertRoot as Alert, AlertDescription, AlertTitle, Box, Button, HStack, Link } from '@chakra-ui/react'
-import { getCookieConsent, hasCookieConsent, initializeGTM, setCookieConsent } from './utils'
+import { hasCookieConsent, setCookieConsent } from './utils'
 
 export function CookieConsent() {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const { PRIVACY_POLICY_URL: privacyPolicyUrl, GTM_CONTAINER_ID: gtmId } = useAppEnv()
-  const supportedLanguages = Object.keys(useLanguagesEnv())
+  const { PRIVACY_POLICY_URL: privacyPolicyUrl, HOME_PROCESS_ID: homeProcessId, PROCESS_IDS: processIds } = useAppEnv()
+  const languagesMap = useLanguagesEnv()
+  const supportedLanguages = useMemo(() => Object.keys(languagesMap), [languagesMap])
+  const processIdsHome = useMemo(() => parseProcessIds(processIds).length > 0, [processIds])
 
   useEffect(() => {
     setMounted(true)
-    // Check if user has already made a choice
-    const hasConsent = hasCookieConsent()
-
-    if (hasConsent) {
-      // User has already made a choice, initialize GTM accordingly
-      const consent = getCookieConsent()
-      const accepted = consent === 'accepted'
-      initializeGTM(accepted, gtmId)
-    } else {
-      // Show the cookie consent banner
+    if (!hasCookieConsent()) {
       setOpen(true)
     }
-  }, [gtmId])
+  }, [])
 
   const syncPublicLanguageCookie = () => {
     const storedLanguage = getStoredPublicLanguage({
@@ -47,7 +42,6 @@ export function CookieConsent() {
   const handleAccept = () => {
     setCookieConsent(true)
     syncPublicLanguageCookie()
-    initializeGTM(true, gtmId)
     setOpen(false)
   }
 
@@ -57,12 +51,13 @@ export function CookieConsent() {
       document,
       location: window.location,
     })
-    initializeGTM(false, gtmId)
     setOpen(false)
   }
 
-  // Don't render anything on server-side or if banner is closed
-  if (!mounted || !open) return null
+  // Don't render anything on server-side, voting pages, or if banner is closed
+  if (!mounted) return null
+  if (isVotingPath(window.location.pathname, { homeProcessId, processIdsHome, supportedLanguages })) return null
+  if (!open) return null
 
   return (
     <Alert

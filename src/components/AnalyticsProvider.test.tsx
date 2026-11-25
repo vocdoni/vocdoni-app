@@ -1,4 +1,5 @@
-import { render } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
+import { COOKIE_CONSENT_CHANGE_EVENT, setCookieConsent } from '~components/Cookies/utils'
 import { AnalyticsProvider } from './AnalyticsProvider'
 
 // The provider pulls the whole dashboard context in; stub every source so the
@@ -31,6 +32,7 @@ const appEnv = vi.hoisted(() => ({
   GTM_CONTAINER_ID: 'GTM-TEST',
   HOME_PROCESS_ID: '0x1234',
   LANGUAGES: { ca: 'Català' },
+  PROCESS_IDS: undefined as string | undefined,
 }))
 
 vi.mock('~src/app-env', async (importOriginal) => {
@@ -156,5 +158,72 @@ describe('AnalyticsProvider consent handling', () => {
     render(<AnalyticsProvider>{null}</AnalyticsProvider>)
 
     expect(initializePosthog).toHaveBeenCalledWith(expect.objectContaining({ consent: null }))
+  })
+})
+
+describe('AnalyticsProvider GTM initialization', () => {
+  beforeEach(() => {
+    initializeGTM.mockClear()
+    localStorage.clear()
+    window.history.pushState({}, '', '/admin')
+  })
+
+  it('does not initialize GTM without explicit consent', () => {
+    render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+    expect(initializeGTM).not.toHaveBeenCalled()
+  })
+
+  it('does not initialize GTM when consent is rejected', () => {
+    localStorage.setItem('vocdoni-cookie-consent', 'rejected')
+    render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+    expect(initializeGTM).not.toHaveBeenCalled()
+  })
+
+  it('initializes GTM on a dashboard route when consent is accepted', () => {
+    localStorage.setItem('vocdoni-cookie-consent', 'accepted')
+    render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+    expect(initializeGTM).toHaveBeenCalledWith({ gtmId: 'GTM-TEST' }, undefined)
+  })
+
+  it('does not initialize GTM on /processes/:id even with consent accepted', () => {
+    localStorage.setItem('vocdoni-cookie-consent', 'accepted')
+    window.history.pushState({}, '', '/processes/0x5678')
+    render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+    expect(initializeGTM).not.toHaveBeenCalled()
+  })
+
+  it('does not initialize GTM on the HOME_PROCESS_ID root even with consent accepted', () => {
+    localStorage.setItem('vocdoni-cookie-consent', 'accepted')
+    window.history.pushState({}, '', '/')
+    render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+    expect(initializeGTM).not.toHaveBeenCalled()
+  })
+
+  it('does not initialize GTM on "/" with PROCESS_IDS set even with consent accepted', () => {
+    localStorage.setItem('vocdoni-cookie-consent', 'accepted')
+    appEnv.PROCESS_IDS = '0xabc,0xdef'
+    window.history.pushState({}, '', '/')
+    render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+    expect(initializeGTM).not.toHaveBeenCalled()
+    appEnv.PROCESS_IDS = undefined
+  })
+
+  it('initializes GTM when the user accepts later on a non-voting route', async () => {
+    window.history.pushState({}, '', '/admin')
+    render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+    expect(initializeGTM).not.toHaveBeenCalled()
+
+    await act(async () => {
+      setCookieConsent(true)
+    })
+
+    expect(initializeGTM).toHaveBeenCalledWith({ gtmId: 'GTM-TEST' }, undefined)
+  })
+
+  it('passes processIdsHome to PostHog when PROCESS_IDS is set', () => {
+    appEnv.PROCESS_IDS = '0xabc'
+    render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+    expect(initializePosthog).toHaveBeenCalledWith(expect.objectContaining({ processIdsHome: true }))
+    appEnv.PROCESS_IDS = undefined
   })
 })

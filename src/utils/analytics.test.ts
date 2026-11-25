@@ -208,6 +208,27 @@ describe('posthog voting-path detection', () => {
     expect(isVotingPath('/organization/0x1234')).toBe(false)
     expect(isVotingPath('/es/organization/0x1234')).toBe(false)
   })
+
+  it.each(['/', '//'])('marks "/" as a voting path when processIdsHome is true (%s)', async (pathname) => {
+    const { isVotingPath } = await import('./analytics')
+
+    expect(isVotingPath(pathname, { processIdsHome: true })).toBe(true)
+  })
+
+  it('does not mark "/" as a voting path when processIdsHome is false', async () => {
+    const { isVotingPath } = await import('./analytics')
+
+    expect(isVotingPath('/', { processIdsHome: false })).toBe(false)
+    expect(isVotingPath('/')).toBe(false)
+  })
+
+  it('does not mark dashboard paths as voting when processIdsHome is true', async () => {
+    const { isVotingPath } = await import('./analytics')
+
+    expect(isVotingPath('/admin', { processIdsHome: true })).toBe(false)
+    expect(isVotingPath('/ca/plans', { processIdsHome: true, supportedLanguages: ['ca'] })).toBe(false)
+    expect(isVotingPath('/processes/0x1234', { processIdsHome: true })).toBe(true)
+  })
 })
 
 // The privacy filters are private to analytics.ts; reach them the way posthog-js does,

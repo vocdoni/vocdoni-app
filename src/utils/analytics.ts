@@ -95,6 +95,20 @@ export const initializeGTM = (config: TagManagerArgs, analyticsClientId?: string
   void loadGtmModule()
     .then((TagManager) => {
       TagManager.initialize(config)
+      // GTM only loads after the visitor accepted the cookie banner, so it starts with every storage granted, as the
+      // banner's own initialiser used to tell it.
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'consent_update',
+          consent: {
+            ad_storage: 'granted',
+            analytics_storage: 'granted',
+            functionality_storage: 'granted',
+            personalization_storage: 'granted',
+            security_storage: 'granted',
+          },
+        },
+      })
       if (analyticsClientId) {
         TagManager.dataLayer({
           dataLayer: {
@@ -173,6 +187,11 @@ export type PosthogConsent = 'accepted' | 'rejected' | null
 type VotingRouteConfig = {
   homeProcessId?: string
   supportedLanguages?: string[]
+  /**
+   * Set to true when PROCESS_IDS is active so that '/' (the shared-census
+   * voting form) is treated as a voting path and excluded from analytics.
+   */
+  processIdsHome?: boolean
 }
 
 type PosthogInitConfig = VotingRouteConfig & {
@@ -201,15 +220,19 @@ const decodePathnameSegments = (pathname: string): string =>
     })
     .join('/')
 
-// The runtime-configured routes (any supported language prefix, and the
-// optional voting homepage at `/` and `/:lang` when HOME_PROCESS_ID is set) go
-// through the very matchers Vike routes them with, so the privacy boundary
-// follows runtime configuration instead of the URL shape alone.
+// The runtime-configured routes (any supported language prefix, the optional
+// voting homepage at `/` and `/:lang` when HOME_PROCESS_ID is set, and `/`
+// when PROCESS_IDS is set) go through the very matchers Vike routes them with,
+// so the privacy boundary follows runtime configuration instead of the URL
+// shape alone.
 export const isVotingPath = (
   pathname: string,
-  { homeProcessId, supportedLanguages = [] }: VotingRouteConfig = {}
+  { homeProcessId, supportedLanguages = [], processIdsHome = false }: VotingRouteConfig = {}
 ): boolean => {
   const localized = { urlPathname: decodePathnameSegments(pathname), supportedLanguages }
+
+  // When PROCESS_IDS is active, '/' hosts the shared-census voting form.
+  if (processIdsHome && (localized.urlPathname.replace(/\/+$/, '') || '/') === '/') return true
 
   return (
     VOTING_PATH_REGEX.test(localized.urlPathname) ||

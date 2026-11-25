@@ -1,4 +1,3 @@
-import TagManager from 'react-gtm-module'
 import { readCookieValues } from '~utils/cookies'
 
 const CONSENT_KEY = 'vocdoni-cookie-consent'
@@ -197,69 +196,4 @@ export function hasCookieConsent(): boolean {
 
 export function hasAcceptedCookieConsent(): boolean {
   return getCookieConsent() === CONSENT_ACCEPTED
-}
-
-/**
- * Initialize Google Tag Manager with or without cookie storage
- * @param withCookies - if true, GTM will use cookies; if false, storage will be disabled
- * @param gtmId - the GTM container id (from runtime env, provided by the caller)
- */
-export function initializeGTM(withCookies: boolean, gtmId?: string): void {
-  if (typeof window === 'undefined') return
-
-  if (!gtmId) return
-
-  // Initialize GTM
-  TagManager.initialize({ gtmId })
-
-  // If cookies are rejected, configure gtag to disable all storage
-  if (!withCookies) {
-    // Push configuration to dataLayer to disable all storage
-    ;(window as any).dataLayer = (window as any).dataLayer || []
-    ;(window as any).dataLayer.push({
-      event: 'consent_update',
-      consent: {
-        ad_storage: 'denied',
-        analytics_storage: 'denied',
-        functionality_storage: 'denied',
-        personalization_storage: 'denied',
-        security_storage: 'granted', // Security storage is typically always granted
-      },
-    })
-
-    // Also use gtag command if available
-    if (typeof (window as any).gtag === 'function') {
-      ;(window as any).gtag('consent', 'default', {
-        ad_storage: 'denied',
-        analytics_storage: 'denied',
-        functionality_storage: 'denied',
-        personalization_storage: 'denied',
-        security_storage: 'granted',
-      })
-    }
-  } else {
-    // Push consent granted to dataLayer
-    ;(window as any).dataLayer = (window as any).dataLayer || []
-    ;(window as any).dataLayer.push({
-      event: 'consent_update',
-      consent: {
-        ad_storage: 'granted',
-        analytics_storage: 'granted',
-        functionality_storage: 'granted',
-        personalization_storage: 'granted',
-        security_storage: 'granted',
-      },
-    })
-
-    // Also use gtag command if available
-    if (typeof (window as any).gtag === 'function') {
-      ;(window as any).gtag('consent', 'update', {
-        ad_storage: 'granted',
-        analytics_storage: 'granted',
-        functionality_storage: 'granted',
-        personalization_storage: 'granted',
-        security_storage: 'granted',
-      })
-    }
-  }
 }

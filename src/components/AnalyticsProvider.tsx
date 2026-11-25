@@ -1,8 +1,9 @@
-import { createContext, PropsWithChildren, useContext, useEffect, useRef, useState } from 'react'
+import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent, watchCrossSiteConsent } from '~components/Cookies/utils'
+import { parseProcessIds } from '~components/Home/processIds'
 import { useProfile } from '~queries/account'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import {
@@ -31,9 +32,11 @@ const useAnalyticsProvider = () => {
     POSTHOG_HOST: posthogHost,
     ANALYTICS_CLIENT_ID,
     HOME_PROCESS_ID: homeProcessId,
+    PROCESS_IDS: processIds,
   } = useAppEnv()
   const languagesMap = useLanguagesEnv()
   const analyticsClientId = ANALYTICS_CLIENT_ID?.trim() || undefined
+  const processIdsHome = useMemo(() => parseProcessIds(processIds).length > 0, [processIds])
   const { isAuthenticated } = useAuth()
   const { data: profile } = useProfile({ enabled: isAuthenticated })
   const { organization } = useSaasAccount()
@@ -56,18 +59,18 @@ const useAnalyticsProvider = () => {
     // This provider also mounts on the public voting pages (PublicProcessPage
     // renders AppProviders), so the privacy boundary has to gate *every*
     // app-owned sink, not just PostHog: Plausible's init auto-captures a ballot
-    // pageview, and the GTM condition below (`/`) is only ever true on the
-    // HOME_PROCESS_ID voting homepage, which would inject the container into a
-    // ballot. Voting pages are always fresh documents, so checking once at
-    // mount is enough.
-    const votingRoutes = { homeProcessId, supportedLanguages: Object.keys(languagesMap) }
+    // pageview, and GTM must only start after explicit consent. Voting pages are
+    // always fresh documents, so checking once at mount is enough.
+    const votingRoutes = { homeProcessId, processIdsHome, supportedLanguages: Object.keys(languagesMap) }
     if (isVotingPath(window.location.pathname, votingRoutes)) return
 
     if (plausibleDomain) {
       initializePlausible({ domain: plausibleDomain }, analyticsClientId)
     }
 
-    if (gtmContainerId && window.location.pathname === '/') {
+    // GTM carries advertising-grade tracking; only load the container after the
+    // visitor has explicitly accepted the cookie banner.
+    if (gtmContainerId && consent === 'accepted') {
       initializeGTM({ gtmId: gtmContainerId }, analyticsClientId)
     }
 
@@ -88,6 +91,7 @@ const useAnalyticsProvider = () => {
     analyticsClientId,
     consent,
     homeProcessId,
+    processIdsHome,
     languagesMap,
   ])
 
