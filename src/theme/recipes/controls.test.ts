@@ -62,6 +62,13 @@ describe('button', () => {
 })
 
 describe('input and textarea', () => {
+  it('outline the focus in the palette focus ring with no dark override, and in the error colour when invalid', () => {
+    const styles = layer(input({}))
+    expect(JSON.stringify(styles)).not.toContain('dark')
+    expect(JSON.stringify(styles)).toContain('var(--chakra-colors-color-palette-focus-ring)')
+    expect(JSON.stringify(styles)).toContain('var(--chakra-colors-status-error-fg)')
+  })
+
   it('are 34px panels with a ring and no border', () => {
     const styles = layer(input({}))
     expect(styles['--input-height']).toBe('var(--chakra-sizes-control-md)')

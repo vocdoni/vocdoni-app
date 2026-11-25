@@ -18,8 +18,7 @@ export const field = defineStyle({
   borderWidth: '[0]',
   boxShadow: 'shadow.field',
   focusVisibleRing: 'outside',
-  focusRingColor: 'colorPalette.solid',
-  _dark: { focusRingColor: 'colorPalette.fg' },
+  focusRingColor: 'colorPalette.focusRing',
   _readOnly: { bg: 'bg.muted' },
   _invalid: {
     boxShadow: '[0 0 0 {borderWidths.hairline} {colors.status.error.fg}]',
