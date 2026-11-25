@@ -157,7 +157,7 @@ const UserProfile = () => {
                   <Text fontWeight='extrabold' textStyle='body-sm' px='2' py='1.5'>
                     {t('preferences', { defaultValue: 'Preferences' })}
                   </Text>
-                  <Flex justifyContent='space-between' alignItems='center' px='2' py='1.5' gap='2'>
+                  <Flex justifyContent='space-between' alignItems='center' flexWrap='wrap' px='2' py='1.5' gap='2'>
                     <Text textStyle='body-sm'>{t('appearance', { defaultValue: 'Appearance' })}</Text>
                     <AppearanceSegment />
                   </Flex>
