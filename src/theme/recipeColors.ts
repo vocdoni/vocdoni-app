@@ -74,6 +74,17 @@ const scroll = {
   },
 }
 
+// The empty box of a checkbox: the panel in light, and in dark the surface behind it, so the checked fill (a
+// separate rule) is the only fill a box ever wears.
+const checkbox = {
+  empty: {
+    value: {
+      _light: '{colors.bg.panel}',
+      _dark: '{colors.transparent}',
+    },
+  },
+}
+
 export const recipeColors = defineSemanticTokens.colors({
   link,
   switch: switchColors,
@@ -81,4 +92,5 @@ export const recipeColors = defineSemanticTokens.colors({
   progress,
   toast,
   scroll,
+  checkbox,
 })

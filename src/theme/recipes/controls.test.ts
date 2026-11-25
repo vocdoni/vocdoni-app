@@ -97,6 +97,16 @@ describe('checkbox, radio and switch', () => {
     }
   })
 
+  it('fill a checked box in dark too, since no dark rule sits over the checked fill', () => {
+    const checkbox = system.sva(system.getSlotRecipe('checkbox'))
+    const control = layer(checkbox({ size: 'md', variant: 'solid' }).control) as Record<string, any>
+    expect(JSON.stringify(control)).not.toContain('dark')
+    expect(control.background).toBe('var(--chakra-colors-checkbox-empty)')
+    expect(control['&:is([data-state=checked], [data-state=indeterminate])'].background).toBe(
+      'var(--chakra-colors-color-palette-solid)'
+    )
+  })
+
   it('draw the unchecked outline in border.strong', () => {
     expect(checkboxStyles.variants?.variant?.solid?.control).toMatchObject({ borderColor: 'border.strong' })
     expect(radioStyles.variants?.variant?.solid?.itemControl).toMatchObject({ borderColor: 'border.strong' })
