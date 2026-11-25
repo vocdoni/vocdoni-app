@@ -1011,7 +1011,7 @@ const ProcessCreateView = () => {
             paddingBottom='4'
           >
             {/* Top bar with draft status and sidebar toggle */}
-            <HStack position='sticky' top='[0px]' p='2' bg='bg' zIndex='contents'>
+            <HStack position='sticky' top='[0px]' p='2' bg='surface.canvas' zIndex='contents'>
               {effectiveDraftId && (
                 <StatusBadge colorPalette='gray'>
                   <Trans i18nKey='process.create.status.draft'>Draft</Trans>

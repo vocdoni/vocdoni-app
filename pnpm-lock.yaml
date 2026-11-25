@@ -201,6 +201,9 @@ importers:
       '@chakra-ui/cli':
         specifier: ^3.37.0
         version: 3.37.0(@chakra-ui/react@3.31.0(@emotion/react@11.14.0(@types/react@19.2.17)(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))
+      '@fontsource/commissioner':
+        specifier: 5.3.0
+        version: 5.3.0
       '@playwright/test':
         specifier: ^1.62.1
         version: 1.62.1
@@ -912,6 +915,9 @@ packages:
 
   '@fontsource-variable/jetbrains-mono@5.3.0':
     resolution: {integrity: sha512-F32xpS2NsGYoQi2ADSkKTgpJj7ozajsGgDJ8woTnqjmIB+dxDIqImjl4pXZVEExu8UFZ2ndhmX18EBS/hdz3Lw==}
+
+  '@fontsource/commissioner@5.3.0':
+    resolution: {integrity: sha512-G3OnulmWmCVSn2qvOsWDQSObOVsDpAsrDM7HL2rtJLYA+U2ly1Ldg5YwEKKiv1inDLhUkwK3u0V6jmMva8vksA==}
 
   '@gemini-wallet/core@0.3.2':
     resolution: {integrity: sha512-Z4aHi3ECFf5oWYWM3F1rW83GJfB9OvhBYPTmb5q+VyK3uvzvS48lwo+jwh2eOoCRWEuT/crpb9Vwp2QaS5JqgQ==}
@@ -7375,6 +7381,8 @@ snapshots:
   '@fontsource-variable/commissioner@5.3.0': {}
 
   '@fontsource-variable/jetbrains-mono@5.3.0': {}
+
+  '@fontsource/commissioner@5.3.0': {}
 
   '@gemini-wallet/core@0.3.2(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7))':
     dependencies:

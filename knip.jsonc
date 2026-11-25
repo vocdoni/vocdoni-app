@@ -24,8 +24,9 @@
   "vike": false,
   "vite": false,
   "vitest": { "config": ["vitest.config.ts", "stress/vitest.config.ts"] },
-  // buffer: knip resolves the bare import to Node's built-in; plausible: loaded with `??= import()`, which knip misses
-  "ignoreDependencies": ["buffer", "@plausible-analytics/tracker"],
+  // buffer: knip resolves the bare import to Node's built-in; plausible: loaded with `??= import()`, which knip misses;
+  // fontsource/commissioner: its .woff files are read from node_modules by scripts/og/generate.mjs, never imported
+  "ignoreDependencies": ["buffer", "@plausible-analytics/tracker", "@fontsource/commissioner"],
   "ignoreBinaries": ["gh", "scripts/integration-stack.sh"],
   // A component's props type stays exported next to it even when only that file uses it
   "ignoreExportsUsedInFile": { "interface": true, "type": true, "enum": true },
