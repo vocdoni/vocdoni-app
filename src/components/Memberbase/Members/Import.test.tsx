@@ -1,4 +1,5 @@
 import type { ImportJob } from '~src/queries/members'
+import { act } from 'react'
 import { mockUseOrganization, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
@@ -70,6 +71,29 @@ describe('ImportProgress', () => {
     render(<ImportProgress />)
 
     expect(screen.getByText('Import Error')).toBeInTheDocument()
+  })
+
+  it('keeps the fake progress below 100 while the job is still pending', () => {
+    // Production crash: the bar went to 104 when the backend reported 99, and the progress bar throws above its max.
+    vi.useFakeTimers()
+    try {
+      mockJobData = {
+        jobId: 'job-1',
+        type: 'org_members',
+        status: 'pending',
+        errors: [],
+        result: { progress: 99, added: 99, total: 100 },
+      }
+      render(<ImportProgress />)
+
+      act(() => {
+        vi.advanceTimersByTime(10_000)
+      })
+
+      expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '99')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('renders completed with errors when the job has row errors', () => {

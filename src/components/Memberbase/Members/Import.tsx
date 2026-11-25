@@ -69,6 +69,8 @@ type ImportDataPreviewProps = {
 
 const PROGRESS_INCREMENT = 5 // Maximum increment for fake progress
 const PROGRESS_UPDATE_INTERVAL = 500 // Interval for fake progress updates
+// The progress bar throws above its max (100). Fake progress stops short of it: only a completed job shows 100%.
+const PROGRESS_FAKE_CEILING = 99
 
 const mapSpreadsheetData = (data: SpreadsheetRow[], mapping: ColumnMapping): MappedRow[] => {
   return data.map((row) => {
@@ -145,8 +147,8 @@ export const ImportProgress = () => {
     if (!data || isComplete || hasFailed) return
 
     let interval: NodeJS.Timeout
-    const current = data.result?.progress ?? 0
-    const target = current + PROGRESS_INCREMENT
+    const current = Math.min(data.result?.progress ?? 0, PROGRESS_FAKE_CEILING)
+    const target = Math.min(current + PROGRESS_INCREMENT, PROGRESS_FAKE_CEILING)
 
     interval = setInterval(() => {
       setProgress((prev) => {
