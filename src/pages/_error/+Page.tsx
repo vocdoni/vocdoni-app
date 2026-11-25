@@ -11,7 +11,7 @@ const ErrorPage = () => {
   const returnHomeHref = language ? `/${language}` : '/'
 
   return (
-    <AppProviders language={language}>
+    <AppProviders language={language} followSystem>
       <PublicLayout pathname={pathname}>
         <ErrorView isNotFound={statusCode === 404} returnHomeHref={returnHomeHref} />
       </PublicLayout>
