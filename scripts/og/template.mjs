@@ -256,7 +256,7 @@ export const buildOpenGraphCard = (copy, { logo: logoSrc, theme = 'light', headl
       height: HEIGHT,
       display: 'flex',
       background: t.canvas ?? t.bg,
-      fontFamily: 'Inter',
+      fontFamily: 'Commissioner',
       color: t.fg,
       position: 'relative',
       overflow: 'hidden',

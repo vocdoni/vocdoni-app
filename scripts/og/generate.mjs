@@ -9,9 +9,10 @@
  *   pnpm og:generate -- --theme light   # or `dark`; see themes in template.mjs
  *
  * satori lays the card out from a flex tree and resvg rasterises it, so the output is identical
- * on every machine. Inter comes from the `@fontsource/inter` package the app already ships; the
- * subsets are registered under separate family names because satori keeps one font per
- * (family, weight) and falls back to the other families for glyphs it lacks (Greek, Latin Extended).
+ * on every machine. Commissioner, the app's sans, comes from the static `@fontsource/commissioner`
+ * devDependency (satori cannot read the variable build the app ships); the subsets are registered
+ * under separate family names because satori keeps one font per (family, weight) and falls back to
+ * the other families for glyphs it lacks (Greek, Latin Extended).
  */
 import { Resvg } from '@resvg/resvg-js'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -32,19 +33,19 @@ if (!themes[theme]) {
   process.exit(1)
 }
 
-const fontDir = join(root, 'node_modules/@fontsource/inter/files')
+const fontDir = join(root, 'node_modules/@fontsource/commissioner/files')
 const fonts = []
 for (const [subset, name] of [
-  ['latin', 'Inter'],
-  ['latin-ext', 'Inter Latin Extended'],
-  ['greek', 'Inter Greek'],
+  ['latin', 'Commissioner'],
+  ['latin-ext', 'Commissioner Latin Extended'],
+  ['greek', 'Commissioner Greek'],
 ]) {
   for (const weight of [400, 500, 600]) {
     fonts.push({
       name,
       weight,
       style: 'normal',
-      data: readFileSync(join(fontDir, `inter-${subset}-${weight}-normal.woff`)),
+      data: readFileSync(join(fontDir, `commissioner-${subset}-${weight}-normal.woff`)),
     })
   }
 }

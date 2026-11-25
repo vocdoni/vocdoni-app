@@ -16,7 +16,7 @@ export const createLineCounter =
           style: {
             display: 'flex',
             width,
-            fontFamily: 'Inter',
+            fontFamily: 'Commissioner',
             ...headlineTextStyle(size),
           },
           children: text,
