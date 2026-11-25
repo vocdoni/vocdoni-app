@@ -84,12 +84,13 @@ the distinction, and copy must never blur them.
 
 ## Colour and type
 
-The app does **not** use the website's palette yet. vocdoni.io is cream, warm ink, Vocdoni green and a Fraunces serif;
-the app today is a neutral theme: white and near-black surfaces, a black accent unless `PRIMARY_COLOR` sets one, the
-status palettes (success, warning, danger, info) for state, and Inter at weights 300, 400 and 500. A re-theme towards
-the brand is planned (#1728) and will land in `src/theme/`, not in components.
+The app does **not** use the website's palette. vocdoni.io is cream, warm ink, Vocdoni green and a Fraunces serif;
+the app is the Fil theme: untinted greys, a blue accent unless `PRIMARY_COLOR` sets one, the status palettes (success,
+warning, danger, info) for state, Commissioner for the interface and JetBrains Mono for figures, at weights 400 to 600.
+It is light only for now. The re-theme towards the brand is planned (#1728) and will land in `src/theme/`, not in
+components.
 
-So, until then:
+So:
 
 - Do not bring website colours, fonts or radii into the app (no Vocdoni green, cream, signal yellow or Fraunces), and do
   not copy them from a mockup. A mockup's look is mapped onto the app's existing roles (see `DESIGN.md`).
