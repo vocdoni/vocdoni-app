@@ -51,7 +51,7 @@ describe('isVoterPageId', () => {
     ['/src/pages/home-process', true],
     ['/src/pages/@lang/@catchAll', false],
     ['/src/pages/@catchAll', false],
-    ['/src/pages/_error', false],
+    ['/src/pages/_error', true],
     [null, false],
   ])('%s -> %s', (pageId, expected) => {
     expect(isVoterPageId(pageId)).toBe(expected)

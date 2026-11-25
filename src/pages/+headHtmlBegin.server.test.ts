@@ -34,6 +34,7 @@ describe('headHtmlBegin', () => {
     '/src/pages/@lang/processes/@id/summary',
     '/src/pages/@lang/organization/@address',
     '/src/pages/home-process',
+    '/src/pages/_error',
   ])('makes the voter page %s follow the system, never the saved choice', (pageId) => {
     const html = headHtmlBegin(context(pageId))
     expect(html).toContain("localStorage.getItem('theme-preference-voter')")
