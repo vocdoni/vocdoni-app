@@ -12,5 +12,6 @@ export const isVoterPageId = (pageId: string | null | undefined): boolean =>
 // routes never run next-themes' own script, so without this the shell paints light before the bundle loads.
 export const colorModeScript = (followSystem: boolean): string => {
   const key = followSystem ? VOTER_COLOR_MODE_STORAGE_KEY : COLOR_MODE_STORAGE_KEY
-  return `<script>(function(){try{var t=localStorage.getItem('${key}');if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';var e=document.documentElement;e.classList.remove('light','dark');e.classList.add(t);e.style.colorScheme=t}catch(e){}})()</script>`
+  // Storage can throw (blocked site data), so only the read is guarded: the system still sets the mode then.
+  return `<script>(function(){var t=null;try{t=localStorage.getItem('${key}')}catch(e){}if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';var e=document.documentElement;e.classList.remove('light','dark');e.classList.add(t);e.style.colorScheme=t})()</script>`
 }

@@ -35,6 +35,14 @@ describe('colorModeScript', () => {
     expect(run(true, 'light')).toEqual({ mode: 'light', scheme: 'light' })
   })
 
+  it('follows the system when storage throws, as in a blocked private window', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('blocked', 'SecurityError')
+    })
+    expect(run(false, 'dark')).toEqual({ mode: 'dark', scheme: 'dark' })
+    expect(run(false, 'light')).toEqual({ mode: 'light', scheme: 'light' })
+  })
+
   it('keeps the classes Vike puts on <html>', () => {
     document.documentElement.classList.add('notranslate')
     run(false, 'dark')
