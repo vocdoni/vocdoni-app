@@ -1,5 +1,5 @@
 import { PAGE_BACKGROUNDS } from './colors'
-import { DARK_SOLID_STEPS, generatePaletteScale, normalizeHexColor, pickReadableStep } from './palette'
+import { generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor, type PaletteScale } from './palette'
 
 // Stripe and Cal.com render in iframes, so theme CSS vars are unreachable; these raw values mirror the Fil dark
 // tokens (bg, the dialog grey, fg, field ring, primary). The one place for them, shared by both embeds. Light keeps
@@ -18,5 +18,7 @@ export const embedBrandColor = (primaryColor?: string): string => {
   const brand = normalizeHexColor(primaryColor)
   if (!brand) return EMBED_DARK.primary
   const scale = generatePaletteScale(brand)
-  return scale[pickReadableStep(scale, DARK_SOLID_STEPS, PAGE_BACKGROUNDS.dark)]
+  // The token is a reference to a scale step, `{colors.brand.<step>}`: the step the buttons fill with.
+  const step = Number(/brand\.(\d+)/.exec(generateBrandSemanticTokens(scale, PAGE_BACKGROUNDS).solid._dark)?.[1])
+  return scale[step as keyof PaletteScale]
 }
