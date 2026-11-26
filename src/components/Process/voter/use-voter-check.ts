@@ -24,7 +24,10 @@ type VoterCheckInput = {
   check: () => Promise<ProcessCheckResponse>
   /** Changes whenever the process status or any question status changes: the check runs again. */
   statusKey: string
-  /** The vote is still open and more than five minutes from its end: an unknown `canVote: false` is not a closed vote. */
+  /**
+   * While it runs, `canVote: false` means ineligible; the backend zeroes every `canVote` once the vote ends (the SDK
+   * allows five minutes of clock skew).
+   */
   running: boolean
 }
 
@@ -94,19 +97,22 @@ export const useVoterCheck = ({ id, authToken, connected, check, statusKey, runn
   }
 
   const answers = query.data?.questions ?? []
+  // The questions this voter is not eligible for (a question restricted to part of the census). After the end the
+  // backend reads every question `canVote: false`, which is no eligibility answer: it counts only while the vote runs.
+  // Voted or signed questions are never ineligible, as the SDK checks those first.
+  const ineligibleIds =
+    query.data?.belongsToProcess && (answers.some((question) => question.canVote === true) || running)
+      ? answers
+          .filter((question) => question.canVote === false && !question.hasVoted && !question.hasSigned)
+          .map((question) => question.questionId)
+      : []
   // Every question this voter may vote is on chain: a vote cast from another device, or the only questions open to
-  // them (audit F9).
+  // them (audit F9). A question the check leaves them out of counts as no open question.
   const votedElsewhere =
     connected &&
     answers.some((question) => question.hasVoted) &&
-    answers.every((question) => question.hasVoted || !question.canVote)
+    answers.every((question) => question.hasVoted || ineligibleIds.includes(question.questionId))
   // The questions the check's last answer lists as on chain, re-read after every cast and when a status changes.
   const votedIds = answers.filter((question) => question.hasVoted).map((question) => question.questionId)
-  // The questions this voter is not eligible for (a question restricted to part of the census). After the end the
-  // backend reads every question `canVote: false`, which is no eligibility answer: it counts only while the vote runs.
-  const ineligibleIds =
-    query.data?.belongsToProcess && (answers.some((question) => question.canVote === true) || running)
-      ? answers.filter((question) => question.canVote === false).map((question) => question.questionId)
-      : []
   return { membership, votedElsewhere, votedIds, ineligibleIds }
 }

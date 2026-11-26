@@ -121,6 +121,47 @@ describe('useVoterCheck', () => {
     expect(result.current.ineligibleIds).toEqual([])
   })
 
+  it('never lists a question the voter already voted or signed as ineligible', async () => {
+    const check = vi.fn().mockResolvedValue({
+      belongsToProcess: true,
+      questions: [
+        { questionId: 'q1', canVote: false, hasVoted: true, hasSigned: true },
+        { questionId: 'q2', canVote: false, hasVoted: false, hasSigned: true },
+        { questionId: 'q3', canVote: true, hasVoted: false },
+      ],
+    })
+    const { result } = run(check)
+    await advance(0)
+    expect(result.current.ineligibleIds).toEqual([])
+  })
+
+  it('after the end, a voter who voted only some questions is not voted elsewhere', async () => {
+    const check = vi.fn().mockResolvedValue({
+      belongsToProcess: true,
+      questions: [
+        { questionId: 'q1', canVote: false, hasVoted: true },
+        { questionId: 'q2', canVote: false, hasVoted: false },
+      ],
+    })
+    const { result } = run(check, 'ENDED:ENDED', false)
+    await advance(0)
+    expect(result.current.votedElsewhere).toBe(false)
+  })
+
+  it('while the vote runs, a voter who voted every question they may vote is voted elsewhere', async () => {
+    const check = vi.fn().mockResolvedValue({
+      belongsToProcess: true,
+      questions: [
+        { questionId: 'q1', canVote: true, hasVoted: true },
+        { questionId: 'q2', canVote: false, hasVoted: false },
+      ],
+    })
+    const { result } = run(check)
+    await advance(0)
+    expect(result.current.ineligibleIds).toEqual(['q2'])
+    expect(result.current.votedElsewhere).toBe(true)
+  })
+
   it('stays pending when the first check fails: there is no answer to keep', async () => {
     const check = vi.fn().mockRejectedValue(new Error('503'))
     const { result } = run(check)
