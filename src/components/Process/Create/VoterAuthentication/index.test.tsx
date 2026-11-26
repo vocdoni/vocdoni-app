@@ -369,6 +369,23 @@ describe('VoterAuthentication', () => {
     expect(storedCensus()).toEqual(certCensus)
   })
 
+  it('blocks a certificate census where no member can sign in', async () => {
+    mockValidateCensus.mockRejectedValue(membersError({ memberIds: [], duplicates: [], missingData: ['m1', 'm2'] }))
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />, { appEnv: { CERT_GATEWAY_URL: 'https://cert.test:15140' } })
+    const dialog = await openDialog(user)
+    await user.click(dialog.getByRole('checkbox', { name: /digital certificate/i }))
+    const status = dialog.getByRole('status')
+    await waitFor(() => expect(status).toHaveAttribute('data-status', 'invalid'))
+
+    const save = dialog.getByTestId('voter-auth-save')
+    expect(save).toHaveTextContent(/^Save$/)
+    expect(status).toHaveTextContent("2 members can't sign in")
+    await user.click(save)
+    await waitFor(() => expect(status).toHaveFocus())
+    expect(storedCensus()).toBeNull()
+  })
+
   it('still blocks a certificate census whose members share a DNI/NIE', async () => {
     mockValidateCensus.mockRejectedValue(
       membersError({ memberIds: ['m1'], duplicates: ['m2', 'm3'], missingData: ['m4'] })

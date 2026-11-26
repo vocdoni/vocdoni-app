@@ -29,7 +29,7 @@ import { buildCensusSpec } from '../census-spec'
 import { Census, Process } from '../common'
 import { MemberCheck } from './MemberCheck'
 import { ProtectionMeter } from './ProtectionLevel'
-import { type CensusCheckIssues, useCensusCheck } from './useCensusCheck'
+import { type CensusCheckIssues, certCensusSavable, useCensusCheck } from './useCensusCheck'
 import {
   CERT_AUTH_CREDENTIALS,
   CodeMethod,
@@ -205,9 +205,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
     censusCheck.status === 'checking' ? settledValues.current : values
   )
 
-  // A certificate census leaves out members with a missing or invalid DNI/NIE (or contact) and still
-  // works: only members that can't be told apart make the backend refuse it.
-  const saveAnyway = (issues: CensusCheckIssues | null) => certAuth && !!issues && !issues.duplicates.length
+  const saveAnyway = (issues: CensusCheckIssues | null) => certAuth && certCensusSavable(issues)
 
   const groupTitle = group?.isAutoGroup
     ? t('groups_board.auto_group.title', { defaultValue: 'All Members' })

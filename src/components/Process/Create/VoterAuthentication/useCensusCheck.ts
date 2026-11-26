@@ -29,6 +29,14 @@ export type CensusCheckIssues = {
  */
 export type CensusCheckResult = { valid: true } | { valid: false; issues: CensusCheckIssues }
 
+/**
+ * A certificate census leaves out members with a missing or invalid DNI/NIE (or contact) and still
+ * works, as long as someone is left to vote: only members that can't be told apart, or nobody
+ * passing the check, make it unusable.
+ */
+export const certCensusSavable = (issues: CensusCheckIssues | null) =>
+  !!issues && !issues.duplicates.length && issues.memberIds.length > 0
+
 /** `rejected`: the backend refused the census itself (e.g. its group is gone), so it cannot be saved. */
 export type CensusCheckStatus = 'idle' | 'checking' | 'valid' | 'invalid' | 'rejected' | 'unavailable'
 

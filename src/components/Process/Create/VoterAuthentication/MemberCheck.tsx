@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { ErrorIcon, ExternalLinkIcon, SuccessIcon, WarningIcon } from '~theme/icons'
 import { InlineLoader } from '~components/ui/Loader'
 import { Routes } from '~routes'
-import { CensusCheckIssues, CensusCheckOutcome, CensusCheckStatus } from './useCensusCheck'
+import { CensusCheckIssues, CensusCheckOutcome, CensusCheckStatus, certCensusSavable } from './useCensusCheck'
 
 type MemberCheckProps = {
   status: CensusCheckStatus
@@ -18,7 +18,7 @@ type MemberCheckProps = {
   /** Which field each incomplete member lacks, once known; replaces the combined sentence. */
   missingByField?: { label: string; count: number }[] | null
   membersCount?: number
-  /** A certificate census: members missing data are left out, and only duplicates block saving. */
+  /** A certificate census: members missing data are left out; duplicates, or nobody left, block saving. */
   certAuth?: boolean
   /** Set when the admin tried to save without choosing anything. */
   emptyAttempt: boolean
@@ -136,7 +136,7 @@ export const MemberCheck = forwardRef<HTMLDivElement, MemberCheckProps>(
       // census), so no guessed consequence and no advice on what to pick.
       // A certificate census is the exception: it saves past members missing
       // data, who then can't sign in, so it says that and warns instead.
-      const blocking = !certAuth || duplicates > 0
+      const blocking = !certAuth || !certCensusSavable(shown.issues)
       const color = blocking ? 'fg.error' : 'fg.warning'
       content = (
         <Line icon={<Icon as={blocking ? ErrorIcon : WarningIcon} boxSize='icon.sm' color={color} />} busy={rechecking}>
