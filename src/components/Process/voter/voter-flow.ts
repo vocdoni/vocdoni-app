@@ -153,6 +153,8 @@ export type VoterLocalState = {
   late: readonly string[]
   /** Question by question: a cast here sent nothing because the check found the question already voted elsewhere. */
   votedElsewhere: string | null
+  /** The questions the voter was seen ineligible for this session: kept once the check stops saying so (after the end). */
+  ineligible: readonly string[]
   notice: 'sessionExpired' | null
 }
 
@@ -167,10 +169,11 @@ export type VoterAction =
   | { type: 'skip'; questionId: string }
   | { type: 'resume'; questionId: string }
   | { type: 'castSucceeded' }
-  | { type: 'castFailed'; message: string; unconfirmed?: boolean; at?: number }
+  | { type: 'castFailed'; message: string; unconfirmed?: boolean; at?: number; questionId?: string }
   | { type: 'castFoundVoted'; questionId: string }
   | { type: 'castLate'; questionId: string }
   | { type: 'castRefused'; questionId: string; message: string }
+  | { type: 'ineligibleSeen'; questionIds: readonly string[] }
   | { type: 'openChanged'; questionId: string | null }
   | { type: 'checkReceipt' }
   | { type: 'leaveReceipt' }
@@ -212,6 +215,7 @@ export const initialVoterState: VoterLocalState = {
   uncertain: [],
   late: [],
   votedElsewhere: null,
+  ineligible: [],
   notice: null,
 }
 
@@ -269,11 +273,13 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
       return { ...state, castDone: true, castError: null, castUnconfirmed: false }
     case 'castFailed': {
       const unconfirmed = action.unconfirmed ?? false
-      const id = state.castQuestionId
+      // A refusal over eligibility names the question its sentence belongs to; any other is the cast's own question.
+      const id = action.questionId ?? state.castQuestionId
       // Kept per question: a later answer clears `castUnconfirmed`, not what is known of this question's vote.
       const uncertain = !id || state.uncertain.includes(id) ? state.uncertain : [...state.uncertain, id]
       return {
         ...state,
+        castQuestionId: id,
         castError: action.message,
         castUnconfirmed: unconfirmed,
         castFailedAt: action.at ?? null,
@@ -284,6 +290,10 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
       return { ...state, votedElsewhere: action.questionId }
     case 'castLate':
       return state.late.includes(action.questionId) ? state : { ...state, late: [...state.late, action.questionId] }
+    case 'ineligibleSeen': {
+      const added = action.questionIds.filter((questionId) => !state.ineligible.includes(questionId))
+      return added.length ? { ...state, ineligible: [...state.ineligible, ...added] } : state
+    }
     // Nothing was sent for the question, so, unlike a failed cast, what earlier casts left unknown stays as it was. An
     // unknown outcome shown on this question stays too: a refusal must not replace it.
     case 'castRefused':
@@ -415,7 +425,10 @@ export const shownOpenIndex = (questions: readonly RoomQuestion[]): number => {
  * chose (or none at all). Such a cast is refused until only one is open (gate-3 F10).
  */
 export const roomCastBlocked = (questions: readonly RoomQuestion[], index: number): boolean =>
-  questions.some((question, other) => other !== index && question.state === 'open' && question.cast === 'none')
+  questions.some(
+    (question, other) =>
+      other !== index && question.state === 'open' && question.cast === 'none' && isRoomEligible(question)
+  )
 
 /**
  * A question-by-question vote's frame for an identified voter (boards V4VoterWideLive / M4VoterLive). The open
@@ -520,6 +533,14 @@ export const deriveVoterScreen = (facts: VoterFacts, asked: VoterLocalState): Vo
   if (!facts.voterStateReady) return { kind: 'checking' }
   // Question by question: its own frames. They come before the all-at-once rules below, because with SDK #118
   // `isAbleToVote` is false whenever no question the voter can still vote is open.
+  // A room the voter may vote none of, and has cast none of: the same screen as a non-member (the SDK skips them all).
+  if (
+    facts.room?.questions.length &&
+    facts.room.questions.every((question) => !isRoomEligible(question)) &&
+    !facts.room.questions.some(isRoomCast)
+  ) {
+    return { kind: 'notEligible' }
+  }
   if (facts.room) return deriveRoomScreen(facts, facts.room, local, results)
   if (facts.hasVoted || (!facts.isAbleToVote && facts.everyQuestionSettled)) {
     return local.viewResults ? results : { kind: 'alreadyVoted' }
@@ -579,22 +600,6 @@ export const isAnswered = (question: QuestionShape, answer: Answer | undefined, 
     default:
       return typeof answer === 'string' && answer !== ''
   }
-}
-
-/**
- * A selection the SDK's encoder accepts for a question that is already on chain (gate F2). `vote()` encodes every
- * question its own rule does not lock and only then skips the confirmed ones (`castVotes` signs state `open` only), so
- * this value is never signed or sent: it only keeps the encoder from refusing an empty answer in a session resumed
- * after a partial cast. Remove once the SDK skips the encoder for them.
- */
-export const encodableAnswer = (question: QuestionShape): Answer => {
-  const values = question.choices.map((choice) => String(choice.value))
-  const type = tryInferQuestionBallotType(question)
-  if (type === BallotType.Ranked) return values
-  if (type === BallotType.MultiChoice || type === BallotType.Approval) {
-    return values.slice(0, Math.max(1, questionSelectionRange(question).min))
-  }
-  return values[0] ?? ''
 }
 
 /** A multiple-choice question whose range lets the voter choose nothing: the SDK accepts a blank vote. */

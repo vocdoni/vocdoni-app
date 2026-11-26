@@ -142,6 +142,8 @@ const useFailedCast = () => {
   const byQuestion = isQuestionByQuestion(election)
   const records = election.questions.flatMap((question, index) => {
     const record = chain[index] ?? 'missing'
+    // Never asked to vote it (its eligibility): not one the cast left missing.
+    if (record === 'missing' && state.ineligible.includes(question.id)) return []
     const tried = !byQuestion || record !== 'missing' || question.id === state.castQuestionId
     return tried ? [record] : []
   })

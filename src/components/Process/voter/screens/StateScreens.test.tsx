@@ -209,6 +209,17 @@ describe('state screens', () => {
       expect(screen.getByRole('alert')).toHaveTextContent('Only 1 of your 2 answers was recorded')
     })
 
+    // The check forgets a question's ineligibility once the vote ends: the session's own record still keeps it out.
+    it('does not count a question the voter was seen ineligible for as missing, even after the end', () => {
+      const flow = testFlow({
+        facts: testFacts({ status: 'ENDED' }),
+        state: { ...initialVoterState, castError: 'x', ineligible: ['q2'] },
+        chain: ['recorded', 'missing'],
+      })
+      renderWithFlow(<ClosedScreen />, flow)
+      expect(screen.queryByRole('alert')).toBeNull()
+    })
+
     it('every question on chain (another device, or recovered at the end): nothing about a failed cast', () => {
       closedWith(['recorded', 'recorded'], { q1: 'a3f1000000000000009c2e', q2: 'b7c2000000000000001d4f' })
       expect(screen.queryByRole('alert')).toBeNull()

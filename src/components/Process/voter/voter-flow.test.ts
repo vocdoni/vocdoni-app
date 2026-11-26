@@ -6,7 +6,6 @@ import {
   batchSize,
   chainRecordOf,
   deriveVoterScreen,
-  encodableAnswer,
   firstUnanswered,
   formValuesFor,
   historyStateFor,
@@ -16,6 +15,7 @@ import {
   lastClosedIndex,
   lateCastOf,
   ON_CHAIN_NOTICE,
+  roomCastBlocked,
   roomCastOf,
   sendingPhase,
   shownAnswer,
@@ -314,6 +314,18 @@ describe('voterReducer', () => {
     expect(state).toMatchObject({ answers: { '0': '1', '1': ['0', '2'] }, memos: { '1': 'Other' }, castError: null })
   })
 
+  it('names the question a refused cast belongs to, and does not date it as late', () => {
+    const refused = voterReducer(local(), { type: 'castFailed', message: 'x', questionId: 'q2' })
+    expect(refused).toMatchObject({ castQuestionId: 'q2', castFailedAt: null, castUnconfirmed: false })
+  })
+
+  it('remembers the questions the voter was seen ineligible for, until sign out', () => {
+    const seen = voterReducer(local(), { type: 'ineligibleSeen', questionIds: ['q1', 'q3'] })
+    expect(seen.ineligible).toEqual(['q1', 'q3'])
+    expect(voterReducer(seen, { type: 'ineligibleSeen', questionIds: ['q3'] })).toBe(seen)
+    expect(voterReducer(seen, { type: 'signedOut' }).ineligible).toEqual([])
+  })
+
   it('tracks a cast', () => {
     const failed = voterReducer(local(), { type: 'castFailed', message: 'Your vote could not be cast: x' })
     expect(failed.castError).toBe('Your vote could not be cast: x')
@@ -544,12 +556,6 @@ describe('isAnswered', () => {
   it('a locked question counts as done; a question with no ballot type never does', () => {
     expect(isAnswered(single, undefined, true)).toBe(true)
     expect(isAnswered(q({ type: '' }), '1')).toBe(false)
-  })
-
-  it('gives a question already on chain a placeholder its encoder accepts (gate F2)', () => {
-    for (const question of [single, multiple(1, 2), multiple(2, 3), ranked]) {
-      expect(isAnswered(question, encodableAnswer(question))).toBe(true)
-    }
   })
 
   it('offers a blank vote only where the range allows choosing nothing', () => {
@@ -841,6 +847,18 @@ describe('deriveVoterScreen: question by question (boards V4VoterWideLive, M4Vot
     it('held by a pause: the paused screen, not its ballot', () => {
       const held = notFor(roomOf([['closed', 'recorded', 1], 'paused', 'toOpen'], 'paused'), 'q2')
       expect(screen(qbq(held, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'paused' })
+    })
+
+    it('an open question the voter may not vote does not block the one they can (the SDK skips it)', () => {
+      const two = notFor(roomOf([['closed', 'recorded', 1], 'open', 'open']), 'q3')
+      expect(screen(qbq(two))).toEqual({ kind: 'roomQuestion', index: 1, paused: false })
+      expect(roomCastBlocked(two.questions, 1)).toBe(false)
+    })
+
+    it('no question the voter may vote, and none cast: not eligible, as a non-member', () => {
+      const none = roomOf(['open', 'toOpen'])
+      const all = { ...none, questions: none.questions.map((question) => ({ ...question, eligible: false })) }
+      expect(screen(qbq(all))).toEqual({ kind: 'notEligible' })
     })
   })
 
