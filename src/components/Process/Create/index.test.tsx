@@ -3,10 +3,11 @@ import userEvent from '@testing-library/user-event'
 import type { PropsWithChildren } from 'react'
 import type { Blocker } from 'react-router'
 import { Route, Routes, useLocation, useNavigate } from 'react-router'
-import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
+import { createTestQueryClient, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultQuestion, Process, SelectorTypes } from './common'
+import { QueryKeys } from '~queries/keys'
 import { Routes as AppRoutes } from '~routes'
 import ProcessCreate, { buildCensusSpec, useConfirmOnNavigate, useFormToVotingProcessRequest } from './index'
 
@@ -84,10 +85,6 @@ vi.mock('./PublishReview/PublishDialog', () => ({
   ),
 }))
 
-vi.mock('~elements/dashboard/processes/drafts', () => ({
-  useDeleteDraft: () => ({}),
-}))
-
 vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
   useApiClient: () => ({ client: mockApiClient }),
@@ -133,6 +130,7 @@ describe('useFormToVotingProcessRequest', () => {
       title: 'Test Election',
       description: 'Test Description',
       autoStart: true,
+      votingMode: 'all',
       startDate: '',
       startTime: '',
       endDate: '2025-12-31',
@@ -750,7 +748,7 @@ describe('the wizard around the publish dialog', () => {
     return <p>{`at:${pathname}${search}`}</p>
   }
 
-  const renderWizard = (url: string) =>
+  const renderWizard = (url: string, queryClient = createTestQueryClient()) =>
     render(
       <TestMemoryRouter initialEntries={[url]}>
         <LocationProbe />
@@ -759,7 +757,8 @@ describe('the wizard around the publish dialog', () => {
           <Route path={AppRoutes.processes.createReturn} element={<ProcessCreate />} />
           <Route path={AppRoutes.dashboard.process} element={<p>process page</p>} />
         </Routes>
-      </TestMemoryRouter>
+      </TestMemoryRouter>,
+      { queryClient }
     )
 
   beforeEach(() => {
@@ -907,6 +906,19 @@ describe('the wizard around the publish dialog', () => {
     await userEvent.setup().click(screen.getByRole('button', { name: 'view-published' }))
 
     await waitFor(() => expect(screen.getByText('process page')).toBeInTheDocument())
+  })
+
+  it('forgets the draft it cached for the process page, so publishing does not send the new vote back to the wizard', async () => {
+    const queryClient = createTestQueryClient()
+    queryClient.setQueryData(QueryKeys.election.process(draftId), { id: draftId, published: false })
+    renderWizard('/admin/processes/create', queryClient)
+
+    await userEvent.setup().type(screen.getByPlaceholderText('Voting Process Title'), 'My vote')
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Publish' }))
+    await userEvent.setup().click(await screen.findByRole('button', { name: 'view-published' }))
+
+    await waitFor(() => expect(screen.getByText('process page')).toBeInTheDocument())
+    expect(queryClient.getQueryData(QueryKeys.election.process(draftId))).toBeUndefined()
   })
 
   it('tracks the creation of a process published from the dialog, with the submitted values', async () => {

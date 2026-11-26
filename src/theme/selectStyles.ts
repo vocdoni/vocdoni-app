@@ -5,10 +5,10 @@ import type { ChakraStylesConfig } from 'chakra-react-select'
 export const selectStyles: ChakraStylesConfig<any, boolean> = {
   control: (base) => ({
     ...base,
-    minH: 'control.md',
+    minH: { base: 'control.touch', md: 'control.tablet', lg: 'control.md' },
     textStyle: 'control',
-    // 16px on phones, like the input recipe: a smaller font makes iOS Safari zoom the page on focus.
-    fontSize: { base: 'lg', md: 'control' },
+    // The input recipe's steps: 16px on phones (a smaller font makes iOS Safari zoom the page on focus), 14px, 13.5px.
+    fontSize: { base: 'lg', md: 'md', lg: 'control' },
   }),
   dropdownIndicator: (base) => ({
     ...base,
@@ -36,7 +36,20 @@ export const selectStyles: ChakraStylesConfig<any, boolean> = {
     bg: state.isSelected ? 'state.selected.bg' : state.isFocused ? 'state.hover.bg' : 'transparent',
     color: 'fg',
   }),
-  // chakra-react-select spaces the input with raw rems (0.125rem); the same step from the spacing scale.
+  // chakra-react-select spaces the value, the input and the placeholder with raw 2px (0.125rem); the same step from
+  // the spacing scale.
+  valueContainer: (base) => ({
+    ...base,
+    paddingY: '0.5',
+  }),
+  singleValue: (base) => ({
+    ...base,
+    marginX: '0.5',
+  }),
+  multiValue: (base) => ({
+    ...base,
+    margin: '0.5',
+  }),
   inputContainer: (base) => ({
     ...base,
     marginX: '0.5',
@@ -44,6 +57,7 @@ export const selectStyles: ChakraStylesConfig<any, boolean> = {
   }),
   placeholder: (base) => ({
     ...base,
+    marginX: '0.5',
     color: 'var(--chakra-colors-input-placeholder)',
   }),
 }

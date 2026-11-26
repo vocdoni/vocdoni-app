@@ -1,18 +1,18 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import type { CreateVotingProcessRequest, VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
+import { createElement, type ReactNode } from 'react'
 import { ApiError, ErrorCode } from '~components/Auth/api'
-import { mockUseElection } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 // Mock dependencies
 const mockNavigate = vi.fn()
 const mockToast = vi.fn()
 const mockMutateAsync = vi.fn()
-let mockElection: VotingProcessResponse | null = null
+let mockQuestionByQuestion = false
 
 vi.mock('~src/app-env', () => ({
-  useAppEnv: () => ({ DISABLE_ANONYMOUS_VOTING: false }),
+  useAppEnv: () => ({ DISABLE_ANONYMOUS_VOTING: false, QUESTION_BY_QUESTION: mockQuestionByQuestion }),
 }))
 
 vi.mock('react-router', () => ({
@@ -110,19 +110,20 @@ describe('useCloneAsDraft', () => {
     mockMutateAsync.mockReset()
     mockNavigate.mockReset()
     mockToast.mockReset()
-    mockElection = null
-    setReactProvidersMock({
-      useElection: () => mockUseElection({ election: mockElection }),
-    })
+    mockQuestionByQuestion = false
   })
 
+  // The hook invalidates the votes list after a clone, so it needs a query client.
+  const wrapper = ({ children }: { children: ReactNode }) =>
+    createElement(QueryClientProvider, { client: new QueryClient() }, children)
+  const renderClone = () => renderHook(() => useCloneAsDraft(), { wrapper })
+
   const cloneWith = async (election: VotingProcessResponse) => {
-    mockElection = election
     mockMutateAsync.mockResolvedValue('draft-123')
 
-    const { result } = renderHook(() => useCloneAsDraft())
+    const { result } = renderClone()
     await act(async () => {
-      await result.current.cloneAsDraft()
+      await result.current.cloneAsDraft(election)
     })
 
     await waitFor(() => expect(mockMutateAsync).toHaveBeenCalled())
@@ -153,28 +154,90 @@ describe('useCloneAsDraft', () => {
     })
   })
 
+  describe('the voting mode', () => {
+    const byQuestion = () =>
+      createMockElection([{ title: 'Option 1' }], { initialStatus: 'PAUSED' } as Partial<VotingProcessResponse>)
+
+    it('keeps a question-by-question source question by question while the flag is on', async () => {
+      mockQuestionByQuestion = true
+      await cloneWith(byQuestion())
+
+      expect(clonedRequest()).toMatchObject({ initialStatus: 'PAUSED' })
+      expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ description: undefined }))
+    })
+
+    it('copies it as all at once with the flag off, and says so', async () => {
+      await cloneWith(byQuestion())
+
+      expect(clonedRequest()).not.toHaveProperty('initialStatus')
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({ description: 'The copy votes all questions at once.' })
+      )
+    })
+
+    it('never adds a mode to an all-at-once source', async () => {
+      mockQuestionByQuestion = true
+      await cloneWith(createMockElection([{ title: 'Option 1' }]))
+
+      expect(clonedRequest()).not.toHaveProperty('initialStatus')
+    })
+  })
+
   describe('success flow', () => {
     it('shows a success toast and opens the new draft in the wizard', async () => {
       await cloneWith(createMockElection([{ title: 'Option 1' }]))
 
       expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }))
       expect(mockNavigate).toHaveBeenCalledWith(
-        expect.objectContaining({ search: expect.stringContaining('draftId=draft-123') }),
-        { replace: true }
+        expect.objectContaining({ search: expect.stringContaining('draftId=draft-123') })
       )
+    })
+
+    it('makes one copy however many times it is asked while the first runs', async () => {
+      let finish: (id: string) => void = () => undefined
+      mockMutateAsync.mockReturnValue(new Promise((resolve) => (finish = resolve)))
+      const election = createMockElection([{ title: 'Option 1' }])
+      const { result } = renderClone()
+
+      await act(async () => {
+        void result.current.cloneAsDraft(election)
+        void result.current.cloneAsDraft(election)
+        finish('draft-123')
+      })
+
+      expect(mockMutateAsync).toHaveBeenCalledTimes(1)
+    })
+
+    it('makes one copy when two buttons of the page (two instances) ask for it, and both show it running', async () => {
+      let finish: (id: string) => void = () => undefined
+      mockMutateAsync.mockReturnValue(new Promise((resolve) => (finish = resolve)))
+      const election = createMockElection([{ title: 'Option 1' }])
+      const header = renderClone()
+      const card = renderClone()
+
+      await act(async () => {
+        void header.result.current.cloneAsDraft(election)
+        void card.result.current.cloneAsDraft(election)
+      })
+      expect(header.result.current.isCloning).toBe(true)
+      expect(card.result.current.isCloning).toBe(true)
+      await act(async () => finish('draft-123'))
+
+      expect(mockMutateAsync).toHaveBeenCalledTimes(1)
+      expect(card.result.current.isCloning).toBe(false)
     })
   })
 
   describe('error flow', () => {
     it('shows the draft limit and stays on the page when the account is over its drafts', async () => {
-      mockElection = createMockElection([{ title: 'Option 1' }])
+      const election = createMockElection([{ title: 'Option 1' }])
       mockMutateAsync.mockRejectedValue(
         new ApiError({ error: 'draft limit', code: ErrorCode.DraftLimitReached }, new Response(null, { status: 400 }))
       )
 
-      const { result } = renderHook(() => useCloneAsDraft())
+      const { result } = renderClone()
       await act(async () => {
-        await result.current.cloneAsDraft()
+        await result.current.cloneAsDraft(election)
       })
 
       await waitFor(() => {
@@ -186,12 +249,12 @@ describe('useCloneAsDraft', () => {
     })
 
     it('shows the backend reason for any other refusal, such as a legacy process over the question cap', async () => {
-      mockElection = createMockElection([{ title: 'Option 1' }])
+      const election = createMockElection([{ title: 'Option 1' }])
       mockMutateAsync.mockRejectedValue(new Error('a process can have at most 15 questions'))
 
-      const { result } = renderHook(() => useCloneAsDraft())
+      const { result } = renderClone()
       await act(async () => {
-        await result.current.cloneAsDraft()
+        await result.current.cloneAsDraft(election)
       })
 
       await waitFor(() => {
@@ -204,22 +267,20 @@ describe('useCloneAsDraft', () => {
 
   describe('edge cases', () => {
     it('does nothing when the process has no questions', async () => {
-      mockElection = createMockElection([{ title: 'Option 1' }], { questions: [] })
+      const election = createMockElection([{ title: 'Option 1' }], { questions: [] })
 
-      const { result } = renderHook(() => useCloneAsDraft())
+      const { result } = renderClone()
       await act(async () => {
-        await result.current.cloneAsDraft()
+        await result.current.cloneAsDraft(election)
       })
 
       expect(mockMutateAsync).not.toHaveBeenCalled()
     })
 
     it('does nothing when there is no election', async () => {
-      mockElection = null
-
-      const { result } = renderHook(() => useCloneAsDraft())
+      const { result } = renderClone()
       await act(async () => {
-        await result.current.cloneAsDraft()
+        await result.current.cloneAsDraft(null)
       })
 
       expect(mockMutateAsync).not.toHaveBeenCalled()

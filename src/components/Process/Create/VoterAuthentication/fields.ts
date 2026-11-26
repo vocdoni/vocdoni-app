@@ -37,3 +37,28 @@ export const getContactFieldLabel = (t: TFunction, twoFaFields: readonly string[
   if (phone) return t('csp.fields.phone', { defaultValue: 'Phone' })
   return t('csp.fields.contact', { defaultValue: 'Contact' })
 }
+
+/**
+ * A census field named as the organiser reads it (the voter lookup, Gestió's voting data): sentence case, so it sits
+ * inside a sentence. Unknown fields fall back to their raw key.
+ */
+export const censusFieldLabel = (t: TFunction, field: string): string => {
+  switch (field) {
+    case 'name':
+      return t('census.search.field.name', { defaultValue: 'Name' })
+    case 'surname':
+      return t('census.search.field.surname', { defaultValue: 'Surname' })
+    case 'email':
+      return t('census.search.field.email', { defaultValue: 'Email' })
+    case 'phone':
+      return t('census.search.field.phone', { defaultValue: 'Phone' })
+    case 'memberNumber':
+      return t('census.search.field.member_number', { defaultValue: 'Member number' })
+    case 'nationalId':
+      return t('census.search.field.national_id', { defaultValue: 'National ID' })
+    case 'birthDate':
+      return t('census.search.field.birth_date', { defaultValue: 'Birth date' })
+    default:
+      return field
+  }
+}

@@ -1,96 +1,127 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { useElection } from '@vocdoni/react-components'
 import type { SetElectionStatusRequest } from '@vocdoni/api-types'
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
-import { QueryKeys } from '~queries/keys'
-import { useApiClient } from '~src/providers/ApiClientProvider'
+import { useTranslation } from 'react-i18next'
+import { useAuth } from '~components/Auth/useAuth'
+import { useIsStatusJobRunning, useStatusJob, type StatusJobOutcome } from '~queries/status-job'
+import { useRemembered, useVotePause, type VotePause } from '~queries/vote-pause'
+import { useCanManageVotes } from '~queries/votes'
+import { sameAddress } from '~utils/address'
+import { useNow } from '~utils/use-now'
+import { deriveVoteState, nonTerminalQuestionIds, type VoteState } from '~utils/vote-state'
 
-type ActionKey = 'continue' | 'pause' | 'end' | 'cancel'
-type ActionMessage = { title?: string; description?: string } | null
+export type ActionKey = 'continue' | 'pause' | 'end' | 'cancel'
 
 export type ActionsContextValue = {
   resume: () => Promise<void>
   pause: () => Promise<void>
-  end: () => Promise<void>
-  cancel: () => Promise<void>
+  end: () => Promise<StatusJobOutcome>
+  cancel: () => Promise<StatusJobOutcome>
   loading: Record<ActionKey, boolean>
+  /** The questions a header action changes: every non-terminal one. Empty means no action is left to take. */
+  targets: string[]
+  /** Whether the user may change this vote: a manager or admin of its organisation. */
+  canManage: boolean
+  /** Any status change of this vote is running (header, whole-vote pause or a single question). */
   disabled: boolean
-  info: ActionMessage
-  error: ActionMessage
+  /** Whole-vote pause of a question-by-question vote ("Pause the vote" / "Resume the vote"). */
+  votePause: VotePause
+  /** The vote's state for every part of the page (header, tabs, Gestió, Papereta), whole-vote pause included. */
+  state: VoteState | undefined
+  /** The page's one clock, so the header, the tabs and their content change together at a start or an end. */
+  now: Date
+  /** The header action running, which the "waiting for the transaction" toast names. */
+  info: ActionKey | null
 }
-
-const NO_LOADING: Record<ActionKey, boolean> = { continue: false, pause: false, end: false, cancel: false }
 
 const ActionsContext = createContext<ActionsContextValue | null>(null)
 
-// Each menu action maps to the SAAS status transition and the i18n description shown in the
-// "waiting for the transaction" toast (translated by use-actions-toast, which interpolates the
-// election so `{{ election.title.default }}` resolves).
-const ACTION_CONFIG: Record<ActionKey, { status: SetElectionStatusRequest['status']; description: string }> = {
-  continue: { status: 'ready', description: 'actions.continue_description' },
-  pause: { status: 'paused', description: 'actions.pause_description' },
-  end: { status: 'ended', description: 'actions.end_description' },
-  cancel: { status: 'canceled', description: 'actions.cancel_description' },
+// Each header action maps to a status transition; use-actions-toast names the running one.
+const ACTION_STATUS: Record<ActionKey, SetElectionStatusRequest['status']> = {
+  continue: 'ready',
+  pause: 'paused',
+  end: 'ended',
+  cancel: 'canceled',
 }
 
 /**
- * Election lifecycle actions (pause/resume/end/cancel) backed by the SAAS API. Replaces the legacy
- * react-components `ActionsProvider`, which drove the changes through the Vochain client. Exposes
- * the same shape (`resume`/`pause`/`end`/`cancel`, per-action `loading`, `disabled`, `info`/`error`)
- * so the existing action buttons/menu and the toast bridge consume it unchanged.
- *
- * On success it refreshes the election in place by writing the freshly fetched process onto the
- * election query the ElectionProvider observes (and invalidating its results query), so the UI
- * reflects the new per-question statuses without waiting for a background refetch.
+ * Lifecycle actions of the vote page (pause, resume, end, cancel, and the whole-vote pause of a question-by-question
+ * vote), run through the shared status-job runner. Also the one place the page derives its state and its clock, so
+ * every screen under it reads them from here instead of calling the hooks again.
  */
 export const ActionsProvider = ({ children }: { children: ReactNode }) => {
-  const { client } = useApiClient()
+  const { t } = useTranslation()
   const { election } = useElection()
-  const queryClient = useQueryClient()
-  const [loading, setLoading] = useState<Record<ActionKey, boolean>>(NO_LOADING)
-  const [info, setInfo] = useState<ActionMessage>(null)
-  const [error, setError] = useState<ActionMessage>(null)
+  const [info, setInfo] = useState<ActionKey | null>(null)
+  const { currentAddress } = useAuth()
+  const canManageVotes = useCanManageVotes()
+  const canManage = canManageVotes && !!election && sameAddress(election.orgAddress, currentAddress)
+  const now = useNow()
+  const remembered = useRemembered(election?.id)
+  const rawVotePause = useVotePause(election, now)
+  const { run, pending } = useStatusJob(election?.id)
+  const running = useIsStatusJobRunning(election?.id)
+  const targets = useMemo(() => nonTerminalQuestionIds(election), [election])
+  const state = election ? deriveVoteState(election, now, remembered) : undefined
 
   const value = useMemo<ActionsContextValue>(() => {
-    const run = async (key: ActionKey) => {
-      if (!election?.id) return
-      const { id } = election
-      const { status, description } = ACTION_CONFIG[key]
-
-      setLoading((prev) => ({ ...prev, [key]: true }))
-      setError(null)
-      setInfo({ title: 'actions.waiting_title', description })
-
+    const errorTitles: Record<ActionKey, string> = {
+      continue: t('votes.pause.error.resume', { defaultValue: 'The vote could not be resumed' }),
+      pause: t('votes.pause.error.pause', { defaultValue: 'The vote could not be paused' }),
+      end: t('votes.end.error', { defaultValue: 'The vote could not be ended' }),
+      cancel: t('votes.cancel.error', { defaultValue: 'The vote could not be canceled' }),
+    }
+    const act = async (key: ActionKey): Promise<StatusJobOutcome> => {
+      // Never an empty list (it targets every question) and never a terminal question (the backend rejects the
+      // whole batch when one is ENDED, RESULTS or CANCELED and the request asks otherwise).
+      if (!election?.id || !targets.length || running) return { ok: false }
+      setInfo(key)
       try {
-        // Status changes go through the questions endpoint: each question is its own
-        // on-chain election. An empty question list targets every published question.
-        const { jobId } = await client.elections.bulkSetQuestionStatus(id, { status })
-        await client.jobs.waitFor(jobId)
-        const refreshed = await client.elections.get(id)
-        queryClient.setQueryData(QueryKeys.election.process(id), refreshed)
-        queryClient.invalidateQueries({ queryKey: QueryKeys.election.results(id) })
-        // The lists are cached for a while: a status filter must not keep showing the old status
-        queryClient.invalidateQueries({ queryKey: QueryKeys.organization.electionLists })
-        setInfo(null)
-      } catch (e) {
-        setInfo(null)
-        setError({ title: 'actions.error_title', description: e instanceof Error ? e.message : String(e) })
+        return await run({ questionIds: targets, status: ACTION_STATUS[key], tag: key, errorTitle: errorTitles[key] })
       } finally {
-        setLoading((prev) => ({ ...prev, [key]: false }))
+        setInfo(null)
       }
     }
+    // The whole-vote pause of a question-by-question vote names itself in the same toast.
+    const told = (key: ActionKey, change: () => Promise<void>) => async () => {
+      setInfo(key)
+      try {
+        await change()
+      } finally {
+        setInfo(null)
+      }
+    }
+    const votePause: VotePause = {
+      ...rawVotePause,
+      pause: told('pause', rawVotePause.pause),
+      resume: told('continue', rawVotePause.resume),
+    }
+    const isRunning = (key: ActionKey) => pending?.tag === key
 
     return {
-      resume: () => run('continue'),
-      pause: () => run('pause'),
-      end: () => run('end'),
-      cancel: () => run('cancel'),
-      loading,
-      disabled: loading.continue || loading.pause || loading.end || loading.cancel,
+      resume: async () => {
+        await act('continue')
+      },
+      pause: async () => {
+        await act('pause')
+      },
+      end: () => act('end'),
+      cancel: () => act('cancel'),
+      loading: {
+        continue: isRunning('continue'),
+        pause: isRunning('pause'),
+        end: isRunning('end'),
+        cancel: isRunning('cancel'),
+      },
+      targets,
+      canManage,
+      disabled: running,
+      votePause,
+      state,
+      now,
       info,
-      error,
     }
-  }, [client, election, queryClient, loading, info, error])
+  }, [t, election, targets, running, run, pending, canManage, rawVotePause, state, now, info])
 
   return <ActionsContext.Provider value={value}>{children}</ActionsContext.Provider>
 }

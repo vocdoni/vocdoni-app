@@ -7,15 +7,24 @@ const progress = system.sva(system.getSlotRecipe('progress'))
 const layer = (styles: unknown) => (styles as Record<string, Record<string, unknown>>)['@layer recipes']
 
 describe('progress variants', () => {
-  it.each(['turnout', 'meter', 'job'] as const)(
-    '%s is a 3px square track with the 2px gap after the fill',
-    (variant) => {
-      const styles = progress({ variant })
-      expect(layer(styles.track)).toMatchObject({ height: '3px', borderRadius: 'var(--chakra-radii-none)' })
-      expect(JSON.stringify(layer(styles.range))).toContain('2px 0 0')
-      expect(JSON.stringify(layer(styles.track))).not.toContain('inset')
-    }
-  )
+  it('turnout is a 4px track with round ends and the 2px gap after the fill', () => {
+    const styles = progress({ variant: 'turnout' })
+    expect(layer(styles.track)).toMatchObject({
+      height: 'var(--chakra-sizes-1)',
+      borderRadius: 'var(--chakra-radii-bar)',
+    })
+    expect(layer(styles.range)).toMatchObject({ borderRadius: 'var(--chakra-radii-bar)' })
+    expect(JSON.stringify(layer(styles.range))).toContain('2px 0 0')
+    expect(system.token('radii.bar')).toBe('2px')
+    expect(system.token('sizes.1')).toBe('0.25rem')
+  })
+
+  it.each(['meter', 'job'] as const)('%s is a 3px square track with the 2px gap after the fill', (variant) => {
+    const styles = progress({ variant })
+    expect(layer(styles.track)).toMatchObject({ height: '3px', borderRadius: 'var(--chakra-radii-none)' })
+    expect(JSON.stringify(layer(styles.range))).toContain('2px 0 0')
+    expect(JSON.stringify(layer(styles.track))).not.toContain('inset')
+  })
 
   it('results is a 6px track with an ink fill', () => {
     const styles = progress({ variant: 'results' })

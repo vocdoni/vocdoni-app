@@ -1,14 +1,12 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { organizationQueryKeys, useOrganization } from '@vocdoni/react-components'
 import type { ElectionStatus } from '@vocdoni/api-types'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { useEffect } from 'react'
-import { useParams, useSearchParams } from 'react-router'
 import { ApiEndpoints, ApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
-import { getPaginationParams } from '~utils/pagination'
 import { requireOrganizationAddress } from '~utils/organization'
 import { QueryKeys } from './keys'
 
@@ -110,7 +108,7 @@ export const paginatedElectionsQuery = (
       published: true,
     })
     // Pre-seed each process into the ElectionProvider query so per-row providers
-    // (ProcessesTable, dashboard cards) render from cache instead of re-fetching.
+    // (the organization dashboard's cards) render from cache instead of re-fetching.
     if (queryClient) {
       result.processes.forEach((process) => {
         queryClient.setQueryData(QueryKeys.election.process(process.id), process)
@@ -119,37 +117,6 @@ export const paginatedElectionsQuery = (
     return result
   },
 })
-
-/**
- * The dashboard elections list, keyed by the active organization address.
- *
- * This deliberately subscribes rather than reading the cache once through a route loader.
- * `currentAddress` resolves asynchronously (the auth/addresses query) and changes when the
- * user switches organization; a loader is a one-shot function baked into a route object and
- * cannot notice either, which is what forced the router to be recreated on every render
- * (#1746). As a query, `enabled` does the waiting and a changed address changes the key.
- */
-export const usePaginatedElections = () => {
-  const { currentAddress } = useAuth()
-  const { client } = useApiClient()
-  const queryClient = useQueryClient()
-  const params = useParams()
-  const [searchParams] = useSearchParams()
-
-  // Same merge the route loaders did, and it reads `params` from the same route match, so
-  // the resulting filters are unchanged: query string first, route params on top. An
-  // optional segment that didn't match is simply absent from `params` (React Router
-  // expands `:page?/:status?` into separate branches), so `?page=`/`?status=` still apply
-  // when the path omits them. `limit` has no default — only `?limit=` sets it.
-  const mergedParams = { ...getPaginationParams(searchParams), ...params }
-
-  return useQuery({
-    ...paginatedElectionsQuery(currentAddress, client, mergedParams, queryClient),
-    // Keep the previous page on screen while the next one loads, matching what the
-    // blocking loader used to do (it left the old list rendered until data arrived).
-    placeholderData: keepPreviousData,
-  })
-}
 
 type BearedFetch = ReturnType<typeof useAuth>['bearedFetch']
 

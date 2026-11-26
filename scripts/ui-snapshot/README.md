@@ -22,18 +22,19 @@ pnpm ui:diff -- before after
 
 `pnpm ui:snapshot` options:
 
-| option                  | default       | what it does                                                                |
-| ----------------------- | ------------- | --------------------------------------------------------------------------- |
-| `--label <name>`        | required      | output folder: `.ui-snapshot/<name>/` (git-ignored; replaced on each run)   |
-| `--routes a,b`          | all           | only these route slugs (see `routes.mjs`); their states come along          |
-| `--viewports 1440,390`  | `1440,390`    | widths; height is 900 (844 below 768)                                       |
-| `--modes light,dark`    | `light,dark`  | colour modes                                                                |
-| `--primary-color <hex>` | unset         | starts the app with `PRIMARY_COLOR`, to see a brand colour change           |
-| `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                    |
-| `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")             |
-| `--build`               | off           | serves a production build instead of the dev server (no warm-up; see below) |
-| `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")          |
-| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                  |
+| option                  | default       | what it does                                                                                     |
+| ----------------------- | ------------- | ------------------------------------------------------------------------------------------------ |
+| `--label <name>`        | required      | output folder: `.ui-snapshot/<name>/` (git-ignored; replaced on each run)                        |
+| `--routes a,b`          | all           | only these route slugs (see `routes.mjs`); their states come along                               |
+| `--viewports 1440,390`  | `1440,390`    | widths; height is 900 (844 below 768)                                                            |
+| `--modes light,dark`    | `light,dark`  | colour modes                                                                                     |
+| `--primary-color <hex>` | unset         | starts the app with `PRIMARY_COLOR`, to see a brand colour change                                |
+| `--url <base>`          | spawn the app | use an app you started yourself on localhost (see below)                                         |
+| `--no-warmup`           | warm-up on    | skip the warm-up pass (faster, but see "How determinism works")                                  |
+| `--build`               | off           | serves a production build instead of the dev server (no warm-up; see below)                      |
+| `--theme stress`        | `stock`       | renders with the stress theme and lists leaks (see "Stress theme")                               |
+| `--a11y`                | off           | runs axe-core on every capture (see "Accessibility (axe)")                                       |
+| `--lang ca`             | `en`          | opens `/<lang><path>`, for side-by-side checks against Catalan boards (stock theme, no `--a11y`) |
 
 `pnpm ui:diff -- <labelA> <labelB>` options: `--ignore width,height` drops properties from the
 comparison; `--limit <n>` caps the elements printed per capture (default 50; totals always count
@@ -191,7 +192,10 @@ Add an entry to `ROUTES` in `routes.mjs`:
 },
 ```
 
-`path` has no language prefix (the snapshot opens `/en<path>`). Each state step clicks the first
+`path` has no language prefix (the snapshot opens `/en<path>`, or `/<lang><path>` with `--lang`). Two more
+fields set up a route's data: `storage` (localStorage entries written before the app loads, such as a vote's
+pause memory) and `mock` (a mock path answered with this JSON instead, such as an empty `/processes` for the
+empty votes list). Each state step clicks the first
 visible match among its candidates (`[role, name]` or `['css', selector]`); use `viewports: [1440]`
 when the trigger only exists on desktop. A step waits up to 5 s for a candidate to appear, as a
 dialog's next step does after a request. If the screen needs data the mock lacks, add a handler in
@@ -199,11 +203,32 @@ dialog's next step does after a request. If the screen needs data the mock lacks
 `mockUnmatched`). Take a new baseline after adding routes: `ui:diff` counts a capture that exists on
 one side only as a difference.
 
+## Board states
+
+The `vote-*`, `processes-empty` routes and the `processes-all` states render every state of the Fil
+vote boards (`v4/V4Vote*`, `v4m/M4Vote*`) with the boards' data: Catalan titles, a census of 312 and the boards'
+tallies (`mock-saas.mjs`, "board votes"). All at once: ready, live, paused, ended, canceled; question by question:
+before the start, one open, two open, paused as a whole, all closed, ended with a never-opened question, canceled
+and the 16-question demo; the Papereta tab of a live, an ended and a question-by-question vote; the end, cancel, close-question and delete-draft confirmations and the vote and row menus. Only the
+ready, paused and canceled ones join the votes list; the rest are reached by id. Run them in Catalan to compare
+with the boards:
+
+```bash
+UI_SNAPSHOT_PORT=3009 pnpm ui:snapshot -- --label boards --viewports 1440,768,390 --modes light --lang ca \
+  --routes processes-all,processes-empty,vote-aao-live,vote-qbq-live
+```
+
+The mock answers question status changes as the API does: a batch that targets a question already over gets a 400
+and changes nothing, and ending a question stamps its end time and final tally. Two switches show the failure paths
+by hand: `MOCK_STATUS_BUSY=1` answers every status change with 503 (another change holds the lock) and
+`MOCK_SLOW_JOB_MS=150000` keeps a status job pending that long (the "still working" message after two minutes).
+The list endpoint pages by `page` and `limit` and, as the API, carries no per-question results.
+
 ## Known limits
 
 - **Mock data, no backend.** Screens show what the mock returns: one admin user, one organization
-  on the professional plan, three votes (draft, ongoing, ended with results), ten members, two
-  groups, a team of three. Screens or states that need other data (empty states, errors, other
+  on the professional plan, four votes (draft, ongoing, ended with results, question by question),
+  the Fil boards' votes (below), ten members, two groups, a team of three. Screens or states that need other data (empty states, errors, other
   plans, a vote in progress) are not covered. Writes answer `200 {}` and change nothing.
 - **Public SSR pages log one hydration error.** `/processes/:id` is server-rendered by the dev
   server with the real clock while the browser runs on the fixed one, so relative dates ("in over 4

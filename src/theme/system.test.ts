@@ -2,7 +2,9 @@ import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
 import { PAGE_BACKGROUNDS } from './colors'
 import { contrastRatio, minContrast, PALETTE_SLOTS } from './palette'
+import { DashboardContents as dashboardContents } from './recipes/dashboard'
 import { dragHandle } from './recipes/dragHandle'
+import { ConfirmModal } from './recipes/confirmModal'
 import { VideoPreview } from './recipes/videoPreview'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
@@ -105,7 +107,14 @@ const KNOWN_INVALID = new Set<string>()
 
 const confirmedInvalid = new Set<string>()
 
-const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes, dragHandle, VideoPreview }
+const ALL_RECIPES: Record<string, unknown> = {
+  ...recipes,
+  ...slotRecipes,
+  dragHandle,
+  dashboardContents,
+  confirmModal: ConfirmModal,
+  VideoPreview,
+}
 
 const isTokenPath = (value: string) => /^[a-zA-Z][\w-]*(\.[\w-]+)+$/.test(value)
 
@@ -448,9 +457,11 @@ describe('layout tokens', () => {
   })
 
   it('keeps the dashboard shell sizes', () => {
-    expect(value('sizes.dashboard.menu.expanded')).toBe('255px')
+    expect(value('sizes.dashboard.menu.expanded')).toBe('240px')
     expect(value('sizes.dashboard.menu.collapsed')).toBe('48px')
     expect(value('sizes.dashboard.header')).toBe('47px')
+    expect(value('sizes.dashboard.topbar')).toBe('52px')
+    expect(value('sizes.dashboard.drawer')).toBe('296px')
     expect(value('sizes.dashboard.panel')).toBe('350px')
   })
 

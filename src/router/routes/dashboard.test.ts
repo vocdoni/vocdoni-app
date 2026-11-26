@@ -6,10 +6,15 @@ import { mockUseClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { shouldRevalidateDashboardProcess } from './dashboard'
 
+const queryClient = vi.hoisted(() => ({
+  // Runs the read, as the real one does on an empty cache
+  ensureQueryData: vi.fn(({ queryFn }: { queryFn: () => unknown }) => queryFn()),
+  fetchQuery: vi.fn(({ queryFn }: { queryFn: () => unknown }) => queryFn()),
+  setQueryData: vi.fn(),
+}))
+
 vi.mock('@tanstack/react-query', () => ({
-  useQueryClient: () => ({
-    ensureQueryData: vi.fn(),
-  }),
+  useQueryClient: () => queryClient,
 }))
 
 const ProcessView = () => null
@@ -73,17 +78,116 @@ describe('dashboard process routes', () => {
 
     const processRoute = findRoute([result.current], Routes.dashboard.process)
 
-    // The view sits on the parent; the tab routes render nothing of their own, so
-    // switching between them keeps the parent element (and its state) mounted.
+    // The view sits on the parent and the tabs are its children, so switching between them keeps the
+    // parent element (and its state) mounted.
     expect(await lazyComponent(processRoute)).toBe(ProcessView)
     expect(processRoute?.shouldRevalidate).toBe(shouldRevalidateDashboardProcess)
     expect(processRoute?.children?.map((child) => (child.index ? 'index' : child.path))).toEqual([
       'index',
-      Routes.dashboard.processResults,
+      Routes.dashboard.processBallot,
     ])
-    for (const child of processRoute?.children ?? []) {
-      expect((child.element as ReactElement).type).toBe(Fragment)
+  })
+
+  it('redirects the retired Results tab to the vote summary', async () => {
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { result } = renderHook(() => useDashboardRoutes())
+    const route = findRoute([result.current], Routes.dashboard.processResults)!
+    const response = (await (route.loader as LoaderFunction)({
+      request: new Request('https://app.test/admin/process/0xabc/results'),
+      params: { id: '0xabc' },
+    } as unknown as LoaderFunctionArgs)) as Response
+
+    expect(route.element).toBeUndefined()
+    expect(response.status).toBe(302)
+    expect(response.headers.get('Location')).toBe('/admin/process/0xabc')
+  })
+})
+
+describe('a draft opened at a vote address', () => {
+  it('goes to the editor instead of being drawn as a running vote', async () => {
+    const get = vi.fn().mockResolvedValue({ id: '0xdraft', published: false })
+    vi.doMock('~src/providers/ApiClientProvider', () => ({ useApiClient: () => ({ client: { elections: { get } } }) }))
+    vi.resetModules()
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { Routes: routes } = await import('.')
+    const { result } = renderHook(() => useDashboardRoutes())
+    const route = findRoute([result.current], routes.dashboard.process)!
+    const response = (await (route.loader as LoaderFunction)({
+      request: new Request('https://app.test/admin/process/0xdraft'),
+      params: { id: '0xdraft' },
+    } as unknown as LoaderFunctionArgs)) as Response
+
+    expect(get).toHaveBeenCalledWith('0xdraft')
+    expect(response.status).toBe(302)
+    expect(response.headers.get('Location')).toBe('/admin/processes/create?draftId=0xdraft')
+    vi.doUnmock('~src/providers/ApiClientProvider')
+    vi.resetModules()
+  })
+
+  it('reads a cached draft again before sending the vote to the editor, since it may have been published', async () => {
+    const published = { id: '0xabc', published: true }
+    queryClient.ensureQueryData.mockResolvedValueOnce({ id: '0xabc', published: false })
+    queryClient.fetchQuery.mockResolvedValueOnce(published)
+    vi.doMock('~src/providers/ApiClientProvider', () => ({
+      useApiClient: () => ({ client: { elections: { get: vi.fn() } } }),
+    }))
+    vi.resetModules()
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { Routes: routes } = await import('.')
+    const { result } = renderHook(() => useDashboardRoutes())
+    const route = findRoute([result.current], routes.dashboard.process)!
+    const election = await (route.loader as LoaderFunction)({
+      request: new Request('https://app.test/admin/process/0xabc'),
+      params: { id: '0xabc' },
+    } as unknown as LoaderFunctionArgs)
+
+    expect(queryClient.fetchQuery).toHaveBeenCalledWith(expect.objectContaining({ staleTime: 0 }))
+    expect(election).toEqual(published)
+    vi.doUnmock('~src/providers/ApiClientProvider')
+    vi.resetModules()
+  })
+})
+
+describe('dashboard votes list routes', () => {
+  beforeEach(() => {
+    setReactProvidersMock({ useClient: () => mockUseClient({ client: {} }) })
+  })
+
+  const listRoutes = async () => {
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { result } = renderHook(() => useDashboardRoutes())
+    return findRoute([result.current], Routes.dashboard.processes.base)?.children ?? []
+  }
+
+  it('has an index plus one child per filter, none with a page of its own', async () => {
+    const children = await listRoutes()
+    const { all, live, paused, ready, drafts, closed, ended } = Routes.dashboard.processes
+
+    expect(children.map((child) => (child.index ? 'index' : child.path))).toEqual([
+      'index',
+      all,
+      live,
+      paused,
+      ready,
+      drafts,
+      closed,
+      ended,
+    ])
+    for (const path of [all, live, paused, ready, drafts, closed]) {
+      expect((findRoute(children, path)?.element as ReactElement).type).toBe(Fragment)
     }
+  })
+
+  it('redirects the retired ended tab to closed, keeping the page', async () => {
+    const route = findRoute(await listRoutes(), Routes.dashboard.processes.ended)!
+    const request = new Request('https://app.test/admin/processes/ended/2/RESULTS')
+    const response = (await (route.loader as LoaderFunction)({
+      request,
+      params: { page: '2', status: 'RESULTS' },
+    } as unknown as LoaderFunctionArgs)) as Response
+
+    expect(response.status).toBe(302)
+    expect(response.headers.get('Location')).toBe('/admin/processes/closed/2')
   })
 })
 

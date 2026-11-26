@@ -18,7 +18,7 @@ export const ListStateAlert = ({ error, show = !!error, title, fallback, mb = '4
 
   return (
     <Box mb={mb}>
-      <Alert status='error'>
+      <Alert status='error' role='alert'>
         <AlertIndicator />
         <Box>
           <AlertTitle>{title}</AlertTitle>
