@@ -1,6 +1,7 @@
 import type { PageContextServer } from 'vike/types'
 import { parseProcessIds } from '~components/Home/processIds'
-import { normalizeLanguages, type AppEnv } from '~src/app-env'
+import { normalizeLanguages } from '~src/app-env'
+import type { AppEnv } from '~src/app-env-build'
 import { colorModeScript, isPublicHomePath, isVoterPageId } from '~theme/color-mode-script'
 
 // The host the browser sees (window.location.hostname on the client): the proxy's forwarded host or the request's
