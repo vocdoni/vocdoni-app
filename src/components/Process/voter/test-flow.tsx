@@ -11,6 +11,7 @@ export const testElection = (over: Partial<Record<string, unknown>> = {}) =>
   ({
     id: 'p1',
     orgAddress: 'abc',
+    chainId: 'vocdoni/LTS/1',
     title: { default: 'Assemblea General' },
     description: { default: '' },
     header: '',
@@ -79,6 +80,7 @@ export const testFlow = (over: Partial<VoterFlow> = {}): VoterFlow => ({
   signOut: vi.fn(),
   showResults: vi.fn(),
   checkReceipt: vi.fn(),
+  verifyReceipt: vi.fn(),
   leaveReceipt: vi.fn(),
   ...over,
 })

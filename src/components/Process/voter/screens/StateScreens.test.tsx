@@ -1,10 +1,12 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import i18n from 'i18next'
 import enCommon from '~i18n/locales/en/common.json'
+import { createTestI18n } from '~src/test-utils'
 import type { VoterFlow } from '../flow-context'
+import { formatVoteDay, formatVoteTime } from '../format'
 import { renderWithFlow, testElection, testFacts, testFlow } from '../test-flow'
 import { initialVoterState } from '../voter-flow'
-import { VoteStatusLine } from '../parts/VoteStatusLine'
+import { VoteClosedLine, VoteStatusLine } from '../parts/VoteStatusLine'
 import { PausedNotice } from '../parts/PausedNotice'
 import {
   AlreadyVotedScreen,
@@ -14,7 +16,6 @@ import {
   NotEligibleScreen,
   PausedScreen,
   UnavailableScreen,
-  UnsupportedScreen,
   UpcomingScreen,
 } from './StateScreens'
 
@@ -46,6 +47,48 @@ describe('state screens', () => {
     expect(flow.showResults).toHaveBeenCalledWith(true)
     fireEvent.click(screen.getByRole('button', { name: 'voter.results.check_vote' }))
     expect(flow.checkReceipt).toHaveBeenCalled()
+  })
+
+  // A question-by-question vote ended early: it closed days before its scheduled end, and says so.
+  describe('a vote ended before its schedule', () => {
+    const DAY = 24 * 60 * 60 * 1000
+    const endedAt = new Date(Date.now() - 2 * DAY)
+    const early = testElection({
+      initialStatus: 'PAUSED',
+      published: true,
+      endDate: new Date(Date.now() + 10 * DAY).toISOString(),
+      questions: testElection().questions.map((question) => ({
+        ...question,
+        status: 'ENDED',
+        endedAt: endedAt.toISOString(),
+      })),
+    })
+    const i18nInstance = () =>
+      createTestI18n({
+        resources: {
+          en: {
+            common: {
+              'voter.closed.sentence': 'The vote closed on {{date}} at {{time}}.',
+              'voter.results.closed_on': 'Closed on {{date}} at {{time}}',
+            },
+          },
+        },
+      })
+    const when = `${formatVoteDay(endedAt, 'en')} at ${formatVoteTime(endedAt, 'en')}`
+
+    it('the closed screen dates the close, not the schedule', async () => {
+      renderWithFlow(<ClosedScreen />, testFlow({ election: early, facts: testFacts({ status: 'ENDED' }) }), {
+        i18nInstance: await i18nInstance(),
+      })
+      expect(screen.getByText(`The vote closed on ${when}.`)).toBeInTheDocument()
+    })
+
+    it('the results closed line dates the close, not the schedule', async () => {
+      renderWithFlow(<VoteClosedLine />, testFlow({ election: early, facts: testFacts({ status: 'ENDED' }) }), {
+        i18nInstance: await i18nInstance(),
+      })
+      expect(screen.getByText(`Closed on ${when}`)).toBeInTheDocument()
+    })
   })
 
   it('closed says a cast that failed as the vote closed was not recorded, and nothing else when none failed (gate F6)', () => {
@@ -93,6 +136,20 @@ describe('state screens', () => {
       expect(flow.checkReceipt).toHaveBeenCalled()
     })
 
+    it('an anonymous census with an unknown outcome asks the chain again, not for the receipt code', () => {
+      const flow = testFlow({
+        anonymous: true,
+        facts: testFacts({ status: 'ENDED' }),
+        state: { ...initialVoterState, castError: 'x' },
+        chain: ['unknown', 'unknown'],
+      })
+      renderWithFlow(<ClosedScreen />, flow)
+      expect(screen.queryByTestId('voter-verify-receipt')).toBeNull()
+      fireEvent.click(screen.getByTestId('voter-check-vote'))
+      expect(flow.checkReceipt).toHaveBeenCalled()
+      expect(flow.verifyReceipt).not.toHaveBeenCalled()
+    })
+
     it('some on chain and the rest unknown: the confirmed count, and the rest may be recorded too', () => {
       closedWith(['recorded', 'unknown'], { q1: 'a3f1000000000000009c2e' })
       expect(screen.getByRole('alert')).toHaveTextContent('voter.closed.partly_unconfirmed')
@@ -127,14 +184,11 @@ describe('state screens', () => {
     expect(screen.queryByText('voter.unavailable.body')).toBeNull()
   })
 
-  it('paused, canceled and unsupported say what happens, with no ballot', () => {
+  it('paused and canceled say what happens, with no ballot', () => {
     renderWithFlow(<PausedScreen />, testFlow({ facts: testFacts({ status: 'PAUSED' }) }))
     expect(screen.getByText('voter.paused.card_title')).toBeInTheDocument()
     renderWithFlow(<CanceledScreen />, testFlow({ facts: testFacts({ status: 'CANCELED' }) }))
     expect(screen.getByText('voter.canceled.card_title')).toBeInTheDocument()
-    renderWithFlow(<UnsupportedScreen />, testFlow({ facts: testFacts({ questionByQuestion: true }) }))
-    expect(screen.getByRole('heading', { name: 'voter.unsupported.title' })).toBeInTheDocument()
-    expect(screen.queryByRole('radio')).toBeNull()
   })
 
   it('VoteStatusLine shows paused indicator for context=head when the vote is paused, not the open-until line', () => {
@@ -184,6 +238,15 @@ describe('state screens', () => {
     expect(screen.getByTestId('voter-screen')).toHaveClass('ph-no-capture')
   })
 
+  it('alreadyVoted: "Mostra els resultats" is the only button, in the action bar', () => {
+    const flow = testFlow({ voteIds: { q1: 'a3f1000000000000009c2e' } })
+    renderWithFlow(<AlreadyVotedScreen />, flow)
+    const bar = screen.getByRole('region', { name: 'voter.actions_label' })
+    expect(within(bar).getAllByRole('button')).toHaveLength(1)
+    fireEvent.click(within(bar).getByRole('button', { name: 'voter.results.show' }))
+    expect(flow.showResults).toHaveBeenCalledWith(true)
+  })
+
   it('alreadyVoted opens with the success disc before the heading', () => {
     renderWithFlow(<AlreadyVotedScreen />, testFlow({ voteIds: { q1: 'a3f1000000000000009c2e' } }))
     const frame = screen.getByTestId('voter-screen')
@@ -202,6 +265,87 @@ describe('state screens', () => {
     expect(screen.getByText('aside.anonymous_receipt_gone')).toBeInTheDocument()
   })
 
+  // Board V4VoterWideMore 13.
+  describe('alreadyVoted, anonymous census, signed with no codes held (board 13)', () => {
+    it('says only what the platform knows: no tick, no "Ja has votat", and the way to verify a receipt', () => {
+      const flow = testFlow({ anonymous: true, statuses: ['signed', 'signed'] })
+      renderWithFlow(<AlreadyVotedScreen />, flow)
+      const frame = screen.getByTestId('voter-screen')
+      expect(frame.querySelector('[data-part="success-disc"]')).toBeNull()
+      expect(frame).not.toHaveTextContent('voter.voted.title')
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.voted.anonymous_title')
+      expect(frame).toHaveTextContent('voter.voted.anonymous_help')
+      expect(frame).toHaveTextContent('voter.receipt.card_title')
+      expect(frame).toHaveTextContent('voter.voted.anonymous_card_note')
+      expect(screen.queryByText('vote.disabled.signed')).toBeNull()
+      fireEvent.click(screen.getByRole('button', { name: 'voter.verify.title' }))
+      expect(flow.verifyReceipt).toHaveBeenCalledWith(true)
+      fireEvent.click(screen.getByRole('button', { name: 'voter.results.show' }))
+      expect(flow.showResults).toHaveBeenCalledWith(true)
+    })
+
+    it('offers no receipt check on a chain with no Explorer to check it on', () => {
+      renderWithFlow(
+        <AlreadyVotedScreen />,
+        testFlow({
+          anonymous: true,
+          statuses: ['signed', 'signed'],
+          election: testElection({ chainId: 'vocdoni/TEST/1' }),
+        })
+      )
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.voted.anonymous_title')
+      expect(screen.queryByRole('button', { name: 'voter.verify.title' })).toBeNull()
+      // The card does not promise an Explorer check the chain cannot make.
+      expect(screen.getByTestId('voter-screen')).toHaveTextContent('voter.voted.anonymous_card_note_no_explorer')
+      expect(screen.queryByText('voter.voted.anonymous_card_note')).toBeNull()
+    })
+
+    it('keeps the current screen with its codes when this tab holds them', () => {
+      renderWithFlow(
+        <AlreadyVotedScreen />,
+        testFlow({ anonymous: true, statuses: ['signed', 'signed'], voteIds: { q1: 'a3f1000000000000009c2e' } })
+      )
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.voted.title')
+      expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
+    })
+
+    it('does not apply to a plain census', () => {
+      renderWithFlow(<AlreadyVotedScreen />, testFlow({ statuses: ['signed', 'signed'] }))
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.voted.title')
+      expect(screen.queryByText('voter.voted.anonymous_title')).toBeNull()
+    })
+  })
+
+  it('closed, anonymous census: "Verifica el teu comprovant" replaces "Comprova el teu vot", for a member too (R8)', () => {
+    const flow = testFlow({ anonymous: true, facts: testFacts({ status: 'ENDED', connected: true }) })
+    renderWithFlow(<ClosedScreen />, flow)
+    expect(screen.queryByTestId('voter-check-vote')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'voter.results.check_vote' })).toBeNull()
+    fireEvent.click(screen.getByTestId('voter-verify-receipt'))
+    expect(screen.getByTestId('voter-verify-receipt')).toHaveTextContent('voter.verify.title')
+    expect(flow.verifyReceipt).toHaveBeenCalledWith(true)
+    expect(flow.checkReceipt).not.toHaveBeenCalled()
+  })
+
+  it('closed, anonymous census on a chain with no Explorer: no receipt check is offered', () => {
+    renderWithFlow(
+      <ClosedScreen />,
+      testFlow({
+        anonymous: true,
+        election: testElection({ chainId: 'vocdoni/TEST/1' }),
+        facts: testFacts({ status: 'ENDED', connected: true }),
+      })
+    )
+    expect(screen.queryByTestId('voter-verify-receipt')).toBeNull()
+    expect(screen.queryByTestId('voter-check-vote')).toBeNull()
+  })
+
+  it('closed, plain census: still "Comprova el teu vot" with its own handle', () => {
+    renderWithFlow(<ClosedScreen />, testFlow({ facts: testFacts({ status: 'ENDED', connected: false }) }))
+    expect(screen.getByTestId('voter-check-vote')).toHaveTextContent('voter.results.check_vote')
+    expect(screen.queryByTestId('voter-verify-receipt')).toBeNull()
+  })
+
   it('alreadyVoted never says "Ja has votat" for a vote the chain does not hold (gate F3)', () => {
     renderWithFlow(
       <AlreadyVotedScreen />,
@@ -214,5 +358,44 @@ describe('state screens', () => {
     // What landed keeps its code; what did not is said in the SDK's sentence, next to it.
     expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
     expect(screen.getByText('vote.disabled.unconfirmed')).toBeInTheDocument()
+  })
+})
+
+describe('receipt codes on the closed and already voted screens', () => {
+  const CODE = 'a3f1000000000000009c2e'
+
+  it('an anonymous census gets the copy and download actions for the codes it holds (gate R8)', () => {
+    renderWithFlow(
+      <AlreadyVotedScreen />,
+      testFlow({ anonymous: true, statuses: ['confirmed'], voteIds: { q1: CODE } })
+    )
+    expect(screen.getByRole('button', { name: 'voter.receipt.copy' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'voter.receipt.download' })).toBeInTheDocument()
+  })
+
+  it('a closed screen of an anonymous census gets the same actions for the codes it holds', () => {
+    renderWithFlow(
+      <ClosedScreen />,
+      testFlow({
+        anonymous: true,
+        facts: testFacts({ status: 'ENDED' }),
+        state: { ...initialVoterState, castError: 'x' },
+        chain: ['recorded', 'recorded'],
+        voteIds: { q1: CODE, q2: 'b7c2000000000000001d4f' },
+      })
+    )
+    expect(screen.getByRole('button', { name: 'voter.receipt.copy' })).toBeInTheDocument()
+  })
+
+  it('a plain census gets no copy or download action', () => {
+    renderWithFlow(<AlreadyVotedScreen />, testFlow({ statuses: ['confirmed'], voteIds: { q1: CODE } }))
+    expect(screen.queryByRole('button', { name: 'voter.receipt.copy' })).toBeNull()
+  })
+
+  it('an anonymous vote the chain does not hold says so, even with another question signed (gate F3)', () => {
+    renderWithFlow(<AlreadyVotedScreen />, testFlow({ anonymous: true, statuses: ['signed', 'unconfirmed'] }))
+    expect(screen.getByText('vote.disabled.unconfirmed')).toBeInTheDocument()
+    expect(screen.queryByText('voter.voted.anonymous_title')).toBeNull()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Assemblea General')
   })
 })

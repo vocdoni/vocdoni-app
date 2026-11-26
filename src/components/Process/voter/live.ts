@@ -1,4 +1,6 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
+import { isTerminalQuestion } from '~utils/vote-state'
+import { resultsFinal } from './format'
 
 // Every timing of the voter page lives here (spec D5, audit F8).
 /** The process read's poll while nothing is about to change. */
@@ -46,21 +48,20 @@ export const checkRetryDelay = (failures: number, factor = 1): number =>
     Math.min(VOTER_CHECK_RETRY_MAX_MS, VOTER_CHECK_RETRY_MS * 2 ** Math.min(Math.max(failures - 1, 0), 6)) * factor
   )
 
-/** Nothing will change any more: every question canceled, or every one ended with its final tally. */
+/**
+ * Nothing will change any more: every question is over on the server (a terminal status, or its end recorded) and the
+ * results are final. The device clock does not decide it: a device ahead of the server would read the questions still
+ * paused as never opened and stop the poll. A vote with nothing to count is final once over (`resultsFinal`).
+ */
 export const isSettledProcess = (process: VotingProcessResponse | null | undefined): boolean => {
-  const questions = process?.questions ?? []
-  if (!questions.length) return false
-  if (questions.every((question) => question.status === 'CANCELED')) return true
-  return questions.every(
-    (question) => (question.status === 'ENDED' || question.status === 'RESULTS') && !!question.results?.finalResults
-  )
+  if (!process?.questions.length) return false
+  const over = process.questions.every((question) => isTerminalQuestion(question) || !!question.endedAt)
+  return over && resultsFinal(process)
 }
 
 export type VoterLiveState = {
   /** Until when (ms epoch) the end-instant window keeps the fast poll; unset before the end instant. */
   endWindowUntil?: number
-  /** A results view is on screen and its figures can still change. */
-  resultsLive: boolean
   /** The tab's jitter factor (`jitterFactor`). */
   factor: number
   now: () => number
@@ -71,10 +72,11 @@ type IntervalQuery = { state: { data: unknown } }
 /**
  * The `queryOptions` and `resultsQueryOptions` of the voter page's `ElectionProvider` (audit F8: the provider owns
  * the key, the fetcher and the initial data, so the intervals are functions of the query's own data). Focus and
- * reconnect refetch explicitly, because the app's QueryClient turns focus refetching off. The results read is off
- * (no interval, never stale) unless a results view is open; the provider still fetches it once.
+ * reconnect refetch explicitly, because the app's QueryClient turns focus refetching off. The results screen reads
+ * its figures from the process read, as the organiser's Resum does (spec D7), so the results read is never polled:
+ * the provider fetches it once.
  */
-export const voterLiveQueryOptions = ({ endWindowUntil, resultsLive, factor, now }: VoterLiveState) => ({
+export const voterLiveQueryOptions = ({ endWindowUntil, factor, now }: VoterLiveState) => ({
   queryOptions: {
     refetchInterval: (query: IntervalQuery) => {
       if (isSettledProcess(query.state.data as VotingProcessResponse | undefined)) return false as const
@@ -85,12 +87,10 @@ export const voterLiveQueryOptions = ({ endWindowUntil, resultsLive, factor, now
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   },
-  resultsQueryOptions: resultsLive
-    ? {
-        refetchInterval: Math.round(VOTER_POLL_MS * factor),
-        refetchIntervalInBackground: false,
-        refetchOnWindowFocus: true,
-        refetchOnReconnect: true,
-      }
-    : { refetchInterval: false as const, staleTime: Infinity, refetchOnWindowFocus: false, refetchOnReconnect: false },
+  resultsQueryOptions: {
+    refetchInterval: false as const,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  },
 })

@@ -19,7 +19,6 @@ export const useVoterLive = (id: string, election: ProcessDates | undefined) => 
   const [endWindowUntil, setEndWindowUntil] = useState<number>()
   // The end instant the timer fired at, so a later end is not passed until its own instant comes.
   const [passedEnd, setPassedEnd] = useState<number>()
-  const [resultsLive, setResultsLive] = useState(false)
   // The provider's read, which the server's copy seeds and the refetches replace. Nothing is cached on the server or
   // while the page hydrates: the prop is the one both sides agree on, and the cache takes over after that.
   const live = useSyncExternalStore(
@@ -51,8 +50,8 @@ export const useVoterLive = (id: string, election: ProcessDates | undefined) => 
   }, [end, id, queryClient])
 
   const options = useMemo(
-    () => voterLiveQueryOptions({ endWindowUntil, resultsLive, factor, now: Date.now }),
-    [endWindowUntil, resultsLive, factor]
+    () => voterLiveQueryOptions({ endWindowUntil, factor, now: Date.now }),
+    [endWindowUntil, factor]
   )
-  return { ...options, endPassed: passedEnd !== undefined && passedEnd === end, setResultsLive }
+  return { ...options, endPassed: passedEnd !== undefined && passedEnd === end }
 }

@@ -1893,19 +1893,54 @@
       "review": "Überprüfen und abstimmen"
     },
     "receipt": {
+      "anonymous_warning": "<strong>Anonyme Stimmabgabe:</strong> Speichere diese Quittung jetzt, die Plattform kann sie dir nicht erneut anzeigen.",
       "card_note_one": "Damit kannst du prüfen, ob deine Stimme gezählt wurde, ohne zu verraten, wie du abgestimmt hast.",
       "card_note_other": "Ein Code pro Antwort. Damit kannst du prüfen, ob sie gezählt wurden, ohne zu verraten, wie du abgestimmt hast.",
+      "card_note_anonymous_one": "Damit kannst du prüfen, ob deine Stimme gezählt wurde, ohne zu verraten, wie du abgestimmt hast.",
+      "card_note_anonymous_other": "Ein Code pro Antwort. Damit kannst du prüfen, ob sie gezählt wurden, ohne zu verraten, wie du abgestimmt hast.",
       "card_title": "Deine Quittung",
+      "copied": "Kopiert",
+      "copied_announce": "Codes in die Zwischenablage kopiert.",
+      "copy": "Codes kopieren",
       "copy_code": "{{code}}: vollständigen Code von {{question}} kopieren",
+      "copy_failed": "Kopieren fehlgeschlagen",
+      "copy_failed_announce": "Codes konnten nicht kopiert werden. Lade sie stattdessen herunter.",
+      "download": "Herunterladen",
+      "file_name": "quittung",
       "help_one": "Geprüft: Deine Antwort ist erfasst. Du kannst die Seite jetzt schließen.",
       "help_other": "Geprüft: Die {{count}} Antworten sind erfasst. Du kannst die Seite jetzt schließen.",
-      "results_later": "Die Ergebnisse werden am {{date}} um {{time}} hier veröffentlicht.",
+      "help_anonymous_one": "Geprüft: Deine Antwort ist erfasst.",
+      "help_anonymous_other": "Geprüft: Die {{count}} Antworten sind erfasst.",
       "title": "Stimme abgegeben. Danke."
     },
     "results": {
       "check_vote": "Deine Stimme prüfen",
-      "kicker": "Ergebnisse",
-      "show": "Ergebnisse anzeigen"
+      "closed": "Beendet",
+      "closed_on": "Beendet am {{date}} um {{time}}",
+      "counting_help": "Die endgültigen Ergebnisse erscheinen hier, sobald sie ausgezählt sind. Du musst die Seite nicht neu laden.",
+      "counting_help_secret": "Die Ergebnisse erscheinen hier, sobald sie ausgezählt sind. Du musst die Seite nicht neu laden.",
+      "counting_last": "Letzte Ergebnisse vor der Auszählung. Sie können sich noch ändern.",
+      "counting_title": "Die Stimmen werden ausgezählt",
+      "final_title": "Endergebnisse",
+      "hidden_card_body": "Du musst nichts weiter tun. Du kannst die Seite schließen und am {{day}} wiederkommen.",
+      "hidden_help": "Die Ergebnisse erscheinen genau hier, wenn die Abstimmung am {{date}} um {{time}} endet.",
+      "kind_approval": "Zustimmungsabstimmung",
+      "kind_multiple_one": "Bis zu {{count}} Option",
+      "kind_multiple_other": "Bis zu {{count}} Optionen",
+      "kind_ranked": "Reihenfolge der Präferenz, in Punkten",
+      "kind_single": "Eine Option",
+      "no_votes": "Noch keine Stimmen.",
+      "no_votes_final": "Es wurden keine Stimmen abgegeben.",
+      "not_counted": "Noch nicht ausgezählt.",
+      "not_counted_final": "Es gibt kein Ergebnis anzuzeigen.",
+      "of_vote": "{{title}}{{stop}}",
+      "provisional_note": "Die Abstimmung läuft noch und diese Ergebnisse können sich ändern.",
+      "provisional_title": "Vorläufige Ergebnisse",
+      "show": "Ergebnisse anzeigen",
+      "turnout_one": "{{count}} Person hat abgestimmt.",
+      "turnout_other": "{{count}} Personen haben abgestimmt.",
+      "turnout_share_one": "{{count}} von {{total}} Personen hat abgestimmt ({{percent}} %).",
+      "turnout_share_other": "{{count}} von {{total}} Personen haben abgestimmt ({{percent}} %)."
     },
     "review": {
       "cast": "Stimme abgeben",
@@ -1917,6 +1952,24 @@
       "title": "So stimmst du ab",
       "weight_label": "Dein Stimmgewicht",
       "weight_value": "Deine Stimme zählt {{weight}}"
+    },
+    "room": {
+      "live": "Live. Aktualisiert sich von selbst.",
+      "next": "Als Nächstes",
+      "none_body": "Sobald eine geöffnet wird, erscheint sie hier von selbst. Du musst die Seite nicht neu laden.",
+      "none_title": "Im Moment ist keine Frage geöffnet",
+      "not_started_body": "Sobald die Organisation die erste Frage öffnet, erscheint sie hier von selbst. Du musst die Seite nicht neu laden.",
+      "not_started_line": "Noch nicht begonnen",
+      "not_started_title": "Die Abstimmung hat noch nicht begonnen",
+      "not_votable": "Über diese Seite kann diese Frage noch nicht abgestimmt werden.",
+      "open_label": "Frage {{number}}, jetzt geöffnet",
+      "state": {
+        "canceled": "Abgebrochen",
+        "closed": "Geschlossen",
+        "open": "Jetzt geöffnet",
+        "paused": "Pausiert",
+        "waiting": "Noch nicht geöffnet"
+      }
     },
     "sending": {
       "authorizing": "Stimme wird autorisiert",
@@ -1938,16 +1991,25 @@
       "refused_body": "Diese Seite kann nicht bestätigen, dass du in der Teilnehmerliste für diese Abstimmung stehst. Lade sie später neu oder kontaktiere die Organisation, wenn du denkst, dass ein Fehler vorliegt.",
       "title": "Diese Abstimmung kann gerade nicht angezeigt werden"
     },
-    "unsupported": {
-      "body": "Über diese Seite kann noch nicht abgestimmt werden.",
-      "title": "Diese Abstimmung läuft Frage für Frage"
-    },
     "upcoming": {
       "card_body": "Komm auf diese Seite zurück, sobald sie geöffnet ist.",
       "card_title": "Abstimmen ist noch nicht möglich",
       "sentence": "Die Abstimmung beginnt am {{startDate}} um {{startTime}} und endet am {{endDate}} um {{endTime}}."
     },
+    "verify": {
+      "error_format": "Dieser Code hat nicht das richtige Format. Kopiere ihn vollständig aus der Quittung.",
+      "error_incomplete": "Dieser Code ist nicht vollständig. Kopiere ihn vollständig aus der Quittung, ohne Auslassungspunkte.",
+      "field_label": "Code der Quittung",
+      "help": "Füge einen der Codes aus der Quittung ein, die du beim Abstimmen gespeichert hast. Es gibt einen pro Frage: Du kannst sie einzeln prüfen.",
+      "hint": "Der Explorer öffnet sich in einem neuen Tab. Du musst dich nicht identifizieren.",
+      "submit": "Im Explorer prüfen",
+      "title": "Deine Quittung prüfen"
+    },
     "voted": {
+      "anonymous_card_note": "Sie wurde angezeigt, als du fertig abgestimmt hast. Mit diesen Codes kannst du im Explorer prüfen, ob deine Stimme gezählt wurde.",
+      "anonymous_card_note_no_explorer": "Er wurde angezeigt, als du deine Stimme abgegeben hast. Bewahre diese Codes auf: Sie sind der Beleg deiner Stimme.",
+      "anonymous_help": "Die Abstimmung ist anonym: Die Plattform weiß nicht, welche Stimme deine ist, und kann sie deshalb von diesem Gerät aus weder bestätigen noch anzeigen.",
+      "anonymous_title": "Deine Stimme wurde bereits autorisiert",
       "body": "Du kannst nicht noch einmal abstimmen.",
       "title": "Du hast bereits abgestimmt"
     },
