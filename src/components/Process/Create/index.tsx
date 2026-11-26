@@ -56,6 +56,7 @@ import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
 import { useWalletAccess } from '~queries/wallet'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
+import { voterResultsMetadata } from '~utils/voter-results'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
@@ -580,6 +581,8 @@ export const useFormToVotingProcessRequest = () => {
       form.endDate && form.endTime ? parseLocalDateTime(form.endDate, form.endTime) : addDays(startRef, 1).toISOString()
 
     const secretUntilTheEnd = form.resultVisibility === 'hidden'
+    // Every question carries whether voters see the results on the voting page, in both voting modes.
+    const showVoterResults = !!form.showVoterResults
 
     const questions: VotingProcessQuestionRequest[] = form.questions.map((question) => {
       const choices: Choice[] = question.options.map((q: Option, i: number) => ({
@@ -587,11 +590,12 @@ export const useFormToVotingProcessRequest = () => {
         value: i,
       }))
 
-      const metadata: Record<string, unknown> | undefined = question.extendedInfo
+      const extended: Record<string, unknown> = question.extendedInfo
         ? {
             choices: question.options.map((q, i) => ({ value: i, description: q.description, image: q.image })),
           }
-        : undefined
+        : {}
+      const metadata: Record<string, unknown> = { ...extended, ...voterResultsMetadata(showVoterResults) }
 
       if (question.type === SelectorTypes.Multiple) {
         const maxChoices =

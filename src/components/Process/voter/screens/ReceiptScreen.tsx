@@ -5,7 +5,7 @@ import { SuccessDisc } from '~components/ui/SuccessDisc'
 import { useVoterFlow } from '../flow-context'
 import { ReceiptCard } from '../parts/ReceiptCard'
 import { NoticeCard, ScreenHeading, ScreenHelp, VoterScreenFrame } from '../parts/ScreenParts'
-import { ShowResultsButton } from '../parts/ShowResultsButton'
+import { useShowResultsAction } from '../parts/ShowResultsButton'
 import { VoterActionBar } from '../parts/VoterActionBar'
 
 /**
@@ -18,6 +18,7 @@ export const ReceiptScreen = () => {
   const { t } = useTranslation()
   const localize = useReactComponentsLocalize()
   const { election, voteIds, anonymous, moved, statuses } = useVoterFlow()
+  const resultsAction = useShowResultsAction()
   const hasCodes = election.questions.some((question) => voteIds[question.id])
   // Only what the chain confirmed is "in the record" (gate F3): a question signed elsewhere and not confirmable is
   // said apart, in the SDK's sentence.
@@ -57,7 +58,7 @@ export const ReceiptScreen = () => {
           />
         )}
       </Box>
-      <VoterActionBar primary={<ShowResultsButton />} />
+      <VoterActionBar primary={resultsAction} />
     </VoterScreenFrame>
   )
 }

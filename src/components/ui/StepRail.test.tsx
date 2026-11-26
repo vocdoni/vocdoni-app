@@ -35,6 +35,24 @@ describe('StepRail', () => {
     }
   })
 
+  it('draws a skipped step with its number and a fold row with its count, neither current', () => {
+    render(
+      <StepRail
+        items={[
+          { id: 'q3', number: '3', title: 'Quotes 2027', state: 'skipped', detail: 'Tancada. No l’has votada.' },
+          { id: 'more', number: '+4', title: '4 preguntes més', state: 'more' },
+        ]}
+      />
+    )
+    const rows = screen.getAllByRole('listitem')
+    expect(rows[0]).toHaveTextContent('3')
+    expect(rows[0].querySelector('svg')).toBeNull()
+    expect(rows[1]).toHaveTextContent('+4')
+    expect(rows[0].firstElementChild).toHaveAttribute('data-state', 'skipped')
+    expect(rows[1].firstElementChild).toHaveAttribute('data-state', 'more')
+    expect(screen.queryByText('Quotes 2027')?.closest('[aria-current]')).toBeNull()
+  })
+
   it('makes a row a button when the voter can go to that step', async () => {
     const onSelect = vi.fn()
     render(<StepRail items={[{ ...items[0], onSelect }, items[1]]} />)

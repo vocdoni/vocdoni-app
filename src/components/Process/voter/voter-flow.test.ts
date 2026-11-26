@@ -6,28 +6,36 @@ import {
   batchSize,
   chainRecordOf,
   deriveVoterScreen,
-  encodableAnswer,
   firstUnanswered,
   formValuesFor,
   historyStateFor,
   initialVoterState,
   isAnswered,
+  isRoomCast,
+  lastClosedIndex,
+  lateCastOf,
   ON_CHAIN_NOTICE,
+  roomCastBlocked,
+  roomCastOf,
   sendingPhase,
   shownAnswer,
   stepFromHistory,
   voterReducer,
+  type RoomCast,
+  type RoomFacts,
   type VoterFacts,
   type VoterLocalState,
 } from './voter-flow'
+import { VOTER_CLOCK_TOLERANCE_MS } from './live'
+import type { QuestionState, VoteState } from '~utils/vote-state'
 
 // A connected member of an ongoing three-question vote who has answered nothing yet.
 const facts = (over: Partial<VoterFacts> = {}): VoterFacts => ({
   loaded: true,
   status: 'ONGOING',
-  questionByQuestion: false,
   endedBySchedule: false,
   secretUntilTheEnd: false,
+  resultsShown: true,
   connected: true,
   challengePending: false,
   membership: 'ok',
@@ -42,6 +50,29 @@ const facts = (over: Partial<VoterFacts> = {}): VoterFacts => ({
 })
 const local = (over: Partial<VoterLocalState> = {}): VoterLocalState => ({ ...initialVoterState, ...over })
 const screen = (f: Partial<VoterFacts> = {}, l: Partial<VoterLocalState> = {}) => deriveVoterScreen(facts(f), local(l))
+
+// A question-by-question vote's room: each entry is a state, or [state, cast, endedAt].
+const roomOf = (
+  entries: Array<QuestionState | [QuestionState, RoomCast?, (number | null)?]>,
+  voteState: VoteState = 'live',
+  showsResult = false
+): RoomFacts => ({
+  voteState,
+  questions: entries.map((entry, index) => {
+    const [state, cast = 'none', endedAt = null] = Array.isArray(entry) ? entry : [entry]
+    return { id: `q${index + 1}`, state, cast, endedAt, ...(showsResult ? { showsResult } : {}) }
+  }),
+})
+const qbq = (room: RoomFacts, over: Partial<VoterFacts> = {}): Partial<VoterFacts> => ({
+  room,
+  questionCount: room.questions.length,
+  answered: room.questions.map(() => false),
+  // SDK #118: able only while an unvoted question is open.
+  isAbleToVote: room.questions.some((question) => question.state === 'open' && question.cast === 'none'),
+  ...over,
+})
+// Questions 1 and 2 closed and voted, 3 open, 4 to open (board V4VoterWideLive 1 to 4).
+const LIVE = roomOf([['closed', 'recorded', 1], ['closed', 'recorded', 2], 'open', 'toOpen'])
 
 describe('deriveVoterScreen: precedence, first match wins', () => {
   it('waits for the process read', () => {
@@ -63,18 +94,17 @@ describe('deriveVoterScreen: precedence, first match wins', () => {
     expect(screen({ status: 'CANCELED' }, { castDone: true })).toEqual({ kind: 'canceled' })
   })
 
-  it('4. room: an ongoing or paused question-by-question vote, before identification', () => {
-    expect(screen({ questionByQuestion: true, connected: false })).toEqual({ kind: 'room' })
-    expect(screen({ questionByQuestion: true, connected: true })).toEqual({ kind: 'room' })
-    expect(screen({ questionByQuestion: true, status: 'PAUSED', connected: false })).toEqual({ kind: 'room' })
-    // The room reads the questions: a vote with none, or one the platform cannot read, is unavailable.
-    expect(screen({ questionByQuestion: true, status: 'PROCESS_UNKNOWN' })).toEqual({ kind: 'unavailable' })
-    expect(screen({ questionByQuestion: true, questionCount: 0 })).toEqual({ kind: 'unavailable' })
+  it('4. question by question: identify first, even before a question opens or while paused (R3)', () => {
+    const ready = roomOf(['toOpen', 'toOpen'], 'ready')
+    expect(screen(qbq(ready, { connected: false, status: 'PAUSED' }))).toEqual({ kind: 'identify' })
+    expect(screen(qbq(LIVE, { connected: false }))).toEqual({ kind: 'identify' })
+    expect(screen(qbq(LIVE, { connected: false, challengePending: true }))).toEqual({ kind: 'code' })
+    expect(screen(qbq(roomOf([]), { connected: false }))).toEqual({ kind: 'unavailable' })
   })
 
   it('4b. an ended question-by-question vote is closed, with its results (gate F8)', () => {
-    expect(screen({ questionByQuestion: true, status: 'ENDED', connected: false })).toEqual({ kind: 'closed' })
-    expect(screen({ questionByQuestion: true, endedBySchedule: true }, { viewResults: true })).toEqual({
+    expect(screen(qbq(LIVE, { status: 'ENDED', connected: false }))).toEqual({ kind: 'closed' })
+    expect(screen(qbq(LIVE, { endedBySchedule: true }), { viewResults: true })).toEqual({
       kind: 'results',
       state: 'final',
     })
@@ -187,10 +217,17 @@ describe('deriveVoterScreen: results links', () => {
     expect(screen({ secretUntilTheEnd: true }, { viewResults: true })).toEqual({ kind: 'results', state: 'hidden' })
   })
 
-  it('never over sending, canceled, the room, upcoming or a pending code', () => {
+  it('never when the creator hid the results from voters', () => {
+    const hidden = { resultsShown: false }
+    expect(screen({ ...hidden, connected: false }, { viewResults: true }).kind).toBe('identify')
+    expect(screen({ ...hidden, status: 'ENDED' }, { viewResults: true }).kind).toBe('closed')
+    expect(screen({ ...hidden, hasVoted: true, isAbleToVote: false }, { viewResults: true }).kind).toBe('alreadyVoted')
+    expect(screen(hidden, { castDone: true, viewResults: true }).kind).toBe('receipt')
+  })
+
+  it('never over sending, canceled, upcoming or a pending code', () => {
     expect(screen({ voting: true }, { viewResults: true }).kind).toBe('sending')
     expect(screen({ status: 'CANCELED' }, { viewResults: true }).kind).toBe('canceled')
-    expect(screen({ questionByQuestion: true }, { viewResults: true }).kind).toBe('room')
     expect(screen({ status: 'UPCOMING' }, { viewResults: true }).kind).toBe('upcoming')
     expect(screen({ connected: false, challengePending: true }, { viewResults: true }).kind).toBe('code')
   })
@@ -277,11 +314,29 @@ describe('voterReducer', () => {
     expect(state).toMatchObject({ answers: { '0': '1', '1': ['0', '2'] }, memos: { '1': 'Other' }, castError: null })
   })
 
+  it('names the question a refused cast belongs to, and does not date it as late', () => {
+    const refused = voterReducer(local(), { type: 'castFailed', message: 'x', questionId: 'q2' })
+    expect(refused).toMatchObject({ castQuestionId: 'q2', castFailedAt: null, castUnconfirmed: false })
+  })
+
+  it('remembers the questions the voter was seen ineligible for, until sign out', () => {
+    const seen = voterReducer(local(), { type: 'ineligibleSeen', questionIds: ['q1', 'q3'] })
+    expect(seen.ineligible).toEqual(['q1', 'q3'])
+    expect(voterReducer(seen, { type: 'ineligibleSeen', questionIds: ['q3'] })).toBe(seen)
+    expect(voterReducer(seen, { type: 'signedOut' }).ineligible).toEqual([])
+  })
+
   it('tracks a cast', () => {
     const failed = voterReducer(local(), { type: 'castFailed', message: 'Your vote could not be cast: x' })
     expect(failed.castError).toBe('Your vote could not be cast: x')
     expect(voterReducer(failed, { type: 'castStarted' }).castError).toBeNull()
     expect(voterReducer(failed, { type: 'castSucceeded' })).toMatchObject({ castDone: true, castError: null })
+  })
+
+  it('keeps when the last failed cast was refused, for the late-cast check', () => {
+    const failed = voterReducer(local(), { type: 'castFailed', message: 'x', at: 1_000 })
+    expect(failed.castFailedAt).toBe(1_000)
+    expect(voterReducer(local(), { type: 'castFailed', message: 'x' }).castFailedAt).toBeNull()
   })
 
   it('remembers whether a failed cast could not learn its outcome, until the next cast or answer (gate-2 N2)', () => {
@@ -503,12 +558,6 @@ describe('isAnswered', () => {
     expect(isAnswered(q({ type: '' }), '1')).toBe(false)
   })
 
-  it('gives a question already on chain a placeholder its encoder accepts (gate F2)', () => {
-    for (const question of [single, multiple(1, 2), multiple(2, 3), ranked]) {
-      expect(isAnswered(question, encodableAnswer(question))).toBe(true)
-    }
-  })
-
   it('offers a blank vote only where the range allows choosing nothing', () => {
     expect(allowsBlankVote(blankable)).toBe(true)
     // A dense multiple choice always asks for one at least, whatever its typeSetup says.
@@ -593,5 +642,454 @@ describe('formValuesFor', () => {
   it('builds the SDK form values from the flow, memos under `memo`', () => {
     expect(formValuesFor({ answers: { '0': '1' }, memos: {} })).toEqual({ '0': '1' })
     expect(formValuesFor({ answers: { '0': '1' }, memos: { '0': 'x' } })).toEqual({ '0': '1', memo: { '0': 'x' } })
+  })
+})
+
+describe('deriveVoterScreen: question by question (boards V4VoterWideLive, M4VoterLive)', () => {
+  it('keeps the shared screens: upcoming, canceled, not eligible, session lost, checking', () => {
+    const ready = roomOf(['toOpen', 'toOpen'], 'ready')
+    expect(screen(qbq(ready, { status: 'UPCOMING', connected: false }))).toEqual({ kind: 'upcoming' })
+    expect(screen(qbq(LIVE, { status: 'CANCELED' }))).toEqual({ kind: 'canceled' })
+    expect(screen(qbq(LIVE, { membership: 'notInProcess' }))).toEqual({ kind: 'notEligible' })
+    expect(screen(qbq(LIVE, { membership: 'sessionLost' }))).toEqual({ kind: 'identify', notice: 'sessionExpired' })
+    expect(screen(qbq(LIVE, { voterStateReady: false }))).toEqual({ kind: 'checking' })
+  })
+
+  it('0. no question opened yet: the vote has not started', () => {
+    expect(screen(qbq(roomOf(['toOpen', 'toOpen', 'toOpen'], 'ready'), { status: 'PAUSED' }))).toEqual({
+      kind: 'roomNotStarted',
+    })
+  })
+
+  it('2. an open question takes the voter to its ballot, never to notEligible (SDK #118 isAbleToVote)', () => {
+    expect(screen(qbq(LIVE))).toEqual({ kind: 'roomQuestion', index: 2, paused: false })
+    expect(screen(qbq(LIVE, { isAbleToVote: false }))).toEqual({ kind: 'roomQuestion', index: 2, paused: false })
+  })
+
+  it('1. "Enrere" leaves the ballot for the room until the voter goes back; it never holds the next question', () => {
+    expect(screen(qbq(LIVE), { parked: 'q3' })).toEqual({ kind: 'roomOpen', index: 2 })
+    const next = roomOf([['closed', 'recorded', 1], ['closed', 'recorded', 2], ['closed', 'none', 3], 'open'])
+    expect(screen(qbq(next), { parked: 'q3' })).toEqual({ kind: 'roomQuestion', index: 3, paused: false })
+  })
+
+  it('3b. a skipped open question: nothing cast, and it can still be voted', () => {
+    expect(screen(qbq(LIVE), { skipped: ['q3'] })).toEqual({ kind: 'roomSkipped', index: 2 })
+    expect(screen(qbq(LIVE), { skipped: ['q3'], parked: 'q3' })).toEqual({ kind: 'roomSkipped', index: 2 })
+  })
+
+  it('3. the open question cast: recorded, authorised elsewhere (anonymous) or lost', () => {
+    const cast = (record: RoomCast) =>
+      roomOf([['closed', 'recorded', 1], ['closed', 'recorded', 2], ['open', record], 'toOpen'])
+    expect(screen(qbq(cast('recorded')))).toEqual({ kind: 'roomVoted', index: 2, record: 'recorded' })
+    expect(screen(qbq(cast('authorised')))).toEqual({ kind: 'roomVoted', index: 2, record: 'authorised' })
+    expect(screen(qbq(cast('lost')))).toEqual({ kind: 'roomVoted', index: 2, record: 'lost' })
+    // A stored transaction waiting to be re-sent is not cast yet: its ballot shows the SDK's notice.
+    expect(screen(qbq(cast('pending')))).toEqual({ kind: 'roomQuestion', index: 2, paused: false })
+    // Voted, then skipped earlier: the vote wins.
+    expect(screen(qbq(cast('recorded')), { skipped: ['q3'] })).toEqual({
+      kind: 'roomVoted',
+      index: 2,
+      record: 'recorded',
+    })
+    // Every question cast while the last one is still open: frame 3, not "Ja has votat".
+    const last = roomOf([
+      ['closed', 'recorded', 1],
+      ['open', 'recorded'],
+    ])
+    expect(screen(qbq(last, { hasVoted: true }))).toEqual({ kind: 'roomVoted', index: 1, record: 'recorded' })
+  })
+
+  it('3c. the question that closed last was not cast, skipped or not: closed without voting', () => {
+    const missed = roomOf([['closed', 'recorded', 1], ['closed', 'recorded', 2], ['closed', 'none', 3], 'toOpen'])
+    expect(screen(qbq(missed, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'roomMissed', index: 2 })
+    expect(screen(qbq(missed, { status: 'PROCESS_UNKNOWN' }), { skipped: ['q3'] })).toEqual({
+      kind: 'roomMissed',
+      index: 2,
+    })
+  })
+
+  describe('3d, 3e. the creator shows the result of each closed question', () => {
+    const closed = (cast: RoomCast, showsResult: boolean) =>
+      roomOf([['closed', 'recorded', 1], ['closed', cast, 2], 'toOpen'], 'live', showsResult)
+    const between = { status: 'PROCESS_UNKNOWN' } as const
+
+    it('3d. closed without voting: the result shows, skipped or never voted', () => {
+      const expected = { kind: 'roomMissed', index: 1, result: true }
+      expect(screen(qbq(closed('none', true), between))).toEqual(expected)
+      expect(screen(qbq(closed('none', true), between), { skipped: ['q2'] })).toEqual(expected)
+    })
+
+    it('3e. closed after voting: the result shows', () => {
+      expect(screen(qbq(closed('recorded', true), between))).toEqual({ kind: 'roomClosedVoted', index: 1 })
+    })
+
+    it('without the key the frames stay 3c and 4', () => {
+      expect(screen(qbq(closed('none', false), between))).toEqual({ kind: 'roomMissed', index: 1 })
+      expect(screen(qbq(closed('recorded', false), between))).toEqual({ kind: 'roomNone' })
+    })
+
+    it('a vote that is not on chain is never told as voted, nor as not voted (gate-3 F2, F3)', () => {
+      expect(screen(qbq(closed('lost', true), between))).toEqual({
+        kind: 'roomMissed',
+        index: 1,
+        result: true,
+        record: 'lost',
+      })
+      expect(screen(qbq(closed('unknown', true), between))).toEqual({
+        kind: 'roomMissed',
+        index: 1,
+        result: true,
+        record: 'unknown',
+      })
+      expect(screen(qbq(closed('authorised', true), between))).toEqual({ kind: 'roomNone' })
+    })
+
+    it('lasts until the next question opens, then its ballot', () => {
+      const next = roomOf([['closed', 'recorded', 1], ['closed', 'recorded', 2], 'open'], 'live', true)
+      expect(screen(qbq(next))).toEqual({ kind: 'roomQuestion', index: 2, paused: false })
+    })
+
+    it('a held (paused) vote shows the paused screen, not the result', () => {
+      const held = roomOf([['closed', 'recorded', 1], 'toOpen'], 'paused', true)
+      expect(screen(qbq(held, between))).toEqual({ kind: 'paused' })
+    })
+  })
+
+  it('3c. a cast lost or of unknown outcome says so, never "No l\'has votada" (gate-3 F2, F3)', () => {
+    const between = { status: 'PROCESS_UNKNOWN' } as const
+    const lost = roomOf([['closed', 'recorded', 1], ['closed', 'lost', 2], 'toOpen'])
+    expect(screen(qbq(lost, between))).toEqual({ kind: 'roomMissed', index: 1, record: 'lost' })
+    const unknown = roomOf([['closed', 'recorded', 1], ['closed', 'unknown', 2], 'toOpen'])
+    expect(screen(qbq(unknown, between))).toEqual({ kind: 'roomMissed', index: 1, record: 'unknown' })
+    // Still open, a cast of unknown outcome keeps its ballot (the error and "Torna-ho a provar"), as a pending one does.
+    const open = roomOf([['closed', 'recorded', 1], ['open', 'unknown'], 'toOpen'])
+    expect(screen(qbq(open))).toEqual({ kind: 'roomQuestion', index: 1, paused: false })
+  })
+
+  describe('3c. late cast: voter pressed the button as the organiser closed the question (gate-3 F2 extension)', () => {
+    const between = { status: 'PROCESS_UNKNOWN' } as const
+
+    // lateCastOf is the single source of the late-cast rule; the provider uses it to convert 'pending' to 'late'
+    // before deriveRoomScreen runs, so the screen sees 'late' directly (the 'cast already set' case below).
+    const ENDED_AT = Date.parse('2026-06-01T12:00:00.000Z')
+    const refused = {
+      castQuestionId: 'q2',
+      castError: 'question closed',
+      castUnconfirmed: false,
+      castFailedAt: ENDED_AT + 5_000,
+    }
+
+    it('lateCastOf: refused after the question ended = true', () => {
+      expect(lateCastOf('pending', 'q2', refused, ENDED_AT)).toBe(true)
+      expect(lateCastOf('pending', 'q2', { ...refused, castFailedAt: ENDED_AT }, ENDED_AT)).toBe(true)
+    })
+
+    it('lateCastOf: refused a few seconds before the end, within the clock tolerance, is still late', () => {
+      expect(lateCastOf('pending', 'q2', { ...refused, castFailedAt: ENDED_AT - 5_000 }, ENDED_AT)).toBe(true)
+      expect(
+        lateCastOf('pending', 'q2', { ...refused, castFailedAt: ENDED_AT - VOTER_CLOCK_TOLERANCE_MS }, ENDED_AT)
+      ).toBe(true)
+    })
+
+    it('lateCastOf: refused well before the question ended is a failed cast, whatever happens after (gate-3 F2)', () => {
+      expect(
+        lateCastOf('pending', 'q2', { ...refused, castFailedAt: ENDED_AT - VOTER_CLOCK_TOLERANCE_MS - 1 }, ENDED_AT)
+      ).toBe(false)
+      expect(lateCastOf('pending', 'q2', { ...refused, castError: 'The CSP did not sign' }, null)).toBe(false)
+    })
+
+    it('lateCastOf: castUnconfirmed means unknown outcome, not a refusal', () => {
+      expect(lateCastOf('pending', 'q2', { ...refused, castUnconfirmed: true }, ENDED_AT)).toBe(false)
+    })
+
+    it('lateCastOf: castQuestionId does not match', () => {
+      expect(lateCastOf('pending', 'q2', { ...refused, castQuestionId: 'q1' }, ENDED_AT)).toBe(false)
+    })
+
+    it('lateCastOf: no castError or no refusal instant', () => {
+      expect(lateCastOf('pending', 'q2', { ...refused, castError: null }, ENDED_AT)).toBe(false)
+      expect(lateCastOf('pending', 'q2', { ...refused, castFailedAt: null }, ENDED_AT)).toBe(false)
+    })
+
+    it('lateCastOf: non-pending cast is never late', () => {
+      expect(lateCastOf('none', 'q2', refused, ENDED_AT)).toBe(false)
+      expect(lateCastOf('late', 'q2', refused, ENDED_AT)).toBe(false)
+      expect(lateCastOf('recorded', 'q2', refused, ENDED_AT)).toBe(false)
+    })
+
+    it('cast already set to late by the provider: roomMissed with record late', () => {
+      // The provider converts pending → late via lateCastOf; deriveRoomScreen sees 'late' directly.
+      const room = roomOf([['closed', 'recorded', 1], ['closed', 'late', 2], 'toOpen'])
+      expect(screen(qbq(room, between))).toEqual({ kind: 'roomMissed', index: 1, record: 'late' })
+    })
+
+    it('with the result card when the creator shows this question result', () => {
+      const room = roomOf([['closed', 'recorded', 1], ['closed', 'late', 2], 'toOpen'], 'live', true)
+      expect(screen(qbq(room, between))).toEqual({ kind: 'roomMissed', index: 1, result: true, record: 'late' })
+    })
+  })
+
+  describe('a question the check leaves this voter out of (canVote false, gate-3 F10)', () => {
+    const notFor = (room: RoomFacts, id: string): RoomFacts => ({
+      ...room,
+      questions: room.questions.map((question) => (question.id === id ? { ...question, eligible: false } : question)),
+    })
+
+    it('open: its own frame, no ballot', () => {
+      expect(screen(qbq(notFor(LIVE, 'q3')))).toEqual({ kind: 'roomNotEligible', index: 2 })
+    })
+
+    it('closed: nothing to tell, never "No l\'has votada"', () => {
+      const closed = notFor(roomOf([['closed', 'recorded', 1], ['closed', 'none', 2], 'toOpen']), 'q2')
+      expect(screen(qbq(closed, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'roomNone' })
+    })
+
+    it('held by a pause: the paused screen, not its ballot', () => {
+      const held = notFor(roomOf([['closed', 'recorded', 1], 'paused', 'toOpen'], 'paused'), 'q2')
+      expect(screen(qbq(held, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'paused' })
+    })
+
+    it('an open question the SDK skips (its form locks it) does not block the one the voter can cast', () => {
+      const two = roomOf([['closed', 'recorded', 1], 'open', 'open'])
+      const skipped: RoomFacts = {
+        ...two,
+        questions: two.questions.map((question) =>
+          question.id === 'q3' ? { ...question, skippedBySdk: true } : question
+        ),
+      }
+      expect(screen(qbq(skipped))).toEqual({ kind: 'roomQuestion', index: 1, paused: false })
+      expect(roomCastBlocked(skipped.questions, 1)).toBe(false)
+    })
+
+    it('an open question only the check leaves out of still blocks, as the SDK would sign it', () => {
+      expect(roomCastBlocked(notFor(roomOf([['closed', 'recorded', 1], 'open', 'open']), 'q3').questions, 1)).toBe(true)
+    })
+
+    it('no question the voter may vote, and none cast: not eligible, as a non-member', () => {
+      const none = roomOf(['open', 'toOpen'])
+      const all = { ...none, questions: none.questions.map((question) => ({ ...question, eligible: false })) }
+      expect(screen(qbq(all))).toEqual({ kind: 'notEligible' })
+    })
+  })
+
+  describe('two questions open at once (only through the API, gate-3 F10)', () => {
+    it('blocks the cast while another open question is not cast, as the SDK would sign both', () => {
+      const two = roomOf([['closed', 'recorded', 1], 'open', 'open'])
+      expect(screen(qbq(two))).toEqual({ kind: 'roomQuestion', index: 1, paused: false, blocked: true })
+    })
+
+    it('shows the open question still to vote, unblocked, once the other is cast', () => {
+      const first = roomOf([['open', 'recorded'], 'open', 'toOpen'])
+      expect(screen(qbq(first))).toEqual({ kind: 'roomQuestion', index: 1, paused: false })
+      const second = roomOf(['open', ['open', 'recorded'], 'toOpen'])
+      expect(screen(qbq(second))).toEqual({ kind: 'roomQuestion', index: 0, paused: false })
+    })
+  })
+
+  it('an all-at-once vote has no room, so the key changes nothing', () => {
+    expect(screen({ status: 'ENDED' }, { checkReceipt: true })).toEqual(
+      screen({ status: 'ENDED', room: null }, { checkReceipt: true })
+    )
+    expect(screen({ hasVoted: true })).toEqual({ kind: 'alreadyVoted' })
+  })
+
+  it('4. none open after a cast question, or between questions: no unavailable screen', () => {
+    const none = roomOf([['closed', 'recorded', 1], ['closed', 'none', 2], ['closed', 'recorded', 3], 'toOpen'])
+    expect(screen(qbq(none, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'roomNone' })
+  })
+
+  it('the paused vote: the held question keeps its ballot (M2), anything else is the paused screen (M1)', () => {
+    const held = roomOf([['closed', 'recorded', 1], 'paused', 'toOpen'], 'paused')
+    expect(screen(qbq(held, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'roomQuestion', index: 1, paused: true })
+    expect(screen(qbq(held, { status: 'PROCESS_UNKNOWN' }), { skipped: ['q2'] })).toEqual({ kind: 'paused' })
+    expect(screen(qbq(held, { status: 'PROCESS_UNKNOWN' }), { parked: 'q2' })).toEqual({ kind: 'paused' })
+    const castHeld = roomOf([['closed', 'recorded', 1], ['paused', 'recorded'], 'toOpen'], 'paused')
+    expect(screen(qbq(castHeld, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'paused' })
+    // Resumed: the skipped question is still skipped (R10: it can be voted while open).
+    expect(screen(qbq(LIVE), { skipped: ['q3'] }).kind).toBe('roomSkipped')
+  })
+
+  it('5. after the end, "Comprova el teu vot" shows the codes of any cast question, else the closed screen', () => {
+    const ended = roomOf(
+      [
+        ['closed', 'recorded', 1],
+        ['closed', 'none', 2],
+      ],
+      'closed'
+    )
+    expect(screen(qbq(ended, { status: 'ENDED' }), { checkReceipt: true })).toEqual({ kind: 'alreadyVoted' })
+    const none = roomOf(
+      [
+        ['closed', 'none', 1],
+        ['closed', 'none', 2],
+      ],
+      'closed'
+    )
+    expect(screen(qbq(none, { status: 'ENDED' }), { checkReceipt: true })).toEqual({ kind: 'closed' })
+    // Every question over with a canceled one (no single stored status says ended): the same rule.
+    const mixed = roomOf([['closed', 'recorded', 1], 'canceled'], 'closed')
+    expect(screen(qbq(mixed, { status: 'PROCESS_UNKNOWN' }))).toEqual({ kind: 'alreadyVoted' })
+  })
+
+  it('no results on the voter screen while a question-by-question vote runs (R11 default)', () => {
+    expect(screen(qbq(LIVE), { viewResults: true })).toEqual({ kind: 'results', state: 'hidden' })
+    expect(screen(qbq(LIVE, { connected: false }), { viewResults: true })).toEqual({ kind: 'results', state: 'hidden' })
+    // The all-at-once vote keeps its live results.
+    expect(screen({}, { viewResults: true })).toEqual({ kind: 'results', state: 'provisional' })
+  })
+
+  it('follows the reads with no reload: opens, casts, closes, opens the next, skips, closes, ends', () => {
+    const reads: [RoomFacts, Partial<VoterFacts>][] = [
+      [roomOf(['toOpen', 'toOpen', 'toOpen'], 'ready'), { status: 'PAUSED' }],
+      [roomOf(['open', 'toOpen', 'toOpen']), {}],
+      [roomOf([['open', 'recorded'], 'toOpen', 'toOpen']), {}],
+      [roomOf([['closed', 'recorded', 1], 'toOpen', 'toOpen']), { status: 'PROCESS_UNKNOWN' }],
+      [roomOf([['closed', 'recorded', 1], 'open', 'toOpen']), {}],
+      [roomOf([['closed', 'recorded', 1], ['closed', 'none', 2], 'toOpen']), { status: 'PROCESS_UNKNOWN' }],
+      [roomOf([['closed', 'recorded', 1], ['closed', 'none', 2], 'open']), {}],
+      [
+        roomOf(
+          [
+            ['closed', 'recorded', 1],
+            ['closed', 'none', 2],
+            ['closed', 'none', 3],
+          ],
+          'closed'
+        ),
+        { status: 'ENDED' },
+      ],
+    ]
+    const kinds = reads.map(([room, over]) => screen(qbq(room, over), { skipped: ['q2'] }).kind)
+    expect(kinds).toEqual([
+      'roomNotStarted',
+      'roomQuestion',
+      'roomVoted',
+      'roomNone',
+      'roomSkipped',
+      'roomMissed',
+      'roomQuestion',
+      'closed',
+    ])
+  })
+})
+
+describe('question by question helpers', () => {
+  it('roomCastOf: on chain first, then the SDK status, then a pending re-send', () => {
+    expect(roomCastOf({ onChain: true, status: 'signed', pending: true })).toBe('recorded')
+    expect(roomCastOf({ onChain: false, status: 'confirmed', pending: false })).toBe('recorded')
+    expect(roomCastOf({ onChain: false, status: 'signed', pending: false })).toBe('authorised')
+    expect(roomCastOf({ onChain: false, status: 'unconfirmed', pending: false })).toBe('lost')
+    expect(roomCastOf({ onChain: false, status: 'failed', pending: true })).toBe('pending')
+    expect(roomCastOf({ onChain: false, status: undefined, pending: false })).toBe('none')
+  })
+
+  it('roomCastOf: a cast whose outcome is unknown may have landed, so it is never "none" (gate-3 F3)', () => {
+    expect(roomCastOf({ onChain: false, status: 'failed', pending: true, outcomeUnknown: true })).toBe('unknown')
+    expect(roomCastOf({ onChain: false, status: 'submitting', pending: false })).toBe('unknown')
+    expect(roomCastOf({ onChain: false, status: 'confirming', pending: false })).toBe('unknown')
+    // The chain wins over any doubt.
+    expect(roomCastOf({ onChain: true, status: 'failed', pending: true, outcomeUnknown: true })).toBe('recorded')
+  })
+
+  it('isRoomCast counts recorded, authorised and lost', () => {
+    expect(
+      (['recorded', 'authorised', 'lost', 'pending', 'none'] as RoomCast[]).map((cast) => isRoomCast({ cast }))
+    ).toEqual([true, true, true, false, false])
+  })
+
+  it('lastClosedIndex: the latest end time, else the agenda order', () => {
+    expect(lastClosedIndex(roomOf(['toOpen']).questions)).toBe(-1)
+    expect(lastClosedIndex(roomOf([['closed', 'none', 5], ['closed', 'none', 3], 'open']).questions)).toBe(0)
+    expect(
+      lastClosedIndex(
+        roomOf([
+          ['closed', 'none', null],
+          ['closed', 'none', null],
+        ]).questions
+      )
+    ).toBe(1)
+  })
+})
+
+describe('voterReducer: question by question', () => {
+  it('parks, skips and resumes by question id', () => {
+    let state = voterReducer(initialVoterState, { type: 'park', questionId: 'q3' })
+    expect(state.parked).toBe('q3')
+    state = voterReducer(state, { type: 'skip', questionId: 'q3' })
+    expect(state).toMatchObject({ parked: null, skipped: ['q3'] })
+    state = voterReducer(state, { type: 'skip', questionId: 'q3' })
+    expect(state.skipped).toEqual(['q3'])
+    state = voterReducer(state, { type: 'resume', questionId: 'q3' })
+    expect(state).toMatchObject({ parked: null, skipped: [] })
+  })
+
+  it('a question cast records the question it was for and never opens the receipt', () => {
+    let state = voterReducer({ ...initialVoterState, answers: { '2': '0' } }, { type: 'castStarted', questionId: 'q3' })
+    expect(state).toMatchObject({ castQuestionId: 'q3', sent: { '2': '0' } })
+    state = voterReducer({ ...state, castError: 'x' }, { type: 'questionCastSucceeded' })
+    expect(state).toMatchObject({ castDone: false, castError: null })
+    // The all-at-once cast still clears it.
+    expect(voterReducer(state, { type: 'castStarted' }).castQuestionId).toBeNull()
+  })
+
+  it('forgets a parked question once another question is the open one', () => {
+    let state = voterReducer(initialVoterState, { type: 'park', questionId: 'q2' })
+    // Question 2 closes and question 3 opens: the frame parked on question 2 has nothing left to show.
+    state = voterReducer(state, { type: 'openChanged', questionId: 'q3' })
+    expect(state.parked).toBeNull()
+  })
+
+  it('keeps a parked question while it stays the open one, or while no question is open (a paused vote)', () => {
+    const parked = voterReducer(initialVoterState, { type: 'park', questionId: 'q2' })
+    expect(voterReducer(parked, { type: 'openChanged', questionId: 'q2' }).parked).toBe('q2')
+    expect(voterReducer(parked, { type: 'openChanged', questionId: null }).parked).toBe('q2')
+  })
+
+  it('a refused cast says why on its question and sends nothing, so an earlier unknown outcome stays', () => {
+    const state = voterReducer(
+      { ...initialVoterState, castQuestionId: 'q1', castUnconfirmed: true, uncertain: ['q1'] },
+      { type: 'castRefused', questionId: 'q2', message: 'voter.room.blocked' }
+    )
+    expect(state).toMatchObject({ castQuestionId: 'q2', castError: 'voter.room.blocked', castUnconfirmed: false })
+    expect(state.uncertain).toEqual(['q1'])
+  })
+
+  it('a definite refusal of a later cast keeps the unknown outcome of an earlier one (only a chain record settles it)', () => {
+    let state = voterReducer(initialVoterState, { type: 'castStarted', questionId: 'q2' })
+    state = voterReducer(state, { type: 'castFailed', message: 'errors.vote_unconfirmed', unconfirmed: true })
+    state = voterReducer(state, { type: 'castStarted', questionId: 'q2' })
+    state = voterReducer(state, { type: 'castFailed', message: 'errors.vote_no_open_question' })
+    expect(state).toMatchObject({ castUnconfirmed: false, uncertain: ['q2'] })
+  })
+
+  it('a refusal does not replace the unknown-outcome notice of the same question', () => {
+    const unknown = {
+      ...initialVoterState,
+      castQuestionId: 'q2',
+      castError: 'errors.vote_unconfirmed',
+      castUnconfirmed: true,
+    }
+    expect(voterReducer(unknown, { type: 'castRefused', questionId: 'q2', message: 'voter.room.blocked' })).toEqual(
+      unknown
+    )
+  })
+
+  it('signing out forgets what was parked and skipped', () => {
+    const state = voterReducer(
+      { ...initialVoterState, parked: 'q1', skipped: ['q2'], uncertain: ['q2'] },
+      { type: 'signedOut' }
+    )
+    expect(state).toMatchObject({ parked: null, skipped: [], castQuestionId: null, uncertain: [] })
+  })
+
+  it('keeps an unknown outcome per question until that question is cast, whatever is answered meanwhile (gate-3 F3)', () => {
+    let state = voterReducer(initialVoterState, { type: 'castStarted', questionId: 'q2' })
+    state = voterReducer(state, { type: 'castFailed', message: 'errors.vote_unconfirmed', unconfirmed: true })
+    expect(state).toMatchObject({ castUnconfirmed: true, uncertain: ['q2'] })
+    state = voterReducer(state, { type: 'answer', key: '2', value: '0' })
+    expect(state).toMatchObject({ castUnconfirmed: false, uncertain: ['q2'] })
+    state = voterReducer(state, { type: 'castStarted', questionId: 'q2' })
+    state = voterReducer(state, { type: 'questionCastSucceeded' })
+    expect(state.uncertain).toEqual([])
   })
 })

@@ -47,6 +47,7 @@ const question = (n: number, status = 'ONGOING', voteCount = 0) => ({
     costFromWeight: false,
   },
   secretUntilTheEnd: false,
+  resultsShown: true,
   status,
   metadata: {},
   results: { voteCount, maxVoters: 10, finalResults: false, results: [] },

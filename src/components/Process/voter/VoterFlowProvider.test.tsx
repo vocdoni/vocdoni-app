@@ -6,6 +6,7 @@ import { VoterFlowProvider } from './VoterFlowProvider'
 // The SDK hooks the provider reads, stubbed: here only what `cast` does with a `vote()` that throws matters.
 const sdk = vi.hoisted(() => ({
   vote: vi.fn(async (_values: Record<string, unknown>): Promise<string | false> => 'vote-1'),
+  errors: {} as Record<string, unknown>,
 }))
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
@@ -33,7 +34,10 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     setValue: () => undefined,
     reset: () => undefined,
     trigger: async () => true,
-    formState: { errors: {} },
+    clearErrors: () => undefined,
+    get formState() {
+      return { errors: sdk.errors }
+    },
   }
   // One value for every render, as the SDK's state is between changes.
   const state = {
@@ -79,6 +83,10 @@ const Probe = () => {
 }
 
 describe('VoterFlowProvider cast', () => {
+  afterEach(() => {
+    sdk.errors = {}
+  })
+
   it('drops the outcome of a cast that settles after the voter signed out, so the next voter gets no receipt', async () => {
     sdk.vote.mockClear()
     let settle!: (result: string | false) => void
@@ -125,5 +133,44 @@ describe('VoterFlowProvider cast', () => {
     expect(probe.current?.casting).toBe(false)
     expect(logged).toHaveBeenCalledWith('Voter cast failed:', expect.any(Error))
     logged.mockRestore()
+  })
+
+  // The SDK refuses a cast over eligibility before it signs anything: the form says so, and it is not a failed cast.
+  it('a stale form is not a failed cast: no late or unknown outcome, its sentence is kept (SDK 4.3)', async () => {
+    sdk.vote.mockResolvedValueOnce(false)
+    sdk.errors = { root: { vote: { message: 'errors.vote_eligibility_changed' } } }
+    render(
+      <AllProviders>
+        <VoterFlowProvider brand={{ branded: false, name: 'Ateneu' }}>
+          <Probe />
+        </VoterFlowProvider>
+      </AllProviders>
+    )
+    await waitFor(() => expect(probe.current).toBeDefined())
+    await act(async () => {
+      await probe.current?.cast()
+    })
+    expect(probe.current?.state).toMatchObject({
+      castError: 'errors.vote_eligibility_changed',
+      castUnconfirmed: false,
+      castFailedAt: null,
+    })
+  })
+
+  it('no question left to this voter: the cast shows no failed sentence, the check decides (SDK 4.3)', async () => {
+    sdk.vote.mockResolvedValueOnce(false)
+    sdk.errors = { root: { vote: { message: 'errors.vote_ineligible_questions' } } }
+    render(
+      <AllProviders>
+        <VoterFlowProvider brand={{ branded: false, name: 'Ateneu' }}>
+          <Probe />
+        </VoterFlowProvider>
+      </AllProviders>
+    )
+    await waitFor(() => expect(probe.current).toBeDefined())
+    await act(async () => {
+      await probe.current?.cast()
+    })
+    expect(probe.current?.state).toMatchObject({ castError: null, castDone: false })
   })
 })

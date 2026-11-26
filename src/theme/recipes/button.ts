@@ -165,6 +165,25 @@ const textLink = defineStyle({
   },
 })
 
+// Underlined text in the vote's link tone, sized by the text around it: a choice set apart from the screen's buttons
+// ("No votar aquesta pregunta") and the agenda's "Mostra-les" (boards V4VoterWideLive 1b, 2). Its hit area still
+// reaches 44px (`touchTarget`).
+const textAction = defineStyle({
+  ...touchTarget,
+  h: 'auto',
+  minW: '0',
+  p: '0',
+  bg: 'transparent',
+  // One level down: the size's `textStyle` is applied after a plain value and would win.
+  '&': { fontSize: '[inherit]', lineHeight: '[inherit]' },
+  fontWeight: 'medium-plus',
+  color: 'accent.fg',
+  textDecoration: 'underline',
+  textUnderlineOffset: '[0.2em]',
+  whiteSpace: 'normal',
+  _hover: { color: 'accent.fg.hover' },
+})
+
 // Dashboard sidebar entry, 32px tall whatever the size (see the compound variants).
 const navItem = defineStyle({
   display: 'flex',
@@ -443,6 +462,7 @@ export const Button = defineRecipe({
       'link-underline': linkUnderline,
       text,
       'text-link': textLink,
+      'text-action': textAction,
       'nav-item': navItem,
       'menu-item': menuItem,
       'menu-item-strong': { ...menuItem, fontWeight: 'bold' },
@@ -513,6 +533,15 @@ export const Button = defineRecipe({
     },
     // The chip is a smaller control than a button at every width: 36px on a phone, 32px on a tablet, 28px from `lg`.
     { variant: 'chip', css: { h: chipHeight, minW: '0', gap: 'chip', textStyle: 'control-chip' } },
+    // The text action takes no size's sides or text at any width: the size's responsive values come in media queries
+    // and would beat the variant's own from `md` and `lg`.
+    {
+      variant: 'text-action',
+      css: {
+        px: { base: '0', md: '0', lg: '0' },
+        fontSize: { base: '[inherit]', md: '[inherit]', lg: '[inherit]' },
+      },
+    },
     // The voter scale: a wrapping label keeps the 52px height, the secondary is 550, and the unavailable look stays
     // sunken at every width with a 16px label in 550.
     { multiline: true, size: 'ballot', css: { minH: 'control.ballot' } },

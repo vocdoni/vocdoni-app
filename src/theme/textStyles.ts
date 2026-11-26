@@ -207,6 +207,10 @@ export const textStyles = defineTextStyles({
   },
   'ballot-rank': { value: { fontFamily: 'figure', fontSize: 'item', lineHeight: 'moderate', letterSpacing: 'voter' } },
   'ballot-figure': { value: { fontFamily: 'figure', fontSize: 'xs', lineHeight: 'moderate', letterSpacing: 'voter' } },
+  // A fold's count in the agenda's badge ("+4"): the figure at 11px, no tracking.
+  'ballot-figure-fold': {
+    value: { fontFamily: 'figure', fontSize: 'ballot.fold', lineHeight: 'moderate', letterSpacing: 'none' },
+  },
   'ballot-receipt': { value: { fontFamily: 'figure', fontSize: 'sm', lineHeight: 'moderate', letterSpacing: 'voter' } },
   'ballot-code': { value: { fontFamily: 'figure', fontSize: 'sm', lineHeight: 'moderate', letterSpacing: 'none' } },
   // The voter's top bar: the organisation's name, its links ("Surt") and the language tag (on a 22px line).

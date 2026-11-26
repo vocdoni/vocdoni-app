@@ -40,8 +40,18 @@ export type VoterFlow = {
   signOut: () => void
   showResults: (on: boolean) => void
   checkReceipt: () => void
+  /** Question by question: asks the membership check again (a closed question whose vote could not be confirmed). */
+  recheck: () => void
   /** Opens or leaves "Verifica el teu comprovant" (anonymous census). */
   verifyReceipt: (on: boolean) => void
+  /** Question by question: "Enrere" leaves the open question's ballot for the room (frame 1). */
+  park: (index: number) => void
+  /** Question by question: "No votar aquesta pregunta" (frame 3b). Casts nothing: the passive abstention (R12). */
+  skip: (index: number) => void
+  /** Question by question: "Vota ara", "Vota la pregunta N": back to the open question's ballot (frame 2). */
+  resume: (index: number) => void
+  /** Question by question: "Emet el vot" casts this question only (SDK #118). */
+  castQuestion: (index: number) => Promise<void>
   /** Leaves "Comprova el teu vot" for the closed screen again. */
   leaveReceipt: () => void
 }

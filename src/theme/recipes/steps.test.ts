@@ -28,6 +28,16 @@ describe('step rail recipe', () => {
     expect(row['&[data-state=done]']).toEqual({ color: 'var(--chakra-colors-fg-muted)' })
   })
 
+  it('rings a skipped badge in the quiet ink with its number muted, and draws a fold badge at 11px', () => {
+    const badge = layer(styles.badge)
+    expect(badge['&[data-state=skipped]']).toEqual({
+      boxShadow: 'inset 0 0 0 var(--chakra-border-widths-mark) var(--chakra-colors-fg-subtle)',
+      color: 'var(--chakra-colors-fg-muted)',
+    })
+    expect(badge['&[data-state=more]']).toMatchObject({ fontSize: 'var(--chakra-font-sizes-ballot-fold)' })
+    expect(system.token('fontSizes.ballot.fold')).toBe('0.6875rem')
+  })
+
   it('keeps the badge ring as a 1.5px border where forced colours drop its box shadow', () => {
     expect(layer(styles.badge)['@media (forced-colors: active)']).toEqual({
       borderWidth: 'var(--chakra-border-widths-mark)',
@@ -61,6 +71,31 @@ describe('step rail recipe', () => {
       fontSize: 'var(--chakra-font-sizes-control)',
       color: 'var(--chakra-colors-fg-subtle)',
     })
+    // The open row keeps the note's grey (it is semibold through the row).
+    expect(layer(styles.detail)['&[data-state=now]']).toBeUndefined()
+  })
+})
+
+describe('button text-action', () => {
+  it('draws text-action as underlined text in the link tone, sized by the text around it', () => {
+    const styles = (system.cva(system.getRecipe('button') as never)({ variant: 'text-action' }) as Record<string, any>)[
+      '@layer recipes'
+    ]
+    expect(styles).toMatchObject({
+      color: 'var(--chakra-colors-accent-fg)',
+      textDecoration: 'underline',
+      fontWeight: 'var(--chakra-font-weights-medium-plus)',
+      background: 'var(--chakra-colors-transparent)',
+    })
+  })
+
+  it('keeps it flush and sized by its text from `md` and `lg` too, not by the size', () => {
+    const styles = (system.cva(system.getRecipe('button') as never)({ variant: 'text-action' }) as Record<string, any>)[
+      '@layer recipes'
+    ]
+    for (const query of ['@media screen and (min-width: 48rem)', '@media screen and (min-width: 64rem)']) {
+      expect(styles[query]).toMatchObject({ fontSize: 'inherit', paddingInline: 'var(--chakra-spacing-0)' })
+    }
   })
 })
 

@@ -8,7 +8,8 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { useId } from 'react'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { HelpIcon } from '~theme/icons'
 import { Select } from '~components/Form/Select'
@@ -92,6 +93,63 @@ const VoterAnonymity = () => {
   )
 }
 
+/**
+ * Whether voters see the results on the voting page, in both modes (stored on every question as
+ * `metadata.voterResults`). Off by default; off, the voting page never offers them.
+ */
+const VoterResults = () => {
+  const { t } = useTranslation()
+  const { control } = useFormContext<Process>()
+  const votingMode = useWatch({ control, name: 'votingMode' })
+  const resultVisibility = useWatch({ control, name: 'resultVisibility' })
+  const helpId = useId()
+
+  // Question by question with hidden results: no question's count shows until the vote ends, so the help says so.
+  const help =
+    votingMode !== 'byQuestion'
+      ? t('process_create.voter_results.help_all', {
+          defaultValue:
+            'Voters can see the results on the voting page. Results hidden until the end appear when the vote ends.',
+        })
+      : resultVisibility === 'hidden'
+        ? t('process_create.voter_results.help_by_question_hidden', {
+            defaultValue: 'With the results hidden, voters see them all when the vote ends.',
+          })
+        : t('process_create.voter_results.help_by_question', {
+            defaultValue: "Voters see each question's result when it closes, and every result when the vote ends.",
+          })
+
+  return (
+    <Box>
+      <Controller
+        control={control}
+        name='showVoterResults'
+        render={({ field }) => (
+          <>
+            <Switch.Root
+              name={field.name}
+              checked={!!field.value}
+              onCheckedChange={({ checked }) => field.onChange(checked)}
+            >
+              <Switch.HiddenInput onBlur={field.onBlur} aria-describedby={helpId} />
+              {/* The stock control gap is 8px and the thumb is its only child: 0 keeps the stress theme clean */}
+              <Switch.Control gap='0'>
+                <Switch.Thumb />
+              </Switch.Control>
+              <Switch.Label>
+                {t('process_create.voter_results.label', { defaultValue: 'Show the results to voters' })}
+              </Switch.Label>
+            </Switch.Root>
+            <Text id={helpId} textStyle='caption' color='fg.muted' mt='1'>
+              {help}
+            </Text>
+          </>
+        )}
+      />
+    </Box>
+  )
+}
+
 export const ExtraConfig = () => {
   const { t } = useTranslation()
   const {
@@ -136,6 +194,7 @@ export const ExtraConfig = () => {
           <FormErrorMessage>{errors.resultVisibility?.message?.toString()}</FormErrorMessage>
         </FormControl>
       </Box>
+      <VoterResults />
       <Box>
         <FormControl invalid={!!errors.weightedVote}>
           <FormLabel htmlFor='weightedVote' display='flex' alignItems='center'>

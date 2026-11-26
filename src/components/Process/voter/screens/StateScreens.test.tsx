@@ -49,6 +49,40 @@ describe('state screens', () => {
     expect(flow.checkReceipt).toHaveBeenCalled()
   })
 
+  it('closed hedges the count on a question-by-question vote: someone may have voted on another question', () => {
+    const election = testElection({ initialStatus: 'PAUSED' })
+    renderWithFlow(<ClosedScreen />, testFlow({ election, facts: testFacts({ status: 'ENDED', connected: false }) }))
+    expect(screen.getByTestId('process-vote-count')).toHaveTextContent(/^voter\.closed\.turnout_any$/)
+  })
+
+  it('closed does not hedge an all-at-once count', () => {
+    renderWithFlow(<ClosedScreen />, testFlow({ facts: testFacts({ status: 'ENDED', connected: false }) }))
+    expect(screen.getByTestId('process-vote-count')).toHaveTextContent(/^voter\.closed\.turnout$/)
+  })
+
+  it('closed tells a signed-in member who checked their vote that none of theirs was found', () => {
+    renderWithFlow(
+      <ClosedScreen />,
+      testFlow({ facts: testFacts({ status: 'ENDED' }), state: { ...initialVoterState, checkReceipt: true } })
+    )
+    expect(screen.getByRole('status')).toHaveTextContent('voter.closed.no_vote_found')
+  })
+
+  it('closed says nothing about a missing vote unless the member asked, and never on an anonymous census', () => {
+    const { unmount } = renderWithFlow(<ClosedScreen />, testFlow({ facts: testFacts({ status: 'ENDED' }) }))
+    expect(screen.queryByText('voter.closed.no_vote_found')).toBeNull()
+    unmount()
+    renderWithFlow(
+      <ClosedScreen />,
+      testFlow({
+        anonymous: true,
+        facts: testFacts({ status: 'ENDED' }),
+        state: { ...initialVoterState, checkReceipt: true },
+      })
+    )
+    expect(screen.queryByText('voter.closed.no_vote_found')).toBeNull()
+  })
+
   // A question-by-question vote ended early: it closed days before its scheduled end, and says so.
   describe('a vote ended before its schedule', () => {
     const DAY = 24 * 60 * 60 * 1000
@@ -157,6 +191,35 @@ describe('state screens', () => {
       expect(screen.getByRole('button', { name: 'voter.results.check_vote' })).toBeInTheDocument()
     })
 
+    // A question-by-question vote: the voter tried question 2 only, so question 3, never cast, is not one of the answers.
+    it('counts only the questions this voter tried to cast, not every question of the vote', async () => {
+      const [first, second] = testElection().questions
+      const flow = testFlow({
+        election: testElection({ initialStatus: 'PAUSED', questions: [first, second, { ...second, id: 'q3' }] }),
+        facts: testFacts({ status: 'ENDED' }),
+        state: { ...initialVoterState, castError: 'x', castQuestionId: 'q2' },
+        chain: ['recorded', 'missing', 'missing'],
+      })
+      const i18nInstance = await createTestI18n({
+        resources: {
+          en: { common: { 'voter.closed.partly_cast': 'Only {{count}} of your {{total}} answers was recorded' } },
+        },
+      })
+      renderWithFlow(<ClosedScreen />, flow, { i18nInstance })
+      expect(screen.getByRole('alert')).toHaveTextContent('Only 1 of your 2 answers was recorded')
+    })
+
+    // The check forgets a question's ineligibility once the vote ends: the session's own record still keeps it out.
+    it('does not count a question the voter was seen ineligible for as missing, even after the end', () => {
+      const flow = testFlow({
+        facts: testFacts({ status: 'ENDED' }),
+        state: { ...initialVoterState, castError: 'x', ineligible: ['q2'] },
+        chain: ['recorded', 'missing'],
+      })
+      renderWithFlow(<ClosedScreen />, flow)
+      expect(screen.queryByRole('alert')).toBeNull()
+    })
+
     it('every question on chain (another device, or recovered at the end): nothing about a failed cast', () => {
       closedWith(['recorded', 'recorded'], { q1: 'a3f1000000000000009c2e', q2: 'b7c2000000000000001d4f' })
       expect(screen.queryByRole('alert')).toBeNull()
@@ -236,6 +299,21 @@ describe('state screens', () => {
     renderWithFlow(<AlreadyVotedScreen />, testFlow({ voteIds: { q1: 'a3f1000000000000009c2e' } }))
     expect(screen.getByText('a3f1…9c2e')).toBeInTheDocument()
     expect(screen.getByTestId('voter-screen')).toHaveClass('ph-no-capture')
+  })
+
+  it('offers no results when the creator hid them from voters', () => {
+    const hidden = { resultsShown: false }
+    const { unmount } = renderWithFlow(
+      <ClosedScreen />,
+      testFlow({ facts: testFacts({ ...hidden, status: 'ENDED', connected: false }) })
+    )
+    expect(screen.queryByRole('button', { name: 'voter.results.show' })).toBeNull()
+    unmount()
+    renderWithFlow(
+      <AlreadyVotedScreen />,
+      testFlow({ facts: testFacts(hidden), voteIds: { q1: 'a3f1000000000000009c2e' } })
+    )
+    expect(screen.queryByRole('button', { name: 'voter.results.show' })).toBeNull()
   })
 
   it('alreadyVoted: "Mostra els resultats" is the only button, in the action bar', () => {

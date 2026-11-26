@@ -64,6 +64,25 @@ describe('ResultsScreen', () => {
     expect(flow.showResults).toHaveBeenCalledWith(false)
   })
 
+  it('hedges the count question by question, with and without the census share', () => {
+    const byQuestion = (final: boolean) => ({ ...tallied({ finalResults: final }), initialStatus: 'PAUSED' }) as never
+    const { unmount } = renderWithFlow(
+      <ResultsScreen state='provisional' />,
+      testFlow({ screen: { kind: 'results', state: 'provisional' }, election: byQuestion(false) })
+    )
+    expect(screen.getByTestId('process-vote-count')).toHaveTextContent(/^voter\.results\.turnout_any$/)
+    unmount()
+    renderWithFlow(
+      <ResultsScreen state='final' />,
+      testFlow({
+        screen: { kind: 'results', state: 'final' },
+        election: byQuestion(true),
+        facts: testFacts({ status: 'RESULTS' }),
+      })
+    )
+    expect(screen.getByTestId('process-vote-count')).toHaveTextContent(/^voter\.results\.turnout_any_share$/)
+  })
+
   it('final (board M11): the closed line, the share of the census, the leading choice set apart and never named', () => {
     show('final', { election: tallied({ finalResults: true }), facts: testFacts({ status: 'RESULTS' }) })
     expect(title()).toHaveTextContent('voter.results.final_title')

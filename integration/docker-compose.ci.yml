@@ -130,6 +130,8 @@ services:
       VOCDONI_HOST: 0.0.0.0
       VOCDONI_PORT: 8080
       VOCDONI_SECRET: supersecret
+      # A voter who reloads identifies again within seconds; the default 60s code cooldown would refuse it (40103).
+      VOCDONI_OTPCOOLDOWN: 1s
       # The app under test, served on the host by `pnpm serve:ssr`. This is what
       # the backend interpolates into the {{.Link}} of every email it sends
       # (verification, password reset, invites), so a link the suite follows —

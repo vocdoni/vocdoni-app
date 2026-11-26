@@ -5,6 +5,8 @@ import { system } from '../system'
 import { Avatar } from './avatar'
 import { figureMark } from './figureMark'
 import { StepMark } from './stepMark'
+import { StepRail } from './steps'
+import { RankBadge } from './voterMarks'
 
 type Rules = Record<string, unknown>
 const layer = (styles: unknown) => (styles as Record<string, Rules>)['@layer recipes']
@@ -23,6 +25,14 @@ describe('figureMark', () => {
       lineHeight: '1',
       textBox: 'trim-both cap alphabetic',
     })
+  })
+
+  it("centres the voter's step badge and rank box, and keeps the fold count on the same line", () => {
+    const badge = layer(system.sva(StepRail)({}).badge)
+    for (const styles of [badge, layer(system.cva(RankBadge)({}))]) {
+      expect(styles).toMatchObject({ lineHeight: '1', textBox: 'trim-both cap alphabetic' })
+    }
+    expect(badge['&[data-state=more]']).toMatchObject({ lineHeight: '1' })
   })
 
   // The centring is a theme default: a mark gets it from its recipe, so no component sets it by hand.

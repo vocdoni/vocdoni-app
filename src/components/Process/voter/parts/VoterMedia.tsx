@@ -4,6 +4,7 @@ import { ElectionVideo } from '~components/Process/ElectionVideo'
 import { Markdown } from '~components/ui/Markdown'
 import { useVoterFlow } from '../flow-context'
 import { textOf } from '../format'
+import { VoterDescription } from './VoterDescription'
 
 /**
  * What the organiser added to the vote, under the title on identify and welcome (owner ruling): the description
@@ -26,18 +27,12 @@ export const VoterMedia = () => {
         </AspectRatio>
       ) : null}
       {description ? (
-        // The board's body rhythm and weight (conformance pass 2, N-2, N-3): no margin after the last paragraph, which
-        // would add to the next block's own, and the regular weight of every other body line.
-        <Box
-          textStyle='ballot-body'
-          color='fg.muted'
-          css={{ '& p': { fontWeight: 'normal' }, '& p:last-of-type': { mb: '0' } }}
-        >
+        <VoterDescription>
           <ReadMoreMarkdownWrapper>
             <Markdown>{description}</Markdown>
           </ReadMoreMarkdownWrapper>
           <ReadMoreMarkdownButton variant='ghost' size='sm' mt='2' />
-        </Box>
+        </VoterDescription>
       ) : null}
       <ElectionVideo streamUri={election.streamUri} title={title} />
     </Box>

@@ -293,7 +293,11 @@ describe('certificate identify screen', () => {
     expect(screen.getByTestId('voter-show-results')).toBeInTheDocument()
     open.unmount()
 
-    renderScreen({ flow: flowFor({ facts: testFacts({ connected: false, secretUntilTheEnd: true }) }) })
+    const secret = renderScreen({ flow: flowFor({ facts: testFacts({ connected: false, secretUntilTheEnd: true }) }) })
+    expect(screen.queryByTestId('voter-show-results')).not.toBeInTheDocument()
+    secret.unmount()
+
+    renderScreen({ flow: flowFor({ facts: testFacts({ connected: false, resultsShown: false }) }) })
     expect(screen.queryByTestId('voter-show-results')).not.toBeInTheDocument()
   })
 

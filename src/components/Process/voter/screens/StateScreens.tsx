@@ -5,6 +5,7 @@ import { useId, type ComponentProps, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SuccessDisc } from '~components/ui/SuccessDisc'
 import { useAppEnv } from '~src/app-env'
+import { isQuestionByQuestion } from '~src/types/voting-process'
 import { closedAt } from '~utils/vote-state'
 import { useVoterFlow } from '../flow-context'
 import { formatVoteDay, formatVoteTime, textOf, voterTurnout, type Turnout } from '../format'
@@ -16,10 +17,11 @@ import {
   NoticeCard,
   ScreenHeading,
   ScreenHelp,
+  ScreenHint,
   ScreenKicker,
   VoterScreenFrame,
 } from '../parts/ScreenParts'
-import { ShowResultsButton } from '../parts/ShowResultsButton'
+import { useShowResultsAction } from '../parts/ShowResultsButton'
 import { VoterActionBar } from '../parts/VoterActionBar'
 import { hasExplorerFor } from '../receipt'
 import type { VoterScreenKind } from '../voter-flow'
@@ -67,9 +69,13 @@ const TurnoutLine = ({ turnout }: { turnout: Turnout }) => {
   return (
     // data-testid: the count is interpolated in a plural sentence; the e2e observer reads the number from here.
     <Text as='span' data-testid='process-vote-count'>
-      {turnout.total
-        ? t('voter.closed.turnout', { count: turnout.count, total: turnout.total })
-        : t('voter.closed.turnout_count', { count: turnout.count })}
+      {turnout.atLeast
+        ? turnout.total
+          ? t('voter.closed.turnout_any', { count: turnout.count, total: turnout.total })
+          : t('voter.closed.turnout_any_count', { count: turnout.count })
+        : turnout.total
+          ? t('voter.closed.turnout', { count: turnout.count, total: turnout.total })
+          : t('voter.closed.turnout_count', { count: turnout.count })}
     </Text>
   )
 }
@@ -132,7 +138,15 @@ export const UpcomingScreen = () => {
 const useFailedCast = () => {
   const { t } = useTranslation()
   const { election, state, chain } = useVoterFlow()
-  const records = election.questions.map((_question, index) => chain[index] ?? 'missing')
+  // A question-by-question voter cast only the questions they tried: one never cast is not an answer that failed.
+  const byQuestion = isQuestionByQuestion(election)
+  const records = election.questions.flatMap((question, index) => {
+    const record = chain[index] ?? 'missing'
+    // Never asked to vote it (its eligibility): not one the cast left missing.
+    if (record === 'missing' && state.ineligible.includes(question.id)) return []
+    const tried = !byQuestion || record !== 'missing' || question.id === state.castQuestionId
+    return tried ? [record] : []
+  })
   const total = records.length
   const recorded = records.filter((record) => record === 'recorded').length
   const unknown = records.filter((record) => record === 'unknown').length
@@ -159,11 +173,15 @@ const useFailedCast = () => {
 export const ClosedScreen = () => {
   const { t } = useTranslation()
   const env = useAppEnv()
-  const { election, facts, anonymous, showResults } = useVoterFlow()
+  const { election, facts, state, anonymous } = useVoterFlow()
+  const resultsAction = useShowResultsAction()
   const { title, organization, day, time } = useVoteTexts()
   const end = closedAt(election)
   const turnout = voterTurnout(election, env)
   const cast = useFailedCast()
+  // Reached with "Comprova el teu vot" as a signed-in member who has no vote here: say so, instead of the plain page
+  // (an anonymous census cannot tie a code to a member, and a failed cast has its own sentence).
+  const noVote = state.checkReceipt && facts.connected && !anonymous && !cast.failed
   return (
     <Centred
       kind='closed'
@@ -184,12 +202,13 @@ export const ClosedScreen = () => {
         </Alert.Root>
       )}
       {cast.receipt && <ReceiptCard anonymous={anonymous} />}
+      {noVote && (
+        <Box role='status'>
+          <ScreenHint>{t('voter.closed.no_vote_found')}</ScreenHint>
+        </Box>
+      )}
       <VoterActionBar
-        primary={
-          <Button size='ballot' onClick={() => showResults(true)}>
-            {t('voter.results.show')}
-          </Button>
-        }
+        primary={resultsAction}
         // An anonymous census verifies a code on the Explorer, so it is always offered (ruling R8); an unknown cast
         // is asked of the chain again, which only a sign-in reaches (`chain`).
         note={anonymous || !facts.connected || cast.unknown ? <CheckVoteAction chain={cast.unknown} /> : undefined}
@@ -282,6 +301,7 @@ export const AlreadyVotedScreen = () => {
   const { t } = useTranslation()
   const localize = useReactComponentsLocalize()
   const { election, voteIds, anonymous, statuses, verifyReceipt } = useVoterFlow()
+  const resultsAction = useShowResultsAction()
   const { title } = useVoteTexts()
   const hasCodes = election.questions.some((question) => voteIds[question.id])
   const hasExplorer = hasExplorerFor(election.chainId)
@@ -315,7 +335,7 @@ export const AlreadyVotedScreen = () => {
             ) : null}
           </Card.Body>
         </Card.Root>
-        <VoterActionBar primary={<ShowResultsButton />} />
+        <VoterActionBar primary={resultsAction} />
       </Centred>
     )
   }
@@ -337,7 +357,7 @@ export const AlreadyVotedScreen = () => {
       ) : !hasCodes && anonymous ? (
         <NoticeCard title={t('aside.anonymous_receipt_gone')} />
       ) : null}
-      <VoterActionBar primary={<ShowResultsButton />} />
+      <VoterActionBar primary={resultsAction} />
     </Centred>
   )
 }

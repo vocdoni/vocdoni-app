@@ -87,6 +87,11 @@ export default defineConfig({
       POSTHOG_KEY: '',
       CRISP_WEBSITE_ID: '',
       ANALYTICS_CLIENT_ID: '',
+      // The create form's "Question by question" voting mode is behind this flag, and
+      // question-by-question-voting.e2e.ts needs it. For every other spec it only adds the mode
+      // chooser above the questions, left on its default "All at once" (no spec selects a
+      // segment group), and lets "Duplicate" keep a source vote's mode (all at once for theirs).
+      QUESTION_BY_QUESTION: 'true',
       // Only in Stripe mode (INTEGRATION_STRIPE_SECRET_KEY set, see integration/README.md) does the
       // app get a publishable key, so the checkout spec can reach Stripe. Otherwise it stays empty
       // and payments stay off in the default suite.

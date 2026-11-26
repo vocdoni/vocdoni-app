@@ -13,8 +13,8 @@ describe('electionComponents.QuestionsConfirmation', () => {
           election={{ title: { default: 'Election' } } as any}
           answers={{}}
           answersView={[
-            { question: 'Do you eat kiwi?', answers: ['With skin', 'Without skin'] },
-            { question: 'Double check', answers: ['Abstain'] },
+            { question: 'Do you eat kiwi?', answers: ['With skin', 'Without skin'], index: 0, questionId: 'q0' },
+            { question: 'Double check', answers: ['Abstain'], index: 1, questionId: 'q1' },
           ]}
           onConfirm={() => {}}
           onCancel={() => {}}
@@ -36,7 +36,7 @@ describe('electionComponents.QuestionsConfirmation', () => {
         <QuestionsConfirmation
           election={{ title: { default: 'Election' } } as any}
           answers={{}}
-          answersView={[{ question: 'Pick toppings', answers: ['Olives', 'Mushrooms'] }]}
+          answersView={[{ question: 'Pick toppings', answers: ['Olives', 'Mushrooms'], index: 0, questionId: 'q0' }]}
           onConfirm={() => {}}
           onCancel={() => {}}
         />

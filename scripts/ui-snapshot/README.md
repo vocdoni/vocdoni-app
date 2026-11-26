@@ -227,8 +227,8 @@ The list endpoint pages by `page` and `limit` and, as the API, carries no per-qu
 ## Voter flow
 
 The `voter-*` routes render every screen of the voter page (spec AC3) with the boards' questions (`mock-saas.mjs`,
-"voter flow votes"). A state walks the flow from identify with three more step kinds: `['fill', selector, value]`
-types into a field, `['mock', pathname, body]` answers a mock path with that JSON from then on (in this page only) and
+"voter flow votes"). A state walks the flow from identify with four more step kinds: `['fill', selector, value]`
+types into a field, `['wait', selector]` waits for a visible match and clicks nothing, `['mock', pathname, body]` answers a mock path with that JSON from then on (in this page only) and
 `['refocus']` fires the page's focus event, so react-query refetches what is stale. The auth-only censuses accept the
 member number `A-1001`; any other number is a failed match. The main vote (`voter-live`) has a fictional description
 and the secret one (`voter-secret`) an inline header image, so identify and welcome show both. Run them at the boards'
@@ -236,13 +236,42 @@ three widths, in Catalan to compare:
 
 ```bash
 UI_SNAPSHOT_PORT=3009 pnpm ui:snapshot -- --label voter --viewports 1440,768,390 --modes light --lang ca \
-  --routes voter-live,voter-sending,voter-secret,voter-2fa,voter-weighted,voter-voted,voter-not-in,voter-checking,voter-upcoming,voter-closed,voter-paused,voter-canceled,voter-room,voter-results,voter-results-final,voter-results-counting,voter-results-secret
+  --routes voter-live,voter-sending,voter-secret,voter-2fa,voter-weighted,voter-voted,voter-not-in,voter-checking,voter-upcoming,voter-closed,voter-paused,voter-canceled,voter-results,voter-results-final,voter-results-counting,voter-results-secret
 ```
 
 `voter-checking` leaves the membership check unanswered on purpose: its capture waits out the settle timeouts (about
 30 s per width) and logs "network never idle". `paused-mid-ballot` pauses the vote in the browser's copy of the
-process read (`['mock', …]`) and refocuses the page. `voter-room` is a question-by-question vote with one question
-open; its `none-open` state serves the read again with that question closed, so the room says no question is open.
+process read (`['mock', …]`) and refocuses the page.
+
+Question by question (boards V4VoterWideLive / M4VoterLive and the QbQ cases of V4VoterWideMore): every vote below uses
+the boards' questions on the voter census (member `A-1001`), so each route is identify, then the frame the open question
+decides.
+
+| route                      | vote                   | states                                                                                                             | board frame       |
+| -------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| `voter-qbq-ready`          | `V_QBQ_READY`          | `not-started`: nothing opened yet                                                                                  | not started       |
+| `voter-qbq-live`           | `V_QBQ_LIVE`           | `identify-mismatch`, `question`, `question-chosen`, `room-open`, `skipped`, `voted`, `missed`, `paused-mid-ballot` | 1 to 3c, M2       |
+| `voter-qbq-between`        | `V_QBQ_BETWEEN`        | `none-open`: three closed, none open                                                                               | between questions |
+| `voter-qbq-many`           | `V_QBQ_MANY`           | `question` (1440), `room-open`, `unfolded` (1440): twenty questions, the rail folded then shown                    | 1b                |
+| `voter-qbq-weighted`       | `V_QBQ_WEIGHTED`       | `question-weighted`: a weighted census                                                                             | weighted          |
+| `voter-qbq-paused`         | `V_QBQ_HELD`           | `paused`: paused as a whole on a question the member voted                                                         | M1                |
+| `voter-qbq-ended`          | `V_QBQ_ENDED`          | `already-voted`: through "Comprova el teu vot"                                                                     | closed            |
+| `voter-qbq-upcoming`       | `V_QBQ_UPCOMING`       | every question paused before the start date                                                                        | not started       |
+| `voter-qbq-anon-signed`    | `V_QBQ_ANON_SIGNED`    | `authorised`: anonymous census, signed from another device                                                         | anonymous         |
+| `voter-qbq-results`        | `V_QBQ_RESULTS`        | `closed-voted`: question 3 closed with its public result, and the member voted it                                  | 3e                |
+| `voter-qbq-results-missed` | `V_QBQ_RESULTS_MISSED` | `missed-result`: the same, and the member did not vote question 3                                                  | 3d                |
+
+```bash
+UI_SNAPSHOT_PORT=3009 pnpm ui:snapshot -- --label qbq --viewports 1440,768,390 --modes light,dark --lang ca \
+  --routes voter-qbq-ready,voter-qbq-live,voter-qbq-between,voter-qbq-many,voter-qbq-weighted,voter-qbq-paused,voter-qbq-ended,voter-qbq-upcoming,voter-qbq-anon-signed,voter-qbq-results,voter-qbq-results-missed
+```
+
+`voted` casts through the SDK: it needs SDK #118 installed (vocdoni-integrator-sdk#118); on 4.1.0 the capture shows the
+refusal on frame 2. `missed` and `paused-mid-ballot` serve the process read again (question 3 closed, or the whole vote
+paused), refocus the page (hidden, then visible, so react-query sees a change) and wait for the screen they lead to
+(`['wait', selector]`, a step that clicks nothing), so the room follows it with no reload. `question-chosen` and
+`question-weighted` wait for the primary to arm (800 ms). A question-by-question vote that has not started has every
+question paused, as the backend reports it: the page says "not started", not "open until".
 
 The results routes use the boards' tallies (221 voters). `voter-results` opens the provisional results from identify,
 `voter-results-final` the final ones from the closed screen. `voter-results-counting` is a public vote that has

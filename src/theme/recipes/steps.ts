@@ -4,9 +4,10 @@ import { touchTarget } from './touchTarget'
 
 // The voter's numbered agenda beside the column from `lg` (ui/StepRail, board V4VoterWide). Each row is a 24px badge
 // and the question's title, with its answer or state under it; `data-state` on the row and its badge is `pending`,
-// `now` or `done`. A step still to come rings its number in the track grey, the current one fills it with the vote's
+// `now`, `done`, `skipped` or `more`. A step still to come rings its number in the track grey, the current one fills it with the vote's
 // colour (edged when that colour is too pale for the page) and turns the row semibold in ink, a done one is an ink
-// disc with a tick and a muted row. A row the voter can jump to is a button.
+// disc with a tick and a muted row, a skipped one (a question that closed without the voter's vote) rings its number
+// in the quiet ink, and a fold row ("+4") draws its count at 11px. A row the voter can jump to is a button.
 export const StepRail = defineSlotRecipe({
   slots: ['root', 'item', 'row', 'badge', 'tick', 'title', 'detail'],
   base: {
@@ -51,6 +52,11 @@ export const StepRail = defineSlotRecipe({
         boxShadow: 'shadow.edge.inner',
         fontWeight: 'semibold',
       },
+      '&[data-state=skipped]': {
+        boxShadow: '[inset 0 0 0 {borderWidths.mark} {colors.fg.subtle}]',
+        color: 'fg.muted',
+      },
+      '&[data-state=more]': { textStyle: 'ballot-figure-fold', lineHeight: figureMark.lineHeight },
     },
     tick: { boxSize: '3.5' },
     title: { gridColumn: '2', minW: '0' },
@@ -58,7 +64,6 @@ export const StepRail = defineSlotRecipe({
       gridColumn: '2',
       textStyle: 'control',
       color: 'fg.subtle',
-      '&[data-state=now]': { color: 'fg' },
     },
   },
 })

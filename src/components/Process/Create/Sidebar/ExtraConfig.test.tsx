@@ -7,11 +7,22 @@ import { ExtraConfig } from './ExtraConfig'
 const AnonymityWatcher = () => {
   const { watch } = useFormContext<Process>()
 
-  return <div data-testid='form-anonymousVoting'>{String(watch('anonymousVoting'))}</div>
+  return (
+    <>
+      <div data-testid='form-anonymousVoting'>{String(watch('anonymousVoting'))}</div>
+      <div data-testid='form-showVoterResults'>{String(watch('showVoterResults'))}</div>
+    </>
+  )
 }
 
-const Harness = () => {
-  const methods = useForm<Process>({ defaultValues: defaultProcessValues })
+const Harness = ({
+  votingMode = 'all',
+  resultVisibility = defaultProcessValues.resultVisibility,
+}: {
+  votingMode?: Process['votingMode']
+  resultVisibility?: Process['resultVisibility']
+}) => {
+  const methods = useForm<Process>({ defaultValues: { ...defaultProcessValues, votingMode, resultVisibility } })
 
   return (
     <FormProvider {...methods}>
@@ -58,5 +69,40 @@ describe('ExtraConfig voter anonymity', () => {
 
     expect(screen.getByTestId('form-anonymousVoting')).toHaveTextContent('false')
     expect(screen.queryByText(/no vote can be traced back/)).not.toBeInTheDocument()
+  })
+})
+
+describe('ExtraConfig results for voters', () => {
+  const label = /Show the results to voters/
+
+  it('shows in both modes, off by default, with the help of each mode', () => {
+    const { unmount } = render(<Harness votingMode='all' />)
+    expect(screen.getByRole('checkbox', { name: label })).not.toBeChecked()
+    expect(screen.getByTestId('form-showVoterResults')).toHaveTextContent('false')
+    // The help describes the switch, as the fields around it are described by theirs.
+    expect(screen.getByRole('checkbox', { name: label })).toHaveAccessibleDescription(
+      /Results hidden until the end appear when the vote ends/
+    )
+    unmount()
+
+    render(<Harness votingMode='byQuestion' resultVisibility='live' />)
+    expect(screen.getByRole('checkbox', { name: label })).not.toBeChecked()
+    expect(screen.getByRole('checkbox', { name: label })).toHaveAccessibleDescription(/each question's result/)
+  })
+
+  it('says question by question with hidden results shows them only at the end', () => {
+    render(<Harness votingMode='byQuestion' resultVisibility='hidden' />)
+    expect(screen.getByRole('checkbox', { name: label })).toHaveAccessibleDescription(
+      /voters see them all when the vote ends/
+    )
+  })
+
+  it('sets the form flag when switched on', async () => {
+    const user = userEvent.setup()
+    render(<Harness votingMode='all' />)
+
+    await user.click(screen.getByRole('checkbox', { name: label }))
+
+    expect(screen.getByTestId('form-showVoterResults')).toHaveTextContent('true')
   })
 })

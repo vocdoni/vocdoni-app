@@ -2,6 +2,8 @@ import { defineRecipe, RecipeDefinition, SlotRecipeDefinition } from '@chakra-ui
 import { Alert } from './alert'
 import { Avatar } from './avatar'
 import { Badge, Code } from './badge'
+import { BallotAside } from './ballotAside'
+import { BallotDescription } from './ballotDescription'
 import { BallotPaper } from './ballotPaper'
 import { Button } from './button'
 import { Card } from './card'
@@ -58,6 +60,8 @@ import { heading, link, text } from './typography'
 
 export const recipes: Record<string, RecipeDefinition> = {
   badge: Badge,
+  ballotAside: BallotAside,
+  ballotDescription: BallotDescription,
   button: Button,
   code: Code,
   heading,

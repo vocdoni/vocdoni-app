@@ -131,6 +131,7 @@ describe('useFormToVotingProcessRequest', () => {
       description: 'Test Description',
       autoStart: true,
       votingMode: 'all',
+      showVoterResults: false,
       startDate: '',
       startTime: '',
       endDate: '2025-12-31',
@@ -378,10 +379,11 @@ describe('useFormToVotingProcessRequest', () => {
       expect((req.questions[0].metadata as any).choices[0].image).toBe('https://img.example/a.png')
     })
 
-    it('omits metadata when extendedInfo is false', () => {
+    it('omits the choices metadata when extendedInfo is false', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current(mockForm, censusSpec())
-      expect(req.questions[0].metadata).toBeUndefined()
+      // Only the voters' results choice, which every question carries.
+      expect(req.questions[0].metadata).toEqual({ voterResults: 'hidden' })
     })
 
     it('only sends metadata for the questions that enabled it', () => {
@@ -397,8 +399,8 @@ describe('useFormToVotingProcessRequest', () => {
         censusSpec()
       )
 
-      expect(req.questions[0].metadata).toBeDefined()
-      expect(req.questions[1].metadata).toBeUndefined()
+      expect(req.questions[0].metadata).toHaveProperty('choices')
+      expect(req.questions[1].metadata).not.toHaveProperty('choices')
     })
   })
 

@@ -202,6 +202,16 @@ export type ProcessSpec = {
    * Unset, the wizard's end fields stay as they are.
    */
   endsInMinutes?: number
+  /**
+   * The create form's "Question by question" voting mode: questions start closed and the organiser opens them one at
+   * a time. The mode switch only exists while the app runs with QUESTION_BY_QUESTION (see playwright.config.ts).
+   */
+  questionByQuestion?: boolean
+  /**
+   * "Show the results to voters": the voting page offers the live count and the results. Off by default, as in the
+   * wizard, so a spec that reads results turns it on.
+   */
+  voterResults?: boolean
 }
 
 /**
@@ -273,6 +283,16 @@ export const fillProcessWizard = async (page: Page, spec: ProcessSpec): Promise<
   await page.reload()
   await expect(page.locator('input[name="title"]')).toHaveValue(spec.title)
 
+  if (spec.questionByQuestion) {
+    // A segmented control whose hidden inputs carry the mode's value, so this does not depend on the translated label.
+    // Clicking the visible item, as a user would, is what flips it: the input itself is hidden.
+    const byQuestion = page.locator('[data-scope="segment-group"][data-part="item"]').filter({
+      has: page.locator('input[value="byQuestion"]'),
+    })
+    await byQuestion.click()
+    await expect(page.locator('input[value="byQuestion"]')).toBeChecked()
+  }
+
   for (const [index, question] of spec.questions.entries()) {
     // The restored draft holds one default question; the rest are appended.
     if (index > 0) {
@@ -294,6 +314,13 @@ export const fillProcessWizard = async (page: Page, spec: ProcessSpec): Promise<
   // after publication, which is a different feature with its own timing. This
   // suite is about the email/OTP journey, so keep the ballot path plain.
   await selectComboboxOption(page, page.locator('#resultVisibility'), /Live results/i)
+
+  if (spec.voterResults) {
+    // Same switch shape as the anonymous one below: the hidden input carries the form field name.
+    const showResults = page.locator('input[name="showVoterResults"]')
+    await toggleSwitch(page.locator('[data-scope="switch"]').filter({ has: showResults }))
+    await expect(showResults).toBeChecked()
+  }
 
   if (spec.endsInMinutes !== undefined) {
     // Formatted in the browser so the picker sees its own time zone, whatever the runner's.
@@ -553,4 +580,109 @@ export const openPublicCount = async (page: Page): Promise<Locator> => {
   await page.getByTestId('voter-show-results').click()
   await expect(voterScreen(page, 'results')).toBeVisible()
   return page.getByTestId('process-vote-count')
+}
+
+/**
+ * Authenticates a voter on an auth-only census (credentials, no one-time code): fills the member number, accepts the
+ * terms and submits. Leaves the voter on `landing` (a question-by-question vote lands on a `room*` screen).
+ */
+export const identifyWithMemberNumber = async (page: Page, member: TestMember, landing: string): Promise<void> => {
+  const screen = await openIdentifyModal(page)
+  await screen.locator('input[name="memberNumber"]').fill(member.memberNumber)
+  await checkCheckbox(screen)
+  await screen.locator('button[type="submit"]').click()
+  await expect(voterScreen(page, landing)).toBeVisible({ timeout: 60_000 })
+}
+
+/** The organiser's vote page ("Manage" is the process route itself); stays put when already there. */
+const openVotePage = async (page: Page, processId: string): Promise<void> => {
+  if (!page.url().endsWith(`/admin/process/${processId}`)) await page.goto(`/admin/process/${processId}`)
+}
+
+/**
+ * A question's own controls on the organiser's vote page. The buttons are named "<Action>: question <n>, <title>"
+ * (English), so the number picks the row; a phone also draws the active question's buttons in a bottom bar, hence
+ * `first()`.
+ */
+const questionButton = (page: Page, action: 'Open' | 'Close', index: number): Locator =>
+  page.getByRole('button', { name: new RegExp(`^${action}: question ${index + 1},`) }).first()
+
+/** On the organiser's vote page, opens question `index` (0-based) from its controls and waits for it to read open. */
+export const openQuestion = async (page: Page, processId: string, index: number): Promise<void> => {
+  await openVotePage(page, processId)
+  const open = questionButton(page, 'Open', index)
+  await expect(open).toBeEnabled({ timeout: 60_000 })
+  await open.click()
+  // An open question's row offers Close; a waiting one does not.
+  await expect(questionButton(page, 'Close', index)).toBeVisible({ timeout: 120_000 })
+}
+
+/** Closes question `index` (confirming the dialog) and waits for it to read closed. */
+export const closeQuestion = async (page: Page, processId: string, index: number): Promise<void> => {
+  await openVotePage(page, processId)
+  const close = questionButton(page, 'Close', index)
+  await expect(close).toBeEnabled({ timeout: 60_000 })
+  await close.click()
+  const dialog = page.getByRole('dialog')
+  await dialog.getByRole('button', { name: `Close question ${index + 1}`, exact: true }).click()
+  await expect(dialog).toBeHidden({ timeout: 120_000 })
+  // A closed question's row has no Close button any more.
+  await expect(questionButton(page, 'Close', index)).toBeHidden({ timeout: 120_000 })
+}
+
+/**
+ * Ends the vote from the header ("End now", confirmed in its dialog) and waits for the header to drop its actions.
+ * Closing the last question of a question-by-question vote already ends it, and then there is nothing to click: the
+ * call returns.
+ */
+export const endVote = async (page: Page, processId: string): Promise<void> => {
+  await openVotePage(page, processId)
+  const end = page.getByRole('button', { name: /^End now$/ })
+  const offered = await end.waitFor({ state: 'visible', timeout: 10_000 }).then(
+    () => true,
+    () => false
+  )
+  if (!offered) return
+  await end.click()
+  const dialog = page.getByRole('dialog')
+  // The dialog's confirm reads "End now" (all at once) or "End the vote" (question by question).
+  await dialog.getByRole('button', { name: /^(End now|End the vote)$/ }).click()
+  await expect(dialog).toBeHidden({ timeout: 120_000 })
+  await expect(end).toBeHidden({ timeout: 120_000 })
+}
+
+/** Pauses the vote from the header and waits for "Resume" to take its place. */
+export const pauseVote = async (page: Page, processId: string): Promise<void> => {
+  await openVotePage(page, processId)
+  await page.getByRole('button', { name: /^Pause$/ }).click()
+  await expect(page.getByRole('button', { name: /^Resume$/ })).toBeVisible({ timeout: 120_000 })
+}
+
+/** Resumes a paused vote from the header and waits for "Pause" to take its place. */
+export const resumeVote = async (page: Page, processId: string): Promise<void> => {
+  await openVotePage(page, processId)
+  await page.getByRole('button', { name: /^Resume$/ }).click()
+  await expect(page.getByRole('button', { name: /^Pause$/ })).toBeVisible({ timeout: 120_000 })
+}
+
+/**
+ * Picks `value` on the open question's ballot (frame 2) and casts it; waits for frame 3. Single choice only: the
+ * ballot value is on the hidden radio, like `fillBallot`. "Emet el vot" arms a moment after the screen appears and the
+ * click waits for it.
+ */
+export const castOpenQuestion = async (page: Page, value: number): Promise<void> => {
+  const question = voterScreen(page, 'roomQuestion')
+  // The fields stay disabled until the SDK reports the voter able to vote, which can land after the screen shows.
+  await expect(question.locator('input[type="radio"]').first()).toBeEnabled({ timeout: 60_000 })
+  await question.locator(`input[type="radio"][value="${value}"]`).check({ force: true })
+  await page.getByTestId('voter-cast').click()
+  await expect(voterScreen(page, 'roomVoted')).toBeVisible({ timeout: 180_000 })
+}
+
+/** The receipt codes (the vote ids in the Explorer links) shown in `screen`, sorted. */
+export const receiptCodes = async (screen: Locator): Promise<string[]> => {
+  const links = screen.locator('a[href*="/verify/"]')
+  await expect(links.first()).toBeVisible()
+  const hrefs = await links.evaluateAll((anchors) => anchors.map((anchor) => (anchor as HTMLAnchorElement).href))
+  return hrefs.map((href) => href.split('/verify/')[1]).sort()
 }

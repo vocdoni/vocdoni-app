@@ -608,7 +608,8 @@ const collectStyles = (props) => {
 }
 
 // Runs one step of a state. A candidate is `[role, name]` or `['css', selector]` (click the first visible match),
-// `['fill', selector, value]` (type into the first visible match), `['mock', pathname, body]` (from now on, answer that
+// `['fill', selector, value]` (type into the first visible match), `['wait', selector]` (wait for a visible match, click
+// nothing: the screen a mocked change should lead to), `['mock', pathname, body]` (from now on, answer that
 // mock path with this JSON in this page) or `['refocus']` (the page regains focus: react-query refetches what is stale).
 // How long a css or fill step waits for its target to show.
 const STEP_WAIT_MS = 8000
@@ -631,7 +632,14 @@ const runStep = async (page, candidates) => {
   const instant = ([role]) => role === 'refocus' || role === 'mock'
   const run = async ([role, name, value]) => {
     if (role === 'refocus') {
-      await page.evaluate(() => window.dispatchEvent(new Event('visibilitychange')))
+      // Hidden, then visible: react-query only refetches when its focus state changes, and the page may have set it
+      // already.
+      await page.evaluate(() => {
+        for (const state of ['hidden', 'visible']) {
+          Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => state })
+          window.dispatchEvent(new Event('visibilitychange'))
+        }
+      })
     } else {
       await page.route(
         (url) => url.port === String(MOCK_PORT) && url.pathname === name,
@@ -644,7 +652,7 @@ const runStep = async (page, candidates) => {
     .map(([role, name, value]) => ({
       role,
       value,
-      loc: role === 'css' || role === 'fill' ? page.locator(name) : page.getByRole(role, { name }),
+      loc: role === 'css' || role === 'fill' || role === 'wait' ? page.locator(name) : page.getByRole(role, { name }),
     }))
   // A voter step often follows a screen change that waits on the mock (identify, the membership check, the cast) or
   // on hydration: poll for its target, found by selector or by role, until a visible one takes the action. A single
@@ -659,6 +667,7 @@ const runStep = async (page, candidates) => {
         const el = loc.nth(i)
         if (!(await el.isVisible().catch(() => false))) continue
         try {
+          if (role === 'wait') return true
           if (role === 'fill') await el.fill(value, { timeout: 5000 })
           else await el.click({ timeout: 5000 })
           return true

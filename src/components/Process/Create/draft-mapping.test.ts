@@ -76,6 +76,30 @@ describe('votingProcessToForm', () => {
     expect(votingProcessToForm(process()).votingMode).toBe('all')
   })
 
+  describe('results on the voter screen', () => {
+    const withKey = (id: string) => question([{ title: 'Option 1' }], { id, metadata: { voterResults: 'perQuestion' } })
+
+    it('turns the switch on in either mode when the questions say shown', () => {
+      const stored = process({ initialStatus: 'PAUSED', questions: [withKey('q1'), withKey('q2')] } as never)
+      expect(votingProcessToForm(stored).showVoterResults).toBe(true)
+      expect(votingProcessToForm(process({ questions: [withKey('q1')] })).showVoterResults).toBe(true)
+    })
+
+    it('stays off when hidden or without the key', () => {
+      const hidden = question([{ title: 'Option 1' }], { id: 'q1', metadata: { voterResults: 'hidden' } })
+      expect(votingProcessToForm(process({ questions: [hidden] })).showVoterResults).toBe(false)
+      expect(votingProcessToForm(process({ initialStatus: 'PAUSED' } as never)).showVoterResults).toBe(false)
+    })
+
+    it('keeps the key on a clone request', () => {
+      const request = votingProcessToCreateRequest(
+        process({ initialStatus: 'PAUSED', questions: [withKey('q1')] } as never),
+        'organization'
+      )
+      expect(request.questions[0].metadata).toEqual({ voterResults: 'perQuestion' })
+    })
+  })
+
   describe('extended info', () => {
     it('is off when no choice carries a description or an image', () => {
       expect(votingProcessToForm(process()).questions[0].extendedInfo).toBe(false)

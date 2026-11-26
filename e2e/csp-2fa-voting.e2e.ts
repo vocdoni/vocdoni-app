@@ -33,6 +33,7 @@ test.describe('voting with a CSP + email 2FA census', () => {
     const processId = await createAndPublishTwoFactorProcess(page, {
       title: `E2E vote ${seed}`,
       questions: [{ title: 'Do you approve?', choices: [{ label: 'Yes' }, { label: 'No' }] }],
+      voterResults: true,
     })
     expect(processId).toBeTruthy()
 

@@ -53,6 +53,7 @@ test.describe('weighted voting across the question matrix', () => {
     const processId = await createAndPublishTwoFactorProcess(page, {
       title: `E2E matrix ${seed}`,
       weighted: true,
+      voterResults: true,
       // Choice labels are unique across questions on purpose: the results
       // assertions below locate tally rows by them.
       questions: [
