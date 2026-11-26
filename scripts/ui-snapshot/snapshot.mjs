@@ -13,11 +13,13 @@ import { captureName, captureNames, DEFAULT_MODES, DEFAULT_VIEWPORTS, ROUTES, st
 import { checkStress, loadSpec, probe, STRESS_MODULE, stressAlias, UPDATE_FLAG } from './stress.mjs'
 
 const USAGE = `pnpm ui:snapshot -- --label <name> [--primary-color <hex>] [--url <base>] [--routes a,b]
-                    [--viewports 1440,390] [--modes light,dark] [--no-warmup]
+                    [--viewports 1440,390] [--modes light,dark] [--no-warmup] [--build]
                     [--theme stress] [${UPDATE_FLAG}] [--a11y] [${A11Y_UPDATE_FLAG}]`
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT_ROOT = path.join(ROOT, '.ui-snapshot')
+// --build writes the production build here, outside OUT_ROOT so the uploaded artifacts stay small. Removed at the end.
+const BUILD_ROOT = path.join(ROOT, '.ui-snapshot-build')
 // Port 3000 is often taken by another checkout's dev server; UI_SNAPSHOT_PORT picks another one.
 const APP_PORT = Number(process.env.UI_SNAPSHOT_PORT || 3000)
 const DEFAULT_BASE = `http://localhost:${APP_PORT}`
@@ -87,6 +89,7 @@ const parseCli = () => {
       viewports: { type: 'string', default: DEFAULT_VIEWPORTS.join(',') },
       modes: { type: 'string', default: DEFAULT_MODES.join(',') },
       'no-warmup': { type: 'boolean', default: false },
+      build: { type: 'boolean', default: false },
       theme: { type: 'string', default: 'stock' },
       'update-stress-baseline': { type: 'boolean', default: false },
       a11y: { type: 'boolean', default: false },
@@ -114,6 +117,7 @@ const parseCli = () => {
   if (values.a11y && primaryColor)
     fail('--a11y needs the stock palette: --primary-color makes colour-contrast incomparable')
   if (values['update-a11y-baseline'] && !values.a11y) fail(`${A11Y_UPDATE_FLAG} needs --a11y`)
+  if (values.build && values.url) fail('--build starts the app itself: drop --url')
   let base = DEFAULT_BASE
   if (values.url) {
     let u
@@ -142,7 +146,9 @@ const parseCli = () => {
     routes: only ? ROUTES.filter((r) => only.includes(r.slug)) : ROUTES,
     // Only a run over every capture may prune the a11y baseline (see checkA11y).
     fullRun: !only && sameItems(viewports, DEFAULT_VIEWPORTS) && sameItems(modes, DEFAULT_MODES),
-    warmup: !values['no-warmup'],
+    build: values.build,
+    // Warm-up compiles routes on demand in the dev server; a production build has nothing to compile.
+    warmup: !values['no-warmup'] && !values.build,
     stress,
     updateStressBaseline: values['update-stress-baseline'],
     a11y: values.a11y,
@@ -226,27 +232,17 @@ const viteConfigEnv = (stress) => {
   return { VITE_CONFIG: JSON.stringify({ server, ...(stress && { resolve: { alias: stressAlias() } }) }) }
 }
 
-// Set as soon as the dev server is spawned, so an interrupt during its start-up still stops it.
-let spawnedDev = null
+// Set as soon as a child is spawned, so an interrupt during its start-up still stops it.
+let spawnedApp = null
 
-const startDevServer = async ({ mockUrl, primaryColor, stress, logFile }) => {
-  if (await portInUse(APP_PORT)) {
-    fail(
-      `port ${APP_PORT} is already in use. Stop whatever listens there (lsof -nP -iTCP:${APP_PORT} -sTCP:LISTEN), ` +
-        'or start the app yourself and pass --url (see README.md).'
-    )
-  }
+// Spawns `command` in its own process group, so stopping it also stops what it started. Output goes to the log
+// file and to memory, for the readiness checks. `exit` resolves once the child and its output pipes are closed.
+const spawnApp = ({ command, args, env, logFile }) => {
   const log = fs.createWriteStream(logFile)
   let output = ''
-  const child = spawn('pnpm', ['exec', 'vike', 'dev'], {
+  const child = spawn(command, args, {
     cwd: ROOT,
-    env: {
-      ...process.env,
-      ...appEnv(mockUrl, primaryColor),
-      ...viteConfigEnv(stress),
-      FORCE_COLOR: '0',
-      BROWSER: 'none',
-    },
+    env: { ...process.env, ...env, FORCE_COLOR: '0', BROWSER: 'none' },
     detached: true,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
@@ -258,49 +254,124 @@ const startDevServer = async ({ mockUrl, primaryColor, stress, logFile }) => {
   child.stdout.on('data', onData)
   child.stderr.on('data', onData)
   let exited = null
-  child.once('exit', (code, signal) => (exited = { code, signal }))
-  const dev = {
-    child,
+  const exit = new Promise((resolve) => child.once('close', (code, signal) => resolve((exited = { code, signal }))))
+  const app = {
     log: () => output,
+    exited: () => exited,
+    exit,
     stop: async () => {
-      if (exited) return
-      const wait = new Promise((resolve) => child.once('exit', resolve))
-      try {
-        process.kill(-child.pid, 'SIGTERM')
-      } catch {}
-      const timer = setTimeout(() => {
+      const killGroup = (signal) => {
         try {
-          process.kill(-child.pid, 'SIGKILL')
+          process.kill(-child.pid, signal)
         } catch {}
-      }, 5000)
-      await wait
-      clearTimeout(timer)
+      }
+      if (!exited) {
+        killGroup('SIGTERM')
+        const timer = setTimeout(() => killGroup('SIGKILL'), 5000)
+        await exit
+        clearTimeout(timer)
+      }
       log.end()
     },
   }
-  spawnedDev = dev
+  spawnedApp = app
+  return app
+}
+
+const requireFreePort = async () => {
+  if (await portInUse(APP_PORT)) {
+    fail(
+      `port ${APP_PORT} is already in use. Stop whatever listens there (lsof -nP -iTCP:${APP_PORT} -sTCP:LISTEN), ` +
+        'or start the app yourself and pass --url (see README.md).'
+    )
+  }
+}
+
+// Whether the app at DEFAULT_BASE answers (anything below a 500).
+const answers = async () => {
+  try {
+    const res = await fetch(`${DEFAULT_BASE}/`, { signal: AbortSignal.timeout(5000) })
+    return res.status < 500
+  } catch {
+    return false
+  }
+}
+
+const startDevServer = async ({ mockUrl, primaryColor, stress, logFile }) => {
+  await requireFreePort()
+  const dev = spawnApp({
+    command: 'pnpm',
+    args: ['exec', 'vike', 'dev'],
+    env: { ...appEnv(mockUrl, primaryColor), ...viteConfigEnv(stress) },
+    logFile,
+  })
   const deadline = Date.now() + 120_000
   for (;;) {
-    if (exited) {
-      try {
-        process.kill(-child.pid, 'SIGKILL')
-      } catch {}
-      fail(`the dev server exited early (${JSON.stringify(exited)}). Log: ${logFile}`)
+    if (dev.exited()) {
+      await dev.stop()
+      fail(`the dev server exited early (${JSON.stringify(dev.exited())}). Log: ${logFile}`)
     }
-    const local = output.match(/Local:\s+http:\/\/[^:/\s]+:(\d+)/)
+    const local = dev.log().match(/Local:\s+http:\/\/[^:/\s]+:(\d+)/)
     if (local && Number(local[1]) !== APP_PORT) {
       await dev.stop()
       fail(`vite started on port ${local[1]} instead of ${APP_PORT}: something else holds ${APP_PORT}.`)
     }
-    if (local) {
-      try {
-        const res = await fetch(`${DEFAULT_BASE}/`, { signal: AbortSignal.timeout(5000) })
-        if (res.status < 500) return dev
-      } catch {}
-    }
+    if (local && (await answers())) return dev
     if (Date.now() > deadline) {
       await dev.stop()
       fail(`the dev server did not answer on ${DEFAULT_BASE} within 120 s. Log: ${logFile}`)
+    }
+    await new Promise((r) => setTimeout(r, 500))
+  }
+}
+
+// Builds the app into buildDir, as `pnpm build` does, with the dev server's env. `vike build` is used rather than
+// `vite build` because only the vike CLI reads VITE_CONFIG, which carries the stress alias.
+const buildApp = async ({ mockUrl, primaryColor, stress, buildDir, logFile }) => {
+  const build = spawnApp({
+    command: 'pnpm',
+    args: ['exec', 'vike', 'build'],
+    env: {
+      ...appEnv(mockUrl, primaryColor),
+      NODE_ENV: 'production',
+      BUILD_PATH: buildDir,
+      VITE_CONFIG: stress ? JSON.stringify({ resolve: { alias: stressAlias() } }) : undefined,
+      UI_SNAPSHOT_TEST_THEME: stress ? '1' : undefined,
+    },
+    logFile,
+  })
+  const exit = await build.exit
+  await build.stop()
+  if (exit.code !== 0) fail(`the build failed (${JSON.stringify(exit)}). Log: ${logFile}`)
+}
+
+// Serves the production build with the app's own server (server/index.mjs). The SSR cache is off, so every capture
+// renders the same way.
+const startProdServer = async ({ mockUrl, primaryColor, buildDir, logFile }) => {
+  await requireFreePort()
+  const server = spawnApp({
+    command: process.execPath,
+    args: ['server/index.mjs'],
+    env: {
+      ...appEnv(mockUrl, primaryColor),
+      NODE_ENV: 'production',
+      PORT: String(APP_PORT),
+      UI_SNAPSHOT_HOST: '127.0.0.1',
+      DIST_DIR: buildDir,
+      SSR_CACHE: 'off',
+    },
+    logFile,
+  })
+  const deadline = Date.now() + 120_000
+  for (;;) {
+    if (server.exited()) {
+      await server.stop()
+      fail(`the server exited early (${JSON.stringify(server.exited())}). Log: ${logFile}`)
+    }
+    if (server.log().includes('Server running at') && (await answers())) return server
+    if (Date.now() > deadline) {
+      await server.stop()
+      fail(`the server did not answer on ${DEFAULT_BASE} within 120 s. Log: ${logFile}`)
     }
     await new Promise((r) => setTimeout(r, 500))
   }
@@ -572,20 +643,28 @@ const main = async () => {
   const mockLog = fs.createWriteStream(path.join(outDir, 'mock-requests.log'))
 
   let mock
-  let dev
+  let app
   let browser
+  let buildDir = null
   let cleaning = false
   const cleanup = async () => {
     if (cleaning) return
     cleaning = true
     await browser?.close().catch(() => {})
-    await (dev ?? spawnedDev)?.stop().catch(() => {})
+    await (app ?? spawnedApp)?.stop().catch(() => {})
     await mock?.close().catch(() => {})
     mockLog.end()
+    if (buildDir) {
+      fs.rmSync(buildDir, { recursive: true, force: true })
+      // Drops the parent too, unless another label's build is still in it (rmdir refuses a non-empty folder).
+      try {
+        fs.rmdirSync(BUILD_ROOT)
+      } catch {}
+    }
   }
   for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
     process.once(signal, async () => {
-      console.error(`\nui:snapshot: ${signal}, stopping the mock, the dev server and the browser…`)
+      console.error(`\nui:snapshot: ${signal}, stopping the mock, the app server and the browser…`)
       await cleanup()
       process.exit(130)
     })
@@ -598,12 +677,29 @@ const main = async () => {
       fail(`the SaaS mock could not listen on 127.0.0.1:${MOCK_PORT} (${e.code || e.message}). Is another run active?`)
     }
     console.log(`Mock SaaS API on ${mock.url}`)
+    const variant = opts.stress ? ' (stress theme)' : opts.primaryColor ? ` (PRIMARY_COLOR=${opts.primaryColor})` : ''
     if (opts.external) {
       console.log(`Using the app at ${opts.base}. It must run with SAAS_URL=${mock.url} (see README.md).`)
+    } else if (opts.build) {
+      buildDir = path.join(BUILD_ROOT, opts.label)
+      console.log(`Building the app${variant}…`)
+      await buildApp({
+        mockUrl: mock.url,
+        primaryColor: opts.primaryColor,
+        stress: opts.stress,
+        buildDir,
+        logFile: path.join(outDir, 'build.log'),
+      })
+      console.log(`Starting the built app on ${DEFAULT_BASE}…`)
+      app = await startProdServer({
+        mockUrl: mock.url,
+        primaryColor: opts.primaryColor,
+        buildDir,
+        logFile: path.join(outDir, 'server.log'),
+      })
     } else {
-      const variant = opts.stress ? ' (stress theme)' : opts.primaryColor ? ` (PRIMARY_COLOR=${opts.primaryColor})` : ''
       console.log(`Starting the dev server on ${DEFAULT_BASE}${variant}…`)
-      dev = await startDevServer({
+      app = await startDevServer({
         mockUrl: mock.url,
         primaryColor: opts.primaryColor,
         stress: opts.stress,
@@ -675,26 +771,22 @@ const main = async () => {
     }
 
     // Warm-up: vite optimizes dependencies the first time a route needs them and reloads the
-    // page when it does. Visit everything once so no reload lands in the middle of a capture.
+    // page when it does. Visit every route once so no reload lands in the middle of a capture.
+    // States are skipped: a dialog or menu rarely loads a module its route did not already load.
     if (opts.warmup) {
       for (let round = 1; round <= 3; round++) {
-        const before = dev ? dev.log().length : 0
+        const before = app ? app.log().length : 0
         console.log(`Warm-up round ${round}…`)
         for (const route of opts.routes) {
-          const { context, page } = await visit({ route, width: 1440, mode: 'light' }).catch(() => ({}))
-          if (!page) continue
-          for (const state of route.states || []) {
-            for (const step of state.open) await clickFirst(page, step).catch(() => {})
-            await page.waitForTimeout(500)
-          }
-          await context.close()
+          const { context } = await visit({ route, width: 1440, mode: 'light' }).catch(() => ({}))
+          await context?.close()
         }
-        if (!dev || !RELOAD_RE.test(dev.log().slice(before))) break
+        if (!app || !RELOAD_RE.test(app.log().slice(before))) break
       }
     }
 
     const captures = []
-    const captureStart = dev ? dev.log().length : 0
+    const captureStart = app ? app.log().length : 0
     const save = async (page, name, fullPage) => {
       const styles = await page.evaluate(collectStyles, STYLE_PROPS)
       fs.writeFileSync(path.join(outDir, `${name}.json`), JSON.stringify(styles))
@@ -782,8 +874,8 @@ const main = async () => {
     }
 
     if (cleaning) return
-    const reloads = dev
-      ? dev
+    const reloads = app
+      ? app
           .log()
           .slice(captureStart)
           .split('\n')
@@ -796,7 +888,8 @@ const main = async () => {
       ...gitInfo(),
       browser: { channel: launched.channel, version: browser.version() },
       baseUrl: opts.base,
-      devServer: opts.external ? 'external' : 'spawned',
+      devServer: opts.external ? 'external' : opts.build ? 'build' : 'spawned',
+      build: opts.build,
       primaryColor: opts.primaryColor ?? null,
       theme: opts.stress ? 'stress' : 'stock',
       a11y: opts.a11y,
