@@ -15,9 +15,11 @@ import { DashboardBox } from '~components/Dashboard/Contents'
 import { SectionHeader } from '~components/ui/SectionHeader'
 import {
   censusPaymentIds,
+  censusTopUpIds,
   useCensusCheckout,
   useReadWalletHistory,
   waitForCensusPayment,
+  type CensusRecovery,
 } from '~queries/census-checkout'
 import { useWallet, useWalletAccess } from '~queries/wallet'
 import { Routes } from '~src/router/routes'
@@ -31,7 +33,11 @@ type Room = { censusSize: number; dueCents?: number; shortfallCents?: number }
 // The payment's snapshot of the ledger and of the room, kept across a redirect-based payment (3DS, bank
 // redirect). The return URL carries only the session id, so the room is read back from here.
 const PENDING_KEY = 'census-checkout-pending'
-export type StoredPending = Room & { processId: string; knownIds: string[] }
+// `knownTopUpIds` is optional: a snapshot stored by the previous version has none, so it cannot recover
+export type StoredPending = Room & { processId: string; knownIds: string[]; knownTopUpIds?: string[] }
+
+// The ledger as it was before the payment: its payments of the process, and its top-ups
+type LedgerSnapshot = { knownIds: string[]; knownTopUpIds: string[] }
 
 // sessionStorage can be blocked (private windows), so every access is guarded. Another process's
 // snapshot is never returned.
@@ -67,10 +73,17 @@ type Step =
   | { name: 'buying' }
   | { name: 'checkout'; clientSecret: string; amountCents: number; currency: string; censusSize: number }
   // The payment is submitted: the debit for the room is awaited in the ledger
-  | { name: 'waiting'; redirected: boolean; knownIds: string[] }
+  | {
+      name: 'waiting'
+      redirected: boolean
+      knownIds: string[]
+      knownTopUpIds?: string[]
+      censusSize?: number
+    }
   | { name: 'bought'; amountCents: number; currency?: string }
-  // `confirmed`: the payment was accepted here, so the room is only late, not unpaid
-  | { name: 'timeout'; confirmed: boolean }
+  // `confirmed`: the payment was accepted here, so the room is only late, not unpaid.
+  // `credited`: the top-up is in the wallet, but calling the checkout again still found it short.
+  | { name: 'timeout'; confirmed: boolean; credited?: boolean }
 
 export type CensusCheckoutProps = {
   processId: string
@@ -83,6 +96,8 @@ export type CensusCheckoutProps = {
   // Set on the return from a redirect-based payment, with the ledger snapshot taken before it when one was stored
   returned?: boolean
   knownIds?: string[]
+  // The top-ups of the ledger snapshot. Without them a credited top-up is not recovered, only waited for.
+  knownTopUpIds?: string[]
 }
 
 const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error))
@@ -92,8 +107,10 @@ const censusCheckoutErrorMessage = (t: ReturnType<typeof useTranslation>['t'], e
 
 // Where a redirect return starts: waiting when the payment was snapshotted, else neutral copy, since
 // nothing says whether the room was bought
-const stepAfterReturn = (knownIds?: string[]): Step =>
-  knownIds ? { name: 'waiting', redirected: true, knownIds } : { name: 'timeout', confirmed: false }
+const stepAfterReturn = (knownIds?: string[], knownTopUpIds?: string[], censusSize?: number): Step =>
+  knownIds
+    ? { name: 'waiting', redirected: true, knownIds, knownTopUpIds, censusSize }
+    : { name: 'timeout', confirmed: false }
 
 /**
  * Buy room in a process census, so the members that were refused can be added (the census growth
@@ -107,6 +124,7 @@ export const CensusCheckout = ({
   shortfallCents,
   returned = false,
   knownIds,
+  knownTopUpIds,
 }: CensusCheckoutProps) => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -121,18 +139,47 @@ export const CensusCheckout = ({
     useHref(generatePath(Routes.dashboard.census.checkoutReturnBase, { id: processId })),
     window.location.origin
   )
-  const [step, setStep] = useState<Step>(() => (returned ? stepAfterReturn(knownIds) : { name: 'ready' }))
+  const [step, setStep] = useState<Step>(() =>
+    returned ? stepAfterReturn(knownIds, knownTopUpIds, censusSize) : { name: 'ready' }
+  )
   const [error, setError] = useState<string>()
+  // At most one recovery per mount: a StrictMode remount or a second wait must not buy the room twice
+  const recoveryRef = useRef(false)
 
   // The debit changes the balance and the ledger: every wallet page is read again
   const markBought = (amountCents: number, currency?: string) => {
     void queryClient.invalidateQueries({ queryKey: ['organizations', 'wallet'] })
     setStep({ name: 'bought', amountCents, currency })
   }
+
+  // Calls the checkout again for a top-up the backend credited without debiting the room. An empty
+  // client secret means the wallet covers the room now; a client secret means it is still short, and
+  // then no second card form is opened.
+  const recoverRoom = async (size: number): Promise<CensusRecovery | undefined> => {
+    if (recoveryRef.current) return undefined
+    recoveryRef.current = true
+    try {
+      const response = await buyRoom.mutateAsync({
+        processId,
+        censusSize: size,
+        locale: i18n.resolvedLanguage,
+        returnURL: returnURL.toString(),
+      })
+      // A new checkout means the wallet still lacks money: never a second card form
+      return response.clientSecret
+        ? { status: 'short' }
+        : { status: 'bought', amountCents: response.amountCents, currency: response.currency }
+    } catch (err) {
+      // A 400 may mean the debit landed: its ledger entry ends the wait, so nothing is claimed here
+      console.warn('could not buy the places from the wallet', err)
+      return undefined
+    }
+  }
+
   // The reader changes with the bearer token: the wait reads it from here, so a refresh does not restart it
-  const latest = useRef({ readHistory })
+  const latest = useRef({ readHistory, recoverRoom })
   useEffect(() => {
-    latest.current = { readHistory }
+    latest.current = { readHistory, recoverRoom }
   })
 
   // The snapshot has served its purpose once read on the return. The URL then moves on to the census
@@ -154,13 +201,21 @@ export const CensusCheckout = ({
   useEffect(() => {
     if (step.name !== 'waiting') return
     const controller = new AbortController()
+    // Without the snapshot of the top-ups, or without the size to buy, a credited top-up is only waited for
+    const size = step.censusSize
+    const recover =
+      step.knownTopUpIds && size !== undefined && size >= 1 ? () => latest.current.recoverRoom(size) : undefined
     waitForCensusPayment(() => latest.current.readHistory(), processId, step.knownIds, {
       signal: controller.signal,
+      knownTopUpIds: step.knownTopUpIds,
+      recover,
     })
       .then((outcome) => {
         if (controller.signal.aborted) return
         clearStoredPending()
         if (outcome?.status === 'paid') markBought(Math.abs(outcome.entry.amountCents))
+        else if (outcome?.status === 'bought') markBought(outcome.amountCents, outcome.currency)
+        else if (outcome?.status === 'short') setStep({ name: 'timeout', confirmed: !step.redirected, credited: true })
         else setStep({ name: 'timeout', confirmed: !step.redirected })
       })
       .catch((err) => {
@@ -175,6 +230,9 @@ export const CensusCheckout = ({
 
   const balanceCents = wallet?.balanceCents
   const currencyCode = wallet?.currency?.toUpperCase()
+  // No shortfall and a balance that covers the price: the backend debits the room without a card payment
+  const walletCovers =
+    shortfallCents === 0 && (balanceCents === undefined || dueCents === undefined || balanceCents >= dueCents)
   const backToMembers = (
     <Button asChild variant='outline'>
       <RouterLink to={Routes.dashboard.memberbase.base}>
@@ -213,12 +271,13 @@ export const CensusCheckout = ({
       })
   }
 
-  // The payments of this process before the one about to be made, read on the first page of the ledger.
-  // Null when the ledger cannot be read: nothing new can then be told apart, so no success is claimed.
+  // The payments of this process and the top-ups before the one about to be made, read on the first page
+  // of the ledger. Null when the ledger cannot be read: nothing new can then be told apart, so no success
+  // is claimed.
   const snapshotPayments = useCallback(
-    () =>
+    (): Promise<LedgerSnapshot | null> =>
       latest.current.readHistory().then(
-        (history) => censusPaymentIds(history, processId),
+        (history) => ({ knownIds: censusPaymentIds(history, processId), knownTopUpIds: censusTopUpIds(history) }),
         () => null
       ),
     [processId]
@@ -240,7 +299,7 @@ export const CensusCheckout = ({
             snapshotPayments={snapshotPayments}
             onPaid={(snapshot) => {
               if (snapshot === null) setStep({ name: 'timeout', confirmed: true })
-              else setStep({ name: 'waiting', redirected: false, knownIds: snapshot })
+              else setStep({ name: 'waiting', redirected: false, ...snapshot, censusSize: step.censusSize })
             }}
           />
         )
@@ -265,15 +324,20 @@ export const CensusCheckout = ({
           <VStack align='stretch' gap='4'>
             {error && <Outcome status='error'>{error}</Outcome>}
             <Outcome status='warning' action={backToMembers}>
-              {step.confirmed
-                ? t('census.checkout.timeout', {
+              {step.credited
+                ? t('census.checkout.credited', {
                     defaultValue:
-                      'Your payment is confirmed; the places are added as soon as it is processed. Try adding the members again in a moment.',
+                      'Your payment was added to your wallet, but the wallet does not cover these voter places yet. Try adding the members again to see what is still missing.',
                   })
-                : t('census.checkout.timeout_redirected', {
-                    defaultValue:
-                      'We are still waiting for the places to be added. Try adding the members again in a moment.',
-                  })}
+                : step.confirmed
+                  ? t('census.checkout.timeout', {
+                      defaultValue:
+                        'Your payment is confirmed; the places are added as soon as it is processed. Try adding the members again in a moment.',
+                    })
+                  : t('census.checkout.timeout_redirected', {
+                      defaultValue:
+                        'We are still waiting for the places to be added. Try adding the members again in a moment.',
+                    })}
             </Outcome>
           </VStack>
         )
@@ -315,11 +379,18 @@ export const CensusCheckout = ({
                 })}
               </Text>
             )}
-            {shortfallCents !== undefined && (
+            {shortfallCents !== undefined && shortfallCents > 0 && (
               <Text textStyle='body-sm' color='fg.muted'>
                 {t('census.checkout.shortfall', {
                   defaultValue: 'Your wallet is {{shortfall}} short.',
                   shortfall: currency(shortfallCents, currencyCode),
+                })}
+              </Text>
+            )}
+            {walletCovers && (
+              <Text textStyle='body-sm' color='fg.muted'>
+                {t('census.checkout.wallet_covers', {
+                  defaultValue: 'Your wallet covers it: the places are charged from your wallet, with no card payment.',
                 })}
               </Text>
             )}
@@ -382,8 +453,8 @@ type CheckoutStepProps = {
   currencyCode: string
   room: Room
   stripePromise: ReturnType<typeof useStripePromise>
-  snapshotPayments: () => Promise<string[] | null>
-  onPaid: (knownIds: string[] | null) => void
+  snapshotPayments: () => Promise<LedgerSnapshot | null>
+  onPaid: (snapshot: LedgerSnapshot | null) => void
 }
 
 const CheckoutStep = ({
@@ -460,9 +531,10 @@ const CheckoutFormFields = ({
 
     setIsSubmitting(true)
     setError(null)
-    // Taken before the payment: the debit it causes is the one new payment of this process in the ledger
-    const knownIds = await snapshotPayments()
-    if (knownIds) writeStoredPending({ processId, ...room, knownIds })
+    // Taken before the payment: the debit it causes is the one new payment of this process in the ledger,
+    // and the top-up it credits is the one new top-up
+    const snapshot = await snapshotPayments()
+    if (snapshot) writeStoredPending({ processId, ...room, ...snapshot })
     else clearStoredPending()
     try {
       const result = await checkout.confirm({ redirect: 'if_required' })
@@ -475,7 +547,7 @@ const CheckoutFormFields = ({
       // No redirect happened, so the return route will not need the snapshot
       clearStoredPending()
       // Stripe accepted the payment; the debit for the room is the backend's to make
-      onPaid(knownIds)
+      onPaid(snapshot)
     } catch (err) {
       clearStoredPending()
       setError(errorMessage(err))
@@ -486,10 +558,32 @@ const CheckoutFormFields = ({
   return (
     <form onSubmit={handleSubmit}>
       <VStack align='stretch' gap='5'>
+        <Text>
+          {room.dueCents !== undefined
+            ? t('census.checkout.topup_intro', {
+                defaultValue:
+                  'These voter places cost {{due}} (VAT excluded). Your card pays a wallet top-up of {{amount}} (VAT excluded), and the places are then charged from your wallet.',
+                due: currency(room.dueCents, currencyCode),
+                amount: currency(amountCents, currencyCode),
+              })
+            : t('census.checkout.topup_intro_no_price', {
+                defaultValue:
+                  'Your card pays a wallet top-up of {{amount}} (VAT excluded), and the voter places are then charged from your wallet.',
+                amount: currency(amountCents, currencyCode),
+              })}
+        </Text>
+        {room.shortfallCents !== undefined && amountCents > room.shortfallCents && (
+          <Text textStyle='body-sm' color='fg.muted'>
+            {t('census.checkout.topup_surplus', {
+              defaultValue: '{{surplus}} of the top-up stays in your wallet afterwards.',
+              surplus: currency(amountCents - room.shortfallCents, currencyCode),
+            })}
+          </Text>
+        )}
         {checkout.total && (
           <Card.Root variant='section' size='md' gap='3'>
             <Flex justify='space-between' gap='4'>
-              <Text>{t('census.checkout.amount_net', { defaultValue: 'Places (VAT excluded)' })}</Text>
+              <Text>{t('census.checkout.topup_net', { defaultValue: 'Wallet top-up (VAT excluded)' })}</Text>
               <Text>{currency(amountCents, currencyCode)}</Text>
             </Flex>
             <Flex justify='space-between' gap='4'>

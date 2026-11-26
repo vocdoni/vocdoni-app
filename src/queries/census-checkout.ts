@@ -26,6 +26,10 @@ export const useCensusCheckout = () => {
 export const censusPaymentIds = (history: WalletLedgerEntry[], processId: string): string[] =>
   history.filter((entry) => entry.kind === 'payment' && entry.processId === processId).map((entry) => entry.id)
 
+// The ledger lines of the top-ups: a card payment for a shortfall is credited to the wallet as one
+export const censusTopUpIds = (history: WalletLedgerEntry[]): string[] =>
+  history.filter((entry) => entry.kind === 'topup').map((entry) => entry.id)
+
 /**
  * Reads the first page of the selected organization's ledger. The room's debit is written there, and
  * a new payment is on top of it.
@@ -53,9 +57,17 @@ export type WaitForCensusPaymentOptions = {
   now?: () => number
   // Stops waiting (e.g. the view was left); resolves to `undefined`
   signal?: AbortSignal
+  // The top-ups in the snapshot taken before the payment. Undefined means no recovery.
+  knownTopUpIds?: string[]
+  // How long a new top-up may wait for its payment before the room is bought again
+  graceMs?: number
+  // Calls the census checkout again: it debits the room from a top-up the backend credited without a debit
+  recover?: () => Promise<CensusRecovery | undefined>
 }
 
-export type CensusPaymentWait = { status: 'paid'; entry: WalletLedgerEntry } | { status: 'timeout' }
+// What calling the census checkout again made of a top-up the backend credited without debiting the room
+export type CensusRecovery = { status: 'bought'; amountCents: number; currency: string } | { status: 'short' }
+export type CensusPaymentWait = { status: 'paid'; entry: WalletLedgerEntry } | { status: 'timeout' } | CensusRecovery
 
 /**
  * Polls the wallet history until a payment for the process appears that was not in `knownIds`, the
@@ -74,10 +86,16 @@ export const waitForCensusPayment = async (
     sleep = defaultSleep,
     now = Date.now,
     signal,
+    knownTopUpIds,
+    graceMs = 5000,
+    recover,
   }: WaitForCensusPaymentOptions = {}
 ): Promise<CensusPaymentWait | undefined> => {
   const deadline = now() + timeoutMs
   let delay = intervalMs
+  // When a top-up that is not in the snapshot was first read, and whether the room was already bought again
+  let firstSeen: number | undefined
+  let attempted = false
   while (!signal?.aborted) {
     try {
       const history = await readHistory()
@@ -86,6 +104,18 @@ export const waitForCensusPayment = async (
           candidate.kind === 'payment' && candidate.processId === processId && !knownIds.includes(candidate.id)
       )
       if (entry) return signal?.aborted ? undefined : { status: 'paid', entry }
+
+      // The top-up is credited but no debit followed: calling the checkout again debits it (it cannot double charge)
+      if (recover && knownTopUpIds && !attempted) {
+        const topUp = history.some((candidate) => candidate.kind === 'topup' && !knownTopUpIds.includes(candidate.id))
+        if (topUp) firstSeen ??= now()
+        if (firstSeen !== undefined && now() - firstSeen >= graceMs) {
+          attempted = true
+          const result = await recover().catch(() => undefined)
+          if (signal?.aborted) return undefined
+          if (result) return result
+        }
+      }
     } catch (error) {
       if (isPermanentFailure(error)) throw error
       console.warn('could not read the wallet, retrying', error)

@@ -3,7 +3,13 @@ import type { WalletLedgerEntry } from '@vocdoni/api-types'
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement, type ReactNode } from 'react'
-import { censusPaymentIds, useCensusCheckout, useReadWalletHistory, waitForCensusPayment } from './census-checkout'
+import {
+  censusPaymentIds,
+  censusTopUpIds,
+  useCensusCheckout,
+  useReadWalletHistory,
+  waitForCensusPayment,
+} from './census-checkout'
 
 const mockCensusCheckout = vi.hoisted(() => vi.fn())
 const mockGetWallet = vi.hoisted(() => vi.fn())
@@ -118,6 +124,18 @@ describe('censusPaymentIds', () => {
   })
 })
 
+describe('censusTopUpIds', () => {
+  it('lists the top-ups only', () => {
+    const history = [
+      entry({ id: 'p1' }),
+      entry({ id: 't1', kind: 'topup', amountCents: 5000, processId: undefined }),
+      entry({ id: 'r1', kind: 'refund' }),
+    ]
+
+    expect(censusTopUpIds(history)).toEqual(['t1'])
+  })
+})
+
 describe('waitForCensusPayment', () => {
   it('resolves with the new payment once it appears in the ledger', async () => {
     const clock = fakeClock()
@@ -205,5 +223,146 @@ describe('waitForCensusPayment', () => {
 
     expect(outcome).toBeUndefined()
     expect(readHistory).toHaveBeenCalledTimes(1)
+  })
+
+  describe('recovery of a top-up credited without a debit', () => {
+    const topUp = entry({ id: 't-new', kind: 'topup', amountCents: 300, processId: undefined })
+    const payment = entry({ id: 'p-new', amountCents: -300 })
+
+    it('calls the checkout again once the top-up has waited the grace period, and returns what it bought', async () => {
+      const clock = fakeClock()
+      const readHistory = vi.fn().mockResolvedValueOnce([]).mockResolvedValue([topUp])
+      const recover = vi.fn().mockResolvedValue({ status: 'bought', amountCents: 300, currency: 'eur' })
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        knownTopUpIds: [],
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'bought', amountCents: 300, currency: 'eur' })
+      expect(recover).toHaveBeenCalledTimes(1)
+      // The top-up is first read at 2 s, so the recovery waits until 5 s have passed since then
+      expect(clock.now()).toBeGreaterThanOrEqual(7000)
+    })
+
+    it('resolves paid, and does not recover, when the payment follows the top-up within the grace period', async () => {
+      const clock = fakeClock()
+      const readHistory = vi
+        .fn()
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([topUp])
+        .mockResolvedValueOnce([payment, topUp])
+      const recover = vi.fn()
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        knownTopUpIds: [],
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'paid', entry: expect.objectContaining({ id: 'p-new' }) })
+      expect(recover).not.toHaveBeenCalled()
+    })
+
+    it('does not recover without the snapshot of the top-ups', async () => {
+      const clock = fakeClock()
+      const readHistory = vi.fn().mockResolvedValue([topUp])
+      const recover = vi.fn()
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        timeoutMs: 60_000,
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'timeout' })
+      expect(recover).not.toHaveBeenCalled()
+    })
+
+    it('does not recover for a top-up that was already in the snapshot', async () => {
+      const clock = fakeClock()
+      const readHistory = vi.fn().mockResolvedValue([topUp])
+      const recover = vi.fn()
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        timeoutMs: 60_000,
+        knownTopUpIds: ['t-new'],
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'timeout' })
+      expect(recover).not.toHaveBeenCalled()
+    })
+
+    it('keeps polling when the recovery answers nothing, and resolves paid once the payment lands', async () => {
+      const clock = fakeClock()
+      let reads = 0
+      const readHistory = vi.fn(async () => {
+        reads++
+        return reads < 5 ? [topUp] : [payment, topUp]
+      })
+      const recover = vi.fn().mockResolvedValue(undefined)
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        knownTopUpIds: [],
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'paid', entry: expect.objectContaining({ id: 'p-new' }) })
+      expect(recover).toHaveBeenCalledTimes(1)
+    })
+
+    it('keeps polling when the recovery rejects, and times out without a payment', async () => {
+      const clock = fakeClock()
+      const readHistory = vi.fn().mockResolvedValue([topUp])
+      const recover = vi.fn().mockRejectedValue(new Error('network down'))
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        timeoutMs: 60_000,
+        knownTopUpIds: [],
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'timeout' })
+      expect(recover).toHaveBeenCalledTimes(1)
+    })
+
+    it('returns a short recovery as it is', async () => {
+      const clock = fakeClock()
+      const readHistory = vi.fn().mockResolvedValue([topUp])
+      const recover = vi.fn().mockResolvedValue({ status: 'short' })
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        knownTopUpIds: [],
+        recover,
+      })
+
+      expect(outcome).toEqual({ status: 'short' })
+    })
+
+    it('resolves to undefined when aborted during the recovery', async () => {
+      const clock = fakeClock()
+      const controller = new AbortController()
+      const readHistory = vi.fn().mockResolvedValue([topUp])
+      const recover = vi.fn(async () => {
+        controller.abort()
+        return { status: 'bought', amountCents: 300, currency: 'eur' } as const
+      })
+
+      const outcome = await waitForCensusPayment(readHistory, processId, [], {
+        ...clock,
+        signal: controller.signal,
+        knownTopUpIds: [],
+        recover,
+      })
+
+      expect(outcome).toBeUndefined()
+      expect(recover).toHaveBeenCalledTimes(1)
+    })
   })
 })

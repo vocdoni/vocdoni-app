@@ -86,11 +86,11 @@
   "census": {
     "checkout": {
       "admin_only": "Només els administradors poden afegir places al cens.",
-      "amount_net": "Places (sense IVA)",
       "back_to_members": "Torna als membres",
       "balance": "El teu wallet té {{balance}}.",
       "bought": "Places al cens afegides: s'han cobrat {{amount}} del teu wallet. Torna a intentar afegir els membres.",
       "buy": "Afegeix places al cens",
+      "credited": "El teu pagament s'ha afegit al wallet, però el wallet encara no cobreix aquestes places de votants. Torna a intentar afegir els membres per veure què encara falta.",
       "intro": "Places per a {{size}} votants, per {{due}} més (sense IVA).",
       "intro_no_price": "Places per a {{size}} votants.",
       "invalid": "Aquesta pàgina necessita el nombre de votants per als quals afegir places al cens. Obre-la des del canvi rebutjat.",
@@ -99,7 +99,12 @@
       "timeout": "El pagament està confirmat; les places s'afegeixen tan bon punt es processi. Torna a intentar afegir els membres d'aquí a un moment.",
       "timeout_redirected": "Encara esperem que s'afegeixin les places. Torna a intentar afegir els membres d'aquí a un moment.",
       "title": "Afegeix places al cens",
-      "waiting": "Pagament rebut. S'estan afegint les places de votants…"
+      "topup_intro": "Aquestes places de votants costen {{due}} (sense IVA). La teva targeta paga una recàrrega del wallet de {{amount}} (sense IVA), i després les places es cobren del wallet.",
+      "topup_intro_no_price": "La teva targeta paga una recàrrega del wallet de {{amount}} (sense IVA), i després les places de votants es cobren del wallet.",
+      "topup_net": "Recàrrega del wallet (sense IVA)",
+      "topup_surplus": "{{surplus}} de la recàrrega es queda al wallet després.",
+      "waiting": "Pagament rebut. S'estan afegint les places de votants…",
+      "wallet_covers": "El teu wallet ho cobreix: les places es cobren del wallet, sense pagament amb targeta."
     },
     "search": {
       "description": "Cerca un votant per les seves credencials per comprovar si és al cens i si ja ha votat.",
@@ -1107,6 +1112,7 @@
         "census_growth_payment_in_progress": "Encara s'està processant el pagament d'un procés de votació que fa servir aquests membres. Torna-ho a provar quan acabi.",
         "census_growth_payment_required": "Aquests membres farien créixer el cens d'un procés de votació més enllà del que s'ha pagat. Ampliar-lo costa fins a {{amount}} més (sense IVA) i l'has de comprar abans d'afegir aquests membres.",
         "census_growth_payment_shortfall": "Aquests membres farien créixer el cens d'un procés de votació més enllà del que s'ha pagat. Ampliar-lo costa fins a {{amount}} més (sense IVA) i l'has de comprar abans d'afegir aquests membres. El teu wallet no cobreix {{shortfall}} d'aquest import.",
+        "census_growth_payment_wallet_covers": "Aquests membres farien créixer el cens d'un procés de votació més enllà del que s'ha pagat. Ampliar-lo costa fins a {{amount}} més (sense IVA) i s'ha de comprar abans d'afegir aquests membres. El wallet ho cobreix, així que es cobra del wallet sense pagament amb targeta.",
         "census_growth_quote_required": "Aquests membres farien que el cens d'un procés de votació superés els 50.000 votants, i això necessita un pressupost personalitzat. Contacta amb nosaltres per ampliar-lo.",
         "census_growth_spend_cap_reached": "Aquestes places al cens superarien el límit de despesa que l'integrador ha fixat per a aquesta organització. L'integrador l'ha d'apujar primer.",
         "census_growth_wallet_insufficient": "El wallet de l'integrador no cobreix el cost d'afegir aquests membres a un procés de votació. L'integrador que gestiona aquesta organització ha de recarregar primer el seu wallet.",

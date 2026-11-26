@@ -25,6 +25,7 @@ const CensusCheckoutPage = () => {
       shortfallCents={room.shortfallCents}
       returned={sessionId !== undefined}
       knownIds={stored?.knownIds}
+      knownTopUpIds={stored?.knownTopUpIds}
     />
   )
 }

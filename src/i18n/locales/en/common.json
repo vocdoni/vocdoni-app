@@ -86,11 +86,11 @@
   "census": {
     "checkout": {
       "admin_only": "Only admins can add voter places.",
-      "amount_net": "Places (VAT excluded)",
       "back_to_members": "Back to members",
       "balance": "Your wallet has {{balance}}.",
       "bought": "Voter places added: {{amount}} was charged from your wallet. Try adding the members again.",
       "buy": "Add voter places",
+      "credited": "Your payment was added to your wallet, but the wallet does not cover these voter places yet. Try adding the members again to see what is still missing.",
       "intro": "Places for {{size}} voters, at {{due}} more (VAT excluded).",
       "intro_no_price": "Places for {{size}} voters.",
       "invalid": "This page needs the number of voters to add places for. Open it from the refused change.",
@@ -99,7 +99,12 @@
       "timeout": "Your payment is confirmed; the places are added as soon as it is processed. Try adding the members again in a moment.",
       "timeout_redirected": "We are still waiting for the places to be added. Try adding the members again in a moment.",
       "title": "Add voter places",
-      "waiting": "Payment received. Adding the voter places…"
+      "topup_intro": "These voter places cost {{due}} (VAT excluded). Your card pays a wallet top-up of {{amount}} (VAT excluded), and the places are then charged from your wallet.",
+      "topup_intro_no_price": "Your card pays a wallet top-up of {{amount}} (VAT excluded), and the voter places are then charged from your wallet.",
+      "topup_net": "Wallet top-up (VAT excluded)",
+      "topup_surplus": "{{surplus}} of the top-up stays in your wallet afterwards.",
+      "waiting": "Payment received. Adding the voter places…",
+      "wallet_covers": "Your wallet covers it: the places are charged from your wallet, with no card payment."
     },
     "search": {
       "description": "Look up a voter by their credentials to check whether they are in the census and if they have already voted.",
@@ -1087,6 +1092,7 @@
         "census_growth_payment_in_progress": "A payment for a voting process using these members is still being processed. Try again once it completes.",
         "census_growth_payment_required": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members.",
         "census_growth_payment_shortfall": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members. Your wallet lacks {{shortfall}} of that amount.",
+        "census_growth_payment_wallet_covers": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded), which must be bought before adding these members. The wallet covers it, so it is charged from the wallet with no card payment.",
         "census_growth_quote_required": "These members would take the census of a voting process above 50,000 voters, which needs a custom quote. Contact us to grow it.",
         "census_growth_spend_cap_reached": "These voter places would exceed the spend cap the integrator set for this organization. The integrator must raise it first.",
         "census_growth_wallet_insufficient": "The integrator wallet does not cover the cost of adding these members to a voting process. The integrator managing this organization must top up its wallet first.",

@@ -195,8 +195,122 @@ describe('CensusCheckout', () => {
       dueCents: 500,
       shortfallCents: 300,
       knownIds: ['old'],
+      knownTopUpIds: [],
     })
     await waitFor(() => expect(sessionStorage.getItem(PENDING_KEY)).toBeNull())
+  })
+
+  it('stores the top-ups of the ledger with the snapshot, so a credited top-up can be recovered', async () => {
+    const user = userEvent.setup()
+    let storedBeforeConfirm: string | null = null
+    const confirm = vi.fn(async () => {
+      storedBeforeConfirm = sessionStorage.getItem(PENDING_KEY)
+      return { type: 'success' }
+    })
+    checkoutState.current = readyCheckout(confirm)
+    mutateAsync.mockResolvedValue({
+      clientSecret: 'cs_test',
+      sessionId: 'cs_session',
+      amountCents: 300,
+      currency: 'eur',
+    })
+    readHistory.mockResolvedValue([{ id: 't0', orgAddress: '0x1234', amountCents: 5000, kind: 'topup', createdAt: '' }])
+    waitForCensusPayment.mockReturnValue(new Promise(() => undefined))
+    renderCheckout()
+
+    await user.click(buyButton())
+    await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+
+    await waitFor(() => expect(confirm).toHaveBeenCalled())
+    expect(JSON.parse(storedBeforeConfirm!)).toMatchObject({ knownIds: [], knownTopUpIds: ['t0'] })
+  })
+
+  it('buys the room again after a credited top-up, and reports the places when the wallet covers them', async () => {
+    const user = userEvent.setup()
+    mutateAsync
+      .mockResolvedValueOnce({ clientSecret: 'cs_test', sessionId: 'cs_session', amountCents: 300, currency: 'eur' })
+      .mockResolvedValueOnce({ clientSecret: '', amountCents: 300, currency: 'eur' })
+    waitForCensusPayment.mockImplementation(async (_read: unknown, _id: unknown, _known: unknown, opts: any) =>
+      opts.recover()
+    )
+    renderCheckout()
+
+    await user.click(buyButton())
+    await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+
+    expect(
+      await screen.findByText('Voter places added: €3 was charged from your wallet. Try adding the members again.')
+    ).toBeInTheDocument()
+    expect(mutateAsync).toHaveBeenCalledTimes(2)
+    expect(mutateAsync.mock.calls[1][0]).toMatchObject({ processId, censusSize: 1200 })
+  })
+
+  it('recovers at most once per mount, even when the wait asks twice', async () => {
+    const user = userEvent.setup()
+    mutateAsync
+      .mockResolvedValueOnce({ clientSecret: 'cs_test', sessionId: 'cs_session', amountCents: 300, currency: 'eur' })
+      .mockResolvedValueOnce({ clientSecret: '', amountCents: 300, currency: 'eur' })
+    waitForCensusPayment.mockImplementation(async (_read: unknown, _id: unknown, _known: unknown, opts: any) => {
+      await opts.recover()
+      await opts.recover()
+      return { status: 'timeout' }
+    })
+    renderCheckout()
+
+    await user.click(buyButton())
+    await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+
+    await screen.findByText(
+      'Your payment is confirmed; the places are added as soon as it is processed. Try adding the members again in a moment.'
+    )
+    expect(mutateAsync).toHaveBeenCalledTimes(2)
+  })
+
+  it('says the top-up is credited, with no second card form, when the wallet is still short', async () => {
+    const user = userEvent.setup()
+    mutateAsync
+      .mockResolvedValueOnce({ clientSecret: 'cs_test', sessionId: 'cs_session', amountCents: 300, currency: 'eur' })
+      .mockResolvedValueOnce({ clientSecret: 'cs_again', sessionId: 'cs_second', amountCents: 300, currency: 'eur' })
+    waitForCensusPayment.mockImplementation(async (_read: unknown, _id: unknown, _known: unknown, opts: any) =>
+      opts.recover()
+    )
+    renderCheckout()
+
+    await user.click(buyButton())
+    await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+
+    expect(
+      await screen.findByText(
+        'Your payment was added to your wallet, but the wallet does not cover these voter places yet. Try adding the members again to see what is still missing.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Pay / })).not.toBeInTheDocument()
+    expect(screen.queryByText('payment-element')).not.toBeInTheDocument()
+    expect(screen.queryByText(/payment is confirmed/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Voter places added/)).not.toBeInTheDocument()
+  })
+
+  it('keeps the confirmed timeout when the recovery fails, and never claims the places were added', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    mutateAsync
+      .mockResolvedValueOnce({ clientSecret: 'cs_test', sessionId: 'cs_session', amountCents: 300, currency: 'eur' })
+      .mockRejectedValueOnce(new Error('network down'))
+    waitForCensusPayment.mockImplementation(async (_read: unknown, _id: unknown, _known: unknown, opts: any) => {
+      await opts.recover()
+      return { status: 'timeout' }
+    })
+    renderCheckout()
+
+    await user.click(buyButton())
+    await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+
+    expect(
+      await screen.findByText(
+        'Your payment is confirmed; the places are added as soon as it is processed. Try adding the members again in a moment.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/Voter places added/)).not.toBeInTheDocument()
   })
 
   it('says the payment is confirmed, not that the places are there, when the debit does not show in time', async () => {
@@ -361,5 +475,107 @@ describe('CensusCheckout', () => {
 
     await screen.findByText('Voter places added: €5 was charged from your wallet. Try adding the members again.')
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ['organizations', 'wallet'] })
+  })
+
+  it('allows the recovery on a redirect return with the top-up snapshot and the size', async () => {
+    sessionStorage.setItem(
+      PENDING_KEY,
+      JSON.stringify({ processId, censusSize: 1200, knownIds: [], knownTopUpIds: ['t0'] })
+    )
+    waitForCensusPayment.mockReturnValue(new Promise(() => undefined))
+    renderReturn()
+
+    await screen.findByText('Payment received. Adding the voter places…')
+    const options = waitForCensusPayment.mock.calls[0][3]
+    expect(options.knownTopUpIds).toEqual(['t0'])
+    expect(options.recover).toEqual(expect.any(Function))
+  })
+
+  it('does not allow the recovery for a snapshot stored before the top-ups were kept', async () => {
+    sessionStorage.setItem(PENDING_KEY, JSON.stringify({ processId, censusSize: 1200, knownIds: [] }))
+    waitForCensusPayment.mockReturnValue(new Promise(() => undefined))
+    renderReturn()
+
+    await screen.findByText('Payment received. Adding the voter places…')
+    expect(waitForCensusPayment.mock.calls[0][3].recover).toBeUndefined()
+  })
+
+  it('does not allow the recovery without the number of voters to buy', async () => {
+    sessionStorage.setItem(PENDING_KEY, JSON.stringify({ processId, knownIds: [], knownTopUpIds: [] }))
+    waitForCensusPayment.mockReturnValue(new Promise(() => undefined))
+    renderReturn()
+
+    await screen.findByText('Payment received. Adding the voter places…')
+    expect(waitForCensusPayment.mock.calls[0][3].recover).toBeUndefined()
+  })
+
+  it('explains the card step as a wallet top-up, with the price of the places', async () => {
+    const user = userEvent.setup()
+    mutateAsync.mockResolvedValue({
+      clientSecret: 'cs_test',
+      sessionId: 'cs_session',
+      amountCents: 300,
+      currency: 'eur',
+    })
+    renderCheckout()
+
+    await user.click(buyButton())
+
+    expect(
+      await screen.findByText(
+        'These voter places cost €5 (VAT excluded). Your card pays a wallet top-up of €3 (VAT excluded), and the places are then charged from your wallet.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByText('Wallet top-up (VAT excluded)')).toBeInTheDocument()
+    expect(screen.queryByText(/stays in your wallet/)).not.toBeInTheDocument()
+  })
+
+  it('shows the surplus the top-up leaves in the wallet, when it is above the shortfall', async () => {
+    const user = userEvent.setup()
+    mutateAsync.mockResolvedValue({
+      clientSecret: 'cs_test',
+      sessionId: 'cs_session',
+      amountCents: 300,
+      currency: 'eur',
+    })
+    renderCheckout({ shortfallCents: 200 })
+
+    await user.click(buyButton())
+
+    expect(await screen.findByText('€1 of the top-up stays in your wallet afterwards.')).toBeInTheDocument()
+  })
+
+  it('explains the top-up without a price when the page has none', async () => {
+    const user = userEvent.setup()
+    mutateAsync.mockResolvedValue({
+      clientSecret: 'cs_test',
+      sessionId: 'cs_session',
+      amountCents: 300,
+      currency: 'eur',
+    })
+    renderCheckout({ dueCents: undefined })
+
+    await user.click(buyButton())
+
+    expect(
+      await screen.findByText(
+        'Your card pays a wallet top-up of €3 (VAT excluded), and the voter places are then charged from your wallet.'
+      )
+    ).toBeInTheDocument()
+  })
+
+  it('says the wallet covers the places, with no shortfall line, when the balance covers the price', () => {
+    renderCheckout({ shortfallCents: 0, dueCents: 500 })
+
+    expect(
+      screen.getByText('Your wallet covers it: the places are charged from your wallet, with no card payment.')
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/is .* short/)).not.toBeInTheDocument()
+  })
+
+  it('does not say the wallet covers the places when the balance is below the price', () => {
+    renderCheckout({ shortfallCents: 0, dueCents: 2000 })
+
+    expect(screen.queryByText(/Your wallet covers it/)).not.toBeInTheDocument()
   })
 })

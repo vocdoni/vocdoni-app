@@ -106,8 +106,14 @@ The request and response types are in `@vocdoni/api-types` (`ProcessQuote`, `Pro
 - **Top-up form** (`TopUp.tsx`): presets and a free amount (100 to 10,000,000 cents, at most 2 decimals), then Stripe.
 - **Buying voter places** (`CensusCheckout.tsx`): adding or importing members to a published vote can be refused with
   a growth quote; `useBuyRoomAction` gives admins an "Add voter places" action to
-  `/admin/process/:id/census/checkout`. If the wallet covers it the backend debits at once (empty `clientSecret`);
-  otherwise Stripe, then a new `payment` ledger entry for the process confirms it.
+  `/admin/process/:id/census/checkout`. The backend debits the room at once when the wallet covers it (empty
+  `clientSecret`). On a shortfall the checkout is a wallet top-up of at least €1 (`amountCents` is the top-up, not the
+  places): the card step says so and shows any surplus that stays in the wallet afterwards. A refusal with
+  `shortfallCents` 0 says the wallet pays, with no card. After a card payment the wait looks for a new `payment` of the
+  process; a new `topup` with no `payment` within 5 s triggers one more call to the endpoint (guarded by `recoveryRef`,
+  once per mount). An empty `clientSecret` means the wallet bought the room, and an error keeps waiting for the ledger.
+  A `clientSecret` gives the "credited, still short" outcome and never a second card form. The sessionStorage snapshot
+  holds `knownTopUpIds` next to `knownIds`; a snapshot without it, or a return without `censusSize`, means no recovery.
 
 ## Tests
 

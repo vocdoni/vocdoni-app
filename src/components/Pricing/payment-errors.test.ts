@@ -178,6 +178,25 @@ describe('censusGrowthPaymentErrorMessage', () => {
     ).not.toMatch(/wallet lacks/)
   })
 
+  it('says the wallet pays, with no card, when the shortfall is zero', () => {
+    expect(
+      censusGrowthPaymentErrorMessage(
+        t,
+        apiError(ApiErrorCode.PaymentRequired, { ...growth, balanceCents: 2500, shortfallCents: 0 })
+      )
+    ).toBe(
+      'These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to €20 more (VAT excluded), which must be bought before adding these members. The wallet covers it, so it is charged from the wallet with no card payment.'
+    )
+  })
+
+  it('keeps the generic copy when the shortfall is not known', () => {
+    expect(
+      censusGrowthPaymentErrorMessage(t, apiError(ApiErrorCode.PaymentRequired, { ...growth, balanceCents: 2500 }))
+    ).toBe(
+      'These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to €20 more (VAT excluded), which must be bought before adding these members.'
+    )
+  })
+
   it('asks for a custom quote, not a payment, when the grown census is above the self-service limit', () => {
     expect(
       censusGrowthPaymentErrorMessage(t, apiError(ApiErrorCode.PaymentRequired, { ...growth, censusSize: 50001 }))
