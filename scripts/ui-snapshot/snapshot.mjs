@@ -654,7 +654,13 @@ const main = async () => {
     await (app ?? spawnedApp)?.stop().catch(() => {})
     await mock?.close().catch(() => {})
     mockLog.end()
-    if (buildDir) fs.rmSync(BUILD_ROOT, { recursive: true, force: true })
+    if (buildDir) {
+      fs.rmSync(buildDir, { recursive: true, force: true })
+      // Drops the parent too, unless another label's build is still in it (rmdir refuses a non-empty folder).
+      try {
+        fs.rmdirSync(BUILD_ROOT)
+      } catch {}
+    }
   }
   for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
     process.once(signal, async () => {
@@ -882,7 +888,7 @@ const main = async () => {
       ...gitInfo(),
       browser: { channel: launched.channel, version: browser.version() },
       baseUrl: opts.base,
-      devServer: opts.external ? 'external' : 'spawned',
+      devServer: opts.external ? 'external' : opts.build ? 'build' : 'spawned',
       build: opts.build,
       primaryColor: opts.primaryColor ?? null,
       theme: opts.stress ? 'stress' : 'stock',
