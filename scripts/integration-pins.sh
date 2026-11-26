@@ -5,7 +5,7 @@
 # Usage:
 #   printf '%s' "$COMMENT_BODY" | scripts/integration-pins.sh
 #
-# Example first line: /integration vochain-sequencer=1a2b3c4 saas-backend=760 integrator-sdk=main
+# Example first line: /integration vocdoni-sequencer=1a2b3c4 saas-backend=760 integrator-sdk=main
 #   or: /integration reset
 # A ref is a commit SHA (7-40 hex), a branch or tag, or a PR number: #<N>, or a
 # bare <N> of 1-6 digits, which is output as #<N>. A branch or tag named only
@@ -15,7 +15,7 @@
 #
 # Env: none. Input: the comment body on stdin.
 # Output (stdout, exit 0):
-#   vochain_sequencer_ref=<ref or empty>
+#   vocdoni_sequencer_ref=<ref or empty>
 #   saas_backend_ref=<ref or empty>
 #   integrator_sdk_ref=<ref or empty>
 #   sticky=true|false
@@ -41,7 +41,7 @@ read -ra tokens <<<"${line#/integration}" || true
 
 if [ "${#tokens[@]}" -gt 0 ] && [ "${tokens[0]}" = reset ]; then
   [ "${#tokens[@]}" = 1 ] || fail "'reset' takes no other tokens"
-  printf 'vochain_sequencer_ref=\nsaas_backend_ref=\nintegrator_sdk_ref=\nsticky=false\nreset=true\n'
+  printf 'vocdoni_sequencer_ref=\nsaas_backend_ref=\nintegrator_sdk_ref=\nsticky=false\nreset=true\n'
   exit 0
 fi
 
@@ -68,13 +68,14 @@ for tok in ${tokens[@]+"${tokens[@]}"}; do
     ref="#$((10#${ref:1}))"
   fi
   case "$key" in
-    vochain-sequencer)
-      [ "$seen_sequencer" = 0 ] || fail "vochain-sequencer given twice"
+    # vochain-sequencer is the pre-rename key; keep honouring pins already posted with it.
+    vocdoni-sequencer | vochain-sequencer)
+      [ "$seen_sequencer" = 0 ] || fail "vocdoni-sequencer given twice"
       seen_sequencer=1
       sequencer_ref="$ref"
       ;;
     vocdoni-node)
-      fail "vocdoni-node is no longer used; use vochain-sequencer instead"
+      fail "vocdoni-node is no longer used; use vocdoni-sequencer instead"
       ;;
     saas-backend)
       [ "$seen_saas" = 0 ] || fail "saas-backend given twice"
@@ -87,7 +88,7 @@ for tok in ${tokens[@]+"${tokens[@]}"}; do
       sdk_ref="$ref"
       ;;
     *)
-      fail "unknown key '$key' (expected vochain-sequencer, saas-backend or integrator-sdk)"
+      fail "unknown key '$key' (expected vocdoni-sequencer, saas-backend or integrator-sdk)"
       ;;
   esac
   [ -n "$ref" ] || fail "empty ref for '$key'"
@@ -111,5 +112,5 @@ if [ "$sticky_refs" -gt 0 ] && [ "$sha_refs" = 0 ]; then
   sticky=true
 fi
 
-printf 'vochain_sequencer_ref=%s\nsaas_backend_ref=%s\nintegrator_sdk_ref=%s\nsticky=%s\nreset=false\n' \
+printf 'vocdoni_sequencer_ref=%s\nsaas_backend_ref=%s\nintegrator_sdk_ref=%s\nsticky=%s\nreset=false\n' \
   "$sequencer_ref" "$saas_ref" "$sdk_ref" "$sticky"
