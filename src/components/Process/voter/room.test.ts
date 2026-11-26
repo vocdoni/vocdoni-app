@@ -85,6 +85,25 @@ describe('roomRail: folds a long agenda (board 1b, 20 questions)', () => {
     expect(kinds(roomRail(leftOut(FOUR, 'q2'), [], { closed: false, more: false }))).toEqual([1, 3, 4])
   })
 
+  it('counts only the rows shown toward the fold, so a hidden question does not start one', () => {
+    const nine = room([
+      ...Array.from({ length: 4 }, () => q('closed', 'recorded')),
+      ...Array.from({ length: 5 }, () => q('toOpen')),
+    ])
+    expect(kinds(roomRail(leftOut(nine, 'q9'), [], { closed: false, more: false }))).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+  })
+
+  it('never anchors on a hidden open question: the next shown question is the anchor', () => {
+    expect(kinds(roomRail(leftOut(twenty, 'q13'), [], { closed: false, more: false }))).toEqual([
+      'closed:1-12',
+      14,
+      15,
+      16,
+      17,
+      'more:18-20',
+    ])
+  })
+
   it('anchors on the next question to open when none is open, and never folds a single row', () => {
     const nine = room([
       ...Array.from({ length: 4 }, () => q('closed', 'recorded')),

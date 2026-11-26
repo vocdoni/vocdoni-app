@@ -94,30 +94,41 @@ const anchorOf = (questions: readonly RoomQuestion[]): number => {
 /**
  * The rail's entries. A long agenda folds the closed run before the anchor into one row, keeps the anchor and the
  * three next, and folds the rest into a last row; each fold opens on its own ("Mostra-les"). A group folds only when it
- * would hide two rows or more.
+ * would hide two rows or more. The folds count the rows shown: a question this voter may not vote has none.
  */
 export const roomRail = (room: RoomFacts, skipped: readonly string[], expanded: RoomRailExpanded): RoomRailEntry[] => {
   const { questions } = room
-  // A question this voter may not vote has no row, but the others keep their agenda numbers.
-  const rows = questions.flatMap((question, index) =>
-    isRoomEligible(question)
-      ? [{ kind: 'row' as const, index, ...roomRowOf(question, skipped.includes(question.id)) }]
-      : []
-  )
-  if (questions.length < ROOM_RAIL_FOLD_FROM) return rows
-  const anchor = anchorOf(questions)
+  // Each row keeps its agenda number, so the numbers of the shown rows may skip.
+  const shown = questions.flatMap((question, index) => (isRoomEligible(question) ? [index] : []))
+  const rows = shown.map((index) => ({
+    kind: 'row' as const,
+    index,
+    ...roomRowOf(questions[index], skipped.includes(questions[index].id)),
+  }))
+  if (rows.length < ROOM_RAIL_FOLD_FROM) return rows
+  const visible = shown.map((index) => questions[index])
+  const anchor = anchorOf(visible)
   let closedRun = 0
-  while (closedRun < anchor && isClosed(questions[closedRun])) closedRun++
+  while (closedRun < anchor && isClosed(visible[closedRun])) closedRun++
   const foldClosed = !expanded.closed && closedRun >= 2
   const moreFrom = anchor + ROOM_RAIL_AHEAD + 1
-  const moreCount = questions.length - moreFrom
+  const moreCount = rows.length - moreFrom
   const foldMore = !expanded.more && moreCount >= 2
-  const entries: RoomRailEntry[] = foldClosed ? [{ kind: 'closed', from: 1, to: closedRun }] : []
-  rows.forEach((row) => {
-    if ((foldClosed && row.index < closedRun) || (foldMore && row.index >= moreFrom)) return
+  const entries: RoomRailEntry[] = foldClosed
+    ? [{ kind: 'closed', from: rows[0].index + 1, to: rows[closedRun - 1].index + 1 }]
+    : []
+  rows.forEach((row, position) => {
+    if ((foldClosed && position < closedRun) || (foldMore && position >= moreFrom)) return
     entries.push(row)
   })
-  if (foldMore) entries.push({ kind: 'more', from: moreFrom + 1, to: questions.length, count: moreCount })
+  if (foldMore) {
+    entries.push({
+      kind: 'more',
+      from: rows[moreFrom].index + 1,
+      to: rows[rows.length - 1].index + 1,
+      count: moreCount,
+    })
+  }
   return entries
 }
 
