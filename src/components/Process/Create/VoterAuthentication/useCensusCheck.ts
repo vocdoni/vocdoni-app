@@ -57,9 +57,15 @@ const readIssues = (error: unknown): CensusCheckIssues | null => {
 /**
  * Order-insensitive identity of a census spec: the check's cache key. Anonymity
  * and weighting are left out: the backend's member check does not depend on them.
+ * The certificate does: it changes which members the backend accepts.
  */
 const censusSpecSignature = (spec: CensusSpec) =>
-  JSON.stringify([spec.groupId ?? null, [...(spec.authFields ?? [])].sort(), [...(spec.twoFaFields ?? [])].sort()])
+  JSON.stringify([
+    spec.groupId ?? null,
+    [...(spec.authFields ?? [])].sort(),
+    [...(spec.twoFaFields ?? [])].sort(),
+    !!spec.certAuth,
+  ])
 
 const hasAuthFields = (spec: CensusSpec) => !!spec.authFields?.length || !!spec.twoFaFields?.length
 

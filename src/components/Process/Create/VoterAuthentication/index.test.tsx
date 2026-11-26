@@ -315,6 +315,24 @@ describe('VoterAuthentication', () => {
     expect(storedCensus()).toEqual({ credentials: ['nationalId'], use2FA: true, use2FAMethod: 'email', certAuth: true })
   })
 
+  it('re-checks the members when the digital certificate is toggled on the same national ID', async () => {
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={{ credentials: ['nationalId'], use2FA: false, use2FAMethod: 'email' }} />, {
+      appEnv: { CERT_GATEWAY_URL: 'https://cert.test:15140' },
+    })
+    const dialog = await openDialog(user)
+    await waitFor(() => expect(dialog.getByRole('status')).toHaveAttribute('data-status', 'valid'))
+
+    await user.click(dialog.getByRole('checkbox', { name: /digital certificate/i }))
+
+    await waitFor(() =>
+      expect(mockValidateCensus).toHaveBeenLastCalledWith({
+        orgAddress: '0x1',
+        census: { groupId: 'group-1', authFields: ['nationalId'], certAuth: true },
+      })
+    )
+  })
+
   it('reports members of a certificate census with a missing or invalid DNI/NIE', async () => {
     mockValidateCensus.mockRejectedValue(membersError({ memberIds: ['m1'], duplicates: [], missingData: ['m2', 'm3'] }))
     const user = userEvent.setup()
