@@ -15,13 +15,18 @@ import { useOrganization } from '@vocdoni/react-components'
 import { cloneElement, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
+import {
+  censusGrowthPaymentErrorMessage,
+  paymentErrorToastOptions,
+  type CensusGrowthCheckoutTarget,
+} from '~components/Pricing/payment-errors'
 import { useBuyRoomAction } from '~components/Pricing/useBuyRoomAction'
 import { useToast } from '~components/Toast'
 import { PanelDrawer } from '~components/ui/Drawer'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
 import { isValidMemberPassword } from '~utils/member-password'
+import { saveMemberDraft, takeMemberDraft } from './memberDraft'
 import { useTable } from '../TableProvider'
 
 type MemberFormData = Record<string, string>
@@ -31,6 +36,8 @@ type MemberManagerProps = {
   member?: Partial<Member> | null
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  // Only the members list's add form reopens a member refused for lack of voter places
+  restoreDraft?: boolean
 }
 
 type TriggerEvent = {
@@ -42,7 +49,13 @@ const stringifyObjectValues = (obj: Record<string, any>) =>
     Object.entries(obj).map(([key, value]) => [key, value === undefined || value === null ? '' : value.toString()])
   )
 
-export const MemberManager = ({ control, member = null, open: controlledOpen, onOpenChange }: MemberManagerProps) => {
+export const MemberManager = ({
+  control,
+  member = null,
+  open: controlledOpen,
+  onOpenChange,
+  restoreDraft = false,
+}: MemberManagerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const buyRoomAction = useBuyRoomAction()
@@ -60,6 +73,11 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   // Same for the password, which is never returned at all: only whether there is one.
   const [passwordEdited, setPasswordEdited] = useState(false)
   const hadPassword = !!member?.hasPassword
+  // A refused add reopened from memory (see memberDraft.ts): its password is sent as this hash until retyped
+  const [keptPasswordHash, setKeptPasswordHash] = useState<string>()
+  const [fromDraft, setFromDraft] = useState(false)
+  const [autoSubmit, setAutoSubmit] = useState(false)
+  const restoredRef = useRef(false)
 
   const defaultValues: MemberFormData = useMemo(() => Object.fromEntries(columns.map((col) => [col.id, ''])), [columns])
 
@@ -181,8 +199,24 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
     }
   }, [member, isOpen])
 
+  // Reopens the refused member once per mount (StrictMode included); a bought one is sent again right away
+  useEffect(() => {
+    const address = organization?.address
+    if (!restoreDraft || isEdit || restoredRef.current || !address) return
+    const draft = takeMemberDraft(address)
+    if (!draft) return
+    restoredRef.current = true
+    methods.reset({ ...defaultValues, ...draft.values })
+    setPasswordEdited(false)
+    setKeptPasswordHash(draft.passwordHash)
+    setFromDraft(true)
+    openDrawer()
+    setAutoSubmit(draft.bought)
+  }, [restoreDraft, organization?.address])
+
   const phoneWillBeRemoved = hadPhone && phoneEdited && !methods.watch('phone')
   const passwordWillBeRemoved = hadPassword && passwordEdited && !methods.watch('password')?.trim()
+  const hasKeptPassword = !!keptPasswordHash && !passwordEdited
 
   const onSubmit = async (data: Partial<Member>) => {
     const { id, memberNumber, name, surname, email, phone, nationalId, birthDate, weight, password } = data
@@ -209,6 +243,8 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
       methods.reset()
       setPhoneEdited(false)
       setPasswordEdited(false)
+      setKeptPasswordHash(undefined)
+      setFromDraft(false)
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.members(organization?.address),
         exact: false,
@@ -216,15 +252,31 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
       closeDrawer()
     }
 
+    // The password as it was sent (its hash), for the draft a refused add keeps
+    let sentPasswordHash: string | undefined
     const handleError = (error: Error) => {
       const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
+      const address = organization?.address
+      // Add mode keeps the refused member for the census checkout, in memory only (see memberDraft.ts)
+      const keepDraft =
+        !isEdit && address
+          ? (target: CensusGrowthCheckoutTarget) => {
+              const { password: _password, ...values } = data
+              saveMemberDraft({
+                organization: address,
+                processId: target.processId,
+                values: stringifyObjectValues(values),
+                passwordHash: sentPasswordHash,
+              })
+            }
+          : undefined
       toast({
         title: errorToastMessage,
         description: paymentMessage ?? error.message,
         type: 'error',
         duration: 3000,
         isClosable: true,
-        action: buyRoomAction(error),
+        action: keepDraft ? buyRoomAction(error, keepDraft) : buyRoomAction(error),
         ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }
@@ -234,11 +286,16 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
     const trimmedPassword = password?.trim() ?? ''
     if (trimmedPassword) {
       try {
-        memberPayload.password = await hashMemberPassword(organization?.address ?? '', trimmedPassword)
+        sentPasswordHash = await hashMemberPassword(organization?.address ?? '', trimmedPassword)
+        memberPayload.password = sentPasswordHash
       } catch (error) {
         handleError(error instanceof Error ? error : new Error(String(error)))
         return
       }
+    } else if (!isEdit && keptPasswordHash && !passwordEdited) {
+      // A reopened draft is sent again with the password it was refused with
+      sentPasswordHash = keptPasswordHash
+      memberPayload.password = keptPasswordHash
     } else if (isEdit && hadPassword && passwordEdited) {
       memberPayload.password = ''
     }
@@ -288,8 +345,20 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
     })
   }
 
+  // After the render that holds the kept password, so onSubmit sends it
+  useEffect(() => {
+    if (!autoSubmit) return
+    setAutoSubmit(false)
+    void methods.handleSubmit(onSubmit)()
+  }, [autoSubmit])
+
   const handleClose = () => {
     methods.clearErrors()
+    if (fromDraft) {
+      methods.reset(defaultValues)
+      setKeptPasswordHash(undefined)
+      setFromDraft(false)
+    }
     closeDrawer()
   }
 
@@ -368,7 +437,9 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                         },
                       }),
                     })}
-                    placeholder={(hadPhone && isPhone) || (hadPassword && isPassword) ? '•••••••••••' : ''}
+                    placeholder={
+                      (hadPhone && isPhone) || ((hadPassword || hasKeptPassword) && isPassword) ? '•••••••••••' : ''
+                    }
                     type={isBirthdate ? 'date' : isPhone ? 'tel' : isPassword ? 'password' : 'text'}
                     autoComplete={isPassword ? 'new-password' : undefined}
                     required={false} // we don't want HTML5 validation
@@ -392,7 +463,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                       defaultValue: 'The stored password will be removed when you save.',
                     })}
                   </FormHelperText>
-                ) : isPassword && hadPassword ? (
+                ) : isPassword && (hadPassword || hasKeptPassword) ? (
                   <FormHelperText>
                     {t('memberbase.form.password_set', {
                       defaultValue: 'A password is set. Type a new one to replace it.',

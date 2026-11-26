@@ -114,10 +114,17 @@ The request and response types are in `@vocdoni/api-types` (`ProcessQuote`, `Pro
   once per mount). An empty `clientSecret` means the wallet bought the room, and an error keeps waiting for the ledger.
   A `clientSecret` gives the "credited, still short" outcome and never a second card form. The sessionStorage snapshot
   holds `knownTopUpIds` next to `knownIds`; a snapshot without it, or a return without `censusSize`, means no recovery.
+- **Refused member kept** (`src/components/Memberbase/Members/memberDraft.ts`): when the add-member form is refused for
+  voter places and the user picks "Add voter places", the typed member is kept in memory only (never in storage or
+  history), with its password as the hash that was sent. `CensusCheckout`'s `onBought` (bought outcomes only, never a
+  timeout) marks it, and the members list's add form (`restoreDraft`) reopens it filled in and sends it once
+  (`restoredRef`); otherwise it only reopens, and the user submits again. It is cleared on use, on cancel, on logout and
+  on organization switch. A full-page redirect loses it. Import, add to group and add to census do not keep theirs.
 
 ## Tests
 
 - Unit: `src/components/Pricing/*.test.ts(x)`, `src/components/Wallet/*.test.tsx`,
+  `src/components/Memberbase/Members/memberDraft.test.ts`,
   `src/components/Process/Create/PublishReview/*.test.ts(x)` (the publish dialog, card and wallet steps, summary),
   `src/queries/{wallet,process-price,process-checkout,census-checkout}.test.ts`, `src/utils/numbers.test.ts`.
   `payment-errors.test.ts` checks every locale's `quote_required` copy states the 50,000 limit.

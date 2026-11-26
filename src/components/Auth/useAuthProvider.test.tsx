@@ -2,9 +2,17 @@ import { QueryClient } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { ReactNode } from 'react'
+import { saveMemberDraft, takeMemberDraft } from '~components/Memberbase/Members/memberDraft'
 import { AllProviders, createTestQueryClient } from '~src/test-utils'
 import { OAuthStorageKeys, OAuthWalletStorageKeys } from './oauthStorage'
 import { useAuthProvider } from './useAuthProvider'
+
+const draftFor = (organization: string) => ({
+  organization,
+  processId: '6650f0c0c0c0c0c0c0c0c0c0',
+  values: { name: 'Ada' },
+  passwordHash: 'hash',
+})
 
 const addressesMock = vi.fn()
 
@@ -71,6 +79,58 @@ describe('useAuthProvider logout', () => {
     })
 
     expect(clearCacheSpy).toHaveBeenCalled()
+  })
+
+  it('drops a saved member draft on logout', () => {
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+    saveMemberDraft(draftFor('0xreal'))
+
+    act(() => {
+      result.current.logout()
+    })
+
+    expect(takeMemberDraft('0xreal')).toBeUndefined()
+  })
+})
+
+describe('useAuthProvider member draft', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    localStorage.clear()
+    addressesMock.mockReset().mockResolvedValue({ addresses: ['0xreal1', '0xreal2'] })
+  })
+
+  it('drops a saved member draft when the user switches organization', async () => {
+    localStorage.setItem('auth.token', 'token')
+    localStorage.setItem('signerAddress', '0xreal1')
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+    await waitFor(() => expect(result.current.currentAddress).toBe('0xreal1'))
+    saveMemberDraft(draftFor('0xreal1'))
+
+    localStorage.setItem('signerAddress', '0xreal2')
+    await act(() => result.current.refreshAddresses())
+
+    expect(result.current.currentAddress).toBe('0xreal2')
+    expect(takeMemberDraft('0xreal1')).toBeUndefined()
+  })
+
+  it('keeps the member draft when the address goes undefined and comes back to the same one', async () => {
+    localStorage.setItem('auth.token', 'token')
+    localStorage.setItem('signerAddress', '0xreal1')
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+    await waitFor(() => expect(result.current.currentAddress).toBe('0xreal1'))
+    saveMemberDraft(draftFor('0xreal1'))
+
+    // A new token gets a new address query: the address is undefined until its list is back
+    let resolveAddresses: (value: { addresses: string[] }) => void = () => undefined
+    addressesMock.mockReturnValueOnce(new Promise((resolve) => (resolveAddresses = resolve)))
+    act(() => result.current.setSession({ token: 'token-2', expirity: '' }))
+    await waitFor(() => expect(result.current.currentAddress).toBeUndefined())
+
+    await act(async () => resolveAddresses({ addresses: ['0xreal1', '0xreal2'] }))
+    await waitFor(() => expect(result.current.currentAddress).toBe('0xreal1'))
+
+    expect(takeMemberDraft('0xreal1')).toMatchObject({ organization: '0xreal1' })
   })
 })
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { CensusCheckout, readStoredPending } from '~components/Pricing/CensusCheckout'
+import { markMemberDraftBought } from '~components/Memberbase/Members/memberDraft'
 
 // A whole number from a search param, or undefined when it is missing or not one
 const wholeNumber = (value: string | null) => (value !== null && /^\d+$/.test(value) ? Number(value) : undefined)
@@ -26,6 +27,7 @@ const CensusCheckoutPage = () => {
       returned={sessionId !== undefined}
       knownIds={stored?.knownIds}
       knownTopUpIds={stored?.knownTopUpIds}
+      onBought={() => markMemberDraftBought(id)}
     />
   )
 }

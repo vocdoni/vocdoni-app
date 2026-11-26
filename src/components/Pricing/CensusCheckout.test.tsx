@@ -578,4 +578,77 @@ describe('CensusCheckout', () => {
 
     expect(screen.queryByText(/Your wallet covers it/)).not.toBeInTheDocument()
   })
+
+  describe('onBought', () => {
+    it('is called once when the wallet covers the places', async () => {
+      const user = userEvent.setup()
+      const onBought = vi.fn()
+      mutateAsync.mockResolvedValue({ amountCents: 500, currency: 'eur' })
+      renderCheckout({ onBought })
+
+      await user.click(buyButton())
+
+      await screen.findByText('Voter places added: €5 was charged from your wallet. Try adding the members again.')
+      expect(onBought).toHaveBeenCalledTimes(1)
+    })
+
+    it('is called once when the ledger shows the payment', async () => {
+      const user = userEvent.setup()
+      const onBought = vi.fn()
+      mutateAsync.mockResolvedValue({
+        clientSecret: 'cs_test',
+        sessionId: 'cs_session',
+        amountCents: 300,
+        currency: 'eur',
+      })
+      waitForCensusPayment.mockResolvedValue({
+        status: 'paid',
+        entry: { id: 'p1', kind: 'payment', processId, amountCents: -300, orgAddress: '0x1234', createdAt: '' },
+      })
+      renderCheckout({ onBought })
+
+      await user.click(buyButton())
+      await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+
+      await screen.findByText('Voter places added: €3 was charged from your wallet. Try adding the members again.')
+      expect(onBought).toHaveBeenCalledTimes(1)
+    })
+
+    it('is not called on a timeout', async () => {
+      const user = userEvent.setup()
+      const onBought = vi.fn()
+      mutateAsync.mockResolvedValue({
+        clientSecret: 'cs_test',
+        sessionId: 'cs_session',
+        amountCents: 300,
+        currency: 'eur',
+      })
+      waitForCensusPayment.mockResolvedValue({ status: 'timeout' })
+      renderCheckout({ onBought })
+
+      await user.click(buyButton())
+      await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+
+      await screen.findByText(/payment is confirmed/)
+      expect(onBought).not.toHaveBeenCalled()
+    })
+
+    it('is not called when the top-up is credited but still short', async () => {
+      const user = userEvent.setup()
+      const onBought = vi.fn()
+      mutateAsync
+        .mockResolvedValueOnce({ clientSecret: 'cs_test', sessionId: 'cs_session', amountCents: 300, currency: 'eur' })
+        .mockResolvedValueOnce({ clientSecret: 'cs_again', sessionId: 'cs_second', amountCents: 300, currency: 'eur' })
+      waitForCensusPayment.mockImplementation(async (_read: unknown, _id: unknown, _known: unknown, opts: any) =>
+        opts.recover()
+      )
+      renderCheckout({ onBought })
+
+      await user.click(buyButton())
+      await user.click(await screen.findByRole('button', { name: 'Pay €2.42' }))
+
+      await screen.findByText(/was added to your wallet, but the wallet does not cover/)
+      expect(onBought).not.toHaveBeenCalled()
+    })
+  })
 })

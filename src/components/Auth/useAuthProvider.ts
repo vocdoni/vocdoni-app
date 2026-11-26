@@ -1,11 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { useAuth as useSdkAuth } from '@vocdoni/react-providers'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
 import { useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
 import { clearOAuthStorage, OAuthStorageKeys } from '~components/Auth/oauthStorage'
+import { clearMemberDraft } from '~components/Memberbase/Members/memberDraft'
 import { useToast } from '~components/Toast'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { sameAddress } from '~utils/address'
@@ -128,6 +129,14 @@ export const useAuthProvider = () => {
   }, [addressesData, addressesError, selectionVersion])
   const currentAddress = selection.address
 
+  // A member draft kept for buying voter places belongs to one organization: drop it when the user switches
+  const lastAddress = useRef(currentAddress)
+  useEffect(() => {
+    if (!currentAddress) return // undefined only while the address list reloads (e.g. a new token)
+    if (lastAddress.current && !sameAddress(lastAddress.current, currentAddress)) clearMemberDraft()
+    lastAddress.current = currentAddress
+  }, [currentAddress])
+
   useEffect(() => {
     if (selection.rejected) {
       const rejected = selection.rejected
@@ -155,6 +164,7 @@ export const useAuthProvider = () => {
   const logout = useCallback(() => {
     // Includes the Google OAuth wallet seed: removing it is what disconnecting the wagmi connector did.
     clearOAuthStorage()
+    clearMemberDraft()
     sdkLogout()
     // Wipe the query cache so a different account logging in afterwards doesn't inherit the
     // previous user's profile (the profile key is static). Without this, e.g. an integrator's

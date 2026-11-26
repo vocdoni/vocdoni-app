@@ -20,12 +20,19 @@ export const useBuyRoomAction = () => {
   const navigate = useNavigate()
   const { canTopUp } = useWalletAccess()
 
-  return (error: unknown): { label: string; onClick: () => void } | undefined => {
+  return (
+    error: unknown,
+    onBuy?: (target: CensusGrowthCheckoutTarget) => void
+  ): { label: string; onClick: () => void } | undefined => {
     const target = censusGrowthCheckoutTarget(error)
     if (!target || !canTopUp) return undefined
     return {
       label: t('census.checkout.buy', { defaultValue: 'Add voter places' }),
-      onClick: () => navigate(censusCheckoutPath(target)),
+      // Runs only when the user chooses to buy: the caller may keep what was refused until then
+      onClick: () => {
+        onBuy?.(target)
+        navigate(censusCheckoutPath(target))
+      },
     }
   }
 }

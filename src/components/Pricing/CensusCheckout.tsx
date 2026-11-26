@@ -98,6 +98,8 @@ export type CensusCheckoutProps = {
   knownIds?: string[]
   // The top-ups of the ledger snapshot. Without them a credited top-up is not recovered, only waited for.
   knownTopUpIds?: string[]
+  // Called when the places are confirmed bought, never on a timeout
+  onBought?: () => void
 }
 
 const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error))
@@ -125,6 +127,7 @@ export const CensusCheckout = ({
   returned = false,
   knownIds,
   knownTopUpIds,
+  onBought,
 }: CensusCheckoutProps) => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -149,6 +152,7 @@ export const CensusCheckout = ({
   // The debit changes the balance and the ledger: every wallet page is read again
   const markBought = (amountCents: number, currency?: string) => {
     void queryClient.invalidateQueries({ queryKey: ['organizations', 'wallet'] })
+    onBought?.()
     setStep({ name: 'bought', amountCents, currency })
   }
 

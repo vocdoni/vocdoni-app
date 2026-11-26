@@ -1082,6 +1082,7 @@ const MembersTable = () => {
           <Flex gap='2'>
             <ImportMembers />
             <MemberManager
+              restoreDraft
               control={
                 <Button>
                   <Icon as={AddIcon} />
