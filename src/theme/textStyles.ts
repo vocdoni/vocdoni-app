@@ -5,6 +5,8 @@ import { defineTextStyles } from '@chakra-ui/react'
 // same property resolve in prop order (and chakra memoizes that per sorted key set), so never pass both.
 export const textStyles = defineTextStyles({
   body: { value: { fontSize: 'md', lineHeight: 'moderate' } },
+  // Emphasis inside a body paragraph (a bold word in a legal notice): the weight only, the size comes from the text.
+  'body-strong': { value: { fontWeight: 'semibold' } },
   'body-sm': { value: { fontSize: 'sm', lineHeight: 'moderate' } },
   caption: { value: { fontSize: 'xs', lineHeight: 'moderate' } },
   // Small labels over a figure or a group. Fil has no uppercase: size and weight carry the role.

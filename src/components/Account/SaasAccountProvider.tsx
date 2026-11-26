@@ -9,7 +9,7 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 const emptyMultilingual = { default: '' }
 
 // Adapts the SAAS `OrganizationInfo` onto the `.account`-nested `OrganizationData` shape
-// that the org display components (Header, Process/View, CreatedBy, LegalNotice) read.
+// that the org display components (those typed with `OrganizationData`) read.
 // This is NOT old-SDK backwards-compat: those same components also render on the public
 // `/organization/:address` and `/processes/:id` SSR pages, which still supply the nested
 // shape from the vochain path (src/ssr/public-pages.ts `fetchAccountInfo`). Until that

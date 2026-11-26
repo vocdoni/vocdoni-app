@@ -28,15 +28,7 @@
   },
   "appearance": "Apparence",
   "aside": {
-    "anonymous_receipt_gone": "Votre reçu a été affiché lors de votre vote et ne peut pas être récupéré.",
-    "has_already_voted": "Votre vote a bien été enregistré",
-    "is_not_in_census": "Vous ne figurez pas sur la liste électorale",
-    "votes_one": "<span>{{ count }}</span> <text>votant</text>",
-    "votes_many": "<span>{{ count }}</span> <text>votants</text>",
-    "votes_other": "<span>{{ count }}</span> <text>votants</text>",
-    "votes_weight_one": "<span>{{ count }}</span> <text>voix</text>",
-    "votes_weight_many": "<span>{{ count }}</span> <text>voix</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>voix</text>"
+    "anonymous_receipt_gone": "Votre reçu a été affiché lors de votre vote et ne peut pas être récupéré."
   },
   "auth": {
     "showcase": {
@@ -181,6 +173,7 @@
     "title": "Parlez-nous de votre organisation"
   },
   "csp": {
+    "auth_failed": "Échec de l'authentification",
     "authenticate": "S'identifier",
     "cert": {
       "contact_organization": "If you keep having problems, contact {{organization}}.",
@@ -230,7 +223,21 @@
       "title": "Digital certificate",
       "unavailable": "Signing in with a digital certificate is not available here."
     },
+    "code_wrong": "Le code n'est pas correct. Vérifiez les chiffres ou demandez-en un nouveau ci-dessous.",
     "contact_match_help": "Doit correspondre à celui enregistré dans le système",
+    "errors": {
+      "credentials_or_password_incorrect": "Nous n'avons pas pu vérifier votre identité. Vérifiez vos identifiants et votre mot de passe, puis réessayez.",
+      "participant_not_found": "L'électeur ne figure pas sur la liste électorale, ou les identifiants fournis sont incorrects.",
+      "requests_on_cooldown": "Trop de tentatives. Veuillez patienter un instant avant de réessayer.",
+      "too_many_attempts": "Trop de tentatives. Réessayez plus tard.",
+      "too_many_attempts_hours_one": "Trop de tentatives. Réessayez dans {{count}} heure.",
+      "too_many_attempts_hours_many": "Trop de tentatives. Réessayez dans {{count}} heures.",
+      "too_many_attempts_hours_other": "Trop de tentatives. Réessayez dans {{count}} heures.",
+      "too_many_attempts_minutes_one": "Trop de tentatives. Réessayez dans {{count}} minute.",
+      "too_many_attempts_minutes_many": "Trop de tentatives. Réessayez dans {{count}} minutes.",
+      "too_many_attempts_minutes_other": "Trop de tentatives. Réessayez dans {{count}} minutes.",
+      "zero_voting_weight": "Vous n'avez pas suffisamment de poids de vote pour accéder à ce processus de vote."
+    },
     "fields": {
       "birthDate": "Date de naissance",
       "contact": "Contact",
@@ -244,11 +251,17 @@
       "surname": "Nom"
     },
     "important": "Important",
+    "password_unavailable": "Le mot de passe ne peut pas être vérifié pour le moment. Rechargez la page et réessayez.",
     "receive_code": "Recevoir le code",
     "step1": {
+      "resend_failed": "Échec du renvoi du code",
       "resend_text": "Vous n'avez pas reçu le code ? <resendBtn>Renvoyez-le</resendBtn>",
       "subtitle": "Saisissez le code de vérification",
-      "title": "Authentification"
+      "title": "Authentification",
+      "validation": {
+        "length": "Le code doit comporter 6 chiffres",
+        "required": "Le code est obligatoire"
+      }
     },
     "terms_acceptance": "J'ai lu et j'accepte les <2>Conditions générales</2> et la <6>Politique de confidentialité</6>."
   },
@@ -1016,7 +1029,6 @@
         "title": "Vote privé"
       }
     },
-    "census": "Liste électorale",
     "checkout": {
       "cancel_open": "Annuler le paiement en cours",
       "check_again": "Vérifier à nouveau",
@@ -1082,17 +1094,14 @@
         "draft": "Brouillon"
       }
     },
-    "created_by": "Créé par",
     "date": {
       "ended": "Terminé",
       "ends": "Se termine",
-      "relative": "{{ date, relative(past: il y a %time; future: dans %time) }}",
       "relative_inline": "{{ status }} {{ date, relative(past: il y a %time; future: dans %time) }}",
       "starts": "Commence"
     },
     "extended_info": "Informations détaillées",
     "is_invalid": "Ce processus contient des données erronées et est donc invalide",
-    "no_description": "Aucune description fournie",
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Le paiement d'un processus de vote utilisant ces membres est encore en cours de traitement. Réessayez une fois qu'il sera terminé.",
@@ -1271,17 +1280,9 @@
       "canceled": "Processus annulé",
       "ended": "Terminé",
       "paused": "Processus en pause",
-      "paused_description": "Le vote n'est pas possible pour le moment",
       "results": "Résultats disponibles",
       "unknown": "Inconnu",
       "upcoming": "À venir"
-    },
-    "success_modal": {
-      "btn": "Fermer",
-      "text": "<p>Votre vote a été émis et stocké de manière sécurisée grâce à la technologie de Vocdoni. Vous pouvez le vérifier <verify>ici</verify>.</p>",
-      "text_no_id": "<p>Votre vote a bien été émis.</p>",
-      "text_no_link": "<p>Votre vote a été émis et stocké de manière sécurisée grâce à la technologie de Vocdoni.</p>",
-      "title": "Vote envoyé !"
     },
     "summary": {
       "countdown": "{{days}}j : {{hours}}h : {{minutes}}min",
@@ -1303,20 +1304,11 @@
       "tech_verifiability": "<b>Vérifiabilité :</b> chaque participant peut vérifier que son vote a été correctement enregistré et comptabilisé, sans compromettre le secret du vote.",
       "time_remaining": "Temps restant pour voter",
       "time_until_start": "Temps avant le début",
-      "view_summary": "Suivre le processus",
       "votes_cast_one": "{{votes}} vote exprimé",
       "votes_cast_many": "{{votes}} votes exprimés",
       "votes_cast_other": "{{votes}} votes exprimés"
     },
-    "vote_failed": {
-      "close": "Fermer",
-      "none": "Aucune réponse n’a été enregistrée. Réessayez.",
-      "partial": "Certaines réponses n’ont pas été enregistrées. Votez à nouveau pour envoyer les restantes.",
-      "title": "Votre vote n’a pas pu être enregistré"
-    },
     "voters": "Électeurs",
-    "voting": "Nous traitons votre vote. Cela prendra quelques secondes. Veuillez ne pas fermer ni actualiser cette page.",
-    "voting_label": "Envoi de votre vote",
     "voting_method": {
       "approval": "Approbation",
       "budget": "Allocation budgétaire",
@@ -1830,6 +1822,185 @@
   "vocdoni_logo": "Logo de Vocdoni",
   "vote": {
     "anonymous_receipt": "Vote anonyme : enregistrez ce reçu maintenant, la plateforme ne pourra plus vous l'afficher."
+  },
+  "voter": {
+    "actions_label": "Actions du vote",
+    "agenda": "Questions soumises au vote",
+    "answer": {
+      "ranked_item": "{{position}}. {{label}}"
+    },
+    "back": "Retour",
+    "canceled": {
+      "body": "L'organisation a annulé ce vote. Vous ne pouvez pas y voter et il n'y aura pas de résultats.",
+      "card_body": "Votre vote ne sera pas comptabilisé. Si l'organisation organise de nouveau ce vote, vous recevrez un nouveau lien.",
+      "card_title": "Si vous aviez déjà voté"
+    },
+    "checking": "Vérification de vos informations",
+    "closed": {
+      "not_cast": "Votre vote n'a pas été enregistré avant la clôture du vote.",
+      "partly_cast_one": "Seule {{count}} de vos {{total}} réponses a été enregistrée avant la clôture du vote.",
+      "partly_cast_many": "Seules {{count}} de vos {{total}} réponses ont été enregistrées avant la clôture du vote.",
+      "partly_cast_other": "Seules {{count}} de vos {{total}} réponses ont été enregistrées avant la clôture du vote.",
+      "partly_unconfirmed_one": "{{count}} de vos {{total}} réponses est confirmée comme enregistrée. Le reste n'a pas pu être confirmé avant la clôture du vote et a peut-être aussi été enregistré : vérifiez votre vote pour le savoir.",
+      "partly_unconfirmed_many": "{{count}} de vos {{total}} réponses sont confirmées comme enregistrées. Le reste n'a pas pu être confirmé avant la clôture du vote et a peut-être aussi été enregistré : vérifiez votre vote pour le savoir.",
+      "partly_unconfirmed_other": "{{count}} de vos {{total}} réponses sont confirmées comme enregistrées. Le reste n'a pas pu être confirmé avant la clôture du vote et a peut-être aussi été enregistré : vérifiez votre vote pour le savoir.",
+      "sentence": "Le vote s'est clôturé le {{date}} à {{time}}.",
+      "turnout_one": "{{count}} personne sur {{total}} a voté.",
+      "turnout_many": "{{count}} personnes sur {{total}} ont voté.",
+      "turnout_other": "{{count}} personnes sur {{total}} ont voté.",
+      "turnout_count_one": "{{count}} personne a voté.",
+      "turnout_count_many": "{{count}} personnes ont voté.",
+      "turnout_count_other": "{{count}} personnes ont voté.",
+      "unconfirmed": "Votre vote n'a pas pu être confirmé avant la clôture du vote. Il a peut-être été enregistré : vérifiez votre vote pour le savoir."
+    },
+    "code": {
+      "label": "Code à usage unique",
+      "resend": "Vous ne l'avez pas reçu ? <resend>Renvoyer le code</resend>.",
+      "resent": "Nous vous avons envoyé un nouveau code.",
+      "sent_to": "Nous l'avons envoyé à {{contact}}.",
+      "spam_hint": "Si vous avez choisi de le recevoir par e-mail, pensez à vérifier votre dossier de courriers indésirables.",
+      "title": "Saisissez le code que nous vous avons envoyé"
+    },
+    "continue": "Continuer",
+    "credit": {
+      "brand": "Vocdoni",
+      "text": "Vote réalisé avec"
+    },
+    "identify": {
+      "cert_contact_help": "Saisissez l'adresse e-mail ou le numéro de téléphone enregistré pour ce vote. Nous vous enverrons un code pour confirmer que c'est bien vous.",
+      "cert_help": "Connectez-vous avec votre certificat numérique pour voter.",
+      "failed": "Nous n'avons pas pu vous identifier. Réessayez dans un instant.",
+      "field_required": "Renseignez ce champ.",
+      "help": "Identifiez-vous pour voter.",
+      "mismatch": "Nous n'avons trouvé personne avec ces informations dans la liste électorale de ce vote. Vérifiez-les et réessayez.",
+      "retry": "Réessayer",
+      "session_expired": "Votre session a expiré. Identifiez-vous à nouveau.",
+      "terms": "J'ai lu et j'accepte les <terms>conditions</terms> et la <privacy>politique de confidentialité</privacy>.",
+      "terms_required": "Acceptez les conditions pour continuer."
+    },
+    "language": {
+      "cancel": "Continuer à voter",
+      "confirm": "Changer de langue",
+      "confirm_body": "Changer de langue fait tout recommencer : vous devrez vous identifier et répondre à nouveau.",
+      "confirm_title": "Changer de langue ?",
+      "label": "Langue : {{language}}"
+    },
+    "not_eligible": {
+      "body": "Vous vous êtes identifié correctement, mais vous ne figurez pas sur la liste des personnes qui peuvent y voter.",
+      "card_body": "Contactez {{organization}}. Seule l'organisation peut vous ajouter à la liste électorale.",
+      "card_title": "Vous pensez que c'est une erreur ?",
+      "title": "Vous n'avez pas le droit de vote pour ce vote"
+    },
+    "not_you": "Ce n'est pas vous ? <exit>Se déconnecter</exit>",
+    "paused": {
+      "body": "L'organisation a suspendu le vote temporairement. Vous ne pouvez pas voter pour le moment.",
+      "card_body": "Cette page se met à jour toute seule à la reprise. Le vote se clôture le {{date}} à {{time}}.",
+      "card_title": "Revenez dans un moment",
+      "notice_body": "Ne fermez pas la page : vous pourrez continuer à la reprise.",
+      "notice_end": "Le vote se clôture le {{date}} à {{time}}.",
+      "notice_title": "Le vote a été suspendu temporairement."
+    },
+    "progress": {
+      "question": "Question {{current}} sur {{total}}",
+      "review": "Vérification"
+    },
+    "question": {
+      "approval_over": "Choisissez-en {{max}} au maximum. Désélectionnez les autres pour continuer.",
+      "blank": "Vote blanc",
+      "can_leave": "Vous pouvez laisser ainsi.",
+      "chosen_one": "{{count}} sur {{max}} choisie.",
+      "chosen_many": "{{count}} sur {{max}} choisies.",
+      "chosen_other": "{{count}} sur {{max}} choisies.",
+      "help_approval": "Choisissez toutes les options que vous approuvez.",
+      "help_approval_cap_one": "Choisissez jusqu'à {{count}} option que vous approuvez.",
+      "help_approval_cap_many": "Choisissez jusqu'à {{count}} options que vous approuvez.",
+      "help_approval_cap_other": "Choisissez jusqu'à {{count}} options que vous approuvez.",
+      "help_exact_one": "Choisissez {{count}} option.",
+      "help_exact_many": "Choisissez {{count}} options.",
+      "help_exact_other": "Choisissez {{count}} options.",
+      "help_multiple_one": "Choisissez jusqu'à {{count}} option.",
+      "help_multiple_many": "Choisissez jusqu'à {{count}} options.",
+      "help_multiple_other": "Choisissez jusqu'à {{count}} options.",
+      "help_range": "Choisissez entre {{min}} et {{max}} options.",
+      "help_ranked": "Sélectionnez-les par ordre de préférence. Resélectionnez-en une pour la retirer.",
+      "help_single": "Choisissez une réponse.",
+      "missing_one": "Il en manque {{count}}.",
+      "missing_many": "Il en manque {{count}}.",
+      "missing_other": "Il en manque {{count}}.",
+      "rank_all": "Classez-les toutes",
+      "rank_position": "En position {{position}} sur {{total}}. Touchez pour la retirer.",
+      "rank_unranked": "Pas encore classée. Touchez pour la placer en position {{position}}."
+    },
+    "rail": {
+      "review": "Vérifier et voter"
+    },
+    "receipt": {
+      "card_note_one": "Il permet de vérifier que votre vote a été comptabilisé, sans révéler ce que vous avez voté.",
+      "card_note_many": "Un code par réponse. Ils permettent de vérifier qu'elles ont été comptabilisées, sans révéler ce que vous avez voté.",
+      "card_note_other": "Un code par réponse. Ils permettent de vérifier qu'elles ont été comptabilisées, sans révéler ce que vous avez voté.",
+      "card_title": "Votre reçu",
+      "copy_code": "{{code}} : copier le code complet de {{question}}",
+      "help_one": "Vérifié : votre réponse est enregistrée. Vous pouvez fermer la page.",
+      "help_many": "Vérifié : les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
+      "help_other": "Vérifié : les {{count}} réponses sont enregistrées. Vous pouvez fermer la page.",
+      "results_later": "Les résultats seront publiés ici même le {{date}} à {{time}}.",
+      "title": "Vote enregistré. Merci."
+    },
+    "results": {
+      "check_vote": "Vérifier votre vote",
+      "kicker": "Résultats",
+      "show": "Afficher les résultats"
+    },
+    "review": {
+      "cast": "Voter",
+      "change": "Modifier",
+      "change_label": "Modifier votre réponse à {{question}}",
+      "kicker": "Dernière étape",
+      "note": "Une fois envoyé, il ne peut plus être modifié.",
+      "retry": "Réessayer",
+      "title": "Voici ce que vous allez voter",
+      "weight_label": "Poids de votre vote",
+      "weight_value": "Votre vote compte {{weight}}"
+    },
+    "sending": {
+      "authorizing": "Autorisation du vote",
+      "confirming_one": "Confirmation de la réception",
+      "confirming_many": "Confirmation de la réception",
+      "confirming_other": "Confirmation de la réception",
+      "hint": "Ne fermez pas cette page. Si la connexion est coupée, nous le renverrons automatiquement.",
+      "sending_one": "Envoi de la réponse",
+      "sending_many": "Envoi des {{count}} réponses",
+      "sending_other": "Envoi des {{count}} réponses",
+      "title": "Nous enregistrons votre vote"
+    },
+    "sign_out": "Se déconnecter",
+    "status": {
+      "canceled": "Annulé",
+      "open_until": "Ouvert jusqu'au {{date}} à {{time}}",
+      "paused": "En pause"
+    },
+    "unavailable": {
+      "body": "Cette page réessaiera automatiquement.",
+      "refused_body": "Cette page ne peut pas confirmer que vous figurez sur la liste électorale de ce vote. Rechargez la page plus tard, ou contactez l'organisation si vous pensez qu'il s'agit d'une erreur.",
+      "title": "Ce vote ne peut pas être affiché pour le moment"
+    },
+    "unsupported": {
+      "body": "Il n'est pas encore possible d'y voter depuis cette page.",
+      "title": "Ce vote se déroule question par question"
+    },
+    "upcoming": {
+      "card_body": "Revenez sur cette page une fois le vote ouvert.",
+      "card_title": "Vous ne pouvez pas encore voter",
+      "sentence": "Le vote ouvre le {{startDate}} à {{startTime}} et se clôture le {{endDate}} à {{endTime}}."
+    },
+    "voted": {
+      "body": "Vous ne pouvez pas voter à nouveau.",
+      "title": "Vous avez déjà voté"
+    },
+    "welcome": {
+      "lead": "Voici les questions de ce vote.",
+      "start": "Commencer à voter"
+    }
   },
   "voter_anonymity": "Anonymat des électeurs",
   "voter_auth": {

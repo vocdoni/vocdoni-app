@@ -378,53 +378,41 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   return processId
 }
 
+/** The voter page's screen on display (`data-testid="voter-screen"` with `data-screen="<kind>"`). */
+export const voterScreen = (page: Page, kind?: string): Locator =>
+  page.locator(kind ? `[data-testid="voter-screen"][data-screen="${kind}"]` : '[data-testid="voter-screen"]')
+
 /**
- * Opens the CSP authentication modal from the public process page.
+ * The identify screen of the public process page, once React owns it.
  *
- * Retries the click until the dialog actually appears. `/processes/:id` is
- * server-rendered, so the "Identify" button exists in the SSR markup before
- * React has hydrated; a click landing in that window hits a real DOM node with
- * no handler attached, does nothing, and leaves the test waiting forever for a
- * modal that will never open.
- *
- * Precautionary rather than a fix for an observed failure — the suite has been
- * stable without it against a healthy stack. `toPass` costs nothing on the
- * common path where hydration already won, and turns the worst case into a
- * retry instead of a hang.
+ * `/processes/:id` is server-rendered, so the form exists before hydration; its submit button stays disabled until
+ * then (a native submit would put the voter's details in the URL). Waiting for it enabled turns that window into a
+ * wait instead of a lost click.
  */
 export const openIdentifyModal = async (page: Page): Promise<Locator> => {
-  const dialog = page.getByRole('dialog')
-
-  await expect(async () => {
-    // Two "Identify" triggers render (main column and aside); either opens the
-    // same modal.
-    await page.getByRole('button', { name: 'Identify' }).first().click()
-    await expect(dialog).toBeVisible({ timeout: 5_000 })
-  }).toPass({ timeout: 60_000 })
-
-  return dialog
+  const screen = voterScreen(page, 'identify')
+  await expect(screen).toBeVisible({ timeout: 60_000 })
+  await expect(screen.locator('button[type="submit"]')).toBeEnabled({ timeout: 60_000 })
+  return screen
 }
 
 /**
- * Authenticates a voter against a 2FA census: CSP step 0 (credentials +
- * contact) → read the emailed OTP → CSP step 1.
- *
- * Leaves the voter connected on the process page, ready to vote.
+ * Authenticates a voter against a 2FA census: identify (credentials + contact) → read the emailed OTP → the code
+ * screen. Leaves the voter on the welcome screen, ready to vote.
  */
 export const authenticateVoterWithOtp = async (page: Page, member: TestMember): Promise<string> => {
-  const dialog = await openIdentifyModal(page)
+  const screen = await openIdentifyModal(page)
 
-  await dialog.locator('input[name="memberNumber"]').fill(member.memberNumber)
+  await screen.locator('input[name="memberNumber"]').fill(member.memberNumber)
   // One field for both channels: the form routes it to `email` or `phone`
   // depending on the census's twoFaFields (email only, here).
-  await dialog.locator('input[name="contact"]').fill(member.email)
-  // Terms acceptance. The packaged form is noValidate and registers the box
-  // with react-hook-form, so an unticked box stops the submit in the form's own
-  // validation rather than the browser's.
-  await checkCheckbox(dialog)
+  await screen.locator('input[name="contact"]').fill(member.email)
+  // Terms acceptance: required, and until it is ticked the page refuses to continue with its own message (the form is
+  // `noValidate`, so the browser does not block it).
+  await checkCheckbox(screen)
 
   const requestedAt = new Date()
-  await dialog.locator('button[type="submit"]').click()
+  await screen.locator('button[type="submit"]').click()
 
   const otp = await waitForCode({
     to: member.email,
@@ -432,31 +420,28 @@ export const authenticateVoterWithOtp = async (page: Page, member: TestMember): 
     since: requestedAt,
   })
 
-  // No submit click: the pin input submits itself the moment the sixth digit
-  // lands (same as the account-verification form). Clicking as well races the
-  // in-flight request and detaches the button mid-click.
-  await fillPinInput(dialog, otp)
+  // No submit click: the code boxes submit themselves the moment the sixth digit lands. Clicking as well races the
+  // in-flight request.
+  await fillPinInput(voterScreen(page, 'code'), otp)
 
-  // Auth done: the modal closes and the process page swaps the "Identify"
-  // trigger for the voting UI.
-  await expect(dialog).toBeHidden({ timeout: 60_000 })
+  // Identified: the page moves to the welcome screen once the membership check answers.
+  await expect(voterScreen(page, 'welcome')).toBeVisible({ timeout: 60_000 })
 
   return otp
 }
 
 /**
- * Submits CSP step 0 on an auth-only census of `memberNumber` + `password`:
- * fills both, accepts the terms and submits. The caller asserts the outcome
- * (the modal closing on success, an error inside it otherwise), and may call it
- * again on the same open modal to retry.
+ * Submits the identify screen on an auth-only census of `memberNumber` + `password`: fills both, accepts the terms
+ * and submits. The caller asserts the outcome (the welcome screen on success, an error on the identify screen
+ * otherwise), and may call it again on the same screen to retry.
  */
-export const submitPasswordLogin = async (dialog: Locator, memberNumber: string, password: string): Promise<void> => {
-  await dialog.locator('input[name="memberNumber"]').fill(memberNumber)
-  await dialog.locator('input[name="password"]').fill(password)
-  // The terms checkbox keeps its state between attempts on the same modal.
-  const terms = dialog.locator('[data-scope="checkbox"][data-part="root"] input[type="checkbox"]').first()
-  if (!(await terms.isChecked())) await checkCheckbox(dialog)
-  await dialog.locator('button[type="submit"]').click()
+export const submitPasswordLogin = async (screen: Locator, memberNumber: string, password: string): Promise<void> => {
+  await screen.locator('input[name="memberNumber"]').fill(memberNumber)
+  await screen.locator('input[name="password"]').fill(password)
+  // The terms checkbox keeps its state between attempts on the same screen.
+  const terms = screen.locator('[data-scope="checkbox"][data-part="root"] input[type="checkbox"]').first()
+  if (!(await terms.isChecked())) await checkCheckbox(screen)
+  await screen.locator('button[type="submit"]').click()
 }
 
 /**
@@ -472,62 +457,45 @@ export type BallotSelection = {
 }
 
 /**
- * The container of the question at `index` on the voting form. The form id is
- * `election-questions-<processId>` but a prefix match is enough — one process
- * renders one questions form — and its direct children are the question cards
- * in process order (the "voted" notice only mounts after voting).
- */
-const questionsForm = (page: Page): Locator => page.locator('form[id^="election-questions-"]')
-
-const questionContainer = (page: Page, index: number): Locator => questionsForm(page).locator(':scope > div').nth(index)
-
-/**
- * Fills ballot selections across the questions form.
+ * Answers the ballot one question per screen, from the welcome screen (or a question already on screen) to review.
  *
- * Single-choice questions render hidden radios carrying the ballot value, so
- * they need `check({ force })` (the visible control intercepts the click).
- * Multiple-choice questions render Chakra checkboxes whose parts carry
- * deterministic ids (`question-<q>-choice-<value>-control`) — the visible
- * control is the click target there.
+ * Single-choice questions render hidden radios carrying the ballot value, so they need `check({ force })` (the
+ * visible card intercepts the click). Multiple-choice questions render Chakra checkboxes whose parts carry
+ * deterministic ids (`question-<q>-choice-<value>-control`): the visible control is the click target. "Continua"
+ * (`voter-continue`) moves to the next question, and after the last one to review.
  */
 export const fillBallot = async (page: Page, selections: BallotSelection[]): Promise<void> => {
-  // Ballot inputs stay disabled until the process is ONGOING and the voter's
-  // `isAbleToVote` loads, which can land after the auth modal closes. A forced
-  // check() skips the enabled check and throws "did not change its state".
-  const ballotInput = questionsForm(page).locator('input:is([type="radio"], [type="checkbox"])')
-  await expect(ballotInput.first()).toBeEnabled({ timeout: 60_000 })
-  for (const selection of selections) {
-    const container = questionContainer(page, selection.question)
+  const welcome = voterScreen(page, 'welcome')
+  if (await welcome.isVisible()) await welcome.locator('[data-scope="action-bar"] [data-part="primary"] button').click()
+  for (const selection of [...selections].sort((a, b) => a.question - b.question)) {
+    const question = voterScreen(page, 'question')
+    // The fields stay disabled until the SDK reports the voter able to vote, which can land after identification.
+    await expect(question.locator('input:is([type="radio"], [type="checkbox"])').first()).toBeEnabled({
+      timeout: 60_000,
+    })
     for (const value of selection.choices) {
       if (selection.type === 'single') {
-        await container.locator(`input[type="radio"][value="${value}"]`).check({ force: true })
+        await question.locator(`input[type="radio"][value="${value}"]`).check({ force: true })
       } else {
-        await container.locator(`[id="question-${selection.question}-choice-${value}-control"]`).click()
+        await question.locator(`[id="question-${selection.question}-choice-${value}-control"]`).click()
       }
     }
+    await page.getByTestId('voter-continue').click()
   }
+  await expect(voterScreen(page, 'review')).toBeVisible({ timeout: 30_000 })
 }
 
 /**
- * Submits the filled ballot and waits for the whole batch to be recorded.
+ * Casts the reviewed ballot and waits for the whole batch to be recorded.
  *
- * The confirm button is rendered by `@vocdoni/react-components`, outside this
- * repo, so there is no test-id to add to it.
- *
- * Waits for the success modal, NOT for the Vote button to disappear: the button
- * goes as soon as submission starts, so that would pass while the vote is still
- * being relayed (and would keep passing if it then failed). The modal renders
- * only once EVERY question of the process reports the voter as having voted —
- * each question is its own on-chain election, so this is also the multi-question
- * completion check.
+ * The review screen is the confirmation: "Emet el vot" (`voter-cast`) casts with no dialog (the button arms a
+ * moment after the screen appears; the click waits for it). Waits for the
+ * receipt (`vote-receipt`), not for the sending screen to go: the receipt renders only once every question of the
+ * process is on chain, so this is also the multi-question completion check.
  */
 export const submitBallot = async (page: Page): Promise<void> => {
-  await page.getByRole('button', { name: /^Vote$/ }).click()
-
-  const confirmation = page.getByRole('dialog')
-  await confirmation.getByRole('button', { name: /confirm/i }).click()
-
-  await expect(page.getByTestId('vote-success-modal')).toBeVisible({ timeout: 180_000 })
+  await page.getByTestId('voter-cast').click()
+  await expect(page.getByTestId('vote-receipt')).toBeVisible({ timeout: 180_000 })
 }
 
 /**
@@ -537,4 +505,15 @@ export const submitBallot = async (page: Page): Promise<void> => {
 export const castVote = async (page: Page, choiceIndex: number): Promise<void> => {
   await fillBallot(page, [{ question: 0, type: 'single', choices: [choiceIndex] }])
   await submitBallot(page)
+}
+
+/**
+ * The live count a visitor reads: from the identify screen, "Mostra els resultats" (`voter-show-results`), then the
+ * results view's count (`process-vote-count`).
+ */
+export const openPublicCount = async (page: Page): Promise<Locator> => {
+  await openIdentifyModal(page)
+  await page.getByTestId('voter-show-results').click()
+  await expect(voterScreen(page, 'results')).toBeVisible()
+  return page.getByTestId('process-vote-count')
 }

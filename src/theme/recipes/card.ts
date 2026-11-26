@@ -168,6 +168,7 @@ export const Card = defineSlotRecipe({
       // review row, a receipt's head).
       ballot: {
         root: voterCard,
+        title: { textStyle: 'ballot-body', fontWeight: 'semibold' },
         header: { px: '4.5', py: '3.5' },
         body: { px: '4.5', py: '3.5' },
         footer: { px: '4.5', py: '3.5' },

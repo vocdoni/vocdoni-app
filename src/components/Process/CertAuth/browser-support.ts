@@ -31,9 +31,16 @@ export const detectCertificateBrowser = ({
   return { kind: 'supported' }
 }
 
-export const readBrowserEnv = (): BrowserEnv => ({
+const readBrowserEnv = (): BrowserEnv => ({
   userAgent: navigator.userAgent,
   maxTouchPoints: navigator.maxTouchPoints ?? 0,
   hasTelegram: 'TelegramWebview' in window || 'TelegramWebviewProxy' in window,
   uaPlatform: (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData?.platform,
 })
+
+/** The platform of an in-app browser (WhatsApp, Instagram, Gmail…), which can't present a certificate. */
+export const inAppPlatform = (): 'android' | 'ios' | 'other' | null => {
+  if (typeof navigator === 'undefined') return null
+  const browser = detectCertificateBrowser(readBrowserEnv())
+  return browser.kind === 'in-app' ? browser.platform : null
+}

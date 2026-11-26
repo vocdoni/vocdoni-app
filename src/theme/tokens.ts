@@ -164,7 +164,7 @@ const spacing = defineTokens.spacing({
       tablet: { value: '220px' },
     },
   },
-  // Drops a mark beside a label onto the label's first line: half of a 20px line minus an 18px mark.
+  // A 1px nudge that drops a mark beside a label onto the label's first line (the voter's consent box uses it too).
   mark: { value: '1px' },
   dashboard: {
     panel: { value: '{sizes.dashboard.panel}' },
@@ -179,6 +179,8 @@ const spacing = defineTokens.spacing({
     gutter: { value: '72px' },
     dock: { value: '150px' },
     options: { value: '22px' },
+    // Above the agenda list on the welcome screen: the same 22px.
+    agenda: { value: '{spacing.ballot.options}' },
   },
 })
 

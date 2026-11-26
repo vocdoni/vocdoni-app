@@ -88,12 +88,45 @@ describe('voter shell recipe', () => {
   })
 
   it('sets the credit at 12px in the quiet ink with a 13px wordmark, in a 48px row', () => {
-    expect(layer(styles.foot)).toMatchObject({ height: 'var(--chakra-sizes-12)' })
-    expect(layer(styles.credit)).toMatchObject({
-      gap: 'var(--chakra-spacing-1\\.5)',
+    expect(layer(styles.foot)).toMatchObject({ minHeight: 'var(--chakra-sizes-12)' })
+    const credit = layer(styles.credit)
+    expect(credit).toMatchObject({
+      columnGap: 'var(--chakra-spacing-3)',
+      rowGap: 'var(--chakra-spacing-0)',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
       fontSize: 'var(--chakra-font-sizes-xs)',
       color: 'var(--chakra-colors-fg-subtle)',
     })
-    expect(layer(styles.wordmark)).toMatchObject({ height: 'var(--chakra-sizes-wordmark-credit)' })
+    // The wordmark sits in the group with the words (`made`), so it is reached as a descendant.
+    expect(credit['& svg']).toEqual({
+      height: 'var(--chakra-sizes-wordmark-credit)',
+      width: 'var(--chakra-sizes-auto)',
+    })
+  })
+
+  it('lets a long status line wrap inside the strip and the rail head, the dot on its first line (R-2)', () => {
+    for (const slot of [styles.head, styles.railHead]) {
+      const rules = layer(slot)
+      expect(rules['& [data-scope="status"][data-part="root"]']).toEqual({
+        whiteSpace: 'normal',
+        alignItems: 'flex-start',
+      })
+      expect(rules['& [data-scope="status"][data-part="indicator"]']).toEqual({
+        flexShrink: 0,
+        marginTop: 'var(--chakra-spacing-1\\.5)',
+      })
+    }
+  })
+
+  it('puts the terms and privacy links 12px after the wordmark, with no separator to dangle when they wrap (R18)', () => {
+    // The words and the wordmark stay one group, 6px apart; the links are the other, and wrap to their own line as a
+    // unit. A middle dot on either group was left at the end or the start of a line whenever they wrapped.
+    const made = layer(styles.made)
+    expect(made).toEqual({ display: 'inline-flex', alignItems: 'center', gap: 'var(--chakra-spacing-1\\.5)' })
+    const credit = layer(styles.credit)
+    expect(credit).toMatchObject({ flexWrap: 'wrap', columnGap: 'var(--chakra-spacing-3)' })
+    expect(credit.gap).toBeUndefined()
+    expect(JSON.stringify([credit, made, layer(styles.links) ?? {}])).not.toMatch(/::(after|before)/)
   })
 })

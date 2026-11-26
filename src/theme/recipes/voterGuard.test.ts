@@ -157,7 +157,8 @@ const pinned = {
     ),
   ElectionQuestions: () => resolveAll(slotRecipe('ElectionQuestions'), { layout: ['list', 'grid'] }),
   QuestionsTip: () => resolveAll(slotRecipe('QuestionsTip'), {}),
-  // Chakra's own pin input, which the app did not restyle: CSP/Step1 draws it at `lg`, Auth/Verify at the default.
+  // Chakra's own pin input, which the app did not restyle: the CSP code step draws it at `lg`, Auth/Verify at the
+  // default.
   pinInput: () =>
     resolveAll(slotRecipe('pinInput'), {
       size: INPUT_SIZES,

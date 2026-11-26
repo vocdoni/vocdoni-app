@@ -38,6 +38,31 @@ export const getContactFieldLabel = (t: TFunction, twoFaFields: readonly string[
   return t('csp.fields.contact', { defaultValue: 'Contact' })
 }
 
+/** The input type of an auth field on the voter page's identify screen. */
+export const getAuthFieldInputType = (field: string): string => {
+  if (field === 'email') return 'email'
+  if (field === 'phone') return 'tel'
+  if (field === 'birthDate') return 'date'
+  if (field === 'password') return 'password'
+  return 'text'
+}
+
+type InputMode = 'email' | 'tel' | 'text' | 'search' | 'url' | 'none' | 'numeric' | 'decimal'
+
+/**
+ * The input props for the two-factor contact field (email, phone or both), so the browser offers the right
+ * keyboard and autocomplete hint for the channel the census uses.
+ */
+export const getContactFieldInputProps = (
+  twoFaFields: readonly string[]
+): { type: string; autoComplete: string; inputMode?: InputMode } => {
+  const hasEmail = twoFaFields.includes('email')
+  const hasPhone = twoFaFields.includes('phone')
+  if (hasEmail && !hasPhone) return { type: 'email', autoComplete: 'email' }
+  if (hasPhone && !hasEmail) return { type: 'tel', inputMode: 'tel', autoComplete: 'tel' }
+  return { type: 'text', autoComplete: 'on' }
+}
+
 /**
  * A census field named as the organiser reads it (the voter lookup, Gestió's voting data): sentence case, so it sits
  * inside a sentence. Unknown fields fall back to their raw key.

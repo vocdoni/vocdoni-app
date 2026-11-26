@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { system } from '../system'
-import { AgendaList, PhaseList, ReceiptCodes } from './voterLists'
+import { AgendaList, PhaseList, ReceiptCodes, ReviewRow } from './voterLists'
 
 type Rules = Record<string, unknown>
 const layer = (styles: unknown) => (styles as Record<string, Rules>)['@layer recipes']
@@ -41,6 +41,24 @@ describe('phase list recipe', () => {
   })
 })
 
+describe('review row recipe', () => {
+  it('shades the vote-weight row under the card top corners, and only that row', () => {
+    expect(layer(system.sva(ReviewRow)({ first: true, shaded: true }).root)).toMatchObject({
+      background: 'var(--chakra-colors-bg-subtle)',
+      borderTopLeftRadius: 'var(--chakra-radii-xl)',
+      borderTopRightRadius: 'var(--chakra-radii-xl)',
+      borderTopWidth: '0',
+    })
+    expect(layer(system.sva(ReviewRow)({}).root)).not.toHaveProperty('background')
+  })
+
+  it('sets the label in the quiet ink, and the action in the column beside the label and value', () => {
+    const styles = system.sva(ReviewRow)({})
+    expect(layer(styles.label)).toMatchObject({ color: 'var(--chakra-colors-fg-subtle)' })
+    expect(layer(styles.action)).toMatchObject({ gridColumn: '2', gridRow: '1 / span 2' })
+  })
+})
+
 describe('receipt codes recipe', () => {
   const styles = system.sva(ReceiptCodes)({})
 
@@ -60,14 +78,18 @@ describe('receipt codes recipe', () => {
     })
   })
 
-  it('gives a code the voter can copy a 44px hit area', () => {
-    const button = layer(styles.code)['&:is(button)'] as Rules
+  it('gives a code that links to its verification a 44px hit area', () => {
+    const button = layer(styles.code)['&:is(button), &:is(a)'] as Rules
     expect(button['&::before']).toMatchObject({ inset: 'calc((100% - var(--chakra-sizes-control-touch)) / 2)' })
   })
 })
 
 describe('agenda list recipe', () => {
   const styles = system.sva(AgendaList)({})
+
+  it('keeps no outer margin: the screen spaces it from what comes before', () => {
+    expect(layer(styles.root)).not.toHaveProperty('marginTop')
+  })
 
   it('rules each row, 11px above and below, the number in mono 14px wide and 14px before the title', () => {
     expect(layer(styles.item)).toMatchObject({

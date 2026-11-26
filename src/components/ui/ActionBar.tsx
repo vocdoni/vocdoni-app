@@ -43,10 +43,15 @@ export const ActionBar = ({
     <Box as='section' aria-label={label} css={styles.root} data-scope='action-bar' data-part='root'>
       <Box css={styles.actions}>
         {secondary && <Box css={styles.secondary}>{secondary}</Box>}
-        {described && <Box css={styles.primary}>{described}</Box>}
+        {described && (
+          <Box css={styles.primary} data-part='primary'>
+            {described}
+          </Box>
+        )}
       </Box>
+      {/* A block, not a paragraph: a block a screen puts in the note never lands in a `p` (conformance D-19). */}
       {note && (
-        <Box as='p' id={noteId} css={styles.note}>
+        <Box id={noteId} css={styles.note}>
           {note}
         </Box>
       )}

@@ -4,6 +4,7 @@ import { system } from '../system'
 const button = system.cva(system.getRecipe('button'))
 const input = system.cva(system.getRecipe('input'))
 const field = system.sva(system.getSlotRecipe('field'))
+const checkbox = system.sva(system.getSlotRecipe('checkbox'))
 
 // The declarations a recipe layer ends up with, and its media queries.
 type Rules = Record<string, unknown>
@@ -99,5 +100,29 @@ describe('voter controls', () => {
       lineHeight: 'var(--chakra-line-heights-moderate)',
       fontWeight: 'var(--chakra-font-weights-medium)',
     })
+  })
+
+  it('draws the consent checkbox 22px with 4px corners and a 15px label, leaving the other sizes at 16px', () => {
+    const ballot = checkbox({ size: 'ballot' }) as unknown as Record<string, Rules>
+    expect(layer(ballot.control)).toMatchObject({
+      width: 'var(--chakra-sizes-mark-ballot)',
+      height: 'var(--chakra-sizes-mark-ballot)',
+      borderRadius: 'var(--chakra-radii-sm)',
+    })
+    expect(layer(ballot.label)).toMatchObject({ fontSize: 'var(--chakra-font-sizes-item)' })
+    expect(system.token('sizes.mark.ballot')).toBe('22px')
+    const md = checkbox({ size: 'md' }) as unknown as Record<string, Rules>
+    expect(layer(md.control)).toMatchObject({ width: 'var(--chakra-sizes-4)', height: 'var(--chakra-sizes-4)' })
+  })
+
+  it('rings the consent box like the ballot marks, with a 14px tick, and keeps the edge when checked (D-6)', () => {
+    const control = layer((checkbox({ size: 'ballot' }) as unknown as Record<string, Rules>).control)
+    expect(control).toMatchObject({ borderWidth: '0', boxShadow: 'var(--chakra-shadows-mark-field)' })
+    expect(control['& svg']).toEqual({ width: 'var(--chakra-sizes-3\\.5)', height: 'var(--chakra-sizes-3\\.5)' })
+    const checked = control['&:is([data-state=checked], [data-state=indeterminate])'] as Rules
+    expect(checked.boxShadow).not.toBe('var(--chakra-shadows-mark-field)')
+    // The other sizes keep their 1.5px border.
+    const md = layer((checkbox({ size: 'md' }) as unknown as Record<string, Rules>).control)
+    expect(md.boxShadow).toBeUndefined()
   })
 })

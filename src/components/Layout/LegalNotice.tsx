@@ -1,16 +1,48 @@
-import { Box, Link, Text } from '@chakra-ui/react'
+import { Link, Text } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
 import { Trans } from 'react-i18next'
 import { PageSection } from '~components/ui/PageContainer'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
 import { getOrganizationName } from '~utils/organization'
 
+type StaticLegalNoticeProps = {
+  orgName?: string
+  /** `voter`: the voter page's note under its column, left-aligned in the quiet body ink. */
+  variant?: 'page' | 'voter'
+}
+
 /**
  * Legal notice that never reads the organization context — for pages rendered without an
  * `OrganizationProvider` (archive-era). Renders nothing when `orgName` is empty.
  */
-export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
+export const StaticLegalNotice = ({ orgName, variant = 'page' }: StaticLegalNoticeProps) => {
   if (!orgName) return null
+
+  // The test id is read by the layout and the voter page tests: keep it on the outer element of both variants.
+  const text = (
+    <>
+      <Trans
+        i18nKey='layout.legal_notice'
+        defaults='To ensure a secure, verifiable and transparent vote, <strong>{{orgName}}</strong> uses the Vocdoni platform, which protects participants’ privacy at all times. More information at'
+        values={{ orgName }}
+        components={{
+          strong: <Text as='strong' color='fg' textStyle='body-strong' />,
+        }}
+      />{' '}
+      <Link href='https://vocdoni.io/' target='_blank' rel='noopener noreferrer'>
+        vocdoni.io
+      </Link>
+      .
+    </>
+  )
+
+  if (variant === 'voter') {
+    return (
+      <Text as='p' data-testid='layout-legal-notice' mt='8' textStyle='body' color='fg.subtle'>
+        {text}
+      </Text>
+    )
+  }
 
   return (
     <PageSection
@@ -22,20 +54,7 @@ export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
       lineHeight='tall'
       textAlign='center'
     >
-      <Text as='p'>
-        <Trans
-          i18nKey='layout.legal_notice'
-          defaults='To ensure a secure, verifiable and transparent vote, <strong>{{orgName}}</strong> uses the Vocdoni platform, which protects participants’ privacy at all times. More information at'
-          values={{ orgName }}
-          components={{
-            strong: <Box as='strong' color='fg' fontWeight='semibold' />,
-          }}
-        />{' '}
-        <Link href='https://vocdoni.io/' target='_blank' rel='noopener noreferrer'>
-          vocdoni.io
-        </Link>
-        .
-      </Text>
+      <Text as='p'>{text}</Text>
     </PageSection>
   )
 }
