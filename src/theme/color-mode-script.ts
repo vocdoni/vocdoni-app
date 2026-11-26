@@ -8,8 +8,7 @@ export const VOTER_COLOR_MODE_STORAGE_KEY = 'theme-preference-voter'
 export const isVoterPageId = (pageId: string | null | undefined): boolean =>
   !!pageId && /\/(processes|organization)\/|\/home-process$|\/_error$/.test(pageId)
 
-// The root (`/` or `/:lang`) is a client-rendered voter shell on a custom domain or with a shared census, and the
-// dashboard otherwise. The server cannot see the host, so the path decides, and the root keeps the system's mode.
+// The root (`/` or `/:lang`). Whether it is a voter shell depends on the host and the env, which the head script checks.
 export const isPublicHomePath = (pathname: string | undefined, languages: readonly string[]): boolean => {
   if (!pathname) return false
   const segments = pathname.split('/').filter(Boolean)

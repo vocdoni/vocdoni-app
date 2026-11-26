@@ -3,8 +3,27 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { colorModeScript } from '~theme/color-mode-script'
 import headHtmlBegin from './+headHtmlBegin.server'
 
-const context = (pageId: string | null = '/src/pages/@lang/@catchAll', urlPathname?: string) =>
-  ({ globalContext: { commitSha: '0123456' }, pageId, urlPathname }) as PageContextServer
+type AppEnvOverrides = { PROCESS_IDS?: string; CUSTOM_ORGANIZATION_DOMAINS?: Record<string, string> }
+
+const context = (
+  pageId: string | null = '/src/pages/@lang/@catchAll',
+  urlPathname?: string,
+  { headers, appEnv }: { headers?: Record<string, string>; appEnv?: AppEnvOverrides } = {}
+) =>
+  ({
+    globalContext: {
+      commitSha: '0123456',
+      appEnv: {
+        LANGUAGES: { en: 'English', es: 'Spanish' },
+        PROCESS_IDS: '',
+        CUSTOM_ORGANIZATION_DOMAINS: {},
+        ...appEnv,
+      },
+    },
+    pageId,
+    urlPathname,
+    headers,
+  }) as unknown as PageContextServer
 
 // The build-commit tag goes first so it sits as high in <head> as Vike allows. The sha comes from the globalContext
 // resolved at server boot, so the render never reads the env or git.
@@ -29,16 +48,55 @@ describe('headHtmlBegin', () => {
     expect(headHtmlBegin(context())).toContain("localStorage.getItem('theme-preference')")
   })
 
-  // The public home is the custom-domain organisation or the shared census, both client-rendered voter shells; the
-  // dashboard reached from it keeps its saved choice.
-  it.each(['/', '/en', '/es/'])('makes the public home %s follow the system, never the saved choice', (urlPathname) => {
-    const html = headHtmlBegin(context('/src/pages/@lang/@catchAll', urlPathname))
-    expect(html).toContain("localStorage.getItem('theme-preference-voter')")
+  // The root is a client-rendered voter shell only when it shows a shared census or a custom-domain organisation;
+  // otherwise it redirects to the dashboard, which keeps its saved choice.
+  it('keeps the saved choice on the root of a plain domain', () => {
+    expect(headHtmlBegin(context('/src/pages/@lang/@catchAll', '/en', { headers: { host: 'app.example' } }))).toContain(
+      "getItem('theme-preference')"
+    )
+  })
+
+  it('makes the root follow the system when a shared census is configured', () => {
+    const html = headHtmlBegin(
+      context('/src/pages/@lang/@catchAll', '/en', {
+        headers: { host: 'app.example' },
+        appEnv: { PROCESS_IDS: 'abc,def' },
+      })
+    )
+    expect(html).toContain("getItem('theme-preference-voter')")
     expect(html).not.toContain("getItem('theme-preference')")
   })
 
+  it('makes the root follow the system on a custom organisation domain, matching the host without its port', () => {
+    const html = headHtmlBegin(
+      context('/src/pages/@lang/@catchAll', '/en', {
+        headers: { 'x-forwarded-host': 'org.example:8443, proxy.example' },
+        appEnv: { CUSTOM_ORGANIZATION_DOMAINS: { 'org.example': '0xabc' } },
+      })
+    )
+    expect(html).toContain("getItem('theme-preference-voter')")
+    expect(html).not.toContain("getItem('theme-preference')")
+  })
+
+  it('keeps the saved choice on the root of an unmapped host even when a shared census exists elsewhere', () => {
+    const html = headHtmlBegin(
+      context('/src/pages/@lang/@catchAll', '/', {
+        headers: { host: 'app.example' },
+        appEnv: { CUSTOM_ORGANIZATION_DOMAINS: { 'org.example': '0xabc' } },
+      })
+    )
+    expect(html).toContain("getItem('theme-preference')")
+  })
+
   it.each(['/admin', '/en/admin', '/en/processes/new', '/xx'])('keeps the saved choice on %s', (urlPathname) => {
-    expect(headHtmlBegin(context('/src/pages/@lang/@catchAll', urlPathname))).toContain("getItem('theme-preference')")
+    expect(
+      headHtmlBegin(
+        context('/src/pages/@lang/@catchAll', urlPathname, {
+          headers: { host: 'org.example' },
+          appEnv: { PROCESS_IDS: 'abc', CUSTOM_ORGANIZATION_DOMAINS: { 'org.example': '0xabc' } },
+        })
+      )
+    ).toContain("getItem('theme-preference')")
   })
 
   it.each([
