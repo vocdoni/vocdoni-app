@@ -15,19 +15,10 @@ import { VoterActionBar } from '../parts/VoterActionBar'
 /**
  * Frame 2 of a question-by-question vote (board V4VoterWideLive 2; weight V4VoterWideMore 6; paused 2): the open
  * question, what will be sent ("Votaràs: A favor"), "No votar aquesta pregunta" set apart (it casts nothing, R12),
- * "Enrere" to the room and "Emet el vot", which casts this question alone. No review: the note says it is final.
- * `blocked`: another question is open too, and the SDK would sign it with this one; the cast stays off and says why
- * (gate-3 F10). The off button is described by its reason: the pause note, the block, or how to answer (gate-3 F8).
+ * "Enrere" to the room and "Emet el vot", which casts the open set. One eligible open question is the room's own; two or
+ * more are answered in the form (`roomFormSet`). No review: the note says it is final.
  */
-export const RoomQuestionScreen = ({
-  index,
-  paused,
-  blocked = false,
-}: {
-  index: number
-  paused: boolean
-  blocked?: boolean
-}) => {
+export const RoomQuestionScreen = ({ index, paused }: { index: number; paused: boolean }) => {
   const { t } = useTranslation()
   const localize = useReactComponentsLocalize()
   const { election, facts, state, weight, weighted, lockedNotice, park, skip, castQuestion, casting } = useVoterFlow()
@@ -47,13 +38,12 @@ export const RoomQuestionScreen = ({
 
   const noteId = useId()
   const helpId = useId()
-  const blockedId = useId()
   const castLabel = failed ? t('voter.review.retry') : t('voter.review.cast')
-  const reason = paused ? noteId : blocked ? blockedId : !answered ? helpId : undefined
+  const reason = paused ? noteId : !answered ? helpId : undefined
   // Until the button is armed it shows the unavailable look too, so an answered ballot goes from off to primary and
   // never through a third grey.
   const primary =
-    paused || blocked || !answered || !armed ? (
+    paused || !answered || !armed ? (
       <Button variant='off' size='ballot' aria-disabled aria-describedby={reason} data-testid='voter-cast'>
         {castLabel}
       </Button>
@@ -87,13 +77,6 @@ export const RoomQuestionScreen = ({
           />
         </ScreenHint>
       ) : null}
-      {blocked && (
-        <Alert.Root status='warning' layout='ballot' mt='6' role='status'>
-          <Alert.Content>
-            <Alert.Description id={blockedId}>{t('voter.room.blocked')}</Alert.Description>
-          </Alert.Content>
-        </Alert.Root>
-      )}
       {failed && state.castUnconfirmed ? (
         <RoomCastNotice kind='unknown' />
       ) : failed ? (

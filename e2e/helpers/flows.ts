@@ -203,10 +203,11 @@ export type ProcessSpec = {
    */
   endsInMinutes?: number
   /**
-   * The create form's "Question by question" voting mode: questions start closed and the organiser opens them one at
-   * a time. The mode switch only exists while the app runs with QUESTION_BY_QUESTION (see playwright.config.ts).
+   * The create form's "Open the questions yourself" switch: the questions start paused and the organiser opens them
+   * from the vote's page. The switch only exists while the app runs with QUESTION_BY_QUESTION (see
+   * playwright.config.ts).
    */
-  questionByQuestion?: boolean
+  startPaused?: boolean
   /**
    * "Show the results to voters": the voting page offers the live count and the results. Off by default, as in the
    * wizard, so a spec that reads results turns it on.
@@ -283,14 +284,11 @@ export const fillProcessWizard = async (page: Page, spec: ProcessSpec): Promise<
   await page.reload()
   await expect(page.locator('input[name="title"]')).toHaveValue(spec.title)
 
-  if (spec.questionByQuestion) {
-    // A segmented control whose hidden inputs carry the mode's value, so this does not depend on the translated label.
-    // Clicking the visible item, as a user would, is what flips it: the input itself is hidden.
-    const byQuestion = page.locator('[data-scope="segment-group"][data-part="item"]').filter({
-      has: page.locator('input[value="byQuestion"]'),
-    })
-    await byQuestion.click()
-    await expect(page.locator('input[value="byQuestion"]')).toBeChecked()
+  if (spec.startPaused) {
+    // Same switch shape as the voter-results one below: the hidden input carries the form field name.
+    const startPaused = page.locator('input[name="startPaused"]')
+    await toggleSwitch(page.locator('[data-scope="switch"]').filter({ has: startPaused }))
+    await expect(startPaused).toBeChecked()
   }
 
   for (const [index, question] of spec.questions.entries()) {

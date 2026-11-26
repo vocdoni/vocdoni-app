@@ -60,6 +60,23 @@ describe('frame 1: a question is open', () => {
   })
 })
 
+describe('frame 1: an open set', () => {
+  it('speaks of the questions together and lists each one', () => {
+    const flow = flowIn({ kind: 'roomOpen', index: 1 }, testRoom([['closed', 'recorded'], 'open', 'open']), {
+      form: [1, 2],
+    })
+    renderWithFlow(<RoomOpenScreen index={1} />, flow)
+    expect(screen.getByText('voter.room.kicker_set')).toBeInTheDocument()
+    expect(screen.queryByText('voter.room.kicker')).toBeNull()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.room.open_title_set')
+    expect(screen.getAllByText('voter.room.open_label')).toHaveLength(2)
+    expect(screen.getByText('Question 2')).toBeInTheDocument()
+    expect(screen.getByText('Question 3')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'voter.room.vote_now' }))
+    expect(flow.resume).toHaveBeenCalledWith(1)
+  })
+})
+
 describe('frame 3: vote cast', () => {
   it('confirms with the tick and the title, never the answer, and says the next is being prepared', () => {
     const state = { ...initialVoterState, sent: { '1': '1' } }
@@ -155,6 +172,20 @@ describe('frame 3b: skipped', () => {
     expect(screen.getByText('voter.room.preparing')).toBeInTheDocument()
     expect(document.querySelector('[data-part="success-disc"]')).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'voter.room.vote_question' }))
+    expect(flow.resume).toHaveBeenCalledWith(1)
+  })
+})
+
+describe('frame 3b: a skipped set', () => {
+  it('speaks of the questions together and offers to vote them', () => {
+    const flow = flowIn({ kind: 'roomSkipped', index: 1 }, testRoom([['closed', 'recorded'], 'open', 'open']), {
+      form: [1, 2],
+    })
+    renderWithFlow(<RoomSkippedScreen index={1} />, flow)
+    expect(screen.getByText('voter.room.open_label_set')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('voter.room.skipped_title_set')
+    expect(screen.getByText('voter.room.skipped_help_set')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'voter.room.vote_question_set' }))
     expect(flow.resume).toHaveBeenCalledWith(1)
   })
 })

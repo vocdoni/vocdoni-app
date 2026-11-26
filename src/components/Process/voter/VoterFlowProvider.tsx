@@ -12,6 +12,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -40,8 +41,11 @@ import {
   isAnswered,
   lateCastOf,
   ON_CHAIN_NOTICE,
-  roomCastBlocked,
-  shownOpenIndex,
+  roomFormSet,
+  roomGroup,
+  roomGroupKey,
+  roomHeldSet,
+  roomNeeded,
   stepFromHistory,
   roomCastOf,
   voterReducer,
@@ -52,6 +56,10 @@ import {
 } from './voter-flow'
 
 const SETTLED = new Set(['confirmed', 'signed', 'unconfirmed'])
+
+/** Whether the check lists every question of a cast as voted: then a refusal of the rest of the batch is expected. */
+const settledSet = (fresh: { questions: readonly { questionId: string; hasVoted: boolean }[] } | null, ids: string[]) =>
+  !!fresh && ids.every((id) => fresh.questions.some((entry) => entry.questionId === id && entry.hasVoted))
 
 type FormErrors = Record<string, { message?: unknown } | undefined> & { root?: { vote?: { message?: unknown } } }
 
@@ -145,7 +153,6 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
   const questions = election?.questions ?? []
   const id = election?.id
   const statusKey = `${sdkStatus}:${questions.map((question) => question.status).join(',')}`
-  const byQuestion = !!election && isQuestionByQuestion(election)
   // The room reads the clock only where it can end a question or the vote. A device clock that is not trusted never
   // ends them (gate F4): the room reads it held just short of the scheduled end, and the polled statuses close it,
   // as `facts.endedBySchedule` does for the whole vote (gate-3 F4).
@@ -201,42 +208,49 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
         SETTLED.has(voteStatus[question.id] ?? '')
     )
 
-  // A question-by-question vote's room, from the polled process read and the voter's state: the open question decides
-  // the frame (Task 1). `roomNow` is the server's instant on the first frame, so server and browser pick the same one.
-  const room: RoomFacts | null =
-    election && byQuestion
-      ? {
-          voteState: deriveVoteState(election, roomNow),
-          questions: questions.map((question) => {
-            const endedAt = question.endedAt ? Date.parse(question.endedAt) || null : null
-            return {
-              id: question.id,
-              state: deriveQuestionState(question, election, roomNow),
-              cast: (() => {
-                const base = roomCastOf({
-                  onChain: onChain(question.id) || !!voteIds[question.id] || votedIds.includes(question.id),
-                  status: voteStatus[question.id],
-                  pending: !!pendingVotes[question.id],
-                  outcomeUnknown: state.uncertain.includes(question.id),
-                })
-                // A refusal that came after the organiser closed the question (gate-3 F2 extension): surface as 'late'
-                // so the rail note matches the roomMissed screen. Kept in `state.late`: an answer to the next question
-                // clears the refusal's error, not that it came late.
-                if (
-                  base === 'pending' &&
-                  (state.late.includes(question.id) || lateCastOf(base, question.id, state, endedAt))
-                ) {
-                  return 'late' as const
-                }
-                return base
-              })(),
-              endedAt,
-              showsResult: voterSeesQuestionResult(question),
-              ...(ineligibleIds.includes(question.id) ? { eligible: false } : {}),
-            }
-          }),
-        }
-      : null
+  // The room, from the polled process read and the voter's state: the open set decides the frame (`roomNeeded`), not
+  // how the vote was created. `roomNow` is the server's instant on the first frame, so server and browser pick the same
+  // one.
+  const roomFacts: RoomFacts | null = election
+    ? {
+        voteState: deriveVoteState(election, roomNow),
+        questions: questions.map((question) => {
+          const endedAt = question.endedAt ? Date.parse(question.endedAt) || null : null
+          return {
+            id: question.id,
+            state: deriveQuestionState(question, election, roomNow),
+            cast: (() => {
+              const base = roomCastOf({
+                onChain: onChain(question.id) || !!voteIds[question.id] || votedIds.includes(question.id),
+                status: voteStatus[question.id],
+                pending: !!pendingVotes[question.id],
+                outcomeUnknown: state.uncertain.includes(question.id),
+              })
+              // A refusal that came after the organiser closed the question (gate-3 F2 extension): surface as 'late'
+              // so the rail note matches the roomMissed screen. Kept in `state.late`: an answer to the next question
+              // clears the refusal's error, not that it came late.
+              if (
+                base === 'pending' &&
+                (state.late.includes(question.id) || lateCastOf(base, question.id, state, endedAt))
+              ) {
+                return 'late' as const
+              }
+              return base
+            })(),
+            endedAt,
+            showsResult: voterSeesQuestionResult(question),
+            ...(ineligibleIds.includes(question.id) ? { eligible: false } : {}),
+          }
+        }),
+      }
+    : null
+  // A whole-vote pause of a vote not created question by question keeps its classic paused screens: the data cannot
+  // tell it from a question-by-question vote with nothing opened yet, so only the creation flag does.
+  const classicPause = !!election && !isQuestionByQuestion(election) && status === 'PAUSED'
+  const room = roomFacts && roomNeeded(roomFacts.questions) && !classicPause ? roomFacts : null
+
+  // The open set's key: a parked frame belongs to the set it was left on, so a changed set forgets it.
+  const openKey = room ? roomGroupKey(room.questions) || null : null
 
   const lateIds = (room?.questions ?? []).flatMap((question) =>
     question.cast === 'late' && !state.late.includes(question.id) ? [question.id] : []
@@ -246,15 +260,20 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     lateIds.forEach((questionId) => dispatch({ type: 'castLate', questionId }))
   }, [lateKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const openQuestionId = room ? (room.questions[shownOpenIndex(room.questions)]?.id ?? null) : null
   useEffect(() => {
-    dispatch({ type: 'openChanged', questionId: openQuestionId })
-  }, [openQuestionId])
+    dispatch({ type: 'openChanged', questionId: openKey })
+  }, [openKey])
+  // The set answered in one form (`roomFormSet`): its questions only, in the classic navigation.
+  // Kept by its key: `room` is rebuilt on every render, and the navigation callbacks below depend on the set.
+  const formKey = room ? (roomFormSet(room.questions, room.voteState) ?? []).join(',') : ''
+  const form = useMemo(() => (formKey ? formKey.split(',').map(Number) : null), [formKey])
+  const inForm = useCallback((index: number) => !form || form.includes(index), [form])
 
   const facts: VoterFacts = {
     loaded: !!election,
     status,
     room,
+    byQuestion: !!election && isQuestionByQuestion(election),
     // `hydrating ||`: the first client render repeats the server's HTML, which read the server's own clock.
     endedBySchedule: (hydrating || clockTrusted) && (endPassed || (!!election && hasEndedBySchedule(election, now))),
     secretUntilTheEnd: !!election && isSecretUntilTheEnd(election),
@@ -298,20 +317,20 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
   const openQuestionAfter = useCallback(
     (index: number) => {
       for (let i = index + 1; i < questions.length; i++) {
-        if (!lockedNotice(questions[i].id)) return i
+        if (inForm(i) && !lockedNotice(questions[i].id)) return i
       }
       return -1
     },
-    [questions, lockedNotice]
+    [questions, lockedNotice, inForm]
   )
   const openQuestionBefore = useCallback(
     (index: number) => {
       for (let i = Math.min(index, questions.length) - 1; i >= 0; i--) {
-        if (!lockedNotice(questions[i].id)) return i
+        if (inForm(i) && !lockedNotice(questions[i].id)) return i
       }
       return -1
     },
-    [questions, lockedNotice]
+    [questions, lockedNotice, inForm]
   )
 
   // Results: the process read carries the figures and keeps polling (spec D5); it is read fresh when a view opens.
@@ -383,62 +402,110 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     }
   }, [answered, fmethods, id, localize, onChain, queryClient, questions, serverOffset, vote, voting])
 
+  // The open set's cast: the eligible questions open now (answered in the form) and the question the cast was pressed on.
+  // The SDK signs every open question in one batch, so one this voter may not vote rides along with a placeholder: the
+  // CSP refuses it, and that refusal is expected (`settledSet`). Nothing else is sent.
   const castQuestion = useCallback(
     async (index: number) => {
+      const roomQuestions = latestRoom.current?.questions ?? []
+      const open = roomGroup(roomQuestions)
+      const sorted = (members: number[]) => [...new Set(members)].sort((x, y) => x - y)
+      // The questions this cast answers: the eligible open ones, and the one pressed on when it has closed since.
+      const askedSet = sorted([...open.filter((member) => roomQuestions[member].eligible !== false), index])
+      // Everything the SDK signs: the open ones too, the placeholders among them the ones this voter may not vote.
+      const members = sorted([...open, index])
       const question = questions[index]
       if (!question || castingRef.current || voting) return
-      // A refusal sends nothing, but never passes in silence: the question says why, as a failed cast does. The
-      // screen disables the cast in these states already; this is for a click that raced a poll.
-      const refuse = (message: string) => dispatch({ type: 'castRefused', questionId: question.id, message })
-      if (!isAnswered(question, latest.current.answers[String(index)], !!lockedNotice(question.id))) {
-        return refuse(localize('validation.required'))
-      }
-      // The SDK cannot sign one question alone: with another open question this voter has not cast, nothing is sent
-      // (the ballot says why), nor for a question the check leaves them out of (gate-3 F10).
-      const roomQuestions = latestRoom.current?.questions ?? []
-      const target = roomQuestions[index]
+      // A refusal sends nothing, but never passes in silence: the question says why, as a failed cast does.
+      const refuse = (questionId: string, message: string) => dispatch({ type: 'castRefused', questionId, message })
+      const unanswered = askedSet.find(
+        (member) =>
+          !isAnswered(questions[member], latest.current.answers[String(member)], !!lockedNotice(questions[member].id))
+      )
+      if (unanswered !== undefined) return refuse(questions[unanswered].id, localize('validation.required'))
       // No room reads the question: nothing to blame on the voter, so the generic sentence.
-      if (!target) return refuse(localize('errors.vote_failed_unknown'))
-      if (target.eligible === false) return refuse(t('voter.room.not_eligible_title', { number: index + 1 }))
-      // The screen already says why (the blocked warning, with the cast off): no refusal to repeat it.
-      if (roomCastBlocked(roomQuestions, index)) return
+      const target = roomQuestions[index]
+      if (!target) return refuse(question.id, localize('errors.vote_failed_unknown'))
+      if (target.eligible === false)
+        return refuse(question.id, t('voter.room.not_eligible_title', { number: index + 1 }))
       const session = sessionRef.current
+      // Which of them were already on chain: a cast that landed some of them is not "another device" (gate-3 F2).
+      const onChainAtPress = new Set(askedSet.filter((member) => onChain(questions[member].id)))
       castingRef.current = true
       setCasting(true)
-      dispatch({ type: 'castStarted', questionId: question.id })
+      dispatch({
+        type: 'castStarted',
+        questionId: questions[askedSet[0]].id,
+        questionIds: askedSet.map((member) => questions[member].id),
+      })
       try {
-        // This question's answer only: SDK #118 locks every question that is not open, never encodes it and signs the
-        // open ones alone, so the batch the CSP checks holds this question (a closed one would refuse it whole).
-        const key = String(index)
+        // Only the open set's answers: SDK #118 locks every question that is not open, never encodes it and signs the
+        // open ones alone, so the batch the CSP checks holds exactly these (a closed one would refuse it whole).
         const all = formValuesFor(latest.current) as Record<string, unknown> & { memo?: Record<string, string> }
-        const values: Record<string, unknown> = { [key]: all[key] }
-        if (all.memo?.[key] !== undefined) values.memo = { [key]: all.memo[key] }
+        const values: Record<string, unknown> = {}
+        const memo: Record<string, string> = {}
+        for (const member of members) {
+          const key = String(member)
+          values[key] = askedSet.includes(member) ? all[key] : encodableAnswer(questions[member])
+          if (all.memo?.[key] !== undefined) memo[key] = all.memo[key]
+        }
+        if (Object.keys(memo).length) values.memo = memo
         const result = await vote(values)
         // A sign-out or a lost session while the cast ran: its outcome belongs to the voter who left.
         if (session !== sessionRef.current) return
-        if (result === false) {
+        const refusals = members.filter((member) => !askedSet.includes(member)).map((member) => questions[member].id)
+        const ids = askedSet.map((member) => questions[member].id)
+        const fresh = result === false || refusals.length ? await check().catch(() => null) : null
+        // A sign-out or a lost session while the re-check ran: the finding belongs to the voter who left.
+        if (session !== sessionRef.current) return
+        if (refusals.length) {
+          // The CSP should have refused the ineligible placeholder: if it signed it, it may be recorded as a vote.
+          const recorded = refusals.filter((questionId) =>
+            fresh?.questions.some((entry) => entry.questionId === questionId && entry.hasVoted)
+          )
+          // A failed cast with nothing recorded is the expected refusal: only a success or a recorded one is an anomaly.
+          if (result !== false || recorded.length)
+            console.error('An ineligible open question was signed by the CSP', {
+              processId: id,
+              questionIds: refusals,
+              recordedQuestionIds: recorded,
+            })
+        }
+        // A refusal of a question this voter may not vote is expected: once the rest of the set is on chain, the cast is
+        // complete. Only a ballot that carried one looks for that; anything else is read as a failure.
+        const complete = result === false && refusals.length > 0 && settledSet(fresh, ids)
+        if (complete) fmethods.clearErrors('root')
+        if (result === false && !complete) {
           const failure = castFailureOf(
             fmethods.formState.errors as FormErrors,
             questions.length,
             localize('errors.vote_unconfirmed')
           )
-          dispatch({ type: 'castFailed', ...failure, at: Date.now() + serverOffset })
-          // The question may have closed meanwhile ("not open for voting"): read the process again, the facts decide.
+          // Landed in part: the failure shows on the first question still to vote, and no other device is blamed.
+          const landed = askedSet.filter(
+            (member) =>
+              !onChainAtPress.has(member) &&
+              fresh?.questions.some((entry) => entry.questionId === questions[member].id && entry.hasVoted)
+          )
+          const stillToVote = askedSet.find((member) => !landed.includes(member)) ?? askedSet[0]
+          dispatch({
+            type: 'castFailed',
+            ...failure,
+            at: Date.now() + serverOffset,
+            questionId: questions[stillToVote].id,
+          })
+          // The set may have closed meanwhile ("not open for voting"): read the process again, the facts decide.
           if (id) void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) })
-          // Nothing left here, yet the check lists the question as voted: another device or tab voted it first, and
-          // frame 3 says so (owner ruling 2026-11-24). An unconfirmed cast may be this one landing, so it never counts,
-          // nor does an earlier one of this device whose outcome was unknown: that one landed, and is this device's.
-          if (!failure.unconfirmed) {
-            const fresh = await check().catch(() => null)
-            // A sign-out or a lost session while the re-check ran: the finding belongs to the voter who left.
-            if (session !== sessionRef.current) return
-            if (fresh?.questions.some((entry) => entry.questionId === question.id && entry.hasVoted)) {
-              dispatch(
-                latest.current.uncertain.includes(question.id)
-                  ? { type: 'questionCastSucceeded' }
-                  : { type: 'castFoundVoted', questionId: question.id }
-              )
-            }
+          // Every question of the cast is on chain, and none was before: another device or tab voted them first, and frame
+          // 3 says so (owner ruling 2026-11-24). A part landed by this cast, or an unconfirmed one, never counts, nor
+          // does a set of this device whose earlier cast had an unknown outcome: that one landed, and is this device's.
+          if (!failure.unconfirmed && landed.length === askedSet.length) {
+            const earlier = askedSet.some((member) => latest.current.uncertain.includes(questions[member].id))
+            dispatch(
+              earlier
+                ? { type: 'questionCastSucceeded' }
+                : { type: 'castFoundVoted', questionId: questions[askedSet[0]].id }
+            )
           }
         } else {
           dispatch({ type: 'questionCastSucceeded' })
@@ -453,7 +520,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
         setCasting(false)
       }
     },
-    [check, fmethods, id, localize, lockedNotice, queryClient, questions, serverOffset, t, vote, voting]
+    [check, fmethods, id, localize, lockedNotice, onChain, queryClient, questions, serverOffset, t, vote, voting]
   )
 
   const signOut = useCallback(() => {
@@ -477,9 +544,19 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     [answered, fmethods, go, openQuestionAfter]
   )
 
+  // The ids a skip, or its resume, acts on: the open set the shown question belongs to.
+  const groupIdsOf = (index: number): string[] => {
+    const group = roomHeldSet(latestRoom.current?.questions ?? [], latestRoom.current?.voteState ?? 'live')
+    return (group.includes(index) ? group : [index]).map((member) => questions[member].id)
+  }
+
   if (!election) return null
 
   const first = openQuestionAfter(-1)
+  const park = (index: number) => {
+    const held = roomHeldSet(latestRoom.current?.questions ?? [], latestRoom.current?.voteState ?? 'live')
+    dispatch({ type: 'park', questionId: held.map((member) => questions[member].id).join(',') || questions[index].id })
+  }
   const flow: VoterFlow = {
     screen,
     moved,
@@ -505,16 +582,21 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     next,
     back: (index) => {
       const previous = openQuestionBefore(index)
+      // Nothing before it in the form (its first question, or the ones before it are locked): the room, where the set waits.
+      if (previous === -1 && form) return park(index)
       go(previous === -1 ? WELCOME : { name: 'question', index: previous })
     },
     goTo: (index) => go({ name: 'question', index }),
     change: (index) => go({ name: 'question', index }, true),
     review: () => go({ name: 'review' }),
     chooseBlank: (index, on) => fmethods.setValue(String(index), on ? [] : ''),
-    cast,
-    park: (index) => dispatch({ type: 'park', questionId: questions[index].id }),
-    skip: (index) => dispatch({ type: 'skip', questionId: questions[index].id }),
-    resume: (index) => dispatch({ type: 'resume', questionId: questions[index].id }),
+    // The form's review casts the set; a single room question casts through the same ballot.
+    cast: form ? () => castQuestion(form[0]) : cast,
+    form,
+    // The open set is one unit for "Enrere", "No votar aquesta pregunta" and "Torna-la a votar" (its key parks it).
+    park,
+    skip: (index) => groupIdsOf(index).forEach((questionId) => dispatch({ type: 'skip', questionId })),
+    resume: (index) => groupIdsOf(index).forEach((questionId) => dispatch({ type: 'resume', questionId })),
     castQuestion,
     casting,
     signOut,

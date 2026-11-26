@@ -160,6 +160,11 @@ export const roomProgress = (room: RoomFacts, screen: VoterScreen): RoomProgress
       return at('notEligible', screen.index)
     case 'roomSkipped':
       return at('skipped', screen.index)
+    // An open set answered in one form: its place is the set's last question (the line runs to it).
+    case 'question':
+      return screen.set ? at('open', screen.index) : null
+    case 'review':
+      return screen.set && screen.index !== undefined ? at('open', screen.index) : null
     case 'roomMissed':
     case 'roomClosedVoted':
     case 'roomNone':

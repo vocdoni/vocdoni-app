@@ -94,30 +94,29 @@ const VoterAnonymity = () => {
 }
 
 /**
- * Whether voters see the results on the voting page, in both modes (stored on every question as
- * `metadata.voterResults`). Off by default; off, the voting page never offers them.
+ * Whether voters see the results on the voting page, whether or not the questions start paused (stored on every
+ * question as `metadata.voterResults`). Off by default; off, the voting page never offers them.
  */
 const VoterResults = () => {
   const { t } = useTranslation()
   const { control } = useFormContext<Process>()
-  const votingMode = useWatch({ control, name: 'votingMode' })
+  const startPaused = useWatch({ control, name: 'startPaused' })
   const resultVisibility = useWatch({ control, name: 'resultVisibility' })
   const helpId = useId()
 
-  // Question by question with hidden results: no question's count shows until the vote ends, so the help says so.
-  const help =
-    votingMode !== 'byQuestion'
-      ? t('process_create.voter_results.help_all', {
-          defaultValue:
-            'Voters can see the results on the voting page. Results hidden until the end appear when the vote ends.',
+  // Questions that start paused with hidden results: no question's count shows until the vote ends, so the help says so.
+  const help = !startPaused
+    ? t('process_create.voter_results.help_all', {
+        defaultValue:
+          'Voters can see the results on the voting page. Results hidden until the end appear when the vote ends.',
+      })
+    : resultVisibility === 'hidden'
+      ? t('process_create.voter_results.help_by_question_hidden', {
+          defaultValue: 'With the results hidden, voters see them all when the vote ends.',
         })
-      : resultVisibility === 'hidden'
-        ? t('process_create.voter_results.help_by_question_hidden', {
-            defaultValue: 'With the results hidden, voters see them all when the vote ends.',
-          })
-        : t('process_create.voter_results.help_by_question', {
-            defaultValue: "Voters see each question's result when it closes, and every result when the vote ends.",
-          })
+      : t('process_create.voter_results.help_by_question', {
+          defaultValue: "Voters see each question's result when it closes, and every result when the vote ends.",
+        })
 
   return (
     <Box>

@@ -18,8 +18,8 @@ type OpenButtonProps = {
   /** The next step: the primary button. */
   primary: boolean
   /**
-   * Another question is open or paused (R29), or the vote has not started: the boards' `off` button, which does
-   * nothing. `aria-disabled` keeps it focusable, and `reasonId` names the note that says why.
+   * The vote has not started, or it is paused as a whole: the boards' `off` button, which does nothing.
+   * `aria-disabled` keeps it focusable, and `reasonId` names the note that says why.
    */
   off?: boolean
   reasonId?: string
@@ -52,20 +52,47 @@ export const OpenButton = ({ questionId, controls, primary, off = false, reasonI
   )
 }
 
+type OpenAllButtonProps = {
+  /** Any status change of this vote runs: the batch waits for it, like every other status button. */
+  busy: boolean
+  loading: boolean
+  onOpenAll: () => void
+  /** `md` in the phone's bottom bar, where it is a full touch button. */
+  size?: 'row' | 'md'
+}
+
+/** "Open all": every waiting question in one batch, beside the questions' header or in the phone's bottom bar. */
+export const OpenAllButton = ({ busy, loading, onOpenAll, size = 'row' }: OpenAllButtonProps) => {
+  const { t } = useTranslation()
+  return (
+    <Button
+      variant='outline'
+      size={size}
+      flex={size === 'md' ? '1' : undefined}
+      flexShrink={0}
+      loading={loading}
+      disabled={busy}
+      onClick={onOpenAll}
+    >
+      {t('votes.manage.open_all', { defaultValue: 'Open all' })}
+    </Button>
+  )
+}
+
 type ActiveButtonsProps = {
   questionId: string
   controls: QuestionControls
   paused: boolean
   /** A paused question whose Open is the next step. */
   openPrimary: boolean
-  /** Another question is open (R29): Open is the `off` button, described by `reasonId`. */
+  /** The vote has not started or is paused as a whole: Open is the `off` button, described by `reasonId`. */
   openOff?: boolean
   reasonId?: string
 }
 
 /**
- * Open: Close (primary). Paused (another question is open meanwhile): Open (primary when it is the next step) and
- * Close. The vote's own pause is the header's "Pause the vote": a question has no pause button of its own.
+ * Open: Close (primary). Paused: Open (primary when it is the next step) and Close. The vote's own pause is the
+ * header's "Pause the vote": a question has no pause button of its own.
  */
 export const ActiveButtons = ({
   questionId,

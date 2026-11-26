@@ -49,7 +49,7 @@ export type VoterScreen =
   | { kind: 'unavailable'; refused?: true }
   | { kind: 'roomNotStarted' }
   | { kind: 'roomOpen'; index: number }
-  | { kind: 'roomQuestion'; index: number; paused: boolean; blocked?: true }
+  | { kind: 'roomQuestion'; index: number; paused: boolean }
   | { kind: 'roomVoted'; index: number; record: RoomRecord }
   | { kind: 'roomSkipped'; index: number }
   | { kind: 'roomMissed'; index: number; result?: true; record?: RoomMissedRecord }
@@ -57,8 +57,8 @@ export type VoterScreen =
   | { kind: 'roomClosedVoted'; index: number }
   | { kind: 'roomNone' }
   | { kind: 'welcome' }
-  | { kind: 'question'; index: number; paused: boolean }
-  | { kind: 'review'; paused: boolean }
+  | { kind: 'question'; index: number; paused: boolean; set?: true }
+  | { kind: 'review'; paused: boolean; set?: true; index?: number }
   | { kind: 'sending' }
   | { kind: 'receipt' }
   | { kind: 'alreadyVoted' }
@@ -81,10 +81,12 @@ export type VoterFacts = {
   loaded: boolean
   /** `useElection().status`: computed from the questions, UPCOMING before the start. */
   status: QuestionStatus | null
-  /** A question-by-question vote's room (Task 2 fills it); absent or null for an all-at-once vote. */
+  /** The room (`null` when every question is open now: the classic all-at-once flow, `roomNeeded`). */
   room?: RoomFacts | null
   /** The scheduled end has passed by the clock, or the end-instant timer fired. */
   endedBySchedule: boolean
+  /** The vote was created question by question (started paused): its results wait for each question to close (R11). */
+  byQuestion?: boolean
   /** Some question hides its tallies until the end. */
   secretUntilTheEnd: boolean
   /** The creator lets voters see the results on this page (`voterSeesResults`); off, they are never offered. */
@@ -141,12 +143,14 @@ export type VoterLocalState = {
   viewResults: boolean
   /** "Verifica el teu comprovant" (anonymous census): the page where one receipt code is checked on the Explorer. */
   verifyReceipt: boolean
-  /** Question by question: the open question the voter left with "Enrere" (frame 1), until they go back to it. */
+  /** Question by question: the open set the voter left with "Enrere" (frame 1), its ids joined (`roomGroupKey`). */
   parked: string | null
   /** Question by question: questions skipped with "No votar aquesta pregunta" (frame 3b). Nothing was cast for them. */
   skipped: readonly string[]
   /** Question by question: the question of the last cast, so its error shows on that question only. */
   castQuestionId: string | null
+  /** Question by question: every question the last cast sent (an open set's), so a refusal late counts for each. */
+  castSet: readonly string[]
   /** Question by question: the questions whose last cast ended with an unknown outcome (`castUnconfirmed`). */
   uncertain: readonly string[]
   /** Question by question: the questions whose refused cast came after they closed (`lateCastOf`). */
@@ -161,13 +165,13 @@ export type VoterAction =
   | { type: 'restore'; step: VoterStep }
   | { type: 'answer'; key: string; value: Answer }
   | { type: 'memo'; key: string; value: string }
-  | { type: 'castStarted'; questionId?: string }
+  | { type: 'castStarted'; questionId?: string; questionIds?: readonly string[] }
   | { type: 'questionCastSucceeded' }
   | { type: 'park'; questionId: string }
   | { type: 'skip'; questionId: string }
   | { type: 'resume'; questionId: string }
   | { type: 'castSucceeded' }
-  | { type: 'castFailed'; message: string; unconfirmed?: boolean; at?: number }
+  | { type: 'castFailed'; message: string; unconfirmed?: boolean; at?: number; questionId?: string }
   | { type: 'castFoundVoted'; questionId: string }
   | { type: 'castLate'; questionId: string }
   | { type: 'castRefused'; questionId: string; message: string }
@@ -209,6 +213,7 @@ export const initialVoterState: VoterLocalState = {
   parked: null,
   skipped: [],
   castQuestionId: null,
+  castSet: [],
   uncertain: [],
   late: [],
   votedElsewhere: null,
@@ -238,15 +243,16 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
         sent: { ...state.answers },
         viewResults: false,
         castQuestionId: action.questionId ?? null,
+        castSet: action.questionIds ?? [],
       }
     case 'questionCastSucceeded': {
       // Question by question: frame 3 follows from the SDK's state; the receipt is the all-at-once screen.
-      const id = state.castQuestionId
+      const sent = castIdsOf(state)
       return {
         ...state,
         castError: null,
         castUnconfirmed: false,
-        uncertain: state.uncertain.filter((questionId) => questionId !== id),
+        uncertain: state.uncertain.filter((questionId) => !sent.includes(questionId)),
       }
     }
     case 'park':
@@ -261,7 +267,8 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
     case 'resume':
       return {
         ...state,
-        parked: state.parked === action.questionId ? null : state.parked,
+        // The parked key is the open set's ids, so resuming any one of them unparks the set.
+        parked: state.parked?.split(',').includes(action.questionId) ? null : state.parked,
         skipped: state.skipped.filter((questionId) => questionId !== action.questionId),
         viewResults: false,
       }
@@ -269,11 +276,12 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
       return { ...state, castDone: true, castError: null, castUnconfirmed: false }
     case 'castFailed': {
       const unconfirmed = action.unconfirmed ?? false
-      const id = state.castQuestionId
-      // Kept per question: a later answer clears `castUnconfirmed`, not what is known of this question's vote.
-      const uncertain = !id || state.uncertain.includes(id) ? state.uncertain : [...state.uncertain, id]
+      // Kept per question: a later answer clears `castUnconfirmed`, not what is known of each question's vote.
+      const uncertain = [...state.uncertain, ...castIdsOf(state).filter((id) => !state.uncertain.includes(id))]
       return {
         ...state,
+        // The question the failure shows on: the first of the set still to vote, when the cast landed in part.
+        castQuestionId: action.questionId ?? state.castQuestionId,
         castError: action.message,
         castUnconfirmed: unconfirmed,
         castFailedAt: action.at ?? null,
@@ -314,6 +322,10 @@ export const voterReducer = (state: VoterLocalState, action: VoterAction): Voter
   }
 }
 
+/** The questions the last cast sent: an open set's, else the one question it was for. */
+const castIdsOf = (state: Pick<VoterLocalState, 'castSet' | 'castQuestionId'>): readonly string[] =>
+  state.castSet.length ? state.castSet : state.castQuestionId ? [state.castQuestionId] : []
+
 const ENDED: ReadonlySet<QuestionStatus> = new Set<QuestionStatus>(['ENDED', 'RESULTS'])
 
 /** The vote is over: its stored status, or the clock (stored statuses lag the scheduled end). */
@@ -330,9 +342,14 @@ export const showsLiveResults = (
 
 // Question by question the results page stays hidden while the vote runs (R11). The creator's per-question choice
 // (`metadata.voterResults`) shows a closed question's result on the room's own frames (3d, 3e), not on this page.
+// A room that exists only for an ineligible question (every question open) is not question by question.
 const resultsStateOf = (
-  facts: Pick<VoterFacts, 'status' | 'endedBySchedule' | 'secretUntilTheEnd' | 'room'>
-): ResultsState => (isVoteOver(facts) ? 'final' : facts.secretUntilTheEnd || facts.room ? 'hidden' : 'provisional')
+  facts: Pick<VoterFacts, 'status' | 'endedBySchedule' | 'secretUntilTheEnd' | 'room' | 'byQuestion'>
+): ResultsState => {
+  if (isVoteOver(facts)) return 'final'
+  const staged = facts.room?.questions.some((question) => question.state !== 'open' && question.state !== 'canceled')
+  return facts.secretUntilTheEnd || facts.byQuestion || staged ? 'hidden' : 'provisional'
+}
 
 /** The index of the first question not answered, or -1 when every one is. */
 export const firstUnanswered = (answered: readonly boolean[]): number => answered.findIndex((done) => !done)
@@ -389,11 +406,12 @@ export const isRoomEligible = (question: Pick<RoomQuestion, 'eligible'>): boolea
 export const lateCastOf = (
   cast: RoomCast,
   questionId: string,
-  local: Pick<VoterLocalState, 'castQuestionId' | 'castError' | 'castUnconfirmed' | 'castFailedAt'>,
+  local: Pick<VoterLocalState, 'castQuestionId' | 'castError' | 'castUnconfirmed' | 'castFailedAt'> &
+    Partial<Pick<VoterLocalState, 'castSet'>>,
   endedAt: number | null
 ): boolean =>
   cast === 'pending' &&
-  local.castQuestionId === questionId &&
+  (local.castQuestionId === questionId || !!local.castSet?.includes(questionId)) &&
   local.castError !== null &&
   !local.castUnconfirmed &&
   endedAt !== null &&
@@ -401,30 +419,80 @@ export const lateCastOf = (
   endedAt <= local.castFailedAt + VOTER_CLOCK_TOLERANCE_MS
 
 /**
- * The open question the room shows: the first the voter can still vote, else the first open one. More than one open
- * at a time only happens through the API (the organiser's pages never open two, R29).
+ * The room's layout: it shows unless every question is open now (or canceled), the classic all-at-once flow. An open
+ * question this voter may not vote joins the room only while another is votable; with none, the vote is not theirs.
  */
-export const shownOpenIndex = (questions: readonly RoomQuestion[]): number => {
+export const roomNeeded = (questions: readonly Pick<RoomQuestion, 'state' | 'eligible'>[]): boolean =>
+  questions.some((question) => question.state !== 'open' && question.state !== 'canceled') ||
+  (questions.some((question) => question.state === 'open' && question.eligible !== false) &&
+    questions.some((question) => question.eligible === false))
+
+/**
+ * The open set the ballot covers: the questions open now that this voter has not cast. The SDK signs every open
+ * question in one batch, so the room answers and casts them together.
+ */
+export const roomGroup = (questions: readonly RoomQuestion[]): number[] =>
+  questions.flatMap((question, index) => (question.state === 'open' && !isRoomCast(question) ? [index] : []))
+
+/** The open set's key, the ids joined: "Enrere" parks the set it was pressed on, and a new set is not parked. */
+export const roomGroupKey = (questions: readonly RoomQuestion[]): string =>
+  roomGroup(questions)
+    .map((index) => questions[index].id)
+    .join(',')
+
+/**
+ * The open question the room shows: the first of the open set this voter can vote and has not answered yet, else the
+ * first they can vote (all answered: the group's cast), else the first open one (a cast question of the set).
+ * `answered` is the flow's rule.
+ */
+const shownOpenIndex = (questions: readonly RoomQuestion[], answered: readonly boolean[]): number => {
+  const group = roomGroup(questions)
+  const votable = group.filter((index) => isRoomEligible(questions[index]))
   const open = questions.flatMap((question, index) => (question.state === 'open' ? [index] : []))
-  return open.find((index) => !isRoomCast(questions[index]) && isRoomEligible(questions[index])) ?? open[0] ?? -1
+  // A question the voter cast in this set comes before one this voter may not vote: the recorded answer is the frame.
+  const cast = open.find((index) => isRoomCast(questions[index]))
+  return votable.find((index) => !answered[index]) ?? votable[0] ?? cast ?? group[0] ?? open[0] ?? -1
 }
 
 /**
- * Whether casting the shown open question would sign another one too: SDK #118 signs every open question this voter
- * has not cast, and the form encodes each of them, so with a second one open the voter would cast an answer they never
- * chose (or none at all). Such a cast is refused until only one is open (gate-3 F10).
+ * The questions the voter answers together in one form: the open set's eligible questions, when there are two or more.
+ * One eligible question is the room's single question. A question this voter may not vote is not in the form: the SDK
+ * signs it with the others, the CSP refuses it, and that refusal is expected (see the provider's cast).
  */
-export const roomCastBlocked = (questions: readonly RoomQuestion[], index: number): boolean =>
-  questions.some((question, other) => other !== index && question.state === 'open' && question.cast === 'none')
+export const roomFormSet = (questions: readonly RoomQuestion[], voteState: VoteState = 'live'): number[] | null => {
+  const set = roomHeldSet(questions, voteState).filter((index) => isRoomEligible(questions[index]))
+  return set.length > 1 ? set : null
+}
 
 /**
- * A question-by-question vote's frame for an identified voter (boards V4VoterWideLive / M4VoterLive). The open
- * question decides: its ballot, unless the voter cast it (3), skipped it (3b), left it (1), or may not vote it. With
- * none open: the held question's ballot while paused (V4VoterWideMore 2), else the paused screen (1); not started (0);
- * the question that closed last if it was not cast (3c; a cast lost or of unknown outcome says so, never "No l'has
- * votada"), or cast and recorded when its result is shown (3e); else none open (4). Once over (reached only with
- * "Comprova el teu vot", or every question over with a canceled one): the codes of any cast question, else the closed
- * screen.
+ * The set a skip, park or form acts on: the open one, or, in a whole-vote pause with nothing open, the paused questions
+ * not yet cast (they were the open set). Limit: a paused question reads as paused only with votes
+ * (`deriveQuestionState`), so a held question with none yet is left out, and a set with no votes reads as no pause.
+ */
+export const roomHeldSet = (questions: readonly RoomQuestion[], voteState: VoteState): number[] => {
+  const group = roomGroup(questions)
+  if (group.length || voteState !== 'paused') return group
+  return questions.flatMap((question, index) => (question.state === 'paused' && !isRoomCast(question) ? [index] : []))
+}
+
+/** The form's screens for an open set: its questions in order, then review; "Canvia" returns to a question of the set. */
+const roomFormScreen = (
+  set: readonly number[],
+  answered: readonly boolean[],
+  step: VoterStep,
+  paused = false
+): VoterScreen => {
+  const left = set.find((index) => !answered[index])
+  if (step.name === 'question' && set.includes(step.index)) {
+    return { kind: 'question', index: step.index, paused, set: true }
+  }
+  if (left !== undefined) return { kind: 'question', index: left, paused, set: true }
+  return { kind: 'review', paused, set: true, index: set[set.length - 1] }
+}
+
+/**
+ * The room's frame for an identified voter (boards V4VoterWideLive / M4VoterLive): the open set decides, after the
+ * voter's own cast, skip and park. The frame order is in the function body, and the cases are in the tests.
  */
 const deriveRoomScreen = (
   facts: VoterFacts,
@@ -439,26 +507,35 @@ const deriveRoomScreen = (
   }
   if (local.viewResults) return results
 
-  const open = shownOpenIndex(questions)
+  const open = shownOpenIndex(questions, facts.answered)
   if (open !== -1) {
     const question = questions[open]
     if (isRoomCast(question)) return { kind: 'roomVoted', index: open, record: question.cast as RoomRecord }
     if (!isRoomEligible(question)) return { kind: 'roomNotEligible', index: open }
     if (local.skipped.includes(question.id)) return { kind: 'roomSkipped', index: open }
-    if (local.parked === question.id) return { kind: 'roomOpen', index: open }
-    return roomCastBlocked(questions, open)
-      ? { kind: 'roomQuestion', index: open, paused: false, blocked: true }
-      : { kind: 'roomQuestion', index: open, paused: false }
+    if (local.parked === roomGroupKey(questions)) return { kind: 'roomOpen', index: open }
+    const set = roomFormSet(questions, voteState)
+    if (set) return roomFormScreen(set, facts.answered, local.step)
+    return { kind: 'roomQuestion', index: open, paused: false }
   }
   if (voteState === 'paused') {
+    const set = roomFormSet(questions, voteState)
+    const parked = local.parked?.split(',') ?? []
+    if (
+      set &&
+      !set.some((index) => parked.includes(questions[index].id) || local.skipped.includes(questions[index].id))
+    ) {
+      return roomFormScreen(set, facts.answered, local.step, true)
+    }
     const held = questions.findIndex((question) => question.state === 'paused')
     const question = questions[held]
     if (
+      !set &&
       question &&
       !isRoomCast(question) &&
       isRoomEligible(question) &&
       !local.skipped.includes(question.id) &&
-      local.parked !== question.id
+      !local.parked?.split(',').includes(question.id)
     ) {
       return { kind: 'roomQuestion', index: held, paused: true }
     }
@@ -582,10 +659,9 @@ export const isAnswered = (question: QuestionShape, answer: Answer | undefined, 
 }
 
 /**
- * A selection the SDK's encoder accepts for a question that is already on chain (gate F2). `vote()` encodes every
- * question its own rule does not lock and only then skips the confirmed ones (`castVotes` signs state `open` only), so
- * this value is never signed or sent: it only keeps the encoder from refusing an empty answer in a session resumed
- * after a partial cast. Remove once the SDK skips the encoder for them.
+ * A selection the SDK's encoder accepts for a question with no answer here: one already on chain (gate F2), or an open
+ * one this voter may not vote, which the CSP should refuse to sign (`castQuestion` logs it if not). Remove once the SDK
+ * skips the encoder for them.
  */
 export const encodableAnswer = (question: QuestionShape): Answer => {
   const values = question.choices.map((choice) => String(choice.value))

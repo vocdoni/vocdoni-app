@@ -7,6 +7,7 @@ import { createElection, createQuestion, createQuestionResults } from '../../../
 import { ByQuestionCard } from './ByQuestionCard'
 
 const change = vi.fn()
+const openAll = vi.fn()
 let questionStatus: { pending?: { questionId: string; status: string }; isBusy: boolean } = { isBusy: false }
 let canManage = true
 let phone = false
@@ -14,7 +15,7 @@ let currentNow = new Date('2026-03-01T12:00:00Z')
 let currentElection: VotingProcessResponse
 
 vi.mock('~queries/question-status', () => ({
-  useQuestionStatusAction: () => ({ change, ...questionStatus }),
+  useQuestionStatusAction: () => ({ change, openAll, ...questionStatus }),
 }))
 // Only the bottom bar depends on the width (it is a phone's alone): the rows are one tree at every width.
 vi.mock('~components/ui/useIsMobile', () => ({ useIsMobile: () => phone }))
@@ -88,7 +89,7 @@ const show = (election: VotingProcessResponse) => {
   return render(<ByQuestionCard questions={election.questions} />)
 }
 
-const NOTE = '“Open” is disabled while another question is open, before the start time and while the vote is paused.'
+const NOTE = '“Open” is disabled before the start time and while the vote is paused.'
 
 const questionsList = () => within(screen.getByRole('region', { name: 'Questions' }))
 const dock = () => screen.queryByRole('region', { name: 'Vote controls' })
@@ -100,8 +101,10 @@ const queryButton = (label: string) => screen.queryByRole('button', { name: new 
 describe('ByQuestionCard', () => {
   beforeEach(() => {
     change.mockReset()
+    openAll.mockReset()
     // The dialog reads the job result once it settles: an unset mock would resolve undefined.
     change.mockResolvedValue({ ok: true })
+    openAll.mockResolvedValue({ ok: true })
     questionStatus = { isBusy: false }
     canManage = true
     phone = false
@@ -159,16 +162,69 @@ describe('ByQuestionCard', () => {
       expect(within(open).queryAllByRole('progressbar', { name: /^(Approve|Reject)/ })).toHaveLength(0)
     })
 
-    it('draws Open off on the others while a question is open: focusable, described, and it does nothing', async () => {
+    it('keeps Open live on a waiting question while another is open, so several can be open at once', async () => {
       show(build())
       const open = button('Open')
       expect(open).toHaveAccessibleName('Open: question 3, Statutes')
-      expect(open).toHaveAttribute('data-variant', 'off')
-      expect(open).toHaveAttribute('aria-disabled', 'true')
-      expect(open).not.toBeDisabled()
-      expect(open).toHaveAccessibleDescription(NOTE)
+      expect(open).toHaveAttribute('data-variant', 'outline')
+      expect(open).not.toHaveAttribute('aria-disabled')
+      expect(open).not.toHaveAccessibleDescription(NOTE)
       await userEvent.click(open)
+      expect(change).toHaveBeenCalledWith({ questionId: 'q3', status: 'ready' })
+    })
+
+    it('counts several open questions and names every one in the next step', () => {
+      show(
+        withQuestions([
+          createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+          createQuestion({ id: 'q2', status: 'ONGOING', results: createQuestionResults({ voteCount: 6 }) }),
+          createQuestion({ id: 'q3', status: 'ONGOING', results: createQuestionResults({ voteCount: 2 }) }),
+          createQuestion({ id: 'q4', status: 'PAUSED', results: undefined }),
+        ])
+      )
+      expect(screen.getByText('1 closed, 2 open, 1 to open')).toBeInTheDocument()
+      expect(screen.getByText('Next step: close questions 2 and 3')).toBeInTheDocument()
+    })
+
+    it('opens every waiting question in one batch from the header, and hides it when none waits', async () => {
+      show(
+        withQuestions([
+          createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+          createQuestion({ id: 'q2', status: 'ONGOING', results: createQuestionResults({ voteCount: 6 }) }),
+          createQuestion({ id: 'q3', title: { default: 'Third' }, status: 'PAUSED', results: undefined }),
+          createQuestion({ id: 'q4', title: { default: 'Fourth' }, status: 'PAUSED', results: undefined }),
+        ])
+      )
+      await userEvent.click(screen.getByRole('button', { name: 'Open all' }))
+      expect(openAll).toHaveBeenCalledWith(['q3', 'q4'])
       expect(change).not.toHaveBeenCalled()
+    })
+
+    it('hides Open all when no question waits, whoever looks', () => {
+      show(
+        withQuestions([
+          createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+          createQuestion({ id: 'q2', status: 'ONGOING', results: createQuestionResults({ voteCount: 6 }) }),
+        ])
+      )
+      expect(screen.queryByRole('button', { name: 'Open all' })).not.toBeInTheDocument()
+    })
+
+    it('hides Open all while the whole vote is paused', () => {
+      show(
+        withQuestions([
+          createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+          createQuestion({ id: 'q2', status: 'PAUSED', results: createQuestionResults({ voteCount: 5 }) }),
+          createQuestion({ id: 'q3', status: 'PAUSED', results: undefined }),
+        ])
+      )
+      expect(screen.queryByRole('button', { name: 'Open all' })).not.toBeInTheDocument()
+    })
+
+    it('shows no Open all to a viewer', () => {
+      canManage = false
+      show(build())
+      expect(screen.queryByRole('button', { name: 'Open all' })).not.toBeInTheDocument()
     })
 
     it('has no pause of its own on a question (the header pauses the vote), and closes only after a primary confirm', async () => {
@@ -210,8 +266,8 @@ describe('ByQuestionCard', () => {
       expect(loading).toHaveLength(1)
       expect(loading[0]).toBeDisabled()
       expect(loading[0]).toHaveTextContent('Close')
-      // Open is off anyway while question 2 is open (R29).
-      expect(button('Open')).toHaveAttribute('aria-disabled', 'true')
+      // Every status button is locked while the change runs, the other questions' Open too.
+      expect(button('Open')).toBeDisabled()
     })
 
     it('before the start says when it starts and counts nothing', () => {
@@ -302,7 +358,7 @@ describe('ByQuestionCard', () => {
       expect(change).toHaveBeenCalledWith({ questionId: 'q3', status: 'ready' })
     })
 
-    it('draws Open off on a paused question while another is open, and says nobody can vote on it', async () => {
+    it('reopens a paused question while another is open, and says nobody can vote on it', async () => {
       show(
         withQuestions([
           createQuestion({ id: 'q1', status: 'ONGOING', results: createQuestionResults({ voteCount: 4 }) }),
@@ -314,11 +370,9 @@ describe('ByQuestionCard', () => {
       expect(queryButton('Resume')).not.toBeInTheDocument()
       const reopen = button('Open')
       expect(reopen).toHaveAccessibleName(/^Open: question 2, /)
-      expect(reopen).toHaveAttribute('data-variant', 'off')
-      expect(reopen).toHaveAccessibleDescription(NOTE)
+      expect(reopen).not.toHaveAttribute('aria-disabled')
       await userEvent.click(reopen)
-      expect(change).not.toHaveBeenCalled()
-      expect(buttons('Close')[0]).toBeEnabled()
+      expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'ready' })
     })
 
     it('warns that closing the last question left closes the vote, and only then', async () => {
@@ -416,6 +470,49 @@ describe('ByQuestionCard', () => {
       expect(open).toHaveAttribute('data-variant', 'solid')
       await userEvent.click(open)
       expect(change).toHaveBeenCalledWith({ questionId: 'q2', status: 'ready' })
+    })
+
+    it('docks Open all beside the open question, while two or more questions wait', async () => {
+      show(
+        withQuestions([
+          createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+          createQuestion({ id: 'q2', status: 'ONGOING', results: createQuestionResults({ voteCount: 6 }) }),
+          createQuestion({ id: 'q3', title: { default: 'Third' }, status: 'PAUSED', results: undefined }),
+          createQuestion({ id: 'q4', title: { default: 'Fourth' }, status: 'PAUSED', results: undefined }),
+        ])
+      )
+      const bar = within(dock()!)
+      await userEvent.click(bar.getByRole('button', { name: 'Open all' }))
+      expect(openAll).toHaveBeenCalledWith(['q3', 'q4'])
+      // Only the header's place: a phone shows it once, in the bottom bar.
+      expect(screen.getAllByRole('button', { name: 'Open all' })).toHaveLength(1)
+    })
+
+    it('hides Open all for a single waiting question, which has its own Open', () => {
+      show(build())
+      expect(dock()).toBeInTheDocument()
+      expect(queryButton('Open')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Open all' })).not.toBeInTheDocument()
+    })
+
+    it('docks the count of several open questions, with Open all and no per-question button', async () => {
+      show(
+        withQuestions([
+          createQuestion({ id: 'q1', status: 'RESULTS', results: createQuestionResults({ voteCount: 4 }) }),
+          createQuestion({ id: 'q2', status: 'ONGOING', results: createQuestionResults({ voteCount: 6 }) }),
+          createQuestion({ id: 'q3', status: 'ONGOING', results: createQuestionResults({ voteCount: 2 }) }),
+          createQuestion({ id: 'q4', title: { default: 'Fourth' }, status: 'PAUSED', results: undefined }),
+          createQuestion({ id: 'q5', title: { default: 'Fifth' }, status: 'PAUSED', results: undefined }),
+        ])
+      )
+      const bar = within(dock()!)
+      expect(bar.getByText('2 questions open')).toBeInTheDocument()
+      expect(bar.queryByRole('button', { name: /^Close: / })).not.toBeInTheDocument()
+      expect(bar.queryByRole('button', { name: /^Open: / })).not.toBeInTheDocument()
+      await userEvent.click(bar.getByRole('button', { name: 'Open all' }))
+      expect(openAll).toHaveBeenCalledWith(['q4', 'q5'])
+      // The rows keep their Close buttons.
+      expect(buttons('Close')).toHaveLength(2)
     })
 
     it('has no bar while the vote is paused (the header resumes it)', () => {

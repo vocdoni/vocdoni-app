@@ -20,6 +20,7 @@ import {
   timeLeft,
   toVoteRows,
   type VoteState,
+  waitingQuestionIds,
 } from './vote-state'
 
 const NOW = new Date('2026-06-15T12:00:00Z')
@@ -139,7 +140,7 @@ describe('pausedHoldIds', () => {
   })
 })
 
-describe('one question open at a time (R29)', () => {
+describe('several questions open at once', () => {
   const qbq = (statuses: QuestionStatus[], voted: number[] = []) => {
     const p = vote(statuses, byQuestion)
     voted.forEach((index) => (p.questions[index].results = { voteCount: 5 }))
@@ -148,20 +149,28 @@ describe('one question open at a time (R29)', () => {
   const block = (p: VotingProcessResponse, index: number, now = NOW, remembered?: ReadonlySet<string>) =>
     openQuestionBlock(p, p.questions[index], now, remembered)
 
-  it('blocks every other question while one is open, and the open one is not waiting', () => {
+  it('lets a waiting question open beside the open ones, and an open one is not waiting', () => {
     const p = qbq(['RESULTS', 'ONGOING', 'PAUSED', 'PAUSED'], [0, 1])
     expect(activeQuestionIds(p, NOW)).toEqual(['q1'])
-    expect(block(p, 2)).toBe('otherActive')
-    expect(block(p, 3)).toBe('otherActive')
+    expect(block(p, 2)).toBeNull()
+    expect(block(p, 3)).toBeNull()
     expect(block(p, 1)).toBe('notWaiting')
-    expect(canOpenQuestion(p, p.questions[2], NOW)).toBe(false)
+    expect(canOpenQuestion(p, p.questions[2], NOW)).toBe(true)
   })
 
-  it('counts a paused question as active: beside an open one it cannot resume, alone it pauses the vote', () => {
+  it('reads any number of open questions as one live vote', () => {
+    const p = qbq(['ONGOING', 'ONGOING', 'PAUSED'], [0, 1])
+    expect(deriveVoteState(p, NOW)).toBe('live')
+    expect(activeQuestionIds(p, NOW)).toEqual(['q0', 'q1'])
+    expect(deriveQuestionState(p.questions[0], p, NOW)).toBe('open')
+    expect(deriveQuestionState(p.questions[1], p, NOW)).toBe('open')
+  })
+
+  it('counts a paused question as active: it resumes beside an open one, and alone it pauses the vote', () => {
     const both = qbq(['ONGOING', 'PAUSED', 'PAUSED'], [0, 1])
     expect(activeQuestionIds(both, NOW)).toEqual(['q0', 'q1'])
-    expect(block(both, 1)).toBe('otherActive')
-    expect(block(both, 2)).toBe('otherActive')
+    expect(block(both, 1)).toBeNull()
+    expect(block(both, 2)).toBeNull()
     // Nothing open and a voted question paused: the vote reads paused, and only "Resume the vote" moves it.
     const alone = qbq(['RESULTS', 'PAUSED', 'PAUSED'], [0, 1])
     expect(activeQuestionIds(alone, NOW)).toEqual(['q1'])
@@ -180,6 +189,17 @@ describe('one question open at a time (R29)', () => {
     const p = qbq(['PAUSED', 'PAUSED'])
     expect(block(p, 1)).toBeNull()
     expect(block(p, 1, NOW, new Set(['q0']))).toBe('votePaused')
+  })
+
+  it('lists every question that can open now, paused ones included, and none while the vote cannot take them', () => {
+    expect(waitingQuestionIds(qbq(['RESULTS', 'ONGOING', 'PAUSED', 'PAUSED'], [0, 1]), NOW)).toEqual(['q2', 'q3'])
+    // A paused question with votes beside an open one is not held: it opens with the others.
+    expect(waitingQuestionIds(qbq(['ONGOING', 'PAUSED'], [1]), NOW)).toEqual(['q1'])
+    expect(waitingQuestionIds(qbq(['PAUSED', 'PAUSED']), NOW)).toEqual(['q0', 'q1'])
+    expect(waitingQuestionIds(qbq(['PAUSED', 'PAUSED']), NOW, new Set(['q0']))).toEqual([])
+    expect(waitingQuestionIds(qbq(['PAUSED', 'PAUSED']), new Date('2026-05-01T12:00:00Z'))).toEqual([])
+    expect(waitingQuestionIds(qbq(['RESULTS', 'ENDED'], [0, 1]), NOW)).toEqual([])
+    expect(waitingQuestionIds(vote(['PAUSED']), NOW)).toEqual([])
   })
 
   it('opens nothing when every question is closed, before the start, nor in an all-at-once vote', () => {

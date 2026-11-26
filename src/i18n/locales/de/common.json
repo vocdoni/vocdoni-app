@@ -1360,17 +1360,16 @@
     },
     "settings": "Einstellungen",
     "start_datetime": "Startdatum und -uhrzeit",
+    "start_paused": {
+      "hint": "Die Fragen starten pausiert. Du öffnest sie auf der Seite der Abstimmung einzeln, in Gruppen oder alle auf einmal.",
+      "label": "Fragen selbst öffnen",
+      "locked": "Dieser Entwurf startet bereits pausiert. Hier kannst du das nicht ändern."
+    },
     "voter_results": {
       "help_all": "Die Abstimmenden sehen die Ergebnisse auf der Abstimmungsseite. Bis zum Ende verborgene Ergebnisse erscheinen, wenn die Abstimmung endet.",
       "help_by_question": "Die Abstimmenden sehen das Ergebnis jeder Frage, wenn sie schließt, und alle Ergebnisse, wenn die Abstimmung endet.",
       "help_by_question_hidden": "Bei verborgenen Ergebnissen sehen die Abstimmenden sie alle, wenn die Abstimmung endet.",
       "label": "Ergebnisse den Abstimmenden zeigen"
-    },
-    "voting_mode": {
-      "all": "Alle auf einmal",
-      "by_question": "Frage für Frage",
-      "by_question_hint": "Die Fragen starten geschlossen. Du öffnest sie einzeln auf der Seite der Abstimmung, und das Ergebnis jeder Frage erscheint, sobald du sie schließt.",
-      "label": "Wie abgestimmt wird"
     },
     "weight": {
       "equal": "Eine Person, eine Stimme",
@@ -1977,7 +1976,6 @@
       "weight_value": "Deine Stimme zählt {{weight}}"
     },
     "room": {
-      "blocked": "Gerade ist mehr als eine Frage geöffnet. Du kannst abstimmen, sobald nur noch eine geöffnet ist.",
       "closed_label": "Frage {{number}}, geschlossen",
       "closed_title": "Frage {{number}} wurde geschlossen",
       "closed_voted_help": "Du hast abgestimmt.",
@@ -1987,6 +1985,7 @@
       "fold_more_other": "{{count}} weitere Fragen",
       "fold_more_note": "Von {{from}} bis {{to}}.",
       "kicker": "Die Fragen öffnen sich nacheinander.",
+      "kicker_set": "Die Fragen öffnen sich gemeinsam.",
       "late_help": "Deine Stimme ist nach dem Schliessen der Frage eingegangen und wurde nicht gezählt.",
       "late_title": "Deine Stimme ist zu spät angekommen",
       "live": "Live. Aktualisiert sich von selbst.",
@@ -2004,14 +2003,19 @@
       "not_started_title": "Die Abstimmung hat noch nicht begonnen",
       "note_weighted": "Deine Stimme zählt {{weight}}. Einmal abgegeben, lässt sie sich nicht mehr ändern.",
       "open_label": "Frage {{number}}, jetzt geöffnet",
+      "open_label_set": "Jetzt geöffnete Fragen",
       "open_title": "Eine Frage ist geöffnet",
+      "open_title_set": "Fragen sind geöffnet",
       "preparing": "Die nächste Frage wird vorbereitet. Sie erscheint hier von selbst, sobald sie sich öffnet.",
       "questions": "Die Fragen",
       "result_title": "Ergebnis",
       "show_them": "Anzeigen",
       "skip": "Bei dieser Frage nicht abstimmen",
+      "skip_set": "Bei diesen Fragen nicht abstimmen",
       "skipped_help": "Es wurde nichts gesendet. Solange sie geöffnet bleibt, kannst du noch abstimmen.",
+      "skipped_help_set": "Es wurde nichts gesendet. Solange sie geöffnet bleiben, kannst du noch abstimmen.",
       "skipped_title": "Du hast bei Frage {{number}} nicht abgestimmt",
+      "skipped_title_set": "Du hast bei diesen Fragen nicht abgestimmt",
       "state": {
         "canceled": "Abgebrochen",
         "closed": "Geschlossen",
@@ -2032,6 +2036,7 @@
       "unconfirmed_title": "Wir konnten deine Stimme nicht bestätigen",
       "vote_now": "Jetzt abstimmen",
       "vote_question": "Bei Frage {{number}} abstimmen",
+      "vote_question_set": "Bei diesen Fragen abstimmen",
       "voted_elsewhere": "Du hattest diese Frage bereits auf einem anderen Gerät abgestimmt.",
       "voted_title": "Stimme zu Frage {{number}} abgegeben",
       "will_vote": "Du wählst: <answer>{{answer}}</answer>"
@@ -2455,6 +2460,7 @@
       },
       "error": {
         "busy": "Eine andere Änderung läuft gerade. Versuche es in ein paar Sekunden erneut.",
+        "open_all": "Die Fragen konnten nicht geöffnet werden",
         "stale": "Der Status der Frage hatte sich bereits geändert.",
         "timeout": "Das dauert länger als erwartet. Der Status aktualisiert sich von selbst.",
         "title": "Die Frage konnte nicht geändert werden"
@@ -2469,7 +2475,8 @@
         "resume_vote": "Nächster Schritt: Abstimmung fortsetzen"
       },
       "open": "Öffnen",
-      "open_off_note": "„Öffnen“ ist deaktiviert, solange eine andere Frage offen ist, vor der Startzeit und solange die Abstimmung pausiert ist.",
+      "open_all": "Alle öffnen",
+      "open_off_note": "„Öffnen“ ist vor der Startzeit und solange die Abstimmung pausiert ist deaktiviert.",
       "paused_note": "Niemand kann darüber abstimmen.",
       "percent": "{{percent}} %",
       "provisional": "Vorläufiges Ergebnis.",
@@ -2564,6 +2571,8 @@
       "count_unknown": "Die Beteiligung konnte nicht geladen werden.",
       "dock": {
         "label": "Steuerung der Abstimmung",
+        "questions_open_one": "{{count, number}} Frage offen",
+        "questions_open_other": "{{count, number}} Fragen offen",
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
@@ -2601,11 +2610,11 @@
         "of_other": "{{count, number}} von {{total}} Personen haben abgestimmt, {{percent}} %."
       },
       "idle": {
-        "by_question_body": "Wenn sie beginnt, sind die Fragen geschlossen, und du öffnest sie eine nach der anderen.",
+        "by_question_body": "Wenn sie beginnt, sind die Fragen pausiert, und du öffnest sie, wann du willst.",
         "by_question_started_body": "Öffne die erste Frage, um die Abstimmung zu beginnen.",
         "by_question_started_title": "Noch ist keine Frage offen",
-        "by_question_started_viewer_body": "Die Verantwortlichen öffnen die Fragen eine nach der anderen.",
-        "by_question_viewer_body": "Wenn sie beginnt, sind die Fragen geschlossen, und die Verantwortlichen öffnen sie eine nach der anderen.",
+        "by_question_started_viewer_body": "Die Verantwortlichen öffnen die Fragen, wann sie wollen.",
+        "by_question_viewer_body": "Wenn sie beginnt, sind die Fragen pausiert, und die Verantwortlichen öffnen sie, wann sie wollen.",
         "canceled_body": "Die abgegebenen Stimmen wurden verworfen. Es gibt keine Ergebnisse.",
         "canceled_hint": "Du kannst sie duplizieren, um sie erneut anzusetzen.",
         "canceled_title": "Abstimmung abgebrochen",

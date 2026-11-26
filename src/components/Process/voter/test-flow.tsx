@@ -101,6 +101,7 @@ export const testFlow = (over: Partial<VoterFlow> = {}): VoterFlow => ({
   resume: vi.fn(),
   castQuestion: vi.fn(async () => undefined),
   leaveReceipt: vi.fn(),
+  form: null,
   ...over,
 })
 

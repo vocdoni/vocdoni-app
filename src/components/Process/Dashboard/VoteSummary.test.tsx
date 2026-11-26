@@ -642,7 +642,7 @@ describe('VoteSummary', () => {
       renderSummary(byQuestion([question('q1', 'PAUSED'), question('q2', 'PAUSED')]), 0)
 
       expect(screen.getByRole('heading', { name: 'No question is open yet' })).toBeInTheDocument()
-      expect(screen.getByText('The organizer opens the questions one at a time.')).toBeInTheDocument()
+      expect(screen.getByText('The organizer opens the questions when they choose.')).toBeInTheDocument()
       expect(screen.queryByText('Open the first question to start the vote.')).not.toBeInTheDocument()
     })
 

@@ -1391,17 +1391,16 @@
     },
     "settings": "Configurações",
     "start_datetime": "Data e hora de início",
+    "start_paused": {
+      "hint": "As perguntas começam pausadas. Você as abre na página da votação, uma a uma, em grupos ou todas de uma vez.",
+      "label": "Abrir você mesmo as perguntas",
+      "locked": "Este rascunho já começa pausado. Aqui você não pode mudar isso."
+    },
     "voter_results": {
       "help_all": "Quem vota pode ver os resultados na página de votação. Os resultados ocultos até o fim aparecem quando a votação terminar.",
       "help_by_question": "Quem vota vê o resultado de cada pergunta quando ela fecha, e todos os resultados quando a votação terminar.",
       "help_by_question_hidden": "Com os resultados ocultos, quem vota vai ver todos quando a votação terminar.",
       "label": "Mostrar os resultados para quem vota"
-    },
-    "voting_mode": {
-      "all": "Tudo de uma vez",
-      "by_question": "Pergunta a pergunta",
-      "by_question_hint": "As perguntas começam fechadas. Você as abre uma a uma na página da votação, e o resultado de cada pergunta aparece quando você a fecha.",
-      "label": "Como as pessoas votam"
     },
     "weight": {
       "equal": "Uma pessoa, um voto",
@@ -2031,7 +2030,6 @@
       "weight_value": "Seu voto vale {{weight}}"
     },
     "room": {
-      "blocked": "No momento há mais de uma pergunta aberta. Você poderá votar quando houver só uma.",
       "closed_label": "Pergunta {{number}}, fechada",
       "closed_title": "A pergunta {{number}} foi fechada",
       "closed_voted_help": "Você votou.",
@@ -2042,6 +2040,7 @@
       "fold_more_other": "Mais {{count}} perguntas",
       "fold_more_note": "Da {{from}} à {{to}}.",
       "kicker": "As perguntas abrem uma de cada vez.",
+      "kicker_set": "As perguntas abrem juntas.",
       "late_help": "Seu voto chegou depois que a pergunta foi encerrada e não foi contabilizado.",
       "late_title": "Seu voto chegou tarde demais",
       "live": "Ao vivo. Atualiza sozinha.",
@@ -2059,14 +2058,19 @@
       "not_started_title": "A votação ainda não começou",
       "note_weighted": "Seu voto vale {{weight}}. Depois de enviado, não pode ser alterado.",
       "open_label": "Pergunta {{number}}, aberta agora",
+      "open_label_set": "Perguntas abertas agora",
       "open_title": "Há uma pergunta aberta",
+      "open_title_set": "Há perguntas abertas",
       "preparing": "A próxima pergunta está sendo preparada. Ela vai aparecer aqui sozinha quando abrir.",
       "questions": "As perguntas",
       "result_title": "Resultado",
       "show_them": "Mostrar",
       "skip": "Não votar nesta pergunta",
+      "skip_set": "Não votar nestas perguntas",
       "skipped_help": "Nada foi enviado. Enquanto continuar aberta, você ainda pode votar nela.",
+      "skipped_help_set": "Nada foi enviado. Enquanto continuarem abertas, você ainda pode votar nelas.",
       "skipped_title": "Você não votou na pergunta {{number}}",
+      "skipped_title_set": "Você não votou nestas perguntas",
       "state": {
         "canceled": "Cancelada",
         "closed": "Fechada",
@@ -2087,6 +2091,7 @@
       "unconfirmed_title": "Não conseguimos confirmar seu voto",
       "vote_now": "Vote agora",
       "vote_question": "Vote na pergunta {{number}}",
+      "vote_question_set": "Vote nestas perguntas",
       "voted_elsewhere": "Você já tinha votado nesta pergunta de outro dispositivo.",
       "voted_title": "Voto registrado na pergunta {{number}}",
       "will_vote": "Você vai votar: <answer>{{answer}}</answer>"
@@ -2547,6 +2552,7 @@
       },
       "error": {
         "busy": "Outra alteração está em andamento. Tente novamente em alguns segundos.",
+        "open_all": "As perguntas não puderam ser abertas",
         "stale": "A pergunta já tinha mudado de estado.",
         "timeout": "Está demorando mais do que o esperado. O estado será atualizado sozinho.",
         "title": "Não foi possível alterar a pergunta"
@@ -2562,7 +2568,8 @@
         "resume_vote": "Próximo passo: retomar a votação"
       },
       "open": "Abrir",
-      "open_off_note": "“Abrir” fica desativado enquanto houver outra pergunta aberta, antes do horário de início e enquanto a votação estiver em pausa.",
+      "open_all": "Abrir todas",
+      "open_off_note": "“Abrir” fica desativado antes do horário de início e enquanto a votação estiver em pausa.",
       "paused_note": "Ninguém pode votar nela.",
       "percent": "{{percent}}%",
       "provisional": "Resultado provisório.",
@@ -2662,6 +2669,9 @@
       "count_unknown": "Não foi possível carregar a participação.",
       "dock": {
         "label": "Controles da votação",
+        "questions_open_one": "{{count, number}} pergunta aberta",
+        "questions_open_many": "{{count, number}} perguntas abertas",
+        "questions_open_other": "{{count, number}} perguntas abertas",
         "state_votes": "{{state}}, {{votes}}",
         "title": "{{number}}. {{title}}"
       },
@@ -2705,11 +2715,11 @@
         "of_other": "{{count, number}} de {{total}} pessoas votaram, {{percent}}%."
       },
       "idle": {
-        "by_question_body": "Quando começar, as perguntas começam fechadas e você vai abrindo uma por vez.",
+        "by_question_body": "Quando começar, as perguntas começam pausadas e você as abre quando quiser.",
         "by_question_started_body": "Abra a primeira pergunta para começar a votação.",
         "by_question_started_title": "Ainda não há nenhuma pergunta aberta",
-        "by_question_started_viewer_body": "O organizador abre as perguntas uma por vez.",
-        "by_question_viewer_body": "Quando começar, as perguntas começam fechadas e o organizador vai abrindo uma por vez.",
+        "by_question_started_viewer_body": "O organizador abre as perguntas quando quiser.",
+        "by_question_viewer_body": "Quando começar, as perguntas começam pausadas e o organizador as abre quando quiser.",
         "canceled_body": "Os votos emitidos foram descartados. Não há resultados.",
         "canceled_hint": "Você pode duplicá-la para convocá-la de novo.",
         "canceled_title": "Votação cancelada",

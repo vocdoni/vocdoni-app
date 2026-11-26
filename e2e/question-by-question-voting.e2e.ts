@@ -16,7 +16,7 @@ import { expect, prepareContext, test } from './helpers/fixtures'
 /**
  * Flow 7: a question-by-question vote, from both sides.
  *
- * The organiser opens and closes the questions one at a time; the voter's page follows by itself (it polls the
+ * The organiser opens and closes the questions in turn; the voter's page follows by itself (it polls the
  * process every 10 seconds with jitter while the vote is live, every 30 outside it; every "auto" wait below gives it
  * 90). Covers every room frame the voter can reach: not started, the open question, cast, the closed question's result,
  * skipped, parked ("Vota ara") and missed, then the closed vote, its results and the receipt checked from another device.
@@ -47,7 +47,7 @@ test.describe('question-by-question voting', () => {
     const processId = await createAndPublishTwoFactorProcess(page, {
       title: `E2E question by question ${seed}`,
       questions: QUESTIONS,
-      questionByQuestion: true,
+      startPaused: true,
       voterResults: true,
       // Credentials only: the journey does not wait on email.
       twoFactor: false,

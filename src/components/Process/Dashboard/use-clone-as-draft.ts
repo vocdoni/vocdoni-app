@@ -32,8 +32,8 @@ const anyCloning = () => cloning.size > 0
 
 /**
  * Copies a process into a new draft and opens it in the wizard. Takes the process, so list rows (which have no
- * ElectionProvider) and the vote page share it. The voting mode travels only while QUESTION_BY_QUESTION is on:
- * with it off nobody could manage the copy's mode from the wizard, so the copy votes all at once and says so.
+ * ElectionProvider) and the vote page share it. Starting paused travels only while QUESTION_BY_QUESTION is on:
+ * with it off nobody could manage the copy's paused questions from the wizard, so the copy starts open and says so.
  */
 export const useCloneAsDraft = () => {
   const { t } = useTranslation()

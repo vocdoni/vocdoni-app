@@ -130,7 +130,7 @@ describe('useFormToVotingProcessRequest', () => {
       title: 'Test Election',
       description: 'Test Description',
       autoStart: true,
-      votingMode: 'all',
+      startPaused: false,
       showVoterResults: false,
       startDate: '',
       startTime: '',

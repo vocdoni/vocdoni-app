@@ -106,22 +106,6 @@ describe('frame 2: voting the open question (board V4VoterWideLive 2)', () => {
     expect(described()).toBe('voter.status.paused')
   })
 
-  it('another question open too: says why, and never casts (gate-3 F10)', async () => {
-    const flow = flowWith({
-      state: chosen,
-      facts: testFacts({ room: testRoom([['closed', 'recorded'], 'open', 'open']), answered: [true, true, false] }),
-    })
-    renderWithFlow(<RoomQuestionScreen index={1} paused={false} blocked />, flow)
-    const cast = screen.getByTestId('voter-cast')
-    expect(cast).toHaveAttribute('aria-disabled', 'true')
-    const reason = document.getElementById(cast.getAttribute('aria-describedby') ?? '')
-    expect(reason).toHaveTextContent('voter.room.blocked')
-    // Past the arming moment it stays off.
-    await new Promise((resolve) => setTimeout(resolve, 900))
-    fireEvent.click(screen.getByTestId('voter-cast'))
-    expect(flow.castQuestion).not.toHaveBeenCalled()
-  })
-
   it('a vote waiting to be re-sent: no hint and no skip; the button re-sends it', async () => {
     const flow = flowWith({ state: chosen, lockedNotice: (id) => (id === 'q2' ? 'vote.pending_resend' : undefined) })
     renderWithFlow(<RoomQuestionScreen index={1} paused={false} />, flow)

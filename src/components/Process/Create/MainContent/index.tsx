@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Icon, SegmentGroup, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, HStack, Icon, Switch, Text, VStack } from '@chakra-ui/react'
 import {
   closestCenter,
   DndContext,
@@ -10,7 +10,7 @@ import {
 } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { memo, useCallback, useMemo, useState } from 'react'
+import { memo, useCallback, useId, useMemo, useState } from 'react'
 import {
   Controller,
   FieldArrayWithId,
@@ -47,67 +47,50 @@ const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
   )
 }
 
-const VotingModeSwitch = () => {
+const StartPausedSwitch = () => {
   const { t } = useTranslation()
-  const { control } = useFormContext()
-  const { QUESTION_BY_QUESTION: questionByQuestionEnabled } = useAppEnv()
-  const votingMode = useWatch({ control, name: 'votingMode' })
-  const byQuestion = votingMode === 'byQuestion'
-  const byQuestionLabel = t('process_create.voting_mode.by_question', { defaultValue: 'Question by question' })
+  const { control } = useFormContext<Process>()
+  const { QUESTION_BY_QUESTION: startPausedEnabled } = useAppEnv()
+  const startPaused = useWatch({ control, name: 'startPaused' })
+  const helpId = useId()
 
-  // With the flag off the switch is hidden, but a draft already in this mode keeps it and shows it.
-  if (!questionByQuestionEnabled && !byQuestion) return null
+  // With the flag off the switch is hidden, unless a draft already started paused: then it shows on, disabled.
+  if (!startPausedEnabled && !startPaused) return null
 
   return (
-    <VStack align='stretch' gap='2'>
-      <Flex
-        direction={{ base: 'column', md: 'row' }}
-        justify='space-between'
-        align={{ base: 'stretch', md: 'center' }}
-        gap='3'
-      >
-        {questionByQuestionEnabled ? (
-          <Controller
-            control={control}
-            name='votingMode'
-            render={({ field }) => (
-              <SegmentGroup.Root
-                size='sm'
-                value={field.value}
-                onValueChange={({ value }) => field.onChange(value)}
-                aria-label={t('process_create.voting_mode.label', { defaultValue: 'How people vote' })}
-                w={{ base: 'full', md: 'auto' }}
-                ms={{ md: 'auto' }}
-              >
-                <SegmentGroup.Indicator />
-                <SegmentGroup.Item value='all' flex={{ base: '1', md: 'initial' }} justifyContent='center'>
-                  <SegmentGroup.ItemText>
-                    {t('process_create.voting_mode.all', { defaultValue: 'All at once' })}
-                  </SegmentGroup.ItemText>
-                  <SegmentGroup.ItemHiddenInput />
-                </SegmentGroup.Item>
-                <SegmentGroup.Item value='byQuestion' flex={{ base: '1', md: 'initial' }} justifyContent='center'>
-                  <SegmentGroup.ItemText>{byQuestionLabel}</SegmentGroup.ItemText>
-                  <SegmentGroup.ItemHiddenInput />
-                </SegmentGroup.Item>
-              </SegmentGroup.Root>
-            )}
-          />
-        ) : (
-          <Text textStyle='body-sm' color='fg.muted'>
-            {byQuestionLabel}
+    <Controller
+      control={control}
+      name='startPaused'
+      render={({ field }) => (
+        <Box>
+          <Switch.Root
+            name={field.name}
+            checked={!!field.value}
+            disabled={!startPausedEnabled}
+            onCheckedChange={({ checked }) => field.onChange(checked)}
+          >
+            <Switch.HiddenInput onBlur={field.onBlur} aria-describedby={helpId} />
+            {/* The stock control gap is 8px and the thumb is its only child: 0 keeps the stress theme clean */}
+            <Switch.Control gap='0'>
+              <Switch.Thumb />
+            </Switch.Control>
+            <Switch.Label>
+              {t('process_create.start_paused.label', { defaultValue: 'Open the questions yourself' })}
+            </Switch.Label>
+          </Switch.Root>
+          <Text id={helpId} textStyle='caption' color='fg.muted' mt='1'>
+            {startPausedEnabled
+              ? t('process_create.start_paused.hint', {
+                  defaultValue:
+                    "The questions start paused. You open them one by one, in groups or all at once, from the vote's page.",
+                })
+              : t('process_create.start_paused.locked', {
+                  defaultValue: "This draft already starts paused. You can't change it here.",
+                })}
           </Text>
-        )}
-      </Flex>
-      {byQuestion && (
-        <Text textStyle='control' color='fg.muted'>
-          {t('process_create.voting_mode.by_question_hint', {
-            defaultValue:
-              "Questions start closed. You open them one by one from the vote's page, and each question's result shows when you close it.",
-          })}
-        </Text>
+        </Box>
       )}
-    </VStack>
+    />
   )
 }
 
@@ -192,7 +175,7 @@ export const Questions = () => {
 
   return (
     <VStack align='stretch' gap='4'>
-      <VotingModeSwitch />
+      <StartPausedSwitch />
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

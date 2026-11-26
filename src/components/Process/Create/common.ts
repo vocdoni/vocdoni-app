@@ -47,8 +47,6 @@ export type Census = {
   certAuth?: boolean
 }
 
-export type VotingMode = 'all' | 'byQuestion'
-
 export type Process = {
   title: string
   description: string
@@ -66,8 +64,9 @@ export type Process = {
   censusType: CensusTypes
   streamUri?: string
   draft?: boolean
-  votingMode: VotingMode
-  /** Voters see the results on the voting page, in both modes (`metadata.voterResults` on every question). */
+  /** The questions start paused and the organizer opens them from the vote's page (`initialStatus: 'PAUSED'`). */
+  startPaused: boolean
+  /** Voters see the results on the voting page, whether or not the questions start paused (`metadata.voterResults`). */
   showVoterResults: boolean
 }
 
@@ -97,6 +96,6 @@ export const defaultProcessValues: Process = {
   census: null,
   censusType: CensusTypes.CSP,
   streamUri: '',
-  votingMode: 'all',
+  startPaused: false,
   showVoterResults: false,
 }

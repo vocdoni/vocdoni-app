@@ -69,11 +69,11 @@ describe('votingProcessToForm', () => {
     ])
   })
 
-  it('maps a question-by-question process to the byQuestion mode', () => {
+  it('maps a process that started paused to the start paused option', () => {
     const paused = process({ initialStatus: 'PAUSED' } as Partial<VotingProcessResponse>)
 
-    expect(votingProcessToForm(paused).votingMode).toBe('byQuestion')
-    expect(votingProcessToForm(process()).votingMode).toBe('all')
+    expect(votingProcessToForm(paused).startPaused).toBe(true)
+    expect(votingProcessToForm(process()).startPaused).toBe(false)
   })
 
   describe('results on the voter screen', () => {

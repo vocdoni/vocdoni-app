@@ -34,6 +34,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   client.elections.get.mockResolvedValue(refreshed)
   client.elections.setQuestionStatus.mockResolvedValue({ jobId: 'job-1' })
+  client.elections.bulkSetQuestionStatus.mockResolvedValue({ jobId: 'job-1' })
 })
 
 describe('useQuestionStatusAction', () => {
@@ -52,7 +53,8 @@ describe('useQuestionStatusAction', () => {
     expect(toast).not.toHaveBeenCalled()
   })
 
-  it('refuses to open a question while another one is open, without calling the backend (R29)', async () => {
+  it('opens a question while others are open: several questions can be open at once', async () => {
+    client.jobs.waitFor.mockResolvedValue({ status: 'completed' })
     const { result, queryClient } = setup()
     queryClient.setQueryData(QueryKeys.election.process('p1'), {
       id: 'p1',
@@ -66,17 +68,56 @@ describe('useQuestionStatusAction', () => {
       ],
     })
 
+    await act(() => result.current.row.change({ questionId: 'q2', status: 'ready' }))
+
+    expect(client.elections.setQuestionStatus).toHaveBeenCalledWith('p1', 'q2', 'ready')
+  })
+
+  it('opens every waiting question in one batch job, and shows the batch as pending', async () => {
+    let finish: () => void = () => undefined
+    client.jobs.waitFor.mockReturnValue(new Promise<void>((resolve) => (finish = resolve)))
+    const { result } = setup()
+
+    act(() => {
+      void result.current.row.openAll(['q2', 'q3'])
+    })
+
+    await waitFor(() => expect(result.current.row.openingAll).toBe(true))
+    expect(result.current.other.openingAll).toBe(false)
+    expect(result.current.other.isBusy).toBe(true)
+    expect(client.elections.bulkSetQuestionStatus).toHaveBeenCalledTimes(1)
+    expect(client.elections.bulkSetQuestionStatus).toHaveBeenCalledWith('p1', {
+      status: 'ready',
+      questions: [{ id: 'q2' }, { id: 'q3' }],
+    })
+    expect(client.elections.setQuestionStatus).not.toHaveBeenCalled()
+    expect(result.current.row.pending).toBeUndefined()
+    await act(async () => finish())
+    await waitFor(() => expect(result.current.row.openingAll).toBe(false))
+  })
+
+  it('refuses to open all while the whole vote is paused, without calling the backend', async () => {
+    const { result, queryClient } = setup()
+    queryClient.setQueryData(QueryKeys.election.process('p1'), {
+      id: 'p1',
+      published: true,
+      initialStatus: 'PAUSED',
+      startDate: '2026-01-01T00:00:00Z',
+      endDate: '2099-01-01T00:00:00Z',
+      questions: [
+        { id: 'q1', status: 'PAUSED', results: { voteCount: 3 } },
+        { id: 'q2', status: 'PAUSED' },
+      ],
+    })
+
     let outcome: unknown
     await act(async () => {
-      outcome = await result.current.row.change({ questionId: 'q2', status: 'ready' })
+      outcome = await result.current.row.openAll(['q2'])
     })
 
     expect(outcome).toEqual({ ok: false })
+    expect(client.elections.bulkSetQuestionStatus).not.toHaveBeenCalled()
     expect(client.elections.setQuestionStatus).not.toHaveBeenCalled()
-    // Closing the open question still goes through.
-    client.jobs.waitFor.mockResolvedValue({ status: 'completed' })
-    await act(() => result.current.row.change({ questionId: 'q1', status: 'ended' }))
-    expect(client.elections.setQuestionStatus).toHaveBeenCalledWith('p1', 'q1', 'ended')
   })
 
   it('marks every instance busy while one change runs, and only the clicked one as pending', async () => {
