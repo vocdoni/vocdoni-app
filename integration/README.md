@@ -161,10 +161,11 @@ Each key is optional:
   which otherwise skip it, so every push to that PR runs the suite.
 - A push to an upstream PR does not trigger a run: comment the same line again, or
   re-run the workflow from the Actions tab.
-- The `pull_request` run uses the workflow and scripts from the PR's merge commit,
-  so a push re-runs the suite only when the PR's base branch has this behaviour.
-  Open PRs into `develop` pick up a change to it on their next push, unless they
-  conflict with `develop`; a stacked PR does once its base branch has the change.
+- The `pull_request` run takes the workflow and the sticky scripts from the PR's
+  merge commit, so a push re-runs the suite once the PR's branch or its base has
+  this behaviour. The push report comes from the base branch's
+  `integration-report.sh`. Open PRs into `develop` pick up a change here on their
+  next push, unless they conflict with `develop`.
 
 ### Actions tab
 
