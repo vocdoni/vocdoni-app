@@ -27,6 +27,10 @@ describe('QuestionChoice recipe', () => {
     expect(checked.bg).toBe('accent.subtle')
   })
 
+  it('pads the option vertically, so a wrapped label or description does not touch the border', () => {
+    expect(card).toMatchObject({ minH: '16', py: '3' })
+  })
+
   it('keeps the keyboard focus visible on the whole option', () => {
     expect(card['&:has(input:focus-visible)'].outlineStyle).toBe('solid')
   })

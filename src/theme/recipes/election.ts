@@ -256,7 +256,9 @@ export const QuestionChoice = defineSlotRecipe({
       },
       card: {
         wrapper: {
+          // The minimum height keeps a one-line option as tall as before; the padding gives a wrapped one room.
           minH: '16',
+          py: '3',
           px: '4.5',
           borderRadius: 'xl',
           borderWidth: 'hairline',
