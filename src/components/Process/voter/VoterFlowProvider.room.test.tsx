@@ -16,6 +16,8 @@ const sdk = vi.hoisted(() => ({
   notEligible: [] as string[],
   // Questions the check alone says this voter may not vote: the SDK's status is not 'ineligible' for them.
   checkOnlyIneligible: [] as string[],
+  // Metadata of question 2 (its creator's result setting), for a test that closes it.
+  q2Metadata: undefined as Record<string, unknown> | undefined,
   // Holds the membership check until released, to let a sign-out overtake a re-check.
   holdCheck: undefined as Promise<void> | undefined,
   checkCalls: 0,
@@ -86,7 +88,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
       question(1, sdk.statuses[0], ended(sdk.statuses[0], '2026-06-15T09:41:00.000Z'), 6, {
         voterResults: 'perQuestion',
       }),
-      question(2, sdk.statuses[1], ended(sdk.statuses[1], '2026-06-15T10:41:00.000Z'), 3),
+      question(2, sdk.statuses[1], ended(sdk.statuses[1], '2026-06-15T10:41:00.000Z'), 3, sdk.q2Metadata),
       question(3, sdk.statuses[2], ended(sdk.statuses[2], '2026-06-15T11:41:00.000Z'), sdk.q3Votes),
     ],
   })
@@ -188,6 +190,7 @@ beforeEach(() => {
   sdk.checkVoted = ['q1']
   sdk.notEligible = []
   sdk.checkOnlyIneligible = []
+  sdk.q2Metadata = undefined
   sdk.holdCheck = undefined
   sdk.checkCalls = 0
   sdk.clearErrors.mockClear()
@@ -669,6 +672,43 @@ describe('VoterFlowProvider, question by question', () => {
     expect(sdk.vote).toHaveBeenCalledTimes(1)
     expect(sdk.vote.mock.calls[0][0]).toEqual({ '1': '0' })
     expect(probe.current?.state).toMatchObject({ castError: 'errors.vote_eligibility_changed', castQuestionId: 'q2' })
+  })
+
+  // The session saw the question ineligible, then the vote ended and the check stopped saying so: a question on chain
+  // still shows its closed frame, and a question not on chain stays hidden (the session's sighting).
+  it('keeps a question the check called ineligible in the room once voted, and shows its closed frame', async () => {
+    sdk.checkOnlyIneligible = ['q2']
+    sdk.q2Metadata = { voterResults: 'perQuestion' }
+    sdk.vote.mockImplementationOnce(async () => {
+      sdk.checkVoted.push('q2')
+      return 'vote-2'
+    })
+    const { reread } = await renderFlow()
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(probe.current?.facts.room?.questions[1]).toMatchObject({ cast: 'recorded' })
+    expect(probe.current?.facts.room?.questions[1].eligible).toBeUndefined()
+    sdk.statuses = ['RESULTS', 'RESULTS', 'PAUSED']
+    reread()
+    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'roomClosedVoted', index: 1 }))
+    expect(probe.current?.facts.room?.questions[1].eligible).toBeUndefined()
+  })
+
+  // A set of an eligible question and one only the check calls ineligible: the SDK signs both, so both answers are sent.
+  it('casts a set with a question only the check calls ineligible as open: both answers go to vote()', async () => {
+    sdk.statuses = ['RESULTS', 'ONGOING', 'ONGOING']
+    sdk.checkOnlyIneligible = ['q3']
+    await renderFlow()
+    expect(probe.current?.facts.room?.questions[2].eligible).toBeUndefined()
+    act(() => sdk.watch?.({ '1': '0' }, { name: '1' }))
+    act(() => sdk.watch?.({ '2': '1' }, { name: '2' }))
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(sdk.vote).toHaveBeenCalledTimes(1)
+    expect(sdk.vote.mock.calls[0][0]).toEqual({ '1': '0', '2': '1' })
   })
 
   // A refused cast is a failure: it is never completed by the check, and the check is read again.

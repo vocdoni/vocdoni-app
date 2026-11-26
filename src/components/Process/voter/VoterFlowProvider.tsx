@@ -180,11 +180,9 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     statusKey,
     running,
   })
-  // A question is ineligible when the SDK says so on connect, the check does (`canVote: false`), or the session saw it so.
+  // A question is ineligible when the SDK says so on connect, or the check does (`canVote: false`).
   const ineligibleOf = (questionId: string) =>
-    voteStatus[questionId] === 'ineligible' ||
-    ineligibleIds.includes(questionId) ||
-    state.ineligible.includes(questionId)
+    voteStatus[questionId] === 'ineligible' || ineligibleIds.includes(questionId)
 
   // The SDK publishes the voter's per-question state a moment after the check. If it never does (its own check failed
   // and it does not retry), nothing can be cast from this session: back to identification, never a wrong sentence.
@@ -244,32 +242,36 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
         questions: questions.map((question) => {
           const endedAt = question.endedAt ? Date.parse(question.endedAt) || null : null
           const questionState = deriveQuestionState(question, election, roomNow)
+          const cast = (() => {
+            const base = roomCastOf({
+              onChain: onChain(question.id) || !!voteIds[question.id] || votedIds.includes(question.id),
+              status: voteStatus[question.id],
+              pending: !!pendingVotes[question.id],
+              outcomeUnknown: state.uncertain.includes(question.id),
+            })
+            // A refusal that came after the organiser closed the question (gate-3 F2 extension): surface as 'late'
+            // so the rail note matches the roomMissed screen. Kept in `state.late`: an answer to the next question
+            // clears the refusal's error, not that it came late.
+            if (
+              base === 'pending' &&
+              (state.late.includes(question.id) || lateCastOf(base, question.id, state, endedAt))
+            ) {
+              return 'late' as const
+            }
+            return base
+          })()
+          // Once the vote ends the check stops saying so: a question seen ineligible, and not on chain, stays hidden.
+          const sessionHidden = !running && state.ineligible.includes(question.id) && !isRoomCast({ cast })
           return {
             id: question.id,
             state: questionState,
-            cast: (() => {
-              const base = roomCastOf({
-                onChain: onChain(question.id) || !!voteIds[question.id] || votedIds.includes(question.id),
-                status: voteStatus[question.id],
-                pending: !!pendingVotes[question.id],
-                outcomeUnknown: state.uncertain.includes(question.id),
-              })
-              // A refusal that came after the organiser closed the question (gate-3 F2 extension): surface as 'late'
-              // so the rail note matches the roomMissed screen. Kept in `state.late`: an answer to the next question
-              // clears the refusal's error, not that it came late.
-              if (
-                base === 'pending' &&
-                (state.late.includes(question.id) || lateCastOf(base, question.id, state, endedAt))
-              ) {
-                return 'late' as const
-              }
-              return base
-            })(),
+            cast,
             endedAt,
             showsResult: voterSeesQuestionResult(question),
             // The SDK locks a question it marks 'ineligible'. The check alone hides only a question that is not open: an
             // open one the SDK did not lock is still sent, and the SDK signs it or refuses it (EligibilityChangedError).
-            ...(voteStatus[question.id] === 'ineligible' || (questionState !== 'open' && ineligibleOf(question.id))
+            ...(voteStatus[question.id] === 'ineligible' ||
+            (questionState !== 'open' && (ineligibleOf(question.id) || sessionHidden))
               ? { eligible: false }
               : {}),
           }
