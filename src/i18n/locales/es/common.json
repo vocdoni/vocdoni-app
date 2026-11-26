@@ -1964,6 +1964,8 @@
     },
     "protection": {
       "basic_risk": "Cualquiera que conozca estos datos podría votar en lugar de un miembro.",
+      "cert": "Un certificado personal acredita al votante: haría falta el certificado de un miembro para votar en su lugar.",
+      "cert_code": "Haría falta el certificado personal de un miembro y acceso a su correo o teléfono para votar en su lugar.",
       "good_code_risk": "Cualquiera que pueda abrir el correo o el teléfono de un miembro podría votar en su lugar.",
       "good_details_risk": "Haría falta conocer varios datos, al menos uno privado, para votar en lugar de un miembro.",
       "label": "Protección",

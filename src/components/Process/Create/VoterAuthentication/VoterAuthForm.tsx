@@ -422,7 +422,7 @@ export const VoterAuthForm = ({ census, group, onCancel, onSave }: VoterAuthForm
                 )}
               />
               <Box mt='4'>
-                <ProtectionMeter credentials={credentials} codeMethod={codeMethod} />
+                <ProtectionMeter credentials={credentials} codeMethod={codeMethod} certAuth={certAuth} />
               </Box>
             </Box>
           </Stack>

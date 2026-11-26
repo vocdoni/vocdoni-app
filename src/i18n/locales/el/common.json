@@ -1929,6 +1929,8 @@
     },
     "protection": {
       "basic_risk": "Όποιος γνωρίζει αυτά τα στοιχεία θα μπορούσε να ψηφίσει στη θέση ενός μέλους.",
+      "cert": "A personal certificate proves the voter: someone would need a member's certificate to vote in their place.",
+      "cert_code": "Someone would need a member's personal certificate and their email or phone to vote in their place.",
       "good_code_risk": "Όποιος μπορεί να ανοίξει το email ή το τηλέφωνο ενός μέλους θα μπορούσε να ψηφίσει στη θέση του.",
       "good_details_risk": "Κάποιος θα χρειαζόταν αρκετά στοιχεία, τουλάχιστον ένα από αυτά ιδιωτικό, για να ψηφίσει στη θέση ενός μέλους.",
       "label": "Προστασία",

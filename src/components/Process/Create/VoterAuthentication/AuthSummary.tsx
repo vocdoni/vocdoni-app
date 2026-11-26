@@ -43,7 +43,7 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus, checkIssues 
   const { t } = useTranslation()
   const anonymity = useAnonymityLabels(anonymousVoting).title
   const { credentials, codeMethod, certAuth } = fromCensus(census)
-  const level = getProtectionLevel(credentials, codeMethod)
+  const level = getProtectionLevel(credentials, codeMethod, certAuth)
   // A certificate census saved anyway past members missing data still works: they are left out.
   const savedAnyway = certAuth && checkStatus === 'invalid' && certCensusSavable(checkIssues ?? null)
 

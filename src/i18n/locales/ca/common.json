@@ -1964,6 +1964,8 @@
     },
     "protection": {
       "basic_risk": "Qualsevol que conegui aquestes dades podria votar en lloc d'un membre.",
+      "cert": "Un certificat personal acredita el votant: caldria el certificat d'un membre per votar en el seu lloc.",
+      "cert_code": "Caldria el certificat personal d'un membre i accés al seu correu o telèfon per votar en el seu lloc.",
       "good_code_risk": "Qualsevol que pugui obrir el correu o el telèfon d'un membre podria votar en el seu lloc.",
       "good_details_risk": "Caldria conèixer diverses dades, almenys una de privada, per votar en lloc d'un membre.",
       "label": "Protecció",

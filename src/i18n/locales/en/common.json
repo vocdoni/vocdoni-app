@@ -1929,6 +1929,8 @@
     },
     "protection": {
       "basic_risk": "Anyone who knows these details could vote in a member's place.",
+      "cert": "A personal certificate proves the voter: someone would need a member's certificate to vote in their place.",
+      "cert_code": "Someone would need a member's personal certificate and their email or phone to vote in their place.",
       "good_code_risk": "Anyone who can open a member's email or phone could vote in their place.",
       "good_details_risk": "Someone would need several details, at least one of them private, to vote in a member's place.",
       "label": "Protection",

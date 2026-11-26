@@ -1964,6 +1964,8 @@
     },
     "protection": {
       "basic_risk": "Toute personne connaissant ces informations pourrait voter à la place d'un membre.",
+      "cert": "A personal certificate proves the voter: someone would need a member's certificate to vote in their place.",
+      "cert_code": "Someone would need a member's personal certificate and their email or phone to vote in their place.",
       "good_code_risk": "Toute personne pouvant accéder à l'e-mail ou au téléphone d'un membre pourrait voter à sa place.",
       "good_details_risk": "Il faudrait connaître plusieurs informations, dont au moins une privée, pour voter à la place d'un membre.",
       "label": "Protection",

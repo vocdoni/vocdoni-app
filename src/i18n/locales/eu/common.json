@@ -1929,6 +1929,8 @@
     },
     "protection": {
       "basic_risk": "Datu hauek dakien edonork bozka lezake kide baten ordez.",
+      "cert": "A personal certificate proves the voter: someone would need a member's certificate to vote in their place.",
+      "cert_code": "Someone would need a member's personal certificate and their email or phone to vote in their place.",
       "good_code_risk": "Kide baten helbide elektronikoa edo telefonoa ireki dezakeen edonork bozka lezake haren ordez.",
       "good_details_risk": "Norbaitek hainbat datu beharko lituzke, horietako gutxienez bat pribatua, kide baten ordez bozkatzeko.",
       "label": "Babesa",

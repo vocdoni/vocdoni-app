@@ -283,6 +283,7 @@ describe('VoterAuthentication', () => {
 
     expect(screen.getByText('Digital certificate')).toBeInTheDocument()
     expect(screen.queryByText(/Voters type/)).not.toBeInTheDocument()
+    expect(screen.getByText('Strong')).toBeInTheDocument()
   })
 
   it('warns, not errors, in the summary of a certificate census saved past members missing data', async () => {
