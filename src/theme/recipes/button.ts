@@ -1,5 +1,6 @@
 import { defaultConfig, defineRecipe, defineStyle, type SystemStyleObject } from '@chakra-ui/react'
 import { solidEdge } from './solidEdge'
+import { touchTarget } from './touchTarget'
 
 // Chakra's own variants and sizes, spread into the app ones built on them, so both stay in step.
 type StyleMap = Record<string, SystemStyleObject>
@@ -375,6 +376,33 @@ const row = defineStyle({
   _icon: { width: 'icon.sm', height: 'icon.sm' },
 })
 
+// The voter scale (docs/ui-guidelines.md, "Voter page"): 52px at every width, 24px sides, 12px corners and the
+// 17px label in semibold. The secondary takes 550 and the unavailable look (`off`) a 16px label: compound variants.
+const ballot = defineStyle({
+  h: 'control.ballot',
+  minW: '0',
+  px: '6',
+  gap: '2',
+  borderRadius: 'xl',
+  textStyle: 'ballot-button',
+  fontWeight: 'semibold',
+})
+
+// The voter's language trigger in the top bar: the language's code as a small tag ("CA"), ringed in the strong grey,
+// at `size='tag'`. Its hit area still reaches 44px (`touchTarget`).
+const langTag = defineStyle({
+  ...touchTarget,
+  bg: 'transparent',
+  color: 'fg.muted',
+  borderRadius: 'xs',
+  boxShadow: '[0 0 0 {borderWidths.hairline} {colors.border.strong}]',
+  _hover: { bg: 'state.hover.bg' },
+  _expanded: { bg: 'state.hover.bg' },
+})
+
+// A control drawn as a small tag (the language tag): 13px medium on a 22px line with 6px sides, at every width.
+const tag = defineStyle({ h: 'auto', minW: '0', px: '1.5', gap: '1', textStyle: 'topbar-lang' })
+
 export const Button = defineRecipe({
   base: baseStyle,
   variants: {
@@ -402,10 +430,12 @@ export const Button = defineRecipe({
       danger,
       floating,
       whatsapp,
+      'lang-tag': langTag,
     },
     // An open map, so the compound variants below can name Chakra's own sizes. `row` is the small action inside a
     // list row (a question's "Open"): 40px with 14px sides below `lg`, 28px with 10px sides and 13px text from `lg`.
-    size: { ...sizes, cta, row } as StyleMap,
+    // `ballot` is the voter scale: see the voter page's section of docs/ui-guidelines.md.
+    size: { ...sizes, cta, row, ballot, tag } as StyleMap,
     // Long labels wrap onto more lines instead of overflowing the button.
     multiline: {
       true: {
@@ -455,5 +485,14 @@ export const Button = defineRecipe({
     },
     // The chip is a smaller control than a button at every width: 36px on a phone, 32px on a tablet, 28px from `lg`.
     { variant: 'chip', css: { h: chipHeight, minW: '0', gap: 'chip', textStyle: 'control-chip' } },
+    // The voter scale: a wrapping label keeps the 52px height, the secondary is 550, and the unavailable look stays
+    // sunken at every width with a 16px label in 550.
+    { multiline: true, size: 'ballot', css: { minH: 'control.ballot' } },
+    { variant: 'outline', size: 'ballot', css: { fontWeight: 'medium-plus' } },
+    {
+      variant: 'off',
+      size: 'ballot',
+      css: { bg: 'bg.emphasized', color: 'fg.muted', textStyle: 'ballot-body', fontWeight: 'medium-plus' },
+    },
   ],
 })

@@ -20,6 +20,11 @@ const resultsRange = defineStyle({ bgColor: 'fg', borderRadius: 'none' })
 const turnoutTrack = defineStyle({ ...track, borderRadius: 'bar' })
 const turnoutRange = defineStyle({ ...range, borderRadius: 'bar' })
 
+// The voter's step progress (ui/StepProgress): a 3px line in the palette's fill with square ends, on no track of its
+// own (the strip's bottom rule shows through) and with no gap after the fill. A bar, so the colour is exact, unedged.
+const lineTrack = defineStyle({ shadow: '[none]', bgColor: 'transparent', borderRadius: 'none' })
+const lineRange = defineStyle({ bgColor: 'colorPalette.solid', borderRadius: 'none', boxShadow: '[none]' })
+
 // Each look owns its height and shape. Chakra applies the `size` and `shape` axes after `variant`, so they live in
 // compound variants, which come last.
 export const Progress = defineSlotRecipe({
@@ -34,6 +39,8 @@ export const Progress = defineSlotRecipe({
       meter: { track, range },
       // A background job, such as the members import.
       job: { track, range },
+      // The voter's step progress on the strip's bottom rule.
+      line: { track: lineTrack, range: lineRange },
     },
     // Chakra's stripes are switched off for good; the `striped` prop stays accepted so callers compile.
     striped: { true: { range: { backgroundImage: '[none]' } } },
@@ -41,6 +48,7 @@ export const Progress = defineSlotRecipe({
   compoundVariants: [
     { variant: 'results', css: { track: { h: '1.5', borderRadius: 'none' } } },
     { variant: 'turnout', css: { root: { borderRadius: 'none' }, track: { h: '1', borderRadius: 'bar' } } },
+    { variant: 'line', css: { root: { borderRadius: 'none' }, track: { h: 'bar.thin', borderRadius: 'none' } } },
     ...(['meter', 'job'] as const).map((variant) => ({
       variant,
       css: { root: { borderRadius: 'none' as const }, track: { h: '[3px]' as const, borderRadius: 'none' as const } },

@@ -1,4 +1,4 @@
-import { defineRecipe, defineSlotRecipe } from '@chakra-ui/react'
+import { defineRecipe, defineSlotRecipe, type SystemStyleObject } from '@chakra-ui/react'
 import {
   questionChoiceAnatomy,
   questionsAnatomy,
@@ -131,6 +131,18 @@ export const ElectionQuestions = defineSlotRecipe({
           gap: '4',
         },
       },
+      // The voter page: one question per screen. Its help 10px under the title in the muted ink, and its options a
+      // column 10px apart, 22px under the help (28px from `lg`).
+      voter: {
+        title: { mb: '0' },
+        description: { textStyle: 'ballot-body', color: 'fg.muted', mt: '2.5', mb: '0' },
+        stack: {
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2.5',
+          mt: { base: 'ballot.options', lg: '7' },
+        },
+      },
     },
   },
   defaultVariants: {
@@ -203,6 +215,86 @@ export const ElectionSchedule = defineRecipe({
   },
 })
 
+// The public ballot's option: a card with the field ring, the chosen one in the accent (context `card`, and the
+// voter page's `voter` below).
+const cardWrapper = {
+  // The minimum height keeps a one-line option as tall as before; the padding gives a wrapped one room.
+  minH: '16',
+  py: '3',
+  px: '4.5',
+  borderRadius: 'xl',
+  borderWidth: 'hairline',
+  borderColor: 'ballot.choice.border',
+  transition:
+    '[border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease]',
+  bg: 'bg.panel',
+  // A second 1px ring of the border's colour: the choice reads 2px without moving the layout. Outside it, the
+  // hairline a colour too pale for the page draws (`solidEdge`, transparent otherwise).
+  '&[data-state="checked"]': {
+    borderColor: 'colorPalette.solid',
+    boxShadow: chosenEdge(['0 0 0 {borderWidths.hairline} {colors.colorPalette.solid}'], '{borderWidths.thick}'),
+    bg: 'accent.subtle',
+    // A line, so in dark the text blue, as the guide draws the chosen option.
+    _dark: { borderColor: 'colorPalette.fg', boxShadow: '[0 0 0 1px {colors.colorPalette.fg}]' },
+    '& [data-choice-label]': { fontWeight: 'semibold' },
+  },
+  '& [data-choice-control][data-control-type="checkbox"]': {
+    boxSize: 'icon.lg',
+    borderRadius: 'xs',
+    borderWidth: 'mark',
+    borderColor: 'ballot.choice.ring',
+    bg: 'transparent',
+    // The fill replaces the outline, so the edge is drawn on the box's outer boundary and the size holds.
+    '&[data-state="checked"]': {
+      borderWidth: '[0]',
+      bg: 'colorPalette.solid',
+      color: 'accent.contrast',
+      boxShadow: solidEdge,
+    },
+  },
+  '&:has(input:focus-visible)': {
+    outlineWidth: '{borderWidths.focusRing}',
+    outlineStyle: 'solid',
+    outlineColor: 'colorPalette.focusRing',
+    outlineOffset: '{spacing.0.5}',
+  },
+  '&[data-disabled="true"]': {
+    opacity: 'inactive',
+    cursor: 'disabled',
+  },
+} satisfies SystemStyleObject
+
+// The voter page's option (its own slot, mounted by the voter page): the card above at the board's measures, 8px and
+// 16px inside (18px from `md`), a 22px radio or checkbox (4px corners) and the label on the running line height. The
+// radio mark is drawn here, so the voter's slot gives it no look props of its own. A blank vote (`data-quiet`) and an
+// option that cannot be chosen now (`data-disabled`, a paused vote) keep their box and turn the text quiet unless
+// chosen.
+const voterWrapper = {
+  ...cardWrapper,
+  py: '2',
+  px: { base: '4', md: '4.5' },
+  '& [data-choice-control][data-control-type="checkbox"]': {
+    ...cardWrapper['& [data-choice-control][data-control-type="checkbox"]'],
+    boxSize: 'mark.ballot',
+    borderRadius: 'sm',
+  },
+  '& [data-choice-mark]': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxSize: 'mark.ballot',
+    borderRadius: 'full',
+    borderWidth: 'mark',
+    borderColor: 'ballot.choice.ring',
+    color: 'accent.contrast',
+    '& svg': { boxSize: '3.5' },
+  },
+  '&[data-state="checked"] [data-choice-mark]': { borderWidth: '[0]', bg: 'colorPalette.solid' },
+  '&[data-disabled="true"]': { opacity: 'opaque', cursor: 'unavailable' },
+  '&[data-disabled="true"]:not([data-state="checked"])': { color: 'fg.subtle' },
+  '&[data-quiet]:not([data-state="checked"])': { color: 'fg.subtle' },
+} satisfies SystemStyleObject
+
 export const QuestionChoice = defineSlotRecipe({
   slots: questionChoiceAnatomy,
   base: {
@@ -258,55 +350,11 @@ export const QuestionChoice = defineSlotRecipe({
         },
       },
       card: {
-        wrapper: {
-          // The minimum height keeps a one-line option as tall as before; the padding gives a wrapped one room.
-          minH: '16',
-          py: '3',
-          px: '4.5',
-          borderRadius: 'xl',
-          borderWidth: 'hairline',
-          borderColor: 'ballot.choice.border',
-          transition:
-            '[border-color {durations.moderate} ease, box-shadow {durations.moderate} ease, background-color {durations.moderate} ease]',
-          bg: 'bg.panel',
-          // A second 1px ring of the border's colour: the choice reads 2px without moving the layout. Outside it, the
-          // hairline a colour too pale for the page draws (`solidEdge`, transparent otherwise).
-          '&[data-state="checked"]': {
-            borderColor: 'colorPalette.solid',
-            boxShadow: chosenEdge(
-              ['0 0 0 {borderWidths.hairline} {colors.colorPalette.solid}'],
-              '{borderWidths.thick}'
-            ),
-            bg: 'accent.subtle',
-            // A line, so in dark the text blue, as the guide draws the chosen option.
-            _dark: { borderColor: 'colorPalette.fg', boxShadow: '[0 0 0 1px {colors.colorPalette.fg}]' },
-            '& [data-choice-label]': { fontWeight: 'semibold' },
-          },
-          '& [data-choice-control][data-control-type="checkbox"]': {
-            boxSize: 'icon.lg',
-            borderRadius: 'xs',
-            borderWidth: 'mark',
-            borderColor: 'ballot.choice.ring',
-            bg: 'transparent',
-            // The fill replaces the outline, so the edge is drawn on the box's outer boundary and the size holds.
-            '&[data-state="checked"]': {
-              borderWidth: '[0]',
-              bg: 'colorPalette.solid',
-              color: 'accent.contrast',
-              boxShadow: solidEdge,
-            },
-          },
-          '&:has(input:focus-visible)': {
-            outlineWidth: '{borderWidths.focusRing}',
-            outlineStyle: 'solid',
-            outlineColor: 'colorPalette.focusRing',
-            outlineOffset: '{spacing.0.5}',
-          },
-          '&[data-disabled="true"]': {
-            opacity: 'inactive',
-            cursor: 'disabled',
-          },
-        },
+        wrapper: cardWrapper,
+      },
+      voter: {
+        wrapper: voterWrapper,
+        label: { lineHeight: 'moderate' },
       },
       plain: {
         wrapper: {
@@ -450,6 +498,15 @@ export const QuestionsTip = defineSlotRecipe({
       fontSize: 'lg',
       letterSpacing: 'voter',
       color: 'fg.subtle',
+    },
+  },
+  variants: {
+    // The voter page's hint under the options: 15px in the muted ink, 14px under them, at the start.
+    layout: {
+      voter: {
+        wrapper: { mt: '3.5', justifyContent: 'flex-start', alignItems: 'flex-start' },
+        text: { fontSize: 'item', lineHeight: 'moderate', color: 'fg.muted' },
+      },
     },
   },
 })

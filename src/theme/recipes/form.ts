@@ -22,6 +22,8 @@ export const field = defineStyle({
   // The ring slot, not `solid`: a pale brand fill would vanish on the page; the slot keeps 3:1 in both modes.
   focusRingColor: 'colorPalette.focusRing',
   _readOnly: { bg: 'bg.muted' },
+  // Forced colours drop box shadows, so the ring falls back to a border there, thicker when invalid.
+  _highContrast: { borderWidth: 'hairline', _invalid: { borderWidth: 'thick' } },
   _invalid: {
     boxShadow: '[0 0 0 {borderWidths.hairline} {colors.status.error.fg}]',
     focusRingColor: 'status.error.fg',
@@ -55,6 +57,16 @@ const sm = defineStyle({
 
 const md = sm
 
+// The voter's field: 52px at every width, 16px sides, 12px corners and 16px text (`ballot-body`, never under 16px, so
+// iOS does not zoom). Its failed state is a compound variant below, so it lands after `variant`'s.
+const ballot = defineStyle({
+  borderRadius: 'xl',
+  px: '4',
+  '--input-height': 'sizes.control.ballot',
+  textStyle: 'ballot-body',
+  _placeholder: { textStyle: 'ballot-body' },
+})
+
 export const input = defineRecipe({
   base: baseStyle,
   variants: {
@@ -62,6 +74,7 @@ export const input = defineRecipe({
       sm,
       md,
       '2xl': xxl,
+      ballot,
     },
     variant: {
       outline: field,
@@ -85,6 +98,8 @@ export const input = defineRecipe({
       },
     },
   },
+  // A failed voter field: a 2px ring inside its edge in the error colour.
+  compoundVariants: [{ size: 'ballot', css: { _invalid: { boxShadow: 'shadow.invalid' } } }],
 })
 
 export const textarea = defineRecipe({

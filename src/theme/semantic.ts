@@ -354,6 +354,11 @@ const colors = defineSemanticTokens.colors({
         _dark: '{colors.carbon.500}',
       },
     },
+    // The ring of a mark still to come on the voter page (an agenda step's number, an unranked option, a phase not
+    // reached): the progress track's grey.
+    pending: {
+      value: '{colors.bg.track}',
+    },
     inverted: {
       value: {
         _light: '{colors.gray.800}',
@@ -548,6 +553,14 @@ const shadows = defineSemanticTokens.shadows({
     // A plain hairline ring in the default border colour.
     ring: {
       value: '0 0 0 1px {colors.border}',
+    },
+    // The voter page: the 1.5px ring inside a mark still to come (`border.pending`), and the 2px ring inside a field
+    // that failed.
+    mark: {
+      value: 'inset 0 0 0 {borderWidths.mark} {colors.border.pending}',
+    },
+    invalid: {
+      value: 'inset 0 0 0 {borderWidths.thick} {colors.status.error.fg}',
     },
     // The hairline a brand fill too pale for the page draws (`accent.solidEdge`, transparent for Fil's blue), for a
     // component that paints `accent.solid` itself. Recipes read the element's own palette (recipes/solidEdge.ts).
