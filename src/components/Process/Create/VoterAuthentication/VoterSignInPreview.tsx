@@ -204,7 +204,7 @@ export const VoterSignInPreview = ({
 
   // Any edit shows the first step again: with the second step on screen, a
   // change to what voters type would otherwise look like it did nothing.
-  const configKey = `${credentials.join()}|${codeMethod}`
+  const configKey = `${credentials.join()}|${codeMethod}|${!!certAuth}`
   useEffect(() => setScreen('signIn'), [configKey])
 
   return (

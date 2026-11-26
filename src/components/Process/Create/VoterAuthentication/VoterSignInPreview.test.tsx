@@ -69,6 +69,17 @@ describe('VoterSignInPreview', () => {
     expect(preview().queryByText('Enter the verification code')).not.toBeInTheDocument()
   })
 
+  it('shows the certificate button again when the certificate is ticked on the second step', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<VoterSignInPreview credentials={['nationalId']} codeMethod='email' />)
+
+    await user.click(preview().getByRole('button', { name: 'Second step' }))
+    rerender(<VoterSignInPreview credentials={['nationalId']} codeMethod='email' certAuth />)
+
+    expect(preview().getByText('Sign in with a digital certificate')).toBeInTheDocument()
+    expect(preview().queryByText('Enter the verification code')).not.toBeInTheDocument()
+  })
+
   // The dialog around it is driven by locating inputs by value (the e2e suite
   // does), so the preview must never render real form controls.
   it('renders no form controls', () => {
