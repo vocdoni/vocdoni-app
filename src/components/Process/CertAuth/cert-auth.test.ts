@@ -153,14 +153,15 @@ describe('cert-auth', () => {
 
     it('means the gateway page did not load when it started moments ago, and is told once', () => {
       expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(false)
-      store(NOW - 60_000)
+      // a dropped port shows the browser's error page only after the TCP connect timeout (~2 min)
+      store(NOW - 10 * 60_000)
       expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(true)
       expect(sessionStorage.getItem(certAuthStorageKey(PID))).toBeNull()
       expect(takeUnansweredCertAuth(PID, { now: NOW })).toBe(false)
     })
 
     it.each([
-      ['it started long ago', NOW - 3 * 60_000],
+      ['it started long ago', NOW - 16 * 60_000],
       ['it has no start time', undefined],
     ])('is no failure when %s, and is forgotten', (_, startedAt) => {
       store(startedAt)

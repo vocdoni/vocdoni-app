@@ -148,8 +148,13 @@ export const readCertReturn = (
   return { kind: 'error', code: certError ?? 'internal', ...(/^[0-9a-f]{32}$/.test(ref) && { ref }) }
 }
 
-/** How long after leaving for the gateway a return without its answer still means its page didn't load. */
-const CERT_PAGE_LOAD_WINDOW_MS = 2 * 60_000
+/**
+ * How long after leaving for the gateway a return without its answer still means its page didn't load.
+ * A network that silently drops the gateway's port shows the browser's error page only after the TCP
+ * connect timeout (~127 s on Linux and Android, ~75 s on macOS), and the voter may stay on that page
+ * a while before going back: 15 minutes leaves room for both.
+ */
+const CERT_PAGE_LOAD_WINDOW_MS = 15 * 60_000
 
 /**
  * Whether this tab started a certificate login for the process moments ago that never came back:

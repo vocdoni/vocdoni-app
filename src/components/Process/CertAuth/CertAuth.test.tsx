@@ -470,7 +470,7 @@ describe('certificate voter flow', () => {
     useCensus([])
     sessionStorage.setItem(
       certAuthStorageKey(PID),
-      JSON.stringify({ state: STATE, codeVerifier: VERIFIER, startedAt: Date.now() - 3 * 60_000 })
+      JSON.stringify({ state: STATE, codeVerifier: VERIFIER, startedAt: Date.now() - 16 * 60_000 })
     )
     const { CertAuthStart } = await import('./CertAuth')
     render(<CertAuthStart />, { appEnv })
