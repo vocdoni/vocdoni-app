@@ -675,19 +675,15 @@ const main = async () => {
     }
 
     // Warm-up: vite optimizes dependencies the first time a route needs them and reloads the
-    // page when it does. Visit everything once so no reload lands in the middle of a capture.
+    // page when it does. Visit every route once so no reload lands in the middle of a capture.
+    // States are skipped: a dialog or menu rarely loads a module its route did not already load.
     if (opts.warmup) {
       for (let round = 1; round <= 3; round++) {
         const before = dev ? dev.log().length : 0
         console.log(`Warm-up round ${round}…`)
         for (const route of opts.routes) {
-          const { context, page } = await visit({ route, width: 1440, mode: 'light' }).catch(() => ({}))
-          if (!page) continue
-          for (const state of route.states || []) {
-            for (const step of state.open) await clickFirst(page, step).catch(() => {})
-            await page.waitForTimeout(500)
-          }
-          await context.close()
+          const { context } = await visit({ route, width: 1440, mode: 'light' }).catch(() => ({}))
+          await context?.close()
         }
         if (!dev || !RELOAD_RE.test(dev.log().slice(before))) break
       }

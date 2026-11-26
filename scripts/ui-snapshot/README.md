@@ -94,8 +94,10 @@ Two runs on the same commit and machine must give `0` differences. What makes th
 - **Settled pages**: network idle, no visible spinner or skeleton, `document.fonts.ready`, and the
   DOM size, page height and text length unchanged on three polls in a row.
 - **Warm-up**: vite optimizes dependencies the first time a route needs them and reloads the page
-  when it does. A warm-up pass visits every route first, and repeats while vite keeps reloading.
-  Reloads during the capture are listed in `summary.json` (`devServerReloadsDuringCapture`).
+  when it does. A warm-up pass visits each route once (its states are skipped: a dialog rarely loads
+  a module its route did not), and repeats while vite keeps reloading. Reloads during the capture
+  are listed in `summary.json` (`devServerReloadsDuringCapture`), so a module a state needs still
+  shows up there.
 
 Compare runs from the same machine and browser: `ui:diff` warns when the browser versions differ.
 The browser is Playwright's bundled Chromium, or Chrome when that is not installed; force one with
