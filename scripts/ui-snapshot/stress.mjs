@@ -136,7 +136,8 @@ const readStressSpec = async () => {
     appType: 'custom',
     logLevel: 'error',
     plugins: [tsconfigPaths()],
-    server: { middlewareMode: true, hmr: false, watch: null },
+    // ws: false keeps Vite from listening on the HMR port (24678, all interfaces); the snapshot only reads modules.
+    server: { middlewareMode: true, ws: false, watch: null },
     optimizeDeps: { noDiscovery: true, include: [] },
   })
   try {
