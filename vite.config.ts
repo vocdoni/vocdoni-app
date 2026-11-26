@@ -4,12 +4,14 @@ import { defineConfig, loadEnv, type Plugin } from 'vite'
 import svgr from 'vite-plugin-svgr'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
-// The stress theme is aliased over `~theme/system` for the dev server only (scripts/ui-snapshot); a build that
-// resolved it would ship the stress palette, so `vite build` refuses it whatever VITE_CONFIG says.
+// The stress theme is aliased over `~theme/system` by scripts/ui-snapshot only; a build that resolved it would ship
+// the stress palette, so `vite build` refuses it. The snapshot's own --build run sets UI_SNAPSHOT_TEST_THEME, since
+// it serves that build locally and never ships it.
 const noTestThemes = (): Plugin => ({
   name: 'no-test-themes-in-build',
   apply: 'build',
   load(id) {
+    if (process.env.UI_SNAPSHOT_TEST_THEME === '1') return
     if (id.includes('/src/theme/test-themes/')) this.error(`test theme in a production build: ${id}`)
   },
 })

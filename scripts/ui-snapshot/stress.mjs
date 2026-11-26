@@ -122,17 +122,34 @@ export const summarize = (leaks) => {
   return byKey
 }
 
-// Reads the probe's inputs from the stress module the app itself loaded; null when the page does not render
-// the stress theme (any vite dev server serves the module, so the import alone proves nothing).
-export const loadSpec = (page) =>
-  page.evaluate(async (url) => {
-    try {
-      const { stressProbeSpec } = await import(url)
-      return getComputedStyle(document.body).fontFamily.includes(stressProbeSpec.fontMarker) ? stressProbeSpec : null
-    } catch {
-      return null
-    }
-  }, `/${STRESS_MODULE}`)
+// The probe's inputs, read in Node from the stress module: a build serves no source files, so the page cannot
+// import them. Vite's SSR loader evaluates the module the way the dev server does.
+const readStressSpec = async () => {
+  // Loaded here, not at import: the unit tests import this module under jsdom, where esbuild (vite's) refuses to load.
+  const { createServer } = await import('vite')
+  const server = await createServer({
+    root: ROOT,
+    appType: 'custom',
+    logLevel: 'error',
+    server: { middlewareMode: true, hmr: false, watch: null },
+    optimizeDeps: { noDiscovery: true, include: [] },
+  })
+  try {
+    return (await server.ssrLoadModule(`/${STRESS_MODULE}`)).stressProbeSpec
+  } finally {
+    await server.close()
+  }
+}
+
+// Null when the page does not render the stress theme: the stock theme never names the stress font.
+export const loadSpec = async (page) => {
+  const spec = await readStressSpec()
+  const rendered = await page.evaluate(
+    (marker) => getComputedStyle(document.body).fontFamily.includes(marker),
+    spec.fontMarker
+  )
+  return rendered ? spec : null
+}
 
 export const probe = (page, spec) =>
   page.evaluate(probeStress, { spec, exceptions: STRESS_EXCEPTIONS, kinds: KINDS }).then(summarize)
