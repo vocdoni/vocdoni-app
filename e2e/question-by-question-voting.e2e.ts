@@ -165,11 +165,12 @@ test.describe('question-by-question voting', () => {
         await observer.getByRole('button', { name: /^Show the results$/ }).click()
         const results = voterScreen(observer, 'results')
         await expect(results).toBeVisible()
+        // Label, count and share run together ("Yes1 vote100%"), so no `\b` on either side of the count.
         const questionResult = (title: string) =>
           results.locator('section').filter({ has: observer.getByRole('heading', { level: 2, name: title }) })
-        await expect(questionResult(QUESTIONS[0].title)).toContainText(/\b1 vote\b/, { timeout: 120_000 })
-        await expect(questionResult(QUESTIONS[1].title)).not.toContainText(/\b[1-9]\d* votes?\b/)
-        await expect(questionResult(QUESTIONS[2].title)).toContainText(/\b1 vote\b/, { timeout: 120_000 })
+        await expect(questionResult(QUESTIONS[0].title)).toContainText(/(?<!\d)1 vote(?![a-z])/, { timeout: 120_000 })
+        await expect(questionResult(QUESTIONS[1].title)).not.toContainText(/(?<!\d)[1-9]\d* votes?(?![a-z])/)
+        await expect(questionResult(QUESTIONS[2].title)).toContainText(/(?<!\d)1 vote(?![a-z])/, { timeout: 120_000 })
       } finally {
         await observerContext.close()
       }
