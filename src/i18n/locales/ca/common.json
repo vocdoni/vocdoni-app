@@ -2006,6 +2006,9 @@
       "valid_count_other": "Els {{count}} membres poden iniciar sessió."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} membre no pot iniciar sessió.",
+      "cert_missing_members_many": "{{count}} membres no poden iniciar sessió.",
+      "cert_missing_members_other": "{{count}} membres no poden iniciar sessió.",
       "code_choice": "Codi d'un sol ús per correu o SMS",
       "code_email": "Codi d'un sol ús per correu",
       "code_none": "Sense codi d'un sol ús",

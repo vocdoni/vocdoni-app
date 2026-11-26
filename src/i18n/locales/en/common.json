@@ -1968,6 +1968,8 @@
       "valid_count_other": "All {{count}} members can sign in."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} member can't sign in.",
+      "cert_missing_members_other": "{{count}} members can't sign in.",
       "code_choice": "One-time code by email or SMS",
       "code_email": "One-time code by email",
       "code_none": "No one-time code",

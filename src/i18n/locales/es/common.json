@@ -2006,6 +2006,9 @@
       "valid_count_other": "Los {{count}} miembros pueden iniciar sesión."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} miembro no puede iniciar sesión.",
+      "cert_missing_members_many": "{{count}} miembros no pueden iniciar sesión.",
+      "cert_missing_members_other": "{{count}} miembros no pueden iniciar sesión.",
       "code_choice": "Código de un solo uso por correo o SMS",
       "code_email": "Código de un solo uso por correo",
       "code_none": "Sin código de un solo uso",

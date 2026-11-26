@@ -8,7 +8,7 @@ import { StatusBadge } from '~components/ui/StatusBadge'
 import { getAuthFieldLabel } from './fields'
 import { Census } from '../common'
 import { getProtectionLevel, getProtectionLevelTitle, protectionLevelPalettes } from './ProtectionLevel'
-import { CensusCheckStatus } from './useCensusCheck'
+import { CensusCheckIssues, CensusCheckStatus, certCensusSavable } from './useCensusCheck'
 import { CodeMethod, fromCensus } from './utils'
 
 const codeIcons: Record<CodeMethod, IconType> = {
@@ -35,14 +35,17 @@ type AuthSummaryProps = {
   census: Census
   anonymousVoting: boolean
   checkStatus: CensusCheckStatus
+  checkIssues?: CensusCheckIssues | null
 }
 
 /** The saved sign-in settings as they read in the Settings panel, graded like the modal grades them. */
-export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummaryProps) => {
+export const AuthSummary = ({ census, anonymousVoting, checkStatus, checkIssues }: AuthSummaryProps) => {
   const { t } = useTranslation()
   const anonymity = useAnonymityLabels(anonymousVoting).title
   const { credentials, codeMethod, certAuth } = fromCensus(census)
   const level = getProtectionLevel(credentials, codeMethod)
+  // A certificate census saved anyway past members missing data still works: they are left out.
+  const savedAnyway = certAuth && checkStatus === 'invalid' && certCensusSavable(checkIssues ?? null)
 
   return (
     <Card.Root variant='section' size='sm'>
@@ -83,15 +86,28 @@ export const AuthSummary = ({ census, anonymousVoting, checkStatus }: AuthSummar
         </HStack>
         {/* Re-checked whenever the group or the chosen details change after
             saving: the settings were only ever validated against the old ones. */}
-        {(checkStatus === 'invalid' || checkStatus === 'rejected') && (
-          <HStack gap='2' align='start' color='fg.error'>
+        {savedAnyway ? (
+          <HStack gap='2' align='start' color='fg.warning'>
             <Icon as={WarningIcon} mt='0.5' />
             <Text>
-              {t('voter_auth.summary.member_list_mismatch', {
-                defaultValue: "These settings don't fit your member list. Edit them to see why.",
+              {t('voter_auth.summary.cert_missing_members', {
+                defaultValue_one: "{{count}} member can't sign in.",
+                defaultValue_other: "{{count}} members can't sign in.",
+                count: checkIssues?.missingData.length ?? 0,
               })}
             </Text>
           </HStack>
+        ) : (
+          (checkStatus === 'invalid' || checkStatus === 'rejected') && (
+            <HStack gap='2' align='start' color='fg.error'>
+              <Icon as={WarningIcon} mt='0.5' />
+              <Text>
+                {t('voter_auth.summary.member_list_mismatch', {
+                  defaultValue: "These settings don't fit your member list. Edit them to see why.",
+                })}
+              </Text>
+            </HStack>
+          )
         )}
       </Stack>
     </Card.Root>

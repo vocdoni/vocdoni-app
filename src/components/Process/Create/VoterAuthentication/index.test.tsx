@@ -285,6 +285,25 @@ describe('VoterAuthentication', () => {
     expect(screen.queryByText(/Voters type/)).not.toBeInTheDocument()
   })
 
+  it('warns, not errors, in the summary of a certificate census saved past members missing data', async () => {
+    mockValidateCensus.mockRejectedValue(membersError({ memberIds: ['m1'], duplicates: [], missingData: ['m2', 'm3'] }))
+    render(
+      <TestForm initialCensus={{ credentials: ['nationalId'], use2FA: false, use2FAMethod: 'email', certAuth: true }} />
+    )
+
+    expect(await screen.findByText("2 members can't sign in.")).toBeInTheDocument()
+    expect(screen.queryByText(/don't fit your member list/)).not.toBeInTheDocument()
+  })
+
+  it('still errors in the summary of a certificate census where no member can sign in', async () => {
+    mockValidateCensus.mockRejectedValue(membersError({ memberIds: [], duplicates: [], missingData: ['m1'] }))
+    render(
+      <TestForm initialCensus={{ credentials: ['nationalId'], use2FA: false, use2FAMethod: 'email', certAuth: true }} />
+    )
+
+    expect(await screen.findByText(/don't fit your member list/)).toBeInTheDocument()
+  })
+
   it('offers the digital certificate only when a gateway is configured', async () => {
     const user = userEvent.setup()
     render(<TestForm />)

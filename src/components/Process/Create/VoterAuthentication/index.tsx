@@ -150,7 +150,14 @@ export const VoterAuthentication = ({ group, triggerRef }: VoterAuthenticationPr
           </Alert.Content>
         </Alert.Root>
       )}
-      {census && <AuthSummary census={census} anonymousVoting={anonymousVoting} checkStatus={savedCheck.status} />}
+      {census && (
+        <AuthSummary
+          census={census}
+          anonymousVoting={anonymousVoting}
+          checkStatus={savedCheck.status}
+          checkIssues={savedCheck.issues}
+        />
+      )}
       {!isPending && trigger}
       <Portal>
         <Dialog.Backdrop />

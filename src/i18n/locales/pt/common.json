@@ -2006,6 +2006,9 @@
       "valid_count_other": "Todos os {{count}} membros podem iniciar sessão."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} member can't sign in.",
+      "cert_missing_members_many": "{{count}} members can't sign in.",
+      "cert_missing_members_other": "{{count}} members can't sign in.",
       "code_choice": "Código único por email ou SMS",
       "code_email": "Código único por email",
       "code_none": "Sem código único",

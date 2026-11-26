@@ -2006,6 +2006,9 @@
       "valid_count_other": "Les {{count}} membres peuvent tous se connecter."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} member can't sign in.",
+      "cert_missing_members_many": "{{count}} members can't sign in.",
+      "cert_missing_members_other": "{{count}} members can't sign in.",
       "code_choice": "Code à usage unique par e-mail ou SMS",
       "code_email": "Code à usage unique par e-mail",
       "code_none": "Aucun code à usage unique",

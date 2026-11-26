@@ -1968,6 +1968,8 @@
       "valid_count_other": "Και τα {{count}} μέλη μπορούν να συνδεθούν."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} member can't sign in.",
+      "cert_missing_members_other": "{{count}} members can't sign in.",
       "code_choice": "Κωδικός μίας χρήσης μέσω email ή SMS",
       "code_email": "Κωδικός μίας χρήσης μέσω email",
       "code_none": "Χωρίς κωδικό μίας χρήσης",

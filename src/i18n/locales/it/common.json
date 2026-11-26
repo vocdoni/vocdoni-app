@@ -2006,6 +2006,9 @@
       "valid_count_other": "Tutti i {{count}} membri possono accedere."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} member can't sign in.",
+      "cert_missing_members_many": "{{count}} members can't sign in.",
+      "cert_missing_members_other": "{{count}} members can't sign in.",
       "code_choice": "Codice monouso via email o SMS",
       "code_email": "Codice monouso via email",
       "code_none": "Nessun codice monouso",

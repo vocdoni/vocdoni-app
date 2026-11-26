@@ -1968,6 +1968,8 @@
       "valid_count_other": "{{count}} kide guztiek hasi dezakete saioa."
     },
     "summary": {
+      "cert_missing_members_one": "{{count}} member can't sign in.",
+      "cert_missing_members_other": "{{count}} members can't sign in.",
       "code_choice": "Behin erabiltzeko kodea helbide elektronikoz edo SMSz",
       "code_email": "Behin erabiltzeko kodea helbide elektronikoz",
       "code_none": "Behin erabiltzeko koderik ez",
