@@ -127,10 +127,14 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     get pendingVotes() {
       return sdk.pendingVotes
     },
-    voterQuestions: ids.map((questionId) => ({ questionId, hasVoted: questionId === 'q1' })),
+    get voterQuestions() {
+      return ids.map((questionId) => ({ questionId, hasVoted: sdk.checkVoted.includes(questionId) }))
+    },
     hasVoted: false,
     isAbleToVote: true,
-    voteIds: { q1: 'vote-1' },
+    get voteIds() {
+      return sdk.checkVoted.includes('q1') ? { q1: 'vote-1' } : {}
+    },
     weight: null,
   }
   const form = { fmethods, vote: (values: Record<string, unknown>) => sdk.vote(values) }
@@ -248,6 +252,58 @@ describe('VoterFlowProvider, question by question', () => {
       await probe.current?.castQuestion(1)
     })
     expect(sdk.vote).not.toHaveBeenCalled()
+  })
+
+  it('a stale form is not a failed cast: its sentence sits on the first question still to vote (SDK 4.3)', async () => {
+    await renderFlow()
+    act(() => sdk.watch?.({ '1': '1' }, { name: '1' }))
+    sdk.vote.mockResolvedValueOnce(false)
+    sdk.errors = { root: { vote: { message: 'errors.vote_eligibility_changed' } } }
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(probe.current?.state).toMatchObject({
+      castError: 'errors.vote_eligibility_changed',
+      castQuestionId: 'q2',
+      castUnconfirmed: false,
+      castFailedAt: null,
+    })
+  })
+
+  it('no question left to this voter: no failed sentence, and the check is read again (SDK 4.3)', async () => {
+    await renderFlow()
+    act(() => sdk.watch?.({ '1': '1' }, { name: '1' }))
+    const before = sdk.checkCalls
+    sdk.notEligible = ['q2']
+    sdk.vote.mockResolvedValueOnce(false)
+    sdk.errors = { root: { vote: { message: 'errors.vote_ineligible_question' } } }
+    await act(async () => {
+      await probe.current?.castQuestion(1)
+    })
+    expect(probe.current?.state.castError).toBeNull()
+    expect(sdk.checkCalls).toBeGreaterThan(before)
+    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'roomNotEligible', index: 1 }))
+  })
+
+  it('a voter the check leaves out of every question is not settled, and not eligible to vote (SDK 4.3)', async () => {
+    sdk.checkVoted = []
+    sdk.notEligible = ['q1', 'q2', 'q3']
+    sdk.voteStatus = { q1: 'ineligible', q2: 'ineligible', q3: 'ineligible' }
+    await renderFlow()
+    await waitFor(() => expect(probe.current?.screen).toEqual({ kind: 'notEligible' }))
+    expect(probe.current?.facts.everyQuestionSettled).toBe(false)
+  })
+
+  it('keeps the questions the voter was seen ineligible for once the check stops saying so (SDK 4.3)', async () => {
+    sdk.notEligible = ['q2']
+    await renderFlow()
+    await waitFor(() => expect(probe.current?.state.ineligible).toEqual(['q2']))
+    sdk.notEligible = []
+    await act(async () => {
+      probe.current?.recheck()
+    })
+    await waitFor(() => expect(probe.current?.facts.room?.questions[1].eligible).not.toBe(false))
+    expect(probe.current?.state.ineligible).toEqual(['q2'])
   })
 
   it('keeps a failed cast on that question, with the SDK sentence', async () => {

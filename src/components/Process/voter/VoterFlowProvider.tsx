@@ -32,12 +32,13 @@ import { useVoterCheck, voterCheckKey } from './use-voter-check'
 import {
   chainRecordOf,
   deriveVoterScreen,
-  encodableAnswer,
   firstUnanswered,
   formValuesFor,
   historyStateFor,
   initialVoterState,
   isAnswered,
+  isRoomCast,
+  isRoomEligible,
   lateCastOf,
   ON_CHAIN_NOTICE,
   roomCastBlocked,
@@ -47,11 +48,15 @@ import {
   voterReducer,
   WELCOME,
   type RoomFacts,
+  type RoomQuestion,
   type VoterFacts,
   type VoterStep,
 } from './voter-flow'
 
-const SETTLED = new Set(['confirmed', 'signed', 'unconfirmed'])
+const SETTLED = new Set(['confirmed', 'signed', 'unconfirmed', 'ineligible'])
+// The vote counts as running for the check's `canVote` only while more than this is left before its end.
+const ENDS_SOON_MS = 5 * 60_000
+const ENDED_STATUSES = ['ENDED', 'RESULTS', 'CANCELED']
 
 type FormErrors = Record<string, { message?: unknown } | undefined> & { root?: { vote?: { message?: unknown } } }
 
@@ -65,6 +70,19 @@ const castFailureOf = (errors: FormErrors, questionCount: number, unknownOutcome
   const message = String(errors.root?.vote?.message ?? fieldError ?? '')
   return { message, unconfirmed: unknownOutcome !== '' && message.includes(unknownOutcome) }
 }
+
+/**
+ * The SDK refuses a cast over eligibility before it signs anything: `changed` (EligibilityChangedError, the form is stale)
+ * or `none` (NoEligibleQuestionError, no question is left to this voter). Neither is a failed cast.
+ */
+const eligibilityRefusalOf = (message: string, localize: (key: string) => string) => ({
+  changed: message === localize('errors.vote_eligibility_changed'),
+  none: [localize('errors.vote_ineligible_question'), localize('errors.vote_ineligible_questions')].includes(message),
+})
+
+/** The first question the voter has not cast and may vote: where a stale form's refusal is shown. */
+const firstToVoteOf = (questions: readonly RoomQuestion[]) =>
+  questions.find((question) => !isRoomCast(question) && isRoomEligible(question))?.id
 
 /**
  * The instant the server rendered the page (`Date.now()` in its loader, carried in the page data). The browser's first
@@ -151,13 +169,19 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
   // as `facts.endedBySchedule` does for the whole vote (gate-3 F4).
   const end = election ? resolveEndDate(election)?.getTime() : undefined
   const roomNow = hydrating || clockTrusted || end === undefined || now.getTime() < end ? now : new Date(end - 1)
+  const running =
+    status !== null && !ENDED_STATUSES.includes(status) && end !== undefined && end - roomNow.getTime() > ENDS_SOON_MS
   const { membership, votedElsewhere, votedIds, ineligibleIds } = useVoterCheck({
     id,
     authToken,
     connected,
     check,
     statusKey,
+    running,
   })
+  // A question is ineligible when the SDK says so on connect, or the check does (`canVote: false`).
+  const ineligibleOf = (questionId: string) =>
+    voteStatus[questionId] === 'ineligible' || ineligibleIds.includes(questionId)
 
   // The SDK publishes the voter's per-question state a moment after the check. If it never does (its own check failed
   // and it does not retry), nothing can be cast from this session: back to identification, never a wrong sentence.
@@ -183,6 +207,12 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
       voterQuestions.some((entry) => entry.questionId === questionId && entry.hasVoted),
     [voteStatus, voterQuestions]
   )
+  // The questions the voter was seen ineligible for this session: the check forgets them once the vote ends.
+  const ineligibleNow = questions.filter((question) => ineligibleOf(question.id)).map((question) => question.id)
+  const ineligibleKey = ineligibleNow.join(',')
+  useEffect(() => {
+    if (ineligibleNow.length) dispatch({ type: 'ineligibleSeen', questionIds: ineligibleNow })
+  }, [ineligibleKey]) // eslint-disable-line react-hooks/exhaustive-deps
   // On chain first: SDK #118 answers `vote.disabled.question_voted` for a confirmed question, and review keys the
   // answer this session sent for it on the flow's own notice (gate F2). Same result on SDK 4.1.0.
   const lockedNotice = useCallback(
@@ -193,13 +223,14 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
   const answered = questions.map((question, index) =>
     isAnswered(question, state.answers[String(index)], !!lockedNotice(question.id))
   )
+  const settledQuestion = (questionId: string) =>
+    voterQuestions.some((entry) => entry.questionId === questionId && entry.hasVoted) ||
+    SETTLED.has(voteStatus[questionId] ?? '')
+  // An ineligible question counts as settled, but a voter ineligible for every question has voted none of them.
   const settledBySdk =
     questions.length > 0 &&
-    questions.every(
-      (question) =>
-        voterQuestions.some((entry) => entry.questionId === question.id && entry.hasVoted) ||
-        SETTLED.has(voteStatus[question.id] ?? '')
-    )
+    questions.every((question) => settledQuestion(question.id)) &&
+    questions.some((question) => settledQuestion(question.id) && !ineligibleOf(question.id))
 
   // A question-by-question vote's room, from the polled process read and the voter's state: the open question decides
   // the frame (Task 1). `roomNow` is the server's instant on the first frame, so server and browser pick the same one.
@@ -232,7 +263,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
               })(),
               endedAt,
               showsResult: voterSeesQuestionResult(question),
-              ...(ineligibleIds.includes(question.id) ? { eligible: false } : {}),
+              ...(ineligibleOf(question.id) ? { eligible: false } : {}),
             }
           }),
         }
@@ -342,27 +373,26 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
     const session = sessionRef.current
     dispatch({ type: 'castStarted' })
     try {
-      const values = formValuesFor(latest.current)
-      // A question on chain with no answer in this session (resumed after a partial cast) still goes through the
-      // SDK's encoder, which refuses an empty answer: it gets a placeholder the SDK never signs (gate F2).
-      questions.forEach((question, index) => {
-        const key = String(index)
-        if (onChain(question.id) && !isAnswered(question, latest.current.answers[key])) {
-          values[key] = encodableAnswer(question)
-        }
-      })
-      const result = await vote(values)
+      const result = await vote(formValuesFor(latest.current))
       if (session !== sessionRef.current) return
       if (result === false) {
-        dispatch({
-          type: 'castFailed',
-          ...castFailureOf(
-            fmethods.formState.errors as FormErrors,
-            questions.length,
-            localize('errors.vote_unconfirmed')
-          ),
-          at: Date.now() + serverOffset,
-        })
+        const failure = castFailureOf(
+          fmethods.formState.errors as FormErrors,
+          questions.length,
+          localize('errors.vote_unconfirmed')
+        )
+        const refusal = eligibilityRefusalOf(failure.message, localize)
+        // Nothing was signed and no question is left to this voter: the check decides the screen, with no sentence.
+        // A stale form is not a failed cast either: it is not late, and its sentence sits on the first question left.
+        if (!refusal.none) {
+          dispatch({
+            type: 'castFailed',
+            ...failure,
+            ...(refusal.changed
+              ? { questionId: firstToVoteOf(latestRoom.current?.questions ?? []) }
+              : { at: Date.now() + serverOffset }),
+          })
+        }
         // A question may have closed or the vote paused meanwhile ("question is not open for voting"): read the
         // process again and let the facts decide. Never a sign out.
         if (id) void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) })
@@ -381,7 +411,7 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
       castingRef.current = false
       setCasting(false)
     }
-  }, [answered, fmethods, id, localize, onChain, queryClient, questions, serverOffset, vote, voting])
+  }, [answered, fmethods, id, localize, queryClient, questions, serverOffset, vote, voting])
 
   const castQuestion = useCallback(
     async (index: number) => {
@@ -422,7 +452,16 @@ export const VoterFlowProvider = ({ brand, endPassed = false, children }: VoterF
             questions.length,
             localize('errors.vote_unconfirmed')
           )
-          dispatch({ type: 'castFailed', ...failure, at: Date.now() + serverOffset })
+          const refusal = eligibilityRefusalOf(failure.message, localize)
+          if (!refusal.none) {
+            dispatch({
+              type: 'castFailed',
+              ...failure,
+              ...(refusal.changed
+                ? { questionId: firstToVoteOf(latestRoom.current?.questions ?? []) }
+                : { at: Date.now() + serverOffset }),
+            })
+          }
           // The question may have closed meanwhile ("not open for voting"): read the process again, the facts decide.
           if (id) void queryClient.invalidateQueries({ queryKey: electionQueryKeys.election(id) })
           // Nothing left here, yet the check lists the question as voted: another device or tab voted it first, and

@@ -4,7 +4,7 @@ import { VocdoniApiError } from '@vocdoni/api-client'
 import type { ReactNode } from 'react'
 import { useVoterCheck } from './use-voter-check'
 
-const run = (check: () => Promise<unknown>, statusKey = 'ONGOING:ONGOING') => {
+const run = (check: () => Promise<unknown>, statusKey = 'ONGOING:ONGOING', running = true) => {
   // The app's own default: an answer under 30 s old is fresh, so only an explicit `staleTime: 0` refetches on focus.
   const client = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000 } } })
   const wrapper = ({ children }: { children: ReactNode }) => (
@@ -18,6 +18,7 @@ const run = (check: () => Promise<unknown>, statusKey = 'ONGOING:ONGOING') => {
         connected: true,
         check: check as Parameters<typeof useVoterCheck>[0]['check'],
         statusKey: key,
+        running,
       }),
     { wrapper, initialProps: { key: statusKey } }
   )
@@ -78,6 +79,46 @@ describe('useVoterCheck', () => {
     await advance(0)
     expect(check).toHaveBeenCalledTimes(2)
     expect(result.current.membership).toBe('ok')
+  })
+
+  it('lists the questions the check says this voter may not vote (canVote false) while the vote runs', async () => {
+    const check = vi.fn().mockResolvedValue({
+      belongsToProcess: true,
+      questions: [
+        { questionId: 'q1', canVote: true, hasVoted: false },
+        { questionId: 'q2', canVote: false, hasVoted: false },
+      ],
+    })
+    const { result } = run(check)
+    await advance(0)
+    expect(result.current.ineligibleIds).toEqual(['q2'])
+  })
+
+  it('does not count a question the check says nothing about as ineligible', async () => {
+    const check = vi.fn().mockResolvedValue({
+      belongsToProcess: true,
+      questions: [
+        { questionId: 'q1', hasVoted: false },
+        { questionId: 'q2', canVote: true, hasVoted: false },
+      ],
+    })
+    const { result } = run(check)
+    await advance(0)
+    expect(result.current.ineligibleIds).toEqual([])
+  })
+
+  it('after the end, a check that reads every question canVote false names nobody as ineligible', async () => {
+    const check = vi.fn().mockResolvedValue({
+      belongsToProcess: true,
+      questions: [
+        { questionId: 'q1', canVote: false, hasVoted: false },
+        { questionId: 'q2', canVote: false, hasVoted: false },
+      ],
+    })
+    const { result } = run(check, 'ENDED:ENDED', false)
+    await advance(0)
+    expect(result.current.membership).toBe('ok')
+    expect(result.current.ineligibleIds).toEqual([])
   })
 
   it('stays pending when the first check fails: there is no answer to keep', async () => {

@@ -24,6 +24,8 @@ type VoterCheckInput = {
   check: () => Promise<ProcessCheckResponse>
   /** Changes whenever the process status or any question status changes: the check runs again. */
   statusKey: string
+  /** The vote is still open and more than five minutes from its end: an unknown `canVote: false` is not a closed vote. */
+  running: boolean
 }
 
 /**
@@ -31,7 +33,7 @@ type VoterCheckInput = {
  * session. The SDK runs its check only when the token or the process status changes and swallows its failure, so the
  * flow keeps its own, refetched when any question status changes, on focus and after every cast.
  */
-export const useVoterCheck = ({ id, authToken, connected, check, statusKey }: VoterCheckInput) => {
+export const useVoterCheck = ({ id, authToken, connected, check, statusKey, running }: VoterCheckInput) => {
   const queryClient = useQueryClient()
   // One spread per tab, fixed (see `checkRetryDelay`), and the failures in a row: the query's own `errorUpdateCount`
   // never goes back to zero, so one bad minute would leave every later retry at the ceiling (gate-2 N1).
@@ -100,7 +102,11 @@ export const useVoterCheck = ({ id, authToken, connected, check, statusKey }: Vo
     answers.every((question) => question.hasVoted || !question.canVote)
   // The questions the check's last answer lists as on chain, re-read after every cast and when a status changes.
   const votedIds = answers.filter((question) => question.hasVoted).map((question) => question.questionId)
-  // The questions this voter is not eligible for (a question restricted to part of the census).
-  const ineligibleIds = answers.filter((question) => !question.canVote).map((question) => question.questionId)
+  // The questions this voter is not eligible for (a question restricted to part of the census). After the end the
+  // backend reads every question `canVote: false`, which is no eligibility answer: it counts only while the vote runs.
+  const ineligibleIds =
+    query.data?.belongsToProcess && (answers.some((question) => question.canVote === true) || running)
+      ? answers.filter((question) => question.canVote === false).map((question) => question.questionId)
+      : []
   return { membership, votedElsewhere, votedIds, ineligibleIds }
 }
